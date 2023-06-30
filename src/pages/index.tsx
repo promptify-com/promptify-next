@@ -1,7 +1,7 @@
 import Head from "next/head";
 import { Box, Grid, Typography } from "@mui/material";
 import React, { useEffect } from "react";
-import { CustomTemplates } from "./_components/Templates";
+import { CustomTemplates } from "@/components/explorer/Templates";
 import { Header } from "@/components/blocks/Header";
 import { PageLoading } from "@/components/PageLoading";
 import useSetUser from "@/hooks/useSetUser";
@@ -19,7 +19,7 @@ import { IContinueWithSocialMediaResponse } from "@/common/types";
 import { getPathURL, saveToken } from "@/common/utils";
 import { AxiosResponse } from "axios";
 import { authClient, client } from "@/common/axios";
-import SearchBar from "./_components/SearchBar";
+import SearchBar from "@/components/explorer/SearchBar";
 
 const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
 

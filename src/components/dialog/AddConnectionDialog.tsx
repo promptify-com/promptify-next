@@ -3,7 +3,7 @@ import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import { IContinueWithSocialMediaResponse } from "../../common/types";
+import { IContinueWithSocialMediaResponse } from "@/common/types";
 // import { AddConnectionButtons } from '../../pages/Login/components/AddConnectionButtons';
 
 interface IProps {

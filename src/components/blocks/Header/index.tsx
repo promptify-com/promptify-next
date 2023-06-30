@@ -24,7 +24,7 @@ import useLogout from "../../../hooks/useLogout";
 import useSetUser from "../../../hooks/useSetUser";
 import useToken from "../../../hooks/useToken";
 import useUser from "../../../hooks/useUser";
-import SearchBar from "@/pages/_components/SearchBar";
+import SearchBar from "@/components/explorer/SearchBar";
 import SearchIcon from "@mui/icons-material/Search";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import { LogoAppMobile } from "../../../assets/icons/LogoAppMobile";
