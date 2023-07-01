@@ -2197,6 +2197,13 @@ react-github-login@^1.0.3:
   resolved "https://registry.yarnpkg.com/react-github-login/-/react-github-login-1.0.3.tgz#e3fdc29c1162ecc0704d9fe6096c69d6f53315e7"
   integrity sha512-SkXwkjUdTgXEISaQkC9+zR1Cm/AcDQSVon956SvPeBWL888A6e1M9eP8WfBxKyV1B5Fc8lLcC0OULr7OYWBqlw==
 
+react-image-crop@^10.1.5:
+  version "10.1.5"
+  resolved "https://registry.yarnpkg.com/react-image-crop/-/react-image-crop-10.1.5.tgz#60f9d81405b01b6925629cae235e8406616fc0e5"
+  integrity sha512-BL8Rd/UHCE4O5GcYQiWDKVh5JOJb0Ic/Gde2W171v5nY7RyQzFLM1cxIzlYfESLO/lNgBVhDHuEV9RHnqALMkA==
+  dependencies:
+    clsx "^1.2.1"
+
 react-is@^16.13.1, react-is@^16.7.0:
   version "16.13.1"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
