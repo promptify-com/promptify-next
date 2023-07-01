@@ -171,3 +171,24 @@ position: fixed;
     width: 100% !important;
   }
 }
+
+
+.display-xs-only {
+  display: inline-flex;
+}
+
+@media (min-width: 768px) {
+  .display-xs-only {
+    display: none;
+  }
+}
+
+.display-md-only {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .display-md-only {
+    display: inline-flex;
+  }
+}
