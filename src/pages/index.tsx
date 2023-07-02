@@ -420,7 +420,9 @@ export async function getServerSideProps() {
     console.error("Error fetching collections:", error);
     return {
       props: {
-        collections: [], // Return an empty array or handle the error case appropriately
+        collections: [],
+        tags: [],
+        categories: [],
       },
     };
   }

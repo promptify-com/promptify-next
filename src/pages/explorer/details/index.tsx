@@ -51,6 +51,9 @@ export default function ExplorerDetail() {
         ? JSON.parse(category[0])
         : JSON.parse(category);
       setCategorySelected(parsedCategory);
+      console.log(
+        Array.isArray(category) ? JSON.parse(category[0]) : JSON.parse(category)
+      );
     }
   }, [category]);
 
@@ -68,10 +71,10 @@ export default function ExplorerDetail() {
     });
 
   React.useEffect(() => {
-    if (category) {
+    if (subcategory) {
       const parsedSubCategory = Array.isArray(subcategory)
         ? JSON.parse(subcategory[0])
-        : subcategory;
+        : JSON.parse(subcategory);
       setSubCategorSelectedy(parsedSubCategory);
     }
   }, [category]);
