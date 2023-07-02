@@ -13,6 +13,7 @@ import useSetUser from "@/hooks/useSetUser";
 import { PageWrapper } from "@/components/PageWrapper";
 import { Header } from "@/components/blocks/Header";
 import { useRouter } from "next/router";
+import Head from "next/head";
 
 const AccountInfo = () => {
   const router = useRouter();
@@ -39,69 +40,84 @@ const AccountInfo = () => {
   });
 
   return (
-    <PageWrapper>
-      <Header fixed />
-      <Grid container>
-        <Grid item xs={0} sm={3}></Grid>
-        <Grid item xs={12} sm={6}>
-          <Box
-            display="flex"
-            mt="140px"
-            justifyContent={{ xs: "center", sm: "flex-start" }}
-            onClick={() => router.push("/dashboard")}
-            sx={{ cursor: "pointer" }}
-          >
-            <Typography
-              fontWeight={500}
-              fontSize={{ xs: "1.5rem", sm: "2rem" }}
-              textAlign={{ xs: "center", sm: "start" }}
-              color="#0000007A"
+    <>
+      <Head>
+        <title>Promptify | Boost Your Creativity</title>
+        <meta
+          name="description"
+          content="Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out."
+        />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+      <PageWrapper>
+        <Header fixed />
+        <Grid container>
+          <Grid item xs={0} sm={3}></Grid>
+          <Grid item xs={12} sm={6}>
+            <Box
+              display="flex"
+              mt="140px"
+              justifyContent={{ xs: "center", sm: "flex-start" }}
+              onClick={() => router.push("/dashboard")}
+              sx={{ cursor: "pointer" }}
             >
-              User Hub &gt;
-            </Typography>
-            <Typography
-              fontWeight={500}
-              fontSize={{ xs: "1.5rem", sm: "2rem" }}
-              textAlign={{ xs: "center", sm: "start" }}
-            >
-              &nbsp;Account Info
-            </Typography>
-          </Box>
+              <Typography
+                fontWeight={500}
+                fontSize={{ xs: "1.5rem", sm: "2rem" }}
+                textAlign={{ xs: "center", sm: "start" }}
+                color="#0000007A"
+              >
+                User Hub &gt;
+              </Typography>
+              <Typography
+                fontWeight={500}
+                fontSize={{ xs: "1.5rem", sm: "2rem" }}
+                textAlign={{ xs: "center", sm: "start" }}
+              >
+                &nbsp;Account Info
+              </Typography>
+            </Box>
 
-          <NameInfo formik={formik} />
-          <ProfileImage formik={formik} />
-          <Gender formik={formik} />
-          <About formik={formik} />
+            <NameInfo formik={formik} />
+            <ProfileImage formik={formik} />
+            <Gender formik={formik} />
+            <About formik={formik} />
 
-          <Box
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            mt="1rem"
-          >
-            <Button
-              sx={{
-                mb: "100px",
-                width: { xs: "90%", sm: "100%" },
-                bgcolor: "#D6D6D6",
-                height: "50px",
-                borderRadius: "15px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                cursor: "pointer",
-                color: "common.black",
-              }}
-              onClick={formik.submitForm}
-              disabled={isLoading}
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              mt="1rem"
             >
-              {isLoading ? <CircularProgress /> : <Typography>Save</Typography>}
-            </Button>
-          </Box>
+              <Button
+                sx={{
+                  mb: "100px",
+                  width: { xs: "90%", sm: "100%" },
+                  bgcolor: "#D6D6D6",
+                  height: "50px",
+                  borderRadius: "15px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  cursor: "pointer",
+                  color: "common.black",
+                }}
+                onClick={formik.submitForm}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <CircularProgress />
+                ) : (
+                  <Typography>Save</Typography>
+                )}
+              </Button>
+            </Box>
+          </Grid>
+          <Grid item xs={0} sm={3}></Grid>
         </Grid>
-        <Grid item xs={0} sm={3}></Grid>
-      </Grid>
-    </PageWrapper>
+      </PageWrapper>
+    </>
   );
 };
 export default AccountInfo;

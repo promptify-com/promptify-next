@@ -23,37 +23,28 @@ import SearchBar from "@/components/explorer/SearchBar";
 
 const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
 
-export default function Home() {
+function Home({
+  collections,
+  tags,
+  categories,
+}: {
+  collections: ICollection[];
+  tags: Tag[];
+  categories: any[];
+}) {
   const router = useRouter();
   const setUser = useSetUser();
   const savedToken = useToken();
 
   const tag = router.query?.tag;
-  const { data: tags } = useGetTagsPopularQuery();
-  const { data: categories } = useGetCategoriesQuery();
 
-  const [collections, setCollections] = React.useState<ICollection[]>([]);
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
   const [isLoadingCollection, setIsLoadingCollection] =
     React.useState<boolean>(false);
   const [categorySelected, setCategorySelected] = React.useState<number>();
   const [selectedTag, setSelectedTag] = React.useState<Tag[]>([]);
   const [keyWord, setKeyWord] = React.useState<string>("");
-  // const [collection] = useCollections();
 
-  const [useDeferredAction] = useCollection();
-
-  useEffect(() => {
-    setIsLoadingCollection(true);
-    useDeferredAction()
-      .then((res: any) => {
-        setCollections(res);
-        setIsLoadingCollection(false);
-      })
-      .catch(() => {
-        setIsLoadingCollection(false);
-      });
-  }, []);
   const preLogin = () => {
     setIsLoading(true);
   };
@@ -408,3 +399,30 @@ export default function Home() {
     </>
   );
 }
+
+export async function getServerSideProps() {
+  try {
+    const collectionResponse = await authClient.get("/api/meta/collections/");
+    const collections = collectionResponse.data; // Extract the necessary data from the response
+    const tagsResponse = await authClient.get("/api/meta/tags/popular/");
+    const tags = tagsResponse.data;
+    const categoryRequest = await authClient.get("/api/meta/categories/");
+    const categories = categoryRequest.data;
+
+    return {
+      props: {
+        collections,
+        tags,
+        categories,
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching collections:", error);
+    return {
+      props: {
+        collections: [], // Return an empty array or handle the error case appropriately
+      },
+    };
+  }
+}
+export default Home;

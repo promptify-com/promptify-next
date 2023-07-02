@@ -6,6 +6,7 @@ import { useQuestions } from "../../hooks/api/questions";
 import Prompts from "@/components/signUp/Prompts";
 import Questions from "@/components/signUp/Questions";
 import Finish from "@/components/signUp/Finish";
+import Head from "next/head";
 
 const SignUp = () => {
   const [step, setStep] = useState(1);
@@ -28,6 +29,15 @@ const SignUp = () => {
 
   return (
     <>
+      <Head>
+        <title>Promptify | Boost Your Creativity</title>
+        <meta
+          name="description"
+          content="Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out."
+        />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
       {isLoading ? (
         <PageLoading />
       ) : (

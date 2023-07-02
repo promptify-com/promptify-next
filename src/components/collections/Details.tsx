@@ -28,12 +28,12 @@ interface DetailsProps {
   setTemplate: (template: Templates) => void;
 }
 
-export const Details: React.FC<DetailsProps> = ({
+export const Details = ({
   template,
   setTemplate,
   templateData,
   updateTemplateData,
-}) => {
+}: DetailsProps) => {
   const [isFetching, setIsFetching] = useState(false);
 
   const token = useToken();

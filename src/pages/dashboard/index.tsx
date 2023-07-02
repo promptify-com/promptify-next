@@ -7,6 +7,7 @@ import { HeaderMenu } from "@/components/blocks";
 import { Header } from "@/components/blocks/Header";
 import useToken from "@/hooks/useToken";
 import { Connections, Home, Identy, Prompts } from "@/components/dashboard";
+import Head from "next/head";
 
 const Dashboard = () => {
   const router = useRouter();
@@ -65,74 +66,88 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <PageWrapper>
-      <Grid
-        sx={{
-          background: "#e8e4ff",
-          position: "fixed",
-          zIndex: 1,
-          top: 0,
-        }}
-      >
-        <Header keyWord={keyWord} setKeyWord={setKeyWord} />
-      </Grid>
-      {showMenu && (
-        <HeaderMenu
-          hash={hash}
-          setShowMenu={setShowMenu}
-          setHash={setHash}
-          mobile
+    <>
+      <Head>
+        <title>Promptify | Boost Your Creativity</title>
+        <meta
+          name="description"
+          content="Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out."
         />
-      )}
-      {!!token ? (
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+      <PageWrapper>
         <Grid
-          container
-          zIndex={1}
           sx={{
-            paddingTop: "90px",
-            background: "#FDFBFF",
+            background: "#e8e4ff",
+            position: "fixed",
+            zIndex: 1,
+            top: 0,
           }}
         >
-          <Grid item xs={0} sm={3}>
-            <Box display={{ xs: "none", sm: "flex" }} justifyContent="center">
-              <HeaderMenu hash={hash} setHash={setHash} />
-            </Box>
-          </Grid>
+          <Header keyWord={keyWord} setKeyWord={setKeyWord} />
+        </Grid>
+        {showMenu && (
+          <HeaderMenu
+            hash={hash}
+            setShowMenu={setShowMenu}
+            setHash={setHash}
+            mobile
+          />
+        )}
+        {!!token ? (
           <Grid
-            item
-            xs={12}
-            sm={8}
-            mt={{ xs: "0px", sm: "3em" }}
-            display="flex"
-            justifyContent="center"
-            flexDirection={{ xs: "column", sm: "row" }}
-            zIndex={0}
+            container
+            zIndex={1}
+            sx={{
+              paddingTop: "90px",
+              background: "#FDFBFF",
+            }}
           >
-            <Grid
-              item
-              xs={0}
-              sm={0}
-              sx={{
-                flexBasis: { xs: "100%", sm: "0" },
-              }}
-            >
-              <Box display={{ xs: "flex", sm: "none" }} justifyContent="center">
-                <HeaderMenu mobile={true} hash={hash} setHash={setHash} />
+            <Grid item xs={0} sm={3}>
+              <Box display={{ xs: "none", sm: "flex" }} justifyContent="center">
+                <HeaderMenu hash={hash} setHash={setHash} />
               </Box>
             </Grid>
+            <Grid
+              item
+              xs={12}
+              sm={8}
+              mt={{ xs: "0px", sm: "3em" }}
+              display="flex"
+              justifyContent="center"
+              flexDirection={{ xs: "column", sm: "row" }}
+              zIndex={0}
+            >
+              <Grid
+                item
+                xs={0}
+                sm={0}
+                sx={{
+                  flexBasis: { xs: "100%", sm: "0" },
+                }}
+              >
+                <Box
+                  display={{ xs: "flex", sm: "none" }}
+                  justifyContent="center"
+                >
+                  <HeaderMenu mobile={true} hash={hash} setHash={setHash} />
+                </Box>
+              </Grid>
 
-            <Box width={{ xs: "100%", sm: "100%" }}>
-              <Home />
-              <Connections />
-              <Identy />
-              <Prompts />
-            </Box>
+              <Box width={{ xs: "100%", sm: "100%" }}>
+                <Home />
+                <Connections />
+                <Identy />
+                <Prompts />
+              </Box>
+            </Grid>
           </Grid>
-        </Grid>
-      ) : (
-        <PageLoading />
-      )}
-    </PageWrapper>
+        ) : (
+          <PageLoading />
+        )}
+      </PageWrapper>
+    </>
   );
 };
 

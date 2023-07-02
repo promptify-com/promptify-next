@@ -26,6 +26,7 @@ import { deletePrompt, updateTemplate } from "../../hooks/api/templates";
 import { PageWrapper } from "@/components/PageWrapper";
 import { ContentCopy } from "@mui/icons-material";
 import { useRouter } from "next/router";
+import Head from "next/head";
 
 export interface ITemplate {
   title: string;
@@ -447,62 +448,92 @@ export const Builder = () => {
   };
 
   return (
-    <PageWrapper>
-      <Grid container>
-        <Grid item xs={12}>
-          <Header
-            title={dataForRequest.current.title}
-            updateTemplateTitle={updateTemplateTitle}
-            onSave={injectOrderAndSendRequest}
-          />
-        </Grid>
-        <Grid item xs={selectedNode ? 9 : 12}>
-          <Box
-            height={"calc(100vh - 80px)"}
-            bgcolor={"#525252"}
-            position="relative"
-            sx={{
-              backgroundImage: "radial-gradient(black 1px, transparent 0)",
-              backgroundSize: "30px 30px",
-            }}
-          >
-            <div ref={ref} style={{ height: "100%", width: "100%" }}></div>
-
+    <>
+      <Head>
+        <title>Promptify | Boost Your Creativity</title>
+        <meta
+          name="description"
+          content="Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out."
+        />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+      <PageWrapper>
+        <Grid container>
+          <Grid item xs={12}>
+            <Header
+              title={dataForRequest.current.title}
+              updateTemplateTitle={updateTemplateTitle}
+              onSave={injectOrderAndSendRequest}
+            />
+          </Grid>
+          <Grid item xs={selectedNode ? 9 : 12}>
             <Box
+              height={"calc(100vh - 80px)"}
+              bgcolor={"#525252"}
+              position="relative"
               sx={{
-                position: "absolute",
-                left: 50,
-                bottom: 50,
+                backgroundImage: "radial-gradient(black 1px, transparent 0)",
+                backgroundSize: "30px 30px",
               }}
             >
-              <Button sx={{ bgcolor: "black" }} onClick={() => createNode()}>
-                <Typography color={"white"}>Add Node</Typography>
-                <Typography color={"white"} sx={{ opacity: 0.4 }}>
-                  &nbsp;Ctrl+N
-                </Typography>
-              </Button>
-              {selectedNode && (
-                <React.Fragment>
-                  <Button
-                    sx={{ bgcolor: "black", ml: "10px" }}
-                    onClick={() => duplicateNode()}
-                  >
-                    <Typography
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        color: "white",
-                      }}
+              <div ref={ref} style={{ height: "100%", width: "100%" }}></div>
+
+              <Box
+                sx={{
+                  position: "absolute",
+                  left: 50,
+                  bottom: 50,
+                }}
+              >
+                <Button sx={{ bgcolor: "black" }} onClick={() => createNode()}>
+                  <Typography color={"white"}>Add Node</Typography>
+                  <Typography color={"white"} sx={{ opacity: 0.4 }}>
+                    &nbsp;Ctrl+N
+                  </Typography>
+                </Button>
+                {selectedNode && (
+                  <React.Fragment>
+                    <Button
+                      sx={{ bgcolor: "black", ml: "10px" }}
+                      onClick={() => duplicateNode()}
                     >
-                      <ContentCopy
-                        sx={{ opacity: 0.4, mr: "3px", fontSize: "medium" }}
-                      />{" "}
-                      Duplicate
-                    </Typography>
-                  </Button>
+                      <Typography
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          color: "white",
+                        }}
+                      >
+                        <ContentCopy
+                          sx={{ opacity: 0.4, mr: "3px", fontSize: "medium" }}
+                        />{" "}
+                        Duplicate
+                      </Typography>
+                    </Button>
+                    <Button
+                      sx={{ bgcolor: "#f85149", ml: "10px" }}
+                      onClick={() => setConfirmDialogOpen(true)}
+                    >
+                      <Typography
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          color: "white",
+                        }}
+                      >
+                        <DeleteIcon
+                          sx={{ opacity: 0.5, mr: "3px", fontSize: "medium" }}
+                        />{" "}
+                        Delete
+                      </Typography>
+                    </Button>
+                  </React.Fragment>
+                )}
+                {selectedConnection && (
                   <Button
                     sx={{ bgcolor: "#f85149", ml: "10px" }}
-                    onClick={() => setConfirmDialogOpen(true)}
+                    onClick={() => removeConnection()}
                   >
                     <Typography
                       sx={{
@@ -517,126 +548,107 @@ export const Builder = () => {
                       Delete
                     </Typography>
                   </Button>
-                </React.Fragment>
-              )}
-              {selectedConnection && (
-                <Button
-                  sx={{ bgcolor: "#f85149", ml: "10px" }}
-                  onClick={() => removeConnection()}
+                )}
+              </Box>
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: 50,
+                  right: 30,
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                <Box
+                  onClick={() => editor?.zoomAt(1)}
+                  sx={{
+                    "&:hover": {
+                      cursor: "pointer",
+                      opacity: 0.5,
+                    },
+                  }}
                 >
-                  <Typography
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      color: "white",
-                    }}
-                  >
-                    <DeleteIcon
-                      sx={{ opacity: 0.5, mr: "3px", fontSize: "medium" }}
-                    />{" "}
-                    Delete
-                  </Typography>
-                </Button>
-              )}
+                  <PlusIcon />
+                </Box>
+                <Box
+                  onClick={() => editor?.zoomAt(0.1)}
+                  sx={{
+                    "&:hover": {
+                      cursor: "pointer",
+                      opacity: 0.5,
+                    },
+                  }}
+                >
+                  <MinusIcon />
+                </Box>
+              </Box>
             </Box>
+          </Grid>
+          <Grid item xs={selectedNode ? 3 : 0}>
             <Box
+              bgcolor={"#373737"}
+              height={"calc(100vh - 80px)"}
+              display={selectedNode ? "block" : "none"}
+            >
+              <Sidebar
+                engines={engines}
+                prompts={prompts}
+                selectedNode={selectedNode}
+                updateTitle={updateTitle}
+                removeNode={() => setConfirmDialogOpen(true)}
+                nodeCount={nodeCount}
+                nodesData={nodesData}
+                setNodesData={setNodesData}
+                selectedNodeData={selectedNodeData}
+                setSelectedNodeData={setSelectedNodeData}
+              />
+            </Box>
+          </Grid>
+        </Grid>
+        <Snackbar
+          open={open}
+          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+          autoHideDuration={3000}
+          message="Prompt template saved with success"
+          onClose={() => setOpen(false)}
+        />
+        <Dialog
+          open={confirmDialogOpen}
+          onClose={() => setConfirmDialogOpen(false)}
+        >
+          <DialogTitle>{selectedNodeData?.title}</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Are you sure you want to remove this node?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions
+            sx={{
+              p: "8px 15px 15px",
+            }}
+          >
+            <Button
               sx={{
-                position: "absolute",
-                top: 50,
-                right: 30,
-                display: "flex",
-                flexDirection: "column",
+                "&:hover": {
+                  backgroundColor: "grey.300",
+                },
+              }}
+              onClick={() => setConfirmDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="contained"
+              onClick={() => {
+                removeNode();
               }}
             >
-              <Box
-                onClick={() => editor?.zoomAt(1)}
-                sx={{
-                  "&:hover": {
-                    cursor: "pointer",
-                    opacity: 0.5,
-                  },
-                }}
-              >
-                <PlusIcon />
-              </Box>
-              <Box
-                onClick={() => editor?.zoomAt(0.1)}
-                sx={{
-                  "&:hover": {
-                    cursor: "pointer",
-                    opacity: 0.5,
-                  },
-                }}
-              >
-                <MinusIcon />
-              </Box>
-            </Box>
-          </Box>
-        </Grid>
-        <Grid item xs={selectedNode ? 3 : 0}>
-          <Box
-            bgcolor={"#373737"}
-            height={"calc(100vh - 80px)"}
-            display={selectedNode ? "block" : "none"}
-          >
-            <Sidebar
-              engines={engines}
-              prompts={prompts}
-              selectedNode={selectedNode}
-              updateTitle={updateTitle}
-              removeNode={() => setConfirmDialogOpen(true)}
-              nodeCount={nodeCount}
-              nodesData={nodesData}
-              setNodesData={setNodesData}
-              selectedNodeData={selectedNodeData}
-              setSelectedNodeData={setSelectedNodeData}
-            />
-          </Box>
-        </Grid>
-      </Grid>
-      <Snackbar
-        open={open}
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-        autoHideDuration={3000}
-        message="Prompt template saved with success"
-        onClose={() => setOpen(false)}
-      />
-      <Dialog
-        open={confirmDialogOpen}
-        onClose={() => setConfirmDialogOpen(false)}
-      >
-        <DialogTitle>{selectedNodeData?.title}</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Are you sure you want to remove this node?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions
-          sx={{
-            p: "8px 15px 15px",
-          }}
-        >
-          <Button
-            sx={{
-              "&:hover": {
-                backgroundColor: "grey.300",
-              },
-            }}
-            onClick={() => setConfirmDialogOpen(false)}
-          >
-            Cancel
-          </Button>
-          <Button
-            variant="contained"
-            onClick={() => {
-              removeNode();
-            }}
-          >
-            Remove
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </PageWrapper>
+              Remove
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </PageWrapper>
+    </>
   );
 };
 export default Builder;
