@@ -232,6 +232,10 @@ export default function ExplorerDetail({
                       onClick={() => {
                         setIsLoading(true);
                         setCategorySelected(el);
+                        router.push({
+                          pathname: "/explorer/details",
+                          query: { category: JSON.stringify(el) },
+                        });
                         setSubCategorSelectedy({
                           id: -1,
                           name: "All subcategories",
