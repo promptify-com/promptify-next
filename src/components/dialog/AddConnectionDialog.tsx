@@ -4,6 +4,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { IContinueWithSocialMediaResponse } from "@/common/types";
+import { AddConnectionButtons } from "../login/AddConnectionButtons";
 // import { AddConnectionButtons } from '../../pages/Login/components/AddConnectionButtons';
 
 interface IProps {
@@ -33,15 +34,15 @@ const AddConnectionDialog: React.FC<IProps> = ({
       <DialogTitle id="alert-dialog-title">{"Add New Connection"}</DialogTitle>
       <DialogContent>
         <GoogleOAuthProvider
-          clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID as string}
+          clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID as string}
         >
-          {/* <AddConnectionButtons
+          <AddConnectionButtons
             setTypeAlert={setTypeAlert}
             preLogin={preLogin}
             postLogin={postLogin}
             authConnection={authConnection}
             setOpenAdd={setOpenAdd}
-          /> */}
+          />
         </GoogleOAuthProvider>
       </DialogContent>
     </Dialog>

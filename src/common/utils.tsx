@@ -9,7 +9,9 @@ interface TokenResponse {
   token: string;
 }
 export const saveToken = ({ token }: TokenResponse) => {
-  localStorage.setItem("token", token);
+  if (typeof window !== "undefined") {
+    localStorage.setItem("token", token);
+  }
 };
 
 export const getToken = () => {
