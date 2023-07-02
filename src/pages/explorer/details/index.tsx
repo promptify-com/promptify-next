@@ -31,9 +31,18 @@ import { useWindowSize } from "usehooks-ts";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import Image from "next/image";
+import { authClient } from "@/common/axios";
 const label = { inputProps: { "aria-label": "Color switch demo" } };
 
-export default function ExplorerDetail() {
+export default function ExplorerDetail({
+  collections,
+  categories,
+  engines,
+}: {
+  collections: ICollection[];
+  categories: Category[];
+  engines: any[];
+}) {
   const router = useRouter();
   const { category, subcategory, keyWordP } = router.query;
 
@@ -51,9 +60,6 @@ export default function ExplorerDetail() {
         ? JSON.parse(category[0])
         : JSON.parse(category);
       setCategorySelected(parsedCategory);
-      console.log(
-        Array.isArray(category) ? JSON.parse(category[0]) : JSON.parse(category)
-      );
     }
   }, [category]);
 
@@ -90,14 +96,13 @@ export default function ExplorerDetail() {
   const [filterSelected, setFilterSelected] = React.useState<TypePopularity>(
     Popularity[0]
   );
-  const { data: categories } = useGetCategoriesQuery();
-  const { data: engines } = useGetEnginesQuery();
+
+  // const { data: engines } = useGetEnginesQuery();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isLoading, setIsLoading] = React.useState(false);
   const menuAnchorRef = React.useRef<HTMLDivElement | null>(null);
   const menuAnchoMobileRef = React.useRef<HTMLDivElement | null>(null);
   const catgMenuAnchorRef = React.useRef<HTMLDivElement | null>(null);
-  const [collections, setCollections] = React.useState<ICollection[]>([]);
   const [isLoadingCollection, setIsLoadingCollection] =
     React.useState<boolean>(false);
   const [useDeferredAction] = useCollection();
@@ -114,18 +119,6 @@ export default function ExplorerDetail() {
       backgroundColor: blue[600],
     },
   }));
-
-  useEffect(() => {
-    setIsLoadingCollection(true);
-    useDeferredAction()
-      .then((res: any) => {
-        setCollections(res);
-        setIsLoadingCollection(false);
-      })
-      .catch(() => {
-        setIsLoadingCollection(false);
-      });
-  }, []);
 
   return (
     <>
@@ -1037,4 +1030,32 @@ export default function ExplorerDetail() {
       </Box>
     </>
   );
+}
+
+export async function getServerSideProps() {
+  try {
+    const collectionResponse = await authClient.get("/api/meta/collections/");
+    const collections = collectionResponse.data; // Extract the necessary data from the response
+    const enginesResponse = await authClient.get("/api/meta/engines");
+    const engines = enginesResponse.data;
+    const categoryRequest = await authClient.get("/api/meta/categories/");
+    const categories = categoryRequest.data;
+
+    return {
+      props: {
+        collections,
+        categories,
+        engines,
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching collections:", error);
+    return {
+      props: {
+        collections: [],
+        categories: [],
+        engines: [],
+      },
+    };
+  }
 }
