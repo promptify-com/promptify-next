@@ -15,11 +15,6 @@ import {
   useTheme,
 } from "@mui/material";
 import materialDynamicColors from "material-dynamic-colors";
-
-import { Header } from "@/components/blocks/Header";
-import { GeneratorForm } from "@/components/collections/GeneratorForm";
-import { Executions } from "@/components/collections/Executions";
-import { Details } from "@/components/collections/Details";
 import {
   useGetCollectionTemplatesQuery,
   useGetPromptTemplatesExecutionsQuery,
@@ -33,34 +28,27 @@ import { useWindowSize } from "usehooks-ts";
 import { Close, KeyboardArrowDown, Loop, MoreHoriz } from "@mui/icons-material";
 import { LogoApp } from "../../assets/icons/LogoApp";
 import { useRouter } from "next/router";
+import { PromptLiveResponse } from "@/common/types/prompt";
+import { Header } from "@/components/blocks/Header";
+import { GeneratorForm } from "@/components/collections/GeneratorForm";
+import { Executions } from "@/components/collections/Executions";
+import { Details } from "@/components/collections/Details";
+import { authClient } from "@/common/axios";
+import Head from "next/head";
 
-export interface PromptLiveResponseData {
-  message: string;
-  prompt: number;
-  created_at: Date;
-  isLoading?: boolean;
-  isCompleted?: boolean;
-  isFailed?: boolean;
-}
-export interface PromptLiveResponse {
-  created_at: Date;
-  data: PromptLiveResponseData[] | undefined;
-}
-
-export const Collection = () => {
+export const Collection = ({ defaultFetchedTemplate }: any) => {
   const router = useRouter();
-  const id = Array.isArray(router.query.id)
-    ? router.query.id[0]
-    : router.query.id;
   const token = useToken();
   const [templateView] = useTemplateView();
   const theme = useTheme();
   const { width: windowWidth } = useWindowSize();
-
+  const id = router.query.id;
   const [NewExecutionData, setNewExecutionData] =
     useState<PromptLiveResponse | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [templateData, setTemplateData] = useState<Templates>();
+  const [templateData, setTemplateData] = useState<Templates>(
+    defaultFetchedTemplate?.prompt_templates[0]
+  );
   const [, setRandomTemplate] = useState<TemplatesExecutions | null>(null);
   const [palette, setPalette] = useState(theme.palette);
   const [detailsOpened, setDetailsOpened] = useState(false);
@@ -98,9 +86,9 @@ export const Collection = () => {
     }
   }, [windowWidth]);
 
-  useEffect(() => {
-    setTemplateData(fetchedTemplate?.prompt_templates[0]);
-  }, [fetchedTemplate]);
+  // useEffect(() => {
+  //   setTemplateData(fetchedTemplate?.prompt_templates[0]);
+  // }, [fetchedTemplate]);
 
   const changeSelectedTemplate = (template: Templates) => {
     if (!isGenerating) {
@@ -224,51 +212,122 @@ export const Collection = () => {
   const newTheme = createTheme({ ...theme, palette });
 
   return (
-    <ThemeProvider theme={newTheme}>
-      <Box sx={{ bgcolor: "background.default" }}>
-        <Header transparent />
-        {!templateData || isLoadingTemplate || isFetchingTemplate ? (
-          <PageLoading />
-        ) : (
-          <Grid
-            container
-            columnSpacing={{ md: 4 }}
-            sx={{
-              height: "calc(100svh - 90px)",
-              position: "relative",
-            }}
-          >
+    <>
+      <Head>
+        <title>Promptify | Boost Your Creativity</title>
+        <meta
+          name="description"
+          content="Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out."
+        />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+
+      <ThemeProvider theme={newTheme}>
+        <Box sx={{ bgcolor: "background.default" }}>
+          <Header transparent />
+          {!templateData || isLoadingTemplate || isFetchingTemplate ? (
+            <PageLoading />
+          ) : (
             <Grid
-              item
-              xs={12}
-              md={3}
+              container
+              columnSpacing={{ md: 4 }}
               sx={{
-                display: `${generatorOpened ? "block" : "none"}`,
-                height: "100%",
-                overflow: "auto",
-                p: { xs: "16px", md: 0 },
-                pr: { md: "10px" },
-                bgcolor: "background.default",
-                position: { xs: "absolute", md: "relative" },
-                top: 0,
-                left: 0,
-                right: 0,
-                zIndex: 999,
+                height: "calc(100svh - 90px)",
+                position: "relative",
               }}
             >
+              <Grid
+                item
+                xs={12}
+                md={3}
+                sx={{
+                  display: `${generatorOpened ? "block" : "none"}`,
+                  height: "100%",
+                  overflow: "auto",
+                  p: { xs: "16px", md: 0 },
+                  pr: { md: "10px" },
+                  bgcolor: "background.default",
+                  position: { xs: "absolute", md: "relative" },
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  zIndex: 999,
+                }}
+              >
+                {windowWidth < 900 && (
+                  <Button
+                    sx={{
+                      width: "100%",
+                      p: "10px 14px",
+                      flexDirection: "row",
+                      alignItems: "center",
+                      gap: 2,
+                      bgcolor: "primary.main",
+                      color: "onPrimary",
+                      borderRadius: "16px",
+                      ":hover": { bgcolor: "primary.main", color: "onPrimary" },
+                    }}
+                  >
+                    <Box
+                      component={"img"}
+                      src={
+                        templateData.thumbnail || "http://placehold.it/240x150"
+                      }
+                      alt={"alt"}
+                      sx={{
+                        width: 56,
+                        height: 42,
+                        objectFit: "cover",
+                        borderRadius: "999px",
+                      }}
+                    />
+                    <Stack alignItems={"flex-start"}>
+                      <Typography
+                        fontSize={14}
+                        color={"inherit"}
+                        dangerouslySetInnerHTML={{ __html: templateData.title }}
+                      />
+                      <Typography
+                        fontSize={10}
+                        fontWeight={400}
+                        color={"inherit"}
+                        dangerouslySetInnerHTML={{
+                          __html: templateData.category.name,
+                        }}
+                      />
+                    </Stack>
+                    <Close
+                      sx={{ ml: "auto", fontSize: 26 }}
+                      onClick={() => setGeneratorOpened(false)}
+                    />
+                  </Button>
+                )}
+                <GeneratorForm
+                  templateData={templateData}
+                  setNewExecutionData={setNewExecutionData}
+                  isGenerating={isGenerating}
+                  setIsGenerating={setIsGenerating}
+                  onError={setErrorMessage}
+                  exit={() => setGeneratorOpened(false)}
+                />
+              </Grid>
+
               {windowWidth < 900 && (
                 <Button
                   sx={{
                     width: "100%",
                     p: "10px 14px",
+                    m: "10px 16px 0",
                     flexDirection: "row",
                     alignItems: "center",
                     gap: 2,
-                    bgcolor: "primary.main",
-                    color: "onPrimary",
+                    bgcolor: "surface.4",
+                    color: "onSurface",
                     borderRadius: "16px",
-                    ":hover": { bgcolor: "primary.main", color: "onPrimary" },
+                    ":hover": { bgcolor: "surface.4", color: "onSurface" },
                   }}
+                  onClick={() => setDetailsOpened(true)}
                 >
                   <Box
                     component={"img"}
@@ -298,197 +357,164 @@ export const Collection = () => {
                       }}
                     />
                   </Stack>
-                  <Close
-                    sx={{ ml: "auto", fontSize: 26 }}
-                    onClick={() => setGeneratorOpened(false)}
-                  />
+                  <KeyboardArrowDown sx={{ ml: "auto", fontSize: 26 }} />
                 </Button>
               )}
-              <GeneratorForm
-                templateData={templateData}
-                setNewExecutionData={setNewExecutionData}
-                isGenerating={isGenerating}
-                setIsGenerating={setIsGenerating}
-                onError={setErrorMessage}
-                exit={() => setGeneratorOpened(false)}
-              />
-            </Grid>
-
-            {windowWidth < 900 && (
-              <Button
+              <Grid
+                item
+                xs={12}
+                md={6}
                 sx={{
-                  width: "100%",
-                  p: "10px 14px",
-                  m: "10px 16px 0",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: 2,
-                  bgcolor: "surface.4",
-                  color: "onSurface",
-                  borderRadius: "16px",
-                  ":hover": { bgcolor: "surface.4", color: "onSurface" },
+                  height: { xs: "calc(100% - 148px)", md: "100%" },
+                  overflow: "auto",
+                  pr: { md: "10px" },
                 }}
-                onClick={() => setDetailsOpened(true)}
               >
-                <Box
-                  component={"img"}
-                  src={templateData.thumbnail || "http://placehold.it/240x150"}
-                  alt={"alt"}
-                  sx={{
-                    width: 56,
-                    height: 42,
-                    objectFit: "cover",
-                    borderRadius: "999px",
-                  }}
+                <Executions
+                  templateData={templateData}
+                  executions={templateExecutions || []}
+                  isFetching={isFetchingExecutions}
+                  newExecutionData={NewExecutionData}
+                  refetchExecutions={refetchTemplateExecutions}
                 />
-                <Stack alignItems={"flex-start"}>
-                  <Typography
-                    fontSize={14}
-                    color={"inherit"}
-                    dangerouslySetInnerHTML={{ __html: templateData.title }}
-                  />
-                  <Typography
-                    fontSize={10}
-                    fontWeight={400}
-                    color={"inherit"}
-                    dangerouslySetInnerHTML={{
-                      __html: templateData.category.name,
+              </Grid>
+
+              {windowWidth < 900 && (
+                <Stack
+                  sx={{
+                    width: "100%",
+                    p: "24px 16px 16px 16px",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 2,
+                    bgcolor: alpha(palette.surface[1], 0.8),
+                  }}
+                >
+                  <Button
+                    sx={{
+                      bgcolor: "primary.main",
+                      color: "onPrimary",
+                      fontSize: 13,
+                      fontWeight: 500,
+                      border: "none",
+                      p: "8px 25px",
+                      ":hover": {
+                        bgcolor: "transparent",
+                        color: "primary.main",
+                      },
+                    }}
+                    startIcon={
+                      token ? <LogoApp width={18} color="white" /> : null
+                    }
+                    variant={"contained"}
+                    onClick={() => setGeneratorOpened(true)}
+                  >
+                    New Request
+                  </Button>
+                  <Loop
+                    sx={{
+                      width: "24px",
+                      height: "24px",
+                      color: "onSurface",
+                      visibility: !isGenerating ? "hidden" : "visible",
                     }}
                   />
+                  <IconButton
+                    sx={{
+                      flexDirection: { xs: "column", md: "row" },
+                      bgcolor: "surface.1",
+                      color: "onSurface",
+                      border: "none",
+                      ":hover": { bgcolor: "action.hover", color: "onSurface" },
+                      svg: { width: "24px", height: "24px" },
+                    }}
+                  >
+                    <MoreHoriz />
+                  </IconButton>
                 </Stack>
-                <KeyboardArrowDown sx={{ ml: "auto", fontSize: 26 }} />
-              </Button>
-            )}
-            <Grid
-              item
-              xs={12}
-              md={6}
-              sx={{
-                height: { xs: "calc(100% - 148px)", md: "100%" },
-                overflow: "auto",
-                pr: { md: "10px" },
-              }}
-            >
-              <Executions
-                templateData={templateData}
-                executions={templateExecutions || []}
-                isFetching={isFetchingExecutions}
-                newExecutionData={NewExecutionData}
-                refetchExecutions={refetchTemplateExecutions}
-              />
-            </Grid>
+              )}
 
-            {windowWidth < 900 && (
-              <Stack
+              <Grid
+                item
+                xs={12}
+                md={3}
                 sx={{
-                  width: "100%",
-                  p: "24px 16px 16px 16px",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: 2,
-                  bgcolor: alpha(palette.surface[1], 0.8),
+                  display: `${detailsOpened ? "block" : "none"}`,
+                  height: "100%",
+                  overflow: "auto",
+                  pr: { md: "10px" },
+                  bgcolor: "background.default",
+                  position: { xs: "absolute", md: "relative" },
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  zIndex: 999,
                 }}
               >
-                <Button
-                  sx={{
-                    bgcolor: "primary.main",
-                    color: "onPrimary",
-                    fontSize: 13,
-                    fontWeight: 500,
-                    border: "none",
-                    p: "8px 25px",
-                    ":hover": {
-                      bgcolor: "transparent",
-                      color: "primary.main",
-                    },
-                  }}
-                  startIcon={
-                    token ? <LogoApp width={18} color="white" /> : null
-                  }
-                  variant={"contained"}
-                  onClick={() => setGeneratorOpened(true)}
-                >
-                  New Request
-                </Button>
-                <Loop
-                  sx={{
-                    width: "24px",
-                    height: "24px",
-                    color: "onSurface",
-                    visibility: !isGenerating ? "hidden" : "visible",
-                  }}
-                />
                 <IconButton
                   sx={{
-                    flexDirection: { xs: "column", md: "row" },
+                    display: { xs: "flex", md: "none" },
+                    position: "relative",
+                    top: "15px",
+                    ml: "auto",
+                    right: "30px",
+                    zIndex: 1,
                     bgcolor: "surface.1",
                     color: "onSurface",
                     border: "none",
-                    ":hover": { bgcolor: "action.hover", color: "onSurface" },
+                    ":hover": { bgcolor: "surface.1", color: "onSurface" },
                     svg: { width: "24px", height: "24px" },
                   }}
+                  onClick={() => setDetailsOpened(false)}
                 >
-                  <MoreHoriz />
+                  <Close />
                 </IconButton>
-              </Stack>
-            )}
-
-            <Grid
-              item
-              xs={12}
-              md={3}
-              sx={{
-                display: `${detailsOpened ? "block" : "none"}`,
-                height: "100%",
-                overflow: "auto",
-                pr: { md: "10px" },
-                bgcolor: "background.default",
-                position: { xs: "absolute", md: "relative" },
-                top: 0,
-                left: 0,
-                right: 0,
-                zIndex: 999,
-              }}
-            >
-              <IconButton
-                sx={{
-                  display: { xs: "flex", md: "none" },
-                  position: "relative",
-                  top: "15px",
-                  ml: "auto",
-                  right: "30px",
-                  zIndex: 1,
-                  bgcolor: "surface.1",
-                  color: "onSurface",
-                  border: "none",
-                  ":hover": { bgcolor: "surface.1", color: "onSurface" },
-                  svg: { width: "24px", height: "24px" },
-                }}
-                onClick={() => setDetailsOpened(false)}
-              >
-                <Close />
-              </IconButton>
-              <Details
-                templateData={fetchedTemplate}
-                updateTemplateData={setTemplateData}
-                template={templateData}
-                setTemplate={changeSelectedTemplate}
-              />
+                <Details
+                  templateData={fetchedTemplate}
+                  updateTemplateData={setTemplateData}
+                  template={templateData}
+                  setTemplate={changeSelectedTemplate}
+                />
+              </Grid>
             </Grid>
-          </Grid>
-        )}
+          )}
 
-        <Snackbar
-          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-          autoHideDuration={6000}
-          open={errorMessage.length > 0}
-          onClose={() => setErrorMessage("")}
-        >
-          <Alert severity={"error"}>{errorMessage}</Alert>
-        </Snackbar>
-      </Box>
-    </ThemeProvider>
+          <Snackbar
+            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+            autoHideDuration={6000}
+            open={errorMessage.length > 0}
+            onClose={() => setErrorMessage("")}
+          >
+            <Alert severity={"error"}>{errorMessage}</Alert>
+          </Snackbar>
+        </Box>
+      </ThemeProvider>
+    </>
   );
 };
+
+export async function getServerSideProps({ params }: any) {
+  const { id } = params;
+
+  try {
+    const templatesResponse = await authClient.get(
+      `/api/meta/collections/${id}`
+    );
+    const fetchedTemplate = templatesResponse.data; // Extract the necessary data from the response
+
+    return {
+      props: {
+        defaultFetchedTemplate: fetchedTemplate,
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching collections:", error);
+    return {
+      props: {
+        defaultFetchedTemplate: [],
+      },
+    };
+  }
+}
 export default Collection;
