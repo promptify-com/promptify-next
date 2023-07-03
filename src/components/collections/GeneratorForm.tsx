@@ -511,7 +511,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
         {token ? (
           <Button
             variant={"contained"}
-            // startIcon={token ? <LogoApp width={18} color="white" /> : null}
+            startIcon={token ? <LogoApp width={18} color="white" /> : null}
             sx={{
               flex: 2,
               fontSize: 15,
@@ -568,7 +568,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
           <Stack direction={"row"} alignItems={"center"} m={"20px 10px"}>
             <Button
               variant={"contained"}
-              // startIcon={token ? <LogoApp width={18} color="white" /> : null}
+              startIcon={token ? <LogoApp width={18} color="white" /> : null}
               sx={{
                 flex: 1,
                 p: "10px 25px",

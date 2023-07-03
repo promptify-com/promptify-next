@@ -455,7 +455,7 @@ export const Details: React.FC<DetailsProps> = ({
                   {templateData.category.parent && (
                     <Button
                       variant={"outlined"}
-                      // startIcon={<ChatGPTIcon />}
+                      startIcon={<ChatGPTIcon />}
                       sx={{
                         bgcolor: alpha(palette.primary.main, 0.1),
                         color: "onSurface",
