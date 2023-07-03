@@ -73,7 +73,6 @@ export const Header: React.FC<Props> = ({
   const setUser = useSetUser();
   const [user] = useGetCurrentUser();
 
-  const userName = useUser();
   const token = useToken();
   const router = useRouter();
   const [isMenuShown, setIsMenuShown] = React.useState(false);
@@ -325,7 +324,7 @@ export const Header: React.FC<Props> = ({
             </Grid>
           )}
 
-          {!!userName && !!token && (
+          {user && token && (
             <Grid display={{ xs: "none", sm: "flex" }}>
               <Descrip />
             </Grid>

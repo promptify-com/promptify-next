@@ -36,7 +36,7 @@ import { Details } from "@/components/collections/Details";
 import { authClient } from "@/common/axios";
 import Head from "next/head";
 
-export const Collection = ({ fetchedTemplate }: any) => {
+export const Collection = () => {
   const router = useRouter();
   const token = useToken();
   const [templateView] = useTemplateView();
@@ -46,23 +46,12 @@ export const Collection = ({ fetchedTemplate }: any) => {
   const [NewExecutionData, setNewExecutionData] =
     useState<PromptLiveResponse | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [templateData, setTemplateData] = useState<Templates>(
-    fetchedTemplate?.prompt_templates[0]
-  );
+  const [templateData, setTemplateData] = useState<Templates>();
   const [, setRandomTemplate] = useState<TemplatesExecutions | null>(null);
   const [palette, setPalette] = useState(theme.palette);
   const [detailsOpened, setDetailsOpened] = useState(false);
   const [generatorOpened, setGeneratorOpened] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
-
-  // const {
-  //   data: fetchedTemplate,
-  //   error: fetchedTemplateError,
-  //   isLoading: isLoadingTemplate,
-  //   isFetching: isFetchingTemplate,
-  // } = useGetCollectionTemplatesQuery(id ? +id : 1, {
-  //   refetchOnMountOrArgChange: true,
-  // });
 
   const {
     data: templateExecutions,
@@ -72,9 +61,17 @@ export const Collection = ({ fetchedTemplate }: any) => {
   } = useGetPromptTemplatesExecutionsQuery(
     templateData?.id ? +templateData.id : 1
   );
+  const {
+    data: fetchedTemplate,
+    error: fetchedTemplateError,
+    isLoading: isLoadingTemplate,
+    isFetching: isFetchingTemplate,
+  } = useGetCollectionTemplatesQuery(id ? +id : 1, {
+    refetchOnMountOrArgChange: true,
+  });
 
-  // if (fetchedTemplateError || templateExecutionsError)
-  //   return <div>Something went wrong...</div>;
+  if (fetchedTemplateError || templateExecutionsError)
+    return <div>Something went wrong...</div>;
 
   useEffect(() => {
     if (windowWidth > 900) {
@@ -494,27 +491,27 @@ export const Collection = ({ fetchedTemplate }: any) => {
   );
 };
 
-export async function getServerSideProps({ params }: any) {
-  const { id } = params;
+// export async function getServerSideProps({ params }: any) {
+//   const { id } = params;
 
-  try {
-    const templatesResponse = await authClient.get(
-      `/api/meta/collections/${id}`
-    );
-    const fetchedTemplate = templatesResponse.data; // Extract the necessary data from the response
+//   try {
+//     const templatesResponse = await authClient.get(
+//       `/api/meta/collections/${id}`
+//     );
+//     const fetchedTemplate = templatesResponse.data; // Extract the necessary data from the response
 
-    return {
-      props: {
-        fetchedTemplate,
-      },
-    };
-  } catch (error) {
-    console.error("Error fetching collections:", error);
-    return {
-      props: {
-        fetchedTemplate: [],
-      },
-    };
-  }
-}
+//     return {
+//       props: {
+//         fetchedTemplate,
+//       },
+//     };
+//   } catch (error) {
+//     console.error("Error fetching collections:", error);
+//     return {
+//       props: {
+//         fetchedTemplate: [],
+//       },
+//     };
+//   }
+// }
 export default Collection;

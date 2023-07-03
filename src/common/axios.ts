@@ -15,12 +15,15 @@ export const authClient = axios.create({
   baseURL: apiUrl,
 });
 
-authClient.interceptors.request.use((config) => {
-  const token = getToken();
+authClient.interceptors.request.use(
+  (config) => {
+    const token = getToken();
 
-  if (token) {
-    config.headers["Authorization"] = `Token ${token}`;
-  }
+    if (token) {
+      config.headers["Authorization"] = `Token ${token}`;
+    }
 
-  return config;
-});
+    return config;
+  },
+  (err) => console.log("error")
+);
