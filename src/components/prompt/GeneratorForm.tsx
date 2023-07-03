@@ -156,6 +156,8 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   };
 
   const generateExecution = (executionData: ResPrompt[]) => {
+    if(isGenerating) return;
+
     setLastExecution(JSON.parse(JSON.stringify(executionData)));
 
     setIsGenerating(true);
@@ -164,7 +166,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
     let tempData: any[] = [];
     fetchEventSource(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/meta/templates/${templateData.id}/execute/`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/mea/templates/${templateData.id}/execute/`,
       {
         method: 'POST',
         headers: {
@@ -175,11 +177,12 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
         body: JSON.stringify(executionData),
 
         async onopen(res) {
-          if (res.ok) {
+          if (res.ok && res.status === 200) {
             setIsGenerating(true);
             setGeneratingResponse({ created_at: new Date(), data: [] });
-          } else {
-            throw Error();
+          } else if (res.status >= 400 && res.status < 500 && res.status !== 429) {
+            console.error("Client side error ", res);
+            onError('Something went wrong. Please try again later');
           }
         },
         onmessage(msg) {
