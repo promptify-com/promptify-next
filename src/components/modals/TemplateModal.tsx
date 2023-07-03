@@ -95,6 +95,7 @@ export default function TemplateModal({ open, setOpen, data, modalNew, reloadDat
       tags: data[0]?.tags || [],
       thumbnail: data[0]?.thumbnail,
       executions_limit: data[0]?.executions_limit || -1,
+      slug: data[0]?.slug || '',
       meta_title: data[0]?.meta_title || '',
       meta_description: data[0]?.meta_description || '',
       meta_keywords: data[0]?.meta_keywords || '',
@@ -259,6 +260,27 @@ export default function TemplateModal({ open, setOpen, data, modalNew, reloadDat
               value={formik.values.executions_limit}
               onChange={formik.handleChange}
             />
+          </Box>
+          <Box style={{...boxStyle, alignItems: 'baseline'}}>
+            <Typography style={typographyStyle}>Slug</Typography>
+            <Box>
+              <Stack direction={'row'} alignItems={'center'} >
+                <Checkbox
+                  sx={{ color: 'grey.600' }}
+                  checked={formik.values.slug === null}
+                  onChange={() => {
+                    formik.setFieldValue('slug', formik.values.slug === null ? '' : null)
+                  }}
+                />
+                <InputLabel sx={{ color: 'grey.600' }}>Use Default</InputLabel>
+              </Stack>
+              <TextField sx={selectStyle}
+                name="slug"
+                value={formik.values.slug === null ? '' : formik.values.slug}
+                disabled={formik.values.slug === null}
+                onChange={formik.handleChange}
+              />
+            </Box>
           </Box>
           <Box style={{...boxStyle, alignItems: 'baseline'}}>
             <Typography style={typographyStyle}>Meta title</Typography>
