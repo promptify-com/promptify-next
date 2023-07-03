@@ -276,9 +276,9 @@ export const Header: React.FC<Props> = ({
               <SearchIcon />
             </IconButton>
           </Box>
-          {!!userName && !!token ? <Login /> : null}
+          {user && token ? null : <Login />}
 
-          {!!userName && !!token ? (
+          {user && token ? null : (
             <Grid
               onClick={() =>
                 router.push({ pathname: "/signin", query: { from: "signup" } })
@@ -323,7 +323,7 @@ export const Header: React.FC<Props> = ({
                 Sign Up
               </Typography>
             </Grid>
-          ) : null}
+          )}
 
           {!!userName && !!token && (
             <Grid display={{ xs: "none", sm: "flex" }}>
