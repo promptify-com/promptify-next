@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react";
+
 import {
-  Avatar,
   Box,
   ClickAwayListener,
   Grid,
@@ -13,25 +13,26 @@ import {
   SwipeableDrawer,
   Typography,
 } from "@mui/material";
-
-import { Descrip } from "../../../assets/icons/Descrip";
-import { LogoApp } from "../../../assets/icons/LogoApp";
-import { Collection } from "../../../assets/icons/collection";
-import { Prompt } from "../../../assets/icons/prompts";
-import { Setting } from "../../../assets/icons/setting";
-import { useGetCurrentUser } from "../../../hooks/api/user";
-import useLogout from "../../../hooks/useLogout";
-import useSetUser from "../../../hooks/useSetUser";
-import useToken from "../../../hooks/useToken";
-import useUser from "../../../hooks/useUser";
+import { Descrip } from "@/assets/icons/Descrip";
+import { LogoApp } from "@/assets/icons/LogoApp";
+import { Collection } from "@/assets/icons/collection";
+import { Prompt } from "@/assets/icons/prompts";
+import { Setting } from "@/assets/icons/setting";
+import { useGetCurrentUser } from "@/hooks/api/user";
+import useLogout from "@/hooks/useLogout";
+import useSetUser from "@/hooks/useSetUser";
+import useToken from "@/hooks/useToken";
+import useUser from "@/hooks/useUser";
 import SearchBar from "@/components/explorer/SearchBar";
 import SearchIcon from "@mui/icons-material/Search";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
-import { LogoAppMobile } from "../../../assets/icons/LogoAppMobile";
+import { LogoAppMobile } from "@/assets/icons/LogoAppMobile";
 import { SearchDialog } from "./SearchDialog";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 
+const Avatar = dynamic(() => import("@mui/material/Avatar"), { ssr: false });
 interface Props {
   transparent?: boolean;
   fixed?: boolean;
@@ -80,6 +81,7 @@ export const Header: React.FC<Props> = ({
   const menuAnchorRef = React.useRef<HTMLDivElement | null>(null);
   const [drawerState, setDrawerState] = React.useState(false);
 
+  console.log({ user });
   const handleLogout = () => {
     setIsMenuShown(!isMenuShown);
     logout();
@@ -275,8 +277,9 @@ export const Header: React.FC<Props> = ({
               <SearchIcon />
             </IconButton>
           </Box>
-          {!userName && !token ? <Login /> : null}
-          {!userName && !token ? (
+          {!!userName && !!token ? <Login /> : null}
+
+          {!!userName && !!token ? (
             <Grid
               onClick={() =>
                 router.push({ pathname: "/signin", query: { from: "signup" } })
@@ -356,9 +359,9 @@ export const Header: React.FC<Props> = ({
                 zIndex: 1,
               }}
             >
-              {!!userName?.first_name && !!userName?.last_name
-                ? `${userName?.first_name[0]?.toUpperCase()}${userName?.last_name[0]?.toUpperCase()}`
-                : userName?.username[0]?.toUpperCase()}
+              {user?.first_name && user?.last_name
+                ? `${user?.first_name[0]?.toUpperCase()}${user?.last_name[0]?.toUpperCase()}`
+                : user?.username[0]?.toUpperCase()}
             </Typography>
           ) : (
             !!token && (
@@ -391,7 +394,13 @@ export const Header: React.FC<Props> = ({
           placement="bottom-end"
           transition
           disablePortal
-          sx={{ zIndex: 2, position: "absolute" }}
+          sx={{
+            zIndex: 10000,
+            position: "absolute !important",
+            right: "22px",
+            left: "auto !important",
+            top: "70px !important",
+          }}
         >
           {({ TransitionProps, placement }) => (
             <Grow
@@ -451,9 +460,9 @@ export const Header: React.FC<Props> = ({
                           color: "#FFFFFF",
                         }}
                       >
-                        {!!userName?.first_name && !!userName?.last_name
-                          ? `${userName?.first_name[0]?.toUpperCase()}${userName?.last_name[0]?.toUpperCase()}`
-                          : userName?.username[0]?.toUpperCase()}
+                        {user?.first_name && user?.last_name
+                          ? `${user?.first_name[0]?.toUpperCase()}${user?.last_name[0]?.toUpperCase()}`
+                          : user?.username[0]?.toUpperCase()}
                       </Typography>
                       <Typography
                         sx={{
@@ -468,9 +477,9 @@ export const Header: React.FC<Props> = ({
                           letterSpacing: "0.15px",
                         }}
                       >
-                        {!!userName?.first_name && !!userName?.last_name
-                          ? `${userName?.first_name} ${userName?.last_name}`
-                          : userName?.username}
+                        {!!user?.first_name && !!user?.last_name
+                          ? `${user?.first_name} ${user?.last_name}`
+                          : user?.username}
                       </Typography>
                     </Grid>
                     <MenuList autoFocusItem={false} sx={{ width: "100%" }}>

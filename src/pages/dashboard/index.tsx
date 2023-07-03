@@ -11,9 +11,9 @@ import Head from "next/head";
 
 const Dashboard = () => {
   const router = useRouter();
-  const token = useToken();
 
   const [hash, setHash] = useState("home");
+  const [token, setToken] = useState<any>(null);
   const [showMenu, setShowMenu] = useState(false);
   const [keyWord, setKeyWord] = useState("");
   const hashElement = useMemo(() => {
@@ -30,10 +30,8 @@ const Dashboard = () => {
   }, [router.asPath]);
 
   useEffect(() => {
-    if (!token) {
-      router.push("/signin");
-    }
-  }, [router, token]);
+    setToken(localStorage.getItem("token"));
+  }, []);
 
   useEffect(() => {
     if (hashElement) {
