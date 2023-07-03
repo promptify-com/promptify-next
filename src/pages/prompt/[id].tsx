@@ -72,6 +72,7 @@ const Prompt = () => {
   } = useGetPromptTemplatesQuery(id ? +id : 1, {
     refetchOnMountOrArgChange: true,
   });
+  console.log({ fetchedTemplate });
   const {
     data: templateExecutions,
     error: templateExecutionsError,
@@ -184,10 +185,15 @@ const Prompt = () => {
   return (
     <>
       <Head>
-        <title>Promptify | Boost Your Creativity</title>
+        <title>
+          {fetchedTemplate?.title || "Promptify | Boost Your Creativity"}{" "}
+        </title>
         <meta
           name="description"
-          content="Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out."
+          content={
+            fetchedTemplate?.description ||
+            "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out."
+          }
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />

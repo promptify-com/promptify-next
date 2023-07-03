@@ -37,6 +37,7 @@ import { authClient } from "@/common/axios";
 import Head from "next/head";
 
 export const Collection = ({ defaultFetchedTemplate }: any) => {
+  console.log({ defaultFetchedTemplate });
   const router = useRouter();
   const token = useToken();
   const [templateView] = useTemplateView();
