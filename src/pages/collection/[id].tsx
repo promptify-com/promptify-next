@@ -36,8 +36,7 @@ import { Details } from "@/components/collections/Details";
 import { authClient } from "@/common/axios";
 import Head from "next/head";
 
-export const Collection = ({ defaultFetchedTemplate }: any) => {
-  console.log({ defaultFetchedTemplate });
+export const Collection = ({ fetchedTemplate }: any) => {
   const router = useRouter();
   const token = useToken();
   const [templateView] = useTemplateView();
@@ -48,7 +47,7 @@ export const Collection = ({ defaultFetchedTemplate }: any) => {
     useState<PromptLiveResponse | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [templateData, setTemplateData] = useState<Templates>(
-    defaultFetchedTemplate?.prompt_templates[0]
+    fetchedTemplate?.prompt_templates[0]
   );
   const [, setRandomTemplate] = useState<TemplatesExecutions | null>(null);
   const [palette, setPalette] = useState(theme.palette);
@@ -56,14 +55,14 @@ export const Collection = ({ defaultFetchedTemplate }: any) => {
   const [generatorOpened, setGeneratorOpened] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
 
-  const {
-    data: fetchedTemplate,
-    error: fetchedTemplateError,
-    isLoading: isLoadingTemplate,
-    isFetching: isFetchingTemplate,
-  } = useGetCollectionTemplatesQuery(id ? +id : 1, {
-    refetchOnMountOrArgChange: true,
-  });
+  // const {
+  //   data: fetchedTemplate,
+  //   error: fetchedTemplateError,
+  //   isLoading: isLoadingTemplate,
+  //   isFetching: isFetchingTemplate,
+  // } = useGetCollectionTemplatesQuery(id ? +id : 1, {
+  //   refetchOnMountOrArgChange: true,
+  // });
 
   const {
     data: templateExecutions,
@@ -74,8 +73,8 @@ export const Collection = ({ defaultFetchedTemplate }: any) => {
     templateData?.id ? +templateData.id : 1
   );
 
-  if (fetchedTemplateError || templateExecutionsError)
-    return <div>Something went wrong...</div>;
+  // if (fetchedTemplateError || templateExecutionsError)
+  //   return <div>Something went wrong...</div>;
 
   useEffect(() => {
     if (windowWidth > 900) {
@@ -227,7 +226,7 @@ export const Collection = ({ defaultFetchedTemplate }: any) => {
       <ThemeProvider theme={newTheme}>
         <Box sx={{ bgcolor: "background.default" }}>
           <Header transparent />
-          {!templateData || isLoadingTemplate || isFetchingTemplate ? (
+          {!templateData ? (
             <PageLoading />
           ) : (
             <Grid
@@ -506,14 +505,14 @@ export async function getServerSideProps({ params }: any) {
 
     return {
       props: {
-        defaultFetchedTemplate: fetchedTemplate,
+        fetchedTemplate,
       },
     };
   } catch (error) {
     console.error("Error fetching collections:", error);
     return {
       props: {
-        defaultFetchedTemplate: [],
+        fetchedTemplate: [],
       },
     };
   }
