@@ -97,6 +97,7 @@ export default function TemplateModal({ open, setOpen, data, modalNew, reloadDat
       executions_limit: data[0]?.executions_limit || -1,
       meta_title: data[0]?.meta_title || '',
       meta_description: data[0]?.meta_description || '',
+      meta_keywords: data[0]?.meta_keywords || '',
       ...(modalNew && { prompts_list: [] }),
     },
     enableReinitialize: true,
@@ -264,17 +265,15 @@ export default function TemplateModal({ open, setOpen, data, modalNew, reloadDat
             <Box>
               <Stack direction={'row'} alignItems={'center'} >
                 <Checkbox
-                  sx={{ color: 'grey.500' }}
+                  sx={{ color: 'grey.600' }}
                   checked={formik.values.meta_title === null}
                   onChange={() => {
                     formik.setFieldValue('meta_title', formik.values.meta_title === null ? '' : null)
                   }}
                 />
-                <InputLabel>Use Default</InputLabel>
+                <InputLabel sx={{ color: 'grey.600' }}>Use Default</InputLabel>
               </Stack>
-              <TextField
-                maxRows={1}
-                sx={selectStyle}
+              <TextField sx={selectStyle}
                 name="meta_title"
                 value={formik.values.meta_title === null ? '' : formik.values.meta_title}
                 disabled={formik.values.meta_title === null}
@@ -287,13 +286,13 @@ export default function TemplateModal({ open, setOpen, data, modalNew, reloadDat
             <Box>
               <Stack direction={'row'} alignItems={'center'} >
                 <Checkbox
-                  sx={{ color: 'grey.500' }}
+                  sx={{ color: 'grey.600' }}
                   checked={formik.values.meta_description === null}
                   onChange={() => {
                     formik.setFieldValue('meta_description', formik.values.meta_description === null ? '' : null)
                   }}
                 />
-                <InputLabel>Use Default</InputLabel>
+                <InputLabel sx={{ color: 'grey.600' }}>Use Default</InputLabel>
               </Stack>
               <TextField
                 multiline
@@ -302,6 +301,27 @@ export default function TemplateModal({ open, setOpen, data, modalNew, reloadDat
                 name="meta_description"
                 value={formik.values.meta_description === null ? '' : formik.values.meta_description}
                 disabled={formik.values.meta_description === null}
+                onChange={formik.handleChange}
+              />
+            </Box>
+          </Box>
+          <Box style={{...boxStyle, alignItems: 'baseline'}}>
+            <Typography style={typographyStyle}>Meta Tags</Typography>
+            <Box>
+              <Stack direction={'row'} alignItems={'center'} >
+                <Checkbox
+                  sx={{ color: 'grey.600' }}
+                  checked={formik.values.meta_keywords === null}
+                  onChange={() => {
+                    formik.setFieldValue('meta_keywords', formik.values.meta_keywords === null ? '' : null)
+                  }}
+                />
+                <InputLabel sx={{ color: 'grey.600' }}>Use Default</InputLabel>
+              </Stack>
+              <TextField sx={selectStyle}
+                name="meta_keywords"
+                value={formik.values.meta_keywords === null ? '' : formik.values.meta_keywords}
+                disabled={formik.values.meta_keywords === null}
                 onChange={formik.handleChange}
               />
             </Box>

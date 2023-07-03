@@ -17,4 +17,5 @@ export interface IEditTemplate {
   executions_limit: number;
   meta_title: string;
   meta_description: string;
+  meta_keywords: string;
 }
