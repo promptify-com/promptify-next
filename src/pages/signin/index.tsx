@@ -94,7 +94,7 @@ const Login = () => {
           //         Welcome to Promptify
           //       </Typography>
 
-          //       <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID as string}>
+          //       <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID as string}>
           //         <LoginSocialButtons preLogin={preLogin} postLogin={postLogin} />
           //       </GoogleOAuthProvider>
           //     </Box>

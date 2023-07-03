@@ -46,7 +46,7 @@ export async function createEditor(
     let promptParams: PromptParams[] = [];
     if (prompt) {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/meta/prompts/${prompt.id}/params`,
+        `${process.env.REACT_APP_API_URL}/api/meta/prompts/${prompt.id}/params`,
       );
       promptParams = await response.json();
     }

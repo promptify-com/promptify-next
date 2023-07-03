@@ -10,11 +10,17 @@ import { ThemeProvider } from "@mui/material";
 import { Provider } from "react-redux";
 import { store } from "@/core/store";
 import { theme } from "@/theme";
+import Head from "next/head";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <Provider store={store}>
       <ThemeProvider theme={theme}>
+        <Head>
+          <title>{pageProps?.title}</title>
+          <meta name="description" content={pageProps?.description} />
+          <meta property="og:title" content={pageProps?.title} />
+        </Head>
         <Component {...pageProps} />
       </ThemeProvider>
     </Provider>

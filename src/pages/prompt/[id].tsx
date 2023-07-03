@@ -34,6 +34,7 @@ import { GeneratorForm } from "@/components/prompt/GeneratorForm";
 import { Executions } from "@/components/prompt/Executions";
 import { Details } from "@/components/prompt/Details";
 import Head from "next/head";
+import { authClient } from "@/common/axios";
 
 export interface PromptLiveResponseData {
   message: string;
@@ -184,20 +185,6 @@ const Prompt = () => {
 
   return (
     <>
-      <Head>
-        <title>
-          {fetchedTemplate?.title || "Promptify | Boost Your Creativity"}{" "}
-        </title>
-        <meta
-          name="description"
-          content={
-            fetchedTemplate?.description ||
-            "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out."
-          }
-        />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
       <ThemeProvider theme={newTheme}>
         <Box sx={{ bgcolor: "background.default" }}>
           <Header transparent />
@@ -467,4 +454,27 @@ const Prompt = () => {
   );
 };
 
+export async function getServerSideProps({ params }: any) {
+  const { id } = params;
+
+  try {
+    const templatesResponse = await authClient.get(`/api/meta/templates/${id}`);
+    const fetchedTemplate = templatesResponse.data; // Extract the necessary data from the response
+
+    return {
+      props: {
+        title: fetchedTemplate.title,
+        description: fetchedTemplate.description,
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching collections:", error);
+    return {
+      props: {
+        title: "",
+        description: "",
+      },
+    };
+  }
+}
 export default Prompt;

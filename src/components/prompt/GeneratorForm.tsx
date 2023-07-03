@@ -172,7 +172,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     let isOpened = false;
     let tempData: any[] = [];
     fetchEventSource(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/meta/templates/${templateData.id}/execute/`,
+      `${process.env.REACT_APP_API_URL}/api/meta/templates/${templateData.id}/execute/`,
       {
         method: "POST",
         headers: {
