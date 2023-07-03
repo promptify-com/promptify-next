@@ -74,13 +74,12 @@ export default function TemplateModal({ open, setOpen, data, modalNew, reloadDat
   };
 
   const onCreateTemplate = async (values: IEditTemplate) => {
-    console.log(values)
-    // createTemplate(values).then(data => {
-    //   handleClose();
-    //   reloadData();
-    //   formik.resetForm();
-    //   window.open(window.location.origin + `/builder/${data.id}`, '_blank');
-    // });
+    createTemplate(values).then(data => {
+      handleClose();
+      reloadData();
+      formik.resetForm();
+      window.open(window.location.origin + `/builder/${data.id}`, '_blank');
+    });
   };
 
   const formik = useFormik<IEditTemplate>({
@@ -97,6 +96,7 @@ export default function TemplateModal({ open, setOpen, data, modalNew, reloadDat
       thumbnail: data[0]?.thumbnail,
       executions_limit: data[0]?.executions_limit || -1,
       meta_title: data[0]?.meta_title || '',
+      meta_description: data[0]?.meta_description || '',
       ...(modalNew && { prompts_list: [] }),
     },
     enableReinitialize: true,
@@ -278,6 +278,30 @@ export default function TemplateModal({ open, setOpen, data, modalNew, reloadDat
                 name="meta_title"
                 value={formik.values.meta_title === null ? '' : formik.values.meta_title}
                 disabled={formik.values.meta_title === null}
+                onChange={formik.handleChange}
+              />
+            </Box>
+          </Box>
+          <Box style={{...boxStyle, alignItems: 'baseline'}}>
+            <Typography style={typographyStyle}>Meta Description</Typography>
+            <Box>
+              <Stack direction={'row'} alignItems={'center'} >
+                <Checkbox
+                  sx={{ color: 'grey.500' }}
+                  checked={formik.values.meta_description === null}
+                  onChange={() => {
+                    formik.setFieldValue('meta_description', formik.values.meta_description === null ? '' : null)
+                  }}
+                />
+                <InputLabel>Use Default</InputLabel>
+              </Stack>
+              <TextField
+                multiline
+                maxRows={4}
+                sx={selectStyle}
+                name="meta_description"
+                value={formik.values.meta_description === null ? '' : formik.values.meta_description}
+                disabled={formik.values.meta_description === null}
                 onChange={formik.handleChange}
               />
             </Box>

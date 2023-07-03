@@ -80,6 +80,7 @@ export interface Templates {
   prompts_list?: [];
   executions_limit: number;
   meta_title: string;
+  meta_description: string;
 }
 
 export interface PromptExecutions {

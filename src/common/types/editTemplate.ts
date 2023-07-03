@@ -16,4 +16,5 @@ export interface IEditTemplate {
   prompts_list?: Prompts[] | [];
   executions_limit: number;
   meta_title: string;
+  meta_description: string;
 }
