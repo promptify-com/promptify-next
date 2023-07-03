@@ -80,9 +80,9 @@ export const Collection = () => {
     }
   }, [windowWidth]);
 
-  // useEffect(() => {
-  //   setTemplateData(fetchedTemplate?.prompt_templates[0]);
-  // }, [fetchedTemplate]);
+  useEffect(() => {
+    setTemplateData(fetchedTemplate?.prompt_templates[0]);
+  }, [fetchedTemplate]);
 
   const changeSelectedTemplate = (template: Templates) => {
     if (!isGenerating) {
