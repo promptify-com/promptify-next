@@ -31,7 +31,6 @@ export default function TemplateModal({ open, setOpen, data, modalNew, reloadDat
   };
 
   useEffect(() => {
-    console.log(data)
     setSelectedTags(data[0]?.tags.map(tag => tag.name) || []);
   }, [data]);
 
