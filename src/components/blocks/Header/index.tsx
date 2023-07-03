@@ -331,7 +331,7 @@ export const Header: React.FC<Props> = ({
               <Descrip />
             </Grid>
           )}
-          {!!userName && !!token ? (
+          {user && token ? (
             <Typography
               ref={menuAnchorRef}
               onClick={() => setIsMenuShown(!isMenuShown)}
@@ -396,10 +396,7 @@ export const Header: React.FC<Props> = ({
           disablePortal
           sx={{
             zIndex: 10000,
-            position: "absolute !important",
-            right: "22px",
-            left: "auto !important",
-            top: "70px !important",
+            position: "absolute",
           }}
         >
           {({ TransitionProps, placement }) => (
