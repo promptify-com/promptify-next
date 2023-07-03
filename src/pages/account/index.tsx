@@ -7,7 +7,7 @@ import { ProfileImage } from "@/components/accountInfo/ProfileImage";
 
 import useUser from "@/hooks/useUser";
 import { useFormik } from "formik";
-import { useUpdateUser } from "@/hooks/api/user";
+import { useGetCurrentUser, useUpdateUser } from "@/hooks/api/user";
 import { IEditProfile } from "@/common/types";
 import useSetUser from "@/hooks/useSetUser";
 import { PageWrapper } from "@/components/PageWrapper";
@@ -17,7 +17,7 @@ import Head from "next/head";
 
 const AccountInfo = () => {
   const router = useRouter();
-  const user = useUser();
+  const [user] = useGetCurrentUser();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [updateUser, _, isLoading] = useUpdateUser();
   const setUser = useSetUser();

@@ -3,10 +3,11 @@ import { Avatar, Box, Typography } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import useUser from "@/hooks/useUser";
 import { useRouter } from "next/router";
+import { useGetCurrentUser } from "@/hooks/api/user";
 
 export const Home = () => {
   const router = useRouter();
-  const user = useUser();
+  const [user] = useGetCurrentUser();
 
   return (
     <section id="home" style={{ scrollMarginTop: "100px" }}>

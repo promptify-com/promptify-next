@@ -81,7 +81,6 @@ export const Header: React.FC<Props> = ({
   const menuAnchorRef = React.useRef<HTMLDivElement | null>(null);
   const [drawerState, setDrawerState] = React.useState(false);
 
-  console.log({ user });
   const handleLogout = () => {
     setIsMenuShown(!isMenuShown);
     logout();
