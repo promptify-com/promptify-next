@@ -461,8 +461,10 @@ export async function getServerSideProps({ params }: any) {
 
     return {
       props: {
-        title: fetchedTemplate.title,
-        description: fetchedTemplate.description,
+        title: fetchedTemplate.meta_title || fetchedTemplate.title,
+        description: fetchedTemplate.meta_description || fetchedTemplate.description,
+        meta_keywords: fetchedTemplate.meta_keywords,
+        image: fetchedTemplate.thumbnail,
       },
     };
   } catch (error) {
