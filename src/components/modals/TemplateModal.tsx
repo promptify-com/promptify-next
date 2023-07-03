@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { Select, MenuItem, TextField, Input, Chip, Autocomplete } from '@mui/material';
+import { Select, MenuItem, TextField, Input, Chip, Autocomplete, InputLabel, Checkbox, Stack } from '@mui/material';
 import { useGetCategoriesQuery, useGetTagsQuery } from '../../core/api/explorer';
 import { Templates } from '../../core/api/dto/templates';
 import { useFormik } from 'formik';
@@ -94,6 +94,10 @@ export default function TemplateModal({ open, setOpen, data, modalNew, reloadDat
       tags: data[0]?.tags || [],
       thumbnail: data[0]?.thumbnail,
       executions_limit: data[0]?.executions_limit || -1,
+      slug: data[0]?.slug || '',
+      meta_title: data[0]?.meta_title || '',
+      meta_description: data[0]?.meta_description || '',
+      meta_keywords: data[0]?.meta_keywords || '',
       ...(modalNew && { prompts_list: [] }),
     },
     enableReinitialize: true,
@@ -110,7 +114,7 @@ export default function TemplateModal({ open, setOpen, data, modalNew, reloadDat
             <TextField
               multiline
               maxRows={4}
-              style={selectStyle}
+              sx={selectStyle}
               name="title"
               value={formik.values.title}
               onChange={formik.handleChange}
@@ -122,7 +126,7 @@ export default function TemplateModal({ open, setOpen, data, modalNew, reloadDat
             <TextField
               multiline
               maxRows={4}
-              style={selectStyle}
+              sx={selectStyle}
               name="description"
               value={formik.values.description}
               onChange={formik.handleChange}
@@ -163,7 +167,7 @@ export default function TemplateModal({ open, setOpen, data, modalNew, reloadDat
             <TextField
               multiline
               maxRows={4}
-              style={selectStyle}
+              sx={selectStyle}
               name="duration"
               value={formik.values.duration}
               onChange={formik.handleChange}
@@ -218,7 +222,7 @@ export default function TemplateModal({ open, setOpen, data, modalNew, reloadDat
             <TextField
               multiline
               maxRows={4}
-              style={selectStyle}
+              sx={selectStyle}
               name="context"
               value={formik.values.context}
               onChange={formik.handleChange}
@@ -229,7 +233,7 @@ export default function TemplateModal({ open, setOpen, data, modalNew, reloadDat
             <Autocomplete
               multiple
               freeSolo
-              style={selectStyle}
+              sx={selectStyle}
               options={tags}
               value={selectedTags}
               onChange={(event, newValue) => addNewTag(newValue)}
@@ -250,11 +254,98 @@ export default function TemplateModal({ open, setOpen, data, modalNew, reloadDat
             <Typography style={typographyStyle}>Hourly Limit</Typography>
             <TextField
               maxRows={1}
-              style={selectStyle}
+              sx={selectStyle}
               name="executions_limit"
               value={formik.values.executions_limit}
               onChange={formik.handleChange}
             />
+          </Box>
+          <Box style={{...boxStyle, alignItems: 'baseline'}}>
+            <Typography style={typographyStyle}>Slug</Typography>
+            <Box>
+              <Stack direction={'row'} alignItems={'center'} >
+                <Checkbox
+                  sx={{ color: 'grey.600' }}
+                  checked={formik.values.slug === null}
+                  onChange={() => {
+                    formik.setFieldValue('slug', formik.values.slug === null ? '' : null)
+                  }}
+                />
+                <InputLabel sx={{ color: 'grey.600' }}>Use Default</InputLabel>
+              </Stack>
+              <TextField sx={selectStyle}
+                name="slug"
+                value={formik.values.slug === null ? '' : formik.values.slug}
+                disabled={formik.values.slug === null}
+                onChange={formik.handleChange}
+              />
+            </Box>
+          </Box>
+          <Box style={{...boxStyle, alignItems: 'baseline'}}>
+            <Typography style={typographyStyle}>Meta title</Typography>
+            <Box>
+              <Stack direction={'row'} alignItems={'center'} >
+                <Checkbox
+                  sx={{ color: 'grey.600' }}
+                  checked={formik.values.meta_title === null}
+                  onChange={() => {
+                    formik.setFieldValue('meta_title', formik.values.meta_title === null ? '' : null)
+                  }}
+                />
+                <InputLabel sx={{ color: 'grey.600' }}>Use Default</InputLabel>
+              </Stack>
+              <TextField sx={selectStyle}
+                name="meta_title"
+                value={formik.values.meta_title === null ? '' : formik.values.meta_title}
+                disabled={formik.values.meta_title === null}
+                onChange={formik.handleChange}
+              />
+            </Box>
+          </Box>
+          <Box style={{...boxStyle, alignItems: 'baseline'}}>
+            <Typography style={typographyStyle}>Meta Description</Typography>
+            <Box>
+              <Stack direction={'row'} alignItems={'center'} >
+                <Checkbox
+                  sx={{ color: 'grey.600' }}
+                  checked={formik.values.meta_description === null}
+                  onChange={() => {
+                    formik.setFieldValue('meta_description', formik.values.meta_description === null ? '' : null)
+                  }}
+                />
+                <InputLabel sx={{ color: 'grey.600' }}>Use Default</InputLabel>
+              </Stack>
+              <TextField
+                multiline
+                maxRows={4}
+                sx={selectStyle}
+                name="meta_description"
+                value={formik.values.meta_description === null ? '' : formik.values.meta_description}
+                disabled={formik.values.meta_description === null}
+                onChange={formik.handleChange}
+              />
+            </Box>
+          </Box>
+          <Box style={{...boxStyle, alignItems: 'baseline'}}>
+            <Typography style={typographyStyle}>Meta Tags</Typography>
+            <Box>
+              <Stack direction={'row'} alignItems={'center'} >
+                <Checkbox
+                  sx={{ color: 'grey.600' }}
+                  checked={formik.values.meta_keywords === null}
+                  onChange={() => {
+                    formik.setFieldValue('meta_keywords', formik.values.meta_keywords === null ? '' : null)
+                  }}
+                />
+                <InputLabel sx={{ color: 'grey.600' }}>Use Default</InputLabel>
+              </Stack>
+              <TextField sx={selectStyle}
+                name="meta_keywords"
+                value={formik.values.meta_keywords === null ? '' : formik.values.meta_keywords}
+                disabled={formik.values.meta_keywords === null}
+                onChange={formik.handleChange}
+              />
+            </Box>
           </Box>
           <Box style={buttonBoxStyle} flexDirection="column">
             <Button
@@ -301,6 +392,10 @@ const style = {
 
 const selectStyle = {
   width: '250px',
+  ".Mui-disabled .MuiOutlinedInput-notchedOutline": {
+    border: "none",
+    bgcolor: "grey.100",
+  }
 };
 
 const boxStyle = {
