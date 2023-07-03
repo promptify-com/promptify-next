@@ -98,16 +98,14 @@ const Prompt = () => {
   // After new generated execution is completed - refetch the executions list and clear the NewExecutionData state
   // All prompts should be completed - isCompleted: true
   useEffect(() => {
-    if (NewExecutionData?.data?.length) {
-      const promptNotCompleted = NewExecutionData.data.find(
-        (execData) => !execData.isCompleted
-      );
+    if (!isGenerating && NewExecutionData?.data?.length) {
+      const promptNotCompleted = NewExecutionData.data.find(execData => !execData.isCompleted);
       if (!promptNotCompleted) {
         refetchTemplateExecutions();
         setNewExecutionData(null);
       }
     }
-  }, [NewExecutionData]);
+  }, [isGenerating, NewExecutionData]);
 
   useEffect(() => {
     if (templateExecutions) {
