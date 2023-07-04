@@ -58,7 +58,7 @@ export default function ExplorerDetail({
     if (category) {
       const parsedCategory = Array.isArray(category)
         ? JSON.parse(category[0])
-        : JSON.parse(category);
+        : category;
       setCategorySelected(parsedCategory);
     }
   }, [category]);

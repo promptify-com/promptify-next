@@ -471,8 +471,9 @@ export async function getServerSideProps({ params }: any) {
     console.error("Error fetching collections:", error);
     return {
       props: {
-        title: "",
-        description: "",
+        title: "Promptify | Boost Your Creativity",
+        description:
+          "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
       },
     };
   }
