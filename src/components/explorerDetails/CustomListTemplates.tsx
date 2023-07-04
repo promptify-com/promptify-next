@@ -191,7 +191,7 @@ export const CustomListDetailTemplates: React.FC<Props> = ({
           !!templatesKW && templatesKW.length > 0 ? (
             templatesKW.map((el, idx) => (
               <ListTemplate
-                onFavoriteClick={() => router.push(`/prompt/${el.id}`)}
+                onFavoriteClick={() => router.push(`/prompt/${el.slug}`)}
                 key={idx}
                 template={el}
                 windowWidth={windowWidth}

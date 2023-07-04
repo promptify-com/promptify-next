@@ -21,6 +21,7 @@ import { Header } from "@/components/blocks/Header";
 import {
   useGetPromptTemplatesExecutionsQuery,
   useGetPromptTemplatesQuery,
+  useGetPromptTemplateBySlugQuery,
   useTemplateView,
 } from "../../core/api/prompts";
 import { Templates, TemplatesExecutions } from "../../core/api/dto/templates";
@@ -52,7 +53,6 @@ export interface PromptLiveResponse {
 const Prompt = () => {
   const router = useRouter();
   const token = useToken();
-  const [templateData, setTemplateData] = useState<Templates>();
   const [NewExecutionData, setNewExecutionData] =
     useState<PromptLiveResponse | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -64,22 +64,44 @@ const Prompt = () => {
   const [detailsOpened, setDetailsOpened] = useState(false);
   const [generatorOpened, setGeneratorOpened] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
-  const id = router.query?.id;
+  const slug = router.query?.slug;
+  // TODO: redirect to 404 page if slug is not found
+  const slugValue = ( Array.isArray(slug) ? slug[0] : slug || "" ) as string;
+
   const {
     data: fetchedTemplate,
     error: fetchedTemplateError,
     isLoading: isLoadingTemplate,
     isFetching: isFetchingTemplate,
-  } = useGetPromptTemplatesQuery(id ? +id : 1, {
+  } = useGetPromptTemplateBySlugQuery(slugValue, {
     refetchOnMountOrArgChange: true,
   });
-  console.log({ fetchedTemplate });
+
+  const [templateData, setTemplateData] = useState<Templates>();
+  const id = templateData?.id;
+
   const {
     data: templateExecutions,
     error: templateExecutionsError,
     isFetching: isFetchingExecutions,
     refetch: refetchTemplateExecutions,
-  } = useGetPromptTemplatesExecutionsQuery(id ? +id : 1);
+  } = useGetPromptTemplatesExecutionsQuery(id ? +id : 1, {
+      refetchOnMountOrArgChange: true,
+  });
+
+  useEffect(() => {
+    if (fetchedTemplate) {
+        setTemplateData(fetchedTemplate);
+    }
+  }, [fetchedTemplate]);
+
+
+  useEffect(() => {
+    if (id) {
+        refetchTemplateExecutions();
+        templateView(id);
+    }
+  }, [id]);
 
   useEffect(() => {
     if (windowWidth > 900) {
@@ -91,9 +113,6 @@ const Prompt = () => {
     }
   }, [windowWidth]);
 
-  useEffect(() => {
-    setTemplateData(fetchedTemplate);
-  }, [fetchedTemplate]);
 
   // After new generated execution is completed - refetch the executions list and clear the NewExecutionData state
   // All prompts should be completed - isCompleted: true
@@ -116,10 +135,6 @@ const Prompt = () => {
       setRandomTemplate(filteredTemplate[indx]);
     }
   }, [templateExecutions]);
-
-  useEffect(() => {
-    templateView(id ? +id : 1);
-  }, []);
 
   useEffect(() => {
     if (fetchedTemplate?.thumbnail) {
@@ -453,10 +468,10 @@ const Prompt = () => {
 };
 
 export async function getServerSideProps({ params }: any) {
-  const { id } = params;
+  const { slug } = params;
 
   try {
-    const templatesResponse = await authClient.get(`/api/meta/templates/${id}`);
+    const templatesResponse = await authClient.get(`/api/meta/templates/by-slug/${slug}/`);
     const fetchedTemplate = templatesResponse.data; // Extract the necessary data from the response
 
     return {
