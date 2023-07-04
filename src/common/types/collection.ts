@@ -16,4 +16,5 @@ export interface ICollection {
   prompt_templates_count: number,
   likes: number,
   created_by: CreatedBy,
+  slug: string,
 }

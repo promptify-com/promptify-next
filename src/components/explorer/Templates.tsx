@@ -180,7 +180,7 @@ export const CustomTemplates: React.FC<Props> = ({
               !!templates && templates.length > 0 ? (
                 templates.map((el, idx) => (
                   <BestTemplate
-                    onFavoriteClick={() => router.push(`/prompt/${el.id}`)}
+                    onFavoriteClick={() => router.push(`/prompt/${el.slug}`)}
                     key={idx}
                     template={el}
                     lengthTemplate={templates.length}

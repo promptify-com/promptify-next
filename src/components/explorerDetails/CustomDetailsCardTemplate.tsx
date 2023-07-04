@@ -31,7 +31,7 @@ export const CustomDetailCardTemplates: React.FC<Props> = ({ templates }) => {
           templates.length > 0 &&
           templates.map((el, idx) => (
             <CardTemplate
-              onFavoriteClick={() => router.push(`/prompt/${el.id}`)}
+              onFavoriteClick={() => router.push(`/prompt/${el.slug}`)}
               key={idx}
               collection={el}
             />

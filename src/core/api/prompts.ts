@@ -23,6 +23,12 @@ export const promptsApi = createApi({
           method: "get",
         }),
       }),
+      getPromptTemplateBySlug: builder.query<any, string>({
+        query: (slug: string) => ({
+          url: `/api/meta/templates/by-slug/${slug}`,
+          method: "get",
+        }),
+      }),
       getCollectionTemplates: builder.query<any, number>({
         query: (id: number) => ({
           url: `/api/meta/collections/${id}`,
@@ -68,6 +74,7 @@ export const promptsApi = createApi({
 
 export const {
   useGetPromptTemplatesQuery,
+  useGetPromptTemplateBySlugQuery,
   useGetCollectionTemplatesQuery,
   useGetPromptParamsQuery,
   useGetPromptTemplatesExecutionsQuery,

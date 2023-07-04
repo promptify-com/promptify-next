@@ -74,7 +74,7 @@ export const Prompts = () => {
                         variant="outlined"
                         onClick={() => {
                           window.open(
-                            window.location.origin + `/prompt/${prompt.id}`,
+                            window.location.origin + `/prompt/${prompt.slug}`,
                             "_blank"
                           );
                         }}
