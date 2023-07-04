@@ -36,7 +36,7 @@ import { Details } from "@/components/collections/Details";
 import { authClient } from "@/common/axios";
 import Head from "next/head";
 
-export const Collection = () => {
+export const Collection = ({ fetchedTemplate, fetchedTemplateError }: any) => {
   const router = useRouter();
   const token = useToken();
   const [templateView] = useTemplateView();
@@ -61,14 +61,14 @@ export const Collection = () => {
   } = useGetPromptTemplatesExecutionsQuery(
     templateData?.id ? +templateData.id : 1
   );
-  const {
-    data: fetchedTemplate,
-    error: fetchedTemplateError,
-    isLoading: isLoadingTemplate,
-    isFetching: isFetchingTemplate,
-  } = useGetCollectionTemplatesQuery(id ? +id : 1, {
-    refetchOnMountOrArgChange: true,
-  });
+  // const {
+  //   data: fetchedTemplate,
+  //   error: fetchedTemplateError,
+  //   isLoading: isLoadingTemplate,
+  //   isFetching: isFetchingTemplate,
+  // } = useGetCollectionTemplatesQuery(id ? +id : 1, {
+  //   refetchOnMountOrArgChange: true,
+  // });
 
   useEffect(() => {
     if (windowWidth > 900) {
@@ -94,7 +94,9 @@ export const Collection = () => {
   // All prompts should be completed - isCompleted: true
   useEffect(() => {
     if (!isGenerating && NewExecutionData?.data?.length) {
-      const promptNotCompleted = NewExecutionData.data.find(execData => !execData.isCompleted);
+      const promptNotCompleted = NewExecutionData.data.find(
+        (execData) => !execData.isCompleted
+      );
       if (!promptNotCompleted) {
         refetchTemplateExecutions();
         setNewExecutionData(null);
@@ -175,28 +177,34 @@ export const Collection = () => {
   const handleKeyboard = (e: KeyboardEvent) => {
     // prevent trigger if typing inside input
     const target = e.target as HTMLElement;
-    if(!['INPUT', 'TEXTAREA'].includes(target.tagName)) {
+    if (!["INPUT", "TEXTAREA"].includes(target.tagName)) {
       if (e.shiftKey && e.code === "ArrowRight") {
         const templateIndex = fetchedTemplate?.prompt_templates.findIndex(
           (temp: Templates) => temp.id === templateData?.id
         );
-        if (templateIndex !== -1 && templateIndex < fetchedTemplate?.prompt_templates.length - 1)
-          changeSelectedTemplate(fetchedTemplate?.prompt_templates[templateIndex + 1]);
+        if (
+          templateIndex !== -1 &&
+          templateIndex < fetchedTemplate?.prompt_templates.length - 1
+        )
+          changeSelectedTemplate(
+            fetchedTemplate?.prompt_templates[templateIndex + 1]
+          );
       }
       if (e.shiftKey && e.code === "ArrowLeft") {
         const templateIndex = fetchedTemplate?.prompt_templates.findIndex(
           (temp: Templates) => temp.id === templateData?.id
         );
         if (templateIndex !== -1 && templateIndex > 0)
-          changeSelectedTemplate(fetchedTemplate?.prompt_templates[templateIndex - 1]);
+          changeSelectedTemplate(
+            fetchedTemplate?.prompt_templates[templateIndex - 1]
+          );
       }
     }
-    
-  }
+  };
 
   useEffect(() => {
-    window.addEventListener('keydown', handleKeyboard);
-    return () => window.removeEventListener('keydown', handleKeyboard);
+    window.addEventListener("keydown", handleKeyboard);
+    return () => window.removeEventListener("keydown", handleKeyboard);
   }, [handleKeyboard]);
 
   const newTheme = createTheme({ ...theme, palette });
@@ -487,38 +495,37 @@ export const Collection = () => {
   );
 };
 
-// export async function getServerSideProps({ params }: any) {
-//   const { id } = params;
+export async function getServerSideProps({ params }: any) {
+  const { id } = params;
 
-//   try {
-//     const templatesResponse = await authClient.get(
-//       `/api/meta/collections/${id}`
-//     );
-//     const fetchedTemplate = templatesResponse.data; // Extract the necessary data from the response
+  try {
+    const templatesResponse = await authClient.get(
+      `/api/meta/collections/${id}`
+    );
+    const fetchedTemplate = templatesResponse.data; // Extract the necessary data from the response
 
-//     return {
-//       props: {
-//         fetchedTemplate,
-//       },
-//     };
-//   } catch (error) {
-//     console.error("Error fetching collections:", error);
-//     return {
-//       props: {
-//         fetchedTemplate: [],
-//       },
-//     };
-//   }
-// }
-
-export async function getServerSideProps() {
-  return {
-    props: {
-      title: "Promptify | Boost Your Creativity",
-      description:
-        "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
-    },
-  };
+    return {
+      props: {
+        fetchedTemplate,
+        title: "Promptify | Boost Your Creativity",
+        description:
+          "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching collections:", error);
+    return {
+      props: {
+        fetchedTemplate: [],
+        fetchedTemplateError: true,
+        title: "Promptify | Boost Your Creativity",
+        description:
+          "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
+      },
+    };
+  }
 }
+
+
 
 export default Collection;

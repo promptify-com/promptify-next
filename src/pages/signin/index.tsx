@@ -53,15 +53,6 @@ const Login = () => {
 
   return (
     <>
-      <Head>
-        <title>Promptify | Boost Your Creativity</title>
-        <meta
-          name="description"
-          content="Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out."
-        />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
       <Box>
         {isLoading || userIsLoading ? (
           <PageLoading />
@@ -118,4 +109,13 @@ const Login = () => {
     </>
   );
 };
+export async function getServerSideProps() {
+  return {
+    props: {
+      title: "Promptify | Boost Your Creativity",
+      description:
+        "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
+    },
+  };
+}
 export default Login;

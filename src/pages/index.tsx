@@ -23,7 +23,15 @@ import SearchBar from "@/components/explorer/SearchBar";
 
 const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
 
-function Home() {
+function Home({
+  collections,
+  tags,
+  categories,
+}: {
+  collections: ICollection[];
+  tags: Tag[];
+  categories: any[];
+}) {
   const router = useRouter();
   const setUser = useSetUser();
   const savedToken = useToken();
@@ -31,30 +39,17 @@ function Home() {
   const tag = router.query?.tag;
 
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
-  const [collections, setCollections] = React.useState<ICollection[]>([]);
   const [isLoadingCollection, setIsLoadingCollection] =
     React.useState<boolean>(false);
   const [categorySelected, setCategorySelected] = React.useState<number>();
   const [selectedTag, setSelectedTag] = React.useState<Tag[]>([]);
   const [keyWord, setKeyWord] = React.useState<string>("");
-  const { data: tags } = useGetTagsPopularQuery();
-  const { data: categories } = useGetCategoriesQuery();
+
   const preLogin = () => {
     setIsLoading(true);
   };
   const [useDeferredAction] = useCollection();
 
-  useEffect(() => {
-    setIsLoadingCollection(true);
-    useDeferredAction()
-      .then((res: any) => {
-        setCollections(res);
-        setIsLoadingCollection(false);
-      })
-      .catch(() => {
-        setIsLoadingCollection(false);
-      });
-  }, []);
   const postLogin = (response: IContinueWithSocialMediaResponse | null) => {
     if (!response) return;
     if (response && response.created) {
@@ -130,15 +125,6 @@ function Home() {
 
   return (
     <>
-      <Head>
-        <title>Promptify | Boost Your Creativity</title>
-        <meta
-          name="description"
-          content="Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out."
-        />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
       <Box>
         {isLoading ? (
           <PageLoading />
@@ -405,5 +391,37 @@ function Home() {
     </>
   );
 }
+export async function getServerSideProps() {
+  try {
+    const collectionResponse = await authClient.get("/api/meta/collections/");
+    const collections = collectionResponse.data; // Extract the necessary data from the response
+    const tagsResponse = await authClient.get("/api/meta/tags/popular/");
+    const tags = tagsResponse.data;
+    const categoryRequest = await authClient.get("/api/meta/categories/");
+    const categories = categoryRequest.data;
 
+    return {
+      props: {
+        collections,
+        tags,
+        categories,
+        title: "Promptify | Boost Your Creativity",
+        description:
+          "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching collections:", error);
+    return {
+      props: {
+        collections: [],
+        tags: [],
+        categories: [],
+        title: "Promptify | Boost Your Creativity",
+        description:
+          "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
+      },
+    };
+  }
+}
 export default Home;
