@@ -70,9 +70,6 @@ export const Collection = () => {
     refetchOnMountOrArgChange: true,
   });
 
-  if (fetchedTemplateError || templateExecutionsError)
-    return <div>Something went wrong...</div>;
-
   useEffect(() => {
     if (windowWidth > 900) {
       setDetailsOpened(true);
@@ -83,9 +80,9 @@ export const Collection = () => {
     }
   }, [windowWidth]);
 
-  // useEffect(() => {
-  //   setTemplateData(fetchedTemplate?.prompt_templates[0]);
-  // }, [fetchedTemplate]);
+  useEffect(() => {
+    setTemplateData(fetchedTemplate?.prompt_templates[0]);
+  }, [fetchedTemplate]);
 
   const changeSelectedTemplate = (template: Templates) => {
     if (!isGenerating) {
@@ -96,16 +93,14 @@ export const Collection = () => {
   // After new generated execution is completed - refetch the executions list and clear the NewExecutionData state
   // All prompts should be completed - isCompleted: true
   useEffect(() => {
-    if (NewExecutionData?.data?.length) {
-      const promptNotCompleted = NewExecutionData.data.find(
-        (execData) => !execData.isCompleted
-      );
+    if (!isGenerating && NewExecutionData?.data?.length) {
+      const promptNotCompleted = NewExecutionData.data.find(execData => !execData.isCompleted);
       if (!promptNotCompleted) {
         refetchTemplateExecutions();
         setNewExecutionData(null);
       }
     }
-  }, [NewExecutionData]);
+  }, [isGenerating, NewExecutionData]);
 
   useEffect(() => {
     if (templateExecutions) {
@@ -178,35 +173,36 @@ export const Collection = () => {
 
   // Keyboard shortcuts
   const handleKeyboard = (e: KeyboardEvent) => {
-    if (e.shiftKey && e.code === "ArrowRight") {
-      const templateIndex = fetchedTemplate?.prompt_templates.findIndex(
-        (temp: Templates) => temp.id === templateData?.id
-      );
-      if (
-        templateIndex !== -1 &&
-        templateIndex < fetchedTemplate?.prompt_templates.length - 1
-      )
-        changeSelectedTemplate(
-          fetchedTemplate?.prompt_templates[templateIndex + 1]
+    // prevent trigger if typing inside input
+    const target = e.target as HTMLElement;
+    if(!['INPUT', 'TEXTAREA'].includes(target.tagName)) {
+      if (e.shiftKey && e.code === "ArrowRight") {
+        const templateIndex = fetchedTemplate?.prompt_templates.findIndex(
+          (temp: Templates) => temp.id === templateData?.id
         );
-    }
-    if (e.shiftKey && e.code === "ArrowLeft") {
-      const templateIndex = fetchedTemplate?.prompt_templates.findIndex(
-        (temp: Templates) => temp.id === templateData?.id
-      );
-      if (templateIndex !== -1 && templateIndex > 0)
-        changeSelectedTemplate(
-          fetchedTemplate?.prompt_templates[templateIndex - 1]
+        if (templateIndex !== -1 && templateIndex < fetchedTemplate?.prompt_templates.length - 1)
+          changeSelectedTemplate(fetchedTemplate?.prompt_templates[templateIndex + 1]);
+      }
+      if (e.shiftKey && e.code === "ArrowLeft") {
+        const templateIndex = fetchedTemplate?.prompt_templates.findIndex(
+          (temp: Templates) => temp.id === templateData?.id
         );
+        if (templateIndex !== -1 && templateIndex > 0)
+          changeSelectedTemplate(fetchedTemplate?.prompt_templates[templateIndex - 1]);
+      }
     }
-  };
+    
+  }
 
   useEffect(() => {
-    window.addEventListener("keydown", handleKeyboard);
-    return () => window.removeEventListener("keydown", handleKeyboard);
+    window.addEventListener('keydown', handleKeyboard);
+    return () => window.removeEventListener('keydown', handleKeyboard);
   }, [handleKeyboard]);
 
   const newTheme = createTheme({ ...theme, palette });
+
+  if (fetchedTemplateError || templateExecutionsError)
+    return <div>Something went wrong...</div>;
 
   return (
     <>
@@ -514,4 +510,15 @@ export const Collection = () => {
 //     };
 //   }
 // }
+
+export async function getServerSideProps() {
+  return {
+    props: {
+      title: "Promptify | Boost Your Creativity",
+      description:
+        "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
+    },
+  };
+}
+
 export default Collection;

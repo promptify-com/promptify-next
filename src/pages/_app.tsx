@@ -20,6 +20,9 @@ export default function App({ Component, pageProps }: AppProps) {
           <title>{pageProps?.title}</title>
           <meta name="description" content={pageProps?.description} />
           <meta property="og:title" content={pageProps?.title} />
+          <meta property="og:description" content={pageProps?.description} />
+          <meta property="og:image" content={pageProps?.image} />
+          <meta property="keywords" content={pageProps?.meta_keywords} />
         </Head>
         <Component {...pageProps} />
       </ThemeProvider>

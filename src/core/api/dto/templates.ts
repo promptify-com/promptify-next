@@ -79,6 +79,10 @@ export interface Templates {
   is_liked: boolean;
   prompts_list?: [];
   executions_limit: number;
+  slug: string;
+  meta_title: string;
+  meta_description: string;
+  meta_keywords: string;
 }
 
 export interface PromptExecutions {

@@ -98,16 +98,14 @@ const Prompt = () => {
   // After new generated execution is completed - refetch the executions list and clear the NewExecutionData state
   // All prompts should be completed - isCompleted: true
   useEffect(() => {
-    if (NewExecutionData?.data?.length) {
-      const promptNotCompleted = NewExecutionData.data.find(
-        (execData) => !execData.isCompleted
-      );
+    if (!isGenerating && NewExecutionData?.data?.length) {
+      const promptNotCompleted = NewExecutionData.data.find(execData => !execData.isCompleted);
       if (!promptNotCompleted) {
         refetchTemplateExecutions();
         setNewExecutionData(null);
       }
     }
-  }, [NewExecutionData]);
+  }, [isGenerating, NewExecutionData]);
 
   useEffect(() => {
     if (templateExecutions) {
@@ -463,12 +461,13 @@ export async function getServerSideProps({ params }: any) {
 
     return {
       props: {
-        title: fetchedTemplate.title,
-        description: fetchedTemplate.description,
+        title: fetchedTemplate.meta_title || fetchedTemplate.title,
+        description: fetchedTemplate.meta_description || fetchedTemplate.description,
+        meta_keywords: fetchedTemplate.meta_keywords,
+        image: fetchedTemplate.thumbnail,
       },
     };
   } catch (error) {
-    console.error("Error fetching collections:", error);
     return {
       props: {
         title: "Promptify | Boost Your Creativity",
