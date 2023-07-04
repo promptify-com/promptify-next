@@ -412,7 +412,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
             >
               <CircularProgress size={20} />
             </Box>
-          ) : shownInputs.length === 0 && shownInputs.length === 0 ? (
+          ) : shownInputs.length === 0 && shownParams.length === 0 ? (
             <Box
               sx={{
                 mt: "20vh",
