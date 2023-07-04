@@ -30,18 +30,19 @@ export const ExecutionCardGenerated: React.FC<Props> = ({
 
   return (
     <Stack direction={"row"} spacing={{ xs: 0, md: 2 }} sx={{ py: "20px" }}>
-      <Image
-        src={PromptifyLogo}
-        className="display-md-only "
-        alt={"alt"}
-        style={{
-          width: 40,
-          height: 40,
-          objectFit: "cover",
-          borderRadius: "50%",
-          marginTop: "16px",
-        }}
-      />
+      <Box display={{ xs: 'none', md: 'inline-flex' }}>
+        <Image
+          src={PromptifyLogo}
+          alt={"alt"}
+          style={{
+            width: 40,
+            height: 40,
+            objectFit: "cover",
+            borderRadius: "50%",
+            marginTop: "16px",
+          }}
+        />
+      </Box>
       <Box
         sx={{
           flex: 1,
@@ -51,17 +52,18 @@ export const ExecutionCardGenerated: React.FC<Props> = ({
         }}
       >
         <Stack direction={"row"} alignItems={"center"} gap={1} mb={"20px"}>
-          <Image
-            className="display-xs-only"
-            src={PromptifyLogo}
-            alt={"alt"}
-            style={{
-              width: 24,
-              height: 24,
-              objectFit: "cover",
-              borderRadius: "50%",
-            }}
-          />
+          <Box display={{ xs: 'inline-flex', md: 'none' }}>
+            <Image
+              src={PromptifyLogo}
+              alt={"alt"}
+              style={{
+                width: 24,
+                height: 24,
+                objectFit: "cover",
+                borderRadius: "50%",
+              }}
+            />
+          </Box>
           <Typography fontWeight={400} color={"onSurface"}>
             Promptify
           </Typography>
