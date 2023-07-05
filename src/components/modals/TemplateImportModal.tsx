@@ -1,9 +1,23 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Modal from '@mui/material/Modal';
 import { Box, Button, Stack, TextField } from '@mui/material';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { createTemplate } from '@/hooks/api/templates';
+import { AxiosError } from 'axios';
+  
+const templateExample = {
+  "title": "Template",
+  "description": "Template description",
+  "duration": "1",
+  "difficulty": "BEGINNER",
+  "is_visible": true,
+  "language": "en-us",
+  "category": 1,
+  "thumbnail": "https://thumbnailpath.com/image675676",
+  "example": "Template example",
+  "prompts_list": []
+}
 
 interface Props {
   open: boolean;
@@ -12,18 +26,7 @@ interface Props {
 }
 
 export default function TemplateImportModal({ open, setOpen, refetchTemplates }: Props) {
-  const placeholder = {
-    "title": "Template",
-    "description": "Template description",
-    "duration": "1",
-    "difficulty": "BEGINNER",
-    "is_visible": true,
-    "language": "en-us",
-    "category": 1,
-    "thumbnail": "https://thumbnailpath.com/image675676",
-    "example": "Template example",
-    "prompts_list": []
-  }
+  const [errors, setErrors] = useState<string[]>([])
 
   const ValidationSchema = yup.object().shape({
     json: yup.string().required('Please enter a valid JSON template schema')
@@ -36,23 +39,39 @@ export default function TemplateImportModal({ open, setOpen, refetchTemplates }:
     enableReinitialize: true,
     validationSchema: ValidationSchema,
     onSubmit: (values) => {
+      setErrors([]);
+      
       try {
         const json = JSON.parse(values.json);
 
         // JSON schema validator
-        const requires = [ 'title', 'description', 'duration', 'difficulty', 'is_visible', 'language', 'category', 'thumbnail', 'example', 'prompts_list' ]
-        const misses = requires.filter((property) => !(property in json));
-        if(misses.length > 0) {
-          formik.setErrors({ json: 'Please enter a valid JSON template schema' })
-          return
-        }
+        // const requires = [ 'title', 'description', 'duration', 'difficulty', 'is_visible', 'language', 'category', 'thumbnail', 'example', 'prompts_list' ]
+        // const misses = requires.filter((property) => !(property in json));
+        // if(misses.length > 0) {
+        //   formik.setErrors({ json: 'Please enter a valid JSON template schema' })
+        //   return
+        // }
 
-        createTemplate({...json}).then(data => {
-          setOpen(false);
-          refetchTemplates();
-          formik.resetForm();
-          window.open(window.location.origin + `/builder/${data.id}`, '_blank');
-        });
+        createTemplate({...json})
+          .then(data => {
+            setOpen(false);
+            refetchTemplates();
+            formik.resetForm();
+            window.open(window.location.origin + `/builder/${data.id}`, '_blank');
+          })
+          .catch((err: AxiosError) => {
+            if (err.response?.status === 400) {
+              const errorData = err.response?.data as any;
+              let resErrors: string[] = [];
+              Object.entries(errorData).map(([property, msg]) => {
+                resErrors.push(`${property}: ${msg}`);
+              })
+              setErrors(resErrors)
+            } else {
+              formik.setErrors({ json: 'Something went wrong. Please try again later' })
+            }
+            return
+          })
 
       } catch (error) {
         formik.setErrors({ json: 'Please enter a valid JSON template schema' })
@@ -77,7 +96,7 @@ export default function TemplateImportModal({ open, setOpen, refetchTemplates }:
         }}
       >
         <TextField
-          placeholder={JSON.stringify(placeholder, null, 3)}
+          placeholder={JSON.stringify(templateExample, null, 3)}
           multiline
           rows={10}
           name='json'
@@ -88,6 +107,25 @@ export default function TemplateImportModal({ open, setOpen, refetchTemplates }:
           helperText={formik.touched.json && formik.errors.json}
           sx={{ '.MuiInputBase-input': { overscrollBehavior: 'contain' } }}
         />
+        {(errors.length > 0) && (
+          <Box sx={{ m: '8px', p: '8px' }}>
+            {errors.map((errMsg, i) => (
+              <Box key={i} 
+                sx={{ 
+                  fontSize: 12, 
+                  bgcolor: 'errorContainer', 
+                  color: 'error', 
+                  mb: '5px', 
+                  p: '5px 10px', 
+                  borderRadius: '4px' 
+                }}
+              >
+                {errMsg}
+              </Box>
+            ))}
+          </Box>
+        )
+        }
         <Stack sx={{
             direction: 'row', 
             justifyContent: 'center', 
