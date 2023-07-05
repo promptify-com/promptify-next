@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Box, Button, Paper, Typography } from "@mui/material";
-import TemplateModal from "@/components/modals/TemplateModal";
+import { Box, Button, Paper, Stack, Typography } from "@mui/material";
+import TemplateFormModal from "@/components/modals/TemplateFormModal";
 import { promptsApi } from "@/core/api/prompts";
 import { Templates } from "@/core/api/dto/templates";
 import { PageLoading } from "@/components/PageLoading";
+import TemplateImportModal from "../modals/TemplateImportModal";
 
 export const Prompts = () => {
-  const [open, setOpen] = useState(false);
+  const [templateFormOpen, setTemplateFormOpen] = useState(false);
+  const [templateImportOpen, setTemplateImportOpen] = useState(false);
   const [modalNew, setModalNew] = useState(false);
   const [modalPromptData, setModalPromptData] = useState<Templates[]>([]);
 
@@ -37,16 +39,26 @@ export const Prompts = () => {
           >
             Prompts
           </Typography>
-          <Button
-            variant="contained"
-            onClick={() => {
-              setModalPromptData([]);
-              setModalNew(true);
-              setOpen(true);
-            }}
-          >
-            Create NEW
-          </Button>
+          <Stack direction={'row'} spacing={1}>
+            <Button
+              variant="contained"
+              onClick={() => {
+                setTemplateImportOpen(true);
+              }}
+            >
+              Import JSON
+            </Button>
+            <Button
+              variant="contained"
+              onClick={() => {
+                setModalPromptData([]);
+                setModalNew(true);
+                setTemplateFormOpen(true);
+              }}
+            >
+              Create NEW
+            </Button>
+          </Stack>
         </Box>
         {isFetching ? (
           <PageLoading />
@@ -103,7 +115,7 @@ export const Prompts = () => {
                             setModalPromptData(findPrompt);
                           }
                           setModalNew(false);
-                          setOpen(true);
+                          setTemplateFormOpen(true);
                         }}
                       >
                         Edit
@@ -115,12 +127,17 @@ export const Prompts = () => {
             })}
           </Box>
         )}
-        <TemplateModal
-          open={open}
-          setOpen={setOpen}
+        <TemplateFormModal
+          open={templateFormOpen}
+          setOpen={setTemplateFormOpen}
           data={modalPromptData}
           modalNew={modalNew}
-          reloadData={trigger}
+          refetchTemplates={trigger}
+        />
+        <TemplateImportModal
+          open={templateImportOpen}
+          setOpen={setTemplateImportOpen}
+          refetchTemplates={trigger}
         />
       </Box>
     </section>
