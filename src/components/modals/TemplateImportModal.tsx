@@ -1,13 +1,17 @@
-import React, {  } from 'react';
+import React from 'react';
 import Modal from '@mui/material/Modal';
 import { Box, Button, Stack, TextField } from '@mui/material';
+import { useFormik } from 'formik';
+import { IEditTemplate } from '@/common/types/editTemplate';
+import * as yup from 'yup';
+import { createTemplate } from '@/hooks/api/templates';
 
-interface IModal {
+interface Props {
   open: boolean;
   setOpen: (val: boolean) => void;
 }
 
-export default function TemplateImportModal({ open, setOpen }: IModal) {
+export default function TemplateImportModal({ open, setOpen }: Props) {
   const placeholder = {
     title: 'Template',
     description: 'Template description',
@@ -20,6 +24,33 @@ export default function TemplateImportModal({ open, setOpen }: IModal) {
     example: 'Template example',
     prompts_list: []
   }
+
+  const ValidationSchema = yup.object().shape({
+    json: yup.string().required('Please enter a valid JSON schema')
+  })
+
+  const formik = useFormik({
+    initialValues: {
+      json: ''
+    },
+    enableReinitialize: true,
+    validationSchema: ValidationSchema,
+    onSubmit: (values) => {
+      try {
+        const json = JSON.parse(values.json)
+        console.log('json: ',json)
+        // createTemplate(values).then(data => {
+        //   handleClose();
+        //   reloadData();
+        //   formik.resetForm();
+        //   window.open(window.location.origin + `/builder/${data.id}`, '_blank');
+        // });
+      } catch (error) {
+        formik.setErrors({ json: 'Please enter a valid JSON schema' })
+        console.error('Invalid JSON input:', error);
+      }
+    },
+  });
 
   return (
     <Modal open={open} onClose={() => setOpen(false)}>
@@ -40,10 +71,13 @@ export default function TemplateImportModal({ open, setOpen }: IModal) {
           placeholder={JSON.stringify(placeholder, null, 3)}
           multiline
           rows={10}
+          name='json'
           fullWidth
-          // value={formik.values.description}
-          // onChange={formik.handleChange}
-          // error={formik.touched.description && formik.values.description === ''}
+          value={formik.values.json}
+          onChange={formik.handleChange}
+          error={formik.touched.json && Boolean(formik.errors.json)}
+          helperText={formik.touched.json && formik.errors.json}
+          sx={{ '.MuiInputBase-input': { overscrollBehavior: 'contain' } }}
         />
         <Stack sx={{
             direction: 'row', 
@@ -58,9 +92,7 @@ export default function TemplateImportModal({ open, setOpen }: IModal) {
               m: 'auto',
               px: 4
             }}
-            onClick={() => {
-              // formik.submitForm();
-            }}
+            onClick={formik.submitForm}
           >
             Import
           </Button>
