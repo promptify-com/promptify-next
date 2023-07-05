@@ -6,7 +6,7 @@ import { Templates } from "@/core/api/dto/templates";
 import { PageLoading } from "@/components/PageLoading";
 
 export const Prompts = () => {
-  const [open, setOpen] = useState(false);
+  const [templateFormOpen, setTemplateFormOpen] = useState(false);
   const [modalNew, setModalNew] = useState(false);
   const [modalPromptData, setModalPromptData] = useState<Templates[]>([]);
 
@@ -42,7 +42,7 @@ export const Prompts = () => {
             onClick={() => {
               setModalPromptData([]);
               setModalNew(true);
-              setOpen(true);
+              setTemplateFormOpen(true);
             }}
           >
             Create NEW
@@ -103,7 +103,7 @@ export const Prompts = () => {
                             setModalPromptData(findPrompt);
                           }
                           setModalNew(false);
-                          setOpen(true);
+                          setTemplateFormOpen(true);
                         }}
                       >
                         Edit
@@ -116,8 +116,8 @@ export const Prompts = () => {
           </Box>
         )}
         <TemplateModal
-          open={open}
-          setOpen={setOpen}
+          open={templateFormOpen}
+          setOpen={setTemplateFormOpen}
           data={modalPromptData}
           modalNew={modalNew}
           reloadData={trigger}
