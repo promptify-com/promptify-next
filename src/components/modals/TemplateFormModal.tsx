@@ -20,7 +20,7 @@ interface IModal {
   reloadData: () => void;
 }
 
-export default function TemplateModal({ open, setOpen, data, modalNew, reloadData }: IModal) {
+export default function TemplateFormModal({ open, setOpen, data, modalNew, reloadData }: IModal) {
   const { data: categories } = useGetCategoriesQuery();
   const { data: fetchedTags } = useGetTagsQuery();
   const [tags, setTags] = useState<string[]>([]);
