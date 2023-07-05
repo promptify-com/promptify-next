@@ -14,9 +14,7 @@ const templateExample = {
   "is_visible": true,
   "language": "en-us",
   "category": 1,
-  "thumbnail": "https://thumbnailpath.com/image675676",
-  "example": "Template example",
-  "prompts_list": []
+  "thumbnail": "https://thumbnailpath.com/image675676"
 }
 
 interface Props {
@@ -106,18 +104,24 @@ export default function TemplateImportModal({ open, setOpen, refetchTemplates }:
           error={formik.touched.json && Boolean(formik.errors.json)}
           helperText={formik.touched.json && formik.errors.json}
           sx={{ '.MuiInputBase-input': { overscrollBehavior: 'contain' } }}
+          InputProps={{
+            sx: {
+              fontFamily: 'monospace',
+              fontSize: 14,
+              bgcolor: 'grey.100',
+              p: '10px',
+            },
+          }}
+          variant="outlined"
         />
         {(errors.length > 0) && (
-          <Box sx={{ m: '8px', p: '8px' }}>
+          <Box sx={{ m: '5px 14px' }}>
             {errors.map((errMsg, i) => (
               <Box key={i} 
                 sx={{ 
                   fontSize: 12, 
-                  bgcolor: 'errorContainer', 
-                  color: 'error', 
-                  mb: '5px', 
-                  p: '5px 10px', 
-                  borderRadius: '4px' 
+                  color: 'error.main', 
+                  mb: '8px'
                 }}
               >
                 {errMsg}

@@ -66,6 +66,9 @@ export let theme = createTheme({
     secondary: {
       main: '#585E71'
     },
+    error: {
+      main: '#BA1B1B'
+    },
     onPrimary: '#FFFFFF',
     primaryContainer: '#D8E2FF',
     secondaryContainer: '#DCE2F9',
