@@ -17,10 +17,10 @@ interface IModal {
   setOpen: (val: boolean) => void;
   data: Templates[];
   modalNew: boolean;
-  reloadData: () => void;
+  refetchTemplates: () => void;
 }
 
-export default function TemplateFormModal({ open, setOpen, data, modalNew, reloadData }: IModal) {
+export default function TemplateFormModal({ open, setOpen, data, modalNew, refetchTemplates }: IModal) {
   const { data: categories } = useGetCategoriesQuery();
   const { data: fetchedTags } = useGetTagsQuery();
   const [tags, setTags] = useState<string[]>([]);
@@ -67,7 +67,7 @@ export default function TemplateFormModal({ open, setOpen, data, modalNew, reloa
   const onEditTemplate = async (values: IEditTemplate) => {
     updateTemplate(data[0]?.id, values).then(() => {
       handleClose();
-      reloadData();
+      refetchTemplates();
       formik.resetForm();
     });
   };
@@ -75,7 +75,7 @@ export default function TemplateFormModal({ open, setOpen, data, modalNew, reloa
   const onCreateTemplate = async (values: IEditTemplate) => {
     createTemplate(values).then(data => {
       handleClose();
-      reloadData();
+      refetchTemplates();
       formik.resetForm();
       window.open(window.location.origin + `/builder/${data.id}`, '_blank');
     });

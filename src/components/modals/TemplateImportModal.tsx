@@ -8,9 +8,10 @@ import { createTemplate } from '@/hooks/api/templates';
 interface Props {
   open: boolean;
   setOpen: (val: boolean) => void;
+  refetchTemplates: () => void;
 }
 
-export default function TemplateImportModal({ open, setOpen }: Props) {
+export default function TemplateImportModal({ open, setOpen, refetchTemplates }: Props) {
   const placeholder = {
     "title": "Template",
     "description": "Template description",
@@ -48,7 +49,7 @@ export default function TemplateImportModal({ open, setOpen }: Props) {
 
         createTemplate({...json}).then(data => {
           setOpen(false);
-          // reloadData();
+          refetchTemplates();
           formik.resetForm();
           window.open(window.location.origin + `/builder/${data.id}`, '_blank');
         });

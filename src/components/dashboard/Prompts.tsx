@@ -132,11 +132,12 @@ export const Prompts = () => {
           setOpen={setTemplateFormOpen}
           data={modalPromptData}
           modalNew={modalNew}
-          reloadData={trigger}
+          refetchTemplates={trigger}
         />
         <TemplateImportModal
           open={templateImportOpen}
           setOpen={setTemplateImportOpen}
+          refetchTemplates={trigger}
         />
       </Box>
     </section>
