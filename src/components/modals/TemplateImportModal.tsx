@@ -2,7 +2,6 @@ import React from 'react';
 import Modal from '@mui/material/Modal';
 import { Box, Button, Stack, TextField } from '@mui/material';
 import { useFormik } from 'formik';
-import { IEditTemplate } from '@/common/types/editTemplate';
 import * as yup from 'yup';
 import { createTemplate } from '@/hooks/api/templates';
 
@@ -13,20 +12,20 @@ interface Props {
 
 export default function TemplateImportModal({ open, setOpen }: Props) {
   const placeholder = {
-    title: 'Template',
-    description: 'Template description',
-    duration: '1',
-    difficulty: 'BEGINNER',
-    is_visible: 'true',
-    language: 'en-us',
-    category: '1',
-    thumbnail: 'https://thumbnailpath.com/image675676',
-    example: 'Template example',
-    prompts_list: []
+    "title": "Template",
+    "description": "Template description",
+    "duration": "1",
+    "difficulty": "BEGINNER",
+    "is_visible": true,
+    "language": "en-us",
+    "category": 1,
+    "thumbnail": "https://thumbnailpath.com/image675676",
+    "example": "Template example",
+    "prompts_list": []
   }
 
   const ValidationSchema = yup.object().shape({
-    json: yup.string().required('Please enter a valid JSON schema')
+    json: yup.string().required('Please enter a valid JSON template schema')
   })
 
   const formik = useFormik({
@@ -37,17 +36,26 @@ export default function TemplateImportModal({ open, setOpen }: Props) {
     validationSchema: ValidationSchema,
     onSubmit: (values) => {
       try {
-        const json = JSON.parse(values.json)
-        console.log('json: ',json)
-        // createTemplate(values).then(data => {
-        //   handleClose();
-        //   reloadData();
-        //   formik.resetForm();
-        //   window.open(window.location.origin + `/builder/${data.id}`, '_blank');
-        // });
+        const json = JSON.parse(values.json);
+
+        // JSON schema validator
+        const requires = [ 'title', 'description', 'duration', 'difficulty', 'is_visible', 'language', 'category', 'thumbnail', 'example', 'prompts_list' ]
+        const misses = requires.filter((property) => !(property in json));
+        if(misses.length > 0) {
+          formik.setErrors({ json: 'Please enter a valid JSON template schema' })
+          return
+        }
+
+        createTemplate({...json}).then(data => {
+          setOpen(false);
+          // reloadData();
+          formik.resetForm();
+          window.open(window.location.origin + `/builder/${data.id}`, '_blank');
+        });
+
       } catch (error) {
-        formik.setErrors({ json: 'Please enter a valid JSON schema' })
-        console.error('Invalid JSON input:', error);
+        formik.setErrors({ json: 'Please enter a valid JSON template schema' })
+        return
       }
     },
   });
