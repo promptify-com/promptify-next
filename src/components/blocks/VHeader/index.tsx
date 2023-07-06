@@ -14,7 +14,6 @@ import {
   Typography,
 } from "@mui/material";
 import { Descrip } from "@/assets/icons/Descrip";
-import { LogoApp } from "@/assets/icons/LogoApp";
 import { Collection } from "@/assets/icons/collection";
 import { Prompt } from "@/assets/icons/prompts";
 import { Setting } from "@/assets/icons/setting";
@@ -22,14 +21,11 @@ import { useGetCurrentUser } from "@/hooks/api/user";
 import useLogout from "@/hooks/useLogout";
 import useSetUser from "@/hooks/useSetUser";
 import useToken from "@/hooks/useToken";
-import useUser from "@/hooks/useUser";
 import SearchBar from "@/components/explorer/SearchBar";
 import SearchIcon from "@mui/icons-material/Search";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
-import { LogoAppMobile } from "@/assets/icons/LogoAppMobile";
 import { SearchDialog } from "./SearchDialog";
 import { useRouter } from "next/router";
-import Link from "next/link";
 import dynamic from "next/dynamic";
 
 const Avatar = dynamic(() => import("@mui/material/Avatar"), { ssr: false });
@@ -145,7 +141,7 @@ export const Header: React.FC<Props> = ({
   return (
     <Box
       sx={{
-        width: "100vw",
+        width: "100%",
         background: transparent ? "transparent" : "#F6F5FF",
         position: fixed ? "fixed" : "relative",
         zIndex: 1000,
@@ -533,10 +529,6 @@ export const Header: React.FC<Props> = ({
             </Box>
           </Box>
         </SwipeableDrawer>
-
-        {/* </Box> */}
-        {/* <MoreVert /> */}
-        {/* </Grid> */}
       </Grid>
     </Box>
   );
