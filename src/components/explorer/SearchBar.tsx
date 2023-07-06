@@ -1,7 +1,8 @@
 import SearchIcon from "@mui/icons-material/Search";
-import { Box, Grid, IconButton, InputBase, Typography } from "@mui/material";
+import { Box, Grid, IconButton, InputBase, Typography, alpha, useTheme } from "@mui/material";
 import React from "react";
 import { Tag } from "@/core/api/dto/templates";
+import { LogoApp } from "@/assets/icons/LogoApp";
 
 interface Props {
   keyWord: string;
@@ -11,13 +12,9 @@ interface Props {
   setSelectedTag?: Function;
   from?: string;
 }
-const SearchBar: React.FC<Props> = ({
-  keyWord,
-  setKeyWord,
-  selectedTag,
-  setSelectedTag,
-  from,
-}) => {
+const SearchBar: React.FC<Props> = ({ keyWord, setKeyWord, selectedTag, setSelectedTag, from }) => {
+  const { palette } = useTheme();
+
   const handleRemoveTag = (tag: Tag) => {
     const removeTag =
       !!selectedTag && selectedTag.filter((el) => el.id !== tag.id);
@@ -37,19 +34,20 @@ const SearchBar: React.FC<Props> = ({
     >
       <Grid
         sx={{
+          minWidth: "100%",
+          flexDirection: "row",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          minWidth: "100%",
-          flexDirection: "row",
-          height: "100%",
+          gap: "8px",
+          pl: "8px",
+          pr: "16px"
         }}
         alignItems="center"
       >
         <Grid
           sx={{
             width: { xs: "97%", sm: "100%" },
-            paddingRight: "0.5em",
             gap: "5px",
             display: "flex",
             overflowX: "auto",
@@ -61,7 +59,6 @@ const SearchBar: React.FC<Props> = ({
             sx={{
               color: "onSurface",
               border: "none",
-              marginLeft: "0.5em",
               ":hover": { color: "tertiary" },
             }}
           >
@@ -112,13 +109,17 @@ const SearchBar: React.FC<Props> = ({
           ) : (
             <Typography
               sx={{
-                color: "gray",
+                color: `${alpha(palette.onSurface, .5)}`,
+                fontSize: 13,
+                fontWeight: 400
               }}
             >
               Search prompts, templates, collections, or ask something...
             </Typography>
           )}
         </Grid>
+
+        {from === "middle" ? (
         <Grid
           sx={{
             display: { xs: "none", sm: "flex" },
@@ -164,6 +165,9 @@ const SearchBar: React.FC<Props> = ({
             Collections
           </Typography>
         </Grid>
+        ) : (
+          <LogoApp width={18} />
+        )}
       </Grid>
     </Box>
   );
