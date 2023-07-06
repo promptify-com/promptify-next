@@ -3,15 +3,21 @@ import React from "react";
 import {
   Box,
   Drawer,
-  List,
   ListItem,
   ListItemButton,
-  ListItemIcon,
-  ListItemText,
+  Stack,
+  Typography,
 } from "@mui/material";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import Link from "next/link";
-import { Home } from "@mui/icons-material";
+import { AutoStoriesOutlined, BookmarkAddOutlined, HomeOutlined, Search } from "@mui/icons-material";
+
+const navItems = [
+  { name: "Home", href: "/", icon: <HomeOutlined /> },
+  { name: "Explore", href: "/", icon: <Search /> },
+  { name: "Learn", href: "/", icon: <AutoStoriesOutlined /> },
+  { name: "Favorites", href: "/", icon: <BookmarkAddOutlined /> }
+];
 
 interface Props {
   transparent?: boolean;
@@ -31,26 +37,32 @@ export const Sidebar: React.FC<Props> = () => {
         '& .MuiDrawer-paper': {
           width: 96,
           boxSizing: 'border-box',
+          bgcolor: 'surface.1',
+          border: 'none'
         },
       }}
       variant="permanent"
       anchor="left"
     >
-      <Box>
-        <Link href="/">
-          <LogoApp />
-        </Link>
-      </Box>
-      <List>
-        {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, i) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon><Home /></ListItemIcon>
-              <ListItemText primary={text} />
+      <Stack gap={1}>
+        <Box sx={{ p: '24px', textAlign: 'center' }}>
+          <Link href="/">
+            <LogoApp width={40} />
+          </Link>
+        </Box>
+        {navItems.map((item, i) => (
+          <ListItem key={i} disablePadding>
+            <ListItemButton sx={{ p: '8px' }}>
+              <Link href={item.href} style={{ textDecoration: "none", width: '100%' }}>
+                <Stack sx={{ flex: 1, alignItems: 'center', textAlign: 'center', color: 'onSurface' }}>
+                  <Box sx={{ p: '12px' }}>{item.icon}</Box>
+                  <Typography fontSize={12} fontWeight={400} color={'onSurface'}>{item.name}</Typography>
+                </Stack>
+              </Link>
             </ListItemButton>
           </ListItem>
         ))}
-      </List>
+      </Stack>
     </Drawer>
   );
 };

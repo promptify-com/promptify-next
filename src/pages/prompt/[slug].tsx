@@ -198,7 +198,7 @@ const Prompt = () => {
   return (
     <>
       <ThemeProvider theme={newTheme}>
-        <Box sx={{ bgcolor: "background.default" }}>
+        <Box sx={{ bgcolor: "surface.3" }}>
           <Sidebar />
           <Box sx={{ width: 'calc(100% - 96px)', ml: 'auto' }}>
             <Header transparent />
@@ -223,7 +223,7 @@ const Prompt = () => {
                     overflow: "auto",
                     p: { xs: "16px", md: 0 },
                     pr: { md: "10px" },
-                    bgcolor: "background.default",
+                    bgcolor: "surface.3",
                     position: { xs: "absolute", md: "relative" },
                     top: 0,
                     left: 0,
@@ -420,7 +420,7 @@ const Prompt = () => {
                     height: "100%",
                     overflow: "auto",
                     pr: { md: "10px" },
-                    bgcolor: "background.default",
+                    bgcolor: "surface.3",
                     position: { xs: "absolute", md: "relative" },
                     top: 0,
                     left: 0,
