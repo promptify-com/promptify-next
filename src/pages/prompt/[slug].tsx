@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import materialDynamicColors from "material-dynamic-colors";
 import { mix } from "polished";
-import { Header } from "@/components/blocks/Header";
+import { Header } from "@/components/blocks/VHeader";
 
 import {
   useGetPromptTemplatesExecutionsQuery,

@@ -154,12 +154,12 @@ body {
 }
 
 .dialog-search{
-position: fixed;
-    top: 16px !important;
-    left: 22% !important;
-    border-radius: 18px !important;
-    max-height: 591px !important;
-    width: 66% !important;
+  position: fixed;
+  top: 24px !important;
+  left: 22% !important;
+  border-radius: 18px !important;
+  max-height: 591px !important;
+  width: 66% !important;
 }
 
 @media (max-width: 760px) {
