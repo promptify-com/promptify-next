@@ -9,7 +9,7 @@ interface Props {
   selectedTag?: Tag[] | [];
   // eslint-disable-next-line @typescript-eslint/ban-types
   setSelectedTag?: Function;
-  from: string;
+  from?: string;
 }
 const SearchBar: React.FC<Props> = ({
   keyWord,
@@ -31,7 +31,6 @@ const SearchBar: React.FC<Props> = ({
       sx={{
         backgroundColor: "surface.5",
         borderRadius: "99px",
-        // padding: '0px 5px 0px 5px',
         height: "48px",
         minWidth: "100%",
       }}
@@ -98,7 +97,7 @@ const SearchBar: React.FC<Props> = ({
                 if (!!setKeyWord) setKeyWord(e.target.value);
               }}
               placeholder={
-                !!selectedTag && !selectedTag.length ? "Search Prompts" : ""
+                !!selectedTag && !selectedTag.length ? "Search prompts, templates, collections, or ask something..." : ""
               }
               fullWidth
               sx={{
@@ -116,7 +115,7 @@ const SearchBar: React.FC<Props> = ({
                 color: "gray",
               }}
             >
-              Search Prompts
+              Search prompts, templates, collections, or ask something...
             </Typography>
           )}
         </Grid>

@@ -175,7 +175,7 @@ export const Header: React.FC<Props> = ({
           }}
           onClick={handleInputFocus}
         >
-          <SearchBar from="" keyWord={keyWord} setKeyWord={setKeyWord} />
+          <SearchBar keyWord={keyWord} setKeyWord={setKeyWord} />
           <SearchDialog
             open={open}
             setOpen={setOpen}

@@ -60,7 +60,7 @@ const InputDialog: React.FC<Props> = ({ setKeyWord, setOpen, keyWord }) => {
               setTextInput(e.target.value);
             }}
             defaultValue={keyWord}
-            placeholder={"Search Prompts"}
+            placeholder={"Search prompts, templates, collections, or ask something..."}
             fullWidth
             sx={{
               fontSize: "13px",
