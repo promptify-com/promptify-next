@@ -44,8 +44,8 @@ interface Props {
 }
 
 export const SearchDialog: React.FC<Props> = ({ open, setOpen, keyWord, setKeyWord }) => {
-  const windowWidth = window.innerWidth;
-  const [IsSm, setIsSm] = React.useState(windowWidth < 600);
+  // TODO: const windowWidth = window.innerWidth; doesn't work in SSR
+  const [IsSm, setIsSm] = React.useState(false);
 
   const handleClose = (e:any, reason:string) => {
     e.stopPropagation()

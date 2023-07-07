@@ -47,8 +47,8 @@ export const SearchDialog: React.FC<Props> = ({ open, setOpen, keyWord, setKeyWo
   const handleClose = () => {
     setOpen(!open);
   };
-  const windowWidth = window.innerWidth;
-  const [IsSm, setIsSm] = React.useState(windowWidth < 600);
+  // TODO: const windowWidth = window.innerWidth; doesn't work in SSR
+  const [IsSm, setIsSm] = React.useState(false);
 
   React.useEffect(() => {
     function handleWindowResize() {
