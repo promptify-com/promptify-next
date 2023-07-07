@@ -4,6 +4,7 @@ import {
   Box,
   Button,
   Dialog,
+  Divider,
   Grid,
   IconButton,
   Palette,
@@ -37,6 +38,7 @@ import { Details } from "@/components/prompt/Details";
 import { authClient } from "@/common/axios";
 import { Sidebar } from "@/components/blocks/VHeader/Sidebar";
 import { DetailsCard } from "@/components/prompt/DetailsCard";
+import { Prompts } from "@/core/api/dto/prompts";
 
 export interface PromptLiveResponseData {
   message: string;
@@ -54,10 +56,9 @@ export interface PromptLiveResponse {
 const Prompt = () => {
   const router = useRouter();
   const token = useToken();
-  const [NewExecutionData, setNewExecutionData] =
-    useState<PromptLiveResponse | null>(null);
+  const [newExecutionData, setNewExecutionData] = useState<PromptLiveResponse | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [, setRandomTemplate] = useState<TemplatesExecutions | null>(null);
+  const [currentGeneratedPrompt, setCurrentGeneratedPrompt] = useState<Prompts | null>(null);
   const [templateView] = useTemplateView();
   const theme = useTheme();
   const [palette, setPalette] = useState(theme.palette);
@@ -115,27 +116,30 @@ const Prompt = () => {
   }, [windowWidth]);
 
 
-  // After new generated execution is completed - refetch the executions list and clear the NewExecutionData state
+  // After new generated execution is completed - refetch the executions list and clear the newExecutionData state
   // All prompts should be completed - isCompleted: true
   useEffect(() => {
-    if (!isGenerating && NewExecutionData?.data?.length) {
-      const promptNotCompleted = NewExecutionData.data.find(execData => !execData.isCompleted);
+    if (!isGenerating && newExecutionData?.data?.length) {
+      const promptNotCompleted = newExecutionData.data.find(execData => !execData.isCompleted);
       if (!promptNotCompleted) {
         refetchTemplateExecutions();
         setNewExecutionData(null);
+        setCurrentGeneratedPrompt(null)
       }
     }
-  }, [isGenerating, NewExecutionData]);
+  }, [isGenerating, newExecutionData]);
 
+  // Keep tracking the current generated prompt
   useEffect(() => {
-    if (templateExecutions) {
-      const filteredTemplate =
-        templateExecutions?.filter((tpm) => !!tpm.prompt_executions.length) ||
-        [];
-      const indx = Math.floor(Math.random() * filteredTemplate.length);
-      setRandomTemplate(filteredTemplate[indx]);
+    if(templateData && newExecutionData?.data?.length) {
+      const loadingPrompt = newExecutionData.data.find(prompt => prompt.isLoading);
+      const prompt = templateData.prompts.find((prompt) => prompt.id === loadingPrompt?.prompt);
+      if(prompt) 
+        setCurrentGeneratedPrompt(prompt)
+    } else {
+      setCurrentGeneratedPrompt(null)
     }
-  }, [templateExecutions]);
+  }, [newExecutionData]);
 
   useEffect(() => {
     if (fetchedTemplate?.thumbnail) {
@@ -389,19 +393,43 @@ const Prompt = () => {
                   sx={{
                     height: { xs: "calc(100% - 148px)", md: "100%" },
                     overflow: "auto",
-                    p: "16px",
+                    p: "16px 16px 0",
                     bgcolor: "surface.1",
                     borderTopLeftRadius: "16px",
-                    borderTopRightRadius: "16px"
+                    borderTopRightRadius: "16px",
+                    position: "relative"
                   }}
                 >
                   <Executions
                     templateData={templateData}
                     executions={templateExecutions || []}
                     isFetching={isFetchingExecutions}
-                    newExecutionData={NewExecutionData}
+                    newExecutionData={newExecutionData}
                     refetchExecutions={refetchTemplateExecutions}
                   />
+                  {currentGeneratedPrompt && (
+                    <Box sx={{ 
+                        position: "sticky",
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        zIndex: 998,
+                        bgcolor: "surface.1" 
+                      }}
+                    >
+                      <Divider sx={{ borderColor: "surface.3" }} />
+                      <Typography sx={{
+                          padding: "8px 16px 5px",
+                          textAlign: "right",
+                          fontSize: 11,
+                          fontWeight: 500,
+                          opacity: .3
+                        }}
+                      >
+                        Prompt #{currentGeneratedPrompt.order}: {currentGeneratedPrompt.title}
+                      </Typography>
+                    </Box>
+                  )}
                 </Grid>
 
                 {windowWidth < 900 && (

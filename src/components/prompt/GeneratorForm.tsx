@@ -123,7 +123,6 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
   // Prompts params values tracker to validate generating allowed or not
   useEffect(() => {
-    console.log(isInputsFilled())
     if (Object.keys(isInputsFilled()).length > 0) 
       setAllowGenerate(false);
     else 
