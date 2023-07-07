@@ -207,23 +207,25 @@ const Prompt = () => {
             ) : (
               <Grid
                 container
-                columnSpacing={{ md: 4 }}
                 sx={{
+                  mx: { md: "32px" },
                   height: "calc(100svh - 90px)",
-                  position: "relative",
+                  width: { md: "calc(100% - 65px)" },
+                  bgcolor: "surface.2",
+                  borderTopLeftRadius: "16px",
+                  borderTopRightRadius: "16px",
+                  position: "relative"
                 }}
               >
                 <Grid
                   item
                   xs={12}
-                  md={3}
+                  md={4}
                   sx={{
                     display: `${generatorOpened ? "block" : "none"}`,
                     height: "100%",
                     overflow: "auto",
-                    p: { xs: "16px", md: 0 },
-                    pr: { md: "10px" },
-                    bgcolor: "surface.3",
+                    p: "16px",
                     position: { xs: "absolute", md: "relative" },
                     top: 0,
                     left: 0,
@@ -339,11 +341,14 @@ const Prompt = () => {
                 <Grid
                   item
                   xs={12}
-                  md={6}
+                  md={8}
                   sx={{
                     height: { xs: "calc(100% - 148px)", md: "100%" },
                     overflow: "auto",
-                    pr: { md: "10px" },
+                    p: "16px",
+                    bgcolor: "surface.1",
+                    borderTopLeftRadius: "16px",
+                    borderTopRightRadius: "16px"
                   }}
                 >
                   <Executions
@@ -411,7 +416,7 @@ const Prompt = () => {
                   </Stack>
                 )}
 
-                <Grid
+                {/* <Grid
                   item
                   xs={12}
                   md={3}
@@ -450,7 +455,7 @@ const Prompt = () => {
                     templateData={templateData}
                     updateTemplateData={setTemplateData}
                   />
-                </Grid>
+                </Grid> */}
               </Grid>
             )}
 
