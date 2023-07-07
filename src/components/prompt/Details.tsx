@@ -109,29 +109,17 @@ export const Details: React.FC<DetailsProps> = ({
   };
 
   return (
-    <Box sx={{ mr: { md: "20px" } }}>
+    <Box sx={{ px: { md: "24px" } }}>
       <Box
         sx={{
           borderRadius: { xs: "24px 24px 0 0", md: "16px 16px 0 0" },
           overflow: "hidden",
         }}
       >
-        <Box sx={{ p: "16px 24px" }}>
+        <Box sx={{ py: "16px" }}>
           <Stack direction={"row"} alignItems={"center"} gap={1}>
             <Button
-              sx={{
-                flex: 1.5,
-                p: "6px 16px",
-                bgcolor: "transparent",
-                color: "primary.main",
-                fontSize: 14,
-                border: "1px solid",
-                borderColor: alpha(palette.primary.main, .3),
-                "&:hover": {
-                  bgcolor: "action.hover",
-                  color: "primary.main"
-                },
-              }}
+              sx={{ ...buttonStytle, borderColor: alpha(palette.primary.main, .3), flex: 1 }}
               startIcon={
                 templateData.is_liked ? <BookmarkAdded /> : <BookmarkAddOutlined />
               }
@@ -141,19 +129,7 @@ export const Details: React.FC<DetailsProps> = ({
               Save
             </Button>
             <Button
-              sx={{
-                flex: 3,
-                p: "6px 16px",
-                bgcolor: "transparent",
-                color: "primary.main",
-                fontSize: 14,
-                border: "1px solid",
-                borderColor: alpha(palette.primary.main, .3),
-                "&:hover": {
-                  bgcolor: "action.hover",
-                  color: "primary.main"
-                },
-              }}
+              sx={{ ...buttonStytle, borderColor: alpha(palette.primary.main, .3), flex: 3 }}
               startIcon={<PlaylistAdd />}
               variant={"outlined"}
               onClick={(e) => setCollectionsAnchor(e.currentTarget)}
@@ -215,19 +191,7 @@ export const Details: React.FC<DetailsProps> = ({
               )}
             </Popper>
             <Button
-              sx={{
-                flex: 1.5,
-                p: "6px 16px",
-                bgcolor: "transparent",
-                color: "primary.main",
-                fontSize: 14,
-                border: "1px solid",
-                borderColor: alpha(palette.primary.main, .3),
-                "&:hover": {
-                  bgcolor: "action.hover",
-                  color: "primary.main"
-                },
-              }}
+              sx={{ ...buttonStytle, borderColor: alpha(palette.primary.main, .3), flex: 1 }}
               startIcon={
                 templateData.is_liked ? <Favorite /> : <FavoriteBorder />
               }
@@ -238,12 +202,50 @@ export const Details: React.FC<DetailsProps> = ({
             </Button>
           </Stack>
         </Box>
-        <Box sx={{ p: "16px 24px" }}>
+        <Box sx={{ py: "16px" }}>
           <Typography 
             sx={{ fontSize: 12, fontWeight: 400, color: "onSurface" }} 
             dangerouslySetInnerHTML={{ __html: templateData.description }} 
           />
         </Box>
+        <Stack
+          direction={"row"}
+          flexWrap={"wrap"}
+          gap={1}
+          sx={{ py: "16px" }}
+        >
+          {templateData.tags.length > 0 ? (
+            templateData.tags.map((tag) => (
+              <Chip
+                key={tag.id}
+                onClick={() =>
+                  router.push({
+                    pathname: `/`,
+                    query: {
+                      tag: JSON.stringify({
+                        id: tag.id,
+                        name: tag.name,
+                      }),
+                    },
+                  })
+                }
+                variant={"filled"}
+                label={tag.name}
+                sx={{
+                  fontSize: 13,
+                  fontWeight: 400,
+                  bgcolor: "surface.3",
+                  color: "onSurface",
+                  "&:hover": { 
+                    bgcolor: "action.hover"
+                  },
+                }}
+              />
+            ))
+          ) : (
+            <Typography fontSize={12} color={"onSurface"}>No tag assigned</Typography>
+          )}
+        </Stack>
 
         <Grid
           container
@@ -256,101 +258,25 @@ export const Details: React.FC<DetailsProps> = ({
           }}
         >
           <Grid item>
-            {templateData?.created_by ? (
-              <Link href={"#"} style={{ textDecoration: "none" }}>
-                <Button
-                  sx={{
-                    width: "100%",
-                    display: "flex",
-                    alignItems: "center",
-                    cursor: "pointer",
-                    p: { xs: "16px", md: "8px 8px 8px 16px" },
-                    bgcolor: "primary.main",
-                    color: "onPrimary",
-                    fontSize: { xs: 16, md: 12 },
-                    fontWeight: 500,
-                    borderRadius: { xs: "24px", md: "16px" },
-                    "&:hover": {
-                      bgcolor: "primary.main",
-                      color: "onPrimary",
-                      opacity: 0.95,
-                      svg: { opacity: 1 },
-                    },
-                  }}
-                >
-                  <Stack
-                    flex={1}
-                    direction={"row"}
-                    alignItems={"center"}
-                    spacing={1}
-                  >
-                    <Box
-                      sx={{
-                        bgcolor: "common.black",
-                        color: "common.white",
-                        borderRadius: "50%",
-                        width: { xs: "48px", md: "32px" },
-                        height: { xs: "48px", md: "32px" },
-                        padding: "1px",
-                        fontFamily: "Poppins",
-                        fontStyle: "normal",
-                        fontWeight: 500,
-                        fontSize: { xs: 20, md: 16 },
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      {templateData?.created_by?.first_name &&
-                      templateData?.created_by?.last_name
-                        ? `${templateData?.created_by?.first_name[0]?.toUpperCase()}${templateData?.created_by?.last_name[0]?.toUpperCase()}`
-                        : templateData?.created_by?.username[0]?.toUpperCase()}
-                    </Box>
-                    <Box>
-                      by{" "}
-                      {templateData?.created_by?.first_name &&
-                      templateData?.created_by?.last_name ? (
-                        <React.Fragment>
-                          {templateData.created_by.first_name
-                            .charAt(0)
-                            .toUpperCase() +
-                            templateData.created_by.first_name.slice(1)}{" "}
-                          {templateData.created_by.last_name
-                            .charAt(0)
-                            .toUpperCase() +
-                            templateData.created_by.last_name.slice(1)}
-                        </React.Fragment>
-                      ) : (
-                        <React.Fragment>
-                          {templateData.created_by.username
-                            .charAt(0)
-                            .toUpperCase() +
-                            templateData.created_by.username.slice(1)}
-                        </React.Fragment>
-                      )}
-                    </Box>
-                  </Stack>
-                  <ArrowForwardIos fontSize="small" sx={{ opacity: 0.6 }} />
-                </Button>
-              </Link>
-            ) : (
+            <Link href={"#"} style={{ textDecoration: "none" }}>
               <Button
                 sx={{
                   width: "100%",
                   display: "flex",
                   alignItems: "center",
                   cursor: "pointer",
-                  p: { xs: "16px", md: "8px 8px 8px 16px" },
+                  p: "8px",
                   bgcolor: "primary.main",
                   color: "onPrimary",
                   fontSize: { xs: 16, md: 12 },
                   fontWeight: 500,
-                  borderRadius: { xs: "24px", md: "16px" },
+                  borderRadius: "99px",
+                  svg: { opacity: .6 },
                   "&:hover": {
                     bgcolor: "primary.main",
                     color: "onPrimary",
                     opacity: 0.95,
-                    svg: { opacity: 1 },
+                    svg: { opacity: 1 }
                   },
                 }}
               >
@@ -377,137 +303,38 @@ export const Details: React.FC<DetailsProps> = ({
                       alignItems: "center",
                     }}
                   >
-                    PU
+                    {templateData?.created_by?.first_name &&
+                    templateData?.created_by?.last_name
+                      ? `${templateData?.created_by?.first_name[0]?.toUpperCase()}${templateData?.created_by?.last_name[0]?.toUpperCase()}`
+                      : templateData?.created_by?.username[0]?.toUpperCase()}
                   </Box>
-                  <Box>by Promptify User</Box>
+                  <Box>
+                    by{" "}
+                    {templateData?.created_by?.first_name &&
+                    templateData?.created_by?.last_name ? (
+                      <React.Fragment>
+                        {templateData.created_by.first_name
+                          .charAt(0)
+                          .toUpperCase() +
+                          templateData.created_by.first_name.slice(1)}{" "}
+                        {templateData.created_by.last_name
+                          .charAt(0)
+                          .toUpperCase() +
+                          templateData.created_by.last_name.slice(1)}
+                      </React.Fragment>
+                    ) : (
+                      <React.Fragment>
+                        {templateData.created_by.username
+                          .charAt(0)
+                          .toUpperCase() +
+                          templateData.created_by.username.slice(1)}
+                      </React.Fragment>
+                    )}
+                  </Box>
                 </Stack>
+                <ArrowForwardIos fontSize="small" />
               </Button>
-            )}
-          </Grid>
-
-          <Grid item>
-            <Box>
-              <Subtitle sx={{ mb: "12px", color: "tertiary" }}>
-                SubCategory
-              </Subtitle>
-              <Stack spacing={1}>
-                {templateData.category.parent && (
-                  <Button
-                    variant={"outlined"}
-                    // startIcon={<ChatGPTIcon />}
-                    sx={{
-                      bgcolor: alpha(palette.primary.main, 0.1),
-                      color: "onSurface",
-                      borderRadius: "999px",
-                      borderColor: "transparent",
-                      svg: {
-                        fill: palette.common.black,
-                      },
-                      "&:hover": {
-                        bgcolor: "surface",
-                        color: "onSurface",
-                        borderColor: alpha(palette.primary.main, 0.1),
-                      },
-                    }}
-                    onClick={() =>
-                      router.push({
-                        pathname: `/explorer/details`,
-                        query: {
-                          category: JSON.stringify(
-                            templateData.category.parent
-                          ),
-                        },
-                      })
-                    }
-                  >
-                    {templateData.category.parent.name}
-                  </Button>
-                )}
-                <Button
-                  variant={"outlined"}
-                  sx={{
-                    bgcolor: alpha(palette.primary.main, 0.1),
-                    color: "onSurface",
-                    borderRadius: "999px",
-                    borderColor: "transparent",
-                    "&:hover": {
-                      bgcolor: "surface",
-                      color: "onSurface",
-                      borderColor: alpha(palette.primary.main, 0.1),
-                    },
-                  }}
-                  onClick={() =>
-                    router.push({
-                      pathname: `/explorer/details`,
-                      query: {
-                        category: templateData.category.parent
-                          ? JSON.stringify(templateData.category.parent)
-                          : JSON.stringify(templateData.category),
-                        subcategory: JSON.stringify(templateData.category),
-                      },
-                    })
-                  }
-                >
-                  {templateData.category.name}
-                </Button>
-              </Stack>
-            </Box>
-          </Grid>
-
-          <Grid item>
-            <Box>
-              <Subtitle sx={{ mb: "12px", color: "tertiary" }}>Tags</Subtitle>
-              <Stack
-                direction={"row"}
-                flexWrap={"wrap"}
-                spacing={1}
-                useFlexGap
-              >
-                {templateData.tags.length > 0 ? (
-                  templateData.tags.map((tag) => (
-                    <Chip
-                      key={tag.id}
-                      onClick={() =>
-                        router.push({
-                          pathname: `/`,
-                          query: {
-                            tag: JSON.stringify({
-                              id: tag.id,
-                              name: tag.name,
-                            }),
-                          },
-                        })
-                      }
-                      variant={"filled"}
-                      label={tag.name}
-                      sx={{
-                        fontSize: 13,
-                        fontWeight: 400,
-                        bgcolor: "surface.3",
-                        color: "onSurface",
-                      }}
-                    />
-                  ))
-                ) : (
-                  <Typography fontSize={12} color={"onSurface"}>
-                    No tag assigned
-                  </Typography>
-                )}
-              </Stack>
-            </Box>
-          </Grid>
-
-          <Grid item>
-            <Box>
-              <Subtitle sx={{ mb: "12px", color: "tertiary" }}>
-                Language
-              </Subtitle>
-              <Typography
-                sx={{ fontSize: 14, fontWeight: 400, color: "onSurface" }}
-              >
-                {getLanguage(templateData.language)}
-              </Typography>
-            </Box>
+            </Link>
           </Grid>
 
           <Grid item>
@@ -515,29 +342,25 @@ export const Details: React.FC<DetailsProps> = ({
               <Subtitle sx={{ mb: "12px", color: "tertiary" }}>
                 Template details
               </Subtitle>
-              <Stack spacing={1}>
+              <Stack gap={1}>
                 {templateData.last_run && (
-                  <Typography sx={{ ...detailsTitle }}>
+                  <Typography sx={detailsStyle}>
                     Last run:{" "}
                     <span>{moment(templateData.last_run).fromNow()}</span>
                   </Typography>
                 )}
-                <Typography sx={{ ...detailsTitle }}>
+                <Typography sx={detailsStyle}>
                   Updated:{" "}
-                  <span>
-                    {moment(templateData.updated_at).format("D MMMM YYYY")}
-                  </span>
+                  <span>{moment(templateData.updated_at).format("D MMMM YYYY")}</span>
                 </Typography>
-                <Typography sx={{ ...detailsTitle }}>
+                <Typography sx={detailsStyle}>
                   Created:{" "}
-                  <span>
-                    {moment(templateData.created_at).format("D MMMM YYYY")}
-                  </span>
+                  <span>{moment(templateData.created_at).format("D MMMM YYYY")}</span>
                 </Typography>
-                <Typography sx={{ ...detailsTitle }}>
+                <Typography sx={detailsStyle}>
                   Views: <span>{templateData.views}</span>
                 </Typography>
-                <Typography sx={{ ...detailsTitle }}>
+                <Typography sx={detailsStyle}>
                   Runs: <span>{templateData.executions_count}</span>
                 </Typography>
               </Stack>
@@ -549,11 +372,25 @@ export const Details: React.FC<DetailsProps> = ({
   );
 };
 
-const detailsTitle = {
+const buttonStytle = {
+  p: "6px 16px",
+  bgcolor: "transparent",
+  color: "primary.main",
+  fontSize: 14,
+  border: "1px solid",
+  "&:hover": {
+    bgcolor: "action.hover",
+    color: "primary.main"
+  }
+};
+const detailsStyle = {
   fontSize: 14,
   fontWeight: 400,
   color: "grey.600",
   span: {
     color: "common.black",
   },
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between"
 };
