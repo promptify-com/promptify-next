@@ -3,7 +3,7 @@ import Modal from '@mui/material/Modal';
 import { Box, Button, Stack, TextField } from '@mui/material';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { createTemplate } from '@/hooks/api/templates';
+import { importTemplate } from '@/hooks/api/templates';
 import { AxiosError } from 'axios';
   
 const templateExample = {
@@ -41,16 +41,7 @@ export default function TemplateImportModal({ open, setOpen, refetchTemplates }:
       
       try {
         const json = JSON.parse(values.json);
-
-        // JSON schema validator
-        // const requires = [ 'title', 'description', 'duration', 'difficulty', 'is_visible', 'language', 'category', 'thumbnail', 'example', 'prompts_list' ]
-        // const misses = requires.filter((property) => !(property in json));
-        // if(misses.length > 0) {
-        //   formik.setErrors({ json: 'Please enter a valid JSON template schema' })
-        //   return
-        // }
-
-        createTemplate({...json})
+        importTemplate({...json})
           .then(data => {
             setOpen(false);
             refetchTemplates();

@@ -23,6 +23,14 @@ export const createTemplate = async (data: IEditTemplate) => {
     });
 };
 
+export const importTemplate = async (data: IEditTemplate) => {
+  return await authClient
+    .post(`/api/meta/templates/import/`, { ...data }, { headers: { 'Content-Type': 'application/json' } })
+    .then(response => {
+      return response.data;
+    });
+};
+
 export const deletePrompt = async (id: number) => {
   return await authClient.delete(`/api/meta/prompts/${id}/`).then(response => {
     return response.data;
