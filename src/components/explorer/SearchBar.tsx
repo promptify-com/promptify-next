@@ -30,6 +30,7 @@ const SearchBar: React.FC<Props> = ({ keyWord, setKeyWord, selectedTag, setSelec
         borderRadius: "99px",
         height: "48px",
         minWidth: "100%",
+        cursor: "pointer"
       }}
     >
       <Grid
