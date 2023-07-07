@@ -200,7 +200,11 @@ const Prompt = () => {
       <ThemeProvider theme={newTheme}>
         <Box sx={{ bgcolor: "surface.3" }}>
           <Sidebar />
-          <Box sx={{ width: 'calc(100% - 96px)', ml: 'auto' }}>
+          <Box sx={{ 
+            width: { md: 'calc(100% - 96px)' }, 
+            ml: { md: 'auto' }
+          }}
+          >
             <Header transparent />
             {!templateData || isLoadingTemplate || isFetchingTemplate ? (
               <PageLoading />

@@ -33,8 +33,8 @@ export const Sidebar: React.FC<Props> = () => {
   return (
     <Drawer
       sx={{
-        width: 96,
-        flexShrink: 0,
+        display: { xs: "none", md: "block" },
+        width: "96px",
         '& .MuiDrawer-paper': {
           width: 96,
           boxSizing: 'border-box',

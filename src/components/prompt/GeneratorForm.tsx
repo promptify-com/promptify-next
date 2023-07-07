@@ -341,7 +341,8 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     <Stack
       sx={{
         minHeight: { xs: 0, md: "100%" },
-        height: { xs: "calc(100% - 62px)", md: "auto" }
+        height: { xs: "calc(100% - 62px)", md: "auto" },
+        bgcolor: "surface.2"
       }}
     >
       <Box

@@ -17,7 +17,7 @@ const InputDialog: React.FC<Props> = ({ setKeyWord, setOpen, keyWord }) => {
       display="flex"
       alignItems="center"
       sx={{
-        backgroundColor: "#fdfbff",
+        bgcolor: "surface.1",
         borderRadius: "99px",
         height: "48px",
         minWidth: "100%",

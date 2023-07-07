@@ -26,7 +26,7 @@ const SearchBar: React.FC<Props> = ({ keyWord, setKeyWord, selectedTag, setSelec
       display="flex"
       alignItems="center"
       sx={{
-        backgroundColor: "surface.5",
+        bgcolor: "surface.1",
         borderRadius: "99px",
         height: "48px",
         minWidth: "100%",
