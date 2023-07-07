@@ -12,7 +12,7 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { ArrowDropDown, ArrowDropUp, AutoFixHigh, Close, Loop } from "@mui/icons-material";
+import { ArrowDropDown, ArrowDropUp, AutoFixHigh, Close, Replay } from "@mui/icons-material";
 import {
   PromptParams,
   ResInputs,
@@ -380,7 +380,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
         >
           Presets
         </Button>
-        {shownInputs && shownInputs.length > 0 && (
+        {false && (
           <Button
             sx={{ color: "onSurface", fontSize: 13, fontWeight: 500 }}
             startIcon={<Close />}
@@ -565,7 +565,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
       </Stack>
 
       <Stack sx={{ display: { xs: "none", md: "flex" } }}>
-        <Stack direction={"row"} alignItems={"center"} m={"20px 10px"}>
+        <Stack direction={"row"} alignItems={"center"} gap={1} m={"20px 10px"}>
           <Button
             variant={"contained"}
             startIcon={token ? <LogoApp width={18} color="white" /> : null}
@@ -599,13 +599,13 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
               <Typography ml={2} color={"inherit"}>Sign in or Create an account</Typography>
             )}
           </Button>
-          <Loop
+          <Replay
             sx={{
-              width: "30px",
-              height: "30px",
-              ml: "10px",
+              width: "16px",
+              height: "16px",
+              p: "16px",
               color: "onSurface",
-              visibility: !isGenerating ? "hidden" : "visible",
+              visibility: isGenerating ? "visible" : "hidden"
             }}
           />
         </Stack>
