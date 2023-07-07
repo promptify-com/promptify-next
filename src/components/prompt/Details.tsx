@@ -49,8 +49,7 @@ export const Details: React.FC<DetailsProps> = ({
   updateTemplateData,
 }) => {
   const [isFetching, setIsFetching] = useState(false);
-  const [collectionsAnchor, setCollectionsAnchor] =
-    useState<HTMLElement | null>(null);
+  const [collectionsAnchor, setCollectionsAnchor] = useState<HTMLElement | null>(null);
   const [collections] = useCollections();
   const token = useToken();
   const router = useRouter();
