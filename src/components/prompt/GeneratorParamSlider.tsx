@@ -20,6 +20,7 @@ export const GeneratorParamSlider: React.FC<PromptParamsDescriptionProps> = ({
     (description) => description.score === activeMark
   );
   const [displayTitle, setDisplayTitle] = useState("");
+  const [displayDesc, setDisplayDesc] = useState("");
 
   const marks = descriptions.map((description) => ({
     value: description.score,
@@ -29,9 +30,15 @@ export const GeneratorParamSlider: React.FC<PromptParamsDescriptionProps> = ({
   const maxValue = Math.max(...values);
 
   useEffect(() => {
-    const colon = activeDescription?.description.indexOf(":");
-    if (activeDescription && colon) {
-      setDisplayTitle(activeDescription.description.substring(0, colon));
+    if (activeDescription) {
+      const description = activeDescription.description;
+      const colon = description.indexOf(":");
+      if (colon !== -1) {
+        setDisplayTitle(description.slice(0, colon + 1));
+        setDisplayDesc(description.slice(colon + 1));
+      } else {
+        setDisplayDesc(description);
+      }
     }
   }, [activeDescription]);
 
@@ -42,7 +49,7 @@ export const GeneratorParamSlider: React.FC<PromptParamsDescriptionProps> = ({
 
   return (
     <Box>
-      <Typography
+      <Typography component={"span"}
         sx={{
           color: "onSurface",
           fontSize: 13,
@@ -53,6 +60,18 @@ export const GeneratorParamSlider: React.FC<PromptParamsDescriptionProps> = ({
         }}
       >
         {displayTitle}
+      </Typography>
+      <Typography component={"span"}
+        sx={{
+          color: "onSurface",
+          fontSize: 13,
+          fontWeight: 400,
+          maxWidth: "380px",
+          lineHeight: "21px",
+          mb: "10px",
+        }}
+      >
+        {displayDesc}
       </Typography>
       <Slider
         disabled={!is_editable}
