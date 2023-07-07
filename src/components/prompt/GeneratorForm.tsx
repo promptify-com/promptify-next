@@ -79,6 +79,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   const [shownParams, setShownParams] = useState<Param[] | null>(null);
   const [presets] = useParametersPresets();
   const [presetsAnchor, setPresetsAnchor] = useState<HTMLElement | null>(null);
+  const [allowGenerate, setAllowGenerate] = useState<boolean>(false);
 
   const setDefaultResPrompts = () => {
     const tempArr: ResPrompt[] = [...resPrompts];
@@ -120,6 +121,15 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     setResPrompts([...tempArr]);
   };
 
+  // Prompts params values tracker to validate generating allowed or not
+  useEffect(() => {
+    console.log(isInputsFilled())
+    if (Object.keys(isInputsFilled()).length > 0) 
+      setAllowGenerate(false);
+    else 
+      setAllowGenerate(true);
+  } , [resPrompts])
+
   const isInputsFilled = () => {
     const tempErrors: InputsErrors = {};
 
@@ -140,12 +150,19 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
       }
     });
 
+    return tempErrors;
+  }
+
+  const validateInputs = () => {
+    const emptyInputs = isInputsFilled();
+
     if (!token) {
       setErrors({});
       return true;
     }
-    if (Object.keys(tempErrors).length > 0) {
-      setErrors({ ...tempErrors });
+
+    if (Object.keys(emptyInputs).length > 0) {
+      setErrors({ ...emptyInputs });
       return false;
     }
 
@@ -159,7 +176,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
       return router.push("/signin");
     }
 
-    if (!isInputsFilled()) return;
+    if (!validateInputs()) return;
 
     generateExecution(resPrompts);
   };
@@ -347,7 +364,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   }, [handleKeyboard]);
 
   return (
-    <Stack
+    <Stack gap={1}
       sx={{
         minHeight: { xs: 0, md: "calc(100% - 92px)" },
         height: { xs: "calc(100% - 62px)", md: "auto" },
@@ -364,14 +381,16 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
         >
           Presets
         </Button>
-        <Button
+        {shownInputs && shownInputs.length > 0 && (
+          <Button
           sx={{ color: "onSurface", fontSize: 13, fontWeight: 500 }}
           startIcon={<Close />}
           variant={"text"}
-          disabled={true}
-        >
+          disabled={!allowGenerate}
+          >
           Clear
         </Button>
+        )}
         <Popper
           open={Boolean(presetsAnchor)}
           anchorEl={presetsAnchor}
@@ -509,112 +528,50 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
         >
           Back
         </Button>
+        <Button
+          variant={"contained"}
+          startIcon={token ? <LogoApp width={18} color="white" /> : null}
+          sx={{
+            flex: 2,
+            fontSize: 15,
+            fontWeight: 500,
+            p: "10px 25px",
+            border: "none",
+            borderRadius: "999px",
+            bgcolor: "primary.main",
+            color: "onPrimary",
+            ":hover": {
+              bgcolor: "primary.main",
+              color: "onPrimary",
+            },
+            ":disabled": {
+              bgcolor: "surface.5",
+              color: "onPrimary",
+              borderColor: "transparent",
+            },
+          }}
+          disabled={!allowGenerate || isGenerating}
+          onClick={handlePostPrompt}
+        >
         {token ? (
+          <React.Fragment>
+            <Typography ml={2} color={"inherit"}>Start</Typography>
+            <Typography ml={"auto"} color={"inherit"}>~360s</Typography>
+          </React.Fragment>
+        ) : (
+          <Typography ml={2} color={"inherit"}>Sign in or Create an account</Typography>
+        )}
+        </Button>
+      </Stack>
+
+      <Stack sx={{ display: { xs: "none", md: "flex" } }}>
+        <Stack direction={"row"} alignItems={"center"} m={"20px 10px"}>
           <Button
             variant={"contained"}
             startIcon={token ? <LogoApp width={18} color="white" /> : null}
             sx={{
-              flex: 2,
-              fontSize: 15,
-              fontWeight: 500,
-              p: "10px 25px",
-              border: "none",
-              borderRadius: "999px",
-              bgcolor: "primary.main",
-              color: "onPrimary",
-              ":hover": {
-                bgcolor: "primary.main",
-                color: "onPrimary",
-              },
-              ":disabled": {
-                bgcolor: "surface.5",
-                color: "onPrimary",
-                borderColor: "transparent",
-              },
-            }}
-            disabled={isGenerating}
-            onClick={handlePostPrompt}
-          >
-            <Typography ml={2} color={"inherit"} fontSize={"inherit"}>
-              Start
-            </Typography>
-            <Typography ml={"auto"} color={"inherit"} fontSize={"inherit"}>
-              ~360s
-            </Typography>
-          </Button>
-        ) : (
-          <Button
-            variant={"contained"}
-            sx={{
-              flex: 2,
-              p: "10px 25px",
-              border: "none",
-              borderRadius: "999px",
-              bgcolor: "primary.main",
-              color: "onPrimary",
-              ":hover": {
-                bgcolor: "transparent",
-                color: "primary.main",
-              },
-            }}
-            onClick={handlePostPrompt}
-          >
-            Sign in or Create an account
-          </Button>
-        )}
-      </Stack>
-
-      <Stack sx={{ display: { xs: "none", md: "flex" } }}>
-        {token ? (
-          <Stack direction={"row"} alignItems={"center"} m={"20px 10px"}>
-            <Button
-              variant={"contained"}
-              startIcon={token ? <LogoApp width={18} color="white" /> : null}
-              sx={{
-                flex: 1,
-                p: "10px 25px",
-                fontWeight: 500,
-                borderColor: "primary.main",
-                borderRadius: "999px",
-                bgcolor: "primary.main",
-                color: "onPrimary",
-                ":hover": {
-                  bgcolor: "transparent",
-                  color: "primary.main",
-                },
-                ":disabled": {
-                  bgcolor: "surface.5",
-                  color: "onPrimary",
-                  borderColor: "transparent",
-                },
-              }}
-              disabled={isGenerating}
-              onClick={handlePostPrompt}
-            >
-              <Typography ml={2} color={"inherit"}>
-                Start
-              </Typography>
-              <Typography ml={"auto"} color={"inherit"}>
-                ~360s
-              </Typography>
-            </Button>
-            <Loop
-              sx={{
-                width: "30px",
-                height: "30px",
-                ml: "10px",
-                color: "onSurface",
-                visibility: !isGenerating ? "hidden" : "visible",
-              }}
-            />
-          </Stack>
-        ) : (
-          <Button
-            variant={"contained"}
-            sx={{
               flex: 1,
               p: "10px 25px",
-              m: "20px 10px",
               fontWeight: 500,
               borderColor: "primary.main",
               borderRadius: "999px",
@@ -624,18 +581,39 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
                 bgcolor: "transparent",
                 color: "primary.main",
               },
+              ":disabled": {
+                bgcolor: "surface.4",
+                color: "onTertiary",
+                borderColor: "transparent",
+              },
             }}
+            disabled={!allowGenerate || isGenerating}
             onClick={handlePostPrompt}
           >
-            Sign in or Create an account
+            {token ? (
+              <React.Fragment>
+                <Typography ml={2} color={"inherit"}>Start</Typography>
+                <Typography ml={"auto"} color={"inherit"}>~360s</Typography>
+              </React.Fragment>
+            ) : (
+              <Typography ml={2} color={"inherit"}>Sign in or Create an account</Typography>
+            )}
           </Button>
-        )}
+          <Loop
+            sx={{
+              width: "30px",
+              height: "30px",
+              ml: "10px",
+              color: "onSurface",
+              visibility: !isGenerating ? "hidden" : "visible",
+            }}
+          />
+        </Stack>
       </Stack>
 
       {Object.keys(errors).length > 0 && (
         <Typography
-          color={"error"}
-          mt={2}
+          color={"error.main"}
           sx={{
             textAlign: "center",
           }}
@@ -652,8 +630,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
           color: "grey.600",
           fontSize: 14,
           fontWeight: 400,
-          mt: "40px",
-          mb: "20px",
+          my: "20px",
         }}
       >
         Repeat last:
