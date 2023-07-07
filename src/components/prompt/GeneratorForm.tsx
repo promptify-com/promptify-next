@@ -383,10 +383,11 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
         </Button>
         {shownInputs && shownInputs.length > 0 && (
           <Button
-          sx={{ color: "onSurface", fontSize: 13, fontWeight: 500 }}
-          startIcon={<Close />}
-          variant={"text"}
-          disabled={!allowGenerate}
+            sx={{ color: "onSurface", fontSize: 13, fontWeight: 500 }}
+            startIcon={<Close />}
+            variant={"text"}
+            disabled={!allowGenerate}
+            onClick={() => { setResInputs([]) }}
           >
           Clear
         </Button>
