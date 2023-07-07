@@ -6,7 +6,7 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { ArrowDropDown, Loop, MoreHoriz } from "@mui/icons-material";
+import { Loop } from "@mui/icons-material";
 import {
   PromptParams,
   ResInputs,
@@ -354,44 +354,6 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
           my: { xs: "16px", md: "0" },
         }}
       >
-        <Stack direction={"row"} gap={2} alignItems={"center"}
-          sx={{
-            display: { xs: "none", md: "flex" },
-            bgcolor: "surface.1",
-            p: "16px",
-            borderRadius: "16px",
-            cursor: "pointer",
-            "&:hover": {
-              bgcolor: "action.hover",
-            },
-          }}
-        >
-          <Box
-            component={"img"}
-            src={templateData.thumbnail || "http://placehold.it/240x150"}
-            alt={templateData.title}
-            sx={{
-              width: 64,
-              height: 48,
-              objectFit: "cover",
-              borderRadius: "16px",
-            }}
-          />
-          <Box>
-            <Typography
-              fontSize={14}
-              color={"onSurface"}
-              dangerouslySetInnerHTML={{ __html: templateData.title }}
-            />
-            <Typography
-              fontSize={12}
-              color={"grey.600"}
-              dangerouslySetInnerHTML={{ __html: templateData.category.name }}
-            />
-          </Box>
-          <ArrowDropDown sx={{ ml: "auto", p: "8px" }} />
-        </Stack>
-
         <Box>
           {!shownInputs || !shownParams ? (
             <Box

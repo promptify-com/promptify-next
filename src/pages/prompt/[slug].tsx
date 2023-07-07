@@ -3,6 +3,7 @@ import {
   Alert,
   Box,
   Button,
+  Dialog,
   Grid,
   IconButton,
   Palette,
@@ -35,6 +36,7 @@ import { Executions } from "@/components/prompt/Executions";
 import { Details } from "@/components/prompt/Details";
 import { authClient } from "@/common/axios";
 import { Sidebar } from "@/components/blocks/VHeader/Sidebar";
+import { DetailsCard } from "@/components/prompt/DetailsCard";
 
 export interface PromptLiveResponseData {
   message: string;
@@ -97,17 +99,17 @@ const Prompt = () => {
 
   useEffect(() => {
     if (id) {
-        refetchTemplateExecutions();
-        templateView(id);
+      refetchTemplateExecutions();
+      templateView(id);
     }
   }, [id]);
 
   useEffect(() => {
     if (windowWidth > 900) {
-      setDetailsOpened(true);
+      // setDetailsOpened(true);
       setGeneratorOpened(true);
     } else {
-      setDetailsOpened(false);
+      // setDetailsOpened(false);
       setGeneratorOpened(false);
     }
   }, [windowWidth]);
@@ -285,6 +287,11 @@ const Prompt = () => {
                       />
                     </Button>
                   )}
+                  <DetailsCard 
+                    templateData={templateData} 
+                    detailsOpened={detailsOpened} 
+                    toggleDetails={() => setDetailsOpened(!detailsOpened)}
+                  />
                   <GeneratorForm
                     templateData={templateData}
                     setNewExecutionData={setNewExecutionData}
@@ -293,6 +300,39 @@ const Prompt = () => {
                     onError={setErrorMessage}
                     exit={() => setGeneratorOpened(false)}
                   />
+                  {detailsOpened && (
+                    <Dialog
+                      open={true}
+                      onClose={() => setDetailsOpened(false)}
+                      disablePortal 
+                      hideBackdrop
+                      PaperProps={{
+                        sx: {
+                          m: "16px",
+                          width: "calc(100% - 32px)",
+                          bgcolor: "surface.1",
+                          borderRadius: "16px"
+                        }
+                      }}
+                      sx={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        height: 'fit-content'
+                      }}
+                    >
+                      <DetailsCard 
+                        templateData={templateData} 
+                        detailsOpened={detailsOpened} 
+                        toggleDetails={() => setDetailsOpened(!detailsOpened)}
+                      />
+                      <Details 
+                        templateData={templateData}
+                        updateTemplateData={setTemplateData}
+                      />
+                    </Dialog>
+                  )}
                 </Grid>
 
                 {windowWidth < 900 && (
