@@ -119,7 +119,7 @@ export const Collection = ({ fetchedTemplate, fetchedTemplateError }: any) => {
   }, []);
 
   useEffect(() => {
-    if (fetchedTemplate?.thumbnail) {
+    if (templateData?.thumbnail) {
       fetchDynamicColors();
     }
   }, [templateData]);
