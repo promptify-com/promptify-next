@@ -18,7 +18,6 @@ import {
 import { Templates } from "@/core/api/dto/templates";
 import {
   ArrowForwardIos,
-  Bookmark,
   BookmarkAddOutlined,
   BookmarkAdded,
   Favorite,
@@ -34,7 +33,6 @@ import {
 } from "@/hooks/api/templates";
 import { useCollections } from "@/hooks/api/collections";
 import { Subtitle } from "@/components/blocks";
-import ChatGPTIcon from "@/assets/icons/chatGPT.svg";
 import moment from "moment";
 import { useRouter } from "next/router";
 import Link from "next/link";
