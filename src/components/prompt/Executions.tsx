@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   CircularProgress,
@@ -26,18 +26,22 @@ export const Executions: React.FC<Props> = ({
   refetchExecutions,
 }) => {
 
-  const allExecutions = executions
-    .slice()
+  const [selectedExecution, setSelectedExecution] = useState<TemplatesExecutions | null>(null);
+
+  const sortedExecutions = [...executions]
     .sort(
-      (a, b) =>
-        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     )
+
+  useEffect(() => {
+    setSelectedExecution(sortedExecutions[0] || null)
+  }, [sortedExecutions])
 
   return (
     <Box sx={{ position: "relative" }}>
 
       <ExecutionsHeader 
-        executions={executions}
+        executions={sortedExecutions}
       />
 
       <Box sx={{ mx: { xs: 0, md: "15px" } }}>
@@ -60,16 +64,11 @@ export const Executions: React.FC<Props> = ({
           >
             <CircularProgress size={20} />
           </Box>
-        ) : allExecutions.length > 0 ? (
-          allExecutions.map((execution, i) => {
-            return (
-              <ExecutionCard
-                key={i}
-                execution={execution}
-                templateData={templateData}
-              />
-            );
-          })
+        ) : selectedExecution ? (
+          <ExecutionCard
+            execution={selectedExecution}
+            templateData={templateData}
+          />
         ) : (
           <Typography sx={{ mt: "40px", textAlign: "center" }}>
             No executions found

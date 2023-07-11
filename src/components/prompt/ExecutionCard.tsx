@@ -81,131 +81,57 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData }) => {
   };
 
   return (
-    <Stack direction={"row"} spacing={{ xs: 0, md: 2 }} sx={{ py: "20px" }}>
-      <Box display={{ xs: 'none', md: 'inline-flex' }}>
-        <Image
-          src={PromptifyLogo}
-          alt={"alt"}
-          style={{
-            width: 40,
-            height: 40,
-            objectFit: "cover",
-            borderRadius: "50%",
-            marginTop: "16px",
-          }}
-        />
-      </Box>
-      <Box
-        sx={{
-          flex: 1,
-          borderRadius: "16px",
-          bgcolor: alpha(palette.surface[4], 0.6),
-          p: "16px",
-          width: "calc(100% - 32px)",
-        }}
-      >
-        <Stack direction={"row"} alignItems={"center"} gap={1} mb={"20px"}>
-          <Box display={{ xs: 'inline-flex', md: 'none' }}>
-            <Image
-              src={PromptifyLogo}
-              alt={"alt"}
-              style={{
-                width: 24,
-                height: 24,
-                objectFit: "cover",
-                borderRadius: "50%",
-              }}
-            />
-          </Box>
-          <Typography fontSize={12} fontWeight={500} color={"onSurface"}>
-            Promptify
-          </Typography>
-          <Typography fontSize={12} fontWeight={500} color={"grey.600"}>
-            {moment(execution.created_at).fromNow()}
-          </Typography>
-        </Stack>
-
-        {execution.prompt_executions.map((exec) => {
-          const prompt = templateData.prompts.find(
-            (prompt) => prompt.id === exec.prompt
+    <Stack
+      sx={{
+        flex: 1,
+        borderRadius: "16px",
+        p: "16px",
+        width: "calc(100% - 32px)",
+      }}
+    >
+      {execution.prompt_executions.map((exec) => {
+        const prompt = templateData.prompts.find(
+          (prompt) => prompt.id === exec.prompt
+        );
+        if (prompt?.show_output)
+          return (
+            <Box key={exec.id}>
+              <Subtitle sx={{ mb: "12px", color: "tertiary", fontSize: 12 }}>
+                {prompt.title}
+              </Subtitle>
+              {isImageOutput(exec.output) ? (
+                <Box
+                  component={"img"}
+                  alt={"book cover"}
+                  src={exec.output}
+                  onError={(
+                    e: React.SyntheticEvent<HTMLImageElement, Event>
+                  ) => {
+                    (e.target as HTMLImageElement).src =
+                      "http://placehold.it/165x215";
+                  }}
+                  sx={{
+                    borderRadius: "8px",
+                    width: 165,
+                    height: 215,
+                    objectFit: "cover",
+                  }}
+                />
+              ) : (
+                <Typography
+                  sx={{
+                    color: "onSurface",
+                    fontSize: 14,
+                    wordWrap: "break-word",
+                  }}
+                  dangerouslySetInnerHTML={{
+                    __html: getMarkdownFromString(exec.output),
+                  }}
+                />
+              )}
+            </Box>
           );
-          if (prompt?.show_output)
-            return (
-              <Box key={exec.id} sx={{ mb: "30px" }}>
-                <Subtitle sx={{ mb: "12px", color: "tertiary", fontSize: 12 }}>
-                  {prompt.title}
-                </Subtitle>
-                {isImageOutput(exec.output) ? (
-                  <Box
-                    component={"img"}
-                    alt={"book cover"}
-                    src={exec.output}
-                    onError={(
-                      e: React.SyntheticEvent<HTMLImageElement, Event>
-                    ) => {
-                      (e.target as HTMLImageElement).src =
-                        "http://placehold.it/165x215";
-                    }}
-                    sx={{
-                      borderRadius: "8px",
-                      width: 165,
-                      height: 215,
-                      objectFit: "cover",
-                    }}
-                  />
-                ) : (
-                  <Typography
-                    sx={{
-                      color: "onSurface",
-                      fontSize: 14,
-                      wordWrap: "break-word",
-                    }}
-                    dangerouslySetInnerHTML={{
-                      __html: getMarkdownFromString(exec.output),
-                    }}
-                  />
-                )}
-              </Box>
-            );
-        })}
-
-        <Stack
-          direction={"row"}
-          spacing={2}
-          sx={{
-            mt: "20px",
-            justifyContent: "space-between",
-            fontSize: 12,
-          }}
-        >
-          <IconButton
-            style={cardButton}
-            sx={{
-              flexDirection: { xs: "column", md: "row" },
-              bgcolor: "surface.1",
-              color: "onSurface",
-              ":hover": { bgcolor: "action.hover", color: "onSurface" },
-              svg: { width: "24px", height: "24px" },
-            }}
-            onClick={toggleFavorite}
-          >
-            {isFavorite ? <StarIcon /> : <StarOutlineIcon />} Fav
-          </IconButton>
-          <IconButton
-            style={cardButton}
-            sx={{
-              flexDirection: { xs: "column", md: "row" },
-              bgcolor: "surface.1",
-              color: "onSurface",
-              ":hover": { bgcolor: "action.hover", color: "onSurface" },
-              svg: { width: "24px", height: "24px" },
-            }}
-            onClick={copyFormattedOutput}
-          >
-            <ContentCopy /> Copy
-          </IconButton>
-        </Stack>
-      </Box>
+      })}
     </Stack>
   );
 };
