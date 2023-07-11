@@ -35,7 +35,7 @@ export const Executions: React.FC<Props> = ({
 
   useEffect(() => {
     setSelectedExecution(sortedExecutions[0] || null)
-  }, [sortedExecutions])
+  }, [executions])
 
   return (
     <Box sx={{ position: "relative" }}>
@@ -43,6 +43,7 @@ export const Executions: React.FC<Props> = ({
       <ExecutionsHeader 
         executions={sortedExecutions}
         selectedExecution={selectedExecution}
+        changeSelectedExecution={setSelectedExecution}
       />
 
       <Box sx={{ mx: { xs: 0, md: "15px" } }}>

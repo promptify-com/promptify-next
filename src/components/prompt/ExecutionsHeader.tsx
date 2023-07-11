@@ -8,11 +8,13 @@ import { ExecutionsTabs } from './ExecutionsTabs';
 interface Props {
    executions: TemplatesExecutions[];
    selectedExecution: TemplatesExecutions | null;
+   changeSelectedExecution: (execution: TemplatesExecutions) => void;
 }
 
 export const ExecutionsHeader: React.FC<Props> = ({ 
    executions,
-   selectedExecution
+   selectedExecution,
+   changeSelectedExecution
  }) => {
    const  { palette } = useTheme();
    
@@ -67,7 +69,11 @@ export const ExecutionsHeader: React.FC<Props> = ({
                               <Box>
                                  <ExecutionsTabs 
                                     executions={executions}
-                                    chooseExecution={(exec) => console.log(exec)}
+                                    chooseExecution={(exec) => {
+                                       console.log(exec)
+                                       changeSelectedExecution(exec)
+                                       setPresetsAnchor(null)
+                                    }}
                                  />
                               </Box>
                            </ClickAwayListener>
