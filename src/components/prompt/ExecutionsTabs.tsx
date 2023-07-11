@@ -19,11 +19,16 @@ const CustomTabPanel = (props: TabPanelProps) => {
    const { children, value, index, ...other } = props;
 
    return (
-      <div
+      <Box
          role="tabpanel"
          hidden={value !== index}
          id={`simple-tabpanel-${index}`}
          aria-labelledby={`simple-tab-${index}`}
+         sx={{
+            height: "50svh", 
+            overflow: "auto",
+            overscrollBehavior: "contain"
+         }}
          {...other}
       >
          {value === index && (
@@ -31,7 +36,7 @@ const CustomTabPanel = (props: TabPanelProps) => {
                {children}
             </React.Fragment>
          )}
-      </div>
+      </Box>
    );
 }
 
@@ -50,6 +55,9 @@ export const ExecutionsTabs:React.FC<Props> = ({ executions, chooseExecution }) 
       setTabsValue(newValue);
    };
 
+   const pinnedExecutions = executions.filter(
+      (execution) => execution.is_favorite
+   );
 
    const ExecutionCard = ({ execution }: { execution: TemplatesExecutions }) => {
       return (
@@ -90,6 +98,22 @@ export const ExecutionsTabs:React.FC<Props> = ({ executions, chooseExecution }) 
       )
    }
 
+   const ExecutionsList = (execs:TemplatesExecutions[]) => (
+      <React.Fragment>
+         {execs.length ? (
+            executions.map((exec) => (
+               <ExecutionCard key={exec.id} execution={exec} />
+            ))
+         ) : (
+            <Stack sx={{ height: "100%", justifyContent: "center", alignItems: "center" }}>
+               <Typography sx={{ color: "onSurface", opacity: .5 }}>
+                  No executions found
+               </Typography>
+            </Stack>
+         )}
+      </React.Fragment>
+   )
+
   return (
       <Box sx={{ width: "360px" }}>
          <Tabs 
@@ -98,6 +122,7 @@ export const ExecutionsTabs:React.FC<Props> = ({ executions, chooseExecution }) 
             textColor="primary"
             indicatorColor="primary"
             variant="fullWidth"
+            sx={{ boxShadow: "0px -1px 0px 0px #ECECF4 inset" }}
          >
             <Tab label="All Sparks" {...a11yProps(0)} 
                sx={{ ...tabStyle, color: `${alpha(palette.onSurface, .4)}` }}
@@ -110,15 +135,8 @@ export const ExecutionsTabs:React.FC<Props> = ({ executions, chooseExecution }) 
             />
          </Tabs>
          <CustomTabPanel value={tabsValue} index={0}>
-            <MenuList sx={{ 
-               p: 0, 
-               maxHeight: "50svh", 
-               overflow: "auto",
-               overscrollBehavior: "contain"
-            }}>
-            {executions.map((exec) => (
-               <ExecutionCard key={exec.id} execution={exec} />
-            ))}
+            <MenuList sx={{ p: 0, height: "100%" }}>
+               {ExecutionsList(executions)}
             </MenuList>
             <Stack direction={"row"} alignItems={"center"} gap={1}
                sx={{ bgcolor: "surface.2", color: "onSurface", p: "8px 16px" }}
@@ -130,28 +148,12 @@ export const ExecutionsTabs:React.FC<Props> = ({ executions, chooseExecution }) 
             </Stack>
          </CustomTabPanel>
          <CustomTabPanel value={tabsValue} index={1}>
-            <MenuList sx={{ 
-               p: 0, 
-               maxHeight: "50svh", 
-               overflow: "auto",
-               overscrollBehavior: "contain"
-            }}>
-            {executions.map((exec) => (
-               <ExecutionCard key={exec.id} execution={exec} />
-            ))}
+            <MenuList sx={{ p: 0, height: "100%" }}>
+               {ExecutionsList(pinnedExecutions)}
             </MenuList>
          </CustomTabPanel>
          <CustomTabPanel value={tabsValue} index={2}>
-            <MenuList sx={{ 
-               p: 0, 
-               maxHeight: "50svh", 
-               overflow: "auto",
-               overscrollBehavior: "contain"
-            }}>
-            {executions.map((exec) => (
-               <ExecutionCard key={exec.id} execution={exec} />
-            ))}
-            </MenuList>
+            {/* <Box>New Spark</Box> */}
          </CustomTabPanel>
       </Box>
   )
