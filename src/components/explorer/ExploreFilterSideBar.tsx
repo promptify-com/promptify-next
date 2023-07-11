@@ -1,3 +1,4 @@
+import { Category } from "@/core/api/dto/templates";
 import { ExpandLess, ExpandMore, MenuOpen } from "@mui/icons-material";
 import {
   Avatar,
@@ -16,7 +17,11 @@ import {
 import { grey } from "@mui/material/colors";
 import React, { useState } from "react";
 
-function ExploreFilterSideBar() {
+interface Props {
+  categories: Category[];
+}
+
+export const ExploreFilterSideBar: React.FC<Props> = ({ categories }) => {
   const [open, setOpen] = useState(false);
   const handleClick = () => {
     setOpen(!open);
@@ -59,7 +64,7 @@ function ExploreFilterSideBar() {
           </IconButton>
         </Grid>
         <List
-          sx={{ width: "90%", bgcolor: "background.paper", mt: "6px" }}
+          sx={{ width: "100%", bgcolor: "background.paper", mt: "6px" }}
           component="nav"
           aria-labelledby="nested-list-subheader"
         >
@@ -73,7 +78,7 @@ function ExploreFilterSideBar() {
                 width: "28px",
                 height: "28px",
                 bgcolor: "black",
-                mr: "8px",
+                mr: "3px",
               }}
             >
               {/* <LogoApp width={20} /> */}
@@ -85,13 +90,25 @@ function ExploreFilterSideBar() {
               <ExpandMore sx={{ color: grey[400] }} />
             )}
           </ListItemButton>
-          <Collapse in={open} timeout={"auto"} unmountOnExit>
-
-					</Collapse>
+          <Collapse in={open} timeout={100}>
+            {categories?.map((category) => (
+              <ListItemButton key={category.id} sx={{ borderRadius: "8px" }}>
+                <Avatar
+                  alt={category.name}
+                  src={category.name}
+                  sx={{
+                    width: "28px",
+                    height: "28px",
+                    mr: "5px",
+                    
+                  }}
+                />
+                <Typography fontSize={12}>{category.name}</Typography>
+              </ListItemButton>
+            ))}
+          </Collapse>
         </List>
       </Box>
     </Drawer>
   );
-}
-
-export default ExploreFilterSideBar;
+};

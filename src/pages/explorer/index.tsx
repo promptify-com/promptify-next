@@ -33,7 +33,7 @@ import Image from "next/image";
 import { authClient } from "@/common/axios";
 import { Sidebar } from "@/components/blocks/VHeader/Sidebar";
 import { Header } from "@/components/blocks/VHeader";
-import ExploreFilterSideBar from "@/components/explorer/ExploreFilterSideBar";
+import { ExploreFilterSideBar } from "@/components/explorer/ExploreFilterSideBar";
 const label = { inputProps: { "aria-label": "Color switch demo" } };
 
 export default function ExplorerDetail({
@@ -127,7 +127,7 @@ export default function ExplorerDetail({
       <Box sx={{ bgcolor: "surface.3" }}>
         <Grid display={"flex"}>
           <Sidebar />
-          <ExploreFilterSideBar />
+          <ExploreFilterSideBar categories={categories} />
         </Grid>
         <Box
           sx={{
