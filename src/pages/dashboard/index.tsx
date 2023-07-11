@@ -1,17 +1,16 @@
 import { Box, Grid } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
+import Head from "next/head";
+
 import { PageLoading } from "@/components/PageLoading";
 import { PageWrapper } from "@/components/PageWrapper";
 import { HeaderMenu } from "@/components/blocks";
 import { Header } from "@/components/blocks/Header";
-import useToken from "@/hooks/useToken";
 import { Connections, Home, Identy, Prompts } from "@/components/dashboard";
-import Head from "next/head";
 
 const Dashboard = () => {
   const router = useRouter();
-
   const [hash, setHash] = useState("home");
   const [token, setToken] = useState<any>(null);
   const [showMenu, setShowMenu] = useState(false);
@@ -93,7 +92,7 @@ const Dashboard = () => {
             mobile
           />
         )}
-        {!!token ? (
+        {token ? (
           <Grid
             container
             zIndex={1}
