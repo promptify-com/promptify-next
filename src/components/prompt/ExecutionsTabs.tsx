@@ -99,7 +99,12 @@ export const ExecutionsTabs:React.FC<Props> = ({ executions, chooseExecution }) 
    }
 
    const ExecutionsList = (execs:TemplatesExecutions[]) => (
-      <React.Fragment>
+      <MenuList sx={{ 
+         p: 0, 
+         height: "calc(100% - 40px)", 
+         overflow: "auto", 
+         overscrollBehavior: "contain" 
+      }}>
          {execs.length ? (
             executions.map((exec) => (
                <ExecutionCard key={exec.id} execution={exec} />
@@ -111,7 +116,7 @@ export const ExecutionsTabs:React.FC<Props> = ({ executions, chooseExecution }) 
                </Typography>
             </Stack>
          )}
-      </React.Fragment>
+      </MenuList>
    )
 
   return (
@@ -135,9 +140,7 @@ export const ExecutionsTabs:React.FC<Props> = ({ executions, chooseExecution }) 
             />
          </Tabs>
          <CustomTabPanel value={tabsValue} index={0}>
-            <MenuList sx={{ p: 0, height: "100%" }}>
-               {ExecutionsList(executions)}
-            </MenuList>
+            {ExecutionsList(executions)}
             <Stack direction={"row"} alignItems={"center"} gap={1}
                sx={{ bgcolor: "surface.2", color: "onSurface", p: "8px 16px" }}
             >
@@ -148,9 +151,7 @@ export const ExecutionsTabs:React.FC<Props> = ({ executions, chooseExecution }) 
             </Stack>
          </CustomTabPanel>
          <CustomTabPanel value={tabsValue} index={1}>
-            <MenuList sx={{ p: 0, height: "100%" }}>
-               {ExecutionsList(pinnedExecutions)}
-            </MenuList>
+            {ExecutionsList(pinnedExecutions)}
          </CustomTabPanel>
          <CustomTabPanel value={tabsValue} index={2}>
             {/* <Box>New Spark</Box> */}
