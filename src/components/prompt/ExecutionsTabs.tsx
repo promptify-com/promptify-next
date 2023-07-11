@@ -100,8 +100,8 @@ export const ExecutionsTabs:React.FC<Props> = ({ executions, chooseExecution }) 
 
    const ExecutionsList = (execs:TemplatesExecutions[]) => (
       <MenuList sx={{ 
+         flex: 1,
          p: 0, 
-         height: "calc(100% - 40px)", 
          overflow: "auto", 
          overscrollBehavior: "contain" 
       }}>
@@ -140,18 +140,28 @@ export const ExecutionsTabs:React.FC<Props> = ({ executions, chooseExecution }) 
             />
          </Tabs>
          <CustomTabPanel value={tabsValue} index={0}>
-            {ExecutionsList(executions)}
-            <Stack direction={"row"} alignItems={"center"} gap={1}
-               sx={{ bgcolor: "surface.2", color: "onSurface", p: "8px 16px" }}
-            >
-               <PriorityHighOutlined style={{ fontSize: 24, opacity: .75 }} />
-               <Typography sx={{ fontSize: 12, fontWeight: 400, color: "onSurface", opacity: .5 }}>
-                  Unpinned Sparked are recorded for 30 days
-               </Typography>
+            <Stack height={"100%"}>
+               {ExecutionsList(executions)}
+               <Stack direction={"row"} alignItems={"center"} gap={1}
+                  sx={{ 
+                     position: "sticky", 
+                     bottom: 0, 
+                     bgcolor: "surface.2", 
+                     color: "onSurface", 
+                     p: "8px 16px" 
+                  }}
+               >
+                  <PriorityHighOutlined style={{ fontSize: 24, opacity: .75 }} />
+                  <Typography sx={{ fontSize: 12, fontWeight: 400, color: "onSurface", opacity: .5 }}>
+                     Unpinned Sparked are recorded for 30 days
+                  </Typography>
+               </Stack>
             </Stack>
          </CustomTabPanel>
          <CustomTabPanel value={tabsValue} index={1}>
-            {ExecutionsList(pinnedExecutions)}
+            <Stack height={"100%"}>
+               {ExecutionsList(pinnedExecutions)}
+            </Stack>
          </CustomTabPanel>
          <CustomTabPanel value={tabsValue} index={2}>
             {/* <Box>New Spark</Box> */}
