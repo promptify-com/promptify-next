@@ -16,7 +16,6 @@ import useToken from "@/hooks/useToken";
 
 import { likeTemplate, removeTemplateLike } from "@/hooks/api/templates";
 import { Subtitle } from "@/components/blocks";
-import ChatGPTIcon from "@/assets/icons/chatGPT.svg";
 import moment from "moment";
 import { useRouter } from "next/router";
 import Link from "next/link";
@@ -392,7 +391,6 @@ export const Details = ({
                   {template.category.parent && (
                     <Button
                       variant={"outlined"}
-                      startIcon={<ChatGPTIcon />}
                       sx={{
                         bgcolor: alpha(palette.primary.main, 0.1),
                         color: "onSurface",
