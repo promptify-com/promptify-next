@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
-import { Box, Button, ClickAwayListener, Grow, IconButton, InputBase, InputLabel, MenuItem, MenuList, Paper, Popper, Stack, Typography, alpha, useTheme } from '@mui/material'
+import { Box, Button, ClickAwayListener, Grow, IconButton, InputBase, InputLabel, Paper, Popper, Stack, Typography, alpha, useTheme } from '@mui/material'
 import { Search as SearchIcon, PushPinOutlined, FeedOutlined, ArrowDropUp, ArrowDropDown, Undo, Redo } from "@mui/icons-material";
 import { SubjectIcon } from "@/assets/icons/SubjectIcon";
 import { TemplatesExecutions } from '@/core/api/dto/templates';
+import { ExecutionsTabs } from './ExecutionsTabs';
 
 interface Props {
    executions: TemplatesExecutions[];
@@ -12,17 +13,20 @@ export const ExecutionsHeader: React.FC<Props> = ({
    executions
  }) => {
    const  { palette } = useTheme();
+   
    const [searchShown, setSearchShown] = useState(false);
    const [searchText, setSearchText] = useState("");
    const [presetsAnchor, setPresetsAnchor] = useState<HTMLElement | null>(null);
 
    return (
       <Box sx={{ 
+            position: "sticky", top: 0, left: 0, right: 0, zIndex: 998,
             p: "16px 16px 16px 24px", 
+            bgcolor: "surface.1",
             boxShadow: "0px -1px 0px 0px #ECECF4 inset"
          }}
       >
-         <Box sx={{ position: "sticky", top: 0, left: 0, right: 0, zIndex: 998 }}>
+         <Box>
             <Stack
                direction={"row"}
                alignItems={"center"}
@@ -45,7 +49,6 @@ export const ExecutionsHeader: React.FC<Props> = ({
                   anchorEl={presetsAnchor}
                   transition
                   disablePortal
-                  sx={{ zIndex: 9 }}
                >
                   {({ TransitionProps, placement }) => (
                      <Grow
@@ -56,43 +59,24 @@ export const ExecutionsHeader: React.FC<Props> = ({
                         sx={{
                            bgcolor: "surface.1",
                            border: "1px solid #E3E3E3",
-                           borderRadius: "10px",
-                           maxHeight: "30svh",
-                           overflow: "auto",
-                           overscrollBehavior: "contain"
+                           borderRadius: "10px"
                         }}
                         elevation={0}
                      >
                         <ClickAwayListener
                            onClickAway={() => setPresetsAnchor(null)}
                         >
-                           <MenuList
-                           sx={{ paddingRight: "3rem", width: "100%" }}
-                           >
-                           {executions.map((exec) => (
-                              <MenuItem
-                                 key={exec.id}
-                                 sx={{ borderTop: "1px solid #E3E3E3" }}
-                                 onClick={() => setPresetsAnchor(null)}
-                              >
-                                 <Typography
-                                 sx={{
-                                    fontWeight: 500,
-                                    fontSize: 14,
-                                    ml: "1rem",
-                                    color: "onSurface",
-                                 }}
-                                 >
-                                 The Mysterious Dragon and the Brave Friends
-                                 </Typography>
-                              </MenuItem>
-                           ))}
-                           </MenuList>
+                           <ExecutionsTabs 
+                              executions={executions}
+                              chooseExecution={(exec) => console.log(exec)}
+                           />
                         </ClickAwayListener>
                      </Paper>
                      </Grow>
                   )}
                </Popper>
+               {false && (
+                  <React.Fragment>
                <Typography sx={{ color: `${alpha(palette.onSurface, .2)}`, fontSize: 12, fontWeight: 400 }}>
                   saved...
                </Typography>
@@ -113,7 +97,9 @@ export const ExecutionsHeader: React.FC<Props> = ({
                   onClick={(e) => setPresetsAnchor(e.currentTarget)}
                >
                   Export
-               </Button>
+               </Button> 
+               </React.Fragment>
+               )}
             </Stack>
             
             {searchShown && (
