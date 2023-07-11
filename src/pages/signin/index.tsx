@@ -8,7 +8,6 @@ import useSetUser from "@/hooks/useSetUser";
 import useToken from "@/hooks/useToken";
 import { LoginLayout } from "@/components/login/LoginLayout";
 import { useRouter } from "next/router";
-import { redirect } from "next/navigation";
 
 const Login = () => {
   const router = useRouter();
@@ -22,7 +21,6 @@ const Login = () => {
 
   useEffect(() => {
     if (!userIsLoading && user) {
-
       router.push("/");
     }
     if (error) {
@@ -39,12 +37,12 @@ const Login = () => {
     if (response?.created) {
       setIsLoading(false);
       setUser(response);
-      redirect("/signup");
+      router.push("/signup");
     } else {
       localStorage.removeItem("path");
       setIsLoading(false);
       if (path) {
-        redirect(path);
+        router.push(path);
       } else {
         router.push("/");
       }
