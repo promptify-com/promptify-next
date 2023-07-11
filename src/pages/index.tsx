@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { Box, Grid, Typography } from "@mui/material";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { CustomTemplates } from "@/components/explorer/Templates";
 import { Header } from "@/components/blocks/Header";
 import { PageLoading } from "@/components/PageLoading";
@@ -8,10 +8,6 @@ import useSetUser from "@/hooks/useSetUser";
 import useToken from "@/hooks/useToken";
 import { TopicImg } from "@/assets/icons/TopicImg";
 import { useRouter } from "next/router";
-import {
-  useGetCategoriesQuery,
-  useGetTagsPopularQuery,
-} from "@/core/api/explorer";
 import { Category, Tag } from "@/core/api/dto/templates";
 import { ICollection } from "@/common/types/collection";
 import { useCollection } from "@/hooks/api/collections";
@@ -38,12 +34,12 @@ function Home({
 
   const tag = router.query?.tag;
 
-  const [isLoading, setIsLoading] = React.useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isLoadingCollection, setIsLoadingCollection] =
-    React.useState<boolean>(false);
-  const [categorySelected, setCategorySelected] = React.useState<number>();
-  const [selectedTag, setSelectedTag] = React.useState<Tag[]>([]);
-  const [keyWord, setKeyWord] = React.useState<string>("");
+    useState<boolean>(false);
+  const [categorySelected, setCategorySelected] = useState<number>();
+  const [selectedTag, setSelectedTag] = useState<Tag[]>([]);
+  const [keyWord, setKeyWord] = useState<string>("");
 
   const preLogin = () => {
     setIsLoading(true);
@@ -98,7 +94,7 @@ function Home({
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const authorizationCode = urlParams.get("code");
     preLogin();

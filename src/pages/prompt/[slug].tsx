@@ -18,19 +18,19 @@ import {
 } from "@mui/material";
 import materialDynamicColors from "material-dynamic-colors";
 import { mix } from "polished";
-import { Header } from "@/components/blocks/VHeader";
 
+import { Header } from "@/components/blocks/VHeader";
 import {
   useGetPromptTemplatesExecutionsQuery,
   useGetPromptTemplateBySlugQuery,
   useTemplateView,
-} from "../../core/api/prompts";
-import { Templates, TemplatesExecutions } from "../../core/api/dto/templates";
-import { PageLoading } from "../../components/PageLoading";
+} from "@/core/api/prompts";
+import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
+import { PageLoading } from "@/components/PageLoading";
 import { useWindowSize } from "usehooks-ts";
 import { Close, KeyboardArrowDown, Loop, MoreHoriz } from "@mui/icons-material";
-import useToken from "../../hooks/useToken";
-import { LogoApp } from "../../assets/icons/LogoApp";
+import useToken from "@/hooks/useToken";
+import { LogoApp } from "@/assets/icons/LogoApp";
 import { useRouter } from "next/router";
 import { GeneratorForm } from "@/components/prompt/GeneratorForm";
 import { Executions } from "@/components/prompt/Executions";
@@ -56,9 +56,11 @@ export interface PromptLiveResponse {
 const Prompt = () => {
   const router = useRouter();
   const token = useToken();
-  const [newExecutionData, setNewExecutionData] = useState<PromptLiveResponse | null>(null);
+  const [newExecutionData, setNewExecutionData] =
+    useState<PromptLiveResponse | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [currentGeneratedPrompt, setCurrentGeneratedPrompt] = useState<Prompts | null>(null);
+  const [currentGeneratedPrompt, setCurrentGeneratedPrompt] =
+    useState<Prompts | null>(null);
   const [templateView] = useTemplateView();
   const theme = useTheme();
   const [palette, setPalette] = useState(theme.palette);
@@ -68,7 +70,7 @@ const Prompt = () => {
   const [errorMessage, setErrorMessage] = useState<string>("");
   const slug = router.query?.slug;
   // TODO: redirect to 404 page if slug is not found
-  const slugValue = ( Array.isArray(slug) ? slug[0] : slug || "" ) as string;
+  const slugValue = (Array.isArray(slug) ? slug[0] : slug || "") as string;
 
   const {
     data: fetchedTemplate,
@@ -88,15 +90,14 @@ const Prompt = () => {
     isFetching: isFetchingExecutions,
     refetch: refetchTemplateExecutions,
   } = useGetPromptTemplatesExecutionsQuery(id ? +id : 1, {
-      refetchOnMountOrArgChange: true,
+    refetchOnMountOrArgChange: true,
   });
 
   useEffect(() => {
     if (fetchedTemplate) {
-        setTemplateData(fetchedTemplate);
+      setTemplateData(fetchedTemplate);
     }
   }, [fetchedTemplate]);
-
 
   useEffect(() => {
     if (id) {
@@ -107,37 +108,39 @@ const Prompt = () => {
 
   useEffect(() => {
     if (windowWidth > 900) {
-      // setDetailsOpened(true);
       setGeneratorOpened(true);
     } else {
-      // setDetailsOpened(false);
       setGeneratorOpened(false);
     }
   }, [windowWidth]);
-
 
   // After new generated execution is completed - refetch the executions list and clear the newExecutionData state
   // All prompts should be completed - isCompleted: true
   useEffect(() => {
     if (!isGenerating && newExecutionData?.data?.length) {
-      const promptNotCompleted = newExecutionData.data.find(execData => !execData.isCompleted);
+      const promptNotCompleted = newExecutionData.data.find(
+        (execData) => !execData.isCompleted
+      );
       if (!promptNotCompleted) {
         refetchTemplateExecutions();
         setNewExecutionData(null);
-        setCurrentGeneratedPrompt(null)
+        setCurrentGeneratedPrompt(null);
       }
     }
   }, [isGenerating, newExecutionData]);
 
   // Keep tracking the current generated prompt
   useEffect(() => {
-    if(templateData && newExecutionData?.data?.length) {
-      const loadingPrompt = newExecutionData.data.find(prompt => prompt.isLoading);
-      const prompt = templateData.prompts.find((prompt) => prompt.id === loadingPrompt?.prompt);
-      if(prompt) 
-        setCurrentGeneratedPrompt(prompt)
+    if (templateData && newExecutionData?.data?.length) {
+      const loadingPrompt = newExecutionData.data.find(
+        (prompt) => prompt.isLoading
+      );
+      const prompt = templateData.prompts.find(
+        (prompt) => prompt.id === loadingPrompt?.prompt
+      );
+      if (prompt) setCurrentGeneratedPrompt(prompt);
     } else {
-      setCurrentGeneratedPrompt(null)
+      setCurrentGeneratedPrompt(null);
     }
   }, [newExecutionData]);
 
@@ -191,8 +194,8 @@ const Prompt = () => {
         };
         setPalette(newPalette);
       })
-      .catch(async () => {
-        await fetchDynamicColors();
+      .catch(() => {
+        fetchDynamicColors();
       });
   };
 
@@ -206,10 +209,11 @@ const Prompt = () => {
       <ThemeProvider theme={newTheme}>
         <Box sx={{ bgcolor: "surface.3" }}>
           <Sidebar />
-          <Box sx={{ 
-            width: { md: 'calc(100% - 96px)' }, 
-            ml: { md: 'auto' }
-          }}
+          <Box
+            sx={{
+              width: { md: "calc(100% - 96px)" },
+              ml: { md: "auto" },
+            }}
           >
             <Header transparent />
             {!templateData || isLoadingTemplate || isFetchingTemplate ? (
@@ -224,7 +228,7 @@ const Prompt = () => {
                   bgcolor: "surface.2",
                   borderTopLeftRadius: "16px",
                   borderTopRightRadius: "16px",
-                  position: "relative"
+                  position: "relative",
                 }}
               >
                 <Grid
@@ -254,13 +258,17 @@ const Prompt = () => {
                         bgcolor: "primary.main",
                         color: "onPrimary",
                         borderRadius: "16px",
-                        ":hover": { bgcolor: "primary.main", color: "onPrimary" },
+                        ":hover": {
+                          bgcolor: "primary.main",
+                          color: "onPrimary",
+                        },
                       }}
                     >
                       <Box
                         component={"img"}
                         src={
-                          templateData.thumbnail || "http://placehold.it/240x150"
+                          templateData.thumbnail ||
+                          "http://placehold.it/240x150"
                         }
                         alt={"alt"}
                         sx={{
@@ -274,7 +282,9 @@ const Prompt = () => {
                         <Typography
                           fontSize={14}
                           color={"inherit"}
-                          dangerouslySetInnerHTML={{ __html: templateData.title }}
+                          dangerouslySetInnerHTML={{
+                            __html: templateData.title,
+                          }}
                         />
                         <Typography
                           fontSize={10}
@@ -291,9 +301,9 @@ const Prompt = () => {
                       />
                     </Button>
                   )}
-                  <DetailsCard 
-                    templateData={templateData} 
-                    detailsOpened={detailsOpened} 
+                  <DetailsCard
+                    templateData={templateData}
+                    detailsOpened={detailsOpened}
                     toggleDetails={() => setDetailsOpened(!detailsOpened)}
                   />
                   <GeneratorForm
@@ -308,30 +318,30 @@ const Prompt = () => {
                     <Dialog
                       open={true}
                       onClose={() => setDetailsOpened(false)}
-                      disablePortal 
+                      disablePortal
                       hideBackdrop
                       PaperProps={{
                         sx: {
                           m: "16px",
                           width: "calc(100% - 32px)",
                           bgcolor: "surface.1",
-                          borderRadius: "16px"
-                        }
+                          borderRadius: "16px",
+                        },
                       }}
                       sx={{
-                        position: 'absolute',
+                        position: "absolute",
                         top: 0,
                         left: 0,
                         right: 0,
-                        height: 'fit-content'
+                        height: "fit-content",
                       }}
                     >
-                      <DetailsCard 
-                        templateData={templateData} 
-                        detailsOpened={detailsOpened} 
+                      <DetailsCard
+                        templateData={templateData}
+                        detailsOpened={detailsOpened}
                         toggleDetails={() => setDetailsOpened(!detailsOpened)}
                       />
-                      <Details 
+                      <Details
                         templateData={templateData}
                         updateTemplateData={setTemplateData}
                       />
@@ -397,7 +407,7 @@ const Prompt = () => {
                     bgcolor: "surface.1",
                     borderTopLeftRadius: "16px",
                     borderTopRightRadius: "16px",
-                    position: "relative"
+                    position: "relative",
                   }}
                 >
                   <Executions
@@ -408,25 +418,28 @@ const Prompt = () => {
                     refetchExecutions={refetchTemplateExecutions}
                   />
                   {currentGeneratedPrompt && (
-                    <Box sx={{ 
+                    <Box
+                      sx={{
                         position: "sticky",
                         bottom: 0,
                         left: 0,
                         right: 0,
                         zIndex: 998,
-                        bgcolor: "surface.1" 
+                        bgcolor: "surface.1",
                       }}
                     >
                       <Divider sx={{ borderColor: "surface.3" }} />
-                      <Typography sx={{
+                      <Typography
+                        sx={{
                           padding: "8px 16px 5px",
                           textAlign: "right",
                           fontSize: 11,
                           fontWeight: 500,
-                          opacity: .3
+                          opacity: 0.3,
                         }}
                       >
-                        Prompt #{currentGeneratedPrompt.order}: {currentGeneratedPrompt.title}
+                        Prompt #{currentGeneratedPrompt.order}:{" "}
+                        {currentGeneratedPrompt.title}
                       </Typography>
                     </Box>
                   )}
@@ -479,7 +492,10 @@ const Prompt = () => {
                         bgcolor: "surface.1",
                         color: "onSurface",
                         border: "none",
-                        ":hover": { bgcolor: "action.hover", color: "onSurface" },
+                        ":hover": {
+                          bgcolor: "action.hover",
+                          color: "onSurface",
+                        },
                         svg: { width: "24px", height: "24px" },
                       }}
                     >
@@ -550,13 +566,16 @@ export async function getServerSideProps({ params }: any) {
   const { slug } = params;
 
   try {
-    const templatesResponse = await authClient.get(`/api/meta/templates/by-slug/${slug}/`);
+    const templatesResponse = await authClient.get(
+      `/api/meta/templates/by-slug/${slug}/`
+    );
     const fetchedTemplate = templatesResponse.data; // Extract the necessary data from the response
 
     return {
       props: {
         title: fetchedTemplate.meta_title || fetchedTemplate.title,
-        description: fetchedTemplate.meta_description || fetchedTemplate.description,
+        description:
+          fetchedTemplate.meta_description || fetchedTemplate.description,
         meta_keywords: fetchedTemplate.meta_keywords,
         image: fetchedTemplate.thumbnail,
       },
