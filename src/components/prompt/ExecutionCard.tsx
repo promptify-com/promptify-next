@@ -81,22 +81,26 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData }) => {
   };
 
   return (
-    <Stack
+    <Stack gap={1}
       sx={{
-        flex: 1,
-        borderRadius: "16px",
-        p: "16px",
-        width: "calc(100% - 32px)",
+        width: "70%",
+        mx: "auto",
       }}
     >
+      <Typography sx={{ fontSize: 48, fontWeight: 400, color: "onSurface", py: "24px" }}>
+        {execution.title}
+      </Typography>
       {execution.prompt_executions.map((exec) => {
         const prompt = templateData.prompts.find(
           (prompt) => prompt.id === exec.prompt
         );
         if (prompt?.show_output)
           return (
-            <Box key={exec.id}>
-              <Subtitle sx={{ mb: "12px", color: "tertiary", fontSize: 12 }}>
+            <Stack key={exec.id}
+              gap={1}
+              sx={{ py: "24px" }}
+            >
+              <Subtitle sx={{ fontSize: 24, fontWeight: 400, color: "onSurface" }}>
                 {prompt.title}
               </Subtitle>
               {isImageOutput(exec.output) ? (
@@ -120,8 +124,9 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData }) => {
               ) : (
                 <Typography
                   sx={{
+                    fontSize: 15,
+                    fontWeight: 400,
                     color: "onSurface",
-                    fontSize: 14,
                     wordWrap: "break-word",
                   }}
                   dangerouslySetInnerHTML={{
@@ -129,7 +134,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData }) => {
                   }}
                 />
               )}
-            </Box>
+            </Stack>
           );
       })}
     </Stack>

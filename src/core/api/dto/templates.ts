@@ -95,6 +95,7 @@ export interface PromptExecutions {
 
 export interface TemplatesExecutions {
   id: number;
+  title: string;
   created_at: Date;
   prompt_executions: PromptExecutions[];
   is_favorite: boolean;
