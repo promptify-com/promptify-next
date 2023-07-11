@@ -8,11 +8,6 @@ import {
   useTheme,
 } from "@mui/material";
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
-import {
-  ContentCopy,
-  StarOutline as StarOutlineIcon,
-  Star as StarIcon,
-} from "@mui/icons-material";
 import { Subtitle } from "@/components/blocks";
 import { getMarkdownFromString } from "@/common/helpers/getMarkdownFromString";
 import moment from "moment";

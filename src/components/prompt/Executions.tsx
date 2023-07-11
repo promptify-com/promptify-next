@@ -42,6 +42,7 @@ export const Executions: React.FC<Props> = ({
 
       <ExecutionsHeader 
         executions={sortedExecutions}
+        selectedExecution={selectedExecution}
       />
 
       <Box sx={{ mx: { xs: 0, md: "15px" } }}>

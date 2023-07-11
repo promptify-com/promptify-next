@@ -7,10 +7,12 @@ import { ExecutionsTabs } from './ExecutionsTabs';
 
 interface Props {
    executions: TemplatesExecutions[];
+   selectedExecution: TemplatesExecutions | null;
 }
 
 export const ExecutionsHeader: React.FC<Props> = ({ 
-   executions
+   executions,
+   selectedExecution
  }) => {
    const  { palette } = useTheme();
    
@@ -42,7 +44,7 @@ export const ExecutionsHeader: React.FC<Props> = ({
                   variant={"text"}
                   onClick={(e) => setPresetsAnchor(e.currentTarget)}
                >
-                  The Mysterious Dragon and the Brave Friends
+                  {selectedExecution?.title || "Choose execution"}
                </Button>
                <Popper
                   open={Boolean(presetsAnchor)}

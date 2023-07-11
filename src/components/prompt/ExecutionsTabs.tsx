@@ -81,7 +81,7 @@ export const ExecutionsTabs:React.FC<Props> = ({ executions, chooseExecution }) 
                      wordBreak: "break-word"
                   }}
                   >
-                     The Mysterious Dragon and the Brave Friends
+                     {execution.title}
                   </Typography>
                   <Typography sx={{
                      fontWeight: 400,
