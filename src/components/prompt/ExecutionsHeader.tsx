@@ -58,8 +58,8 @@ export const ExecutionsHeader: React.FC<Props> = ({
                      <Paper
                         sx={{
                            bgcolor: "surface.1",
-                           border: "1px solid #E3E3E3",
-                           borderRadius: "10px"
+                           borderRadius: "16px",
+                           boxShadow: "0px 10px 13px -6px rgba(0, 0, 0, 0.20), 0px 20px 31px 3px rgba(0, 0, 0, 0.14), 0px 8px 38px 7px rgba(0, 0, 0, 0.12)"
                         }}
                         elevation={0}
                      >

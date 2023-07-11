@@ -1,7 +1,8 @@
 import React from 'react'
-import { Box, MenuItem, MenuList, Tab, Tabs, Typography, alpha, useTheme } from '@mui/material'
+import { Box, MenuItem, MenuList, Stack, Tab, Tabs, Typography, alpha, useTheme } from '@mui/material'
 import { TemplatesExecutions } from '@/core/api/dto/templates';
-import { PushPin, PushPinOutlined } from '@mui/icons-material';
+import { FeedOutlined, PushPin } from '@mui/icons-material';
+import moment from 'moment';
 
 interface Props {
    executions: TemplatesExecutions[];
@@ -14,7 +15,7 @@ interface TabPanelProps {
   value: number;
 }
 
-function CustomTabPanel(props: TabPanelProps) {
+const CustomTabPanel = (props: TabPanelProps) => {
    const { children, value, index, ...other } = props;
 
    return (
@@ -49,6 +50,46 @@ export const ExecutionsTabs:React.FC<Props> = ({ executions, chooseExecution }) 
       setTabsValue(newValue);
    };
 
+
+   const ExecutionCard = ({ execution }: { execution: TemplatesExecutions }) => {
+      return (
+         <MenuItem key={execution.id}
+            sx={{ 
+               borderTop: "1px solid #E3E3E3", 
+               p: "16px",
+               opacity: .8,
+               "&:hover": { opacity: 1 }
+            }}
+            onClick={() => chooseExecution(execution)}
+         >
+            <Stack direction={"row"} alignItems={"center"} gap={2}>
+               <FeedOutlined style={{ fontSize: 32 }} />
+               <Stack>
+                  <Typography sx={{
+                     fontWeight: 500,
+                     fontSize: 14,
+                     color: "onSurface",
+                     whiteSpace: "normal",
+                     wordBreak: "break-word"
+                  }}
+                  >
+                     The Mysterious Dragon and the Brave Friends
+                  </Typography>
+                  <Typography sx={{
+                     fontWeight: 400,
+                     fontSize: 12,
+                     color: "onSurface",
+                     opacity: .5
+                  }}
+                  >
+                     {moment(execution.created_at).fromNow()}
+                  </Typography>
+               </Stack>
+            </Stack>
+         </MenuItem>
+      )
+   }
+
   return (
       <Box sx={{ width: "360px" }}>
          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -71,29 +112,40 @@ export const ExecutionsTabs:React.FC<Props> = ({ executions, chooseExecution }) 
             </Tabs>
          </Box>
          <CustomTabPanel value={tabsValue} index={0}>
-            <MenuList sx={{ p: 0 }}>
+            <MenuList sx={{ 
+               p: 0, 
+               maxHeight: "50svh", 
+               overflow: "auto",
+               overscrollBehavior: "contain"
+            }}>
             {executions.map((exec) => (
-               <MenuItem key={exec.id}
-                  sx={{ borderTop: "1px solid #E3E3E3" }}
-                  onClick={() => chooseExecution(exec)}
-               >
-                  <Typography sx={{
-                     fontWeight: 500,
-                     fontSize: 14,
-                     ml: "1rem",
-                     color: "onSurface",
-                  }}
-                  >
-                  The Mysterious Dragon and the Brave Friends
-                  </Typography>
-               </MenuItem>
+               <ExecutionCard execution={exec} />
             ))}
             </MenuList>
          </CustomTabPanel>
          <CustomTabPanel value={tabsValue} index={1}>
+            <MenuList sx={{ 
+               p: 0, 
+               maxHeight: "50svh", 
+               overflow: "auto",
+               overscrollBehavior: "contain"
+            }}>
+            {executions.map((exec) => (
+               <ExecutionCard execution={exec} />
+            ))}
+            </MenuList>
          </CustomTabPanel>
          <CustomTabPanel value={tabsValue} index={2}>
-            Item Three
+            <MenuList sx={{ 
+               p: 0, 
+               maxHeight: "50svh", 
+               overflow: "auto",
+               overscrollBehavior: "contain"
+            }}>
+            {executions.map((exec) => (
+               <ExecutionCard execution={exec} />
+            ))}
+            </MenuList>
          </CustomTabPanel>
       </Box>
   )
