@@ -32,7 +32,7 @@ export const ExecutionsHeader: React.FC<Props> = ({
                alignItems={"center"}
                gap={1}
             >
-               <IconButton sx={{ border: "none", p: 0, ":hover": { color: "onBackground" } }}>
+               <IconButton sx={{ ...iconButtonStyle, opacity: .5 }}>
                   <PushPinOutlined />
                </IconButton>
                <Button
@@ -78,13 +78,13 @@ export const ExecutionsHeader: React.FC<Props> = ({
                <Typography sx={{ color: `${alpha(palette.onSurface, .2)}`, fontSize: 12, fontWeight: 400 }}>
                   saved...
                </Typography>
-               <IconButton sx={{ ml: "auto", border: "none", p: "8px", ":hover": { color: "onBackground" } }}>
+               <IconButton sx={{ ...iconButtonStyle, ml: "auto" }}>
                   <SearchIcon />
                </IconButton>
-               <IconButton sx={{ border: "none", p: "8px", ":hover": { color: "onBackground" } }}>
+               <IconButton sx={{ ...iconButtonStyle }}>
                   <Undo />
                </IconButton>
-               <IconButton sx={{ border: "none", p: "8px", ":hover": { color: "onBackground" } }}>
+               <IconButton sx={{ ...iconButtonStyle }}>
                   <Redo />
                </IconButton>
                <Button
@@ -152,4 +152,12 @@ export const ExecutionsHeader: React.FC<Props> = ({
          </Box>
       </Box>
    )
+}
+
+const iconButtonStyle = { 
+   border: "none", 
+   p: "8px", 
+   color: "onBackground",
+   opacity: .8,
+   ":hover": { opacity: 1, color: "onBackground" } 
 }
