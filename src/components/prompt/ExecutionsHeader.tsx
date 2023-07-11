@@ -51,27 +51,25 @@ export const ExecutionsHeader: React.FC<Props> = ({
                   disablePortal
                >
                   {({ TransitionProps, placement }) => (
-                     <Grow
-                     {...TransitionProps}
-                     style={{ transformOrigin: "center top" }}
-                     >
-                     <Paper
-                        sx={{
-                           bgcolor: "surface.1",
-                           borderRadius: "16px",
-                           boxShadow: "0px 10px 13px -6px rgba(0, 0, 0, 0.20), 0px 20px 31px 3px rgba(0, 0, 0, 0.14), 0px 8px 38px 7px rgba(0, 0, 0, 0.12)"
-                        }}
-                        elevation={0}
-                     >
-                        <ClickAwayListener
-                           onClickAway={() => setPresetsAnchor(null)}
+                     <Grow {...TransitionProps} style={{ transformOrigin: "center top" }}>
+                        <Paper
+                           sx={{
+                              bgcolor: "surface.1",
+                              borderRadius: "16px",
+                              overflow: "hidden",
+                              boxShadow: "0px 10px 13px -6px rgba(0, 0, 0, 0.20), 0px 20px 31px 3px rgba(0, 0, 0, 0.14), 0px 8px 38px 7px rgba(0, 0, 0, 0.12)"
+                           }}
+                           elevation={0}
                         >
-                           <ExecutionsTabs 
-                              executions={executions}
-                              chooseExecution={(exec) => console.log(exec)}
-                           />
-                        </ClickAwayListener>
-                     </Paper>
+                           <ClickAwayListener onClickAway={() => setPresetsAnchor(null)}>
+                              <Box>
+                                 <ExecutionsTabs 
+                                    executions={executions}
+                                    chooseExecution={(exec) => console.log(exec)}
+                                 />
+                              </Box>
+                           </ClickAwayListener>
+                        </Paper>
                      </Grow>
                   )}
                </Popper>

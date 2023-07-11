@@ -92,25 +92,23 @@ export const ExecutionsTabs:React.FC<Props> = ({ executions, chooseExecution }) 
 
   return (
       <Box sx={{ width: "360px" }}>
-         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-            <Tabs 
-               value={tabsValue} 
-               onChange={changeTab}
-               textColor="primary"
-               indicatorColor="primary"
-               variant="fullWidth"
-            >
-               <Tab label="All Sparks" {...a11yProps(0)} 
-                  sx={{ ...tabStyle, color: `${alpha(palette.onSurface, .4)}` }}
-               />
-               <Tab label="Pinned" {...a11yProps(1)} icon={<PushPin />} iconPosition='start'
-                  sx={{ ...tabStyle, color: `${alpha(palette.onSurface, .4)}` }}
-               />
-               <Tab label="New Spark" {...a11yProps(2)} 
-                  sx={{ ...tabStyle, color: `${alpha(palette.onSurface, .4)}` }}
-               />
-            </Tabs>
-         </Box>
+         <Tabs 
+            value={tabsValue} 
+            onChange={changeTab}
+            textColor="primary"
+            indicatorColor="primary"
+            variant="fullWidth"
+         >
+            <Tab label="All Sparks" {...a11yProps(0)} 
+               sx={{ ...tabStyle, color: `${alpha(palette.onSurface, .4)}` }}
+            />
+            <Tab label="Pinned" {...a11yProps(1)} icon={<PushPin />} iconPosition='start'
+               sx={{ ...tabStyle, color: `${alpha(palette.onSurface, .4)}` }}
+            />
+            <Tab label="New Spark" {...a11yProps(2)} 
+               sx={{ ...tabStyle, color: `${alpha(palette.onSurface, .4)}` }}
+            />
+         </Tabs>
          <CustomTabPanel value={tabsValue} index={0}>
             <MenuList sx={{ 
                p: 0, 
@@ -119,7 +117,7 @@ export const ExecutionsTabs:React.FC<Props> = ({ executions, chooseExecution }) 
                overscrollBehavior: "contain"
             }}>
             {executions.map((exec) => (
-               <ExecutionCard execution={exec} />
+               <ExecutionCard key={exec.id} execution={exec} />
             ))}
             </MenuList>
          </CustomTabPanel>
@@ -131,7 +129,7 @@ export const ExecutionsTabs:React.FC<Props> = ({ executions, chooseExecution }) 
                overscrollBehavior: "contain"
             }}>
             {executions.map((exec) => (
-               <ExecutionCard execution={exec} />
+               <ExecutionCard key={exec.id} execution={exec} />
             ))}
             </MenuList>
          </CustomTabPanel>
@@ -143,7 +141,7 @@ export const ExecutionsTabs:React.FC<Props> = ({ executions, chooseExecution }) 
                overscrollBehavior: "contain"
             }}>
             {executions.map((exec) => (
-               <ExecutionCard execution={exec} />
+               <ExecutionCard key={exec.id} execution={exec} />
             ))}
             </MenuList>
          </CustomTabPanel>
