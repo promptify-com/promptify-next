@@ -25,9 +25,6 @@ export const Executions: React.FC<Props> = ({
   newExecutionData,
   refetchExecutions,
 }) => {
-  const [searchText, setSearchText] = useState("");
-  const [favoriteSearch, setFavoriteSearch] = useState(false);
-  const [searchShown, setSearchShown] = useState(false);
 
   const allExecutions = executions
     .slice()
@@ -35,19 +32,6 @@ export const Executions: React.FC<Props> = ({
       (a, b) =>
         new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     )
-    .filter((exec) => {
-      return exec.prompt_executions.some((promptExec) =>
-        promptExec.output.toLowerCase().includes(searchText.toLowerCase())
-      );
-    });
-
-  const favoritedExecutions = allExecutions.filter(
-    (execution) => execution.is_favorite
-  );
-
-  const filteredExecutions = favoriteSearch
-    ? favoritedExecutions
-    : allExecutions;
 
   return (
     <Box sx={{ position: "relative" }}>
@@ -76,8 +60,8 @@ export const Executions: React.FC<Props> = ({
           >
             <CircularProgress size={20} />
           </Box>
-        ) : filteredExecutions.length > 0 ? (
-          filteredExecutions.map((execution, i) => {
+        ) : allExecutions.length > 0 ? (
+          allExecutions.map((execution, i) => {
             return (
               <ExecutionCard
                 key={i}
