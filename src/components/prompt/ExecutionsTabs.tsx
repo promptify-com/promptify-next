@@ -1,7 +1,7 @@
 import React from 'react'
 import { Box, MenuItem, MenuList, Stack, Tab, Tabs, Typography, alpha, useTheme } from '@mui/material'
 import { TemplatesExecutions } from '@/core/api/dto/templates';
-import { FeedOutlined, PushPin } from '@mui/icons-material';
+import { FeedOutlined, PriorityHighOutlined, PushPin } from '@mui/icons-material';
 import moment from 'moment';
 
 interface Props {
@@ -120,6 +120,14 @@ export const ExecutionsTabs:React.FC<Props> = ({ executions, chooseExecution }) 
                <ExecutionCard key={exec.id} execution={exec} />
             ))}
             </MenuList>
+            <Stack direction={"row"} alignItems={"center"} gap={1}
+               sx={{ bgcolor: "surface.2", color: "onSurface", p: "8px 16px" }}
+            >
+               <PriorityHighOutlined style={{ fontSize: 24, opacity: .75 }} />
+               <Typography sx={{ fontSize: 12, fontWeight: 400, color: "onSurface", opacity: .5 }}>
+                  Unpinned Sparked are recorded for 30 days
+               </Typography>
+            </Stack>
          </CustomTabPanel>
          <CustomTabPanel value={tabsValue} index={1}>
             <MenuList sx={{ 
