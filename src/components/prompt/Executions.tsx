@@ -50,9 +50,11 @@ export const Executions: React.FC<Props> = ({
     : allExecutions;
 
   return (
-    <Box sx={{ position: "relative", px: "16px" }}>
+    <Box sx={{ position: "relative" }}>
 
-      <ExecutionsHeader />
+      <ExecutionsHeader 
+        executions={executions}
+      />
 
       <Box sx={{ mx: { xs: 0, md: "15px" } }}>
         {newExecutionData && (

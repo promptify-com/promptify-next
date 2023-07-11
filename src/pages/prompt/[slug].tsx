@@ -393,7 +393,6 @@ const Prompt = () => {
                   sx={{
                     height: { xs: "calc(100% - 148px)", md: "100%" },
                     overflow: "auto",
-                    p: "16px 16px 0",
                     bgcolor: "surface.1",
                     borderTopLeftRadius: "16px",
                     borderTopRightRadius: "16px",
