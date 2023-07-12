@@ -31,7 +31,6 @@ export interface TemplateIds {
 
 export interface Engine {
   icon: string;
-
   id: number;
   input_type: string;
   name: string;

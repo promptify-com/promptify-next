@@ -15,7 +15,7 @@ import React, { useEffect } from "react";
 import { TopicImg } from "@/assets/icons/TopicImg";
 import { VictorIcon } from "@/assets/icons/VictorIcon";
 import { Popularity, TypePopularity } from "@/common/helpers/getFilter";
-import { Category } from "@/core/api/dto/templates";
+import { Category, Tag } from "@/core/api/dto/templates";
 import { useGetCategoriesQuery, useGetEnginesQuery } from "@/core/api/explorer";
 import { CustomListDetailTemplates } from "@/components/explorerDetails/CustomListTemplates";
 import { FilterIcon } from "@/assets/icons/FilterIcon";
@@ -40,10 +40,12 @@ export default function ExplorerDetail({
   collections,
   categories,
   engines,
+  tags,
 }: {
   collections: ICollection[];
   categories: Category[];
   engines: any[];
+  tags: Tag[];
 }) {
   const router = useRouter();
   const { category, subcategory, keyWordP } = router.query;
@@ -127,7 +129,11 @@ export default function ExplorerDetail({
       <Box sx={{ bgcolor: "surface.3" }}>
         <Grid display={"flex"}>
           <Sidebar />
-          <ExploreFilterSideBar categories={categories} />
+          <ExploreFilterSideBar
+            categories={categories}
+            engines={engines}
+            tags={tags}
+          />
         </Grid>
         <Box
           sx={{
@@ -158,6 +164,8 @@ export async function getServerSideProps() {
   try {
     const collectionResponse = await authClient.get("/api/meta/collections/");
     const collections = collectionResponse.data; // Extract the necessary data from the response
+    const tagsResponse = await authClient.get("/api/meta/tags/popular/");
+    const tags = tagsResponse.data;
     const enginesResponse = await authClient.get("/api/meta/engines");
     const engines = enginesResponse.data;
     const categoryRequest = await authClient.get("/api/meta/categories/");
@@ -167,6 +175,7 @@ export async function getServerSideProps() {
       props: {
         collections,
         categories,
+        tags,
         engines,
         title: "Promptify | Boost Your Creativity",
         description:
@@ -180,6 +189,7 @@ export async function getServerSideProps() {
         collections: [],
         categories: [],
         engines: [],
+        tags: [],
         title: "Promptify | Boost Your Creativity",
         description:
           "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
