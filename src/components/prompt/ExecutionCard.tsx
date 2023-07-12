@@ -1,19 +1,12 @@
 import React from "react";
 import {
   Box,
-  IconButton,
   Stack,
   Typography,
-  alpha,
-  useTheme,
 } from "@mui/material";
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { Subtitle } from "@/components/blocks";
 import { getMarkdownFromString } from "@/common/helpers/getMarkdownFromString";
-import moment from "moment";
-import PromptifyLogo from "@/assets/images/promptify.png";
-import { addToFavorite, removeFromFavorite } from "@/hooks/api/executions";
-import Image from "next/image";
 
 interface Props {
   execution: TemplatesExecutions;
@@ -21,8 +14,6 @@ interface Props {
 }
 
 export const ExecutionCard: React.FC<Props> = ({ execution, templateData }) => {
-  const { palette } = useTheme();
-  const [isFavorite, setIsFavorite] = React.useState(execution.is_favorite);
 
   const isImageOutput = (output: string): boolean => {
     return (
@@ -31,20 +22,6 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData }) => {
       output.endsWith(".jpeg") ||
       output.endsWith(".webp")
     );
-  };
-
-  // Function to toggle favorite status
-  const toggleFavorite = async () => {
-    try {
-      if (isFavorite) {
-        await removeFromFavorite(execution.id);
-      } else {
-        await addToFavorite(execution.id);
-      }
-      setIsFavorite(!isFavorite); // Update the state
-    } catch (error) {
-      console.error(error);
-    }
   };
 
   const copyFormattedOutput = async () => {

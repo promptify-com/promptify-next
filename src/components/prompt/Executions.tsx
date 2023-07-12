@@ -44,6 +44,7 @@ export const Executions: React.FC<Props> = ({
         executions={sortedExecutions}
         selectedExecution={selectedExecution}
         changeSelectedExecution={setSelectedExecution}
+        refetchExecutions={refetchExecutions}
       />
 
       <Box sx={{ mx: { xs: 0, md: "15px" } }}>

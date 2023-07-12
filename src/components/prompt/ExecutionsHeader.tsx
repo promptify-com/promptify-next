@@ -1,26 +1,46 @@
 import React, { useState } from 'react'
 import { Box, Button, ClickAwayListener, Grow, IconButton, InputBase, InputLabel, Paper, Popper, Stack, Typography, alpha, useTheme } from '@mui/material'
-import { Search as SearchIcon, PushPinOutlined, FeedOutlined, ArrowDropUp, ArrowDropDown, Undo, Redo } from "@mui/icons-material";
+import { Search as SearchIcon, PushPinOutlined, FeedOutlined, ArrowDropUp, ArrowDropDown, Undo, Redo, PushPin } from "@mui/icons-material";
 import { SubjectIcon } from "@/assets/icons/SubjectIcon";
 import { TemplatesExecutions } from '@/core/api/dto/templates';
 import { ExecutionsTabs } from './ExecutionsTabs';
+import { addToFavorite, removeFromFavorite } from '@/hooks/api/executions';
 
 interface Props {
    executions: TemplatesExecutions[];
    selectedExecution: TemplatesExecutions | null;
    changeSelectedExecution: (execution: TemplatesExecutions) => void;
+   refetchExecutions: () => void;
 }
 
 export const ExecutionsHeader: React.FC<Props> = ({ 
    executions,
    selectedExecution,
-   changeSelectedExecution
+   changeSelectedExecution,
+   refetchExecutions
  }) => {
    const  { palette } = useTheme();
    
    const [searchShown, setSearchShown] = useState(false);
    const [searchText, setSearchText] = useState("");
    const [presetsAnchor, setPresetsAnchor] = useState<HTMLElement | null>(null);
+   const [isFavorite, setIsFavorite] = useState(selectedExecution?.is_favorite || false);
+
+   const toggleFavorite = async () => {
+      if(selectedExecution === null) return;
+
+      try {
+         if (isFavorite) {
+            await removeFromFavorite(selectedExecution.id);
+         } else {
+            await addToFavorite(selectedExecution.id);
+         }
+         setIsFavorite(!isFavorite);
+         refetchExecutions();
+      } catch (error) {
+         console.error(error);
+      }
+   };
 
    return (
       <Box sx={{ 
@@ -36,17 +56,28 @@ export const ExecutionsHeader: React.FC<Props> = ({
                alignItems={"center"}
                gap={1}
             >
-               <IconButton sx={{ ...iconButtonStyle, opacity: .5 }}>
-                  <PushPinOutlined />
+               <IconButton sx={{ ...iconButtonStyle, opacity: .5 }}
+                  onClick={toggleFavorite}
+               >
+                  {isFavorite ? <PushPin /> : <PushPinOutlined />}
                </IconButton>
                <Button
-                  sx={{ color: "onSurface", fontSize: 13, fontWeight: 500 }}
+                  sx={{ 
+                     width: "360px",
+                     color: "onSurface", 
+                     fontSize: 13, 
+                     fontWeight: 500,
+                     justifyContent: "space-between",
+                     ":hover": { bgcolor: "action.hover" }
+                  }}
                   startIcon={<FeedOutlined />}
                   endIcon={Boolean(presetsAnchor) ? <ArrowDropUp /> : <ArrowDropDown />}
                   variant={"text"}
                   onClick={(e) => setPresetsAnchor(e.currentTarget)}
                >
-                  {selectedExecution?.title || "Choose execution"}
+                  <Box sx={{ width: "80%", overflow: "hidden", textAlign: "left" }}>
+                     {selectedExecution?.title || "Choose execution"}
+                  </Box>
                </Button>
                <Popper
                   open={Boolean(presetsAnchor)}
