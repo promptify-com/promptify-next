@@ -135,9 +135,6 @@ export const ExecutionsTabs:React.FC<Props> = ({ executions, chooseExecution }) 
             <Tab label="Pinned" {...a11yProps(1)} icon={<PushPin />} iconPosition='start'
                sx={{ ...tabStyle, color: `${alpha(palette.onSurface, .4)}` }}
             />
-            <Tab label="New Spark" {...a11yProps(2)} 
-               sx={{ ...tabStyle, color: `${alpha(palette.onSurface, .4)}` }}
-            />
          </Tabs>
          <CustomTabPanel value={tabsValue} index={0}>
             <Stack height={"100%"}>
@@ -162,9 +159,6 @@ export const ExecutionsTabs:React.FC<Props> = ({ executions, chooseExecution }) 
             <Stack height={"100%"}>
                {ExecutionsList(pinnedExecutions)}
             </Stack>
-         </CustomTabPanel>
-         <CustomTabPanel value={tabsValue} index={2}>
-            {/* <Box>New Spark</Box> */}
          </CustomTabPanel>
       </Box>
   )

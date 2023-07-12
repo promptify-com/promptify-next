@@ -44,13 +44,10 @@ export const ExecutionsHeader: React.FC<Props> = ({
             sx={{
                flex: 1,
                fontSize: 13, 
-               fontWeight: 500,
-               padding: "0px",
+               fontWeight: 400
             }}
             value={searchText}
-            onChange={(e) => {
-            setSearchText(e.target.value);
-            }}
+            onChange={(e) => setSearchText(e.target.value)}
          />
       </Stack>
    )
