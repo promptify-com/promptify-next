@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Box, Button, ClickAwayListener, Grow, IconButton, InputBase, InputLabel, Paper, Popper, Stack, Typography, alpha, useTheme } from '@mui/material'
-import { Search as SearchIcon, PushPinOutlined, FeedOutlined, ArrowDropUp, ArrowDropDown, Undo, Redo, PushPin } from "@mui/icons-material";
+import { Search as SearchIcon, PushPinOutlined, FeedOutlined, ArrowDropUp, ArrowDropDown, Undo, Redo, PushPin, Close } from "@mui/icons-material";
 import { SubjectIcon } from "@/assets/icons/SubjectIcon";
 import { TemplatesExecutions } from '@/core/api/dto/templates';
 import { ExecutionsTabs } from './ExecutionsTabs';
@@ -32,7 +32,7 @@ export const ExecutionsHeader: React.FC<Props> = ({
             boxShadow: "0px -1px 0px 0px #ECECF4 inset"
          }}
       >
-         <Box>
+         <Box sx={{ position: "relative" }}>
             <Stack
                direction={"row"}
                alignItems={"center"}
@@ -94,14 +94,16 @@ export const ExecutionsHeader: React.FC<Props> = ({
                      </Grow>
                   )}
                </Popper>
+               <IconButton sx={{ ...iconButtonStyle, ml: "auto" }}
+                  onClick={() => setSearchShown(!searchShown)}
+               >
+                  <SearchIcon />
+               </IconButton>
                {false && (
                <React.Fragment>
                <Typography sx={{ color: `${alpha(palette.onSurface, .2)}`, fontSize: 12, fontWeight: 400 }}>
                   saved...
                </Typography>
-               <IconButton sx={{ ...iconButtonStyle, ml: "auto" }}>
-                  <SearchIcon />
-               </IconButton>
                <IconButton sx={{ ...iconButtonStyle }}>
                   <Undo />
                </IconButton>
@@ -122,13 +124,13 @@ export const ExecutionsHeader: React.FC<Props> = ({
             </Stack>
             
             {searchShown && (
-            <Stack
-               direction={"row"}
-               alignItems={"center"}
-               spacing={2}
+            <Stack direction={"row"} alignItems={"center"} spacing={2}
                sx={{
+                  position: "absolute",
+                  top: 0,
+                  right: 0,
                   bgcolor: "surface.4",
-                  p: "10px 20px",
+                  p: "5px 10px",
                   borderRadius: "99px",
                   color: "onSurface",
                }}
@@ -140,7 +142,8 @@ export const ExecutionsHeader: React.FC<Props> = ({
                   fullWidth
                   sx={{
                      flex: 1,
-                     fontSize: 14,
+                     fontSize: 13, 
+                     fontWeight: 500,
                      padding: "0px",
                   }}
                   value={searchText}
@@ -148,11 +151,6 @@ export const ExecutionsHeader: React.FC<Props> = ({
                   setSearchText(e.target.value);
                   }}
                />
-               <InputLabel htmlFor="exec">
-                  <IconButton sx={{ border: "none", p: 0, ":hover": { color: "tertiary" } }}>
-                     <SearchIcon />
-                  </IconButton>
-               </InputLabel>
                <Button
                   variant="text"
                   sx={{
@@ -168,6 +166,11 @@ export const ExecutionsHeader: React.FC<Props> = ({
                >
                   Clear
                </Button>
+               <IconButton sx={{ border: "none", p: 0, ":hover": { color: "tertiary" } }}
+                  onClick={() => setSearchShown(false)}
+               >
+                  <Close />
+               </IconButton>
             </Stack>
             )}
          </Box>
