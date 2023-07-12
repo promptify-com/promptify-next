@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Box,
   CircularProgress,
@@ -26,10 +26,25 @@ export const Executions: React.FC<Props> = ({
   newExecutionData,
   refetchExecutions,
 }) => {
-
   const [selectedExecution, setSelectedExecution] = useState<TemplatesExecutions | null>(null);
   const [sortedExecutions, setSortedExecutions] = useState<TemplatesExecutions[]>([]);
+  const [firstLoad, setFirstLoad] = useState(true);
+  const containerRef = useRef<HTMLDivElement>(null);
 
+  // click listener to remove opacity layer on first loaded execution
+  useEffect(() => {
+    const handleClick = () => setFirstLoad(false)
+    
+    const container = containerRef.current;
+    container?.addEventListener('click', handleClick);
+
+    return () => container?.removeEventListener('click', handleClick);
+  }, []);
+  // If there is a new execution being generated, remove opacity layer
+  useEffect(() => {
+    if(newExecutionData) setFirstLoad(false)
+  }, [newExecutionData])
+  
   useEffect(() => {
     const sorted = [...executions].sort((a, b) => {
       return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
@@ -67,7 +82,8 @@ export const Executions: React.FC<Props> = ({
   }
 
   return (
-    <Box sx={{ 
+    <Box ref={containerRef}
+     sx={{ 
         minHeight: "calc(100% - 31px)",
         position: "relative" 
       }}
@@ -80,7 +96,7 @@ export const Executions: React.FC<Props> = ({
         pinExecution={pinExecution}
       />
 
-      <Box sx={{ mx: { xs: 0, md: "15px" } }}>
+      <Box sx={{ mx: "15px", opacity: firstLoad ? .5 : 1 }}>
         {
           // If there is a new execution being generated, show it first
           newExecutionData ? (
