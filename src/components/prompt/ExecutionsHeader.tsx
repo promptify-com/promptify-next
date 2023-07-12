@@ -10,14 +10,14 @@ interface Props {
    executions: TemplatesExecutions[];
    selectedExecution: TemplatesExecutions | null;
    changeSelectedExecution: (execution: TemplatesExecutions) => void;
-   refetchExecutions: () => void;
+   pinExecution: () => void;
 }
 
 export const ExecutionsHeader: React.FC<Props> = ({ 
    executions,
    selectedExecution,
    changeSelectedExecution,
-   refetchExecutions
+   pinExecution
  }) => {
    const  { palette } = useTheme();
    
@@ -25,22 +25,6 @@ export const ExecutionsHeader: React.FC<Props> = ({
    const [searchText, setSearchText] = useState("");
    const [presetsAnchor, setPresetsAnchor] = useState<HTMLElement | null>(null);
    const [isFavorite, setIsFavorite] = useState(selectedExecution?.is_favorite || false);
-
-   const toggleFavorite = async () => {
-      if(selectedExecution === null) return;
-
-      try {
-         if (isFavorite) {
-            await removeFromFavorite(selectedExecution.id);
-         } else {
-            await addToFavorite(selectedExecution.id);
-         }
-         setIsFavorite(!isFavorite);
-         refetchExecutions();
-      } catch (error) {
-         console.error(error);
-      }
-   };
 
    return (
       <Box sx={{ 
@@ -57,9 +41,9 @@ export const ExecutionsHeader: React.FC<Props> = ({
                gap={1}
             >
                <IconButton sx={{ ...iconButtonStyle, opacity: .5 }}
-                  onClick={toggleFavorite}
+                  onClick={pinExecution}
                >
-                  {isFavorite ? <PushPin /> : <PushPinOutlined />}
+                  {selectedExecution?.is_favorite ? <PushPin /> : <PushPinOutlined />}
                </IconButton>
                <Button
                   sx={{ 

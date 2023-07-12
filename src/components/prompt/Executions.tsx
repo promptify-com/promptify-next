@@ -9,6 +9,7 @@ import { ExecutionCard } from "./ExecutionCard";
 import { PromptLiveResponse } from "@/common/types/prompt";
 import { ExecutionCardGenerated } from "./ExecutionCardGenerated";
 import { ExecutionsHeader } from "./ExecutionsHeader";
+import { addToFavorite, removeFromFavorite } from "@/hooks/api/executions";
 
 interface Props {
   templateData: Templates;
@@ -27,15 +28,43 @@ export const Executions: React.FC<Props> = ({
 }) => {
 
   const [selectedExecution, setSelectedExecution] = useState<TemplatesExecutions | null>(null);
-
-  const sortedExecutions = [...executions]
-    .sort(
-      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-    )
+  const [sortedExecutions, setSortedExecutions] = useState<TemplatesExecutions[]>([]);
 
   useEffect(() => {
-    setSelectedExecution(sortedExecutions[0] || null)
+    const sorted = [...executions].sort((a, b) => {
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    });
+    setSortedExecutions(sorted)
+    setSelectedExecution(sorted[0] || null)
   }, [executions])
+
+  const pinExecution = async () => {
+    if(selectedExecution === null) return;
+
+    try {
+      if (selectedExecution.is_favorite) {
+        await removeFromFavorite(selectedExecution.id);
+      } else {
+        await addToFavorite(selectedExecution.id);
+      }
+
+      // Update state after API call is successful to avoid unnecessary refetch of executions
+      const updatedExecutions = sortedExecutions.map((exec) => {
+        if (exec.id === selectedExecution.id) {
+          return {
+            ...exec,
+            is_favorite: !exec.is_favorite,
+          };
+        }
+        return exec;
+      })
+      setSortedExecutions(updatedExecutions)
+      setSelectedExecution({ ...selectedExecution, is_favorite: !selectedExecution.is_favorite })
+      
+    } catch (error) {
+        console.error(error);
+    }
+  }
 
   return (
     <Box sx={{ position: "relative" }}>
@@ -44,7 +73,7 @@ export const Executions: React.FC<Props> = ({
         executions={sortedExecutions}
         selectedExecution={selectedExecution}
         changeSelectedExecution={setSelectedExecution}
-        refetchExecutions={refetchExecutions}
+        pinExecution={pinExecution}
       />
 
       <Box sx={{ mx: { xs: 0, md: "15px" } }}>
