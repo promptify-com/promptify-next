@@ -45,7 +45,7 @@ export const CategoryCard = ({ category }: { category: Category }) => {
           <Typography gutterBottom variant="h5" component="div" mt={-1}>
             {truncatedTilte(category.name)}
           </Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" color="text.secondary" fontSize={12}>
             482 Templates
           </Typography>
         </CardContent>

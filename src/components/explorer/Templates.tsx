@@ -6,7 +6,7 @@ import { ICollection } from "@/common/types/collection";
 import { FetchLoading } from "@/components/FetchLoading";
 import { Tag } from "@/core/api/dto/templates";
 import { useGetTemplatesByKeyWordAndTagQuery } from "@/core/api/explorer";
-import BestTemplate from "./BestTemplate";
+import CardTemplate from "../common/cards/CardTemplate";
 import CardCollection from "@/components/common/cards/CardCollection";
 import { useRouter } from "next/router";
 
@@ -179,7 +179,7 @@ export const CustomTemplates: React.FC<Props> = ({
             {!isFetching ? (
               !!templates && templates.length > 0 ? (
                 templates.map((el, idx) => (
-                  <BestTemplate
+                  <CardTemplate
                     onFavoriteClick={() => router.push(`/prompt/${el.slug}`)}
                     key={idx}
                     template={el}
