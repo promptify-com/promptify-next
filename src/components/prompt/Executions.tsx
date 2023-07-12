@@ -48,7 +48,7 @@ export const Executions: React.FC<Props> = ({
         await addToFavorite(selectedExecution.id);
       }
 
-      // Update state after API call is successful to avoid unnecessary refetch of executions
+      // Update state after API call is successful and avoid unnecessary refetch of executions
       const updatedExecutions = sortedExecutions.map((exec) => {
         if (exec.id === selectedExecution.id) {
           return {
@@ -77,35 +77,39 @@ export const Executions: React.FC<Props> = ({
       />
 
       <Box sx={{ mx: { xs: 0, md: "15px" } }}>
-        {newExecutionData && (
-          <ExecutionCardGenerated
-            execution={newExecutionData}
-            templateData={templateData}
-          />
-        )}
-
-        {isFetching ? (
-          <Box
-            sx={{
-              width: "100%",
-              mt: "40px",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <CircularProgress size={20} />
-          </Box>
-        ) : selectedExecution ? (
-          <ExecutionCard
-            execution={selectedExecution}
-            templateData={templateData}
-          />
-        ) : (
-          <Typography sx={{ mt: "40px", textAlign: "center" }}>
-            No execution found
-          </Typography>
-        )}
+        {
+          // If there is a new execution being generated, show it first
+          newExecutionData ? (
+            <ExecutionCardGenerated
+              execution={newExecutionData}
+              templateData={templateData}
+            />
+          ) : (
+            // If there is no new execution being generated, show the selected execution
+            isFetching ? (
+              <Box
+                sx={{
+                  width: "100%",
+                  mt: "40px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <CircularProgress size={20} />
+              </Box>
+            ) : selectedExecution ? (
+              <ExecutionCard
+                execution={selectedExecution}
+                templateData={templateData}
+              />
+            ) : (
+              <Typography sx={{ mt: "40px", textAlign: "center" }}>
+                No execution found
+              </Typography>
+            )
+          )
+        }
       </Box>
     </Box>
   );

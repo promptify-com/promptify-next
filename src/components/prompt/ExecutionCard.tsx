@@ -112,14 +112,3 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData }) => {
     </Stack>
   );
 };
-
-const cardButton = {
-  flex: 1,
-  display: "flex",
-  alignItems: "center",
-  border: "none",
-  borderRadius: "16px",
-  padding: "15px",
-  fontSize: 12,
-  gap: 10,
-};

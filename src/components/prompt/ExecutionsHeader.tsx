@@ -4,7 +4,6 @@ import { Search as SearchIcon, PushPinOutlined, FeedOutlined, ArrowDropUp, Arrow
 import { SubjectIcon } from "@/assets/icons/SubjectIcon";
 import { TemplatesExecutions } from '@/core/api/dto/templates';
 import { ExecutionsTabs } from './ExecutionsTabs';
-import { addToFavorite, removeFromFavorite } from '@/hooks/api/executions';
 
 interface Props {
    executions: TemplatesExecutions[];
@@ -24,7 +23,6 @@ export const ExecutionsHeader: React.FC<Props> = ({
    const [searchShown, setSearchShown] = useState(false);
    const [searchText, setSearchText] = useState("");
    const [presetsAnchor, setPresetsAnchor] = useState<HTMLElement | null>(null);
-   const [isFavorite, setIsFavorite] = useState(selectedExecution?.is_favorite || false);
 
    return (
       <Box sx={{ 
