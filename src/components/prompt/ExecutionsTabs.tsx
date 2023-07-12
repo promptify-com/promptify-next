@@ -98,15 +98,15 @@ export const ExecutionsTabs:React.FC<Props> = ({ executions, chooseExecution }) 
       )
    }
 
-   const ExecutionsList = (execs:TemplatesExecutions[]) => (
+   const ExecutionsList = (executionList:TemplatesExecutions[]) => (
       <MenuList sx={{ 
          flex: 1,
          p: 0, 
          overflow: "auto", 
          overscrollBehavior: "contain" 
       }}>
-         {execs.length ? (
-            executions.map((exec) => (
+         {executionList.length ? (
+            executionList.map((exec) => (
                <ExecutionCard key={exec.id} execution={exec} />
             ))
          ) : (
