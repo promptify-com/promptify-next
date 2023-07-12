@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Box, Button, ClickAwayListener, Grow, IconButton, InputBase, InputLabel, Paper, Popper, Stack, Typography, alpha, useTheme } from '@mui/material'
+import { Box, Button, ClickAwayListener, Collapse, Grow, IconButton, InputBase, InputLabel, Paper, Popper, Stack, Typography, alpha, useTheme } from '@mui/material'
 import { Search as SearchIcon, PushPinOutlined, FeedOutlined, ArrowDropUp, ArrowDropDown, Undo, Redo, PushPin, Close } from "@mui/icons-material";
 import { SubjectIcon } from "@/assets/icons/SubjectIcon";
 import { TemplatesExecutions } from '@/core/api/dto/templates';
@@ -23,6 +23,37 @@ export const ExecutionsHeader: React.FC<Props> = ({
    const [searchShown, setSearchShown] = useState(false);
    const [searchText, setSearchText] = useState("");
    const [presetsAnchor, setPresetsAnchor] = useState<HTMLElement | null>(null);
+
+   const searchInput = (
+      <Stack direction={"row"} alignItems={"center"} spacing={1}
+         sx={{
+            position: "sticky",
+            top: 0,
+            right: 0,
+            bgcolor: "surface.2",
+            p: "5px 10px",
+            borderRadius: "99px",
+            color: "onSurface",
+         }}
+      >
+         <SubjectIcon />
+         <InputBase
+            id="exec"
+            placeholder={"Search..."}
+            fullWidth
+            sx={{
+               flex: 1,
+               fontSize: 13, 
+               fontWeight: 500,
+               padding: "0px",
+            }}
+            value={searchText}
+            onChange={(e) => {
+            setSearchText(e.target.value);
+            }}
+         />
+      </Stack>
+   )
 
    return (
       <Box sx={{ 
@@ -94,85 +125,41 @@ export const ExecutionsHeader: React.FC<Props> = ({
                      </Grow>
                   )}
                </Popper>
-               <IconButton sx={{ ...iconButtonStyle, ml: "auto" }}
-                  onClick={() => setSearchShown(!searchShown)}
-               >
-                  <SearchIcon />
-               </IconButton>
+
+               <Stack direction={"row"} alignItems={"center"} ml="auto">
+                  <Collapse orientation="horizontal" in={searchShown}>
+                     {searchInput}
+                  </Collapse>
+                  <IconButton sx={{ ...iconButtonStyle }}
+                     onClick={() => setSearchShown(!searchShown)}
+                  >
+                     {searchShown ? <Close /> : <SearchIcon />}
+                  </IconButton>
+               </Stack>
+
                {false && (
-               <React.Fragment>
-               <Typography sx={{ color: `${alpha(palette.onSurface, .2)}`, fontSize: 12, fontWeight: 400 }}>
-                  saved...
-               </Typography>
-               <IconButton sx={{ ...iconButtonStyle }}>
-                  <Undo />
-               </IconButton>
-               <IconButton sx={{ ...iconButtonStyle }}>
-                  <Redo />
-               </IconButton>
-               <Button
-                  sx={{ color: "onSurface", fontSize: 13, fontWeight: 500 }}
-                  startIcon={<FeedOutlined />}
-                  endIcon={Boolean(presetsAnchor) ? <ArrowDropUp /> : <ArrowDropDown />}
-                  variant={"text"}
-                  onClick={(e) => setPresetsAnchor(e.currentTarget)}
-               >
-                  Export
-               </Button> 
-               </React.Fragment>
+                  <React.Fragment>
+                  <Typography sx={{ color: `${alpha(palette.onSurface, .2)}`, fontSize: 12, fontWeight: 400 }}>
+                     saved...
+                  </Typography>
+                  <IconButton sx={{ ...iconButtonStyle }}>
+                     <Undo />
+                  </IconButton>
+                  <IconButton sx={{ ...iconButtonStyle }}>
+                     <Redo />
+                  </IconButton>
+                  <Button
+                     sx={{ color: "onSurface", fontSize: 13, fontWeight: 500 }}
+                     startIcon={<FeedOutlined />}
+                     endIcon={Boolean(presetsAnchor) ? <ArrowDropUp /> : <ArrowDropDown />}
+                     variant={"text"}
+                     onClick={(e) => setPresetsAnchor(e.currentTarget)}
+                  >
+                     Export
+                  </Button> 
+                  </React.Fragment>
                )}
             </Stack>
-            
-            {searchShown && (
-            <Stack direction={"row"} alignItems={"center"} spacing={2}
-               sx={{
-                  position: "absolute",
-                  top: 0,
-                  right: 0,
-                  bgcolor: "surface.4",
-                  p: "5px 10px",
-                  borderRadius: "99px",
-                  color: "onSurface",
-               }}
-            >
-               <SubjectIcon />
-               <InputBase
-                  id="exec"
-                  placeholder={"Search..."}
-                  fullWidth
-                  sx={{
-                     flex: 1,
-                     fontSize: 13, 
-                     fontWeight: 500,
-                     padding: "0px",
-                  }}
-                  value={searchText}
-                  onChange={(e) => {
-                  setSearchText(e.target.value);
-                  }}
-               />
-               <Button
-                  variant="text"
-                  sx={{
-                     minWidth: 0,
-                     p: 0,
-                     color: "onSurface",
-                     fontSize: 13,
-                     fontWeight: 500,
-                     "&:hover": { opacity: 0.8 },
-                  }}
-                  disabled={!searchText.length}
-                  onClick={() => setSearchText("")}
-               >
-                  Clear
-               </Button>
-               <IconButton sx={{ border: "none", p: 0, ":hover": { color: "tertiary" } }}
-                  onClick={() => setSearchShown(false)}
-               >
-                  <Close />
-               </IconButton>
-            </Stack>
-            )}
          </Box>
       </Box>
    )
