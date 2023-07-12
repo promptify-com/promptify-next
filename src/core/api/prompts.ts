@@ -13,7 +13,7 @@ import { authClient } from "../../common/axios";
 export const promptsApi = createApi({
   reducerPath: "promptsApi",
   baseQuery: axiosBaseQuery({
-    baseUrl: process.env.NEXT_PUBLIC_API_URL || "",
+    baseUrl: process.env.NEXT_PUBLIC_API_URL ?? "",
   }),
   endpoints: (builder) => {
     return {

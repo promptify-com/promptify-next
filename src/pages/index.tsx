@@ -98,7 +98,7 @@ function Home({
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const authorizationCode = urlParams.get("code");
     preLogin();

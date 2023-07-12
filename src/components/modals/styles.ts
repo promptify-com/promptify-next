@@ -1,0 +1,44 @@
+export const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    maxHeight: '70vh',
+    width: '600px',
+    bgcolor: 'background.paper',
+    boxShadow: 24,
+    p: 4,
+    display: 'flex',
+    flexDirection: 'column',
+    overflow: 'scroll',
+    overscrollBehavior: 'contain',
+  };
+  
+  export const selectStyle = {
+    width: '250px',
+    ".Mui-disabled .MuiOutlinedInput-notchedOutline": {
+      border: "none",
+      bgcolor: "grey.100",
+    }
+  };
+  
+  export const boxStyle = {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: '100px',
+    marginTop: '25px',
+  };
+  
+  export const buttonBoxStyle = {
+    display: 'flex',
+    justifyContent: 'center',
+    alignSelf: 'center',
+    width: '250px',
+    marginTop: '50px',
+  };
+  
+  export const typographyStyle = {
+    fontSize: '20px',
+    fontWeight: '400',
+  };
