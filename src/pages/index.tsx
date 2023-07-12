@@ -395,7 +395,7 @@ export async function getServerSideProps() {
     const tags = tagsResponse.data;
     const categoryRequest = await authClient.get("/api/meta/categories/");
     const categories = categoryRequest.data;
-
+    
     return {
       props: {
         collections,

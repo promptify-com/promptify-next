@@ -11,14 +11,12 @@ import {
   IconButton,
   List,
   ListItemButton,
-  ListItemIcon,
   ListItemText,
   ListSubheader,
   Typography,
 } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import React, { useState } from "react";
-import { boolean } from "yup";
 
 interface Props {
   categories: Category[];

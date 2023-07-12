@@ -1,5 +1,6 @@
 import {
   Box,
+  Card,
   ClickAwayListener,
   Grid,
   Grow,
@@ -34,6 +35,7 @@ import { authClient } from "@/common/axios";
 import { Sidebar } from "@/components/blocks/VHeader/Sidebar";
 import { Header } from "@/components/blocks/VHeader";
 import { ExploreFilterSideBar } from "@/components/explorer/ExploreFilterSideBar";
+import { CategoryCard } from "@/components/common/CategoryCard";
 const label = { inputProps: { "aria-label": "Color switch demo" } };
 
 export default function ExplorerDetail({
@@ -138,7 +140,7 @@ export default function ExplorerDetail({
         <Box
           sx={{
             minHeight: "100vh",
-            width: { md: "calc(100% - 96px - 230px)" },
+            width: { xs: "100%", md: "calc(100% - 96px - 230px)" },
             ml: { md: "auto" },
           }}
         >
@@ -150,8 +152,18 @@ export default function ExplorerDetail({
               }}
               display={"flex"}
               direction={"column"}
+              gap={1}
             >
               <Typography fontSize={19}> Browse Category </Typography>
+              <Grid container spacing={3}>
+                {categories
+                  ?.filter((mainCat) => !mainCat.parent)
+                  .map((category) => (
+                    <Grid item xs={6} md={3}>
+                      <CategoryCard category={category} />
+                    </Grid>
+                  ))}
+              </Grid>
             </Grid>
           </Box>
         </Box>
