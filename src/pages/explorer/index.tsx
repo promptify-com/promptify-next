@@ -73,7 +73,7 @@ export default function ExplorerDetail({
                 {categories
                   ?.filter((mainCat) => !mainCat.parent)
                   .map((category) => (
-                    <Grid item xs={6} md={3}>
+                    <Grid key={category.id} item xs={6} md={3}>
                       <CategoryCard category={category} />
                     </Grid>
                   ))}
@@ -88,36 +88,37 @@ export default function ExplorerDetail({
                     width: "100%",
                   }}
                 >
-                  {!isFetching ? (
-                    !!templates && templates.length > 0 ? (
-                      templates.map((el: any, idx) => (
-                        <Grid item xs={12}>
-                          <CardTemplate
-                            onFavoriteClick={() =>
-                              router.push(`/prompt/${el.slug}`)
-                            }
-                            key={idx}
-                            template={el}
-                            lengthTemplate={templates.length}
-                          />
-                        </Grid>
-                      ))
-                    ) : (
-                      <Grid
-                        sx={{
-                          display: "flex",
-                          flexDirection: "column",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          width: "100%",
-                        }}
-                      >
-                        <NotFoundIcon />
+                  {!isFetching &&
+                    !!templates &&
+                    templates.length > 0 &&
+                    templates.map((el: any, idx) => (
+                      <Grid key={el.id} item xs={12}>
+                        <CardTemplate
+                          onFavoriteClick={() =>
+                            router.push(`/prompt/${el.slug}`)
+                          }
+                          key={el.id}
+                          template={el}
+                          lengthTemplate={templates.length}
+                        />
                       </Grid>
-                    )
-                  ) : (
-                    <FetchLoading />
+                    ))}
+
+                  {!isFetching && (!templates || templates.length === 0) && (
+                    <Grid
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        width: "100%",
+                      }}
+                    >
+                      <NotFoundIcon />
+                    </Grid>
                   )}
+
+                  {isFetching && <FetchLoading />}
                 </Grid>
               </Grid>
             </Grid>
