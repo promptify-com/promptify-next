@@ -67,7 +67,11 @@ export const Executions: React.FC<Props> = ({
   }
 
   return (
-    <Box sx={{ position: "relative" }}>
+    <Box sx={{ 
+        minHeight: "calc(100% - 31px)",
+        position: "relative" 
+      }}
+    >
 
       <ExecutionsHeader 
         executions={sortedExecutions}
