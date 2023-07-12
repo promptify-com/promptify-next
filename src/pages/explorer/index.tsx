@@ -35,11 +35,10 @@ import { authClient } from "@/common/axios";
 import { Sidebar } from "@/components/blocks/VHeader/Sidebar";
 import { Header } from "@/components/blocks/VHeader";
 import { ExploreFilterSideBar } from "@/components/explorer/ExploreFilterSideBar";
-import { CategoryCard } from "@/components/common/CategoryCard";
+import { CategoryCard } from "@/components/common/cards/CardCategory";
 const label = { inputProps: { "aria-label": "Color switch demo" } };
 
 export default function ExplorerDetail({
-  collections,
   categories,
   engines,
   tags,
@@ -174,8 +173,7 @@ export default function ExplorerDetail({
 
 export async function getServerSideProps() {
   try {
-    const collectionResponse = await authClient.get("/api/meta/collections/");
-    const collections = collectionResponse.data; // Extract the necessary data from the response
+
     const tagsResponse = await authClient.get("/api/meta/tags/popular/");
     const tags = tagsResponse.data;
     const enginesResponse = await authClient.get("/api/meta/engines");
@@ -185,7 +183,6 @@ export async function getServerSideProps() {
 
     return {
       props: {
-        collections,
         categories,
         tags,
         engines,

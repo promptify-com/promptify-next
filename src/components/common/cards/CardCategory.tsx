@@ -1,14 +1,14 @@
-import { Category } from "@/core/api/dto/templates";
-import CardImg from "@/assets/images/cardImg.png";
 import Image from "next/image";
 import {
   Box,
   Card,
   CardActionArea,
   CardContent,
-  CardMedia,
   Typography,
 } from "@mui/material";
+
+import CardImg from "@/assets/images/cardImg.png";
+import { Category } from "@/core/api/dto/templates";
 
 export const CategoryCard = ({ category }: { category: Category }) => {
   const truncatedTilte = (str: string) => {
@@ -20,6 +20,7 @@ export const CategoryCard = ({ category }: { category: Category }) => {
   return (
     <Card
       title={category.name}
+      elevation={0}
       sx={{
         maxWidth: "230px",
         width: "100%",
@@ -30,7 +31,6 @@ export const CategoryCard = ({ category }: { category: Category }) => {
           bgcolor: "white",
         },
       }}
-      elevation={0}
     >
       <CardActionArea>
         <Box
