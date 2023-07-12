@@ -4,12 +4,16 @@ import {
   Box,
   Button,
   Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Divider,
   Grid,
   IconButton,
   Palette,
   Snackbar,
   Stack,
+  TextField,
   ThemeProvider,
   Typography,
   alpha,
@@ -59,6 +63,7 @@ const Prompt = () => {
   const [newExecutionData, setNewExecutionData] = useState<PromptLiveResponse | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [currentGeneratedPrompt, setCurrentGeneratedPrompt] = useState<Prompts | null>(null);
+  const [openTitleModal, setOpenTitleModal] = useState(false);
   const [templateView] = useTemplateView();
   const theme = useTheme();
   const [palette, setPalette] = useState(theme.palette);
@@ -196,14 +201,56 @@ const Prompt = () => {
       });
   };
 
-  const newTheme = createTheme({ ...theme, palette });
+  const dynamicTheme = createTheme({ ...theme, palette });
+
+  const closeTitleModal = () => {
+    setOpenTitleModal(false);
+  }
+
+  const ExecutionTitleModal = (
+    <Dialog open={openTitleModal} onClose={closeTitleModal}
+      PaperProps={{
+        sx: { bgcolor: "surface.1" }
+      }}
+    >
+      <DialogTitle sx={{ fontSize: 16, fontWeight: 400 }}>Enter a title for your new spark:</DialogTitle>
+      <DialogContent>
+        <TextField
+          sx={{
+            width: "100%",
+            ".MuiInputBase-input": {
+              p: 0,
+              color: "onSurface",
+              fontSize: 48,
+              fontWeight: 400,
+              "&::placeholder": {
+                color: "grey.600",
+                opacity: 1
+              }
+            },
+            ".MuiOutlinedInput-notchedOutline": {
+              border: 0,
+            },
+            ".MuiInputBase-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+              border: 0,
+            },
+          }}
+          placeholder={"Title..."}
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={closeTitleModal}>Skip</Button>
+        <Button onClick={closeTitleModal}>Save</Button>
+      </DialogActions>
+    </Dialog>
+  )
 
   if (fetchedTemplateError || templateExecutionsError)
     return <div>Something went wrong...</div>;
 
   return (
     <>
-      <ThemeProvider theme={newTheme}>
+      <ThemeProvider theme={dynamicTheme}>
         <Box sx={{ bgcolor: "surface.3" }}>
           <Sidebar />
           <Box sx={{ 
@@ -529,6 +576,8 @@ const Prompt = () => {
                 </Grid> */}
               </Grid>
             )}
+
+            {ExecutionTitleModal}
 
             <Snackbar
               anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
