@@ -28,6 +28,7 @@ import {
   useGetPromptTemplatesExecutionsQuery,
   useGetPromptTemplateBySlugQuery,
   useTemplateView,
+  useGetExecutionTemplateQuery,
 } from "../../core/api/prompts";
 import { Templates } from "../../core/api/dto/templates";
 import { PageLoading } from "../../components/PageLoading";
@@ -45,6 +46,7 @@ import { DetailsCard } from "@/components/prompt/DetailsCard";
 import { Prompts } from "@/core/api/dto/prompts";
 import { updateExecution } from "@/hooks/api/executions";
 import { PromptLiveResponse } from "@/common/types/prompt";
+import { skipToken } from "@reduxjs/toolkit/dist/query";
 
 const Prompt = () => {
   const router = useRouter();
@@ -64,6 +66,11 @@ const Prompt = () => {
   const slug = router.query?.slug;
   // TODO: redirect to 404 page if slug is not found
   const slugValue = ( Array.isArray(slug) ? slug[0] : slug || "" ) as string;
+
+  // Fetch new execution data after generating and retrieving its id
+  const { data: fetchedNewExecution } = useGetExecutionTemplateQuery(
+    newExecutionData?.id ? newExecutionData?.id : skipToken
+  );
 
   const {
     data: fetchedTemplate,
@@ -198,9 +205,10 @@ const Prompt = () => {
   }
   const saveExecutionTitle = async () => {
     if (executionTitle.length) {
-      if(newExecutionData?.id) {
+      if(fetchedNewExecution?.id) {
         try {
-          await updateExecution(newExecutionData.id, { 
+          await updateExecution(fetchedNewExecution?.id, { 
+            ...fetchedNewExecution,
             title: executionTitle
           })
         } 
