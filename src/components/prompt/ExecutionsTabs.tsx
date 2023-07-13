@@ -40,7 +40,7 @@ const CustomTabPanel = (props: TabPanelProps) => {
    );
 }
 
-function a11yProps(index: number) {
+const a11yProps = (index: number) => {
    return {
       id: `simple-tab-${index}`,
       'aria-controls': `simple-tabpanel-${index}`,

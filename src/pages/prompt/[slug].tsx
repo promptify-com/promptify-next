@@ -13,6 +13,8 @@ IconButton,
 Palette,
 Snackbar,
 Stack,
+Tab,
+Tabs,
 TextField,
 ThemeProvider,
 Typography,
@@ -33,7 +35,7 @@ import {
 import { Templates } from "../../core/api/dto/templates";
 import { PageLoading } from "../../components/PageLoading";
 import { useWindowSize } from "usehooks-ts";
-import { Close, KeyboardArrowDown, Loop, MoreHoriz } from "@mui/icons-material";
+import { ArtTrack, Close, KeyboardArrowDown, Loop, MoreHoriz } from "@mui/icons-material";
 import useToken from "../../hooks/useToken";
 import { LogoApp } from "../../assets/icons/LogoApp";
 import { useRouter } from "next/router";
@@ -47,6 +49,39 @@ import { Prompts } from "@/core/api/dto/prompts";
 import { updateExecution } from "@/hooks/api/executions";
 import { PromptLiveResponse } from "@/common/types/prompt";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
+
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
+}
+
+const CustomTabPanel = (props: TabPanelProps) => {
+   const { children, value, index, ...other } = props;
+
+   return (
+      <Box
+         role="tabpanel"
+         hidden={value !== index}
+         id={`simple-tabpanel-${index}`}
+         aria-labelledby={`simple-tab-${index}`}
+         {...other}
+      >
+         {value === index && (
+            <React.Fragment>
+               {children}
+            </React.Fragment>
+         )}
+      </Box>
+   );
+}
+
+const a11yProps = (index: number) => {
+   return {
+      id: `simple-tab-${index}`,
+      'aria-controls': `simple-tabpanel-${index}`,
+   };
+}
 
 const Prompt = () => {
   const router = useRouter();
@@ -92,6 +127,11 @@ const Prompt = () => {
   } = useGetPromptTemplatesExecutionsQuery(id ? +id : 1, {
       refetchOnMountOrArgChange: true,
   });
+
+  const [tabsValue, setTabsValue] = React.useState(0);
+  const changeTab = (e: React.SyntheticEvent, newValue: number) => {
+    setTabsValue(newValue);
+  };
 
   useEffect(() => {
     if (fetchedTemplate) {
@@ -363,47 +403,55 @@ const Prompt = () => {
                     detailsOpened={detailsOpened} 
                     toggleDetails={() => setDetailsOpened(!detailsOpened)}
                   />
-                  <GeneratorForm
-                    templateData={templateData}
-                    setNewExecutionData={setNewExecutionData}
-                    isGenerating={isGenerating}
-                    setIsGenerating={setIsGenerating}
-                    onError={setErrorMessage}
-                    exit={() => setGeneratorOpened(false)}
-                  />
-                  {detailsOpened && (
-                    <Dialog
-                      open={true}
-                      onClose={() => setDetailsOpened(false)}
-                      disablePortal 
-                      hideBackdrop
-                      PaperProps={{
-                        sx: {
-                          m: "16px",
-                          width: "calc(100% - 32px)",
-                          bgcolor: "surface.1",
-                          borderRadius: "16px"
-                        }
-                      }}
-                      sx={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        height: 'fit-content'
-                      }}
-                    >
-                      <DetailsCard 
-                        templateData={templateData} 
-                        detailsOpened={detailsOpened} 
-                        toggleDetails={() => setDetailsOpened(!detailsOpened)}
-                      />
-                      <Details 
-                        templateData={templateData}
-                        updateTemplateData={setTemplateData}
-                      />
-                    </Dialog>
-                  )}
+                  <Box>
+                     <Tabs
+                        value={tabsValue} 
+                        onChange={changeTab}
+                        textColor="primary"
+                        indicatorColor="primary"
+                        variant="fullWidth"
+                        sx={{ boxShadow: "0px -1px 0px 0px #ECECF4 inset" }}
+                     >
+                        <Tab label="(x) Variables" {...a11yProps(0)} 
+                          sx={{ 
+                            fontSize: 13, 
+                            fontWeight: 500, 
+                            textTransform: "none",
+                            p: "9px 16px",
+                            minHeight: "auto",
+                            bgcolor: "surface.1",
+                            color: `${alpha(palette.onSurface, .5)}` 
+                          }}
+                        />
+                        <Tab label="Pinned" {...a11yProps(1)} icon={<ArtTrack />} iconPosition='start'
+                          sx={{ 
+                            fontSize: 13, 
+                            fontWeight: 500, 
+                            textTransform: "none",
+                            p: "9px 16px",
+                            minHeight: "auto",
+                            bgcolor: "surface.1",
+                            color: `${alpha(palette.onSurface, .5)}`
+                          }}
+                        />
+                     </Tabs>
+                     <CustomTabPanel value={tabsValue} index={0}>
+                        <GeneratorForm
+                          templateData={templateData}
+                          setNewExecutionData={setNewExecutionData}
+                          isGenerating={isGenerating}
+                          setIsGenerating={setIsGenerating}
+                          onError={setErrorMessage}
+                          exit={() => setGeneratorOpened(false)}
+                        />
+                     </CustomTabPanel>
+                     <CustomTabPanel value={tabsValue} index={1}>
+                        <Details 
+                          templateData={templateData}
+                          updateTemplateData={setTemplateData}
+                        />
+                     </CustomTabPanel>
+                  </Box>
                 </Grid>
 
                 {windowWidth < 900 && (
