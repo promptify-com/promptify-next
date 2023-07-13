@@ -1,24 +1,24 @@
 import React, { useEffect, useState } from "react";
 import {
-  Alert,
-  Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Divider,
-  Grid,
-  IconButton,
-  Palette,
-  Snackbar,
-  Stack,
-  TextField,
-  ThemeProvider,
-  Typography,
-  alpha,
-  createTheme,
-  useTheme,
+Alert,
+Box,
+Button,
+Dialog,
+DialogActions,
+DialogContent,
+DialogTitle,
+Divider,
+Grid,
+IconButton,
+Palette,
+Snackbar,
+Stack,
+TextField,
+ThemeProvider,
+Typography,
+alpha,
+createTheme,
+useTheme,
 } from "@mui/material";
 import materialDynamicColors from "material-dynamic-colors";
 import { mix } from "polished";
@@ -29,7 +29,7 @@ import {
   useGetPromptTemplateBySlugQuery,
   useTemplateView,
 } from "../../core/api/prompts";
-import { Templates, TemplatesExecutions } from "../../core/api/dto/templates";
+import { Templates } from "../../core/api/dto/templates";
 import { PageLoading } from "../../components/PageLoading";
 import { useWindowSize } from "usehooks-ts";
 import { Close, KeyboardArrowDown, Loop, MoreHoriz } from "@mui/icons-material";
@@ -43,19 +43,8 @@ import { authClient } from "@/common/axios";
 import { Sidebar } from "@/components/blocks/VHeader/Sidebar";
 import { DetailsCard } from "@/components/prompt/DetailsCard";
 import { Prompts } from "@/core/api/dto/prompts";
-
-export interface PromptLiveResponseData {
-  message: string;
-  prompt: number;
-  created_at: Date;
-  isLoading?: boolean;
-  isCompleted?: boolean;
-  isFailed?: boolean;
-}
-export interface PromptLiveResponse {
-  created_at: Date;
-  data: PromptLiveResponseData[] | undefined;
-}
+import { updateExecution } from "@/hooks/api/executions";
+import { PromptLiveResponse } from "@/common/types/prompt";
 
 const Prompt = () => {
   const router = useRouter();
@@ -64,6 +53,7 @@ const Prompt = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [currentGeneratedPrompt, setCurrentGeneratedPrompt] = useState<Prompts | null>(null);
   const [openTitleModal, setOpenTitleModal] = useState(false);
+  const [executionTitle, setExecutionTitle] = useState("");
   const [templateView] = useTemplateView();
   const theme = useTheme();
   const [palette, setPalette] = useState(theme.palette);
@@ -127,9 +117,7 @@ const Prompt = () => {
     if (!isGenerating && newExecutionData?.data?.length) {
       const promptNotCompleted = newExecutionData.data.find(execData => !execData.isCompleted);
       if (!promptNotCompleted) {
-        refetchTemplateExecutions();
-        setNewExecutionData(null);
-        setCurrentGeneratedPrompt(null)
+        setOpenTitleModal(true)
       }
     }
   }, [isGenerating, newExecutionData]);
@@ -204,11 +192,33 @@ const Prompt = () => {
   const dynamicTheme = createTheme({ ...theme, palette });
 
   const closeTitleModal = () => {
-    setOpenTitleModal(false);
+    setOpenTitleModal(false)
+    setExecutionTitle("")
+    refetchTemplateExecutions()
+  }
+  const saveExecutionTitle = async () => {
+    if (executionTitle.length) {
+      if(newExecutionData?.id) {
+        try {
+          await updateExecution(newExecutionData.id, { 
+            title: executionTitle
+          })
+        } 
+        catch(err) {
+          console.error(err)
+        }
+      }
+      
+      refetchTemplateExecutions()
+      setNewExecutionData(null)
+      setCurrentGeneratedPrompt(null)
+      setOpenTitleModal(false)
+      setExecutionTitle("")
+    }
   }
 
   const ExecutionTitleModal = (
-    <Dialog open={openTitleModal} onClose={closeTitleModal}
+    <Dialog open={openTitleModal}
       PaperProps={{
         sx: { bgcolor: "surface.1" }
       }}
@@ -217,30 +227,32 @@ const Prompt = () => {
       <DialogContent>
         <TextField
           sx={{
-            width: "100%",
             ".MuiInputBase-input": {
               p: 0,
               color: "onSurface",
               fontSize: 48,
               fontWeight: 400,
-              "&::placeholder": {
-                color: "grey.600",
-                opacity: 1
-              }
+              "&::placeholder": { color: "grey.600" }
             },
-            ".MuiOutlinedInput-notchedOutline": {
-              border: 0,
-            },
-            ".MuiInputBase-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
-              border: 0,
-            },
+            ".MuiOutlinedInput-notchedOutline": { border: 0 },
+            ".MuiInputBase-root.Mui-focused .MuiOutlinedInput-notchedOutline": { border: 0 },
           }}
           placeholder={"Title..."}
+          onChange={(e) => setExecutionTitle(e.target.value)}
         />
       </DialogContent>
-      <DialogActions>
-        <Button onClick={closeTitleModal}>Skip</Button>
-        <Button onClick={closeTitleModal}>Save</Button>
+      <DialogActions sx={{ p: "16px", gap: 2 }}>
+        <Button sx={{ minWidth: "auto", p: 0, color: "grey.600" }}
+          onClick={closeTitleModal} 
+        >
+          Skip
+        </Button>
+        <Button sx={{ ":disabled": { color: "grey.600" } ,":hover": { bgcolor: "action.hover" } }}
+          disabled={!executionTitle.length}
+          onClick={saveExecutionTitle} 
+        >
+          Save
+        </Button>
       </DialogActions>
     </Dialog>
   )

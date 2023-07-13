@@ -8,6 +8,7 @@ export interface PromptLiveResponseData {
 }
 
 export interface PromptLiveResponse {
+  id?: number;
   created_at: Date;
   data: PromptLiveResponseData[] | undefined;
 }

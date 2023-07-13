@@ -70,6 +70,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   const { width: windowWidth } = useWindowSize();
 
   const [generatingResponse, setGeneratingResponse] = useState<PromptLiveResponse | null>(null);
+  const [newExecutionId, setNewExecutionId] = useState<number | null>(null);
   const [resPrompts, setResPrompts] = useState<ResPrompt[]>([]);
   const [lastExecution, setLastExecution] = useState<ResPrompt[] | null>(null);
   const [resInputs, setResInputs] = useState<ResInputs[]>([]);
@@ -215,6 +216,9 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
             const parseData = JSON.parse(msg.data.replace(/'/g, '"'));
             const message = parseData.message;
             const prompt = parseData.prompt_id;
+            const executionId = parseData.template_execution_id;
+
+            if(executionId) setNewExecutionId(executionId);
 
             if (msg.event === 'infer' && msg.data) {
               if (message) {
@@ -235,7 +239,8 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
                 }
 
                 tempData = [...tempArr];
-                setGeneratingResponse(prevState => ({ 
+                setGeneratingResponse(prevState => ({
+                  ...prevState,
                   created_at: prevState?.created_at || new Date(), 
                   data: tempArr 
                 }));
@@ -275,7 +280,8 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
               }
 
               tempData = [...tempArr];
-              setGeneratingResponse(prevState => ({ 
+              setGeneratingResponse(prevState => ({
+                ...prevState,
                 created_at: prevState?.created_at || new Date(), 
                 data: tempArr 
               }));
@@ -296,6 +302,16 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
       }
     );
   };
+
+  useEffect(() => {
+    if (newExecutionId) {
+      setGeneratingResponse(prevState => ({
+        id: newExecutionId,
+        created_at: prevState?.created_at || new Date(),
+        data: prevState?.data || [] 
+      }));
+    }
+  }, [newExecutionId]);
 
   useEffect(() => {
     if (generatingResponse) setNewExecutionData(generatingResponse);
