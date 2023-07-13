@@ -101,10 +101,8 @@ export interface TemplatesExecutions {
   is_favorite: boolean;
 }
 
-export interface TemplatesExecutionsPost {
-  prompt: number;
-  contextual_overrides: any[];
-  prompt_params: any;
+export interface ITemplateExecutionPut {
+  title?: string;
 }
 
 export interface PromptExecutions {
