@@ -38,6 +38,10 @@ export const CategoryCard = ({ category }: { category: Category }) => {
           width={"100%"}
           height={"180px"}
           component={"div"}
+          sx={{
+            borderRadius: "27px",
+            overflow: "hidden",
+          }}
         >
           <Image alt="aa" fill style={{ objectFit: "cover" }} src={CardImg} />
         </Box>

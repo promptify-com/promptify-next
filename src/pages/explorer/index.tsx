@@ -33,6 +33,7 @@ export default function ExplorerDetail({
     { keyword: "", tag: "" },
     { refetchOnMountOrArgChange: true }
   );
+  console.log(categories[1]);
 
   return (
     <>
@@ -49,9 +50,10 @@ export default function ExplorerDetail({
             <Typography fontSize={19}> Browse Category </Typography>
             <Grid container spacing={3}>
               {categories
+
                 ?.filter((mainCat) => !mainCat.parent)
                 .map((category) => (
-                  <Grid key={category.id} item xs={6} md={3}>
+                  <Grid key={category.id} item xs={6} sm={4} md={3} xl={2}>
                     <CategoryCard category={category} />
                   </Grid>
                 ))}

@@ -9,12 +9,13 @@ export const Layout = ({ children }: { children: ReactNode }) => {
     <>
       <Box sx={{ bgcolor: "surface.3" }}>
         <Grid display={"flex"}>
-          <Sidebar transparent />
+          <Sidebar />
         </Grid>
         <Box
           sx={{
+            mt: "60px",
             minHeight: "100vh",
-            width: { xs: "100%", md: "calc(100% - 230px)" },
+            width: { xs: "100%", md: "calc(100% - 299px)" },
             ml: { md: "auto" },
           }}
         >
