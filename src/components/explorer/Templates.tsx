@@ -13,15 +13,11 @@ import { useRouter } from "next/router";
 interface Props {
   selectedTag: Tag[];
   keyWord: string;
-  collections: ICollection[];
-  isLoadingCollection: boolean;
 }
 
 export const CustomTemplates: React.FC<Props> = ({
   selectedTag,
   keyWord,
-  collections,
-  isLoadingCollection,
 }) => {
   const router = useRouter();
 
@@ -45,91 +41,6 @@ export const CustomTemplates: React.FC<Props> = ({
           gap: "2em",
         }}
       >
-        {!keyWord && !queryString && (
-          <Grid
-            sx={{
-              maxWidth: "1160px",
-              width: "100%",
-            }}
-          >
-            <Grid
-              sx={{
-                justifyContent: "flex-start",
-              }}
-            >
-              <Grid>
-                <Typography
-                  sx={{
-                    fontFamily: "Poppins",
-                    fontStyle: "normal",
-                    fontWeight: 400,
-                    fontSize: "24px",
-                    lineHeight: "133.4%",
-                    color: "#1B1B1E",
-                    marginBottom: "1em",
-                  }}
-                >
-                  Top Collections
-                </Typography>
-              </Grid>
-            </Grid>
-            {isLoadingCollection ? (
-              <FetchLoading />
-            ) : (
-              <Grid
-                sx={{
-                  justifyContent: "center",
-                  display: "flex",
-                }}
-              >
-                <Grid
-                  sx={{
-                    display: "flex",
-                    gap: "1em",
-                    flexWrap: "wrap",
-                    justifyContent: "flex-start",
-                    width: "100%",
-                    boxSizing: "border-box",
-                    WebkitFlexDirection: "row",
-                    msFlexDirection: "row",
-                    flexDirection: "row",
-                    WebkitBoxFlexWrap: "wrap",
-                    WebkitFlexWrap: "wrap",
-                    msFlexWrap: "wrap",
-                    WebkitBoxPack: "start",
-                    msFlexPack: "start",
-                    WebkitJustifyContent: "flex-start",
-                  }}
-                >
-                  {!!collections && collections.length > 0 ? (
-                    collections.map((el, idx) => (
-                      <CardTemplate
-                        onFavoriteClick={() =>
-                          router.push(`/collection/${el.id}`)
-                        }
-                        key={idx}
-                        collection={el}
-                      />
-                    ))
-                  ) : (
-                    <Grid
-                      sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        width: "100%",
-                      }}
-                    >
-                      <NotFoundIcon />
-                    </Grid>
-                  )}
-                </Grid>
-              </Grid>
-            )}
-          </Grid>
-        )}
-
         <Grid
           sx={{
             maxWidth: "1160px",

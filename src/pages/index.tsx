@@ -8,10 +8,6 @@ import useSetUser from "@/hooks/useSetUser";
 import useToken from "@/hooks/useToken";
 import { TopicImg } from "@/assets/icons/TopicImg";
 import { useRouter } from "next/router";
-import {
-  useGetCategoriesQuery,
-  useGetTagsPopularQuery,
-} from "@/core/api/explorer";
 import { Category, Tag } from "@/core/api/dto/templates";
 import { ICollection } from "@/common/types/collection";
 import { useCollection } from "@/hooks/api/collections";
@@ -380,10 +376,8 @@ function Home({
             </Box>
 
             <CustomTemplates
-              isLoadingCollection={isLoadingCollection}
               selectedTag={selectedTag}
               keyWord={keyWord}
-              collections={collections}
             />
           </Box>
         )}
