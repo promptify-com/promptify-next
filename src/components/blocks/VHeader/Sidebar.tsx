@@ -34,25 +34,13 @@ export const Sidebar: React.FC<Props> = () => {
 
   const navItems = [
     {
-      name: "Home",
-      href: "/",
-      icon: <HomeOutlined />,
-      active: pathname == "/",
-    },
-    {
-      name: "Explore",
+      name: "Browse",
       href: "/explorer",
       icon: <Search />,
       active: pathname == "/explorer",
     },
     {
-      name: "Learn",
-      href: "/",
-      icon: <AutoStoriesOutlined />,
-      active: pathname == "/",
-    },
-    {
-      name: "Favorites",
+      name: "Sperks",
       href: "/",
       icon: <BookmarkAddOutlined />,
       active: pathname == "/",
@@ -64,9 +52,9 @@ export const Sidebar: React.FC<Props> = () => {
     <Drawer
       sx={{
         display: { xs: "none", md: "block" },
-        width: "96px",
+        width: "230px",
         "& .MuiDrawer-paper": {
-          width: 96,
+          width: 230,
           boxSizing: "border-box",
           bgcolor: "surface.1",
           border: "none",

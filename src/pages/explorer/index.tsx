@@ -16,6 +16,7 @@ import { useGetTemplatesByKeyWordAndTagQuery } from "@/core/api/explorer";
 import { NotFoundIcon } from "@/assets/icons/NotFoundIcon";
 import { FetchLoading } from "@/components/FetchLoading";
 import CardTemplate from "@/components/common/cards/CardTemplate";
+import { Layout } from "@/layout";
 
 export default function ExplorerDetail({
   categories,
@@ -28,13 +29,6 @@ export default function ExplorerDetail({
   tags: Tag[];
 }) {
   const router = useRouter();
-  const { category, subcategory, keyWordP } = router.query;
-
-  const [keyWord, setKeyWord] = React.useState<string>("");
-
-  // const queryString = selectedTag
-  //   .map((tag) => `tag=${encodeURIComponent(tag.name)}`)
-  //   .join("&");
   const { data: templates, isFetching } = useGetTemplatesByKeyWordAndTagQuery(
     { keyword: "", tag: "" },
     { refetchOnMountOrArgChange: true }
@@ -42,89 +36,72 @@ export default function ExplorerDetail({
 
   return (
     <>
-      <Box sx={{ bgcolor: "surface.3" }}>
-        <Grid display={"flex"}>
-          <Sidebar />
-          <ExploreFilterSideBar
-            categories={categories}
-            engines={engines}
-            tags={tags}
-          />
-        </Grid>
-        <Box
-          sx={{
-            minHeight: "100vh",
-            width: { xs: "100%", md: "calc(100% - 96px - 230px)" },
-            ml: { md: "auto" },
-          }}
-        >
-          <Header transparent />
-          <Box>
-            <Grid
-              sx={{
-                padding: { xs: "1em 0em 0em 1em", sm: "1.5em 2em" },
-              }}
-              display={"flex"}
-              direction={"column"}
-              gap={1}
-            >
-              <Typography fontSize={19}> Browse Category </Typography>
-              <Grid container spacing={3}>
-                {categories
-                  ?.filter((mainCat) => !mainCat.parent)
-                  .map((category) => (
-                    <Grid key={category.id} item xs={6} md={3}>
-                      <CategoryCard category={category} />
+      <Layout>
+        <Box>
+          <Grid
+            sx={{
+              padding: { xs: "1em 0em 0em 1em", sm: "1.5em 2em" },
+            }}
+            display={"flex"}
+            direction={"column"}
+            gap={1}
+          >
+            <Typography fontSize={19}> Browse Category </Typography>
+            <Grid container spacing={3}>
+              {categories
+                ?.filter((mainCat) => !mainCat.parent)
+                .map((category) => (
+                  <Grid key={category.id} item xs={6} md={3}>
+                    <CategoryCard category={category} />
+                  </Grid>
+                ))}
+            </Grid>
+            <Grid mt={3}>
+              <Typography fontSize={19}>Best Templates</Typography>
+              <Grid
+                container
+                sx={{
+                  mt: "10px",
+                  gap: "1em",
+                  width: "100%",
+                }}
+              >
+                {!isFetching &&
+                  !!templates &&
+                  templates.length > 0 &&
+                  templates.map((el: any, idx) => (
+                    <Grid key={el.id} item xs={12}>
+                      <CardTemplate
+                        onFavoriteClick={() =>
+                          router.push(`/prompt/${el.slug}`)
+                        }
+                        key={el.id}
+                        template={el}
+                        lengthTemplate={templates.length}
+                      />
                     </Grid>
                   ))}
-              </Grid>
-              <Grid mt={3}>
-                <Typography fontSize={19}>Best Templates</Typography>
-                <Grid
-                  container
-                  sx={{
-                    mt: "10px",
-                    gap: "1em",
-                    width: "100%",
-                  }}
-                >
-                  {!isFetching &&
-                    !!templates &&
-                    templates.length > 0 &&
-                    templates.map((el: any, idx) => (
-                      <Grid key={el.id} item xs={12}>
-                        <CardTemplate
-                          onFavoriteClick={() =>
-                            router.push(`/prompt/${el.slug}`)
-                          }
-                          key={el.id}
-                          template={el}
-                          lengthTemplate={templates.length}
-                        />
-                      </Grid>
-                    ))}
 
-                  {!isFetching && (!templates || templates.length === 0) && (
-                    <Grid
-                      sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        width: "100%",
-                      }}
-                    >
-                      <NotFoundIcon />
-                    </Grid>
-                  )}
+                {!isFetching && (!templates || templates.length === 0) && (
+                  <Grid
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      width: "100%",
+                    }}
+                  >
+                    <NotFoundIcon />
+                  </Grid>
+                )}
 
-                  {isFetching && <FetchLoading />}
-                </Grid>
+                {isFetching && <FetchLoading />}
               </Grid>
             </Grid>
-          </Box>
+          </Grid>
         </Box>
-      </Box>
+      </Layout>
     </>
   );
 }

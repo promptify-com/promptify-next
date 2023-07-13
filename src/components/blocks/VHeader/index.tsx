@@ -142,7 +142,7 @@ export const Header: React.FC<Props> = ({
     <Box
       sx={{
         width: "100%",
-        background: transparent ? "transparent" : "#F6F5FF",
+        bgcolor: transparent ? "transparent" : "surface.3",
         position: fixed ? "fixed" : "relative",
         zIndex: 1000,
         top: 0,
@@ -159,7 +159,7 @@ export const Header: React.FC<Props> = ({
           width: "100%",
           padding: { xs: "1em 0 0 1em", sm: "24px 33px 16px 32px" },
           alignItems: "center",
-          gap: "16px"
+          gap: "16px",
         }}
       >
         <Box
@@ -167,7 +167,7 @@ export const Header: React.FC<Props> = ({
           sx={{
             flex: 1,
             alignItems: "center",
-            position: "relative"
+            position: "relative",
           }}
           onClick={handleInputFocus}
         >
@@ -216,7 +216,8 @@ export const Header: React.FC<Props> = ({
                 width: "105px",
                 height: "42px",
                 background: "#3B4050",
-                boxShadow: "0px 1px 5px rgba(0, 0, 0, 0.12), 0px 2px 2px rgba(0, 0, 0, 0.14), 0px 3px 1px -2px rgba(0, 0, 0, 0.2)",
+                boxShadow:
+                  "0px 1px 5px rgba(0, 0, 0, 0.12), 0px 2px 2px rgba(0, 0, 0, 0.14), 0px 3px 1px -2px rgba(0, 0, 0, 0.2)",
                 borderRadius: "100px",
                 flex: "none",
                 order: 1,
