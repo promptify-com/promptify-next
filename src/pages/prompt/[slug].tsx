@@ -66,11 +66,7 @@ const CustomTabPanel = (props: TabPanelProps) => {
         sx={{ height: "100%", width: "100%" }}
         {...other}
       >
-         {value === index && (
-            <React.Fragment>
-              {children}
-            </React.Fragment>
-         )}
+        {children}
       </Box>
    );
 }
