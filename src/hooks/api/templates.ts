@@ -60,3 +60,11 @@ export const addToCollection = async (collectionId: number, templateId: number) 
       return response.data;
     });
 }
+
+export const removeFromCollection = async (collectionId: number, templateId: number) => {
+  return await authClient
+    .post(`/api/meta/collections/${collectionId}/remove/${templateId}/`)
+    .then(response => {
+      return response.data;
+    });
+}

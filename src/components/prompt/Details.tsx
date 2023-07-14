@@ -18,13 +18,14 @@ import {
 import { savePathURL } from "@/common/utils";
 import useToken from "@/hooks/useToken";
 import {
-  likeTemplate,
-  removeTemplateLike,
+  addToCollection,
+  removeFromCollection
 } from "@/hooks/api/templates";
 import { Subtitle } from "@/components/blocks";
 import moment from "moment";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { useGetCurrentUser } from "@/hooks/api/user";
 
 interface DetailsProps {
   templateData: Templates;
@@ -37,10 +38,11 @@ export const Details: React.FC<DetailsProps> = ({
 }) => {
   const [isFetching, setIsFetching] = useState(false);
   const token = useToken();
+  const [user, error, userIsLoading] = useGetCurrentUser([token]);
   const router = useRouter();
   const { palette } = useTheme();
 
-  const likeTemplateClicked = async () => {
+  const favorTemplate = async () => {
     if (!token) {
       savePathURL(window.location.pathname);
       return router.push("/signin");
@@ -49,32 +51,17 @@ export const Details: React.FC<DetailsProps> = ({
     if (!isFetching) {
       setIsFetching(true);
 
-      // Toggle the like button temporarily for smoother UX and permanently after processing likeTemplate() & removeTemplateLike()
-      updateTemplateData({ ...templateData, is_liked: !templateData.is_liked });
+      updateTemplateData({ ...templateData, is_favorite: !templateData.is_favorite });
 
       try {
-        let likes = templateData.likes;
 
-        if (!templateData.is_liked) {
-          await likeTemplate(templateData.id);
-          likes++;
+        if (!templateData.is_favorite) {
+          await addToCollection(user.favorite_collection_id, templateData.id);
         } else {
-          await removeTemplateLike(templateData.id);
-          likes > 0 && likes--;
+          await removeFromCollection(user.favorite_collection_id, templateData.id);
         }
-
-        updateTemplateData({
-          ...templateData,
-          is_liked: !templateData.is_liked,
-          likes: likes,
-        });
       } catch (err: any) {
-        // API response for an already liked template
-        if (err.response.data?.status === "success")
-          updateTemplateData({
-            ...templateData,
-            is_liked: !templateData.is_liked,
-          });
+        console.error(err)
       } finally {
         setIsFetching(false);
       }
@@ -93,12 +80,12 @@ export const Details: React.FC<DetailsProps> = ({
           <Button
             sx={{ ...buttonStytle, borderColor: alpha(palette.primary.main, .3), flex: 1 }}
             startIcon={
-              templateData.is_liked ? <Favorite /> : <FavoriteBorder />
+              templateData.is_favorite ? <Favorite /> : <FavoriteBorder />
             }
             variant={"outlined"}
-            onClick={likeTemplateClicked}
+            onClick={favorTemplate}
           >
-            {templateData.likes}
+            {templateData.is_favorite ? "Remove from favorites" : "Add to favorites"}
           </Button>
         </Box>
         <Box sx={{ py: "16px" }}>

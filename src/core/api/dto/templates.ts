@@ -77,6 +77,7 @@ export interface Templates {
   views: number;
   likes: number;
   is_liked: boolean;
+  is_favorite: boolean;
   prompts_list?: [];
   executions_limit: number;
   slug: string;
