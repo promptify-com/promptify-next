@@ -227,6 +227,7 @@ export const Header: React.FC<Props> = ({
                   order: 1,
                   flexGrow: 0,
                   cursor: "pointer",
+                  
                   "&:hover": {
                     transform: "scale(1.05)",
                   },

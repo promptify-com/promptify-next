@@ -49,6 +49,7 @@ function Home({
   const postLogin = (response: IContinueWithSocialMediaResponse | null) => {
     if (!response) return;
     if (response && response.created) {
+      
       setUser(response);
       router.push("/signup");
     } else {

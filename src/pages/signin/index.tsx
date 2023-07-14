@@ -8,7 +8,6 @@ import useSetUser from "@/hooks/useSetUser";
 import useToken from "@/hooks/useToken";
 import { LoginLayout } from "@/components/login/LoginLayout";
 import { useRouter } from "next/router";
-import { redirect } from "next/navigation";
 
 const Login = () => {
   const router = useRouter();
@@ -56,52 +55,6 @@ const Login = () => {
         {isLoading || userIsLoading ? (
           <PageLoading />
         ) : (
-          // <Box display="flex" sx={{ minHeight: '100vh', width: '100vw' }}>
-          //   <Box
-          //     display="flex"
-          //     flexDirection="column"
-          //     alignContent="center"
-          //     width={{ xs: '100vw', lg: '55vw' }}
-          //   >
-          //     <Box
-          //       sx={{
-          //         width: { xs: '70%', lg: '60%' },
-          //         alignSelf: 'center',
-          //         mt: { xs: '2rem', md: '4rem', lg: '5rem', xl: '6rem' },
-          //       }}
-          //     >
-          //       <Link
-          //         to="/">
-          //         <LogoWithName />
-          //       </Link>
-          //       <Typography
-          //         sx={{
-          //           fontSize: { xs: '1.2rem', md: '1.6rem', lg: '1.8rem', xl: '2rem' },
-          //           mt: { xs: '4rem', md: '8rem', lg: '10rem', xl: '12rem' },
-          //           fontWeight: 500,
-          //         }}
-          //       >
-          //         Welcome to Promptify
-          //       </Typography>
-
-          //       <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID as string}>
-          //         <LoginSocialButtons preLogin={preLogin} postLogin={postLogin} />
-          //       </GoogleOAuthProvider>
-          //     </Box>
-          //   </Box>
-          //   <Box
-          //     sx={{ display: { xs: 'none', lg: 'flex' } }}
-          //     bgcolor="#4F4F4F"
-          //     width="45vw"
-          //     justifyContent="center"
-          //     alignItems="center"
-          //   >
-          //     <Typography sx={{ fontSize: '1.8rem' }} color="#D2D2D2" width="50%" textAlign="center">
-          //       Emotional marketing content
-          //     </Typography>
-          //   </Box>
-          // </Box>
-
           <LoginLayout preLogin={preLogin} postLogin={postLogin} from={from} />
         )}
       </Box>

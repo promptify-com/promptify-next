@@ -2,38 +2,95 @@ import React, { useState } from "react";
 import {
   Box,
   Divider,
-  Drawer,
   Grid,
   Icon,
   IconButton,
+  List,
   ListItem,
   ListItemButton,
-  Stack,
+  ListItemIcon,
   Typography,
 } from "@mui/material";
+import MuiDrawer from "@mui/material/Drawer";
+
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { AutoAwesome, Search } from "@mui/icons-material";
-
+import { styled, Theme, CSSObject } from "@mui/material/styles";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { Engine, Tag } from "@/core/api/dto/templates";
 import { SidebarIcon } from "@/assets/icons/Sidebar";
+import { Collections } from "@/components/common/sidebar/Collections";
+import { IUser } from "@/common/types";
+import { ICollection } from "@/common/types/collection";
+import { useGetCollectionTemplatesQuery } from "@/core/api/prompts";
+import useToken from "@/hooks/useToken";
+import { useGetCurrentUser } from "@/hooks/api/user";
 
 interface SideBarProps {
+  open: boolean;
+  toggleSideBar: () => void;
+  onMouseLeave: () => void;
+  onMouseEnter: () => void;
   tags?: Tag[];
   englines?: Engine[];
 }
 
-export const Sidebar: React.FC<SideBarProps> = ({ tags, englines }) => {
-  const [open, setOpen] = useState<boolean>(false);
+const drawerWidth = 299;
 
-  const handleDrawerToggle = () => {
-    setOpen(!open);
-  };
+const openedMixin = (theme: Theme): CSSObject => ({
+  width: drawerWidth,
+  transition: theme.transitions.create("width", {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.enteringScreen,
+  }),
+  overflowX: "hidden",
+});
+
+const closedMixin = (theme: Theme): CSSObject => ({
+  transition: theme.transitions.create("width", {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
+  overflowX: "hidden",
+  width: `140px`,
+  [theme.breakpoints.up("sm")]: {
+    width: `90px`,
+  },
+});
+
+const Drawer = styled(MuiDrawer, {
+  shouldForwardProp: (prop) => prop !== "open",
+})(({ theme, open }) => ({
+  width: drawerWidth,
+  flexShrink: 0,
+  whiteSpace: "nowrap",
+  boxSizing: "border-box",
+  ...(open && {
+    ...openedMixin(theme),
+    "& .MuiDrawer-paper": openedMixin(theme),
+  }),
+  ...(!open && {
+    ...closedMixin(theme),
+    "& .MuiDrawer-paper": closedMixin(theme),
+  }),
+}));
+
+export const Sidebar: React.FC<SideBarProps> = ({
+  open,
+  onMouseEnter,
+  onMouseLeave,
+  toggleSideBar,
+}) => {
+  // openOnHover
+
+  const token = useToken();
+  const [user] = useGetCurrentUser([token]);
+  const { data: collections } = useGetCollectionTemplatesQuery(1);
+  console.log(user, collections);
 
   const router = useRouter();
   const pathname = router.pathname;
-
   const navItems = [
     {
       name: "Browse",
@@ -50,90 +107,114 @@ export const Sidebar: React.FC<SideBarProps> = ({ tags, englines }) => {
   ];
 
   return (
-    <Drawer
-      sx={{
-        display: { xs: "none", md: "block" },
-        width: "299px",
-        "& .MuiDrawer-paper": {
-          mt: "14px",
-          borderRadius: "0px 8px 8px 0px",
-          height: "97vh",
-          width: 299,
-          boxSizing: "border-box",
-          bgcolor: "surface.1",
-          border: "none",
-        },
-      }}
-      variant="permanent"
-      anchor="left"
-    >
-      <Stack gap={1}>
-        <Grid
-          display={"flex"}
-          alignItems={"center"}
-          justifyContent={"space-between"}
-          sx={{ padding: "16px 8px 16px 24px" }}
-        >
-          <Box sx={{ textAlign: "center" }}>
-            <Link
-              href="/"
-              style={{ textDecoration: "none", display: "flex", gap: "4px" }}
-            >
-              <LogoApp width={30} />
-              <Typography mt={0.5}>Promptify</Typography>
-            </Link>
-          </Box>
-          <IconButton
-            sx={{
-              border: "none",
-              "&:hover": {
-                backgroundColor: "surface.2",
-              },
-            }}
+    <Box>
+      <Drawer
+        open={open}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+        sx={{
+          display: { xs: "none", md: "flex" },
+          alignItems: "center",
+          justifyContent: "center",
+          "& .MuiDrawer-paper": {
+            my: "2vh",
+            borderRadius: "0px 8px 8px 0px",
+            height: "96vh",
+            overflow: "hidden",
+            boxSizing: "border-box",
+            bgcolor: "surface.1",
+            border: "none",
+          },
+        }}
+        variant="permanent"
+        anchor="left"
+      >
+        <Box display={"flex"} flexDirection={"column"} gap={1}>
+          <Grid
+            display={"flex"}
+            alignItems={"center"}
+            justifyContent={"space-between"}
+            sx={{ padding: "16px 8px 16px 24px", minHeight: 48 }}
           >
-            <SidebarIcon />
-          </IconButton>
-        </Grid>
-        {navItems.map((item, i) => (
-          <ListItem
-            key={item.name}
-            sx={{
-              p: 0,
-            }}
-          >
-            <ListItemButton
-              sx={{ mx: "8px", borderRadius: "8px" }}
-              selected={item.active}
-            >
+            <Box sx={{ textAlign: "center" }}>
               <Link
-                href={item.href}
+                href="/"
                 style={{
                   textDecoration: "none",
+                  display: "flex",
+                  paddingLeft: "6px",
                 }}
               >
-                <Grid
-                  sx={{
+                <LogoApp width={30} />
+                <Typography sx={{ ml: "19px", opacity: open ? 1 : 0 }} mt={0.5}>
+                  Promptify
+                </Typography>
+              </Link>
+            </Box>
+            <IconButton
+              onClick={toggleSideBar}
+              sx={{
+                border: "none",
+                "&:hover": {
+                  backgroundColor: "surface.2",
+                },
+              }}
+            >
+              <SidebarIcon />
+            </IconButton>
+          </Grid>
+          {navItems.map((item, i) => (
+            <ListItem disablePadding key={item.name}>
+              <ListItemButton
+                sx={{
+                  minHeight: 48,
+                  mx: 1,
+                  borderRadius: "8px",
+                }}
+                selected={item.active}
+              >
+                <Link
+                  href={item.href}
+                  style={{
                     display: "flex",
                     alignItems: "center",
-                    textAlign: "center",
-                    color: "onSurface",
+                    justifyContent: open ? "initial" : "center",
+                    padding: 6.5,
+                    textDecoration: "none",
                   }}
                 >
-                  <Icon sx={{ p: "11px" }}>{item.icon}</Icon>
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: open ? 3 : "auto",
+                      color: "onSurface",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Icon>{item.icon}</Icon>
+                  </ListItemIcon>
                   <Typography
+                    sx={{ opacity: open ? 1 : 0 }}
                     fontSize={14}
                     fontWeight={500}
                     color={"onSurface"}
                   >
                     {item.name}
                   </Typography>
-                </Grid>
-              </Link>
-            </ListItemButton>
-          </ListItem>
-        ))}
-        <Divider />
-      </Stack>
-    </Drawer>
+                </Link>
+              </ListItemButton>
+            </ListItem>
+          ))}
+          <Divider />
+          <>
+            <Collections
+              favCollection={collections}
+              user={user}
+              sidebarOpen={open}
+            />
+          </>
+        </Box>
+      </Drawer>
+    </Box>
   );
 };
