@@ -383,7 +383,8 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
       sx={{
         minHeight: { xs: 0, md: "calc(100% - 92px)" },
         height: { xs: "calc(100% - 62px)", md: "auto" },
-        bgcolor: "surface.2"
+        bgcolor: "surface.2",
+        p: "16px"
       }}
     >
       <Stack direction={'row'} justifyContent={'space-between'} py={'8px'}>

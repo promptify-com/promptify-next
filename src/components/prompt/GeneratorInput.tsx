@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Box, Divider, InputLabel, TextField } from '@mui/material';
+import { Box, Divider, InputLabel, Stack, TextField } from '@mui/material';
 import { InputsErrors } from './GeneratorForm';
 
 interface GeneratorInputProps {
@@ -62,15 +62,13 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
       {inputs.map((input, index) => (
         <React.Fragment key={index} >
           <Divider sx={{ borderColor: 'surface.3' }} />
-          <Box
-            p={'16px 8px 16px 16px'}
-            position={'relative'}
+          <Stack direction={'row'} alignItems={'center'} gap={1}
+            sx={{ p: '16px 8px 16px 16px' }}
           >
             <InputLabel
               sx={{
                 fontSize: 14,
                 fontWeight: 500,
-                mb: '10px',
                 color: errors[input.name] ? 'error.main' : 'tertiary'
               }}
             >
@@ -78,7 +76,7 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
             </InputLabel>
             <TextField
               sx={{
-                width: '100%',
+                flex: 1,
                 '.MuiInputBase-input': {
                   p: 0,
                   color: 'onSurface',
@@ -107,7 +105,7 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
               type={input.type}
               onChange={e => handleChange(e.target.value, input.name, input.type)}
             />
-          </Box>
+          </Stack>
         </React.Fragment>
       ))}
     </Box>
