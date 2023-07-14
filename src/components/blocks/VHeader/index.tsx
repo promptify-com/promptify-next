@@ -141,7 +141,7 @@ export const Header: React.FC<Props> = ({
   return (
     <Grid width={"100%"}>
       <Box
-        width={"calc(100% - 280px)"}
+        width={router.pathname == "/explorer" ? "calc(100% - 280px)" : "100%"}
         sx={{
           bgcolor: transparent ? "transparent" : "surface.3",
           position: fixed ? "fixed" : "relative",
@@ -227,7 +227,7 @@ export const Header: React.FC<Props> = ({
                   order: 1,
                   flexGrow: 0,
                   cursor: "pointer",
-                  
+
                   "&:hover": {
                     transform: "scale(1.05)",
                   },

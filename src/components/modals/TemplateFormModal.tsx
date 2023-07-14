@@ -3,14 +3,16 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { Select, MenuItem, TextField, Input, Chip, Autocomplete, InputLabel, Checkbox, Stack } from '@mui/material';
-import { useGetCategoriesQuery, useGetTagsQuery } from '../../core/api/explorer';
-import { Templates } from '../../core/api/dto/templates';
-import { useFormik } from 'formik';
-import { IEditTemplate } from '../../common/types/editTemplate';
 import { object, string } from 'yup';
-import { createTemplate, updateTemplate } from '../../hooks/api/templates';
-import { authClient } from '../../common/axios';
+import { useFormik } from 'formik';
+import { Select, MenuItem, TextField, Input, Chip, Autocomplete, InputLabel, Checkbox, Stack } from '@mui/material';
+
+import { useGetCategoriesQuery, useGetTagsQuery } from '@/core/api/explorer';
+import { Templates } from '@/core/api/dto/templates';
+import { IEditTemplate } from '@/common/types/editTemplate';
+import { createTemplate, updateTemplate } from '@/hooks/api/templates';
+import { authClient } from '@/common/axios';
+import {style, selectStyle, boxStyle, buttonBoxStyle, typographyStyle} from './styles'
 
 interface IModal {
   open: boolean;
@@ -38,7 +40,6 @@ export default function TemplateFormModal({ open, setOpen, data, modalNew, refet
     if (fetchedTags) setTags(fetchedTags.map(tag => tag.name));
   }, [fetchedTags]);
 
-  // Keep updating formik tags field based on selected tags names from selectedTags
   useEffect(() => {
     formik.setFieldValue(
       'tags',
@@ -49,9 +50,8 @@ export default function TemplateFormModal({ open, setOpen, data, modalNew, refet
   const getUrlImage = async (image: File) => {
     const file = new FormData();
     file.append('file', image);
-    await authClient.post('/api/upload/', file).then(data => {
-      formik.values.thumbnail = data.data.file_url;
-    });
+    const { data: { file_url } } = await authClient.post('/api/upload/', file);
+    formik.values.thumbnail = file_url;
   };
 
   const addNewTag = (newValue: string[]) => {
@@ -65,23 +65,21 @@ export default function TemplateFormModal({ open, setOpen, data, modalNew, refet
   });
 
   const onEditTemplate = async (values: IEditTemplate) => {
-    updateTemplate(data[0]?.id, values).then(() => {
-      handleClose();
-      refetchTemplates();
-      formik.resetForm();
-    });
+    await updateTemplate(data[0]?.id, values);
+    handleClose();
+    refetchTemplates();
+    formik.resetForm();
   };
 
   const onCreateTemplate = async (values: IEditTemplate) => {
-    createTemplate(values).then(data => {
-      handleClose();
-      refetchTemplates();
-      formik.resetForm();
-      window.open(window.location.origin + `/builder/${data.id}`, '_blank');
-    });
+    const { id } = await createTemplate(values);
+    handleClose();
+    refetchTemplates();
+    formik.resetForm();
+    window.open(window.location.origin + `/builder/${id}`, '_blank');
   };
 
-  const formik = useFormik<IEditTemplate>({
+  const formik =  useFormik<IEditTemplate>({
     initialValues: {
       title: data[0]?.title || '',
       description: data[0]?.description || '',
@@ -89,7 +87,7 @@ export default function TemplateFormModal({ open, setOpen, data, modalNew, refet
       difficulty: data[0]?.difficulty || 'BEGINNER',
       is_visible: data[0]?.is_visible || true,
       language: data[0]?.language || 'en-us',
-      category: data[0]?.category.id || 1,
+      category: data[0]?.category?.id || 1,
       context: data[0]?.context || '',
       tags: data[0]?.tags || [],
       thumbnail: data[0]?.thumbnail,
@@ -207,13 +205,11 @@ export default function TemplateFormModal({ open, setOpen, data, modalNew, refet
                 value={formik.values.category}
                 onChange={formik.handleChange}
               >
-                {categories.map(category => {
-                  return (
-                    <MenuItem value={category.id} key={category.id}>
-                      {category.name}
-                    </MenuItem>
-                  );
-                })}
+                {categories.map(category => (
+                  <MenuItem value={category.id} key={category.id}>
+                    {category.name}
+                  </MenuItem>
+                ))}
               </Select>
             </Box>
           )}
@@ -260,57 +256,68 @@ export default function TemplateFormModal({ open, setOpen, data, modalNew, refet
               onChange={formik.handleChange}
             />
           </Box>
-          <Box style={{...boxStyle, alignItems: 'baseline'}}>
+          <Box style={{ ...boxStyle, alignItems: 'baseline' }}>
             <Typography style={typographyStyle}>Slug</Typography>
             <Box>
-              <Stack direction={'row'} alignItems={'center'} >
+              <Stack direction={'row'} alignItems={'center'}>
                 <Checkbox
                   sx={{ color: 'grey.600' }}
                   checked={formik.values.slug === null}
                   onChange={() => {
-                    formik.setFieldValue('slug', formik.values.slug === null ? '' : null)
+                    formik.setFieldValue(
+                      'slug',
+                      formik.values.slug === null ? '' : null
+                    );
                   }}
                 />
                 <InputLabel sx={{ color: 'grey.600' }}>Use Default</InputLabel>
               </Stack>
-              <TextField sx={selectStyle}
+              <TextField
+                sx={selectStyle}
                 name="slug"
-                value={formik.values.slug === null ? '' : formik.values.slug}
+                value={formik.values.slug ?? ''}
                 disabled={formik.values.slug === null}
                 onChange={formik.handleChange}
               />
             </Box>
           </Box>
-          <Box style={{...boxStyle, alignItems: 'baseline'}}>
+          <Box style={{ ...boxStyle, alignItems: 'baseline' }}>
             <Typography style={typographyStyle}>Meta title</Typography>
             <Box>
-              <Stack direction={'row'} alignItems={'center'} >
+              <Stack direction={'row'} alignItems={'center'}>
                 <Checkbox
                   sx={{ color: 'grey.600' }}
                   checked={formik.values.meta_title === null}
                   onChange={() => {
-                    formik.setFieldValue('meta_title', formik.values.meta_title === null ? '' : null)
+                    formik.setFieldValue(
+                      'meta_title',
+                      formik.values.meta_title === null ? '' : null
+                    );
                   }}
                 />
                 <InputLabel sx={{ color: 'grey.600' }}>Use Default</InputLabel>
               </Stack>
-              <TextField sx={selectStyle}
+              <TextField
+                sx={selectStyle}
                 name="meta_title"
-                value={formik.values.meta_title === null ? '' : formik.values.meta_title}
+                value={formik.values.meta_title ?? ''}
                 disabled={formik.values.meta_title === null}
                 onChange={formik.handleChange}
               />
             </Box>
           </Box>
-          <Box style={{...boxStyle, alignItems: 'baseline'}}>
+          <Box style={{ ...boxStyle, alignItems: 'baseline' }}>
             <Typography style={typographyStyle}>Meta Description</Typography>
             <Box>
-              <Stack direction={'row'} alignItems={'center'} >
+              <Stack direction={'row'} alignItems={'center'}>
                 <Checkbox
                   sx={{ color: 'grey.600' }}
                   checked={formik.values.meta_description === null}
                   onChange={() => {
-                    formik.setFieldValue('meta_description', formik.values.meta_description === null ? '' : null)
+                    formik.setFieldValue(
+                      'meta_description',
+                      formik.values.meta_description === null ? '' : null
+                    );
                   }}
                 />
                 <InputLabel sx={{ color: 'grey.600' }}>Use Default</InputLabel>
@@ -320,28 +327,32 @@ export default function TemplateFormModal({ open, setOpen, data, modalNew, refet
                 maxRows={4}
                 sx={selectStyle}
                 name="meta_description"
-                value={formik.values.meta_description === null ? '' : formik.values.meta_description}
+                value={formik.values.meta_description ?? ''}
                 disabled={formik.values.meta_description === null}
                 onChange={formik.handleChange}
               />
             </Box>
           </Box>
-          <Box style={{...boxStyle, alignItems: 'baseline'}}>
+          <Box style={{ ...boxStyle, alignItems: 'baseline' }}>
             <Typography style={typographyStyle}>Meta Tags</Typography>
             <Box>
-              <Stack direction={'row'} alignItems={'center'} >
+              <Stack direction={'row'} alignItems={'center'}>
                 <Checkbox
                   sx={{ color: 'grey.600' }}
                   checked={formik.values.meta_keywords === null}
                   onChange={() => {
-                    formik.setFieldValue('meta_keywords', formik.values.meta_keywords === null ? '' : null)
+                    formik.setFieldValue(
+                      'meta_keywords',
+                      formik.values.meta_keywords === null ? '' : null
+                    );
                   }}
                 />
                 <InputLabel sx={{ color: 'grey.600' }}>Use Default</InputLabel>
               </Stack>
-              <TextField sx={selectStyle}
+              <TextField
+                sx={selectStyle}
                 name="meta_keywords"
-                value={formik.values.meta_keywords === null ? '' : formik.values.meta_keywords}
+                value={formik.values.meta_keywords ?? ''}
                 disabled={formik.values.meta_keywords === null}
                 onChange={formik.handleChange}
               />
@@ -361,7 +372,10 @@ export default function TemplateFormModal({ open, setOpen, data, modalNew, refet
                 variant="contained"
                 sx={{ mt: '20px' }}
                 onClick={() => {
-                  window.open(window.location.origin + `/builder/${data[0]?.id}`, '_blank');
+                  window.open(
+                    window.location.origin + `/builder/${data[0]?.id}`,
+                    '_blank'
+                  );
                 }}
               >
                 Prompt Builder
@@ -374,47 +388,4 @@ export default function TemplateFormModal({ open, setOpen, data, modalNew, refet
   );
 }
 
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  maxHeight: '70vh',
-  width: '600px',
-  bgcolor: 'background.paper',
-  boxShadow: 24,
-  p: 4,
-  display: 'flex',
-  flexDirection: 'column',
-  overflow: 'scroll',
-  overscrollBehavior: 'contain',
-};
 
-const selectStyle = {
-  width: '250px',
-  ".Mui-disabled .MuiOutlinedInput-notchedOutline": {
-    border: "none",
-    bgcolor: "grey.100",
-  }
-};
-
-const boxStyle = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  gap: '100px',
-  marginTop: '25px',
-};
-
-const buttonBoxStyle = {
-  display: 'flex',
-  justifyContent: 'center',
-  alignSelf: 'center',
-  width: '250px',
-  marginTop: '50px',
-};
-
-const typographyStyle = {
-  fontSize: '20px',
-  fontWeight: '400',
-};

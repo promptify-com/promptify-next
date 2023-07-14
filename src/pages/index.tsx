@@ -377,10 +377,8 @@ function Home({
             </Box>
 
             <CustomTemplates
-              isLoadingCollection={isLoadingCollection}
               selectedTag={selectedTag}
               keyWord={keyWord}
-              collections={collections}
             />
           </Box>
         )}

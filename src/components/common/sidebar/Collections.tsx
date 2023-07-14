@@ -116,10 +116,14 @@ export const Collections: React.FC<SideBarCollectionsProps> = ({
               <MoreVert />
             </IconButton>
           </Grid>
-          <List>
+          <List className="sidebar-collection-list">
             {favCollection &&
               favCollection.prompt_templates.map((item: ITemplate) => (
-                <CollectionItem key={item.id} template={item} />
+                <CollectionItem
+                  key={item.id}
+                  template={item}
+                  expanded={sidebarOpen}
+                />
               ))}
           </List>
         </Box>

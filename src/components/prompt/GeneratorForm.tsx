@@ -70,6 +70,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   const { width: windowWidth } = useWindowSize();
 
   const [generatingResponse, setGeneratingResponse] = useState<PromptLiveResponse | null>(null);
+  const [newExecutionId, setNewExecutionId] = useState<number | null>(null);
   const [resPrompts, setResPrompts] = useState<ResPrompt[]>([]);
   const [lastExecution, setLastExecution] = useState<ResPrompt[] | null>(null);
   const [resInputs, setResInputs] = useState<ResInputs[]>([]);
@@ -215,6 +216,9 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
             const parseData = JSON.parse(msg.data.replace(/'/g, '"'));
             const message = parseData.message;
             const prompt = parseData.prompt_id;
+            const executionId = parseData.template_execution_id;
+
+            if(executionId) setNewExecutionId(executionId);
 
             if (msg.event === 'infer' && msg.data) {
               if (message) {
@@ -235,7 +239,8 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
                 }
 
                 tempData = [...tempArr];
-                setGeneratingResponse(prevState => ({ 
+                setGeneratingResponse(prevState => ({
+                  ...prevState,
                   created_at: prevState?.created_at || new Date(), 
                   data: tempArr 
                 }));
@@ -275,7 +280,8 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
               }
 
               tempData = [...tempArr];
-              setGeneratingResponse(prevState => ({ 
+              setGeneratingResponse(prevState => ({
+                ...prevState,
                 created_at: prevState?.created_at || new Date(), 
                 data: tempArr 
               }));
@@ -296,6 +302,16 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
       }
     );
   };
+
+  useEffect(() => {
+    if (newExecutionId) {
+      setGeneratingResponse(prevState => ({
+        id: newExecutionId,
+        created_at: prevState?.created_at || new Date(),
+        data: prevState?.data || [] 
+      }));
+    }
+  }, [newExecutionId]);
 
   useEffect(() => {
     if (generatingResponse) setNewExecutionData(generatingResponse);
@@ -365,9 +381,9 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   return (
     <Stack gap={1}
       sx={{
-        minHeight: { xs: 0, md: "calc(100% - 92px)" },
-        height: { xs: "calc(100% - 62px)", md: "auto" },
-        bgcolor: "surface.2"
+        minHeight: "calc(100% - 32px)",
+        bgcolor: "surface.2",
+        p: "16px"
       }}
     >
       <Stack direction={'row'} justifyContent={'space-between'} py={'8px'}>
@@ -451,58 +467,59 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
           flex: 1,
           bgcolor: "surface.2",
           borderRadius: "16px",
-          overflow: "auto",
-          my: { xs: "16px", md: "0" },
+          position: "relative"
         }}
       >
-        <Box>
-          {!shownInputs || !shownParams ? (
-            <Box
-              sx={{
-                width: "100%",
-                mt: "40px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <CircularProgress size={20} />
-            </Box>
-          ) : shownInputs.length === 0 && shownParams.length === 0 ? (
-            <Box
-              sx={{
-                mt: "20vh",
-                textAlign: "center",
-                color: "onSurface",
-                fontSize: 14,
-              }}
-            >
-              No parameters available for this template
-            </Box>
-          ) : (
-            <React.Fragment>
-              {shownInputs.map((input, i) => (
-                <GeneratorInput
-                  key={i}
-                  promptId={input.prompt}
-                  inputs={[input]}
-                  resInputs={resInputs}
-                  setResInputs={setResInputs}
-                  errors={errors}
-                />
-              ))}
-              {shownParams.map((param, i) => (
-                <GeneratorParam
-                  key={i}
-                  params={[param.param]}
-                  promptId={param.prompt}
-                  resOverrides={resOverrides}
-                  setResOverrides={setResOverrides}
-                />
-              ))}
-            </React.Fragment>
-          )}
+      {!shownInputs || !shownParams ? (
+        <Box
+          sx={{
+            width: "100%",
+            mt: "40px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <CircularProgress size={20} />
         </Box>
+      ) : shownInputs.length === 0 && shownParams.length === 0 ? (
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "100%",
+            textAlign: "center",
+            color: "onSurface",
+            fontSize: 14,
+          }}
+        >
+          No parameters available for this template
+        </Box>
+      ) : (
+        <React.Fragment>
+          {shownInputs.map((input, i) => (
+            <GeneratorInput
+              key={i}
+              promptId={input.prompt}
+              inputs={[input]}
+              resInputs={resInputs}
+              setResInputs={setResInputs}
+              errors={errors}
+            />
+          ))}
+          {shownParams.map((param, i) => (
+            <GeneratorParam
+              key={i}
+              params={[param.param]}
+              promptId={param.prompt}
+              resOverrides={resOverrides}
+              setResOverrides={setResOverrides}
+            />
+          ))}
+        </React.Fragment>
+      )}
       </Box>
 
       <Stack

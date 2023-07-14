@@ -4,12 +4,17 @@ import {
   Box,
   Button,
   Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Divider,
   Grid,
-  IconButton,
   Palette,
   Snackbar,
   Stack,
+  Tab,
+  Tabs,
+  TextField,
   ThemeProvider,
   Typography,
   alpha,
@@ -24,13 +29,13 @@ import {
   useGetPromptTemplatesExecutionsQuery,
   useGetPromptTemplateBySlugQuery,
   useTemplateView,
-} from "@/core/api/prompts";
-import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
-import { PageLoading } from "@/components/PageLoading";
+  useGetExecutionTemplateQuery,
+} from "../../core/api/prompts";
+import { Templates } from "../../core/api/dto/templates";
+import { PageLoading } from "../../components/PageLoading";
 import { useWindowSize } from "usehooks-ts";
-import { Close, KeyboardArrowDown, Loop, MoreHoriz } from "@mui/icons-material";
-import useToken from "@/hooks/useToken";
-import { LogoApp } from "@/assets/icons/LogoApp";
+import { ArtTrack } from "@mui/icons-material";
+import useToken from "../../hooks/useToken";
 import { useRouter } from "next/router";
 import { GeneratorForm } from "@/components/prompt/GeneratorForm";
 import { Executions } from "@/components/prompt/Executions";
@@ -39,19 +44,39 @@ import { authClient } from "@/common/axios";
 import { Sidebar } from "@/components/blocks/VHeader/Sidebar";
 import { DetailsCard } from "@/components/prompt/DetailsCard";
 import { Prompts } from "@/core/api/dto/prompts";
+import { updateExecution } from "@/hooks/api/executions";
+import { PromptLiveResponse } from "@/common/types/prompt";
+import { skipToken } from "@reduxjs/toolkit/dist/query";
 
-export interface PromptLiveResponseData {
-  message: string;
-  prompt: number;
-  created_at: Date;
-  isLoading?: boolean;
-  isCompleted?: boolean;
-  isFailed?: boolean;
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
 }
-export interface PromptLiveResponse {
-  created_at: Date;
-  data: PromptLiveResponseData[] | undefined;
-}
+
+const CustomTabPanel = (props: TabPanelProps) => {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <Box
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      sx={{ height: "100%", width: "100%" }}
+      {...other}
+    >
+      {children}
+    </Box>
+  );
+};
+
+const a11yProps = (index: number) => {
+  return {
+    id: `simple-tab-${index}`,
+    "aria-controls": `simple-tabpanel-${index}`,
+  };
+};
 
 const Prompt = () => {
   const router = useRouter();
@@ -61,16 +86,23 @@ const Prompt = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [currentGeneratedPrompt, setCurrentGeneratedPrompt] =
     useState<Prompts | null>(null);
+  const [openTitleModal, setOpenTitleModal] = useState(false);
+  const [executionTitle, setExecutionTitle] = useState("");
   const [templateView] = useTemplateView();
   const theme = useTheme();
   const [palette, setPalette] = useState(theme.palette);
   const { width: windowWidth } = useWindowSize();
   const [detailsOpened, setDetailsOpened] = useState(false);
-  const [generatorOpened, setGeneratorOpened] = useState(false);
+  const [generatorOpened, setGeneratorOpened] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const slug = router.query?.slug;
   // TODO: redirect to 404 page if slug is not found
   const slugValue = (Array.isArray(slug) ? slug[0] : slug || "") as string;
+
+  // Fetch new execution data after generating and retrieving its id
+  const { data: fetchedNewExecution } = useGetExecutionTemplateQuery(
+    newExecutionData?.id ? newExecutionData?.id : skipToken
+  );
 
   const {
     data: fetchedTemplate,
@@ -93,6 +125,11 @@ const Prompt = () => {
     refetchOnMountOrArgChange: true,
   });
 
+  const [tabsValue, setTabsValue] = React.useState(0);
+  const changeTab = (e: React.SyntheticEvent, newValue: number) => {
+    setTabsValue(newValue);
+  };
+
   useEffect(() => {
     if (fetchedTemplate) {
       setTemplateData(fetchedTemplate);
@@ -106,13 +143,12 @@ const Prompt = () => {
     }
   }, [id]);
 
-  useEffect(() => {
-    if (windowWidth > 900) {
-      setGeneratorOpened(true);
-    } else {
+  const resetForm = () => {
+    if (!isGenerating) {
       setGeneratorOpened(false);
+      setTimeout(() => setGeneratorOpened(true));
     }
-  }, [windowWidth]);
+  };
 
   // After new generated execution is completed - refetch the executions list and clear the newExecutionData state
   // All prompts should be completed - isCompleted: true
@@ -122,12 +158,11 @@ const Prompt = () => {
         (execData) => !execData.isCompleted
       );
       if (!promptNotCompleted) {
-        refetchTemplateExecutions();
-        setNewExecutionData(null);
-        setCurrentGeneratedPrompt(null);
+        setOpenTitleModal(true);
       }
     }
   }, [isGenerating, newExecutionData]);
+  const [openSideBar, setOpenSideBar] = useState<boolean>(true);
 
   // Keep tracking the current generated prompt
   useEffect(() => {
@@ -199,19 +234,100 @@ const Prompt = () => {
       });
   };
 
-  const newTheme = createTheme({ ...theme, palette });
+  const dynamicTheme = createTheme({ ...theme, palette });
+
+  const closeTitleModal = () => {
+    setOpenTitleModal(false);
+    setExecutionTitle("");
+    refetchTemplateExecutions();
+  };
+  const saveExecutionTitle = async () => {
+    if (executionTitle.length) {
+      if (fetchedNewExecution?.id) {
+        try {
+          await updateExecution(fetchedNewExecution?.id, {
+            ...fetchedNewExecution,
+            title: executionTitle,
+          });
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
+      refetchTemplateExecutions();
+      setNewExecutionData(null);
+      setCurrentGeneratedPrompt(null);
+      setOpenTitleModal(false);
+      setExecutionTitle("");
+    }
+  };
+
+  const ExecutionTitleModal = (
+    <Dialog
+      open={openTitleModal}
+      PaperProps={{
+        sx: { bgcolor: "surface.1" },
+      }}
+    >
+      <DialogTitle sx={{ fontSize: 16, fontWeight: 400 }}>
+        Enter a title for your new spark:
+      </DialogTitle>
+      <DialogContent>
+        <TextField
+          sx={{
+            ".MuiInputBase-input": {
+              p: 0,
+              color: "onSurface",
+              fontSize: 48,
+              fontWeight: 400,
+              "&::placeholder": { color: "grey.600" },
+            },
+            ".MuiOutlinedInput-notchedOutline": { border: 0 },
+            ".MuiInputBase-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+              border: 0,
+            },
+          }}
+          placeholder={"Title..."}
+          onChange={(e) => setExecutionTitle(e.target.value)}
+        />
+      </DialogContent>
+      <DialogActions sx={{ p: "16px", gap: 2 }}>
+        <Button
+          sx={{ minWidth: "auto", p: 0, color: "grey.600" }}
+          onClick={closeTitleModal}
+        >
+          Skip
+        </Button>
+        <Button
+          sx={{
+            ":disabled": { color: "grey.600" },
+            ":hover": { bgcolor: "action.hover" },
+          }}
+          disabled={!executionTitle.length}
+          onClick={saveExecutionTitle}
+        >
+          Save
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
 
   if (fetchedTemplateError || templateExecutionsError)
     return <div>Something went wrong...</div>;
 
   return (
     <>
-      <ThemeProvider theme={newTheme}>
+      <ThemeProvider theme={dynamicTheme}>
         <Box sx={{ bgcolor: "surface.3" }}>
-          <Sidebar />
+          <Sidebar
+            open={openSideBar}
+            toggleSideBar={() => setOpenSideBar(!openSideBar)}
+            onMouseEnter={() => setOpenSideBar(true)}
+            onMouseLeave={() => setOpenSideBar(false)}
+          />
           <Box
             sx={{
-              width: { md: "calc(100% - 96px)" },
+              width: { md: "calc(100% - 299px)" },
               ml: { md: "auto" },
             }}
           >
@@ -228,6 +344,7 @@ const Prompt = () => {
                   bgcolor: "surface.2",
                   borderTopLeftRadius: "16px",
                   borderTopRightRadius: "16px",
+                  overflow: "hidden",
                   position: "relative",
                 }}
               >
@@ -236,177 +353,94 @@ const Prompt = () => {
                   xs={12}
                   md={4}
                   sx={{
-                    display: `${generatorOpened ? "block" : "none"}`,
                     height: "100%",
                     overflow: "auto",
-                    p: "16px",
-                    position: { xs: "absolute", md: "relative" },
+                    position: "relative",
                     top: 0,
                     left: 0,
                     right: 0,
                     zIndex: 999,
                   }}
                 >
-                  {windowWidth < 900 && (
-                    <Button
-                      sx={{
-                        width: "100%",
-                        p: "10px 14px",
-                        flexDirection: "row",
-                        alignItems: "center",
-                        gap: 2,
-                        bgcolor: "primary.main",
-                        color: "onPrimary",
-                        borderRadius: "16px",
-                        ":hover": {
-                          bgcolor: "primary.main",
-                          color: "onPrimary",
-                        },
-                      }}
-                    >
-                      <Box
-                        component={"img"}
-                        src={
-                          templateData.thumbnail ||
-                          "http://placehold.it/240x150"
-                        }
-                        alt={"alt"}
+                  <Stack height={"100%"}>
+                    <DetailsCard
+                      templateData={templateData}
+                      resetForm={resetForm}
+                    />
+                    <Stack flex={1}>
+                      <Tabs
+                        value={tabsValue}
+                        onChange={changeTab}
+                        textColor="primary"
+                        indicatorColor="primary"
+                        variant="fullWidth"
                         sx={{
-                          width: 56,
-                          height: 42,
-                          objectFit: "cover",
-                          borderRadius: "999px",
+                          minHeight: "auto",
+                          boxShadow: "0px -1px 0px 0px #ECECF4 inset",
                         }}
-                      />
-                      <Stack alignItems={"flex-start"}>
-                        <Typography
-                          fontSize={14}
-                          color={"inherit"}
-                          dangerouslySetInnerHTML={{
-                            __html: templateData.title,
+                      >
+                        <Tab
+                          label="(X) Variables"
+                          {...a11yProps(0)}
+                          sx={{
+                            fontSize: 13,
+                            fontWeight: 500,
+                            textTransform: "none",
+                            p: "16px",
+                            minHeight: "auto",
+                            bgcolor: "surface.1",
+                            color: `${alpha(palette.onSurface, 0.5)}`,
                           }}
                         />
-                        <Typography
-                          fontSize={10}
-                          fontWeight={400}
-                          color={"inherit"}
-                          dangerouslySetInnerHTML={{
-                            __html: templateData.category.name,
+                        <Tab
+                          label="About"
+                          {...a11yProps(1)}
+                          icon={<ArtTrack />}
+                          iconPosition="start"
+                          sx={{
+                            fontSize: 13,
+                            fontWeight: 500,
+                            textTransform: "none",
+                            p: "16px",
+                            minHeight: "auto",
+                            bgcolor: "surface.1",
+                            color: `${alpha(palette.onSurface, 0.5)}`,
                           }}
                         />
-                      </Stack>
-                      <Close
-                        sx={{ ml: "auto", fontSize: 26 }}
-                        onClick={() => setGeneratorOpened(false)}
-                      />
-                    </Button>
-                  )}
-                  <DetailsCard
-                    templateData={templateData}
-                    detailsOpened={detailsOpened}
-                    toggleDetails={() => setDetailsOpened(!detailsOpened)}
-                  />
-                  <GeneratorForm
-                    templateData={templateData}
-                    setNewExecutionData={setNewExecutionData}
-                    isGenerating={isGenerating}
-                    setIsGenerating={setIsGenerating}
-                    onError={setErrorMessage}
-                    exit={() => setGeneratorOpened(false)}
-                  />
-                  {detailsOpened && (
-                    <Dialog
-                      open={true}
-                      onClose={() => setDetailsOpened(false)}
-                      disablePortal
-                      hideBackdrop
-                      PaperProps={{
-                        sx: {
-                          m: "16px",
-                          width: "calc(100% - 32px)",
-                          bgcolor: "surface.1",
-                          borderRadius: "16px",
-                        },
-                      }}
-                      sx={{
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        height: "fit-content",
-                      }}
-                    >
-                      <DetailsCard
-                        templateData={templateData}
-                        detailsOpened={detailsOpened}
-                        toggleDetails={() => setDetailsOpened(!detailsOpened)}
-                      />
-                      <Details
-                        templateData={templateData}
-                        updateTemplateData={setTemplateData}
-                      />
-                    </Dialog>
-                  )}
+                      </Tabs>
+                      <Box flex={1}>
+                        <CustomTabPanel value={tabsValue} index={0}>
+                          {generatorOpened && (
+                            <GeneratorForm
+                              templateData={templateData}
+                              setNewExecutionData={setNewExecutionData}
+                              isGenerating={isGenerating}
+                              setIsGenerating={setIsGenerating}
+                              onError={setErrorMessage}
+                              exit={() => setGeneratorOpened(false)}
+                            />
+                          )}
+                        </CustomTabPanel>
+                        <CustomTabPanel value={tabsValue} index={1}>
+                          <Details
+                            templateData={templateData}
+                            updateTemplateData={setTemplateData}
+                          />
+                        </CustomTabPanel>
+                      </Box>
+                    </Stack>
+                  </Stack>
                 </Grid>
 
-                {windowWidth < 900 && (
-                  <Button
-                    sx={{
-                      width: "100%",
-                      p: "10px 14px",
-                      m: "10px 16px 0",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      gap: 2,
-                      bgcolor: "surface.4",
-                      color: "onSurface",
-                      borderRadius: "16px",
-                      ":hover": { bgcolor: "surface.4", color: "onSurface" },
-                    }}
-                    onClick={() => setDetailsOpened(true)}
-                  >
-                    <Box
-                      component={"img"}
-                      src={
-                        templateData.thumbnail || "http://placehold.it/240x150"
-                      }
-                      alt={"alt"}
-                      sx={{
-                        width: 56,
-                        height: 42,
-                        objectFit: "cover",
-                        borderRadius: "999px",
-                      }}
-                    />
-                    <Stack alignItems={"flex-start"}>
-                      <Typography
-                        fontSize={14}
-                        color={"inherit"}
-                        dangerouslySetInnerHTML={{ __html: templateData.title }}
-                      />
-                      <Typography
-                        fontSize={10}
-                        fontWeight={400}
-                        color={"inherit"}
-                        dangerouslySetInnerHTML={{
-                          __html: templateData.category.name,
-                        }}
-                      />
-                    </Stack>
-                    <KeyboardArrowDown sx={{ ml: "auto", fontSize: 26 }} />
-                  </Button>
-                )}
                 <Grid
                   item
                   xs={12}
                   md={8}
                   sx={{
-                    height: { xs: "calc(100% - 148px)", md: "100%" },
+                    height: "100%",
                     overflow: "auto",
-                    p: "16px 16px 0",
                     bgcolor: "surface.1",
-                    borderTopLeftRadius: "16px",
-                    borderTopRightRadius: "16px",
+                    borderLeft: "1px solid #ECECF4",
                     position: "relative",
                   }}
                 >
@@ -444,108 +478,10 @@ const Prompt = () => {
                     </Box>
                   )}
                 </Grid>
-
-                {windowWidth < 900 && (
-                  <Stack
-                    sx={{
-                      width: "100%",
-                      p: "24px 16px 16px 16px",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      gap: 2,
-                      bgcolor: alpha(palette.surface[1], 0.8),
-                    }}
-                  >
-                    <Button
-                      sx={{
-                        bgcolor: "primary.main",
-                        color: "onPrimary",
-                        fontSize: 13,
-                        fontWeight: 500,
-                        border: "none",
-                        p: "8px 25px",
-                        ":hover": {
-                          bgcolor: "transparent",
-                          color: "primary.main",
-                        },
-                      }}
-                      startIcon={
-                        token ? <LogoApp width={18} color="white" /> : null
-                      }
-                      variant={"contained"}
-                      onClick={() => setGeneratorOpened(true)}
-                    >
-                      New Request
-                    </Button>
-                    <Loop
-                      sx={{
-                        width: "24px",
-                        height: "24px",
-                        color: "onSurface",
-                        visibility: !isGenerating ? "hidden" : "visible",
-                      }}
-                    />
-                    <IconButton
-                      sx={{
-                        flexDirection: { xs: "column", md: "row" },
-                        bgcolor: "surface.1",
-                        color: "onSurface",
-                        border: "none",
-                        ":hover": {
-                          bgcolor: "action.hover",
-                          color: "onSurface",
-                        },
-                        svg: { width: "24px", height: "24px" },
-                      }}
-                    >
-                      <MoreHoriz />
-                    </IconButton>
-                  </Stack>
-                )}
-
-                {/* <Grid
-                  item
-                  xs={12}
-                  md={3}
-                  sx={{
-                    display: `${detailsOpened ? "block" : "none"}`,
-                    height: "100%",
-                    overflow: "auto",
-                    pr: { md: "10px" },
-                    bgcolor: "surface.3",
-                    position: { xs: "absolute", md: "relative" },
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    zIndex: 999,
-                  }}
-                >
-                  <IconButton
-                    sx={{
-                      display: { xs: "flex", md: "none" },
-                      position: "relative",
-                      top: "15px",
-                      ml: "auto",
-                      right: "30px",
-                      zIndex: 1,
-                      bgcolor: "surface.1",
-                      color: "onSurface",
-                      border: "none",
-                      ":hover": { bgcolor: "surface.1", color: "onSurface" },
-                      svg: { width: "24px", height: "24px" },
-                    }}
-                    onClick={() => setDetailsOpened(false)}
-                  >
-                    <Close />
-                  </IconButton>
-                  <Details
-                    templateData={templateData}
-                    updateTemplateData={setTemplateData}
-                  />
-                </Grid> */}
               </Grid>
             )}
+
+            {ExecutionTitleModal}
 
             <Snackbar
               anchorOrigin={{ vertical: "bottom", horizontal: "right" }}

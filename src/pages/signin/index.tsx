@@ -13,7 +13,7 @@ const Login = () => {
   const router = useRouter();
   const from = Array.isArray(router?.query?.from)
     ? router?.query?.from[0]
-    : router?.query?.from || "";
+    : router?.query?.from ?? "";
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const token = useToken();
   const setUser = useSetUser();
@@ -26,21 +26,21 @@ const Login = () => {
     if (error) {
       console.log(error);
     }
-  }, [user, userIsLoading, error, router]);
+  }, [user, userIsLoading, router, error]);
 
   const preLogin = () => {
     setIsLoading(true);
   };
 
   const postLogin = (response: IContinueWithSocialMediaResponse | null) => {
-    setIsLoading(false);
-
+    const path = getPathURL();
     if (response?.created) {
+      setIsLoading(false);
       setUser(response);
       router.push("/signup");
     } else {
-      const path = getPathURL();
       localStorage.removeItem("path");
+      setIsLoading(false);
       if (path) {
         router.push(path);
       } else {
@@ -61,6 +61,7 @@ const Login = () => {
     </>
   );
 };
+
 export async function getServerSideProps() {
   return {
     props: {
@@ -70,4 +71,5 @@ export async function getServerSideProps() {
     },
   };
 }
+
 export default Login;

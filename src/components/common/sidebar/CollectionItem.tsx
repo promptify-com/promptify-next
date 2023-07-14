@@ -1,5 +1,11 @@
 import { ITemplate } from "@/common/types/template";
-import {  CardMedia, ListItem, ListItemButton } from "@mui/material";
+import {
+  CardMedia,
+  Grid,
+  ListItem,
+  ListItemButton,
+  Typography,
+} from "@mui/material";
 
 interface CollectionItemProps {
   expanded?: boolean;
@@ -15,8 +21,11 @@ export const CollectionItem: React.FC<CollectionItemProps> = ({
       <ListItemButton
         sx={{
           minHeight: 48,
-          mx: 1,
+          mx: expanded ? 1 : 0.5,
           borderRadius: "8px",
+          display: "flex",
+          alignItems: "center",
+          gap: 1,
         }}
         selected={template.id == 3}
       >
@@ -32,6 +41,16 @@ export const CollectionItem: React.FC<CollectionItemProps> = ({
           image={template.thumbnail}
           alt={template.title}
         />
+        <Grid
+          display={"flex"}
+          flexDirection={"column"}
+          sx={{ opacity: expanded ? 1 : 0 }}
+        >
+          <Typography>{template.title}</Typography>
+          <Typography variant="body2" color={"text.secondary"}>
+            ChatGpt
+          </Typography>
+        </Grid>
       </ListItemButton>
     </ListItem>
   );

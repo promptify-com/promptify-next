@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
-import { Box, Divider, InputLabel, TextField } from '@mui/material';
+import { Box, Divider, IconButton, InputLabel, Stack, TextField } from '@mui/material';
 import { InputsErrors } from './GeneratorForm';
+import { Backspace } from '@mui/icons-material';
 
 interface GeneratorInputProps {
   promptId: number;
@@ -62,15 +63,13 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
       {inputs.map((input, index) => (
         <React.Fragment key={index} >
           <Divider sx={{ borderColor: 'surface.3' }} />
-          <Box
-            p={'16px 8px 16px 16px'}
-            position={'relative'}
+          <Stack direction={'row'} alignItems={'center'} gap={1}
+            sx={{ p: '16px 8px 16px 16px' }}
           >
             <InputLabel
               sx={{
-                fontSize: 14,
+                fontSize: 13,
                 fontWeight: 500,
-                mb: '10px',
                 color: errors[input.name] ? 'error.main' : 'tertiary'
               }}
             >
@@ -78,12 +77,12 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
             </InputLabel>
             <TextField
               sx={{
-                width: '100%',
+                flex: 1,
                 '.MuiInputBase-input': {
                   p: 0,
                   color: 'onSurface',
-                  fontSize: 14,
-                  fontWeight: 400,
+                  fontSize: 13,
+                  fontWeight: 500,
                   '&::placeholder': {
                     color: 'grey.600',
                     opacity: 1
@@ -105,9 +104,15 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
               }}
               placeholder={input.type === 'number' ? 'Write a number here..' : 'Type here...'}
               type={input.type}
+              value={resInputs.find((prompt: any) => prompt.id === promptId)?.inputs[input.name] || ''}
               onChange={e => handleChange(e.target.value, input.name, input.type)}
             />
-          </Box>
+            <IconButton sx={{ color: 'grey.600', border: "none", p: "4px" }}
+              onClick={() => handleChange('', input.name, input.type)}
+            >
+              <Backspace />
+            </IconButton>
+          </Stack>
         </React.Fragment>
       ))}
     </Box>

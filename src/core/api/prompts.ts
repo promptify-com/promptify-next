@@ -13,7 +13,7 @@ import { authClient } from "../../common/axios";
 export const promptsApi = createApi({
   reducerPath: "promptsApi",
   baseQuery: axiosBaseQuery({
-    baseUrl: process.env.NEXT_PUBLIC_API_URL || "",
+    baseUrl: process.env.NEXT_PUBLIC_API_URL ?? "",
   }),
   endpoints: (builder) => {
     return {
@@ -33,12 +33,6 @@ export const promptsApi = createApi({
         query: (id: number) => ({
           url: `/api/meta/collections/${id}`,
           method: "get",
-        }),
-      }),
-      getTemplatesView: builder.query<Templates, number>({
-        query: (id: number) => ({
-          url: `api/meta/templates/${id}/view/`,
-          method: "post",
         }),
       }),
       getPromptParams: builder.query<PromptParams[], number>({
@@ -80,7 +74,6 @@ export const {
   useGetPromptTemplatesExecutionsQuery,
   useGetExecutionTemplateQuery,
   useGetAllPromptTemplatesQuery,
-  useLazyGetTemplatesViewQuery,
 } = promptsApi;
 
 export const useTemplateView = () => {

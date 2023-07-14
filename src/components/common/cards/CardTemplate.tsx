@@ -24,8 +24,10 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
 }) => {
   return (
     <Card
+      onClick={onFavoriteClick}
       sx={{
         borderRadius: "16px",
+        cursor: "pointer",
         p: { sm: "6px" },
         width: "100%",
         "&:hover": {
