@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
-import { Box, Divider, InputLabel, Stack, TextField } from '@mui/material';
+import { Box, Divider, IconButton, InputLabel, Stack, TextField } from '@mui/material';
 import { InputsErrors } from './GeneratorForm';
+import { Backspace } from '@mui/icons-material';
 
 interface GeneratorInputProps {
   promptId: number;
@@ -43,6 +44,7 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
     });
 
     setResInputs([...resArr]);
+    console.log(resInputs)
   };
 
   useEffect(() => {
@@ -103,8 +105,14 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
               }}
               placeholder={input.type === 'number' ? 'Write a number here..' : 'Type here...'}
               type={input.type}
+              value={resInputs.find((prompt: any) => prompt.id === promptId)?.inputs[input.name] || ''}
               onChange={e => handleChange(e.target.value, input.name, input.type)}
             />
+            <IconButton sx={{ color: 'grey.600', border: "none", p: "4px" }}
+              onClick={() => handleChange('', input.name, input.type)}
+            >
+              <Backspace />
+            </IconButton>
           </Stack>
         </React.Fragment>
       ))}

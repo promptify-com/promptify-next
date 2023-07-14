@@ -111,7 +111,6 @@ export const ExecutionsHeader: React.FC<Props> = ({
                                  <ExecutionsTabs 
                                     executions={executions}
                                     chooseExecution={(exec) => {
-                                       console.log(exec)
                                        changeSelectedExecution(exec)
                                        setPresetsAnchor(null)
                                     }}
