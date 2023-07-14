@@ -61,11 +61,12 @@ const CustomTabPanel = (props: TabPanelProps) => {
 
    return (
       <Box
-         role="tabpanel"
-         hidden={value !== index}
-         id={`simple-tabpanel-${index}`}
-         aria-labelledby={`simple-tab-${index}`}
-         {...other}
+        role="tabpanel"
+        hidden={value !== index}
+        id={`simple-tabpanel-${index}`}
+        aria-labelledby={`simple-tab-${index}`}
+        sx={{ height: "100%", width: "100%" }}
+        {...other}
       >
          {value === index && (
             <React.Fragment>
@@ -350,61 +351,65 @@ const Prompt = () => {
                     zIndex: 999,
                   }}
                 >
-                  <DetailsCard 
-                    templateData={templateData}
-                  />
-                  <Box>
-                     <Tabs
-                        value={tabsValue} 
-                        onChange={changeTab}
-                        textColor="primary"
-                        indicatorColor="primary"
-                        variant="fullWidth"
-                        sx={{ 
-                          minHeight: "auto",
-                          boxShadow: "0px -1px 0px 0px #ECECF4 inset" 
-                        }}
-                     >
-                        <Tab label="(X) Variables" {...a11yProps(0)} 
+                  <Stack height={"100%"}>
+                    <DetailsCard 
+                      templateData={templateData}
+                    />
+                    <Stack flex={1}>
+                      <Tabs
+                          value={tabsValue} 
+                          onChange={changeTab}
+                          textColor="primary"
+                          indicatorColor="primary"
+                          variant="fullWidth"
                           sx={{ 
-                            fontSize: 13, 
-                            fontWeight: 500, 
-                            textTransform: "none",
-                            p: "16px",
                             minHeight: "auto",
-                            bgcolor: "surface.1",
-                            color: `${alpha(palette.onSurface, .5)}` 
+                            boxShadow: "0px -1px 0px 0px #ECECF4 inset" 
                           }}
-                        />
-                        <Tab label="About" {...a11yProps(1)} icon={<ArtTrack />} iconPosition='start'
-                          sx={{ 
-                            fontSize: 13, 
-                            fontWeight: 500, 
-                            textTransform: "none",
-                            p: "16px",
-                            minHeight: "auto",
-                            bgcolor: "surface.1",
-                            color: `${alpha(palette.onSurface, .5)}`
-                          }}
-                        />
-                     </Tabs>
-                     <CustomTabPanel value={tabsValue} index={0}>
-                        <GeneratorForm
-                          templateData={templateData}
-                          setNewExecutionData={setNewExecutionData}
-                          isGenerating={isGenerating}
-                          setIsGenerating={setIsGenerating}
-                          onError={setErrorMessage}
-                          exit={() => setGeneratorOpened(false)}
-                        />
-                     </CustomTabPanel>
-                     <CustomTabPanel value={tabsValue} index={1}>
-                        <Details 
-                          templateData={templateData}
-                          updateTemplateData={setTemplateData}
-                        />
-                     </CustomTabPanel>
-                  </Box>
+                      >
+                          <Tab label="(X) Variables" {...a11yProps(0)} 
+                            sx={{ 
+                              fontSize: 13, 
+                              fontWeight: 500, 
+                              textTransform: "none",
+                              p: "16px",
+                              minHeight: "auto",
+                              bgcolor: "surface.1",
+                              color: `${alpha(palette.onSurface, .5)}` 
+                            }}
+                          />
+                          <Tab label="About" {...a11yProps(1)} icon={<ArtTrack />} iconPosition='start'
+                            sx={{ 
+                              fontSize: 13, 
+                              fontWeight: 500, 
+                              textTransform: "none",
+                              p: "16px",
+                              minHeight: "auto",
+                              bgcolor: "surface.1",
+                              color: `${alpha(palette.onSurface, .5)}`
+                            }}
+                          />
+                      </Tabs>
+                      <Box flex={1}>
+                        <CustomTabPanel value={tabsValue} index={0}>
+                            <GeneratorForm
+                              templateData={templateData}
+                              setNewExecutionData={setNewExecutionData}
+                              isGenerating={isGenerating}
+                              setIsGenerating={setIsGenerating}
+                              onError={setErrorMessage}
+                              exit={() => setGeneratorOpened(false)}
+                            />
+                        </CustomTabPanel>
+                        <CustomTabPanel value={tabsValue} index={1}>
+                            <Details 
+                              templateData={templateData}
+                              updateTemplateData={setTemplateData}
+                            />
+                        </CustomTabPanel>
+                      </Box>
+                    </Stack>
+                  </Stack>
                 </Grid>
 
                 {windowWidth < 900 && (

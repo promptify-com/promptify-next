@@ -67,7 +67,7 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
           >
             <InputLabel
               sx={{
-                fontSize: 14,
+                fontSize: 13,
                 fontWeight: 500,
                 color: errors[input.name] ? 'error.main' : 'tertiary'
               }}
@@ -80,8 +80,8 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
                 '.MuiInputBase-input': {
                   p: 0,
                   color: 'onSurface',
-                  fontSize: 14,
-                  fontWeight: 400,
+                  fontSize: 13,
+                  fontWeight: 500,
                   '&::placeholder': {
                     color: 'grey.600',
                     opacity: 1
