@@ -11,11 +11,36 @@ import { Provider } from "react-redux";
 import { store } from "@/core/store";
 import { theme } from "@/theme";
 import Head from "next/head";
+import Script from 'next/script';
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <Provider store={store}>
       <ThemeProvider theme={theme}>
+        <Script strategy="lazyOnload" src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS}`} />
+        <Script strategy="lazyOnload">
+            {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS}', {
+                page_path: window.location.pathname,
+                });
+            `}
+        </Script>
+        <Script strategy="afterInteractive" dangerouslySetInnerHTML={{
+            __html:`
+              (function(h,o,t,j,a,r){
+                h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+                h._hjSettings={hjid:${process.env.NEXT_PUBLIC_HOTJAR_ID},hjsv:6};
+                a=o.getElementsByTagName('head')[0];
+                r=o.createElement('script');r.async=1;
+                r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+                a.appendChild(r);
+              })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+              `
+            }} />
+        
         <Head>
           <title>{pageProps?.title}</title>
           <meta name="description" content={pageProps?.description} />
