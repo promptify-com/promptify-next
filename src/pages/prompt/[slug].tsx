@@ -344,7 +344,7 @@ const Prompt = () => {
                     display: `${generatorOpened ? "block" : "none"}`,
                     height: "100%",
                     overflow: "auto",
-                    position: { xs: "absolute", md: "relative" },
+                    position: "relative",
                     top: 0,
                     left: 0,
                     right: 0,
@@ -412,59 +412,12 @@ const Prompt = () => {
                   </Stack>
                 </Grid>
 
-                {windowWidth < 900 && (
-                  <Button
-                    sx={{
-                      width: "100%",
-                      p: "10px 14px",
-                      m: "10px 16px 0",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      gap: 2,
-                      bgcolor: "surface.4",
-                      color: "onSurface",
-                      borderRadius: "16px",
-                      ":hover": { bgcolor: "surface.4", color: "onSurface" },
-                    }}
-                    onClick={() => setDetailsOpened(true)}
-                  >
-                    <Box
-                      component={"img"}
-                      src={
-                        templateData.thumbnail || "http://placehold.it/240x150"
-                      }
-                      alt={"alt"}
-                      sx={{
-                        width: 56,
-                        height: 42,
-                        objectFit: "cover",
-                        borderRadius: "999px",
-                      }}
-                    />
-                    <Stack alignItems={"flex-start"}>
-                      <Typography
-                        fontSize={14}
-                        color={"inherit"}
-                        dangerouslySetInnerHTML={{ __html: templateData.title }}
-                      />
-                      <Typography
-                        fontSize={10}
-                        fontWeight={400}
-                        color={"inherit"}
-                        dangerouslySetInnerHTML={{
-                          __html: templateData.category.name,
-                        }}
-                      />
-                    </Stack>
-                    <KeyboardArrowDown sx={{ ml: "auto", fontSize: 26 }} />
-                  </Button>
-                )}
                 <Grid
                   item
                   xs={12}
                   md={8}
                   sx={{
-                    height: { xs: "calc(100% - 148px)", md: "100%" },
+                    height: "100%",
                     overflow: "auto",
                     bgcolor: "surface.1",
                     borderLeft: "1px solid #ECECF4",
@@ -502,103 +455,6 @@ const Prompt = () => {
                     </Box>
                   )}
                 </Grid>
-
-                {windowWidth < 900 && (
-                  <Stack
-                    sx={{
-                      width: "100%",
-                      p: "24px 16px 16px 16px",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      gap: 2,
-                      bgcolor: alpha(palette.surface[1], 0.8),
-                    }}
-                  >
-                    <Button
-                      sx={{
-                        bgcolor: "primary.main",
-                        color: "onPrimary",
-                        fontSize: 13,
-                        fontWeight: 500,
-                        border: "none",
-                        p: "8px 25px",
-                        ":hover": {
-                          bgcolor: "transparent",
-                          color: "primary.main",
-                        },
-                      }}
-                      startIcon={
-                        token ? <LogoApp width={18} color="white" /> : null
-                      }
-                      variant={"contained"}
-                      onClick={() => setGeneratorOpened(true)}
-                    >
-                      New Request
-                    </Button>
-                    <Loop
-                      sx={{
-                        width: "24px",
-                        height: "24px",
-                        color: "onSurface",
-                        visibility: !isGenerating ? "hidden" : "visible",
-                      }}
-                    />
-                    <IconButton
-                      sx={{
-                        flexDirection: { xs: "column", md: "row" },
-                        bgcolor: "surface.1",
-                        color: "onSurface",
-                        border: "none",
-                        ":hover": { bgcolor: "action.hover", color: "onSurface" },
-                        svg: { width: "24px", height: "24px" },
-                      }}
-                    >
-                      <MoreHoriz />
-                    </IconButton>
-                  </Stack>
-                )}
-
-                {/* <Grid
-                  item
-                  xs={12}
-                  md={3}
-                  sx={{
-                    display: `${detailsOpened ? "block" : "none"}`,
-                    height: "100%",
-                    overflow: "auto",
-                    pr: { md: "10px" },
-                    bgcolor: "surface.3",
-                    position: { xs: "absolute", md: "relative" },
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    zIndex: 999,
-                  }}
-                >
-                  <IconButton
-                    sx={{
-                      display: { xs: "flex", md: "none" },
-                      position: "relative",
-                      top: "15px",
-                      ml: "auto",
-                      right: "30px",
-                      zIndex: 1,
-                      bgcolor: "surface.1",
-                      color: "onSurface",
-                      border: "none",
-                      ":hover": { bgcolor: "surface.1", color: "onSurface" },
-                      svg: { width: "24px", height: "24px" },
-                    }}
-                    onClick={() => setDetailsOpened(false)}
-                  >
-                    <Close />
-                  </IconButton>
-                  <Details
-                    templateData={templateData}
-                    updateTemplateData={setTemplateData}
-                  />
-                </Grid> */}
               </Grid>
             )}
 
