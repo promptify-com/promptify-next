@@ -9,7 +9,6 @@ DialogContent,
 DialogTitle,
 Divider,
 Grid,
-IconButton,
 Palette,
 Snackbar,
 Stack,
@@ -35,9 +34,8 @@ import {
 import { Templates } from "../../core/api/dto/templates";
 import { PageLoading } from "../../components/PageLoading";
 import { useWindowSize } from "usehooks-ts";
-import { ArtTrack, Close, KeyboardArrowDown, Loop, MoreHoriz } from "@mui/icons-material";
+import { ArtTrack } from "@mui/icons-material";
 import useToken from "../../hooks/useToken";
-import { LogoApp } from "../../assets/icons/LogoApp";
 import { useRouter } from "next/router";
 import { GeneratorForm } from "@/components/prompt/GeneratorForm";
 import { Executions } from "@/components/prompt/Executions";
@@ -70,7 +68,7 @@ const CustomTabPanel = (props: TabPanelProps) => {
       >
          {value === index && (
             <React.Fragment>
-               {children}
+              {children}
             </React.Fragment>
          )}
       </Box>
@@ -97,7 +95,7 @@ const Prompt = () => {
   const [palette, setPalette] = useState(theme.palette);
   const { width: windowWidth } = useWindowSize();
   const [detailsOpened, setDetailsOpened] = useState(false);
-  const [generatorOpened, setGeneratorOpened] = useState(false);
+  const [generatorOpened, setGeneratorOpened] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const slug = router.query?.slug;
   // TODO: redirect to 404 page if slug is not found
@@ -148,15 +146,10 @@ const Prompt = () => {
     }
   }, [id]);
 
-  useEffect(() => {
-    if (windowWidth > 900) {
-      // setDetailsOpened(true);
-      setGeneratorOpened(true);
-    } else {
-      // setDetailsOpened(false);
-      setGeneratorOpened(false);
-    }
-  }, [windowWidth]);
+  const resetForm = () => {
+    setGeneratorOpened(false);
+    setTimeout(() => setGeneratorOpened(true));
+  };
 
 
   // After new generated execution is completed - refetch the executions list and clear the newExecutionData state
@@ -341,7 +334,6 @@ const Prompt = () => {
                   xs={12}
                   md={4}
                   sx={{
-                    display: `${generatorOpened ? "block" : "none"}`,
                     height: "100%",
                     overflow: "auto",
                     position: "relative",
@@ -354,6 +346,7 @@ const Prompt = () => {
                   <Stack height={"100%"}>
                     <DetailsCard 
                       templateData={templateData}
+                      resetForm={resetForm}
                     />
                     <Stack flex={1}>
                       <Tabs
@@ -392,6 +385,7 @@ const Prompt = () => {
                       </Tabs>
                       <Box flex={1}>
                         <CustomTabPanel value={tabsValue} index={0}>
+                          {generatorOpened && (
                             <GeneratorForm
                               templateData={templateData}
                               setNewExecutionData={setNewExecutionData}
@@ -400,6 +394,7 @@ const Prompt = () => {
                               onError={setErrorMessage}
                               exit={() => setGeneratorOpened(false)}
                             />
+                          )}
                         </CustomTabPanel>
                         <CustomTabPanel value={tabsValue} index={1}>
                             <Details 

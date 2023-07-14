@@ -44,7 +44,6 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
     });
 
     setResInputs([...resArr]);
-    console.log(resInputs)
   };
 
   useEffect(() => {
