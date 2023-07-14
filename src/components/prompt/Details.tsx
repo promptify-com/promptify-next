@@ -3,13 +3,7 @@ import {
   Box,
   Button,
   Chip,
-  ClickAwayListener,
   Grid,
-  Grow,
-  MenuItem,
-  MenuList,
-  Paper,
-  Popper,
   Stack,
   Typography,
   alpha,
@@ -18,24 +12,20 @@ import {
 import { Templates } from "@/core/api/dto/templates";
 import {
   ArrowForwardIos,
-  BookmarkAddOutlined,
-  BookmarkAdded,
   Favorite,
   FavoriteBorder,
-  PlaylistAdd,
 } from "@mui/icons-material";
 import { savePathURL } from "@/common/utils";
 import useToken from "@/hooks/useToken";
 import {
   addToCollection,
-  likeTemplate,
-  removeTemplateLike,
+  removeFromCollection
 } from "@/hooks/api/templates";
-import { useCollections } from "@/hooks/api/collections";
 import { Subtitle } from "@/components/blocks";
 import moment from "moment";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { useGetCurrentUser } from "@/hooks/api/user";
 
 interface DetailsProps {
   templateData: Templates;
@@ -47,24 +37,12 @@ export const Details: React.FC<DetailsProps> = ({
   updateTemplateData,
 }) => {
   const [isFetching, setIsFetching] = useState(false);
-  const [collectionsAnchor, setCollectionsAnchor] = useState<HTMLElement | null>(null);
-  const [collections] = useCollections();
   const token = useToken();
+  const [user, error, userIsLoading] = useGetCurrentUser([token]);
   const router = useRouter();
   const { palette } = useTheme();
 
-  const getLanguage = (shortLang: string): string => {
-    return (
-      new Intl.DisplayNames(["en"], { type: "language" }).of(shortLang) || ""
-    );
-  };
-
-  const chooseCollection = (collectionId: number) => {
-    addToCollection(collectionId, templateData.id);
-    setCollectionsAnchor(null);
-  };
-
-  const likeTemplateClicked = async () => {
+  const favorTemplate = async () => {
     if (!token) {
       savePathURL(window.location.pathname);
       return router.push("/signin");
@@ -73,32 +51,17 @@ export const Details: React.FC<DetailsProps> = ({
     if (!isFetching) {
       setIsFetching(true);
 
-      // Toggle the like button temporarily for smoother UX and permanently after processing likeTemplate() & removeTemplateLike()
-      updateTemplateData({ ...templateData, is_liked: !templateData.is_liked });
+      updateTemplateData({ ...templateData, is_favorite: !templateData.is_favorite });
 
       try {
-        let likes = templateData.likes;
 
-        if (!templateData.is_liked) {
-          await likeTemplate(templateData.id);
-          likes++;
+        if (!templateData.is_favorite) {
+          await addToCollection(user.favorite_collection_id, templateData.id);
         } else {
-          await removeTemplateLike(templateData.id);
-          likes > 0 && likes--;
+          await removeFromCollection(user.favorite_collection_id, templateData.id);
         }
-
-        updateTemplateData({
-          ...templateData,
-          is_liked: !templateData.is_liked,
-          likes: likes,
-        });
       } catch (err: any) {
-        // API response for an already liked template
-        if (err.response.data?.status === "success")
-          updateTemplateData({
-            ...templateData,
-            is_liked: !templateData.is_liked,
-          });
+        console.error(err)
       } finally {
         setIsFetching(false);
       }
@@ -106,7 +69,7 @@ export const Details: React.FC<DetailsProps> = ({
   };
 
   return (
-    <Box sx={{ px: { md: "24px" } }}>
+    <Box sx={{ p: "16px" }}>
       <Box
         sx={{
           borderRadius: { xs: "24px 24px 0 0", md: "16px 16px 0 0" },
@@ -114,90 +77,16 @@ export const Details: React.FC<DetailsProps> = ({
         }}
       >
         <Box sx={{ py: "16px" }}>
-          <Stack direction={"row"} alignItems={"center"} gap={1}>
-            <Button
-              sx={{ ...buttonStytle, borderColor: alpha(palette.primary.main, .3), flex: 1 }}
-              startIcon={
-                templateData.is_liked ? <BookmarkAdded /> : <BookmarkAddOutlined />
-              }
-              variant={"outlined"}
-              onClick={likeTemplateClicked}
-            >
-              Save
-            </Button>
-            <Button
-              sx={{ ...buttonStytle, borderColor: alpha(palette.primary.main, .3), flex: 3 }}
-              startIcon={<PlaylistAdd />}
-              variant={"outlined"}
-              onClick={(e) => setCollectionsAnchor(e.currentTarget)}
-            >
-              Collection
-            </Button>
-            <Popper
-              open={Boolean(collectionsAnchor)}
-              anchorEl={collectionsAnchor}
-              transition
-              disablePortal
-            >
-              {({ TransitionProps, placement }) => (
-                <Grow
-                  {...TransitionProps}
-                  style={{
-                    transformOrigin:
-                      placement === "bottom"
-                        ? "center top"
-                        : "center bottom",
-                  }}
-                >
-                  <Paper
-                    sx={{
-                      bgcolor: "surface.1",
-                      border: "1px solid #E3E3E3",
-                      borderRadius: "10px",
-                    }}
-                    elevation={0}
-                  >
-                    <ClickAwayListener
-                      onClickAway={() => setCollectionsAnchor(null)}
-                    >
-                      <MenuList
-                        sx={{ paddingRight: "3rem", width: "100%" }}
-                      >
-                        {collections.map((collection) => (
-                          <MenuItem
-                            key={collection.id}
-                            sx={{ borderTop: "1px solid #E3E3E3" }}
-                            onClick={() => chooseCollection(collection.id)}
-                          >
-                            <Typography
-                              sx={{
-                                fontWeight: 500,
-                                fontSize: 14,
-                                ml: "1rem",
-                                color: "onSurface",
-                              }}
-                            >
-                              {collection.name}
-                            </Typography>
-                          </MenuItem>
-                        ))}
-                      </MenuList>
-                    </ClickAwayListener>
-                  </Paper>
-                </Grow>
-              )}
-            </Popper>
-            <Button
-              sx={{ ...buttonStytle, borderColor: alpha(palette.primary.main, .3), flex: 1 }}
-              startIcon={
-                templateData.is_liked ? <Favorite /> : <FavoriteBorder />
-              }
-              variant={"outlined"}
-              onClick={likeTemplateClicked}
-            >
-              {templateData.likes}
-            </Button>
-          </Stack>
+          <Button
+            sx={{ ...buttonStytle, borderColor: alpha(palette.primary.main, .3), flex: 1 }}
+            startIcon={
+              templateData.is_favorite ? <Favorite /> : <FavoriteBorder />
+            }
+            variant={"outlined"}
+            onClick={favorTemplate}
+          >
+            {templateData.is_favorite ? "Remove from favorites" : "Add to favorites"}
+          </Button>
         </Box>
         <Box sx={{ py: "16px" }}>
           <Typography 
@@ -249,7 +138,6 @@ export const Details: React.FC<DetailsProps> = ({
           direction={"column"}
           gap={3}
           sx={{
-            bgcolor: "surface.1",
             p: { xs: "24px", md: "16px 0" },
             borderRadius: { xs: "24px 24px 0 0", md: 0 },
           }}

@@ -35,12 +35,6 @@ export const promptsApi = createApi({
           method: "get",
         }),
       }),
-      getTemplatesView: builder.query<Templates, number>({
-        query: (id: number) => ({
-          url: `api/meta/templates/${id}/view/`,
-          method: "post",
-        }),
-      }),
       getPromptParams: builder.query<PromptParams[], number>({
         query: (id: number) => ({
           url: `/api/meta/prompts/${id}/params`,
@@ -80,7 +74,6 @@ export const {
   useGetPromptTemplatesExecutionsQuery,
   useGetExecutionTemplateQuery,
   useGetAllPromptTemplatesQuery,
-  useLazyGetTemplatesViewQuery,
 } = promptsApi;
 
 export const useTemplateView = () => {

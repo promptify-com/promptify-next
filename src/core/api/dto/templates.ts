@@ -77,6 +77,7 @@ export interface Templates {
   views: number;
   likes: number;
   is_liked: boolean;
+  is_favorite: boolean;
   prompts_list?: [];
   executions_limit: number;
   slug: string;
@@ -95,15 +96,14 @@ export interface PromptExecutions {
 
 export interface TemplatesExecutions {
   id: number;
+  title: string;
   created_at: Date;
   prompt_executions: PromptExecutions[];
   is_favorite: boolean;
 }
 
-export interface TemplatesExecutionsPost {
-  prompt: number;
-  contextual_overrides: any[];
-  prompt_params: any;
+export interface ITemplateExecutionPut {
+  title?: string;
 }
 
 export interface PromptExecutions {

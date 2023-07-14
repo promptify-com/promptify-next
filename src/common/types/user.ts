@@ -14,4 +14,5 @@ export interface IUser {
   date_joined: string;
   interests: IInterest[];
   created?: boolean;
+  favorite_collection_id: number;
 }

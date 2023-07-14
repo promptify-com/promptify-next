@@ -45,10 +45,10 @@ export const GeneratorParam: React.FC<GeneratorParamProps> = ({
       {params?.map((params, i) => (
         <React.Fragment key={i}>
           <Divider sx={{ borderColor: "surface.3" }} />
-          <Box p={"20px"} position={"relative"}>
+          <Box p={"16px 24px 0px 16px"} position={"relative"}>
             <InputLabel
               sx={{
-                fontSize: 14,
+                fontSize: 13,
                 fontWeight: 500,
                 mb: "10px",
                 color: "tertiary",
