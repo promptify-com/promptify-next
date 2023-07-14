@@ -1,6 +1,5 @@
-import { ICollection } from "@/common/types/collection";
 import { ITemplate } from "@/common/types/template";
-import { Card, CardMedia, ListItem, ListItemButton } from "@mui/material";
+import {  CardMedia, ListItem, ListItemButton } from "@mui/material";
 
 interface CollectionItemProps {
   expanded?: boolean;

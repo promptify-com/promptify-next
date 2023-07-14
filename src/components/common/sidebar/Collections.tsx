@@ -14,8 +14,7 @@ import {
   Typography,
 } from "@mui/material";
 import { CollectionItem } from "./CollectionItem";
-import { ITemplate } from "@/pages/builder/[id]";
-import { Sidebar } from "@/components/builder/Sidebar";
+import { ITemplate } from "@/common/types/template";
 
 interface SideBarCollectionsProps {
   sidebarOpen: boolean;
