@@ -147,8 +147,10 @@ const Prompt = () => {
   }, [id]);
 
   const resetForm = () => {
-    setGeneratorOpened(false);
-    setTimeout(() => setGeneratorOpened(true));
+    if(!isGenerating) {
+      setGeneratorOpened(false);
+      setTimeout(() => setGeneratorOpened(true));
+    }
   };
 
 
