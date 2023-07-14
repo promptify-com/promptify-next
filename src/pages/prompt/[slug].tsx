@@ -360,25 +360,28 @@ const Prompt = () => {
                         textColor="primary"
                         indicatorColor="primary"
                         variant="fullWidth"
-                        sx={{ boxShadow: "0px -1px 0px 0px #ECECF4 inset" }}
+                        sx={{ 
+                          minHeight: "auto",
+                          boxShadow: "0px -1px 0px 0px #ECECF4 inset" 
+                        }}
                      >
-                        <Tab label="(x) Variables" {...a11yProps(0)} 
+                        <Tab label="(X) Variables" {...a11yProps(0)} 
                           sx={{ 
                             fontSize: 13, 
                             fontWeight: 500, 
                             textTransform: "none",
-                            p: "9px 16px",
+                            p: "16px",
                             minHeight: "auto",
                             bgcolor: "surface.1",
                             color: `${alpha(palette.onSurface, .5)}` 
                           }}
                         />
-                        <Tab label="Pinned" {...a11yProps(1)} icon={<ArtTrack />} iconPosition='start'
+                        <Tab label="About" {...a11yProps(1)} icon={<ArtTrack />} iconPosition='start'
                           sx={{ 
                             fontSize: 13, 
                             fontWeight: 500, 
                             textTransform: "none",
-                            p: "9px 16px",
+                            p: "16px",
                             minHeight: "auto",
                             bgcolor: "surface.1",
                             color: `${alpha(palette.onSurface, .5)}`
