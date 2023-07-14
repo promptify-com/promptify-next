@@ -331,6 +331,7 @@ const Prompt = () => {
                   bgcolor: "surface.2",
                   borderTopLeftRadius: "16px",
                   borderTopRightRadius: "16px",
+                  overflow: "hidden",
                   position: "relative"
                 }}
               >
@@ -342,7 +343,6 @@ const Prompt = () => {
                     display: `${generatorOpened ? "block" : "none"}`,
                     height: "100%",
                     overflow: "auto",
-                    p: "16px",
                     position: { xs: "absolute", md: "relative" },
                     top: 0,
                     left: 0,
@@ -350,58 +350,8 @@ const Prompt = () => {
                     zIndex: 999,
                   }}
                 >
-                  {windowWidth < 900 && (
-                    <Button
-                      sx={{
-                        width: "100%",
-                        p: "10px 14px",
-                        flexDirection: "row",
-                        alignItems: "center",
-                        gap: 2,
-                        bgcolor: "primary.main",
-                        color: "onPrimary",
-                        borderRadius: "16px",
-                        ":hover": { bgcolor: "primary.main", color: "onPrimary" },
-                      }}
-                    >
-                      <Box
-                        component={"img"}
-                        src={
-                          templateData.thumbnail || "http://placehold.it/240x150"
-                        }
-                        alt={"alt"}
-                        sx={{
-                          width: 56,
-                          height: 42,
-                          objectFit: "cover",
-                          borderRadius: "999px",
-                        }}
-                      />
-                      <Stack alignItems={"flex-start"}>
-                        <Typography
-                          fontSize={14}
-                          color={"inherit"}
-                          dangerouslySetInnerHTML={{ __html: templateData.title }}
-                        />
-                        <Typography
-                          fontSize={10}
-                          fontWeight={400}
-                          color={"inherit"}
-                          dangerouslySetInnerHTML={{
-                            __html: templateData.category.name,
-                          }}
-                        />
-                      </Stack>
-                      <Close
-                        sx={{ ml: "auto", fontSize: 26 }}
-                        onClick={() => setGeneratorOpened(false)}
-                      />
-                    </Button>
-                  )}
                   <DetailsCard 
-                    templateData={templateData} 
-                    detailsOpened={detailsOpened} 
-                    toggleDetails={() => setDetailsOpened(!detailsOpened)}
+                    templateData={templateData}
                   />
                   <Box>
                      <Tabs
@@ -509,8 +459,7 @@ const Prompt = () => {
                     height: { xs: "calc(100% - 148px)", md: "100%" },
                     overflow: "auto",
                     bgcolor: "surface.1",
-                    borderTopLeftRadius: "16px",
-                    borderTopRightRadius: "16px",
+                    borderLeft: "1px solid #ECECF4",
                     position: "relative"
                   }}
                 >
