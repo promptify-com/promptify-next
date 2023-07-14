@@ -1,3 +1,5 @@
+import { ITemplate } from "./template"
+
 export interface CreatedBy {
   id: number,
   username: string,
@@ -17,4 +19,18 @@ export interface ICollection {
   likes: number,
   created_by: CreatedBy,
   slug: string,
+}
+
+
+export interface ICollectionById {
+  id: number,
+  name: string,
+  description: string,
+  is_visible: boolean,
+  created_at: string
+  thumbnail: string,
+  prompt_templates_count: number,
+  likes: number,
+  created_by: CreatedBy,
+  prompt_templates:ITemplate[]
 }
