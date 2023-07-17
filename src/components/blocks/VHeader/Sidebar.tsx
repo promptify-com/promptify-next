@@ -24,12 +24,14 @@ import { useGetCollectionTemplatesQuery } from "@/core/api/prompts";
 import useToken from "@/hooks/useToken";
 import { useGetCurrentUser } from "@/hooks/api/user";
 import { ExploreFilterSideBar } from "@/components/explorer/ExploreFilterSideBar";
+import {
+  useGetEnginesQuery,
+  useGetTagsPopularQuery,
+} from "@/core/api/explorer";
 
 interface SideBarProps {
   open: boolean;
   toggleSideBar: () => void;
-  tags?: Tag[];
-  englines?: Engine[];
 }
 
 const drawerWidth = 299;
@@ -75,12 +77,14 @@ const Drawer = styled(MuiDrawer, {
 export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
   const token = useToken();
   const [user] = useGetCurrentUser([token]);
-  const { data: collections } = useGetCollectionTemplatesQuery(1);
-
+  const { data: collections } = useGetCollectionTemplatesQuery(user?.id);
+  const { data: tags } = useGetTagsPopularQuery();
+  const { data: engines } = useGetEnginesQuery();
   const [expandedOnHover, setExpandedOnHover] = useState<boolean>(false);
 
   const router = useRouter();
   const pathname = router.pathname;
+
   const navItems = [
     {
       name: "Browse",
@@ -188,7 +192,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
                     <Icon>{item.icon}</Icon>
                   </ListItemIcon>
                   <Typography
-                    sx={{ opacity: open || expandedOnHover ? 1 : 0 }}
+                    sx={{ opacity: open || expandedOnHover ? 1 : 0, mt: 0.5 }}
                     fontSize={14}
                     fontWeight={500}
                     color={"onSurface"}
@@ -199,10 +203,14 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
               </ListItemButton>
             </ListItem>
           ))}
-          <Divider />
+          <Divider sx={{ opacity: pathname == "/explorer" ? 0 : 1 }} />
           <>
             {pathname == "/explorer" ? (
-              <ExploreFilterSideBar engines={[]} tags={[]} />
+              <ExploreFilterSideBar
+                engines={engines}
+                tags={tags}
+                sidebarOpen={open || expandedOnHover}
+              />
             ) : (
               <Collections
                 favCollection={collections}
