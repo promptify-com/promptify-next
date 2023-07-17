@@ -2,7 +2,7 @@ import { Grid, Typography } from "@mui/material";
 import React from "react";
 import { ICollection } from "@/common/types/collection";
 import { FetchLoading } from "@/components/FetchLoading";
-import CardTemplate from "../explorer/CardPrompte";
+import CollectionCard from "@/components/common/cards/CardCollection";
 import { NotFoundIcon } from "@/assets/icons/NotFoundIcon";
 import { useRouter } from "next/router";
 
@@ -78,7 +78,7 @@ const Collections: React.FC<Props> = ({
           >
             {!!collections && collections.length > 0 ? (
               collections.map((el, idx) => (
-                <CardTemplate
+                <CollectionCard
                   onFavoriteClick={() => router.push(`/collection/${el.id}`)}
                   key={idx}
                   collection={el}
