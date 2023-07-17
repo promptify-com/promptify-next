@@ -1,0 +1,116 @@
+import React, { useState } from "react";
+import {
+  Avatar,
+  Box,
+  Button,
+  Chip,
+  Grid,
+  List,
+  ListItem,
+  ListItemButton,
+  ListSubheader,
+  Typography,
+} from "@mui/material";
+
+import { Engine, Tag } from "@/core/api/dto/templates";
+import ChatGptImg from "@/assets/images/promptify.png";
+
+interface ExploreFilterSideBarProps {
+  sidebarOpen: boolean;
+  engines: Engine[] | undefined;
+  tags: Tag[] | undefined;
+}
+
+export const ExploreFilterSideBar: React.FC<ExploreFilterSideBarProps> = ({
+  engines,
+  tags,
+  sidebarOpen,
+}) => {
+  const [itemsToShow, setItemsToShow] = useState<number>(3);
+
+  const showmore = () => {
+    if (engines?.length) {
+      setItemsToShow(engines.length);
+    }
+  };
+
+  const showless = () => {
+    setItemsToShow(3);
+  };
+  return (
+    <Box sx={{ opacity: sidebarOpen ? 1 : 0 }}>
+      <List
+        subheader={
+          <ListSubheader sx={{ fontSize: "12px", ml: "17px" }}>
+            ENGINES
+          </ListSubheader>
+        }
+      >
+        {engines?.slice(0, itemsToShow).map((engine) => (
+          <ListItem disablePadding key={engine.name}>
+            <ListItemButton
+              key={engine.id}
+              sx={{ borderRadius: "8px", minHeight: 48, mx: 1, px: 3.0 }}
+            >
+              <Avatar
+                src={
+                  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS58O0-OcWTqwlFJCYTkJUSVlGeqleLPstyYdxFFcXNpQ&s"
+                }
+                alt={engine.name}
+                sx={{
+                  width: "30px",
+                  height: "30px",
+                  mr: "18px",
+                }}
+              />
+              <Typography fontSize={14} fontWeight={500} color={"onSurface"}>
+                {engine.name}
+              </Typography>
+            </ListItemButton>
+          </ListItem>
+        ))}
+        <Button
+          sx={{
+            fontSize: "12px",
+            color: "black",
+            mx: 2,
+          }}
+          variant="text"
+          onClick={itemsToShow === 3 ? showmore : showless}
+        >
+          {itemsToShow === 3 ? "See all" : "Show less"}
+        </Button>
+      </List>
+      <List
+        subheader={
+          <ListSubheader sx={{ fontSize: "12px", ml: "17px" }}>
+            POPULAR TAGS
+          </ListSubheader>
+        }
+      >
+        <Grid
+          display={"flex"}
+          direction={"column"}
+          alignItems={"start"}
+          gap={"8px"}
+          ml={"29px"}
+        >
+          {tags?.map((tag) => (
+            <Chip
+              sx={{
+                bgcolor: "surface.3",
+                fontSize: 14,
+                fontWeight: 500,
+                lineHeight: "18px",
+                height: "24px",
+              }}
+              key={tag.id}
+              label={tag.name}
+              onClick={() => {}}
+            />
+          ))}
+        </Grid>
+      </List>
+    </Box>
+  );
+};

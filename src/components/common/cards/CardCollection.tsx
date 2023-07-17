@@ -12,7 +12,7 @@ import {
   WishCardContainer,
   WishCardTotalGrid,
   WriterNameCardMedia,
-} from "./StyleComponents";
+} from "@/components/explorer/StyleComponents";
 import { UnionIcon } from "@/assets/icons/Union";
 import { ICollection } from "@/common/types/collection";
 
@@ -21,7 +21,10 @@ type CardProps = {
   onFavoriteClick?: () => void;
 };
 
-const CardTemplate: React.FC<CardProps> = ({ collection, onFavoriteClick }) => {
+const CardCollection: React.FC<CardProps> = ({
+  collection,
+  onFavoriteClick,
+}) => {
   return (
     <CardContainerGrid onClick={onFavoriteClick}>
       <Grid>
@@ -57,19 +60,6 @@ const CardTemplate: React.FC<CardProps> = ({ collection, onFavoriteClick }) => {
             </Grid>
           </Grid>
         </ImgCardContainerGrid>
-        {/* <Grid
-          sx={{
-            marginTop: '-11.5em',
-            padding: '20px',
-          }}
-        >
-          <CardMedia
-            sx={{ borderRadius: '18px' }}
-            component="img"
-            image={collection.thumbnail}
-            alt="propmte image"
-          />
-        </Grid> */}
       </Grid>
       <BodyCardContainerGrid>
         <TitleCardGrid>
@@ -77,13 +67,7 @@ const CardTemplate: React.FC<CardProps> = ({ collection, onFavoriteClick }) => {
             ? collection.name
             : `${collection.name.slice(0, 30)}...`}
         </TitleCardGrid>
-        {/* <TagsCardContainerGrid>
-                    {collection.tags.map((el, idx) => (
-                        <TagCardGrid key={idx} >
-                            {el.name}
-                        </TagCardGrid>
-                    ))}
-                </TagsCardContainerGrid> */}
+
         <Grid
           sx={{
             fontFamily: "Poppins",
@@ -104,12 +88,6 @@ const CardTemplate: React.FC<CardProps> = ({ collection, onFavoriteClick }) => {
       <TitleCardContainerGrid>
         <FooterCardContainerGrid>
           <CardMediaContainer>
-            {/* <WriterImgCardMedia
-                            component="img"
-                            image={collection?.created_by?.avatar || Images.WRITER}
-                            alt="writer"
-                        /> */}
-            {/* {`${collection?.first_name[0].toUpperCase()}${collection?.last_name[0].toUpperCase()}`} */}
             <Typography
               sx={{
                 bgcolor: "black",
@@ -130,7 +108,6 @@ const CardTemplate: React.FC<CardProps> = ({ collection, onFavoriteClick }) => {
                 color: "#FFFFFF",
               }}
             >
-              {/* {`${collection?.created_by?.first_name[0]?.toUpperCase()}${collection?.created_by?.last_name[0]?.toUpperCase()}`} */}
               {!!collection?.created_by
                 ? !!collection?.created_by?.first_name &&
                   !!collection?.created_by?.last_name
@@ -159,4 +136,4 @@ const CardTemplate: React.FC<CardProps> = ({ collection, onFavoriteClick }) => {
   );
 };
 
-export default CardTemplate;
+export default CardCollection;

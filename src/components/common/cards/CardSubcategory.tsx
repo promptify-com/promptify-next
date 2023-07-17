@@ -1,0 +1,52 @@
+import React from "react";
+import { Card, CardActionArea, CardMedia, Typography } from "@mui/material";
+
+import { Category } from "@/core/api/dto/templates";
+
+interface CardSubcategoryProps {
+  subcategory: Category;
+  onSelected?: () => void;
+}
+
+export const SubCategoryCard: React.FC<CardSubcategoryProps> = ({
+  subcategory,
+  onSelected,
+}) => {
+  return (
+    <Card
+      onClick={onSelected}
+      sx={{
+        borderRadius: "45px",
+        display: "flex",
+        height: "46px",
+        width: "fit-content",
+      }}
+      elevation={0}
+    >
+      <CardActionArea
+        sx={{
+          display: "flex",
+          gap: 1,
+          p: 1,
+          p4: 4,
+        }}
+      >
+        <CardMedia
+          sx={{
+            zIndex: 1,
+            borderRadius: "100%",
+            width: "32px",
+            height: "32px",
+            objectFit: "cover",
+          }}
+          component="img"
+          image={
+            "https://promptify.s3.amazonaws.com/b2ef452894b9464786556b89c63a213b"
+          }
+          alt={subcategory.name}
+        />
+        <Typography sx={{ ml: "" }}> {subcategory.name}</Typography>
+      </CardActionArea>
+    </Card>
+  );
+};

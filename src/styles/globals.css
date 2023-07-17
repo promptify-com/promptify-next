@@ -171,3 +171,15 @@ body {
     width: 100% !important;
   }
 }
+.sidebar-collection-list{
+  height: '60vh';
+  overflow-y: 'scroll' !important;
+}
+
+.sidebar-collection-list {
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none;  /* Firefox */
+}
+.sidebar-collection-list::-webkit-scrollbar { 
+  display: none;  /* Safari and Chrome */
+}

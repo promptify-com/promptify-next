@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { Box, Grid, Typography } from "@mui/material";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { CustomTemplates } from "@/components/explorer/Templates";
 import { Header } from "@/components/blocks/Header";
 import { PageLoading } from "@/components/PageLoading";
@@ -34,12 +34,12 @@ function Home({
 
   const tag = router.query?.tag;
 
-  const [isLoading, setIsLoading] = React.useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isLoadingCollection, setIsLoadingCollection] =
-    React.useState<boolean>(false);
-  const [categorySelected, setCategorySelected] = React.useState<number>();
-  const [selectedTag, setSelectedTag] = React.useState<Tag[]>([]);
-  const [keyWord, setKeyWord] = React.useState<string>("");
+    useState<boolean>(false);
+  const [categorySelected, setCategorySelected] = useState<number>();
+  const [selectedTag, setSelectedTag] = useState<Tag[]>([]);
+  const [keyWord, setKeyWord] = useState<string>("");
 
   const preLogin = () => {
     setIsLoading(true);
@@ -49,6 +49,7 @@ function Home({
   const postLogin = (response: IContinueWithSocialMediaResponse | null) => {
     if (!response) return;
     if (response && response.created) {
+      
       setUser(response);
       router.push("/signup");
     } else {
@@ -393,7 +394,7 @@ export async function getServerSideProps() {
     const tags = tagsResponse.data;
     const categoryRequest = await authClient.get("/api/meta/categories/");
     const categories = categoryRequest.data;
-
+    
     return {
       props: {
         collections,

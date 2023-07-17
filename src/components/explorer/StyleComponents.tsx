@@ -38,7 +38,6 @@ export const BodyCardContainerGrid = styled(Grid)(({ theme }) => ({
   [theme.breakpoints.up('sm')]: {
     height: '4em',
   },
-  //   padding: '1em 0em',
   display: 'flex',
   flexDirection: 'column',
   gap: '0.5em',

@@ -2,12 +2,10 @@ import { Box, Grid, Typography } from "@mui/material";
 import React from "react";
 
 import { NotFoundIcon } from "@/assets/icons/NotFoundIcon";
-import { ICollection } from "@/common/types/collection";
 import { FetchLoading } from "@/components/FetchLoading";
 import { Tag } from "@/core/api/dto/templates";
 import { useGetTemplatesByKeyWordAndTagQuery } from "@/core/api/explorer";
-import BestTemplate from "./BestTemplate";
-import CardTemplate from "./CardPrompte";
+import CardTemplate from "../common/cards/CardTemplate";
 import { useRouter } from "next/router";
 
 interface Props {
@@ -15,10 +13,7 @@ interface Props {
   keyWord: string;
 }
 
-export const CustomTemplates: React.FC<Props> = ({
-  selectedTag,
-  keyWord,
-}) => {
+export const CustomTemplates: React.FC<Props> = ({ selectedTag, keyWord }) => {
   const router = useRouter();
 
   const queryString = selectedTag
@@ -90,7 +85,7 @@ export const CustomTemplates: React.FC<Props> = ({
             {!isFetching ? (
               !!templates && templates.length > 0 ? (
                 templates.map((el, idx) => (
-                  <BestTemplate
+                  <CardTemplate
                     onFavoriteClick={() => router.push(`/prompt/${el.slug}`)}
                     key={idx}
                     template={el}

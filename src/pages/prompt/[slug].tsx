@@ -1,30 +1,30 @@
 import React, { useEffect, useState } from "react";
 import {
-Alert,
-Box,
-Button,
-Dialog,
-DialogActions,
-DialogContent,
-DialogTitle,
-Divider,
-Grid,
-Palette,
-Snackbar,
-Stack,
-Tab,
-Tabs,
-TextField,
-ThemeProvider,
-Typography,
-alpha,
-createTheme,
-useTheme,
+  Alert,
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Divider,
+  Grid,
+  Palette,
+  Snackbar,
+  Stack,
+  Tab,
+  Tabs,
+  TextField,
+  ThemeProvider,
+  Typography,
+  alpha,
+  createTheme,
+  useTheme,
 } from "@mui/material";
 import materialDynamicColors from "material-dynamic-colors";
 import { mix } from "polished";
-import { Header } from "@/components/blocks/VHeader";
 
+import { Header } from "@/components/blocks/VHeader";
 import {
   useGetPromptTemplatesExecutionsQuery,
   useGetPromptTemplateBySlugQuery,
@@ -55,47 +55,47 @@ interface TabPanelProps {
 }
 
 const CustomTabPanel = (props: TabPanelProps) => {
-   const { children, value, index, ...other } = props;
+  const { children, value, index, ...other } = props;
 
-   return (
-      <Box
-        role="tabpanel"
-        hidden={value !== index}
-        id={`simple-tabpanel-${index}`}
-        aria-labelledby={`simple-tab-${index}`}
-        sx={{ height: "100%", width: "100%" }}
-        {...other}
-      >
-        {children}
-      </Box>
-   );
-}
+  return (
+    <Box
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      sx={{ height: "100%", width: "100%" }}
+      {...other}
+    >
+      {children}
+    </Box>
+  );
+};
 
 const a11yProps = (index: number) => {
-   return {
-      id: `simple-tab-${index}`,
-      'aria-controls': `simple-tabpanel-${index}`,
-   };
-}
+  return {
+    id: `simple-tab-${index}`,
+    "aria-controls": `simple-tabpanel-${index}`,
+  };
+};
 
 const Prompt = () => {
   const router = useRouter();
   const token = useToken();
-  const [newExecutionData, setNewExecutionData] = useState<PromptLiveResponse | null>(null);
+  const [newExecutionData, setNewExecutionData] =
+    useState<PromptLiveResponse | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [currentGeneratedPrompt, setCurrentGeneratedPrompt] = useState<Prompts | null>(null);
+  const [currentGeneratedPrompt, setCurrentGeneratedPrompt] =
+    useState<Prompts | null>(null);
   const [openTitleModal, setOpenTitleModal] = useState(false);
   const [executionTitle, setExecutionTitle] = useState("");
   const [templateView] = useTemplateView();
   const theme = useTheme();
   const [palette, setPalette] = useState(theme.palette);
-  const { width: windowWidth } = useWindowSize();
-  const [detailsOpened, setDetailsOpened] = useState(false);
   const [generatorOpened, setGeneratorOpened] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const slug = router.query?.slug;
   // TODO: redirect to 404 page if slug is not found
-  const slugValue = ( Array.isArray(slug) ? slug[0] : slug || "" ) as string;
+  const slugValue = (Array.isArray(slug) ? slug[0] : slug || "") as string;
 
   // Fetch new execution data after generating and retrieving its id
   const { data: fetchedNewExecution } = useGetExecutionTemplateQuery(
@@ -120,7 +120,7 @@ const Prompt = () => {
     isFetching: isFetchingExecutions,
     refetch: refetchTemplateExecutions,
   } = useGetPromptTemplatesExecutionsQuery(id ? +id : 1, {
-      refetchOnMountOrArgChange: true,
+    refetchOnMountOrArgChange: true,
   });
 
   const [tabsValue, setTabsValue] = React.useState(0);
@@ -130,10 +130,9 @@ const Prompt = () => {
 
   useEffect(() => {
     if (fetchedTemplate) {
-        setTemplateData(fetchedTemplate);
+      setTemplateData(fetchedTemplate);
     }
   }, [fetchedTemplate]);
-
 
   useEffect(() => {
     if (id) {
@@ -143,33 +142,38 @@ const Prompt = () => {
   }, [id]);
 
   const resetForm = () => {
-    if(!isGenerating) {
+    if (!isGenerating) {
       setGeneratorOpened(false);
       setTimeout(() => setGeneratorOpened(true));
     }
   };
 
-
   // After new generated execution is completed - refetch the executions list and clear the newExecutionData state
   // All prompts should be completed - isCompleted: true
   useEffect(() => {
     if (!isGenerating && newExecutionData?.data?.length) {
-      const promptNotCompleted = newExecutionData.data.find(execData => !execData.isCompleted);
+      const promptNotCompleted = newExecutionData.data.find(
+        (execData) => !execData.isCompleted
+      );
       if (!promptNotCompleted) {
-        setOpenTitleModal(true)
+        setOpenTitleModal(true);
       }
     }
   }, [isGenerating, newExecutionData]);
+  const [openSideBar, setOpenSideBar] = useState<boolean>(true);
 
   // Keep tracking the current generated prompt
   useEffect(() => {
-    if(templateData && newExecutionData?.data?.length) {
-      const loadingPrompt = newExecutionData.data.find(prompt => prompt.isLoading);
-      const prompt = templateData.prompts.find((prompt) => prompt.id === loadingPrompt?.prompt);
-      if(prompt) 
-        setCurrentGeneratedPrompt(prompt)
+    if (templateData && newExecutionData?.data?.length) {
+      const loadingPrompt = newExecutionData.data.find(
+        (prompt) => prompt.isLoading
+      );
+      const prompt = templateData.prompts.find(
+        (prompt) => prompt.id === loadingPrompt?.prompt
+      );
+      if (prompt) setCurrentGeneratedPrompt(prompt);
     } else {
-      setCurrentGeneratedPrompt(null)
+      setCurrentGeneratedPrompt(null);
     }
   }, [newExecutionData]);
 
@@ -223,47 +227,49 @@ const Prompt = () => {
         };
         setPalette(newPalette);
       })
-      .catch(async () => {
-        await fetchDynamicColors();
+      .catch(() => {
+        fetchDynamicColors();
       });
   };
 
   const dynamicTheme = createTheme({ ...theme, palette });
 
   const closeTitleModal = () => {
-    setOpenTitleModal(false)
-    setExecutionTitle("")
-    refetchTemplateExecutions()
-  }
+    setOpenTitleModal(false);
+    setExecutionTitle("");
+    refetchTemplateExecutions();
+  };
   const saveExecutionTitle = async () => {
     if (executionTitle.length) {
-      if(fetchedNewExecution?.id) {
+      if (fetchedNewExecution?.id) {
         try {
-          await updateExecution(fetchedNewExecution?.id, { 
+          await updateExecution(fetchedNewExecution?.id, {
             ...fetchedNewExecution,
-            title: executionTitle
-          })
-        } 
-        catch(err) {
-          console.error(err)
+            title: executionTitle,
+          });
+        } catch (err) {
+          console.error(err);
         }
       }
-      
-      refetchTemplateExecutions()
-      setNewExecutionData(null)
-      setCurrentGeneratedPrompt(null)
-      setOpenTitleModal(false)
-      setExecutionTitle("")
+
+      refetchTemplateExecutions();
+      setNewExecutionData(null);
+      setCurrentGeneratedPrompt(null);
+      setOpenTitleModal(false);
+      setExecutionTitle("");
     }
-  }
+  };
 
   const ExecutionTitleModal = (
-    <Dialog open={openTitleModal}
+    <Dialog
+      open={openTitleModal}
       PaperProps={{
-        sx: { bgcolor: "surface.1" }
+        sx: { bgcolor: "surface.1" },
       }}
     >
-      <DialogTitle sx={{ fontSize: 16, fontWeight: 400 }}>Enter a title for your new spark:</DialogTitle>
+      <DialogTitle sx={{ fontSize: 16, fontWeight: 400 }}>
+        Enter a title for your new spark:
+      </DialogTitle>
       <DialogContent>
         <TextField
           sx={{
@@ -272,30 +278,37 @@ const Prompt = () => {
               color: "onSurface",
               fontSize: 48,
               fontWeight: 400,
-              "&::placeholder": { color: "grey.600" }
+              "&::placeholder": { color: "grey.600" },
             },
             ".MuiOutlinedInput-notchedOutline": { border: 0 },
-            ".MuiInputBase-root.Mui-focused .MuiOutlinedInput-notchedOutline": { border: 0 },
+            ".MuiInputBase-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+              border: 0,
+            },
           }}
           placeholder={"Title..."}
           onChange={(e) => setExecutionTitle(e.target.value)}
         />
       </DialogContent>
       <DialogActions sx={{ p: "16px", gap: 2 }}>
-        <Button sx={{ minWidth: "auto", p: 0, color: "grey.600" }}
-          onClick={closeTitleModal} 
+        <Button
+          sx={{ minWidth: "auto", p: 0, color: "grey.600" }}
+          onClick={closeTitleModal}
         >
           Skip
         </Button>
-        <Button sx={{ ":disabled": { color: "grey.600" } ,":hover": { bgcolor: "action.hover" } }}
+        <Button
+          sx={{
+            ":disabled": { color: "grey.600" },
+            ":hover": { bgcolor: "action.hover" },
+          }}
           disabled={!executionTitle.length}
-          onClick={saveExecutionTitle} 
+          onClick={saveExecutionTitle}
         >
           Save
         </Button>
       </DialogActions>
     </Dialog>
-  )
+  );
 
   if (fetchedTemplateError || templateExecutionsError)
     return <div>Something went wrong...</div>;
@@ -304,11 +317,15 @@ const Prompt = () => {
     <>
       <ThemeProvider theme={dynamicTheme}>
         <Box sx={{ bgcolor: "surface.3" }}>
-          <Sidebar />
-          <Box sx={{ 
-            width: { md: 'calc(100% - 96px)' }, 
-            ml: { md: 'auto' }
-          }}
+          <Sidebar
+            open={openSideBar}
+            toggleSideBar={() => setOpenSideBar(!openSideBar)}
+          />
+          <Box
+            sx={{
+              width: { md: "calc(100% - 299px)" },
+              ml: { md: "auto" },
+            }}
           >
             <Header transparent />
             {!templateData || isLoadingTemplate || isFetchingTemplate ? (
@@ -324,7 +341,7 @@ const Prompt = () => {
                   borderTopLeftRadius: "16px",
                   borderTopRightRadius: "16px",
                   overflow: "hidden",
-                  position: "relative"
+                  position: "relative",
                 }}
               >
                 <Grid
@@ -342,44 +359,50 @@ const Prompt = () => {
                   }}
                 >
                   <Stack height={"100%"}>
-                    <DetailsCard 
+                    <DetailsCard
                       templateData={templateData}
                       resetForm={resetForm}
                     />
                     <Stack flex={1}>
                       <Tabs
-                          value={tabsValue} 
-                          onChange={changeTab}
-                          textColor="primary"
-                          indicatorColor="primary"
-                          variant="fullWidth"
-                          sx={{ 
-                            minHeight: "auto",
-                            boxShadow: "0px -1px 0px 0px #ECECF4 inset" 
-                          }}
+                        value={tabsValue}
+                        onChange={changeTab}
+                        textColor="primary"
+                        indicatorColor="primary"
+                        variant="fullWidth"
+                        sx={{
+                          minHeight: "auto",
+                          boxShadow: "0px -1px 0px 0px #ECECF4 inset",
+                        }}
                       >
-                          <Tab label="(X) Variables" {...a11yProps(0)} 
-                            sx={{ 
-                              fontSize: 13, 
-                              fontWeight: 500, 
-                              textTransform: "none",
-                              p: "16px",
-                              minHeight: "auto",
-                              bgcolor: "surface.1",
-                              color: `${alpha(palette.onSurface, .5)}` 
-                            }}
-                          />
-                          <Tab label="About" {...a11yProps(1)} icon={<ArtTrack />} iconPosition='start'
-                            sx={{ 
-                              fontSize: 13, 
-                              fontWeight: 500, 
-                              textTransform: "none",
-                              p: "16px",
-                              minHeight: "auto",
-                              bgcolor: "surface.1",
-                              color: `${alpha(palette.onSurface, .5)}`
-                            }}
-                          />
+                        <Tab
+                          label="(X) Variables"
+                          {...a11yProps(0)}
+                          sx={{
+                            fontSize: 13,
+                            fontWeight: 500,
+                            textTransform: "none",
+                            p: "16px",
+                            minHeight: "auto",
+                            bgcolor: "surface.1",
+                            color: `${alpha(palette.onSurface, 0.5)}`,
+                          }}
+                        />
+                        <Tab
+                          label="About"
+                          {...a11yProps(1)}
+                          icon={<ArtTrack />}
+                          iconPosition="start"
+                          sx={{
+                            fontSize: 13,
+                            fontWeight: 500,
+                            textTransform: "none",
+                            p: "16px",
+                            minHeight: "auto",
+                            bgcolor: "surface.1",
+                            color: `${alpha(palette.onSurface, 0.5)}`,
+                          }}
+                        />
                       </Tabs>
                       <Box flex={1}>
                         <CustomTabPanel value={tabsValue} index={0}>
@@ -395,10 +418,10 @@ const Prompt = () => {
                           )}
                         </CustomTabPanel>
                         <CustomTabPanel value={tabsValue} index={1}>
-                            <Details 
-                              templateData={templateData}
-                              updateTemplateData={setTemplateData}
-                            />
+                          <Details
+                            templateData={templateData}
+                            updateTemplateData={setTemplateData}
+                          />
                         </CustomTabPanel>
                       </Box>
                     </Stack>
@@ -414,7 +437,7 @@ const Prompt = () => {
                     overflow: "auto",
                     bgcolor: "surface.1",
                     borderLeft: "1px solid #ECECF4",
-                    position: "relative"
+                    position: "relative",
                   }}
                 >
                   <Executions
@@ -425,25 +448,28 @@ const Prompt = () => {
                     refetchExecutions={refetchTemplateExecutions}
                   />
                   {currentGeneratedPrompt && (
-                    <Box sx={{ 
+                    <Box
+                      sx={{
                         position: "sticky",
                         bottom: 0,
                         left: 0,
                         right: 0,
                         zIndex: 998,
-                        bgcolor: "surface.1" 
+                        bgcolor: "surface.1",
                       }}
                     >
                       <Divider sx={{ borderColor: "surface.3" }} />
-                      <Typography sx={{
+                      <Typography
+                        sx={{
                           padding: "8px 16px 5px",
                           textAlign: "right",
                           fontSize: 11,
                           fontWeight: 500,
-                          opacity: .3
+                          opacity: 0.3,
                         }}
                       >
-                        Prompt #{currentGeneratedPrompt.order}: {currentGeneratedPrompt.title}
+                        Prompt #{currentGeneratedPrompt.order}:{" "}
+                        {currentGeneratedPrompt.title}
                       </Typography>
                     </Box>
                   )}
@@ -472,13 +498,16 @@ export async function getServerSideProps({ params }: any) {
   const { slug } = params;
 
   try {
-    const templatesResponse = await authClient.get(`/api/meta/templates/by-slug/${slug}/`);
+    const templatesResponse = await authClient.get(
+      `/api/meta/templates/by-slug/${slug}/`
+    );
     const fetchedTemplate = templatesResponse.data; // Extract the necessary data from the response
 
     return {
       props: {
         title: fetchedTemplate.meta_title || fetchedTemplate.title,
-        description: fetchedTemplate.meta_description || fetchedTemplate.description,
+        description:
+          fetchedTemplate.meta_description || fetchedTemplate.description,
         meta_keywords: fetchedTemplate.meta_keywords,
         image: fetchedTemplate.thumbnail,
       },

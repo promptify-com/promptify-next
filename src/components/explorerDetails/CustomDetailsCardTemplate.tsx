@@ -1,7 +1,7 @@
 import { Grid } from "@mui/material";
 import React from "react";
 import { ICollection } from "@/common/types/collection";
-import CardTemplate from "../explorer/CardPrompte";
+import CardCollection from "@/components/common/cards/CardCollection";
 import { useRouter } from "next/router";
 
 interface Props {
@@ -30,7 +30,7 @@ export const CustomDetailCardTemplates: React.FC<Props> = ({ templates }) => {
         {!!templates &&
           templates.length > 0 &&
           templates.map((el, idx) => (
-            <CardTemplate
+            <CardCollection
               onFavoriteClick={() => router.push(`/prompt/${el.slug}`)}
               key={idx}
               collection={el}
