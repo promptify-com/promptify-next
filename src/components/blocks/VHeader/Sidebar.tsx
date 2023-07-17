@@ -17,7 +17,6 @@ import { AutoAwesome, Search } from "@mui/icons-material";
 import { styled, Theme, CSSObject } from "@mui/material/styles";
 
 import { LogoApp } from "@/assets/icons/LogoApp";
-import { Engine, Tag } from "@/core/api/dto/templates";
 import { SidebarIcon } from "@/assets/icons/Sidebar";
 import { Collections } from "@/components/common/sidebar/Collections";
 import { useGetCollectionTemplatesQuery } from "@/core/api/prompts";
@@ -28,6 +27,7 @@ import {
   useGetEnginesQuery,
   useGetTagsPopularQuery,
 } from "@/core/api/explorer";
+import { SideBarCloseIcon } from "@/assets/icons/SideBarClose";
 
 interface SideBarProps {
   open: boolean;
@@ -158,7 +158,11 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
                 },
               }}
             >
-              <SidebarIcon />
+              {!open && expandedOnHover ? (
+                <SideBarCloseIcon />
+              ) : (
+                <SidebarIcon />
+              )}
             </IconButton>
           </Grid>
           {navItems.map((item, i) => (

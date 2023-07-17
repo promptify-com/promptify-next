@@ -138,10 +138,12 @@ export const Header: React.FC<Props> = ({
     setOpen(true);
   };
 
+  const isExplorePage = router.pathname == "/explore";
+
   return (
     <Grid width={"100%"}>
       <Box
-        width={router.pathname == "/explorer" ? "calc(100% - 280px)" : "100%"}
+        width={isExplorePage ? "calc(100% - 280px)" : "100%"}
         sx={{
           bgcolor: transparent ? "transparent" : "surface.3",
           position: fixed ? "fixed" : "relative",
