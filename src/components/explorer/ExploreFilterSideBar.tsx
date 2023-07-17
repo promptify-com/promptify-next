@@ -90,7 +90,7 @@ export const ExploreFilterSideBar: React.FC<ExploreFilterSideBarProps> = ({
       >
         <Grid
           display={"flex"}
-          direction={"column"}
+          flexDirection={"column"}
           alignItems={"start"}
           gap={"8px"}
           ml={"29px"}
