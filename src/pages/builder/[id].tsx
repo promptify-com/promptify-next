@@ -210,7 +210,7 @@ export const Builder = () => {
         model_parameters: null,
         is_visible: true,
         show_output: true,
-        prompt_output_variable: "$temp_id_<prompt_temp_id>",
+        prompt_output_variable: `$temp_id_${node.temp_id}`,
       },
     ]);
   };
@@ -252,7 +252,7 @@ export const Builder = () => {
           model_parameters: selectedNodeData.model_parameters,
           is_visible: selectedNodeData.is_visible,
           show_output: selectedNodeData.show_output,
-          prompt_output_variable: selectedNodeData.prompt_output_variable,
+          prompt_output_variable: `$temp_id_${node.temp_id}`,
         },
       ]);
     }
