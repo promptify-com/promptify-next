@@ -31,7 +31,7 @@ import {
   useTemplateView,
   useGetExecutionTemplateQuery,
 } from "../../core/api/prompts";
-import { Templates } from "../../core/api/dto/templates";
+import { Templates, TemplatesExecutions } from "../../core/api/dto/templates";
 import { PageLoading } from "../../components/PageLoading";
 import { useWindowSize } from "usehooks-ts";
 import { ArtTrack } from "@mui/icons-material";
@@ -80,15 +80,14 @@ const a11yProps = (index: number) => {
 
 const Prompt = () => {
   const router = useRouter();
-  const token = useToken();
-  const [newExecutionData, setNewExecutionData] =
-    useState<PromptLiveResponse | null>(null);
+  const [newExecutionData, setNewExecutionData] = useState<PromptLiveResponse | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [currentGeneratedPrompt, setCurrentGeneratedPrompt] =
-    useState<Prompts | null>(null);
+  const [currentGeneratedPrompt, setCurrentGeneratedPrompt] = useState<Prompts | null>(null);
   const [openTitleModal, setOpenTitleModal] = useState(false);
   const [executionTitle, setExecutionTitle] = useState("");
+  const [defaultExecution, setDefaultExecution] = useState<TemplatesExecutions | null>(null);
   const [templateView] = useTemplateView();
+
   const theme = useTheme();
   const [palette, setPalette] = useState(theme.palette);
   const [generatorOpened, setGeneratorOpened] = useState(true);
@@ -141,10 +140,14 @@ const Prompt = () => {
     }
   }, [id]);
 
-  const resetForm = () => {
-    if (!isGenerating) {
+  const resetNewExecution = () => {
+    if(!isGenerating) {
       setGeneratorOpened(false);
       setTimeout(() => setGeneratorOpened(true));
+      setDefaultExecution({ 
+        ...defaultExecution as TemplatesExecutions, 
+        title: "Untitled"
+      });
     }
   };
 
@@ -361,7 +364,7 @@ const Prompt = () => {
                   <Stack height={"100%"}>
                     <DetailsCard
                       templateData={templateData}
-                      resetForm={resetForm}
+                      resetNewExecution={resetNewExecution}
                     />
                     <Stack flex={1}>
                       <Tabs
@@ -444,6 +447,7 @@ const Prompt = () => {
                     templateData={templateData}
                     executions={templateExecutions || []}
                     isFetching={isFetchingExecutions}
+                    defaultExecution={defaultExecution}
                     newExecutionData={newExecutionData}
                     refetchExecutions={refetchTemplateExecutions}
                   />

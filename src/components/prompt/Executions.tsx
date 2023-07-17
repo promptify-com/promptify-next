@@ -16,6 +16,7 @@ interface Props {
   executions: TemplatesExecutions[];
   isFetching?: boolean;
   newExecutionData: PromptLiveResponse | null;
+  defaultExecution: TemplatesExecutions | null;
   refetchExecutions: () => void;
 }
 
@@ -23,6 +24,7 @@ export const Executions: React.FC<Props> = ({
   templateData,
   executions,
   isFetching,
+  defaultExecution,
   newExecutionData,
   refetchExecutions,
 }) => {
@@ -52,6 +54,16 @@ export const Executions: React.FC<Props> = ({
     setSortedExecutions(sorted)
     setSelectedExecution(sorted[0] || null)
   }, [executions])
+
+  useEffect(() => {
+    if(defaultExecution) {
+      setSelectedExecution({
+        ...defaultExecution as TemplatesExecutions,
+        prompt_executions: selectedExecution?.prompt_executions || [],
+      })
+      setFirstLoad(true)
+    }
+  }, [defaultExecution])
 
   const pinExecution = async () => {
     if(selectedExecution === null) return;
