@@ -17,13 +17,15 @@ export const Layout = ({ children }: { children: ReactNode }) => {
         </Grid>
         <Box
           sx={{
-            mt: "90px",
             minHeight: "100vh",
-            width: { xs: "100%", md: "calc(100% - 299px)" },
-            ml: { md: "auto" },
+            maxWidth: {
+              xs: "100%",
+              md: openSideBar ? "calc(100% - 299px)" : "1200px",
+            },
+            m: openSideBar ? "0px 0px 0px auto" : "0px auto 0px auto",
           }}
         >
-          <Header fixed />
+          <Header transparent />
           {children}
         </Box>
       </Box>

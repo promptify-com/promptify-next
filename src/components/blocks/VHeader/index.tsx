@@ -59,6 +59,36 @@ const Menu: MenuType[] = [
   },
 ];
 
+const Login = () => {
+  const router = useRouter();
+  return (
+    <Grid onClick={() => router.push("/signin")}>
+      <Typography
+        sx={{
+          width: "54px",
+          height: "26px",
+          fontFamily: "Poppins",
+          fontStyle: "normal",
+          fontWeight: 500,
+          fontSize: "15px",
+          lineHeight: "26px",
+          letterSpacing: "0.46px",
+          color: "onBackground",
+          flex: "none",
+          order: 1,
+          flexGrow: 0,
+          cursor: "pointer",
+          "&:hover": {
+            transform: "scale(1.05)",
+          },
+        }}
+      >
+        Sign In
+      </Typography>
+    </Grid>
+  );
+};
+
 export const Header: React.FC<Props> = ({
   transparent = false,
   fixed = false,
@@ -80,35 +110,6 @@ export const Header: React.FC<Props> = ({
     setIsMenuShown(!isMenuShown);
     logout();
     setUser(null);
-  };
-
-  const Login = () => {
-    return (
-      <Grid onClick={() => router.push("/signin")}>
-        <Typography
-          sx={{
-            width: "54px",
-            height: "26px",
-            fontFamily: "Poppins",
-            fontStyle: "normal",
-            fontWeight: 500,
-            fontSize: "15px",
-            lineHeight: "26px",
-            letterSpacing: "0.46px",
-            color: "onBackground",
-            flex: "none",
-            order: 1,
-            flexGrow: 0,
-            cursor: "pointer",
-            "&:hover": {
-              transform: "scale(1.05)",
-            },
-          }}
-        >
-          Sign In
-        </Typography>
-      </Grid>
-    );
   };
 
   const toggleDrawer =
@@ -138,12 +139,10 @@ export const Header: React.FC<Props> = ({
     setOpen(true);
   };
 
-  const isExplorePage = router.pathname == "/explore";
-
   return (
     <Grid width={"100%"}>
       <Box
-        width={isExplorePage ? "calc(100% - 280px)" : "100%"}
+        width="100%"
         sx={{
           bgcolor: transparent ? "transparent" : "surface.3",
           position: fixed ? "fixed" : "relative",
