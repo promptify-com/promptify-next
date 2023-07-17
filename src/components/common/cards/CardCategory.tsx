@@ -4,6 +4,7 @@ import {
   Card,
   CardActionArea,
   CardContent,
+  CardMedia,
   Typography,
 } from "@mui/material";
 
@@ -32,19 +33,34 @@ export const CategoryCard = ({ category }: { category: Category }) => {
         },
       }}
     >
-      <CardActionArea>
-        <Box
-          position={"relative"}
-          width={"100%"}
-          height={"180px"}
-          component={"div"}
+      <CardActionArea
+        sx={{
+          position: "relative",
+        }}
+      >
+        <CardMedia
           sx={{
-            borderRadius: "27px",
-            overflow: "hidden",
+            zIndex: 1,
+            borderRadius: "16px",
+            width: "100%",
+            height: "254px",
+            objectFit: "cover",
           }}
+          component="img"
+          image={category.image}
+          alt={category.name}
+        />
+        <Typography
+          variant="h1"
+          fontSize={20}
+          fontWeight={500}
+          color={"white"}
+          mx={2}
+          position={"absolute"}
+          top={8}
         >
-          <Image alt="aa" fill style={{ objectFit: "cover" }} src={CardImg} />
-        </Box>
+          {category.name}
+        </Typography>
         <CardContent>
           <Typography gutterBottom variant="h5" component="div" mt={-1}>
             {truncatedTilte(category.name)}

@@ -91,8 +91,6 @@ const Prompt = () => {
   const [templateView] = useTemplateView();
   const theme = useTheme();
   const [palette, setPalette] = useState(theme.palette);
-  const { width: windowWidth } = useWindowSize();
-  const [detailsOpened, setDetailsOpened] = useState(false);
   const [generatorOpened, setGeneratorOpened] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const slug = router.query?.slug;
@@ -322,8 +320,6 @@ const Prompt = () => {
           <Sidebar
             open={openSideBar}
             toggleSideBar={() => setOpenSideBar(!openSideBar)}
-            onMouseEnter={() => setOpenSideBar(true)}
-            onMouseLeave={() => setOpenSideBar(false)}
           />
           <Box
             sx={{

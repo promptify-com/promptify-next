@@ -5,33 +5,29 @@ import {
   Grid,
   Icon,
   IconButton,
-  List,
   ListItem,
   ListItemButton,
   ListItemIcon,
   Typography,
 } from "@mui/material";
 import MuiDrawer from "@mui/material/Drawer";
-
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { AutoAwesome, Search } from "@mui/icons-material";
 import { styled, Theme, CSSObject } from "@mui/material/styles";
+
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { Engine, Tag } from "@/core/api/dto/templates";
 import { SidebarIcon } from "@/assets/icons/Sidebar";
 import { Collections } from "@/components/common/sidebar/Collections";
-import { IUser } from "@/common/types";
-import { ICollection } from "@/common/types/collection";
 import { useGetCollectionTemplatesQuery } from "@/core/api/prompts";
 import useToken from "@/hooks/useToken";
 import { useGetCurrentUser } from "@/hooks/api/user";
+import { ExploreFilterSideBar } from "@/components/explorer/ExploreFilterSideBar";
 
 interface SideBarProps {
   open: boolean;
   toggleSideBar: () => void;
-  onMouseLeave: () => void;
-  onMouseEnter: () => void;
   tags?: Tag[];
   englines?: Engine[];
 }
@@ -76,18 +72,12 @@ const Drawer = styled(MuiDrawer, {
   }),
 }));
 
-export const Sidebar: React.FC<SideBarProps> = ({
-  open,
-  onMouseEnter,
-  onMouseLeave,
-  toggleSideBar,
-}) => {
-  // openOnHover
-
+export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
   const token = useToken();
   const [user] = useGetCurrentUser([token]);
   const { data: collections } = useGetCollectionTemplatesQuery(1);
-  console.log(user, collections);
+
+  const [expandedOnHover, setExpandedOnHover] = useState<boolean>(false);
 
   const router = useRouter();
   const pathname = router.pathname;
@@ -109,9 +99,9 @@ export const Sidebar: React.FC<SideBarProps> = ({
   return (
     <Box>
       <Drawer
-        open={open}
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
+        open={open || expandedOnHover}
+        onMouseEnter={() => setExpandedOnHover(true)}
+        onMouseLeave={() => setExpandedOnHover(false)}
         sx={{
           display: { xs: "none", md: "flex" },
           alignItems: "center",
@@ -122,7 +112,7 @@ export const Sidebar: React.FC<SideBarProps> = ({
             height: "96vh",
             overflow: "hidden",
             boxSizing: "border-box",
-            bgcolor: "surface.1",
+            bgcolor: "white",
             border: "none",
           },
         }}
@@ -146,7 +136,10 @@ export const Sidebar: React.FC<SideBarProps> = ({
                 }}
               >
                 <LogoApp width={30} />
-                <Typography sx={{ ml: "19px", opacity: open ? 1 : 0 }} mt={0.5}>
+                <Typography
+                  sx={{ ml: "19px", opacity: open || expandedOnHover ? 1 : 0 }}
+                  mt={0.5}
+                >
                   Promptify
                 </Typography>
               </Link>
@@ -178,7 +171,8 @@ export const Sidebar: React.FC<SideBarProps> = ({
                   style={{
                     display: "flex",
                     alignItems: "center",
-                    justifyContent: open ? "initial" : "center",
+                    justifyContent:
+                      open || expandedOnHover ? "initial" : "center",
                     padding: 6.5,
                     textDecoration: "none",
                   }}
@@ -186,7 +180,7 @@ export const Sidebar: React.FC<SideBarProps> = ({
                   <ListItemIcon
                     sx={{
                       minWidth: 0,
-                      mr: open ? 3 : "auto",
+                      mr: open || expandedOnHover ? 3 : "auto",
                       color: "onSurface",
                       justifyContent: "center",
                     }}
@@ -194,7 +188,7 @@ export const Sidebar: React.FC<SideBarProps> = ({
                     <Icon>{item.icon}</Icon>
                   </ListItemIcon>
                   <Typography
-                    sx={{ opacity: open ? 1 : 0 }}
+                    sx={{ opacity: open || expandedOnHover ? 1 : 0 }}
                     fontSize={14}
                     fontWeight={500}
                     color={"onSurface"}
@@ -207,11 +201,15 @@ export const Sidebar: React.FC<SideBarProps> = ({
           ))}
           <Divider />
           <>
-            <Collections
-              favCollection={collections}
-              user={user}
-              sidebarOpen={open}
-            />
+            {pathname == "/explorer" ? (
+              <ExploreFilterSideBar engines={[]} tags={[]} />
+            ) : (
+              <Collections
+                favCollection={collections}
+                user={user}
+                sidebarOpen={open || expandedOnHover}
+              />
+            )}
           </>
         </Box>
       </Drawer>

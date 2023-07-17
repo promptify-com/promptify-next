@@ -13,13 +13,11 @@ export const Layout = ({ children }: { children: ReactNode }) => {
           <Sidebar
             open={openSideBar}
             toggleSideBar={() => setOpenSideBar(!openSideBar)}
-            onMouseEnter={() => setOpenSideBar(true)}
-            onMouseLeave={() => setOpenSideBar(false)}
           />
         </Grid>
         <Box
           sx={{
-            mt: "60px",
+            mt: "90px",
             minHeight: "100vh",
             width: { xs: "100%", md: "calc(100% - 299px)" },
             ml: { md: "auto" },

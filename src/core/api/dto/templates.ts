@@ -1,5 +1,5 @@
-import { User } from './user';
-import { Prompts } from './prompts';
+import { User } from "./user";
+import { Prompts } from "./prompts";
 
 export interface FilterParams {
   categoryId: string;
@@ -52,6 +52,9 @@ export interface Category {
   id: number;
   name: string;
   parent?: CategoryParent;
+  image: string;
+  prompt_template_count: number;
+  slug: number;
 }
 
 export interface Templates {
