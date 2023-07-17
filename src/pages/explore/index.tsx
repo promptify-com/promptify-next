@@ -1,5 +1,5 @@
-import { Box, Button, Grid, Typography } from "@mui/material";
-import React, { useState } from "react";
+import { Box, Button, Grid, Slide, Typography } from "@mui/material";
+import React, { useRef, useState } from "react";
 import { useRouter } from "next/router";
 
 import { Category } from "@/core/api/dto/templates";
@@ -17,6 +17,7 @@ import { SubCategoryCard } from "@/components/common/cards/CardSubcategory";
 
 export default function ExplorePage() {
   const router = useRouter();
+  const categoriesRef = useRef(null);
   const { data: templates, isLoading: isTemplatesLoading } =
     useGetTemplatesByKeyWordAndTagQuery(
       { keyword: "", tag: "" },
@@ -39,12 +40,13 @@ export default function ExplorePage() {
               padding: { xs: "1em 0em 0em 1em", sm: "1.5em 2em" },
             }}
             display={"flex"}
-            direction={"column"}
+            flexDirection={"column"}
             gap={1}
           >
-            {!selectedCategory ? (
+            {!selectedCategory && (
               <Box gap={1} display={"flex"} flexDirection={"column"}>
                 <Typography fontSize={19}> Browse Category </Typography>
+                {/* Loading Categories  */}
                 {isCategoryLoading && (
                   <Box
                     minHeight={"40vh"}
@@ -55,7 +57,7 @@ export default function ExplorePage() {
                     <FetchLoading />
                   </Box>
                 )}
-                <Grid container spacing={3}>
+                <Grid container direction={"row"} spacing={3}>
                   {categories
 
                     ?.filter((mainCat) => !mainCat.parent)
@@ -69,37 +71,46 @@ export default function ExplorePage() {
                     ))}
                 </Grid>
               </Box>
-            ) : (
-              <Box
-                gap={1}
-                display={"flex"}
-                flexDirection={"column"}
-                alignItems={"start"}
-              >
-                <Button
-                  onClick={() => setSelectedCategory(null)}
-                  variant="text"
-                  sx={{ fontSize: 19, color: "onSurface", ml: -3, mt: -1 }}
-                >
-                  <KeyboardArrowLeft /> {selectedCategory?.name}
-                </Button>
-                <Grid display={"flex"} gap={"8px"} flexWrap={"wrap"}>
-                  {categories
-                    ?.filter(
-                      (mainCat) =>
-                        selectedCategory?.name == mainCat.parent?.name
-                    )
-                    .map((subcategory) => (
-                      <Grid key={subcategory.id}>
-                        <SubCategoryCard
-                          subcategory={subcategory}
-                          onSelected={() => {}}
-                        />
-                      </Grid>
-                    ))}
-                </Grid>
-              </Box>
             )}
+            <Box ref={categoriesRef}>
+              <Slide
+                in={!!selectedCategory}
+                direction="up"
+                mountOnEnter
+                unmountOnExit
+                container={categoriesRef.current}
+              >
+                <Box
+                  gap={1}
+                  display={"flex"}
+                  flexDirection={"column"}
+                  alignItems={"start"}
+                >
+                  <Button
+                    onClick={() => setSelectedCategory(null)}
+                    variant="text"
+                    sx={{ fontSize: 19, color: "onSurface", ml: -3, mt: -1 }}
+                  >
+                    <KeyboardArrowLeft /> {selectedCategory?.name}
+                  </Button>
+                  <Grid display={"flex"} gap={"8px"} flexWrap={"wrap"}>
+                    {categories
+                      ?.filter(
+                        (mainCat) =>
+                          selectedCategory?.name == mainCat.parent?.name
+                      )
+                      .map((subcategory) => (
+                        <Grid key={subcategory.id}>
+                          <SubCategoryCard
+                            subcategory={subcategory}
+                            onSelected={() => {}}
+                          />
+                        </Grid>
+                      ))}
+                  </Grid>
+                </Box>
+              </Slide>
+            </Box>
 
             <Grid mt={3}>
               {!selectedCategory && (
@@ -107,6 +118,7 @@ export default function ExplorePage() {
               )}
               <Grid
                 container
+                direction={"column"}
                 sx={{
                   mt: "10px",
                   gap: "1em",
