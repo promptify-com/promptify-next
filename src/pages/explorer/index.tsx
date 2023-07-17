@@ -1,10 +1,10 @@
-import { Box, Grid, Typography } from "@mui/material";
-import React, { useEffect } from "react";
+import { Box, Button, Grid, Typography } from "@mui/material";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useWindowSize } from "usehooks-ts";
 
 import { Popularity, TypePopularity } from "@/common/helpers/getFilter";
-import { Category, Tag } from "@/core/api/dto/templates";
+import { Category, Engine, Tag } from "@/core/api/dto/templates";
 import { useCollection } from "@/hooks/api/collections";
 import { ICollection } from "@/common/types/collection";
 import { authClient } from "@/common/axios";
@@ -17,6 +17,8 @@ import { NotFoundIcon } from "@/assets/icons/NotFoundIcon";
 import { FetchLoading } from "@/components/FetchLoading";
 import CardTemplate from "@/components/common/cards/CardTemplate";
 import { Layout } from "@/layout";
+import { KeyboardArrowLeft } from "@mui/icons-material";
+import { SubCategoryCard } from "@/components/common/cards/CardSubcategory";
 
 export default function ExplorerDetail({
   categories,
@@ -25,7 +27,7 @@ export default function ExplorerDetail({
 }: {
   collections: ICollection[];
   categories: Category[];
-  engines: any[];
+  engines: Engine[];
   tags: Tag[];
 }) {
   const router = useRouter();
@@ -33,7 +35,10 @@ export default function ExplorerDetail({
     { keyword: "", tag: "" },
     { refetchOnMountOrArgChange: true }
   );
-  console.log(categories[1]);
+
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
+    null
+  );
 
   return (
     <>
@@ -47,19 +52,58 @@ export default function ExplorerDetail({
             direction={"column"}
             gap={1}
           >
-            <Typography fontSize={19}> Browse Category </Typography>
-            <Grid container spacing={3}>
-              {categories
+            {selectedCategory ? (
+              <Box
+                gap={1}
+                display={"flex"}
+                flexDirection={"column"}
+                alignItems={"start"}
+              >
+                <Button
+                  onClick={() => setSelectedCategory(null)}
+                  variant="text"
+                  sx={{ fontSize: 19, color: "onSurface", ml: -3, mt: -1 }}
+                >
+                  <KeyboardArrowLeft /> {selectedCategory.name}
+                </Button>
+                <Grid display={"flex"} gap={"8px"} flexWrap={"wrap"}>
+                  {categories
+                    ?.filter(
+                      (mainCat) => selectedCategory.name == mainCat.parent?.name
+                    )
+                    .map((subcategory) => (
+                      <Grid key={subcategory.id}>
+                        <SubCategoryCard
+                          subcategory={subcategory}
+                          onSelected={() => {}}
+                        />
+                      </Grid>
+                    ))}
+                </Grid>
+              </Box>
+            ) : (
+              <Box gap={1} display={"flex"} flexDirection={"column"}>
+                <Typography fontSize={19}> Browse Category </Typography>
+                <Grid container spacing={3}>
+                  {categories
 
-                ?.filter((mainCat) => !mainCat.parent)
-                .map((category) => (
-                  <Grid key={category.id} item xs={6} sm={4} md={3} xl={2}>
-                    <CategoryCard category={category} />
-                  </Grid>
-                ))}
-            </Grid>
+                    ?.filter((mainCat) => !mainCat.parent)
+                    .map((category) => (
+                      <Grid key={category.id} item xs={6} sm={4} md={3} xl={2}>
+                        <CategoryCard
+                          category={category}
+                          onSelected={() => setSelectedCategory(category)}
+                        />
+                      </Grid>
+                    ))}
+                </Grid>
+              </Box>
+            )}
+
             <Grid mt={3}>
-              <Typography fontSize={19}>Best Templates</Typography>
+              {!selectedCategory && (
+                <Typography fontSize={19}>Best Templates</Typography>
+              )}
               <Grid
                 container
                 sx={{

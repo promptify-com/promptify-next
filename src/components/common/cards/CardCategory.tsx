@@ -1,6 +1,4 @@
-import Image from "next/image";
 import {
-  Box,
   Card,
   CardActionArea,
   CardContent,
@@ -8,10 +6,15 @@ import {
   Typography,
 } from "@mui/material";
 
-import CardImg from "@/assets/images/cardImg.png";
 import { Category } from "@/core/api/dto/templates";
 
-export const CategoryCard = ({ category }: { category: Category }) => {
+export const CategoryCard = ({
+  category,
+  onSelected,
+}: {
+  category: Category;
+  onSelected: () => void;
+}) => {
   const truncatedTilte = (str: string) => {
     if (str.length > 22) {
       return str.slice(0, 22) + "...";
@@ -20,6 +23,7 @@ export const CategoryCard = ({ category }: { category: Category }) => {
   };
   return (
     <Card
+      onClick={onSelected}
       title={category.name}
       elevation={0}
       sx={{
