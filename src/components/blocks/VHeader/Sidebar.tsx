@@ -84,13 +84,14 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
 
   const router = useRouter();
   const pathname = router.pathname;
+  const showFilters = pathname == "/explore";
 
   const navItems = [
     {
       name: "Browse",
-      href: "/explorer",
+      href: "/explore",
       icon: <Search />,
-      active: pathname == "/explorer",
+      active: pathname == "/explore",
     },
     {
       name: "My Sparks",
@@ -203,9 +204,9 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
               </ListItemButton>
             </ListItem>
           ))}
-          <Divider sx={{ opacity: pathname == "/explorer" ? 0 : 1 }} />
+          <Divider sx={{ opacity: showFilters ? 0 : 1 }} />
           <>
-            {pathname == "/explorer" ? (
+            {showFilters ? (
               <ExploreFilterSideBar
                 engines={engines}
                 tags={tags}
