@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Divider,
@@ -28,6 +28,7 @@ import {
   useGetTagsPopularQuery,
 } from "@/core/api/explorer";
 import { SideBarCloseIcon } from "@/assets/icons/SideBarClose";
+import { ICollection } from "@/common/types/collection";
 
 interface SideBarProps {
   open: boolean;
@@ -77,21 +78,26 @@ const Drawer = styled(MuiDrawer, {
 export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
   const token = useToken();
   const [user] = useGetCurrentUser([token]);
-  const { data: collections } = useGetCollectionTemplatesQuery(user?.id);
+
+  const { data: collections } = useGetCollectionTemplatesQuery(user?.id, {
+    skip: !user,
+  });
+
   const { data: tags } = useGetTagsPopularQuery();
   const { data: engines } = useGetEnginesQuery();
   const [expandedOnHover, setExpandedOnHover] = useState<boolean>(false);
 
   const router = useRouter();
   const pathname = router.pathname;
-  const showFilters = pathname == "/explore";
+  const isExplorePage =
+    pathname == "/explore" || pathname == "/explore/[...slug]";
 
   const navItems = [
     {
       name: "Browse",
       href: "/explore",
       icon: <Search />,
-      active: pathname == "/explore",
+      active: isExplorePage,
     },
     {
       name: "My Sparks",
@@ -212,9 +218,9 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
               </ListItemButton>
             </ListItem>
           ))}
-          <Divider sx={{ opacity: showFilters ? 0 : 1 }} />
+          <Divider sx={{ opacity: isExplorePage ? 0 : 1 }} />
           <>
-            {showFilters ? (
+            {isExplorePage ? (
               <ExploreFilterSideBar
                 engines={engines}
                 tags={tags}

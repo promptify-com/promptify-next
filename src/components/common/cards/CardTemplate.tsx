@@ -28,7 +28,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
       sx={{
         borderRadius: "16px",
         cursor: "pointer",
-        p: { sm: "6px" },
+        p: { sm: "8px" },
         width: "100%",
         "&:hover": {
           bgcolor: "white",
@@ -41,13 +41,13 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
     >
       <Grid
         display={"flex"}
-        direction={{ xs: "column", md: "row" }}
+        flexDirection={{ xs: "column", md: "row" }}
         alignItems={{ xs: "start", md: "center" }}
         justifyContent={"space-between"}
       >
         <Grid
           display={"flex"}
-          direction={{ xs: "column", sm: "row" }}
+          flexDirection={{ xs: "column", sm: "row" }}
           alignItems={{ xs: "start", sm: "center" }}
         >
           <CardMedia
@@ -67,21 +67,26 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
               ml: { md: "20px" },
             }}
             display={"flex"}
-            direction={"column"}
+            flexDirection={"column"}
           >
             <Typography fontSize={14} fontWeight={500}>
               {template.title}
             </Typography>
-            <Typography fontSize={12} color="text.secondary" variant="body2">
-              <div
-                dangerouslySetInnerHTML={{
-                  __html:
-                    template.description?.length > 70
-                      ? `${template.description?.slice(0, 70 - 1)}...`
-                      : template.description,
-                }}
-              />
-            </Typography>
+            <div
+              style={{
+                fontSize: "12px",
+                lineHeight: "16.8px",
+                fontWeight: 400,
+                letterSpacing: "0.15px",
+                color: "#1B1B1E",
+              }}
+              dangerouslySetInnerHTML={{
+                __html:
+                  template.description?.length > 70
+                    ? `${template.description?.slice(0, 70 - 1)}...`
+                    : template.description,
+              }}
+            />
           </Grid>
         </Grid>
         <Grid display={"flex"} alignItems={"center"} gap={1}>
@@ -92,7 +97,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
             }}
           >
             {template.tags.slice(0, 3).map((el, idx) => (
-              <Chip clickable size="small" label={el.name} key={idx} />
+              <Chip clickable size="small" label={el.name} key={el.id} />
             ))}
           </Grid>
           <Button variant="text" size="small">

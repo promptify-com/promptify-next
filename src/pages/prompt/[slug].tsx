@@ -24,7 +24,6 @@ import {
 import materialDynamicColors from "material-dynamic-colors";
 import { mix } from "polished";
 
-import { Header } from "@/components/blocks/VHeader";
 import {
   useGetPromptTemplatesExecutionsQuery,
   useGetPromptTemplateBySlugQuery,
@@ -33,15 +32,12 @@ import {
 } from "../../core/api/prompts";
 import { Templates } from "../../core/api/dto/templates";
 import { PageLoading } from "../../components/PageLoading";
-import { useWindowSize } from "usehooks-ts";
 import { ArtTrack } from "@mui/icons-material";
-import useToken from "../../hooks/useToken";
 import { useRouter } from "next/router";
 import { GeneratorForm } from "@/components/prompt/GeneratorForm";
 import { Executions } from "@/components/prompt/Executions";
 import { Details } from "@/components/prompt/Details";
 import { authClient } from "@/common/axios";
-import { Sidebar } from "@/components/blocks/VHeader/Sidebar";
 import { DetailsCard } from "@/components/prompt/DetailsCard";
 import { Prompts } from "@/core/api/dto/prompts";
 import { updateExecution } from "@/hooks/api/executions";
@@ -81,7 +77,6 @@ const a11yProps = (index: number) => {
 
 const Prompt = () => {
   const router = useRouter();
-  const token = useToken();
   const [newExecutionData, setNewExecutionData] =
     useState<PromptLiveResponse | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -161,7 +156,6 @@ const Prompt = () => {
       }
     }
   }, [isGenerating, newExecutionData]);
-  const [openSideBar, setOpenSideBar] = useState<boolean>(true);
 
   // Keep tracking the current generated prompt
   useEffect(() => {

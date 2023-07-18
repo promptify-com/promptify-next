@@ -10,10 +10,10 @@ import { Category } from "@/core/api/dto/templates";
 
 export const CategoryCard = ({
   category,
-  onSelected,
+  onClick,
 }: {
   category: Category;
-  onSelected: () => void;
+  onClick: () => void;
 }) => {
   const truncatedTilte = (str: string) => {
     if (str.length > 22) {
@@ -23,7 +23,7 @@ export const CategoryCard = ({
   };
   return (
     <Card
-      onClick={onSelected}
+      onClick={onClick}
       title={category.name}
       elevation={0}
       sx={{

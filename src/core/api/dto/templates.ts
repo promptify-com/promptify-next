@@ -54,7 +54,7 @@ export interface Category {
   parent?: CategoryParent;
   image: string;
   prompt_template_count: number;
-  slug: number;
+  slug: string;
 }
 
 export interface Templates {

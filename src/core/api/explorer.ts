@@ -134,6 +134,13 @@ export const explorerApi = createApi({
           method: "get",
         }),
       }),
+
+      getCategoryBySlug: builder.query<Category, string>({
+        query: (slug: string) => ({
+          url: `/api/meta/categories/by-slug/${slug}`,
+          method: "get",
+        }),
+      }),
     };
   },
 });
@@ -142,6 +149,7 @@ export const {
   useGetTagsQuery,
   useGetTagsPopularQuery,
   useGetCategoriesQuery,
+  useGetCategoryBySlugQuery,
   useGetTemplatesByKeyWordQuery,
   useGetTemplatesByTagQuery,
   useGetTemplatesByKeyWordAndTagQuery,
