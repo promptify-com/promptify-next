@@ -5,10 +5,6 @@ interface Engine {
 }
 
 export interface Prompts {
-  is_visible: boolean;
-  show_output: boolean;
-  model_parameters: { temperature: number; maximumLength: number; topP: number; presencePenalty: number; frequencyPenalty: number; } | null;
-  output_format: string;
   id: number;
   order: number;
   title: string;
@@ -18,6 +14,11 @@ export interface Prompts {
   allow_input: boolean;
   created_at: Date;
   dependencies?: number[];
+  is_visible: boolean;
+  show_output: boolean;
+  model_parameters: { temperature: number; maximumLength: number; topP: number; presencePenalty: number; frequencyPenalty: number; } | null;
+  output_format: string;
+  prompt_output_variable: string;
 }
 
 export interface PromptParam {

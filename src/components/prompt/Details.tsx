@@ -6,14 +6,10 @@ import {
   Grid,
   Stack,
   Typography,
-  alpha,
-  useTheme,
 } from "@mui/material";
 import { Templates } from "@/core/api/dto/templates";
 import {
   ArrowForwardIos,
-  Favorite,
-  FavoriteBorder,
 } from "@mui/icons-material";
 import { savePathURL } from "@/common/utils";
 import useToken from "@/hooks/useToken";
@@ -26,6 +22,7 @@ import moment from "moment";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { useGetCurrentUser } from "@/hooks/api/user";
+import FavoriteButton from "@/components/common/buttons/FavoriteButton";
 
 interface DetailsProps {
   templateData: Templates;
@@ -40,7 +37,6 @@ export const Details: React.FC<DetailsProps> = ({
   const token = useToken();
   const [user, error, userIsLoading] = useGetCurrentUser([token]);
   const router = useRouter();
-  const { palette } = useTheme();
 
   const favorTemplate = async () => {
     if (!token) {
@@ -77,16 +73,10 @@ export const Details: React.FC<DetailsProps> = ({
         }}
       >
         <Box sx={{ py: "16px" }}>
-          <Button
-            sx={{ ...buttonStytle, borderColor: alpha(palette.primary.main, .3), flex: 1 }}
-            startIcon={
-              templateData.is_favorite ? <Favorite /> : <FavoriteBorder />
-            }
-            variant={"outlined"}
+          <FavoriteButton 
+            isFavorite={templateData.is_favorite}
             onClick={favorTemplate}
-          >
-            {templateData.is_favorite ? "Remove from favorites" : "Add to favorites"}
-          </Button>
+          />
         </Box>
         <Box sx={{ py: "16px" }}>
           <Typography 
@@ -257,17 +247,6 @@ export const Details: React.FC<DetailsProps> = ({
   );
 };
 
-const buttonStytle = {
-  p: "6px 16px",
-  bgcolor: "transparent",
-  color: "primary.main",
-  fontSize: 14,
-  border: "1px solid",
-  "&:hover": {
-    bgcolor: "action.hover",
-    color: "primary.main"
-  }
-};
 const detailsStyle = {
   fontSize: 14,
   fontWeight: 400,

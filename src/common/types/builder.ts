@@ -21,6 +21,7 @@ export interface IPromptOptions {
   output_format: string;
   is_visible: boolean;
   show_output: boolean;
+  prompt_output_variable: string;
 }
 export interface INodesData extends IPromptOptions {
   id?: number;

@@ -15,6 +15,7 @@ interface IBoxStates {
   box1: boolean;
   box2: boolean;
   box3: boolean;
+  box4: boolean;
 }
 interface OptionsProps {
   prevOptions: INodesData | null;
@@ -26,6 +27,7 @@ export const Options = ({ prevOptions, onUpdateNodeOptions }: OptionsProps) => {
     box1: true,
     box2: true,
     box3: true,
+    box4: true, 
   });
   const [useDefault, setUseDefault] = useState(false);
   const [optionsValues, setOptionsValues] = useState<IPromptOptions>({
@@ -39,6 +41,7 @@ export const Options = ({ prevOptions, onUpdateNodeOptions }: OptionsProps) => {
     },
     is_visible: false,
     show_output: false,
+    prompt_output_variable: ""
   });
 
   useEffect(() => {
@@ -48,6 +51,7 @@ export const Options = ({ prevOptions, onUpdateNodeOptions }: OptionsProps) => {
         model_parameters: prevOptions?.model_parameters,
         is_visible: prevOptions.is_visible,
         show_output: prevOptions.show_output,
+        prompt_output_variable: prevOptions.prompt_output_variable
       });
     }
 
@@ -504,6 +508,64 @@ export const Options = ({ prevOptions, onUpdateNodeOptions }: OptionsProps) => {
               </Box>
             </Box>
           </React.Fragment>
+        )}
+      </Box>
+      <Box sx={{ mb: "20px" }}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            mb: "15px",
+            "&:hover": { cursor: "pointer", opacity: 0.5 },
+          }}
+          onClick={() => shrinkBox("box4")}
+        >
+          {boxStates.box4 ? (
+            <KeyboardArrowUpIcon sx={{ color: "white", fontSize: "30px" }} />
+          ) : (
+            <KeyboardArrowDownIcon sx={{ color: "white", fontSize: "30px" }} />
+          )}
+          <Typography
+            fontSize="1rem"
+            color="rgba(255, 255, 255, 0.6)"
+            ml="10px"
+          >
+            Save Output As
+          </Typography>
+          <TuneIcon
+            sx={{
+              color: "rgba(255, 255, 255, 0.6)",
+              fontSize: "20px",
+              ml: "10px",
+            }}
+          />
+        </Box>
+        {boxStates.box4 && (
+          <Box sx={{ p: "5px 30px" }}>
+            <TextField
+              name="prompt_output_variable"
+              inputProps={{
+                style: {
+                  fontSize: "1rem",
+                  color: "white",
+                  backgroundColor: "#373737",
+                },
+              }}
+              sx={{
+                width: "100%",
+                bgcolor: "#373737",
+                ".MuiOutlinedInput-notchedOutline": {
+                  borderColor: "white",
+                  borderRadius: "2px",
+                },
+                ".Mui-focused .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "primary.main",
+                },
+              }}
+              value={optionsValues?.prompt_output_variable || ""}
+              onChange={setOptionValue}
+            />
+          </Box>
         )}
       </Box>
     </Box>

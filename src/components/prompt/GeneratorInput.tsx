@@ -107,7 +107,7 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
               value={resInputs.find((prompt: any) => prompt.id === promptId)?.inputs[input.name] || ''}
               onChange={e => handleChange(e.target.value, input.name, input.type)}
             />
-            <IconButton sx={{ color: 'grey.600', border: "none", p: "4px" }}
+            <IconButton sx={{ color: 'grey.600', border: "none", p: "4px", ":hover": { color: "tertiary" } }}
               onClick={() => handleChange('', input.name, input.type)}
             >
               <Backspace />
