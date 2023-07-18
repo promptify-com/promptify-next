@@ -7,8 +7,8 @@ import {
   useGetTemplatesByKeyWordAndTagQuery,
 } from "@/core/api/explorer";
 import { Layout } from "@/layout";
-import { CategoriesSection } from "./components/CategoriesSection";
-import { TemplatesSection } from "./components/TemplatesSection";
+import { CategoriesSection } from "@/components/explorer/CategoriesSection";
+import { TemplatesSection } from "@/components/explorer/TemplatesSection";
 
 export default function ExplorePage() {
   const { data: templates, isLoading: isTemplatesLoading } =

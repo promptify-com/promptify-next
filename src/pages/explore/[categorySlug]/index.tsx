@@ -1,3 +1,7 @@
+import { useRouter } from "next/router";
+import { KeyboardArrowLeft } from "@mui/icons-material";
+import { Box, Button, Grid } from "@mui/material";
+
 import { authClient } from "@/common/axios";
 import { FetchLoading } from "@/components/FetchLoading";
 import { SubCategoryCard } from "@/components/common/cards/CardSubcategory";
@@ -7,10 +11,7 @@ import {
   useGetTemplatesByFilterQuery,
 } from "@/core/api/explorer";
 import { Layout } from "@/layout";
-import { KeyboardArrowLeft } from "@mui/icons-material";
-import { Box, Button, Grid } from "@mui/material";
-import { useRouter } from "next/router";
-import { TemplatesSection } from "../components/TemplatesSection";
+import { TemplatesSection } from "@/components/explorer/TemplatesSection";
 
 export default function Page({ category }: { category: Category }) {
   const router = useRouter();

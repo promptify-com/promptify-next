@@ -7,7 +7,7 @@ import { FetchLoading } from "@/components/FetchLoading";
 import { SubCategoryCard } from "@/components/common/cards/CardSubcategory";
 import { Category } from "@/core/api/dto/templates";
 import { Layout } from "@/layout";
-import { TemplatesSection } from "../components/TemplatesSection";
+import { TemplatesSection } from "@/components/explorer/TemplatesSection";
 import {
   useGetCategoriesQuery,
   useGetTemplatesByFilterQuery,
