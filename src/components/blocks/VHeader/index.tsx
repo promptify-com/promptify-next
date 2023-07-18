@@ -13,7 +13,6 @@ import {
   SwipeableDrawer,
   Typography,
 } from "@mui/material";
-import { Descrip } from "@/assets/icons/Descrip";
 import { Collection } from "@/assets/icons/collection";
 import { Prompt } from "@/assets/icons/prompts";
 import { Setting } from "@/assets/icons/setting";

@@ -1,5 +1,13 @@
 import SearchIcon from "@mui/icons-material/Search";
-import { Box, Grid, IconButton, InputBase, Typography, alpha, useTheme } from "@mui/material";
+import {
+  Box,
+  Grid,
+  IconButton,
+  InputBase,
+  Typography,
+  alpha,
+  useTheme,
+} from "@mui/material";
 import React from "react";
 import { Tag } from "@/core/api/dto/templates";
 import { LogoApp } from "@/assets/icons/LogoApp";
@@ -12,13 +20,19 @@ interface Props {
   setSelectedTag?: Function;
   from?: string;
 }
-const SearchBar: React.FC<Props> = ({ keyWord, setKeyWord, selectedTag, setSelectedTag, from }) => {
+const SearchBar: React.FC<Props> = ({
+  keyWord,
+  setKeyWord,
+  selectedTag,
+  setSelectedTag,
+  from,
+}) => {
   const { palette } = useTheme();
 
   const handleRemoveTag = (tag: Tag) => {
     const removeTag =
       !!selectedTag && selectedTag.filter((el) => el.id !== tag.id);
-    if (!!setSelectedTag) setSelectedTag(removeTag);
+    if (setSelectedTag) setSelectedTag(removeTag);
   };
 
   return (
@@ -30,7 +44,7 @@ const SearchBar: React.FC<Props> = ({ keyWord, setKeyWord, selectedTag, setSelec
         borderRadius: "99px",
         height: "48px",
         minWidth: "100%",
-        cursor: "pointer"
+        cursor: "pointer",
       }}
     >
       <Grid
@@ -42,7 +56,7 @@ const SearchBar: React.FC<Props> = ({ keyWord, setKeyWord, selectedTag, setSelec
           justifyContent: "space-between",
           gap: "8px",
           pl: "8px",
-          pr: "16px"
+          pr: "16px",
         }}
         alignItems="center"
       >
@@ -67,10 +81,10 @@ const SearchBar: React.FC<Props> = ({ keyWord, setKeyWord, selectedTag, setSelec
           </IconButton>
           {!!selectedTag &&
             selectedTag.length > 0 &&
-            selectedTag.map((el, idx) => (
+            selectedTag.map((el) => (
               <Typography
                 onClick={() => handleRemoveTag(el)}
-                key={idx}
+                key={el.id}
                 sx={{
                   bgcolor: "white",
                   color: "black",
@@ -95,7 +109,9 @@ const SearchBar: React.FC<Props> = ({ keyWord, setKeyWord, selectedTag, setSelec
                 if (!!setKeyWord) setKeyWord(e.target.value);
               }}
               placeholder={
-                !!selectedTag && !selectedTag.length ? "Search prompts, templates, collections, or ask something..." : ""
+                !!selectedTag && !selectedTag.length
+                  ? "Search prompts, templates, collections, or ask something..."
+                  : ""
               }
               fullWidth
               sx={{
@@ -105,14 +121,14 @@ const SearchBar: React.FC<Props> = ({ keyWord, setKeyWord, selectedTag, setSelec
               }}
               value={keyWord}
             />
-          ) : !!keyWord ? (
+          ) : keyWord ? (
             <Typography>{keyWord}</Typography>
           ) : (
             <Typography
               sx={{
-                color: `${alpha(palette.onSurface, .5)}`,
+                color: `${alpha(palette.onSurface, 0.5)}`,
                 fontSize: 13,
-                fontWeight: 400
+                fontWeight: 400,
               }}
             >
               Search prompts, templates, collections, or ask something...
@@ -121,51 +137,51 @@ const SearchBar: React.FC<Props> = ({ keyWord, setKeyWord, selectedTag, setSelec
         </Grid>
 
         {from === "middle" ? (
-        <Grid
-          sx={{
-            display: { xs: "none", sm: "flex" },
-            marginRight: "0.2em",
-          }}
-        >
-          <Typography
+          <Grid
             sx={{
-              bgcolor: "primary.main",
-              color: "onPrimary",
-              borderRadius: "20px",
-              width: "75px",
-              padding: "1px",
-              height: "26px",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              cursor: "pointer",
-              marginRight: "-15px",
-              fontSize: "12px",
-              zIndex: 1,
+              display: { xs: "none", sm: "flex" },
+              marginRight: "0.2em",
             }}
           >
-            Prompts
-          </Typography>
-          <Typography
-            onClick={() => console.log("")}
-            sx={{
-              bgcolor: "surface.5",
-              color: "onSurface",
-              borderRadius: "20px",
-              fontSize: "12px",
-              height: "26px",
-              width: "92px",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              padding: "1px",
-              paddingLeft: "10px",
-              cursor: "pointer",
-            }}
-          >
-            Collections
-          </Typography>
-        </Grid>
+            <Typography
+              sx={{
+                bgcolor: "primary.main",
+                color: "onPrimary",
+                borderRadius: "20px",
+                width: "75px",
+                padding: "1px",
+                height: "26px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                cursor: "pointer",
+                marginRight: "-15px",
+                fontSize: "12px",
+                zIndex: 1,
+              }}
+            >
+              Prompts
+            </Typography>
+            <Typography
+              onClick={() => console.log("")}
+              sx={{
+                bgcolor: "surface.5",
+                color: "onSurface",
+                borderRadius: "20px",
+                fontSize: "12px",
+                height: "26px",
+                width: "92px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                padding: "1px",
+                paddingLeft: "10px",
+                cursor: "pointer",
+              }}
+            >
+              Collections
+            </Typography>
+          </Grid>
         ) : (
           <LogoApp width={18} />
         )}
