@@ -69,13 +69,17 @@ export const Options = ({ prevOptions, onUpdateNodeOptions }: OptionsProps) => {
   };
 
   const setOptionValue = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
+    let { name, value, type, checked } = e.target;
     if (type === "checkbox") {
       setOptionsValues((prevState) => ({
         ...prevState,
         [name]: checked,
       }));
     } else {
+      // prompt_output_variable requires a $ prefix
+      if(name === "prompt_output_variable") 
+        if(value.length && value[0] !== "$") value = "$" + value;
+
       setOptionsValues((prevState) => ({
         ...prevState,
         [name]: value,
@@ -544,6 +548,7 @@ export const Options = ({ prevOptions, onUpdateNodeOptions }: OptionsProps) => {
           <Box sx={{ p: "5px 30px" }}>
             <TextField
               name="prompt_output_variable"
+              placeholder={`$temp_id_1234`}
               inputProps={{
                 style: {
                   fontSize: "1rem",
