@@ -189,7 +189,7 @@ export const Header: React.FC<Props> = ({
             </Link>
           </Box>
           <Typography
-            onClick={() => router.push("/explorer")}
+            onClick={() => router.push("/explore")}
             display={{ xs: "none", sm: "flex" }}
             sx={{
               width: "58px",
