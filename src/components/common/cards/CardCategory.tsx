@@ -10,10 +10,10 @@ import { Category } from "@/core/api/dto/templates";
 
 export const CategoryCard = ({
   category,
-  onSelected,
+  onClick,
 }: {
   category: Category;
-  onSelected: () => void;
+  onClick: () => void;
 }) => {
   const truncatedTilte = (str: string) => {
     if (str.length > 22) {
@@ -23,12 +23,12 @@ export const CategoryCard = ({
   };
   return (
     <Card
-      onClick={onSelected}
+      onClick={onClick}
       title={category.name}
       elevation={0}
       sx={{
-        maxWidth: "230px",
-        width: "100%",
+        maxWidth: "200px",
+        width: "200px",
         bgcolor: "transparent",
         borderRadius: "27px",
         overflow: "hidden",
@@ -47,7 +47,7 @@ export const CategoryCard = ({
             zIndex: 1,
             borderRadius: "16px",
             width: "100%",
-            height: "254px",
+            height: "200px",
             objectFit: "cover",
           }}
           component="img"
@@ -56,8 +56,9 @@ export const CategoryCard = ({
         />
         <Typography
           variant="h1"
-          fontSize={20}
+          fontSize={16}
           fontWeight={500}
+          lineHeight={"20.8px"}
           color={"white"}
           mx={2}
           position={"absolute"}
@@ -65,8 +66,13 @@ export const CategoryCard = ({
         >
           {category.name}
         </Typography>
-        <CardContent>
-          <Typography gutterBottom variant="h5" component="div" mt={-1}>
+        <CardContent sx={{ padding: "8px", m: 0 }}>
+          <Typography
+            gutterBottom
+            fontSize={12}
+            lineHeight={"16.8px"}
+            component="div"
+          >
             {truncatedTilte(category.name)}
           </Typography>
           <Typography variant="body2" color="text.secondary" fontSize={12}>

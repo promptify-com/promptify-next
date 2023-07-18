@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-
+import Link from "next/link";
 import {
   Box,
   ClickAwayListener,
@@ -13,6 +13,11 @@ import {
   SwipeableDrawer,
   Typography,
 } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
+import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
+import { useRouter } from "next/router";
+import dynamic from "next/dynamic";
+
 import { Descrip } from "@/assets/icons/Descrip";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { Collection } from "@/assets/icons/collection";
@@ -22,15 +27,9 @@ import { useGetCurrentUser } from "@/hooks/api/user";
 import useLogout from "@/hooks/useLogout";
 import useSetUser from "@/hooks/useSetUser";
 import useToken from "@/hooks/useToken";
-import useUser from "@/hooks/useUser";
 import SearchBar from "@/components/explorer/SearchBar";
-import SearchIcon from "@mui/icons-material/Search";
-import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import { LogoAppMobile } from "@/assets/icons/LogoAppMobile";
 import { SearchDialog } from "./SearchDialog";
-import { useRouter } from "next/router";
-import Link from "next/link";
-import dynamic from "next/dynamic";
 
 const Avatar = dynamic(() => import("@mui/material/Avatar"), { ssr: false });
 interface Props {
@@ -63,6 +62,36 @@ const Menu: MenuType[] = [
   },
 ];
 
+const Login = () => {
+  const router = useRouter();
+  return (
+    <Grid onClick={() => router.push("/signin")}>
+      <Typography
+        sx={{
+          width: "54px",
+          height: "26px",
+          fontFamily: "Poppins",
+          fontStyle: "normal",
+          fontWeight: 500,
+          fontSize: "15px",
+          lineHeight: "26px",
+          letterSpacing: "0.46px",
+          color: "onBackground",
+          flex: "none",
+          order: 1,
+          flexGrow: 0,
+          cursor: "pointer",
+          "&:hover": {
+            transform: "scale(1.05)",
+          },
+        }}
+      >
+        Sign In
+      </Typography>
+    </Grid>
+  );
+};
+
 export const Header: React.FC<Props> = ({
   transparent = false,
   fixed = false,
@@ -84,35 +113,6 @@ export const Header: React.FC<Props> = ({
     setIsMenuShown(!isMenuShown);
     logout();
     setUser(null);
-  };
-
-  const Login = () => {
-    return (
-      <Grid onClick={() => router.push("/signin")}>
-        <Typography
-          sx={{
-            width: "54px",
-            height: "26px",
-            fontFamily: "Poppins",
-            fontStyle: "normal",
-            fontWeight: 500,
-            fontSize: "15px",
-            lineHeight: "26px",
-            letterSpacing: "0.46px",
-            color: "onBackground",
-            flex: "none",
-            order: 1,
-            flexGrow: 0,
-            cursor: "pointer",
-            "&:hover": {
-              transform: "scale(1.05)",
-            },
-          }}
-        >
-          Sign In
-        </Typography>
-      </Grid>
-    );
   };
 
   const toggleDrawer =
@@ -189,7 +189,7 @@ export const Header: React.FC<Props> = ({
             </Link>
           </Box>
           <Typography
-            onClick={() => router.push("/explorer")}
+            onClick={() => router.push("/explore")}
             display={{ xs: "none", sm: "flex" }}
             sx={{
               width: "58px",
@@ -397,12 +397,11 @@ export const Header: React.FC<Props> = ({
             position: "absolute",
           }}
         >
-          {({ TransitionProps, placement }) => (
+          {({ TransitionProps }) => (
             <Grow
               {...TransitionProps}
               style={{
-                transformOrigin:
-                  placement === "left-end" ? "left top" : "left top",
+                transformOrigin: "left top",
               }}
             >
               <Paper
@@ -480,7 +479,7 @@ export const Header: React.FC<Props> = ({
                     <MenuList autoFocusItem={false} sx={{ width: "100%" }}>
                       {Menu.map((el, idx) => (
                         <MenuItem
-                          key={idx}
+                          key={el.name}
                           onClick={() => handleHeaderMenu(el)}
                           sx={{
                             display: "flex",

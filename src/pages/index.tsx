@@ -1,26 +1,24 @@
-import Head from "next/head";
 import { Box, Grid, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import { AxiosResponse } from "axios";
+
 import { CustomTemplates } from "@/components/explorer/Templates";
 import { Header } from "@/components/blocks/Header";
 import { PageLoading } from "@/components/PageLoading";
 import useSetUser from "@/hooks/useSetUser";
 import useToken from "@/hooks/useToken";
 import { TopicImg } from "@/assets/icons/TopicImg";
-import { useRouter } from "next/router";
 import { Category, Tag } from "@/core/api/dto/templates";
 import { ICollection } from "@/common/types/collection";
-import { useCollection } from "@/hooks/api/collections";
 import { IContinueWithSocialMediaResponse } from "@/common/types";
 import { getPathURL, saveToken } from "@/common/utils";
-import { AxiosResponse } from "axios";
 import { authClient, client } from "@/common/axios";
 import SearchBar from "@/components/explorer/SearchBar";
 
 const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
 
 function Home({
-  collections,
   tags,
   categories,
 }: {
@@ -32,11 +30,8 @@ function Home({
   const setUser = useSetUser();
   const savedToken = useToken();
 
-  const tag = router.query?.tag;
-
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isLoadingCollection, setIsLoadingCollection] =
-    useState<boolean>(false);
+
   const [categorySelected, setCategorySelected] = useState<number>();
   const [selectedTag, setSelectedTag] = useState<Tag[]>([]);
   const [keyWord, setKeyWord] = useState<string>("");
@@ -44,18 +39,15 @@ function Home({
   const preLogin = () => {
     setIsLoading(true);
   };
-  const [useDeferredAction] = useCollection();
 
   const postLogin = (response: IContinueWithSocialMediaResponse | null) => {
     if (!response) return;
-    if (response && response.created) {
-      
+    if (response?.created) {
       setUser(response);
       router.push("/signup");
     } else {
       const path = getPathURL();
-      // localStorage.removeItem('path')
-      if (!!path) {
+      if (path) {
         router.push(path);
       }
     }
@@ -66,11 +58,10 @@ function Home({
     const { token } = r.data;
     if (!!savedToken && token !== savedToken) {
       const path = getPathURL();
-      if (!!path) {
+      if (path) {
         router.push(path);
         localStorage.setItem("from", "alert");
       }
-      return;
     } else {
       setUser(r.data);
       saveToken(r.data);
@@ -80,8 +71,7 @@ function Home({
 
   const handleClickCategory = (el: number, category: Category) => {
     router.push({
-      pathname: `/explorer/details`,
-      query: { category: JSON.stringify(category) },
+      pathname: `/explore/${category.slug}`,
     });
     setCategorySelected(el);
   };
@@ -262,10 +252,10 @@ function Home({
                 )}
                 {!!tags &&
                   tags.length > 0 &&
-                  tags.map((el, idx) => (
+                  tags.map((el) => (
                     <Grid
                       onClick={() => handleClickTag(el)}
-                      key={idx}
+                      key={el.id}
                       sx={{
                         display: "flex",
                         flexDirection: "column",
@@ -324,10 +314,10 @@ function Home({
                   categories.length > 0 &&
                   categories
                     ?.filter((mainCat) => !mainCat.parent)
-                    .map((el, idx) => (
+                    .map((el) => (
                       <Grid
                         onClick={() => handleClickCategory(el.id, el)}
-                        key={idx}
+                        key={el.id}
                         sx={{
                           display: "flex",
                           flexDirection: "row",
@@ -376,10 +366,7 @@ function Home({
               </Grid>
             </Box>
 
-            <CustomTemplates
-              selectedTag={selectedTag}
-              keyWord={keyWord}
-            />
+            <CustomTemplates selectedTag={selectedTag} keyWord={keyWord} />
           </Box>
         )}
       </Box>
@@ -394,7 +381,7 @@ export async function getServerSideProps() {
     const tags = tagsResponse.data;
     const categoryRequest = await authClient.get("/api/meta/categories/");
     const categories = categoryRequest.data;
-    
+
     return {
       props: {
         collections,

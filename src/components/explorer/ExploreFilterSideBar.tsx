@@ -13,7 +13,6 @@ import {
 } from "@mui/material";
 
 import { Engine, Tag } from "@/core/api/dto/templates";
-import ChatGptImg from "@/assets/images/promptify.png";
 
 interface ExploreFilterSideBarProps {
   sidebarOpen: boolean;
@@ -46,29 +45,36 @@ export const ExploreFilterSideBar: React.FC<ExploreFilterSideBarProps> = ({
           </ListSubheader>
         }
       >
-        {engines?.slice(0, itemsToShow).map((engine) => (
-          <ListItem disablePadding key={engine.name}>
-            <ListItemButton
-              key={engine.id}
-              sx={{ borderRadius: "8px", minHeight: 48, mx: 1, px: 3.0 }}
-            >
-              <Avatar
-                src={
-                  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS58O0-OcWTqwlFJCYTkJUSVlGeqleLPstyYdxFFcXNpQ&s"
-                }
-                alt={engine.name}
-                sx={{
-                  width: "30px",
-                  height: "30px",
-                  mr: "18px",
-                }}
-              />
-              <Typography fontSize={14} fontWeight={500} color={"onSurface"}>
-                {engine.name}
-              </Typography>
-            </ListItemButton>
-          </ListItem>
-        ))}
+        <Box
+          sx={{
+            height: itemsToShow === 3 ? "auto" : "36vh",
+            overflowY: itemsToShow === 3 ? "none" : "scroll",
+          }}
+        >
+          {engines?.slice(0, itemsToShow).map((engine) => (
+            <ListItem disablePadding key={engine.name}>
+              <ListItemButton
+                key={engine.id}
+                sx={{ borderRadius: "8px", minHeight: 48, mx: 1, px: 3.0 }}
+              >
+                <Avatar
+                  src={
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS58O0-OcWTqwlFJCYTkJUSVlGeqleLPstyYdxFFcXNpQ&s"
+                  }
+                  alt={engine.name}
+                  sx={{
+                    width: "30px",
+                    height: "30px",
+                    mr: "18px",
+                  }}
+                />
+                <Typography fontSize={14} fontWeight={500} color={"onSurface"}>
+                  {engine.name}
+                </Typography>
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </Box>
         <Button
           sx={{
             fontSize: "12px",

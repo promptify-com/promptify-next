@@ -76,22 +76,30 @@ const Drawer = styled(MuiDrawer, {
 
 export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
   const token = useToken();
+  const router = useRouter();
+
+  const pathname = router.pathname;
+  const splittedPath = pathname.split("/");
+
+  const isExplorePage = splittedPath[1] == "explore";
+
   const [user] = useGetCurrentUser([token]);
-  const { data: collections } = useGetCollectionTemplatesQuery(user?.id);
+
+  const { data: collections, isLoading: isCollectionsLoading } =
+    useGetCollectionTemplatesQuery(user?.id, {
+      skip: !user,
+    });
   const { data: tags } = useGetTagsPopularQuery();
   const { data: engines } = useGetEnginesQuery();
-  const [expandedOnHover, setExpandedOnHover] = useState<boolean>(false);
 
-  const router = useRouter();
-  const pathname = router.pathname;
-  const showFilters = pathname == "/explore";
+  const [expandedOnHover, setExpandedOnHover] = useState<boolean>(false);
 
   const navItems = [
     {
       name: "Browse",
       href: "/explore",
       icon: <Search />,
-      active: pathname == "/explore",
+      active: isExplorePage,
     },
     {
       name: "My Sparks",
@@ -115,6 +123,10 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
             my: "2vh",
             borderRadius: "0px 8px 8px 0px",
             height: "96vh",
+            boxShadow:
+              !open && expandedOnHover
+                ? "0px 7px 8px -4px #00000033, 0px 12px 17px 2px #00000024, 0px 5px 22px 4px #0000001F"
+                : "",
             overflow: "hidden",
             boxSizing: "border-box",
             bgcolor: "white",
@@ -179,6 +191,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
                   href={item.href}
                   style={{
                     display: "flex",
+                    width: open || expandedOnHover ? "100%" : "auto",
                     alignItems: "center",
                     justifyContent:
                       open || expandedOnHover ? "initial" : "center",
@@ -208,9 +221,9 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
               </ListItemButton>
             </ListItem>
           ))}
-          <Divider sx={{ opacity: showFilters ? 0 : 1 }} />
+          <Divider sx={{ opacity: isExplorePage ? 0 : 1 }} />
           <>
-            {showFilters ? (
+            {isExplorePage ? (
               <ExploreFilterSideBar
                 engines={engines}
                 tags={tags}
@@ -219,6 +232,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
             ) : (
               <Collections
                 favCollection={collections}
+                isLoading={isCollectionsLoading}
                 user={user}
                 sidebarOpen={open || expandedOnHover}
               />

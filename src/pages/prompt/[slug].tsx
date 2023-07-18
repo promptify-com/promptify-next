@@ -21,32 +21,29 @@ import {
   createTheme,
   useTheme,
 } from "@mui/material";
+import { ArtTrack } from "@mui/icons-material";
+import { skipToken } from "@reduxjs/toolkit/dist/query";
 import materialDynamicColors from "material-dynamic-colors";
 import { mix } from "polished";
+import { useRouter } from "next/router";
 
-import { Header } from "@/components/blocks/VHeader";
 import {
   useGetPromptTemplatesExecutionsQuery,
   useGetPromptTemplateBySlugQuery,
   useTemplateView,
   useGetExecutionTemplateQuery,
-} from "../../core/api/prompts";
-import { Templates, TemplatesExecutions } from "../../core/api/dto/templates";
+} from "@/core/api/prompts";
+import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { PageLoading } from "../../components/PageLoading";
-import { useWindowSize } from "usehooks-ts";
-import { ArtTrack } from "@mui/icons-material";
-import useToken from "../../hooks/useToken";
-import { useRouter } from "next/router";
 import { GeneratorForm } from "@/components/prompt/GeneratorForm";
 import { Executions } from "@/components/prompt/Executions";
 import { Details } from "@/components/prompt/Details";
 import { authClient } from "@/common/axios";
-import { Sidebar } from "@/components/blocks/VHeader/Sidebar";
 import { DetailsCard } from "@/components/prompt/DetailsCard";
 import { Prompts } from "@/core/api/dto/prompts";
 import { updateExecution } from "@/hooks/api/executions";
 import { PromptLiveResponse } from "@/common/types/prompt";
-import { skipToken } from "@reduxjs/toolkit/dist/query";
+import { Layout } from "@/layout";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -80,12 +77,15 @@ const a11yProps = (index: number) => {
 
 const Prompt = () => {
   const router = useRouter();
-  const [newExecutionData, setNewExecutionData] = useState<PromptLiveResponse | null>(null);
+  const [newExecutionData, setNewExecutionData] =
+    useState<PromptLiveResponse | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [currentGeneratedPrompt, setCurrentGeneratedPrompt] = useState<Prompts | null>(null);
+  const [currentGeneratedPrompt, setCurrentGeneratedPrompt] =
+    useState<Prompts | null>(null);
   const [openTitleModal, setOpenTitleModal] = useState(false);
   const [executionTitle, setExecutionTitle] = useState("");
-  const [defaultExecution, setDefaultExecution] = useState<TemplatesExecutions | null>(null);
+  const [defaultExecution, setDefaultExecution] =
+    useState<TemplatesExecutions | null>(null);
   const [templateView] = useTemplateView();
 
   const theme = useTheme();
@@ -141,12 +141,12 @@ const Prompt = () => {
   }, [id]);
 
   const resetNewExecution = () => {
-    if(!isGenerating) {
+    if (!isGenerating) {
       setGeneratorOpened(false);
       setTimeout(() => setGeneratorOpened(true));
-      setDefaultExecution({ 
-        ...defaultExecution as TemplatesExecutions, 
-        title: "Untitled"
+      setDefaultExecution({
+        ...(defaultExecution as TemplatesExecutions),
+        title: "Untitled",
       });
     }
   };
@@ -163,7 +163,6 @@ const Prompt = () => {
       }
     }
   }, [isGenerating, newExecutionData]);
-  const [openSideBar, setOpenSideBar] = useState<boolean>(true);
 
   // Keep tracking the current generated prompt
   useEffect(() => {
@@ -319,180 +318,168 @@ const Prompt = () => {
   return (
     <>
       <ThemeProvider theme={dynamicTheme}>
-        <Box sx={{ bgcolor: "surface.3" }}>
-          <Sidebar
-            open={openSideBar}
-            toggleSideBar={() => setOpenSideBar(!openSideBar)}
-          />
-          <Box
-            sx={{
-              width: { md: "calc(100% - 299px)" },
-              ml: { md: "auto" },
-            }}
-          >
-            <Header transparent />
-            {!templateData || isLoadingTemplate || isFetchingTemplate ? (
-              <PageLoading />
-            ) : (
+        <Layout>
+          {!templateData || isLoadingTemplate || isFetchingTemplate ? (
+            <PageLoading />
+          ) : (
+            <Grid
+              container
+              sx={{
+                mx: "auto",
+                height: "calc(100svh - 90px)",
+                width: { md: "calc(100% - 65px)" },
+                bgcolor: "surface.2",
+                borderTopLeftRadius: "16px",
+                borderTopRightRadius: "16px",
+                overflow: "hidden",
+                position: "relative",
+              }}
+            >
               <Grid
-                container
+                item
+                xs={12}
+                md={4}
                 sx={{
-                  mx: { md: "32px" },
-                  height: "calc(100svh - 90px)",
-                  width: { md: "calc(100% - 65px)" },
-                  bgcolor: "surface.2",
-                  borderTopLeftRadius: "16px",
-                  borderTopRightRadius: "16px",
-                  overflow: "hidden",
+                  height: "100%",
+                  overflow: "auto",
+                  position: "relative",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  zIndex: 999,
+                }}
+              >
+                <Stack height={"100%"}>
+                  <DetailsCard
+                    templateData={templateData}
+                    resetNewExecution={resetNewExecution}
+                  />
+                  <Stack flex={1}>
+                    <Tabs
+                      value={tabsValue}
+                      onChange={changeTab}
+                      textColor="primary"
+                      indicatorColor="primary"
+                      variant="fullWidth"
+                      sx={{
+                        minHeight: "auto",
+                        boxShadow: "0px -1px 0px 0px #ECECF4 inset",
+                      }}
+                    >
+                      <Tab
+                        label="(X) Variables"
+                        {...a11yProps(0)}
+                        sx={{
+                          fontSize: 13,
+                          fontWeight: 500,
+                          textTransform: "none",
+                          p: "16px",
+                          minHeight: "auto",
+                          bgcolor: "surface.1",
+                          color: `${alpha(palette.onSurface, 0.5)}`,
+                        }}
+                      />
+                      <Tab
+                        label="About"
+                        {...a11yProps(1)}
+                        icon={<ArtTrack />}
+                        iconPosition="start"
+                        sx={{
+                          fontSize: 13,
+                          fontWeight: 500,
+                          textTransform: "none",
+                          p: "16px",
+                          minHeight: "auto",
+                          bgcolor: "surface.1",
+                          color: `${alpha(palette.onSurface, 0.5)}`,
+                        }}
+                      />
+                    </Tabs>
+                    <Box flex={1}>
+                      <CustomTabPanel value={tabsValue} index={0}>
+                        {generatorOpened && (
+                          <GeneratorForm
+                            templateData={templateData}
+                            setNewExecutionData={setNewExecutionData}
+                            isGenerating={isGenerating}
+                            setIsGenerating={setIsGenerating}
+                            onError={setErrorMessage}
+                            exit={() => setGeneratorOpened(false)}
+                          />
+                        )}
+                      </CustomTabPanel>
+                      <CustomTabPanel value={tabsValue} index={1}>
+                        <Details
+                          templateData={templateData}
+                          updateTemplateData={setTemplateData}
+                        />
+                      </CustomTabPanel>
+                    </Box>
+                  </Stack>
+                </Stack>
+              </Grid>
+
+              <Grid
+                item
+                xs={12}
+                md={8}
+                sx={{
+                  height: "100%",
+                  overflow: "auto",
+                  bgcolor: "surface.1",
+                  borderLeft: "1px solid #ECECF4",
                   position: "relative",
                 }}
               >
-                <Grid
-                  item
-                  xs={12}
-                  md={4}
-                  sx={{
-                    height: "100%",
-                    overflow: "auto",
-                    position: "relative",
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    zIndex: 999,
-                  }}
-                >
-                  <Stack height={"100%"}>
-                    <DetailsCard
-                      templateData={templateData}
-                      resetNewExecution={resetNewExecution}
-                    />
-                    <Stack flex={1}>
-                      <Tabs
-                        value={tabsValue}
-                        onChange={changeTab}
-                        textColor="primary"
-                        indicatorColor="primary"
-                        variant="fullWidth"
-                        sx={{
-                          minHeight: "auto",
-                          boxShadow: "0px -1px 0px 0px #ECECF4 inset",
-                        }}
-                      >
-                        <Tab
-                          label="(X) Variables"
-                          {...a11yProps(0)}
-                          sx={{
-                            fontSize: 13,
-                            fontWeight: 500,
-                            textTransform: "none",
-                            p: "16px",
-                            minHeight: "auto",
-                            bgcolor: "surface.1",
-                            color: `${alpha(palette.onSurface, 0.5)}`,
-                          }}
-                        />
-                        <Tab
-                          label="About"
-                          {...a11yProps(1)}
-                          icon={<ArtTrack />}
-                          iconPosition="start"
-                          sx={{
-                            fontSize: 13,
-                            fontWeight: 500,
-                            textTransform: "none",
-                            p: "16px",
-                            minHeight: "auto",
-                            bgcolor: "surface.1",
-                            color: `${alpha(palette.onSurface, 0.5)}`,
-                          }}
-                        />
-                      </Tabs>
-                      <Box flex={1}>
-                        <CustomTabPanel value={tabsValue} index={0}>
-                          {generatorOpened && (
-                            <GeneratorForm
-                              templateData={templateData}
-                              setNewExecutionData={setNewExecutionData}
-                              isGenerating={isGenerating}
-                              setIsGenerating={setIsGenerating}
-                              onError={setErrorMessage}
-                              exit={() => setGeneratorOpened(false)}
-                            />
-                          )}
-                        </CustomTabPanel>
-                        <CustomTabPanel value={tabsValue} index={1}>
-                          <Details
-                            templateData={templateData}
-                            updateTemplateData={setTemplateData}
-                          />
-                        </CustomTabPanel>
-                      </Box>
-                    </Stack>
-                  </Stack>
-                </Grid>
-
-                <Grid
-                  item
-                  xs={12}
-                  md={8}
-                  sx={{
-                    height: "100%",
-                    overflow: "auto",
-                    bgcolor: "surface.1",
-                    borderLeft: "1px solid #ECECF4",
-                    position: "relative",
-                  }}
-                >
-                  <Executions
-                    templateData={templateData}
-                    executions={templateExecutions || []}
-                    isFetching={isFetchingExecutions}
-                    defaultExecution={defaultExecution}
-                    newExecutionData={newExecutionData}
-                    refetchExecutions={refetchTemplateExecutions}
-                  />
-                  {currentGeneratedPrompt && (
-                    <Box
+                <Executions
+                  templateData={templateData}
+                  executions={templateExecutions || []}
+                  isFetching={isFetchingExecutions}
+                  defaultExecution={defaultExecution}
+                  newExecutionData={newExecutionData}
+                  refetchExecutions={refetchTemplateExecutions}
+                />
+                {currentGeneratedPrompt && (
+                  <Box
+                    sx={{
+                      position: "sticky",
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      zIndex: 998,
+                      bgcolor: "surface.1",
+                    }}
+                  >
+                    <Divider sx={{ borderColor: "surface.3" }} />
+                    <Typography
                       sx={{
-                        position: "sticky",
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        zIndex: 998,
-                        bgcolor: "surface.1",
+                        padding: "8px 16px 5px",
+                        textAlign: "right",
+                        fontSize: 11,
+                        fontWeight: 500,
+                        opacity: 0.3,
                       }}
                     >
-                      <Divider sx={{ borderColor: "surface.3" }} />
-                      <Typography
-                        sx={{
-                          padding: "8px 16px 5px",
-                          textAlign: "right",
-                          fontSize: 11,
-                          fontWeight: 500,
-                          opacity: 0.3,
-                        }}
-                      >
-                        Prompt #{currentGeneratedPrompt.order}:{" "}
-                        {currentGeneratedPrompt.title}
-                      </Typography>
-                    </Box>
-                  )}
-                </Grid>
+                      Prompt #{currentGeneratedPrompt.order}:{" "}
+                      {currentGeneratedPrompt.title}
+                    </Typography>
+                  </Box>
+                )}
               </Grid>
-            )}
+            </Grid>
+          )}
 
-            {ExecutionTitleModal}
+          {ExecutionTitleModal}
 
-            <Snackbar
-              anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-              open={errorMessage.length > 0}
-              autoHideDuration={6000}
-              onClose={() => setErrorMessage("")}
-            >
-              <Alert severity={"error"}>{errorMessage}</Alert>
-            </Snackbar>
-          </Box>
-        </Box>
+          <Snackbar
+            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+            open={errorMessage.length > 0}
+            autoHideDuration={6000}
+            onClose={() => setErrorMessage("")}
+          >
+            <Alert severity={"error"}>{errorMessage}</Alert>
+          </Snackbar>
+        </Layout>
       </ThemeProvider>
     </>
   );

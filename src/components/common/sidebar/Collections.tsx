@@ -15,18 +15,26 @@ import {
 } from "@mui/material";
 import { CollectionItem } from "./CollectionItem";
 import { ITemplate } from "@/common/types/template";
+import { FetchLoading } from "@/components/FetchLoading";
+import { useRouter } from "next/router";
 
 interface SideBarCollectionsProps {
   sidebarOpen: boolean;
   user: IUser | null;
   favCollection: ICollectionById | null;
+  isLoading: boolean;
 }
 
 export const Collections: React.FC<SideBarCollectionsProps> = ({
   sidebarOpen,
   user,
   favCollection,
+  isLoading,
 }) => {
+  const router = useRouter();
+  const navigateTo = (slug: string) => {
+    router.push(`/prompt/${slug}`);
+  };
   return (
     <Box>
       <ListSubheader
@@ -116,15 +124,25 @@ export const Collections: React.FC<SideBarCollectionsProps> = ({
               <MoreVert />
             </IconButton>
           </Grid>
-          <List className="sidebar-collection-list">
-            {favCollection &&
-              favCollection.prompt_templates.map((item: ITemplate) => (
+          <List
+            sx={{
+              height: isLoading ? "auto" : "55vh",
+              width: isLoading ? "100%" : "fit-content",
+              overflowY: isLoading || !favCollection ? "none" : "scroll",
+            }}
+          >
+            {isLoading ? (
+              <FetchLoading />
+            ) : (
+              favCollection?.prompt_templates.map((item: ITemplate) => (
                 <CollectionItem
                   key={item.id}
                   template={item}
                   expanded={sidebarOpen}
+                  onClick={() => navigateTo(item.slug)}
                 />
-              ))}
+              ))
+            )}
           </List>
         </Box>
       )}

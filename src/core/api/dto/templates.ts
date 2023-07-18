@@ -2,10 +2,10 @@ import { User } from "./user";
 import { Prompts } from "./prompts";
 
 export interface FilterParams {
-  categoryId: string;
-  subcategoryId: string;
-  engineId: string;
-  filter: string;
+  categoryId?: number;
+  subcategoryId?: string;
+  engineId?: string;
+  filter?: string;
 }
 
 export class TemplateParam {
@@ -24,7 +24,7 @@ export interface TemplateKeyWordTag {
 }
 
 export interface TemplateIds {
-  categoryId: string;
+  categoryId: number;
   subcategoryId: string;
   engineId: string;
 }
@@ -54,7 +54,7 @@ export interface Category {
   parent?: CategoryParent;
   image: string;
   prompt_template_count: number;
-  slug: number;
+  slug: string;
 }
 
 export interface Templates {
