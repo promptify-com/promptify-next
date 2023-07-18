@@ -20,7 +20,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
             minHeight: "100vh",
             maxWidth: {
               xs: "100%",
-              md: openSideBar ? "calc(100% - 299px)" : "1177px",
+              md: openSideBar ? "calc(100% - 299px)" : "80%",
             },
             m: openSideBar ? "0px 0px 0px auto" : "0px auto 0px auto",
           }}

@@ -1,9 +1,10 @@
+import { Box, Grid, Typography } from "@mui/material";
+import { useRouter } from "next/router";
+
 import { NotFoundIcon } from "@/assets/icons/NotFoundIcon";
 import { FetchLoading } from "@/components/FetchLoading";
 import CardTemplate from "@/components/common/cards/CardTemplate";
 import { Templates } from "@/core/api/dto/templates";
-import { Box, Grid, Typography } from "@mui/material";
-import { useRouter } from "next/router";
 
 interface TemplatesSectionProps {
   templates: Templates[];

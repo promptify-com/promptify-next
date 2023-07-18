@@ -10,15 +10,18 @@ import {
 interface CollectionItemProps {
   expanded?: boolean;
   template: ITemplate;
+  onClick: () => void;
 }
 
 export const CollectionItem: React.FC<CollectionItemProps> = ({
   expanded,
   template,
+  onClick,
 }) => {
   return (
     <ListItem disablePadding>
       <ListItemButton
+        onClick={onClick}
         sx={{
           minHeight: 48,
           mx: expanded ? 1 : 0.5,
@@ -46,9 +49,23 @@ export const CollectionItem: React.FC<CollectionItemProps> = ({
           flexDirection={"column"}
           sx={{ opacity: expanded ? 1 : 0 }}
         >
-          <Typography>{template.title}</Typography>
-          <Typography variant="body2" color={"text.secondary"}>
-            ChatGpt
+          <Typography
+            fontSize={12}
+            fontWeight={500}
+            lineHeight={"16.8px"}
+            letterSpacing={"0.15px"}
+          >
+            {template.title}
+          </Typography>
+          <Typography
+            fontSize={10}
+            fontWeight={500}
+            lineHeight={"12.35px"}
+            variant="body2"
+            letterSpacing={"0.25px"}
+            color={"text.secondary"}
+          >
+            {template.category.name}
           </Typography>
         </Grid>
       </ListItemButton>

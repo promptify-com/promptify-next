@@ -1,15 +1,16 @@
+import { useRouter } from "next/router";
+import { Box, Grid, Typography } from "@mui/material";
+
 import { FetchLoading } from "@/components/FetchLoading";
 import { CategoryCard } from "@/components/common/cards/CardCategory";
 import { Category } from "@/core/api/dto/templates";
-import { Box, Grid, Typography } from "@mui/material";
-import { useRouter } from "next/router";
 
-interface CategoriesProps {
+interface CategoriesSectionProps {
   isLoading: boolean;
   categories: Category[] | undefined;
 }
 
-export const Categories: React.FC<CategoriesProps> = ({
+export const CategoriesSection: React.FC<CategoriesSectionProps> = ({
   isLoading,
   categories,
 }) => {
@@ -35,8 +36,7 @@ export const Categories: React.FC<CategoriesProps> = ({
         <Grid
           display={"flex"}
           flexDirection={"row"}
-          gap={"24px"}
-          justifyContent={"space-between"}
+          gap={"16px"}
           alignItems={"flex-start"}
           alignContent={"flex-start"}
           alignSelf={"stretch"}

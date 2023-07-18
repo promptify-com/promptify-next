@@ -7,8 +7,8 @@ import {
   useGetTemplatesByKeyWordAndTagQuery,
 } from "@/core/api/explorer";
 import { Layout } from "@/layout";
-import { Categories } from "./components/Categories";
-import { TemplatesSection } from "./components/Templates";
+import { CategoriesSection } from "./components/CategoriesSection";
+import { TemplatesSection } from "./components/TemplatesSection";
 
 export default function ExplorePage() {
   const { data: templates, isLoading: isTemplatesLoading } =
@@ -24,7 +24,7 @@ export default function ExplorePage() {
     <>
       <Layout>
         <Head>
-          <title>Explore | Boost your creativity</title>
+          <title>Explore and Boost your creativity</title>
           <meta
             name="description"
             content="Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out."
@@ -33,7 +33,10 @@ export default function ExplorePage() {
         </Head>
         <Box>
           <Grid sx={{}} display={"flex"} flexDirection={"column"} gap={"16px"}>
-            <Categories categories={categories} isLoading={isCategoryLoading} />
+            <CategoriesSection
+              categories={categories}
+              isLoading={isCategoryLoading}
+            />
             <TemplatesSection
               templates={templates ?? []}
               isLoading={isTemplatesLoading}
@@ -43,14 +46,4 @@ export default function ExplorePage() {
       </Layout>
     </>
   );
-}
-
-export async function getServerSideProps() {
-  return {
-    props: {
-      title: "Promptify | Boost Your Creativity",
-      description:
-        "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
-    },
-  };
 }

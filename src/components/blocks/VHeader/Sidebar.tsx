@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Box,
   Divider,
@@ -28,7 +28,6 @@ import {
   useGetTagsPopularQuery,
 } from "@/core/api/explorer";
 import { SideBarCloseIcon } from "@/assets/icons/SideBarClose";
-import { ICollection } from "@/common/types/collection";
 
 interface SideBarProps {
   open: boolean;
@@ -77,20 +76,23 @@ const Drawer = styled(MuiDrawer, {
 
 export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
   const token = useToken();
+  const router = useRouter();
+
+  const pathname = router.pathname;
+  const splittedPath = pathname.split("/");
+
+  const isExplorePage = splittedPath[1] == "explore";
+
   const [user] = useGetCurrentUser([token]);
 
-  const { data: collections } = useGetCollectionTemplatesQuery(user?.id, {
-    skip: !user,
-  });
-
+  const { data: collections, isLoading: isCollectionsLoading } =
+    useGetCollectionTemplatesQuery(user?.id, {
+      skip: !user,
+    });
   const { data: tags } = useGetTagsPopularQuery();
   const { data: engines } = useGetEnginesQuery();
-  const [expandedOnHover, setExpandedOnHover] = useState<boolean>(false);
 
-  const router = useRouter();
-  const pathname = router.pathname;
-  const isExplorePage =
-    pathname == "/explore" || pathname == "/explore/[...slug]";
+  const [expandedOnHover, setExpandedOnHover] = useState<boolean>(false);
 
   const navItems = [
     {
@@ -229,6 +231,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
             ) : (
               <Collections
                 favCollection={collections}
+                isLoading={isCollectionsLoading}
                 user={user}
                 sidebarOpen={open || expandedOnHover}
               />
