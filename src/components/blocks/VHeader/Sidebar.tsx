@@ -191,6 +191,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
                   href={item.href}
                   style={{
                     display: "flex",
+                    width: "100%",
                     alignItems: "center",
                     justifyContent:
                       open || expandedOnHover ? "initial" : "center",

@@ -2,11 +2,15 @@ import { authClient } from "@/common/axios";
 import { FetchLoading } from "@/components/FetchLoading";
 import { SubCategoryCard } from "@/components/common/cards/CardSubcategory";
 import { Category } from "@/core/api/dto/templates";
-import { useGetCategoriesQuery } from "@/core/api/explorer";
+import {
+  useGetCategoriesQuery,
+  useGetTemplatesByFilterQuery,
+} from "@/core/api/explorer";
 import { Layout } from "@/layout";
 import { KeyboardArrowLeft } from "@mui/icons-material";
 import { Box, Button, Grid } from "@mui/material";
 import { useRouter } from "next/router";
+import { TemplatesSection } from "../components/TemplatesSection";
 
 export default function Page({ category }: { category: Category }) {
   const router = useRouter();
@@ -18,6 +22,11 @@ export default function Page({ category }: { category: Category }) {
     router.push(`/explore/${categorySlug}/${slug}`);
   };
 
+  const { data: templates, isLoading: isTemplatesLoading } =
+    useGetTemplatesByFilterQuery({
+      categoryId: category.id,
+    });
+
   return (
     <Layout>
       {isCategoriesLoading ? (
@@ -27,6 +36,7 @@ export default function Page({ category }: { category: Category }) {
       ) : (
         <Box
           gap={"16px"}
+          width={"100%"}
           display={"flex"}
           flexDirection={"column"}
           alignItems={"start"}
@@ -52,6 +62,11 @@ export default function Page({ category }: { category: Category }) {
                 </Grid>
               ))}
           </Grid>
+          <TemplatesSection
+            filtred
+            templates={templates}
+            isLoading={isTemplatesLoading}
+          />
         </Box>
       )}
     </Layout>

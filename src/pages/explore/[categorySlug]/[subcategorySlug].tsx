@@ -1,18 +1,26 @@
+import { useRouter } from "next/router";
+import { KeyboardArrowLeft } from "@mui/icons-material";
+import { Box, Button, Grid } from "@mui/material";
+
 import { authClient } from "@/common/axios";
 import { FetchLoading } from "@/components/FetchLoading";
 import { SubCategoryCard } from "@/components/common/cards/CardSubcategory";
 import { Category } from "@/core/api/dto/templates";
-import { useGetCategoriesQuery } from "@/core/api/explorer";
 import { Layout } from "@/layout";
-import { KeyboardArrowLeft } from "@mui/icons-material";
-import { Box, Button, Grid } from "@mui/material";
-import { useRouter } from "next/router";
+import { TemplatesSection } from "../components/TemplatesSection";
+import {
+  useGetCategoriesQuery,
+  useGetTemplatesByFilterQuery,
+} from "@/core/api/explorer";
 
 export default function Page({ category }: { category: Category }) {
   const router = useRouter();
   const { data: categories, isLoading: isCategoriesLoading } =
     useGetCategoriesQuery();
-
+  const { data: templates, isLoading: isTemplatesLoading } =
+    useGetTemplatesByFilterQuery({
+      categoryId: category.id,
+    });
   const navigateTo = (slug: string) => {
     router.push(`/explore/${category.slug}/${slug}`);
   };
@@ -28,6 +36,7 @@ export default function Page({ category }: { category: Category }) {
           display={"flex"}
           flexDirection={"column"}
           alignItems={"start"}
+          width={"100%"}
         >
           <Button
             onClick={() => router.push("/explore")}
@@ -48,6 +57,11 @@ export default function Page({ category }: { category: Category }) {
                 </Grid>
               ))}
           </Grid>
+          <TemplatesSection
+            filtred
+            templates={templates}
+            isLoading={isTemplatesLoading}
+          />
         </Box>
       )}
     </Layout>

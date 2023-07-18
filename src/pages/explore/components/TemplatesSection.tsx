@@ -7,13 +7,15 @@ import CardTemplate from "@/components/common/cards/CardTemplate";
 import { Templates } from "@/core/api/dto/templates";
 
 interface TemplatesSectionProps {
-  templates: Templates[];
+  templates: Templates[] | undefined;
   isLoading: boolean;
+  filtred?: boolean;
 }
 
 export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
   templates,
   isLoading,
+  filtred,
 }) => {
   const router = useRouter();
 
@@ -22,7 +24,7 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
   };
   return (
     <>
-      <Box>
+      <Box width={"100%"}>
         {isLoading && (
           <Box
             minHeight={"40vh"}
@@ -33,7 +35,8 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
             <FetchLoading />
           </Box>
         )}
-        <Typography fontSize={19}>Best Templates</Typography>
+        {!filtred && <Typography fontSize={19}>Best Templates</Typography>}
+
         <Grid
           container
           flexDirection={"column"}

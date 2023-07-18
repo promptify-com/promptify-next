@@ -49,7 +49,6 @@ function Home({
   const postLogin = (response: IContinueWithSocialMediaResponse | null) => {
     if (!response) return;
     if (response && response.created) {
-      
       setUser(response);
       router.push("/signup");
     } else {
@@ -80,8 +79,7 @@ function Home({
 
   const handleClickCategory = (el: number, category: Category) => {
     router.push({
-      pathname: `/explorer/details`,
-      query: { category: JSON.stringify(category) },
+      pathname: `/explore/${category.slug}`,
     });
     setCategorySelected(el);
   };
@@ -376,10 +374,7 @@ function Home({
               </Grid>
             </Box>
 
-            <CustomTemplates
-              selectedTag={selectedTag}
-              keyWord={keyWord}
-            />
+            <CustomTemplates selectedTag={selectedTag} keyWord={keyWord} />
           </Box>
         )}
       </Box>
@@ -394,7 +389,7 @@ export async function getServerSideProps() {
     const tags = tagsResponse.data;
     const categoryRequest = await authClient.get("/api/meta/categories/");
     const categories = categoryRequest.data;
-    
+
     return {
       props: {
         collections,

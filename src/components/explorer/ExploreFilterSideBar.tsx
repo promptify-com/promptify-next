@@ -13,7 +13,6 @@ import {
 } from "@mui/material";
 
 import { Engine, Tag } from "@/core/api/dto/templates";
-import ChatGptImg from "@/assets/images/promptify.png";
 
 interface ExploreFilterSideBarProps {
   sidebarOpen: boolean;
