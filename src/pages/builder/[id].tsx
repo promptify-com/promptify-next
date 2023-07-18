@@ -26,6 +26,7 @@ import { deletePrompt, updateTemplate } from "../../hooks/api/templates";
 import { PageWrapper } from "@/components/PageWrapper";
 import { ContentCopy } from "@mui/icons-material";
 import { useRouter } from "next/router";
+import { INodesData } from "@/common/types/builder";
 
 export interface ITemplate {
   title: string;
@@ -39,16 +40,6 @@ export interface ITemplate {
   duration: string;
   prompts_list?: INodesData[];
 }
-export interface INodesData extends IPromptOptions {
-  id?: number;
-  temp_id?: number;
-  title: string;
-  content: string;
-  engine_id: number;
-  dependencies: number[];
-  parameters: IPromptParams[];
-  order: number;
-}
 export interface IPromptParams {
   parameter_id: number;
   score: number;
@@ -61,19 +52,6 @@ export interface IPromptParams {
   }[];
 }
 
-export interface IPromptOptions {
-  model_parameters: {
-    temperature?: number;
-    maximumLength?: number;
-    topP?: number;
-    presencePenalty?: number;
-    frequencyPenalty?: number;
-  } | null;
-  output_format: string;
-  is_visible: boolean;
-  show_output: boolean;
-}
-
 export const Builder = () => {
   const router = useRouter();
   const id = router.query.id;
@@ -81,12 +59,8 @@ export const Builder = () => {
   const [prompts, setPrompts] = useState<Prompts[]>([]);
   const [engines] = useEngines();
   const [selectedNode, setSelectedNode] = useState<any>(null);
-  const [selectedNodeData, setSelectedNodeData] = useState<INodesData | null>(
-    null
-  );
-  const [selectedConnection, setSelectedConnection] = useState<string | null>(
-    null
-  );
+  const [selectedNodeData, setSelectedNodeData] = useState<INodesData | null>(null);
+  const [selectedConnection, setSelectedConnection] = useState<string | null>(null);
   const [nodesData, setNodesData] = useState<INodesData[]>([]);
   const { data: promptsData } = useGetPromptTemplatesQuery(id ? +id : 1);
   const dataForRequest = useRef({} as any);
@@ -152,6 +126,7 @@ export const Builder = () => {
           model_parameters: model_parameters,
           is_visible: node.is_visible,
           show_output: node.show_output,
+          prompt_output_variable: node.prompt_output_variable,
         };
       });
 
@@ -235,6 +210,7 @@ export const Builder = () => {
         model_parameters: null,
         is_visible: true,
         show_output: true,
+        prompt_output_variable: `$temp_id_${node.temp_id}`,
       },
     ]);
   };
@@ -276,6 +252,7 @@ export const Builder = () => {
           model_parameters: selectedNodeData.model_parameters,
           is_visible: selectedNodeData.is_visible,
           show_output: selectedNodeData.show_output,
+          prompt_output_variable: `$temp_id_${node.temp_id}`,
         },
       ]);
     }

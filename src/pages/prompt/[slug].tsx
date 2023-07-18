@@ -21,19 +21,20 @@ import {
   createTheme,
   useTheme,
 } from "@mui/material";
+import { ArtTrack } from "@mui/icons-material";
+import { skipToken } from "@reduxjs/toolkit/dist/query";
 import materialDynamicColors from "material-dynamic-colors";
 import { mix } from "polished";
+import { useRouter } from "next/router";
 
 import {
   useGetPromptTemplatesExecutionsQuery,
   useGetPromptTemplateBySlugQuery,
   useTemplateView,
   useGetExecutionTemplateQuery,
-} from "../../core/api/prompts";
-import { Templates } from "../../core/api/dto/templates";
+} from "@/core/api/prompts";
+import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { PageLoading } from "../../components/PageLoading";
-import { ArtTrack } from "@mui/icons-material";
-import { useRouter } from "next/router";
 import { GeneratorForm } from "@/components/prompt/GeneratorForm";
 import { Executions } from "@/components/prompt/Executions";
 import { Details } from "@/components/prompt/Details";
@@ -42,7 +43,6 @@ import { DetailsCard } from "@/components/prompt/DetailsCard";
 import { Prompts } from "@/core/api/dto/prompts";
 import { updateExecution } from "@/hooks/api/executions";
 import { PromptLiveResponse } from "@/common/types/prompt";
-import { skipToken } from "@reduxjs/toolkit/dist/query";
 import { Layout } from "@/layout";
 
 interface TabPanelProps {
@@ -84,7 +84,10 @@ const Prompt = () => {
     useState<Prompts | null>(null);
   const [openTitleModal, setOpenTitleModal] = useState(false);
   const [executionTitle, setExecutionTitle] = useState("");
+  const [defaultExecution, setDefaultExecution] =
+    useState<TemplatesExecutions | null>(null);
   const [templateView] = useTemplateView();
+
   const theme = useTheme();
   const [palette, setPalette] = useState(theme.palette);
   const [generatorOpened, setGeneratorOpened] = useState(true);
@@ -137,10 +140,14 @@ const Prompt = () => {
     }
   }, [id]);
 
-  const resetForm = () => {
+  const resetNewExecution = () => {
     if (!isGenerating) {
       setGeneratorOpened(false);
       setTimeout(() => setGeneratorOpened(true));
+      setDefaultExecution({
+        ...(defaultExecution as TemplatesExecutions),
+        title: "Untitled",
+      });
     }
   };
 
@@ -318,7 +325,7 @@ const Prompt = () => {
             <Grid
               container
               sx={{
-                mx: { md: "32px" },
+                mx: "auto",
                 height: "calc(100svh - 90px)",
                 width: { md: "calc(100% - 65px)" },
                 bgcolor: "surface.2",
@@ -345,7 +352,7 @@ const Prompt = () => {
                 <Stack height={"100%"}>
                   <DetailsCard
                     templateData={templateData}
-                    resetForm={resetForm}
+                    resetNewExecution={resetNewExecution}
                   />
                   <Stack flex={1}>
                     <Tabs
@@ -428,6 +435,7 @@ const Prompt = () => {
                   templateData={templateData}
                   executions={templateExecutions || []}
                   isFetching={isFetchingExecutions}
+                  defaultExecution={defaultExecution}
                   newExecutionData={newExecutionData}
                   refetchExecutions={refetchTemplateExecutions}
                 />

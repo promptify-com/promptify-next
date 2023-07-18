@@ -62,7 +62,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData }) => {
       <Typography sx={{ fontSize: 48, fontWeight: 400, color: "onSurface", py: "24px" }}>
         {execution.title}
       </Typography>
-      {execution.prompt_executions.map((exec) => {
+      {execution.prompt_executions?.map((exec) => {
         const prompt = templateData.prompts.find(
           (prompt) => prompt.id === exec.prompt
         );

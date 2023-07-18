@@ -157,6 +157,7 @@ export const Sidebar = ({
       findSelectedNode.model_parameters = options.model_parameters;
       findSelectedNode.is_visible = options.is_visible;
       findSelectedNode.show_output = options.show_output;
+      findSelectedNode.prompt_output_variable = options.prompt_output_variable;
       setNodesData([...otherNodes, findSelectedNode]);
     }
   };

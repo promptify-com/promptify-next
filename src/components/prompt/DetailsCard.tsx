@@ -5,12 +5,12 @@ import React from 'react'
 
 interface Props {
    templateData: Templates;
-   resetForm: () => void;
+   resetNewExecution: () => void;
 }
 
 export const DetailsCard: React.FC<Props> = ({ 
    templateData,
-   resetForm
+   resetNewExecution
 }) => {
    const { palette } = useTheme();
 
@@ -59,7 +59,7 @@ export const DetailsCard: React.FC<Props> = ({
                }}
               startIcon={<AddOutlined />}
               variant={"outlined"}
-              onClick={resetForm}
+              onClick={resetNewExecution}
             >
               Spark
             </Button>

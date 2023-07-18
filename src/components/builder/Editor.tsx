@@ -78,6 +78,8 @@ export async function createEditor(
         model_parameters: prompt?.model_parameters,
         is_visible: prompt?.is_visible,
         show_output: prompt?.show_output,
+        prompt_output_variable: prompt?.prompt_output_variable,
+
       },
     ]);
   };
