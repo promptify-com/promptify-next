@@ -255,11 +255,6 @@ export const Header: React.FC<Props> = ({
               </Grid>
             )}
 
-            {user && token && (
-              <Grid display={{ xs: "none", sm: "flex" }}>
-                <Descrip />
-              </Grid>
-            )}
             {user && token ? (
               <Typography
                 ref={menuAnchorRef}
@@ -328,12 +323,11 @@ export const Header: React.FC<Props> = ({
               position: "absolute",
             }}
           >
-            {({ TransitionProps, placement }) => (
+            {({ TransitionProps }) => (
               <Grow
                 {...TransitionProps}
                 style={{
-                  transformOrigin:
-                    placement === "left-end" ? "left top" : "left top",
+                  transformOrigin: "left top",
                 }}
               >
                 <Paper
@@ -409,9 +403,9 @@ export const Header: React.FC<Props> = ({
                         </Typography>
                       </Grid>
                       <MenuList autoFocusItem={false} sx={{ width: "100%" }}>
-                        {Menu.map((el, idx) => (
+                        {Menu.map((el) => (
                           <MenuItem
-                            key={idx}
+                            key={el.id}
                             onClick={() => handleHeaderMenu(el)}
                             sx={{
                               display: "flex",

@@ -34,7 +34,7 @@ export default function ExplorePage() {
   return (
     <>
       <Layout>
-        <Box>
+        <Box padding={"0px 8px"}>
           <Grid
             sx={{
               padding: { xs: "1em 0em 0em 1em", sm: "1.5em 2em" },
@@ -44,7 +44,7 @@ export default function ExplorePage() {
             gap={1}
           >
             {!selectedCategory && (
-              <Box gap={1} display={"flex"} flexDirection={"column"}>
+              <Box gap={"16px"} display={"flex"} flexDirection={"column"}>
                 <Typography fontSize={19}> Browse Category </Typography>
                 {/* Loading Categories  */}
                 {isCategoryLoading && (
@@ -57,12 +57,21 @@ export default function ExplorePage() {
                     <FetchLoading />
                   </Box>
                 )}
-                <Grid container direction={"row"} spacing={3}>
+                <Grid
+                  display={"flex"}
+                  flexDirection={"row"}
+                  gap={"24px"}
+                  justifyContent={"space-between"}
+                  alignItems={"flex-start"}
+                  alignContent={"flex-start"}
+                  alignSelf={"stretch"}
+                  flexWrap={"wrap"}
+                >
                   {categories
 
                     ?.filter((mainCat) => !mainCat.parent)
                     .map((category) => (
-                      <Grid key={category.id} item xs={6} sm={4} md={3} xl={2}>
+                      <Grid key={category.id}>
                         <CategoryCard
                           category={category}
                           onSelected={() => setSelectedCategory(category)}
@@ -81,7 +90,7 @@ export default function ExplorePage() {
                 container={categoriesRef.current}
               >
                 <Box
-                  gap={1}
+                  gap={"16px"}
                   display={"flex"}
                   flexDirection={"column"}
                   alignItems={"start"}
