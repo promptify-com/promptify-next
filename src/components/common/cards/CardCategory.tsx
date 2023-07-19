@@ -15,12 +15,6 @@ export const CategoryCard = ({
   category: Category;
   onClick: () => void;
 }) => {
-  const truncatedTilte = (str: string) => {
-    if (str.length > 22) {
-      return str.slice(0, 22) + "...";
-    }
-    return str;
-  };
   return (
     <Card
       onClick={onClick}
@@ -73,10 +67,10 @@ export const CategoryCard = ({
             lineHeight={"16.8px"}
             component="div"
           >
-            {truncatedTilte(category.name)}
+            {category.name}
           </Typography>
           <Typography variant="body2" color="text.secondary" fontSize={12}>
-            482 Templates
+            {category.prompt_template_count} templates
           </Typography>
         </CardContent>
       </CardActionArea>

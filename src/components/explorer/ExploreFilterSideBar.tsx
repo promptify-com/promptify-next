@@ -45,7 +45,8 @@ export const ExploreFilterSideBar: React.FC<ExploreFilterSideBarProps> = ({
           </ListSubheader>
         }
       >
-        <Box
+        <Grid
+          className="sidebar-list"
           sx={{
             height: itemsToShow === 3 ? "auto" : "36vh",
             overflowY: itemsToShow === 3 ? "none" : "scroll",
@@ -74,7 +75,7 @@ export const ExploreFilterSideBar: React.FC<ExploreFilterSideBarProps> = ({
               </ListItemButton>
             </ListItem>
           ))}
-        </Box>
+        </Grid>
         <Button
           sx={{
             fontSize: "12px",

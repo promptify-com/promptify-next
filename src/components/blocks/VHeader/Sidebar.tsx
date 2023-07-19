@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
+  Collapse,
   Divider,
   Grid,
   Icon,
@@ -13,7 +14,13 @@ import {
 import MuiDrawer from "@mui/material/Drawer";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { AutoAwesome, Search } from "@mui/icons-material";
+import {
+  AutoAwesome,
+  ExpandLess,
+  ExpandMore,
+  MenuBookRounded,
+  Search,
+} from "@mui/icons-material";
 import { styled, Theme, CSSObject } from "@mui/material/styles";
 
 import { LogoApp } from "@/assets/icons/LogoApp";
@@ -86,13 +93,21 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
   const [user] = useGetCurrentUser([token]);
 
   const { data: collections, isLoading: isCollectionsLoading } =
-    useGetCollectionTemplatesQuery(user?.id, {
+    useGetCollectionTemplatesQuery(1, {
       skip: !user,
     });
   const { data: tags } = useGetTagsPopularQuery();
   const { data: engines } = useGetEnginesQuery();
 
   const [expandedOnHover, setExpandedOnHover] = useState<boolean>(false);
+  const [showFilters, setShowFilters] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (expandedOnHover || open) {
+      return;
+    }
+    setShowFilters(false);
+  }, [expandedOnHover, open]);
 
   const navItems = [
     {
@@ -105,6 +120,12 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
       name: "My Sparks",
       href: "/",
       icon: <AutoAwesome />,
+      active: pathname == "/",
+    },
+    {
+      name: "Learn",
+      href: "/",
+      icon: <MenuBookRounded />,
       active: pathname == "/",
     },
   ];
@@ -178,66 +199,82 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
             </IconButton>
           </Grid>
           {navItems.map((item, i) => (
-            <ListItem disablePadding key={item.name}>
-              <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  mx: 1,
-                  borderRadius: "8px",
-                }}
-                selected={item.active}
-              >
-                <Link
-                  href={item.href}
-                  style={{
-                    display: "flex",
-                    width: open || expandedOnHover ? "100%" : "auto",
-                    alignItems: "center",
-                    justifyContent:
-                      open || expandedOnHover ? "initial" : "center",
-                    padding: 6.5,
-                    textDecoration: "none",
+            <Grid key={item.name}>
+              <ListItem disablePadding>
+                <ListItemButton
+                  sx={{
+                    minHeight: 48,
+                    borderRadius: "8px",
+                    mx: 1,
                   }}
+                  selected={item.active}
+                  onClick={() =>
+                    item.name == "Browse" && setShowFilters(!showFilters)
+                  }
                 >
-                  <ListItemIcon
-                    sx={{
-                      minWidth: 0,
-                      mr: open || expandedOnHover ? 3 : "auto",
-                      color: "onSurface",
-                      justifyContent: "center",
+                  <Link
+                    href={isExplorePage ? "#" : item.href}
+                    style={{
+                      textDecoration: "none",
+                      padding: 6.5,
+                      display: "flex",
+                      width: open || expandedOnHover ? "100%" : "auto",
+                      alignItems: "center",
+                      justifyContent:
+                        open || expandedOnHover ? "initial" : "center",
                     }}
                   >
-                    <Icon>{item.icon}</Icon>
-                  </ListItemIcon>
-                  <Typography
-                    sx={{ opacity: open || expandedOnHover ? 1 : 0, mt: 0.5 }}
-                    fontSize={14}
-                    fontWeight={500}
-                    color={"onSurface"}
-                  >
-                    {item.name}
-                  </Typography>
-                </Link>
-              </ListItemButton>
-            </ListItem>
+                    <ListItemIcon
+                      sx={{
+                        minWidth: 0,
+                        mr: open || expandedOnHover ? 3 : "auto",
+                        color: "onSurface",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Icon>{item.icon}</Icon>
+                    </ListItemIcon>
+                    <Typography
+                      sx={{
+                        opacity: open || expandedOnHover ? 1 : 0,
+                        mt: 0.5,
+                      }}
+                      fontSize={14}
+                      fontWeight={500}
+                      color={"onSurface"}
+                    >
+                      {item.name}
+                    </Typography>
+                  </Link>
+                  {item.name == "Browse" &&
+                    isExplorePage &&
+                    (showFilters ? (
+                      <ExpandLess sx={{ mr: -1, color: "text.secondary" }} />
+                    ) : (
+                      <ExpandMore sx={{ mr: -1, color: "text.secondary" }} />
+                    ))}
+                </ListItemButton>
+              </ListItem>
+              <Collapse
+                in={showFilters && isExplorePage && item.name == "Browse"}
+                timeout={"auto"}
+                unmountOnExit
+              >
+                <ExploreFilterSideBar
+                  engines={engines}
+                  tags={tags}
+                  sidebarOpen={open || expandedOnHover}
+                />
+              </Collapse>
+            </Grid>
           ))}
-          <Divider sx={{ opacity: isExplorePage ? 0 : 1 }} />
-          <>
-            {isExplorePage ? (
-              <ExploreFilterSideBar
-                engines={engines}
-                tags={tags}
-                sidebarOpen={open || expandedOnHover}
-              />
-            ) : (
-              <Collections
-                favCollection={collections}
-                isLoading={isCollectionsLoading}
-                user={user}
-                sidebarOpen={open || expandedOnHover}
-              />
-            )}
-          </>
+          <Divider />
+          <Collections
+            favCollection={collections}
+            isLoading={isCollectionsLoading}
+            user={user}
+            sidebarOpen={open || expandedOnHover}
+          />
         </Box>
       </Drawer>
     </Box>

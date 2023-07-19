@@ -125,10 +125,11 @@ export const Collections: React.FC<SideBarCollectionsProps> = ({
             </IconButton>
           </Grid>
           <List
+            className="sidebar-list"
             sx={{
-              height: isLoading ? "auto" : "55vh",
-              width: isLoading ? "100%" : "fit-content",
-              overflowY: isLoading || !favCollection ? "none" : "scroll",
+              height: "300px",
+              overflowY: "scroll",
+              overflowX: "hidden",
             }}
           >
             {isLoading ? (

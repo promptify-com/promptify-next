@@ -167,8 +167,10 @@ body {
   }
 }
 
-.sidebar-collection-list {
-  max-height: "10px" !important;
-  background-color: red !important;
-  overflow-y: "hidden" !important;
+.sidebar-list {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none;
+}
+.sidebar-list::-webkit-scrollbar {
+  display: none;
 }
