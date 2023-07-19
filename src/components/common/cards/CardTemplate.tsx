@@ -29,12 +29,10 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
         cursor: "pointer",
         p: { sm: "8px" },
         width: "100%",
+        bgcolor: "surface.1",
         "&:hover": {
-          bgcolor: "white",
-        },
-        "&.MuiCard-root": {
-          bgcolor: "white",
-        },
+          bgcolor: "action.hover",
+        }
       }}
       elevation={0}
     >
@@ -122,12 +120,12 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
             </Grid>
           </Button>
           <Avatar
-            src={template.title}
-            alt={template.title}
+            src={template.created_by.avatar}
+            alt={template.created_by.first_name}
             sx={{ 
               width: 32,
               height: 32,
-              bgcolor: "indigo" 
+              bgcolor: "surface.5"
             }}
           />
         </Grid>
