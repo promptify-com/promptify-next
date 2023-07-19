@@ -70,20 +70,19 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
               {template.title}
             </Typography>
             <Typography
-              style={{
+              sx={{
                 fontSize: 12,
                 fontWeight: 400,
                 lineHeight: "16.8px",
                 letterSpacing: "0.15px",
                 color: "onSurface"
               }}
-              dangerouslySetInnerHTML={{
-                __html:
-                  template.description?.length > 70
-                    ? `${template.description?.slice(0, 70 - 1)}...`
-                    : template.description,
-              }}
-            />
+            >
+              {template.description?.length > 70
+                ? `${template.description?.slice(0, 70 - 1)}...`
+                : template.description
+              }
+            </Typography>
           </Grid>
         </Grid>
         <Grid display={"flex"} alignItems={"center"} gap={1}>
