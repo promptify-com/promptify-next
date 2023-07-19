@@ -6,6 +6,7 @@ import {
   ListItemButton,
   Typography,
 } from "@mui/material";
+import { useRouter } from "next/router";
 
 interface CollectionItemProps {
   expanded?: boolean;
@@ -18,6 +19,14 @@ export const CollectionItem: React.FC<CollectionItemProps> = ({
   template,
   onClick,
 }) => {
+  const router = useRouter();
+  const slug = router.query?.slug;
+  const truncatedTilte = (str: string) => {
+    if (str.length > 22) {
+      return str.slice(0, 22) + "...";
+    }
+    return str;
+  };
   return (
     <ListItem disablePadding>
       <ListItemButton
@@ -28,22 +37,27 @@ export const CollectionItem: React.FC<CollectionItemProps> = ({
           borderRadius: "8px",
           display: "flex",
           alignItems: "center",
-          gap: 1,
+          gap: "8px",
+          p: "8px",
+          width: "100%",
         }}
-        selected={template.id == 3}
+        selected={template.slug == slug}
       >
-        <CardMedia
-          sx={{
-            zIndex: 1,
-            borderRadius: "16px",
-            width: "50px",
-            height: "50px",
-            objectFit: "cover",
-          }}
-          component="img"
-          image={template.thumbnail}
-          alt={template.title}
-        />
+        <Grid>
+          <CardMedia
+            sx={{
+              zIndex: 1,
+              borderRadius: "16px",
+              width: "48px",
+              height: "38px",
+              objectFit: "cover",
+              mx: expanded ? 0 : 1,
+            }}
+            component="img"
+            image={template.thumbnail}
+            alt={template.title}
+          />
+        </Grid>
         <Grid
           display={"flex"}
           flexDirection={"column"}
@@ -54,18 +68,19 @@ export const CollectionItem: React.FC<CollectionItemProps> = ({
             fontWeight={500}
             lineHeight={"16.8px"}
             letterSpacing={"0.15px"}
+            whiteSpace={"pre-wrap"}
           >
             {template.title}
           </Typography>
           <Typography
-            fontSize={10}
+            fontSize={12}
             fontWeight={500}
-            lineHeight={"12.35px"}
+            lineHeight={"16.8px"}
             variant="body2"
             letterSpacing={"0.25px"}
             color={"text.secondary"}
           >
-            {template.category.name}
+            {truncatedTilte(template.category.name)}
           </Typography>
         </Grid>
       </ListItemButton>
