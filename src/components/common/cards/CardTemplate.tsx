@@ -3,7 +3,6 @@ import {
   Avatar,
   Button,
   Card,
-  CardActionArea,
   CardMedia,
   Chip,
   Grid,
@@ -16,7 +15,6 @@ import { Favorite } from "@mui/icons-material";
 type CardTemplateProps = {
   template: Templates | TemplateExecutionsDisplay;
   onFavoriteClick?: () => void;
-  lengthTemplate?: number;
 };
 
 const CardTemplate: React.FC<CardTemplateProps> = ({

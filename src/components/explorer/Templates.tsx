@@ -89,7 +89,6 @@ export const CustomTemplates: React.FC<Props> = ({ selectedTag, keyWord }) => {
                     onFavoriteClick={() => router.push(`/prompt/${el.slug}`)}
                     key={idx}
                     template={el}
-                    lengthTemplate={templates.length}
                   />
                 ))
               ) : (
