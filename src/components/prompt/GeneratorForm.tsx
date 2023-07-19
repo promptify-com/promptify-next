@@ -134,20 +134,18 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     const tempErrors: InputsErrors = {};
 
     templateData.prompts.forEach((prompt) => {
-      if (prompt.is_visible) {
-        const inputs = getArrayFromString(prompt.content);
+      const inputs = getArrayFromString(prompt.content);
 
-        inputs.forEach((input) => {
-          const checkParams = resPrompts.find(
-            (resPrompt) =>
-              resPrompt.prompt_params && resPrompt.prompt_params[input.name]
-          );
+      inputs.forEach((input) => {
+        const checkParams = resPrompts.find(
+          (resPrompt) =>
+            resPrompt.prompt_params && resPrompt.prompt_params[input.name]
+        );
 
-          if (!checkParams || !checkParams.prompt_params[input.name]) {
-            tempErrors[input.name] = prompt.id;
-          }
-        });
-      }
+        if (!checkParams || !checkParams.prompt_params[input.name]) {
+          tempErrors[input.name] = prompt.id;
+        }
+      });
     });
 
     return tempErrors;
@@ -339,7 +337,6 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     await Promise.all(
       [...templateData.prompts]
         .sort((a, b) => a.order - b.order)
-        .filter((el) => el.is_visible)
         .map(async (prompt) => {
           const inputs = getArrayFromString(prompt.content);
           inputs.forEach((input) => {
