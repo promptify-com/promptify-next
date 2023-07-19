@@ -6,6 +6,7 @@ import {
   PromptExecutions,
   Templates,
   TemplatesExecutions,
+  TemplateExecutionsDisplay,
 } from "./dto/templates";
 import useDeferredAction from "../../hooks/useDeferredAction";
 import { authClient } from "../../common/axios";
@@ -56,7 +57,7 @@ export const promptsApi = createApi({
           method: "get",
         }),
       }),
-      getTemplatesExecutionsByMe: builder.query<PromptExecutions, void>({
+      getTemplatesExecutionsByMe: builder.query<TemplateExecutionsDisplay[], void>({
         query: () => ({
           url: `/api/meta/template-executions/me`,
           method: "get",

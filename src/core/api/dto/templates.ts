@@ -1,4 +1,4 @@
-import { User } from "./user";
+import { User, UserMin } from "./user";
 import { Prompts } from "./prompts";
 
 export interface FilterParams {
@@ -131,4 +131,24 @@ export interface PromptExecutionResponse {
   };
   prompt_executions: PromptExecutions[];
   template: number;
+}
+
+export interface TemplateExecutionsDisplay {
+  id: number;
+  title: string;
+  category: {
+    id: number;
+    name: string;
+  };
+  description: string;
+  thumbnail: string;
+  created_by: UserMin;
+  tags: Tag[];
+  slug: string;
+  executions: {
+    id: number;
+    title: string;
+    created_at: string;
+  }[];
+  likes: number;
 }
