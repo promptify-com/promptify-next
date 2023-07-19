@@ -50,7 +50,7 @@ export const promptsApi = createApi({
           method: "get",
         }),
       }),
-      getExecutionTemplate: builder.query<PromptExecutions, number>({
+      getExecutionById: builder.query<PromptExecutions, number>({
         query: (id: number) => ({
           url: `/api/meta/template-executions/${id}`,
           method: "get",
@@ -72,7 +72,7 @@ export const {
   useGetCollectionTemplatesQuery,
   useGetPromptParamsQuery,
   useGetPromptTemplatesExecutionsQuery,
-  useGetExecutionTemplateQuery,
+  useGetExecutionByIdQuery,
   useGetAllPromptTemplatesQuery,
 } = promptsApi;
 

@@ -31,7 +31,7 @@ import {
   useGetPromptTemplatesExecutionsQuery,
   useGetPromptTemplateBySlugQuery,
   useTemplateView,
-  useGetExecutionTemplateQuery,
+  useGetExecutionByIdQuery,
 } from "@/core/api/prompts";
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { PageLoading } from "../../components/PageLoading";
@@ -97,7 +97,7 @@ const Prompt = () => {
   const slugValue = (Array.isArray(slug) ? slug[0] : slug || "") as string;
 
   // Fetch new execution data after generating and retrieving its id
-  const { data: fetchedNewExecution } = useGetExecutionTemplateQuery(
+  const { data: fetchedNewExecution } = useGetExecutionByIdQuery(
     newExecutionData?.id ? newExecutionData?.id : skipToken
   );
 
