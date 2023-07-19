@@ -285,11 +285,12 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
               }));
             }
           } catch {
-            console.log(msg.event);
+            console.error(msg);
+            onError(msg.data.slice(0, 100));
           }
         },
         onerror(err) {
-          console.log(err);
+          console.error(err);
           setIsGenerating(false);
           onError('Something went wrong. Please try again later');
           throw err; // rethrow to stop the operation
