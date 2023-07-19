@@ -35,6 +35,7 @@ import {
   useGetTagsPopularQuery,
 } from "@/core/api/explorer";
 import { SideBarCloseIcon } from "@/assets/icons/SideBarClose";
+import { useGetCurrentUserQuery } from "@/core/api/user";
 
 interface SideBarProps {
   open: boolean;
@@ -90,10 +91,10 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
 
   const isExplorePage = splittedPath[1] == "explore";
 
-  const [user] = useGetCurrentUser([token]);
+  const { data: user, isLoading: userLoading } = useGetCurrentUserQuery(token);
 
   const { data: collections, isLoading: isCollectionsLoading } =
-    useGetCollectionTemplatesQuery(1, {
+    useGetCollectionTemplatesQuery(user?.id as number, {
       skip: !user,
     });
   const { data: tags } = useGetTagsPopularQuery();
@@ -271,7 +272,8 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
           <Divider />
           <Collections
             favCollection={collections}
-            isLoading={isCollectionsLoading}
+            collectionLoading={isCollectionsLoading}
+            userLoading={userLoading}
             user={user}
             sidebarOpen={open || expandedOnHover}
           />

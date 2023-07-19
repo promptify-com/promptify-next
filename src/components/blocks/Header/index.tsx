@@ -30,6 +30,8 @@ import useToken from "@/hooks/useToken";
 import SearchBar from "@/components/explorer/SearchBar";
 import { LogoAppMobile } from "@/assets/icons/LogoAppMobile";
 import { SearchDialog } from "./SearchDialog";
+import { useGetCurrentUserQuery } from "@/core/api/user";
+import { FetchLoading } from "@/components/FetchLoading";
 
 const Avatar = dynamic(() => import("@mui/material/Avatar"), { ssr: false });
 interface Props {
@@ -100,9 +102,9 @@ export const Header: React.FC<Props> = ({
 }) => {
   const logout = useLogout();
   const setUser = useSetUser();
-  const [user] = useGetCurrentUser();
-
   const token = useToken();
+  const { data: user, isLoading: userLoading } = useGetCurrentUserQuery(token);
+
   const router = useRouter();
   const [isMenuShown, setIsMenuShown] = React.useState(false);
   const [open, setOpen] = React.useState(false);
@@ -275,103 +277,98 @@ export const Header: React.FC<Props> = ({
               <SearchIcon />
             </IconButton>
           </Box>
-          {user && token ? null : <Login />}
-
-          {user && token ? null : (
-            <Grid
-              onClick={() =>
-                router.push({ pathname: "/signin", query: { from: "signup" } })
-              }
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-                padding: "8px 22px",
-                width: "105px",
-                height: "42px",
-                background: "#3B4050",
-                boxShadow:
-                  "0px 1px 5px rgba(0, 0, 0, 0.12), 0px 2px 2px rgba(0, 0, 0, 0.14), 0px 3px 1px -2px rgba(0, 0, 0, 0.2)",
-                borderRadius: "100px",
-                flex: "none",
-                order: 1,
-                flexGrow: 0,
-                cursor: "pointer",
-                "&:hover": {
-                  transform: "scale(1.05)",
-                },
-              }}
-            >
-              <Typography
-                sx={{
-                  width: "61px",
-                  height: "26px",
-                  fontFamily: "Poppins",
-                  fontStyle: "normal",
-                  fontWeight: 500,
-                  fontSize: "15px",
-                  lineHeight: "26px",
-                  letterSpacing: "0.46px",
-                  color: "#FFFFFF",
-                  flex: "none",
-                  order: 1,
-                  flexGrow: 0,
-                }}
-              >
-                Sign Up
-              </Typography>
-            </Grid>
-          )}
-
-          {user && token && (
-            <Grid display={{ xs: "none", sm: "flex" }}>
-              <Descrip />
-            </Grid>
-          )}
-          {user && token ? (
-            <Typography
-              ref={menuAnchorRef}
-              onClick={() => setIsMenuShown(!isMenuShown)}
-              sx={{
-                bgcolor: "black",
-                borderRadius: { xs: "24px", sm: "36px" },
-                width: { xs: "24px", sm: "40px" },
-                padding: "1px",
-                height: { xs: "24px", sm: "40px" },
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                cursor: "pointer",
-                fontFamily: "Poppins",
-                fontStyle: "normal",
-                textAlign: "center",
-                fontWeight: 400,
-                fontSize: { xs: "12px", sm: "20px" },
-                lineHeight: "20px",
-                letterSpacing: "0.14px",
-                color: "#FFFFFF",
-                flex: "none",
-                order: 1,
-                flexGrow: 0,
-                zIndex: 1,
-              }}
-            >
-              {user?.first_name && user?.last_name
-                ? `${user?.first_name[0]?.toUpperCase()}${user?.last_name[0]?.toUpperCase()}`
-                : user?.username[0]?.toUpperCase()}
-            </Typography>
+          {userLoading ? (
+            <FetchLoading />
           ) : (
-            !!token && (
-              <Avatar
-                alt={"name"}
-                src={user?.avatar || "https://placehold.it/50x50"}
-                ref={menuAnchorRef}
-                onClick={() => setIsMenuShown(true)}
-                sx={{ cursor: "pointer" }}
-              />
-            )
+            <Box>
+              {user && token ? (
+                <Typography
+                  ref={menuAnchorRef}
+                  onClick={() => setIsMenuShown(!isMenuShown)}
+                  sx={{
+                    bgcolor: "black",
+                    borderRadius: { xs: "24px", sm: "36px" },
+                    width: { xs: "24px", sm: "40px" },
+                    padding: "1px",
+                    height: { xs: "24px", sm: "40px" },
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    cursor: "pointer",
+                    fontFamily: "Poppins",
+                    fontStyle: "normal",
+                    textAlign: "center",
+                    fontWeight: 400,
+                    fontSize: { xs: "12px", sm: "20px" },
+                    lineHeight: "20px",
+                    letterSpacing: "0.14px",
+                    color: "#FFFFFF",
+                    flex: "none",
+                    order: 1,
+                    flexGrow: 0,
+                    zIndex: 1,
+                  }}
+                >
+                  {user?.first_name && user?.last_name
+                    ? `${user?.first_name[0]?.toUpperCase()}${user?.last_name[0]?.toUpperCase()}`
+                    : user?.username[0]?.toUpperCase()}
+                </Typography>
+              ) : (
+                <Box display={"flex"} alignItems={"center"} gap={"16px"}>
+                  <Login />
+                  <Grid
+                    onClick={() =>
+                      router.push({
+                        pathname: "/signin",
+                        query: { from: "signup" },
+                      })
+                    }
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      padding: "8px 22px",
+                      width: "105px",
+                      height: "42px",
+                      background: "#3B4050",
+                      boxShadow:
+                        "0px 1px 5px rgba(0, 0, 0, 0.12), 0px 2px 2px rgba(0, 0, 0, 0.14), 0px 3px 1px -2px rgba(0, 0, 0, 0.2)",
+                      borderRadius: "100px",
+                      flex: "none",
+                      order: 1,
+                      flexGrow: 0,
+                      cursor: "pointer",
+
+                      "&:hover": {
+                        transform: "scale(1.05)",
+                      },
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        width: "61px",
+                        height: "26px",
+                        fontFamily: "Poppins",
+                        fontStyle: "normal",
+                        fontWeight: 500,
+                        fontSize: "15px",
+                        lineHeight: "26px",
+                        letterSpacing: "0.46px",
+                        color: "#FFFFFF",
+                        flex: "none",
+                        order: 1,
+                        flexGrow: 0,
+                      }}
+                    >
+                      Sign Up
+                    </Typography>
+                  </Grid>
+                </Box>
+              )}
+            </Box>
           )}
+
           <Box display={{ xs: "flex", sm: "none" }}>
             <IconButton
               // onClick={fetchTemplates}
