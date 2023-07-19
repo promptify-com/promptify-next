@@ -1,4 +1,5 @@
 import { FetchLoading } from "@/components/FetchLoading";
+import CardTemplate from "@/components/common/cards/CardTemplate";
 import { useGetTemplatesExecutionsByMeQuery } from "@/core/api/prompts";
 import { Layout } from "@/layout";
 import { Box, Stack, Typography } from "@mui/material";
@@ -22,10 +23,15 @@ const Sparks = () => {
           <FetchLoading />
         </Box>
       ) : (
-        <Stack>
+        <Stack gap={2}>
           <Typography fontSize={18} fontWeight={500} color={"onSurface"}>
             My Sparks ({executionsCount})
           </Typography>
+          <Stack gap={1}>
+            {templatesExecutions?.map((template) => (
+              <CardTemplate template={template} />
+            ))}
+          </Stack>
         </Stack>
       )}
     </Layout>

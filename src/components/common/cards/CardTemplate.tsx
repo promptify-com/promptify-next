@@ -7,13 +7,14 @@ import {
   CardMedia,
   Chip,
   Grid,
+  Stack,
   Typography,
 } from "@mui/material";
-import { WishHeart } from "@/assets/icons/WishHeart";
-import { Templates } from "@/core/api/dto/templates";
+import { TemplateExecutionsDisplay, Templates } from "@/core/api/dto/templates";
+import { Favorite } from "@mui/icons-material";
 
 type CardTemplateProps = {
-  template: Templates;
+  template: Templates | TemplateExecutionsDisplay;
   onFavoriteClick?: () => void;
   lengthTemplate?: number;
 };
@@ -54,8 +55,8 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
             sx={{
               zIndex: 1,
               borderRadius: "16px",
-              width: { xs: "100%", sm: "100px" },
-              height: { xs: "270px", sm: "70px" },
+              width: { xs: "100%", sm: "72px" },
+              height: { xs: "270px", sm: "54px" },
               objectFit: "cover",
             }}
             component="img"
@@ -72,13 +73,13 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
             <Typography fontSize={14} fontWeight={500}>
               {template.title}
             </Typography>
-            <div
+            <Typography
               style={{
-                fontSize: "12px",
-                lineHeight: "16.8px",
+                fontSize: 12,
                 fontWeight: 400,
+                lineHeight: "16.8px",
                 letterSpacing: "0.15px",
-                color: "#1B1B1E",
+                color: "onSurface"
               }}
               dangerouslySetInnerHTML={{
                 __html:
@@ -97,7 +98,9 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
             }}
           >
             {template.tags.slice(0, 3).map((el, idx) => (
-              <Chip clickable size="small" label={el.name} key={el.id} />
+              <Chip key={el.id} clickable size="small" label={el.name}
+                sx={{ fontSize: 13, fontWeight: 400, color: "onSurface" }}
+              />
             ))}
           </Grid>
           <Button variant="text" size="small">
@@ -107,25 +110,27 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
                 gap: "0.4em",
               }}
             >
-              <Grid>
-                <WishHeart />
-              </Grid>
-              <Grid
+              <Stack direction={"row"} alignItems={"center"} gap={.5}
                 sx={{
                   display: "flex",
-                  fontSize: "0.7em",
-                  alignItems: "center",
-                  color: "#8c8b8e",
+                  fontSize: 13,
+                  fontWeight: 500,
+                  color: "onSurface",
                 }}
               >
+                <Favorite sx={{ fontSize: 18 }} />
                 {template.likes}
-              </Grid>
+              </Stack>
             </Grid>
           </Button>
           <Avatar
             src={template.title}
             alt={template.title}
-            sx={{ bgcolor: "indigo" }}
+            sx={{ 
+              width: 32,
+              height: 32,
+              bgcolor: "indigo" 
+            }}
           />
         </Grid>
       </Grid>
