@@ -83,7 +83,7 @@ export default function TemplateFormModal({ open, setOpen, data, modalNew, refet
     initialValues: {
       title: data[0]?.title || '',
       description: data[0]?.description || '',
-      duration: data[0]?.duration.toString() || '1',
+      duration: data[0]?.duration?.toString() || '1',
       difficulty: data[0]?.difficulty || 'BEGINNER',
       is_visible: data[0]?.is_visible || true,
       language: data[0]?.language || 'en-us',

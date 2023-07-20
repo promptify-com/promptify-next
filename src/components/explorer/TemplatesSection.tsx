@@ -55,7 +55,6 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
                   onFavoriteClick={() => navigateTo(el.slug)}
                   key={el.id}
                   template={el}
-                  lengthTemplate={templates.length}
                 />
               </Grid>
             ))}

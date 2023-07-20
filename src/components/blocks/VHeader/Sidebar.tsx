@@ -90,6 +90,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
   const splittedPath = pathname.split("/");
 
   const isExplorePage = splittedPath[1] == "explore";
+  const isSparksPage = splittedPath[1] == "sparks";
 
   const { data: user, isLoading: userLoading } = useGetCurrentUserQuery(token);
 
@@ -119,9 +120,9 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
     },
     {
       name: "My Sparks",
-      href: "/",
+      href: "/sparks",
       icon: <AutoAwesome />,
-      active: pathname == "/",
+      active: isSparksPage,
     },
     {
       name: "Learn",

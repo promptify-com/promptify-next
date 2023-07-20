@@ -3,19 +3,18 @@ import {
   Avatar,
   Button,
   Card,
-  CardActionArea,
   CardMedia,
   Chip,
   Grid,
+  Stack,
   Typography,
 } from "@mui/material";
-import { WishHeart } from "@/assets/icons/WishHeart";
-import { Templates } from "@/core/api/dto/templates";
+import { TemplateExecutionsDisplay, Templates } from "@/core/api/dto/templates";
+import { Favorite } from "@mui/icons-material";
 
 type CardTemplateProps = {
-  template: Templates;
+  template: Templates | TemplateExecutionsDisplay;
   onFavoriteClick?: () => void;
-  lengthTemplate?: number;
 };
 
 const CardTemplate: React.FC<CardTemplateProps> = ({
@@ -30,12 +29,10 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
         cursor: "pointer",
         p: { sm: "8px" },
         width: "100%",
+        bgcolor: "surface.2",
         "&:hover": {
-          bgcolor: "white",
-        },
-        "&.MuiCard-root": {
-          bgcolor: "white",
-        },
+          bgcolor: "action.hover",
+        }
       }}
       elevation={0}
     >
@@ -54,15 +51,15 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
             sx={{
               zIndex: 1,
               borderRadius: "16px",
-              width: { xs: "100%", sm: "100px" },
-              height: { xs: "270px", sm: "70px" },
+              width: { xs: "100%", sm: "72px" },
+              height: { xs: "270px", sm: "54px" },
               objectFit: "cover",
             }}
             component="img"
             image={template.thumbnail}
             alt={template.title}
           />
-          <Grid
+          <Grid gap={.5}
             sx={{
               ml: { md: "20px" },
             }}
@@ -72,21 +69,20 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
             <Typography fontSize={14} fontWeight={500}>
               {template.title}
             </Typography>
-            <div
-              style={{
-                fontSize: "12px",
-                lineHeight: "16.8px",
+            <Typography
+              sx={{
+                fontSize: 12,
                 fontWeight: 400,
+                lineHeight: "16.8px",
                 letterSpacing: "0.15px",
-                color: "#1B1B1E",
+                color: "onSurface"
               }}
-              dangerouslySetInnerHTML={{
-                __html:
-                  template.description?.length > 70
-                    ? `${template.description?.slice(0, 70 - 1)}...`
-                    : template.description,
-              }}
-            />
+            >
+              {template.description?.length > 70
+                ? `${template.description?.slice(0, 70 - 1)}...`
+                : template.description
+              }
+            </Typography>
           </Grid>
         </Grid>
         <Grid display={"flex"} alignItems={"center"} gap={1}>
@@ -96,8 +92,10 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
               gap: "4px",
             }}
           >
-            {template.tags.slice(0, 3).map((el, idx) => (
-              <Chip clickable size="small" label={el.name} key={el.id} />
+            {template.tags.slice(0, 3).map((el) => (
+              <Chip key={el.id} clickable size="small" label={el.name}
+                sx={{ fontSize: 13, fontWeight: 400, color: "onSurface" }}
+              />
             ))}
           </Grid>
           <Button variant="text" size="small">
@@ -107,25 +105,27 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
                 gap: "0.4em",
               }}
             >
-              <Grid>
-                <WishHeart />
-              </Grid>
-              <Grid
+              <Stack direction={"row"} alignItems={"center"} gap={.5}
                 sx={{
                   display: "flex",
-                  fontSize: "0.7em",
-                  alignItems: "center",
-                  color: "#8c8b8e",
+                  fontSize: 13,
+                  fontWeight: 500,
+                  color: "onSurface",
                 }}
               >
+                <Favorite sx={{ fontSize: 18 }} />
                 {template.likes}
-              </Grid>
+              </Stack>
             </Grid>
           </Button>
           <Avatar
-            src={template.title}
-            alt={template.title}
-            sx={{ bgcolor: "indigo" }}
+            src={template.created_by.avatar}
+            alt={template.created_by.first_name}
+            sx={{ 
+              width: 32,
+              height: 32,
+              bgcolor: "surface.5"
+            }}
           />
         </Grid>
       </Grid>

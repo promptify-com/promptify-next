@@ -15,3 +15,11 @@ export interface User {
   interests: IInterest[];
   created?: boolean;
 }
+
+export interface UserMin {
+  id: number;
+  username: string;
+  first_name: string;
+  last_name: string;
+  avatar: string;
+}
