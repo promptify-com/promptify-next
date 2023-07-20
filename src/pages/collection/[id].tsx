@@ -17,7 +17,7 @@ import {
 import materialDynamicColors from "material-dynamic-colors";
 import {
   useGetCollectionTemplatesQuery,
-  useGetPromptTemplatesExecutionsQuery,
+  useGetExecutionsByTemplateQuery,
   useTemplateView,
 } from "../../core/api/prompts";
 import { Templates, TemplatesExecutions } from "../../core/api/dto/templates";
@@ -58,7 +58,7 @@ export const Collection = ({ fetchedTemplate, fetchedTemplateError }: any) => {
     error: templateExecutionsError,
     isFetching: isFetchingExecutions,
     refetch: refetchTemplateExecutions,
-  } = useGetPromptTemplatesExecutionsQuery(
+  } = useGetExecutionsByTemplateQuery(
     templateData?.id ? +templateData.id : 1
   );
   // const {

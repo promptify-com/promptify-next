@@ -28,7 +28,7 @@ import { mix } from "polished";
 import { useRouter } from "next/router";
 
 import {
-  useGetPromptTemplatesExecutionsQuery,
+  useGetExecutionsByTemplateQuery,
   useGetPromptTemplateBySlugQuery,
   useTemplateView,
   useGetExecutionByIdQuery,
@@ -118,7 +118,7 @@ const Prompt = () => {
     error: templateExecutionsError,
     isFetching: isFetchingExecutions,
     refetch: refetchTemplateExecutions,
-  } = useGetPromptTemplatesExecutionsQuery(id ? +id : 1, {
+  } = useGetExecutionsByTemplateQuery(id ? +id : 1, {
     refetchOnMountOrArgChange: true,
   });
 
