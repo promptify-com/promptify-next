@@ -161,7 +161,7 @@ export const Header: React.FC<Props> = ({
             justifyContent: "space-between",
             display: "flex",
             width: "100%",
-            padding: { xs: "1em 0 0 1em", sm: "24px 33px 16px 32px" },
+            padding: { xs: "1em 0 0 1em", md: "24px 33px 16px 32px" },
             alignItems: "center",
             gap: "16px",
           }}
@@ -188,7 +188,9 @@ export const Header: React.FC<Props> = ({
             sx={{
               display: "-webkit-box",
               alignItems: "center",
+              justifyContent: "space-between",
               gap: "10px",
+              width: { xs: "100%", sm: "auto" },
             }}
           >
             <Box display={{ xs: "flex", sm: "none" }}>
@@ -204,109 +206,108 @@ export const Header: React.FC<Props> = ({
                 <SearchIcon />
               </IconButton>
             </Box>
-            {userLoading ? (
-              <FetchLoading />
-            ) : (
-              <Box>
-                {user && token ? (
-                  <Typography
-                    ref={menuAnchorRef}
-                    onClick={() => setIsMenuShown(!isMenuShown)}
-                    sx={{
-                      bgcolor: "black",
-                      borderRadius: { xs: "24px", sm: "36px" },
-                      width: { xs: "24px", sm: "40px" },
-                      padding: "1px",
-                      height: { xs: "24px", sm: "40px" },
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      cursor: "pointer",
-                      fontFamily: "Poppins",
-                      fontStyle: "normal",
-                      textAlign: "center",
-                      fontWeight: 400,
-                      fontSize: { xs: "12px", sm: "20px" },
-                      lineHeight: "20px",
-                      letterSpacing: "0.14px",
-                      color: "#FFFFFF",
-                      flex: "none",
-                      order: 1,
-                      flexGrow: 0,
-                      zIndex: 1,
-                    }}
-                  >
-                    {user?.first_name && user?.last_name
-                      ? `${user?.first_name[0]?.toUpperCase()}${user?.last_name[0]?.toUpperCase()}`
-                      : user?.username[0]?.toUpperCase()}
-                  </Typography>
-                ) : (
-                  <Box display={"flex"} alignItems={"center"} gap={"16px"}>
-                    <Login />
-                    <Grid
-                      onClick={() =>
-                        router.push({
-                          pathname: "/signin",
-                          query: { from: "signup" },
-                        })
-                      }
+            <Box display={"flex"} alignContent={"start"}>
+              {userLoading ? (
+                <FetchLoading />
+              ) : (
+                <Box>
+                  {user && token ? (
+                    <Typography
+                      ref={menuAnchorRef}
+                      onClick={() => setIsMenuShown(!isMenuShown)}
                       sx={{
+                        bgcolor: "black",
+                        mt: { xs: 1 },
+                        borderRadius: { xs: "24px", sm: "36px" },
+                        width: { xs: "24px", sm: "40px" },
+                        padding: "1px",
+                        height: { xs: "24px", sm: "40px" },
                         display: "flex",
-                        flexDirection: "column",
                         justifyContent: "center",
                         alignItems: "center",
-                        padding: "8px 22px",
-                        width: "105px",
-                        height: "42px",
-                        background: "#3B4050",
-                        boxShadow:
-                          "0px 1px 5px rgba(0, 0, 0, 0.12), 0px 2px 2px rgba(0, 0, 0, 0.14), 0px 3px 1px -2px rgba(0, 0, 0, 0.2)",
-                        borderRadius: "100px",
-                        flex: "none",
-                        order: 1,
-                        flexGrow: 0,
                         cursor: "pointer",
-
-                        "&:hover": {
-                          transform: "scale(1.05)",
-                        },
+                        fontFamily: "Poppins",
+                        fontStyle: "normal",
+                        textAlign: "center",
+                        fontWeight: 400,
+                        fontSize: { xs: "12px", sm: "20px" },
+                        lineHeight: "20px",
+                        letterSpacing: "0.14px",
+                        color: "#FFFFFF",
+                        zIndex: 1,
                       }}
                     >
-                      <Typography
+                      {user?.first_name && user?.last_name
+                        ? `${user?.first_name[0]?.toUpperCase()}${user?.last_name[0]?.toUpperCase()}`
+                        : user?.username[0]?.toUpperCase()}
+                    </Typography>
+                  ) : (
+                    <Box display={"flex"} alignItems={"center"} gap={"16px"}>
+                      <Login />
+                      <Grid
+                        onClick={() =>
+                          router.push({
+                            pathname: "/signin",
+                            query: { from: "signup" },
+                          })
+                        }
                         sx={{
-                          width: "61px",
-                          height: "26px",
-                          fontFamily: "Poppins",
-                          fontStyle: "normal",
-                          fontWeight: 500,
-                          fontSize: "15px",
-                          lineHeight: "26px",
-                          letterSpacing: "0.46px",
-                          color: "#FFFFFF",
+                          display: "flex",
+                          flexDirection: "column",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          padding: "8px 22px",
+                          width: "105px",
+                          height: "42px",
+                          background: "#3B4050",
+                          boxShadow:
+                            "0px 1px 5px rgba(0, 0, 0, 0.12), 0px 2px 2px rgba(0, 0, 0, 0.14), 0px 3px 1px -2px rgba(0, 0, 0, 0.2)",
+                          borderRadius: "100px",
                           flex: "none",
                           order: 1,
                           flexGrow: 0,
+                          cursor: "pointer",
+
+                          "&:hover": {
+                            transform: "scale(1.05)",
+                          },
                         }}
                       >
-                        Sign Up
-                      </Typography>
-                    </Grid>
-                  </Box>
-                )}
+                        <Typography
+                          sx={{
+                            width: "61px",
+                            height: "26px",
+                            fontFamily: "Poppins",
+                            fontStyle: "normal",
+                            fontWeight: 500,
+                            fontSize: "15px",
+                            lineHeight: "26px",
+                            letterSpacing: "0.46px",
+                            color: "#FFFFFF",
+                            flex: "none",
+                            order: 1,
+                            flexGrow: 0,
+                          }}
+                        >
+                          Sign Up
+                        </Typography>
+                      </Grid>
+                    </Box>
+                  )}
+                </Box>
+              )}
+              <Box display={{ xs: "flex", sm: "none" }}>
+                <IconButton
+                  // onClick={fetchTemplates}
+                  onClick={() => setDrawerState((prev) => !prev)}
+                  size="large"
+                  sx={{
+                    border: "none",
+                  }}
+                >
+                  <MenuRoundedIcon />
+                </IconButton>
               </Box>
-            )}
-
-            <Box display={{ xs: "flex", sm: "none" }}>
-              <IconButton
-                // onClick={fetchTemplates}
-                onClick={() => setDrawerState((prev) => !prev)}
-                size="large"
-                sx={{
-                  border: "none",
-                }}
-              >
-                <MenuRoundedIcon />
-              </IconButton>
             </Box>
           </Box>
           <Popper
