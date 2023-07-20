@@ -106,9 +106,7 @@ const Prompt = () => {
     error: fetchedTemplateError,
     isLoading: isLoadingTemplate,
     isFetching: isFetchingTemplate,
-  } = useGetPromptTemplateBySlugQuery(slugValue, {
-    refetchOnMountOrArgChange: true,
-  });
+  } = useGetPromptTemplateBySlugQuery(slugValue);
 
   const [templateData, setTemplateData] = useState<Templates>();
   const id = templateData?.id;
@@ -118,9 +116,7 @@ const Prompt = () => {
     error: templateExecutionsError,
     isFetching: isFetchingExecutions,
     refetch: refetchTemplateExecutions,
-  } = useGetExecutionsByTemplateQuery(id ? +id : 1, {
-    refetchOnMountOrArgChange: true,
-  });
+  } = useGetExecutionsByTemplateQuery(id ? id : skipToken);
 
   const [tabsValue, setTabsValue] = React.useState(0);
   const changeTab = (e: React.SyntheticEvent, newValue: number) => {
