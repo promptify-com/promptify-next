@@ -37,7 +37,10 @@ const Sparks = () => {
           <Stack gap={1}>
           {templatesExecutions && templatesExecutions.length > 0 ? (
             templatesExecutions.map((template, i) => (
-              <Accordion expanded={expanded === `accordian${i}`} onChange={toggleExpand(`accordian${i}`)}
+              <Accordion key={template.id}
+                expanded={expanded === `accordian${i}`} 
+                onChange={toggleExpand(`accordian${i}`)}
+                TransitionProps={{ unmountOnExit: true }}
                 sx={{
                   borderRadius: "16px", 
                   overflow: "hidden",
@@ -70,7 +73,8 @@ const Sparks = () => {
                 <Divider sx={{ m: "0 8px 8px", bgcolor: "surface.5", opacity: .5 }} />
                 <AccordionDetails>
                   {template.executions.map((execution) => (
-                    <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"} gap={1}
+                    <Stack key={execution.id}
+                      direction={"row"} justifyContent={"space-between"} alignItems={"center"} gap={1}
                       sx={{ p: "8px 16px" }}
                     >
                       <Typography fontSize={14} fontWeight={500} color={"onSurface"} letterSpacing={.46}
