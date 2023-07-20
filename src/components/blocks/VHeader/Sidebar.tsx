@@ -28,7 +28,6 @@ import { SidebarIcon } from "@/assets/icons/Sidebar";
 import { Collections } from "@/components/common/sidebar/Collections";
 import { useGetCollectionTemplatesQuery } from "@/core/api/prompts";
 import useToken from "@/hooks/useToken";
-import { useGetCurrentUser } from "@/hooks/api/user";
 import { ExploreFilterSideBar } from "@/components/explorer/ExploreFilterSideBar";
 import {
   useGetEnginesQuery,
@@ -94,9 +93,10 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
   const { data: user, isLoading: userLoading } = useGetCurrentUserQuery(token);
 
   const { data: collections, isLoading: isCollectionsLoading } =
-    useGetCollectionTemplatesQuery(user?.id as number, {
+    useGetCollectionTemplatesQuery(user?.favorite_collection_id as number, {
       skip: !user,
     });
+
   const { data: tags } = useGetTagsPopularQuery();
   const { data: engines } = useGetEnginesQuery();
 
