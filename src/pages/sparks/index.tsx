@@ -16,14 +16,12 @@ const Sparks = () => {
   } = useGetTemplatesExecutionsByMeQuery();
 
   const toggleExpand = (panel: string) => (e: React.SyntheticEvent, newExpanded: boolean) => {
-      setExpanded(newExpanded ? panel : false);
+    setExpanded(newExpanded ? panel : false);
   };
 
   const executionsCount = templatesExecutions?.reduce((acc, curr) => {
     return acc + curr.executions.length;
   }, 0)
-
-  console.log(templatesExecutions);
 
   return (
     <Layout>
@@ -37,7 +35,8 @@ const Sparks = () => {
             My Sparks ({executionsCount})
           </Typography>
           <Stack gap={1}>
-            {templatesExecutions?.map((template, i) => (
+          {templatesExecutions && templatesExecutions.length > 0 ? (
+            templatesExecutions.map((template, i) => (
               <Accordion expanded={expanded === `accordian${i}`} onChange={toggleExpand(`accordian${i}`)}
                 sx={{
                   borderRadius: "16px", 
@@ -100,7 +99,12 @@ const Sparks = () => {
                   ))}
                 </AccordionDetails>
               </Accordion>
-            ))}
+            ))
+            ) : (
+              <Typography sx={{ color: "onSurface", opacity: .5, textAlign: "center", mt: "50px" }}>
+                No sparks found
+              </Typography>
+            )}
           </Stack>
         </Stack>
       )}
