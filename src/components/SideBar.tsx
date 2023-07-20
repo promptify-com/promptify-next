@@ -149,8 +149,8 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
               !open && expandedOnHover
                 ? "0px 7px 8px -4px #00000033, 0px 12px 17px 2px #00000024, 0px 5px 22px 4px #0000001F"
                 : "",
-            overflow: "hidden",
             boxSizing: "border-box",
+            overflow: "visible",
             bgcolor: "white",
             border: "none",
           },

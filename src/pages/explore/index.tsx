@@ -4,18 +4,21 @@ import Head from "next/head";
 
 import {
   useGetCategoriesQuery,
+  useGetTemplatesByFilterQuery,
   useGetTemplatesByKeyWordAndTagQuery,
 } from "@/core/api/explorer";
 import { Layout } from "@/layout";
 import { CategoriesSection } from "@/components/explorer/CategoriesSection";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
+import { useSelector } from "react-redux";
+import { RootState } from "@/core/store";
 
 export default function ExplorePage() {
+  const selectedEngine = useSelector(
+    (state: RootState) => state.engines.engine
+  );
   const { data: templates, isLoading: isTemplatesLoading } =
-    useGetTemplatesByKeyWordAndTagQuery(
-      { keyword: "", tag: "" },
-      { refetchOnMountOrArgChange: true }
-    );
+    useGetTemplatesByFilterQuery({ engineId: selectedEngine as number });
 
   const { data: categories, isLoading: isCategoryLoading } =
     useGetCategoriesQuery();
@@ -33,11 +36,15 @@ export default function ExplorePage() {
         </Head>
         <Box>
           <Grid sx={{}} display={"flex"} flexDirection={"column"} gap={"16px"}>
-            <CategoriesSection
-              categories={categories}
-              isLoading={isCategoryLoading}
-            />
+            {!selectedEngine && (
+              <CategoriesSection
+                categories={categories}
+                isLoading={isCategoryLoading}
+              />
+            )}
+
             <TemplatesSection
+              filtred={!!selectedEngine}
               templates={templates ?? []}
               isLoading={isTemplatesLoading}
             />
