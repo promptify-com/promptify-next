@@ -3,7 +3,7 @@ import { FetchLoading } from "@/components/FetchLoading";
 import CardTemplate from "@/components/common/cards/CardTemplate";
 import { useGetTemplatesExecutionsByMeQuery } from "@/core/api/prompts";
 import { Layout } from "@/layout";
-import { Accordion, AccordionDetails, AccordionSummary, Box, Stack, Typography } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Box, Divider, Stack, Typography } from "@mui/material";
 import moment from "moment";
 import { ArrowForwardIos, History } from "@mui/icons-material";
 
@@ -42,13 +42,13 @@ const Sparks = () => {
                   borderRadius: "16px", 
                   overflow: "hidden",
                   boxShadow: "none",
+                  bgcolor: "surface.2",
                   ":first-of-type": { borderRadius: "16px" },
                   ":before": { display: "none" },
                   "&.Mui-expanded": { m: 0 }
                 }}>
                 <AccordionSummary sx={{ 
-                    px: "8px", 
-                    bgcolor: "surface.1",
+                    px: "8px",
                     flexDirection: "row-reverse",
                     gap: 2,
                     "&:hover": { bgcolor: "action.hover" },
@@ -57,7 +57,7 @@ const Sparks = () => {
                       gap: 2,
                       alignItems: "center",
                     },
-                    ".MuiCard-root:hover": { bgcolor: "transparent" },
+                    ".MuiCard-root, .MuiCard-root:hover": { bgcolor: "transparent" },
                   }}
 
                   expandIcon={<ArrowForwardIos sx={{ fontSize: 12, p: "8px", transform: 'rotate(90deg)' }} />}
@@ -67,6 +67,7 @@ const Sparks = () => {
                   </Typography>
                   <CardTemplate template={template} />
                 </AccordionSummary>
+                <Divider sx={{ m: "0 8px 8px", bgcolor: "surface.5", opacity: .5 }} />
                 <AccordionDetails>
                   {template.executions.map((execution) => (
                     <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"} gap={1}

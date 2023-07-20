@@ -29,7 +29,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
         cursor: "pointer",
         p: { sm: "8px" },
         width: "100%",
-        bgcolor: "surface.1",
+        bgcolor: "surface.2",
         "&:hover": {
           bgcolor: "action.hover",
         }
