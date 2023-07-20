@@ -30,6 +30,7 @@ const Dashboard = () => {
               flexDirection="column"
               alignItems={"flex-start"}
               gap={"16px"}
+              width={"100%"}
             >
               <Home />
               <Connections />
