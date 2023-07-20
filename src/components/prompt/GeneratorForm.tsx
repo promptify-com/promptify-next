@@ -520,66 +520,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
       )}
       </Box>
 
-      <Stack
-        sx={{
-          display: { xs: "flex", md: "none" },
-          width: "100%",
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: 3,
-        }}
-      >
-        <Button
-          variant={"text"}
-          sx={{
-            flex: 1,
-            p: "10px 22px",
-            fontSize: 15,
-            fontWeight: 500,
-            borderColor: "onSurface",
-          }}
-          onClick={exit}
-        >
-          Back
-        </Button>
-        <Button
-          variant={"contained"}
-          startIcon={token ? <LogoApp width={18} color="white" /> : null}
-          sx={{
-            flex: 2,
-            fontSize: 15,
-            fontWeight: 500,
-            p: "10px 25px",
-            border: "none",
-            borderRadius: "999px",
-            bgcolor: "primary.main",
-            color: "onPrimary",
-            ":hover": {
-              bgcolor: "primary.main",
-              color: "onPrimary",
-            },
-            ":disabled": {
-              bgcolor: "surface.5",
-              color: "onPrimary",
-              borderColor: "transparent",
-            },
-          }}
-          disabled={!allowGenerate || isGenerating}
-          onClick={handlePostPrompt}
-        >
-        {token ? (
-          <React.Fragment>
-            <Typography ml={2} color={"inherit"}>Start</Typography>
-            <Typography ml={"auto"} color={"inherit"}>~360s</Typography>
-          </React.Fragment>
-        ) : (
-          <Typography ml={2} color={"inherit"}>Sign in or Create an account</Typography>
-        )}
-        </Button>
-      </Stack>
-
-      <Stack sx={{ display: { xs: "none", md: "flex" } }}>
+      <Stack>
         <Stack direction={"row"} alignItems={"center"} gap={1} m={"20px 10px"}>
           <Button
             variant={"contained"}
@@ -602,7 +543,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
                 borderColor: "transparent",
               },
             }}
-            disabled={!allowGenerate || isGenerating}
+            disabled={!token ? false : (!allowGenerate || isGenerating)}
             onClick={handlePostPrompt}
           >
             {token ? (
@@ -639,7 +580,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
       <Box
         sx={{
-          display: { xs: "none", md: "flex" },
+          display: "flex",
           alignItems: "center",
           gap: "15px",
           color: "grey.600",
