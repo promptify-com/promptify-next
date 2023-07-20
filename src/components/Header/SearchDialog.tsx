@@ -73,8 +73,10 @@ export const SearchDialog: React.FC<Props> = ({
         fullWidth
         open={open}
         onClose={handleClose}
-        BackdropProps={{
-          style: { backgroundColor: !IsSm ? "rgba(0, 0, 0, 0)" : "" },
+        slotProps={{
+          backdrop: {
+            style: { backgroundColor: !IsSm ? "rgba(0, 0, 0, 0)" : "" },
+          },
         }}
         PaperProps={{
           style: {

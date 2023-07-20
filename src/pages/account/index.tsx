@@ -5,15 +5,14 @@ import { About } from "@/components/accountInfo/About";
 import { Gender } from "@/components/accountInfo/Gender";
 import { ProfileImage } from "@/components/accountInfo/ProfileImage";
 
-import useUser from "@/hooks/useUser";
 import { useFormik } from "formik";
 import { useGetCurrentUser, useUpdateUser } from "@/hooks/api/user";
 import { IEditProfile } from "@/common/types";
 import useSetUser from "@/hooks/useSetUser";
-import { PageWrapper } from "@/components/PageWrapper";
-import { Header } from "@/components/blocks/Header";
+import { Header } from "@/components/Header";
 import { useRouter } from "next/router";
 import Head from "next/head";
+import { Layout } from "@/layout";
 
 const AccountInfo = () => {
   const router = useRouter();
@@ -50,7 +49,7 @@ const AccountInfo = () => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <PageWrapper>
+      <Layout>
         <Header fixed />
         <Grid container>
           <Grid item xs={0} sm={3}></Grid>
@@ -116,7 +115,7 @@ const AccountInfo = () => {
           </Grid>
           <Grid item xs={0} sm={3}></Grid>
         </Grid>
-      </PageWrapper>
+      </Layout>
     </>
   );
 };

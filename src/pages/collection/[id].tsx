@@ -29,7 +29,7 @@ import { Close, KeyboardArrowDown, Loop, MoreHoriz } from "@mui/icons-material";
 import { LogoApp } from "../../assets/icons/LogoApp";
 import { useRouter } from "next/router";
 import { PromptLiveResponse } from "@/common/types/prompt";
-import { Header } from "@/components/blocks/Header";
+import { Header } from "@/components/Header";
 import { GeneratorForm } from "@/components/collections/GeneratorForm";
 import { Executions } from "@/components/collections/Executions";
 import { Details } from "@/components/collections/Details";
@@ -525,7 +525,5 @@ export async function getServerSideProps({ params }: any) {
     };
   }
 }
-
-
 
 export default Collection;

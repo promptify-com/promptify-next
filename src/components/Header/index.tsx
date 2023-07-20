@@ -167,27 +167,32 @@ export const Header: React.FC<HeaderProps> = ({
             ))}
           </Box>
         )}
-
-        {!open ? (
-          <Box
-            onClick={handleInputFocus}
-            sx={{
-              width: "70%",
-              maxWidth: "960px",
-              alignItems: "center",
-            }}
-            display={{ xs: "none", sm: "flex" }}
-          >
-            <SearchBar from="" keyWord={keyWord} setKeyWord={setKeyWord} />
-          </Box>
-        ) : (
-          <SearchDialog
-            open={open}
-            setOpen={setOpen}
-            keyWord={keyWord}
-            setKeyWord={setKeyWord}
-          />
-        )}
+        <Box
+          sx={{
+            width: isHomepage ? "70%" : "95%",
+          }}
+        >
+          {!open ? (
+            <Box
+              onClick={handleInputFocus}
+              sx={{
+                width: "100%",
+                mr: "auto",
+                alignItems: "center",
+              }}
+              display={{ xs: "none", sm: "flex" }}
+            >
+              <SearchBar from="" keyWord={keyWord} setKeyWord={setKeyWord} />
+            </Box>
+          ) : (
+            <SearchDialog
+              open={open}
+              setOpen={setOpen}
+              keyWord={keyWord}
+              setKeyWord={setKeyWord}
+            />
+          )}
+        </Box>
 
         <Box
           sx={{
@@ -212,7 +217,7 @@ export const Header: React.FC<HeaderProps> = ({
           {userLoading ? (
             <FetchLoading />
           ) : (
-            <Box>
+            <Box ml={"auto"}>
               {user && token ? (
                 <Avatar
                   ref={menuAnchorRef}
@@ -220,6 +225,7 @@ export const Header: React.FC<HeaderProps> = ({
                   src={user.avatar || user.first_name}
                   alt={user.first_name}
                   sx={{
+                    ml: "auto",
                     cursor: "pointer",
                     bgcolor: "black",
                     borderRadius: { xs: "24px", sm: "36px" },

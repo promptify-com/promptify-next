@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { AxiosResponse } from "axios";
 
 import { CustomTemplates } from "@/components/explorer/Templates";
-import { Header } from "@/components/blocks/Header";
+import { Header } from "@/components/Header";
 import { PageLoading } from "@/components/PageLoading";
 import useSetUser from "@/hooks/useSetUser";
 import useToken from "@/hooks/useToken";
