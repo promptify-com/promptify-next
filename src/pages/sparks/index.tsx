@@ -5,7 +5,7 @@ import { useGetTemplatesExecutionsByMeQuery } from "@/core/api/prompts";
 import { Layout } from "@/layout";
 import { Accordion, AccordionDetails, AccordionSummary, Box, Stack, Typography } from "@mui/material";
 import moment from "moment";
-import { History } from "@mui/icons-material";
+import { ArrowForwardIos, History } from "@mui/icons-material";
 
 const Sparks = () => {
   const [expanded, setExpanded] = React.useState<string | false>(false);
@@ -41,16 +41,31 @@ const Sparks = () => {
               <Accordion expanded={expanded === `accordian${i}`} onChange={toggleExpand(`accordian${i}`)}
                 sx={{
                   borderRadius: "16px", 
+                  overflow: "hidden",
                   boxShadow: "none",
                   ":first-of-type": { borderRadius: "16px" },
                   ":before": { display: "none" },
                   "&.Mui-expanded": { m: 0 }
                 }}>
                 <AccordionSummary sx={{ 
-                    p: 0, 
-                    ".MuiAccordionSummary-content, .MuiAccordionSummary-content.Mui-expanded": { m: 0 } 
+                    px: "8px", 
+                    bgcolor: "surface.1",
+                    flexDirection: "row-reverse",
+                    gap: 2,
+                    "&:hover": { bgcolor: "action.hover" },
+                    ".MuiAccordionSummary-content, .MuiAccordionSummary-content.Mui-expanded": { 
+                      m: 0,
+                      gap: 2,
+                      alignItems: "center",
+                    },
+                    ".MuiCard-root:hover": { bgcolor: "transparent" },
                   }}
+
+                  expandIcon={<ArrowForwardIos sx={{ fontSize: 12, p: "8px", transform: 'rotate(90deg)' }} />}
                 >
+                  <Typography fontSize={14} fontWeight={500} color={"onSurface"}>
+                    {template.executions.length}
+                  </Typography>
                   <CardTemplate template={template} />
                 </AccordionSummary>
                 <AccordionDetails>

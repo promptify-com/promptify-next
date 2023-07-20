@@ -59,7 +59,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
             image={template.thumbnail}
             alt={template.title}
           />
-          <Grid
+          <Grid gap={.5}
             sx={{
               ml: { md: "20px" },
             }}
@@ -92,7 +92,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
               gap: "4px",
             }}
           >
-            {template.tags.slice(0, 3).map((el, idx) => (
+            {template.tags.slice(0, 3).map((el) => (
               <Chip key={el.id} clickable size="small" label={el.name}
                 sx={{ fontSize: 13, fontWeight: 400, color: "onSurface" }}
               />
