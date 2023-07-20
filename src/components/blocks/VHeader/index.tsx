@@ -100,8 +100,6 @@ export const Header: React.FC<Props> = ({
   const token = useToken();
   const { data: user, isLoading: userLoading } = useGetCurrentUserQuery(token);
 
-  console.log(user);
-
   const router = useRouter();
   const [isMenuShown, setIsMenuShown] = React.useState(false);
   const [open, setOpen] = React.useState(false);
