@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Box,
   CircularProgress,
   ClickAwayListener,
@@ -18,6 +19,7 @@ import UnicornLeft from "@/assets/images/UnicornLeft.png";
 import { IOption, IQuestion } from "@/common/types";
 import { useUpdateAnswers } from "@/hooks/api/user";
 import Image from "next/image";
+import { Edit } from "@mui/icons-material";
 
 interface IProps {
   question: IQuestion;
@@ -87,12 +89,13 @@ export const IdentityItem: React.FC<IProps> = ({
     <Box
       key={question.id}
       display="flex"
-      borderBottom={length - 1 !== index ? "1px solid #c0c3cf54" : ""}
-      width={{ xs: "100%", sm: "95%" }}
+      bgcolor={"white"}
+      width={"100%"}
       justifyContent="space-between"
       // mt="2rem"
       alignItems="center"
-      padding="1em 0rem"
+      padding="24px 16px"
+      borderRadius={"16px"}
     >
       <Grid
         display={{ xs: "flex", sm: "none" }}
@@ -100,7 +103,7 @@ export const IdentityItem: React.FC<IProps> = ({
           dispaly: "flex",
           flexDirection: "row",
           alignItem: "center",
-          width: "90%",
+          width: "100%",
         }}
       >
         <Typography
@@ -146,57 +149,75 @@ export const IdentityItem: React.FC<IProps> = ({
           dispaly: "flex",
           flexDirection: "row",
           alignItem: "center",
-          width: "90%",
+          width: "100%",
           gap: "1em",
         }}
       >
-        <Typography
-          sx={{
-            fontFamily: "Poppins",
-            fontStyle: "normal",
-            fontWeight: 400,
-            fontSize: "16px",
-            lineHeight: "150%",
-            display: "flex",
-            alignItems: "center",
-            letterSpacing: "0.15px",
-            color: "##1B1B1E",
-            width: "55%",
-          }}
+        <Grid
+          container
+          display={"flex"}
+          justifyContent={"space-between"}
+          width={"100%"}
         >
-          {question?.text}
-        </Typography>
-        <Typography
-          sx={{
-            fontFamily: "Poppins",
-            fontStyle: "normal",
-            fontWeight: 400,
-            fontSize: "16px",
-            lineHeight: "150%",
-            display: "flex",
-            alignItems: "center",
-            letterSpacing: "0.15px",
-            color: "#1B1B1E",
-            width: "30%",
-          }}
-        >
-          {selectedOption?.text}
-        </Typography>
+          <Grid item xs={3}>
+            <Typography
+              sx={{
+                fontFamily: "Poppins",
+                fontStyle: "normal",
+                fontWeight: 500,
+                fontSize: "16px",
+                lineHeight: "150%",
+                display: "flex",
+                alignItems: "center",
+                letterSpacing: "0.15px",
+                color: "##1B1B1E",
+              }}
+            >
+              {question?.text}
+            </Typography>
+          </Grid>
+
+          <Grid item xs={3} display={"flex"} alignItems={"center"} gap={2}>
+            <Avatar
+              alt={selectedOption?.text}
+              src={selectedOption?.text}
+              sx={{ bgcolor: "black" }}
+            />
+            <Typography
+              sx={{
+                fontFamily: "Poppins",
+                fontStyle: "normal",
+                fontWeight: 400,
+                fontSize: "16px",
+                lineHeight: "150%",
+                display: "flex",
+                alignItems: "center",
+                letterSpacing: "0.15px",
+                color: "onSurface",
+              }}
+            >
+              {selectedOption?.text}
+            </Typography>
+          </Grid>
+          <IconButton
+            sx={{
+              border: "0px solid",
+              cursor: "pointer",
+              color: "black",
+            }}
+            onClick={handleToggle}
+            ref={anchorRef}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <CircularProgress sx={{ color: "black" }} size={24} />
+            ) : (
+              <Edit sx={{ fontSize: "24px" }} />
+            )}
+          </IconButton>
+        </Grid>
       </Grid>
 
-      <IconButton
-        sx={{
-          border: "0px solid",
-          cursor: "pointer",
-          color: "rgba(55, 92, 169, 1)",
-          width: "10%",
-        }}
-        onClick={handleToggle}
-        ref={anchorRef}
-        disabled={isLoading}
-      >
-        {isLoading ? <CircularProgress size={24} /> : <EditPen />}
-      </IconButton>
       <Popper
         open={open}
         anchorEl={anchorRef.current}
@@ -226,9 +247,9 @@ export const IdentityItem: React.FC<IProps> = ({
                   <MenuItem>
                     <Typography
                       fontWeight={500}
-                      fontSize="1rem"
-                      ml="1rem"
-                      paddingY="5px"
+                      fontSize={16}
+                      lineHeight={"24px"}
+                      color={"onSurface"}
                     >
                       {question.text}
                     </Typography>

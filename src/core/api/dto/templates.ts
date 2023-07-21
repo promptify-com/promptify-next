@@ -4,7 +4,7 @@ import { Prompts } from "./prompts";
 export interface FilterParams {
   categoryId?: number;
   subcategoryId?: number;
-  tag: string | undefined;
+  tag?: string | undefined;
   engineId?: number;
   filter?: string;
 }

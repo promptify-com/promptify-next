@@ -115,7 +115,7 @@ export const Connections = () => {
   return (
     <Box
       mt={"24px"}
-      width={"95%"}
+      width={"100%"}
       sx={{
         justifyContent: "center",
         display: "flex",
@@ -146,13 +146,12 @@ export const Connections = () => {
             <Box
               key={item.id}
               sx={{
-                width: "100%",
                 bgcolor: "white",
                 height: "74px",
                 display: "flex",
                 flexDirection: "row",
                 alignItems: "center",
-                padding: "0em 1em",
+                padding: "0px 24px",
                 border: "1px solid #ECECF4",
                 borderRadius: "16px",
               }}
@@ -196,8 +195,8 @@ export const Connections = () => {
                         overflow: "hidden",
                         color: "#fff",
                         backgroundColor: "black",
-                        height: "32px",
-                        width: "32px",
+                        height: "48px",
+                        width: "48px",
                       }}
                       src={customConnection.avatar}
                     >
@@ -205,23 +204,6 @@ export const Connections = () => {
                     </Avatar>
                   </Box>
                   <Box>
-                    <Typography
-                      sx={{
-                        fontFamily: "Poppins",
-                        fontStyle: "normal",
-                        fontWeight: 400,
-                        fontSize: "16px",
-                        lineHeight: "150%",
-                        display: { xs: "flex", sm: "none" },
-                        alignItems: "center",
-                        letterSpacing: "0.15px",
-                        color: "#1B1B1E",
-                      }}
-                    >
-                      {customConnection.name.length > 13
-                        ? customConnection.name.slice(0, 13) + "..."
-                        : customConnection.name}
-                    </Typography>
                     <Typography
                       sx={{
                         fontFamily: "Poppins",
@@ -242,8 +224,9 @@ export const Connections = () => {
                 {connections.length !== 1 && (
                   <Box
                     display="flex"
+                    mr={"24px"}
                     alignItems="center"
-                    color="rgba(55, 92, 169, 1)"
+                    color="onSurface"
                     sx={{ cursor: "pointer" }}
                     onClick={() => {
                       setConnectionSelected(item);
@@ -257,7 +240,6 @@ export const Connections = () => {
                       ml="1rem"
                       display={{ xs: "none", sm: "block" }}
                       sx={{
-                        color: "rgba(55, 92, 169, 1)",
                         fontFamily: "Poppins",
                         fontStyle: "normal",
                         fontWeight: 500,
@@ -275,62 +257,83 @@ export const Connections = () => {
           );
         })}
 
-      {/* <Box
-            color="#0F6FFF"
-            mt={{ xs: "0rem", sm: "1.5rem" }}
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              padding: { xs: "0px 11px", sm: "8px 22px" },
-              height: "64px",
-              border: "1px solid rgba(55, 92, 169, 0.6)",
-              borderRadius: "16px",
-              flexDirection: "row",
-              gap: "8px",
-              cursor: "pointer",
-              width: { xs: "95%", sm: "95%" },
-            }}
-            onClick={() => setOpenAdd(true)}
-          >
-            <Typography
-              ml="0.5rem"
-              fontSize="1rem"
-              sx={{
-                fontFamily: "Poppins",
-                fontStyle: "normal",
-                fontWeight: 500,
-                fontSize: "15px",
-                lineHeight: "173%",
-                letterSpacing: "0.46px",
-                color: "#375CA9",
-              }}
-            >
-              Add More connections
-            </Typography>
-          </Box> */}
+      <Box
+        width={"100%"}
+        bgcolor={"white"}
+        height={"64px"}
+        display={"flex"}
+        alignItems={"center"}
+        justifyContent={"center"}
+        borderRadius={"16px"}
+        onClick={() => setOpenAdd(true)}
+        sx={{
+          cursor: "pointer",
+          "&:hover": {
+            bgcolor: "surface.2",
+          },
+        }}
+      >
+        <Typography fontSize={15} fontWeight={500} lineHeight={"26px"}>
+          Add More connections
+        </Typography>
+      </Box>
 
-      {/* <AddConnectionDialog
-            openAdd={openAdd}
-            setOpenAdd={setOpenAdd}
-            setTypeAlert={setTypeAlert}
-            preLogin={preLogin}
-            postLogin={postLogin}
-            authConnection={authConnection}
-          /> */}
-      {/* <DeleteConnectionDialog
-          handleDeleteConnection={(e: IConnection) => handleDeleteConnection(e)}
-          typeConnection={connectionSelected || null}
-          open={open}
-          setOpen={setOpen}
-        />
-        <Snackbar
-          open={typeAlert.open}
-          autoHideDuration={6000}
-          onClose={() => setTypeAlert({ ...typeAlert, open: false })}
+      {/* <Box
+        color="#0F6FFF"
+        mt={{ xs: "0rem", sm: "1.5rem" }}
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          padding: { xs: "0px 11px", sm: "8px 22px" },
+          height: "64px",
+          border: "1px solid rgba(55, 92, 169, 0.6)",
+          borderRadius: "16px",
+          flexDirection: "row",
+          gap: "8px",
+          cursor: "pointer",
+          width: { xs: "95%", sm: "95%" },
+        }}
+        onClick={() => setOpenAdd(true)}
+      >
+        <Typography
+          ml="0.5rem"
+          fontSize="1rem"
+          sx={{
+            fontFamily: "Poppins",
+            fontStyle: "normal",
+            fontWeight: 500,
+            fontSize: "15px",
+            lineHeight: "173%",
+            letterSpacing: "0.46px",
+            color: "#375CA9",
+          }}
         >
-          <Alert severity={typeAlert.color}>{typeAlert.message}</Alert>
-        </Snackbar> */}
+          Add More connections
+        </Typography>
+      </Box> */}
+
+      <AddConnectionDialog
+        openAdd={openAdd}
+        setOpenAdd={setOpenAdd}
+        setTypeAlert={setTypeAlert}
+        preLogin={preLogin}
+        postLogin={postLogin}
+        authConnection={authConnection}
+      />
+      <DeleteConnectionDialog
+        handleDeleteConnection={(e: IConnection) => handleDeleteConnection(e)}
+        typeConnection={connectionSelected || null}
+        open={open}
+        setOpen={setOpen}
+      />
+      <Snackbar
+        open={typeAlert.open}
+        autoHideDuration={6000}
+        onClose={() => setTypeAlert({ ...typeAlert, open: false })}
+      >
+        <Alert severity={typeAlert.color}>{typeAlert.message}</Alert>
+      </Snackbar>
     </Box>
   );
 };

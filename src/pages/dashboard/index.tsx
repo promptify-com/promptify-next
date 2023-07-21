@@ -1,6 +1,5 @@
 import { Box, Grid } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/router";
+
 import Head from "next/head";
 
 import { PageLoading } from "@/components/PageLoading";
@@ -24,8 +23,8 @@ const Dashboard = () => {
       </Head>
       <Layout>
         {token ? (
-          <Grid sx={{ px: "12px" }}>
-            <Grid
+          <Box sx={{ px: "12px" }}>
+            <Box
               display="flex"
               flexDirection="column"
               alignItems={"flex-start"}
@@ -36,8 +35,8 @@ const Dashboard = () => {
               <Connections />
               <Identy />
               <Prompts />
-            </Grid>
-          </Grid>
+            </Box>
+          </Box>
         ) : (
           <PageLoading />
         )}
@@ -48,7 +47,7 @@ const Dashboard = () => {
 export async function getServerSideProps() {
   return {
     props: {
-      title: "Promptify | Boost Your Creativity",
+      title: "User Profile",
       description:
         "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
     },

@@ -1,6 +1,8 @@
 import { ReactNode } from "react";
 import { useRouter } from "next/router";
 import {
+  Avatar,
+  Box,
   ClickAwayListener,
   Grid,
   Grow,
@@ -11,12 +13,12 @@ import {
   Typography,
 } from "@mui/material";
 
-import { Collection } from "@/assets/icons/collection";
 import { Prompt } from "@/assets/icons/prompts";
 import { Setting } from "@/assets/icons/setting";
 import { User } from "@/core/api/dto/user";
 import useLogout from "@/hooks/useLogout";
 import useSetUser from "@/hooks/useSetUser";
+import { AutoAwesome } from "@mui/icons-material";
 
 interface ProfileDropDownProps {
   open: boolean;
@@ -30,22 +32,27 @@ interface MenuType {
   id: number;
   icon: ReactNode;
   name: string;
+  href: string;
 }
 
 const Menu: MenuType[] = [
   {
     id: 1,
     icon: <Prompt />,
-    name: "My Prompts",
+    href: "/dashboard",
+    name: "My Templates",
   },
   {
     id: 2,
-    icon: <Collection />,
-    name: "My Collections",
+    icon: <AutoAwesome />,
+    href: "/dashboard",
+
+    name: "My Sparks",
   },
   {
     id: 3,
     icon: <Setting />,
+    href: "/dashboard",
     name: "Settings",
   },
 ];
@@ -62,16 +69,10 @@ export const ProfileDropDown: React.FC<ProfileDropDownProps> = ({
 
   const handleHeaderMenu = (el: MenuType) => {
     onToggle();
-    // setIsMenuShown(!isMenuShown);
-    if (el.id === Menu[0].id) {
-      router.push("/");
-    } else if (el.id === Menu[2].id) {
-      router.push("/dashboard");
-    }
+    router.push(el.href);
   };
   const handleLogout = () => {
     onToggle();
-    // setIsMenuShown(!isMenuShown);
     logout();
     setUser(null);
   };
@@ -99,8 +100,9 @@ export const ProfileDropDown: React.FC<ProfileDropDownProps> = ({
             sx={{
               border: "1px solid #E3E3E3",
               borderRadius: "10px",
-              width: "13em",
+              width: "282px",
               marginTop: "5px",
+              overflow: "hidden",
             }}
             elevation={0}
           >
@@ -118,54 +120,62 @@ export const ProfileDropDown: React.FC<ProfileDropDownProps> = ({
                     width: "100%",
                     display: "flex",
                     flexDirection: "column",
+                    alignContent: "center",
                     justifyContent: "center",
                     alignItems: "center",
-                    padding: "0.5em 0em",
-                    gap: "5px",
+                    py: "24px",
+                    gap: "8px",
                   }}
                 >
-                  <Typography
-                    sx={{
-                      bgcolor: "black",
-                      borderRadius: "36px",
-                      width: "40px",
-                      padding: "1px",
-                      height: "40px",
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      cursor: "pointer",
-                      fontFamily: "Poppins",
-                      fontStyle: "normal",
-                      textAlign: "center",
-                      fontWeight: 400,
-                      fontSize: "20px",
-                      lineHeight: "20px",
-                      letterSpacing: "0.14px",
-                      color: "#FFFFFF",
-                    }}
-                  >
-                    {user?.first_name && user?.last_name
-                      ? `${user?.first_name[0]?.toUpperCase()}${user?.last_name[0]?.toUpperCase()}`
-                      : user?.username[0]?.toUpperCase()}
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontFamily: "Poppins",
-                      fontStyle: "normal",
-                      fontWeight: 500,
-                      fontSize: "20px",
-                      lineHeight: "160%",
-                      display: "flex",
-                      alignItems: "center",
-                      textAlign: "center",
-                      letterSpacing: "0.15px",
-                    }}
-                  >
-                    {!!user?.first_name && !!user?.last_name
-                      ? `${user?.first_name} ${user?.last_name}`
-                      : user?.username}
-                  </Typography>
+                  <Box display={"flex"} justifyContent={"center"}>
+                    <Avatar
+                      src={user?.avatar || user?.first_name}
+                      alt={user?.first_name}
+                      sizes="40px"
+                      sx={{
+                        width: "90px",
+                        height: "90px",
+                        ml: "auto",
+                        cursor: "pointer",
+                        bgcolor: "black",
+                        padding: "1px",
+                        fontStyle: "normal",
+                        textAlign: "center",
+                        fontWeight: 500,
+                        fontSize: { sm: "60px" },
+                        textTransform: "capitalize",
+                        lineHeight: "20px",
+                        letterSpacing: "0.14px",
+                      }}
+                    />
+                  </Box>
+                  <Box textAlign={"center"}>
+                    <Typography
+                      sx={{
+                        fontFamily: "Poppins",
+                        fontStyle: "normal",
+                        fontWeight: 500,
+                        fontSize: "20px",
+                        lineHeight: "160%",
+                        letterSpacing: "0.15px",
+                      }}
+                    >
+                      {user?.first_name} {user?.last_name}
+                    </Typography>
+                    <Typography
+                      sx={{
+                        color: "text.secondary",
+                        fontFamily: "Poppins",
+                        fontStyle: "normal",
+                        fontWeight: 400,
+                        fontSize: "14px",
+                        lineHeight: "143%",
+                        letterSpacing: "0.15px",
+                      }}
+                    >
+                      {user?.username}
+                    </Typography>
+                  </Box>
                 </Grid>
                 <MenuList autoFocusItem={false} sx={{ width: "100%" }}>
                   {Menu.map((el, idx) => (
@@ -175,6 +185,7 @@ export const ProfileDropDown: React.FC<ProfileDropDownProps> = ({
                       sx={{
                         display: "flex",
                         alignItems: "center",
+                        minHeight: "48px",
                         gap: "15px",
                       }}
                     >
@@ -199,11 +210,9 @@ export const ProfileDropDown: React.FC<ProfileDropDownProps> = ({
                   onClick={() => handleLogout()}
                   sx={{
                     borderTop: "1px solid #00000024",
-                    padding: "0.5em 0.5em 0.5em 0em",
+                    padding: "0.5em 0.5em 0.5em 1.2em",
                     display: "flex",
-                    alignItems: "center",
                     width: "100%",
-                    justifyContent: "space-around",
                     cursor: "pointer",
                     "&:hover": {
                       cursor: "pointer",
@@ -211,7 +220,7 @@ export const ProfileDropDown: React.FC<ProfileDropDownProps> = ({
                     },
                   }}
                 >
-                  <Typography>Logout</Typography>
+                  <Typography>Sign Out</Typography>
                 </Grid>
               </Grid>
             </ClickAwayListener>
