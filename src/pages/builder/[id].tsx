@@ -27,6 +27,7 @@ import { PageWrapper } from "@/components/PageWrapper";
 import { ContentCopy } from "@mui/icons-material";
 import { useRouter } from "next/router";
 import { INodesData } from "@/common/types/builder";
+import { skipToken } from "@reduxjs/toolkit/dist/query";
 
 export interface ITemplate {
   title: string;
@@ -62,7 +63,7 @@ export const Builder = () => {
   const [selectedNodeData, setSelectedNodeData] = useState<INodesData | null>(null);
   const [selectedConnection, setSelectedConnection] = useState<string | null>(null);
   const [nodesData, setNodesData] = useState<INodesData[]>([]);
-  const { data: promptsData } = useGetPromptTemplatesQuery(id ? +id : 1);
+  const { data: promptsData } = useGetPromptTemplatesQuery(id ? +id : skipToken);
   const dataForRequest = useRef({} as any);
   const [confirmDialogOpen, setConfirmDialogOpen] = React.useState(false);
   const [open, setOpen] = React.useState(false);

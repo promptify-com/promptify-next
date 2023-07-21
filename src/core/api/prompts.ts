@@ -42,7 +42,7 @@ export const promptsApi = createApi({
           method: "get",
         }),
       }),
-      getPromptTemplatesExecutions: builder.query<
+      getExecutionsByTemplate: builder.query<
         TemplatesExecutions[],
         number
       >({
@@ -78,7 +78,7 @@ export const {
   useGetPromptTemplateBySlugQuery,
   useGetCollectionTemplatesQuery,
   useGetPromptParamsQuery,
-  useGetPromptTemplatesExecutionsQuery,
+  useGetExecutionsByTemplateQuery,
   useGetExecutionByIdQuery,
   useGetTemplatesExecutionsByMeQuery,
   useGetAllPromptTemplatesQuery,
