@@ -58,10 +58,6 @@ const Login = () => {
     </Grid>
   );
 };
-const navLinks = [
-  { id: 0, label: "Explore", href: "/explore" },
-  { id: 0, label: "Learn", href: "/" },
-];
 
 export const Header: React.FC<HeaderProps> = ({
   transparent = false,
@@ -97,7 +93,6 @@ export const Header: React.FC<HeaderProps> = ({
     setOpen(true);
   };
 
-  const isHomepage = router.pathname == "/";
   return (
     <Box
       sx={{
@@ -117,81 +112,27 @@ export const Header: React.FC<HeaderProps> = ({
           justifyContent: "space-between",
           display: "flex",
           width: "100%",
+          gap: "30px",
           padding: { xs: "1em 0em 0em 1em", sm: "1.5em 2em" },
           alignItems: "center",
         }}
       >
-        {isHomepage && (
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: "20px",
-            }}
-          >
-            <Box
-              display={{ xs: "none", sm: "flex" }}
-              mr={{ xs: "0rem", sm: "1rem" }}
-            >
-              <Link href="/">
-                <LogoApp />
-              </Link>
-            </Box>
-            <Box
-              display={{ xs: "flex", sm: "none" }}
-              mr={{ xs: "0rem", sm: "1rem" }}
-            >
-              <Link href="/">
-                <LogoAppMobile />
-              </Link>
-            </Box>
-            {navLinks.map((link) => (
-              <Link
-                href={link.href}
-                style={{
-                  textDecoration: "none",
-                }}
-              >
-                <Typography
-                  sx={{
-                    fontWeight: 500,
-                    fontSize: "16px",
-                    lineHeight: "24px",
-                    textAlign: "center",
-                  }}
-                  color={"onSurface"}
-                >
-                  {link.label}
-                </Typography>
-              </Link>
-            ))}
-          </Box>
-        )}
         <Box
+          display={{ xs: "none", sm: "flex" }}
           sx={{
-            width: isHomepage ? "70%" : "95%",
+            flex: 1,
+            alignItems: "center",
+            position: "relative",
           }}
+          onClick={handleInputFocus}
         >
-          {!open ? (
-            <Box
-              onClick={handleInputFocus}
-              sx={{
-                width: "100%",
-                mr: "auto",
-                alignItems: "center",
-              }}
-              display={{ xs: "none", sm: "flex" }}
-            >
-              <SearchBar from="" keyWord={keyWord} setKeyWord={setKeyWord} />
-            </Box>
-          ) : (
-            <SearchDialog
-              open={open}
-              setOpen={setOpen}
-              keyWord={keyWord}
-              setKeyWord={setKeyWord}
-            />
-          )}
+          <SearchBar keyWord={keyWord} setKeyWord={setKeyWord} />
+          <SearchDialog
+            open={open}
+            setOpen={setOpen}
+            keyWord={keyWord}
+            setKeyWord={setKeyWord}
+          />
         </Box>
 
         <Box
@@ -217,7 +158,7 @@ export const Header: React.FC<HeaderProps> = ({
           {userLoading ? (
             <FetchLoading />
           ) : (
-            <Box ml={"auto"}>
+            <Box>
               {user && token ? (
                 <Avatar
                   ref={menuAnchorRef}

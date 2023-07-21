@@ -9,12 +9,10 @@ export const Layout = ({ children }: { children: ReactNode }) => {
   return (
     <>
       <Box sx={{ bgcolor: "surface.3" }}>
-        <Grid display={"flex"}>
-          <Sidebar
-            open={openSideBar}
-            toggleSideBar={() => setOpenSideBar(!openSideBar)}
-          />
-        </Grid>
+        <Sidebar
+          open={openSideBar}
+          toggleSideBar={() => setOpenSideBar(!openSideBar)}
+        />
         <Box
           sx={{
             minHeight: "100vh",
@@ -26,18 +24,16 @@ export const Layout = ({ children }: { children: ReactNode }) => {
           }}
         >
           <Header transparent />
-          <Box padding={"0px 8px"}>
-            <Grid
-              sx={{
-                padding: { xs: "1em 0em 0em 1em", sm: "1.5em 2em" },
-              }}
-              display={"flex"}
-              flexDirection={"column"}
-              gap={"16px"}
-            >
-              {children}
-            </Grid>
-          </Box>
+          <Grid
+            sx={{
+              padding: { xs: "1em 0em 0em 1em", sm: "1.5em 2em" },
+            }}
+            display={"flex"}
+            flexDirection={"column"}
+            gap={"16px"}
+          >
+            {children}
+          </Grid>
         </Box>
       </Box>
     </>

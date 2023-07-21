@@ -1,6 +1,7 @@
 import React from "react";
-import { Box, Button, Chip, Grid } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 import Head from "next/head";
+import { useSelector } from "react-redux";
 
 import {
   useGetCategoriesQuery,
@@ -9,27 +10,22 @@ import {
 import { Layout } from "@/layout";
 import { CategoriesSection } from "@/components/explorer/CategoriesSection";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
-import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/core/store";
-import { setSelectedEngine, setSelectedTag } from "@/core/store/filtersSlice";
+import { FiltersSelected } from "@/components/explorer/FiltersSelected";
 
 export default function ExplorePage() {
-  const filters = useSelector((state: RootState) => state.filters);
   const engineId = useSelector((state: RootState) => state.filters.engine?.id);
   const tag = useSelector((state: RootState) => state.filters.tag?.name);
   const { data: templates, isLoading: isTemplatesLoading } =
     useGetTemplatesByFilterQuery({ engineId, tag });
+  const filters = useSelector((state: RootState) => state.filters);
 
   const { data: categories, isLoading: isCategoryLoading } =
     useGetCategoriesQuery();
 
-  const { engine, tag: selectedTag } = filters;
-
   const isFiltersNullish = Object.values(filters).every((value) => {
     return value === null ? true : false;
   });
-
-  const dispatch = useDispatch();
 
   return (
     <>
@@ -43,26 +39,8 @@ export default function ExplorePage() {
           />
         </Head>
         <Box>
-          {!isFiltersNullish && (
-            <Box display={"flex"} alignItems={"center"}>
-              {engine && (
-                <Chip
-                  label={engine.name}
-                  sx={{ fontSize: 13, fontWeight: 500 }}
-                  onDelete={() => dispatch(setSelectedEngine(null))}
-                />
-              )}
-              {selectedTag && (
-                <Chip
-                  label={selectedTag.name}
-                  sx={{ fontSize: 13, fontWeight: 500 }}
-                  onDelete={() => dispatch(setSelectedTag(null))}
-                />
-              )}
-            </Box>
-          )}
-
           <Grid sx={{}} display={"flex"} flexDirection={"column"} gap={"16px"}>
+            <FiltersSelected show={!isFiltersNullish} />
             {isFiltersNullish && (
               <CategoriesSection
                 categories={categories}

@@ -122,13 +122,13 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
       name: "My Sparks",
       href: "/sparks",
       icon: <AutoAwesome />,
-      active: isSparksPage,
+      active: pathname == "/sparks",
     },
     {
       name: "Learn",
       href: "/",
       icon: <MenuBookRounded />,
-      active: pathname == "/",
+      active: pathname == "/learn",
     },
   ];
 
@@ -223,7 +223,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
                     item.name == "Browse" && setShowFilters(!showFilters)
                   }
                 >
-                  <Typography
+                  <Box
                     onClick={() => navigate(item.href)}
                     style={{
                       textDecoration: "none",
@@ -256,7 +256,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
                     >
                       {item.name}
                     </Typography>
-                  </Typography>
+                  </Box>
                   {item.name == "Browse" &&
                     isExplorePage &&
                     (showFilters ? (

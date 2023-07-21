@@ -2,39 +2,58 @@ import { Box, Grid, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { AxiosResponse } from "axios";
+import { useDispatch, useSelector } from "react-redux";
 
-import { CustomTemplates } from "@/components/explorer/Templates";
-import { Header } from "@/components/Header";
-import { PageLoading } from "@/components/PageLoading";
 import useSetUser from "@/hooks/useSetUser";
 import useToken from "@/hooks/useToken";
 import { TopicImg } from "@/assets/icons/TopicImg";
 import { Category, Tag } from "@/core/api/dto/templates";
-import { ICollection } from "@/common/types/collection";
 import { IContinueWithSocialMediaResponse } from "@/common/types";
 import { getPathURL, saveToken } from "@/common/utils";
 import { authClient, client } from "@/common/axios";
-import SearchBar from "@/components/explorer/SearchBar";
+import {
+  useGetCategoriesQuery,
+  useGetTagsPopularQuery,
+  useGetTemplatesByFilterQuery,
+} from "@/core/api/explorer";
+import { RootState } from "@/core/store";
+import { Layout } from "@/layout";
+import { TemplatesSection } from "@/components/explorer/TemplatesSection";
+import { setSelectedTag } from "@/core/store/filtersSlice";
 
 const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
 
-function Home({
-  tags,
-  categories,
-}: {
-  collections: ICollection[];
-  tags: Tag[];
-  categories: any[];
-}) {
+function Home() {
   const router = useRouter();
   const setUser = useSetUser();
   const savedToken = useToken();
+  const dispatch = useDispatch();
+  const tag = useSelector((state: RootState) => state.filters.tag?.name);
+
+  const { data: categories } = useGetCategoriesQuery();
+  const { data: tags } = useGetTagsPopularQuery();
+  const { data: templates, isLoading: isTemplateLoading } =
+    useGetTemplatesByFilterQuery({ tag });
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
-
   const [categorySelected, setCategorySelected] = useState<number>();
-  const [selectedTag, setSelectedTag] = useState<Tag[]>([]);
-  const [keyWord, setKeyWord] = useState<string>("");
+
+  const handleTagSelect = (tag: Tag | null) => {
+    dispatch(setSelectedTag(tag));
+  };
+
+  const handleClickCategory = (el: number, category: Category) => {
+    router.push({
+      pathname: `/explore/${category.slug}`,
+    });
+    setCategorySelected(el);
+  };
+
+  useEffect(() => {
+    router.events.on("routeChangeComplete", () => {
+      dispatch(setSelectedTag(null));
+    });
+  }, [router.events]);
 
   const preLogin = () => {
     setIsLoading(true);
@@ -69,22 +88,6 @@ function Home({
     }
   };
 
-  const handleClickCategory = (el: number, category: Category) => {
-    router.push({
-      pathname: `/explore/${category.slug}`,
-    });
-    setCategorySelected(el);
-  };
-
-  const handleClickTag = (tag: Tag) => {
-    if (selectedTag.find((item) => item.id === tag.id)) {
-      const removeTag = selectedTag.filter((el) => el.id !== tag.id);
-      setSelectedTag(removeTag);
-    } else {
-      setSelectedTag([...selectedTag, tag]);
-    }
-  };
-
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const authorizationCode = urlParams.get("code");
@@ -112,298 +115,225 @@ function Home({
 
   return (
     <>
-      <Box>
-        {isLoading ? (
-          <PageLoading />
-        ) : (
-          <Box sx={{ flexGrow: 1 }}>
-            <Box
+      <Box width={"100%"}>
+        <Layout>
+          <Box width={"100%"}>
+            <Grid
+              flexDirection="column"
+              display={"flex"}
               sx={{
-                backgroundSize: "cover",
-                width: "100%",
-                display: "flex",
-                flexDirection: "column",
-                backgroundColor: "surface.3",
-                paddingBottom: "1em",
+                padding: "1em",
               }}
             >
-              <Header transparent keyWord={keyWord} setKeyWord={setKeyWord} />
               <Grid
-                container
-                flexDirection="column"
-                display={"flex"}
                 sx={{
-                  padding: "1em",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  width: "100%",
                 }}
-                rowGap={2}
               >
-                <Grid
+                <Typography
                   sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    width: "100%",
+                    fontFamily: "Poppins",
+                    fontStyle: "normal",
+                    fontWeight: 500,
+                    fontSize: { xs: "30px", sm: "48px" },
+                    lineHeight: "72px",
+                    color: "#1D2028",
+                    marginLeft: { xs: "0px", sm: "0px" },
                   }}
                 >
-                  <Typography
-                    sx={{
-                      fontFamily: "Poppins",
-                      fontStyle: "normal",
-                      fontWeight: 500,
-                      fontSize: { xs: "30px", sm: "48px" },
-                      lineHeight: "72px",
-                      color: "#1D2028",
-                      marginLeft: { xs: "0px", sm: "0px" },
-                    }}
-                  >
-                    Welcome to Promptify
-                  </Typography>
-                </Grid>
-                <Grid
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    width: "100%",
-                  }}
-                >
-                  <Typography
-                    sx={{
-                      fontSize: "14px",
-                      width: { xs: "100%", sm: "666px" },
-                      marginLeft: { xs: "0px", sm: "0em" },
-                      fontWeight: 400,
-                    }}
-                    align="center"
-                  >
-                    Unleash your creative potential using Promptify, the
-                    ultimate ChatGPT and AI-driven content generation and idea
-                    inspiration platform. Try it today!
-                  </Typography>
-                </Grid>
+                  Welcome to Promptify
+                </Typography>
               </Grid>
               <Grid
                 sx={{
                   display: "flex",
-                  alignItems: "center",
                   justifyContent: "center",
-                  marginTop: "1em",
+                  alignItems: "center",
+                  width: "100%",
                 }}
               >
-                <Box
+                <Typography
                   sx={{
-                    width: { xs: "90%", sm: "57%" },
-                    marginLeft: { xs: "0em", sm: "4em" },
-                    maxWidth: "700px",
+                    fontSize: "14px",
+                    width: { xs: "100%", sm: "666px" },
+                    marginLeft: { xs: "0px", sm: "0em" },
+                    fontWeight: 400,
+                  }}
+                  align="center"
+                >
+                  Unleash your creative potential using Promptify, the ultimate
+                  ChatGPT and AI-driven content generation and idea inspiration
+                  platform. Try it today!
+                </Typography>
+              </Grid>
+            </Grid>
+
+            <Grid
+              sx={{
+                display: "-webkit-box",
+                overflowX: "auto",
+                height: "70px",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: "0.4em",
+                width: "100%",
+                padding: "1em 1em",
+              }}
+            >
+              {!!tags && tags.length > 0 && (
+                <Typography
+                  sx={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    padding: "0.7em",
+                    gap: "10px",
+                    width: "fit-content",
+                    height: "0.7em",
+                    background: "transparent",
+                    borderRadius: "99px",
+                    fontSize: "14px",
+                    fontFamily: "Poppins",
+                    fontStyle: "normal",
+                    fontWeight: 500,
+                    lineHeight: "18px",
+                    leadingTrim: "both",
+                    color: "onSurface",
                   }}
                 >
-                  <SearchBar
-                    keyWord={keyWord}
-                    setKeyWord={setKeyWord}
-                    selectedTag={selectedTag}
-                    setSelectedTag={setSelectedTag}
-                    from="middle"
-                  />
-                </Box>
-              </Grid>
-              <Grid
-                className="scroll-class-name"
-                sx={{
-                  display: "-webkit-box",
-                  overflowX: "auto",
-                  height: "70px",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  gap: "0.4em",
-                  width: "100%",
-                  padding: "1em 1em",
-                }}
-              >
-                {!!tags && tags.length > 0 && (
-                  <Typography
-                    onClick={() => setSelectedTag([])}
+                  Popular topics:
+                </Typography>
+              )}
+              {!!tags &&
+                tags.length > 0 &&
+                tags.map((el) => (
+                  <Grid
+                    onClick={() => handleTagSelect(el)}
+                    key={el.id}
                     sx={{
                       display: "flex",
-                      flexDirection: "row",
+                      flexDirection: "column",
                       justifyContent: "center",
                       alignItems: "center",
-                      padding: "0.7em",
-                      gap: "10px",
-                      width: "fit-content",
-                      height: "0.7em",
-                      background: "transparent",
-                      borderRadius: "99px",
-                      fontSize: "14px",
-                      fontFamily: "Poppins",
-                      fontStyle: "normal",
-                      fontWeight: 500,
-                      lineHeight: "18px",
-                      leadingTrim: "both",
-                      textEdge: "cap",
-                      color: "#1D202",
+                      padding: "8px 12px",
+                      minWidth: "63px",
+                      height: "36px",
+                      borderRadius: "100px",
+                      flex: "none",
+                      order: 4,
+                      flexGrow: 0,
+                      background: tag == el.name ? "#cad3e2" : "#ffffff78",
                       cursor: "pointer",
                       "&:hover": {
                         transform: "scale(1.05)",
                       },
                     }}
                   >
-                    Popular topics:
-                  </Typography>
-                )}
-                {!!tags &&
-                  tags.length > 0 &&
-                  tags.map((el) => (
+                    <Typography
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        padding: "0px",
+                        gap: "8px",
+                        height: "20px",
+                        flex: "none",
+                        order: 0,
+                        flexGrow: 0,
+                      }}
+                    >
+                      {el.name}
+                    </Typography>
+                  </Grid>
+                ))}
+            </Grid>
+            <Grid
+              sx={{
+                display: "-webkit-box",
+                overflowX: "auto",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "0.5em",
+                padding: "1em 1em",
+                width: "100%",
+              }}
+            >
+              {!!categories &&
+                categories.length > 0 &&
+                categories
+                  ?.filter((mainCat) => !mainCat.parent)
+                  .map((el) => (
                     <Grid
-                      onClick={() => handleClickTag(el)}
+                      onClick={() => handleClickCategory(el.id, el)}
                       key={el.id}
                       sx={{
                         display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "center",
+                        flexDirection: "row",
                         alignItems: "center",
-                        padding: "8px 12px",
-                        minWidth: "63px",
-                        height: "36px",
-                        borderRadius: "100px",
-                        flex: "none",
-                        order: 4,
-                        flexGrow: 0,
-                        background: selectedTag.find(
-                          (item) => item.id === el.id
-                        )
-                          ? "#cad3e2"
-                          : "#ffffff78",
+                        padding: "10px 12px",
+                        gap: "8px",
+                        maxWidth: "7em",
+                        width: "fit-content",
+                        height: "1.5em",
+                        background:
+                          el.id === categorySelected ? "#cad3e2" : "#ffffff78",
+                        borderRadius: "99px",
+                        boxSizing: "initial",
                         cursor: "pointer",
                         "&:hover": {
                           transform: "scale(1.05)",
                         },
                       }}
                     >
-                      <Typography
+                      <Grid
                         sx={{
+                          height: "1em",
+                          width: "1.5em",
                           display: "flex",
-                          flexDirection: "row",
                           justifyContent: "center",
                           alignItems: "center",
-                          padding: "0px",
-                          gap: "8px",
-                          height: "20px",
-                          flex: "none",
-                          order: 0,
-                          flexGrow: 0,
                         }}
                       >
-                        {el.name}
+                        <TopicImg />
+                      </Grid>
+                      <Typography
+                        title={el.name.length > 22 ? el.name : ""}
+                        sx={{
+                          display: "flex",
+                          fontSize: "0.7em",
+                        }}
+                      >
+                        {el.name.length > 22
+                          ? el.name.slice(0, 22) + "..."
+                          : el.name}
                       </Typography>
                     </Grid>
                   ))}
-              </Grid>
-              <Grid
-                className="scroll-class-name"
-                sx={{
-                  display: "-webkit-box",
-                  overflowX: "auto",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "0.5em",
-                  padding: "1em 1em",
-                  width: "100%",
-                }}
-              >
-                {!!categories &&
-                  categories.length > 0 &&
-                  categories
-                    ?.filter((mainCat) => !mainCat.parent)
-                    .map((el) => (
-                      <Grid
-                        onClick={() => handleClickCategory(el.id, el)}
-                        key={el.id}
-                        sx={{
-                          display: "flex",
-                          flexDirection: "row",
-                          alignItems: "center",
-                          padding: "10px 12px",
-                          gap: "8px",
-                          maxWidth: "7em",
-                          width: "fit-content",
-                          height: "1.5em",
-                          background:
-                            el.id === categorySelected
-                              ? "#cad3e2"
-                              : "#ffffff78",
-                          borderRadius: "99px",
-                          boxSizing: "initial",
-                          cursor: "pointer",
-                          "&:hover": {
-                            transform: "scale(1.05)",
-                          },
-                        }}
-                      >
-                        <Grid
-                          sx={{
-                            height: "1em",
-                            width: "1.5em",
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                          }}
-                        >
-                          <TopicImg />
-                        </Grid>
-                        <Typography
-                          title={el.name.length > 22 ? el.name : ""}
-                          sx={{
-                            display: "flex",
-                            fontSize: "0.7em",
-                          }}
-                        >
-                          {el.name.length > 22
-                            ? el.name.slice(0, 22) + "..."
-                            : el.name}
-                        </Typography>
-                      </Grid>
-                    ))}
-              </Grid>
-            </Box>
+            </Grid>
 
-            <CustomTemplates selectedTag={selectedTag} keyWord={keyWord} />
+            <TemplatesSection
+              isLoading={isTemplateLoading}
+              templates={templates}
+              filtred={!!tag}
+            />
           </Box>
-        )}
+        </Layout>
       </Box>
     </>
   );
 }
 export async function getServerSideProps() {
-  try {
-    const collectionResponse = await authClient.get("/api/meta/collections/");
-    const collections = collectionResponse.data; // Extract the necessary data from the response
-    const tagsResponse = await authClient.get("/api/meta/tags/popular/");
-    const tags = tagsResponse.data;
-    const categoryRequest = await authClient.get("/api/meta/categories/");
-    const categories = categoryRequest.data;
-
-    return {
-      props: {
-        collections,
-        tags,
-        categories,
-        title: "Promptify | Boost Your Creativity",
-        description:
-          "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
-      },
-    };
-  } catch (error) {
-    console.error("Error fetching collections:", error);
-    return {
-      props: {
-        collections: [],
-        tags: [],
-        categories: [],
-        title: "Promptify | Boost Your Creativity",
-        description:
-          "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
-      },
-    };
-  }
+  return {
+    props: {
+      title: "Promptify | Boost Your Creativity",
+      description:
+        "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
+    },
+  };
 }
 export default Home;
