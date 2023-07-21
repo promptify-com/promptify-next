@@ -89,6 +89,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
   const splittedPath = pathname.split("/");
 
   const isExplorePage = splittedPath[1] == "explore";
+  const isSparksPage = splittedPath[1] == "sparks";
 
   const { data: user, isLoading: userLoading } = useGetCurrentUserQuery(token);
 
@@ -119,9 +120,9 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
     },
     {
       name: "My Sparks",
-      href: "/",
+      href: "/sparks",
       icon: <AutoAwesome />,
-      active: pathname == "/",
+      active: isSparksPage,
     },
     {
       name: "Learn",
@@ -130,6 +131,15 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
       active: pathname == "/",
     },
   ];
+
+  const navigate = (href: string) => {
+    let next = href.split("/");
+
+    if (splittedPath[1] == next[1]) {
+      return null;
+    }
+    router.push(href);
+  };
 
   return (
     <Box>
@@ -150,7 +160,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
                 ? "0px 7px 8px -4px #00000033, 0px 12px 17px 2px #00000024, 0px 5px 22px 4px #0000001F"
                 : "",
             boxSizing: "border-box",
-            overflow: "visible",
+            overflow: "hidden",
             bgcolor: "white",
             border: "none",
           },
@@ -213,8 +223,8 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
                     item.name == "Browse" && setShowFilters(!showFilters)
                   }
                 >
-                  <Link
-                    href={isExplorePage ? "#" : item.href}
+                  <Typography
+                    onClick={() => navigate(item.href)}
                     style={{
                       textDecoration: "none",
                       padding: 6.5,
@@ -246,7 +256,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
                     >
                       {item.name}
                     </Typography>
-                  </Link>
+                  </Typography>
                   {item.name == "Browse" &&
                     isExplorePage &&
                     (showFilters ? (

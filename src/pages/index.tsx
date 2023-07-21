@@ -123,7 +123,7 @@ function Home({
                 width: "100%",
                 display: "flex",
                 flexDirection: "column",
-                backgroundColor: "grey.300",
+                backgroundColor: "surface.3",
                 paddingBottom: "1em",
               }}
             >

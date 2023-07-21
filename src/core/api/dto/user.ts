@@ -16,3 +16,11 @@ export interface User {
   created?: boolean;
   favorite_collection_id: number
 }
+
+export interface UserMin {
+  id: number;
+  username: string;
+  first_name: string;
+  last_name: string;
+  avatar: string;
+}

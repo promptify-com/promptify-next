@@ -25,7 +25,7 @@ export const CustomTemplates: React.FC<Props> = ({ selectedTag, keyWord }) => {
   );
 
   return (
-    <Box sx={{ flexGrow: 1, backgroundColor: "grey.100" }}>
+    <Box sx={{ flexGrow: 1, bgcolor: "surface.3" }}>
       <Grid
         sx={{
           padding: "1em",
@@ -89,7 +89,6 @@ export const CustomTemplates: React.FC<Props> = ({ selectedTag, keyWord }) => {
                     onFavoriteClick={() => router.push(`/prompt/${el.slug}`)}
                     key={idx}
                     template={el}
-                    lengthTemplate={templates.length}
                   />
                 ))
               ) : (
