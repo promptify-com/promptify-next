@@ -533,6 +533,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
               borderRadius: "999px",
               bgcolor: "primary.main",
               color: "onPrimary",
+              whiteSpace: "pre-line",
               ":hover": {
                 bgcolor: "transparent",
                 color: "primary.main",

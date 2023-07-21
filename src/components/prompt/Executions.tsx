@@ -137,7 +137,7 @@ export const Executions: React.FC<Props> = ({
               />
             ) : (
               <Typography sx={{ mt: "40px", textAlign: "center" }}>
-                No execution found
+                No spark found
               </Typography>
             )
           )

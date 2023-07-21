@@ -44,6 +44,7 @@ import { Prompts } from "@/core/api/dto/prompts";
 import { updateExecution } from "@/hooks/api/executions";
 import { PromptLiveResponse } from "@/common/types/prompt";
 import { Layout } from "@/layout";
+import useToken from "@/hooks/useToken";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -76,22 +77,20 @@ const a11yProps = (index: number) => {
 };
 
 const Prompt = () => {
-  const router = useRouter();
-  const [newExecutionData, setNewExecutionData] =
-    useState<PromptLiveResponse | null>(null);
+  const [newExecutionData, setNewExecutionData] = useState<PromptLiveResponse | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [currentGeneratedPrompt, setCurrentGeneratedPrompt] =
-    useState<Prompts | null>(null);
+  const [currentGeneratedPrompt, setCurrentGeneratedPrompt] = useState<Prompts | null>(null);
   const [openTitleModal, setOpenTitleModal] = useState(false);
   const [executionTitle, setExecutionTitle] = useState("");
-  const [defaultExecution, setDefaultExecution] =
-    useState<TemplatesExecutions | null>(null);
+  const [defaultExecution, setDefaultExecution] = useState<TemplatesExecutions | null>(null);
   const [templateView] = useTemplateView();
-
-  const theme = useTheme();
-  const [palette, setPalette] = useState(theme.palette);
   const [generatorOpened, setGeneratorOpened] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string>("");
+
+  const router = useRouter();
+  const token = useToken();
+  const theme = useTheme();
+  const [palette, setPalette] = useState(theme.palette);
   const slug = router.query?.slug;
   // TODO: redirect to 404 page if slug is not found
   const slugValue = (Array.isArray(slug) ? slug[0] : slug || "") as string;
@@ -116,7 +115,7 @@ const Prompt = () => {
     error: templateExecutionsError,
     isFetching: isFetchingExecutions,
     refetch: refetchTemplateExecutions,
-  } = useGetExecutionsByTemplateQuery(id ? id : skipToken);
+  } = useGetExecutionsByTemplateQuery(token ? (id ? id : skipToken) : skipToken);
 
   const [tabsValue, setTabsValue] = React.useState(0);
   const changeTab = (e: React.SyntheticEvent, newValue: number) => {
@@ -131,7 +130,6 @@ const Prompt = () => {
 
   useEffect(() => {
     if (id) {
-      refetchTemplateExecutions();
       templateView(id);
     }
   }, [id]);
