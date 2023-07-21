@@ -15,9 +15,8 @@ import {
 
 import { Engine, Tag } from "@/core/api/dto/templates";
 import { useDispatch, useSelector } from "react-redux";
-import { setSelectedEngine } from "@/core/store/enginesSlice";
+import { setSelectedEngine, setSelectedTag } from "@/core/store/filtersSlice";
 import { RootState } from "@/core/store";
-import { Clear } from "@mui/icons-material";
 
 interface ExploreFilterSideBarProps {
   sidebarOpen: boolean;
@@ -32,13 +31,14 @@ export const ExploreFilterSideBar: React.FC<ExploreFilterSideBarProps> = ({
 }) => {
   const [itemsToShow, setItemsToShow] = useState<number>(3);
 
-  const selectedEngineId = useSelector(
-    (state: RootState) => state.engines.engine
-  );
+  const filters = useSelector((state: RootState) => state.filters);
   const dispatch = useDispatch();
 
-  const handleEngineSelect = (engine: number | null) => {
+  const handleEngineSelect = (engine: Engine | null) => {
     dispatch(setSelectedEngine(engine));
+  };
+  const handleTagSelect = (tag: Tag | null) => {
+    dispatch(setSelectedTag(tag));
   };
 
   const showmore = () => {
@@ -68,16 +68,11 @@ export const ExploreFilterSideBar: React.FC<ExploreFilterSideBarProps> = ({
           }}
         >
           {engines?.slice(0, itemsToShow).map((engine) => (
-            <ListItem
-              disablePadding
-              key={engine.name}
-              sx={{ position: "relative" }}
-            >
+            <ListItem disablePadding key={engine.name}>
               <ListItemButton
-                key={engine.id}
-                sx={{ borderRadius: "8px", minHeight: 48, pl: -4 }}
-                onClick={() => handleEngineSelect(engine.id)}
-                selected={selectedEngineId == engine.id}
+                sx={{ borderRadius: "8px", minHeight: 48, mx: 1, px: 3.0 }}
+                onClick={() => handleEngineSelect(engine)}
+                selected={filters.engine?.id == engine.id}
               >
                 <Avatar
                   src={
@@ -94,22 +89,6 @@ export const ExploreFilterSideBar: React.FC<ExploreFilterSideBarProps> = ({
                   {engine.name}
                 </Typography>
               </ListItemButton>
-              {selectedEngineId == engine.id && (
-                <IconButton
-                  onClick={() => handleEngineSelect(null)}
-                  size="small"
-                  sx={{
-                    mr: -3,
-                    width: "23px",
-                    border: "none",
-                    bgcolor: "onSurface",
-                    height: "23px",
-                    color: "white",
-                  }}
-                >
-                  <Clear />
-                </IconButton>
-              )}
             </ListItem>
           ))}
         </Grid>
@@ -142,7 +121,7 @@ export const ExploreFilterSideBar: React.FC<ExploreFilterSideBarProps> = ({
           {tags?.map((tag) => (
             <Chip
               sx={{
-                bgcolor: "surface.3",
+                bgcolor: filters.tag?.id == tag.id ? "#9DB2BF" : "surface.3",
                 fontSize: 14,
                 fontWeight: 500,
                 lineHeight: "18px",
@@ -150,7 +129,7 @@ export const ExploreFilterSideBar: React.FC<ExploreFilterSideBarProps> = ({
               }}
               key={tag.id}
               label={tag.name}
-              onClick={() => {}}
+              onClick={() => handleTagSelect(tag)}
             />
           ))}
         </Grid>

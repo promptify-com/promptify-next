@@ -3,8 +3,7 @@ import { promptsApi } from "../api/prompts";
 import { explorerApi } from "../api/explorer";
 import { userApi } from "../api/user";
 import { templatesSlice } from "./templatesSlice";
-import { enginesSlice } from './enginesSlice';
-
+import filterSlice from "./filtersSlice";
 
 export const store = configureStore({
   reducer: {
@@ -12,7 +11,7 @@ export const store = configureStore({
     [userApi.reducerPath]: userApi.reducer,
     [explorerApi.reducerPath]: explorerApi.reducer,
     template: templatesSlice.reducer,
-    engines: enginesSlice.reducer
+    filters: filterSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(

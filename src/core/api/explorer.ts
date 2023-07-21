@@ -86,14 +86,13 @@ export const explorerApi = createApi({
         query: (params: FilterParams) => ({
           url:
             "/api/meta/templates/?" +
-            (!!params.categoryId
-              ? `main_category_id=${params.categoryId}`
-              : "") +
-            (!!params.subcategoryId
+            (params.tag ? `&tag=${params.tag}` : "") +
+            (params.categoryId ? `main_category_id=${params.categoryId}` : "") +
+            (params.subcategoryId
               ? `&sub_category_id=${params.subcategoryId}`
               : "") +
-            (!!params.engineId ? `&engine=${params.engineId}` : "") +
-            (!!params.filter ? `&ordering=${params.filter}` : ""),
+            (params.engineId ? `&engine=${params.engineId}` : "") +
+            (params.filter ? `&ordering=${params.filter}` : ""),
           method: "get",
         }),
       }),
@@ -112,11 +111,9 @@ export const explorerApi = createApi({
         query: (ids: TemplateIds) => ({
           url:
             "/api/meta/templates/?" +
-            (!!ids.categoryId ? `main_category_id=${ids.categoryId}` : "") +
-            (!!ids.subcategoryId
-              ? `&sub_category_id=${ids.subcategoryId}`
-              : "") +
-            (!!ids.engineId ? `&engine=${ids.engineId}` : ""),
+            (ids.categoryId ? `main_category_id=${ids.categoryId}` : "") +
+            (ids.subcategoryId ? `&sub_category_id=${ids.subcategoryId}` : "") +
+            (ids.engineId ? `&engine=${ids.engineId}` : ""),
           method: "get",
         }),
       }),
