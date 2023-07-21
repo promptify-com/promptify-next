@@ -21,9 +21,18 @@ const Sparks = () => {
     setExpanded(newExpanded ? panel : false);
   };
 
-  const executionsCount = templatesExecutions?.reduce((acc, curr) => {
-    return acc + curr.executions.length;
-  }, 0)
+  let executionsCount = 0;
+  const sortedTemplates = templatesExecutions?.map(template => {
+    const executions = [...template.executions].sort((a, b) => {
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    })
+    executionsCount += template.executions.length;
+
+    return {
+      ...template,
+      executions
+    }
+  })
 
   return (
     <Layout>
@@ -37,8 +46,8 @@ const Sparks = () => {
             My Sparks ({executionsCount})
           </Typography>
           <Stack gap={1}>
-          {templatesExecutions && templatesExecutions.length > 0 ? (
-            templatesExecutions.map((template, i) => (
+          {sortedTemplates && sortedTemplates.length > 0 ? (
+            sortedTemplates.map((template, i) => (
               <Accordion key={template.id}
                 expanded={expanded === `accordian${i}`} 
                 onChange={toggleExpand(`accordian${i}`)}
