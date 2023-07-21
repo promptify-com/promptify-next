@@ -320,7 +320,7 @@ const Prompt = () => {
               container
               sx={{
                 mx: "auto",
-                height: "calc(100svh - 90px)",
+                height: "calc(100svh - (90px + 32px))",
                 width: { md: "calc(100% - 65px)" },
                 bgcolor: "surface.2",
                 borderTopLeftRadius: "16px",
