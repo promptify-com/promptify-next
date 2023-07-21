@@ -112,7 +112,7 @@ export const ExecutionsTabs:React.FC<Props> = ({ executions, chooseExecution }) 
          ) : (
             <Stack sx={{ height: "100%", justifyContent: "center", alignItems: "center" }}>
                <Typography sx={{ color: "onSurface", opacity: .5 }}>
-                  No executions found
+                  No sparks found
                </Typography>
             </Stack>
          )}

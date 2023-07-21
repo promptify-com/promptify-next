@@ -24,16 +24,18 @@ export const Layout = ({ children }: { children: ReactNode }) => {
           }}
         >
           <Header transparent />
-          <Grid
-            sx={{
-              padding: { xs: "1em 0em 0em 1em", sm: "1.5em 2em" },
-            }}
-            display={"flex"}
-            flexDirection={"column"}
-            gap={"16px"}
-          >
-            {children}
-          </Grid>
+          <Box padding={"0px 8px"}>
+            <Grid
+              sx={{
+                padding: { xs: "8px 0 0 8px", sm: "32px" },
+              }}
+              display={"flex"}
+              flexDirection={"column"}
+              gap={"16px"}
+            >
+              {children}
+            </Grid>
+          </Box>
         </Box>
       </Box>
     </>

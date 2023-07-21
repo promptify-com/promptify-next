@@ -6,9 +6,11 @@ import { Layout } from "@/layout";
 import { Accordion, AccordionDetails, AccordionSummary, Box, Divider, Grid, Stack, Typography } from "@mui/material";
 import moment from "moment";
 import { ArrowForwardIos, History } from "@mui/icons-material";
+import { useRouter } from "next/router";
 
 const Sparks = () => {
   const [expanded, setExpanded] = React.useState<string | false>(false);
+  const router = useRouter();
 
   const { 
     data: templatesExecutions, 
@@ -19,9 +21,18 @@ const Sparks = () => {
     setExpanded(newExpanded ? panel : false);
   };
 
-  const executionsCount = templatesExecutions?.reduce((acc, curr) => {
-    return acc + curr.executions.length;
-  }, 0)
+  let executionsCount = 0;
+  const sortedTemplates = templatesExecutions?.map(template => {
+    const executions = [...template.executions].sort((a, b) => {
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    })
+    executionsCount += template.executions.length;
+
+    return {
+      ...template,
+      executions
+    }
+  })
 
   return (
     <Layout>
@@ -35,8 +46,8 @@ const Sparks = () => {
             My Sparks ({executionsCount})
           </Typography>
           <Stack gap={1}>
-          {templatesExecutions && templatesExecutions.length > 0 ? (
-            templatesExecutions.map((template, i) => (
+          {sortedTemplates && sortedTemplates.length > 0 ? (
+            sortedTemplates.map((template, i) => (
               <Accordion key={template.id}
                 expanded={expanded === `accordian${i}`} 
                 onChange={toggleExpand(`accordian${i}`)}
@@ -80,7 +91,8 @@ const Sparks = () => {
                   {template.executions.map((execution) => (
                     <Stack key={execution.id}
                       direction={"row"} justifyContent={"space-between"} alignItems={"center"} gap={1}
-                      sx={{ p: "8px 16px" }}
+                      sx={{ p: "8px 16px", cursor: "pointer", ":hover": { bgcolor: "action.hover" } }}
+                      onClick={() => router.push(`prompt/${template.slug}?spark=${execution.id}`) }
                     >
                       <Typography fontSize={14} fontWeight={500} color={"onSurface"} letterSpacing={.46}
                         dangerouslySetInnerHTML={{ __html: 

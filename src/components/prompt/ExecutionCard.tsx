@@ -15,6 +15,14 @@ interface Props {
 
 export const ExecutionCard: React.FC<Props> = ({ execution, templateData }) => {
 
+  const promptsOrderMap: { [key: string]: number } = {};
+  templateData.prompts.forEach((prompt) => {
+    promptsOrderMap[prompt.id] = prompt.order;
+  });
+  const sortedExecutions = [...execution.prompt_executions].sort((a, b) => {
+    return promptsOrderMap[a.prompt] - promptsOrderMap[b.prompt];
+  });
+
   const isImageOutput = (output: string): boolean => {
     return (
       output.endsWith(".png") ||
@@ -62,7 +70,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData }) => {
       <Typography sx={{ fontSize: 48, fontWeight: 400, color: "onSurface", py: "24px" }}>
         {execution.title}
       </Typography>
-      {execution.prompt_executions?.map((exec) => {
+      {sortedExecutions?.map((exec) => {
         const prompt = templateData.prompts.find(
           (prompt) => prompt.id === exec.prompt
         );

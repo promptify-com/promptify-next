@@ -17,7 +17,7 @@ import {
 import materialDynamicColors from "material-dynamic-colors";
 import {
   useGetCollectionTemplatesQuery,
-  useGetPromptTemplatesExecutionsQuery,
+  useGetExecutionsByTemplateQuery,
   useTemplateView,
 } from "../../core/api/prompts";
 import { Templates, TemplatesExecutions } from "../../core/api/dto/templates";
@@ -35,6 +35,7 @@ import { Executions } from "@/components/collections/Executions";
 import { Details } from "@/components/collections/Details";
 import { authClient } from "@/common/axios";
 import Head from "next/head";
+import { skipToken } from "@reduxjs/toolkit/dist/query";
 
 export const Collection = ({ fetchedTemplate, fetchedTemplateError }: any) => {
   const router = useRouter();
@@ -58,7 +59,7 @@ export const Collection = ({ fetchedTemplate, fetchedTemplateError }: any) => {
     error: templateExecutionsError,
     isFetching: isFetchingExecutions,
     refetch: refetchTemplateExecutions,
-  } = useGetPromptTemplatesExecutionsQuery(
+  } = useGetExecutionsByTemplateQuery(
     templateData?.id ? +templateData.id : 1
   );
   // const {
@@ -66,7 +67,7 @@ export const Collection = ({ fetchedTemplate, fetchedTemplateError }: any) => {
   //   error: fetchedTemplateError,
   //   isLoading: isLoadingTemplate,
   //   isFetching: isFetchingTemplate,
-  // } = useGetCollectionTemplatesQuery(id ? +id : 1, {
+  // } = useGetCollectionTemplatesQuery(id ? id : skipToken, {
   //   refetchOnMountOrArgChange: true,
   // });
 
@@ -115,7 +116,7 @@ export const Collection = ({ fetchedTemplate, fetchedTemplateError }: any) => {
   }, [templateExecutions]);
 
   useEffect(() => {
-    templateView(id ? +id : 1);
+    templateView(id ? id : skipToken);
   }, []);
 
   useEffect(() => {

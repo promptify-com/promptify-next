@@ -10,6 +10,7 @@ import { PromptLiveResponse } from "@/common/types/prompt";
 import { ExecutionCardGenerated } from "./ExecutionCardGenerated";
 import { ExecutionsHeader } from "./ExecutionsHeader";
 import { addToFavorite, removeFromFavorite } from "@/hooks/api/executions";
+import { useRouter } from "next/router";
 
 interface Props {
   templateData: Templates;
@@ -32,6 +33,8 @@ export const Executions: React.FC<Props> = ({
   const [sortedExecutions, setSortedExecutions] = useState<TemplatesExecutions[]>([]);
   const [firstLoad, setFirstLoad] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
+  const routerSpark = router.query?.spark;
 
   // click listener to remove opacity layer on first loaded execution
   useEffect(() => {
@@ -54,6 +57,14 @@ export const Executions: React.FC<Props> = ({
     setSortedExecutions(sorted)
     setSelectedExecution(sorted[0] || null)
   }, [executions])
+
+  useEffect(() => {
+    if (routerSpark) {
+      const execution = executions.find((exec) => exec.id.toString() === routerSpark);
+      if (execution) 
+        setSelectedExecution(execution);
+    }
+  }, [routerSpark, executions]);
 
   useEffect(() => {
     if(defaultExecution) {
@@ -137,7 +148,7 @@ export const Executions: React.FC<Props> = ({
               />
             ) : (
               <Typography sx={{ mt: "40px", textAlign: "center" }}>
-                No execution found
+                No spark found
               </Typography>
             )
           )
