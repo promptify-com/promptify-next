@@ -172,16 +172,15 @@ export const Prompts = () => {
         onClose={() => setConfirmDialog(false)}
         aria-describedby="alert-dialog-slide-description"
       >
-        <DialogTitle>{"Use Google's location service?"}</DialogTitle>
+        <DialogTitle>{"Confirm Deletion"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-slide-description">
-            Let Google help apps determine location. This means sending
-            anonymous location data to Google, even when no apps are running.
+            Are you sure you want to delete this item? Once deleted, it cannot be recovered. Please proceed with caution.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setConfirmDialog(false)}>Disagree</Button>
-          <Button onClick={() => confirmDelete()}>Agree</Button>
+          <Button onClick={() => setConfirmDialog(false)}>Cancel</Button>
+          <Button onClick={() => confirmDelete()}>Confirm</Button>
         </DialogActions>
       </Dialog>
       <TemplateFormModal
