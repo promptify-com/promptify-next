@@ -23,7 +23,6 @@ import { ClassicPreset } from "rete";
 import { Node } from "@/components/builder/Editor";
 import { Prompts } from "@/core/api/dto/prompts";
 import { deletePrompt, updateTemplate } from "../../hooks/api/templates";
-import { PageWrapper } from "@/components/PageWrapper";
 import { ContentCopy } from "@mui/icons-material";
 import { useRouter } from "next/router";
 import { INodesData } from "@/common/types/builder";
@@ -60,8 +59,12 @@ export const Builder = () => {
   const [prompts, setPrompts] = useState<Prompts[]>([]);
   const [engines] = useEngines();
   const [selectedNode, setSelectedNode] = useState<any>(null);
-  const [selectedNodeData, setSelectedNodeData] = useState<INodesData | null>(null);
-  const [selectedConnection, setSelectedConnection] = useState<string | null>(null);
+  const [selectedNodeData, setSelectedNodeData] = useState<INodesData | null>(
+    null
+  );
+  const [selectedConnection, setSelectedConnection] = useState<string | null>(
+    null
+  );
   const [nodesData, setNodesData] = useState<INodesData[]>([]);
   const { data: promptsData } = useGetPromptTemplatesQuery(id ? +id : skipToken);
   const dataForRequest = useRef({} as any);
@@ -426,7 +429,7 @@ export const Builder = () => {
 
   return (
     <>
-      <PageWrapper>
+      <Box>
         <Grid container>
           <Grid item xs={12}>
             <Header
@@ -615,7 +618,7 @@ export const Builder = () => {
             </Button>
           </DialogActions>
         </Dialog>
-      </PageWrapper>
+      </Box>
     </>
   );
 };

@@ -28,7 +28,6 @@ import { SidebarIcon } from "@/assets/icons/Sidebar";
 import { Collections } from "@/components/common/sidebar/Collections";
 import { useGetCollectionTemplatesQuery } from "@/core/api/prompts";
 import useToken from "@/hooks/useToken";
-import { useGetCurrentUser } from "@/hooks/api/user";
 import { ExploreFilterSideBar } from "@/components/explorer/ExploreFilterSideBar";
 import {
   useGetEnginesQuery,
@@ -95,9 +94,10 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
   const { data: user, isLoading: userLoading } = useGetCurrentUserQuery(token);
 
   const { data: collections, isLoading: isCollectionsLoading } =
-    useGetCollectionTemplatesQuery(user?.id as number, {
+    useGetCollectionTemplatesQuery(user?.favorite_collection_id as number, {
       skip: !user,
     });
+
   const { data: tags } = useGetTagsPopularQuery();
   const { data: engines } = useGetEnginesQuery();
 
@@ -122,15 +122,24 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
       name: "My Sparks",
       href: "/sparks",
       icon: <AutoAwesome />,
-      active: isSparksPage,
+      active: pathname == "/sparks",
     },
     {
       name: "Learn",
       href: "/",
       icon: <MenuBookRounded />,
-      active: pathname == "/",
+      active: pathname == "/learn",
     },
   ];
+
+  const navigate = (href: string) => {
+    let next = href.split("/");
+
+    if (splittedPath[1] == next[1]) {
+      return null;
+    }
+    router.push(href);
+  };
 
   return (
     <Box>
@@ -150,8 +159,8 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
               !open && expandedOnHover
                 ? "0px 7px 8px -4px #00000033, 0px 12px 17px 2px #00000024, 0px 5px 22px 4px #0000001F"
                 : "",
-            overflow: "hidden",
             boxSizing: "border-box",
+            overflow: "hidden",
             bgcolor: "white",
             border: "none",
           },
@@ -214,8 +223,8 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
                     item.name == "Browse" && setShowFilters(!showFilters)
                   }
                 >
-                  <Link
-                    href={isExplorePage ? "#" : item.href}
+                  <Box
+                    onClick={() => navigate(item.href)}
                     style={{
                       textDecoration: "none",
                       padding: 6.5,
@@ -247,7 +256,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
                     >
                       {item.name}
                     </Typography>
-                  </Link>
+                  </Box>
                   {item.name == "Browse" &&
                     isExplorePage &&
                     (showFilters ? (

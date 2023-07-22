@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { LinkOff } from "@mui/icons-material";
 import { Avatar, Box, Snackbar, Typography } from "@mui/material";
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
+import { useRouter } from "next/router";
 
 import {
   AlertContent,
@@ -12,7 +13,6 @@ import { formatConnection } from "@/common/utils";
 import AddConnectionDialog from "@/components/dialog/AddConnectionDialog";
 import DeleteConnectionDialog from "@/components/dialog/DeleteConnectionDialog";
 import { useConnectionss, useDeleteConnection } from "@/hooks/api/connections";
-import { useRouter } from "next/router";
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
   props,
@@ -34,7 +34,7 @@ export const Connections = () => {
     color: "success",
     message: "Connection deleted successfully",
   });
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [_useDeferredAction] = useConnectionss();
   const [useDeferredAction] = useDeleteConnection();
@@ -113,218 +113,214 @@ export const Connections = () => {
     }
   }, []);
   return (
-    <section
-      id="connections"
-      style={{ scrollMarginTop: "100px", marginTop: "8rem" }}
+    <Box
+      mt={"24px"}
+      width={"100%"}
+      sx={{
+        justifyContent: "center",
+        display: "flex",
+        flexDirection: "column",
+        gap: "16px",
+      }}
     >
-      <Box
+      <Typography
+        textAlign={{ xs: "center", sm: "start" }}
+        mb={{ xs: "1rem", sm: "0rem" }}
         sx={{
-          justifyContent: "center",
+          fontFamily: "Poppins",
+          fontStyle: "normal",
+          fontWeight: { xs: 400, sm: 500 },
+          fontSize: 24,
+          lineHeight: { xs: "133.4%", sm: "123.5%" },
           display: "flex",
-          flexDirection: "column",
-          alignItems: { xs: "center", sm: "start" },
-          padding: { xs: "1em", sm: "2em 0em" },
-          gap: "1em",
+          alignItems: "center",
+          color: "#1B1B1E",
         }}
       >
-        <Typography
-          textAlign={{ xs: "center", sm: "start" }}
-          mb={{ xs: "1rem", sm: "0rem" }}
-          sx={{
-            fontFamily: "Poppins",
-            fontStyle: "normal",
-            fontWeight: { xs: 400, sm: 500 },
-            fontSize: { xs: "24px", sm: "34px" },
-            lineHeight: { xs: "133.4%", sm: "123.5%" },
-            display: "flex",
-            alignItems: "center",
-            color: "#1B1B1E",
-          }}
-        >
-          Connections
-        </Typography>
-
-        {!!connections &&
-          connections.map((item, index: number) => {
-            const customConnection = formatConnection(item);
-            return (
+        Connections
+      </Typography>
+      {!!connections &&
+        connections.map((item) => {
+          const customConnection = formatConnection(item);
+          return (
+            <Box
+              key={item.id}
+              sx={{
+                bgcolor: "white",
+                height: "74px",
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                padding: "0px 24px",
+                border: "1px solid #ECECF4",
+                borderRadius: "16px",
+              }}
+            >
               <Box
-                mt={{ xs: "0rem", sm: "0.8rem" }}
-                key={index}
                 sx={{
-                  marginTop: "0rem",
-                  width: { xs: "90%", sm: "96%" },
-                  height: "74px",
                   display: "flex",
-                  flexDirection: "row",
+                  flexDirection: { xs: "column", sm: "row" },
                   alignItems: "center",
-                  padding: "0em 1em",
-                  border: "1px solid #ECECF4",
-                  borderRadius: "16px",
+                  padding: "0px 24px 0px 0px",
+                  gap: { xs: "0em", sm: "1em" },
                 }}
               >
+                {customConnection.icon}
+                <Typography
+                  fontWeight={500}
+                  fontSize="1rem"
+                  display={{ xs: "none", sm: "block" }}
+                >
+                  {customConnection.service}
+                </Typography>
+              </Box>
+              <Box display="flex" width="100%" justifyContent="space-between">
                 <Box
                   sx={{
                     display: "flex",
-                    flexDirection: { xs: "column", sm: "row" },
+                    flexDirection: "row",
                     alignItems: "center",
-                    padding: "0px 24px 0px 0px",
-                    gap: { xs: "0em", sm: "1em" },
+                    gap: "24px",
                   }}
                 >
-                  {customConnection.icon}
-                  <Typography
-                    fontWeight={500}
-                    fontSize="1rem"
-                    display={{ xs: "none", sm: "block" }}
-                  >
-                    {customConnection.service}
-                  </Typography>
-                </Box>
-                <Box display="flex" width="100%" justifyContent="space-between">
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      gap: "24px",
-                    }}
-                  >
-                    <Box>
-                      <Avatar
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          fontFamily: "Poppins, Space Mono",
-                          fontSize: "16px",
-                          borderRadius: "50%",
-                          overflow: "hidden",
-                          color: "#fff",
-                          backgroundColor: "black",
-                          height: "32px",
-                          width: "32px",
-                        }}
-                        src={customConnection.avatar}
-                      >
-                        {customConnection.avatar}
-                      </Avatar>
-                    </Box>
-                    <Box>
-                      <Typography
-                        sx={{
-                          fontFamily: "Poppins",
-                          fontStyle: "normal",
-                          fontWeight: 400,
-                          fontSize: "16px",
-                          lineHeight: "150%",
-                          display: { xs: "flex", sm: "none" },
-                          alignItems: "center",
-                          letterSpacing: "0.15px",
-                          color: "#1B1B1E",
-                        }}
-                      >
-                        {customConnection.name.length > 13
-                          ? customConnection.name.slice(0, 13) + "..."
-                          : customConnection.name}
-                      </Typography>
-                      <Typography
-                        sx={{
-                          fontFamily: "Poppins",
-                          fontStyle: "normal",
-                          fontWeight: 400,
-                          fontSize: "16px",
-                          lineHeight: "150%",
-                          display: { xs: "none", sm: "flex" },
-                          alignItems: "center",
-                          letterSpacing: "0.15px",
-                          color: "#1B1B1E",
-                        }}
-                      >
-                        {customConnection.name}
-                      </Typography>
-                    </Box>
+                  <Box>
+                    <Avatar
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontFamily: "Poppins, Space Mono",
+                        fontSize: "16px",
+                        borderRadius: "50%",
+                        overflow: "hidden",
+                        color: "#fff",
+                        backgroundColor: "black",
+                        height: "48px",
+                        width: "48px",
+                      }}
+                      src={customConnection.avatar}
+                    >
+                      {customConnection.avatar}
+                    </Avatar>
                   </Box>
-                  {connections.length !== 1 && (
-                    <Box
-                      display="flex"
-                      alignItems="center"
-                      color="rgba(55, 92, 169, 1)"
-                      sx={{ cursor: "pointer" }}
-                      onClick={() => {
-                        setConnectionSelected(item);
-                        setOpen(true);
+                  <Box>
+                    <Typography
+                      sx={{
+                        fontFamily: "Poppins",
+                        fontStyle: "normal",
+                        fontWeight: 400,
+                        fontSize: "16px",
+                        lineHeight: "150%",
+                        display: { xs: "none", sm: "flex" },
+                        alignItems: "center",
+                        letterSpacing: "0.15px",
+                        color: "#1B1B1E",
                       }}
                     >
-                      <LinkOff />
-                      <Typography
-                        fontWeight={500}
-                        fontSize="1rem"
-                        ml="1rem"
-                        display={{ xs: "none", sm: "block" }}
-                        sx={{
-                          color: "rgba(55, 92, 169, 1)",
-                          fontFamily: "Poppins",
-                          fontStyle: "normal",
-                          fontWeight: 500,
-                          fontSize: "15px",
-                          lineHeight: "26px",
-                          letterSpacing: "0.46px",
-                        }}
-                      >
-                        Disconnect
-                      </Typography>
-                    </Box>
-                  )}
+                      {customConnection.name}
+                    </Typography>
+                  </Box>
                 </Box>
+                {connections.length !== 1 && (
+                  <Box
+                    display="flex"
+                    mr={"24px"}
+                    alignItems="center"
+                    color="onSurface"
+                    sx={{ cursor: "pointer" }}
+                    onClick={() => {
+                      setConnectionSelected(item);
+                      setOpen(true);
+                    }}
+                  >
+                    <LinkOff />
+                    <Typography
+                      fontWeight={500}
+                      fontSize="1rem"
+                      ml="1rem"
+                      display={{ xs: "none", sm: "block" }}
+                      sx={{
+                        fontFamily: "Poppins",
+                        fontStyle: "normal",
+                        fontWeight: 500,
+                        fontSize: "15px",
+                        lineHeight: "26px",
+                        letterSpacing: "0.46px",
+                      }}
+                    >
+                      Disconnect
+                    </Typography>
+                  </Box>
+                )}
               </Box>
-            );
-          })}
+            </Box>
+          );
+        })}
 
-        <Box
-          color="#0F6FFF"
-          mt={{ xs: "0rem", sm: "1.5rem" }}
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            padding: { xs: "0px 11px", sm: "8px 22px" },
-            height: "64px",
-            border: "1px solid rgba(55, 92, 169, 0.6)",
-            borderRadius: "16px",
-            flexDirection: "row",
-            gap: "8px",
-            cursor: "pointer",
-            width: { xs: "95%", sm: "95%" },
-          }}
-          onClick={() => setOpenAdd(true)}
-        >
-          <Typography
-            ml="0.5rem"
-            fontSize="1rem"
-            sx={{
-              fontFamily: "Poppins",
-              fontStyle: "normal",
-              fontWeight: 500,
-              fontSize: "15px",
-              lineHeight: "173%",
-              letterSpacing: "0.46px",
-              color: "#375CA9",
-            }}
-          >
-            Add More connections
-          </Typography>
-        </Box>
-
-        <AddConnectionDialog
-          openAdd={openAdd}
-          setOpenAdd={setOpenAdd}
-          setTypeAlert={setTypeAlert}
-          preLogin={preLogin}
-          postLogin={postLogin}
-          authConnection={authConnection}
-        />
+      <Box
+        width={"100%"}
+        bgcolor={"white"}
+        height={"64px"}
+        display={"flex"}
+        alignItems={"center"}
+        justifyContent={"center"}
+        borderRadius={"16px"}
+        onClick={() => setOpenAdd(true)}
+        sx={{
+          cursor: "pointer",
+          "&:hover": {
+            bgcolor: "surface.2",
+          },
+        }}
+      >
+        <Typography fontSize={15} fontWeight={500} lineHeight={"26px"}>
+          Add More connections
+        </Typography>
       </Box>
+
+      {/* <Box
+        color="#0F6FFF"
+        mt={{ xs: "0rem", sm: "1.5rem" }}
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          padding: { xs: "0px 11px", sm: "8px 22px" },
+          height: "64px",
+          border: "1px solid rgba(55, 92, 169, 0.6)",
+          borderRadius: "16px",
+          flexDirection: "row",
+          gap: "8px",
+          cursor: "pointer",
+          width: { xs: "95%", sm: "95%" },
+        }}
+        onClick={() => setOpenAdd(true)}
+      >
+        <Typography
+          ml="0.5rem"
+          fontSize="1rem"
+          sx={{
+            fontFamily: "Poppins",
+            fontStyle: "normal",
+            fontWeight: 500,
+            fontSize: "15px",
+            lineHeight: "173%",
+            letterSpacing: "0.46px",
+            color: "#375CA9",
+          }}
+        >
+          Add More connections
+        </Typography>
+      </Box> */}
+
+      <AddConnectionDialog
+        openAdd={openAdd}
+        setOpenAdd={setOpenAdd}
+        setTypeAlert={setTypeAlert}
+        preLogin={preLogin}
+        postLogin={postLogin}
+        authConnection={authConnection}
+      />
       <DeleteConnectionDialog
         handleDeleteConnection={(e: IConnection) => handleDeleteConnection(e)}
         typeConnection={connectionSelected || null}
@@ -338,6 +334,6 @@ export const Connections = () => {
       >
         <Alert severity={typeAlert.color}>{typeAlert.message}</Alert>
       </Snackbar>
-    </section>
+    </Box>
   );
 };

@@ -1,24 +1,31 @@
 import React from "react";
 import { Box, Grid } from "@mui/material";
 import Head from "next/head";
+import { useSelector } from "react-redux";
 
 import {
   useGetCategoriesQuery,
-  useGetTemplatesByKeyWordAndTagQuery,
+  useGetTemplatesByFilterQuery,
 } from "@/core/api/explorer";
 import { Layout } from "@/layout";
 import { CategoriesSection } from "@/components/explorer/CategoriesSection";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
+import { RootState } from "@/core/store";
+import { FiltersSelected } from "@/components/explorer/FiltersSelected";
 
 export default function ExplorePage() {
+  const engineId = useSelector((state: RootState) => state.filters.engine?.id);
+  const tag = useSelector((state: RootState) => state.filters.tag?.name);
   const { data: templates, isLoading: isTemplatesLoading } =
-    useGetTemplatesByKeyWordAndTagQuery(
-      { keyword: "", tag: "" },
-      { refetchOnMountOrArgChange: true }
-    );
+    useGetTemplatesByFilterQuery({ engineId, tag });
+  const filters = useSelector((state: RootState) => state.filters);
 
   const { data: categories, isLoading: isCategoryLoading } =
     useGetCategoriesQuery();
+
+  const isFiltersNullish = Object.values(filters).every((value) => {
+    return value === null ? true : false;
+  });
 
   return (
     <>
@@ -33,11 +40,16 @@ export default function ExplorePage() {
         </Head>
         <Box>
           <Grid sx={{}} display={"flex"} flexDirection={"column"} gap={"16px"}>
-            <CategoriesSection
-              categories={categories}
-              isLoading={isCategoryLoading}
-            />
+            <FiltersSelected show={!isFiltersNullish} />
+            {isFiltersNullish && (
+              <CategoriesSection
+                categories={categories}
+                isLoading={isCategoryLoading}
+              />
+            )}
+
             <TemplatesSection
+              filtred={!isFiltersNullish}
               templates={templates ?? []}
               isLoading={isTemplatesLoading}
             />

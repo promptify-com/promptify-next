@@ -57,7 +57,10 @@ export const promptsApi = createApi({
           method: "get",
         }),
       }),
-      getTemplatesExecutionsByMe: builder.query<TemplateExecutionsDisplay[], void>({
+      getTemplatesExecutionsByMe: builder.query<
+        TemplateExecutionsDisplay[],
+        void
+      >({
         query: () => ({
           url: `/api/meta/template-executions/me`,
           method: "get",
@@ -67,6 +70,12 @@ export const promptsApi = createApi({
         query: () => ({
           url: `/api/meta/templates/`,
           method: "get",
+        }),
+      }),
+      deleteTemplate: builder.mutation({
+        query: (id: number) => ({
+          url: `/api/meta/templates/${id}`,
+          method: "delete",
         }),
       }),
     };
@@ -82,6 +91,7 @@ export const {
   useGetExecutionByIdQuery,
   useGetTemplatesExecutionsByMeQuery,
   useGetAllPromptTemplatesQuery,
+  useDeleteTemplateMutation,
 } = promptsApi;
 
 export const useTemplateView = () => {

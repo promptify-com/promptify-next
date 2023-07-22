@@ -14,6 +14,7 @@ export interface User {
   date_joined: string;
   interests: IInterest[];
   created?: boolean;
+  favorite_collection_id: number
 }
 
 export interface UserMin {

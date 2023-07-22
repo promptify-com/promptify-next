@@ -3,9 +3,18 @@ import { Prompts } from "./prompts";
 
 export interface FilterParams {
   categoryId?: number;
-  subcategoryId?: string;
-  engineId?: string;
+  subcategoryId?: number;
+  tag?: string | undefined;
+  engineId?: number;
   filter?: string;
+}
+
+export interface SelectedFilters {
+  engine: Engine | null;
+  tag: Tag | null;
+  keyword: string | null;
+  category: Category | null;
+  subCategory: Category | null;
 }
 
 export class TemplateParam {
@@ -25,8 +34,9 @@ export interface TemplateKeyWordTag {
 
 export interface TemplateIds {
   categoryId: number;
-  subcategoryId: string;
-  engineId: string;
+  subcategoryId: number;
+  engineId: number;
+  tagId: number;
 }
 
 export interface Engine {

@@ -5,6 +5,7 @@ import {
   Button,
   Chip,
   Grid,
+  IconButton,
   List,
   ListItem,
   ListItemButton,
@@ -13,6 +14,9 @@ import {
 } from "@mui/material";
 
 import { Engine, Tag } from "@/core/api/dto/templates";
+import { useDispatch, useSelector } from "react-redux";
+import { setSelectedEngine, setSelectedTag } from "@/core/store/filtersSlice";
+import { RootState } from "@/core/store";
 
 interface ExploreFilterSideBarProps {
   sidebarOpen: boolean;
@@ -26,6 +30,16 @@ export const ExploreFilterSideBar: React.FC<ExploreFilterSideBarProps> = ({
   sidebarOpen,
 }) => {
   const [itemsToShow, setItemsToShow] = useState<number>(3);
+
+  const filters = useSelector((state: RootState) => state.filters);
+  const dispatch = useDispatch();
+
+  const handleEngineSelect = (engine: Engine | null) => {
+    dispatch(setSelectedEngine(engine));
+  };
+  const handleTagSelect = (tag: Tag | null) => {
+    dispatch(setSelectedTag(tag));
+  };
 
   const showmore = () => {
     if (engines?.length) {
@@ -48,15 +62,17 @@ export const ExploreFilterSideBar: React.FC<ExploreFilterSideBarProps> = ({
         <Grid
           className="sidebar-list"
           sx={{
-            height: itemsToShow === 3 ? "auto" : "36vh",
+            height: itemsToShow === 3 ? "auto" : "400px",
             overflowY: itemsToShow === 3 ? "none" : "scroll",
+            overflowX: "none",
           }}
         >
           {engines?.slice(0, itemsToShow).map((engine) => (
             <ListItem disablePadding key={engine.name}>
               <ListItemButton
-                key={engine.id}
                 sx={{ borderRadius: "8px", minHeight: 48, mx: 1, px: 3.0 }}
+                onClick={() => handleEngineSelect(engine)}
+                selected={filters.engine?.id == engine.id}
               >
                 <Avatar
                   src={
@@ -105,7 +121,7 @@ export const ExploreFilterSideBar: React.FC<ExploreFilterSideBarProps> = ({
           {tags?.map((tag) => (
             <Chip
               sx={{
-                bgcolor: "surface.3",
+                bgcolor: filters.tag?.id == tag.id ? "#9DB2BF" : "surface.3",
                 fontSize: 14,
                 fontWeight: 500,
                 lineHeight: "18px",
@@ -113,7 +129,7 @@ export const ExploreFilterSideBar: React.FC<ExploreFilterSideBarProps> = ({
               }}
               key={tag.id}
               label={tag.name}
-              onClick={() => {}}
+              onClick={() => handleTagSelect(tag)}
             />
           ))}
         </Grid>
