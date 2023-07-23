@@ -45,8 +45,7 @@ const Menu: MenuType[] = [
   {
     id: 2,
     icon: <AutoAwesome />,
-    href: "/dashboard",
-
+    href: "/sparks",
     name: "My Sparks",
   },
   {

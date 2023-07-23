@@ -117,24 +117,31 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
       href: "/explore",
       icon: <Search />,
       active: isExplorePage,
+      external: false,
     },
     {
       name: "My Sparks",
       href: "/sparks",
       icon: <AutoAwesome />,
       active: pathname == "/sparks",
+      external: false,
     },
     {
       name: "Learn",
-      href: "/",
+      href: "https://promptify.com",
       icon: <MenuBookRounded />,
       active: pathname == "/learn",
+      external: true,
     },
   ];
 
-  const navigate = (href: string) => {
+  const navigate = (href: string, isExternal: boolean) => {
+    if (isExternal) {
+      window.open(href, '_blank'); // opens in a new tab
+      return;
+    }
+    
     let next = href.split("/");
-
     if (splittedPath[1] == next[1]) {
       return null;
     }
@@ -224,7 +231,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
                   }
                 >
                   <Box
-                    onClick={() => navigate(item.href)}
+                   onClick={() => navigate(item.href, item.external)}
                     style={{
                       textDecoration: "none",
                       padding: 6.5,
