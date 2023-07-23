@@ -16,10 +16,18 @@ interface Props {
 export const ExecutionCard: React.FC<Props> = ({ execution, templateData }) => {
 
   const promptsOrderMap: { [key: string]: number } = {};
+  const promptsExecutionOrderMap: { [key: string]: number } = {};
+
   templateData.prompts.forEach((prompt) => {
     promptsOrderMap[prompt.id] = prompt.order;
+    promptsExecutionOrderMap[prompt.id] = prompt.execution_priority;
   });
+
   const sortedExecutions = [...execution.prompt_executions].sort((a, b) => {
+    if (promptsOrderMap[a.prompt] === promptsOrderMap[b.prompt]) {
+      console.log(promptsExecutionOrderMap[a.prompt], promptsExecutionOrderMap[b.prompt]);
+      return promptsExecutionOrderMap[a.prompt] - promptsExecutionOrderMap[b.prompt];
+    }
     return promptsOrderMap[a.prompt] - promptsOrderMap[b.prompt];
   });
 

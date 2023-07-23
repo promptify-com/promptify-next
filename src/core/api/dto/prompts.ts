@@ -19,6 +19,7 @@ export interface Prompts {
   model_parameters: { temperature: number; maximumLength: number; topP: number; presencePenalty: number; frequencyPenalty: number; } | null;
   output_format: string;
   prompt_output_variable: string;
+  execution_priority: number;
 }
 
 export interface PromptParam {
