@@ -57,6 +57,7 @@ export async function createEditor(
   const arrange = new AutoArrangePlugin<Schemes>();
   const selector = AreaExtensions.selector();
   const accumulating = AreaExtensions.accumulateOnCtrl();
+  let isLoaded = false;
 
   const setInitialNodes = async (id: string, prompt: Prompts) => {
     let promptParams: PromptParams[] = [];
@@ -173,13 +174,14 @@ export async function createEditor(
     Promise.all(connectionPromises).then(() => {
       arrange.layout();
       AreaExtensions.zoomAt(area, editor.getNodes());
+      isLoaded = true;
     });
   });
 
   AreaExtensions.selectableNodes(area, selector, { accumulating });
 
   area.addPipe(async (context) => {
-    if (context.type === "connectioncreated") {
+    if (context.type === "connectioncreated" && isLoaded) {
       let target: any = context.data.target;
       let source: any = context.data.source;
 
@@ -313,7 +315,7 @@ export async function createEditor(
     }
     await editor.removeNode(nodeId);
   }
-
+  
   return {
     destroy: () => area.destroy(),
     editor,
