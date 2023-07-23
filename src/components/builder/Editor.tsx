@@ -1,24 +1,40 @@
-import React from 'react';
-import { createRoot } from 'react-dom/client';
-import { NodeEditor, GetSchemes, ClassicPreset, BaseSchemes, NodeId } from 'rete';
-import { AreaPlugin, AreaExtensions } from 'rete-area-plugin';
-import { BidirectFlow, ConnectionPlugin } from 'rete-connection-plugin';
-import { ReactRenderPlugin, Presets, ReactArea2D } from 'rete-react-render-plugin';
-import { CustomNode } from './CustomNode';
-import { CustomSocket } from './CustomSocket';
-import { AutoArrangePlugin, Presets as ArrangePresets } from 'rete-auto-arrange-plugin';
-import { SelectableConnection } from './SelectableConnection';
-import { PromptParams, Prompts } from '@/core/api/dto/prompts';
-import { INodesData } from '@/common/types/builder'; 
+import React from "react";
+import { createRoot } from "react-dom/client";
+import {
+  NodeEditor,
+  GetSchemes,
+  ClassicPreset,
+  BaseSchemes,
+  NodeId,
+} from "rete";
+import { AreaPlugin, AreaExtensions } from "rete-area-plugin";
+import { BidirectFlow, ConnectionPlugin } from "rete-connection-plugin";
+import {
+  ReactRenderPlugin,
+  Presets,
+  ReactArea2D,
+} from "rete-react-render-plugin";
+import { CustomNode } from "./CustomNode";
+import { CustomSocket } from "./CustomSocket";
+import {
+  AutoArrangePlugin,
+  Presets as ArrangePresets,
+} from "rete-auto-arrange-plugin";
+import { SelectableConnection } from "./SelectableConnection";
+import { PromptParams, Prompts } from "@/core/api/dto/prompts";
+import { INodesData } from "@/common/types/builder";
 
 export class Node extends ClassicPreset.Node {
   width = 250;
   height = 150;
-  count = '';
+  count = "";
   temp_id = 0;
 }
 
-class Connection extends ClassicPreset.Connection<ClassicPreset.Node, ClassicPreset.Node> {
+class Connection extends ClassicPreset.Connection<
+  ClassicPreset.Node,
+  ClassicPreset.Node
+> {
   selected?: boolean;
 }
 type Schemes = GetSchemes<Node, Connection>;
@@ -27,12 +43,12 @@ type AreaExtra = ReactArea2D<Schemes>;
 export async function createEditor(
   container: HTMLElement,
   setSelectedNode: (val: any) => void,
-  setSelectedConnection: (id: string|null) => void,
+  setSelectedConnection: (id: string | null) => void,
   prompts: Prompts[],
   nodeCount: number,
   setNodeCount: (val: number) => void,
   setNodesData: React.Dispatch<React.SetStateAction<INodesData[]>>,
-  updateTemplateDependencties: (val1: string, val2: string) => void,
+  updateTemplateDependencties: (val1: string, val2: string) => void
 ) {
   const editor = new NodeEditor<Schemes>();
   const area = new AreaPlugin<Schemes, AreaExtra>(container);
@@ -46,12 +62,12 @@ export async function createEditor(
     let promptParams: PromptParams[] = [];
     if (prompt) {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/meta/prompts/${prompt.id}/params`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/meta/prompts/${prompt.id}/params`
       );
       promptParams = await response.json();
     }
 
-    const initialParams = promptParams?.map(param => {
+    const initialParams = promptParams?.map((param) => {
       return {
         parameter_id: param.parameter.id,
         score: param.score,
@@ -62,14 +78,15 @@ export async function createEditor(
       };
     });
 
-    setNodesData(prev => [
+    setNodesData((prev) => [
       ...prev,
       {
         id: Number(id),
         count: nodeCount.toString(),
         title: prompt?.title || `Prompt #${nodeCount}`,
         content:
-          prompt?.content || 'Describe here prompt parameters, for example {{name:John Doe}}',
+          prompt?.content ||
+          "Describe here prompt parameters, for example {{name:John Doe}}",
         engine_id: prompt?.engine?.id || 1,
         dependencies: prompt?.dependencies || [],
         parameters: initialParams,
@@ -79,22 +96,21 @@ export async function createEditor(
         is_visible: prompt?.is_visible,
         show_output: prompt?.show_output,
         prompt_output_variable: prompt?.prompt_output_variable,
-
       },
     ]);
   };
 
   const createNode = async (name: string, prompt: Prompts) => {
-    const socket = new ClassicPreset.Socket('socket');
+    const socket = new ClassicPreset.Socket("socket");
     const node = new Node(name);
-    node.addInput('Input', new ClassicPreset.Input(socket, 'Input'));
-    node.addOutput('Output', new ClassicPreset.Output(socket, 'Output'));
+    node.addInput("Input", new ClassicPreset.Input(socket, "Input"));
+    node.addOutput("Output", new ClassicPreset.Output(socket, "Output"));
 
     const allNodes = editor.getNodes();
 
-    allNodes?.forEach(allNodesNode => {
+    allNodes?.forEach((allNodesNode) => {
       allNodesNode.selected = false;
-      area.update('node', allNodesNode.id);
+      area.update("node", allNodesNode.id);
     });
 
     setNodeCount(nodeCount + 1);
@@ -111,44 +127,59 @@ export async function createEditor(
       AreaExtensions.zoomAt(area, editor.getNodes());
     }
 
-    prompts.forEach(prompt => {
+    return { id: node.id };
+  };
+
+  // First, create all nodes
+  const nodeCreationPromises = prompts.map((prompt: Prompts) => {
+    return createNode(prompt.title, prompt).then((data) =>
+      setInitialNodes(data.id, prompt)
+    );
+  });
+
+  // After all nodes have been created, create connections
+  Promise.all(nodeCreationPromises).then(() => {
+    const connectionPromises: Promise<any>[] = [];
+
+    prompts.forEach((prompt) => {
       const allNodes = editor.getNodes();
 
-      const promptNode = allNodes?.filter(node => {
+      const promptNode = allNodes?.filter((node) => {
         return node?.id === prompt.id.toString();
       });
 
       if (prompt.dependencies) {
-        prompt.dependencies.forEach(dependency => {
-          const depNode = allNodes?.filter(node => {
+        prompt.dependencies.forEach((dependency) => {
+          const depNode = allNodes?.filter((node) => {
             return node?.id === dependency.toString();
           });
 
           if (depNode?.length && promptNode?.length) {
-            editor.addConnection(
-              new ClassicPreset.Connection(depNode[0], 'Output', promptNode[0], 'Input'),
+            const connectionPromise = editor.addConnection(
+              new ClassicPreset.Connection(
+                depNode[0],
+                "Output",
+                promptNode[0],
+                "Input"
+              )
             );
+            connectionPromises.push(connectionPromise);
           }
         });
       }
     });
 
-    return { id: node.id };
-  };
-
-  prompts.forEach((prompt: Prompts) => {
-    createNode(prompt.title, prompt)
-      .then(data => setInitialNodes(data.id, prompt))
-      .finally(() => {
-        arrange.layout();
-        AreaExtensions.zoomAt(area, editor.getNodes());
-      });
+    // Once all connections are added, arrange the layout
+    Promise.all(connectionPromises).then(() => {
+      arrange.layout();
+      AreaExtensions.zoomAt(area, editor.getNodes());
+    });
   });
 
   AreaExtensions.selectableNodes(area, selector, { accumulating });
 
-  area.addPipe(async context => {
-    if (context.type === 'connectioncreated') {
+  area.addPipe(async (context) => {
+    if (context.type === "connectioncreated") {
       let target: any = context.data.target;
       let source: any = context.data.source;
 
@@ -163,7 +194,7 @@ export async function createEditor(
       }
 
       // if self connection ?
-      if(target === source) {
+      if (target === source) {
         editor.removeConnection(context.data.id);
         return context;
       }
@@ -172,34 +203,36 @@ export async function createEditor(
       const connections = await editor.getConnections();
       connections.forEach(async (conn, i, self) => {
         const validator = conn.source + conn.target;
-        const existIndex = self.findIndex(checkConn => checkConn.source + checkConn.target === validator)
-        if(i !== existIndex) {
-          await editor.removeConnection(conn.id)
+        const existIndex = self.findIndex(
+          (checkConn) => checkConn.source + checkConn.target === validator
+        );
+        if (i !== existIndex) {
+          await editor.removeConnection(conn.id);
         }
-      })
+      });
 
       updateTemplateDependencties(target, source);
     }
 
-    if (context.type === 'nodepicked') {
+    if (context.type === "nodepicked") {
       const allNodes = editor.getNodes();
-      allNodes?.forEach(allNodesNode => {
+      allNodes?.forEach((allNodesNode) => {
         allNodesNode.selected = false;
-        area.update('node', allNodesNode.id);
+        area.update("node", allNodesNode.id);
       });
 
       const node = editor.getNode(context.data.id);
       node.selected = true;
-      area.update('node', node.id);
+      area.update("node", node.id);
       setSelectedNode(node);
       setSelectedConnection(null);
     }
 
-    if (context.type === 'pointerdown') {
+    if (context.type === "pointerdown") {
       const allNodes = editor.getNodes();
-      allNodes?.forEach(node => {
+      allNodes?.forEach((node) => {
         node.selected = false;
-        area.update('node', node.id);
+        area.update("node", node.id);
       });
       setSelectedNode(null);
       setSelectedConnection(null);
@@ -224,7 +257,7 @@ export async function createEditor(
           return SelectableConnectionBind;
         },
       },
-    }),
+    })
   );
 
   connection.addPreset(() => new BidirectFlow());
@@ -240,36 +273,39 @@ export async function createEditor(
     AreaExtensions.zoomAt(area, editor.getNodes(), { scale: k });
   };
 
-  function SelectableConnectionBind(props: { data: Schemes['Connection'] }) {
+  function SelectableConnectionBind(props: { data: Schemes["Connection"] }) {
     const id = props.data.id;
-    const label = 'connection';
+    const label = "connection";
 
     return (
       <SelectableConnection
         {...props}
         click={() => {
           setSelectedConnection(id),
-          selector.add(
-            {
-              id,
-              label,
-              // eslint-disable-next-line @typescript-eslint/no-empty-function
-              translate() {},
-              unselect() {
-                props.data.selected = false;
-                area.update('connection', id);
+            selector.add(
+              {
+                id,
+                label,
+                // eslint-disable-next-line @typescript-eslint/no-empty-function
+                translate() {},
+                unselect() {
+                  props.data.selected = false;
+                  area.update("connection", id);
+                },
               },
-            },
-            accumulating.active(),
-          );
+              accumulating.active()
+            );
           props.data.selected = true;
-          area.update('connection', id);
+          area.update("connection", id);
         }}
       />
     );
   }
 
-  async function removeNodeWithConnections(editor: NodeEditor<BaseSchemes>, nodeId: NodeId) {
+  async function removeNodeWithConnections(
+    editor: NodeEditor<BaseSchemes>,
+    nodeId: NodeId
+  ) {
     for (const item of [...editor.getConnections()]) {
       if (item.source === nodeId || item.target === nodeId) {
         await editor.removeConnection(item.id);
@@ -296,8 +332,8 @@ export async function createEditor(
         }
       }
     },
-    removeConnection: async (connectionId:string) => {
+    removeConnection: async (connectionId: string) => {
       await editor.removeConnection(connectionId);
-    }
+    },
   };
 }
