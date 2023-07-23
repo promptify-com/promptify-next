@@ -286,7 +286,8 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
             }
           } catch {
             console.error(msg);
-            onError(msg.data.slice(0, 100));
+            // TODO: this is triggered event when there is no error
+            // onError(msg.data.slice(0, 100));
           }
         },
         onerror(err) {
