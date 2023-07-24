@@ -89,7 +89,6 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
   const splittedPath = pathname.split("/");
 
   const isExplorePage = splittedPath[1] == "explore";
-  const isSparksPage = splittedPath[1] == "sparks";
 
   const { data: user, isLoading: userLoading } = useGetCurrentUserQuery(token);
 
@@ -102,6 +101,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
   const { data: engines } = useGetEnginesQuery();
 
   const [expandedOnHover, setExpandedOnHover] = useState<boolean>(false);
+  const [showExpandIcon, setShowExpandIcon] = useState<boolean>(false);
   const [showFilters, setShowFilters] = useState<boolean>(false);
 
   useEffect(() => {
@@ -137,10 +137,10 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
 
   const navigate = (href: string, isExternal: boolean) => {
     if (isExternal) {
-      window.open(href, '_blank'); // opens in a new tab
+      window.open(href, "_blank"); // opens in a new tab
       return;
     }
-    
+
     let next = href.split("/");
     if (splittedPath[1] == next[1]) {
       return null;
@@ -148,12 +148,22 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
     router.push(href);
   };
 
+  const expandSideBarOnHover = () => {
+    setExpandedOnHover(true);
+    setShowExpandIcon(true);
+  };
+
+  const collapseSidebarOnHover = () => {
+    setExpandedOnHover(false);
+    setShowExpandIcon(false);
+  };
+
   return (
     <Box>
       <Drawer
         open={open || expandedOnHover}
-        onMouseEnter={() => setExpandedOnHover(true)}
-        onMouseLeave={() => setExpandedOnHover(false)}
+        onMouseEnter={() => expandSideBarOnHover()}
+        onMouseLeave={() => collapseSidebarOnHover()}
         sx={{
           display: { xs: "none", md: "flex" },
           alignItems: "center",
@@ -203,6 +213,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
             <IconButton
               onClick={toggleSideBar}
               sx={{
+                opacity: showExpandIcon ? 1 : 0,
                 border: "none",
                 "&:hover": {
                   backgroundColor: "surface.2",
@@ -231,7 +242,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
                   }
                 >
                   <Box
-                   onClick={() => navigate(item.href, item.external)}
+                    onClick={() => navigate(item.href, item.external)}
                     style={{
                       textDecoration: "none",
                       padding: 6.5,

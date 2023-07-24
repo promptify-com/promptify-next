@@ -27,7 +27,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
           <Box padding={"0px 8px"}>
             <Grid
               sx={{
-                padding: { xs: "8px 0 0 8px", sm: "32px" },
+                padding: { xs: "8px 0 0 8px", sm: "0px 32px" },
               }}
               display={"flex"}
               flexDirection={"column"}
