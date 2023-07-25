@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { setSelectedEngine, setSelectedTag } from "@/core/store/filtersSlice";
 import { RootState } from "@/core/store";
+import { Tag } from "@/core/api/dto/templates";
 
 interface FiltersSelectedProps {
   show: boolean;
@@ -24,12 +25,17 @@ export const FiltersSelected: React.FC<FiltersSelectedProps> = ({ show }) => {
               onDelete={() => dispatch(setSelectedEngine(null))}
             />
           )}
-          {tag && (
-            <Chip
-              label={tag.name}
-              sx={{ fontSize: 13, fontWeight: 500 }}
-              onDelete={() => dispatch(setSelectedTag(null))}
-            />
+          {tag.length > 0 && (
+            <Box>
+              {tag.map((item: Tag | null) => (
+                <Chip
+                  key={item?.id}
+                  label={item?.name}
+                  sx={{ fontSize: 13, fontWeight: 500 }}
+                  onDelete={() => dispatch(setSelectedTag(null))}
+                />
+              ))}
+            </Box>
           )}
         </Box>
       )}

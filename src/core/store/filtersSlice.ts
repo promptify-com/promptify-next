@@ -3,7 +3,7 @@ import { Category, Engine, SelectedFilters, Tag } from "../api/dto/templates";
 
 const initialState: SelectedFilters = {
   engine: null,
-  tag: null,
+  tag: [],
   keyword: null,
   category: null,
   subCategory: null,
@@ -17,7 +17,7 @@ const filterSlice = createSlice({
       state.engine = action.payload;
     },
     setSelectedTag: (state, action: PayloadAction<Tag | null>) => {
-      state.tag = action.payload;
+      state.tag.push(action.payload); // This should work fine now
     },
     setSelectedCategory: (state, action: PayloadAction<Category | null>) => {
       state.category = action.payload;

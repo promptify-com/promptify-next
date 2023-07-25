@@ -201,8 +201,6 @@ export const Header: React.FC<HeaderProps> = ({
                       width: "105px",
                       height: "42px",
                       background: "#3B4050",
-                      boxShadow:
-                        "0px 1px 5px rgba(0, 0, 0, 0.12), 0px 2px 2px rgba(0, 0, 0, 0.14), 0px 3px 1px -2px rgba(0, 0, 0, 0.2)",
                       borderRadius: "100px",
                       flex: "none",
                       order: 1,

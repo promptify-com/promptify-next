@@ -10,20 +10,29 @@ import { TemplatesSection } from "@/components/explorer/TemplatesSection";
 import { RootState } from "@/core/store";
 import { FiltersSelected } from "@/components/explorer/FiltersSelected";
 import { useGetCategoriesQuery } from "@/core/api/categories";
+import { SelectedFilters } from "@/core/api/dto/templates";
 
 export default function ExplorePage() {
   const engineId = useSelector((state: RootState) => state.filters.engine?.id);
-  const tag = useSelector((state: RootState) => state.filters.tag?.name);
+  const tags = useSelector((state: RootState) => state.filters.tag);
   const { data: templates, isLoading: isTemplatesLoading } =
-    useGetTemplatesByFilterQuery({ engineId, tag });
+    useGetTemplatesByFilterQuery({ engineId, tag: tags[0]?.name });
   const filters = useSelector((state: RootState) => state.filters);
 
   const { data: categories, isLoading: isCategoryLoading } =
     useGetCategoriesQuery();
 
-  const isFiltersNullish = Object.values(filters).every((value) => {
-    return value === null ? true : false;
-  });
+  function areAllStatesNull(filters: SelectedFilters): boolean {
+    return (
+      filters.engine === null &&
+      filters.tag.every((tag) => tag === null) &&
+      filters.keyword === null &&
+      filters.category === null &&
+      filters.subCategory === null
+    );
+  }
+
+  const allNull = areAllStatesNull(filters);
 
   return (
     <>
@@ -38,8 +47,8 @@ export default function ExplorePage() {
         </Head>
         <Box>
           <Grid sx={{}} display={"flex"} flexDirection={"column"} gap={"16px"}>
-            <FiltersSelected show={!isFiltersNullish} />
-            {isFiltersNullish && (
+            <FiltersSelected show={!allNull} />
+            {allNull && (
               <CategoriesSection
                 categories={categories}
                 isLoading={isCategoryLoading}
@@ -47,7 +56,7 @@ export default function ExplorePage() {
             )}
 
             <TemplatesSection
-              filtred={!isFiltersNullish}
+              filtred={!allNull}
               templates={templates ?? []}
               isLoading={isTemplatesLoading}
             />
