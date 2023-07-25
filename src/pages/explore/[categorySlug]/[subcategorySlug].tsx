@@ -20,7 +20,9 @@ export default function Page({ category }: { category: Category }) {
   const subCategorySlug = router.query.subcategorySlug;
   console.log(router.query);
 
-  const { data: subcategory } = useGetCategoryBySlugQuery(subCategorySlug);
+  const { data: subcategory } = useGetCategoryBySlugQuery(
+    subCategorySlug as string
+  );
   const { data: categories, isLoading: isCategoriesLoading } =
     useGetCategoriesQuery();
   const { data: templates, isLoading: isTemplatesLoading } =
