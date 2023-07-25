@@ -235,6 +235,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
                     minHeight: 48,
                     borderRadius: "8px",
                     mx: 1,
+                    padding: "16px 22px ",
                   }}
                   selected={item.active}
                   onClick={() =>
@@ -245,7 +246,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
                     onClick={() => navigate(item.href, item.external)}
                     style={{
                       textDecoration: "none",
-                      padding: 6.5,
+
                       display: "flex",
                       width: open || expandedOnHover ? "100%" : "auto",
                       alignItems: "center",

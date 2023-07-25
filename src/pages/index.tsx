@@ -12,7 +12,6 @@ import { IContinueWithSocialMediaResponse } from "@/common/types";
 import { getPathURL, saveToken } from "@/common/utils";
 import { authClient, client } from "@/common/axios";
 import {
-  useGetCategoriesQuery,
   useGetTagsPopularQuery,
   useGetTemplatesByFilterQuery,
 } from "@/core/api/explorer";
@@ -20,6 +19,7 @@ import { RootState } from "@/core/store";
 import { Layout } from "@/layout";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
 import { setSelectedTag } from "@/core/store/filtersSlice";
+import { useGetCategoriesQuery } from "@/core/api/categories";
 
 const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
 

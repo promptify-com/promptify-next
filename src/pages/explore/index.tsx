@@ -3,15 +3,13 @@ import { Box, Grid } from "@mui/material";
 import Head from "next/head";
 import { useSelector } from "react-redux";
 
-import {
-  useGetCategoriesQuery,
-  useGetTemplatesByFilterQuery,
-} from "@/core/api/explorer";
+import { useGetTemplatesByFilterQuery } from "@/core/api/explorer";
 import { Layout } from "@/layout";
 import { CategoriesSection } from "@/components/explorer/CategoriesSection";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
 import { RootState } from "@/core/store";
 import { FiltersSelected } from "@/components/explorer/FiltersSelected";
+import { useGetCategoriesQuery } from "@/core/api/categories";
 
 export default function ExplorePage() {
   const engineId = useSelector((state: RootState) => state.filters.engine?.id);

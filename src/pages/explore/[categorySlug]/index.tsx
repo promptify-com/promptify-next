@@ -6,30 +6,22 @@ import { authClient } from "@/common/axios";
 import { FetchLoading } from "@/components/FetchLoading";
 import { SubCategoryCard } from "@/components/common/cards/CardSubcategory";
 import { Category } from "@/core/api/dto/templates";
-import {
-  useGetCategoriesQuery,
-  useGetTemplatesByFilterQuery,
-} from "@/core/api/explorer";
+import { useGetTemplatesByFilterQuery } from "@/core/api/explorer";
 import { Layout } from "@/layout";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "@/core/store";
 import { FiltersSelected } from "@/components/explorer/FiltersSelected";
-import {
-  setSelectedCategory,
-  setSelectedSubCategory,
-} from "@/core/store/filtersSlice";
+import { useGetCategoriesQuery } from "@/core/api/categories";
 
 export default function Page({ category }: { category: Category }) {
   const router = useRouter();
-  const dispatch = useDispatch();
   const categorySlug = router.query.categorySlug;
   const { data: categories, isLoading: isCategoriesLoading } =
     useGetCategoriesQuery();
 
   const navigateTo = (item: Category) => {
     router.push(`/explore/${categorySlug}/${item.slug}`);
-    dispatch(setSelectedSubCategory(item));
   };
 
   const filters = useSelector((state: RootState) => state.filters);
@@ -49,7 +41,6 @@ export default function Page({ category }: { category: Category }) {
 
   const goBack = () => {
     router.push("/explore");
-    dispatch(setSelectedCategory(null));
   };
 
   return (
