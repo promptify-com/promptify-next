@@ -5,6 +5,7 @@ import { userApi } from "../api/user";
 import { templatesSlice } from "./templatesSlice";
 import filterSlice from "./filtersSlice";
 import { CategoriesApi } from "../api/categories";
+import sidebarSlice from "./sidebar";
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
     [CategoriesApi.reducerPath]: CategoriesApi.reducer,
     template: templatesSlice.reducer,
     filters: filterSlice,
+    sidebar: sidebarSlice
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
