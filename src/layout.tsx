@@ -5,7 +5,7 @@ import { Header } from "@/components/Header";
 import { Sidebar } from "@/components/SideBar";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./core/store";
-import { setOpenSidebar } from "./core/store/sidebar";
+import { setOpenSidebar } from "./core/store/sidebarSlice";
 
 export const Layout = ({ children }: { children: ReactNode }) => {
   const open = useSelector((state: RootState) => state.sidebar.open);

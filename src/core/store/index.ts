@@ -5,7 +5,7 @@ import { userApi } from "../api/user";
 import { templatesSlice } from "./templatesSlice";
 import filterSlice from "./filtersSlice";
 import { CategoriesApi } from "../api/categories";
-import sidebarSlice from "./sidebar";
+import sidebarSlice from "./sidebarSlice";
 
 export const store = configureStore({
   reducer: {
