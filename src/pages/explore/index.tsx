@@ -10,13 +10,20 @@ import { TemplatesSection } from "@/components/explorer/TemplatesSection";
 import { RootState } from "@/core/store";
 import { FiltersSelected } from "@/components/explorer/FiltersSelected";
 import { useGetCategoriesQuery } from "@/core/api/categories";
-import { SelectedFilters } from "@/core/api/dto/templates";
+import { FilterParams, SelectedFilters } from "@/core/api/dto/templates";
 
 export default function ExplorePage() {
-  const engineId = useSelector((state: RootState) => state.filters.engine?.id);
   const tags = useSelector((state: RootState) => state.filters.tag);
+  const engineId = useSelector((state: RootState) => state.filters.engine?.id);
+  const params: FilterParams = {
+    tag: tags
+      .map((item) => item?.name)
+      .filter((name) => name !== null)
+      .join("&tag="), // Filter out null values and convert to string array
+    engineId,
+  };
   const { data: templates, isLoading: isTemplatesLoading } =
-    useGetTemplatesByFilterQuery({ engineId, tag: tags[0]?.name });
+    useGetTemplatesByFilterQuery(params);
   const filters = useSelector((state: RootState) => state.filters);
 
   const { data: categories, isLoading: isCategoryLoading } =
