@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   deleteSelectedTag,
   setSelectedEngine,
+  setSelectedKeyword,
 } from "@/core/store/filtersSlice";
 import { RootState } from "@/core/store";
 import { Tag } from "@/core/api/dto/templates";
@@ -15,7 +16,7 @@ interface FiltersSelectedProps {
 export const FiltersSelected: React.FC<FiltersSelectedProps> = ({ show }) => {
   const dispatch = useDispatch();
   const filters = useSelector((state: RootState) => state.filters);
-  const { engine, tag } = filters;
+  const { engine, tag, title } = filters;
 
   const handleDeleteTag = (tagId: number) => {
     dispatch(deleteSelectedTag(tagId));
@@ -44,6 +45,13 @@ export const FiltersSelected: React.FC<FiltersSelectedProps> = ({ show }) => {
                   />
                 ))}
             </Box>
+          )}
+          {title && (
+            <Chip
+              label={title}
+              sx={{ fontSize: 13, fontWeight: 500 }}
+              onDelete={() => dispatch(setSelectedKeyword(null))}
+            />
           )}
         </Box>
       )}

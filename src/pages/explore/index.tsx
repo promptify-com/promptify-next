@@ -15,12 +15,15 @@ import { FilterParams, SelectedFilters } from "@/core/api/dto/templates";
 export default function ExplorePage() {
   const tags = useSelector((state: RootState) => state.filters.tag);
   const engineId = useSelector((state: RootState) => state.filters.engine?.id);
+  const title = useSelector((state: RootState) => state.filters.title);
+  const filteredTags = tags
+    .filter((item) => item !== null)
+    .map((item) => item?.name)
+    .join("&tag=");
   const params: FilterParams = {
-    tag: tags
-      .map((item) => item?.name)
-      .filter((name) => name !== null)
-      .join("&tag="), // Filter out null values and convert to string array
+    tag: filteredTags,
     engineId,
+    title,
   };
   const { data: templates, isLoading: isTemplatesLoading } =
     useGetTemplatesByFilterQuery(params);
@@ -33,7 +36,7 @@ export default function ExplorePage() {
     return (
       filters.engine === null &&
       filters.tag.every((tag) => tag === null) &&
-      filters.keyword === null &&
+      filters.title === null &&
       filters.category === null &&
       filters.subCategory === null
     );

@@ -4,7 +4,7 @@ import { Category, Engine, SelectedFilters, Tag } from "../api/dto/templates";
 const initialState: SelectedFilters = {
   engine: null,
   tag: [],
-  keyword: null,
+  title: null,
   category: null,
   subCategory: null,
 };
@@ -26,7 +26,7 @@ const filterSlice = createSlice({
       state.subCategory = action.payload;
     },
     setSelectedKeyword: (state, action: PayloadAction<string | null>) => {
-      state.keyword = action.payload;
+      state.title = action.payload;
     },
     deleteSelectedTag: (state, action: PayloadAction<number>) => {
       state.tag = state.tag.filter((tag) => tag?.id !== action.payload);

@@ -5,6 +5,7 @@ export interface FilterParams {
   categoryId?: number;
   subcategoryId?: number;
   tag?: string;
+  title?: string | null,
   engineId?: number;
   filter?: string;
 }
@@ -12,7 +13,7 @@ export interface FilterParams {
 export interface SelectedFilters {
   engine: Engine | null;
   tag: (Tag | null)[];
-  keyword: string | null;
+  title: string | null;
   category: Category | null;
   subCategory: Category | null;
 }

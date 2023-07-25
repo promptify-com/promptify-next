@@ -127,12 +127,7 @@ export const Header: React.FC<HeaderProps> = ({
           onClick={handleInputFocus}
         >
           <SearchBar keyWord={keyWord} setKeyWord={setKeyWord} />
-          <SearchDialog
-            open={open}
-            setOpen={setOpen}
-            keyWord={keyWord}
-            setKeyWord={setKeyWord}
-          />
+          <SearchDialog open={open} close={() => setOpen(false)} />
         </Box>
 
         <Box

@@ -229,7 +229,12 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
           </Grid>
           {navItems.map((item, i) => (
             <Grid key={item.name}>
-              <ListItem disablePadding>
+              <ListItem
+                disablePadding
+                onClick={() =>
+                  item.name == "Browse" && setShowFilters(!showFilters)
+                }
+              >
                 <ListItemButton
                   sx={{
                     minHeight: 48,
@@ -237,13 +242,10 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
                     mx: 1,
                     padding: "16px 22px ",
                   }}
+                  onClick={() => navigate(item.href, item.external)}
                   selected={item.active}
-                  onClick={() =>
-                    item.name == "Browse" && setShowFilters(!showFilters)
-                  }
                 >
                   <Box
-                    onClick={() => navigate(item.href, item.external)}
                     style={{
                       textDecoration: "none",
 

@@ -85,6 +85,8 @@ export const explorerApi = createApi({
               ? `&sub_category_id=${params.subcategoryId}`
               : "") +
             (params.engineId ? `&engine=${params.engineId}` : "") +
+            (params.title ? `&title=${params.title}` : "") +
+
             (params.filter ? `&ordering=${params.filter}` : ""),
           method: "get",
         }),
