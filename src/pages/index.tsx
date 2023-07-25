@@ -28,12 +28,17 @@ function Home() {
   const setUser = useSetUser();
   const savedToken = useToken();
   const dispatch = useDispatch();
-  const tag = useSelector((state: RootState) => state.filters.tag?.name);
+  const tagsData = useSelector((state: RootState) => state.filters.tag);
+
+  const filteredTags = tagsData
+    .filter((item: Tag | null) => item !== null)
+    .map((item: Tag | null) => item?.name)
+    .join("&tag=");
 
   const { data: categories } = useGetCategoriesQuery();
   const { data: tags } = useGetTagsPopularQuery();
   const { data: templates, isLoading: isTemplateLoading } =
-    useGetTemplatesByFilterQuery({ tag });
+    useGetTemplatesByFilterQuery({ tag: filteredTags });
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [categorySelected, setCategorySelected] = useState<number>();
@@ -210,7 +215,7 @@ function Home() {
               )}
               {!!tags &&
                 tags.length > 0 &&
-                tags.map((el) => (
+                tags.map((el: Tag) => (
                   <Grid
                     onClick={() => handleTagSelect(el)}
                     key={el.id}
@@ -226,7 +231,9 @@ function Home() {
                       flex: "none",
                       order: 4,
                       flexGrow: 0,
-                      background: tag == el.name ? "#cad3e2" : "#ffffff78",
+                      background: tagsData.includes(el)
+                        ? "#cad3e2"
+                        : "#ffffff78",
                       cursor: "pointer",
                       "&:hover": {
                         transform: "scale(1.05)",
@@ -319,7 +326,7 @@ function Home() {
             <TemplatesSection
               isLoading={isTemplateLoading}
               templates={templates}
-              filtred={!!tag}
+              filtred={!!filteredTags}
             />
           </Box>
         </Layout>

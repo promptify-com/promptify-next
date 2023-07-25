@@ -10,15 +10,15 @@ import { TemplatesSection } from "@/components/explorer/TemplatesSection";
 import { RootState } from "@/core/store";
 import { FiltersSelected } from "@/components/explorer/FiltersSelected";
 import { useGetCategoriesQuery } from "@/core/api/categories";
-import { FilterParams, SelectedFilters } from "@/core/api/dto/templates";
+import { FilterParams, SelectedFilters, Tag } from "@/core/api/dto/templates";
 
 export default function ExplorePage() {
   const tags = useSelector((state: RootState) => state.filters.tag);
   const engineId = useSelector((state: RootState) => state.filters.engine?.id);
   const title = useSelector((state: RootState) => state.filters.title);
   const filteredTags = tags
-    .filter((item) => item !== null)
-    .map((item) => item?.name)
+    .filter((item: Tag | null) => item !== null)
+    .map((item: Tag | null) => item?.name)
     .join("&tag=");
   const params: FilterParams = {
     tag: filteredTags,
