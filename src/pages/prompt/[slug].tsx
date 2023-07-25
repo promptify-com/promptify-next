@@ -335,6 +335,7 @@ const Prompt = () => {
               }}
             >
               <Grid
+                className="prompt-grid"
                 sx={{
                   height: "100%",
                   maxWidth: "430px",
@@ -342,8 +343,21 @@ const Prompt = () => {
                   position: "relative",
                   top: 0,
                   left: 0,
+                  scrollbarColor: "red",
                   right: 0,
                   zIndex: 999,
+                  "&::-webkit-scrollbar": {
+                    width: "0.4em",
+                  },
+                  "&::-webkit-scrollbar-track": {
+                    boxShadow: "inset 0 0 6px rgba(0, 0, 0, 0.3)",
+                    webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
+                  },
+                  "&::-webkit-scrollbar-thumb": {
+                    backgroundColor: "surface.3",
+                    outline: "1px solid surface.3",
+                    borderRadius: "10px",
+                  },
                 }}
               >
                 <Stack height={"100%"}>
