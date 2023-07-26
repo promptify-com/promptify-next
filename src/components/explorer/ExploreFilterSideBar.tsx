@@ -46,6 +46,7 @@ export const ExploreFilterSideBar: React.FC<ExploreFilterSideBarProps> = ({
       setItemsToShow(engines.length);
     }
   };
+  const { engine: storedEngine, tag: storedTags } = filters;
 
   const showless = () => {
     setItemsToShow(3);
@@ -72,7 +73,7 @@ export const ExploreFilterSideBar: React.FC<ExploreFilterSideBarProps> = ({
               <ListItemButton
                 sx={{ borderRadius: "8px", minHeight: 48, mx: 1, px: 3.0 }}
                 onClick={() => handleEngineSelect(engine)}
-                selected={filters.engine?.id == engine.id}
+                selected={storedEngine?.id == engine.id}
               >
                 <Avatar
                   src={
@@ -121,7 +122,7 @@ export const ExploreFilterSideBar: React.FC<ExploreFilterSideBarProps> = ({
           {tags?.map((tag) => (
             <Chip
               sx={{
-                bgcolor: filters.tag?.id == tag.id ? "#9DB2BF" : "surface.3",
+                bgcolor: storedTags.includes(tag) ? "#9DB2BF" : "surface.3",
                 fontSize: 14,
                 fontWeight: 500,
                 lineHeight: "18px",

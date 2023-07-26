@@ -5,51 +5,59 @@ import { Box, Button, Grid } from "@mui/material";
 import { authClient } from "@/common/axios";
 import { FetchLoading } from "@/components/FetchLoading";
 import { SubCategoryCard } from "@/components/common/cards/CardSubcategory";
-import { Category } from "@/core/api/dto/templates";
 import {
-  useGetCategoriesQuery,
-  useGetTemplatesByFilterQuery,
-} from "@/core/api/explorer";
+  Category,
+  FilterParams,
+  SelectedFilters,
+} from "@/core/api/dto/templates";
+import { useGetTemplatesByFilterQuery } from "@/core/api/explorer";
 import { Layout } from "@/layout";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "@/core/store";
 import { FiltersSelected } from "@/components/explorer/FiltersSelected";
-import {
-  setSelectedCategory,
-  setSelectedSubCategory,
-} from "@/core/store/filtersSlice";
+import { useGetCategoriesQuery } from "@/core/api/categories";
 
 export default function Page({ category }: { category: Category }) {
   const router = useRouter();
-  const dispatch = useDispatch();
   const categorySlug = router.query.categorySlug;
   const { data: categories, isLoading: isCategoriesLoading } =
     useGetCategoriesQuery();
 
-  const navigateTo = (item: Category) => {
-    router.push(`/explore/${categorySlug}/${item.slug}`);
-    dispatch(setSelectedSubCategory(item));
-  };
-
+  const title = useSelector((state: RootState) => state.filters.title);
   const filters = useSelector((state: RootState) => state.filters);
-  const tag = useSelector((state: RootState) => state.filters.tag?.name);
+  const tags = useSelector((state: RootState) => state.filters.tag);
   const engineId = useSelector((state: RootState) => state.filters.engine?.id);
 
-  const isFiltersNullish = Object.values(filters).every((value) => {
-    return value === null ? true : false;
-  });
+  function areAllStatesNull(filters: SelectedFilters): boolean {
+    return (
+      filters.engine === null &&
+      filters.tag.every((tag) => tag === null) &&
+      filters.title === null &&
+      filters.category === null &&
+      filters.subCategory === null
+    );
+  }
 
+  const allNull = areAllStatesNull(filters);
+
+  const filteredTags = tags
+    .filter((item) => item !== null)
+    .map((item) => item?.name)
+    .join("&tag=");
+  const params: FilterParams = {
+    tag: filteredTags,
+    engineId,
+    title,
+  };
   const { data: templates, isLoading: isTemplatesLoading } =
-    useGetTemplatesByFilterQuery({
-      categoryId: category.id,
-      tag,
-      engineId,
-    });
+    useGetTemplatesByFilterQuery(params);
 
   const goBack = () => {
     router.push("/explore");
-    dispatch(setSelectedCategory(null));
+  };
+  const navigateTo = (item: Category) => {
+    router.push(`/explore/${categorySlug}/${item.slug}`);
   };
 
   return (
@@ -94,7 +102,7 @@ export default function Page({ category }: { category: Category }) {
                     </Grid>
                   ))}
               </Grid>
-              <FiltersSelected show={!isFiltersNullish} />
+              <FiltersSelected show={!allNull} />
               <TemplatesSection
                 filtred
                 templates={templates}

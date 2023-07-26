@@ -22,24 +22,20 @@ const Dashboard = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Layout>
-        {token ? (
-          <Box sx={{ px: "12px" }}>
-            <Box
-              display="flex"
-              flexDirection="column"
-              alignItems={"flex-start"}
-              gap={"16px"}
-              width={"100%"}
-            >
-              <Home />
-              <Connections />
-              <Identy />
-              <Prompts />
-            </Box>
+        <Box sx={{ px: "12px" }}>
+          <Box
+            display="flex"
+            flexDirection="column"
+            alignItems={"flex-start"}
+            gap={"16px"}
+            width={"100%"}
+          >
+            <Home />
+            <Connections />
+            <Identy />
+            <Prompts />
           </Box>
-        ) : (
-          <PageLoading />
-        )}
+        </Box>
       </Layout>
     </>
   );
