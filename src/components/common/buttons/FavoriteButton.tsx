@@ -16,6 +16,7 @@ export const FavoriteButton:React.FC<Props> = ({ isFavorite, onClick }) => {
    return (
       <Button
          sx={{ 
+            width: { xs: "100%", md: "auto" },
             p: "6px 16px",
             bgcolor: "transparent",
             color: color,

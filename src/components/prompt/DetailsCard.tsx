@@ -47,6 +47,7 @@ export const DetailsCard: React.FC<Props> = ({
             </Box>
             <Button
               sx={{ 
+                  display: { xs: "none", md: "flex" },
                   p: "6px 16px",
                   bgcolor: "transparent",
                   color: "primary.main",

@@ -46,6 +46,7 @@ import { updateExecution } from "@/hooks/api/executions";
 import { PromptLiveResponse } from "@/common/types/prompt";
 import { Layout } from "@/layout";
 import useToken from "@/hooks/useToken";
+import { useWindowSize } from "usehooks-ts";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -102,6 +103,8 @@ const Prompt = () => {
   const token = useToken();
   const theme = useTheme();
   const [palette, setPalette] = useState(theme.palette);
+  const { width: windowWidth } = useWindowSize();
+
   const slug = router.query?.slug;
   // TODO: redirect to 404 page if slug is not found
   const slugValue = (Array.isArray(slug) ? slug[0] : slug || "") as string;
@@ -345,10 +348,10 @@ const Prompt = () => {
                 position: "relative",
               }}
             >
+              {windowWidth > 960 && ( 
               <Grid
                 className="prompt-grid"
                 sx={{
-                  display: { md: "block", xs: mobileTab.name === "details" ? "block" : "none" },
                   height: "100%",
                   maxWidth: "430px",
                   overflow: "auto",
@@ -441,6 +444,57 @@ const Prompt = () => {
                   </Stack>
                 </Stack>
               </Grid>
+              )}
+
+              {windowWidth < 960 && (
+              <>
+                <Grid
+                  item
+                  xs={12}
+                  md={8}
+                  sx={{
+                    display: mobileTab.name === "details" ? "block" : "none",
+                    height: "100%",
+                    overflow: "auto",
+                    bgcolor: "surface.1",
+                    borderLeft: "1px solid #ECECF4",
+                    position: "relative",
+                  }}
+                >
+                  <DetailsCard
+                    templateData={templateData}
+                    resetNewExecution={resetNewExecution}
+                  />
+                  <Details
+                    templateData={templateData}
+                    updateTemplateData={setTemplateData}
+                  />
+                </Grid>
+
+                <Grid
+                  item
+                  xs={12}
+                  md={8}
+                  sx={{
+                    display: mobileTab.name === "generator" ? "block" : "none",
+                    height: "100%",
+                    overflow: "auto",
+                    bgcolor: "surface.1",
+                    borderLeft: "1px solid #ECECF4",
+                    position: "relative",
+                  }}
+                >
+                  <GeneratorForm
+                    templateData={templateData}
+                    setNewExecutionData={setNewExecutionData}
+                    isGenerating={isGenerating}
+                    setIsGenerating={setIsGenerating}
+                    onError={setErrorMessage}
+                    exit={() => setGeneratorOpened(false)}
+                  />
+                </Grid>
+              </>
+              )}
 
               <Grid
                 flex={1}

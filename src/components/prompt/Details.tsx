@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   Chip,
+  Divider,
   Grid,
   Stack,
   Typography,
@@ -66,18 +67,19 @@ export const Details: React.FC<DetailsProps> = ({
 
   return (
     <Box sx={{ p: "16px" }}>
-      <Box
-        sx={{
-          borderRadius: { xs: "24px 24px 0 0", md: "16px 16px 0 0" },
-          overflow: "hidden",
-        }}
-      >
-        <Box sx={{ py: "16px" }}>
+      <Box>
+        <Box sx={{ py: { md: "16px" } }}>
           <FavoriteButton 
             isFavorite={templateData.is_favorite}
             onClick={favorTemplate}
           />
         </Box>
+        <Divider sx={{
+            display: { md: "none" },
+            my: "16px",
+            borderColor: "surface.3",
+          }}  
+        />
         <Box sx={{ py: "16px" }}>
           <Typography 
             sx={{ fontSize: 12, fontWeight: 400, color: "onSurface" }} 
@@ -127,10 +129,7 @@ export const Details: React.FC<DetailsProps> = ({
           container
           direction={"column"}
           gap={3}
-          sx={{
-            p: { xs: "24px", md: "16px 0" },
-            borderRadius: { xs: "24px 24px 0 0", md: 0 },
-          }}
+          sx={{ py: "16px" }}
         >
           <Grid item>
             <Link href={"#"} style={{ textDecoration: "none" }}>
@@ -143,14 +142,13 @@ export const Details: React.FC<DetailsProps> = ({
                   p: "8px",
                   bgcolor: "primary.main",
                   color: "onPrimary",
-                  fontSize: { xs: 16, md: 12 },
+                  fontSize: 12,
                   fontWeight: 500,
                   borderRadius: "99px",
                   svg: { opacity: .6 },
                   "&:hover": {
                     bgcolor: "primary.main",
                     color: "onPrimary",
-                    opacity: 0.95,
                     svg: { opacity: 1 }
                   },
                 }}
@@ -166,13 +164,10 @@ export const Details: React.FC<DetailsProps> = ({
                       bgcolor: "common.black",
                       color: "common.white",
                       borderRadius: "50%",
-                      width: { xs: "48px", md: "32px" },
-                      height: { xs: "48px", md: "32px" },
+                      width: 32,
+                      height: 32,
+                      fontSize: 16,
                       padding: "1px",
-                      fontFamily: "Poppins",
-                      fontStyle: "normal",
-                      fontWeight: 500,
-                      fontSize: { xs: 20, md: 16 },
                       display: "flex",
                       justifyContent: "center",
                       alignItems: "center",
@@ -187,7 +182,7 @@ export const Details: React.FC<DetailsProps> = ({
                     by{" "}
                     {templateData?.created_by?.first_name &&
                     templateData?.created_by?.last_name ? (
-                      <React.Fragment>
+                      <>
                         {templateData.created_by.first_name
                           .charAt(0)
                           .toUpperCase() +
@@ -196,14 +191,14 @@ export const Details: React.FC<DetailsProps> = ({
                           .charAt(0)
                           .toUpperCase() +
                           templateData.created_by.last_name.slice(1)}
-                      </React.Fragment>
+                      </>
                     ) : (
-                      <React.Fragment>
+                      <>
                         {templateData.created_by.username
                           .charAt(0)
                           .toUpperCase() +
                           templateData.created_by.username.slice(1)}
-                      </React.Fragment>
+                      </>
                     )}
                   </Box>
                 </Stack>
