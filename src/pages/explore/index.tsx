@@ -57,6 +57,9 @@ export default function ExplorePage() {
         </Head>
         <Box padding={{ xs: "4px 0px", md: "0px 8px" }}>
           <Grid
+            display={"flex"}
+            flexDirection={"column"}
+            gap={"16px"}
             sx={{
               padding: { xs: "16px", md: "32px" },
             }}
