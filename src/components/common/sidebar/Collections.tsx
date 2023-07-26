@@ -18,6 +18,7 @@ import { ITemplate } from "@/common/types/template";
 import { FetchLoading } from "@/components/FetchLoading";
 import { useRouter } from "next/router";
 import { User } from "@/core/api/dto/user";
+import { CollectionsEmptyBox } from "./CollectionsEmptyBox";
 
 interface SideBarCollectionsProps {
   sidebarOpen: boolean;
@@ -51,50 +52,7 @@ export const Collections: React.FC<SideBarCollectionsProps> = ({
       ) : (
         <Box>
           {!user ? (
-            <Box
-              sx={{ display: sidebarOpen ? "flex" : "none" }}
-              mt={2}
-              alignContent={"center"}
-              flexDirection={"column"}
-              alignItems={"center"}
-              gap={3}
-            >
-              <Box textAlign={"center"} width={"100%"}>
-                <Typography
-                  fontSize={14}
-                  sx={{
-                    textAlign: "center",
-                  }}
-                  color={"onSurface"}
-                >
-                  Your selected templates <br /> will be collected there
-                </Typography>
-              </Box>
-              <EmptyBox />
-              <Grid
-                display={"flex"}
-                justifyContent={"space-around"}
-                alignItems={"center"}
-                gap={3}
-              >
-                <Button variant="outlined">Sign In</Button>
-                <Typography>Or</Typography>
-                <Button
-                  sx={{
-                    bgcolor: "#3B4050",
-                    color: "white",
-                    boxShadow:
-                      "0px 1px 5px rgba(0, 0, 0, 0.12), 0px 2px 2px rgba(0, 0, 0, 0.14), 0px 3px 1px -2px rgba(0, 0, 0, 0.2)",
-                    "&:hover": {
-                      color: "#3B4050",
-                      border: "1px solid #3B4050",
-                    },
-                  }}
-                >
-                  Sign Up
-                </Button>
-              </Grid>
-            </Box>
+            <CollectionsEmptyBox onExpand={sidebarOpen} />
           ) : (
             <Box>
               <Grid

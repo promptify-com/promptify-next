@@ -20,6 +20,8 @@ import { SearchDialog } from "./SearchDialog";
 import { useGetCurrentUserQuery } from "@/core/api/user";
 import { FetchLoading } from "@/components/FetchLoading";
 import { ProfileDropDown } from "@/components/ProfileMenu";
+import { Menu } from "@mui/icons-material";
+import { SideBarMobile } from "../SideBarMobile";
 
 interface HeaderProps {
   transparent?: boolean;
@@ -73,6 +75,7 @@ export const Header: React.FC<HeaderProps> = ({
   const [isMenuShown, setIsMenuShown] = useState(false);
   const [open, setOpen] = useState(false);
   const menuAnchorRef = useRef<HTMLDivElement | null>(null);
+  const [openSidebar, setOpenSidebar] = useState(false);
   const [drawerState, setDrawerState] = useState(false);
 
   const toggleDrawer =
@@ -85,7 +88,6 @@ export const Header: React.FC<HeaderProps> = ({
       ) {
         return;
       }
-
       setDrawerState(open);
     };
 
@@ -104,7 +106,8 @@ export const Header: React.FC<HeaderProps> = ({
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        height: "90px",
+        bgcolor: { xs: "surface.1", md: "surface.3" },
+        height: { xs: "56px", md: "90px" },
       }}
     >
       <Grid
@@ -113,12 +116,54 @@ export const Header: React.FC<HeaderProps> = ({
           display: "flex",
           width: "100%",
           gap: "30px",
-          padding: { xs: "1em 0em 0em 1em", sm: "1.5em 2em" },
+          padding: { xs: "0 4px ", md: "1.5em 2em" },
           alignItems: "center",
         }}
       >
+        <Grid
+          display={{ xs: "flex", md: "none" }}
+          width={75}
+          p={"0px 10px"}
+          alignItems={"center"}
+          height={48}
+          mt={1}
+        >
+          <LogoApp width={23} />
+        </Grid>
+        <Grid
+          display={{ xs: "flex", md: "none" }}
+          alignItems={"center"}
+          gap={2}
+          mr={1}
+        >
+          <Box
+            display={"flex"}
+            alignItems={"center"}
+            justifyContent={"center"}
+            onClick={() => setOpenSidebar(true)}
+          >
+            <SearchIcon sx={{ fontSize: "26px", color: "onSurface" }} />
+          </Box>
+          <Avatar
+            sx={{
+              width: "23px",
+              height: "23px",
+              bgcolor: "black",
+            }}
+            src="John Doe"
+            alt="John Doe"
+          />
+          <Box
+            display={"flex"}
+            alignItems={"center"}
+            justifyContent={"center"}
+            onClick={() => setOpenSidebar(true)}
+          >
+            <MenuRoundedIcon sx={{ fontSize: "26px", color: "onSurface" }} />
+          </Box>
+        </Grid>
         <Box
-          display={{ xs: "none", sm: "flex" }}
+          display={{ xs: "none", md: "flex" }}
           sx={{
             flex: 1,
             alignItems: "center",
@@ -137,108 +182,113 @@ export const Header: React.FC<HeaderProps> = ({
 
         <Box
           sx={{
-            display: "-webkit-box",
+            display: { xs: "none", md: "flex" },
             alignItems: "center",
             gap: "10px",
           }}
         >
-          <Box display={{ xs: "flex", sm: "none" }}>
+          {/* <Box
+            display={{ xs: "flex", sm: "none" }}
+            alignItems={"center"}
+            bgcolor={"blue"}
+          >
             <IconButton
               onClick={() => {
                 setOpen(true);
               }}
-              size="large"
               sx={{
                 border: "none",
               }}
             >
               <SearchIcon />
             </IconButton>
-          </Box>
-          {userLoading ? (
-            <FetchLoading />
-          ) : (
-            <Box>
-              {user && token ? (
-                <Avatar
-                  ref={menuAnchorRef}
-                  onClick={() => setIsMenuShown(!isMenuShown)}
-                  src={user.avatar || user.first_name}
-                  alt={user.first_name}
-                  sx={{
-                    ml: "auto",
-                    cursor: "pointer",
-                    bgcolor: "black",
-                    borderRadius: { xs: "24px", sm: "36px" },
-                    width: { xs: "24px", sm: "40px" },
-                    padding: "1px",
-                    height: { xs: "24px", sm: "40px" },
-                    fontStyle: "normal",
-                    textAlign: "center",
-                    fontWeight: 400,
-                    fontSize: { sm: "30px" },
-                    textTransform: "capitalize",
-                    lineHeight: "20px",
-                    letterSpacing: "0.14px",
-                  }}
-                />
-              ) : (
-                <Box display={"flex"} alignItems={"center"} gap={"16px"}>
-                  <Login />
-                  <Grid
-                    onClick={() =>
-                      router.push({
-                        pathname: "/signin",
-                        query: { from: "signup" },
-                      })
-                    }
+          </Box> */}
+          <Box sx={{ display: { xs: "none", md: "flex" } }}>
+            {userLoading ? (
+              <FetchLoading />
+            ) : (
+              <Box>
+                {user && token ? (
+                  <Avatar
+                    ref={menuAnchorRef}
+                    onClick={() => setIsMenuShown(!isMenuShown)}
+                    src={user.avatar || user.first_name}
+                    alt={user.first_name}
                     sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      padding: "8px 22px",
-                      width: "105px",
-                      height: "42px",
-                      background: "#3B4050",
-                      boxShadow:
-                        "0px 1px 5px rgba(0, 0, 0, 0.12), 0px 2px 2px rgba(0, 0, 0, 0.14), 0px 3px 1px -2px rgba(0, 0, 0, 0.2)",
-                      borderRadius: "100px",
-                      flex: "none",
-                      order: 1,
-                      flexGrow: 0,
+                      ml: "auto",
                       cursor: "pointer",
-
-                      "&:hover": {
-                        transform: "scale(1.05)",
-                      },
+                      bgcolor: "black",
+                      borderRadius: { xs: "24px", sm: "36px" },
+                      width: { xs: "24px", sm: "40px" },
+                      padding: "1px",
+                      height: { xs: "24px", sm: "40px" },
+                      fontStyle: "normal",
+                      textAlign: "center",
+                      fontWeight: 400,
+                      fontSize: { sm: "30px" },
+                      textTransform: "capitalize",
+                      lineHeight: "20px",
+                      letterSpacing: "0.14px",
                     }}
-                  >
-                    <Typography
+                  />
+                ) : (
+                  <Box display={"flex"} alignItems={"center"} gap={"16px"}>
+                    <Login />
+                    <Grid
+                      onClick={() =>
+                        router.push({
+                          pathname: "/signin",
+                          query: { from: "signup" },
+                        })
+                      }
                       sx={{
-                        width: "61px",
-                        height: "26px",
-                        fontFamily: "Poppins",
-                        fontStyle: "normal",
-                        fontWeight: 500,
-                        fontSize: "15px",
-                        lineHeight: "26px",
-                        letterSpacing: "0.46px",
-                        color: "#FFFFFF",
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        padding: "8px 22px",
+                        width: "105px",
+                        height: "42px",
+                        background: "#3B4050",
+                        boxShadow:
+                          "0px 1px 5px rgba(0, 0, 0, 0.12), 0px 2px 2px rgba(0, 0, 0, 0.14), 0px 3px 1px -2px rgba(0, 0, 0, 0.2)",
+                        borderRadius: "100px",
                         flex: "none",
                         order: 1,
                         flexGrow: 0,
+                        cursor: "pointer",
+
+                        "&:hover": {
+                          transform: "scale(1.05)",
+                        },
                       }}
                     >
-                      Sign Up
-                    </Typography>
-                  </Grid>
-                </Box>
-              )}
-            </Box>
-          )}
+                      <Typography
+                        sx={{
+                          width: "61px",
+                          height: "26px",
+                          fontFamily: "Poppins",
+                          fontStyle: "normal",
+                          fontWeight: 500,
+                          fontSize: "15px",
+                          lineHeight: "26px",
+                          letterSpacing: "0.46px",
+                          color: "#FFFFFF",
+                          flex: "none",
+                          order: 1,
+                          flexGrow: 0,
+                        }}
+                      >
+                        Sign Up
+                      </Typography>
+                    </Grid>
+                  </Box>
+                )}
+              </Box>
+            )}
+          </Box>
 
-          <Box display={{ xs: "flex", sm: "none" }}>
+          {/* <Box display={{ xs: "flex", sm: "none" }}>
             <IconButton
               // onClick={fetchTemplates}
               onClick={() => setDrawerState((prev) => !prev)}
@@ -249,7 +299,7 @@ export const Header: React.FC<HeaderProps> = ({
             >
               <MenuRoundedIcon />
             </IconButton>
-          </Box>
+          </Box> */}
         </Box>
         <ProfileDropDown
           anchorElement={menuAnchorRef.current}
@@ -258,8 +308,12 @@ export const Header: React.FC<HeaderProps> = ({
           onToggle={() => setIsMenuShown(!isMenuShown)}
           onClose={() => setIsMenuShown(false)}
         />
-
-        <SwipeableDrawer
+        <SideBarMobile
+          open={openSidebar}
+          onClose={() => setOpenSidebar(false)}
+          onOpen={() => setOpenSidebar(true)}
+        />
+        {/* <SwipeableDrawer
           anchor={"top"}
           open={drawerState}
           onClose={toggleDrawer(false)}
@@ -333,7 +387,7 @@ export const Header: React.FC<HeaderProps> = ({
               <Typography fontSize={24}>Collections</Typography>
             </Box>
           </Box>
-        </SwipeableDrawer>
+        </SwipeableDrawer> */}
       </Grid>
     </Box>
   );
