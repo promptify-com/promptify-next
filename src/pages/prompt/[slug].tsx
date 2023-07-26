@@ -130,15 +130,12 @@ const Prompt = () => {
     token ? (id ? id : skipToken) : skipToken
   );
 
-  const [tabsValue, setTabsValue] = React.useState(0);
+  const [tabsValue, setTabsValue] = useState(0);
   const changeTab = (e: React.SyntheticEvent, newValue: number) => {
     setTabsValue(newValue);
   };
 
-  const [mobileTabsValue, setMobileTabsValue] = React.useState(0);
-  const changeMobileTab = (e: React.SyntheticEvent, newValue: number) => {
-    setMobileTabsValue(newValue);
-  };
+  const [mobileTab, setMobileTab] = useState(mobileTabs[0]);
 
   useEffect(() => {
     if (fetchedTemplate) {
@@ -338,7 +335,8 @@ const Prompt = () => {
               container
               sx={{
                 mx: "auto",
-                height: "calc(100svh - (90px + 32px))",
+                height: { xs: "calc(100svh - 90px)", md: "calc(100svh - (90px + 32px))" },
+                pb: { xs: "68px", md: 0 },
                 width: { md: "calc(100% - 65px)" },
                 bgcolor: "surface.2",
                 borderTopLeftRadius: "16px",
@@ -350,6 +348,7 @@ const Prompt = () => {
               <Grid
                 className="prompt-grid"
                 sx={{
+                  display: { md: "block", xs: mobileTab.name === "details" ? "block" : "none" },
                   height: "100%",
                   maxWidth: "430px",
                   overflow: "auto",
@@ -446,6 +445,7 @@ const Prompt = () => {
               <Grid
                 flex={1}
                 sx={{
+                  display: { md: "block", xs: mobileTab.name === "sparks" ? "block" : "none" },
                   height: "100%",
                   overflow: "auto",
                   bgcolor: "surface.1",
@@ -503,7 +503,7 @@ const Prompt = () => {
                 {mobileTabs.map((tab, i) => (
                   <Grid item xs={3} md={4} key={i}>
                     <IconButton
-                      onClick={() => setMobileTabsValue(i)}
+                      onClick={() => setMobileTab(tab)}
                       sx={{
                         width: "100%",
                         border: "none",
@@ -511,7 +511,7 @@ const Prompt = () => {
                         py: "24px",
                         fontSize: 16,
                         fontWeight: 500,
-                        color: mobileTabsValue === i ? "primary.main" : "grey.600",
+                        color: mobileTab === tab ? "primary.main" : "grey.600",
                         "&:hover, &:focus": {
                           color: "primary.main",
                         },
