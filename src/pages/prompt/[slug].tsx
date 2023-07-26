@@ -9,6 +9,7 @@ import {
   DialogTitle,
   Divider,
   Grid,
+  IconButton,
   Palette,
   Snackbar,
   Stack,
@@ -21,7 +22,7 @@ import {
   createTheme,
   useTheme,
 } from "@mui/material";
-import { ArtTrack } from "@mui/icons-material";
+import { ArtTrack, History, Subject } from "@mui/icons-material";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
 import materialDynamicColors from "material-dynamic-colors";
 import { mix } from "polished";
@@ -76,6 +77,13 @@ const a11yProps = (index: number) => {
   };
 };
 
+const mobileTabs = [
+  { name: "details", icon: <ArtTrack /> },
+  { name: "generator", icon: "(x)" },
+  { name: "sparks", icon: <Subject /> },
+  { name: "history", icon: <History /> },
+]
+
 const Prompt = () => {
   const [newExecutionData, setNewExecutionData] =
     useState<PromptLiveResponse | null>(null);
@@ -125,6 +133,11 @@ const Prompt = () => {
   const [tabsValue, setTabsValue] = React.useState(0);
   const changeTab = (e: React.SyntheticEvent, newValue: number) => {
     setTabsValue(newValue);
+  };
+
+  const [mobileTabsValue, setMobileTabsValue] = React.useState(0);
+  const changeMobileTab = (e: React.SyntheticEvent, newValue: number) => {
+    setMobileTabsValue(newValue);
   };
 
   useEffect(() => {
@@ -378,7 +391,7 @@ const Prompt = () => {
                       }}
                     >
                       <Tab
-                        label="(X) Variables"
+                        label="(x) Variables"
                         {...a11yProps(0)}
                         sx={{
                           fontSize: 13,
@@ -474,6 +487,44 @@ const Prompt = () => {
                     </Typography>
                   </Box>
                 )}
+              </Grid>
+              
+              <Grid container 
+                sx={{ 
+                  display: { xs: "flex", md: "none" },
+                  position: "fixed",
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  zIndex: 999,
+                  bgcolor: "surface.1",
+                }}
+              >
+                {mobileTabs.map((tab, i) => (
+                  <Grid item xs={3} md={4} key={i}>
+                    <IconButton
+                      onClick={() => setMobileTabsValue(i)}
+                      sx={{
+                        width: "100%",
+                        border: "none",
+                        borderRadius: 0,
+                        py: "24px",
+                        fontSize: 16,
+                        fontWeight: 500,
+                        color: mobileTabsValue === i ? "primary.main" : "grey.600",
+                        "&:hover, &:focus": {
+                          color: "primary.main",
+                        },
+                        "svg": {
+                          width: 20,
+                          height: 20
+                        },
+                      }}
+                    >
+                      {tab.icon}
+                    </IconButton>
+                  </Grid>
+                ))}
               </Grid>
             </Grid>
           )}
