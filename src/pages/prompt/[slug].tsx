@@ -9,7 +9,6 @@ import {
   DialogTitle,
   Divider,
   Grid,
-  IconButton,
   Palette,
   Snackbar,
   Stack,
@@ -47,6 +46,7 @@ import { PromptLiveResponse } from "@/common/types/prompt";
 import { Layout } from "@/layout";
 import useToken from "@/hooks/useToken";
 import { useWindowSize } from "usehooks-ts";
+import BottomTabs from "@/components/prompt/BottomTabs";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -77,13 +77,6 @@ const a11yProps = (index: number) => {
     "aria-controls": `simple-tabpanel-${index}`,
   };
 };
-
-const mobileTabs = [
-  { name: "details", icon: <ArtTrack /> },
-  { name: "generator", icon: "(x)" },
-  { name: "sparks", icon: <Subject /> },
-  { name: "history", icon: <History /> },
-]
 
 const Prompt = () => {
   const [newExecutionData, setNewExecutionData] =
@@ -138,7 +131,7 @@ const Prompt = () => {
     setTabsValue(newValue);
   };
 
-  const [mobileTab, setMobileTab] = useState(mobileTabs[0]);
+  const [mobileTab, setMobileTab] = useState(0);
 
   const detailsElRef = useRef<HTMLDivElement|null>(null);
   const [hideDetailsImage, setHideDetailsImage] = useState(false);
@@ -466,7 +459,7 @@ const Prompt = () => {
                   xs={12}
                   md={8}
                   sx={{
-                    display: mobileTab.name === "details" ? "block" : "none",
+                    display: mobileTab === 0 ? "block" : "none",
                     height: "100%",
                     overflow: "auto",
                     bgcolor: "surface.1",
@@ -489,7 +482,7 @@ const Prompt = () => {
                   xs={12}
                   md={8}
                   sx={{
-                    display: mobileTab.name === "generator" ? "block" : "none",
+                    display: mobileTab === 1 ? "block" : "none",
                     height: "100%",
                     overflow: "auto",
                     bgcolor: "surface.1",
@@ -512,7 +505,7 @@ const Prompt = () => {
               <Grid
                 flex={1}
                 sx={{
-                  display: { md: "block", xs: mobileTab.name === "sparks" ? "block" : "none" },
+                  display: { md: "block", xs: mobileTab === 2 ? "block" : "none" },
                   height: "100%",
                   overflow: "auto",
                   bgcolor: "surface.1",
@@ -556,43 +549,9 @@ const Prompt = () => {
                 )}
               </Grid>
               
-              <Grid container 
-                sx={{ 
-                  display: { xs: "flex", md: "none" },
-                  position: "fixed",
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  zIndex: 999,
-                  bgcolor: "surface.1",
-                }}
-              >
-                {mobileTabs.map((tab, i) => (
-                  <Grid item xs={3} md={4} key={i}>
-                    <IconButton
-                      onClick={() => setMobileTab(tab)}
-                      sx={{
-                        width: "100%",
-                        border: "none",
-                        borderRadius: 0,
-                        py: "24px",
-                        fontSize: 16,
-                        fontWeight: 500,
-                        color: mobileTab === tab ? "primary.main" : "grey.600",
-                        "&:hover, &:focus": {
-                          color: "primary.main",
-                        },
-                        "svg": {
-                          width: 20,
-                          height: 20
-                        },
-                      }}
-                    >
-                      {tab.icon}
-                    </IconButton>
-                  </Grid>
-                ))}
-              </Grid>
+              <BottomTabs
+                onChange={(tab) => setMobileTab(tab)}
+              />
             </Grid>
           )}
 
