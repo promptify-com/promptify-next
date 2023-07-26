@@ -16,6 +16,7 @@ export const SubCategoryCard: React.FC<CardSubcategoryProps> = ({
     <Card
       onClick={onSelected}
       sx={{
+        bgcolor: { xs: "surface.2", md: "white" },
         borderRadius: "45px",
         display: "flex",
         height: "46px",
@@ -45,7 +46,10 @@ export const SubCategoryCard: React.FC<CardSubcategoryProps> = ({
           }
           alt={subcategory.name}
         />
-        <Typography sx={{ ml: "" }}> {subcategory.name}</Typography>
+        <Typography sx={{ ml: "", whiteSpace: "nowrap" }}>
+          {" "}
+          {subcategory.name}
+        </Typography>
       </CardActionArea>
     </Card>
   );

@@ -20,23 +20,16 @@ export const Layout = ({ children }: { children: ReactNode }) => {
               xs: "100%",
               md: openSideBar ? "calc(100% - 299px)" : "80%",
             },
-            m: openSideBar ? "0px 0px 0px auto" : "0px auto 0px auto",
+            m: { md: openSideBar ? "0px 0px 0px auto" : "0px auto 0px auto" },
           }}
         >
           <Header transparent />
           <Box
-            padding={{ xs: "4px 0px", md: "0px 8px" }}
             bgcolor={{ xs: "surface.1", md: "surface.3" }}
             mt={{ xs: "3px", md: 0 }}
+            minHeight={{ xs: "70vh", md: "auto" }}
           >
-            <Grid
-              sx={{
-                padding: { xs: "16px", sm: "32px" },
-              }}
-              display={"flex"}
-              flexDirection={"column"}
-              gap={"16px"}
-            >
+            <Grid display={"flex"} flexDirection={"column"} gap={"16px"}>
               {children}
             </Grid>
           </Box>

@@ -28,7 +28,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
         borderRadius: "16px",
         cursor: "pointer",
         p: "8px",
-        bgcolor: "surface.2",
+        bgcolor: { xs: "surface.2", md: "white" },
         "&:hover": {
           bgcolor: "action.hover",
         },

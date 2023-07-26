@@ -54,47 +54,56 @@ export default function Page({ category }: { category: Category }) {
 
   return (
     <Layout>
-      {isCategoriesLoading ? (
-        <Box>
-          <FetchLoading />
-        </Box>
-      ) : (
-        <Box
-          gap={"16px"}
-          width={"100%"}
-          display={"flex"}
-          flexDirection={"column"}
-          alignItems={"start"}
+      <Box padding={{ xs: "4px 0px", md: "0px 8px" }}>
+        <Grid
+          sx={{
+            padding: { xs: "16px", md: "32px" },
+          }}
         >
-          <Button
-            onClick={() => goBack()}
-            variant="text"
-            sx={{ fontSize: 19, color: "onSurface", ml: -3 }}
-          >
-            <KeyboardArrowLeft /> {category.name}
-          </Button>
-          <Grid display={"flex"} gap={"8px"} flexWrap={"wrap"}>
-            {categories
-              ?.filter((mainCat) => category?.name == mainCat.parent?.name)
-              .map((subcategory) => (
-                <Grid key={subcategory.id}>
-                  <SubCategoryCard
-                    subcategory={subcategory}
-                    onSelected={() => {
-                      navigateTo(subcategory);
-                    }}
-                  />
-                </Grid>
-              ))}
-          </Grid>
-          <FiltersSelected show={!isFiltersNullish} />
-          <TemplatesSection
-            filtred
-            templates={templates}
-            isLoading={isTemplatesLoading}
-          />
-        </Box>
-      )}
+          {isCategoriesLoading ? (
+            <Box>
+              <FetchLoading />
+            </Box>
+          ) : (
+            <Box display={"flex"} flexDirection={"column"} gap={"16px"}>
+              <Grid>
+                <Button
+                  onClick={() => goBack()}
+                  variant="text"
+                  sx={{ fontSize: 19, color: "onSurface", ml: -3 }}
+                >
+                  <KeyboardArrowLeft /> {category.name}
+                </Button>
+              </Grid>
+              <Grid
+                display={"flex"}
+                gap={"8px"}
+                flexWrap={{ xs: "nowrap", md: "wrap" }}
+                overflow={{ xs: "auto", md: "initial" }}
+              >
+                {categories
+                  ?.filter((mainCat) => category?.name == mainCat.parent?.name)
+                  .map((subcategory) => (
+                    <Grid key={subcategory.id}>
+                      <SubCategoryCard
+                        subcategory={subcategory}
+                        onSelected={() => {
+                          navigateTo(subcategory);
+                        }}
+                      />
+                    </Grid>
+                  ))}
+              </Grid>
+              <FiltersSelected show={!isFiltersNullish} />
+              <TemplatesSection
+                filtred
+                templates={templates}
+                isLoading={isTemplatesLoading}
+              />
+            </Box>
+          )}
+        </Grid>
+      </Box>
     </Layout>
   );
 }
