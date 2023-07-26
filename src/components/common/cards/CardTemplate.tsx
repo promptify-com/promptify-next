@@ -27,12 +27,11 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
       sx={{
         borderRadius: "16px",
         cursor: "pointer",
-        p: { sm: "8px" },
-        width: "100%",
+        p: "8px",
         bgcolor: "surface.2",
         "&:hover": {
           bgcolor: "action.hover",
-        }
+        },
       }}
       elevation={0}
     >
@@ -44,48 +43,71 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
       >
         <Grid
           display={"flex"}
-          flexDirection={{ xs: "column", sm: "row" }}
-          alignItems={{ xs: "start", sm: "center" }}
+          flexDirection={"row"}
+          width={{ xs: "100%", md: "auto" }}
+          justifyContent={"space-between"}
+          gap={{ xs: "16px", md: 0 }}
+          alignItems={"center"}
         >
-          <CardMedia
-            sx={{
-              zIndex: 1,
-              borderRadius: "16px",
-              width: { xs: "100%", sm: "72px" },
-              height: { xs: "270px", sm: "54px" },
-              objectFit: "cover",
-            }}
-            component="img"
-            image={template.thumbnail}
-            alt={template.title}
-          />
-          <Grid gap={.5}
-            sx={{
-              ml: { md: "20px" },
-            }}
-            display={"flex"}
-            flexDirection={"column"}
-          >
-            <Typography fontSize={14} fontWeight={500}>
-              {template.title}
-            </Typography>
-            <Typography
+          <Grid display={"flex"} alignItems={"center"} gap={"16px"}>
+            <Grid>
+              <CardMedia
+                sx={{
+                  zIndex: 1,
+                  borderRadius: "16px",
+                  width: { xs: "98px", sm: "72px" },
+                  height: { xs: "73px", sm: "54px" },
+                  objectFit: "cover",
+                }}
+                component="img"
+                image={template.thumbnail}
+                alt={template.title}
+              />
+            </Grid>
+            <Grid
+              gap={0.5}
               sx={{
-                fontSize: 12,
-                fontWeight: 400,
-                lineHeight: "16.8px",
-                letterSpacing: "0.15px",
-                color: "onSurface"
+                ml: { md: "20px" },
               }}
+              display={"flex"}
+              flexDirection={"column"}
             >
-              {template.description?.length > 70
-                ? `${template.description?.slice(0, 70 - 1)}...`
-                : template.description
-              }
-            </Typography>
+              <Typography fontSize={14} fontWeight={500}>
+                {template.title}
+              </Typography>
+              <Typography
+                sx={{
+                  fontSize: 12,
+                  fontWeight: 400,
+                  lineHeight: "16.8px",
+                  letterSpacing: "0.15px",
+                  color: "onSurface",
+                }}
+              >
+                {template.description?.length > 70
+                  ? `${template.description?.slice(0, 70 - 1)}...`
+                  : template.description}
+              </Typography>
+            </Grid>
           </Grid>
+          <Avatar
+            src={template.created_by.avatar}
+            alt={template.created_by.first_name}
+            sx={{
+              display: { xs: "flex", md: "none" },
+              width: 32,
+              height: 32,
+              bgcolor: "surface.5",
+            }}
+          />
         </Grid>
-        <Grid display={"flex"} alignItems={"center"} gap={1}>
+        <Grid
+          display={"flex"}
+          alignItems={"end"}
+          width={{ xs: "100%", md: "auto" }}
+          justifyContent={"space-between"}
+          gap={1}
+        >
           <Grid
             sx={{
               display: "flex",
@@ -93,8 +115,16 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
             }}
           >
             {template.tags.slice(0, 3).map((el) => (
-              <Chip key={el.id} clickable size="small" label={el.name}
-                sx={{ fontSize: 13, fontWeight: 400, color: "onSurface" }}
+              <Chip
+                key={el.id}
+                clickable
+                size="small"
+                label={el.name}
+                sx={{
+                  fontSize: { xs: 11, md: 13 },
+                  fontWeight: 400,
+                  color: "onSurface",
+                }}
               />
             ))}
           </Grid>
@@ -105,7 +135,10 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
                 gap: "0.4em",
               }}
             >
-              <Stack direction={"row"} alignItems={"center"} gap={.5}
+              <Stack
+                direction={"row"}
+                alignItems={"center"}
+                gap={0.5}
                 sx={{
                   display: "flex",
                   fontSize: 13,
@@ -121,10 +154,11 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
           <Avatar
             src={template.created_by.avatar}
             alt={template.created_by.first_name}
-            sx={{ 
+            sx={{
+              display: { xs: "none", md: "flex" },
               width: 32,
               height: 32,
-              bgcolor: "surface.5"
+              bgcolor: "surface.5",
             }}
           />
         </Grid>
