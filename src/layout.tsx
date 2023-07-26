@@ -24,10 +24,14 @@ export const Layout = ({ children }: { children: ReactNode }) => {
           }}
         >
           <Header transparent />
-          <Box padding={"0px 8px"}>
+          <Box
+            padding={{ xs: "4px 0px", md: "0px 8px" }}
+            bgcolor={{ xs: "surface.1", md: "surface.3" }}
+            mt={{ xs: "3px", md: 0 }}
+          >
             <Grid
               sx={{
-                padding: { xs: "8px 0 0 8px", sm: "32px" },
+                padding: { xs: "16px", sm: "32px" },
               }}
               display={"flex"}
               flexDirection={"column"}
