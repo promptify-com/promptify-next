@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Alert,
   Box,
@@ -139,6 +139,19 @@ const Prompt = () => {
   };
 
   const [mobileTab, setMobileTab] = useState(mobileTabs[0]);
+
+  const detailsElRef = useRef<HTMLDivElement|null>(null);
+  const [hideDetailsImage, setHideDetailsImage] = useState(false);
+  
+  const handleScroll = () => {
+    const scrollY = detailsElRef.current?.scrollTop || 0;
+    setHideDetailsImage(scrollY > 226);
+  }
+  useEffect(() => {
+    const detailsEl = detailsElRef.current;
+    detailsEl?.addEventListener('scroll', handleScroll)
+    return () => detailsEl?.removeEventListener('scroll', handleScroll)
+  }, [handleScroll]);
 
   useEffect(() => {
     if (fetchedTemplate) {
@@ -342,8 +355,8 @@ const Prompt = () => {
                 pb: { xs: "68px", md: 0 },
                 width: { md: "calc(100% - 65px)" },
                 bgcolor: "surface.2",
-                borderTopLeftRadius: "16px",
-                borderTopRightRadius: "16px",
+                borderTopLeftRadius: { md: "16px" },
+                borderTopRightRadius: { md: "16px" },
                 overflow: "hidden",
                 position: "relative",
               }}
@@ -448,7 +461,7 @@ const Prompt = () => {
 
               {windowWidth < 960 && (
               <>
-                <Grid
+                <Grid ref={detailsElRef}
                   item
                   xs={12}
                   md={8}
