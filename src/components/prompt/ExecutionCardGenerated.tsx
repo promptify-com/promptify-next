@@ -1,9 +1,10 @@
 import React, { useEffect, useRef } from "react";
-import { Box, Stack, Typography } from "@mui/material";
+import { Box, Stack, Tooltip, Typography } from "@mui/material";
 import { Subtitle } from "@/components/blocks";
 import { getMarkdownFromString } from "@/common/helpers/getMarkdownFromString";
 import { PromptLiveResponse } from "@/common/types/prompt";
 import { Templates } from "@/core/api/dto/templates";
+import { Error } from "@mui/icons-material";
 
 interface Props {
   execution: PromptLiveResponse;
@@ -41,6 +42,23 @@ export const ExecutionCardGenerated: React.FC<Props> = ({
       output.endsWith(".webp")
     );
   };
+
+  const executionError = (error: string|undefined) => {
+    return (
+      <Tooltip title={error} placement="right" arrow
+        componentsProps={{ 
+          tooltip: { 
+            sx: { bgcolor: "error.main", color: "onError", fontSize: 10, fontWeight: 500 } 
+          },
+          arrow: { 
+            sx: { color: "error.main" } 
+          }
+        }}
+      >
+        <Error sx={{ color: "error.main", width: 20, height: 20 }} />
+      </Tooltip>
+    )
+  }
 
   return (
     <Stack
@@ -92,19 +110,22 @@ export const ExecutionCardGenerated: React.FC<Props> = ({
                       }}
                     />
                   )}
-                  <Typography
-                    sx={{
-                      fontSize: 15,
-                      fontWeight: 400,
-                      color: "onSurface",
-                      wordWrap: "break-word",
-                      textAlign: "justify",
-                      float: "none",
-                    }}
-                    dangerouslySetInnerHTML={{
-                      __html: getMarkdownFromString(exec.message),
-                    }}
-                  />
+                  <Typography variant="body1" component="div">
+                    <Typography component={"span"}
+                      sx={{
+                        fontSize: 15,
+                        fontWeight: 400,
+                        color: "onSurface",
+                        wordWrap: "break-word",
+                        textAlign: "justify",
+                        float: "none",
+                      }}
+                      dangerouslySetInnerHTML={{
+                        __html: getMarkdownFromString(exec.message)
+                      }}
+                    />
+                    {exec.error && executionError(exec.error)}
+                  </Typography>
                 </Box>
               )}
               {/* is Image Output and Next item is not text */}
