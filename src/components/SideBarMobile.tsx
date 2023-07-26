@@ -1,7 +1,6 @@
 import { LogoApp } from "@/assets/icons/LogoApp";
 import {
   AutoAwesome,
-  Clear,
   ClearRounded,
   HomeRounded,
   MenuBookRounded,
@@ -12,7 +11,6 @@ import {
   Box,
   Divider,
   Grid,
-  IconButton,
   InputBase,
   List,
   ListItem,
@@ -24,11 +22,14 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/router";
 import { CollectionsEmptyBox } from "./common/sidebar/CollectionsEmptyBox";
+import { User } from "@/core/api/dto/user";
 
 interface SideBarMobileProps {
   open: boolean;
   onClose: () => void;
   onOpen: () => void;
+  user: User | undefined;
+  token: string | null | undefined;
 }
 const links = [
   {
@@ -60,6 +61,8 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
   open,
   onClose,
   onOpen,
+  user,
+  token,
 }) => {
   const router = useRouter();
   const pathname = router.pathname;
@@ -109,15 +112,19 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
             mr={1}
             gap={2}
           >
-            <Avatar
-              sx={{
-                width: "23px",
-                height: "23px",
-                bgcolor: "#56575c",
-              }}
-              src="John Doe"
-              alt="John Doe"
-            />
+            {user && token && (
+              <Avatar
+                sx={{
+                  width: "23px",
+                  height: "23px",
+                  bgcolor: "black",
+                  fontSize: 10,
+                  textTransform: "capitalize",
+                }}
+                src={user.avatar || user.first_name}
+                alt={user.first_name}
+              />
+            )}
             <Box
               onClick={onClose}
               display={"flex"}

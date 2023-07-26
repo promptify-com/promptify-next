@@ -1,13 +1,5 @@
 import React, { useRef, useState } from "react";
-import Link from "next/link";
-import {
-  Avatar,
-  Box,
-  Grid,
-  IconButton,
-  SwipeableDrawer,
-  Typography,
-} from "@mui/material";
+import { Avatar, Box, Grid, Typography } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import { useRouter } from "next/router";
@@ -15,12 +7,10 @@ import { useRouter } from "next/router";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import useToken from "@/hooks/useToken";
 import SearchBar from "@/components/explorer/SearchBar";
-import { LogoAppMobile } from "@/assets/icons/LogoAppMobile";
 import { SearchDialog } from "./SearchDialog";
 import { useGetCurrentUserQuery } from "@/core/api/user";
 import { FetchLoading } from "@/components/FetchLoading";
 import { ProfileDropDown } from "@/components/ProfileMenu";
-import { Menu } from "@mui/icons-material";
 import { SideBarMobile } from "../SideBarMobile";
 
 interface HeaderProps {
@@ -76,20 +66,6 @@ export const Header: React.FC<HeaderProps> = ({
   const [open, setOpen] = useState(false);
   const menuAnchorRef = useRef<HTMLDivElement | null>(null);
   const [openSidebar, setOpenSidebar] = useState(false);
-  const [drawerState, setDrawerState] = useState(false);
-
-  const toggleDrawer =
-    (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
-      if (
-        event &&
-        event.type === "keydown" &&
-        ((event as React.KeyboardEvent).key === "Tab" ||
-          (event as React.KeyboardEvent).key === "Shift")
-      ) {
-        return;
-      }
-      setDrawerState(open);
-    };
 
   const handleInputFocus = () => {
     setOpen(true);
@@ -144,15 +120,19 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <SearchIcon sx={{ fontSize: "26px", color: "onSurface" }} />
           </Box>
-          <Avatar
-            sx={{
-              width: "23px",
-              height: "23px",
-              bgcolor: "black",
-            }}
-            src="John Doe"
-            alt="John Doe"
-          />
+          {user && token && (
+            <Avatar
+              sx={{
+                width: "23px",
+                height: "23px",
+                bgcolor: "black",
+                fontSize: 10,
+                textTransform: "capitalize",
+              }}
+              src={user.avatar || user.first_name}
+              alt={user.first_name}
+            />
+          )}
           <Box
             display={"flex"}
             alignItems={"center"}
@@ -182,22 +162,6 @@ export const Header: React.FC<HeaderProps> = ({
             gap: "10px",
           }}
         >
-          {/* <Box
-            display={{ xs: "flex", sm: "none" }}
-            alignItems={"center"}
-            bgcolor={"blue"}
-          >
-            <IconButton
-              onClick={() => {
-                setOpen(true);
-              }}
-              sx={{
-                border: "none",
-              }}
-            >
-              <SearchIcon />
-            </IconButton>
-          </Box> */}
           <Box sx={{ display: { xs: "none", md: "flex" } }}>
             {userLoading ? (
               <FetchLoading />
@@ -282,19 +246,6 @@ export const Header: React.FC<HeaderProps> = ({
               </Box>
             )}
           </Box>
-
-          {/* <Box display={{ xs: "flex", sm: "none" }}>
-            <IconButton
-              // onClick={fetchTemplates}
-              onClick={() => setDrawerState((prev) => !prev)}
-              size="large"
-              sx={{
-                border: "none",
-              }}
-            >
-              <MenuRoundedIcon />
-            </IconButton>
-          </Box> */}
         </Box>
         <ProfileDropDown
           anchorElement={menuAnchorRef.current}
@@ -307,82 +258,9 @@ export const Header: React.FC<HeaderProps> = ({
           open={openSidebar}
           onClose={() => setOpenSidebar(false)}
           onOpen={() => setOpenSidebar(true)}
+          user={user}
+          token={token}
         />
-        {/* <SwipeableDrawer
-          anchor={"top"}
-          open={drawerState}
-          onClose={toggleDrawer(false)}
-          onOpen={toggleDrawer(true)}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-around",
-              width: "auto",
-              mt: "65px",
-              ml: "2rem",
-              mb: "65px",
-            }}
-            role="presentation"
-          >
-            <Typography fontSize={14} pt={"1rem"} color="grey">
-              Explore
-            </Typography>
-
-            <Box
-              pt={"1rem"}
-              onClick={() => {
-                router.push({
-                  pathname: `/explorer/details`,
-                  query: {
-                    category: "All directions",
-                  },
-                });
-                setDrawerState(false);
-              }}
-            >
-              <Typography fontSize={24}>Templates</Typography>
-            </Box>
-            <Box
-              pt={"1rem"}
-              onClick={() => {
-                router.push({
-                  pathname: `/explorer/details`,
-                  query: {
-                    category: "All directions",
-                  },
-                });
-                setDrawerState(false);
-              }}
-            >
-              <Typography fontSize={24}>Collections</Typography>
-            </Box>
-
-            <Typography fontSize={14} pt={"1rem"} color="grey">
-              Learn
-            </Typography>
-
-            <Box
-              pt={"1rem"}
-              onClick={() => {
-                router.push("/");
-                setDrawerState(false);
-              }}
-            >
-              <Typography fontSize={24}>Blog</Typography>
-            </Box>
-            <Box
-              pt={"1rem"}
-              onClick={() => {
-                router.push("/");
-                setDrawerState(false);
-              }}
-            >
-              <Typography fontSize={24}>Collections</Typography>
-            </Box>
-          </Box>
-        </SwipeableDrawer> */}
       </Grid>
     </Box>
   );
