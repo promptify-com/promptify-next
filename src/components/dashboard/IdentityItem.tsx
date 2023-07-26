@@ -98,52 +98,6 @@ export const IdentityItem: React.FC<IProps> = ({
       borderRadius={"16px"}
     >
       <Grid
-        display={{ xs: "flex", sm: "none" }}
-        sx={{
-          dispaly: "flex",
-          flexDirection: "row",
-          alignItem: "center",
-          width: "100%",
-        }}
-      >
-        <Typography
-          sx={{
-            fontFamily: "Poppins",
-            fontStyle: "normal",
-            fontWeight: 400,
-            fontSize: "16px",
-            lineHeight: "150%",
-            display: "flex",
-            alignItems: "center",
-            letterSpacing: "0.15px",
-            color: "##1B1B1E",
-            width: "70%",
-          }}
-        >
-          {question?.text?.length > 16
-            ? question?.text?.slice(0, 16) + "..."
-            : question?.text}
-        </Typography>
-        <Typography
-          sx={{
-            fontFamily: "Poppins",
-            fontStyle: "normal",
-            fontWeight: 400,
-            fontSize: "16px",
-            lineHeight: "150%",
-            display: "flex",
-            alignItems: "center",
-            letterSpacing: "0.15px",
-            color: "#1B1B1E",
-            width: "30%",
-          }}
-        >
-          {!!selectedOption?.text && selectedOption?.text?.length > 13
-            ? selectedOption?.text?.slice(0, 13) + "..."
-            : selectedOption?.text}
-        </Typography>
-      </Grid>
-      <Grid
         display={{ xs: "none", sm: "flex" }}
         sx={{
           dispaly: "flex",
@@ -157,6 +111,7 @@ export const IdentityItem: React.FC<IProps> = ({
           container
           display={"flex"}
           justifyContent={"space-between"}
+          alignItems={"center"}
           width={"100%"}
         >
           <Grid item xs={3}>

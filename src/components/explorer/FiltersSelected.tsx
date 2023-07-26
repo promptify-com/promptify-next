@@ -1,8 +1,13 @@
 import { Box, Chip } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 
-import { setSelectedEngine, setSelectedTag } from "@/core/store/filtersSlice";
+import {
+  deleteSelectedTag,
+  setSelectedEngine,
+  setSelectedKeyword,
+} from "@/core/store/filtersSlice";
 import { RootState } from "@/core/store";
+import { Tag } from "@/core/api/dto/templates";
 
 interface FiltersSelectedProps {
   show: boolean;
@@ -11,8 +16,11 @@ interface FiltersSelectedProps {
 export const FiltersSelected: React.FC<FiltersSelectedProps> = ({ show }) => {
   const dispatch = useDispatch();
   const filters = useSelector((state: RootState) => state.filters);
-  const { engine, tag } = filters;
+  const { engine, tag, title } = filters;
 
+  const handleDeleteTag = (tagId: number) => {
+    dispatch(deleteSelectedTag(tagId));
+  };
   return (
     <>
       {show && (
@@ -24,11 +32,25 @@ export const FiltersSelected: React.FC<FiltersSelectedProps> = ({ show }) => {
               onDelete={() => dispatch(setSelectedEngine(null))}
             />
           )}
-          {tag && (
+          {tag.length > 0 && (
+            <Box display={"flex"} alignItems={"center"} gap={2}>
+              {tag
+                .filter((item: Tag | null): item is Tag => item !== null)
+                .map((item: Tag) => (
+                  <Chip
+                    key={item.id}
+                    label={item.name}
+                    sx={{ fontSize: 13, fontWeight: 500 }}
+                    onDelete={() => handleDeleteTag(item.id)}
+                  />
+                ))}
+            </Box>
+          )}
+          {title && (
             <Chip
-              label={tag.name}
+              label={title}
               sx={{ fontSize: 13, fontWeight: 500 }}
-              onDelete={() => dispatch(setSelectedTag(null))}
+              onDelete={() => dispatch(setSelectedKeyword(null))}
             />
           )}
         </Box>
