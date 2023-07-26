@@ -40,44 +40,60 @@ export default function Page({ category }: { category: Category }) {
         />
       </Head>
       <Layout>
-        {isCategoriesLoading ? (
-          <Box>
-            <FetchLoading />
-          </Box>
-        ) : (
-          <Box
-            gap={"16px"}
-            display={"flex"}
-            flexDirection={"column"}
-            alignItems={"start"}
-            width={"100%"}
+        <Box padding={{ xs: "4px 0px", md: "0px 8px" }}>
+          <Grid
+            sx={{
+              padding: { xs: "16px", md: "32px" },
+            }}
           >
-            <Button
-              onClick={() => router.push("/explore")}
-              variant="text"
-              sx={{ fontSize: 19, color: "onSurface", ml: -3 }}
-            >
-              <KeyboardArrowLeft /> {category.name}
-            </Button>
-            <Grid display={"flex"} gap={"8px"} flexWrap={"wrap"}>
-              {categories
-                ?.filter((mainCat) => category?.name == mainCat.parent?.name)
-                .map((subcategory) => (
-                  <Grid key={subcategory.id}>
-                    <SubCategoryCard
-                      subcategory={subcategory}
-                      onSelected={() => navigateTo(subcategory.slug)}
-                    />
-                  </Grid>
-                ))}
-            </Grid>
-            <TemplatesSection
-              filtred
-              templates={templates}
-              isLoading={isTemplatesLoading}
-            />
-          </Box>
-        )}
+            {isCategoriesLoading ? (
+              <Box>
+                <FetchLoading />
+              </Box>
+            ) : (
+              <Box
+                gap={"16px"}
+                display={"flex"}
+                flexDirection={"column"}
+                width={"100%"}
+              >
+                <Grid>
+                  <Button
+                    onClick={() => router.push("/explore")}
+                    variant="text"
+                    sx={{ fontSize: 19, color: "onSurface", ml: -3 }}
+                  >
+                    <KeyboardArrowLeft /> {category.name}
+                  </Button>
+                </Grid>
+                <Grid
+                  display={"flex"}
+                  gap={"8px"}
+                  flexWrap={{ xs: "nowrap", md: "wrap" }}
+                  overflow={{ xs: "auto", md: "initial" }}
+                >
+                  {categories
+                    ?.filter(
+                      (mainCat) => category?.name == mainCat.parent?.name
+                    )
+                    .map((subcategory) => (
+                      <Grid key={subcategory.id}>
+                        <SubCategoryCard
+                          subcategory={subcategory}
+                          onSelected={() => navigateTo(subcategory.name)}
+                        />
+                      </Grid>
+                    ))}
+                </Grid>
+                <TemplatesSection
+                  filtred
+                  templates={templates}
+                  isLoading={isTemplatesLoading}
+                />
+              </Box>
+            )}
+          </Grid>
+        </Box>
       </Layout>
     </>
   );

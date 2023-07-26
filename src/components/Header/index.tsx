@@ -1,13 +1,5 @@
 import React, { useRef, useState } from "react";
-import Link from "next/link";
-import {
-  Avatar,
-  Box,
-  Grid,
-  IconButton,
-  SwipeableDrawer,
-  Typography,
-} from "@mui/material";
+import { Avatar, Box, Grid, Typography } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import { useRouter } from "next/router";
@@ -15,11 +7,11 @@ import { useRouter } from "next/router";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import useToken from "@/hooks/useToken";
 import SearchBar from "@/components/explorer/SearchBar";
-import { LogoAppMobile } from "@/assets/icons/LogoAppMobile";
 import { SearchDialog } from "./SearchDialog";
 import { useGetCurrentUserQuery } from "@/core/api/user";
 import { FetchLoading } from "@/components/FetchLoading";
 import { ProfileDropDown } from "@/components/ProfileMenu";
+import { SideBarMobile } from "../SideBarMobile";
 
 interface HeaderProps {
   transparent?: boolean;
@@ -73,21 +65,7 @@ export const Header: React.FC<HeaderProps> = ({
   const [isMenuShown, setIsMenuShown] = useState(false);
   const [open, setOpen] = useState(false);
   const menuAnchorRef = useRef<HTMLDivElement | null>(null);
-  const [drawerState, setDrawerState] = useState(false);
-
-  const toggleDrawer =
-    (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
-      if (
-        event &&
-        event.type === "keydown" &&
-        ((event as React.KeyboardEvent).key === "Tab" ||
-          (event as React.KeyboardEvent).key === "Shift")
-      ) {
-        return;
-      }
-
-      setDrawerState(open);
-    };
+  const [openSidebar, setOpenSidebar] = useState(false);
 
   const handleInputFocus = () => {
     setOpen(true);
@@ -104,7 +82,8 @@ export const Header: React.FC<HeaderProps> = ({
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        height: "90px",
+        bgcolor: { xs: "surface.1", md: "surface.3" },
+        height: { xs: "56px", md: "90px" },
       }}
     >
       <Grid
@@ -113,12 +92,58 @@ export const Header: React.FC<HeaderProps> = ({
           display: "flex",
           width: "100%",
           gap: "30px",
-          padding: { xs: "1em 0em 0em 1em", sm: "1.5em 2em" },
+          padding: { xs: "0 4px ", md: "1.5em 2em" },
           alignItems: "center",
         }}
       >
+        <Grid
+          display={{ xs: "flex", md: "none" }}
+          width={75}
+          p={"0px 10px"}
+          alignItems={"center"}
+          height={48}
+          mt={1}
+        >
+          <LogoApp width={23} />
+        </Grid>
+        <Grid
+          display={{ xs: "flex", md: "none" }}
+          alignItems={"center"}
+          gap={2}
+          mr={1}
+        >
+          <Box
+            display={"flex"}
+            alignItems={"center"}
+            justifyContent={"center"}
+            onClick={() => setOpenSidebar(true)}
+          >
+            <SearchIcon sx={{ fontSize: "26px", color: "onSurface" }} />
+          </Box>
+          {user && token && (
+            <Avatar
+              sx={{
+                width: "23px",
+                height: "23px",
+                bgcolor: "black",
+                fontSize: 10,
+                textTransform: "capitalize",
+              }}
+              src={user.avatar || user.first_name}
+              alt={user.first_name}
+            />
+          )}
+          <Box
+            display={"flex"}
+            alignItems={"center"}
+            justifyContent={"center"}
+            onClick={() => setOpenSidebar(true)}
+          >
+            <MenuRoundedIcon sx={{ fontSize: "26px", color: "onSurface" }} />
+          </Box>
+        </Grid>
         <Box
-          display={{ xs: "none", sm: "flex" }}
+          display={{ xs: "none", md: "flex" }}
           sx={{
             flex: 1,
             alignItems: "center",
@@ -132,116 +157,94 @@ export const Header: React.FC<HeaderProps> = ({
 
         <Box
           sx={{
-            display: "-webkit-box",
+            display: { xs: "none", md: "flex" },
             alignItems: "center",
             gap: "10px",
           }}
         >
-          <Box display={{ xs: "flex", sm: "none" }}>
-            <IconButton
-              onClick={() => {
-                setOpen(true);
-              }}
-              size="large"
-              sx={{
-                border: "none",
-              }}
-            >
-              <SearchIcon />
-            </IconButton>
-          </Box>
-          {userLoading ? (
-            <FetchLoading />
-          ) : (
-            <Box>
-              {user && token ? (
-                <Avatar
-                  ref={menuAnchorRef}
-                  onClick={() => setIsMenuShown(!isMenuShown)}
-                  src={user.avatar || user.first_name}
-                  alt={user.first_name}
-                  sx={{
-                    ml: "auto",
-                    cursor: "pointer",
-                    bgcolor: "black",
-                    borderRadius: { xs: "24px", sm: "36px" },
-                    width: { xs: "24px", sm: "40px" },
-                    padding: "1px",
-                    height: { xs: "24px", sm: "40px" },
-                    fontStyle: "normal",
-                    textAlign: "center",
-                    fontWeight: 400,
-                    fontSize: { sm: "30px" },
-                    textTransform: "capitalize",
-                    lineHeight: "20px",
-                    letterSpacing: "0.14px",
-                  }}
-                />
-              ) : (
-                <Box display={"flex"} alignItems={"center"} gap={"16px"}>
-                  <Login />
-                  <Grid
-                    onClick={() =>
-                      router.push({
-                        pathname: "/signin",
-                        query: { from: "signup" },
-                      })
-                    }
+          <Box sx={{ display: { xs: "none", md: "flex" } }}>
+            {userLoading ? (
+              <FetchLoading />
+            ) : (
+              <Box>
+                {user && token ? (
+                  <Avatar
+                    ref={menuAnchorRef}
+                    onClick={() => setIsMenuShown(!isMenuShown)}
+                    src={user.avatar || user.first_name}
+                    alt={user.first_name}
                     sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      padding: "8px 22px",
-                      width: "105px",
-                      height: "42px",
-                      background: "#3B4050",
-                      borderRadius: "100px",
-                      flex: "none",
-                      order: 1,
-                      flexGrow: 0,
+                      ml: "auto",
                       cursor: "pointer",
-
-                      "&:hover": {
-                        transform: "scale(1.05)",
-                      },
+                      bgcolor: "black",
+                      borderRadius: { xs: "24px", sm: "36px" },
+                      width: { xs: "24px", sm: "40px" },
+                      padding: "1px",
+                      height: { xs: "24px", sm: "40px" },
+                      fontStyle: "normal",
+                      textAlign: "center",
+                      fontWeight: 400,
+                      fontSize: { sm: "30px" },
+                      textTransform: "capitalize",
+                      lineHeight: "20px",
+                      letterSpacing: "0.14px",
                     }}
-                  >
-                    <Typography
+                  />
+                ) : (
+                  <Box display={"flex"} alignItems={"center"} gap={"16px"}>
+                    <Login />
+                    <Grid
+                      onClick={() =>
+                        router.push({
+                          pathname: "/signin",
+                          query: { from: "signup" },
+                        })
+                      }
                       sx={{
-                        width: "61px",
-                        height: "26px",
-                        fontFamily: "Poppins",
-                        fontStyle: "normal",
-                        fontWeight: 500,
-                        fontSize: "15px",
-                        lineHeight: "26px",
-                        letterSpacing: "0.46px",
-                        color: "#FFFFFF",
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        padding: "8px 22px",
+                        width: "105px",
+                        height: "42px",
+                        background: "#3B4050",
+                        boxShadow:
+                          "0px 1px 5px rgba(0, 0, 0, 0.12), 0px 2px 2px rgba(0, 0, 0, 0.14), 0px 3px 1px -2px rgba(0, 0, 0, 0.2)",
+                        borderRadius: "100px",
                         flex: "none",
                         order: 1,
                         flexGrow: 0,
+                        cursor: "pointer",
+
+                        "&:hover": {
+                          transform: "scale(1.05)",
+                        },
                       }}
                     >
-                      Sign Up
-                    </Typography>
-                  </Grid>
-                </Box>
-              )}
-            </Box>
-          )}
-
-          <Box display={{ xs: "flex", sm: "none" }}>
-            <IconButton
-              // onClick={fetchTemplates}
-              onClick={() => setDrawerState((prev) => !prev)}
-              size="large"
-              sx={{
-                border: "none",
-              }}
-            >
-              <MenuRoundedIcon />
-            </IconButton>
+                      <Typography
+                        sx={{
+                          width: "61px",
+                          height: "26px",
+                          fontFamily: "Poppins",
+                          fontStyle: "normal",
+                          fontWeight: 500,
+                          fontSize: "15px",
+                          lineHeight: "26px",
+                          letterSpacing: "0.46px",
+                          color: "#FFFFFF",
+                          flex: "none",
+                          order: 1,
+                          flexGrow: 0,
+                        }}
+                      >
+                        Sign Up
+                      </Typography>
+                    </Grid>
+                  </Box>
+                )}
+              </Box>
+            )}
           </Box>
         </Box>
         <ProfileDropDown
@@ -251,82 +254,13 @@ export const Header: React.FC<HeaderProps> = ({
           onToggle={() => setIsMenuShown(!isMenuShown)}
           onClose={() => setIsMenuShown(false)}
         />
-
-        <SwipeableDrawer
-          anchor={"top"}
-          open={drawerState}
-          onClose={toggleDrawer(false)}
-          onOpen={toggleDrawer(true)}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-around",
-              width: "auto",
-              mt: "65px",
-              ml: "2rem",
-              mb: "65px",
-            }}
-            role="presentation"
-          >
-            <Typography fontSize={14} pt={"1rem"} color="grey">
-              Explore
-            </Typography>
-
-            <Box
-              pt={"1rem"}
-              onClick={() => {
-                router.push({
-                  pathname: `/explorer/details`,
-                  query: {
-                    category: "All directions",
-                  },
-                });
-                setDrawerState(false);
-              }}
-            >
-              <Typography fontSize={24}>Templates</Typography>
-            </Box>
-            <Box
-              pt={"1rem"}
-              onClick={() => {
-                router.push({
-                  pathname: `/explorer/details`,
-                  query: {
-                    category: "All directions",
-                  },
-                });
-                setDrawerState(false);
-              }}
-            >
-              <Typography fontSize={24}>Collections</Typography>
-            </Box>
-
-            <Typography fontSize={14} pt={"1rem"} color="grey">
-              Learn
-            </Typography>
-
-            <Box
-              pt={"1rem"}
-              onClick={() => {
-                router.push("/");
-                setDrawerState(false);
-              }}
-            >
-              <Typography fontSize={24}>Blog</Typography>
-            </Box>
-            <Box
-              pt={"1rem"}
-              onClick={() => {
-                router.push("/");
-                setDrawerState(false);
-              }}
-            >
-              <Typography fontSize={24}>Collections</Typography>
-            </Box>
-          </Box>
-        </SwipeableDrawer>
+        <SideBarMobile
+          open={openSidebar}
+          onClose={() => setOpenSidebar(false)}
+          onOpen={() => setOpenSidebar(true)}
+          user={user}
+          token={token}
+        />
       </Grid>
     </Box>
   );

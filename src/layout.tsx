@@ -24,19 +24,16 @@ export const Layout = ({ children }: { children: ReactNode }) => {
               xs: "100%",
               md: open ? "calc(100% - 299px)" : "80%",
             },
-            m: open ? "0px 0px 0px auto" : "0px auto 0px auto",
+            m: { md: open ? "0px 0px 0px auto" : "0px auto 0px auto" },
           }}
         >
           <Header transparent />
-          <Box padding={"0px 8px"}>
-            <Grid
-              sx={{
-                padding: { xs: "8px 0 0 8px", sm: "0px 32px" },
-              }}
-              display={"flex"}
-              flexDirection={"column"}
-              gap={"16px"}
-            >
+          <Box
+            bgcolor={{ xs: "surface.1", md: "surface.3" }}
+            mt={{ xs: "3px", md: 0 }}
+            minHeight={{ xs: "70vh", md: "auto" }}
+          >
+            <Grid display={"flex"} flexDirection={"column"} gap={"16px"}>
               {children}
             </Grid>
           </Box>

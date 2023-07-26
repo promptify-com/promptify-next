@@ -55,8 +55,12 @@ export default function ExplorePage() {
             key="desc"
           />
         </Head>
-        <Box>
-          <Grid sx={{}} display={"flex"} flexDirection={"column"} gap={"16px"}>
+        <Box padding={{ xs: "4px 0px", md: "0px 8px" }}>
+          <Grid
+            sx={{
+              padding: { xs: "16px", md: "32px" },
+            }}
+          >
             <FiltersSelected show={!allNull} />
             {allNull && (
               <CategoriesSection
