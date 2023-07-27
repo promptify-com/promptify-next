@@ -175,6 +175,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(executionData),
+        openWhenHidden: true,
 
         async onopen(res) {
           if (res.ok && res.status === 200) {
