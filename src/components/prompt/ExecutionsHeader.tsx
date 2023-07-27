@@ -24,10 +24,11 @@ export const ExecutionsHeader: React.FC<Props> = ({
    const [searchText, setSearchText] = useState("");
    const [presetsAnchor, setPresetsAnchor] = useState<HTMLElement | null>(null);
 
-   const SearchInput = (
-               
-      <Stack direction={"row"} alignItems={"center"} ml="auto">
-         <Collapse orientation="horizontal" in={searchShown}>
+   const SearchInput = (direction:"right"|"left") => (     
+      <Stack direction={"row"} alignItems={"center"}>
+         <Collapse orientation="horizontal" in={searchShown} 
+            sx={{ order: direction === "right" ? 1 : 0 }}
+         >
             <Stack direction={"row"} alignItems={"center"} spacing={1}
                sx={{
                   position: "sticky",
@@ -83,7 +84,7 @@ export const ExecutionsHeader: React.FC<Props> = ({
       </Button>
    )
 
-   const FavoriteButton = (
+   const PinButton = (
       <IconButton sx={{ ...iconButtonStyle, opacity: .5 }}
          onClick={pinExecution}
       >
@@ -94,7 +95,7 @@ export const ExecutionsHeader: React.FC<Props> = ({
    return (
       <Box sx={{ 
             position: "sticky", top: 0, left: 0, right: 0, zIndex: 998,
-            p: "16px 16px 16px 24px", 
+            p: { md: "16px 16px 16px 24px" }, 
             bgcolor: "surface.1",
             boxShadow: "0px -1px 0px 0px #ECECF4 inset"
          }}
@@ -108,25 +109,62 @@ export const ExecutionsHeader: React.FC<Props> = ({
                alignItems={"center"}
                gap={1}
             >
-               {FavoriteButton}
+               {PinButton}
 
                {SparksSelect}
 
-               {SearchInput}
+               <Stack
+                  direction={"row"}
+                  alignItems={"center"}
+                  gap={1}
+                  ml={"auto"}
+               >
+                  {SearchInput("left")}
 
-               {false && (
-                  <React.Fragment>
-                  <Typography sx={{ color: `${alpha(palette.onSurface, .2)}`, fontSize: 12, fontWeight: 400 }}>
-                     saved...
-                  </Typography>
-                  <IconButton sx={{ ...iconButtonStyle }}>
-                     <Undo />
-                  </IconButton>
-                  <IconButton sx={{ ...iconButtonStyle }}>
-                     <Redo />
-                  </IconButton>
+                  {false && (
+                     <React.Fragment>
+                     <Typography sx={{ color: `${alpha(palette.onSurface, .2)}`, fontSize: 12, fontWeight: 400 }}>
+                        saved...
+                     </Typography>
+                     <IconButton sx={{ ...iconButtonStyle }}>
+                        <Undo />
+                     </IconButton>
+                     <IconButton sx={{ ...iconButtonStyle }}>
+                        <Redo />
+                     </IconButton>
+                     <Button
+                        sx={{ color: "onSurface", fontSize: 13, fontWeight: 500 }}
+                        startIcon={<FeedOutlined />}
+                        endIcon={Boolean(presetsAnchor) ? <ArrowDropUp /> : <ArrowDropDown />}
+                        variant={"text"}
+                        onClick={(e) => setPresetsAnchor(e.currentTarget)}
+                     >
+                        Export
+                     </Button> 
+                     </React.Fragment>
+                  )}
+               </Stack>
+            </Stack>
+
+            {/* Small screen header */}
+            <Box>
+               <Stack
+                  display={{ md: "none" }}
+                  direction={"row"} alignItems={"center"} gap={1} p={"8px 16px"}
+               >
+                  {SparksSelect}
+
+                  {PinButton}
+               </Stack>
+               <Stack
+                  display={{ md: "none" }}
+                  direction={"row"} alignItems={"center"} gap={1} p={"8px 16px"}
+               >
+                  {SearchInput("right")}
+
+                  {false && (
                   <Button
-                     sx={{ color: "onSurface", fontSize: 13, fontWeight: 500 }}
+                     sx={{ color: "onSurface", fontSize: 13, fontWeight: 500, ml: "auto" }}
                      startIcon={<FeedOutlined />}
                      endIcon={Boolean(presetsAnchor) ? <ArrowDropUp /> : <ArrowDropDown />}
                      variant={"text"}
@@ -134,19 +172,9 @@ export const ExecutionsHeader: React.FC<Props> = ({
                   >
                      Export
                   </Button> 
-                  </React.Fragment>
-               )}
-            </Stack>
-
-            {/* Small screen header */}
-            <Stack
-               display={{ md: "none" }}
-               direction={"row"}
-               alignItems={"center"}
-               gap={1}
-            >
-               {SparksSelect}
-            </Stack>
+                  )}
+               </Stack>
+            </Box>
 
             <Popper
                open={Boolean(presetsAnchor)}

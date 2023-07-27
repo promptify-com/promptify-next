@@ -71,7 +71,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData }) => {
   return (
     <Stack gap={1}
       sx={{
-        width: "70%",
+        width: { md: "70%" },
         mx: "auto",
       }}
     >
