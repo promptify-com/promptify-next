@@ -464,7 +464,6 @@ const Prompt = () => {
                     height: "100%",
                     overflow: "auto",
                     bgcolor: "surface.1",
-                    borderLeft: "1px solid #ECECF4",
                     position: "relative",
                   }}
                 >
@@ -487,8 +486,6 @@ const Prompt = () => {
                     height: "100%",
                     overflow: "auto",
                     bgcolor: "surface.1",
-                    borderLeft: "1px solid #ECECF4",
-                    position: "relative",
                   }}
                 >
                   <GeneratorForm
@@ -498,6 +495,21 @@ const Prompt = () => {
                     setIsGenerating={setIsGenerating}
                     onError={setErrorMessage}
                     exit={() => setGeneratorOpened(false)}
+                  />
+                </Grid>
+
+                <Grid
+                  item
+                  xs={12}
+                  md={8}
+                  sx={{
+                    display: mobileTab === 3 ? "block" : "none",
+                    height: "100%",
+                    overflow: "auto",
+                    bgcolor: "surface.1"
+                  }}
+                >
+                  <History 
                   />
                 </Grid>
               </>

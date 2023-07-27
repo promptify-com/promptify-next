@@ -64,7 +64,9 @@ export const History: React.FC<Props> = ({
               <TimelineOppositeContent
                 sx={{ 
                   p: "16px", 
-                  textAlign: "left", 
+                  textAlign: "left",
+                  fontSize: 12,
+                  fontWeight: 500, 
                   color: "onSurface" 
                 }}
               >
@@ -76,7 +78,7 @@ export const History: React.FC<Props> = ({
                     bgcolor: `${alpha(palette.primary.main, .3)}`
                   }}
                 />
-                <TimelineDot variant={true ? "filled": "outlined"} color="primary"
+                <TimelineDot variant={i === 0 ? "filled": "outlined"} color="primary"
                   sx={{ 
                     m: 0,
                     p: 0,
@@ -92,10 +94,12 @@ export const History: React.FC<Props> = ({
               <TimelineContent sx={{ 
                   flex: 3,
                   p: '16px',
-                  color: "onSurface" 
+                  fontSize: 12,
+                  fontWeight: 500,
+                  color: "onSurface",
                 }}
               >
-                <Typography>Because you need strength</Typography>
+                [spent with lites of coffees in front of your laptop in search]
               </TimelineContent>
             </TimelineItem>
 
