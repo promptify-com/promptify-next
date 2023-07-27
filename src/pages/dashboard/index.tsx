@@ -22,19 +22,27 @@ const Dashboard = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Layout>
-        <Box sx={{ px: "12px" }}>
-          <Box
-            display="flex"
-            flexDirection="column"
-            alignItems={"flex-start"}
-            gap={"16px"}
-            width={"100%"}
+        <Box padding={{ xs: "4px 0px", md: "0px 8px" }}>
+          <Grid
+            sx={{
+              padding: { xs: "16px", md: "32px" },
+            }}
           >
-            <Home />
-            <Connections />
-            <Identy />
-            <Prompts />
-          </Box>
+            <Box sx={{ px: "12px" }}>
+              <Box
+                display="flex"
+                flexDirection="column"
+                alignItems={"flex-start"}
+                gap={"16px"}
+                width={"100%"}
+              >
+                <Home />
+                <Connections />
+                <Identy />
+                <Prompts />
+              </Box>
+            </Box>
+          </Grid>
         </Box>
       </Layout>
     </>

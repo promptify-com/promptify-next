@@ -87,7 +87,10 @@ export default function Page({ category }: { category: Category }) {
                 display={"flex"}
                 gap={"8px"}
                 flexWrap={{ xs: "nowrap", md: "wrap" }}
-                overflow={{ xs: "auto", md: "initial" }}
+                sx={{
+                  overflow: { xs: "auto", md: "initial" },
+                  WebkitOverflowScrolling: "touch",
+                }}
               >
                 {categories
                   ?.filter((mainCat) => category?.name == mainCat.parent?.name)

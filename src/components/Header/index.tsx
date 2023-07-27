@@ -97,6 +97,7 @@ export const Header: React.FC<HeaderProps> = ({
         }}
       >
         <Grid
+          onClick={() => router.push("/")}
           display={{ xs: "flex", md: "none" }}
           width={75}
           p={"0px 10px"}
