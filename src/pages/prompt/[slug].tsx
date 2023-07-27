@@ -17,11 +17,10 @@ import {
   TextField,
   ThemeProvider,
   Typography,
-  alpha,
   createTheme,
   useTheme,
 } from "@mui/material";
-import { ArtTrack, History, Subject } from "@mui/icons-material";
+import { ArtTrack, History as HistoryIcon } from "@mui/icons-material";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
 import materialDynamicColors from "material-dynamic-colors";
 import { mix } from "polished";
@@ -47,6 +46,7 @@ import { Layout } from "@/layout";
 import useToken from "@/hooks/useToken";
 import { useWindowSize } from "usehooks-ts";
 import BottomTabs from "@/components/prompt/BottomTabs";
+import { History } from "@/components/prompt/History";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -404,30 +404,19 @@ const Prompt = () => {
                       <Tab
                         label="(x) Variables"
                         {...a11yProps(0)}
-                        sx={{
-                          fontSize: 13,
-                          fontWeight: 500,
-                          textTransform: "none",
-                          p: "16px",
-                          minHeight: "auto",
-                          bgcolor: "surface.1",
-                          color: `${alpha(palette.onSurface, 0.5)}`,
-                        }}
+                        sx={tabStyle}
                       />
                       <Tab
                         label="About"
                         {...a11yProps(1)}
-                        icon={<ArtTrack />}
-                        iconPosition="start"
-                        sx={{
-                          fontSize: 13,
-                          fontWeight: 500,
-                          textTransform: "none",
-                          p: "16px",
-                          minHeight: "auto",
-                          bgcolor: "surface.1",
-                          color: `${alpha(palette.onSurface, 0.5)}`,
-                        }}
+                        icon={<ArtTrack />} iconPosition="start"
+                        sx={tabStyle}
+                      />
+                      <Tab
+                        label="History"
+                        {...a11yProps(1)}
+                        icon={<HistoryIcon />} iconPosition="start"
+                        sx={tabStyle}
                       />
                     </Tabs>
                     <Box flex={1}>
@@ -447,6 +436,10 @@ const Prompt = () => {
                         <Details
                           templateData={templateData}
                           updateTemplateData={setTemplateData}
+                        />
+                      </CustomTabPanel>
+                      <CustomTabPanel value={tabsValue} index={2}>
+                        <History 
                         />
                       </CustomTabPanel>
                     </Box>
@@ -608,3 +601,16 @@ export async function getServerSideProps({ params }: any) {
   }
 }
 export default Prompt;
+
+const tabStyle = {
+  fontSize: 13,
+  fontWeight: 500,
+  textTransform: "none",
+  p: "16px",
+  minHeight: "auto",
+  bgcolor: "surface.1",
+  opacity: .7,
+  "svg": {
+    fontSize: 20,
+  }
+}
