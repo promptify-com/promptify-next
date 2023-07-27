@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from "react-redux";
 
 import useSetUser from "@/hooks/useSetUser";
 import useToken from "@/hooks/useToken";
-import { TopicImg } from "@/assets/icons/TopicImg";
 import {
   Category,
   FilterParams,
@@ -59,6 +58,8 @@ function Home() {
     useGetTemplatesSuggestedQuery();
   const { data: lastTemplate, isLoading: islastTemplateLoading } =
     useGetLastTemplatesQuery();
+
+  console.log("lastTemplate ++++++++++++++++++++", lastTemplate);
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [categorySelected, setCategorySelected] = useState<number>();
