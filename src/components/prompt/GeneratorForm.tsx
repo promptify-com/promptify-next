@@ -379,234 +379,261 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   }, [handleKeyboard]);
 
   return (
-    <Stack gap={1}
+    <Box
       sx={{
         minHeight: "calc(100% - 32px)",
-        bgcolor: "surface.2",
-        p: "16px"
+        bgcolor: "surface.2"
       }}
     >
-      <Stack direction={'row'} justifyContent={'space-between'} py={'8px'}>
-        <Button
-          sx={{ color: "onSurface", fontSize: 13, fontWeight: 500 }}
-          startIcon={<AutoFixHigh />}
-          endIcon={Boolean(presetsAnchor) ? <ArrowDropUp /> : <ArrowDropDown />}
-          variant={"text"}
-          onClick={(e) => setPresetsAnchor(e.currentTarget)}
-        >
-          Presets
-        </Button>
-        {false && (
+      <Typography 
+        sx={{ 
+          display: { md: "none" },
+          p: "16px",
+          fontSize: 24,
+          fontWeight: 500,
+          color: "onSurface",
+          opacity: .8,
+        }}
+      >
+        Inputs
+      </Typography>
+      <Stack gap={1}
+        sx={{
+          p: "16px"
+        }}
+      >
+        <Stack direction={'row'} justifyContent={'space-between'} py={'8px'}>
           <Button
-            sx={{ color: "onSurface", fontSize: 13, fontWeight: 500 }}
-            startIcon={<Close />}
+            sx={textButtonStyle}
+            startIcon={<AutoFixHigh />}
+            endIcon={Boolean(presetsAnchor) ? <ArrowDropUp /> : <ArrowDropDown />}
             variant={"text"}
-            disabled={!allowGenerate}
-            onClick={() => { setResInputs([]) }}
+            onClick={(e) => setPresetsAnchor(e.currentTarget)}
           >
-          Clear
-        </Button>
-        )}
-        <Popper
-          open={Boolean(presetsAnchor)}
-          anchorEl={presetsAnchor}
-          transition
-          disablePortal
-          sx={{ zIndex: 9 }}
-        >
-          {({ TransitionProps, placement }) => (
-            <Grow
-              {...TransitionProps}
-              style={{ transformOrigin: "center top" }}
-            >
-              <Paper
-                sx={{
-                  bgcolor: "surface.1",
-                  border: "1px solid #E3E3E3",
-                  borderRadius: "10px",
-                  maxHeight: "30svh",
-                  overflow: "auto",
-                  overscrollBehavior: "contain"
-                }}
-                elevation={0}
-              >
-                <ClickAwayListener
-                  onClickAway={() => setPresetsAnchor(null)}
-                >
-                  <MenuList
-                    sx={{ paddingRight: "3rem", width: "100%" }}
-                  >
-                    {presets.map((preset) => (
-                      <MenuItem
-                        key={preset.id}
-                        sx={{ borderTop: "1px solid #E3E3E3" }}
-                        onClick={() => setPresetsAnchor(null)}
-                      >
-                        <Typography
-                          sx={{
-                            fontWeight: 500,
-                            fontSize: 14,
-                            ml: "1rem",
-                            color: "onSurface",
-                          }}
-                        >
-                          {preset.name}
-                        </Typography>
-                      </MenuItem>
-                    ))}
-                  </MenuList>
-                </ClickAwayListener>
-              </Paper>
-            </Grow>
-          )}
-        </Popper>
-      </Stack>
-
-      <Box
-        sx={{
-          flex: 1,
-          bgcolor: "surface.2",
-          borderRadius: "16px",
-          position: "relative"
-        }}
-      >
-      {!shownInputs || !shownParams ? (
-        <Box
-          sx={{
-            width: "100%",
-            mt: "40px",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <CircularProgress size={20} />
-        </Box>
-      ) : shownInputs.length === 0 && shownParams.length === 0 ? (
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: "100%",
-            textAlign: "center",
-            color: "onSurface",
-            fontSize: 14,
-          }}
-        >
-          No parameters available for this template
-        </Box>
-      ) : (
-        <React.Fragment>
-          {shownInputs.map((input, i) => (
-            <GeneratorInput
-              key={i}
-              promptId={input.prompt}
-              inputs={[input]}
-              resInputs={resInputs}
-              setResInputs={setResInputs}
-              errors={errors}
-            />
-          ))}
-          {shownParams.map((param, i) => (
-            <GeneratorParam
-              key={i}
-              params={[param.param]}
-              promptId={param.prompt}
-              resOverrides={resOverrides}
-              setResOverrides={setResOverrides}
-            />
-          ))}
-        </React.Fragment>
-      )}
-      </Box>
-
-      <Stack>
-        <Stack direction={"row"} alignItems={"center"} gap={1} m={"20px 10px"}>
-          <Button
-            variant={"contained"}
-            startIcon={token ? <LogoApp width={18} color="white" /> : null}
-            sx={{
-              flex: 1,
-              p: "10px 25px",
-              fontWeight: 500,
-              borderColor: "primary.main",
-              borderRadius: "999px",
-              bgcolor: "primary.main",
-              color: "onPrimary",
-              whiteSpace: "pre-line",
-              ":hover": {
-                bgcolor: "transparent",
-                color: "primary.main",
-              },
-              ":disabled": {
-                bgcolor: "surface.4",
-                color: "onTertiary",
-                borderColor: "transparent",
-              },
-            }}
-            disabled={!token ? false : (!allowGenerate || isGenerating)}
-            onClick={handlePostPrompt}
-          >
-            {token ? (
-              <React.Fragment>
-                <Typography ml={2} color={"inherit"}>Start</Typography>
-                <Typography ml={"auto"} color={"inherit"}>~360s</Typography>
-              </React.Fragment>
-            ) : (
-              <Typography ml={2} color={"inherit"}>Sign in or Create an account</Typography>
-            )}
+            Presets
           </Button>
-          <Replay
-            sx={{
-              width: "16px",
-              height: "16px",
-              p: "16px",
-              color: "onSurface",
-              visibility: isGenerating ? "visible" : "hidden"
-            }}
-          />
+          {false && (
+            <Button
+              sx={textButtonStyle}
+              startIcon={<Close />}
+              variant={"text"}
+              disabled={!allowGenerate}
+              onClick={() => { setResInputs([]) }}
+            >
+            Clear
+          </Button>
+          )}
+          <Popper
+            open={Boolean(presetsAnchor)}
+            anchorEl={presetsAnchor}
+            transition
+            disablePortal
+            sx={{ zIndex: 9 }}
+          >
+            {({ TransitionProps, placement }) => (
+              <Grow
+                {...TransitionProps}
+                style={{ transformOrigin: "center top" }}
+              >
+                <Paper
+                  sx={{
+                    bgcolor: "surface.1",
+                    border: "1px solid #E3E3E3",
+                    borderRadius: "10px",
+                    maxHeight: "30svh",
+                    overflow: "auto",
+                    overscrollBehavior: "contain"
+                  }}
+                  elevation={0}
+                >
+                  <ClickAwayListener
+                    onClickAway={() => setPresetsAnchor(null)}
+                  >
+                    <MenuList
+                      sx={{ paddingRight: "3rem", width: "100%" }}
+                    >
+                      {presets.map((preset) => (
+                        <MenuItem
+                          key={preset.id}
+                          sx={{ borderTop: "1px solid #E3E3E3" }}
+                          onClick={() => setPresetsAnchor(null)}
+                        >
+                          <Typography
+                            sx={{
+                              fontWeight: 500,
+                              fontSize: 14,
+                              ml: "1rem",
+                              color: "onSurface",
+                            }}
+                          >
+                            {preset.name}
+                          </Typography>
+                        </MenuItem>
+                      ))}
+                    </MenuList>
+                  </ClickAwayListener>
+                </Paper>
+              </Grow>
+            )}
+          </Popper>
         </Stack>
-      </Stack>
 
-      {Object.keys(errors).length > 0 && (
-        <Typography
-          color={"error.main"}
+        <Box
           sx={{
-            textAlign: "center",
+            flex: 1,
+            bgcolor: "surface.2",
+            borderRadius: "16px",
+            position: "relative"
           }}
         >
-          Fill all the inputs
-        </Typography>
-      )}
-
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          gap: "15px",
-          color: "grey.600",
-          fontSize: 14,
-          fontWeight: 400,
-          my: "20px",
-        }}
-      >
-        Repeat last:
-        <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <Box style={keysStyle} sx={{ fontSize: 12, fontWeight: 600 }}>
-            SHIFT
+        {!shownInputs || !shownParams ? (
+          <Box
+            sx={{
+              width: "100%",
+              mt: "40px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <CircularProgress size={20} />
           </Box>
-          +
-          <Box style={keysStyle} sx={{ fontSize: 12, fontWeight: 600 }}>
-            R
+        ) : shownInputs.length === 0 && shownParams.length === 0 ? (
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: "100%",
+              textAlign: "center",
+              color: "onSurface",
+              fontSize: 14,
+            }}
+          >
+            No parameters available for this template
+          </Box>
+        ) : (
+          <React.Fragment>
+            {shownInputs.map((input, i) => (
+              <GeneratorInput
+                key={i}
+                promptId={input.prompt}
+                inputs={[input]}
+                resInputs={resInputs}
+                setResInputs={setResInputs}
+                errors={errors}
+              />
+            ))}
+            {shownParams.map((param, i) => (
+              <GeneratorParam
+                key={i}
+                params={[param.param]}
+                promptId={param.prompt}
+                resOverrides={resOverrides}
+                setResOverrides={setResOverrides}
+              />
+            ))}
+          </React.Fragment>
+        )}
+        </Box>
+
+        <Stack>
+          <Stack direction={"row"} alignItems={"center"} gap={1} m={"20px 10px"}>
+            <Button
+              variant={"contained"}
+              startIcon={token ? <LogoApp width={18} color="white" /> : null}
+              sx={{
+                flex: 1,
+                p: "10px 25px",
+                fontWeight: 500,
+                borderColor: "primary.main",
+                borderRadius: "999px",
+                bgcolor: "primary.main",
+                color: "onPrimary",
+                whiteSpace: "pre-line",
+                ":hover": {
+                  bgcolor: "transparent",
+                  color: "primary.main",
+                },
+                ":disabled": {
+                  bgcolor: "surface.4",
+                  color: "onTertiary",
+                  borderColor: "transparent",
+                },
+              }}
+              disabled={!token ? false : (!allowGenerate || isGenerating)}
+              onClick={handlePostPrompt}
+            >
+              {token ? (
+                <React.Fragment>
+                  <Typography ml={2} color={"inherit"}>Start</Typography>
+                  <Typography ml={"auto"} color={"inherit"}>~360s</Typography>
+                </React.Fragment>
+              ) : (
+                <Typography ml={2} color={"inherit"}>Sign in or Create an account</Typography>
+              )}
+            </Button>
+            <Replay
+              sx={{
+                width: "16px",
+                height: "16px",
+                p: "16px",
+                color: "onSurface",
+                visibility: isGenerating ? "visible" : "hidden"
+              }}
+            />
+          </Stack>
+        </Stack>
+
+        {Object.keys(errors).length > 0 && (
+          <Typography
+            color={"error.main"}
+            sx={{
+              textAlign: "center",
+            }}
+          >
+            Fill all the inputs
+          </Typography>
+        )}
+
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: "15px",
+            color: "grey.600",
+            fontSize: 14,
+            fontWeight: 400,
+            my: "20px",
+          }}
+        >
+          Repeat last:
+          <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <Box style={keysStyle} sx={{ fontSize: 12, fontWeight: 600 }}>
+              SHIFT
+            </Box>
+            +
+            <Box style={keysStyle} sx={{ fontSize: 12, fontWeight: 600 }}>
+              R
+            </Box>
           </Box>
         </Box>
-      </Box>
-    </Stack>
+      </Stack>
+    </Box>
   );
 };
 
+const textButtonStyle = {
+  bgcolor: "surface.3", 
+  color: "onSurface", 
+  fontSize: 13, 
+  fontWeight: 500, 
+  p: "5px 12px",
+  "svg": {
+    fontSize: "16px !important"
+  }
+}
 const keysStyle = {
   padding: "2px 4px",
   letterSpacing: "1px",
