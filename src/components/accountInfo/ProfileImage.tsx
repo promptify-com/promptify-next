@@ -4,6 +4,7 @@ import {
   Box,
   Button,
   CircularProgress,
+  Grid,
   Modal,
   Typography,
 } from "@mui/material";
@@ -103,22 +104,26 @@ export const ProfileImage: React.FC<IProps> = ({}) => {
   }
 
   return (
-    <Box mt="70px">
-      <Typography
-        fontWeight={500}
-        fontSize="1rem"
-        textAlign={{ xs: "center", sm: "start" }}
-      >
+    <Box
+      display={"flex"}
+      flexDirection={"column"}
+      gap={"16px"}
+      width={"100%"}
+      bgcolor={"surface.1"}
+      padding={{ md: "16px" }}
+      borderRadius={"16px"}
+    >
+      <Typography fontWeight={500} fontSize="18px" textAlign={"start"}>
         Profile Image
       </Typography>
-      <Box
+      <Grid
+        container
         display="flex"
-        mt="2rem"
-        flexDirection={{ xs: "column", sm: "row" }}
-        justifyContent={{ xs: "center", sm: "flex-start" }}
-        alignItems={{ xs: "center", sm: "flex-start" }}
+        flexDirection={"row"}
+        justifyContent={"start"}
+        alignItems={"start"}
       >
-        <Box>
+        <Grid item xs={5}>
           <Avatar
             src={
               croppedImage
@@ -127,25 +132,21 @@ export const ProfileImage: React.FC<IProps> = ({}) => {
             }
             sx={{ width: "150px", height: "150px" }}
           />
-        </Box>
-        <Box
+        </Grid>
+        <Grid
+          item
+          xs={5}
           component="label"
-          ml={{ xs: "0rem", sm: "2rem" }}
-          mt={{ xs: "1rem", sm: "0rem" }}
           display="flex"
           flexDirection="column"
           justifyContent="center"
           alignSelf="center"
-          alignItems={{ xs: "center", sm: "flex-start" }}
+          alignItems={"start"}
         >
           <Box
-            bgcolor="#424242"
-            width="160px"
-            height="50px"
+            bgcolor="var(--primary-main, #3B4050)"
             borderRadius="25px"
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
+            padding={"6px 16px"}
             aria-label="upload picture"
             sx={{ cursor: "pointer" }}
           >
@@ -174,8 +175,8 @@ export const ProfileImage: React.FC<IProps> = ({}) => {
           >
             Please choose an image that is at least fit to requirements
           </Typography>
-        </Box>
-      </Box>
+        </Grid>
+      </Grid>
       <Modal
         open={showCropModal}
         onClose={() => setShowCropModal(false)}

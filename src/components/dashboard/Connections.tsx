@@ -114,7 +114,7 @@ export const Connections = () => {
   }, []);
   return (
     <Box
-      mt={"24px"}
+      mt={"14px"}
       width={"100%"}
       sx={{
         justifyContent: "center",
@@ -129,8 +129,8 @@ export const Connections = () => {
         sx={{
           fontFamily: "Poppins",
           fontStyle: "normal",
-          fontWeight: { xs: 400, sm: 500 },
-          fontSize: 24,
+          fontWeight: 500,
+          fontSize: { xs: 18, md: 24 },
           lineHeight: { xs: "133.4%", sm: "123.5%" },
           display: "flex",
           alignItems: "center",
@@ -146,7 +146,7 @@ export const Connections = () => {
             <Box
               key={item.id}
               sx={{
-                bgcolor: "white",
+                bgcolor: "surface.1",
                 height: "74px",
                 display: "flex",
                 flexDirection: "row",
@@ -159,18 +159,13 @@ export const Connections = () => {
               <Box
                 sx={{
                   display: "flex",
-                  flexDirection: { xs: "column", sm: "row" },
                   alignItems: "center",
                   padding: "0px 24px 0px 0px",
-                  gap: { xs: "0em", sm: "1em" },
+                  gap: { xs: "1em", sm: "1em" },
                 }}
               >
                 {customConnection.icon}
-                <Typography
-                  fontWeight={500}
-                  fontSize="1rem"
-                  display={{ xs: "none", sm: "block" }}
-                >
+                <Typography fontWeight={500} fontSize="1rem" display={"block"}>
                   {customConnection.service}
                 </Typography>
               </Box>
@@ -180,7 +175,7 @@ export const Connections = () => {
                     display: "flex",
                     flexDirection: "row",
                     alignItems: "center",
-                    gap: "24px",
+                    gap: "16px",
                   }}
                 >
                   <Box>
@@ -195,8 +190,8 @@ export const Connections = () => {
                         overflow: "hidden",
                         color: "#fff",
                         backgroundColor: "black",
-                        height: "48px",
-                        width: "48px",
+                        height: { xs: "36px", md: "48px" },
+                        width: { xs: "36px", md: "48px" },
                       }}
                       src={customConnection.avatar}
                     >
@@ -211,20 +206,19 @@ export const Connections = () => {
                         fontWeight: 400,
                         fontSize: "16px",
                         lineHeight: "150%",
-                        display: { xs: "none", sm: "flex" },
+                        display: "flex",
                         alignItems: "center",
                         letterSpacing: "0.15px",
                         color: "#1B1B1E",
                       }}
                     >
-                      {customConnection.name}
+                      {/* {customConnection.name} */} JohnTester
                     </Typography>
                   </Box>
                 </Box>
                 {connections.length !== 1 && (
                   <Box
                     display="flex"
-                    mr={"24px"}
                     alignItems="center"
                     color="onSurface"
                     sx={{ cursor: "pointer" }}
@@ -259,7 +253,7 @@ export const Connections = () => {
 
       <Box
         width={"100%"}
-        bgcolor={"white"}
+        bgcolor={"surface.1"}
         height={"64px"}
         display={"flex"}
         alignItems={"center"}

@@ -19,6 +19,7 @@ import { User } from "@/core/api/dto/user";
 import useLogout from "@/hooks/useLogout";
 import useSetUser from "@/hooks/useSetUser";
 import { AutoAwesome } from "@mui/icons-material";
+import { Menu, MenuType } from "@/common/constants";
 
 interface ProfileDropDownProps {
   open: boolean;
@@ -28,33 +29,6 @@ interface ProfileDropDownProps {
   anchorElement: HTMLElement | null;
 }
 
-interface MenuType {
-  id: number;
-  icon: ReactNode;
-  name: string;
-  href: string;
-}
-
-const Menu: MenuType[] = [
-  {
-    id: 1,
-    icon: <Prompt />,
-    href: "/dashboard",
-    name: "My Templates",
-  },
-  {
-    id: 2,
-    icon: <AutoAwesome />,
-    href: "/sparks",
-    name: "My Sparks",
-  },
-  {
-    id: 3,
-    icon: <Setting />,
-    href: "/dashboard",
-    name: "Settings",
-  },
-];
 export const ProfileDropDown: React.FC<ProfileDropDownProps> = ({
   open,
   onClose,

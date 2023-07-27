@@ -1,8 +1,6 @@
 import { Box, Grid } from "@mui/material";
-
 import Head from "next/head";
 
-import { PageLoading } from "@/components/PageLoading";
 import { Connections, Home, Identy, Prompts } from "@/components/dashboard";
 import { Layout } from "@/layout";
 import useToken from "@/hooks/useToken";

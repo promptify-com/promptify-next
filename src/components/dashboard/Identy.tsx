@@ -58,7 +58,7 @@ export const Identy = () => {
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
-            alignItems: { xs: "center", sm: "flex-start" },
+            alignItems: { xs: "start", sm: "flex-start" },
             gap: "16px",
           }}
         >
@@ -66,7 +66,7 @@ export const Identy = () => {
             sx={{
               fontFamily: "Poppins",
               fontStyle: "normal",
-              fontWeight: { xs: 400, sm: 500 },
+              fontWeight: 500,
               fontSize: 24,
               lineHeight: { xs: "133.4%", sm: "123.5%" },
               display: "flex",
@@ -86,9 +86,9 @@ export const Identy = () => {
               lineHeight: "143%",
               display: "flex",
               alignItems: "center",
-              textAlign: { xs: "center", sm: "start" },
+              textAlign: "start",
               letterSpacing: "0.17px",
-              color: "#1B1B1E",
+              color: "onSurface",
             }}
           >
             Identity for Personlized AI at Promptify, blah balh blah, short

@@ -89,7 +89,10 @@ export const IdentityItem: React.FC<IProps> = ({
     <Box
       key={question.id}
       display="flex"
-      bgcolor={"white"}
+      bgcolor={"surface.1"}
+      sx={{
+        border: { xs: "1px solid var(--surface-3, #ECECF4)", md: "none" },
+      }}
       width={"100%"}
       justifyContent="space-between"
       // mt="2rem"
@@ -98,7 +101,7 @@ export const IdentityItem: React.FC<IProps> = ({
       borderRadius={"16px"}
     >
       <Grid
-        display={{ xs: "none", sm: "flex" }}
+        display={"flex"}
         sx={{
           dispaly: "flex",
           flexDirection: "row",
@@ -114,45 +117,61 @@ export const IdentityItem: React.FC<IProps> = ({
           alignItems={"center"}
           width={"100%"}
         >
-          <Grid item xs={3}>
-            <Typography
-              sx={{
-                fontFamily: "Poppins",
-                fontStyle: "normal",
-                fontWeight: 500,
-                fontSize: "16px",
-                lineHeight: "150%",
-                display: "flex",
-                alignItems: "center",
-                letterSpacing: "0.15px",
-                color: "##1B1B1E",
-              }}
-            >
-              {question?.text}
-            </Typography>
-          </Grid>
+          <Grid
+            item
+            xs={9}
+            md={10}
+            display={"flex"}
+            flexDirection={{ xs: "column", md: "row" }}
+            gap={2}
+          >
+            <Grid item xs={12} md={6}>
+              <Typography
+                sx={{
+                  fontFamily: "Poppins",
+                  fontStyle: "normal",
+                  fontWeight: 500,
+                  fontSize: { xs: 14, md: 16 },
+                  lineHeight: "150%",
+                  display: "flex",
+                  alignItems: "center",
+                  letterSpacing: "0.15px",
+                  color: "onSurface",
+                }}
+              >
+                {question?.text}
+              </Typography>
+            </Grid>
 
-          <Grid item xs={3} display={"flex"} alignItems={"center"} gap={2}>
-            <Avatar
-              alt={selectedOption?.text}
-              src={selectedOption?.text}
-              sx={{ bgcolor: "black" }}
-            />
-            <Typography
-              sx={{
-                fontFamily: "Poppins",
-                fontStyle: "normal",
-                fontWeight: 400,
-                fontSize: "16px",
-                lineHeight: "150%",
-                display: "flex",
-                alignItems: "center",
-                letterSpacing: "0.15px",
-                color: "onSurface",
-              }}
+            <Grid
+              item
+              xs={12}
+              md={5}
+              display={"flex"}
+              alignItems={"center"}
+              gap={1}
             >
-              {selectedOption?.text}
-            </Typography>
+              <Avatar
+                alt={selectedOption?.text}
+                src={selectedOption?.text}
+                sx={{ bgcolor: "black" }}
+              />
+              <Typography
+                sx={{
+                  fontFamily: "Poppins",
+                  fontStyle: "normal",
+                  fontWeight: 400,
+                  fontSize: "16px",
+                  lineHeight: "150%",
+                  display: "flex",
+                  alignItems: "center",
+                  letterSpacing: "0.15px",
+                  color: "onSurface",
+                }}
+              >
+                {selectedOption?.text}
+              </Typography>
+            </Grid>
           </Grid>
           <IconButton
             sx={{
@@ -167,7 +186,7 @@ export const IdentityItem: React.FC<IProps> = ({
             {isLoading ? (
               <CircularProgress sx={{ color: "black" }} size={24} />
             ) : (
-              <Edit sx={{ fontSize: "24px" }} />
+              <Edit sx={{ fontSize: "44px" }} />
             )}
           </IconButton>
         </Grid>

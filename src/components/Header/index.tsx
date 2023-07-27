@@ -21,6 +21,8 @@ interface HeaderProps {
   handleKeyPress?: React.KeyboardEventHandler<HTMLInputElement>;
 }
 
+type SidebarType = "navigation" | "profile";
+
 const Login = () => {
   const router = useRouter();
   return (
@@ -63,12 +65,13 @@ export const Header: React.FC<HeaderProps> = ({
   const { data: user, isLoading: userLoading } = useGetCurrentUserQuery(token);
 
   const [isMenuShown, setIsMenuShown] = useState(false);
-  const [open, setOpen] = useState(false);
+  const [openSearchDialog, setOpenSearchDialog] = useState<boolean>(false);
   const menuAnchorRef = useRef<HTMLDivElement | null>(null);
-  const [openSidebar, setOpenSidebar] = useState(false);
+  const [openSidebar, setOpenSidebar] = useState<boolean>(false);
+  const [sidebarType, setSidebarType] = useState<SidebarType>("navigation");
 
   const handleInputFocus = () => {
-    setOpen(true);
+    setOpenSearchDialog(true);
   };
 
   return (
@@ -117,28 +120,41 @@ export const Header: React.FC<HeaderProps> = ({
             display={"flex"}
             alignItems={"center"}
             justifyContent={"center"}
-            onClick={() => setOpenSidebar(true)}
+            onClick={() => {
+              setOpenSidebar(true);
+              setSidebarType("navigation");
+            }}
           >
             <SearchIcon sx={{ fontSize: "26px", color: "onSurface" }} />
           </Box>
           {user && token && (
-            <Avatar
-              sx={{
-                width: "23px",
-                height: "23px",
-                bgcolor: "black",
-                fontSize: 10,
-                textTransform: "capitalize",
+            <Box
+              onClick={() => {
+                setOpenSidebar(true);
+                setSidebarType("profile");
               }}
-              src={user.avatar || user.first_name}
-              alt={user.first_name}
-            />
+            >
+              <Avatar
+                sx={{
+                  width: "23px",
+                  height: "23px",
+                  bgcolor: "black",
+                  fontSize: 10,
+                  textTransform: "capitalize",
+                }}
+                src={user.avatar || user.first_name}
+                alt={user.first_name}
+              />
+            </Box>
           )}
           <Box
             display={"flex"}
             alignItems={"center"}
             justifyContent={"center"}
-            onClick={() => setOpenSidebar(true)}
+            onClick={() => {
+              setOpenSidebar(true);
+              setSidebarType("navigation");
+            }}
           >
             <MenuRoundedIcon sx={{ fontSize: "26px", color: "onSurface" }} />
           </Box>
@@ -153,7 +169,10 @@ export const Header: React.FC<HeaderProps> = ({
           onClick={handleInputFocus}
         >
           <SearchBar keyWord={keyWord} setKeyWord={setKeyWord} />
-          <SearchDialog open={open} close={() => setOpen(false)} />
+          <SearchDialog
+            open={openSearchDialog}
+            close={() => setOpenSearchDialog(false)}
+          />
         </Box>
 
         <Box
@@ -256,6 +275,7 @@ export const Header: React.FC<HeaderProps> = ({
           onClose={() => setIsMenuShown(false)}
         />
         <SideBarMobile
+          type={sidebarType}
           open={openSidebar}
           onClose={() => setOpenSidebar(false)}
           onOpen={() => setOpenSidebar(true)}
