@@ -59,8 +59,6 @@ function Home() {
   const { data: lastTemplate, isLoading: islastTemplateLoading } =
     useGetLastTemplatesQuery();
 
-  console.log("lastTemplate ++++++++++++++++++++", lastTemplate);
-
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [categorySelected, setCategorySelected] = useState<number>();
 
