@@ -101,7 +101,7 @@ export const explorerApi = createApi({
       }),
 
 
-      getLastTemplates: builder.query<Templates[], void>({
+      getLastTemplates: builder.query<Templates, void>({
         query: () => ({
           url:
             "/api/meta/templates/last_executed/",

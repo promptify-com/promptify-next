@@ -195,10 +195,10 @@ function Home() {
                   </Grid>
                 </Grid>
 
-                {lastTemplate && lastTemplate.length > 0 && (
+                {lastTemplate && Object.keys(lastTemplate).length > 0 && (
                   <TemplatesSection
                     isLoading={islastTemplateLoading}
-                    templates={lastTemplate}
+                    templates={[lastTemplate]}
                     filtred={!!filteredTags}
                   >
                     Your Latest Template:
