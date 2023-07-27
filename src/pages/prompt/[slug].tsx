@@ -344,7 +344,7 @@ const Prompt = () => {
               container
               sx={{
                 mx: "auto",
-                height: { xs: "calc(100svh - 90px)", md: "calc(100svh - (90px + 32px))" },
+                height: { xs: "calc(100svh - 56px)", md: "calc(100svh - (90px + 32px))" },
                 pb: { xs: "68px", md: 0 },
                 width: { md: "calc(100% - 65px)" },
                 bgcolor: "surface.2",
