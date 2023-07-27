@@ -5,96 +5,116 @@ import { Box, Button, Grid } from "@mui/material";
 import { authClient } from "@/common/axios";
 import { FetchLoading } from "@/components/FetchLoading";
 import { SubCategoryCard } from "@/components/common/cards/CardSubcategory";
-import { Category } from "@/core/api/dto/templates";
 import {
-  useGetCategoriesQuery,
-  useGetTemplatesByFilterQuery,
-} from "@/core/api/explorer";
+  Category,
+  FilterParams,
+  SelectedFilters,
+} from "@/core/api/dto/templates";
+import { useGetTemplatesByFilterQuery } from "@/core/api/explorer";
 import { Layout } from "@/layout";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "@/core/store";
 import { FiltersSelected } from "@/components/explorer/FiltersSelected";
-import {
-  setSelectedCategory,
-  setSelectedSubCategory,
-} from "@/core/store/filtersSlice";
+import { useGetCategoriesQuery } from "@/core/api/categories";
 
 export default function Page({ category }: { category: Category }) {
   const router = useRouter();
-  const dispatch = useDispatch();
   const categorySlug = router.query.categorySlug;
   const { data: categories, isLoading: isCategoriesLoading } =
     useGetCategoriesQuery();
 
-  const navigateTo = (item: Category) => {
-    router.push(`/explore/${categorySlug}/${item.slug}`);
-    dispatch(setSelectedSubCategory(item));
-  };
-
+  const title = useSelector((state: RootState) => state.filters.title);
   const filters = useSelector((state: RootState) => state.filters);
-  const tag = useSelector((state: RootState) => state.filters.tag?.name);
+  const tags = useSelector((state: RootState) => state.filters.tag);
   const engineId = useSelector((state: RootState) => state.filters.engine?.id);
 
-  const isFiltersNullish = Object.values(filters).every((value) => {
-    return value === null ? true : false;
-  });
+  function areAllStatesNull(filters: SelectedFilters): boolean {
+    return (
+      filters.engine === null &&
+      filters.tag.every((tag) => tag === null) &&
+      filters.title === null &&
+      filters.category === null &&
+      filters.subCategory === null
+    );
+  }
 
+  const allNull = areAllStatesNull(filters);
+
+  const filteredTags = tags
+    .filter((item) => item !== null)
+    .map((item) => item?.name)
+    .join("&tag=");
+  const params: FilterParams = {
+    tag: filteredTags,
+    engineId,
+    title,
+  };
   const { data: templates, isLoading: isTemplatesLoading } =
-    useGetTemplatesByFilterQuery({
-      categoryId: category.id,
-      tag,
-      engineId,
-    });
+    useGetTemplatesByFilterQuery(params);
 
   const goBack = () => {
     router.push("/explore");
-    dispatch(setSelectedCategory(null));
+  };
+  const navigateTo = (item: Category) => {
+    router.push(`/explore/${categorySlug}/${item.slug}`);
   };
 
   return (
     <Layout>
-      {isCategoriesLoading ? (
-        <Box>
-          <FetchLoading />
-        </Box>
-      ) : (
-        <Box
-          gap={"16px"}
-          width={"100%"}
-          display={"flex"}
-          flexDirection={"column"}
-          alignItems={"start"}
+      <Box padding={{ xs: "4px 0px", md: "0px 8px" }}>
+        <Grid
+          sx={{
+            padding: { xs: "16px", md: "32px" },
+          }}
         >
-          <Button
-            onClick={() => goBack()}
-            variant="text"
-            sx={{ fontSize: 19, color: "onSurface", ml: -3 }}
-          >
-            <KeyboardArrowLeft /> {category.name}
-          </Button>
-          <Grid display={"flex"} gap={"8px"} flexWrap={"wrap"}>
-            {categories
-              ?.filter((mainCat) => category?.name == mainCat.parent?.name)
-              .map((subcategory) => (
-                <Grid key={subcategory.id}>
-                  <SubCategoryCard
-                    subcategory={subcategory}
-                    onSelected={() => {
-                      navigateTo(subcategory);
-                    }}
-                  />
-                </Grid>
-              ))}
-          </Grid>
-          <FiltersSelected show={!isFiltersNullish} />
-          <TemplatesSection
-            filtred
-            templates={templates}
-            isLoading={isTemplatesLoading}
-          />
-        </Box>
-      )}
+          {isCategoriesLoading ? (
+            <Box>
+              <FetchLoading />
+            </Box>
+          ) : (
+            <Box display={"flex"} flexDirection={"column"} gap={"16px"}>
+              <Grid>
+                <Button
+                  onClick={() => goBack()}
+                  variant="text"
+                  sx={{ fontSize: 19, color: "onSurface", ml: -3 }}
+                >
+                  <KeyboardArrowLeft /> {category.name}
+                </Button>
+              </Grid>
+              <Grid
+                display={"flex"}
+                gap={"8px"}
+                flexWrap={{ xs: "nowrap", md: "wrap" }}
+                sx={{
+                  overflow: { xs: "auto", md: "initial" },
+                  WebkitOverflowScrolling: "touch",
+                }}
+              >
+                {categories
+                  ?.filter((mainCat) => category?.name == mainCat.parent?.name)
+                  .map((subcategory) => (
+                    <Grid key={subcategory.id}>
+                      <SubCategoryCard
+                        subcategory={subcategory}
+                        onSelected={() => {
+                          navigateTo(subcategory);
+                        }}
+                      />
+                    </Grid>
+                  ))}
+              </Grid>
+              <FiltersSelected show={!allNull} />
+              <TemplatesSection
+                filtred
+                templates={templates}
+                isLoading={isTemplatesLoading}
+              />
+            </Box>
+          )}
+        </Grid>
+      </Box>
     </Layout>
   );
 }

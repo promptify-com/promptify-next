@@ -1,9 +1,21 @@
-import { Grid, MenuItem, MenuList, Typography } from "@mui/material";
+import {
+  Box,
+  Grid,
+  IconButton,
+  InputBase,
+  MenuItem,
+  MenuList,
+  Typography,
+} from "@mui/material";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import * as React from "react";
-import InputDialog from "./InputDialog";
+import { useDispatch, useSelector } from "react-redux";
+import { setSelectedKeyword } from "@/core/store/filtersSlice";
+import { Search } from "@mui/icons-material";
+import { useRouter } from "next/router";
+import { RootState } from "@/core/store";
 
 const Menu: any[] = [
   {
@@ -36,26 +48,28 @@ const Menu: any[] = [
   },
 ];
 
-interface Props {
+interface SearchDialogProps {
   open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  keyWord: string;
-  setKeyWord?: React.Dispatch<React.SetStateAction<string>>;
+  close: () => void;
 }
 
-export const SearchDialog: React.FC<Props> = ({
-  open,
-  setOpen,
-  keyWord,
-  setKeyWord,
-}) => {
+export const SearchDialog: React.FC<SearchDialogProps> = ({ open, close }) => {
+  const router = useRouter();
   // TODO: const windowWidth = window.innerWidth; doesn't work in SSR
   const [IsSm, setIsSm] = React.useState(false);
 
+  const title = useSelector((state: RootState) => state.filters.title);
+
   const handleClose = (e: any, reason: string) => {
     e.stopPropagation();
-    setOpen(false);
+    close();
   };
+  React.useEffect(() => {
+    close();
+  }, [title]);
+
+  const [textInput, setTextInput] = React.useState("");
+  const dispatch = useDispatch();
 
   React.useEffect(() => {
     function handleWindowResize() {
@@ -103,11 +117,72 @@ export const SearchDialog: React.FC<Props> = ({
           padding: "8px 4px",
         }}
       >
-        <InputDialog
-          keyWord={keyWord}
-          setOpen={setOpen}
-          setKeyWord={setKeyWord}
-        />
+        <Box
+          display="flex"
+          alignItems="center"
+          sx={{
+            bgcolor: "surface.1",
+            borderRadius: "99px",
+            height: "48px",
+            minWidth: "100%",
+          }}
+        >
+          <Grid
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              minWidth: "100%",
+              flexDirection: "row",
+              height: "100%",
+            }}
+            alignItems="center"
+          >
+            <Grid
+              sx={{
+                width: { xs: "97%", sm: "100%" },
+                paddingRight: "0.5em",
+                gap: "5px",
+                display: "flex",
+                overflowX: "auto",
+                alignItems: "center",
+              }}
+            >
+              <IconButton
+                size="small"
+                sx={{
+                  color: "onSurface",
+                  border: "none",
+                  marginLeft: "0.5em",
+                  ":hover": { color: "tertiary" },
+                }}
+              >
+                <Search />
+              </IconButton>
+              <InputBase
+                onChange={(e) => {
+                  setTextInput(e.target.value);
+                }}
+                defaultValue={title ?? ""}
+                placeholder={
+                  "Search prompts, templates, collections, or ask something..."
+                }
+                fullWidth
+                sx={{
+                  fontSize: "13px",
+                  padding: "0px",
+                  fontFamily: "Poppins",
+                }}
+                onKeyPress={(e) => {
+                  if (e.key === "Enter") {
+                    dispatch(setSelectedKeyword(textInput));
+                    router.push({ pathname: "/explore" });
+                  }
+                }}
+              />
+            </Grid>
+          </Grid>
+        </Box>{" "}
       </DialogTitle>
       <DialogContent>
         <Grid
@@ -199,8 +274,8 @@ export const SearchDialog: React.FC<Props> = ({
             <MenuItem
               key={el.name}
               onClick={() => {
-                if (setKeyWord) setKeyWord(el.name);
-                setOpen(false);
+                dispatch(setSelectedKeyword(el.name));
+                router.push({ pathname: "/explore" });
               }}
               sx={{
                 display: "flex",
@@ -208,7 +283,7 @@ export const SearchDialog: React.FC<Props> = ({
                 alignItems: "flex-start",
                 gap: "8px",
                 alignSelf: "stretch",
-                background: el.name === keyWord ? "#8080801a" : "none",
+                background: el.name === title ? "#8080801a" : "none",
               }}
             >
               <Typography

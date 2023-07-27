@@ -77,12 +77,15 @@ const a11yProps = (index: number) => {
 };
 
 const Prompt = () => {
-  const [newExecutionData, setNewExecutionData] = useState<PromptLiveResponse | null>(null);
+  const [newExecutionData, setNewExecutionData] =
+    useState<PromptLiveResponse | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [currentGeneratedPrompt, setCurrentGeneratedPrompt] = useState<Prompts | null>(null);
+  const [currentGeneratedPrompt, setCurrentGeneratedPrompt] =
+    useState<Prompts | null>(null);
   const [openTitleModal, setOpenTitleModal] = useState(false);
   const [executionTitle, setExecutionTitle] = useState("");
-  const [defaultExecution, setDefaultExecution] = useState<TemplatesExecutions | null>(null);
+  const [defaultExecution, setDefaultExecution] =
+    useState<TemplatesExecutions | null>(null);
   const [templateView] = useTemplateView();
   const [generatorOpened, setGeneratorOpened] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string>("");
@@ -115,7 +118,9 @@ const Prompt = () => {
     error: templateExecutionsError,
     isFetching: isFetchingExecutions,
     refetch: refetchTemplateExecutions,
-  } = useGetExecutionsByTemplateQuery(token ? (id ? id : skipToken) : skipToken);
+  } = useGetExecutionsByTemplateQuery(
+    token ? (id ? id : skipToken) : skipToken
+  );
 
   const [tabsValue, setTabsValue] = React.useState(0);
   const changeTab = (e: React.SyntheticEvent, newValue: number) => {
@@ -330,17 +335,29 @@ const Prompt = () => {
               }}
             >
               <Grid
-                item
-                xs={12}
-                md={4}
+                className="prompt-grid"
                 sx={{
                   height: "100%",
+                  maxWidth: "430px",
                   overflow: "auto",
                   position: "relative",
                   top: 0,
                   left: 0,
+                  scrollbarColor: "red",
                   right: 0,
                   zIndex: 999,
+                  "&::-webkit-scrollbar": {
+                    width: "0.4em",
+                  },
+                  "&::-webkit-scrollbar-track": {
+                    boxShadow: "inset 0 0 6px rgba(0, 0, 0, 0.3)",
+                    webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
+                  },
+                  "&::-webkit-scrollbar-thumb": {
+                    backgroundColor: "surface.3",
+                    outline: "1px solid surface.3",
+                    borderRadius: "10px",
+                  },
                 }}
               >
                 <Stack height={"100%"}>
@@ -414,9 +431,7 @@ const Prompt = () => {
               </Grid>
 
               <Grid
-                item
-                xs={12}
-                md={8}
+                flex={1}
                 sx={{
                   height: "100%",
                   overflow: "auto",

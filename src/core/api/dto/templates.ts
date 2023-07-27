@@ -4,15 +4,16 @@ import { Prompts } from "./prompts";
 export interface FilterParams {
   categoryId?: number;
   subcategoryId?: number;
-  tag?: string | undefined;
+  tag?: string;
+  title?: string | null,
   engineId?: number;
   filter?: string;
 }
 
 export interface SelectedFilters {
   engine: Engine | null;
-  tag: Tag | null;
-  keyword: string | null;
+  tag: (Tag | null)[];
+  title: string | null;
   category: Category | null;
   subCategory: Category | null;
 }

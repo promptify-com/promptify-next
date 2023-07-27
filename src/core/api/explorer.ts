@@ -32,13 +32,6 @@ export const explorerApi = createApi({
         }),
       }),
 
-      getCategories: builder.query<Category[], void>({
-        query: () => ({
-          url: `/api/meta/categories/`,
-          method: "get",
-        }),
-      }),
-
       getTemplatesByKeyWord: builder.query<Templates[], string>({
         query: (title: string) => ({
           url: `/api/meta/templates/?title=${title}`,
@@ -92,6 +85,8 @@ export const explorerApi = createApi({
               ? `&sub_category_id=${params.subcategoryId}`
               : "") +
             (params.engineId ? `&engine=${params.engineId}` : "") +
+            (params.title ? `&title=${params.title}` : "") +
+
             (params.filter ? `&ordering=${params.filter}` : ""),
           method: "get",
         }),
@@ -99,7 +94,13 @@ export const explorerApi = createApi({
 
       getTemplatesByCategory: builder.query<Templates[], string>({
         query: (id: string) => ({
-          url: `/api/meta/templates/?main_category_id=${id}`,
+          url: `/api/meta/templates/?main_category_slug=${id}`,
+          method: "get",
+        }),
+      }),
+      getTemplateBySubCategory: builder.query<Templates[], string>({
+        query: (id: string) => ({
+          url: `/api/meta/templates/?sub_category_slug=${id}`,
           method: "get",
         }),
       }),
@@ -131,13 +132,6 @@ export const explorerApi = createApi({
           method: "get",
         }),
       }),
-
-      getCategoryBySlug: builder.query<Category, string>({
-        query: (slug: string) => ({
-          url: `/api/meta/categories/by-slug/${slug}`,
-          method: "get",
-        }),
-      }),
     };
   },
 });
@@ -145,8 +139,7 @@ export const explorerApi = createApi({
 export const {
   useGetTagsQuery,
   useGetTagsPopularQuery,
-  useGetCategoriesQuery,
-  useGetCategoryBySlugQuery,
+
   useGetTemplatesByKeyWordQuery,
   useGetTemplatesByTagQuery,
   useGetTemplatesByKeyWordAndTagQuery,
@@ -160,4 +153,5 @@ export const {
   useGetTemplatesByFilterQuery,
   useGetCollectionsQuery,
   useLazyGetCollectionsQuery,
+  useGetTemplateBySubCategoryQuery,
 } = explorerApi;

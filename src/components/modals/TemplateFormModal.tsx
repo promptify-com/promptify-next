@@ -7,12 +7,13 @@ import { object, string } from 'yup';
 import { useFormik } from 'formik';
 import { Select, MenuItem, TextField, Input, Chip, Autocomplete, InputLabel, Checkbox, Stack } from '@mui/material';
 
-import { useGetCategoriesQuery, useGetTagsQuery } from '@/core/api/explorer';
+import {  useGetTagsQuery } from '@/core/api/explorer';
 import { Templates } from '@/core/api/dto/templates';
 import { IEditTemplate } from '@/common/types/editTemplate';
 import { createTemplate, updateTemplate } from '@/hooks/api/templates';
 import { authClient } from '@/common/axios';
 import {style, selectStyle, boxStyle, buttonBoxStyle, typographyStyle} from './styles'
+import { useGetCategoriesQuery } from '@/core/api/categories';
 
 interface IModal {
   open: boolean;

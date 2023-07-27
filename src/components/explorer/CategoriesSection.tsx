@@ -40,7 +40,11 @@ export const CategoriesSection: React.FC<CategoriesSectionProps> = ({
           alignItems={"flex-start"}
           alignContent={"flex-start"}
           alignSelf={"stretch"}
-          flexWrap={"wrap"}
+          flexWrap={{ xs: "nowrap", md: "wrap" }}
+          sx={{
+            overflow: { xs: "auto", md: "initial" },
+            WebkitOverflowScrolling: { xs: "touch", md: "initial" },
+          }}
         >
           {categories
 

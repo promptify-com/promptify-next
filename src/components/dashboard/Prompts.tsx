@@ -2,15 +2,20 @@ import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
+  Card,
+  CardActionArea,
+  CardMedia,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Grid,
   IconButton,
   Paper,
   Slide,
   Stack,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import TemplateFormModal from "@/components/modals/TemplateFormModal";
@@ -18,7 +23,12 @@ import { promptsApi, useDeleteTemplateMutation } from "@/core/api/prompts";
 import { Templates } from "@/core/api/dto/templates";
 import { PageLoading } from "@/components/PageLoading";
 import TemplateImportModal from "../modals/TemplateImportModal";
-import { Delete } from "@mui/icons-material";
+import {
+  Delete,
+  Edit,
+  PreviewRounded,
+  SettingsApplicationsRounded,
+} from "@mui/icons-material";
 
 export const Prompts = () => {
   const [templateFormOpen, setTemplateFormOpen] = useState(false);
@@ -88,79 +98,127 @@ export const Prompts = () => {
       {isFetching ? (
         <PageLoading />
       ) : (
-        <Box>
+        <Box display={"flex"} flexDirection={"column"} gap={"14px"}>
           {promptsData?.map((prompt) => {
             return (
-              <Paper key={prompt.id} elevation={0} sx={{ marginTop: "4px" }}>
-                <Box
-                  display="flex"
-                  justifyContent="space-between"
-                  alignItems="center"
-                  padding="20px"
+              <Card
+                key={prompt.id}
+                elevation={0}
+                sx={{ p: "10px", borderRadius: "16px" }}
+              >
+                <Grid
+                  container
+                  display={"flex"}
+                  alignItems={"center"}
+                  justifyContent={"space-between"}
                 >
-                  <Typography>ID: {prompt.id}</Typography>
-                  <Typography>{prompt.title}</Typography>
-                  <Box
-                    display="flex"
-                    justifyContent="center"
-                    alignItems="center"
-                    gap={1}
+                  <Grid
+                    item
+                    xs={7}
+                    display={"flex"}
+                    alignItems={"center"}
+                    gap={"16px"}
                   >
-                    <Button
-                      variant="outlined"
-                      onClick={() => {
-                        window.open(
-                          window.location.origin + `/prompt/${prompt.slug}`,
-                          "_blank"
-                        );
-                      }}
-                    >
-                      Preview
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      onClick={() => {
-                        window.open(
-                          window.location.origin + `/builder/${prompt.id}`,
-                          "_blank"
-                        );
-                      }}
-                    >
-                      Builder
-                    </Button>
-                    <Button
-                      variant="contained"
-                      onClick={() => {
-                        const findPrompt = promptsData?.filter(
-                          (data) => data.id === prompt.id
-                        );
-                        if (findPrompt) {
-                          setModalPromptData(findPrompt);
-                        }
-                        setModalNew(false);
-                        setTemplateFormOpen(true);
-                      }}
-                    >
-                      Edit
-                    </Button>
-                    <IconButton
-                      onClick={() => openModal(prompt.id)}
-                      size="large"
+                    <CardMedia
+                      component={"img"}
+                      image={prompt.thumbnail}
                       sx={{
-                        bgcolor: "#ef4444",
-                        border: "none",
-                        color: "white",
-                        "&:hover": {
-                          bgcolor: "surface.3",
-                          color: "#ef4444",
-                        },
+                        height: "60px",
+                        width: "80px",
+                        borderRadius: "16px",
                       }}
-                    >
-                      <Delete />
-                    </IconButton>
-                  </Box>
-                </Box>
-              </Paper>
+                    />
+                    <Box>
+                      <Typography>{prompt.title}</Typography>
+                    </Box>
+                  </Grid>
+                  <Grid display={"flex"} alignItems={"center"} gap={"8px"}>
+                    <Tooltip title="Preview">
+                      <IconButton
+                        sx={{
+                          bgcolor: "surface.2",
+                          border: "none",
+                          color: "onSurface",
+                          "&:hover": {
+                            bgcolor: "surface.3",
+                            color: "onSurface",
+                          },
+                        }}
+                        onClick={() => {
+                          window.open(
+                            window.location.origin + `/prompt/${prompt.slug}`,
+                            "_blank"
+                          );
+                        }}
+                      >
+                        <PreviewRounded />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Builder">
+                      <IconButton
+                        sx={{
+                          bgcolor: "surface.2",
+                          border: "none",
+                          color: "onSurface",
+                          "&:hover": {
+                            bgcolor: "surface.3",
+                            color: "onSurface",
+                          },
+                        }}
+                        onClick={() => {
+                          window.open(
+                            window.location.origin + `/builder/${prompt.id}`,
+                            "_blank"
+                          );
+                        }}
+                      >
+                        <SettingsApplicationsRounded />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Edit">
+                      <IconButton
+                        sx={{
+                          bgcolor: "surface.2",
+                          border: "none",
+                          color: "onSurface",
+                          "&:hover": {
+                            bgcolor: "surface.3",
+                            color: "onSurface",
+                          },
+                        }}
+                        onClick={() => {
+                          const findPrompt = promptsData?.filter(
+                            (data) => data.id === prompt.id
+                          );
+                          if (findPrompt) {
+                            setModalPromptData(findPrompt);
+                          }
+                          setModalNew(false);
+                          setTemplateFormOpen(true);
+                        }}
+                      >
+                        <Edit />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Delete">
+                      <IconButton
+                        onClick={() => openModal(prompt.id)}
+                        sx={{
+                          bgcolor: "surface.2",
+                          border: "none",
+                          color: "onSurface",
+                          "&:hover": {
+                            bgcolor: "surface.3",
+                            color: "#ef4444",
+                          },
+                        }}
+                      >
+                        <Delete />
+                      </IconButton>
+                    </Tooltip>
+                  </Grid>
+                </Grid>
+              </Card>
             );
           })}
         </Box>
@@ -175,7 +233,8 @@ export const Prompts = () => {
         <DialogTitle>{"Confirm Deletion"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-slide-description">
-            Are you sure you want to delete this item? Once deleted, it cannot be recovered. Please proceed with caution.
+            Are you sure you want to delete this item? Once deleted, it cannot
+            be recovered. Please proceed with caution.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
