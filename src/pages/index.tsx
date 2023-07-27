@@ -1,4 +1,4 @@
-import { Box, Grid, Typography } from "@mui/material";
+import { Box, Button, Grid, Stack, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { AxiosResponse } from "axios";
@@ -7,19 +7,30 @@ import { useDispatch, useSelector } from "react-redux";
 import useSetUser from "@/hooks/useSetUser";
 import useToken from "@/hooks/useToken";
 import { TopicImg } from "@/assets/icons/TopicImg";
-import { Category, Tag } from "@/core/api/dto/templates";
+import {
+  Category,
+  FilterParams,
+  SelectedFilters,
+  Tag,
+} from "@/core/api/dto/templates";
 import { IContinueWithSocialMediaResponse } from "@/common/types";
 import { getPathURL, saveToken } from "@/common/utils";
 import { authClient, client } from "@/common/axios";
 import {
   useGetTagsPopularQuery,
-  useGetTemplatesByFilterQuery,
+  useGetTemplatesSuggestedQuery,
+  useGetLastTemplatesQuery,
 } from "@/core/api/explorer";
 import { RootState } from "@/core/store";
 import { Layout } from "@/layout";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
 import { setSelectedTag } from "@/core/store/filtersSlice";
 import { useGetCategoriesQuery } from "@/core/api/categories";
+import { ExploreHeaderImage } from "@/assets/icons/exploreHeader";
+import { FiltersSelected } from "@/components/explorer/FiltersSelected";
+import { CategoriesSection } from "@/components/explorer/CategoriesSection";
+import { useGetCurrentUserQuery } from "@/core/api/user";
+import CardTemplate from "@/components/common/cards/CardTemplate";
 
 const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
 
@@ -29,16 +40,25 @@ function Home() {
   const savedToken = useToken();
   const dispatch = useDispatch();
   const tagsData = useSelector((state: RootState) => state.filters.tag);
+  const engineId = useSelector((state: RootState) => state.filters.engine?.id);
+  const title = useSelector((state: RootState) => state.filters.title);
 
   const filteredTags = tagsData
     .filter((item: Tag | null) => item !== null)
     .map((item: Tag | null) => item?.name)
     .join("&tag=");
 
-  const { data: categories } = useGetCategoriesQuery();
+  const params: FilterParams = {
+    tag: filteredTags,
+    engineId,
+    title,
+  };
   const { data: tags } = useGetTagsPopularQuery();
-  const { data: templates, isLoading: isTemplateLoading } =
-    useGetTemplatesByFilterQuery({ tag: filteredTags });
+
+  const { data: templates, isLoading: isTemplatesLoading } =
+    useGetTemplatesSuggestedQuery();
+  const { data: lastTemplate, isLoading: islastTemplateLoading } =
+    useGetLastTemplatesQuery();
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [categorySelected, setCategorySelected] = useState<number>();
@@ -92,12 +112,15 @@ function Home() {
       postLogin(r.data);
     }
   };
+  const { data: user, isLoading: userLoading } =
+    useGetCurrentUserQuery(savedToken);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const authorizationCode = urlParams.get("code");
     preLogin();
-    if (authorizationCode && !savedToken) {
+
+    if (!!authorizationCode && !savedToken) {
       client
         .post(CODE_TOKEN_ENDPOINT, {
           provider: "microsoft",
@@ -117,231 +140,253 @@ function Home() {
       setIsLoading(false);
     }
   }, []);
+  const { data: categories, isLoading: isCategoryLoading } =
+    useGetCategoriesQuery();
+
+  function areAllStatesNull(filters: SelectedFilters): boolean {
+    return (
+      filters.engine === null &&
+      filters.tag.every((tag) => tag === null) &&
+      filters.title === null &&
+      filters.category === null &&
+      filters.subCategory === null
+    );
+  }
+  const filters = useSelector((state: RootState) => state.filters);
+
+  const allNull = areAllStatesNull(filters);
 
   return (
     <>
       <Box width={"100%"}>
         <Layout>
-          <Box padding={{ xs: "4px 0px", md: "0px 8px" }}>
-            <Grid
-              display={"flex"}
-              flexDirection={"column"}
-              gap={"16px"}
-              sx={{
-                padding: { xs: "16px", md: "32px" },
-              }}
-            >
+          {savedToken ? (
+            <Box padding={{ xs: "4px 0px", md: "0px 8px" }}>
               <Grid
-                flexDirection="column"
                 display={"flex"}
+                flexDirection={"column"}
                 sx={{
-                  padding: "1em",
+                  padding: { xs: "16px", md: "32px" },
+                  paddingBottom: "0 !important",
                 }}
               >
-                <Grid
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    width: "100%",
-                    textAlign: "center",
-                  }}
-                >
-                  <Typography
+                <Grid flexDirection="column" display={"flex"} mb={"22px"}>
+                  <Grid
                     sx={{
-                      fontFamily: "Poppins",
-                      fontStyle: "normal",
-                      fontWeight: 500,
-                      fontSize: { xs: "30px", sm: "48px" },
-                      lineHeight: { xs: "30px", md: "72px" },
-                      color: "#1D2028",
-                      marginLeft: { xs: "0px", sm: "0px" },
-                    }}
-                  >
-                    Welcome to Promptify
-                  </Typography>
-                </Grid>
-                <Grid
-                  mt={2}
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    width: "100%",
-                  }}
-                >
-                  <Typography
-                    sx={{
-                      fontSize: "14px",
-                      width: { xs: "100%", sm: "666px" },
-                      marginLeft: { xs: "0px", sm: "0em" },
-                      fontWeight: 400,
-                    }}
-                    align="center"
-                  >
-                    Unleash your creative potential using Promptify, the
-                    ultimate ChatGPT and AI-driven content generation and idea
-                    inspiration platform. Try it today!
-                  </Typography>
-                </Grid>
-              </Grid>
-
-              <Grid
-                sx={{
-                  display: "-webkit-box",
-                  overflowX: "auto",
-                  height: "70px",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  gap: "0.4em",
-                  width: "100%",
-                  padding: "1em 1em",
-                }}
-              >
-                {!!tags && tags.length > 0 && (
-                  <Typography
-                    sx={{
-                      display: "flex",
-                      flexDirection: "row",
-                      justifyContent: "center",
                       alignItems: "center",
-                      padding: "0.7em",
-                      gap: "10px",
-                      width: "fit-content",
-                      height: "0.7em",
-                      background: "transparent",
-                      borderRadius: "99px",
-                      fontSize: "14px",
-                      fontFamily: "Poppins",
-                      fontStyle: "normal",
-                      fontWeight: 500,
-                      lineHeight: "18px",
-                      leadingTrim: "both",
-                      color: "onSurface",
+                      width: "100%",
                     }}
                   >
-                    Popular topics:
-                  </Typography>
-                )}
-                {!!tags &&
-                  tags.length > 0 &&
-                  tags.map((el: Tag) => (
-                    <Grid
-                      onClick={() => handleTagSelect(el)}
-                      key={el.id}
+                    <Typography
                       sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        padding: "8px 12px",
-                        minWidth: "63px",
-                        height: "36px",
-                        borderRadius: "100px",
-                        flex: "none",
-                        order: 4,
-                        flexGrow: 0,
-                        background: tagsData.includes(el)
-                          ? "#cad3e2"
-                          : "#ffffff78",
-                        cursor: "pointer",
-                        "&:hover": {
-                          transform: "scale(1.05)",
-                        },
+                        fontFamily: "Poppins",
+                        fontStyle: "normal",
+                        fontWeight: 500,
+                        fontSize: { xs: "30px", sm: "48px" },
+                        lineHeight: { xs: "30px", md: "56px" },
+                        color: "#1D2028",
+                        marginLeft: { xs: "0px", sm: "0px" },
                       }}
+                    >
+                      Welcome, {user?.username}
+                    </Typography>
+                  </Grid>
+                </Grid>
+
+                <TemplatesSection
+                  isLoading={islastTemplateLoading}
+                  templates={lastTemplate}
+                  filtred={!!filteredTags}
+                >
+                  Your Latest Template:
+                </TemplatesSection>
+              </Grid>
+              <Grid
+                display={"flex"}
+                flexDirection={"column"}
+                sx={{
+                  padding: { xs: "16px", md: "32px" },
+                  paddingBottom: "0 !important",
+                }}
+              >
+                <TemplatesSection
+                  isLoading={isTemplatesLoading}
+                  templates={templates}
+                  filtred={!!filteredTags}
+                >
+                  You may like this templates:
+                </TemplatesSection>
+              </Grid>
+              <Grid
+                display={"flex"}
+                flexDirection={"column"}
+                sx={{
+                  padding: { xs: "16px", md: "32px" },
+                }}
+              >
+                <CategoriesSection
+                  categories={categories}
+                  isLoading={isCategoryLoading}
+                />
+              </Grid>
+            </Box>
+          ) : (
+            <>
+              <Box padding={{ xs: "4px 0px", md: "0px 8px" }}>
+                <Box
+                  sx={{
+                    padding: { xs: "16px", md: "32px" },
+                  }}
+                >
+                  <Stack
+                    bgcolor={"white"}
+                    sx={{
+                      padding: { xs: "16px", md: "24px" },
+                      borderRadius: "25px",
+                      gap: { xs: "25px", sm: "48px", md: "10px", lg: "48px" },
+                      flexDirection: { xs: "column", sm: "row" },
+                    }}
+                  >
+                    <Stack
+                      sx={{
+                        paddingBlock: "8px",
+                        paddingInline: {
+                          xs: "40px",
+                          sm: "8px",
+                          md: "8px",
+                          lg: "40px",
+                        },
+                        alignItems: "center",
+                      }}
+                    >
+                      <ExploreHeaderImage />
+                    </Stack>
+
+                    <Stack
+                      flex={1}
+                      justifyContent="center"
+                      sx={{ alignItems: { xs: "center", sm: "flex-start" } }}
                     >
                       <Typography
                         sx={{
-                          display: "flex",
-                          flexDirection: "row",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          padding: "0px",
-                          gap: "8px",
-                          height: "20px",
-                          flex: "none",
-                          order: 0,
-                          flexGrow: 0,
+                          fontStyle: "normal",
+                          fontWeight: 500,
+                          fontSize: "24px",
+                          lineHeight: "28px",
+                          letterSpacing: "0.15px",
+                          color: "#1D2028",
+                          marginBottom: "8px",
                         }}
                       >
-                        {el.name}
+                        Welcome to Promptify
                       </Typography>
-                    </Grid>
-                  ))}
-              </Grid>
-              <Grid
-                sx={{
-                  display: "-webkit-box",
-                  overflowX: "auto",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "0.5em",
-                  padding: "1em 1em",
-                  width: "100%",
-                }}
-              >
-                {!!categories &&
-                  categories.length > 0 &&
-                  categories
-                    ?.filter((mainCat) => !mainCat.parent)
-                    .map((el) => (
-                      <Grid
-                        onClick={() => handleClickCategory(el.id, el)}
-                        key={el.id}
+                      <Typography
                         sx={{
-                          display: "flex",
-                          flexDirection: "row",
-                          alignItems: "center",
-                          padding: "10px 12px",
-                          gap: "8px",
-                          maxWidth: "7em",
-                          width: "fit-content",
-                          height: "1.5em",
-                          background:
-                            el.id === categorySelected
-                              ? "#cad3e2"
-                              : "#ffffff78",
-                          borderRadius: "99px",
-                          boxSizing: "initial",
-                          cursor: "pointer",
-                          "&:hover": {
-                            transform: "scale(1.05)",
-                          },
+                          fontStyle: "normal",
+                          fontWeight: 400,
+                          fontSize: "14px",
+                          lineHeight: "23px",
+                          letterSpacing: "0.4px",
+                          color: "#1D2028",
+                          marginBottom: "16px",
+                          textAlign: { xs: "center", sm: "left" },
                         }}
                       >
-                        <Grid
+                        Unleash your creative potential using Promptify, the
+                        ultimate ChatGPT and AI-driven content generation and
+                        idea inspiration platform. Try it today!
+                      </Typography>
+
+                      <Stack direction={"row"} gap={"8px"}>
+                        <Button
+                          onClick={() =>
+                            router.push({
+                              pathname: "/signin",
+                              query: { from: "signup" },
+                            })
+                          }
                           sx={{
-                            height: "1em",
-                            width: "1.5em",
                             display: "flex",
+                            padding: "6px 16px",
                             justifyContent: "center",
                             alignItems: "center",
+
+                            borderRadius: "100px",
+                            background: "#3B4050",
+                            color: "#FFF",
+
+                            fontStyle: "normal",
+                            fontWeight: 500,
+                            fontSize: "14px",
+                            lineHeight: "24px",
+                            letterSpacing: "0.4px",
+                            "&:hover": {
+                              color: "#000000",
+                              outline: "1px solid #3B4050",
+                            },
                           }}
                         >
-                          <TopicImg />
-                        </Grid>
-                        <Typography
-                          title={el.name.length > 22 ? el.name : ""}
+                          Sign Up for Free
+                        </Button>
+                        <Button
+                          onClick={() =>
+                            router.push({
+                              pathname: "https://promptify.com",
+                            })
+                          }
                           sx={{
                             display: "flex",
-                            fontSize: "0.7em",
+                            padding: "6px 16px",
+                            justifyContent: "center",
+                            alignItems: "center",
+
+                            borderRadius: "100px",
+                            background: "transparent",
+                            color: "var(--primary-main, #3B4050)",
+                            border:
+                              "1px solid var(--primary-states-outlined-border, rgba(59, 64, 80, 0.15))",
+
+                            fontStyle: "normal",
+                            fontWeight: 500,
+                            fontSize: "14px",
+                            lineHeight: "24px",
+                            letterSpacing: "0.4px",
+
+                            "&:hover": {
+                              color: "#FFF",
+                              background:
+                                "var(--primary-states-outlined-border, rgba(59, 64, 80, 0.15))",
+                            },
                           }}
                         >
-                          {el.name.length > 22
-                            ? el.name.slice(0, 22) + "..."
-                            : el.name}
-                        </Typography>
-                      </Grid>
-                    ))}
-              </Grid>
+                          How it Works?
+                        </Button>
+                      </Stack>
+                    </Stack>
+                  </Stack>
+                </Box>
+              </Box>
 
-              <TemplatesSection
-                isLoading={isTemplateLoading}
-                templates={templates}
-                filtred={!!filteredTags}
-              />
-            </Grid>
-          </Box>
+              <Box padding={{ xs: "4px 0px", md: "0px 8px" }}>
+                <Grid
+                  display={"flex"}
+                  flexDirection={"column"}
+                  gap={"16px"}
+                  sx={{
+                    padding: { xs: "16px", md: "32px" },
+                  }}
+                >
+                  <FiltersSelected show={!allNull} />
+                  {allNull && (
+                    <CategoriesSection
+                      categories={categories}
+                      isLoading={isCategoryLoading}
+                    />
+                  )}
+                </Grid>
+              </Box>
+            </>
+          )}
         </Layout>
       </Box>
     </>

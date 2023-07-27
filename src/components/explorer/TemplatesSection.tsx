@@ -10,12 +10,14 @@ interface TemplatesSectionProps {
   templates: Templates[] | undefined;
   isLoading: boolean;
   filtred?: boolean;
+  children: string;
 }
 
 export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
   templates,
   isLoading,
   filtred,
+  children,
 }) => {
   const router = useRouter();
 
@@ -35,7 +37,7 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
             <FetchLoading />
           </Box>
         )}
-        {!filtred && <Typography fontSize={19}>Best Templates</Typography>}
+        {!filtred && <Typography fontSize={19}>{children}</Typography>}
 
         <Grid
           container
