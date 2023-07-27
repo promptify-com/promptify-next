@@ -29,7 +29,7 @@ import { ExploreHeaderImage } from "@/assets/icons/exploreHeader";
 import { FiltersSelected } from "@/components/explorer/FiltersSelected";
 import { CategoriesSection } from "@/components/explorer/CategoriesSection";
 import { useGetCurrentUserQuery } from "@/core/api/user";
-import CardTemplate from "@/components/common/cards/CardTemplate";
+import { FetchLoading } from "@/components/FetchLoading";
 
 const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
 
@@ -37,6 +37,7 @@ function Home() {
   const router = useRouter();
   const setUser = useSetUser();
   const savedToken = useToken();
+
   const dispatch = useDispatch();
   const tagsData = useSelector((state: RootState) => state.filters.tag);
   const engineId = useSelector((state: RootState) => state.filters.engine?.id);
@@ -159,7 +160,9 @@ function Home() {
     <>
       <Box width={"100%"}>
         <Layout>
-          {savedToken ? (
+          {userLoading ? (
+            <FetchLoading />
+          ) : user && savedToken ? (
             <Box padding={{ xs: "4px 0px", md: "0px 8px" }}>
               <Grid
                 display={"flex"}
@@ -192,13 +195,15 @@ function Home() {
                   </Grid>
                 </Grid>
 
-                <TemplatesSection
-                  isLoading={islastTemplateLoading}
-                  templates={lastTemplate}
-                  filtred={!!filteredTags}
-                >
-                  Your Latest Template:
-                </TemplatesSection>
+                {lastTemplate && lastTemplate.length > 0 && (
+                  <TemplatesSection
+                    isLoading={islastTemplateLoading}
+                    templates={lastTemplate}
+                    filtred={!!filteredTags}
+                  >
+                    Your Latest Template:
+                  </TemplatesSection>
+                )}
               </Grid>
               <Grid
                 display={"flex"}
@@ -391,6 +396,7 @@ function Home() {
     </>
   );
 }
+
 export async function getServerSideProps() {
   return {
     props: {
