@@ -345,7 +345,10 @@ const Prompt = () => {
               sx={{
                 mx: "auto",
                 height: { xs: "calc(100svh - 56px)", md: "calc(100svh - (90px + 32px))" },
-                pb: { xs: "68px", md: 0 },
+                pb: { 
+                  xs: "calc(68px + 64px)", // 64px fixed min card details + 68px bottom tabs
+                  md: 0 
+                },
                 width: { md: "calc(100% - 65px)" },
                 bgcolor: "surface.2",
                 borderTopLeftRadius: { md: "16px" },
@@ -454,6 +457,11 @@ const Prompt = () => {
 
               {windowWidth < 960 && (
               <>
+                <DetailsCard
+                  templateData={templateData}
+                  min
+                />
+
                 <Grid ref={detailsElRef}
                   item
                   xs={12}

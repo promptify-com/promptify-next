@@ -30,7 +30,6 @@ export const Layout = ({ children }: { children: ReactNode }) => {
           <Header transparent />
           <Box
             bgcolor={{ xs: "surface.1", md: "surface.3" }}
-            mt={{ xs: "3px", md: 0 }}
             minHeight={{ xs: "calc(100svh - 60px)", md: "calc(100vh - 90px)" }}
           >
             <Grid display={"flex"} flexDirection={"column"} gap={"16px"}>
