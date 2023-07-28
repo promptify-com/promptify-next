@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { Box, Stack, Typography } from "@mui/material";
 import { Subtitle } from "@/components/blocks";
 import { getMarkdownFromString } from "@/common/helpers/getMarkdownFromString";
@@ -10,7 +10,26 @@ interface Props {
   templateData: Templates;
 }
 
-export const ExecutionCardGenerated: React.FC<Props> = ({ execution, templateData }) => {
+export const ExecutionCardGenerated: React.FC<Props> = ({
+  execution,
+  templateData,
+}) => {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    document.addEventListener("wheel", (event) => {
+      clearInterval(interval);
+    });
+
+    function updateScroll() {
+      ref.current?.scrollIntoView({
+        block: "end",
+      });
+    }
+    const interval = setInterval(updateScroll, 100);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const isImageOutput = (output: string): boolean => {
     return (
@@ -22,7 +41,8 @@ export const ExecutionCardGenerated: React.FC<Props> = ({ execution, templateDat
   };
 
   return (
-    <Stack gap={1}
+    <Stack
+      gap={1}
       sx={{
         width: "70%",
         mx: "auto",
@@ -37,11 +57,10 @@ export const ExecutionCardGenerated: React.FC<Props> = ({ execution, templateDat
         );
         if (prompt?.show_output)
           return (
-            <Stack key={i}
-              gap={1}
-              sx={{ py: "24px" }}
-            >
-              <Subtitle sx={{ fontSize: 24, fontWeight: 400, color: "onSurface" }}>
+            <Stack key={i} gap={1} sx={{ py: "24px" }}>
+              <Subtitle
+                sx={{ fontSize: 24, fontWeight: 400, color: "onSurface" }}
+              >
                 {prompt.title}
               </Subtitle>
               {!isImageOutput(exec.message) && (
@@ -86,6 +105,7 @@ export const ExecutionCardGenerated: React.FC<Props> = ({ execution, templateDat
             </Stack>
           );
       })}
+      <div ref={ref} />
     </Stack>
   );
 };
