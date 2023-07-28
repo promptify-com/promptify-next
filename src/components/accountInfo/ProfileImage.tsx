@@ -122,13 +122,14 @@ export const ProfileImage: React.FC<IProps> = ({}) => {
         flexDirection={"row"}
         justifyContent={"start"}
         alignItems={"start"}
+        gap={2}
       >
         <Grid item xs={5}>
           <Avatar
             src={
               croppedImage
                 ? URL.createObjectURL(croppedImage)
-                : user?.avatar || "no-image"
+                : user?.avatar ?? "no-image"
             }
             sx={{ width: "150px", height: "150px" }}
           />

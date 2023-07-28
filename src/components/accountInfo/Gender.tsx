@@ -27,12 +27,8 @@ export const Gender: React.FC<IProps> = ({ formik }) => {
   }, [formik.values.gender]);
 
   return (
-    <Box mt="70px">
-      <Typography
-        fontWeight={500}
-        fontSize="1rem"
-        textAlign={{ xs: "center", sm: "start" }}
-      >
+    <Box>
+      <Typography fontWeight={500} fontSize="18px" textAlign={"start"}>
         Gender
       </Typography>
       <Box

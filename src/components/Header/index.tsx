@@ -79,14 +79,14 @@ export const Header: React.FC<HeaderProps> = ({
       sx={{
         width: "100%",
         background: transparent ? "transparent" : "#F6F5FF",
-        position: fixed ? "fixed" : "relative",
+        position: { xs: "fixed", md: fixed ? "fixed" : "relative" },
         zIndex: 1000,
         top: 0,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         bgcolor: { xs: "surface.1", md: "surface.3" },
-        height: { xs: "56px", md: "90px" },
+        height: { xs: "58px", md: "90px" },
       }}
     >
       <Grid
@@ -97,6 +97,7 @@ export const Header: React.FC<HeaderProps> = ({
           gap: "30px",
           padding: { xs: "0 4px ", md: "1.5em 2em" },
           alignItems: "center",
+          borderBottom: { xs: "2px solid #E1E2EC", md: "none" },
         }}
       >
         <Grid
@@ -107,6 +108,7 @@ export const Header: React.FC<HeaderProps> = ({
           alignItems={"center"}
           height={48}
           mt={1}
+          sx={{}}
         >
           <LogoApp width={23} />
         </Grid>

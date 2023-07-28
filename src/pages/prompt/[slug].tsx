@@ -322,6 +322,7 @@ const Prompt = () => {
             <PageLoading />
           ) : (
             <Grid
+              mt={{ xs: 7, md: 0 }}
               container
               sx={{
                 mx: "auto",

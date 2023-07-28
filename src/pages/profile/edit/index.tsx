@@ -1,7 +1,9 @@
 import React from "react";
 import Head from "next/head";
+import { useRouter } from "next/router";
 import { useFormik } from "formik";
 import { Box, Button, CircularProgress, Grid, Typography } from "@mui/material";
+import { ArrowBackIosRounded } from "@mui/icons-material";
 
 import { NameInfo } from "@/components/accountInfo/NameInfo";
 import { About } from "@/components/accountInfo/About";
@@ -10,10 +12,7 @@ import { ProfileImage } from "@/components/accountInfo/ProfileImage";
 import { useGetCurrentUser, useUpdateUser } from "@/hooks/api/user";
 import { IEditProfile } from "@/common/types";
 import useSetUser from "@/hooks/useSetUser";
-import { Header } from "@/components/Header";
-import { useRouter } from "next/router";
 import { Layout } from "@/layout";
-import { ArrowBackIosRounded } from "@mui/icons-material";
 
 const EditProfilePage = () => {
   const router = useRouter();
@@ -51,7 +50,7 @@ const EditProfilePage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Layout>
-        <Box padding={{ xs: "4px 0px", md: "0px 8px" }}>
+        <Box mt={{ xs: 7, md: 0 }} padding={{ xs: "4px 0px", md: "0px 8px" }}>
           <Grid
             sx={{
               padding: { xs: "16px", md: "32px" },
@@ -86,11 +85,12 @@ const EditProfilePage = () => {
                     Edit Profile
                   </Typography>
                 </Box>
-
-                <NameInfo formik={formik} />
-                <ProfileImage formik={formik} />
-                <Gender formik={formik} />
-                <About formik={formik} />
+                <Grid display={"flex"} flexDirection={"column"} gap={"46px"}>
+                  <NameInfo formik={formik} />
+                  <ProfileImage formik={formik} />
+                  <Gender formik={formik} />
+                  <About formik={formik} />
+                </Grid>
 
                 <Box
                   display="flex"
@@ -122,7 +122,6 @@ const EditProfilePage = () => {
                   </Button>
                 </Box>
               </Grid>
-              <Grid item xs={0} sm={3}></Grid>
             </Grid>
           </Grid>
         </Box>

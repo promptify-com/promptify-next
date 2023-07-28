@@ -20,7 +20,7 @@ const Dashboard = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Layout>
-        <Box padding={{ xs: "4px 0px", md: "0px 8px" }}>
+        <Box mt={{ xs: 7, md: 0 }} padding={{ xs: "4px 0px", md: "0px 8px" }}>
           <Grid
             sx={{
               padding: { xs: "16px", md: "32px" },
