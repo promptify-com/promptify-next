@@ -27,7 +27,6 @@ import { mix } from "polished";
 import { useRouter } from "next/router";
 
 import {
-  useGetExecutionsByTemplateQuery,
   useGetPromptTemplateBySlugQuery,
   useTemplateView,
   useGetExecutionByIdQuery,
@@ -81,6 +80,7 @@ const a11yProps = (index: number) => {
 
 const Prompt = () => {
   const [selectedSpark, setSelectedSpark] = useState<Spark | null>(null);
+  const [selectedExecution, setSelectedExecution] = useState<TemplatesExecutions | null>(null);
   const [newExecutionData, setNewExecutionData] =
     useState<PromptLiveResponse | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -363,12 +363,11 @@ const Prompt = () => {
                 position: "relative",
               }}
             >
-              {windowWidth > 960 && ( 
+              {windowWidth > 960 && (
               <Grid
-                className="prompt-grid"
                 sx={{
                   height: "100%",
-                  maxWidth: "430px",
+                  width: "401px",
                   overflow: "auto",
                   position: "relative",
                   top: 0,
@@ -446,6 +445,8 @@ const Prompt = () => {
                       </CustomTabPanel>
                       <CustomTabPanel value={tabsValue} index={2}>
                         <History 
+                          spark={selectedSpark}
+                          selectedExecution={selectedExecution}
                         />
                       </CustomTabPanel>
                     </Box>
@@ -517,7 +518,9 @@ const Prompt = () => {
                     bgcolor: "surface.1"
                   }}
                 >
-                  <History 
+                  <History
+                    spark={selectedSpark}
+                    selectedExecution={selectedExecution} 
                   />
                 </Grid>
               </>

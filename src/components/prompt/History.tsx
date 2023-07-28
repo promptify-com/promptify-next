@@ -9,16 +9,70 @@ import TimelineConnector from '@mui/lab/TimelineConnector';
 import TimelineContent from '@mui/lab/TimelineContent';
 import TimelineOppositeContent from '@mui/lab/TimelineOppositeContent';
 import TimelineDot from '@mui/lab/TimelineDot';
-import { PromptExecutions } from "@/core/api/dto/templates";
+import { Spark, SparkVersion, TemplatesExecutions } from "@/core/api/dto/templates";
+import moment from "moment";
 
 interface Props {
-  spark?: PromptExecutions
+  spark: Spark | null,
+  selectedExecution: TemplatesExecutions | null
 }
 
 export const History: React.FC<Props> = ({
-  spark
+  spark,
+  selectedExecution
 }) => {
   const { palette } = useTheme();
+  const versions = [...spark?.versions || []]
+  const [groupedVersions, setGroupedVersions] = React.useState<{ date: string; versions: SparkVersion[] }[]>([]);
+
+  const sortedVersions = versions.sort((a, b) => moment(b.created_at).diff(moment(a.created_at)));
+
+  React.useEffect(() => {
+    const grouped = sortedVersions.reduce((acc, item) => {
+      const createdAt = moment(item.created_at).fromNow();
+      const index = acc.findIndex(version => version.date === createdAt);
+      if (index !== -1) {
+        acc[index].versions.push(item);
+      } else {
+        acc.push({ date: createdAt, versions: [item] });
+      }
+      return acc;
+    }, [] as { date: string; versions: SparkVersion[] }[]);
+    
+    const sortedGrouped = grouped.sort((a, b) => moment(b.date, 'D MMMM YYYY').diff(moment(a.date, 'D MMMM YYYY')));
+    setGroupedVersions(sortedGrouped);
+  }, [spark?.versions]);
+
+
+  const TimeLineSeparator = ({noConnector=false, active=false}) => (
+    <TimelineSeparator sx={{ position: "relative" }}>
+      <TimelineConnector sx={{ 
+          bgcolor: `${alpha(palette.primary.main, .3)}`
+        }}
+      />
+      <TimelineDot variant={active ? "filled": "outlined"} color="primary"
+        sx={{ 
+          display: noConnector ? "none" : "flex",
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: "4px",
+          height: "4px",
+          m: 0,
+          p: 0,
+          bgcolor: "surface.2",
+          borderColor: `${alpha(palette.primary.main, .3)}`,
+        }}
+      >
+        <TimelineConnector sx={{
+            bgcolor: "transparent" 
+          }} 
+        />
+      </TimelineDot>
+      <TimelineConnector sx={{ bgcolor: `${alpha(palette.primary.main, .3)}` }} />
+    </TimelineSeparator>
+  );
 
   return (
     <Box sx={{ p: "16px" }}>
@@ -34,75 +88,65 @@ export const History: React.FC<Props> = ({
       </Typography>
       <Box>
         <Timeline sx={{ p: 0 }}>
-          <Typography
-            sx={{
-              fontSize: 11,
-              fontWeight: 500,
-              color: "onSurface",
-              opacity: .5,
-              p: "8px 16px",
-              textTransform: "uppercase"
-            }}
-          >
-            Today
-          </Typography>
 
-          {new Array(3).fill(0).map((_, i) => (
-
+          {groupedVersions.map((group, i) => (
+            <>
             <TimelineItem key={i}
-              sx={{
-                cursor: "pointer",
-                borderRadius: "8px",
-                ":hover": {
-                  bgcolor: "action.hover"
-                },
-                ".active": {
-                  bgcolor: "surface.3"
-                }
-              }}
+              sx={{ minHeight: "0" }} 
             >
               <TimelineOppositeContent
                 sx={{ 
+                  fontSize: 11,
+                  fontWeight: 500,
+                  color: "onSurface",
+                  opacity: .5,
                   p: "16px", 
+                  textTransform: "uppercase",
                   textAlign: "left",
-                  fontSize: 12,
-                  fontWeight: 500, 
-                  color: "onSurface" 
                 }}
               >
-                9:30 am
+                {group.date}
               </TimelineOppositeContent>
-              <TimelineSeparator>
-                <TimelineConnector sx={{ 
-                    visibility: i === 0 ? "hidden" : "visible",
-                    bgcolor: `${alpha(palette.primary.main, .3)}`
-                  }}
-                />
-                <TimelineDot variant={i === 0 ? "filled": "outlined"} color="primary"
-                  sx={{ 
-                    m: 0,
-                    p: 0,
-                    borderColor: `${alpha(palette.primary.main, .3)}`,
-                    width: "8px",
-                    height: "8px",
-                  }}
-                >
-                  <TimelineConnector sx={{ bgcolor: "transparent" }} />
-                </TimelineDot>
-                <TimelineConnector sx={{ bgcolor: `${alpha(palette.primary.main, .3)}` }} />
-              </TimelineSeparator>
+              <TimeLineSeparator noConnector />
               <TimelineContent sx={{ 
                   flex: 3,
                   p: '16px',
-                  fontSize: 12,
-                  fontWeight: 500,
-                  color: "onSurface",
                 }}
               >
-                [spent with lites of coffees in front of your laptop in search]
               </TimelineContent>
             </TimelineItem>
 
+            {group.versions.map((version, i) => (
+              <TimelineItem key={version.id}
+                sx={{
+                  cursor: "pointer",
+                  borderRadius: "8px",
+                  ":hover": {
+                    bgcolor: "action.hover"
+                  },
+                  ".active": {
+                    bgcolor: "surface.3"
+                  }
+                }}
+                >
+                <TimelineOppositeContent
+                  sx={{ 
+                    ...timeLineContentStyle,
+                  }}
+                >
+                  {moment(version.created_at).format("hh:mm A")}
+                </TimelineOppositeContent>
+                <TimeLineSeparator active={ version.id === selectedExecution?.id } />
+                <TimelineContent sx={{
+                    ...timeLineContentStyle, 
+                    flex: 3,
+                  }}
+                >
+                  {version.title}
+                </TimelineContent>
+              </TimelineItem>
+            ))}
+            </>
           ))}
 
         </Timeline>
@@ -110,3 +154,13 @@ export const History: React.FC<Props> = ({
     </Box>
   );
 };
+
+const timeLineContentStyle = {
+  p: '16px',
+  fontSize: 12,
+  fontWeight: 500,
+  color: "onSurface",
+  textAlign: "left",
+  display: "flex",
+  alignItems: "center",
+}
