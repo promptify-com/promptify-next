@@ -35,7 +35,7 @@ import {
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { PageLoading } from "../../components/PageLoading";
 import { GeneratorForm } from "@/components/prompt/GeneratorForm";
-import { Executions } from "@/components/prompt/Executions";
+import { Display } from "@/components/prompt/Display";
 import { Details } from "@/components/prompt/Details";
 import { authClient } from "@/common/axios";
 import { DetailsCard } from "@/components/prompt/DetailsCard";
@@ -47,6 +47,7 @@ import useToken from "@/hooks/useToken";
 import { useWindowSize } from "usehooks-ts";
 import BottomTabs from "@/components/prompt/BottomTabs";
 import { History } from "@/components/prompt/History";
+import { useGetSparksByTemplateQuery } from "@/core/api/sparks";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -118,11 +119,11 @@ const Prompt = () => {
   const id = templateData?.id;
 
   const {
-    data: templateExecutions,
-    error: templateExecutionsError,
+    data: templateSparks,
+    error: templateSparksError,
     isFetching: isFetchingExecutions,
-    refetch: refetchTemplateExecutions,
-  } = useGetExecutionsByTemplateQuery(
+    refetch: refetchTemplateSparks,
+  } = useGetSparksByTemplateQuery(
     token ? (id ? id : skipToken) : skipToken
   );
 
@@ -257,7 +258,7 @@ const Prompt = () => {
   const closeTitleModal = () => {
     setOpenTitleModal(false);
     setExecutionTitle("");
-    refetchTemplateExecutions();
+    refetchTemplateSparks();
   };
   const saveExecutionTitle = async () => {
     if (executionTitle.length) {
@@ -272,7 +273,7 @@ const Prompt = () => {
         }
       }
 
-      refetchTemplateExecutions();
+      refetchTemplateSparks();
       setNewExecutionData(null);
       setCurrentGeneratedPrompt(null);
       setOpenTitleModal(false);
@@ -330,7 +331,7 @@ const Prompt = () => {
     </Dialog>
   );
 
-  if (fetchedTemplateError || templateExecutionsError)
+  if (fetchedTemplateError || templateSparksError)
     return <div>Something went wrong...</div>;
 
   return (
@@ -528,13 +529,13 @@ const Prompt = () => {
                   position: "relative",
                 }}
               >
-                <Executions
+                <Display
                   templateData={templateData}
-                  executions={templateExecutions || []}
+                  sparks={templateSparks || []}
                   isFetching={isFetchingExecutions}
                   defaultExecution={defaultExecution}
                   newExecutionData={newExecutionData}
-                  refetchExecutions={refetchTemplateExecutions}
+                  refetchExecutions={refetchTemplateSparks}
                 />
                 {currentGeneratedPrompt && (
                   <Box

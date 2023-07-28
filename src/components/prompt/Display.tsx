@@ -4,33 +4,33 @@ import {
   CircularProgress,
   Typography,
 } from "@mui/material";
-import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
+import { Spark, Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { ExecutionCard } from "./ExecutionCard";
 import { PromptLiveResponse } from "@/common/types/prompt";
 import { ExecutionCardGenerated } from "./ExecutionCardGenerated";
-import { ExecutionsHeader } from "./DisplayHeader";
+import { DisplayHeader } from "./DisplayHeader";
 import { addToFavorite, removeFromFavorite } from "@/hooks/api/executions";
 import { useRouter } from "next/router";
 
 interface Props {
   templateData: Templates;
-  executions: TemplatesExecutions[];
+  sparks: Spark[];
   isFetching?: boolean;
   newExecutionData: PromptLiveResponse | null;
   defaultExecution: TemplatesExecutions | null;
   refetchExecutions: () => void;
 }
 
-export const Executions: React.FC<Props> = ({
+export const Display: React.FC<Props> = ({
   templateData,
-  executions,
+  sparks,
   isFetching,
   defaultExecution,
   newExecutionData,
   refetchExecutions,
 }) => {
   const [selectedExecution, setSelectedExecution] = useState<TemplatesExecutions | null>(null);
-  const [sortedExecutions, setSortedExecutions] = useState<TemplatesExecutions[]>([]);
+  const [sortedSparks, setSortedSparks] = useState<Spark[]>([]);
   const [firstLoad, setFirstLoad] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -51,20 +51,20 @@ export const Executions: React.FC<Props> = ({
   }, [newExecutionData])
   
   useEffect(() => {
-    const sorted = [...executions].sort((a, b) => {
+    const sorted = [...sparks].sort((a, b) => {
       return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
     });
-    setSortedExecutions(sorted)
-    setSelectedExecution(sorted[0] || null)
-  }, [executions])
+    setSortedSparks(sorted)
+    // setSelectedExecution(sorted[0]?.current_version || null)
+  }, [sparks])
 
   useEffect(() => {
     if (routerSpark) {
-      const execution = executions.find((exec) => exec.id.toString() === routerSpark);
-      if (execution) 
-        setSelectedExecution(execution);
+      const spark = sparks.find((exec) => exec.id.toString() === routerSpark);
+      if (spark) 
+        setSelectedExecution(spark.current_version);
     }
-  }, [routerSpark, executions]);
+  }, [routerSpark, sparks]);
 
   useEffect(() => {
     if(defaultExecution) {
@@ -77,31 +77,7 @@ export const Executions: React.FC<Props> = ({
   }, [defaultExecution])
 
   const pinExecution = async () => {
-    if(selectedExecution === null) return;
-
-    try {
-      if (selectedExecution.is_favorite) {
-        await removeFromFavorite(selectedExecution.id);
-      } else {
-        await addToFavorite(selectedExecution.id);
-      }
-
-      // Update state after API call is successful and avoid unnecessary refetch of executions
-      const updatedExecutions = sortedExecutions.map((exec) => {
-        if (exec.id === selectedExecution.id) {
-          return {
-            ...exec,
-            is_favorite: !exec.is_favorite,
-          };
-        }
-        return exec;
-      })
-      setSortedExecutions(updatedExecutions)
-      setSelectedExecution({ ...selectedExecution, is_favorite: !selectedExecution.is_favorite })
-      
-    } catch (error) {
-        console.error(error);
-    }
+    return
   }
 
   return (
@@ -112,8 +88,8 @@ export const Executions: React.FC<Props> = ({
       }}
     >
 
-      <ExecutionsHeader 
-        executions={sortedExecutions}
+      <DisplayHeader 
+        sparks={sortedSparks}
         selectedExecution={selectedExecution}
         changeSelectedExecution={setSelectedExecution}
         pinExecution={pinExecution}

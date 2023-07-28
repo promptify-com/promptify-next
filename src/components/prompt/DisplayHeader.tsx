@@ -2,18 +2,18 @@ import React, { useState } from 'react'
 import { Box, Button, ClickAwayListener, Collapse, Grow, IconButton, InputBase, InputLabel, Paper, Popper, Stack, Typography, alpha, useTheme } from '@mui/material'
 import { Search as SearchIcon, PushPinOutlined, FeedOutlined, ArrowDropUp, ArrowDropDown, Undo, Redo, PushPin, Close } from "@mui/icons-material";
 import { SubjectIcon } from "@/assets/icons/SubjectIcon";
-import { TemplatesExecutions } from '@/core/api/dto/templates';
-import { ExecutionsTabs } from './ExecutionsTabs';
+import { Spark, TemplatesExecutions } from '@/core/api/dto/templates';
+import { SparksTabs } from './SparksTabs';
 
 interface Props {
-   executions: TemplatesExecutions[];
+   sparks: Spark[];
    selectedExecution: TemplatesExecutions | null;
    changeSelectedExecution: (execution: TemplatesExecutions) => void;
    pinExecution: () => void;
 }
 
-export const ExecutionsHeader: React.FC<Props> = ({ 
-   executions,
+export const DisplayHeader: React.FC<Props> = ({ 
+   sparks,
    selectedExecution,
    changeSelectedExecution,
    pinExecution
@@ -195,8 +195,8 @@ export const ExecutionsHeader: React.FC<Props> = ({
                      >
                         <ClickAwayListener onClickAway={() => setPresetsAnchor(null)}>
                            <Box>
-                              <ExecutionsTabs 
-                                 executions={executions}
+                              <SparksTabs 
+                                 sparks={sparks}
                                  chooseExecution={(exec) => {
                                     changeSelectedExecution(exec)
                                     setPresetsAnchor(null)
