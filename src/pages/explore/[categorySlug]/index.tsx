@@ -110,7 +110,9 @@ export default function Page({ category }: { category: Category }) {
                 filtred
                 templates={templates}
                 isLoading={isTemplatesLoading}
-              />
+              >
+                {" "}
+              </TemplatesSection>
             </Box>
           )}
         </Grid>

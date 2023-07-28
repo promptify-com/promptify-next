@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Grid } from "@mui/material";
+import { Box, Button, Grid, Stack, Typography } from "@mui/material";
 import Head from "next/head";
 import { useSelector } from "react-redux";
 
@@ -11,6 +11,7 @@ import { RootState } from "@/core/store";
 import { FiltersSelected } from "@/components/explorer/FiltersSelected";
 import { useGetCategoriesQuery } from "@/core/api/categories";
 import { FilterParams, SelectedFilters, Tag } from "@/core/api/dto/templates";
+import { ExploreHeaderImage } from "@/assets/icons/exploreHeader";
 
 export default function ExplorePage() {
   const tags = useSelector((state: RootState) => state.filters.tag);
@@ -55,6 +56,7 @@ export default function ExplorePage() {
             key="desc"
           />
         </Head>
+
         <Box padding={{ xs: "4px 0px", md: "0px 8px" }}>
           <Grid
             display={"flex"}
@@ -76,7 +78,9 @@ export default function ExplorePage() {
               filtred={!allNull}
               templates={templates ?? []}
               isLoading={isTemplatesLoading}
-            />
+            >
+              Best templates
+            </TemplatesSection>
           </Grid>
         </Box>
       </Layout>

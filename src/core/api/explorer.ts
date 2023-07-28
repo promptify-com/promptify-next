@@ -92,6 +92,23 @@ export const explorerApi = createApi({
         }),
       }),
 
+      getTemplatesSuggested: builder.query<Templates[], void>({
+        query: () => ({
+          url:
+            "/api/meta/templates/suggested",
+          method: "get",
+        }),
+      }),
+
+
+      getLastTemplates: builder.query<Templates, void>({
+        query: () => ({
+          url:
+            "/api/meta/templates/last_executed/",
+          method: "get",
+        }),
+      }),
+
       getTemplatesByCategory: builder.query<Templates[], string>({
         query: (id: string) => ({
           url: `/api/meta/templates/?main_category_slug=${id}`,
@@ -151,6 +168,8 @@ export const {
   useGetTemplatesByEngineCategorySubcategoryQuery,
   useLazyGetTemplatesByFilterQuery,
   useGetTemplatesByFilterQuery,
+  useGetTemplatesSuggestedQuery,
+  useGetLastTemplatesQuery,
   useGetCollectionsQuery,
   useLazyGetCollectionsQuery,
   useGetTemplateBySubCategoryQuery,
