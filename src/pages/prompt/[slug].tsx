@@ -346,7 +346,7 @@ const Prompt = () => {
                 mx: "auto",
                 height: { xs: "calc(100svh - 56px)", md: "calc(100svh - (90px + 32px))" },
                 pb: { 
-                  xs: "calc(68px + 64px)", // 64px fixed min card details + 68px bottom tabs
+                  xs: `calc(68px + ${mobileTab !== 0 ? "64" : "0"}px)`, // 64px fixed min card details + 68px bottom tabs. Hidden in details tab.
                   md: 0 
                 },
                 width: { md: "calc(100% - 65px)" },
@@ -450,10 +450,12 @@ const Prompt = () => {
 
               {windowWidth < 960 && (
               <>
+                {mobileTab !== 0 && (
                 <DetailsCard
                   templateData={templateData}
                   min
                 />
+                )}
 
                 <Grid ref={detailsElRef}
                   item
