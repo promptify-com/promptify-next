@@ -7,16 +7,16 @@ import { SparksTabs } from './SparksTabs';
 
 interface Props {
    sparks: Spark[];
-   selectedExecution: TemplatesExecutions | null;
-   changeSelectedExecution: (execution: TemplatesExecutions) => void;
-   pinExecution: () => void;
+   selectedSpark: Spark | null;
+   changeSelectedSpark: (spark: Spark) => void;
+   pinSpark: () => void;
 }
 
 export const DisplayHeader: React.FC<Props> = ({ 
    sparks,
-   selectedExecution,
-   changeSelectedExecution,
-   pinExecution
+   selectedSpark,
+   changeSelectedSpark,
+   pinSpark
  }) => {
    const  { palette } = useTheme();
    
@@ -79,16 +79,16 @@ export const DisplayHeader: React.FC<Props> = ({
          onClick={(e) => setPresetsAnchor(e.currentTarget)}
       >
          <Box sx={{ width: "80%", overflow: "hidden", textAlign: "left" }}>
-            {selectedExecution?.title || "Choose execution"}
+            {selectedSpark?.initial_title || "Choose Spark..."}
          </Box>
       </Button>
    )
 
    const PinButton = (
       <IconButton sx={{ ...iconButtonStyle, opacity: .5 }}
-         onClick={pinExecution}
+         onClick={pinSpark}
       >
-         {selectedExecution?.is_favorite ? <PushPin /> : <PushPinOutlined />}
+         {selectedSpark?.is_favorite ? <PushPin /> : <PushPinOutlined />}
       </IconButton>
    )
 
@@ -197,8 +197,8 @@ export const DisplayHeader: React.FC<Props> = ({
                            <Box>
                               <SparksTabs 
                                  sparks={sparks}
-                                 chooseExecution={(exec) => {
-                                    changeSelectedExecution(exec)
+                                 chooseSpark={(spark) => {
+                                    changeSelectedSpark(spark)
                                     setPresetsAnchor(null)
                                  }}
                               />

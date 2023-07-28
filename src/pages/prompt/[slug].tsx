@@ -32,7 +32,7 @@ import {
   useTemplateView,
   useGetExecutionByIdQuery,
 } from "@/core/api/prompts";
-import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
+import { Spark, Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { PageLoading } from "../../components/PageLoading";
 import { GeneratorForm } from "@/components/prompt/GeneratorForm";
 import { Display } from "@/components/prompt/Display";
@@ -80,6 +80,7 @@ const a11yProps = (index: number) => {
 };
 
 const Prompt = () => {
+  const [selectedSpark, setSelectedSpark] = useState<Spark | null>(null);
   const [newExecutionData, setNewExecutionData] =
     useState<PromptLiveResponse | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -126,6 +127,10 @@ const Prompt = () => {
   } = useGetSparksByTemplateQuery(
     token ? (id ? id : skipToken) : skipToken
   );
+
+  useEffect(() => {
+    setSelectedSpark(templateSparks?.[0] || null);
+  }, [templateSparks]);
 
   const [tabsValue, setTabsValue] = useState(0);
   const changeTab = (e: React.SyntheticEvent, newValue: number) => {
@@ -532,6 +537,8 @@ const Prompt = () => {
                 <Display
                   templateData={templateData}
                   sparks={templateSparks || []}
+                  selectedSpark={selectedSpark}
+                  setSelectedSpark={setSelectedSpark}
                   isFetching={isFetchingExecutions}
                   defaultExecution={defaultExecution}
                   newExecutionData={newExecutionData}

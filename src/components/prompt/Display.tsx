@@ -9,12 +9,14 @@ import { ExecutionCard } from "./ExecutionCard";
 import { PromptLiveResponse } from "@/common/types/prompt";
 import { ExecutionCardGenerated } from "./ExecutionCardGenerated";
 import { DisplayHeader } from "./DisplayHeader";
-import { addToFavorite, removeFromFavorite } from "@/hooks/api/executions";
+import {  pinSpark, unpinSpark } from "@/hooks/api/executions";
 import { useRouter } from "next/router";
 
 interface Props {
   templateData: Templates;
   sparks: Spark[];
+  selectedSpark: Spark | null;
+  setSelectedSpark: (spark: Spark) => void;
   isFetching?: boolean;
   newExecutionData: PromptLiveResponse | null;
   defaultExecution: TemplatesExecutions | null;
@@ -24,6 +26,8 @@ interface Props {
 export const Display: React.FC<Props> = ({
   templateData,
   sparks,
+  selectedSpark,
+  setSelectedSpark,
   isFetching,
   defaultExecution,
   newExecutionData,
@@ -55,7 +59,7 @@ export const Display: React.FC<Props> = ({
       return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
     });
     setSortedSparks(sorted)
-    // setSelectedExecution(sorted[0]?.current_version || null)
+    setSelectedExecution(sorted[0]?.current_version || null)
   }, [sparks])
 
   useEffect(() => {
@@ -76,9 +80,37 @@ export const Display: React.FC<Props> = ({
     }
   }, [defaultExecution])
 
-  const pinExecution = async () => {
-    return
+  const handlePinSpark = async () => {
+    if(selectedSpark === null) return;
+
+    try {
+      if (selectedSpark.is_favorite) {
+        await pinSpark(selectedSpark.id);
+      } else {
+        await unpinSpark(selectedSpark.id);
+      }
+
+      // Update state after API call is successful and avoid unnecessary refetch of sparks
+      const updatedSparks = sortedSparks.map((spark) => {
+        if (spark.id === selectedSpark?.id) {
+          return {
+            ...spark,
+            is_favorite: !selectedSpark.is_favorite,
+          };
+        }
+        return spark;
+      })
+      setSortedSparks(updatedSparks)
+      setSelectedSpark({ 
+        ...selectedSpark, 
+        is_favorite: !selectedSpark.is_favorite 
+      })
+      
+    } catch (error) {
+        console.error(error);
+    }
   }
+
 
   return (
     <Box ref={containerRef}
@@ -90,9 +122,9 @@ export const Display: React.FC<Props> = ({
 
       <DisplayHeader 
         sparks={sortedSparks}
-        selectedExecution={selectedExecution}
-        changeSelectedExecution={setSelectedExecution}
-        pinExecution={pinExecution}
+        selectedSpark={selectedSpark}
+        changeSelectedSpark={setSelectedSpark}
+        pinSpark={handlePinSpark}
       />
 
       <Box sx={{ mx: "15px", opacity: firstLoad ? .5 : 1 }}>

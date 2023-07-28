@@ -44,10 +44,10 @@ const a11yProps = (index: number) => {
 
 interface Props {
    sparks: Spark[];
-   chooseExecution: (execution: TemplatesExecutions) => void;
+   chooseSpark: (spark: Spark) => void;
 }
 
-export const SparksTabs:React.FC<Props> = ({ sparks, chooseExecution }) => {
+export const SparksTabs:React.FC<Props> = ({ sparks, chooseSpark }) => {
    const { palette } = useTheme();
    
    const [tabsValue, setTabsValue] = React.useState(0);
@@ -68,7 +68,7 @@ export const SparksTabs:React.FC<Props> = ({ sparks, chooseExecution }) => {
                opacity: .8,
                "&:hover": { opacity: 1 }
             }}
-            // onClick={() => chooseExecution(spark)}
+            onClick={() => chooseSpark(spark)}
          >
             <Stack direction={"row"} alignItems={"center"} gap={2}>
                <FeedOutlined style={{ fontSize: 32 }} />
