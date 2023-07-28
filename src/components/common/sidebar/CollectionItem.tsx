@@ -48,21 +48,17 @@ export const CollectionItem: React.FC<CollectionItemProps> = ({
             sx={{
               zIndex: 1,
               borderRadius: "16px",
-              width: "48px",
+              width: expanded ? "48px" : "38px",
               height: "38px",
               objectFit: "cover",
-              mx: expanded ? 0 : 1,
+              mx: expanded ? 0 : 1.5,
             }}
             component="img"
             image={template.thumbnail}
             alt={template.title}
           />
         </Grid>
-        <Grid
-          display={"flex"}
-          flexDirection={"column"}
-          sx={{ opacity: expanded ? 1 : 0 }}
-        >
+        <Grid display={expanded ? "flex" : "none"} flexDirection={"column"}>
           <Typography
             fontSize={12}
             fontWeight={500}

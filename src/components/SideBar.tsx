@@ -60,7 +60,7 @@ const closedMixin = (theme: Theme): CSSObject => ({
   overflowX: "hidden",
   width: `140px`,
   [theme.breakpoints.up("sm")]: {
-    width: `90px`,
+    width: `86px`,
   },
 });
 
