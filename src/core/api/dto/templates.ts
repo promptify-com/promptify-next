@@ -173,11 +173,11 @@ export interface SparkVersion {
   created_at: string
 }
 export interface Spark {
-  id: number,
-  initial_title: string,
-  created_at: string,
-  created_by: number,
-  versions: SparkVersion[],
-  current_version: TemplatesExecutions,
-  is_favorite: false
+  id: number;
+  initial_title: string;
+  created_at: string;
+  created_by: number;
+  versions: SparkVersion[];
+  current_version: TemplatesExecutions;
+  is_favorite: boolean;
 }

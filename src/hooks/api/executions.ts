@@ -28,3 +28,19 @@ export const removeFromFavorite = async (templateExecutionId: number) => {
       return response.data;
     });
 };
+
+export const pinSpark = async (sparkId: number) => {
+  return await authClient
+    .post(`/api/meta/sparks/${sparkId}/favorite/`)
+    .then(response => {
+      return response.data;
+    });
+};
+
+export const unpinSpark = async (sparkId: number) => {
+  return await authClient
+    .delete(`/api/meta/sparks/${sparkId}/favorite/`)
+    .then(response => {
+      return response.data;
+    });
+};
