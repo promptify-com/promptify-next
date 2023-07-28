@@ -45,10 +45,12 @@ export default function Page({ category }: { category: Category }) {
     .filter((item) => item !== null)
     .map((item) => item?.name)
     .join("&tag=");
+
   const params: FilterParams = {
     tag: filteredTags,
     engineId,
     title,
+    categoryId: category.id,
   };
   const { data: templates, isLoading: isTemplatesLoading } =
     useGetTemplatesByFilterQuery(params);
@@ -62,7 +64,7 @@ export default function Page({ category }: { category: Category }) {
 
   return (
     <Layout>
-      <Box mt={{ xs: 7, md: 0 }} padding={{ xs: "4px 0px", md: "0px 8px" }}>
+      <Box mt={{ xs: 7, md: -2 }} padding={{ xs: "4px 0px", md: "0px 8px" }}>
         <Grid
           sx={{
             padding: { xs: "16px", md: "32px" },

@@ -15,7 +15,11 @@ import {
 
 import { Engine, Tag } from "@/core/api/dto/templates";
 import { useDispatch, useSelector } from "react-redux";
-import { setSelectedEngine, setSelectedTag } from "@/core/store/filtersSlice";
+import {
+  deleteSelectedTag,
+  setSelectedEngine,
+  setSelectedTag,
+} from "@/core/store/filtersSlice";
 import { RootState } from "@/core/store";
 
 interface ExploreFilterSideBarProps {
@@ -37,8 +41,12 @@ export const ExploreFilterSideBar: React.FC<ExploreFilterSideBarProps> = ({
   const handleEngineSelect = (engine: Engine | null) => {
     dispatch(setSelectedEngine(engine));
   };
-  const handleTagSelect = (tag: Tag | null) => {
-    dispatch(setSelectedTag(tag));
+  const handleTagSelect = (tag: Tag) => {
+    if (storedTags.includes(tag)) {
+      dispatch(deleteSelectedTag(tag.id));
+    } else {
+      dispatch(setSelectedTag(tag));
+    }
   };
 
   const showmore = () => {

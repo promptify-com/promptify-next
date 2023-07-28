@@ -198,7 +198,7 @@ export const Header: React.FC<HeaderProps> = ({
                     sx={{
                       ml: "auto",
                       cursor: "pointer",
-                      bgcolor: "black",
+                        bgcolor: "black",
                       borderRadius: { xs: "24px", sm: "36px" },
                       width: { xs: "24px", sm: "40px" },
                       padding: "1px",
