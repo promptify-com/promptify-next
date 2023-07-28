@@ -11,17 +11,22 @@ import TimelineOppositeContent from '@mui/lab/TimelineOppositeContent';
 import TimelineDot from '@mui/lab/TimelineDot';
 import { Spark, SparkVersion, TemplatesExecutions } from "@/core/api/dto/templates";
 import moment from "moment";
+import { promptsApi } from "@/core/api/prompts";
+import { useAppDispatch } from "@/hooks/useStore";
 
 interface Props {
   spark: Spark | null,
-  selectedExecution: TemplatesExecutions | null
+  selectedExecution: TemplatesExecutions | null,
+  setSelectedExecution: (execution: TemplatesExecutions) => void,
 }
 
 export const History: React.FC<Props> = ({
   spark,
-  selectedExecution
+  selectedExecution,
+  setSelectedExecution,
 }) => {
   const { palette } = useTheme();
+  const dispatch = useAppDispatch();
   const versions = [...spark?.versions || []]
   const [groupedVersions, setGroupedVersions] = React.useState<{ date: string; versions: SparkVersion[] }[]>([]);
 
@@ -50,7 +55,7 @@ export const History: React.FC<Props> = ({
           bgcolor: `${alpha(palette.primary.main, .3)}`
         }}
       />
-      <TimelineDot variant={active ? "filled": "outlined"} color="primary"
+      <TimelineDot variant={active ? "filled": "outlined"}
         sx={{ 
           display: noConnector ? "none" : "flex",
           position: "absolute",
@@ -61,7 +66,7 @@ export const History: React.FC<Props> = ({
           height: "4px",
           m: 0,
           p: 0,
-          bgcolor: "surface.2",
+          bgcolor: `${active ? "primary.main" : "surface.2"}`,
           borderColor: `${alpha(palette.primary.main, .3)}`,
         }}
       >
@@ -73,6 +78,16 @@ export const History: React.FC<Props> = ({
       <TimelineConnector sx={{ bgcolor: `${alpha(palette.primary.main, .3)}` }} />
     </TimelineSeparator>
   );
+
+  const chooseExecution = async (executionId: number) => {
+    const execution = (
+      await dispatch(
+        promptsApi.endpoints.getExecutionById.initiate(executionId)
+      )
+    ).data;
+    if (execution)
+      setSelectedExecution(execution);
+  }
 
   return (
     <Box sx={{ p: "16px" }}>
@@ -116,7 +131,7 @@ export const History: React.FC<Props> = ({
               </TimelineContent>
             </TimelineItem>
 
-            {group.versions.map((version, i) => (
+            {group.versions.map((version) => (
               <TimelineItem key={version.id}
                 sx={{
                   cursor: "pointer",
@@ -128,7 +143,8 @@ export const History: React.FC<Props> = ({
                     bgcolor: "surface.3"
                   }
                 }}
-                >
+                onClick={() => chooseExecution(version.id)}
+              >
                 <TimelineOppositeContent
                   sx={{ 
                     ...timeLineContentStyle,

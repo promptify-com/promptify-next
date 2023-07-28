@@ -451,6 +451,7 @@ const Prompt = () => {
                         <History 
                           spark={selectedSpark}
                           selectedExecution={selectedExecution}
+                          setSelectedExecution={setSelectedExecution}
                         />
                       </CustomTabPanel>
                     </Box>
@@ -524,7 +525,8 @@ const Prompt = () => {
                 >
                   <History
                     spark={selectedSpark}
-                    selectedExecution={selectedExecution} 
+                    selectedExecution={selectedExecution}
+                    setSelectedExecution={setSelectedExecution} 
                   />
                 </Grid>
               </>

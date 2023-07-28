@@ -51,7 +51,7 @@ export const promptsApi = createApi({
           method: "get",
         }),
       }),
-      getExecutionById: builder.query<PromptExecutions, number>({
+      getExecutionById: builder.query<TemplatesExecutions, number>({
         query: (id: number) => ({
           url: `/api/meta/template-executions/${id}`,
           method: "get",
