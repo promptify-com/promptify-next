@@ -31,7 +31,7 @@ const Dashboard = () => {
                 display="flex"
                 flexDirection="column"
                 alignItems={"flex-start"}
-                gap={"16px"}
+                gap={"36px"}
                 width={"100%"}
               >
                 <Home />

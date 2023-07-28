@@ -43,7 +43,6 @@ export const Home = () => {
       </Box>
       <Box
         display="flex"
-        width={"100%"}
         flexDirection={{ xs: "column", md: "row" }}
         justifyContent={"space-between"}
         alignItems="center"

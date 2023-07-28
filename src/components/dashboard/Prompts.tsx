@@ -61,8 +61,23 @@ export const Prompts = () => {
   };
 
   return (
-    <Box width={"100%"} display={{ xs: "none", sm: "block" }} mt={"30px"}>
-      <Box display="flex" justifyContent="space-between">
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+      width={"100%"}
+      gap={"16px"}
+    >
+      <Box
+        display="flex"
+        gap={2}
+        width={"100%"}
+        alignItems={{ xs: "start", md: "center" }}
+        flexDirection={{ xs: "column", md: "row" }}
+      >
         <Typography
           fontWeight={500}
           fontSize={{ xs: "1.5rem", sm: "2rem" }}
@@ -70,26 +85,29 @@ export const Prompts = () => {
         >
           Prompts
         </Typography>
-        <Stack mb={-1} direction={"row"} spacing={1}>
+        <Stack
+          direction={"row"}
+          justifyContent={"end"}
+          ml={{ xs: "auto" }}
+          spacing={1}
+        >
           <Button
-            variant="contained"
             size="small"
             onClick={() => {
               setTemplateImportOpen(true);
             }}
-            sx={{ height: "30px" }}
+            sx={{ bgcolor: "var(--primary-main, #3B4050)", color: "surface.1" }}
           >
             Import JSON
           </Button>
           <Button
             size="small"
-            variant="contained"
             onClick={() => {
               setModalPromptData([]);
               setModalNew(true);
               setTemplateFormOpen(true);
             }}
-            sx={{ height: "30px" }}
+            sx={{ bgcolor: "var(--primary-main, #3B4050)", color: "surface.1" }}
           >
             Create NEW
           </Button>
@@ -98,13 +116,22 @@ export const Prompts = () => {
       {isFetching ? (
         <PageLoading />
       ) : (
-        <Box display={"flex"} flexDirection={"column"} gap={"14px"}>
+        <Box
+          display={"flex"}
+          flexDirection={"column"}
+          gap={"14px"}
+          width={"100%"}
+        >
           {promptsData?.map((prompt) => {
             return (
               <Card
                 key={prompt.id}
                 elevation={0}
-                sx={{ p: "10px", borderRadius: "16px" }}
+                sx={{
+                  p: "10px",
+                  borderRadius: "16px",
+                  bgcolor: { xs: "surface.2", md: "surface.1" },
+                }}
               >
                 <Grid
                   container
@@ -114,7 +141,8 @@ export const Prompts = () => {
                 >
                   <Grid
                     item
-                    xs={7}
+                    xs={12}
+                    md={7}
                     display={"flex"}
                     alignItems={"center"}
                     gap={"16px"}
@@ -123,7 +151,7 @@ export const Prompts = () => {
                       component={"img"}
                       image={prompt.thumbnail}
                       sx={{
-                        height: "60px",
+                        height: { xs: "100%", md: "60px" },
                         width: "80px",
                         borderRadius: "16px",
                       }}
@@ -132,7 +160,12 @@ export const Prompts = () => {
                       <Typography>{prompt.title}</Typography>
                     </Box>
                   </Grid>
-                  <Grid display={"flex"} alignItems={"center"} gap={"8px"}>
+                  <Grid
+                    display={"flex"}
+                    alignItems={"center"}
+                    ml={"auto"}
+                    gap={"8px"}
+                  >
                     <Tooltip title="Preview">
                       <IconButton
                         sx={{

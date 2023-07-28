@@ -97,7 +97,7 @@ export const IdentityItem: React.FC<IProps> = ({
       justifyContent="space-between"
       // mt="2rem"
       alignItems="center"
-      padding="24px 16px"
+      padding=" 16px"
       borderRadius={"16px"}
     >
       <Grid
@@ -123,6 +123,7 @@ export const IdentityItem: React.FC<IProps> = ({
             md={10}
             display={"flex"}
             flexDirection={{ xs: "column", md: "row" }}
+            alignItems={{ xs: "start", md: "center" }}
             gap={2}
           >
             <Grid item xs={12} md={6}>

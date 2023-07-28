@@ -47,61 +47,61 @@ const EditProfilePage = () => {
               padding: { xs: "16px", md: "32px" },
             }}
           >
-            <Grid container>
-              <Grid
-                item
-                xs={12}
-                display={"flex"}
-                flexDirection={"column"}
-                gap={"16px"}
+            <Grid display={"flex"} flexDirection={"column"} gap={"16px"}>
+              <Box
+                display="flex"
+                justifyContent={{ xs: "center", sm: "flex-start" }}
+                alignItems={"center"}
+                gap={2}
+                onClick={() => router.push("/profile")}
+                sx={{ cursor: "pointer" }}
               >
+                <ArrowBackIosRounded
+                  sx={{
+                    fontSize: { xs: "16px", md: "20px" },
+                  }}
+                />
+                <Typography
+                  fontWeight={500}
+                  fontSize={{ xs: "1.5rem", md: "2rem" }}
+                  textAlign={{ xs: "center", md: "start" }}
+                >
+                  Edit Profile
+                </Typography>
+              </Box>
+              <Box sx={{ px: { xs: 0, md: "12px" } }}>
                 <Box
                   display="flex"
-                  justifyContent={{ xs: "center", sm: "flex-start" }}
-                  alignItems={"center"}
-                  gap={2}
-                  onClick={() => router.push("/profile")}
-                  sx={{ cursor: "pointer" }}
+                  flexDirection="column"
+                  alignItems={"flex-start"}
+                  gap={"36px"}
+                  width={"100%"}
                 >
-                  <ArrowBackIosRounded
-                    sx={{
-                      fontSize: { xs: "16px", md: "20px" },
-                    }}
-                  />
-                  <Typography
-                    fontWeight={500}
-                    fontSize={{ xs: "1.5rem", md: "2rem" }}
-                    textAlign={{ xs: "center", md: "start" }}
-                  >
-                    Edit Profile
-                  </Typography>
-                </Box>
-                <Grid display={"flex"} flexDirection={"column"} gap={"46px"}>
                   <NameInfo formik={formik} />
                   <ProfileImage formik={formik} />
                   <Gender formik={formik} />
                   <About formik={formik} />
-                </Grid>
-
-                <Box>
-                  <Button
-                    sx={{
-                      bgcolor: "var(--primary-main, #3B4050)",
-                      padding: "8px 22px",
-                      minWidth: "96px",
-                      borderRadius: "15px",
-                    }}
-                    onClick={formik.submitForm}
-                    disabled={isLoading}
-                  >
-                    {isLoading ? (
-                      <CircularProgress size={23} />
-                    ) : (
-                      <Typography color={"surface.1"}>Save profile</Typography>
-                    )}
-                  </Button>
                 </Box>
-              </Grid>
+              </Box>
+
+              <Box>
+                <Button
+                  sx={{
+                    bgcolor: "var(--primary-main, #3B4050)",
+                    padding: "8px 22px",
+                    minWidth: "96px",
+                    borderRadius: "15px",
+                  }}
+                  onClick={formik.submitForm}
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <CircularProgress size={23} />
+                  ) : (
+                    <Typography color={"surface.1"}>Save profile</Typography>
+                  )}
+                </Button>
+              </Box>
             </Grid>
           </Grid>
         </Box>
