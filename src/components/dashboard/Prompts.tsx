@@ -151,7 +151,7 @@ export const Prompts = () => {
                       component={"img"}
                       image={prompt.thumbnail}
                       sx={{
-                        height: { xs: "100%", md: "60px" },
+                        height: { xs: "90px", md: "60px" },
                         width: "80px",
                         borderRadius: "16px",
                       }}

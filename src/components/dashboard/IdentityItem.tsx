@@ -197,7 +197,7 @@ export const IdentityItem: React.FC<IProps> = ({
         open={open}
         anchorEl={anchorRef.current}
         role={undefined}
-        placement="left-start"
+        placement="bottom-start"
         transition
         disablePortal
         sx={{ zIndex: 2 }}
@@ -211,7 +211,11 @@ export const IdentityItem: React.FC<IProps> = ({
             }}
           >
             <Paper
-              sx={{ border: "1px solid #E3E3E3", borderRadius: "10px" }}
+              sx={{
+                width: "300px",
+                border: "1px solid #E3E3E3",
+                borderRadius: "10px",
+              }}
               elevation={0}
             >
               <ClickAwayListener onClickAway={handleClose}>
@@ -225,6 +229,7 @@ export const IdentityItem: React.FC<IProps> = ({
                       fontSize={16}
                       lineHeight={"24px"}
                       color={"onSurface"}
+                      whiteSpace={"pre-wrap"}
                     >
                       {question.text}
                     </Typography>
