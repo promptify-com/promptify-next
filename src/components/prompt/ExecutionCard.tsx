@@ -106,11 +106,10 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData }) => {
                       }}
                       sx={{
                         borderRadius: "8px",
-                        width: 165,
-                        height: 215,
+                        width: '40%',
                         objectFit: "cover",
                         float: "right",
-                        ml: "10px",
+                        ml: "20px",
                         mb: "10px",
                       }}
                     />
