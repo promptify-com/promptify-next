@@ -10,14 +10,14 @@ interface TemplatesSectionProps {
   templates: Templates[] | undefined;
   isLoading: boolean;
   filtred?: boolean;
-  children?: string;
+  title?: string;
 }
 
 export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
   templates,
   isLoading,
   filtred,
-  children,
+  title,
 }) => {
   const router = useRouter();
 
@@ -27,7 +27,7 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
   return (
     <>
       <Box width={"100%"}>
-        {!filtred && <Typography fontSize={19}>{children}</Typography>}
+        {!filtred && <Typography fontSize={19}>{title}</Typography>}
         {isLoading ? (
           <Box
             minHeight={"40vh"}

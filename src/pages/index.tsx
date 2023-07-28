@@ -150,9 +150,8 @@ function Home() {
                   <TemplatesSection
                     isLoading={islastTemplateLoading}
                     templates={[lastTemplate]}
-                  >
-                    Your Latest Template:
-                  </TemplatesSection>
+                    title="Your Latest Template:"
+                  />
                 )}
               </Grid>
               <Grid
@@ -166,9 +165,8 @@ function Home() {
                 <TemplatesSection
                   isLoading={isTemplatesLoading}
                   templates={templates}
-                >
-                  You may like this templates:
-                </TemplatesSection>
+                  title="You may like this templates:"
+                />
               </Grid>
               <Grid
                 display={"flex"}
