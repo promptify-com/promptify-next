@@ -20,9 +20,9 @@ const EditProfilePage = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [updateUser, _, isLoading] = useUpdateUser();
   const setUser = useSetUser();
-
   const onSubmit = async (values: IEditProfile) => {
     await updateUser(values).then((user) => setUser(user));
+    router.reload();
   };
 
   const formik = useFormik<IEditProfile>({

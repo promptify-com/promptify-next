@@ -22,6 +22,8 @@ import { User } from "@/core/api/dto/user";
 import { Menu, MenuType, links } from "@/common/constants";
 import useLogout from "@/hooks/useLogout";
 import useSetUser from "@/hooks/useSetUser";
+import { useGetCollectionTemplatesQuery } from "@/core/api/prompts";
+import { Collections } from "./common/sidebar/Collections";
 
 type SidebarType = "navigation" | "profile";
 
@@ -68,6 +70,12 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
     logout();
     setUser(null);
   };
+
+  const { data: collections, isLoading: isCollectionsLoading } =
+    useGetCollectionTemplatesQuery(user?.favorite_collection_id as number, {
+      skip: !user,
+    });
+
   return (
     <SwipeableDrawer
       anchor={"top"}
@@ -202,9 +210,20 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
                 ))}
               </List>
               <Divider sx={{ mt: 1 }} />
-              <List subheader={<ListSubheader>COLLECTION</ListSubheader>}>
-                <CollectionsEmptyBox onExpand />
-              </List>
+              {user && token ? (
+                <Box ml={1}>
+                  <Collections
+                    favCollection={collections}
+                    collectionLoading={isCollectionsLoading}
+                    user={user}
+                    sidebarOpen
+                  />
+                </Box>
+              ) : (
+                <List subheader={<ListSubheader>COLLECTION</ListSubheader>}>
+                  <CollectionsEmptyBox onExpand />
+                </List>
+              )}
             </Box>
           </Box>
         ) : (
@@ -218,6 +237,7 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
               }}
             >
               <Grid
+                borderBottom={"1px solid #f5f5f5"}
                 sx={{
                   width: "100%",
                   display: "flex",

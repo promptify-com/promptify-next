@@ -110,9 +110,11 @@ function Home() {
         <Layout>
           {userLoading ? (
             <FetchLoading />
-          ) : user && savedToken 
-          ? (
-            <Box padding={{ xs: "4px 0px", md: "0px 8px" }}>
+          ) : user && savedToken ? (
+            <Box
+              mt={{ xs: 7, md: 0 }}
+              padding={{ xs: "4px 0px", md: "0px 8px" }}
+            >
               <Grid
                 display={"flex"}
                 flexDirection={"column"}
@@ -183,7 +185,10 @@ function Home() {
             </Box>
           ) : (
             <>
-              <Box padding={{ xs: "4px 0px", md: "0px 8px" }}>
+              <Box
+                mt={{ xs: 7, md: 0 }}
+                padding={{ xs: "4px 0px", md: "0px 8px" }}
+              >
                 <Box
                   sx={{
                     padding: { xs: "16px", md: "32px" },
