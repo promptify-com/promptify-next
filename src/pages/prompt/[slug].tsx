@@ -132,6 +132,10 @@ const Prompt = () => {
     setSelectedSpark(templateSparks?.[0] || null);
   }, [templateSparks]);
 
+  useEffect(() => {
+    setSelectedExecution(selectedSpark?.current_version || null);
+  }, [selectedSpark]);
+
   const [tabsValue, setTabsValue] = useState(0);
   const changeTab = (e: React.SyntheticEvent, newValue: number) => {
     setTabsValue(newValue);
@@ -542,8 +546,8 @@ const Prompt = () => {
                   sparks={templateSparks || []}
                   selectedSpark={selectedSpark}
                   setSelectedSpark={setSelectedSpark}
+                  selectedExecution={selectedExecution}
                   isFetching={isFetchingExecutions}
-                  defaultExecution={defaultExecution}
                   newExecutionData={newExecutionData}
                   refetchExecutions={refetchTemplateSparks}
                 />

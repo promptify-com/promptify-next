@@ -90,7 +90,7 @@ export const History: React.FC<Props> = ({
         <Timeline sx={{ p: 0 }}>
 
           {groupedVersions.map((group, i) => (
-            <>
+            <React.Fragment key={i}>
             <TimelineItem key={i}
               sx={{ minHeight: "0" }} 
             >
@@ -136,7 +136,7 @@ export const History: React.FC<Props> = ({
                 >
                   {moment(version.created_at).format("hh:mm A")}
                 </TimelineOppositeContent>
-                <TimeLineSeparator active={ version.id === selectedExecution?.id } />
+                <TimeLineSeparator active={version.id === selectedExecution?.id} />
                 <TimelineContent sx={{
                     ...timeLineContentStyle, 
                     flex: 3,
@@ -146,7 +146,7 @@ export const History: React.FC<Props> = ({
                 </TimelineContent>
               </TimelineItem>
             ))}
-            </>
+            </React.Fragment>
           ))}
 
         </Timeline>

@@ -17,9 +17,9 @@ interface Props {
   sparks: Spark[];
   selectedSpark: Spark | null;
   setSelectedSpark: (spark: Spark) => void;
+  selectedExecution: TemplatesExecutions | null;
   isFetching?: boolean;
   newExecutionData: PromptLiveResponse | null;
-  defaultExecution: TemplatesExecutions | null;
   refetchExecutions: () => void;
 }
 
@@ -28,12 +28,11 @@ export const Display: React.FC<Props> = ({
   sparks,
   selectedSpark,
   setSelectedSpark,
+  selectedExecution,
   isFetching,
-  defaultExecution,
   newExecutionData,
   refetchExecutions,
 }) => {
-  const [selectedExecution, setSelectedExecution] = useState<TemplatesExecutions | null>(null);
   const [sortedSparks, setSortedSparks] = useState<Spark[]>([]);
   const [firstLoad, setFirstLoad] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -59,26 +58,15 @@ export const Display: React.FC<Props> = ({
       return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
     });
     setSortedSparks(sorted)
-    setSelectedExecution(sorted[0]?.current_version || null)
   }, [sparks])
 
   useEffect(() => {
     if (routerSpark) {
-      const spark = sparks.find((exec) => exec.id.toString() === routerSpark);
+      const spark = sparks.find((spark) => spark.id.toString() === routerSpark);
       if (spark) 
-        setSelectedExecution(spark.current_version);
+        setSelectedSpark(spark);
     }
   }, [routerSpark, sparks]);
-
-  useEffect(() => {
-    if(defaultExecution) {
-      setSelectedExecution({
-        ...defaultExecution as TemplatesExecutions,
-        prompt_executions: selectedExecution?.prompt_executions || [],
-      })
-      setFirstLoad(true)
-    }
-  }, [defaultExecution])
 
   const handlePinSpark = async () => {
     if(selectedSpark === null) return;
