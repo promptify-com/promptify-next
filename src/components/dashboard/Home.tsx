@@ -13,46 +13,52 @@ export const Home = () => {
 
   return (
     <Box
-      width={"95%"}
       sx={{
         justifyContent: "center",
         display: "flex",
+        width: "100%",
         flexDirection: "column",
         gap: "16px",
       }}
     >
-      <Typography
-        fontWeight={500}
-        fontSize={{ xs: "1.5rem", sm: "2rem" }}
+      <Box
+        display={"flex"}
+        justifyContent={{ xs: "center", md: "start" }}
         textAlign={{ xs: "center", sm: "start" }}
-        sx={{
-          fontFamily: "Poppins",
-          fontStyle: "normal",
-          fontWeight: 500,
-          fontSize: { xs: "18px", sm: "34px" },
-          lineHeight: { xs: "27px", sm: "123.5%" },
-          display: "flex",
-          alignItems: "center",
-          textAlign: "center",
-          color: "onSurface",
-        }}
       >
-        Welcome to your space
-      </Typography>
+        <Typography
+          fontWeight={500}
+          fontSize={{ xs: "1.5rem", sm: "2rem" }}
+          sx={{
+            fontFamily: "Poppins",
+            fontStyle: "normal",
+            fontWeight: 500,
+            fontSize: { xs: "24px", sm: "34px" },
+            lineHeight: { xs: "27px", sm: "123.5%" },
+            color: "onSurface",
+          }}
+        >
+          Welcome to your space
+        </Typography>
+      </Box>
       <Box
         display="flex"
-        width={"100%"}
-        flexDirection={{ xs: "column", sm: "row" }}
+        flexDirection={{ xs: "column", md: "row" }}
         justifyContent={"space-between"}
         alignItems="center"
-        padding={"24px"}
+        padding={{ xs: 0, md: "24px" }}
         gap={"24px"}
         sx={{
-          bgcolor: "white",
+          bgcolor: "surface.1",
           borderRadius: "15px",
         }}
       >
-        <Box display="flex" alignItems="center" gap={"24px"}>
+        <Box
+          display="flex"
+          flexDirection={{ xs: "column", md: "row" }}
+          alignItems="center"
+          gap={"16px"}
+        >
           <Box>
             <Avatar
               sx={{
@@ -62,11 +68,15 @@ export const Home = () => {
                 fontSize: 40,
                 textTransform: "capitalize",
               }}
-              src={user?.avatar || user?.username}
+              src={user?.avatar ?? user?.username}
               alt={user?.username}
             />
           </Box>
-          <Box>
+          <Box
+            display={"flex"}
+            flexDirection={"column"}
+            alignItems={{ xs: "center", md: "start" }}
+          >
             <Typography
               sx={{
                 fontFamily: "Poppins",
@@ -87,7 +97,8 @@ export const Home = () => {
                 fontSize: "13px",
                 lineHeight: "150%",
                 letterSpacing: "0.15px",
-                color: "text.secondary",
+                color: " var(--on-surface, #1B1B1E)",
+                opacity: 0.5,
               }}
             >
               {user?.username}
@@ -96,7 +107,7 @@ export const Home = () => {
         </Box>
 
         {user?.bio && (
-          <Box maxWidth={"605px"}>
+          <Box maxWidth={"505px"}>
             <Typography
               fontSize={16}
               fontStyle={"normal"}
@@ -104,23 +115,29 @@ export const Home = () => {
               lineHeight={"22.88px"}
               letterSpacing={"0.17px"}
             >
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptas
-              nisi tenetur sapiente
+              {user.bio}
             </Typography>
           </Box>
         )}
         <Box>
           <Button
+            onClick={() => router.push("/profile/edit")}
             sx={{
-              bgcolor: "black",
+              bgcolor: "var(--primary-main, #3B4050)",
               color: "white",
+              display: "flex",
+              gap: "8px",
               "&:hover": {
                 color: "onSurface",
                 bgcolor: "surface.3",
               },
             }}
           >
-            <Mode />
+            <Mode
+              sx={{
+                fontSize: { xs: "16px", md: "20px" },
+              }}
+            />
             Edit
           </Button>
         </Box>

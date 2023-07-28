@@ -18,6 +18,7 @@ import {
   AutoAwesome,
   ExpandLess,
   ExpandMore,
+  Home,
   MenuBookRounded,
   Search,
 } from "@mui/icons-material";
@@ -61,7 +62,7 @@ const closedMixin = (theme: Theme): CSSObject => ({
   overflowX: "hidden",
   width: `140px`,
   [theme.breakpoints.up("sm")]: {
-    width: `90px`,
+    width: `86px`,
   },
 });
 
@@ -116,7 +117,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
     {
       name: "Homepage",
       href: "/",
-      icon: <StarIcon />,
+      icon: <Home />,
       active: pathname == "/",
       external: false,
     },

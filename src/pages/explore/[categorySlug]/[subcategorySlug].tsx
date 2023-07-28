@@ -5,28 +5,66 @@ import { Box, Button, Grid } from "@mui/material";
 import { authClient } from "@/common/axios";
 import { FetchLoading } from "@/components/FetchLoading";
 import { SubCategoryCard } from "@/components/common/cards/CardSubcategory";
-import { Category } from "@/core/api/dto/templates";
+import {
+  Category,
+  FilterParams,
+  SelectedFilters,
+} from "@/core/api/dto/templates";
 import { Layout } from "@/layout";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
-import { useGetTemplateBySubCategoryQuery } from "@/core/api/explorer";
+import {
+  useGetTemplateBySubCategoryQuery,
+  useGetTemplatesByFilterQuery,
+} from "@/core/api/explorer";
 import Head from "next/head";
 import {
   useGetCategoriesQuery,
   useGetCategoryBySlugQuery,
 } from "@/core/api/categories";
+import { useSelector } from "react-redux";
+import { RootState } from "@/core/store";
+import { FiltersSelected } from "@/components/explorer/FiltersSelected";
 
 export default function Page({ category }: { category: Category }) {
+  const title = useSelector((state: RootState) => state.filters.title);
+  const filters = useSelector((state: RootState) => state.filters);
+  const tags = useSelector((state: RootState) => state.filters.tag);
+  const engineId = useSelector((state: RootState) => state.filters.engine?.id);
   const router = useRouter();
   const subCategorySlug = router.query.subcategorySlug;
-  console.log(router.query);
 
   const { data: subcategory } = useGetCategoryBySlugQuery(
     subCategorySlug as string
   );
   const { data: categories, isLoading: isCategoriesLoading } =
     useGetCategoriesQuery();
+
+  const filteredTags = tags
+    .filter((item) => item !== null)
+    .map((item) => item?.name)
+    .join("&tag=");
+
+  const params: FilterParams = {
+    tag: filteredTags,
+    engineId,
+    title,
+    subcategoryId: subcategory?.id,
+  };
+
   const { data: templates, isLoading: isTemplatesLoading } =
-    useGetTemplateBySubCategoryQuery(subCategorySlug as string);
+    useGetTemplatesByFilterQuery(params);
+
+  function areAllStatesNull(filters: SelectedFilters): boolean {
+    return (
+      filters.engine === null &&
+      filters.tag.every((tag) => tag === null) &&
+      filters.title === null &&
+      filters.category === null &&
+      filters.subCategory === null
+    );
+  }
+  const allNull = areAllStatesNull(filters);
+
   const navigateTo = (slug: string) => {
     router.push(`/explore/${category.slug}/${slug}`);
   };
@@ -40,7 +78,7 @@ export default function Page({ category }: { category: Category }) {
         />
       </Head>
       <Layout>
-        <Box padding={{ xs: "4px 0px", md: "0px 8px" }}>
+        <Box mt={{ xs: 7, md: 0 }} padding={{ xs: "4px 0px", md: "0px 8px" }}>
           <Grid
             sx={{
               padding: { xs: "16px", md: "32px" },
@@ -83,18 +121,19 @@ export default function Page({ category }: { category: Category }) {
                       <Grid key={subcategory.id}>
                         <SubCategoryCard
                           subcategory={subcategory}
-                          onSelected={() => navigateTo(subcategory.name)}
+                          onSelected={() => navigateTo(subcategory.slug)}
                         />
                       </Grid>
                     ))}
                 </Grid>
+
+                <FiltersSelected show={!allNull} />
+
                 <TemplatesSection
                   filtred
                   templates={templates}
                   isLoading={isTemplatesLoading}
-                >
-                  {" "}
-                </TemplatesSection>
+                />
               </Box>
             )}
           </Grid>

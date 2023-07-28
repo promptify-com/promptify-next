@@ -10,7 +10,7 @@ interface TemplatesSectionProps {
   templates: Templates[] | undefined;
   isLoading: boolean;
   filtred?: boolean;
-  children: string;
+  children?: string;
 }
 
 export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
@@ -27,7 +27,8 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
   return (
     <>
       <Box width={"100%"}>
-        {isLoading && (
+        {!filtred && <Typography fontSize={19}>{children}</Typography>}
+        {isLoading ? (
           <Box
             minHeight={"40vh"}
             display={"flex"}
@@ -36,45 +37,44 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
           >
             <FetchLoading />
           </Box>
-        )}
-        {!filtred && <Typography fontSize={19}>{children}</Typography>}
+        ) : (
+          <Grid
+            container
+            flexDirection={"column"}
+            sx={{
+              mt: "10px",
+              gap: "1em",
+              width: "100%",
+            }}
+          >
+            {!isLoading &&
+              !!templates &&
+              templates.length > 0 &&
+              templates.map((el: any) => (
+                <Grid key={el.id} item xs={12}>
+                  <CardTemplate
+                    onFavoriteClick={() => navigateTo(el.slug)}
+                    key={el.id}
+                    template={el}
+                  />
+                </Grid>
+              ))}
 
-        <Grid
-          container
-          flexDirection={"column"}
-          sx={{
-            mt: "10px",
-            gap: "1em",
-            width: "100%",
-          }}
-        >
-          {!isLoading &&
-            !!templates &&
-            templates.length > 0 &&
-            templates.map((el: any) => (
-              <Grid key={el.id} item xs={12}>
-                <CardTemplate
-                  onFavoriteClick={() => navigateTo(el.slug)}
-                  key={el.id}
-                  template={el}
-                />
+            {!isLoading && (!templates || templates.length === 0) && (
+              <Grid
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  width: "100%",
+                }}
+              >
+                <NotFoundIcon />
               </Grid>
-            ))}
-
-          {!isLoading && (!templates || templates.length === 0) && (
-            <Grid
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-                width: "100%",
-              }}
-            >
-              <NotFoundIcon />
-            </Grid>
-          )}
-        </Grid>
+            )}
+          </Grid>
+        )}
       </Box>
     </>
   );

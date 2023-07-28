@@ -1,8 +1,6 @@
 import { Box, Grid } from "@mui/material";
-
 import Head from "next/head";
 
-import { PageLoading } from "@/components/PageLoading";
 import { Connections, Home, Identy, Prompts } from "@/components/dashboard";
 import { Layout } from "@/layout";
 import useToken from "@/hooks/useToken";
@@ -22,10 +20,10 @@ const Dashboard = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Layout>
-        <Box padding={{ xs: "4px 0px", md: "0px 8px" }}>
+        <Box mt={{ xs: 7, md: 0 }} padding={{ xs: "4px 0px", md: "0px 8px" }}>
           <Grid
             sx={{
-              padding: { xs: "16px", md: "32px" },
+              padding: { xs: "16px 4px", md: "32px" },
             }}
           >
             <Box sx={{ px: "12px" }}>
@@ -33,7 +31,7 @@ const Dashboard = () => {
                 display="flex"
                 flexDirection="column"
                 alignItems={"flex-start"}
-                gap={"16px"}
+                gap={"36px"}
                 width={"100%"}
               >
                 <Home />

@@ -21,6 +21,8 @@ interface HeaderProps {
   handleKeyPress?: React.KeyboardEventHandler<HTMLInputElement>;
 }
 
+type SidebarType = "navigation" | "profile";
+
 const Login = () => {
   const router = useRouter();
   return (
@@ -63,12 +65,13 @@ export const Header: React.FC<HeaderProps> = ({
   const { data: user, isLoading: userLoading } = useGetCurrentUserQuery(token);
 
   const [isMenuShown, setIsMenuShown] = useState(false);
-  const [open, setOpen] = useState(false);
+  const [openSearchDialog, setOpenSearchDialog] = useState<boolean>(false);
   const menuAnchorRef = useRef<HTMLDivElement | null>(null);
-  const [openSidebar, setOpenSidebar] = useState(false);
+  const [openSidebar, setOpenSidebar] = useState<boolean>(false);
+  const [sidebarType, setSidebarType] = useState<SidebarType>("navigation");
 
   const handleInputFocus = () => {
-    setOpen(true);
+    setOpenSearchDialog(true);
   };
 
   return (
@@ -76,14 +79,14 @@ export const Header: React.FC<HeaderProps> = ({
       sx={{
         width: "100%",
         background: transparent ? "transparent" : "#F6F5FF",
-        position: fixed ? "fixed" : "relative",
+        position: { xs: "fixed", md: fixed ? "fixed" : "relative" },
         zIndex: 1000,
         top: 0,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         bgcolor: { xs: "surface.1", md: "surface.3" },
-        height: { xs: "56px", md: "90px" },
+        height: { xs: "58px", md: "90px" },
       }}
     >
       <Grid
@@ -94,6 +97,7 @@ export const Header: React.FC<HeaderProps> = ({
           gap: "30px",
           padding: { xs: "0 4px ", md: "1.5em 2em" },
           alignItems: "center",
+          borderBottom: { xs: "2px solid #E1E2EC", md: "none" },
         }}
       >
         <Grid
@@ -104,6 +108,7 @@ export const Header: React.FC<HeaderProps> = ({
           alignItems={"center"}
           height={48}
           mt={1}
+          sx={{}}
         >
           <LogoApp width={23} />
         </Grid>
@@ -117,28 +122,41 @@ export const Header: React.FC<HeaderProps> = ({
             display={"flex"}
             alignItems={"center"}
             justifyContent={"center"}
-            onClick={() => setOpenSidebar(true)}
+            onClick={() => {
+              setOpenSidebar(true);
+              setSidebarType("navigation");
+            }}
           >
             <SearchIcon sx={{ fontSize: "26px", color: "onSurface" }} />
           </Box>
           {user && token && (
-            <Avatar
-              sx={{
-                width: "23px",
-                height: "23px",
-                bgcolor: "black",
-                fontSize: 10,
-                textTransform: "capitalize",
+            <Box
+              onClick={() => {
+                setOpenSidebar(true);
+                setSidebarType("profile");
               }}
-              src={user.avatar || user.first_name}
-              alt={user.first_name}
-            />
+            >
+              <Avatar
+                sx={{
+                  width: "23px",
+                  height: "23px",
+                  bgcolor: "black",
+                  fontSize: 10,
+                  textTransform: "capitalize",
+                }}
+                src={user.avatar || user.first_name}
+                alt={user.first_name}
+              />
+            </Box>
           )}
           <Box
             display={"flex"}
             alignItems={"center"}
             justifyContent={"center"}
-            onClick={() => setOpenSidebar(true)}
+            onClick={() => {
+              setOpenSidebar(true);
+              setSidebarType("navigation");
+            }}
           >
             <MenuRoundedIcon sx={{ fontSize: "26px", color: "onSurface" }} />
           </Box>
@@ -153,7 +171,10 @@ export const Header: React.FC<HeaderProps> = ({
           onClick={handleInputFocus}
         >
           <SearchBar keyWord={keyWord} setKeyWord={setKeyWord} />
-          <SearchDialog open={open} close={() => setOpen(false)} />
+          <SearchDialog
+            open={openSearchDialog}
+            close={() => setOpenSearchDialog(false)}
+          />
         </Box>
 
         <Box
@@ -256,6 +277,7 @@ export const Header: React.FC<HeaderProps> = ({
           onClose={() => setIsMenuShown(false)}
         />
         <SideBarMobile
+          type={sidebarType}
           open={openSidebar}
           onClose={() => setOpenSidebar(false)}
           onOpen={() => setOpenSidebar(true)}

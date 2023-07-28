@@ -79,8 +79,8 @@ export const explorerApi = createApi({
         query: (params: FilterParams) => ({
           url:
             "/api/meta/templates/?" +
-            (params.tag ? `&tag=${params.tag}` : "") +
             (params.categoryId ? `main_category_id=${params.categoryId}` : "") +
+            (params.tag ? `&tag=${params.tag}` : "") +
             (params.subcategoryId
               ? `&sub_category_id=${params.subcategoryId}`
               : "") +

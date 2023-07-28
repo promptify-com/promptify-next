@@ -64,14 +64,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
                 alt={template.title}
               />
             </Grid>
-            <Grid
-              gap={0.5}
-              sx={{
-                ml: { md: "20px" },
-              }}
-              display={"flex"}
-              flexDirection={"column"}
-            >
+            <Grid gap={0.5} sx={{}} display={"flex"} flexDirection={"column"}>
               <Typography fontSize={14} fontWeight={500}>
                 {template.title}
               </Typography>
@@ -103,7 +96,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
         </Grid>
         <Grid
           display={"flex"}
-          alignItems={"end"}
+          alignItems={{ xs: "end", md: "center" }}
           width={{ xs: "100%", md: "auto" }}
           justifyContent={"space-between"}
           gap={1}

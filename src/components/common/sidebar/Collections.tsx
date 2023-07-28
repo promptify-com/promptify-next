@@ -21,11 +21,11 @@ import { User } from "@/core/api/dto/user";
 import { CollectionsEmptyBox } from "./CollectionsEmptyBox";
 
 interface SideBarCollectionsProps {
-  sidebarOpen: boolean;
+  sidebarOpen?: boolean;
   user: User | undefined;
   favCollection: ICollectionById | null;
   collectionLoading: boolean;
-  userLoading: boolean;
+  userLoading?: boolean;
 }
 
 export const Collections: React.FC<SideBarCollectionsProps> = ({

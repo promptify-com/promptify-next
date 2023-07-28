@@ -34,51 +34,14 @@ import { FetchLoading } from "@/components/FetchLoading";
 const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
 
 function Home() {
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const setUser = useSetUser();
   const savedToken = useToken();
-
-  const dispatch = useDispatch();
-  const tagsData = useSelector((state: RootState) => state.filters.tag);
-  const engineId = useSelector((state: RootState) => state.filters.engine?.id);
-  const title = useSelector((state: RootState) => state.filters.title);
-
-  const filteredTags = tagsData
-    .filter((item: Tag | null) => item !== null)
-    .map((item: Tag | null) => item?.name)
-    .join("&tag=");
-
-  const params: FilterParams = {
-    tag: filteredTags,
-    engineId,
-    title,
-  };
-  const { data: tags } = useGetTagsPopularQuery();
-
   const { data: templates, isLoading: isTemplatesLoading } =
     useGetTemplatesSuggestedQuery();
   const { data: lastTemplate, isLoading: islastTemplateLoading } =
     useGetLastTemplatesQuery();
-
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [categorySelected, setCategorySelected] = useState<number>();
-
-  const handleTagSelect = (tag: Tag | null) => {
-    dispatch(setSelectedTag(tag));
-  };
-
-  const handleClickCategory = (el: number, category: Category) => {
-    router.push({
-      pathname: `/explore/${category.slug}`,
-    });
-    setCategorySelected(el);
-  };
-
-  useEffect(() => {
-    router.events.on("routeChangeComplete", () => {
-      dispatch(setSelectedTag(null));
-    });
-  }, [router.events]);
 
   const preLogin = () => {
     setIsLoading(true);
@@ -136,25 +99,10 @@ function Home() {
         })
         .then(doPostLogin)
         .catch(() => postLogin(null));
-    } else {
-      setIsLoading(false);
     }
   }, []);
   const { data: categories, isLoading: isCategoryLoading } =
     useGetCategoriesQuery();
-
-  function areAllStatesNull(filters: SelectedFilters): boolean {
-    return (
-      filters.engine === null &&
-      filters.tag.every((tag) => tag === null) &&
-      filters.title === null &&
-      filters.category === null &&
-      filters.subCategory === null
-    );
-  }
-  const filters = useSelector((state: RootState) => state.filters);
-
-  const allNull = areAllStatesNull(filters);
 
   return (
     <>
@@ -163,7 +111,10 @@ function Home() {
           {userLoading ? (
             <FetchLoading />
           ) : user && savedToken ? (
-            <Box padding={{ xs: "4px 0px", md: "0px 8px" }}>
+            <Box
+              mt={{ xs: 7, md: 0 }}
+              padding={{ xs: "4px 0px", md: "0px 8px" }}
+            >
               <Grid
                 display={"flex"}
                 flexDirection={"column"}
@@ -199,7 +150,6 @@ function Home() {
                   <TemplatesSection
                     isLoading={islastTemplateLoading}
                     templates={[lastTemplate]}
-                    filtred={!!filteredTags}
                   >
                     Your Latest Template:
                   </TemplatesSection>
@@ -216,7 +166,6 @@ function Home() {
                 <TemplatesSection
                   isLoading={isTemplatesLoading}
                   templates={templates}
-                  filtred={!!filteredTags}
                 >
                   You may like this templates:
                 </TemplatesSection>
@@ -236,7 +185,10 @@ function Home() {
             </Box>
           ) : (
             <>
-              <Box padding={{ xs: "4px 0px", md: "0px 8px" }}>
+              <Box
+                mt={{ xs: 7, md: 0 }}
+                padding={{ xs: "4px 0px", md: "0px 8px" }}
+              >
                 <Box
                   sx={{
                     padding: { xs: "16px", md: "32px" },
@@ -380,13 +332,10 @@ function Home() {
                     padding: { xs: "16px", md: "32px" },
                   }}
                 >
-                  <FiltersSelected show={!allNull} />
-                  {allNull && (
-                    <CategoriesSection
-                      categories={categories}
-                      isLoading={isCategoryLoading}
-                    />
-                  )}
+                  <CategoriesSection
+                    categories={categories}
+                    isLoading={isCategoryLoading}
+                  />
                 </Grid>
               </Box>
             </>

@@ -22,8 +22,18 @@ export const userApi = createApi({
           },
         }),
       }),
+      updateUserProfile: builder.mutation<User, any>({
+        query: (updatedUser) => ({
+          url: "/api/me/",
+          method: "put",
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+          data: updatedUser,
+        }),
+      }),
     };
   },
 });
 
-export const { useGetCurrentUserQuery } = userApi;
+export const { useGetCurrentUserQuery, useUpdateUserProfileMutation } = userApi;

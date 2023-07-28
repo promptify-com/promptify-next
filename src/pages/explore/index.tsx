@@ -11,7 +11,6 @@ import { RootState } from "@/core/store";
 import { FiltersSelected } from "@/components/explorer/FiltersSelected";
 import { useGetCategoriesQuery } from "@/core/api/categories";
 import { FilterParams, SelectedFilters, Tag } from "@/core/api/dto/templates";
-import { ExploreHeaderImage } from "@/assets/icons/exploreHeader";
 
 export default function ExplorePage() {
   const tags = useSelector((state: RootState) => state.filters.tag);
@@ -56,12 +55,11 @@ export default function ExplorePage() {
             key="desc"
           />
         </Head>
-
-        <Box padding={{ xs: "4px 0px", md: "0px 8px" }}>
+        <Box mt={{ xs: 7, md: 0 }} padding={{ xs: "4px 0px", md: "0px 8px" }}>
           <Grid
             display={"flex"}
             flexDirection={"column"}
-            gap={"16px"}
+            gap={"36px"}
             sx={{
               padding: { xs: "16px", md: "32px" },
             }}

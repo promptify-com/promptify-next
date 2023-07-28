@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, TextField, Typography } from "@mui/material";
+import { Box, Grid, TextField, Typography } from "@mui/material";
 import { FormikProps } from "formik";
 import { IEditProfile } from "@/common/types";
 
@@ -9,54 +9,57 @@ interface IProps {
 
 export const NameInfo: React.FC<IProps> = ({ formik }) => {
   return (
-    <Box mt="2rem">
-      <Typography
-        fontWeight={500}
-        fontSize="1rem"
-        textAlign={{ xs: "center", sm: "start" }}
-      >
+    <Box
+      display={"flex"}
+      flexDirection={"column"}
+      gap={"16px"}
+      width={"100%"}
+      bgcolor={"surface.1"}
+      padding={{ md: "16px" }}
+      borderRadius={"16px"}
+    >
+      <Typography fontWeight={500} fontSize="1rem" textAlign={"start"}>
         Name Info
       </Typography>
       <Box
         sx={{
           width: "100%",
-          mt: "1rem",
         }}
+        gap={16}
         flexDirection="column"
       >
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: { xs: "column", sm: "row" },
-            justifyContent: { xs: "center", sm: "space-between" },
-            alignItems: "center",
-            mt: "1rem",
-          }}
+        <Grid
+          container
+          display={"flex"}
+          flexDirection={{ xs: "column", md: "row" }}
+          justifyContent={{ xs: "center", md: "space-between" }}
+          gap={"16px"}
         >
-          <TextField
-            sx={{
-              width: { xs: "90%", sm: "47%" },
-              "& .MuiOutlinedInput-root": {
-                "& fieldset": {
-                  borderRadius: 3,
+          <Grid item xs={12} md={6}>
+            <TextField
+              fullWidth
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": {
+                    borderRadius: 3,
+                  },
                 },
-              },
-            }}
-            name="first_name"
-            id="outlined-required"
-            label="FirstName"
-            value={formik.values.first_name}
-            onChange={formik.handleChange}
-            helperText={formik.touched.first_name && formik.errors.first_name}
-            error={
-              !!formik.touched.first_name && Boolean(formik.errors.first_name)
-            }
-          />
+              }}
+              name="first_name"
+              id="outlined-required"
+              label="FirstName"
+              value={formik.values.first_name}
+              onChange={formik.handleChange}
+              helperText={formik.touched.first_name && formik.errors.first_name}
+              error={
+                !!formik.touched.first_name && Boolean(formik.errors.first_name)
+              }
+            />
+          </Grid>
 
           <TextField
             sx={{
-              width: { xs: "90%", sm: "47%" },
-              mt: { xs: "1rem", sm: "0rem" },
+              width: { xs: "100%", sm: "47%" },
               "& .MuiOutlinedInput-root": {
                 "& fieldset": {
                   borderRadius: 3,
@@ -73,11 +76,11 @@ export const NameInfo: React.FC<IProps> = ({ formik }) => {
               !!formik.touched.last_name && Boolean(formik.errors.last_name)
             }
           />
-        </Box>
+        </Grid>
         <Box sx={{ display: "flex", justifyContent: "center", mt: "1rem" }}>
           <TextField
             sx={{
-              width: { xs: "90%", sm: "100%" },
+              width: "100%",
               "& .MuiOutlinedInput-root": {
                 "& fieldset": {
                   borderRadius: 3,
@@ -94,30 +97,25 @@ export const NameInfo: React.FC<IProps> = ({ formik }) => {
           />
         </Box>
       </Box>
-      <Box
-        display="flex"
-        mt="0.5rem"
-        flexDirection={{ xs: "column", sm: "row" }}
-      >
+      <Box display="flex" flexDirection={{ xs: "column", md: "row" }}>
         <Typography
           fontWeight={400}
           fontSize="0.8rem"
-          textAlign={{ xs: "center", sm: "start" }}
+          textAlign={{ xs: "start", sm: "start" }}
           whiteSpace="nowrap"
         >
           Nickname will be used as link to your profile:
         </Typography>
         <Typography
-          fontWeight={500}
+          fontWeight={600}
           fontSize="0.8rem"
-          textAlign={{ xs: "center", sm: "start" }}
+          textAlign={{ xs: "start", sm: "start" }}
           overflow="hidden"
           textOverflow="ellipsis"
-          maxWidth="90%"
-          alignSelf={{ xs: "center", sm: "start" }}
+          alignSelf={{ xs: "start", sm: "start" }}
           whiteSpace="nowrap"
         >
-          &nbsp; www.promptify.com/users/{formik.values.username}
+          www.promptify.com/users/{formik.values.username}
         </Typography>
       </Box>
     </Box>
