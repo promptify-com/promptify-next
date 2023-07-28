@@ -107,7 +107,7 @@ export const Home = () => {
         </Box>
 
         {user?.bio && (
-          <Box maxWidth={"605px"}>
+          <Box maxWidth={"505px"}>
             <Typography
               fontSize={16}
               fontStyle={"normal"}
@@ -115,8 +115,7 @@ export const Home = () => {
               lineHeight={"22.88px"}
               letterSpacing={"0.17px"}
             >
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptas
-              nisi tenetur sapiente
+              {user.bio}
             </Typography>
           </Box>
         )}
