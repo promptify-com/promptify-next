@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Grid } from "@mui/material";
+import { Box, Button, Grid, Stack, Typography } from "@mui/material";
 import Head from "next/head";
 import { useSelector } from "react-redux";
 
@@ -76,7 +76,9 @@ export default function ExplorePage() {
               filtred={!allNull}
               templates={templates ?? []}
               isLoading={isTemplatesLoading}
-            />
+            >
+              Best templates
+            </TemplatesSection>
           </Grid>
         </Box>
       </Layout>

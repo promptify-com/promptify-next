@@ -42,6 +42,4 @@ export const Layout = ({ children }: { children: ReactNode }) => {
     </>
   );
 };
-function setOpenSideBar(arg0: boolean): any {
-  throw new Error("Function not implemented.");
-}
+

@@ -18,9 +18,11 @@ import {
   AutoAwesome,
   ExpandLess,
   ExpandMore,
+  Home,
   MenuBookRounded,
   Search,
 } from "@mui/icons-material";
+import StarIcon from "@mui/icons-material/Star";
 import { styled, Theme, CSSObject } from "@mui/material/styles";
 
 import { LogoApp } from "@/assets/icons/LogoApp";
@@ -112,6 +114,13 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
   }, [expandedOnHover, open]);
 
   const navItems = [
+    {
+      name: "Homepage",
+      href: "/",
+      icon: <Home />,
+      active: pathname == "/",
+      external: false,
+    },
     {
       name: "Browse",
       href: "/explore",
