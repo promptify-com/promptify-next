@@ -69,13 +69,14 @@ export const Display: React.FC<Props> = ({
   }, [routerSpark, sparks]);
 
   const handlePinSpark = async () => {
+    // console.log(selectedSpark)
     if(selectedSpark === null) return;
 
     try {
       if (selectedSpark.is_favorite) {
-        await pinSpark(selectedSpark.id);
-      } else {
         await unpinSpark(selectedSpark.id);
+      } else {
+        await pinSpark(selectedSpark.id);
       }
 
       // Update state after API call is successful and avoid unnecessary refetch of sparks
