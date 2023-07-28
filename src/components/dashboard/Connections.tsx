@@ -125,7 +125,6 @@ export const Connections = () => {
     >
       <Typography
         textAlign={{ xs: "center", sm: "start" }}
-        mb={{ xs: "1rem", sm: "0rem" }}
         sx={{
           fontFamily: "Poppins",
           fontStyle: "normal",
@@ -194,9 +193,9 @@ export const Connections = () => {
                         width: { xs: "36px", md: "48px" },
                       }}
                       src={customConnection.avatar}
-                    >
-                      {customConnection.avatar}
-                    </Avatar>
+                      component={"image"}
+                      alt={customConnection.avatar}
+                    />
                   </Box>
                   <Box>
                     <Typography
@@ -271,41 +270,6 @@ export const Connections = () => {
           Add More connections
         </Typography>
       </Box>
-
-      {/* <Box
-        color="#0F6FFF"
-        mt={{ xs: "0rem", sm: "1.5rem" }}
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          padding: { xs: "0px 11px", sm: "8px 22px" },
-          height: "64px",
-          border: "1px solid rgba(55, 92, 169, 0.6)",
-          borderRadius: "16px",
-          flexDirection: "row",
-          gap: "8px",
-          cursor: "pointer",
-          width: { xs: "95%", sm: "95%" },
-        }}
-        onClick={() => setOpenAdd(true)}
-      >
-        <Typography
-          ml="0.5rem"
-          fontSize="1rem"
-          sx={{
-            fontFamily: "Poppins",
-            fontStyle: "normal",
-            fontWeight: 500,
-            fontSize: "15px",
-            lineHeight: "173%",
-            letterSpacing: "0.46px",
-            color: "#375CA9",
-          }}
-        >
-          Add More connections
-        </Typography>
-      </Box> */}
 
       <AddConnectionDialog
         openAdd={openAdd}

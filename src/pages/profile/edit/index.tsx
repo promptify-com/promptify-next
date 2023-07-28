@@ -40,15 +40,6 @@ const EditProfilePage = () => {
 
   return (
     <>
-      <Head>
-        <title>Edit Account</title>
-        <meta
-          name="description"
-          content="Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out."
-        />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
       <Layout>
         <Box mt={{ xs: 7, md: 0 }} padding={{ xs: "4px 0px", md: "0px 8px" }}>
           <Grid
@@ -92,32 +83,21 @@ const EditProfilePage = () => {
                   <About formik={formik} />
                 </Grid>
 
-                <Box
-                  display="flex"
-                  justifyContent="center"
-                  alignItems="center"
-                  mt="1rem"
-                >
+                <Box>
                   <Button
                     sx={{
-                      mb: "100px",
-                      width: { xs: "90%", sm: "100%" },
-                      bgcolor: "#D6D6D6",
-                      height: "50px",
+                      bgcolor: "var(--primary-main, #3B4050)",
+                      padding: "8px 22px",
+                      minWidth: "96px",
                       borderRadius: "15px",
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      cursor: "pointer",
-                      color: "common.black",
                     }}
                     onClick={formik.submitForm}
                     disabled={isLoading}
                   >
                     {isLoading ? (
-                      <CircularProgress />
+                      <CircularProgress size={23} />
                     ) : (
-                      <Typography>Save</Typography>
+                      <Typography color={"surface.1"}>Save profile</Typography>
                     )}
                   </Button>
                 </Box>
@@ -132,7 +112,7 @@ const EditProfilePage = () => {
 export async function getServerSideProps() {
   return {
     props: {
-      title: "Promptify | Boost Your Creativity",
+      title: "",
       description:
         "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
     },

@@ -124,13 +124,10 @@ export const ProfileImage: React.FC<IProps> = ({}) => {
         alignItems={"start"}
         gap={2}
       >
-        <Grid item xs={5}>
+        <Grid>
           <Avatar
-            src={
-              croppedImage
-                ? URL.createObjectURL(croppedImage)
-                : user?.avatar ?? "no-image"
-            }
+            src={user?.avatar}
+            alt={user?.username}
             sx={{ width: "150px", height: "150px" }}
           />
         </Grid>

@@ -13,28 +13,28 @@ export const Home = () => {
 
   return (
     <Box
-      width={"95%"}
       sx={{
         justifyContent: "center",
         display: "flex",
+        width: "100%",
         flexDirection: "column",
         gap: "16px",
       }}
     >
-      <Box display={"flex"} justifyContent={{ xs: "center", md: "start" }}>
+      <Box
+        display={"flex"}
+        justifyContent={{ xs: "center", md: "start" }}
+        textAlign={{ xs: "center", sm: "start" }}
+      >
         <Typography
           fontWeight={500}
           fontSize={{ xs: "1.5rem", sm: "2rem" }}
-          textAlign={{ xs: "center", sm: "start" }}
           sx={{
             fontFamily: "Poppins",
             fontStyle: "normal",
             fontWeight: 500,
             fontSize: { xs: "24px", sm: "34px" },
             lineHeight: { xs: "27px", sm: "123.5%" },
-            display: "flex",
-            alignItems: "center",
-            textAlign: "center",
             color: "onSurface",
           }}
         >
@@ -47,7 +47,7 @@ export const Home = () => {
         flexDirection={{ xs: "column", md: "row" }}
         justifyContent={"space-between"}
         alignItems="center"
-        padding={"24px"}
+        padding={{ xs: 0, md: "24px" }}
         gap={"24px"}
         sx={{
           bgcolor: "surface.1",
@@ -58,7 +58,7 @@ export const Home = () => {
           display="flex"
           flexDirection={{ xs: "column", md: "row" }}
           alignItems="center"
-          gap={"24px"}
+          gap={"16px"}
         >
           <Box>
             <Avatar
@@ -69,7 +69,7 @@ export const Home = () => {
                 fontSize: 40,
                 textTransform: "capitalize",
               }}
-              src={user?.avatar || user?.username}
+              src={user?.avatar ?? user?.username}
               alt={user?.username}
             />
           </Box>

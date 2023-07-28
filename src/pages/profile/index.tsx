@@ -23,7 +23,7 @@ const Dashboard = () => {
         <Box mt={{ xs: 7, md: 0 }} padding={{ xs: "4px 0px", md: "0px 8px" }}>
           <Grid
             sx={{
-              padding: { xs: "16px", md: "32px" },
+              padding: { xs: "16px 4px", md: "32px" },
             }}
           >
             <Box sx={{ px: "12px" }}>

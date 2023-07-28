@@ -9,19 +9,19 @@ interface IProps {
 
 export const About: React.FC<IProps> = ({ formik }) => {
   return (
-    <Box mt="70px">
-      <Typography
-        fontWeight={500}
-        fontSize="1rem"
-        textAlign={{ xs: "center", sm: "start" }}
-      >
+    <Box
+      display={"flex"}
+      flexDirection={"column"}
+      gap={"16px"}
+      width={"100%"}
+      bgcolor={"surface.1"}
+      padding={{ md: "16px" }}
+      borderRadius={"16px"}
+    >
+      <Typography fontWeight={500} fontSize="18px" textAlign={"start"}>
         About you
       </Typography>
-      <Box
-        mt="1rem"
-        display="flex"
-        justifyContent={{ xs: "center", sm: "flex-start" }}
-      >
+      <Box display="flex">
         <TextField
           id="outlined-multiline-static"
           label="Short"
@@ -32,7 +32,7 @@ export const About: React.FC<IProps> = ({ formik }) => {
           helperText={formik.touched.bio && formik.errors.bio}
           multiline
           rows={10}
-          sx={{ width: { xs: "90%", sm: "100%" } }}
+          sx={{ width: { xs: "100%", md: "85%" } }}
         />
       </Box>
     </Box>
