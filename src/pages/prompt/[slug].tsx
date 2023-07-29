@@ -39,7 +39,7 @@ import { Details } from "@/components/prompt/Details";
 import { authClient } from "@/common/axios";
 import { DetailsCard } from "@/components/prompt/DetailsCard";
 import { Prompts } from "@/core/api/dto/prompts";
-import { updateExecution } from "@/hooks/api/executions";
+import { createSparkWithExecution, updateExecution } from "@/hooks/api/executions";
 import { PromptLiveResponse } from "@/common/types/prompt";
 import { Layout } from "@/layout";
 import useToken from "@/hooks/useToken";
@@ -87,7 +87,7 @@ const Prompt = () => {
   const [currentGeneratedPrompt, setCurrentGeneratedPrompt] =
     useState<Prompts | null>(null);
   const [openTitleModal, setOpenTitleModal] = useState(false);
-  const [executionTitle, setExecutionTitle] = useState("");
+  const [sparkTitle, setSparkTitle] = useState("");
   const [defaultExecution, setDefaultExecution] =
     useState<TemplatesExecutions | null>(null);
   const [templateView] = useTemplateView();
@@ -176,6 +176,7 @@ const Prompt = () => {
         ...(defaultExecution as TemplatesExecutions),
         title: "Untitled",
       });
+      setSelectedSpark(null)
     }
   };
 
@@ -187,10 +188,18 @@ const Prompt = () => {
         (execData) => !execData.isCompleted
       );
       if (!promptNotCompleted) {
-        setOpenTitleModal(true);
+        if(selectedSpark)
+          refetchTemplateSparks();
+        else
+          setOpenTitleModal(true);
       }
     }
   }, [isGenerating, newExecutionData]);
+
+  useEffect(() => {
+    if(isGenerating)
+      setMobileTab(2);
+  }, [isGenerating]);
 
   // Keep tracking the current generated prompt
   useEffect(() => {
@@ -266,16 +275,16 @@ const Prompt = () => {
 
   const closeTitleModal = () => {
     setOpenTitleModal(false);
-    setExecutionTitle("");
+    setSparkTitle("");
     refetchTemplateSparks();
   };
-  const saveExecutionTitle = async () => {
-    if (executionTitle.length) {
+  const saveSparkTitle = async () => {
+    if (sparkTitle.length) {
       if (fetchedNewExecution?.id) {
         try {
-          await updateExecution(fetchedNewExecution?.id, {
-            ...fetchedNewExecution,
-            title: executionTitle,
+          await createSparkWithExecution({
+            title: sparkTitle,
+            execution_id: fetchedNewExecution.id,
           });
         } catch (err) {
           console.error(err);
@@ -286,11 +295,11 @@ const Prompt = () => {
       setNewExecutionData(null);
       setCurrentGeneratedPrompt(null);
       setOpenTitleModal(false);
-      setExecutionTitle("");
+      setSparkTitle("");
     }
   };
 
-  const ExecutionTitleModal = (
+  const SparkTitleModal = (
     <Dialog
       open={openTitleModal}
       PaperProps={{
@@ -316,7 +325,7 @@ const Prompt = () => {
             },
           }}
           placeholder={"Title..."}
-          onChange={(e) => setExecutionTitle(e.target.value)}
+          onChange={(e) => setSparkTitle(e.target.value)}
         />
       </DialogContent>
       <DialogActions sx={{ p: "16px", gap: 2 }}>
@@ -331,8 +340,8 @@ const Prompt = () => {
             ":disabled": { color: "grey.600" },
             ":hover": { bgcolor: "action.hover" },
           }}
-          disabled={!executionTitle.length}
-          onClick={saveExecutionTitle}
+          disabled={!sparkTitle.length}
+          onClick={saveSparkTitle}
         >
           Save
         </Button>
@@ -438,6 +447,8 @@ const Prompt = () => {
                             setIsGenerating={setIsGenerating}
                             onError={setErrorMessage}
                             exit={() => setGeneratorOpened(false)}
+                            currentSparkId={selectedSpark?.id ?? null} 
+                            selectedExecution={selectedExecution}
                           />
                         )}
                       </CustomTabPanel>
@@ -509,6 +520,8 @@ const Prompt = () => {
                     setIsGenerating={setIsGenerating}
                     onError={setErrorMessage}
                     exit={() => setGeneratorOpened(false)}
+                    currentSparkId={selectedSpark?.id ?? null}
+                    selectedExecution={selectedExecution}
                   />
                 </Grid>
 
@@ -587,7 +600,7 @@ const Prompt = () => {
             </Grid>
           )}
 
-          {ExecutionTitleModal}
+          {SparkTitleModal}
 
           <Snackbar
             anchorOrigin={{ vertical: "bottom", horizontal: "right" }}

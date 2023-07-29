@@ -9,6 +9,7 @@ interface GeneratorInputProps {
     name: string;
     fullName: string;
     type: string;
+    defaultValue?: string | number | null;
   }[];
   resInputs: any;
   setResInputs: (obj: any) => void;
@@ -49,9 +50,15 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
   useEffect(() => {
     if (inputs.length > 0) {
       const defaultObj = inputs
-        .map(input => ({
-          [input.name]: input.type === 'number' ? 0 : '',
-        }))
+          .map(input => ({
+            [input.name]: input.defaultValue != null // Checking for default value
+              ? input.type === 'number'
+                ? Number(input.defaultValue)
+                : input.defaultValue
+              : input.type === 'number'
+              ? 0
+              : '',
+          }))
         .reduce((acc, curr) => Object.assign(acc, curr), {});
 
       setResInputs([...resInputs, { id: promptId, inputs: defaultObj }]);
@@ -104,7 +111,8 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
               }}
               placeholder={input.type === 'number' ? 'Write a number here..' : 'Type here...'}
               type={input.type}
-              value={resInputs.find((prompt: any) => prompt.id === promptId)?.inputs[input.name] || ''}
+              value={resInputs.find((prompt: any) => prompt.id === promptId)?.inputs[input.name]
+                || ''}
               onChange={e => handleChange(e.target.value, input.name, input.type)}
             />
             <IconButton sx={{ color: 'grey.600', border: "none", p: "4px", ":hover": { color: "tertiary" } }}

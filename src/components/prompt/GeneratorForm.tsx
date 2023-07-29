@@ -12,7 +12,13 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { ArrowDropDown, ArrowDropUp, AutoFixHigh, Close, Replay } from "@mui/icons-material";
+import {
+  ArrowDropDown,
+  ArrowDropUp,
+  AutoFixHigh,
+  Close,
+  Replay,
+} from "@mui/icons-material";
 import {
   PromptParams,
   ResInputs,
@@ -28,7 +34,7 @@ import { GeneratorParam } from "./GeneratorParam";
 import { savePathURL } from "@/common/utils";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { getArrayFromString } from "@/common/helpers/getArrayFromString";
-import { Templates } from "@/core/api/dto/templates";
+import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { useWindowSize } from "usehooks-ts";
 import { useRouter } from "next/router";
@@ -41,7 +47,10 @@ interface GeneratorFormProps {
   setIsGenerating: (status: boolean) => void;
   onError: (errMsg: string) => void;
   exit: () => void;
+  currentSparkId: number | null;
+  selectedExecution: TemplatesExecutions | null;
 }
+
 export interface InputsErrors {
   [key: string]: number | boolean;
 }
@@ -50,6 +59,7 @@ interface Input {
   name: string;
   fullName: string;
   type: string;
+  defaultValue?: string | number | null;
 }
 interface Param {
   prompt: number;
@@ -63,13 +73,16 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   setIsGenerating,
   onError,
   exit,
+  currentSparkId,
+  selectedExecution,
 }) => {
   const token = useToken();
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { width: windowWidth } = useWindowSize();
 
-  const [generatingResponse, setGeneratingResponse] = useState<PromptLiveResponse | null>(null);
+  const [generatingResponse, setGeneratingResponse] =
+    useState<PromptLiveResponse | null>(null);
   const [newExecutionId, setNewExecutionId] = useState<number | null>(null);
   const [resPrompts, setResPrompts] = useState<ResPrompt[]>([]);
   const [lastExecution, setLastExecution] = useState<ResPrompt[] | null>(null);
@@ -90,12 +103,22 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
       tempObj.prompt = prompt.id;
       tempObj.contextual_overrides = [];
+      tempObj.prompt_params = {Scope: '', Field: 'aa'}
       tempArr.push(tempObj);
     });
-
     setResPrompts([...tempArr]);
   };
 
+  useEffect(() => {
+    if (selectedExecution?.parameters) {
+      const inputs = Object.entries(selectedExecution.parameters).map(([promptId, values]) => ({
+        id: +promptId, 
+        inputs: values
+      }));
+      setResInputs(inputs);
+    }
+  }, [shownInputs?.length, selectedExecution])
+  
   const changeResPrompts = () => {
     const tempArr = [...resPrompts];
 
@@ -124,11 +147,9 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
   // Prompts params values tracker to validate generating allowed or not
   useEffect(() => {
-    if (Object.keys(isInputsFilled()).length > 0) 
-      setAllowGenerate(false);
-    else 
-      setAllowGenerate(true);
-  } , [resPrompts])
+    if (Object.keys(isInputsFilled()).length > 0) setAllowGenerate(false);
+    else setAllowGenerate(true);
+  }, [resPrompts]);
 
   const isInputsFilled = () => {
     const tempErrors: InputsErrors = {};
@@ -149,7 +170,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     });
 
     return tempErrors;
-  }
+  };
 
   const validateInputs = () => {
     const emptyInputs = isInputsFilled();
@@ -180,7 +201,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   };
 
   const generateExecution = (executionData: ResPrompt[]) => {
-    if(isGenerating) return;
+    if (isGenerating) return;
 
     setLastExecution(JSON.parse(JSON.stringify(executionData)));
 
@@ -189,127 +210,134 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     if (windowWidth < 900) setTimeout(() => exit(), 2000);
 
     let tempData: any[] = [];
-    fetchEventSource(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/meta/templates/${templateData.id}/execute/`,
-      {
-        method: 'POST',
-        headers: {
-          Authorization: `Token ${token}`,
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(executionData),
-        openWhenHidden: true,
+    let url = `${process.env.NEXT_PUBLIC_API_URL}/api/meta/templates/${templateData.id}/execute/`;
+    if (currentSparkId) url += `?spark_id=${currentSparkId}`;
+    fetchEventSource(url, {
+      method: "POST",
+      headers: {
+        Authorization: `Token ${token}`,
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(executionData),
+      openWhenHidden: true,
 
-        async onopen(res) {
-          if (res.ok && res.status === 200) {
-            setIsGenerating(true);
-            setGeneratingResponse({ created_at: new Date(), data: [] });
-          } else if (res.status >= 400 && res.status < 500 && res.status !== 429) {
-            console.error("Client side error ", res);
-            onError('Something went wrong. Please try again later');
-          }
-        },
-        onmessage(msg) {
-          try {
-            const parseData = JSON.parse(msg.data.replace(/'/g, '"'));
-            const message = parseData.message;
-            const prompt = parseData.prompt_id;
-            const executionId = parseData.template_execution_id;
+      async onopen(res) {
+        if (res.ok && res.status === 200) {
+          setIsGenerating(true);
+          setGeneratingResponse({ created_at: new Date(), data: [] });
+        } else if (
+          res.status >= 400 &&
+          res.status < 500 &&
+          res.status !== 429
+        ) {
+          console.error("Client side error ", res);
+          onError("Something went wrong. Please try again later");
+        }
+      },
+      onmessage(msg) {
+        try {
+          const parseData = JSON.parse(msg.data.replace(/'/g, '"'));
+          const message = parseData.message;
+          const prompt = parseData.prompt_id;
+          const executionId = parseData.template_execution_id;
 
-            if(executionId) setNewExecutionId(executionId);
+          if (executionId) setNewExecutionId(executionId);
 
-            if (msg.event === 'infer' && msg.data) {
-              if (message) {
-                const tempArr = [...tempData];
-                const activePrompt = tempArr.findIndex(template => template.prompt === +prompt);
-
-                if (activePrompt === -1) {
-                  tempArr.push({
-                    message,
-                    prompt,
-                  });
-                } else {
-                  tempArr[activePrompt] = {
-                    ...tempArr[activePrompt],
-                    message: tempArr[activePrompt].message + message,
-                    prompt,
-                  };
-                }
-
-                tempData = [...tempArr];
-                setGeneratingResponse(prevState => ({
-                  ...prevState,
-                  created_at: prevState?.created_at || new Date(), 
-                  data: tempArr 
-                }));
-              }
-            } else {
+          if (msg.event === "infer" && msg.data) {
+            if (message) {
               const tempArr = [...tempData];
-              const activePrompt = tempArr.findIndex(template => template.prompt === +prompt);
+              const activePrompt = tempArr.findIndex(
+                (template) => template.prompt === +prompt
+              );
 
-              if (message === '[COMPLETED]') {
+              if (activePrompt === -1) {
+                tempArr.push({
+                  message,
+                  prompt,
+                });
+              } else {
                 tempArr[activePrompt] = {
                   ...tempArr[activePrompt],
+                  message: tempArr[activePrompt].message + message,
                   prompt,
-                  isLoading: false,
-                  isCompleted: true,
                 };
               }
 
-              if (message === '[INITIALIZING]') {
-                if (activePrompt === -1) {
-                  tempArr.push({
-                    message: '',
-                    prompt,
-                    isLoading: true,
-                    created_at: new Date(),
-                  });
-                } else {
-                  tempArr[activePrompt] = {
-                    ...tempArr[activePrompt],
-                    prompt,
-                    isLoading: true,
-                  };
-                }
-              }
-
-              if (message.includes('[ERROR]')) {
-                onError(message);
-              }
-
               tempData = [...tempArr];
-              setGeneratingResponse(prevState => ({
+              setGeneratingResponse((prevState) => ({
                 ...prevState,
-                created_at: prevState?.created_at || new Date(), 
-                data: tempArr 
+                created_at: prevState?.created_at || new Date(),
+                data: tempArr,
               }));
             }
-          } catch {
-            console.error(msg);
-            // TODO: this is triggered event when there is no error
-            // onError(msg.data.slice(0, 100));
+          } else {
+            const tempArr = [...tempData];
+            const activePrompt = tempArr.findIndex(
+              (template) => template.prompt === +prompt
+            );
+
+            if (message === "[COMPLETED]") {
+              tempArr[activePrompt] = {
+                ...tempArr[activePrompt],
+                prompt,
+                isLoading: false,
+                isCompleted: true,
+              };
+            }
+
+            if (message === "[INITIALIZING]") {
+              if (activePrompt === -1) {
+                tempArr.push({
+                  message: "",
+                  prompt,
+                  isLoading: true,
+                  created_at: new Date(),
+                });
+              } else {
+                tempArr[activePrompt] = {
+                  ...tempArr[activePrompt],
+                  prompt,
+                  isLoading: true,
+                };
+              }
+            }
+
+            if (message.includes("[ERROR]")) {
+              onError(message);
+            }
+
+            tempData = [...tempArr];
+            setGeneratingResponse((prevState) => ({
+              ...prevState,
+              created_at: prevState?.created_at || new Date(),
+              data: tempArr,
+            }));
           }
-        },
-        onerror(err) {
-          console.error(err);
-          setIsGenerating(false);
-          onError('Something went wrong. Please try again later');
-          throw err; // rethrow to stop the operation
-        },
-        onclose() {
-          setIsGenerating(false);
-        },
-      }
-    );
+        } catch {
+          console.error(msg);
+          // TODO: this is triggered event when there is no error
+          // onError(msg.data.slice(0, 100));
+        }
+      },
+      onerror(err) {
+        console.error(err);
+        setIsGenerating(false);
+        onError("Something went wrong. Please try again later");
+        throw err; // rethrow to stop the operation
+      },
+      onclose() {
+        setIsGenerating(false);
+      },
+    });
   };
 
   useEffect(() => {
     if (newExecutionId) {
-      setGeneratingResponse(prevState => ({
+      setGeneratingResponse((prevState) => ({
         id: newExecutionId,
         created_at: prevState?.created_at || new Date(),
-        data: prevState?.data || [] 
+        data: prevState?.data || [],
       }));
     }
   }, [newExecutionId]);
@@ -328,6 +356,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     if (resPrompts.length > 0) {
       changeResPrompts();
     }
+    console.log(resInputs)
   }, [resInputs, resOverrides]);
 
   useEffect(() => {
@@ -382,31 +411,34 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     <Box
       sx={{
         minHeight: "calc(100% - 32px)",
-        bgcolor: "surface.2"
+        bgcolor: "surface.2",
       }}
     >
-      <Typography 
-        sx={{ 
+      <Typography
+        sx={{
           display: { md: "none" },
           p: "16px",
           fontSize: 24,
           fontWeight: 500,
           color: "onSurface",
-          opacity: .8,
+          opacity: 0.8,
         }}
       >
         Inputs
       </Typography>
-      <Stack gap={1}
+      <Stack
+        gap={1}
         sx={{
-          p: "16px"
+          p: "16px",
         }}
       >
-        <Stack direction={'row'} justifyContent={'space-between'} py={'8px'}>
+        <Stack direction={"row"} justifyContent={"space-between"} py={"8px"}>
           <Button
             sx={textButtonStyle}
             startIcon={<AutoFixHigh />}
-            endIcon={Boolean(presetsAnchor) ? <ArrowDropUp /> : <ArrowDropDown />}
+            endIcon={
+              Boolean(presetsAnchor) ? <ArrowDropUp /> : <ArrowDropDown />
+            }
             variant={"text"}
             onClick={(e) => setPresetsAnchor(e.currentTarget)}
           >
@@ -418,10 +450,12 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
               startIcon={<Close />}
               variant={"text"}
               disabled={!allowGenerate}
-              onClick={() => { setResInputs([]) }}
+              onClick={() => {
+                setResInputs([]);
+              }}
             >
-            Clear
-          </Button>
+              Clear
+            </Button>
           )}
           <Popper
             open={Boolean(presetsAnchor)}
@@ -442,16 +476,12 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
                     borderRadius: "10px",
                     maxHeight: "30svh",
                     overflow: "auto",
-                    overscrollBehavior: "contain"
+                    overscrollBehavior: "contain",
                   }}
                   elevation={0}
                 >
-                  <ClickAwayListener
-                    onClickAway={() => setPresetsAnchor(null)}
-                  >
-                    <MenuList
-                      sx={{ paddingRight: "3rem", width: "100%" }}
-                    >
+                  <ClickAwayListener onClickAway={() => setPresetsAnchor(null)}>
+                    <MenuList sx={{ paddingRight: "3rem", width: "100%" }}>
                       {presets.map((preset) => (
                         <MenuItem
                           key={preset.id}
@@ -483,63 +513,68 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
             flex: 1,
             bgcolor: "surface.2",
             borderRadius: "16px",
-            position: "relative"
+            position: "relative",
           }}
         >
-        {!shownInputs || !shownParams ? (
-          <Box
-            sx={{
-              width: "100%",
-              mt: "40px",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <CircularProgress size={20} />
-          </Box>
-        ) : shownInputs.length === 0 && shownParams.length === 0 ? (
-          <Box
-            sx={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              width: "100%",
-              textAlign: "center",
-              color: "onSurface",
-              fontSize: 14,
-            }}
-          >
-            No parameters available for this template
-          </Box>
-        ) : (
-          <React.Fragment>
-            {shownInputs.map((input, i) => (
-              <GeneratorInput
-                key={i}
-                promptId={input.prompt}
-                inputs={[input]}
-                resInputs={resInputs}
-                setResInputs={setResInputs}
-                errors={errors}
-              />
-            ))}
-            {shownParams.map((param, i) => (
-              <GeneratorParam
-                key={i}
-                params={[param.param]}
-                promptId={param.prompt}
-                resOverrides={resOverrides}
-                setResOverrides={setResOverrides}
-              />
-            ))}
-          </React.Fragment>
-        )}
+          {!shownInputs || !shownParams ? (
+            <Box
+              sx={{
+                width: "100%",
+                mt: "40px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <CircularProgress size={20} />
+            </Box>
+          ) : shownInputs.length === 0 && shownParams.length === 0 ? (
+            <Box
+              sx={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                width: "100%",
+                textAlign: "center",
+                color: "onSurface",
+                fontSize: 14,
+              }}
+            >
+              No parameters available for this template
+            </Box>
+          ) : (
+            <React.Fragment>
+              {shownInputs.map((input, i) => (
+                <GeneratorInput
+                  key={i}
+                  promptId={input.prompt}
+                  inputs={[input]}
+                  resInputs={resInputs}
+                  setResInputs={setResInputs}
+                  errors={errors}
+                />
+              ))}
+              {shownParams.map((param, i) => (
+                <GeneratorParam
+                  key={i}
+                  params={[param.param]}
+                  promptId={param.prompt}
+                  resOverrides={resOverrides}
+                  setResOverrides={setResOverrides}
+                />
+              ))}
+            </React.Fragment>
+          )}
         </Box>
 
         <Stack>
-          <Stack direction={"row"} alignItems={"center"} gap={1} m={"20px 10px"}>
+          <Stack
+            direction={"row"}
+            alignItems={"center"}
+            gap={1}
+            m={"20px 10px"}
+          >
             <Button
               variant={"contained"}
               startIcon={token ? <LogoApp width={18} color="white" /> : null}
@@ -562,16 +597,22 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
                   borderColor: "transparent",
                 },
               }}
-              disabled={!token ? false : (!allowGenerate || isGenerating)}
+              disabled={!token ? false : !allowGenerate || isGenerating}
               onClick={handlePostPrompt}
             >
               {token ? (
                 <React.Fragment>
-                  <Typography ml={2} color={"inherit"}>Start</Typography>
-                  <Typography ml={"auto"} color={"inherit"}>~360s</Typography>
+                  <Typography ml={2} color={"inherit"}>
+                    Start
+                  </Typography>
+                  <Typography ml={"auto"} color={"inherit"}>
+                    ~360s
+                  </Typography>
                 </React.Fragment>
               ) : (
-                <Typography ml={2} color={"inherit"}>Sign in or Create an account</Typography>
+                <Typography ml={2} color={"inherit"}>
+                  Sign in or Create an account
+                </Typography>
               )}
             </Button>
             <Replay
@@ -580,7 +621,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
                 height: "16px",
                 p: "16px",
                 color: "onSurface",
-                visibility: isGenerating ? "visible" : "hidden"
+                visibility: isGenerating ? "visible" : "hidden",
               }}
             />
           </Stack>
@@ -625,19 +666,19 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 };
 
 const textButtonStyle = {
-  bgcolor: "surface.3", 
-  color: "onSurface", 
-  fontSize: 13, 
-  fontWeight: 500, 
+  bgcolor: "surface.3",
+  color: "onSurface",
+  fontSize: 13,
+  fontWeight: 500,
   p: "5px 12px",
-  "svg": {
-    fontSize: "16px !important"
-  }
-}
+  svg: {
+    fontSize: "16px !important",
+  },
+};
 const keysStyle = {
   padding: "2px 4px",
   letterSpacing: "1px",
   border: "1px solid #E1E2EC",
   borderRadius: "4px",
-  boxShadow: "0px 2px 0px rgba(0, 0, 0, 0.12)"
+  boxShadow: "0px 2px 0px rgba(0, 0, 0, 0.12)",
 };

@@ -113,10 +113,16 @@ export interface TemplatesExecutions {
   created_at: Date;
   prompt_executions: PromptExecutions[];
   is_favorite: boolean;
+  parameters: { [key: string]: any };
 }
 
 export interface ITemplateExecutionPut {
   title?: string;
+}
+
+export interface ISparkWithExecution {
+  title?: string;
+  execution_id?: number;
 }
 
 export interface PromptExecutions {
