@@ -174,7 +174,8 @@ const Questions: React.FC<IProps> = ({ skip, questions }) => {
                 bgcolor: "#D6D6D6",
               },
               ":hover": {
-                color: "#000",
+                color: "#fff",
+                background: "#375CA9",
               },
             }}
           >

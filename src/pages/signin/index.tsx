@@ -35,12 +35,10 @@ const Login = () => {
   const postLogin = (response: IContinueWithSocialMediaResponse | null) => {
     const path = getPathURL();
     if (response?.created) {
-      setIsLoading(false);
       setUser(response);
       router.push("/signup");
     } else {
       localStorage.removeItem("path");
-      setIsLoading(false);
       if (path) {
         router.push(path);
       } else {
