@@ -113,35 +113,30 @@ export interface TemplatesExecutions {
   created_at: Date;
   prompt_executions: PromptExecutions[];
   is_favorite: boolean;
+  parameters: { [key: string]: any };
+  contextual_overrides: { [key: string]: any };
 }
 
 export interface ITemplateExecutionPut {
   title?: string;
 }
 
+export interface ISparkWithExecution {
+  title?: string;
+  execution_id?: number;
+}
+
 export interface PromptExecutions {
-  content: string;
-  created_at: Date;
-  executed_by: number;
   id: number;
+  prompt: number;
+  executed_by: number;
   output: string;
   parameters: {
     [key: number]: string | number;
   };
-  prompt: number;
-}
-export interface PromptExecutionResponse {
-  contextual_overrides: {
-    [key: number]: [];
-  };
+  content: string;
   created_at: Date;
-  executed_by: number;
-  id: number;
-  parameters: {
-    [key: number]: string | number;
-  };
-  prompt_executions: PromptExecutions[];
-  template: number;
+  tokens_spent: number;
 }
 
 export interface TemplateExecutionsDisplay {
@@ -161,5 +156,50 @@ export interface TemplateExecutionsDisplay {
     title: string;
     created_at: string;
   }[];
+  sparks: {
+    id: number;
+    initial_title: string;
+    created_at: string;
+    versions: {
+      id: number;
+      title: string;
+      created_at: string;
+    }[];
+    current_version: {
+      id: number;
+      title: string;
+      created_at: string;
+    };
+  }[];
   likes: number;
+}
+export interface SparkExecution {
+  id: number;
+  title: string;
+  parameters: {
+    [key: number]: string | number;
+  };
+  contextual_overrides: {
+    [key: number]: [];
+  };
+  template: number;
+  executed_by: number;
+  created_at: string;
+  prompt_executions: PromptExecutions[];
+  is_favorite: boolean;
+}
+
+export interface SparkVersion {
+  id: number,
+  title: string,
+  created_at: string
+}
+export interface Spark {
+  id: number;
+  initial_title: string;
+  created_at: string;
+  created_by: number;
+  versions: SparkVersion[];
+  current_version: TemplatesExecutions;
+  is_favorite: boolean;
 }

@@ -1,7 +1,6 @@
 import React from "react";
 import { FetchLoading } from "@/components/FetchLoading";
 import CardTemplate from "@/components/common/cards/CardTemplate";
-import { useGetTemplatesExecutionsByMeQuery } from "@/core/api/prompts";
 import { Layout } from "@/layout";
 import {
   Accordion,
@@ -16,31 +15,34 @@ import {
 import moment from "moment";
 import { ArrowForwardIos, History } from "@mui/icons-material";
 import { useRouter } from "next/router";
+import { useGetSparksByMeQuery } from "@/core/api/sparks";
 
 const Sparks = () => {
   const [expanded, setExpanded] = React.useState<string | false>(false);
   const router = useRouter();
 
-  const { data: templatesExecutions, isLoading: isTemplatesLoading } =
-    useGetTemplatesExecutionsByMeQuery();
+  const { data: sparksByTemplate, isLoading: isSparksByTemplateLoading} =
+    useGetSparksByMeQuery();
 
   const toggleExpand =
     (panel: string) => (e: React.SyntheticEvent, newExpanded: boolean) => {
       setExpanded(newExpanded ? panel : false);
     };
 
-  let executionsCount = 0;
-  const sortedTemplates = templatesExecutions?.map((template) => {
-    const executions = [...template.executions].sort((a, b) => {
-      return (
-        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      );
+  let sparksCount = 0;
+  const sortedTemplates = sparksByTemplate?.map((template) => {
+    // Sort the sparks inside each template by current_version.created_at
+    console.log(template.sparks)
+    const sortedSparks = [...template.sparks].sort((a, b) => {
+      const dateA = a.current_version ? new Date(a.current_version.created_at).getTime() : 0;
+      const dateB = b.current_version ? new Date(b.current_version.created_at).getTime() : 0;
+      return dateB - dateA;
     });
-    executionsCount += template.executions.length;
+    sparksCount += template.sparks.length;
 
     return {
       ...template,
-      executions,
+      sparks: sortedSparks,
     };
   });
 
@@ -52,14 +54,14 @@ const Sparks = () => {
             padding: { xs: "16px", md: "32px" },
           }}
         >
-          {isTemplatesLoading ? (
+          {isSparksByTemplateLoading ? (
             <Box>
               <FetchLoading />
             </Box>
           ) : (
             <Stack gap={2}>
               <Typography fontSize={18} fontWeight={500} color={"onSurface"}>
-                My Sparks ({executionsCount})
+                My Sparks ({sparksCount})
               </Typography>
               <Stack gap={1}>
                 {sortedTemplates && sortedTemplates.length > 0 ? (
@@ -111,7 +113,7 @@ const Sparks = () => {
                               fontWeight={500}
                               color={"onSurface"}
                             >
-                              {template.executions.length}
+                              {template.sparks?.length}
                             </Typography>
                           </Grid>
                           <Grid item xs={11.5}>
@@ -127,9 +129,9 @@ const Sparks = () => {
                         }}
                       />
                       <AccordionDetails>
-                        {template.executions.map((execution) => (
+                        {template.sparks?.map((spark) => (
                           <Stack
-                            key={execution.id}
+                            key={spark.id}
                             direction={"row"}
                             justifyContent={"space-between"}
                             alignItems={"center"}
@@ -141,7 +143,7 @@ const Sparks = () => {
                             }}
                             onClick={() =>
                               router.push(
-                                `prompt/${template.slug}?spark=${execution.id}`
+                                `prompt/${template.slug}?spark=${spark.id}`
                               )
                             }
                           >
@@ -152,9 +154,9 @@ const Sparks = () => {
                               letterSpacing={0.46}
                               dangerouslySetInnerHTML={{
                                 __html:
-                                  execution.title.length > 150
-                                    ? `${execution.title?.slice(0, 150 - 1)}...`
-                                    : execution.title,
+                                  spark.initial_title.length > 150
+                                    ? `${spark.initial_title?.slice(0, 150 - 1)}...`
+                                    : spark.initial_title,
                               }}
                             />
                             <Stack
@@ -168,7 +170,7 @@ const Sparks = () => {
                                 color={"onSurface"}
                                 sx={{ opacity: 0.5 }}
                               >
-                                {moment(execution.created_at).fromNow()}
+                                {spark.current_version ? moment(spark.current_version.created_at  ).fromNow() : '-'}
                               </Typography>
                               <Stack
                                 direction={"row"}
@@ -182,7 +184,7 @@ const Sparks = () => {
                                 }}
                               >
                                 <History sx={{ fontSize: 18 }} />
-                                {template.likes}
+                                {spark.versions.length}
                               </Stack>
                             </Stack>
                           </Stack>

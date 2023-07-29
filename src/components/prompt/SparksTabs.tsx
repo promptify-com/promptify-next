@@ -1,35 +1,30 @@
 import React from 'react'
 import { Box, MenuItem, MenuList, Stack, Tab, Tabs, Typography, alpha, useTheme } from '@mui/material'
-import { TemplatesExecutions } from '@/core/api/dto/templates';
+import { Spark, TemplatesExecutions } from '@/core/api/dto/templates';
 import { FeedOutlined, PriorityHighOutlined, PushPin } from '@mui/icons-material';
 import moment from 'moment';
 
-interface Props {
-   executions: TemplatesExecutions[];
-   chooseExecution: (execution: TemplatesExecutions) => void;
-}
-
 interface TabPanelProps {
-  children?: React.ReactNode;
-  index: number;
-  value: number;
+   children?: React.ReactNode;
+   index: number;
+   value: number;
 }
 
 const CustomTabPanel = (props: TabPanelProps) => {
    const { children, value, index, ...other } = props;
-
+   
    return (
       <Box
-         role="tabpanel"
-         hidden={value !== index}
-         id={`simple-tabpanel-${index}`}
-         aria-labelledby={`simple-tab-${index}`}
-         sx={{
-            height: "50svh", 
-            overflow: "auto",
-            overscrollBehavior: "contain"
-         }}
-         {...other}
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      sx={{
+         height: "50svh", 
+         overflow: "auto",
+         overscrollBehavior: "contain"
+      }}
+      {...other}
       >
          {value === index && (
             <React.Fragment>
@@ -47,28 +42,33 @@ const a11yProps = (index: number) => {
    };
 }
 
-export const ExecutionsTabs:React.FC<Props> = ({ executions, chooseExecution }) => {
-   const { palette } = useTheme();
+interface Props {
+   sparks: Spark[];
+   chooseSpark: (spark: Spark) => void;
+}
 
+export const SparksTabs:React.FC<Props> = ({ sparks, chooseSpark }) => {
+   const { palette } = useTheme();
+   
    const [tabsValue, setTabsValue] = React.useState(0);
    const changeTab = (e: React.SyntheticEvent, newValue: number) => {
       setTabsValue(newValue);
    };
 
-   const pinnedExecutions = executions.filter(
-      (execution) => execution.is_favorite
+   const pinnedSparks = sparks.filter(
+      (spark) => spark.is_favorite
    );
 
-   const ExecutionCard = ({ execution }: { execution: TemplatesExecutions }) => {
+   const SparkCard = ({ spark }: { spark: Spark }) => {
       return (
-         <MenuItem key={execution.id}
+         <MenuItem key={spark.id}
             sx={{ 
                borderTop: "1px solid #E3E3E3", 
                p: "16px",
                opacity: .8,
                "&:hover": { opacity: 1 }
             }}
-            onClick={() => chooseExecution(execution)}
+            onClick={() => chooseSpark(spark)}
          >
             <Stack direction={"row"} alignItems={"center"} gap={2}>
                <FeedOutlined style={{ fontSize: 32 }} />
@@ -81,7 +81,7 @@ export const ExecutionsTabs:React.FC<Props> = ({ executions, chooseExecution }) 
                      wordBreak: "break-word"
                   }}
                   >
-                     {execution.title}
+                     {spark.initial_title}
                   </Typography>
                   <Typography sx={{
                      fontWeight: 400,
@@ -90,7 +90,7 @@ export const ExecutionsTabs:React.FC<Props> = ({ executions, chooseExecution }) 
                      opacity: .5
                   }}
                   >
-                     {moment(execution.created_at).fromNow()}
+                     {spark.current_version ? moment(spark.current_version.created_at).fromNow() : '-'}
                   </Typography>
                </Stack>
             </Stack>
@@ -98,16 +98,16 @@ export const ExecutionsTabs:React.FC<Props> = ({ executions, chooseExecution }) 
       )
    }
 
-   const ExecutionsList = (executionList:TemplatesExecutions[]) => (
+   const SparksList = (sparksList:Spark[]) => (
       <MenuList sx={{ 
          flex: 1,
          p: 0, 
          overflow: "auto", 
          overscrollBehavior: "contain" 
       }}>
-         {executionList.length ? (
-            executionList.map((exec) => (
-               <ExecutionCard key={exec.id} execution={exec} />
+         {sparksList.length ? (
+            sparksList.map((spark) => (
+               <SparkCard key={spark.id} spark={spark} />
             ))
          ) : (
             <Stack sx={{ height: "100%", justifyContent: "center", alignItems: "center" }}>
@@ -138,7 +138,7 @@ export const ExecutionsTabs:React.FC<Props> = ({ executions, chooseExecution }) 
          </Tabs>
          <CustomTabPanel value={tabsValue} index={0}>
             <Stack height={"100%"}>
-               {ExecutionsList(executions)}
+               {SparksList(sparks)}
                <Stack direction={"row"} alignItems={"center"} gap={1}
                   sx={{ 
                      position: "sticky", 
@@ -157,7 +157,7 @@ export const ExecutionsTabs:React.FC<Props> = ({ executions, chooseExecution }) 
          </CustomTabPanel>
          <CustomTabPanel value={tabsValue} index={1}>
             <Stack height={"100%"}>
-               {ExecutionsList(pinnedExecutions)}
+               {SparksList(pinnedSparks)}
             </Stack>
          </CustomTabPanel>
       </Box>
