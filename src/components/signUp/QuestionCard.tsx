@@ -42,7 +42,7 @@ const QuestionCard = ({
       borderRadius="16px"
       border={
         checkedOptions[question.id] === id
-          ? "1px solid #30499e"
+          ? "1px solid #375CA9"
           : "2px solid var(--primary-20, rgba(55, 92, 169, 0.20))"
       }
       onClick={() => checkCard(id)}
@@ -61,8 +61,8 @@ const QuestionCard = ({
         sx={{
           fontFamily: "Poppins",
           fontStyle: "normal",
-          fontWeight: 400,
-          fontSize: "16px",
+          fontWeight: 500,
+          fontSize: "18px",
           lineHeight: "150%",
           display: "flex",
           alignItems: "center",

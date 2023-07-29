@@ -21,7 +21,7 @@ const Finish = () => {
 
   const handleFinish = async () => {
     // await updateUser(values)
-    router.push("/");
+    router.push("/profile/edit");
   };
 
   return (

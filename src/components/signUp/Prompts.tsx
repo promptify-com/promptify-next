@@ -15,8 +15,6 @@ const Prompts = ({ setStep }: OnboardingPage) => {
   const [checkedPrompts, setCheckedPrompts] = useState<number[]>([]);
   const [interests] = useInterests();
 
-  console.log("interests ++++++++++++++++++", interests);
-
   const [updateInterests] = useUpdateInterests();
 
   const handleContinue = async () => {

@@ -155,30 +155,33 @@ const Questions: React.FC<IProps> = ({ skip, questions }) => {
           )}
 
           <Button
-            disabled={isAnswering}
+            disabled={isAnswering || !Boolean(checkedOptions[step])}
             onClick={nextStep}
             sx={{
-              bgcolor: "#D6D6D6",
-              color: "common.black",
               mt: "2rem",
-              paddingLeft: "2rem",
-              paddingRight: "2rem",
-              textTransform: "none",
               display: "flex",
+              padding: "8px 22px",
               flexDirection: "column",
               justifyContent: "center",
               alignItems: "center",
-              padding: "8px 22px",
-              width: "100%",
-              height: "42px",
-              background: "rgba(29, 32, 40, 0.12)",
+              alignSelf: "stretch",
               borderRadius: "100px",
+              background: "#375CA9",
+              fontSize: "15px",
+              fontWeight: "500",
+              color: "#fff",
+              ":disabled": {
+                bgcolor: "#D6D6D6",
+              },
+              ":hover": {
+                color: "#000",
+              },
             }}
           >
             {isAnswering ? (
-              <CircularProgress />
+              <CircularProgress style={{ color: "#fff" }} />
             ) : (
-              <Typography color="#000000">Continue</Typography>
+              "Continue"
             )}
           </Button>
 
@@ -207,8 +210,9 @@ const Questions: React.FC<IProps> = ({ skip, questions }) => {
               onClick={() => skip()}
               sx={{
                 fontSize: { xs: "0.8rem", md: "0.8rem", lg: "0.8rem" },
-                color: "#9A9A9A",
+                color: "#1D202",
                 mb: "2rem",
+                fontWeight: 500,
               }}
             >
               Skip for now
