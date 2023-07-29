@@ -12,6 +12,7 @@ import { LogoApp } from "../../assets/icons/LogoApp";
 import { useUpdateUser } from "../../hooks/api/user";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { SigninImage } from "@/assets/icons/SigninImage";
 
 const Finish = () => {
   const router = useRouter();
@@ -20,7 +21,7 @@ const Finish = () => {
 
   const handleFinish = async () => {
     // await updateUser(values)
-    router.push("/dashboard");
+    router.push("/profile/edit");
   };
 
   return (
@@ -36,7 +37,7 @@ const Finish = () => {
         flexDirection="column"
         alignItems="center"
         sx={{
-          width: { xs: "100%", lg: "70%" },
+          width: { xs: "100%", lg: "50%" },
           height: "100vh",
           justifyContent: "center",
         }}
@@ -96,34 +97,34 @@ const Finish = () => {
             disabled={isLoading}
             onClick={handleFinish}
             sx={{
-              bgcolor: "#D6D6D6",
-              color: "common.black",
               mt: "2rem",
-              paddingLeft: "2rem",
-              paddingRight: "2rem",
-              textTransform: "none",
               display: "flex",
+              padding: "8px 22px",
               flexDirection: "column",
               justifyContent: "center",
               alignItems: "center",
-              padding: "8px 22px",
-              width: "100%",
-              height: "42px",
-              background: "rgba(29, 32, 40, 0.12)",
+              alignSelf: "stretch",
               borderRadius: "100px",
+              background: "#375CA9",
+              fontSize: "15px",
+              fontWeight: "500",
+              color: "#fff",
+              ":disabled": {
+                bgcolor: "#D6D6D6",
+              },
+              ":hover": {
+                color: "#fff",
+                background: "#375CA9",
+              },
             }}
           >
-            {isLoading ? (
-              <CircularProgress />
-            ) : (
-              <Typography color="#FFFFFF">Finish</Typography>
-            )}
+            {isLoading ? <CircularProgress /> : "Finish"}
           </Button>
         </Box>
       </Box>
       <Grid
         sx={{
-          width: "30%",
+          width: "50%",
           height: "100vh",
           display: { xs: "none", lg: "flex" },
           justifyContent: "flex-end",
@@ -131,18 +132,55 @@ const Finish = () => {
         }}
       >
         <CardMedia
-          component="img"
-          image={Images.COVERLOGIN}
-          alt="Cover SignIn"
           sx={{
-            display: "block",
-            WebkitBackgroundSize: "cover",
-            backgroundSize: "cover",
-            objectFit: "contain",
-            height: "100vh",
-            width: "fit-content",
+            padding: { xs: "0px", sm: "24px" },
+            width: "100%",
+            height: "100%",
+            boxSizing: "border-box",
+            position: "relative",
           }}
-        />
+        >
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexDirection: "column",
+              gap: "34px",
+              position: "absolute",
+              top: { xs: "50px", sm: "70px" },
+              left: "50%",
+              transform: "translateX(-50%)",
+              width: { xs: "80%", sm: "70%" },
+            }}
+          >
+            <Box
+              sx={{
+                display: { xs: "none", sm: "block" },
+              }}
+            >
+              <LogoApp width={53} color={"#fff"} />
+            </Box>
+
+            <Typography
+              sx={{
+                color: "var(--on-primary, #FFF)",
+                textAlign: "center",
+                fontSize: { xs: "14px", sm: "18px" },
+                fontStyle: "normal",
+                fontWeight: 400,
+                lineHeight: "27px",
+                letterSpacing: "0.15px",
+              }}
+            >
+              Unleash your creative potential using Promptify, the ultimate
+              ChatGPT and AI-driven content generation and idea inspiration
+              platform
+            </Typography>
+          </Box>
+
+          <SigninImage style={{ borderRadius: "25px" }} />
+        </CardMedia>
       </Grid>
     </Box>
   );

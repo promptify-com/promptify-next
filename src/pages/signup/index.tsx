@@ -33,11 +33,11 @@ const SignUp = () => {
         <PageLoading />
       ) : (
         <Box>
-          {step === 1 && <Prompts setStep={setStep} />}
-          {step === 2 && (
-            <Questions questions={questions} skip={() => setStep(3)} />
+          {/* {step === 1 && <Prompts setStep={setStep} />} */}
+          {step === 1 && (
+            <Questions questions={questions} skip={() => setStep(2)} />
           )}
-          {step === 3 && <Finish />}
+          {step === 2 && <Finish />}
         </Box>
       )}
     </>

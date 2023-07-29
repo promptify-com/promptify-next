@@ -76,9 +76,8 @@ export default function ExplorePage() {
               filtred={!allNull}
               templates={templates ?? []}
               isLoading={isTemplatesLoading}
-            >
-              Best templates
-            </TemplatesSection>
+              title="Best templates"
+            />
           </Grid>
         </Box>
       </Layout>
