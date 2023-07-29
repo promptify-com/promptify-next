@@ -133,15 +133,15 @@ export const SocialButtons: React.FC<IProps> = ({
           padding: "8px 22px",
           height: "42px",
           width: "100%",
-          background: "#3B4050",
-          boxShadow:
-            "0px 1px 5px rgba(0, 0, 0, 0.12), 0px 2px 2px rgba(0, 0, 0, 0.14), 0px 3px 1px -2px rgba(0, 0, 0, 0.2)",
+          background: "transparent",
           borderRadius: "100px",
+          border:
+            "1px solid var(--primary-states-outlined-border, rgba(59, 64, 80, 0.15))",
           gap: "0.5em",
+          cursor: "pointer",
           "&:hover": {
-            transform: "scale(1.005)",
-            cursor: "pointer",
-            boxShadow: "rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px",
+            transform: "scale(1.01)",
+            boxShadow: "rgba(0, 0, 0, 0.15) 0 0 1px",
           },
         }}
       >
@@ -154,7 +154,7 @@ export const SocialButtons: React.FC<IProps> = ({
             fontSize: "15px",
             lineHeight: "26px",
             letterSpacing: "0.46px",
-            color: "#FFFFFF",
+            color: "#3B4050",
           }}
         >
           Continue with Google
@@ -170,19 +170,26 @@ export const SocialButtons: React.FC<IProps> = ({
           padding: "8px 22px",
           height: "42px",
           width: "100%",
-          background: "#1877F2",
-          boxShadow:
-            "0px 1px 5px rgba(0, 0, 0, 0.12), 0px 2px 2px rgba(0, 0, 0, 0.14), 0px 3px 1px -2px rgba(0, 0, 0, 0.2)",
+          background: "transparent",
           borderRadius: "100px",
+          border:
+            "1px solid var(--primary-states-outlined-border, rgba(59, 64, 80, 0.15))",
           gap: "0.5em",
+          cursor: "pointer",
           "&:hover": {
-            transform: "scale(1.005)",
-            cursor: "pointer",
-            boxShadow: "rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px",
+            transform: "scale(1.01)",
+            boxShadow: "rgba(0, 0, 0, 0.15) 0 0 1px",
           },
         }}
       >
-        <LinkedIn sx={{ color: "white" }} />
+        <LinkedIn
+          sx={{
+            color: "#0072b1",
+            width: "24px",
+            height: "24px",
+            fontSize: "30px",
+          }}
+        />
         <Typography
           sx={{
             fontFamily: "Poppins",
@@ -191,7 +198,7 @@ export const SocialButtons: React.FC<IProps> = ({
             fontSize: "15px",
             lineHeight: "26px",
             letterSpacing: "0.46px",
-            color: "#FFFFFF",
+            color: "#3B4050",
           }}
         >
           Continue with LinkedIn
@@ -217,19 +224,19 @@ export const SocialButtons: React.FC<IProps> = ({
           padding: "8px 22px",
           height: "42px",
           width: "100%",
-          background: "#FF4500",
-          boxShadow:
-            "0px 1px 5px rgba(0, 0, 0, 0.12), 0px 2px 2px rgba(0, 0, 0, 0.14), 0px 3px 1px -2px rgba(0, 0, 0, 0.2)",
+          background: "transparent",
           borderRadius: "100px",
+          border:
+            "1px solid var(--primary-states-outlined-border, rgba(59, 64, 80, 0.15))",
           gap: "0.5em",
+          cursor: "pointer",
           "&:hover": {
-            transform: "scale(1.005)",
-            cursor: "pointer",
-            boxShadow: "rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px",
+            transform: "scale(1.01)",
+            boxShadow: "rgba(0, 0, 0, 0.15) 0 0 1px",
           },
         }}
       >
-        <GitHub sx={{ color: "white" }} />
+        <GitHub sx={{ color: "#171515" }} />
         <Typography
           sx={{
             fontFamily: "Poppins",
@@ -238,7 +245,7 @@ export const SocialButtons: React.FC<IProps> = ({
             fontSize: "15px",
             lineHeight: "26px",
             letterSpacing: "0.46px",
-            color: "#FFFFFF",
+            color: "#3B4050",
           }}
         >
           Continue with GitHub
@@ -254,15 +261,15 @@ export const SocialButtons: React.FC<IProps> = ({
           padding: "8px 22px",
           height: "42px",
           width: "100%",
-          background: "#1877f280",
-          boxShadow:
-            "0px 1px 5px rgba(0, 0, 0, 0.12), 0px 2px 2px rgba(0, 0, 0, 0.14), 0px 3px 1px -2px rgba(0, 0, 0, 0.2)",
+          background: "transparent",
           borderRadius: "100px",
+          border:
+            "1px solid var(--primary-states-outlined-border, rgba(59, 64, 80, 0.15))",
           gap: "0.5em",
+          cursor: "pointer",
           "&:hover": {
-            transform: "scale(1.005)",
-            cursor: "pointer",
-            boxShadow: "rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px",
+            transform: "scale(1.01)",
+            boxShadow: "rgba(0, 0, 0, 0.15) 0 0 1px",
           },
         }}
       >
@@ -275,7 +282,7 @@ export const SocialButtons: React.FC<IProps> = ({
             fontSize: "15px",
             lineHeight: "26px",
             letterSpacing: "0.46px",
-            color: "#FFFFFF",
+            color: "#3B4050",
           }}
         >
           Continue with Microsoft

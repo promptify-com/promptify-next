@@ -16,6 +16,7 @@ import { LogoApp } from "../../assets/icons/LogoApp";
 import Images from "../../assets";
 import MuiAlert, { AlertProps, AlertColor } from "@mui/material/Alert";
 import Link from "next/link";
+import { SigninImage } from "@/assets/icons/SigninImage";
 
 interface IProps {
   skip: () => void;
@@ -73,14 +74,14 @@ const Questions: React.FC<IProps> = ({ skip, questions }) => {
         flexDirection="column"
         alignItems="center"
         sx={{
-          width: { xs: "100%", lg: "70%" },
+          width: { xs: "100%", lg: "50%" },
           height: "100vh",
           justifyContent: "center",
         }}
       >
         <Box
           sx={{
-            width: { xs: "70%", lg: "70%" },
+            width: { xs: "90%", lg: "70%" },
             display: "flex",
             flexDirection: "column",
           }}
@@ -89,26 +90,14 @@ const Questions: React.FC<IProps> = ({ skip, questions }) => {
             <Grid
               sx={{
                 display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: "30px",
               }}
             >
               <LogoApp />
             </Grid>
           </Link>
-          <Typography
-            sx={{
-              mt: { xs: "1rem", md: "1rem", lg: "1rem", xl: "1rem" },
-              fontWeight: 500,
-              fontFamily: "Poppins",
-              fontStyle: "normal",
-              fontSize: "48px",
-              lineHeight: "116.7%",
-              display: "flex",
-              alignItems: "center",
-              color: "#1D2028",
-            }}
-          >
-            Hello, Johnathan!
-          </Typography>
 
           <Typography
             sx={{
@@ -149,7 +138,7 @@ const Questions: React.FC<IProps> = ({ skip, questions }) => {
               <Grid container spacing={{ xs: 1, sm: 2 }}>
                 {questions[step - 1].options.map((option) => {
                   return (
-                    <Grid item xs={12} sm={6} key={option.id}>
+                    <Grid item xs={6} sm={6} key={option.id}>
                       <QuestionCard
                         name={option.text}
                         icon={<BugReport />}
@@ -229,7 +218,7 @@ const Questions: React.FC<IProps> = ({ skip, questions }) => {
       </Box>
       <Grid
         sx={{
-          width: "30%",
+          width: "50%",
           height: "100vh",
           display: { xs: "none", lg: "flex" },
           justifyContent: "flex-end",
@@ -237,18 +226,55 @@ const Questions: React.FC<IProps> = ({ skip, questions }) => {
         }}
       >
         <CardMedia
-          component="img"
-          image={Images.COVERLOGIN}
-          alt="Cover SignIn"
           sx={{
-            display: "block",
-            WebkitBackgroundSize: "cover",
-            backgroundSize: "cover",
-            objectFit: "contain",
-            height: "100vh",
-            width: "fit-content",
+            padding: { xs: "0px", sm: "24px" },
+            width: "100%",
+            height: "100%",
+            boxSizing: "border-box",
+            position: "relative",
           }}
-        />
+        >
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexDirection: "column",
+              gap: "34px",
+              position: "absolute",
+              top: { xs: "50px", sm: "70px" },
+              left: "50%",
+              transform: "translateX(-50%)",
+              width: { xs: "80%", sm: "70%" },
+            }}
+          >
+            <Box
+              sx={{
+                display: { xs: "none", sm: "block" },
+              }}
+            >
+              <LogoApp width={53} color={"#fff"} />
+            </Box>
+
+            <Typography
+              sx={{
+                color: "var(--on-primary, #FFF)",
+                textAlign: "center",
+                fontSize: { xs: "14px", sm: "18px" },
+                fontStyle: "normal",
+                fontWeight: 400,
+                lineHeight: "27px",
+                letterSpacing: "0.15px",
+              }}
+            >
+              Unleash your creative potential using Promptify, the ultimate
+              ChatGPT and AI-driven content generation and idea inspiration
+              platform
+            </Typography>
+          </Box>
+
+          <SigninImage style={{ borderRadius: "25px" }} />
+        </CardMedia>
       </Grid>
       <Snackbar
         open={open}

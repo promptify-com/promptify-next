@@ -6,6 +6,7 @@ import { LogoApp } from "@/assets/icons/LogoApp";
 import { IContinueWithSocialMediaResponse } from "@/common/types";
 import { SocialButtons } from "./SocialButtons";
 import Image from "next/image";
+import { SigninImage } from "@/assets/icons/SigninImage";
 
 interface IProps {
   preLogin: () => void;
@@ -27,11 +28,18 @@ export const LoginLayout: React.FC<IProps> = ({
   };
 
   return (
-    <Box display="flex" sx={{ minHeight: "100vh", width: "100vw" }}>
+    <Box
+      display="flex"
+      sx={{
+        height: "100vh",
+        overflowY: { xs: "hidden", sm: "auto" },
+        width: "100%",
+        flexDirection: { xs: "column", sm: "row" },
+      }}
+    >
       <Grid
         sx={{
-          width: { xs: "100%", lg: "70%" },
-          height: "100vh",
+          width: { xs: "100%", lg: "50%" },
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -41,62 +49,82 @@ export const LoginLayout: React.FC<IProps> = ({
         <Grid
           className="button-style"
           sx={{
-            height: "70vh",
+            height: { xs: "100%", sm: "70vh" },
             width: "100%",
             display: "flex",
+            justifyContent: "center",
+            alignItems: { xs: "center", sm: "flex-start" },
             flexDirection: "column",
-            gap: "2em",
-            // padding: { xs: '0em 2em', sm: '0em 5em' },
+            gap: { xs: "1em", sm: "2em" },
+            marginBottom: { xs: "1em", sm: 0 },
           }}
         >
           <Grid
             sx={{
               display: "flex",
+              alignItems: "center",
+              justifyContent: { xs: "center", sm: "flex-start" },
+              gap: "16px",
               width: "100%",
-              marginBottom: "2em",
+              marginBottom: { xs: 0, sm: "80px" },
             }}
           >
-            <LogoApp width={90} />
+            <Box
+              sx={{
+                marginTop: { xs: "40px", sm: "0em" },
+                marginBottom: { xs: "10px", sm: "0em" },
+              }}
+            >
+              <LogoApp width={54} />
+            </Box>
+            <Typography
+              sx={{
+                display: { xs: "none", sm: "block" },
+                color: "var(--on-surface, #1B1B1E)",
+                textAlign: "center",
+                fontSize: "18px",
+                fontStyle: "normal",
+                fontWeight: 500,
+                lineHeight: "25px",
+                letterSpacing: "0.17px",
+              }}
+            >
+              Promptify
+            </Typography>
           </Grid>
           <Grid
             sx={{
               display: "flex",
+              alignItems: { xs: "center", sm: "flex-start" },
+
               width: "100%",
               flexDirection: "column",
-              gap: "2em",
+              gap: "1em",
             }}
           >
             <Typography
               sx={{
-                height: "56px",
-                fontFamily: "Poppins",
                 fontStyle: "normal",
                 fontWeight: 500,
-                fontSize: { xs: "32px", sm: "48px" },
-                lineHeight: "116.7%",
-                display: "flex",
-                alignItems: "center",
+                fontSize: { xs: "24px", sm: "32px" },
+                lineHeight: { xs: "28px", sm: "37px" },
                 color: "#1D2028",
+                textAlign: { xs: "center", sm: "left" },
               }}
             >
               Welcome to Promptify
             </Typography>
             <Typography
               sx={{
-                height: "24px",
-                fontFamily: "Poppins",
                 fontStyle: "normal",
                 fontWeight: 400,
-                fontSize: { xs: "14px", sm: "16px" },
-                lineHeight: "150%",
-                display: "flex",
-                alignItems: "center",
+                fontSize: "16px",
+                lineHeight: "24px",
                 letterSpacing: "0.15px",
                 color: "#1D2028",
-                flex: "none",
               }}
             >
-              Please, specify what type of prompts you need
+              Please, register via social network
             </Typography>
           </Grid>
           <GoogleOAuthProvider
@@ -121,42 +149,43 @@ export const LoginLayout: React.FC<IProps> = ({
               <Checkbox
                 checked={isChecked}
                 onChange={handleCheckboxChange}
-                color="info"
-              />
-              <Grid
                 sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "4px",
+                  color: "#3B4050",
+                  "&.Mui-checked": {
+                    color: "#3B4050",
+                  },
+                }}
+              />
+
+              <Typography
+                sx={{
+                  fontFamily: "Poppins",
+                  fontStyle: "normal",
+                  fontWeight: 400,
+                  fontSize: "16px",
+                  lineHeight: "24px",
+                  letterSpacing: "0.15px",
+                  color: errorCheckBox ? "#1D2028" : "red",
+                  display: "inline",
                 }}
               >
+                I accept the{" "}
                 <Typography
                   sx={{
                     fontFamily: "Poppins",
                     fontStyle: "normal",
                     fontWeight: 400,
                     fontSize: "16px",
-                    lineHeight: "150%",
-                    letterSpacing: "0.15px",
-                    color: errorCheckBox ? "#1D2028" : "red",
-                  }}
-                >
-                  I accept
-                </Typography>
-                <Typography
-                  sx={{
-                    fontFamily: "Poppins",
-                    fontStyle: "normal",
-                    fontWeight: 400,
-                    fontSize: "16px",
-                    lineHeight: "150%",
+                    lineHeight: "24px",
                     letterSpacing: "0.15px",
                     color: errorCheckBox ? "#4733ff" : "red",
+                    display: "inline",
+                    "&:hover": { textDecoration: "underline" },
                   }}
                 >
-                  the Terms or Conditions
+                  Terms or Conditions
                 </Typography>
-              </Grid>
+              </Typography>
             </Grid>
           )}
         </Grid>
@@ -164,31 +193,61 @@ export const LoginLayout: React.FC<IProps> = ({
 
       <Grid
         sx={{
-          //   width: '30%',
-          height: "100vh",
-          display: { xs: "none", lg: "flex" },
+          width: { xs: "100%", sm: "50%" },
+          display: { xs: "flex", sm: "none", lg: "flex" },
           justifyContent: "flex-end",
           alignItems: "flex-end",
         }}
       >
         <CardMedia
           sx={{
-            WebkitBackgroundSize: "contain",
-            backgroundSize: "cover",
-            objectFit: "contain",
-            height: "100vh",
-            width: "fit-content",
+            padding: { xs: "0px", sm: "24px" },
+            width: "100%",
+            height: "100%",
+            boxSizing: "border-box",
+            position: "relative",
           }}
         >
-          <Image
-            src={CoverImage}
-            className="MuiCardMedia-root MuiCardMedia-media MuiCardMedia-img"
-            alt="cover"
-            style={{
-              maxHeight: "99.5%",
-              maxWidth: "100%",
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexDirection: "column",
+              gap: "34px",
+              position: "absolute",
+              top: { xs: "50px", sm: "70px" },
+              left: "50%",
+              transform: "translateX(-50%)",
+              width: { xs: "80%", sm: "70%" },
             }}
-          />
+          >
+            <Box
+              sx={{
+                display: { xs: "none", sm: "block" },
+              }}
+            >
+              <LogoApp width={53} color={"#fff"} />
+            </Box>
+
+            <Typography
+              sx={{
+                color: "var(--on-primary, #FFF)",
+                textAlign: "center",
+                fontSize: { xs: "14px", sm: "18px" },
+                fontStyle: "normal",
+                fontWeight: 400,
+                lineHeight: "27px",
+                letterSpacing: "0.15px",
+              }}
+            >
+              Unleash your creative potential using Promptify, the ultimate
+              ChatGPT and AI-driven content generation and idea inspiration
+              platform
+            </Typography>
+          </Box>
+
+          <SigninImage style={{ borderRadius: "25px" }} />
         </CardMedia>
       </Grid>
     </Box>

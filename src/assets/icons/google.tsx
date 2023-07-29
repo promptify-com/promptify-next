@@ -1,7 +1,13 @@
-import React from 'react';
+import React from "react";
 
 export const Google: React.FC = () => (
-  <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg
+    width="24"
+    height="24"
+    viewBox="0 0 32 32"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
     <path
       d="M32.0003 16.368C32.0003 15.2804 31.9104 14.187 31.7185 13.117H16.3227V19.2781H25.1391C24.7733 21.2652 23.5977 23.023 21.8764 24.1399V28.1376H27.1363C30.2251 25.351 32.0003 21.2358 32.0003 16.368Z"
       fill="#4285F4"

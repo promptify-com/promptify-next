@@ -1,12 +1,12 @@
-import React from 'react';
+import React from "react";
 
 export const Microsoft: React.FC = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 23 23"
-    width="32"
-    height="32"
-    style={{ border: 'none' }}
+    width="24"
+    height="24"
+    style={{ border: "none" }}
   >
     <path fill="#f3f3f3" d="M0 0h23v23H0z" />
     <path fill="#f35325" d="M1 1h10v10H1z" />

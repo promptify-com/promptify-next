@@ -1,6 +1,7 @@
 import React, { ReactElement } from "react";
 import { Box, Typography } from "@mui/material";
 import { ICheckedQA, IQuestion } from "@/common/types";
+import Image from "next/image";
 
 interface ICard {
   name: string;
@@ -30,21 +31,31 @@ const QuestionCard = ({
     <Box
       display="flex"
       sx={{
-        height: { xs: "110px", sm: "120px" },
-        width: { xs: "100%", sm: "100%" },
+        display: "flex",
+        padding: "24px 16px",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        gap: "16px",
+        flex: "1 0 0",
       }}
-      borderRadius="10px"
+      borderRadius="16px"
       border={
         checkedOptions[question.id] === id
-          ? "2px solid #BCBCBC"
+          ? "1px solid var(--primary-20, rgba(55, 92, 169, 0.20))"
           : "2px solid rgba(59, 64, 80, 0.15)"
       }
-      flexDirection="column"
-      alignItems="center"
-      justifyContent="center"
       onClick={() => checkCard(id)}
     >
-      <Box>{icon}</Box>
+      <Image
+        style={{
+          width: "120px",
+          height: "120px",
+          borderRadius: "100px",
+        }}
+        alt="Image"
+        src={require(`../../assets/images/animals/${name}.png`)}
+      />
 
       <Typography
         sx={{
