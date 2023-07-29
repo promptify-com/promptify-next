@@ -42,8 +42,8 @@ const QuestionCard = ({
       borderRadius="16px"
       border={
         checkedOptions[question.id] === id
-          ? "1px solid var(--primary-20, rgba(55, 92, 169, 0.20))"
-          : "2px solid rgba(59, 64, 80, 0.15)"
+          ? "1px solid #30499e"
+          : "2px solid var(--primary-20, rgba(55, 92, 169, 0.20))"
       }
       onClick={() => checkCard(id)}
     >

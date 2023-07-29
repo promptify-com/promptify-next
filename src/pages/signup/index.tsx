@@ -35,7 +35,7 @@ const SignUp = () => {
         <Box>
           {/* {step === 1 && <Prompts setStep={setStep} />} */}
           {step === 1 && (
-            <Questions questions={questions} skip={() => setStep(3)} />
+            <Questions questions={questions} skip={() => setStep(2)} />
           )}
           {step === 2 && <Finish />}
         </Box>
