@@ -137,7 +137,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
     },
     {
       name: "Learn",
-      href: "https://promptify.com",
+      href: "https://blog.promptify.com/",
       icon: <MenuBookRounded />,
       active: pathname == "/learn",
       external: true,

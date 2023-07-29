@@ -58,7 +58,7 @@ export const links = [
   {
     label: "Learn",
     icon: <MenuBookRounded />,
-    href: "https://promptify.com",
+    href: "https://blog.promptify.com/",
     external: true,
   },
 ];

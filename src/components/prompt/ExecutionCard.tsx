@@ -81,11 +81,6 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData }) => {
       }}
     >
       <div ref={ref}></div>
-      <Typography
-        sx={{ fontSize: 48, fontWeight: 400, color: "onSurface", py: "24px" }}
-      >
-        {execution.title}
-      </Typography>
       {sortedExecutions?.map((exec, index) => {
         const prevItem = index > 0 && sortedExecutions[index - 1];
         const isPrevItemIsImage = prevItem && isImageOutput(prevItem?.output);
