@@ -1,9 +1,5 @@
-import React from "react";
-import {
-  Box,
-  Stack,
-  Typography,
-} from "@mui/material";
+import React, { useEffect, useRef } from "react";
+import { Box, Stack, Typography } from "@mui/material";
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { Subtitle } from "@/components/blocks";
 import { getMarkdownFromString } from "@/common/helpers/getMarkdownFromString";
@@ -14,9 +10,16 @@ interface Props {
 }
 
 export const ExecutionCard: React.FC<Props> = ({ execution, templateData }) => {
-
   const promptsOrderMap: { [key: string]: number } = {};
   const promptsExecutionOrderMap: { [key: string]: number } = {};
+
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    ref.current?.scrollIntoView({
+      block: "start",
+    });
+  }, [execution]);
 
   templateData.prompts.forEach((prompt) => {
     promptsOrderMap[prompt.id] = prompt.order;
@@ -25,8 +28,13 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData }) => {
 
   const sortedExecutions = [...execution.prompt_executions].sort((a, b) => {
     if (promptsOrderMap[a.prompt] === promptsOrderMap[b.prompt]) {
-      console.log(promptsExecutionOrderMap[a.prompt], promptsExecutionOrderMap[b.prompt]);
-      return promptsExecutionOrderMap[a.prompt] - promptsExecutionOrderMap[b.prompt];
+      console.log(
+        promptsExecutionOrderMap[a.prompt],
+        promptsExecutionOrderMap[b.prompt]
+      );
+      return (
+        promptsExecutionOrderMap[a.prompt] - promptsExecutionOrderMap[b.prompt]
+      );
     }
     return promptsOrderMap[a.prompt] - promptsOrderMap[b.prompt];
   });
@@ -69,13 +77,17 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData }) => {
   };
 
   return (
-    <Stack gap={1}
+    <Stack
+      gap={1}
       sx={{
         width: { md: "70%" },
         mx: "auto",
       }}
     >
-      <Typography sx={{ fontSize: 48, fontWeight: 400, color: "onSurface", py: "24px" }}>
+      <div ref={ref}></div>
+      <Typography
+        sx={{ fontSize: 48, fontWeight: 400, color: "onSurface", py: "24px" }}
+      >
         {execution.title}
       </Typography>
       {sortedExecutions?.map((exec, index) => {
@@ -88,7 +100,9 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData }) => {
         if (prompt?.show_output)
           return (
             <Stack key={exec.id} gap={1} sx={{ py: "24px" }}>
-              <Subtitle sx={{ fontSize: 24, fontWeight: 400, color: "onSurface" }}>
+              <Subtitle
+                sx={{ fontSize: 24, fontWeight: 400, color: "onSurface" }}
+              >
                 {prompt.title}
               </Subtitle>
               {!isImageOutput(exec.output) && (
@@ -106,7 +120,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData }) => {
                       }}
                       sx={{
                         borderRadius: "8px",
-                        width: '40%',
+                        width: "40%",
                         objectFit: "cover",
                         float: "right",
                         ml: "20px",
