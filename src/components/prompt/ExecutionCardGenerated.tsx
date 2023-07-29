@@ -51,6 +51,8 @@ export const ExecutionCardGenerated: React.FC<Props> = ({
       {execution.data?.map((exec, i) => {
         const prevItem = i > 0 && execution.data && execution.data[i - 1];
         const isPrevItemIsImage = prevItem && isImageOutput(prevItem?.message);
+        const nextItem =  execution.data ? (i < execution.data.length - 1 && execution.data[i + 1]) : undefined;
+        const isNextItemIsText = nextItem && !isImageOutput(nextItem?.message);
 
         const prompt = templateData.prompts.find(
           (prompt) => prompt.id === exec.prompt
@@ -97,6 +99,30 @@ export const ExecutionCardGenerated: React.FC<Props> = ({
                     }}
                     dangerouslySetInnerHTML={{
                       __html: getMarkdownFromString(exec.message),
+                    }}
+                  />
+                </Box>
+              )}
+              {/* is Image Output and Next item is not text */}
+              {isImageOutput(exec.message) && !isNextItemIsText && (
+                <Box>
+                  <Box
+                    component={"img"}
+                    alt={"book cover"}
+                    src={exec.message}
+                    onError={(
+                      e: React.SyntheticEvent<HTMLImageElement, Event>
+                    ) => {
+                      (e.target as HTMLImageElement).src =
+                        "http://placehold.it/165x215";
+                    }}
+                    sx={{
+                      borderRadius: "8px",
+                      width: '40%',
+                      objectFit: "cover",
+                      float: "right",
+                      ml: "20px",
+                      mb: "10px",
                     }}
                   />
                 </Box>

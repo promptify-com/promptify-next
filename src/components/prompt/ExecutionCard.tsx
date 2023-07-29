@@ -93,6 +93,8 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData }) => {
       {sortedExecutions?.map((exec, index) => {
         const prevItem = index > 0 && sortedExecutions[index - 1];
         const isPrevItemIsImage = prevItem && isImageOutput(prevItem?.output);
+        const nextItem = index < sortedExecutions.length - 1 && sortedExecutions[index + 1];
+        const isNextItemIsText = nextItem && !isImageOutput(nextItem?.output);
         const prompt = templateData.prompts.find(
           (prompt) => prompt.id === exec.prompt
         );
@@ -105,6 +107,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData }) => {
               >
                 {prompt.title}
               </Subtitle>
+              {/* is Text Output */}
               {!isImageOutput(exec.output) && (
                 <Box>
                   {isPrevItemIsImage && (
@@ -142,6 +145,28 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData }) => {
                     }}
                   />
                 </Box>
+              )}
+              {/* is Image Output and Next item is not text */}
+              {isImageOutput(exec.output) && !isNextItemIsText && (
+                <Box
+                  component={"img"}
+                  alt={"book cover"}
+                  src={exec.output}
+                  onError={(
+                    e: React.SyntheticEvent<HTMLImageElement, Event>
+                  ) => {
+                    (e.target as HTMLImageElement).src =
+                      "http://placehold.it/165x215";
+                  }}
+                  sx={{
+                    borderRadius: "8px",
+                    width: "40%",
+                    objectFit: "cover",
+                    float: "right",
+                    ml: "20px",
+                    mb: "10px",
+                  }}
+                />
               )}
             </Stack>
           );
