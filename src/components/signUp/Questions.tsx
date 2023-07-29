@@ -113,7 +113,7 @@ const Questions: React.FC<IProps> = ({ skip, questions }) => {
               color: "#1D2028",
             }}
           >
-            Please, answer six simple questions specify your conext
+            Please, answer six simple questions to specify your context
           </Typography>
 
           {questions.length > 0 && (
