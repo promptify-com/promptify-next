@@ -1,7 +1,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 
 import { axiosBaseQuery } from "./axios-base-query";
-import { Spark } from "./dto/templates";
+import { Spark, TemplateExecutionsDisplay } from "./dto/templates";
 import useDeferredAction from "../../hooks/useDeferredAction";
 import { authClient } from "../../common/axios";
 
@@ -17,13 +17,23 @@ export const sparksApi = createApi({
           url: `/api/meta/templates/${id}/sparks`,
           method: "get",
         }),
-      })
+      }),
+      getSparksByMe: builder.query<
+        TemplateExecutionsDisplay[],
+        void
+      >({
+        query: () => ({
+          url: `/api/meta/sparks/me`,
+          method: "get",
+        }),
+      }),
     };
   },
 });
 
 export const {
   useGetSparksByTemplateQuery,
+  useGetSparksByMeQuery,
 } = sparksApi;
 
 export const useTemplateView = () => {
