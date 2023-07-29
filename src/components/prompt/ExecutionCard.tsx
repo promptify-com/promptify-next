@@ -78,49 +78,56 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData }) => {
       <Typography sx={{ fontSize: 48, fontWeight: 400, color: "onSurface", py: "24px" }}>
         {execution.title}
       </Typography>
-      {sortedExecutions?.map((exec) => {
+      {sortedExecutions?.map((exec, index) => {
+        const prevItem = index > 0 && sortedExecutions[index - 1];
+        const isPrevItemIsImage = prevItem && isImageOutput(prevItem?.output);
         const prompt = templateData.prompts.find(
           (prompt) => prompt.id === exec.prompt
         );
+
         if (prompt?.show_output)
           return (
-            <Stack key={exec.id}
-              gap={1}
-              sx={{ py: "24px" }}
-            >
+            <Stack key={exec.id} gap={1} sx={{ py: "24px" }}>
               <Subtitle sx={{ fontSize: 24, fontWeight: 400, color: "onSurface" }}>
                 {prompt.title}
               </Subtitle>
-              {isImageOutput(exec.output) ? (
-                <Box
-                  component={"img"}
-                  alt={"book cover"}
-                  src={exec.output}
-                  onError={(
-                    e: React.SyntheticEvent<HTMLImageElement, Event>
-                  ) => {
-                    (e.target as HTMLImageElement).src =
-                      "http://placehold.it/165x215";
-                  }}
-                  sx={{
-                    borderRadius: "8px",
-                    width: 165,
-                    height: 215,
-                    objectFit: "cover",
-                  }}
-                />
-              ) : (
-                <Typography
-                  sx={{
-                    fontSize: 15,
-                    fontWeight: 400,
-                    color: "onSurface",
-                    wordWrap: "break-word",
-                  }}
-                  dangerouslySetInnerHTML={{
-                    __html: getMarkdownFromString(exec.output),
-                  }}
-                />
+              {!isImageOutput(exec.output) && (
+                <Box>
+                  {isPrevItemIsImage && (
+                    <Box
+                      component={"img"}
+                      alt={"book cover"}
+                      src={prevItem.output}
+                      onError={(
+                        e: React.SyntheticEvent<HTMLImageElement, Event>
+                      ) => {
+                        (e.target as HTMLImageElement).src =
+                          "http://placehold.it/165x215";
+                      }}
+                      sx={{
+                        borderRadius: "8px",
+                        width: '40%',
+                        objectFit: "cover",
+                        float: "right",
+                        ml: "20px",
+                        mb: "10px",
+                      }}
+                    />
+                  )}
+                  <Typography
+                    sx={{
+                      fontSize: 15,
+                      fontWeight: 400,
+                      color: "onSurface",
+                      wordWrap: "break-word",
+                      textAlign: "justify",
+                      float: "none",
+                    }}
+                    dangerouslySetInnerHTML={{
+                      __html: getMarkdownFromString(exec.output),
+                    }}
+                  />
+                </Box>
               )}
             </Stack>
           );
