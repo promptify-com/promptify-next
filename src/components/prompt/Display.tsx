@@ -69,7 +69,6 @@ export const Display: React.FC<Props> = ({
   }, [routerSpark, sparks]);
 
   const handlePinSpark = async () => {
-    // console.log(selectedSpark)
     if(selectedSpark === null) return;
 
     try {

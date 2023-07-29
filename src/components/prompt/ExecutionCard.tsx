@@ -28,10 +28,6 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData }) => {
 
   const sortedExecutions = [...execution.prompt_executions].sort((a, b) => {
     if (promptsOrderMap[a.prompt] === promptsOrderMap[b.prompt]) {
-      console.log(
-        promptsExecutionOrderMap[a.prompt],
-        promptsExecutionOrderMap[b.prompt]
-      );
       return (
         promptsExecutionOrderMap[a.prompt] - promptsExecutionOrderMap[b.prompt]
       );

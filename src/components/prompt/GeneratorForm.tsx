@@ -150,7 +150,6 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   }, [shownInputs?.length, selectedExecution]);
 
   useEffect(() => {
-    console.log("Set new overrides");
     if (selectedExecution?.contextual_overrides) {
       const overrides = Object.entries(selectedExecution.contextual_overrides)
         .map(([promptId, values]) => ({
@@ -401,7 +400,6 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     if (resPrompts.length > 0) {
       changeResPrompts();
     }
-    console.log(resInputs);
   }, [resInputs, resOverrides]);
 
   useEffect(() => {
@@ -448,7 +446,6 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   };
 
   const handlePinSpark = async () => {
-    // console.log(selectedSpark)
     if (selectedSpark === null) return;
 
     try {

@@ -32,7 +32,6 @@ const Sparks = () => {
   let sparksCount = 0;
   const sortedTemplates = sparksByTemplate?.map((template) => {
     // Sort the sparks inside each template by current_version.created_at
-    console.log(template.sparks)
     const sortedSparks = [...template.sparks].sort((a, b) => {
       const dateA = a.current_version ? new Date(a.current_version.created_at).getTime() : 0;
       const dateB = b.current_version ? new Date(b.current_version.created_at).getTime() : 0;
