@@ -114,6 +114,7 @@ export interface TemplatesExecutions {
   prompt_executions: PromptExecutions[];
   is_favorite: boolean;
   parameters: { [key: string]: any };
+  contextual_overrides: { [key: string]: any };
 }
 
 export interface ITemplateExecutionPut {

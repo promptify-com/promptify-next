@@ -118,6 +118,17 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
       setResInputs(inputs);
     }
   }, [shownInputs?.length, selectedExecution])
+
+  useEffect(() => {
+    console.log("Set new overrides")
+    if (selectedExecution?.contextual_overrides) {
+      const overrides = Object.entries(selectedExecution.contextual_overrides).map(([promptId, values]) => ({
+        id: +promptId, 
+        contextual_overrides: values
+      })).filter((override) => override.contextual_overrides.length > 0);
+      setResOverrides(overrides);
+    }
+  }, [selectedExecution])
   
   const changeResPrompts = () => {
     const tempArr = [...resPrompts];

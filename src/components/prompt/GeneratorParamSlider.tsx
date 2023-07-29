@@ -47,6 +47,10 @@ export const GeneratorParamSlider: React.FC<PromptParamsDescriptionProps> = ({
     setScore(mark);
   };
 
+  useEffect(() => {
+    setActiveMark(activeScore);
+  }, [activeScore]);
+
   return (
     <Box>
       <Typography component={"span"}
