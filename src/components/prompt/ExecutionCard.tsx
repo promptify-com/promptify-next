@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { Box, Stack, Typography } from "@mui/material";
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { Subtitle } from "@/components/blocks";
@@ -12,6 +12,14 @@ interface Props {
 export const ExecutionCard: React.FC<Props> = ({ execution, templateData }) => {
   const promptsOrderMap: { [key: string]: number } = {};
   const promptsExecutionOrderMap: { [key: string]: number } = {};
+
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    ref.current?.scrollIntoView({
+      block: "start",
+    });
+  }, [execution]);
 
   templateData.prompts.forEach((prompt) => {
     promptsOrderMap[prompt.id] = prompt.order;
@@ -68,8 +76,6 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData }) => {
     }
   };
 
-  useEffect(() => {}, [execution]);
-
   return (
     <Stack
       gap={1}
@@ -78,6 +84,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData }) => {
         mx: "auto",
       }}
     >
+      <div ref={ref}></div>
       <Typography
         sx={{ fontSize: 48, fontWeight: 400, color: "onSurface", py: "24px" }}
       >
