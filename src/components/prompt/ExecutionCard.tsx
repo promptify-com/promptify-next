@@ -1,9 +1,5 @@
-import React from "react";
-import {
-  Box,
-  Stack,
-  Typography,
-} from "@mui/material";
+import React, { useEffect } from "react";
+import { Box, Stack, Typography } from "@mui/material";
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { Subtitle } from "@/components/blocks";
 import { getMarkdownFromString } from "@/common/helpers/getMarkdownFromString";
@@ -14,7 +10,6 @@ interface Props {
 }
 
 export const ExecutionCard: React.FC<Props> = ({ execution, templateData }) => {
-
   const promptsOrderMap: { [key: string]: number } = {};
   const promptsExecutionOrderMap: { [key: string]: number } = {};
 
@@ -25,8 +20,13 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData }) => {
 
   const sortedExecutions = [...execution.prompt_executions].sort((a, b) => {
     if (promptsOrderMap[a.prompt] === promptsOrderMap[b.prompt]) {
-      console.log(promptsExecutionOrderMap[a.prompt], promptsExecutionOrderMap[b.prompt]);
-      return promptsExecutionOrderMap[a.prompt] - promptsExecutionOrderMap[b.prompt];
+      console.log(
+        promptsExecutionOrderMap[a.prompt],
+        promptsExecutionOrderMap[b.prompt]
+      );
+      return (
+        promptsExecutionOrderMap[a.prompt] - promptsExecutionOrderMap[b.prompt]
+      );
     }
     return promptsOrderMap[a.prompt] - promptsOrderMap[b.prompt];
   });
@@ -68,14 +68,19 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData }) => {
     }
   };
 
+  useEffect(() => {}, [execution]);
+
   return (
-    <Stack gap={1}
+    <Stack
+      gap={1}
       sx={{
         width: { md: "70%" },
         mx: "auto",
       }}
     >
-      <Typography sx={{ fontSize: 48, fontWeight: 400, color: "onSurface", py: "24px" }}>
+      <Typography
+        sx={{ fontSize: 48, fontWeight: 400, color: "onSurface", py: "24px" }}
+      >
         {execution.title}
       </Typography>
       {sortedExecutions?.map((exec) => {
@@ -84,11 +89,10 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData }) => {
         );
         if (prompt?.show_output)
           return (
-            <Stack key={exec.id}
-              gap={1}
-              sx={{ py: "24px" }}
-            >
-              <Subtitle sx={{ fontSize: 24, fontWeight: 400, color: "onSurface" }}>
+            <Stack key={exec.id} gap={1} sx={{ py: "24px" }}>
+              <Subtitle
+                sx={{ fontSize: 24, fontWeight: 400, color: "onSurface" }}
+              >
                 {prompt.title}
               </Subtitle>
               {isImageOutput(exec.output) ? (

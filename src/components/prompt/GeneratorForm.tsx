@@ -11,8 +11,11 @@ import {
   Popper,
   Stack,
   Typography,
+  alpha,
+  useTheme,
 } from "@mui/material";
 import {
+  AddOutlined,
   ArrowDropDown,
   ArrowDropUp,
   AutoFixHigh,
@@ -34,11 +37,17 @@ import { GeneratorParam } from "./GeneratorParam";
 import { savePathURL } from "@/common/utils";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { getArrayFromString } from "@/common/helpers/getArrayFromString";
-import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
+import {
+  Spark,
+  Templates,
+  TemplatesExecutions,
+} from "@/core/api/dto/templates";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { useWindowSize } from "usehooks-ts";
 import { useRouter } from "next/router";
 import { useParametersPresets } from "@/hooks/api/parametersPresets";
+import { DisplayHeader } from "./DisplayHeader";
+import { pinSpark, unpinSpark } from "@/hooks/api/executions";
 
 interface GeneratorFormProps {
   templateData: Templates;
@@ -49,6 +58,15 @@ interface GeneratorFormProps {
   exit: () => void;
   currentSparkId: number | null;
   selectedExecution: TemplatesExecutions | null;
+  setMobileTab: (value: number) => void;
+  setActiveTab: (value: number) => void;
+  mobileTab?: number;
+  resetNewExecution: () => void;
+  sparks: Spark[];
+  selectedSpark: Spark | null;
+  setSelectedSpark: (spark: Spark) => void;
+  setSortedSparks: (value: Spark[]) => void;
+  sparksShown: boolean;
 }
 
 export interface InputsErrors {
@@ -75,8 +93,18 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   exit,
   currentSparkId,
   selectedExecution,
+  setMobileTab,
+  setActiveTab,
+  mobileTab,
+  resetNewExecution,
+  sparks,
+  selectedSpark,
+  setSelectedSpark,
+  setSortedSparks,
+  sparksShown,
 }) => {
   const token = useToken();
+  const { palette } = useTheme();
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { width: windowWidth } = useWindowSize();
@@ -103,7 +131,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
       tempObj.prompt = prompt.id;
       tempObj.contextual_overrides = [];
-      tempObj.prompt_params = {Scope: '', Field: 'aa'}
+      tempObj.prompt_params = { Scope: "", Field: "aa" };
       tempArr.push(tempObj);
     });
     setResPrompts([...tempArr]);
@@ -111,14 +139,16 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
   useEffect(() => {
     if (selectedExecution?.parameters) {
-      const inputs = Object.entries(selectedExecution.parameters).map(([promptId, values]) => ({
-        id: +promptId, 
-        inputs: values
-      }));
+      const inputs = Object.entries(selectedExecution.parameters).map(
+        ([promptId, values]) => ({
+          id: +promptId,
+          inputs: values,
+        })
+      );
       setResInputs(inputs);
     }
-  }, [shownInputs?.length, selectedExecution])
-  
+  }, [shownInputs?.length, selectedExecution]);
+
   const changeResPrompts = () => {
     const tempArr = [...resPrompts];
 
@@ -197,6 +227,8 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
     if (!validateInputs()) return;
 
+    setMobileTab(2);
+    setActiveTab(2);
     generateExecution(resPrompts);
   };
 
@@ -356,7 +388,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     if (resPrompts.length > 0) {
       changeResPrompts();
     }
-    console.log(resInputs)
+    console.log(resInputs);
   }, [resInputs, resOverrides]);
 
   useEffect(() => {
@@ -402,6 +434,37 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     }
   };
 
+  const handlePinSpark = async () => {
+    // console.log(selectedSpark)
+    if (selectedSpark === null) return;
+
+    try {
+      if (selectedSpark.is_favorite) {
+        await unpinSpark(selectedSpark.id);
+      } else {
+        await pinSpark(selectedSpark.id);
+      }
+
+      // Update state after API call is successful and avoid unnecessary refetch of sparks
+      const updatedSparks = sparks.map((spark) => {
+        if (spark.id === selectedSpark?.id) {
+          return {
+            ...spark,
+            is_favorite: !selectedSpark.is_favorite,
+          };
+        }
+        return spark;
+      });
+      setSortedSparks(updatedSparks);
+      setSelectedSpark({
+        ...selectedSpark,
+        is_favorite: !selectedSpark.is_favorite,
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     window.addEventListener("keydown", handleKeyboard);
     return () => window.removeEventListener("keydown", handleKeyboard);
@@ -414,18 +477,61 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
         bgcolor: "surface.2",
       }}
     >
-      <Typography
-        sx={{
-          display: { md: "none" },
-          p: "16px",
-          fontSize: 24,
-          fontWeight: 500,
-          color: "onSurface",
-          opacity: 0.8,
-        }}
-      >
-        Inputs
-      </Typography>
+      {sparksShown && (
+        <DisplayHeader
+          sparks={sparks}
+          selectedSpark={selectedSpark}
+          changeSelectedSpark={setSelectedSpark}
+          pinSpark={handlePinSpark}
+        />
+      )}
+
+      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+        <Typography
+          sx={{
+            display: { md: "none" },
+            p: "16px",
+            fontSize: 24,
+            fontWeight: 500,
+            color: "onSurface",
+            opacity: 0.8,
+          }}
+        >
+          Inputs
+        </Typography>
+
+        {windowWidth < 960 && (
+          <Button
+            sx={{
+              m: "16px",
+              bgcolor: "transparent",
+              color: "primary.main",
+              fontSize: 14,
+              border: `1px solid ${alpha(palette.primary.main, 0.3)}`,
+              "&:hover": {
+                bgcolor: "action.hover",
+                color: "primary.main",
+              },
+            }}
+            startIcon={<AddOutlined />}
+            variant={"outlined"}
+            onClick={() => {
+              if (resetNewExecution) {
+                resetNewExecution();
+              }
+              if (setMobileTab) {
+                setMobileTab(1);
+              }
+              if (setActiveTab) {
+                setActiveTab(1);
+              }
+            }}
+          >
+            Spark
+          </Button>
+        )}
+      </Box>
+
       <Stack
         gap={1}
         sx={{

@@ -31,7 +31,11 @@ import {
   useTemplateView,
   useGetExecutionByIdQuery,
 } from "@/core/api/prompts";
-import { Spark, Templates, TemplatesExecutions } from "@/core/api/dto/templates";
+import {
+  Spark,
+  Templates,
+  TemplatesExecutions,
+} from "@/core/api/dto/templates";
 import { PageLoading } from "../../components/PageLoading";
 import { GeneratorForm } from "@/components/prompt/GeneratorForm";
 import { Display } from "@/components/prompt/Display";
@@ -39,7 +43,10 @@ import { Details } from "@/components/prompt/Details";
 import { authClient } from "@/common/axios";
 import { DetailsCard } from "@/components/prompt/DetailsCard";
 import { Prompts } from "@/core/api/dto/prompts";
-import { createSparkWithExecution, updateExecution } from "@/hooks/api/executions";
+import {
+  createSparkWithExecution,
+  updateExecution,
+} from "@/hooks/api/executions";
 import { PromptLiveResponse } from "@/common/types/prompt";
 import { Layout } from "@/layout";
 import useToken from "@/hooks/useToken";
@@ -80,7 +87,8 @@ const a11yProps = (index: number) => {
 
 const Prompt = () => {
   const [selectedSpark, setSelectedSpark] = useState<Spark | null>(null);
-  const [selectedExecution, setSelectedExecution] = useState<TemplatesExecutions | null>(null);
+  const [selectedExecution, setSelectedExecution] =
+    useState<TemplatesExecutions | null>(null);
   const [newExecutionData, setNewExecutionData] =
     useState<PromptLiveResponse | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -93,6 +101,8 @@ const Prompt = () => {
   const [templateView] = useTemplateView();
   const [generatorOpened, setGeneratorOpened] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [activeTab, setActiveTab] = React.useState(0);
+  const [sortedSparks, setSortedSparks] = useState<Spark[]>([]);
 
   const router = useRouter();
   const token = useToken();
@@ -124,9 +134,7 @@ const Prompt = () => {
     error: templateSparksError,
     isFetching: isFetchingExecutions,
     refetch: refetchTemplateSparks,
-  } = useGetSparksByTemplateQuery(
-    token ? (id ? id : skipToken) : skipToken
-  );
+  } = useGetSparksByTemplateQuery(token ? (id ? id : skipToken) : skipToken);
 
   useEffect(() => {
     setSelectedSpark(templateSparks?.[0] || null);
@@ -143,17 +151,27 @@ const Prompt = () => {
 
   const [mobileTab, setMobileTab] = useState(0);
 
-  const detailsElRef = useRef<HTMLDivElement|null>(null);
+  const detailsElRef = useRef<HTMLDivElement | null>(null);
   const [hideDetailsImage, setHideDetailsImage] = useState(false);
-  
+
   const handleScroll = () => {
     const scrollY = detailsElRef.current?.scrollTop || 0;
     setHideDetailsImage(scrollY > 226);
-  }
+  };
+
+  useEffect(() => {
+    const sorted = [...(templateSparks || [])].sort((a, b) => {
+      return (
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
+    });
+    setSortedSparks(sorted);
+  }, [templateSparks]);
+
   useEffect(() => {
     const detailsEl = detailsElRef.current;
-    detailsEl?.addEventListener('scroll', handleScroll)
-    return () => detailsEl?.removeEventListener('scroll', handleScroll)
+    detailsEl?.addEventListener("scroll", handleScroll);
+    return () => detailsEl?.removeEventListener("scroll", handleScroll);
   }, [handleScroll]);
 
   useEffect(() => {
@@ -176,7 +194,7 @@ const Prompt = () => {
         ...(defaultExecution as TemplatesExecutions),
         title: "Untitled",
       });
-      setSelectedSpark(null)
+      setSelectedSpark(null);
     }
   };
 
@@ -188,17 +206,14 @@ const Prompt = () => {
         (execData) => !execData.isCompleted
       );
       if (!promptNotCompleted) {
-        if(selectedSpark)
-          refetchTemplateSparks();
-        else
-          setOpenTitleModal(true);
+        if (selectedSpark) refetchTemplateSparks();
+        else setOpenTitleModal(true);
       }
     }
   }, [isGenerating, newExecutionData]);
 
   useEffect(() => {
-    if(isGenerating)
-      setMobileTab(2);
+    if (isGenerating) setMobileTab(2);
   }, [isGenerating]);
 
   // Keep tracking the current generated prompt
@@ -363,10 +378,13 @@ const Prompt = () => {
               container
               sx={{
                 mx: "auto",
-                height: { xs: "calc(100svh - 56px)", md: "calc(100svh - (90px + 32px))" },
-                pb: { 
+                height: {
+                  xs: "calc(100svh - 56px)",
+                  md: "calc(100svh - (90px + 32px))",
+                },
+                pb: {
                   xs: `calc(68px + ${mobileTab !== 0 ? "64" : "0"}px)`, // 64px fixed min card details + 68px bottom tabs. Hidden in details tab.
-                  md: 0 
+                  md: 0,
                 },
                 width: { md: "calc(100% - 65px)" },
                 bgcolor: "surface.2",
@@ -377,178 +395,201 @@ const Prompt = () => {
               }}
             >
               {windowWidth > 960 && (
-              <Grid
-                sx={{
-                  height: "100%",
-                  width: "401px",
-                  overflow: "auto",
-                  position: "relative",
-                  top: 0,
-                  left: 0,
-                  scrollbarColor: "red",
-                  right: 0,
-                  zIndex: 999,
-                  "&::-webkit-scrollbar": {
-                    width: "0.4em",
-                  },
-                  "&::-webkit-scrollbar-track": {
-                    boxShadow: "inset 0 0 6px rgba(0, 0, 0, 0.3)",
-                    webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
-                  },
-                  "&::-webkit-scrollbar-thumb": {
-                    backgroundColor: "surface.3",
-                    outline: "1px solid surface.3",
-                    borderRadius: "10px",
-                  },
-                }}
-              >
-                <Stack height={"100%"}>
-                  <DetailsCard
-                    templateData={templateData}
-                    resetNewExecution={resetNewExecution}
-                  />
-                  <Stack flex={1}>
-                    <Tabs
-                      value={tabsValue}
-                      onChange={changeTab}
-                      textColor="primary"
-                      indicatorColor="primary"
-                      variant="fullWidth"
-                      sx={{
-                        minHeight: "auto",
-                        boxShadow: "0px -1px 0px 0px #ECECF4 inset",
-                      }}
-                    >
-                      <Tab
-                        label="(x) Variables"
-                        {...a11yProps(0)}
-                        sx={tabStyle}
-                      />
-                      <Tab
-                        label="About"
-                        {...a11yProps(1)}
-                        icon={<ArtTrack />} iconPosition="start"
-                        sx={tabStyle}
-                      />
-                      <Tab
-                        label="History"
-                        {...a11yProps(1)}
-                        icon={<HistoryIcon />} iconPosition="start"
-                        sx={tabStyle}
-                      />
-                    </Tabs>
-                    <Box flex={1}>
-                      <CustomTabPanel value={tabsValue} index={0}>
-                        {generatorOpened && (
-                          <GeneratorForm
+                <Grid
+                  sx={{
+                    height: "100%",
+                    width: "401px",
+                    overflow: "auto",
+                    position: "relative",
+                    top: 0,
+                    left: 0,
+                    scrollbarColor: "red",
+                    right: 0,
+                    zIndex: 999,
+                    "&::-webkit-scrollbar": {
+                      width: "0.4em",
+                    },
+                    "&::-webkit-scrollbar-track": {
+                      boxShadow: "inset 0 0 6px rgba(0, 0, 0, 0.3)",
+                      webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
+                    },
+                    "&::-webkit-scrollbar-thumb": {
+                      backgroundColor: "surface.3",
+                      outline: "1px solid surface.3",
+                      borderRadius: "10px",
+                    },
+                  }}
+                >
+                  <Stack height={"100%"}>
+                    <DetailsCard
+                      templateData={templateData}
+                      resetNewExecution={resetNewExecution}
+                    />
+                    <Stack flex={1}>
+                      <Tabs
+                        value={tabsValue}
+                        onChange={changeTab}
+                        textColor="primary"
+                        indicatorColor="primary"
+                        variant="fullWidth"
+                        sx={{
+                          minHeight: "auto",
+                          boxShadow: "0px -1px 0px 0px #ECECF4 inset",
+                        }}
+                      >
+                        <Tab
+                          label="(x) Variables"
+                          {...a11yProps(0)}
+                          sx={tabStyle}
+                        />
+                        <Tab
+                          label="About"
+                          {...a11yProps(1)}
+                          icon={<ArtTrack />}
+                          iconPosition="start"
+                          sx={tabStyle}
+                        />
+                        <Tab
+                          label="History"
+                          {...a11yProps(1)}
+                          icon={<HistoryIcon />}
+                          iconPosition="start"
+                          sx={tabStyle}
+                        />
+                      </Tabs>
+                      <Box flex={1}>
+                        <CustomTabPanel value={tabsValue} index={0}>
+                          {generatorOpened && (
+                            <GeneratorForm
+                              templateData={templateData}
+                              setNewExecutionData={setNewExecutionData}
+                              isGenerating={isGenerating}
+                              setIsGenerating={setIsGenerating}
+                              onError={setErrorMessage}
+                              exit={() => setGeneratorOpened(false)}
+                              currentSparkId={selectedSpark?.id ?? null}
+                              selectedExecution={selectedExecution}
+                              setMobileTab={setMobileTab}
+                              setActiveTab={setActiveTab}
+                              resetNewExecution={resetNewExecution}
+                              sparks={sortedSparks}
+                              selectedSpark={selectedSpark}
+                              setSelectedSpark={setSelectedSpark}
+                              setSortedSparks={setSortedSparks}
+                              sparksShown={false}
+                            />
+                          )}
+                        </CustomTabPanel>
+                        <CustomTabPanel value={tabsValue} index={1}>
+                          <Details
                             templateData={templateData}
-                            setNewExecutionData={setNewExecutionData}
-                            isGenerating={isGenerating}
-                            setIsGenerating={setIsGenerating}
-                            onError={setErrorMessage}
-                            exit={() => setGeneratorOpened(false)}
-                            currentSparkId={selectedSpark?.id ?? null} 
-                            selectedExecution={selectedExecution}
+                            updateTemplateData={setTemplateData}
                           />
-                        )}
-                      </CustomTabPanel>
-                      <CustomTabPanel value={tabsValue} index={1}>
-                        <Details
-                          templateData={templateData}
-                          updateTemplateData={setTemplateData}
-                        />
-                      </CustomTabPanel>
-                      <CustomTabPanel value={tabsValue} index={2}>
-                        <History 
-                          spark={selectedSpark}
-                          selectedExecution={selectedExecution}
-                          setSelectedExecution={setSelectedExecution}
-                        />
-                      </CustomTabPanel>
-                    </Box>
+                        </CustomTabPanel>
+                        <CustomTabPanel value={tabsValue} index={2}>
+                          <History
+                            spark={selectedSpark}
+                            selectedExecution={selectedExecution}
+                            setSelectedExecution={setSelectedExecution}
+                          />
+                        </CustomTabPanel>
+                      </Box>
+                    </Stack>
                   </Stack>
-                </Stack>
-              </Grid>
+                </Grid>
               )}
 
               {windowWidth < 960 && (
-              <>
-                {mobileTab !== 0 && (
-                <DetailsCard
-                  templateData={templateData}
-                  min
-                />
-                )}
+                <>
+                  {mobileTab !== 0 && (
+                    <DetailsCard
+                      templateData={templateData}
+                      resetNewExecution={resetNewExecution}
+                      min
+                    />
+                  )}
 
-                <Grid ref={detailsElRef}
-                  item
-                  xs={12}
-                  md={8}
-                  sx={{
-                    display: mobileTab === 0 ? "block" : "none",
-                    height: "100%",
-                    overflow: "auto",
-                    bgcolor: "surface.1",
-                    position: "relative",
-                  }}
-                >
-                  <DetailsCard
-                    templateData={templateData}
-                    resetNewExecution={resetNewExecution}
-                  />
-                  <Details
-                    templateData={templateData}
-                    updateTemplateData={setTemplateData}
-                  />
-                </Grid>
+                  <Grid
+                    ref={detailsElRef}
+                    item
+                    xs={12}
+                    md={8}
+                    sx={{
+                      display: mobileTab === 0 ? "block" : "none",
+                      height: "100%",
+                      overflow: "auto",
+                      bgcolor: "surface.1",
+                      position: "relative",
+                    }}
+                  >
+                    <DetailsCard
+                      templateData={templateData}
+                      resetNewExecution={resetNewExecution}
+                    />
+                    <Details
+                      templateData={templateData}
+                      updateTemplateData={setTemplateData}
+                    />
+                  </Grid>
 
-                <Grid
-                  item
-                  xs={12}
-                  md={8}
-                  sx={{
-                    display: mobileTab === 1 ? "block" : "none",
-                    height: "100%",
-                    overflow: "auto",
-                    bgcolor: "surface.1",
-                  }}
-                >
-                  <GeneratorForm
-                    templateData={templateData}
-                    setNewExecutionData={setNewExecutionData}
-                    isGenerating={isGenerating}
-                    setIsGenerating={setIsGenerating}
-                    onError={setErrorMessage}
-                    exit={() => setGeneratorOpened(false)}
-                    currentSparkId={selectedSpark?.id ?? null}
-                    selectedExecution={selectedExecution}
-                  />
-                </Grid>
+                  <Grid
+                    item
+                    xs={12}
+                    md={8}
+                    sx={{
+                      display: mobileTab === 1 ? "block" : "none",
+                      height: "100%",
+                      overflow: "auto",
+                      bgcolor: "surface.1",
+                    }}
+                  >
+                    <GeneratorForm
+                      templateData={templateData}
+                      setNewExecutionData={setNewExecutionData}
+                      isGenerating={isGenerating}
+                      setIsGenerating={setIsGenerating}
+                      onError={setErrorMessage}
+                      exit={() => setGeneratorOpened(false)}
+                      currentSparkId={selectedSpark?.id ?? null}
+                      selectedExecution={selectedExecution}
+                      setMobileTab={setMobileTab}
+                      setActiveTab={setActiveTab}
+                      resetNewExecution={resetNewExecution}
+                      sparks={sortedSparks}
+                      selectedSpark={selectedSpark}
+                      setSelectedSpark={setSelectedSpark}
+                      setSortedSparks={setSortedSparks}
+                      sparksShown
+                    />
+                  </Grid>
 
-                <Grid
-                  item
-                  xs={12}
-                  md={8}
-                  sx={{
-                    display: mobileTab === 3 ? "block" : "none",
-                    height: "100%",
-                    overflow: "auto",
-                    bgcolor: "surface.1"
-                  }}
-                >
-                  <History
-                    spark={selectedSpark}
-                    selectedExecution={selectedExecution}
-                    setSelectedExecution={setSelectedExecution} 
-                  />
-                </Grid>
-              </>
+                  <Grid
+                    item
+                    xs={12}
+                    md={8}
+                    sx={{
+                      display: mobileTab === 3 ? "block" : "none",
+                      height: "100%",
+                      overflow: "auto",
+                      bgcolor: "surface.1",
+                    }}
+                  >
+                    <History
+                      spark={selectedSpark}
+                      selectedExecution={selectedExecution}
+                      setSelectedExecution={setSelectedExecution}
+                    />
+                  </Grid>
+                </>
               )}
 
               <Grid
                 flex={1}
                 sx={{
-                  display: { md: "block", xs: mobileTab === 2 ? "block" : "none" },
+                  display: {
+                    md: "block",
+                    xs: mobileTab === 2 ? "block" : "none",
+                  },
                   height: "100%",
                   overflow: "auto",
                   bgcolor: "surface.1",
@@ -593,9 +634,11 @@ const Prompt = () => {
                   </Box>
                 )}
               </Grid>
-              
+
               <BottomTabs
                 onChange={(tab) => setMobileTab(tab)}
+                setActiveTab={setActiveTab}
+                activeTab={activeTab}
               />
             </Grid>
           )}
@@ -653,8 +696,8 @@ const tabStyle = {
   p: "16px",
   minHeight: "auto",
   bgcolor: "surface.1",
-  opacity: .7,
-  "svg": {
+  opacity: 0.7,
+  svg: {
     fontSize: 20,
-  }
-}
+  },
+};
