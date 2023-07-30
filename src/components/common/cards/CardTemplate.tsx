@@ -1,6 +1,7 @@
 import React from "react";
 import {
   Avatar,
+  Box,
   Button,
   Card,
   CardMedia,
@@ -49,7 +50,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
           gap={{ xs: "16px", md: 0 }}
           alignItems={"center"}
         >
-          <Grid display={"flex"} alignItems={"center"} gap={"16px"}>
+          <Grid display={"flex"} justifyContent={'center'} alignItems={"center"} gap={"16px"}>
             <Grid>
               <CardMedia
                 sx={{
@@ -71,8 +72,18 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
               }}
               display={"flex"}
               flexDirection={"column"}
+              justifyContent={'center'}
             >
-              <Typography fontSize={14} fontWeight={500}>
+              <Typography 
+                  fontSize={14} 
+                  fontWeight={500} 
+                  sx={{ overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  display: "-webkit-box",
+                  WebkitLineClamp: "1",
+                  WebkitBoxOrient: "vertical",
+                }}
+              >
                 {template.title}
               </Typography>
               <Typography
@@ -82,11 +93,17 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
                   lineHeight: "16.8px",
                   letterSpacing: "0.15px",
                   color: "onSurface",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  display: "-webkit-box",
+                  WebkitLineClamp: "1",
+                  WebkitBoxOrient: "vertical",
                 }}
               >
-                {template.description?.length > 70
+                {/* {template.description?.length > 70
                   ? `${template.description?.slice(0, 70 - 1)}...`
-                  : template.description}
+                  : template.description} */}
+                  {template.description}
               </Typography>
             </Grid>
           </Grid>
@@ -103,10 +120,11 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
         </Grid>
         <Grid
           display={"flex"}
-          alignItems={"end"}
+          alignItems={"center"}
           width={{ xs: "100%", md: "auto" }}
           justifyContent={"space-between"}
           gap={1}
+          mt={{ xs: "10px", md: "0px" }}
         >
           <Grid
             sx={{
@@ -128,7 +146,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
               />
             ))}
           </Grid>
-          <Button variant="text" size="small">
+          <Box sx={{ paddingX: {xs: '0px', md: '20px'}}}>
             <Grid
               sx={{
                 display: "flex",
@@ -150,7 +168,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
                 {template.likes}
               </Stack>
             </Grid>
-          </Button>
+          </Box>
           <Avatar
             src={template.created_by.avatar}
             alt={template.created_by.first_name}
