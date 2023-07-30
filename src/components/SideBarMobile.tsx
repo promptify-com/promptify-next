@@ -23,6 +23,8 @@ import {
 import { useRouter } from "next/router";
 import { CollectionsEmptyBox } from "./common/sidebar/CollectionsEmptyBox";
 import { User } from "@/core/api/dto/user";
+import { ProfileDropDown } from "./ProfileMenu";
+import { useRef, useState } from "react";
 
 interface SideBarMobileProps {
   open: boolean;
@@ -67,6 +69,10 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
   const router = useRouter();
   const pathname = router.pathname;
   const splittedPath = pathname.split("/");
+  
+  const menuAnchorRef = useRef<HTMLDivElement | null>(null);
+
+  const [isMenuShown, setIsMenuShown] = useState(false);
 
   const navigateTo = (href: string, isExternal: boolean) => {
     if (isExternal) {
@@ -114,16 +120,27 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
           >
             {user && token && (
               <Avatar
-                sx={{
-                  width: "23px",
-                  height: "23px",
-                  bgcolor: "black",
-                  fontSize: 10,
-                  textTransform: "capitalize",
-                }}
-                src={user.avatar || user.first_name}
-                alt={user.first_name}
-              />
+              ref={menuAnchorRef}
+              onClick={() => setIsMenuShown(!isMenuShown)}
+              src={user.avatar || user.first_name}
+              alt={user.first_name}
+              sx={{
+                ml: "auto",
+                cursor: "pointer",
+                bgcolor: "black",
+                borderRadius: { xs: "24px", sm: "36px" },
+                width: "23px",
+                height: "23px",
+                padding: "1px",      
+                fontStyle: "normal",
+                textAlign: "center",
+                fontWeight: 400,
+                fontSize: 10,
+                textTransform: "capitalize",
+                lineHeight: "20px",
+                letterSpacing: "0.14px",
+              }}
+            />
             )}
             <Box
               onClick={onClose}
@@ -190,6 +207,13 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
           </Box>
         </Box>
       </Box>
+      <ProfileDropDown
+          anchorElement={menuAnchorRef.current}
+          user={user}
+          open={isMenuShown}
+          onToggle={() => setIsMenuShown(!isMenuShown)}
+          onClose={() => setIsMenuShown(false)}
+        />
     </SwipeableDrawer>
   );
 };
