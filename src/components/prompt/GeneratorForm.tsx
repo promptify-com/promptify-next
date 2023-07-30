@@ -60,7 +60,6 @@ interface GeneratorFormProps {
   selectedExecution: TemplatesExecutions | null;
   setMobileTab: (value: number) => void;
   setActiveTab: (value: number) => void;
-  mobileTab?: number;
   resetNewExecution: () => void;
   sparks: Spark[];
   selectedSpark: Spark | null;
@@ -95,7 +94,6 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   selectedExecution,
   setMobileTab,
   setActiveTab,
-  mobileTab,
   resetNewExecution,
   sparks,
   selectedSpark,
