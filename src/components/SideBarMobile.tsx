@@ -219,6 +219,7 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
           open={isMenuShown}
           onToggle={() => setIsMenuShown(!isMenuShown)}
           onClose={() => setIsMenuShown(false)}
+          onCloseSidebar={onClose}
         />
     </SwipeableDrawer>
   );
