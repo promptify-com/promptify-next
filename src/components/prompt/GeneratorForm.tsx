@@ -144,6 +144,8 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
         })
       );
       setResInputs(inputs);
+    } else {
+      setResInputs([])
     }
   }, [shownInputs?.length, selectedExecution]);
 
@@ -528,16 +530,10 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
             startIcon={<AddOutlined />}
             variant={"outlined"}
             onClick={() => {
-              if (resetNewExecution) {
-                resetNewExecution();
+              resetNewExecution()
+              setAllowGenerate(false)
               }
-              if (setMobileTab) {
-                setMobileTab(1);
-              }
-              if (setActiveTab) {
-                setActiveTab(1);
-              }
-            }}
+            }
           >
             Spark
           </Button>
