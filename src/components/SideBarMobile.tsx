@@ -33,32 +33,7 @@ interface SideBarMobileProps {
   user: User | undefined;
   token: string | null | undefined;
 }
-const links = [
-  {
-    label: "Homepage",
-    icon: <HomeRounded />,
-    href: "/",
-    external: false,
-  },
-  {
-    label: "Browse",
-    icon: <Search />,
-    href: "/explore",
-    external: false,
-  },
-  {
-    label: "My Sparks",
-    icon: <AutoAwesome />,
-    href: "/sparks",
-    external: false,
-  },
-  {
-    label: "Learn",
-    icon: <MenuBookRounded />,
-    href: "https://promptify.com",
-    external: true,
-  },
-];
+
 export const SideBarMobile: React.FC<SideBarMobileProps> = ({
   open,
   onClose,
@@ -69,10 +44,41 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
   const router = useRouter();
   const pathname = router.pathname;
   const splittedPath = pathname.split("/");
-  
+
   const menuAnchorRef = useRef<HTMLDivElement | null>(null);
 
   const [isMenuShown, setIsMenuShown] = useState(false);
+
+  const links = [
+    {
+      label: "Homepage",
+      icon: <HomeRounded />,
+      href: "/",
+      active: pathname == "/",
+      external: false,
+    },
+    {
+      label: "Browse",
+      icon: <Search />,
+      href: "/explore",
+      active: splittedPath[1] == "explore",
+      external: false,
+    },
+    {
+      label: "My Sparks",
+      icon: <AutoAwesome />,
+      href: "/sparks",
+      active: pathname == "/sparks",
+      external: false,
+    },
+    {
+      label: "Learn",
+      icon: <MenuBookRounded />,
+      href: "https://promptify.com",
+      active: pathname == "/learn",
+      external: true,
+    },
+  ];
 
   const navigateTo = (href: string, isExternal: boolean) => {
     if (isExternal) {
@@ -189,7 +195,7 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
                   disablePadding
                   onClick={() => navigateTo(link.href, link.external)}
                 >
-                  <ListItemButton>
+                  <ListItemButton  selected={link.active}>
                     <ListItemIcon sx={{ color: "onSurface" }}>
                       {link.icon}
                     </ListItemIcon>
