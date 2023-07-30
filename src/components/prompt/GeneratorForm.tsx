@@ -496,6 +496,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
           selectedSpark={selectedSpark}
           changeSelectedSpark={setSelectedSpark}
           pinSpark={handlePinSpark}
+          showSearchBar={false}
         />
       )}
 
