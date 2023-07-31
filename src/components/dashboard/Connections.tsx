@@ -211,7 +211,7 @@ export const Connections = () => {
                         color: "#1B1B1E",
                       }}
                     >
-                      {/* {customConnection.name} */} JohnTester
+                      {customConnection.name}
                     </Typography>
                   </Box>
                 </Box>

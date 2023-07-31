@@ -41,13 +41,11 @@ const Questions: React.FC<IProps> = ({ skip, questions }) => {
   const nextStep = async () => {
     const idx = step - 1;
     const currentQuestion = questions[idx];
-
-    // setOpen(true);
     await setUserAnswer(
       currentQuestion,
       checkedOptions[currentQuestion.id]
     ).then((res: any) => {
-      if (!!res?.answer) {
+      if (res?.answer) {
         setTypeAlert("success");
       } else {
         setTypeAlert("error");

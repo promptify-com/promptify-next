@@ -6,16 +6,23 @@ import { CategoriesApi } from "@/core/api/categories";
 import { Layout } from "@/layout";
 import { CategoriesSection } from "@/components/explorer/CategoriesSection";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
-import { RootState, wrapper } from "@/core/store";
+import { RootState, wrapper, AppDispatch } from "@/core/store"; // Make sure to import AppStore here
 import { FiltersSelected } from "@/components/explorer/FiltersSelected";
-import { FilterParams, SelectedFilters, Tag } from "@/core/api/dto/templates";
+
+import {
+  Category,
+  FilterParams,
+  SelectedFilters,
+  Tag,
+  Templates,
+} from "@/core/api/dto/templates";
 import { NextPage } from "next";
 import { useAppSelector } from "@/hooks/useStore";
 
 interface IProps {
   props: {
-    categories: any;
-    templates: any;
+    categories: Category[];
+    templates: Templates[];
     isCategoryLoading: boolean;
     isTemplatesLoading: boolean;
   };
@@ -80,8 +87,9 @@ const ExplorePage: NextPage<IProps> = ({ props }) => {
 };
 
 ExplorePage.getInitialProps = wrapper.getInitialPageProps(
-  ({ dispatch }) =>
-    async ({ store }) => {
+  ({ dispatch }: { dispatch: AppDispatch }) =>
+    async ({ store }: { store }) => {
+      // Specify the type for 'store' variable
       const { filters } = store.getState();
 
       const filteredTags = filters.tag

@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   Card,
-  CardActionArea,
   CardMedia,
   Dialog,
   DialogActions,
@@ -12,29 +11,32 @@ import {
   DialogTitle,
   Grid,
   IconButton,
-  Paper,
-  Slide,
+  Modal,
   Stack,
   Tooltip,
   Typography,
 } from "@mui/material";
-import TemplateFormModal from "@/components/modals/TemplateFormModal";
 import { promptsApi, useDeleteTemplateMutation } from "@/core/api/prompts";
 import { Templates } from "@/core/api/dto/templates";
 import { PageLoading } from "@/components/PageLoading";
-import TemplateImportModal from "../modals/TemplateImportModal";
+import TemplateImportModal from "@/components/modals/TemplateImportModal";
+import TemplateForm from "@/components/common/forms/TemplateForm";
 import {
   Delete,
   Edit,
   PreviewRounded,
   SettingsApplicationsRounded,
 } from "@mui/icons-material";
+import BaseButton from "../base/BaseButton";
+import { modalStyle } from "../modals/styles";
 
 export const Prompts = () => {
   const [templateFormOpen, setTemplateFormOpen] = useState(false);
   const [templateImportOpen, setTemplateImportOpen] = useState(false);
   const [modalNew, setModalNew] = useState(false);
-  const [modalPromptData, setModalPromptData] = useState<Templates[]>([]);
+  const [selectedTemplate, setSelectedTemplate] = useState<Templates | null>(
+    null
+  );
 
   const [trigger, { data: promptsData, isFetching }] =
     promptsApi.endpoints.getAllPromptTemplates.useLazyQuery();
@@ -46,17 +48,15 @@ export const Prompts = () => {
 
   const [confirmDialog, setConfirmDialog] = useState(false);
 
-  const [selectedTemplate, setSelectedTemplate] = useState<
-    number | undefined
-  >();
-
-  const openModal = (id: number) => {
-    setSelectedTemplate(id);
+  const openDeletionModal = (template: Templates) => {
+    setSelectedTemplate(template);
     setConfirmDialog(true);
   };
 
   const confirmDelete = async () => {
-    await deleteTemplate(selectedTemplate as number);
+    if (!selectedTemplate) return;
+
+    await deleteTemplate(selectedTemplate.id);
     setConfirmDialog(false);
   };
 
@@ -91,26 +91,29 @@ export const Prompts = () => {
           ml={{ xs: "auto" }}
           spacing={1}
         >
-          <Button
-            size="small"
+          <BaseButton
             onClick={() => {
               setTemplateImportOpen(true);
             }}
-            sx={{ bgcolor: "var(--primary-main, #3B4050)", color: "surface.1" }}
+            color="primary"
+            variant="contained"
+            style={{ fontWeight: 500 }}
           >
             Import JSON
-          </Button>
-          <Button
-            size="small"
+          </BaseButton>
+
+          <BaseButton
             onClick={() => {
-              setModalPromptData([]);
+              setSelectedTemplate(null);
               setModalNew(true);
               setTemplateFormOpen(true);
             }}
-            sx={{ bgcolor: "var(--primary-main, #3B4050)", color: "surface.1" }}
+            color="primary"
+            variant="contained"
+            style={{ fontWeight: 500 }}
           >
-            Create NEW
-          </Button>
+            Create New
+          </BaseButton>
         </Stack>
       </Box>
       {isFetching ? (
@@ -220,12 +223,7 @@ export const Prompts = () => {
                           },
                         }}
                         onClick={() => {
-                          const findPrompt = promptsData?.filter(
-                            (data) => data.id === prompt.id
-                          );
-                          if (findPrompt) {
-                            setModalPromptData(findPrompt);
-                          }
+                          setSelectedTemplate(prompt);
                           setModalNew(false);
                           setTemplateFormOpen(true);
                         }}
@@ -235,7 +233,7 @@ export const Prompts = () => {
                     </Tooltip>
                     <Tooltip title="Delete">
                       <IconButton
-                        onClick={() => openModal(prompt.id)}
+                        onClick={() => openDeletionModal(prompt)}
                         sx={{
                           bgcolor: "surface.2",
                           border: "none",
@@ -275,13 +273,21 @@ export const Prompts = () => {
           <Button onClick={() => confirmDelete()}>Confirm</Button>
         </DialogActions>
       </Dialog>
-      <TemplateFormModal
-        open={templateFormOpen}
-        setOpen={setTemplateFormOpen}
-        data={modalPromptData}
-        modalNew={modalNew}
-        refetchTemplates={trigger}
-      />
+
+      <Modal open={templateFormOpen} onClose={() => setTemplateFormOpen(false)}>
+        <Box sx={modalStyle}>
+          <TemplateForm
+            templateData={selectedTemplate}
+            modalNew={modalNew}
+            onSaved={() => {
+              trigger();
+              setTemplateFormOpen(false);
+            }}
+            linkBuilder={!modalNew}
+          />
+        </Box>
+      </Modal>
+
       <TemplateImportModal
         open={templateImportOpen}
         setOpen={setTemplateImportOpen}

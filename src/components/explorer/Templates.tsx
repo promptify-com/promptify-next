@@ -85,11 +85,7 @@ export const CustomTemplates: React.FC<Props> = ({ selectedTag, keyWord }) => {
             {!isFetching ? (
               !!templates && templates.length > 0 ? (
                 templates.map((el, idx) => (
-                  <CardTemplate
-                    onFavoriteClick={() => router.push(`/prompt/${el.slug}`)}
-                    key={idx}
-                    template={el}
-                  />
+                  <CardTemplate key={idx} template={el} />
                 ))
               ) : (
                 <Grid

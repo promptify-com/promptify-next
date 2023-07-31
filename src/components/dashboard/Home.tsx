@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { useGetCurrentUserQuery } from "@/core/api/user";
 import useToken from "@/hooks/useToken";
 import { Mode } from "@mui/icons-material";
+import BaseButton from "../base/BaseButton";
 
 export const Home = () => {
   const router = useRouter();
@@ -21,26 +22,6 @@ export const Home = () => {
         gap: "16px",
       }}
     >
-      <Box
-        display={"flex"}
-        justifyContent={{ xs: "center", md: "start" }}
-        textAlign={{ xs: "center", sm: "start" }}
-      >
-        <Typography
-          fontWeight={500}
-          fontSize={{ xs: "1.5rem", sm: "2rem" }}
-          sx={{
-            fontFamily: "Poppins",
-            fontStyle: "normal",
-            fontWeight: 500,
-            fontSize: { xs: "24px", sm: "34px" },
-            lineHeight: { xs: "27px", sm: "123.5%" },
-            color: "onSurface",
-          }}
-        >
-          Welcome to your space
-        </Typography>
-      </Box>
       <Box
         display="flex"
         flexDirection={{ xs: "column", md: "row" }}
@@ -120,26 +101,26 @@ export const Home = () => {
           </Box>
         )}
         <Box>
-          <Button
+          <BaseButton
             onClick={() => router.push("/profile/edit")}
-            sx={{
-              bgcolor: "var(--primary-main, #3B4050)",
-              color: "white",
-              display: "flex",
-              gap: "8px",
-              "&:hover": {
-                color: "onSurface",
-                bgcolor: "surface.3",
-              },
+            color="primary"
+            variant="contained"
+            style={{
+              fontSize: "15px",
+              fontWeight: "500",
             }}
+            icon={
+              <Box mt={-1}>
+                <Mode
+                  sx={{
+                    fontSize: { xs: "16px", md: "20px" },
+                  }}
+                />
+              </Box>
+            }
           >
-            <Mode
-              sx={{
-                fontSize: { xs: "16px", md: "20px" },
-              }}
-            />
             Edit
-          </Button>
+          </BaseButton>
         </Box>
       </Box>
     </Box>

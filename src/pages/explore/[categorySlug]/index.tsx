@@ -17,6 +17,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/core/store";
 import { FiltersSelected } from "@/components/explorer/FiltersSelected";
 import { useGetCategoriesQuery } from "@/core/api/categories";
+import Link from "next/link";
 
 export default function Page({ category }: { category: Category }) {
   const router = useRouter();
@@ -77,13 +78,15 @@ export default function Page({ category }: { category: Category }) {
           ) : (
             <Box display={"flex"} flexDirection={"column"} gap={"16px"}>
               <Grid>
-                <Button
-                  onClick={() => goBack()}
-                  variant="text"
-                  sx={{ fontSize: 19, color: "onSurface", ml: -3 }}
-                >
-                  <KeyboardArrowLeft /> {category.name}
-                </Button>
+                <Link style={{ textDecoration: "none" }} href={"/explore"}>
+                  <Button
+                    onClick={() => goBack()}
+                    variant="text"
+                    sx={{ fontSize: 19, color: "onSurface", ml: -3 }}
+                  >
+                    <KeyboardArrowLeft /> {category.name}
+                  </Button>
+                </Link>
               </Grid>
               <Grid
                 display={"flex"}

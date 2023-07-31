@@ -201,7 +201,6 @@ export const Header: React.FC<HeaderProps> = ({
                       bgcolor: "black",
                       borderRadius: { xs: "24px", sm: "36px" },
                       width: { xs: "24px", sm: "40px" },
-                      padding: "1px",
                       height: { xs: "24px", sm: "40px" },
                       fontStyle: "normal",
                       textAlign: "center",

@@ -39,6 +39,7 @@ type Store = ReturnType<typeof store>;
 
 export type AppDispatch = Store["dispatch"];
 export type RootState = ReturnType<Store["getState"]>;
+
 export type AppThunk<ReturnType = void> = ThunkAction<
   ReturnType,
   RootState,

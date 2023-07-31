@@ -19,7 +19,7 @@ export const Menu: MenuType[] = [
   {
     id: 1,
     icon: <Prompt />,
-    href: "/profile",
+    href: "/profile/templates",
     name: "My Templates",
   },
   {

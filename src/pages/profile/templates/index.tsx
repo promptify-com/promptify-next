@@ -1,13 +1,17 @@
-import { Box, Grid, Typography } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 import Head from "next/head";
 
-import { Connections, Home, Identy, Prompts } from "@/components/dashboard";
+import { Home } from "@/components/dashboard";
 import { Layout } from "@/layout";
-import Protected from "@/components/Protected";
+import { TemplatesSection } from "@/components/explorer/TemplatesSection";
+import { useGetUserTemplatesQuery } from "@/core/api/user";
 
 const Dashboard = () => {
+  const { data: templates, isLoading: isTemplatesLoading } =
+    useGetUserTemplatesQuery();
+
   return (
-    <Protected>
+    <>
       <Head>
         <title>Promptify | Boost Your Creativity</title>
         <meta
@@ -32,36 +36,18 @@ const Dashboard = () => {
                 gap={"36px"}
                 width={"100%"}
               >
-                <Box
-                  display={"flex"}
-                  justifyContent={{ xs: "center", md: "start" }}
-                  textAlign={{ xs: "center", sm: "start" }}
-                >
-                  <Typography
-                    fontWeight={500}
-                    fontSize={{ xs: "1.5rem", sm: "2rem" }}
-                    sx={{
-                      fontFamily: "Poppins",
-                      fontStyle: "normal",
-                      fontWeight: 500,
-                      fontSize: { xs: "24px", sm: "34px" },
-                      lineHeight: { xs: "27px", sm: "123.5%" },
-                      color: "onSurface",
-                    }}
-                  >
-                    Welcome to your space
-                  </Typography>
-                </Box>
                 <Home />
-                <Connections />
-                <Identy />
-                <Prompts />
+                <TemplatesSection
+                  templates={templates ?? []}
+                  isLoading={isTemplatesLoading}
+                  title="My templates"
+                />
               </Box>
             </Box>
           </Grid>
         </Box>
       </Layout>
-    </Protected>
+    </>
   );
 };
 export async function getServerSideProps() {
