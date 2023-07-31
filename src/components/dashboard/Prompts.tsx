@@ -27,6 +27,7 @@ import {
   PreviewRounded,
   SettingsApplicationsRounded,
 } from "@mui/icons-material";
+import { modalStyle } from "../modals/styles";
 
 export const Prompts = () => {
   const [templateFormOpen, setTemplateFormOpen] = useState(false);
@@ -267,8 +268,11 @@ export const Prompts = () => {
         </DialogActions>
       </Dialog>
       
-      <Modal open={templateFormOpen} onClose={() => setTemplateFormOpen(false)}>
-        <Box>
+      <Modal
+        open={templateFormOpen} 
+        onClose={() => setTemplateFormOpen(false)}
+      >
+        <Box sx={modalStyle}>
           <TemplateForm
             templateData={selectedTemplate}
             modalNew={modalNew}

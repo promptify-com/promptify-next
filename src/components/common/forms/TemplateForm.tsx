@@ -10,7 +10,7 @@ import { Templates } from '@/core/api/dto/templates';
 import { IEditTemplate } from '@/common/types/editTemplate';
 import { createTemplate, updateTemplate } from '@/hooks/api/templates';
 import { authClient } from '@/common/axios';
-import {style, selectStyle, boxStyle, buttonBoxStyle, typographyStyle} from '../../modals/styles'
+import {selectStyle, boxStyle, buttonBoxStyle, typographyStyle} from '../../modals/styles'
 import { useGetCategoriesQuery } from '@/core/api/categories';
 
 interface Props {
@@ -106,7 +106,7 @@ const TemplateForm: React.FC<Props> = ({
   });
 
   return (
-    <Box sx={style}>
+    <Box>
       <Box style={boxStyle}>
         <Typography style={typographyStyle}>Title</Typography>
         <TextField
@@ -358,7 +358,7 @@ const TemplateForm: React.FC<Props> = ({
           />
         </Box>
       </Box>
-      <Box style={buttonBoxStyle} flexDirection="column">
+      <Box sx={buttonBoxStyle}>
         <Button
           variant="contained"
           onClick={() => {

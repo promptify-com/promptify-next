@@ -1,18 +1,18 @@
-export const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    maxHeight: '70vh',
-    width: '600px',
-    bgcolor: 'background.paper',
-    boxShadow: 24,
-    p: 4,
-    display: 'flex',
-    flexDirection: 'column',
-    overflow: 'scroll',
-    overscrollBehavior: 'contain',
-  };
+export const modalStyle = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  maxHeight: '70vh',
+  width: '600px',
+  bgcolor: 'background.paper',
+  boxShadow: 24,
+  p: 4,
+  display: 'flex',
+  flexDirection: 'column',
+  overflow: 'scroll',
+  overscrollBehavior: 'contain',
+};
   
   export const selectStyle = {
     width: '250px',
@@ -32,9 +32,11 @@ export const style = {
   
   export const buttonBoxStyle = {
     display: 'flex',
+    flexDirection: 'column',
     justifyContent: 'center',
     alignSelf: 'center',
     width: '250px',
+    margin: 'auto',
     marginTop: '50px',
   };
   
