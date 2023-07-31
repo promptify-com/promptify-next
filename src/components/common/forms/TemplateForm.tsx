@@ -16,7 +16,6 @@ import { useGetCategoriesQuery } from '@/core/api/categories';
 interface Props {
   templateData: Templates | null;
   modalNew?: boolean;
-  refetchTemplates?: () => void;
   onSaved?: () => void;
   darkMode?: boolean;
   linkBuilder?: boolean;
@@ -25,7 +24,6 @@ interface Props {
 const TemplateForm: React.FC<Props> = ({
   templateData,
   modalNew = false,
-  refetchTemplates = () => {},
   onSaved = () => {},
   darkMode = false,
   linkBuilder = false
@@ -73,14 +71,12 @@ const TemplateForm: React.FC<Props> = ({
 
     await updateTemplate(templateData?.id, values);
     onSaved();
-    refetchTemplates();
     formik.resetForm();
   };
 
   const onCreateTemplate = async (values: IEditTemplate) => {
     const { id } = await createTemplate(values);
     onSaved();
-    refetchTemplates();
     formik.resetForm();
     window.open(window.location.origin + `/builder/${id}`, '_blank');
   };

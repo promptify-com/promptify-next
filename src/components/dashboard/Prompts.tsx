@@ -276,8 +276,10 @@ export const Prompts = () => {
           <TemplateForm
             templateData={selectedTemplate}
             modalNew={modalNew}
-            refetchTemplates={trigger}
-            onSaved={() => setTemplateFormOpen(false)}
+            onSaved={() => {
+              trigger();
+              setTemplateFormOpen(false);
+            }}
             linkBuilder={!modalNew}
           />
         </Box>
