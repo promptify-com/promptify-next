@@ -61,7 +61,7 @@ export let theme = createTheme({
       '600': '#81889E',
     },
     primary: {
-      main: '#375CA9'
+      main: '#3B4050'
     },
     secondary: {
       main: '#585E71'
