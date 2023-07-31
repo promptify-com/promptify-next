@@ -1,15 +1,15 @@
 import React from "react";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Stack, Typography } from "@mui/material";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
-import { EditableTextField } from "@/components/blocks";
+import { ModeEdit } from "@mui/icons-material";
 
 interface IHeader {
-  updateTemplateTitle: (value: string) => void;
+  onTitleHover: () => void;
   onSave: () => void;
   title: string;
 }
 
-export const Header = ({ updateTemplateTitle, onSave, title }: IHeader) => {
+export const Header = ({ onTitleHover, onSave, title }: IHeader) => {
   return (
     <Box
       bgcolor={"#262626"}
@@ -18,9 +18,16 @@ export const Header = ({ updateTemplateTitle, onSave, title }: IHeader) => {
       alignItems="center"
       justifyContent="space-between"
     >
-      <Box ml="50px">
-        <EditableTextField value={title} setValue={updateTemplateTitle} />
-      </Box>
+      <Stack direction={"row"} alignItems={"center"} gap={1} 
+        sx={{ ml: "50px", color: "white" }}
+      >
+        <Typography sx={{ color: "white", fontSize: "1rem" }}
+          dangerouslySetInnerHTML={{ __html: title }}
+        />
+        <ModeEdit sx={{ cursor: "pointer" }} 
+          onClick={onTitleHover}
+        />
+      </Stack>
 
       <Button
         sx={{
