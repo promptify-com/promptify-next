@@ -10,7 +10,7 @@ import { Templates } from '@/core/api/dto/templates';
 import { IEditTemplate } from '@/common/types/editTemplate';
 import { createTemplate, updateTemplate } from '@/hooks/api/templates';
 import { authClient } from '@/common/axios';
-import {selectStyle, boxStyle, buttonBoxStyle, typographyStyle} from '../../modals/styles'
+import {fieldStyle, boxStyle, buttonBoxStyle, typographyStyle, checkboxStyle} from '../../modals/styles'
 import { useGetCategoriesQuery } from '@/core/api/categories';
 
 interface Props {
@@ -118,7 +118,7 @@ const TemplateForm: React.FC<Props> = ({
         <TextField
           multiline
           maxRows={4}
-          sx={selectStyle}
+          sx={fieldStyle}
           name="title"
           value={formik.values.title}
           onChange={formik.handleChange}
@@ -130,7 +130,7 @@ const TemplateForm: React.FC<Props> = ({
         <TextField
           multiline
           maxRows={4}
-          sx={selectStyle}
+          sx={fieldStyle}
           name="description"
           value={formik.values.description}
           onChange={formik.handleChange}
@@ -156,7 +156,7 @@ const TemplateForm: React.FC<Props> = ({
       <Box sx={boxStyle}>
         <Typography sx={typographyStyle}>Difficulty</Typography>
         <Select
-          sx={selectStyle}
+          sx={fieldStyle}
           name="difficulty"
           value={formik.values.difficulty}
           onChange={formik.handleChange}
@@ -171,7 +171,7 @@ const TemplateForm: React.FC<Props> = ({
         <TextField
           multiline
           maxRows={4}
-          sx={selectStyle}
+          sx={fieldStyle}
           name="duration"
           value={formik.values.duration}
           onChange={formik.handleChange}
@@ -180,7 +180,7 @@ const TemplateForm: React.FC<Props> = ({
       <Box sx={boxStyle}>
         <Typography sx={typographyStyle}>Visibility</Typography>
         <Select
-          sx={selectStyle}
+          sx={fieldStyle}
           name="is_visible"
           value={formik.values.is_visible ? '1' : '0'}
           onChange={formik.handleChange}
@@ -192,7 +192,7 @@ const TemplateForm: React.FC<Props> = ({
       <Box sx={boxStyle}>
         <Typography sx={typographyStyle}>Language</Typography>
         <Select
-          sx={selectStyle}
+          sx={fieldStyle}
           name="language"
           value={formik.values.language}
           onChange={formik.handleChange}
@@ -206,7 +206,7 @@ const TemplateForm: React.FC<Props> = ({
         <Box sx={boxStyle}>
           <Typography sx={typographyStyle}>Category</Typography>
           <Select
-            sx={selectStyle}
+            sx={fieldStyle}
             name="category"
             value={formik.values.category}
             onChange={formik.handleChange}
@@ -224,7 +224,7 @@ const TemplateForm: React.FC<Props> = ({
         <TextField
           multiline
           maxRows={4}
-          sx={selectStyle}
+          sx={fieldStyle}
           name="context"
           value={formik.values.context}
           onChange={formik.handleChange}
@@ -235,7 +235,7 @@ const TemplateForm: React.FC<Props> = ({
         <Autocomplete
           multiple
           freeSolo
-          sx={selectStyle}
+          sx={fieldStyle}
           options={tags}
           value={selectedTags}
           onChange={(event, newValue) => addNewTag(newValue)}
@@ -256,7 +256,7 @@ const TemplateForm: React.FC<Props> = ({
         <Typography sx={typographyStyle}>Hourly Limit</Typography>
         <TextField
           maxRows={1}
-          sx={selectStyle}
+          sx={fieldStyle}
           name="executions_limit"
           value={formik.values.executions_limit}
           onChange={formik.handleChange}
@@ -265,9 +265,8 @@ const TemplateForm: React.FC<Props> = ({
       <Box sx={{ ...boxStyle, alignItems: 'baseline' }}>
         <Typography sx={typographyStyle}>Slug</Typography>
         <Box>
-          <Stack direction={'row'} alignItems={'center'}>
+          <Stack direction={'row'} alignItems={'center'} sx={checkboxStyle}>
             <Checkbox
-              sx={{ color }}
               checked={formik.values.slug === null}
               onChange={() => {
                 formik.setFieldValue(
@@ -276,10 +275,10 @@ const TemplateForm: React.FC<Props> = ({
                 );
               }}
             />
-            <InputLabel sx={{ color }}>Use Default</InputLabel>
+            <InputLabel>Use Default</InputLabel>
           </Stack>
           <TextField
-            sx={selectStyle}
+            sx={fieldStyle}
             name="slug"
             value={formik.values.slug ?? ''}
             disabled={formik.values.slug === null}
@@ -290,9 +289,8 @@ const TemplateForm: React.FC<Props> = ({
       <Box sx={{ ...boxStyle, alignItems: 'baseline' }}>
         <Typography sx={typographyStyle}>Meta title</Typography>
         <Box>
-          <Stack direction={'row'} alignItems={'center'}>
+          <Stack direction={'row'} alignItems={'center'} sx={checkboxStyle}>
             <Checkbox
-              sx={{ color }}
               checked={formik.values.meta_title === null}
               onChange={() => {
                 formik.setFieldValue(
@@ -301,10 +299,10 @@ const TemplateForm: React.FC<Props> = ({
                 );
               }}
             />
-            <InputLabel sx={{ color }}>Use Default</InputLabel>
+            <InputLabel>Use Default</InputLabel>
           </Stack>
           <TextField
-            sx={selectStyle}
+            sx={fieldStyle}
             name="meta_title"
             value={formik.values.meta_title ?? ''}
             disabled={formik.values.meta_title === null}
@@ -315,9 +313,8 @@ const TemplateForm: React.FC<Props> = ({
       <Box sx={{ ...boxStyle, alignItems: 'baseline' }}>
         <Typography sx={typographyStyle}>Meta Description</Typography>
         <Box>
-          <Stack direction={'row'} alignItems={'center'}>
+          <Stack direction={'row'} alignItems={'center'} sx={checkboxStyle}>
             <Checkbox
-              sx={{ color }}
               checked={formik.values.meta_description === null}
               onChange={() => {
                 formik.setFieldValue(
@@ -326,12 +323,12 @@ const TemplateForm: React.FC<Props> = ({
                 );
               }}
             />
-            <InputLabel sx={{ color }}>Use Default</InputLabel>
+            <InputLabel>Use Default</InputLabel>
           </Stack>
           <TextField
             multiline
             maxRows={4}
-            sx={selectStyle}
+            sx={fieldStyle}
             name="meta_description"
             value={formik.values.meta_description ?? ''}
             disabled={formik.values.meta_description === null}
@@ -342,9 +339,8 @@ const TemplateForm: React.FC<Props> = ({
       <Box sx={{ ...boxStyle, alignItems: 'baseline' }}>
         <Typography sx={typographyStyle}>Meta Tags</Typography>
         <Box>
-          <Stack direction={'row'} alignItems={'center'}>
+          <Stack direction={'row'} alignItems={'center'} sx={checkboxStyle}>
             <Checkbox
-              sx={{ color }}
               checked={formik.values.meta_keywords === null}
               onChange={() => {
                 formik.setFieldValue(
@@ -353,10 +349,10 @@ const TemplateForm: React.FC<Props> = ({
                 );
               }}
             />
-            <InputLabel sx={{ color }}>Use Default</InputLabel>
+            <InputLabel>Use Default</InputLabel>
           </Stack>
           <TextField
-            sx={selectStyle}
+            sx={fieldStyle}
             name="meta_keywords"
             value={formik.values.meta_keywords ?? ''}
             disabled={formik.values.meta_keywords === null}
