@@ -456,6 +456,7 @@ export const Builder = () => {
               <TemplateForm
                 templateData={promptsData as Templates}
                 darkMode
+                onSaved={() => window.location.reload()}
               />
             </Box>
           </SwipeableDrawer>
