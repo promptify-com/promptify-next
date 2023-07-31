@@ -1,5 +1,12 @@
 import { LogoApp } from "@/assets/icons/LogoApp";
-import { ClearRounded, MenuRounded, Search } from "@mui/icons-material";
+import {
+  AutoAwesome,
+  ClearRounded,
+  HomeRounded,
+  MenuBookRounded,
+  MenuRounded,
+  Search,
+} from "@mui/icons-material";
 import {
   Avatar,
   Box,
@@ -24,6 +31,8 @@ import useLogout from "@/hooks/useLogout";
 import useSetUser from "@/hooks/useSetUser";
 import { useGetCollectionTemplatesQuery } from "@/core/api/prompts";
 import { Collections } from "./common/sidebar/Collections";
+import { useRef, useState } from "react";
+import { ProfileDropDown } from "./ProfileMenu";
 
 type SidebarType = "navigation" | "profile";
 
@@ -34,6 +43,7 @@ interface SideBarMobileProps {
   onOpen: () => void;
   user: User | undefined;
   token: string | null | undefined;
+  setSidebarType: (value: React.SetStateAction<SidebarType>) => void;
 }
 
 export const SideBarMobile: React.FC<SideBarMobileProps> = ({
@@ -43,6 +53,7 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
   onOpen,
   user,
   token,
+  setSidebarType,
 }) => {
   const router = useRouter();
   const logout = useLogout();
@@ -50,6 +61,37 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
 
   const pathname = router.pathname;
   const splittedPath = pathname.split("/");
+
+  const links = [
+    {
+      label: "Homepage",
+      icon: <HomeRounded />,
+      href: "/",
+      active: pathname == "/",
+      external: false,
+    },
+    {
+      label: "Browse",
+      icon: <Search />,
+      href: "/explore",
+      active: splittedPath[1] == "explore",
+      external: false,
+    },
+    {
+      label: "My Sparks",
+      icon: <AutoAwesome />,
+      href: "/sparks",
+      active: pathname == "/sparks",
+      external: false,
+    },
+    {
+      label: "Learn",
+      icon: <MenuBookRounded />,
+      href: "https://promptify.com",
+      active: pathname == "/learn",
+      external: true,
+    },
+  ];
 
   const navigateTo = (href: string, isExternal: boolean) => {
     if (isExternal) {
@@ -113,15 +155,25 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
               <Box>
                 {user && token && (
                   <Avatar
-                    sx={{
-                      width: "23px",
-                      height: "23px",
-                      bgcolor: "#56575c",
-                      fontSize: 10,
-                      textTransform: "capitalize",
-                    }}
+                    onClick={() => setSidebarType("profile")}
                     src={user.avatar || user.first_name}
                     alt={user.first_name}
+                    sx={{
+                      ml: "auto",
+                      cursor: "pointer",
+                      bgcolor: "black",
+                      borderRadius: { xs: "24px", sm: "36px" },
+                      width: "23px",
+                      height: "23px",
+                      padding: "1px",
+                      fontStyle: "normal",
+                      textAlign: "center",
+                      fontWeight: 400,
+                      fontSize: 10,
+                      textTransform: "capitalize",
+                      lineHeight: "20px",
+                      letterSpacing: "0.14px",
+                    }}
                   />
                 )}
               </Box>
@@ -198,7 +250,7 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
                     disablePadding
                     onClick={() => navigateTo(link.href, link.external)}
                   >
-                    <ListItemButton>
+                    <ListItemButton selected={link.active}>
                       <ListItemIcon sx={{ color: "onSurface" }}>
                         {link.icon}
                       </ListItemIcon>

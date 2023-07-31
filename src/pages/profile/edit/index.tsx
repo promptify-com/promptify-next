@@ -13,6 +13,7 @@ import { useGetCurrentUser, useUpdateUser } from "@/hooks/api/user";
 import { IEditProfile } from "@/common/types";
 import useSetUser from "@/hooks/useSetUser";
 import { Layout } from "@/layout";
+import Protected from "@/components/Protected";
 
 const EditProfilePage = () => {
   const router = useRouter();
@@ -39,7 +40,7 @@ const EditProfilePage = () => {
   });
 
   return (
-    <>
+    <Protected>
       <Layout>
         <Box mt={{ xs: 7, md: 0 }} padding={{ xs: "4px 0px", md: "0px 8px" }}>
           <Grid
@@ -106,7 +107,7 @@ const EditProfilePage = () => {
           </Grid>
         </Box>
       </Layout>
-    </>
+    </Protected>
   );
 };
 export async function getServerSideProps() {

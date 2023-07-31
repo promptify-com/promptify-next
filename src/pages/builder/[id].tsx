@@ -10,6 +10,7 @@ import {
   DialogContentText,
   DialogTitle,
   Snackbar,
+  SwipeableDrawer,
 } from "@mui/material";
 import { createEditor } from "@/components/builder/Editor";
 import { useRete } from "rete-react-render-plugin";
@@ -27,6 +28,8 @@ import { ContentCopy } from "@mui/icons-material";
 import { useRouter } from "next/router";
 import { INodesData } from "@/common/types/builder";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
+import TemplateForm from "@/components/common/forms/TemplateForm";
+import { Templates } from "@/core/api/dto/templates";
 
 export interface ITemplate {
   title: string;
@@ -69,7 +72,8 @@ export const Builder = () => {
   const { data: promptsData } = useGetPromptTemplatesQuery(id ? +id : skipToken);
   const dataForRequest = useRef({} as any);
   const [confirmDialogOpen, setConfirmDialogOpen] = React.useState(false);
-  const [open, setOpen] = React.useState(false);
+  const [snackBarOpen, setSnackBarOpen] = React.useState(false);
+  const [templateDrawerOpen, setTemplateDrawerOpen] = React.useState(false);
 
   const create = useCallback(
     (el: HTMLElement) => {
@@ -422,9 +426,13 @@ export const Builder = () => {
     });
 
     updateTemplate(Number(id), data).then(() => {
-      setOpen(true);
+      setSnackBarOpen(true);
       window.location.reload();
     });
+  };
+
+  const toggleTemplateDrawer = (open: boolean) => {
+    setTemplateDrawerOpen(open);
   };
 
   return (
@@ -434,10 +442,24 @@ export const Builder = () => {
           <Grid item xs={12}>
             <Header
               title={dataForRequest.current.title}
-              updateTemplateTitle={updateTemplateTitle}
+              onTitleHover={() => toggleTemplateDrawer(true)}
               onSave={injectOrderAndSendRequest}
             />
           </Grid>
+          <SwipeableDrawer
+            anchor={"left"}
+            open={templateDrawerOpen}
+            onClose={() => toggleTemplateDrawer(false)}
+            onOpen={() => toggleTemplateDrawer(true)}
+          >
+            <Box sx={{ bgcolor: "#373737", p: "1rem" }}>
+              <TemplateForm
+                templateData={promptsData as Templates}
+                darkMode
+                onSaved={() => window.location.reload()}
+              />
+            </Box>
+          </SwipeableDrawer>
           <Grid item xs={selectedNode ? 9 : 12}>
             <Box
               height={"calc(100vh - 80px)"}
@@ -577,11 +599,11 @@ export const Builder = () => {
           </Grid>
         </Grid>
         <Snackbar
-          open={open}
+          open={snackBarOpen}
           anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
           autoHideDuration={3000}
           message="Prompt template saved with success"
-          onClose={() => setOpen(false)}
+          onClose={() => setSnackBarOpen(false)}
         />
         <Dialog
           open={confirmDialogOpen}

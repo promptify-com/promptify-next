@@ -18,7 +18,9 @@ export const ExecutionCardGenerated: React.FC<Props> = ({
 
   useEffect(() => {
     document.addEventListener("wheel", (event) => {
-      clearInterval(interval);
+      if (event.deltaY < 0) {
+        clearInterval(interval);
+      }
     });
 
     function updateScroll() {
@@ -51,7 +53,9 @@ export const ExecutionCardGenerated: React.FC<Props> = ({
       {execution.data?.map((exec, i) => {
         const prevItem = i > 0 && execution.data && execution.data[i - 1];
         const isPrevItemIsImage = prevItem && isImageOutput(prevItem?.message);
-        const nextItem =  execution.data ? (i < execution.data.length - 1 && execution.data[i + 1]) : undefined;
+        const nextItem = execution.data
+          ? i < execution.data.length - 1 && execution.data[i + 1]
+          : undefined;
         const isNextItemIsText = nextItem && !isImageOutput(nextItem?.message);
 
         const prompt = templateData.prompts.find(
@@ -80,7 +84,7 @@ export const ExecutionCardGenerated: React.FC<Props> = ({
                       }}
                       sx={{
                         borderRadius: "8px",
-                        width: '40%',
+                        width: "40%",
                         objectFit: "cover",
                         float: "right",
                         ml: "20px",
@@ -118,7 +122,7 @@ export const ExecutionCardGenerated: React.FC<Props> = ({
                     }}
                     sx={{
                       borderRadius: "8px",
-                      width: '40%',
+                      width: "40%",
                       objectFit: "cover",
                       float: "right",
                       ml: "20px",

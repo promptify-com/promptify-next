@@ -60,7 +60,6 @@ interface GeneratorFormProps {
   selectedExecution: TemplatesExecutions | null;
   setMobileTab: (value: number) => void;
   setActiveTab: (value: number) => void;
-  mobileTab?: number;
   resetNewExecution: () => void;
   sparks: Spark[];
   selectedSpark: Spark | null;
@@ -95,7 +94,6 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   selectedExecution,
   setMobileTab,
   setActiveTab,
-  mobileTab,
   resetNewExecution,
   sparks,
   selectedSpark,
@@ -146,6 +144,8 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
         })
       );
       setResInputs(inputs);
+    } else {
+      setResInputs([]);
     }
   }, [shownInputs?.length, selectedExecution]);
 
@@ -189,9 +189,12 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
   // Prompts params values tracker to validate generating allowed or not
   useEffect(() => {
-    if (Object.keys(isInputsFilled()).length > 0) setAllowGenerate(false);
-    else setAllowGenerate(true);
-  }, [resPrompts]);
+    if (Object.keys(isInputsFilled()).length > 0 || resInputs.length === 0) {
+      setAllowGenerate(false);
+    } else {
+      setAllowGenerate(true);
+    }
+  }, [resInputs]);
 
   const isInputsFilled = () => {
     const tempErrors: InputsErrors = {};
@@ -493,6 +496,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
           selectedSpark={selectedSpark}
           changeSelectedSpark={setSelectedSpark}
           pinSpark={handlePinSpark}
+          showSearchBar={false}
         />
       )}
 
@@ -526,15 +530,8 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
             startIcon={<AddOutlined />}
             variant={"outlined"}
             onClick={() => {
-              if (resetNewExecution) {
-                resetNewExecution();
-              }
-              if (setMobileTab) {
-                setMobileTab(1);
-              }
-              if (setActiveTab) {
-                setActiveTab(1);
-              }
+              resetNewExecution();
+              setResInputs([]);
             }}
           >
             Spark
