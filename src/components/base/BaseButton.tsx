@@ -1,13 +1,13 @@
-// BaseButton.tsx
-import React, { FC, ReactNode } from "react";
+import React, { FC, ReactNode, JSX } from "react";
 import Button, { ButtonProps } from "@mui/material/Button";
-
+import Icon from "@mui/material/Icon";
 interface BaseButtonProps extends Omit<ButtonProps, "color"> {
   children: ReactNode;
   variant: "text" | "outlined" | "contained";
   color: "primary" | "custom";
   customColor?: string;
-  onClick?: () => void; // Add onClick prop
+  onClick?: () => void;
+  icon?: JSX.Element;
 }
 
 const BaseButton: FC<BaseButtonProps> = ({
@@ -16,6 +16,7 @@ const BaseButton: FC<BaseButtonProps> = ({
   color,
   customColor,
   onClick,
+  icon,
   ...rest
 }) => {
   // Define the color for the button
@@ -35,7 +36,10 @@ const BaseButton: FC<BaseButtonProps> = ({
       style={buttonStyle}
       onClick={onClick}
       {...rest}
+      sx={{ display: "flex", alignItems: "center" }}
     >
+      {/* Render the icon if provided */}
+      {icon && <Icon>{icon}</Icon>}
       {children}
     </Button>
   );

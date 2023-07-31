@@ -27,13 +27,16 @@ import {
   PreviewRounded,
   SettingsApplicationsRounded,
 } from "@mui/icons-material";
+import BaseButton from "../base/BaseButton";
 import { modalStyle } from "../modals/styles";
 
 export const Prompts = () => {
   const [templateFormOpen, setTemplateFormOpen] = useState(false);
   const [templateImportOpen, setTemplateImportOpen] = useState(false);
   const [modalNew, setModalNew] = useState(false);
-  const [selectedTemplate, setSelectedTemplate] = useState<Templates | null>(null);
+  const [selectedTemplate, setSelectedTemplate] = useState<Templates | null>(
+    null
+  );
 
   const [trigger, { data: promptsData, isFetching }] =
     promptsApi.endpoints.getAllPromptTemplates.useLazyQuery();
@@ -52,7 +55,7 @@ export const Prompts = () => {
 
   const confirmDelete = async () => {
     if (!selectedTemplate) return;
-    
+
     await deleteTemplate(selectedTemplate.id);
     setConfirmDialog(false);
   };
@@ -88,26 +91,29 @@ export const Prompts = () => {
           ml={{ xs: "auto" }}
           spacing={1}
         >
-          <Button
-            size="small"
+          <BaseButton
             onClick={() => {
               setTemplateImportOpen(true);
             }}
-            sx={{ bgcolor: "var(--primary-main, #3B4050)", color: "surface.1" }}
+            color="primary"
+            variant="contained"
+            style={{ fontWeight: 500 }}
           >
             Import JSON
-          </Button>
-          <Button
-            size="small"
+          </BaseButton>
+
+          <BaseButton
             onClick={() => {
               setSelectedTemplate(null);
               setModalNew(true);
               setTemplateFormOpen(true);
             }}
-            sx={{ bgcolor: "var(--primary-main, #3B4050)", color: "surface.1" }}
+            color="primary"
+            variant="contained"
+            style={{ fontWeight: 500 }}
           >
-            Create NEW
-          </Button>
+            Create New
+          </BaseButton>
         </Stack>
       </Box>
       {isFetching ? (
@@ -267,11 +273,8 @@ export const Prompts = () => {
           <Button onClick={() => confirmDelete()}>Confirm</Button>
         </DialogActions>
       </Dialog>
-      
-      <Modal
-        open={templateFormOpen} 
-        onClose={() => setTemplateFormOpen(false)}
-      >
+
+      <Modal open={templateFormOpen} onClose={() => setTemplateFormOpen(false)}>
         <Box sx={modalStyle}>
           <TemplateForm
             templateData={selectedTemplate}
@@ -284,7 +287,7 @@ export const Prompts = () => {
           />
         </Box>
       </Modal>
-      
+
       <TemplateImportModal
         open={templateImportOpen}
         setOpen={setTemplateImportOpen}

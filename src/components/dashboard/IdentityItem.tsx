@@ -152,11 +152,26 @@ export const IdentityItem: React.FC<IProps> = ({
               alignItems={"center"}
               gap={1}
             >
-              <Avatar
+              {selectedOption && (
+                <Image
+                  src={require(`../../assets/images/animals/${selectedOption?.text}.png`)}
+                  alt={"Unicorn"}
+                  loading="lazy"
+                  width={45}
+                  height={45}
+                  style={{ borderRadius: "45px" }}
+                />
+              )}
+
+              {/* <Avatar
                 alt={selectedOption?.text}
-                src={selectedOption?.text}
+                src={
+                  selectedOption?.text ??
+                  `../../assets/images/animals/${selectedOption?.text}.png`
+                }
                 sx={{ bgcolor: "black" }}
-              />
+                component={"image"}
+              /> */}
               <Typography
                 sx={{
                   fontFamily: "Poppins",
@@ -249,10 +264,12 @@ export const IdentityItem: React.FC<IProps> = ({
                       >
                         <Box display="flex" alignItems="center">
                           <Image
-                            src={UnicornLeft}
+                            src={require(`../../assets/images/animals/${option.text}.png`)}
                             alt={"Unicorn"}
                             loading="lazy"
                             width={45}
+                            height={45}
+                            style={{ borderRadius: "45px" }}
                           />
                           <Typography
                             fontWeight={500}

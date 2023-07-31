@@ -37,6 +37,7 @@ import {
 } from "@/core/api/explorer";
 import { SideBarCloseIcon } from "@/assets/icons/SideBarClose";
 import { useGetCurrentUserQuery } from "@/core/api/user";
+import { useFetchFilters } from "@/hooks/useFetchFilters";
 
 interface SideBarProps {
   open: boolean;
@@ -99,9 +100,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
       skip: !user,
     });
 
-  const { data: tags } = useGetTagsPopularQuery();
-  const { data: engines } = useGetEnginesQuery();
-
+  const { tags, engines } = useFetchFilters();
   const [expandedOnHover, setExpandedOnHover] = useState<boolean>(false);
   const [showExpandIcon, setShowExpandIcon] = useState<boolean>(false);
   const [showFilters, setShowFilters] = useState<boolean>(false);
@@ -143,19 +142,6 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
       external: true,
     },
   ];
-
-  const navigate = (href: string, isExternal: boolean) => {
-    if (isExternal) {
-      window.open(href, "_blank"); // opens in a new tab
-      return;
-    }
-
-    let next = href.split("/");
-    if (splittedPath[1] == next[1]) {
-      return null;
-    }
-    router.push(href);
-  };
 
   const expandSideBarOnHover = () => {
     setExpandedOnHover(true);
@@ -244,57 +230,70 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
                   item.name == "Browse" && setShowFilters(!showFilters)
                 }
               >
-                <ListItemButton
-                  sx={{
-                    minHeight: 48,
-                    borderRadius: "8px",
-                    mx: 1,
-                    padding: "16px 22px ",
+                <Link
+                  href={item.href}
+                  style={{
+                    width: "100%",
+                    textDecoration: "none",
                   }}
-                  onClick={() => navigate(item.href, item.external)}
-                  selected={item.active}
+                  target={item.external ? "_blank" : ""}
+                  onClick={(e) => {
+                    if (item.name === "Browse" && isExplorePage) {
+                      e.preventDefault();
+                    }
+                  }}
                 >
-                  <Box
-                    style={{
-                      textDecoration: "none",
-
-                      display: "flex",
-                      width: open || expandedOnHover ? "100%" : "auto",
-                      alignItems: "center",
-                      justifyContent:
-                        open || expandedOnHover ? "initial" : "center",
+                  <ListItemButton
+                    sx={{
+                      minHeight: 48,
+                      borderRadius: "8px",
+                      mx: 1,
+                      padding: "16px 22px ",
                     }}
+                    selected={item.active}
                   >
-                    <ListItemIcon
-                      sx={{
-                        minWidth: 0,
-                        mr: open || expandedOnHover ? 3 : "auto",
-                        color: "onSurface",
-                        justifyContent: "center",
+                    <Box
+                      style={{
+                        textDecoration: "none",
+
+                        display: "flex",
+                        width: open || expandedOnHover ? "100%" : "auto",
+                        alignItems: "center",
+                        justifyContent:
+                          open || expandedOnHover ? "initial" : "center",
                       }}
                     >
-                      <Icon>{item.icon}</Icon>
-                    </ListItemIcon>
-                    <Typography
-                      sx={{
-                        opacity: open || expandedOnHover ? 1 : 0,
-                        mt: 0.5,
-                      }}
-                      fontSize={14}
-                      fontWeight={500}
-                      color={"onSurface"}
-                    >
-                      {item.name}
-                    </Typography>
-                  </Box>
-                  {item.name == "Browse" &&
-                    isExplorePage &&
-                    (showFilters ? (
-                      <ExpandLess sx={{ mr: -1, color: "text.secondary" }} />
-                    ) : (
-                      <ExpandMore sx={{ mr: -1, color: "text.secondary" }} />
-                    ))}
-                </ListItemButton>
+                      <ListItemIcon
+                        sx={{
+                          minWidth: 0,
+                          mr: open || expandedOnHover ? 3 : "auto",
+                          color: "onSurface",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <Icon>{item.icon}</Icon>
+                      </ListItemIcon>
+                      <Typography
+                        sx={{
+                          opacity: open || expandedOnHover ? 1 : 0,
+                          mt: 0.5,
+                        }}
+                        fontSize={14}
+                        fontWeight={500}
+                        color={"onSurface"}
+                      >
+                        {item.name}
+                      </Typography>
+                    </Box>
+                    {item.name == "Browse" &&
+                      isExplorePage &&
+                      (showFilters ? (
+                        <ExpandLess sx={{ mr: -1, color: "text.secondary" }} />
+                      ) : (
+                        <ExpandMore sx={{ mr: -1, color: "text.secondary" }} />
+                      ))}
+                  </ListItemButton>
+                </Link>
               </ListItem>
               <Collapse
                 in={showFilters && isExplorePage && item.name == "Browse"}

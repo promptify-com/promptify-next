@@ -1,37 +1,15 @@
 import React from "react";
-import { Box, Button, Grid, Stack, Typography } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 import Head from "next/head";
-import { useSelector } from "react-redux";
 
-import { useGetTemplatesByFilterQuery } from "@/core/api/explorer";
 import { Layout } from "@/layout";
 import { CategoriesSection } from "@/components/explorer/CategoriesSection";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
-import { RootState } from "@/core/store";
 import { FiltersSelected } from "@/components/explorer/FiltersSelected";
-import { useGetCategoriesQuery } from "@/core/api/categories";
-import { FilterParams, SelectedFilters, Tag } from "@/core/api/dto/templates";
+import { SelectedFilters } from "@/core/api/dto/templates";
+import { useExploreData } from "@/hooks/useExploreData";
 
 export default function ExplorePage() {
-  const tags = useSelector((state: RootState) => state.filters.tag);
-  const engineId = useSelector((state: RootState) => state.filters.engine?.id);
-  const title = useSelector((state: RootState) => state.filters.title);
-  const filteredTags = tags
-    .filter((item: Tag | null) => item !== null)
-    .map((item: Tag | null) => item?.name)
-    .join("&tag=");
-  const params: FilterParams = {
-    tag: filteredTags,
-    engineId,
-    title,
-  };
-  const { data: templates, isLoading: isTemplatesLoading } =
-    useGetTemplatesByFilterQuery(params);
-  const filters = useSelector((state: RootState) => state.filters);
-
-  const { data: categories, isLoading: isCategoryLoading } =
-    useGetCategoriesQuery();
-
   function areAllStatesNull(filters: SelectedFilters): boolean {
     return (
       filters.engine === null &&
@@ -41,6 +19,13 @@ export default function ExplorePage() {
       filters.subCategory === null
     );
   }
+  const {
+    categories,
+    templates,
+    filters,
+    isTemplatesLoading,
+    isCategoryLoading,
+  } = useExploreData();
 
   const allNull = areAllStatesNull(filters);
 

@@ -79,7 +79,7 @@ const EditProfilePage = () => {
                   width={"100%"}
                 >
                   <NameInfo formik={formik} />
-                  <ProfileImage formik={formik} />
+                  <ProfileImage formik={formik} user={user} />
                   <Gender formik={formik} />
                   <About formik={formik} />
                 </Box>
