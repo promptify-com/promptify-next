@@ -278,7 +278,7 @@ export const Prompts = () => {
       <TemplateFormModal
         open={templateFormOpen}
         setOpen={setTemplateFormOpen}
-        data={modalPromptData}
+        templateData={modalPromptData[0]}
         modalNew={modalNew}
         refetchTemplates={trigger}
       />

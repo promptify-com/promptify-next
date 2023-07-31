@@ -18,12 +18,12 @@ import { useGetCategoriesQuery } from '@/core/api/categories';
 interface IModal {
   open: boolean;
   setOpen: (val: boolean) => void;
-  data: Templates[];
+  templateData: Templates;
   modalNew: boolean;
   refetchTemplates: () => void;
 }
 
-export default function TemplateFormModal({ open, setOpen, data, modalNew, refetchTemplates }: IModal) {
+export default function TemplateFormModal({ open, setOpen, templateData, modalNew, refetchTemplates }: IModal) {
   const { data: categories } = useGetCategoriesQuery();
   const { data: fetchedTags } = useGetTagsQuery();
   const [tags, setTags] = useState<string[]>([]);
@@ -34,8 +34,8 @@ export default function TemplateFormModal({ open, setOpen, data, modalNew, refet
   };
 
   useEffect(() => {
-    setSelectedTags(data[0]?.tags.map(tag => tag.name) || []);
-  }, [data]);
+    setSelectedTags(templateData?.tags.map(tag => tag.name) || []);
+  }, [templateData]);
 
   useEffect(() => {
     if (fetchedTags) setTags(fetchedTags.map(tag => tag.name));
@@ -66,7 +66,7 @@ export default function TemplateFormModal({ open, setOpen, data, modalNew, refet
   });
 
   const onEditTemplate = async (values: IEditTemplate) => {
-    await updateTemplate(data[0]?.id, values);
+    await updateTemplate(templateData?.id, values);
     handleClose();
     refetchTemplates();
     formik.resetForm();
@@ -82,21 +82,21 @@ export default function TemplateFormModal({ open, setOpen, data, modalNew, refet
 
   const formik =  useFormik<IEditTemplate>({
     initialValues: {
-      title: data[0]?.title || '',
-      description: data[0]?.description || '',
-      duration: data[0]?.duration?.toString() || '1',
-      difficulty: data[0]?.difficulty || 'BEGINNER',
-      is_visible: data[0]?.is_visible || true,
-      language: data[0]?.language || 'en-us',
-      category: data[0]?.category?.id || 1,
-      context: data[0]?.context || '',
-      tags: data[0]?.tags || [],
-      thumbnail: data[0]?.thumbnail,
-      executions_limit: data[0]?.executions_limit || -1,
-      slug: data[0]?.slug || '',
-      meta_title: data[0]?.meta_title || '',
-      meta_description: data[0]?.meta_description || '',
-      meta_keywords: data[0]?.meta_keywords || '',
+      title: templateData?.title || '',
+      description: templateData?.description || '',
+      duration: templateData?.duration?.toString() || '1',
+      difficulty: templateData?.difficulty || 'BEGINNER',
+      is_visible: templateData?.is_visible || true,
+      language: templateData?.language || 'en-us',
+      category: templateData?.category?.id || 1,
+      context: templateData?.context || '',
+      tags: templateData?.tags || [],
+      thumbnail: templateData?.thumbnail,
+      executions_limit: templateData?.executions_limit || -1,
+      slug: templateData?.slug || '',
+      meta_title: templateData?.meta_title || '',
+      meta_description: templateData?.meta_description || '',
+      meta_keywords: templateData?.meta_keywords || '',
       ...(modalNew && { prompts_list: [] }),
     },
     enableReinitialize: true,
@@ -374,7 +374,7 @@ export default function TemplateFormModal({ open, setOpen, data, modalNew, refet
                 sx={{ mt: '20px' }}
                 onClick={() => {
                   window.open(
-                    window.location.origin + `/builder/${data[0]?.id}`,
+                    window.location.origin + `/builder/${templateData?.id}`,
                     '_blank'
                   );
                 }}
