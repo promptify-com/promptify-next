@@ -13,14 +13,21 @@ const Protected: React.FC<IProps> = ({ children, showLoadingPage }) => {
   const [user, error, isLoading] = useGetCurrentUser();
   const setUser = useSetUser();
 
+  const pathname = router.pathname;
+  const splittedPath = pathname.split("/");
+
+  console.log(splittedPath);
+
   useEffect(() => {
     if (!isLoading && user) {
       setUser(user);
     }
 
-    // if (!user && !isLoading) {
-    //   navigate('/');
-    // }
+    if (!user && !isLoading) {
+      if (splittedPath[1] === "profile" || splittedPath[1] === "sparks") {
+        router.push("/");
+      }
+    }
   }, [user, isLoading, error, router]);
 
   return <>{showLoadingPage && isLoading ? <PageLoading /> : children}</>;

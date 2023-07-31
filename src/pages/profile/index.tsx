@@ -4,12 +4,13 @@ import Head from "next/head";
 import { Connections, Home, Identy, Prompts } from "@/components/dashboard";
 import { Layout } from "@/layout";
 import useToken from "@/hooks/useToken";
+import Protected from "@/components/Protected";
 
 const Dashboard = () => {
   const token = useToken();
 
   return (
-    <>
+    <Protected>
       <Head>
         <title>Promptify | Boost Your Creativity</title>
         <meta
@@ -43,7 +44,7 @@ const Dashboard = () => {
           </Grid>
         </Box>
       </Layout>
-    </>
+    </Protected>
   );
 };
 export async function getServerSideProps() {
