@@ -79,7 +79,7 @@ export const ProfileDropDown: React.FC<ProfileDropDownProps> = ({
             }}
             elevation={0}
           >
-            <ClickAwayListener onClickAway={() => onClose}>
+            <ClickAwayListener onClickAway={() => onClose()}>
               <Grid
                 sx={{
                   display: "flex",
