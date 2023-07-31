@@ -16,8 +16,6 @@ const Protected: React.FC<IProps> = ({ children, showLoadingPage }) => {
   const pathname = router.pathname;
   const splittedPath = pathname.split("/");
 
-  console.log(splittedPath);
-
   useEffect(() => {
     if (!isLoading && user) {
       setUser(user);
