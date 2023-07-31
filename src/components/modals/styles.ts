@@ -16,9 +16,15 @@ export const modalStyle = {
   
   export const selectStyle = {
     width: '250px',
+    color: "inherit",
+    ".MuiOutlinedInput-root": {
+      color: "inherit",
+    },
+    ".MuiOutlinedInput-notchedOutline": {
+      borderColor: "inherit",
+    },
     ".Mui-disabled .MuiOutlinedInput-notchedOutline": {
-      border: "none",
-      bgcolor: "grey.100",
+      bgcolor: "action.hover",
     }
   };
   
@@ -43,4 +49,5 @@ export const modalStyle = {
   export const typographyStyle = {
     fontSize: '20px',
     fontWeight: '400',
+    color: "inherit"
   };
