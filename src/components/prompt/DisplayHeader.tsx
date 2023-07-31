@@ -10,15 +10,13 @@ interface Props {
    selectedSpark: Spark | null;
    changeSelectedSpark: (spark: Spark) => void;
    pinSpark: () => void;
-   showSearchBar: boolean;
 }
 
 export const DisplayHeader: React.FC<Props> = ({ 
    sparks,
    selectedSpark,
    changeSelectedSpark,
-   pinSpark,
-   showSearchBar
+   pinSpark
  }) => {
    const  { palette } = useTheme();
    
@@ -166,7 +164,7 @@ export const DisplayHeader: React.FC<Props> = ({
                   display={{ md: "none" }}
                   direction={"row"} alignItems={"center"} gap={1} p={"8px 16px"}
                >
-                  {showSearchBar && SearchInput("right")}
+                  {SearchInput("right")}
 
                   {false && (
                   <Button

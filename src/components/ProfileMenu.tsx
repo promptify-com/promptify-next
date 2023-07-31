@@ -27,7 +27,6 @@ interface ProfileDropDownProps {
   onToggle: () => void;
   user: User | undefined;
   anchorElement: HTMLElement | null;
-  onCloseSidebar?: () => void;
 }
 
 export const ProfileDropDown: React.FC<ProfileDropDownProps> = ({
@@ -36,7 +35,6 @@ export const ProfileDropDown: React.FC<ProfileDropDownProps> = ({
   user,
   onToggle,
   anchorElement,
-  onCloseSidebar
 }) => {
   const router = useRouter();
   const logout = useLogout();
@@ -47,10 +45,7 @@ export const ProfileDropDown: React.FC<ProfileDropDownProps> = ({
     router.push(el.href);
   };
   const handleLogout = () => {
-    onClose();
-    if (onCloseSidebar){
-      onCloseSidebar();
-    }
+    onToggle();
     logout();
     setUser(null);
   };
@@ -84,7 +79,7 @@ export const ProfileDropDown: React.FC<ProfileDropDownProps> = ({
             }}
             elevation={0}
           >
-            <ClickAwayListener onClickAway={() => onClose()}>
+            <ClickAwayListener onClickAway={() => onClose}>
               <Grid
                 sx={{
                   display: "flex",

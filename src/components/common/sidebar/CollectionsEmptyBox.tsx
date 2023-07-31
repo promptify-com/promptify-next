@@ -1,20 +1,7 @@
 import { EmptyBox } from "@/assets/icons/EmptyBox";
 import { Box, Button, Grid, Typography } from "@mui/material";
-import { useRouter } from "next/router";
 
 export const CollectionsEmptyBox = ({ onExpand }: { onExpand?: boolean }) => {
-  const router = useRouter();
-  const pathname = router.pathname;
-  const splittedPath = pathname.split("/");
-
-  const navigate = (href: string) => {
-    let next = href.split("/");
-    if (splittedPath[1] == next[1]) {
-      return null;
-    }
-    router.push(href);
-  };
-
   return (
     <Box
       sx={{ display: onExpand ? "flex" : "none" }}
@@ -42,7 +29,7 @@ export const CollectionsEmptyBox = ({ onExpand }: { onExpand?: boolean }) => {
         alignItems={"center"}
         gap={3}
       >
-        <Button variant="outlined" onClick={() => navigate('signin')}>Sign In</Button>
+        <Button variant="outlined">Sign In</Button>
         <Typography>Or</Typography>
         <Button
           sx={{
@@ -53,7 +40,6 @@ export const CollectionsEmptyBox = ({ onExpand }: { onExpand?: boolean }) => {
               border: "1px solid #3B4050",
             },
           }}
-          onClick={() => navigate('signup')}
         >
           Sign Up
         </Button>

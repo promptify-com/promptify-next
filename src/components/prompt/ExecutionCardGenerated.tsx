@@ -18,9 +18,7 @@ export const ExecutionCardGenerated: React.FC<Props> = ({
 
   useEffect(() => {
     document.addEventListener("wheel", (event) => {
-      if (event.deltaY < 0){
-        clearInterval(interval);
-      }
+      clearInterval(interval);
     });
 
     function updateScroll() {
