@@ -39,7 +39,7 @@ export const History: React.FC<Props> = ({
       if (index !== -1) {
         acc[index].versions.push(item);
       } else {
-        acc.push({ date: createdAt, versions: [item] });
+        acc.push({ date: item.created_at, versions: [item] });
       }
       return acc;
     }, [] as { date: string; versions: SparkVersion[] }[]);
@@ -89,6 +89,20 @@ export const History: React.FC<Props> = ({
       setSelectedExecution(execution);
   }
 
+  const formatDate = (date: string) => {
+    const today = moment().startOf('day');
+    const inputDate = moment(new Date(date));
+
+    if (inputDate.isSame(today, 'd')) {
+      return 'Today';
+    } else if (inputDate.isSame(today.subtract(1, 'd'), 'd')) {
+      return 'Yesterday';
+    } else {
+      const diff = today.diff(inputDate, 'days');
+      return `${diff} days ago`;
+    }
+  }
+
   return (
     <Box sx={{ p: "16px" }}>
       <Typography 
@@ -120,7 +134,7 @@ export const History: React.FC<Props> = ({
                   textAlign: "left",
                 }}
               >
-                {group.date}
+                {formatDate(group.date)}
               </TimelineOppositeContent>
               <TimeLineSeparator noConnector />
               <TimelineContent sx={{ 
