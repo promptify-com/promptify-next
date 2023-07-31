@@ -356,7 +356,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
               tempArr[activePrompt] = {
                 ...tempArr[activePrompt],
                 prompt,
-                error: message,
+                error: message ? message.replace("[ERROR]", "") : "Something went wrong during the execution of this prompt",
               };
             }
 
