@@ -55,7 +55,7 @@ const EditProfilePage = () => {
                 alignItems={"center"}
                 gap={2}
                 onClick={() => router.push("/profile")}
-                sx={{ cursor: "pointer" }}
+                sx={{ cursor: "pointer", width: "fit-content" }} // Adding width with fit-content will make box take only the width needed
               >
                 <ArrowBackIosRounded
                   sx={{
