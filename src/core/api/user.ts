@@ -3,6 +3,7 @@ import { createApi } from "@reduxjs/toolkit/query/react";
 import { axiosBaseQuery } from "./axios-base-query";
 import { User } from "./dto/user";
 import useToken from "../../hooks/useToken";
+import { Templates } from "./dto/templates";
 
 export const userApi = createApi({
   reducerPath: "userApi",
@@ -22,6 +23,12 @@ export const userApi = createApi({
           },
         }),
       }),
+      getUserTemplates: builder.query<Templates[], void>({
+        query: () => ({
+          url: "/api/meta/templates/me",
+          method: "get",
+        }),
+      }),
       updateUserProfile: builder.mutation<User, any>({
         query: (updatedUser) => ({
           url: "/api/me/",
@@ -36,4 +43,8 @@ export const userApi = createApi({
   },
 });
 
-export const { useGetCurrentUserQuery, useUpdateUserProfileMutation } = userApi;
+export const {
+  useGetCurrentUserQuery,
+  useUpdateUserProfileMutation,
+  useGetUserTemplatesQuery,
+} = userApi;

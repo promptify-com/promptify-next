@@ -1,17 +1,14 @@
 import { Box, Grid } from "@mui/material";
 import Head from "next/head";
 
-import { Connections, Home, Identy, Prompts } from "@/components/dashboard";
+import { Home } from "@/components/dashboard";
 import { Layout } from "@/layout";
-import useToken from "@/hooks/useToken";
-import { useGetTemplatesByOrderingQuery } from "@/core/api/explorer";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
+import { useGetUserTemplatesQuery } from "@/core/api/user";
 
 const Dashboard = () => {
-  const token = useToken();
-
   const { data: templates, isLoading: isTemplatesLoading } =
-    useGetTemplatesByOrderingQuery();
+    useGetUserTemplatesQuery();
 
   return (
     <>

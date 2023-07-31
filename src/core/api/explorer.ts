@@ -86,7 +86,6 @@ export const explorerApi = createApi({
               : "") +
             (params.engineId ? `&engine=${params.engineId}` : "") +
             (params.title ? `&title=${params.title}` : "") +
-
             (params.filter ? `&ordering=${params.filter}` : ""),
           method: "get",
         }),
@@ -94,17 +93,14 @@ export const explorerApi = createApi({
 
       getTemplatesSuggested: builder.query<Templates[], void>({
         query: () => ({
-          url:
-            "/api/meta/templates/suggested",
+          url: "/api/meta/templates/suggested",
           method: "get",
         }),
       }),
 
-
       getLastTemplates: builder.query<Templates, void>({
         query: () => ({
-          url:
-            "/api/meta/templates/last_executed/",
+          url: "/api/meta/templates/last_executed/",
           method: "get",
         }),
       }),

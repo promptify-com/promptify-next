@@ -37,6 +37,7 @@ import {
 } from "@/core/api/explorer";
 import { SideBarCloseIcon } from "@/assets/icons/SideBarClose";
 import { useGetCurrentUserQuery } from "@/core/api/user";
+import { useFetchFilters } from "@/hooks/useFetchFilters";
 
 interface SideBarProps {
   open: boolean;
@@ -99,9 +100,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
       skip: !user,
     });
 
-  const { data: tags } = useGetTagsPopularQuery();
-  const { data: engines } = useGetEnginesQuery();
-
+  const { tags, engines } = useFetchFilters();
   const [expandedOnHover, setExpandedOnHover] = useState<boolean>(false);
   const [showExpandIcon, setShowExpandIcon] = useState<boolean>(false);
   const [showFilters, setShowFilters] = useState<boolean>(false);
@@ -143,19 +142,6 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
       external: true,
     },
   ];
-
-  const navigate = (href: string, isExternal: boolean) => {
-    if (isExternal) {
-      window.open(href, "_blank"); // opens in a new tab
-      return;
-    }
-
-    let next = href.split("/");
-    if (splittedPath[1] == next[1]) {
-      return null;
-    }
-    router.push(href);
-  };
 
   const expandSideBarOnHover = () => {
     setExpandedOnHover(true);
@@ -250,6 +236,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
                     width: "100%",
                     textDecoration: "none",
                   }}
+                  target={item.external ? "_blank" : ""}
                   onClick={(e) => {
                     if (item.name === "Browse" && isExplorePage) {
                       e.preventDefault();
