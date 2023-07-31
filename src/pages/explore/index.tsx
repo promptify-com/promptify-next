@@ -88,7 +88,7 @@ const ExplorePage: NextPage<IProps> = ({ props }) => {
 
 ExplorePage.getInitialProps = wrapper.getInitialPageProps(
   ({ dispatch }: { dispatch: AppDispatch }) =>
-    async ({ store }: { store }) => {
+    async ({ store }) => {
       // Specify the type for 'store' variable
       const { filters } = store.getState();
 
