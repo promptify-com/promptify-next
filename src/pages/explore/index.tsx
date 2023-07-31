@@ -1,36 +1,31 @@
 import React from "react";
-import { Box, Button, Grid, Stack, Typography } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 import Head from "next/head";
-import { useSelector } from "react-redux";
-
-import { useGetTemplatesByFilterQuery } from "@/core/api/explorer";
+import { explorerApi } from "@/core/api/explorer";
+import { CategoriesApi } from "@/core/api/categories";
 import { Layout } from "@/layout";
 import { CategoriesSection } from "@/components/explorer/CategoriesSection";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
-import { RootState } from "@/core/store";
+import { RootState, wrapper } from "@/core/store";
 import { FiltersSelected } from "@/components/explorer/FiltersSelected";
-import { useGetCategoriesQuery } from "@/core/api/categories";
 import { FilterParams, SelectedFilters, Tag } from "@/core/api/dto/templates";
+import { NextPage } from "next";
+import { useAppSelector } from "@/hooks/useStore";
 
-export default function ExplorePage() {
-  const tags = useSelector((state: RootState) => state.filters.tag);
-  const engineId = useSelector((state: RootState) => state.filters.engine?.id);
-  const title = useSelector((state: RootState) => state.filters.title);
-  const filteredTags = tags
-    .filter((item: Tag | null) => item !== null)
-    .map((item: Tag | null) => item?.name)
-    .join("&tag=");
-  const params: FilterParams = {
-    tag: filteredTags,
-    engineId,
-    title,
+interface IProps {
+  props: {
+    categories: any;
+    templates: any;
+    isCategoryLoading: boolean;
+    isTemplatesLoading: boolean;
   };
-  const { data: templates, isLoading: isTemplatesLoading } =
-    useGetTemplatesByFilterQuery(params);
-  const filters = useSelector((state: RootState) => state.filters);
+}
 
-  const { data: categories, isLoading: isCategoryLoading } =
-    useGetCategoriesQuery();
+const ExplorePage: NextPage<IProps> = ({ props }) => {
+  const { categories, templates, isCategoryLoading, isTemplatesLoading } =
+    props;
+
+  const filters = useAppSelector((state: RootState) => state.filters);
 
   function areAllStatesNull(filters: SelectedFilters): boolean {
     return (
@@ -71,7 +66,6 @@ export default function ExplorePage() {
                 isLoading={isCategoryLoading}
               />
             )}
-
             <TemplatesSection
               filtred={!allNull}
               templates={templates ?? []}
@@ -83,4 +77,41 @@ export default function ExplorePage() {
       </Layout>
     </>
   );
-}
+};
+
+ExplorePage.getInitialProps = wrapper.getInitialPageProps(
+  ({ dispatch }) =>
+    async ({ store }) => {
+      const { filters } = store.getState();
+
+      const filteredTags = filters.tag
+        .filter((item: Tag | null) => item !== null)
+        .map((item: Tag | null) => item?.name)
+        .join("&tag=");
+
+      const params: FilterParams = {
+        tag: filteredTags,
+        engineId: filters.engine?.id,
+        title: filters.title,
+      };
+
+      const templates = await dispatch(
+        explorerApi.endpoints.getTemplatesByFilter.initiate(params)
+      );
+
+      const categories = await dispatch(
+        CategoriesApi.endpoints.getCategories.initiate()
+      );
+
+      return {
+        props: {
+          templates: templates.data,
+          categories: categories.data,
+          isTemplatesLoading: templates.isLoading,
+          isCategoryLoading: categories.isLoading,
+        },
+      };
+    }
+);
+
+export default ExplorePage;

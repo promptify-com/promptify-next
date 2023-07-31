@@ -4,18 +4,23 @@ import { axiosBaseQuery } from "./axios-base-query";
 import {
   Templates,
   Tag,
-  Category,
   Engine,
   TemplateIds,
   TemplateKeyWordTag,
   FilterParams,
 } from "./dto/templates";
+import { HYDRATE } from "next-redux-wrapper";
 
 export const explorerApi = createApi({
   reducerPath: "explorerApi",
   baseQuery: axiosBaseQuery({
     baseUrl: process.env.NEXT_PUBLIC_API_URL || "",
   }),
+  extractRehydrationInfo(action, { reducerPath }) {
+    if (action.type === HYDRATE) {
+      return action.payload[reducerPath];
+    }
+  },
   endpoints: (builder) => {
     return {
       getTags: builder.query<Tag[], void>({
@@ -86,7 +91,6 @@ export const explorerApi = createApi({
               : "") +
             (params.engineId ? `&engine=${params.engineId}` : "") +
             (params.title ? `&title=${params.title}` : "") +
-
             (params.filter ? `&ordering=${params.filter}` : ""),
           method: "get",
         }),
@@ -94,17 +98,14 @@ export const explorerApi = createApi({
 
       getTemplatesSuggested: builder.query<Templates[], void>({
         query: () => ({
-          url:
-            "/api/meta/templates/suggested",
+          url: "/api/meta/templates/suggested",
           method: "get",
         }),
       }),
 
-
       getLastTemplates: builder.query<Templates, void>({
         query: () => ({
-          url:
-            "/api/meta/templates/last_executed/",
+          url: "/api/meta/templates/last_executed/",
           method: "get",
         }),
       }),
@@ -156,7 +157,6 @@ export const explorerApi = createApi({
 export const {
   useGetTagsQuery,
   useGetTagsPopularQuery,
-
   useGetTemplatesByKeyWordQuery,
   useGetTemplatesByTagQuery,
   useGetTemplatesByKeyWordAndTagQuery,

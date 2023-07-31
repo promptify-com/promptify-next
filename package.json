@@ -17,6 +17,7 @@
     "@mui/icons-material": "^5.11.16",
     "@mui/lab": "^5.0.0-alpha.137",
     "@mui/material": "^5.13.6",
+    "@netlify/plugin-nextjs": "^4.1.1",
     "@react-oauth/google": "^0.11.0",
     "@reduxjs/toolkit": "^1.9.5",
     "@types/node": "20.3.2",
@@ -29,6 +30,7 @@
     "material-dynamic-colors": "^0.1.7",
     "moment": "^2.29.4",
     "next": "13.4.7",
+    "next-redux-wrapper": "^8.1.0",
     "polished": "^4.2.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -46,7 +48,6 @@
     "typescript": "5.1.6",
     "usehooks-ts": "^2.9.1",
     "web-worker": "^1.2.0",
-    "yup": "^1.2.0",
-    "@netlify/plugin-nextjs": "^4.1.1"
+    "yup": "^1.2.0"
   }
 }

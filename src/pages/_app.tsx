@@ -7,19 +7,24 @@ import "@fontsource/space-mono/400.css";
 import "@fontsource/space-mono/700.css";
 import type { AppProps } from "next/app";
 import { ThemeProvider } from "@mui/material";
-import { Provider } from "react-redux";
-import { store } from "@/core/store";
+import { wrapper } from "@/core/store";
 import { theme } from "@/theme";
 import Head from "next/head";
-import Script from 'next/script';
+import Script from "next/script";
+import { Provider } from "react-redux";
 
-export default function App({ Component, pageProps }: AppProps) {
+function App({ Component, ...rest }: AppProps) {
+  const { store, props } = wrapper.useWrappedStore(rest);
+  const { pageProps } = props;
   return (
     <Provider store={store}>
       <ThemeProvider theme={theme}>
-        <Script strategy="lazyOnload" src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS}`} />
+        <Script
+          strategy="lazyOnload"
+          src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS}`}
+        />
         <Script strategy="lazyOnload">
-            {`
+          {`
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){dataLayer.push(arguments);}
                 gtag('js', new Date());
@@ -28,8 +33,10 @@ export default function App({ Component, pageProps }: AppProps) {
                 });
             `}
         </Script>
-        <Script strategy="afterInteractive" dangerouslySetInnerHTML={{
-            __html:`
+        <Script
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
               (function(h,o,t,j,a,r){
                 h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
                 h._hjSettings={hjid:${process.env.NEXT_PUBLIC_HOTJAR_ID},hjsv:6};
@@ -38,9 +45,10 @@ export default function App({ Component, pageProps }: AppProps) {
                 r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
                 a.appendChild(r);
               })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
-              `
-            }} />
-        
+              `,
+          }}
+        />
+
         <Head>
           <title>{pageProps?.title}</title>
           <meta name="description" content={pageProps?.description} />
@@ -54,3 +62,4 @@ export default function App({ Component, pageProps }: AppProps) {
     </Provider>
   );
 }
+export default App;
