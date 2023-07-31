@@ -18,6 +18,8 @@ interface Props {
   modalNew?: boolean;
   refetchTemplates?: () => void;
   onSaved?: () => void;
+  darkMode?: boolean;
+  linkBuilder?: boolean;
 }
 
 const TemplateForm: React.FC<Props> = ({
@@ -25,6 +27,8 @@ const TemplateForm: React.FC<Props> = ({
   modalNew = false,
   refetchTemplates = () => {},
   onSaved = () => {},
+  darkMode = false,
+  linkBuilder = false
 }) => {
   
   const { data: categories } = useGetCategoriesQuery();
@@ -104,6 +108,8 @@ const TemplateForm: React.FC<Props> = ({
     validationSchema: FormSchema,
     onSubmit: modalNew ? onCreateTemplate : onEditTemplate,
   });
+
+  const color = darkMode ? "common.white" : "grey.600";
 
   return (
     <Box>
@@ -261,7 +267,7 @@ const TemplateForm: React.FC<Props> = ({
         <Box>
           <Stack direction={'row'} alignItems={'center'}>
             <Checkbox
-              sx={{ color: 'grey.600' }}
+              sx={{ color: color }}
               checked={formik.values.slug === null}
               onChange={() => {
                 formik.setFieldValue(
@@ -270,7 +276,7 @@ const TemplateForm: React.FC<Props> = ({
                 );
               }}
             />
-            <InputLabel sx={{ color: 'grey.600' }}>Use Default</InputLabel>
+            <InputLabel sx={{ color: color }}>Use Default</InputLabel>
           </Stack>
           <TextField
             sx={selectStyle}
@@ -286,7 +292,7 @@ const TemplateForm: React.FC<Props> = ({
         <Box>
           <Stack direction={'row'} alignItems={'center'}>
             <Checkbox
-              sx={{ color: 'grey.600' }}
+              sx={{ color: color }}
               checked={formik.values.meta_title === null}
               onChange={() => {
                 formik.setFieldValue(
@@ -295,7 +301,7 @@ const TemplateForm: React.FC<Props> = ({
                 );
               }}
             />
-            <InputLabel sx={{ color: 'grey.600' }}>Use Default</InputLabel>
+            <InputLabel sx={{ color: color }}>Use Default</InputLabel>
           </Stack>
           <TextField
             sx={selectStyle}
@@ -311,7 +317,7 @@ const TemplateForm: React.FC<Props> = ({
         <Box>
           <Stack direction={'row'} alignItems={'center'}>
             <Checkbox
-              sx={{ color: 'grey.600' }}
+              sx={{ color: color }}
               checked={formik.values.meta_description === null}
               onChange={() => {
                 formik.setFieldValue(
@@ -320,7 +326,7 @@ const TemplateForm: React.FC<Props> = ({
                 );
               }}
             />
-            <InputLabel sx={{ color: 'grey.600' }}>Use Default</InputLabel>
+            <InputLabel sx={{ color: color }}>Use Default</InputLabel>
           </Stack>
           <TextField
             multiline
@@ -338,7 +344,7 @@ const TemplateForm: React.FC<Props> = ({
         <Box>
           <Stack direction={'row'} alignItems={'center'}>
             <Checkbox
-              sx={{ color: 'grey.600' }}
+              sx={{ color: color }}
               checked={formik.values.meta_keywords === null}
               onChange={() => {
                 formik.setFieldValue(
@@ -347,7 +353,7 @@ const TemplateForm: React.FC<Props> = ({
                 );
               }}
             />
-            <InputLabel sx={{ color: 'grey.600' }}>Use Default</InputLabel>
+            <InputLabel sx={{ color: color }}>Use Default</InputLabel>
           </Stack>
           <TextField
             sx={selectStyle}
@@ -367,7 +373,7 @@ const TemplateForm: React.FC<Props> = ({
         >
           Save
         </Button>
-        {!modalNew && (
+        {linkBuilder && (
           <Button
             variant="contained"
             sx={{ mt: '20px' }}

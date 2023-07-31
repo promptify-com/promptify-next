@@ -28,6 +28,8 @@ import { ContentCopy } from "@mui/icons-material";
 import { useRouter } from "next/router";
 import { INodesData } from "@/common/types/builder";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
+import TemplateForm from "@/components/common/forms/TemplateForm";
+import { Templates } from "@/core/api/dto/templates";
 
 export interface ITemplate {
   title: string;
@@ -430,9 +432,6 @@ export const Builder = () => {
   };
 
   const toggleTemplateDrawer = (open: boolean) => {
-      console.log('toggleTemplateDrawer')
-
-    console.log(open)
     setTemplateDrawerOpen(open);
   };
 
@@ -453,7 +452,12 @@ export const Builder = () => {
             onClose={() => toggleTemplateDrawer(false)}
             onOpen={() => toggleTemplateDrawer(true)}
           >
-            <Box>Template</Box>
+            <Box sx={{ bgcolor: "#373737", p: "1rem" }}>
+              <TemplateForm
+                templateData={promptsData as Templates}
+                darkMode
+              />
+            </Box>
           </SwipeableDrawer>
           <Grid item xs={selectedNode ? 9 : 12}>
             <Box
