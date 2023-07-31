@@ -283,6 +283,7 @@ export const Header: React.FC<HeaderProps> = ({
           onOpen={() => setOpenSidebar(true)}
           user={user}
           token={token}
+          setSidebarType={setSidebarType}
         />
       </Grid>
     </Box>
