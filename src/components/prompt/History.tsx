@@ -1,23 +1,30 @@
 import React from "react";
+import { Box, Typography, alpha, useTheme } from "@mui/material";
+import Timeline from "@mui/lab/Timeline";
+import TimelineItem from "@mui/lab/TimelineItem";
+import TimelineSeparator from "@mui/lab/TimelineSeparator";
+import TimelineConnector from "@mui/lab/TimelineConnector";
+import TimelineContent from "@mui/lab/TimelineContent";
+import TimelineOppositeContent from "@mui/lab/TimelineOppositeContent";
+import TimelineDot from "@mui/lab/TimelineDot";
 import {
-  Box, Typography, alpha, useTheme,
-} from "@mui/material";
-import Timeline from '@mui/lab/Timeline';
-import TimelineItem from '@mui/lab/TimelineItem';
-import TimelineSeparator from '@mui/lab/TimelineSeparator';
-import TimelineConnector from '@mui/lab/TimelineConnector';
-import TimelineContent from '@mui/lab/TimelineContent';
-import TimelineOppositeContent from '@mui/lab/TimelineOppositeContent';
-import TimelineDot from '@mui/lab/TimelineDot';
-import { Spark, SparkVersion, TemplatesExecutions } from "@/core/api/dto/templates";
+  Spark,
+  SparkVersion,
+  TemplatesExecutions,
+} from "@/core/api/dto/templates";
 import moment from "moment";
 import { promptsApi } from "@/core/api/prompts";
 import { useAppDispatch } from "@/hooks/useStore";
 
 interface Props {
-  spark: Spark | null,
-  selectedExecution: TemplatesExecutions | null,
-  setSelectedExecution: (execution: TemplatesExecutions) => void,
+  spark: Spark | null;
+  selectedExecution: TemplatesExecutions | null;
+  setSelectedExecution: (execution: TemplatesExecutions) => void;
+}
+
+interface IDays {
+  date: string;
+  days: { date: string; versions: SparkVersion[]; dayName: string }[];
 }
 
 export const History: React.FC<Props> = ({
@@ -27,36 +34,72 @@ export const History: React.FC<Props> = ({
 }) => {
   const { palette } = useTheme();
   const dispatch = useAppDispatch();
-  const versions = [...spark?.versions || []]
-  const [groupedVersions, setGroupedVersions] = React.useState<{ date: string; versions: SparkVersion[] }[]>([]);
+  const versions = [...(spark?.versions || [])];
+  const [groupedVersions, setGroupedVersions] = React.useState<IDays[] | null>(
+    null
+  );
 
-  const sortedVersions = versions.sort((a, b) => moment(b.created_at).diff(moment(a.created_at)));
+  const sortedVersions = versions.sort((a, b) =>
+    moment(b.created_at).diff(moment(a.created_at))
+  );
 
   React.useEffect(() => {
     const grouped = sortedVersions.reduce((acc, item) => {
       const createdAt = moment(item.created_at).fromNow();
-      const index = acc.findIndex(version => version.date === createdAt);
+      const index = acc.findIndex((version) => version.date === createdAt);
       if (index !== -1) {
         acc[index].versions.push(item);
       } else {
-        acc.push({ date: item.created_at, versions: [item] });
+        acc.push({
+          date: item.created_at,
+          versions: [item],
+          dayName: formatDate(item.created_at),
+        });
       }
       return acc;
-    }, [] as { date: string; versions: SparkVersion[] }[]);
-    
-    const sortedGrouped = grouped.sort((a, b) => moment(b.date, 'D MMMM YYYY').diff(moment(a.date, 'D MMMM YYYY')));
+    }, [] as { date: string; versions: SparkVersion[]; dayName: string }[]);
+
+    const sortedGrouped: any = [];
+
+    for (const day of grouped) {
+      const formattedDate = formatDate(day.date);
+
+      const group = sortedGrouped.find((g: any) => g.date === formattedDate);
+      if (group) {
+        group.days.push(day);
+      } else {
+        sortedGrouped.push({ date: formattedDate, days: [day] });
+      }
+    }
+
     setGroupedVersions(sortedGrouped);
   }, [spark?.versions]);
 
+  function formatDate(date: string): string {
+    const today = moment().startOf("day");
+    const targetDate = moment(date);
 
-  const TimeLineSeparator = ({noConnector=false, active=false}) => (
+    const diffInDays = today.diff(targetDate, "days");
+
+    if (diffInDays === 0) {
+      return "today";
+    } else if (diffInDays === 1) {
+      return "yesterday";
+    } else {
+      return `${Math.abs(diffInDays)} days ago`;
+    }
+  }
+
+  const TimeLineSeparator = ({ noConnector = false, active = false }) => (
     <TimelineSeparator sx={{ position: "relative" }}>
-      <TimelineConnector sx={{ 
-          bgcolor: `${alpha(palette.primary.main, .3)}`
+      <TimelineConnector
+        sx={{
+          bgcolor: `${alpha(palette.primary.main, 0.3)}`,
         }}
       />
-      <TimelineDot variant={active ? "filled": "outlined"}
-        sx={{ 
+      <TimelineDot
+        variant={active ? "filled" : "outlined"}
+        sx={{
           display: noConnector ? "none" : "flex",
           position: "absolute",
           top: "50%",
@@ -67,15 +110,18 @@ export const History: React.FC<Props> = ({
           m: 0,
           p: 0,
           bgcolor: `${active ? "primary.main" : "surface.2"}`,
-          borderColor: `${alpha(palette.primary.main, .3)}`,
+          borderColor: `${alpha(palette.primary.main, 0.3)}`,
         }}
       >
-        <TimelineConnector sx={{
-            bgcolor: "transparent" 
-          }} 
+        <TimelineConnector
+          sx={{
+            bgcolor: "transparent",
+          }}
         />
       </TimelineDot>
-      <TimelineConnector sx={{ bgcolor: `${alpha(palette.primary.main, .3)}` }} />
+      <TimelineConnector
+        sx={{ bgcolor: `${alpha(palette.primary.main, 0.3)}` }}
+      />
     </TimelineSeparator>
   );
 
@@ -85,100 +131,88 @@ export const History: React.FC<Props> = ({
         promptsApi.endpoints.getExecutionById.initiate(executionId)
       )
     ).data;
-    if (execution)
-      setSelectedExecution(execution);
-  }
-
-  const formatDate = (date: string) => {
-    const today = moment().startOf('day');
-    const inputDate = moment(new Date(date));
-
-    if (inputDate.isSame(today, 'd')) {
-      return 'Today';
-    } else if (inputDate.isSame(today.subtract(1, 'd'), 'd')) {
-      return 'Yesterday';
-    } else {
-      const diff = today.diff(inputDate, 'days');
-      return `${diff} days ago`;
-    }
-  }
+    if (execution) setSelectedExecution(execution);
+  };
 
   return (
     <Box sx={{ p: "16px" }}>
-      <Typography 
-        sx={{ 
+      <Typography
+        sx={{
           fontSize: 14,
           fontWeight: 500,
           color: "onSurface",
-          py: "8px"
+          py: "8px",
         }}
       >
         Changes History
       </Typography>
       <Box>
         <Timeline sx={{ p: 0 }}>
-
-          {groupedVersions.map((group, i) => (
+          {groupedVersions?.map((group, i) => (
             <React.Fragment key={i}>
-            <TimelineItem key={i}
-              sx={{ minHeight: "0" }} 
-            >
-              <TimelineOppositeContent
-                sx={{ 
-                  fontSize: 11,
-                  fontWeight: 500,
-                  color: "onSurface",
-                  opacity: .5,
-                  p: "16px", 
-                  textTransform: "uppercase",
-                  textAlign: "left",
-                }}
-              >
-                {formatDate(group.date)}
-              </TimelineOppositeContent>
-              <TimeLineSeparator noConnector />
-              <TimelineContent sx={{ 
-                  flex: 3,
-                  p: '16px',
-                }}
-              >
-              </TimelineContent>
-            </TimelineItem>
-
-            {group.versions.map((version) => (
-              <TimelineItem key={version.id}
-                sx={{
-                  cursor: "pointer",
-                  borderRadius: "8px",
-                  ":hover": {
-                    bgcolor: "action.hover"
-                  },
-                  ".active": {
-                    bgcolor: "surface.3"
-                  }
-                }}
-                onClick={() => chooseExecution(version.id)}
-              >
+              <TimelineItem key={i} sx={{ minHeight: "0" }}>
                 <TimelineOppositeContent
-                  sx={{ 
-                    ...timeLineContentStyle,
+                  sx={{
+                    fontSize: 11,
+                    fontWeight: 500,
+                    color: "onSurface",
+                    opacity: 0.5,
+                    p: "16px",
+                    textTransform: "uppercase",
+                    textAlign: "left",
                   }}
                 >
-                  {moment(version.created_at).format("hh:mm A")}
+                  {group.date}
                 </TimelineOppositeContent>
-                <TimeLineSeparator active={version.id === selectedExecution?.id} />
-                <TimelineContent sx={{
-                    ...timeLineContentStyle, 
+                <TimeLineSeparator noConnector />
+                <TimelineContent
+                  sx={{
                     flex: 3,
+                    p: "16px",
                   }}
-                >
-                  {version.title}
-                </TimelineContent>
+                ></TimelineContent>
               </TimelineItem>
-            ))}
+              {group.days.map((day) => {
+                return day.versions.map((version) => {
+                  return (
+                    <TimelineItem
+                      key={version.id}
+                      sx={{
+                        cursor: "pointer",
+                        borderRadius: "8px",
+                        ":hover": {
+                          bgcolor: "action.hover",
+                        },
+                        ".active": {
+                          bgcolor: "surface.3",
+                        },
+                      }}
+                      onClick={() => chooseExecution(version.id)}
+                    >
+                      <TimelineOppositeContent
+                        sx={{
+                          ...timeLineContentStyle,
+                        }}
+                      >
+                        {moment(version.created_at).format("hh:mm A")}
+                      </TimelineOppositeContent>
+                      <TimeLineSeparator
+                        active={version.id === selectedExecution?.id}
+                      />
+                      <TimelineContent
+                        sx={{
+                          ...timeLineContentStyle,
+                          flex: 3,
+                        }}
+                      >
+                        {version.title}
+                      </TimelineContent>
+                    </TimelineItem>
+                  );
+                });
+              })}
             </React.Fragment>
           ))}
-
         </Timeline>
       </Box>
     </Box>
@@ -186,11 +220,11 @@ export const History: React.FC<Props> = ({
 };
 
 const timeLineContentStyle = {
-  p: '16px',
+  p: "16px",
   fontSize: 12,
   fontWeight: 500,
   color: "onSurface",
   textAlign: "left",
   display: "flex",
   alignItems: "center",
-}
+};
