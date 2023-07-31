@@ -145,7 +145,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
       );
       setResInputs(inputs);
     } else {
-      setResInputs([])
+      setResInputs([]);
     }
   }, [shownInputs?.length, selectedExecution]);
 
@@ -190,10 +190,10 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   // Prompts params values tracker to validate generating allowed or not
   useEffect(() => {
     if (Object.keys(isInputsFilled()).length > 0 || resInputs.length === 0) {
-      setAllowGenerate(false)
+      setAllowGenerate(false);
     } else {
-      setAllowGenerate(true)
-    };
+      setAllowGenerate(true);
+    }
   }, [resInputs]);
 
   const isInputsFilled = () => {
@@ -529,7 +529,10 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
             }}
             startIcon={<AddOutlined />}
             variant={"outlined"}
-            onClick={resetNewExecution}
+            onClick={() => {
+              resetNewExecution();
+              setResInputs([]);
+            }}
           >
             Spark
           </Button>
