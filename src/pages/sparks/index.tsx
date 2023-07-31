@@ -21,7 +21,7 @@ const Sparks = () => {
   const [expanded, setExpanded] = React.useState<string | false>(false);
   const router = useRouter();
 
-  const { data: sparksByTemplate, isLoading: isSparksByTemplateLoading} =
+  const { data: sparksByTemplate, isLoading: isSparksByTemplateLoading } =
     useGetSparksByMeQuery();
 
   const toggleExpand =
@@ -33,8 +33,12 @@ const Sparks = () => {
   const sortedTemplates = sparksByTemplate?.map((template) => {
     // Sort the sparks inside each template by current_version.created_at
     const sortedSparks = [...template.sparks].sort((a, b) => {
-      const dateA = a.current_version ? new Date(a.current_version.created_at).getTime() : 0;
-      const dateB = b.current_version ? new Date(b.current_version.created_at).getTime() : 0;
+      const dateA = a.current_version
+        ? new Date(a.current_version.created_at).getTime()
+        : 0;
+      const dateB = b.current_version
+        ? new Date(b.current_version.created_at).getTime()
+        : 0;
       return dateB - dateA;
     });
     sparksCount += template.sparks.length;
@@ -154,7 +158,10 @@ const Sparks = () => {
                               dangerouslySetInnerHTML={{
                                 __html:
                                   spark.initial_title.length > 150
-                                    ? `${spark.initial_title?.slice(0, 150 - 1)}...`
+                                    ? `${spark.initial_title?.slice(
+                                        0,
+                                        150 - 1
+                                      )}...`
                                     : spark.initial_title,
                               }}
                             />
@@ -169,7 +176,11 @@ const Sparks = () => {
                                 color={"onSurface"}
                                 sx={{ opacity: 0.5 }}
                               >
-                                {spark.current_version ? moment(spark.current_version.created_at  ).fromNow() : '-'}
+                                {spark.current_version
+                                  ? moment(
+                                      spark.current_version.created_at
+                                    ).fromNow()
+                                  : "-"}
                               </Typography>
                               <Stack
                                 direction={"row"}

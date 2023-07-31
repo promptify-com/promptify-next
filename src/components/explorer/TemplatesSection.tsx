@@ -21,9 +21,6 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
 }) => {
   const router = useRouter();
 
-  const navigateTo = (slug: string) => {
-    router.push(`/prompt/${slug}`);
-  };
   return (
     <>
       <Box width={"100%"}>
@@ -52,11 +49,7 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
               templates.length > 0 &&
               templates.map((el: any) => (
                 <Grid key={el.id} item xs={12}>
-                  <CardTemplate
-                    onFavoriteClick={() => navigateTo(el.slug)}
-                    key={el.id}
-                    template={el}
-                  />
+                  <CardTemplate key={el.id} template={el} />
                 </Grid>
               ))}
 
