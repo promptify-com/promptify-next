@@ -1,13 +1,10 @@
-import { Box, Grid } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 import Head from "next/head";
 
 import { Connections, Home, Identy, Prompts } from "@/components/dashboard";
 import { Layout } from "@/layout";
-import useToken from "@/hooks/useToken";
 
 const Dashboard = () => {
-  const token = useToken();
-
   return (
     <>
       <Head>
@@ -34,6 +31,26 @@ const Dashboard = () => {
                 gap={"36px"}
                 width={"100%"}
               >
+                <Box
+                  display={"flex"}
+                  justifyContent={{ xs: "center", md: "start" }}
+                  textAlign={{ xs: "center", sm: "start" }}
+                >
+                  <Typography
+                    fontWeight={500}
+                    fontSize={{ xs: "1.5rem", sm: "2rem" }}
+                    sx={{
+                      fontFamily: "Poppins",
+                      fontStyle: "normal",
+                      fontWeight: 500,
+                      fontSize: { xs: "24px", sm: "34px" },
+                      lineHeight: { xs: "27px", sm: "123.5%" },
+                      color: "onSurface",
+                    }}
+                  >
+                    Welcome to your space
+                  </Typography>
+                </Box>
                 <Home />
                 <Connections />
                 <Identy />

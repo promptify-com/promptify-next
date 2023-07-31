@@ -15,17 +15,18 @@ import { FormikProps } from "formik";
 import { IEditProfile } from "@/common/types";
 import { useUpdateUser } from "@/hooks/api/user";
 import useUser from "@/hooks/useUser";
+import { User } from "@/core/api/dto/user";
 
 interface IProps {
   formik?: FormikProps<IEditProfile>;
+  user: User | null;
 }
 
-export const ProfileImage: React.FC<IProps> = ({}) => {
+export const ProfileImage: React.FC<IProps> = ({ user, formik }) => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [croppedImage, setCroppedImage] = useState<File | null>(null);
   const [showCropModal, setShowCropModal] = useState(false);
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
-  const user = useUser();
 
   const [crop, setCrop] = useState<Crop>({
     unit: "px",

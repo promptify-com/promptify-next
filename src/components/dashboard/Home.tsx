@@ -23,26 +23,6 @@ export const Home = () => {
       }}
     >
       <Box
-        display={"flex"}
-        justifyContent={{ xs: "center", md: "start" }}
-        textAlign={{ xs: "center", sm: "start" }}
-      >
-        <Typography
-          fontWeight={500}
-          fontSize={{ xs: "1.5rem", sm: "2rem" }}
-          sx={{
-            fontFamily: "Poppins",
-            fontStyle: "normal",
-            fontWeight: 500,
-            fontSize: { xs: "24px", sm: "34px" },
-            lineHeight: { xs: "27px", sm: "123.5%" },
-            color: "onSurface",
-          }}
-        >
-          Welcome to your space
-        </Typography>
-      </Box>
-      <Box
         display="flex"
         flexDirection={{ xs: "column", md: "row" }}
         justifyContent={"space-between"}

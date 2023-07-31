@@ -244,57 +244,69 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
                   item.name == "Browse" && setShowFilters(!showFilters)
                 }
               >
-                <ListItemButton
-                  sx={{
-                    minHeight: 48,
-                    borderRadius: "8px",
-                    mx: 1,
-                    padding: "16px 22px ",
+                <Link
+                  href={item.href}
+                  style={{
+                    width: "100%",
+                    textDecoration: "none",
                   }}
-                  onClick={() => navigate(item.href, item.external)}
-                  selected={item.active}
+                  onClick={(e) => {
+                    if (item.name === "Browse" && isExplorePage) {
+                      e.preventDefault();
+                    }
+                  }}
                 >
-                  <Box
-                    style={{
-                      textDecoration: "none",
-
-                      display: "flex",
-                      width: open || expandedOnHover ? "100%" : "auto",
-                      alignItems: "center",
-                      justifyContent:
-                        open || expandedOnHover ? "initial" : "center",
+                  <ListItemButton
+                    sx={{
+                      minHeight: 48,
+                      borderRadius: "8px",
+                      mx: 1,
+                      padding: "16px 22px ",
                     }}
+                    selected={item.active}
                   >
-                    <ListItemIcon
-                      sx={{
-                        minWidth: 0,
-                        mr: open || expandedOnHover ? 3 : "auto",
-                        color: "onSurface",
-                        justifyContent: "center",
+                    <Box
+                      style={{
+                        textDecoration: "none",
+
+                        display: "flex",
+                        width: open || expandedOnHover ? "100%" : "auto",
+                        alignItems: "center",
+                        justifyContent:
+                          open || expandedOnHover ? "initial" : "center",
                       }}
                     >
-                      <Icon>{item.icon}</Icon>
-                    </ListItemIcon>
-                    <Typography
-                      sx={{
-                        opacity: open || expandedOnHover ? 1 : 0,
-                        mt: 0.5,
-                      }}
-                      fontSize={14}
-                      fontWeight={500}
-                      color={"onSurface"}
-                    >
-                      {item.name}
-                    </Typography>
-                  </Box>
-                  {item.name == "Browse" &&
-                    isExplorePage &&
-                    (showFilters ? (
-                      <ExpandLess sx={{ mr: -1, color: "text.secondary" }} />
-                    ) : (
-                      <ExpandMore sx={{ mr: -1, color: "text.secondary" }} />
-                    ))}
-                </ListItemButton>
+                      <ListItemIcon
+                        sx={{
+                          minWidth: 0,
+                          mr: open || expandedOnHover ? 3 : "auto",
+                          color: "onSurface",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <Icon>{item.icon}</Icon>
+                      </ListItemIcon>
+                      <Typography
+                        sx={{
+                          opacity: open || expandedOnHover ? 1 : 0,
+                          mt: 0.5,
+                        }}
+                        fontSize={14}
+                        fontWeight={500}
+                        color={"onSurface"}
+                      >
+                        {item.name}
+                      </Typography>
+                    </Box>
+                    {item.name == "Browse" &&
+                      isExplorePage &&
+                      (showFilters ? (
+                        <ExpandLess sx={{ mr: -1, color: "text.secondary" }} />
+                      ) : (
+                        <ExpandMore sx={{ mr: -1, color: "text.secondary" }} />
+                      ))}
+                  </ListItemButton>
+                </Link>
               </ListItem>
               <Collapse
                 in={showFilters && isExplorePage && item.name == "Browse"}

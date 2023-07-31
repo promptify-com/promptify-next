@@ -53,7 +53,7 @@ export const CategoriesSection: React.FC<CategoriesSectionProps> = ({
               <Grid key={category.id}>
                 <CategoryCard
                   category={category}
-                  onClick={() => navigateToCategory(category.slug)}
+                  href={`/explore/${category.slug}`}
                 />
               </Grid>
             ))}
