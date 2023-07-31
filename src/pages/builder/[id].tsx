@@ -10,6 +10,7 @@ import {
   DialogContentText,
   DialogTitle,
   Snackbar,
+  SwipeableDrawer,
 } from "@mui/material";
 import { createEditor } from "@/components/builder/Editor";
 import { useRete } from "rete-react-render-plugin";
@@ -69,7 +70,8 @@ export const Builder = () => {
   const { data: promptsData } = useGetPromptTemplatesQuery(id ? +id : skipToken);
   const dataForRequest = useRef({} as any);
   const [confirmDialogOpen, setConfirmDialogOpen] = React.useState(false);
-  const [open, setOpen] = React.useState(false);
+  const [snackBarOpen, setSnackBarOpen] = React.useState(false);
+  const [templateDrawerOpen, setTemplateDrawerOpen] = React.useState(false);
 
   const create = useCallback(
     (el: HTMLElement) => {
@@ -422,9 +424,16 @@ export const Builder = () => {
     });
 
     updateTemplate(Number(id), data).then(() => {
-      setOpen(true);
+      setSnackBarOpen(true);
       window.location.reload();
     });
+  };
+
+  const toggleTemplateDrawer = (open: boolean) => {
+      console.log('toggleTemplateDrawer')
+
+    console.log(open)
+    setTemplateDrawerOpen(open);
   };
 
   return (
@@ -434,10 +443,18 @@ export const Builder = () => {
           <Grid item xs={12}>
             <Header
               title={dataForRequest.current.title}
-              updateTemplateTitle={updateTemplateTitle}
+              onTitleHover={() => toggleTemplateDrawer(true)}
               onSave={injectOrderAndSendRequest}
             />
           </Grid>
+          <SwipeableDrawer
+            anchor={"left"}
+            open={templateDrawerOpen}
+            onClose={() => toggleTemplateDrawer(false)}
+            onOpen={() => toggleTemplateDrawer(true)}
+          >
+            <Box>Template</Box>
+          </SwipeableDrawer>
           <Grid item xs={selectedNode ? 9 : 12}>
             <Box
               height={"calc(100vh - 80px)"}
@@ -577,11 +594,11 @@ export const Builder = () => {
           </Grid>
         </Grid>
         <Snackbar
-          open={open}
+          open={snackBarOpen}
           anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
           autoHideDuration={3000}
           message="Prompt template saved with success"
-          onClose={() => setOpen(false)}
+          onClose={() => setSnackBarOpen(false)}
         />
         <Dialog
           open={confirmDialogOpen}
