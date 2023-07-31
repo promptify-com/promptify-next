@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { useGetCurrentUserQuery } from "@/core/api/user";
 import useToken from "@/hooks/useToken";
 import { Mode } from "@mui/icons-material";
+import BaseButton from "../base/BaseButton";
 
 export const Home = () => {
   const router = useRouter();
@@ -120,26 +121,26 @@ export const Home = () => {
           </Box>
         )}
         <Box>
-          <Button
+          <BaseButton
             onClick={() => router.push("/profile/edit")}
-            sx={{
-              bgcolor: "var(--primary-main, #3B4050)",
-              color: "white",
-              display: "flex",
-              gap: "8px",
-              "&:hover": {
-                color: "onSurface",
-                bgcolor: "surface.3",
-              },
+            color="primary"
+            variant="contained"
+            style={{
+              fontSize: "15px",
+              fontWeight: "500",
             }}
+            icon={
+              <Box mt={-1}>
+                <Mode
+                  sx={{
+                    fontSize: { xs: "16px", md: "20px" },
+                  }}
+                />
+              </Box>
+            }
           >
-            <Mode
-              sx={{
-                fontSize: { xs: "16px", md: "20px" },
-              }}
-            />
             Edit
-          </Button>
+          </BaseButton>
         </Box>
       </Box>
     </Box>
