@@ -11,6 +11,7 @@ interface Props {
    changeSelectedSpark: (spark: Spark) => void;
    pinSpark: () => void;
    showSearchBar: boolean;
+   onSearch?: (text: string) => void;
 }
 
 export const DisplayHeader: React.FC<Props> = ({ 
@@ -18,12 +19,12 @@ export const DisplayHeader: React.FC<Props> = ({
    selectedSpark,
    changeSelectedSpark,
    pinSpark,
-   showSearchBar
+   showSearchBar,
+   onSearch = () => {}
  }) => {
    const  { palette } = useTheme();
    
    const [searchShown, setSearchShown] = useState(false);
-   const [searchText, setSearchText] = useState("");
    const [presetsAnchor, setPresetsAnchor] = useState<HTMLElement | null>(null);
 
    const sortedSparks = [...sparks].sort((a, b) => {
@@ -56,8 +57,7 @@ export const DisplayHeader: React.FC<Props> = ({
                      fontSize: 13, 
                      fontWeight: 400
                   }}
-                  value={searchText}
-                  onChange={(e) => setSearchText(e.target.value)}
+                  onChange={(e) => onSearch(e.target.value)}
                />
             </Stack>
          </Collapse>

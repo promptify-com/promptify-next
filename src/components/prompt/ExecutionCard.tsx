@@ -7,9 +7,14 @@ import { getMarkdownFromString } from "@/common/helpers/getMarkdownFromString";
 interface Props {
   execution: TemplatesExecutions;
   templateData: Templates;
+  search: string;
 }
 
-export const ExecutionCard: React.FC<Props> = ({ execution, templateData }) => {
+export const ExecutionCard: React.FC<Props> = ({ 
+  execution, 
+  templateData,
+  search,
+}) => {
   const promptsOrderMap: { [key: string]: number } = {};
   const promptsExecutionOrderMap: { [key: string]: number } = {};
 
@@ -71,6 +76,8 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData }) => {
       console.error("Failed to copy HTML: ", err);
     }
   };
+
+  console.log(search)
 
   return (
     <Stack
