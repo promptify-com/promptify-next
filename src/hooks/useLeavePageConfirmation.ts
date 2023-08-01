@@ -11,12 +11,12 @@ export const useLeavePageConfirmation = (
   ) => Promise<boolean> = defaultConfirmationDialog
 ) => {
   useEffect(() => {
-    // @ts-ignore because "change" is private in Next.js
+    // @ts-ignore
     if (!SingletonRouter.router?.change) {
       return;
     }
 
-    // @ts-ignore because "change" is private in Next.js
+    // @ts-ignore
     const originalChangeFunction = SingletonRouter.router.change;
     const originalOnBeforeUnloadFunction = window.onbeforeunload;
 
@@ -26,7 +26,7 @@ export const useLeavePageConfirmation = (
       window.onbeforeunload = originalOnBeforeUnloadFunction;
     }
     if (shouldPreventLeaving) {
-      // @ts-ignore because "change" is private in Next.js
+      // @ts-ignore
       SingletonRouter.router.change = async (...args) => {
         const [historyMethod, , as] = args;
         // @ts-ignore because "state" is private in Next.js
@@ -42,7 +42,7 @@ export const useLeavePageConfirmation = (
         }
 
         if (confirmed) {
-          // @ts-ignore because "change" is private in Next.js
+          // @ts-ignore
           Router.prototype.change.apply(SingletonRouter.router, args);
         } else if (
           wasBackOrForwardBrowserButtonClicked &&
@@ -63,7 +63,7 @@ export const useLeavePageConfirmation = (
       };
     }
     return () => {
-      // @ts-ignore because "change" is private in Next.js
+      // @ts-ignore
       SingletonRouter.router.change = originalChangeFunction;
       window.onbeforeunload = originalOnBeforeUnloadFunction;
     };
