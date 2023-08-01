@@ -129,7 +129,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
       tempObj.prompt = prompt.id;
       tempObj.contextual_overrides = [];
-      tempObj.prompt_params = { Scope: "", Field: "aa" };
+      tempObj.prompt_params = {};
       tempArr.push(tempObj);
     });
     setResPrompts([...tempArr]);
