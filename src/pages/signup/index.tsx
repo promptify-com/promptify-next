@@ -3,7 +3,7 @@ import { Box } from "@mui/material";
 import { useGetCurrentUser } from "../../hooks/api/user";
 import { PageLoading } from "../../components/PageLoading";
 import { useQuestions } from "../../hooks/api/questions";
-import Prompts from "@/components/signUp/Prompts";
+// import Prompts from "@/components/signUp/Prompts";
 import Questions from "@/components/signUp/Questions";
 import Finish from "@/components/signUp/Finish";
 import Head from "next/head";
@@ -13,19 +13,6 @@ const SignUp = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [tokenUser, error, isLoading] = useGetCurrentUser();
   const [questions] = useQuestions();
-
-  useEffect(() => {
-    const handleBeforeUnload = (event: any) => {
-      event.preventDefault();
-      event.returnValue = "Etes-vous sur de vouloir quitter la page ?";
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, []);
 
   return (
     <>

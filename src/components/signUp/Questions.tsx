@@ -13,10 +13,10 @@ import { ICheckedQA, IQuestion } from "../../common/types";
 import { useUpdateAnswers } from "../../hooks/api/user";
 import QuestionCard from "./QuestionCard";
 import { LogoApp } from "../../assets/icons/LogoApp";
-import Images from "../../assets";
 import MuiAlert, { AlertProps, AlertColor } from "@mui/material/Alert";
 import Link from "next/link";
 import { SigninImage } from "@/assets/icons/SigninImage";
+import { useLeavePageConfirmation } from "@/hooks/useLeavePageConfirmation";
 
 interface IProps {
   skip: () => void;
@@ -35,6 +35,8 @@ const Questions: React.FC<IProps> = ({ skip, questions }) => {
   const [open, setOpen] = React.useState(false);
   const [typeAlert, setTypeAlert] = React.useState<AlertColor>("success");
   const [step, setStep] = useState(1);
+
+  useLeavePageConfirmation(true);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [setUserAnswer, _, isAnswering] = useUpdateAnswers();

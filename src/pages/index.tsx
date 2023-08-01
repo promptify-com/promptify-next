@@ -26,10 +26,15 @@ function Home() {
   const router = useRouter();
   const setUser = useSetUser();
   const savedToken = useToken();
+
   const { data: templates, isLoading: isTemplatesLoading } =
-    useGetTemplatesSuggestedQuery();
+    useGetTemplatesSuggestedQuery(undefined, {
+      skip: !Boolean(savedToken),
+    });
   const { data: lastTemplate, isLoading: islastTemplateLoading } =
-    useGetLastTemplatesQuery();
+    useGetLastTemplatesQuery(undefined, {
+      skip: !Boolean(savedToken),
+    });
 
   const preLogin = () => {
     setIsLoading(true);
