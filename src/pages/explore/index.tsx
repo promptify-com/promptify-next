@@ -1,15 +1,39 @@
 import React from "react";
 import { Box, Grid } from "@mui/material";
 import Head from "next/head";
-
+import { explorerApi } from "@/core/api/explorer";
+import { CategoriesApi } from "@/core/api/categories";
 import { Layout } from "@/layout";
 import { CategoriesSection } from "@/components/explorer/CategoriesSection";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
+import { RootState, wrapper, AppDispatch } from "@/core/store"; // Make sure to import AppStore here
 import { FiltersSelected } from "@/components/explorer/FiltersSelected";
-import { SelectedFilters } from "@/core/api/dto/templates";
-import { useExploreData } from "@/hooks/useExploreData";
 
-export default function ExplorePage() {
+import {
+  Category,
+  FilterParams,
+  SelectedFilters,
+  Tag,
+  Templates,
+} from "@/core/api/dto/templates";
+import { NextPage } from "next";
+import { useAppSelector } from "@/hooks/useStore";
+
+interface IProps {
+  props: {
+    categories: Category[];
+    templates: Templates[];
+    isCategoryLoading: boolean;
+    isTemplatesLoading: boolean;
+  };
+}
+
+const ExplorePage: NextPage<IProps> = ({ props }) => {
+  const { categories, templates, isCategoryLoading, isTemplatesLoading } =
+    props;
+
+  const filters = useAppSelector((state: RootState) => state.filters);
+
   function areAllStatesNull(filters: SelectedFilters): boolean {
     return (
       filters.engine === null &&
@@ -19,13 +43,6 @@ export default function ExplorePage() {
       filters.subCategory === null
     );
   }
-  const {
-    categories,
-    templates,
-    filters,
-    isTemplatesLoading,
-    isCategoryLoading,
-  } = useExploreData();
 
   const allNull = areAllStatesNull(filters);
 
@@ -56,7 +73,6 @@ export default function ExplorePage() {
                 isLoading={isCategoryLoading}
               />
             )}
-
             <TemplatesSection
               filtred={!allNull}
               templates={templates ?? []}
@@ -68,4 +84,42 @@ export default function ExplorePage() {
       </Layout>
     </>
   );
-}
+};
+
+ExplorePage.getInitialProps = wrapper.getInitialPageProps(
+  ({ dispatch }: { dispatch: AppDispatch }) =>
+    async ({ store }) => {
+      // Specify the type for 'store' variable
+      const { filters } = store.getState();
+
+      const filteredTags = filters.tag
+        .filter((item: Tag | null) => item !== null)
+        .map((item: Tag | null) => item?.name)
+        .join("&tag=");
+
+      const params: FilterParams = {
+        tag: filteredTags,
+        engineId: filters.engine?.id,
+        title: filters.title,
+      };
+
+      const templates = await dispatch(
+        explorerApi.endpoints.getTemplatesByFilter.initiate(params)
+      );
+
+      const categories = await dispatch(
+        CategoriesApi.endpoints.getCategories.initiate()
+      );
+
+      return {
+        props: {
+          templates: templates.data,
+          categories: categories.data,
+          isTemplatesLoading: templates.isLoading,
+          isCategoryLoading: categories.isLoading,
+        },
+      };
+    }
+);
+
+export default ExplorePage;

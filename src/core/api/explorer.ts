@@ -4,18 +4,23 @@ import { axiosBaseQuery } from "./axios-base-query";
 import {
   Templates,
   Tag,
-  Category,
   Engine,
   TemplateIds,
   TemplateKeyWordTag,
   FilterParams,
 } from "./dto/templates";
+import { HYDRATE } from "next-redux-wrapper";
 
 export const explorerApi = createApi({
   reducerPath: "explorerApi",
   baseQuery: axiosBaseQuery({
     baseUrl: process.env.NEXT_PUBLIC_API_URL || "",
   }),
+  extractRehydrationInfo(action, { reducerPath }) {
+    if (action.type === HYDRATE) {
+      return action.payload[reducerPath];
+    }
+  },
   endpoints: (builder) => {
     return {
       getTags: builder.query<Tag[], void>({
@@ -152,7 +157,6 @@ export const explorerApi = createApi({
 export const {
   useGetTagsQuery,
   useGetTagsPopularQuery,
-
   useGetTemplatesByKeyWordQuery,
   useGetTemplatesByTagQuery,
   useGetTemplatesByKeyWordAndTagQuery,
