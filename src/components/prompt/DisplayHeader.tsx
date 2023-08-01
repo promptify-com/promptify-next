@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Box, Button, ClickAwayListener, Collapse, Grow, IconButton, InputBase, InputLabel, Paper, Popper, Stack, Typography, alpha, useTheme } from '@mui/material'
 import { Search as SearchIcon, PushPinOutlined, FeedOutlined, ArrowDropUp, ArrowDropDown, Undo, Redo, PushPin, Close } from "@mui/icons-material";
 import { SubjectIcon } from "@/assets/icons/SubjectIcon";
-import { Spark, TemplatesExecutions } from '@/core/api/dto/templates';
+import { Spark } from '@/core/api/dto/templates';
 import { SparksTabs } from './SparksTabs';
 
 interface Props {
@@ -22,10 +22,23 @@ export const DisplayHeader: React.FC<Props> = ({
    showSearchBar,
    onSearch = () => {}
  }) => {
-   const  { palette } = useTheme();
+   const { palette } = useTheme();
    
-   const [searchShown, setSearchShown] = useState(false);
    const [presetsAnchor, setPresetsAnchor] = useState<HTMLElement | null>(null);
+   const [searchShown, setSearchShown] = useState(false);
+   const [search, setSearch] = useState<string>("");
+
+   useEffect(() => {
+      onSearch(search);
+   }, [search]);
+   
+   useEffect(() => {
+      if (searchShown) {
+         onSearch(search);
+      } else {
+         onSearch("");
+      }
+   }, [searchShown]);
 
    const sortedSparks = [...sparks].sort((a, b) => {
       return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
@@ -57,7 +70,8 @@ export const DisplayHeader: React.FC<Props> = ({
                      fontSize: 13, 
                      fontWeight: 400
                   }}
-                  onChange={(e) => onSearch(e.target.value)}
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
                />
             </Stack>
          </Collapse>
