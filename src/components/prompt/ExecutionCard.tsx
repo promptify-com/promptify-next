@@ -77,8 +77,6 @@ export const ExecutionCard: React.FC<Props> = ({
     }
   };
 
-  console.log(search)
-
   return (
     <Stack
       gap={1}
@@ -137,9 +135,13 @@ export const ExecutionCard: React.FC<Props> = ({
                       wordWrap: "break-word",
                       textAlign: "justify",
                       float: "none",
+                      ".highlight": {
+                        backgroundColor: "yellow",
+                        color: "black",
+                      }
                     }}
                     dangerouslySetInnerHTML={{
-                      __html: getMarkdownFromString(exec.output),
+                      __html: getMarkdownFromString(exec.output, search),
                     }}
                   />
                 </Box>
