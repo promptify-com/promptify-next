@@ -4,7 +4,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { object, string } from 'yup';
 import { useFormik } from 'formik';
-import { Select, MenuItem, TextField, Input, Chip, Autocomplete, InputLabel, Checkbox, Stack } from '@mui/material';
+import { Select, MenuItem, TextField, Chip, Autocomplete, InputLabel, Checkbox, Stack } from '@mui/material';
 import {  useGetTagsQuery } from '@/core/api/explorer';
 import { Templates } from '@/core/api/dto/templates';
 import { IEditTemplate } from '@/common/types/editTemplate';
@@ -12,6 +12,7 @@ import { createTemplate, updateTemplate } from '@/hooks/api/templates';
 import { authClient } from '@/common/axios';
 import {fieldStyle, boxStyle, buttonBoxStyle, typographyStyle, checkboxStyle} from '../../modals/styles'
 import { useGetCategoriesQuery } from '@/core/api/categories';
+import { Upload } from '@mui/icons-material';
 
 interface Props {
   templateData: Templates | null;
@@ -49,11 +50,15 @@ const TemplateForm: React.FC<Props> = ({
     );
   }, [selectedTags]);
 
+  // TODO - No need to upload image and then preview it, just preview it and upload on submit
   const getUrlImage = async (image: File) => {
     const file = new FormData();
     file.append('file', image);
     const { data: { file_url } } = await authClient.post('/api/upload/', file);
-    formik.values.thumbnail = file_url;
+    formik.setFieldValue(
+      'thumbnail', 
+      file_url
+    );
   };
 
   const addNewTag = (newValue: string[]) => {
@@ -135,17 +140,47 @@ const TemplateForm: React.FC<Props> = ({
       </Box>
       <Box sx={boxStyle}>
         <Typography sx={typographyStyle}>Thumbnail</Typography>
-        <Box display="flex" flexDirection="column">
+        <Box display="flex" flexDirection="column" width="250px">
           {formik.values.thumbnail && (
-            <img src={formik.values.thumbnail} alt="thumbnail" style={{ maxWidth: '250px' }} />
+            <img 
+              src={formik.values.thumbnail} 
+              alt="thumbnail" 
+              style={{ height: "250px", objectFit: "cover" }}
+            />
           )}
-          <Input
-            type="file"
-            sx={{ width: '250px' }}
-            onChange={(args: any) => {
-              getUrlImage(args.target.files[0]);
-            }}
-          />
+          <Box component="label">
+            <Stack direction={"row"} alignItems={"center"} justifyContent={"center"}
+              sx={{ 
+                bgcolor: "grey.600",
+                color: "common.white",
+                border: "1px solid transparent", 
+                borderRadius: "4px",
+                p: "8px",
+                mt: "5px",
+                cursor: "pointer",
+                ":hover": { bgcolor: "transparent", color: "grey.600", borderColor: "grey.600" } 
+              }}
+            >
+              <Upload sx={{ height: "100%", display: "flex", alignItems: "center", fontSize: "1.2rem", mr: "15px" }} />
+              <Typography sx={{
+                  fontSize: "1rem",
+                  fontWeight: 400,
+                  color: "inherit",
+                }}
+              >
+                Select Image
+              </Typography>
+
+              <input
+                hidden
+                accept="image/*"
+                type="file"
+                onChange={(args: any) => {
+                  getUrlImage(args.target.files[0]);
+                }}
+              />
+            </Stack>
+          </Box>
         </Box>
       </Box>
 

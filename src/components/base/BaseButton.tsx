@@ -33,10 +33,9 @@ const BaseButton: FC<BaseButtonProps> = ({
     <Button
       variant={variant}
       color={buttonColor}
-      style={buttonStyle}
+      style={{ display: "flex", alignItems: "center", ...buttonStyle }}
       onClick={onClick}
       {...rest}
-      sx={{ display: "flex", alignItems: "center" }}
     >
       {/* Render the icon if provided */}
       {icon && <Icon>{icon}</Icon>}

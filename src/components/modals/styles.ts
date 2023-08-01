@@ -59,14 +59,20 @@ export const buttonBoxStyle = {
 };
 
 export const typographyStyle = {
-  fontSize: '20px',
-  fontWeight: '400',
-  color: "inherit"
+  fontSize: '1rem',
+  fontWeight: '500',
+  color: "inherit",
+  opacity: .6
 };
 
 export const checkboxStyle = {
   color: "grey.600",
   "label, svg": {
-    color: "grey.600"
+    color: "grey.600",
+  },
+  "label": {
+    fontSize: '1rem',
+    fontWeight: '400',
+    color: "inherit"
   }
 };
