@@ -12,6 +12,8 @@ import { createTemplate, updateTemplate } from '@/hooks/api/templates';
 import { authClient } from '@/common/axios';
 import {fieldStyle, boxStyle, buttonBoxStyle, typographyStyle, checkboxStyle} from '../../modals/styles'
 import { useGetCategoriesQuery } from '@/core/api/categories';
+import BaseButton from '@/components/base/BaseButton';
+import { Upload } from '@mui/icons-material';
 
 interface Props {
   templateData: Templates | null;
@@ -135,17 +137,42 @@ const TemplateForm: React.FC<Props> = ({
       </Box>
       <Box sx={boxStyle}>
         <Typography sx={typographyStyle}>Thumbnail</Typography>
-        <Box display="flex" flexDirection="column">
+        <Box display="flex" flexDirection="column" width="250px">
           {formik.values.thumbnail && (
-            <img src={formik.values.thumbnail} alt="thumbnail" style={{ maxWidth: '250px' }} />
+            <img src={formik.values.thumbnail} alt="thumbnail"  />
           )}
-          <Input
+          {/* <Input
             type="file"
             sx={{ width: '250px' }}
             onChange={(args: any) => {
               getUrlImage(args.target.files[0]);
             }}
-          />
+          /> */}
+          <BaseButton
+            variant="contained"
+            icon={<Upload sx={{ height: "100%", display: "flex", alignItems: "center", fontSize: "1.2rem", mr: "15px" }} />}
+            color="custom"
+            customColor="#82899e"
+            sx={{ borderRadius: "4px" }}
+          >
+            <Typography sx={{
+                fontSize: "1rem",
+                fontWeight: 400,
+                color: "inherit",
+              }}
+            >
+              Select Image
+            </Typography>
+
+            <input
+              hidden
+              accept="image/*"
+              type="file"
+              onChange={(args: any) => {
+                getUrlImage(args.target.files[0]);
+              }}
+            />
+          </BaseButton>
         </Box>
       </Box>
 
