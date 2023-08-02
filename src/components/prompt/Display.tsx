@@ -55,10 +55,7 @@ export const Display: React.FC<Props> = ({
   }, [newExecutionData]);
 
   useEffect(() => {
-    const sorted = [...sparks].sort((a, b) => (
-      moment(b.current_version?.created_at).diff(moment(a.current_version?.created_at))
-    ));
-    setSortedSparks(sorted);
+    setSortedSparks([...sparks]);
   }, [sparks]);
 
   useEffect(() => {

@@ -54,6 +54,7 @@ import { useWindowSize } from "usehooks-ts";
 import BottomTabs from "@/components/prompt/BottomTabs";
 import { History } from "@/components/prompt/History";
 import { useGetSparksByTemplateQuery } from "@/core/api/sparks";
+import moment from "moment";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -104,6 +105,13 @@ const Prompt = () => {
   const [activeTab, setActiveTab] = React.useState(0);
   const [sortedSparks, setSortedSparks] = useState<Spark[]>([]);
 
+  const [tabsValue, setTabsValue] = useState(0);
+  
+  const [mobileTab, setMobileTab] = useState(0);
+
+  const detailsElRef = useRef<HTMLDivElement | null>(null);
+  const [hideDetailsImage, setHideDetailsImage] = useState(false);
+
   const router = useRouter();
   const token = useToken();
   const theme = useTheme();
@@ -129,6 +137,12 @@ const Prompt = () => {
   const [templateData, setTemplateData] = useState<Templates>();
   const id = templateData?.id;
 
+  useEffect(() => {
+    if (fetchedTemplate) {
+      setTemplateData(fetchedTemplate);
+    }
+  }, [fetchedTemplate]);
+
   const {
     data: templateSparks,
     error: templateSparksError,
@@ -137,22 +151,23 @@ const Prompt = () => {
   } = useGetSparksByTemplateQuery(token ? (id ? id : skipToken) : skipToken);
 
   useEffect(() => {
-    setSelectedSpark(templateSparks?.[0] || null);
+    const sorted = [...(templateSparks || [])].sort((a, b) => (
+      moment(b.current_version?.created_at).diff(moment(a.current_version?.created_at))
+    ));
+    setSortedSparks(sorted);
   }, [templateSparks]);
-
+  
+  useEffect(() => {
+    setSelectedSpark(sortedSparks?.[0] || null);
+  }, [sortedSparks]);
+  
   useEffect(() => {
     setSelectedExecution(selectedSpark?.current_version || null);
   }, [selectedSpark]);
 
-  const [tabsValue, setTabsValue] = useState(0);
   const changeTab = (e: React.SyntheticEvent, newValue: number) => {
     setTabsValue(newValue);
   };
-
-  const [mobileTab, setMobileTab] = useState(0);
-
-  const detailsElRef = useRef<HTMLDivElement | null>(null);
-  const [hideDetailsImage, setHideDetailsImage] = useState(false);
 
   const handleScroll = () => {
     const scrollY = detailsElRef.current?.scrollTop || 0;
@@ -160,25 +175,10 @@ const Prompt = () => {
   };
 
   useEffect(() => {
-    const sorted = [...(templateSparks || [])].sort((a, b) => {
-      return (
-        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      );
-    });
-    setSortedSparks(sorted);
-  }, [templateSparks]);
-
-  useEffect(() => {
     const detailsEl = detailsElRef.current;
     detailsEl?.addEventListener("scroll", handleScroll);
     return () => detailsEl?.removeEventListener("scroll", handleScroll);
   }, [handleScroll]);
-
-  useEffect(() => {
-    if (fetchedTemplate) {
-      setTemplateData(fetchedTemplate);
-    }
-  }, [fetchedTemplate]);
 
   useEffect(() => {
     if (id) {
@@ -600,7 +600,7 @@ const Prompt = () => {
               >
                 <Display
                   templateData={templateData}
-                  sparks={templateSparks || []}
+                  sparks={sortedSparks || []}
                   selectedSpark={selectedSpark}
                   setSelectedSpark={setSelectedSpark}
                   selectedExecution={selectedExecution}
