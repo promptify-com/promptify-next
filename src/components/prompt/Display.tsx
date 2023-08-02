@@ -113,7 +113,7 @@ export const Display: React.FC<Props> = ({
         changeSelectedSpark={setSelectedSpark}
         pinSpark={handlePinSpark}
         showSearchBar
-        onSearch={(txt) => setSearch(txt)}
+        onSearch={(text) => setSearch(text)}
       />
 
       <Box sx={{ mx: "15px", opacity: firstLoad ? 0.5 : 1 }}>

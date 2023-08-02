@@ -26,15 +26,17 @@ export const DisplayHeader: React.FC<Props> = ({
    
    const [presetsAnchor, setPresetsAnchor] = useState<HTMLElement | null>(null);
    const [searchShown, setSearchShown] = useState(false);
-   const [search, setSearch] = useState<string>("");
+   const [searchText, setSearchText] = useState<string>("");
 
    useEffect(() => {
-      onSearch(search);
-   }, [search]);
+      onSearch(searchText);
+   }, [searchText]);
    
    useEffect(() => {
+      if (!searchText) return;
+      
       if (searchShown) {
-         onSearch(search);
+         onSearch(searchText);
       } else {
          onSearch("");
       }
@@ -70,8 +72,8 @@ export const DisplayHeader: React.FC<Props> = ({
                      fontSize: 13, 
                      fontWeight: 400
                   }}
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
+                  value={searchText}
+                  onChange={(e) => setSearchText(e.target.value)}
                />
             </Stack>
          </Collapse>
