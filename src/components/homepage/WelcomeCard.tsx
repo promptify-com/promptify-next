@@ -76,7 +76,12 @@ export const WelcomeCard = () => {
             }}
             variant="contained"
             color="primary"
-            onClick={() => router.push("/signup")}
+            onClick={() => {
+              router.push({
+                pathname: "/signin",
+                query: { from: "signup" },
+              })
+            }}
           >
             Sign Up for Free
           </BaseButton>
