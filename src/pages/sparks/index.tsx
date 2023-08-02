@@ -33,15 +33,9 @@ const Sparks = () => {
   let sparksCount = 0;
   const sortedTemplates = sparksByTemplate?.map((template) => {
     // Sort the sparks inside each template by current_version.created_at
-    const sortedSparks = [...template.sparks].sort((a, b) => {
-      const dateA = a.current_version
-        ? new Date(a.current_version.created_at).getTime()
-        : 0;
-      const dateB = b.current_version
-        ? new Date(b.current_version.created_at).getTime()
-        : 0;
-      return dateB - dateA;
-    });
+    const sortedSparks = [...template.sparks].sort((a, b) => (
+      moment(b.current_version?.created_at).diff(moment(a.current_version?.created_at))
+    ));
     sparksCount += template.sparks.length;
 
     return {
