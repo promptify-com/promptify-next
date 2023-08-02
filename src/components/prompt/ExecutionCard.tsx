@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { Box, Stack, Typography } from "@mui/material";
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { Subtitle } from "@/components/blocks";
-import { getMarkdownFromString } from "@/common/helpers/getMarkdownFromString";
+import { getMarkdownFromString, highlightSearch } from "@/common/helpers/getMarkdownFromString";
 
 interface Props {
   execution: TemplatesExecutions;
@@ -95,7 +95,8 @@ export const ExecutionCard: React.FC<Props> = ({
           (prompt) => prompt.id === exec.prompt
         );
 
-        if (prompt?.show_output)
+        if (prompt?.show_output) {
+
           return (
             <Stack key={exec.id} gap={1} sx={{ py: "24px" }}>
               <Subtitle
@@ -141,7 +142,7 @@ export const ExecutionCard: React.FC<Props> = ({
                       }
                     }}
                     dangerouslySetInnerHTML={{
-                      __html: getMarkdownFromString(exec.output, search),
+                      __html: highlightSearch(getMarkdownFromString(exec.output), search),
                     }}
                   />
                 </Box>
@@ -170,6 +171,7 @@ export const ExecutionCard: React.FC<Props> = ({
               )}
             </Stack>
           );
+        }
       })}
     </Stack>
   );

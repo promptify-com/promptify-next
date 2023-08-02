@@ -1,6 +1,6 @@
-export const getMarkdownFromString = (str: string, search=""): string => {
+export const getMarkdownFromString = (markdown: string): string => {
 
-  let formatted = str
+  return markdown
     .replace(/^###([^\n]+)\n/gm, '<h3>$1</h3>\n')
     .replace(/^##([^\n]+)\n/gm, '<h2>$1</h2>\n')
     .replace(/^#([^\n]+)\n/gm, '<h1>$1</h1>\n')
@@ -9,10 +9,12 @@ export const getMarkdownFromString = (str: string, search=""): string => {
     .replace(/- ([^\n]+)\n/g, '<div>- $1</div>')
     .replace(/\n/g, '<br>')
     .replace('\"', '"');
-
-  if (search) {
-    formatted = formatted.replace(new RegExp(search, 'gi'), '<span class="highlight">$&</span>');
-  }
-
-  return formatted;
 };
+
+export const highlightSearch = (searchString: string, searchValue: string): string => {
+  if (!searchValue) {
+    return searchString;
+  }
+  
+  return searchString.replace(new RegExp(searchValue, 'gi'), '<span class="highlight">$&</span>');
+}
