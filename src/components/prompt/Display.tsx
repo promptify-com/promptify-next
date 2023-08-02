@@ -55,7 +55,7 @@ export const Display: React.FC<Props> = ({
   }, [newExecutionData]);
 
   useEffect(() => {
-    setSortedSparks([...sparks]);
+    setSortedSparks(sparks);
   }, [sparks]);
 
   useEffect(() => {

@@ -600,7 +600,7 @@ const Prompt = () => {
               >
                 <Display
                   templateData={templateData}
-                  sparks={sortedSparks || []}
+                  sparks={sortedSparks}
                   selectedSpark={selectedSpark}
                   setSelectedSpark={setSelectedSpark}
                   selectedExecution={selectedExecution}
