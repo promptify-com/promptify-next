@@ -606,7 +606,6 @@ const Prompt = () => {
                   selectedExecution={selectedExecution}
                   isFetching={isFetchingExecutions}
                   newExecutionData={newExecutionData}
-                  refetchExecutions={refetchTemplateSparks}
                 />
                 {currentGeneratedPrompt && (
                   <Box

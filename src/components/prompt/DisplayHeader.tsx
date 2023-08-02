@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Box, Button, ClickAwayListener, Collapse, Grow, IconButton, InputBase, InputLabel, Paper, Popper, Stack, Typography, alpha, useTheme } from '@mui/material'
 import { Search as SearchIcon, PushPinOutlined, FeedOutlined, ArrowDropUp, ArrowDropDown, Undo, Redo, PushPin, Close } from "@mui/icons-material";
 import { SubjectIcon } from "@/assets/icons/SubjectIcon";
-import { Spark, TemplatesExecutions } from '@/core/api/dto/templates';
+import { Spark } from '@/core/api/dto/templates';
 import { SparksTabs } from './SparksTabs';
 
 interface Props {
@@ -11,6 +11,7 @@ interface Props {
    changeSelectedSpark: (spark: Spark) => void;
    pinSpark: () => void;
    showSearchBar: boolean;
+   onSearch?: (text: string) => void;
 }
 
 export const DisplayHeader: React.FC<Props> = ({ 
@@ -18,13 +19,28 @@ export const DisplayHeader: React.FC<Props> = ({
    selectedSpark,
    changeSelectedSpark,
    pinSpark,
-   showSearchBar
+   showSearchBar,
+   onSearch = () => {}
  }) => {
-   const  { palette } = useTheme();
+   const { palette } = useTheme();
    
-   const [searchShown, setSearchShown] = useState(false);
-   const [searchText, setSearchText] = useState("");
    const [presetsAnchor, setPresetsAnchor] = useState<HTMLElement | null>(null);
+   const [searchShown, setSearchShown] = useState(false);
+   const [searchText, setSearchText] = useState<string>("");
+
+   useEffect(() => {
+      onSearch(searchText);
+   }, [searchText]);
+   
+   useEffect(() => {
+      if (!searchText) return;
+      
+      if (searchShown) {
+         onSearch(searchText);
+      } else {
+         onSearch("");
+      }
+   }, [searchShown]);
 
    const SearchInput = (direction:"right"|"left") => (     
       <Stack direction={"row"} alignItems={"center"}>

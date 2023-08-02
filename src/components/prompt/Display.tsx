@@ -21,7 +21,6 @@ interface Props {
   selectedExecution: TemplatesExecutions | null;
   isFetching?: boolean;
   newExecutionData: PromptLiveResponse | null;
-  refetchExecutions: () => void;
 }
 
 export const Display: React.FC<Props> = ({
@@ -32,10 +31,11 @@ export const Display: React.FC<Props> = ({
   selectedExecution,
   isFetching,
   newExecutionData,
-  refetchExecutions,
 }) => {
   const [sortedSparks, setSortedSparks] = useState<Spark[]>([]);
   const [firstLoad, setFirstLoad] = useState(true);
+  const [search, setSearch] = useState<string>("");
+
   const containerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const routerSpark = router.query?.spark;
@@ -109,6 +109,7 @@ export const Display: React.FC<Props> = ({
         changeSelectedSpark={setSelectedSpark}
         pinSpark={handlePinSpark}
         showSearchBar
+        onSearch={(text) => setSearch(text)}
       />
 
       <Box sx={{ mx: "15px", opacity: firstLoad ? 0.5 : 1 }}>
@@ -136,6 +137,7 @@ export const Display: React.FC<Props> = ({
             <ExecutionCard
               execution={selectedExecution}
               templateData={templateData}
+              search={search}
             />
           ) : (
             <Typography sx={{ mt: "40px", textAlign: "center" }}>

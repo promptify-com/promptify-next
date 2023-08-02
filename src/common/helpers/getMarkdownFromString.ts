@@ -1,5 +1,6 @@
-export const getMarkdownFromString = (str: string): string => {
-  return str
+export const getMarkdownFromString = (markdown: string): string => {
+
+  return markdown
     .replace(/^###([^\n]+)\n/gm, '<h3>$1</h3>\n')
     .replace(/^##([^\n]+)\n/gm, '<h2>$1</h2>\n')
     .replace(/^#([^\n]+)\n/gm, '<h1>$1</h1>\n')
