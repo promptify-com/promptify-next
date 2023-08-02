@@ -12,7 +12,7 @@ import {
   Typography,
 } from "@mui/material";
 import MuiDrawer from "@mui/material/Drawer";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import {
   AutoAwesome,
@@ -22,7 +22,6 @@ import {
   MenuBookRounded,
   Search,
 } from "@mui/icons-material";
-import StarIcon from "@mui/icons-material/Star";
 import { styled, Theme, CSSObject } from "@mui/material/styles";
 
 import { LogoApp } from "@/assets/icons/LogoApp";
@@ -31,10 +30,7 @@ import { Collections } from "@/components/common/sidebar/Collections";
 import { useGetCollectionTemplatesQuery } from "@/core/api/prompts";
 import useToken from "@/hooks/useToken";
 import { ExploreFilterSideBar } from "@/components/explorer/ExploreFilterSideBar";
-import {
-  useGetEnginesQuery,
-  useGetTagsPopularQuery,
-} from "@/core/api/explorer";
+
 import { SideBarCloseIcon } from "@/assets/icons/SideBarClose";
 import { useGetCurrentUserQuery } from "@/core/api/user";
 import { useFetchFilters } from "@/hooks/useFetchFilters";
@@ -86,21 +82,18 @@ const Drawer = styled(MuiDrawer, {
 
 export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
   const token = useToken();
-  const router = useRouter();
+  const pathname = usePathname();
 
-  const pathname = router.pathname;
   const splittedPath = pathname.split("/");
-
   const isExplorePage = splittedPath[1] == "explore";
 
   const { data: user, isLoading: userLoading } = useGetCurrentUserQuery(token);
-
   const { data: collections, isLoading: isCollectionsLoading } =
     useGetCollectionTemplatesQuery(user?.favorite_collection_id as number, {
       skip: !user,
     });
-
   const { tags, engines } = useFetchFilters();
+
   const [expandedOnHover, setExpandedOnHover] = useState<boolean>(false);
   const [showExpandIcon, setShowExpandIcon] = useState<boolean>(false);
   const [showFilters, setShowFilters] = useState<boolean>(false);

@@ -1,5 +1,4 @@
-import { ReactNode } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import {
   Avatar,
   Box,
@@ -13,12 +12,9 @@ import {
   Typography,
 } from "@mui/material";
 
-import { Prompt } from "@/assets/icons/prompts";
-import { Setting } from "@/assets/icons/setting";
 import { User } from "@/core/api/dto/user";
 import useLogout from "@/hooks/useLogout";
 import useSetUser from "@/hooks/useSetUser";
-import { AutoAwesome } from "@mui/icons-material";
 import { Menu, MenuType } from "@/common/constants";
 
 interface ProfileDropDownProps {

@@ -1,12 +1,9 @@
-import { EmptyBox } from "@/assets/icons/EmptyBox";
 import { FavoriteList } from "@/assets/icons/FavoriteList";
-import { IUser } from "@/common/types";
 import { ICollectionById } from "@/common/types/collection";
 import { MoreVert } from "@mui/icons-material";
 
 import {
   Box,
-  Button,
   Grid,
   IconButton,
   List,
@@ -16,7 +13,7 @@ import {
 import { CollectionItem } from "./CollectionItem";
 import { ITemplate } from "@/common/types/template";
 import { FetchLoading } from "@/components/FetchLoading";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { User } from "@/core/api/dto/user";
 import { CollectionsEmptyBox } from "./CollectionsEmptyBox";
 

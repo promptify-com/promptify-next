@@ -18,6 +18,7 @@ import { useGetCategoriesQuery } from "@/core/api/categories";
 import { CategoriesSection } from "@/components/explorer/CategoriesSection";
 import { useGetCurrentUserQuery } from "@/core/api/user";
 import { WelcomeCard } from "@/components/homepage/WelcomeCard";
+import { PageLoading } from "@/components/PageLoading";
 
 const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
 
@@ -94,62 +95,66 @@ function Home() {
 
   return (
     <>
-      <Layout>
-        <Box mt={{ xs: 7, md: 0 }} padding={{ xs: "4px 0px", md: "0px 8px" }}>
-          <Grid
-            gap={"56px"}
-            display={"flex"}
-            flexDirection={"column"}
-            sx={{
-              padding: { xs: "16px", md: "32px" },
-            }}
-          >
-            {user && savedToken ? (
-              <Grid flexDirection="column" display={"flex"} gap={"56px"}>
-                <Grid
-                  sx={{
-                    alignItems: "center",
-                    width: "100%",
-                  }}
-                >
-                  <Typography
+      {userLoading ? (
+        <PageLoading />
+      ) : (
+        <Layout>
+          <Box mt={{ xs: 7, md: 0 }} padding={{ xs: "4px 0px", md: "0px 8px" }}>
+            <Grid
+              gap={"56px"}
+              display={"flex"}
+              flexDirection={"column"}
+              sx={{
+                padding: { xs: "16px", md: "32px" },
+              }}
+            >
+              {savedToken && user ? (
+                <Grid flexDirection="column" display={"flex"} gap={"56px"}>
+                  <Grid
                     sx={{
-                      fontFamily: "Poppins",
-                      fontStyle: "normal",
-                      fontWeight: 500,
-                      fontSize: { xs: "30px", sm: "48px" },
-                      lineHeight: { xs: "30px", md: "56px" },
-                      color: "#1D2028",
-                      marginLeft: { xs: "0px", sm: "0px" },
+                      alignItems: "center",
+                      width: "100%",
                     }}
                   >
-                    Welcome, {user?.username}
-                  </Typography>
-                </Grid>
-                {lastTemplate && Object.keys(lastTemplate).length > 0 && (
-                  <TemplatesSection
-                    isLoading={islastTemplateLoading}
-                    templates={[lastTemplate]}
-                    title="Your Latest Template:"
-                  />
-                )}
+                    <Typography
+                      sx={{
+                        fontFamily: "Poppins",
+                        fontStyle: "normal",
+                        fontWeight: 500,
+                        fontSize: { xs: "30px", sm: "48px" },
+                        lineHeight: { xs: "30px", md: "56px" },
+                        color: "#1D2028",
+                        marginLeft: { xs: "0px", sm: "0px" },
+                      }}
+                    >
+                      Welcome, {user?.username}
+                    </Typography>
+                  </Grid>
+                  {lastTemplate && Object.keys(lastTemplate).length > 0 && (
+                    <TemplatesSection
+                      isLoading={islastTemplateLoading}
+                      templates={[lastTemplate]}
+                      title="Your Latest Template:"
+                    />
+                  )}
 
-                <TemplatesSection
-                  isLoading={isTemplatesLoading}
-                  templates={templates}
-                  title="You may like this templates:"
-                />
-              </Grid>
-            ) : (
-              <WelcomeCard />
-            )}
-            <CategoriesSection
-              categories={categories}
-              isLoading={isCategoryLoading}
-            />
-          </Grid>
-        </Box>
-      </Layout>
+                  <TemplatesSection
+                    isLoading={isTemplatesLoading}
+                    templates={templates}
+                    title="You may like this templates:"
+                  />
+                </Grid>
+              ) : (
+                <WelcomeCard />
+              )}
+              <CategoriesSection
+                categories={categories}
+                isLoading={isCategoryLoading}
+              />
+            </Grid>
+          </Box>
+        </Layout>
+      )}
     </>
   );
 }

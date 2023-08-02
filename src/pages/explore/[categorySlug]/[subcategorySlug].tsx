@@ -1,6 +1,8 @@
 import { useRouter } from "next/router";
 import { KeyboardArrowLeft } from "@mui/icons-material";
 import { Box, Button, Grid } from "@mui/material";
+import { useSelector } from "react-redux";
+import Head from "next/head";
 
 import { authClient } from "@/common/axios";
 import { FetchLoading } from "@/components/FetchLoading";
@@ -12,16 +14,11 @@ import {
 } from "@/core/api/dto/templates";
 import { Layout } from "@/layout";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
-import {
-  useGetTemplateBySubCategoryQuery,
-  useGetTemplatesByFilterQuery,
-} from "@/core/api/explorer";
-import Head from "next/head";
+import { useGetTemplatesByFilterQuery } from "@/core/api/explorer";
 import {
   useGetCategoriesQuery,
   useGetCategoryBySlugQuery,
 } from "@/core/api/categories";
-import { useSelector } from "react-redux";
 import { RootState } from "@/core/store";
 import { FiltersSelected } from "@/components/explorer/FiltersSelected";
 
