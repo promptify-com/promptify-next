@@ -1,10 +1,10 @@
-interface IPrompts {
+interface Input {
   title: string;
   text: string;
 }
 
 export const getStringsFromPrompt = (str: string) => {
-  const matches: IPrompts[] = [];
+  const matches: Input[] = [];
   const regex = /{{(.*?)}}/g;
   let match;
 
@@ -20,7 +20,9 @@ export const getStringsFromPrompt = (str: string) => {
       text: arrayOfStrings[1],
     };
 
-    matches.push(obj);
+    if(obj.text === 'text' || obj.text === 'number') {
+      matches.push(obj);
+    }
   }
   return matches;
 };
