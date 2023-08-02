@@ -11,6 +11,7 @@ import { ExecutionCardGenerated } from "./ExecutionCardGenerated";
 import { DisplayHeader } from "./DisplayHeader";
 import { pinSpark, unpinSpark } from "@/hooks/api/executions";
 import { useRouter } from "next/router";
+import moment from "moment";
 
 interface Props {
   templateData: Templates;
@@ -54,12 +55,7 @@ export const Display: React.FC<Props> = ({
   }, [newExecutionData]);
 
   useEffect(() => {
-    const sorted = [...sparks].sort((a, b) => {
-      return (
-        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      );
-    });
-    setSortedSparks(sorted);
+    setSortedSparks(sparks);
   }, [sparks]);
 
   useEffect(() => {

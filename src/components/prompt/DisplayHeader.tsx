@@ -26,10 +26,6 @@ export const DisplayHeader: React.FC<Props> = ({
    const [searchText, setSearchText] = useState("");
    const [presetsAnchor, setPresetsAnchor] = useState<HTMLElement | null>(null);
 
-   const sortedSparks = [...sparks].sort((a, b) => {
-      return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
-   });
-
    const SearchInput = (direction:"right"|"left") => (     
       <Stack direction={"row"} alignItems={"center"}>
          <Collapse orientation="horizontal" in={searchShown} 
@@ -202,7 +198,7 @@ export const DisplayHeader: React.FC<Props> = ({
                         <ClickAwayListener onClickAway={() => setPresetsAnchor(null)}>
                            <Box>
                               <SparksTabs 
-                                 sparks={sortedSparks}
+                                 sparks={sparks}
                                  chooseSpark={(spark) => {
                                     changeSelectedSpark(spark)
                                     setPresetsAnchor(null)
