@@ -2,7 +2,8 @@ import React, { useEffect, useRef } from "react";
 import { Box, Stack, Typography } from "@mui/material";
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { Subtitle } from "@/components/blocks";
-import { getMarkdownFromString, highlightSearch } from "@/common/helpers/getMarkdownFromString";
+import { getMarkdownFromString } from "@/common/helpers/getMarkdownFromString";
+import { highlightSearch } from "@/common/helpers/highlightSearch";
 
 interface Props {
   execution: TemplatesExecutions;
