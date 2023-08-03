@@ -119,7 +119,17 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
                 || ''}
               onChange={e => handleChange(e.target.value, input.name, input.type)}
             />
-            <IconButton sx={{ color: 'grey.600', border: "none", p: "4px", ":hover": { color: "tertiary" }, display: displayClearButton ? 'inline-flex' : 'none', height: '27px' }}
+            <IconButton 
+               sx={{ 
+                  color: 'grey.600', 
+                  border: "none", 
+                  p: "4px", 
+                  ":hover": { 
+                       color: "tertiary" 
+                  }, 
+                  display: displayClearButton ? 'inline-flex' : 'none', 
+                  height: '27px' 
+               }}
               onClick={() => handleChange('', input.name, input.type)}
             >
               <Backspace />
