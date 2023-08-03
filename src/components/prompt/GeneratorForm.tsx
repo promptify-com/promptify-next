@@ -46,7 +46,7 @@ interface GeneratorFormProps {
   selectedExecution: TemplatesExecutions | null;
   setMobileTab: (value: number) => void;
   setActiveTab: (value: number) => void;
-  resetNewExecution: () => void;
+  onNewSpark: () => void;
   sparks: Spark[];
   selectedSpark: Spark | null;
   setSelectedSpark: (spark: Spark) => void;
@@ -80,7 +80,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   selectedExecution,
   setMobileTab,
   setActiveTab,
-  resetNewExecution,
+  onNewSpark,
   sparks,
   selectedSpark,
   setSelectedSpark,
@@ -513,10 +513,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
             }}
             startIcon={<AddOutlined />}
             variant={"outlined"}
-            onClick={() => {
-              resetNewExecution();
-              setResInputs([]);
-            }}
+            onClick={onNewSpark}
           >
             Spark
           </Button>

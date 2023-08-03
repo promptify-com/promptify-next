@@ -338,7 +338,7 @@ const Prompt = () => {
                   <Stack height={"100%"}>
                     <DetailsCard
                       templateData={templateData}
-                      resetNewExecution={resetNewExecution}
+                      onNewSpark={() => setSparkFormOpen(true)}
                     />
                     <Stack flex={1}>
                       <Tabs
@@ -386,7 +386,7 @@ const Prompt = () => {
                               selectedExecution={selectedExecution}
                               setMobileTab={setMobileTab}
                               setActiveTab={setActiveTab}
-                              resetNewExecution={resetNewExecution}
+                              onNewSpark={() => setSparkFormOpen(true)}
                               sparks={sortedSparks}
                               selectedSpark={selectedSpark}
                               setSelectedSpark={setSelectedSpark}
@@ -419,7 +419,7 @@ const Prompt = () => {
                   {mobileTab !== 0 && (
                     <DetailsCard
                       templateData={templateData}
-                      resetNewExecution={resetNewExecution}
+                      onNewSpark={() => setSparkFormOpen(true)}
                       min
                     />
                   )}
@@ -439,7 +439,7 @@ const Prompt = () => {
                   >
                     <DetailsCard
                       templateData={templateData}
-                      resetNewExecution={resetNewExecution}
+                      onNewSpark={() => setSparkFormOpen(true)}
                     />
                     <Details
                       templateData={templateData}
@@ -469,7 +469,7 @@ const Prompt = () => {
                       selectedExecution={selectedExecution}
                       setMobileTab={setMobileTab}
                       setActiveTab={setActiveTab}
-                      resetNewExecution={resetNewExecution}
+                      onNewSpark={() => setSparkFormOpen(true)}
                       sparks={sortedSparks}
                       selectedSpark={selectedSpark}
                       setSelectedSpark={setSelectedSpark}
