@@ -1,8 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-
 import { axiosBaseQuery } from "./axios-base-query";
 import { User } from "./dto/user";
-import useToken from "../../hooks/useToken";
 import { Templates } from "./dto/templates";
 
 export const userApi = createApi({
@@ -11,11 +9,9 @@ export const userApi = createApi({
     baseUrl: process.env.NEXT_PUBLIC_API_URL || "",
   }),
   endpoints: (builder) => {
-    const token = useToken();
-
     return {
       getCurrentUser: builder.query<User, any>({
-        query: () => ({
+        query: (token: string) => ({
           url: "/api/me/",
           method: "get",
           headers: {
@@ -30,7 +26,7 @@ export const userApi = createApi({
         }),
       }),
       updateUserProfile: builder.mutation<User, any>({
-        query: (updatedUser) => ({
+        query: ({ updatedUser, token }: {updatedUser: any, token: string}) => ({
           url: "/api/me/",
           method: "patch",
           headers: {
