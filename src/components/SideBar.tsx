@@ -87,19 +87,15 @@ const Drawer = styled(MuiDrawer, {
 export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
   const token = useToken();
   const router = useRouter();
-
   const pathname = router.pathname;
   const splittedPath = pathname.split("/");
-
   const isExplorePage = splittedPath[1] == "explore";
-
   const { data: user, isLoading: userLoading } = useGetCurrentUserQuery(token);
-
+  const isValidUser = Boolean(user && user.id);
   const { data: collections, isLoading: isCollectionsLoading } =
     useGetCollectionTemplatesQuery(user?.favorite_collection_id as number, {
-      skip: !user,
+      skip: !isValidUser,
     });
-
   const { tags, engines } = useFetchFilters();
   const [expandedOnHover, setExpandedOnHover] = useState<boolean>(false);
   const [showExpandIcon, setShowExpandIcon] = useState<boolean>(false);
@@ -313,7 +309,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
             favCollection={collections}
             collectionLoading={isCollectionsLoading}
             userLoading={userLoading}
-            user={user}
+            isValidUser={isValidUser}
             sidebarOpen={open || expandedOnHover}
           />
         </Box>

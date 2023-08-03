@@ -18,6 +18,7 @@ export const getToken = () => {
   if (typeof window !== "undefined") {
     // Perform localStorage action
     const token = localStorage.getItem("token");
+
     return token || null;
   }
 };
