@@ -1,6 +1,4 @@
-import { useRouter } from "next/router";
 import { Box, Grid, Typography } from "@mui/material";
-
 import { FetchLoading } from "@/components/FetchLoading";
 import { CategoryCard } from "@/components/common/cards/CardCategory";
 import { Category } from "@/core/api/dto/templates";
@@ -14,15 +12,10 @@ export const CategoriesSection: React.FC<CategoriesSectionProps> = ({
   isLoading,
   categories,
 }) => {
-  const router = useRouter();
-  const navigateToCategory = (slug: string) => {
-    router.push(`/explore/${slug}`);
-  };
   return (
     <>
       <Box gap={"16px"} display={"flex"} flexDirection={"column"}>
-        <Typography fontSize={19}> Browse Category </Typography>
-        {/* Loading Categories  */}
+        {!isLoading && <Typography fontSize={19}> Browse Category </Typography>}
         {isLoading && (
           <Box
             minHeight={"40vh"}
@@ -46,9 +39,7 @@ export const CategoriesSection: React.FC<CategoriesSectionProps> = ({
             WebkitOverflowScrolling: { xs: "touch", md: "initial" },
           }}
         >
-          {categories
-
-            ?.filter((mainCat) => !mainCat.parent)
+          {categories?.filter((mainCat) => !mainCat.parent)
             .map((category) => (
               <Grid key={category.id}>
                 <CategoryCard

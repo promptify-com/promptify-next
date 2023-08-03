@@ -63,7 +63,7 @@ function Home() {
       postLogin(r.data);
     }
   };
-  const { data: user, isLoading: userLoading } =
+  const { data: user } =
     useGetCurrentUserQuery(savedToken);
 
   useEffect(() => {
@@ -104,7 +104,7 @@ function Home() {
               padding: { xs: "16px", md: "32px" },
             }}
           >
-            {user && savedToken ? (
+            {savedToken && user?.id ? (
               <Grid flexDirection="column" display={"flex"} gap={"56px"}>
                 <Grid
                   sx={{

@@ -1,11 +1,21 @@
-import { ExploreHeaderImage } from "@/assets/icons/exploreHeader";
-import { Button, Stack, Typography } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Stack, Typography } from "@mui/material";
 import { useRouter } from "next/router";
-import React from "react";
-import BaseButton from "../base/BaseButton";
+import { ExploreHeaderImage } from "@/assets/icons/exploreHeader";
+import BaseButton from "@/components/base/BaseButton";
+import useToken from "@/hooks/useToken";
 
 export const WelcomeCard = () => {
   const router = useRouter();
+  const token = useToken();
+  const [showContainer, setShowContainer] = useState(false);
+
+  useEffect(() => {
+    if (!token) {
+      setShowContainer(true);
+    }
+  }, [token]);
+
   return (
     <Stack
       bgcolor={"white"}
@@ -14,6 +24,7 @@ export const WelcomeCard = () => {
         borderRadius: "25px",
         gap: { xs: "25px", sm: "48px", md: "10px", lg: "48px" },
         flexDirection: { xs: "column", sm: "row" },
+        display: !showContainer ? 'none' : 'flex'
       }}
     >
       <Stack
