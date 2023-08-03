@@ -382,7 +382,6 @@ const Prompt = () => {
                               setIsGenerating={setIsGenerating}
                               onError={setErrorMessage}
                               exit={() => setGeneratorOpened(false)}
-                              currentSparkId={selectedSpark?.id ?? null}
                               selectedExecution={selectedExecution}
                               setMobileTab={setMobileTab}
                               setActiveTab={setActiveTab}
@@ -465,7 +464,6 @@ const Prompt = () => {
                       setIsGenerating={setIsGenerating}
                       onError={setErrorMessage}
                       exit={() => setGeneratorOpened(false)}
-                      currentSparkId={selectedSpark?.id ?? null}
                       selectedExecution={selectedExecution}
                       setMobileTab={setMobileTab}
                       setActiveTab={setActiveTab}
@@ -561,7 +559,6 @@ const Prompt = () => {
             isOpen={sparkFormOpen}
             close={() => setSparkFormOpen(false)}
             templateId={templateData?.id}
-            executionId={fetchedNewExecution?.id}
             onSparkCreated={() => {
               refetchTemplateSparks();
               setNewExecutionData(null);

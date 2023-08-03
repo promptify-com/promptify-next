@@ -42,7 +42,6 @@ interface GeneratorFormProps {
   setIsGenerating: (status: boolean) => void;
   onError: (errMsg: string) => void;
   exit: () => void;
-  currentSparkId: number | null;
   selectedExecution: TemplatesExecutions | null;
   setMobileTab: (value: number) => void;
   setActiveTab: (value: number) => void;
@@ -76,7 +75,6 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   setIsGenerating,
   onError,
   exit,
-  currentSparkId,
   selectedExecution,
   setMobileTab,
   setActiveTab,
@@ -242,7 +240,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
     let tempData: any[] = [];
     let url = `${process.env.NEXT_PUBLIC_API_URL}/api/meta/templates/${templateData.id}/execute/`;
-    if (currentSparkId) url += `?spark_id=${currentSparkId}`;
+    if (selectedSpark?.id) url += `?spark_id=${selectedSpark.id}`;
     fetchEventSource(url, {
       method: "POST",
       headers: {

@@ -29,7 +29,6 @@ const SparkForm: React.FC<Props> = ({
       if (sparkTitle.length) {
          // If executionId is passed, create a spark with execution_id, otherwise create a empty spark with templateId
          // TODO: Handle error
-         console.log("executionId", executionId);
          if (executionId) {
             try {
                await createSparkWithExecution({
