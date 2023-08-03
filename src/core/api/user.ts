@@ -1,21 +1,15 @@
-import { createApi } from "@reduxjs/toolkit/query/react";
-
-import { axiosBaseQuery } from "./axios-base-query";
 import { User } from "./dto/user";
 import useToken from "../../hooks/useToken";
 import { Templates } from "./dto/templates";
+import { globalApi } from "./api";
 
-export const userApi = createApi({
-  reducerPath: "userApi",
-  baseQuery: axiosBaseQuery({
-    baseUrl: process.env.NEXT_PUBLIC_API_URL || "",
-  }),
+export const userApi = globalApi.injectEndpoints({
   endpoints: (builder) => {
     const token = useToken();
 
     return {
       getCurrentUser: builder.query<User, any>({
-        query: () => ({
+        query: (token: string) => ({
           url: "/api/me/",
           method: "get",
           headers: {

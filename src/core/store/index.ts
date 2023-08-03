@@ -1,42 +1,34 @@
-import { Action, ThunkAction, configureStore } from "@reduxjs/toolkit";
+import {
+  Action,
+  ConfigureStoreOptions,
+  ThunkAction,
+  configureStore,
+} from "@reduxjs/toolkit";
 import { createWrapper } from "next-redux-wrapper";
 
-import { promptsApi } from "../api/prompts";
-import { explorerApi } from "../api/explorer";
-import { userApi } from "../api/user";
 import { templatesSlice } from "./templatesSlice";
 import filterSlice from "./filtersSlice";
-import { CategoriesApi } from "../api/categories";
 import sidebarSlice from "./sidebarSlice";
-import { sparksApi } from "../api/sparks";
-import { templatesApi } from "../api/templates";
+import { globalApi } from "../api/api";
 
 export interface State {
   tick: string;
 }
 
-export const store = () =>
+export const store = (
+  options?: ConfigureStoreOptions["preloadedState"] | undefined
+) =>
   configureStore({
     reducer: {
-      [promptsApi.reducerPath]: promptsApi.reducer,
-      [sparksApi.reducerPath]: sparksApi.reducer,
-      [userApi.reducerPath]: userApi.reducer,
-      [explorerApi.reducerPath]: explorerApi.reducer,
-      [CategoriesApi.reducerPath]: CategoriesApi.reducer,
-      [templatesApi.reducerPath]: templatesApi.reducer,
+      [globalApi.reducerPath]: globalApi.reducer,
+
       template: templatesSlice.reducer,
       filters: filterSlice,
       sidebar: sidebarSlice,
     },
     middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware().concat(
-        promptsApi.middleware,
-        sparksApi.middleware,
-        CategoriesApi.middleware,
-        userApi.middleware,
-        explorerApi.middleware,
-        templatesApi.middleware
-      ),
+      getDefaultMiddleware().concat(globalApi.middleware),
+    ...options,
   });
 
 type Store = ReturnType<typeof store>;

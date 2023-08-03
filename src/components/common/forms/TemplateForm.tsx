@@ -1,18 +1,33 @@
-import React, { useEffect, useState } from 'react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import { object, string } from 'yup';
-import { useFormik } from 'formik';
-import { Select, MenuItem, TextField, Chip, Autocomplete, InputLabel, Checkbox, Stack } from '@mui/material';
-import {  useGetTagsQuery } from '@/core/api/explorer';
-import { Templates } from '@/core/api/dto/templates';
-import { IEditTemplate } from '@/common/types/editTemplate';
-import { createTemplate, updateTemplate } from '@/hooks/api/templates';
-import { authClient } from '@/common/axios';
-import {fieldStyle, boxStyle, buttonBoxStyle, typographyStyle, checkboxStyle} from '../../modals/styles'
-import { useGetCategoriesQuery } from '@/core/api/categories';
-import { Upload } from '@mui/icons-material';
+import React, { useEffect, useState } from "react";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+import { object, string } from "yup";
+import { useFormik } from "formik";
+import {
+  Select,
+  MenuItem,
+  TextField,
+  Chip,
+  Autocomplete,
+  InputLabel,
+  Checkbox,
+  Stack,
+} from "@mui/material";
+import { useGetTagsQuery } from "@/core/api/tags";
+import { Templates } from "@/core/api/dto/templates";
+import { IEditTemplate } from "@/common/types/editTemplate";
+import { createTemplate, updateTemplate } from "@/hooks/api/templates";
+import { authClient } from "@/common/axios";
+import {
+  fieldStyle,
+  boxStyle,
+  buttonBoxStyle,
+  typographyStyle,
+  checkboxStyle,
+} from "../../modals/styles";
+import { useGetCategoriesQuery } from "@/core/api/categories";
+import { Upload } from "@mui/icons-material";
 
 interface Props {
   templateData: Templates | null;
@@ -27,38 +42,36 @@ const TemplateForm: React.FC<Props> = ({
   modalNew = false,
   onSaved = () => {},
   darkMode = false,
-  linkBuilder = false
+  linkBuilder = false,
 }) => {
-  
   const { data: categories } = useGetCategoriesQuery();
   const { data: fetchedTags } = useGetTagsQuery();
   const [tags, setTags] = useState<string[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   useEffect(() => {
-    setSelectedTags(templateData?.tags.map(tag => tag.name) || []);
+    setSelectedTags(templateData?.tags.map((tag) => tag.name) || []);
   }, [templateData]);
 
   useEffect(() => {
-    if (fetchedTags) setTags(fetchedTags.map(tag => tag.name));
+    if (fetchedTags) setTags(fetchedTags.map((tag) => tag.name));
   }, [fetchedTags]);
 
   useEffect(() => {
     formik.setFieldValue(
-      'tags',
-      selectedTags.map(tag => ({ name: tag })),
+      "tags",
+      selectedTags.map((tag) => ({ name: tag }))
     );
   }, [selectedTags]);
 
   // TODO - No need to upload image and then preview it, just preview it and upload on submit
   const getUrlImage = async (image: File) => {
     const file = new FormData();
-    file.append('file', image);
-    const { data: { file_url } } = await authClient.post('/api/upload/', file);
-    formik.setFieldValue(
-      'thumbnail', 
-      file_url
-    );
+    file.append("file", image);
+    const {
+      data: { file_url },
+    } = await authClient.post("/api/upload/", file);
+    formik.setFieldValue("thumbnail", file_url);
   };
 
   const addNewTag = (newValue: string[]) => {
@@ -66,9 +79,9 @@ const TemplateForm: React.FC<Props> = ({
   };
 
   const FormSchema = object({
-    title: string().min(1).required('required'),
-    description: string().min(1).required('required'),
-    thumbnail: string().min(1).required('required'),
+    title: string().min(1).required("required"),
+    description: string().min(1).required("required"),
+    thumbnail: string().min(1).required("required"),
   });
 
   const onEditTemplate = async (values: IEditTemplate) => {
@@ -83,26 +96,26 @@ const TemplateForm: React.FC<Props> = ({
     const { id } = await createTemplate(values);
     onSaved();
     formik.resetForm();
-    window.open(window.location.origin + `/builder/${id}`, '_blank');
+    window.open(window.location.origin + `/builder/${id}`, "_blank");
   };
 
-  const formik =  useFormik<IEditTemplate>({
+  const formik = useFormik<IEditTemplate>({
     initialValues: {
-      title: templateData?.title || '',
-      description: templateData?.description || '',
-      duration: templateData?.duration?.toString() || '1',
-      difficulty: templateData?.difficulty || 'BEGINNER',
+      title: templateData?.title || "",
+      description: templateData?.description || "",
+      duration: templateData?.duration?.toString() || "1",
+      difficulty: templateData?.difficulty || "BEGINNER",
       is_visible: templateData?.is_visible || true,
-      language: templateData?.language || 'en-us',
+      language: templateData?.language || "en-us",
       category: templateData?.category?.id || 1,
-      context: templateData?.context || '',
+      context: templateData?.context || "",
       tags: templateData?.tags || [],
-      thumbnail: templateData?.thumbnail || '',
+      thumbnail: templateData?.thumbnail || "",
       executions_limit: templateData?.executions_limit || -1,
-      slug: templateData?.slug || '',
-      meta_title: templateData?.meta_title || '',
-      meta_description: templateData?.meta_description || '',
-      meta_keywords: templateData?.meta_keywords || '',
+      slug: templateData?.slug || "",
+      meta_title: templateData?.meta_title || "",
+      meta_description: templateData?.meta_description || "",
+      meta_keywords: templateData?.meta_keywords || "",
       ...(modalNew && { prompts_list: [] }),
     },
     enableReinitialize: true,
@@ -123,7 +136,7 @@ const TemplateForm: React.FC<Props> = ({
           name="title"
           value={formik.values.title}
           onChange={formik.handleChange}
-          error={formik.touched.title && formik.values.title === ''}
+          error={formik.touched.title && formik.values.title === ""}
         />
       </Box>
       <Box sx={boxStyle}>
@@ -135,34 +148,50 @@ const TemplateForm: React.FC<Props> = ({
           name="description"
           value={formik.values.description}
           onChange={formik.handleChange}
-          error={formik.touched.description && formik.values.description === ''}
+          error={formik.touched.description && formik.values.description === ""}
         />
       </Box>
       <Box sx={boxStyle}>
         <Typography sx={typographyStyle}>Thumbnail</Typography>
         <Box display="flex" flexDirection="column" width="250px">
           {formik.values.thumbnail && (
-            <img 
-              src={formik.values.thumbnail} 
-              alt="thumbnail" 
+            <img
+              src={formik.values.thumbnail}
+              alt="thumbnail"
               style={{ height: "250px", objectFit: "cover" }}
             />
           )}
           <Box component="label">
-            <Stack direction={"row"} alignItems={"center"} justifyContent={"center"}
-              sx={{ 
+            <Stack
+              direction={"row"}
+              alignItems={"center"}
+              justifyContent={"center"}
+              sx={{
                 bgcolor: "grey.600",
                 color: "common.white",
-                border: "1px solid transparent", 
+                border: "1px solid transparent",
                 borderRadius: "4px",
                 p: "8px",
                 mt: "5px",
                 cursor: "pointer",
-                ":hover": { bgcolor: "transparent", color: "grey.600", borderColor: "grey.600" } 
+                ":hover": {
+                  bgcolor: "transparent",
+                  color: "grey.600",
+                  borderColor: "grey.600",
+                },
               }}
             >
-              <Upload sx={{ height: "100%", display: "flex", alignItems: "center", fontSize: "1.2rem", mr: "15px" }} />
-              <Typography sx={{
+              <Upload
+                sx={{
+                  height: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  fontSize: "1.2rem",
+                  mr: "15px",
+                }}
+              />
+              <Typography
+                sx={{
                   fontSize: "1rem",
                   fontWeight: 400,
                   color: "inherit",
@@ -192,9 +221,9 @@ const TemplateForm: React.FC<Props> = ({
           value={formik.values.difficulty}
           onChange={formik.handleChange}
         >
-          <MenuItem value={'BEGINNER'}>Beginner</MenuItem>
-          <MenuItem value={'INTERMEDIATE'}>Intermediate</MenuItem>
-          <MenuItem value={'ADVANCED'}>Advanced</MenuItem>
+          <MenuItem value={"BEGINNER"}>Beginner</MenuItem>
+          <MenuItem value={"INTERMEDIATE"}>Intermediate</MenuItem>
+          <MenuItem value={"ADVANCED"}>Advanced</MenuItem>
         </Select>
       </Box>
       <Box sx={boxStyle}>
@@ -213,7 +242,7 @@ const TemplateForm: React.FC<Props> = ({
         <Select
           sx={fieldStyle}
           name="is_visible"
-          value={formik.values.is_visible ? '1' : '0'}
+          value={formik.values.is_visible ? "1" : "0"}
           onChange={formik.handleChange}
         >
           <MenuItem value={1}>Yes</MenuItem>
@@ -228,9 +257,9 @@ const TemplateForm: React.FC<Props> = ({
           value={formik.values.language}
           onChange={formik.handleChange}
         >
-          <MenuItem value={'en-us'}>English</MenuItem>
-          <MenuItem value={'es'}>Spanish</MenuItem>
-          <MenuItem value={'fr'}>French</MenuItem>
+          <MenuItem value={"en-us"}>English</MenuItem>
+          <MenuItem value={"es"}>Spanish</MenuItem>
+          <MenuItem value={"fr"}>French</MenuItem>
         </Select>
       </Box>
       {categories && (
@@ -242,7 +271,7 @@ const TemplateForm: React.FC<Props> = ({
             value={formik.values.category}
             onChange={formik.handleChange}
           >
-            {categories.map(category => (
+            {categories.map((category) => (
               <MenuItem value={category.id} key={category.id}>
                 {category.name}
               </MenuItem>
@@ -280,7 +309,7 @@ const TemplateForm: React.FC<Props> = ({
               />
             ))
           }
-          renderInput={params => <TextField {...params} />}
+          renderInput={(params) => <TextField {...params} />}
         />
       </Box>
       <Box sx={boxStyle}>
@@ -293,16 +322,16 @@ const TemplateForm: React.FC<Props> = ({
           onChange={formik.handleChange}
         />
       </Box>
-      <Box sx={{ ...boxStyle, alignItems: 'baseline' }}>
+      <Box sx={{ ...boxStyle, alignItems: "baseline" }}>
         <Typography sx={typographyStyle}>Slug</Typography>
         <Box>
-          <Stack direction={'row'} alignItems={'center'} sx={checkboxStyle}>
+          <Stack direction={"row"} alignItems={"center"} sx={checkboxStyle}>
             <Checkbox
               checked={formik.values.slug === null}
               onChange={() => {
                 formik.setFieldValue(
-                  'slug',
-                  formik.values.slug === null ? '' : null
+                  "slug",
+                  formik.values.slug === null ? "" : null
                 );
               }}
             />
@@ -311,22 +340,22 @@ const TemplateForm: React.FC<Props> = ({
           <TextField
             sx={fieldStyle}
             name="slug"
-            value={formik.values.slug ?? ''}
+            value={formik.values.slug ?? ""}
             disabled={formik.values.slug === null}
             onChange={formik.handleChange}
           />
         </Box>
       </Box>
-      <Box sx={{ ...boxStyle, alignItems: 'baseline' }}>
+      <Box sx={{ ...boxStyle, alignItems: "baseline" }}>
         <Typography sx={typographyStyle}>Meta title</Typography>
         <Box>
-          <Stack direction={'row'} alignItems={'center'} sx={checkboxStyle}>
+          <Stack direction={"row"} alignItems={"center"} sx={checkboxStyle}>
             <Checkbox
               checked={formik.values.meta_title === null}
               onChange={() => {
                 formik.setFieldValue(
-                  'meta_title',
-                  formik.values.meta_title === null ? '' : null
+                  "meta_title",
+                  formik.values.meta_title === null ? "" : null
                 );
               }}
             />
@@ -335,22 +364,22 @@ const TemplateForm: React.FC<Props> = ({
           <TextField
             sx={fieldStyle}
             name="meta_title"
-            value={formik.values.meta_title ?? ''}
+            value={formik.values.meta_title ?? ""}
             disabled={formik.values.meta_title === null}
             onChange={formik.handleChange}
           />
         </Box>
       </Box>
-      <Box sx={{ ...boxStyle, alignItems: 'baseline' }}>
+      <Box sx={{ ...boxStyle, alignItems: "baseline" }}>
         <Typography sx={typographyStyle}>Meta Description</Typography>
         <Box>
-          <Stack direction={'row'} alignItems={'center'} sx={checkboxStyle}>
+          <Stack direction={"row"} alignItems={"center"} sx={checkboxStyle}>
             <Checkbox
               checked={formik.values.meta_description === null}
               onChange={() => {
                 formik.setFieldValue(
-                  'meta_description',
-                  formik.values.meta_description === null ? '' : null
+                  "meta_description",
+                  formik.values.meta_description === null ? "" : null
                 );
               }}
             />
@@ -361,22 +390,22 @@ const TemplateForm: React.FC<Props> = ({
             maxRows={4}
             sx={fieldStyle}
             name="meta_description"
-            value={formik.values.meta_description ?? ''}
+            value={formik.values.meta_description ?? ""}
             disabled={formik.values.meta_description === null}
             onChange={formik.handleChange}
           />
         </Box>
       </Box>
-      <Box sx={{ ...boxStyle, alignItems: 'baseline' }}>
+      <Box sx={{ ...boxStyle, alignItems: "baseline" }}>
         <Typography sx={typographyStyle}>Meta Tags</Typography>
         <Box>
-          <Stack direction={'row'} alignItems={'center'} sx={checkboxStyle}>
+          <Stack direction={"row"} alignItems={"center"} sx={checkboxStyle}>
             <Checkbox
               checked={formik.values.meta_keywords === null}
               onChange={() => {
                 formik.setFieldValue(
-                  'meta_keywords',
-                  formik.values.meta_keywords === null ? '' : null
+                  "meta_keywords",
+                  formik.values.meta_keywords === null ? "" : null
                 );
               }}
             />
@@ -385,7 +414,7 @@ const TemplateForm: React.FC<Props> = ({
           <TextField
             sx={fieldStyle}
             name="meta_keywords"
-            value={formik.values.meta_keywords ?? ''}
+            value={formik.values.meta_keywords ?? ""}
             disabled={formik.values.meta_keywords === null}
             onChange={formik.handleChange}
           />
@@ -403,11 +432,11 @@ const TemplateForm: React.FC<Props> = ({
         {linkBuilder && (
           <Button
             variant="contained"
-            sx={{ mt: '20px' }}
+            sx={{ mt: "20px" }}
             onClick={() => {
               window.open(
                 window.location.origin + `/builder/${templateData?.id}`,
-                '_blank'
+                "_blank"
               );
             }}
           >
@@ -417,6 +446,6 @@ const TemplateForm: React.FC<Props> = ({
       </Box>
     </Box>
   );
-}
+};
 
 export default TemplateForm;

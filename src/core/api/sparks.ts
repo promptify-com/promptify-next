@@ -1,15 +1,9 @@
-import { createApi } from "@reduxjs/toolkit/query/react";
-
-import { axiosBaseQuery } from "./axios-base-query";
 import { Spark, TemplateExecutionsDisplay } from "./dto/templates";
 import useDeferredAction from "../../hooks/useDeferredAction";
 import { authClient } from "../../common/axios";
+import { globalApi } from "./api";
 
-export const sparksApi = createApi({
-  reducerPath:  "sparksApi",
-  baseQuery: axiosBaseQuery({
-    baseUrl: process.env.NEXT_PUBLIC_API_URL ?? "",
-  }),
+export const sparksApi = globalApi.injectEndpoints({
   endpoints: (builder) => {
     return {
       getSparksByTemplate: builder.query<Spark[], number>({
@@ -18,10 +12,7 @@ export const sparksApi = createApi({
           method: "get",
         }),
       }),
-      getSparksByMe: builder.query<
-        TemplateExecutionsDisplay[],
-        void
-      >({
+      getSparksByMe: builder.query<TemplateExecutionsDisplay[], void>({
         query: () => ({
           url: `/api/meta/sparks/me`,
           method: "get",
@@ -31,10 +22,7 @@ export const sparksApi = createApi({
   },
 });
 
-export const {
-  useGetSparksByTemplateQuery,
-  useGetSparksByMeQuery,
-} = sparksApi;
+export const { useGetSparksByTemplateQuery, useGetSparksByMeQuery } = sparksApi;
 
 export const useTemplateView = () => {
   return useDeferredAction(async (id: number) => {

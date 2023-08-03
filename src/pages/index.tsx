@@ -6,52 +6,42 @@ import { NextPage } from "next";
 import useToken from "@/hooks/useToken";
 import { IContinueWithSocialMediaResponse } from "@/common/types";
 import { authClient, client } from "@/common/axios";
-import { explorerApi } from "@/core/api/explorer";
 import { Layout } from "@/layout";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
-import { CategoriesApi } from "@/core/api/categories";
+import { categoriesApi } from "@/core/api/categories";
 import { CategoriesSection } from "@/components/explorer/CategoriesSection";
-import { userApi } from "@/core/api/user";
+import { useGetCurrentUserQuery } from "@/core/api/user";
 import { WelcomeCard } from "@/components/homepage/WelcomeCard";
 import { PageLoading } from "@/components/PageLoading";
 import { AppDispatch, wrapper } from "@/core/store";
-import { Category, Templates } from "@/core/api/dto/templates";
-import { User } from "@/core/api/dto/user";
+import { Category } from "@/core/api/dto/templates";
 import {
   CODE_TOKEN_ENDPOINT,
   doPostLogin,
   postLogin,
 } from "@/utils/loginUtils";
+import {
+  useGetLastTemplatesQuery,
+  useGetTemplatesSuggestedQuery,
+} from "@/core/api/templates";
 
 interface HomePageProps {
-  props: {
-    user: User;
-    userLoading: boolean;
-    categories: Category[];
-    lastTemplate: Templates;
-    suggestedTemplates: Templates[];
-    isCategoryLoading: boolean;
-    isLastTemplateLoading: boolean;
-    isSuggestedTemplateLoading: boolean;
-  };
+  categories: Category[];
+  isCategoryLoading: boolean;
 }
 
-const HomePage: NextPage<HomePageProps> = ({ props }) => {
-  const {
-    user,
-    userLoading,
-    categories,
-    isCategoryLoading,
-    lastTemplate,
-    isLastTemplateLoading,
-    suggestedTemplates,
-    isSuggestedTemplateLoading,
-  } = props;
+const HomePage: NextPage<HomePageProps> = ({
+  categories,
+  isCategoryLoading,
+}) => {
+  const token = useToken();
+  const { data: user, isLoading: userLoading } = useGetCurrentUserQuery(token);
+  const { data: lastTemplate, isLoading: isLastTemplateLoading } =
+    useGetLastTemplatesQuery();
+  const { data: suggestedTemplates, isLoading: isSuggestedTemplateLoading } =
+    useGetTemplatesSuggestedQuery();
 
   const [isLoading, setIsLoading] = useState(false);
-  console.log(user, userLoading);
-
-  const savedToken = useToken();
 
   const preLogin = () => {
     setIsLoading(true);
@@ -62,24 +52,24 @@ const HomePage: NextPage<HomePageProps> = ({ props }) => {
     const authorizationCode = urlParams.get("code");
     preLogin();
 
-    if (!!authorizationCode && !savedToken) {
+    if (!!authorizationCode && !token) {
       client
         .post(CODE_TOKEN_ENDPOINT, {
           provider: "microsoft",
           code: authorizationCode,
         })
         .then((r: AxiosResponse<IContinueWithSocialMediaResponse>) =>
-          doPostLogin(r, savedToken)
+          doPostLogin(r, token)
         )
         .catch(() => postLogin(null));
-    } else if (authorizationCode && !!savedToken) {
+    } else if (authorizationCode && !!token) {
       authClient
         .post(CODE_TOKEN_ENDPOINT, {
           provider: "microsoft",
           code: authorizationCode,
         })
         .then((r: AxiosResponse<IContinueWithSocialMediaResponse>) =>
-          doPostLogin(r, savedToken)
+          doPostLogin(r, token)
         )
         .catch(() => postLogin(null));
     }
@@ -100,7 +90,7 @@ const HomePage: NextPage<HomePageProps> = ({ props }) => {
                 padding: { xs: "16px", md: "32px" },
               }}
             >
-              {savedToken && user ? (
+              {token && user ? (
                 <Grid flexDirection="column" display={"flex"} gap={"56px"}>
                   <Grid
                     sx={{
@@ -154,33 +144,16 @@ const HomePage: NextPage<HomePageProps> = ({ props }) => {
 HomePage.getInitialProps = wrapper.getInitialPageProps(
   ({ dispatch }: { dispatch: AppDispatch }) =>
     async () => {
-      const token = useToken();
-      console.log("tokeenm");
-
-      const user = await dispatch(
-        userApi.endpoints.getCurrentUser.initiate(token)
-      );
-      const lastTemplate = await dispatch(
-        explorerApi.endpoints.getLastTemplates.initiate()
-      );
-      const suggestedTemplates = await dispatch(
-        explorerApi.endpoints.getTemplatesSuggested.initiate()
-      );
-      const categories = await dispatch(
-        CategoriesApi.endpoints.getCategories.initiate()
+      const { data: categories, isLoading: isCategoryLoading } = await dispatch(
+        categoriesApi.endpoints.getCategories.initiate()
       );
 
       return {
-        props: {
-          user: user.data,
-          lastTemplate: lastTemplate.data,
-          suggestedTemplates: suggestedTemplates.data,
-          categories: categories.data,
-          isLastTemplateLoading: lastTemplate.isLoading,
-          isSuggestedTemplateLoading: suggestedTemplates.isLoading,
-          isCategoryLoading: categories.isLoading,
-          userLoading: user.isLoading,
-        },
+        title: "Promptify | Boost Your Creativity",
+        description:
+          "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
+        categories,
+        isCategoryLoading,
       };
     }
 );

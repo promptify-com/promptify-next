@@ -1,8 +1,8 @@
 import React from "react";
 import { Box, Grid } from "@mui/material";
-import Head from "next/head";
-import { explorerApi } from "@/core/api/explorer";
-import { CategoriesApi } from "@/core/api/categories";
+import { NextPage } from "next";
+
+import { categoriesApi } from "@/core/api/categories";
 import { Layout } from "@/layout";
 import { CategoriesSection } from "@/components/explorer/CategoriesSection";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
@@ -16,8 +16,8 @@ import {
   Tag,
   Templates,
 } from "@/core/api/dto/templates";
-import { NextPage } from "next";
 import { useAppSelector } from "@/hooks/useStore";
+import { templatesApi } from "@/core/api/templates";
 
 interface IProps {
   props: {
@@ -49,14 +49,6 @@ const ExplorePage: NextPage<IProps> = ({ props }) => {
   return (
     <>
       <Layout>
-        <Head>
-          <title>Explore and Boost your creativity</title>
-          <meta
-            name="description"
-            content="Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out."
-            key="desc"
-          />
-        </Head>
         <Box mt={{ xs: 7, md: 0 }} padding={{ xs: "4px 0px", md: "0px 8px" }}>
           <Grid
             display={"flex"}
@@ -104,15 +96,18 @@ ExplorePage.getInitialProps = wrapper.getInitialPageProps(
       };
 
       const templates = await dispatch(
-        explorerApi.endpoints.getTemplatesByFilter.initiate(params)
+        templatesApi.endpoints.getTemplatesByFilter.initiate(params)
       );
 
       const categories = await dispatch(
-        CategoriesApi.endpoints.getCategories.initiate()
+        categoriesApi.endpoints.getCategories.initiate()
       );
 
       return {
         props: {
+          title: "Explore and Boost Your Creativity",
+          description:
+            "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
           templates: templates.data,
           categories: categories.data,
           isTemplatesLoading: templates.isLoading,

@@ -1,21 +1,14 @@
-import { createApi } from "@reduxjs/toolkit/query/react";
-
-import { axiosBaseQuery } from "./axios-base-query";
 import { PromptParams } from "./dto/prompts";
 import {
-  PromptExecutions,
   Templates,
   TemplatesExecutions,
   TemplateExecutionsDisplay,
 } from "./dto/templates";
 import useDeferredAction from "../../hooks/useDeferredAction";
 import { authClient } from "../../common/axios";
+import { globalApi } from "./api";
 
-export const promptsApi = createApi({
-  reducerPath: "promptsApi",
-  baseQuery: axiosBaseQuery({
-    baseUrl: process.env.NEXT_PUBLIC_API_URL ?? "",
-  }),
+export const promptsApi = globalApi.injectEndpoints({
   endpoints: (builder) => {
     return {
       getPromptTemplates: builder.query<Templates, number>({
@@ -42,10 +35,7 @@ export const promptsApi = createApi({
           method: "get",
         }),
       }),
-      getExecutionsByTemplate: builder.query<
-        TemplatesExecutions[],
-        number
-      >({
+      getExecutionsByTemplate: builder.query<TemplatesExecutions[], number>({
         query: (id: number) => ({
           url: `/api/meta/templates/${id}/executions/`,
           method: "get",
@@ -72,12 +62,6 @@ export const promptsApi = createApi({
           method: "get",
         }),
       }),
-      deleteTemplate: builder.mutation({
-        query: (id: number) => ({
-          url: `/api/meta/templates/${id}`,
-          method: "delete",
-        }),
-      }),
     };
   },
 });
@@ -91,7 +75,6 @@ export const {
   useGetExecutionByIdQuery,
   useGetTemplatesExecutionsByMeQuery,
   useGetAllPromptTemplatesQuery,
-  useDeleteTemplateMutation,
 } = promptsApi;
 
 export const useTemplateView = () => {

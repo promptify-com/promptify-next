@@ -43,10 +43,7 @@ import { Details } from "@/components/prompt/Details";
 import { authClient } from "@/common/axios";
 import { DetailsCard } from "@/components/prompt/DetailsCard";
 import { Prompts } from "@/core/api/dto/prompts";
-import {
-  createSparkWithExecution,
-  updateExecution,
-} from "@/hooks/api/executions";
+import { createSparkWithExecution } from "@/hooks/api/executions";
 import { PromptLiveResponse } from "@/common/types/prompt";
 import { Layout } from "@/layout";
 import useToken from "@/hooks/useToken";

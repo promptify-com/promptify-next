@@ -1,19 +1,7 @@
-import { createApi } from "@reduxjs/toolkit/dist/query/react";
-import { HYDRATE } from "next-redux-wrapper";
-
+import { globalApi } from "./api";
 import { FilterParams, Templates } from "./dto/templates";
-import { axiosBaseQuery } from "./axios-base-query";
 
-export const templatesApi = createApi({
-  reducerPath: "templatesApi",
-  baseQuery: axiosBaseQuery({
-    baseUrl: process.env.NEXT_PUBLIC_API_URL || "",
-  }),
-  extractRehydrationInfo(action, { reducerPath }) {
-    if (action.type === HYDRATE) {
-      return action.payload[reducerPath];
-    }
-  },
+export const templatesApi = globalApi.injectEndpoints({
   endpoints: (build) => {
     return {
       getTemplatesByOrdering: build.query<Templates[], void>({
@@ -21,6 +9,7 @@ export const templatesApi = createApi({
           url: `/api/meta/templates/?ordering=-runs`,
           method: "get",
         }),
+        providesTags: ["Templates"],
       }),
       getTemplatesSuggested: build.query<Templates[], void>({
         query: () => ({
@@ -62,8 +51,23 @@ export const templatesApi = createApi({
           method: "get",
         }),
       }),
+      deleteTemplate: build.mutation({
+        query: (id: number) => ({
+          url: `/api/meta/templates/${id}`,
+          method: "delete",
+        }),
+        invalidatesTags: ["Templates"],
+      }),
     };
   },
 });
 
-export const { useGetTemplatesByOrderingQuery } = templatesApi;
+export const {
+  useGetTemplatesByOrderingQuery,
+  useGetLastTemplatesQuery,
+  useGetTemplatesSuggestedQuery,
+  useGetTemplateBySubCategoryQuery,
+  useGetTemplatesByCategoryQuery,
+  useDeleteTemplateMutation,
+  useGetTemplatesByFilterQuery,
+} = templatesApi;

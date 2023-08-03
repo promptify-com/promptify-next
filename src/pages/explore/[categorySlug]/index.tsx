@@ -10,7 +10,7 @@ import {
   FilterParams,
   SelectedFilters,
 } from "@/core/api/dto/templates";
-import { useGetTemplatesByFilterQuery } from "@/core/api/explorer";
+import { useGetTemplatesByFilterQuery } from "@/core/api/templates";
 import { Layout } from "@/layout";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
 import { useSelector } from "react-redux";

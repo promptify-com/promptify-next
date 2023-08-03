@@ -16,17 +16,19 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { promptsApi, useDeleteTemplateMutation } from "@/core/api/prompts";
-import { Templates } from "@/core/api/dto/templates";
-import { PageLoading } from "@/components/PageLoading";
-import TemplateImportModal from "@/components/modals/TemplateImportModal";
-import TemplateForm from "@/components/common/forms/TemplateForm";
 import {
   Delete,
   Edit,
   PreviewRounded,
   SettingsApplicationsRounded,
 } from "@mui/icons-material";
+
+import { promptsApi } from "@/core/api/prompts";
+import { Templates } from "@/core/api/dto/templates";
+import { PageLoading } from "@/components/PageLoading";
+import TemplateImportModal from "@/components/modals/TemplateImportModal";
+import TemplateForm from "@/components/common/forms/TemplateForm";
+import { useDeleteTemplateMutation } from "@/core/api/templates";
 import BaseButton from "../base/BaseButton";
 import { modalStyle } from "../modals/styles";
 
