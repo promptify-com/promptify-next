@@ -1,4 +1,6 @@
 import { Action, ThunkAction, configureStore } from "@reduxjs/toolkit";
+import { createWrapper } from "next-redux-wrapper";
+
 import { promptsApi } from "../api/prompts";
 import { explorerApi } from "../api/explorer";
 import { userApi } from "../api/user";
@@ -7,7 +9,6 @@ import filterSlice from "./filtersSlice";
 import { CategoriesApi } from "../api/categories";
 import sidebarSlice from "./sidebarSlice";
 import { sparksApi } from "../api/sparks";
-import { createWrapper } from "next-redux-wrapper";
 
 export interface State {
   tick: string;

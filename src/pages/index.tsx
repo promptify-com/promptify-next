@@ -1,71 +1,61 @@
 import { Box, Grid, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
 import { AxiosResponse } from "axios";
+import { NextPage } from "next";
 
-import useSetUser from "@/hooks/useSetUser";
 import useToken from "@/hooks/useToken";
 import { IContinueWithSocialMediaResponse } from "@/common/types";
-import { getPathURL, saveToken } from "@/common/utils";
 import { authClient, client } from "@/common/axios";
-import {
-  useGetTemplatesSuggestedQuery,
-  useGetLastTemplatesQuery,
-} from "@/core/api/explorer";
+import { explorerApi } from "@/core/api/explorer";
 import { Layout } from "@/layout";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
-import { useGetCategoriesQuery } from "@/core/api/categories";
+import { CategoriesApi } from "@/core/api/categories";
 import { CategoriesSection } from "@/components/explorer/CategoriesSection";
-import { useGetCurrentUserQuery } from "@/core/api/user";
+import { userApi } from "@/core/api/user";
 import { WelcomeCard } from "@/components/homepage/WelcomeCard";
 import { PageLoading } from "@/components/PageLoading";
+import { AppDispatch, wrapper } from "@/core/store";
+import { Category, Templates } from "@/core/api/dto/templates";
+import { User } from "@/core/api/dto/user";
+import {
+  CODE_TOKEN_ENDPOINT,
+  doPostLogin,
+  postLogin,
+} from "@/utils/loginUtils";
 
-const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
+interface HomePageProps {
+  props: {
+    user: User;
+    userLoading: boolean;
+    categories: Category[];
+    lastTemplate: Templates;
+    suggestedTemplates: Templates[];
+    isCategoryLoading: boolean;
+    isLastTemplateLoading: boolean;
+    isSuggestedTemplateLoading: boolean;
+  };
+}
 
-function Home() {
+const HomePage: NextPage<HomePageProps> = ({ props }) => {
+  const {
+    user,
+    userLoading,
+    categories,
+    isCategoryLoading,
+    lastTemplate,
+    isLastTemplateLoading,
+    suggestedTemplates,
+    isSuggestedTemplateLoading,
+  } = props;
+
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
-  const setUser = useSetUser();
+  console.log(user, userLoading);
+
   const savedToken = useToken();
-  const { data: templates, isLoading: isTemplatesLoading } =
-    useGetTemplatesSuggestedQuery();
-  const { data: lastTemplate, isLoading: islastTemplateLoading } =
-    useGetLastTemplatesQuery();
 
   const preLogin = () => {
     setIsLoading(true);
   };
-
-  const postLogin = (response: IContinueWithSocialMediaResponse | null) => {
-    if (!response) return;
-    if (response?.created) {
-      setUser(response);
-      router.push("/signup");
-    } else {
-      const path = getPathURL();
-      if (path) {
-        router.push(path);
-      }
-    }
-    setIsLoading(false);
-  };
-
-  const doPostLogin = (r: AxiosResponse<IContinueWithSocialMediaResponse>) => {
-    const { token } = r.data;
-    if (!!savedToken && token !== savedToken) {
-      const path = getPathURL();
-      if (path) {
-        router.push(path);
-        localStorage.setItem("from", "alert");
-      }
-    } else {
-      setUser(r.data);
-      saveToken(r.data);
-      postLogin(r.data);
-    }
-  };
-  const { data: user, isLoading: userLoading } =
-    useGetCurrentUserQuery(savedToken);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
@@ -78,7 +68,9 @@ function Home() {
           provider: "microsoft",
           code: authorizationCode,
         })
-        .then(doPostLogin)
+        .then((r: AxiosResponse<IContinueWithSocialMediaResponse>) =>
+          doPostLogin(r, savedToken)
+        )
         .catch(() => postLogin(null));
     } else if (authorizationCode && !!savedToken) {
       authClient
@@ -86,12 +78,12 @@ function Home() {
           provider: "microsoft",
           code: authorizationCode,
         })
-        .then(doPostLogin)
+        .then((r: AxiosResponse<IContinueWithSocialMediaResponse>) =>
+          doPostLogin(r, savedToken)
+        )
         .catch(() => postLogin(null));
     }
   }, []);
-  const { data: categories, isLoading: isCategoryLoading } =
-    useGetCategoriesQuery();
 
   return (
     <>
@@ -132,15 +124,15 @@ function Home() {
                   </Grid>
                   {lastTemplate && Object.keys(lastTemplate).length > 0 && (
                     <TemplatesSection
-                      isLoading={islastTemplateLoading}
+                      isLoading={isLastTemplateLoading}
                       templates={[lastTemplate]}
                       title="Your Latest Template:"
                     />
                   )}
 
                   <TemplatesSection
-                    isLoading={isTemplatesLoading}
-                    templates={templates}
+                    isLoading={isSuggestedTemplateLoading}
+                    templates={suggestedTemplates}
                     title="You may like this templates:"
                   />
                 </Grid>
@@ -157,15 +149,40 @@ function Home() {
       )}
     </>
   );
-}
+};
 
-export async function getServerSideProps() {
-  return {
-    props: {
-      title: "Promptify | Boost Your Creativity",
-      description:
-        "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
-    },
-  };
-}
-export default Home;
+HomePage.getInitialProps = wrapper.getInitialPageProps(
+  ({ dispatch }: { dispatch: AppDispatch }) =>
+    async () => {
+      const token = useToken();
+      console.log("tokeenm");
+
+      const user = await dispatch(
+        userApi.endpoints.getCurrentUser.initiate(token)
+      );
+      const lastTemplate = await dispatch(
+        explorerApi.endpoints.getLastTemplates.initiate()
+      );
+      const suggestedTemplates = await dispatch(
+        explorerApi.endpoints.getTemplatesSuggested.initiate()
+      );
+      const categories = await dispatch(
+        CategoriesApi.endpoints.getCategories.initiate()
+      );
+
+      return {
+        props: {
+          user: user.data,
+          lastTemplate: lastTemplate.data,
+          suggestedTemplates: suggestedTemplates.data,
+          categories: categories.data,
+          isLastTemplateLoading: lastTemplate.isLoading,
+          isSuggestedTemplateLoading: suggestedTemplates.isLoading,
+          isCategoryLoading: categories.isLoading,
+          userLoading: user.isLoading,
+        },
+      };
+    }
+);
+
+export default HomePage;
