@@ -3,7 +3,6 @@ import { createApi } from "@reduxjs/toolkit/query/react";
 import { axiosBaseQuery } from "./axios-base-query";
 import { PromptParams } from "./dto/prompts";
 import {
-  PromptExecutions,
   Templates,
   TemplatesExecutions,
   TemplateExecutionsDisplay,
@@ -24,7 +23,7 @@ export const promptsApi = createApi({
           method: "get",
         }),
       }),
-      getPromptTemplateBySlug: builder.query<any, string>({
+      getPromptTemplateBySlug: builder.query<Templates, string>({
         query: (slug: string) => ({
           url: `/api/meta/templates/by-slug/${slug}`,
           method: "get",

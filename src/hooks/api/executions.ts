@@ -1,10 +1,22 @@
-import { ISparkWithExecution, ITemplateExecutionPut } from '@/core/api/dto/templates';
+import { ISparkWithExecution, ISparkWithTemplate, ITemplateExecutionPut } from '@/core/api/dto/templates';
 import { authClient } from '../../common/axios';
 
 export const updateExecution = async (templateExecutionId: number, data: ITemplateExecutionPut) => {
   return await authClient
     .put(
       `/api/meta/template-executions/${templateExecutionId}/`,
+      { ...data },
+      { headers: { 'Content-Type': 'application/json' } }
+    )
+    .then(response => {
+      return response.data;
+    });
+};
+
+export const createSpark = async (data: ISparkWithTemplate) => {
+  return await authClient
+    .post(
+      `/api/meta/sparks/`,
       { ...data },
       { headers: { 'Content-Type': 'application/json' } }
     )
