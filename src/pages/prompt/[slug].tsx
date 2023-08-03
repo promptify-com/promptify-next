@@ -560,7 +560,8 @@ const Prompt = () => {
           <SparkForm
             isOpen={sparkFormOpen}
             close={() => setSparkFormOpen(false)}
-            execution_id={fetchedNewExecution?.id}
+            templateId={templateData?.id}
+            executionId={fetchedNewExecution?.id}
             onSparkCreated={() => {
               refetchTemplateSparks();
               setNewExecutionData(null);

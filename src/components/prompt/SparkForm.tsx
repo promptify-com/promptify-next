@@ -1,18 +1,20 @@
 import React from 'react'
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
-import { createSparkWithExecution } from '@/hooks/api/executions';
+import { createSpark, createSparkWithExecution } from '@/hooks/api/executions';
 
 interface Props {
    isOpen: boolean,
    close: () => void,
-   execution_id?: number,
+   templateId?: number,
+   executionId?: number,
    onSparkCreated: () => void,
 }
 
 const SparkForm: React.FC<Props> = ({
    isOpen,
    close,
-   execution_id,
+   templateId,
+   executionId,
    onSparkCreated,
 }) => {
 
@@ -21,16 +23,28 @@ const SparkForm: React.FC<Props> = ({
    const closeTitleModal = () => {
      close();
      setSparkTitle("");
-     onSparkCreated();
    };
    
-   const saveSparkTitle = async () => {
+   const saveNewSpark = async () => {
       if (sparkTitle.length) {
-         if (execution_id) {
+         // If executionId is passed, create a spark with execution_id, otherwise create a empty spark with templateId
+         // TODO: Handle error
+         console.log("executionId", executionId);
+         if (executionId) {
             try {
                await createSparkWithExecution({
                   title: sparkTitle,
-                  execution_id: execution_id,
+                  execution_id: executionId,
+               });
+            } catch (err) {
+               console.error(err);
+            }
+
+         } else {
+            try {
+               await createSpark({
+                  initial_title: sparkTitle,
+                  template: templateId,
                });
             } catch (err) {
                console.error(err);
@@ -85,7 +99,7 @@ const SparkForm: React.FC<Props> = ({
             ":hover": { bgcolor: "action.hover" },
             }}
             disabled={!sparkTitle.length}
-            onClick={saveSparkTitle}
+            onClick={saveNewSpark}
          >
             Save
          </Button>
