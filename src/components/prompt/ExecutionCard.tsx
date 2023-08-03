@@ -3,13 +3,19 @@ import { Box, Stack, Typography } from "@mui/material";
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { Subtitle } from "@/components/blocks";
 import { getMarkdownFromString } from "@/common/helpers/getMarkdownFromString";
+import { highlightSearch } from "@/common/helpers/highlightSearch";
 
 interface Props {
   execution: TemplatesExecutions;
   templateData: Templates;
+  search: string;
 }
 
-export const ExecutionCard: React.FC<Props> = ({ execution, templateData }) => {
+export const ExecutionCard: React.FC<Props> = ({ 
+  execution, 
+  templateData,
+  search,
+}) => {
   const promptsOrderMap: { [key: string]: number } = {};
   const promptsExecutionOrderMap: { [key: string]: number } = {};
 
@@ -90,7 +96,8 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData }) => {
           (prompt) => prompt.id === exec.prompt
         );
 
-        if (prompt?.show_output)
+        if (prompt?.show_output) {
+
           return (
             <Stack key={exec.id} gap={1} sx={{ py: "24px" }}>
               <Subtitle
@@ -130,9 +137,13 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData }) => {
                       wordWrap: "break-word",
                       textAlign: "justify",
                       float: "none",
+                      ".highlight": {
+                        backgroundColor: "yellow",
+                        color: "black",
+                      }
                     }}
                     dangerouslySetInnerHTML={{
-                      __html: getMarkdownFromString(exec.output),
+                      __html: highlightSearch(getMarkdownFromString(exec.output), search),
                     }}
                   />
                 </Box>
@@ -161,6 +172,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData }) => {
               )}
             </Stack>
           );
+        }
       })}
     </Stack>
   );
