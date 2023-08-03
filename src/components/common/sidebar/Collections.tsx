@@ -73,17 +73,6 @@ export const Collections: React.FC<SideBarCollectionsProps> = ({
                     My Favorites
                   </Typography>
                 </Grid>
-                <IconButton
-                  sx={{
-                    border: "none",
-                    opacity: sidebarOpen ? 1 : 0,
-                    "&:hover": {
-                      backgroundColor: "surface.2",
-                    },
-                  }}
-                >
-                  <MoreVert />
-                </IconButton>
               </Grid>
               <List
                 className="sidebar-list"
