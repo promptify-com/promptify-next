@@ -132,79 +132,77 @@ export const Details: React.FC<DetailsProps> = ({
           sx={{ py: "16px" }}
         >
           <Grid item>
-            <Link href={"#"} style={{ textDecoration: "none" }}>
-              <Button
-                sx={{
-                  width: "100%",
-                  display: "flex",
-                  alignItems: "center",
-                  cursor: "pointer",
-                  p: "8px",
+            <Button
+              sx={{
+                width: "100%",
+                display: "flex",
+                alignItems: "center",
+                cursor: "pointer",
+                p: "8px",
+                bgcolor: "primary.main",
+                color: "onPrimary",
+                fontSize: 12,
+                fontWeight: 500,
+                borderRadius: "99px",
+                svg: { opacity: .6 },
+                "&:hover": {
                   bgcolor: "primary.main",
                   color: "onPrimary",
-                  fontSize: 12,
-                  fontWeight: 500,
-                  borderRadius: "99px",
-                  svg: { opacity: .6 },
-                  "&:hover": {
-                    bgcolor: "primary.main",
-                    color: "onPrimary",
-                    svg: { opacity: 1 }
-                  },
-                }}
+                  svg: { opacity: 1 }
+                },
+              }}
+            >
+              <Stack
+                flex={1}
+                direction={"row"}
+                alignItems={"center"}
+                spacing={1}
               >
-                <Stack
-                  flex={1}
-                  direction={"row"}
-                  alignItems={"center"}
-                  spacing={1}
+                <Box
+                  sx={{
+                    bgcolor: "common.black",
+                    color: "common.white",
+                    borderRadius: "50%",
+                    width: 32,
+                    height: 32,
+                    fontSize: 16,
+                    padding: "1px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
                 >
-                  <Box
-                    sx={{
-                      bgcolor: "common.black",
-                      color: "common.white",
-                      borderRadius: "50%",
-                      width: 32,
-                      height: 32,
-                      fontSize: 16,
-                      padding: "1px",
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                  >
-                    {templateData?.created_by?.first_name &&
-                    templateData?.created_by?.last_name
-                      ? `${templateData?.created_by?.first_name[0]?.toUpperCase()}${templateData?.created_by?.last_name[0]?.toUpperCase()}`
-                      : templateData?.created_by?.username[0]?.toUpperCase()}
-                  </Box>
-                  <Box>
-                    by{" "}
-                    {templateData?.created_by?.first_name &&
-                    templateData?.created_by?.last_name ? (
-                      <>
-                        {templateData.created_by.first_name
-                          .charAt(0)
-                          .toUpperCase() +
-                          templateData.created_by.first_name.slice(1)}{" "}
-                        {templateData.created_by.last_name
-                          .charAt(0)
-                          .toUpperCase() +
-                          templateData.created_by.last_name.slice(1)}
-                      </>
-                    ) : (
-                      <>
-                        {templateData.created_by.username
-                          .charAt(0)
-                          .toUpperCase() +
-                          templateData.created_by.username.slice(1)}
-                      </>
-                    )}
-                  </Box>
-                </Stack>
-                <ArrowForwardIos fontSize="small" />
-              </Button>
-            </Link>
+                  {templateData?.created_by?.first_name &&
+                  templateData?.created_by?.last_name
+                    ? `${templateData?.created_by?.first_name[0]?.toUpperCase()}${templateData?.created_by?.last_name[0]?.toUpperCase()}`
+                    : templateData?.created_by?.username[0]?.toUpperCase()}
+                </Box>
+                <Box>
+                  by{" "} 
+                  {templateData?.created_by?.first_name &&
+                  templateData?.created_by?.last_name ? (
+                    <>
+                      {templateData.created_by.first_name
+                        .charAt(0)
+                        .toUpperCase() +
+                        templateData.created_by.first_name.slice(1)}{" "}
+                      {templateData.created_by.last_name
+                        .charAt(0)
+                        .toUpperCase() +
+                        templateData.created_by.last_name.slice(1)}
+                    </>
+                  ) : (
+                    <>
+                      {templateData.created_by.username
+                        .charAt(0)
+                        .toUpperCase() +
+                        templateData.created_by.username.slice(1)}
+                    </>
+                  )}
+                </Box>
+              </Stack>
+              <ArrowForwardIos fontSize="small" />
+            </Button>
           </Grid>
 
           <Grid item>
