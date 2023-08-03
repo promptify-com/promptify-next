@@ -14,25 +14,35 @@ import {
   FilterParams,
   SelectedFilters,
   Tag,
-  Templates,
 } from "@/core/api/dto/templates";
 import { useAppSelector } from "@/hooks/useStore";
-import { templatesApi } from "@/core/api/templates";
+import { useGetTemplatesByFilterQuery } from "@/core/api/templates";
 
 interface IProps {
   props: {
     categories: Category[];
-    templates: Templates[];
     isCategoryLoading: boolean;
-    isTemplatesLoading: boolean;
   };
 }
 
 const ExplorePage: NextPage<IProps> = ({ props }) => {
-  const { categories, templates, isCategoryLoading, isTemplatesLoading } =
-    props;
+  const { categories, isCategoryLoading } = props;
 
   const filters = useAppSelector((state: RootState) => state.filters);
+
+  const filteredTags = filters.tag
+    .filter((item: Tag | null) => item !== null)
+    .map((item: Tag | null) => item?.name)
+    .join("&tag=");
+
+  const params: FilterParams = {
+    tag: filteredTags,
+    engineId: filters.engine?.id,
+    title: filters.title,
+  };
+
+  const { data: templates, isLoading: isTemplatesLoading } =
+    useGetTemplatesByFilterQuery(params);
 
   function areAllStatesNull(filters: SelectedFilters): boolean {
     return (
@@ -80,26 +90,8 @@ const ExplorePage: NextPage<IProps> = ({ props }) => {
 
 ExplorePage.getInitialProps = wrapper.getInitialPageProps(
   ({ dispatch }: { dispatch: AppDispatch }) =>
-    async ({ store }) => {
-      // Specify the type for 'store' variable
-      const { filters } = store.getState();
-
-      const filteredTags = filters.tag
-        .filter((item: Tag | null) => item !== null)
-        .map((item: Tag | null) => item?.name)
-        .join("&tag=");
-
-      const params: FilterParams = {
-        tag: filteredTags,
-        engineId: filters.engine?.id,
-        title: filters.title,
-      };
-
-      const templates = await dispatch(
-        templatesApi.endpoints.getTemplatesByFilter.initiate(params)
-      );
-
-      const categories = await dispatch(
+    async () => {
+      const { data: categories, isLoading: isCategoryLoading } = await dispatch(
         categoriesApi.endpoints.getCategories.initiate()
       );
 
@@ -108,10 +100,8 @@ ExplorePage.getInitialProps = wrapper.getInitialPageProps(
           title: "Explore and Boost Your Creativity",
           description:
             "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
-          templates: templates.data,
-          categories: categories.data,
-          isTemplatesLoading: templates.isLoading,
-          isCategoryLoading: categories.isLoading,
+          categories,
+          isCategoryLoading,
         },
       };
     }
