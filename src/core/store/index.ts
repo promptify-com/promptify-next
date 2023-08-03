@@ -9,6 +9,7 @@ import filterSlice from "./filtersSlice";
 import { CategoriesApi } from "../api/categories";
 import sidebarSlice from "./sidebarSlice";
 import { sparksApi } from "../api/sparks";
+import { templatesApi } from "../api/templates";
 
 export interface State {
   tick: string;
@@ -22,6 +23,7 @@ export const store = () =>
       [userApi.reducerPath]: userApi.reducer,
       [explorerApi.reducerPath]: explorerApi.reducer,
       [CategoriesApi.reducerPath]: CategoriesApi.reducer,
+      [templatesApi.reducerPath]: templatesApi.reducer,
       template: templatesSlice.reducer,
       filters: filterSlice,
       sidebar: sidebarSlice,
@@ -32,7 +34,8 @@ export const store = () =>
         sparksApi.middleware,
         CategoriesApi.middleware,
         userApi.middleware,
-        explorerApi.middleware
+        explorerApi.middleware,
+        templatesApi.middleware
       ),
   });
 
