@@ -9,14 +9,9 @@ import { TemplatesSection } from "@/components/explorer/TemplatesSection";
 import { RootState, wrapper, AppDispatch } from "@/core/store"; // Make sure to import AppStore here
 import { FiltersSelected } from "@/components/explorer/FiltersSelected";
 
-import {
-  Category,
-  FilterParams,
-  SelectedFilters,
-  Tag,
-} from "@/core/api/dto/templates";
+import { Category, SelectedFilters } from "@/core/api/dto/templates";
 import { useAppSelector } from "@/hooks/useStore";
-import { useGetTemplatesByFilterQuery } from "@/core/api/templates";
+import { useExploreData } from "@/hooks/useExploreData";
 
 interface IProps {
   props: {
@@ -30,19 +25,7 @@ const ExplorePage: NextPage<IProps> = ({ props }) => {
 
   const filters = useAppSelector((state: RootState) => state.filters);
 
-  const filteredTags = filters.tag
-    .filter((item: Tag | null) => item !== null)
-    .map((item: Tag | null) => item?.name)
-    .join("&tag=");
-
-  const params: FilterParams = {
-    tag: filteredTags,
-    engineId: filters.engine?.id,
-    title: filters.title,
-  };
-
-  const { data: templates, isLoading: isTemplatesLoading } =
-    useGetTemplatesByFilterQuery(params);
+  const { templates, isTemplatesLoading } = useExploreData();
 
   function areAllStatesNull(filters: SelectedFilters): boolean {
     return (

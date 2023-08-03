@@ -1,12 +1,9 @@
 import { User } from "./dto/user";
-import useToken from "../../hooks/useToken";
 import { Templates } from "./dto/templates";
 import { globalApi } from "./api";
 
 export const userApi = globalApi.injectEndpoints({
   endpoints: (builder) => {
-    const token = useToken();
-
     return {
       getCurrentUser: builder.query<User, any>({
         query: (token: string) => ({
@@ -24,7 +21,13 @@ export const userApi = globalApi.injectEndpoints({
         }),
       }),
       updateUserProfile: builder.mutation<User, any>({
-        query: (updatedUser) => ({
+        query: ({
+          updatedUser,
+          token,
+        }: {
+          updatedUser: any;
+          token: string;
+        }) => ({
           url: "/api/me/",
           method: "patch",
           headers: {

@@ -3,25 +3,12 @@ import {
   Box,
   Button,
   CircularProgress,
-  ClickAwayListener,
-  Grow,
-  MenuItem,
-  MenuList,
-  Paper,
-  Popper,
   Stack,
   Typography,
   alpha,
   useTheme,
 } from "@mui/material";
-import {
-  AddOutlined,
-  ArrowDropDown,
-  ArrowDropUp,
-  AutoFixHigh,
-  Close,
-  Replay,
-} from "@mui/icons-material";
+import { AddOutlined, Replay } from "@mui/icons-material";
 import {
   PromptParams,
   ResInputs,
@@ -45,7 +32,6 @@ import {
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { useWindowSize } from "usehooks-ts";
 import { useRouter } from "next/router";
-import { useParametersPresets } from "@/hooks/api/parametersPresets";
 import { DisplayHeader } from "./DisplayHeader";
 import { pinSpark, unpinSpark } from "@/hooks/api/executions";
 
@@ -117,8 +103,6 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   const [errors, setErrors] = useState<InputsErrors>({});
   const [shownInputs, setShownInputs] = useState<Input[] | null>(null);
   const [shownParams, setShownParams] = useState<Param[] | null>(null);
-  const [presets] = useParametersPresets();
-  const [presetsAnchor, setPresetsAnchor] = useState<HTMLElement | null>(null);
   const [allowGenerate, setAllowGenerate] = useState<boolean>(false);
 
   const setDefaultResPrompts = () => {
@@ -545,82 +529,6 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
           p: "16px",
         }}
       >
-        <Stack direction={"row"} justifyContent={"space-between"} py={"8px"}>
-          <Button
-            sx={textButtonStyle}
-            startIcon={<AutoFixHigh />}
-            endIcon={
-              Boolean(presetsAnchor) ? <ArrowDropUp /> : <ArrowDropDown />
-            }
-            variant={"text"}
-            onClick={(e) => setPresetsAnchor(e.currentTarget)}
-          >
-            Presets
-          </Button>
-          {false && (
-            <Button
-              sx={textButtonStyle}
-              startIcon={<Close />}
-              variant={"text"}
-              disabled={!allowGenerate}
-              onClick={() => {
-                setResInputs([]);
-              }}
-            >
-              Clear
-            </Button>
-          )}
-          <Popper
-            open={Boolean(presetsAnchor)}
-            anchorEl={presetsAnchor}
-            transition
-            disablePortal
-            sx={{ zIndex: 9 }}
-          >
-            {({ TransitionProps, placement }) => (
-              <Grow
-                {...TransitionProps}
-                style={{ transformOrigin: "center top" }}
-              >
-                <Paper
-                  sx={{
-                    bgcolor: "surface.1",
-                    border: "1px solid #E3E3E3",
-                    borderRadius: "10px",
-                    maxHeight: "30svh",
-                    overflow: "auto",
-                    overscrollBehavior: "contain",
-                  }}
-                  elevation={0}
-                >
-                  <ClickAwayListener onClickAway={() => setPresetsAnchor(null)}>
-                    <MenuList sx={{ paddingRight: "3rem", width: "100%" }}>
-                      {presets.map((preset) => (
-                        <MenuItem
-                          key={preset.id}
-                          sx={{ borderTop: "1px solid #E3E3E3" }}
-                          onClick={() => setPresetsAnchor(null)}
-                        >
-                          <Typography
-                            sx={{
-                              fontWeight: 500,
-                              fontSize: 14,
-                              ml: "1rem",
-                              color: "onSurface",
-                            }}
-                          >
-                            {preset.name}
-                          </Typography>
-                        </MenuItem>
-                      ))}
-                    </MenuList>
-                  </ClickAwayListener>
-                </Paper>
-              </Grow>
-            )}
-          </Popper>
-        </Stack>
-
         <Box
           sx={{
             flex: 1,
@@ -778,16 +686,6 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   );
 };
 
-const textButtonStyle = {
-  bgcolor: "surface.3",
-  color: "onSurface",
-  fontSize: 13,
-  fontWeight: 500,
-  p: "5px 12px",
-  svg: {
-    fontSize: "16px !important",
-  },
-};
 const keysStyle = {
   padding: "2px 4px",
   letterSpacing: "1px",

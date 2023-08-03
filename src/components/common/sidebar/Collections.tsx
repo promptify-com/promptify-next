@@ -1,7 +1,6 @@
 import { FavoriteList } from "@/assets/icons/FavoriteList";
 import { ICollectionById } from "@/common/types/collection";
 import { MoreVert } from "@mui/icons-material";
-
 import {
   Box,
   Grid,
@@ -14,12 +13,11 @@ import { CollectionItem } from "./CollectionItem";
 import { ITemplate } from "@/common/types/template";
 import { FetchLoading } from "@/components/FetchLoading";
 import { useRouter } from "next/navigation";
-import { User } from "@/core/api/dto/user";
 import { CollectionsEmptyBox } from "./CollectionsEmptyBox";
 
 interface SideBarCollectionsProps {
   sidebarOpen?: boolean;
-  user: User | undefined;
+  isValidUser: boolean | undefined;
   favCollection: ICollectionById | null;
   collectionLoading: boolean;
   userLoading?: boolean;
@@ -27,7 +25,7 @@ interface SideBarCollectionsProps {
 
 export const Collections: React.FC<SideBarCollectionsProps> = ({
   sidebarOpen,
-  user,
+  isValidUser,
   favCollection,
   collectionLoading,
   userLoading,
@@ -48,7 +46,7 @@ export const Collections: React.FC<SideBarCollectionsProps> = ({
         <FetchLoading />
       ) : (
         <Box>
-          {!user ? (
+          {!isValidUser ? (
             <CollectionsEmptyBox onExpand={sidebarOpen} />
           ) : (
             <Box>
@@ -75,17 +73,6 @@ export const Collections: React.FC<SideBarCollectionsProps> = ({
                     My Favorites
                   </Typography>
                 </Grid>
-                <IconButton
-                  sx={{
-                    border: "none",
-                    opacity: sidebarOpen ? 1 : 0,
-                    "&:hover": {
-                      backgroundColor: "surface.2",
-                    },
-                  }}
-                >
-                  <MoreVert />
-                </IconButton>
               </Grid>
               <List
                 className="sidebar-list"

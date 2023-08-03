@@ -64,6 +64,7 @@ export const Prompts = () => {
 
   return (
     <Box
+      mt={14}
       sx={{
         display: "flex",
         flexDirection: "column",
@@ -81,9 +82,16 @@ export const Prompts = () => {
         flexDirection={{ xs: "column", md: "row" }}
       >
         <Typography
-          fontWeight={500}
-          fontSize={{ xs: "1.5rem", sm: "2rem" }}
-          textAlign={{ xs: "center", sm: "start" }}
+          sx={{
+            fontFamily: "Poppins",
+            fontStyle: "normal",
+            fontWeight: 500,
+            fontSize: { xs: 18, md: 24 },
+            lineHeight: { xs: "133.4%", sm: "123.5%" },
+            display: "flex",
+            alignItems: "center",
+            color: "#1B1B1E",
+          }}
         >
           Prompts
         </Typography>

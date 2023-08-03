@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Divider, IconButton, InputLabel, Stack, TextField } from '@mui/material';
 import { InputsErrors } from './GeneratorForm';
 import { Backspace } from '@mui/icons-material';
@@ -23,10 +23,12 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
   resInputs,
   errors,
 }) => {
-
+  const [displayClearButton, setDisplayClearButton] = useState(false);
   const handleChange = (value: string, name: string, type: string) => {
     const resObj = [...resInputs].find(prompt => prompt.id === promptId);
     const resArr = [...resInputs];
+
+    setDisplayClearButton(!!value);
 
     if (!resObj) {
       return setResInputs([
@@ -77,7 +79,8 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
               sx={{
                 fontSize: 13,
                 fontWeight: 500,
-                color: errors[input.name] ? 'error.main' : 'tertiary'
+                color: errors[input.name] ? 'error.main' : 'tertiary',
+                height: '27px',
               }}
             >
               {input.fullName}:
@@ -85,6 +88,7 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
             <TextField
               sx={{
                 flex: 1,
+                height: '27px',
                 '.MuiInputBase-input': {
                   p: 0,
                   color: 'onSurface',
@@ -115,7 +119,17 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
                 || ''}
               onChange={e => handleChange(e.target.value, input.name, input.type)}
             />
-            <IconButton sx={{ color: 'grey.600', border: "none", p: "4px", ":hover": { color: "tertiary" } }}
+            <IconButton 
+               sx={{ 
+                  color: 'grey.600', 
+                  border: "none", 
+                  p: "4px", 
+                  ":hover": { 
+                       color: "tertiary" 
+                  }, 
+                  display: displayClearButton ? 'inline-flex' : 'none', 
+                  height: '27px' 
+               }}
               onClick={() => handleChange('', input.name, input.type)}
             >
               <Backspace />

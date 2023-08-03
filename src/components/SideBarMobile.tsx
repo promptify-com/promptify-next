@@ -266,7 +266,7 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
                   <Collections
                     favCollection={collections}
                     collectionLoading={isCollectionsLoading}
-                    user={user}
+                    isValidUser={!!user?.id}
                     sidebarOpen
                   />
                 </Box>

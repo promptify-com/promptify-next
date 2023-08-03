@@ -40,7 +40,7 @@ const Dashboard = () => {
                 <TemplatesSection
                   templates={templates ?? []}
                   isLoading={isTemplatesLoading}
-                  title="My templates"
+                  title="My templates (admins only!)"
                 />
               </Box>
             </Box>
