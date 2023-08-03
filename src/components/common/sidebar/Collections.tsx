@@ -1,12 +1,8 @@
-import { EmptyBox } from "@/assets/icons/EmptyBox";
 import { FavoriteList } from "@/assets/icons/FavoriteList";
-import { IUser } from "@/common/types";
 import { ICollectionById } from "@/common/types/collection";
 import { MoreVert } from "@mui/icons-material";
-
 import {
   Box,
-  Button,
   Grid,
   IconButton,
   List,
@@ -74,7 +70,7 @@ export const Collections: React.FC<SideBarCollectionsProps> = ({
                       display: sidebarOpen ? "block" : "none",
                     }}
                   >
-                    My Favorites hhhh
+                    My Favorites
                   </Typography>
                 </Grid>
                 <IconButton
