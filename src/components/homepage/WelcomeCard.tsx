@@ -18,7 +18,7 @@ export const WelcomeCard = () => {
 
   return (
     <Stack
-      bgcolor={"white"}
+      bgcolor={"surface.1"}
       sx={{
         padding: { xs: "16px", md: "24px" },
         borderRadius: "25px",
