@@ -254,7 +254,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
     let tempData: any[] = [];
     let url = `${process.env.NEXT_PUBLIC_API_URL}/api/meta/templates/${templateData.id}/execute/`;
-    if (selectedSpark) url += `?spark_id=${selectedSpark?.id}`;
+    if (selectedSpark?.id) url += `?spark_id=${selectedSpark.id}`;
 
     fetchEventSource(url, {
       method: "POST",

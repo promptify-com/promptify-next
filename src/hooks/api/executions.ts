@@ -5,7 +5,7 @@ export const updateExecution = async (templateExecutionId: number, data: ITempla
   return await authClient
     .put(
       `/api/meta/template-executions/${templateExecutionId}/`,
-      { ...data },
+      data,
       { headers: { 'Content-Type': 'application/json' } }
     )
     .then(response => {
@@ -17,7 +17,7 @@ export const createSpark = async (data: ISparkWithTemplate) : Promise<Spark> => 
   return await authClient
     .post(
       `/api/meta/sparks/`,
-      { ...data },
+      data,
       { headers: { 'Content-Type': 'application/json' } }
     )
     .then(response => {
@@ -29,7 +29,7 @@ export const createSparkWithExecution = async (data: ISparkWithExecution) : Prom
   return await authClient
     .post(
       `/api/meta/sparks/create_with_execution/`,
-      { ...data },
+      data,
       { headers: { 'Content-Type': 'application/json' } }
     )
     .then(response => {
