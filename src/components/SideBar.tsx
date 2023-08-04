@@ -27,7 +27,7 @@ import { styled, Theme, CSSObject } from "@mui/material/styles";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { SidebarIcon } from "@/assets/icons/Sidebar";
 import { Collections } from "@/components/common/sidebar/Collections";
-import { useGetCollectionTemplatesQuery } from "@/core/api/prompts";
+import { useGetCollectionTemplatesQuery } from "@/core/api/collections";
 import useToken from "@/hooks/useToken";
 import { ExploreFilterSideBar } from "@/components/explorer/ExploreFilterSideBar";
 

@@ -1,9 +1,9 @@
 import { Spark, TemplateExecutionsDisplay } from "./dto/templates";
 import useDeferredAction from "../../hooks/useDeferredAction";
 import { authClient } from "../../common/axios";
-import { globalApi } from "./api";
+import { baseApi } from "./api";
 
-export const sparksApi = globalApi.injectEndpoints({
+export const sparksApi = baseApi.injectEndpoints({
   endpoints: (builder) => {
     return {
       getSparksByTemplate: builder.query<Spark[], number>({

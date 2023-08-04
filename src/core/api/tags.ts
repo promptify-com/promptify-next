@@ -1,7 +1,7 @@
 import { Tag } from "./dto/templates";
-import { globalApi } from "./api";
+import { baseApi } from "./api";
 
-export const tagsApi = globalApi.injectEndpoints({
+export const tagsApi = baseApi.injectEndpoints({
   endpoints: (builder) => {
     return {
       getTags: builder.query<Tag[], void>({

@@ -1,8 +1,8 @@
 import { User } from "./dto/user";
 import { Templates } from "./dto/templates";
-import { globalApi } from "./api";
+import { baseApi } from "./api";
 
-export const userApi = globalApi.injectEndpoints({
+export const userApi = baseApi.injectEndpoints({
   endpoints: (builder) => {
     return {
       getCurrentUser: builder.query<User, any>({

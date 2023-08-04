@@ -1,7 +1,7 @@
 import { Category } from "./dto/templates";
-import { globalApi } from "./api";
+import { baseApi } from "./api";
 
-export const categoriesApi = globalApi.injectEndpoints({
+export const categoriesApi = baseApi.injectEndpoints({
   endpoints: (build) => {
     return {
       getCategories: build.query<Category[], void>({

@@ -16,7 +16,7 @@ import {
 import { PromptLiveResponse } from "@/common/types/prompt";
 import useToken from "@/hooks/useToken";
 import { useAppDispatch } from "@/hooks/useStore";
-import { promptsApi } from "@/core/api/prompts";
+import { templatesApi } from "@/core/api/templates";
 import { GeneratorInput } from "./GeneratorInput";
 import { GeneratorParam } from "./GeneratorParam";
 import { savePathURL } from "@/common/utils";
@@ -62,7 +62,8 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   const router = useRouter();
   const { width: windowWidth } = useWindowSize();
 
-  const [generatingResponse, setGeneratingResponse] = useState<PromptLiveResponse | null>(null);
+  const [generatingResponse, setGeneratingResponse] =
+    useState<PromptLiveResponse | null>(null);
   const [resPrompts, setResPrompts] = useState<ResPrompt[]>([]);
   const [lastExecution, setLastExecution] = useState<ResPrompt[] | null>(null);
   const [resInputs, setResInputs] = useState<ResInputs[]>([]);
@@ -156,8 +157,8 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   };
 
   const generateExecution = (executionData: ResPrompt[]) => {
-    if(isGenerating) return;
-    
+    if (isGenerating) return;
+
     setLastExecution(JSON.parse(JSON.stringify(executionData)));
 
     setIsGenerating(true);
@@ -168,11 +169,11 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     fetchEventSource(
       `${process.env.NEXT_PUBLIC_API_URL}/api/meta/templates/${templateData.id}/execute/`,
       {
-        method: 'POST',
+        method: "POST",
         headers: {
           Authorization: `Token ${token}`,
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
+          Accept: "application/json",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(executionData),
         openWhenHidden: true,
@@ -181,9 +182,13 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
           if (res.ok && res.status === 200) {
             setIsGenerating(true);
             setGeneratingResponse({ created_at: new Date(), data: [] });
-          } else if (res.status >= 400 && res.status < 500 && res.status !== 429) {
+          } else if (
+            res.status >= 400 &&
+            res.status < 500 &&
+            res.status !== 429
+          ) {
             console.error("Client side error ", res);
-            onError('Something went wrong. Please try again later');
+            onError("Something went wrong. Please try again later");
           }
         },
         onmessage(msg) {
@@ -192,7 +197,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
             const message = parseData.message;
             const prompt = parseData.prompt_id;
 
-            if (msg.event === 'infer' && msg.data) {
+            if (msg.event === "infer" && msg.data) {
               if (message) {
                 const tempArr = [...tempData];
                 const activePrompt = tempArr.findIndex(
@@ -213,9 +218,9 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
                 }
 
                 tempData = [...tempArr];
-                setGeneratingResponse(prevState => ({ 
-                  created_at: prevState?.created_at || new Date(), 
-                  data: tempArr 
+                setGeneratingResponse((prevState) => ({
+                  created_at: prevState?.created_at || new Date(),
+                  data: tempArr,
                 }));
               }
             } else {
@@ -224,7 +229,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
                 (template) => template.prompt === +prompt
               );
 
-              if (message === '[COMPLETED]') {
+              if (message === "[COMPLETED]") {
                 tempArr[activePrompt] = {
                   ...tempArr[activePrompt],
                   prompt,
@@ -233,10 +238,10 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
                 };
               }
 
-              if (message === '[INITIALIZING]') {
+              if (message === "[INITIALIZING]") {
                 if (activePrompt === -1) {
                   tempArr.push({
-                    message: '',
+                    message: "",
                     prompt,
                     isLoading: true,
                     created_at: new Date(),
@@ -250,14 +255,14 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
                 }
               }
 
-              if (message.includes('[ERROR]')) {
+              if (message.includes("[ERROR]")) {
                 onError(message);
               }
 
               tempData = [...tempArr];
-              setGeneratingResponse(prevState => ({ 
-                created_at: prevState?.created_at || new Date(), 
-                data: tempArr 
+              setGeneratingResponse((prevState) => ({
+                created_at: prevState?.created_at || new Date(),
+                data: tempArr,
               }));
             }
           } catch {
@@ -267,7 +272,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
         onerror(err) {
           console.log(err);
           setIsGenerating(false);
-          onError('Something went wrong. Please try again later');
+          onError("Something went wrong. Please try again later");
           throw err; // rethrow to stop the operation
         },
         onclose() {
@@ -316,7 +321,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
           const params = (
             await dispatch(
-              promptsApi.endpoints.getPromptParams.initiate(prompt.id)
+              templatesApi.endpoints.getPromptParams.initiate(prompt.id)
             )
           ).data;
           params
@@ -679,5 +684,5 @@ const keysStyle = {
   letterSpacing: "1px",
   border: "1px solid #E1E2EC",
   borderRadius: "4px",
-  boxShadow: "0px 2px 0px rgba(0, 0, 0, 0.12)"
+  boxShadow: "0px 2px 0px rgba(0, 0, 0, 0.12)",
 };

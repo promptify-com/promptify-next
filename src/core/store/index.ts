@@ -9,7 +9,7 @@ import { createWrapper } from "next-redux-wrapper";
 import { templatesSlice } from "./templatesSlice";
 import filterSlice from "./filtersSlice";
 import sidebarSlice from "./sidebarSlice";
-import { globalApi } from "../api/api";
+import { baseApi } from "../api/api";
 
 export interface State {
   tick: string;
@@ -20,14 +20,14 @@ export const store = (
 ) =>
   configureStore({
     reducer: {
-      [globalApi.reducerPath]: globalApi.reducer,
+      [baseApi.reducerPath]: baseApi.reducer,
 
       template: templatesSlice.reducer,
       filters: filterSlice,
       sidebar: sidebarSlice,
     },
     middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware().concat(globalApi.middleware),
+      getDefaultMiddleware().concat(baseApi.middleware),
     ...options,
   });
 

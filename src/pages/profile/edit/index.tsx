@@ -1,5 +1,4 @@
 import React from "react";
-import Head from "next/head";
 import { useRouter } from "next/router";
 import { useFormik } from "formik";
 import { Box, Button, CircularProgress, Grid, Typography } from "@mui/material";

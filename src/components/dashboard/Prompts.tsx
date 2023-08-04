@@ -23,7 +23,7 @@ import {
   SettingsApplicationsRounded,
 } from "@mui/icons-material";
 
-import { promptsApi } from "@/core/api/prompts";
+import { templatesApi } from "@/core/api/templates";
 import { Templates } from "@/core/api/dto/templates";
 import { PageLoading } from "@/components/PageLoading";
 import TemplateImportModal from "@/components/modals/TemplateImportModal";
@@ -41,7 +41,7 @@ export const Prompts = () => {
   );
 
   const [trigger, { data: promptsData, isFetching }] =
-    promptsApi.endpoints.getAllPromptTemplates.useLazyQuery();
+    templatesApi.endpoints.getAllPromptTemplates.useLazyQuery();
 
   const [deleteTemplate, response] = useDeleteTemplateMutation();
   useEffect(() => {

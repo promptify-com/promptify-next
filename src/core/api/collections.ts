@@ -1,7 +1,7 @@
 import { Templates } from "./dto/templates";
-import { globalApi } from "./api";
+import { baseApi } from "./api";
 
-export const collectionsApi = globalApi.injectEndpoints({
+export const collectionsApi = baseApi.injectEndpoints({
   endpoints: (builder) => {
     return {
       getCollections: builder.query<Templates[], void>({
@@ -12,8 +12,15 @@ export const collectionsApi = globalApi.injectEndpoints({
           };
         },
       }),
+      getCollectionTemplates: builder.query<any, number>({
+        query: (id: number) => ({
+          url: `/api/meta/collections/${id}`,
+          method: "get",
+        }),
+      }),
     };
   },
 });
 
-export const { useGetCollectionsQuery } = collectionsApi;
+export const { useGetCollectionsQuery, useGetCollectionTemplatesQuery } =
+  collectionsApi;

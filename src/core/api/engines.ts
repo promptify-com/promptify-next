@@ -1,7 +1,7 @@
 import { Engine } from "./dto/templates";
-import { globalApi } from "./api";
+import { baseApi } from "./api";
 
-export const explorerApi = globalApi.injectEndpoints({
+export const enginesApi = baseApi.injectEndpoints({
   endpoints: (builder) => {
     return {
       getEngines: builder.query<Engine[], void>({
@@ -15,4 +15,4 @@ export const explorerApi = globalApi.injectEndpoints({
   },
 });
 
-export const { useGetEnginesQuery } = explorerApi;
+export const { useGetEnginesQuery } = enginesApi;

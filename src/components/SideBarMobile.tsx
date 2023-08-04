@@ -30,7 +30,7 @@ import { User } from "@/core/api/dto/user";
 import { Menu, MenuType } from "@/common/constants";
 import useLogout from "@/hooks/useLogout";
 import useSetUser from "@/hooks/useSetUser";
-import { useGetCollectionTemplatesQuery } from "@/core/api/prompts";
+import { useGetCollectionTemplatesQuery } from "@/core/api/collections";
 import { Collections } from "./common/sidebar/Collections";
 
 type SidebarType = "navigation" | "profile";

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Head from "next/head";
 import {
   Alert,
   Box,
@@ -15,27 +16,26 @@ import {
   useTheme,
 } from "@mui/material";
 import materialDynamicColors from "material-dynamic-colors";
+import { useWindowSize } from "usehooks-ts";
+import { useRouter } from "next/router";
+import { Close, KeyboardArrowDown, Loop, MoreHoriz } from "@mui/icons-material";
+import { skipToken } from "@reduxjs/toolkit/dist/query";
+import { mix } from "polished";
+
 import {
-  useGetCollectionTemplatesQuery,
   useGetExecutionsByTemplateQuery,
   useTemplateView,
-} from "../../core/api/prompts";
-import { Templates, TemplatesExecutions } from "../../core/api/dto/templates";
-import { PageLoading } from "../../components/PageLoading";
-import { mix } from "polished";
-import useToken from "../../hooks/useToken";
-import { useWindowSize } from "usehooks-ts";
-import { Close, KeyboardArrowDown, Loop, MoreHoriz } from "@mui/icons-material";
-import { LogoApp } from "../../assets/icons/LogoApp";
-import { useRouter } from "next/router";
+} from "@/core/api/templates";
+import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
+import { PageLoading } from "@/components/PageLoading";
+import useToken from "@/hooks/useToken";
+import { LogoApp } from "@/assets/icons/LogoApp";
 import { PromptLiveResponse } from "@/common/types/prompt";
 import { Header } from "@/components/Header";
 import { GeneratorForm } from "@/components/collections/GeneratorForm";
 import { Executions } from "@/components/collections/Executions";
 import { Details } from "@/components/collections/Details";
 import { authClient } from "@/common/axios";
-import Head from "next/head";
-import { skipToken } from "@reduxjs/toolkit/dist/query";
 
 export const Collection = ({ fetchedTemplate, fetchedTemplateError }: any) => {
   const router = useRouter();
@@ -59,17 +59,7 @@ export const Collection = ({ fetchedTemplate, fetchedTemplateError }: any) => {
     error: templateExecutionsError,
     isFetching: isFetchingExecutions,
     refetch: refetchTemplateExecutions,
-  } = useGetExecutionsByTemplateQuery(
-    templateData?.id ? +templateData.id : 1
-  );
-  // const {
-  //   data: fetchedTemplate,
-  //   error: fetchedTemplateError,
-  //   isLoading: isLoadingTemplate,
-  //   isFetching: isFetchingTemplate,
-  // } = useGetCollectionTemplatesQuery(id ? id : skipToken, {
-  //   refetchOnMountOrArgChange: true,
-  // });
+  } = useGetExecutionsByTemplateQuery(templateData?.id ? +templateData.id : 1);
 
   useEffect(() => {
     if (windowWidth > 900) {

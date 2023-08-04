@@ -30,7 +30,7 @@ import {
   useGetPromptTemplateBySlugQuery,
   useTemplateView,
   useGetExecutionByIdQuery,
-} from "@/core/api/prompts";
+} from "@/core/api/templates";
 import {
   Spark,
   Templates,
@@ -103,7 +103,7 @@ const Prompt = () => {
   const [sortedSparks, setSortedSparks] = useState<Spark[]>([]);
 
   const [tabsValue, setTabsValue] = useState(0);
-  
+
   const [mobileTab, setMobileTab] = useState(0);
 
   const detailsElRef = useRef<HTMLDivElement | null>(null);
@@ -148,16 +148,18 @@ const Prompt = () => {
   } = useGetSparksByTemplateQuery(token ? (id ? id : skipToken) : skipToken);
 
   useEffect(() => {
-    const sorted = [...(templateSparks || [])].sort((a, b) => (
-      moment(b.current_version?.created_at).diff(moment(a.current_version?.created_at))
-    ));
+    const sorted = [...(templateSparks || [])].sort((a, b) =>
+      moment(b.current_version?.created_at).diff(
+        moment(a.current_version?.created_at)
+      )
+    );
     setSortedSparks(sorted);
   }, [templateSparks]);
-  
+
   useEffect(() => {
     setSelectedSpark(sortedSparks?.[0] || null);
   }, [sortedSparks]);
-  
+
   useEffect(() => {
     setSelectedExecution(selectedSpark?.current_version || null);
   }, [selectedSpark]);

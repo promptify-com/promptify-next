@@ -1,4 +1,4 @@
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 import {
   Avatar,
   Box,
@@ -56,7 +56,6 @@ export const ProfileDropDown: React.FC<ProfileDropDownProps> = ({
 
   useEffect(() => {
     if (!user?.is_admin) {
-      // Filter out the menu links that have an id of 1
       setMenuLinks((prevMenuLinks) =>
         prevMenuLinks.filter((el) => el.id !== 1)
       );

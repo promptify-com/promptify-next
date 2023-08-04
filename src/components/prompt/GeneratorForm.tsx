@@ -18,7 +18,7 @@ import {
 import { PromptLiveResponse } from "@/common/types/prompt";
 import useToken from "@/hooks/useToken";
 import { useAppDispatch } from "@/hooks/useStore";
-import { promptsApi } from "@/core/api/prompts";
+import { templatesApi } from "@/core/api/templates";
 import { GeneratorInput } from "./GeneratorInput";
 import { GeneratorParam } from "./GeneratorParam";
 import { savePathURL } from "@/common/utils";
@@ -407,7 +407,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
           const params = (
             await dispatch(
-              promptsApi.endpoints.getPromptParams.initiate(prompt.id)
+              templatesApi.endpoints.getPromptParams.initiate(prompt.id)
             )
           ).data;
           params
