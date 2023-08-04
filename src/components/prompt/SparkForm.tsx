@@ -1,13 +1,14 @@
 import React from 'react'
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
 import { createSpark, createSparkWithExecution } from '@/hooks/api/executions';
+import { Spark } from '@/core/api/dto/templates';
 
 interface Props {
    isOpen: boolean,
    close: () => void,
    templateId?: number,
    executionId?: number,
-   onSparkCreated: () => void,
+   onSparkCreated: (sparkId: number) => void,
 }
 
 const SparkForm: React.FC<Props> = ({
@@ -29,28 +30,26 @@ const SparkForm: React.FC<Props> = ({
       if (sparkTitle.length) {
          // If executionId is passed, create a spark with execution_id, otherwise create a empty spark with templateId
          // TODO: Handle error
-         if (executionId) {
-            try {
-               await createSparkWithExecution({
+         let sparkCreated: Spark;
+
+         try {
+            if (executionId) {
+               sparkCreated = await createSparkWithExecution({
                   title: sparkTitle,
                   execution_id: executionId,
                });
-            } catch (err) {
-               console.error(err);
-            }
-
-         } else {
-            try {
-               await createSpark({
+            } else {
+               sparkCreated = await createSpark({
                   initial_title: sparkTitle,
                   template: templateId,
                });
-            } catch (err) {
-               console.error(err);
             }
+
+            onSparkCreated(sparkCreated.id)
+         } catch (err) {
+            console.error(err);
          }
-   
-         onSparkCreated();
+
          close();
          setSparkTitle("");
       }
