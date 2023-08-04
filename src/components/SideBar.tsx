@@ -23,7 +23,6 @@ import {
   Search,
 } from "@mui/icons-material";
 import { styled, Theme, CSSObject } from "@mui/material/styles";
-
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { SidebarIcon } from "@/assets/icons/Sidebar";
 import { Collections } from "@/components/common/sidebar/Collections";

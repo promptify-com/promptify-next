@@ -1,4 +1,4 @@
-import { Templates } from "./dto/templates";
+import { CollectionMutationParams, Templates } from "./dto/templates";
 import { baseApi } from "./api";
 
 export const collectionsApi = baseApi.injectEndpoints({
@@ -11,6 +11,7 @@ export const collectionsApi = baseApi.injectEndpoints({
             method: "get",
           };
         },
+        providesTags: ["Collections"],
       }),
       getCollectionTemplates: builder.query<any, number>({
         query: (id: number) => ({
@@ -18,9 +19,27 @@ export const collectionsApi = baseApi.injectEndpoints({
           method: "get",
         }),
       }),
+      addToCollection: builder.mutation<void, CollectionMutationParams>({
+        query: (options) => ({
+          url: `/api/meta/collections/${options.collectionId}/add/${options.templateId}/`,
+          method: "post",
+        }),
+        invalidatesTags: ["Collections"],
+      }),
+      removeFromCollection: builder.mutation<void, CollectionMutationParams>({
+        query: (options) => ({
+          url: `/api/meta/collections/${options.collectionId}/remove/${options.templateId}/`,
+          method: "post",
+        }),
+        invalidatesTags: ["Collections"],
+      }),
     };
   },
 });
 
-export const { useGetCollectionsQuery, useGetCollectionTemplatesQuery } =
-  collectionsApi;
+export const {
+  useGetCollectionsQuery,
+  useGetCollectionTemplatesQuery,
+  useAddToCollectionMutation,
+  useRemoveFromCollectionMutation,
+} = collectionsApi;
