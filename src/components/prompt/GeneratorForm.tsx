@@ -247,14 +247,18 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   };
 
   const generateExecution = (executionData: ResPrompt[]) => {
-
     setLastExecution(JSON.parse(JSON.stringify(executionData)));
 
     if (windowWidth < 900) setTimeout(() => exit(), 2000);
 
+    if (!selectedSpark?.id) {
+      setErrors({});
+      return;
+    }
+
     let tempData: any[] = [];
     let url = `${process.env.NEXT_PUBLIC_API_URL}/api/meta/templates/${templateData.id}/execute/`;
-    if (selectedSpark?.id) url += `?spark_id=${selectedSpark.id}`;
+    url += `?spark_id=${selectedSpark.id}`;
 
     fetchEventSource(url, {
       method: "POST",
