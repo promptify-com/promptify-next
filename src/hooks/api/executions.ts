@@ -1,4 +1,4 @@
-import { ISparkWithExecution, ISparkWithTemplate, ITemplateExecutionPut } from '@/core/api/dto/templates';
+import { ISparkWithExecution, ISparkWithTemplate, ITemplateExecutionPut, Spark } from '@/core/api/dto/templates';
 import { authClient } from '../../common/axios';
 
 export const updateExecution = async (templateExecutionId: number, data: ITemplateExecutionPut) => {
@@ -13,7 +13,7 @@ export const updateExecution = async (templateExecutionId: number, data: ITempla
     });
 };
 
-export const createSpark = async (data: ISparkWithTemplate) => {
+export const createSpark = async (data: ISparkWithTemplate) : Promise<Spark> => {
   return await authClient
     .post(
       `/api/meta/sparks/`,
@@ -25,7 +25,7 @@ export const createSpark = async (data: ISparkWithTemplate) => {
     });
 };
 
-export const createSparkWithExecution = async (data: ISparkWithExecution) => {
+export const createSparkWithExecution = async (data: ISparkWithExecution) : Promise<Spark> => {
   return await authClient
     .post(
       `/api/meta/sparks/create_with_execution/`,
