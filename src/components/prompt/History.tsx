@@ -205,7 +205,7 @@ export const History: React.FC<Props> = ({
                           flex: 3,
                         }}
                       >
-                        {version.title}
+                        {spark?.initial_title}
                       </TimelineContent>
                     </TimelineItem>
                   );
