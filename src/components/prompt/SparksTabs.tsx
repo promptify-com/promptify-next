@@ -153,7 +153,7 @@ export const SparksTabs:React.FC<Props> = ({ sparks, chooseSpark }) => {
                >
                   <PriorityHighOutlined style={{ fontSize: 24, opacity: .75 }} />
                   <Typography sx={{ fontSize: 12, fontWeight: 400, color: "onSurface", opacity: .5 }}>
-                     Unpinned Sparked are recorded for 30 days
+                     Unpinned Sparks are recorded for 30 days
                   </Typography>
                </Stack>
             </Stack>
