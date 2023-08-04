@@ -1,7 +1,5 @@
-import {
-  useGetEnginesQuery,
-  useGetTagsPopularQuery,
-} from "@/core/api/explorer";
+import { useGetEnginesQuery } from "@/core/api/engines";
+import { useGetTagsPopularQuery } from "@/core/api/tags";
 import { useRouter } from "next/router";
 
 export function useFetchFilters() {

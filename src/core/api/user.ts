@@ -1,13 +1,8 @@
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { axiosBaseQuery } from "./axios-base-query";
 import { User } from "./dto/user";
 import { Templates } from "./dto/templates";
+import { baseApi } from "./api";
 
-export const userApi = createApi({
-  reducerPath: "userApi",
-  baseQuery: axiosBaseQuery({
-    baseUrl: process.env.NEXT_PUBLIC_API_URL || "",
-  }),
+export const userApi = baseApi.injectEndpoints({
   endpoints: (builder) => {
     return {
       getCurrentUser: builder.query<User, any>({
@@ -26,7 +21,13 @@ export const userApi = createApi({
         }),
       }),
       updateUserProfile: builder.mutation<User, any>({
-        query: ({ updatedUser, token }: {updatedUser: any, token: string}) => ({
+        query: ({
+          updatedUser,
+          token,
+        }: {
+          updatedUser: any;
+          token: string;
+        }) => ({
           url: "/api/me/",
           method: "patch",
           headers: {

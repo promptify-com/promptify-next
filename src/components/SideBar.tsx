@@ -12,7 +12,7 @@ import {
   Typography,
 } from "@mui/material";
 import MuiDrawer from "@mui/material/Drawer";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import {
   AutoAwesome,
@@ -26,9 +26,10 @@ import { styled, Theme, CSSObject } from "@mui/material/styles";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { SidebarIcon } from "@/assets/icons/Sidebar";
 import { Collections } from "@/components/common/sidebar/Collections";
-import { useGetCollectionTemplatesQuery } from "@/core/api/prompts";
+import { useGetCollectionTemplatesQuery } from "@/core/api/collections";
 import useToken from "@/hooks/useToken";
 import { ExploreFilterSideBar } from "@/components/explorer/ExploreFilterSideBar";
+
 import { SideBarCloseIcon } from "@/assets/icons/SideBarClose";
 import { useGetCurrentUserQuery } from "@/core/api/user";
 import { useFetchFilters } from "@/hooks/useFetchFilters";
@@ -80,8 +81,8 @@ const Drawer = styled(MuiDrawer, {
 
 export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
   const token = useToken();
-  const router = useRouter();
-  const pathname = router.pathname;
+  const pathname = usePathname();
+
   const splittedPath = pathname.split("/");
   const isExplorePage = splittedPath[1] == "explore";
   const { data: user, isLoading: userLoading } = useGetCurrentUserQuery(token);
@@ -91,6 +92,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
       skip: !isValidUser,
     });
   const { tags, engines } = useFetchFilters();
+
   const [expandedOnHover, setExpandedOnHover] = useState<boolean>(false);
   const [showExpandIcon, setShowExpandIcon] = useState<boolean>(false);
   const [showFilters, setShowFilters] = useState<boolean>(false);

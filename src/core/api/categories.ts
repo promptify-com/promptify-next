@@ -1,13 +1,7 @@
-import { createApi } from "@reduxjs/toolkit/dist/query/react";
-
 import { Category } from "./dto/templates";
-import { axiosBaseQuery } from "./axios-base-query";
+import { baseApi } from "./api";
 
-export const CategoriesApi = createApi({
-  reducerPath: "categoriesApi",
-  baseQuery: axiosBaseQuery({
-    baseUrl: process.env.NEXT_PUBLIC_API_URL || "",
-  }),
+export const categoriesApi = baseApi.injectEndpoints({
   endpoints: (build) => {
     return {
       getCategories: build.query<Category[], void>({
@@ -15,6 +9,7 @@ export const CategoriesApi = createApi({
           url: `/api/meta/categories`,
           method: "get",
         }),
+        providesTags: ["Categories"],
       }),
       getCategoryById: build.query<Category, number>({
         query: (id: number) => ({
@@ -37,4 +32,4 @@ export const {
   useGetCategoriesQuery,
   useGetCategoryByIdQuery,
   useGetCategoryBySlugQuery,
-} = CategoriesApi;
+} = categoriesApi;

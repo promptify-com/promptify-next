@@ -9,9 +9,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Templates } from "@/core/api/dto/templates";
-import {
-  ArrowForwardIos,
-} from "@mui/icons-material";
+import { ArrowForwardIos } from "@mui/icons-material";
 import { savePathURL } from "@/common/utils";
 import useToken from "@/hooks/useToken";
 import { Subtitle } from "@/components/blocks";
@@ -21,8 +19,8 @@ import { useGetCurrentUser } from "@/hooks/api/user";
 import FavoriteButton from "@/components/common/buttons/FavoriteButton";
 import {
   useAddToCollectionMutation,
-  useRemoveFromCollectionMutation
-} from '@/core/api/prompts';
+  useRemoveFromCollectionMutation,
+} from "@/core/api/collections";
 
 interface DetailsProps {
   templateData: Templates;
@@ -49,13 +47,16 @@ export const Details: React.FC<DetailsProps> = ({
     if (!isFetching) {
       setIsFetching(true);
 
-      updateTemplateData({ ...templateData, is_favorite: !templateData.is_favorite });
+      updateTemplateData({
+        ...templateData,
+        is_favorite: !templateData.is_favorite,
+      });
 
       try {
         if (!templateData.is_favorite) {
           await addToCollection({
             collectionId: user.favorite_collection_id,
-            templateId: templateData.id
+            templateId: templateData.id,
           });
         } else {
           await removeFromCollection({
@@ -64,7 +65,7 @@ export const Details: React.FC<DetailsProps> = ({
           });
         }
       } catch (err: any) {
-        console.error(err)
+        console.error(err);
       } finally {
         setIsFetching(false);
       }
@@ -75,29 +76,25 @@ export const Details: React.FC<DetailsProps> = ({
     <Box sx={{ p: "16px" }}>
       <Box>
         <Box sx={{ py: { md: "16px" } }}>
-          <FavoriteButton 
+          <FavoriteButton
             isFavorite={templateData.is_favorite}
             onClick={favorTemplate}
           />
         </Box>
-        <Divider sx={{
+        <Divider
+          sx={{
             display: { md: "none" },
             my: "16px",
             borderColor: "surface.3",
-          }}  
+          }}
         />
         <Box sx={{ py: "16px" }}>
-          <Typography 
-            sx={{ fontSize: 12, fontWeight: 400, color: "onSurface" }} 
-            dangerouslySetInnerHTML={{ __html: templateData.description }} 
+          <Typography
+            sx={{ fontSize: 12, fontWeight: 400, color: "onSurface" }}
+            dangerouslySetInnerHTML={{ __html: templateData.description }}
           />
         </Box>
-        <Stack
-          direction={"row"}
-          flexWrap={"wrap"}
-          gap={1}
-          sx={{ py: "16px" }}
-        >
+        <Stack direction={"row"} flexWrap={"wrap"} gap={1} sx={{ py: "16px" }}>
           {templateData.tags.length > 0 ? (
             templateData.tags.map((tag) => (
               <Chip
@@ -120,23 +117,20 @@ export const Details: React.FC<DetailsProps> = ({
                   fontWeight: 400,
                   bgcolor: "surface.3",
                   color: "onSurface",
-                  "&:hover": { 
-                    bgcolor: "action.hover"
+                  "&:hover": {
+                    bgcolor: "action.hover",
                   },
                 }}
               />
             ))
           ) : (
-            <Typography fontSize={12} color={"onSurface"}>No tag assigned</Typography>
+            <Typography fontSize={12} color={"onSurface"}>
+              No tag assigned
+            </Typography>
           )}
         </Stack>
 
-        <Grid
-          container
-          direction={"column"}
-          gap={3}
-          sx={{ py: "16px" }}
-        >
+        <Grid container direction={"column"} gap={3} sx={{ py: "16px" }}>
           <Grid item>
             <Button
               sx={{
@@ -150,11 +144,11 @@ export const Details: React.FC<DetailsProps> = ({
                 fontSize: 12,
                 fontWeight: 500,
                 borderRadius: "99px",
-                svg: { opacity: .6 },
+                svg: { opacity: 0.6 },
                 "&:hover": {
                   bgcolor: "primary.main",
                   color: "onPrimary",
-                  svg: { opacity: 1 }
+                  svg: { opacity: 1 },
                 },
               }}
             >
@@ -184,7 +178,7 @@ export const Details: React.FC<DetailsProps> = ({
                     : templateData?.created_by?.username[0]?.toUpperCase()}
                 </Box>
                 <Box>
-                  by{" "} 
+                  by{" "}
                   {templateData?.created_by?.first_name &&
                   templateData?.created_by?.last_name ? (
                     <>
@@ -225,11 +219,15 @@ export const Details: React.FC<DetailsProps> = ({
                 )}
                 <Typography sx={detailsStyle}>
                   Updated:{" "}
-                  <span>{moment(templateData.updated_at).format("D MMMM YYYY")}</span>
+                  <span>
+                    {moment(templateData.updated_at).format("D MMMM YYYY")}
+                  </span>
                 </Typography>
                 <Typography sx={detailsStyle}>
                   Created:{" "}
-                  <span>{moment(templateData.created_at).format("D MMMM YYYY")}</span>
+                  <span>
+                    {moment(templateData.created_at).format("D MMMM YYYY")}
+                  </span>
                 </Typography>
                 <Typography sx={detailsStyle}>
                   Views: <span>{templateData.views}</span>
@@ -255,5 +253,5 @@ const detailsStyle = {
   },
   display: "flex",
   alignItems: "center",
-  justifyContent: "space-between"
+  justifyContent: "space-between",
 };

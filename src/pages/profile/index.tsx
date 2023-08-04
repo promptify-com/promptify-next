@@ -1,9 +1,13 @@
 import { Box, Grid, Typography } from "@mui/material";
 import Head from "next/head";
 
-import { Connections, Home, Identy, Prompts } from "@/components/dashboard";
+import { Connections, Home, Identy, AllTemplates } from "@/components/profile";
 import { Layout } from "@/layout";
 import Protected from "@/components/Protected";
+import { TemplatesSection } from "@/components/explorer/TemplatesSection";
+import { useGetUserTemplatesQuery } from "@/core/api/user";
+import BaseButton from "@/components/base/BaseButton";
+import { MyTemplates } from "@/components/profile/MyTemplates";
 
 const Dashboard = () => {
   return (
@@ -55,7 +59,8 @@ const Dashboard = () => {
                 <Home />
                 <Connections />
                 <Identy />
-                <Prompts />
+                <MyTemplates />
+                <AllTemplates />
               </Box>
             </Box>
           </Grid>

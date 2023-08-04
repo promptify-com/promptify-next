@@ -31,7 +31,7 @@ export const Menu: MenuType[] = [
   {
     id: 3,
     icon: <Setting />,
-    href: "/profile/edit",
+    href: "/profile",
     name: "Settings",
   },
 ];

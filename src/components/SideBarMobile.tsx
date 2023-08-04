@@ -24,15 +24,14 @@ import {
   Typography,
 } from "@mui/material";
 import { useRouter } from "next/router";
+
 import { CollectionsEmptyBox } from "./common/sidebar/CollectionsEmptyBox";
 import { User } from "@/core/api/dto/user";
-import { Menu, MenuType, links } from "@/common/constants";
+import { Menu, MenuType } from "@/common/constants";
 import useLogout from "@/hooks/useLogout";
 import useSetUser from "@/hooks/useSetUser";
-import { useGetCollectionTemplatesQuery } from "@/core/api/prompts";
+import { useGetCollectionTemplatesQuery } from "@/core/api/collections";
 import { Collections } from "./common/sidebar/Collections";
-import { useRef, useState } from "react";
-import { ProfileDropDown } from "./ProfileMenu";
 
 type SidebarType = "navigation" | "profile";
 

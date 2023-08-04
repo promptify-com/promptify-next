@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -12,46 +11,45 @@ import {
   Grid,
   IconButton,
   Modal,
-  Stack,
   Tooltip,
   Typography,
 } from "@mui/material";
-import { promptsApi, useDeleteTemplateMutation } from "@/core/api/prompts";
+import BaseButton from "../base/BaseButton";
+import { useGetUserTemplatesQuery, userApi } from "@/core/api/user";
+import { PageLoading } from "../PageLoading";
 import { Templates } from "@/core/api/dto/templates";
-import { PageLoading } from "@/components/PageLoading";
-import TemplateImportModal from "@/components/modals/TemplateImportModal";
-import TemplateForm from "@/components/common/forms/TemplateForm";
 import {
   Delete,
   Edit,
   PreviewRounded,
   SettingsApplicationsRounded,
 } from "@mui/icons-material";
-import BaseButton from "../base/BaseButton";
+import { useState, useEffect } from "react";
+import { useDeleteTemplateMutation } from "@/core/api/templates";
 import { modalStyle } from "../modals/styles";
+import TemplateForm from "../common/forms/TemplateForm";
+import TemplateImportModal from "../modals/TemplateImportModal";
 
-export const Prompts = () => {
-  const [templateFormOpen, setTemplateFormOpen] = useState(false);
-  const [templateImportOpen, setTemplateImportOpen] = useState(false);
-  const [modalNew, setModalNew] = useState(false);
+export const MyTemplates = () => {
+  const [trigger, { data: templates, isLoading: isTemplatesLoading }] =
+    userApi.endpoints.getUserTemplates.useLazyQuery();
+
   const [selectedTemplate, setSelectedTemplate] = useState<Templates | null>(
     null
   );
-
-  const [trigger, { data: promptsData, isFetching }] =
-    promptsApi.endpoints.getAllPromptTemplates.useLazyQuery();
-
-  const [deleteTemplate, response] = useDeleteTemplateMutation();
-  useEffect(() => {
-    trigger();
-  }, [response]);
-
-  const [confirmDialog, setConfirmDialog] = useState(false);
+  const [templateFormOpen, setTemplateFormOpen] = useState(false);
+  const [modalNew, setModalNew] = useState(false);
 
   const openDeletionModal = (template: Templates) => {
     setSelectedTemplate(template);
     setConfirmDialog(true);
   };
+
+  const [deleteTemplate, response] = useDeleteTemplateMutation();
+
+  useEffect(() => {
+    trigger();
+  }, [response]);
 
   const confirmDelete = async () => {
     if (!selectedTemplate) return;
@@ -60,63 +58,42 @@ export const Prompts = () => {
     setConfirmDialog(false);
   };
 
+  const [confirmDialog, setConfirmDialog] = useState(false);
   return (
     <Box
+      width={"100%"}
       sx={{
+        justifyContent: "center",
         display: "flex",
         flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
+        gap: "16px",
       }}
-      width={"100%"}
-      gap={"16px"}
     >
       <Box
-        display="flex"
-        gap={2}
-        width={"100%"}
-        alignItems={{ xs: "start", md: "center" }}
-        flexDirection={{ xs: "column", md: "row" }}
+        display={"flex"}
+        alignItems={"center"}
+        justifyContent={"space-between"}
       >
         <Typography
-          fontWeight={500}
-          fontSize={{ xs: "1.5rem", sm: "2rem" }}
           textAlign={{ xs: "center", sm: "start" }}
+          sx={{
+            fontFamily: "Poppins",
+            fontStyle: "normal",
+            fontWeight: 500,
+            fontSize: { xs: 18, md: 24 },
+            lineHeight: { xs: "133.4%", sm: "123.5%" },
+            display: "flex",
+            alignItems: "center",
+            color: "onSurface",
+          }}
         >
-          Prompts
+          My templates
         </Typography>
-        <Stack
-          direction={"row"}
-          justifyContent={"end"}
-          ml={{ xs: "auto" }}
-          spacing={1}
-        >
-          <BaseButton
-            onClick={() => {
-              setTemplateImportOpen(true);
-            }}
-            color="primary"
-            variant="contained"
-            style={{ fontWeight: 500 }}
-          >
-            Import JSON
-          </BaseButton>
-
-          <BaseButton
-            onClick={() => {
-              setSelectedTemplate(null);
-              setModalNew(true);
-              setTemplateFormOpen(true);
-            }}
-            color="primary"
-            variant="contained"
-            style={{ fontWeight: 500 }}
-          >
-            Create New
-          </BaseButton>
-        </Stack>
+        <BaseButton variant="contained" color="primary">
+          New
+        </BaseButton>
       </Box>
-      {isFetching ? (
+      {isTemplatesLoading ? (
         <PageLoading />
       ) : (
         <Box
@@ -125,10 +102,10 @@ export const Prompts = () => {
           gap={"14px"}
           width={"100%"}
         >
-          {promptsData?.map((prompt) => {
+          {templates?.map((template: Templates) => {
             return (
               <Card
-                key={prompt.id}
+                key={template.id}
                 elevation={0}
                 sx={{
                   p: "10px",
@@ -152,7 +129,7 @@ export const Prompts = () => {
                   >
                     <CardMedia
                       component={"img"}
-                      image={prompt.thumbnail}
+                      image={template.thumbnail}
                       sx={{
                         height: { xs: "90px", md: "60px" },
                         width: "80px",
@@ -160,7 +137,7 @@ export const Prompts = () => {
                       }}
                     />
                     <Box>
-                      <Typography>{prompt.title}</Typography>
+                      <Typography>{template.title}</Typography>
                     </Box>
                   </Grid>
                   <Grid
@@ -182,7 +159,7 @@ export const Prompts = () => {
                         }}
                         onClick={() => {
                           window.open(
-                            window.location.origin + `/prompt/${prompt.slug}`,
+                            window.location.origin + `/prompt/${template.slug}`,
                             "_blank"
                           );
                         }}
@@ -203,7 +180,7 @@ export const Prompts = () => {
                         }}
                         onClick={() => {
                           window.open(
-                            window.location.origin + `/builder/${prompt.id}`,
+                            window.location.origin + `/builder/${template.id}`,
                             "_blank"
                           );
                         }}
@@ -223,7 +200,7 @@ export const Prompts = () => {
                           },
                         }}
                         onClick={() => {
-                          setSelectedTemplate(prompt);
+                          setSelectedTemplate(template);
                           setModalNew(false);
                           setTemplateFormOpen(true);
                         }}
@@ -233,7 +210,7 @@ export const Prompts = () => {
                     </Tooltip>
                     <Tooltip title="Delete">
                       <IconButton
-                        onClick={() => openDeletionModal(prompt)}
+                        onClick={() => openDeletionModal(template)}
                         sx={{
                           bgcolor: "surface.2",
                           border: "none",
@@ -255,6 +232,11 @@ export const Prompts = () => {
         </Box>
       )}
 
+      {templates && templates.length == 0 && (
+        <Typography textAlign={"center"}>
+          All your templates will be listed here! Click New to create a new one
+        </Typography>
+      )}
       <Dialog
         open={confirmDialog}
         keepMounted
@@ -287,12 +269,6 @@ export const Prompts = () => {
           />
         </Box>
       </Modal>
-
-      <TemplateImportModal
-        open={templateImportOpen}
-        setOpen={setTemplateImportOpen}
-        refetchTemplates={trigger}
-      />
     </Box>
   );
 };

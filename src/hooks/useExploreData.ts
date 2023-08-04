@@ -2,7 +2,7 @@
 import { useSelector } from "react-redux";
 import { RootState } from "@/core/store";
 import { useGetCategoriesQuery } from "@/core/api/categories";
-import { useGetTemplatesByFilterQuery } from "@/core/api/explorer";
+import { useGetTemplatesByFilterQuery } from "@/core/api/templates";
 import { FilterParams, Tag } from "@/core/api/dto/templates";
 
 export function useExploreData() {

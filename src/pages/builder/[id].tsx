@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/router";
 import {
   Box,
   Button,
@@ -12,22 +13,21 @@ import {
   Snackbar,
   SwipeableDrawer,
 } from "@mui/material";
-import { createEditor } from "@/components/builder/Editor";
+import { ClassicPreset } from "rete";
+import { skipToken } from "@reduxjs/toolkit/dist/query";
 import { useRete } from "rete-react-render-plugin";
+
+import { createEditor, Node } from "@/components/builder/Editor";
 import { Header } from "@/components/builder/Header";
 import { MinusIcon, PlusIcon } from "@/assets/icons";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Sidebar } from "@/components/builder/Sidebar";
 import { useEngines } from "@/hooks/api/engines";
-import { useGetPromptTemplatesQuery } from "../../core/api/prompts";
-import { ClassicPreset } from "rete";
-import { Node } from "@/components/builder/Editor";
+import { useGetPromptTemplatesQuery } from "@/core/api/templates";
 import { Prompts } from "@/core/api/dto/prompts";
-import { deletePrompt, updateTemplate } from "../../hooks/api/templates";
+import { deletePrompt, updateTemplate } from "@/hooks/api/templates";
 import { ContentCopy } from "@mui/icons-material";
-import { useRouter } from "next/router";
 import { INodesData } from "@/common/types/builder";
-import { skipToken } from "@reduxjs/toolkit/dist/query";
 import TemplateForm from "@/components/common/forms/TemplateForm";
 import { Templates } from "@/core/api/dto/templates";
 
@@ -69,7 +69,9 @@ export const Builder = () => {
     null
   );
   const [nodesData, setNodesData] = useState<INodesData[]>([]);
-  const { data: promptsData } = useGetPromptTemplatesQuery(id ? +id : skipToken);
+  const { data: promptsData } = useGetPromptTemplatesQuery(
+    id ? +id : skipToken
+  );
   const dataForRequest = useRef({} as any);
   const [confirmDialogOpen, setConfirmDialogOpen] = React.useState(false);
   const [snackBarOpen, setSnackBarOpen] = React.useState(false);

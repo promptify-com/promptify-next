@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Box,
   CircularProgress,
   ClickAwayListener,
@@ -14,8 +13,6 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { Check } from "@/assets/icons";
-import { EditPen } from "@/assets/icons/EditPen";
-import UnicornLeft from "@/assets/images/UnicornLeft.png";
 import { IOption, IQuestion } from "@/common/types";
 import { useUpdateAnswers } from "@/hooks/api/user";
 import Image from "next/image";

@@ -1,38 +1,31 @@
 import React from "react";
 import { Box, Grid } from "@mui/material";
-import Head from "next/head";
-import { explorerApi } from "@/core/api/explorer";
-import { CategoriesApi } from "@/core/api/categories";
+import { NextPage } from "next";
+
+import { categoriesApi } from "@/core/api/categories";
 import { Layout } from "@/layout";
 import { CategoriesSection } from "@/components/explorer/CategoriesSection";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
 import { RootState, wrapper, AppDispatch } from "@/core/store"; // Make sure to import AppStore here
 import { FiltersSelected } from "@/components/explorer/FiltersSelected";
 
-import {
-  Category,
-  FilterParams,
-  SelectedFilters,
-  Tag,
-  Templates,
-} from "@/core/api/dto/templates";
-import { NextPage } from "next";
+import { Category, SelectedFilters } from "@/core/api/dto/templates";
 import { useAppSelector } from "@/hooks/useStore";
+import { useExploreData } from "@/hooks/useExploreData";
 
 interface IProps {
   props: {
     categories: Category[];
-    templates: Templates[];
     isCategoryLoading: boolean;
-    isTemplatesLoading: boolean;
   };
 }
 
 const ExplorePage: NextPage<IProps> = ({ props }) => {
-  const { categories, templates, isCategoryLoading, isTemplatesLoading } =
-    props;
+  const { categories, isCategoryLoading } = props;
 
   const filters = useAppSelector((state: RootState) => state.filters);
+
+  const { templates, isTemplatesLoading } = useExploreData();
 
   function areAllStatesNull(filters: SelectedFilters): boolean {
     return (
@@ -49,14 +42,6 @@ const ExplorePage: NextPage<IProps> = ({ props }) => {
   return (
     <>
       <Layout>
-        <Head>
-          <title>Explore and Boost your creativity</title>
-          <meta
-            name="description"
-            content="Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out."
-            key="desc"
-          />
-        </Head>
         <Box mt={{ xs: 7, md: 0 }} padding={{ xs: "4px 0px", md: "0px 8px" }}>
           <Grid
             display={"flex"}
@@ -88,35 +73,18 @@ const ExplorePage: NextPage<IProps> = ({ props }) => {
 
 ExplorePage.getInitialProps = wrapper.getInitialPageProps(
   ({ dispatch }: { dispatch: AppDispatch }) =>
-    async ({ store }) => {
-      // Specify the type for 'store' variable
-      const { filters } = store.getState();
-
-      const filteredTags = filters.tag
-        .filter((item: Tag | null) => item !== null)
-        .map((item: Tag | null) => item?.name)
-        .join("&tag=");
-
-      const params: FilterParams = {
-        tag: filteredTags,
-        engineId: filters.engine?.id,
-        title: filters.title,
-      };
-
-      const templates = await dispatch(
-        explorerApi.endpoints.getTemplatesByFilter.initiate(params)
-      );
-
-      const categories = await dispatch(
-        CategoriesApi.endpoints.getCategories.initiate()
+    async () => {
+      const { data: categories, isLoading: isCategoryLoading } = await dispatch(
+        categoriesApi.endpoints.getCategories.initiate()
       );
 
       return {
         props: {
-          templates: templates.data,
-          categories: categories.data,
-          isTemplatesLoading: templates.isLoading,
-          isCategoryLoading: categories.isLoading,
+          title: "Explore and Boost Your Creativity",
+          description:
+            "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
+          categories,
+          isCategoryLoading,
         },
       };
     }

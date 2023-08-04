@@ -1,7 +1,7 @@
 import { Box, Grid } from "@mui/material";
 import Head from "next/head";
 
-import { Home } from "@/components/dashboard";
+import { Home } from "@/components/profile";
 import { Layout } from "@/layout";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
 import { useGetUserTemplatesQuery } from "@/core/api/user";

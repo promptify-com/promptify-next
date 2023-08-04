@@ -13,7 +13,7 @@ import {
   TemplatesExecutions,
 } from "@/core/api/dto/templates";
 import moment from "moment";
-import { promptsApi } from "@/core/api/prompts";
+import { templatesApi } from "@/core/api/templates";
 import { useAppDispatch } from "@/hooks/useStore";
 
 interface Props {
@@ -128,7 +128,7 @@ export const History: React.FC<Props> = ({
   const chooseExecution = async (executionId: number) => {
     const execution = (
       await dispatch(
-        promptsApi.endpoints.getExecutionById.initiate(executionId)
+        templatesApi.endpoints.getExecutionById.initiate(executionId)
       )
     ).data;
     if (execution) setSelectedExecution(execution);

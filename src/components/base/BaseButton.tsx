@@ -33,7 +33,12 @@ const BaseButton: FC<BaseButtonProps> = ({
     <Button
       variant={variant}
       color={buttonColor}
-      style={{ display: "flex", alignItems: "center", ...buttonStyle }}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        fontWeight: 500,
+        ...buttonStyle,
+      }}
       onClick={onClick}
       {...rest}
     >

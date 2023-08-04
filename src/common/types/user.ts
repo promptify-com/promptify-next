@@ -15,4 +15,5 @@ export interface IUser {
   interests: IInterest[];
   created?: boolean;
   favorite_collection_id: number;
+  is_admin: boolean;
 }

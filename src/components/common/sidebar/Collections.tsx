@@ -1,14 +1,6 @@
 import { FavoriteList } from "@/assets/icons/FavoriteList";
 import { ICollectionById } from "@/common/types/collection";
-import { MoreVert } from "@mui/icons-material";
-import {
-  Box,
-  Grid,
-  IconButton,
-  List,
-  ListSubheader,
-  Typography,
-} from "@mui/material";
+import { Box, Grid, List, ListSubheader, Typography } from "@mui/material";
 import { CollectionItem } from "./CollectionItem";
 import { ITemplate } from "@/common/types/template";
 import { FetchLoading } from "@/components/FetchLoading";
