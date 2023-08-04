@@ -18,21 +18,21 @@ export interface MenuType {
 export const Menu: MenuType[] = [
   {
     id: 1,
-    icon: <Prompt />,
-    href: "/profile/templates",
-    name: "My Templates",
+    icon: <Setting />,
+    href: "/profile",
+    name: "Settings",
   },
   {
     id: 2,
     icon: <AutoAwesome />,
-    href: "/profile",
+    href: "/sparks",
     name: "My Sparks",
   },
   {
     id: 3,
-    icon: <Setting />,
+    icon: <Prompt />,
     href: "/profile",
-    name: "Settings",
+    name: "My Templates",
   },
 ];
 
