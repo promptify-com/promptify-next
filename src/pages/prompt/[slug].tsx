@@ -198,6 +198,9 @@ const Prompt = () => {
       if (!promptNotCompleted) {
         if (selectedSpark) refetchTemplateSparks();
         else setSparkFormOpen(true);
+
+        setCurrentGeneratedPrompt(null);
+        setNewExecutionData(null);
       }
     }
   }, [isGenerating, newExecutionData]);
@@ -561,8 +564,6 @@ const Prompt = () => {
             templateId={templateData?.id}
             onSparkCreated={() => {
               refetchTemplateSparks();
-              setNewExecutionData(null);
-              setCurrentGeneratedPrompt(null);
             }}
           />
 
