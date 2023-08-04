@@ -141,9 +141,12 @@ const Prompt = () => {
   } = useGetSparksByTemplateQuery(token ? (id ? id : skipToken) : skipToken);
 
   useEffect(() => {
-    const sorted = [...(templateSparks || [])].sort((a, b) => (
-      moment(b.current_version?.created_at).diff(moment(a.current_version?.created_at))
-    ));
+    const sorted = [...(templateSparks || [])].sort((a, b) => {
+      const aCreatedAt = a.current_version ? a.current_version?.created_at : a.created_at;
+      const bCreatedAt = b.current_version ? b.current_version?.created_at : b.created_at;
+      
+      return moment(bCreatedAt).diff(moment(aCreatedAt))
+    });
     setSortedSparks(sorted);
   }, [templateSparks]);
   
