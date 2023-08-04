@@ -121,6 +121,11 @@ export interface ITemplateExecutionPut {
   title?: string;
 }
 
+export interface ISparkWithTemplate {
+  initial_title?: string;
+  template?: number;
+}
+
 export interface ISparkWithExecution {
   title?: string;
   execution_id?: number;

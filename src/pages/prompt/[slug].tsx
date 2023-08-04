@@ -2,11 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import {
   Alert,
   Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   Divider,
   Grid,
   Palette,
@@ -14,7 +9,6 @@ import {
   Stack,
   Tab,
   Tabs,
-  TextField,
   ThemeProvider,
   Typography,
   createTheme,
@@ -43,7 +37,6 @@ import { Details } from "@/components/prompt/Details";
 import { authClient } from "@/common/axios";
 import { DetailsCard } from "@/components/prompt/DetailsCard";
 import { Prompts } from "@/core/api/dto/prompts";
-import { createSparkWithExecution } from "@/hooks/api/executions";
 import { PromptLiveResponse } from "@/common/types/prompt";
 import { Layout } from "@/layout";
 import useToken from "@/hooks/useToken";
@@ -52,6 +45,7 @@ import BottomTabs from "@/components/prompt/BottomTabs";
 import { History } from "@/components/prompt/History";
 import { useGetSparksByTemplateQuery } from "@/core/api/sparks";
 import moment from "moment";
+import SparkForm from "@/components/prompt/SparkForm";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -92,8 +86,7 @@ const Prompt = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [currentGeneratedPrompt, setCurrentGeneratedPrompt] =
     useState<Prompts | null>(null);
-  const [openTitleModal, setOpenTitleModal] = useState(false);
-  const [sparkTitle, setSparkTitle] = useState("");
+  const [sparkFormOpen, setSparkFormOpen] = useState(false);
   const [defaultExecution, setDefaultExecution] =
     useState<TemplatesExecutions | null>(null);
   const [templateView] = useTemplateView();
@@ -148,11 +141,16 @@ const Prompt = () => {
   } = useGetSparksByTemplateQuery(token ? (id ? id : skipToken) : skipToken);
 
   useEffect(() => {
-    const sorted = [...(templateSparks || [])].sort((a, b) =>
-      moment(b.current_version?.created_at).diff(
-        moment(a.current_version?.created_at)
-      )
-    );
+    const sorted = [...(templateSparks || [])].sort((a, b) => {
+      const aCreatedAt = a.current_version
+        ? a.current_version?.created_at
+        : a.created_at;
+      const bCreatedAt = b.current_version
+        ? b.current_version?.created_at
+        : b.created_at;
+
+      return moment(bCreatedAt).diff(moment(aCreatedAt));
+    });
     setSortedSparks(sorted);
   }, [templateSparks]);
 
@@ -206,7 +204,10 @@ const Prompt = () => {
       );
       if (!promptNotCompleted) {
         if (selectedSpark) refetchTemplateSparks();
-        else setOpenTitleModal(true);
+        else setSparkFormOpen(true);
+
+        setCurrentGeneratedPrompt(null);
+        setNewExecutionData(null);
       }
     }
   }, [isGenerating, newExecutionData]);
@@ -287,82 +288,6 @@ const Prompt = () => {
 
   const dynamicTheme = createTheme({ ...theme, palette });
 
-  const closeTitleModal = () => {
-    setOpenTitleModal(false);
-    setSparkTitle("");
-    refetchTemplateSparks();
-  };
-  const saveSparkTitle = async () => {
-    if (sparkTitle.length) {
-      if (fetchedNewExecution?.id) {
-        try {
-          await createSparkWithExecution({
-            title: sparkTitle,
-            execution_id: fetchedNewExecution.id,
-          });
-        } catch (err) {
-          console.error(err);
-        }
-      }
-
-      refetchTemplateSparks();
-      setNewExecutionData(null);
-      setCurrentGeneratedPrompt(null);
-      setOpenTitleModal(false);
-      setSparkTitle("");
-    }
-  };
-
-  const SparkTitleModal = (
-    <Dialog
-      open={openTitleModal}
-      PaperProps={{
-        sx: { bgcolor: "surface.1" },
-      }}
-    >
-      <DialogTitle sx={{ fontSize: 16, fontWeight: 400 }}>
-        Enter a title for your new spark:
-      </DialogTitle>
-      <DialogContent>
-        <TextField
-          sx={{
-            ".MuiInputBase-input": {
-              p: 0,
-              color: "onSurface",
-              fontSize: 48,
-              fontWeight: 400,
-              "&::placeholder": { color: "grey.600" },
-            },
-            ".MuiOutlinedInput-notchedOutline": { border: 0 },
-            ".MuiInputBase-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
-              border: 0,
-            },
-          }}
-          placeholder={"Title..."}
-          onChange={(e) => setSparkTitle(e.target.value)}
-        />
-      </DialogContent>
-      <DialogActions sx={{ p: "16px", gap: 2 }}>
-        <Button
-          sx={{ minWidth: "auto", p: 0, color: "grey.600" }}
-          onClick={closeTitleModal}
-        >
-          Skip
-        </Button>
-        <Button
-          sx={{
-            ":disabled": { color: "grey.600" },
-            ":hover": { bgcolor: "action.hover" },
-          }}
-          disabled={!sparkTitle.length}
-          onClick={saveSparkTitle}
-        >
-          Save
-        </Button>
-      </DialogActions>
-    </Dialog>
-  );
-
   if (fetchedTemplateError || templateSparksError)
     return <div>Something went wrong...</div>;
 
@@ -423,7 +348,7 @@ const Prompt = () => {
                   <Stack height={"100%"}>
                     <DetailsCard
                       templateData={templateData}
-                      resetNewExecution={resetNewExecution}
+                      onNewSpark={() => setSparkFormOpen(true)}
                     />
                     <Stack flex={1}>
                       <Tabs
@@ -467,11 +392,10 @@ const Prompt = () => {
                               setIsGenerating={setIsGenerating}
                               onError={setErrorMessage}
                               exit={() => setGeneratorOpened(false)}
-                              currentSparkId={selectedSpark?.id ?? null}
                               selectedExecution={selectedExecution}
                               setMobileTab={setMobileTab}
                               setActiveTab={setActiveTab}
-                              resetNewExecution={resetNewExecution}
+                              onNewSpark={() => setSparkFormOpen(true)}
                               sparks={sortedSparks}
                               selectedSpark={selectedSpark}
                               setSelectedSpark={setSelectedSpark}
@@ -504,7 +428,7 @@ const Prompt = () => {
                   {mobileTab !== 0 && (
                     <DetailsCard
                       templateData={templateData}
-                      resetNewExecution={resetNewExecution}
+                      onNewSpark={() => setSparkFormOpen(true)}
                       min
                     />
                   )}
@@ -524,7 +448,7 @@ const Prompt = () => {
                   >
                     <DetailsCard
                       templateData={templateData}
-                      resetNewExecution={resetNewExecution}
+                      onNewSpark={() => setSparkFormOpen(true)}
                     />
                     <Details
                       templateData={templateData}
@@ -550,11 +474,10 @@ const Prompt = () => {
                       setIsGenerating={setIsGenerating}
                       onError={setErrorMessage}
                       exit={() => setGeneratorOpened(false)}
-                      currentSparkId={selectedSpark?.id ?? null}
                       selectedExecution={selectedExecution}
                       setMobileTab={setMobileTab}
                       setActiveTab={setActiveTab}
-                      resetNewExecution={resetNewExecution}
+                      onNewSpark={() => setSparkFormOpen(true)}
                       sparks={sortedSparks}
                       selectedSpark={selectedSpark}
                       setSelectedSpark={setSelectedSpark}
@@ -642,7 +565,14 @@ const Prompt = () => {
             </Grid>
           )}
 
-          {SparkTitleModal}
+          <SparkForm
+            isOpen={sparkFormOpen}
+            close={() => setSparkFormOpen(false)}
+            templateId={templateData?.id}
+            onSparkCreated={() => {
+              refetchTemplateSparks();
+            }}
+          />
 
           <Snackbar
             anchorOrigin={{ vertical: "bottom", horizontal: "right" }}

@@ -34,6 +34,7 @@ import { useWindowSize } from "usehooks-ts";
 import { useRouter } from "next/router";
 import { DisplayHeader } from "./DisplayHeader";
 import { pinSpark, unpinSpark } from "@/hooks/api/executions";
+import SparkForm from "./SparkForm";
 
 interface GeneratorFormProps {
   templateData: Templates;
@@ -42,11 +43,10 @@ interface GeneratorFormProps {
   setIsGenerating: (status: boolean) => void;
   onError: (errMsg: string) => void;
   exit: () => void;
-  currentSparkId: number | null;
   selectedExecution: TemplatesExecutions | null;
   setMobileTab: (value: number) => void;
   setActiveTab: (value: number) => void;
-  resetNewExecution: () => void;
+  onNewSpark: () => void;
   sparks: Spark[];
   selectedSpark: Spark | null;
   setSelectedSpark: (spark: Spark) => void;
@@ -76,11 +76,10 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   setIsGenerating,
   onError,
   exit,
-  currentSparkId,
   selectedExecution,
   setMobileTab,
   setActiveTab,
-  resetNewExecution,
+  onNewSpark,
   sparks,
   selectedSpark,
   setSelectedSpark,
@@ -104,6 +103,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   const [shownInputs, setShownInputs] = useState<Input[] | null>(null);
   const [shownParams, setShownParams] = useState<Param[] | null>(null);
   const [allowGenerate, setAllowGenerate] = useState<boolean>(false);
+  const [sparkFormOpen, setSparkFormOpen] = useState<boolean>(false);
 
   const setDefaultResPrompts = () => {
     const tempArr: ResPrompt[] = [...resPrompts];
@@ -180,6 +180,13 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     }
   }, [resInputs]);
 
+  // Handling the case of no spark selected. Wait for new spark to be created/selected, then generate
+  useEffect(() => {
+    if (isGenerating && selectedSpark) {
+      validateAndGenerateExecution()
+    }
+  }, [selectedSpark])
+
   const isInputsFilled = () => {
     const tempErrors: InputsErrors = {};
 
@@ -218,31 +225,41 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     return true;
   };
 
-  const handlePostPrompt = () => {
+  const validateAndGenerateExecution = () => {
+    
     if (!token) {
       savePathURL(window.location.pathname);
       return router.push("/signin");
     }
-
+    
     if (!validateInputs()) return;
 
+    setIsGenerating(true);
+    
     setMobileTab(2);
     setActiveTab(2);
-    generateExecution(resPrompts);
+    
+    if (selectedSpark?.id) {
+      generateExecution(resPrompts);
+    } else {
+      setSparkFormOpen(true);
+    }
   };
 
   const generateExecution = (executionData: ResPrompt[]) => {
-    if (isGenerating) return;
-
     setLastExecution(JSON.parse(JSON.stringify(executionData)));
-
-    setIsGenerating(true);
 
     if (windowWidth < 900) setTimeout(() => exit(), 2000);
 
+    if (!selectedSpark?.id) {
+      setErrors({});
+      return;
+    }
+
     let tempData: any[] = [];
     let url = `${process.env.NEXT_PUBLIC_API_URL}/api/meta/templates/${templateData.id}/execute/`;
-    if (currentSparkId) url += `?spark_id=${currentSparkId}`;
+    url += `?spark_id=${selectedSpark.id}`;
+
     fetchEventSource(url, {
       method: "POST",
       headers: {
@@ -513,10 +530,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
             }}
             startIcon={<AddOutlined />}
             variant={"outlined"}
-            onClick={() => {
-              resetNewExecution();
-              setResInputs([]);
-            }}
+            onClick={onNewSpark}
           >
             Spark
           </Button>
@@ -619,7 +633,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
                 },
               }}
               disabled={!token ? false : !allowGenerate || isGenerating}
-              onClick={handlePostPrompt}
+              onClick={validateAndGenerateExecution}
             >
               {token ? (
                 <React.Fragment>
@@ -682,6 +696,16 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
           </Box>
         </Box>
       </Stack>
+
+      <SparkForm
+        isOpen={sparkFormOpen}
+        close={() => setSparkFormOpen(false)}
+        templateId={templateData?.id}
+        onSparkCreated={(spark) => {
+          // No Spark selected case, useEffect [selectedSpark] at the top will handle generating new execution after Spark is selected
+          setSelectedSpark(spark);
+        }}
+      />
     </Box>
   );
 };

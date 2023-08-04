@@ -73,7 +73,7 @@ export const templatesApi = baseApi.injectEndpoints({
           method: "get",
         }),
       }),
-      getPromptTemplateBySlug: build.query<any, string>({
+      getPromptTemplateBySlug: build.query<Templates, string>({
         query: (slug: string) => ({
           url: `/api/meta/templates/by-slug/${slug}`,
           method: "get",
