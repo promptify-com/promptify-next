@@ -24,7 +24,7 @@ export const promptsApi = createApi({
           method: "get",
         }),
       }),
-      getPromptTemplateBySlug: builder.query<any, string>({
+      getPromptTemplateBySlug: builder.query<Templates, string>({
         query: (slug: string) => ({
           url: `/api/meta/templates/by-slug/${slug}`,
           method: "get",

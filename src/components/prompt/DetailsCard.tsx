@@ -5,13 +5,13 @@ import React from 'react'
 
 interface Props {
    templateData: Templates;
-   resetNewExecution?: () => void;
+   onNewSpark?: () => void;
    min?: boolean;
 }
 
 export const DetailsCard: React.FC<Props> = ({ 
    templateData,
-   resetNewExecution,
+   onNewSpark,
    min = false
 }) => {
    const { palette } = useTheme();
@@ -93,7 +93,7 @@ export const DetailsCard: React.FC<Props> = ({
                }}
               startIcon={<AddOutlined />}
               variant={"outlined"}
-              onClick={resetNewExecution}
+              onClick={onNewSpark}
             >
               Spark
             </Button>
