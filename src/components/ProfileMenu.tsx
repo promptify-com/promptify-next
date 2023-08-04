@@ -16,6 +16,7 @@ import { User } from "@/core/api/dto/user";
 import useLogout from "@/hooks/useLogout";
 import useSetUser from "@/hooks/useSetUser";
 import { Menu, MenuType } from "@/common/constants";
+import { useEffect, useState } from "react";
 
 interface ProfileDropDownProps {
   open: boolean;
@@ -38,6 +39,8 @@ export const ProfileDropDown: React.FC<ProfileDropDownProps> = ({
   const logout = useLogout();
   const setUser = useSetUser();
 
+  const [MenuLinks, setMenuLinks] = useState<MenuType[]>(Menu);
+
   const handleHeaderMenu = (el: MenuType) => {
     onToggle();
     router.push(el.href);
@@ -50,6 +53,16 @@ export const ProfileDropDown: React.FC<ProfileDropDownProps> = ({
     logout();
     setUser(null);
   };
+
+  useEffect(() => {
+    if (!user?.is_admin) {
+      // Filter out the menu links that have an id of 1
+      setMenuLinks((prevMenuLinks) =>
+        prevMenuLinks.filter((el) => el.id !== 1)
+      );
+    }
+  }, [user]);
+
   return (
     <Popper
       open={open}
@@ -111,7 +124,7 @@ export const ProfileDropDown: React.FC<ProfileDropDownProps> = ({
                         height: "90px",
                         ml: "auto",
                         cursor: "pointer",
-                        bgcolor: "black",
+                        bgcolor: user?.avatar ? "" : "black",
                         padding: "1px",
                         fontStyle: "normal",
                         textAlign: "center",
@@ -152,7 +165,7 @@ export const ProfileDropDown: React.FC<ProfileDropDownProps> = ({
                   </Box>
                 </Grid>
                 <MenuList autoFocusItem={false} sx={{ width: "100%" }}>
-                  {Menu.map((el, idx) => (
+                  {MenuLinks.map((el, idx) => (
                     <MenuItem
                       key={el.name}
                       onClick={() => handleHeaderMenu(el)}

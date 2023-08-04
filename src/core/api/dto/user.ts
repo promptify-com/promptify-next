@@ -1,4 +1,4 @@
-import { IInterest } from '../../../common/types';
+import { IInterest } from "../../../common/types";
 
 export interface User {
   id: number;
@@ -14,7 +14,8 @@ export interface User {
   date_joined: string;
   interests: IInterest[];
   created?: boolean;
-  favorite_collection_id: number
+  favorite_collection_id: number;
+  is_admin: boolean;
 }
 
 export interface UserMin {
