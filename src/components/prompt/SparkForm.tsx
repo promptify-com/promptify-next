@@ -8,7 +8,7 @@ interface Props {
    close: () => void,
    templateId?: number,
    executionId?: number,
-   onSparkCreated: (sparkId: number) => void,
+   onSparkCreated: (spark: Spark) => void,
 }
 
 const SparkForm: React.FC<Props> = ({
@@ -45,7 +45,7 @@ const SparkForm: React.FC<Props> = ({
                });
             }
 
-            onSparkCreated(sparkCreated.id)
+            onSparkCreated(sparkCreated)
          } catch (err) {
             console.error(err);
          }
