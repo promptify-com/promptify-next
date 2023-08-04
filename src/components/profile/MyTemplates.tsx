@@ -89,9 +89,6 @@ export const MyTemplates = () => {
         >
           My templates
         </Typography>
-        <BaseButton variant="contained" color="primary">
-          New
-        </BaseButton>
       </Box>
       {isTemplatesLoading ? (
         <PageLoading />
