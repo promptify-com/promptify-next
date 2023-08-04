@@ -22,19 +22,13 @@ import {
   MenuBookRounded,
   Search,
 } from "@mui/icons-material";
-import StarIcon from "@mui/icons-material/Star";
 import { styled, Theme, CSSObject } from "@mui/material/styles";
-
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { SidebarIcon } from "@/assets/icons/Sidebar";
 import { Collections } from "@/components/common/sidebar/Collections";
 import { useGetCollectionTemplatesQuery } from "@/core/api/prompts";
 import useToken from "@/hooks/useToken";
 import { ExploreFilterSideBar } from "@/components/explorer/ExploreFilterSideBar";
-import {
-  useGetEnginesQuery,
-  useGetTagsPopularQuery,
-} from "@/core/api/explorer";
 import { SideBarCloseIcon } from "@/assets/icons/SideBarClose";
 import { useGetCurrentUserQuery } from "@/core/api/user";
 import { useFetchFilters } from "@/hooks/useFetchFilters";

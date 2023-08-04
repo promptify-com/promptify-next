@@ -203,3 +203,8 @@ export interface Spark {
   current_version: TemplatesExecutions;
   is_favorite: boolean;
 }
+
+export interface CollectionMutationParams {
+  collectionId: number;
+  templateId: number;
+}
