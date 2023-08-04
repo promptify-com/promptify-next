@@ -1,17 +1,17 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-
 import { axiosBaseQuery } from "./axios-base-query";
 import { PromptParams } from "./dto/prompts";
 import {
-  PromptExecutions,
   Templates,
   TemplatesExecutions,
   TemplateExecutionsDisplay,
+  CollectionMutationParams
 } from "./dto/templates";
 import useDeferredAction from "../../hooks/useDeferredAction";
 import { authClient } from "../../common/axios";
 
 export const promptsApi = createApi({
+  tagTypes: ['PromptsCollectionTemplates'],
   reducerPath: "promptsApi",
   baseQuery: axiosBaseQuery({
     baseUrl: process.env.NEXT_PUBLIC_API_URL ?? "",
@@ -35,6 +35,7 @@ export const promptsApi = createApi({
           url: `/api/meta/collections/${id}`,
           method: "get",
         }),
+        providesTags: ['PromptsCollectionTemplates'],
       }),
       getPromptParams: builder.query<PromptParams[], number>({
         query: (id: number) => ({
@@ -78,6 +79,20 @@ export const promptsApi = createApi({
           method: "delete",
         }),
       }),
+      addToCollection: builder.mutation<void, CollectionMutationParams>({
+        query: (options) => ({
+          url: `/api/meta/collections/${options.collectionId}/add/${options.templateId}/`,
+          method: 'post'
+        }),
+        invalidatesTags: ['PromptsCollectionTemplates']
+      }),
+      removeFromCollection: builder.mutation<void, CollectionMutationParams>({
+        query: (options) => ({
+          url: `/api/meta/collections/${options.collectionId}/remove/${options.templateId}/`,
+          method: 'post'
+        }),
+        invalidatesTags: ['PromptsCollectionTemplates']
+      }),
     };
   },
 });
@@ -92,6 +107,8 @@ export const {
   useGetTemplatesExecutionsByMeQuery,
   useGetAllPromptTemplatesQuery,
   useDeleteTemplateMutation,
+  useAddToCollectionMutation,
+  useRemoveFromCollectionMutation,
 } = promptsApi;
 
 export const useTemplateView = () => {

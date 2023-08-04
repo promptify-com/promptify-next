@@ -14,16 +14,15 @@ import {
 } from "@mui/icons-material";
 import { savePathURL } from "@/common/utils";
 import useToken from "@/hooks/useToken";
-import {
-  addToCollection,
-  removeFromCollection
-} from "@/hooks/api/templates";
 import { Subtitle } from "@/components/blocks";
 import moment from "moment";
 import { useRouter } from "next/router";
-import Link from "next/link";
 import { useGetCurrentUser } from "@/hooks/api/user";
 import FavoriteButton from "@/components/common/buttons/FavoriteButton";
+import {
+  useAddToCollectionMutation,
+  useRemoveFromCollectionMutation
+} from '@/core/api/prompts';
 
 interface DetailsProps {
   templateData: Templates;
@@ -36,8 +35,10 @@ export const Details: React.FC<DetailsProps> = ({
 }) => {
   const [isFetching, setIsFetching] = useState(false);
   const token = useToken();
-  const [user, error, userIsLoading] = useGetCurrentUser([token]);
+  const [user] = useGetCurrentUser([token]);
   const router = useRouter();
+  const [addToCollection] = useAddToCollectionMutation();
+  const [removeFromCollection] = useRemoveFromCollectionMutation();
 
   const favorTemplate = async () => {
     if (!token) {
@@ -51,11 +52,16 @@ export const Details: React.FC<DetailsProps> = ({
       updateTemplateData({ ...templateData, is_favorite: !templateData.is_favorite });
 
       try {
-
         if (!templateData.is_favorite) {
-          await addToCollection(user.favorite_collection_id, templateData.id);
+          await addToCollection({
+            collectionId: user.favorite_collection_id,
+            templateId: templateData.id
+          });
         } else {
-          await removeFromCollection(user.favorite_collection_id, templateData.id);
+          await removeFromCollection({
+            collectionId: user.favorite_collection_id,
+            templateId: templateData.id,
+          });
         }
       } catch (err: any) {
         console.error(err)
