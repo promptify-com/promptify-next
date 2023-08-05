@@ -75,7 +75,7 @@ export const DetailsCard: React.FC<Props> = ({
                }}
             >
               {templateData.is_favorite ? <Favorite /> : <FavoriteOutlined />}
-              {templateData.likes}
+              {templateData.favorites_count}
             </Typography>
             )}
             <Button

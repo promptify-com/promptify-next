@@ -140,7 +140,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({ template }) => {
                   }}
                 >
                   <Favorite sx={{ fontSize: 18 }} />
-                  {template.likes}
+                  {template.favorites_count || 0}
                 </Stack>
               </Grid>
             </Button>

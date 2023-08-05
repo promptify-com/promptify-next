@@ -58,7 +58,7 @@ export const Details = ({
       updateTemplateData({ ...template, is_liked: !template.is_liked });
 
       try {
-        let likes = template.likes;
+        let likes = template.likes || 0;
 
         if (!template.is_liked) {
           await likeTemplate(template.id);
