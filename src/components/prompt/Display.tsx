@@ -60,10 +60,10 @@ export const Display: React.FC<Props> = ({
 
   useEffect(() => {
     if (routerSpark) {
-      const spark = sparks.find((spark) => spark.id.toString() === routerSpark);
+      const spark = sortedSparks.find((spark) => spark.id.toString() === routerSpark);
       if (spark) setSelectedSpark(spark);
     }
-  }, [routerSpark, sparks]);
+  }, [routerSpark, sortedSparks]);
 
   const handlePinSpark = async () => {
     if (selectedSpark === null) return;
