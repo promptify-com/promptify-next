@@ -15,7 +15,7 @@ import {
   ResOverrides,
   ResPrompt,
 } from "@/core/api/dto/prompts";
-import { PromptLiveResponse, PromptLiveResponseData } from "@/common/types/prompt";
+import { PromptLiveResponse } from "@/common/types/prompt";
 import useToken from "@/hooks/useToken";
 import { useAppDispatch } from "@/hooks/useStore";
 import { templatesApi } from "@/core/api/templates";
@@ -286,8 +286,8 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
       onmessage(msg) {
         try {
           const parseData = JSON.parse(msg.data.replace(/'/g, '"'));
-          const message = parseData.message as string;
-          const prompt = parseData.prompt_id as number;
+          const message = parseData.message;
+          const prompt = parseData.prompt_id;
           const executionId = parseData.template_execution_id;
 
           if (executionId) setNewExecutionId(executionId);
@@ -303,7 +303,6 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
                 tempArr.push({
                   message,
                   prompt,
-                  created_at: new Date(),
                 });
               } else {
                 tempArr[activePrompt] = {
