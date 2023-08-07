@@ -110,22 +110,19 @@ export const ExecutionCardGenerated: React.FC<Props> = ({
                       }}
                     />
                   )}
-                  <Typography variant="body1" component="div">
-                    <Typography component={"span"}
-                      sx={{
-                        fontSize: 15,
-                        fontWeight: 400,
-                        color: "onSurface",
-                        wordWrap: "break-word",
-                        textAlign: "justify",
-                        float: "none",
-                      }}
-                      dangerouslySetInnerHTML={{
-                        __html: getMarkdownFromString(exec.message)
-                      }}
-                    />
-                    {exec.error && executionError(exec.error)}
-                  </Typography>
+                  <Typography
+                    sx={{
+                      fontSize: 15,
+                      fontWeight: 400,
+                      color: "onSurface",
+                      wordWrap: "break-word",
+                      textAlign: "justify",
+                      float: "none",
+                    }}
+                    dangerouslySetInnerHTML={{
+                      __html: getMarkdownFromString(exec.message),
+                    }}
+                  />
                 </Box>
               )}
               {/* is Image Output and Next item is not text */}

@@ -5,7 +5,6 @@ export interface PromptLiveResponseData {
   isLoading?: boolean;
   isCompleted?: boolean;
   isFailed?: boolean;
-  error?: string;
 }
 
 export interface PromptLiveResponse {
