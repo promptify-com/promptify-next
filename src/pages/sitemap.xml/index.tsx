@@ -1,8 +1,5 @@
+import { authClient } from "@/common/axios";
 import { GetServerSideProps } from "next";
-import fetch from "node-fetch";
-
-const EXTERNAL_DATA_URL_PROMPT_TEMPLATES = `${process.env.NEXT_PUBLIC_API_URL}/api/meta/templates/`;
-const EXTERNAL_DATA_URL_PROMPT_CATEGORIES = `${process.env.NEXT_PUBLIC_API_URL}/api/meta/categories/`;
 
 interface Template {
   slug: string;
@@ -36,15 +33,15 @@ function generateSiteMap(
         .join("")}
 
 			${categories
-				.filter(({ slug }) => slug !== null)
-				.map(({ slug }) => {
-					return `
+        .filter(({ slug }) => slug !== null)
+        .map(({ slug }) => {
+          return `
 						<url>
 							<loc>${`https://app.promptify.com/explore/${slug}`}</loc>
 						</url>
 						`;
-				})
-				.join("")}
+        })
+        .join("")}
 
 			
    	</urlset>
@@ -58,11 +55,11 @@ function SiteMap() {
 
 export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   // We make an API call to gather the URLs for our site
-  const responseTemplates = await fetch(EXTERNAL_DATA_URL_PROMPT_TEMPLATES);
-  const templates: Template[] = await responseTemplates.json();
+	const templatesResponse = await authClient.get('/api/meta/templates/');
+  const templates = templatesResponse.data;
 
-	const responseCategories = await fetch(EXTERNAL_DATA_URL_PROMPT_CATEGORIES);
-	const categories: Category[] = await responseCategories.json();
+  const responseCategories = await authClient.get('/api/meta/categories/');
+	const categories = responseCategories.data;
 
   // We generate the XML sitemap with the templates data
   const sitemap = generateSiteMap(templates, categories);
