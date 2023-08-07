@@ -69,7 +69,6 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
       href: "/",
       active: pathname == "/",
       external: false,
-      userLoggedIn: false,
     },
     {
       label: "Browse",
@@ -77,15 +76,13 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
       href: "/explore",
       active: splittedPath[1] == "explore",
       external: false,
-      userLoggedIn: false,
     },
     {
       label: "My Sparks",
       icon: <AutoAwesome />,
-      href: "/sparks",
+      href: isValidUser ? "/sparks" : "/signin",
       active: pathname == "/sparks",
       external: false,
-      userLoggedIn: true,
     },
     {
       label: "Learn",
@@ -93,7 +90,6 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
       href: "https://promptify.com",
       active: pathname == "/learn",
       external: true,
-      userLoggedIn: false,
     },
   ];
 
@@ -248,9 +244,7 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
                   padding: "0px 22px",
                 }}
               >
-                {links
-                  .filter(link => !link.userLoggedIn || (isValidUser && link.userLoggedIn))
-                  .map((link) => (
+                {links.map((link) => (
                   <ListItem
                     key={link.label}
                     disablePadding
