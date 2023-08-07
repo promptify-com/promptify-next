@@ -85,14 +85,18 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
 
   const splittedPath = pathname.split("/");
   const isExplorePage = splittedPath[1] == "explore";
+
   const { data: user, isLoading: userLoading } = useGetCurrentUserQuery(token);
   const isValidUser = Boolean(user && user.id);
+
   const { data: collections, isLoading: isCollectionsLoading } =
-    useGetCollectionTemplatesQuery(user?.favorite_collection_id as number, {
-      skip: !isValidUser,
-    });
+  useGetCollectionTemplatesQuery(user?.favorite_collection_id as number, {
+    skip: !isValidUser,
+  });
+  
   const { tags, engines } = useFetchFilters();
 
+  
   const [expandedOnHover, setExpandedOnHover] = useState<boolean>(false);
   const [showExpandIcon, setShowExpandIcon] = useState<boolean>(false);
   const [showFilters, setShowFilters] = useState<boolean>(false);
@@ -107,11 +111,10 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
   const navItems = [
     {
       name: "Homepage",
-      href: "/",
+      href: isValidUser ? "/" : "login",
       icon: <Home />,
       active: pathname == "/",
       external: false,
-      userLoggedIn: false,
     },
     {
       name: "Browse",
@@ -119,15 +122,13 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
       icon: <Search />,
       active: isExplorePage,
       external: false,
-      userLoggedIn: false,
     },
     {
       name: "My Sparks",
-      href: "/sparks",
+      href: isValidUser ? "/sparks" : "/signin",
       icon: <AutoAwesome />,
       active: pathname == "/sparks",
       external: false,
-      userLoggedIn: true,
     },
     {
       name: "Learn",
@@ -135,7 +136,6 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
       icon: <MenuBookRounded />,
       active: pathname == "/learn",
       external: true,
-      userLoggedIn: false,
     },
   ];
 
@@ -218,9 +218,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
               )}
             </IconButton>
           </Grid>
-          {navItems
-            .filter(item => !item.userLoggedIn || (isValidUser && item.userLoggedIn))
-            .map((item, i) => (
+          {navItems.map((item) => (
             <Grid key={item.name}>
               <ListItem
                 disablePadding
