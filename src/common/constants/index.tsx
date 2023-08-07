@@ -1,12 +1,13 @@
-import { Prompt } from "@/assets/icons/prompts";
-import { Setting } from "@/assets/icons/setting";
+import { ReactNode } from "react";
 import {
   AutoAwesome,
   HomeRounded,
   MenuBookRounded,
   Search,
 } from "@mui/icons-material";
-import { ReactNode } from "react";
+
+import { Prompt } from "@/assets/icons/prompts";
+import { Setting } from "@/assets/icons/setting";
 
 export interface MenuType {
   id: number;
@@ -31,7 +32,7 @@ export const Menu: MenuType[] = [
   {
     id: 3,
     icon: <Prompt />,
-    href: "/profile",
+    href: "/profile/#my-templates",
     name: "My Templates",
   },
 ];
