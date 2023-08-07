@@ -198,6 +198,13 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
                 >
                   Promptify
                 </Typography>
+                <Typography
+                  sx={{ ml: "4px", fontSize: 10, opacity: open || expandedOnHover ? 1 : 0 }}
+                  mt={1}
+                  fontWeight={'bold'}
+                >
+                  beta
+                </Typography>
               </Link>
             </Box>
             <IconButton
