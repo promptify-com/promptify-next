@@ -353,11 +353,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
             }
 
             if (message.includes("[ERROR]")) {
-              tempArr[activePrompt] = {
-                ...tempArr[activePrompt],
-                prompt,
-                error: message ? message.replace("[ERROR]", "") : "Something went wrong during the execution of this prompt",
-              };
+              onError(message ? message.replace("[ERROR]", "") : "Something went wrong during the execution of this prompt");
             }
 
             tempData = [...tempArr];
