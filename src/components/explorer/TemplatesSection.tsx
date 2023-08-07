@@ -1,5 +1,4 @@
 import { Box, Grid, Typography } from "@mui/material";
-import { useRouter } from "next/router";
 
 import { NotFoundIcon } from "@/assets/icons/NotFoundIcon";
 import { FetchLoading } from "@/components/FetchLoading";
@@ -19,7 +18,6 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
   filtred,
   title,
 }) => {
-  const router = useRouter();
 
   return (
     <>

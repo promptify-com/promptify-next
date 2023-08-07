@@ -17,6 +17,7 @@ import { ArrowForwardIos, History } from "@mui/icons-material";
 import { useRouter } from "next/router";
 import { useGetSparksByMeQuery } from "@/core/api/sparks";
 import Protected from "@/components/Protected";
+import Link from "next/link";
 
 const Sparks = () => {
   const [expanded, setExpanded] = React.useState<string | false>(false);
@@ -116,7 +117,10 @@ const Sparks = () => {
                               </Typography>
                             </Grid>
                             <Grid item xs={11.5}>
-                              <CardTemplate template={template} />
+                              <CardTemplate 
+                                template={template} 
+                                noRedirect
+                              />
                             </Grid>
                           </Grid>
                         </AccordionSummary>
@@ -129,71 +133,70 @@ const Sparks = () => {
                         />
                         <AccordionDetails>
                           {template.sparks?.map((spark) => (
-                            <Stack
-                              key={spark.id}
-                              direction={"row"}
-                              justifyContent={"space-between"}
-                              alignItems={"center"}
-                              gap={1}
-                              sx={{
-                                p: "8px 16px",
-                                cursor: "pointer",
-                                ":hover": { bgcolor: "action.hover" },
-                              }}
-                              onClick={() =>
-                                router.push(
-                                  `prompt/${template.slug}?spark=${spark.id}`
-                                )
-                              }
+                            <Link key={spark.id}
+                              href={{ pathname: `prompt/${template.slug}?spark=${spark.id}` }}
+                              style={{ textDecoration: "none" }}
                             >
-                              <Typography
-                                fontSize={14}
-                                fontWeight={500}
-                                color={"onSurface"}
-                                letterSpacing={0.46}
-                                dangerouslySetInnerHTML={{
-                                  __html:
-                                    spark.initial_title.length > 150
-                                      ? `${spark.initial_title?.slice(
-                                          0,
-                                          150 - 1
-                                        )}...`
-                                      : spark.initial_title,
-                                }}
-                              />
                               <Stack
                                 direction={"row"}
+                                justifyContent={"space-between"}
                                 alignItems={"center"}
                                 gap={1}
+                                sx={{
+                                  p: "8px 16px",
+                                  cursor: "pointer",
+                                  ":hover": { bgcolor: "action.hover" },
+                                }}
                               >
                                 <Typography
-                                  fontSize={12}
-                                  fontWeight={400}
+                                  fontSize={14}
+                                  fontWeight={500}
                                   color={"onSurface"}
-                                  sx={{ opacity: 0.5 }}
-                                >
-                                  {spark.current_version
-                                    ? moment(
-                                        spark.current_version.created_at
-                                      ).fromNow()
-                                    : "-"}
-                                </Typography>
+                                  letterSpacing={0.46}
+                                  dangerouslySetInnerHTML={{
+                                    __html:
+                                      spark.initial_title.length > 150
+                                        ? `${spark.initial_title?.slice(
+                                            0,
+                                            150 - 1
+                                          )}...`
+                                        : spark.initial_title,
+                                  }}
+                                />
                                 <Stack
                                   direction={"row"}
                                   alignItems={"center"}
-                                  gap={0.5}
-                                  sx={{
-                                    fontSize: 13,
-                                    fontWeight: 500,
-                                    color: "onSurface",
-                                    p: "0 6px",
-                                  }}
+                                  gap={1}
                                 >
-                                  <History sx={{ fontSize: 18 }} />
-                                  {spark.versions.length}
+                                  <Typography
+                                    fontSize={12}
+                                    fontWeight={400}
+                                    color={"onSurface"}
+                                    sx={{ opacity: 0.5 }}
+                                  >
+                                    {spark.current_version
+                                      ? moment(
+                                          spark.current_version.created_at
+                                        ).fromNow()
+                                      : "-"}
+                                  </Typography>
+                                  <Stack
+                                    direction={"row"}
+                                    alignItems={"center"}
+                                    gap={0.5}
+                                    sx={{
+                                      fontSize: 13,
+                                      fontWeight: 500,
+                                      color: "onSurface",
+                                      p: "0 6px",
+                                    }}
+                                  >
+                                    <History sx={{ fontSize: 18 }} />
+                                    {spark.versions.length}
+                                  </Stack>
                                 </Stack>
                               </Stack>
-                            </Stack>
+                            </Link>
                           ))}
                         </AccordionDetails>
                       </Accordion>

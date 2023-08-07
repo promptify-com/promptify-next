@@ -1,6 +1,7 @@
 import React from "react";
 import {
   Avatar,
+  Box,
   Button,
   Card,
   CardMedia,
@@ -11,17 +12,26 @@ import {
 } from "@mui/material";
 import { TemplateExecutionsDisplay, Templates } from "@/core/api/dto/templates";
 import { Favorite } from "@mui/icons-material";
-import Link from "next/link";
+import { useRouter } from "next/router";
 
 type CardTemplateProps = {
   template: Templates | TemplateExecutionsDisplay;
+  noRedirect?: boolean;
 };
 
-const CardTemplate: React.FC<CardTemplateProps> = ({ template }) => {
+const CardTemplate: React.FC<CardTemplateProps> = ({ 
+  template, 
+  noRedirect = false
+}) => {
+  const router = useRouter();
+
   return (
-    <Link
-      href={{ pathname: `/prompt/${template.slug}` }}
-      style={{ textDecoration: "none" }}
+    <Box
+      onClick={() => {
+        if(!noRedirect) {
+          router.push(`/prompt/${template.slug}`)
+        }
+      }}
     >
       <Card
         sx={{
@@ -157,7 +167,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({ template }) => {
           </Grid>
         </Grid>
       </Card>
-    </Link>
+    </Box>
   );
 };
 
