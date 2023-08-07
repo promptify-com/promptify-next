@@ -9,6 +9,7 @@ import { createWrapper } from "next-redux-wrapper";
 import { templatesSlice } from "./templatesSlice";
 import filterSlice from "./filtersSlice";
 import sidebarSlice from "./sidebarSlice";
+import profileSlice from "./profileSlice";
 import { baseApi } from "../api/api";
 
 export interface State {
@@ -25,6 +26,7 @@ export const store = (
       template: templatesSlice.reducer,
       filters: filterSlice,
       sidebar: sidebarSlice,
+      profile: profileSlice,
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware().concat(baseApi.middleware),

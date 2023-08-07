@@ -4,12 +4,15 @@ import Head from "next/head";
 import { Connections, Home, Identy, AllTemplates } from "@/components/profile";
 import { Layout } from "@/layout";
 import Protected from "@/components/Protected";
-import { TemplatesSection } from "@/components/explorer/TemplatesSection";
-import { useGetUserTemplatesQuery } from "@/core/api/user";
-import BaseButton from "@/components/base/BaseButton";
 import { MyTemplates } from "@/components/profile/MyTemplates";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/core/store";
+import EditProfile from "@/components/profile/EditProfile";
 
 const Dashboard = () => {
+  const isEditMode = useSelector(
+    (state: RootState) => state.profile.showEditMode
+  );
   return (
     <Protected>
       <Head>
@@ -21,51 +24,60 @@ const Dashboard = () => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Layout>
-        <Box mt={{ xs: 7, md: 0 }} padding={{ xs: "4px 0px", md: "0px 8px" }}>
-          <Grid
-            sx={{
-              padding: { xs: "16px 4px", md: "32px" },
-            }}
-          >
-            <Box sx={{ px: "12px" }}>
-              <Box
-                display="flex"
-                flexDirection="column"
-                alignItems={"flex-start"}
-                gap={"36px"}
-                width={"100%"}
+      <>
+        {isEditMode ? (
+          <EditProfile />
+        ) : (
+          <Layout>
+            <Box
+              mt={{ xs: 7, md: 0 }}
+              padding={{ xs: "4px 0px", md: "0px 8px" }}
+            >
+              <Grid
+                sx={{
+                  padding: { xs: "16px 4px", md: "32px" },
+                }}
               >
-                <Box
-                  display={"flex"}
-                  justifyContent={{ xs: "center", md: "start" }}
-                  textAlign={{ xs: "center", sm: "start" }}
-                >
-                  <Typography
-                    fontWeight={500}
-                    fontSize={{ xs: "1.5rem", sm: "2rem" }}
-                    sx={{
-                      fontFamily: "Poppins",
-                      fontStyle: "normal",
-                      fontWeight: 500,
-                      fontSize: { xs: "24px", sm: "34px" },
-                      lineHeight: { xs: "27px", sm: "123.5%" },
-                      color: "onSurface",
-                    }}
+                <Box sx={{ px: "12px" }}>
+                  <Box
+                    display="flex"
+                    flexDirection="column"
+                    alignItems={"flex-start"}
+                    gap={"36px"}
+                    width={"100%"}
                   >
-                    Welcome to your space
-                  </Typography>
+                    <Box
+                      display={"flex"}
+                      justifyContent={{ xs: "center", md: "start" }}
+                      textAlign={{ xs: "center", sm: "start" }}
+                    >
+                      <Typography
+                        fontWeight={500}
+                        fontSize={{ xs: "1.5rem", sm: "2rem" }}
+                        sx={{
+                          fontFamily: "Poppins",
+                          fontStyle: "normal",
+                          fontWeight: 500,
+                          fontSize: { xs: "24px", sm: "34px" },
+                          lineHeight: { xs: "27px", sm: "123.5%" },
+                          color: "onSurface",
+                        }}
+                      >
+                        Welcome to your space
+                      </Typography>
+                    </Box>
+                    <Home />
+                    <Connections />
+                    <Identy />
+                    <MyTemplates />
+                    <AllTemplates />
+                  </Box>
                 </Box>
-                <Home />
-                <Connections />
-                <Identy />
-                <MyTemplates />
-                <AllTemplates />
-              </Box>
+              </Grid>
             </Box>
-          </Grid>
-        </Box>
-      </Layout>
+          </Layout>
+        )}
+      </>
     </Protected>
   );
 };

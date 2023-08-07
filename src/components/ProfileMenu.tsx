@@ -57,7 +57,7 @@ export const ProfileDropDown: React.FC<ProfileDropDownProps> = ({
   useEffect(() => {
     if (!user?.is_admin) {
       setMenuLinks((prevMenuLinks) =>
-        prevMenuLinks.filter((el) => el.id !== 1)
+        prevMenuLinks.filter((el) => el.id !== 3)
       );
     }
   }, [user]);

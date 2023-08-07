@@ -6,10 +6,13 @@ import { useGetCurrentUserQuery } from "@/core/api/user";
 import useToken from "@/hooks/useToken";
 import { Mode } from "@mui/icons-material";
 import BaseButton from "../base/BaseButton";
+import { useDispatch } from "react-redux";
+import { SwitchProfileMode } from "@/core/store/profileSlice";
 
 export const Home = () => {
   const router = useRouter();
   const token = useToken();
+  const dispatch = useDispatch();
   const { data: user } = useGetCurrentUserQuery(token);
 
   return (
@@ -102,7 +105,7 @@ export const Home = () => {
         )}
         <Box>
           <BaseButton
-            onClick={() => router.push("/profile/edit")}
+            onClick={() => dispatch(SwitchProfileMode(true))}
             color="primary"
             variant="contained"
             style={{
