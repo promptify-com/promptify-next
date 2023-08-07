@@ -6,7 +6,7 @@ import { ArrowBackIosRounded } from "@mui/icons-material";
 import { useDispatch } from "react-redux";
 
 import { Layout } from "@/layout";
-import { SwitchProfileMode } from "@/core/store/profileSlice";
+import { showProfileInEditMode } from "@/core/store/profileSlice";
 import { IEditProfile } from "@/common/types";
 import { useGetCurrentUser, useUpdateUser } from "@/hooks/api/user";
 import useSetUser from "@/hooks/useSetUser";
@@ -54,8 +54,8 @@ export const EditProfile = () => {
               justifyContent={{ xs: "center", sm: "flex-start" }}
               alignItems={"center"}
               gap={2}
-              onClick={() => dispatch(SwitchProfileMode(false))}
-              sx={{ cursor: "pointer", width: "fit-content" }} // Adding width with fit-content will make box take only the width needed
+              onClick={() => dispatch(showProfileInEditMode(false))}
+              sx={{ cursor: "pointer", width: "fit-content" }}
             >
               <ArrowBackIosRounded
                 sx={{

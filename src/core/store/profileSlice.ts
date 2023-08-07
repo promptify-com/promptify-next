@@ -8,12 +8,12 @@ const profileSlice = createSlice({
   name: "profile",
   initialState,
   reducers: {
-    SwitchProfileMode: (state, action: PayloadAction<boolean>) => {
+    showProfileInEditMode: (state, action: PayloadAction<boolean>) => {
       state.showEditMode = action.payload;
     },
   },
 });
 
-export const { SwitchProfileMode } = profileSlice.actions;
+export const { showProfileInEditMode } = profileSlice.actions;
 
 export default profileSlice.reducer;
