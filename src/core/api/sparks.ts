@@ -17,33 +17,12 @@ export const sparksApi = baseApi.injectEndpoints({
           url: `/api/meta/sparks/me`,
           method: "get",
         }),
-        providesTags: ["Sparks"],
-      }),
-      editSparkById: builder.mutation<Spark, any>({
-        query: ({ id, data }) => ({
-          url: `/api/meta/sparks/${id}`,
-          method: "PATCH",
-          data: data,
-        }),
-        invalidatesTags: ["Sparks"],
-      }),
-      deleteSparkById: builder.mutation<Spark, number>({
-        query: (id: number) => ({
-          url: `/api/meta/sparks/${id}`,
-          method: "DELETE",
-        }),
-        invalidatesTags: ["Sparks"],
       }),
     };
   },
 });
 
-export const {
-  useGetSparksByTemplateQuery,
-  useGetSparksByMeQuery,
-  useEditSparkByIdMutation,
-  useDeleteSparkByIdMutation,
-} = sparksApi;
+export const { useGetSparksByTemplateQuery, useGetSparksByMeQuery } = sparksApi;
 
 export const useTemplateView = () => {
   return useDeferredAction(async (id: number) => {
