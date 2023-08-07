@@ -43,23 +43,6 @@ export const ExecutionCardGenerated: React.FC<Props> = ({
     );
   };
 
-  const executionError = (error: string|undefined) => {
-    return (
-      <Tooltip title={error} placement="right" arrow
-        componentsProps={{ 
-          tooltip: { 
-            sx: { bgcolor: "error.main", color: "onError", fontSize: 10, fontWeight: 500 } 
-          },
-          arrow: { 
-            sx: { color: "error.main" } 
-          }
-        }}
-      >
-        <Error sx={{ color: "error.main", width: 20, height: 20 }} />
-      </Tooltip>
-    )
-  }
-
   return (
     <Stack
       gap={1}

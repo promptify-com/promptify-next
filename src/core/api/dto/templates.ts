@@ -106,6 +106,7 @@ export interface PromptExecutions {
   output: string;
   prompt_executions: PromptExecutions[];
   is_favorite: boolean;
+  errors: string;
 }
 
 export interface TemplatesExecutions {
