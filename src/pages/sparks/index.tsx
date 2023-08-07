@@ -9,21 +9,17 @@ import {
   Box,
   Divider,
   Grid,
-  IconButton,
   Stack,
-  Tooltip,
   Typography,
 } from "@mui/material";
 import moment from "moment";
-import { ArrowForwardIos, Delete, Edit, History } from "@mui/icons-material";
-import { useRouter } from "next/router";
+import { ArrowForwardIos, History } from "@mui/icons-material";
 import { useGetSparksByMeQuery } from "@/core/api/sparks";
 import Protected from "@/components/Protected";
 import Link from "next/link";
 
 const Sparks = () => {
   const [expanded, setExpanded] = React.useState<string | false>(false);
-  const router = useRouter();
 
   const { data: sparksByTemplate, isLoading: isSparksByTemplateLoading } =
     useGetSparksByMeQuery();
@@ -199,47 +195,6 @@ const Sparks = () => {
                                     <History sx={{ fontSize: 18 }} />
                                     {spark.versions.length}
                                   </Stack>
-                                  <Grid>
-                                    <Tooltip title="Edit">
-                                      <IconButton
-                                        sx={{
-                                          bgcolor: "transparent",
-                                          border: "none",
-                                          color: "onSurface",
-                                          "&:hover": {
-                                            bgcolor: "surface.3",
-                                            color: "onSurface",
-                                          },
-                                        }}
-                                        onClick={() => {
-                                          // setSelectedTemplate(template);
-                                          // setModalNew(false);
-                                          // setTemplateFormOpen(true);
-                                        }}
-                                      >
-                                        <Edit />
-                                      </IconButton>
-                                    </Tooltip>
-                                    <Tooltip title="Delete">
-                                      <IconButton
-                                        onClick={
-                                          () => {}
-                                          // openDeletionModal(template)
-                                        }
-                                        sx={{
-                                          bgcolor: "transparent",
-                                          border: "none",
-                                          color: "onSurface",
-                                          "&:hover": {
-                                            bgcolor: "surface.3",
-                                            color: "#ef4444",
-                                          },
-                                        }}
-                                      >
-                                        <Delete />
-                                      </IconButton>
-                                    </Tooltip>
-                                  </Grid>
                                 </Stack>
                               </Stack>
                             </Link>
