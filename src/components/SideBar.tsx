@@ -90,13 +90,12 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
   const isValidUser = Boolean(user && user.id);
 
   const { data: collections, isLoading: isCollectionsLoading } =
-  useGetCollectionTemplatesQuery(user?.favorite_collection_id as number, {
-    skip: !isValidUser,
-  });
-  
+    useGetCollectionTemplatesQuery(user?.favorite_collection_id as number, {
+      skip: !isValidUser,
+    });
+
   const { tags, engines } = useFetchFilters();
 
-  
   const [expandedOnHover, setExpandedOnHover] = useState<boolean>(false);
   const [showExpandIcon, setShowExpandIcon] = useState<boolean>(false);
   const [showFilters, setShowFilters] = useState<boolean>(false);
@@ -111,7 +110,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
   const navItems = [
     {
       name: "Homepage",
-      href: isValidUser ? "/" : "login",
+      href: "/",
       icon: <Home />,
       active: pathname == "/",
       external: false,
