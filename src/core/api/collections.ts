@@ -11,13 +11,13 @@ export const collectionsApi = baseApi.injectEndpoints({
             method: "get",
           };
         },
-        providesTags: ["Collections"],
       }),
       getCollectionTemplates: builder.query<any, number>({
         query: (id: number) => ({
           url: `/api/meta/collections/${id}`,
           method: "get",
         }),
+        providesTags: ["Collections"],
       }),
       addToCollection: builder.mutation<void, CollectionMutationParams>({
         query: (options) => ({
