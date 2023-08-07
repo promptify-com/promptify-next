@@ -232,7 +232,7 @@ export const MyTemplates = () => {
 
       {templates && templates.length == 0 && (
         <Typography textAlign={"center"}>
-          All your templates will be listed here! Click New to create a new one
+          All your templates will be listed here! This feature is coming soon.
         </Typography>
       )}
       <Dialog

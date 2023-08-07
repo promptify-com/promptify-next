@@ -8,11 +8,13 @@ import { MyTemplates } from "@/components/profile/MyTemplates";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/core/store";
 import EditProfile from "@/components/profile/EditProfile";
+import { useGetCurrentUser } from "@/hooks/api/user";
 
 const Dashboard = () => {
   const isEditMode = useSelector(
     (state: RootState) => state.profile.showEditMode
   );
+  const [user] = useGetCurrentUser();
   return (
     <Protected>
       <Head>
@@ -70,7 +72,7 @@ const Dashboard = () => {
                     <Connections />
                     <Identy />
                     <MyTemplates />
-                    <AllTemplates />
+                    {user?.is_admin && <AllTemplates />}
                   </Box>
                 </Box>
               </Grid>
