@@ -134,7 +134,10 @@ const Sparks = () => {
                         <AccordionDetails>
                           {template.sparks?.map((spark) => (
                             <Link key={spark.id}
-                              href={{ pathname: `prompt/${template.slug}?spark=${spark.id}` }}
+                              href={{ 
+                                pathname: `prompt/${template.slug}`, 
+                                query: { 'spark': spark.id }
+                              }}
                               style={{ textDecoration: "none" }}
                             >
                               <Stack
