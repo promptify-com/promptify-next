@@ -10,7 +10,7 @@ import { Layout } from "@/layout";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
 import { categoriesApi } from "@/core/api/categories";
 import { CategoriesSection } from "@/components/explorer/CategoriesSection";
-import { useGetCurrentUserQuery } from "@/core/api/user";
+import { useGetCurrentUserQuery, userApi } from "@/core/api/user";
 import { WelcomeCard } from "@/components/homepage/WelcomeCard";
 import { PageLoading } from "@/components/PageLoading";
 import { AppDispatch, wrapper } from "@/core/store";
@@ -24,6 +24,7 @@ import {
   useGetLastTemplatesQuery,
   useGetTemplatesSuggestedQuery,
 } from "@/core/api/templates";
+import { Token } from "@mui/icons-material";
 
 interface HomePageProps {
   categories: Category[];
@@ -35,7 +36,13 @@ const HomePage: NextPage<HomePageProps> = ({
   isCategoryLoading,
 }) => {
   const token = useToken();
-  const { data: user, isLoading: userLoading } = useGetCurrentUserQuery(token);
+  const [trigger, { data: user, isLoading: _userLoading }] =
+    userApi.endpoints.getCurrentUser.useLazyQuery();
+  useEffect(() => {
+    if (token) {
+      trigger(token);
+    }
+  }, [token]);
   const { data: lastTemplate, isLoading: isLastTemplateLoading } =
     useGetLastTemplatesQuery();
   const { data: suggestedTemplates, isLoading: isSuggestedTemplateLoading } =
@@ -77,66 +84,62 @@ const HomePage: NextPage<HomePageProps> = ({
 
   return (
     <>
-      {userLoading ? (
-        <PageLoading />
-      ) : (
-        <Layout>
-          <Box mt={{ xs: 7, md: 0 }} padding={{ xs: "4px 0px", md: "0px 8px" }}>
-            <Grid
-              gap={"56px"}
-              display={"flex"}
-              flexDirection={"column"}
-              sx={{
-                padding: { xs: "16px", md: "32px" },
-              }}
-            >
-              {token && user ? (
-                <Grid flexDirection="column" display={"flex"} gap={"56px"}>
-                  <Grid
+      <Layout>
+        <Box mt={{ xs: 7, md: 0 }} padding={{ xs: "4px 0px", md: "0px 8px" }}>
+          <Grid
+            gap={"56px"}
+            display={"flex"}
+            flexDirection={"column"}
+            sx={{
+              padding: { xs: "16px", md: "32px" },
+            }}
+          >
+            {token && user && !isLastTemplateLoading ? (
+              <Grid flexDirection="column" display={"flex"} gap={"56px"}>
+                <Grid
+                  sx={{
+                    alignItems: "center",
+                    width: "100%",
+                  }}
+                >
+                  <Typography
                     sx={{
-                      alignItems: "center",
-                      width: "100%",
+                      fontFamily: "Poppins",
+                      fontStyle: "normal",
+                      fontWeight: 500,
+                      fontSize: { xs: "30px", sm: "48px" },
+                      lineHeight: { xs: "30px", md: "56px" },
+                      color: "#1D2028",
+                      marginLeft: { xs: "0px", sm: "0px" },
                     }}
                   >
-                    <Typography
-                      sx={{
-                        fontFamily: "Poppins",
-                        fontStyle: "normal",
-                        fontWeight: 500,
-                        fontSize: { xs: "30px", sm: "48px" },
-                        lineHeight: { xs: "30px", md: "56px" },
-                        color: "#1D2028",
-                        marginLeft: { xs: "0px", sm: "0px" },
-                      }}
-                    >
-                      Welcome, {user?.username}
-                    </Typography>
-                  </Grid>
-                  {lastTemplate && Object.keys(lastTemplate).length > 0 && (
-                    <TemplatesSection
-                      isLoading={isLastTemplateLoading}
-                      templates={[lastTemplate]}
-                      title="Your Latest Template:"
-                    />
-                  )}
-
-                  <TemplatesSection
-                    isLoading={isSuggestedTemplateLoading}
-                    templates={suggestedTemplates}
-                    title="You may like this templates:"
-                  />
+                    Welcome, {user?.username}
+                  </Typography>
                 </Grid>
-              ) : (
-                <WelcomeCard />
-              )}
-              <CategoriesSection
-                categories={categories}
-                isLoading={isCategoryLoading}
-              />
-            </Grid>
-          </Box>
-        </Layout>
-      )}
+                {lastTemplate && Object.keys(lastTemplate).length > 0 && (
+                  <TemplatesSection
+                    isLoading={isLastTemplateLoading}
+                    templates={[lastTemplate]}
+                    title="Your Latest Template:"
+                  />
+                )}
+
+                <TemplatesSection
+                  isLoading={isSuggestedTemplateLoading}
+                  templates={suggestedTemplates}
+                  title="You may like this templates:"
+                />
+              </Grid>
+            ) : (
+              <WelcomeCard />
+            )}
+            <CategoriesSection
+              categories={categories}
+              isLoading={isCategoryLoading}
+            />
+          </Grid>
+        </Box>
+      </Layout>
     </>
   );
 };
