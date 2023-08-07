@@ -9,11 +9,13 @@ import {
   Box,
   Divider,
   Grid,
+  IconButton,
   Stack,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import moment from "moment";
-import { ArrowForwardIos, History } from "@mui/icons-material";
+import { ArrowForwardIos, Delete, Edit, History } from "@mui/icons-material";
 import { useRouter } from "next/router";
 import { useGetSparksByMeQuery } from "@/core/api/sparks";
 import Protected from "@/components/Protected";
@@ -34,9 +36,11 @@ const Sparks = () => {
   let sparksCount = 0;
   const sortedTemplates = sparksByTemplate?.map((template) => {
     // Sort the sparks inside each template by current_version.created_at
-    const sortedSparks = [...template.sparks].sort((a, b) => (
-      moment(b.current_version?.created_at).diff(moment(a.current_version?.created_at))
-    ));
+    const sortedSparks = [...template.sparks].sort((a, b) =>
+      moment(b.current_version?.created_at).diff(
+        moment(a.current_version?.created_at)
+      )
+    );
     sparksCount += template.sparks.length;
 
     return {
@@ -117,10 +121,7 @@ const Sparks = () => {
                               </Typography>
                             </Grid>
                             <Grid item xs={11.5}>
-                              <CardTemplate 
-                                template={template} 
-                                noRedirect
-                              />
+                              <CardTemplate template={template} noRedirect />
                             </Grid>
                           </Grid>
                         </AccordionSummary>
@@ -133,10 +134,11 @@ const Sparks = () => {
                         />
                         <AccordionDetails>
                           {template.sparks?.map((spark) => (
-                            <Link key={spark.id}
-                              href={{ 
-                                pathname: `prompt/${template.slug}`, 
-                                query: { 'spark': spark.id }
+                            <Link
+                              key={spark.id}
+                              href={{
+                                pathname: `prompt/${template.slug}`,
+                                query: { spark: spark.id },
                               }}
                               style={{ textDecoration: "none" }}
                             >
@@ -197,6 +199,47 @@ const Sparks = () => {
                                     <History sx={{ fontSize: 18 }} />
                                     {spark.versions.length}
                                   </Stack>
+                                  <Grid>
+                                    <Tooltip title="Edit">
+                                      <IconButton
+                                        sx={{
+                                          bgcolor: "transparent",
+                                          border: "none",
+                                          color: "onSurface",
+                                          "&:hover": {
+                                            bgcolor: "surface.3",
+                                            color: "onSurface",
+                                          },
+                                        }}
+                                        onClick={() => {
+                                          // setSelectedTemplate(template);
+                                          // setModalNew(false);
+                                          // setTemplateFormOpen(true);
+                                        }}
+                                      >
+                                        <Edit />
+                                      </IconButton>
+                                    </Tooltip>
+                                    <Tooltip title="Delete">
+                                      <IconButton
+                                        onClick={
+                                          () => {}
+                                          // openDeletionModal(template)
+                                        }
+                                        sx={{
+                                          bgcolor: "transparent",
+                                          border: "none",
+                                          color: "onSurface",
+                                          "&:hover": {
+                                            bgcolor: "surface.3",
+                                            color: "#ef4444",
+                                          },
+                                        }}
+                                      >
+                                        <Delete />
+                                      </IconButton>
+                                    </Tooltip>
+                                  </Grid>
                                 </Stack>
                               </Stack>
                             </Link>
