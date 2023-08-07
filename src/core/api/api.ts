@@ -19,6 +19,7 @@ export const baseApi = createApi({
     "User",
     "Tags",
     "Engines",
+    "Sparks",
   ],
   endpoints: () => ({}),
 });
