@@ -111,6 +111,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
       icon: <Home />,
       active: pathname == "/",
       external: false,
+      userLoggedIn: false,
     },
     {
       name: "Browse",
@@ -118,6 +119,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
       icon: <Search />,
       active: isExplorePage,
       external: false,
+      userLoggedIn: false,
     },
     {
       name: "My Sparks",
@@ -125,6 +127,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
       icon: <AutoAwesome />,
       active: pathname == "/sparks",
       external: false,
+      userLoggedIn: true,
     },
     {
       name: "Learn",
@@ -132,6 +135,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
       icon: <MenuBookRounded />,
       active: pathname == "/learn",
       external: true,
+      userLoggedIn: false,
     },
   ];
 
@@ -214,7 +218,9 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
               )}
             </IconButton>
           </Grid>
-          {navItems.map((item, i) => (
+          {navItems
+            .filter(item => !item.userLoggedIn || (isValidUser && item.userLoggedIn))
+            .map((item, i) => (
             <Grid key={item.name}>
               <ListItem
                 disablePadding
