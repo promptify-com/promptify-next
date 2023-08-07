@@ -39,8 +39,6 @@ export const ProfileDropDown: React.FC<ProfileDropDownProps> = ({
   const logout = useLogout();
   const setUser = useSetUser();
 
-  const [MenuLinks, setMenuLinks] = useState<MenuType[]>(Menu);
-
   const handleHeaderMenu = (el: MenuType) => {
     onToggle();
     router.push(el.href);
@@ -54,19 +52,10 @@ export const ProfileDropDown: React.FC<ProfileDropDownProps> = ({
     setUser(null);
   };
 
-  useEffect(() => {
-    if (!user?.is_admin) {
-      setMenuLinks((prevMenuLinks) =>
-        prevMenuLinks.filter((el) => el.id !== 3)
-      );
-    }
-  }, [user]);
-
   return (
     <Popper
       open={open}
       anchorEl={anchorElement}
-      // role={undefined}
       placement="bottom-end"
       transition
       disablePortal
@@ -164,7 +153,7 @@ export const ProfileDropDown: React.FC<ProfileDropDownProps> = ({
                   </Box>
                 </Grid>
                 <MenuList autoFocusItem={false} sx={{ width: "100%" }}>
-                  {MenuLinks.map((el, idx) => (
+                  {Menu.map((el, idx) => (
                     <MenuItem
                       key={el.name}
                       onClick={() => handleHeaderMenu(el)}

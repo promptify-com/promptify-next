@@ -1,16 +1,14 @@
 import React from "react";
-import { Avatar, Box, Button, Typography } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
-import { useRouter } from "next/router";
+import { Avatar, Box, Typography } from "@mui/material";
+import { Mode } from "@mui/icons-material";
+import { useDispatch } from "react-redux";
+
 import { useGetCurrentUserQuery } from "@/core/api/user";
 import useToken from "@/hooks/useToken";
-import { Mode } from "@mui/icons-material";
-import BaseButton from "../base/BaseButton";
-import { useDispatch } from "react-redux";
-import { SwitchProfileMode } from "@/core/store/profileSlice";
+import BaseButton from "@/components/base/BaseButton";
+import { showProfileInEditMode } from "@/core/store/profileSlice";
 
 export const Home = () => {
-  const router = useRouter();
   const token = useToken();
   const dispatch = useDispatch();
   const { data: user } = useGetCurrentUserQuery(token);
@@ -105,7 +103,7 @@ export const Home = () => {
         )}
         <Box>
           <BaseButton
-            onClick={() => dispatch(SwitchProfileMode(true))}
+            onClick={() => dispatch(showProfileInEditMode(true))}
             color="primary"
             variant="contained"
             style={{

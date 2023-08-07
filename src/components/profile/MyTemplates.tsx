@@ -61,6 +61,7 @@ export const MyTemplates = () => {
   const [confirmDialog, setConfirmDialog] = useState(false);
   return (
     <Box
+      id="my-templates"
       width={"100%"}
       sx={{
         justifyContent: "center",
