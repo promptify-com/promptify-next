@@ -60,6 +60,7 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
 
   const pathname = router.pathname;
   const splittedPath = pathname.split("/");
+  const isValidUser = Boolean(token && user?.id);
 
   const links = [
     {
@@ -68,6 +69,7 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
       href: "/",
       active: pathname == "/",
       external: false,
+      userLoggedIn: false,
     },
     {
       label: "Browse",
@@ -75,6 +77,7 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
       href: "/explore",
       active: splittedPath[1] == "explore",
       external: false,
+      userLoggedIn: false,
     },
     {
       label: "My Sparks",
@@ -82,6 +85,7 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
       href: "/sparks",
       active: pathname == "/sparks",
       external: false,
+      userLoggedIn: true,
     },
     {
       label: "Learn",
@@ -89,6 +93,7 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
       href: "https://promptify.com",
       active: pathname == "/learn",
       external: true,
+      userLoggedIn: false,
     },
   ];
 
@@ -152,11 +157,11 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
           >
             {type == "navigation" ? (
               <Box>
-                {user && token && (
+                {isValidUser && (
                   <Avatar
                     onClick={() => setSidebarType("profile")}
-                    src={user.avatar || user.first_name}
-                    alt={user.first_name}
+                    src={user?.avatar || user?.first_name}
+                    alt={user?.first_name}
                     sx={{
                       ml: "auto",
                       cursor: "pointer",
@@ -243,7 +248,9 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
                   padding: "0px 22px",
                 }}
               >
-                {links.map((link) => (
+                {links
+                  .filter(link => !link.userLoggedIn || (isValidUser && link.userLoggedIn))
+                  .map((link) => (
                   <ListItem
                     key={link.label}
                     disablePadding
@@ -261,12 +268,12 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
                 ))}
               </List>
               <Divider sx={{ mt: 1 }} />
-              {user && token ? (
+              {isValidUser ? (
                 <Box ml={1}>
                   <Collections
                     favCollection={collections}
                     collectionLoading={isCollectionsLoading}
-                    isValidUser={!!user?.id}
+                    isValidUser={isValidUser}
                     sidebarOpen
                   />
                 </Box>
