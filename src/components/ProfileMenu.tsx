@@ -43,12 +43,12 @@ export const ProfileDropDown: React.FC<ProfileDropDownProps> = ({
     onToggle();
     router.push(el.href);
   };
-  const handleLogout = () => {
+  const handleLogout = async () => {
     onClose();
     if (onCloseSidebar) {
       onCloseSidebar();
     }
-    logout();
+    await logout();
     setUser(null);
   };
 
