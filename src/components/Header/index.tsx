@@ -111,6 +111,12 @@ export const Header: React.FC<HeaderProps> = ({
           sx={{}}
         >
           <LogoApp width={23} />
+          <Typography
+            sx={{fontSize: 10, mt: 0.2, ml: 0.5}}
+            fontWeight={'bold'}
+          >
+            beta
+          </Typography>
         </Grid>
         <Grid
           display={{ xs: "flex", md: "none" }}
