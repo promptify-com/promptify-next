@@ -108,8 +108,9 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
   const handleHeaderMenu = (el: MenuType) => {
     router.push(el.href);
   };
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
+    onClose();
     setUser(null);
   };
 
