@@ -97,12 +97,11 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   const [newExecutionId, setNewExecutionId] = useState<number | null>(null);
   const [resPrompts, setResPrompts] = useState<ResPrompt[]>([]);
   const [lastExecution, setLastExecution] = useState<ResPrompt[] | null>(null);
-  const [resInputs, setResInputs] = useState<ResInputs[]>([]);
-  const [resOverrides, setResOverrides] = useState<ResOverrides[]>([]);
+  const [nodeInputs, setNodeInputs] = useState<ResInputs[]>([]);
+  const [nodeParams, setNodeParams] = useState<ResOverrides[]>([]);
   const [errors, setErrors] = useState<InputsErrors>({});
   const [shownInputs, setShownInputs] = useState<Input[] | null>(null);
   const [shownParams, setShownParams] = useState<Param[] | null>(null);
-  const [allowGenerate, setAllowGenerate] = useState<boolean>(false);
   const [sparkFormOpen, setSparkFormOpen] = useState<boolean>(false);
 
   const setDefaultResPrompts = () => {
@@ -119,19 +118,28 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     setResPrompts([...tempArr]);
   };
 
+  // Set default inputs values from selected execution parameters
+  // Fetched execution also provides old / no more existed inputs values, needed to filter depending on shown inputs
   useEffect(() => {
-    if (selectedExecution?.parameters) {
-      const inputs = Object.entries(selectedExecution.parameters).map(
-        ([promptId, values]) => ({
-          id: +promptId,
-          inputs: values,
-        })
-      );
-      setResInputs(inputs);
+    if (selectedExecution?.parameters && shownInputs) {
+      const fetchedInputs = Object.values(selectedExecution.parameters).map(param => {
+        let filteredFields = {} as ResInputs;
+        for (const input of shownInputs) {
+          if (param[input.name]) {
+            filteredFields = {
+              id: input.prompt,
+              inputs: param || {}
+            };
+          }
+        }
+        
+        return filteredFields;
+      });
+      setNodeInputs(fetchedInputs);
     } else {
-      setResInputs([]);
+      setNodeInputs([]);
     }
-  }, [shownInputs?.length, selectedExecution]);
+  }, [selectedExecution, shownInputs]);
 
   useEffect(() => {
     if (selectedExecution?.contextual_overrides) {
@@ -141,25 +149,25 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
           contextual_overrides: values,
         }))
         .filter((override) => override.contextual_overrides.length > 0);
-      setResOverrides(overrides);
+      setNodeParams(overrides);
     }
   }, [selectedExecution]);
 
   const changeResPrompts = () => {
     const tempArr = [...resPrompts];
 
-    if (resInputs.length > 0) {
+    if (nodeInputs.length > 0) {
       tempArr.forEach((prompt, index) => {
-        const obj = resInputs.find((inputs) => inputs.id === prompt.prompt);
+        const obj = nodeInputs.find((inputs) => inputs.id === prompt.prompt);
         if (obj) {
           tempArr[index].prompt_params = obj.inputs;
         }
       });
     }
 
-    if (resOverrides.length > 0) {
+    if (nodeParams.length > 0) {
       tempArr.forEach((prompt, index) => {
-        const obj = resOverrides.find(
+        const obj = nodeParams.find(
           (overrides) => overrides.id === prompt.prompt
         );
         if (obj) {
@@ -170,15 +178,6 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
     setResPrompts([...tempArr]);
   };
-
-  // Prompts params values tracker to validate generating allowed or not
-  useEffect(() => {
-    if (Object.keys(isInputsFilled()).length > 0) {
-      setAllowGenerate(false);
-    } else {
-      setAllowGenerate(true);
-    }
-  }, [resInputs]);
 
   // Handling the case of no spark selected. Wait for new spark to be created/selected, then generate
   useEffect(() => {
@@ -209,15 +208,15 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   };
 
   const validateInputs = () => {
-    const emptyInputs = isInputsFilled();
+    const unFilledInputs = isInputsFilled();
 
     if (!token) {
       setErrors({});
       return true;
     }
 
-    if (Object.keys(emptyInputs).length > 0) {
-      setErrors({ ...emptyInputs });
+    if (Object.keys(unFilledInputs).length > 0) {
+      setErrors({ ...unFilledInputs });
       return false;
     }
 
@@ -404,7 +403,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     if (resPrompts.length > 0) {
       changeResPrompts();
     }
-  }, [resInputs, resOverrides]);
+  }, [nodeInputs, nodeParams]);
 
   useEffect(() => {
     removeDuplicates();
@@ -438,17 +437,6 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     setShownParams(Array.from(shownParams.values()));
   };
 
-  // Keyboard shortcuts
-  const handleKeyboard = (e: KeyboardEvent) => {
-    // prevent trigger if typing inside input
-    const target = e.target as HTMLElement;
-    if (!["INPUT", "TEXTAREA"].includes(target.tagName)) {
-      if (e.shiftKey && e.code === "KeyR" && lastExecution) {
-        generateExecution(lastExecution);
-      }
-    }
-  };
-
   const handlePinSpark = async () => {
     if (selectedSpark === null) return;
 
@@ -479,11 +467,26 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     }
   };
 
+  // Keyboard shortcuts
+  const handleKeyboard = (e: KeyboardEvent) => {
+    // prevent trigger if typing inside input
+    const target = e.target as HTMLElement;
+    if (!["INPUT", "TEXTAREA"].includes(target.tagName)) {
+      if (e.shiftKey && e.code === "KeyR" && lastExecution) {
+        generateExecution(lastExecution);
+      }
+    }
+  };
+  
   useEffect(() => {
     window.addEventListener("keydown", handleKeyboard);
     return () => window.removeEventListener("keydown", handleKeyboard);
   }, [handleKeyboard]);
 
+  const filledForm = nodeInputs
+    .filter(nodeInput => nodeInput.inputs)
+    .every(nodeInput => Object.values(nodeInput.inputs).every(input => input));
+  
   return (
     <Box
       sx={{
@@ -585,8 +588,8 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
                   key={i}
                   promptId={input.prompt}
                   inputs={[input]}
-                  resInputs={resInputs}
-                  setResInputs={setResInputs}
+                  resInputs={nodeInputs}
+                  setResInputs={setNodeInputs}
                   errors={errors}
                 />
               ))}
@@ -595,8 +598,8 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
                   key={i}
                   params={[param.param]}
                   promptId={param.prompt}
-                  resOverrides={resOverrides}
-                  setResOverrides={setResOverrides}
+                  resOverrides={nodeParams}
+                  setResOverrides={setNodeParams}
                 />
               ))}
             </React.Fragment>
@@ -632,7 +635,9 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
                   borderColor: "transparent",
                 },
               }}
-              disabled={!token ? false : !allowGenerate || isGenerating}
+              disabled={
+                !token ? false : (isGenerating ? true : !filledForm)
+              }
               onClick={validateAndGenerateExecution}
             >
               {token ? (
