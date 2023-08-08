@@ -91,6 +91,13 @@ export const LoginLayout: React.FC<IProps> = ({
             >
               Promptify
             </Typography>
+            <Typography
+              sx={{fontSize: 10}}
+              mt={0.5}
+              fontWeight={'bold'}
+            >
+              beta
+            </Typography>
           </Grid>
           <Grid
             sx={{
