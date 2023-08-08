@@ -8,56 +8,77 @@ import { IContinueWithSocialMediaResponse } from "@/common/types";
 import { authClient, client } from "@/common/axios";
 import { Layout } from "@/layout";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
-import { categoriesApi } from "@/core/api/categories";
+import { categoriesApi, useGetCategoriesQuery } from "@/core/api/categories";
 import { CategoriesSection } from "@/components/explorer/CategoriesSection";
 import { useGetCurrentUserQuery, userApi } from "@/core/api/user";
 import { WelcomeCard } from "@/components/homepage/WelcomeCard";
 import { PageLoading } from "@/components/PageLoading";
 import { AppDispatch, wrapper } from "@/core/store";
 import { Category } from "@/core/api/dto/templates";
-import {
-  CODE_TOKEN_ENDPOINT,
-  doPostLogin,
-  postLogin,
-} from "@/utils/loginUtils";
+import { useRouter } from "next/router";
 import {
   useGetLastTemplatesQuery,
   useGetTemplatesSuggestedQuery,
 } from "@/core/api/templates";
-import { Token } from "@mui/icons-material";
+import { getPathURL, saveToken } from "@/common/utils";
 
-interface HomePageProps {
-  categories: Category[];
-  isCategoryLoading: boolean;
-}
-
-const HomePage: NextPage<HomePageProps> = ({
-  categories,
-  isCategoryLoading,
-}) => {
+const HomePage: NextPage = () => {
   const token = useToken();
-  const [trigger, { data: user, isLoading: _userLoading }] =
+  const router = useRouter();
+  const path = getPathURL();
+
+  const [trigger, { data: user, isLoading: userLoading }] =
     userApi.endpoints.getCurrentUser.useLazyQuery();
   useEffect(() => {
     if (token) {
       trigger(token);
     }
   }, [token]);
+
+  const { data: categories, isLoading: isCategoryLoading } =
+    useGetCategoriesQuery();
   const { data: lastTemplate, isLoading: isLastTemplateLoading } =
-    useGetLastTemplatesQuery();
+    useGetLastTemplatesQuery(undefined, { skip: !user });
   const { data: suggestedTemplates, isLoading: isSuggestedTemplateLoading } =
-    useGetTemplatesSuggestedQuery();
+    useGetTemplatesSuggestedQuery(undefined, { skip: !user });
 
-  const [isLoading, setIsLoading] = useState(false);
+  const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
 
-  const preLogin = () => {
-    setIsLoading(true);
+  const postLogin = (response: IContinueWithSocialMediaResponse | null) => {
+    if (!response) return;
+    if (response?.created) {
+      router.push("/signup");
+    } else {
+      if (path) {
+        trigger(token);
+        router.push(path);
+      }
+    }
+  };
+
+  const doPostLogin = (
+    r: AxiosResponse<IContinueWithSocialMediaResponse>,
+    savedToken: string | null | undefined
+  ) => {
+    const { token } = r.data;
+    if (!!savedToken && token !== savedToken) {
+      if (path) {
+        router.push(path);
+        trigger(token);
+
+        localStorage.setItem("from", "alert");
+      }
+    } else {
+      saveToken(r.data);
+      trigger(token);
+
+      postLogin(r.data);
+    }
   };
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const authorizationCode = urlParams.get("code");
-    preLogin();
 
     if (!!authorizationCode && !token) {
       client
@@ -65,9 +86,9 @@ const HomePage: NextPage<HomePageProps> = ({
           provider: "microsoft",
           code: authorizationCode,
         })
-        .then((r: AxiosResponse<IContinueWithSocialMediaResponse>) =>
-          doPostLogin(r, token)
-        )
+        .then((r: AxiosResponse<IContinueWithSocialMediaResponse>) => {
+          doPostLogin(r, token);
+        })
         .catch(() => postLogin(null));
     } else if (authorizationCode && !!token) {
       authClient
@@ -75,9 +96,9 @@ const HomePage: NextPage<HomePageProps> = ({
           provider: "microsoft",
           code: authorizationCode,
         })
-        .then((r: AxiosResponse<IContinueWithSocialMediaResponse>) =>
-          doPostLogin(r, token)
-        )
+        .then((r: AxiosResponse<IContinueWithSocialMediaResponse>) => {
+          doPostLogin(r, token);
+        })
         .catch(() => postLogin(null));
     }
   }, []);
@@ -94,7 +115,7 @@ const HomePage: NextPage<HomePageProps> = ({
               padding: { xs: "16px", md: "32px" },
             }}
           >
-            {token && user && !isLastTemplateLoading ? (
+            {token && user ? (
               <Grid flexDirection="column" display={"flex"} gap={"56px"}>
                 <Grid
                   sx={{
@@ -143,22 +164,13 @@ const HomePage: NextPage<HomePageProps> = ({
     </>
   );
 };
-
-HomePage.getInitialProps = wrapper.getInitialPageProps(
-  ({ dispatch }: { dispatch: AppDispatch }) =>
-    async () => {
-      const { data: categories, isLoading: isCategoryLoading } = await dispatch(
-        categoriesApi.endpoints.getCategories.initiate()
-      );
-
-      return {
-        title: "Promptify | Boost Your Creativity",
-        description:
-          "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
-        categories,
-        isCategoryLoading,
-      };
-    }
-);
-
+export async function getServerSideProps() {
+  return {
+    props: {
+      title: "Promptify | Boost Your Creativity",
+      description:
+        "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
+    },
+  };
+}
 export default HomePage;
