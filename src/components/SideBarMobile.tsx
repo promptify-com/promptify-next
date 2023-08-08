@@ -144,6 +144,12 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
             mt={1}
           >
             <LogoApp width={23} color="#56575c" />
+            <Typography
+              sx={{fontSize: 10, mt: 0.2, ml: 0.5}}
+              fontWeight={'bold'}
+            >
+              beta
+            </Typography>
           </Grid>
           <Grid
             display={{ xs: "flex", md: "none" }}
