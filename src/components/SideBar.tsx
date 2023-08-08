@@ -87,7 +87,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
   const isExplorePage = splittedPath[1] == "explore";
 
   const { data: user, isLoading: userLoading } = useGetCurrentUserQuery(token);
-  const isValidUser = Boolean(user && user.id);
+  const isValidUser = Boolean(user && token);
 
   const { data: collections, isLoading: isCollectionsLoading } =
     useGetCollectionTemplatesQuery(user?.favorite_collection_id as number, {
