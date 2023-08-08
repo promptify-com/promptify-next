@@ -26,12 +26,16 @@ export const getToken = () => {
 export const deleteToken = () => localStorage.removeItem("token");
 
 export const savePathURL = (path: string) => {
-  localStorage.setItem("path", path);
+  if (typeof window !== "undefined") {
+    localStorage.setItem("path", path);
+  }
 };
 
 export const getPathURL = () => {
-  const path = localStorage.getItem("path");
-  return path || null;
+  if (typeof window !== "undefined") {
+    const path = localStorage.getItem("path") || null;
+    return path;
+  }
 };
 
 export const deletePathURL = () => localStorage.removeItem("path");
