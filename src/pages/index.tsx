@@ -25,6 +25,8 @@ interface HomePageProps {
   isCategoryLoading: boolean;
 }
 
+const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
+
 const HomePage: NextPage<HomePageProps> = ({
   categories,
   isCategoryLoading,
@@ -47,8 +49,6 @@ const HomePage: NextPage<HomePageProps> = ({
     useGetLastTemplatesQuery(undefined, { skip: !isValidUser });
   const { data: suggestedTemplates, isLoading: isSuggestedTemplateLoading } =
     useGetTemplatesSuggestedQuery(undefined, { skip: !isValidUser });
-
-  const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
 
   const postLogin = (response: IContinueWithSocialMediaResponse | null) => {
     if (!response) return;
@@ -88,15 +88,6 @@ const HomePage: NextPage<HomePageProps> = ({
 
     if (!!authorizationCode && !token) {
       client
-        .post(CODE_TOKEN_ENDPOINT, {
-          provider: "microsoft",
-          code: authorizationCode,
-        })
-        .then((r: AxiosResponse<IContinueWithSocialMediaResponse>) => {
-          doPostLogin(r, token);
-        })
-        .catch(() => postLogin(null));
-      authClient
         .post(CODE_TOKEN_ENDPOINT, {
           provider: "microsoft",
           code: authorizationCode,
