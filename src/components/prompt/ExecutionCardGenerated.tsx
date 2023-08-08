@@ -1,9 +1,10 @@
 import React, { useEffect, useRef } from "react";
-import { Box, Stack, Typography } from "@mui/material";
+import { Box, Stack, Tooltip, Typography } from "@mui/material";
 import { Subtitle } from "@/components/blocks";
 import { getMarkdownFromString } from "@/common/helpers/getMarkdownFromString";
 import { PromptLiveResponse } from "@/common/types/prompt";
 import { Templates } from "@/core/api/dto/templates";
+import { Error } from "@mui/icons-material";
 
 interface Props {
   execution: PromptLiveResponse;

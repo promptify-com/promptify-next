@@ -1,9 +1,10 @@
 import React, { useEffect, useRef } from "react";
-import { Box, Stack, Typography } from "@mui/material";
+import { Box, Stack, Tooltip, Typography } from "@mui/material";
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { Subtitle } from "@/components/blocks";
 import { getMarkdownFromString } from "@/common/helpers/getMarkdownFromString";
 import { highlightSearch } from "@/common/helpers/highlightSearch";
+import { Error } from "@mui/icons-material";
 
 interface Props {
   execution: TemplatesExecutions;
@@ -78,6 +79,23 @@ export const ExecutionCard: React.FC<Props> = ({
     }
   };
 
+  const executionError = (error: string|undefined) => {
+    return (
+      <Tooltip title={error} placement="right" arrow
+        componentsProps={{ 
+          tooltip: { 
+            sx: { bgcolor: "error.main", color: "onError", fontSize: 10, fontWeight: 500 } 
+          },
+          arrow: { 
+            sx: { color: "error.main" } 
+          }
+        }}
+      >
+        <Error sx={{ color: "error.main", width: 20, height: 20 }} />
+      </Tooltip>
+    )
+  }
+
   return (
     <Stack
       gap={1}
@@ -104,6 +122,7 @@ export const ExecutionCard: React.FC<Props> = ({
                 sx={{ fontSize: 24, fontWeight: 400, color: "onSurface" }}
               >
                 {prompt.title}
+                {exec.errors && executionError(exec.errors)}
               </Subtitle>
               {/* is Text Output */}
               {!isImageOutput(exec.output) && (
