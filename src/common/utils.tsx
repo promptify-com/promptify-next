@@ -15,23 +15,27 @@ export const saveToken = ({ token }: TokenResponse) => {
 };
 
 export const getToken = () => {
+  let token = null;
   if (typeof window !== "undefined") {
-    // Perform localStorage action
-    const token = localStorage.getItem("token");
-
-    return token || null;
+    token = localStorage.getItem("token");
   }
+  return token;
 };
 
 export const deleteToken = () => localStorage.removeItem("token");
 
 export const savePathURL = (path: string) => {
-  localStorage.setItem("path", path);
+  if (typeof window !== "undefined") {
+    localStorage.setItem("path", path);
+  }
 };
 
 export const getPathURL = () => {
-  const path = localStorage.getItem("path");
-  return path || null;
+  let path = null;
+  if (typeof window !== "undefined") {
+    path = localStorage.getItem("path");
+  }
+  return path;
 };
 
 export const deletePathURL = () => localStorage.removeItem("path");
