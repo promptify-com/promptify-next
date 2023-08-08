@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { FetchLoading } from "@/components/FetchLoading";
 import CardTemplate from "@/components/common/cards/CardTemplate";
 import { Layout } from "@/layout";
@@ -9,20 +9,30 @@ import {
   Box,
   Divider,
   Grid,
+  IconButton,
   Stack,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import moment from "moment";
-import { ArrowForwardIos, History } from "@mui/icons-material";
+import { ArrowForwardIos, Delete, Edit, History } from "@mui/icons-material";
 import { useGetSparksByMeQuery } from "@/core/api/sparks";
 import Protected from "@/components/Protected";
 import Link from "next/link";
+import SparkForm from "@/components/prompt/SparkForm";
+import { Spark } from "@/core/api/dto/templates";
 
 const Sparks = () => {
-  const [expanded, setExpanded] = React.useState<string | false>(false);
+  const [expanded, setExpanded] = useState<string | false>(false);
+  const [sparkFormOpen, setSparkFormOpen] = useState(false);
+  const [sparkId, setSparkId] = useState<number>();
+  const [spartTitle, setSparkTitle] = useState<string>();
 
-  const { data: sparksByTemplate, isLoading: isSparksByTemplateLoading } =
-    useGetSparksByMeQuery();
+  const {
+    data: sparksByTemplate,
+    isLoading: isSparksByTemplateLoading,
+    refetch: refetchTemplateSparks,
+  } = useGetSparksByMeQuery();
 
   const toggleExpand =
     (panel: string) => (e: React.SyntheticEvent, newExpanded: boolean) => {
@@ -130,76 +140,148 @@ const Sparks = () => {
                         />
                         <AccordionDetails>
                           {template.sparks?.map((spark) => (
-                            <Link
+                            <Box
                               key={spark.id}
-                              href={{
-                                pathname: `prompt/${template.slug}`,
-                                query: { spark: spark.id },
-                              }}
-                              style={{ textDecoration: "none" }}
+                              display={"flex"}
+                              alignItems={"center"}
+                              justifyContent={"space-between"}
                             >
-                              <Stack
-                                direction={"row"}
-                                justifyContent={"space-between"}
-                                alignItems={"center"}
-                                gap={1}
-                                sx={{
-                                  p: "8px 16px",
-                                  cursor: "pointer",
-                                  ":hover": { bgcolor: "action.hover" },
+                              <Link
+                                href={{
+                                  pathname: `prompt/${template.slug}`,
+                                  query: { spark: spark.id },
+                                }}
+                                style={{
+                                  textDecoration: "none",
+                                  flex: 1,
+                                  borderRadius: "8px",
+                                  overflow: "hidden",
                                 }}
                               >
-                                <Typography
-                                  fontSize={14}
-                                  fontWeight={500}
-                                  color={"onSurface"}
-                                  letterSpacing={0.46}
-                                  dangerouslySetInnerHTML={{
-                                    __html:
-                                      spark.initial_title.length > 150
-                                        ? `${spark.initial_title?.slice(
-                                            0,
-                                            150 - 1
-                                          )}...`
-                                        : spark.initial_title,
-                                  }}
-                                />
                                 <Stack
                                   direction={"row"}
+                                  justifyContent={"space-between"}
                                   alignItems={"center"}
                                   gap={1}
+                                  sx={{
+                                    p: "8px 16px",
+                                    cursor: "pointer",
+                                    ":hover": { bgcolor: "action.hover" },
+                                  }}
                                 >
                                   <Typography
-                                    fontSize={12}
-                                    fontWeight={400}
+                                    fontSize={14}
+                                    fontWeight={500}
                                     color={"onSurface"}
-                                    sx={{ opacity: 0.5 }}
-                                  >
-                                    {spark.current_version
-                                      ? moment(
-                                          spark.current_version.created_at
-                                        ).fromNow()
-                                      : "-"}
-                                  </Typography>
+                                    letterSpacing={0.46}
+                                    dangerouslySetInnerHTML={{
+                                      __html:
+                                        spark.initial_title.length > 150
+                                          ? `${spark.initial_title?.slice(
+                                              0,
+                                              150 - 1
+                                            )}...`
+                                          : spark.initial_title,
+                                    }}
+                                  />
                                   <Stack
                                     direction={"row"}
                                     alignItems={"center"}
-                                    gap={0.5}
-                                    sx={{
-                                      fontSize: 13,
-                                      fontWeight: 500,
-                                      color: "onSurface",
-                                      p: "0 6px",
-                                    }}
+                                    gap={1}
                                   >
-                                    <History sx={{ fontSize: 18 }} />
-                                    {spark.versions.length}
+                                    <Typography
+                                      fontSize={12}
+                                      fontWeight={400}
+                                      color={"onSurface"}
+                                      sx={{ opacity: 0.5 }}
+                                    >
+                                      {spark.current_version
+                                        ? moment(
+                                            spark.current_version.created_at
+                                          ).fromNow()
+                                        : "-"}
+                                    </Typography>
+                                    <Stack
+                                      direction={"row"}
+                                      alignItems={"center"}
+                                      gap={1}
+                                      sx={{
+                                        fontSize: 13,
+                                        fontWeight: 500,
+                                        color: "onSurface",
+                                        p: "0 6px",
+                                      }}
+                                    >
+                                      <Grid
+                                        display={"flex"}
+                                        alignItems={"center"}
+                                        gap={0.5}
+                                      >
+                                        <History sx={{ fontSize: 18 }} />
+                                        {spark.versions.length}
+                                      </Grid>
+                                    </Stack>
                                   </Stack>
                                 </Stack>
-                              </Stack>
-                            </Link>
+                              </Link>
+                              <Grid
+                                display={"flex"}
+                                alignItems={"center"}
+                                gap={1}
+                              >
+                                <Tooltip title="Edit">
+                                  <IconButton
+                                    size="small"
+                                    sx={{
+                                      bgcolor: "surface.2",
+                                      border: "none",
+                                      color: "onSurface",
+                                      "&:hover": {
+                                        bgcolor: "surface.3",
+                                        color: "onSurface",
+                                      },
+                                    }}
+                                    onClick={() => {
+                                      setSparkFormOpen(true);
+                                      setSparkId(spark.id);
+                                      setSparkTitle(spark.initial_title);
+                                    }}
+                                  >
+                                    <Edit />
+                                  </IconButton>
+                                </Tooltip>
+                                <Tooltip title="Delete">
+                                  <IconButton
+                                    size="small"
+                                    onClick={() => {}}
+                                    sx={{
+                                      bgcolor: "surface.2",
+                                      border: "none",
+                                      color: "onSurface",
+                                      "&:hover": {
+                                        bgcolor: "surface.3",
+                                        color: "#ef4444",
+                                      },
+                                    }}
+                                  >
+                                    <Delete />
+                                  </IconButton>
+                                </Tooltip>
+                              </Grid>
+                            </Box>
                           ))}
                         </AccordionDetails>
+                        <SparkForm
+                          type="edit"
+                          isOpen={sparkFormOpen}
+                          close={() => setSparkFormOpen(false)}
+                          sparkId={sparkId}
+                          currentSparkTitle={spartTitle}
+                          templateId={template?.id}
+                          onSparkCreated={() => {
+                            refetchTemplateSparks();
+                          }}
+                        />
                       </Accordion>
                     ))
                   ) : (
