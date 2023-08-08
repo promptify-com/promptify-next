@@ -27,7 +27,7 @@ const HomePage: NextPage = () => {
   const router = useRouter();
   const path = getPathURL();
 
-  const [trigger, { data: user, isLoading: userLoading }] =
+  const [trigger, { data: user, isLoading: _userLoading }] =
     userApi.endpoints.getCurrentUser.useLazyQuery();
   useEffect(() => {
     if (token) {
@@ -35,12 +35,15 @@ const HomePage: NextPage = () => {
     }
   }, [token]);
 
+  const isValidUser = Boolean(user?.id && token);
+
   const { data: categories, isLoading: isCategoryLoading } =
     useGetCategoriesQuery();
+
   const { data: lastTemplate, isLoading: isLastTemplateLoading } =
-    useGetLastTemplatesQuery(undefined, { skip: !user });
+    useGetLastTemplatesQuery(undefined, { skip: !isValidUser });
   const { data: suggestedTemplates, isLoading: isSuggestedTemplateLoading } =
-    useGetTemplatesSuggestedQuery(undefined, { skip: !user });
+    useGetTemplatesSuggestedQuery(undefined, { skip: !isValidUser });
 
   const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
 
