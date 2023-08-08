@@ -104,7 +104,7 @@ export const ProfileDropDown: React.FC<ProfileDropDownProps> = ({
                 >
                   <Box display={"flex"} justifyContent={"center"}>
                     <Avatar
-                      src={user?.avatar || user?.first_name}
+                      src={user?.avatar}
                       alt={user?.first_name}
                       sizes="40px"
                       sx={{
