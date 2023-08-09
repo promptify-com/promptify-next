@@ -35,6 +35,12 @@ const SparksSection: React.FC<SparksSectionProps> = ({ templates }) => {
     (panel: string) => (e: React.SyntheticEvent, newExpanded: boolean) => {
       setExpanded(newExpanded ? panel : false);
     };
+
+  function truncateTitle(title: string) {
+    return title && title.length > 150
+      ? `${title.slice(0, 150 - 1)}...`
+      : title;
+  }
   return (
     <Stack gap={1}>
       {templates.map((template) => (
@@ -133,10 +139,7 @@ const SparksSection: React.FC<SparksSectionProps> = ({ templates }) => {
                       color={"onSurface"}
                       letterSpacing={0.46}
                       dangerouslySetInnerHTML={{
-                        __html:
-                          spark.initial_title.length > 150
-                            ? `${spark.initial_title?.slice(0, 150 - 1)}...`
-                            : spark.initial_title,
+                        __html: truncateTitle(spark.initial_title),
                       }}
                     />
                     <Stack direction={"row"} alignItems={"center"} gap={1}>
@@ -227,10 +230,8 @@ const SparksSection: React.FC<SparksSectionProps> = ({ templates }) => {
                 open={dialogDeleteOpen}
                 dialogTitle="Delete Spark"
                 dialogContentText={`Are you sure you want to delete ${
-                  activeSpark.initial_title.length > 150
-                    ? `${activeSpark.initial_title?.slice(0, 150 - 1)}...`
-                    : activeSpark.initial_title
-                } Spark ?`}
+                  truncateTitle(activeSpark?.initial_title) || "this"
+                } Spark?`}
                 onClose={() => setDialogDeleteOpen(false)}
                 onSubmit={() => {
                   deleteSpark(activeSpark.id);
