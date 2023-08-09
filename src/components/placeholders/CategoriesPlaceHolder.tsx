@@ -1,6 +1,6 @@
 import { Box, Grid, Skeleton } from "@mui/material";
 
-export default function CategoryPlaceholder() {
+export default function CategoriesPlaceholder() {
   const numSkeletons = 12;
 
   return Array.from({ length: numSkeletons }).map((_, index) => (
