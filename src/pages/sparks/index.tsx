@@ -18,7 +18,7 @@ import { ArrowForwardIos, History } from "@mui/icons-material";
 import { useGetSparksByMeQuery } from "@/core/api/sparks";
 import Protected from "@/components/Protected";
 import Link from "next/link";
-import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
+import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceholder";
 
 const Sparks = () => {
   const [expanded, setExpanded] = React.useState<string | false>(false);
