@@ -1,4 +1,6 @@
-import { Spark, TemplateExecutionsDisplay } from "@/core/api/dto/templates";
+import React, { useState } from "react";
+import moment from "moment";
+import Link from "next/link";
 import { ArrowForwardIos, Delete, Edit, History } from "@mui/icons-material";
 import {
   Accordion,
@@ -12,10 +14,8 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import { Spark, TemplateExecutionsDisplay } from "@/core/api/dto/templates";
 import CardTemplate from "./common/cards/CardTemplate";
-import moment from "moment";
-import Link from "next/link";
 import SparkForm from "./prompt/SparkForm";
 import { DeleteDialog } from "./dialog/DeleteDialog";
 import { useDeleteSparkMutation } from "@/core/api/sparks";
@@ -87,7 +87,7 @@ const SparksSection: React.FC<SparksSectionProps> = ({ templates }) => {
             <Grid container alignItems={"center"}>
               <Grid item xs={0.5}>
                 <Typography fontSize={14} fontWeight={500} color={"onSurface"}>
-                  {template.sparks?.length}
+                  {template.sparks?.length ?? 0}
                 </Typography>
               </Grid>
               <Grid item xs={11.5}>
