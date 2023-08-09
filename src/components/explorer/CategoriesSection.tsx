@@ -3,6 +3,8 @@ import { FetchLoading } from "@/components/FetchLoading";
 import { CategoryCard } from "@/components/common/cards/CardCategory";
 import { Category } from "@/core/api/dto/templates";
 
+import CategoriesPlaceholder from "@/components/placeholders/CategoriesPlaceHolder";
+
 interface CategoriesSectionProps {
   isLoading: boolean;
   categories: Category[] | undefined;
@@ -17,14 +19,17 @@ export const CategoriesSection: React.FC<CategoriesSectionProps> = ({
       <Box gap={"16px"} display={"flex"} flexDirection={"column"}>
         {!isLoading && <Typography fontSize={19}> Browse Category </Typography>}
         {isLoading && (
-          <Box
-            minHeight={"40vh"}
+          <Grid
             display={"flex"}
-            alignItems={"center"}
-            justifyContent={"center"}
+            flexDirection={"row"}
+            gap={"16px"}
+            alignItems={"flex-start"}
+            alignContent={"flex-start"}
+            alignSelf={"stretch"}
+            flexWrap={{ xs: "nowrap", md: "wrap" }}
           >
-            <FetchLoading />
-          </Box>
+            <CategoriesPlaceholder />
+          </Grid>
         )}
         <Grid
           display={"flex"}
@@ -39,7 +44,8 @@ export const CategoriesSection: React.FC<CategoriesSectionProps> = ({
             WebkitOverflowScrolling: { xs: "touch", md: "initial" },
           }}
         >
-          {categories?.filter((mainCat) => !mainCat.parent)
+          {categories
+            ?.filter((mainCat) => !mainCat.parent)
             .map((category) => (
               <Grid key={category.id}>
                 <CategoryCard

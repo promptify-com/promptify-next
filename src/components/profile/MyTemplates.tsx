@@ -30,6 +30,8 @@ import { modalStyle } from "../modals/styles";
 import TemplateForm from "../common/forms/TemplateForm";
 import TemplateImportModal from "../modals/TemplateImportModal";
 
+import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
+
 export const MyTemplates = () => {
   const [trigger, { data: templates, isLoading: isTemplatesLoading }] =
     userApi.endpoints.getUserTemplates.useLazyQuery();
@@ -92,7 +94,13 @@ export const MyTemplates = () => {
         </Typography>
       </Box>
       {isTemplatesLoading ? (
-        <PageLoading />
+        <Grid container spacing={2}>
+          {Array.from({ length: 6 }).map((_, index) => (
+            <Grid key={index} item xs={12}>
+              <CardTemplatePlaceholder />
+            </Grid>
+          ))}
+        </Grid>
       ) : (
         <Box
           display={"flex"}

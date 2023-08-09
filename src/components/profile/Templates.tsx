@@ -32,6 +32,8 @@ import { useDeleteTemplateMutation } from "@/core/api/templates";
 import BaseButton from "../base/BaseButton";
 import { modalStyle } from "../modals/styles";
 
+import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
+
 export const AllTemplates = () => {
   const [templateImportOpen, setTemplateImportOpen] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<Templates | null>(
@@ -126,8 +128,14 @@ export const AllTemplates = () => {
           </BaseButton>
         </Stack>
       </Box>
-      {isFetching ? (
-        <PageLoading />
+      {!isFetching ? (
+        <Grid container spacing={2}>
+          {Array.from({ length: 6 }).map((_, index) => (
+            <Grid key={index} item xs={12}>
+              <CardTemplatePlaceholder />
+            </Grid>
+          ))}
+        </Grid>
       ) : (
         <Box
           display={"flex"}

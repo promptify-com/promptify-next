@@ -47,6 +47,8 @@ import { useGetSparksByTemplateQuery } from "@/core/api/sparks";
 import moment from "moment";
 import SparkForm from "@/components/prompt/SparkForm";
 
+import PromptPlaceholder from "@/components/placeholders/PromptPlaceHolder";
+
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -296,7 +298,7 @@ const Prompt = () => {
       <ThemeProvider theme={dynamicTheme}>
         <Layout>
           {!templateData || isLoadingTemplate || isFetchingTemplate ? (
-            <PageLoading />
+            <PromptPlaceholder />
           ) : (
             <Grid
               mt={{ xs: 7, md: 0 }}

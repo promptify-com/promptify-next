@@ -9,6 +9,8 @@ import useToken from "@/hooks/useToken";
 import { LoginLayout } from "@/components/login/LoginLayout";
 import { useRouter } from "next/router";
 
+import SigninPlaceholder from "@/components/placeholders/SigninPlaceholder";
+
 const Login = () => {
   const router = useRouter();
   const from = Array.isArray(router?.query?.from)
@@ -51,7 +53,7 @@ const Login = () => {
     <>
       <Box>
         {isLoading || userIsLoading ? (
-          <PageLoading />
+          <SigninPlaceholder />
         ) : (
           <LoginLayout preLogin={preLogin} postLogin={postLogin} from={from} />
         )}

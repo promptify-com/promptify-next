@@ -5,6 +5,8 @@ import { FetchLoading } from "@/components/FetchLoading";
 import CardTemplate from "@/components/common/cards/CardTemplate";
 import { Templates } from "@/core/api/dto/templates";
 
+import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
+
 interface TemplatesSectionProps {
   templates: Templates[] | undefined;
   isLoading: boolean;
@@ -18,20 +20,16 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
   filtred,
   title,
 }) => {
-
   return (
     <>
       <Box width={"100%"}>
         {!filtred && <Typography fontSize={19}>{title}</Typography>}
         {isLoading ? (
-          <Box
-            minHeight={"40vh"}
-            display={"flex"}
-            alignItems={"center"}
-            justifyContent={"center"}
-          >
-            <FetchLoading />
-          </Box>
+          Array.from({ length: 6 }).map((_, index) => (
+            <Grid item key={index} sx={{ mb: 2 }}>
+              <CardTemplatePlaceholder />
+            </Grid>
+          ))
         ) : (
           <Grid
             container

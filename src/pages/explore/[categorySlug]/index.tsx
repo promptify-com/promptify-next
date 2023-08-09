@@ -19,6 +19,8 @@ import { FiltersSelected } from "@/components/explorer/FiltersSelected";
 import { useGetCategoriesQuery } from "@/core/api/categories";
 import Link from "next/link";
 
+import SubCategoryPlaceholder from "@/components/placeholders/SubCategoryPlaceholder";
+
 export default function Page({ category }: { category: Category }) {
   const router = useRouter();
   const categorySlug = router.query.categorySlug;
@@ -72,9 +74,7 @@ export default function Page({ category }: { category: Category }) {
           }}
         >
           {isCategoriesLoading ? (
-            <Box>
-              <FetchLoading />
-            </Box>
+            <SubCategoryPlaceholder />
           ) : (
             <Box display={"flex"} flexDirection={"column"} gap={"16px"}>
               <Grid>
