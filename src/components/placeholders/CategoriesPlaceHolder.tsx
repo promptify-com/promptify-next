@@ -13,7 +13,6 @@ export default function CategoriesPlaceholder() {
           borderRadius: "27px",
           overflow: "hidden",
           transition: "opacity 0.3s ease",
-          //opacity: isLoading ? 1 : 0, // Hide the placeholder if isLoading is false
         }}
       >
         {/* Skeleton for the image */}
