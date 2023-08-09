@@ -2,7 +2,7 @@ import { Box, Grid, Typography } from "@mui/material";
 import { FetchLoading } from "@/components/FetchLoading";
 import { CategoryCard } from "@/components/common/cards/CardCategory";
 import { Category } from "@/core/api/dto/templates";
-import CategoriesPlaceholder from "@/components/placeholders/CategoriesPlaceHolder";
+import CategoriesPlaceholder from "@/components/placeholders/CategoriesPlaceholder";
 
 interface CategoriesSectionProps {
   isLoading: boolean;
