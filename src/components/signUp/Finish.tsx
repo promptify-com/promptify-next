@@ -7,7 +7,6 @@ import {
   Grid,
   Typography,
 } from "@mui/material";
-import Images from "../../assets";
 import { LogoApp } from "../../assets/icons/LogoApp";
 import { useUpdateUser } from "../../hooks/api/user";
 import { useRouter } from "next/router";
@@ -20,8 +19,7 @@ const Finish = () => {
   const [updateUser, error, isLoading] = useUpdateUser();
 
   const handleFinish = async () => {
-    // await updateUser(values)
-    router.push("/profile/edit");
+    router.push("/profile");
   };
 
   return (
