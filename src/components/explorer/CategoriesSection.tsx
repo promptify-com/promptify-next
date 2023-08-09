@@ -2,7 +2,7 @@ import { Box, Grid, Typography } from "@mui/material";
 import { FetchLoading } from "@/components/FetchLoading";
 import { CategoryCard } from "@/components/common/cards/CardCategory";
 import { Category } from "@/core/api/dto/templates";
-import CategoryPlaceholder from "../placeholders/CategoriesPlaceHolder";
+import CategoriesPlaceholder from "../placeholders/CategoriesPlaceHolder";
 
 interface CategoriesSectionProps {
   isLoading: boolean;
@@ -31,7 +31,7 @@ export const CategoriesSection: React.FC<CategoriesSectionProps> = ({
               WebkitOverflowScrolling: { xs: "touch", md: "initial" },
             }}
           >
-            <CategoryPlaceholder />
+            <CategoriesPlaceholder />
           </Grid>
         )}
         <Grid
