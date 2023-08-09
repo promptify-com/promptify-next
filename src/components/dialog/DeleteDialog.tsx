@@ -8,6 +8,7 @@ import {
   DialogTitle,
   Typography,
 } from "@mui/material";
+import { red } from "@mui/material/colors";
 import React from "react";
 
 interface DeleteDialogProps {
@@ -34,7 +35,9 @@ export const DeleteDialog: React.FC<DeleteDialogProps> = ({
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
-      <DialogTitle id="alert-dialog-title">{dialogTitle}</DialogTitle>
+      <DialogTitle id="alert-dialog-title" fontSize={26}>
+        {dialogTitle}
+      </DialogTitle>
       <DialogContent>
         <DialogContentText id="alert-dialog-description">
           {dialogContentText}
@@ -54,16 +57,18 @@ export const DeleteDialog: React.FC<DeleteDialogProps> = ({
         <Button
           onClick={() => onSubmit()}
           sx={{
+            bgcolor: red[400],
+            color: "white",
+            minWidth: "90px",
             "&:hover": {
-              background: "#5a58cb24",
-              maxWidth: "120px",
+              bgcolor: red[700],
             },
           }}
         >
           {onSubmitLoading ? (
             <CircularProgress size={20} />
           ) : (
-            <Typography>Remove</Typography>
+            <span>Confirm</span>
           )}
         </Button>
       </DialogActions>
