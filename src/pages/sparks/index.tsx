@@ -11,11 +11,8 @@ import SparksSection from "@/components/SparksSection";
 import { TemplateExecutionsDisplay } from "@/core/api/dto/templates";
 
 const Sparks = () => {
-  const {
-    data: sparksByTemplate,
-    isLoading: isSparksByTemplateLoading,
-    refetch: refetchTemplateSparks,
-  } = useGetSparksByMeQuery();
+  const { data: sparksByTemplate, isLoading: isSparksByTemplateLoading } =
+    useGetSparksByMeQuery();
 
   let sparksCount = 0;
   const sortedTemplates = sparksByTemplate?.map((template) => {
