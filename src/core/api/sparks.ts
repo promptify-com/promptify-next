@@ -23,7 +23,6 @@ export const sparksApi = baseApi.injectEndpoints({
         }),
         providesTags: ["Sparks"],
       }),
-      
 
       editSparkTitle: builder.mutation<
         Spark,
