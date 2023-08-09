@@ -54,7 +54,6 @@ const Sparks = () => {
                 {sortedTemplates?.length ? (
                   <SparksSection
                     templates={sortedTemplates as TemplateExecutionsDisplay[]}
-                    refetchData={refetchTemplateSparks}
                   />
                 ) : (
                   <Typography

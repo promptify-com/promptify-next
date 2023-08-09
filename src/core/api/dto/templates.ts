@@ -205,11 +205,11 @@ export interface SparkVersion {
 export interface Spark {
   id: number;
   initial_title: string;
-  created_at: string;
-  created_by: number;
+  created_at?: string;
+  created_by?: number;
   versions: SparkVersion[];
   current_version: TemplatesExecutions;
-  is_favorite: boolean;
+  is_favorite?: boolean;
 }
 
 export interface CollectionMutationParams {

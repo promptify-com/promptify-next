@@ -22,30 +22,26 @@ import { useDeleteSparkMutation } from "@/core/api/sparks";
 
 interface SparksSectionProps {
   templates: TemplateExecutionsDisplay[];
-  refetchData: () => void;
 }
 
-const SparksSection: React.FC<SparksSectionProps> = ({
-  templates,
-  refetchData,
-}) => {
+const SparksSection: React.FC<SparksSectionProps> = ({ templates }) => {
   const [expanded, setExpanded] = useState<string | false>(false);
   const [sparkFormOpen, setSparkFormOpen] = useState(false);
   const [dialogDeleteOpen, setDialogDeleteOpen] = useState<boolean>(false);
-  const [deleteSpark, { isError, isLoading }] = useDeleteSparkMutation();
+  const [deleteSpark, { isLoading }] = useDeleteSparkMutation();
 
-  const [activeSpark, setActiveSpark] = useState<Spark>();
+  const [activeSpark, setActiveSpark] = useState<Spark | undefined>();
   const toggleExpand =
     (panel: string) => (e: React.SyntheticEvent, newExpanded: boolean) => {
       setExpanded(newExpanded ? panel : false);
     };
   return (
     <Stack gap={1}>
-      {templates.map((template, i) => (
+      {templates.map((template) => (
         <Accordion
           key={template.id}
-          expanded={expanded === `accordian${i}`}
-          onChange={toggleExpand(`accordian${i}`)}
+          expanded={expanded === `accordian${template.id}`}
+          onChange={toggleExpand(`accordian${template.id}`)}
           TransitionProps={{ unmountOnExit: true }}
           sx={{
             borderRadius: "16px",
@@ -187,7 +183,7 @@ const SparksSection: React.FC<SparksSectionProps> = ({
                         },
                       }}
                       onClick={() => {
-                        //@ts-ignore
+                        //@ts-ignore: spark object passed to setActiveSpark does not matches the Spark type
                         setActiveSpark(spark);
                         setSparkFormOpen(true);
                       }}
@@ -199,7 +195,7 @@ const SparksSection: React.FC<SparksSectionProps> = ({
                     <IconButton
                       size="small"
                       onClick={() => {
-                        //@ts-ignore
+                        //@ts-ignore: spark object passed to setActiveSpark does not matches the Spark type
                         setActiveSpark(spark);
                         setDialogDeleteOpen(true);
                       }}
@@ -225,17 +221,19 @@ const SparksSection: React.FC<SparksSectionProps> = ({
               close={() => setSparkFormOpen(false)}
               activeSpark={activeSpark}
               templateId={template?.id}
-              onSparkCreated={() => refetchData()}
             />
             {activeSpark !== undefined && (
               <DeleteDialog
                 open={dialogDeleteOpen}
                 dialogTitle="Delete Spark"
-                dialogContentText={`Are you sure you want to delete ${activeSpark?.initial_title} Spark ?`}
+                dialogContentText={`Are you sure you want to delete ${
+                  activeSpark.initial_title.length > 150
+                    ? `${activeSpark.initial_title?.slice(0, 150 - 1)}...`
+                    : activeSpark.initial_title
+                } Spark ?`}
                 onClose={() => setDialogDeleteOpen(false)}
                 onSubmit={() => {
                   deleteSpark(activeSpark.id);
-                  refetchData();
                   setDialogDeleteOpen(false);
                 }}
                 onSubmitLoading={isLoading}

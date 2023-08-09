@@ -28,13 +28,7 @@ export const sparksApi = baseApi.injectEndpoints({
         Spark,
         { id: number; data: ISparkWithTemplate }
       >({
-        query: ({
-          id,
-          data,
-        }: {
-          id: number | undefined;
-          data: ISparkWithTemplate;
-        }) => ({
+        query: ({ id, data }: { id: number; data: ISparkWithTemplate }) => ({
           url: `/api/meta/sparks/${id}/`,
           method: "patch",
           headers: { "Content-Type": "application/json" },
