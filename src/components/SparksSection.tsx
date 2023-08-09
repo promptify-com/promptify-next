@@ -17,6 +17,8 @@ import CardTemplate from "./common/cards/CardTemplate";
 import moment from "moment";
 import Link from "next/link";
 import SparkForm from "./prompt/SparkForm";
+import { DeleteDialog } from "./dialog/DeleteDialog";
+import { useDeleteSparkMutation } from "@/core/api/sparks";
 
 interface SparksSectionProps {
   templates: TemplateExecutionsDisplay[];
@@ -29,6 +31,9 @@ const SparksSection: React.FC<SparksSectionProps> = ({
 }) => {
   const [expanded, setExpanded] = useState<string | false>(false);
   const [sparkFormOpen, setSparkFormOpen] = useState(false);
+  const [dialogDeleteOpen, setDialogDeleteOpen] = useState<boolean>(false);
+  const [deleteSpark, { isError, isLoading }] = useDeleteSparkMutation();
+
   const [activeSpark, setActiveSpark] = useState<Spark>();
   const toggleExpand =
     (panel: string) => (e: React.SyntheticEvent, newExpanded: boolean) => {
@@ -193,7 +198,11 @@ const SparksSection: React.FC<SparksSectionProps> = ({
                   <Tooltip title="Delete">
                     <IconButton
                       size="small"
-                      onClick={() => {}}
+                      onClick={() => {
+                        //@ts-ignore
+                        setActiveSpark(spark);
+                        setDialogDeleteOpen(true);
+                      }}
                       sx={{
                         bgcolor: "surface.2",
                         border: "none",
@@ -218,6 +227,20 @@ const SparksSection: React.FC<SparksSectionProps> = ({
               templateId={template?.id}
               onSparkCreated={() => refetchData()}
             />
+            {activeSpark !== undefined && (
+              <DeleteDialog
+                open={dialogDeleteOpen}
+                dialogTitle="Delete Spark"
+                dialogContentText={`Are you sure you want to delete ${activeSpark?.initial_title} Spark ?`}
+                onClose={() => setDialogDeleteOpen(false)}
+                onSubmit={() => {
+                  deleteSpark(activeSpark.id);
+                  refetchData();
+                  setDialogDeleteOpen(false);
+                }}
+                onSubmitLoading={isLoading}
+              />
+            )}
           </AccordionDetails>
         </Accordion>
       ))}

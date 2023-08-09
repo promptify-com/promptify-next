@@ -51,23 +51,23 @@ const Sparks = () => {
                 <Typography fontSize={18} fontWeight={500} color={"onSurface"}>
                   My Sparks ({sparksCount})
                 </Typography>
-                {
-                  
-                }
-                <SparksSection
-                  templates={sortedTemplates as TemplateExecutionsDisplay[]}
-                  refetchData={refetchTemplateSparks}
-                />
-                <Typography
-                  sx={{
-                    color: "onSurface",
-                    opacity: 0.5,
-                    textAlign: "center",
-                    mt: "50px",
-                  }}
-                >
-                  No sparks found
-                </Typography>
+                {sortedTemplates?.length ? (
+                  <SparksSection
+                    templates={sortedTemplates as TemplateExecutionsDisplay[]}
+                    refetchData={refetchTemplateSparks}
+                  />
+                ) : (
+                  <Typography
+                    sx={{
+                      color: "onSurface",
+                      opacity: 0.5,
+                      textAlign: "center",
+                      mt: "50px",
+                    }}
+                  >
+                    No sparks found
+                  </Typography>
+                )}
               </Stack>
             )}
           </Grid>
