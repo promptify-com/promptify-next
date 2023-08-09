@@ -122,27 +122,38 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   // Set default inputs values from selected execution parameters
   // Fetched execution also provides old / no more existed inputs values, needed to filter depending on shown inputs
   useEffect(() => {
-    if (selectedExecution?.parameters && shownInputs) {
-      const fetchedValues = Object.values(selectedExecution.parameters);
+    if (shownInputs) {
       const updatedInputs = new Map<number, ResInputs>();
 
       shownInputs.forEach(input => {
-        let filteredFields = {} as ResInputs;
-        
         const inputName = input.name;
-        const inputValue = fetchedValues.find(val => val[inputName]);
-        filteredFields = {
-            id: input.prompt, 
-            inputs: { 
-              ...updatedInputs.get(input.prompt)?.inputs,
-              [inputName]: {
-                value: inputValue ? inputValue[inputName] : "",
-                required: input.required
-              }
-            } 
-        };
 
-        updatedInputs.set(filteredFields.id, filteredFields)
+        if(selectedExecution?.parameters) {
+
+          const inputValue = Object.values(selectedExecution.parameters).find(val => val[inputName]);
+          updatedInputs.set(input.prompt, {
+              id: input.prompt, 
+              inputs: { 
+                ...updatedInputs.get(input.prompt)?.inputs,
+                [inputName]: {
+                  value: inputValue ? inputValue[inputName] : "",
+                  required: input.required
+                }
+              } 
+          })
+          
+        } else {
+          updatedInputs.set(input.prompt, {
+              id: input.prompt,
+              inputs: { 
+                ...updatedInputs.get(input.prompt)?.inputs,
+                [inputName]: {
+                  value: "",
+                  required: input.required
+                }
+              } 
+          })
+        }
       });
 
       setNodeInputs(Array.from(updatedInputs.values()));
@@ -502,8 +513,10 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     return () => window.removeEventListener("keydown", handleKeyboard);
   }, [handleKeyboard]);
 
-  const filledForm = nodeInputs
-    .every(nodeInput => Object.values(nodeInput.inputs).every(input => input));
+  const filledForm = nodeInputs.every(nodeInput => 
+    Object.values(nodeInput.inputs).filter(input => input.required).every(input => input.value)
+  );
+
   
   return (
     <Box
