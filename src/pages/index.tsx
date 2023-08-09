@@ -146,14 +146,20 @@ const HomePage: NextPage<HomePageProps> = ({
                   templates={suggestedTemplates}
                   title="You may like this templates:"
                 />
+                <CategoriesSection
+                  categories={categories}
+                  isLoading={isCategoryLoading && !!token && !!user}
+                />
               </Grid>
             ) : (
-              <WelcomeCard />
+              <>
+                <CategoriesSection
+                  categories={categories}
+                  isLoading={isCategoryLoading && !!token && !!user}
+                />
+                <WelcomeCard />
+              </>
             )}
-            <CategoriesSection
-              categories={categories}
-              isLoading={isCategoryLoading && !!token && !!user}
-            />
           </Grid>
         </Box>
       </Layout>
