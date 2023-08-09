@@ -21,6 +21,7 @@ import {
 } from "@/core/api/categories";
 import { RootState } from "@/core/store";
 import { FiltersSelected } from "@/components/explorer/FiltersSelected";
+import SubCategoryPlaceholder from "@/components/placeholders/SubCategoryPlaceholder";
 
 export default function Page({ category }: { category: Category }) {
   const title = useSelector((state: RootState) => state.filters.title);
@@ -82,9 +83,7 @@ export default function Page({ category }: { category: Category }) {
             }}
           >
             {isCategoriesLoading ? (
-              <Box>
-                <FetchLoading />
-              </Box>
+              <SubCategoryPlaceholder />
             ) : (
               <Box
                 gap={"16px"}

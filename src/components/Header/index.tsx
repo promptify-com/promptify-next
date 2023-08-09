@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { Avatar, Box, Grid, Typography } from "@mui/material";
+import { Avatar, Box, Grid, Skeleton, Typography } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import { useRouter } from "next/router";
@@ -112,8 +112,8 @@ export const Header: React.FC<HeaderProps> = ({
         >
           <LogoApp width={23} />
           <Typography
-            sx={{fontSize: 10, mt: 0.2, ml: 0.5}}
-            fontWeight={'bold'}
+            sx={{ fontSize: 10, mt: 0.2, ml: 0.5 }}
+            fontWeight={"bold"}
           >
             beta
           </Typography>
@@ -192,7 +192,16 @@ export const Header: React.FC<HeaderProps> = ({
         >
           <Box sx={{ display: { xs: "none", md: "flex" } }}>
             {userLoading ? (
-              <FetchLoading />
+              <Skeleton
+                variant="circular"
+                animation="wave"
+                sx={{
+                  width: "40px",
+                  height: "40px",
+                  borderRadius: "50%",
+                  bgcolor: "surface.5",
+                }}
+              />
             ) : (
               <Box>
                 {user && token ? (

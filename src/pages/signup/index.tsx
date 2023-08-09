@@ -7,6 +7,7 @@ import Prompts from "@/components/signUp/Prompts";
 import Questions from "@/components/signUp/Questions";
 import Finish from "@/components/signUp/Finish";
 import Head from "next/head";
+import SigninPlaceholder from "@/components/placeholders/SigninPlaceholder";
 
 const SignUp = () => {
   const [step, setStep] = useState(1);
@@ -30,7 +31,8 @@ const SignUp = () => {
   return (
     <>
       {isLoading ? (
-        <PageLoading />
+        // <PageLoading />
+        <SigninPlaceholder signup={true} />
       ) : (
         <Box>
           {/* {step === 1 && <Prompts setStep={setStep} />} */}
