@@ -123,22 +123,29 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   // Fetched execution also provides old / no more existed inputs values, needed to filter depending on shown inputs
   useEffect(() => {
     if (selectedExecution?.parameters && shownInputs) {
-      const fetchedInputs = Object.values(selectedExecution.parameters).map(
-        (param) => {
-          let filteredFields = {} as ResInputs;
-          for (const input of shownInputs) {
-            if (param[input.name]) {
-              filteredFields = {
-                id: input.prompt,
-                inputs: param || {},
-              };
-            }
-          }
+      const fetchedValues = Object.values(selectedExecution.parameters);
+      const updatedInputs = new Map<number, ResInputs>();
 
-          return filteredFields;
-        }
-      );
-      setNodeInputs(fetchedInputs);
+      shownInputs.forEach(input => {
+        let filteredFields = {} as ResInputs;
+        
+        const inputName = input.name;
+        const inputValue = fetchedValues.find(val => val[inputName]);
+        filteredFields = {
+            id: input.prompt, 
+            inputs: { 
+              ...updatedInputs.get(input.prompt)?.inputs,
+              [inputName]: {
+                value: inputValue ? inputValue[inputName] : "",
+                required: input.required
+              }
+            } 
+        };
+
+        updatedInputs.set(filteredFields.id, filteredFields)
+      });
+
+      setNodeInputs(Array.from(updatedInputs.values()));
     } else {
       setNodeInputs([]);
     }
@@ -163,7 +170,11 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
       tempArr.forEach((prompt, index) => {
         const obj = nodeInputs.find((inputs) => inputs.id === prompt.prompt);
         if (obj) {
-          tempArr[index].prompt_params = obj.inputs;
+          // Extract inputs values from nodeInputs item and put it as { inputName: inputValue }
+          const values = Object.fromEntries(
+            Object.entries(obj.inputs).map(([key, value]) => [key, value.value])
+          );
+          tempArr[index].prompt_params = values;
         }
       });
     }
@@ -196,6 +207,8 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
       const inputs = getArrayFromString(prompt.content);
 
       inputs.forEach((input) => {
+        if(!input.required) return;
+
         const checkParams = resPrompts.find(
           (resPrompt) =>
             resPrompt.prompt_params && resPrompt.prompt_params[input.name]
@@ -490,11 +503,8 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   }, [handleKeyboard]);
 
   const filledForm = nodeInputs
-    .filter((nodeInput) => nodeInput.inputs)
-    .every((nodeInput) =>
-      Object.values(nodeInput.inputs).every((input) => input)
-    );
-
+    .every(nodeInput => Object.values(nodeInput.inputs).every(input => input));
+  
   return (
     <Box
       sx={{

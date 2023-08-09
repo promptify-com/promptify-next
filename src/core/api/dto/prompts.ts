@@ -56,7 +56,12 @@ export interface ResPrompt {
 
 export interface ResInputs {
   id: number;
-  inputs: any;
+  inputs: {
+    [key:string]: {
+      value: any,
+      required: boolean
+    }
+  };
 }
 
 export interface ResOverrides {
