@@ -4,7 +4,7 @@ import { NotFoundIcon } from "@/assets/icons/NotFoundIcon";
 import { FetchLoading } from "@/components/FetchLoading";
 import CardTemplate from "@/components/common/cards/CardTemplate";
 import { Templates } from "@/core/api/dto/templates";
-import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceholder";
+import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
 
 interface TemplatesSectionProps {
   templates: Templates[] | undefined;

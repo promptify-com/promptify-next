@@ -29,7 +29,7 @@ import { useDeleteTemplateMutation } from "@/core/api/templates";
 import { modalStyle } from "../modals/styles";
 import TemplateForm from "../common/forms/TemplateForm";
 import TemplateImportModal from "../modals/TemplateImportModal";
-import CardTemplatePlaceholder from "../placeholders/CardTemplatePlaceholder";
+import CardTemplatePlaceholder from "../placeholders/CardTemplatePlaceHolder";
 
 export const MyTemplates = () => {
   const [trigger, { data: templates, isLoading: isTemplatesLoading }] =

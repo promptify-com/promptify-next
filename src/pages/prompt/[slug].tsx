@@ -46,7 +46,7 @@ import { History } from "@/components/prompt/History";
 import { useGetSparksByTemplateQuery } from "@/core/api/sparks";
 import moment from "moment";
 import SparkForm from "@/components/prompt/SparkForm";
-import PromptPlaceholder from "@/components/placeholders/PromptPlaceholder";
+import PromptPlaceholder from "@/components/placeholders/PromptPlaceHolder";
 
 interface TabPanelProps {
   children?: React.ReactNode;
