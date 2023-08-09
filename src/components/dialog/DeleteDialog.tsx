@@ -47,7 +47,7 @@ export const DeleteDialog: React.FC<DeleteDialogProps> = ({
               background: "#5a58cb24",
             },
           }}
-          onClick={() => onClose}
+          onClick={() => onClose()}
         >
           Cancel
         </Button>
