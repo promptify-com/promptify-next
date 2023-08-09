@@ -22,7 +22,7 @@ interface Props {
   templateId?: number;
   executionId?: number;
   activeSpark?: Spark;
-  onSparkCreated: (spark: Spark) => void;
+  onSparkCreated?: (spark: Spark) => void;
 }
 
 const SparkForm: React.FC<Props> = ({
@@ -68,7 +68,9 @@ const SparkForm: React.FC<Props> = ({
           });
         }
 
-        onSparkCreated(sparkCreated);
+        if (onSparkCreated !== undefined) {
+          onSparkCreated(sparkCreated);
+        }
       } catch (err) {
         console.error(err);
       }
@@ -88,7 +90,7 @@ const SparkForm: React.FC<Props> = ({
   };
 
   const dialogTitle =
-    type == "new"
+    type === "new"
       ? "Enter a title for your new spark:"
       : "Update the title of your spark";
 
