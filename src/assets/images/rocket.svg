@@ -1,5 +1,15 @@
 <svg width="152" height="160" viewBox="0 0 152 160" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<rect width="152" height="160" fill="url(#pattern0)"/>
+
+ <clipPath id="patternClip">
+    <rect width="152" height="160" />
+  </clipPath>
+  
+  <!-- Create a white rectangle for the background -->
+  <rect width="152" height="160" fill="transparent" />
+  
+  <!-- Apply the image pattern within the clipped area -->
+  <rect width="152" height="160" fill="url(#pattern0)" clip-path="url(#patternClip)" />
+
 <defs>
 <pattern id="pattern0" patternContentUnits="objectBoundingBox" width="1" height="1">
 <use xlink:href="#image0_1277_16760" transform="matrix(0.0021322 0 0 0.00202559 0 -0.00335821)"/>
