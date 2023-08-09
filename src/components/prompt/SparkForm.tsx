@@ -40,7 +40,7 @@ const SparkForm: React.FC<Props> = ({
     if (type === "edit" && activeSpark?.initial_title !== undefined) {
       setSparkTitle(activeSpark.initial_title);
     }
-  }, [type, activeSpark]);
+  }, [type, activeSpark, close]);
 
   const [editSparkTitle, { isError, isLoading }] = useEditSparkTitleMutation();
 
@@ -74,8 +74,7 @@ const SparkForm: React.FC<Props> = ({
       } catch (err) {
         console.error(err);
       }
-      close();
-      setSparkTitle("");
+      closeTitleModal();
     } else {
       if (activeSpark?.id !== undefined) {
         await editSparkTitle({
@@ -130,9 +129,8 @@ const SparkForm: React.FC<Props> = ({
             minWidth: "auto",
             p: 0,
             color: "grey.600",
-            display: type == "edit" ? "none" : "block",
           }}
-          onClick={closeTitleModal}
+          onClick={() => closeTitleModal()}
         >
           Skip
         </Button>
