@@ -101,23 +101,6 @@ export const WelcomeCard = () => {
           >
             Sign Up for Free
           </BaseButton>
-
-          <BaseButton
-            sx={{
-              fontStyle: "normal",
-              fontWeight: 500,
-              fontSize: "14px",
-              lineHeight: "24px",
-              color: "var(--primary-main, #3B4050)",
-            }}
-            variant="outlined"
-            color="primary"
-            onClick={() =>
-              window.open("https://blog.promptify.com", "_blank")
-            }
-          >
-            How it Works?
-          </BaseButton>
         </Stack>
       </Stack>
     </Stack>
