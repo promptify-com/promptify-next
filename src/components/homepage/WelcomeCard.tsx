@@ -113,9 +113,7 @@ export const WelcomeCard = () => {
             variant="outlined"
             color="primary"
             onClick={() =>
-              router.push({
-                pathname: "https://promptify.com",
-              })
+              window.open("https://blog.promptify.com", "_blank")
             }
           >
             How it Works?
