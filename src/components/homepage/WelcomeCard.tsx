@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import { Stack, Typography } from "@mui/material";
 import { useRouter } from "next/router";
-import { ExploreHeaderImage } from "@/assets/icons/exploreHeader";
+
 import BaseButton from "@/components/base/BaseButton";
 import useToken from "@/hooks/useToken";
 
@@ -24,7 +25,7 @@ export const WelcomeCard = () => {
         borderRadius: "25px",
         gap: { xs: "25px", sm: "48px", md: "10px", lg: "48px" },
         flexDirection: { xs: "column", sm: "row" },
-        display: !showContainer ? 'none' : 'flex'
+        display: !showContainer ? "none" : "flex",
       }}
     >
       <Stack
@@ -36,10 +37,14 @@ export const WelcomeCard = () => {
             md: "8px",
             lg: "40px",
           },
+          width: "152px",
+          height: "162px",
+          position: "relative",
           alignItems: "center",
+          mx: "auto",
         }}
       >
-        <ExploreHeaderImage />
+        <Image src={require("@/assets/images/rocket.svg")} alt="rocket" fill />
       </Stack>
 
       <Stack
@@ -91,7 +96,7 @@ export const WelcomeCard = () => {
               router.push({
                 pathname: "/signin",
                 query: { from: "signup" },
-              })
+              });
             }}
           >
             Sign Up for Free
@@ -108,9 +113,7 @@ export const WelcomeCard = () => {
             variant="outlined"
             color="primary"
             onClick={() =>
-              router.push({
-                pathname: "https://promptify.com",
-              })
+              window.open("https://blog.promptify.com", "_blank")
             }
           >
             How it Works?
