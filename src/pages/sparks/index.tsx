@@ -9,6 +9,7 @@ import {
   Box,
   Divider,
   Grid,
+  Skeleton,
   Stack,
   Typography,
 } from "@mui/material";
@@ -17,6 +18,7 @@ import { ArrowForwardIos, History } from "@mui/icons-material";
 import { useGetSparksByMeQuery } from "@/core/api/sparks";
 import Protected from "@/components/Protected";
 import Link from "next/link";
+import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
 
 const Sparks = () => {
   const [expanded, setExpanded] = React.useState<string | false>(false);
@@ -56,7 +58,17 @@ const Sparks = () => {
           >
             {isSparksByTemplateLoading ? (
               <Box>
-                <FetchLoading />
+                <Skeleton
+                  variant="text"
+                  height={40}
+                  width={"10%"}
+                  sx={{ mb: 2 }}
+                />
+                {Array.from({ length: 4 }).map((_, index) => (
+                  <Grid item key={index} sx={{ mb: 2 }}>
+                    <CardTemplatePlaceholder />
+                  </Grid>
+                ))}
               </Box>
             ) : (
               <Stack gap={2}>
