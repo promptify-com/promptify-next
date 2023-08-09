@@ -23,7 +23,6 @@ export const sparksApi = baseApi.injectEndpoints({
         }),
         providesTags: ["Sparks"],
       }),
-      
 
       editSparkTitle: builder.mutation<
         Spark,
@@ -38,7 +37,15 @@ export const sparksApi = baseApi.injectEndpoints({
         }) => ({
           url: `/api/meta/sparks/${id}/`,
           method: "patch",
-          data: data,
+          headers: { "Content-Type": "application/json" },
+          data,
+        }),
+        invalidatesTags: ["Sparks"],
+      }),
+      deleteSpark: builder.mutation<Spark, number>({
+        query: (id: number) => ({
+          url: `/api/meta/sparks/${id}/`,
+          method: "delete",
         }),
         invalidatesTags: ["Sparks"],
       }),
@@ -50,6 +57,7 @@ export const {
   useGetSparksByTemplateQuery,
   useGetSparksByMeQuery,
   useEditSparkTitleMutation,
+  useDeleteSparkMutation,
 } = sparksApi;
 
 export const useTemplateView = () => {
