@@ -63,6 +63,7 @@ interface Input {
   fullName: string;
   type: string;
   defaultValue?: string | number | null;
+  required: boolean;
 }
 interface Param {
   prompt: number;

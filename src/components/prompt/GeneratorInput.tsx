@@ -10,6 +10,7 @@ interface GeneratorInputProps {
     fullName: string;
     type: string;
     defaultValue?: string | number | null;
+    required: boolean
   }[];
   resInputs: any;
   setResInputs: (obj: any) => void;
@@ -87,7 +88,7 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
                   height: '27px',
                 }}
               >
-                {input.fullName}:
+                {input.fullName} {input.required ? '*' : ''} :
               </InputLabel>
               <TextField
                 sx={{
