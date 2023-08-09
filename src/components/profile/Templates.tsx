@@ -31,7 +31,7 @@ import TemplateForm from "@/components/common/forms/TemplateForm";
 import { useDeleteTemplateMutation } from "@/core/api/templates";
 import BaseButton from "../base/BaseButton";
 import { modalStyle } from "../modals/styles";
-import CardTemplatePlaceholder from "../placeholders/CardTemplatePlaceHolder";
+import CardTemplatePlaceholder from "../placeholders/CardTemplatePlaceholder";
 
 export const AllTemplates = () => {
   const [templateImportOpen, setTemplateImportOpen] = useState(false);

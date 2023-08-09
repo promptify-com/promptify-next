@@ -1,6 +1,7 @@
 import { Box, Grid, Skeleton } from "@mui/material";
+
 import CardTemplatePlaceholder from "./CardTemplatePlaceholder";
-import CategoriesPlaceholder from "./CategoriesPlaceholder";
+import CategoryPlaceholder from "./CategoriesPlaceHolder";
 
 export default function HomePlaceholder() {
   return (
@@ -41,7 +42,6 @@ export default function HomePlaceholder() {
 
             {/* Placeholder for You may like this templates */}
             <CardTemplatePlaceholder />
-
             <Grid
               sx={{
                 alignItems: "center",
@@ -77,7 +77,7 @@ export default function HomePlaceholder() {
                 WebkitOverflowScrolling: { xs: "touch", md: "initial" },
               }}
             >
-              <CategoriesPlaceholder />
+              <CategoryPlaceholder />
             </Grid>
           </Grid>
         </Grid>

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Box, CircularProgress, Typography } from "@mui/material";
+import { Box, CircularProgress, Skeleton, Typography } from "@mui/material";
 import {
   Spark,
   Templates,
@@ -60,7 +60,9 @@ export const Display: React.FC<Props> = ({
 
   useEffect(() => {
     if (routerSpark) {
-      const spark = sortedSparks.find((spark) => spark.id.toString() === routerSpark);
+      const spark = sortedSparks.find(
+        (spark) => spark.id.toString() === routerSpark
+      );
       if (spark) setSelectedSpark(spark);
     }
   }, [routerSpark, sortedSparks]);
@@ -123,15 +125,20 @@ export const Display: React.FC<Props> = ({
           ) : // If there is no new execution being generated, show the selected execution
           isFetching ? (
             <Box
-              sx={{
-                width: "100%",
-                mt: "40px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
+              display="flex"
+              flexDirection="column"
+              justifyContent="center"
+              alignItems="center"
             >
-              <CircularProgress size={20} />
+              {Array.from({ length: 12 }).map((_, index) => (
+                <Skeleton
+                  key={index}
+                  variant="text"
+                  width={"60%"}
+                  height={16}
+                  sx={{ marginBottom: "8px" }}
+                />
+              ))}
             </Box>
           ) : selectedExecution ? (
             <ExecutionCard

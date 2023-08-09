@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   CircularProgress,
+  Skeleton,
   Stack,
   Typography,
   alpha,
@@ -183,9 +184,9 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   // Handling the case of no spark selected. Wait for new spark to be created/selected, then generate
   useEffect(() => {
     if (isGenerating && selectedSpark) {
-      validateAndGenerateExecution()
+      validateAndGenerateExecution();
     }
-  }, [selectedSpark])
+  }, [selectedSpark]);
 
   const isInputsFilled = () => {
     const tempErrors: InputsErrors = {};
@@ -226,19 +227,18 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   };
 
   const validateAndGenerateExecution = () => {
-    
     if (!token) {
       savePathURL(window.location.pathname);
       return router.push("/signin");
     }
-    
+
     if (!validateInputs()) return;
 
     setIsGenerating(true);
-    
+
     setMobileTab(2);
     setActiveTab(2);
-    
+
     if (selectedSpark?.id) {
       generateExecution(resPrompts);
     } else {
@@ -352,7 +352,11 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
             }
 
             if (message.includes("[ERROR]")) {
-              onError(message ? message.replace("[ERROR]", "") : "Something went wrong during the execution of this prompt");
+              onError(
+                message
+                  ? message.replace("[ERROR]", "")
+                  : "Something went wrong during the execution of this prompt"
+              );
             }
 
             tempData = [...tempArr];
@@ -552,17 +556,29 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
           }}
         >
           {!shownInputs || !shownParams ? (
-            <Box
-              sx={{
-                width: "100%",
-                mt: "40px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <CircularProgress size={20} />
-            </Box>
+            // <Box
+            //   sx={{
+            //     width: "100%",
+            //     mt: "40px",
+            //     display: "flex",
+            //     justifyContent: "center",
+            //     alignItems: "center",
+            //     bgcolor: "red",
+            //   }}
+            // >
+            //   <CircularProgress size={20} />
+            // </Box>
+            <form>
+              {Array.from({ length: 5 }).map((_, index) => (
+                <Skeleton
+                  key={index}
+                  variant="text"
+                  width="100%"
+                  height={40}
+                  sx={{ marginBottom: "16px" }}
+                />
+              ))}
+            </form>
           ) : shownInputs.length === 0 && shownParams.length === 0 ? (
             <Box
               sx={{
