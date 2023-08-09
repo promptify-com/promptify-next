@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import {
   Button,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   TextField,
+  Typography,
 } from "@mui/material";
 import { createSpark, createSparkWithExecution } from "@/hooks/api/executions";
 import { Spark } from "@/core/api/dto/templates";
@@ -19,8 +21,7 @@ interface Props {
   close: () => void;
   templateId?: number;
   executionId?: number;
-  sparkId?: number;
-  currentSparkTitle?: string;
+  activeSpark?: Spark;
   onSparkCreated: (spark: Spark) => void;
 }
 
@@ -31,18 +32,17 @@ const SparkForm: React.FC<Props> = ({
   templateId,
   executionId,
   onSparkCreated,
-  sparkId,
-  currentSparkTitle,
+  activeSpark,
 }) => {
   const [sparkTitle, setSparkTitle] = useState<string>("");
 
   useEffect(() => {
-    if (type === "edit" && currentSparkTitle !== undefined) {
-      setSparkTitle(currentSparkTitle);
+    if (type === "edit" && activeSpark?.initial_title !== undefined) {
+      setSparkTitle(activeSpark.initial_title);
     }
-  }, [type, currentSparkTitle]);
+  }, [type, activeSpark]);
 
-  const [editSparkTitle, { isError }] = useEditSparkTitleMutation();
+  const [editSparkTitle, { isError, isLoading }] = useEditSparkTitleMutation();
 
   const closeTitleModal = () => {
     close();
@@ -72,16 +72,15 @@ const SparkForm: React.FC<Props> = ({
       } catch (err) {
         console.error(err);
       }
-
       close();
       setSparkTitle("");
     } else {
-      if (sparkId !== undefined) {
+      if (activeSpark?.id !== undefined) {
         await editSparkTitle({
-          id: sparkId,
+          id: activeSpark.id,
           data: { initial_title: sparkTitle },
         });
-        if (!isError) {
+        if (!isError && !isLoading) {
           close();
         }
       }
@@ -139,11 +138,16 @@ const SparkForm: React.FC<Props> = ({
           sx={{
             ":disabled": { color: "grey.600" },
             ":hover": { bgcolor: "action.hover" },
+            maxWidth: "94px",
           }}
           disabled={!sparkTitle?.length}
           onClick={handleSave}
         >
-          Save
+          {isLoading ? (
+            <CircularProgress size={20} />
+          ) : (
+            <Typography>Save</Typography>
+          )}
         </Button>
       </DialogActions>
     </Dialog>
