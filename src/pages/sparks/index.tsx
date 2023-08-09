@@ -48,7 +48,7 @@ const Sparks = () => {
                 <Typography fontSize={18} fontWeight={500} color={"onSurface"}>
                   My Sparks ({sparksCount})
                 </Typography>
-                {sortedTemplates?.length ?? 0 ? (
+                {sortedTemplates?.length ? (
                   <SparksSection
                     templates={sortedTemplates as TemplateExecutionsDisplay[]}
                   />
