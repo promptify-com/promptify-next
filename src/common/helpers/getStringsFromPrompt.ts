@@ -18,9 +18,10 @@ export const getStringsFromPrompt = (str: string) => {
         .toLowerCase()
         .replace(/^./, arrayOfStrings[0][0].toUpperCase()),
       text: arrayOfStrings[1],
+      required: arrayOfStrings[2] === 'true'
     };
 
-    if(obj.text === 'text' || obj.text === 'number') {
+    if(['text','number'].includes(obj.text)) {
       matches.push(obj);
     }
   }
