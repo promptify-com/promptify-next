@@ -22,8 +22,8 @@ export const LoginLayout: React.FC<IProps> = ({
   const [isChecked, setIsChecked] = React.useState(false);
   const [errorCheckBox, setErrorCheckBox] = useState<boolean>(true);
 
-  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setIsChecked(event.target.checked);
+  const handleCheckboxChange = () => {
+    setIsChecked(!isChecked);
     setErrorCheckBox(true);
   };
 
@@ -174,7 +174,9 @@ export const LoginLayout: React.FC<IProps> = ({
                   letterSpacing: "0.15px",
                   color: errorCheckBox ? "#1D2028" : "red",
                   display: "inline",
+                  cursor: "pointer"
                 }}
+                onClick={handleCheckboxChange}
               >
                 I accept the{" "}
                 <Typography

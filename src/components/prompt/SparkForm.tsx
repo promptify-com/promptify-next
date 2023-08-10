@@ -132,7 +132,7 @@ const SparkForm: React.FC<Props> = ({
           }}
           onClick={() => closeTitleModal()}
         >
-          Skip
+          Cancel
         </Button>
         <Button
           sx={{

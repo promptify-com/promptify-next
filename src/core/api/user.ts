@@ -19,6 +19,7 @@ export const userApi = baseApi.injectEndpoints({
           url: "/api/meta/templates/me",
           method: "get",
         }),
+        providesTags: ['MyTemplates']
       }),
       updateUserProfile: builder.mutation<User, any>({
         query: ({
