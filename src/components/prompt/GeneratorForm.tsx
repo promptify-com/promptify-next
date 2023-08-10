@@ -729,7 +729,10 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
       <SparkForm
         type="new"
         isOpen={sparkFormOpen}
-        close={() => setSparkFormOpen(false)}
+        close={() => {
+          setSparkFormOpen(false);
+          setIsGenerating(false);
+        }}
         templateId={templateData?.id}
         onSparkCreated={(spark) => {
           // No Spark selected case, useEffect [selectedSpark] at the top will handle generating new execution after Spark is selected
