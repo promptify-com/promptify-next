@@ -192,7 +192,7 @@ export const Connections = () => {
                         height: { xs: "36px", md: "48px" },
                         width: { xs: "36px", md: "48px" },
                       }}
-                      src={customConnection.avatar}
+                      src={""}
                       component={"image"}
                       alt={customConnection.avatar}
                     />
