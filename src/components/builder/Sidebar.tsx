@@ -12,7 +12,6 @@ import { EditableTextField } from "@/components/blocks";
 import { PromptIcon, TrashIcon } from "@/assets/icons";
 import { IEngines } from "@/common/types";
 import { Stylizer } from "./Stylizer";
-import { getStringsFromPrompt } from "@/common/helpers/getStringsFromPrompt";
 import { Prompts } from "@/core/api/dto/prompts";
 import {
   INodesData,
@@ -20,6 +19,7 @@ import {
   IPromptParams,
 } from "@/common/types/builder";
 import { Options } from "./Options";
+import { getArrayFromString } from "@/common/helpers/getArrayFromString";
 
 interface ISidebar {
   engines: IEngines[];
@@ -50,6 +50,8 @@ export const Sidebar = ({
   selectedNodeData,
 }: ISidebar) => {
   const [parsedTexts, setParsedTexts] = useState<any[]>([]);
+
+  console.log(parsedTexts)
 
   const changeTitle = (title: string) => {
     const findSelectedNode = nodesData?.find((node) => {
@@ -163,7 +165,7 @@ export const Sidebar = ({
   };
 
   useEffect(() => {
-    setParsedTexts(getStringsFromPrompt(selectedNodeData?.content || ""));
+    setParsedTexts(getArrayFromString(selectedNodeData?.content || ""));
   }, [selectedNodeData?.content]);
 
   return (
@@ -261,9 +263,9 @@ export const Sidebar = ({
           />
         </Box>
         <Box display="flex" flexDirection="column" width="100%">
-          {parsedTexts.map((text, id) => {
+          {parsedTexts.map((parts, i) => {
             return (
-              <Box key={id}>
+              <Box key={i}>
                 <Box
                   display="flex"
                   flexDirection="row"
@@ -279,14 +281,21 @@ export const Sidebar = ({
                       opacity: 0.6,
                     }}
                   >
-                    {text.title}:&nbsp;
+                    {parts.title}:&nbsp;
                   </Typography>
                   <Typography
                     fontSize="1rem"
                     fontFamily="Space Mono"
                     color="#FFF"
                   >
-                    {text.text}
+                    {parts.text}
+                  </Typography>
+                  <Typography
+                    fontSize="1rem"
+                    fontFamily="Space Mono"
+                    color="#FFF"
+                  >
+                    {parts.required}
                   </Typography>
                 </Box>
                 <Box borderBottom="1px solid grey" />
