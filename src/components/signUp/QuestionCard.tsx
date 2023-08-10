@@ -54,7 +54,7 @@ const QuestionCard = ({
           borderRadius: "100px",
         }}
         alt="Image"
-        src={require(`../../assets/images/animals/${name}.png`)}
+        src={require(`../../assets/images/animals/${name}.jpg`)}
       />
 
       <Typography
