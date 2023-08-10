@@ -129,7 +129,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
           updatedInputs.set(input.prompt, {
               id: input.prompt, 
               inputs: { 
-                ...updatedInputs.get(input.prompt)?.inputs,
+                ...(updatedInputs.get(input.prompt)?.inputs || {}),
                 [inputName]: {
                   value: inputValue ? inputValue[inputName] : "",
                   required: input.required

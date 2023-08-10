@@ -24,7 +24,7 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
 
   const handleChange = (value: string, name: string, type: string) => {
     const resObj = resInputs.find(prompt => prompt.inputs[name]);
-    const resArr = resInputs;
+    const resArr = [...resInputs];
 
     setDisplayClearButton(!!value);
 
@@ -81,8 +81,8 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
   return inputs.length > 0 ? (
     <Box>
       {inputs.map((input, index) => {
-        const inputValue = resInputs.find((prompt: any) => prompt.id === promptId)?.inputs[input.name]?.value
-        || '';
+        const inputValue = resInputs.find((prompt) => prompt.id === promptId)?.inputs[input.name]?.value
+          || '';
 
         return (
           <React.Fragment key={index} >

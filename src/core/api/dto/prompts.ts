@@ -58,7 +58,7 @@ export interface ResInputs {
   id: number;
   inputs: {
     [key:string]: {
-      value: any,
+      value: string | number,
       required: boolean
     }
   };
