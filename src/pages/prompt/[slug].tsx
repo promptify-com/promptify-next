@@ -566,6 +566,7 @@ const Prompt = () => {
           )}
 
           <SparkForm
+            type="new"
             isOpen={sparkFormOpen}
             close={() => setSparkFormOpen(false)}
             templateId={templateData?.id}
