@@ -15,7 +15,7 @@ import {
   ResOverrides,
   ResPrompt,
 } from "@/core/api/dto/prompts";
-import { PromptLiveResponse } from "@/common/types/prompt";
+import { IPromptInput, PromptLiveResponse } from "@/common/types/prompt";
 import useToken from "@/hooks/useToken";
 import { useAppDispatch } from "@/hooks/useStore";
 import { templatesApi } from "@/core/api/templates";
@@ -23,7 +23,7 @@ import { GeneratorInput } from "./GeneratorInput";
 import { GeneratorParam } from "./GeneratorParam";
 import { savePathURL } from "@/common/utils";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
-import { getArrayFromString } from "@/common/helpers/getArrayFromString";
+import { getInputsFromString } from "@/common/helpers/getInputsFromString";
 import {
   Spark,
   Templates,
@@ -57,12 +57,8 @@ interface GeneratorFormProps {
 export interface InputsErrors {
   [key: string]: number | boolean;
 }
-interface Input {
+interface Input extends IPromptInput {
   prompt: number;
-  name: string;
-  fullName: string;
-  type: string;
-  defaultValue?: string | number | null;
 }
 interface Param {
   prompt: number;
@@ -121,23 +117,41 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   // Set default inputs values from selected execution parameters
   // Fetched execution also provides old / no more existed inputs values, needed to filter depending on shown inputs
   useEffect(() => {
-    if (selectedExecution?.parameters && shownInputs) {
-      const fetchedInputs = Object.values(selectedExecution.parameters).map(
-        (param) => {
-          let filteredFields = {} as ResInputs;
-          for (const input of shownInputs) {
-            if (param[input.name]) {
-              filteredFields = {
-                id: input.prompt,
-                inputs: param || {},
-              };
-            }
-          }
+    if (shownInputs) {
+      const updatedInputs = new Map<number, ResInputs>();
 
-          return filteredFields;
+      shownInputs.forEach(input => {
+        const inputName = input.name;
+
+        if(selectedExecution?.parameters) {
+
+          const inputValue = Object.values(selectedExecution.parameters).find(val => val[inputName]);
+          updatedInputs.set(input.prompt, {
+              id: input.prompt, 
+              inputs: { 
+                ...(updatedInputs.get(input.prompt)?.inputs || {}),
+                [inputName]: {
+                  value: inputValue ? inputValue[inputName] : "",
+                  required: input.required
+                }
+              } 
+          })
+          
+        } else {
+          updatedInputs.set(input.prompt, {
+              id: input.prompt,
+              inputs: { 
+                ...updatedInputs.get(input.prompt)?.inputs,
+                [inputName]: {
+                  value: "",
+                  required: input.required
+                }
+              } 
+          })
         }
-      );
-      setNodeInputs(fetchedInputs);
+      });
+
+      setNodeInputs(Array.from(updatedInputs.values()));
     } else {
       setNodeInputs([]);
     }
@@ -162,7 +176,11 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
       tempArr.forEach((prompt, index) => {
         const obj = nodeInputs.find((inputs) => inputs.id === prompt.prompt);
         if (obj) {
-          tempArr[index].prompt_params = obj.inputs;
+          // Extract inputs values from nodeInputs item and put it as { inputName: inputValue }
+          const values = Object.fromEntries(
+            Object.entries(obj.inputs).map(([key, value]) => [key, value.value])
+          );
+          tempArr[index].prompt_params = values;
         }
       });
     }
@@ -192,9 +210,11 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     const tempErrors: InputsErrors = {};
 
     templateData.prompts.forEach((prompt) => {
-      const inputs = getArrayFromString(prompt.content);
+      const inputs = getInputsFromString(prompt.content);
 
       inputs.forEach((input) => {
+        if(!input.required) return;
+
         const checkParams = resPrompts.find(
           (resPrompt) =>
             resPrompt.prompt_params && resPrompt.prompt_params[input.name]
@@ -421,7 +441,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
       [...templateData.prompts]
         .sort((a, b) => a.order - b.order)
         .map(async (prompt) => {
-          const inputs = getArrayFromString(prompt.content);
+          const inputs = getInputsFromString(prompt.content);
           inputs.forEach((input) => {
             shownInputs.set(input.name, { ...input, prompt: prompt.id });
           });
@@ -488,12 +508,11 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     return () => window.removeEventListener("keydown", handleKeyboard);
   }, [handleKeyboard]);
 
-  const filledForm = nodeInputs
-    .filter((nodeInput) => nodeInput.inputs)
-    .every((nodeInput) =>
-      Object.values(nodeInput.inputs).every((input) => input)
-    );
+  const filledForm = nodeInputs.every(nodeInput => 
+    Object.values(nodeInput.inputs).filter(input => input.required).every(input => input.value)
+  );
 
+  
   return (
     <Box
       sx={{

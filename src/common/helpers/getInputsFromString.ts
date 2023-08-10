@@ -1,3 +1,5 @@
+import { IPromptInput } from "../types/prompt";
+
 const getType = (str: string) => {
   switch (str) {
     case 'integer':
@@ -7,21 +9,22 @@ const getType = (str: string) => {
   }
 };
 
-export const getArrayFromString = (str: string) => {
+export const getInputsFromString = (str: string) : IPromptInput[] => {
   const regex = /{{(.*?)}}/g;
   const matches = [];
   let match;
 
   while ((match = regex.exec(str)) !== null) {
-    const str = match[1];
+    const parts = match[1].split(':');
+    
     const obj = {
-      name: str.slice(0, str.indexOf(':')),
-      fullName: str
-        .slice(0, str.indexOf(':'))
+      name: parts[0],
+      fullName: parts[0]
         .replace(/([a-z])([A-Z])/g, '$1 $2')
         .toLowerCase()
-        .replace(/^./, str[0].toUpperCase()),
-      type: getType(str.slice(str.indexOf(':') + 1)),
+        .replace(/^./, parts[0][0].toUpperCase()),
+      type: getType(parts[1]),
+      required: parts[2] ? parts[2].toLowerCase() !== 'false' : true // required by default
     };
 
     matches.push(obj);

@@ -21,7 +21,7 @@ import { GeneratorInput } from "./GeneratorInput";
 import { GeneratorParam } from "./GeneratorParam";
 import { savePathURL } from "@/common/utils";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
-import { getArrayFromString } from "@/common/helpers/getArrayFromString";
+import { getInputsFromString } from "@/common/helpers/getInputsFromString";
 import { Templates } from "@/core/api/dto/templates";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { useWindowSize } from "usehooks-ts";
@@ -117,7 +117,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
     templateData.prompts.forEach((prompt) => {
       if (prompt.is_visible) {
-        const inputs = getArrayFromString(prompt.content);
+        const inputs = getInputsFromString(prompt.content);
 
         inputs.forEach((input) => {
           const checkParams = resPrompts.find(
@@ -314,7 +314,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
         .sort((a, b) => a.order - b.order)
         .filter((el) => el.is_visible)
         .map(async (prompt) => {
-          const inputs = getArrayFromString(prompt.content);
+          const inputs = getInputsFromString(prompt.content);
           inputs.forEach((input) => {
             shownInputs.set(input.name, { ...input, prompt: prompt.id });
           });

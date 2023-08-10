@@ -12,7 +12,6 @@ import { EditableTextField } from "@/components/blocks";
 import { PromptIcon, TrashIcon } from "@/assets/icons";
 import { IEngines } from "@/common/types";
 import { Stylizer } from "./Stylizer";
-import { getStringsFromPrompt } from "@/common/helpers/getStringsFromPrompt";
 import { Prompts } from "@/core/api/dto/prompts";
 import {
   INodesData,
@@ -20,6 +19,8 @@ import {
   IPromptParams,
 } from "@/common/types/builder";
 import { Options } from "./Options";
+import { getInputsFromString } from "@/common/helpers/getInputsFromString";
+import { IPromptInput } from "@/common/types/prompt";
 
 interface ISidebar {
   engines: IEngines[];
@@ -34,12 +35,6 @@ interface ISidebar {
   setSelectedNodeData: (value: INodesData) => void;
 }
 
-export interface Prompt {
-  name: string;
-  fullName: string;
-  type: string;
-}
-
 export const Sidebar = ({
   engines,
   selectedNode,
@@ -49,7 +44,7 @@ export const Sidebar = ({
   setNodesData,
   selectedNodeData,
 }: ISidebar) => {
-  const [parsedTexts, setParsedTexts] = useState<any[]>([]);
+  const [nodeInputs, setNodeInputs] = useState<IPromptInput[]>([]);
 
   const changeTitle = (title: string) => {
     const findSelectedNode = nodesData?.find((node) => {
@@ -163,7 +158,7 @@ export const Sidebar = ({
   };
 
   useEffect(() => {
-    setParsedTexts(getStringsFromPrompt(selectedNodeData?.content || ""));
+    setNodeInputs(getInputsFromString(selectedNodeData?.content || ""));
   }, [selectedNodeData?.content]);
 
   return (
@@ -261,9 +256,9 @@ export const Sidebar = ({
           />
         </Box>
         <Box display="flex" flexDirection="column" width="100%">
-          {parsedTexts.map((text, id) => {
+          {nodeInputs.map((parts, i) => {
             return (
-              <Box key={id}>
+              <Box key={i}>
                 <Box
                   display="flex"
                   flexDirection="row"
@@ -279,14 +274,14 @@ export const Sidebar = ({
                       opacity: 0.6,
                     }}
                   >
-                    {text.title}:&nbsp;
+                    {parts.fullName}{parts.required && '*'}:&nbsp;
                   </Typography>
                   <Typography
                     fontSize="1rem"
                     fontFamily="Space Mono"
                     color="#FFF"
                   >
-                    {text.text}
+                    {parts.type}
                   </Typography>
                 </Box>
                 <Box borderBottom="1px solid grey" />
