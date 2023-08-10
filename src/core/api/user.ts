@@ -1,5 +1,4 @@
 import { User } from "./dto/user";
-import { Templates } from "./dto/templates";
 import { baseApi } from "./api";
 
 export const userApi = baseApi.injectEndpoints({
@@ -12,12 +11,6 @@ export const userApi = baseApi.injectEndpoints({
           headers: {
             Authorization: `Token ${token}`,
           },
-        }),
-      }),
-      getUserTemplates: builder.query<Templates[], void>({
-        query: () => ({
-          url: "/api/meta/templates/me",
-          method: "get",
         }),
       }),
       updateUserProfile: builder.mutation<User, any>({
@@ -40,8 +33,4 @@ export const userApi = baseApi.injectEndpoints({
   },
 });
 
-export const {
-  useGetCurrentUserQuery,
-  useUpdateUserProfileMutation,
-  useGetUserTemplatesQuery,
-} = userApi;
+export const { useGetCurrentUserQuery, useUpdateUserProfileMutation } = userApi;
