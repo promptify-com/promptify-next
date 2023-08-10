@@ -19,6 +19,7 @@ interface Props {
   type: DialogType;
   isOpen: boolean;
   close: () => void;
+  cancel?: () => void;
   templateId?: number;
   executionId?: number;
   activeSpark?: Spark;
@@ -29,6 +30,7 @@ const SparkForm: React.FC<Props> = ({
   type,
   isOpen,
   close,
+  cancel = () => {},
   templateId,
   executionId,
   onSparkCreated,
@@ -48,6 +50,11 @@ const SparkForm: React.FC<Props> = ({
     close();
     setSparkTitle("");
   };
+
+  const cancelSpark = () => {
+    cancel()
+    close()
+  }
 
   const handleSave = async () => {
     if (type === "new" && sparkTitle.length) {
@@ -130,7 +137,7 @@ const SparkForm: React.FC<Props> = ({
             p: 0,
             color: "grey.600",
           }}
-          onClick={() => closeTitleModal()}
+          onClick={() => cancelSpark()}
         >
           Cancel
         </Button>

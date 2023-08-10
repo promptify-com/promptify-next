@@ -9,14 +9,14 @@ interface GeneratorInputProps {
   promptId: number;
   inputs: IPromptInput[];
   resInputs: ResInputs[];
-  setResInputs: (obj: any) => void;
+  setNodeInputs: (obj: any) => void;
   errors: InputsErrors;
 }
 
 export const GeneratorInput: React.FC<GeneratorInputProps> = ({
   promptId,
   inputs,
-  setResInputs,
+  setNodeInputs,
   resInputs,
   errors,
 }) => {
@@ -29,7 +29,7 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
     setDisplayClearButton(!!value);
 
     if (!resObj) {
-      return setResInputs([
+      return setNodeInputs([
         ...resInputs,
         { 
           id: promptId, 
@@ -57,26 +57,8 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
       }
     });
 
-    setResInputs([...resArr]);
+    setNodeInputs([...resArr]);
   };
-
-  useEffect(() => {
-    if (inputs.length > 0) {
-      const defaultObj = inputs
-          .map(input => ({
-            [input.name]: input.defaultValue != null // Checking for default value
-              ? input.type === 'number'
-                ? Number(input.defaultValue)
-                : input.defaultValue
-              : input.type === 'number'
-              ? 0
-              : '',
-          }))
-        .reduce((acc, curr) => Object.assign(acc, curr), {});
-
-      setResInputs([...resInputs, { id: promptId, inputs: defaultObj }]);
-    }
-  }, []);
 
   return inputs.length > 0 ? (
     <Box>
