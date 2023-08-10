@@ -33,10 +33,3 @@ export interface INodesData extends IPromptOptions {
   parameters: IPromptParams[];
   order: number;
 }
-
-export type IGetInputsFromString = {
-  name: string;
-  fullName: string;
-  type: string;
-  required: boolean;
-}[]

@@ -14,13 +14,13 @@ import { IEngines } from "@/common/types";
 import { Stylizer } from "./Stylizer";
 import { Prompts } from "@/core/api/dto/prompts";
 import {
-  IGetInputsFromString,
   INodesData,
   IPromptOptions,
   IPromptParams,
 } from "@/common/types/builder";
 import { Options } from "./Options";
 import { getInputsFromString } from "@/common/helpers/getInputsFromString";
+import { IPromptInput } from "@/common/types/prompt";
 
 interface ISidebar {
   engines: IEngines[];
@@ -50,7 +50,7 @@ export const Sidebar = ({
   setNodesData,
   selectedNodeData,
 }: ISidebar) => {
-  const [parsedTexts, setParsedTexts] = useState<IGetInputsFromString>([]);
+  const [nodeInputs, setNodeInputs] = useState<IPromptInput[]>([]);
 
   const changeTitle = (title: string) => {
     const findSelectedNode = nodesData?.find((node) => {
@@ -164,7 +164,7 @@ export const Sidebar = ({
   };
 
   useEffect(() => {
-    setParsedTexts(getInputsFromString(selectedNodeData?.content || ""));
+    setNodeInputs(getInputsFromString(selectedNodeData?.content || ""));
   }, [selectedNodeData?.content]);
 
   return (
@@ -262,7 +262,7 @@ export const Sidebar = ({
           />
         </Box>
         <Box display="flex" flexDirection="column" width="100%">
-          {parsedTexts.map((parts, i) => {
+          {nodeInputs.map((parts, i) => {
             return (
               <Box key={i}>
                 <Box

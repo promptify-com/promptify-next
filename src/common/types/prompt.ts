@@ -12,3 +12,10 @@ export interface PromptLiveResponse {
   created_at: Date;
   data: PromptLiveResponseData[] | undefined;
 }
+
+export interface IPromptInput {
+  name: string;
+  fullName: string;
+  type: string;
+  required: boolean;
+}

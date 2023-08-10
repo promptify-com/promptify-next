@@ -1,4 +1,4 @@
-import { IGetInputsFromString } from "../types/builder";
+import { IPromptInput } from "../types/prompt";
 
 const getType = (str: string) => {
   switch (str) {
@@ -9,7 +9,7 @@ const getType = (str: string) => {
   }
 };
 
-export const getInputsFromString = (str: string) : IGetInputsFromString => {
+export const getInputsFromString = (str: string) : IPromptInput[] => {
   const regex = /{{(.*?)}}/g;
   const matches = [];
   let match;
