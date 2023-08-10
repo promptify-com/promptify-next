@@ -17,7 +17,6 @@ import {
 import { useGetTagsQuery } from "@/core/api/tags";
 import { Templates } from "@/core/api/dto/templates";
 import { IEditTemplate } from "@/common/types/editTemplate";
-import { updateTemplate } from "@/hooks/api/templates";
 import { authClient } from "@/common/axios";
 import {
   fieldStyle,
@@ -30,7 +29,10 @@ import { useGetCategoriesQuery } from "@/core/api/categories";
 import { Upload } from "@mui/icons-material";
 import useToken from "@/hooks/useToken";
 import { useGetCurrentUserQuery } from "@/core/api/user";
-import { useCreateTemplateMutation } from "@/core/api/templates";
+import {
+  useCreateTemplateMutation,
+  useUpdateTemplateMutation,
+} from "@/core/api/templates";
 import { FormType } from "@/common/types/template";
 
 interface Props {
@@ -56,6 +58,7 @@ const TemplateForm: React.FC<Props> = ({
   const { data: user } = useGetCurrentUserQuery(token);
 
   const [createTemplate] = useCreateTemplateMutation();
+  const [updateTemplate] = useUpdateTemplateMutation();
 
   useEffect(() => {
     setSelectedTags(templateData?.tags.map((tag) => tag.name) ?? []);
@@ -99,8 +102,10 @@ const TemplateForm: React.FC<Props> = ({
 
   const onEditTemplate = async (values: IEditTemplate) => {
     if (!templateData) return;
-
-    await updateTemplate(templateData?.id, values);
+    await updateTemplate({
+      id: templateData?.id,
+      data: values,
+    });
     handleSave();
   };
 

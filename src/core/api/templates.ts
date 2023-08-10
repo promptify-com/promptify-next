@@ -128,6 +128,18 @@ export const templatesApi = baseApi.injectEndpoints({
         }),
         invalidatesTags: ["Templates"],
       }),
+      updateTemplate: build.mutation<
+        Templates,
+        { id: number; data: IEditTemplate }
+      >({
+        query: ({ data, id }: { data: IEditTemplate; id: number }) => ({
+          url: `/api/meta/templates/${id}/`,
+          method: "put",
+          headers: { "Content-Type": "application/json" },
+          data,
+        }),
+        invalidatesTags: ["Templates"],
+      }),
     };
   },
 });
@@ -149,6 +161,7 @@ export const {
   useGetTemplatesExecutionsByMeQuery,
   useGetMyTemplatesQuery,
   useCreateTemplateMutation,
+  useUpdateTemplateMutation,
 } = templatesApi;
 
 export const useTemplateView = () => {
