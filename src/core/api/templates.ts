@@ -8,6 +8,7 @@ import {
   TemplatesExecutions,
 } from "./dto/templates";
 import { authClient } from "@/common/axios";
+import { IEditTemplate } from "@/common/types/editTemplate";
 
 export const templatesApi = baseApi.injectEndpoints({
   endpoints: (build) => {
@@ -112,6 +113,22 @@ export const templatesApi = baseApi.injectEndpoints({
           method: "get",
         }),
       }),
+      getMyTemplates: build.query<Templates[], void>({
+        query: () => ({
+          url: "/api/meta/templates/me",
+          method: "get",
+        }),
+        providesTags: ["Templates"],
+      }),
+      createTemplate: build.mutation<Templates, IEditTemplate>({
+        query: (data: IEditTemplate) => ({
+          url: `/api/meta/templates/`,
+          method: "post",
+          headers: { "Content-Type": "application/json" },
+          data,
+        }),
+        invalidatesTags: ["Templates"],
+      }),
     };
   },
 });
@@ -131,6 +148,8 @@ export const {
   useGetPromptTemplateBySlugQuery,
   useGetPromptTemplatesQuery,
   useGetTemplatesExecutionsByMeQuery,
+  useGetMyTemplatesQuery,
+  useCreateTemplateMutation,
 } = templatesApi;
 
 export const useTemplateView = () => {

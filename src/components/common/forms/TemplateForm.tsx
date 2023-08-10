@@ -17,7 +17,7 @@ import {
 import { useGetTagsQuery } from "@/core/api/tags";
 import { Templates } from "@/core/api/dto/templates";
 import { IEditTemplate } from "@/common/types/editTemplate";
-import { createTemplate, updateTemplate } from "@/hooks/api/templates";
+import { updateTemplate } from "@/hooks/api/templates";
 import { authClient } from "@/common/axios";
 import {
   fieldStyle,
@@ -28,29 +28,37 @@ import {
 } from "../../modals/styles";
 import { useGetCategoriesQuery } from "@/core/api/categories";
 import { Upload } from "@mui/icons-material";
+import useToken from "@/hooks/useToken";
+import { useGetCurrentUserQuery } from "@/core/api/user";
+import { useCreateTemplateMutation } from "@/core/api/templates";
+import { FormType } from "@/common/types/template";
 
 interface Props {
+  type?: FormType;
   templateData: Templates | null;
   modalNew?: boolean;
   onSaved?: () => void;
   darkMode?: boolean;
-  linkBuilder?: boolean;
 }
 
 const TemplateForm: React.FC<Props> = ({
+  type = "create",
   templateData,
-  modalNew = false,
   onSaved = () => {},
   darkMode = false,
-  linkBuilder = false,
 }) => {
+  const token = useToken();
   const { data: categories } = useGetCategoriesQuery();
   const { data: fetchedTags } = useGetTagsQuery();
   const [tags, setTags] = useState<string[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
+  const { data: user } = useGetCurrentUserQuery(token);
+
+  const [createTemplate] = useCreateTemplateMutation();
+
   useEffect(() => {
-    setSelectedTags(templateData?.tags.map((tag) => tag.name) || []);
+    setSelectedTags(templateData?.tags.map((tag) => tag.name) ?? []);
   }, [templateData]);
 
   useEffect(() => {
@@ -84,43 +92,47 @@ const TemplateForm: React.FC<Props> = ({
     thumbnail: string().min(1).required("required"),
   });
 
-  const onEditTemplate = async (values: IEditTemplate) => {
-    if (!templateData) return;
-
-    await updateTemplate(templateData?.id, values);
+  const handleSave = () => {
     onSaved();
     formik.resetForm();
   };
 
+  const onEditTemplate = async (values: IEditTemplate) => {
+    if (!templateData) return;
+
+    await updateTemplate(templateData?.id, values);
+    handleSave();
+  };
+
   const onCreateTemplate = async (values: IEditTemplate) => {
-    const { id } = await createTemplate(values);
-    onSaved();
-    formik.resetForm();
+    const response = await createTemplate(values).unwrap();
+    const { id } = response;
+    handleSave();
     window.open(window.location.origin + `/builder/${id}`, "_blank");
   };
 
   const formik = useFormik<IEditTemplate>({
     initialValues: {
-      title: templateData?.title || "",
-      description: templateData?.description || "",
-      duration: templateData?.duration?.toString() || "1",
-      difficulty: templateData?.difficulty || "BEGINNER",
-      is_visible: templateData?.is_visible || true,
-      language: templateData?.language || "en-us",
-      category: templateData?.category?.id || 1,
-      context: templateData?.context || "",
-      tags: templateData?.tags || [],
-      thumbnail: templateData?.thumbnail || "",
-      executions_limit: templateData?.executions_limit || -1,
-      slug: templateData?.slug || "",
-      meta_title: templateData?.meta_title || "",
-      meta_description: templateData?.meta_description || "",
-      meta_keywords: templateData?.meta_keywords || "",
-      ...(modalNew && { prompts_list: [] }),
+      title: templateData?.title ?? "",
+      description: templateData?.description ?? "",
+      duration: templateData?.duration?.toString() ?? "1",
+      difficulty: templateData?.difficulty ?? "BEGINNER",
+      is_visible: templateData?.is_visible ?? true,
+      language: templateData?.language ?? "en-us",
+      category: templateData?.category?.id ?? 1,
+      context: templateData?.context ?? "",
+      tags: templateData?.tags ?? [],
+      thumbnail: templateData?.thumbnail ?? "",
+      executions_limit: templateData?.executions_limit ?? -1,
+      slug: templateData?.slug ?? "",
+      meta_title: templateData?.meta_title ?? "",
+      meta_description: templateData?.meta_description ?? "",
+      meta_keywords: templateData?.meta_keywords ?? "",
+      ...(type === "create" && { prompts_list: [] }),
     },
     enableReinitialize: true,
     validationSchema: FormSchema,
-    onSubmit: modalNew ? onCreateTemplate : onEditTemplate,
+    onSubmit: type === "create" ? onCreateTemplate : onEditTemplate,
   });
 
   const color = darkMode ? "common.white" : "common.black";
@@ -312,114 +324,119 @@ const TemplateForm: React.FC<Props> = ({
           renderInput={(params) => <TextField {...params} />}
         />
       </Box>
-      <Box sx={boxStyle}>
-        <Typography sx={typographyStyle}>Hourly Limit</Typography>
-        <TextField
-          maxRows={1}
-          sx={fieldStyle}
-          name="executions_limit"
-          value={formik.values.executions_limit}
-          onChange={formik.handleChange}
-        />
-      </Box>
-      <Box sx={{ ...boxStyle, alignItems: "baseline" }}>
-        <Typography sx={typographyStyle}>Slug</Typography>
+
+      {user?.is_admin && (
         <Box>
-          <Stack direction={"row"} alignItems={"center"} sx={checkboxStyle}>
-            <Checkbox
-              checked={formik.values.slug === null}
-              onChange={() => {
-                formik.setFieldValue(
-                  "slug",
-                  formik.values.slug === null ? "" : null
-                );
-              }}
+          <Box sx={boxStyle}>
+            <Typography sx={typographyStyle}>Hourly Limit</Typography>
+            <TextField
+              maxRows={1}
+              sx={fieldStyle}
+              name="executions_limit"
+              value={formik.values.executions_limit}
+              onChange={formik.handleChange}
             />
-            <InputLabel>Use Default</InputLabel>
-          </Stack>
-          <TextField
-            sx={fieldStyle}
-            name="slug"
-            value={formik.values.slug ?? ""}
-            disabled={formik.values.slug === null}
-            onChange={formik.handleChange}
-          />
+          </Box>
+          <Box sx={{ ...boxStyle, alignItems: "baseline" }}>
+            <Typography sx={typographyStyle}>Slug</Typography>
+            <Box>
+              <Stack direction={"row"} alignItems={"center"} sx={checkboxStyle}>
+                <Checkbox
+                  checked={formik.values.slug === null}
+                  onChange={() => {
+                    formik.setFieldValue(
+                      "slug",
+                      formik.values.slug === null ? "" : null
+                    );
+                  }}
+                />
+                <InputLabel>Use Default</InputLabel>
+              </Stack>
+              <TextField
+                sx={fieldStyle}
+                name="slug"
+                value={formik.values.slug ?? ""}
+                disabled={formik.values.slug === null}
+                onChange={formik.handleChange}
+              />
+            </Box>
+          </Box>
+          <Box sx={{ ...boxStyle, alignItems: "baseline" }}>
+            <Typography sx={typographyStyle}>Meta title</Typography>
+            <Box>
+              <Stack direction={"row"} alignItems={"center"} sx={checkboxStyle}>
+                <Checkbox
+                  checked={formik.values.meta_title === null}
+                  onChange={() => {
+                    formik.setFieldValue(
+                      "meta_title",
+                      formik.values.meta_title === null ? "" : null
+                    );
+                  }}
+                />
+                <InputLabel>Use Default</InputLabel>
+              </Stack>
+              <TextField
+                sx={fieldStyle}
+                name="meta_title"
+                value={formik.values.meta_title ?? ""}
+                disabled={formik.values.meta_title === null}
+                onChange={formik.handleChange}
+              />
+            </Box>
+          </Box>
+          <Box sx={{ ...boxStyle, alignItems: "baseline" }}>
+            <Typography sx={typographyStyle}>Meta Description</Typography>
+            <Box>
+              <Stack direction={"row"} alignItems={"center"} sx={checkboxStyle}>
+                <Checkbox
+                  checked={formik.values.meta_description === null}
+                  onChange={() => {
+                    formik.setFieldValue(
+                      "meta_description",
+                      formik.values.meta_description === null ? "" : null
+                    );
+                  }}
+                />
+                <InputLabel>Use Default</InputLabel>
+              </Stack>
+              <TextField
+                multiline
+                maxRows={4}
+                sx={fieldStyle}
+                name="meta_description"
+                value={formik.values.meta_description ?? ""}
+                disabled={formik.values.meta_description === null}
+                onChange={formik.handleChange}
+              />
+            </Box>
+          </Box>
+          <Box sx={{ ...boxStyle, alignItems: "baseline" }}>
+            <Typography sx={typographyStyle}>Meta Tags</Typography>
+            <Box>
+              <Stack direction={"row"} alignItems={"center"} sx={checkboxStyle}>
+                <Checkbox
+                  checked={formik.values.meta_keywords === null}
+                  onChange={() => {
+                    formik.setFieldValue(
+                      "meta_keywords",
+                      formik.values.meta_keywords === null ? "" : null
+                    );
+                  }}
+                />
+                <InputLabel>Use Default</InputLabel>
+              </Stack>
+              <TextField
+                sx={fieldStyle}
+                name="meta_keywords"
+                value={formik.values.meta_keywords ?? ""}
+                disabled={formik.values.meta_keywords === null}
+                onChange={formik.handleChange}
+              />
+            </Box>
+          </Box>
         </Box>
-      </Box>
-      <Box sx={{ ...boxStyle, alignItems: "baseline" }}>
-        <Typography sx={typographyStyle}>Meta title</Typography>
-        <Box>
-          <Stack direction={"row"} alignItems={"center"} sx={checkboxStyle}>
-            <Checkbox
-              checked={formik.values.meta_title === null}
-              onChange={() => {
-                formik.setFieldValue(
-                  "meta_title",
-                  formik.values.meta_title === null ? "" : null
-                );
-              }}
-            />
-            <InputLabel>Use Default</InputLabel>
-          </Stack>
-          <TextField
-            sx={fieldStyle}
-            name="meta_title"
-            value={formik.values.meta_title ?? ""}
-            disabled={formik.values.meta_title === null}
-            onChange={formik.handleChange}
-          />
-        </Box>
-      </Box>
-      <Box sx={{ ...boxStyle, alignItems: "baseline" }}>
-        <Typography sx={typographyStyle}>Meta Description</Typography>
-        <Box>
-          <Stack direction={"row"} alignItems={"center"} sx={checkboxStyle}>
-            <Checkbox
-              checked={formik.values.meta_description === null}
-              onChange={() => {
-                formik.setFieldValue(
-                  "meta_description",
-                  formik.values.meta_description === null ? "" : null
-                );
-              }}
-            />
-            <InputLabel>Use Default</InputLabel>
-          </Stack>
-          <TextField
-            multiline
-            maxRows={4}
-            sx={fieldStyle}
-            name="meta_description"
-            value={formik.values.meta_description ?? ""}
-            disabled={formik.values.meta_description === null}
-            onChange={formik.handleChange}
-          />
-        </Box>
-      </Box>
-      <Box sx={{ ...boxStyle, alignItems: "baseline" }}>
-        <Typography sx={typographyStyle}>Meta Tags</Typography>
-        <Box>
-          <Stack direction={"row"} alignItems={"center"} sx={checkboxStyle}>
-            <Checkbox
-              checked={formik.values.meta_keywords === null}
-              onChange={() => {
-                formik.setFieldValue(
-                  "meta_keywords",
-                  formik.values.meta_keywords === null ? "" : null
-                );
-              }}
-            />
-            <InputLabel>Use Default</InputLabel>
-          </Stack>
-          <TextField
-            sx={fieldStyle}
-            name="meta_keywords"
-            value={formik.values.meta_keywords ?? ""}
-            disabled={formik.values.meta_keywords === null}
-            onChange={formik.handleChange}
-          />
-        </Box>
-      </Box>
+      )}
       <Box sx={buttonBoxStyle}>
         <Button
           variant="contained"
@@ -429,7 +446,7 @@ const TemplateForm: React.FC<Props> = ({
         >
           Save
         </Button>
-        {linkBuilder && (
+        {type === "edit" && (
           <Button
             variant="contained"
             sx={{ mt: "20px" }}
