@@ -32,7 +32,7 @@ export const CollectionsEmptyBox = ({ onExpand }: { onExpand?: boolean }) => {
         alignItems={"center"}
         gap={3}
       >
-        <Button variant="outlined" onClick={() => router.push('signin')}>Sign In</Button>
+        <Button variant="outlined" onClick={() => router.push('/signin')}>Sign In</Button>
         <Typography>Or</Typography>
         <Button
           sx={{
