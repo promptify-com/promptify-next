@@ -50,7 +50,7 @@ export const Home = () => {
                 fontSize: 40,
                 textTransform: "capitalize",
               }}
-              src={user?.avatar ?? user?.username}
+              src={user?.avatar}
               alt={user?.username}
             />
           </Box>

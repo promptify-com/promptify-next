@@ -93,20 +93,18 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
     },
   ];
 
-  const navigateTo = (href: string, isExternal: boolean) => {
+  const navigateTo = async (href: string, isExternal: boolean) => {
     if (isExternal) {
       window.open(href, "_blank"); // opens in a new tab
       return;
     }
-    let next = href.split("/");
-    if (splittedPath[1] == next[1]) {
-      return null;
-    }
-    router.push(href);
+
+    await router.push(href);
   };
 
-  const handleHeaderMenu = (el: MenuType) => {
-    router.push(el.href);
+  const handleHeaderMenu = async (el: MenuType) => {
+    await router.push(el.href);
+    onClose();
   };
   const handleLogout = async () => {
     await logout();
@@ -163,7 +161,7 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
                 {isValidUser && (
                   <Avatar
                     onClick={() => setSidebarType("profile")}
-                    src={user?.avatar || user?.first_name}
+                    src={user?.avatar}
                     alt={user?.first_name}
                     sx={{
                       ml: "auto",
@@ -255,7 +253,10 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
                   <ListItem
                     key={link.label}
                     disablePadding
-                    onClick={() => navigateTo(link.href, link.external)}
+                    onClick={async () => {
+                      await navigateTo(link.href, link.external);
+                      onClose();
+                    }}
                   >
                     <ListItemButton selected={link.active}>
                       <ListItemIcon sx={{ color: "onSurface" }}>
@@ -310,7 +311,7 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
               >
                 <Box display={"flex"} justifyContent={"center"}>
                   <Avatar
-                    src={user?.avatar ?? user?.first_name}
+                    src={user?.avatar}
                     alt={user?.first_name}
                     sizes="40px"
                     sx={{
@@ -359,7 +360,7 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
                 </Box>
               </Grid>
               <MenuList autoFocusItem={false} sx={{ width: "100%" }}>
-                {Menu.map((el, idx) => (
+                {Menu.map((el) => (
                   <MenuItem
                     key={el.name}
                     onClick={() => handleHeaderMenu(el)}
