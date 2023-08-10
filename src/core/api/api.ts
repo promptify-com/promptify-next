@@ -20,6 +20,7 @@ export const baseApi = createApi({
     "Tags",
     "Engines",
     "Sparks",
+    "MyTemplates",
   ],
   endpoints: () => ({}),
 });

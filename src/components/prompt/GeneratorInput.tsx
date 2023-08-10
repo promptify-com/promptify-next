@@ -2,16 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { Box, Divider, IconButton, InputLabel, Stack, TextField } from '@mui/material';
 import { InputsErrors } from './GeneratorForm';
 import { Backspace } from '@mui/icons-material';
+import { ResInputs } from '@/core/api/dto/prompts';
+import { IPromptInput } from '@/common/types/prompt';
 
 interface GeneratorInputProps {
   promptId: number;
-  inputs: {
-    name: string;
-    fullName: string;
-    type: string;
-    defaultValue?: string | number | null;
-  }[];
-  resInputs: any;
+  inputs: IPromptInput[];
+  resInputs: ResInputs[];
   setResInputs: (obj: any) => void;
   errors: InputsErrors;
 }
@@ -24,8 +21,9 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
   errors,
 }) => {
   const [displayClearButton, setDisplayClearButton] = useState(false);
+
   const handleChange = (value: string, name: string, type: string) => {
-    const resObj = [...resInputs].find(prompt => prompt.id === promptId);
+    const resObj = resInputs.find(prompt => prompt.inputs[name]);
     const resArr = [...resInputs];
 
     setDisplayClearButton(!!value);
@@ -33,7 +31,14 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
     if (!resObj) {
       return setResInputs([
         ...resInputs,
-        { id: promptId, inputs: { [name]: type === 'number' ? +value : value } },
+        { 
+          id: promptId, 
+          inputs: { 
+            [name]: {
+              value: type === 'number' ? +value : value,
+            }
+          } 
+        },
       ]);
     }
 
@@ -41,7 +46,13 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
       if (prompt.id === promptId) {
         resArr[index] = {
           ...prompt,
-          inputs: { ...prompt.inputs, [name]: type === 'number' ? +value : value },
+          inputs: { 
+            ...prompt.inputs,
+            [name]: {
+              value: type === 'number' ? +value : value,
+              required: resObj.inputs[name].required
+            }
+          }
         };
       }
     });
@@ -70,8 +81,8 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
   return inputs.length > 0 ? (
     <Box>
       {inputs.map((input, index) => {
-        const inputValue = resInputs.find((prompt: any) => prompt.id === promptId)?.inputs[input.name]
-        || '';
+        const inputValue = resInputs.find((prompt) => prompt.id === promptId)?.inputs[input.name]?.value
+          || '';
 
         return (
           <React.Fragment key={index} >
@@ -87,7 +98,7 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
                   height: '27px',
                 }}
               >
-                {input.fullName}:
+                {input.fullName} {input.required ? '*' : ''} :
               </InputLabel>
               <TextField
                 sx={{
