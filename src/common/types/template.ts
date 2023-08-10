@@ -1,6 +1,8 @@
 import { Category } from "@/core/api/dto/templates";
 import { INodesData } from "./builder";
 
+export type FormType = "create" | "edit";
+
 export interface ITemplate {
   slug: string;
   id: number;
