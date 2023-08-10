@@ -14,6 +14,7 @@ import { IEngines } from "@/common/types";
 import { Stylizer } from "./Stylizer";
 import { Prompts } from "@/core/api/dto/prompts";
 import {
+  IGetInputsFromString,
   INodesData,
   IPromptOptions,
   IPromptParams,
@@ -49,9 +50,7 @@ export const Sidebar = ({
   setNodesData,
   selectedNodeData,
 }: ISidebar) => {
-  const [parsedTexts, setParsedTexts] = useState<any[]>([]);
-
-  console.log(parsedTexts)
+  const [parsedTexts, setParsedTexts] = useState<IGetInputsFromString>([]);
 
   const changeTitle = (title: string) => {
     const findSelectedNode = nodesData?.find((node) => {
@@ -281,21 +280,14 @@ export const Sidebar = ({
                       opacity: 0.6,
                     }}
                   >
-                    {parts.title}:&nbsp;
+                    {parts.fullName}{parts.required && '*'}:&nbsp;
                   </Typography>
                   <Typography
                     fontSize="1rem"
                     fontFamily="Space Mono"
                     color="#FFF"
                   >
-                    {parts.text}
-                  </Typography>
-                  <Typography
-                    fontSize="1rem"
-                    fontFamily="Space Mono"
-                    color="#FFF"
-                  >
-                    {parts.required}
+                    {parts.type}
                   </Typography>
                 </Box>
                 <Box borderBottom="1px solid grey" />

@@ -1,3 +1,5 @@
+import { IGetInputsFromString } from "../types/builder";
+
 const getType = (str: string) => {
   switch (str) {
     case 'integer':
@@ -7,7 +9,7 @@ const getType = (str: string) => {
   }
 };
 
-export const getInputsFromString = (str: string) => {
+export const getInputsFromString = (str: string) : IGetInputsFromString => {
   const regex = /{{(.*?)}}/g;
   const matches = [];
   let match;
