@@ -18,4 +18,5 @@ export interface IPromptInput {
   fullName: string;
   type: string;
   required: boolean;
+  defaultValue?: string | number | null;
 }

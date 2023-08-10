@@ -15,7 +15,7 @@ import {
   ResOverrides,
   ResPrompt,
 } from "@/core/api/dto/prompts";
-import { PromptLiveResponse } from "@/common/types/prompt";
+import { IPromptInput, PromptLiveResponse } from "@/common/types/prompt";
 import useToken from "@/hooks/useToken";
 import { useAppDispatch } from "@/hooks/useStore";
 import { templatesApi } from "@/core/api/templates";
@@ -57,13 +57,8 @@ interface GeneratorFormProps {
 export interface InputsErrors {
   [key: string]: number | boolean;
 }
-interface Input {
+interface Input extends IPromptInput {
   prompt: number;
-  name: string;
-  fullName: string;
-  type: string;
-  defaultValue?: string | number | null;
-  required: boolean;
 }
 interface Param {
   prompt: number;

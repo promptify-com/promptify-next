@@ -3,16 +3,11 @@ import { Box, Divider, IconButton, InputLabel, Stack, TextField } from '@mui/mat
 import { InputsErrors } from './GeneratorForm';
 import { Backspace } from '@mui/icons-material';
 import { ResInputs } from '@/core/api/dto/prompts';
+import { IPromptInput } from '@/common/types/prompt';
 
 interface GeneratorInputProps {
   promptId: number;
-  inputs: {
-    name: string;
-    fullName: string;
-    type: string;
-    defaultValue?: string | number | null;
-    required: boolean
-  }[];
+  inputs: IPromptInput[];
   resInputs: ResInputs[];
   setResInputs: (obj: any) => void;
   errors: InputsErrors;

@@ -35,12 +35,6 @@ interface ISidebar {
   setSelectedNodeData: (value: INodesData) => void;
 }
 
-export interface Prompt {
-  name: string;
-  fullName: string;
-  type: string;
-}
-
 export const Sidebar = ({
   engines,
   selectedNode,
