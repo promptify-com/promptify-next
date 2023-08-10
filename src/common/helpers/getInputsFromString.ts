@@ -7,7 +7,7 @@ const getType = (str: string) => {
   }
 };
 
-export const getArrayFromString = (str: string) => {
+export const getInputsFromString = (str: string) => {
   const regex = /{{(.*?)}}/g;
   const matches = [];
   let match;

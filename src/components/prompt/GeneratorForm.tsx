@@ -23,7 +23,7 @@ import { GeneratorInput } from "./GeneratorInput";
 import { GeneratorParam } from "./GeneratorParam";
 import { savePathURL } from "@/common/utils";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
-import { getArrayFromString } from "@/common/helpers/getArrayFromString";
+import { getInputsFromString } from "@/common/helpers/getInputsFromString";
 import {
   Spark,
   Templates,
@@ -215,7 +215,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     const tempErrors: InputsErrors = {};
 
     templateData.prompts.forEach((prompt) => {
-      const inputs = getArrayFromString(prompt.content);
+      const inputs = getInputsFromString(prompt.content);
 
       inputs.forEach((input) => {
         if(!input.required) return;
@@ -446,7 +446,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
       [...templateData.prompts]
         .sort((a, b) => a.order - b.order)
         .map(async (prompt) => {
-          const inputs = getArrayFromString(prompt.content);
+          const inputs = getInputsFromString(prompt.content);
           inputs.forEach((input) => {
             shownInputs.set(input.name, { ...input, prompt: prompt.id });
           });

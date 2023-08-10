@@ -19,7 +19,7 @@ import {
   IPromptParams,
 } from "@/common/types/builder";
 import { Options } from "./Options";
-import { getArrayFromString } from "@/common/helpers/getArrayFromString";
+import { getInputsFromString } from "@/common/helpers/getInputsFromString";
 
 interface ISidebar {
   engines: IEngines[];
@@ -165,7 +165,7 @@ export const Sidebar = ({
   };
 
   useEffect(() => {
-    setParsedTexts(getArrayFromString(selectedNodeData?.content || ""));
+    setParsedTexts(getInputsFromString(selectedNodeData?.content || ""));
   }, [selectedNodeData?.content]);
 
   return (
