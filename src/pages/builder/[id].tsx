@@ -456,6 +456,7 @@ export const Builder = () => {
           >
             <Box sx={{ bgcolor: "#373737", p: "1rem" }}>
               <TemplateForm
+                type="edit"
                 templateData={promptsData as Templates}
                 darkMode
                 onSaved={() => window.location.reload()}
