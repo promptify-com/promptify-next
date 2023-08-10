@@ -17,7 +17,6 @@ export const templatesApi = baseApi.injectEndpoints({
           url: `/api/meta/templates/?ordering=-runs`,
           method: "get",
         }),
-        providesTags: ["Templates"],
       }),
       getTemplatesSuggested: build.query<Templates[], void>({
         query: () => ({
@@ -64,9 +63,8 @@ export const templatesApi = baseApi.injectEndpoints({
           url: `/api/meta/templates/${id}`,
           method: "delete",
         }),
-        invalidatesTags: ["Templates"],
+        invalidatesTags: ["Templates", "MyTemplates"],
       }),
-
       getPromptTemplates: build.query<Templates, number>({
         query: (id: number) => ({
           url: `/api/meta/templates/${id}`,
@@ -111,6 +109,7 @@ export const templatesApi = baseApi.injectEndpoints({
           url: `/api/meta/templates/`,
           method: "get",
         }),
+        providesTags: ["Templates"],
       }),
     };
   },
