@@ -122,19 +122,21 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   // Fetched execution also provides old / no more existed inputs values, needed to filter depending on shown inputs
   useEffect(() => {
     if (selectedExecution?.parameters && shownInputs) {
-      const fetchedInputs = Object.values(selectedExecution.parameters).map(param => {
-        let filteredFields = {} as ResInputs;
-        for (const input of shownInputs) {
-          if (param[input.name]) {
-            filteredFields = {
-              id: input.prompt,
-              inputs: param || {}
-            };
+      const fetchedInputs = Object.values(selectedExecution.parameters).map(
+        (param) => {
+          let filteredFields = {} as ResInputs;
+          for (const input of shownInputs) {
+            if (param[input.name]) {
+              filteredFields = {
+                id: input.prompt,
+                inputs: param || {},
+              };
+            }
           }
+
+          return filteredFields;
         }
-        
-        return filteredFields;
-      });
+      );
       setNodeInputs(fetchedInputs);
     } else {
       setNodeInputs([]);
@@ -182,9 +184,9 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   // Handling the case of no spark selected. Wait for new spark to be created/selected, then generate
   useEffect(() => {
     if (isGenerating && selectedSpark) {
-      validateAndGenerateExecution()
+      validateAndGenerateExecution();
     }
-  }, [selectedSpark])
+  }, [selectedSpark]);
 
   const isInputsFilled = () => {
     const tempErrors: InputsErrors = {};
@@ -225,19 +227,18 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   };
 
   const validateAndGenerateExecution = () => {
-    
     if (!token) {
       savePathURL(window.location.pathname);
       return router.push("/signin");
     }
-    
+
     if (!validateInputs()) return;
 
     setIsGenerating(true);
-    
+
     setMobileTab(2);
     setActiveTab(2);
-    
+
     if (selectedSpark?.id) {
       generateExecution(resPrompts);
     } else {
@@ -351,7 +352,11 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
             }
 
             if (message.includes("[ERROR]")) {
-              onError(message ? message.replace("[ERROR]", "") : "Something went wrong during the execution of this prompt");
+              onError(
+                message
+                  ? message.replace("[ERROR]", "")
+                  : "Something went wrong during the execution of this prompt"
+              );
             }
 
             tempData = [...tempArr];
@@ -477,16 +482,18 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
       }
     }
   };
-  
+
   useEffect(() => {
     window.addEventListener("keydown", handleKeyboard);
     return () => window.removeEventListener("keydown", handleKeyboard);
   }, [handleKeyboard]);
 
   const filledForm = nodeInputs
-    .filter(nodeInput => nodeInput.inputs)
-    .every(nodeInput => Object.values(nodeInput.inputs).every(input => input));
-  
+    .filter((nodeInput) => nodeInput.inputs)
+    .every((nodeInput) =>
+      Object.values(nodeInput.inputs).every((input) => input)
+    );
+
   return (
     <Box
       sx={{
@@ -635,9 +642,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
                   borderColor: "transparent",
                 },
               }}
-              disabled={
-                !token ? false : (isGenerating ? true : !filledForm)
-              }
+              disabled={!token ? false : isGenerating ? true : !filledForm}
               onClick={validateAndGenerateExecution}
             >
               {token ? (
@@ -703,6 +708,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
       </Stack>
 
       <SparkForm
+        type="new"
         isOpen={sparkFormOpen}
         close={() => setSparkFormOpen(false)}
         templateId={templateData?.id}
