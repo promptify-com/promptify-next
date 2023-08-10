@@ -23,20 +23,22 @@ import {
   SettingsApplicationsRounded,
 } from "@mui/icons-material";
 
-import { templatesApi } from "@/core/api/templates";
+import { templatesApi, useDeleteTemplateMutation } from "@/core/api/templates";
 import { Templates } from "@/core/api/dto/templates";
 import { PageLoading } from "@/components/PageLoading";
 import TemplateImportModal from "@/components/modals/TemplateImportModal";
 import TemplateForm from "@/components/common/forms/TemplateForm";
-import { useDeleteTemplateMutation } from "@/core/api/templates";
 import BaseButton from "../base/BaseButton";
 import { modalStyle } from "../modals/styles";
+import { FormType } from "@/common/types/template";
 
 export const AllTemplates = () => {
   const [templateImportOpen, setTemplateImportOpen] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<Templates | null>(
     null
   );
+  const [templateFormType, setTemplateFormType] = useState<FormType>("create");
+
   const [templateFormOpen, setTemplateFormOpen] = useState(false);
   const [modalNew, setModalNew] = useState(false);
 
@@ -115,7 +117,7 @@ export const AllTemplates = () => {
           <BaseButton
             onClick={() => {
               setSelectedTemplate(null);
-              setModalNew(true);
+              setTemplateFormType("create");
               setTemplateFormOpen(true);
             }}
             color="primary"
@@ -234,7 +236,7 @@ export const AllTemplates = () => {
                         }}
                         onClick={() => {
                           setSelectedTemplate(template);
-                          setModalNew(false);
+                          setTemplateFormType("edit");
                           setTemplateFormOpen(true);
                         }}
                       >
@@ -286,13 +288,12 @@ export const AllTemplates = () => {
       <Modal open={templateFormOpen} onClose={() => setTemplateFormOpen(false)}>
         <Box sx={modalStyle}>
           <TemplateForm
+            type={templateFormType}
             templateData={selectedTemplate}
-            modalNew={modalNew}
             onSaved={() => {
               trigger();
               setTemplateFormOpen(false);
             }}
-            linkBuilder={!modalNew}
           />
         </Box>
       </Modal>
