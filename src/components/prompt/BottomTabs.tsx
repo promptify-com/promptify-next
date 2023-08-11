@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid, IconButton, Typography } from "@mui/material";
+import { Grid, IconButton, Theme, Typography, alpha, useTheme } from "@mui/material";
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined';
 import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
@@ -21,6 +21,8 @@ export const BottomTabs: React.FC<Props> = ({
   setActiveTab,
   activeTab,
 }) => {
+  const theme = useTheme();
+
   return (
     <Grid
       container
@@ -33,8 +35,7 @@ export const BottomTabs: React.FC<Props> = ({
         marginLeft: 'auto',
         marginRight: 'auto',
         zIndex: 999,
-        bgcolor: "primary.main",
-        opacity: 0.7,
+        bgcolor: alpha(theme.palette.primary.main, 0.7),
         width: '90%',
         borderRadius: '50px'
       }}
@@ -57,9 +58,6 @@ export const BottomTabs: React.FC<Props> = ({
               fontWeight: 500,
               bgcolor: activeTab === i ? '#FFF' : 'transparent',
               color: activeTab === i ? '#000' : '#FFF',
-              "&:hover, &:focus": {
-                color: activeTab === i ? '#000' : '#FFF',
-              },
               svg: {
                 width: 20,
                 height: 20,
