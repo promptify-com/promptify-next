@@ -28,7 +28,6 @@ import {
 } from "@mui/icons-material";
 
 import {
-  templatesApi,
   useDeleteTemplateMutation,
   useGetTemplatesByOrderingQuery,
 } from "@/core/api/templates";
@@ -42,7 +41,8 @@ import { TemplateStatusArray } from "@/common/constants";
 import { PageLoading } from "../PageLoading";
 
 export const AllTemplates = () => {
-  const { data: templates, isFetching } = useGetTemplatesByOrderingQuery();
+  const { data: templates, isFetching } =
+    useGetTemplatesByOrderingQuery("-created_at");
 
   const [deleteTemplate] = useDeleteTemplateMutation(); // auto update templates daaata without refretch again
 

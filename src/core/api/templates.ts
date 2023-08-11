@@ -13,9 +13,9 @@ import { IEditTemplate } from "@/common/types/editTemplate";
 export const templatesApi = baseApi.injectEndpoints({
   endpoints: (build) => {
     return {
-      getTemplatesByOrdering: build.query<Templates[], void>({
-        query: () => ({
-          url: `/api/meta/templates/?ordering=-runs`,
+      getTemplatesByOrdering: build.query<Templates[], string>({
+        query: (ordering: string = "-runs") => ({
+          url: `/api/meta/templates/?ordering=${ordering}`,
           method: "get",
         }),
       }),
