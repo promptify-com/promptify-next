@@ -4,6 +4,7 @@ import {
   Button,
   Card,
   CardMedia,
+  Chip,
   Dialog,
   DialogActions,
   DialogContent,
@@ -146,6 +147,11 @@ export const MyTemplates = () => {
                     <Box>
                       <Typography>{template.title}</Typography>
                     </Box>
+                    <Chip
+                      label={template.status}
+                      size="small"
+                      sx={{ fontSize: "12px", fontWeight: 500 }}
+                    />
                   </Grid>
                   <Grid
                     display={"flex"}

@@ -141,7 +141,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
           updatedInputs.set(input.prompt, {
               id: input.prompt,
               inputs: { 
-                ...updatedInputs.get(input.prompt)?.inputs,
+                ...(updatedInputs.get(input.prompt)?.inputs || {}),
                 [inputName]: {
                   value: "",
                   required: input.required
@@ -511,7 +511,6 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   const filledForm = nodeInputs.every(nodeInput => 
     Object.values(nodeInput.inputs).filter(input => input.required).every(input => input.value)
   );
-
   
   return (
     <Box
@@ -615,7 +614,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
                   promptId={input.prompt}
                   inputs={[input]}
                   resInputs={nodeInputs}
-                  setResInputs={setNodeInputs}
+                  setNodeInputs={setNodeInputs}
                   errors={errors}
                 />
               ))}
@@ -729,10 +728,8 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
       <SparkForm
         type="new"
         isOpen={sparkFormOpen}
-        close={() => {
-          setSparkFormOpen(false);
-          setIsGenerating(false);
-        }}
+        close={() => setSparkFormOpen(false)}
+        cancel={() => setIsGenerating(false)}
         templateId={templateData?.id}
         onSparkCreated={(spark) => {
           // No Spark selected case, useEffect [selectedSpark] at the top will handle generating new execution after Spark is selected
