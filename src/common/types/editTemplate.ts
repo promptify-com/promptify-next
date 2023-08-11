@@ -1,5 +1,5 @@
-import { Prompts } from '../../core/api/dto/prompts';
-import { Tag } from '../../core/api/dto/templates';
+import { Prompts } from "@/core/api/dto/prompts";
+import { Tag, TemplateStatus } from "@/core/api/dto/templates";
 
 export interface IEditTemplate {
   title: string;
@@ -19,4 +19,5 @@ export interface IEditTemplate {
   meta_title: string;
   meta_description: string;
   meta_keywords: string;
+  status: TemplateStatus;
 }
