@@ -151,7 +151,7 @@ export const IdentityItem: React.FC<IProps> = ({
             >
               {selectedOption && (
                 <Image
-                  src={require(`../../assets/images/animals/${selectedOption?.text}.png`)}
+                  src={require(`../../assets/images/animals/${selectedOption?.text}.jpg`)}
                   alt={"Unicorn"}
                   loading="lazy"
                   width={45}
@@ -261,7 +261,7 @@ export const IdentityItem: React.FC<IProps> = ({
                       >
                         <Box display="flex" alignItems="center">
                           <Image
-                            src={require(`../../assets/images/animals/${option.text}.png`)}
+                            src={require(`../../assets/images/animals/${option.text}.jpg`)}
                             alt={"Unicorn"}
                             loading="lazy"
                             width={45}

@@ -150,7 +150,7 @@ export const Header: React.FC<HeaderProps> = ({
                   fontSize: 10,
                   textTransform: "capitalize",
                 }}
-                src={user.avatar || user.first_name}
+                src={user.avatar}
                 alt={user.first_name}
               />
             </Box>
@@ -208,7 +208,7 @@ export const Header: React.FC<HeaderProps> = ({
                   <Avatar
                     ref={menuAnchorRef}
                     onClick={() => setIsMenuShown(!isMenuShown)}
-                    src={user.avatar || user.first_name}
+                    src={user.avatar}
                     alt={user.first_name}
                     sx={{
                       ml: "auto",

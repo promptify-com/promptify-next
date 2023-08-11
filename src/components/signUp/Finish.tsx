@@ -19,7 +19,7 @@ const Finish = () => {
   const [updateUser, error, isLoading] = useUpdateUser();
 
   const handleFinish = async () => {
-    router.push("/profile");
+    router.push("/explore");
   };
 
   return (

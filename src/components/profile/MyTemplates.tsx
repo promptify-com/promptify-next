@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -14,33 +15,35 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import BaseButton from "../base/BaseButton";
-import { useGetUserTemplatesQuery, userApi } from "@/core/api/user";
-import { PageLoading } from "../PageLoading";
-import { Templates } from "@/core/api/dto/templates";
 import {
   Delete,
   Edit,
   PreviewRounded,
   SettingsApplicationsRounded,
 } from "@mui/icons-material";
-import { useState, useEffect } from "react";
-import { useDeleteTemplateMutation } from "@/core/api/templates";
-import { modalStyle } from "../modals/styles";
-import TemplateForm from "../common/forms/TemplateForm";
-import TemplateImportModal from "../modals/TemplateImportModal";
+
+import {
+  useDeleteTemplateMutation,
+  useGetMyTemplatesQuery,
+} from "@/core/api/templates";
+import BaseButton from "@/components/base/BaseButton";
+import { Templates } from "@/core/api/dto/templates";
+import { modalStyle } from "@/components/modals/styles";
+import { PageLoading } from "@/components/PageLoading";
+import TemplateForm from "@/components/common/forms/TemplateForm";
+import { FormType } from "@/common/types/template";
 
 import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
 
 export const MyTemplates = () => {
-  const [trigger, { data: templates, isLoading: isTemplatesLoading }] =
-    userApi.endpoints.getUserTemplates.useLazyQuery();
+  const { data: templates, isLoading: isTemplatesLoading } =
+    useGetMyTemplatesQuery();
 
   const [selectedTemplate, setSelectedTemplate] = useState<Templates | null>(
     null
   );
   const [templateFormOpen, setTemplateFormOpen] = useState(false);
-  const [modalNew, setModalNew] = useState(false);
+  const [templateFormType, setTemplateFormType] = useState<FormType>("create");
 
   const openDeletionModal = (template: Templates) => {
     setSelectedTemplate(template);
@@ -48,10 +51,6 @@ export const MyTemplates = () => {
   };
 
   const [deleteTemplate, response] = useDeleteTemplateMutation();
-
-  useEffect(() => {
-    trigger();
-  }, [response]);
 
   const confirmDelete = async () => {
     if (!selectedTemplate) return;
@@ -92,15 +91,19 @@ export const MyTemplates = () => {
         >
           My templates
         </Typography>
+        <BaseButton
+          onClick={() => {
+            setTemplateFormOpen(true);
+            setTemplateFormType("create");
+          }}
+          variant="contained"
+          color="primary"
+        >
+          New
+        </BaseButton>
       </Box>
       {isTemplatesLoading ? (
-        <Grid container spacing={2}>
-          {Array.from({ length: 6 }).map((_, index) => (
-            <Grid key={index} item xs={12}>
-              <CardTemplatePlaceholder />
-            </Grid>
-          ))}
-        </Grid>
+        <CardTemplatePlaceholder count={6} />
       ) : (
         <Box
           display={"flex"}
@@ -207,7 +210,7 @@ export const MyTemplates = () => {
                         }}
                         onClick={() => {
                           setSelectedTemplate(template);
-                          setModalNew(false);
+                          setTemplateFormType("edit");
                           setTemplateFormOpen(true);
                         }}
                       >
@@ -265,13 +268,11 @@ export const MyTemplates = () => {
       <Modal open={templateFormOpen} onClose={() => setTemplateFormOpen(false)}>
         <Box sx={modalStyle}>
           <TemplateForm
+            type={templateFormType}
             templateData={selectedTemplate}
-            modalNew={modalNew}
             onSaved={() => {
-              trigger();
               setTemplateFormOpen(false);
             }}
-            linkBuilder={!modalNew}
           />
         </Box>
       </Modal>

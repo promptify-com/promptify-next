@@ -1,9 +1,7 @@
 import { Box, Grid, Skeleton } from "@mui/material";
 
-export default function CategoryPlaceholder() {
-  const numSkeletons = 12;
-
-  return Array.from({ length: numSkeletons }).map((_, index) => (
+export default function CategoriesPlaceholder({ count = 12 }) {
+  return Array.from({ length: count }).map((_, index) => (
     <Grid item key={index}>
       <Box
         sx={{
@@ -15,9 +13,9 @@ export default function CategoryPlaceholder() {
           transition: "opacity 0.3s ease",
         }}
       >
-        {/* Skeleton for the image */}
         <Skeleton
           variant="rectangular"
+          animation="wave"
           sx={{
             zIndex: 1,
             borderRadius: "16px",
@@ -25,8 +23,6 @@ export default function CategoryPlaceholder() {
             height: "200px",
           }}
         />
-
-        {/* Skeleton for the title */}
         <Box
           sx={{
             p: 2,
@@ -35,6 +31,7 @@ export default function CategoryPlaceholder() {
         >
           <Skeleton
             variant="text"
+            animation="wave"
             sx={{
               width: "80%",
               height: 20,
@@ -42,10 +39,9 @@ export default function CategoryPlaceholder() {
               fontSize: "18px",
             }}
           />
-
-          {/* Skeleton for the small description */}
           <Skeleton
             variant="text"
+            animation="wave"
             sx={{ width: "60%", height: 16, fontSize: "14px" }}
           />
         </Box>

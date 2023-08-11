@@ -13,6 +13,8 @@ import { pinSpark, unpinSpark } from "@/hooks/api/executions";
 import { useRouter } from "next/router";
 import moment from "moment";
 
+import ParagraphPlaceholder from "@/components/placeholders/ParagraphPlaceholder";
+
 interface Props {
   templateData: Templates;
   sparks: Spark[];
@@ -124,24 +126,7 @@ export const Display: React.FC<Props> = ({
             />
           ) : // If there is no new execution being generated, show the selected execution
           isFetching ? (
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                flexDirection: "column",
-              }}
-            >
-              {Array.from({ length: 12 }).map((_, index) => (
-                <Skeleton
-                  key={index}
-                  variant="text"
-                  width={"60%"}
-                  height={16}
-                  sx={{ marginBottom: "8px" }}
-                />
-              ))}
-            </Box>
+            <ParagraphPlaceholder />
           ) : selectedExecution ? (
             <ExecutionCard
               execution={selectedExecution}

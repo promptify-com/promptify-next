@@ -25,11 +25,7 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
       <Box width={"100%"}>
         {!filtred && <Typography fontSize={19}>{title}</Typography>}
         {isLoading ? (
-          Array.from({ length: 6 }).map((_, index) => (
-            <Grid item key={index} sx={{ mb: 2 }}>
-              <CardTemplatePlaceholder />
-            </Grid>
-          ))
+          <CardTemplatePlaceholder count={6} />
         ) : (
           <Grid
             container

@@ -10,7 +10,7 @@ export default function SubCategoryPlaceholder() {
         justifyContent="flex-start"
         gap={2}
       >
-        {[1, 2, 3].map((_, index) => (
+        {Array.from({ length: 3 }).map((_, index) => (
           <Box
             key={index}
             display="flex"

@@ -10,7 +10,6 @@ import {
 } from "@mui/material";
 import { CollectionItem } from "./CollectionItem";
 import { ITemplate } from "@/common/types/template";
-import { FetchLoading } from "@/components/FetchLoading";
 import { useRouter } from "next/router";
 import { CollectionsEmptyBox } from "./CollectionsEmptyBox";
 

@@ -30,7 +30,6 @@ import {
   Templates,
   TemplatesExecutions,
 } from "@/core/api/dto/templates";
-import { PageLoading } from "../../components/PageLoading";
 import { GeneratorForm } from "@/components/prompt/GeneratorForm";
 import { Display } from "@/components/prompt/Display";
 import { Details } from "@/components/prompt/Details";
@@ -568,6 +567,7 @@ const Prompt = () => {
           )}
 
           <SparkForm
+            type="new"
             isOpen={sparkFormOpen}
             close={() => setSparkFormOpen(false)}
             templateId={templateData?.id}
