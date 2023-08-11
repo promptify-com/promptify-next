@@ -452,7 +452,7 @@ const Prompt = () => {
                       updateTemplateData={setTemplateData}
                       setMobileTab={setMobileTab}
                       setActiveTab={setActiveTab}
-                      min
+                      mobile
                     />
                   </Grid>
 
