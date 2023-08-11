@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Box,
   Button,
@@ -51,8 +51,7 @@ export const AllTemplates = () => {
     null
   );
   const [templateFormType, setTemplateFormType] = useState<FormType>("create");
-  const [status, SetStatus] = useState<TemplateStatus | null>(null);
-  const [filteredTemplates, setFilteredTemplates] = useState<Templates[]>([]);
+  const [status, setStatus] = useState<TemplateStatus | null>("ALL");
 
   const [templateFormOpen, setTemplateFormOpen] = useState(false);
 
@@ -61,16 +60,11 @@ export const AllTemplates = () => {
     setConfirmDialog(true);
   };
 
-  useEffect(() => {
-    if (templates) {
-      let filtered;
-      if (status !== null) {
-        filtered = templates.filter((template) => template.status === status);
-      } else {
-        filtered = templates;
-      }
-      setFilteredTemplates(filtered);
+  const filteredTemplates = useMemo(() => {
+    if (status !== "ALL" && templates) {
+      return templates.filter((template) => template.status === status);
     }
+    return templates || [];
   }, [templates, status]);
 
   const confirmDelete = async () => {
@@ -127,13 +121,13 @@ export const AllTemplates = () => {
               sx={{
                 fontSize: 15,
               }}
-              value={status}
+              value={status || "ALL"}
               onChange={(event) => {
-                SetStatus(event.target.value as TemplateStatus);
+                setStatus(event.target.value as TemplateStatus);
               }}
             >
-              <option selected disabled>
-                Status
+              <option value="ALL">
+                All Status
               </option>
               {TemplateStatusArray.map((item: TemplateStatus) => (
                 <option key={item} value={item}>
