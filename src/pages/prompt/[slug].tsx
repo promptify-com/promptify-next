@@ -46,6 +46,7 @@ import { History } from "@/components/prompt/History";
 import { useGetSparksByTemplateQuery } from "@/core/api/sparks";
 import moment from "moment";
 import SparkForm from "@/components/prompt/SparkForm";
+import { DetailsCardMini } from "@/components/prompt/DetailsCardMini";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -422,10 +423,9 @@ const Prompt = () => {
               {windowWidth < 960 && (
                 <>
                   {mobileTab !== 0 && (
-                    <DetailsCard
+                    <DetailsCardMini
                       templateData={templateData}
                       onNewSpark={() => setSparkFormOpen(true)}
-                      min
                     />
                   )}
 
