@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Button, alpha, useTheme } from '@mui/material'
+import { Button, alpha, useTheme } from '@mui/material';
 import { Favorite, FavoriteBorder } from '@mui/icons-material';
 
 interface Props {
