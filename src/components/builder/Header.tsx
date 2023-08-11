@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  Box,
-  Chip,
-  ChipPropsColorOverrides,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Box, Chip, Stack, Typography } from "@mui/material";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import { ModeEdit, Publish } from "@mui/icons-material";
 import BaseButton from "../base/BaseButton";
@@ -32,7 +26,7 @@ export const Header = ({
       height="80px"
       display="flex"
       alignItems="center"
-      px={"50px"}
+      px={{ xs: "10px", md: "50px" }}
       justifyContent="space-between"
     >
       <Box display={"flex"} alignItems={"center"} gap={2}>
