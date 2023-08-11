@@ -14,7 +14,6 @@ const mobileTabs = [
   { name: "About", icon: <RemoveRedEyeOutlinedIcon /> },
   { name: "Ignite", icon: <ExitToAppIcon /> },
   { name: "Spark", icon: <MenuOutlinedIcon /> },
-  // { name: "history", icon: <History /> },
 ];
 
 export const BottomTabs: React.FC<Props> = ({

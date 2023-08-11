@@ -31,7 +31,7 @@ interface DetailsProps {
   updateTemplateData: (data: Templates) => void;
   setMobileTab?: (value: number) => void;
   setActiveTab?: (value: number) => void;
-  min?: boolean;
+  mobile?: boolean;
 }
 
 export const Details: React.FC<DetailsProps> = ({
@@ -39,7 +39,7 @@ export const Details: React.FC<DetailsProps> = ({
   updateTemplateData,
   setMobileTab,
   setActiveTab,
-  min
+  mobile
 }) => {
   const [isFetching, setIsFetching] = useState(false);
   const token = useToken();
@@ -87,11 +87,11 @@ export const Details: React.FC<DetailsProps> = ({
     <Box sx={{ p: "16px" }}>
       <Box>
         <Box sx={{ display: 'flex', py: { md: "16px" } }}>
-          {!min && <FavoriteButton
+          {!mobile && <FavoriteButton
             isFavorite={templateData.is_favorite}
             onClick={favorTemplate}
           />}
-         {min &&
+         {mobile &&
          <>
            <FavoriteMobileButton
             isFavorite={templateData.is_favorite}
