@@ -105,7 +105,7 @@ const TemplateForm: React.FC<Props> = ({
     if (!templateData) return;
     await updateTemplate({
       id: templateData?.id,
-      update: values,
+      data: values,
     });
     handleSave();
   };

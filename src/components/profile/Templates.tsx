@@ -27,28 +27,31 @@ import {
   SettingsApplicationsRounded,
 } from "@mui/icons-material";
 
-import { templatesApi, useDeleteTemplateMutation } from "@/core/api/templates";
+import {
+  templatesApi,
+  useDeleteTemplateMutation,
+  useGetTemplatesByOrderingQuery,
+} from "@/core/api/templates";
 import { TemplateStatus, Templates } from "@/core/api/dto/templates";
-import { PageLoading } from "@/components/PageLoading";
 import TemplateImportModal from "@/components/modals/TemplateImportModal";
 import TemplateForm from "@/components/common/forms/TemplateForm";
 import BaseButton from "@/components/base/BaseButton";
 import { modalStyle } from "@/components/modals/styles";
 import { FormType } from "@/common/types/template";
 import { TemplateStatusArray } from "@/common/constants";
+import { PageLoading } from "../PageLoading";
 
 export const AllTemplates = () => {
-  const [trigger, { data: templates, isFetching }] =
-    templatesApi.endpoints.getAllPromptTemplates.useLazyQuery();
+  const { data: templates, isFetching } = useGetTemplatesByOrderingQuery();
 
-  const [deleteTemplate, response] = useDeleteTemplateMutation();
+  const [deleteTemplate] = useDeleteTemplateMutation(); // auto update templates daaata without refretch again
 
   const [templateImportOpen, setTemplateImportOpen] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<Templates | null>(
     null
   );
   const [templateFormType, setTemplateFormType] = useState<FormType>("create");
-  const [status, SetStatus] = useState<TemplateStatus>("PUBLISHED");
+  const [status, SetStatus] = useState<TemplateStatus | null>(null);
   const [filteredTemplates, setFilteredTemplates] = useState<Templates[]>([]);
 
   const [templateFormOpen, setTemplateFormOpen] = useState(false);
@@ -59,14 +62,13 @@ export const AllTemplates = () => {
   };
 
   useEffect(() => {
-    trigger();
-  }, [response]);
-
-  useEffect(() => {
     if (templates) {
-      const filtered = templates.filter(
-        (template) => template.status === status
-      );
+      let filtered;
+      if (status !== null) {
+        filtered = templates.filter((template) => template.status === status);
+      } else {
+        filtered = templates;
+      }
       setFilteredTemplates(filtered);
     }
   }, [templates, status]);
@@ -120,16 +122,8 @@ export const AllTemplates = () => {
           spacing={1}
         >
           <FormControl sx={{ m: 1 }} variant="standard">
-            <InputLabel
-              htmlFor="demo-customized-select-native"
-              sx={{
-                fontWeight: 500,
-              }}
-            >
-              Status
-            </InputLabel>
             <NativeSelect
-              id="demo-customized-select-native"
+              id="status"
               sx={{
                 fontSize: 15,
               }}
@@ -138,14 +132,11 @@ export const AllTemplates = () => {
                 SetStatus(event.target.value as TemplateStatus);
               }}
             >
+              <option selected disabled>
+                Status
+              </option>
               {TemplateStatusArray.map((item: TemplateStatus) => (
-                <option
-                  key={item}
-                  value={item}
-                  style={{
-                    padding: "0px 10px",
-                  }}
-                >
+                <option key={item} value={item}>
                   {item}
                 </option>
               ))}
@@ -359,7 +350,6 @@ export const AllTemplates = () => {
             type={templateFormType}
             templateData={selectedTemplate}
             onSaved={() => {
-              trigger();
               setTemplateFormOpen(false);
             }}
           />
@@ -369,7 +359,7 @@ export const AllTemplates = () => {
       <TemplateImportModal
         open={templateImportOpen}
         setOpen={setTemplateImportOpen}
-        refetchTemplates={trigger}
+        refetchTemplates={() => {}} // this needs to be refactored no need to refetch data
       />
     </Box>
   );

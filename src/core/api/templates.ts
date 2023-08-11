@@ -130,13 +130,13 @@ export const templatesApi = baseApi.injectEndpoints({
       }),
       updateTemplate: build.mutation<
         Templates,
-        { id: number; update: IEditTemplate }
+        { id: number; data: IEditTemplate }
       >({
-        query: ({ update, id }: { update: IEditTemplate; id: number }) => ({
+        query: ({ data, id }: { data: IEditTemplate; id: number }) => ({
           url: `/api/meta/templates/${id}/`,
           method: "put",
           headers: { "Content-Type": "application/json" },
-          data: update,
+          data,
         }),
         invalidatesTags: ["Templates"],
       }),
