@@ -446,7 +446,7 @@ const TemplateForm: React.FC<Props> = ({
             <Typography sx={typographyStyle}>Status</Typography>
             <Select
               sx={fieldStyle}
-              name="category"
+              name="status"
               value={formik.values.status}
               onChange={formik.handleChange}
             >
