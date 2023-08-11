@@ -1,6 +1,6 @@
 import React from 'react'
 import { Button, alpha, useTheme } from '@mui/material';
-import { Favorite, FavoriteBorder } from '@mui/icons-material';
+import { Favorite } from '@mui/icons-material';
 
 interface Props {
    isFavorite: boolean;
@@ -22,7 +22,6 @@ export const FavoriteMobileButton:React.FC<Props> = ({ isFavorite, onClick, like
             fontSize: 14,
             borderColor: alpha(palette.primary.main, .3),
             "&:hover": {
-              bgcolor: "action.hover",
               color: palette.primary.main,
               borderColor: alpha(palette.primary.main, .8),
             },           
