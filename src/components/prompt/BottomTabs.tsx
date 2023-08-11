@@ -77,6 +77,10 @@ export const BottomTabs: React.FC<Props> = ({
                 width: 20,
                 height: 20,
               },
+              '&:hover, &:focus': {
+                color: "#000",
+                bgcolor: "#FFF"
+              },
             }}
           >
             {tab.icon}
