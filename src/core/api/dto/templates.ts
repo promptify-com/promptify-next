@@ -69,6 +69,7 @@ export interface Category {
 }
 
 export type TemplateStatus =
+  | "ALL"
   | "DRAFT"
   | "PENDING_REVIEW"
   | "PUBLISHED"

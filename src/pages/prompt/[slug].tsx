@@ -282,7 +282,7 @@ const Prompt = () => {
         setPalette(newPalette);
       })
       .catch(() => {
-        fetchDynamicColors();
+        console.warn("Error fetching dynamic colors");
       });
   };
 

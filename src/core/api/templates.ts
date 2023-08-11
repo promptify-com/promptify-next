@@ -18,6 +18,7 @@ export const templatesApi = baseApi.injectEndpoints({
           url: `/api/meta/templates/?ordering=${ordering}`,
           method: "get",
         }),
+        providesTags: ["Templates"],
       }),
       getTemplatesSuggested: build.query<Templates[], void>({
         query: () => ({
@@ -117,7 +118,7 @@ export const templatesApi = baseApi.injectEndpoints({
           url: "/api/meta/templates/me",
           method: "get",
         }),
-        providesTags: ["Templates"],
+        providesTags: ["MyTemplates"],
       }),
       createTemplate: build.mutation<Templates, IEditTemplate>({
         query: (data: IEditTemplate) => ({
@@ -126,7 +127,7 @@ export const templatesApi = baseApi.injectEndpoints({
           headers: { "Content-Type": "application/json" },
           data,
         }),
-        invalidatesTags: ["Templates"],
+        invalidatesTags: ["Templates", "MyTemplates"],
       }),
       updateTemplate: build.mutation<
         Templates,
@@ -138,7 +139,7 @@ export const templatesApi = baseApi.injectEndpoints({
           headers: { "Content-Type": "application/json" },
           data,
         }),
-        invalidatesTags: ["Templates"],
+        invalidatesTags: ["Templates", "MyTemplates"],
       }),
 
       publishTemplate: build.mutation<Templates, number>({

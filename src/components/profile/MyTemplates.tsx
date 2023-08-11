@@ -93,6 +93,7 @@ export const MyTemplates = () => {
         <BaseButton
           onClick={() => {
             setTemplateFormOpen(true);
+            setSelectedTemplate(null);
             setTemplateFormType("create");
           }}
           variant="contained"
@@ -180,7 +181,7 @@ export const MyTemplates = () => {
                         <PreviewRounded />
                       </IconButton>
                     </Tooltip>
-                    <Tooltip title="Builder">
+                    <Tooltip title="Edit">
                       <IconButton
                         sx={{
                           bgcolor: "surface.2",
@@ -196,26 +197,6 @@ export const MyTemplates = () => {
                             window.location.origin + `/builder/${template.id}`,
                             "_blank"
                           );
-                        }}
-                      >
-                        <SettingsApplicationsRounded />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Edit">
-                      <IconButton
-                        sx={{
-                          bgcolor: "surface.2",
-                          border: "none",
-                          color: "onSurface",
-                          "&:hover": {
-                            bgcolor: "surface.3",
-                            color: "onSurface",
-                          },
-                        }}
-                        onClick={() => {
-                          setSelectedTemplate(template);
-                          setTemplateFormType("edit");
-                          setTemplateFormOpen(true);
                         }}
                       >
                         <Edit />
@@ -247,7 +228,7 @@ export const MyTemplates = () => {
 
       {templates && templates.length == 0 && (
         <Typography textAlign={"center"}>
-          All your templates will be listed here! This feature is coming soon.
+          No template found. Create one now!
         </Typography>
       )}
       <Dialog
