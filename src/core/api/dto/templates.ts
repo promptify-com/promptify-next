@@ -5,7 +5,7 @@ export interface FilterParams {
   categoryId?: number;
   subcategoryId?: number;
   tag?: string;
-  title?: string | null,
+  title?: string | null;
   engineId?: number;
   filter?: string;
 }
@@ -68,6 +68,12 @@ export interface Category {
   slug: string;
 }
 
+export type TemplateStatus =
+  | "DRAFT"
+  | "PENDING_REVIEW"
+  | "PUBLISHED"
+  | "ARCHIVED";
+
 export interface Templates {
   id: number;
   title: string;
@@ -98,6 +104,7 @@ export interface Templates {
   meta_title: string;
   meta_description: string;
   meta_keywords: string;
+  status: TemplateStatus;
 }
 
 export interface PromptExecutions {
@@ -198,9 +205,9 @@ export interface SparkExecution {
 }
 
 export interface SparkVersion {
-  id: number,
-  title: string,
-  created_at: string
+  id: number;
+  title: string;
+  created_at: string;
 }
 export interface Spark {
   id: number;
