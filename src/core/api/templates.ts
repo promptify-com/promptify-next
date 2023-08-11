@@ -140,6 +140,15 @@ export const templatesApi = baseApi.injectEndpoints({
         }),
         invalidatesTags: ["Templates"],
       }),
+
+      publishTemplate: build.mutation<Templates, number>({
+        query: (id: number) => ({
+          url: `/api/meta/templates/${id}/submit/`,
+          method: "post",
+          headers: { "Content-Type": "application/json" },
+        }),
+        invalidatesTags: ["Templates"],
+      }),
     };
   },
 });
@@ -162,6 +171,7 @@ export const {
   useGetMyTemplatesQuery,
   useCreateTemplateMutation,
   useUpdateTemplateMutation,
+  usePublishTemplateMutation,
 } = templatesApi;
 
 export const useTemplateView = () => {
