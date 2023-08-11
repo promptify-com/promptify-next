@@ -1,4 +1,4 @@
-import { IInterest } from "../../../common/types";
+import { IInterest } from "@/common/types";
 
 export interface User {
   id: number;

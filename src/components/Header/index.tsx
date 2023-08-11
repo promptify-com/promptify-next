@@ -3,15 +3,14 @@ import { Avatar, Box, Grid, Typography } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import { useRouter } from "next/router";
-
 import { LogoApp } from "@/assets/icons/LogoApp";
-import useToken from "@/hooks/useToken";
 import SearchBar from "@/components/explorer/SearchBar";
 import { SearchDialog } from "./SearchDialog";
-import { useGetCurrentUserQuery } from "@/core/api/user";
-import { FetchLoading } from "@/components/FetchLoading";
 import { ProfileDropDown } from "@/components/ProfileMenu";
 import { SideBarMobile } from "../SideBarMobile";
+import { RootState } from "@/core/store";
+import { isValidUserFn } from '@/core/store/userSlice';
+import { useSelector } from 'react-redux';
 
 interface HeaderProps {
   transparent?: boolean;
@@ -59,11 +58,9 @@ export const Header: React.FC<HeaderProps> = ({
   keyWord = "",
   setKeyWord,
 }) => {
-  const token = useToken();
   const router = useRouter();
-
-  const { data: user, isLoading: userLoading } = useGetCurrentUserQuery(token);
-
+  const currentUser = useSelector((state: RootState) => state.user.currentUser);
+  const isValidUser = useSelector(isValidUserFn);
   const [isMenuShown, setIsMenuShown] = useState(false);
   const [openSearchDialog, setOpenSearchDialog] = useState<boolean>(false);
   const menuAnchorRef = useRef<HTMLDivElement | null>(null);
@@ -135,7 +132,7 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <SearchIcon sx={{ fontSize: "26px", color: "onSurface" }} />
           </Box>
-          {user && token && (
+          {isValidUser && (
             <Box
               onClick={() => {
                 setOpenSidebar(true);
@@ -150,8 +147,8 @@ export const Header: React.FC<HeaderProps> = ({
                   fontSize: 10,
                   textTransform: "capitalize",
                 }}
-                src={user.avatar}
-                alt={user.first_name}
+                src={currentUser?.avatar}
+                alt={currentUser?.first_name}
               />
             </Box>
           )}
@@ -191,92 +188,87 @@ export const Header: React.FC<HeaderProps> = ({
           }}
         >
           <Box sx={{ display: { xs: "none", md: "flex" } }}>
-            {userLoading ? (
-              <FetchLoading />
-            ) : (
-              <Box>
-                {user && token ? (
-                  <Avatar
-                    ref={menuAnchorRef}
-                    onClick={() => setIsMenuShown(!isMenuShown)}
-                    src={user.avatar}
-                    alt={user.first_name}
+            <Box>
+              {isValidUser ? (
+                <Avatar
+                  ref={menuAnchorRef}
+                  onClick={() => setIsMenuShown(!isMenuShown)}
+                  src={currentUser?.avatar}
+                  alt={currentUser?.first_name}
+                  sx={{
+                    ml: "auto",
+                    cursor: "pointer",
+                    bgcolor: "black",
+                    borderRadius: { xs: "24px", sm: "36px" },
+                    width: { xs: "24px", sm: "40px" },
+                    height: { xs: "24px", sm: "40px" },
+                    fontStyle: "normal",
+                    textAlign: "center",
+                    fontWeight: 400,
+                    fontSize: { sm: "30px" },
+                    textTransform: "capitalize",
+                    lineHeight: "20px",
+                    letterSpacing: "0.14px",
+                  }}
+                />
+              ) : (
+                <Box display={"flex"} alignItems={"center"} gap={"16px"}>
+                  <Login />
+                  <Grid
+                    onClick={() =>
+                      router.push({
+                        pathname: "/signin",
+                        query: { from: "signup" },
+                      })
+                    }
                     sx={{
-                      ml: "auto",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      padding: "8px 22px",
+                      width: "105px",
+                      height: "42px",
+                      background: "#3B4050",
+                      boxShadow:
+                        "0px 1px 5px rgba(0, 0, 0, 0.12), 0px 2px 2px rgba(0, 0, 0, 0.14), 0px 3px 1px -2px rgba(0, 0, 0, 0.2)",
+                      borderRadius: "100px",
+                      flex: "none",
+                      order: 1,
+                      flexGrow: 0,
                       cursor: "pointer",
-                      bgcolor: "black",
-                      borderRadius: { xs: "24px", sm: "36px" },
-                      width: { xs: "24px", sm: "40px" },
-                      height: { xs: "24px", sm: "40px" },
-                      fontStyle: "normal",
-                      textAlign: "center",
-                      fontWeight: 400,
-                      fontSize: { sm: "30px" },
-                      textTransform: "capitalize",
-                      lineHeight: "20px",
-                      letterSpacing: "0.14px",
+
+                      "&:hover": {
+                        transform: "scale(1.05)",
+                      },
                     }}
-                  />
-                ) : (
-                  <Box display={"flex"} alignItems={"center"} gap={"16px"}>
-                    <Login />
-                    <Grid
-                      onClick={() =>
-                        router.push({
-                          pathname: "/signin",
-                          query: { from: "signup" },
-                        })
-                      }
+                  >
+                    <Typography
                       sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        padding: "8px 22px",
-                        width: "105px",
-                        height: "42px",
-                        background: "#3B4050",
-                        boxShadow:
-                          "0px 1px 5px rgba(0, 0, 0, 0.12), 0px 2px 2px rgba(0, 0, 0, 0.14), 0px 3px 1px -2px rgba(0, 0, 0, 0.2)",
-                        borderRadius: "100px",
+                        width: "61px",
+                        height: "26px",
+                        fontFamily: "Poppins",
+                        fontStyle: "normal",
+                        fontWeight: 500,
+                        fontSize: "15px",
+                        lineHeight: "26px",
+                        letterSpacing: "0.46px",
+                        color: "#FFFFFF",
                         flex: "none",
                         order: 1,
                         flexGrow: 0,
-                        cursor: "pointer",
-
-                        "&:hover": {
-                          transform: "scale(1.05)",
-                        },
                       }}
                     >
-                      <Typography
-                        sx={{
-                          width: "61px",
-                          height: "26px",
-                          fontFamily: "Poppins",
-                          fontStyle: "normal",
-                          fontWeight: 500,
-                          fontSize: "15px",
-                          lineHeight: "26px",
-                          letterSpacing: "0.46px",
-                          color: "#FFFFFF",
-                          flex: "none",
-                          order: 1,
-                          flexGrow: 0,
-                        }}
-                      >
-                        Sign Up
-                      </Typography>
-                    </Grid>
-                  </Box>
-                )}
-              </Box>
-            )}
+                      Sign Up
+                    </Typography>
+                  </Grid>
+                </Box>
+              )}
+            </Box>
           </Box>
         </Box>
         <ProfileDropDown
           anchorElement={menuAnchorRef.current}
-          user={user}
           open={isMenuShown}
           onToggle={() => setIsMenuShown(!isMenuShown)}
           onClose={() => setIsMenuShown(false)}
@@ -286,8 +278,6 @@ export const Header: React.FC<HeaderProps> = ({
           openDrawer={openSidebar}
           onCloseDrawer={() => setOpenSidebar(false)}
           onOpenDrawer={() => setOpenSidebar(true)}
-          user={user}
-          token={token}
           setSidebarType={setSidebarType}
         />
       </Grid>

@@ -27,13 +27,13 @@ import {
 import { useRouter } from "next/router";
 import { setSelectedKeyword } from "@/core/store/filtersSlice";
 import { CollectionsEmptyBox } from "./common/sidebar/CollectionsEmptyBox";
-import { User } from "@/core/api/dto/user";
 import { Menu, MenuType } from "@/common/constants";
 import useLogout from "@/hooks/useLogout";
 import useSetUser from "@/hooks/useSetUser";
 import { useGetCollectionTemplatesQuery } from "@/core/api/collections";
 import { Collections } from "./common/sidebar/Collections";
 import { useDispatch, useSelector } from "react-redux";
+import { isValidUserFn } from '@/core/store/userSlice';
 import { RootState } from "@/core/store";
 
 type SidebarType = "navigation" | "profile";
@@ -43,8 +43,6 @@ interface SideBarMobileProps {
   openDrawer: boolean;
   onCloseDrawer: () => void;
   onOpenDrawer: () => void;
-  user: User | undefined;
-  token: string | null | undefined;
   setSidebarType: (value: React.SetStateAction<SidebarType>) => void;
 }
 
@@ -53,19 +51,18 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
   openDrawer,
   onCloseDrawer,
   onOpenDrawer,
-  user,
-  token,
-  setSidebarType
+  setSidebarType,
 }) => {
   const router = useRouter();
   const logout = useLogout();
   const setUser = useSetUser();
   const title = useSelector((state: RootState) => state.filters.title || "");
   const dispatch = useDispatch();
-  const [textInput, setTextInput] = React.useState("");
   const pathname = router.pathname;
   const splittedPath = pathname.split("/");
-  const isValidUser = Boolean(token && user?.id);
+  const [textInput, setTextInput] = React.useState("");
+  const isValidUser = useSelector(isValidUserFn);
+  const currentUser = useSelector((state: RootState) => state.user.currentUser);
   const links = [
     {
       label: "Homepage",
@@ -119,8 +116,8 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
     onCloseDrawer();
   };
   const { data: collections, isLoading: isCollectionsLoading } =
-    useGetCollectionTemplatesQuery(user?.favorite_collection_id as number, {
-      skip: !user,
+    useGetCollectionTemplatesQuery(currentUser?.favorite_collection_id as number, {
+      skip: !isValidUser,
     });
 
   return (
@@ -167,8 +164,8 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
                 {isValidUser && (
                   <Avatar
                     onClick={() => setSidebarType("profile")}
-                    src={user?.avatar}
-                    alt={user?.first_name}
+                    src={currentUser?.avatar}
+                    alt={currentUser?.first_name}
                     sx={{
                       ml: "auto",
                       cursor: "pointer",
@@ -242,7 +239,7 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
                 sx={{ flex: 1 }}
                 placeholder="Search for templates..."
                 onChange={(e) => {
-                    setTextInput(e.target.value);
+                  setTextInput(e.target.value);
                 }}
                 value={textInput ?? title}
               />
@@ -321,8 +318,8 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
               >
                 <Box display={"flex"} justifyContent={"center"}>
                   <Avatar
-                    src={user?.avatar}
-                    alt={user?.first_name}
+                    src={currentUser?.avatar}
+                    alt={currentUser?.first_name}
                     sizes="40px"
                     sx={{
                       width: "90px",
@@ -352,7 +349,7 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
                       letterSpacing: "0.15px",
                     }}
                   >
-                    {user?.first_name} {user?.last_name}
+                    {currentUser?.first_name} {currentUser?.last_name}
                   </Typography>
                   <Typography
                     sx={{
@@ -365,7 +362,7 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
                       letterSpacing: "0.15px",
                     }}
                   >
-                    {user?.username}
+                    {currentUser?.username}
                   </Typography>
                 </Box>
               </Grid>

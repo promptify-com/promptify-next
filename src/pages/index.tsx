@@ -3,10 +3,9 @@ import React, { useEffect } from "react";
 import { AxiosResponse } from "axios";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-
-import useToken from "@/hooks/useToken";
+import { useSelector, useDispatch } from 'react-redux';
 import { IContinueWithSocialMediaResponse } from "@/common/types";
-import { authClient, client } from "@/common/axios";
+import { client } from "@/common/axios";
 import { Layout } from "@/layout";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
 import { categoriesApi } from "@/core/api/categories";
@@ -18,84 +17,80 @@ import {
   useGetTemplatesSuggestedQuery,
 } from "@/core/api/templates";
 import { getPathURL, saveToken } from "@/common/utils";
-import { AppDispatch, wrapper } from "@/core/store";
+import { AppDispatch, RootState, wrapper } from "@/core/store";
+import { isValidUserFn, updateUser } from '@/core/store/userSlice';
 import { Category } from "@/core/api/dto/templates";
+
 interface HomePageProps {
   categories: Category[];
-  isCategoryLoading: boolean;
 }
 
 const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
 
 const HomePage: NextPage<HomePageProps> = ({
   categories,
-  isCategoryLoading,
 }) => {
-  const token = useToken();
   const router = useRouter();
   const path = getPathURL();
-
-  const [trigger, { data: user, isLoading: _userLoading }] =
+  const dispatch = useDispatch();
+  const isValidUser = useSelector(isValidUserFn);
+  const currentUser = useSelector((state: RootState) => state.user.currentUser);
+  const [getCurrentUser] =
     userApi.endpoints.getCurrentUser.useLazyQuery();
-  useEffect(() => {
-    if (token) {
-      trigger(token);
-    }
-  }, [token]);
-
-  const isValidUser = Boolean(user?.id && token);
-
   const { data: lastTemplate, isLoading: isLastTemplateLoading } =
     useGetLastTemplatesQuery(undefined, { skip: !isValidUser });
   const { data: suggestedTemplates, isLoading: isSuggestedTemplateLoading } =
     useGetTemplatesSuggestedQuery(undefined, { skip: !isValidUser });
 
-  const postLogin = (response: IContinueWithSocialMediaResponse | null) => {
-    if (!response) return;
-    if (response?.created) {
-      router.push("/signup");
-    } else {
-      if (path) {
-        trigger(token);
-        router.push(path);
-      }
-    }
-  };
-
-  const doPostLogin = (
-    r: AxiosResponse<IContinueWithSocialMediaResponse>,
-    savedToken: string | null | undefined
+  // TODO: move authentication logic to signin page instead
+  const doPostLogin = async (
+    response: AxiosResponse<IContinueWithSocialMediaResponse>,
   ) => {
-    const { token } = r.data;
-    if (!!savedToken && token !== savedToken) {
-      if (path) {
-        router.push(path);
-        trigger(token);
-
-        localStorage.setItem("from", "alert");
-      }
-    } else {
-      saveToken(r.data);
-      trigger(token);
-
-      postLogin(r.data);
+    if (typeof response.data !== "object" || response.data === null) {
+      console.error('incoming data for Microsoft authentication is not an object:', response.data);
+      return;
     }
+
+    const { token, created } = response.data;
+
+    // TODO: find out what this mysterious prop means
+    if (created) {
+      router.push({
+        pathname: "/signin",
+        query: { from: "signup" },
+      });
+      return;
+    }
+
+    if (!token) {
+      console.error('incoming token for Microsoft authentication is not present:', token);
+      return;
+    }
+
+    saveToken({ token });
+    const payload = await getCurrentUser(token).unwrap();
+    dispatch(updateUser(payload));
+
+    router.push(path || "/");
   };
 
+  // TODO: move authentication logic to signin page instead
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const authorizationCode = urlParams.get("code");
 
-    if (!!authorizationCode && !token) {
+    if (!!authorizationCode) {
       client
         .post(CODE_TOKEN_ENDPOINT, {
           provider: "microsoft",
           code: authorizationCode,
         })
-        .then((r: AxiosResponse<IContinueWithSocialMediaResponse>) => {
-          doPostLogin(r, token);
+        .then((response: AxiosResponse<IContinueWithSocialMediaResponse>) => {
+          doPostLogin(response);
         })
-        .catch(() => postLogin(null));
+        .catch((reason) => {
+          console.warn('Could not authenticate via Microsoft:', reason);
+        });
     }
   }, []);
 
@@ -111,7 +106,7 @@ const HomePage: NextPage<HomePageProps> = ({
               padding: { xs: "16px", md: "32px" },
             }}
           >
-            {token && user ? (
+            {isValidUser ? (
               <Grid flexDirection="column" display={"flex"} gap={"56px"}>
                 <Grid
                   sx={{
@@ -130,7 +125,7 @@ const HomePage: NextPage<HomePageProps> = ({
                       marginLeft: { xs: "0px", sm: "0px" },
                     }}
                   >
-                    Welcome, {user?.username}
+                    Welcome, {currentUser?.username}
                   </Typography>
                 </Grid>
                 {lastTemplate && Object.keys(lastTemplate).length > 0 && (
@@ -148,14 +143,14 @@ const HomePage: NextPage<HomePageProps> = ({
                 />
                 <CategoriesSection
                   categories={categories}
-                  isLoading={isCategoryLoading && !!token && !!user}
+                  isLoading={isValidUser}
                 />
               </Grid>
             ) : (
               <>
                 <CategoriesSection
                   categories={categories}
-                  isLoading={isCategoryLoading && !!token && !!user}
+                  isLoading={isValidUser}
                 />
                 <WelcomeCard />
               </>
@@ -166,10 +161,12 @@ const HomePage: NextPage<HomePageProps> = ({
     </>
   );
 };
+
+// TODO: getInitialProps is a legacy API, converting this code into getServerSideProps is an option
 HomePage.getInitialProps = wrapper.getInitialPageProps(
   ({ dispatch }: { dispatch: AppDispatch }) =>
     async () => {
-      const { data: categories, isLoading: isCategoryLoading } = await dispatch(
+      const { data: categories } = await dispatch(
         categoriesApi.endpoints.getCategories.initiate()
       );
 
@@ -178,7 +175,6 @@ HomePage.getInitialProps = wrapper.getInitialPageProps(
         description:
           "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
         categories,
-        isCategoryLoading,
       };
     }
 );
