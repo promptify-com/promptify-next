@@ -87,7 +87,7 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
     {
       label: "Learn",
       icon: <MenuBookRounded />,
-      href: "https://promptify.com",
+      href: "https://blog.promptify.com/",
       active: pathname == "/learn",
       external: true,
     },
