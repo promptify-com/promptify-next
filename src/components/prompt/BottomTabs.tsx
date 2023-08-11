@@ -1,6 +1,8 @@
 import React from "react";
-import { ArtTrack, History, Subject } from "@mui/icons-material";
-import { Grid, IconButton } from "@mui/material";
+import { Grid, IconButton, Typography } from "@mui/material";
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined';
+import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
 
 interface Props {
   onChange: (tab: number) => void;
@@ -9,10 +11,10 @@ interface Props {
 }
 
 const mobileTabs = [
-  { name: "details", icon: <ArtTrack /> },
-  { name: "generator", icon: "(x)" },
-  { name: "sparks", icon: <Subject /> },
-  { name: "history", icon: <History /> },
+  { name: "About", icon: <RemoveRedEyeOutlinedIcon /> },
+  { name: "Ignite", icon: <ExitToAppIcon /> },
+  { name: "Spark", icon: <MenuOutlinedIcon /> },
+  // { name: "history", icon: <History /> },
 ];
 
 export const BottomTabs: React.FC<Props> = ({
@@ -26,30 +28,38 @@ export const BottomTabs: React.FC<Props> = ({
       sx={{
         display: { xs: "flex", md: "none" },
         position: "fixed",
-        bottom: 0,
+        bottom: 10,
         left: 0,
         right: 0,
+        marginLeft: 'auto',
+        marginRight: 'auto',
         zIndex: 999,
-        bgcolor: "surface.1",
+        bgcolor: "primary.main",
+        opacity: 0.7,
+        width: '90%',
+        borderRadius: '50px'
       }}
     >
       {mobileTabs.map((tab, i) => (
-        <Grid item xs={3} md={4} key={i}>
+        <Grid item xs={4} md={4} key={i} py='10px' display='flex' justifyContent='center' >
           <IconButton
             onClick={() => {
               onChange(i);
               setActiveTab(i);
             }}
             sx={{
-              width: "100%",
-              border: "none",
-              borderRadius: 0,
-              py: "24px",
+              display: 'flex', 
+              justifyContent: 'center',
+              width: '80%',
+              height: '42px',
+              border: 'none',
+              borderRadius: 50,          
               fontSize: 16,
               fontWeight: 500,
-              color: activeTab === i ? "primary.main" : "grey.600",
+              bgcolor: activeTab === i ? '#FFF' : 'transparent',
+              color: activeTab === i ? '#000' : '#FFF',
               "&:hover, &:focus": {
-                color: "primary.main",
+                color: activeTab === i ? '#000' : '#FFF',
               },
               svg: {
                 width: 20,
@@ -58,6 +68,9 @@ export const BottomTabs: React.FC<Props> = ({
             }}
           >
             {tab.icon}
+            <Typography ml='10px' sx={{ color: activeTab === i ? "#000" : "#FFF" }}>
+              {tab.name}
+            </Typography>
           </IconButton>
         </Grid>
       ))}

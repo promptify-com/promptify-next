@@ -7,6 +7,8 @@ import {
   Grid,
   Stack,
   Typography,
+  alpha,
+  useTheme,
 } from "@mui/material";
 import { Templates } from "@/core/api/dto/templates";
 import { ArrowForwardIos } from "@mui/icons-material";
@@ -21,15 +23,23 @@ import {
   useAddToCollectionMutation,
   useRemoveFromCollectionMutation,
 } from "@/core/api/collections";
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import FavoriteMobileButton from "../common/buttons/FavoriteMobileButton";
 
 interface DetailsProps {
   templateData: Templates;
   updateTemplateData: (data: Templates) => void;
+  setMobileTab?: (value: number) => void;
+  setActiveTab?: (value: number) => void;
+  min?: boolean;
 }
 
 export const Details: React.FC<DetailsProps> = ({
   templateData,
   updateTemplateData,
+  setMobileTab,
+  setActiveTab,
+  min
 }) => {
   const [isFetching, setIsFetching] = useState(false);
   const token = useToken();
@@ -37,6 +47,7 @@ export const Details: React.FC<DetailsProps> = ({
   const router = useRouter();
   const [addToCollection] = useAddToCollectionMutation();
   const [removeFromCollection] = useRemoveFromCollectionMutation();
+  const { palette } = useTheme();
 
   const favorTemplate = async () => {
     if (!token) {
@@ -75,11 +86,45 @@ export const Details: React.FC<DetailsProps> = ({
   return (
     <Box sx={{ p: "16px" }}>
       <Box>
-        <Box sx={{ py: { md: "16px" } }}>
-          <FavoriteButton
+        <Box sx={{ display: 'flex', py: { md: "16px" } }}>
+          {!min && <FavoriteButton
             isFavorite={templateData.is_favorite}
             onClick={favorTemplate}
+          />}
+         {min &&
+         <>
+           <FavoriteMobileButton
+            isFavorite={templateData.is_favorite}
+            onClick={favorTemplate}
+            likes={templateData.favorites_count}
           />
+         <Button
+            variant="outlined"
+            onClick={() => {
+              if(setMobileTab && setActiveTab){
+                setMobileTab(1);
+                setActiveTab(1);
+              }
+            }}
+            sx={{
+              width: { xs: "100%", md: "auto" },
+              p: 0,
+              bgcolor: palette.primary.main,
+              color: '#FFF',
+              fontSize: 14,
+              borderColor: alpha(palette.primary.main, .3),
+              "&:hover": {
+                bgcolor: "action.hover",
+                color: palette.primary.main,
+                borderColor: alpha(palette.primary.main, .8),
+              },
+              ml: '10px'
+            }}
+          >
+            Ignite Now!
+            <ExitToAppIcon sx={{ ml: '10px'}} />
+          </Button></>
+       }
         </Box>
         <Divider
           sx={{
