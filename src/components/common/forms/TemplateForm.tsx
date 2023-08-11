@@ -468,20 +468,6 @@ const TemplateForm: React.FC<Props> = ({
         >
           Save
         </Button>
-        {type === "edit" && (
-          <Button
-            variant="contained"
-            sx={{ mt: "20px" }}
-            onClick={() => {
-              window.open(
-                window.location.origin + `/builder/${templateData?.id}`,
-                "_blank"
-              );
-            }}
-          >
-            Prompt Builder
-          </Button>
-        )}
       </Box>
     </Box>
   );
