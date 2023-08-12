@@ -519,8 +519,7 @@ const Prompt = () => {
                   overflow: "auto",
                   bgcolor: "surface.1",
                   borderLeft: "1px solid #ECECF4",
-                  position: "relative",
-                  pb: '75px' // Bottom tab bar height
+                  position: "relative"
                 }}
               >
                 <Display
