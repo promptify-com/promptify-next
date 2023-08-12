@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { KeyboardArrowLeft } from "@mui/icons-material";
-import { Box, Button, Grid } from "@mui/material";
+import { Box, Button, Grid, Typography } from "@mui/material";
 
 import { authClient } from "@/common/axios";
 import { FetchLoading } from "@/components/FetchLoading";
@@ -87,6 +87,7 @@ export default function Page({ category }: { category: Category }) {
                     <KeyboardArrowLeft /> {category.name}
                   </Button>
                 </Link>
+                <Typography variant="body1">{category.description}</Typography> {/* Adding category description using Typography */}
               </Grid>
               <Grid
                 display={"flex"}
@@ -135,10 +136,11 @@ export async function getServerSideProps({ params }: any) {
     return {
       props: {
         category,
-        title: category?.name,
+        title: category.meta_title || category.name,
         description:
+          category.meta_description ||
           "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
-        meta_keywords: "",
+        meta_keywords: category.meta_keywords,
         image: category.image,
       },
     };

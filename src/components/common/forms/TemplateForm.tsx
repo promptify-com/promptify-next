@@ -34,6 +34,7 @@ import {
   useUpdateTemplateMutation,
 } from "@/core/api/templates";
 import { FormType } from "@/common/types/template";
+import { TemplateStatusArray } from "@/common/constants";
 
 interface Props {
   type?: FormType;
@@ -133,6 +134,7 @@ const TemplateForm: React.FC<Props> = ({
       meta_title: templateData?.meta_title ?? "",
       meta_description: templateData?.meta_description ?? "",
       meta_keywords: templateData?.meta_keywords ?? "",
+      status: templateData?.status ?? "DRAFT",
       ...(type === "create" && { prompts_list: [] }),
     },
     enableReinitialize: true,
@@ -440,6 +442,21 @@ const TemplateForm: React.FC<Props> = ({
               />
             </Box>
           </Box>
+          <Box sx={{ ...boxStyle, alignItems: "center" }}>
+            <Typography sx={typographyStyle}>Status</Typography>
+            <Select
+              sx={fieldStyle}
+              name="status"
+              value={formik.values.status}
+              onChange={formik.handleChange}
+            >
+              {TemplateStatusArray.map((status) => (
+                <MenuItem value={status} key={status}>
+                  {status}
+                </MenuItem>
+              ))}
+            </Select>
+          </Box>
         </Box>
       )}
       <Box sx={buttonBoxStyle}>
@@ -451,20 +468,6 @@ const TemplateForm: React.FC<Props> = ({
         >
           Save
         </Button>
-        {type === "edit" && (
-          <Button
-            variant="contained"
-            sx={{ mt: "20px" }}
-            onClick={() => {
-              window.open(
-                window.location.origin + `/builder/${templateData?.id}`,
-                "_blank"
-              );
-            }}
-          >
-            Prompt Builder
-          </Button>
-        )}
       </Box>
     </Box>
   );
