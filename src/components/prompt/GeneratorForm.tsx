@@ -519,7 +519,6 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
       sx={{
         minHeight: "calc(100% - 32px)",
         bgcolor: "surface.2",
-        pb: {xs: 'calc(75px + 50px)', md: '0px'} // 75px Bottom tab bar height + 50px to show bottom repeat last button
       }}
     >
       {sparksShown && (
@@ -715,6 +714,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
             fontSize: 14,
             fontWeight: 400,
             my: "20px",
+            mb: {xs: 'calc(75px + 50px)', md: '0px'} // 75px Bottom tab bar height + 50px to show bottom repeat last button
           }}
         >
           Repeat last:

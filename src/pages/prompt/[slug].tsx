@@ -398,6 +398,7 @@ const Prompt = () => {
                               setSelectedSpark={setSelectedSpark}
                               setSortedSparks={setSortedSparks}
                               sparksShown={false}
+                              mobileTab={mobileTab}
                             />
                           )}
                         </CustomTabPanel>
