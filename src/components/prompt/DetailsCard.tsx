@@ -44,7 +44,7 @@ export const DetailsCard: React.FC<Props> = ({
                   borderTopLeftRadius: '25px',
                   borderTopRightRadius: '25px',
                   mt: {xs: '-35px', md: '0px'},
-                  bgcolor: '#FFF'
+                  bgcolor: 'surface.1'
             }}
          >
             <Box pt={{xs: '15px', md: '0px'}} paddingX={{ xs: '16px', md: '0px' }}>

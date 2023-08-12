@@ -21,6 +21,8 @@ interface Props {
   selectedExecution: TemplatesExecutions | null;
   isFetching?: boolean;
   newExecutionData: PromptLiveResponse | null;
+  setMobileTab: (value: number) => void;
+  mobileTab: number;
 }
 
 export const Display: React.FC<Props> = ({
@@ -31,6 +33,8 @@ export const Display: React.FC<Props> = ({
   selectedExecution,
   isFetching,
   newExecutionData,
+  setMobileTab,
+  mobileTab
 }) => {
   const [sortedSparks, setSortedSparks] = useState<Spark[]>([]);
   const [firstLoad, setFirstLoad] = useState(true);
@@ -110,6 +114,8 @@ export const Display: React.FC<Props> = ({
         pinSpark={handlePinSpark}
         showSearchBar
         onSearch={(text) => setSearch(text)}
+        setMobileTab={setMobileTab}
+        mobileTab={mobileTab}
       />
 
       <Box sx={{ mx: "15px", opacity: firstLoad ? 0.5 : 1 }}>

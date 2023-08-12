@@ -4,6 +4,7 @@ import { Search as SearchIcon, PushPinOutlined, FeedOutlined, ArrowDropUp, Arrow
 import { SubjectIcon } from "@/assets/icons/SubjectIcon";
 import { Spark } from '@/core/api/dto/templates';
 import { SparksTabs } from './SparksTabs';
+import HistoryIcon from '@mui/icons-material/History';
 
 interface Props {
    sparks: Spark[];
@@ -12,6 +13,8 @@ interface Props {
    pinSpark: () => void;
    showSearchBar: boolean;
    onSearch?: (text: string) => void;
+   setMobileTab: (value: number) => void;
+   mobileTab: number;
 }
 
 export const DisplayHeader: React.FC<Props> = ({ 
@@ -20,7 +23,9 @@ export const DisplayHeader: React.FC<Props> = ({
    changeSelectedSpark,
    pinSpark,
    showSearchBar,
-   onSearch = () => {}
+   onSearch = () => {},
+   setMobileTab,
+   mobileTab
  }) => {
    const { palette } = useTheme();
    
@@ -138,7 +143,7 @@ export const DisplayHeader: React.FC<Props> = ({
                   ml={"auto"}
                >
                   {SearchInput("left")}
-
+            
                   {false && (
                      <React.Fragment>
                      <Typography sx={{ color: `${alpha(palette.onSurface, .2)}`, fontSize: 12, fontWeight: 400 }}>
@@ -176,10 +181,10 @@ export const DisplayHeader: React.FC<Props> = ({
                </Stack>
                <Stack
                   display={{ md: "none" }}
-                  direction={"row"} alignItems={"center"} gap={1} p={"8px 16px"}
+                  direction={"row"} justifyContent={"space-between"} alignItems='center' gap={1} p={"8px 16px"}
                >
                   {showSearchBar && SearchInput("right")}
-
+                  {mobileTab === 2 && <HistoryIcon  sx={{ color: '#1B1B1E', fontSize: '20px' }} onClick={() => setMobileTab(3)}/>}
                   {false && (
                   <Button
                      sx={{ color: "onSurface", fontSize: 13, fontWeight: 500, ml: "auto" }}

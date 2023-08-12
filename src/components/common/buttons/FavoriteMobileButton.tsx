@@ -1,5 +1,6 @@
 import { Button, alpha, useTheme } from '@mui/material';
 import { Favorite } from '@mui/icons-material';
+import { useState } from 'react';
 
 interface Props {
    isFavorite: boolean;
@@ -10,7 +11,17 @@ interface Props {
 
 export const FavoriteMobileButton:React.FC<Props> = ({ isFavorite, onClick, likes }) => {
    const { palette } = useTheme();
+   const [localLikes, setLocalLikes] = useState(likes)
    
+   const handleOnClick = () => {
+      if (isFavorite) {
+         setLocalLikes(localLikes - 1)
+      } else {
+         setLocalLikes(localLikes + 1)
+      }
+      onClick()
+   }
+
    return (
       <Button
          sx={{ 
@@ -26,7 +37,7 @@ export const FavoriteMobileButton:React.FC<Props> = ({ isFavorite, onClick, like
             },           
          }}
          variant={"outlined"}
-         onClick={onClick}
+         onClick={handleOnClick}
       >
          {isFavorite ? (
             "Favorite " 
@@ -36,7 +47,7 @@ export const FavoriteMobileButton:React.FC<Props> = ({ isFavorite, onClick, like
          {isFavorite ? 
          <Favorite sx={{ pr: '5px', pl: '70px' }} /> 
          : <Favorite sx={{ pr: '5px', pl: '20px' }} />}
-         {likes}
+         {localLikes}
       </Button>
    )
 }

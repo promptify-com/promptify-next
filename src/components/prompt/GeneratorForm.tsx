@@ -52,6 +52,7 @@ interface GeneratorFormProps {
   setSelectedSpark: (spark: Spark) => void;
   setSortedSparks: (value: Spark[]) => void;
   sparksShown: boolean;
+  mobileTab: number;
 }
 
 export interface InputsErrors {
@@ -81,6 +82,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   setSelectedSpark,
   setSortedSparks,
   sparksShown,
+  mobileTab
 }) => {
   const token = useToken();
   const { palette } = useTheme();
@@ -517,6 +519,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
       sx={{
         minHeight: "calc(100% - 32px)",
         bgcolor: "surface.2",
+        pb: {xs: 'calc(75px + 50px)', md: '0px'} // 75px Bottom tab bar height + 50px to show bottom repeat last button
       }}
     >
       {sparksShown && (
@@ -526,6 +529,8 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
           changeSelectedSpark={setSelectedSpark}
           pinSpark={handlePinSpark}
           showSearchBar={false}
+          setMobileTab={setMobileTab}
+          mobileTab={mobileTab}
         />
       )}
 

@@ -464,8 +464,7 @@ const Prompt = () => {
                       display: mobileTab === 1 ? "block" : "none",
                       height: "100%",
                       overflow: "auto",
-                      bgcolor: "surface.1",
-                      pb: 'calc(75px + 50px)' // 75px Bottom tab bar height + 50px to show bottom repeat last button
+                      bgcolor: "surface.1",                      
                     }}
                   >
                     <GeneratorForm
@@ -483,6 +482,7 @@ const Prompt = () => {
                       selectedSpark={selectedSpark}
                       setSelectedSpark={setSelectedSpark}
                       setSortedSparks={setSortedSparks}
+                      mobileTab={mobileTab}
                       sparksShown
                     />
                   </Grid>
@@ -530,6 +530,8 @@ const Prompt = () => {
                   selectedExecution={selectedExecution}
                   isFetching={isFetchingExecutions}
                   newExecutionData={newExecutionData}
+                  setMobileTab={setMobileTab}
+                  mobileTab={mobileTab}
                 />
                 {currentGeneratedPrompt && (
                   <Box
