@@ -283,9 +283,9 @@ export const Header: React.FC<HeaderProps> = ({
         />
         <SideBarMobile
           type={sidebarType}
-          open={openSidebar}
-          onClose={() => setOpenSidebar(false)}
-          onOpen={() => setOpenSidebar(true)}
+          openDrawer={openSidebar}
+          onCloseDrawer={() => setOpenSidebar(false)}
+          onOpenDrawer={() => setOpenSidebar(true)}
           user={user}
           token={token}
           setSidebarType={setSidebarType}
