@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Box, Grid } from "@mui/material";
 import { NextPage } from "next";
 
@@ -37,6 +37,13 @@ const ExplorePage: NextPage<IProps> = ({ props }) => {
     );
   }
 
+  const filteredTemplates = useMemo(() => {
+    if (templates) {
+      return templates.filter((template) => template.status !== "ARCHIVED");
+    }
+    return templates ?? [];
+  }, [templates]);
+
   const allNull = areAllStatesNull(filters);
 
   return (
@@ -60,7 +67,7 @@ const ExplorePage: NextPage<IProps> = ({ props }) => {
             )}
             <TemplatesSection
               filtred={!allNull}
-              templates={templates ?? []}
+              templates={filteredTemplates}
               isLoading={isTemplatesLoading}
               title="Best templates"
             />

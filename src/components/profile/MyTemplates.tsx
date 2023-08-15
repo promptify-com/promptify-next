@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Box,
   Button,
@@ -16,12 +16,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import {
-  Delete,
-  Edit,
-  PreviewRounded,
-  SettingsApplicationsRounded,
-} from "@mui/icons-material";
+import { Delete, Edit, PreviewRounded } from "@mui/icons-material";
 
 import {
   useDeleteTemplateMutation,
@@ -49,7 +44,7 @@ export const MyTemplates = () => {
     setConfirmDialog(true);
   };
 
-  const [deleteTemplate, response] = useDeleteTemplateMutation();
+  const [deleteTemplate] = useDeleteTemplateMutation();
 
   const confirmDelete = async () => {
     if (!selectedTemplate) return;
@@ -181,27 +176,30 @@ export const MyTemplates = () => {
                         <PreviewRounded />
                       </IconButton>
                     </Tooltip>
-                    <Tooltip title="Edit">
-                      <IconButton
-                        sx={{
-                          bgcolor: "surface.2",
-                          border: "none",
-                          color: "onSurface",
-                          "&:hover": {
-                            bgcolor: "surface.3",
+                    {template.status !== "ARCHIVED" && (
+                      <Tooltip title="Edit">
+                        <IconButton
+                          sx={{
+                            bgcolor: "surface.2",
+                            border: "none",
                             color: "onSurface",
-                          },
-                        }}
-                        onClick={() => {
-                          window.open(
-                            window.location.origin + `/builder/${template.id}`,
-                            "_blank"
-                          );
-                        }}
-                      >
-                        <Edit />
-                      </IconButton>
-                    </Tooltip>
+                            "&:hover": {
+                              bgcolor: "surface.3",
+                              color: "onSurface",
+                            },
+                          }}
+                          onClick={() => {
+                            window.open(
+                              window.location.origin +
+                                `/builder/${template.id}`,
+                              "_blank"
+                            );
+                          }}
+                        >
+                          <Edit />
+                        </IconButton>
+                      </Tooltip>
+                    )}
                     <Tooltip title="Delete">
                       <IconButton
                         onClick={() => openDeletionModal(template)}

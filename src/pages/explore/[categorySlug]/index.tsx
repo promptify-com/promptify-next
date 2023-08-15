@@ -1,6 +1,9 @@
 import { useRouter } from "next/router";
 import { KeyboardArrowLeft } from "@mui/icons-material";
 import { Box, Button, Grid, Typography } from "@mui/material";
+import Link from "next/link";
+import { useMemo } from "react";
+import { useSelector } from "react-redux";
 
 import { authClient } from "@/common/axios";
 import { FetchLoading } from "@/components/FetchLoading";
@@ -13,11 +16,9 @@ import {
 import { useGetTemplatesByFilterQuery } from "@/core/api/templates";
 import { Layout } from "@/layout";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
-import { useSelector } from "react-redux";
 import { RootState } from "@/core/store";
 import { FiltersSelected } from "@/components/explorer/FiltersSelected";
 import { useGetCategoriesQuery } from "@/core/api/categories";
-import Link from "next/link";
 
 export default function Page({ category }: { category: Category }) {
   const router = useRouter();
@@ -56,6 +57,13 @@ export default function Page({ category }: { category: Category }) {
   const { data: templates, isLoading: isTemplatesLoading } =
     useGetTemplatesByFilterQuery(params);
 
+  const filteredTemplates = useMemo(() => {
+    if (templates) {
+      return templates.filter((template) => template.status !== "ARCHIVED");
+    }
+    return templates ?? [];
+  }, [templates]);
+
   const goBack = () => {
     router.push("/explore");
   };
@@ -87,7 +95,14 @@ export default function Page({ category }: { category: Category }) {
                     <KeyboardArrowLeft /> {category.name}
                   </Button>
                 </Link>
-                <Typography variant="body1">{category.description}</Typography> {/* Adding category description using Typography */}
+                <Typography
+                  variant="body1"
+                  color={"text.secondary"}
+                  sx={{ ml: 2.5 }}
+                >
+                  {category.description}
+                </Typography>{" "}
+                {/* Adding category description using Typography */}
               </Grid>
               <Grid
                 display={"flex"}
@@ -114,7 +129,7 @@ export default function Page({ category }: { category: Category }) {
               <FiltersSelected show={!allNull} />
               <TemplatesSection
                 filtred
-                templates={templates}
+                templates={filteredTemplates}
                 isLoading={isTemplatesLoading}
               />
             </Box>

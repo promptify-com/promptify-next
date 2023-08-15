@@ -1,8 +1,9 @@
 import { useRouter } from "next/router";
+import { useMemo } from "react";
+import Head from "next/head";
 import { KeyboardArrowLeft } from "@mui/icons-material";
 import { Box, Button, Grid } from "@mui/material";
 import { useSelector } from "react-redux";
-import Head from "next/head";
 
 import { authClient } from "@/common/axios";
 import { FetchLoading } from "@/components/FetchLoading";
@@ -50,6 +51,13 @@ export default function Page({ category }: { category: Category }) {
 
   const { data: templates, isLoading: isTemplatesLoading } =
     useGetTemplatesByFilterQuery(params);
+
+  const filteredTemplates = useMemo(() => {
+    if (templates) {
+      return templates.filter((template) => template.status !== "ARCHIVED");
+    }
+    return templates ?? [];
+  }, [templates]);
 
   function areAllStatesNull(filters: SelectedFilters): boolean {
     return (
@@ -128,7 +136,7 @@ export default function Page({ category }: { category: Category }) {
 
                 <TemplatesSection
                   filtred
-                  templates={templates}
+                  templates={filteredTemplates}
                   isLoading={isTemplatesLoading}
                 />
               </Box>
