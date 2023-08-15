@@ -11,18 +11,15 @@ import {
   Popper,
   Typography,
 } from "@mui/material";
-
-import { User } from "@/core/api/dto/user";
 import useLogout from "@/hooks/useLogout";
-import useSetUser from "@/hooks/useSetUser";
 import { Menu, MenuType } from "@/common/constants";
-import { useEffect, useState } from "react";
+import { useSelector } from 'react-redux';
+import { RootState } from "@/core/store";
 
 interface ProfileDropDownProps {
   open: boolean;
   onClose: () => void;
   onToggle: () => void;
-  user: User | undefined;
   anchorElement: HTMLElement | null;
   onCloseSidebar?: () => void;
 }
@@ -30,15 +27,13 @@ interface ProfileDropDownProps {
 export const ProfileDropDown: React.FC<ProfileDropDownProps> = ({
   open,
   onClose,
-  user,
   onToggle,
   anchorElement,
   onCloseSidebar,
 }) => {
   const router = useRouter();
   const logout = useLogout();
-  const setUser = useSetUser();
-
+  const currentUser = useSelector((state: RootState) => state.user.currentUser);
   const handleHeaderMenu = (el: MenuType) => {
     onToggle();
     router.push(el.href);
@@ -49,7 +44,6 @@ export const ProfileDropDown: React.FC<ProfileDropDownProps> = ({
       onCloseSidebar();
     }
     await logout();
-    setUser(null);
   };
 
   return (
@@ -104,15 +98,15 @@ export const ProfileDropDown: React.FC<ProfileDropDownProps> = ({
                 >
                   <Box display={"flex"} justifyContent={"center"}>
                     <Avatar
-                      src={user?.avatar}
-                      alt={user?.first_name}
+                      src={currentUser?.avatar}
+                      alt={currentUser?.first_name}
                       sizes="40px"
                       sx={{
                         width: "90px",
                         height: "90px",
                         ml: "auto",
                         cursor: "pointer",
-                        bgcolor: user?.avatar ? "" : "black",
+                        bgcolor: currentUser?.avatar ? "" : "black",
                         padding: "1px",
                         fontStyle: "normal",
                         textAlign: "center",
@@ -135,7 +129,7 @@ export const ProfileDropDown: React.FC<ProfileDropDownProps> = ({
                         letterSpacing: "0.15px",
                       }}
                     >
-                      {user?.first_name} {user?.last_name}
+                      {currentUser?.first_name} {currentUser?.last_name}
                     </Typography>
                     <Typography
                       sx={{
@@ -148,12 +142,12 @@ export const ProfileDropDown: React.FC<ProfileDropDownProps> = ({
                         letterSpacing: "0.15px",
                       }}
                     >
-                      {user?.username}
+                      {currentUser?.username}
                     </Typography>
                   </Box>
                 </Grid>
                 <MenuList autoFocusItem={false} sx={{ width: "100%" }}>
-                  {Menu.map((el, idx) => (
+                  {Menu.map((el) => (
                     <MenuItem
                       key={el.name}
                       onClick={() => handleHeaderMenu(el)}
