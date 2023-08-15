@@ -54,6 +54,11 @@ export const MyTemplates = () => {
   };
 
   const [confirmDialog, setConfirmDialog] = useState(false);
+
+  const TemplateStatus = {
+    archived: "ARCHIVED",
+    // Add other statuses as needed
+  };
   return (
     <Box
       id="my-templates"
@@ -176,7 +181,7 @@ export const MyTemplates = () => {
                         <PreviewRounded />
                       </IconButton>
                     </Tooltip>
-                    {template.status !== "ARCHIVED" && (
+                    {template.status !== TemplateStatus.archived && (
                       <Tooltip title="Edit">
                         <IconButton
                           sx={{
