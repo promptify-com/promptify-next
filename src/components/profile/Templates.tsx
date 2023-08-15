@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Box,
   Button,
@@ -10,9 +10,12 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  FormControl,
   Grid,
   IconButton,
+  InputLabel,
   Modal,
+  NativeSelect,
   Stack,
   Tooltip,
   Typography,
@@ -24,34 +27,45 @@ import {
   SettingsApplicationsRounded,
 } from "@mui/icons-material";
 
-import { templatesApi, useDeleteTemplateMutation } from "@/core/api/templates";
-import { Templates } from "@/core/api/dto/templates";
-import { PageLoading } from "@/components/PageLoading";
+import {
+  useDeleteTemplateMutation,
+  useGetTemplatesByOrderingQuery,
+} from "@/core/api/templates";
+import { TemplateStatus, Templates } from "@/core/api/dto/templates";
 import TemplateImportModal from "@/components/modals/TemplateImportModal";
 import TemplateForm from "@/components/common/forms/TemplateForm";
-import BaseButton from "../base/BaseButton";
-import { modalStyle } from "../modals/styles";
+import BaseButton from "@/components/base/BaseButton";
+import { modalStyle } from "@/components/modals/styles";
 import { FormType } from "@/common/types/template";
+import { TemplateStatusArray } from "@/common/constants";
+import { PageLoading } from "../PageLoading";
 
 export const AllTemplates = () => {
+  const { data: templates, isFetching } =
+    useGetTemplatesByOrderingQuery("-created_at");
+
+  const [deleteTemplate] = useDeleteTemplateMutation(); // auto update templates daaata without refretch again
+
   const [templateImportOpen, setTemplateImportOpen] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<Templates | null>(
     null
   );
   const [templateFormType, setTemplateFormType] = useState<FormType>("create");
+  const [status, setStatus] = useState<TemplateStatus | null>("ALL");
 
   const [templateFormOpen, setTemplateFormOpen] = useState(false);
-  const [modalNew, setModalNew] = useState(false);
 
   const openDeletionModal = (template: Templates) => {
     setSelectedTemplate(template);
     setConfirmDialog(true);
   };
 
-  const [deleteTemplate, response] = useDeleteTemplateMutation();
-  useEffect(() => {
-    trigger();
-  }, [response]);
+  const filteredTemplates = useMemo(() => {
+    if (status !== "ALL" && templates) {
+      return templates.filter((template) => template.status === status);
+    }
+    return templates || [];
+  }, [templates, status]);
 
   const confirmDelete = async () => {
     if (!selectedTemplate) return;
@@ -60,14 +74,10 @@ export const AllTemplates = () => {
     setConfirmDialog(false);
   };
 
-  const [trigger, { data: templates, isFetching }] =
-    templatesApi.endpoints.getAllPromptTemplates.useLazyQuery();
-
   const [confirmDialog, setConfirmDialog] = useState(false);
 
   return (
     <Box
-      mt={14}
       sx={{
         display: "flex",
         flexDirection: "column",
@@ -101,10 +111,33 @@ export const AllTemplates = () => {
         <Stack
           direction={"row"}
           justifyContent={"end"}
+          alignItems={"center"}
           ml={{ xs: "auto" }}
           spacing={1}
         >
+          <FormControl sx={{ m: 1 }} variant="standard">
+            <NativeSelect
+              id="status"
+              sx={{
+                fontSize: 15,
+              }}
+              value={status || "ALL"}
+              onChange={(event) => {
+                setStatus(event.target.value as TemplateStatus);
+              }}
+            >
+              <option value="ALL">
+                All Status
+              </option>
+              {TemplateStatusArray.map((item: TemplateStatus) => (
+                <option key={item} value={item}>
+                  {item}
+                </option>
+              ))}
+            </NativeSelect>
+          </FormControl>
           <BaseButton
+            size="small"
             onClick={() => {
               setTemplateImportOpen(true);
             }}
@@ -116,6 +149,7 @@ export const AllTemplates = () => {
           </BaseButton>
 
           <BaseButton
+            size="small"
             onClick={() => {
               setSelectedTemplate(null);
               setTemplateFormType("create");
@@ -129,7 +163,7 @@ export const AllTemplates = () => {
           </BaseButton>
         </Stack>
       </Box>
-      {isFetching ? (
+      {isFetching && filteredTemplates.length === 0 ? (
         <PageLoading />
       ) : (
         <Box
@@ -138,138 +172,151 @@ export const AllTemplates = () => {
           gap={"14px"}
           width={"100%"}
         >
-          {templates?.map((template: Templates) => {
-            return (
-              <Card
-                key={template.id}
-                elevation={0}
-                sx={{
-                  p: "10px",
-                  borderRadius: "16px",
-                  bgcolor: { xs: "surface.2", md: "surface.1" },
-                }}
-              >
-                <Grid
-                  container
-                  display={"flex"}
-                  alignItems={"center"}
-                  justifyContent={"space-between"}
+          {filteredTemplates.length === 0 ? (
+            <Box
+              display={"flex"}
+              alignItems={"center"}
+              justifyContent={"center"}
+              minHeight={"30vh"}
+            >
+              <Typography variant="body1">No templates found.</Typography>
+            </Box>
+          ) : (
+            filteredTemplates.map((template: Templates) => {
+              return (
+                <Card
+                  key={template.id}
+                  elevation={0}
+                  sx={{
+                    p: "10px",
+                    borderRadius: "16px",
+                    bgcolor: { xs: "surface.2", md: "surface.1" },
+                  }}
                 >
                   <Grid
-                    item
-                    xs={12}
-                    md={7}
+                    container
                     display={"flex"}
                     alignItems={"center"}
-                    gap={"16px"}
+                    justifyContent={"space-between"}
                   >
-                    <CardMedia
-                      component={"img"}
-                      image={template.thumbnail}
-                      sx={{
-                        height: { xs: "90px", md: "60px" },
-                        width: "80px",
-                        borderRadius: "16px",
-                      }}
-                    />
-                    <Box>
-                      <Typography>{template.title}</Typography>
-                    </Box>
-                    <Chip
-                      label={template.status}
-                      size="small"
-                      sx={{ fontSize: "12px", fontWeight: 500 }}
-                    />
+                    <Grid
+                      item
+                      xs={12}
+                      md={7}
+                      display={"flex"}
+                      alignItems={"center"}
+                      gap={"16px"}
+                    >
+                      <CardMedia
+                        component={"img"}
+                        image={template.thumbnail}
+                        sx={{
+                          height: { xs: "90px", md: "60px" },
+                          width: "80px",
+                          borderRadius: "16px",
+                        }}
+                      />
+                      <Box>
+                        <Typography>{template.title}</Typography>
+                      </Box>
+                      <Chip
+                        label={template.status}
+                        size="small"
+                        sx={{ fontSize: "12px", fontWeight: 500 }}
+                      />
+                    </Grid>
+                    <Grid
+                      display={"flex"}
+                      alignItems={"center"}
+                      ml={"auto"}
+                      gap={"8px"}
+                    >
+                      <Tooltip title="Preview">
+                        <IconButton
+                          sx={{
+                            bgcolor: "surface.2",
+                            border: "none",
+                            color: "onSurface",
+                            "&:hover": {
+                              bgcolor: "surface.3",
+                              color: "onSurface",
+                            },
+                          }}
+                          onClick={() => {
+                            window.open(
+                              window.location.origin +
+                                `/prompt/${template.slug}`,
+                              "_blank"
+                            );
+                          }}
+                        >
+                          <PreviewRounded />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Builder">
+                        <IconButton
+                          sx={{
+                            bgcolor: "surface.2",
+                            border: "none",
+                            color: "onSurface",
+                            "&:hover": {
+                              bgcolor: "surface.3",
+                              color: "onSurface",
+                            },
+                          }}
+                          onClick={() => {
+                            window.open(
+                              window.location.origin +
+                                `/builder/${template.id}`,
+                              "_blank"
+                            );
+                          }}
+                        >
+                          <SettingsApplicationsRounded />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Edit">
+                        <IconButton
+                          sx={{
+                            bgcolor: "surface.2",
+                            border: "none",
+                            color: "onSurface",
+                            "&:hover": {
+                              bgcolor: "surface.3",
+                              color: "onSurface",
+                            },
+                          }}
+                          onClick={() => {
+                            setSelectedTemplate(template);
+                            setTemplateFormType("edit");
+                            setTemplateFormOpen(true);
+                          }}
+                        >
+                          <Edit />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Delete">
+                        <IconButton
+                          onClick={() => openDeletionModal(template)}
+                          sx={{
+                            bgcolor: "surface.2",
+                            border: "none",
+                            color: "onSurface",
+                            "&:hover": {
+                              bgcolor: "surface.3",
+                              color: "#ef4444",
+                            },
+                          }}
+                        >
+                          <Delete />
+                        </IconButton>
+                      </Tooltip>
+                    </Grid>
                   </Grid>
-                  <Grid
-                    display={"flex"}
-                    alignItems={"center"}
-                    ml={"auto"}
-                    gap={"8px"}
-                  >
-                    <Tooltip title="Preview">
-                      <IconButton
-                        sx={{
-                          bgcolor: "surface.2",
-                          border: "none",
-                          color: "onSurface",
-                          "&:hover": {
-                            bgcolor: "surface.3",
-                            color: "onSurface",
-                          },
-                        }}
-                        onClick={() => {
-                          window.open(
-                            window.location.origin + `/prompt/${template.slug}`,
-                            "_blank"
-                          );
-                        }}
-                      >
-                        <PreviewRounded />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Builder">
-                      <IconButton
-                        sx={{
-                          bgcolor: "surface.2",
-                          border: "none",
-                          color: "onSurface",
-                          "&:hover": {
-                            bgcolor: "surface.3",
-                            color: "onSurface",
-                          },
-                        }}
-                        onClick={() => {
-                          window.open(
-                            window.location.origin + `/builder/${template.id}`,
-                            "_blank"
-                          );
-                        }}
-                      >
-                        <SettingsApplicationsRounded />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Edit">
-                      <IconButton
-                        sx={{
-                          bgcolor: "surface.2",
-                          border: "none",
-                          color: "onSurface",
-                          "&:hover": {
-                            bgcolor: "surface.3",
-                            color: "onSurface",
-                          },
-                        }}
-                        onClick={() => {
-                          setSelectedTemplate(template);
-                          setTemplateFormType("edit");
-                          setTemplateFormOpen(true);
-                        }}
-                      >
-                        <Edit />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Delete">
-                      <IconButton
-                        onClick={() => openDeletionModal(template)}
-                        sx={{
-                          bgcolor: "surface.2",
-                          border: "none",
-                          color: "onSurface",
-                          "&:hover": {
-                            bgcolor: "surface.3",
-                            color: "#ef4444",
-                          },
-                        }}
-                      >
-                        <Delete />
-                      </IconButton>
-                    </Tooltip>
-                  </Grid>
-                </Grid>
-              </Card>
-            );
-          })}
+                </Card>
+              );
+            })
+          )}
         </Box>
       )}
       <Dialog
@@ -297,7 +344,6 @@ export const AllTemplates = () => {
             type={templateFormType}
             templateData={selectedTemplate}
             onSaved={() => {
-              trigger();
               setTemplateFormOpen(false);
             }}
           />
@@ -307,7 +353,7 @@ export const AllTemplates = () => {
       <TemplateImportModal
         open={templateImportOpen}
         setOpen={setTemplateImportOpen}
-        refetchTemplates={trigger}
+        refetchTemplates={() => {}} // this needs to be refactored no need to refetch data
       />
     </Box>
   );

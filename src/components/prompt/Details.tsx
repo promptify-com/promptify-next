@@ -7,6 +7,8 @@ import {
   Grid,
   Stack,
   Typography,
+  alpha,
+  useTheme,
 } from "@mui/material";
 import { Templates } from "@/core/api/dto/templates";
 import { ArrowForwardIos } from "@mui/icons-material";
@@ -21,15 +23,23 @@ import {
   useAddToCollectionMutation,
   useRemoveFromCollectionMutation,
 } from "@/core/api/collections";
+import ExitToAppIcon from "@mui/icons-material/ExitToApp";
+import FavoriteMobileButton from "../common/buttons/FavoriteMobileButton";
 
 interface DetailsProps {
   templateData: Templates;
   updateTemplateData: (data: Templates) => void;
+  setMobileTab?: (value: number) => void;
+  setActiveTab?: (value: number) => void;
+  mobile?: boolean;
 }
 
 export const Details: React.FC<DetailsProps> = ({
   templateData,
   updateTemplateData,
+  setMobileTab,
+  setActiveTab,
+  mobile,
 }) => {
   const [isFetching, setIsFetching] = useState(false);
   const token = useToken();
@@ -37,6 +47,7 @@ export const Details: React.FC<DetailsProps> = ({
   const router = useRouter();
   const [addToCollection] = useAddToCollectionMutation();
   const [removeFromCollection] = useRemoveFromCollectionMutation();
+  const { palette } = useTheme();
 
   const favorTemplate = async () => {
     if (!token) {
@@ -74,12 +85,93 @@ export const Details: React.FC<DetailsProps> = ({
 
   return (
     <Box sx={{ p: "16px" }}>
+      <Stack flex={1} direction={"row"} alignItems={"center"} spacing={1}>
+        <Box
+          sx={{
+            bgcolor: "common.black",
+            color: "common.white",
+            borderRadius: "50%",
+            width: 32,
+            height: 32,
+            fontSize: 16,
+            padding: "1px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          {templateData?.created_by?.first_name &&
+          templateData?.created_by?.last_name
+            ? `${templateData?.created_by?.first_name[0]?.toUpperCase()}${templateData?.created_by?.last_name[0]?.toUpperCase()}`
+            : templateData?.created_by?.username[0]?.toUpperCase()}
+        </Box>
+        <Typography fontSize={12}>
+          by{" "}
+          {templateData?.created_by?.first_name &&
+          templateData?.created_by?.last_name ? (
+            <>
+              {templateData.created_by.first_name.charAt(0).toUpperCase() +
+                templateData.created_by.first_name.slice(1)}{" "}
+              {templateData.created_by.last_name.charAt(0).toUpperCase() +
+                templateData.created_by.last_name.slice(1)}
+            </>
+          ) : (
+            <>
+              {templateData.created_by.username.charAt(0).toUpperCase() +
+                templateData.created_by.username.slice(1)}
+            </>
+          )}
+        </Typography>
+      </Stack>
       <Box>
-        <Box sx={{ py: { md: "16px" } }}>
-          <FavoriteButton
-            isFavorite={templateData.is_favorite}
-            onClick={favorTemplate}
-          />
+        <Box
+          sx={{
+            display: "flex",
+            pt: { xs: "25px", md: "16px" },
+            pb: { xs: "5px", md: "16px" },
+          }}
+        >
+          {!mobile && (
+            <FavoriteButton
+              isFavorite={templateData.is_favorite}
+              onClick={favorTemplate}
+            />
+          )}
+          {mobile && (
+            <>
+              <FavoriteMobileButton
+                isFavorite={templateData.is_favorite}
+                onClick={favorTemplate}
+                likes={templateData.favorites_count}
+              />
+              <Button
+                variant="outlined"
+                onClick={() => {
+                  if (setMobileTab && setActiveTab) {
+                    setMobileTab(1);
+                    setActiveTab(1);
+                  }
+                }}
+                sx={{
+                  width: { xs: "100%", md: "auto" },
+                  p: 0,
+                  bgcolor: palette.primary.main,
+                  color: "#FFF",
+                  fontSize: 14,
+                  borderColor: alpha(palette.primary.main, 0.3),
+                  "&:hover": {
+                    bgcolor: "action.hover",
+                    color: palette.primary.main,
+                    borderColor: alpha(palette.primary.main, 0.8),
+                  },
+                  ml: "10px",
+                }}
+              >
+                Ignite Now!
+                <ExitToAppIcon sx={{ ml: "10px" }} />
+              </Button>
+            </>
+          )}
         </Box>
         <Divider
           sx={{
@@ -88,13 +180,16 @@ export const Details: React.FC<DetailsProps> = ({
             borderColor: "surface.3",
           }}
         />
+        <Subtitle sx={{ pt: "20px", color: "tertiary" }}>
+          Template Insights
+        </Subtitle>
         <Box sx={{ py: "16px" }}>
           <Typography
             sx={{ fontSize: 12, fontWeight: 400, color: "onSurface" }}
             dangerouslySetInnerHTML={{ __html: templateData.description }}
           />
         </Box>
-        <Stack direction={"row"} flexWrap={"wrap"} gap={1} sx={{ py: "16px" }}>
+        <Stack direction={"row"} flexWrap={"wrap"} gap={1} sx={{ pb: "25px" }}>
           {templateData.tags.length > 0 ? (
             templateData.tags.map((tag) => (
               <Chip
@@ -129,116 +224,36 @@ export const Details: React.FC<DetailsProps> = ({
             </Typography>
           )}
         </Stack>
-
-        <Grid container direction={"column"} gap={3} sx={{ py: "16px" }}>
-          <Grid item>
-            <Button
-              sx={{
-                width: "100%",
-                display: "flex",
-                alignItems: "center",
-                cursor: "pointer",
-                p: "8px",
-                bgcolor: "primary.main",
-                color: "onPrimary",
-                fontSize: 12,
-                fontWeight: 500,
-                borderRadius: "99px",
-                svg: { opacity: 0.6 },
-                "&:hover": {
-                  bgcolor: "primary.main",
-                  color: "onPrimary",
-                  svg: { opacity: 1 },
-                },
-              }}
-            >
-              <Stack
-                flex={1}
-                direction={"row"}
-                alignItems={"center"}
-                spacing={1}
-              >
-                <Box
-                  sx={{
-                    bgcolor: "common.black",
-                    color: "common.white",
-                    borderRadius: "50%",
-                    width: 32,
-                    height: 32,
-                    fontSize: 16,
-                    padding: "1px",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  {templateData?.created_by?.first_name &&
-                  templateData?.created_by?.last_name
-                    ? `${templateData?.created_by?.first_name[0]?.toUpperCase()}${templateData?.created_by?.last_name[0]?.toUpperCase()}`
-                    : templateData?.created_by?.username[0]?.toUpperCase()}
-                </Box>
-                <Box>
-                  by{" "}
-                  {templateData?.created_by?.first_name &&
-                  templateData?.created_by?.last_name ? (
-                    <>
-                      {templateData.created_by.first_name
-                        .charAt(0)
-                        .toUpperCase() +
-                        templateData.created_by.first_name.slice(1)}{" "}
-                      {templateData.created_by.last_name
-                        .charAt(0)
-                        .toUpperCase() +
-                        templateData.created_by.last_name.slice(1)}
-                    </>
-                  ) : (
-                    <>
-                      {templateData.created_by.username
-                        .charAt(0)
-                        .toUpperCase() +
-                        templateData.created_by.username.slice(1)}
-                    </>
-                  )}
-                </Box>
-              </Stack>
-              <ArrowForwardIos fontSize="small" />
-            </Button>
-          </Grid>
-
-          <Grid item>
-            <Box>
-              <Subtitle sx={{ mb: "12px", color: "tertiary" }}>
-                Template details
-              </Subtitle>
-              <Stack gap={1}>
-                {templateData.last_run && (
-                  <Typography sx={detailsStyle}>
-                    Last run:{" "}
-                    <span>{moment(templateData.last_run).fromNow()}</span>
-                  </Typography>
-                )}
-                <Typography sx={detailsStyle}>
-                  Updated:{" "}
-                  <span>
-                    {moment(templateData.updated_at).format("D MMMM YYYY")}
-                  </span>
-                </Typography>
-                <Typography sx={detailsStyle}>
-                  Created:{" "}
-                  <span>
-                    {moment(templateData.created_at).format("D MMMM YYYY")}
-                  </span>
-                </Typography>
-                <Typography sx={detailsStyle}>
-                  Views: <span>{templateData.views}</span>
-                </Typography>
-                <Typography sx={detailsStyle}>
-                  Runs: <span>{templateData.executions_count}</span>
-                </Typography>
-              </Stack>
-            </Box>
-          </Grid>
-        </Grid>
+        <Box>
+          <Subtitle sx={{ mb: "12px", color: "tertiary" }}>
+            Metrics Overview
+          </Subtitle>
+          <Stack gap={1}>
+            {templateData.last_run && (
+              <Typography sx={detailsStyle}>
+                Last run: <span>{moment(templateData.last_run).fromNow()}</span>
+              </Typography>
+            )}
+            <Typography sx={detailsStyle}>
+              Updated:{" "}
+              <span>
+                {moment(templateData.updated_at).format("D MMMM YYYY")}
+              </span>
+            </Typography>
+            <Typography sx={detailsStyle}>
+              Created:{" "}
+              <span>
+                {moment(templateData.created_at).format("D MMMM YYYY")}
+              </span>
+            </Typography>
+            <Typography sx={detailsStyle}>
+              Views: <span>{templateData.views}</span>
+            </Typography>
+            <Typography sx={detailsStyle}>
+              Runs: <span>{templateData.executions_count}</span>
+            </Typography>
+          </Stack>
+        </Box>
       </Box>
     </Box>
   );

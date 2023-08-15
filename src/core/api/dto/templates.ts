@@ -66,9 +66,14 @@ export interface Category {
   image: string;
   prompt_template_count: number;
   slug: string;
+  meta_title: string;
+  meta_description: string;
+  meta_keywords: string;
+  description: string;
 }
 
 export type TemplateStatus =
+  | "ALL"
   | "DRAFT"
   | "PENDING_REVIEW"
   | "PUBLISHED"
