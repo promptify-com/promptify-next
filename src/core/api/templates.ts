@@ -8,15 +8,17 @@ import {
   TemplatesExecutions,
 } from "./dto/templates";
 import { authClient } from "@/common/axios";
+import { IEditTemplate } from "@/common/types/editTemplate";
 
 export const templatesApi = baseApi.injectEndpoints({
   endpoints: (build) => {
     return {
-      getTemplatesByOrdering: build.query<Templates[], void>({
-        query: () => ({
-          url: `/api/meta/templates/?ordering=-runs`,
+      getTemplatesByOrdering: build.query<Templates[], string>({
+        query: (ordering: string = "-runs") => ({
+          url: `/api/meta/templates/?ordering=${ordering}`,
           method: "get",
         }),
+        providesTags: ["Templates"],
       }),
       getTemplatesSuggested: build.query<Templates[], void>({
         query: () => ({
@@ -111,6 +113,43 @@ export const templatesApi = baseApi.injectEndpoints({
         }),
         providesTags: ["Templates"],
       }),
+      getMyTemplates: build.query<Templates[], void>({
+        query: () => ({
+          url: "/api/meta/templates/me",
+          method: "get",
+        }),
+        providesTags: ["MyTemplates"],
+      }),
+      createTemplate: build.mutation<Templates, IEditTemplate>({
+        query: (data: IEditTemplate) => ({
+          url: `/api/meta/templates/`,
+          method: "post",
+          headers: { "Content-Type": "application/json" },
+          data,
+        }),
+        invalidatesTags: ["Templates", "MyTemplates"],
+      }),
+      updateTemplate: build.mutation<
+        Templates,
+        { id: number; data: IEditTemplate }
+      >({
+        query: ({ data, id }: { data: IEditTemplate; id: number }) => ({
+          url: `/api/meta/templates/${id}/`,
+          method: "put",
+          headers: { "Content-Type": "application/json" },
+          data,
+        }),
+        invalidatesTags: ["Templates", "MyTemplates"],
+      }),
+
+      publishTemplate: build.mutation<Templates, number>({
+        query: (id: number) => ({
+          url: `/api/meta/templates/${id}/submit/`,
+          method: "post",
+          headers: { "Content-Type": "application/json" },
+        }),
+        invalidatesTags: ["Templates"],
+      }),
     };
   },
 });
@@ -130,6 +169,10 @@ export const {
   useGetPromptTemplateBySlugQuery,
   useGetPromptTemplatesQuery,
   useGetTemplatesExecutionsByMeQuery,
+  useGetMyTemplatesQuery,
+  useCreateTemplateMutation,
+  useUpdateTemplateMutation,
+  usePublishTemplateMutation,
 } = templatesApi;
 
 export const useTemplateView = () => {

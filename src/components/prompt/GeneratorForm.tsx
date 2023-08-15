@@ -141,7 +141,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
           updatedInputs.set(input.prompt, {
               id: input.prompt,
               inputs: { 
-                ...updatedInputs.get(input.prompt)?.inputs,
+                ...(updatedInputs.get(input.prompt)?.inputs || {}),
                 [inputName]: {
                   value: "",
                   required: input.required
@@ -266,19 +266,19 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     }
   };
 
-  const generateExecution = (executionData: ResPrompt[]) => {
+  const generateExecution = (executionData: ResPrompt[], sparkId?: number) => {
     setLastExecution(JSON.parse(JSON.stringify(executionData)));
 
     if (windowWidth < 900) setTimeout(() => exit(), 2000);
 
-    if (!selectedSpark?.id) {
+    if (!selectedSpark?.id && !sparkId) {
       setErrors({});
       return;
     }
 
     let tempData: any[] = [];
     let url = `${process.env.NEXT_PUBLIC_API_URL}/api/meta/templates/${templateData.id}/execute/`;
-    url += `?spark_id=${selectedSpark.id}`;
+    url += `?spark_id=${selectedSpark?.id || sparkId}`;
 
     fetchEventSource(url, {
       method: "POST",
@@ -511,7 +511,6 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   const filledForm = nodeInputs.every(nodeInput => 
     Object.values(nodeInput.inputs).filter(input => input.required).every(input => input.value)
   );
-
   
   return (
     <Box
@@ -615,7 +614,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
                   promptId={input.prompt}
                   inputs={[input]}
                   resInputs={nodeInputs}
-                  setResInputs={setNodeInputs}
+                  setNodeInputs={setNodeInputs}
                   errors={errors}
                 />
               ))}
@@ -729,6 +728,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
       <SparkForm
         type="new"
         isOpen={sparkFormOpen}
+        cancel={() => setIsGenerating(false)}
         close={() => {
           setSparkFormOpen(false);
           setIsGenerating(false);
@@ -737,6 +737,10 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
         onSparkCreated={(spark) => {
           // No Spark selected case, useEffect [selectedSpark] at the top will handle generating new execution after Spark is selected
           setSelectedSpark(spark);
+          // check if it's the first spark created
+          if(sparks.length === 0 && validateInputs()) {
+            generateExecution(resPrompts, spark.id);
+          }
         }}
       />
     </Box>

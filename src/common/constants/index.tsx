@@ -8,6 +8,7 @@ import {
 
 import { Prompt } from "@/assets/icons/prompts";
 import { Setting } from "@/assets/icons/setting";
+import { TemplateStatus } from "@/core/api/dto/templates";
 
 export interface MenuType {
   id: number;
@@ -62,4 +63,11 @@ export const links = [
     href: "https://blog.promptify.com/",
     external: true,
   },
+];
+
+export const TemplateStatusArray: TemplateStatus[] = [
+  "ARCHIVED",
+  "DRAFT",
+  "PENDING_REVIEW",
+  "PUBLISHED",
 ];

@@ -23,7 +23,10 @@ import { MinusIcon, PlusIcon } from "@/assets/icons";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Sidebar } from "@/components/builder/Sidebar";
 import { useEngines } from "@/hooks/api/engines";
-import { useGetPromptTemplatesQuery } from "@/core/api/templates";
+import {
+  useGetPromptTemplatesQuery,
+  usePublishTemplateMutation,
+} from "@/core/api/templates";
 import { Prompts } from "@/core/api/dto/prompts";
 import { deletePrompt, updateTemplate } from "@/hooks/api/templates";
 import { ContentCopy } from "@mui/icons-material";
@@ -76,6 +79,7 @@ export const Builder = () => {
   const [confirmDialogOpen, setConfirmDialogOpen] = React.useState(false);
   const [snackBarOpen, setSnackBarOpen] = React.useState(false);
   const [templateDrawerOpen, setTemplateDrawerOpen] = React.useState(false);
+  const [publishTemplate] = usePublishTemplateMutation();
 
   const create = useCallback(
     (el: HTMLElement) => {
@@ -107,6 +111,7 @@ export const Builder = () => {
         category: promptsData.category.id,
         difficulty: promptsData.difficulty,
         duration: promptsData.duration,
+        status: promptsData.status,
       };
       dataForRequest.current = data;
     }
@@ -275,12 +280,6 @@ export const Builder = () => {
     }
   };
 
-  const updateTemplateTitle = (value: string) => {
-    const data = dataForRequest.current;
-    data.title = value;
-    dataForRequest.current = data;
-  };
-
   const updateTemplateDependencties = (id: string, dependsOn: string) => {
     const data = dataForRequest.current;
     const currentPrompt = dataForRequest.current.prompts_list?.find(
@@ -393,7 +392,7 @@ export const Builder = () => {
   const injectOrderAndSendRequest = () => {
     const data = dataForRequest.current;
     // remove duplicated dependencies in the prompts
-    data.prompts_list.forEach((prompt: INodesData) => {
+    data.prompts_list?.forEach((prompt: INodesData) => {
       prompt.dependencies = prompt.dependencies.filter(
         (dependency: number, index: number, self: number[]) => {
           return self.indexOf(dependency) === index;
@@ -419,11 +418,11 @@ export const Builder = () => {
       }
     }
 
-    data.prompts_list.forEach((node: any) => {
+    data.prompts_list?.forEach((node: any) => {
       node.order = getOrder(node);
     });
 
-    data.prompts_list.sort(function (a: any, b: any) {
+    data.prompts_list?.sort(function (a: any, b: any) {
       return a.order - b.order;
     });
 
@@ -437,14 +436,21 @@ export const Builder = () => {
     setTemplateDrawerOpen(open);
   };
 
+  const handlePublishTemplate = async () => {
+    injectOrderAndSendRequest();
+    await publishTemplate(Number(id));
+  };
+
   return (
     <>
       <Box>
         <Grid container>
           <Grid item xs={12}>
             <Header
+              status={dataForRequest.current.status}
               title={dataForRequest.current.title}
-              onTitleHover={() => toggleTemplateDrawer(true)}
+              onPublish={() => handlePublishTemplate()}
+              onDrawerOpen={() => toggleTemplateDrawer(true)}
               onSave={injectOrderAndSendRequest}
             />
           </Grid>
@@ -456,6 +462,7 @@ export const Builder = () => {
           >
             <Box sx={{ bgcolor: "#373737", p: "1rem" }}>
               <TemplateForm
+                type="edit"
                 templateData={promptsData as Templates}
                 darkMode
                 onSaved={() => window.location.reload()}

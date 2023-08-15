@@ -1,5 +1,5 @@
 import { Templates } from '@/core/api/dto/templates';
-import { AddOutlined } from '@mui/icons-material';
+import { AddOutlined, Favorite, FavoriteOutlined } from '@mui/icons-material';
 import { Box, Button, Stack, Typography, alpha, useTheme } from '@mui/material'
 import React from 'react'
 
@@ -8,19 +8,21 @@ interface Props {
    onNewSpark?: () => void;
 }
 
-export const DetailsCard: React.FC<Props> = ({ 
+export const DetailsCardMini: React.FC<Props> = ({ 
    templateData,
    onNewSpark,
 }) => {
    const { palette } = useTheme();
 
    return (
-      <Stack gap={2} direction={"column"}
+      <Stack gap={2} direction={"row"}
        sx={{
          bgcolor: "surface.1",
-         p: { xs: '0px', md: "16px"},
-         width: `calc(100% - ${{ xs: 0, md: 32}}px)`,
+         p: "10px 14px",
+         width: `calc(100% - 28px)`,
          height: "fit-content",
+         borderTop: `1px solid ${palette.surface[3]}`,
+         borderBottom: `1px solid ${palette.surface[3]}`,
       }}
       >
          <Box
@@ -28,10 +30,10 @@ export const DetailsCard: React.FC<Props> = ({
             src={templateData.thumbnail || "http://placehold.it/240x150"}
             alt={templateData.title}
             sx={{
-               height: 226,
-               width: "100%",
+               height: 42,
+               width: 56,
                objectFit: "cover",
-               borderRadius: { xs: '0px', md: "16px"},
+               borderRadius: "99px",
             }}
          />
          <Stack 
@@ -40,27 +42,38 @@ export const DetailsCard: React.FC<Props> = ({
             justifyContent={"space-between"} 
             flex={1}
             gap={1}
-            sx={{                
-                  borderTopLeftRadius: '25px',
-                  borderTopRightRadius: '25px',
-                  mt: {xs: '-35px', md: '0px'},
-                  bgcolor: '#FFF'
-            }}
          >
-            <Box pt={{xs: '15px', md: '0px'}} paddingX={{ xs: '16px', md: '0px' }}>
+            <Box>
                <Typography
-                  fontSize={18}
+                  fontSize={14}
                   fontWeight={500}
                   color={"onSurface"}
                   dangerouslySetInnerHTML={{ __html: templateData.title }}
                />
                <Typography
-                  fontSize={12}
-                  fontWeight={500}
+                  fontSize={10}
+                  fontWeight={400}
                   color={"grey.600"}
                   dangerouslySetInnerHTML={{ __html: templateData.category.name }}
                />
-            </Box>           
+            </Box>
+            <Typography sx={{
+                  p: "8px 16px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1,
+                  fontSize: 15,
+                  fontWeight: 500,
+                  color: "primary.main",
+                  "svg": {
+                     width: 24,
+                     height: 24,
+                  }
+               }}
+            >
+              {templateData.is_favorite ? <Favorite /> : <FavoriteOutlined />}
+              {templateData.favorites_count}
+            </Typography>
             <Button
               sx={{ 
                   display: { xs: "none", md: "flex" },

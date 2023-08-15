@@ -1,8 +1,10 @@
+import { useState, useEffect } from "react";
 import {
   Box,
   Button,
   Card,
   CardMedia,
+  Chip,
   Dialog,
   DialogActions,
   DialogContent,
@@ -14,31 +16,33 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import BaseButton from "../base/BaseButton";
-import { useGetUserTemplatesQuery, userApi } from "@/core/api/user";
-import { PageLoading } from "../PageLoading";
-import { Templates } from "@/core/api/dto/templates";
 import {
   Delete,
   Edit,
   PreviewRounded,
   SettingsApplicationsRounded,
 } from "@mui/icons-material";
-import { useState, useEffect } from "react";
-import { useDeleteTemplateMutation } from "@/core/api/templates";
-import { modalStyle } from "../modals/styles";
-import TemplateForm from "../common/forms/TemplateForm";
-import TemplateImportModal from "../modals/TemplateImportModal";
+
+import {
+  useDeleteTemplateMutation,
+  useGetMyTemplatesQuery,
+} from "@/core/api/templates";
+import BaseButton from "@/components/base/BaseButton";
+import { Templates } from "@/core/api/dto/templates";
+import { modalStyle } from "@/components/modals/styles";
+import { PageLoading } from "@/components/PageLoading";
+import TemplateForm from "@/components/common/forms/TemplateForm";
+import { FormType } from "@/common/types/template";
 
 export const MyTemplates = () => {
-  const [trigger, { data: templates, isLoading: isTemplatesLoading }] =
-    userApi.endpoints.getUserTemplates.useLazyQuery();
+  const { data: templates, isLoading: isTemplatesLoading } =
+    useGetMyTemplatesQuery();
 
   const [selectedTemplate, setSelectedTemplate] = useState<Templates | null>(
     null
   );
   const [templateFormOpen, setTemplateFormOpen] = useState(false);
-  const [modalNew, setModalNew] = useState(false);
+  const [templateFormType, setTemplateFormType] = useState<FormType>("create");
 
   const openDeletionModal = (template: Templates) => {
     setSelectedTemplate(template);
@@ -46,10 +50,6 @@ export const MyTemplates = () => {
   };
 
   const [deleteTemplate, response] = useDeleteTemplateMutation();
-
-  useEffect(() => {
-    trigger();
-  }, [response]);
 
   const confirmDelete = async () => {
     if (!selectedTemplate) return;
@@ -90,6 +90,17 @@ export const MyTemplates = () => {
         >
           My templates
         </Typography>
+        <BaseButton
+          onClick={() => {
+            setTemplateFormOpen(true);
+            setSelectedTemplate(null);
+            setTemplateFormType("create");
+          }}
+          variant="contained"
+          color="primary"
+        >
+          New
+        </BaseButton>
       </Box>
       {isTemplatesLoading ? (
         <PageLoading />
@@ -137,6 +148,11 @@ export const MyTemplates = () => {
                     <Box>
                       <Typography>{template.title}</Typography>
                     </Box>
+                    <Chip
+                      label={template.status}
+                      size="small"
+                      sx={{ fontSize: "12px", fontWeight: 500 }}
+                    />
                   </Grid>
                   <Grid
                     display={"flex"}
@@ -165,7 +181,7 @@ export const MyTemplates = () => {
                         <PreviewRounded />
                       </IconButton>
                     </Tooltip>
-                    <Tooltip title="Builder">
+                    <Tooltip title="Edit">
                       <IconButton
                         sx={{
                           bgcolor: "surface.2",
@@ -181,26 +197,6 @@ export const MyTemplates = () => {
                             window.location.origin + `/builder/${template.id}`,
                             "_blank"
                           );
-                        }}
-                      >
-                        <SettingsApplicationsRounded />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Edit">
-                      <IconButton
-                        sx={{
-                          bgcolor: "surface.2",
-                          border: "none",
-                          color: "onSurface",
-                          "&:hover": {
-                            bgcolor: "surface.3",
-                            color: "onSurface",
-                          },
-                        }}
-                        onClick={() => {
-                          setSelectedTemplate(template);
-                          setModalNew(false);
-                          setTemplateFormOpen(true);
                         }}
                       >
                         <Edit />
@@ -232,7 +228,7 @@ export const MyTemplates = () => {
 
       {templates && templates.length == 0 && (
         <Typography textAlign={"center"}>
-          All your templates will be listed here! This feature is coming soon.
+          No template found. Create one now!
         </Typography>
       )}
       <Dialog
@@ -257,13 +253,11 @@ export const MyTemplates = () => {
       <Modal open={templateFormOpen} onClose={() => setTemplateFormOpen(false)}>
         <Box sx={modalStyle}>
           <TemplateForm
+            type={templateFormType}
             templateData={selectedTemplate}
-            modalNew={modalNew}
             onSaved={() => {
-              trigger();
               setTemplateFormOpen(false);
             }}
-            linkBuilder={!modalNew}
           />
         </Box>
       </Modal>
