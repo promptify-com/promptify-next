@@ -4,12 +4,14 @@ type Props = {
   width?: number;
   color?: string;
   style?: React.CSSProperties;
+  onClick?: () => void;
 };
 
 export const LogoApp: React.FC<Props> = ({
   width = 37,
   color = "#1D2028",
   style,
+  onClick
 }) => (
   <svg
     width={width}
@@ -17,6 +19,7 @@ export const LogoApp: React.FC<Props> = ({
     viewBox="0 0 37 36"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
+    onClick={onClick}
   >
     <path
       fillRule="evenodd"
