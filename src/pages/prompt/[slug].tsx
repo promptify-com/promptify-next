@@ -47,6 +47,7 @@ import { useGetSparksByTemplateQuery } from "@/core/api/sparks";
 import moment from "moment";
 import SparkForm from "@/components/prompt/SparkForm";
 import { DetailsCardMini } from "@/components/prompt/DetailsCardMini";
+import { savePathURL } from "@/common/utils";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -184,16 +185,13 @@ const Prompt = () => {
     }
   }, [id]);
 
-  const resetNewExecution = () => {
-    if (!isGenerating) {
-      setGeneratorOpened(false);
-      setTimeout(() => setGeneratorOpened(true));
-      setDefaultExecution({
-        ...(defaultExecution as TemplatesExecutions),
-        title: "Untitled",
-      });
-      setSelectedSpark(null);
+  const handleNewSpark = () => {
+    if (!token) {
+      savePathURL(window.location.pathname);
+      return router.push("/signin");
     }
+
+    setSparkFormOpen(true);
   };
 
   // After new generated execution is completed - refetch the executions list and clear the newExecutionData state
@@ -345,7 +343,7 @@ const Prompt = () => {
                   <Stack height={"100%"}>
                     <DetailsCard
                       templateData={templateData}
-                      onNewSpark={() => setSparkFormOpen(true)}
+                      onNewSpark={handleNewSpark}
                     />
                     <Stack flex={1}>
                       <Tabs
@@ -392,7 +390,7 @@ const Prompt = () => {
                               selectedExecution={selectedExecution}
                               setMobileTab={setMobileTab}
                               setActiveTab={setActiveTab}
-                              onNewSpark={() => setSparkFormOpen(true)}
+                              onNewSpark={handleNewSpark}
                               sparks={sortedSparks}
                               selectedSpark={selectedSpark}
                               setSelectedSpark={setSelectedSpark}
@@ -425,7 +423,7 @@ const Prompt = () => {
                   {mobileTab !== 0 && (
                     <DetailsCardMini
                       templateData={templateData}
-                      onNewSpark={() => setSparkFormOpen(true)}
+                      onNewSpark={handleNewSpark}
                     />
                   )}
 
@@ -445,7 +443,7 @@ const Prompt = () => {
                   >
                     <DetailsCard
                       templateData={templateData}
-                      onNewSpark={() => setSparkFormOpen(true)}         
+                      onNewSpark={handleNewSpark}
                     />
                     <Details
                       templateData={templateData}
@@ -478,7 +476,7 @@ const Prompt = () => {
                       selectedExecution={selectedExecution}
                       setMobileTab={setMobileTab}
                       setActiveTab={setActiveTab}
-                      onNewSpark={() => setSparkFormOpen(true)}
+                      onNewSpark={handleNewSpark}
                       sparks={sortedSparks}
                       selectedSpark={selectedSpark}
                       setSelectedSpark={setSelectedSpark}
