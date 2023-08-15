@@ -2,7 +2,11 @@ const LCL_STR_KEY = 'promptify:';
 
 export default class Storage {
     static get(key: string) {
-        return localStorage.getItem(`${LCL_STR_KEY}${key}`);
+        try {
+            return JSON.parse(localStorage.getItem(`${LCL_STR_KEY}${key}`)!);
+        } catch {
+            return localStorage.getItem(`${LCL_STR_KEY}${key}`);
+        }
     }
 
     static set(key: string, item: string) {
