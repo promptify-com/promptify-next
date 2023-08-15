@@ -32,7 +32,7 @@ function App({ Component, ...rest }: AppProps) {
     }
 
     if (!isValidUser && storedToken) {
-      const _currentUser = Storage.get("currentUser");
+      const _currentUser = JSON.parse(Storage.get("currentUser") || "{}");
 
       if (_currentUser && Object.values(_currentUser).length) {
         store.dispatch(updateUser(JSON.parse(_currentUser)));
