@@ -143,7 +143,7 @@ const HomePage: NextPage<HomePageProps> = ({
                 />
                 <CategoriesSection
                   categories={categories}
-                  isLoading={isValidUser}
+                  isLoading={!isValidUser}
                 />
               </Grid>
             ) : (
