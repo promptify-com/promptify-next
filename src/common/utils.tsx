@@ -4,41 +4,50 @@ import { Window, LinkedIn, Reddit, GitHub } from "@mui/icons-material";
 import { CONNECTIONS } from "./constants/connections";
 import { Google } from "../assets/icons/google";
 import { Microsoft } from "../assets/icons/microsoft";
+import Storage from "./storage";
 
 interface TokenResponse {
   token: string;
 }
 export const saveToken = ({ token }: TokenResponse) => {
   if (typeof window !== "undefined") {
-    localStorage.setItem("token", token);
+    Storage.set("token", token);
   }
 };
 
 export const getToken = () => {
   let token = null;
+
   if (typeof window !== "undefined") {
-    token = localStorage.getItem("token");
+    token = Storage.get("token");
   }
+
   return token;
 };
 
-export const deleteToken = () => localStorage.removeItem("token");
+export const deleteToken = () => {
+  Storage.remove("token");
+};
 
 export const savePathURL = (path: string) => {
   if (typeof window !== "undefined") {
-    localStorage.setItem("path", path);
+    Storage.set("path", path);
   }
 };
 
 export const getPathURL = () => {
   let path = null;
+
   if (typeof window !== "undefined") {
-    path = localStorage.getItem("path");
+    path = Storage.get("path");
   }
+
   return path;
 };
 
-export const deletePathURL = () => localStorage.removeItem("path");
+export const deletePathURL = () => {
+  Storage.remove("path");
+};
 
 export const formatConnection = (item: IConnection) => {
   switch (item.provider) {

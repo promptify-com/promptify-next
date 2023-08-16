@@ -106,7 +106,9 @@ const SearchBar: React.FC<Props> = ({
           {from === "middle" ? (
             <InputBase
               onChange={(e) => {
-                if (!!setKeyWord) setKeyWord(e.target.value);
+                if (typeof setKeyWord === 'function') {
+                  setKeyWord(e.target.value);
+                }
               }}
               placeholder={
                 !!selectedTag && !selectedTag.length

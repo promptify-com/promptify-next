@@ -3,7 +3,6 @@ import { KeyboardArrowLeft } from "@mui/icons-material";
 import { Box, Button, Grid, Typography } from "@mui/material";
 
 import { authClient } from "@/common/axios";
-import { FetchLoading } from "@/components/FetchLoading";
 import { SubCategoryCard } from "@/components/common/cards/CardSubcategory";
 import {
   Category,
@@ -87,7 +86,8 @@ export default function Page({ category }: { category: Category }) {
                     <KeyboardArrowLeft /> {category.name}
                   </Button>
                 </Link>
-                <Typography variant="body1">{category.description}</Typography> {/* Adding category description using Typography */}
+                <Typography variant="body1">{category.description}</Typography>{" "}
+                {/* Adding category description using Typography */}
               </Grid>
               <Grid
                 display={"flex"}

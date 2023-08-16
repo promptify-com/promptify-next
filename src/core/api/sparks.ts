@@ -18,7 +18,7 @@ export const sparksApi = baseApi.injectEndpoints({
       }),
       getSparksByMe: builder.query<TemplateExecutionsDisplay[], void>({
         query: () => ({
-          url: `/api/meta/sparks/me`,
+          url: `/api/meta/sparks/me/`,
           method: "get",
         }),
         providesTags: ["Sparks"],

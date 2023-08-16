@@ -27,12 +27,12 @@ import { LogoApp } from "@/assets/icons/LogoApp";
 import { SidebarIcon } from "@/assets/icons/Sidebar";
 import { Collections } from "@/components/common/sidebar/Collections";
 import { useGetCollectionTemplatesQuery } from "@/core/api/collections";
-import useToken from "@/hooks/useToken";
 import { ExploreFilterSideBar } from "@/components/explorer/ExploreFilterSideBar";
-
 import { SideBarCloseIcon } from "@/assets/icons/SideBarClose";
-import { useGetCurrentUserQuery } from "@/core/api/user";
 import { useFetchFilters } from "@/hooks/useFetchFilters";
+import { useSelector } from 'react-redux';
+import { isValidUserFn } from '@/core/store/userSlice';
+import { RootState } from "@/core/store";
 
 interface SideBarProps {
   open: boolean;
@@ -80,22 +80,15 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
-  const token = useToken();
   const pathname = usePathname();
-
-  const splittedPath = pathname.split("/");
-  const isExplorePage = splittedPath[1] == "explore";
-
-  const { data: user, isLoading: userLoading } = useGetCurrentUserQuery(token);
-  const isValidUser = Boolean(user && token);
-
+  const isExplorePage = pathname.split("/")[1] === "explore";
+  const isValidUser = useSelector(isValidUserFn);
+  const currentUser = useSelector((state: RootState) => state.user.currentUser);
   const { data: collections, isLoading: isCollectionsLoading } =
-    useGetCollectionTemplatesQuery(user?.favorite_collection_id as number, {
+    useGetCollectionTemplatesQuery(currentUser?.favorite_collection_id as number, {
       skip: !isValidUser,
     });
-
   const { tags, engines } = useFetchFilters();
-
   const [expandedOnHover, setExpandedOnHover] = useState<boolean>(false);
   const [showExpandIcon, setShowExpandIcon] = useState<boolean>(false);
   const [showFilters, setShowFilters] = useState<boolean>(false);
@@ -112,7 +105,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
       name: "Homepage",
       href: "/",
       icon: <Home />,
-      active: pathname == "/",
+      active: pathname === "/",
       external: false,
     },
     {
@@ -126,14 +119,14 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
       name: "My Sparks",
       href: isValidUser ? "/sparks" : "/signin",
       icon: <AutoAwesome />,
-      active: pathname == "/sparks",
+      active: pathname === "/sparks",
       external: false,
     },
     {
       name: "Learn",
       href: "https://blog.promptify.com/",
       icon: <MenuBookRounded />,
-      active: pathname == "/learn",
+      active: pathname === "/learn",
       external: true,
     },
   ];
@@ -287,7 +280,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
                         {item.name}
                       </Typography>
                     </Box>
-                    {item.name == "Browse" &&
+                    {item.name === "Browse" &&
                       isExplorePage &&
                       (showFilters ? (
                         <ExpandLess sx={{ mr: -1, color: "text.secondary" }} />
@@ -298,7 +291,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
                 </Link>
               </ListItem>
               <Collapse
-                in={showFilters && isExplorePage && item.name == "Browse"}
+                in={showFilters && isExplorePage && item.name === "Browse"}
                 timeout={"auto"}
                 unmountOnExit
               >
@@ -314,7 +307,6 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
           <Collections
             favCollection={collections}
             collectionLoading={isCollectionsLoading}
-            userLoading={userLoading}
             isValidUser={isValidUser}
             sidebarOpen={open || expandedOnHover}
           />

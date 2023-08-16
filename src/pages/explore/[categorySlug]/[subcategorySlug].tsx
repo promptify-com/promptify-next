@@ -5,7 +5,6 @@ import { useSelector } from "react-redux";
 import Head from "next/head";
 
 import { authClient } from "@/common/axios";
-import { FetchLoading } from "@/components/FetchLoading";
 import { SubCategoryCard } from "@/components/common/cards/CardSubcategory";
 import {
   Category,

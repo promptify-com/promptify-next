@@ -2,9 +2,6 @@ import React from "react";
 import moment from "moment";
 import { Box, Grid, Stack, Typography, Skeleton } from "@mui/material";
 
-import { FetchLoading } from "@/components/FetchLoading";
-
-import CardTemplate from "@/components/common/cards/CardTemplate";
 import { Layout } from "@/layout";
 import { useGetSparksByMeQuery } from "@/core/api/sparks";
 import Protected from "@/components/Protected";
@@ -15,15 +12,8 @@ import { TemplateExecutionsDisplay } from "@/core/api/dto/templates";
 import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
 
 const Sparks = () => {
-  const [expanded, setExpanded] = React.useState<string | false>(false);
-
   const { data: sparksByTemplate, isLoading: isSparksByTemplateLoading } =
     useGetSparksByMeQuery();
-
-  const toggleExpand =
-    (panel: string) => (e: React.SyntheticEvent, newExpanded: boolean) => {
-      setExpanded(newExpanded ? panel : false);
-    };
 
   let sparksCount = 0;
   const sortedTemplates = sparksByTemplate?.map((template) => {

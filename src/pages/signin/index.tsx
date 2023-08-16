@@ -8,6 +8,7 @@ import useSetUser from "@/hooks/useSetUser";
 import useToken from "@/hooks/useToken";
 import { LoginLayout } from "@/components/login/LoginLayout";
 import { useRouter } from "next/router";
+import { deletePathURL } from '@/common/utils';
 
 import SigninPlaceholder from "@/components/placeholders/SigninPlaceholder";
 
@@ -40,7 +41,8 @@ const Login = () => {
       setUser(response);
       router.push("/signup");
     } else {
-      localStorage.removeItem("path");
+      deletePathURL();
+
       if (path) {
         router.push(path);
       } else {
