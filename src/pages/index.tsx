@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { AxiosResponse } from "axios";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from "react-redux";
 import { IContinueWithSocialMediaResponse } from "@/common/types";
 import { client } from "@/common/axios";
 import { Layout } from "@/layout";
@@ -18,7 +18,7 @@ import {
 } from "@/core/api/templates";
 import { getPathURL, saveToken } from "@/common/utils";
 import { AppDispatch, RootState, wrapper } from "@/core/store";
-import { isValidUserFn, updateUser } from '@/core/store/userSlice';
+import { isValidUserFn, updateUser } from "@/core/store/userSlice";
 import { Category } from "@/core/api/dto/templates";
 
 interface HomePageProps {
@@ -27,16 +27,13 @@ interface HomePageProps {
 
 const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
 
-const HomePage: NextPage<HomePageProps> = ({
-  categories,
-}) => {
+const HomePage: NextPage<HomePageProps> = ({ categories }) => {
   const router = useRouter();
   const path = getPathURL();
   const dispatch = useDispatch();
   const isValidUser = useSelector(isValidUserFn);
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
-  const [getCurrentUser] =
-    userApi.endpoints.getCurrentUser.useLazyQuery();
+  const [getCurrentUser] = userApi.endpoints.getCurrentUser.useLazyQuery();
   const { data: lastTemplate, isLoading: isLastTemplateLoading } =
     useGetLastTemplatesQuery(undefined, { skip: !isValidUser });
   const { data: suggestedTemplates, isLoading: isSuggestedTemplateLoading } =
@@ -44,10 +41,13 @@ const HomePage: NextPage<HomePageProps> = ({
 
   // TODO: move authentication logic to signin page instead
   const doPostLogin = async (
-    response: AxiosResponse<IContinueWithSocialMediaResponse>,
+    response: AxiosResponse<IContinueWithSocialMediaResponse>
   ) => {
     if (typeof response.data !== "object" || response.data === null) {
-      console.error('incoming data for Microsoft authentication is not an object:', response.data);
+      console.error(
+        "incoming data for Microsoft authentication is not an object:",
+        response.data
+      );
       return;
     }
 
@@ -63,7 +63,10 @@ const HomePage: NextPage<HomePageProps> = ({
     }
 
     if (!token) {
-      console.error('incoming token for Microsoft authentication is not present:', token);
+      console.error(
+        "incoming token for Microsoft authentication is not present:",
+        token
+      );
       return;
     }
 
@@ -89,7 +92,7 @@ const HomePage: NextPage<HomePageProps> = ({
           doPostLogin(response);
         })
         .catch((reason) => {
-          console.warn('Could not authenticate via Microsoft:', reason);
+          console.warn("Could not authenticate via Microsoft:", reason);
         });
     }
   }, []);
@@ -130,6 +133,7 @@ const HomePage: NextPage<HomePageProps> = ({
                 </Grid>
                 {lastTemplate && Object.keys(lastTemplate).length > 0 && (
                   <TemplatesSection
+                    isLatestTemplates
                     isLoading={isLastTemplateLoading}
                     templates={[lastTemplate]}
                     title="Your Latest Template:"

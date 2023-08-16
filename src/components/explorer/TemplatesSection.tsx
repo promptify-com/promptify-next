@@ -4,12 +4,14 @@ import { NotFoundIcon } from "@/assets/icons/NotFoundIcon";
 import { FetchLoading } from "@/components/FetchLoading";
 import CardTemplate from "@/components/common/cards/CardTemplate";
 import { Templates } from "@/core/api/dto/templates";
+import CardTemplateLast from "../common/cards/CardTemplateLast";
 
 interface TemplatesSectionProps {
   templates: Templates[] | undefined;
   isLoading: boolean;
   filtred?: boolean;
   title?: string;
+  isLatestTemplates?: boolean;
 }
 
 export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
@@ -17,8 +19,8 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
   isLoading,
   filtred,
   title,
+  isLatestTemplates = false,
 }) => {
-
   return (
     <>
       <Box width={"100%"}>
@@ -47,7 +49,11 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
               templates.length > 0 &&
               templates.map((el: any) => (
                 <Grid key={el.id} item xs={12}>
-                  <CardTemplate key={el.id} template={el} />
+                  {isLatestTemplates ? (
+                    <CardTemplateLast key={el.id} template={el} />
+                  ) : (
+                    <CardTemplate key={el.id} template={el} />
+                  )}
                 </Grid>
               ))}
 
