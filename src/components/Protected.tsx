@@ -21,7 +21,7 @@ const Protected: React.FC<IProps> = ({ children, showLoadingPage }) => {
     }
   }, [isValidUser, currentPathName]);
 
-  return <>{showLoadingPage ? <PageLoading /> : children}</>;
+  return <>{showLoadingPage || !isValidUser ? <PageLoading /> : children}</>;
 };
 
 export default Protected;

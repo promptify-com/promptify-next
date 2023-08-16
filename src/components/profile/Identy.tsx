@@ -1,40 +1,20 @@
-import React, { useEffect } from "react";
-import { Box, Button, Typography } from "@mui/material";
-import { IdentyImg } from "@/assets/icons/identy";
-import { IdentyImgIverse } from "@/assets/icons/identyInve";
+import { useEffect, useState, useRef } from "react";
+import { Box, Typography } from "@mui/material";
 import { IOption, IQuestion } from "@/common/types";
 import { useQuestions } from "@/hooks/api/questions";
 import { useUserAnswers } from "@/hooks/api/user";
-import useUser from "@/hooks/useUser";
 import { IdentityItem } from "./IdentityItem";
 
 export const Identy = () => {
-  const user = useUser();
-
   const [questions] = useQuestions();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [qa, error, isLoading] = useUserAnswers();
-
+  const [answers] = useUserAnswers();
   const getUserAnswer = (question: IQuestion): IOption | null => {
-    const option = qa.find(
+    const option = answers.find(
       (userAnswer) => userAnswer?.question?.id === question.id
     )?.option;
+
     return option || null;
   };
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [open, setOpen] = React.useState(false);
-
-  const prevOpen = React.useRef(open);
-  const anchorRef = React.useRef<HTMLButtonElement | null>(null);
-
-  useEffect(() => {
-    if (prevOpen.current && !open) {
-      anchorRef.current?.focus();
-    }
-
-    prevOpen.current = open;
-  }, [open]);
 
   return (
     <Box

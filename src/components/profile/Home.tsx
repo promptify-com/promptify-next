@@ -1,17 +1,14 @@
 import React from "react";
 import { Avatar, Box, Typography } from "@mui/material";
 import { Mode } from "@mui/icons-material";
-import { useDispatch } from "react-redux";
-
-import { useGetCurrentUserQuery } from "@/core/api/user";
-import useToken from "@/hooks/useToken";
+import { useDispatch, useSelector } from "react-redux";
 import BaseButton from "@/components/base/BaseButton";
 import { showProfileInEditMode } from "@/core/store/profileSlice";
+import { RootState } from '@/core/store';
 
 export const Home = () => {
-  const token = useToken();
   const dispatch = useDispatch();
-  const { data: user } = useGetCurrentUserQuery(token);
+  const currentUser = useSelector((state: RootState) => state.user.currentUser);
 
   return (
     <Box
@@ -50,8 +47,8 @@ export const Home = () => {
                 fontSize: 40,
                 textTransform: "capitalize",
               }}
-              src={user?.avatar}
-              alt={user?.username}
+              src={currentUser?.avatar}
+              alt={currentUser?.username}
             />
           </Box>
           <Box
@@ -69,7 +66,7 @@ export const Home = () => {
                 color: "onSurface",
               }}
             >
-              {user?.first_name} {user?.last_name}
+              {currentUser?.first_name} {currentUser?.last_name}
             </Typography>
             <Typography
               sx={{
@@ -83,12 +80,12 @@ export const Home = () => {
                 opacity: 0.5,
               }}
             >
-              {user?.username}
+              {currentUser?.username}
             </Typography>
           </Box>
         </Box>
 
-        {user?.bio && (
+        {currentUser?.bio && (
           <Box maxWidth={"505px"}>
             <Typography
               fontSize={16}
@@ -97,7 +94,7 @@ export const Home = () => {
               lineHeight={"22.88px"}
               letterSpacing={"0.17px"}
             >
-              {user.bio}
+              {currentUser.bio}
             </Typography>
           </Box>
         )}

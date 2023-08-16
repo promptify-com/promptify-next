@@ -4,15 +4,15 @@ import { useGoogleLogin } from "@react-oauth/google";
 import React, { useRef } from "react";
 import GitHubLogin from "react-github-login";
 import { useLinkedIn } from "react-linkedin-login-oauth2";
-
 import { AxiosResponse } from "axios";
 import { Google } from "@/assets/icons/google";
 import { Microsoft } from "@/assets/icons/microsoft";
 import { authClient } from "@/common/axios";
 import { IContinueWithSocialMediaResponse } from "@/common/types";
 import { savePathURL, saveToken } from "@/common/utils";
-import useSetUser from "@/hooks/useSetUser";
 import useToken from "@/hooks/useToken";
+import { useDispatch } from "react-redux";
+import { updateUser } from "@/core/store/userSlice";
 
 const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
 
@@ -32,13 +32,12 @@ export const AddConnectionButtons: React.FC<IProps> = ({
   setTypeAlert,
   setOpenAdd,
 }) => {
-  const setUser = useSetUser();
+  const dispatch = useDispatch();
   const savedToken = useToken();
-
   const githubButtonRef = useRef<HTMLButtonElement | null>(null);
-
   const doPostLogin = (r: AxiosResponse<IContinueWithSocialMediaResponse>) => {
-    const { token } = r.data;
+    const { token, created, ...userProps } = r.data;
+
     if (token !== savedToken) {
       setOpenAdd(false);
       setTypeAlert({
@@ -46,10 +45,9 @@ export const AddConnectionButtons: React.FC<IProps> = ({
         color: "info",
         message: "You already have this connection attached to another account",
       });
-      return;
     } else {
-      setUser(r.data);
-      saveToken(r.data);
+      dispatch(updateUser(userProps));
+      saveToken({ token });
       postLogin(r.data);
     }
   };
