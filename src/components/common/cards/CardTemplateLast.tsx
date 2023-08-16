@@ -2,24 +2,26 @@ import React from "react";
 import {
   Avatar,
   Box,
-  Button,
   Card,
   CardMedia,
-  Chip,
   Grid,
-  Stack,
+  IconButton,
   Typography,
 } from "@mui/material";
-import { TemplateExecutionsDisplay, Templates } from "@/core/api/dto/templates";
-import { Favorite } from "@mui/icons-material";
+import { TemplateExecutionsDisplay } from "@/core/api/dto/templates";
+import { Favorite, PlayCircle } from "@mui/icons-material";
 import { useRouter } from "next/router";
 import DraftSpark from "@/assets/icons/DraftSpark";
+import useTruncate from "@/hooks/useTruncate";
+import SavedSpark from "@/assets/icons/SavedSpark";
+import NoSpark from "@/assets/icons/NoSpark";
 
 type CardTemplateLastProps = {
-  template: Templates | TemplateExecutionsDisplay;
+  template: TemplateExecutionsDisplay;
 };
 
 const CardTemplateLast: React.FC<CardTemplateLastProps> = ({ template }) => {
+  const { truncate } = useTruncate();
   const router = useRouter();
 
   return (
@@ -51,19 +53,20 @@ const CardTemplateLast: React.FC<CardTemplateLastProps> = ({ template }) => {
 
         <Box
           display={"flex"}
-          bottom={8}
-          mt={-3}
-          bgcolor={"surface.1"}
+          mt={-1.5}
+          bgcolor={{ xs: "surface.2", md: "surface.1" }}
           flexDirection={"column"}
           sx={{
             zIndex: 2,
           }}
         >
           <Grid
-            bgcolor={"surface.2"}
+            bgcolor={{ xs: "surface.3", md: "surface.2" }}
             padding={"16px"}
             borderRadius={"16px 16px 0px 0px"}
             display={"flex"}
+            height={"121px"}
+            position={"relative"}
             flexDirection={"column"}
             gap={"17px"}
           >
@@ -74,7 +77,9 @@ const CardTemplateLast: React.FC<CardTemplateLastProps> = ({ template }) => {
                 lineHeight={"140%"}
                 letterSpacing={"0.15px"}
               >
-                {template.title}
+                {truncate(template.title, {
+                  length: 32,
+                })}
               </Typography>
               <Typography
                 sx={{
@@ -85,12 +90,14 @@ const CardTemplateLast: React.FC<CardTemplateLastProps> = ({ template }) => {
                   color: "text.secondary",
                 }}
               >
-                {template.description?.length > 70
-                  ? `${template.description?.slice(0, 70 - 1)}...`
-                  : template.description}
+                {truncate(template.description, { length: 60 })}
               </Typography>
             </Grid>
             <Grid
+              position={"absolute"}
+              bottom={6}
+              right={"16px"}
+              left={"16px"}
               display={"flex"}
               alignItems={"center"}
               justifyContent={"space-between"}
@@ -125,20 +132,57 @@ const CardTemplateLast: React.FC<CardTemplateLastProps> = ({ template }) => {
             padding={"0px 16px"}
             display={"flex"}
             alignItems={"center"}
+            justifyContent={"space-between"}
             height={"48px"}
           >
-            <DraftSpark />
-            <Typography
+            {!!template.executions && template.executions.length > 0 ? (
+              <Box display={"flex"} alignItems={"bottom"} gap={"8px"}>
+                <SavedSpark />
+                <Typography
+                  sx={{
+                    fontSize: 13,
+                    fontWeight: 500,
+                    lineHeight: "18.59px",
+                    letterSpacing: "0.17px",
+                    color: "onSurface",
+                  }}
+                >
+                  {template.executions[0].title}
+                </Typography>
+              </Box>
+            ) : (
+              <Box display={"flex"} alignItems={"bottom"} gap={"8px"}>
+                <NoSpark />
+                <Typography
+                  sx={{
+                    fontSize: 13,
+                    fontWeight: 500,
+                    lineHeight: "18.59px",
+                    letterSpacing: "0.17px",
+                    color: "onSurface",
+                    opacity: 0.25,
+                  }}
+                >
+                  No Spark Found
+                </Typography>
+              </Box>
+            )}
+            <IconButton
+              onClick={() =>
+                router.push({
+                  pathname: `prompt/${template.slug}`,
+                  query: { spark: template.executions[0].id },
+                })
+              }
               sx={{
-                fontSize: 12,
-                fontWeight: 400,
-                lineHeight: "16.8px",
-                letterSpacing: "0.15px",
-                color: "text.secondary",
+                border: "none",
+                "&:hover": {
+                  bgcolor: "surface.2",
+                },
               }}
             >
-              2246: Redemption
-            </Typography>
+              <PlayCircle />
+            </IconButton>
           </Grid>
         </Box>
       </Card>

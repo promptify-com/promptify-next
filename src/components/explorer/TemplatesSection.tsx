@@ -37,18 +37,21 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
         ) : (
           <Grid
             container
-            flexDirection={"column"}
+            flexDirection={isLatestTemplates ? "row" : "column"}
+            flexWrap={{ xs: "nowrap", md: "wrap" }}
             sx={{
               mt: "10px",
               gap: "1em",
               width: "100%",
+              overflow: { xs: "auto", md: "initial" },
+              WebkitOverflowScrolling: { xs: "touch", md: "initial" },
             }}
           >
             {!isLoading &&
               !!templates &&
               templates.length > 0 &&
               templates.map((el: any) => (
-                <Grid key={el.id} item xs={12}>
+                <Grid key={el.id}>
                   {isLatestTemplates ? (
                     <CardTemplateLast key={el.id} template={el} />
                   ) : (
