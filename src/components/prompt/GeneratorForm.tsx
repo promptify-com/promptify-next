@@ -619,7 +619,18 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
           )}
         </Box>
 
-        <Stack>
+        <Stack sx={{
+            position: { xs: "sticky", md: "relative" },
+            bottom: 0,
+            m: { xs: "0 -16px -3px", md: "0" },
+            bgcolor: { xs: "surface.1", md: "initial" },
+            color: { xs: "onSurface", md: "initial" },
+            boxShadow: { xs: "0px -8px 40px 0px rgba(93, 123, 186, 0.09), 0px -8px 10px 0px rgba(98, 98, 107, 0.03)", md: "none" },
+            borderRadius: "24px 24px 0 0",
+            zIndex: 999,
+            borderBottom: { xs: `1px solid ${palette.surface[5]}`, md: "none" },
+          }}
+        >
           <Stack
             direction={"row"}
             alignItems={"center"}
@@ -666,15 +677,35 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
                 </Typography>
               )}
             </Button>
-            <Replay
-              sx={{
-                width: "16px",
-                height: "16px",
-                p: "16px",
-                color: "onSurface",
-                visibility: isGenerating ? "visible" : "hidden",
-              }}
-            />
+            <Box sx={{ position: 'relative', display: 'inline-flex' }}>
+              <CircularProgress variant="determinate" value={100} sx={{ position: "absolute", color: "grey.400" }} />
+              <CircularProgress variant="determinate"
+                value={templateData.executions_limit === -1 ? 100 : templateData.executions_count} 
+              />
+              <Box
+                sx={{
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  position: 'absolute',
+                  width: 26,
+                  height: 26,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  bgcolor: "primary.main",
+                  color: "onPrimary",
+                  borderRadius: 99
+                }}
+              >
+                <Typography
+                  sx={{ fontSize: 13, color: "inherit"}}
+                  dangerouslySetInnerHTML={{
+                    __html: templateData.executions_limit === -1 ? "&infin;" : templateData.executions_count
+                  }}
+                />
+              </Box>
+            </Box>
           </Stack>
         </Stack>
 

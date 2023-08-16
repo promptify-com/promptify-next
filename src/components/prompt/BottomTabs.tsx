@@ -43,8 +43,8 @@ export const BottomTabs: React.FC<Props> = ({
         zIndex: 999,
         bgcolor: "surface.1",
         color: "onSurface",
-        boxShadow: "0px -8px 40px 0px rgba(93, 123, 186, 0.09), 0px -8px 10px 0px rgba(98, 98, 107, 0.03)",
-        borderRadius: "24px 24px 0 0",
+        boxShadow: activeTab === 0 && "0px -8px 40px 0px rgba(93, 123, 186, 0.09), 0px -8px 10px 0px rgba(98, 98, 107, 0.03)",
+        borderRadius: activeTab === 0 && "16px 16px 0 0",
         p: "16px 24px",
         gap: 1,
         flexWrap: "nowrap"
