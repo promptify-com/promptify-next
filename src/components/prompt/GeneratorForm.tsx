@@ -624,7 +624,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
             direction={"row"}
             alignItems={"center"}
             gap={1}
-            m={"20px 10px"}
+            p={"16px 8px 16px 16px"}
           >
             <Button
               variant={"contained"}
@@ -691,7 +691,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
         <Box
           sx={{
-            display: "flex",
+            display: { xs: "none", md: "flex" },
             alignItems: "center",
             gap: "15px",
             color: "grey.600",

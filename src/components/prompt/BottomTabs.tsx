@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  Button,
   Grid,
   IconButton,
   Theme,
@@ -36,15 +37,17 @@ export const BottomTabs: React.FC<Props> = ({
       sx={{
         display: { xs: "flex", md: "none" },
         position: "fixed",
-        bottom: 10,
+        bottom: 0,
         left: 0,
         right: 0,
-        marginLeft: "auto",
-        marginRight: "auto",
         zIndex: 999,
-        bgcolor: alpha(theme.palette.primary.main, 0.9),
-        width: "90%",
-        borderRadius: "50px",
+        bgcolor: "surface.1",
+        color: "onSurface",
+        boxShadow: "0px -8px 40px 0px rgba(93, 123, 186, 0.09), 0px -8px 10px 0px rgba(98, 98, 107, 0.03)",
+        borderRadius: "24px 24px 0 0",
+        p: "16px 24px",
+        gap: 1,
+        flexWrap: "nowrap"
       }}
     >
       {mobileTabs.map((tab, i) => (
@@ -53,44 +56,40 @@ export const BottomTabs: React.FC<Props> = ({
           xs={4}
           md={4}
           key={i}
-          py="10px"
           display="flex"
           justifyContent="center"
         >
-          <IconButton
-            onClick={() => {
-              onChange(i);
-              setActiveTab(i);
-            }}
+          <Button
+            startIcon={tab.icon}
             sx={{
               display: "flex",
               justifyContent: "center",
-              width: "80%",
+              width: "100%",
               height: "42px",
               border: "none",
               borderRadius: 50,
               fontSize: 16,
               fontWeight: 500,
-              bgcolor: activeTab === i ? "#FFF" : "transparent",
-              color: activeTab === i ? "#000" : "#FFF",
+              bgcolor: activeTab === i ? "primary.main" : "transparent",
+              color: activeTab === i ? "onPrimary" : "onSurface",
               svg: {
                 width: 20,
                 height: 20,
               },
               '&:hover, &:focus': {
-                color: "#000",
-                bgcolor: "#FFF"
+                color: "onSurface",
+                bgcolor: "surface.2"
               },
             }}
-          >
-            {tab.icon}
-            <Typography
-              ml="10px"
-              sx={{ color: activeTab === i ? "#000" : "#FFF" }}
+            onClick={() => {
+              onChange(i);
+              setActiveTab(i);
+            }}
             >
+            <Typography color="inherit">
               {tab.name}
             </Typography>
-          </IconButton>
+          </Button>
         </Grid>
       ))}
     </Grid>
