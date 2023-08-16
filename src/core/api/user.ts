@@ -1,4 +1,4 @@
-import { User } from "./dto/user";
+import { User, UpdateUserData } from "./dto/user";
 import { baseApi } from "./api";
 
 export const userApi = baseApi.injectEndpoints({
@@ -13,20 +13,18 @@ export const userApi = baseApi.injectEndpoints({
           },
         }),
       }),
-      updateUserProfile: builder.mutation<User, any>({
+      updateUserProfile: builder.mutation<User, { data: UpdateUserData, token: string }>({
         query: ({
-          updatedUser,
+          data,
           token,
-        }: {
-          updatedUser: any;
-          token: string;
         }) => ({
           url: "/api/me/",
-          method: "patch",
+          method: "put",
           headers: {
             Authorization: `Token ${token}`,
+            "Content-Type": "multipart/form-data",
           },
-          data: updatedUser,
+          data
         }),
       }),
     };

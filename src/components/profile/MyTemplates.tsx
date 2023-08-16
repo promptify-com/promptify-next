@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Box,
   Button,
@@ -16,13 +16,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import {
-  Delete,
-  Edit,
-  PreviewRounded,
-  SettingsApplicationsRounded,
-} from "@mui/icons-material";
-
+import { Delete, Edit, PreviewRounded } from "@mui/icons-material";
 import {
   useDeleteTemplateMutation,
   useGetMyTemplatesQuery,
@@ -30,7 +24,6 @@ import {
 import BaseButton from "@/components/base/BaseButton";
 import { Templates } from "@/core/api/dto/templates";
 import { modalStyle } from "@/components/modals/styles";
-import { PageLoading } from "@/components/PageLoading";
 import TemplateForm from "@/components/common/forms/TemplateForm";
 import { FormType } from "@/common/types/template";
 
@@ -39,28 +32,24 @@ import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlace
 export const MyTemplates = () => {
   const { data: templates, isLoading: isTemplatesLoading } =
     useGetMyTemplatesQuery();
-
   const [selectedTemplate, setSelectedTemplate] = useState<Templates | null>(
     null
   );
   const [templateFormOpen, setTemplateFormOpen] = useState(false);
   const [templateFormType, setTemplateFormType] = useState<FormType>("create");
-
+  const [deleteTemplate, response] = useDeleteTemplateMutation();
   const openDeletionModal = (template: Templates) => {
     setSelectedTemplate(template);
     setConfirmDialog(true);
   };
-
-  const [deleteTemplate, response] = useDeleteTemplateMutation();
-
   const confirmDelete = async () => {
     if (!selectedTemplate) return;
 
     await deleteTemplate(selectedTemplate.id);
     setConfirmDialog(false);
   };
-
   const [confirmDialog, setConfirmDialog] = useState(false);
+
   return (
     <Box
       id="my-templates"

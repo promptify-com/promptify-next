@@ -19,11 +19,9 @@ import { skipToken } from "@reduxjs/toolkit/dist/query";
 import materialDynamicColors from "material-dynamic-colors";
 import { mix } from "polished";
 import { useRouter } from "next/router";
-
 import {
   useGetPromptTemplateBySlugQuery,
   useTemplateView,
-  useGetExecutionByIdQuery,
 } from "@/core/api/templates";
 import {
   Spark,
@@ -90,43 +88,29 @@ const Prompt = () => {
   const [currentGeneratedPrompt, setCurrentGeneratedPrompt] =
     useState<Prompts | null>(null);
   const [sparkFormOpen, setSparkFormOpen] = useState(false);
-  const [defaultExecution, setDefaultExecution] =
-    useState<TemplatesExecutions | null>(null);
   const [templateView] = useTemplateView();
   const [generatorOpened, setGeneratorOpened] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string>("");
-  const [activeTab, setActiveTab] = React.useState(0);
+  const [activeTab, setActiveTab] = useState(0);
   const [sortedSparks, setSortedSparks] = useState<Spark[]>([]);
-
   const [tabsValue, setTabsValue] = useState(0);
-
   const [mobileTab, setMobileTab] = useState(0);
-
   const detailsElRef = useRef<HTMLDivElement | null>(null);
   const [hideDetailsImage, setHideDetailsImage] = useState(false);
-
   const router = useRouter();
   const token = useToken();
   const theme = useTheme();
   const [palette, setPalette] = useState(theme.palette);
   const { width: windowWidth } = useWindowSize();
-
   const slug = router.query?.slug;
   // TODO: redirect to 404 page if slug is not found
   const slugValue = (Array.isArray(slug) ? slug[0] : slug || "") as string;
-
-  // Fetch new execution data after generating and retrieving its id
-  const { data: fetchedNewExecution } = useGetExecutionByIdQuery(
-    newExecutionData?.id ? newExecutionData?.id : skipToken
-  );
-
   const {
     data: fetchedTemplate,
     error: fetchedTemplateError,
     isLoading: isLoadingTemplate,
     isFetching: isFetchingTemplate,
   } = useGetPromptTemplateBySlugQuery(slugValue);
-
   const [templateData, setTemplateData] = useState<Templates>();
   const id = templateData?.id;
 
@@ -439,7 +423,7 @@ const Prompt = () => {
                       overflow: "auto",
                       bgcolor: "surface.1",
                       position: "relative",
-                      pb: '75px' // Bottom tab bar height
+                      pb: "75px", // Bottom tab bar height
                     }}
                   >
                     <DetailsCard
@@ -464,7 +448,7 @@ const Prompt = () => {
                       height: "100%",
                       overflow: "auto",
                       bgcolor: "surface.1",
-                      pb: 'calc(75px + 50px)' // 75px Bottom tab bar height + 50px to show bottom repeat last button
+                      pb: "calc(75px + 50px)", // 75px Bottom tab bar height + 50px to show bottom repeat last button
                     }}
                   >
                     <GeneratorForm
@@ -495,7 +479,7 @@ const Prompt = () => {
                       height: "100%",
                       overflow: "auto",
                       bgcolor: "surface.1",
-                      pb: '75px' // Bottom tab bar height
+                      pb: "75px", // Bottom tab bar height
                     }}
                   >
                     <History
@@ -518,7 +502,7 @@ const Prompt = () => {
                   overflow: "auto",
                   bgcolor: "surface.1",
                   borderLeft: "1px solid #ECECF4",
-                  position: "relative"
+                  position: "relative",
                 }}
               >
                 <Display
