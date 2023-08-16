@@ -14,7 +14,7 @@ interface Props {
    onSearch?: (text: string) => void;
 }
 
-export const DisplayHeader: React.FC<Props> = ({ 
+export const DisplayActions: React.FC<Props> = ({ 
    sparks,
    selectedSpark,
    changeSelectedSpark,

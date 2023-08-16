@@ -8,7 +8,7 @@ import {
 import { ExecutionCard } from "./ExecutionCard";
 import { PromptLiveResponse } from "@/common/types/prompt";
 import { ExecutionCardGenerated } from "./ExecutionCardGenerated";
-import { DisplayHeader } from "./DisplayHeader";
+import { DisplayActions } from "./DisplayActions";
 import { pinSpark, unpinSpark } from "@/hooks/api/executions";
 import { useRouter } from "next/router";
 
@@ -103,7 +103,7 @@ export const Display: React.FC<Props> = ({
         pb: { xs: "70px", md: "0" }
       }}
     >
-      <DisplayHeader
+      <DisplayActions
         sparks={sortedSparks}
         selectedSpark={selectedSpark}
         changeSelectedSpark={setSelectedSpark}

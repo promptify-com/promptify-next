@@ -32,7 +32,7 @@ import {
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { useWindowSize } from "usehooks-ts";
 import { useRouter } from "next/router";
-import { DisplayHeader } from "./DisplayHeader";
+import { DisplayActions } from "./DisplayActions";
 import { pinSpark, unpinSpark } from "@/hooks/api/executions";
 import SparkForm from "./SparkForm";
 
