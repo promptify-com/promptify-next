@@ -34,7 +34,7 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
   const isValidUser = useSelector(isValidUserFn);
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
   const [getCurrentUser] = userApi.endpoints.getCurrentUser.useLazyQuery();
-  const { data: lastTemplate, isLoading: isLastTemplateLoading } =
+  const { data: lastTemplates, isLoading: isLastTemplatesLoading } =
     useGetLastTemplatesQuery(undefined, { skip: !isValidUser });
   const { data: suggestedTemplates, isLoading: isSuggestedTemplateLoading } =
     useGetTemplatesSuggestedQuery(undefined, { skip: !isValidUser });
@@ -131,19 +131,32 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
                     Welcome, {currentUser?.username}
                   </Typography>
                 </Grid>
-                {lastTemplate && Object.keys(lastTemplate).length > 0 && (
+                {/* back compatibility solution for now */}
+                {lastTemplates &&
+                Array.isArray(lastTemplates) &&
+                lastTemplates.length ? (
                   <TemplatesSection
                     isLatestTemplates
-                    isLoading={isLastTemplateLoading}
-                    templates={[lastTemplate]}
+                    isLoading={isLastTemplatesLoading}
+                    templates={lastTemplates}
+                    title="Your Latest Templates:"
+                  />
+                ) : null}
+                {lastTemplates &&
+                !Array.isArray(lastTemplates) &&
+                Object.values(lastTemplates).length ? (
+                  <TemplatesSection
+                    isLatestTemplates
+                    isLoading={isLastTemplatesLoading}
+                    templates={[lastTemplates]}
                     title="Your Latest Template:"
                   />
-                )}
+                ) : null}
 
                 <TemplatesSection
                   isLoading={isSuggestedTemplateLoading}
                   templates={suggestedTemplates}
-                  title="You may like this templates:"
+                  title="You may like these templates:"
                 />
                 <CategoriesSection
                   categories={categories}

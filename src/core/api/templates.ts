@@ -26,7 +26,7 @@ export const templatesApi = baseApi.injectEndpoints({
           method: "get",
         }),
       }),
-      getLastTemplates: build.query<Templates, void>({
+      getLastTemplates: build.query<Templates[], void>({
         query: () => ({
           url: "/api/meta/templates/last_executed/",
           method: "get",
