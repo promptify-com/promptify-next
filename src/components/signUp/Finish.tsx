@@ -8,15 +8,13 @@ import {
   Typography,
 } from "@mui/material";
 import { LogoApp } from "../../assets/icons/LogoApp";
-import { useUpdateUser } from "../../hooks/api/user";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { SigninImage } from "@/assets/icons/SigninImage";
 
 const Finish = () => {
   const router = useRouter();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [updateUser, error, isLoading] = useUpdateUser();
+  const isLoading = false;
 
   const handleFinish = async () => {
     router.push("/explore");
@@ -88,8 +86,6 @@ const Finish = () => {
           >
             Please, set up your profile to finish
           </Typography>
-
-          {/* <FinishCard formik={formik}/> */}
 
           <Button
             disabled={isLoading}

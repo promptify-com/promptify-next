@@ -16,8 +16,17 @@ const Protected: React.FC<IProps> = ({ children, showLoadingPage }) => {
   const isValidUser = useSelector(isValidUserFn);
 
   useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+
     if (!isValidUser && protectedRoutes.includes(currentPathName)) {
-      router.push("/");
+      timeoutId = setTimeout(() => {
+        clearTimeout(timeoutId);
+        router.push("/");
+      }, 800);
+    }
+
+    return () => {
+      clearTimeout(timeoutId);
     }
   }, [isValidUser, currentPathName]);
 

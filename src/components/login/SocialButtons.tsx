@@ -1,7 +1,7 @@
 import { GitHub, LinkedIn } from "@mui/icons-material";
 import { Box, Grid, Snackbar, Typography } from "@mui/material";
 import { useGoogleLogin } from "@react-oauth/google";
-import React, { useRef, useState } from "react";
+import { useRef, useState, forwardRef } from "react";
 import GitHubLogin from "react-github-login";
 import { useLinkedIn } from "react-linkedin-login-oauth2";
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
@@ -10,13 +10,16 @@ import { Google } from "@/assets/icons/google";
 import { client } from "@/common/axios";
 import { IContinueWithSocialMediaResponse } from "@/common/types";
 import { savePathURL, saveToken } from "@/common/utils";
-import { useDispatch } from "react-redux";
 import { Microsoft } from "@/assets/icons/microsoft";
+import { getPathURL, deletePathURL } from "@/common/utils";
+import { useRouter } from "next/router";
 import { updateUser } from "@/core/store/userSlice";
+import { useDispatch } from "react-redux";
+import { userApi } from "@/core/api/user";
 
 const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
 
-const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
+const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(
   props,
   ref
 ) {
@@ -24,41 +27,58 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
 });
 
 interface IProps {
-  enabled?: boolean;
-  preLogin: () => void;
-  postLogin: (data: IContinueWithSocialMediaResponse | null) => void;
+  preLogin: (isLoading: boolean) => void;
   isChecked: boolean;
   setErrorCheckBox: Function;
   from: string;
 }
 
 export const SocialButtons: React.FC<IProps> = ({
-  postLogin,
   preLogin,
   isChecked,
   setErrorCheckBox,
   from,
 }) => {
-  const dispatch = useDispatch();
   const githubButtonRef = useRef<HTMLButtonElement | null>(null);
-  const [open, setOpen] = useState<boolean>(false);
-  const doPostLogin = (r: AxiosResponse<IContinueWithSocialMediaResponse>) => {
-    const { token, created, ...userProps } = r.data;
+  const [open, setOpen] = useState(false);
+  const [attemptError, setAttemptError] = useState(false);
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const [getCurrentUser] = userApi.endpoints.getCurrentUser.useLazyQuery();
+  const doPostLogin = async (response: AxiosResponse<IContinueWithSocialMediaResponse> | null) => {
+    if (response?.data) {
+      const { token, created: _ } = response.data;
+      const path = getPathURL();
+      // response.data has corrupted user data, so we need to call this API to get proper user data
+      const payload =  await getCurrentUser(token).unwrap();
 
-    dispatch(updateUser(userProps));
-    saveToken({ token });
-    postLogin(r.data);
+      dispatch(updateUser(payload));
+      saveToken({ token });
+      deletePathURL();
+ 
+      router.push(path || "/");
+      return;
+    }
+
+    setAttemptError(true);
+    preLogin(false);
   };
+
+  const initAttempt = () => {
+    setAttemptError(false);
+    preLogin(true);
+  }
+
   const loginGoogle = useGoogleLogin({
     onSuccess: ({ code }) => {
-      preLogin();
+      initAttempt();
       client
         .post(CODE_TOKEN_ENDPOINT, {
           provider: "google",
           code,
         })
         .then(doPostLogin)
-        .catch(() => postLogin(null));
+        .catch(() => doPostLogin(null));
     },
     flow: "auth-code",
     redirect_uri: process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI,
@@ -68,34 +88,34 @@ export const SocialButtons: React.FC<IProps> = ({
     redirectUri: process.env.NEXT_PUBLIC_LINKEDIN_REDIRECT_URI as string,
     scope: "r_emailaddress,r_liteprofile",
     onSuccess: (code) => {
-      preLogin();
+      initAttempt();
       client
         .post(CODE_TOKEN_ENDPOINT, {
           provider: "linkedin",
           code,
         })
         .then(doPostLogin)
-        .catch(() => postLogin(null));
+        .catch(() => doPostLogin(null));
     },
     onError: (error) => {
       console.log(error);
     },
   });
   const loginWithGitHub = ({ code }: { code: string }) => {
-    preLogin();
+    initAttempt();
     client
       .post(CODE_TOKEN_ENDPOINT, {
         provider: "github",
         code,
       })
       .then(doPostLogin)
-      .catch(() => postLogin(null));
+      .catch(() => doPostLogin(null));
   };
   const handleGithubButtonClick = () => {
     // hack because the React GitHub oauth2 library is trash
     (githubButtonRef?.current?.children[0] as HTMLButtonElement).click();
   };
-  const handleLogin = async () => {
+  const loginWithMicrosoft = async () => {
     const clientId = process.env.NEXT_PUBLIC_MICROSOFT_CLIENT_ID;
     const redirectUri = process.env.NEXT_PUBLIC_MICROSOFT_REDIRECT_URI;
     const scope = "openid email profile User.Read";
@@ -108,7 +128,9 @@ export const SocialButtons: React.FC<IProps> = ({
     if (!isChecked && from === "signup") {
       setOpen(true);
       setErrorCheckBox(false);
-    } else loginMethod();
+    } else {
+      loginMethod();
+    };
   };
 
   return (
@@ -119,9 +141,26 @@ export const SocialButtons: React.FC<IProps> = ({
         alignItems: "flex-start",
         padding: "0px",
         gap: "16px",
-        width: "100%", //{ xs: '100%', sm: '80%' },
+        width: "100%",
       }}
     >
+      {attemptError && (<Box sx={{
+        display: "flex",
+        alignSelf: "center"
+      }}><Typography
+          sx={{
+            fontFamily: "Poppins",
+            fontStyle: "normal",
+            fontWeight: 400,
+            fontSize: "16px",
+            lineHeight: "24px",
+            letterSpacing: "0.15px",
+            color: "red",
+            display: "inline",
+          }}
+        >
+          Something went wrong, please try again.
+        </Typography></Box>)}
       <Grid
         onClick={() => validateConsent(loginGoogle)}
         sx={{
@@ -251,7 +290,7 @@ export const SocialButtons: React.FC<IProps> = ({
       </Grid>
 
       <Grid
-        onClick={() => validateConsent(handleLogin)}
+        onClick={() => validateConsent(loginWithMicrosoft)}
         sx={{
           display: "flex",
           justifyContent: "center",
