@@ -492,10 +492,13 @@ const Prompt = () => {
                 flex={1}
                 sx={{
                   display: {
-                    md: "block",
                     xs: mobileTab === 2 ? "block" : "none",
+                    md: "block",
                   },
-                  height: "100%",
+                  height: {
+                    xs: "calc(100% - (74px + 64px))",
+                    md: "100%"
+                  },
                   overflow: "auto",
                   bgcolor: "surface.1",
                   borderLeft: "1px solid #ECECF4",

@@ -2,11 +2,7 @@ import React from "react";
 import {
   Button,
   Grid,
-  IconButton,
-  Theme,
   Typography,
-  alpha,
-  useTheme,
 } from "@mui/material";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
@@ -20,7 +16,7 @@ interface Props {
 
 const mobileTabs = [
   { name: "About", icon: <RemoveRedEyeOutlinedIcon /> },
-  { name: "Ignite", icon: <ExitToAppIcon /> },
+  { name: "Create", icon: <ExitToAppIcon /> },
   { name: "Spark", icon: <MenuOutlinedIcon /> },
 ];
 
@@ -29,22 +25,21 @@ export const BottomTabs: React.FC<Props> = ({
   setActiveTab,
   activeTab,
 }) => {
-  const theme = useTheme();
 
   return (
     <Grid
       container
       sx={{
         display: { xs: "flex", md: "none" },
-        position: "fixed",
+        position: "sticky",
         bottom: 0,
         left: 0,
         right: 0,
-        zIndex: 999,
+        zIndex: 998,
         bgcolor: "surface.1",
         color: "onSurface",
-        boxShadow: activeTab === 0 && "0px -8px 40px 0px rgba(93, 123, 186, 0.09), 0px -8px 10px 0px rgba(98, 98, 107, 0.03)",
-        borderRadius: activeTab === 0 && "16px 16px 0 0",
+        boxShadow: activeTab === 0 ? "0px -8px 40px 0px rgba(93, 123, 186, 0.09), 0px -8px 10px 0px rgba(98, 98, 107, 0.03)" : "none",
+        borderRadius: activeTab === 0 ? "16px 16px 0 0" : "0",
         p: "16px 24px",
         gap: 1,
         flexWrap: "nowrap"

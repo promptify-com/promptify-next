@@ -100,6 +100,7 @@ export const Display: React.FC<Props> = ({
       sx={{
         minHeight: "calc(100% - 31px)",
         position: "relative",
+        pb: { xs: "70px", md: "0" }
       }}
     >
       <DisplayHeader
@@ -107,7 +108,6 @@ export const Display: React.FC<Props> = ({
         selectedSpark={selectedSpark}
         changeSelectedSpark={setSelectedSpark}
         pinSpark={handlePinSpark}
-        showSearchBar
         onSearch={(text) => setSearch(text)}
       />
 
