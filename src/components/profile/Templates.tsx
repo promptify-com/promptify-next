@@ -39,6 +39,7 @@ import { modalStyle } from "@/components/modals/styles";
 import { FormType } from "@/common/types/template";
 import { TemplateStatusArray } from "@/common/constants";
 import { PageLoading } from "../PageLoading";
+import NextImage from "@/components/NextImage";
 
 export const AllTemplates = () => {
   const { data: templates, isFetching } =
@@ -126,9 +127,7 @@ export const AllTemplates = () => {
                 setStatus(event.target.value as TemplateStatus);
               }}
             >
-              <option value="ALL">
-                All Status
-              </option>
+              <option value="ALL">All Status</option>
               {TemplateStatusArray.map((item: TemplateStatus) => (
                 <option key={item} value={item}>
                   {item}
@@ -208,14 +207,14 @@ export const AllTemplates = () => {
                       gap={"16px"}
                     >
                       <CardMedia
-                        component={"img"}
-                        image={template.thumbnail}
                         sx={{
                           height: { xs: "90px", md: "60px" },
                           width: "80px",
                           borderRadius: "16px",
                         }}
-                      />
+                      >
+                        <NextImage src={template.thumbnail} alt="" />
+                      </CardMedia>
                       <Box>
                         <Typography>{template.title}</Typography>
                       </Box>

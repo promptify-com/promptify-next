@@ -1,4 +1,5 @@
 import { ITemplate } from "@/common/types/template";
+import NextImage from "@/components/NextImage";
 import {
   CardMedia,
   Grid,
@@ -50,13 +51,11 @@ export const CollectionItem: React.FC<CollectionItemProps> = ({
               borderRadius: "16px",
               width: expanded ? "48px" : "38px",
               height: "38px",
-              objectFit: "cover",
               mx: expanded ? 0 : 1.5,
             }}
-            component="img"
-            image={template.thumbnail}
-            alt={template.title}
-          />
+          >
+            <NextImage src={template.thumbnail} alt={template.title} />
+          </CardMedia>
         </Grid>
         <Grid display={expanded ? "flex" : "none"} flexDirection={"column"}>
           <Typography

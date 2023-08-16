@@ -16,11 +16,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import {
-  Delete,
-  Edit,
-  PreviewRounded,
-} from "@mui/icons-material";
+import { Delete, Edit, PreviewRounded } from "@mui/icons-material";
 import {
   useDeleteTemplateMutation,
   useGetMyTemplatesQuery,
@@ -31,6 +27,7 @@ import { modalStyle } from "@/components/modals/styles";
 import { PageLoading } from "@/components/PageLoading";
 import TemplateForm from "@/components/common/forms/TemplateForm";
 import { FormType } from "@/common/types/template";
+import NextImage from "@/components/NextImage";
 
 export const MyTemplates = () => {
   const { data: templates, isLoading: isTemplatesLoading } =
@@ -131,14 +128,14 @@ export const MyTemplates = () => {
                     gap={"16px"}
                   >
                     <CardMedia
-                      component={"img"}
-                      image={template.thumbnail}
                       sx={{
                         height: { xs: "90px", md: "60px" },
                         width: "80px",
                         borderRadius: "16px",
                       }}
-                    />
+                    >
+                      <NextImage src={template.thumbnail} alt="" />
+                    </CardMedia>
                     <Box>
                       <Typography>{template.title}</Typography>
                     </Box>
