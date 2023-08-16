@@ -379,7 +379,6 @@ const Prompt = () => {
                               selectedSpark={selectedSpark}
                               setSelectedSpark={setSelectedSpark}
                               setSortedSparks={setSortedSparks}
-                              sparksShown={false}
                             />
                           )}
                         </CustomTabPanel>
@@ -465,7 +464,6 @@ const Prompt = () => {
                       selectedSpark={selectedSpark}
                       setSelectedSpark={setSelectedSpark}
                       setSortedSparks={setSortedSparks}
-                      sparksShown
                     />
                   </Grid>
 

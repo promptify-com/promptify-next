@@ -51,7 +51,6 @@ interface GeneratorFormProps {
   selectedSpark: Spark | null;
   setSelectedSpark: (spark: Spark) => void;
   setSortedSparks: (value: Spark[]) => void;
-  sparksShown: boolean;
 }
 
 export interface InputsErrors {
@@ -79,8 +78,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   sparks,
   selectedSpark,
   setSelectedSpark,
-  setSortedSparks,
-  sparksShown,
+  setSortedSparks
 }) => {
   const token = useToken();
   const { palette } = useTheme();
@@ -519,16 +517,6 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
         bgcolor: "surface.2",
       }}
     >
-      {sparksShown && (
-        <DisplayHeader
-          sparks={sparks}
-          selectedSpark={selectedSpark}
-          changeSelectedSpark={setSelectedSpark}
-          pinSpark={handlePinSpark}
-          showSearchBar={false}
-        />
-      )}
-
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
         <Typography
           sx={{

@@ -11,7 +11,6 @@ import { ExecutionCardGenerated } from "./ExecutionCardGenerated";
 import { DisplayHeader } from "./DisplayHeader";
 import { pinSpark, unpinSpark } from "@/hooks/api/executions";
 import { useRouter } from "next/router";
-import moment from "moment";
 
 interface Props {
   templateData: Templates;
