@@ -11,23 +11,22 @@ import {
 import ReactCrop, { PixelCrop, type Crop } from "react-image-crop";
 import { Buffer } from "buffer";
 import "react-image-crop/dist/ReactCrop.css";
-import { FormikProps } from "formik";
-import { IEditProfile } from "@/common/types";
-import { useUpdateUser } from "@/hooks/api/user";
-import useUser from "@/hooks/useUser";
+import { useUpdateUserProfileMutation } from '@/core/api/user';
 import { User } from "@/core/api/dto/user";
+import { useDispatch } from "react-redux";
+import { updateUser } from '@/core/store/userSlice';
 
 interface IProps {
-  formik?: FormikProps<IEditProfile>;
   user: User | null;
+  token: string;
 }
 
-export const ProfileImage: React.FC<IProps> = ({ user, formik }) => {
+export const ProfileImage: React.FC<IProps> = ({ user, token }) => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [croppedImage, setCroppedImage] = useState<File | null>(null);
   const [showCropModal, setShowCropModal] = useState(false);
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
-
+  const dispatch = useDispatch();
   const [crop, setCrop] = useState<Crop>({
     unit: "px",
     x: 0,
@@ -35,18 +34,16 @@ export const ProfileImage: React.FC<IProps> = ({ user, formik }) => {
     width: 150,
     height: 150,
   });
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [updateUser, _, isLoading] = useUpdateUser();
-
+  const [updateUserProfile, { isLoading }] = useUpdateUserProfileMutation();
   const onSave = async () => {
     const avatar = getCroppedImage();
 
     if (avatar) {
       setCroppedImage(avatar);
-      await updateUser({
-        avatar,
-      }).then(() => setShowCropModal(false));
+
+      const payload = await updateUserProfile({ token, data: { avatar } }).unwrap();
+      dispatch(updateUser(payload));
+      setShowCropModal(false);
     }
   };
 

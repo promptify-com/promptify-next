@@ -1,4 +1,4 @@
-import { IInterest } from "@/common/types";
+import { IInterest, IEditProfile } from "@/common/types";
 
 export interface User {
   id: number;
@@ -25,3 +25,5 @@ export interface UserMin {
   last_name: string;
   avatar: string;
 }
+
+export interface UpdateUserData extends IEditProfile {}
