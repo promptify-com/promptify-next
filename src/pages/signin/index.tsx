@@ -34,18 +34,16 @@ const Login = () => {
   };
 
   const postLogin = (response: IContinueWithSocialMediaResponse | null) => {
-    const path = getPathURL();
     if (response?.created) {
       setUser(response);
+      
       router.push("/signup");
     } else {
+      const path = getPathURL();
+
       deletePathURL();
 
-      if (path) {
-        router.push(path);
-      } else {
-        router.push("/");
-      }
+      router.push(path || "/");
     }
   };
 

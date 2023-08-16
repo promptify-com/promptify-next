@@ -32,14 +32,8 @@ export const IdentityItem: React.FC<IProps> = ({
   defaultOption,
 }) => {
   const [open, setOpen] = useState(false);
-  const [selectedOption, setSelectedOption] = useState<IOption | null>();
+  const [selectedOption, setSelectedOption] = useState<IOption | null>(defaultOption ?? null);
   const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    if (defaultOption) {
-      setSelectedOption(defaultOption);
-    }
-  }, [defaultOption]);
 
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
@@ -68,8 +62,7 @@ export const IdentityItem: React.FC<IProps> = ({
     prevOpen.current = open;
   }, [open]);
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [setUserAnswer, _, isAnswering] = useUpdateAnswers();
+  const [setUserAnswer] = useUpdateAnswers();
 
   const handleOptionSelection = async (
     e: React.SyntheticEvent,
@@ -82,6 +75,7 @@ export const IdentityItem: React.FC<IProps> = ({
       .then(() => setIsLoading(false))
       .catch(() => setIsLoading(false));
   };
+
   return (
     <Box
       key={question.id}
@@ -159,16 +153,6 @@ export const IdentityItem: React.FC<IProps> = ({
                   style={{ borderRadius: "45px" }}
                 />
               )}
-
-              {/* <Avatar
-                alt={selectedOption?.text}
-                src={
-                  selectedOption?.text ??
-                  `../../assets/images/animals/${selectedOption?.text}.png`
-                }
-                sx={{ bgcolor: "black" }}
-                component={"image"}
-              /> */}
               <Typography
                 sx={{
                   fontFamily: "Poppins",

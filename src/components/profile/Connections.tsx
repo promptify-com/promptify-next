@@ -3,7 +3,6 @@ import { LinkOff } from "@mui/icons-material";
 import { Avatar, Box, Snackbar, Typography } from "@mui/material";
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import { useRouter } from "next/router";
-
 import {
   AlertContent,
   IConnection,
@@ -34,18 +33,16 @@ export const Connections = () => {
     color: "success",
     message: "Connection deleted successfully",
   });
-
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [_useDeferredAction] = useConnectionss();
   const [useDeferredAction] = useDeleteConnection();
-
   const preLogin = () => {
     setIsLoading(true);
   };
-
   const postLogin = (response: IContinueWithSocialMediaResponse | null) => {
     setIsLoading(false);
     setOpenAdd(false);
+
     if (!response) {
       setTypeAlert({
         open: true,
@@ -64,9 +61,9 @@ export const Connections = () => {
         });
       });
     }
-    router.push("/dashboard");
-  };
 
+    router.push("/profile");
+  };
   const handleDeleteConnection = (connection: IConnection) => {
     useDeferredAction(connection.id)
       .then((res) => {
@@ -98,20 +95,16 @@ export const Connections = () => {
 
   useEffect(() => {
     _useDeferredAction().then((res) => {
-      const cnx = res.map((cn: any) => cn.provider);
+      if (!res) {
+        return;
+      }
+
+      const cnx = res?.map((cn: any) => cn.provider);
       setAuthConnection(cnx);
       setConnections(res);
     });
-    const from = localStorage.getItem("from");
-    if (!!from) {
-      setTypeAlert({
-        open: true,
-        color: "info",
-        message: "You already have this connection attached to another account",
-      });
-      localStorage.removeItem("from");
-    }
   }, []);
+
   return (
     <Box
       mt={"14px"}

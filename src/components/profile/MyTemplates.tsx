@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Box,
   Button,
@@ -20,9 +20,7 @@ import {
   Delete,
   Edit,
   PreviewRounded,
-  SettingsApplicationsRounded,
 } from "@mui/icons-material";
-
 import {
   useDeleteTemplateMutation,
   useGetMyTemplatesQuery,
@@ -37,28 +35,24 @@ import { FormType } from "@/common/types/template";
 export const MyTemplates = () => {
   const { data: templates, isLoading: isTemplatesLoading } =
     useGetMyTemplatesQuery();
-
   const [selectedTemplate, setSelectedTemplate] = useState<Templates | null>(
     null
   );
   const [templateFormOpen, setTemplateFormOpen] = useState(false);
   const [templateFormType, setTemplateFormType] = useState<FormType>("create");
-
+  const [deleteTemplate, response] = useDeleteTemplateMutation();
   const openDeletionModal = (template: Templates) => {
     setSelectedTemplate(template);
     setConfirmDialog(true);
   };
-
-  const [deleteTemplate, response] = useDeleteTemplateMutation();
-
   const confirmDelete = async () => {
     if (!selectedTemplate) return;
 
     await deleteTemplate(selectedTemplate.id);
     setConfirmDialog(false);
   };
-
   const [confirmDialog, setConfirmDialog] = useState(false);
+
   return (
     <Box
       id="my-templates"

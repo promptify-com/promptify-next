@@ -19,18 +19,16 @@ import { skipToken } from "@reduxjs/toolkit/dist/query";
 import materialDynamicColors from "material-dynamic-colors";
 import { mix } from "polished";
 import { useRouter } from "next/router";
-
 import {
   useGetPromptTemplateBySlugQuery,
   useTemplateView,
-  useGetExecutionByIdQuery,
 } from "@/core/api/templates";
 import {
   Spark,
   Templates,
   TemplatesExecutions,
 } from "@/core/api/dto/templates";
-import { PageLoading } from "../../components/PageLoading";
+import { PageLoading } from "@/components/PageLoading";
 import { GeneratorForm } from "@/components/prompt/GeneratorForm";
 import { Display } from "@/components/prompt/Display";
 import { Details } from "@/components/prompt/Details";
@@ -89,43 +87,29 @@ const Prompt = () => {
   const [currentGeneratedPrompt, setCurrentGeneratedPrompt] =
     useState<Prompts | null>(null);
   const [sparkFormOpen, setSparkFormOpen] = useState(false);
-  const [defaultExecution, setDefaultExecution] =
-    useState<TemplatesExecutions | null>(null);
   const [templateView] = useTemplateView();
   const [generatorOpened, setGeneratorOpened] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string>("");
-  const [activeTab, setActiveTab] = React.useState(0);
+  const [activeTab, setActiveTab] = useState(0);
   const [sortedSparks, setSortedSparks] = useState<Spark[]>([]);
-
   const [tabsValue, setTabsValue] = useState(0);
-
   const [mobileTab, setMobileTab] = useState(0);
-
   const detailsElRef = useRef<HTMLDivElement | null>(null);
   const [hideDetailsImage, setHideDetailsImage] = useState(false);
-
   const router = useRouter();
   const token = useToken();
   const theme = useTheme();
   const [palette, setPalette] = useState(theme.palette);
   const { width: windowWidth } = useWindowSize();
-
   const slug = router.query?.slug;
   // TODO: redirect to 404 page if slug is not found
   const slugValue = (Array.isArray(slug) ? slug[0] : slug || "") as string;
-
-  // Fetch new execution data after generating and retrieving its id
-  const { data: fetchedNewExecution } = useGetExecutionByIdQuery(
-    newExecutionData?.id ? newExecutionData?.id : skipToken
-  );
-
   const {
     data: fetchedTemplate,
     error: fetchedTemplateError,
     isLoading: isLoadingTemplate,
     isFetching: isFetchingTemplate,
   } = useGetPromptTemplateBySlugQuery(slugValue);
-
   const [templateData, setTemplateData] = useState<Templates>();
   const id = templateData?.id;
 

@@ -10,8 +10,9 @@ import { Google } from "@/assets/icons/google";
 import { client } from "@/common/axios";
 import { IContinueWithSocialMediaResponse } from "@/common/types";
 import { savePathURL, saveToken } from "@/common/utils";
-import useSetUser from "@/hooks/useSetUser";
+import { useDispatch } from "react-redux";
 import { Microsoft } from "@/assets/icons/microsoft";
+import { updateUser } from "@/core/store/userSlice";
 
 const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
 
@@ -38,15 +39,16 @@ export const SocialButtons: React.FC<IProps> = ({
   setErrorCheckBox,
   from,
 }) => {
-  const setUser = useSetUser();
+  const dispatch = useDispatch();
   const githubButtonRef = useRef<HTMLButtonElement | null>(null);
   const [open, setOpen] = useState<boolean>(false);
   const doPostLogin = (r: AxiosResponse<IContinueWithSocialMediaResponse>) => {
-    setUser(r.data);
-    saveToken(r.data);
+    const { token, created, ...userProps } = r.data;
+
+    dispatch(updateUser(userProps));
+    saveToken({ token });
     postLogin(r.data);
   };
-
   const loginGoogle = useGoogleLogin({
     onSuccess: ({ code }) => {
       preLogin();
@@ -61,7 +63,6 @@ export const SocialButtons: React.FC<IProps> = ({
     flow: "auth-code",
     redirect_uri: process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI,
   });
-
   const { linkedInLogin } = useLinkedIn({
     clientId: process.env.NEXT_PUBLIC_LINKEDIN_CLIENT_ID as string,
     redirectUri: process.env.NEXT_PUBLIC_LINKEDIN_REDIRECT_URI as string,
@@ -80,7 +81,6 @@ export const SocialButtons: React.FC<IProps> = ({
       console.log(error);
     },
   });
-
   const loginWithGitHub = ({ code }: { code: string }) => {
     preLogin();
     client
@@ -91,12 +91,10 @@ export const SocialButtons: React.FC<IProps> = ({
       .then(doPostLogin)
       .catch(() => postLogin(null));
   };
-
   const handleGithubButtonClick = () => {
     // hack because the React GitHub oauth2 library is trash
     (githubButtonRef?.current?.children[0] as HTMLButtonElement).click();
   };
-
   const handleLogin = async () => {
     const clientId = process.env.NEXT_PUBLIC_MICROSOFT_CLIENT_ID;
     const redirectUri = process.env.NEXT_PUBLIC_MICROSOFT_REDIRECT_URI;
@@ -106,13 +104,13 @@ export const SocialButtons: React.FC<IProps> = ({
     savePathURL("/");
     window.location.href = authUrl;
   };
-
   const validateConsent = (loginMethod: Function) => {
     if (!isChecked && from === "signup") {
       setOpen(true);
       setErrorCheckBox(false);
     } else loginMethod();
   };
+
   return (
     <Box
       sx={{

@@ -29,7 +29,6 @@ import { setSelectedKeyword } from "@/core/store/filtersSlice";
 import { CollectionsEmptyBox } from "./common/sidebar/CollectionsEmptyBox";
 import { Menu, MenuType } from "@/common/constants";
 import useLogout from "@/hooks/useLogout";
-import useSetUser from "@/hooks/useSetUser";
 import { useGetCollectionTemplatesQuery } from "@/core/api/collections";
 import { Collections } from "./common/sidebar/Collections";
 import { useDispatch, useSelector } from "react-redux";
@@ -55,7 +54,6 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
 }) => {
   const router = useRouter();
   const logout = useLogout();
-  const setUser = useSetUser();
   const title = useSelector((state: RootState) => state.filters.title || "");
   const dispatch = useDispatch();
   const pathname = router.pathname;
@@ -108,7 +106,6 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
   const handleLogout = async () => {
     await logout();
     onCloseDrawer();
-    setUser(null);
   };
   const onSearchClicked = () => {
     dispatch(setSelectedKeyword(textInput));

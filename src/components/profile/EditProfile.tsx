@@ -3,37 +3,46 @@ import { useRouter } from "next/router";
 import { useFormik } from "formik";
 import { Box, Button, CircularProgress, Grid, Typography } from "@mui/material";
 import { ArrowBackIosRounded } from "@mui/icons-material";
-import { useDispatch } from "react-redux";
-
+import { useDispatch, useSelector } from "react-redux";
 import { Layout } from "@/layout";
 import { showProfileInEditMode } from "@/core/store/profileSlice";
 import { IEditProfile } from "@/common/types";
-import { useGetCurrentUser, useUpdateUser } from "@/hooks/api/user";
-import useSetUser from "@/hooks/useSetUser";
+import { useUpdateUserProfileMutation } from '@/core/api/user';
 import { NameInfo } from "@/components/accountInfo/NameInfo";
 import { About } from "@/components/accountInfo/About";
 import { Gender } from "@/components/accountInfo/Gender";
 import { ProfileImage } from "@/components/accountInfo/ProfileImage";
+import useToken from "@/hooks/useToken";
+import useLogout from '@/hooks/useLogout';
+import { RootState } from "@/core/store";
+import { updateUser } from '@/core/store/userSlice';
 
 export const EditProfile = () => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const [user] = useGetCurrentUser();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [updateUser, _, isLoading] = useUpdateUser();
-  const setUser = useSetUser();
+  const currentUser = useSelector((state: RootState) => state.user.currentUser);
+  const [updateUserProfile, { isLoading }] = useUpdateUserProfileMutation();
+  const savedToken = useToken();
+  const logoutUser = useLogout();
   const onSubmit = async (values: IEditProfile) => {
-    await updateUser(values).then((user) => setUser(user));
+    if (!savedToken || !currentUser?.id) {
+      logoutUser();
+      return;
+    }
+
+    const payload = await updateUserProfile({ token: savedToken, data: values }).unwrap();
+    dispatch(updateUser(payload));
+
     router.reload();
   };
 
   const formik = useFormik<IEditProfile>({
     initialValues: {
-      first_name: user?.first_name || "",
-      last_name: user?.last_name || "",
-      username: user?.username || "",
-      gender: user?.gender || "",
-      bio: user?.bio || "",
+      first_name: currentUser?.first_name || "",
+      last_name: currentUser?.last_name || "",
+      username: currentUser?.username || "",
+      gender: currentUser?.gender || "",
+      bio: currentUser?.bio || "",
       avatar: null, // file expected
     },
     enableReinitialize: true,
@@ -79,7 +88,7 @@ export const EditProfile = () => {
                 width={"100%"}
               >
                 <NameInfo formik={formik} />
-                <ProfileImage formik={formik} user={user} />
+                <ProfileImage user={currentUser} token={savedToken} />
                 <Gender formik={formik} />
                 <About formik={formik} />
               </Box>
