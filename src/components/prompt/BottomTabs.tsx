@@ -31,7 +31,7 @@ export const BottomTabs: React.FC<Props> = ({
       container
       sx={{
         display: { xs: "flex", md: "none" },
-        position: "sticky", 
+        position: "sticky",
         bottom: 0,
         left: 0,
         right: 0,
