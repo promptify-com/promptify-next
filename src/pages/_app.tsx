@@ -12,10 +12,37 @@ import { theme } from "@/theme";
 import Head from "next/head";
 import Script from "next/script";
 import { Provider } from "react-redux";
+import { useEffect } from "react";
+import useToken from "@/hooks/useToken";
+import { isValidUserFn, updateUser } from "@/core/store/userSlice";
+import { userApi } from "@/core/api/user";
+import Storage from "@/common/storage";
 
 function App({ Component, ...rest }: AppProps) {
   const { store, props } = wrapper.useWrappedStore(rest);
   const { pageProps } = props;
+  const isValidUser = isValidUserFn(store.getState());
+  const storedToken = useToken();
+
+  useEffect(() => {
+    const _updateUser = async () => {
+      const payload = await store.dispatch(userApi.endpoints.getCurrentUser.initiate(storedToken));
+
+      store.dispatch(updateUser(payload.data!));
+    };
+
+    if (!isValidUser && storedToken) {
+      const _currentUser = Storage.get("currentUser");
+
+      if (_currentUser && Object.values(_currentUser).length) {
+        store.dispatch(updateUser(_currentUser));
+        return;
+      }
+
+      _updateUser();
+    }
+  }, [storedToken, isValidUser]);
+
   return (
     <Provider store={store}>
       <ThemeProvider theme={theme}>
@@ -51,11 +78,26 @@ function App({ Component, ...rest }: AppProps) {
 
         <Head>
           <title>{pageProps?.title}</title>
-          <meta name="description" content={pageProps?.description} />
-          <meta property="og:title" content={pageProps?.title} />
-          <meta property="og:description" content={pageProps?.description} />
-          <meta property="og:image" content={pageProps?.image} />
-          <meta property="keywords" content={pageProps?.meta_keywords} />
+          <meta
+            name="description"
+            content={pageProps?.description}
+          />
+          <meta
+            property="og:title"
+            content={pageProps?.title}
+          />
+          <meta
+            property="og:description"
+            content={pageProps?.description}
+          />
+          <meta
+            property="og:image"
+            content={pageProps?.image}
+          />
+          <meta
+            property="keywords"
+            content={pageProps?.meta_keywords}
+          />
         </Head>
         <Component {...pageProps} />
       </ThemeProvider>

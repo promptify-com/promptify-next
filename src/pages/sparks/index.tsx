@@ -1,12 +1,10 @@
 import React from "react";
 import moment from "moment";
 import { Box, Grid, Stack, Typography } from "@mui/material";
-
 import { FetchLoading } from "@/components/FetchLoading";
 import { Layout } from "@/layout";
 import { useGetSparksByMeQuery } from "@/core/api/sparks";
 import Protected from "@/components/Protected";
-
 import SparksSection from "@/components/SparksSection";
 import { TemplateExecutionsDisplay } from "@/core/api/dto/templates";
 

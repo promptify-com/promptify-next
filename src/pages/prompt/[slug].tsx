@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Alert,
   Box,
@@ -19,18 +19,16 @@ import { skipToken } from "@reduxjs/toolkit/dist/query";
 import materialDynamicColors from "material-dynamic-colors";
 import { mix } from "polished";
 import { useRouter } from "next/router";
-
 import {
   useGetPromptTemplateBySlugQuery,
   useTemplateView,
-  useGetExecutionByIdQuery,
 } from "@/core/api/templates";
 import {
   Spark,
   Templates,
   TemplatesExecutions,
 } from "@/core/api/dto/templates";
-import { PageLoading } from "../../components/PageLoading";
+import { PageLoading } from "@/components/PageLoading";
 import { GeneratorForm } from "@/components/prompt/GeneratorForm";
 import { Display } from "@/components/prompt/Display";
 import { Details } from "@/components/prompt/Details";
@@ -47,6 +45,7 @@ import { useGetSparksByTemplateQuery } from "@/core/api/sparks";
 import moment from "moment";
 import SparkForm from "@/components/prompt/SparkForm";
 import { DetailsCardMini } from "@/components/prompt/DetailsCardMini";
+import { savePathURL } from "@/common/utils";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -88,43 +87,27 @@ const Prompt = () => {
   const [currentGeneratedPrompt, setCurrentGeneratedPrompt] =
     useState<Prompts | null>(null);
   const [sparkFormOpen, setSparkFormOpen] = useState(false);
-  const [defaultExecution, setDefaultExecution] =
-    useState<TemplatesExecutions | null>(null);
   const [templateView] = useTemplateView();
   const [generatorOpened, setGeneratorOpened] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string>("");
-  const [activeTab, setActiveTab] = React.useState(0);
+  const [activeTab, setActiveTab] = useState(0);
   const [sortedSparks, setSortedSparks] = useState<Spark[]>([]);
-
   const [tabsValue, setTabsValue] = useState(0);
-
   const [mobileTab, setMobileTab] = useState(0);
-
-  const detailsElRef = useRef<HTMLDivElement | null>(null);
-  const [hideDetailsImage, setHideDetailsImage] = useState(false);
-
   const router = useRouter();
   const token = useToken();
   const theme = useTheme();
   const [palette, setPalette] = useState(theme.palette);
   const { width: windowWidth } = useWindowSize();
-
   const slug = router.query?.slug;
   // TODO: redirect to 404 page if slug is not found
   const slugValue = (Array.isArray(slug) ? slug[0] : slug || "") as string;
-
-  // Fetch new execution data after generating and retrieving its id
-  const { data: fetchedNewExecution } = useGetExecutionByIdQuery(
-    newExecutionData?.id ? newExecutionData?.id : skipToken
-  );
-
   const {
     data: fetchedTemplate,
     error: fetchedTemplateError,
     isLoading: isLoadingTemplate,
     isFetching: isFetchingTemplate,
   } = useGetPromptTemplateBySlugQuery(slugValue);
-
   const [templateData, setTemplateData] = useState<Templates>();
   const id = templateData?.id;
 
@@ -167,33 +150,19 @@ const Prompt = () => {
     setTabsValue(newValue);
   };
 
-  const handleScroll = () => {
-    const scrollY = detailsElRef.current?.scrollTop || 0;
-    setHideDetailsImage(scrollY > 226);
-  };
-
-  useEffect(() => {
-    const detailsEl = detailsElRef.current;
-    detailsEl?.addEventListener("scroll", handleScroll);
-    return () => detailsEl?.removeEventListener("scroll", handleScroll);
-  }, [handleScroll]);
-
   useEffect(() => {
     if (id) {
       templateView(id);
     }
   }, [id]);
 
-  const resetNewExecution = () => {
-    if (!isGenerating) {
-      setGeneratorOpened(false);
-      setTimeout(() => setGeneratorOpened(true));
-      setDefaultExecution({
-        ...(defaultExecution as TemplatesExecutions),
-        title: "Untitled",
-      });
-      setSelectedSpark(null);
+  const handleNewSpark = () => {
+    if (!token) {
+      savePathURL(window.location.pathname);
+      return router.push("/signin");
     }
+
+    setSparkFormOpen(true);
   };
 
   // After new generated execution is completed - refetch the executions list and clear the newExecutionData state
@@ -345,7 +314,7 @@ const Prompt = () => {
                   <Stack height={"100%"}>
                     <DetailsCard
                       templateData={templateData}
-                      onNewSpark={() => setSparkFormOpen(true)}
+                      onNewSpark={handleNewSpark}
                     />
                     <Stack flex={1}>
                       <Tabs
@@ -392,12 +361,11 @@ const Prompt = () => {
                               selectedExecution={selectedExecution}
                               setMobileTab={setMobileTab}
                               setActiveTab={setActiveTab}
-                              onNewSpark={() => setSparkFormOpen(true)}
+                              onNewSpark={handleNewSpark}
                               sparks={sortedSparks}
                               selectedSpark={selectedSpark}
                               setSelectedSpark={setSelectedSpark}
                               setSortedSparks={setSortedSparks}
-                              sparksShown={false}
                             />
                           )}
                         </CustomTabPanel>
@@ -425,12 +393,10 @@ const Prompt = () => {
                   {mobileTab !== 0 && (
                     <DetailsCardMini
                       templateData={templateData}
-                      onNewSpark={() => setSparkFormOpen(true)}
                     />
                   )}
 
                   <Grid
-                    ref={detailsElRef}
                     item
                     xs={12}
                     md={8}
@@ -445,7 +411,7 @@ const Prompt = () => {
                   >
                     <DetailsCard
                       templateData={templateData}
-                      onNewSpark={() => setSparkFormOpen(true)}         
+                      onNewSpark={handleNewSpark}
                     />
                     <Details
                       templateData={templateData}
@@ -465,7 +431,7 @@ const Prompt = () => {
                       height: "100%",
                       overflow: "auto",
                       bgcolor: "surface.1",
-                      pb: 'calc(75px + 50px)' // 75px Bottom tab bar height + 50px to show bottom repeat last button
+                      pb: 'calc(74px + 90px)' // 74px Bottom tab bar height + 90px details card mini on the header
                     }}
                   >
                     <GeneratorForm
@@ -478,12 +444,11 @@ const Prompt = () => {
                       selectedExecution={selectedExecution}
                       setMobileTab={setMobileTab}
                       setActiveTab={setActiveTab}
-                      onNewSpark={() => setSparkFormOpen(true)}
+                      onNewSpark={handleNewSpark}
                       sparks={sortedSparks}
                       selectedSpark={selectedSpark}
                       setSelectedSpark={setSelectedSpark}
                       setSortedSparks={setSortedSparks}
-                      sparksShown
                     />
                   </Grid>
 
@@ -512,10 +477,13 @@ const Prompt = () => {
                 flex={1}
                 sx={{
                   display: {
-                    md: "block",
                     xs: mobileTab === 2 ? "block" : "none",
+                    md: "block",
                   },
-                  height: "100%",
+                  height: {
+                    xs: "calc(100% - (74px + 90px))", // 74px Bottom tab bar height + 90px details card mini on the header
+                    md: "100%"
+                  },
                   overflow: "auto",
                   bgcolor: "surface.1",
                   borderLeft: "1px solid #ECECF4",

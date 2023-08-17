@@ -4,27 +4,26 @@ import {
   Button,
   Chip,
   Divider,
-  Grid,
   Stack,
   Typography,
   alpha,
   useTheme,
 } from "@mui/material";
 import { Templates } from "@/core/api/dto/templates";
-import { ArrowForwardIos } from "@mui/icons-material";
 import { savePathURL } from "@/common/utils";
 import useToken from "@/hooks/useToken";
 import { Subtitle } from "@/components/blocks";
 import moment from "moment";
 import { useRouter } from "next/router";
-import { useGetCurrentUser } from "@/hooks/api/user";
+import { useSelector } from "react-redux";
 import FavoriteButton from "@/components/common/buttons/FavoriteButton";
 import {
   useAddToCollectionMutation,
   useRemoveFromCollectionMutation,
 } from "@/core/api/collections";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
-import FavoriteMobileButton from "../common/buttons/FavoriteMobileButton";
+import FavoriteMobileButton from "@/components/common/buttons/FavoriteMobileButton";
+import { RootState } from "@/core/store";
 
 interface DetailsProps {
   templateData: Templates;
@@ -43,7 +42,7 @@ export const Details: React.FC<DetailsProps> = ({
 }) => {
   const [isFetching, setIsFetching] = useState(false);
   const token = useToken();
-  const [user] = useGetCurrentUser([token]);
+  const currentUser = useSelector((state: RootState) => state.user.currentUser);
   const router = useRouter();
   const [addToCollection] = useAddToCollectionMutation();
   const [removeFromCollection] = useRemoveFromCollectionMutation();
@@ -64,14 +63,18 @@ export const Details: React.FC<DetailsProps> = ({
       });
 
       try {
+        if (!currentUser?.favorite_collection_id) {
+          throw new Error("user's 'favorite_collection_id' field does not exist!");
+        }
+
         if (!templateData.is_favorite) {
           await addToCollection({
-            collectionId: user.favorite_collection_id,
+            collectionId: currentUser.favorite_collection_id,
             templateId: templateData.id,
           });
         } else {
           await removeFromCollection({
-            collectionId: user.favorite_collection_id,
+            collectionId: currentUser.favorite_collection_id,
             templateId: templateData.id,
           });
         }
@@ -146,6 +149,7 @@ export const Details: React.FC<DetailsProps> = ({
               />
               <Button
                 variant="outlined"
+                endIcon={<ExitToAppIcon />}
                 onClick={() => {
                   if (setMobileTab && setActiveTab) {
                     setMobileTab(1);
@@ -167,8 +171,7 @@ export const Details: React.FC<DetailsProps> = ({
                   ml: "10px",
                 }}
               >
-                Ignite Now!
-                <ExitToAppIcon sx={{ ml: "10px" }} />
+                Create Now!
               </Button>
             </>
           )}

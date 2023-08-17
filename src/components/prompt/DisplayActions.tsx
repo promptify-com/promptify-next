@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Box, Button, ClickAwayListener, Collapse, Grow, IconButton, InputBase, InputLabel, Paper, Popper, Stack, Typography, alpha, useTheme } from '@mui/material'
+import { Box, Button, ClickAwayListener, Collapse, Grow, IconButton, InputBase, Paper, Popper, Stack, Typography, alpha, useTheme } from '@mui/material'
 import { Search as SearchIcon, PushPinOutlined, FeedOutlined, ArrowDropUp, ArrowDropDown, Undo, Redo, PushPin, Close } from "@mui/icons-material";
 import { SubjectIcon } from "@/assets/icons/SubjectIcon";
 import { Spark } from '@/core/api/dto/templates';
@@ -10,11 +10,11 @@ interface Props {
    selectedSpark: Spark | null;
    changeSelectedSpark: (spark: Spark) => void;
    pinSpark: () => void;
-   showSearchBar: boolean;
+   showSearchBar?: boolean;
    onSearch?: (text: string) => void;
 }
 
-export const DisplayHeader: React.FC<Props> = ({ 
+export const DisplayActions: React.FC<Props> = ({ 
    sparks,
    selectedSpark,
    changeSelectedSpark,
@@ -112,10 +112,20 @@ export const DisplayHeader: React.FC<Props> = ({
 
    return (
       <Box sx={{ 
-            position: "sticky", top: 0, left: 0, right: 0, zIndex: 998,
-            p: { md: "16px 16px 16px 24px" }, 
+            position: { xs: "fixed", md: "sticky" }, 
+            top: { xs: "auto", md: 0 }, 
+            bottom: { xs: "74px", md: "auto" }, 
+            left: 0, 
+            right: 0, 
+            zIndex: 999,
             bgcolor: "surface.1",
-            boxShadow: "0px -1px 0px 0px #ECECF4 inset"
+            p: { md: "16px 16px 16px 24px" }, 
+            borderRadius: "24px 24px 0 0",
+            borderBottom: { xs: `1px solid ${palette.surface[5]}`, md: "none" },
+            boxShadow: { 
+               xs: "0px -8px 40px 0px rgba(93, 123, 186, 0.09), 0px -8px 10px 0px rgba(98, 98, 107, 0.03)", 
+               md: "0px -1px 0px 0px #ECECF4 inset" 
+            },
          }}
       >
          <Box sx={{ position: "relative" }}>
