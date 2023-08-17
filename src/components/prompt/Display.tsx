@@ -8,10 +8,9 @@ import {
 import { ExecutionCard } from "./ExecutionCard";
 import { PromptLiveResponse } from "@/common/types/prompt";
 import { ExecutionCardGenerated } from "./ExecutionCardGenerated";
-import { DisplayHeader } from "./DisplayHeader";
+import { DisplayActions } from "./DisplayActions";
 import { pinSpark, unpinSpark } from "@/hooks/api/executions";
 import { useRouter } from "next/router";
-import moment from "moment";
 
 interface Props {
   templateData: Templates;
@@ -101,14 +100,14 @@ export const Display: React.FC<Props> = ({
       sx={{
         minHeight: "calc(100% - 31px)",
         position: "relative",
+        pb: { xs: "70px", md: "0" }
       }}
     >
-      <DisplayHeader
+      <DisplayActions
         sparks={sortedSparks}
         selectedSpark={selectedSpark}
         changeSelectedSpark={setSelectedSpark}
         pinSpark={handlePinSpark}
-        showSearchBar
         onSearch={(text) => setSearch(text)}
       />
 

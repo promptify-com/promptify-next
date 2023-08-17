@@ -32,7 +32,7 @@ import {
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { useWindowSize } from "usehooks-ts";
 import { useRouter } from "next/router";
-import { DisplayHeader } from "./DisplayHeader";
+import { DisplayActions } from "./DisplayActions";
 import { pinSpark, unpinSpark } from "@/hooks/api/executions";
 import SparkForm from "./SparkForm";
 
@@ -51,7 +51,6 @@ interface GeneratorFormProps {
   selectedSpark: Spark | null;
   setSelectedSpark: (spark: Spark) => void;
   setSortedSparks: (value: Spark[]) => void;
-  sparksShown: boolean;
 }
 
 export interface InputsErrors {
@@ -79,8 +78,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   sparks,
   selectedSpark,
   setSelectedSpark,
-  setSortedSparks,
-  sparksShown,
+  setSortedSparks
 }) => {
   const token = useToken();
   const { palette } = useTheme();
@@ -513,22 +511,12 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   );
   
   return (
-    <Box
+    <Stack
       sx={{
-        minHeight: "calc(100% - 32px)",
+        minHeight: "100%",
         bgcolor: "surface.2",
       }}
     >
-      {sparksShown && (
-        <DisplayHeader
-          sparks={sparks}
-          selectedSpark={selectedSpark}
-          changeSelectedSpark={setSelectedSpark}
-          pinSpark={handlePinSpark}
-          showSearchBar={false}
-        />
-      )}
-
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
         <Typography
           sx={{
@@ -566,9 +554,10 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
       </Box>
 
       <Stack
-        gap={1}
+        flex={1} gap={1}
         sx={{
           p: "16px",
+          pb: { xs: 0, md: "16px" }
         }}
       >
         <Box
@@ -631,12 +620,23 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
           )}
         </Box>
 
-        <Stack>
+        <Stack sx={{
+            position: { xs: "sticky", md: "relative" },
+            bottom: 0,
+            m: { xs: "0 -16px -3px", md: "0" },
+            bgcolor: { xs: "surface.1", md: "initial" },
+            color: { xs: "onSurface", md: "initial" },
+            boxShadow: { xs: "0px -8px 40px 0px rgba(93, 123, 186, 0.09), 0px -8px 10px 0px rgba(98, 98, 107, 0.03)", md: "none" },
+            borderRadius: "24px 24px 0 0",
+            zIndex: 999,
+            borderBottom: { xs: `1px solid ${palette.surface[5]}`, md: "none" },
+          }}
+        >
           <Stack
             direction={"row"}
             alignItems={"center"}
             gap={1}
-            m={"20px 10px"}
+            p={"16px 8px 16px 16px"}
           >
             <Button
               variant={"contained"}
@@ -666,7 +666,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
               {token ? (
                 <React.Fragment>
                   <Typography ml={2} color={"inherit"}>
-                    Start
+                    Generate
                   </Typography>
                   <Typography ml={"auto"} color={"inherit"}>
                     ~360s
@@ -678,15 +678,35 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
                 </Typography>
               )}
             </Button>
-            <Replay
-              sx={{
-                width: "16px",
-                height: "16px",
-                p: "16px",
-                color: "onSurface",
-                visibility: isGenerating ? "visible" : "hidden",
-              }}
-            />
+            <Box sx={{ position: 'relative', display: 'inline-flex' }}>
+              <CircularProgress variant="determinate" value={100} sx={{ position: "absolute", color: "grey.400" }} />
+              <CircularProgress variant="determinate"
+                value={templateData.executions_limit === -1 ? 100 : templateData.executions_count} 
+              />
+              <Box
+                sx={{
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  position: 'absolute',
+                  width: 26,
+                  height: 26,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  bgcolor: "primary.main",
+                  color: "onPrimary",
+                  borderRadius: 99
+                }}
+              >
+                <Typography
+                  sx={{ fontSize: 13, color: "inherit"}}
+                  dangerouslySetInnerHTML={{
+                    __html: templateData.executions_limit === -1 ? "&infin;" : templateData.executions_count
+                  }}
+                />
+              </Box>
+            </Box>
           </Stack>
         </Stack>
 
@@ -703,7 +723,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
         <Box
           sx={{
-            display: "flex",
+            display: { xs: "none", md: "flex" },
             alignItems: "center",
             gap: "15px",
             color: "grey.600",
@@ -743,7 +763,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
           }
         }}
       />
-    </Box>
+    </Stack>
   );
 };
 

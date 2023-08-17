@@ -149,6 +149,7 @@ export const Details: React.FC<DetailsProps> = ({
               />
               <Button
                 variant="outlined"
+                endIcon={<ExitToAppIcon />}
                 onClick={() => {
                   if (setMobileTab && setActiveTab) {
                     setMobileTab(1);
@@ -170,8 +171,7 @@ export const Details: React.FC<DetailsProps> = ({
                   ml: "10px",
                 }}
               >
-                Ignite Now!
-                <ExitToAppIcon sx={{ ml: "10px" }} />
+                Create Now!
               </Button>
             </>
           )}
