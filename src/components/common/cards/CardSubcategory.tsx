@@ -3,8 +3,7 @@ import { Card, CardActionArea, CardMedia, Typography } from "@mui/material";
 
 import { Category } from "@/core/api/dto/templates";
 
-import Image from "next/image";
-import NextImage from "@/components/NextImage";
+import Image from "@/components/design-system/Image";
 
 interface CardSubcategoryProps {
   subcategory: Category;
@@ -43,7 +42,7 @@ export const SubCategoryCard: React.FC<CardSubcategoryProps> = ({
             height: "32px",
           }}
         >
-          <NextImage
+          <Image
             src={
               "https://promptify.s3.amazonaws.com/b2ef452894b9464786556b89c63a213b"
             }

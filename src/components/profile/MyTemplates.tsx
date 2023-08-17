@@ -27,7 +27,8 @@ import { modalStyle } from "@/components/modals/styles";
 import { PageLoading } from "@/components/PageLoading";
 import TemplateForm from "@/components/common/forms/TemplateForm";
 import { FormType } from "@/common/types/template";
-import NextImage from "@/components/NextImage";
+
+import Image from "@/components/design-system/Image";
 
 export const MyTemplates = () => {
   const { data: templates, isLoading: isTemplatesLoading } =
@@ -134,7 +135,7 @@ export const MyTemplates = () => {
                         borderRadius: "16px",
                       }}
                     >
-                      <NextImage src={template.thumbnail} alt="" />
+                      <Image src={template.thumbnail} alt={template.title} />
                     </CardMedia>
                     <Box>
                       <Typography>{template.title}</Typography>

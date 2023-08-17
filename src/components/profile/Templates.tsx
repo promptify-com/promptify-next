@@ -39,7 +39,8 @@ import { modalStyle } from "@/components/modals/styles";
 import { FormType } from "@/common/types/template";
 import { TemplateStatusArray } from "@/common/constants";
 import { PageLoading } from "../PageLoading";
-import NextImage from "@/components/NextImage";
+
+import Image from "@/components/design-system/Image";
 
 export const AllTemplates = () => {
   const { data: templates, isFetching } =
@@ -213,7 +214,7 @@ export const AllTemplates = () => {
                           borderRadius: "16px",
                         }}
                       >
-                        <NextImage src={template.thumbnail} alt="" />
+                        <Image src={template.thumbnail} alt={template.title} />
                       </CardMedia>
                       <Box>
                         <Typography>{template.title}</Typography>

@@ -14,8 +14,7 @@ import { TemplateExecutionsDisplay, Templates } from "@/core/api/dto/templates";
 import ArrowBackIosRoundedIcon from "@mui/icons-material/ArrowBackIosRounded";
 import { useRouter } from "next/router";
 
-import Image from "next/image";
-import NextImage from "@/components/NextImage";
+import Image from "@/components/design-system/Image";
 
 type CardTemplateProps = {
   template: Templates | TemplateExecutionsDisplay;
@@ -72,7 +71,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
                     height: { xs: "73px", sm: "54px" },
                   }}
                 >
-                  <NextImage src={template.thumbnail} alt={template.title} />
+                  <Image src={template.thumbnail} alt={template.title} />
                 </CardMedia>
               </Grid>
               <Grid gap={0.5} sx={{}} display={"flex"} flexDirection={"column"}>

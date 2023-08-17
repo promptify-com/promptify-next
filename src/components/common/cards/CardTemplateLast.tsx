@@ -15,6 +15,8 @@ import useTruncate from "@/hooks/useTruncate";
 import SavedSpark from "@/assets/icons/SavedSpark";
 import NoSpark from "@/assets/icons/NoSpark";
 
+import Image from "@/components/design-system/Image";
+
 type CardTemplateLastProps = {
   template: TemplateExecutionsDisplay;
 };
@@ -45,10 +47,16 @@ const CardTemplateLast: React.FC<CardTemplateLastProps> = ({ template }) => {
             height: "115px",
             objectFit: "cover",
           }}
-          component="img"
-          image={template.thumbnail}
-          alt={template.title}
-        />
+          // component="img"
+          // image={template.thumbnail}
+          // alt={template.title}
+        >
+          <Image
+            src={template.thumbnail}
+            alt={template.title}
+            borderRadius="16px 16px 0px 0px"
+          />
+        </CardMedia>
 
         <Box
           display={"flex"}

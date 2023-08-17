@@ -9,8 +9,7 @@ import {
 import { Category } from "@/core/api/dto/templates";
 import Link from "next/link";
 
-import Image from "next/image";
-import NextImage from "@/components/NextImage";
+import Image from "@/components/design-system/Image";
 
 export const CategoryCard = ({
   category,
@@ -48,7 +47,7 @@ export const CategoryCard = ({
               height: "200px",
             }}
           >
-            <NextImage src={category.image} alt={category.name} />
+            <Image src={category.image} alt={category.name} />
           </CardMedia>
 
           <Typography

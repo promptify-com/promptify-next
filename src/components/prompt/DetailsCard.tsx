@@ -10,7 +10,8 @@ import {
   useTheme,
 } from "@mui/material";
 import React from "react";
-import NextImage from "@/components/NextImage";
+
+import Image from "@/components/design-system/Image";
 
 interface Props {
   templateData: Templates;
@@ -38,7 +39,7 @@ export const DetailsCard: React.FC<Props> = ({ templateData, onNewSpark }) => {
           borderRadius: { xs: "0px", md: "16px" },
         }}
       >
-        <NextImage
+        <Image
           src={templateData.thumbnail || "http://placehold.it/240x150"}
           alt={templateData.title}
           borderRadius={{ xs: "0px", md: "16px" }}

@@ -1,5 +1,4 @@
 import { ITemplate } from "@/common/types/template";
-import NextImage from "@/components/NextImage";
 import {
   CardMedia,
   Grid,
@@ -8,6 +7,8 @@ import {
   Typography,
 } from "@mui/material";
 import { useRouter } from "next/router";
+
+import Image from "@/components/design-system/Image";
 
 interface CollectionItemProps {
   expanded?: boolean;
@@ -54,7 +55,7 @@ export const CollectionItem: React.FC<CollectionItemProps> = ({
               mx: expanded ? 0 : 1.5,
             }}
           >
-            <NextImage src={template.thumbnail} alt={template.title} />
+            <Image src={template.thumbnail} alt={template.title} />
           </CardMedia>
         </Grid>
         <Grid display={expanded ? "flex" : "none"} flexDirection={"column"}>
