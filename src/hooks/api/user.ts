@@ -1,54 +1,7 @@
-import useDeferredState from "../useDeferredState";
-import { authClient } from "../../common/axios";
-import { IQuestion, IUser, IUserQA } from "../../common/types";
-import useDeferredAction from "../useDeferredAction";
-import useSetUser from "../useSetUser";
-import useToken from "../useToken";
-
-export const useGetCurrentUser = (deps: Array<any> = []) => {
-  const token = useToken();
-  const setUser = useSetUser();
-  return useDeferredState<IUser>(
-    async () => {
-      if (!token)
-        return {
-          data: null,
-        };
-
-      return await authClient
-        .get("/api/me/")
-        .then((response) => {
-          setUser(response.data);
-          return response;
-        })
-        .catch(() => {
-          console.log("err");
-        });
-    },
-    [token, ...deps],
-    null
-  );
-};
-
-export const useUpdateUser = (deps: Array<any> = []) => {
-  const setUser = useSetUser();
-
-  return useDeferredAction(
-    async (data) => {
-      return await authClient
-        .put("/api/me/", data, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        })
-        .then((response) => {
-          setUser(response.data);
-          return response;
-        });
-    },
-    [setUser, ...deps]
-  );
-};
+import useDeferredState from "@/hooks/useDeferredState";
+import { authClient } from "@/common/axios";
+import { IQuestion, IUserQA } from "@/common/types";
+import useDeferredAction from "@/hooks/useDeferredAction";
 
 export const useUserAnswers = (deps: Array<any> = []) => {
   return useDeferredState<IUserQA[]>(

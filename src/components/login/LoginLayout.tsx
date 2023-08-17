@@ -1,27 +1,23 @@
-import React, { useState } from "react";
+import { useState, FC } from "react";
 import { Box, CardMedia, Checkbox, Grid, Typography } from "@mui/material";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import CoverImage from "@/assets/images/Col.svg";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { IContinueWithSocialMediaResponse } from "@/common/types";
 import { SocialButtons } from "./SocialButtons";
-import Image from "next/image";
 import { SigninImage } from "@/assets/icons/SigninImage";
+import { useRouter } from "next/router";
 
 interface IProps {
-  preLogin: () => void;
-  postLogin: (data: IContinueWithSocialMediaResponse | null) => void;
-  from: string;
+  preLogin: (isLoading: boolean) => void;
 }
 
-export const LoginLayout: React.FC<IProps> = ({
-  postLogin,
+export const LoginLayout: FC<IProps> = ({
   preLogin,
-  from,
 }) => {
-  const [isChecked, setIsChecked] = React.useState(false);
+  const [isChecked, setIsChecked] = useState(false);
   const [errorCheckBox, setErrorCheckBox] = useState<boolean>(true);
-
+  const router = useRouter();
+  const from = router.query?.from as string;
   const handleCheckboxChange = () => {
     setIsChecked(!isChecked);
     setErrorCheckBox(true);
@@ -139,7 +135,6 @@ export const LoginLayout: React.FC<IProps> = ({
           >
             <SocialButtons
               preLogin={preLogin}
-              postLogin={postLogin}
               isChecked={isChecked}
               setErrorCheckBox={setErrorCheckBox}
               from={from}
@@ -190,6 +185,9 @@ export const LoginLayout: React.FC<IProps> = ({
                     color: errorCheckBox ? "#4733ff" : "red",
                     display: "inline",
                     "&:hover": { textDecoration: "underline" },
+                  }}
+                  onClick={() => {
+                    window.open("https://blog.promptify.com/post/terms-of-use", "_blank");
                   }}
                 >
                   Terms or Conditions

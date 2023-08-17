@@ -1,59 +1,41 @@
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import { Box } from "@mui/material";
-import { IContinueWithSocialMediaResponse } from "@/common/types";
-import { getPathURL } from "@/common/utils";
 import { PageLoading } from "@/components/PageLoading";
-import { useGetCurrentUser } from "@/hooks/api/user";
-import useSetUser from "@/hooks/useSetUser";
 import useToken from "@/hooks/useToken";
 import { LoginLayout } from "@/components/login/LoginLayout";
 import { useRouter } from "next/router";
-import { deletePathURL } from '@/common/utils';
+import { useSelector } from "react-redux";
+import { isValidUserFn } from "@/core/store/userSlice";
+import useLogout from "@/hooks/useLogout";
 
 const Login = () => {
   const router = useRouter();
-  const from = Array.isArray(router?.query?.from)
-    ? router?.query?.from[0]
-    : router?.query?.from ?? "";
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const token = useToken();
-  const setUser = useSetUser();
-  const [user, error, userIsLoading] = useGetCurrentUser([token]);
+  const saveToken = useToken();
+  const isValidUser = useSelector(isValidUserFn);
+  const logoutUser = useLogout();
 
-  useEffect(() => {
-    if (!userIsLoading && user) {
+  if (isValidUser) {
+    if (!saveToken) {
+      logoutUser();
+    } else {
       router.push("/");
     }
-    if (error) {
-      console.log(error);
-    }
-  }, [user, userIsLoading, router, error]);
 
-  const preLogin = () => {
-    setIsLoading(true);
-  };
+    return <PageLoading />;
+  }
 
-  const postLogin = (response: IContinueWithSocialMediaResponse | null) => {
-    if (response?.created) {
-      setUser(response);
-      
-      router.push("/signup");
-    } else {
-      const path = getPathURL();
-
-      deletePathURL();
-
-      router.push(path || "/");
-    }
+  const preLogin = (isLoading: boolean) => {
+    setIsLoading(isLoading);
   };
 
   return (
     <>
       <Box>
-        {isLoading || userIsLoading ? (
+        {isLoading ? (
           <PageLoading />
         ) : (
-          <LoginLayout preLogin={preLogin} postLogin={postLogin} from={from} />
+          <LoginLayout preLogin={preLogin} />
         )}
       </Box>
     </>
