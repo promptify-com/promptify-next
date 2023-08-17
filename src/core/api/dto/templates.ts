@@ -72,12 +72,7 @@ export interface Category {
   description: string;
 }
 
-export type TemplateStatus =
-  | "ALL"
-  | "DRAFT"
-  | "PENDING_REVIEW"
-  | "PUBLISHED"
-  | "ARCHIVED";
+export type TemplateStatus = "ALL" | "DRAFT" | "PENDING_REVIEW" | "PUBLISHED" | "ARCHIVED";
 
 export interface Templates {
   id: number;
@@ -151,11 +146,12 @@ export interface PromptExecutions {
   executed_by: number;
   output: string;
   parameters: {
-    [key: number]: string | number;
+    Field: string;
+    Scope: string;
   };
-  content: string;
-  created_at: Date;
+  created_at: string;
   tokens_spent: number;
+  errors: string;
 }
 
 export interface TemplateExecutionsDisplay {
@@ -175,23 +171,18 @@ export interface TemplateExecutionsDisplay {
     title: string;
     created_at: string;
   }[];
-  sparks: {
-    id: number;
-    initial_title: string;
-    created_at: string;
-    versions: {
-      id: number;
-      title: string;
-      created_at: string;
-    }[];
-    current_version: {
-      id: number;
-      title: string;
-      created_at: string;
-    };
-  }[];
+  sparks: Spark[];
   likes?: number;
   favorites_count: number;
+
+  context: number;
+  executions_limit: number;
+  meta_title: string;
+  meta_description: string;
+  meta_keywords: string;
+  status: string;
+  is_favorite: boolean;
+  template: number;
 }
 export interface SparkExecution {
   id: number;
@@ -217,11 +208,29 @@ export interface SparkVersion {
 export interface Spark {
   id: number;
   initial_title: string;
-  created_at?: string;
-  created_by?: number;
+  created_at: string;
+  created_by: number;
   versions: SparkVersion[];
-  current_version: TemplatesExecutions;
-  is_favorite?: boolean;
+  current_version: {
+    id: number;
+    title: string;
+    parameters: {
+      [key: string]: {
+        Field: string;
+        Scope: string;
+      };
+    };
+    contextual_overrides: {
+      [key: string]: any[]; // Replace 'any' with appropriate type
+    };
+    template: number;
+    executed_by: number;
+    created_at: string;
+    prompt_executions: PromptExecutions[];
+    is_favorite: boolean;
+  };
+  is_favorite: boolean;
+  template: number;
 }
 
 export interface CollectionMutationParams {
