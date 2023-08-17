@@ -8,15 +8,15 @@ import { IContinueWithSocialMediaResponse } from "@/common/types";
 import { client } from "@/common/axios";
 import { Layout } from "@/layout";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
-import { categoriesApi } from "@/core/api/categories";
 import { CategoriesSection } from "@/components/explorer/CategoriesSection";
 import { userApi } from "@/core/api/user";
 import { WelcomeCard } from "@/components/homepage/WelcomeCard";
 import { useGetLastTemplatesQuery, useGetTemplatesSuggestedQuery } from "@/core/api/templates";
 import { getPathURL, saveToken } from "@/common/utils";
-import { AppDispatch, RootState, wrapper } from "@/core/store";
+import { RootState } from "@/core/store";
 import { isValidUserFn, updateUser } from "@/core/store/userSlice";
 import { Category } from "@/core/api/dto/templates";
+import { authClient } from "@/common/axios";
 
 interface HomePageProps {
   categories: Category[];
@@ -164,16 +164,18 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
   );
 };
 
-// TODO: getInitialProps is a legacy API, converting this code into getServerSideProps is an option
-HomePage.getInitialProps = wrapper.getInitialPageProps(({ dispatch }: { dispatch: AppDispatch }) => async () => {
-  const { data: categories } = await dispatch(categoriesApi.endpoints.getCategories.initiate());
+export async function getServerSideProps() {
+  const responseCategories = await authClient.get("/api/meta/categories/");
+  const categories = responseCategories.data;
 
   return {
-    title: "Promptify | Boost Your Creativity",
-    description:
-      "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
-    categories,
+    props: {
+      title: "Promptify | Boost Your Creativity",
+      description:
+        "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
+      categories,
+    },
   };
-});
+}
 
 export default HomePage;

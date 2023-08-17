@@ -1,32 +1,23 @@
 import React from "react";
 import { Box, Grid } from "@mui/material";
 import { NextPage } from "next";
-
-import { categoriesApi } from "@/core/api/categories";
 import { Layout } from "@/layout";
 import { CategoriesSection } from "@/components/explorer/CategoriesSection";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
-import { RootState, wrapper, AppDispatch } from "@/core/store"; // Make sure to import AppStore here
+import { RootState } from "@/core/store";
 import { FiltersSelected } from "@/components/explorer/FiltersSelected";
-
 import { Category, SelectedFilters } from "@/core/api/dto/templates";
 import { useAppSelector } from "@/hooks/useStore";
 import { useExploreData } from "@/hooks/useExploreData";
+import { authClient } from "@/common/axios";
 
 interface IProps {
-  props: {
-    categories: Category[];
-    isCategoryLoading: boolean;
-  };
+  categories: Category[];
 }
 
-const ExplorePage: NextPage<IProps> = ({ props }) => {
-  const { categories, isCategoryLoading } = props;
-
+const ExplorePage: NextPage<IProps> = ({ categories }) => {
   const filters = useAppSelector((state: RootState) => state.filters);
-
   const { templates, isTemplatesLoading } = useExploreData();
-
   function areAllStatesNull(filters: SelectedFilters): boolean {
     return (
       filters.engine === null &&
@@ -55,7 +46,7 @@ const ExplorePage: NextPage<IProps> = ({ props }) => {
             {allNull && (
               <CategoriesSection
                 categories={categories}
-                isLoading={isCategoryLoading}
+                isLoading={false}
               />
             )}
             <TemplatesSection
@@ -71,23 +62,18 @@ const ExplorePage: NextPage<IProps> = ({ props }) => {
   );
 };
 
-ExplorePage.getInitialProps = wrapper.getInitialPageProps(
-  ({ dispatch }: { dispatch: AppDispatch }) =>
-    async () => {
-      const { data: categories, isLoading: isCategoryLoading } = await dispatch(
-        categoriesApi.endpoints.getCategories.initiate()
-      );
+export async function getServerSideProps() {
+  const responseCategories = await authClient.get('/api/meta/categories/');
+	const categories = responseCategories.data;
 
-      return {
-        props: {
-          title: "Explore and Boost Your Creativity",
-          description:
-            "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
-          categories,
-          isCategoryLoading,
-        },
-      };
-    }
-);
+  return {
+    props: {
+      title: "Explore and Boost Your Creativity",
+      description:
+        "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
+      categories,
+    },
+  };
+}
 
 export default ExplorePage;
