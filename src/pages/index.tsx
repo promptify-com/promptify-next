@@ -12,10 +12,7 @@ import { categoriesApi } from "@/core/api/categories";
 import { CategoriesSection } from "@/components/explorer/CategoriesSection";
 import { userApi } from "@/core/api/user";
 import { WelcomeCard } from "@/components/homepage/WelcomeCard";
-import {
-  useGetLastTemplatesQuery,
-  useGetTemplatesSuggestedQuery,
-} from "@/core/api/templates";
+import { useGetLastTemplatesQuery, useGetTemplatesSuggestedQuery } from "@/core/api/templates";
 import { getPathURL, saveToken } from "@/common/utils";
 import { AppDispatch, RootState, wrapper } from "@/core/store";
 import { isValidUserFn, updateUser } from "@/core/store/userSlice";
@@ -51,16 +48,7 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
       return;
     }
 
-    const { token, created } = response.data;
-
-    // TODO: find out what this mysterious prop means
-    if (created) {
-      router.push({
-        pathname: "/signin",
-        query: { from: "signup" },
-      });
-      return;
-    }
+    const { token } = response.data;
 
     if (!token) {
       console.error(
@@ -100,7 +88,10 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
   return (
     <>
       <Layout>
-        <Box mt={{ xs: 7, md: 0 }} padding={{ xs: "4px 0px", md: "0px 8px" }}>
+        <Box
+          mt={{ xs: 7, md: 0 }}
+          padding={{ xs: "4px 0px", md: "0px 8px" }}
+        >
           <Grid
             gap={"56px"}
             display={"flex"}
@@ -110,7 +101,11 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
             }}
           >
             {isValidUser ? (
-              <Grid flexDirection="column" display={"flex"} gap={"56px"}>
+              <Grid
+                flexDirection="column"
+                display={"flex"}
+                gap={"56px"}
+              >
                 <Grid
                   sx={{
                     alignItems: "center",
@@ -180,20 +175,15 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
 };
 
 // TODO: getInitialProps is a legacy API, converting this code into getServerSideProps is an option
-HomePage.getInitialProps = wrapper.getInitialPageProps(
-  ({ dispatch }: { dispatch: AppDispatch }) =>
-    async () => {
-      const { data: categories } = await dispatch(
-        categoriesApi.endpoints.getCategories.initiate()
-      );
+HomePage.getInitialProps = wrapper.getInitialPageProps(({ dispatch }: { dispatch: AppDispatch }) => async () => {
+  const { data: categories } = await dispatch(categoriesApi.endpoints.getCategories.initiate());
 
-      return {
-        title: "Promptify | Boost Your Creativity",
-        description:
-          "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
-        categories,
-      };
-    }
-);
+  return {
+    title: "Promptify | Boost Your Creativity",
+    description:
+      "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
+    categories,
+  };
+});
 
 export default HomePage;

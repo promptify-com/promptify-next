@@ -1,4 +1,4 @@
-import CoverLogin from './images/Col.svg';
+import CoverLogin from "./images/Col.svg";
 const Images = {
   COVERLOGIN: CoverLogin,
 };

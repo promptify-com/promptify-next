@@ -8,7 +8,7 @@ const useLogout = () => {
   const dispatch = useDispatch();
 
   return async () => {
-    return new Promise(async (resolve) => {
+    return new Promise(async resolve => {
       Storage.remove("token");
       Storage.remove("currentUser");
 
@@ -17,7 +17,7 @@ const useLogout = () => {
       await router.push("/");
 
       resolve(true);
-    })
+    });
   };
 };
 

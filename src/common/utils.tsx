@@ -95,9 +95,7 @@ export const formatConnection = (item: IConnection) => {
         id: item.id,
       };
     case "github":
-      const extraDataString = item?.extra_data
-        ?.replace(/'/g, '"')
-        ?.replace(/None/g, "null");
+      const extraDataString = item?.extra_data?.replace(/'/g, '"')?.replace(/None/g, "null");
       const extraDataObj = JSON.parse(extraDataString);
       return {
         service: CONNECTIONS.GITHUB,
