@@ -31,30 +31,24 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
   const isValidUser = useSelector(isValidUserFn);
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
   const [getCurrentUser] = userApi.endpoints.getCurrentUser.useLazyQuery();
-  const { data: lastTemplates, isLoading: isLastTemplatesLoading } =
-    useGetLastTemplatesQuery(undefined, { skip: !isValidUser });
-  const { data: suggestedTemplates, isLoading: isSuggestedTemplateLoading } =
-    useGetTemplatesSuggestedQuery(undefined, { skip: !isValidUser });
+  const { data: lastTemplates, isLoading: isLastTemplatesLoading } = useGetLastTemplatesQuery(undefined, {
+    skip: !isValidUser,
+  });
+  const { data: suggestedTemplates, isLoading: isSuggestedTemplateLoading } = useGetTemplatesSuggestedQuery(undefined, {
+    skip: !isValidUser,
+  });
 
   // TODO: move authentication logic to signin page instead
-  const doPostLogin = async (
-    response: AxiosResponse<IContinueWithSocialMediaResponse>
-  ) => {
+  const doPostLogin = async (response: AxiosResponse<IContinueWithSocialMediaResponse>) => {
     if (typeof response.data !== "object" || response.data === null) {
-      console.error(
-        "incoming data for Microsoft authentication is not an object:",
-        response.data
-      );
+      console.error("incoming data for Microsoft authentication is not an object:", response.data);
       return;
     }
 
     const { token } = response.data;
 
     if (!token) {
-      console.error(
-        "incoming token for Microsoft authentication is not present:",
-        token
-      );
+      console.error("incoming token for Microsoft authentication is not present:", token);
       return;
     }
 
@@ -79,7 +73,7 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
         .then((response: AxiosResponse<IContinueWithSocialMediaResponse>) => {
           doPostLogin(response);
         })
-        .catch((reason) => {
+        .catch(reason => {
           console.warn("Could not authenticate via Microsoft:", reason);
         });
     }
@@ -127,9 +121,7 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
                   </Typography>
                 </Grid>
                 {/* back compatibility solution for now */}
-                {lastTemplates &&
-                Array.isArray(lastTemplates) &&
-                lastTemplates.length ? (
+                {lastTemplates && Array.isArray(lastTemplates) && lastTemplates.length ? (
                   <TemplatesSection
                     isLatestTemplates
                     isLoading={isLastTemplatesLoading}
@@ -137,9 +129,7 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
                     title="Your Latest Templates:"
                   />
                 ) : null}
-                {lastTemplates &&
-                !Array.isArray(lastTemplates) &&
-                Object.values(lastTemplates).length ? (
+                {lastTemplates && !Array.isArray(lastTemplates) && Object.values(lastTemplates).length ? (
                   <TemplatesSection
                     isLatestTemplates
                     isLoading={isLastTemplatesLoading}

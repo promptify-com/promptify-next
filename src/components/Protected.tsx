@@ -27,7 +27,7 @@ const Protected: React.FC<IProps> = ({ children, showLoadingPage }) => {
 
     return () => {
       clearTimeout(timeoutId);
-    }
+    };
   }, [isValidUser, currentPathName]);
 
   return <>{showLoadingPage || !isValidUser ? <PageLoading /> : children}</>;
