@@ -23,7 +23,6 @@ import { skipToken } from "@reduxjs/toolkit/dist/query";
 import { mix } from "polished";
 
 import {
-  useGetExecutionsByTemplateQuery,
   useTemplateView,
 } from "@/core/api/templates";
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
@@ -36,6 +35,7 @@ import { GeneratorForm } from "@/components/collections/GeneratorForm";
 import { Executions } from "@/components/collections/Executions";
 import { Details } from "@/components/collections/Details";
 import { authClient } from "@/common/axios";
+import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
 
 export const Collection = ({ fetchedTemplate, fetchedTemplateError }: any) => {
   const router = useRouter();

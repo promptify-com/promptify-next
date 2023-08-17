@@ -3,9 +3,7 @@ import { baseApi } from "./api";
 import { PromptParams } from "./dto/prompts";
 import {
   FilterParams,
-  TemplateExecutionsDisplay,
   Templates,
-  TemplatesExecutions,
 } from "./dto/templates";
 import { authClient } from "@/common/axios";
 import { IEditTemplate } from "@/common/types/editTemplate";
@@ -85,27 +83,6 @@ export const templatesApi = baseApi.injectEndpoints({
           method: "get",
         }),
       }),
-      getExecutionsByTemplate: build.query<TemplatesExecutions[], number>({
-        query: (id: number) => ({
-          url: `/api/meta/templates/${id}/executions/`,
-          method: "get",
-        }),
-      }),
-      getExecutionById: build.query<TemplatesExecutions, number>({
-        query: (id: number) => ({
-          url: `/api/meta/template-executions/${id}`,
-          method: "get",
-        }),
-      }),
-      getTemplatesExecutionsByMe: build.query<
-        TemplateExecutionsDisplay[],
-        void
-      >({
-        query: () => ({
-          url: `/api/meta/template-executions/me`,
-          method: "get",
-        }),
-      }),
       getAllPromptTemplates: build.query<Templates[], void>({
         query: () => ({
           url: `/api/meta/templates/`,
@@ -163,12 +140,9 @@ export const {
   useDeleteTemplateMutation,
   useGetTemplatesByFilterQuery,
   useGetAllPromptTemplatesQuery,
-  useGetExecutionByIdQuery,
-  useGetExecutionsByTemplateQuery,
   useGetPromptParamsQuery,
   useGetPromptTemplateBySlugQuery,
   useGetPromptTemplatesQuery,
-  useGetTemplatesExecutionsByMeQuery,
   useGetMyTemplatesQuery,
   useCreateTemplateMutation,
   useUpdateTemplateMutation,

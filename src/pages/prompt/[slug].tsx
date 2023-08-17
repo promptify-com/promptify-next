@@ -20,7 +20,6 @@ import materialDynamicColors from "material-dynamic-colors";
 import { mix } from "polished";
 import { useRouter } from "next/router";
 import {
-  useGetExecutionsByTemplateQuery,
   useGetPromptTemplateBySlugQuery,
   useTemplateView,
 } from "@/core/api/templates";
@@ -42,6 +41,7 @@ import { useWindowSize } from "usehooks-ts";
 import BottomTabs from "@/components/prompt/BottomTabs";
 import moment from "moment";
 import { DetailsCardMini } from "@/components/prompt/DetailsCardMini";
+import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
 
 interface TabPanelProps {
   children?: React.ReactNode;
