@@ -1,6 +1,5 @@
-import {getToken} from "../common/utils";
+import { getToken } from "../common/utils";
 
-
-const useToken = () => getToken()
+const useToken = () => getToken();
 
 export default useToken;

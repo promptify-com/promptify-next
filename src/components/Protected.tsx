@@ -1,14 +1,14 @@
 import React, { PropsWithChildren, useEffect } from "react";
-import { useSelector } from 'react-redux';
+import { useSelector } from "react-redux";
 import { PageLoading } from "./PageLoading";
 import { useRouter } from "next/router";
-import { isValidUserFn } from '@/core/store/userSlice';
+import { isValidUserFn } from "@/core/store/userSlice";
 
 interface IProps extends PropsWithChildren {
   showLoadingPage?: boolean;
 }
 
-const protectedRoutes = ["profile", "sparks"]
+const protectedRoutes = ["profile", "sparks"];
 
 const Protected: React.FC<IProps> = ({ children, showLoadingPage }) => {
   const router = useRouter();
@@ -27,7 +27,7 @@ const Protected: React.FC<IProps> = ({ children, showLoadingPage }) => {
 
     return () => {
       clearTimeout(timeoutId);
-    }
+    };
   }, [isValidUser, currentPathName]);
 
   return <>{showLoadingPage || !isValidUser ? <PageLoading /> : children}</>;

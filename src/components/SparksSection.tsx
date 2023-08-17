@@ -31,19 +31,16 @@ const SparksSection: React.FC<SparksSectionProps> = ({ templates }) => {
   const [deleteSpark, { isLoading }] = useDeleteSparkMutation();
 
   const [activeSpark, setActiveSpark] = useState<Spark | undefined>();
-  const toggleExpand =
-    (panel: string) => (e: React.SyntheticEvent, newExpanded: boolean) => {
-      setExpanded(newExpanded ? panel : false);
-    };
+  const toggleExpand = (panel: string) => (e: React.SyntheticEvent, newExpanded: boolean) => {
+    setExpanded(newExpanded ? panel : false);
+  };
 
   function truncateTitle(title: string) {
-    return title && title.length > 150
-      ? `${title.slice(0, 150 - 1)}...`
-      : title;
+    return title && title.length > 150 ? `${title.slice(0, 150 - 1)}...` : title;
   }
   return (
     <Stack gap={1}>
-      {templates.map((template) => (
+      {templates.map(template => (
         <Accordion
           key={template.id}
           expanded={expanded === `accordian${template.id}`}
@@ -64,12 +61,11 @@ const SparksSection: React.FC<SparksSectionProps> = ({ templates }) => {
               flexDirection: "row-reverse",
               gap: 2,
               "&:hover": { bgcolor: "action.hover" },
-              ".MuiAccordionSummary-content, .MuiAccordionSummary-content.Mui-expanded":
-                {
-                  m: 0,
-                  gap: 2,
-                  alignItems: "center",
-                },
+              ".MuiAccordionSummary-content, .MuiAccordionSummary-content.Mui-expanded": {
+                m: 0,
+                gap: 2,
+                alignItems: "center",
+              },
               ".MuiCard-root, .MuiCard-root:hover": {
                 bgcolor: "transparent",
               },
@@ -84,14 +80,30 @@ const SparksSection: React.FC<SparksSectionProps> = ({ templates }) => {
               />
             }
           >
-            <Grid container alignItems={"center"}>
-              <Grid item xs={0.5}>
-                <Typography fontSize={14} fontWeight={500} color={"onSurface"}>
+            <Grid
+              container
+              alignItems={"center"}
+            >
+              <Grid
+                item
+                xs={0.5}
+              >
+                <Typography
+                  fontSize={14}
+                  fontWeight={500}
+                  color={"onSurface"}
+                >
                   {template.sparks?.length ?? 0}
                 </Typography>
               </Grid>
-              <Grid item xs={11.5}>
-                <CardTemplate template={template} noRedirect />
+              <Grid
+                item
+                xs={11.5}
+              >
+                <CardTemplate
+                  template={template}
+                  noRedirect
+                />
               </Grid>
             </Grid>
           </AccordionSummary>
@@ -103,7 +115,7 @@ const SparksSection: React.FC<SparksSectionProps> = ({ templates }) => {
             }}
           />
           <AccordionDetails>
-            {template.sparks?.map((spark) => (
+            {template.sparks?.map(spark => (
               <Box
                 key={spark.id}
                 display={"flex"}
@@ -142,16 +154,18 @@ const SparksSection: React.FC<SparksSectionProps> = ({ templates }) => {
                         __html: truncateTitle(spark.initial_title),
                       }}
                     />
-                    <Stack direction={"row"} alignItems={"center"} gap={1}>
+                    <Stack
+                      direction={"row"}
+                      alignItems={"center"}
+                      gap={1}
+                    >
                       <Typography
                         fontSize={12}
                         fontWeight={400}
                         color={"onSurface"}
                         sx={{ opacity: 0.5 }}
                       >
-                        {spark.current_version
-                          ? moment(spark.current_version.created_at).fromNow()
-                          : "-"}
+                        {spark.current_version ? moment(spark.current_version.created_at).fromNow() : "-"}
                       </Typography>
                       <Stack
                         direction={"row"}
@@ -164,7 +178,11 @@ const SparksSection: React.FC<SparksSectionProps> = ({ templates }) => {
                           p: "0 6px",
                         }}
                       >
-                        <Grid display={"flex"} alignItems={"center"} gap={0.5}>
+                        <Grid
+                          display={"flex"}
+                          alignItems={"center"}
+                          gap={0.5}
+                        >
                           <History sx={{ fontSize: 18 }} />
                           {spark.versions.length}
                         </Grid>
@@ -172,7 +190,11 @@ const SparksSection: React.FC<SparksSectionProps> = ({ templates }) => {
                     </Stack>
                   </Stack>
                 </Link>
-                <Grid display={"flex"} alignItems={"center"} gap={1}>
+                <Grid
+                  display={"flex"}
+                  alignItems={"center"}
+                  gap={1}
+                >
                   <Tooltip title="Edit">
                     <IconButton
                       size="small"

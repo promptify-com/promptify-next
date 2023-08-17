@@ -16,7 +16,7 @@ export const authClient = axios.create({
 });
 
 authClient.interceptors.request.use(
-  (config) => {
+  config => {
     const token = getToken();
 
     if (token) {
@@ -25,5 +25,5 @@ authClient.interceptors.request.use(
 
     return config;
   },
-  (err) => console.log("error")
+  err => console.log("error"),
 );

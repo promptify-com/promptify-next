@@ -1,13 +1,6 @@
 import React from "react";
 import { LogoApp } from "@/assets/icons/LogoApp";
-import {
-  AutoAwesome,
-  ClearRounded,
-  HomeRounded,
-  MenuBookRounded,
-  MenuRounded,
-  Search,
-} from "@mui/icons-material";
+import { AutoAwesome, ClearRounded, HomeRounded, MenuBookRounded, MenuRounded, Search } from "@mui/icons-material";
 import {
   Avatar,
   Box,
@@ -32,7 +25,7 @@ import useLogout from "@/hooks/useLogout";
 import { useGetCollectionTemplatesQuery } from "@/core/api/collections";
 import { Collections } from "./common/sidebar/Collections";
 import { useDispatch, useSelector } from "react-redux";
-import { isValidUserFn } from '@/core/store/userSlice';
+import { isValidUserFn } from "@/core/store/userSlice";
 import { RootState } from "@/core/store";
 
 type SidebarType = "navigation" | "profile";
@@ -112,10 +105,12 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
     router.push({ pathname: "/explore" });
     onCloseDrawer();
   };
-  const { data: collections, isLoading: isCollectionsLoading } =
-    useGetCollectionTemplatesQuery(currentUser?.favorite_collection_id as number, {
+  const { data: collections, isLoading: isCollectionsLoading } = useGetCollectionTemplatesQuery(
+    currentUser?.favorite_collection_id as number,
+    {
       skip: !isValidUser,
-    });
+    },
+  );
 
   return (
     <SwipeableDrawer
@@ -142,10 +137,13 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
             height={48}
             mt={1}
           >
-            <LogoApp width={23} color="#56575c" />
+            <LogoApp
+              width={23}
+              color="#56575c"
+            />
             <Typography
-              sx={{fontSize: 10, mt: 0.2, ml: 0.5}}
-              fontWeight={'bold'}
+              sx={{ fontSize: 10, mt: 0.2, ml: 0.5 }}
+              fontWeight={"bold"}
             >
               beta
             </Typography>
@@ -235,13 +233,19 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
               <InputBase
                 sx={{ flex: 1 }}
                 placeholder="Search for templates..."
-                onChange={(e) => {
+                onChange={e => {
                   setTextInput(e.target.value);
                 }}
                 value={textInput ?? title}
               />
-              <Box display={"flex"} alignItems={"center"}>
-                <LogoApp width={20} onClick={onSearchClicked} />
+              <Box
+                display={"flex"}
+                alignItems={"center"}
+              >
+                <LogoApp
+                  width={20}
+                  onClick={onSearchClicked}
+                />
               </Box>
             </Box>
             <Box>
@@ -253,7 +257,7 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
                   padding: "0px 22px",
                 }}
               >
-                {links.map((link) => (
+                {links.map(link => (
                   <ListItem
                     key={link.label}
                     disablePadding
@@ -263,10 +267,11 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
                     }}
                   >
                     <ListItemButton selected={link.active}>
-                      <ListItemIcon sx={{ color: "onSurface" }}>
-                        {link.icon}
-                      </ListItemIcon>
-                      <Typography sx={{ color: "onSurface" }} ml={-3}>
+                      <ListItemIcon sx={{ color: "onSurface" }}>{link.icon}</ListItemIcon>
+                      <Typography
+                        sx={{ color: "onSurface" }}
+                        ml={-3}
+                      >
                         {link.label}
                       </Typography>
                     </ListItemButton>
@@ -313,7 +318,10 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
                   gap: "8px",
                 }}
               >
-                <Box display={"flex"} justifyContent={"center"}>
+                <Box
+                  display={"flex"}
+                  justifyContent={"center"}
+                >
                   <Avatar
                     src={currentUser?.avatar}
                     alt={currentUser?.first_name}
@@ -363,8 +371,11 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
                   </Typography>
                 </Box>
               </Grid>
-              <MenuList autoFocusItem={false} sx={{ width: "100%" }}>
-                {Menu.map((el) => (
+              <MenuList
+                autoFocusItem={false}
+                sx={{ width: "100%" }}
+              >
+                {Menu.map(el => (
                   <MenuItem
                     key={el.name}
                     onClick={() => handleHeaderMenu(el)}
