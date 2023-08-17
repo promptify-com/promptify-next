@@ -11,7 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import { TemplateExecutionsDisplay, Templates } from "@/core/api/dto/templates";
-import { Favorite } from "@mui/icons-material";
+import ArrowBackIosRoundedIcon from "@mui/icons-material/ArrowBackIosRounded";
 import { useRouter } from "next/router";
 
 type CardTemplateProps = {
@@ -19,17 +19,17 @@ type CardTemplateProps = {
   noRedirect?: boolean;
 };
 
-const CardTemplate: React.FC<CardTemplateProps> = ({ 
-  template, 
-  noRedirect = false
+const CardTemplate: React.FC<CardTemplateProps> = ({
+  template,
+  noRedirect = false,
 }) => {
   const router = useRouter();
 
   return (
     <Box
       onClick={() => {
-        if(!noRedirect) {
-          router.push(`/prompt/${template.slug}`)
+        if (!noRedirect) {
+          router.push(`/prompt/${template.slug}`);
         }
       }}
     >
@@ -38,7 +38,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
           borderRadius: "16px",
           cursor: "pointer",
           p: "8px",
-          bgcolor: { xs: "surface.2", md: "white" },
+          bgcolor: "surface.2",
           "&:hover": {
             bgcolor: "action.hover",
           },
@@ -109,7 +109,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
             alignItems={{ xs: "end", md: "center" }}
             width={{ xs: "100%", md: "auto" }}
             justifyContent={"space-between"}
-            gap={1}
+            gap={3}
           >
             <Grid
               sx={{
@@ -126,34 +126,33 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
                   sx={{
                     fontSize: { xs: 11, md: 13 },
                     fontWeight: 400,
+                    bgcolor: "surface.5",
                     color: "onSurface",
                   }}
                 />
               ))}
             </Grid>
-            <Button variant="text" size="small">
-              <Grid
+            <Grid
+              sx={{
+                display: "flex",
+                gap: "0.4em",
+              }}
+            >
+              <Stack
+                direction={"row"}
+                alignItems={"center"}
+                gap={0.5}
                 sx={{
                   display: "flex",
-                  gap: "0.4em",
+                  fontSize: 13,
+                  fontWeight: 500,
+                  color: "onSurface",
                 }}
               >
-                <Stack
-                  direction={"row"}
-                  alignItems={"center"}
-                  gap={0.5}
-                  sx={{
-                    display: "flex",
-                    fontSize: 13,
-                    fontWeight: 500,
-                    color: "onSurface",
-                  }}
-                >
-                  <Favorite sx={{ fontSize: 18 }} />
-                  {template.favorites_count || 0}
-                </Stack>
-              </Grid>
-            </Button>
+                <ArrowBackIosRoundedIcon sx={{ fontSize: 14 }} />
+                {template.favorites_count || 0}
+              </Stack>
+            </Grid>
             <Avatar
               src={template.created_by.avatar}
               alt={template.created_by.first_name}
