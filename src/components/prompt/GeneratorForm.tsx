@@ -186,13 +186,6 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     setResPrompts([...tempArr]);
   };
 
-  // Handling the case of no spark selected. Wait for new spark to be created/selected, then generate
-  useEffect(() => {
-    if (isGenerating && selectedExecution) {
-      validateAndGenerateExecution();
-    }
-  }, [selectedExecution]);
-
   const isInputsFilled = () => {
     const tempErrors: InputsErrors = {};
 

@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import { Spark, TemplateExecutionsDisplay } from "@/core/api/dto/templates";
 import CardTemplate from "./common/cards/CardTemplate";
-import SparkForm from "./prompt/SparkForm";
+import ExecutionForm from "./prompt/ExecutionForm";
 import { DeleteDialog } from "./dialog/DeleteDialog";
 import { useDeleteSparkMutation } from "@/core/api/sparks";
 
@@ -26,7 +26,7 @@ interface SparksSectionProps {
 
 const SparksSection: React.FC<SparksSectionProps> = ({ templates }) => {
   const [expanded, setExpanded] = useState<string | false>(false);
-  const [sparkFormOpen, setSparkFormOpen] = useState(false);
+  const [executionFormOpen, setExecutionFormOpen] = useState(false);
   const [dialogDeleteOpen, setDialogDeleteOpen] = useState<boolean>(false);
   const [deleteSpark, { isLoading }] = useDeleteSparkMutation();
 
@@ -210,7 +210,7 @@ const SparksSection: React.FC<SparksSectionProps> = ({ templates }) => {
                       onClick={() => {
                         //@ts-ignore: spark object passed to setActiveSpark does not matches the Spark type
                         setActiveSpark(spark);
-                        setSparkFormOpen(true);
+                        setExecutionFormOpen(true);
                       }}
                     >
                       <Edit />
@@ -240,10 +240,10 @@ const SparksSection: React.FC<SparksSectionProps> = ({ templates }) => {
                 </Grid>
               </Box>
             ))}
-            <SparkForm
+            <ExecutionForm
               type="edit"
-              isOpen={sparkFormOpen}
-              close={() => setSparkFormOpen(false)}
+              isOpen={executionFormOpen}
+              close={() => setExecutionFormOpen(false)}
               activeSpark={activeSpark}
               templateId={template?.id}
             />

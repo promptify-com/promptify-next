@@ -112,18 +112,18 @@ const Prompt = () => {
   }, [fetchedTemplate]);
 
   const {
-    data: templateSparks,
-    error: templateSparksError,
+    data: templateExecutions,
+    error: templateExecutionsError,
     isFetching: isFetchingExecutions,
-    refetch: refetchTemplateSparks,
+    refetch: refetchTemplateExecutions,
   } = useGetExecutionsByTemplateQuery(token ? (id ? id : skipToken) : skipToken);
 
   useEffect(() => {
-    const sorted = [...(templateSparks || [])].sort((a, b) => 
+    const sorted = [...(templateExecutions || [])].sort((a, b) => 
       moment(b.created_at).diff(moment(a.created_at))
     );
     setSortedExecutions(sorted);
-  }, [templateSparks]);
+  }, [templateExecutions]);
 
   useEffect(() => {
     setSelectedExecution(sortedExecutions?.[0] || null);
@@ -147,7 +147,7 @@ const Prompt = () => {
         (execData) => !execData.isCompleted
       );
       if (!promptNotCompleted) {
-        refetchTemplateSparks();
+        refetchTemplateExecutions();
 
         setCurrentGeneratedPrompt(null);
         setNewExecutionData(null);
@@ -231,7 +231,7 @@ const Prompt = () => {
 
   const dynamicTheme = createTheme({ ...theme, palette });
 
-  if (fetchedTemplateError || templateSparksError)
+  if (fetchedTemplateError || templateExecutionsError)
     return <div>Something went wrong...</div>;
 
   return (

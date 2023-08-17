@@ -81,7 +81,7 @@ export const DisplayActions: React.FC<Props> = ({
       </Stack>
    )
 
-   const SparksSelect = (
+   const ExecutionsSelect = (
       <Button
          sx={{ 
             width: "360px",
@@ -139,7 +139,7 @@ export const DisplayActions: React.FC<Props> = ({
             >
                {PinButton}
 
-               {SparksSelect}
+               {ExecutionsSelect}
 
                <Stack
                   direction={"row"}
@@ -180,7 +180,7 @@ export const DisplayActions: React.FC<Props> = ({
                   display={{ md: "none" }}
                   direction={"row"} alignItems={"center"} gap={1} p={"8px 16px"}
                >
-                  {SparksSelect}
+                  {ExecutionsSelect}
 
                   {PinButton}
                </Stack>

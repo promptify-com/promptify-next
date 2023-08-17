@@ -26,7 +26,7 @@ interface Props {
   onSparkCreated?: (spark: Spark) => void;
 }
 
-const SparkForm: React.FC<Props> = ({
+const ExecutionForm: React.FC<Props> = ({
   type,
   isOpen,
   close,
@@ -36,11 +36,11 @@ const SparkForm: React.FC<Props> = ({
   onSparkCreated,
   activeSpark,
 }) => {
-  const [sparkTitle, setSparkTitle] = useState<string>("");
+  const [executionTitle, setExecutionTitle] = useState<string>("");
 
   useEffect(() => {
     if (type === "edit" && activeSpark?.initial_title !== undefined) {
-      setSparkTitle(activeSpark.initial_title);
+      setExecutionTitle(activeSpark.initial_title);
     }
   }, [type, activeSpark, close]);
 
@@ -48,7 +48,7 @@ const SparkForm: React.FC<Props> = ({
 
   const closeTitleModal = () => {
     close();
-    setSparkTitle("");
+    setExecutionTitle("");
   };
 
   const cancelSpark = () => {
@@ -57,7 +57,7 @@ const SparkForm: React.FC<Props> = ({
   }
 
   const handleSave = async () => {
-    if (type === "new" && sparkTitle.length) {
+    if (type === "new" && executionTitle.length) {
       // If executionId is passed, create a spark with execution_id, otherwise create a empty spark with templateId
       // TODO: Handle error
       let sparkCreated: Spark;
@@ -65,12 +65,12 @@ const SparkForm: React.FC<Props> = ({
       try {
         if (executionId) {
           sparkCreated = await createSparkWithExecution({
-            title: sparkTitle,
+            title: executionTitle,
             execution_id: executionId,
           });
         } else {
           sparkCreated = await createSpark({
-            initial_title: sparkTitle,
+            initial_title: executionTitle,
             template: templateId,
           });
         }
@@ -86,7 +86,7 @@ const SparkForm: React.FC<Props> = ({
       if (activeSpark?.id !== undefined) {
         await editSparkTitle({
           id: activeSpark.id,
-          data: { initial_title: sparkTitle },
+          data: { initial_title: executionTitle },
         });
         if (!isError && !isLoading) {
           close();
@@ -125,21 +125,16 @@ const SparkForm: React.FC<Props> = ({
               border: 0,
             },
           }}
-          value={sparkTitle}
           placeholder={"Title..."}
-          onChange={(e) => setSparkTitle(e.target.value)}
+          onChange={(e) => setExecutionTitle(e.target.value)}
         />
       </DialogContent>
       <DialogActions sx={{ p: "16px", gap: 2 }}>
         <Button
-          sx={{
-            minWidth: "auto",
-            p: 0,
-            color: "grey.600",
-          }}
-          onClick={() => cancelSpark()}
+          sx={{ minWidth: "auto", p: 0, color: "grey.600" }}
+          onClick={closeTitleModal}
         >
-          Cancel
+          Skip
         </Button>
         <Button
           sx={{
@@ -147,7 +142,7 @@ const SparkForm: React.FC<Props> = ({
             ":hover": { bgcolor: "action.hover" },
             maxWidth: "94px",
           }}
-          disabled={!sparkTitle?.length}
+          disabled={!executionTitle.length}
           onClick={handleSave}
         >
           {isLoading ? (
@@ -161,4 +156,4 @@ const SparkForm: React.FC<Props> = ({
   );
 };
 
-export default SparkForm;
+export default ExecutionForm;
