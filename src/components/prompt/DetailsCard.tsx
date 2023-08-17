@@ -1,16 +1,13 @@
 import { Templates } from '@/core/api/dto/templates';
-import { AddOutlined } from '@mui/icons-material';
-import { Box, Button, Stack, Typography, alpha, useTheme } from '@mui/material'
+import { Box, Stack, Typography, useTheme } from '@mui/material'
 import React from 'react'
 
 interface Props {
    templateData: Templates;
-   onNewSpark?: () => void;
 }
 
 export const DetailsCard: React.FC<Props> = ({ 
    templateData,
-   onNewSpark,
 }) => {
    const { palette } = useTheme();
 
@@ -60,26 +57,7 @@ export const DetailsCard: React.FC<Props> = ({
                   color={"grey.600"}
                   dangerouslySetInnerHTML={{ __html: templateData.category.name }}
                />
-            </Box>           
-            <Button
-              sx={{ 
-                  display: { xs: "none", md: "flex" },
-                  p: "6px 16px",
-                  bgcolor: "transparent",
-                  color: "primary.main",
-                  fontSize: 14,
-                  border: `1px solid ${alpha(palette.primary.main, .3)}`,
-                  "&:hover": {
-                     bgcolor: "action.hover",
-                     color: "primary.main"
-                  }
-               }}
-              startIcon={<AddOutlined />}
-              variant={"outlined"}
-              onClick={onNewSpark}
-            >
-              Spark
-            </Button>
+            </Box>
          </Stack>
       </Stack>
   )
