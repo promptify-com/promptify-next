@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Alert,
   Box,
@@ -94,8 +94,6 @@ const Prompt = () => {
   const [sortedSparks, setSortedSparks] = useState<Spark[]>([]);
   const [tabsValue, setTabsValue] = useState(0);
   const [mobileTab, setMobileTab] = useState(0);
-  const detailsElRef = useRef<HTMLDivElement | null>(null);
-  const [hideDetailsImage, setHideDetailsImage] = useState(false);
   const router = useRouter();
   const token = useToken();
   const theme = useTheme();
@@ -151,17 +149,6 @@ const Prompt = () => {
   const changeTab = (e: React.SyntheticEvent, newValue: number) => {
     setTabsValue(newValue);
   };
-
-  const handleScroll = () => {
-    const scrollY = detailsElRef.current?.scrollTop || 0;
-    setHideDetailsImage(scrollY > 226);
-  };
-
-  useEffect(() => {
-    const detailsEl = detailsElRef.current;
-    detailsEl?.addEventListener("scroll", handleScroll);
-    return () => detailsEl?.removeEventListener("scroll", handleScroll);
-  }, [handleScroll]);
 
   useEffect(() => {
     if (id) {
@@ -406,12 +393,10 @@ const Prompt = () => {
                   {mobileTab !== 0 && (
                     <DetailsCardMini
                       templateData={templateData}
-                      onNewSpark={handleNewSpark}
                     />
                   )}
 
                   <Grid
-                    ref={detailsElRef}
                     item
                     xs={12}
                     md={8}
@@ -446,7 +431,7 @@ const Prompt = () => {
                       height: "100%",
                       overflow: "auto",
                       bgcolor: "surface.1",
-                      pb: 'calc(75px + 50px)' // 75px Bottom tab bar height + 50px to show bottom repeat last button
+                      pb: 'calc(74px + 90px)' // 74px Bottom tab bar height + 90px details card mini on the header
                     }}
                   >
                     <GeneratorForm
@@ -496,7 +481,7 @@ const Prompt = () => {
                     md: "block",
                   },
                   height: {
-                    xs: "calc(100% - (74px + 64px))",
+                    xs: "calc(100% - (74px + 90px))", // 74px Bottom tab bar height + 90px details card mini on the header
                     md: "100%"
                   },
                   overflow: "auto",

@@ -511,9 +511,9 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   );
   
   return (
-    <Box
+    <Stack
       sx={{
-        minHeight: "calc(100% - 32px)",
+        minHeight: "100%",
         bgcolor: "surface.2",
       }}
     >
@@ -554,9 +554,10 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
       </Box>
 
       <Stack
-        gap={1}
+        flex={1} gap={1}
         sx={{
           p: "16px",
+          pb: { xs: 0, md: "16px" }
         }}
       >
         <Box
@@ -665,7 +666,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
               {token ? (
                 <React.Fragment>
                   <Typography ml={2} color={"inherit"}>
-                    Start
+                    Generate
                   </Typography>
                   <Typography ml={"auto"} color={"inherit"}>
                     ~360s
@@ -762,7 +763,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
           }
         }}
       />
-    </Box>
+    </Stack>
   );
 };
 

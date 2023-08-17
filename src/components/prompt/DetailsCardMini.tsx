@@ -1,48 +1,43 @@
 import { Templates } from '@/core/api/dto/templates';
 import { AddOutlined, Favorite, FavoriteOutlined } from '@mui/icons-material';
-import { Box, Button, Stack, Typography, alpha, useTheme } from '@mui/material'
+import { Avatar, Box, Button, Stack, Typography, alpha, useTheme } from '@mui/material'
 import React from 'react'
 
 interface Props {
    templateData: Templates;
-   onNewSpark?: () => void;
 }
 
 export const DetailsCardMini: React.FC<Props> = ({ 
    templateData,
-   onNewSpark,
 }) => {
    const { palette } = useTheme();
 
    return (
-      <Stack gap={2} direction={"row"}
-       sx={{
-         bgcolor: "surface.1",
-         p: "10px 14px",
-         width: `calc(100% - 28px)`,
-         height: "fit-content",
-         borderTop: `1px solid ${palette.surface[3]}`,
-         borderBottom: `1px solid ${palette.surface[3]}`,
-      }}
+      <Box sx={{ 
+            width: "100%", 
+            p: "8px",
+            bgcolor: alpha(palette.surface[1], .8),
+         }}
       >
-         <Box
-            component={"img"}
-            src={templateData.thumbnail || "http://placehold.it/240x150"}
-            alt={templateData.title}
+         <Stack gap={1} direction={"row"} alignItems={"center"} justifyContent={"space-between"}
             sx={{
-               height: 42,
-               width: 56,
-               objectFit: "cover",
-               borderRadius: "99px",
+               bgcolor: alpha(palette.surface[4], .6),
+               p: "8px",
+               height: "fit-content",
+               borderRadius: "16px"
             }}
-         />
-         <Stack 
-            direction={"row"} 
-            alignItems={"center"} 
-            justifyContent={"space-between"} 
-            flex={1}
-            gap={1}
          >
+            <Box
+               component={"img"}
+               src={templateData.thumbnail || "http://placehold.it/240x150"}
+               alt={templateData.title}
+               sx={{
+                  height: 54,
+                  width: 72,
+                  objectFit: "cover",
+                  borderRadius: "16px",
+               }}
+            />
             <Box>
                <Typography
                   fontSize={14}
@@ -50,18 +45,13 @@ export const DetailsCardMini: React.FC<Props> = ({
                   color={"onSurface"}
                   dangerouslySetInnerHTML={{ __html: templateData.title }}
                />
-               <Typography
-                  fontSize={10}
-                  fontWeight={400}
-                  color={"grey.600"}
-                  dangerouslySetInnerHTML={{ __html: templateData.category.name }}
-               />
             </Box>
             <Typography sx={{
-                  p: "8px 16px",
+                  p: "6px 11px",
                   display: "flex",
+                  flexDirection: "column",
                   alignItems: "center",
-                  gap: 1,
+                  justifyContent: "center",
                   fontSize: 15,
                   fontWeight: 500,
                   color: "primary.main",
@@ -71,29 +61,15 @@ export const DetailsCardMini: React.FC<Props> = ({
                   }
                }}
             >
-              {templateData.is_favorite ? <Favorite /> : <FavoriteOutlined />}
-              {templateData.favorites_count}
+               {templateData.is_favorite ? <Favorite /> : <FavoriteOutlined />}
+               {templateData.favorites_count}
             </Typography>
-            <Button
-              sx={{ 
-                  display: { xs: "none", md: "flex" },
-                  p: "6px 16px",
-                  bgcolor: "transparent",
-                  color: "primary.main",
-                  fontSize: 14,
-                  border: `1px solid ${alpha(palette.primary.main, .3)}`,
-                  "&:hover": {
-                     bgcolor: "action.hover",
-                     color: "primary.main"
-                  }
-               }}
-              startIcon={<AddOutlined />}
-              variant={"outlined"}
-              onClick={onNewSpark}
-            >
-              Spark
-            </Button>
+            <Avatar
+               src={templateData.created_by.avatar}
+               alt={templateData.created_by.username}
+               sx={{ width: 40, height: 40 }}
+            />
          </Stack>
-      </Stack>
+      </Box>
   )
 }
