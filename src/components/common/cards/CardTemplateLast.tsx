@@ -11,7 +11,6 @@ import {
 import { TemplateExecutionsDisplay } from "@/core/api/dto/templates";
 import { Favorite, PlayCircle } from "@mui/icons-material";
 import { useRouter } from "next/router";
-import DraftSpark from "@/assets/icons/DraftSpark";
 import useTruncate from "@/hooks/useTruncate";
 import SavedSpark from "@/assets/icons/SavedSpark";
 import NoSpark from "@/assets/icons/NoSpark";
@@ -128,14 +127,14 @@ const CardTemplateLast: React.FC<CardTemplateLastProps> = ({ template }) => {
               />
             </Grid>
           </Grid>
-          <Grid
-            padding={"0px 16px"}
-            display={"flex"}
-            alignItems={"center"}
-            justifyContent={"space-between"}
-            height={"48px"}
-          >
-            {!!template.executions && template.executions.length > 0 ? (
+          {!!template.executions && template.executions.length > 0 ? (
+            <Grid
+              padding={"0px 16px"}
+              display={"flex"}
+              alignItems={"center"}
+              justifyContent={"space-between"}
+              height={"48px"}
+            >
               <Box display={"flex"} alignItems={"bottom"} gap={"8px"}>
                 <SavedSpark />
                 <Typography
@@ -150,7 +149,32 @@ const CardTemplateLast: React.FC<CardTemplateLastProps> = ({ template }) => {
                   {template.executions[0].title}
                 </Typography>
               </Box>
-            ) : (
+
+              <IconButton
+                onClick={() =>
+                  router.push({
+                    pathname: `prompt/${template.slug}`,
+                    query: { spark: template.executions[0].id },
+                  })
+                }
+                sx={{
+                  border: "none",
+                  "&:hover": {
+                    bgcolor: "surface.2",
+                  },
+                }}
+              >
+                <PlayCircle />
+              </IconButton>
+            </Grid>
+          ) : (
+            <Grid
+              padding={"0px 16px"}
+              display={"flex"}
+              alignItems={"center"}
+              justifyContent={"space-between"}
+              height={"48px"}
+            >
               <Box display={"flex"} alignItems={"bottom"} gap={"8px"}>
                 <NoSpark />
                 <Typography
@@ -166,24 +190,8 @@ const CardTemplateLast: React.FC<CardTemplateLastProps> = ({ template }) => {
                   No Spark Found
                 </Typography>
               </Box>
-            )}
-            <IconButton
-              onClick={() =>
-                router.push({
-                  pathname: `prompt/${template.slug}`,
-                  query: { spark: template.executions[0].id },
-                })
-              }
-              sx={{
-                border: "none",
-                "&:hover": {
-                  bgcolor: "surface.2",
-                },
-              }}
-            >
-              <PlayCircle />
-            </IconButton>
-          </Grid>
+            </Grid>
+          )}
         </Box>
       </Card>
     </Box>
