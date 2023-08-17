@@ -1,7 +1,16 @@
 import { Templates } from "@/core/api/dto/templates";
 import { AddOutlined } from "@mui/icons-material";
-import { Box, Button, Stack, Typography, alpha, useTheme } from "@mui/material";
+import {
+  Box,
+  Button,
+  CardMedia,
+  Stack,
+  Typography,
+  alpha,
+  useTheme,
+} from "@mui/material";
 import React from "react";
+import NextImage from "@/components/NextImage";
 
 interface Props {
   templateData: Templates;
@@ -22,17 +31,19 @@ export const DetailsCard: React.FC<Props> = ({ templateData, onNewSpark }) => {
         height: "fit-content",
       }}
     >
-      <Box
-        component={"img"}
-        src={templateData.thumbnail || "http://placehold.it/240x150"}
-        alt={templateData.title}
+      <CardMedia
         sx={{
           height: 226,
           width: "100%",
-          objectFit: "cover",
           borderRadius: { xs: "0px", md: "16px" },
         }}
-      />
+      >
+        <NextImage
+          src={templateData.thumbnail || "http://placehold.it/240x150"}
+          alt={templateData.title}
+          borderRadius={{ xs: "0px", md: "16px" }}
+        />
+      </CardMedia>
       <Stack
         direction={"row"}
         alignItems={"center"}
