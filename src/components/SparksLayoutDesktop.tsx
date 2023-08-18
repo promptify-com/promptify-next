@@ -20,7 +20,11 @@ import useTruncate from "@/hooks/useTruncate";
 import BaseButton from "./base/BaseButton";
 import DraftSpark from "@/assets/icons/DraftSpark";
 import SavedSpark from "@/assets/icons/SavedSpark";
-import { useDeleteExecutionMutation, usePutExecutionTitleMutation } from "@/core/api/executions";
+import {
+  useDeleteExecutionMutation,
+  useExecutionFavoriteMutation,
+  usePutExecutionTitleMutation,
+} from "@/core/api/executions";
 
 interface SparksLayoutDesktopProps {
   execution: Execution;
@@ -32,6 +36,7 @@ type PopperType = "rename" | "delete";
 export const SparksLayoutDesktop: FC<SparksLayoutDesktopProps> = ({ execution, template }) => {
   const [updateExecution, { isError }] = usePutExecutionTitleMutation();
   const [deleteExecution, { isError: isDeleteExecutionError }] = useDeleteExecutionMutation();
+  const [favoriteExecution, { isError: isFavoriteExecutionError }] = useExecutionFavoriteMutation();
 
   const { truncate } = useTruncate();
   const { convertedTimestamp } = useTimestampConverter();
@@ -78,6 +83,10 @@ export const SparksLayoutDesktop: FC<SparksLayoutDesktopProps> = ({ execution, t
     if (!isError) {
       onCloseDropdown();
     }
+  };
+
+  const handleSaveExecution = () => {
+    favoriteExecution(execution.id);
   };
 
   return (
@@ -214,6 +223,7 @@ export const SparksLayoutDesktop: FC<SparksLayoutDesktopProps> = ({ execution, t
         {!execution.is_favorite && (
           <Tooltip title="Save">
             <IconButton
+              onClick={() => handleSaveExecution()}
               sx={{
                 border: "none",
                 "&:hover": {

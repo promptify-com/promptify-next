@@ -40,6 +40,13 @@ export const executionsApi = baseApi.injectEndpoints({
         }),
         invalidatesTags: ["Executions"],
       }),
+      executionFavorite: build.mutation<TemplatesExecutions, number>({
+        query: (id: number) => ({
+          url: `/api/meta/template-executions/${id}/favorite/`,
+          method: "post",
+        }),
+        invalidatesTags: ["Executions"],
+      }),
     };
   },
 });
@@ -50,4 +57,5 @@ export const {
   useGetTemplatesExecutionsByMeQuery,
   usePutExecutionTitleMutation,
   useDeleteExecutionMutation,
+  useExecutionFavoriteMutation,
 } = executionsApi;
