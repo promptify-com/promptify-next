@@ -25,6 +25,7 @@ import {
   useExecutionFavoriteMutation,
   usePutExecutionTitleMutation,
 } from "@/core/api/executions";
+import { useRouter } from "next/router";
 
 interface SparksLayoutDesktopProps {
   execution: Execution;
@@ -34,6 +35,7 @@ interface SparksLayoutDesktopProps {
 type PopperType = "rename" | "delete";
 
 export const SparksLayoutDesktop: FC<SparksLayoutDesktopProps> = ({ execution, template }) => {
+  const router = useRouter();
   const [updateExecution, { isError }] = usePutExecutionTitleMutation();
   const [deleteExecution, { isError: isDeleteExecutionError }] = useDeleteExecutionMutation();
   const [favoriteExecution, { isError: isFavoriteExecutionError }] = useExecutionFavoriteMutation();
@@ -142,7 +144,9 @@ export const SparksLayoutDesktop: FC<SparksLayoutDesktopProps> = ({ execution, t
           </IconButton>
         </Tooltip>
       </Grid>
+
       <Grid
+        onClick={() => router.push(`prompt/${template.slug}`)}
         item
         md={4}
         padding={"16px"}
@@ -287,112 +291,112 @@ export const SparksLayoutDesktop: FC<SparksLayoutDesktopProps> = ({ execution, t
               }}
               elevation={0}
             >
-              <ClickAwayListener onClickAway={onCloseDropdown}>
-                {popperType === "rename" ? (
+              {popperType === "rename" ? (
+                <Grid
+                  padding={"16px"}
+                  display={"flex"}
+                  flexDirection={"column"}
+                  gap={"8px"}
+                >
+                  <TextField
+                    defaultValue={execution?.title}
+                    id="standard-basic"
+                    label="Rename Spark"
+                    variant="standard"
+                    fullWidth
+                    onChange={e => setExecutionTitle(e.target.value)}
+                    color="secondary"
+                  />
                   <Grid
-                    padding={"16px"}
                     display={"flex"}
-                    flexDirection={"column"}
                     gap={"8px"}
+                    paddingY={"8px"}
+                    alignItems={"center"}
                   >
-                    <TextField
-                      defaultValue={execution?.title}
-                      id="standard-basic"
-                      label="Rename Spark"
-                      variant="standard"
-                      fullWidth
-                      onChange={e => setExecutionTitle(e.target.value)}
-                      color="secondary"
-                    />
-                    <Grid
-                      display={"flex"}
-                      gap={"8px"}
-                      paddingY={"8px"}
-                      alignItems={"center"}
+                    <BaseButton
+                      onClick={() => handleUpdateExecution()}
+                      color="custom"
+                      variant="contained"
+                      size="small"
+                      sx={{
+                        height: "30px",
+                        px: 0,
+                        bgcolor: "#375CA9",
+                        border: "none",
+                        "&:hover": {
+                          bgcolor: "surface.2",
+                        },
+                      }}
                     >
-                      <BaseButton
-                        onClick={() => handleUpdateExecution()}
-                        color="custom"
-                        variant="contained"
-                        size="small"
-                        sx={{
-                          height: "30px",
-                          px: 0,
-                          bgcolor: "#375CA9",
-                          border: "none",
-                          "&:hover": {
-                            bgcolor: "surface.2",
-                          },
-                        }}
-                      >
-                        <Check sx={{ fontSize: "16px", mr: "2px" }} />
-                        Ok
-                      </BaseButton>
-                      <BaseButton
-                        color="primary"
-                        variant="outlined"
-                        size="small"
-                        sx={{
-                          height: "30px",
-                          px: 0,
-                        }}
-                      >
-                        Cancel
-                      </BaseButton>
-                    </Grid>
+                      <Check sx={{ fontSize: "16px", mr: "2px" }} />
+                      Ok
+                    </BaseButton>
+                    <BaseButton
+                      onClick={() => onCloseDropdown()}
+                      color="primary"
+                      variant="outlined"
+                      size="small"
+                      sx={{
+                        height: "30px",
+                        px: 0,
+                      }}
+                    >
+                      Cancel
+                    </BaseButton>
                   </Grid>
-                ) : (
+                </Grid>
+              ) : (
+                <Grid
+                  padding={"16px"}
+                  display={"flex"}
+                  flexDirection={"column"}
+                  gap={"8px"}
+                >
+                  <Typography
+                    fontSize={"18px"}
+                    fontWeight={500}
+                    lineHeight={"25.74px"}
+                  >
+                    You really want to delete this spark permanently?
+                  </Typography>
                   <Grid
-                    padding={"16px"}
                     display={"flex"}
-                    flexDirection={"column"}
                     gap={"8px"}
+                    paddingY={"8px"}
+                    alignItems={"center"}
                   >
-                    <Typography
-                      fontSize={"18px"}
-                      fontWeight={500}
-                      lineHeight={"25.74px"}
+                    <BaseButton
+                      onClick={() => handleDeleteExecution()}
+                      color="custom"
+                      variant="contained"
+                      size="small"
+                      sx={{
+                        bgcolor: red[400],
+                        height: "30px",
+                        border: "none",
+                        "&:hover": {
+                          bgcolor: "surface.2",
+                        },
+                      }}
                     >
-                      You really want to delete this spark permanently?
-                    </Typography>
-                    <Grid
-                      display={"flex"}
-                      gap={"8px"}
-                      paddingY={"8px"}
-                      alignItems={"center"}
+                      <DeleteRounded sx={{ fontSize: "16px", mr: "2px" }} />
+                      Yes, Delete
+                    </BaseButton>
+                    <BaseButton
+                      onClick={() => onCloseDropdown()}
+                      color="primary"
+                      variant="outlined"
+                      size="small"
+                      sx={{
+                        height: "30px",
+                        px: 0,
+                      }}
                     >
-                      <BaseButton
-                        onClick={() => handleDeleteExecution()}
-                        color="custom"
-                        variant="contained"
-                        size="small"
-                        sx={{
-                          bgcolor: red[400],
-                          height: "30px",
-                          border: "none",
-                          "&:hover": {
-                            bgcolor: "surface.2",
-                          },
-                        }}
-                      >
-                        <DeleteRounded sx={{ fontSize: "16px", mr: "2px" }} />
-                        Yes, Delete
-                      </BaseButton>
-                      <BaseButton
-                        color="primary"
-                        variant="outlined"
-                        size="small"
-                        sx={{
-                          height: "30px",
-                          px: 0,
-                        }}
-                      >
-                        Cancel
-                      </BaseButton>
-                    </Grid>
+                      Cancel
+                    </BaseButton>
                   </Grid>
-                )}
-              </ClickAwayListener>
+                </Grid>
+              )}
             </Paper>
           </Grow>
         )}
