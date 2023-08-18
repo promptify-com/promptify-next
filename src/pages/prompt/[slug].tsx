@@ -112,12 +112,23 @@ const Prompt = () => {
   } = useGetExecutionsByTemplateQuery(token ? (id ? id : skipToken) : skipToken);
 
   useEffect(() => {
-    const sorted = [...(templateExecutions || [])].sort((a, b) => moment(b.created_at).diff(moment(a.created_at)));
+    const sorted = [...(templateExecutions || [])]
+      .reduce((uniqueExecs: TemplatesExecutions[], execution) => {
+        if (!uniqueExecs.some((item: TemplatesExecutions) => item.id === execution.id)) {
+          uniqueExecs.push(execution);
+        }
+        return uniqueExecs;
+      }, [])
+      .sort((a, b) => moment(b.created_at).diff(moment(a.created_at)));
     setSortedExecutions(sorted);
   }, [templateExecutions]);
 
   useEffect(() => {
-    setSelectedExecution(sortedExecutions?.[0] || null);
+    if (selectedExecution) {
+      setSelectedExecution(sortedExecutions.find(exec => exec.id === selectedExecution.id) || null);
+    } else {
+      setSelectedExecution(sortedExecutions?.[0] || null);
+    }
   }, [sortedExecutions]);
 
   const changeTab = (e: React.SyntheticEvent, newValue: number) => {
@@ -136,6 +147,7 @@ const Prompt = () => {
     if (!isGenerating && newExecutionData?.data?.length) {
       const promptNotCompleted = newExecutionData.data.find(execData => !execData.isCompleted);
       if (!promptNotCompleted) {
+        setSelectedExecution(null);
         setExecutionFormOpen(true);
       }
     }
