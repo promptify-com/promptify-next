@@ -124,11 +124,8 @@ const Prompt = () => {
   }, [templateExecutions]);
 
   useEffect(() => {
-    if (selectedExecution) {
-      setSelectedExecution(sortedExecutions.find(exec => exec.id === selectedExecution.id) || null);
-    } else {
-      setSelectedExecution(sortedExecutions?.[0] || null);
-    }
+    const displayExecution = sortedExecutions.find(exec => exec.id === selectedExecution?.id);
+    setSelectedExecution(displayExecution || sortedExecutions?.[0] || null);
   }, [sortedExecutions]);
 
   const changeTab = (e: React.SyntheticEvent, newValue: number) => {

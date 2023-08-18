@@ -260,7 +260,6 @@ export const DisplayActions: React.FC<Props> = ({
                       selectedExecution={selectedExecution}
                       chooseExecution={exec => {
                         setSelectedExecution(exec);
-                        setPresetsAnchor(null);
                       }}
                     />
                   </Box>

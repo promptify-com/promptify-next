@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -17,7 +17,12 @@ import { CloudQueue, Create, Delete, Done, PriorityHighOutlined } from "@mui/ico
 import moment from "moment";
 import SavedSpark from "@/assets/icons/SavedSpark";
 import DraftSpark from "@/assets/icons/DraftSpark";
-import { usePostExecutionFavoriteMutation, usePutExecutionTitleMutation } from "@/core/api/executions";
+import {
+  useDeleteExecutionMutation,
+  usePostExecutionFavoriteMutation,
+  usePutExecutionTitleMutation,
+} from "@/core/api/executions";
+import { DeleteDialog } from "../dialog/DeleteDialog";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -62,16 +67,22 @@ interface Props {
 export const ExecutionsTabs: React.FC<Props> = ({ executions, chooseExecution, selectedExecution }) => {
   const { palette } = useTheme();
 
-  const [executionTitle, setExecutionTitle] = useState(selectedExecution?.title);
-  const [renameAllow, setRenameAllow] = useState(false);
-
   const [updateExecutionTitle, { isError, isLoading }] = usePutExecutionTitleMutation();
   const [postExecutionFavorite] = usePostExecutionFavoriteMutation();
+  const [deleteExecution] = useDeleteExecutionMutation();
 
   const [tabsValue, setTabsValue] = useState(0);
   const changeTab = (e: React.SyntheticEvent, newValue: number) => {
     setTabsValue(newValue);
   };
+
+  const [executionTitle, setExecutionTitle] = useState(selectedExecution?.title);
+  const [renameAllow, setRenameAllow] = useState(false);
+  const [deleteAllow, setDeleteAllow] = useState(false);
+
+  useEffect(() => {
+    setExecutionTitle(selectedExecution?.title);
+  }, [selectedExecution]);
 
   const renameSave = async () => {
     if (executionTitle?.length && selectedExecution?.id) {
@@ -283,6 +294,7 @@ export const ExecutionsTabs: React.FC<Props> = ({ executions, chooseExecution, s
                 p: "4px 12px",
                 ml: "auto",
               }}
+              onClick={() => setDeleteAllow(true)}
             >
               Delete
             </Button>
@@ -397,6 +409,20 @@ export const ExecutionsTabs: React.FC<Props> = ({ executions, chooseExecution, s
       >
         <Stack height={"100%"}>{ExecutionsList(pinnedExecutions)}</Stack>
       </CustomTabPanel>
+
+      {!!selectedExecution && (
+        <DeleteDialog
+          open={deleteAllow}
+          dialogTitle="Delete Spark"
+          dialogContentText={`Are you sure you want to delete ${selectedExecution?.title || "this"} Spark?`}
+          onClose={() => setDeleteAllow(false)}
+          onSubmit={() => {
+            deleteExecution({ id: selectedExecution.id });
+            setDeleteAllow(false);
+          }}
+          onSubmitLoading={isLoading}
+        />
+      )}
     </Box>
   );
 };
