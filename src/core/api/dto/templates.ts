@@ -169,24 +169,9 @@ export interface TemplateExecutionsDisplay {
     id: number;
     title: string;
     created_at: string;
-  }[];
-  sparks: {
-    id: number;
-    initial_title: string;
-    created_at: string;
-    versions: {
-      id: number;
-      title: string;
-      created_at: string;
-    }[];
-    current_version: {
-      id: number;
-      title: string;
-      created_at: string;
-    };
-    template: number;
     is_favorite: boolean;
   }[];
+
   likes?: number;
   favorites_count: number;
 }

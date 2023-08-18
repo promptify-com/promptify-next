@@ -2,13 +2,13 @@ import React from "react";
 import { Box, Grid, Stack, Typography } from "@mui/material";
 import { FetchLoading } from "@/components/FetchLoading";
 import { Layout } from "@/layout";
-import { useGetSparksByMeQuery } from "@/core/api/sparks";
 import Protected from "@/components/Protected";
 import SparksSection from "@/components/SparksSection";
 import { TemplateExecutionsDisplay } from "@/core/api/dto/templates";
+import { useGetTemplatesExecutionsByMeQuery } from "@/core/api/executions";
 
 const Sparks = () => {
-  const { data: executedTemplates, isLoading: isSparksByTemplateLoading } = useGetSparksByMeQuery();
+  const { data: executedTemplates, isLoading: isExecutedTemplatesLoading } = useGetTemplatesExecutionsByMeQuery();
 
   return (
     <Protected>
@@ -22,7 +22,7 @@ const Sparks = () => {
               padding: { xs: "16px", md: "32px" },
             }}
           >
-            {isSparksByTemplateLoading ? (
+            {isExecutedTemplatesLoading ? (
               <Box>
                 <FetchLoading />
               </Box>
