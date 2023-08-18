@@ -1,13 +1,5 @@
 import React from "react";
-import {
-  Avatar,
-  Box,
-  Card,
-  CardMedia,
-  Grid,
-  IconButton,
-  Typography,
-} from "@mui/material";
+import { Avatar, Box, Card, CardMedia, Grid, IconButton, Typography } from "@mui/material";
 import { TemplateExecutionsDisplay } from "@/core/api/dto/templates";
 import { Favorite, PlayCircle } from "@mui/icons-material";
 import { useRouter } from "next/router";
@@ -26,7 +18,9 @@ const CardTemplateLast: React.FC<CardTemplateLastProps> = ({ template }) => {
   return (
     <Box>
       <Card
+        onClick={() => router.push(`prompt/${template.slug}`)}
         sx={{
+          cursor: "pointer",
           maxWidth: "266px",
           width: "266px",
           minHeight: "277px",
@@ -135,7 +129,11 @@ const CardTemplateLast: React.FC<CardTemplateLastProps> = ({ template }) => {
               justifyContent={"space-between"}
               height={"48px"}
             >
-              <Box display={"flex"} alignItems={"bottom"} gap={"8px"}>
+              <Box
+                display={"flex"}
+                alignItems={"bottom"}
+                gap={"8px"}
+              >
                 <SavedSpark />
                 <Typography
                   sx={{
@@ -175,7 +173,11 @@ const CardTemplateLast: React.FC<CardTemplateLastProps> = ({ template }) => {
               justifyContent={"space-between"}
               height={"48px"}
             >
-              <Box display={"flex"} alignItems={"bottom"} gap={"8px"}>
+              <Box
+                display={"flex"}
+                alignItems={"bottom"}
+                gap={"8px"}
+              >
                 <NoSpark />
                 <Typography
                   sx={{
