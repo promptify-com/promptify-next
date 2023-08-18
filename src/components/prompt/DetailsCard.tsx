@@ -1,5 +1,6 @@
 import { Templates } from "@/core/api/dto/templates";
-import { Box, Stack, Typography, useTheme } from "@mui/material";
+import { Favorite, FavoriteOutlined } from "@mui/icons-material";
+import { Avatar, Box, Stack, Typography, useTheme } from "@mui/material";
 import React from "react";
 
 interface Props {
@@ -7,8 +8,6 @@ interface Props {
 }
 
 export const DetailsCard: React.FC<Props> = ({ templateData }) => {
-  const { palette } = useTheme();
-
   return (
     <Stack
       gap={2}
@@ -41,7 +40,7 @@ export const DetailsCard: React.FC<Props> = ({ templateData }) => {
           borderTopLeftRadius: "25px",
           borderTopRightRadius: "25px",
           mt: { xs: "-35px", md: "0px" },
-          bgcolor: "#FFF",
+          bgcolor: "surface.1",
         }}
       >
         <Box
@@ -61,6 +60,36 @@ export const DetailsCard: React.FC<Props> = ({ templateData }) => {
             dangerouslySetInnerHTML={{ __html: templateData.category.name }}
           />
         </Box>
+        <Stack
+          direction={"row"}
+          alignItems={"center"}
+          gap={1}
+        >
+          <Typography
+            sx={{
+              p: "6px 11px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "3px",
+              fontSize: 15,
+              fontWeight: 500,
+              color: "onSurface",
+              svg: {
+                width: 24,
+                height: 24,
+              },
+            }}
+          >
+            {templateData.is_favorite ? <Favorite /> : <FavoriteOutlined />}
+            {templateData.favorites_count}
+          </Typography>
+          <Avatar
+            src={templateData.created_by.avatar}
+            alt={templateData.created_by.username}
+            sx={{ width: 32, height: 32 }}
+          />
+        </Stack>
       </Stack>
     </Stack>
   );

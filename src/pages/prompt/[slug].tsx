@@ -265,61 +265,25 @@ const Prompt = () => {
                   <Stack height={"100%"}>
                     <DetailsCard templateData={templateData} />
                     <Stack flex={1}>
-                      <Tabs
-                        value={tabsValue}
-                        onChange={changeTab}
-                        textColor="primary"
-                        indicatorColor="primary"
-                        variant="fullWidth"
-                        sx={{
-                          minHeight: "auto",
-                          boxShadow: "0px -1px 0px 0px #ECECF4 inset",
-                        }}
-                      >
-                        <Tab
-                          label="(x) Variables"
-                          {...a11yProps(0)}
-                          sx={tabStyle}
-                        />
-                        <Tab
-                          label="About"
-                          {...a11yProps(1)}
-                          icon={<ArtTrack />}
-                          iconPosition="start"
-                          sx={tabStyle}
-                        />
-                      </Tabs>
                       <Box flex={1}>
-                        <CustomTabPanel
-                          value={tabsValue}
-                          index={0}
-                        >
-                          {generatorOpened && (
-                            <GeneratorForm
-                              templateData={templateData}
-                              setNewExecutionData={setNewExecutionData}
-                              isGenerating={isGenerating}
-                              setIsGenerating={setIsGenerating}
-                              onError={setErrorMessage}
-                              exit={() => setGeneratorOpened(false)}
-                              setMobileTab={setMobileTab}
-                              setActiveTab={setActiveTab}
-                              executions={sortedExecutions}
-                              selectedExecution={selectedExecution}
-                              setSelectedExecution={setSelectedExecution}
-                              setSortedExecutions={setSortedExecutions}
-                            />
-                          )}
-                        </CustomTabPanel>
-                        <CustomTabPanel
-                          value={tabsValue}
-                          index={1}
-                        >
-                          <Details
-                            templateData={templateData}
-                            updateTemplateData={setTemplateData}
-                          />
-                        </CustomTabPanel>
+                        <Details
+                          templateData={templateData}
+                          updateTemplateData={setTemplateData}
+                        />
+                        <GeneratorForm
+                          templateData={templateData}
+                          setNewExecutionData={setNewExecutionData}
+                          isGenerating={isGenerating}
+                          setIsGenerating={setIsGenerating}
+                          onError={setErrorMessage}
+                          exit={() => setGeneratorOpened(false)}
+                          setMobileTab={setMobileTab}
+                          setActiveTab={setActiveTab}
+                          executions={sortedExecutions}
+                          selectedExecution={selectedExecution}
+                          setSelectedExecution={setSelectedExecution}
+                          setSortedExecutions={setSortedExecutions}
+                        />
                       </Box>
                     </Stack>
                   </Stack>

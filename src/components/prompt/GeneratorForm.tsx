@@ -420,14 +420,13 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   return (
     <Stack
       sx={{
-        minHeight: "100%",
+        minHeight: { xs: "100%", md: "auto" },
         bgcolor: "surface.2",
       }}
     >
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
         <Typography
           sx={{
-            display: { md: "none" },
             p: "16px",
             fontSize: 24,
             fontWeight: 500,
@@ -440,9 +439,9 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
       </Box>
 
       <Stack
-        flex={1}
         gap={1}
         sx={{
+          flex: { xs: 1, md: 0 },
           p: "16px",
           pb: { xs: 0, md: "16px" },
         }}
