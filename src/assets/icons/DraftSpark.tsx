@@ -19,4 +19,4 @@ const DraftSpark = ({ size = "16", color = "#1B1B1E", opacity = 0.8 }) => {
   );
 };
 
-export default DraftedSpark;
+export default DraftSpark;
