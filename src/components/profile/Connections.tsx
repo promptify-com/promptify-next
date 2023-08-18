@@ -1,23 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { LinkOff } from "@mui/icons-material";
-import { Avatar, Box, Snackbar, Typography } from "@mui/material";
+import { Avatar, Box, Snackbar, Typography, useTheme, useMediaQuery } from "@mui/material";
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import { useRouter } from "next/router";
-import {
-  AlertContent,
-  IConnection,
-  IContinueWithSocialMediaResponse,
-} from "@/common/types";
+import { AlertContent, IConnection, IContinueWithSocialMediaResponse } from "@/common/types";
 import { formatConnection } from "@/common/utils";
 import AddConnectionDialog from "@/components/dialog/AddConnectionDialog";
 import DeleteConnectionDialog from "@/components/dialog/DeleteConnectionDialog";
 import { useConnectionss, useDeleteConnection } from "@/hooks/api/connections";
+import useTruncate from "@/hooks/useTruncate";
 
-const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
-  props,
-  ref
-) {
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
+  return (
+    <MuiAlert
+      elevation={6}
+      ref={ref}
+      variant="filled"
+      {...props}
+    />
+  );
 });
 
 export const Connections = () => {
@@ -26,8 +27,7 @@ export const Connections = () => {
   const [authConnection, setAuthConnection] = useState<string[]>([]);
   const [open, setOpen] = useState<boolean>(false);
   const [openAdd, setOpenAdd] = useState(false);
-  const [connectionSelected, setConnectionSelected] =
-    useState<IConnection | null>();
+  const [connectionSelected, setConnectionSelected] = useState<IConnection | null>();
   const [typeAlert, setTypeAlert] = React.useState<AlertContent>({
     open: false,
     color: "success",
@@ -36,6 +36,9 @@ export const Connections = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [_useDeferredAction] = useConnectionss();
   const [useDeferredAction] = useDeleteConnection();
+  const { truncate } = useTruncate();
+  const { breakpoints } = useTheme();
+  const isMediumScreensUp = useMediaQuery(breakpoints.up("sm"));
   const preLogin = () => {
     setIsLoading(true);
   };
@@ -43,14 +46,18 @@ export const Connections = () => {
     setIsLoading(false);
     setOpenAdd(false);
 
-    if (!response) {
+    if (!response?.token) {
       setTypeAlert({
         open: true,
         color: "error",
         message: "Connection not added",
       });
     } else {
-      _useDeferredAction().then((res) => {
+      _useDeferredAction().then(res => {
+        if (!res?.length) {
+          return;
+        }
+
         const cnx = res.map((cn: any) => cn.provider);
         setAuthConnection(cnx);
         setConnections(res);
@@ -66,11 +73,9 @@ export const Connections = () => {
   };
   const handleDeleteConnection = (connection: IConnection) => {
     useDeferredAction(connection.id)
-      .then((res) => {
-        if (!(res === undefined)) {
-          const filterConnection = connections.filter(
-            (el) => el.id !== connection.id
-          );
+      .then(res => {
+        if (!res && connections?.length) {
+          const filterConnection = connections.filter(el => el.id !== connection.id);
           const cnx = filterConnection.map((cn: any) => cn.provider);
           setAuthConnection(cnx);
           setConnections(filterConnection);
@@ -94,8 +99,8 @@ export const Connections = () => {
   };
 
   useEffect(() => {
-    _useDeferredAction().then((res) => {
-      if (!res) {
+    _useDeferredAction().then(res => {
+      if (!res?.length) {
         return;
       }
 
@@ -132,7 +137,7 @@ export const Connections = () => {
         Connections
       </Typography>
       {!!connections &&
-        connections.map((item) => {
+        connections.map(item => {
           const customConnection = formatConnection(item);
           return (
             <Box
@@ -157,11 +162,19 @@ export const Connections = () => {
                 }}
               >
                 {customConnection.icon}
-                <Typography fontWeight={500} fontSize="1rem" display={"block"}>
+                <Typography
+                  fontWeight={500}
+                  fontSize="1rem"
+                  display={"block"}
+                >
                   {customConnection.service}
                 </Typography>
               </Box>
-              <Box display="flex" width="100%" justifyContent="space-between">
+              <Box
+                display="flex"
+                width="100%"
+                justifyContent="space-between"
+              >
                 <Box
                   sx={{
                     display: "flex",
@@ -204,7 +217,7 @@ export const Connections = () => {
                         color: "#1B1B1E",
                       }}
                     >
-                      {customConnection.name}
+                      {isMediumScreensUp ? customConnection.name : truncate(customConnection.name, { length: 14 })}
                     </Typography>
                   </Box>
                 </Box>
@@ -259,7 +272,11 @@ export const Connections = () => {
           },
         }}
       >
-        <Typography fontSize={15} fontWeight={500} lineHeight={"26px"}>
+        <Typography
+          fontSize={15}
+          fontWeight={500}
+          lineHeight={"26px"}
+        >
           Add More connections
         </Typography>
       </Box>
