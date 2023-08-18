@@ -19,7 +19,7 @@ import SavedSpark from "@/assets/icons/SavedSpark";
 import DraftSpark from "@/assets/icons/DraftSpark";
 import {
   useDeleteExecutionMutation,
-  usePostExecutionFavoriteMutation,
+  useExecutionFavoriteMutation,
   usePutExecutionTitleMutation,
 } from "@/core/api/executions";
 import { DeleteDialog } from "../dialog/DeleteDialog";
@@ -68,7 +68,7 @@ export const ExecutionsTabs: React.FC<Props> = ({ executions, chooseExecution, s
   const { palette } = useTheme();
 
   const [updateExecutionTitle, { isError, isLoading }] = usePutExecutionTitleMutation();
-  const [postExecutionFavorite] = usePostExecutionFavoriteMutation();
+  const [favoriteExecution] = useExecutionFavoriteMutation();
   const [deleteExecution] = useDeleteExecutionMutation();
 
   const [tabsValue, setTabsValue] = useState(0);
@@ -100,7 +100,7 @@ export const ExecutionsTabs: React.FC<Props> = ({ executions, chooseExecution, s
     if (!!!selectedExecution || selectedExecution?.is_favorite) return;
 
     try {
-      await postExecutionFavorite({ id: selectedExecution.id });
+      await favoriteExecution(selectedExecution.id);
     } catch (error) {
       console.error(error);
     }
@@ -419,7 +419,7 @@ export const ExecutionsTabs: React.FC<Props> = ({ executions, chooseExecution, s
           dialogContentText={`Are you sure you want to delete ${selectedExecution?.title || "this"} Spark?`}
           onClose={() => setDeleteAllow(false)}
           onSubmit={() => {
-            deleteExecution({ id: selectedExecution.id });
+            deleteExecution(selectedExecution.id);
             setDeleteAllow(false);
           }}
           onSubmitLoading={isLoading}

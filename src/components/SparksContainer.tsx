@@ -7,7 +7,7 @@ import { SparksLayoutMobile } from "./SparksLayoutMobile";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/core/store";
 import { SparkPopup } from "./dialog/SparkPopup";
-import { useDeleteExecutionMutation, useExecutionFavoriteMutation } from "@/core/api/executions";
+import { useExecutionFavoriteMutation } from "@/core/api/executions";
 
 interface SparksContainerProps {
   templates: TemplateExecutionsDisplay[];

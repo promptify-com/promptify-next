@@ -280,6 +280,12 @@ const Prompt = () => {
                             },
                             ".MuiAccordionSummary-root": {
                               minHeight: "48px",
+                              ":hover": {
+                                opacity: 0.8,
+                                svg: {
+                                  color: "primary.main",
+                                },
+                              },
                             },
                             ".MuiAccordionSummary-content": {
                               m: 0,

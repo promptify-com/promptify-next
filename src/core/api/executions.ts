@@ -47,14 +47,6 @@ export const executionsApi = baseApi.injectEndpoints({
         }),
         invalidatesTags: ["Executions"],
       }),
-      deleteExecution: build.mutation({
-        query: ({ id }: { id: number }) => ({
-          url: `/api/meta/template-executions/${id}/`,
-          method: "delete",
-          headers: { "Content-Type": "application/json" },
-        }),
-        invalidatesTags: ["Executions"],
-      }),
     };
   },
 });
