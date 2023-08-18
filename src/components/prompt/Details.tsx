@@ -77,12 +77,9 @@ export const Details: React.FC<DetailsProps> = ({
   return (
     <Box sx={{ bgcolor: "surface.1", p: "16px" }}>
       <Box>
-        <Box
-          sx={{
-            display: "flex",
-            pt: { xs: "25px", md: "16px" },
-            pb: { xs: "5px", md: "16px" },
-          }}
+        <Stack
+          direction={"row"}
+          sx={{ pb: "16px" }}
         >
           {!mobile && (
             <FavoriteButton
@@ -107,10 +104,9 @@ export const Details: React.FC<DetailsProps> = ({
                   }
                 }}
                 sx={{
-                  width: { xs: "100%", md: "auto" },
-                  p: 0,
+                  p: "8px 16px",
                   bgcolor: palette.primary.main,
-                  color: "#FFF",
+                  color: "onPrimary",
                   fontSize: 14,
                   borderColor: alpha(palette.primary.main, 0.3),
                   "&:hover": {
@@ -125,15 +121,9 @@ export const Details: React.FC<DetailsProps> = ({
               </Button>
             </>
           )}
-        </Box>
-        <Divider
-          sx={{
-            display: { md: "none" },
-            my: "16px",
-            borderColor: "surface.3",
-          }}
-        />
+        </Stack>
         <Box sx={{ py: "16px" }}>
+          <Subtitle sx={{ mb: "12px", color: "tertiary" }}>Template Insights</Subtitle>
           <Typography
             sx={{ fontSize: 12, fontWeight: 400, color: "onSurface" }}
             dangerouslySetInnerHTML={{ __html: templateData.description }}
