@@ -17,17 +17,14 @@ import { useRouter } from "next/router";
 
 interface GeneratorFormProps {
   templateData: Templates;
+  selectedExecution: TemplatesExecutions | null;
   setNewExecutionData: (data: PromptLiveResponse) => void;
   isGenerating: boolean;
   setIsGenerating: (status: boolean) => void;
   onError: (errMsg: string) => void;
   exit: () => void;
-  selectedExecution: TemplatesExecutions | null;
   setMobileTab: (value: number) => void;
   setActiveTab: (value: number) => void;
-  executions: TemplatesExecutions[];
-  setSelectedExecution: (execution: TemplatesExecutions) => void;
-  setSortedExecutions: (value: TemplatesExecutions[]) => void;
 }
 
 export interface InputsErrors {
@@ -43,6 +40,7 @@ interface Param {
 
 export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   templateData,
+  selectedExecution,
   setNewExecutionData,
   isGenerating,
   setIsGenerating,
@@ -50,10 +48,6 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   exit,
   setMobileTab,
   setActiveTab,
-  executions,
-  selectedExecution,
-  setSelectedExecution,
-  setSortedExecutions,
 }) => {
   const token = useToken();
   const { palette } = useTheme();

@@ -10,14 +10,12 @@ import {
   Palette,
   Snackbar,
   Stack,
-  Tab,
-  Tabs,
   ThemeProvider,
   Typography,
   createTheme,
   useTheme,
 } from "@mui/material";
-import { ArtTrack, ExpandMore } from "@mui/icons-material";
+import { ExpandMore } from "@mui/icons-material";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
 import materialDynamicColors from "material-dynamic-colors";
 import { mix } from "polished";
@@ -40,36 +38,6 @@ import moment from "moment";
 import { DetailsCardMini } from "@/components/prompt/DetailsCardMini";
 import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
 import ExecutionForm from "@/components/prompt/ExecutionForm";
-
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: number;
-  value: number;
-}
-
-const CustomTabPanel = (props: TabPanelProps) => {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <Box
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      sx={{ height: "100%", width: "100%" }}
-      {...other}
-    >
-      {children}
-    </Box>
-  );
-};
-
-const a11yProps = (index: number) => {
-  return {
-    id: `simple-tab-${index}`,
-    "aria-controls": `simple-tabpanel-${index}`,
-  };
-};
 
 const Prompt = () => {
   const [selectedExecution, setSelectedExecution] = useState<TemplatesExecutions | null>(null);
@@ -312,6 +280,7 @@ const Prompt = () => {
                         </Accordion>
                         <GeneratorForm
                           templateData={templateData}
+                          selectedExecution={selectedExecution}
                           setNewExecutionData={setNewExecutionData}
                           isGenerating={isGenerating}
                           setIsGenerating={setIsGenerating}
@@ -319,10 +288,6 @@ const Prompt = () => {
                           exit={() => setGeneratorOpened(false)}
                           setMobileTab={setMobileTab}
                           setActiveTab={setActiveTab}
-                          executions={sortedExecutions}
-                          selectedExecution={selectedExecution}
-                          setSelectedExecution={setSelectedExecution}
-                          setSortedExecutions={setSortedExecutions}
                         />
                       </Box>
                     </Stack>
@@ -371,6 +336,7 @@ const Prompt = () => {
                   >
                     <GeneratorForm
                       templateData={templateData}
+                      selectedExecution={selectedExecution}
                       setNewExecutionData={setNewExecutionData}
                       isGenerating={isGenerating}
                       setIsGenerating={setIsGenerating}
@@ -378,10 +344,6 @@ const Prompt = () => {
                       exit={() => setGeneratorOpened(false)}
                       setMobileTab={setMobileTab}
                       setActiveTab={setActiveTab}
-                      executions={sortedExecutions}
-                      selectedExecution={selectedExecution}
-                      setSelectedExecution={setSelectedExecution}
-                      setSortedExecutions={setSortedExecutions}
                     />
                   </Grid>
                 </>
