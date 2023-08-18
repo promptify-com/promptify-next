@@ -42,6 +42,7 @@ import BottomTabs from "@/components/prompt/BottomTabs";
 import moment from "moment";
 import { DetailsCardMini } from "@/components/prompt/DetailsCardMini";
 import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
+import ExecutionForm from "@/components/prompt/ExecutionForm";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -81,6 +82,7 @@ const Prompt = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [currentGeneratedPrompt, setCurrentGeneratedPrompt] =
     useState<Prompts | null>(null);
+  const [executionFormOpen, setExecutionFormOpen] = useState(false);
   const [templateView] = useTemplateView();
   const [generatorOpened, setGeneratorOpened] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string>("");
@@ -147,10 +149,7 @@ const Prompt = () => {
         (execData) => !execData.isCompleted
       );
       if (!promptNotCompleted) {
-        refetchTemplateExecutions();
-
-        setCurrentGeneratedPrompt(null);
-        setNewExecutionData(null);
+        setExecutionFormOpen(true);
       }
     }
   }, [isGenerating, newExecutionData]);
@@ -467,6 +466,18 @@ const Prompt = () => {
               />
             </Grid>
           )}
+          
+          <ExecutionForm
+            type="new"
+            isOpen={executionFormOpen}
+            executionId={newExecutionData?.id}
+            onClose={() => {
+              setCurrentGeneratedPrompt(null)
+              setNewExecutionData(null)
+              setExecutionFormOpen(false)
+            }}
+            onCancel={() => refetchTemplateExecutions()}
+          />
 
           <Snackbar
             anchorOrigin={{ vertical: "bottom", horizontal: "right" }}

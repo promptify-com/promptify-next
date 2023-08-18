@@ -243,9 +243,8 @@ const SparksSection: React.FC<SparksSectionProps> = ({ templates }) => {
             <ExecutionForm
               type="edit"
               isOpen={executionFormOpen}
-              close={() => setExecutionFormOpen(false)}
-              activeSpark={activeSpark}
-              templateId={template?.id}
+              onClose={() => setExecutionFormOpen(false)}
+              // activeSpark={activeSpark}
             />
             {activeSpark !== undefined && (
               <DeleteDialog

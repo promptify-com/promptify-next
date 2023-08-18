@@ -1,5 +1,6 @@
 import { baseApi } from "./api";
 import {
+  ITemplateExecutionPut,
   TemplateExecutionsDisplay,
   TemplatesExecutions,
 } from "./dto/templates";
@@ -28,7 +29,19 @@ export const executionsApi = baseApi.injectEndpoints({
           url: `/api/meta/template-executions/me`,
           method: "get",
         }),
-      })
+      }),
+      putExecutionTitle: build.mutation<
+        TemplatesExecutions,
+        { id: number; data: ITemplateExecutionPut }
+      >({
+        query: ({ id, data }: { id: number; data: ITemplateExecutionPut }) => ({
+          url: `/api/meta/template-executions/${id}/`,
+          method: "patch",
+          headers: { "Content-Type": "application/json" },
+          data,
+        }),
+        invalidatesTags: ["Executions"],
+      }),
     };
   },
 });
@@ -37,4 +50,5 @@ export const {
   useGetExecutionByIdQuery,
   useGetExecutionsByTemplateQuery,
   useGetTemplatesExecutionsByMeQuery,
+  usePutExecutionTitleMutation
 } = executionsApi;

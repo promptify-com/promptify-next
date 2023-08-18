@@ -9,88 +9,56 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { createSpark, createSparkWithExecution } from "@/hooks/api/executions";
-import { Spark } from "@/core/api/dto/templates";
-import { useEditSparkTitleMutation } from "@/core/api/sparks";
+import { TemplatesExecutions } from "@/core/api/dto/templates";
+import { usePutExecutionTitleMutation } from "@/core/api/executions";
 
 type DialogType = "new" | "edit";
 
 interface Props {
   type: DialogType;
   isOpen: boolean;
-  close: () => void;
-  cancel?: () => void;
-  templateId?: number;
   executionId?: number;
-  activeSpark?: Spark;
-  onSparkCreated?: (spark: Spark) => void;
+  activeExecution?: TemplatesExecutions;
+  onClose: () => void;
+  onCancel?: () => void;
+  onSaved?: () => void;
 }
 
 const ExecutionForm: React.FC<Props> = ({
   type,
   isOpen,
-  close,
-  cancel = () => {},
-  templateId,
   executionId,
-  onSparkCreated,
-  activeSpark,
+  activeExecution,
+  onClose,
+  onCancel = () => null,
+  onSaved = () => null
 }) => {
   const [executionTitle, setExecutionTitle] = useState<string>("");
 
   useEffect(() => {
-    if (type === "edit" && activeSpark?.initial_title !== undefined) {
-      setExecutionTitle(activeSpark.initial_title);
+    if (type === "edit" && activeExecution?.title !== undefined) {
+      setExecutionTitle(activeExecution.title);
     }
-  }, [type, activeSpark, close]);
+  }, [type, activeExecution, onClose]);
 
-  const [editSparkTitle, { isError, isLoading }] = useEditSparkTitleMutation();
+  const [updateExecutionTitle, { isError, isLoading }] = usePutExecutionTitleMutation();
 
-  const closeTitleModal = () => {
-    close();
+  const handleCancel = () => {
+    onCancel();
     setExecutionTitle("");
+    onClose();
   };
 
-  const cancelSpark = () => {
-    cancel()
-    close()
-  }
-
   const handleSave = async () => {
-    if (type === "new" && executionTitle.length) {
-      // If executionId is passed, create a spark with execution_id, otherwise create a empty spark with templateId
-      // TODO: Handle error
-      let sparkCreated: Spark;
-
-      try {
-        if (executionId) {
-          sparkCreated = await createSparkWithExecution({
-            title: executionTitle,
-            execution_id: executionId,
-          });
-        } else {
-          sparkCreated = await createSpark({
-            initial_title: executionTitle,
-            template: templateId,
-          });
-        }
-
-        if (onSparkCreated !== undefined) {
-          onSparkCreated(sparkCreated);
-        }
-      } catch (err) {
-        console.error(err);
-      }
-      closeTitleModal();
-    } else {
-      if (activeSpark?.id !== undefined) {
-        await editSparkTitle({
-          id: activeSpark.id,
-          data: { initial_title: executionTitle },
-        });
-        if (!isError && !isLoading) {
-          close();
-        }
+    if (executionTitle.length && executionId) {
+      await updateExecutionTitle({
+        id: executionId,
+        data: { title: executionTitle }
+      });
+      if (!isError && !isLoading) {
+        onSaved();
+        setExecutionTitle("");
+        onClose();
       }
     }
   };
@@ -132,7 +100,7 @@ const ExecutionForm: React.FC<Props> = ({
       <DialogActions sx={{ p: "16px", gap: 2 }}>
         <Button
           sx={{ minWidth: "auto", p: 0, color: "grey.600" }}
-          onClick={closeTitleModal}
+          onClick={handleCancel}
         >
           Skip
         </Button>
