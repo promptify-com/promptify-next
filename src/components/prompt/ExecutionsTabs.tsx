@@ -1,10 +1,23 @@
-import React from "react";
-import { Box, Button, MenuItem, MenuList, Stack, Tab, Tabs, Typography, alpha, useTheme } from "@mui/material";
+import React, { useState } from "react";
+import {
+  Box,
+  Button,
+  MenuItem,
+  MenuList,
+  Stack,
+  Tab,
+  Tabs,
+  TextField,
+  Typography,
+  alpha,
+  useTheme,
+} from "@mui/material";
 import { TemplatesExecutions } from "@/core/api/dto/templates";
-import { CloudQueue, Create, Delete, PriorityHighOutlined, PushPin } from "@mui/icons-material";
+import { CloudQueue, Create, Delete, Done, PriorityHighOutlined } from "@mui/icons-material";
 import moment from "moment";
 import SavedSpark from "@/assets/icons/SavedSpark";
 import DraftSpark from "@/assets/icons/DraftSpark";
+import { usePutExecutionTitleMutation } from "@/core/api/executions";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -49,9 +62,26 @@ interface Props {
 export const ExecutionsTabs: React.FC<Props> = ({ executions, chooseExecution, selectedExecution }) => {
   const { palette } = useTheme();
 
-  const [tabsValue, setTabsValue] = React.useState(0);
+  const [executionTitle, setExecutionTitle] = useState(selectedExecution?.title);
+  const [renameAllow, setRenameAllow] = useState(false);
+
+  const [updateExecutionTitle, { isError, isLoading }] = usePutExecutionTitleMutation();
+
+  const [tabsValue, setTabsValue] = useState(0);
   const changeTab = (e: React.SyntheticEvent, newValue: number) => {
     setTabsValue(newValue);
+  };
+
+  const handleSave = async () => {
+    if (executionTitle?.length && selectedExecution?.id) {
+      await updateExecutionTitle({
+        id: selectedExecution?.id,
+        data: { title: executionTitle },
+      });
+      if (!isError && !isLoading) {
+        setRenameAllow(false);
+      }
+    }
   };
 
   const pinnedExecutions = executions.filter(execution => execution.is_favorite);
@@ -141,107 +171,167 @@ export const ExecutionsTabs: React.FC<Props> = ({ executions, chooseExecution, s
   return (
     <Box sx={{ width: { xs: "90svw", md: "401px" } }}>
       <Box sx={{ p: "16px", borderBottom: `1px solid ${palette.surface[5]}` }}>
-        <Stack
-          flexDirection={"row"}
-          alignItems={"flex-start"}
-          gap={1}
-          sx={{ py: "8px" }}
-        >
-          {selectedExecution?.is_favorite ? (
-            <SavedSpark
-              size="32"
-              color={palette.onSurface}
-              opacity={1}
-            />
-          ) : (
-            <DraftSpark
-              size="32"
-              color={palette.onSurface}
-              opacity={1}
-            />
-          )}
-          <Stack>
-            <Typography
-              sx={{
-                fontWeight: 500,
-                fontSize: 18,
-                color: `${alpha(palette.onSurface, 0.8)}`,
-                whiteSpace: "normal",
-                wordBreak: "break-word",
-              }}
-            >
-              {selectedExecution?.title}
-            </Typography>
-            <Typography
-              sx={{
-                fontWeight: 400,
-                fontSize: 12,
-                color: "onSurface",
-                opacity: 0.5,
-              }}
-            >
-              {!selectedExecution?.is_favorite &&
-                `This Spark is temporal and will be removed in 
-                           ${moment
-                             .duration(
-                               moment(selectedExecution?.created_at)
-                                 .add(30, "days")
-                                 .diff(moment()),
-                             )
-                             .humanize()}`}
-            </Typography>
+        <Box display={renameAllow ? "none" : "block"}>
+          <Stack
+            flexDirection={"row"}
+            alignItems={"flex-start"}
+            gap={1}
+            sx={{ py: "8px" }}
+          >
+            {selectedExecution?.is_favorite ? (
+              <SavedSpark
+                size="32"
+                color={palette.onSurface}
+                opacity={1}
+              />
+            ) : (
+              <DraftSpark
+                size="32"
+                color={palette.onSurface}
+                opacity={1}
+              />
+            )}
+            <Stack>
+              <Typography
+                sx={{
+                  fontWeight: 500,
+                  fontSize: 18,
+                  color: `${alpha(palette.onSurface, 0.8)}`,
+                  whiteSpace: "normal",
+                  wordBreak: "break-word",
+                }}
+              >
+                {executionTitle}
+              </Typography>
+              <Typography
+                sx={{
+                  fontWeight: 400,
+                  fontSize: 12,
+                  color: "onSurface",
+                  opacity: 0.5,
+                }}
+              >
+                {!selectedExecution?.is_favorite &&
+                  `This Spark is temporal and will be removed in 
+                        ${moment
+                          .duration(
+                            moment(selectedExecution?.created_at)
+                              .add(30, "days")
+                              .diff(moment()),
+                          )
+                          .humanize()}`}
+              </Typography>
+            </Stack>
           </Stack>
-        </Stack>
-        <Stack
-          flexDirection={"row"}
-          alignItems={"flex-start"}
-          gap={1}
-          sx={{ py: "8px" }}
-        >
-          <Button
-            variant="text"
-            startIcon={<Create />}
-            sx={{
-              border: `1px solid ${alpha(palette.primary.main, 0.15)}`,
-              bgcolor: "transparent",
-              color: "onSurface",
-              fontSize: 13,
-              fontWeight: 500,
-              p: "4px 12px",
-            }}
+          <Stack
+            flexDirection={"row"}
+            alignItems={"flex-start"}
+            gap={1}
+            sx={{ py: "8px" }}
           >
-            Rename
-          </Button>
-          <Button
-            variant="text"
-            startIcon={<CloudQueue />}
-            sx={{
-              border: `1px solid ${alpha(palette.primary.main, 0.15)}`,
-              bgcolor: "transparent",
-              color: "onSurface",
-              fontSize: 13,
-              fontWeight: 500,
-              p: "4px 12px",
-            }}
-          >
-            Save
-          </Button>
-          <Button
-            variant="text"
-            startIcon={<Delete />}
-            sx={{
-              border: `1px solid ${alpha(palette.primary.main, 0.15)}`,
-              bgcolor: "transparent",
-              color: "onSurface",
-              fontSize: 13,
-              fontWeight: 500,
-              p: "4px 12px",
-              ml: "auto",
-            }}
-          >
-            Delete
-          </Button>
-        </Stack>
+            <Button
+              variant="text"
+              startIcon={<Create />}
+              sx={{
+                border: `1px solid ${alpha(palette.primary.main, 0.15)}`,
+                bgcolor: "transparent",
+                color: "onSurface",
+                fontSize: 13,
+                fontWeight: 500,
+                p: "4px 12px",
+              }}
+              onClick={() => setRenameAllow(true)}
+            >
+              Rename
+            </Button>
+            <Button
+              variant="text"
+              startIcon={<CloudQueue />}
+              sx={{
+                border: `1px solid ${alpha(palette.primary.main, 0.15)}`,
+                bgcolor: "transparent",
+                color: "onSurface",
+                fontSize: 13,
+                fontWeight: 500,
+                p: "4px 12px",
+              }}
+              disabled={selectedExecution?.is_favorite}
+            >
+              {selectedExecution?.is_favorite ? "Saved" : "Save"}
+            </Button>
+            <Button
+              variant="text"
+              startIcon={<Delete />}
+              sx={{
+                border: `1px solid ${alpha(palette.primary.main, 0.15)}`,
+                bgcolor: "transparent",
+                color: "onSurface",
+                fontSize: 13,
+                fontWeight: 500,
+                p: "4px 12px",
+                ml: "auto",
+              }}
+            >
+              Delete
+            </Button>
+          </Stack>
+        </Box>
+        {renameAllow && (
+          <Box>
+            <Box sx={{ py: "8px" }}>
+              <TextField
+                variant="standard"
+                fullWidth
+                label="Rename Spark"
+                value={executionTitle}
+                onChange={e => setExecutionTitle(e.target.value)}
+              />
+            </Box>
+            <Stack
+              flexDirection={"row"}
+              alignItems={"flex-start"}
+              gap={1}
+              sx={{ py: "8px" }}
+            >
+              <Button
+                variant="contained"
+                startIcon={<Done />}
+                sx={{
+                  borderColor: "primary.main",
+                  bgcolor: "primary.main",
+                  color: "onPrimary",
+                  fontSize: 13,
+                  fontWeight: 500,
+                  p: "4px 12px",
+                  ":hover": { color: "primary.main" },
+                  ":disabled": { bgcolor: "transparent", borderColor: alpha(palette.primary.main, 0.15) },
+                }}
+                disabled={!!!executionTitle?.length || isLoading}
+                onClick={handleSave}
+              >
+                Ok
+              </Button>
+              <Button
+                variant="text"
+                sx={{
+                  border: `1px solid ${alpha(palette.primary.main, 0.15)}`,
+                  bgcolor: "transparent",
+                  color: "onSurface",
+                  fontSize: 13,
+                  fontWeight: 500,
+                  p: "4px 12px",
+                }}
+                disabled={isLoading}
+                onClick={() => {
+                  setRenameAllow(false);
+                  setExecutionTitle(selectedExecution?.title);
+                }}
+              >
+                Cancel
+              </Button>
+            </Stack>
+          </Box>
+        )}
       </Box>
       <Tabs
         value={tabsValue}
