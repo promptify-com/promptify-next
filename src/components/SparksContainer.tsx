@@ -4,21 +4,22 @@ import { TemplateExecutionsDisplay } from "@/core/api/dto/templates";
 
 import { SparksLayoutDesktop } from "./SparksLayoutDesktop";
 import { SparksLayoutMobile } from "./SparksLayoutMobile";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/core/store";
 import { SparkPopup } from "./dialog/SparkPopup";
-import { useDeleteExecutionMutation } from "@/core/api/executions";
+import { useDeleteExecutionMutation, useExecutionFavoriteMutation } from "@/core/api/executions";
 
 interface SparksContainerProps {
   templates: TemplateExecutionsDisplay[];
 }
 
 const SparksContainer: FC<SparksContainerProps> = ({ templates }) => {
+  const dispatch = useDispatch();
   const openPopup = useSelector((state: RootState) => state.executionsSlice.openPopup);
   const activeExecution = useSelector((state: RootState) => state.executionsSlice.activeExecution);
   const popupType = useSelector((state: RootState) => state.executionsSlice.popupType);
 
-  const [favoriteExecution] = useDeleteExecutionMutation();
+  const [favoriteExecution, { isError }] = useExecutionFavoriteMutation();
 
   const handleSaveExecution = (executionId: number) => {
     favoriteExecution(executionId);
