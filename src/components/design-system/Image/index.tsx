@@ -3,15 +3,15 @@ import NextImage from "next/image";
 interface NextImageProps {
   src: string;
   alt: string;
-  objectFit?: "fill" | "contain" | "cover" | "none" | "scale-down";
-  borderRadius?: string;
+  loading?: "lazy" | "eager";
+  style?: React.CSSProperties;
 }
 
 const Image: React.FC<NextImageProps> = ({
   src,
   alt,
-  objectFit = "cover",
-  borderRadius = "16px",
+  loading="lazy",
+  style = {},
 }) => {
   
   return (
@@ -20,14 +20,9 @@ const Image: React.FC<NextImageProps> = ({
       alt={alt}
       width={0}
       height={0}
-      sizes="100vw"
-      priority
-      style={{
-        borderRadius,
-        objectFit,
-        width: "100%",
-        height: "100%",
-      }}
+      sizes="100vw" // This is helping us to tell Next.js Image component to resize the image to fit the width of its container.
+      loading={loading}
+      style={{...style}}
     />
   );
 };

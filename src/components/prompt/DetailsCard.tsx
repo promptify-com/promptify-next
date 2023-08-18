@@ -1,25 +1,14 @@
 import { Templates } from "@/core/api/dto/templates";
-import { AddOutlined } from "@mui/icons-material";
-import {
-  Box,
-  Button,
-  CardMedia,
-  Stack,
-  Typography,
-  alpha,
-  useTheme,
-  useMediaQuery
-} from "@mui/material";
+import { Box, Stack, Typography, useTheme, CardMedia, useMediaQuery } from "@mui/material";
 import React from "react";
 
 import Image from "@/components/design-system/Image";
 
 interface Props {
   templateData: Templates;
-  onNewSpark?: () => void;
 }
 
-export const DetailsCard: React.FC<Props> = ({ templateData, onNewSpark }) => {
+export const DetailsCard: React.FC<Props> = ({ templateData }) => {
   const { palette, breakpoints } = useTheme();
 
   // Determine the appropriate border radius value based on the breakpoint
@@ -42,6 +31,7 @@ export const DetailsCard: React.FC<Props> = ({ templateData, onNewSpark }) => {
     >
       <CardMedia
         sx={{
+          position: "relative",
           height: 226,
           width: "100%",
           borderRadius: { xs: "0px", md: "16px" },
@@ -50,7 +40,8 @@ export const DetailsCard: React.FC<Props> = ({ templateData, onNewSpark }) => {
         <Image
           src={templateData.thumbnail || "http://placehold.it/240x150"}
           alt={templateData.title}
-          borderRadius={borderRadiusValue}
+          style={{borderRadius: borderRadiusValue, objectFit: "cover", width: "100%", height: "100%"}}
+          
         />
       </CardMedia>
       <Stack
@@ -83,25 +74,6 @@ export const DetailsCard: React.FC<Props> = ({ templateData, onNewSpark }) => {
             dangerouslySetInnerHTML={{ __html: templateData.category.name }}
           />
         </Box>
-        <Button
-          sx={{
-            display: { xs: "none", md: "flex" },
-            p: "6px 16px",
-            bgcolor: "transparent",
-            color: "primary.main",
-            fontSize: 14,
-            border: `1px solid ${alpha(palette.primary.main, 0.3)}`,
-            "&:hover": {
-              bgcolor: "action.hover",
-              color: "primary.main",
-            },
-          }}
-          startIcon={<AddOutlined />}
-          variant={"outlined"}
-          onClick={onNewSpark}
-        >
-          Spark
-        </Button>
       </Stack>
     </Stack>
   );

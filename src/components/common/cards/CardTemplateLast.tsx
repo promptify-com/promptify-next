@@ -47,14 +47,11 @@ const CardTemplateLast: React.FC<CardTemplateLastProps> = ({ template }) => {
             height: "115px",
             objectFit: "cover",
           }}
-          // component="img"
-          // image={template.thumbnail}
-          // alt={template.title}
         >
           <Image
             src={template.thumbnail}
             alt={template.title}
-            borderRadius="16px 16px 0px 0px"
+            style={{borderRadius: "16px 16px 0px 0px", objectFit: "cover", width: "100%", height: "100%"}}
           />
         </CardMedia>
 

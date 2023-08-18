@@ -71,7 +71,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
                     height: { xs: "73px", sm: "54px" },
                   }}
                 >
-                  <Image src={template.thumbnail} alt={template.title} />
+                  <Image src={template.thumbnail} alt={template.title} style={{borderRadius: "16%", objectFit: "cover", width: "100%", height: "100%"}}/>
                 </CardMedia>
               </Grid>
               <Grid gap={0.5} sx={{}} display={"flex"} flexDirection={"column"}>

@@ -72,12 +72,7 @@ export interface Category {
   description: string;
 }
 
-export type TemplateStatus =
-  | "ALL"
-  | "DRAFT"
-  | "PENDING_REVIEW"
-  | "PUBLISHED"
-  | "ARCHIVED";
+export type TemplateStatus = "ALL" | "DRAFT" | "PENDING_REVIEW" | "PUBLISHED" | "ARCHIVED";
 
 export interface Templates {
   id: number;
@@ -174,22 +169,9 @@ export interface TemplateExecutionsDisplay {
     id: number;
     title: string;
     created_at: string;
+    is_favorite: boolean;
   }[];
-  sparks: {
-    id: number;
-    initial_title: string;
-    created_at: string;
-    versions: {
-      id: number;
-      title: string;
-      created_at: string;
-    }[];
-    current_version: {
-      id: number;
-      title: string;
-      created_at: string;
-    };
-  }[];
+
   likes?: number;
   favorites_count: number;
 }

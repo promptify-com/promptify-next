@@ -47,7 +47,7 @@ export const CategoryCard = ({
               height: "200px",
             }}
           >
-            <Image src={category.image} alt={category.name} />
+            <Image src={category.image} alt={category.name} style={{borderRadius: "16px", objectFit: "cover", width: "100%", height: "100%"}}/>
           </CardMedia>
 
           <Typography

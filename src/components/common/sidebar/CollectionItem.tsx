@@ -55,7 +55,7 @@ export const CollectionItem: React.FC<CollectionItemProps> = ({
               mx: expanded ? 0 : 1.5,
             }}
           >
-            <Image src={template.thumbnail} alt={template.title} />
+            <Image src={template.thumbnail} alt={template.title} style={{borderRadius: "16px", objectFit: "cover", width: "100%", height: "100%"}}/>
           </CardMedia>
         </Grid>
         <Grid display={expanded ? "flex" : "none"} flexDirection={"column"}>

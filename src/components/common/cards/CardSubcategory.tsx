@@ -47,7 +47,7 @@ export const SubCategoryCard: React.FC<CardSubcategoryProps> = ({
               "https://promptify.s3.amazonaws.com/b2ef452894b9464786556b89c63a213b"
             }
             alt={subcategory.name}
-            borderRadius="100%"
+            style={{borderRadius: "100%", objectFit: "cover", width: "100%", height: "100%"}}
           />
         </CardMedia>
         <Typography sx={{ ml: "", whiteSpace: "nowrap" }}>

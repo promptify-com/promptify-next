@@ -135,7 +135,7 @@ export const MyTemplates = () => {
                         borderRadius: "16px",
                       }}
                     >
-                      <Image src={template.thumbnail} alt={template.title} />
+                      <Image src={template.thumbnail} alt={template.title} style={{borderRadius: "16px", objectFit: "cover", width: "100%", height: "100%"}}/>
                     </CardMedia>
                     <Box>
                       <Typography>{template.title}</Typography>
