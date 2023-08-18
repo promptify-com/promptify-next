@@ -8,6 +8,7 @@ import {
   Typography,
   alpha,
   useTheme,
+  useMediaQuery
 } from "@mui/material";
 import React from "react";
 
@@ -19,7 +20,14 @@ interface Props {
 }
 
 export const DetailsCard: React.FC<Props> = ({ templateData, onNewSpark }) => {
-  const { palette } = useTheme();
+  const { palette, breakpoints } = useTheme();
+
+  // Determine the appropriate border radius value based on the breakpoint
+  // If the current breakpoint is medium (md) or larger,
+  const isMdBreakpoint = useMediaQuery(breakpoints.up("md"));
+  const borderRadiusValue = isMdBreakpoint
+      ? "16px"
+      : "0px";
 
   return (
     <Stack
@@ -42,7 +50,7 @@ export const DetailsCard: React.FC<Props> = ({ templateData, onNewSpark }) => {
         <Image
           src={templateData.thumbnail || "http://placehold.it/240x150"}
           alt={templateData.title}
-          borderRadius={{ xs: "0px", md: "16px" }}
+          borderRadius={borderRadiusValue}
         />
       </CardMedia>
       <Stack
