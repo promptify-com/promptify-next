@@ -79,14 +79,8 @@ export const Details: React.FC<DetailsProps> = ({
       <Box>
         <Stack
           direction={"row"}
-          sx={{ pb: "16px" }}
+          sx={{ pb: { xs: "16px", md: 0 } }}
         >
-          {!mobile && (
-            <FavoriteButton
-              isFavorite={templateData.is_favorite}
-              onClick={favorTemplate}
-            />
-          )}
           {mobile && (
             <>
               <FavoriteMobileButton
@@ -123,7 +117,6 @@ export const Details: React.FC<DetailsProps> = ({
           )}
         </Stack>
         <Box sx={{ py: "16px" }}>
-          <Subtitle sx={{ mb: "12px", color: "tertiary" }}>Template Insights</Subtitle>
           <Typography
             sx={{ fontSize: 12, fontWeight: 400, color: "onSurface" }}
             dangerouslySetInnerHTML={{ __html: templateData.description }}

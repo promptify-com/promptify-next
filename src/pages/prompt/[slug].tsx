@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Alert,
   Box,
   Divider,
@@ -14,7 +17,7 @@ import {
   createTheme,
   useTheme,
 } from "@mui/material";
-import { ArtTrack } from "@mui/icons-material";
+import { ArtTrack, ExpandMore } from "@mui/icons-material";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
 import materialDynamicColors from "material-dynamic-colors";
 import { mix } from "polished";
@@ -266,10 +269,41 @@ const Prompt = () => {
                     <DetailsCard templateData={templateData} />
                     <Stack flex={1}>
                       <Box flex={1}>
-                        <Details
-                          templateData={templateData}
-                          updateTemplateData={setTemplateData}
-                        />
+                        <Accordion
+                          sx={{
+                            boxShadow: "none",
+                            bgcolor: "surface.1",
+                            borderRadius: "0 0 16px 16px",
+                            overflow: "hidden",
+                            ".MuiAccordionDetails-root": {
+                              p: "0",
+                            },
+                            ".MuiAccordionSummary-root": {
+                              minHeight: "48px",
+                            },
+                            ".MuiAccordionSummary-content": {
+                              m: 0,
+                            },
+                          }}
+                        >
+                          <AccordionSummary expandIcon={<ExpandMore />}>
+                            <Typography
+                              sx={{
+                                fontSize: 12,
+                                fontWeight: 500,
+                                color: "primary.main",
+                              }}
+                            >
+                              More about template
+                            </Typography>
+                          </AccordionSummary>
+                          <AccordionDetails>
+                            <Details
+                              templateData={templateData}
+                              updateTemplateData={setTemplateData}
+                            />
+                          </AccordionDetails>
+                        </Accordion>
                         <GeneratorForm
                           templateData={templateData}
                           setNewExecutionData={setNewExecutionData}
