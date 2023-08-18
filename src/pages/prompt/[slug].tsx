@@ -19,7 +19,7 @@ import { skipToken } from "@reduxjs/toolkit/dist/query";
 import materialDynamicColors from "material-dynamic-colors";
 import { mix } from "polished";
 import { useRouter } from "next/router";
-import { useGetPromptTemplateBySlugQuery, useTemplateView } from "@/core/api/templates";
+import { useGetPromptTemplateBySlugQuery, useViewTemplateMutation } from "@/core/api/templates";
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { PageLoading } from "@/components/PageLoading";
 import { GeneratorForm } from "@/components/prompt/GeneratorForm";
@@ -37,6 +37,8 @@ import moment from "moment";
 import { DetailsCardMini } from "@/components/prompt/DetailsCardMini";
 import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
 import ExecutionForm from "@/components/prompt/ExecutionForm";
+import { isValidUserFn } from "@/core/store/userSlice";
+import { useSelector } from "react-redux";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -74,7 +76,7 @@ const Prompt = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [currentGeneratedPrompt, setCurrentGeneratedPrompt] = useState<Prompts | null>(null);
   const [executionFormOpen, setExecutionFormOpen] = useState(false);
-  const [templateView] = useTemplateView();
+  const [updateViewTemplate] = useViewTemplateMutation();
   const [generatorOpened, setGeneratorOpened] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [activeTab, setActiveTab] = useState(0);
@@ -86,6 +88,7 @@ const Prompt = () => {
   const theme = useTheme();
   const [palette, setPalette] = useState(theme.palette);
   const { width: windowWidth } = useWindowSize();
+  const isValidUser = useSelector(isValidUserFn);
   const slug = router.query?.slug;
   // TODO: redirect to 404 page if slug is not found
   const slugValue = (Array.isArray(slug) ? slug[0] : slug || "") as string;
@@ -125,10 +128,10 @@ const Prompt = () => {
   };
 
   useEffect(() => {
-    if (id) {
-      templateView(id);
+    if (id && isValidUser) {
+      updateViewTemplate(id);
     }
-  }, [id]);
+  }, [id, isValidUser]);
 
   // After new generated execution is completed - refetch the executions list and clear the newExecutionData state
   // All prompts should be completed - isCompleted: true

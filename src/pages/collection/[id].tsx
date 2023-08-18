@@ -19,10 +19,8 @@ import materialDynamicColors from "material-dynamic-colors";
 import { useWindowSize } from "usehooks-ts";
 import { useRouter } from "next/router";
 import { Close, KeyboardArrowDown, Loop, MoreHoriz } from "@mui/icons-material";
-import { skipToken } from "@reduxjs/toolkit/dist/query";
 import { mix } from "polished";
-
-import { useTemplateView } from "@/core/api/templates";
+import { useViewTemplateMutation } from "@/core/api/templates";
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { PageLoading } from "@/components/PageLoading";
 import useToken from "@/hooks/useToken";
@@ -34,14 +32,16 @@ import { Executions } from "@/components/collections/Executions";
 import { Details } from "@/components/collections/Details";
 import { authClient } from "@/common/axios";
 import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
+import { isValidUserFn } from "@/core/store/userSlice";
+import { useSelector } from "react-redux";
 
 export const Collection = ({ fetchedTemplate, fetchedTemplateError }: any) => {
   const router = useRouter();
   const token = useToken();
-  const [templateView] = useTemplateView();
+  const [updateViewTemplate] = useViewTemplateMutation();
   const theme = useTheme();
   const { width: windowWidth } = useWindowSize();
-  const id = router.query.id;
+  const id = Number(router.query.id);
   const [NewExecutionData, setNewExecutionData] = useState<PromptLiveResponse | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [templateData, setTemplateData] = useState<Templates>();
@@ -50,6 +50,7 @@ export const Collection = ({ fetchedTemplate, fetchedTemplateError }: any) => {
   const [detailsOpened, setDetailsOpened] = useState(false);
   const [generatorOpened, setGeneratorOpened] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const isValidUser = useSelector(isValidUserFn);
 
   const {
     data: templateExecutions,
@@ -99,8 +100,10 @@ export const Collection = ({ fetchedTemplate, fetchedTemplateError }: any) => {
   }, [templateExecutions]);
 
   useEffect(() => {
-    templateView(id ? id : skipToken);
-  }, []);
+    if (id && isValidUser) {
+      updateViewTemplate(id);
+    }
+  }, [id, isValidUser]);
 
   useEffect(() => {
     if (templateData?.thumbnail) {
