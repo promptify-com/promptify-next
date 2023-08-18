@@ -1,8 +1,10 @@
 import React from "react";
-import { Box, MenuItem, MenuList, Stack, Tab, Tabs, Typography, alpha, useTheme } from "@mui/material";
+import { Box, Button, MenuItem, MenuList, Stack, Tab, Tabs, Typography, alpha, useTheme } from "@mui/material";
 import { TemplatesExecutions } from "@/core/api/dto/templates";
-import { FeedOutlined, PriorityHighOutlined, PushPin } from "@mui/icons-material";
+import { CloudQueue, Create, Delete, PriorityHighOutlined, PushPin } from "@mui/icons-material";
 import moment from "moment";
+import SavedSpark from "@/assets/icons/SavedSpark";
+import DraftSpark from "@/assets/icons/DraftSpark";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -20,7 +22,7 @@ const CustomTabPanel = (props: TabPanelProps) => {
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}
       sx={{
-        height: "50svh",
+        height: { xs: "35svh", md: "50svh" },
         overflow: "auto",
         overscrollBehavior: "contain",
       }}
@@ -40,10 +42,11 @@ const a11yProps = (index: number) => {
 
 interface Props {
   executions: TemplatesExecutions[];
+  selectedExecution: TemplatesExecutions | null;
   chooseExecution: (execution: TemplatesExecutions) => void;
 }
 
-export const ExecutionsTabs: React.FC<Props> = ({ executions, chooseExecution }) => {
+export const ExecutionsTabs: React.FC<Props> = ({ executions, chooseExecution, selectedExecution }) => {
   const { palette } = useTheme();
 
   const [tabsValue, setTabsValue] = React.useState(0);
@@ -70,7 +73,19 @@ export const ExecutionsTabs: React.FC<Props> = ({ executions, chooseExecution })
           alignItems={"center"}
           gap={2}
         >
-          <FeedOutlined style={{ fontSize: 32 }} />
+          {execution.is_favorite ? (
+            <SavedSpark
+              size="32"
+              color={palette.onSurface}
+              opacity={1}
+            />
+          ) : (
+            <DraftSpark
+              size="32"
+              color={palette.onSurface}
+              opacity={1}
+            />
+          )}
           <Stack>
             <Typography
               sx={{
@@ -124,7 +139,110 @@ export const ExecutionsTabs: React.FC<Props> = ({ executions, chooseExecution })
   );
 
   return (
-    <Box sx={{ width: "360px" }}>
+    <Box sx={{ width: { xs: "90svw", md: "401px" } }}>
+      <Box sx={{ p: "16px", borderBottom: `1px solid ${palette.surface[5]}` }}>
+        <Stack
+          flexDirection={"row"}
+          alignItems={"flex-start"}
+          gap={1}
+          sx={{ py: "8px" }}
+        >
+          {selectedExecution?.is_favorite ? (
+            <SavedSpark
+              size="32"
+              color={palette.onSurface}
+              opacity={1}
+            />
+          ) : (
+            <DraftSpark
+              size="32"
+              color={palette.onSurface}
+              opacity={1}
+            />
+          )}
+          <Stack>
+            <Typography
+              sx={{
+                fontWeight: 500,
+                fontSize: 18,
+                color: `${alpha(palette.onSurface, 0.8)}`,
+                whiteSpace: "normal",
+                wordBreak: "break-word",
+              }}
+            >
+              {selectedExecution?.title}
+            </Typography>
+            <Typography
+              sx={{
+                fontWeight: 400,
+                fontSize: 12,
+                color: "onSurface",
+                opacity: 0.5,
+              }}
+            >
+              {!selectedExecution?.is_favorite &&
+                `This Spark is temporal and will be removed in 
+                           ${moment
+                             .duration(
+                               moment(selectedExecution?.created_at)
+                                 .add(30, "days")
+                                 .diff(moment()),
+                             )
+                             .humanize()}`}
+            </Typography>
+          </Stack>
+        </Stack>
+        <Stack
+          flexDirection={"row"}
+          alignItems={"flex-start"}
+          gap={1}
+          sx={{ py: "8px" }}
+        >
+          <Button
+            variant="text"
+            startIcon={<Create />}
+            sx={{
+              border: `1px solid ${alpha(palette.primary.main, 0.15)}`,
+              bgcolor: "transparent",
+              color: "onSurface",
+              fontSize: 13,
+              fontWeight: 500,
+              p: "4px 12px",
+            }}
+          >
+            Rename
+          </Button>
+          <Button
+            variant="text"
+            startIcon={<CloudQueue />}
+            sx={{
+              border: `1px solid ${alpha(palette.primary.main, 0.15)}`,
+              bgcolor: "transparent",
+              color: "onSurface",
+              fontSize: 13,
+              fontWeight: 500,
+              p: "4px 12px",
+            }}
+          >
+            Save
+          </Button>
+          <Button
+            variant="text"
+            startIcon={<Delete />}
+            sx={{
+              border: `1px solid ${alpha(palette.primary.main, 0.15)}`,
+              bgcolor: "transparent",
+              color: "onSurface",
+              fontSize: 13,
+              fontWeight: 500,
+              p: "4px 12px",
+              ml: "auto",
+            }}
+          >
+            Delete
+          </Button>
+        </Stack>
+      </Box>
       <Tabs
         value={tabsValue}
         onChange={changeTab}
@@ -139,9 +257,9 @@ export const ExecutionsTabs: React.FC<Props> = ({ executions, chooseExecution })
           sx={{ ...tabStyle, color: `${alpha(palette.onSurface, 0.4)}` }}
         />
         <Tab
-          label="Pinned"
+          label="Saved"
           {...a11yProps(1)}
-          icon={<PushPin />}
+          icon={<CloudQueue />}
           iconPosition="start"
           sx={{ ...tabStyle, color: `${alpha(palette.onSurface, 0.4)}` }}
         />
@@ -166,7 +284,7 @@ export const ExecutionsTabs: React.FC<Props> = ({ executions, chooseExecution })
           >
             <PriorityHighOutlined style={{ fontSize: 24, opacity: 0.75 }} />
             <Typography sx={{ fontSize: 12, fontWeight: 400, color: "onSurface", opacity: 0.5 }}>
-              Unpinned Sparked are recorded for 30 days
+              Unsaved Sparks are recorded for 30 days
             </Typography>
           </Stack>
         </Stack>

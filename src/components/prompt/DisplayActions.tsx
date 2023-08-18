@@ -269,6 +269,7 @@ export const DisplayActions: React.FC<Props> = ({
                   <Box>
                     <ExecutionsTabs
                       executions={executions}
+                      selectedExecution={selectedExecution}
                       chooseExecution={exec => {
                         setSelectedExecution(exec);
                         setPresetsAnchor(null);
