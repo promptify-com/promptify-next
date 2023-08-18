@@ -31,7 +31,7 @@ const ExecutionForm: React.FC<Props> = ({
   activeExecution,
   onClose,
   onCancel = () => null,
-  onSaved = () => null
+  onSaved = () => null,
 }) => {
   const [executionTitle, setExecutionTitle] = useState<string>("");
 
@@ -53,7 +53,7 @@ const ExecutionForm: React.FC<Props> = ({
     if (executionTitle.length && executionId) {
       await updateExecutionTitle({
         id: executionId,
-        data: { title: executionTitle }
+        data: { title: executionTitle },
       });
       if (!isError && !isLoading) {
         onSaved();
@@ -63,10 +63,7 @@ const ExecutionForm: React.FC<Props> = ({
     }
   };
 
-  const dialogTitle =
-    type === "new"
-      ? "Enter a title for your new spark:"
-      : "Update the title of your spark";
+  const dialogTitle = type === "new" ? "Enter a title for your new spark:" : "Update the title of your spark";
 
   return (
     <Dialog
@@ -75,9 +72,7 @@ const ExecutionForm: React.FC<Props> = ({
         sx: { bgcolor: "surface.1" },
       }}
     >
-      <DialogTitle sx={{ fontSize: 16, fontWeight: 400 }}>
-        {dialogTitle}
-      </DialogTitle>
+      <DialogTitle sx={{ fontSize: 16, fontWeight: 400 }}>{dialogTitle}</DialogTitle>
       <DialogContent>
         <TextField
           sx={{
@@ -94,7 +89,7 @@ const ExecutionForm: React.FC<Props> = ({
             },
           }}
           placeholder={"Title..."}
-          onChange={(e) => setExecutionTitle(e.target.value)}
+          onChange={e => setExecutionTitle(e.target.value)}
         />
       </DialogContent>
       <DialogActions sx={{ p: "16px", gap: 2 }}>
@@ -113,11 +108,7 @@ const ExecutionForm: React.FC<Props> = ({
           disabled={!executionTitle.length}
           onClick={handleSave}
         >
-          {isLoading ? (
-            <CircularProgress size={20} />
-          ) : (
-            <Typography>Save</Typography>
-          )}
+          {isLoading ? <CircularProgress size={20} /> : <Typography>Save</Typography>}
         </Button>
       </DialogActions>
     </Dialog>

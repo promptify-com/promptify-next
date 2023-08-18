@@ -19,14 +19,8 @@ import { skipToken } from "@reduxjs/toolkit/dist/query";
 import materialDynamicColors from "material-dynamic-colors";
 import { mix } from "polished";
 import { useRouter } from "next/router";
-import {
-  useGetPromptTemplateBySlugQuery,
-  useTemplateView,
-} from "@/core/api/templates";
-import {
-  Templates,
-  TemplatesExecutions,
-} from "@/core/api/dto/templates";
+import { useGetPromptTemplateBySlugQuery, useTemplateView } from "@/core/api/templates";
+import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { PageLoading } from "@/components/PageLoading";
 import { GeneratorForm } from "@/components/prompt/GeneratorForm";
 import { Display } from "@/components/prompt/Display";
@@ -75,13 +69,10 @@ const a11yProps = (index: number) => {
 };
 
 const Prompt = () => {
-  const [selectedExecution, setSelectedExecution] =
-    useState<TemplatesExecutions | null>(null);
-  const [newExecutionData, setNewExecutionData] =
-    useState<PromptLiveResponse | null>(null);
+  const [selectedExecution, setSelectedExecution] = useState<TemplatesExecutions | null>(null);
+  const [newExecutionData, setNewExecutionData] = useState<PromptLiveResponse | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [currentGeneratedPrompt, setCurrentGeneratedPrompt] =
-    useState<Prompts | null>(null);
+  const [currentGeneratedPrompt, setCurrentGeneratedPrompt] = useState<Prompts | null>(null);
   const [executionFormOpen, setExecutionFormOpen] = useState(false);
   const [templateView] = useTemplateView();
   const [generatorOpened, setGeneratorOpened] = useState(true);
@@ -98,7 +89,7 @@ const Prompt = () => {
   const slug = router.query?.slug;
   // TODO: redirect to 404 page if slug is not found
   const slugValue = (Array.isArray(slug) ? slug[0] : slug || "") as string;
-  const { 
+  const {
     data: fetchedTemplate,
     error: fetchedTemplateError,
     isLoading: isLoadingTemplate,
@@ -121,9 +112,7 @@ const Prompt = () => {
   } = useGetExecutionsByTemplateQuery(token ? (id ? id : skipToken) : skipToken);
 
   useEffect(() => {
-    const sorted = [...(templateExecutions || [])].sort((a, b) => 
-      moment(b.created_at).diff(moment(a.created_at))
-    );
+    const sorted = [...(templateExecutions || [])].sort((a, b) => moment(b.created_at).diff(moment(a.created_at)));
     setSortedExecutions(sorted);
   }, [templateExecutions]);
 
@@ -145,9 +134,7 @@ const Prompt = () => {
   // All prompts should be completed - isCompleted: true
   useEffect(() => {
     if (!isGenerating && newExecutionData?.data?.length) {
-      const promptNotCompleted = newExecutionData.data.find(
-        (execData) => !execData.isCompleted
-      );
+      const promptNotCompleted = newExecutionData.data.find(execData => !execData.isCompleted);
       if (!promptNotCompleted) {
         setExecutionFormOpen(true);
       }
@@ -161,12 +148,8 @@ const Prompt = () => {
   // Keep tracking the current generated prompt
   useEffect(() => {
     if (templateData && newExecutionData?.data?.length) {
-      const loadingPrompt = newExecutionData.data.find(
-        (prompt) => prompt.isLoading
-      );
-      const prompt = templateData.prompts.find(
-        (prompt) => prompt.id === loadingPrompt?.prompt
-      );
+      const loadingPrompt = newExecutionData.data.find(prompt => prompt.isLoading);
+      const prompt = templateData.prompts.find(prompt => prompt.id === loadingPrompt?.prompt);
       if (prompt) setCurrentGeneratedPrompt(prompt);
     } else {
       setCurrentGeneratedPrompt(null);
@@ -203,21 +186,9 @@ const Prompt = () => {
           },
           surface: {
             1: imgPalette.light.surface,
-            2: mix(
-              0.3,
-              imgPalette.light.surfaceVariant,
-              imgPalette.light.surface
-            ),
-            3: mix(
-              0.6,
-              imgPalette.light.surfaceVariant,
-              imgPalette.light.surface
-            ),
-            4: mix(
-              0.8,
-              imgPalette.light.surfaceVariant,
-              imgPalette.light.surface
-            ),
+            2: mix(0.3, imgPalette.light.surfaceVariant, imgPalette.light.surface),
+            3: mix(0.6, imgPalette.light.surfaceVariant, imgPalette.light.surface),
+            4: mix(0.8, imgPalette.light.surfaceVariant, imgPalette.light.surface),
             5: imgPalette.light.surfaceVariant,
           },
         };
@@ -230,8 +201,7 @@ const Prompt = () => {
 
   const dynamicTheme = createTheme({ ...theme, palette });
 
-  if (fetchedTemplateError || templateExecutionsError)
-    return <div>Something went wrong...</div>;
+  if (fetchedTemplateError || templateExecutionsError) return <div>Something went wrong...</div>;
 
   return (
     <>
@@ -284,9 +254,7 @@ const Prompt = () => {
                   }}
                 >
                   <Stack height={"100%"}>
-                    <DetailsCard
-                      templateData={templateData}
-                    />
+                    <DetailsCard templateData={templateData} />
                     <Stack flex={1}>
                       <Tabs
                         value={tabsValue}
@@ -313,7 +281,10 @@ const Prompt = () => {
                         />
                       </Tabs>
                       <Box flex={1}>
-                        <CustomTabPanel value={tabsValue} index={0}>
+                        <CustomTabPanel
+                          value={tabsValue}
+                          index={0}
+                        >
                           {generatorOpened && (
                             <GeneratorForm
                               templateData={templateData}
@@ -331,7 +302,10 @@ const Prompt = () => {
                             />
                           )}
                         </CustomTabPanel>
-                        <CustomTabPanel value={tabsValue} index={1}>
+                        <CustomTabPanel
+                          value={tabsValue}
+                          index={1}
+                        >
                           <Details
                             templateData={templateData}
                             updateTemplateData={setTemplateData}
@@ -345,11 +319,7 @@ const Prompt = () => {
 
               {windowWidth < 960 && (
                 <>
-                  {mobileTab !== 0 && (
-                    <DetailsCardMini
-                      templateData={templateData}
-                    />
-                  )}
+                  {mobileTab !== 0 && <DetailsCardMini templateData={templateData} />}
 
                   <Grid
                     item
@@ -361,12 +331,10 @@ const Prompt = () => {
                       overflow: "auto",
                       bgcolor: "surface.1",
                       position: "relative",
-                      pb: '75px' // Bottom tab bar height
+                      pb: "75px", // Bottom tab bar height
                     }}
                   >
-                    <DetailsCard
-                      templateData={templateData}
-                    />
+                    <DetailsCard templateData={templateData} />
                     <Details
                       templateData={templateData}
                       updateTemplateData={setTemplateData}
@@ -385,7 +353,7 @@ const Prompt = () => {
                       height: "100%",
                       overflow: "auto",
                       bgcolor: "surface.1",
-                      pb: 'calc(74px + 90px)' // 74px Bottom tab bar height + 90px details card mini on the header
+                      pb: "calc(74px + 90px)", // 74px Bottom tab bar height + 90px details card mini on the header
                     }}
                   >
                     <GeneratorForm
@@ -415,12 +383,12 @@ const Prompt = () => {
                   },
                   height: {
                     xs: "calc(100% - (74px + 90px))", // 74px Bottom tab bar height + 90px details card mini on the header
-                    md: "100%"
+                    md: "100%",
                   },
                   overflow: "auto",
                   bgcolor: "surface.1",
                   borderLeft: "1px solid #ECECF4",
-                  position: "relative"
+                  position: "relative",
                 }}
               >
                 <Display
@@ -452,29 +420,28 @@ const Prompt = () => {
                         opacity: 0.3,
                       }}
                     >
-                      Prompt #{currentGeneratedPrompt.order}:{" "}
-                      {currentGeneratedPrompt.title}
+                      Prompt #{currentGeneratedPrompt.order}: {currentGeneratedPrompt.title}
                     </Typography>
                   </Box>
                 )}
               </Grid>
 
               <BottomTabs
-                onChange={(tab) => setMobileTab(tab)}
+                onChange={tab => setMobileTab(tab)}
                 setActiveTab={setActiveTab}
                 activeTab={activeTab}
               />
             </Grid>
           )}
-          
+
           <ExecutionForm
             type="new"
             isOpen={executionFormOpen}
             executionId={newExecutionData?.id}
             onClose={() => {
-              setCurrentGeneratedPrompt(null)
-              setNewExecutionData(null)
-              setExecutionFormOpen(false)
+              setCurrentGeneratedPrompt(null);
+              setNewExecutionData(null);
+              setExecutionFormOpen(false);
             }}
             onCancel={() => refetchTemplateExecutions()}
           />
@@ -497,16 +464,13 @@ export async function getServerSideProps({ params }: any) {
   const { slug } = params;
 
   try {
-    const templatesResponse = await authClient.get(
-      `/api/meta/templates/by-slug/${slug}/`
-    );
+    const templatesResponse = await authClient.get(`/api/meta/templates/by-slug/${slug}/`);
     const fetchedTemplate = templatesResponse.data; // Extract the necessary data from the response
 
     return {
       props: {
         title: fetchedTemplate.meta_title || fetchedTemplate.title,
-        description:
-          fetchedTemplate.meta_description || fetchedTemplate.description,
+        description: fetchedTemplate.meta_description || fetchedTemplate.description,
         meta_keywords: fetchedTemplate.meta_keywords,
         image: fetchedTemplate.thumbnail,
       },

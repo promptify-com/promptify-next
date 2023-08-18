@@ -12,11 +12,7 @@ interface Props {
   search: string;
 }
 
-export const ExecutionCard: React.FC<Props> = ({ 
-  execution, 
-  templateData,
-  search,
-}) => {
+export const ExecutionCard: React.FC<Props> = ({ execution, templateData, search }) => {
   const promptsOrderMap: { [key: string]: number } = {};
   const promptsExecutionOrderMap: { [key: string]: number } = {};
 
@@ -28,35 +24,26 @@ export const ExecutionCard: React.FC<Props> = ({
     });
   }, [execution]);
 
-  templateData.prompts.forEach((prompt) => {
+  templateData.prompts.forEach(prompt => {
     promptsOrderMap[prompt.id] = prompt.order;
     promptsExecutionOrderMap[prompt.id] = prompt.execution_priority;
   });
 
   const sortedExecutions = [...execution.prompt_executions].sort((a, b) => {
     if (promptsOrderMap[a.prompt] === promptsOrderMap[b.prompt]) {
-      return (
-        promptsExecutionOrderMap[a.prompt] - promptsExecutionOrderMap[b.prompt]
-      );
+      return promptsExecutionOrderMap[a.prompt] - promptsExecutionOrderMap[b.prompt];
     }
     return promptsOrderMap[a.prompt] - promptsOrderMap[b.prompt];
   });
 
   const isImageOutput = (output: string): boolean => {
-    return (
-      output.endsWith(".png") ||
-      output.endsWith(".jpg") ||
-      output.endsWith(".jpeg") ||
-      output.endsWith(".webp")
-    );
+    return output.endsWith(".png") || output.endsWith(".jpg") || output.endsWith(".jpeg") || output.endsWith(".webp");
   };
 
   const copyFormattedOutput = async () => {
     let copyHTML = "";
     for (const exec of execution.prompt_executions) {
-      const prompt = templateData.prompts.find(
-        (prompt) => prompt.id === exec.prompt
-      );
+      const prompt = templateData.prompts.find(prompt => prompt.id === exec.prompt);
       if (prompt?.show_output) {
         copyHTML += "<h2>" + prompt.title + "</h2>";
         if (isImageOutput(exec.output)) {
@@ -79,22 +66,25 @@ export const ExecutionCard: React.FC<Props> = ({
     }
   };
 
-  const executionError = (error: string|undefined) => {
+  const executionError = (error: string | undefined) => {
     return (
-      <Tooltip title={error} placement="right" arrow
-        componentsProps={{ 
-          tooltip: { 
-            sx: { bgcolor: "error.main", color: "onError", fontSize: 10, fontWeight: 500 } 
+      <Tooltip
+        title={error}
+        placement="right"
+        arrow
+        componentsProps={{
+          tooltip: {
+            sx: { bgcolor: "error.main", color: "onError", fontSize: 10, fontWeight: 500 },
           },
-          arrow: { 
-            sx: { color: "error.main" } 
-          }
+          arrow: {
+            sx: { color: "error.main" },
+          },
         }}
       >
         <Error sx={{ color: "error.main", width: 20, height: 20 }} />
       </Tooltip>
-    )
-  }
+    );
+  };
 
   return (
     <Stack
@@ -105,25 +95,22 @@ export const ExecutionCard: React.FC<Props> = ({
       }}
     >
       <div ref={scrollRef}></div>
-      <Typography sx={{ fontSize: 48, fontWeight: 400, color: "onSurface", py: "24px" }}>
-        {execution.title}
-      </Typography>
+      <Typography sx={{ fontSize: 48, fontWeight: 400, color: "onSurface", py: "24px" }}>{execution.title}</Typography>
       {sortedExecutions?.map((exec, index) => {
         const prevItem = index > 0 && sortedExecutions[index - 1];
         const isPrevItemIsImage = prevItem && isImageOutput(prevItem?.output);
         const nextItem = index < sortedExecutions.length - 1 && sortedExecutions[index + 1];
         const isNextItemIsText = nextItem && !isImageOutput(nextItem?.output);
-        const prompt = templateData.prompts.find(
-          (prompt) => prompt.id === exec.prompt
-        );
+        const prompt = templateData.prompts.find(prompt => prompt.id === exec.prompt);
 
         if (prompt?.show_output) {
-
           return (
-            <Stack key={exec.id} gap={1} sx={{ py: "24px" }}>
-              <Subtitle
-                sx={{ fontSize: 24, fontWeight: 400, color: "onSurface" }}
-              >
+            <Stack
+              key={exec.id}
+              gap={1}
+              sx={{ py: "24px" }}
+            >
+              <Subtitle sx={{ fontSize: 24, fontWeight: 400, color: "onSurface" }}>
                 {prompt.title}
                 {exec.errors && executionError(exec.errors)}
               </Subtitle>
@@ -135,11 +122,8 @@ export const ExecutionCard: React.FC<Props> = ({
                       component={"img"}
                       alt={"book cover"}
                       src={prevItem.output}
-                      onError={(
-                        e: React.SyntheticEvent<HTMLImageElement, Event>
-                      ) => {
-                        (e.target as HTMLImageElement).src =
-                          "http://placehold.it/165x215";
+                      onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                        (e.target as HTMLImageElement).src = "http://placehold.it/165x215";
                       }}
                       sx={{
                         borderRadius: "8px",
@@ -162,7 +146,7 @@ export const ExecutionCard: React.FC<Props> = ({
                       ".highlight": {
                         backgroundColor: "yellow",
                         color: "black",
-                      }
+                      },
                     }}
                     dangerouslySetInnerHTML={{
                       __html: highlightSearch(getMarkdownFromString(exec.output), search),
@@ -176,11 +160,8 @@ export const ExecutionCard: React.FC<Props> = ({
                   component={"img"}
                   alt={"book cover"}
                   src={exec.output}
-                  onError={(
-                    e: React.SyntheticEvent<HTMLImageElement, Event>
-                  ) => {
-                    (e.target as HTMLImageElement).src =
-                      "http://placehold.it/165x215";
+                  onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                    (e.target as HTMLImageElement).src = "http://placehold.it/165x215";
                   }}
                   sx={{
                     borderRadius: "8px",

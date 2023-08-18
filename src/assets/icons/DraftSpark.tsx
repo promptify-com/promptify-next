@@ -1,11 +1,16 @@
 import React from "react";
 
-const DraftSpark = () => {
+interface DraftedSparkProps {
+  width?: number;
+  height?: number;
+}
+
+const DraftedSpark: React.FC<DraftedSparkProps> = ({ width = 16, height = 16 }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="16"
+      width={width}
+      height={height}
       viewBox="0 0 16 16"
       fill="none"
     >
@@ -19,4 +24,4 @@ const DraftSpark = () => {
   );
 };
 
-export default DraftSpark;
+export default DraftedSpark;

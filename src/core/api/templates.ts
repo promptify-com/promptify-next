@@ -1,15 +1,12 @@
 import useDeferredAction from "@/hooks/useDeferredAction";
 import { baseApi } from "./api";
 import { PromptParams } from "./dto/prompts";
-import {
-  FilterParams,
-  Templates,
-} from "./dto/templates";
+import { FilterParams, Templates } from "./dto/templates";
 import { authClient } from "@/common/axios";
 import { IEditTemplate } from "@/common/types/editTemplate";
 
 export const templatesApi = baseApi.injectEndpoints({
-  endpoints: (build) => {
+  endpoints: build => {
     return {
       getTemplatesByOrdering: build.query<Templates[], string>({
         query: (ordering: string = "-runs") => ({
@@ -36,9 +33,7 @@ export const templatesApi = baseApi.injectEndpoints({
             "/api/meta/templates/?" +
             (params.categoryId ? `main_category_id=${params.categoryId}` : "") +
             (params.tag ? `&tag=${params.tag}` : "") +
-            (params.subcategoryId
-              ? `&sub_category_id=${params.subcategoryId}`
-              : "") +
+            (params.subcategoryId ? `&sub_category_id=${params.subcategoryId}` : "") +
             (params.engineId ? `&engine=${params.engineId}` : "") +
             (params.title ? `&title=${params.title}` : "") +
             (params.filter ? `&ordering=${params.filter}` : ""),
@@ -106,10 +101,7 @@ export const templatesApi = baseApi.injectEndpoints({
         }),
         invalidatesTags: ["Templates", "MyTemplates"],
       }),
-      updateTemplate: build.mutation<
-        Templates,
-        { id: number; data: IEditTemplate }
-      >({
+      updateTemplate: build.mutation<Templates, { id: number; data: IEditTemplate }>({
         query: ({ data, id }: { data: IEditTemplate; id: number }) => ({
           url: `/api/meta/templates/${id}/`,
           method: "put",
