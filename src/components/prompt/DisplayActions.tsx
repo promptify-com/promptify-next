@@ -28,12 +28,13 @@ import {
 import { SubjectIcon } from "@/assets/icons/SubjectIcon";
 import { TemplatesExecutions } from "@/core/api/dto/templates";
 import { ExecutionsTabs } from "./ExecutionsTabs";
+import SavedSpark from "@/assets/icons/SavedSpark";
+import DraftSpark from "@/assets/icons/DraftSpark";
 
 interface Props {
   executions: TemplatesExecutions[];
   selectedExecution: TemplatesExecutions | null;
   setSelectedExecution: (exec: TemplatesExecutions) => void;
-  pinExecution: () => void;
   showSearchBar?: boolean;
   onSearch?: (text: string) => void;
 }
@@ -42,7 +43,6 @@ export const DisplayActions: React.FC<Props> = ({
   executions,
   selectedExecution,
   setSelectedExecution,
-  pinExecution,
   showSearchBar,
   onSearch = () => {},
 }) => {
@@ -123,8 +123,9 @@ export const DisplayActions: React.FC<Props> = ({
         fontWeight: 500,
         justifyContent: "space-between",
         ":hover": { bgcolor: "action.hover" },
+        ".MuiButton-startIcon": { m: 0 },
       }}
-      startIcon={<FeedOutlined />}
+      startIcon={selectedExecution?.is_favorite ? <SavedSpark /> : <DraftSpark />}
       endIcon={Boolean(presetsAnchor) ? <ArrowDropUp /> : <ArrowDropDown />}
       variant={"text"}
       onClick={e => setPresetsAnchor(e.currentTarget)}
@@ -133,15 +134,6 @@ export const DisplayActions: React.FC<Props> = ({
         {selectedExecution?.title || "Choose Spark..."}
       </Box>
     </Button>
-  );
-
-  const PinButton = (
-    <IconButton
-      sx={{ ...iconButtonStyle, opacity: 0.5 }}
-      onClick={pinExecution}
-    >
-      {selectedExecution?.is_favorite ? <PushPin /> : <PushPinOutlined />}
-    </IconButton>
   );
 
   return (
@@ -171,8 +163,6 @@ export const DisplayActions: React.FC<Props> = ({
           alignItems={"center"}
           gap={1}
         >
-          {PinButton}
-
           {ExecutionsSelect}
 
           <Stack
@@ -218,8 +208,6 @@ export const DisplayActions: React.FC<Props> = ({
             p={"8px 16px"}
           >
             {ExecutionsSelect}
-
-            {PinButton}
           </Stack>
           <Stack
             display={{ md: "none" }}

@@ -17,7 +17,7 @@ import { CloudQueue, Create, Delete, Done, PriorityHighOutlined } from "@mui/ico
 import moment from "moment";
 import SavedSpark from "@/assets/icons/SavedSpark";
 import DraftSpark from "@/assets/icons/DraftSpark";
-import { usePutExecutionTitleMutation } from "@/core/api/executions";
+import { usePostExecutionFavoriteMutation, usePutExecutionTitleMutation } from "@/core/api/executions";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -66,13 +66,14 @@ export const ExecutionsTabs: React.FC<Props> = ({ executions, chooseExecution, s
   const [renameAllow, setRenameAllow] = useState(false);
 
   const [updateExecutionTitle, { isError, isLoading }] = usePutExecutionTitleMutation();
+  const [postExecutionFavorite] = usePostExecutionFavoriteMutation();
 
   const [tabsValue, setTabsValue] = useState(0);
   const changeTab = (e: React.SyntheticEvent, newValue: number) => {
     setTabsValue(newValue);
   };
 
-  const handleSave = async () => {
+  const renameSave = async () => {
     if (executionTitle?.length && selectedExecution?.id) {
       await updateExecutionTitle({
         id: selectedExecution?.id,
@@ -81,6 +82,16 @@ export const ExecutionsTabs: React.FC<Props> = ({ executions, chooseExecution, s
       if (!isError && !isLoading) {
         setRenameAllow(false);
       }
+    }
+  };
+
+  const saveExecution = async () => {
+    if (!!!selectedExecution || selectedExecution?.is_favorite) return;
+
+    try {
+      await postExecutionFavorite({ id: selectedExecution.id });
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -256,6 +267,7 @@ export const ExecutionsTabs: React.FC<Props> = ({ executions, chooseExecution, s
                 p: "4px 12px",
               }}
               disabled={selectedExecution?.is_favorite}
+              onClick={saveExecution}
             >
               {selectedExecution?.is_favorite ? "Saved" : "Save"}
             </Button>
@@ -307,7 +319,7 @@ export const ExecutionsTabs: React.FC<Props> = ({ executions, chooseExecution, s
                   ":disabled": { bgcolor: "transparent", borderColor: alpha(palette.primary.main, 0.15) },
                 }}
                 disabled={!!!executionTitle?.length || isLoading}
-                onClick={handleSave}
+                onClick={renameSave}
               >
                 Ok
               </Button>
