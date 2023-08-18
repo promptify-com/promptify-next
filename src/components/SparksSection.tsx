@@ -19,13 +19,13 @@ const SparksSection: FC<SparksSectionProps> = ({ templates }) => {
     <Grid
       display={"flex"}
       flexDirection={"column"}
+      borderRadius={"8px"}
+      overflow={"hidden"}
       gap={{ xs: "16px", md: "0px" }}
     >
       {templates.map(template => (
         <Box
           key={template.id}
-          borderRadius={"8px"}
-          overflow={"hidden"}
           display={"flex"}
           flexDirection={"column"}
           gap={{ xs: "16px", md: "0px" }}

@@ -4,7 +4,6 @@ import { FetchLoading } from "@/components/FetchLoading";
 import { Layout } from "@/layout";
 import Protected from "@/components/Protected";
 import SparksSection from "@/components/SparksSection";
-import { TemplateExecutionsDisplay } from "@/core/api/dto/templates";
 import { useGetTemplatesExecutionsByMeQuery } from "@/core/api/executions";
 
 const Sparks = () => {
@@ -38,7 +37,7 @@ const Sparks = () => {
                   My Sparks
                 </Typography>
                 {executedTemplates?.length ? (
-                  <SparksSection templates={executedTemplates as TemplateExecutionsDisplay[]} />
+                  <SparksSection templates={executedTemplates} />
                 ) : (
                   <Typography
                     sx={{
