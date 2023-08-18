@@ -1,90 +1,42 @@
-import { FC, useState, useEffect } from "react";
-import { red } from "@mui/material/colors";
+import { FC } from "react";
 import { Execution, TemplateExecutionsDisplay } from "@/core/api/dto/templates";
-import { ArrowDropDown, Check, CloudQueueRounded, DeleteRounded, Edit } from "@mui/icons-material";
-import {
-  CardMedia,
-  ClickAwayListener,
-  Grid,
-  Grow,
-  IconButton,
-  Paper,
-  Popper,
-  TextField,
-  Tooltip,
-  Typography,
-} from "@mui/material";
+import { ArrowDropDown, CloudQueueRounded, DeleteRounded, Edit } from "@mui/icons-material";
+import { CardMedia, Grid, IconButton, Tooltip, Typography } from "@mui/material";
 
 import useTimestampConverter from "@/hooks/useTimestampConverter";
 import useTruncate from "@/hooks/useTruncate";
 import BaseButton from "./base/BaseButton";
 import DraftSpark from "@/assets/icons/DraftSpark";
 import SavedSpark from "@/assets/icons/SavedSpark";
-import {
-  useDeleteExecutionMutation,
-  useExecutionFavoriteMutation,
-  usePutExecutionTitleMutation,
-} from "@/core/api/executions";
+import { useExecutionFavoriteMutation } from "@/core/api/executions";
 import { useRouter } from "next/router";
+import { useDispatch } from "react-redux";
+import { handleOpenPopup, handlePopupType, setActiveExecution } from "@/core/store/executionsSlice";
 
 interface SparksLayoutDesktopProps {
   execution: Execution;
   template: TemplateExecutionsDisplay;
 }
 
-type PopperType = "rename" | "delete";
-
 export const SparksLayoutDesktop: FC<SparksLayoutDesktopProps> = ({ execution, template }) => {
   const router = useRouter();
-  const [updateExecution, { isError }] = usePutExecutionTitleMutation();
-  const [deleteExecution, { isError: isDeleteExecutionError }] = useDeleteExecutionMutation();
-  const [favoriteExecution, { isError: isFavoriteExecutionError }] = useExecutionFavoriteMutation();
+  const dispatch = useDispatch();
+
+  const [favoriteExecution] = useExecutionFavoriteMutation();
 
   const { truncate } = useTruncate();
   const { convertedTimestamp } = useTimestampConverter();
-  const [anchorElement, setAnchorElement] = useState<HTMLElement | null>(null);
-  const [open, setOpen] = useState<boolean>(false);
-  const [popperType, setPopperType] = useState<PopperType>("rename");
-  const [executionTitle, setExecutionTitle] = useState("");
 
-  useEffect(() => {
-    if (execution && execution.title !== "") {
-      setExecutionTitle(execution.title);
-    } else setExecutionTitle("");
-  }, []);
-
-  const handleOpenEditDropdown = (event: React.MouseEvent<HTMLElement>) => {
-    setOpen(true);
-    setPopperType("rename");
-    setAnchorElement(event.currentTarget);
+  const handleOpenEditDropdown = () => {
+    dispatch(handleOpenPopup(true));
+    dispatch(setActiveExecution(execution));
+    dispatch(handlePopupType("update"));
   };
 
-  const handleOpenDeleteDropdown = (event: React.MouseEvent<HTMLElement>) => {
-    setOpen(true);
-    setPopperType("delete");
-    setAnchorElement(event.currentTarget);
-  };
-
-  function onCloseDropdown() {
-    setOpen(false);
-    setAnchorElement(null);
-  }
-
-  const handleUpdateExecution = () => {
-    let data = {
-      title: executionTitle,
-    };
-    updateExecution({ id: execution.id, data }).unwrap();
-    if (!isDeleteExecutionError) {
-      onCloseDropdown();
-    }
-  };
-
-  const handleDeleteExecution = () => {
-    deleteExecution(execution.id).unwrap();
-    if (!isError) {
-      onCloseDropdown();
-    }
+  const handleOpenDeleteDropdown = () => {
+    dispatch(handleOpenPopup(true));
+    dispatch(setActiveExecution(execution));
+    dispatch(handlePopupType("delete"));
   };
 
   const handleSaveExecution = () => {
@@ -259,148 +211,6 @@ export const SparksLayoutDesktop: FC<SparksLayoutDesktopProps> = ({ execution, t
           </IconButton>
         </Tooltip>
       </Grid>
-
-      {/*THIS NEEDS TO BE REFACTORED  */}
-
-      <Popper
-        open={open}
-        anchorEl={anchorElement}
-        placement="bottom-end"
-        transition
-        disablePortal
-        sx={{
-          zIndex: 10000,
-          position: "absolute",
-        }}
-      >
-        {({ TransitionProps }) => (
-          <Grow
-            {...TransitionProps}
-            style={{
-              transformOrigin: "left top",
-            }}
-          >
-            <Paper
-              sx={{
-                border: "1px solid #E3E3E3",
-                borderRadius: "10px",
-                width: "330px",
-                marginTop: "5px",
-                bgcolor: "surface.1",
-                overflow: "hidden",
-              }}
-              elevation={0}
-            >
-              {popperType === "rename" ? (
-                <Grid
-                  padding={"16px"}
-                  display={"flex"}
-                  flexDirection={"column"}
-                  gap={"8px"}
-                >
-                  <TextField
-                    defaultValue={execution?.title}
-                    id="standard-basic"
-                    label="Rename Spark"
-                    variant="standard"
-                    fullWidth
-                    onChange={e => setExecutionTitle(e.target.value)}
-                    color="secondary"
-                  />
-                  <Grid
-                    display={"flex"}
-                    gap={"8px"}
-                    paddingY={"8px"}
-                    alignItems={"center"}
-                  >
-                    <BaseButton
-                      onClick={() => handleUpdateExecution()}
-                      color="custom"
-                      variant="contained"
-                      size="small"
-                      sx={{
-                        height: "30px",
-                        px: 0,
-                        bgcolor: "#375CA9",
-                        border: "none",
-                        "&:hover": {
-                          bgcolor: "surface.2",
-                        },
-                      }}
-                    >
-                      <Check sx={{ fontSize: "16px", mr: "2px" }} />
-                      Ok
-                    </BaseButton>
-                    <BaseButton
-                      onClick={() => onCloseDropdown()}
-                      color="primary"
-                      variant="outlined"
-                      size="small"
-                      sx={{
-                        height: "30px",
-                        px: 0,
-                      }}
-                    >
-                      Cancel
-                    </BaseButton>
-                  </Grid>
-                </Grid>
-              ) : (
-                <Grid
-                  padding={"16px"}
-                  display={"flex"}
-                  flexDirection={"column"}
-                  gap={"8px"}
-                >
-                  <Typography
-                    fontSize={"18px"}
-                    fontWeight={500}
-                    lineHeight={"25.74px"}
-                  >
-                    You really want to delete this spark permanently?
-                  </Typography>
-                  <Grid
-                    display={"flex"}
-                    gap={"8px"}
-                    paddingY={"8px"}
-                    alignItems={"center"}
-                  >
-                    <BaseButton
-                      onClick={() => handleDeleteExecution()}
-                      color="custom"
-                      variant="contained"
-                      size="small"
-                      sx={{
-                        bgcolor: red[400],
-                        height: "30px",
-                        border: "none",
-                        "&:hover": {
-                          bgcolor: "surface.2",
-                        },
-                      }}
-                    >
-                      <DeleteRounded sx={{ fontSize: "16px", mr: "2px" }} />
-                      Yes, Delete
-                    </BaseButton>
-                    <BaseButton
-                      onClick={() => onCloseDropdown()}
-                      color="primary"
-                      variant="outlined"
-                      size="small"
-                      sx={{
-                        height: "30px",
-                        px: 0,
-                      }}
-                    >
-                      Cancel
-                    </BaseButton>
-                  </Grid>
-                </Grid>
-              )}
-            </Paper>
-          </Grow>
-        )}
-      </Popper>
     </Grid>
   );
 };

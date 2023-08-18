@@ -1,18 +1,24 @@
-import { FC, useState } from "react";
-import { Box, ClickAwayListener, Grid, Grow, Paper, Popper, TextField } from "@mui/material";
-import { Execution, TemplateExecutionsDisplay } from "@/core/api/dto/templates";
+import { FC } from "react";
+import { Box, Grid } from "@mui/material";
+import { TemplateExecutionsDisplay } from "@/core/api/dto/templates";
 
 import { SparksLayoutDesktop } from "./SparksLayoutDesktop";
 import { SparksLayoutMobile } from "./SparksLayoutMobile";
 import { useDispatch, useSelector } from "react-redux";
-import { setActiveExecution, setAnchorElement, setOpenRenameDropdow } from "@/core/store/executionsSlice";
 import { RootState } from "@/core/store";
+import { SparkPopup } from "./dialog/SparkPopup";
+import { handleOpenPopup } from "@/core/store/executionsSlice";
 
 interface SparksContainerProps {
   templates: TemplateExecutionsDisplay[];
 }
 
 const SparksContainer: FC<SparksContainerProps> = ({ templates }) => {
+  const dispatch = useDispatch();
+  const openPopup = useSelector((state: RootState) => state.executionsSlice.openPopup);
+  const activeExecution = useSelector((state: RootState) => state.executionsSlice.activeExecution);
+  const popupType = useSelector((state: RootState) => state.executionsSlice.popupType);
+
   return (
     <Grid
       display={"flex"}
@@ -44,8 +50,11 @@ const SparksContainer: FC<SparksContainerProps> = ({ templates }) => {
           ))}
         </Box>
       ))}
-
-      {/* <DropdownDeleteExecution /> */}
+      <SparkPopup
+        open={openPopup}
+        type={popupType}
+        activeExecution={activeExecution}
+      />
     </Grid>
   );
 };

@@ -1,14 +1,14 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { Execution } from "../api/dto/templates";
+import { Execution, ExecutionTemplatePopupType } from "../api/dto/templates";
 
 interface State {
   filters: {
     template: null | string;
     keyword: string;
   };
-  openRenameDropdown: boolean;
-  anchorElement: string | null;
-  openDeleteDropdown: boolean;
+  openPopup: boolean;
+  popupType: ExecutionTemplatePopupType;
+  sparkTitle: string;
   activeExecution: Execution | null;
 }
 
@@ -17,9 +17,9 @@ const initialState: State = {
     template: null,
     keyword: "",
   },
-  openRenameDropdown: false,
-  anchorElement: null,
-  openDeleteDropdown: false,
+  openPopup: false,
+  popupType: "update",
+  sparkTitle: "",
   activeExecution: null,
 };
 
@@ -27,11 +27,14 @@ const executionsSlice = createSlice({
   name: "executions",
   initialState,
   reducers: {
-    setOpenRenameDropdow: (state, action: PayloadAction<boolean>) => {
-      state.openRenameDropdown = action.payload;
+    handleOpenPopup: (state, action: PayloadAction<boolean>) => {
+      state.openPopup = action.payload;
     },
-    setAnchorElement: (state, action: PayloadAction<string | null>) => {
-      state.anchorElement = action.payload;
+    handlePopupType: (state, action: PayloadAction<ExecutionTemplatePopupType>) => {
+      state.popupType = action.payload;
+    },
+    updateSparkTitle: (state, action: PayloadAction<string>) => {
+      state.sparkTitle = action.payload;
     },
     setActiveExecution: (state, action: PayloadAction<Execution | null>) => {
       state.activeExecution = action.payload;
@@ -39,6 +42,6 @@ const executionsSlice = createSlice({
   },
 });
 
-export const { setOpenRenameDropdow, setAnchorElement, setActiveExecution } = executionsSlice.actions;
+export const { handleOpenPopup, handlePopupType, updateSparkTitle, setActiveExecution } = executionsSlice.actions;
 
 export default executionsSlice.reducer;
