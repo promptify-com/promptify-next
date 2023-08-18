@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import useLogout from "@/hooks/useLogout";
 import { Menu, MenuType } from "@/common/constants";
-import { useSelector } from 'react-redux';
+import { useSelector } from "react-redux";
 import { RootState } from "@/core/store";
 
 interface ProfileDropDownProps {
@@ -96,7 +96,10 @@ export const ProfileDropDown: React.FC<ProfileDropDownProps> = ({
                     gap: "8px",
                   }}
                 >
-                  <Box display={"flex"} justifyContent={"center"}>
+                  <Box
+                    display={"flex"}
+                    justifyContent={"center"}
+                  >
                     <Avatar
                       src={currentUser?.avatar}
                       alt={currentUser?.first_name}
@@ -146,8 +149,11 @@ export const ProfileDropDown: React.FC<ProfileDropDownProps> = ({
                     </Typography>
                   </Box>
                 </Grid>
-                <MenuList autoFocusItem={false} sx={{ width: "100%" }}>
-                  {Menu.map((el) => (
+                <MenuList
+                  autoFocusItem={false}
+                  sx={{ width: "100%" }}
+                >
+                  {Menu.map(el => (
                     <MenuItem
                       key={el.name}
                       onClick={() => handleHeaderMenu(el)}

@@ -1,4 +1,4 @@
-import { createTheme } from '@mui/material';
+import { createTheme } from "@mui/material";
 
 interface SurfaceVariants {
   1: string;
@@ -7,7 +7,8 @@ interface SurfaceVariants {
   4: string;
   5: string;
 }
-declare module '@mui/material/styles' {
+
+declare module "@mui/material/styles" {
   interface Palette {
     onPrimary: string;
     primaryContainer: string;
@@ -23,8 +24,8 @@ declare module '@mui/material/styles' {
     onSurface: string;
     onSurfaceVariant: string;
     outline: string;
-    inverseOnSurface: string,
-    inverseSurface: string
+    inverseOnSurface: string;
+    inverseSurface: string;
   }
   interface PaletteOptions {
     onPrimary: string;
@@ -41,56 +42,56 @@ declare module '@mui/material/styles' {
     onSurface: string;
     onSurfaceVariant: string;
     outline: string;
-    inverseOnSurface: string,
-    inverseSurface: string
+    inverseOnSurface: string;
+    inverseSurface: string;
   }
 }
 
 export let theme = createTheme({
   typography: {
-    fontFamily: ['Poppins', 'Space Mono'].join(','),
+    fontFamily: ["Poppins", "Space Mono"].join(","),
   },
   palette: {
-    common: { black: '#1D2028', white: '#fff' },
-    action: { disabled: 'grey', focusOpacity: 0 },
+    common: { black: "#1D2028", white: "#fff" },
+    action: { disabled: "grey", focusOpacity: 0 },
     grey: {
-      '100': '#F5F5F5',
-      '300': '#EFF0F3',
-      '400': '#E0E1E7',
-      '500': '#A1A6B6',
-      '600': '#81889E',
+      "100": "#F5F5F5",
+      "300": "#EFF0F3",
+      "400": "#E0E1E7",
+      "500": "#A1A6B6",
+      "600": "#81889E",
     },
     primary: {
-      main: '#3B4050'
+      main: "#3B4050",
     },
     secondary: {
-      main: '#585E71'
+      main: "#585E71",
     },
     error: {
-      main: '#BA1B1B'
+      main: "#BA1B1B",
     },
-    onPrimary: '#FFFFFF',
-    primaryContainer: '#D8E2FF',
-    secondaryContainer: '#DCE2F9',
-    tertiary: '#725472',
-    tertiaryContainer: '#FDD7FA',
-    onBackground: '#1B1B1E',
-    errorContainer: '#FFDAD4',
-    onError: '#FFFFFF',
-    onErrorContainer: '#410001',
+    onPrimary: "#FFFFFF",
+    primaryContainer: "#D8E2FF",
+    secondaryContainer: "#DCE2F9",
+    tertiary: "#725472",
+    tertiaryContainer: "#FDD7FA",
+    onBackground: "#1B1B1E",
+    errorContainer: "#FFDAD4",
+    onError: "#FFFFFF",
+    onErrorContainer: "#410001",
     surface: {
-      1: '#FDFBFF', 
-      2: '#F5F4FA', 
-      3: '#ECECF4', 
-      4: '#E7E7F0', 
-      5: '#E1E2EC'
+      1: "#FDFBFF",
+      2: "#F5F4FA",
+      3: "#ECECF4",
+      4: "#E7E7F0",
+      5: "#E1E2EC",
     },
-    surfaceVariant: '#E1E2EC',
-    onSurface: '#1B1B1E',
-    onSurfaceVariant: '#FFC5C9',
-    outline: '#FFC5C9',
-    inverseOnSurface: '#F2F0F4',
-    inverseSurface: '#303033'
+    surfaceVariant: "#E1E2EC",
+    onSurface: "#1B1B1E",
+    onSurfaceVariant: "#FFC5C9",
+    outline: "#FFC5C9",
+    inverseOnSurface: "#F2F0F4",
+    inverseSurface: "#303033",
   },
 });
 
@@ -99,15 +100,15 @@ theme = createTheme(theme, {
     MuiButton: {
       styleOverrides: {
         root: {
-          textTransform: 'unset',
-          whiteSpace: 'nowrap',
-          boxShadow: 'unset',
-          borderRadius: '21px',
-          padding: '7px 20px',
-          transition: 'all .15s',
-          '&:hover': {
-            backgroundColor: 'transparent',
-            boxShadow: 'unset',
+          textTransform: "unset",
+          whiteSpace: "nowrap",
+          boxShadow: "unset",
+          borderRadius: "21px",
+          padding: "7px 20px",
+          transition: "all .15s",
+          "&:hover": {
+            backgroundColor: "transparent",
+            boxShadow: "unset",
           },
         },
         contained: {
@@ -115,7 +116,7 @@ theme = createTheme(theme, {
           border: `1px solid ${theme.palette.primary.main}`,
           color: theme.palette.common.white,
           fontWeight: 600,
-          '&:hover': {
+          "&:hover": {
             color: theme.palette.primary.main,
           },
         },
@@ -123,7 +124,7 @@ theme = createTheme(theme, {
           borderColor: theme.palette.grey[400],
           color: theme.palette.common.black,
           fontWeight: 500,
-          '&:hover': {
+          "&:hover": {
             color: theme.palette.primary.main,
           },
         },
@@ -143,13 +144,13 @@ theme = createTheme(theme, {
         root: {
           border: `1px solid ${theme.palette.grey[400]}`,
           color: theme.palette.common.black,
-          transition: 'all .15s',
-          '& svg': {
+          transition: "all .15s",
+          "& svg": {
             width: 19,
             height: 19,
           },
-          '&:hover': {
-            backgroundColor: 'transparent',
+          "&:hover": {
+            backgroundColor: "transparent",
             color: theme.palette.primary.main,
             borderColor: theme.palette.primary.main,
           },
@@ -159,8 +160,8 @@ theme = createTheme(theme, {
     MuiLink: {
       styleOverrides: {
         root: {
-          textDecoration: 'none',
-          color: 'inherit',
+          textDecoration: "none",
+          color: "inherit",
         },
       },
     },

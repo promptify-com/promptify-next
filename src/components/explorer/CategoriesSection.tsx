@@ -13,6 +13,10 @@ export const CategoriesSection: React.FC<CategoriesSectionProps> = ({
   isLoading,
   categories,
 }) => {
+  if (!categories?.length) {
+    return null;
+  }
+
   return (
     <>
       <Box gap={"16px"} display={"flex"} flexDirection={"column"}>

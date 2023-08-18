@@ -7,14 +7,10 @@ import TimelineConnector from "@mui/lab/TimelineConnector";
 import TimelineContent from "@mui/lab/TimelineContent";
 import TimelineOppositeContent from "@mui/lab/TimelineOppositeContent";
 import TimelineDot from "@mui/lab/TimelineDot";
-import {
-  Spark,
-  SparkVersion,
-  TemplatesExecutions,
-} from "@/core/api/dto/templates";
+import { Spark, SparkVersion, TemplatesExecutions } from "@/core/api/dto/templates";
 import moment from "moment";
-import { templatesApi } from "@/core/api/templates";
 import { useAppDispatch } from "@/hooks/useStore";
+import { executionsApi } from "@/core/api/executions";
 
 interface Props {
   spark: Spark | null;
@@ -27,37 +23,32 @@ interface IDays {
   days: { date: string; versions: SparkVersion[]; dayName: string }[];
 }
 
-export const History: React.FC<Props> = ({
-  spark,
-  selectedExecution,
-  setSelectedExecution,
-}) => {
+export const History: React.FC<Props> = ({ spark, selectedExecution, setSelectedExecution }) => {
   const { palette } = useTheme();
   const dispatch = useAppDispatch();
   const versions = [...(spark?.versions || [])];
-  const [groupedVersions, setGroupedVersions] = React.useState<IDays[] | null>(
-    null
-  );
+  const [groupedVersions, setGroupedVersions] = React.useState<IDays[] | null>(null);
 
-  const sortedVersions = versions.sort((a, b) =>
-    moment(b.created_at).diff(moment(a.created_at))
-  );
+  const sortedVersions = versions.sort((a, b) => moment(b.created_at).diff(moment(a.created_at)));
 
   React.useEffect(() => {
-    const grouped = sortedVersions.reduce((acc, item) => {
-      const createdAt = moment(item.created_at).fromNow();
-      const index = acc.findIndex((version) => version.date === createdAt);
-      if (index !== -1) {
-        acc[index].versions.push(item);
-      } else {
-        acc.push({
-          date: item.created_at,
-          versions: [item],
-          dayName: formatDate(item.created_at),
-        });
-      }
-      return acc;
-    }, [] as { date: string; versions: SparkVersion[]; dayName: string }[]);
+    const grouped = sortedVersions.reduce(
+      (acc, item) => {
+        const createdAt = moment(item.created_at).fromNow();
+        const index = acc.findIndex(version => version.date === createdAt);
+        if (index !== -1) {
+          acc[index].versions.push(item);
+        } else {
+          acc.push({
+            date: item.created_at,
+            versions: [item],
+            dayName: formatDate(item.created_at),
+          });
+        }
+        return acc;
+      },
+      [] as { date: string; versions: SparkVersion[]; dayName: string }[],
+    );
 
     const sortedGrouped: any = [];
 
@@ -119,18 +110,12 @@ export const History: React.FC<Props> = ({
           }}
         />
       </TimelineDot>
-      <TimelineConnector
-        sx={{ bgcolor: `${alpha(palette.primary.main, 0.3)}` }}
-      />
+      <TimelineConnector sx={{ bgcolor: `${alpha(palette.primary.main, 0.3)}` }} />
     </TimelineSeparator>
   );
 
   const chooseExecution = async (executionId: number) => {
-    const execution = (
-      await dispatch(
-        templatesApi.endpoints.getExecutionById.initiate(executionId)
-      )
-    ).data;
+    const execution = (await dispatch(executionsApi.endpoints.getExecutionById.initiate(executionId))).data;
     if (execution) setSelectedExecution(execution);
   };
 
@@ -150,7 +135,10 @@ export const History: React.FC<Props> = ({
         <Timeline sx={{ p: 0 }}>
           {groupedVersions?.map((group, i) => (
             <React.Fragment key={i}>
-              <TimelineItem key={i} sx={{ minHeight: "0" }}>
+              <TimelineItem
+                key={i}
+                sx={{ minHeight: "0" }}
+              >
                 <TimelineOppositeContent
                   sx={{
                     fontSize: 11,
@@ -172,8 +160,8 @@ export const History: React.FC<Props> = ({
                   }}
                 ></TimelineContent>
               </TimelineItem>
-              {group.days.map((day) => {
-                return day.versions.map((version) => {
+              {group.days.map(day => {
+                return day.versions.map(version => {
                   return (
                     <TimelineItem
                       key={version.id}
@@ -196,9 +184,7 @@ export const History: React.FC<Props> = ({
                       >
                         {moment(version.created_at).format("hh:mm A")}
                       </TimelineOppositeContent>
-                      <TimeLineSeparator
-                        active={version.id === selectedExecution?.id}
-                      />
+                      <TimeLineSeparator active={version.id === selectedExecution?.id} />
                       <TimelineContent
                         sx={{
                           ...timeLineContentStyle,

@@ -3,23 +3,20 @@ import React, { useEffect } from "react";
 import { AxiosResponse } from "axios";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from "react-redux";
 import { IContinueWithSocialMediaResponse } from "@/common/types";
 import { client } from "@/common/axios";
 import { Layout } from "@/layout";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
-import { categoriesApi } from "@/core/api/categories";
 import { CategoriesSection } from "@/components/explorer/CategoriesSection";
 import { userApi } from "@/core/api/user";
 import { WelcomeCard } from "@/components/homepage/WelcomeCard";
-import {
-  useGetLastTemplatesQuery,
-  useGetTemplatesSuggestedQuery,
-} from "@/core/api/templates";
+import { useGetLastTemplatesQuery, useGetTemplatesSuggestedQuery } from "@/core/api/templates";
 import { getPathURL, saveToken } from "@/common/utils";
-import { AppDispatch, RootState, wrapper } from "@/core/store";
-import { isValidUserFn, updateUser } from '@/core/store/userSlice';
+import { RootState } from "@/core/store";
+import { isValidUserFn, updateUser } from "@/core/store/userSlice";
 import { Category } from "@/core/api/dto/templates";
+import { authClient } from "@/common/axios";
 
 interface HomePageProps {
   categories: Category[];
@@ -27,43 +24,31 @@ interface HomePageProps {
 
 const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
 
-const HomePage: NextPage<HomePageProps> = ({
-  categories,
-}) => {
+const HomePage: NextPage<HomePageProps> = ({ categories }) => {
   const router = useRouter();
   const path = getPathURL();
   const dispatch = useDispatch();
   const isValidUser = useSelector(isValidUserFn);
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
-  const [getCurrentUser] =
-    userApi.endpoints.getCurrentUser.useLazyQuery();
-  const { data: lastTemplates, isLoading: isLastTemplatesLoading } =
-    useGetLastTemplatesQuery(undefined, { skip: !isValidUser });
-  const { data: suggestedTemplates, isLoading: isSuggestedTemplateLoading } =
-    useGetTemplatesSuggestedQuery(undefined, { skip: !isValidUser });
+  const [getCurrentUser] = userApi.endpoints.getCurrentUser.useLazyQuery();
+  const { data: lastTemplates, isLoading: isLastTemplatesLoading } = useGetLastTemplatesQuery(undefined, {
+    skip: !isValidUser,
+  });
+  const { data: suggestedTemplates, isLoading: isSuggestedTemplateLoading } = useGetTemplatesSuggestedQuery(undefined, {
+    skip: !isValidUser,
+  });
 
   // TODO: move authentication logic to signin page instead
-  const doPostLogin = async (
-    response: AxiosResponse<IContinueWithSocialMediaResponse>,
-  ) => {
+  const doPostLogin = async (response: AxiosResponse<IContinueWithSocialMediaResponse>) => {
     if (typeof response.data !== "object" || response.data === null) {
-      console.error('incoming data for Microsoft authentication is not an object:', response.data);
+      console.error("incoming data for Microsoft authentication is not an object:", response.data);
       return;
     }
 
-    const { token, created } = response.data;
-
-    // TODO: find out what this mysterious prop means
-    if (created) {
-      router.push({
-        pathname: "/signin",
-        query: { from: "signup" },
-      });
-      return;
-    }
+    const { token } = response.data;
 
     if (!token) {
-      console.error('incoming token for Microsoft authentication is not present:', token);
+      console.error("incoming token for Microsoft authentication is not present:", token);
       return;
     }
 
@@ -88,8 +73,8 @@ const HomePage: NextPage<HomePageProps> = ({
         .then((response: AxiosResponse<IContinueWithSocialMediaResponse>) => {
           doPostLogin(response);
         })
-        .catch((reason) => {
-          console.warn('Could not authenticate via Microsoft:', reason);
+        .catch(reason => {
+          console.warn("Could not authenticate via Microsoft:", reason);
         });
     }
   }, []);
@@ -97,7 +82,10 @@ const HomePage: NextPage<HomePageProps> = ({
   return (
     <>
       <Layout>
-        <Box mt={{ xs: 7, md: 0 }} padding={{ xs: "4px 0px", md: "0px 8px" }}>
+        <Box
+          mt={{ xs: 7, md: 0 }}
+          padding={{ xs: "4px 0px", md: "0px 8px" }}
+        >
           <Grid
             gap={"56px"}
             display={"flex"}
@@ -107,7 +95,11 @@ const HomePage: NextPage<HomePageProps> = ({
             }}
           >
             {isValidUser ? (
-              <Grid flexDirection="column" display={"flex"} gap={"56px"}>
+              <Grid
+                flexDirection="column"
+                display={"flex"}
+                gap={"56px"}
+              >
                 <Grid
                   sx={{
                     alignItems: "center",
@@ -129,22 +121,22 @@ const HomePage: NextPage<HomePageProps> = ({
                   </Typography>
                 </Grid>
                 {/* back compatibility solution for now */}
-                {lastTemplates && Array.isArray(lastTemplates) && lastTemplates.length
-                  ? <TemplatesSection
-                      isLoading={isLastTemplatesLoading}
-                      templates={lastTemplates}
-                      title="Your Latest Templates:"
-                    /> 
-                  : null
-                }
-                {lastTemplates && !Array.isArray(lastTemplates) && Object.values(lastTemplates).length
-                  ? <TemplatesSection
-                      isLoading={isLastTemplatesLoading}
-                      templates={[lastTemplates]}
-                      title="Your Latest Template:"
-                    /> 
-                  : null
-                }
+                {lastTemplates && Array.isArray(lastTemplates) && lastTemplates.length ? (
+                  <TemplatesSection
+                    isLatestTemplates
+                    isLoading={isLastTemplatesLoading}
+                    templates={lastTemplates}
+                    title="Your Latest Templates:"
+                  />
+                ) : null}
+                {lastTemplates && !Array.isArray(lastTemplates) && Object.values(lastTemplates).length ? (
+                  <TemplatesSection
+                    isLatestTemplates
+                    isLoading={isLastTemplatesLoading}
+                    templates={[lastTemplates]}
+                    title="Your Latest Template:"
+                  />
+                ) : null}
 
                 <TemplatesSection
                   isLoading={isSuggestedTemplateLoading}
@@ -172,21 +164,18 @@ const HomePage: NextPage<HomePageProps> = ({
   );
 };
 
-// TODO: getInitialProps is a legacy API, converting this code into getServerSideProps is an option
-HomePage.getInitialProps = wrapper.getInitialPageProps(
-  ({ dispatch }: { dispatch: AppDispatch }) =>
-    async () => {
-      const { data: categories } = await dispatch(
-        categoriesApi.endpoints.getCategories.initiate()
-      );
+export async function getServerSideProps() {
+  const responseCategories = await authClient.get("/api/meta/categories/");
+  const categories = responseCategories.data;
 
-      return {
-        title: "Promptify | Boost Your Creativity",
-        description:
-          "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
-        categories,
-      };
-    }
-);
+  return {
+    props: {
+      title: "Promptify | Boost Your Creativity",
+      description:
+        "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
+      categories,
+    },
+  };
+}
 
 export default HomePage;

@@ -1,19 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Box } from "@mui/material";
-import { useGetCurrentUser } from "../../hooks/api/user";
 import { PageLoading } from "../../components/PageLoading";
 import { useQuestions } from "../../hooks/api/questions";
-import Prompts from "@/components/signUp/Prompts";
 import Questions from "@/components/signUp/Questions";
 import Finish from "@/components/signUp/Finish";
-import Head from "next/head";
 
 import SigninPlaceholder from "@/components/placeholders/SigninPlaceholder";
 
 const SignUp = () => {
   const [step, setStep] = useState(1);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [tokenUser, error, isLoading] = useGetCurrentUser();
+  const isLoading = false;
   const [questions] = useQuestions();
 
   useEffect(() => {

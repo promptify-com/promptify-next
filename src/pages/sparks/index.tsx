@@ -18,7 +18,7 @@ const Sparks = () => {
   let sparksCount = 0;
   const sortedTemplates = sparksByTemplate?.map((template) => {
     // Sort the sparks inside each template by current_version.created_at
-    const sortedSparks = [...template.sparks].sort((a, b) =>
+    const sortedExecutions = [...template.sparks].sort((a, b) =>
       moment(b.current_version?.created_at).diff(
         moment(a.current_version?.created_at)
       )
@@ -27,7 +27,7 @@ const Sparks = () => {
 
     return {
       ...template,
-      sparks: sortedSparks,
+      sparks: sortedExecutions,
     };
   });
 

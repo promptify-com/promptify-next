@@ -1,24 +1,24 @@
 import React, { useEffect, useState } from 'react'
-import { Box, Button, ClickAwayListener, Collapse, Grow, IconButton, InputBase, InputLabel, Paper, Popper, Stack, Typography, alpha, useTheme } from '@mui/material'
+import { Box, Button, ClickAwayListener, Collapse, Grow, IconButton, InputBase, Paper, Popper, Stack, Typography, alpha, useTheme } from '@mui/material'
 import { Search as SearchIcon, PushPinOutlined, FeedOutlined, ArrowDropUp, ArrowDropDown, Undo, Redo, PushPin, Close } from "@mui/icons-material";
 import { SubjectIcon } from "@/assets/icons/SubjectIcon";
-import { Spark } from '@/core/api/dto/templates';
-import { SparksTabs } from './SparksTabs';
+import { TemplatesExecutions } from '@/core/api/dto/templates';
+import { ExecutionsTabs } from './ExecutionsTabs';
 
 interface Props {
-   sparks: Spark[];
-   selectedSpark: Spark | null;
-   changeSelectedSpark: (spark: Spark) => void;
-   pinSpark: () => void;
-   showSearchBar: boolean;
+   executions: TemplatesExecutions[];
+   selectedExecution: TemplatesExecutions | null;
+   setSelectedExecution: (exec: TemplatesExecutions) => void;
+   pinExecution: () => void;
+   showSearchBar?: boolean;
    onSearch?: (text: string) => void;
 }
 
-export const DisplayHeader: React.FC<Props> = ({ 
-   sparks,
-   selectedSpark,
-   changeSelectedSpark,
-   pinSpark,
+export const DisplayActions: React.FC<Props> = ({ 
+   executions,
+   selectedExecution,
+   setSelectedExecution,
+   pinExecution,
    showSearchBar,
    onSearch = () => {}
  }) => {
@@ -81,7 +81,7 @@ export const DisplayHeader: React.FC<Props> = ({
       </Stack>
    )
 
-   const SparksSelect = (
+   const ExecutionsSelect = (
       <Button
          sx={{ 
             width: "360px",
@@ -97,25 +97,35 @@ export const DisplayHeader: React.FC<Props> = ({
          onClick={(e) => setPresetsAnchor(e.currentTarget)}
       >
          <Box sx={{ width: "80%", overflow: "hidden", textAlign: "left" }}>
-            {selectedSpark?.initial_title || "Choose Spark..."}
+            {selectedExecution?.title || "Choose Spark..."}
          </Box>
       </Button>
    )
 
    const PinButton = (
       <IconButton sx={{ ...iconButtonStyle, opacity: .5 }}
-         onClick={pinSpark}
+         onClick={pinExecution}
       >
-         {selectedSpark?.is_favorite ? <PushPin /> : <PushPinOutlined />}
+         {selectedExecution?.is_favorite ? <PushPin /> : <PushPinOutlined />}
       </IconButton>
    )
 
    return (
       <Box sx={{ 
-            position: "sticky", top: 0, left: 0, right: 0, zIndex: 998,
-            p: { md: "16px 16px 16px 24px" }, 
+            position: { xs: "fixed", md: "sticky" }, 
+            top: { xs: "auto", md: 0 }, 
+            bottom: { xs: "74px", md: "auto" }, 
+            left: 0, 
+            right: 0, 
+            zIndex: 999,
             bgcolor: "surface.1",
-            boxShadow: "0px -1px 0px 0px #ECECF4 inset"
+            p: { md: "16px 16px 16px 24px" }, 
+            borderRadius: "24px 24px 0 0",
+            borderBottom: { xs: `1px solid ${palette.surface[5]}`, md: "none" },
+            boxShadow: { 
+               xs: "0px -8px 40px 0px rgba(93, 123, 186, 0.09), 0px -8px 10px 0px rgba(98, 98, 107, 0.03)", 
+               md: "0px -1px 0px 0px #ECECF4 inset" 
+            },
          }}
       >
          <Box sx={{ position: "relative" }}>
@@ -129,7 +139,7 @@ export const DisplayHeader: React.FC<Props> = ({
             >
                {PinButton}
 
-               {SparksSelect}
+               {ExecutionsSelect}
 
                <Stack
                   direction={"row"}
@@ -170,7 +180,7 @@ export const DisplayHeader: React.FC<Props> = ({
                   display={{ md: "none" }}
                   direction={"row"} alignItems={"center"} gap={1} p={"8px 16px"}
                >
-                  {SparksSelect}
+                  {ExecutionsSelect}
 
                   {PinButton}
                </Stack>
@@ -213,10 +223,10 @@ export const DisplayHeader: React.FC<Props> = ({
                      >
                         <ClickAwayListener onClickAway={() => setPresetsAnchor(null)}>
                            <Box>
-                              <SparksTabs 
-                                 sparks={sparks}
-                                 chooseSpark={(spark) => {
-                                    changeSelectedSpark(spark)
+                              <ExecutionsTabs 
+                                 executions={executions}
+                                 chooseExecution={(exec) => {
+                                    setSelectedExecution(exec)
                                     setPresetsAnchor(null)
                                  }}
                               />

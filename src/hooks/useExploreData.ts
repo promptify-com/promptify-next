@@ -20,11 +20,9 @@ export function useExploreData() {
     title,
   };
 
-  const { data: templates, isLoading: isTemplatesLoading } =
-    useGetTemplatesByFilterQuery(params);
+  const { data: templates, isLoading: isTemplatesLoading } = useGetTemplatesByFilterQuery(params);
 
-  const { data: categories, isLoading: isCategoryLoading } =
-    useGetCategoriesQuery();
+  const { data: categories, isLoading: isCategoryLoading } = useGetCategoriesQuery();
 
   return {
     categories,

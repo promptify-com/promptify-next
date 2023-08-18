@@ -14,14 +14,7 @@ import {
 import MuiDrawer from "@mui/material/Drawer";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import {
-  AutoAwesome,
-  ExpandLess,
-  ExpandMore,
-  Home,
-  MenuBookRounded,
-  Search,
-} from "@mui/icons-material";
+import { AutoAwesome, ExpandLess, ExpandMore, Home, MenuBookRounded, Search } from "@mui/icons-material";
 import { styled, Theme, CSSObject } from "@mui/material/styles";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { SidebarIcon } from "@/assets/icons/Sidebar";
@@ -30,8 +23,8 @@ import { useGetCollectionTemplatesQuery } from "@/core/api/collections";
 import { ExploreFilterSideBar } from "@/components/explorer/ExploreFilterSideBar";
 import { SideBarCloseIcon } from "@/assets/icons/SideBarClose";
 import { useFetchFilters } from "@/hooks/useFetchFilters";
-import { useSelector } from 'react-redux';
-import { isValidUserFn } from '@/core/store/userSlice';
+import { useSelector } from "react-redux";
+import { isValidUserFn } from "@/core/store/userSlice";
 import { RootState } from "@/core/store";
 
 interface SideBarProps {
@@ -63,7 +56,7 @@ const closedMixin = (theme: Theme): CSSObject => ({
 });
 
 const Drawer = styled(MuiDrawer, {
-  shouldForwardProp: (prop) => prop !== "open",
+  shouldForwardProp: prop => prop !== "open",
 })(({ theme, open }) => ({
   width: drawerWidth,
   flexShrink: 0,
@@ -84,10 +77,12 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
   const isExplorePage = pathname.split("/")[1] === "explore";
   const isValidUser = useSelector(isValidUserFn);
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
-  const { data: collections, isLoading: isCollectionsLoading } =
-    useGetCollectionTemplatesQuery(currentUser?.favorite_collection_id as number, {
+  const { data: collections, isLoading: isCollectionsLoading } = useGetCollectionTemplatesQuery(
+    currentUser?.favorite_collection_id as number,
+    {
       skip: !isValidUser,
-    });
+    },
+  );
   const { tags, engines } = useFetchFilters();
   const [expandedOnHover, setExpandedOnHover] = useState<boolean>(false);
   const [showExpandIcon, setShowExpandIcon] = useState<boolean>(false);
@@ -168,7 +163,11 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
         variant="permanent"
         anchor="left"
       >
-        <Box display={"flex"} flexDirection={"column"} gap={1}>
+        <Box
+          display={"flex"}
+          flexDirection={"column"}
+          gap={1}
+        >
           <Grid
             display={"flex"}
             alignItems={"center"}
@@ -194,7 +193,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
                 <Typography
                   sx={{ ml: "4px", fontSize: 10, opacity: open || expandedOnHover ? 1 : 0 }}
                   mt={1}
-                  fontWeight={'bold'}
+                  fontWeight={"bold"}
                 >
                   beta
                 </Typography>
@@ -210,20 +209,14 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
                 },
               }}
             >
-              {!open && expandedOnHover ? (
-                <SideBarCloseIcon />
-              ) : (
-                <SidebarIcon />
-              )}
+              {!open && expandedOnHover ? <SideBarCloseIcon /> : <SidebarIcon />}
             </IconButton>
           </Grid>
-          {navItems.map((item) => (
+          {navItems.map(item => (
             <Grid key={item.name}>
               <ListItem
                 disablePadding
-                onClick={() =>
-                  item.name == "Browse" && setShowFilters(!showFilters)
-                }
+                onClick={() => item.name == "Browse" && setShowFilters(!showFilters)}
               >
                 <Link
                   href={item.href}
@@ -232,7 +225,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
                     textDecoration: "none",
                   }}
                   target={item.external ? "_blank" : ""}
-                  onClick={(e) => {
+                  onClick={e => {
                     if (item.name === "Browse" && isExplorePage) {
                       e.preventDefault();
                     }
@@ -254,8 +247,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
                         display: "flex",
                         width: open || expandedOnHover ? "100%" : "auto",
                         alignItems: "center",
-                        justifyContent:
-                          open || expandedOnHover ? "initial" : "center",
+                        justifyContent: open || expandedOnHover ? "initial" : "center",
                       }}
                     >
                       <ListItemIcon

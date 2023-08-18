@@ -20,11 +20,11 @@ export const ExecutionCard: React.FC<Props> = ({
   const promptsOrderMap: { [key: string]: number } = {};
   const promptsExecutionOrderMap: { [key: string]: number } = {};
 
-  const ref = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    ref.current?.scrollIntoView({
-      block: "start",
+    scrollRef.current?.scrollIntoView({
+      block: "end",
     });
   }, [execution]);
 
@@ -104,7 +104,10 @@ export const ExecutionCard: React.FC<Props> = ({
         mx: "auto",
       }}
     >
-      <div ref={ref}></div>
+      <div ref={scrollRef}></div>
+      <Typography sx={{ fontSize: 48, fontWeight: 400, color: "onSurface", py: "24px" }}>
+        {execution.title}
+      </Typography>
       {sortedExecutions?.map((exec, index) => {
         const prevItem = index > 0 && sortedExecutions[index - 1];
         const isPrevItemIsImage = prevItem && isImageOutput(prevItem?.output);
