@@ -58,6 +58,7 @@ export const SparkPopup: React.FC<SparkPopupProps> = ({ open, type, activeExecut
     >
       {type === "update" ? (
         <Grid
+          width={"318px"}
           padding={"16px"}
           display={"flex"}
           flexDirection={"column"}
@@ -89,7 +90,7 @@ export const SparkPopup: React.FC<SparkPopupProps> = ({ open, type, activeExecut
                 bgcolor: "#375CA9",
                 border: "none",
                 "&:hover": {
-                  bgcolor: "surface.2",
+                  bgcolor: "surface.5",
                 },
               }}
             >
@@ -140,7 +141,7 @@ export const SparkPopup: React.FC<SparkPopupProps> = ({ open, type, activeExecut
                 height: "30px",
                 border: "none",
                 "&:hover": {
-                  bgcolor: "surface.2",
+                  bgcolor: "surface.5",
                 },
               }}
             >

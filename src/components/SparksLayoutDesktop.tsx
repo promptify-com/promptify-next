@@ -8,7 +8,6 @@ import useTruncate from "@/hooks/useTruncate";
 import BaseButton from "./base/BaseButton";
 import DraftSpark from "@/assets/icons/DraftSpark";
 import SavedSpark from "@/assets/icons/SavedSpark";
-import { useExecutionFavoriteMutation } from "@/core/api/executions";
 import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
 import { handleOpenPopup, handlePopupType, setActiveExecution } from "@/core/store/executionsSlice";
@@ -16,31 +15,26 @@ import { handleOpenPopup, handlePopupType, setActiveExecution } from "@/core/sto
 interface SparksLayoutDesktopProps {
   execution: Execution;
   template: TemplateExecutionsDisplay;
+  onExecutionSaved: () => void;
 }
 
-export const SparksLayoutDesktop: FC<SparksLayoutDesktopProps> = ({ execution, template }) => {
+export const SparksLayoutDesktop: FC<SparksLayoutDesktopProps> = ({ execution, template, onExecutionSaved }) => {
   const router = useRouter();
   const dispatch = useDispatch();
-
-  const [favoriteExecution] = useExecutionFavoriteMutation();
 
   const { truncate } = useTruncate();
   const { convertedTimestamp } = useTimestampConverter();
 
-  const handleOpenEditDropdown = () => {
+  const handleOpenEdit = () => {
     dispatch(handleOpenPopup(true));
     dispatch(setActiveExecution(execution));
     dispatch(handlePopupType("update"));
   };
 
-  const handleOpenDeleteDropdown = () => {
+  const handleOpenDelete = () => {
     dispatch(handleOpenPopup(true));
     dispatch(setActiveExecution(execution));
     dispatch(handlePopupType("delete"));
-  };
-
-  const handleSaveExecution = () => {
-    favoriteExecution(execution.id);
   };
 
   return (
@@ -81,7 +75,7 @@ export const SparksLayoutDesktop: FC<SparksLayoutDesktopProps> = ({ execution, t
         </Typography>
         <Tooltip title="Rename">
           <IconButton
-            onClick={handleOpenEditDropdown}
+            onClick={handleOpenEdit}
             sx={{
               border: "none",
               "&:hover": {
@@ -179,7 +173,7 @@ export const SparksLayoutDesktop: FC<SparksLayoutDesktopProps> = ({ execution, t
         {!execution.is_favorite && (
           <Tooltip title="Save">
             <IconButton
-              onClick={() => handleSaveExecution()}
+              onClick={() => onExecutionSaved()}
               sx={{
                 border: "none",
                 "&:hover": {
@@ -196,7 +190,7 @@ export const SparksLayoutDesktop: FC<SparksLayoutDesktopProps> = ({ execution, t
         )}
         <Tooltip title="Delete">
           <IconButton
-            onClick={handleOpenDeleteDropdown}
+            onClick={handleOpenDelete}
             sx={{
               border: "none",
               "&:hover": {

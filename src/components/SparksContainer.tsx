@@ -4,20 +4,25 @@ import { TemplateExecutionsDisplay } from "@/core/api/dto/templates";
 
 import { SparksLayoutDesktop } from "./SparksLayoutDesktop";
 import { SparksLayoutMobile } from "./SparksLayoutMobile";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "@/core/store";
 import { SparkPopup } from "./dialog/SparkPopup";
-import { handleOpenPopup } from "@/core/store/executionsSlice";
+import { useDeleteExecutionMutation } from "@/core/api/executions";
 
 interface SparksContainerProps {
   templates: TemplateExecutionsDisplay[];
 }
 
 const SparksContainer: FC<SparksContainerProps> = ({ templates }) => {
-  const dispatch = useDispatch();
   const openPopup = useSelector((state: RootState) => state.executionsSlice.openPopup);
   const activeExecution = useSelector((state: RootState) => state.executionsSlice.activeExecution);
   const popupType = useSelector((state: RootState) => state.executionsSlice.popupType);
+
+  const [favoriteExecution] = useDeleteExecutionMutation();
+
+  const handleSaveExecution = (executionId: number) => {
+    favoriteExecution(executionId);
+  };
 
   return (
     <Grid
@@ -38,11 +43,13 @@ const SparksContainer: FC<SparksContainerProps> = ({ templates }) => {
             <Box key={execution.id}>
               {/* // DESKTOP VIEW */}
               <SparksLayoutDesktop
+                onExecutionSaved={() => handleSaveExecution(execution.id)}
                 template={template}
                 execution={execution}
               />
               {/* MOBILE VIEW  */}
               <SparksLayoutMobile
+                onExecutionSaved={() => handleSaveExecution(execution.id)}
                 template={template}
                 execution={execution}
               />

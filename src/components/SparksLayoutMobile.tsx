@@ -1,21 +1,64 @@
-import { FC } from "react";
-import { Box, CardMedia, Grid, IconButton, Typography } from "@mui/material";
-import { MoreVert } from "@mui/icons-material";
+import { FC, useState } from "react";
+import {
+  Box,
+  CardMedia,
+  Grid,
+  IconButton,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
+  Typography,
+} from "@mui/material";
+import { CloudQueueOutlined, Delete, Edit, MoreVert } from "@mui/icons-material";
+import { useRouter } from "next/router";
+import { useDispatch } from "react-redux";
 
 import DraftSpark from "@/assets/icons/DraftSpark";
 import SavedSpark from "@/assets/icons/SavedSpark";
 import useTimestampConverter from "@/hooks/useTimestampConverter";
 import useTruncate from "@/hooks/useTruncate";
 import { Execution, TemplateExecutionsDisplay } from "@/core/api/dto/templates";
+import { handleOpenPopup, handlePopupType, setActiveExecution } from "@/core/store/executionsSlice";
 
 interface SparksLayoutMobileProps {
   execution: Execution;
   template: TemplateExecutionsDisplay;
+  onExecutionSaved: () => void;
 }
 
-export const SparksLayoutMobile: FC<SparksLayoutMobileProps> = ({ execution, template }) => {
+export const SparksLayoutMobile: FC<SparksLayoutMobileProps> = ({ execution, template, onExecutionSaved }) => {
+  const router = useRouter();
+  const dispatch = useDispatch();
+
   const { truncate } = useTruncate();
   const { convertedTimestamp } = useTimestampConverter();
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleOpenEdit = () => {
+    dispatch(handleOpenPopup(true));
+    dispatch(setActiveExecution(execution));
+    dispatch(handlePopupType("update"));
+    handleClose();
+  };
+
+  const handleOpenDelete = () => {
+    dispatch(handleOpenPopup(true));
+    dispatch(setActiveExecution(execution));
+    dispatch(handlePopupType("delete"));
+    handleClose();
+  };
+
   return (
     <Grid
       container
@@ -23,8 +66,12 @@ export const SparksLayoutMobile: FC<SparksLayoutMobileProps> = ({ execution, tem
       gap={"16px"}
       bgcolor={"surface.1"}
       justifyContent={"space-between"}
+      sx={{
+        cursor: "pointer",
+      }}
     >
       <Grid
+        onClick={() => router.push(`prompt/${template.slug}`)}
         item
         display={"flex"}
         gap={1}
@@ -74,6 +121,7 @@ export const SparksLayoutMobile: FC<SparksLayoutMobileProps> = ({ execution, tem
         </Box>
       </Grid>
       <Grid
+        onClick={() => router.push(`prompt/${template.slug}`)}
         item
         flex={1}
         display={"flex"}
@@ -109,8 +157,12 @@ export const SparksLayoutMobile: FC<SparksLayoutMobileProps> = ({ execution, tem
           {convertedTimestamp(execution.created_at)}
         </Typography>
       </Grid>
-      <Grid item>
+      <Grid
+        position={"absolute"}
+        right={1}
+      >
         <IconButton
+          onClick={handleClick}
           size="small"
           sx={{
             border: "none",
@@ -122,6 +174,34 @@ export const SparksLayoutMobile: FC<SparksLayoutMobileProps> = ({ execution, tem
           <MoreVert sx={{ fontSize: "16px" }} />
         </IconButton>
       </Grid>
+      <Menu
+        id="basic-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+      >
+        <MenuItem onClick={() => handleOpenEdit()}>
+          <ListItemIcon>
+            <Edit sx={{ fontSize: "18px" }} />
+          </ListItemIcon>
+          <ListItemText>Rename</ListItemText>
+        </MenuItem>
+        {!execution.is_favorite && (
+          <MenuItem onClick={() => onExecutionSaved()}>
+            <ListItemIcon>
+              <CloudQueueOutlined sx={{ fontSize: "18px" }} />
+            </ListItemIcon>
+            <ListItemText>Save</ListItemText>
+          </MenuItem>
+        )}
+
+        <MenuItem onClick={() => handleOpenDelete()}>
+          <ListItemIcon>
+            <Delete sx={{ fontSize: "18px" }} />
+          </ListItemIcon>
+          <ListItemText>Delete</ListItemText>
+        </MenuItem>
+      </Menu>
     </Grid>
   );
 };
