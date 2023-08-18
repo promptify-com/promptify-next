@@ -3,7 +3,7 @@ import { Box, Grid, Stack, Typography } from "@mui/material";
 import { FetchLoading } from "@/components/FetchLoading";
 import { Layout } from "@/layout";
 import Protected from "@/components/Protected";
-import SparksSection from "@/components/SparksSection";
+import SparksContainer from "@/components/SparksContainer";
 import { useGetTemplatesExecutionsByMeQuery } from "@/core/api/executions";
 
 const Sparks = () => {
@@ -37,7 +37,7 @@ const Sparks = () => {
                   My Sparks
                 </Typography>
                 {executedTemplates?.length ? (
-                  <SparksSection templates={executedTemplates} />
+                  <SparksContainer templates={executedTemplates} />
                 ) : (
                   <Typography
                     sx={{

@@ -153,6 +153,13 @@ export interface PromptExecutions {
   tokens_spent: number;
 }
 
+export interface Execution {
+  id: number;
+  title: string;
+  created_at: string;
+  is_favorite: boolean;
+}
+
 export interface TemplateExecutionsDisplay {
   id: number;
   title: string;
@@ -165,12 +172,7 @@ export interface TemplateExecutionsDisplay {
   created_by: UserMin;
   tags: Tag[];
   slug: string;
-  executions: {
-    id: number;
-    title: string;
-    created_at: string;
-    is_favorite: boolean;
-  }[];
+  executions: Execution[];
 
   likes?: number;
   favorites_count: number;
