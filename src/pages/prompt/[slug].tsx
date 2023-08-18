@@ -14,7 +14,7 @@ import {
   createTheme,
   useTheme,
 } from "@mui/material";
-import { ArtTrack, History as HistoryIcon } from "@mui/icons-material";
+import { ArtTrack } from "@mui/icons-material";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
 import materialDynamicColors from "material-dynamic-colors";
 import { mix } from "polished";
@@ -24,7 +24,6 @@ import {
   useTemplateView,
 } from "@/core/api/templates";
 import {
-  Spark,
   Templates,
   TemplatesExecutions,
 } from "@/core/api/dto/templates";
@@ -40,12 +39,10 @@ import { Layout } from "@/layout";
 import useToken from "@/hooks/useToken";
 import { useWindowSize } from "usehooks-ts";
 import BottomTabs from "@/components/prompt/BottomTabs";
-import { History } from "@/components/prompt/History";
-import { useGetSparksByTemplateQuery } from "@/core/api/sparks";
 import moment from "moment";
-import SparkForm from "@/components/prompt/SparkForm";
 import { DetailsCardMini } from "@/components/prompt/DetailsCardMini";
-import { savePathURL } from "@/common/utils";
+import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
+import ExecutionForm from "@/components/prompt/ExecutionForm";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -78,7 +75,6 @@ const a11yProps = (index: number) => {
 };
 
 const Prompt = () => {
-  const [selectedSpark, setSelectedSpark] = useState<Spark | null>(null);
   const [selectedExecution, setSelectedExecution] =
     useState<TemplatesExecutions | null>(null);
   const [newExecutionData, setNewExecutionData] =
@@ -86,12 +82,12 @@ const Prompt = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [currentGeneratedPrompt, setCurrentGeneratedPrompt] =
     useState<Prompts | null>(null);
-  const [sparkFormOpen, setSparkFormOpen] = useState(false);
+  const [executionFormOpen, setExecutionFormOpen] = useState(false);
   const [templateView] = useTemplateView();
   const [generatorOpened, setGeneratorOpened] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [activeTab, setActiveTab] = useState(0);
-  const [sortedSparks, setSortedSparks] = useState<Spark[]>([]);
+  const [sortedExecutions, setSortedExecutions] = useState<TemplatesExecutions[]>([]);
   const [tabsValue, setTabsValue] = useState(0);
   const [mobileTab, setMobileTab] = useState(0);
   const router = useRouter();
@@ -102,7 +98,7 @@ const Prompt = () => {
   const slug = router.query?.slug;
   // TODO: redirect to 404 page if slug is not found
   const slugValue = (Array.isArray(slug) ? slug[0] : slug || "") as string;
-  const {
+  const { 
     data: fetchedTemplate,
     error: fetchedTemplateError,
     isLoading: isLoadingTemplate,
@@ -118,33 +114,22 @@ const Prompt = () => {
   }, [fetchedTemplate]);
 
   const {
-    data: templateSparks,
-    error: templateSparksError,
+    data: templateExecutions,
+    error: templateExecutionsError,
     isFetching: isFetchingExecutions,
-    refetch: refetchTemplateSparks,
-  } = useGetSparksByTemplateQuery(token ? (id ? id : skipToken) : skipToken);
+    refetch: refetchTemplateExecutions,
+  } = useGetExecutionsByTemplateQuery(token ? (id ? id : skipToken) : skipToken);
 
   useEffect(() => {
-    const sorted = [...(templateSparks || [])].sort((a, b) => {
-      const aCreatedAt = a.current_version
-        ? a.current_version?.created_at
-        : a.created_at;
-      const bCreatedAt = b.current_version
-        ? b.current_version?.created_at
-        : b.created_at;
-
-      return moment(bCreatedAt).diff(moment(aCreatedAt));
-    });
-    setSortedSparks(sorted);
-  }, [templateSparks]);
+    const sorted = [...(templateExecutions || [])].sort((a, b) => 
+      moment(b.created_at).diff(moment(a.created_at))
+    );
+    setSortedExecutions(sorted);
+  }, [templateExecutions]);
 
   useEffect(() => {
-    setSelectedSpark(sortedSparks?.[0] || null);
-  }, [sortedSparks]);
-
-  useEffect(() => {
-    setSelectedExecution(selectedSpark?.current_version || null);
-  }, [selectedSpark]);
+    setSelectedExecution(sortedExecutions?.[0] || null);
+  }, [sortedExecutions]);
 
   const changeTab = (e: React.SyntheticEvent, newValue: number) => {
     setTabsValue(newValue);
@@ -156,15 +141,6 @@ const Prompt = () => {
     }
   }, [id]);
 
-  const handleNewSpark = () => {
-    if (!token) {
-      savePathURL(window.location.pathname);
-      return router.push("/signin");
-    }
-
-    setSparkFormOpen(true);
-  };
-
   // After new generated execution is completed - refetch the executions list and clear the newExecutionData state
   // All prompts should be completed - isCompleted: true
   useEffect(() => {
@@ -173,11 +149,7 @@ const Prompt = () => {
         (execData) => !execData.isCompleted
       );
       if (!promptNotCompleted) {
-        if (selectedSpark) refetchTemplateSparks();
-        else setSparkFormOpen(true);
-
-        setCurrentGeneratedPrompt(null);
-        setNewExecutionData(null);
+        setExecutionFormOpen(true);
       }
     }
   }, [isGenerating, newExecutionData]);
@@ -258,7 +230,7 @@ const Prompt = () => {
 
   const dynamicTheme = createTheme({ ...theme, palette });
 
-  if (fetchedTemplateError || templateSparksError)
+  if (fetchedTemplateError || templateExecutionsError)
     return <div>Something went wrong...</div>;
 
   return (
@@ -314,7 +286,6 @@ const Prompt = () => {
                   <Stack height={"100%"}>
                     <DetailsCard
                       templateData={templateData}
-                      onNewSpark={handleNewSpark}
                     />
                     <Stack flex={1}>
                       <Tabs
@@ -340,13 +311,6 @@ const Prompt = () => {
                           iconPosition="start"
                           sx={tabStyle}
                         />
-                        <Tab
-                          label="History"
-                          {...a11yProps(1)}
-                          icon={<HistoryIcon />}
-                          iconPosition="start"
-                          sx={tabStyle}
-                        />
                       </Tabs>
                       <Box flex={1}>
                         <CustomTabPanel value={tabsValue} index={0}>
@@ -358,14 +322,12 @@ const Prompt = () => {
                               setIsGenerating={setIsGenerating}
                               onError={setErrorMessage}
                               exit={() => setGeneratorOpened(false)}
-                              selectedExecution={selectedExecution}
                               setMobileTab={setMobileTab}
                               setActiveTab={setActiveTab}
-                              onNewSpark={handleNewSpark}
-                              sparks={sortedSparks}
-                              selectedSpark={selectedSpark}
-                              setSelectedSpark={setSelectedSpark}
-                              setSortedSparks={setSortedSparks}
+                              executions={sortedExecutions}
+                              selectedExecution={selectedExecution}
+                              setSelectedExecution={setSelectedExecution}
+                              setSortedExecutions={setSortedExecutions}
                             />
                           )}
                         </CustomTabPanel>
@@ -373,13 +335,6 @@ const Prompt = () => {
                           <Details
                             templateData={templateData}
                             updateTemplateData={setTemplateData}
-                          />
-                        </CustomTabPanel>
-                        <CustomTabPanel value={tabsValue} index={2}>
-                          <History
-                            spark={selectedSpark}
-                            selectedExecution={selectedExecution}
-                            setSelectedExecution={setSelectedExecution}
                           />
                         </CustomTabPanel>
                       </Box>
@@ -411,7 +366,6 @@ const Prompt = () => {
                   >
                     <DetailsCard
                       templateData={templateData}
-                      onNewSpark={handleNewSpark}
                     />
                     <Details
                       templateData={templateData}
@@ -441,33 +395,12 @@ const Prompt = () => {
                       setIsGenerating={setIsGenerating}
                       onError={setErrorMessage}
                       exit={() => setGeneratorOpened(false)}
-                      selectedExecution={selectedExecution}
                       setMobileTab={setMobileTab}
                       setActiveTab={setActiveTab}
-                      onNewSpark={handleNewSpark}
-                      sparks={sortedSparks}
-                      selectedSpark={selectedSpark}
-                      setSelectedSpark={setSelectedSpark}
-                      setSortedSparks={setSortedSparks}
-                    />
-                  </Grid>
-
-                  <Grid
-                    item
-                    xs={12}
-                    md={8}
-                    sx={{
-                      display: mobileTab === 3 ? "block" : "none",
-                      height: "100%",
-                      overflow: "auto",
-                      bgcolor: "surface.1",
-                      pb: '75px' // Bottom tab bar height
-                    }}
-                  >
-                    <History
-                      spark={selectedSpark}
+                      executions={sortedExecutions}
                       selectedExecution={selectedExecution}
                       setSelectedExecution={setSelectedExecution}
+                      setSortedExecutions={setSortedExecutions}
                     />
                   </Grid>
                 </>
@@ -492,11 +425,10 @@ const Prompt = () => {
               >
                 <Display
                   templateData={templateData}
-                  sparks={sortedSparks}
-                  selectedSpark={selectedSpark}
-                  setSelectedSpark={setSelectedSpark}
-                  selectedExecution={selectedExecution}
+                  executions={sortedExecutions || []}
                   isFetching={isFetchingExecutions}
+                  selectedExecution={selectedExecution}
+                  setSelectedExecution={setSelectedExecution}
                   newExecutionData={newExecutionData}
                 />
                 {currentGeneratedPrompt && (
@@ -534,15 +466,17 @@ const Prompt = () => {
               />
             </Grid>
           )}
-
-          <SparkForm
+          
+          <ExecutionForm
             type="new"
-            isOpen={sparkFormOpen}
-            close={() => setSparkFormOpen(false)}
-            templateId={templateData?.id}
-            onSparkCreated={() => {
-              refetchTemplateSparks();
+            isOpen={executionFormOpen}
+            executionId={newExecutionData?.id}
+            onClose={() => {
+              setCurrentGeneratedPrompt(null)
+              setNewExecutionData(null)
+              setExecutionFormOpen(false)
             }}
+            onCancel={() => refetchTemplateExecutions()}
           />
 
           <Snackbar

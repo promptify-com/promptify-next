@@ -2,23 +2,23 @@ import React, { useEffect, useState } from 'react'
 import { Box, Button, ClickAwayListener, Collapse, Grow, IconButton, InputBase, Paper, Popper, Stack, Typography, alpha, useTheme } from '@mui/material'
 import { Search as SearchIcon, PushPinOutlined, FeedOutlined, ArrowDropUp, ArrowDropDown, Undo, Redo, PushPin, Close } from "@mui/icons-material";
 import { SubjectIcon } from "@/assets/icons/SubjectIcon";
-import { Spark } from '@/core/api/dto/templates';
-import { SparksTabs } from './SparksTabs';
+import { TemplatesExecutions } from '@/core/api/dto/templates';
+import { ExecutionsTabs } from './ExecutionsTabs';
 
 interface Props {
-   sparks: Spark[];
-   selectedSpark: Spark | null;
-   changeSelectedSpark: (spark: Spark) => void;
-   pinSpark: () => void;
+   executions: TemplatesExecutions[];
+   selectedExecution: TemplatesExecutions | null;
+   setSelectedExecution: (exec: TemplatesExecutions) => void;
+   pinExecution: () => void;
    showSearchBar?: boolean;
    onSearch?: (text: string) => void;
 }
 
 export const DisplayActions: React.FC<Props> = ({ 
-   sparks,
-   selectedSpark,
-   changeSelectedSpark,
-   pinSpark,
+   executions,
+   selectedExecution,
+   setSelectedExecution,
+   pinExecution,
    showSearchBar,
    onSearch = () => {}
  }) => {
@@ -81,7 +81,7 @@ export const DisplayActions: React.FC<Props> = ({
       </Stack>
    )
 
-   const SparksSelect = (
+   const ExecutionsSelect = (
       <Button
          sx={{ 
             width: "360px",
@@ -97,16 +97,16 @@ export const DisplayActions: React.FC<Props> = ({
          onClick={(e) => setPresetsAnchor(e.currentTarget)}
       >
          <Box sx={{ width: "80%", overflow: "hidden", textAlign: "left" }}>
-            {selectedSpark?.initial_title || "Choose Spark..."}
+            {selectedExecution?.title || "Choose Spark..."}
          </Box>
       </Button>
    )
 
    const PinButton = (
       <IconButton sx={{ ...iconButtonStyle, opacity: .5 }}
-         onClick={pinSpark}
+         onClick={pinExecution}
       >
-         {selectedSpark?.is_favorite ? <PushPin /> : <PushPinOutlined />}
+         {selectedExecution?.is_favorite ? <PushPin /> : <PushPinOutlined />}
       </IconButton>
    )
 
@@ -139,7 +139,7 @@ export const DisplayActions: React.FC<Props> = ({
             >
                {PinButton}
 
-               {SparksSelect}
+               {ExecutionsSelect}
 
                <Stack
                   direction={"row"}
@@ -180,7 +180,7 @@ export const DisplayActions: React.FC<Props> = ({
                   display={{ md: "none" }}
                   direction={"row"} alignItems={"center"} gap={1} p={"8px 16px"}
                >
-                  {SparksSelect}
+                  {ExecutionsSelect}
 
                   {PinButton}
                </Stack>
@@ -223,10 +223,10 @@ export const DisplayActions: React.FC<Props> = ({
                      >
                         <ClickAwayListener onClickAway={() => setPresetsAnchor(null)}>
                            <Box>
-                              <SparksTabs 
-                                 sparks={sparks}
-                                 chooseSpark={(spark) => {
-                                    changeSelectedSpark(spark)
+                              <ExecutionsTabs 
+                                 executions={executions}
+                                 chooseExecution={(exec) => {
+                                    setSelectedExecution(exec)
                                     setPresetsAnchor(null)
                                  }}
                               />

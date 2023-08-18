@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Box, CircularProgress, Typography } from "@mui/material";
 import {
-  Spark,
   Templates,
   TemplatesExecutions,
 } from "@/core/api/dto/templates";
@@ -9,35 +8,30 @@ import { ExecutionCard } from "./ExecutionCard";
 import { PromptLiveResponse } from "@/common/types/prompt";
 import { ExecutionCardGenerated } from "./ExecutionCardGenerated";
 import { DisplayActions } from "./DisplayActions";
-import { pinSpark, unpinSpark } from "@/hooks/api/executions";
-import { useRouter } from "next/router";
+import { addToFavorite, removeFromFavorite } from "@/hooks/api/executions";
 
 interface Props {
   templateData: Templates;
-  sparks: Spark[];
-  selectedSpark: Spark | null;
-  setSelectedSpark: (spark: Spark) => void;
-  selectedExecution: TemplatesExecutions | null;
+  executions: TemplatesExecutions[];
   isFetching?: boolean;
+  selectedExecution: TemplatesExecutions | null;
+  setSelectedExecution: (execution: TemplatesExecutions) => void;
   newExecutionData: PromptLiveResponse | null;
 }
 
 export const Display: React.FC<Props> = ({
   templateData,
-  sparks,
-  selectedSpark,
-  setSelectedSpark,
-  selectedExecution,
+  executions,
   isFetching,
+  selectedExecution,
+  setSelectedExecution,
   newExecutionData,
 }) => {
-  const [sortedSparks, setSortedSparks] = useState<Spark[]>([]);
+  const [sortedExecutions, setSortedExecutions] = useState<TemplatesExecutions[]>([]);
   const [firstLoad, setFirstLoad] = useState(true);
   const [search, setSearch] = useState<string>("");
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const router = useRouter();
-  const routerSpark = router.query?.spark;
 
   // click listener to remove opacity layer on first loaded execution
   useEffect(() => {
@@ -54,40 +48,33 @@ export const Display: React.FC<Props> = ({
   }, [newExecutionData]);
 
   useEffect(() => {
-    setSortedSparks(sparks);
-  }, [sparks]);
+    setSortedExecutions(executions);
+  }, [executions]);
 
-  useEffect(() => {
-    if (routerSpark) {
-      const spark = sortedSparks.find((spark) => spark.id.toString() === routerSpark);
-      if (spark) setSelectedSpark(spark);
-    }
-  }, [routerSpark, sortedSparks]);
-
-  const handlePinSpark = async () => {
-    if (selectedSpark === null) return;
+  const handlePinExecution = async () => {
+    if (selectedExecution === null) return;
 
     try {
-      if (selectedSpark.is_favorite) {
-        await unpinSpark(selectedSpark.id);
+      if (selectedExecution.is_favorite) {
+        await removeFromFavorite(selectedExecution.id);
       } else {
-        await pinSpark(selectedSpark.id);
+        await addToFavorite(selectedExecution.id);
       }
 
-      // Update state after API call is successful and avoid unnecessary refetch of sparks
-      const updatedSparks = sortedSparks.map((spark) => {
-        if (spark.id === selectedSpark?.id) {
+      // Update state after API call is successful and avoid unnecessary refetch of executions
+      const updatedExecs = sortedExecutions.map((exec) => {
+        if (exec.id === selectedExecution?.id) {
           return {
-            ...spark,
-            is_favorite: !selectedSpark.is_favorite,
+            ...exec,
+            is_favorite: !selectedExecution.is_favorite,
           };
         }
-        return spark;
+        return exec;
       });
-      setSortedSparks(updatedSparks);
-      setSelectedSpark({
-        ...selectedSpark,
-        is_favorite: !selectedSpark.is_favorite,
+      setSortedExecutions(updatedExecs);
+      setSelectedExecution({
+        ...selectedExecution,
+        is_favorite: !selectedExecution.is_favorite,
       });
     } catch (error) {
       console.error(error);
@@ -104,10 +91,10 @@ export const Display: React.FC<Props> = ({
       }}
     >
       <DisplayActions
-        sparks={sortedSparks}
-        selectedSpark={selectedSpark}
-        changeSelectedSpark={setSelectedSpark}
-        pinSpark={handlePinSpark}
+        executions={sortedExecutions}
+        selectedExecution={selectedExecution}
+        setSelectedExecution={setSelectedExecution}
+        pinExecution={handlePinExecution}
         onSearch={(text) => setSearch(text)}
       />
 

@@ -5,10 +5,8 @@ import {
   CircularProgress,
   Stack,
   Typography,
-  alpha,
   useTheme,
 } from "@mui/material";
-import { AddOutlined, Replay } from "@mui/icons-material";
 import {
   PromptParams,
   ResInputs,
@@ -25,16 +23,12 @@ import { savePathURL } from "@/common/utils";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { getInputsFromString } from "@/common/helpers/getInputsFromString";
 import {
-  Spark,
   Templates,
   TemplatesExecutions,
 } from "@/core/api/dto/templates";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { useWindowSize } from "usehooks-ts";
 import { useRouter } from "next/router";
-import { DisplayActions } from "./DisplayActions";
-import { pinSpark, unpinSpark } from "@/hooks/api/executions";
-import SparkForm from "./SparkForm";
 
 interface GeneratorFormProps {
   templateData: Templates;
@@ -46,11 +40,9 @@ interface GeneratorFormProps {
   selectedExecution: TemplatesExecutions | null;
   setMobileTab: (value: number) => void;
   setActiveTab: (value: number) => void;
-  onNewSpark: () => void;
-  sparks: Spark[];
-  selectedSpark: Spark | null;
-  setSelectedSpark: (spark: Spark) => void;
-  setSortedSparks: (value: Spark[]) => void;
+  executions: TemplatesExecutions[];
+  setSelectedExecution: (execution: TemplatesExecutions) => void;
+  setSortedExecutions: (value: TemplatesExecutions[]) => void;
 }
 
 export interface InputsErrors {
@@ -71,14 +63,12 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   setIsGenerating,
   onError,
   exit,
-  selectedExecution,
   setMobileTab,
   setActiveTab,
-  onNewSpark,
-  sparks,
-  selectedSpark,
-  setSelectedSpark,
-  setSortedSparks
+  executions,
+  selectedExecution,
+  setSelectedExecution,
+  setSortedExecutions
 }) => {
   const token = useToken();
   const { palette } = useTheme();
@@ -96,7 +86,6 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   const [errors, setErrors] = useState<InputsErrors>({});
   const [shownInputs, setShownInputs] = useState<Input[] | null>(null);
   const [shownParams, setShownParams] = useState<Param[] | null>(null);
-  const [sparkFormOpen, setSparkFormOpen] = useState<boolean>(false);
 
   const setDefaultResPrompts = () => {
     const tempArr: ResPrompt[] = [...resPrompts];
@@ -197,13 +186,6 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     setResPrompts([...tempArr]);
   };
 
-  // Handling the case of no spark selected. Wait for new spark to be created/selected, then generate
-  useEffect(() => {
-    if (isGenerating && selectedSpark) {
-      validateAndGenerateExecution();
-    }
-  }, [selectedSpark]);
-
   const isInputsFilled = () => {
     const tempErrors: InputsErrors = {};
 
@@ -257,26 +239,16 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     setMobileTab(2);
     setActiveTab(2);
 
-    if (selectedSpark?.id) {
-      generateExecution(resPrompts);
-    } else {
-      setSparkFormOpen(true);
-    }
+    generateExecution(resPrompts);
   };
 
-  const generateExecution = (executionData: ResPrompt[], sparkId?: number) => {
+  const generateExecution = (executionData: ResPrompt[]) => {
     setLastExecution(JSON.parse(JSON.stringify(executionData)));
 
     if (windowWidth < 900) setTimeout(() => exit(), 2000);
 
-    if (!selectedSpark?.id && !sparkId) {
-      setErrors({});
-      return;
-    }
-
     let tempData: any[] = [];
     let url = `${process.env.NEXT_PUBLIC_API_URL}/api/meta/templates/${templateData.id}/execute/`;
-    url += `?spark_id=${selectedSpark?.id || sparkId}`;
 
     fetchEventSource(url, {
       method: "POST",
@@ -460,36 +432,6 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     setShownParams(Array.from(shownParams.values()));
   };
 
-  const handlePinSpark = async () => {
-    if (selectedSpark === null) return;
-
-    try {
-      if (selectedSpark.is_favorite) {
-        await unpinSpark(selectedSpark.id);
-      } else {
-        await pinSpark(selectedSpark.id);
-      }
-
-      // Update state after API call is successful and avoid unnecessary refetch of sparks
-      const updatedSparks = sparks.map((spark) => {
-        if (spark.id === selectedSpark?.id) {
-          return {
-            ...spark,
-            is_favorite: !selectedSpark.is_favorite,
-          };
-        }
-        return spark;
-      });
-      setSortedSparks(updatedSparks);
-      setSelectedSpark({
-        ...selectedSpark,
-        is_favorite: !selectedSpark.is_favorite,
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   // Keyboard shortcuts
   const handleKeyboard = (e: KeyboardEvent) => {
     // prevent trigger if typing inside input
@@ -530,27 +472,6 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
         >
           Inputs
         </Typography>
-
-        {windowWidth < 960 && (
-          <Button
-            sx={{
-              m: "16px",
-              bgcolor: "transparent",
-              color: "primary.main",
-              fontSize: 14,
-              border: `1px solid ${alpha(palette.primary.main, 0.3)}`,
-              "&:hover": {
-                bgcolor: "action.hover",
-                color: "primary.main",
-              },
-            }}
-            startIcon={<AddOutlined />}
-            variant={"outlined"}
-            onClick={onNewSpark}
-          >
-            Spark
-          </Button>
-        )}
       </Box>
 
       <Stack
@@ -744,25 +665,6 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
           </Box>
         </Box>
       </Stack>
-
-      <SparkForm
-        type="new"
-        isOpen={sparkFormOpen}
-        cancel={() => setIsGenerating(false)}
-        close={() => {
-          setSparkFormOpen(false);
-          setIsGenerating(false);
-        }}
-        templateId={templateData?.id}
-        onSparkCreated={(spark) => {
-          // No Spark selected case, useEffect [selectedSpark] at the top will handle generating new execution after Spark is selected
-          setSelectedSpark(spark);
-          // check if it's the first spark created
-          if(sparks.length === 0 && validateInputs()) {
-            generateExecution(resPrompts, spark.id);
-          }
-        }}
-      />
     </Stack>
   );
 };
