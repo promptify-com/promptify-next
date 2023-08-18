@@ -29,7 +29,7 @@ const filterSlice = createSlice({
       state.title = action.payload;
     },
     deleteSelectedTag: (state, action: PayloadAction<number>) => {
-      state.tag = state.tag.filter((tag) => tag?.id !== action.payload);
+      state.tag = state.tag.filter(tag => tag?.id !== action.payload);
     },
   },
 });
@@ -40,7 +40,7 @@ export const {
   setSelectedKeyword,
   setSelectedCategory,
   setSelectedSubCategory,
-  deleteSelectedTag
+  deleteSelectedTag,
 } = filterSlice.actions;
 
 export default filterSlice.reducer;
