@@ -1,22 +1,18 @@
+import moment from "moment";
+
 function useTimestampConverter() {
   const convertedTimestamp = (timestamp: string): string => {
-    const date = new Date(timestamp);
-    const currentDate = new Date();
+    if (!moment(timestamp).isValid()) {
+      return "Invalid timestamp";
+    }
 
-    if (
-      date.getDate() === currentDate.getDate() &&
-      date.getMonth() === currentDate.getMonth() &&
-      date.getFullYear() === currentDate.getFullYear()
-    ) {
-      const hours = date.getHours();
-      return `${hours} hours ago`;
+    const date = moment(timestamp);
+    const currentDate = moment();
+
+    if (date.isSame(currentDate, "day")) {
+      return date.fromNow(); // E.g., "2 hours ago"
     } else {
-      const options: Intl.DateTimeFormatOptions = {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      };
-      return date.toLocaleDateString(undefined, options);
+      return date.format("LL"); // E.g., "August 18, 2023"
     }
   };
 
