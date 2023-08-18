@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { LinkOff } from "@mui/icons-material";
-import { Avatar, Box, Snackbar, Typography } from "@mui/material";
+import { Avatar, Box, Snackbar, Typography, useTheme, useMediaQuery } from "@mui/material";
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import { useRouter } from "next/router";
 import { AlertContent, IConnection, IContinueWithSocialMediaResponse } from "@/common/types";
@@ -9,7 +9,6 @@ import AddConnectionDialog from "@/components/dialog/AddConnectionDialog";
 import DeleteConnectionDialog from "@/components/dialog/DeleteConnectionDialog";
 import { useConnectionss, useDeleteConnection } from "@/hooks/api/connections";
 import useTruncate from "@/hooks/useTruncate";
-import { useWindowSize } from "usehooks-ts";
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return (
@@ -38,7 +37,8 @@ export const Connections = () => {
   const [_useDeferredAction] = useConnectionss();
   const [useDeferredAction] = useDeleteConnection();
   const { truncate } = useTruncate();
-  const { width: windowWidth } = useWindowSize();
+  const { breakpoints } = useTheme();
+  const isMediumScreensUp = useMediaQuery(breakpoints.up("sm"));
   const preLogin = () => {
     setIsLoading(true);
   };
@@ -217,7 +217,7 @@ export const Connections = () => {
                         color: "#1B1B1E",
                       }}
                     >
-                      {windowWidth <= 412 ? truncate(customConnection.name, { length: 14 }) : customConnection.name}
+                      {isMediumScreensUp ? customConnection.name : truncate(customConnection.name, { length: 14 })}
                     </Typography>
                   </Box>
                 </Box>
