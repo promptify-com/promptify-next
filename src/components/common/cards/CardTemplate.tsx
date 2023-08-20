@@ -108,6 +108,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
             display={"flex"}
             alignItems={{ xs: "end", md: "center" }}
             width={{ xs: "100%", md: "auto" }}
+            marginTop={{ xs: "10px", md: "0px"}}
             justifyContent={"space-between"}
             gap={3}
           >
