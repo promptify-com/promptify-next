@@ -502,7 +502,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
         <Stack
           sx={{
-            position: { xs: "sticky", md: "relative" },
+            position: "sticky",
             bottom: 0,
             m: { xs: "0 -16px -3px", md: "0" },
             bgcolor: { xs: "surface.1", md: "initial" },
@@ -542,7 +542,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
                 color: "onPrimary",
                 whiteSpace: "pre-line",
                 ":hover": {
-                  bgcolor: "transparent",
+                  bgcolor: "surface.1",
                   color: "primary.main",
                 },
                 ":disabled": {
