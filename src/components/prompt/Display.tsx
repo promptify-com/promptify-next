@@ -48,36 +48,6 @@ export const Display: React.FC<Props> = ({
     setSortedExecutions(executions);
   }, [executions]);
 
-  const handlePinExecution = async () => {
-    if (selectedExecution === null) return;
-
-    try {
-      if (selectedExecution.is_favorite) {
-        await removeFromFavorite(selectedExecution.id);
-      } else {
-        await addToFavorite(selectedExecution.id);
-      }
-
-      // Update state after API call is successful and avoid unnecessary refetch of executions
-      const updatedExecs = sortedExecutions.map(exec => {
-        if (exec.id === selectedExecution?.id) {
-          return {
-            ...exec,
-            is_favorite: !selectedExecution.is_favorite,
-          };
-        }
-        return exec;
-      });
-      setSortedExecutions(updatedExecs);
-      setSelectedExecution({
-        ...selectedExecution,
-        is_favorite: !selectedExecution.is_favorite,
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   return (
     <Box
       ref={containerRef}
@@ -91,7 +61,6 @@ export const Display: React.FC<Props> = ({
         executions={sortedExecutions}
         selectedExecution={selectedExecution}
         setSelectedExecution={setSelectedExecution}
-        pinExecution={handlePinExecution}
         onSearch={text => setSearch(text)}
       />
 
