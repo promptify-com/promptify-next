@@ -150,14 +150,7 @@ export const SparksLayoutDesktop: FC<SparksLayoutDesktopProps> = ({ execution, t
         gap={1}
         alignItems={"center"}
       >
-        <BaseButton
-          variant="text"
-          color="primary"
-          className="cellHovered"
-          sx={{ opacity: 0.25 }}
-        >
-          Export <ArrowDropDown sx={{ ml: 1 }} />
-        </BaseButton>
+        
       </Grid>
 
       <Grid
