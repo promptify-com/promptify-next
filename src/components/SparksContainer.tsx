@@ -1,10 +1,9 @@
 import { FC, useMemo, useState } from "react";
 import { Box, Grid } from "@mui/material";
-import { Execution, TemplateExecutionsDisplay } from "@/core/api/dto/templates";
+import { Execution, ExecutionTemplatePopupType, TemplateExecutionsDisplay } from "@/core/api/dto/templates";
 
 import { SparksLayoutDesktop } from "./SparksLayoutDesktop";
 import { SparksLayoutMobile } from "./SparksLayoutMobile";
-import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/core/store";
 import { SparkPopup } from "./dialog/SparkPopup";
 import { useExecutionFavoriteMutation } from "@/core/api/executions";
@@ -15,21 +14,24 @@ interface SparksContainerProps {
 }
 
 const SparksContainer: FC<SparksContainerProps> = ({ templates }) => {
-  const openPopup = useSelector((state: RootState) => state.executionsSlice.openPopup);
-  const activeExecution = useSelector((state: RootState) => state.executionsSlice.activeExecution);
-  const popupType = useSelector((state: RootState) => state.executionsSlice.popupType);
+  // const openPopup = useSelector((state: RootState) => state.executionsSlice.openPopup);
+  // const activeExecution = useSelector((state: RootState) => state.executionsSlice.activeExecution);
+  // const popupType = useSelector((state: RootState) => state.executionsSlice.popupType);
+
+  const [openPopup, setOpenPopup] = useState(false);
+  const [activeExecution, setActiveExecution] = useState<Execution | null>(null);
+  const [popupType, setPopupType] = useState<ExecutionTemplatePopupType>("update");
+  const [templateSortOption, setTemplateSortOption] = useState<"asc" | "desc">("asc");
+  const [executionSortOption, setExecutionSortOption] = useState<"asc" | "desc">("asc");
+  const [executionTimeSortOption, setExecutionTimeSortOption] = useState<"asc" | "desc">("asc");
+  const [selectedTemplate, setSelectedTemplate] = useState<TemplateExecutionsDisplay | null>(null);
+  const [nameFilter, setNameFilter] = useState<string>("");
 
   const [favoriteExecution] = useExecutionFavoriteMutation();
 
   const handleSaveExecution = (executionId: number) => {
     favoriteExecution(executionId);
   };
-
-  const [templateSortOption, setTemplateSortOption] = useState<"asc" | "desc">("asc");
-  const [executionSortOption, setExecutionSortOption] = useState<"asc" | "desc">("asc");
-  const [executionTimeSortOption, setExecutionTimeSortOption] = useState<"asc" | "desc">("asc");
-  const [selectedTemplate, setSelectedTemplate] = useState<TemplateExecutionsDisplay | null>(null);
-  const [nameFilter, setNameFilter] = useState<string>("");
 
   const toggleSortDirection = () => {
     setTemplateSortOption(templateSortOption === "asc" ? "desc" : "asc");
@@ -143,12 +145,32 @@ const SparksContainer: FC<SparksContainerProps> = ({ templates }) => {
                   onExecutionSaved={() => handleSaveExecution(execution.id)}
                   template={template}
                   execution={execution}
+                  onOpenEdit={() => {
+                    setPopupType("update");
+                    setActiveExecution(execution);
+                    setOpenPopup(true);
+                  }}
+                  onOpenDelete={() => {
+                    setPopupType("delete");
+                    setActiveExecution(execution);
+                    setOpenPopup(true);
+                  }}
                 />
                 {/* MOBILE VIEW  */}
                 <SparksLayoutMobile
                   onExecutionSaved={() => handleSaveExecution(execution.id)}
                   template={template}
                   execution={execution}
+                  onOpenEdit={() => {
+                    setPopupType("update");
+                    setActiveExecution(execution);
+                    setOpenPopup(true);
+                  }}
+                  onOpenDelete={() => {
+                    setPopupType("delete");
+                    setActiveExecution(execution);
+                    setOpenPopup(true);
+                  }}
                 />
               </Box>
             ))}
@@ -156,9 +178,10 @@ const SparksContainer: FC<SparksContainerProps> = ({ templates }) => {
         ))}
       </Grid>
       <SparkPopup
-        open={openPopup}
         type={popupType}
+        open={openPopup}
         activeExecution={activeExecution}
+        onClose={() => setOpenPopup(false)}
       />
     </Grid>
   );

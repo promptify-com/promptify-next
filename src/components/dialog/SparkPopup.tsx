@@ -5,17 +5,15 @@ import React, { useEffect, useState } from "react";
 import BaseButton from "../base/BaseButton";
 import { Execution, ExecutionTemplatePopupType } from "@/core/api/dto/templates";
 import { useDeleteExecutionMutation, usePutExecutionTitleMutation } from "@/core/api/executions";
-import { useDispatch } from "react-redux";
-import { handleOpenPopup } from "@/core/store/executionsSlice";
 
 interface SparkPopupProps {
   type: ExecutionTemplatePopupType;
   open: boolean;
+  onClose: () => void;
   activeExecution: Execution | null;
 }
 
-export const SparkPopup: React.FC<SparkPopupProps> = ({ open, type, activeExecution }) => {
-  const dispatch = useDispatch();
+export const SparkPopup: React.FC<SparkPopupProps> = ({ open, type, activeExecution, onClose }) => {
   const [updateExecution, { isError }] = usePutExecutionTitleMutation();
   const [deleteExecution, { isError: isDeleteExecutionError }] = useDeleteExecutionMutation();
   const [executionTitle, setExecutionTitle] = useState("");
@@ -25,9 +23,6 @@ export const SparkPopup: React.FC<SparkPopupProps> = ({ open, type, activeExecut
     }
   }, []);
 
-  const onClose = () => {
-    dispatch(handleOpenPopup(false));
-  };
   const handleUpdateExecution = () => {
     if (activeExecution) {
       let data = {
@@ -149,7 +144,7 @@ export const SparkPopup: React.FC<SparkPopupProps> = ({ open, type, activeExecut
               Yes, Delete
             </BaseButton>
             <BaseButton
-              onClick={() => onClose()}
+              onClick={onClose}
               color="primary"
               variant="outlined"
               size="small"

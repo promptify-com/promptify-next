@@ -1,41 +1,24 @@
 import { FC } from "react";
-import { Execution, TemplateExecutionsDisplay } from "@/core/api/dto/templates";
-import { ArrowDropDown, CloudQueueRounded, DeleteRounded, Edit } from "@mui/icons-material";
+import { SparksLayoutProps } from "@/core/api/dto/templates";
+import { CloudQueueRounded, DeleteRounded, Edit } from "@mui/icons-material";
 import { CardMedia, Grid, IconButton, Tooltip, Typography } from "@mui/material";
 
 import useTimestampConverter from "@/hooks/useTimestampConverter";
 import useTruncate from "@/hooks/useTruncate";
-import BaseButton from "./base/BaseButton";
 import DraftSpark from "@/assets/icons/DraftSpark";
 import SavedSpark from "@/assets/icons/SavedSpark";
 import { useRouter } from "next/router";
-import { useDispatch } from "react-redux";
-import { handleOpenPopup, handlePopupType, setActiveExecution } from "@/core/store/executionsSlice";
 
-interface SparksLayoutDesktopProps {
-  execution: Execution;
-  template: TemplateExecutionsDisplay;
-  onExecutionSaved: () => void;
-}
-
-export const SparksLayoutDesktop: FC<SparksLayoutDesktopProps> = ({ execution, template, onExecutionSaved }) => {
+export const SparksLayoutDesktop: FC<SparksLayoutProps> = ({
+  execution,
+  template,
+  onExecutionSaved,
+  onOpenEdit,
+  onOpenDelete,
+}) => {
   const router = useRouter();
-  const dispatch = useDispatch();
-
   const { truncate } = useTruncate();
   const { convertedTimestamp } = useTimestampConverter();
-
-  const handleOpenEdit = () => {
-    dispatch(handleOpenPopup(true));
-    dispatch(setActiveExecution(execution));
-    dispatch(handlePopupType("update"));
-  };
-
-  const handleOpenDelete = () => {
-    dispatch(handleOpenPopup(true));
-    dispatch(setActiveExecution(execution));
-    dispatch(handlePopupType("delete"));
-  };
 
   return (
     <Grid
@@ -75,7 +58,7 @@ export const SparksLayoutDesktop: FC<SparksLayoutDesktopProps> = ({ execution, t
         </Typography>
         <Tooltip title="Rename">
           <IconButton
-            onClick={handleOpenEdit}
+            onClick={onOpenEdit}
             sx={{
               border: "none",
               "&:hover": {
@@ -181,7 +164,7 @@ export const SparksLayoutDesktop: FC<SparksLayoutDesktopProps> = ({ execution, t
         )}
         <Tooltip title="Delete">
           <IconButton
-            onClick={handleOpenDelete}
+            onClick={onOpenDelete}
             sx={{
               border: "none",
               "&:hover": {
