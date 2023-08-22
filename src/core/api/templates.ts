@@ -110,7 +110,6 @@ export const templatesApi = baseApi.injectEndpoints({
         }),
         invalidatesTags: ["Templates", "MyTemplates"],
       }),
-
       publishTemplate: build.mutation<Templates, number>({
         query: (id: number) => ({
           url: `/api/meta/templates/${id}/submit/`,
@@ -118,6 +117,12 @@ export const templatesApi = baseApi.injectEndpoints({
           headers: { "Content-Type": "application/json" },
         }),
         invalidatesTags: ["Templates"],
+      }),
+      viewTemplate: build.mutation<void, number>({
+        query: (id: number) => ({
+          url: `/api/meta/templates/${id}/view/`,
+          method: "post",
+        }),
       }),
     };
   },
@@ -139,10 +144,5 @@ export const {
   useCreateTemplateMutation,
   useUpdateTemplateMutation,
   usePublishTemplateMutation,
+  useViewTemplateMutation,
 } = templatesApi;
-
-export const useTemplateView = () => {
-  return useDeferredAction(async (id: number) => {
-    return await authClient.post(`/api/meta/templates/${id}/view/`);
-  }, []);
-};

@@ -42,9 +42,3 @@ export const sparksApi = baseApi.injectEndpoints({
 
 export const { useGetSparksByTemplateQuery, useGetSparksByMeQuery, useEditSparkTitleMutation, useDeleteSparkMutation } =
   sparksApi;
-
-export const useTemplateView = () => {
-  return useDeferredAction(async (id: number) => {
-    return await authClient.post(`/api/meta/templates/${id}/view/`);
-  }, []);
-};
