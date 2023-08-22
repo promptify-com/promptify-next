@@ -107,15 +107,7 @@ export const SparksLayoutMobile: FC<SparksLayoutMobileProps> = ({ execution, tem
             zIndex: 3,
           }}
         >
-          {execution.is_favorite ? (
-            <SavedSpark
-              size="24"
-            />
-          ) : (
-            <DraftSpark
-              size="24"
-            />
-          )}
+          {execution.is_favorite ? <SavedSpark size="24" /> : <DraftSpark size="24" />}
         </Box>
       </Grid>
       <Grid
