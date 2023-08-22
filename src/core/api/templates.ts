@@ -1,20 +1,24 @@
-import useDeferredAction from "@/hooks/useDeferredAction";
 import { baseApi } from "./api";
 import { PromptParams } from "./dto/prompts";
 import { FilterParams, Templates } from "./dto/templates";
-import { authClient } from "@/common/axios";
 import { IEditTemplate } from "@/common/types/editTemplate";
+
+const getSearchParams = (params: FilterParams) => {
+  const searchParams = new URLSearchParams();
+
+  params.categoryId && searchParams.append("main_category_id", String(params.categoryId));
+  params.tag && searchParams.append("tag", params.tag);
+  params.subcategoryId && searchParams.append("sub_category_id", String(params.subcategoryId));
+  params.engineId && searchParams.append("engine", String(params.engineId));
+  params.title && searchParams.append("title", params.title);
+  params.ordering && searchParams.append("ordering", params.ordering);
+
+  return searchParams.toString();
+};
 
 export const templatesApi = baseApi.injectEndpoints({
   endpoints: build => {
     return {
-      getTemplatesByOrdering: build.query<Templates[], string>({
-        query: (ordering: string = "-runs") => ({
-          url: `/api/meta/templates/?ordering=${ordering}`,
-          method: "get",
-        }),
-        providesTags: ["Templates"],
-      }),
       getTemplatesSuggested: build.query<Templates[], void>({
         query: () => ({
           url: "/api/meta/templates/suggested",
@@ -29,27 +33,7 @@ export const templatesApi = baseApi.injectEndpoints({
       }),
       getTemplatesByFilter: build.query<Templates[], FilterParams>({
         query: (params: FilterParams) => ({
-          url:
-            "/api/meta/templates/?" +
-            (params.categoryId ? `main_category_id=${params.categoryId}` : "") +
-            (params.tag ? `&tag=${params.tag}` : "") +
-            (params.subcategoryId ? `&sub_category_id=${params.subcategoryId}` : "") +
-            (params.engineId ? `&engine=${params.engineId}` : "") +
-            (params.title ? `&title=${params.title}` : "") +
-            (params.filter ? `&ordering=${params.filter}` : ""),
-          method: "get",
-        }),
-      }),
-
-      getTemplatesByCategory: build.query<Templates[], string>({
-        query: (id: string) => ({
-          url: `/api/meta/templates/?main_category_slug=${id}`,
-          method: "get",
-        }),
-      }),
-      getTemplateBySubCategory: build.query<Templates[], string>({
-        query: (id: string) => ({
-          url: `/api/meta/templates/?sub_category_slug=${id}`,
+          url: `/api/meta/templates/?${getSearchParams(params)}`,
           method: "get",
         }),
       }),
@@ -78,13 +62,6 @@ export const templatesApi = baseApi.injectEndpoints({
           method: "get",
         }),
       }),
-      getAllPromptTemplates: build.query<Templates[], void>({
-        query: () => ({
-          url: `/api/meta/templates/`,
-          method: "get",
-        }),
-        providesTags: ["Templates"],
-      }),
       getMyTemplates: build.query<Templates[], void>({
         query: () => ({
           url: "/api/meta/templates/me",
@@ -96,7 +73,6 @@ export const templatesApi = baseApi.injectEndpoints({
         query: (data: IEditTemplate) => ({
           url: `/api/meta/templates/`,
           method: "post",
-          headers: { "Content-Type": "application/json" },
           data,
         }),
         invalidatesTags: ["Templates", "MyTemplates"],
@@ -105,7 +81,6 @@ export const templatesApi = baseApi.injectEndpoints({
         query: ({ data, id }: { data: IEditTemplate; id: number }) => ({
           url: `/api/meta/templates/${id}/`,
           method: "put",
-          headers: { "Content-Type": "application/json" },
           data,
         }),
         invalidatesTags: ["Templates", "MyTemplates"],
@@ -114,7 +89,6 @@ export const templatesApi = baseApi.injectEndpoints({
         query: (id: number) => ({
           url: `/api/meta/templates/${id}/submit/`,
           method: "post",
-          headers: { "Content-Type": "application/json" },
         }),
         invalidatesTags: ["Templates"],
       }),
@@ -129,14 +103,10 @@ export const templatesApi = baseApi.injectEndpoints({
 });
 
 export const {
-  useGetTemplatesByOrderingQuery,
   useGetLastTemplatesQuery,
   useGetTemplatesSuggestedQuery,
-  useGetTemplateBySubCategoryQuery,
-  useGetTemplatesByCategoryQuery,
   useDeleteTemplateMutation,
   useGetTemplatesByFilterQuery,
-  useGetAllPromptTemplatesQuery,
   useGetPromptParamsQuery,
   useGetPromptTemplateBySlugQuery,
   useGetPromptTemplatesQuery,

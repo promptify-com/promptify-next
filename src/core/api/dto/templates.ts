@@ -7,7 +7,7 @@ export interface FilterParams {
   tag?: string;
   title?: string | null;
   engineId?: number;
-  filter?: string;
+  ordering?: string;
 }
 
 export interface SelectedFilters {

@@ -20,7 +20,7 @@ import DraftSpark from "@/assets/icons/DraftSpark";
 import {
   useDeleteExecutionMutation,
   useExecutionFavoriteMutation,
-  usePutExecutionTitleMutation,
+  useUpdateExecutionMutation,
 } from "@/core/api/executions";
 import { DeleteDialog } from "../dialog/DeleteDialog";
 
@@ -67,7 +67,7 @@ interface Props {
 export const ExecutionsTabs: React.FC<Props> = ({ executions, chooseExecution, selectedExecution }) => {
   const { palette } = useTheme();
 
-  const [updateExecutionTitle, { isError, isLoading }] = usePutExecutionTitleMutation();
+  const [updateExecution, { isError, isLoading }] = useUpdateExecutionMutation();
   const [favoriteExecution] = useExecutionFavoriteMutation();
   const [deleteExecution] = useDeleteExecutionMutation();
 
@@ -86,7 +86,7 @@ export const ExecutionsTabs: React.FC<Props> = ({ executions, chooseExecution, s
 
   const renameSave = async () => {
     if (executionTitle?.length && selectedExecution?.id) {
-      await updateExecutionTitle({
+      await updateExecution({
         id: selectedExecution?.id,
         data: { title: executionTitle },
       });
