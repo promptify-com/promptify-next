@@ -2,14 +2,14 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ["placehold.it"],
+    domains: ["placehold.it", "promptify.s3.amazonaws.com"],
   },
 };
 
 if (
-  process.env.NODE_ENV === 'production' 
-  && process.env.NEXT_PUBLIC_SENTRY_DSN 
-  && process.env.SENTRY_AUTH_TOKEN
+  process.env.NODE_ENV === "production" &&
+  process.env.NEXT_PUBLIC_SENTRY_DSN &&
+  process.env.SENTRY_AUTH_TOKEN
 ) {
   const { withSentryConfig } = require("@sentry/nextjs");
 
@@ -23,9 +23,8 @@ if (
     silent: true,
     authToken: process.env.SENTRY_AUTH_TOKEN,
   };
-  
+
   module.exports = withSentryConfig(nextConfig, sentryWebpackPluginOptions);
 } else {
   module.exports = nextConfig;
 }
-

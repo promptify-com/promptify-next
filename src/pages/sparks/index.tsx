@@ -1,46 +1,28 @@
 import React from "react";
-import moment from "moment";
 import { Box, Grid, Stack, Typography, Skeleton } from "@mui/material";
-
 import { Layout } from "@/layout";
-import { useGetSparksByMeQuery } from "@/core/api/sparks";
 import Protected from "@/components/Protected";
-
-import SparksSection from "@/components/SparksSection";
-import { TemplateExecutionsDisplay } from "@/core/api/dto/templates";
+import SparksContainer from "@/components/SparksContainer";
+import { useGetTemplatesExecutionsByMeQuery } from "@/core/api/executions";
 
 import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
 
 const Sparks = () => {
-  const { data: sparksByTemplate, isLoading: isSparksByTemplateLoading } =
-    useGetSparksByMeQuery();
-
-  let sparksCount = 0;
-  const sortedTemplates = sparksByTemplate?.map((template) => {
-    // Sort the sparks inside each template by current_version.created_at
-    const sortedExecutions = [...template.sparks].sort((a, b) =>
-      moment(b.current_version?.created_at).diff(
-        moment(a.current_version?.created_at)
-      )
-    );
-    sparksCount += template.sparks.length;
-
-    return {
-      ...template,
-      sparks: sortedExecutions,
-    };
-  });
+  const { data: executedTemplates, isLoading: isExecutedTemplatesLoading } = useGetTemplatesExecutionsByMeQuery();
 
   return (
     <Protected>
       <Layout>
-        <Box mt={{ xs: 7, md: 0 }} padding={{ xs: "4px 0px", md: "0px 8px" }}>
+        <Box
+          mt={{ xs: 7, md: 0 }}
+          padding={{ xs: "4px 0px", md: "0px 8px" }}
+        >
           <Grid
             sx={{
               padding: { xs: "16px", md: "32px" },
             }}
           >
-            {isSparksByTemplateLoading ? (
+            {isExecutedTemplatesLoading ? (
               <Box>
                 <Skeleton
                   variant="text"
@@ -53,13 +35,17 @@ const Sparks = () => {
               </Box>
             ) : (
               <Stack gap={2}>
-                <Typography fontSize={18} fontWeight={500} color={"onSurface"}>
-                  My Sparks ({sparksCount})
+                <Typography
+                  fontSize={"24px"}
+                  fontWeight={500}
+                  color={"onSurface"}
+                  lineHeight={"34.32px"}
+                  letterSpacing={"0.17"}
+                >
+                  My Sparks
                 </Typography>
-                {sortedTemplates?.length ? (
-                  <SparksSection
-                    templates={sortedTemplates as TemplateExecutionsDisplay[]}
-                  />
+                {executedTemplates?.length ? (
+                  <SparksContainer templates={executedTemplates} />
                 ) : (
                   <Typography
                     sx={{

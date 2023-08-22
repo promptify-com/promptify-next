@@ -21,7 +21,7 @@ export const baseApi = createApi({
     "Engines",
     "Sparks",
     "MyTemplates",
-    "Executions"
+    "Executions",
   ],
   endpoints: () => ({}),
 });

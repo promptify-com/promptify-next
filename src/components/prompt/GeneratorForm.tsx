@@ -1,18 +1,6 @@
 import React, { useEffect, useState } from "react";
-import {
-  Box,
-  Button,
-  CircularProgress,
-  Stack,
-  Typography,
-  useTheme,
-} from "@mui/material";
-import {
-  PromptParams,
-  ResInputs,
-  ResOverrides,
-  ResPrompt,
-} from "@/core/api/dto/prompts";
+import { Box, Button, CircularProgress, Stack, Typography, useTheme } from "@mui/material";
+import { PromptParams, ResInputs, ResOverrides, ResPrompt } from "@/core/api/dto/prompts";
 import { IPromptInput, PromptLiveResponse } from "@/common/types/prompt";
 import useToken from "@/hooks/useToken";
 import { useAppDispatch } from "@/hooks/useStore";
@@ -22,10 +10,7 @@ import { GeneratorParam } from "./GeneratorParam";
 import { savePathURL } from "@/common/utils";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { getInputsFromString } from "@/common/helpers/getInputsFromString";
-import {
-  Templates,
-  TemplatesExecutions,
-} from "@/core/api/dto/templates";
+import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { useWindowSize } from "usehooks-ts";
 import { useRouter } from "next/router";
@@ -33,17 +18,14 @@ import TabsAndFormPlaceholder from "@/components/placeholders/TabsAndFormPlaceho
 
 interface GeneratorFormProps {
   templateData: Templates;
+  selectedExecution: TemplatesExecutions | null;
   setNewExecutionData: (data: PromptLiveResponse) => void;
   isGenerating: boolean;
   setIsGenerating: (status: boolean) => void;
   onError: (errMsg: string) => void;
   exit: () => void;
-  selectedExecution: TemplatesExecutions | null;
   setMobileTab: (value: number) => void;
   setActiveTab: (value: number) => void;
-  executions: TemplatesExecutions[];
-  setSelectedExecution: (execution: TemplatesExecutions) => void;
-  setSortedExecutions: (value: TemplatesExecutions[]) => void;
 }
 
 export interface InputsErrors {
@@ -59,6 +41,7 @@ interface Param {
 
 export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   templateData,
+  selectedExecution,
   setNewExecutionData,
   isGenerating,
   setIsGenerating,
@@ -66,10 +49,6 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   exit,
   setMobileTab,
   setActiveTab,
-  executions,
-  selectedExecution,
-  setSelectedExecution,
-  setSortedExecutions
 }) => {
   const token = useToken();
   const { palette } = useTheme();
@@ -77,8 +56,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   const router = useRouter();
   const { width: windowWidth } = useWindowSize();
 
-  const [generatingResponse, setGeneratingResponse] =
-    useState<PromptLiveResponse | null>(null);
+  const [generatingResponse, setGeneratingResponse] = useState<PromptLiveResponse | null>(null);
   const [newExecutionId, setNewExecutionId] = useState<number | null>(null);
   const [resPrompts, setResPrompts] = useState<ResPrompt[]>([]);
   const [lastExecution, setLastExecution] = useState<ResPrompt[] | null>(null);
@@ -91,7 +69,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   const setDefaultResPrompts = () => {
     const tempArr: ResPrompt[] = [...resPrompts];
 
-    templateData.prompts.forEach((prompt) => {
+    templateData.prompts.forEach(prompt => {
       const tempObj: ResPrompt = {} as ResPrompt;
 
       tempObj.prompt = prompt.id;
@@ -112,9 +90,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
         const inputName = input.name;
 
         if (selectedExecution?.parameters) {
-          const inputValue = Object.values(selectedExecution.parameters).find(
-            (val) => val[inputName]
-          );
+          const inputValue = Object.values(selectedExecution.parameters).find(val => val[inputName]);
           updatedInputs.set(input.prompt, {
             id: input.prompt,
             inputs: {
@@ -152,7 +128,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
           id: +promptId,
           contextual_overrides: values,
         }))
-        .filter((override) => override.contextual_overrides.length > 0);
+        .filter(override => override.contextual_overrides.length > 0);
       setNodeParams(overrides);
     }
   }, [selectedExecution]);
@@ -162,12 +138,10 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
     if (nodeInputs.length > 0) {
       tempArr.forEach((prompt, index) => {
-        const obj = nodeInputs.find((inputs) => inputs.id === prompt.prompt);
+        const obj = nodeInputs.find(inputs => inputs.id === prompt.prompt);
         if (obj) {
           // Extract inputs values from nodeInputs item and put it as { inputName: inputValue }
-          const values = Object.fromEntries(
-            Object.entries(obj.inputs).map(([key, value]) => [key, value.value])
-          );
+          const values = Object.fromEntries(Object.entries(obj.inputs).map(([key, value]) => [key, value.value]));
           tempArr[index].prompt_params = values;
         }
       });
@@ -175,9 +149,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
     if (nodeParams.length > 0) {
       tempArr.forEach((prompt, index) => {
-        const obj = nodeParams.find(
-          (overrides) => overrides.id === prompt.prompt
-        );
+        const obj = nodeParams.find(overrides => overrides.id === prompt.prompt);
         if (obj) {
           tempArr[index].contextual_overrides = obj.contextual_overrides;
         }
@@ -190,15 +162,14 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   const isInputsFilled = () => {
     const tempErrors: InputsErrors = {};
 
-    templateData.prompts.forEach((prompt) => {
+    templateData.prompts.forEach(prompt => {
       const inputs = getInputsFromString(prompt.content);
 
-      inputs.forEach((input) => {
+      inputs.forEach(input => {
         if (!input.required) return;
 
         const checkParams = resPrompts.find(
-          (resPrompt) =>
-            resPrompt.prompt_params && resPrompt.prompt_params[input.name]
+          resPrompt => resPrompt.prompt_params && resPrompt.prompt_params[input.name],
         );
 
         if (!checkParams || !checkParams.prompt_params[input.name]) {
@@ -265,11 +236,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
         if (res.ok && res.status === 200) {
           setIsGenerating(true);
           setGeneratingResponse({ created_at: new Date(), data: [] });
-        } else if (
-          res.status >= 400 &&
-          res.status < 500 &&
-          res.status !== 429
-        ) {
+        } else if (res.status >= 400 && res.status < 500 && res.status !== 429) {
           console.error("Client side error ", res);
           onError("Something went wrong. Please try again later");
         }
@@ -286,9 +253,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
           if (msg.event === "infer" && msg.data) {
             if (message) {
               const tempArr = [...tempData];
-              const activePrompt = tempArr.findIndex(
-                (template) => template.prompt === +prompt
-              );
+              const activePrompt = tempArr.findIndex(template => template.prompt === +prompt);
 
               if (activePrompt === -1) {
                 tempArr.push({
@@ -304,7 +269,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
               }
 
               tempData = [...tempArr];
-              setGeneratingResponse((prevState) => ({
+              setGeneratingResponse(prevState => ({
                 ...prevState,
                 created_at: prevState?.created_at || new Date(),
                 data: tempArr,
@@ -312,9 +277,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
             }
           } else {
             const tempArr = [...tempData];
-            const activePrompt = tempArr.findIndex(
-              (template) => template.prompt === +prompt
-            );
+            const activePrompt = tempArr.findIndex(template => template.prompt === +prompt);
 
             if (message === "[COMPLETED]") {
               tempArr[activePrompt] = {
@@ -344,14 +307,12 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
             if (message.includes("[ERROR]")) {
               onError(
-                message
-                  ? message.replace("[ERROR]", "")
-                  : "Something went wrong during the execution of this prompt"
+                message ? message.replace("[ERROR]", "") : "Something went wrong during the execution of this prompt",
               );
             }
 
             tempData = [...tempArr];
-            setGeneratingResponse((prevState) => ({
+            setGeneratingResponse(prevState => ({
               ...prevState,
               created_at: prevState?.created_at || new Date(),
               data: tempArr,
@@ -377,7 +338,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
   useEffect(() => {
     if (newExecutionId) {
-      setGeneratingResponse((prevState) => ({
+      setGeneratingResponse(prevState => ({
         id: newExecutionId,
         created_at: prevState?.created_at || new Date(),
         data: prevState?.data || [],
@@ -411,23 +372,19 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     await Promise.all(
       [...templateData.prompts]
         .sort((a, b) => a.order - b.order)
-        .map(async (prompt) => {
+        .map(async prompt => {
           const inputs = getInputsFromString(prompt.content);
-          inputs.forEach((input) => {
+          inputs.forEach(input => {
             shownInputs.set(input.name, { ...input, prompt: prompt.id });
           });
 
-          const params = (
-            await dispatch(
-              templatesApi.endpoints.getPromptParams.initiate(prompt.id)
-            )
-          ).data;
+          const params = (await dispatch(templatesApi.endpoints.getPromptParams.initiate(prompt.id))).data;
           params
-            ?.filter((param) => param.is_visible)
-            .forEach((param) => {
+            ?.filter(param => param.is_visible)
+            .forEach(param => {
               shownParams.set(param.parameter.id, { param, prompt: prompt.id });
             });
-        })
+        }),
     );
     setShownInputs(Array.from(shownInputs.values()));
     setShownParams(Array.from(shownParams.values()));
@@ -449,23 +406,22 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     return () => window.removeEventListener("keydown", handleKeyboard);
   }, [handleKeyboard]);
 
-  const filledForm = nodeInputs.every((nodeInput) =>
+  const filledForm = nodeInputs.every(nodeInput =>
     Object.values(nodeInput.inputs)
-      .filter((input) => input.required)
-      .every((input) => input.value)
+      .filter(input => input.required)
+      .every(input => input.value),
   );
 
   return (
     <Stack
       sx={{
-        minHeight: "100%",
+        minHeight: { xs: "100%", md: "auto" },
         bgcolor: "surface.2",
       }}
     >
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
         <Typography
           sx={{
-            display: { md: "none" },
             p: "16px",
             fontSize: 24,
             fontWeight: 500,
@@ -478,10 +434,11 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
       </Box>
 
       <Stack
-        flex={1} gap={1}
+        gap={1}
         sx={{
+          flex: { xs: 1, md: 0 },
           p: "16px",
-          pb: { xs: 0, md: "16px" }
+          pb: { xs: 0, md: "16px" },
         }}
       >
         <Box
@@ -534,13 +491,17 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
           )}
         </Box>
 
-        <Stack sx={{
-            position: { xs: "sticky", md: "relative" },
+        <Stack
+          sx={{
+            position: "sticky",
             bottom: 0,
             m: { xs: "0 -16px -3px", md: "0" },
             bgcolor: { xs: "surface.1", md: "initial" },
             color: { xs: "onSurface", md: "initial" },
-            boxShadow: { xs: "0px -8px 40px 0px rgba(93, 123, 186, 0.09), 0px -8px 10px 0px rgba(98, 98, 107, 0.03)", md: "none" },
+            boxShadow: {
+              xs: "0px -8px 40px 0px rgba(93, 123, 186, 0.09), 0px -8px 10px 0px rgba(98, 98, 107, 0.03)",
+              md: "none",
+            },
             borderRadius: "24px 24px 0 0",
             zIndex: 999,
             borderBottom: { xs: `1px solid ${palette.surface[5]}`, md: "none" },
@@ -554,7 +515,14 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
           >
             <Button
               variant={"contained"}
-              startIcon={token ? <LogoApp width={18} color="white" /> : null}
+              startIcon={
+                token ? (
+                  <LogoApp
+                    width={18}
+                    color="white"
+                  />
+                ) : null
+              }
               sx={{
                 flex: 1,
                 p: "10px 25px",
@@ -565,7 +533,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
                 color: "onPrimary",
                 whiteSpace: "pre-line",
                 ":hover": {
-                  bgcolor: "transparent",
+                  bgcolor: "surface.1",
                   color: "primary.main",
                 },
                 ":disabled": {
@@ -579,44 +547,58 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
             >
               {token ? (
                 <React.Fragment>
-                  <Typography ml={2} color={"inherit"}>
+                  <Typography
+                    ml={2}
+                    color={"inherit"}
+                  >
                     Generate
                   </Typography>
-                  <Typography ml={"auto"} color={"inherit"}>
+                  <Typography
+                    ml={"auto"}
+                    color={"inherit"}
+                  >
                     ~360s
                   </Typography>
                 </React.Fragment>
               ) : (
-                <Typography ml={2} color={"inherit"}>
+                <Typography
+                  ml={2}
+                  color={"inherit"}
+                >
                   Sign in or Create an account
                 </Typography>
               )}
             </Button>
-            <Box sx={{ position: 'relative', display: 'inline-flex' }}>
-              <CircularProgress variant="determinate" value={100} sx={{ position: "absolute", color: "grey.400" }} />
-              <CircularProgress variant="determinate"
-                value={templateData.executions_limit === -1 ? 100 : templateData.executions_count} 
+            <Box sx={{ position: "relative", display: "inline-flex" }}>
+              <CircularProgress
+                variant="determinate"
+                value={100}
+                sx={{ position: "absolute", color: "grey.400" }}
+              />
+              <CircularProgress
+                variant="determinate"
+                value={templateData.executions_limit === -1 ? 100 : templateData.executions_count}
               />
               <Box
                 sx={{
                   top: "50%",
                   left: "50%",
                   transform: "translate(-50%, -50%)",
-                  position: 'absolute',
+                  position: "absolute",
                   width: 26,
                   height: 26,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
                   bgcolor: "primary.main",
                   color: "onPrimary",
-                  borderRadius: 99
+                  borderRadius: 99,
                 }}
               >
                 <Typography
-                  sx={{ fontSize: 13, color: "inherit"}}
+                  sx={{ fontSize: 13, color: "inherit" }}
                   dangerouslySetInnerHTML={{
-                    __html: templateData.executions_limit === -1 ? "&infin;" : templateData.executions_count
+                    __html: templateData.executions_limit === -1 ? "&infin;" : templateData.executions_count,
                   }}
                 />
               </Box>
@@ -648,11 +630,17 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
         >
           Repeat last:
           <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <Box style={keysStyle} sx={{ fontSize: 12, fontWeight: 600 }}>
+            <Box
+              style={keysStyle}
+              sx={{ fontSize: 12, fontWeight: 600 }}
+            >
               SHIFT
             </Box>
             +
-            <Box style={keysStyle} sx={{ fontSize: 12, fontWeight: 600 }}>
+            <Box
+              style={keysStyle}
+              sx={{ fontSize: 12, fontWeight: 600 }}
+            >
               R
             </Box>
           </Box>

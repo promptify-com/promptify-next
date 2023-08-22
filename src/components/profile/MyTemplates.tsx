@@ -28,6 +28,7 @@ import TemplateForm from "@/components/common/forms/TemplateForm";
 import { FormType } from "@/common/types/template";
 
 import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
+import Image from "@/components/design-system/Image";
 
 export const MyTemplates = () => {
   const { data: templates, isLoading: isTemplatesLoading } =
@@ -128,14 +129,14 @@ export const MyTemplates = () => {
                     gap={"16px"}
                   >
                     <CardMedia
-                      component={"img"}
-                      image={template.thumbnail}
                       sx={{
                         height: { xs: "90px", md: "60px" },
                         width: "80px",
                         borderRadius: "16px",
                       }}
-                    />
+                    >
+                      <Image src={template.thumbnail} alt={template.title} style={{borderRadius: "16px", objectFit: "cover", width: "100%", height: "100%"}}/>
+                    </CardMedia>
                     <Box>
                       <Typography>{template.title}</Typography>
                     </Box>

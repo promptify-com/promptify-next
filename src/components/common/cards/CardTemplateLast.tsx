@@ -1,19 +1,13 @@
 import React from "react";
-import {
-  Avatar,
-  Box,
-  Card,
-  CardMedia,
-  Grid,
-  IconButton,
-  Typography,
-} from "@mui/material";
+import { Avatar, Box, Card, CardMedia, Grid, IconButton, Typography } from "@mui/material";
 import { TemplateExecutionsDisplay } from "@/core/api/dto/templates";
 import { Favorite, PlayCircle } from "@mui/icons-material";
 import { useRouter } from "next/router";
 import useTruncate from "@/hooks/useTruncate";
 import SavedSpark from "@/assets/icons/SavedSpark";
 import NoSpark from "@/assets/icons/NoSpark";
+
+import Image from "@/components/design-system/Image";
 
 type CardTemplateLastProps = {
   template: TemplateExecutionsDisplay;
@@ -26,7 +20,9 @@ const CardTemplateLast: React.FC<CardTemplateLastProps> = ({ template }) => {
   return (
     <Box>
       <Card
+        onClick={() => router.push(`prompt/${template.slug}`)}
         sx={{
+          cursor: "pointer",
           maxWidth: "266px",
           width: "266px",
           minHeight: "277px",
@@ -45,10 +41,13 @@ const CardTemplateLast: React.FC<CardTemplateLastProps> = ({ template }) => {
             height: "115px",
             objectFit: "cover",
           }}
-          component="img"
-          image={template.thumbnail}
-          alt={template.title}
-        />
+        >
+          <Image
+            src={template.thumbnail}
+            alt={template.title}
+            style={{borderRadius: "16px 16px 0px 0px", objectFit: "cover", width: "100%", height: "100%"}}
+          />
+        </CardMedia>
 
         <Box
           display={"flex"}
@@ -135,7 +134,11 @@ const CardTemplateLast: React.FC<CardTemplateLastProps> = ({ template }) => {
               justifyContent={"space-between"}
               height={"48px"}
             >
-              <Box display={"flex"} alignItems={"bottom"} gap={"8px"}>
+              <Box
+                display={"flex"}
+                alignItems={"bottom"}
+                gap={"8px"}
+              >
                 <SavedSpark />
                 <Typography
                   sx={{
@@ -175,7 +178,11 @@ const CardTemplateLast: React.FC<CardTemplateLastProps> = ({ template }) => {
               justifyContent={"space-between"}
               height={"48px"}
             >
-              <Box display={"flex"} alignItems={"bottom"} gap={"8px"}>
+              <Box
+                display={"flex"}
+                alignItems={"bottom"}
+                gap={"8px"}
+              >
                 <NoSpark />
                 <Typography
                   sx={{

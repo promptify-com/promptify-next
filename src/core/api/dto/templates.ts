@@ -72,12 +72,7 @@ export interface Category {
   description: string;
 }
 
-export type TemplateStatus =
-  | "ALL"
-  | "DRAFT"
-  | "PENDING_REVIEW"
-  | "PUBLISHED"
-  | "ARCHIVED";
+export type TemplateStatus = "ALL" | "DRAFT" | "PENDING_REVIEW" | "PUBLISHED" | "ARCHIVED";
 
 export interface Templates {
   id: number;
@@ -158,6 +153,13 @@ export interface PromptExecutions {
   tokens_spent: number;
 }
 
+export interface Execution {
+  id: number;
+  title: string;
+  created_at: string;
+  is_favorite: boolean;
+}
+
 export interface TemplateExecutionsDisplay {
   id: number;
   title: string;
@@ -170,26 +172,8 @@ export interface TemplateExecutionsDisplay {
   created_by: UserMin;
   tags: Tag[];
   slug: string;
-  executions: {
-    id: number;
-    title: string;
-    created_at: string;
-  }[];
-  sparks: {
-    id: number;
-    initial_title: string;
-    created_at: string;
-    versions: {
-      id: number;
-      title: string;
-      created_at: string;
-    }[];
-    current_version: {
-      id: number;
-      title: string;
-      created_at: string;
-    };
-  }[];
+  executions: Execution[];
+
   likes?: number;
   favorites_count: number;
 }
@@ -228,3 +212,5 @@ export interface CollectionMutationParams {
   collectionId: number;
   templateId: number;
 }
+
+export type ExecutionTemplatePopupType = "update" | "delete";
