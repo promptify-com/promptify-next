@@ -8,6 +8,9 @@ import {
 
 import { Category } from "@/core/api/dto/templates";
 import Link from "next/link";
+import { useSelector } from "react-redux";
+import { isValidUserFn } from "@/core/store/userSlice";
+
 
 import Image from "@/components/design-system/Image";
 
@@ -18,6 +21,8 @@ export const CategoryCard = ({
   category: Category;
   href: string;
 }) => {
+  const isValidUser = useSelector(isValidUserFn);
+
   return (
     <Link href={{ pathname: href }} style={{ textDecoration: "none" }}>
       <Card
@@ -47,7 +52,11 @@ export const CategoryCard = ({
               height: "200px",
             }}
           >
-            <Image src={category.image} alt={category.name} style={{borderRadius: "16px", objectFit: "cover", width: "100%", height: "100%"}} priority/>
+            <Image 
+              src={category.image} 
+              alt={category.name} 
+              style={{borderRadius: "16px", objectFit: "cover", width: "100%", height: "100%"}} 
+              priority={!isValidUser}/>
           </CardMedia>
 
           <Typography

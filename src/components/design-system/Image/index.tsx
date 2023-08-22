@@ -17,7 +17,6 @@ const Image: React.FC<NextImageProps> = ({
   width = 0,
   height = 0
 }) => {
-  
   return (
     <NextImage
       src={src}
@@ -26,7 +25,7 @@ const Image: React.FC<NextImageProps> = ({
       height={height}
       sizes="100vw" // This is helping us to tell Next.js Image component to resize the image to fit the width of its container.
       priority={priority}
-      style={{...style}}
+      style={style}
     />
   );
 };
