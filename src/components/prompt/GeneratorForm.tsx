@@ -14,6 +14,7 @@ import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { useWindowSize } from "usehooks-ts";
 import { useRouter } from "next/router";
+import { AllInclusive, InfoOutlined } from "@mui/icons-material";
 
 interface GeneratorFormProps {
   templateData: Templates;
@@ -556,18 +557,25 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
             >
               {token ? (
                 <React.Fragment>
-                  <Typography
-                    ml={2}
-                    color={"inherit"}
-                  >
-                    Generate
-                  </Typography>
-                  <Typography
-                    ml={"auto"}
-                    color={"inherit"}
-                  >
+                  <Typography sx={{ ml: 2, color: "inherit", fontSize: 15 }}>Generate</Typography>
+                  <Typography sx={{ display: { md: "none" }, ml: "auto", color: "inherit", fontSize: 12 }}>
                     ~360s
                   </Typography>
+                  <Stack
+                    direction={"row"}
+                    alignItems={"center"}
+                    gap={0.5}
+                    sx={{ display: { xs: "none", md: "flex" }, ml: "auto", color: "inherit", fontSize: 12 }}
+                  >
+                    {templateData.executions_limit === -1 ? (
+                      <AllInclusive fontSize="small" />
+                    ) : (
+                      <>
+                        {templateData.executions_count} of {templateData.executions_limit} left
+                        <InfoOutlined sx={{ fontSize: 16 }} />
+                      </>
+                    )}
+                  </Stack>
                 </React.Fragment>
               ) : (
                 <Typography
@@ -578,7 +586,12 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
                 </Typography>
               )}
             </Button>
-            <Box sx={{ position: "relative", display: "inline-flex" }}>
+            <Box
+              sx={{
+                position: "relative",
+                display: { xs: "inline-flex", md: "none" },
+              }}
+            >
               <CircularProgress
                 variant="determinate"
                 value={100}
@@ -602,14 +615,14 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
                   bgcolor: "primary.main",
                   color: "onPrimary",
                   borderRadius: 99,
+                  fontSize: 12,
                 }}
               >
-                <Typography
-                  sx={{ fontSize: 13, color: "inherit" }}
-                  dangerouslySetInnerHTML={{
-                    __html: templateData.executions_limit === -1 ? "&infin;" : templateData.executions_count,
-                  }}
-                />
+                {templateData.executions_limit === -1 ? (
+                  <AllInclusive fontSize="small" />
+                ) : (
+                  templateData.executions_count
+                )}
               </Box>
             </Box>
           </Stack>

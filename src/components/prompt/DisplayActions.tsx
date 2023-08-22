@@ -24,6 +24,7 @@ import {
   Redo,
   PushPin,
   Close,
+  InfoOutlined,
 } from "@mui/icons-material";
 import { SubjectIcon } from "@/assets/icons/SubjectIcon";
 import { TemplatesExecutions } from "@/core/api/dto/templates";
@@ -117,7 +118,8 @@ export const DisplayActions: React.FC<Props> = ({
   const ExecutionsSelect = (
     <Button
       sx={{
-        width: "360px",
+        width: "100%",
+        maxWidth: "336px",
         color: "onSurface",
         fontSize: 13,
         fontWeight: 500,
@@ -163,7 +165,32 @@ export const DisplayActions: React.FC<Props> = ({
           alignItems={"center"}
           gap={1}
         >
-          {ExecutionsSelect}
+          <Stack
+            flex={1}
+            direction={"row"}
+            alignItems={"center"}
+            gap={1}
+          >
+            {ExecutionsSelect}
+            {!selectedExecution?.is_favorite && (
+              <Typography
+                sx={{
+                  p: "4px 8px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1,
+                  color: `${alpha(palette.onSurface, 0.5)}`,
+                  fontSize: 12,
+                  fontWeight: 400,
+                  svg: {
+                    fontSize: 16,
+                  },
+                }}
+              >
+                <InfoOutlined /> This spark not saved yet...
+              </Typography>
+            )}
+          </Stack>
 
           <Stack
             direction={"row"}
@@ -175,9 +202,6 @@ export const DisplayActions: React.FC<Props> = ({
 
             {false && (
               <React.Fragment>
-                <Typography sx={{ color: `${alpha(palette.onSurface, 0.2)}`, fontSize: 12, fontWeight: 400 }}>
-                  saved...
-                </Typography>
                 <IconButton sx={{ ...iconButtonStyle }}>
                   <Undo />
                 </IconButton>
@@ -260,6 +284,7 @@ export const DisplayActions: React.FC<Props> = ({
                       selectedExecution={selectedExecution}
                       chooseExecution={exec => {
                         setSelectedExecution(exec);
+                        setPresetsAnchor(null);
                       }}
                     />
                   </Box>
