@@ -17,59 +17,59 @@ const getSearchParams = (params: FilterParams) => {
 };
 
 export const templatesApi = baseApi.injectEndpoints({
-  endpoints: build => {
+  endpoints: builder => {
     return {
-      getTemplatesSuggested: build.query<Templates[], void>({
+      getTemplatesSuggested: builder.query<Templates[], void>({
         query: () => ({
           url: "/api/meta/templates/suggested",
           method: "get",
         }),
       }),
-      getLastTemplates: build.query<Templates[], void>({
+      getLastTemplates: builder.query<Templates[], void>({
         query: () => ({
           url: "/api/meta/templates/last_executed/",
           method: "get",
         }),
       }),
-      getTemplatesByFilter: build.query<Templates[], FilterParams>({
+      getTemplatesByFilter: builder.query<Templates[], FilterParams>({
         query: (params: FilterParams) => ({
           url: `/api/meta/templates/?${getSearchParams(params)}`,
           method: "get",
         }),
       }),
-      deleteTemplate: build.mutation({
+      deleteTemplate: builder.mutation({
         query: (id: number) => ({
           url: `/api/meta/templates/${id}`,
           method: "delete",
         }),
         invalidatesTags: ["Templates", "MyTemplates"],
       }),
-      getPromptTemplates: build.query<Templates, number>({
+      getPromptTemplates: builder.query<Templates, number>({
         query: (id: number) => ({
           url: `/api/meta/templates/${id}`,
           method: "get",
         }),
       }),
-      getPromptTemplateBySlug: build.query<Templates, string>({
+      getPromptTemplateBySlug: builder.query<Templates, string>({
         query: (slug: string) => ({
           url: `/api/meta/templates/by-slug/${slug}`,
           method: "get",
         }),
       }),
-      getPromptParams: build.query<PromptParams[], number>({
+      getPromptParams: builder.query<PromptParams[], number>({
         query: (id: number) => ({
           url: `/api/meta/prompts/${id}/params`,
           method: "get",
         }),
       }),
-      getMyTemplates: build.query<Templates[], void>({
+      getMyTemplates: builder.query<Templates[], void>({
         query: () => ({
           url: "/api/meta/templates/me",
           method: "get",
         }),
         providesTags: ["MyTemplates"],
       }),
-      createTemplate: build.mutation<Templates, IEditTemplate>({
+      createTemplate: builder.mutation<Templates, IEditTemplate>({
         query: (data: IEditTemplate) => ({
           url: `/api/meta/templates/`,
           method: "post",
@@ -77,7 +77,7 @@ export const templatesApi = baseApi.injectEndpoints({
         }),
         invalidatesTags: ["Templates", "MyTemplates"],
       }),
-      updateTemplate: build.mutation<Templates, { id: number; data: IEditTemplate }>({
+      updateTemplate: builder.mutation<Templates, { id: number; data: IEditTemplate }>({
         query: ({ data, id }: { data: IEditTemplate; id: number }) => ({
           url: `/api/meta/templates/${id}/`,
           method: "put",
@@ -85,14 +85,14 @@ export const templatesApi = baseApi.injectEndpoints({
         }),
         invalidatesTags: ["Templates", "MyTemplates"],
       }),
-      publishTemplate: build.mutation<Templates, number>({
+      publishTemplate: builder.mutation<Templates, number>({
         query: (id: number) => ({
           url: `/api/meta/templates/${id}/submit/`,
           method: "post",
         }),
         invalidatesTags: ["Templates"],
       }),
-      viewTemplate: build.mutation<void, number>({
+      viewTemplate: builder.mutation<void, number>({
         query: (id: number) => ({
           url: `/api/meta/templates/${id}/view/`,
           method: "post",

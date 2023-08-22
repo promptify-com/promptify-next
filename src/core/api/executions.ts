@@ -2,23 +2,23 @@ import { baseApi } from "./api";
 import { ITemplateExecutionPut, TemplateExecutionsDisplay, TemplatesExecutions } from "./dto/templates";
 
 export const executionsApi = baseApi.injectEndpoints({
-  endpoints: build => {
+  endpoints: builder => {
     return {
-      getExecutionsByTemplate: build.query<TemplatesExecutions[], number>({
+      getExecutionsByTemplate: builder.query<TemplatesExecutions[], number>({
         query: (id: number) => ({
           url: `/api/meta/templates/${id}/executions/`,
           method: "get",
         }),
         providesTags: ["Executions"],
       }),
-      getTemplatesExecutionsByMe: build.query<TemplateExecutionsDisplay[], void>({
+      getTemplatesExecutionsByMe: builder.query<TemplateExecutionsDisplay[], void>({
         query: () => ({
           url: `/api/meta/template-executions/me`,
           method: "get",
         }),
         providesTags: ["Executions"],
       }),
-      updateExecution: build.mutation<TemplatesExecutions, { id: number; data: ITemplateExecutionPut }>({
+      updateExecution: builder.mutation<TemplatesExecutions, { id: number; data: ITemplateExecutionPut }>({
         query: ({ id, data }: { id: number; data: ITemplateExecutionPut }) => ({
           url: `/api/meta/template-executions/${id}/`,
           method: "patch",
@@ -26,14 +26,14 @@ export const executionsApi = baseApi.injectEndpoints({
         }),
         invalidatesTags: ["Executions"],
       }),
-      deleteExecution: build.mutation<TemplatesExecutions, number>({
+      deleteExecution: builder.mutation<TemplatesExecutions, number>({
         query: (id: number) => ({
           url: `/api/meta/template-executions/${id}/`,
           method: "delete",
         }),
         invalidatesTags: ["Executions"],
       }),
-      executionFavorite: build.mutation<TemplatesExecutions, number>({
+      executionFavorite: builder.mutation<TemplatesExecutions, number>({
         query: (id: number) => ({
           url: `/api/meta/template-executions/${id}/favorite/`,
           method: "post",
