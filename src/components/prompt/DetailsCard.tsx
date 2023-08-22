@@ -1,13 +1,24 @@
 import { Templates } from "@/core/api/dto/templates";
 import { Favorite, FavoriteOutlined } from "@mui/icons-material";
-import { Avatar, Box, Stack, Typography, useTheme } from "@mui/material";
+import { Avatar, Box, Stack, Typography, useTheme, CardMedia, useMediaQuery } from "@mui/material";
 import React from "react";
+
+import Image from "@/components/design-system/Image";
 
 interface Props {
   templateData: Templates;
 }
 
 export const DetailsCard: React.FC<Props> = ({ templateData }) => {
+  const { breakpoints } = useTheme();
+
+  // Determine the appropriate border radius value based on the breakpoint
+  // If the current breakpoint is medium (md) or larger,
+  const isMdBreakpoint = useMediaQuery(breakpoints.up("md"));
+  const borderRadiusValue = isMdBreakpoint
+      ? "16px"
+      : "0px";
+
   return (
     <Box
       sx={{
@@ -17,17 +28,21 @@ export const DetailsCard: React.FC<Props> = ({ templateData }) => {
         height: "fit-content",
       }}
     >
-      <Box
-        component={"img"}
-        src={templateData.thumbnail || "http://placehold.it/240x150"}
-        alt={templateData.title}
+      <CardMedia
         sx={{
+          position: "relative",
           height: 226,
           width: "100%",
-          objectFit: "cover",
           borderRadius: { xs: "0px", md: "16px" },
         }}
-      />
+      >
+        <Image
+          src={templateData.thumbnail || "http://placehold.it/240x150"}
+          alt={templateData.title}
+          style={{borderRadius: borderRadiusValue, objectFit: "cover", width: "100%", height: "100%"}}
+          
+        />
+      </CardMedia>
       <Stack
         gap={2}
         sx={{

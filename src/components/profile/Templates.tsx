@@ -40,6 +40,8 @@ import { FormType } from "@/common/types/template";
 import { TemplateStatusArray } from "@/common/constants";
 import { PageLoading } from "../PageLoading";
 
+import Image from "@/components/design-system/Image";
+
 export const AllTemplates = () => {
   const { data: templates, isFetching } =
     useGetTemplatesByOrderingQuery("-created_at");
@@ -126,9 +128,7 @@ export const AllTemplates = () => {
                 setStatus(event.target.value as TemplateStatus);
               }}
             >
-              <option value="ALL">
-                All Status
-              </option>
+              <option value="ALL">All Status</option>
               {TemplateStatusArray.map((item: TemplateStatus) => (
                 <option key={item} value={item}>
                   {item}
@@ -208,14 +208,14 @@ export const AllTemplates = () => {
                       gap={"16px"}
                     >
                       <CardMedia
-                        component={"img"}
-                        image={template.thumbnail}
                         sx={{
                           height: { xs: "90px", md: "60px" },
                           width: "80px",
                           borderRadius: "16px",
                         }}
-                      />
+                      >
+                        <Image src={template.thumbnail} alt={template.title} style={{borderRadius: "16px", objectFit: "cover", width: "100%", height: "100%"}}/>
+                      </CardMedia>
                       <Box>
                         <Typography>{template.title}</Typography>
                       </Box>

@@ -8,6 +8,8 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/router";
 
+import Image from "@/components/design-system/Image";
+
 interface CollectionItemProps {
   expanded?: boolean;
   template: ITemplate;
@@ -50,13 +52,11 @@ export const CollectionItem: React.FC<CollectionItemProps> = ({
               borderRadius: "16px",
               width: expanded ? "48px" : "38px",
               height: "38px",
-              objectFit: "cover",
               mx: expanded ? 0 : 1.5,
             }}
-            component="img"
-            image={template.thumbnail}
-            alt={template.title}
-          />
+          >
+            <Image src={template.thumbnail} alt={template.title} style={{borderRadius: "16px", objectFit: "cover", width: "100%", height: "100%"}}/>
+          </CardMedia>
         </Grid>
         <Grid display={expanded ? "flex" : "none"} flexDirection={"column"}>
           <Typography
