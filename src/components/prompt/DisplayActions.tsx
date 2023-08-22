@@ -49,7 +49,7 @@ export const DisplayActions: React.FC<Props> = ({
 }) => {
   const { palette } = useTheme();
 
-  const [presetsAnchor, setPresetsAnchor] = useState<HTMLElement | null>(null);
+  const [execsDropAnchor, setExecsDropAnchor] = useState<HTMLElement | null>(null);
   const [searchShown, setSearchShown] = useState(false);
   const [searchText, setSearchText] = useState<string>("");
 
@@ -128,9 +128,9 @@ export const DisplayActions: React.FC<Props> = ({
         ".MuiButton-startIcon": { m: 0 },
       }}
       startIcon={selectedExecution?.is_favorite ? <SavedSpark /> : <DraftSpark />}
-      endIcon={Boolean(presetsAnchor) ? <ArrowDropUp /> : <ArrowDropDown />}
+      endIcon={Boolean(execsDropAnchor) ? <ArrowDropUp /> : <ArrowDropDown />}
       variant={"text"}
-      onClick={e => setPresetsAnchor(e.currentTarget)}
+      onClick={e => setExecsDropAnchor(e.currentTarget)}
     >
       <Box sx={{ width: "80%", overflow: "hidden", textAlign: "left" }}>
         {selectedExecution?.title || "Choose Spark..."}
@@ -211,9 +211,9 @@ export const DisplayActions: React.FC<Props> = ({
                 <Button
                   sx={{ color: "onSurface", fontSize: 13, fontWeight: 500 }}
                   startIcon={<FeedOutlined />}
-                  endIcon={Boolean(presetsAnchor) ? <ArrowDropUp /> : <ArrowDropDown />}
+                  endIcon={Boolean(execsDropAnchor) ? <ArrowDropUp /> : <ArrowDropDown />}
                   variant={"text"}
-                  onClick={e => setPresetsAnchor(e.currentTarget)}
+                  onClick={e => setExecsDropAnchor(e.currentTarget)}
                 >
                   Export
                 </Button>
@@ -246,9 +246,9 @@ export const DisplayActions: React.FC<Props> = ({
               <Button
                 sx={{ color: "onSurface", fontSize: 13, fontWeight: 500, ml: "auto" }}
                 startIcon={<FeedOutlined />}
-                endIcon={Boolean(presetsAnchor) ? <ArrowDropUp /> : <ArrowDropDown />}
+                endIcon={Boolean(execsDropAnchor) ? <ArrowDropUp /> : <ArrowDropDown />}
                 variant={"text"}
-                onClick={e => setPresetsAnchor(e.currentTarget)}
+                onClick={e => setExecsDropAnchor(e.currentTarget)}
               >
                 Export
               </Button>
@@ -257,8 +257,8 @@ export const DisplayActions: React.FC<Props> = ({
         </Box>
 
         <Popper
-          open={Boolean(presetsAnchor)}
-          anchorEl={presetsAnchor}
+          open={Boolean(execsDropAnchor)}
+          anchorEl={execsDropAnchor}
           transition
           disablePortal
         >
@@ -277,14 +277,14 @@ export const DisplayActions: React.FC<Props> = ({
                 }}
                 elevation={0}
               >
-                <ClickAwayListener onClickAway={() => setPresetsAnchor(null)}>
+                <ClickAwayListener onClickAway={() => setExecsDropAnchor(null)}>
                   <Box>
                     <ExecutionsTabs
                       executions={executions}
                       selectedExecution={selectedExecution}
                       chooseExecution={exec => {
                         setSelectedExecution(exec);
-                        setPresetsAnchor(null);
+                        setExecsDropAnchor(null);
                       }}
                     />
                   </Box>

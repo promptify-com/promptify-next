@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Button, CircularProgress, Stack, Typography, useTheme } from "@mui/material";
+import { Box, Button, CircularProgress, Stack, Typography, alpha, useTheme } from "@mui/material";
 import { PromptParams, ResInputs, ResOverrides, ResPrompt } from "@/core/api/dto/prompts";
 import { IPromptInput, PromptLiveResponse } from "@/common/types/prompt";
 import useToken from "@/hooks/useToken";
@@ -14,7 +14,7 @@ import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { useWindowSize } from "usehooks-ts";
 import { useRouter } from "next/router";
-import { AllInclusive, InfoOutlined } from "@mui/icons-material";
+import { AllInclusive, Close, InfoOutlined } from "@mui/icons-material";
 
 interface GeneratorFormProps {
   templateData: Templates;
@@ -390,6 +390,25 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     setShownParams(Array.from(shownParams.values()));
   };
 
+  const resetForm = () => {
+    const resetedNodeInputs = nodeInputs.map(nodeInput => {
+      const updatedInputs = Object.keys(nodeInput.inputs).reduce((acc: any, inputKey) => {
+        acc[inputKey] = {
+          ...nodeInput.inputs[inputKey],
+          value: null,
+        };
+        return acc;
+      }, {});
+
+      return {
+        ...nodeInput,
+        inputs: updatedInputs,
+      };
+    });
+
+    setNodeInputs(resetedNodeInputs);
+  };
+
   // Keyboard shortcuts
   const handleKeyboard = (e: KeyboardEvent) => {
     // prevent trigger if typing inside input
@@ -406,6 +425,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     return () => window.removeEventListener("keydown", handleKeyboard);
   }, [handleKeyboard]);
 
+  console.log(nodeInputs);
   const filledForm = nodeInputs.every(nodeInput =>
     Object.values(nodeInput.inputs)
       .filter(input => input.required)
@@ -419,10 +439,14 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
         bgcolor: "surface.2",
       }}
     >
-      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+      <Stack
+        direction={"row"}
+        alignItems={"center"}
+        justifyContent={"space-between"}
+        sx={{ p: "16px 8px 16px 24px" }}
+      >
         <Typography
           sx={{
-            p: "16px",
             fontSize: 24,
             fontWeight: 500,
             color: "onSurface",
@@ -431,7 +455,25 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
         >
           Inputs
         </Typography>
-      </Box>
+        <Button
+          variant="text"
+          startIcon={<Close />}
+          sx={{
+            border: `1px solid ${alpha(palette.primary.main, 0.15)}`,
+            bgcolor: "surface.1",
+            color: "onSurface",
+            fontSize: 13,
+            fontWeight: 500,
+            p: "4px 12px",
+            svg: {
+              fontSize: "18px !important",
+            },
+          }}
+          onClick={resetForm}
+        >
+          Reset
+        </Button>
+      </Stack>
 
       <Stack
         gap={1}
