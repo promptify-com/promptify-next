@@ -392,12 +392,12 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
   const resetForm = () => {
     const resetedNodeInputs = nodeInputs.map(nodeInput => {
-      const updatedInputs = Object.keys(nodeInput.inputs).reduce((acc: any, inputKey) => {
-        acc[inputKey] = {
+      const updatedInputs = Object.keys(nodeInput.inputs).reduce((inputs: ResInputs["inputs"], inputKey) => {
+        inputs[inputKey] = {
           ...nodeInput.inputs[inputKey],
-          value: null,
+          value: "",
         };
-        return acc;
+        return inputs;
       }, {});
 
       return {
@@ -425,7 +425,6 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     return () => window.removeEventListener("keydown", handleKeyboard);
   }, [handleKeyboard]);
 
-  console.log(nodeInputs);
   const filledForm = nodeInputs.every(nodeInput =>
     Object.values(nodeInput.inputs)
       .filter(input => input.required)

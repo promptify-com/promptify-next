@@ -24,6 +24,7 @@ import {
   usePutExecutionTitleMutation,
 } from "@/core/api/executions";
 import { DeleteDialog } from "../dialog/DeleteDialog";
+import { executionTimeLeft } from "@/common/helpers/executionTimeLeft";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -215,14 +216,6 @@ export const ExecutionsTabs: React.FC<Props> = ({ executions, chooseExecution, s
     </MenuList>
   );
 
-  const sparkTimeLeft =
-    `${moment(selectedExecution?.created_at)
-      .add(30, "days")
-      .diff(moment(), "days")} day` ||
-    `${moment(selectedExecution?.created_at)
-      .add(30, "days")
-      .diff(moment(), "hours")} hour`;
-
   return (
     <Box sx={{ width: { xs: "90svw", md: "401px" } }}>
       {!!selectedExecution && (
@@ -268,7 +261,7 @@ export const ExecutionsTabs: React.FC<Props> = ({ executions, chooseExecution, s
                   }}
                 >
                   {!selectedExecution?.is_favorite
-                    ? `This Spark is temporal and will be removed in ${sparkTimeLeft}`
+                    ? `This Spark is temporal and will be removed in ${executionTimeLeft(selectedExecution.created_at)}`
                     : "This Spark is saved"}
                 </Typography>
               </Stack>

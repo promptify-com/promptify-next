@@ -172,7 +172,7 @@ export const DisplayActions: React.FC<Props> = ({
             gap={1}
           >
             {ExecutionsSelect}
-            {!selectedExecution?.is_favorite && (
+            {!!selectedExecution && !selectedExecution?.is_favorite && (
               <Typography
                 sx={{
                   p: "4px 8px",
