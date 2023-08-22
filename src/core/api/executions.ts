@@ -22,6 +22,7 @@ export const executionsApi = baseApi.injectEndpoints({
           url: `/api/meta/template-executions/me`,
           method: "get",
         }),
+        providesTags: ["Executions"],
       }),
       putExecutionTitle: build.mutation<TemplatesExecutions, { id: number; data: ITemplateExecutionPut }>({
         query: ({ id, data }: { id: number; data: ITemplateExecutionPut }) => ({
@@ -29,6 +30,20 @@ export const executionsApi = baseApi.injectEndpoints({
           method: "patch",
           headers: { "Content-Type": "application/json" },
           data,
+        }),
+        invalidatesTags: ["Executions"],
+      }),
+      deleteExecution: build.mutation<TemplatesExecutions, number>({
+        query: (id: number) => ({
+          url: `/api/meta/template-executions/${id}/`,
+          method: "delete",
+        }),
+        invalidatesTags: ["Executions"],
+      }),
+      executionFavorite: build.mutation<TemplatesExecutions, number>({
+        query: (id: number) => ({
+          url: `/api/meta/template-executions/${id}/favorite/`,
+          method: "post",
         }),
         invalidatesTags: ["Executions"],
       }),
@@ -41,4 +56,6 @@ export const {
   useGetExecutionsByTemplateQuery,
   useGetTemplatesExecutionsByMeQuery,
   usePutExecutionTitleMutation,
+  useDeleteExecutionMutation,
+  useExecutionFavoriteMutation,
 } = executionsApi;

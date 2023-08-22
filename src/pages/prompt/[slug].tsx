@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Alert,
   Box,
   Divider,
@@ -7,14 +10,12 @@ import {
   Palette,
   Snackbar,
   Stack,
-  Tab,
-  Tabs,
   ThemeProvider,
   Typography,
   createTheme,
   useTheme,
 } from "@mui/material";
-import { ArtTrack } from "@mui/icons-material";
+import { ExpandMore } from "@mui/icons-material";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
 import materialDynamicColors from "material-dynamic-colors";
 import { mix } from "polished";
@@ -37,36 +38,6 @@ import moment from "moment";
 import { DetailsCardMini } from "@/components/prompt/DetailsCardMini";
 import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
 import ExecutionForm from "@/components/prompt/ExecutionForm";
-
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: number;
-  value: number;
-}
-
-const CustomTabPanel = (props: TabPanelProps) => {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <Box
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      sx={{ height: "100%", width: "100%" }}
-      {...other}
-    >
-      {children}
-    </Box>
-  );
-};
-
-const a11yProps = (index: number) => {
-  return {
-    id: `simple-tab-${index}`,
-    "aria-controls": `simple-tabpanel-${index}`,
-  };
-};
 
 const Prompt = () => {
   const [selectedExecution, setSelectedExecution] = useState<TemplatesExecutions | null>(null);
@@ -112,12 +83,20 @@ const Prompt = () => {
   } = useGetExecutionsByTemplateQuery(token ? (id ? id : skipToken) : skipToken);
 
   useEffect(() => {
-    const sorted = [...(templateExecutions || [])].sort((a, b) => moment(b.created_at).diff(moment(a.created_at)));
+    const sorted = [...(templateExecutions || [])]
+      .reduce((uniqueExecs: TemplatesExecutions[], execution) => {
+        if (!uniqueExecs.some((item: TemplatesExecutions) => item.id === execution.id)) {
+          uniqueExecs.push(execution);
+        }
+        return uniqueExecs;
+      }, [])
+      .sort((a, b) => moment(b.created_at).diff(moment(a.created_at)));
     setSortedExecutions(sorted);
   }, [templateExecutions]);
 
   useEffect(() => {
-    setSelectedExecution(sortedExecutions?.[0] || null);
+    const displayExecution = sortedExecutions.find(exec => exec.id === selectedExecution?.id);
+    setSelectedExecution(displayExecution || sortedExecutions?.[0] || null);
   }, [sortedExecutions]);
 
   const changeTab = (e: React.SyntheticEvent, newValue: number) => {
@@ -136,6 +115,7 @@ const Prompt = () => {
     if (!isGenerating && newExecutionData?.data?.length) {
       const promptNotCompleted = newExecutionData.data.find(execData => !execData.isCompleted);
       if (!promptNotCompleted) {
+        setSelectedExecution(null);
         setExecutionFormOpen(true);
       }
     }
@@ -256,61 +236,59 @@ const Prompt = () => {
                   <Stack height={"100%"}>
                     <DetailsCard templateData={templateData} />
                     <Stack flex={1}>
-                      <Tabs
-                        value={tabsValue}
-                        onChange={changeTab}
-                        textColor="primary"
-                        indicatorColor="primary"
-                        variant="fullWidth"
-                        sx={{
-                          minHeight: "auto",
-                          boxShadow: "0px -1px 0px 0px #ECECF4 inset",
-                        }}
-                      >
-                        <Tab
-                          label="(x) Variables"
-                          {...a11yProps(0)}
-                          sx={tabStyle}
-                        />
-                        <Tab
-                          label="About"
-                          {...a11yProps(1)}
-                          icon={<ArtTrack />}
-                          iconPosition="start"
-                          sx={tabStyle}
-                        />
-                      </Tabs>
                       <Box flex={1}>
-                        <CustomTabPanel
-                          value={tabsValue}
-                          index={0}
+                        <Accordion
+                          sx={{
+                            boxShadow: "none",
+                            bgcolor: "surface.1",
+                            borderRadius: "0 0 16px 16px",
+                            overflow: "hidden",
+                            ".MuiAccordionDetails-root": {
+                              p: "0",
+                            },
+                            ".MuiAccordionSummary-root": {
+                              minHeight: "48px",
+                              ":hover": {
+                                opacity: 0.8,
+                                svg: {
+                                  color: "primary.main",
+                                },
+                              },
+                            },
+                            ".MuiAccordionSummary-content": {
+                              m: 0,
+                            },
+                          }}
                         >
-                          {generatorOpened && (
-                            <GeneratorForm
+                          <AccordionSummary expandIcon={<ExpandMore />}>
+                            <Typography
+                              sx={{
+                                fontSize: 12,
+                                fontWeight: 500,
+                                color: "primary.main",
+                              }}
+                            >
+                              More about template
+                            </Typography>
+                          </AccordionSummary>
+                          <AccordionDetails>
+                            <Details
                               templateData={templateData}
-                              setNewExecutionData={setNewExecutionData}
-                              isGenerating={isGenerating}
-                              setIsGenerating={setIsGenerating}
-                              onError={setErrorMessage}
-                              exit={() => setGeneratorOpened(false)}
-                              setMobileTab={setMobileTab}
-                              setActiveTab={setActiveTab}
-                              executions={sortedExecutions}
-                              selectedExecution={selectedExecution}
-                              setSelectedExecution={setSelectedExecution}
-                              setSortedExecutions={setSortedExecutions}
+                              updateTemplateData={setTemplateData}
                             />
-                          )}
-                        </CustomTabPanel>
-                        <CustomTabPanel
-                          value={tabsValue}
-                          index={1}
-                        >
-                          <Details
-                            templateData={templateData}
-                            updateTemplateData={setTemplateData}
-                          />
-                        </CustomTabPanel>
+                          </AccordionDetails>
+                        </Accordion>
+                        <GeneratorForm
+                          templateData={templateData}
+                          selectedExecution={selectedExecution}
+                          setNewExecutionData={setNewExecutionData}
+                          isGenerating={isGenerating}
+                          setIsGenerating={setIsGenerating}
+                          onError={setErrorMessage}
+                          exit={() => setGeneratorOpened(false)}
+                          setMobileTab={setMobileTab}
+                          setActiveTab={setActiveTab}
+                        />
                       </Box>
                     </Stack>
                   </Stack>
@@ -358,6 +336,7 @@ const Prompt = () => {
                   >
                     <GeneratorForm
                       templateData={templateData}
+                      selectedExecution={selectedExecution}
                       setNewExecutionData={setNewExecutionData}
                       isGenerating={isGenerating}
                       setIsGenerating={setIsGenerating}
@@ -365,10 +344,6 @@ const Prompt = () => {
                       exit={() => setGeneratorOpened(false)}
                       setMobileTab={setMobileTab}
                       setActiveTab={setActiveTab}
-                      executions={sortedExecutions}
-                      selectedExecution={selectedExecution}
-                      setSelectedExecution={setSelectedExecution}
-                      setSortedExecutions={setSortedExecutions}
                     />
                   </Grid>
                 </>

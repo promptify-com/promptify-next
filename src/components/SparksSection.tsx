@@ -240,17 +240,7 @@ const SparksSection: FC<SparksSectionProps> = ({ templates }) => {
                       zIndex: 3,
                     }}
                   >
-                    {execution.is_favorite ? (
-                      <SavedSpark
-                        width={24}
-                        height={24}
-                      />
-                    ) : (
-                      <DraftSpark
-                        width={24}
-                        height={24}
-                      />
-                    )}
+                    {execution.is_favorite ? <SavedSpark size={"24"} /> : <DraftSpark size={"24"} />}
                   </Box>
                 </Grid>
                 <Grid

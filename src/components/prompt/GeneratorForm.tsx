@@ -17,17 +17,14 @@ import { useRouter } from "next/router";
 
 interface GeneratorFormProps {
   templateData: Templates;
+  selectedExecution: TemplatesExecutions | null;
   setNewExecutionData: (data: PromptLiveResponse) => void;
   isGenerating: boolean;
   setIsGenerating: (status: boolean) => void;
   onError: (errMsg: string) => void;
   exit: () => void;
-  selectedExecution: TemplatesExecutions | null;
   setMobileTab: (value: number) => void;
   setActiveTab: (value: number) => void;
-  executions: TemplatesExecutions[];
-  setSelectedExecution: (execution: TemplatesExecutions) => void;
-  setSortedExecutions: (value: TemplatesExecutions[]) => void;
 }
 
 export interface InputsErrors {
@@ -43,6 +40,7 @@ interface Param {
 
 export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   templateData,
+  selectedExecution,
   setNewExecutionData,
   isGenerating,
   setIsGenerating,
@@ -50,10 +48,6 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   exit,
   setMobileTab,
   setActiveTab,
-  executions,
-  selectedExecution,
-  setSelectedExecution,
-  setSortedExecutions,
 }) => {
   const token = useToken();
   const { palette } = useTheme();
@@ -420,14 +414,13 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   return (
     <Stack
       sx={{
-        minHeight: "100%",
+        minHeight: { xs: "100%", md: "auto" },
         bgcolor: "surface.2",
       }}
     >
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
         <Typography
           sx={{
-            display: { md: "none" },
             p: "16px",
             fontSize: 24,
             fontWeight: 500,
@@ -440,9 +433,9 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
       </Box>
 
       <Stack
-        flex={1}
         gap={1}
         sx={{
+          flex: { xs: 1, md: 0 },
           p: "16px",
           pb: { xs: 0, md: "16px" },
         }}
@@ -509,7 +502,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
         <Stack
           sx={{
-            position: { xs: "sticky", md: "relative" },
+            position: "sticky",
             bottom: 0,
             m: { xs: "0 -16px -3px", md: "0" },
             bgcolor: { xs: "surface.1", md: "initial" },
@@ -549,7 +542,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
                 color: "onPrimary",
                 whiteSpace: "pre-line",
                 ":hover": {
-                  bgcolor: "transparent",
+                  bgcolor: "surface.1",
                   color: "primary.main",
                 },
                 ":disabled": {
