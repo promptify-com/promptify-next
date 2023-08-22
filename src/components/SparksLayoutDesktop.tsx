@@ -149,9 +149,7 @@ export const SparksLayoutDesktop: FC<SparksLayoutDesktopProps> = ({ execution, t
         display={"flex"}
         gap={1}
         alignItems={"center"}
-      >
-        
-      </Grid>
+      ></Grid>
 
       <Grid
         item
