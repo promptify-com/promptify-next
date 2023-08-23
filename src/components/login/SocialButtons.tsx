@@ -120,7 +120,6 @@ export const SocialButtons: React.FC<IProps> = ({ preLogin, isChecked, setErrorC
     const scope = "openid email profile User.Read";
 
     const authUrl = `https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}&scope=${scope}`;
-    savePathURL("/");
     window.location.href = authUrl;
   };
   const validateConsent = (loginMethod: Function) => {

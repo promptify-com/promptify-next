@@ -48,7 +48,7 @@ function App({ Component, ...rest }: AppProps) {
 
   useEffect(() => {
     const handleRouteChange = (url: string) => {
-      if (url === "/signin") {
+      if (url.startsWith("/signin")) {
         savePathURL(window.location.pathname);
       } else {
         deletePathURL();
