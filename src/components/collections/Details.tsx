@@ -1,19 +1,8 @@
 import React, { useState } from "react";
-import {
-  Box,
-  Button,
-  Chip,
-  Grid,
-  Stack,
-  Typography,
-  alpha,
-  useTheme,
-} from "@mui/material";
+import { Box, Button, Chip, Grid, Stack, Typography, alpha, useTheme } from "@mui/material";
 import { Templates } from "@/core/api/dto/templates";
 import { ArrowForwardIos, Favorite, FavoriteBorder } from "@mui/icons-material";
-import { savePathURL } from "@/common/utils";
 import useToken from "@/hooks/useToken";
-
 import { likeTemplate, removeTemplateLike } from "@/hooks/api/templates";
 import { Subtitle } from "@/components/blocks";
 import moment from "moment";
@@ -27,12 +16,7 @@ interface DetailsProps {
   setTemplate: (template: Templates) => void;
 }
 
-export const Details = ({
-  template,
-  setTemplate,
-  templateData,
-  updateTemplateData,
-}: DetailsProps) => {
+export const Details = ({ template, setTemplate, templateData, updateTemplateData }: DetailsProps) => {
   const [isFetching, setIsFetching] = useState(false);
 
   const token = useToken();
@@ -40,14 +24,11 @@ export const Details = ({
   const { palette } = useTheme();
 
   const getLanguage = (shortLang: string): string => {
-    return (
-      new Intl.DisplayNames(["en"], { type: "language" }).of(shortLang) || ""
-    );
+    return new Intl.DisplayNames(["en"], { type: "language" }).of(shortLang) || "";
   };
 
   const likeTemplateClicked = async () => {
     if (!token) {
-      savePathURL(window.location.pathname);
       return router.push("/signin");
     }
 
@@ -75,8 +56,7 @@ export const Details = ({
         });
       } catch (err: any) {
         // API response for an already liked template
-        if (err.response.data?.status === "success")
-          updateTemplateData({ ...template, is_liked: !template.is_liked });
+        if (err.response.data?.status === "success") updateTemplateData({ ...template, is_liked: !template.is_liked });
       } finally {
         setIsFetching(false);
       }
@@ -104,9 +84,7 @@ export const Details = ({
           <Box
             sx={{
               backgroundImage: {
-                md: `url(${
-                  template.thumbnail || "http://placehold.it/240x150"
-                })`,
+                md: `url(${template.thumbnail || "http://placehold.it/240x150"})`,
               },
               backgroundSize: "cover",
               borderRadius: "16px",
@@ -117,9 +95,7 @@ export const Details = ({
               sx={{
                 width: "100%",
                 height: "286px",
-                backgroundImage: `url(${
-                  template.thumbnail || "http://placehold.it/240x150"
-                })`,
+                backgroundImage: `url(${template.thumbnail || "http://placehold.it/240x150"})`,
                 backgroundSize: "cover",
                 backgroundRepeat: "no-repeat",
                 backgroundPosition: "center",
@@ -128,9 +104,7 @@ export const Details = ({
               }}
             >
               <Button
-                startIcon={
-                  template.is_liked ? <Favorite /> : <FavoriteBorder />
-                }
+                startIcon={template.is_liked ? <Favorite /> : <FavoriteBorder />}
                 variant={"contained"}
                 sx={{
                   display: { xs: "none", md: "inline-flex" },
@@ -172,9 +146,7 @@ export const Details = ({
                   pt: "15px",
                 }}
               >
-                <Box sx={{ fontSize: { xs: 22, md: 16 }, fontWeight: 600 }}>
-                  {template.title}
-                </Box>
+                <Box sx={{ fontSize: { xs: 22, md: 16 }, fontWeight: 600 }}>{template.title}</Box>
                 <Box sx={{ width: "75px" }}>
                   <Button
                     sx={{
@@ -191,9 +163,7 @@ export const Details = ({
                         border: "none",
                       },
                     }}
-                    startIcon={
-                      template.is_liked ? <Favorite /> : <FavoriteBorder />
-                    }
+                    startIcon={template.is_liked ? <Favorite /> : <FavoriteBorder />}
                     variant={"outlined"}
                     onClick={likeTemplateClicked}
                   >
@@ -214,31 +184,26 @@ export const Details = ({
                 COLLECTION:
               </Box>
 
-              {templateData?.prompt_templates?.map(
-                (promptTemplate: Templates, id: number) => {
-                  return (
-                    <Box
-                      key={id}
-                      sx={{
-                        fontSize: { xs: 16, md: 14 },
-                        fontWeight: 400,
-                        paddingY: "10px",
-                        paddingX: "30px",
-                        bgcolor:
-                          promptTemplate.id === template.id
-                            ? alpha(palette.surface[5], 0.3)
-                            : "transparent",
-                        "&:hover": {
-                          cursor: "pointer",
-                        },
-                      }}
-                      onClick={() => {
-                        setTemplate(promptTemplate);
-                      }}
-                    >{`${id + 1}. ${promptTemplate.title}`}</Box>
-                  );
-                }
-              )}
+              {templateData?.prompt_templates?.map((promptTemplate: Templates, id: number) => {
+                return (
+                  <Box
+                    key={id}
+                    sx={{
+                      fontSize: { xs: 16, md: 14 },
+                      fontWeight: 400,
+                      paddingY: "10px",
+                      paddingX: "30px",
+                      bgcolor: promptTemplate.id === template.id ? alpha(palette.surface[5], 0.3) : "transparent",
+                      "&:hover": {
+                        cursor: "pointer",
+                      },
+                    }}
+                    onClick={() => {
+                      setTemplate(promptTemplate);
+                    }}
+                  >{`${id + 1}. ${promptTemplate.title}`}</Box>
+                );
+              })}
             </Box>
           </Box>
           <Grid
@@ -254,7 +219,10 @@ export const Details = ({
           >
             <Grid item>
               {templateData?.created_by ? (
-                <Link href={"#"} style={{ textDecoration: "none" }}>
+                <Link
+                  href={"#"}
+                  style={{ textDecoration: "none" }}
+                >
                   <Button
                     sx={{
                       width: "100%",
@@ -298,36 +266,31 @@ export const Details = ({
                           alignItems: "center",
                         }}
                       >
-                        {templateData?.created_by?.first_name &&
-                        templateData?.created_by?.last_name
+                        {templateData?.created_by?.first_name && templateData?.created_by?.last_name
                           ? `${templateData?.created_by?.first_name[0]?.toUpperCase()}${templateData?.created_by?.last_name[0]?.toUpperCase()}`
                           : templateData?.created_by?.username[0]?.toUpperCase()}
                       </Box>
                       <Box>
                         by{" "}
-                        {templateData?.created_by?.first_name &&
-                        templateData?.created_by?.last_name ? (
+                        {templateData?.created_by?.first_name && templateData?.created_by?.last_name ? (
                           <React.Fragment>
-                            {templateData.created_by.first_name
-                              .charAt(0)
-                              .toUpperCase() +
+                            {templateData.created_by.first_name.charAt(0).toUpperCase() +
                               templateData.created_by.first_name.slice(1)}{" "}
-                            {templateData.created_by.last_name
-                              .charAt(0)
-                              .toUpperCase() +
+                            {templateData.created_by.last_name.charAt(0).toUpperCase() +
                               templateData.created_by.last_name.slice(1)}
                           </React.Fragment>
                         ) : (
                           <React.Fragment>
-                            {templateData.created_by.username
-                              .charAt(0)
-                              .toUpperCase() +
+                            {templateData.created_by.username.charAt(0).toUpperCase() +
                               templateData.created_by.username.slice(1)}
                           </React.Fragment>
                         )}
                       </Box>
                     </Stack>
-                    <ArrowForwardIos fontSize="small" sx={{ opacity: 0.6 }} />
+                    <ArrowForwardIos
+                      fontSize="small"
+                      sx={{ opacity: 0.6 }}
+                    />
                   </Button>
                 </Link>
               ) : (
@@ -384,9 +347,7 @@ export const Details = ({
 
             <Grid item>
               <Box>
-                <Subtitle sx={{ mb: "12px", color: "tertiary" }}>
-                  SubCategory
-                </Subtitle>
+                <Subtitle sx={{ mb: "12px", color: "tertiary" }}>SubCategory</Subtitle>
                 <Stack spacing={1}>
                   {template.category.parent && (
                     <Button
@@ -483,7 +444,10 @@ export const Details = ({
                       />
                     ))
                   ) : (
-                    <Typography fontSize={12} color={"onSurface"}>
+                    <Typography
+                      fontSize={12}
+                      color={"onSurface"}
+                    >
                       No tag assigned
                     </Typography>
                   )}
@@ -493,12 +457,8 @@ export const Details = ({
 
             <Grid item>
               <Box>
-                <Subtitle sx={{ mb: "12px", color: "tertiary" }}>
-                  Language
-                </Subtitle>
-                <Typography
-                  sx={{ fontSize: 14, fontWeight: 400, color: "onSurface" }}
-                >
+                <Subtitle sx={{ mb: "12px", color: "tertiary" }}>Language</Subtitle>
+                <Typography sx={{ fontSize: 14, fontWeight: 400, color: "onSurface" }}>
                   {getLanguage(template.language)}
                 </Typography>
               </Box>
@@ -506,27 +466,18 @@ export const Details = ({
 
             <Grid item>
               <Box>
-                <Subtitle sx={{ mb: "12px", color: "tertiary" }}>
-                  Template details
-                </Subtitle>
+                <Subtitle sx={{ mb: "12px", color: "tertiary" }}>Template details</Subtitle>
                 <Stack spacing={1}>
                   {template.last_run && (
                     <Typography sx={{ ...detailsTitle }}>
-                      Last run:{" "}
-                      <span>{moment(template.last_run).fromNow()}</span>
+                      Last run: <span>{moment(template.last_run).fromNow()}</span>
                     </Typography>
                   )}
                   <Typography sx={{ ...detailsTitle }}>
-                    Updated:{" "}
-                    <span>
-                      {moment(template.updated_at).format("D MMMM YYYY")}
-                    </span>
+                    Updated: <span>{moment(template.updated_at).format("D MMMM YYYY")}</span>
                   </Typography>
                   <Typography sx={{ ...detailsTitle }}>
-                    Created:{" "}
-                    <span>
-                      {moment(template.created_at).format("D MMMM YYYY")}
-                    </span>
+                    Created: <span>{moment(template.created_at).format("D MMMM YYYY")}</span>
                   </Typography>
                   <Typography sx={{ ...detailsTitle }}>
                     Views: <span>{template.views}</span>

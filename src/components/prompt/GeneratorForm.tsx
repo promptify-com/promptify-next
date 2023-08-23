@@ -7,7 +7,6 @@ import { useAppDispatch } from "@/hooks/useStore";
 import { templatesApi } from "@/core/api/templates";
 import { GeneratorInput } from "./GeneratorInput";
 import { GeneratorParam } from "./GeneratorParam";
-import { savePathURL } from "@/common/utils";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { getInputsFromString } from "@/common/helpers/getInputsFromString";
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
@@ -200,7 +199,6 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
   const validateAndGenerateExecution = () => {
     if (!token) {
-      savePathURL(window.location.pathname);
       return router.push("/signin");
     }
 
