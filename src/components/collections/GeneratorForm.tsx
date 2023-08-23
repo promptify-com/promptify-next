@@ -1,25 +1,13 @@
 import React, { useEffect, useState } from "react";
-import {
-  Box,
-  Button,
-  CircularProgress,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Box, Button, CircularProgress, Stack, Typography } from "@mui/material";
 import { Loop, MoreHoriz } from "@mui/icons-material";
-import {
-  PromptParams,
-  ResInputs,
-  ResOverrides,
-  ResPrompt,
-} from "@/core/api/dto/prompts";
+import { PromptParams, ResInputs, ResOverrides, ResPrompt } from "@/core/api/dto/prompts";
 import { PromptLiveResponse } from "@/common/types/prompt";
 import useToken from "@/hooks/useToken";
 import { useAppDispatch } from "@/hooks/useStore";
 import { templatesApi } from "@/core/api/templates";
 import { GeneratorInput } from "./GeneratorInput";
 import { GeneratorParam } from "./GeneratorParam";
-import { savePathURL } from "@/common/utils";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { getInputsFromString } from "@/common/helpers/getInputsFromString";
 import { Templates } from "@/core/api/dto/templates";
@@ -62,8 +50,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   const router = useRouter();
   const { width: windowWidth } = useWindowSize();
 
-  const [generatingResponse, setGeneratingResponse] =
-    useState<PromptLiveResponse | null>(null);
+  const [generatingResponse, setGeneratingResponse] = useState<PromptLiveResponse | null>(null);
   const [resPrompts, setResPrompts] = useState<ResPrompt[]>([]);
   const [lastExecution, setLastExecution] = useState<ResPrompt[] | null>(null);
   const [resInputs, setResInputs] = useState<ResInputs[]>([]);
@@ -75,7 +62,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   const setDefaultResPrompts = () => {
     const tempArr: ResPrompt[] = [...resPrompts];
 
-    templateData.prompts.forEach((prompt) => {
+    templateData.prompts.forEach(prompt => {
       const tempObj: ResPrompt = {} as ResPrompt;
 
       tempObj.prompt = prompt.id;
@@ -91,7 +78,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
     if (resInputs.length > 0) {
       tempArr.forEach((prompt, index) => {
-        const obj = resInputs.find((inputs) => inputs.id === prompt.prompt);
+        const obj = resInputs.find(inputs => inputs.id === prompt.prompt);
         if (obj) {
           tempArr[index].prompt_params = obj.inputs;
         }
@@ -100,9 +87,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
     if (resOverrides.length > 0) {
       tempArr.forEach((prompt, index) => {
-        const obj = resOverrides.find(
-          (overrides) => overrides.id === prompt.prompt
-        );
+        const obj = resOverrides.find(overrides => overrides.id === prompt.prompt);
         if (obj) {
           tempArr[index].contextual_overrides = obj.contextual_overrides;
         }
@@ -115,14 +100,13 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   const isInputsFilled = () => {
     const tempErrors: InputsErrors = {};
 
-    templateData.prompts.forEach((prompt) => {
+    templateData.prompts.forEach(prompt => {
       if (prompt.is_visible) {
         const inputs = getInputsFromString(prompt.content);
 
-        inputs.forEach((input) => {
+        inputs.forEach(input => {
           const checkParams = resPrompts.find(
-            (resPrompt) =>
-              resPrompt.prompt_params && resPrompt.prompt_params[input.name]
+            resPrompt => resPrompt.prompt_params && resPrompt.prompt_params[input.name],
           );
 
           if (!checkParams || !checkParams.prompt_params[input.name]) {
@@ -147,7 +131,6 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
   const handlePostPrompt = () => {
     if (!token) {
-      savePathURL(window.location.pathname);
       return router.push("/signin");
     }
 
@@ -166,120 +149,109 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     if (windowWidth < 900) setTimeout(() => exit(), 2000);
 
     let tempData: any[] = [];
-    fetchEventSource(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/meta/templates/${templateData.id}/execute/`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Token ${token}`,
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(executionData),
-        openWhenHidden: true,
+    fetchEventSource(`${process.env.NEXT_PUBLIC_API_URL}/api/meta/templates/${templateData.id}/execute/`, {
+      method: "POST",
+      headers: {
+        Authorization: `Token ${token}`,
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(executionData),
+      openWhenHidden: true,
 
-        async onopen(res) {
-          if (res.ok && res.status === 200) {
-            setIsGenerating(true);
-            setGeneratingResponse({ created_at: new Date(), data: [] });
-          } else if (
-            res.status >= 400 &&
-            res.status < 500 &&
-            res.status !== 429
-          ) {
-            console.error("Client side error ", res);
-            onError("Something went wrong. Please try again later");
-          }
-        },
-        onmessage(msg) {
-          try {
-            const parseData = JSON.parse(msg.data.replace(/'/g, '"'));
-            const message = parseData.message;
-            const prompt = parseData.prompt_id;
+      async onopen(res) {
+        if (res.ok && res.status === 200) {
+          setIsGenerating(true);
+          setGeneratingResponse({ created_at: new Date(), data: [] });
+        } else if (res.status >= 400 && res.status < 500 && res.status !== 429) {
+          console.error("Client side error ", res);
+          onError("Something went wrong. Please try again later");
+        }
+      },
+      onmessage(msg) {
+        try {
+          const parseData = JSON.parse(msg.data.replace(/'/g, '"'));
+          const message = parseData.message;
+          const prompt = parseData.prompt_id;
 
-            if (msg.event === "infer" && msg.data) {
-              if (message) {
-                const tempArr = [...tempData];
-                const activePrompt = tempArr.findIndex(
-                  (template) => template.prompt === +prompt
-                );
-
-                if (activePrompt === -1) {
-                  tempArr.push({
-                    message,
-                    prompt,
-                  });
-                } else {
-                  tempArr[activePrompt] = {
-                    ...tempArr[activePrompt],
-                    message: tempArr[activePrompt].message + message,
-                    prompt,
-                  };
-                }
-
-                tempData = [...tempArr];
-                setGeneratingResponse((prevState) => ({
-                  created_at: prevState?.created_at || new Date(),
-                  data: tempArr,
-                }));
-              }
-            } else {
+          if (msg.event === "infer" && msg.data) {
+            if (message) {
               const tempArr = [...tempData];
-              const activePrompt = tempArr.findIndex(
-                (template) => template.prompt === +prompt
-              );
+              const activePrompt = tempArr.findIndex(template => template.prompt === +prompt);
 
-              if (message === "[COMPLETED]") {
+              if (activePrompt === -1) {
+                tempArr.push({
+                  message,
+                  prompt,
+                });
+              } else {
                 tempArr[activePrompt] = {
                   ...tempArr[activePrompt],
+                  message: tempArr[activePrompt].message + message,
                   prompt,
-                  isLoading: false,
-                  isCompleted: true,
                 };
               }
 
-              if (message === "[INITIALIZING]") {
-                if (activePrompt === -1) {
-                  tempArr.push({
-                    message: "",
-                    prompt,
-                    isLoading: true,
-                    created_at: new Date(),
-                  });
-                } else {
-                  tempArr[activePrompt] = {
-                    ...tempArr[activePrompt],
-                    prompt,
-                    isLoading: true,
-                  };
-                }
-              }
-
-              if (message.includes("[ERROR]")) {
-                onError(message);
-              }
-
               tempData = [...tempArr];
-              setGeneratingResponse((prevState) => ({
+              setGeneratingResponse(prevState => ({
                 created_at: prevState?.created_at || new Date(),
                 data: tempArr,
               }));
             }
-          } catch {
-            console.log(msg.event);
+          } else {
+            const tempArr = [...tempData];
+            const activePrompt = tempArr.findIndex(template => template.prompt === +prompt);
+
+            if (message === "[COMPLETED]") {
+              tempArr[activePrompt] = {
+                ...tempArr[activePrompt],
+                prompt,
+                isLoading: false,
+                isCompleted: true,
+              };
+            }
+
+            if (message === "[INITIALIZING]") {
+              if (activePrompt === -1) {
+                tempArr.push({
+                  message: "",
+                  prompt,
+                  isLoading: true,
+                  created_at: new Date(),
+                });
+              } else {
+                tempArr[activePrompt] = {
+                  ...tempArr[activePrompt],
+                  prompt,
+                  isLoading: true,
+                };
+              }
+            }
+
+            if (message.includes("[ERROR]")) {
+              onError(message);
+            }
+
+            tempData = [...tempArr];
+            setGeneratingResponse(prevState => ({
+              created_at: prevState?.created_at || new Date(),
+              data: tempArr,
+            }));
           }
-        },
-        onerror(err) {
-          console.log(err);
-          setIsGenerating(false);
-          onError("Something went wrong. Please try again later");
-          throw err; // rethrow to stop the operation
-        },
-        onclose() {
-          setIsGenerating(false);
-        },
-      }
-    );
+        } catch {
+          console.log(msg.event);
+        }
+      },
+      onerror(err) {
+        console.log(err);
+        setIsGenerating(false);
+        onError("Something went wrong. Please try again later");
+        throw err; // rethrow to stop the operation
+      },
+      onclose() {
+        setIsGenerating(false);
+      },
+    });
   };
 
   useEffect(() => {
@@ -312,24 +284,20 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     await Promise.all(
       [...templateData.prompts]
         .sort((a, b) => a.order - b.order)
-        .filter((el) => el.is_visible)
-        .map(async (prompt) => {
+        .filter(el => el.is_visible)
+        .map(async prompt => {
           const inputs = getInputsFromString(prompt.content);
-          inputs.forEach((input) => {
+          inputs.forEach(input => {
             shownInputs.set(input.name, { ...input, prompt: prompt.id });
           });
 
-          const params = (
-            await dispatch(
-              templatesApi.endpoints.getPromptParams.initiate(prompt.id)
-            )
-          ).data;
+          const params = (await dispatch(templatesApi.endpoints.getPromptParams.initiate(prompt.id))).data;
           params
-            ?.filter((param) => param.is_visible)
-            .forEach((param) => {
+            ?.filter(param => param.is_visible)
+            .forEach(param => {
               shownParams.set(param.parameter.id, { param, prompt: prompt.id });
             });
-        })
+        }),
     );
     setShownInputs(Array.from(shownInputs.values()));
     setShownParams(Array.from(shownParams.values()));
@@ -494,7 +462,14 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
         {token ? (
           <Button
             variant={"contained"}
-            startIcon={token ? <LogoApp width={18} color="white" /> : null}
+            startIcon={
+              token ? (
+                <LogoApp
+                  width={18}
+                  color="white"
+                />
+              ) : null
+            }
             sx={{
               flex: 2,
               fontSize: 15,
@@ -517,10 +492,18 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
             disabled={isGenerating}
             onClick={handlePostPrompt}
           >
-            <Typography ml={2} color={"inherit"} fontSize={"inherit"}>
+            <Typography
+              ml={2}
+              color={"inherit"}
+              fontSize={"inherit"}
+            >
               Start
             </Typography>
-            <Typography ml={"auto"} color={"inherit"} fontSize={"inherit"}>
+            <Typography
+              ml={"auto"}
+              color={"inherit"}
+              fontSize={"inherit"}
+            >
               ~360s
             </Typography>
           </Button>
@@ -548,10 +531,21 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
       <Stack sx={{ display: { xs: "none", md: "flex" } }}>
         {token ? (
-          <Stack direction={"row"} alignItems={"center"} m={"20px 10px"}>
+          <Stack
+            direction={"row"}
+            alignItems={"center"}
+            m={"20px 10px"}
+          >
             <Button
               variant={"contained"}
-              startIcon={token ? <LogoApp width={18} color="white" /> : null}
+              startIcon={
+                token ? (
+                  <LogoApp
+                    width={18}
+                    color="white"
+                  />
+                ) : null
+              }
               sx={{
                 flex: 1,
                 p: "10px 25px",
@@ -573,10 +567,16 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
               disabled={isGenerating}
               onClick={handlePostPrompt}
             >
-              <Typography ml={2} color={"inherit"}>
+              <Typography
+                ml={2}
+                color={"inherit"}
+              >
                 Start
               </Typography>
-              <Typography ml={"auto"} color={"inherit"}>
+              <Typography
+                ml={"auto"}
+                color={"inherit"}
+              >
                 ~360s
               </Typography>
             </Button>
@@ -640,11 +640,17 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
       >
         Repeat last:
         <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <Box style={keysStyle} sx={{ fontSize: 12, fontWeight: 600 }}>
+          <Box
+            style={keysStyle}
+            sx={{ fontSize: 12, fontWeight: 600 }}
+          >
             SHIFT
           </Box>
           +
-          <Box style={keysStyle} sx={{ fontSize: 12, fontWeight: 600 }}>
+          <Box
+            style={keysStyle}
+            sx={{ fontSize: 12, fontWeight: 600 }}
+          >
             R
           </Box>
         </Box>
@@ -663,14 +669,23 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
       >
         Next/Prev template:
         <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <Box style={keysStyle} sx={{ fontSize: 12, fontWeight: 600 }}>
+          <Box
+            style={keysStyle}
+            sx={{ fontSize: 12, fontWeight: 600 }}
+          >
             SHIFT
           </Box>
           +
-          <Box style={keysStyle} sx={{ fontSize: 12, fontWeight: 600 }}>
+          <Box
+            style={keysStyle}
+            sx={{ fontSize: 12, fontWeight: 600 }}
+          >
             {"<"}
           </Box>
-          <Box style={keysStyle} sx={{ fontSize: 12, fontWeight: 600 }}>
+          <Box
+            style={keysStyle}
+            sx={{ fontSize: 12, fontWeight: 600 }}
+          >
             {">"}
           </Box>
         </Box>
