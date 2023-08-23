@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Button, CircularProgress, Stack, Typography, useTheme } from "@mui/material";
+import { Box, Button, CircularProgress, Stack, Typography, alpha, useTheme } from "@mui/material";
 import { PromptParams, ResInputs, ResOverrides, ResPrompt } from "@/core/api/dto/prompts";
 import { IPromptInput, PromptLiveResponse } from "@/common/types/prompt";
 import useToken from "@/hooks/useToken";
@@ -7,14 +7,16 @@ import { useAppDispatch } from "@/hooks/useStore";
 import { templatesApi } from "@/core/api/templates";
 import { GeneratorInput } from "./GeneratorInput";
 import { GeneratorParam } from "./GeneratorParam";
-import { savePathURL } from "@/common/utils";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { getInputsFromString } from "@/common/helpers/getInputsFromString";
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { useWindowSize } from "usehooks-ts";
 import { useRouter } from "next/router";
+import { AllInclusive, Close, InfoOutlined } from "@mui/icons-material";
+
 import TabsAndFormPlaceholder from "@/components/placeholders/TabsAndFormPlaceholder";
+
 
 interface GeneratorFormProps {
   templateData: Templates;
@@ -200,7 +202,6 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
   const validateAndGenerateExecution = () => {
     if (!token) {
-      savePathURL(window.location.pathname);
       return router.push("/signin");
     }
 
@@ -390,6 +391,25 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     setShownParams(Array.from(shownParams.values()));
   };
 
+  const resetForm = () => {
+    const resetedNodeInputs = nodeInputs.map(nodeInput => {
+      const updatedInputs = Object.keys(nodeInput.inputs).reduce((inputs: ResInputs["inputs"], inputKey) => {
+        inputs[inputKey] = {
+          ...nodeInput.inputs[inputKey],
+          value: "",
+        };
+        return inputs;
+      }, {});
+
+      return {
+        ...nodeInput,
+        inputs: updatedInputs,
+      };
+    });
+
+    setNodeInputs(resetedNodeInputs);
+  };
+
   // Keyboard shortcuts
   const handleKeyboard = (e: KeyboardEvent) => {
     // prevent trigger if typing inside input
@@ -419,10 +439,14 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
         bgcolor: "surface.2",
       }}
     >
-      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+      <Stack
+        direction={"row"}
+        alignItems={"center"}
+        justifyContent={"space-between"}
+        sx={{ p: "16px 8px 16px 24px" }}
+      >
         <Typography
           sx={{
-            p: "16px",
             fontSize: 24,
             fontWeight: 500,
             color: "onSurface",
@@ -431,7 +455,25 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
         >
           Inputs
         </Typography>
-      </Box>
+        <Button
+          variant="text"
+          startIcon={<Close />}
+          sx={{
+            border: `1px solid ${alpha(palette.primary.main, 0.15)}`,
+            bgcolor: "surface.1",
+            color: "onSurface",
+            fontSize: 13,
+            fontWeight: 500,
+            p: "4px 12px",
+            svg: {
+              fontSize: "18px !important",
+            },
+          }}
+          onClick={resetForm}
+        >
+          Reset
+        </Button>
+      </Stack>
 
       <Stack
         gap={1}
@@ -547,18 +589,25 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
             >
               {token ? (
                 <React.Fragment>
-                  <Typography
-                    ml={2}
-                    color={"inherit"}
-                  >
-                    Generate
-                  </Typography>
-                  <Typography
-                    ml={"auto"}
-                    color={"inherit"}
-                  >
+                  <Typography sx={{ ml: 2, color: "inherit", fontSize: 15 }}>Generate</Typography>
+                  <Typography sx={{ display: { md: "none" }, ml: "auto", color: "inherit", fontSize: 12 }}>
                     ~360s
                   </Typography>
+                  <Stack
+                    direction={"row"}
+                    alignItems={"center"}
+                    gap={0.5}
+                    sx={{ display: { xs: "none", md: "flex" }, ml: "auto", color: "inherit", fontSize: 12 }}
+                  >
+                    {templateData.executions_limit === -1 ? (
+                      <AllInclusive fontSize="small" />
+                    ) : (
+                      <>
+                        {templateData.executions_count} of {templateData.executions_limit} left
+                        <InfoOutlined sx={{ fontSize: 16 }} />
+                      </>
+                    )}
+                  </Stack>
                 </React.Fragment>
               ) : (
                 <Typography
@@ -569,7 +618,12 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
                 </Typography>
               )}
             </Button>
-            <Box sx={{ position: "relative", display: "inline-flex" }}>
+            <Box
+              sx={{
+                position: "relative",
+                display: { xs: "inline-flex", md: "none" },
+              }}
+            >
               <CircularProgress
                 variant="determinate"
                 value={100}
@@ -593,14 +647,14 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
                   bgcolor: "primary.main",
                   color: "onPrimary",
                   borderRadius: 99,
+                  fontSize: 12,
                 }}
               >
-                <Typography
-                  sx={{ fontSize: 13, color: "inherit" }}
-                  dangerouslySetInnerHTML={{
-                    __html: templateData.executions_limit === -1 ? "&infin;" : templateData.executions_count,
-                  }}
-                />
+                {templateData.executions_limit === -1 ? (
+                  <AllInclusive fontSize="small" />
+                ) : (
+                  templateData.executions_count
+                )}
               </Box>
             </Box>
           </Stack>
