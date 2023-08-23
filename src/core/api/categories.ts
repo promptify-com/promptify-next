@@ -2,23 +2,17 @@ import { Category } from "./dto/templates";
 import { baseApi } from "./api";
 
 export const categoriesApi = baseApi.injectEndpoints({
-  endpoints: (build) => {
+  endpoints: builder => {
     return {
-      getCategories: build.query<Category[], void>({
+      getCategories: builder.query<Category[], void>({
         query: () => ({
           url: `/api/meta/categories`,
           method: "get",
         }),
         providesTags: ["Categories"],
       }),
-      getCategoryById: build.query<Category, number>({
-        query: (id: number) => ({
-          url: `/api/meta/categories/${id}`,
-          method: "get",
-        }),
-      }),
-      //   works for subcategory slug as well
-      getCategoryBySlug: build.query<Category, string>({
+      // works for subcategory slug as well
+      getCategoryBySlug: builder.query<Category, string>({
         query: (slug: string) => ({
           url: `/api/meta/categories/by-slug/${slug}`,
           method: "get",
@@ -28,8 +22,4 @@ export const categoriesApi = baseApi.injectEndpoints({
   },
 });
 
-export const {
-  useGetCategoriesQuery,
-  useGetCategoryByIdQuery,
-  useGetCategoryBySlugQuery,
-} = categoriesApi;
+export const { useGetCategoriesQuery, useGetCategoryBySlugQuery } = categoriesApi;

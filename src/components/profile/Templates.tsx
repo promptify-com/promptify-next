@@ -20,17 +20,9 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import {
-  Delete,
-  Edit,
-  PreviewRounded,
-  SettingsApplicationsRounded,
-} from "@mui/icons-material";
+import { Delete, Edit, PreviewRounded, SettingsApplicationsRounded } from "@mui/icons-material";
 
-import {
-  useDeleteTemplateMutation,
-  useGetTemplatesByOrderingQuery,
-} from "@/core/api/templates";
+import { useDeleteTemplateMutation, useGetTemplatesByFilterQuery } from "@/core/api/templates";
 import { TemplateStatus, Templates } from "@/core/api/dto/templates";
 import TemplateImportModal from "@/components/modals/TemplateImportModal";
 import TemplateForm from "@/components/common/forms/TemplateForm";
@@ -43,15 +35,12 @@ import { PageLoading } from "../PageLoading";
 import Image from "@/components/design-system/Image";
 
 export const AllTemplates = () => {
-  const { data: templates, isFetching } =
-    useGetTemplatesByOrderingQuery("-created_at");
+  const { data: templates, isFetching } = useGetTemplatesByFilterQuery({ ordering: "-created_at" });
 
   const [deleteTemplate] = useDeleteTemplateMutation(); // auto update templates daaata without refretch again
 
   const [templateImportOpen, setTemplateImportOpen] = useState(false);
-  const [selectedTemplate, setSelectedTemplate] = useState<Templates | null>(
-    null
-  );
+  const [selectedTemplate, setSelectedTemplate] = useState<Templates | null>(null);
   const [templateFormType, setTemplateFormType] = useState<FormType>("create");
   const [status, setStatus] = useState<TemplateStatus | null>("ALL");
 
@@ -64,7 +53,7 @@ export const AllTemplates = () => {
 
   const filteredTemplates = useMemo(() => {
     if (status !== "ALL" && templates) {
-      return templates.filter((template) => template.status === status);
+      return templates.filter(template => template.status === status);
     }
     return templates || [];
   }, [templates, status]);
@@ -117,20 +106,26 @@ export const AllTemplates = () => {
           ml={{ xs: "auto" }}
           spacing={1}
         >
-          <FormControl sx={{ m: 1 }} variant="standard">
+          <FormControl
+            sx={{ m: 1 }}
+            variant="standard"
+          >
             <NativeSelect
               id="status"
               sx={{
                 fontSize: 15,
               }}
               value={status || "ALL"}
-              onChange={(event) => {
+              onChange={event => {
                 setStatus(event.target.value as TemplateStatus);
               }}
             >
               <option value="ALL">All Status</option>
               {TemplateStatusArray.map((item: TemplateStatus) => (
-                <option key={item} value={item}>
+                <option
+                  key={item}
+                  value={item}
+                >
                   {item}
                 </option>
               ))}
@@ -243,11 +238,7 @@ export const AllTemplates = () => {
                             },
                           }}
                           onClick={() => {
-                            window.open(
-                              window.location.origin +
-                                `/prompt/${template.slug}`,
-                              "_blank"
-                            );
+                            window.open(window.location.origin + `/prompt/${template.slug}`, "_blank");
                           }}
                         >
                           <PreviewRounded />
@@ -265,11 +256,7 @@ export const AllTemplates = () => {
                             },
                           }}
                           onClick={() => {
-                            window.open(
-                              window.location.origin +
-                                `/builder/${template.id}`,
-                              "_blank"
-                            );
+                            window.open(window.location.origin + `/builder/${template.id}`, "_blank");
                           }}
                         >
                           <SettingsApplicationsRounded />
@@ -328,8 +315,8 @@ export const AllTemplates = () => {
         <DialogTitle>{"Confirm Deletion"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-slide-description">
-            Are you sure you want to delete this item? Once deleted, it cannot
-            be recovered. Please proceed with caution.
+            Are you sure you want to delete this item? Once deleted, it cannot be recovered. Please proceed with
+            caution.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -338,7 +325,10 @@ export const AllTemplates = () => {
         </DialogActions>
       </Dialog>
 
-      <Modal open={templateFormOpen} onClose={() => setTemplateFormOpen(false)}>
+      <Modal
+        open={templateFormOpen}
+        onClose={() => setTemplateFormOpen(false)}
+      >
         <Box sx={modalStyle}>
           <TemplateForm
             type={templateFormType}

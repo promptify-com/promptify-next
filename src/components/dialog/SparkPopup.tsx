@@ -4,7 +4,7 @@ import { red } from "@mui/material/colors";
 import React, { useEffect, useState } from "react";
 import BaseButton from "../base/BaseButton";
 import { Execution, ExecutionTemplatePopupType } from "@/core/api/dto/templates";
-import { useDeleteExecutionMutation, usePutExecutionTitleMutation } from "@/core/api/executions";
+import { useDeleteExecutionMutation, useUpdateExecutionMutation } from "@/core/api/executions";
 import { useDispatch } from "react-redux";
 import { handleOpenPopup } from "@/core/store/executionsSlice";
 
@@ -16,7 +16,7 @@ interface SparkPopupProps {
 
 export const SparkPopup: React.FC<SparkPopupProps> = ({ open, type, activeExecution }) => {
   const dispatch = useDispatch();
-  const [updateExecution, { isError }] = usePutExecutionTitleMutation();
+  const [updateExecution, { isError }] = useUpdateExecutionMutation();
   const [deleteExecution, { isError: isDeleteExecutionError }] = useDeleteExecutionMutation();
   const [executionTitle, setExecutionTitle] = useState("");
   useEffect(() => {
@@ -30,10 +30,7 @@ export const SparkPopup: React.FC<SparkPopupProps> = ({ open, type, activeExecut
   };
   const handleUpdateExecution = () => {
     if (activeExecution) {
-      let data = {
-        title: executionTitle,
-      };
-      updateExecution({ id: activeExecution.id, data }).unwrap();
+      updateExecution({ id: activeExecution.id, data: { title: executionTitle } });
       if (!isDeleteExecutionError) {
         onClose();
       }
@@ -42,7 +39,7 @@ export const SparkPopup: React.FC<SparkPopupProps> = ({ open, type, activeExecut
 
   const handleDeleteExecution = () => {
     if (activeExecution) {
-      deleteExecution(activeExecution.id).unwrap();
+      deleteExecution(activeExecution.id);
       if (!isError) {
         onClose();
       }
