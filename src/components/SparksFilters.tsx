@@ -21,6 +21,9 @@ import DraftSpark from "@/assets/icons/DraftSpark";
 import SavedSpark from "@/assets/icons/SavedSpark";
 import { TemplateExecutionsDisplay } from "@/core/api/dto/templates";
 import useTruncate from "@/hooks/useTruncate";
+import TabsSection from "./sparks/TabsSection";
+import SelectedFiltersSection from "./sparks/SelectedFiltersSection";
+import TemplatesMenuSection from "./sparks/TemplatesMenu";
 
 interface TemplateFilterProps {
   templates: TemplateExecutionsDisplay[];
@@ -86,98 +89,22 @@ const SparkFilters: React.FC<TemplateFilterProps> = ({
       flexDirection={"column"}
       gap={"16px"}
     >
-      <Tabs
+      {/* Tabs Section */}
+      <TabsSection
         value={value}
         onChange={handleChange}
-        sx={{
-          textTransform: "capitalise",
-        }}
-      >
-        <Tab
-          value="all"
-          style={{
-            minWidth: "40px",
-          }}
-          label="All"
-          sx={{
-            textTransform: "capitalize",
-          }}
-        />
-        <Tab
-          style={{
-            minWidth: "40px",
-          }}
-          sx={{
-            textTransform: "capitalize",
-          }}
-          value="saved"
-          label="Saved"
-        />
-        <Tab
-          value="drafts"
-          style={{
-            minWidth: "40px",
-          }}
-          sx={{
-            textTransform: "capitalize",
-            opacity: value !== "drafts" ? 0.6 : 1,
-          }}
-          label="Drafts"
-        />
-      </Tabs>
+      />
 
-      <Grid
-        display={"flex"}
-        gap={"8px"}
-      >
-        {selectedTemplate && (
-          <Chip
-            avatar={
-              <Avatar
-                alt={selectedTemplate.title}
-                src={selectedTemplate.thumbnail}
-              />
-            }
-            label={selectedTemplate.title}
-            onDelete={() => handleTemplateSelect(null)}
-            sx={{
-              bgcolor: "surface.1",
-              fontWeight: 400,
-              fontSize: 13,
-              lineHeight: "18px",
-              letterSpacing: "0.16px",
-            }}
-          />
-        )}
-        {nameFilter !== "" && (
-          <Chip
-            label={nameFilter}
-            onDelete={() => onNameFilter("")}
-            sx={{
-              bgcolor: "surface.1",
-              fontWeight: 400,
-              fontSize: 13,
-              lineHeight: "18px",
-              letterSpacing: "0.16px",
-            }}
-          />
-        )}
-        {value !== "all" && (
-          <Chip
-            label={`${value === "saved" ? "Saved" : "Drafts "} Sparks`}
-            icon={value === "saved" ? <SavedSpark /> : <DraftSpark />}
-            onDelete={() => setValue("all")}
-            sx={{
-              bgcolor: "surface.1",
-              fontWeight: 400,
-              pl: "10px",
-              fontSize: 13,
-              lineHeight: "18px",
-              letterSpacing: "0.16px",
-            }}
-          />
-        )}
-      </Grid>
+      {/* Selected Filters Section */}
+      <SelectedFiltersSection
+        selectedTemplate={selectedTemplate}
+        nameFilter={nameFilter}
+        currentTab={value}
+        onTemplateClear={() => onTemplateSelect(null)}
+        onSearchClear={() => onNameFilter("")}
+        onTabClear={() => setValue("all")}
+      />
+
       <Box
         bgcolor={"surface.5"}
         borderRadius={"8px"}
@@ -322,112 +249,12 @@ const SparkFilters: React.FC<TemplateFilterProps> = ({
           open={open}
           onClose={handleClose}
         >
-          <List
-            sx={{
-              pt: 0,
-              width: "401px",
-            }}
-          >
-            <Grid padding={"8px 16px 16px 16px"}>
-              <Typography
-                textTransform={"uppercase"}
-                fontSize={"12px"}
-                lineHeight={"180%"}
-                letterSpacing={"1px"}
-                color={"#375CA9"}
-              >
-                Templates
-              </Typography>
-            </Grid>
-            <Divider />
-            <Box
-              sx={{
-                height: "408px",
-                overflowY: "auto",
-                "&::-webkit-scrollbar": {
-                  width: "0.4em",
-                },
-                "&::-webkit-scrollbar-track": {
-                  boxShadow: "inset 1 0 2px rgba(0, 0, 0, 0.6)",
-                  webkitBoxShadow: "inset 1 1 6px rgba(0,0,0,0.50)",
-                },
-                "&::-webkit-scrollbar-thumb": {
-                  backgroundColor: "surface.5",
-                  outline: "1px solid surface.5",
-                  borderRadius: "10px",
-                },
-              }}
-            >
-              {templates.map(template => (
-                <ListItemButton
-                  sx={{ p: 0 }}
-                  key={template.id}
-                  selected={selectedTemplate?.title === template.title}
-                  onClick={() => handleTemplateSelect(template)}
-                >
-                  <Grid
-                    padding={"16px"}
-                    display={"flex"}
-                    flexDirection={"column"}
-                    gap={"8px"}
-                  >
-                    <Grid
-                      display={"flex"}
-                      alignItems={"center"}
-                      gap={"8px"}
-                    >
-                      <CardMedia
-                        sx={{
-                          zIndex: 1,
-                          borderRadius: "8px",
-                          width: "41px",
-                          height: "31px",
-                          objectFit: "cover",
-                        }}
-                        component="img"
-                        image={template.thumbnail}
-                        alt={template.title}
-                      />
-                      <Typography
-                        fontSize={"13px"}
-                        lineHeight={"140%"}
-                        letterSpacing={"0.15px"}
-                      >
-                        {template.title}
-                      </Typography>
-                    </Grid>
-                    <Typography
-                      fontSize={"12px"}
-                      fontWeight={400}
-                      lineHeight={"140%"}
-                      letterSpacing={"0.15px"}
-                      sx={{
-                        opacity: 0.75,
-                      }}
-                    >
-                      {truncate(template.description, { length: 53 })}
-                    </Typography>
-                    <Grid
-                      display={"flex"}
-                      gap={"8px"}
-                    >
-                      {template.tags.slice(0, 3).map(tag => (
-                        <Chip
-                          size="small"
-                          key={tag.id}
-                          label={tag.name}
-                          sx={{
-                            bgcolor: "surface.5",
-                          }}
-                        />
-                      ))}
-                    </Grid>
-                  </Grid>
-                  {/* {template.title} */}
-                </ListItemButton>
-              ))}
-            </Box>
-          </List>
+          {/* Templates Menu Section */}
+          <TemplatesMenuSection
+            templates={templates}
+            selectedTemplate={selectedTemplate}
+            onTemplateSelect={handleTemplateSelect}
+          />
         </Menu>
       </Box>
     </Grid>
