@@ -12,7 +12,7 @@ export interface FilterParams {
 
 export interface SelectedFilters {
   engine: Engine | null;
-  tag: (Tag | null)[];
+  tag: Tag[];
   title: string | null;
   category: Category | null;
   subCategory: Category | null;
