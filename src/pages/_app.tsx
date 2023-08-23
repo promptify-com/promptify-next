@@ -17,12 +17,15 @@ import useToken from "@/hooks/useToken";
 import { isValidUserFn, updateUser } from "@/core/store/userSlice";
 import { userApi } from "@/core/api/user";
 import Storage from "@/common/storage";
+import { useRouter } from "next/router";
+import { deletePathURL, savePathURL } from "@/common/utils";
 
 function App({ Component, ...rest }: AppProps) {
   const { store, props } = wrapper.useWrappedStore(rest);
   const { pageProps } = props;
   const isValidUser = isValidUserFn(store.getState());
   const storedToken = useToken();
+  const router = useRouter();
 
   useEffect(() => {
     const _updateUser = async () => {
@@ -42,6 +45,21 @@ function App({ Component, ...rest }: AppProps) {
       _updateUser();
     }
   }, [storedToken, isValidUser]);
+
+  useEffect(() => {
+    const handleRouteChange = (url: string) => {
+      if (url === "/signin") {
+        savePathURL(window.location.pathname);
+      } else {
+        deletePathURL();
+      }
+    };
+
+    router.events.on("routeChangeStart", handleRouteChange);
+    return () => {
+      router.events.off("routeChangeStart", handleRouteChange);
+    };
+  }, [router]);
 
   return (
     <Provider store={store}>

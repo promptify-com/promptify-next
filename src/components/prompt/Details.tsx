@@ -1,13 +1,11 @@
 import React, { useState } from "react";
-import { Box, Button, Chip, Divider, Stack, Typography, alpha, useTheme } from "@mui/material";
+import { Box, Button, Chip, Stack, Typography, alpha, useTheme } from "@mui/material";
 import { Templates } from "@/core/api/dto/templates";
-import { savePathURL } from "@/common/utils";
 import useToken from "@/hooks/useToken";
 import { Subtitle } from "@/components/blocks";
 import moment from "moment";
 import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
-import FavoriteButton from "@/components/common/buttons/FavoriteButton";
 import { useAddToCollectionMutation, useRemoveFromCollectionMutation } from "@/core/api/collections";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import FavoriteMobileButton from "@/components/common/buttons/FavoriteMobileButton";
@@ -38,7 +36,6 @@ export const Details: React.FC<DetailsProps> = ({
 
   const favorTemplate = async () => {
     if (!token) {
-      savePathURL(window.location.pathname);
       return router.push("/signin");
     }
 
