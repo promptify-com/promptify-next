@@ -5,7 +5,7 @@ import Protected from "@/components/Protected";
 import SparksContainer from "@/components/SparksContainer";
 import { useGetTemplatesExecutionsByMeQuery } from "@/core/api/executions";
 
-import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
+import SparksTemplatePlaceholder from "@/components/placeholders/SparksTemplatePlaceholder";
 
 const Sparks = () => {
   const { data: executedTemplates, isLoading: isExecutedTemplatesLoading } = useGetTemplatesExecutionsByMeQuery();
@@ -23,16 +23,22 @@ const Sparks = () => {
             }}
           >
             {isExecutedTemplatesLoading ? (
-              <Box>
-                <Skeleton
-                  variant="text"
-                  height={40}
-                  width={"10%"}
-                  sx={{ mb: 2 }}
-                />
-
-                <CardTemplatePlaceholder count={3} />
-              </Box>
+              <>
+                <Box width={{xs: "40%", md: "20%"}} mb={1}>
+                  <Skeleton
+                    variant="text"
+                    height={35}
+                    width={"100%"}
+                    animation='wave'
+                  />
+                </Box>
+                
+                <Box 
+                  bgcolor={"surface.1"}
+                >
+                  <SparksTemplatePlaceholder count={3} />
+                </Box>
+              </>
             ) : (
               <Stack gap={2}>
                 <Typography
