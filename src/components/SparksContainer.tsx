@@ -4,7 +4,6 @@ import { Execution, ExecutionTemplatePopupType, TemplateExecutionsDisplay } from
 
 import { SparksLayoutDesktop } from "./SparksLayoutDesktop";
 import { SparksLayoutMobile } from "./SparksLayoutMobile";
-import { RootState } from "@/core/store";
 import { SparkPopup } from "./dialog/SparkPopup";
 import { useExecutionFavoriteMutation } from "@/core/api/executions";
 import SparkFilters from "./SparksFilters";
@@ -14,16 +13,13 @@ interface SparksContainerProps {
 }
 
 const SparksContainer: FC<SparksContainerProps> = ({ templates }) => {
-  // const openPopup = useSelector((state: RootState) => state.executionsSlice.openPopup);
-  // const activeExecution = useSelector((state: RootState) => state.executionsSlice.activeExecution);
-  // const popupType = useSelector((state: RootState) => state.executionsSlice.popupType);
-
   const [openPopup, setOpenPopup] = useState(false);
   const [activeExecution, setActiveExecution] = useState<Execution | null>(null);
   const [popupType, setPopupType] = useState<ExecutionTemplatePopupType>("update");
-  const [templateSortOption, setTemplateSortOption] = useState<"asc" | "desc">("asc");
-  const [executionSortOption, setExecutionSortOption] = useState<"asc" | "desc">("asc");
-  const [executionTimeSortOption, setExecutionTimeSortOption] = useState<"asc" | "desc">("asc");
+  const [templateSortOption, setTemplateSortOption] = useState<"asc" | "desc">("desc");
+  const [executionSortOption, setExecutionSortOption] = useState<"asc" | "desc">("desc");
+  const [executionTimeSortOption, setExecutionTimeSortOption] = useState<"asc" | "desc">("desc");
+  const [currentTab, setCurrentTab] = useState("all");
   const [selectedTemplate, setSelectedTemplate] = useState<TemplateExecutionsDisplay | null>(null);
   const [nameFilter, setNameFilter] = useState<string>("");
 
@@ -72,39 +68,41 @@ const SparksContainer: FC<SparksContainerProps> = ({ templates }) => {
     setNameFilter(filterValue);
   };
 
-  // Memoize the sorted templates based on sort direction
-  const sortedTemplates = useMemo(() => {
-    return templates.slice().sort((a, b) => {
-      if (templateSortOption === "asc") {
-        return a.title.localeCompare(b.title);
-      } else {
-        return b.title.localeCompare(a.title);
-      }
-    });
-  }, [templateSortOption, templates]);
+  // This function filters and sorts executions based on given criteria
+  const filterAndSortExecutions = (executions: Execution[], filterPredicate: (execution: Execution) => boolean) => {
+    // Filter the executions based on the provided filterPredicate
+    // Then sort them first by execution time and then by execution title
+    return executions.filter(filterPredicate).sort(compareByExecutionTime).sort(compareByExecutionTitle);
+  };
 
-  // Memoize the filtered templates based on sort, template selection, and name filter
+  // Use the useMemo hook to efficiently calculate filtered templates
   const filteredTemplates = useMemo(() => {
+    // Define a filterPredicate based on the current tab value
+    const filterPredicate =
+      currentTab === "saved"
+        ? (execution: Execution) => execution.is_favorite
+        : currentTab === "drafts"
+        ? (execution: Execution) => !execution.is_favorite
+        : () => true; // For the "all" tab, no additional filtering is needed
+
+    // Map through the templates and apply filtering and sorting to their executions
+    const sortedAndFilteredTemplates = templates.map(template => ({
+      ...template,
+      executions: filterAndSortExecutions(
+        template.executions,
+        (execution: Execution) =>
+          execution.title.toLowerCase().includes(nameFilter.toLowerCase()) && filterPredicate(execution),
+      ),
+    }));
+
+    // If a specific template is selected, filter the templates to match the selected template's title
+    // Otherwise, return all the sorted and filtered templates
     if (selectedTemplate) {
-      return sortedTemplates
-        .map(template => ({
-          ...template,
-          executions: template.executions
-            .filter(execution => execution.title.toLowerCase().includes(nameFilter.toLowerCase()))
-            .sort(compareByExecutionTime) // Apply execution time sorting
-            .sort(compareByExecutionTitle), // Apply execution title sorting
-        }))
-        .filter(template => template.title === selectedTemplate.title);
+      return sortedAndFilteredTemplates.filter(template => template.title === selectedTemplate.title);
     } else {
-      return sortedTemplates.map(template => ({
-        ...template,
-        executions: template.executions
-          .filter(execution => execution.title.toLowerCase().includes(nameFilter.toLowerCase()))
-          .sort(compareByExecutionTime) // Apply execution time sorting
-          .sort(compareByExecutionTitle), // Apply execution title sorting
-      }));
+      return sortedAndFilteredTemplates;
     }
-  }, [selectedTemplate, sortedTemplates, nameFilter, executionSortOption, executionTimeSortOption]);
+  }, [currentTab, templates, selectedTemplate, nameFilter, executionSortOption, executionTimeSortOption]);
   return (
     <Grid
       display={"flex"}
@@ -123,6 +121,8 @@ const SparksContainer: FC<SparksContainerProps> = ({ templates }) => {
         sortTimeDirection={executionTimeSortOption}
         onNameFilter={handleNameFilter}
         nameFilter={nameFilter}
+        currentTab={currentTab}
+        setCurrentTab={setCurrentTab}
       />
       <Grid
         display={"flex"}

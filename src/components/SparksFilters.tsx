@@ -1,8 +1,4 @@
-import { ArrowDropDownIcon } from "@/assets/icons/ArrowDropDownIcon";
-import { MenuIcon } from "@/assets/icons/MenuIcon";
-import SavedSpark from "@/assets/icons/SavedSpark";
-import { TemplateExecutionsDisplay } from "@/core/api/dto/templates";
-import useTruncate from "@/hooks/useTruncate";
+import React, { useState } from "react";
 import { ArrowDropDown, Search, SortRounded } from "@mui/icons-material";
 import {
   Box,
@@ -17,8 +13,14 @@ import {
   Divider,
   Chip,
   Avatar,
+  Tab,
+  Tabs,
 } from "@mui/material";
-import React, { useState } from "react";
+
+import DraftSpark from "@/assets/icons/DraftSpark";
+import SavedSpark from "@/assets/icons/SavedSpark";
+import { TemplateExecutionsDisplay } from "@/core/api/dto/templates";
+import useTruncate from "@/hooks/useTruncate";
 
 interface TemplateFilterProps {
   templates: TemplateExecutionsDisplay[];
@@ -32,6 +34,8 @@ interface TemplateFilterProps {
   sortTimeDirection: "asc" | "desc";
   onNameFilter: (nameFilter: string) => void;
   nameFilter: string;
+  currentTab: string;
+  setCurrentTab: (value: "all" | "drafts" | "saved") => void;
 }
 
 const SparkFilters: React.FC<TemplateFilterProps> = ({
@@ -46,8 +50,11 @@ const SparkFilters: React.FC<TemplateFilterProps> = ({
   sortTimeDirection,
   onNameFilter,
   nameFilter,
+  currentTab,
+  setCurrentTab,
 }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [value, setValue] = useState(currentTab);
   const open = Boolean(anchorEl);
   const { truncate } = useTruncate();
 
@@ -68,13 +75,61 @@ const SparkFilters: React.FC<TemplateFilterProps> = ({
     onNameFilter(filterValue);
   };
 
+  const handleChange = (event: React.SyntheticEvent, newValue: "all" | "drafts" | "saved") => {
+    setValue(newValue);
+    setCurrentTab(newValue);
+  };
+
   return (
     <Grid
       display={"flex"}
       flexDirection={"column"}
       gap={"16px"}
     >
-      <Grid display={"flex"}>
+      <Tabs
+        value={value}
+        onChange={handleChange}
+        sx={{
+          textTransform: "capitalise",
+        }}
+      >
+        <Tab
+          value="all"
+          style={{
+            minWidth: "40px",
+          }}
+          label="All"
+          sx={{
+            textTransform: "capitalize",
+          }}
+        />
+        <Tab
+          style={{
+            minWidth: "40px",
+          }}
+          sx={{
+            textTransform: "capitalize",
+          }}
+          value="saved"
+          label="Saved"
+        />
+        <Tab
+          value="drafts"
+          style={{
+            minWidth: "40px",
+          }}
+          sx={{
+            textTransform: "capitalize",
+            opacity: value !== "drafts" ? 0.6 : 1,
+          }}
+          label="Drafts"
+        />
+      </Tabs>
+
+      <Grid
+        display={"flex"}
+        gap={"8px"}
+      >
         {selectedTemplate && (
           <Chip
             avatar={
@@ -88,6 +143,34 @@ const SparkFilters: React.FC<TemplateFilterProps> = ({
             sx={{
               bgcolor: "surface.1",
               fontWeight: 400,
+              fontSize: 13,
+              lineHeight: "18px",
+              letterSpacing: "0.16px",
+            }}
+          />
+        )}
+        {nameFilter !== "" && (
+          <Chip
+            label={nameFilter}
+            onDelete={() => onNameFilter("")}
+            sx={{
+              bgcolor: "surface.1",
+              fontWeight: 400,
+              fontSize: 13,
+              lineHeight: "18px",
+              letterSpacing: "0.16px",
+            }}
+          />
+        )}
+        {value !== "all" && (
+          <Chip
+            label={`${value === "saved" ? "Saved" : "Drafts "} Sparks`}
+            icon={value === "saved" ? <SavedSpark /> : <DraftSpark />}
+            onDelete={() => setValue("all")}
+            sx={{
+              bgcolor: "surface.1",
+              fontWeight: 400,
+              pl: "10px",
               fontSize: 13,
               lineHeight: "18px",
               letterSpacing: "0.16px",
