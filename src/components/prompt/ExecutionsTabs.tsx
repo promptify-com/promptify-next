@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
+  IconButton,
   MenuItem,
   MenuList,
   Stack,
@@ -23,6 +24,7 @@ import {
   usePutExecutionTitleMutation,
 } from "@/core/api/executions";
 import { DeleteDialog } from "../dialog/DeleteDialog";
+import { executionTimeLeft } from "@/common/helpers/executionTimeLeft";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -79,6 +81,7 @@ export const ExecutionsTabs: React.FC<Props> = ({ executions, chooseExecution, s
   const [executionTitle, setExecutionTitle] = useState(selectedExecution?.title);
   const [renameAllow, setRenameAllow] = useState(false);
   const [deleteAllow, setDeleteAllow] = useState(false);
+  const [executionToDelete, setExecutionToDelete] = useState<TemplatesExecutions | null>(null);
 
   useEffect(() => {
     setExecutionTitle(selectedExecution?.title);
@@ -115,8 +118,14 @@ export const ExecutionsTabs: React.FC<Props> = ({ executions, chooseExecution, s
         sx={{
           borderTop: "1px solid #E3E3E3",
           p: "16px",
-          opacity: 0.8,
-          "&:hover": { opacity: 1 },
+          opacity: 0.85,
+          "&:hover": {
+            opacity: 1,
+            bgcolor: "surface.2",
+            ".delete-btn": {
+              display: "inline-flex",
+            },
+          },
         }}
         onClick={() => chooseExecution(execution)}
       >
@@ -124,18 +133,17 @@ export const ExecutionsTabs: React.FC<Props> = ({ executions, chooseExecution, s
           direction={"row"}
           alignItems={"center"}
           gap={2}
+          width={"100%"}
         >
           {execution.is_favorite ? (
             <SavedSpark
               size="32"
-              color={palette.onSurface}
-              opacity={1}
+              color={execution.id === selectedExecution?.id ? palette.primary.main : palette.onSurface}
             />
           ) : (
             <DraftSpark
               size="32"
-              color={palette.onSurface}
-              opacity={1}
+              color={execution.id === selectedExecution?.id ? palette.primary.main : palette.onSurface}
             />
           )}
           <Stack>
@@ -143,7 +151,7 @@ export const ExecutionsTabs: React.FC<Props> = ({ executions, chooseExecution, s
               sx={{
                 fontWeight: 500,
                 fontSize: 14,
-                color: "onSurface",
+                color: execution.id === selectedExecution?.id ? "primary.main" : "onSurface",
                 whiteSpace: "normal",
                 wordBreak: "break-word",
               }}
@@ -161,6 +169,24 @@ export const ExecutionsTabs: React.FC<Props> = ({ executions, chooseExecution, s
               {moment(execution.created_at).fromNow()}
             </Typography>
           </Stack>
+          <IconButton
+            className="delete-btn"
+            sx={{
+              display: "none",
+              ml: "auto",
+              border: "none",
+              "&:hover": {
+                bgcolor: "surface.5",
+              },
+            }}
+            onClick={e => {
+              e.stopPropagation();
+              setExecutionToDelete(execution);
+              setDeleteAllow(true);
+            }}
+          >
+            <Delete sx={{ fontSize: "16px" }} />
+          </IconButton>
         </Stack>
       </MenuItem>
     );
@@ -234,15 +260,9 @@ export const ExecutionsTabs: React.FC<Props> = ({ executions, chooseExecution, s
                     opacity: 0.5,
                   }}
                 >
-                  {!selectedExecution?.is_favorite &&
-                    `This Spark is temporal and will be removed in 
-                        ${moment
-                          .duration(
-                            moment(selectedExecution?.created_at)
-                              .add(30, "days")
-                              .diff(moment()),
-                          )
-                          .humanize()}`}
+                  {!selectedExecution?.is_favorite
+                    ? `This Spark is temporal and will be removed in ${executionTimeLeft(selectedExecution.created_at)}`
+                    : "This Spark is saved"}
                 </Typography>
               </Stack>
             </Stack>
@@ -295,7 +315,10 @@ export const ExecutionsTabs: React.FC<Props> = ({ executions, chooseExecution, s
                   p: "4px 12px",
                   ml: "auto",
                 }}
-                onClick={() => setDeleteAllow(true)}
+                onClick={() => {
+                  setExecutionToDelete(selectedExecution);
+                  setDeleteAllow(true);
+                }}
               >
                 Delete
               </Button>
@@ -412,15 +435,19 @@ export const ExecutionsTabs: React.FC<Props> = ({ executions, chooseExecution, s
         <Stack height={"100%"}>{ExecutionsList(pinnedExecutions)}</Stack>
       </CustomTabPanel>
 
-      {!!selectedExecution && (
+      {!!executionToDelete && (
         <DeleteDialog
           open={deleteAllow}
           dialogTitle="Delete Spark"
-          dialogContentText={`Are you sure you want to delete ${selectedExecution?.title || "this"} Spark?`}
-          onClose={() => setDeleteAllow(false)}
-          onSubmit={() => {
-            deleteExecution(selectedExecution.id);
+          dialogContentText={`Are you sure you want to delete ${executionToDelete?.title || "this"} Spark?`}
+          onClose={() => {
             setDeleteAllow(false);
+            setExecutionToDelete(null);
+          }}
+          onSubmit={async () => {
+            await deleteExecution(executionToDelete.id);
+            setDeleteAllow(false);
+            setExecutionToDelete(null);
           }}
           onSubmitLoading={isLoading}
         />
