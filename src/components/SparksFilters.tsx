@@ -1,6 +1,19 @@
 import React, { useMemo, useState } from "react";
 import { ArrowDropDown, FilterList, Search, SortRounded } from "@mui/icons-material";
-import { Box, Dialog, DialogActions, Grid, IconButton, InputBase, Menu, Typography } from "@mui/material";
+import {
+  Box,
+  Dialog,
+  DialogActions,
+  Divider,
+  Grid,
+  IconButton,
+  InputBase,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
+  Typography,
+} from "@mui/material";
 
 import SavedSpark from "@/assets/icons/SavedSpark";
 import { TemplateExecutionsDisplay } from "@/core/api/dto/templates";
@@ -18,9 +31,12 @@ interface TemplateFilterProps {
   onSortTemplateToggle: () => void;
   onSortExecutionToggle: () => void;
   onSortTimeToggle: () => void;
+  onSortFavoriteToggle: (value: "saved" | "drafts") => void;
+
   sortTemplateDirection: "asc" | "desc";
   sortExecutionDirection: "asc" | "desc";
   sortTimeDirection: "asc" | "desc";
+  sortFavoriteDirection: "saved" | "drafts";
   onNameFilter: (nameFilter: string) => void;
   nameFilter: string;
   currentTab: TabValueType;
@@ -35,9 +51,11 @@ const SparkFilters: React.FC<TemplateFilterProps> = ({
   onSortTemplateToggle,
   onSortExecutionToggle,
   onSortTimeToggle,
+  onSortFavoriteToggle,
   sortTemplateDirection,
   sortExecutionDirection,
   sortTimeDirection,
+  sortFavoriteDirection,
   onNameFilter,
   nameFilter,
   currentTab,
@@ -45,9 +63,11 @@ const SparkFilters: React.FC<TemplateFilterProps> = ({
   availableTabs,
 }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [anchorFavoriteSort, setAnchorFavoriteSort] = useState<null | HTMLElement>(null);
   const [openFilters, setOpenFilters] = useState<boolean>(false);
   const [value, setValue] = useState<TabValueType>(currentTab);
   const openTemplates = Boolean(anchorEl);
+  const openSortFaviteMenu = Boolean(anchorFavoriteSort);
 
   const handleTemplateSelect = (template: TemplateExecutionsDisplay | null) => {
     onTemplateSelect(template);
@@ -119,12 +139,22 @@ const SparkFilters: React.FC<TemplateFilterProps> = ({
           gap={{ md: "1px" }}
         >
           <Grid
+            onClick={e => {
+              if (currentTab !== "all") return;
+              setAnchorFavoriteSort(e.currentTarget);
+            }}
             bgcolor={"surface.5"}
-            padding={"0px 16px"}
+            minWidth={"48px"}
+            padding={"0px 8px"}
             display={{ xs: "none", md: "flex" }}
             alignItems={"center"}
+            justifyContent={"center"}
+            sx={{
+              cursor: "pointer",
+            }}
           >
-            {currentTab === "all" || currentTab === "saved" ? <SavedSpark /> : <DraftSpark />}
+            {sortFavoriteDirection === "saved" || currentTab === "saved" ? <SavedSpark /> : <DraftSpark />}
+            <ArrowDropDown sx={{ fontSize: "16px", display: currentTab !== "all" ? "none" : "block" }} />
           </Grid>
           <Grid
             bgcolor={"surface.5"}
@@ -318,6 +348,44 @@ const SparkFilters: React.FC<TemplateFilterProps> = ({
             </Typography>
           </Grid>
         </Grid>
+
+        <Menu
+          id="template-menu"
+          anchorEl={anchorFavoriteSort}
+          open={openSortFaviteMenu}
+          onClose={() => setAnchorFavoriteSort(null)}
+        >
+          <MenuItem
+            onClick={() => {
+              onSortFavoriteToggle("saved");
+              setAnchorFavoriteSort(null);
+            }}
+          >
+            <ListItemIcon
+              sx={{
+                mr: -1.5,
+              }}
+            >
+              <SavedSpark />
+            </ListItemIcon>
+            <ListItemText>Saved</ListItemText>
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              onSortFavoriteToggle("drafts");
+              setAnchorFavoriteSort(null);
+            }}
+          >
+            <ListItemIcon
+              sx={{
+                mr: -1.5,
+              }}
+            >
+              <DraftSpark />
+            </ListItemIcon>
+            <ListItemText>Drafts</ListItemText>
+          </MenuItem>
+        </Menu>
         <Menu
           id="template-menu"
           anchorEl={anchorEl}
