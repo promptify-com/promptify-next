@@ -23,10 +23,7 @@ import { MinusIcon, PlusIcon } from "@/assets/icons";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Sidebar } from "@/components/builder/Sidebar";
 import { useEngines } from "@/hooks/api/engines";
-import {
-  useGetPromptTemplatesQuery,
-  usePublishTemplateMutation,
-} from "@/core/api/templates";
+import { useGetPromptTemplatesQuery, usePublishTemplateMutation } from "@/core/api/templates";
 import { Prompts } from "@/core/api/dto/prompts";
 import { deletePrompt, updateTemplate } from "@/hooks/api/templates";
 import { ContentCopy } from "@mui/icons-material";
@@ -65,16 +62,10 @@ export const Builder = () => {
   const [prompts, setPrompts] = useState<Prompts[]>([]);
   const [engines] = useEngines();
   const [selectedNode, setSelectedNode] = useState<any>(null);
-  const [selectedNodeData, setSelectedNodeData] = useState<INodesData | null>(
-    null
-  );
-  const [selectedConnection, setSelectedConnection] = useState<string | null>(
-    null
-  );
+  const [selectedNodeData, setSelectedNodeData] = useState<INodesData | null>(null);
+  const [selectedConnection, setSelectedConnection] = useState<string | null>(null);
   const [nodesData, setNodesData] = useState<INodesData[]>([]);
-  const { data: promptsData } = useGetPromptTemplatesQuery(
-    id ? +id : skipToken
-  );
+  const { data: promptsData } = useGetPromptTemplatesQuery(id ? +id : skipToken);
   const dataForRequest = useRef({} as any);
   const [confirmDialogOpen, setConfirmDialogOpen] = React.useState(false);
   const [snackBarOpen, setSnackBarOpen] = React.useState(false);
@@ -91,10 +82,10 @@ export const Builder = () => {
         nodeCount,
         setNodeCount,
         setNodesData,
-        updateTemplateDependencties
+        updateTemplateDependencties,
       );
     },
-    [setSelectedNode, prompts, promptsData]
+    [setSelectedNode, prompts, promptsData],
   );
 
   const [ref, editor] = useRete(create);
@@ -120,7 +111,7 @@ export const Builder = () => {
   useEffect(() => {
     if (nodesData) {
       const data = dataForRequest.current as any;
-      data.prompts_list = nodesData.map((node) => {
+      data.prompts_list = nodesData.map(node => {
         const model_parameters = node.model_parameters || null;
         return {
           id: node.id,
@@ -128,7 +119,7 @@ export const Builder = () => {
           title: node.title,
           content: node.content,
           engine_id: node.engine_id,
-          parameters: node?.parameters?.map((params) => {
+          parameters: node?.parameters?.map(params => {
             return {
               parameter_id: params.parameter_id,
               score: params.score,
@@ -165,11 +156,8 @@ export const Builder = () => {
     if (!selectedNode) {
       setSelectedNodeData(null);
     } else {
-      const findSelectedNode = nodesData?.find((node) => {
-        return (
-          node?.id?.toString() === selectedNode?.id.toString() ||
-          node?.temp_id === selectedNode?.temp_id
-        );
+      const findSelectedNode = nodesData?.find(node => {
+        return node?.id?.toString() === selectedNode?.id.toString() || node?.temp_id === selectedNode?.temp_id;
       });
 
       if (findSelectedNode) {
@@ -195,28 +183,27 @@ export const Builder = () => {
 
     const allNodes = editor?.editor.getNodes();
 
-    allNodes?.forEach((allNodesNode) => {
+    allNodes?.forEach(allNodesNode => {
       allNodesNode.selected = false;
       editor?.area.update("node", allNodesNode.id);
     });
 
     await editor?.editor.addNode(node);
 
-    setNodeCount((prev) => prev + 1);
+    setNodeCount(prev => prev + 1);
     setSelectedNode(node);
     node.selected = true;
     node.count = nodeCount.toString();
     // assign random integer to temp_id
     node.temp_id = Math.floor(Math.random() * 1000000000);
 
-    setNodesData((prev) => [
+    setNodesData(prev => [
       ...prev,
       {
         temp_id: node.temp_id,
         count: nodeCount.toString(),
         title: `Prompt #${nodeCount}`,
-        content:
-          "Describe here prompt parameters, for example {{name:text}} or {{age:integer}}",
+        content: "Describe here prompt parameters, for example {{name:text}} or {{age:integer}}",
         engine_id: 1,
         dependencies: [],
         parameters: [],
@@ -239,20 +226,20 @@ export const Builder = () => {
 
       const allNodes = editor?.editor.getNodes();
 
-      allNodes?.forEach((allNodesNode) => {
+      allNodes?.forEach(allNodesNode => {
         allNodesNode.selected = false;
         editor?.area.update("node", allNodesNode.id);
       });
 
       await editor?.editor.addNode(node);
 
-      setNodeCount((prev) => prev + 1);
+      setNodeCount(prev => prev + 1);
       setSelectedNode(node);
       node.selected = true;
       node.count = nodeCount.toString();
       node.temp_id = Math.floor(Math.random() * 1000000000);
 
-      setNodesData((prev) => [
+      setNodesData(prev => [
         ...prev,
         {
           temp_id: node.temp_id,
@@ -282,23 +269,15 @@ export const Builder = () => {
 
   const updateTemplateDependencties = (id: string, dependsOn: string) => {
     const data = dataForRequest.current;
-    const currentPrompt = dataForRequest.current.prompts_list?.find(
-      (prompt: INodesData) => {
-        return prompt.temp_id === Number(id) || prompt.id === Number(id);
-      }
-    );
+    const currentPrompt = dataForRequest.current.prompts_list?.find((prompt: INodesData) => {
+      return prompt.temp_id === Number(id) || prompt.id === Number(id);
+    });
 
     if (currentPrompt) {
-      currentPrompt.dependencies = [
-        ...currentPrompt.dependencies,
-        Number(dependsOn),
-      ];
+      currentPrompt.dependencies = [...currentPrompt.dependencies, Number(dependsOn)];
 
       const allPrompts = data.prompts_list.filter((prompt: any) => {
-        return (
-          prompt.id !== currentPrompt?.id ||
-          prompt.temp_id !== currentPrompt?.temp_id
-        );
+        return prompt.id !== currentPrompt?.id || prompt.temp_id !== currentPrompt?.temp_id;
       });
 
       const prompts = [...allPrompts, currentPrompt];
@@ -314,14 +293,9 @@ export const Builder = () => {
 
     const data = dataForRequest.current;
 
-    const currentPrompt = dataForRequest.current.prompts_list.find(
-      (prompt: INodesData) => {
-        return (
-          prompt?.id?.toString() === selectedNode?.id ||
-          prompt?.temp_id === selectedNode?.temp_id
-        );
-      }
-    );
+    const currentPrompt = dataForRequest.current.prompts_list.find((prompt: INodesData) => {
+      return prompt?.id?.toString() === selectedNode?.id || prompt?.temp_id === selectedNode?.temp_id;
+    });
 
     // Remove the prompt from the backend
     if (currentPrompt?.id) {
@@ -329,10 +303,7 @@ export const Builder = () => {
     }
 
     const allPrompts = data.prompts_list.filter((prompt: INodesData) => {
-      return (
-        prompt?.id?.toString() !== currentPrompt?.id?.toString() ||
-        prompt?.temp_id !== currentPrompt?.temp_id
-      );
+      return prompt?.id?.toString() !== currentPrompt?.id?.toString() || prompt?.temp_id !== currentPrompt?.temp_id;
     });
 
     data.prompts_list = allPrompts;
@@ -340,10 +311,7 @@ export const Builder = () => {
     // remove the ID of the prompt from the dependencies of other prompts
     allPrompts.forEach((prompt: INodesData) => {
       prompt.dependencies = prompt.dependencies.filter((dependency: number) => {
-        return (
-          dependency !== currentPrompt?.id &&
-          dependency !== currentPrompt?.temp_id
-        );
+        return dependency !== currentPrompt?.id && dependency !== currentPrompt?.temp_id;
       });
     });
 
@@ -368,19 +336,12 @@ export const Builder = () => {
 
         if (source && target) {
           const targetNode = nodesData.find(
-            (node) =>
-              node.id?.toString() === target?.id ||
-              node.temp_id === target?.temp_id
+            node => node.id?.toString() === target?.id || node.temp_id === target?.temp_id,
           );
           if (targetNode) {
-            targetNode.dependencies = targetNode?.dependencies.filter(
-              (dep) => dep.toString() !== source?.id
-            );
+            targetNode.dependencies = targetNode?.dependencies.filter(dep => dep.toString() !== source?.id);
 
-            setNodesData((prev) => [
-              ...prev.filter((node) => node.id !== targetNode?.id),
-              targetNode as INodesData,
-            ]);
+            setNodesData(prev => [...prev.filter(node => node.id !== targetNode?.id), targetNode as INodesData]);
           }
           await editor?.removeConnection(selectedConnection);
           setSelectedConnection(null);
@@ -393,11 +354,9 @@ export const Builder = () => {
     const data = dataForRequest.current;
     // remove duplicated dependencies in the prompts
     data.prompts_list?.forEach((prompt: INodesData) => {
-      prompt.dependencies = prompt.dependencies.filter(
-        (dependency: number, index: number, self: number[]) => {
-          return self.indexOf(dependency) === index;
-        }
-      );
+      prompt.dependencies = prompt.dependencies.filter((dependency: number, index: number, self: number[]) => {
+        return self.indexOf(dependency) === index;
+      });
     });
 
     function getOrder(node: INodesData) {
@@ -405,10 +364,8 @@ export const Builder = () => {
         return 1;
       } else {
         let maxOrder = 0;
-        node.dependencies.forEach((dependencyId) => {
-          const dependency = data.prompts_list.find(
-            (n: any) => n.id === dependencyId || n.temp_id === dependencyId
-          );
+        node.dependencies.forEach(dependencyId => {
+          const dependency = data.prompts_list.find((n: any) => n.id === dependencyId || n.temp_id === dependencyId);
           const dependencyOrder = dependency?.order || getOrder(dependency);
           if (dependencyOrder > maxOrder) {
             maxOrder = dependencyOrder;
@@ -445,7 +402,10 @@ export const Builder = () => {
     <>
       <Box>
         <Grid container>
-          <Grid item xs={12}>
+          <Grid
+            item
+            xs={12}
+          >
             <Header
               status={dataForRequest.current.status}
               title={dataForRequest.current.title}
@@ -466,10 +426,14 @@ export const Builder = () => {
                 templateData={promptsData as Templates}
                 darkMode
                 onSaved={() => window.location.reload()}
+                onClose={() => toggleTemplateDrawer(false)}
               />
             </Box>
           </SwipeableDrawer>
-          <Grid item xs={selectedNode ? 9 : 12}>
+          <Grid
+            item
+            xs={selectedNode ? 9 : 12}
+          >
             <Box
               height={"calc(100vh - 80px)"}
               bgcolor={"#525252"}
@@ -479,7 +443,10 @@ export const Builder = () => {
                 backgroundSize: "30px 30px",
               }}
             >
-              <div ref={ref} style={{ height: "100%", width: "100%" }}></div>
+              <div
+                ref={ref}
+                style={{ height: "100%", width: "100%" }}
+              ></div>
 
               <Box
                 sx={{
@@ -488,9 +455,15 @@ export const Builder = () => {
                   bottom: 50,
                 }}
               >
-                <Button sx={{ bgcolor: "black" }} onClick={() => createNode()}>
+                <Button
+                  sx={{ bgcolor: "black" }}
+                  onClick={() => createNode()}
+                >
                   <Typography color={"white"}>Add Node</Typography>
-                  <Typography color={"white"} sx={{ opacity: 0.4 }}>
+                  <Typography
+                    color={"white"}
+                    sx={{ opacity: 0.4 }}
+                  >
                     &nbsp;Ctrl+N
                   </Typography>
                 </Button>
@@ -507,10 +480,7 @@ export const Builder = () => {
                           color: "white",
                         }}
                       >
-                        <ContentCopy
-                          sx={{ opacity: 0.4, mr: "3px", fontSize: "medium" }}
-                        />{" "}
-                        Duplicate
+                        <ContentCopy sx={{ opacity: 0.4, mr: "3px", fontSize: "medium" }} /> Duplicate
                       </Typography>
                     </Button>
                     <Button
@@ -524,10 +494,7 @@ export const Builder = () => {
                           color: "white",
                         }}
                       >
-                        <DeleteIcon
-                          sx={{ opacity: 0.5, mr: "3px", fontSize: "medium" }}
-                        />{" "}
-                        Delete
+                        <DeleteIcon sx={{ opacity: 0.5, mr: "3px", fontSize: "medium" }} /> Delete
                       </Typography>
                     </Button>
                   </React.Fragment>
@@ -544,10 +511,7 @@ export const Builder = () => {
                         color: "white",
                       }}
                     >
-                      <DeleteIcon
-                        sx={{ opacity: 0.5, mr: "3px", fontSize: "medium" }}
-                      />{" "}
-                      Delete
+                      <DeleteIcon sx={{ opacity: 0.5, mr: "3px", fontSize: "medium" }} /> Delete
                     </Typography>
                   </Button>
                 )}
@@ -586,7 +550,10 @@ export const Builder = () => {
               </Box>
             </Box>
           </Grid>
-          <Grid item xs={selectedNode ? 3 : 0}>
+          <Grid
+            item
+            xs={selectedNode ? 3 : 0}
+          >
             <Box
               bgcolor={"#373737"}
               height={"calc(100vh - 80px)"}
@@ -620,9 +587,7 @@ export const Builder = () => {
         >
           <DialogTitle>{selectedNodeData?.title}</DialogTitle>
           <DialogContent>
-            <DialogContentText>
-              Are you sure you want to remove this node?
-            </DialogContentText>
+            <DialogContentText>Are you sure you want to remove this node?</DialogContentText>
           </DialogContent>
           <DialogActions
             sx={{

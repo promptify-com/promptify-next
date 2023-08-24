@@ -432,7 +432,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   return (
     <Stack
       sx={{
-        minHeight: { xs: "100%", md: "auto" },
+        minHeight: "100%",
         bgcolor: "surface.2",
       }}
     >
@@ -475,7 +475,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
       <Stack
         gap={1}
         sx={{
-          flex: { xs: 1, md: 0 },
+          flex: 1,
           p: "16px",
           pb: { xs: 0, md: "16px" },
         }}
