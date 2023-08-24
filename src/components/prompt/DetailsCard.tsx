@@ -15,9 +15,7 @@ export const DetailsCard: React.FC<Props> = ({ templateData }) => {
   // Determine the appropriate border radius value based on the breakpoint
   // If the current breakpoint is medium (md) or larger,
   const isMdBreakpoint = useMediaQuery(breakpoints.up("md"));
-  const borderRadiusValue = isMdBreakpoint
-      ? "16px"
-      : "0px";
+  const borderRadiusValue = isMdBreakpoint ? "16px" : "0px";
 
   return (
     <Box
@@ -39,8 +37,7 @@ export const DetailsCard: React.FC<Props> = ({ templateData }) => {
         <Image
           src={templateData.thumbnail || "http://placehold.it/240x150"}
           alt={templateData.title}
-          style={{borderRadius: borderRadiusValue, objectFit: "cover", width: "100%", height: "100%"}}
-          
+          style={{ borderRadius: borderRadiusValue, objectFit: "cover", width: "100%", height: "100%" }}
         />
       </CardMedia>
       <Stack
@@ -51,7 +48,7 @@ export const DetailsCard: React.FC<Props> = ({ templateData }) => {
           position: "relative",
           mt: { xs: "-35px", md: "0px" },
           bgcolor: "surface.1",
-          p: { xs: "16px", md: 0 },
+          p: { xs: "16px", md: "16px 0 0" },
         }}
       >
         <Stack
@@ -59,7 +56,7 @@ export const DetailsCard: React.FC<Props> = ({ templateData }) => {
           justifyContent={"space-between"}
           gap={1}
         >
-          <Box>
+          <Stack gap={1}>
             <Typography
               fontSize={18}
               fontWeight={500}
@@ -72,7 +69,7 @@ export const DetailsCard: React.FC<Props> = ({ templateData }) => {
               color={"grey.600"}
               dangerouslySetInnerHTML={{ __html: templateData.category.name }}
             />
-          </Box>
+          </Stack>
           <Stack
             direction={"row"}
             alignItems={"center"}
