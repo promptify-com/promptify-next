@@ -210,7 +210,11 @@ export const AllTemplates = () => {
                           borderRadius: "16px",
                         }}
                       >
-                        <Image src={template.thumbnail} alt={template.title} style={{borderRadius: "16px", objectFit: "cover", width: "100%", height: "100%"}}/>
+                        <Image
+                          src={template.thumbnail}
+                          alt={template.title}
+                          style={{ borderRadius: "16px", objectFit: "cover", width: "100%", height: "100%" }}
+                        />
                       </CardMedia>
                       <Box>
                         <Typography>{template.title}</Typography>
@@ -334,9 +338,8 @@ export const AllTemplates = () => {
           <TemplateForm
             type={templateFormType}
             templateData={selectedTemplate}
-            onSaved={() => {
-              setTemplateFormOpen(false);
-            }}
+            onSaved={() => setTemplateFormOpen(false)}
+            onClose={() => setTemplateFormOpen(false)}
           />
         </Box>
       </Modal>

@@ -432,10 +432,12 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
       .every(input => input.value),
   );
 
+  const allowReset = nodeInputs.some(input => Object.values(input.inputs).some(input => input.value));
+
   return (
     <Stack
       sx={{
-        minHeight: { xs: "100%", md: "auto" },
+        minHeight: "100%",
         bgcolor: "surface.2",
       }}
     >
@@ -459,6 +461,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
           variant="text"
           startIcon={<Close />}
           sx={{
+            display: allowReset ? "inline-flex" : "none",
             border: `1px solid ${alpha(palette.primary.main, 0.15)}`,
             bgcolor: "surface.1",
             color: "onSurface",
@@ -478,7 +481,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
       <Stack
         gap={1}
         sx={{
-          flex: { xs: 1, md: 0 },
+          flex: 1,
           p: "16px",
           pb: { xs: 0, md: "16px" },
         }}

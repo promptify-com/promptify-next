@@ -11,7 +11,8 @@ import { TemplatesSection } from "@/components/explorer/TemplatesSection";
 import { CategoriesSection } from "@/components/explorer/CategoriesSection";
 import { userApi } from "@/core/api/user";
 import { WelcomeCard } from "@/components/homepage/WelcomeCard";
-import { useGetLastTemplatesQuery, useGetTemplatesSuggestedQuery } from "@/core/api/templates";
+import { useGetTemplatesSuggestedQuery } from "@/core/api/templates";
+import { useGetTemplatesExecutionsByMeQuery } from "@/core/api/executions";
 import { getPathURL, saveToken } from "@/common/utils";
 import { RootState } from "@/core/store";
 import { isValidUserFn, updateUser } from "@/core/store/userSlice";
@@ -31,9 +32,12 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
   const isValidUser = useSelector(isValidUserFn);
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
   const [getCurrentUser] = userApi.endpoints.getCurrentUser.useLazyQuery();
-  const { data: lastTemplates, isLoading: isLastTemplatesLoading } = useGetLastTemplatesQuery(undefined, {
-    skip: !isValidUser,
-  });
+  const { data: myLatestExecutions, isLoading: isMyLatestExecutionsLoading } = useGetTemplatesExecutionsByMeQuery(
+    undefined,
+    {
+      skip: !isValidUser,
+    },
+  );
   const { data: suggestedTemplates, isLoading: isSuggestedTemplateLoading } = useGetTemplatesSuggestedQuery(undefined, {
     skip: !isValidUser,
   });
@@ -120,24 +124,12 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
                     Welcome, {currentUser?.username}
                   </Typography>
                 </Grid>
-                {/* back compatibility solution for now */}
-                {lastTemplates && Array.isArray(lastTemplates) && lastTemplates.length ? (
-                  <TemplatesSection
-                    isLatestTemplates
-                    isLoading={isLastTemplatesLoading}
-                    templates={lastTemplates}
-                    title="Your Latest Templates:"
-                  />
-                ) : null}
-                {lastTemplates && !Array.isArray(lastTemplates) && Object.values(lastTemplates).length ? (
-                  <TemplatesSection
-                    isLatestTemplates
-                    isLoading={isLastTemplatesLoading}
-                    templates={[lastTemplates]}
-                    title="Your Latest Template:"
-                  />
-                ) : null}
-
+                <TemplatesSection
+                  isLatestTemplates
+                  isLoading={isMyLatestExecutionsLoading}
+                  templates={myLatestExecutions}
+                  title="Your Latest Templates:"
+                />
                 <TemplatesSection
                   isLoading={isSuggestedTemplateLoading}
                   templates={suggestedTemplates}
