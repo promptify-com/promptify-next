@@ -1,9 +1,10 @@
 import { User, UserMin } from "./user";
 import { Prompts } from "./prompts";
+import { ExecutionTemplate } from "@/components/SparksContainer";
 
 export interface SparksLayoutProps {
   execution: Execution;
-  template: TemplateExecutionsDisplay;
+  template: ExecutionTemplate;
   onExecutionSaved: () => void;
   onOpenEdit: () => void;
   onOpenDelete: () => void;
