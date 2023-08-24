@@ -10,7 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import { TemplatesExecutions } from "@/core/api/dto/templates";
-import { usePutExecutionTitleMutation } from "@/core/api/executions";
+import { useUpdateExecutionMutation } from "@/core/api/executions";
 
 type DialogType = "new" | "edit";
 
@@ -41,7 +41,7 @@ const ExecutionForm: React.FC<Props> = ({
     }
   }, [type, activeExecution, onClose]);
 
-  const [updateExecutionTitle, { isError, isLoading }] = usePutExecutionTitleMutation();
+  const [updateExecution, { isError, isLoading }] = useUpdateExecutionMutation();
 
   const handleCancel = () => {
     onCancel();
@@ -51,7 +51,7 @@ const ExecutionForm: React.FC<Props> = ({
 
   const handleSave = async () => {
     if (executionTitle.length && executionId) {
-      await updateExecutionTitle({
+      await updateExecution({
         id: executionId,
         data: { title: executionTitle },
       });

@@ -90,7 +90,7 @@ export const AddConnectionButtons: React.FC<IProps> = ({
     clientId: process.env.NEXT_PUBLIC_LINKEDIN_CLIENT_ID as string,
     redirectUri: process.env.NEXT_PUBLIC_LINKEDIN_REDIRECT_URI as string,
     scope: "r_emailaddress,r_liteprofile",
-    onSuccess: (code) => {
+    onSuccess: code => {
       preLogin();
       authClient
         .post(CODE_TOKEN_ENDPOINT, {
@@ -100,7 +100,7 @@ export const AddConnectionButtons: React.FC<IProps> = ({
         .then(doPostLogin)
         .catch(() => postLogin(null));
     },
-    onError: (error) => {
+    onError: error => {
       console.log(error);
       postLogin(null);
     },
@@ -113,7 +113,6 @@ export const AddConnectionButtons: React.FC<IProps> = ({
     const scope = "openid email profile User.Read";
 
     const authUrl = `https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}&scope=${scope}`;
-    savePathURL(window.location.pathname);
     window.location.href = authUrl;
   };
 
@@ -205,7 +204,10 @@ export const AddConnectionButtons: React.FC<IProps> = ({
         </Grid>
       )}
 
-      <Box hidden ref={githubButtonRef}>
+      <Box
+        hidden
+        ref={githubButtonRef}
+      >
         <GitHubLogin
           clientId={process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID}
           redirectUri={process.env.NEXT_PUBLIC_GITHUB_REDIRECT_URI}

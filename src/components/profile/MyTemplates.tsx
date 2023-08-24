@@ -16,15 +16,8 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import {
-  Delete,
-  Edit,
-  PreviewRounded,
-} from "@mui/icons-material";
-import {
-  useDeleteTemplateMutation,
-  useGetMyTemplatesQuery,
-} from "@/core/api/templates";
+import { Delete, Edit, PreviewRounded } from "@mui/icons-material";
+import { useDeleteTemplateMutation, useGetMyTemplatesQuery } from "@/core/api/templates";
 import BaseButton from "@/components/base/BaseButton";
 import { Templates } from "@/core/api/dto/templates";
 import { modalStyle } from "@/components/modals/styles";
@@ -32,12 +25,11 @@ import { PageLoading } from "@/components/PageLoading";
 import TemplateForm from "@/components/common/forms/TemplateForm";
 import { FormType } from "@/common/types/template";
 
+import Image from "@/components/design-system/Image";
+
 export const MyTemplates = () => {
-  const { data: templates, isLoading: isTemplatesLoading } =
-    useGetMyTemplatesQuery();
-  const [selectedTemplate, setSelectedTemplate] = useState<Templates | null>(
-    null
-  );
+  const { data: templates, isLoading: isTemplatesLoading } = useGetMyTemplatesQuery();
+  const [selectedTemplate, setSelectedTemplate] = useState<Templates | null>(null);
   const [templateFormOpen, setTemplateFormOpen] = useState(false);
   const [templateFormType, setTemplateFormType] = useState<FormType>("create");
   const [deleteTemplate, response] = useDeleteTemplateMutation();
@@ -131,14 +123,18 @@ export const MyTemplates = () => {
                     gap={"16px"}
                   >
                     <CardMedia
-                      component={"img"}
-                      image={template.thumbnail}
                       sx={{
                         height: { xs: "90px", md: "60px" },
                         width: "80px",
                         borderRadius: "16px",
                       }}
-                    />
+                    >
+                      <Image
+                        src={template.thumbnail}
+                        alt={template.title}
+                        style={{ borderRadius: "16px", objectFit: "cover", width: "100%", height: "100%" }}
+                      />
+                    </CardMedia>
                     <Box>
                       <Typography>{template.title}</Typography>
                     </Box>
@@ -166,10 +162,7 @@ export const MyTemplates = () => {
                           },
                         }}
                         onClick={() => {
-                          window.open(
-                            window.location.origin + `/prompt/${template.slug}`,
-                            "_blank"
-                          );
+                          window.open(window.location.origin + `/prompt/${template.slug}`, "_blank");
                         }}
                       >
                         <PreviewRounded />
@@ -187,10 +180,7 @@ export const MyTemplates = () => {
                           },
                         }}
                         onClick={() => {
-                          window.open(
-                            window.location.origin + `/builder/${template.id}`,
-                            "_blank"
-                          );
+                          window.open(window.location.origin + `/builder/${template.id}`, "_blank");
                         }}
                       >
                         <Edit />
@@ -221,9 +211,7 @@ export const MyTemplates = () => {
       )}
 
       {templates && templates.length == 0 && (
-        <Typography textAlign={"center"}>
-          No template found. Create one now!
-        </Typography>
+        <Typography textAlign={"center"}>No template found. Create one now!</Typography>
       )}
       <Dialog
         open={confirmDialog}
@@ -234,8 +222,8 @@ export const MyTemplates = () => {
         <DialogTitle>{"Confirm Deletion"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-slide-description">
-            Are you sure you want to delete this item? Once deleted, it cannot
-            be recovered. Please proceed with caution.
+            Are you sure you want to delete this item? Once deleted, it cannot be recovered. Please proceed with
+            caution.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -244,7 +232,10 @@ export const MyTemplates = () => {
         </DialogActions>
       </Dialog>
 
-      <Modal open={templateFormOpen} onClose={() => setTemplateFormOpen(false)}>
+      <Modal
+        open={templateFormOpen}
+        onClose={() => setTemplateFormOpen(false)}
+      >
         <Box sx={modalStyle}>
           <TemplateForm
             type={templateFormType}

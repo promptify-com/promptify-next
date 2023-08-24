@@ -16,12 +16,12 @@ export interface FilterParams {
   tag?: string;
   title?: string | null;
   engineId?: number;
-  filter?: string;
+  ordering?: string;
 }
 
 export interface SelectedFilters {
   engine: Engine | null;
-  tag: (Tag | null)[];
+  tag: Tag[];
   title: string | null;
   category: Category | null;
   subCategory: Category | null;

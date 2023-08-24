@@ -3,15 +3,14 @@ import { Card, CardActionArea, CardMedia, Typography } from "@mui/material";
 
 import { Category } from "@/core/api/dto/templates";
 
+import Image from "@/components/design-system/Image";
+
 interface CardSubcategoryProps {
   subcategory: Category;
   onSelected?: () => void;
 }
 
-export const SubCategoryCard: React.FC<CardSubcategoryProps> = ({
-  subcategory,
-  onSelected,
-}) => {
+export const SubCategoryCard: React.FC<CardSubcategoryProps> = ({ subcategory, onSelected }) => {
   return (
     <Card
       onClick={onSelected}
@@ -38,18 +37,15 @@ export const SubCategoryCard: React.FC<CardSubcategoryProps> = ({
             borderRadius: "100%",
             width: "32px",
             height: "32px",
-            objectFit: "cover",
           }}
-          component="img"
-          image={
-            "https://promptify.s3.amazonaws.com/b2ef452894b9464786556b89c63a213b"
-          }
-          alt={subcategory.name}
-        />
-        <Typography sx={{ ml: "", whiteSpace: "nowrap" }}>
-          {" "}
-          {subcategory.name}
-        </Typography>
+        >
+          <Image
+            src={"https://promptify.s3.amazonaws.com/b2ef452894b9464786556b89c63a213b"}
+            alt={subcategory.name}
+            style={{ borderRadius: "100%", objectFit: "cover", width: "100%", height: "100%" }}
+          />
+        </CardMedia>
+        <Typography sx={{ ml: "", whiteSpace: "nowrap" }}>{subcategory.name}</Typography>
       </CardActionArea>
     </Card>
   );

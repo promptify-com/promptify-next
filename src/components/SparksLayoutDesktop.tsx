@@ -40,6 +40,14 @@ export const SparksLayoutDesktop: FC<SparksLayoutProps> = ({
         {execution.is_favorite ? <SavedSpark /> : <DraftSpark />}
       </Grid>
       <Grid
+        onClick={() =>
+          router.push({
+            pathname: `prompt/${template.slug}`,
+            query: {
+              spark: execution.id,
+            },
+          })
+        }
         item
         md={2}
         lg={3}
