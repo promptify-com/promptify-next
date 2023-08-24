@@ -12,6 +12,7 @@ import FavoriteMobileButton from "@/components/common/buttons/FavoriteMobileButt
 import { RootState } from "@/core/store";
 import { setSelectedTag } from "@/core/store/filtersSlice";
 import { isValidUserFn } from "@/core/store/userSlice";
+import { Create } from "@mui/icons-material";
 
 interface DetailsProps {
   templateData: Templates;
@@ -159,7 +160,7 @@ export const Details: React.FC<DetailsProps> = ({
             </Typography>
           )}
         </Stack>
-        <Box>
+        <Box sx={{ pb: "25px" }}>
           <Subtitle sx={{ mb: "12px", color: "tertiary" }}>Metrics Overview</Subtitle>
           <Stack gap={1}>
             {templateData.last_run && (
@@ -179,6 +180,36 @@ export const Details: React.FC<DetailsProps> = ({
             <Typography sx={detailsStyle}>
               Runs: <span>{templateData.executions_count}</span>
             </Typography>
+          </Stack>
+        </Box>
+        <Box sx={{ pb: "25px" }}>
+          <Subtitle sx={{ mb: "12px", color: "tertiary" }}>Actions</Subtitle>
+          <Stack gap={1}>
+            {currentUser?.is_admin ||
+              (currentUser?.id === templateData.created_by.id && (
+                <Button
+                  variant={"contained"}
+                  startIcon={<Create />}
+                  sx={{
+                    flex: 1,
+                    p: "8px 22px",
+                    fontSize: 15,
+                    fontWeight: 500,
+                    border: "none",
+                    borderRadius: "999px",
+                    bgcolor: "surface.3",
+                    color: "onSurface",
+                    ":hover": {
+                      bgcolor: "surface.4",
+                    },
+                  }}
+                  onClick={() => {
+                    window.open(window.location.origin + `/builder/${templateData.id}?editor=1`, "_blank");
+                  }}
+                >
+                  Edit this Template
+                </Button>
+              ))}
           </Stack>
         </Box>
       </Box>

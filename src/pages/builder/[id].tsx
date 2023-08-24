@@ -69,8 +69,15 @@ export const Builder = () => {
   const dataForRequest = useRef({} as any);
   const [confirmDialogOpen, setConfirmDialogOpen] = React.useState(false);
   const [snackBarOpen, setSnackBarOpen] = React.useState(false);
-  const [templateDrawerOpen, setTemplateDrawerOpen] = React.useState(false);
+  const [templateDrawerOpen, setTemplateDrawerOpen] = React.useState(Boolean(router.query.editor));
   const [publishTemplate] = usePublishTemplateMutation();
+
+  // Remove 'editor' query param after first load to prevent open modal on every load
+  useEffect(() => {
+    const newQueryParams = new URLSearchParams(window.location.search);
+    newQueryParams.delete("editor");
+    window.history.replaceState({}, "", `${window.location.pathname}?${newQueryParams}`);
+  }, [router.query.editor]);
 
   const create = useCallback(
     (el: HTMLElement) => {
