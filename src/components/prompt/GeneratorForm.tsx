@@ -429,6 +429,8 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
       .every(input => input.value),
   );
 
+  const allowReset = nodeInputs.some(input => Object.values(input.inputs).some(input => input.value));
+
   return (
     <Stack
       sx={{
@@ -456,6 +458,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
           variant="text"
           startIcon={<Close />}
           sx={{
+            display: allowReset ? "inline-flex" : "none",
             border: `1px solid ${alpha(palette.primary.main, 0.15)}`,
             bgcolor: "surface.1",
             color: "onSurface",
