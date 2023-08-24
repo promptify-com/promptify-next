@@ -25,6 +25,14 @@ const SelectedFiltersSection: React.FC<SelectedFiltersSectionProps> = ({
     <Grid
       display="flex"
       gap="8px"
+      alignItems={"flex-start"}
+      alignContent={"flex-start"}
+      alignSelf={"stretch"}
+      flexWrap={{ xs: "nowrap", md: "wrap" }}
+      sx={{
+        overflow: { xs: "auto", md: "initial" },
+        WebkitOverflowScrolling: { xs: "touch", md: "initial" },
+      }}
     >
       {selectedTemplate && (
         <Chip
@@ -37,7 +45,7 @@ const SelectedFiltersSection: React.FC<SelectedFiltersSectionProps> = ({
           label={selectedTemplate.title}
           onDelete={onTemplateClear}
           sx={{
-            bgcolor: "surface.1",
+            bgcolor: { xs: "surface.5", md: "surface.1" },
             fontWeight: 400,
             fontSize: 13,
             lineHeight: "18px",
@@ -50,7 +58,7 @@ const SelectedFiltersSection: React.FC<SelectedFiltersSectionProps> = ({
           label={nameFilter}
           onDelete={onSearchClear}
           sx={{
-            bgcolor: "surface.1",
+            bgcolor: { xs: "surface.5", md: "surface.1" },
             fontWeight: 400,
             fontSize: 13,
             lineHeight: "18px",
@@ -64,7 +72,7 @@ const SelectedFiltersSection: React.FC<SelectedFiltersSectionProps> = ({
           icon={currentTab === "saved" ? <SavedSpark /> : <DraftSpark />}
           onDelete={onTabClear}
           sx={{
-            bgcolor: "surface.1",
+            bgcolor: { xs: "surface.5", md: "surface.1" },
             fontWeight: 400,
             pl: "10px",
             fontSize: 13,

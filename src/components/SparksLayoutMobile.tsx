@@ -46,6 +46,7 @@ export const SparksLayoutMobile: FC<SparksLayoutProps> = ({
 
   return (
     <Grid
+      my={"10px"}
       container
       display={{ xs: "flex", md: "none" }}
       gap={"16px"}
@@ -78,8 +79,8 @@ export const SparksLayoutMobile: FC<SparksLayoutProps> = ({
         />
         <Box
           position={"absolute"}
-          bottom={"-1px"}
-          left={"-1px"}
+          bottom={"-0.5px"}
+          left={"-0.5px"}
           display={"flex"}
           justifyContent={"center"}
           alignItems={"center"}

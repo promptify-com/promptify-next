@@ -6,7 +6,7 @@ import { SparksLayoutDesktop } from "./SparksLayoutDesktop";
 import { SparksLayoutMobile } from "./SparksLayoutMobile";
 import { SparkPopup } from "./dialog/SparkPopup";
 import { useExecutionFavoriteMutation } from "@/core/api/executions";
-import SparkFilters from "./SparksFilters";
+import SparkFilters, { TabValueType } from "./SparksFilters";
 
 interface SparksContainerProps {
   templates: TemplateExecutionsDisplay[];
@@ -18,8 +18,9 @@ const SparksContainer: FC<SparksContainerProps> = ({ templates }) => {
   const [popupType, setPopupType] = useState<ExecutionTemplatePopupType>("update");
   const [templateSortOption, setTemplateSortOption] = useState<"asc" | "desc">("desc");
   const [executionSortOption, setExecutionSortOption] = useState<"asc" | "desc">("desc");
+  const [currentSortType, setCurrentSortType] = useState<"title" | "time">("title");
   const [executionTimeSortOption, setExecutionTimeSortOption] = useState<"asc" | "desc">("desc");
-  const [currentTab, setCurrentTab] = useState("all");
+  const [currentTab, setCurrentTab] = useState<TabValueType>("all");
   const [selectedTemplate, setSelectedTemplate] = useState<TemplateExecutionsDisplay | null>(null);
   const [nameFilter, setNameFilter] = useState<string>("");
 
@@ -53,10 +54,12 @@ const SparksContainer: FC<SparksContainerProps> = ({ templates }) => {
   };
 
   const handleExecutionSortDirection = () => {
+    setCurrentSortType("title");
     setExecutionSortOption(executionSortOption === "asc" ? "desc" : "asc");
   };
 
   const handleTimeSortDirection = () => {
+    setCurrentSortType("time");
     setExecutionTimeSortOption(executionTimeSortOption === "asc" ? "desc" : "asc");
   };
 
@@ -72,7 +75,9 @@ const SparksContainer: FC<SparksContainerProps> = ({ templates }) => {
   const filterAndSortExecutions = (executions: Execution[], filterPredicate: (execution: Execution) => boolean) => {
     // Filter the executions based on the provided filterPredicate
     // Then sort them first by execution time and then by execution title
-    return executions.filter(filterPredicate).sort(compareByExecutionTime).sort(compareByExecutionTitle);
+    return executions
+      .filter(filterPredicate)
+      .sort(currentSortType === "title" ? compareByExecutionTitle : compareByExecutionTime);
   };
 
   // Use the useMemo hook to efficiently calculate filtered templates
@@ -95,6 +100,13 @@ const SparksContainer: FC<SparksContainerProps> = ({ templates }) => {
       ),
     }));
 
+    // Apply sorting by template title
+    if (templateSortOption === "asc") {
+      sortedAndFilteredTemplates.sort((a, b) => a.title.localeCompare(b.title));
+    } else {
+      sortedAndFilteredTemplates.sort((a, b) => b.title.localeCompare(a.title));
+    }
+
     // If a specific template is selected, filter the templates to match the selected template's title
     // Otherwise, return all the sorted and filtered templates
     if (selectedTemplate) {
@@ -102,7 +114,15 @@ const SparksContainer: FC<SparksContainerProps> = ({ templates }) => {
     } else {
       return sortedAndFilteredTemplates;
     }
-  }, [currentTab, templates, selectedTemplate, nameFilter, executionSortOption, executionTimeSortOption]);
+  }, [
+    currentTab,
+    templates,
+    selectedTemplate,
+    nameFilter,
+    templateSortOption,
+    executionSortOption,
+    executionTimeSortOption,
+  ]);
   return (
     <Grid
       display={"flex"}
@@ -129,14 +149,12 @@ const SparksContainer: FC<SparksContainerProps> = ({ templates }) => {
         flexDirection={"column"}
         borderRadius={"8px"}
         overflow={"hidden"}
-        gap={{ xs: "16px", md: "0px" }}
       >
         {filteredTemplates.map(template => (
           <Box
             key={template.id}
             display={"flex"}
             flexDirection={"column"}
-            gap={{ xs: "16px", md: "0px" }}
           >
             {template.executions.map(execution => (
               <Box key={execution.id}>

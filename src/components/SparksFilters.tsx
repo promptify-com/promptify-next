@@ -1,30 +1,29 @@
 import React, { useState } from "react";
-import { ArrowDropDown, Search, SortRounded } from "@mui/icons-material";
+import { ArrowDropDown, FilterList, Search, SortRounded } from "@mui/icons-material";
 import {
   Box,
+  Dialog,
+  DialogActions,
+  DialogTitle,
   Grid,
   IconButton,
   InputBase,
-  ListItemButton,
-  List,
+  ListItemIcon,
+  ListItemText,
   Menu,
+  MenuItem,
   Typography,
-  CardMedia,
-  Divider,
-  Chip,
-  Avatar,
-  Tab,
-  Tabs,
 } from "@mui/material";
 
-import DraftSpark from "@/assets/icons/DraftSpark";
 import SavedSpark from "@/assets/icons/SavedSpark";
 import { TemplateExecutionsDisplay } from "@/core/api/dto/templates";
-import useTruncate from "@/hooks/useTruncate";
 import TabsSection from "./sparks/TabsSection";
 import SelectedFiltersSection from "./sparks/SelectedFiltersSection";
 import TemplatesMenuSection from "./sparks/TemplatesMenu";
+import DraftSpark from "@/assets/icons/DraftSpark";
+import BaseButton from "./base/BaseButton";
 
+export type TabValueType = "all" | "drafts" | "saved";
 interface TemplateFilterProps {
   templates: TemplateExecutionsDisplay[];
   selectedTemplate: TemplateExecutionsDisplay | null;
@@ -37,8 +36,8 @@ interface TemplateFilterProps {
   sortTimeDirection: "asc" | "desc";
   onNameFilter: (nameFilter: string) => void;
   nameFilter: string;
-  currentTab: string;
-  setCurrentTab: (value: "all" | "drafts" | "saved") => void;
+  currentTab: TabValueType;
+  setCurrentTab: (value: TabValueType) => void;
 }
 
 const SparkFilters: React.FC<TemplateFilterProps> = ({
@@ -57,19 +56,12 @@ const SparkFilters: React.FC<TemplateFilterProps> = ({
   setCurrentTab,
 }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [value, setValue] = useState(currentTab);
-  const open = Boolean(anchorEl);
-  const { truncate } = useTruncate();
+  const [openFilters, setOpenFilters] = useState<boolean>(false);
+  const [value, setValue] = useState<TabValueType>(currentTab);
+  const openTemplates = Boolean(anchorEl);
 
   const handleTemplateSelect = (template: TemplateExecutionsDisplay | null) => {
     onTemplateSelect(template);
-    handleClose();
-  };
-
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
     setAnchorEl(null);
   };
 
@@ -78,7 +70,7 @@ const SparkFilters: React.FC<TemplateFilterProps> = ({
     onNameFilter(filterValue);
   };
 
-  const handleChange = (event: React.SyntheticEvent, newValue: "all" | "drafts" | "saved") => {
+  const handleChange = (event: React.SyntheticEvent, newValue: TabValueType) => {
     setValue(newValue);
     setCurrentTab(newValue);
   };
@@ -102,30 +94,39 @@ const SparkFilters: React.FC<TemplateFilterProps> = ({
         currentTab={value}
         onTemplateClear={() => onTemplateSelect(null)}
         onSearchClear={() => onNameFilter("")}
-        onTabClear={() => setValue("all")}
+        onTabClear={() => {
+          setValue("all");
+          setCurrentTab("all");
+        }}
       />
 
       <Box
-        bgcolor={"surface.5"}
-        borderRadius={"8px"}
+        bgcolor={"surface.1"}
+        height={"36px"}
+        display={"flex"}
+        alignItems={"center"}
+        overflow={"hidden"}
+        borderRadius={{ xs: "99px", md: "8px" }}
       >
         <Grid
           container
           position={"relative"}
+          gap={{ md: "1px" }}
         >
           <Grid
-            item
-            sx={{ width: "49px" }}
-            padding={"16px 8px"}
-            display={"flex"}
-            justifyContent={"center"}
+            bgcolor={"surface.5"}
+            padding={"0px 16px"}
+            display={{ xs: "none", md: "flex" }}
             alignItems={"center"}
           >
-            <SavedSpark />
+            {currentTab === "all" || currentTab === "saved" ? <SavedSpark /> : <DraftSpark />}
           </Grid>
           <Grid
+            bgcolor={"surface.5"}
             item
+            flex={1}
             md={3}
+            padding={{ xs: "0px 8px", md: "0px 8px" }}
             display={"flex"}
             justifyContent={"space-between"}
             alignItems={"center"}
@@ -143,6 +144,7 @@ const SparkFilters: React.FC<TemplateFilterProps> = ({
               size="small"
               aria-label="sort"
               sx={{
+                display: { xs: "none", md: "flex" },
                 border: "none",
                 "&:hover": {
                   bgcolor: "surface.4",
@@ -156,16 +158,82 @@ const SparkFilters: React.FC<TemplateFilterProps> = ({
               />
             </IconButton>
           </Grid>
+
+          <Grid
+            bgcolor={"surface.5"}
+            item
+            xs={3}
+            justifyContent={"center"}
+            display={{ xs: "flex", md: "none" }}
+            alignItems={"center"}
+            onClick={onSortTemplateToggle}
+          >
+            <IconButton
+              size="small"
+              aria-label="sort"
+              sx={{
+                border: "none",
+                transform: `rotate(${sortTemplateDirection === "asc" ? "180" : "0"}deg)`,
+
+                "&:hover": {
+                  bgcolor: "surface.4",
+                },
+              }}
+            >
+              <SortRounded />
+            </IconButton>
+            <Typography
+              fontSize={13}
+              lineHeight={"143%"}
+              letterSpacing={"0.17px"}
+              sx={{ opacity: 0.75, display: "flex", alignItems: "center", gap: "8px" }}
+            >
+              Sort
+            </Typography>
+          </Grid>
           <Grid
             item
-            px={"16px"}
+            xs={3}
+            justifyContent={"center"}
+            bgcolor={"surface.5"}
+            padding={"16px"}
+            display={{ xs: "flex", md: "none" }}
+            alignItems={"center"}
+          >
+            <IconButton
+              onClick={e => setOpenFilters(true)}
+              size="small"
+              aria-label="sort"
+              sx={{
+                border: "none",
+
+                "&:hover": {
+                  bgcolor: "surface.4",
+                },
+              }}
+            >
+              <FilterList />
+            </IconButton>
+            <Typography
+              fontSize={13}
+              lineHeight={"143%"}
+              letterSpacing={"0.17px"}
+              sx={{ opacity: 0.75, display: "flex", alignItems: "center", gap: "8px" }}
+            >
+              Filter
+            </Typography>
+          </Grid>
+          <Grid
+            bgcolor={"surface.5"}
+            item
+            padding={"8px 8px 8px 16px"}
             lg={4}
-            display={"flex"}
+            display={{ xs: "none", md: "flex" }}
             justifyContent={"space-between"}
             alignItems={"center"}
           >
             <Typography
-              onClick={handleClick}
+              onClick={e => setAnchorEl(e.currentTarget)}
               fontSize={13}
               lineHeight={"143%"}
               letterSpacing={"0.17px"}
@@ -191,9 +259,10 @@ const SparkFilters: React.FC<TemplateFilterProps> = ({
             </IconButton>
           </Grid>
           <Grid
+            bgcolor={"surface.5"}
             item
-            xs={3}
-            display={"flex"}
+            padding={"8px 16px"}
+            display={{ xs: "none", md: "flex" }}
             gap={"8px"}
             alignItems={"center"}
           >
@@ -224,14 +293,15 @@ const SparkFilters: React.FC<TemplateFilterProps> = ({
             </IconButton>
           </Grid>
           <Grid
+            bgcolor={"surface.5"}
             item
-            display={"flex"}
+            display={{ xs: "none", md: "flex" }}
             gap={"8px"}
-            position={"absolute"}
-            right={27}
             top={13}
             alignItems={"center"}
             justifyContent={"end"}
+            flex={1}
+            padding={"8px 16px"}
           >
             <Typography
               fontSize={13}
@@ -244,10 +314,10 @@ const SparkFilters: React.FC<TemplateFilterProps> = ({
           </Grid>
         </Grid>
         <Menu
-          id="basic-menu"
+          id="template-menu"
           anchorEl={anchorEl}
-          open={open}
-          onClose={handleClose}
+          open={openTemplates}
+          onClose={() => setAnchorEl(null)}
         >
           {/* Templates Menu Section */}
           <TemplatesMenuSection
@@ -256,6 +326,34 @@ const SparkFilters: React.FC<TemplateFilterProps> = ({
             onTemplateSelect={handleTemplateSelect}
           />
         </Menu>
+
+        <Dialog
+          open={openFilters}
+          onClose={() => setOpenFilters(false)}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <TemplatesMenuSection
+            templates={templates}
+            selectedTemplate={selectedTemplate}
+            onTemplateSelect={handleTemplateSelect}
+            onClose={() => setOpenFilters(false)}
+          />
+          <DialogActions>
+            <BaseButton
+              onClick={() => setOpenFilters(false)}
+              variant="contained"
+              size="small"
+              color="custom"
+              customColor=""
+              sx={{
+                height: 30,
+              }}
+            >
+              Cancel
+            </BaseButton>
+          </DialogActions>
+        </Dialog>
       </Box>
     </Grid>
   );

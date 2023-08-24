@@ -2,8 +2,8 @@ import React from "react";
 import { Tab, Tabs } from "@mui/material";
 
 interface TabsSectionProps {
-  value: string;
-  onChange: (event: React.SyntheticEvent, newValue: string) => void;
+  value: "all" | "drafts" | "saved";
+  onChange: (event: React.SyntheticEvent, newValue: "all" | "drafts" | "saved") => void;
 }
 
 const TabsSection: React.FC<TabsSectionProps> = ({ value, onChange }) => {

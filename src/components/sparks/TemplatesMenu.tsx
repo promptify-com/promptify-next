@@ -7,12 +7,14 @@ interface TemplatesMenuSectionProps {
   templates: TemplateExecutionsDisplay[];
   selectedTemplate: TemplateExecutionsDisplay | null;
   onTemplateSelect: (template: TemplateExecutionsDisplay) => void;
+  onClose?: () => void;
 }
 
 const TemplatesMenuSection: React.FC<TemplatesMenuSectionProps> = ({
   templates,
   selectedTemplate,
   onTemplateSelect,
+  onClose,
 }) => {
   const { truncate } = useTruncate();
 
@@ -20,7 +22,7 @@ const TemplatesMenuSection: React.FC<TemplatesMenuSectionProps> = ({
     <List
       sx={{
         pt: 0,
-        width: "401px",
+        width: { xs: "100%", md: "401px" },
       }}
     >
       <Grid padding={"8px 16px 16px 16px"}>
@@ -58,7 +60,12 @@ const TemplatesMenuSection: React.FC<TemplatesMenuSectionProps> = ({
             sx={{ p: 0 }}
             key={template.id}
             selected={selectedTemplate?.title === template.title}
-            onClick={() => onTemplateSelect(template)}
+            onClick={() => {
+              onTemplateSelect(template);
+              if (onClose) {
+                onClose();
+              }
+            }}
           >
             <Grid
               padding={"16px"}
