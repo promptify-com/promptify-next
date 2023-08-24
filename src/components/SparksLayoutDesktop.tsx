@@ -20,6 +20,11 @@ export const SparksLayoutDesktop: FC<SparksLayoutProps> = ({
   const { truncate } = useTruncate();
   const { convertedTimestamp } = useTimestampConverter();
 
+  const handleEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    onOpenEdit();
+  };
+
   return (
     <Grid
       container
@@ -66,7 +71,7 @@ export const SparksLayoutDesktop: FC<SparksLayoutProps> = ({
         </Typography>
         <Tooltip title="Rename">
           <IconButton
-            onClick={onOpenEdit}
+            onClick={handleEditClick}
             sx={{
               border: "none",
               "&:hover": {

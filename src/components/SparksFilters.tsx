@@ -1,19 +1,6 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { ArrowDropDown, FilterList, Search, SortRounded } from "@mui/icons-material";
-import {
-  Box,
-  Dialog,
-  DialogActions,
-  DialogTitle,
-  Grid,
-  IconButton,
-  InputBase,
-  ListItemIcon,
-  ListItemText,
-  Menu,
-  MenuItem,
-  Typography,
-} from "@mui/material";
+import { Box, Dialog, DialogActions, Grid, IconButton, InputBase, Menu, Typography } from "@mui/material";
 
 import SavedSpark from "@/assets/icons/SavedSpark";
 import { TemplateExecutionsDisplay } from "@/core/api/dto/templates";
@@ -37,6 +24,7 @@ interface TemplateFilterProps {
   onNameFilter: (nameFilter: string) => void;
   nameFilter: string;
   currentTab: TabValueType;
+  availableTabs: TabValueType[];
   setCurrentTab: (value: TabValueType) => void;
 }
 
@@ -54,6 +42,7 @@ const SparkFilters: React.FC<TemplateFilterProps> = ({
   nameFilter,
   currentTab,
   setCurrentTab,
+  availableTabs,
 }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [openFilters, setOpenFilters] = useState<boolean>(false);
@@ -75,6 +64,21 @@ const SparkFilters: React.FC<TemplateFilterProps> = ({
     setCurrentTab(newValue);
   };
 
+  const filteredTemplates = useMemo(() => {
+    if (currentTab === "saved" || currentTab === "drafts") {
+      return templates.filter(template => {
+        if (currentTab === "saved") {
+          return template.executions.some(execution => execution.is_favorite);
+        } else if (currentTab === "drafts") {
+          return template.executions.some(execution => !execution.is_favorite);
+        }
+        return true; // Keep the template if the tab is not "saved" or "drafts"
+      });
+    }
+
+    return templates; // Default case
+  }, [templates, currentTab]);
+
   return (
     <Grid
       display={"flex"}
@@ -85,6 +89,7 @@ const SparkFilters: React.FC<TemplateFilterProps> = ({
       <TabsSection
         value={value}
         onChange={handleChange}
+        availableTabs={availableTabs}
       />
 
       {/* Selected Filters Section */}
@@ -321,7 +326,7 @@ const SparkFilters: React.FC<TemplateFilterProps> = ({
         >
           {/* Templates Menu Section */}
           <TemplatesMenuSection
-            templates={templates}
+            templates={filteredTemplates}
             selectedTemplate={selectedTemplate}
             onTemplateSelect={handleTemplateSelect}
           />
@@ -334,7 +339,7 @@ const SparkFilters: React.FC<TemplateFilterProps> = ({
           aria-describedby="alert-dialog-description"
         >
           <TemplatesMenuSection
-            templates={templates}
+            templates={filteredTemplates}
             selectedTemplate={selectedTemplate}
             onTemplateSelect={handleTemplateSelect}
             onClose={() => setOpenFilters(false)}

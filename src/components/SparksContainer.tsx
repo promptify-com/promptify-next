@@ -1,5 +1,5 @@
 import { FC, useMemo, useState } from "react";
-import { Box, Grid } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 import { Execution, ExecutionTemplatePopupType, TemplateExecutionsDisplay } from "@/core/api/dto/templates";
 
 import { SparksLayoutDesktop } from "./SparksLayoutDesktop";
@@ -12,17 +12,28 @@ interface SparksContainerProps {
   templates: TemplateExecutionsDisplay[];
 }
 
+export interface ExecutionTemplate {
+  title: string;
+  thumbnail: string;
+  slug: string;
+}
+interface ExecutionWithTemplate extends Execution {
+  template: ExecutionTemplate;
+}
+
 const SparksContainer: FC<SparksContainerProps> = ({ templates }) => {
   const [openPopup, setOpenPopup] = useState(false);
   const [activeExecution, setActiveExecution] = useState<Execution | null>(null);
   const [popupType, setPopupType] = useState<ExecutionTemplatePopupType>("update");
   const [templateSortOption, setTemplateSortOption] = useState<"asc" | "desc">("desc");
   const [executionSortOption, setExecutionSortOption] = useState<"asc" | "desc">("desc");
-  const [currentSortType, setCurrentSortType] = useState<"title" | "time">("title");
   const [executionTimeSortOption, setExecutionTimeSortOption] = useState<"asc" | "desc">("desc");
   const [currentTab, setCurrentTab] = useState<TabValueType>("all");
   const [selectedTemplate, setSelectedTemplate] = useState<TemplateExecutionsDisplay | null>(null);
   const [nameFilter, setNameFilter] = useState<string>("");
+  const [currentSortType, setCurrentSortType] = useState<"executionTitle" | "executionTime" | "executionTemplate">(
+    "executionTitle",
+  );
 
   const [favoriteExecution] = useExecutionFavoriteMutation();
 
@@ -32,35 +43,17 @@ const SparksContainer: FC<SparksContainerProps> = ({ templates }) => {
 
   const toggleSortDirection = () => {
     setTemplateSortOption(templateSortOption === "asc" ? "desc" : "asc");
-  };
-
-  const compareByExecutionTime = (a: Execution, b: Execution) => {
-    const aTimestamp = new Date(a.created_at).getTime();
-    const bTimestamp = new Date(b.created_at).getTime();
-
-    if (executionTimeSortOption === "asc") {
-      return aTimestamp - bTimestamp;
-    } else {
-      return bTimestamp - aTimestamp;
-    }
-  };
-
-  const compareByExecutionTitle = (a: Execution, b: Execution) => {
-    if (executionSortOption === "asc") {
-      return a.title.localeCompare(b.title);
-    } else {
-      return b.title.localeCompare(a.title);
-    }
+    setCurrentSortType("executionTemplate");
   };
 
   const handleExecutionSortDirection = () => {
-    setCurrentSortType("title");
     setExecutionSortOption(executionSortOption === "asc" ? "desc" : "asc");
+    setCurrentSortType("executionTitle");
   };
 
   const handleTimeSortDirection = () => {
-    setCurrentSortType("time");
     setExecutionTimeSortOption(executionTimeSortOption === "asc" ? "desc" : "asc");
+    setCurrentSortType("executionTime");
   };
 
   const handleTemplateSelect = (selectedTemplate: TemplateExecutionsDisplay | null) => {
@@ -71,58 +64,101 @@ const SparksContainer: FC<SparksContainerProps> = ({ templates }) => {
     setNameFilter(filterValue);
   };
 
-  // This function filters and sorts executions based on given criteria
-  const filterAndSortExecutions = (executions: Execution[], filterPredicate: (execution: Execution) => boolean) => {
-    // Filter the executions based on the provided filterPredicate
-    // Then sort them first by execution time and then by execution title
-    return executions
-      .filter(filterPredicate)
-      .sort(currentSortType === "title" ? compareByExecutionTitle : compareByExecutionTime);
+  const filterAndSortExecutions = (
+    executions: ExecutionWithTemplate[],
+    sortBy: "executionTitle" | "executionTime" | "executionTemplate",
+    sortDirection: "asc" | "desc",
+    selectedTemplate: TemplateExecutionsDisplay | null,
+  ) => {
+    const sortedExecutions = [...executions];
+
+    sortedExecutions.sort((a: ExecutionWithTemplate, b: ExecutionWithTemplate) => {
+      if (sortBy === "executionTitle") {
+        const titleComparison = a.title.localeCompare(b.title);
+        return sortDirection === "asc" ? titleComparison : -titleComparison;
+      } else if (sortBy === "executionTime") {
+        const aTimestamp = new Date(a.created_at).getTime();
+        const bTimestamp = new Date(b.created_at).getTime();
+        const timeComparison = aTimestamp - bTimestamp;
+        return sortDirection === "asc" ? timeComparison : -timeComparison;
+      } else if (sortBy === "executionTemplate") {
+        const templateComparison = a.template.title.localeCompare(b.template.title);
+        return sortDirection === "asc" ? templateComparison : -templateComparison;
+      }
+      return 0; // Default case
+    });
+
+    if (selectedTemplate) {
+      return sortedExecutions.filter(execution => execution.template.slug === selectedTemplate.slug);
+    }
+
+    return sortedExecutions;
   };
 
-  // Use the useMemo hook to efficiently calculate filtered templates
-  const filteredTemplates = useMemo(() => {
-    // Define a filterPredicate based on the current tab value
-    const filterPredicate =
-      currentTab === "saved"
-        ? (execution: Execution) => execution.is_favorite
-        : currentTab === "drafts"
-        ? (execution: Execution) => !execution.is_favorite
-        : () => true; // For the "all" tab, no additional filtering is needed
+  // filtereing executions regadless currenttab
 
-    // Map through the templates and apply filtering and sorting to their executions
-    const sortedAndFilteredTemplates = templates.map(template => ({
-      ...template,
-      executions: filterAndSortExecutions(
-        template.executions,
-        (execution: Execution) =>
-          execution.title.toLowerCase().includes(nameFilter.toLowerCase()) && filterPredicate(execution),
-      ),
-    }));
+  const executions = useMemo(() => {
+    // Calculate all executions from templates and add template information
+    const allExecutions: ExecutionWithTemplate[] = [];
+    templates.forEach(template => {
+      const templateInfo = {
+        title: template.title,
+        thumbnail: template.thumbnail,
+        slug: template.slug,
+      };
+      const executionsWithTemplate = template.executions.map((execution: Execution) => ({
+        ...execution,
+        template: templateInfo,
+      }));
+      allExecutions.push(...executionsWithTemplate);
+    });
 
-    // Apply sorting by template title
-    if (templateSortOption === "asc") {
-      sortedAndFilteredTemplates.sort((a, b) => a.title.localeCompare(b.title));
-    } else {
-      sortedAndFilteredTemplates.sort((a, b) => b.title.localeCompare(a.title));
-    }
-
-    // If a specific template is selected, filter the templates to match the selected template's title
-    // Otherwise, return all the sorted and filtered templates
-    if (selectedTemplate) {
-      return sortedAndFilteredTemplates.filter(template => template.title === selectedTemplate.title);
-    } else {
-      return sortedAndFilteredTemplates;
-    }
+    const filteredAndSortedExecutions = filterAndSortExecutions(
+      allExecutions,
+      currentSortType,
+      currentSortType === "executionTitle"
+        ? executionSortOption
+        : currentSortType === "executionTemplate"
+        ? templateSortOption
+        : executionTimeSortOption,
+      selectedTemplate,
+    ).filter(execution => execution.title.toLowerCase().includes(nameFilter.toLowerCase()));
+    return filteredAndSortedExecutions;
   }, [
-    currentTab,
-    templates,
-    selectedTemplate,
     nameFilter,
-    templateSortOption,
+    currentSortType,
     executionSortOption,
+    templateSortOption,
+    selectedTemplate,
     executionTimeSortOption,
+    templates,
   ]);
+
+  const draftsExecutions = executions.filter(execution => !execution.is_favorite);
+  const savedExecutions = executions.filter(execution => execution.is_favorite);
+
+  const hasDrafts = draftsExecutions.length > 0;
+  const hasSaved = savedExecutions.length > 0;
+
+  const availableTabs = useMemo(() => {
+    const tabs: TabValueType[] = ["all"];
+    if (hasDrafts) tabs.push("drafts");
+    if (hasSaved) tabs.push("saved");
+
+    return tabs;
+  }, [hasDrafts, hasSaved]);
+
+  // Apply tab-based filtering to executions
+  const filteredExecutions = useMemo(() => {
+    if (currentTab === "saved") {
+      return savedExecutions;
+    } else if (currentTab === "drafts") {
+      return draftsExecutions;
+    } else {
+      return executions;
+    }
+  }, [currentTab, draftsExecutions, savedExecutions, executions]);
+
   return (
     <Grid
       display={"flex"}
@@ -143,6 +179,7 @@ const SparksContainer: FC<SparksContainerProps> = ({ templates }) => {
         nameFilter={nameFilter}
         currentTab={currentTab}
         setCurrentTab={setCurrentTab}
+        availableTabs={availableTabs}
       />
       <Grid
         display={"flex"}
@@ -150,50 +187,45 @@ const SparksContainer: FC<SparksContainerProps> = ({ templates }) => {
         borderRadius={"8px"}
         overflow={"hidden"}
       >
-        {filteredTemplates.map(template => (
-          <Box
-            key={template.id}
-            display={"flex"}
-            flexDirection={"column"}
-          >
-            {template.executions.map(execution => (
-              <Box key={execution.id}>
-                {/* // DESKTOP VIEW */}
-                <SparksLayoutDesktop
-                  onExecutionSaved={() => handleSaveExecution(execution.id)}
-                  template={template}
-                  execution={execution}
-                  onOpenEdit={() => {
-                    setPopupType("update");
-                    setActiveExecution(execution);
-                    setOpenPopup(true);
-                  }}
-                  onOpenDelete={() => {
-                    setPopupType("delete");
-                    setActiveExecution(execution);
-                    setOpenPopup(true);
-                  }}
-                />
-                {/* MOBILE VIEW  */}
-                <SparksLayoutMobile
-                  onExecutionSaved={() => handleSaveExecution(execution.id)}
-                  template={template}
-                  execution={execution}
-                  onOpenEdit={() => {
-                    setPopupType("update");
-                    setActiveExecution(execution);
-                    setOpenPopup(true);
-                  }}
-                  onOpenDelete={() => {
-                    setPopupType("delete");
-                    setActiveExecution(execution);
-                    setOpenPopup(true);
-                  }}
-                />
-              </Box>
-            ))}
-          </Box>
-        ))}
+        <Box
+          display={"flex"}
+          flexDirection={"column"}
+        >
+          {filteredExecutions.map(execution => (
+            <Box key={execution.id}>
+              <SparksLayoutDesktop
+                onExecutionSaved={() => handleSaveExecution(execution.id)}
+                template={execution.template}
+                execution={execution}
+                onOpenEdit={() => {
+                  setPopupType("update");
+                  setActiveExecution(execution);
+                  setOpenPopup(true);
+                }}
+                onOpenDelete={() => {
+                  setPopupType("delete");
+                  setActiveExecution(execution);
+                  setOpenPopup(true);
+                }}
+              />
+              <SparksLayoutMobile
+                onExecutionSaved={() => handleSaveExecution(execution.id)}
+                template={execution.template}
+                execution={execution}
+                onOpenEdit={() => {
+                  setPopupType("update");
+                  setActiveExecution(execution);
+                  setOpenPopup(true);
+                }}
+                onOpenDelete={() => {
+                  setPopupType("delete");
+                  setActiveExecution(execution);
+                  setOpenPopup(true);
+                }}
+              />
+            </Box>
+          ))}
+        </Box>
       </Grid>
       <SparkPopup
         type={popupType}
