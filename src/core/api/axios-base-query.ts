@@ -31,8 +31,9 @@ export const axiosBaseQuery =
     }
 
     try {
+      const properUrl = url.endsWith("/") || url.includes("?") ? url : `${url}/`;
       const result = await axios({
-        url: baseUrl + url,
+        url: baseUrl + properUrl,
         method,
         data,
         params,
