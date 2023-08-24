@@ -15,6 +15,8 @@ import { useWindowSize } from "usehooks-ts";
 import { useRouter } from "next/router";
 import { AllInclusive, Close, InfoOutlined } from "@mui/icons-material";
 
+import Storage from "@/common/storage";
+
 interface GeneratorFormProps {
   templateData: Templates;
   selectedExecution: TemplatesExecutions | null;
@@ -430,6 +432,28 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   );
 
   const allowReset = nodeInputs.some(input => Object.values(input.inputs).some(input => input.value));
+
+
+  useEffect(() => {
+    if (!token && allowReset) {
+      Storage.set("nodeInputsData", JSON.stringify(nodeInputs))
+    }
+  }, [nodeInputs]);
+
+  const loadDataFromLocalStorage = () => {
+      const storedData = Storage.get('nodeInputsData')
+      return storedData ? storedData : []
+  };
+
+  useEffect(() => {
+    if(token && shownInputs){
+      const loadedData = loadDataFromLocalStorage();
+      if (loadedData) {
+        setNodeInputs(loadedData);
+        Storage.remove("nodeInputsData")
+      }
+    }
+  }, [shownInputs]);
 
   return (
     <Stack
