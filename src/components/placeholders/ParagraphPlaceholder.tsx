@@ -4,7 +4,7 @@ export default function ParagraphPlaceholder({ count = 12 }) {
   return (
     <Box
       sx={{
-        maxWidth: "800px",
+        maxWidth: "100%",
         margin: "0 auto",
         padding: "16px",
       }}

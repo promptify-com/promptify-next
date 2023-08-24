@@ -23,7 +23,7 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
   title,
   isLatestTemplates = false,
 }) => {
-  console.log(isLatestTemplates);
+
   return (
     <>
       <Box width={"100%"}>
@@ -42,7 +42,7 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
           >
             <LatestTemplatePlaceholder count={4}/>
           </Grid>
-           : <CardTemplatePlaceholder count={6} />  
+           : <CardTemplatePlaceholder count={4} />  
         ) : (
           <Grid
             container

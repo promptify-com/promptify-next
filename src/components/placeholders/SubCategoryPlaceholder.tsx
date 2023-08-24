@@ -1,14 +1,17 @@
 import { Box, Skeleton } from "@mui/material";
 
+import ParagraphPlaceholder from "@/components/placeholders/ParagraphPlaceholder";
+import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
+
 export default function SubCategoryPlaceholder() {
   return (
     <Box>
-      <Skeleton animation="wave" width="10%" sx={{ mb: 1 }} />
+      <Skeleton animation="wave" sx={{ mb: 1, width: {xs: "40%", md: "10%"} }} />
+      <ParagraphPlaceholder count={1}/>
       <Box
         display="flex"
-        flexDirection="row"
-        justifyContent="flex-start"
         gap={2}
+        mb={2}
       >
         {Array.from({ length: 3 }).map((_, index) => (
           <Box
@@ -17,28 +20,28 @@ export default function SubCategoryPlaceholder() {
             justifyContent="center"
             alignItems="center"
             gap={1}
-            width="15%"
             sx={{
               bgcolor: "#f5f4f9",
               p: 1,
-              borderRadius: 15,
+              borderRadius: 16,
+              width: {xs: "100%", md: "10%"},
             }}
           >
             <Skeleton
               variant="circular"
-              width={60}
-              height={40}
+              width={30}
+              height={30}
               animation="wave"
             />
             <Skeleton
               variant="text"
-              width="100%"
-              height={30}
               animation="wave"
+              width={140}
             />
           </Box>
         ))}
       </Box>
+      <CardTemplatePlaceholder count={8} />
     </Box>
   );
 }
