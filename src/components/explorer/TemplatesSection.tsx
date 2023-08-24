@@ -7,7 +7,7 @@ import { TemplateExecutionsDisplay, Templates } from "@/core/api/dto/templates";
 import CardTemplateLast from "../common/cards/CardTemplateLast";
 
 interface TemplatesSectionProps {
-  templates: Templates[] | undefined;
+  templates: Templates[] | TemplateExecutionsDisplay[] | undefined;
   isLoading: boolean;
   filtred?: boolean;
   title?: string;
@@ -50,25 +50,23 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
             {!isLoading &&
               !!templates &&
               templates.length > 0 &&
-              templates.map(
-                (template: TemplateExecutionsDisplay | Templates) => (
-                  <Grid key={template.id}>
-                    {isLatestTemplates ? (
-                      <CardTemplateLast
-                        key={template.id}
-                        template={template as TemplateExecutionsDisplay}
-                      />
-                    ) : (
-                      <CardTemplate
-                        key={template.id}
-                        template={template as Templates}
-                      />
-                    )}
-                  </Grid>
-                )
-              )}
+              templates.map((template: TemplateExecutionsDisplay | Templates) => (
+                <Grid key={template.id}>
+                  {isLatestTemplates ? (
+                    <CardTemplateLast
+                      key={template.id}
+                      template={template as TemplateExecutionsDisplay}
+                    />
+                  ) : (
+                    <CardTemplate
+                      key={template.id}
+                      template={template as Templates}
+                    />
+                  )}
+                </Grid>
+              ))}
 
-            {!isLoading && (!templates || templates.length === 0) && (
+            {!isLoading && !(templates && templates.length) && (
               <Grid
                 sx={{
                   display: "flex",

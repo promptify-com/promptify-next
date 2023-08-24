@@ -25,12 +25,6 @@ export const templatesApi = baseApi.injectEndpoints({
           method: "get",
         }),
       }),
-      getLastTemplates: builder.query<Templates[], void>({
-        query: () => ({
-          url: "/api/meta/templates/last_executed/",
-          method: "get",
-        }),
-      }),
       getTemplatesByFilter: builder.query<Templates[], FilterParams>({
         query: (params: FilterParams) => ({
           url: `/api/meta/templates/?${getSearchParams(params)}`,
@@ -103,7 +97,6 @@ export const templatesApi = baseApi.injectEndpoints({
 });
 
 export const {
-  useGetLastTemplatesQuery,
   useGetTemplatesSuggestedQuery,
   useDeleteTemplateMutation,
   useGetTemplatesByFilterQuery,
