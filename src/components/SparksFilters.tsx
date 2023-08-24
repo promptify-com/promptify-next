@@ -64,10 +64,13 @@ const SparkFilters: React.FC<TemplateFilterProps> = ({
 }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [anchorFavoriteSort, setAnchorFavoriteSort] = useState<null | HTMLElement>(null);
+  const [anchorSortOptions, setAnchorSortOptions] = useState<null | HTMLElement>(null);
+
   const [openFilters, setOpenFilters] = useState<boolean>(false);
   const [value, setValue] = useState<TabValueType>(currentTab);
-  const openTemplates = Boolean(anchorEl);
-  const openSortFaviteMenu = Boolean(anchorFavoriteSort);
+  const openTemplatesMenu = Boolean(anchorEl);
+  const openSortFavoriteMenu = Boolean(anchorFavoriteSort);
+  const openSortOptionsMenu = Boolean(anchorSortOptions);
 
   const handleTemplateSelect = (template: TemplateExecutionsDisplay | null) => {
     onTemplateSelect(template);
@@ -201,15 +204,13 @@ const SparkFilters: React.FC<TemplateFilterProps> = ({
             justifyContent={"center"}
             display={{ xs: "flex", md: "none" }}
             alignItems={"center"}
-            onClick={onSortTemplateToggle}
+            onClick={e => setAnchorSortOptions(e.currentTarget)}
           >
             <IconButton
               size="small"
               aria-label="sort"
               sx={{
                 border: "none",
-                transform: `rotate(${sortTemplateDirection === "asc" ? "180" : "0"}deg)`,
-
                 "&:hover": {
                   bgcolor: "surface.4",
                 },
@@ -350,9 +351,9 @@ const SparkFilters: React.FC<TemplateFilterProps> = ({
         </Grid>
 
         <Menu
-          id="template-menu"
+          id="favorite-menu"
           anchorEl={anchorFavoriteSort}
-          open={openSortFaviteMenu}
+          open={openSortFavoriteMenu}
           onClose={() => setAnchorFavoriteSort(null)}
         >
           <MenuItem
@@ -389,7 +390,7 @@ const SparkFilters: React.FC<TemplateFilterProps> = ({
         <Menu
           id="template-menu"
           anchorEl={anchorEl}
-          open={openTemplates}
+          open={openTemplatesMenu}
           onClose={() => setAnchorEl(null)}
         >
           {/* Templates Menu Section */}
@@ -398,6 +399,61 @@ const SparkFilters: React.FC<TemplateFilterProps> = ({
             selectedTemplate={selectedTemplate}
             onTemplateSelect={handleTemplateSelect}
           />
+        </Menu>
+
+        {/* mobile sort options menu */}
+
+        <Menu
+          id="sortOptions-menu"
+          anchorEl={anchorSortOptions}
+          open={openSortOptionsMenu}
+          onClose={() => setAnchorSortOptions(null)}
+        >
+          <MenuItem
+            onClick={() => {
+              onSortExecutionToggle();
+              setAnchorSortOptions(null);
+            }}
+          >
+            <ListItemIcon>
+              <SortRounded
+                sx={{
+                  transform: `rotate(${sortExecutionDirection === "asc" ? "180" : "0"}deg)`,
+                }}
+              />
+            </ListItemIcon>
+            <ListItemText>By Spark</ListItemText>
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              onSortTimeToggle();
+              setAnchorSortOptions(null);
+            }}
+          >
+            <ListItemIcon>
+              <SortRounded
+                sx={{
+                  transform: `rotate(${sortTimeDirection === "asc" ? "180" : "0"}deg)`,
+                }}
+              />
+            </ListItemIcon>
+            <ListItemText>By time</ListItemText>
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              onSortTemplateToggle();
+              setAnchorSortOptions(null);
+            }}
+          >
+            <ListItemIcon>
+              <SortRounded
+                sx={{
+                  transform: `rotate(${sortTemplateDirection === "asc" ? "180" : "0"}deg)`,
+                }}
+              />
+            </ListItemIcon>
+            <ListItemText>By template</ListItemText>
+          </MenuItem>
         </Menu>
 
         <Dialog

@@ -159,9 +159,7 @@ export const SparksLayoutMobile: FC<SparksLayoutProps> = ({
         <MenuItem
           onClick={() => {
             onOpenEdit();
-            if (onClosePopup) {
-              onClosePopup();
-            }
+            setAnchorEl(null);
           }}
         >
           <ListItemIcon>
@@ -170,7 +168,12 @@ export const SparksLayoutMobile: FC<SparksLayoutProps> = ({
           <ListItemText>Rename</ListItemText>
         </MenuItem>
         {!execution.is_favorite && (
-          <MenuItem onClick={() => onExecutionSaved()}>
+          <MenuItem
+            onClick={() => {
+              onExecutionSaved();
+              setAnchorEl(null);
+            }}
+          >
             <ListItemIcon>
               <CloudQueueOutlined sx={{ fontSize: "18px" }} />
             </ListItemIcon>
@@ -181,9 +184,7 @@ export const SparksLayoutMobile: FC<SparksLayoutProps> = ({
         <MenuItem
           onClick={() => {
             onOpenDelete();
-            if (onClosePopup) {
-              onClosePopup();
-            }
+            setAnchorEl(null);
           }}
         >
           <ListItemIcon>
