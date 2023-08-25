@@ -1,44 +1,52 @@
-import { BaseQueryFn } from '@reduxjs/toolkit/query';
+import { BaseQueryFn } from "@reduxjs/toolkit/query";
 
-import axios, { AxiosError, AxiosRequestConfig } from 'axios';
-import useToken from '@/hooks/useToken';
+import axios, { AxiosError, AxiosRequestConfig } from "axios";
+import useToken from "@/hooks/useToken";
 
 export const axiosBaseQuery =
   (
-    { baseUrl }: { baseUrl: string } = { baseUrl: '' },
+    { baseUrl }: { baseUrl: string } = { baseUrl: "" },
   ): BaseQueryFn<
     {
       url: string;
-      method: AxiosRequestConfig['method'];
-      data?: AxiosRequestConfig['data'];
-      params?: AxiosRequestConfig['params'];
-      headers?: AxiosRequestConfig['headers'];
+      method: AxiosRequestConfig["method"];
+      data?: AxiosRequestConfig["data"];
+      params?: AxiosRequestConfig["params"];
+      headers?: AxiosRequestConfig["headers"];
     },
     unknown,
     unknown
   > =>
-    async ({ url, method, data, params, headers }) => {
-      // If access token exists send the Authorization header
-      const token = useToken();
-      if (token)
-        headers = { ...headers, Authorization: `Token ${token}` }
+  async ({ url, method, data, params, headers }) => {
+    // If access token exists send the Authorization header
+    const token = useToken();
+    headers = headers || {};
 
-      try {
-        const result = await axios({
-          url: baseUrl + url,
-          method,
-          data,
-          params,
-          headers,
-        });
-        return { data: result.data };
-      } catch (axiosError) {
-        const err = axiosError as AxiosError;
-        return {
-          error: {
-            status: err.response?.status,
-            data: err.response?.data || err.message,
-          },
-        };
-      }
-    };
+    if (token) {
+      headers.Authorization = `Token ${token}`;
+    }
+
+    if (!headers?.["Content-Type"]) {
+      headers["Content-Type"] = "application/json";
+    }
+
+    try {
+      const properUrl = url.endsWith("/") || url.includes("?") ? url : `${url}/`;
+      const result = await axios({
+        url: baseUrl + properUrl,
+        method,
+        data,
+        params,
+        headers,
+      });
+      return { data: result.data };
+    } catch (axiosError) {
+      const err = axiosError as AxiosError;
+      return {
+        error: {
+          status: err.response?.status,
+          data: err.response?.data || err.message,
+        },
+      };
+    }
+  };

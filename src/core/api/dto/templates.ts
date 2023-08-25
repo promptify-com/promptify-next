@@ -1,5 +1,15 @@
 import { User, UserMin } from "./user";
 import { Prompts } from "./prompts";
+import { ExecutionTemplate } from "@/components/SparksContainer";
+
+export interface SparksLayoutProps {
+  execution: Execution;
+  template: ExecutionTemplate;
+  onExecutionSaved: () => void;
+  onOpenEdit: () => void;
+  onOpenDelete: () => void;
+  onClosePopup?: () => void;
+}
 
 export interface FilterParams {
   categoryId?: number;
@@ -7,12 +17,12 @@ export interface FilterParams {
   tag?: string;
   title?: string | null;
   engineId?: number;
-  filter?: string;
+  ordering?: string;
 }
 
 export interface SelectedFilters {
   engine: Engine | null;
-  tag: (Tag | null)[];
+  tag: Tag[];
   title: string | null;
   category: Category | null;
   subCategory: Category | null;
@@ -72,12 +82,7 @@ export interface Category {
   description: string;
 }
 
-export type TemplateStatus =
-  | "ALL"
-  | "DRAFT"
-  | "PENDING_REVIEW"
-  | "PUBLISHED"
-  | "ARCHIVED";
+export type TemplateStatus = "ALL" | "DRAFT" | "PENDING_REVIEW" | "PUBLISHED" | "ARCHIVED";
 
 export interface Templates {
   id: number;
@@ -158,6 +163,13 @@ export interface PromptExecutions {
   tokens_spent: number;
 }
 
+export interface Execution {
+  id: number;
+  title: string;
+  created_at: string;
+  is_favorite: boolean;
+}
+
 export interface TemplateExecutionsDisplay {
   id: number;
   title: string;
@@ -170,26 +182,8 @@ export interface TemplateExecutionsDisplay {
   created_by: UserMin;
   tags: Tag[];
   slug: string;
-  executions: {
-    id: number;
-    title: string;
-    created_at: string;
-  }[];
-  sparks: {
-    id: number;
-    initial_title: string;
-    created_at: string;
-    versions: {
-      id: number;
-      title: string;
-      created_at: string;
-    }[];
-    current_version: {
-      id: number;
-      title: string;
-      created_at: string;
-    };
-  }[];
+  executions: Execution[];
+
   likes?: number;
   favorites_count: number;
 }
@@ -228,3 +222,5 @@ export interface CollectionMutationParams {
   collectionId: number;
   templateId: number;
 }
+
+export type ExecutionTemplatePopupType = "update" | "delete";

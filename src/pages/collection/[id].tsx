@@ -19,13 +19,8 @@ import materialDynamicColors from "material-dynamic-colors";
 import { useWindowSize } from "usehooks-ts";
 import { useRouter } from "next/router";
 import { Close, KeyboardArrowDown, Loop, MoreHoriz } from "@mui/icons-material";
-import { skipToken } from "@reduxjs/toolkit/dist/query";
 import { mix } from "polished";
-
-import {
-  useGetExecutionsByTemplateQuery,
-  useTemplateView,
-} from "@/core/api/templates";
+import { useViewTemplateMutation } from "@/core/api/templates";
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { PageLoading } from "@/components/PageLoading";
 import useToken from "@/hooks/useToken";
@@ -36,16 +31,18 @@ import { GeneratorForm } from "@/components/collections/GeneratorForm";
 import { Executions } from "@/components/collections/Executions";
 import { Details } from "@/components/collections/Details";
 import { authClient } from "@/common/axios";
+import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
+import { isValidUserFn } from "@/core/store/userSlice";
+import { useSelector } from "react-redux";
 
 export const Collection = ({ fetchedTemplate, fetchedTemplateError }: any) => {
   const router = useRouter();
   const token = useToken();
-  const [templateView] = useTemplateView();
+  const [updateViewTemplate] = useViewTemplateMutation();
   const theme = useTheme();
   const { width: windowWidth } = useWindowSize();
-  const id = router.query.id;
-  const [NewExecutionData, setNewExecutionData] =
-    useState<PromptLiveResponse | null>(null);
+  const id = Number(router.query.id);
+  const [NewExecutionData, setNewExecutionData] = useState<PromptLiveResponse | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [templateData, setTemplateData] = useState<Templates>();
   const [, setRandomTemplate] = useState<TemplatesExecutions | null>(null);
@@ -53,6 +50,7 @@ export const Collection = ({ fetchedTemplate, fetchedTemplateError }: any) => {
   const [detailsOpened, setDetailsOpened] = useState(false);
   const [generatorOpened, setGeneratorOpened] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const isValidUser = useSelector(isValidUserFn);
 
   const {
     data: templateExecutions,
@@ -85,9 +83,7 @@ export const Collection = ({ fetchedTemplate, fetchedTemplateError }: any) => {
   // All prompts should be completed - isCompleted: true
   useEffect(() => {
     if (!isGenerating && NewExecutionData?.data?.length) {
-      const promptNotCompleted = NewExecutionData.data.find(
-        (execData) => !execData.isCompleted
-      );
+      const promptNotCompleted = NewExecutionData.data.find(execData => !execData.isCompleted);
       if (!promptNotCompleted) {
         refetchTemplateExecutions();
         setNewExecutionData(null);
@@ -97,17 +93,17 @@ export const Collection = ({ fetchedTemplate, fetchedTemplateError }: any) => {
 
   useEffect(() => {
     if (templateExecutions) {
-      const filteredTemplate =
-        templateExecutions?.filter((tpm) => !!tpm.prompt_executions.length) ||
-        [];
+      const filteredTemplate = templateExecutions?.filter(tpm => !!tpm.prompt_executions.length) || [];
       const indx = Math.floor(Math.random() * filteredTemplate.length);
       setRandomTemplate(filteredTemplate[indx]);
     }
   }, [templateExecutions]);
 
   useEffect(() => {
-    templateView(id ? id : skipToken);
-  }, []);
+    if (id && isValidUser) {
+      updateViewTemplate(id);
+    }
+  }, [id, isValidUser]);
 
   useEffect(() => {
     if (templateData?.thumbnail) {
@@ -139,21 +135,9 @@ export const Collection = ({ fetchedTemplate, fetchedTemplateError }: any) => {
           },
           surface: {
             1: imgPalette.light.surface,
-            2: mix(
-              0.3,
-              imgPalette.light.surfaceVariant,
-              imgPalette.light.surface
-            ),
-            3: mix(
-              0.6,
-              imgPalette.light.surfaceVariant,
-              imgPalette.light.surface
-            ),
-            4: mix(
-              0.8,
-              imgPalette.light.surfaceVariant,
-              imgPalette.light.surface
-            ),
+            2: mix(0.3, imgPalette.light.surfaceVariant, imgPalette.light.surface),
+            3: mix(0.6, imgPalette.light.surfaceVariant, imgPalette.light.surface),
+            4: mix(0.8, imgPalette.light.surfaceVariant, imgPalette.light.surface),
             5: imgPalette.light.surfaceVariant,
           },
         };
@@ -171,24 +155,17 @@ export const Collection = ({ fetchedTemplate, fetchedTemplateError }: any) => {
     if (!["INPUT", "TEXTAREA"].includes(target.tagName)) {
       if (e.shiftKey && e.code === "ArrowRight") {
         const templateIndex = fetchedTemplate?.prompt_templates.findIndex(
-          (temp: Templates) => temp.id === templateData?.id
+          (temp: Templates) => temp.id === templateData?.id,
         );
-        if (
-          templateIndex !== -1 &&
-          templateIndex < fetchedTemplate?.prompt_templates.length - 1
-        )
-          changeSelectedTemplate(
-            fetchedTemplate?.prompt_templates[templateIndex + 1]
-          );
+        if (templateIndex !== -1 && templateIndex < fetchedTemplate?.prompt_templates.length - 1)
+          changeSelectedTemplate(fetchedTemplate?.prompt_templates[templateIndex + 1]);
       }
       if (e.shiftKey && e.code === "ArrowLeft") {
         const templateIndex = fetchedTemplate?.prompt_templates.findIndex(
-          (temp: Templates) => temp.id === templateData?.id
+          (temp: Templates) => temp.id === templateData?.id,
         );
         if (templateIndex !== -1 && templateIndex > 0)
-          changeSelectedTemplate(
-            fetchedTemplate?.prompt_templates[templateIndex - 1]
-          );
+          changeSelectedTemplate(fetchedTemplate?.prompt_templates[templateIndex - 1]);
       }
     }
   };
@@ -200,8 +177,7 @@ export const Collection = ({ fetchedTemplate, fetchedTemplateError }: any) => {
 
   const newTheme = createTheme({ ...theme, palette });
 
-  if (fetchedTemplateError || templateExecutionsError)
-    return <div>Something went wrong...</div>;
+  if (fetchedTemplateError || templateExecutionsError) return <div>Something went wrong...</div>;
 
   return (
     <>
@@ -211,8 +187,14 @@ export const Collection = ({ fetchedTemplate, fetchedTemplateError }: any) => {
           name="description"
           content="Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out."
         />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1"
+        />
+        <link
+          rel="icon"
+          href="/favicon.ico"
+        />
       </Head>
 
       <ThemeProvider theme={newTheme}>
@@ -263,9 +245,7 @@ export const Collection = ({ fetchedTemplate, fetchedTemplateError }: any) => {
                   >
                     <Box
                       component={"img"}
-                      src={
-                        templateData.thumbnail || "http://placehold.it/240x150"
-                      }
+                      src={templateData.thumbnail || "http://placehold.it/240x150"}
                       alt={"alt"}
                       sx={{
                         width: 56,
@@ -323,9 +303,7 @@ export const Collection = ({ fetchedTemplate, fetchedTemplateError }: any) => {
                 >
                   <Box
                     component={"img"}
-                    src={
-                      templateData.thumbnail || "http://placehold.it/240x150"
-                    }
+                    src={templateData.thumbnail || "http://placehold.it/240x150"}
                     alt={"alt"}
                     sx={{
                       width: 56,
@@ -397,7 +375,12 @@ export const Collection = ({ fetchedTemplate, fetchedTemplateError }: any) => {
                       },
                     }}
                     startIcon={
-                      token ? <LogoApp width={18} color="white" /> : null
+                      token ? (
+                        <LogoApp
+                          width={18}
+                          color="white"
+                        />
+                      ) : null
                     }
                     variant={"contained"}
                     onClick={() => setGeneratorOpened(true)}
@@ -490,9 +473,7 @@ export async function getServerSideProps({ params }: any) {
   const { id } = params;
 
   try {
-    const templatesResponse = await authClient.get(
-      `/api/meta/collections/${id}`
-    );
+    const templatesResponse = await authClient.get(`/api/meta/collections/${id}`);
     const fetchedTemplate = templatesResponse.data; // Extract the necessary data from the response
 
     return {

@@ -11,7 +11,7 @@ import { client } from "@/common/axios";
 import { IContinueWithSocialMediaResponse } from "@/common/types";
 import { savePathURL, saveToken } from "@/common/utils";
 import { Microsoft } from "@/assets/icons/microsoft";
-import { getPathURL, deletePathURL } from "@/common/utils";
+import { getPathURL } from "@/common/utils";
 import { useRouter } from "next/router";
 import { updateUser } from "@/core/store/userSlice";
 import { useDispatch } from "react-redux";
@@ -19,11 +19,15 @@ import { userApi } from "@/core/api/user";
 
 const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
 
-const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(
-  props,
-  ref
-) {
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
+  return (
+    <MuiAlert
+      elevation={6}
+      ref={ref}
+      variant="filled"
+      {...props}
+    />
+  );
 });
 
 interface IProps {
@@ -33,12 +37,7 @@ interface IProps {
   from: string;
 }
 
-export const SocialButtons: React.FC<IProps> = ({
-  preLogin,
-  isChecked,
-  setErrorCheckBox,
-  from,
-}) => {
+export const SocialButtons: React.FC<IProps> = ({ preLogin, isChecked, setErrorCheckBox, from }) => {
   const githubButtonRef = useRef<HTMLButtonElement | null>(null);
   const [open, setOpen] = useState(false);
   const [attemptError, setAttemptError] = useState(false);
@@ -50,12 +49,12 @@ export const SocialButtons: React.FC<IProps> = ({
       const { token, created: _ } = response.data;
       const path = getPathURL();
       // response.data has corrupted user data, so we need to call this API to get proper user data
-      const payload =  await getCurrentUser(token).unwrap();
+      const payload = await getCurrentUser(token).unwrap();
 
+      savePathURL("no-redirect");
       dispatch(updateUser(payload));
       saveToken({ token });
-      deletePathURL();
- 
+
       router.push(path || "/");
       return;
     }
@@ -67,7 +66,7 @@ export const SocialButtons: React.FC<IProps> = ({
   const initAttempt = () => {
     setAttemptError(false);
     preLogin(true);
-  }
+  };
 
   const loginGoogle = useGoogleLogin({
     onSuccess: ({ code }) => {
@@ -87,7 +86,7 @@ export const SocialButtons: React.FC<IProps> = ({
     clientId: process.env.NEXT_PUBLIC_LINKEDIN_CLIENT_ID as string,
     redirectUri: process.env.NEXT_PUBLIC_LINKEDIN_REDIRECT_URI as string,
     scope: "r_emailaddress,r_liteprofile",
-    onSuccess: (code) => {
+    onSuccess: code => {
       initAttempt();
       client
         .post(CODE_TOKEN_ENDPOINT, {
@@ -97,7 +96,7 @@ export const SocialButtons: React.FC<IProps> = ({
         .then(doPostLogin)
         .catch(() => doPostLogin(null));
     },
-    onError: (error) => {
+    onError: error => {
       console.log(error);
     },
   });
@@ -121,7 +120,6 @@ export const SocialButtons: React.FC<IProps> = ({
     const scope = "openid email profile User.Read";
 
     const authUrl = `https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}&scope=${scope}`;
-    savePathURL("/");
     window.location.href = authUrl;
   };
   const validateConsent = (loginMethod: Function) => {
@@ -130,7 +128,7 @@ export const SocialButtons: React.FC<IProps> = ({
       setErrorCheckBox(false);
     } else {
       loginMethod();
-    };
+    }
   };
 
   return (
@@ -144,23 +142,29 @@ export const SocialButtons: React.FC<IProps> = ({
         width: "100%",
       }}
     >
-      {attemptError && (<Box sx={{
-        display: "flex",
-        alignSelf: "center"
-      }}><Typography
+      {attemptError && (
+        <Box
           sx={{
-            fontFamily: "Poppins",
-            fontStyle: "normal",
-            fontWeight: 400,
-            fontSize: "16px",
-            lineHeight: "24px",
-            letterSpacing: "0.15px",
-            color: "red",
-            display: "inline",
+            display: "flex",
+            alignSelf: "center",
           }}
         >
-          Something went wrong, please try again.
-        </Typography></Box>)}
+          <Typography
+            sx={{
+              fontFamily: "Poppins",
+              fontStyle: "normal",
+              fontWeight: 400,
+              fontSize: "16px",
+              lineHeight: "24px",
+              letterSpacing: "0.15px",
+              color: "red",
+              display: "inline",
+            }}
+          >
+            Something went wrong, please try again.
+          </Typography>
+        </Box>
+      )}
       <Grid
         onClick={() => validateConsent(loginGoogle)}
         sx={{
@@ -172,8 +176,7 @@ export const SocialButtons: React.FC<IProps> = ({
           width: "100%",
           background: "transparent",
           borderRadius: "100px",
-          border:
-            "1px solid var(--primary-states-outlined-border, rgba(59, 64, 80, 0.15))",
+          border: "1px solid var(--primary-states-outlined-border, rgba(59, 64, 80, 0.15))",
           gap: "0.5em",
           cursor: "pointer",
           "&:hover": {
@@ -209,8 +212,7 @@ export const SocialButtons: React.FC<IProps> = ({
           width: "100%",
           background: "transparent",
           borderRadius: "100px",
-          border:
-            "1px solid var(--primary-states-outlined-border, rgba(59, 64, 80, 0.15))",
+          border: "1px solid var(--primary-states-outlined-border, rgba(59, 64, 80, 0.15))",
           gap: "0.5em",
           cursor: "pointer",
           "&:hover": {
@@ -242,7 +244,10 @@ export const SocialButtons: React.FC<IProps> = ({
         </Typography>
       </Grid>
 
-      <Box hidden ref={githubButtonRef}>
+      <Box
+        hidden
+        ref={githubButtonRef}
+      >
         <GitHubLogin
           clientId={process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID}
           redirectUri={process.env.NEXT_PUBLIC_GITHUB_REDIRECT_URI}
@@ -263,8 +268,7 @@ export const SocialButtons: React.FC<IProps> = ({
           width: "100%",
           background: "transparent",
           borderRadius: "100px",
-          border:
-            "1px solid var(--primary-states-outlined-border, rgba(59, 64, 80, 0.15))",
+          border: "1px solid var(--primary-states-outlined-border, rgba(59, 64, 80, 0.15))",
           gap: "0.5em",
           cursor: "pointer",
           "&:hover": {
@@ -300,8 +304,7 @@ export const SocialButtons: React.FC<IProps> = ({
           width: "100%",
           background: "transparent",
           borderRadius: "100px",
-          border:
-            "1px solid var(--primary-states-outlined-border, rgba(59, 64, 80, 0.15))",
+          border: "1px solid var(--primary-states-outlined-border, rgba(59, 64, 80, 0.15))",
           gap: "0.5em",
           cursor: "pointer",
           "&:hover": {
@@ -331,9 +334,7 @@ export const SocialButtons: React.FC<IProps> = ({
         autoHideDuration={6000}
         onClose={() => setOpen(false)}
       >
-        <Alert severity={"error"}>
-          Please accept the terms and conditions.
-        </Alert>
+        <Alert severity={"error"}>Please accept the terms and conditions.</Alert>
       </Snackbar>
     </Box>
   );

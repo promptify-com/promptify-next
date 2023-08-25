@@ -5,21 +5,15 @@ import {
   Button,
   Chip,
   Grid,
-  IconButton,
   List,
   ListItem,
   ListItemButton,
   ListSubheader,
   Typography,
 } from "@mui/material";
-
 import { Engine, Tag } from "@/core/api/dto/templates";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  deleteSelectedTag,
-  setSelectedEngine,
-  setSelectedTag,
-} from "@/core/store/filtersSlice";
+import { deleteSelectedTag, setSelectedEngine, setSelectedTag } from "@/core/store/filtersSlice";
 import { RootState } from "@/core/store";
 
 interface ExploreFilterSideBarProps {
@@ -28,11 +22,7 @@ interface ExploreFilterSideBarProps {
   tags: Tag[] | undefined;
 }
 
-export const ExploreFilterSideBar: React.FC<ExploreFilterSideBarProps> = ({
-  engines,
-  tags,
-  sidebarOpen,
-}) => {
+export const ExploreFilterSideBar: React.FC<ExploreFilterSideBarProps> = ({ engines, tags, sidebarOpen }) => {
   const [itemsToShow, setItemsToShow] = useState<number>(3);
 
   const filters = useSelector((state: RootState) => state.filters);
@@ -61,13 +51,7 @@ export const ExploreFilterSideBar: React.FC<ExploreFilterSideBarProps> = ({
   };
   return (
     <Box sx={{ opacity: sidebarOpen ? 1 : 0 }}>
-      <List
-        subheader={
-          <ListSubheader sx={{ fontSize: "12px", ml: "17px" }}>
-            ENGINES
-          </ListSubheader>
-        }
-      >
+      <List subheader={<ListSubheader sx={{ fontSize: "12px", ml: "17px" }}>ENGINES</ListSubheader>}>
         <Grid
           className="sidebar-list"
           sx={{
@@ -76,8 +60,11 @@ export const ExploreFilterSideBar: React.FC<ExploreFilterSideBarProps> = ({
             overflowX: "none",
           }}
         >
-          {engines?.slice(0, itemsToShow).map((engine) => (
-            <ListItem disablePadding key={engine.name}>
+          {engines?.slice(0, itemsToShow).map(engine => (
+            <ListItem
+              disablePadding
+              key={engine.name}
+            >
               <ListItemButton
                 sx={{ borderRadius: "8px", minHeight: 48, mx: 1, px: 3.0 }}
                 onClick={() => handleEngineSelect(engine)}
@@ -94,7 +81,11 @@ export const ExploreFilterSideBar: React.FC<ExploreFilterSideBarProps> = ({
                     mr: "18px",
                   }}
                 />
-                <Typography fontSize={14} fontWeight={500} color={"onSurface"}>
+                <Typography
+                  fontSize={14}
+                  fontWeight={500}
+                  color={"onSurface"}
+                >
                   {engine.name}
                 </Typography>
               </ListItemButton>
@@ -113,13 +104,7 @@ export const ExploreFilterSideBar: React.FC<ExploreFilterSideBarProps> = ({
           {itemsToShow === 3 ? "See all" : "Show less"}
         </Button>
       </List>
-      <List
-        subheader={
-          <ListSubheader sx={{ fontSize: "12px", ml: "17px" }}>
-            POPULAR TAGS
-          </ListSubheader>
-        }
-      >
+      <List subheader={<ListSubheader sx={{ fontSize: "12px", ml: "17px" }}>POPULAR TAGS</ListSubheader>}>
         <Grid
           display={"flex"}
           flexDirection={"column"}
@@ -127,7 +112,7 @@ export const ExploreFilterSideBar: React.FC<ExploreFilterSideBarProps> = ({
           gap={"8px"}
           ml={"29px"}
         >
-          {tags?.map((tag) => (
+          {tags?.map(tag => (
             <Chip
               sx={{
                 bgcolor: storedTags.includes(tag) ? "#9DB2BF" : "surface.3",

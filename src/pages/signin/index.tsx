@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import { isValidUserFn } from "@/core/store/userSlice";
 import useLogout from "@/hooks/useLogout";
+import { deletePathURL, getPathURL } from "@/common/utils";
 
 const Login = () => {
   const router = useRouter();
@@ -14,11 +15,16 @@ const Login = () => {
   const saveToken = useToken();
   const isValidUser = useSelector(isValidUserFn);
   const logoutUser = useLogout();
+  const path = getPathURL();
 
   if (isValidUser) {
     if (!saveToken) {
       logoutUser();
     } else {
+      if (path === "no-redirect") {
+        deletePathURL();
+        return;
+      }
       router.push("/");
     }
 
@@ -31,13 +37,7 @@ const Login = () => {
 
   return (
     <>
-      <Box>
-        {isLoading ? (
-          <PageLoading />
-        ) : (
-          <LoginLayout preLogin={preLogin} />
-        )}
-      </Box>
+      <Box>{isLoading ? <PageLoading /> : <LoginLayout preLogin={preLogin} />}</Box>
     </>
   );
 };

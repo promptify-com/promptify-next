@@ -16,8 +16,12 @@ const filterSlice = createSlice({
     setSelectedEngine: (state, action: PayloadAction<Engine | null>) => {
       state.engine = action.payload;
     },
-    setSelectedTag: (state, action: PayloadAction<Tag | null>) => {
-      state.tag.push(action.payload); // This should work fine now
+    setSelectedTag: (state, action: PayloadAction<Tag>) => {
+      if (state.tag?.find(_tag => _tag.id === action.payload?.id)) {
+        return;
+      }
+
+      state.tag.push(action.payload);
     },
     setSelectedCategory: (state, action: PayloadAction<Category | null>) => {
       state.category = action.payload;
@@ -29,7 +33,7 @@ const filterSlice = createSlice({
       state.title = action.payload;
     },
     deleteSelectedTag: (state, action: PayloadAction<number>) => {
-      state.tag = state.tag.filter((tag) => tag?.id !== action.payload);
+      state.tag = state.tag.filter(tag => tag?.id !== action.payload);
     },
   },
 });
@@ -40,7 +44,7 @@ export const {
   setSelectedKeyword,
   setSelectedCategory,
   setSelectedSubCategory,
-  deleteSelectedTag
+  deleteSelectedTag,
 } = filterSlice.actions;
 
 export default filterSlice.reducer;
