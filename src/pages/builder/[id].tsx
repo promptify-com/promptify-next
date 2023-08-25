@@ -30,6 +30,7 @@ import { ContentCopy } from "@mui/icons-material";
 import { INodesData } from "@/common/types/builder";
 import TemplateForm from "@/components/common/forms/TemplateForm";
 import { Templates } from "@/core/api/dto/templates";
+import { promptRandomId } from "@/common/helpers/promptRandomId";
 
 export interface ITemplate {
   title: string;
@@ -201,8 +202,7 @@ export const Builder = () => {
     setSelectedNode(node);
     node.selected = true;
     node.count = nodeCount.toString();
-    // assign random integer to temp_id
-    node.temp_id = Math.floor(Math.random() * 1000000000);
+    node.temp_id = promptRandomId();
 
     setNodesData(prev => [
       ...prev,
@@ -244,7 +244,7 @@ export const Builder = () => {
       setSelectedNode(node);
       node.selected = true;
       node.count = nodeCount.toString();
-      node.temp_id = Math.floor(Math.random() * 1000000000);
+      node.temp_id = promptRandomId();
 
       setNodesData(prev => [
         ...prev,

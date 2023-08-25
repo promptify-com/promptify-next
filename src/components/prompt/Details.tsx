@@ -13,6 +13,10 @@ import { RootState } from "@/core/store";
 import { setSelectedTag } from "@/core/store/filtersSlice";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { Create } from "@mui/icons-material";
+import Clone from "@/assets/icons/Clone";
+import { useCreateTemplateMutation } from "@/core/api/templates";
+import { INodesData } from "@/common/types/builder";
+import { promptRandomId } from "@/common/helpers/promptRandomId";
 
 interface DetailsProps {
   templateData: Templates;
@@ -37,6 +41,10 @@ export const Details: React.FC<DetailsProps> = ({
   const { palette } = useTheme();
   const dispatch = useDispatch();
   const isValidUser = useSelector(isValidUserFn);
+  const [isCloning, setIsCloning] = useState(false);
+
+  const [createTemplate] = useCreateTemplateMutation();
+
   const favorTemplate = async () => {
     if (!isValidUser) {
       savePathURL(window.location.pathname);
@@ -72,6 +80,52 @@ export const Details: React.FC<DetailsProps> = ({
       } finally {
         setIsFetching(false);
       }
+    }
+  };
+
+  const cloneTemplate = async () => {
+    setIsCloning(true);
+    try {
+      const clonedPrompts: INodesData[] = templateData.prompts.map(prompt => ({
+        temp_id: promptRandomId(),
+        title: prompt.title,
+        content: prompt.content,
+        engine_id: prompt.engine.id,
+        model_parameters: prompt.model_parameters,
+        dependencies: [],
+        is_visible: prompt.is_visible,
+        show_output: prompt.show_output,
+        prompt_output_variable: prompt.prompt_output_variable,
+        order: prompt.order,
+        parameters: [],
+        output_format: prompt.output_format,
+      }));
+
+      const response = await createTemplate({
+        title: `${templateData.title} - clone`,
+        description: templateData.description,
+        duration: templateData.duration.toString(),
+        difficulty: templateData.difficulty,
+        is_visible: templateData.is_visible,
+        language: templateData.language,
+        category: templateData.category?.id,
+        context: templateData.context,
+        tags: templateData.tags,
+        thumbnail: templateData.thumbnail,
+        executions_limit: templateData.executions_limit,
+        meta_title: templateData.meta_title,
+        meta_description: templateData.meta_description,
+        meta_keywords: templateData.meta_keywords,
+        status: "DRAFT",
+        prompts_list: clonedPrompts,
+      }).unwrap();
+      const { id, slug } = response;
+      window.open(window.location.origin + `/builder/${id}?editor=1`, "_blank");
+      router.push(`/prompt/${slug}`);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsCloning(false);
     }
   };
 
@@ -190,19 +244,7 @@ export const Details: React.FC<DetailsProps> = ({
                 <Button
                   variant={"contained"}
                   startIcon={<Create />}
-                  sx={{
-                    flex: 1,
-                    p: "8px 22px",
-                    fontSize: 15,
-                    fontWeight: 500,
-                    border: "none",
-                    borderRadius: "999px",
-                    bgcolor: "surface.3",
-                    color: "onSurface",
-                    ":hover": {
-                      bgcolor: "surface.4",
-                    },
-                  }}
+                  sx={templateBtnStyle}
                   onClick={() => {
                     window.open(window.location.origin + `/builder/${templateData.id}?editor=1`, "_blank");
                   }}
@@ -210,6 +252,15 @@ export const Details: React.FC<DetailsProps> = ({
                   Edit this Template
                 </Button>
               ))}
+            <Button
+              variant={"contained"}
+              startIcon={<Clone />}
+              sx={templateBtnStyle}
+              onClick={cloneTemplate}
+              disabled={isCloning}
+            >
+              Clone and Edit
+            </Button>
           </Stack>
         </Box>
       </Box>
@@ -227,4 +278,21 @@ const detailsStyle = {
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
+};
+const templateBtnStyle = {
+  flex: 1,
+  p: "8px 22px",
+  fontSize: 15,
+  fontWeight: 500,
+  border: "none",
+  borderRadius: "999px",
+  bgcolor: "surface.3",
+  color: "onSurface",
+  svg: {
+    width: 24,
+    height: 24,
+  },
+  ":hover": {
+    bgcolor: "surface.4",
+  },
 };
