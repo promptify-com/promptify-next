@@ -65,7 +65,11 @@ const CardTemplate: React.FC<CardTemplateProps> = ({ template, noRedirect = fals
                     height: { xs: "73px", sm: "54px" },
                   }}
                 >
-                  <Image src={template.thumbnail} alt={template.title} style={{borderRadius: "16%", objectFit: "cover", width: "100%", height: "100%"}}/>
+                  <Image
+                    src={template.thumbnail}
+                    alt={template.title}
+                    style={{ borderRadius: "16%", objectFit: "cover", width: "100%", height: "100%" }}
+                  />
                 </CardMedia>
               </Grid>
               <Grid

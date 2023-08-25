@@ -1,30 +1,20 @@
-import {
-  Card,
-  CardActionArea,
-  CardContent,
-  CardMedia,
-  Typography,
-} from "@mui/material";
+import { Card, CardActionArea, CardContent, CardMedia, Typography } from "@mui/material";
 
 import { Category } from "@/core/api/dto/templates";
 import Link from "next/link";
 import { useSelector } from "react-redux";
 import { isValidUserFn } from "@/core/store/userSlice";
 
-
 import Image from "@/components/design-system/Image";
 
-export const CategoryCard = ({
-  category,
-  href,
-}: {
-  category: Category;
-  href: string;
-}) => {
+export const CategoryCard = ({ category, href }: { category: Category; href: string }) => {
   const isValidUser = useSelector(isValidUserFn);
 
   return (
-    <Link href={{ pathname: href }} style={{ textDecoration: "none" }}>
+    <Link
+      href={{ pathname: href }}
+      style={{ textDecoration: "none" }}
+    >
       <Card
         title={category.name}
         elevation={0}
@@ -52,11 +42,12 @@ export const CategoryCard = ({
               height: "200px",
             }}
           >
-            <Image 
-              src={category.image} 
-              alt={category.name} 
-              style={{borderRadius: "16px", objectFit: "cover", width: "100%", height: "100%"}} 
-              priority={!isValidUser}/>
+            <Image
+              src={category.image}
+              alt={category.name}
+              style={{ borderRadius: "16px", objectFit: "cover", width: "100%", height: "100%" }}
+              priority={!isValidUser}
+            />
           </CardMedia>
 
           <Typography
@@ -80,7 +71,11 @@ export const CategoryCard = ({
             >
               {category.name}
             </Typography>
-            <Typography variant="body2" color="text.secondary" fontSize={12}>
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              fontSize={12}
+            >
               {category.prompt_template_count} templates
             </Typography>
           </CardContent>

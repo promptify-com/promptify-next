@@ -9,24 +9,18 @@ interface ICard {
   setCheckedPrompts: (value: number[]) => void;
 }
 
-const PromptsCard = ({
-  name,
-  icon,
-  id,
-  checkedPrompts,
-  setCheckedPrompts,
-}: ICard) => {
+const PromptsCard = ({ name, icon, id, checkedPrompts, setCheckedPrompts }: ICard) => {
   const [checked, setChecked] = useState(false);
 
   useEffect(() => {
-    setChecked(checkedPrompts.find((e) => e === id) !== undefined);
+    setChecked(checkedPrompts.find(e => e === id) !== undefined);
   }, [checkedPrompts]);
 
   const checkCard = () => {
     if (!checked) {
       setCheckedPrompts([...checkedPrompts, id]);
     } else {
-      setCheckedPrompts(checkedPrompts.filter((e) => e !== id));
+      setCheckedPrompts(checkedPrompts.filter(e => e !== id));
     }
   };
 
@@ -43,9 +37,7 @@ const PromptsCard = ({
         alignItems: "center",
         padding: "24px 16px",
         gap: "16px",
-        border: checked
-          ? "2px solid #BCBCBC"
-          : "2px solid rgba(59, 64, 80, 0.15)",
+        border: checked ? "2px solid #BCBCBC" : "2px solid rgba(59, 64, 80, 0.15)",
         borderRadius: "16px",
       }}
       flexDirection="column"

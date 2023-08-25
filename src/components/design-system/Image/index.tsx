@@ -9,14 +9,7 @@ interface NextImageProps {
   height?: number;
 }
 
-const Image: React.FC<NextImageProps> = ({
-  src,
-  alt,
-  priority = false,
-  style = {},
-  width = 0,
-  height = 0
-}) => {
+const Image: React.FC<NextImageProps> = ({ src, alt, priority = false, style = {}, width = 0, height = 0 }) => {
   return (
     <NextImage
       src={src}

@@ -1,11 +1,5 @@
 import { ITemplate } from "@/common/types/template";
-import {
-  CardMedia,
-  Grid,
-  ListItem,
-  ListItemButton,
-  Typography,
-} from "@mui/material";
+import { CardMedia, Grid, ListItem, ListItemButton, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 
 import Image from "@/components/design-system/Image";
@@ -16,11 +10,7 @@ interface CollectionItemProps {
   onClick: () => void;
 }
 
-export const CollectionItem: React.FC<CollectionItemProps> = ({
-  expanded,
-  template,
-  onClick,
-}) => {
+export const CollectionItem: React.FC<CollectionItemProps> = ({ expanded, template, onClick }) => {
   const router = useRouter();
   const slug = router.query?.slug;
   const truncatedTilte = (str: string) => {
@@ -55,10 +45,17 @@ export const CollectionItem: React.FC<CollectionItemProps> = ({
               mx: expanded ? 0 : 1.5,
             }}
           >
-            <Image src={template.thumbnail} alt={template.title} style={{borderRadius: "16px", objectFit: "cover", width: "100%", height: "100%"}}/>
+            <Image
+              src={template.thumbnail}
+              alt={template.title}
+              style={{ borderRadius: "16px", objectFit: "cover", width: "100%", height: "100%" }}
+            />
           </CardMedia>
         </Grid>
-        <Grid display={expanded ? "flex" : "none"} flexDirection={"column"}>
+        <Grid
+          display={expanded ? "flex" : "none"}
+          flexDirection={"column"}
+        >
           <Typography
             fontSize={12}
             fontWeight={500}

@@ -1,5 +1,15 @@
 import { User, UserMin } from "./user";
 import { Prompts } from "./prompts";
+import { ExecutionTemplate } from "@/components/SparksContainer";
+
+export interface SparksLayoutProps {
+  execution: Execution;
+  template: ExecutionTemplate;
+  onExecutionSaved: () => void;
+  onOpenEdit: () => void;
+  onOpenDelete: () => void;
+  onClosePopup?: () => void;
+}
 
 export interface FilterParams {
   categoryId?: number;

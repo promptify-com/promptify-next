@@ -18,18 +18,17 @@ import DraftSpark from "@/assets/icons/DraftSpark";
 import SavedSpark from "@/assets/icons/SavedSpark";
 import useTimestampConverter from "@/hooks/useTimestampConverter";
 import useTruncate from "@/hooks/useTruncate";
-import { Execution, TemplateExecutionsDisplay } from "@/core/api/dto/templates";
-import { handleOpenPopup, handlePopupType, setActiveExecution } from "@/core/store/executionsSlice";
+import { SparksLayoutProps } from "@/core/api/dto/templates";
 
-interface SparksLayoutMobileProps {
-  execution: Execution;
-  template: TemplateExecutionsDisplay;
-  onExecutionSaved: () => void;
-}
-
-export const SparksLayoutMobile: FC<SparksLayoutMobileProps> = ({ execution, template, onExecutionSaved }) => {
+export const SparksLayoutMobile: FC<SparksLayoutProps> = ({
+  execution,
+  template,
+  onExecutionSaved,
+  onOpenDelete,
+  onOpenEdit,
+  onClosePopup,
+}) => {
   const router = useRouter();
-  const dispatch = useDispatch();
 
   const { truncate } = useTruncate();
   const { convertedTimestamp } = useTimestampConverter();
@@ -45,22 +44,9 @@ export const SparksLayoutMobile: FC<SparksLayoutMobileProps> = ({ execution, tem
     setAnchorEl(null);
   };
 
-  const handleOpenEdit = () => {
-    dispatch(handleOpenPopup(true));
-    dispatch(setActiveExecution(execution));
-    dispatch(handlePopupType("update"));
-    handleClose();
-  };
-
-  const handleOpenDelete = () => {
-    dispatch(handleOpenPopup(true));
-    dispatch(setActiveExecution(execution));
-    dispatch(handlePopupType("delete"));
-    handleClose();
-  };
-
   return (
     <Grid
+      my={"10px"}
       container
       display={{ xs: "flex", md: "none" }}
       gap={"16px"}
@@ -93,8 +79,8 @@ export const SparksLayoutMobile: FC<SparksLayoutMobileProps> = ({ execution, tem
         />
         <Box
           position={"absolute"}
-          bottom={"-1px"}
-          left={"-1px"}
+          bottom={"-0.5px"}
+          left={"-0.5px"}
           display={"flex"}
           justifyContent={"center"}
           alignItems={"center"}
@@ -170,14 +156,24 @@ export const SparksLayoutMobile: FC<SparksLayoutMobileProps> = ({ execution, tem
         open={open}
         onClose={handleClose}
       >
-        <MenuItem onClick={() => handleOpenEdit()}>
+        <MenuItem
+          onClick={() => {
+            onOpenEdit();
+            setAnchorEl(null);
+          }}
+        >
           <ListItemIcon>
             <Edit sx={{ fontSize: "18px" }} />
           </ListItemIcon>
           <ListItemText>Rename</ListItemText>
         </MenuItem>
         {!execution.is_favorite && (
-          <MenuItem onClick={() => onExecutionSaved()}>
+          <MenuItem
+            onClick={() => {
+              onExecutionSaved();
+              setAnchorEl(null);
+            }}
+          >
             <ListItemIcon>
               <CloudQueueOutlined sx={{ fontSize: "18px" }} />
             </ListItemIcon>
@@ -185,7 +181,12 @@ export const SparksLayoutMobile: FC<SparksLayoutMobileProps> = ({ execution, tem
           </MenuItem>
         )}
 
-        <MenuItem onClick={() => handleOpenDelete()}>
+        <MenuItem
+          onClick={() => {
+            onOpenDelete();
+            setAnchorEl(null);
+          }}
+        >
           <ListItemIcon>
             <Delete sx={{ fontSize: "18px" }} />
           </ListItemIcon>
