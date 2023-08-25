@@ -23,6 +23,14 @@ interface ExecutionWithTemplate extends Execution {
   template: ExecutionTemplate;
 }
 
+type SortDirectionState = {
+  [key in CurrentSortType]: "asc" | "desc";
+};
+
+type SortStateWithCurrentType = SortDirectionState & {
+  currentType: CurrentSortType;
+};
+
 const SparksContainer: FC<SparksContainerProps> = ({ templates }) => {
   const [openPopup, setOpenPopup] = useState(false);
   const [activeExecution, setActiveExecution] = useState<Execution | null>(null);
@@ -31,27 +39,27 @@ const SparksContainer: FC<SparksContainerProps> = ({ templates }) => {
   const [currentTab, setCurrentTab] = useState<TabValueType>("all");
   const [selectedTemplate, setSelectedTemplate] = useState<TemplateExecutionsDisplay | null>(null);
   const [nameFilter, setNameFilter] = useState<string>("");
-  const [currentSortType, setCurrentSortType] = useState<CurrentSortType>("executionTitle");
-
   const [favoriteExecution] = useExecutionFavoriteMutation();
 
   const handleSaveExecution = (executionId: number) => {
     favoriteExecution(executionId);
   };
 
-  const [sortDirectionState, setSortDirectionState] = useState<Record<CurrentSortType, "asc" | "desc">>({
+  const [sortDirectionState, setSortDirectionState] = useState<SortStateWithCurrentType>({
     executionTitle: "desc",
     executionTemplate: "desc",
     executionTime: "desc",
     executionFavorite: "desc",
+    currentType: "executionTitle",
   });
 
   const toggleSortDirection = (sortType: CurrentSortType) => {
+    const newDirection = sortDirectionState[sortType] === "asc" ? "desc" : "asc";
     setSortDirectionState(prevState => ({
       ...prevState,
-      [sortType]: prevState[sortType] === "asc" ? "desc" : "asc",
+      currentType: sortType,
+      [sortType]: newDirection,
     }));
-    setCurrentSortType(sortType);
   };
 
   const handleTemplateSelect = (selectedTemplate: TemplateExecutionsDisplay | null) => {
@@ -64,28 +72,27 @@ const SparksContainer: FC<SparksContainerProps> = ({ templates }) => {
 
   const filterAndSortExecutions = (
     executions: ExecutionWithTemplate[],
-    sortBy: CurrentSortType,
-    sortDirection: "asc" | "desc",
     selectedTemplate: TemplateExecutionsDisplay | null,
   ) => {
     const sortedExecutions = [...executions];
+    const type = sortDirectionState.currentType;
 
     sortedExecutions.sort((a: ExecutionWithTemplate, b: ExecutionWithTemplate) => {
-      if (sortBy === "executionTitle") {
+      if (type === "executionTitle") {
         const titleComparison = a.title.localeCompare(b.title);
-        return sortDirection === "asc" ? titleComparison : -titleComparison;
-      } else if (sortBy === "executionTime") {
+        return sortDirectionState[type] === "asc" ? titleComparison : -titleComparison;
+      } else if (type === "executionTime") {
         const aTimestamp = new Date(a.created_at).getTime();
         const bTimestamp = new Date(b.created_at).getTime();
         const timeComparison = aTimestamp - bTimestamp;
-        return sortDirection === "asc" ? timeComparison : -timeComparison;
-      } else if (sortBy === "executionTemplate") {
+        return sortDirectionState[type] === "asc" ? timeComparison : -timeComparison;
+      } else if (type === "executionTemplate") {
         const templateComparison = a.template.title.localeCompare(b.template.title);
-        return sortDirection === "asc" ? templateComparison : -templateComparison;
+        return sortDirectionState[type] === "asc" ? templateComparison : -templateComparison;
       } else {
         // Handle the "executionFavorite" case
         const favoriteComparison = a.is_favorite === b.is_favorite ? 0 : a.is_favorite ? -1 : 1;
-        return sortDirection === "asc" ? favoriteComparison : -favoriteComparison;
+        return sortDirectionState[type] === "asc" ? favoriteComparison : -favoriteComparison;
       }
     });
 
@@ -113,14 +120,11 @@ const SparksContainer: FC<SparksContainerProps> = ({ templates }) => {
       allExecutions.push(...executionsWithTemplate);
     });
 
-    const filteredAndSortedExecutions = filterAndSortExecutions(
-      allExecutions,
-      currentSortType,
-      sortDirectionState[currentSortType],
-      selectedTemplate,
-    ).filter(execution => execution.title.toLowerCase().includes(nameFilter.toLowerCase()));
+    const filteredAndSortedExecutions = filterAndSortExecutions(allExecutions, selectedTemplate).filter(execution =>
+      execution.title.toLowerCase().includes(nameFilter.toLowerCase()),
+    );
     return filteredAndSortedExecutions;
-  }, [nameFilter, currentSortType, sortDirectionState, currentSortType, selectedTemplate, templates]);
+  }, [nameFilter, selectedTemplate, templates, sortDirectionState]);
 
   const draftsExecutions = executions.filter(execution => !execution.is_favorite);
   const savedExecutions = executions.filter(execution => execution.is_favorite);

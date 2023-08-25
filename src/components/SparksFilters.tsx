@@ -4,7 +4,6 @@ import {
   Box,
   Dialog,
   DialogActions,
-  Divider,
   Grid,
   IconButton,
   InputBase,
@@ -31,8 +30,7 @@ interface TemplateFilterProps {
   onSortTemplateToggle: () => void;
   onSortExecutionToggle: () => void;
   onSortTimeToggle: () => void;
-  onSortFavoriteToggle: (value: "saved" | "drafts") => void;
-
+  onSortFavoriteToggle: () => void;
   sortTemplateDirection: "asc" | "desc";
   sortExecutionDirection: "asc" | "desc";
   sortTimeDirection: "asc" | "desc";
@@ -63,13 +61,11 @@ const SparkFilters: React.FC<TemplateFilterProps> = ({
   availableTabs,
 }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [anchorFavoriteSort, setAnchorFavoriteSort] = useState<null | HTMLElement>(null);
   const [anchorSortOptions, setAnchorSortOptions] = useState<null | HTMLElement>(null);
 
   const [openFilters, setOpenFilters] = useState<boolean>(false);
   const [value, setValue] = useState<TabValueType>(currentTab);
   const openTemplatesMenu = Boolean(anchorEl);
-  const openSortFavoriteMenu = Boolean(anchorFavoriteSort);
   const openSortOptionsMenu = Boolean(anchorSortOptions);
 
   const handleTemplateSelect = (template: TemplateExecutionsDisplay | null) => {
@@ -144,7 +140,7 @@ const SparkFilters: React.FC<TemplateFilterProps> = ({
           <Grid
             onClick={e => {
               if (currentTab !== "all") return;
-              setAnchorFavoriteSort(e.currentTarget);
+              onSortFavoriteToggle();
             }}
             bgcolor={"surface.5"}
             minWidth={"48px"}
@@ -156,8 +152,24 @@ const SparkFilters: React.FC<TemplateFilterProps> = ({
               cursor: "pointer",
             }}
           >
-            {sortFavoriteDirection === "asc" || currentTab === "saved" ? <SavedSpark /> : <DraftSpark />}
-            <ArrowDropDown sx={{ fontSize: "16px", display: currentTab !== "all" ? "none" : "block" }} />
+            {sortFavoriteDirection === "asc" || currentTab !== "drafts" ? <SavedSpark /> : <DraftSpark />}
+            <IconButton
+              size="small"
+              aria-label="sort"
+              sx={{
+                display: { xs: "none", md: currentTab !== "all" ? "none" : "block" },
+                border: "none",
+                "&:hover": {
+                  bgcolor: "surface.4",
+                },
+              }}
+            >
+              <SortRounded
+                sx={{
+                  transform: `rotate(${sortFavoriteDirection === "asc" ? "180" : "0"}deg)`,
+                }}
+              />
+            </IconButton>
           </Grid>
           <Grid
             bgcolor={"surface.5"}
@@ -350,43 +362,6 @@ const SparkFilters: React.FC<TemplateFilterProps> = ({
           </Grid>
         </Grid>
 
-        <Menu
-          id="favorite-menu"
-          anchorEl={anchorFavoriteSort}
-          open={openSortFavoriteMenu}
-          onClose={() => setAnchorFavoriteSort(null)}
-        >
-          <MenuItem
-            onClick={() => {
-              onSortFavoriteToggle("saved");
-              setAnchorFavoriteSort(null);
-            }}
-          >
-            <ListItemIcon
-              sx={{
-                mr: -1.5,
-              }}
-            >
-              <SavedSpark />
-            </ListItemIcon>
-            <ListItemText>Saved</ListItemText>
-          </MenuItem>
-          <MenuItem
-            onClick={() => {
-              onSortFavoriteToggle("drafts");
-              setAnchorFavoriteSort(null);
-            }}
-          >
-            <ListItemIcon
-              sx={{
-                mr: -1.5,
-              }}
-            >
-              <DraftSpark />
-            </ListItemIcon>
-            <ListItemText>Drafts</ListItemText>
-          </MenuItem>
-        </Menu>
         <Menu
           id="template-menu"
           anchorEl={anchorEl}
