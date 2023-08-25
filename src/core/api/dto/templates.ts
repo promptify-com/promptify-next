@@ -109,6 +109,13 @@ export interface Templates {
   status: TemplateStatus;
 }
 
+export interface TemplatesWithPagination {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: Templates[];
+}
+
 export interface PromptExecutions {
   id: number;
   prompt: number;

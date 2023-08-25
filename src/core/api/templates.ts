@@ -1,6 +1,6 @@
 import { baseApi } from "./api";
 import { PromptParams } from "./dto/prompts";
-import { FilterParams, Templates } from "./dto/templates";
+import { FilterParams, Templates, TemplatesWithPagination } from "./dto/templates";
 import { IEditTemplate } from "@/common/types/editTemplate";
 
 const getSearchParams = (params: FilterParams) => {
@@ -27,7 +27,7 @@ export const templatesApi = baseApi.injectEndpoints({
           method: "get",
         }),
       }),
-      getTemplatesByFilter: builder.query<Templates[], FilterParams>({
+      getTemplatesByFilter: builder.query<TemplatesWithPagination, FilterParams>({
         query: (params: FilterParams) => ({
           url: `/api/meta/templates/?${getSearchParams(params)}`,
           method: "get",

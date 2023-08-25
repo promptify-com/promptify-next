@@ -1,4 +1,4 @@
-import React, { useMemo, useState, FC } from "react";
+import React, { useMemo, useState, FC, useEffect } from "react";
 import {
   Box,
   Button,
@@ -8,13 +8,19 @@ import {
   DialogContentText,
   DialogTitle,
   FormControl,
+  Grid,
   Modal,
   NativeSelect,
   Stack,
   Typography,
 } from "@mui/material";
 
-import { useDeleteTemplateMutation, useGetMyTemplatesQuery, useGetTemplatesByFilterQuery } from "@/core/api/templates";
+import {
+  templatesApi,
+  useDeleteTemplateMutation,
+  useGetMyTemplatesQuery,
+  useGetTemplatesByFilterQuery,
+} from "@/core/api/templates";
 import { TemplateStatus, Templates } from "@/core/api/dto/templates";
 import TemplateImportModal from "@/components/modals/TemplateImportModal";
 import TemplateForm from "@/components/common/forms/TemplateForm";
@@ -24,6 +30,8 @@ import { FormType } from "@/common/types/template";
 import { TemplateStatusArray } from "@/common/constants";
 import { PageLoading } from "../PageLoading";
 import TemplateManagerItem from "./TemplateManagerItem";
+import { ArrowLeft, ArrowRight, ArrowRightAlt } from "@mui/icons-material";
+import TemplatesPaginatedList from "../TemplatesPaginatedList";
 
 export type UserType = "admin" | "user";
 
@@ -33,17 +41,22 @@ interface TemplateManagerProps {
 }
 
 export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title }) => {
-  const { data: templates, isFetching } =
-    type === "admin" ? useGetTemplatesByFilterQuery({ ordering: "-created_at" }) : useGetMyTemplatesQuery();
+  const isUserAdmin = type === "admin";
 
-  const [deleteTemplate] = useDeleteTemplateMutation(); // auto update templates daaata without refretch again
+  const { data: userTemplates, isFetching: isUserTemplatesFetching } = useGetMyTemplatesQuery(undefined, {
+    skip: isUserAdmin,
+  });
+  const [trigger, { data: adminTemplates, isFetching: isAdminTemplatesFetchiing }] =
+    templatesApi.endpoints.getTemplatesByFilter.useLazyQuery();
 
+  const [offset, setOffset] = useState<number>(0);
+  const [deleteTemplate] = useDeleteTemplateMutation();
   const [templateImportOpen, setTemplateImportOpen] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<Templates | null>(null);
   const [templateFormType, setTemplateFormType] = useState<FormType>("create");
   const [status, setStatus] = useState<TemplateStatus | null>("ALL");
-
   const [templateFormOpen, setTemplateFormOpen] = useState(false);
+  const [confirmDialog, setConfirmDialog] = useState(false);
 
   const openDeletionModal = (template: Templates) => {
     setSelectedTemplate(template);
@@ -51,11 +64,20 @@ export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title }) => {
   };
 
   const filteredTemplates = useMemo(() => {
-    if (type === "admin" && status !== "ALL" && templates) {
-      return templates.filter(template => template.status === status);
+    if (isUserAdmin && status !== "ALL" && adminTemplates) {
+      return adminTemplates.results.filter(template => template.status === status);
     }
-    return templates ?? [];
-  }, [templates, status]);
+    return adminTemplates?.results ?? [];
+  }, [adminTemplates, status, isUserAdmin]);
+
+  useEffect(() => {
+    trigger({
+      ordering: "-created_at",
+      limit: 10,
+      offset,
+      title: "Novella",
+    });
+  }, [offset]);
 
   const confirmDelete = async () => {
     if (!selectedTemplate) return;
@@ -64,7 +86,11 @@ export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title }) => {
     setConfirmDialog(false);
   };
 
-  const [confirmDialog, setConfirmDialog] = useState(false);
+  const handlePrevPage = () => {
+    if (offset === 0) return;
+    setOffset(offset - 10);
+  };
+  const handleNextPage = () => setOffset(offset + 10);
 
   return (
     <Box
@@ -98,7 +124,7 @@ export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title }) => {
         >
           {title}
         </Typography>
-        {type === "admin" ? (
+        {isUserAdmin ? (
           <Stack
             direction={"row"}
             justifyContent={"end"}
@@ -179,43 +205,92 @@ export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title }) => {
           </Stack>
         )}
       </Box>
-      {isFetching && filteredTemplates.length === 0 ? (
-        <PageLoading />
-      ) : (
-        <Box
-          display={"flex"}
-          flexDirection={"column"}
-          gap={"14px"}
-          width={"100%"}
-        >
-          {filteredTemplates.length === 0 ? (
+
+      {isUserAdmin ? (
+        <Grid width={"100%"}>
+          {isAdminTemplatesFetchiing && filteredTemplates?.length === 0 ? (
+            <PageLoading />
+          ) : (
             <Box
               display={"flex"}
-              alignItems={"center"}
-              justifyContent={"center"}
-              minHeight={"30vh"}
+              flexDirection={"column"}
+              gap={"14px"}
+              width={"100%"}
             >
-              <Typography variant="body1">No templates found.</Typography>
+              {filteredTemplates?.length === 0 ? (
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  minHeight="30vh"
+                >
+                  <Typography variant="body1">No templates found.</Typography>
+                </Box>
+              ) : (
+                <TemplatesPaginatedList
+                  hasNext={!!adminTemplates?.next}
+                  hasPrev={!!adminTemplates?.previous}
+                  onNextPage={handleNextPage}
+                  onPrevPage={handlePrevPage}
+                >
+                  {filteredTemplates?.map((template: Templates) => (
+                    <TemplateManagerItem
+                      key={template.id}
+                      type={type}
+                      template={template}
+                      onOpenEdit={() => {
+                        setSelectedTemplate(template);
+                        setTemplateFormType("edit");
+                        setTemplateFormOpen(true);
+                      }}
+                      onOpenDelete={() => openDeletionModal(template)}
+                    />
+                  ))}
+                </TemplatesPaginatedList>
+              )}
             </Box>
-          ) : (
-            filteredTemplates.map((template: Templates) => {
-              return (
-                <TemplateManagerItem
-                  key={template.id}
-                  type={type}
-                  template={template}
-                  onOpenEdit={() => {
-                    setSelectedTemplate(template);
-                    setTemplateFormType("edit");
-                    setTemplateFormOpen(true);
-                  }}
-                  onOpenDelete={() => openDeletionModal(template)}
-                />
-              );
-            })
           )}
-        </Box>
+        </Grid>
+      ) : (
+        <Grid width={"100%"}>
+          {isUserTemplatesFetching && userTemplates?.length === 0 ? (
+            <PageLoading />
+          ) : (
+            <Box
+              display={"flex"}
+              flexDirection={"column"}
+              gap={"14px"}
+              width={"100%"}
+            >
+              {userTemplates?.length === 0 ? (
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  minHeight="30vh"
+                >
+                  <Typography variant="body1">No templates found.</Typography>
+                </Box>
+              ) : (
+                filteredTemplates?.map((template: Templates) => (
+                  <TemplateManagerItem
+                    key={template.id}
+                    type={type}
+                    template={template}
+                    onOpenEdit={() => {
+                      setSelectedTemplate(template);
+                      setTemplateFormType("edit");
+                      setTemplateFormOpen(true);
+                    }}
+                    onOpenDelete={() => openDeletionModal(template)}
+                  />
+                ))
+              )}
+            </Box>
+          )}
+        </Grid>
       )}
+
       <Dialog
         open={confirmDialog}
         keepMounted

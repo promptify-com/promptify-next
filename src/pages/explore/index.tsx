@@ -17,11 +17,11 @@ interface IProps {
 
 const ExplorePage: NextPage<IProps> = ({ categories }) => {
   const filters = useAppSelector((state: RootState) => state.filters);
-  const { templates, isTemplatesLoading } = useExploreData();
+  const { templates, isTemplatesLoading, handleNextPage, handlePreviousPage } = useExploreData();
   function areAllStatesNull(filters: SelectedFilters): boolean {
     return (
       filters.engine === null &&
-      filters.tag.every((tag) => tag === null) &&
+      filters.tag.every(tag => tag === null) &&
       filters.title === null &&
       filters.category === null &&
       filters.subCategory === null
@@ -33,7 +33,10 @@ const ExplorePage: NextPage<IProps> = ({ categories }) => {
   return (
     <>
       <Layout>
-        <Box mt={{ xs: 7, md: 0 }} padding={{ xs: "4px 0px", md: "0px 8px" }}>
+        <Box
+          mt={{ xs: 7, md: 0 }}
+          padding={{ xs: "4px 0px", md: "0px 8px" }}
+        >
           <Grid
             display={"flex"}
             flexDirection={"column"}
@@ -51,9 +54,13 @@ const ExplorePage: NextPage<IProps> = ({ categories }) => {
             )}
             <TemplatesSection
               filtred={!allNull}
-              templates={templates ?? []}
+              templates={templates?.results ?? []}
               isLoading={isTemplatesLoading}
               title="Best templates"
+              hasNext={!!templates?.next}
+              hasPrev={!!templates?.previous}
+              onNextPage={handleNextPage}
+              onPrevPage={handlePreviousPage}
             />
           </Grid>
         </Box>
@@ -63,8 +70,8 @@ const ExplorePage: NextPage<IProps> = ({ categories }) => {
 };
 
 export async function getServerSideProps() {
-  const responseCategories = await authClient.get('/api/meta/categories/');
-	const categories = responseCategories.data;
+  const responseCategories = await authClient.get("/api/meta/categories/");
+  const categories = responseCategories.data;
 
   return {
     props: {
