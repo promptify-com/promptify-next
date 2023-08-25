@@ -9,6 +9,8 @@ import { isValidUserFn } from "@/core/store/userSlice";
 import useLogout from "@/hooks/useLogout";
 import { deletePathURL, getPathURL } from "@/common/utils";
 
+import SigninPlaceholder from "@/components/placeholders/SigninPlaceholder";
+
 const Login = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -37,7 +39,13 @@ const Login = () => {
 
   return (
     <>
-      <Box>{isLoading ? <PageLoading /> : <LoginLayout preLogin={preLogin} />}</Box>
+      <Box>
+        {isLoading ? (
+          <SigninPlaceholder />
+        ) : (
+          <LoginLayout preLogin={preLogin} />
+        )}
+      </Box>
     </>
   );
 };

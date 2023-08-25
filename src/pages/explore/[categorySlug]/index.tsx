@@ -3,7 +3,6 @@ import { KeyboardArrowLeft } from "@mui/icons-material";
 import { Box, Button, Grid, Typography } from "@mui/material";
 
 import { authClient } from "@/common/axios";
-import { FetchLoading } from "@/components/FetchLoading";
 import { SubCategoryCard } from "@/components/common/cards/CardSubcategory";
 import {
   Category,
@@ -18,6 +17,8 @@ import { RootState } from "@/core/store";
 import { FiltersSelected } from "@/components/explorer/FiltersSelected";
 import { useGetCategoriesQuery } from "@/core/api/categories";
 import Link from "next/link";
+
+import SubCategoryPlaceholder from "@/components/placeholders/SubCategoryPlaceholder";
 
 export default function Page({ category }: { category: Category }) {
   const router = useRouter();
@@ -72,9 +73,7 @@ export default function Page({ category }: { category: Category }) {
           }}
         >
           {isCategoriesLoading ? (
-            <Box>
-              <FetchLoading />
-            </Box>
+            <SubCategoryPlaceholder />
           ) : (
             <Box display={"flex"} flexDirection={"column"} gap={"16px"}>
               <Grid>
@@ -87,7 +86,8 @@ export default function Page({ category }: { category: Category }) {
                     <KeyboardArrowLeft /> {category.name}
                   </Button>
                 </Link>
-                <Typography variant="body1">{category.description}</Typography> {/* Adding category description using Typography */}
+                <Typography variant="body1">{category.description}</Typography>{" "}
+                {/* Adding category description using Typography */}
               </Grid>
               <Grid
                 display={"flex"}
