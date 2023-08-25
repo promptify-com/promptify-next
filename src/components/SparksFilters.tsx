@@ -36,7 +36,7 @@ interface TemplateFilterProps {
   sortTemplateDirection: "asc" | "desc";
   sortExecutionDirection: "asc" | "desc";
   sortTimeDirection: "asc" | "desc";
-  sortFavoriteDirection: "saved" | "drafts";
+  sortFavoriteDirection: "asc" | "desc";
   onNameFilter: (nameFilter: string) => void;
   nameFilter: string;
   currentTab: TabValueType;
@@ -156,7 +156,7 @@ const SparkFilters: React.FC<TemplateFilterProps> = ({
               cursor: "pointer",
             }}
           >
-            {sortFavoriteDirection === "saved" || currentTab === "saved" ? <SavedSpark /> : <DraftSpark />}
+            {sortFavoriteDirection === "asc" || currentTab === "saved" ? <SavedSpark /> : <DraftSpark />}
             <ArrowDropDown sx={{ fontSize: "16px", display: currentTab !== "all" ? "none" : "block" }} />
           </Grid>
           <Grid

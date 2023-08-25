@@ -18,7 +18,7 @@ export interface ExecutionTemplate {
   slug: string;
 }
 
-export type CurrentSortType = "executionTitle" | "executionTime" | "executionTemplate" | "saved" | "drafts";
+export type CurrentSortType = "executionTitle" | "executionTime" | "executionTemplate" | "executionFavorite";
 interface ExecutionWithTemplate extends Execution {
   template: ExecutionTemplate;
 }
@@ -27,10 +27,6 @@ const SparksContainer: FC<SparksContainerProps> = ({ templates }) => {
   const [openPopup, setOpenPopup] = useState(false);
   const [activeExecution, setActiveExecution] = useState<Execution | null>(null);
   const [popupType, setPopupType] = useState<ExecutionTemplatePopupType>("update");
-  const [templateSortOption, setTemplateSortOption] = useState<"asc" | "desc">("desc");
-  const [executionSortOption, setExecutionSortOption] = useState<"asc" | "desc">("desc");
-  const [executionTimeSortOption, setExecutionTimeSortOption] = useState<"asc" | "desc">("desc");
-  const [executionFavoriteSortOption, setExecutionFavoriteSortOption] = useState<"saved" | "drafts">("saved");
 
   const [currentTab, setCurrentTab] = useState<TabValueType>("all");
   const [selectedTemplate, setSelectedTemplate] = useState<TemplateExecutionsDisplay | null>(null);
@@ -43,24 +39,19 @@ const SparksContainer: FC<SparksContainerProps> = ({ templates }) => {
     favoriteExecution(executionId);
   };
 
-  const toggleSortDirection = () => {
-    setTemplateSortOption(templateSortOption === "asc" ? "desc" : "asc");
-    setCurrentSortType("executionTemplate");
-  };
+  const [sortDirectionState, setSortDirectionState] = useState<Record<CurrentSortType, "asc" | "desc">>({
+    executionTitle: "desc",
+    executionTemplate: "desc",
+    executionTime: "desc",
+    executionFavorite: "desc",
+  });
 
-  const handleExecutionSortDirection = () => {
-    setExecutionSortOption(executionSortOption === "asc" ? "desc" : "asc");
-    setCurrentSortType("executionTitle");
-  };
-
-  const handleTimeSortDirection = () => {
-    setExecutionTimeSortOption(executionTimeSortOption === "asc" ? "desc" : "asc");
-    setCurrentSortType("executionTime");
-  };
-
-  const handleExecutionFavoriteSort = (value: "saved" | "drafts") => {
-    setExecutionFavoriteSortOption(value);
-    setCurrentSortType(value);
+  const toggleSortDirection = (sortType: CurrentSortType) => {
+    setSortDirectionState(prevState => ({
+      ...prevState,
+      [sortType]: prevState[sortType] === "asc" ? "desc" : "asc",
+    }));
+    setCurrentSortType(sortType);
   };
 
   const handleTemplateSelect = (selectedTemplate: TemplateExecutionsDisplay | null) => {
@@ -91,14 +82,11 @@ const SparksContainer: FC<SparksContainerProps> = ({ templates }) => {
       } else if (sortBy === "executionTemplate") {
         const templateComparison = a.template.title.localeCompare(b.template.title);
         return sortDirection === "asc" ? templateComparison : -templateComparison;
-      } else if (sortBy === "saved") {
-        // Handle the "saved" case
-        return a.is_favorite === b.is_favorite ? 0 : a.is_favorite ? -1 : 1;
-      } else if (sortBy === "drafts") {
-        // Handle the "drafts" case
-        return a.is_favorite === b.is_favorite ? 0 : a.is_favorite ? 1 : -1;
+      } else {
+        // Handle the "executionFavorite" case
+        const favoriteComparison = a.is_favorite === b.is_favorite ? 0 : a.is_favorite ? -1 : 1;
+        return sortDirection === "asc" ? favoriteComparison : -favoriteComparison;
       }
-      return 0; // Default case
     });
 
     if (selectedTemplate) {
@@ -125,32 +113,14 @@ const SparksContainer: FC<SparksContainerProps> = ({ templates }) => {
       allExecutions.push(...executionsWithTemplate);
     });
 
-    let selectedSortOption: "asc" | "desc" = "asc"; // Default value
-    if (currentSortType === "executionTitle") {
-      selectedSortOption = executionSortOption;
-    } else if (currentSortType === "executionTemplate") {
-      selectedSortOption = templateSortOption;
-    } else if (currentSortType === "executionTime") {
-      selectedSortOption = executionTimeSortOption;
-    }
-
     const filteredAndSortedExecutions = filterAndSortExecutions(
       allExecutions,
       currentSortType,
-      selectedSortOption,
+      sortDirectionState[currentSortType],
       selectedTemplate,
     ).filter(execution => execution.title.toLowerCase().includes(nameFilter.toLowerCase()));
     return filteredAndSortedExecutions;
-  }, [
-    nameFilter,
-    currentSortType,
-    executionSortOption,
-    templateSortOption,
-    executionFavoriteSortOption,
-    selectedTemplate,
-    executionTimeSortOption,
-    templates,
-  ]);
+  }, [nameFilter, currentSortType, sortDirectionState, currentSortType, selectedTemplate, templates]);
 
   const draftsExecutions = executions.filter(execution => !execution.is_favorite);
   const savedExecutions = executions.filter(execution => execution.is_favorite);
@@ -187,14 +157,14 @@ const SparksContainer: FC<SparksContainerProps> = ({ templates }) => {
         templates={templates}
         onTemplateSelect={handleTemplateSelect}
         selectedTemplate={selectedTemplate}
-        onSortTemplateToggle={toggleSortDirection}
-        onSortExecutionToggle={handleExecutionSortDirection}
-        onSortTimeToggle={handleTimeSortDirection}
-        onSortFavoriteToggle={handleExecutionFavoriteSort}
-        sortTemplateDirection={templateSortOption}
-        sortExecutionDirection={executionSortOption}
-        sortFavoriteDirection={executionFavoriteSortOption}
-        sortTimeDirection={executionTimeSortOption}
+        onSortTemplateToggle={() => toggleSortDirection("executionTemplate")}
+        onSortExecutionToggle={() => toggleSortDirection("executionTitle")}
+        onSortTimeToggle={() => toggleSortDirection("executionTime")}
+        onSortFavoriteToggle={() => toggleSortDirection("executionFavorite")}
+        sortTemplateDirection={sortDirectionState.executionTemplate}
+        sortExecutionDirection={sortDirectionState.executionTitle}
+        sortFavoriteDirection={sortDirectionState.executionFavorite}
+        sortTimeDirection={sortDirectionState.executionTime}
         onNameFilter={handleNameFilter}
         nameFilter={nameFilter}
         currentTab={currentTab}
