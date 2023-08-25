@@ -14,7 +14,21 @@ const TabsSection: React.FC<TabsSectionProps> = ({ value, onChange, availableTab
       value={value}
       onChange={(event, newValue) => onChange(event, newValue)}
     >
-      {availableTabs.includes("all") && (
+      {availableTabs.map((tab, idx) => (
+        <Tab
+          key={idx}
+          value={tab}
+          label={tab}
+          style={{
+            minWidth: "40px",
+          }}
+          sx={{
+            textTransform: "capitalize",
+            opacity: tab === "drafts" && availableTabs.includes("saved") && value !== "drafts" ? 0.6 : 1,
+          }}
+        />
+      ))}
+      {/* {availableTabs.includes("all") && (
         <Tab
           value="all"
           label="All"
@@ -50,7 +64,7 @@ const TabsSection: React.FC<TabsSectionProps> = ({ value, onChange, availableTab
             opacity: availableTabs.includes("saved") && value !== "drafts" ? 0.6 : 1,
           }}
         />
-      )}
+      )} */}
     </Tabs>
   );
 };

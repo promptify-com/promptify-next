@@ -160,8 +160,8 @@ const SparksContainer: FC<SparksContainerProps> = ({ templates }) => {
 
   const availableTabs = useMemo(() => {
     const tabs: TabValueType[] = ["all"];
-    if (hasDrafts) tabs.push("drafts");
     if (hasSaved) tabs.push("saved");
+    if (hasDrafts) tabs.push("drafts");
 
     return tabs;
   }, [hasDrafts, hasSaved]);
