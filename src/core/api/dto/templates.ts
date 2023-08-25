@@ -8,6 +8,8 @@ export interface FilterParams {
   title?: string | null;
   engineId?: number;
   ordering?: string;
+  limit?: number;
+  offset?: number;
 }
 
 export interface SelectedFilters {

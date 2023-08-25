@@ -12,6 +12,8 @@ const getSearchParams = (params: FilterParams) => {
   params.engineId && searchParams.append("engine", String(params.engineId));
   params.title && searchParams.append("title", params.title);
   params.ordering && searchParams.append("ordering", params.ordering);
+  params.limit && searchParams.append("limit", String(params.limit));
+  params.offset && searchParams.append("offset", String(params.offset));
 
   return searchParams.toString();
 };
