@@ -14,9 +14,9 @@ import { setSelectedTag } from "@/core/store/filtersSlice";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { Create } from "@mui/icons-material";
 import Clone from "@/assets/icons/Clone";
-import { useCreateTemplateMutation } from "@/core/api/templates";
+import { templatesApi, useCreateTemplateMutation } from "@/core/api/templates";
 import { INodesData } from "@/common/types/builder";
-import { promptRandomId } from "@/common/helpers/promptRandomId";
+import { useAppDispatch } from "@/hooks/useStore";
 
 interface DetailsProps {
   templateData: Templates;
@@ -39,7 +39,7 @@ export const Details: React.FC<DetailsProps> = ({
   const [addToCollection] = useAddToCollectionMutation();
   const [removeFromCollection] = useRemoveFromCollectionMutation();
   const { palette } = useTheme();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const isValidUser = useSelector(isValidUserFn);
   const [isCloning, setIsCloning] = useState(false);
 
@@ -86,20 +86,36 @@ export const Details: React.FC<DetailsProps> = ({
   const cloneTemplate = async () => {
     setIsCloning(true);
     try {
-      const clonedPrompts: INodesData[] = templateData.prompts.map(prompt => ({
-        temp_id: promptRandomId(),
-        title: prompt.title,
-        content: prompt.content,
-        engine_id: prompt.engine.id,
-        model_parameters: prompt.model_parameters,
-        dependencies: [],
-        is_visible: prompt.is_visible,
-        show_output: prompt.show_output,
-        prompt_output_variable: prompt.prompt_output_variable,
-        order: prompt.order,
-        parameters: [],
-        output_format: prompt.output_format,
-      }));
+      // sort based on order to prevent depending on prompt before its created
+      const orderedPrompts = [...templateData.prompts].sort((a, b) => a.order - b.order);
+
+      const clonedPrompts: INodesData[] = await Promise.all(
+        orderedPrompts.map(async prompt => {
+          const params = (await dispatch(templatesApi.endpoints.getPromptParams.initiate(prompt.id))).data?.map(
+            param => ({
+              parameter_id: param.parameter.id,
+              score: param.score,
+              is_visible: param.is_visible,
+              is_editable: param.is_editable,
+            }),
+          );
+
+          return {
+            temp_id: prompt.id,
+            title: prompt.title,
+            content: prompt.content,
+            engine_id: prompt.engine.id,
+            model_parameters: prompt.model_parameters,
+            dependencies: prompt.dependencies || [],
+            is_visible: prompt.is_visible,
+            show_output: prompt.show_output,
+            prompt_output_variable: prompt.prompt_output_variable,
+            order: prompt.order,
+            parameters: params || [],
+            output_format: prompt.output_format,
+          };
+        }),
+      );
 
       const response = await createTemplate({
         title: `${templateData.title} - clone`,
@@ -119,6 +135,7 @@ export const Details: React.FC<DetailsProps> = ({
         status: "DRAFT",
         prompts_list: clonedPrompts,
       }).unwrap();
+
       const { id, slug } = response;
       window.open(window.location.origin + `/builder/${id}?editor=1`, "_blank");
       router.push(`/prompt/${slug}`);
@@ -236,33 +253,35 @@ export const Details: React.FC<DetailsProps> = ({
             </Typography>
           </Stack>
         </Box>
-        <Box sx={{ pb: "25px" }}>
-          <Subtitle sx={{ mb: "12px", color: "tertiary" }}>Actions</Subtitle>
-          <Stack gap={1}>
-            {currentUser?.is_admin ||
-              (currentUser?.id === templateData.created_by.id && (
-                <Button
-                  variant={"contained"}
-                  startIcon={<Create />}
-                  sx={templateBtnStyle}
-                  onClick={() => {
-                    window.open(window.location.origin + `/builder/${templateData.id}?editor=1`, "_blank");
-                  }}
-                >
-                  Edit this Template
-                </Button>
-              ))}
-            <Button
-              variant={"contained"}
-              startIcon={<Clone />}
-              sx={templateBtnStyle}
-              onClick={cloneTemplate}
-              disabled={isCloning}
-            >
-              Clone and Edit
-            </Button>
-          </Stack>
-        </Box>
+        {!!templateData && (
+          <Box sx={{ pb: "25px" }}>
+            <Subtitle sx={{ mb: "12px", color: "tertiary" }}>Actions</Subtitle>
+            <Stack gap={1}>
+              {currentUser?.is_admin ||
+                (currentUser?.id === templateData.created_by.id && (
+                  <Button
+                    variant={"contained"}
+                    startIcon={<Create />}
+                    sx={templateBtnStyle}
+                    onClick={() => {
+                      window.open(window.location.origin + `/builder/${templateData.id}?editor=1`, "_blank");
+                    }}
+                  >
+                    Edit this Template
+                  </Button>
+                ))}
+              <Button
+                variant={"contained"}
+                startIcon={<Clone />}
+                sx={templateBtnStyle}
+                onClick={cloneTemplate}
+                disabled={isCloning}
+              >
+                Clone and Edit
+              </Button>
+            </Stack>
+          </Box>
+        )}
       </Box>
     </Box>
   );

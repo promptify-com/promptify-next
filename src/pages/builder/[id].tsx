@@ -32,30 +32,6 @@ import TemplateForm from "@/components/common/forms/TemplateForm";
 import { Templates } from "@/core/api/dto/templates";
 import { promptRandomId } from "@/common/helpers/promptRandomId";
 
-export interface ITemplate {
-  title: string;
-  description: string;
-  example: string;
-  thumbnail: string;
-  is_visible: boolean;
-  language: string;
-  category: number;
-  difficulty: string;
-  duration: string;
-  prompts_list?: INodesData[];
-}
-export interface IPromptParams {
-  parameter_id: number;
-  score: number;
-  name?: string;
-  is_visible: boolean;
-  is_editable: boolean;
-  descriptions?: {
-    score: number;
-    description: string;
-  }[];
-}
-
 export const Builder = () => {
   const router = useRouter();
   const id = router.query.id;
