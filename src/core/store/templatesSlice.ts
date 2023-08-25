@@ -1,24 +1,34 @@
-import { createSlice } from '@reduxjs/toolkit';
-import type { PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
+import type { PayloadAction } from "@reduxjs/toolkit";
 
-interface TemplatesProps {
-  executeId: number | null;
+export interface TemplatesProps {
+  is_favorite: boolean;
+  id: number;
+  likes: number;
 }
 
 const initialState: TemplatesProps = {
-  executeId: null,
+  is_favorite: false,
+  id: 0,
+  likes: 0,
 };
 
 export const templatesSlice = createSlice({
-  name: 'templates',
+  name: "templates",
   initialState,
   reducers: {
-    setExecuteId: (state, action: PayloadAction<number>) => {
-      state.executeId = action.payload;
+    updateCurrentFavorite: (state, action: PayloadAction<boolean>) => {
+      state.is_favorite = action.payload;
+      state.likes = action.payload ? state.likes + 1 : state.likes - 1;
+    },
+    updateTemplateData: (state, action: PayloadAction<TemplatesProps>) => {
+      state.is_favorite = action.payload.is_favorite;
+      state.id = action.payload.id;
+      state.likes = action.payload.likes;
     },
   },
 });
 
-export const { setExecuteId } = templatesSlice.actions;
+export const { updateCurrentFavorite, updateTemplateData } = templatesSlice.actions;
 
 export default templatesSlice.reducer;

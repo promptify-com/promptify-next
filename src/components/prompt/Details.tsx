@@ -1,87 +1,33 @@
 import React, { useState } from "react";
 import { Box, Button, Chip, Stack, Typography, alpha, useTheme } from "@mui/material";
 import { Templates } from "@/core/api/dto/templates";
-import { savePathURL } from "@/common/utils";
 import { Subtitle } from "@/components/blocks";
 import moment from "moment";
 import { useRouter } from "next/router";
-import { useSelector, useDispatch } from "react-redux";
-import { useAddToCollectionMutation, useRemoveFromCollectionMutation } from "@/core/api/collections";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import FavoriteMobileButton from "@/components/common/buttons/FavoriteMobileButton";
-import { RootState } from "@/core/store";
 import { setSelectedTag } from "@/core/store/filtersSlice";
-import { isValidUserFn } from "@/core/store/userSlice";
 import { Create } from "@mui/icons-material";
 import Clone from "@/assets/icons/Clone";
 import { templatesApi, useCreateTemplateMutation } from "@/core/api/templates";
 import { INodesData } from "@/common/types/builder";
-import { useAppDispatch } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { RootState } from "@/core/store";
 
 interface DetailsProps {
   templateData: Templates;
-  updateTemplateData: (data: Templates) => void;
   setMobileTab?: (value: number) => void;
   setActiveTab?: (value: number) => void;
   mobile?: boolean;
 }
 
-export const Details: React.FC<DetailsProps> = ({
-  templateData,
-  updateTemplateData,
-  setMobileTab,
-  setActiveTab,
-  mobile,
-}) => {
-  const [isFetching, setIsFetching] = useState(false);
-  const currentUser = useSelector((state: RootState) => state.user.currentUser);
+export const Details: React.FC<DetailsProps> = ({ templateData, setMobileTab, setActiveTab, mobile }) => {
   const router = useRouter();
-  const [addToCollection] = useAddToCollectionMutation();
-  const [removeFromCollection] = useRemoveFromCollectionMutation();
   const { palette } = useTheme();
   const dispatch = useAppDispatch();
-  const isValidUser = useSelector(isValidUserFn);
   const [isCloning, setIsCloning] = useState(false);
-
+  const currentUser = useAppSelector((state: RootState) => state.user.currentUser);
   const [createTemplate] = useCreateTemplateMutation();
-
-  const favorTemplate = async () => {
-    if (!isValidUser) {
-      savePathURL(window.location.pathname);
-      return router.push("/signin");
-    }
-
-    if (!isFetching) {
-      setIsFetching(true);
-
-      updateTemplateData({
-        ...templateData,
-        is_favorite: !templateData.is_favorite,
-      });
-
-      try {
-        if (!currentUser?.favorite_collection_id) {
-          throw new Error("user's 'favorite_collection_id' field does not exist!");
-        }
-
-        if (!templateData.is_favorite) {
-          await addToCollection({
-            collectionId: currentUser.favorite_collection_id,
-            templateId: templateData.id,
-          });
-        } else {
-          await removeFromCollection({
-            collectionId: currentUser.favorite_collection_id,
-            templateId: templateData.id,
-          });
-        }
-      } catch (err: any) {
-        console.error(err);
-      } finally {
-        setIsFetching(false);
-      }
-    }
-  };
 
   const cloneTemplate = async () => {
     setIsCloning(true);
@@ -155,11 +101,7 @@ export const Details: React.FC<DetailsProps> = ({
         >
           {mobile && (
             <>
-              <FavoriteMobileButton
-                isFavorite={templateData.is_favorite}
-                onClick={favorTemplate}
-                likes={templateData.favorites_count}
-              />
+              <FavoriteMobileButton />
               <Button
                 variant="outlined"
                 endIcon={<ExitToAppIcon />}
@@ -257,19 +199,18 @@ export const Details: React.FC<DetailsProps> = ({
           <Box sx={{ pb: "25px" }}>
             <Subtitle sx={{ mb: "12px", color: "tertiary" }}>Actions</Subtitle>
             <Stack gap={1}>
-              {(currentUser?.is_admin ||
-                currentUser?.id === templateData.created_by.id) && (
-                  <Button
-                    variant={"contained"}
-                    startIcon={<Create />}
-                    sx={templateBtnStyle}
-                    onClick={() => {
-                      window.open(window.location.origin + `/builder/${templateData.id}?editor=1`, "_blank");
-                    }}
-                  >
-                    Edit this Template
-                  </Button>
-                )}
+              {(currentUser?.is_admin || currentUser?.id === templateData.created_by.id) && (
+                <Button
+                  variant={"contained"}
+                  startIcon={<Create />}
+                  sx={templateBtnStyle}
+                  onClick={() => {
+                    window.open(window.location.origin + `/builder/${templateData.id}?editor=1`, "_blank");
+                  }}
+                >
+                  Edit this Template
+                </Button>
+              )}
               <Button
                 variant={"contained"}
                 startIcon={<Clone />}
