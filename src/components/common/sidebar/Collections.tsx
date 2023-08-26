@@ -3,9 +3,10 @@ import { ICollectionById } from "@/common/types/collection";
 import { Box, Grid, List, ListSubheader, Typography } from "@mui/material";
 import { CollectionItem } from "./CollectionItem";
 import { ITemplate } from "@/common/types/template";
-import { FetchLoading } from "@/components/FetchLoading";
 import { useRouter } from "next/router";
 import { CollectionsEmptyBox } from "./CollectionsEmptyBox";
+
+import ListItemPlaceholder from "@/components/placeholders/ListItemPlaceholder";
 
 interface SideBarCollectionsProps {
   sidebarOpen?: boolean;
@@ -68,7 +69,7 @@ export const Collections: React.FC<SideBarCollectionsProps> = ({
               }}
             >
               {collectionLoading ? (
-                <FetchLoading />
+                <ListItemPlaceholder />
               ) : (
                 favCollection?.prompt_templates.map((item: ITemplate) => (
                   <CollectionItem

@@ -21,10 +21,10 @@ import { useDeleteTemplateMutation, useGetMyTemplatesQuery } from "@/core/api/te
 import BaseButton from "@/components/base/BaseButton";
 import { Templates } from "@/core/api/dto/templates";
 import { modalStyle } from "@/components/modals/styles";
-import { PageLoading } from "@/components/PageLoading";
 import TemplateForm from "@/components/common/forms/TemplateForm";
 import { FormType } from "@/common/types/template";
 
+import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
 import Image from "@/components/design-system/Image";
 
 export const MyTemplates = () => {
@@ -89,7 +89,7 @@ export const MyTemplates = () => {
         </BaseButton>
       </Box>
       {isTemplatesLoading ? (
-        <PageLoading />
+        <CardTemplatePlaceholder count={6} />
       ) : (
         <Box
           display={"flex"}

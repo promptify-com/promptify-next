@@ -9,8 +9,8 @@ import { SearchDialog } from "./SearchDialog";
 import { ProfileDropDown } from "@/components/ProfileMenu";
 import { SideBarMobile } from "../SideBarMobile";
 import { RootState } from "@/core/store";
-import { isValidUserFn } from '@/core/store/userSlice';
-import { useSelector } from 'react-redux';
+import { isValidUserFn } from "@/core/store/userSlice";
+import { useSelector } from "react-redux";
 
 interface HeaderProps {
   transparent?: boolean;
@@ -109,8 +109,8 @@ export const Header: React.FC<HeaderProps> = ({
         >
           <LogoApp width={23} />
           <Typography
-            sx={{fontSize: 10, mt: 0.2, ml: 0.5}}
-            fontWeight={'bold'}
+            sx={{ fontSize: 10, mt: 0.2, ml: 0.5 }}
+            fontWeight={"bold"}
           >
             beta
           </Typography>
