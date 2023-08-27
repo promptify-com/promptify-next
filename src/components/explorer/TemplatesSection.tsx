@@ -1,11 +1,13 @@
 import { Box, Grid, Typography } from "@mui/material";
 
 import { NotFoundIcon } from "@/assets/icons/NotFoundIcon";
-import { FetchLoading } from "@/components/FetchLoading";
 import CardTemplate from "@/components/common/cards/CardTemplate";
 import { TemplateExecutionsDisplay, Templates, TemplatesWithPagination } from "@/core/api/dto/templates";
 import CardTemplateLast from "../common/cards/CardTemplateLast";
 import TemplatesPaginatedList from "../TemplatesPaginatedList";
+
+import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
+import LatestTemplatePlaceholder from "@/components/placeholders/LatestTemplatePlaceholder";
 
 interface TemplatesSectionProps {
   templates: Templates[] | TemplateExecutionsDisplay[] | undefined;
@@ -34,15 +36,23 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
     <>
       <Box width={"100%"}>
         {!filtred && <Typography fontSize={19}>{title}</Typography>}
+
         {isLoading ? (
-          <Box
-            minHeight={"40vh"}
-            display={"flex"}
-            alignItems={"center"}
-            justifyContent={"center"}
-          >
-            <FetchLoading />
-          </Box>
+          isLatestTemplates ? (
+            <Grid
+              display={"flex"}
+              flexDirection={"row"}
+              gap={"16px"}
+              alignItems={"flex-start"}
+              alignContent={"flex-start"}
+              alignSelf={"stretch"}
+              flexWrap={{ xs: "nowrap", md: "wrap" }}
+            >
+              <LatestTemplatePlaceholder count={4} />
+            </Grid>
+          ) : (
+            <CardTemplatePlaceholder count={4} />
+          )
         ) : (
           <Grid
             display={"flex"}

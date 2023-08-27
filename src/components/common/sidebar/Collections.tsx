@@ -3,9 +3,10 @@ import { ICollectionById } from "@/common/types/collection";
 import { Box, Grid, List, ListSubheader, Typography } from "@mui/material";
 import { CollectionItem } from "./CollectionItem";
 import { ITemplate } from "@/common/types/template";
-import { FetchLoading } from "@/components/FetchLoading";
 import { useRouter } from "next/router";
 import { CollectionsEmptyBox } from "./CollectionsEmptyBox";
+
+import ListItemPlaceholder from "@/components/placeholders/ListItemPlaceholder";
 
 interface SideBarCollectionsProps {
   sidebarOpen?: boolean;
@@ -24,11 +25,7 @@ export const Collections: React.FC<SideBarCollectionsProps> = ({
 
   return (
     <Box>
-      <ListSubheader
-        sx={{ fontSize: "12px", display: sidebarOpen ? "block" : "none" }}
-      >
-        COLLECTION
-      </ListSubheader>
+      <ListSubheader sx={{ fontSize: "12px", display: sidebarOpen ? "block" : "none" }}>COLLECTION</ListSubheader>
 
       <Box>
         {!isValidUser ? (
@@ -45,7 +42,10 @@ export const Collections: React.FC<SideBarCollectionsProps> = ({
                 pl: 3,
               }}
             >
-              <Grid display={"flex"} alignItems={"center"}>
+              <Grid
+                display={"flex"}
+                alignItems={"center"}
+              >
                 <FavoriteList />
                 <Typography
                   sx={{
@@ -68,7 +68,7 @@ export const Collections: React.FC<SideBarCollectionsProps> = ({
               }}
             >
               {collectionLoading ? (
-                <FetchLoading />
+                <ListItemPlaceholder />
               ) : (
                 favCollection?.prompt_templates.map((item: ITemplate) => (
                   <CollectionItem

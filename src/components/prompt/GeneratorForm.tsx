@@ -15,6 +15,8 @@ import { useWindowSize } from "usehooks-ts";
 import { useRouter } from "next/router";
 import { AllInclusive, Close, InfoOutlined } from "@mui/icons-material";
 
+import TabsAndFormPlaceholder from "@/components/placeholders/TabsAndFormPlaceholder";
+
 interface GeneratorFormProps {
   templateData: Templates;
   selectedExecution: TemplatesExecutions | null;
@@ -434,7 +436,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   return (
     <Stack
       sx={{
-        minHeight: "100%",
+        minHeight: { xs: "100%", md: "40svh" },
         bgcolor: "surface.2",
       }}
     >
@@ -492,17 +494,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
           }}
         >
           {!shownInputs || !shownParams ? (
-            <Box
-              sx={{
-                width: "100%",
-                mt: "40px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <CircularProgress size={20} />
-            </Box>
+            <TabsAndFormPlaceholder form={true} />
           ) : shownInputs.length === 0 && shownParams.length === 0 ? (
             <Box
               sx={{
@@ -613,7 +605,8 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
                       <AllInclusive fontSize="small" />
                     ) : (
                       <>
-                        {templateData.executions_count} of {templateData.executions_limit} left
+                        {templateData.executions_limit - templateData.executions_count} of{" "}
+                        {templateData.executions_limit} left
                         <InfoOutlined sx={{ fontSize: 16 }} />
                       </>
                     )}

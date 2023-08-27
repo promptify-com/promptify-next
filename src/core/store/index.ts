@@ -3,7 +3,6 @@ import { createWrapper } from "next-redux-wrapper";
 
 import { templatesSlice } from "./templatesSlice";
 import filterSlice from "./filtersSlice";
-import executionsSlice from "./executionsSlice";
 import sidebarSlice from "./sidebarSlice";
 import profileSlice from "./profileSlice";
 import { baseApi } from "../api/api";
@@ -18,7 +17,6 @@ export const store = (options?: ConfigureStoreOptions["preloadedState"] | undefi
     reducer: {
       [baseApi.reducerPath]: baseApi.reducer,
       template: templatesSlice.reducer,
-      executionsSlice: executionsSlice,
       filters: filterSlice,
       sidebar: sidebarSlice,
       profile: profileSlice,

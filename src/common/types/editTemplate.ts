@@ -1,7 +1,9 @@
 import { Prompts } from "@/core/api/dto/prompts";
 import { Tag, TemplateStatus } from "@/core/api/dto/templates";
+import { INodesData } from "./builder";
 
 export interface IEditTemplate {
+  slug?: string;
   title: string;
   description: string;
   duration: string;
@@ -13,9 +15,8 @@ export interface IEditTemplate {
   tags: Tag[] | [];
   thumbnail: string;
   example?: string;
-  prompts_list?: Prompts[] | [];
+  prompts_list?: INodesData[] | [];
   executions_limit: number;
-  slug: string;
   meta_title: string;
   meta_description: string;
   meta_keywords: string;

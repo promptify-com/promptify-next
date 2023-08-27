@@ -5,6 +5,8 @@ import { useQuestions } from "../../hooks/api/questions";
 import Questions from "@/components/signUp/Questions";
 import Finish from "@/components/signUp/Finish";
 
+import SigninPlaceholder from "@/components/placeholders/SigninPlaceholder";
+
 const SignUp = () => {
   const [step, setStep] = useState(1);
   const isLoading = false;
@@ -26,12 +28,15 @@ const SignUp = () => {
   return (
     <>
       {isLoading ? (
-        <PageLoading />
+        <SigninPlaceholder signup={true} />
       ) : (
         <Box>
           {/* {step === 1 && <Prompts setStep={setStep} />} */}
           {step === 1 && (
-            <Questions questions={questions} skip={() => setStep(2)} />
+            <Questions
+              questions={questions}
+              skip={() => setStep(2)}
+            />
           )}
           {step === 2 && <Finish />}
         </Box>

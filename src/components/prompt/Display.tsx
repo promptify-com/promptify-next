@@ -1,11 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Box, CircularProgress, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { ExecutionCard } from "./ExecutionCard";
 import { PromptLiveResponse } from "@/common/types/prompt";
 import { ExecutionCardGenerated } from "./ExecutionCardGenerated";
 import { DisplayActions } from "./DisplayActions";
 import { addToFavorite, removeFromFavorite } from "@/hooks/api/executions";
+
+import ParagraphPlaceholder from "@/components/placeholders/ParagraphPlaceholder";
 
 interface Props {
   templateData: Templates;
@@ -74,17 +76,7 @@ export const Display: React.FC<Props> = ({
             />
           ) : // If there is no new execution being generated, show the selected execution
           isFetching ? (
-            <Box
-              sx={{
-                width: "100%",
-                mt: "40px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <CircularProgress size={20} />
-            </Box>
+            <ParagraphPlaceholder />
           ) : selectedExecution ? (
             <ExecutionCard
               execution={selectedExecution}

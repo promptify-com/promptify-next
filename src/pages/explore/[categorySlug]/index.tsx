@@ -3,7 +3,6 @@ import { KeyboardArrowLeft } from "@mui/icons-material";
 import { Box, Button, Grid, Typography } from "@mui/material";
 
 import { authClient } from "@/common/axios";
-import { FetchLoading } from "@/components/FetchLoading";
 import { SubCategoryCard } from "@/components/common/cards/CardSubcategory";
 import { Category, FilterParams, SelectedFilters } from "@/core/api/dto/templates";
 import { useGetTemplatesByFilterQuery } from "@/core/api/templates";
@@ -15,6 +14,8 @@ import { FiltersSelected } from "@/components/explorer/FiltersSelected";
 import { useGetCategoriesQuery } from "@/core/api/categories";
 import Link from "next/link";
 import { useState } from "react";
+
+import SubCategoryPlaceholder from "@/components/placeholders/SubCategoryPlaceholder";
 
 export default function Page({ category }: { category: Category }) {
   const router = useRouter();
@@ -82,9 +83,7 @@ export default function Page({ category }: { category: Category }) {
           }}
         >
           {isCategoriesLoading ? (
-            <Box>
-              <FetchLoading />
-            </Box>
+            <SubCategoryPlaceholder />
           ) : (
             <Box
               display={"flex"}

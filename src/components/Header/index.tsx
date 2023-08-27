@@ -9,8 +9,8 @@ import { SearchDialog } from "./SearchDialog";
 import { ProfileDropDown } from "@/components/ProfileMenu";
 import { SideBarMobile } from "../SideBarMobile";
 import { RootState } from "@/core/store";
-import { isValidUserFn } from '@/core/store/userSlice';
-import { useSelector } from 'react-redux';
+import { isValidUserFn } from "@/core/store/userSlice";
+import { useSelector } from "react-redux";
 
 interface HeaderProps {
   transparent?: boolean;
@@ -52,12 +52,7 @@ const Login = () => {
   );
 };
 
-export const Header: React.FC<HeaderProps> = ({
-  transparent = false,
-  fixed = false,
-  keyWord = "",
-  setKeyWord,
-}) => {
+export const Header: React.FC<HeaderProps> = ({ transparent = false, fixed = false, keyWord = "", setKeyWord }) => {
   const router = useRouter();
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
   const isValidUser = useSelector(isValidUserFn);
@@ -109,8 +104,8 @@ export const Header: React.FC<HeaderProps> = ({
         >
           <LogoApp width={23} />
           <Typography
-            sx={{fontSize: 10, mt: 0.2, ml: 0.5}}
-            fontWeight={'bold'}
+            sx={{ fontSize: 10, mt: 0.2, ml: 0.5 }}
+            fontWeight={"bold"}
           >
             beta
           </Typography>
@@ -173,7 +168,10 @@ export const Header: React.FC<HeaderProps> = ({
           }}
           onClick={handleInputFocus}
         >
-          <SearchBar keyWord={keyWord} setKeyWord={setKeyWord} />
+          <SearchBar
+            keyWord={keyWord}
+            setKeyWord={setKeyWord}
+          />
           <SearchDialog
             open={openSearchDialog}
             close={() => setOpenSearchDialog(false)}
@@ -212,7 +210,11 @@ export const Header: React.FC<HeaderProps> = ({
                   }}
                 />
               ) : (
-                <Box display={"flex"} alignItems={"center"} gap={"16px"}>
+                <Box
+                  display={"flex"}
+                  alignItems={"center"}
+                  gap={"16px"}
+                >
                   <Login />
                   <Grid
                     onClick={() =>

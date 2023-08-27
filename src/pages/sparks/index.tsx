@@ -1,10 +1,11 @@
 import React from "react";
-import { Box, Grid, Stack, Typography } from "@mui/material";
-import { FetchLoading } from "@/components/FetchLoading";
+import { Box, Grid, Stack, Typography, Skeleton } from "@mui/material";
 import { Layout } from "@/layout";
 import Protected from "@/components/Protected";
 import SparksContainer from "@/components/SparksContainer";
 import { useGetTemplatesExecutionsByMeQuery } from "@/core/api/executions";
+
+import SparksTemplatePlaceholder from "@/components/placeholders/SparksTemplatePlaceholder";
 
 const Sparks = () => {
   const { data: executedTemplates, isLoading: isExecutedTemplatesLoading } = useGetTemplatesExecutionsByMeQuery();
@@ -22,9 +23,23 @@ const Sparks = () => {
             }}
           >
             {isExecutedTemplatesLoading ? (
-              <Box>
-                <FetchLoading />
-              </Box>
+              <>
+                <Box
+                  width={{ xs: "40%", md: "20%" }}
+                  mb={1}
+                >
+                  <Skeleton
+                    variant="text"
+                    height={35}
+                    width={"100%"}
+                    animation="wave"
+                  />
+                </Box>
+
+                <Box bgcolor={"surface.1"}>
+                  <SparksTemplatePlaceholder count={3} />
+                </Box>
+              </>
             ) : (
               <Stack gap={2}>
                 <Typography
