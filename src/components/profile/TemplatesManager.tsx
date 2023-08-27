@@ -2,6 +2,7 @@ import React, { useMemo, useState, FC, useEffect } from "react";
 import {
   Box,
   Button,
+  Chip,
   Dialog,
   DialogActions,
   DialogContent,
@@ -9,9 +10,11 @@ import {
   DialogTitle,
   FormControl,
   Grid,
+  InputBase,
   Modal,
   NativeSelect,
   Stack,
+  TextField,
   Typography,
 } from "@mui/material";
 
@@ -30,7 +33,7 @@ import { FormType } from "@/common/types/template";
 import { TemplateStatusArray } from "@/common/constants";
 import { PageLoading } from "../PageLoading";
 import TemplateManagerItem from "./TemplateManagerItem";
-import { ArrowLeft, ArrowRight, ArrowRightAlt } from "@mui/icons-material";
+import { ArrowLeft, ArrowRight, ArrowRightAlt, Search } from "@mui/icons-material";
 import TemplatesPaginatedList from "../TemplatesPaginatedList";
 
 export type UserType = "admin" | "user";
@@ -46,7 +49,7 @@ export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title }) => {
   const { data: userTemplates, isFetching: isUserTemplatesFetching } = useGetMyTemplatesQuery(undefined, {
     skip: isUserAdmin,
   });
-  const [trigger, { data: adminTemplates, isFetching: isAdminTemplatesFetchiing }] =
+  const [trigger, { data: adminTemplates, isLoading: isAdminTemplatesLoading }] =
     templatesApi.endpoints.getTemplatesByFilter.useLazyQuery();
 
   const [offset, setOffset] = useState<number>(0);
@@ -69,15 +72,20 @@ export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title }) => {
     }
     return adminTemplates?.results ?? [];
   }, [adminTemplates, status, isUserAdmin]);
+  const [searchName, setSearchName] = useState("");
 
   useEffect(() => {
     trigger({
       ordering: "-created_at",
       limit: 10,
-      offset,
-      title: "Novella",
+      offset: offset,
+      title: searchName,
     });
-  }, [offset]);
+  }, [offset, searchName]);
+
+  useEffect(() => {
+    setOffset(0);
+  }, [searchName]);
 
   const confirmDelete = async () => {
     if (!selectedTemplate) return;
@@ -132,12 +140,32 @@ export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title }) => {
             ml={{ xs: "auto" }}
             spacing={1}
           >
-            <FormControl
-              sx={{ m: 1 }}
-              variant="standard"
+            <Box
+              display={"flex"}
+              bgcolor={"surface.1"}
+              alignItems={"center"}
+              p={"4px 16px"}
+              width={"200px"}
+              borderRadius={"99px"}
             >
+              <Search sx={{ fontSize: 18, opacity: 0.6 }} />
+              <InputBase
+                sx={{ ml: 1, flex: 1, fontSize: 14 }}
+                placeholder="Search..."
+                inputProps={{ "aria-label": "Search" }}
+                defaultValue={searchName}
+                onChange={e => {
+                  setTimeout(() => {
+                    setSearchName(e.target.value);
+                  }, 500);
+                }}
+              />
+            </Box>
+
+            <FormControl sx={{ m: 1 }}>
               <NativeSelect
                 id="status"
+                variant="outlined"
                 sx={{
                   fontSize: 15,
                 }}
@@ -208,7 +236,7 @@ export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title }) => {
 
       {isUserAdmin ? (
         <Grid width={"100%"}>
-          {isAdminTemplatesFetchiing && filteredTemplates?.length === 0 ? (
+          {isAdminTemplatesLoading ? (
             <PageLoading />
           ) : (
             <Box

@@ -5,11 +5,7 @@ import { Box, Button, Grid, Typography } from "@mui/material";
 import { authClient } from "@/common/axios";
 import { FetchLoading } from "@/components/FetchLoading";
 import { SubCategoryCard } from "@/components/common/cards/CardSubcategory";
-import {
-  Category,
-  FilterParams,
-  SelectedFilters,
-} from "@/core/api/dto/templates";
+import { Category, FilterParams, SelectedFilters } from "@/core/api/dto/templates";
 import { useGetTemplatesByFilterQuery } from "@/core/api/templates";
 import { Layout } from "@/layout";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
@@ -18,22 +14,39 @@ import { RootState } from "@/core/store";
 import { FiltersSelected } from "@/components/explorer/FiltersSelected";
 import { useGetCategoriesQuery } from "@/core/api/categories";
 import Link from "next/link";
+import { useState } from "react";
 
 export default function Page({ category }: { category: Category }) {
   const router = useRouter();
   const categorySlug = router.query.categorySlug;
-  const { data: categories, isLoading: isCategoriesLoading } =
-    useGetCategoriesQuery();
+  const { data: categories, isLoading: isCategoriesLoading } = useGetCategoriesQuery();
 
   const title = useSelector((state: RootState) => state.filters.title);
   const filters = useSelector((state: RootState) => state.filters);
   const tags = useSelector((state: RootState) => state.filters.tag);
   const engineId = useSelector((state: RootState) => state.filters.engine?.id);
 
+  const filteredTags = tags
+    .filter(item => item !== null)
+    .map(item => item?.name)
+    .join("&tag=");
+
+  const [offset, setOffset] = useState(0);
+
+  const params: FilterParams = {
+    tag: filteredTags,
+    engineId,
+    title,
+    categoryId: category.id,
+    offset,
+    limit: 10,
+  };
+  const { data: templates, isLoading: isTemplatesLoading } = useGetTemplatesByFilterQuery(params);
+
   function areAllStatesNull(filters: SelectedFilters): boolean {
     return (
       filters.engine === null &&
-      filters.tag.every((tag) => tag === null) &&
+      filters.tag.every(tag => tag === null) &&
       filters.title === null &&
       filters.category === null &&
       filters.subCategory === null
@@ -42,20 +55,6 @@ export default function Page({ category }: { category: Category }) {
 
   const allNull = areAllStatesNull(filters);
 
-  const filteredTags = tags
-    .filter((item) => item !== null)
-    .map((item) => item?.name)
-    .join("&tag=");
-
-  const params: FilterParams = {
-    tag: filteredTags,
-    engineId,
-    title,
-    categoryId: category.id,
-  };
-  const { data: templates, isLoading: isTemplatesLoading } =
-    useGetTemplatesByFilterQuery(params);
-
   const goBack = () => {
     router.push("/explore");
   };
@@ -63,9 +62,20 @@ export default function Page({ category }: { category: Category }) {
     router.push(`/explore/${categorySlug}/${item.slug}`);
   };
 
+  const handleNextPage = () => {
+    setOffset(prevOffset => prevOffset + 10);
+  };
+
+  const handlePreviousPage = () => {
+    setOffset(prevOffset => Math.max(0, prevOffset - 10));
+  };
+
   return (
     <Layout>
-      <Box mt={{ xs: 7, md: -2 }} padding={{ xs: "4px 0px", md: "0px 8px" }}>
+      <Box
+        mt={{ xs: 7, md: -2 }}
+        padding={{ xs: "4px 0px", md: "0px 8px" }}
+      >
         <Grid
           sx={{
             padding: { xs: "16px", md: "32px" },
@@ -76,9 +86,16 @@ export default function Page({ category }: { category: Category }) {
               <FetchLoading />
             </Box>
           ) : (
-            <Box display={"flex"} flexDirection={"column"} gap={"16px"}>
+            <Box
+              display={"flex"}
+              flexDirection={"column"}
+              gap={"16px"}
+            >
               <Grid>
-                <Link style={{ textDecoration: "none" }} href={"/explore"}>
+                <Link
+                  style={{ textDecoration: "none" }}
+                  href={"/explore"}
+                >
                   <Button
                     onClick={() => goBack()}
                     variant="text"
@@ -87,7 +104,8 @@ export default function Page({ category }: { category: Category }) {
                     <KeyboardArrowLeft /> {category.name}
                   </Button>
                 </Link>
-                <Typography variant="body1">{category.description}</Typography> {/* Adding category description using Typography */}
+                <Typography variant="body1">{category.description}</Typography>{" "}
+                {/* Adding category description using Typography */}
               </Grid>
               <Grid
                 display={"flex"}
@@ -99,8 +117,8 @@ export default function Page({ category }: { category: Category }) {
                 }}
               >
                 {categories
-                  ?.filter((mainCat) => category?.name == mainCat.parent?.name)
-                  .map((subcategory) => (
+                  ?.filter(mainCat => category?.name == mainCat.parent?.name)
+                  .map(subcategory => (
                     <Grid key={subcategory.id}>
                       <SubCategoryCard
                         subcategory={subcategory}
@@ -113,9 +131,14 @@ export default function Page({ category }: { category: Category }) {
               </Grid>
               <FiltersSelected show={!allNull} />
               <TemplatesSection
-                filtred
-                templates={templates}
+                filtred={!allNull}
+                templates={templates?.results ?? []}
                 isLoading={isTemplatesLoading}
+                title="Best templates"
+                hasNext={!!templates?.next}
+                hasPrev={!!templates?.previous}
+                onNextPage={handleNextPage}
+                onPrevPage={handlePreviousPage}
               />
             </Box>
           )}
@@ -128,9 +151,7 @@ export default function Page({ category }: { category: Category }) {
 export async function getServerSideProps({ params }: any) {
   const { categorySlug } = params;
   try {
-    const categoryRes = await authClient.get(
-      `/api/meta/categories/by-slug/${categorySlug}/`
-    );
+    const categoryRes = await authClient.get(`/api/meta/categories/by-slug/${categorySlug}/`);
     const category = categoryRes.data; // Extract the necessary data from the response
 
     return {

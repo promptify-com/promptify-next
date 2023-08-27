@@ -7,18 +7,11 @@ import Head from "next/head";
 import { authClient } from "@/common/axios";
 import { FetchLoading } from "@/components/FetchLoading";
 import { SubCategoryCard } from "@/components/common/cards/CardSubcategory";
-import {
-  Category,
-  FilterParams,
-  SelectedFilters,
-} from "@/core/api/dto/templates";
+import { Category, FilterParams, SelectedFilters } from "@/core/api/dto/templates";
 import { Layout } from "@/layout";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
 import { useGetTemplatesByFilterQuery } from "@/core/api/templates";
-import {
-  useGetCategoriesQuery,
-  useGetCategoryBySlugQuery,
-} from "@/core/api/categories";
+import { useGetCategoriesQuery, useGetCategoryBySlugQuery } from "@/core/api/categories";
 import { RootState } from "@/core/store";
 import { FiltersSelected } from "@/components/explorer/FiltersSelected";
 
@@ -30,15 +23,12 @@ export default function Page({ category }: { category: Category }) {
   const router = useRouter();
   const subCategorySlug = router.query.subcategorySlug;
 
-  const { data: subcategory } = useGetCategoryBySlugQuery(
-    subCategorySlug as string
-  );
-  const { data: categories, isLoading: isCategoriesLoading } =
-    useGetCategoriesQuery();
+  const { data: subcategory } = useGetCategoryBySlugQuery(subCategorySlug as string);
+  const { data: categories, isLoading: isCategoriesLoading } = useGetCategoriesQuery();
 
   const filteredTags = tags
-    .filter((item) => item !== null)
-    .map((item) => item?.name)
+    .filter(item => item !== null)
+    .map(item => item?.name)
     .join("&tag=");
 
   const params: FilterParams = {
@@ -48,13 +38,12 @@ export default function Page({ category }: { category: Category }) {
     subcategoryId: subcategory?.id,
   };
 
-  const { data: templates, isLoading: isTemplatesLoading } =
-    useGetTemplatesByFilterQuery(params);
+  const { data: templates, isLoading: isTemplatesLoading } = useGetTemplatesByFilterQuery(params);
 
   function areAllStatesNull(filters: SelectedFilters): boolean {
     return (
       filters.engine === null &&
-      filters.tag.every((tag) => tag === null) &&
+      filters.tag.every(tag => tag === null) &&
       filters.title === null &&
       filters.category === null &&
       filters.subCategory === null
@@ -75,7 +64,10 @@ export default function Page({ category }: { category: Category }) {
         />
       </Head>
       <Layout>
-        <Box mt={{ xs: 7, md: 0 }} padding={{ xs: "4px 0px", md: "0px 8px" }}>
+        <Box
+          mt={{ xs: 7, md: 0 }}
+          padding={{ xs: "4px 0px", md: "0px 8px" }}
+        >
           <Grid
             sx={{
               padding: { xs: "16px", md: "32px" },
@@ -111,10 +103,8 @@ export default function Page({ category }: { category: Category }) {
                   }}
                 >
                   {categories
-                    ?.filter(
-                      (mainCat) => category?.name == mainCat.parent?.name
-                    )
-                    .map((subcategory) => (
+                    ?.filter(mainCat => category?.name == mainCat.parent?.name)
+                    .map(subcategory => (
                       <Grid key={subcategory.id}>
                         <SubCategoryCard
                           subcategory={subcategory}
@@ -128,7 +118,7 @@ export default function Page({ category }: { category: Category }) {
 
                 <TemplatesSection
                   filtred
-                  templates={templates}
+                  templates={templates?.results}
                   isLoading={isTemplatesLoading}
                 />
               </Box>
@@ -143,9 +133,7 @@ export default function Page({ category }: { category: Category }) {
 export async function getServerSideProps({ params }: any) {
   const { categorySlug } = params;
   try {
-    const categoryRes = await authClient.get(
-      `/api/meta/categories/by-slug/${categorySlug}`
-    );
+    const categoryRes = await authClient.get(`/api/meta/categories/by-slug/${categorySlug}`);
     const category = categoryRes.data; // Extract the necessary data from the response
     return {
       props: {
