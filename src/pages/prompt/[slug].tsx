@@ -22,7 +22,7 @@ import { mix } from "polished";
 import { useRouter } from "next/router";
 import { useGetPromptTemplateBySlugQuery, useViewTemplateMutation } from "@/core/api/templates";
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
-import { PageLoading } from "@/components/PageLoading";
+
 import { GeneratorForm } from "@/components/prompt/GeneratorForm";
 import { Display } from "@/components/prompt/Display";
 import { Details } from "@/components/prompt/Details";
@@ -40,6 +40,8 @@ import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
 import ExecutionForm from "@/components/prompt/ExecutionForm";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { useSelector } from "react-redux";
+
+import PromptPlaceholder from "@/components/placeholders/PromptPlaceHolder";
 
 const Prompt = () => {
   const [selectedExecution, setSelectedExecution] = useState<TemplatesExecutions | null>(null);
@@ -191,7 +193,7 @@ const Prompt = () => {
       <ThemeProvider theme={dynamicTheme}>
         <Layout>
           {!templateData || isLoadingTemplate || isFetchingTemplate ? (
-            <PageLoading />
+            <PromptPlaceholder />
           ) : (
             <Grid
               mt={{ xs: 7, md: 0 }}

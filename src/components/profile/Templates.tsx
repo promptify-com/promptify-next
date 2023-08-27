@@ -32,6 +32,7 @@ import { FormType } from "@/common/types/template";
 import { TemplateStatusArray } from "@/common/constants";
 import { PageLoading } from "../PageLoading";
 
+import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
 import Image from "@/components/design-system/Image";
 
 export const AllTemplates = () => {
@@ -159,7 +160,7 @@ export const AllTemplates = () => {
         </Stack>
       </Box>
       {isFetching && filteredTemplates.length === 0 ? (
-        <PageLoading />
+        <CardTemplatePlaceholder count={6} />
       ) : (
         <Box
           display={"flex"}

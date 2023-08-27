@@ -5,7 +5,6 @@ import { useSelector } from "react-redux";
 import Head from "next/head";
 
 import { authClient } from "@/common/axios";
-import { FetchLoading } from "@/components/FetchLoading";
 import { SubCategoryCard } from "@/components/common/cards/CardSubcategory";
 import {
   Category,
@@ -21,6 +20,8 @@ import {
 } from "@/core/api/categories";
 import { RootState } from "@/core/store";
 import { FiltersSelected } from "@/components/explorer/FiltersSelected";
+
+import SubCategoryPlaceholder from "@/components/placeholders/SubCategoryPlaceholder";
 
 export default function Page({ category }: { category: Category }) {
   const title = useSelector((state: RootState) => state.filters.title);
@@ -82,9 +83,7 @@ export default function Page({ category }: { category: Category }) {
             }}
           >
             {isCategoriesLoading ? (
-              <Box>
-                <FetchLoading />
-              </Box>
+              <SubCategoryPlaceholder />
             ) : (
               <Box
                 gap={"16px"}
