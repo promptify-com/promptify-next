@@ -51,10 +51,16 @@ export const Builder = () => {
 
   // Remove 'editor' query param after first load to prevent open modal on every load
   useEffect(() => {
-    const newQueryParams = new URLSearchParams(window.location.search);
-    newQueryParams.delete("editor");
-    window.history.replaceState({}, "", `${window.location.pathname}?${newQueryParams}`);
-  }, [router.query.editor]);
+    if (router.query.editor) {
+      const { editor, ...restQueryParams } = router.query;
+
+      // Replace the route without causing a re-render, and without changing the scroll position
+      router.replace({
+        pathname: router.pathname,
+        query: restQueryParams,
+      }, undefined, { scroll: false, shallow: true });
+    }
+  }, [router.query]);
 
   const create = useCallback(
     (el: HTMLElement) => {

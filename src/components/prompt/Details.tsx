@@ -118,7 +118,7 @@ export const Details: React.FC<DetailsProps> = ({
       );
 
       const response = await createTemplate({
-        title: `${templateData.title} - clone`,
+        title: `${templateData.title} - Copy`,
         description: templateData.description,
         duration: templateData.duration.toString(),
         difficulty: templateData.difficulty,
@@ -257,8 +257,8 @@ export const Details: React.FC<DetailsProps> = ({
           <Box sx={{ pb: "25px" }}>
             <Subtitle sx={{ mb: "12px", color: "tertiary" }}>Actions</Subtitle>
             <Stack gap={1}>
-              {currentUser?.is_admin ||
-                (currentUser?.id === templateData.created_by.id && (
+              {(currentUser?.is_admin ||
+                currentUser?.id === templateData.created_by.id) && (
                   <Button
                     variant={"contained"}
                     startIcon={<Create />}
@@ -269,7 +269,7 @@ export const Details: React.FC<DetailsProps> = ({
                   >
                     Edit this Template
                   </Button>
-                ))}
+                )}
               <Button
                 variant={"contained"}
                 startIcon={<Clone />}
