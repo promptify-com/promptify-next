@@ -437,7 +437,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   return (
     <Stack
       sx={{
-        minHeight: "100%",
+        minHeight: { xs: "100%", md: "40svh" },
         bgcolor: "surface.2",
       }}
     >
@@ -606,7 +606,8 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
                       <AllInclusive fontSize="small" />
                     ) : (
                       <>
-                        {templateData.executions_count} of {templateData.executions_limit} left
+                        {templateData.executions_limit - templateData.executions_count} of{" "}
+                        {templateData.executions_limit} left
                         <InfoOutlined sx={{ fontSize: 16 }} />
                       </>
                     )}

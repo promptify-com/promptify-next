@@ -30,30 +30,7 @@ import { ContentCopy } from "@mui/icons-material";
 import { INodesData } from "@/common/types/builder";
 import TemplateForm from "@/components/common/forms/TemplateForm";
 import { Templates } from "@/core/api/dto/templates";
-
-export interface ITemplate {
-  title: string;
-  description: string;
-  example: string;
-  thumbnail: string;
-  is_visible: boolean;
-  language: string;
-  category: number;
-  difficulty: string;
-  duration: string;
-  prompts_list?: INodesData[];
-}
-export interface IPromptParams {
-  parameter_id: number;
-  score: number;
-  name?: string;
-  is_visible: boolean;
-  is_editable: boolean;
-  descriptions?: {
-    score: number;
-    description: string;
-  }[];
-}
+import { promptRandomId } from "@/common/helpers/promptRandomId";
 
 export const Builder = () => {
   const router = useRouter();
@@ -69,8 +46,21 @@ export const Builder = () => {
   const dataForRequest = useRef({} as any);
   const [confirmDialogOpen, setConfirmDialogOpen] = React.useState(false);
   const [snackBarOpen, setSnackBarOpen] = React.useState(false);
-  const [templateDrawerOpen, setTemplateDrawerOpen] = React.useState(false);
+  const [templateDrawerOpen, setTemplateDrawerOpen] = React.useState(Boolean(router.query.editor));
   const [publishTemplate] = usePublishTemplateMutation();
+
+  // Remove 'editor' query param after first load to prevent open modal on every load
+  useEffect(() => {
+    if (router.query.editor) {
+      const { editor, ...restQueryParams } = router.query;
+
+      // Replace the route without causing a re-render, and without changing the scroll position
+      router.replace({
+        pathname: router.pathname,
+        query: restQueryParams,
+      }, undefined, { scroll: false, shallow: true });
+    }
+  }, [router.query]);
 
   const create = useCallback(
     (el: HTMLElement) => {
@@ -194,8 +184,7 @@ export const Builder = () => {
     setSelectedNode(node);
     node.selected = true;
     node.count = nodeCount.toString();
-    // assign random integer to temp_id
-    node.temp_id = Math.floor(Math.random() * 1000000000);
+    node.temp_id = promptRandomId();
 
     setNodesData(prev => [
       ...prev,
@@ -237,7 +226,7 @@ export const Builder = () => {
       setSelectedNode(node);
       node.selected = true;
       node.count = nodeCount.toString();
-      node.temp_id = Math.floor(Math.random() * 1000000000);
+      node.temp_id = promptRandomId();
 
       setNodesData(prev => [
         ...prev,
