@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Accordion,
   AccordionDetails,
@@ -21,8 +21,7 @@ import materialDynamicColors from "material-dynamic-colors";
 import { mix } from "polished";
 import { useRouter } from "next/router";
 import { useGetPromptTemplateBySlugQuery, useViewTemplateMutation } from "@/core/api/templates";
-import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
-
+import { TemplatesExecutions } from "@/core/api/dto/templates";
 import { GeneratorForm } from "@/components/prompt/GeneratorForm";
 import { Display } from "@/components/prompt/Display";
 import { Details } from "@/components/prompt/Details";
@@ -31,7 +30,6 @@ import { DetailsCard } from "@/components/prompt/DetailsCard";
 import { Prompts } from "@/core/api/dto/prompts";
 import { PromptLiveResponse } from "@/common/types/prompt";
 import { Layout } from "@/layout";
-import useToken from "@/hooks/useToken";
 import { useWindowSize } from "usehooks-ts";
 import BottomTabs from "@/components/prompt/BottomTabs";
 import moment from "moment";
@@ -39,53 +37,57 @@ import { DetailsCardMini } from "@/components/prompt/DetailsCardMini";
 import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
 import ExecutionForm from "@/components/prompt/ExecutionForm";
 import { isValidUserFn } from "@/core/store/userSlice";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { updateTemplateData } from "@/core/store/templatesSlice";
+import { RootState } from "@/core/store";
 
 import PromptPlaceholder from "@/components/placeholders/PromptPlaceHolder";
 
 const Prompt = () => {
   const [selectedExecution, setSelectedExecution] = useState<TemplatesExecutions | null>(null);
-  const [newExecutionData, setNewExecutionData] = useState<PromptLiveResponse | null>(null);
+  const [generatedExecution, setGeneratedExecution] = useState<PromptLiveResponse | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [currentGeneratedPrompt, setCurrentGeneratedPrompt] = useState<Prompts | null>(null);
   const [executionFormOpen, setExecutionFormOpen] = useState(false);
   const [updateViewTemplate] = useViewTemplateMutation();
-  const [generatorOpened, setGeneratorOpened] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string>("");
-  const [activeTab, setActiveTab] = useState(0);
   const [sortedExecutions, setSortedExecutions] = useState<TemplatesExecutions[]>([]);
-  const [tabsValue, setTabsValue] = useState(0);
   const [mobileTab, setMobileTab] = useState(0);
   const router = useRouter();
-  const token = useToken();
   const theme = useTheme();
   const [palette, setPalette] = useState(theme.palette);
-  const { width: windowWidth } = useWindowSize();
+  const disptach = useDispatch();
   const isValidUser = useSelector(isValidUserFn);
-  const slug = router.query?.slug;
-  // TODO: redirect to 404 page if slug is not found
-  const slugValue = (Array.isArray(slug) ? slug[0] : slug || "") as string;
+  const { width: windowWidth } = useWindowSize();
+  const isSavedTemplateId = useSelector((state: RootState) => state.template.id);
+
+  const routerSlug = router.query?.slug as string;
+  if (!routerSlug) {
+    router.push("/404");
+    return;
+  }
+
   const {
     data: fetchedTemplate,
     error: fetchedTemplateError,
     isLoading: isLoadingTemplate,
-    isFetching: isFetchingTemplate,
-  } = useGetPromptTemplateBySlugQuery(slugValue);
-  const [templateData, setTemplateData] = useState<Templates>();
-  const id = templateData?.id;
-
-  useEffect(() => {
-    if (fetchedTemplate) {
-      setTemplateData(fetchedTemplate);
-    }
-  }, [fetchedTemplate]);
-
+  } = useGetPromptTemplateBySlugQuery(routerSlug);
   const {
     data: templateExecutions,
     error: templateExecutionsError,
     isFetching: isFetchingExecutions,
     refetch: refetchTemplateExecutions,
-  } = useGetExecutionsByTemplateQuery(token ? (id ? id : skipToken) : skipToken);
+  } = useGetExecutionsByTemplateQuery(isValidUser && fetchedTemplate?.id ? fetchedTemplate.id : skipToken);
+
+  // We need to set initial template store only once.
+  if (fetchedTemplate && (!isSavedTemplateId || isSavedTemplateId !== fetchedTemplate.id)) {
+    disptach(
+      updateTemplateData({
+        id: fetchedTemplate.id,
+        is_favorite: fetchedTemplate.is_favorite,
+        likes: fetchedTemplate.favorites_count,
+      }),
+    );
+  }
 
   useEffect(() => {
     const sorted = [...(templateExecutions || [])]
@@ -104,42 +106,37 @@ const Prompt = () => {
     setSelectedExecution(displayExecution || sortedExecutions?.[0] || null);
   }, [sortedExecutions]);
 
-  const changeTab = (e: React.SyntheticEvent, newValue: number) => {
-    setTabsValue(newValue);
-  };
-
   useEffect(() => {
-    if (id && isValidUser) {
-      updateViewTemplate(id);
+    if (fetchedTemplate?.id && isValidUser) {
+      updateViewTemplate(fetchedTemplate.id);
     }
-  }, [id, isValidUser]);
+  }, [fetchedTemplate?.id, isValidUser]);
 
-  // After new generated execution is completed - refetch the executions list and clear the newExecutionData state
+  // After new generated execution is completed - refetch the executions list and clear the generatedExecution state
   // All prompts should be completed - isCompleted: true
   useEffect(() => {
-    if (!isGenerating && newExecutionData?.data?.length) {
-      const promptNotCompleted = newExecutionData.data.find(execData => !execData.isCompleted);
+    if (!isGenerating && generatedExecution?.data?.length) {
+      const promptNotCompleted = generatedExecution.data.find(execData => !execData.isCompleted);
       if (!promptNotCompleted) {
         setSelectedExecution(null);
         setExecutionFormOpen(true);
       }
     }
-  }, [isGenerating, newExecutionData]);
+  }, [isGenerating, generatedExecution]);
 
   useEffect(() => {
     if (isGenerating) setMobileTab(2);
   }, [isGenerating]);
 
   // Keep tracking the current generated prompt
-  useEffect(() => {
-    if (templateData && newExecutionData?.data?.length) {
-      const loadingPrompt = newExecutionData.data.find(prompt => prompt.isLoading);
-      const prompt = templateData.prompts.find(prompt => prompt.id === loadingPrompt?.prompt);
-      if (prompt) setCurrentGeneratedPrompt(prompt);
-    } else {
-      setCurrentGeneratedPrompt(null);
+  const currentGeneratedPrompt = useMemo(() => {
+    if (fetchedTemplate && generatedExecution?.data?.length) {
+      const loadingPrompt = generatedExecution.data.find(prompt => prompt.isLoading);
+      const prompt = fetchedTemplate.prompts.find(prompt => prompt.id === loadingPrompt?.prompt);
+      if (prompt) return prompt;
     }
-  }, [newExecutionData]);
+    return null;
+  }, [fetchedTemplate, generatedExecution]);
 
   useEffect(() => {
     if (fetchedTemplate?.thumbnail) {
@@ -186,13 +183,16 @@ const Prompt = () => {
 
   const dynamicTheme = createTheme({ ...theme, palette });
 
-  if (fetchedTemplateError || templateExecutionsError) return <div>Something went wrong...</div>;
+  if (fetchedTemplateError || templateExecutionsError) {
+    router.push("/404");
+    return;
+  }
 
   return (
     <>
       <ThemeProvider theme={dynamicTheme}>
         <Layout>
-          {!templateData || isLoadingTemplate || isFetchingTemplate ? (
+          {!fetchedTemplate || isLoadingTemplate ? (
             <PromptPlaceholder />
           ) : (
             <Grid
@@ -239,7 +239,7 @@ const Prompt = () => {
                   }}
                 >
                   <Stack height={"100%"}>
-                    <DetailsCard templateData={templateData} />
+                    <DetailsCard templateData={fetchedTemplate} />
                     <Stack flex={1}>
                       <Box flex={1}>
                         <Accordion
@@ -277,22 +277,16 @@ const Prompt = () => {
                             </Typography>
                           </AccordionSummary>
                           <AccordionDetails>
-                            <Details
-                              templateData={templateData}
-                              updateTemplateData={setTemplateData}
-                            />
+                            <Details templateData={fetchedTemplate} />
                           </AccordionDetails>
                         </Accordion>
                         <GeneratorForm
-                          templateData={templateData}
+                          templateData={fetchedTemplate}
                           selectedExecution={selectedExecution}
-                          setNewExecutionData={setNewExecutionData}
+                          setGeneratedExecution={setGeneratedExecution}
                           isGenerating={isGenerating}
                           setIsGenerating={setIsGenerating}
                           onError={setErrorMessage}
-                          exit={() => setGeneratorOpened(false)}
-                          setMobileTab={setMobileTab}
-                          setActiveTab={setActiveTab}
                         />
                       </Box>
                     </Stack>
@@ -302,7 +296,7 @@ const Prompt = () => {
 
               {windowWidth < 960 && (
                 <>
-                  {mobileTab !== 0 && <DetailsCardMini templateData={templateData} />}
+                  {mobileTab !== 0 && <DetailsCardMini templateData={fetchedTemplate} />}
 
                   <Grid
                     item
@@ -317,12 +311,10 @@ const Prompt = () => {
                       pb: "75px", // Bottom tab bar height
                     }}
                   >
-                    <DetailsCard templateData={templateData} />
+                    <DetailsCard templateData={fetchedTemplate} />
                     <Details
-                      templateData={templateData}
-                      updateTemplateData={setTemplateData}
+                      templateData={fetchedTemplate}
                       setMobileTab={setMobileTab}
-                      setActiveTab={setActiveTab}
                       mobile
                     />
                   </Grid>
@@ -340,15 +332,12 @@ const Prompt = () => {
                     }}
                   >
                     <GeneratorForm
-                      templateData={templateData}
+                      templateData={fetchedTemplate}
                       selectedExecution={selectedExecution}
-                      setNewExecutionData={setNewExecutionData}
+                      setGeneratedExecution={setGeneratedExecution}
                       isGenerating={isGenerating}
                       setIsGenerating={setIsGenerating}
                       onError={setErrorMessage}
-                      exit={() => setGeneratorOpened(false)}
-                      setMobileTab={setMobileTab}
-                      setActiveTab={setActiveTab}
                     />
                   </Grid>
                 </>
@@ -372,12 +361,12 @@ const Prompt = () => {
                 }}
               >
                 <Display
-                  templateData={templateData}
+                  templateData={fetchedTemplate}
                   executions={sortedExecutions || []}
                   isFetching={isFetchingExecutions}
                   selectedExecution={selectedExecution}
                   setSelectedExecution={setSelectedExecution}
-                  newExecutionData={newExecutionData}
+                  generatedExecution={generatedExecution}
                 />
                 {currentGeneratedPrompt && (
                   <Box
@@ -407,9 +396,8 @@ const Prompt = () => {
               </Grid>
 
               <BottomTabs
-                onChange={tab => setMobileTab(tab)}
-                setActiveTab={setActiveTab}
-                activeTab={activeTab}
+                setActiveTab={setMobileTab}
+                activeTab={mobileTab}
               />
             </Grid>
           )}
@@ -417,10 +405,9 @@ const Prompt = () => {
           <ExecutionForm
             type="new"
             isOpen={executionFormOpen}
-            executionId={newExecutionData?.id}
+            executionId={generatedExecution?.id}
             onClose={() => {
-              setCurrentGeneratedPrompt(null);
-              setNewExecutionData(null);
+              setGeneratedExecution(null);
               setExecutionFormOpen(false);
             }}
             onCancel={() => refetchTemplateExecutions()}
@@ -466,16 +453,3 @@ export async function getServerSideProps({ params }: any) {
   }
 }
 export default Prompt;
-
-const tabStyle = {
-  fontSize: 13,
-  fontWeight: 500,
-  textTransform: "none",
-  p: "16px",
-  minHeight: "auto",
-  bgcolor: "surface.1",
-  opacity: 0.7,
-  svg: {
-    fontSize: 20,
-  },
-};

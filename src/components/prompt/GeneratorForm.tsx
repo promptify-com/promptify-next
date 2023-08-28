@@ -17,17 +17,13 @@ import { AllInclusive, Close, InfoOutlined } from "@mui/icons-material";
 
 import TabsAndFormPlaceholder from "@/components/placeholders/TabsAndFormPlaceholder";
 
-
 interface GeneratorFormProps {
   templateData: Templates;
   selectedExecution: TemplatesExecutions | null;
-  setNewExecutionData: (data: PromptLiveResponse) => void;
+  setGeneratedExecution: (data: PromptLiveResponse) => void;
   isGenerating: boolean;
   setIsGenerating: (status: boolean) => void;
   onError: (errMsg: string) => void;
-  exit: () => void;
-  setMobileTab: (value: number) => void;
-  setActiveTab: (value: number) => void;
 }
 
 export interface InputsErrors {
@@ -44,13 +40,10 @@ interface Param {
 export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   templateData,
   selectedExecution,
-  setNewExecutionData,
+  setGeneratedExecution,
   isGenerating,
   setIsGenerating,
   onError,
-  exit,
-  setMobileTab,
-  setActiveTab,
 }) => {
   const token = useToken();
   const { palette } = useTheme();
@@ -88,7 +81,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     if (shownInputs) {
       const updatedInputs = new Map<number, ResInputs>();
 
-      shownInputs.forEach((input) => {
+      shownInputs.forEach(input => {
         const inputName = input.name;
 
         if (selectedExecution?.parameters) {
@@ -209,16 +202,11 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
     setIsGenerating(true);
 
-    setMobileTab(2);
-    setActiveTab(2);
-
     generateExecution(resPrompts);
   };
 
   const generateExecution = (executionData: ResPrompt[]) => {
     setLastExecution(JSON.parse(JSON.stringify(executionData)));
-
-    if (windowWidth < 900) setTimeout(() => exit(), 2000);
 
     let tempData: any[] = [];
     let url = `${process.env.NEXT_PUBLIC_API_URL}/api/meta/templates/${templateData.id}/execute/`;
@@ -348,7 +336,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   }, [newExecutionId]);
 
   useEffect(() => {
-    if (generatingResponse) setNewExecutionData(generatingResponse);
+    if (generatingResponse) setGeneratedExecution(generatingResponse);
   }, [generatingResponse]);
 
   useEffect(() => {

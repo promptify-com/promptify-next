@@ -287,7 +287,7 @@ const SparkFilters: React.FC<TemplateFilterProps> = ({
               letterSpacing={"0.17px"}
               sx={{ opacity: 0.75, display: "flex", alignItems: "center", gap: "8px" }}
             >
-              template
+              Template
               <ArrowDropDown sx={{ fontSize: "16px" }} />
             </Typography>
             <IconButton
@@ -320,7 +320,7 @@ const SparkFilters: React.FC<TemplateFilterProps> = ({
               letterSpacing={"0.17px"}
               sx={{ opacity: 0.75 }}
             >
-              Last Modified
+              Created At
             </Typography>
             <IconButton
               onClick={onSortTimeToggle}
