@@ -44,6 +44,7 @@ export const Details: React.FC<DetailsProps> = ({ templateData, setMobileTab = (
         const orderedPrompts = [...templateData.prompts].sort((a, b) => a.order - b.order);
 
         const clonedPrompts: INodesData[] = await Promise.all(
+          // TODO: https://github.com/ysfbsf/promptify-next/issues/262
           orderedPrompts.map(async prompt => {
             const params = (await dispatch(templatesApi.endpoints.getPromptParams.initiate(prompt.id))).data?.map(
               param => ({
