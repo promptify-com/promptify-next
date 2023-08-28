@@ -93,6 +93,7 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
             ) : (
               <Grid>
                 <TemplatesPaginatedList
+                  loading={isLoading}
                   hasNext={hasNext}
                   hasPrev={hasPrev}
                   onPrevPage={onPrevPage}

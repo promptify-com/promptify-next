@@ -1,10 +1,9 @@
 import { FC } from "react";
-
-import { Templates } from "@/core/api/dto/templates";
+import { Delete, Edit, PreviewRounded, SettingsApplicationsRounded } from "@mui/icons-material";
 import { Box, Card, CardMedia, Chip, Grid, IconButton, Tooltip, Typography } from "@mui/material";
 
+import { Templates } from "@/core/api/dto/templates";
 import Image from "@/components/design-system/Image";
-import { Delete, Edit, PreviewRounded, SettingsApplicationsRounded } from "@mui/icons-material";
 import { UserType } from "./TemplatesManager";
 
 interface TemplateManagerItemProps {
@@ -117,9 +116,6 @@ const TemplateManagerItem: FC<TemplateManagerItemProps> = ({ template, type, onO
                   color: "onSurface",
                 },
               }}
-              //   setSelectedTemplate(template);
-              //   setTemplateFormType("edit");
-              //   setTemplateFormOpen(true);
               onClick={onOpenEdit}
             >
               <Edit />
@@ -127,7 +123,6 @@ const TemplateManagerItem: FC<TemplateManagerItemProps> = ({ template, type, onO
           </Tooltip>
           <Tooltip title="Delete">
             <IconButton
-              // openDeletionModal(template)
               onClick={onOpenDelete}
               sx={{
                 bgcolor: "surface.2",

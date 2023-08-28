@@ -35,6 +35,8 @@ import { PageLoading } from "../PageLoading";
 import TemplateManagerItem from "./TemplateManagerItem";
 import { ArrowLeft, ArrowRight, ArrowRightAlt, Search } from "@mui/icons-material";
 import TemplatesPaginatedList from "../TemplatesPaginatedList";
+import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
+import CardTemplatePlaceholder from "../placeholders/CardTemplatePlaceHolder";
 
 export type UserType = "admin" | "user";
 
@@ -49,10 +51,7 @@ export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title }) => {
   const { data: userTemplates, isFetching: isUserTemplatesFetching } = useGetMyTemplatesQuery(undefined, {
     skip: isUserAdmin,
   });
-  const [trigger, { data: adminTemplates, isLoading: isAdminTemplatesLoading }] =
-    templatesApi.endpoints.getTemplatesByFilter.useLazyQuery();
 
-  const [offset, setOffset] = useState<number>(0);
   const [deleteTemplate] = useDeleteTemplateMutation();
   const [templateImportOpen, setTemplateImportOpen] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<Templates | null>(null);
@@ -60,6 +59,20 @@ export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title }) => {
   const [status, setStatus] = useState<TemplateStatus | null>("ALL");
   const [templateFormOpen, setTemplateFormOpen] = useState(false);
   const [confirmDialog, setConfirmDialog] = useState(false);
+
+  const {
+    templates: adminTemplates,
+    isTemplatesLoading: isAdminTemplatesLoading,
+    hasNext,
+    hasPrev,
+    handleNextPage,
+    handlePreviousPage,
+    searchName,
+    setSearchName,
+    debouncedSearchValue,
+    setOffset,
+    isFetching,
+  } = useGetTemplatesByFilter();
 
   const openDeletionModal = (template: Templates) => {
     setSelectedTemplate(template);
@@ -72,38 +85,18 @@ export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title }) => {
     }
     return adminTemplates?.results ?? [];
   }, [adminTemplates, status, isUserAdmin]);
-  const [searchName, setSearchName] = useState("");
 
   useEffect(() => {
-    trigger({
-      ordering: "-created_at",
-      limit: 10,
-      offset: offset,
-      title: searchName,
-    });
-  }, [offset, searchName]);
-
-  useEffect(() => {
-    setOffset(0);
-  }, [searchName, status]);
+    if (debouncedSearchValue !== "") {
+      setOffset(0);
+    }
+  }, [debouncedSearchValue, status]);
 
   const confirmDelete = async () => {
     if (!selectedTemplate) return;
 
     await deleteTemplate(selectedTemplate.id);
     setConfirmDialog(false);
-  };
-
-  const handleNextPage = () => {
-    if (adminTemplates?.next) {
-      setOffset(prevOffset => prevOffset + 10);
-    }
-  };
-
-  const handlePreviousPage = () => {
-    if (adminTemplates?.previous) {
-      setOffset(prevOffset => Math.max(0, prevOffset - 10));
-    }
   };
 
   return (
@@ -160,11 +153,7 @@ export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title }) => {
                 placeholder="Search..."
                 inputProps={{ "aria-label": "Search" }}
                 defaultValue={searchName}
-                onChange={e => {
-                  setTimeout(() => {
-                    setSearchName(e.target.value);
-                  }, 500);
-                }}
+                onChange={e => setSearchName(e.target.value)}
               />
             </Box>
 
@@ -243,7 +232,7 @@ export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title }) => {
       {isUserAdmin ? (
         <Grid width={"100%"}>
           {isAdminTemplatesLoading ? (
-            <PageLoading />
+            <CardTemplatePlaceholder count={4} />
           ) : (
             <Box
               display={"flex"}
@@ -262,8 +251,9 @@ export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title }) => {
                 </Box>
               ) : (
                 <TemplatesPaginatedList
-                  hasNext={!!adminTemplates?.next && filteredTemplates.length >= 10}
-                  hasPrev={!!adminTemplates?.previous}
+                  hasNext={hasNext}
+                  loading={isFetching}
+                  hasPrev={hasPrev}
                   onNextPage={handleNextPage}
                   onPrevPage={handlePreviousPage}
                 >
@@ -288,7 +278,7 @@ export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title }) => {
       ) : (
         <Grid width={"100%"}>
           {isUserTemplatesFetching && userTemplates?.length === 0 ? (
-            <PageLoading />
+            <CardTemplatePlaceholder count={4} />
           ) : (
             <Box
               display={"flex"}

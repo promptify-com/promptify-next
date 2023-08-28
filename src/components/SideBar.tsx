@@ -22,10 +22,10 @@ import { Collections } from "@/components/common/sidebar/Collections";
 import { useGetCollectionTemplatesQuery } from "@/core/api/collections";
 import { ExploreFilterSideBar } from "@/components/explorer/ExploreFilterSideBar";
 import { SideBarCloseIcon } from "@/assets/icons/SideBarClose";
-import { useFetchFilters } from "@/hooks/useFetchFilters";
 import { useSelector } from "react-redux";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { RootState } from "@/core/store";
+import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
 
 interface SideBarProps {
   open: boolean;
@@ -83,7 +83,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
       skip: !isValidUser,
     },
   );
-  const { tags, engines } = useFetchFilters();
+  const { tags, engines } = useGetTemplatesByFilter();
   const [expandedOnHover, setExpandedOnHover] = useState<boolean>(false);
   const [showExpandIcon, setShowExpandIcon] = useState<boolean>(false);
   const [showFilters, setShowFilters] = useState<boolean>(false);

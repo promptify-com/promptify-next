@@ -1,77 +1,36 @@
 import { useRouter } from "next/router";
+import Head from "next/head";
 import { KeyboardArrowLeft } from "@mui/icons-material";
 import { Box, Button, Grid } from "@mui/material";
-import { useSelector } from "react-redux";
-import Head from "next/head";
 
 import { authClient } from "@/common/axios";
 import { SubCategoryCard } from "@/components/common/cards/CardSubcategory";
-import { Category, FilterParams, SelectedFilters } from "@/core/api/dto/templates";
+import { Category } from "@/core/api/dto/templates";
 import { Layout } from "@/layout";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
-import { useGetTemplatesByFilterQuery } from "@/core/api/templates";
-import { useGetCategoriesQuery, useGetCategoryBySlugQuery } from "@/core/api/categories";
-import { RootState } from "@/core/store";
 import { FiltersSelected } from "@/components/explorer/FiltersSelected";
-
 import SubCategoryPlaceholder from "@/components/placeholders/SubCategoryPlaceholder";
-import { useState } from "react";
+import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
 
 export default function Page({ category }: { category: Category }) {
-  const title = useSelector((state: RootState) => state.filters.title);
-  const filters = useSelector((state: RootState) => state.filters);
-  const tags = useSelector((state: RootState) => state.filters.tag);
-  const engineId = useSelector((state: RootState) => state.filters.engine?.id);
   const router = useRouter();
-  const subCategorySlug = router.query.subcategorySlug;
+  const {
+    templates,
+    isFetching,
+    categories,
+    isCategoryLoading,
+    subcategory,
+    allFilterParamsNull,
+    handleNextPage,
+    handlePreviousPage,
+  } = useGetTemplatesByFilter();
 
-  const { data: subcategory } = useGetCategoryBySlugQuery(subCategorySlug as string);
-  const { data: categories, isLoading: isCategoriesLoading } = useGetCategoriesQuery();
-
-  const filteredTags = tags
-    .filter(item => item !== null)
-    .map(item => item?.name)
-    .join("&tag=");
-
-  const [offset, setOffset] = useState(0);
-
-  const params: FilterParams = {
-    tag: filteredTags,
-    engineId,
-    title,
-    subcategoryId: subcategory?.id,
-    offset,
-    limit: 10,
-  };
-
-  const { data: templates, isLoading: isTemplatesLoading } = useGetTemplatesByFilterQuery(params);
-
-  function areAllStatesNull(filters: SelectedFilters): boolean {
-    return (
-      filters.engine === null &&
-      filters.tag.every(tag => tag === null) &&
-      filters.title === null &&
-      filters.category === null &&
-      filters.subCategory === null
-    );
-  }
-  const allNull = areAllStatesNull(filters);
+  console.log(subcategory);
 
   const navigateTo = (slug: string) => {
     router.push(`/explore/${category.slug}/${slug}`);
   };
 
-  const handleNextPage = () => {
-    if (templates?.next) {
-      setOffset(prevOffset => prevOffset + 10);
-    }
-  };
-
-  const handlePreviousPage = () => {
-    if (templates?.previous) {
-      setOffset(prevOffset => Math.max(0, prevOffset - 10));
-    }
-  };
   return (
     <>
       <Head>
@@ -91,7 +50,7 @@ export default function Page({ category }: { category: Category }) {
               padding: { xs: "16px", md: "32px" },
             }}
           >
-            {isCategoriesLoading ? (
+            {isCategoryLoading ? (
               <SubCategoryPlaceholder />
             ) : (
               <Box
@@ -119,7 +78,7 @@ export default function Page({ category }: { category: Category }) {
                   }}
                 >
                   {categories
-                    ?.filter(mainCat => category?.name == mainCat.parent?.name)
+                    ?.filter((mainCat: Category) => category?.name == mainCat.parent?.name)
                     .map(subcategory => (
                       <Grid key={subcategory.id}>
                         <SubCategoryCard
@@ -130,12 +89,12 @@ export default function Page({ category }: { category: Category }) {
                     ))}
                 </Grid>
 
-                <FiltersSelected show={!allNull} />
+                <FiltersSelected show={!allFilterParamsNull} />
 
                 <TemplatesSection
-                  filtred={!allNull}
+                  filtred={!allFilterParamsNull}
                   templates={templates?.results ?? []}
-                  isLoading={isTemplatesLoading}
+                  isLoading={isFetching}
                   hasNext={!!templates?.next}
                   hasPrev={!!templates?.previous}
                   onNextPage={handleNextPage}
