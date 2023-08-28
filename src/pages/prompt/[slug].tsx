@@ -185,7 +185,10 @@ const Prompt = () => {
 
   const dynamicTheme = createTheme({ ...theme, palette });
 
-  if (fetchedTemplateError || templateExecutionsError) return <div>Something went wrong...</div>;
+  if (fetchedTemplateError || templateExecutionsError) {
+    router.push("/404");
+    return;
+  }
 
   return (
     <>
