@@ -15,6 +15,7 @@ import { RootState } from "@/core/store";
 import { FiltersSelected } from "@/components/explorer/FiltersSelected";
 
 import SubCategoryPlaceholder from "@/components/placeholders/SubCategoryPlaceholder";
+import { useState } from "react";
 
 export default function Page({ category }: { category: Category }) {
   const title = useSelector((state: RootState) => state.filters.title);
@@ -32,11 +33,15 @@ export default function Page({ category }: { category: Category }) {
     .map(item => item?.name)
     .join("&tag=");
 
+  const [offset, setOffset] = useState(0);
+
   const params: FilterParams = {
     tag: filteredTags,
     engineId,
     title,
     subcategoryId: subcategory?.id,
+    offset,
+    limit: 10,
   };
 
   const { data: templates, isLoading: isTemplatesLoading } = useGetTemplatesByFilterQuery(params);
@@ -54,6 +59,18 @@ export default function Page({ category }: { category: Category }) {
 
   const navigateTo = (slug: string) => {
     router.push(`/explore/${category.slug}/${slug}`);
+  };
+
+  const handleNextPage = () => {
+    if (templates?.next) {
+      setOffset(prevOffset => prevOffset + 10);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (templates?.previous) {
+      setOffset(prevOffset => Math.max(0, prevOffset - 10));
+    }
   };
   return (
     <>
@@ -116,9 +133,13 @@ export default function Page({ category }: { category: Category }) {
                 <FiltersSelected show={!allNull} />
 
                 <TemplatesSection
-                  filtred
-                  templates={templates?.results}
+                  filtred={!allNull}
+                  templates={templates?.results ?? []}
                   isLoading={isTemplatesLoading}
+                  hasNext={!!templates?.next}
+                  hasPrev={!!templates?.previous}
+                  onNextPage={handleNextPage}
+                  onPrevPage={handlePreviousPage}
                 />
               </Box>
             )}

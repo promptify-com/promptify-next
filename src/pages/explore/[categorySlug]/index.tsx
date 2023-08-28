@@ -64,11 +64,15 @@ export default function Page({ category }: { category: Category }) {
   };
 
   const handleNextPage = () => {
-    setOffset(prevOffset => prevOffset + 10);
+    if (templates?.next) {
+      setOffset(prevOffset => prevOffset + 10);
+    }
   };
 
   const handlePreviousPage = () => {
-    setOffset(prevOffset => Math.max(0, prevOffset - 10));
+    if (templates?.previous) {
+      setOffset(prevOffset => Math.max(0, prevOffset - 10));
+    }
   };
 
   return (
@@ -133,7 +137,6 @@ export default function Page({ category }: { category: Category }) {
                 filtred={!allNull}
                 templates={templates?.results ?? []}
                 isLoading={isTemplatesLoading}
-                title="Best templates"
                 hasNext={!!templates?.next}
                 hasPrev={!!templates?.previous}
                 onNextPage={handleNextPage}

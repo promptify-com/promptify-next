@@ -85,7 +85,7 @@ export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title }) => {
 
   useEffect(() => {
     setOffset(0);
-  }, [searchName]);
+  }, [searchName, status]);
 
   const confirmDelete = async () => {
     if (!selectedTemplate) return;
@@ -94,11 +94,17 @@ export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title }) => {
     setConfirmDialog(false);
   };
 
-  const handlePrevPage = () => {
-    if (offset === 0) return;
-    setOffset(offset - 10);
+  const handleNextPage = () => {
+    if (adminTemplates?.next) {
+      setOffset(prevOffset => prevOffset + 10);
+    }
   };
-  const handleNextPage = () => setOffset(offset + 10);
+
+  const handlePreviousPage = () => {
+    if (adminTemplates?.previous) {
+      setOffset(prevOffset => Math.max(0, prevOffset - 10));
+    }
+  };
 
   return (
     <Box
@@ -256,10 +262,10 @@ export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title }) => {
                 </Box>
               ) : (
                 <TemplatesPaginatedList
-                  hasNext={!!adminTemplates?.next}
+                  hasNext={!!adminTemplates?.next && filteredTemplates.length >= 10}
                   hasPrev={!!adminTemplates?.previous}
                   onNextPage={handleNextPage}
-                  onPrevPage={handlePrevPage}
+                  onPrevPage={handlePreviousPage}
                 >
                   {filteredTemplates?.map((template: Templates) => (
                     <TemplateManagerItem
@@ -300,7 +306,7 @@ export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title }) => {
                   <Typography variant="body1">No templates found.</Typography>
                 </Box>
               ) : (
-                filteredTemplates?.map((template: Templates) => (
+                userTemplates?.map((template: Templates) => (
                   <TemplateManagerItem
                     key={template.id}
                     type={type}

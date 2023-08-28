@@ -31,11 +31,15 @@ export function useExploreData() {
   const { data: categories, isLoading: isCategoryLoading } = useGetCategoriesQuery();
 
   const handleNextPage = () => {
-    setOffset(prevOffset => prevOffset + 10); // Assuming you're using a limit of 10
+    if (templates?.next) {
+      setOffset(prevOffset => prevOffset + 10);
+    }
   };
 
   const handlePreviousPage = () => {
-    setOffset(prevOffset => Math.max(0, prevOffset - 10)); // Assuming you're using a limit of 10
+    if (templates?.previous) {
+      setOffset(prevOffset => Math.max(0, prevOffset - 10));
+    }
   };
 
   return {
