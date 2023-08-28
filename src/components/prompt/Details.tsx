@@ -19,11 +19,10 @@ import { useSelector } from "react-redux";
 interface DetailsProps {
   templateData: Templates;
   setMobileTab?: (value: number) => void;
-  setActiveTab?: (value: number) => void;
   mobile?: boolean;
 }
 
-export const Details: React.FC<DetailsProps> = ({ templateData, setMobileTab, setActiveTab, mobile }) => {
+export const Details: React.FC<DetailsProps> = ({ templateData, setMobileTab = () => {}, mobile }) => {
   const router = useRouter();
   const { palette } = useTheme();
   const dispatch = useAppDispatch();
@@ -116,10 +115,7 @@ export const Details: React.FC<DetailsProps> = ({ templateData, setMobileTab, se
                 variant="outlined"
                 endIcon={<ExitToAppIcon />}
                 onClick={() => {
-                  if (setMobileTab && setActiveTab) {
-                    setMobileTab(1);
-                    setActiveTab(1);
-                  }
+                  setMobileTab(1);
                 }}
                 sx={{
                   p: "8px 16px",

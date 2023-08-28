@@ -1,9 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Box, Typography } from "@mui/material";
-import {
-  Templates,
-  TemplatesExecutions,
-} from "@/core/api/dto/templates";
+import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { ExecutionCard } from "./ExecutionCard";
 import { PromptLiveResponse } from "@/common/types/prompt";
 import { ExecutionCardGenerated } from "./ExecutionCardGenerated";
@@ -18,7 +15,7 @@ interface Props {
   isFetching?: boolean;
   selectedExecution: TemplatesExecutions | null;
   setSelectedExecution: (execution: TemplatesExecutions) => void;
-  newExecutionData: PromptLiveResponse | null;
+  generatedExecution: PromptLiveResponse | null;
 }
 
 export const Display: React.FC<Props> = ({
@@ -27,7 +24,7 @@ export const Display: React.FC<Props> = ({
   isFetching,
   selectedExecution,
   setSelectedExecution,
-  newExecutionData,
+  generatedExecution,
 }) => {
   const [sortedExecutions, setSortedExecutions] = useState<TemplatesExecutions[]>([]);
   const [firstLoad, setFirstLoad] = useState(true);
@@ -46,8 +43,8 @@ export const Display: React.FC<Props> = ({
   }, []);
   // If there is a new execution being generated, remove opacity layer
   useEffect(() => {
-    if (newExecutionData) setFirstLoad(false);
-  }, [newExecutionData]);
+    if (generatedExecution) setFirstLoad(false);
+  }, [generatedExecution]);
 
   useEffect(() => {
     setSortedExecutions(executions);
@@ -72,9 +69,9 @@ export const Display: React.FC<Props> = ({
       <Box sx={{ mx: "15px", opacity: firstLoad ? 0.5 : 1 }}>
         {
           // If there is a new execution being generated, show it first
-          newExecutionData ? (
+          generatedExecution ? (
             <ExecutionCardGenerated
-              execution={newExecutionData}
+              execution={generatedExecution}
               templateData={templateData}
             />
           ) : // If there is no new execution being generated, show the selected execution

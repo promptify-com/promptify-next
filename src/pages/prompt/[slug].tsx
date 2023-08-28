@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Accordion,
   AccordionDetails,
@@ -30,7 +30,6 @@ import { DetailsCard } from "@/components/prompt/DetailsCard";
 import { Prompts } from "@/core/api/dto/prompts";
 import { PromptLiveResponse } from "@/common/types/prompt";
 import { Layout } from "@/layout";
-import useToken from "@/hooks/useToken";
 import { useWindowSize } from "usehooks-ts";
 import BottomTabs from "@/components/prompt/BottomTabs";
 import moment from "moment";
@@ -46,38 +45,38 @@ import PromptPlaceholder from "@/components/placeholders/PromptPlaceHolder";
 
 const Prompt = () => {
   const [selectedExecution, setSelectedExecution] = useState<TemplatesExecutions | null>(null);
-  const [newExecutionData, setNewExecutionData] = useState<PromptLiveResponse | null>(null);
+  const [generatedExecution, setGeneratedExecution] = useState<PromptLiveResponse | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [currentGeneratedPrompt, setCurrentGeneratedPrompt] = useState<Prompts | null>(null);
   const [executionFormOpen, setExecutionFormOpen] = useState(false);
   const [updateViewTemplate] = useViewTemplateMutation();
   const [errorMessage, setErrorMessage] = useState<string>("");
-  const [activeTab, setActiveTab] = useState(0);
   const [sortedExecutions, setSortedExecutions] = useState<TemplatesExecutions[]>([]);
   const [mobileTab, setMobileTab] = useState(0);
   const router = useRouter();
-  const token = useToken();
   const theme = useTheme();
   const [palette, setPalette] = useState(theme.palette);
-  const { width: windowWidth } = useWindowSize();
+  const disptach = useDispatch();
   const isValidUser = useSelector(isValidUserFn);
+  const { width: windowWidth } = useWindowSize();
   const isSavedTemplateId = useSelector((state: RootState) => state.template.id);
-  const slug = router.query?.slug;
-  // TODO: redirect to 404 page if slug is not found
-  const slugValue = (Array.isArray(slug) ? slug[0] : slug || "") as string;
+
+  const routerSlug = Array.isArray(router.query?.slug) ? router.query?.slug[0] : router.query?.slug;
+  if (!routerSlug) {
+    router.push("/404");
+    return;
+  }
+
   const {
     data: fetchedTemplate,
     error: fetchedTemplateError,
     isLoading: isLoadingTemplate,
-  } = useGetPromptTemplateBySlugQuery(slugValue);
-  const id = fetchedTemplate?.id;
-  const disptach = useDispatch();
+  } = useGetPromptTemplateBySlugQuery(routerSlug);
   const {
     data: templateExecutions,
     error: templateExecutionsError,
     isFetching: isFetchingExecutions,
     refetch: refetchTemplateExecutions,
-  } = useGetExecutionsByTemplateQuery(token ? (id ? id : skipToken) : skipToken);
+  } = useGetExecutionsByTemplateQuery(isValidUser ? (fetchedTemplate?.id ? fetchedTemplate.id : skipToken) : skipToken);
 
   // We need to set initial template store only once.
   if (fetchedTemplate && (!isSavedTemplateId || isSavedTemplateId !== fetchedTemplate.id)) {
@@ -108,37 +107,36 @@ const Prompt = () => {
   }, [sortedExecutions]);
 
   useEffect(() => {
-    if (id && isValidUser) {
-      updateViewTemplate(id);
+    if (fetchedTemplate?.id && isValidUser) {
+      updateViewTemplate(fetchedTemplate.id);
     }
-  }, [id, isValidUser]);
+  }, [fetchedTemplate?.id, isValidUser]);
 
-  // After new generated execution is completed - refetch the executions list and clear the newExecutionData state
+  // After new generated execution is completed - refetch the executions list and clear the generatedExecution state
   // All prompts should be completed - isCompleted: true
   useEffect(() => {
-    if (!isGenerating && newExecutionData?.data?.length) {
-      const promptNotCompleted = newExecutionData.data.find(execData => !execData.isCompleted);
+    if (!isGenerating && generatedExecution?.data?.length) {
+      const promptNotCompleted = generatedExecution.data.find(execData => !execData.isCompleted);
       if (!promptNotCompleted) {
         setSelectedExecution(null);
         setExecutionFormOpen(true);
       }
     }
-  }, [isGenerating, newExecutionData]);
+  }, [isGenerating, generatedExecution]);
 
   useEffect(() => {
     if (isGenerating) setMobileTab(2);
   }, [isGenerating]);
 
   // Keep tracking the current generated prompt
-  useEffect(() => {
-    if (fetchedTemplate && newExecutionData?.data?.length) {
-      const loadingPrompt = newExecutionData.data.find(prompt => prompt.isLoading);
+  const currentGeneratedPrompt = useMemo(() => {
+    if (fetchedTemplate && generatedExecution?.data?.length) {
+      const loadingPrompt = generatedExecution.data.find(prompt => prompt.isLoading);
       const prompt = fetchedTemplate.prompts.find(prompt => prompt.id === loadingPrompt?.prompt);
-      if (prompt) setCurrentGeneratedPrompt(prompt);
-    } else {
-      setCurrentGeneratedPrompt(null);
+      if (prompt) return prompt;
     }
-  }, [newExecutionData]);
+    return null;
+  }, [fetchedTemplate, generatedExecution]);
 
   useEffect(() => {
     if (fetchedTemplate?.thumbnail) {
@@ -285,13 +283,10 @@ const Prompt = () => {
                         <GeneratorForm
                           templateData={fetchedTemplate}
                           selectedExecution={selectedExecution}
-                          setNewExecutionData={setNewExecutionData}
+                          setGeneratedExecution={setGeneratedExecution}
                           isGenerating={isGenerating}
                           setIsGenerating={setIsGenerating}
                           onError={setErrorMessage}
-                          exit={() => console.log("exit called on parent")}
-                          setMobileTab={setMobileTab}
-                          setActiveTab={setActiveTab}
                         />
                       </Box>
                     </Stack>
@@ -320,7 +315,6 @@ const Prompt = () => {
                     <Details
                       templateData={fetchedTemplate}
                       setMobileTab={setMobileTab}
-                      setActiveTab={setActiveTab}
                       mobile
                     />
                   </Grid>
@@ -340,13 +334,10 @@ const Prompt = () => {
                     <GeneratorForm
                       templateData={fetchedTemplate}
                       selectedExecution={selectedExecution}
-                      setNewExecutionData={setNewExecutionData}
+                      setGeneratedExecution={setGeneratedExecution}
                       isGenerating={isGenerating}
                       setIsGenerating={setIsGenerating}
                       onError={setErrorMessage}
-                      exit={() => console.log("exit called on parent")}
-                      setMobileTab={setMobileTab}
-                      setActiveTab={setActiveTab}
                     />
                   </Grid>
                 </>
@@ -375,7 +366,7 @@ const Prompt = () => {
                   isFetching={isFetchingExecutions}
                   selectedExecution={selectedExecution}
                   setSelectedExecution={setSelectedExecution}
-                  newExecutionData={newExecutionData}
+                  generatedExecution={generatedExecution}
                 />
                 {currentGeneratedPrompt && (
                   <Box
@@ -405,9 +396,8 @@ const Prompt = () => {
               </Grid>
 
               <BottomTabs
-                onChange={tab => setMobileTab(tab)}
-                setActiveTab={setActiveTab}
-                activeTab={activeTab}
+                setActiveTab={setMobileTab}
+                activeTab={mobileTab}
               />
             </Grid>
           )}
@@ -415,10 +405,9 @@ const Prompt = () => {
           <ExecutionForm
             type="new"
             isOpen={executionFormOpen}
-            executionId={newExecutionData?.id}
+            executionId={generatedExecution?.id}
             onClose={() => {
-              setCurrentGeneratedPrompt(null);
-              setNewExecutionData(null);
+              setGeneratedExecution(null);
               setExecutionFormOpen(false);
             }}
             onCancel={() => refetchTemplateExecutions()}
