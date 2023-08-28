@@ -60,7 +60,7 @@ const Prompt = () => {
   const { width: windowWidth } = useWindowSize();
   const isSavedTemplateId = useSelector((state: RootState) => state.template.id);
 
-  const routerSlug = Array.isArray(router.query?.slug) ? router.query?.slug[0] : router.query?.slug;
+  const routerSlug = router.query?.slug as string;
   if (!routerSlug) {
     router.push("/404");
     return;
@@ -76,7 +76,7 @@ const Prompt = () => {
     error: templateExecutionsError,
     isFetching: isFetchingExecutions,
     refetch: refetchTemplateExecutions,
-  } = useGetExecutionsByTemplateQuery(isValidUser ? (fetchedTemplate?.id ? fetchedTemplate.id : skipToken) : skipToken);
+  } = useGetExecutionsByTemplateQuery(isValidUser && fetchedTemplate?.id ? fetchedTemplate.id : skipToken);
 
   // We need to set initial template store only once.
   if (fetchedTemplate && (!isSavedTemplateId || isSavedTemplateId !== fetchedTemplate.id)) {
