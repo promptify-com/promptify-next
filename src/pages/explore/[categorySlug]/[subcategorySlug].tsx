@@ -25,8 +25,6 @@ export default function Page({ category }: { category: Category }) {
     handlePreviousPage,
   } = useGetTemplatesByFilter();
 
-  console.log(subcategory);
-
   const navigateTo = (slug: string) => {
     router.push(`/explore/${category.slug}/${slug}`);
   };

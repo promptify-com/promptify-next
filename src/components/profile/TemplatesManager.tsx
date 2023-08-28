@@ -69,8 +69,8 @@ export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title }) => {
     handlePreviousPage,
     searchName,
     setSearchName,
-    debouncedSearchValue,
-    setOffset,
+    debouncedSearchName,
+    resetOffest,
     isFetching,
   } = useGetTemplatesByFilter();
 
@@ -87,10 +87,8 @@ export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title }) => {
   }, [adminTemplates, status, isUserAdmin]);
 
   useEffect(() => {
-    if (debouncedSearchValue !== "") {
-      setOffset(0);
-    }
-  }, [debouncedSearchValue, status]);
+    resetOffest();
+  }, [debouncedSearchName, status]);
 
   const confirmDelete = async () => {
     if (!selectedTemplate) return;

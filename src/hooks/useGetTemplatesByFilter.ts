@@ -1,11 +1,11 @@
-import { useMemo, useState } from "react";
+import { useDeferredValue, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 
 import { RootState } from "@/core/store";
 import { useGetCategoriesQuery, useGetCategoryBySlugQuery } from "@/core/api/categories";
 import { useGetTemplatesByFilterQuery } from "@/core/api/templates";
-import { FilterParams, SelectedFilters, Tag } from "@/core/api/dto/templates";
+import { FilterParams, SelectedFilters } from "@/core/api/dto/templates";
 import { useGetTagsPopularQuery } from "@/core/api/tags";
 import { useGetEnginesQuery } from "@/core/api/engines";
 import useDebounce from "./useDebounce";
@@ -35,7 +35,8 @@ export function useGetTemplatesByFilter() {
   const [offset, setOffset] = useState(0);
   const [searchName, setSearchName] = useState("");
 
-  const debouncedSearchValue = useDebounce<string>(searchName, 300);
+  const deferredSearchName = useDeferredValue(searchName);
+  const debouncedSearchName = useDebounce<string>(deferredSearchName, 300);
 
   const memoizedFilteredTags = useMemo(() => {
     const filteredTags = tags
@@ -51,11 +52,27 @@ export function useGetTemplatesByFilter() {
     engineId,
     categoryId: category?.id,
     subcategoryId: subcategory?.id,
-    title: title ?? debouncedSearchValue,
+    title: title ?? debouncedSearchName,
     offset,
     limit: PAGINATION_LIMIT,
   };
   const { data: templates, isLoading: isTemplatesLoading, isFetching } = useGetTemplatesByFilterQuery(params);
+
+  function areAllStatesNull(filters: SelectedFilters): boolean {
+    return (
+      filters.engine === null &&
+      filters.tag.every(tag => tag === null) &&
+      filters.title === null &&
+      filters.category === null &&
+      filters.subCategory === null
+    );
+  }
+
+  const resetOffest = () => {
+    setOffset(0);
+  };
+
+  const allFilterParamsNull = areAllStatesNull(filters);
 
   const handleNextPage = () => {
     if (templates?.next) {
@@ -69,17 +86,6 @@ export function useGetTemplatesByFilter() {
     }
   };
 
-  function areAllStatesNull(filters: SelectedFilters): boolean {
-    return (
-      filters.engine === null &&
-      filters.tag.every(tag => tag === null) &&
-      filters.title === null &&
-      filters.category === null &&
-      filters.subCategory === null
-    );
-  }
-  const allFilterParamsNull = areAllStatesNull(filters);
-
   const hasNext = !!templates?.next;
   const hasPrev = !!templates?.previous;
 
@@ -87,8 +93,7 @@ export function useGetTemplatesByFilter() {
     categorySlug,
     searchName,
     setSearchName,
-    debouncedSearchValue,
-    setOffset,
+    debouncedSearchName,
     subcategorySlug,
     subcategory,
     allFilterParamsNull,
@@ -101,6 +106,7 @@ export function useGetTemplatesByFilter() {
     handlePreviousPage,
     hasPrev,
     hasNext,
+    resetOffest,
     isFetching,
     tags: tagsQuery.data,
     engines: enginesQuery.data,
