@@ -86,7 +86,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
   const { tags, engines } = useGetTemplatesByFilter();
   const [expandedOnHover, setExpandedOnHover] = useState<boolean>(false);
   const [showExpandIcon, setShowExpandIcon] = useState<boolean>(false);
-  const [showFilters, setShowFilters] = useState<boolean>(false);
+  const [showFilters, setShowFilters] = useState<boolean>(true);
 
   useEffect(() => {
     if (expandedOnHover || open) {

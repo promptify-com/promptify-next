@@ -1,8 +1,9 @@
 import { Box, Grid, Card, Skeleton } from "@mui/material";
 
 export default function LatestTemplatePlaceholder({ count = 12 }) {
-  return Array.from({ length: count }).map((_, index) => (
-    <Box>
+
+  return Array.from<number>({ length: count }).map(_count => (
+    <Box key={_count}>
       <Card
         sx={{
           maxWidth: "266px",
