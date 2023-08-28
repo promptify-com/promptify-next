@@ -1,13 +1,19 @@
 import { Templates } from "@/core/api/dto/templates";
-import { Favorite, FavoriteOutlined } from "@mui/icons-material";
 import { Avatar, Box, Stack, Typography, useTheme, CardMedia, useMediaQuery } from "@mui/material";
 import React from "react";
-
+import FavoriteIcon from "./FavoriteIcon";
 import Image from "@/components/design-system/Image";
 
 interface Props {
   templateData: Templates;
 }
+
+const favoriteIconStyle = {
+  sx: {
+    gap: "3px",
+    color: "onSurface",
+  },
+};
 
 export const DetailsCard: React.FC<Props> = ({ templateData }) => {
   const { breakpoints } = useTheme();
@@ -76,25 +82,7 @@ export const DetailsCard: React.FC<Props> = ({ templateData }) => {
             gap={1}
             sx={{ display: { xs: "none", md: "flex" } }}
           >
-            <Typography
-              sx={{
-                p: "6px 11px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "3px",
-                fontSize: 15,
-                fontWeight: 500,
-                color: "onSurface",
-                svg: {
-                  width: 24,
-                  height: 24,
-                },
-              }}
-            >
-              {templateData.is_favorite ? <Favorite /> : <FavoriteOutlined />}
-              {templateData.favorites_count}
-            </Typography>
+            <FavoriteIcon style={favoriteIconStyle} />
             <Avatar
               src={templateData.created_by.avatar}
               alt={templateData.created_by.username}

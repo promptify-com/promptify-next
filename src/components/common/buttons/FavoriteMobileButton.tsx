@@ -1,13 +1,10 @@
+import { memo } from "react";
 import { Button, alpha, useTheme } from "@mui/material";
-import { Favorite, FavoriteBorder, FavoriteOutlined } from "@mui/icons-material";
+import { Favorite, FavoriteBorder } from "@mui/icons-material";
+import useSaveFavoriteTemplate from "@/hooks/useSaveFavoriteTemplate";
 
-interface Props {
-  isFavorite: boolean;
-  onClick: () => void;
-  likes: number;
-}
-
-export const FavoriteMobileButton: React.FC<Props> = ({ isFavorite, onClick, likes }) => {
+export const FavoriteMobileButton = () => {
+  const [saveFavoriteTemplate, { templateData }] = useSaveFavoriteTemplate();
   const { palette } = useTheme();
 
   return (
@@ -25,13 +22,17 @@ export const FavoriteMobileButton: React.FC<Props> = ({ isFavorite, onClick, lik
         },
       }}
       variant={"outlined"}
-      onClick={onClick}
+      onClick={saveFavoriteTemplate}
     >
-      {isFavorite ? "Favorite " : "Add To Favorite "}
-      {isFavorite ? <Favorite sx={{ ml: "auto", mr: "5px" }} /> : <FavoriteBorder sx={{ ml: "auto", mr: "5px" }} />}
-      {likes}
+      {templateData.is_favorite ? "Favorite " : "Add To Favorite "}
+      {templateData.is_favorite ? (
+        <Favorite sx={{ ml: "auto", mr: "5px" }} />
+      ) : (
+        <FavoriteBorder sx={{ ml: "auto", mr: "5px" }} />
+      )}
+      {templateData.likes}
     </Button>
   );
 };
 
-export default FavoriteMobileButton;
+export default memo(FavoriteMobileButton);
