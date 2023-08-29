@@ -34,9 +34,7 @@ export function useGetTemplatesByFilter() {
   const enginesQuery = useGetEnginesQuery(undefined, { skip: !hasPathname("explore") });
 
   const filters = useSelector((state: RootState) => state.filters);
-  const tags = useSelector((state: RootState) => state.filters.tag);
-  const engineId = useSelector((state: RootState) => state.filters.engine?.id);
-  const title = useSelector((state: RootState) => state.filters.title);
+  const { tag: tags, engine, title } = filters;
 
   const PAGINATION_LIMIT = 10;
   const [offset, setOffset] = useState(0);
@@ -56,7 +54,7 @@ export function useGetTemplatesByFilter() {
 
   const params: FilterParams = {
     tag: memoizedFilteredTags,
-    engineId,
+    engineId: engine?.id,
     categoryId: category?.id,
     subcategoryId: subcategory?.id,
     title: title ?? debouncedSearchName,
