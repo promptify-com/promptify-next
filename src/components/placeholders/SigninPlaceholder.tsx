@@ -20,9 +20,17 @@ export default function SigninPlaceholder({ signup = false }) {
           justifyContent="center"
           alignItems="center"
         >
-          <Grid container spacing={1}>
+          <Grid
+            container
+            spacing={1}
+          >
             {Array.from({ length: 4 }).map((_, index) => (
-              <Grid item xs={6} sm={6} key={index}>
+              <Grid
+                item
+                xs={6}
+                sm={6}
+                key={index}
+              >
                 <Box
                   display="flex"
                   flexDirection="column"

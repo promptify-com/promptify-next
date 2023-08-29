@@ -18,6 +18,8 @@ export interface FilterParams {
   title?: string | null;
   engineId?: number;
   ordering?: string;
+  limit?: number;
+  offset?: number;
 }
 
 export interface SelectedFilters {
@@ -115,6 +117,13 @@ export interface Templates {
   meta_description: string;
   meta_keywords: string;
   status: TemplateStatus;
+}
+
+export interface TemplatesWithPagination {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: Templates[];
 }
 
 export interface PromptExecutions {

@@ -57,7 +57,12 @@ export default function PromptPlaceholder() {
             alignItems: "center",
           }}
         >
-          <Skeleton animation="wave" height={25} width="100px" sx={{}} />
+          <Skeleton
+            animation="wave"
+            height={25}
+            width="100px"
+            sx={{}}
+          />
           <Skeleton
             variant="circular"
             animation="wave"

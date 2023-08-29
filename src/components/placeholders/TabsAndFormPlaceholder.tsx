@@ -35,7 +35,12 @@ export default function TabsAndFormPlaceholder({ form = false }) {
         }}
       >
         {Array.from({ length: 5 }).map((_, index) => (
-          <Skeleton key={index} animation="wave" height={45} width="90%" />
+          <Skeleton
+            key={index}
+            animation="wave"
+            height={45}
+            width="90%"
+          />
         ))}
       </Box>
 

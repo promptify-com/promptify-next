@@ -2,8 +2,9 @@ import { Box, Grid, Typography } from "@mui/material";
 
 import { NotFoundIcon } from "@/assets/icons/NotFoundIcon";
 import CardTemplate from "@/components/common/cards/CardTemplate";
-import { TemplateExecutionsDisplay, Templates } from "@/core/api/dto/templates";
+import { TemplateExecutionsDisplay, Templates, TemplatesWithPagination } from "@/core/api/dto/templates";
 import CardTemplateLast from "../common/cards/CardTemplateLast";
+import TemplatesPaginatedList from "../TemplatesPaginatedList";
 
 import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
 import LatestTemplatePlaceholder from "@/components/placeholders/LatestTemplatePlaceholder";
@@ -14,6 +15,10 @@ interface TemplatesSectionProps {
   filtred?: boolean;
   title?: string;
   isLatestTemplates?: boolean;
+  hasNext?: boolean;
+  hasPrev?: boolean;
+  onNextPage?: () => void;
+  onPrevPage?: () => void;
 }
 
 export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
@@ -22,30 +27,36 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
   filtred,
   title,
   isLatestTemplates = false,
+  hasNext = false,
+  hasPrev = false,
+  onNextPage = () => {},
+  onPrevPage = () => {},
 }) => {
-
   return (
     <>
       <Box width={"100%"}>
         {!filtred && <Typography fontSize={19}>{title}</Typography>}
 
         {isLoading ? (
-          isLatestTemplates ?
-          <Grid
-            display={"flex"}
-            flexDirection={"row"}
-            gap={"16px"}
-            alignItems={"flex-start"}
-            alignContent={"flex-start"}
-            alignSelf={"stretch"}
-            flexWrap={{ xs: "nowrap", md: "wrap" }}
-          >
-            <LatestTemplatePlaceholder count={4}/>
-          </Grid>
-           : <CardTemplatePlaceholder count={4} />  
+          isLatestTemplates ? (
+            <Grid
+              display={"flex"}
+              flexDirection={"row"}
+              gap={"16px"}
+              alignItems={"flex-start"}
+              alignContent={"flex-start"}
+              alignSelf={"stretch"}
+              flexWrap={{ xs: "nowrap", md: "wrap" }}
+            >
+              <LatestTemplatePlaceholder count={4} />
+            </Grid>
+          ) : (
+            <CardTemplatePlaceholder count={4} />
+          )
         ) : (
           <Grid
-            container
+            display={"flex"}
+            gap={"16px"}
             flexDirection={isLatestTemplates ? "row" : "column"}
             flexWrap={{ xs: "nowrap", md: "wrap" }}
             sx={{
@@ -56,26 +67,54 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
               WebkitOverflowScrolling: { xs: "touch", md: "initial" },
             }}
           >
-            {!isLoading &&
-              !!templates &&
-              templates.length > 0 &&
-              templates.map((template: TemplateExecutionsDisplay | Templates) => (
-                <Grid key={template.id}>
-                  {isLatestTemplates ? (
-                    <CardTemplateLast
-                      key={template.id}
-                      template={template as TemplateExecutionsDisplay}
-                    />
-                  ) : (
-                    <CardTemplate
-                      key={template.id}
-                      template={template as Templates}
-                    />
-                  )}
-                </Grid>
-              ))}
+            {isLatestTemplates ? (
+              <Grid
+                display={"flex"}
+                flexWrap={{ xs: "nowrap", md: "wrap" }}
+                sx={{
+                  gap: "1em",
+                  width: "100%",
+                  overflow: { xs: "auto", md: "initial" },
+                  WebkitOverflowScrolling: { xs: "touch", md: "initial" },
+                }}
+              >
+                {!isLoading &&
+                  !!templates &&
+                  templates.length > 0 &&
+                  templates.map((template: TemplateExecutionsDisplay | Templates) => (
+                    <Grid key={template.id}>
+                      <CardTemplateLast
+                        key={template.id}
+                        template={template as TemplateExecutionsDisplay}
+                      />
+                    </Grid>
+                  ))}
+              </Grid>
+            ) : (
+              <Grid>
+                <TemplatesPaginatedList
+                  loading={isLoading}
+                  hasNext={hasNext}
+                  hasPrev={hasPrev}
+                  onPrevPage={onPrevPage}
+                  onNextPage={onNextPage}
+                >
+                  {!isLoading &&
+                    !!templates &&
+                    templates.length > 0 &&
+                    templates.map((template: TemplateExecutionsDisplay | Templates) => (
+                      <Grid key={template.id}>
+                        <CardTemplate
+                          key={template.id}
+                          template={template as Templates}
+                        />
+                      </Grid>
+                    ))}
+                </TemplatesPaginatedList>
+              </Grid>
+            )}
 
-            {!isLoading && !(templates && templates.length) && (
+            {!isLoading && !templates?.length && (
               <Grid
                 sx={{
                   display: "flex",

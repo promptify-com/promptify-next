@@ -55,10 +55,14 @@ export const Builder = () => {
       const { editor, ...restQueryParams } = router.query;
 
       // Replace the route without causing a re-render, and without changing the scroll position
-      router.replace({
-        pathname: router.pathname,
-        query: restQueryParams,
-      }, undefined, { scroll: false, shallow: true });
+      router.replace(
+        {
+          pathname: router.pathname,
+          query: restQueryParams,
+        },
+        undefined,
+        { scroll: false, shallow: true },
+      );
     }
   }, [router.query]);
 

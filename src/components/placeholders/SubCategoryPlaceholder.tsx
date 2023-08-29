@@ -6,8 +6,11 @@ import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlace
 export default function SubCategoryPlaceholder() {
   return (
     <Box>
-      <Skeleton animation="wave" sx={{ mb: 1, width: {xs: "40%", md: "10%"} }} />
-      <ParagraphPlaceholder count={1}/>
+      <Skeleton
+        animation="wave"
+        sx={{ mb: 1, width: { xs: "40%", md: "10%" } }}
+      />
+      <ParagraphPlaceholder count={1} />
       <Box
         display="flex"
         gap={2}
@@ -24,7 +27,7 @@ export default function SubCategoryPlaceholder() {
               bgcolor: "#f5f4f9",
               p: 1,
               borderRadius: 16,
-              width: {xs: "100%", md: "10%"},
+              width: { xs: "100%", md: "10%" },
             }}
           >
             <Skeleton
