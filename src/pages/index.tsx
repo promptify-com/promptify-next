@@ -142,11 +142,11 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
               </Grid>
             ) : (
               <>
+                <WelcomeCard />
                 <CategoriesSection
                   categories={categories}
                   isLoading={isValidUser}
                 />
-                <WelcomeCard />
               </>
             )}
           </Grid>
