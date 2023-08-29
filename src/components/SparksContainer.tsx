@@ -1,6 +1,12 @@
 import { FC, useMemo, useState } from "react";
 import { Box, Grid } from "@mui/material";
-import { Execution, ExecutionTemplatePopupType, TemplateExecutionsDisplay } from "@/core/api/dto/templates";
+import {
+  Execution,
+  ExecutionTemplatePopupType,
+  ExecutionWithTemplate,
+  TemplateExecutionsDisplay,
+} from "@/core/api/dto/templates";
+
 import { SparksLayoutDesktop } from "./SparksLayoutDesktop";
 import { SparksLayoutMobile } from "./SparksLayoutMobile";
 import { SparkSaveDeletePopup } from "./dialog/SparkSaveDeletePopup";
@@ -19,9 +25,6 @@ export interface ExecutionTemplate {
 }
 
 export type CurrentSortType = "executionTitle" | "executionTime" | "executionTemplate" | "executionFavorite";
-interface ExecutionWithTemplate extends Execution {
-  template: ExecutionTemplate;
-}
 
 type SortDirectionState = {
   [key in CurrentSortType]: "asc" | "desc";
@@ -34,7 +37,7 @@ type SortStateWithCurrentType = SortDirectionState & {
 const SparksContainer: FC<SparksContainerProps> = ({ templates }) => {
   const [openPopup, setOpenPopup] = useState(false);
   const [openExportPopup, setOpenExportpopup] = useState(false);
-  const [activeExecution, setActiveExecution] = useState<Execution | null>(null);
+  const [activeExecution, setActiveExecution] = useState<ExecutionWithTemplate | null>(null);
   const [popupType, setPopupType] = useState<ExecutionTemplatePopupType>("update");
 
   const [currentTab, setCurrentTab] = useState<TabValueType>("all");
