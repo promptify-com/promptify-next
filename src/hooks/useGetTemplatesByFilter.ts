@@ -14,7 +14,7 @@ export function useGetTemplatesByFilter() {
   const router = useRouter();
   const splittedPath = router.pathname.split("/");
 
-  const hasPathname = (route: "explore" | "categorySlug" | "subcategorySlug") => {
+  const hasPathname = (route: "explore" | "[categorySlug]" | "[subcategorySlug]") => {
     return splittedPath.includes(route);
   };
 
@@ -23,9 +23,11 @@ export function useGetTemplatesByFilter() {
   const { data: categories, isLoading: isCategoryLoading } = useGetCategoriesQuery(undefined, {
     skip: !hasPathname("explore"),
   });
-  const { data: category } = useGetCategoryBySlugQuery(categorySlug as string, { skip: !hasPathname("categorySlug") });
+  const { data: category } = useGetCategoryBySlugQuery(categorySlug as string, {
+    skip: !hasPathname("[categorySlug]"),
+  });
   const { data: subcategory } = useGetCategoryBySlugQuery(subcategorySlug as string, {
-    skip: !hasPathname("subcategorySlug"),
+    skip: !hasPathname("[subcategorySlug]"),
   });
 
   const tagsQuery = useGetTagsPopularQuery(undefined, { skip: !hasPathname("explore") });
