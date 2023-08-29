@@ -5,9 +5,10 @@ import { ExecutionCard } from "./ExecutionCard";
 import { PromptLiveResponse } from "@/common/types/prompt";
 import { ExecutionCardGenerated } from "./ExecutionCardGenerated";
 import { DisplayActions } from "./DisplayActions";
-import { addToFavorite, removeFromFavorite } from "@/hooks/api/executions";
 
 import ParagraphPlaceholder from "@/components/placeholders/ParagraphPlaceholder";
+import { useRouter } from "next/router";
+import moment from "moment";
 
 interface Props {
   templateData: Templates;
@@ -26,9 +27,11 @@ export const Display: React.FC<Props> = ({
   setSelectedExecution,
   generatedExecution,
 }) => {
-  const [sortedExecutions, setSortedExecutions] = useState<TemplatesExecutions[]>([]);
+  const [sortedExecutions, setSortedExecutions] = useState(executions);
   const [firstLoad, setFirstLoad] = useState(true);
   const [search, setSearch] = useState<string>("");
+  const router = useRouter();
+  const routerSpark = router.query?.spark;
 
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -47,7 +50,23 @@ export const Display: React.FC<Props> = ({
   }, [generatedExecution]);
 
   useEffect(() => {
-    setSortedExecutions(executions);
+    const sorted = [...(executions || [])]
+      .reduce((uniqueExecs: TemplatesExecutions[], execution) => {
+        if (!uniqueExecs.some((item: TemplatesExecutions) => item.id === execution.id)) {
+          uniqueExecs.push(execution);
+        }
+        return uniqueExecs;
+      }, [])
+      .sort((a, b) => moment(b.created_at).diff(moment(a.created_at)));
+    setSortedExecutions(sorted);
+
+    // Selected execution already set ==> executions list mutated and refetched
+    // the router spark param considered only on the first component load, otherwise select the latest execution
+    let spark = !!selectedExecution
+      ? sorted.find(exec => exec.id === selectedExecution.id)
+      : firstLoad && routerSpark && sorted.find(exec => exec.id.toString() === routerSpark);
+
+    setSelectedExecution(spark || sorted[0]);
   }, [executions]);
 
   return (
