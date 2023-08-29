@@ -40,6 +40,13 @@ export const executionsApi = baseApi.injectEndpoints({
         }),
         invalidatesTags: ["Executions"],
       }),
+      exportExecution: builder.query<File, { id: number; fileType: "pdf" | "word" }>({
+        query: ({ id, fileType }: { id: number; fileType: "pdf" | "word" }) => ({
+          url: `/api/meta/template-executions/${id}/export/?file_format=${fileType}`,
+          method: "get",
+        }),
+        providesTags: ["Executions"],
+      }),
     };
   },
 });
@@ -50,4 +57,5 @@ export const {
   useUpdateExecutionMutation,
   useDeleteExecutionMutation,
   useExecutionFavoriteMutation,
+  useExportExecutionQuery,
 } = executionsApi;

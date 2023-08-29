@@ -8,6 +8,7 @@ export interface SparksLayoutProps {
   onExecutionSaved: () => void;
   onOpenEdit: () => void;
   onOpenDelete: () => void;
+  onOpenExport: () => void;
   onClosePopup?: () => void;
 }
 

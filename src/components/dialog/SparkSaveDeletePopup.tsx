@@ -6,14 +6,14 @@ import BaseButton from "../base/BaseButton";
 import { Execution, ExecutionTemplatePopupType } from "@/core/api/dto/templates";
 import { useDeleteExecutionMutation, useUpdateExecutionMutation } from "@/core/api/executions";
 
-interface SparkPopupProps {
+interface SparkSaveDeletePopupProps {
   type: ExecutionTemplatePopupType;
   open: boolean;
   onClose: () => void;
   activeExecution: Execution | null;
 }
 
-export const SparkPopup: React.FC<SparkPopupProps> = ({ open, type, activeExecution, onClose }) => {
+export const SparkSaveDeletePopup = ({ open, type, activeExecution, onClose }: SparkSaveDeletePopupProps) => {
   const [updateExecution, { isError }] = useUpdateExecutionMutation();
   const [deleteExecution, { isError: isDeleteExecutionError }] = useDeleteExecutionMutation();
   const [executionTitle, setExecutionTitle] = useState("");

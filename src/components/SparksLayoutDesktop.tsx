@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { SparksLayoutProps } from "@/core/api/dto/templates";
-import { CloudQueueRounded, DeleteRounded, Edit } from "@mui/icons-material";
+import { CloudQueueRounded, DeleteRounded, Edit, GetAppRounded } from "@mui/icons-material";
 import { CardMedia, Grid, IconButton, Tooltip, Typography } from "@mui/material";
 
 import useTimestampConverter from "@/hooks/useTimestampConverter";
@@ -15,6 +15,7 @@ export const SparksLayoutDesktop: FC<SparksLayoutProps> = ({
   onExecutionSaved,
   onOpenEdit,
   onOpenDelete,
+  onOpenExport,
 }) => {
   const router = useRouter();
   const { truncate } = useTruncate();
@@ -157,6 +158,22 @@ export const SparksLayoutDesktop: FC<SparksLayoutProps> = ({
         justifyContent={"end"}
         alignItems={"center"}
       >
+        <Tooltip title="Export">
+          <IconButton
+            onClick={onOpenExport}
+            sx={{
+              border: "none",
+              "&:hover": {
+                bgcolor: "surface.2",
+              },
+            }}
+          >
+            <GetAppRounded
+              className="cellHovered"
+              sx={{ opacity: 0.25, fontSize: "18px" }}
+            />
+          </IconButton>
+        </Tooltip>
         {!execution.is_favorite && (
           <Tooltip title="Save">
             <IconButton
