@@ -48,10 +48,10 @@ export const SparkExportPopup = ({ open, activeExecution, onClose }: SparkExport
   const ENCODED_URL = encodeURIComponent(sharedUrl);
 
   const generateTitle = () => {
-    if (activeExecution) {
+    if (activeExecution?.template) {
       const hasNotitle = activeExecution?.title.toLowerCase() === "untitled";
       return encodeURIComponent(hasNotitle ? activeExecution.template.title : activeExecution.title);
-    }
+    } else return activeExecution?.title;
   };
 
   const handleFacebookShare = () => {
