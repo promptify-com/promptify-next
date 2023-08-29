@@ -12,19 +12,24 @@ import useDebounce from "./useDebounce";
 
 export function useGetTemplatesByFilter() {
   const router = useRouter();
-  const pathname = router.pathname;
+  const splittedPath = router.pathname.split("/");
 
-  const splittedPath = pathname.split("/");
-  const isExplorePage = splittedPath[1] == "explore";
+  const hasPathname = (route: "explore" | "categorySlug" | "subcategorySlug") => {
+    return splittedPath.includes(route);
+  };
 
   const { categorySlug, subcategorySlug } = router.query;
 
-  const { data: categories, isLoading: isCategoryLoading } = useGetCategoriesQuery(undefined, { skip: !isExplorePage });
-  const { data: category } = useGetCategoryBySlugQuery(categorySlug as string, { skip: !isExplorePage });
-  const { data: subcategory } = useGetCategoryBySlugQuery(subcategorySlug as string, { skip: !isExplorePage });
+  const { data: categories, isLoading: isCategoryLoading } = useGetCategoriesQuery(undefined, {
+    skip: !hasPathname("explore"),
+  });
+  const { data: category } = useGetCategoryBySlugQuery(categorySlug as string, { skip: !hasPathname("categorySlug") });
+  const { data: subcategory } = useGetCategoryBySlugQuery(subcategorySlug as string, {
+    skip: !hasPathname("subcategorySlug"),
+  });
 
-  const tagsQuery = useGetTagsPopularQuery(undefined, { skip: !isExplorePage });
-  const enginesQuery = useGetEnginesQuery(undefined, { skip: !isExplorePage });
+  const tagsQuery = useGetTagsPopularQuery(undefined, { skip: !hasPathname("explore") });
+  const enginesQuery = useGetEnginesQuery(undefined, { skip: !hasPathname("explore") });
 
   const filters = useSelector((state: RootState) => state.filters);
   const tags = useSelector((state: RootState) => state.filters.tag);
@@ -33,8 +38,8 @@ export function useGetTemplatesByFilter() {
 
   const PAGINATION_LIMIT = 10;
   const [offset, setOffset] = useState(0);
-  const [searchName, setSearchName] = useState("");
 
+  const [searchName, setSearchName] = useState("");
   const deferredSearchName = useDeferredValue(searchName);
   const debouncedSearchName = useDebounce<string>(deferredSearchName, 300);
 
@@ -67,12 +72,11 @@ export function useGetTemplatesByFilter() {
       filters.subCategory === null
     );
   }
+  const allFilterParamsNull = areAllStatesNull(filters);
 
   const resetOffest = () => {
     setOffset(0);
   };
-
-  const allFilterParamsNull = areAllStatesNull(filters);
 
   const handleNextPage = () => {
     if (templates?.next) {
