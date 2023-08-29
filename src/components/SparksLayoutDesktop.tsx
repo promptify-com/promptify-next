@@ -8,6 +8,7 @@ import useTruncate from "@/hooks/useTruncate";
 import DraftSpark from "@/assets/icons/DraftSpark";
 import SavedSpark from "@/assets/icons/SavedSpark";
 import { useRouter } from "next/router";
+import ShareIcon from "@/assets/icons/ShareIcon";
 
 export const SparksLayoutDesktop: FC<SparksLayoutProps> = ({
   execution,
@@ -158,22 +159,6 @@ export const SparksLayoutDesktop: FC<SparksLayoutProps> = ({
         justifyContent={"end"}
         alignItems={"center"}
       >
-        <Tooltip title="Export">
-          <IconButton
-            onClick={onOpenExport}
-            sx={{
-              border: "none",
-              "&:hover": {
-                bgcolor: "surface.2",
-              },
-            }}
-          >
-            <GetAppRounded
-              className="cellHovered"
-              sx={{ opacity: 0.25, fontSize: "18px" }}
-            />
-          </IconButton>
-        </Tooltip>
         {!execution.is_favorite && (
           <Tooltip title="Save">
             <IconButton
@@ -205,6 +190,22 @@ export const SparksLayoutDesktop: FC<SparksLayoutProps> = ({
             <DeleteRounded
               className="cellHovered"
               sx={{ opacity: 0.25, fontSize: "16px" }}
+            />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Export / Share">
+          <IconButton
+            onClick={onOpenExport}
+            sx={{
+              border: "none",
+              "&:hover": {
+                bgcolor: "surface.2",
+              },
+            }}
+          >
+            <ShareIcon
+              className="cellHovered"
+              opacity={0.2}
             />
           </IconButton>
         </Tooltip>

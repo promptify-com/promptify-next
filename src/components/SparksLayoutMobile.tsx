@@ -10,17 +10,7 @@ import {
   MenuItem,
   Typography,
 } from "@mui/material";
-import {
-  Cloud,
-  CloudDoneRounded,
-  CloudQueueOutlined,
-  CloudQueueRounded,
-  CloudQueueSharp,
-  Delete,
-  Edit,
-  GetAppRounded,
-  MoreVert,
-} from "@mui/icons-material";
+import { Cloud, Delete, Edit, MoreVert } from "@mui/icons-material";
 import { useRouter } from "next/router";
 
 import DraftSpark from "@/assets/icons/DraftSpark";
@@ -28,6 +18,7 @@ import SavedSpark from "@/assets/icons/SavedSpark";
 import useTimestampConverter from "@/hooks/useTimestampConverter";
 import useTruncate from "@/hooks/useTruncate";
 import { SparksLayoutProps } from "@/core/api/dto/templates";
+import ShareIcon from "@/assets/icons/ShareIcon";
 
 export const SparksLayoutMobile: FC<SparksLayoutProps> = ({
   execution,
@@ -209,7 +200,7 @@ export const SparksLayoutMobile: FC<SparksLayoutProps> = ({
           }}
         >
           <ListItemIcon>
-            <GetAppRounded sx={{ fontSize: "18px" }} />
+            <ShareIcon />
           </ListItemIcon>
           <ListItemText>Export</ListItemText>
         </MenuItem>
