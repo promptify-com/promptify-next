@@ -39,13 +39,7 @@ const Login = () => {
 
   return (
     <>
-      <Box>
-        {isLoading ? (
-          <SigninPlaceholder />
-        ) : (
-          <LoginLayout preLogin={preLogin} />
-        )}
-      </Box>
+      <Box>{isLoading ? <SigninPlaceholder /> : <LoginLayout preLogin={preLogin} />}</Box>
     </>
   );
 };

@@ -27,12 +27,10 @@ import { Display } from "@/components/prompt/Display";
 import { Details } from "@/components/prompt/Details";
 import { authClient } from "@/common/axios";
 import { DetailsCard } from "@/components/prompt/DetailsCard";
-import { Prompts } from "@/core/api/dto/prompts";
 import { PromptLiveResponse } from "@/common/types/prompt";
 import { Layout } from "@/layout";
 import { useWindowSize } from "usehooks-ts";
 import BottomTabs from "@/components/prompt/BottomTabs";
-import moment from "moment";
 import { DetailsCardMini } from "@/components/prompt/DetailsCardMini";
 import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
 import ExecutionForm from "@/components/prompt/ExecutionForm";
@@ -50,7 +48,6 @@ const Prompt = () => {
   const [executionFormOpen, setExecutionFormOpen] = useState(false);
   const [updateViewTemplate] = useViewTemplateMutation();
   const [errorMessage, setErrorMessage] = useState<string>("");
-  const [sortedExecutions, setSortedExecutions] = useState<TemplatesExecutions[]>([]);
   const [mobileTab, setMobileTab] = useState(0);
   const router = useRouter();
   const theme = useTheme();
@@ -88,23 +85,6 @@ const Prompt = () => {
       }),
     );
   }
-
-  useEffect(() => {
-    const sorted = [...(templateExecutions || [])]
-      .reduce((uniqueExecs: TemplatesExecutions[], execution) => {
-        if (!uniqueExecs.some((item: TemplatesExecutions) => item.id === execution.id)) {
-          uniqueExecs.push(execution);
-        }
-        return uniqueExecs;
-      }, [])
-      .sort((a, b) => moment(b.created_at).diff(moment(a.created_at)));
-    setSortedExecutions(sorted);
-  }, [templateExecutions]);
-
-  useEffect(() => {
-    const displayExecution = sortedExecutions.find(exec => exec.id === selectedExecution?.id);
-    setSelectedExecution(displayExecution || sortedExecutions?.[0] || null);
-  }, [sortedExecutions]);
 
   useEffect(() => {
     if (fetchedTemplate?.id && isValidUser) {
@@ -362,7 +342,7 @@ const Prompt = () => {
               >
                 <Display
                   templateData={fetchedTemplate}
-                  executions={sortedExecutions || []}
+                  executions={templateExecutions || []}
                   isFetching={isFetchingExecutions}
                   selectedExecution={selectedExecution}
                   setSelectedExecution={setSelectedExecution}

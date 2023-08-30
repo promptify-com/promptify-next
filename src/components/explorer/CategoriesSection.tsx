@@ -9,17 +9,18 @@ interface CategoriesSectionProps {
   categories: Category[] | undefined;
 }
 
-export const CategoriesSection: React.FC<CategoriesSectionProps> = ({
-  isLoading,
-  categories,
-}) => {
+export const CategoriesSection: React.FC<CategoriesSectionProps> = ({ isLoading, categories }) => {
   if (!categories?.length) {
     return null;
   }
 
   return (
     <>
-      <Box gap={"16px"} display={"flex"} flexDirection={"column"}>
+      <Box
+        gap={"16px"}
+        display={"flex"}
+        flexDirection={"column"}
+      >
         {!isLoading && <Typography fontSize={19}> Browse Category </Typography>}
         {isLoading ? (
           <Grid
@@ -48,8 +49,8 @@ export const CategoriesSection: React.FC<CategoriesSectionProps> = ({
             }}
           >
             {categories
-              ?.filter((mainCat) => !mainCat.parent)
-              .map((category) => (
+              ?.filter(mainCat => !mainCat.parent)
+              .map(category => (
                 <Grid key={category.id}>
                   <CategoryCard
                     category={category}

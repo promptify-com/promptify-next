@@ -2,7 +2,11 @@ import { Grid, Card, Skeleton } from "@mui/material";
 
 export default function CardTemplatePlaceholder({ count = 6 }) {
   return Array.from({ length: count }).map((_, index) => (
-    <Grid key={index} item sx={{ mb: 2 }}>
+    <Grid
+      key={index}
+      item
+      sx={{ mb: 2 }}
+    >
       <Card
         sx={{
           borderRadius: "16px",

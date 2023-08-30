@@ -2,7 +2,10 @@ import { Box, Grid, Skeleton } from "@mui/material";
 
 export default function CategoriesPlaceholder({ count = 12 }) {
   return Array.from({ length: count }).map((_, index) => (
-    <Grid item key={index}>
+    <Grid
+      item
+      key={index}
+    >
       <Box
         sx={{
           maxWidth: "200px",

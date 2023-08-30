@@ -4,4 +4,4 @@ export * from "./Home";
 export * from "./Identy";
 export * from "./Payment";
 export * from "./Privacy";
-export * from "./Templates";
+export * from "./TemplatesManager";

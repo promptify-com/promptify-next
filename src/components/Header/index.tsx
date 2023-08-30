@@ -52,12 +52,7 @@ const Login = () => {
   );
 };
 
-export const Header: React.FC<HeaderProps> = ({
-  transparent = false,
-  fixed = false,
-  keyWord = "",
-  setKeyWord,
-}) => {
+export const Header: React.FC<HeaderProps> = ({ transparent = false, fixed = false, keyWord = "", setKeyWord }) => {
   const router = useRouter();
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
   const isValidUser = useSelector(isValidUserFn);
@@ -173,7 +168,10 @@ export const Header: React.FC<HeaderProps> = ({
           }}
           onClick={handleInputFocus}
         >
-          <SearchBar keyWord={keyWord} setKeyWord={setKeyWord} />
+          <SearchBar
+            keyWord={keyWord}
+            setKeyWord={setKeyWord}
+          />
           <SearchDialog
             open={openSearchDialog}
             close={() => setOpenSearchDialog(false)}
@@ -212,7 +210,11 @@ export const Header: React.FC<HeaderProps> = ({
                   }}
                 />
               ) : (
-                <Box display={"flex"} alignItems={"center"} gap={"16px"}>
+                <Box
+                  display={"flex"}
+                  alignItems={"center"}
+                  gap={"16px"}
+                >
                   <Login />
                   <Grid
                     onClick={() =>
