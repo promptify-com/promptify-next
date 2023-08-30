@@ -6,9 +6,8 @@ import { ExecutionWithTemplate } from "@/core/api/dto/templates";
 import PdfIcon from "@/assets/icons/PdfIcon";
 import WordIcon from "@/assets/icons/WordIcon";
 import LinkVariantIcon from "@/assets/icons/LinkVariantIcon";
-import { exportExecution } from "@/hooks/api/executions";
 import useCopyToClipboard from "@/hooks/useCopyToClipboard";
-import { GetBaseURL } from "@/common/helpers/getBaseUrl";
+import { getBaseURL, handleExport } from "@/common/helpers";
 
 interface SparkExportProps {
   open: boolean;
@@ -17,29 +16,8 @@ interface SparkExportProps {
 }
 
 export const SparkExportPopup = ({ open, activeExecution, onClose }: SparkExportProps) => {
-  const sharedUrl = `${GetBaseURL()}/prompt/${activeExecution?.title}/?=spark=${activeExecution?.id}`;
+  const sharedUrl = `${getBaseURL()}/prompt/${activeExecution?.template.slug}/?=spark=${activeExecution?.id}`;
   const [copyToClipboard, copyResult] = useCopyToClipboard();
-
-  const handleExport = async (fileType: "word" | "pdf") => {
-    const isPdf = fileType === "pdf";
-    if (activeExecution) {
-      try {
-        const fileData = await exportExecution(activeExecution.id, fileType);
-
-        const blob = new Blob([fileData], { type: isPdf ? "application/pdf" : "application/msword" });
-        const url = URL.createObjectURL(blob);
-
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `${activeExecution.title}.${isPdf ? "pdf" : "docx"}`;
-        a.click();
-
-        URL.revokeObjectURL(url);
-      } catch (error) {
-        console.error("Error exporting and downloading:", error);
-      }
-    }
-  };
 
   const handleClickCopy = () => {
     copyToClipboard(sharedUrl);
@@ -142,7 +120,7 @@ export const SparkExportPopup = ({ open, activeExecution, onClose }: SparkExport
           </Grid>
 
           <IconButton
-            onClick={() => handleExport("pdf")}
+            onClick={() => handleExport(activeExecution, "pdf")}
             sx={{
               border: "none",
               opacity: 0.6,
@@ -198,7 +176,7 @@ export const SparkExportPopup = ({ open, activeExecution, onClose }: SparkExport
           </Grid>
 
           <IconButton
-            onClick={() => handleExport("word")}
+            onClick={() => handleExport(activeExecution, "word")}
             sx={{
               border: "none",
               opacity: 0.6,

@@ -236,4 +236,4 @@ export interface CollectionMutationParams {
   templateId: number;
 }
 
-export type ExecutionTemplatePopupType = "update" | "delete";
+export type ExecutionTemplatePopupType = "update" | "delete" | "export" | null;

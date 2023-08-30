@@ -1,4 +1,4 @@
-export function GetBaseURL() {
+export function getBaseURL() {
   if (typeof window !== "undefined") {
     return window.location.origin;
   }

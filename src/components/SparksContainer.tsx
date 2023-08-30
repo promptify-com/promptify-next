@@ -35,10 +35,8 @@ type SortStateWithCurrentType = SortDirectionState & {
 };
 
 const SparksContainer: FC<SparksContainerProps> = ({ templates }) => {
-  const [openPopup, setOpenPopup] = useState(false);
-  const [openExportPopup, setOpenExportpopup] = useState(false);
+  const [popup, setPopup] = useState<ExecutionTemplatePopupType>(null);
   const [activeExecution, setActiveExecution] = useState<ExecutionWithTemplate | null>(null);
-  const [popupType, setPopupType] = useState<ExecutionTemplatePopupType>("update");
 
   const [currentTab, setCurrentTab] = useState<TabValueType>("all");
   const [selectedTemplate, setSelectedTemplate] = useState<TemplateExecutionsDisplay | null>(null);
@@ -196,18 +194,16 @@ const SparksContainer: FC<SparksContainerProps> = ({ templates }) => {
                 template={execution.template}
                 execution={execution}
                 onOpenExport={() => {
-                  setOpenExportpopup(true);
+                  setPopup("export");
                   setActiveExecution(execution);
                 }}
                 onOpenEdit={() => {
-                  setPopupType("update");
+                  setPopup("update");
                   setActiveExecution(execution);
-                  setOpenPopup(true);
                 }}
                 onOpenDelete={() => {
-                  setPopupType("delete");
+                  setPopup("delete");
                   setActiveExecution(execution);
-                  setOpenPopup(true);
                 }}
               />
               <SparksLayoutMobile
@@ -215,18 +211,16 @@ const SparksContainer: FC<SparksContainerProps> = ({ templates }) => {
                 template={execution.template}
                 execution={execution}
                 onOpenEdit={() => {
-                  setPopupType("update");
+                  setPopup("update");
                   setActiveExecution(execution);
-                  setOpenPopup(true);
                 }}
                 onOpenExport={() => {
-                  setOpenExportpopup(true);
+                  setPopup("export");
                   setActiveExecution(execution);
                 }}
                 onOpenDelete={() => {
-                  setPopupType("delete");
+                  setPopup("delete");
                   setActiveExecution(execution);
-                  setOpenPopup(true);
                 }}
               />
             </Box>
@@ -234,14 +228,14 @@ const SparksContainer: FC<SparksContainerProps> = ({ templates }) => {
         </Box>
       </Grid>
       <SparkSaveDeletePopup
-        type={popupType}
-        open={openPopup}
+        type={popup}
+        open={popup === "delete" || popup === "update"}
         activeExecution={activeExecution}
-        onClose={() => setOpenPopup(false)}
+        onClose={() => setPopup(null)}
       />
       <SparkExportPopup
-        open={openExportPopup}
-        onClose={() => setOpenExportpopup(false)}
+        open={popup === "export"}
+        onClose={() => setPopup(null)}
         activeExecution={activeExecution}
       />
     </Grid>

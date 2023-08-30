@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function useCopyToClipboard() {
   const [result, setResult] = useState<null | { state: "success" } | { state: "error"; message: string }>(null);
@@ -9,13 +9,24 @@ function useCopyToClipboard() {
       setResult({ state: "success" });
     } catch (e: any) {
       setResult({ state: "error", message: e.message });
-      throw e;
-    } finally {
-      setTimeout(() => {
+    }
+  };
+
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout | null = null;
+
+    if (result !== null) {
+      timeoutId = setTimeout(() => {
         setResult(null);
       }, 2000);
     }
-  };
+
+    return () => {
+      if (timeoutId !== null) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [result]);
 
   return [copy, result] as const;
 }
