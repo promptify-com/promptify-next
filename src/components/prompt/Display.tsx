@@ -1,13 +1,14 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useMemo } from "react";
 import { Box, Typography } from "@mui/material";
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { ExecutionCard } from "./ExecutionCard";
 import { PromptLiveResponse } from "@/common/types/prompt";
 import { ExecutionCardGenerated } from "./ExecutionCardGenerated";
 import { DisplayActions } from "./DisplayActions";
-import { addToFavorite, removeFromFavorite } from "@/hooks/api/executions";
 
 import ParagraphPlaceholder from "@/components/placeholders/ParagraphPlaceholder";
+import { useRouter } from "next/router";
+import moment from "moment";
 
 interface Props {
   templateData: Templates;
@@ -26,9 +27,10 @@ export const Display: React.FC<Props> = ({
   setSelectedExecution,
   generatedExecution,
 }) => {
-  const [sortedExecutions, setSortedExecutions] = useState<TemplatesExecutions[]>([]);
   const [firstLoad, setFirstLoad] = useState(true);
   const [search, setSearch] = useState<string>("");
+  const router = useRouter();
+  const sparkQueryParam = router.query?.spark as string;
 
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -41,13 +43,37 @@ export const Display: React.FC<Props> = ({
 
     return () => container?.removeEventListener("click", handleClick);
   }, []);
+
   // If there is a new execution being generated, remove opacity layer
   useEffect(() => {
     if (generatedExecution) setFirstLoad(false);
   }, [generatedExecution]);
 
-  useEffect(() => {
-    setSortedExecutions(executions);
+  const sortedExecutions = useMemo(() => {
+    const _execuitons = [...(executions || [])]
+      .reduce((uniqueExecs: TemplatesExecutions[], execution) => {
+        if (!uniqueExecs.some((item: TemplatesExecutions) => item.id === execution.id)) {
+          uniqueExecs.push(execution);
+        }
+        return uniqueExecs;
+      }, [])
+      .sort((a, b) => moment(b.created_at).diff(moment(a.created_at)));
+
+    const wantedExecutionId = sparkQueryParam ?? selectedExecution?.id.toString();
+
+    if (wantedExecutionId) {
+      const _selectedExecution = _execuitons.find(exec => exec.id.toString() === wantedExecutionId);
+
+      setSelectedExecution(_selectedExecution || _execuitons?.[0] || null);
+    } else {
+      setSelectedExecution(_execuitons?.[0] || null);
+    }
+
+    if (sparkQueryParam) {
+      router.replace({ pathname: `/prompt/${templateData.slug}` }, undefined, { shallow: true, scroll: false });
+    }
+
+    return _execuitons;
   }, [executions]);
 
   return (
