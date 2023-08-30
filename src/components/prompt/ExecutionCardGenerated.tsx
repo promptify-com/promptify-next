@@ -1,8 +1,8 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Box, Stack, Tooltip, Typography } from "@mui/material";
 import { Subtitle } from "@/components/blocks";
 import { markdownToHTML } from "@/common/helpers/markdownToHTML";
-import { PromptLiveResponse } from "@/common/types/prompt";
+import { PromptLiveResponse, PromptLiveResponseData } from "@/common/types/prompt";
 import { Templates } from "@/core/api/dto/templates";
 import DOMPurify from "isomorphic-dompurify";
 
@@ -12,7 +12,28 @@ interface Props {
 }
 
 export const ExecutionCardGenerated: React.FC<Props> = ({ execution, templateData }) => {
+  const [liveExecutionData, setLiveExecutionData] = useState<PromptLiveResponseData[]>([]);
   const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const sortAndProcessExecutions = async () => {
+      if (execution.data) {
+        const processedOutputs = await Promise.all(
+          execution.data.map(async liveResponseData => {
+            return {
+              ...liveResponseData,
+              message: !isImageOutput(liveResponseData.message)
+                ? await markdownToHTML(liveResponseData.message)
+                : liveResponseData.message,
+            };
+          }),
+        );
+        setLiveExecutionData(processedOutputs);
+      }
+    };
+
+    sortAndProcessExecutions();
+  }, [execution.data]);
 
   useEffect(() => {
     document.addEventListener("wheel", event => {
@@ -43,7 +64,7 @@ export const ExecutionCardGenerated: React.FC<Props> = ({ execution, templateDat
         mx: "auto",
       }}
     >
-      {execution.data?.map((exec, i) => {
+      {liveExecutionData.map((exec, i) => {
         const prevItem = i > 0 && execution.data && execution.data[i - 1];
         const isPrevItemIsImage = prevItem && isImageOutput(prevItem?.message);
         const nextItem = execution.data ? i < execution.data.length - 1 && execution.data[i + 1] : undefined;
