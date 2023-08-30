@@ -9,7 +9,12 @@ import { Search } from "@mui/icons-material";
 import { useRouter } from "next/router";
 import { RootState } from "@/core/store";
 import SearchByKeywords from "./SearchByKeywords";
-import { useEffect } from "react";
+import { useDeferredValue, useEffect, useState } from "react";
+import { useGetTemplatesBySearchQuery } from "@/core/api/templates";
+import useDebounce from "@/hooks/useDebounce";
+import CardTemplate from "../common/cards/CardTemplate";
+import CardTemplatePlaceholder from "../placeholders/CardTemplatePlaceHolder";
+import { NotFoundIcon } from "@/assets/icons/NotFoundIcon";
 
 interface SearchDialogProps {
   open: boolean;
@@ -18,9 +23,14 @@ interface SearchDialogProps {
 
 export const SearchDialog: React.FC<SearchDialogProps> = ({ open, close }) => {
   const router = useRouter();
+  const dispatch = useDispatch();
 
-  const [IsSm, setIsSm] = React.useState(false);
-  const [textInput, setTextInput] = React.useState("");
+  const [IsSm, setIsSm] = useState(false);
+  const [textInput, setTextInput] = useState("");
+  const deferredSearchName = useDeferredValue(textInput);
+  const debouncedSearchName = useDebounce<string>(deferredSearchName, 300);
+
+  const { data: templates, isFetching } = useGetTemplatesBySearchQuery(debouncedSearchName);
 
   const title = useSelector((state: RootState) => state.filters.title);
 
@@ -28,11 +38,10 @@ export const SearchDialog: React.FC<SearchDialogProps> = ({ open, close }) => {
     e.stopPropagation();
     close();
   };
-  React.useEffect(() => {
+
+  useEffect(() => {
     close();
   }, [title]);
-
-  const dispatch = useDispatch();
 
   useEffect(() => {
     function handleWindowResize() {
@@ -146,7 +155,41 @@ export const SearchDialog: React.FC<SearchDialogProps> = ({ open, close }) => {
         </Box>
       </DialogTitle>
       <DialogContent>
-        <SearchByKeywords title={title} />
+        {textInput === "" ? (
+          <SearchByKeywords title={title} />
+        ) : (
+          <Grid>
+            {isFetching ? (
+              <CardTemplatePlaceholder count={5} />
+            ) : (
+              <Grid
+                display={"flex"}
+                flexDirection={"column"}
+                justifyContent={"center"}
+                alignItems={"center"}
+                minHeight={"20vh"}
+              >
+                {templates?.length !== 0 && !isFetching ? (
+                  <Grid
+                    display={"flex"}
+                    flexDirection={"column"}
+                    gap={"8px"}
+                  >
+                    {templates?.map(template => (
+                      <CardTemplate
+                        key={template.id}
+                        template={template}
+                        query={debouncedSearchName}
+                      />
+                    ))}
+                  </Grid>
+                ) : (
+                  <NotFoundIcon />
+                )}
+              </Grid>
+            )}
+          </Grid>
+        )}
       </DialogContent>
     </Dialog>
   );
