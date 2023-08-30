@@ -30,7 +30,9 @@ export const SearchDialog: React.FC<SearchDialogProps> = ({ open, close }) => {
   const deferredSearchName = useDeferredValue(textInput);
   const debouncedSearchName = useDebounce<string>(deferredSearchName, 300);
 
-  const { data: templates, isFetching } = useGetTemplatesBySearchQuery(debouncedSearchName);
+  const { data: templates, isFetching } = useGetTemplatesBySearchQuery(debouncedSearchName, {
+    skip: Boolean(textInput.length <= 3),
+  });
 
   const title = useSelector((state: RootState) => state.filters.title);
 
@@ -135,7 +137,7 @@ export const SearchDialog: React.FC<SearchDialogProps> = ({ open, close }) => {
                 onChange={e => {
                   setTextInput(e.target.value);
                 }}
-                defaultValue={title ?? ""}
+                defaultValue={title ?? textInput}
                 placeholder={"Search prompts, templates, collections, or ask something..."}
                 fullWidth
                 sx={{
@@ -165,15 +167,13 @@ export const SearchDialog: React.FC<SearchDialogProps> = ({ open, close }) => {
               <Grid
                 display={"flex"}
                 flexDirection={"column"}
-                justifyContent={"center"}
-                alignItems={"center"}
-                minHeight={"20vh"}
               >
                 {templates?.length !== 0 && !isFetching ? (
                   <Grid
                     display={"flex"}
                     flexDirection={"column"}
                     gap={"8px"}
+                    width={"100%"}
                   >
                     {templates?.map(template => (
                       <CardTemplate
@@ -184,7 +184,15 @@ export const SearchDialog: React.FC<SearchDialogProps> = ({ open, close }) => {
                     ))}
                   </Grid>
                 ) : (
-                  <NotFoundIcon />
+                  <Grid
+                    display={"flex"}
+                    flexDirection={"column"}
+                    justifyContent={"center"}
+                    alignItems={"center"}
+                    minHeight={"20vh"}
+                  >
+                    <NotFoundIcon />
+                  </Grid>
                 )}
               </Grid>
             )}

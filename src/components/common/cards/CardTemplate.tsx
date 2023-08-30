@@ -13,9 +13,10 @@ type CardTemplateProps = {
   template: Templates | TemplateExecutionsDisplay;
   noRedirect?: boolean;
   query?: string;
+  asResult?: boolean;
 };
 
-const CardTemplate: React.FC<CardTemplateProps> = ({ template, noRedirect = false, query }) => {
+const CardTemplate: React.FC<CardTemplateProps> = ({ template, noRedirect = false, query, asResult = false }) => {
   const router = useRouter();
   const dispatch = useDispatch();
   const { truncate } = useTruncate();
@@ -26,10 +27,10 @@ const CardTemplate: React.FC<CardTemplateProps> = ({ template, noRedirect = fals
     const regex = new RegExp(`(${query})`, "gi");
     const parts = text.split(regex);
 
-    return parts.map(part =>
+    return parts.map((part, idx) =>
       regex.test(part) ? (
         <span
-          key={part}
+          key={idx}
           style={{ color: "#375CA9", fontWeight: "bold", textDecoration: "underline" }}
         >
           {part}
@@ -124,7 +125,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({ template, noRedirect = fals
               src={template.created_by.avatar}
               alt={template.created_by.first_name}
               sx={{
-                display: { xs: "flex", md: "none" },
+                display: { xs: asResult ? "none" : "flex", md: "none" },
                 width: 32,
                 height: 32,
                 bgcolor: "surface.5",
@@ -132,7 +133,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({ template, noRedirect = fals
             />
           </Grid>
           <Grid
-            display={"flex"}
+            display={asResult ? "none" : "flex"}
             alignItems={{ xs: "end", md: "center" }}
             width={{ xs: "100%", md: "auto" }}
             marginTop={{ xs: "10px", md: "0px" }}
