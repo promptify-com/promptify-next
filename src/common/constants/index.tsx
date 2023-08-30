@@ -1,10 +1,5 @@
 import { ReactNode } from "react";
-import {
-  AutoAwesome,
-  HomeRounded,
-  MenuBookRounded,
-  Search,
-} from "@mui/icons-material";
+import { AutoAwesome, HomeRounded, MenuBookRounded, Search } from "@mui/icons-material";
 
 import { Prompt } from "@/assets/icons/prompts";
 import { Setting } from "@/assets/icons/setting";
@@ -65,9 +60,35 @@ export const links = [
   },
 ];
 
-export const TemplateStatusArray: TemplateStatus[] = [
-  "ARCHIVED",
-  "DRAFT",
-  "PENDING_REVIEW",
-  "PUBLISHED",
+export const TemplateStatusArray: TemplateStatus[] = ["ARCHIVED", "DRAFT", "PENDING_REVIEW", "PUBLISHED"];
+
+export const Keywords: any[] = [
+  {
+    id: 1,
+    name: "Essay",
+  },
+  {
+    id: 2,
+    name: "Management",
+  },
+  {
+    id: 3,
+    name: "Novel",
+  },
+  {
+    id: 4,
+    name: "Marketing",
+  },
+  {
+    id: 5,
+    name: "Kids Story",
+  },
+  {
+    id: 6,
+    name: "Recommendations",
+  },
+  {
+    id: 7,
+    name: "Social Media",
+  },
 ];
