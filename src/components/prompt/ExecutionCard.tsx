@@ -1,10 +1,11 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Box, Stack, Tooltip, Typography } from "@mui/material";
-import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
+import { PromptExecutions, Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { Subtitle } from "@/components/blocks";
-import { getMarkdownFromString } from "@/common/helpers/getMarkdownFromString";
 import { highlightSearch } from "@/common/helpers/highlightSearch";
 import { Error } from "@mui/icons-material";
+import { markdownToHTML } from "@/common/helpers/markdownToHTML";
+import DOMPurify from "isomorphic-dompurify";
 
 interface Props {
   execution: TemplatesExecutions;
@@ -13,57 +14,49 @@ interface Props {
 }
 
 export const ExecutionCard: React.FC<Props> = ({ execution, templateData, search }) => {
+  const [sortedExecutions, setSortedExecutions] = useState<PromptExecutions[]>([]);
+
   const promptsOrderMap: { [key: string]: number } = {};
   const promptsExecutionOrderMap: { [key: string]: number } = {};
-
-  const scrollRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    scrollRef.current?.scrollIntoView({
-      block: "end",
-    });
-  }, [execution]);
 
   templateData.prompts.forEach(prompt => {
     promptsOrderMap[prompt.id] = prompt.order;
     promptsExecutionOrderMap[prompt.id] = prompt.execution_priority;
   });
 
-  const sortedExecutions = [...execution.prompt_executions].sort((a, b) => {
-    if (promptsOrderMap[a.prompt] === promptsOrderMap[b.prompt]) {
-      return promptsExecutionOrderMap[a.prompt] - promptsExecutionOrderMap[b.prompt];
-    }
-    return promptsOrderMap[a.prompt] - promptsOrderMap[b.prompt];
-  });
+  useEffect(() => {
+    const sortAndProcessExecutions = async () => {
+      const sortedByPrompts = [...execution.prompt_executions].sort((a, b) => {
+        if (promptsOrderMap[a.prompt] === promptsOrderMap[b.prompt]) {
+          return promptsExecutionOrderMap[a.prompt] - promptsExecutionOrderMap[b.prompt];
+        }
+        return promptsOrderMap[a.prompt] - promptsOrderMap[b.prompt];
+      });
+
+      const processedOutputs = await Promise.all(
+        sortedByPrompts.map(async exec => {
+          return {
+            ...exec,
+            output: !isImageOutput(exec.output) ? await markdownToHTML(exec.output) : exec.output,
+          };
+        }),
+      );
+
+      setSortedExecutions(processedOutputs);
+    };
+
+    sortAndProcessExecutions();
+  }, [execution.prompt_executions]);
+
+  const scrollRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({
+      block: "end",
+    });
+  }, [execution]);
 
   const isImageOutput = (output: string): boolean => {
     return output.endsWith(".png") || output.endsWith(".jpg") || output.endsWith(".jpeg") || output.endsWith(".webp");
-  };
-
-  const copyFormattedOutput = async () => {
-    let copyHTML = "";
-    for (const exec of execution.prompt_executions) {
-      const prompt = templateData.prompts.find(prompt => prompt.id === exec.prompt);
-      if (prompt?.show_output) {
-        copyHTML += "<h2>" + prompt.title + "</h2>";
-        if (isImageOutput(exec.output)) {
-          copyHTML += '<img src="' + exec.output + '" alt="Image output"/>';
-        } else {
-          copyHTML += "<p>" + exec.output + "</p>";
-        }
-        copyHTML += "<br/>";
-      }
-    }
-
-    try {
-      await navigator.clipboard.write([
-        new ClipboardItem({
-          "text/html": new Blob([copyHTML], { type: "text/html" }),
-        }),
-      ]);
-    } catch (err) {
-      console.error("Failed to copy HTML: ", err);
-    }
   };
 
   const executionError = (error: string | undefined) => {
@@ -147,9 +140,18 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData, search
                         backgroundColor: "yellow",
                         color: "black",
                       },
+                      code: {
+                        display: "block",
+                        bgcolor: "#282a35",
+                        color: "common.white",
+                        p: "16px 24px",
+                        m: "10px 0",
+                        borderRadius: "8px",
+                        overflow: "auto",
+                      },
                     }}
                     dangerouslySetInnerHTML={{
-                      __html: highlightSearch(getMarkdownFromString(exec.output), search),
+                      __html: DOMPurify.sanitize(exec.output),
                     }}
                   />
                 </Box>

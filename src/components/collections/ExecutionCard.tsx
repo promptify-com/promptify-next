@@ -1,20 +1,9 @@
 import React from "react";
-import {
-  Box,
-  IconButton,
-  Stack,
-  Typography,
-  alpha,
-  useTheme,
-} from "@mui/material";
+import { Box, IconButton, Stack, Typography, alpha, useTheme } from "@mui/material";
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
-import {
-  ContentCopy,
-  StarOutline as StarOutlineIcon,
-  Star as StarIcon,
-} from "@mui/icons-material";
+import { ContentCopy, StarOutline as StarOutlineIcon, Star as StarIcon } from "@mui/icons-material";
 import { Subtitle } from "@/components/blocks";
-import { getMarkdownFromString } from "@/common/helpers/getMarkdownFromString";
+import { markdownToHTML } from "@/common/helpers/markdownToHTML";
 import moment from "moment";
 import PromptifyLogo from "@/assets/images/promptify.png";
 import { addToFavorite, removeFromFavorite } from "@/hooks/api/executions";
@@ -30,12 +19,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData }) => {
   const [isFavorite, setIsFavorite] = React.useState(execution.is_favorite);
 
   const isImageOutput = (output: string): boolean => {
-    return (
-      output.endsWith(".png") ||
-      output.endsWith(".jpg") ||
-      output.endsWith(".jpeg") ||
-      output.endsWith(".webp")
-    );
+    return output.endsWith(".png") || output.endsWith(".jpg") || output.endsWith(".jpeg") || output.endsWith(".webp");
   };
 
   // Function to toggle favorite status
@@ -55,9 +39,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData }) => {
   const copyFormattedOutput = async () => {
     let copyHTML = "";
     for (const exec of execution.prompt_executions) {
-      const prompt = templateData.prompts.find(
-        (prompt) => prompt.id === exec.prompt
-      );
+      const prompt = templateData.prompts.find(prompt => prompt.id === exec.prompt);
       if (prompt?.show_output) {
         copyHTML += "<h2>" + prompt.title + "</h2>";
         if (isImageOutput(exec.output)) {
@@ -81,8 +63,12 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData }) => {
   };
 
   return (
-    <Stack direction={"row"} spacing={{ xs: 0, md: 2 }} sx={{ py: "20px" }}>
-      <Box display={{ xs: 'none', md: 'inline-flex' }}>
+    <Stack
+      direction={"row"}
+      spacing={{ xs: 0, md: 2 }}
+      sx={{ py: "20px" }}
+    >
+      <Box display={{ xs: "none", md: "inline-flex" }}>
         <Image
           src={PromptifyLogo}
           alt={"alt"}
@@ -103,8 +89,13 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData }) => {
           p: "16px",
         }}
       >
-        <Stack direction={"row"} alignItems={"center"} gap={1} mb={"20px"}>
-          <Box display={{ xs: 'inline-flex', md: 'none' }}>
+        <Stack
+          direction={"row"}
+          alignItems={"center"}
+          gap={1}
+          mb={"20px"}
+        >
+          <Box display={{ xs: "inline-flex", md: "none" }}>
             <Image
               src={PromptifyLogo}
               alt={"alt"}
@@ -116,34 +107,36 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData }) => {
               }}
             />
           </Box>
-          <Typography fontWeight={400} color={"onSurface"}>
+          <Typography
+            fontWeight={400}
+            color={"onSurface"}
+          >
             Promptify
           </Typography>
-          <Typography fontWeight={400} color={"grey.600"}>
+          <Typography
+            fontWeight={400}
+            color={"grey.600"}
+          >
             {moment(execution.created_at).fromNow()}
           </Typography>
         </Stack>
 
-        {execution.prompt_executions.map((exec) => {
-          const prompt = templateData?.prompts?.find(
-            (prompt) => prompt.id === exec.prompt
-          );
+        {execution.prompt_executions.map(exec => {
+          const prompt = templateData?.prompts?.find(prompt => prompt.id === exec.prompt);
           if (prompt?.show_output)
             return (
-              <Box key={exec.id} sx={{ mb: "30px" }}>
-                <Subtitle sx={{ mb: "12px", color: "tertiary", fontSize: 12 }}>
-                  {prompt.title}
-                </Subtitle>
+              <Box
+                key={exec.id}
+                sx={{ mb: "30px" }}
+              >
+                <Subtitle sx={{ mb: "12px", color: "tertiary", fontSize: 12 }}>{prompt.title}</Subtitle>
                 {isImageOutput(exec.output) ? (
                   <Box
                     component={"img"}
                     alt={"book cover"}
                     src={exec.output}
-                    onError={(
-                      e: React.SyntheticEvent<HTMLImageElement, Event>
-                    ) => {
-                      (e.target as HTMLImageElement).src =
-                        "http://placehold.it/165x215";
+                    onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                      (e.target as HTMLImageElement).src = "http://placehold.it/165x215";
                     }}
                     sx={{
                       borderRadius: "8px",
@@ -157,7 +150,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData }) => {
                     color={"onSurface"}
                     fontSize={14}
                     dangerouslySetInnerHTML={{
-                      __html: getMarkdownFromString(exec.output),
+                      __html: markdownToHTML(exec.output),
                     }}
                   />
                 )}

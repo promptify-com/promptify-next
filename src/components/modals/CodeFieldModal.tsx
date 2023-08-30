@@ -11,7 +11,6 @@ interface Props {
 }
 
 export default function CodeFieldModal({ open, setOpen, value, onChange }: Props) {
-  const [code, setCode] = useState("");
   const [errors, setErrors] = useState<string[]>([]);
 
   return (
@@ -72,7 +71,7 @@ export default function CodeFieldModal({ open, setOpen, value, onChange }: Props
             }}
             onClick={() => setOpen(false)}
           >
-            Close
+            Confirm
           </Button>
         </Stack>
       </Box>
