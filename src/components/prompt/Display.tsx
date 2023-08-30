@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useMemo } from "react";
 import { Box, Typography } from "@mui/material";
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { ExecutionCard } from "./ExecutionCard";
@@ -27,11 +27,10 @@ export const Display: React.FC<Props> = ({
   setSelectedExecution,
   generatedExecution,
 }) => {
-  const [sortedExecutions, setSortedExecutions] = useState(executions);
   const [firstLoad, setFirstLoad] = useState(true);
   const [search, setSearch] = useState<string>("");
   const router = useRouter();
-  const routerSpark = router.query?.spark;
+  const sparkQueryParam = router.query?.spark as string;
 
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -44,13 +43,14 @@ export const Display: React.FC<Props> = ({
 
     return () => container?.removeEventListener("click", handleClick);
   }, []);
+
   // If there is a new execution being generated, remove opacity layer
   useEffect(() => {
     if (generatedExecution) setFirstLoad(false);
   }, [generatedExecution]);
 
-  useEffect(() => {
-    const sorted = [...(executions || [])]
+  const sortedExecutions = useMemo(() => {
+    const _execuitons = [...(executions || [])]
       .reduce((uniqueExecs: TemplatesExecutions[], execution) => {
         if (!uniqueExecs.some((item: TemplatesExecutions) => item.id === execution.id)) {
           uniqueExecs.push(execution);
@@ -58,15 +58,22 @@ export const Display: React.FC<Props> = ({
         return uniqueExecs;
       }, [])
       .sort((a, b) => moment(b.created_at).diff(moment(a.created_at)));
-    setSortedExecutions(sorted);
 
-    // Selected execution already set ==> executions list mutated and refetched
-    // the router spark param considered only on the first component load, otherwise select the latest execution
-    let spark = !!selectedExecution
-      ? sorted.find(exec => exec.id === selectedExecution.id)
-      : firstLoad && routerSpark && sorted.find(exec => exec.id.toString() === routerSpark);
+    const wantedExecutionId = sparkQueryParam ?? selectedExecution?.id.toString();
 
-    setSelectedExecution(spark || sorted[0]);
+    if (wantedExecutionId) {
+      const _selectedExecution = _execuitons.find(exec => exec.id.toString() === wantedExecutionId);
+
+      setSelectedExecution(_selectedExecution || _execuitons?.[0] || null);
+    } else {
+      setSelectedExecution(_execuitons?.[0] || null);
+    }
+
+    if (sparkQueryParam) {
+      router.replace({ pathname: `/prompt/${templateData.slug}` }, undefined, { shallow: true, scroll: false });
+    }
+
+    return _execuitons;
   }, [executions]);
 
   return (
