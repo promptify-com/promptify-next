@@ -139,14 +139,20 @@ export interface PromptExecutions {
   errors: string;
 }
 
+export type ResponseType = "arraybuffer" | "blob" | "document" | "json" | "text" | "stream";
 export interface TemplatesExecutions {
   id: number;
   title: string;
   created_at: Date;
-  prompt_executions: PromptExecutions[];
+  prompt_executions?: PromptExecutions[];
   is_favorite: boolean;
-  parameters: { [key: string]: any };
-  contextual_overrides: { [key: string]: any };
+  parameters?: { [key: string]: any };
+  contextual_overrides?: { [key: string]: any };
+  template?: {
+    title: string;
+    slug: string;
+    thumbnail: string;
+  };
 }
 
 export interface ITemplateExecutionPut {
@@ -179,7 +185,7 @@ export interface PromptExecutions {
 export interface Execution {
   id: number;
   title: string;
-  created_at: string;
+  created_at: Date;
   is_favorite: boolean;
 }
 

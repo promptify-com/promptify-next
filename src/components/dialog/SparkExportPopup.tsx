@@ -2,21 +2,24 @@ import { Box, Dialog, Divider, Grid, IconButton, Typography } from "@mui/materia
 import { Check, Email, FacebookRounded, GetAppRounded, Reddit, Twitter } from "@mui/icons-material";
 
 import BaseButton from "../base/BaseButton";
-import { ExecutionWithTemplate } from "@/core/api/dto/templates";
+import { TemplatesExecutions } from "@/core/api/dto/templates";
 import PdfIcon from "@/assets/icons/PdfIcon";
 import WordIcon from "@/assets/icons/WordIcon";
 import LinkVariantIcon from "@/assets/icons/LinkVariantIcon";
 import useCopyToClipboard from "@/hooks/useCopyToClipboard";
 import { getBaseURL, handleExport } from "@/common/helpers";
+import { executionsApi } from "@/core/api/executions";
 
 interface SparkExportProps {
   open: boolean;
   onClose: () => void;
-  activeExecution: ExecutionWithTemplate | null;
+  activeExecution: TemplatesExecutions | null;
 }
 
 export const SparkExportPopup = ({ open, activeExecution, onClose }: SparkExportProps) => {
-  const sharedUrl = `${getBaseURL()}/prompt/${activeExecution?.template.slug}/?=spark=${activeExecution?.id}`;
+  const sharedUrl = `${getBaseURL()}/prompt/${activeExecution?.template?.slug}?=spark=${activeExecution?.id}`;
+
+  const [exportExecution, { data, isFetching }] = executionsApi.endpoints.exportExecution.useLazyQuery();
   const [copyToClipboard, copyResult] = useCopyToClipboard();
 
   const handleClickCopy = () => {
@@ -53,6 +56,15 @@ export const SparkExportPopup = ({ open, activeExecution, onClose }: SparkExport
     window.location.href = emailUrl;
   };
 
+  const handleExportExecution = (fileType: "word" | "pdf") => {
+    if (activeExecution) {
+      exportExecution({ id: activeExecution.id, fileType }).unwrap();
+      if (data && !isFetching) {
+        const fileData = data;
+        handleExport(fileData, fileType, activeExecution.title);
+      }
+    }
+  };
   return (
     <Dialog
       open={open}
@@ -114,13 +126,14 @@ export const SparkExportPopup = ({ open, activeExecution, onClose }: SparkExport
                   opacity: 0.5,
                 }}
               >
+                {}
                 {activeExecution?.title}.pdf
               </Typography>
             </Box>
           </Grid>
 
           <IconButton
-            onClick={() => handleExport(activeExecution, "pdf")}
+            onClick={() => handleExportExecution("pdf")}
             sx={{
               border: "none",
               opacity: 0.6,
@@ -176,7 +189,7 @@ export const SparkExportPopup = ({ open, activeExecution, onClose }: SparkExport
           </Grid>
 
           <IconButton
-            onClick={() => handleExport(activeExecution, "word")}
+            onClick={() => handleExportExecution("word")}
             sx={{
               border: "none",
               opacity: 0.6,

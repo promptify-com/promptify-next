@@ -4,6 +4,7 @@ function useCopyToClipboard() {
   const [result, setResult] = useState<null | { state: "success" } | { state: "error"; message: string }>(null);
 
   const copy = async (text: string) => {
+    setResult(null);
     try {
       await navigator.clipboard.writeText(text);
       setResult({ state: "success" });
@@ -11,22 +12,6 @@ function useCopyToClipboard() {
       setResult({ state: "error", message: e.message });
     }
   };
-
-  useEffect(() => {
-    let timeoutId: NodeJS.Timeout | null = null;
-
-    if (result !== null) {
-      timeoutId = setTimeout(() => {
-        setResult(null);
-      }, 2000);
-    }
-
-    return () => {
-      if (timeoutId !== null) {
-        clearTimeout(timeoutId);
-      }
-    };
-  }, [result]);
 
   return [copy, result] as const;
 }

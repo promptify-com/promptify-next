@@ -11,7 +11,7 @@ export const updateExecution = async (templateExecutionId: number, data: ITempla
     });
 };
 
-export const exportExecution = async (id: number, fileType: "word" | "pdf") => {
+export const exportExecutionTest = async (id: number, fileType: "word" | "pdf") => {
   let contentType = "application/pdf"; // Default to PDF
   if (fileType === "word") {
     contentType = "application/msword"; // Change to Word if fileType is "word"

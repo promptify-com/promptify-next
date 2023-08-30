@@ -30,11 +30,27 @@ export const Display: React.FC<Props> = ({
 }) => {
   const [firstLoad, setFirstLoad] = useState(true);
   const [search, setSearch] = useState<string>("");
+
   const router = useRouter();
   const sparkQueryParam = router.query?.spark as string;
   const [openExportPopup, setOpenExportpopup] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const activeExecution = useMemo(() => {
+    if (selectedExecution) {
+      return {
+        ...selectedExecution,
+        template: {
+          ...selectedExecution.template,
+          title: templateData.title,
+          slug: templateData.slug,
+          thumbnail: templateData.thumbnail,
+        },
+      };
+    }
+    return null;
+  }, [selectedExecution, templateData]);
 
   // click listener to remove opacity layer on first loaded execution
   useEffect(() => {
@@ -98,8 +114,7 @@ export const Display: React.FC<Props> = ({
       <SparkExportPopup
         open={openExportPopup}
         onClose={() => setOpenExportpopup(false)}
-        //@ts-ignore  expect execution that have related template object
-        activeExecution={selectedExecution}
+        activeExecution={activeExecution}
       />
 
       <Box sx={{ mx: "15px", opacity: firstLoad ? 0.5 : 1 }}>

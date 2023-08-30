@@ -5,6 +5,7 @@ import {
   ExecutionTemplatePopupType,
   ExecutionWithTemplate,
   TemplateExecutionsDisplay,
+  TemplatesExecutions,
 } from "@/core/api/dto/templates";
 
 import { SparksLayoutDesktop } from "./SparksLayoutDesktop";
@@ -17,13 +18,6 @@ import { SparkExportPopup } from "./dialog/SparkExportPopup";
 interface SparksContainerProps {
   templates: TemplateExecutionsDisplay[];
 }
-
-export interface ExecutionTemplate {
-  title: string;
-  thumbnail: string;
-  slug: string;
-}
-
 export type CurrentSortType = "executionTitle" | "executionTime" | "executionTemplate" | "executionFavorite";
 
 type SortDirectionState = {
@@ -36,7 +30,7 @@ type SortStateWithCurrentType = SortDirectionState & {
 
 const SparksContainer: FC<SparksContainerProps> = ({ templates }) => {
   const [popup, setPopup] = useState<ExecutionTemplatePopupType>(null);
-  const [activeExecution, setActiveExecution] = useState<ExecutionWithTemplate | null>(null);
+  const [activeExecution, setActiveExecution] = useState<TemplatesExecutions | null>(null);
 
   const [currentTab, setCurrentTab] = useState<TabValueType>("all");
   const [selectedTemplate, setSelectedTemplate] = useState<TemplateExecutionsDisplay | null>(null);
