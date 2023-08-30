@@ -140,14 +140,23 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData, search
                         backgroundColor: "yellow",
                         color: "black",
                       },
-                      code: {
-                        display: "block",
+                      pre: {
                         bgcolor: "#282a35",
                         color: "common.white",
-                        p: "16px 24px",
                         m: "10px 0",
                         borderRadius: "8px",
-                        overflow: "auto",
+                        overflow: "hidden",
+                        code: {
+                          display: "block",
+                          p: "16px 24px",
+                          overflow: "auto",
+                        },
+                        ".language": {
+                          p: "8px 24px",
+                          bgcolor: "#4d5562",
+                          color: "#ffffff",
+                          fontSize: 13,
+                        },
                       },
                     }}
                     dangerouslySetInnerHTML={{

@@ -198,7 +198,7 @@ export const DisplayActions: React.FC<Props> = ({
             gap={1}
             ml={"auto"}
           >
-            {SearchInput("left")}
+            {/* {SearchInput("left")} */}
 
             {false && (
               <React.Fragment>
@@ -240,7 +240,7 @@ export const DisplayActions: React.FC<Props> = ({
             gap={1}
             p={"8px 16px"}
           >
-            {showSearchBar && SearchInput("right")}
+            {/* {showSearchBar && SearchInput("right")} */}
 
             {false && (
               <Button

@@ -150,7 +150,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData }) => {
                     color={"onSurface"}
                     fontSize={14}
                     dangerouslySetInnerHTML={{
-                      __html: markdownToHTML(exec.output),
+                      __html: exec.output,
                     }}
                   />
                 )}

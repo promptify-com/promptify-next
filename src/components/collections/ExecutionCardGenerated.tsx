@@ -68,7 +68,7 @@ export const ExecutionCardGenerated: React.FC<Props> = ({ execution, templateDat
                 )}
                 <div
                   dangerouslySetInnerHTML={{
-                    __html: markdownToHTML(exec.message),
+                    __html: exec.message,
                   }}
                 />
               </Typography>
