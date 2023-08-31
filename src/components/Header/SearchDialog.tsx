@@ -31,7 +31,7 @@ export const SearchDialog: React.FC<SearchDialogProps> = ({ open, close }) => {
   const debouncedSearchName = useDebounce<string>(deferredSearchName, 300);
 
   const { data: templates, isFetching } = useGetTemplatesBySearchQuery(debouncedSearchName, {
-    skip: Boolean(textInput.length <= 3),
+    skip: !textInput.length,
   });
 
   const title = useSelector((state: RootState) => state.filters.title);

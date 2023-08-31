@@ -66,7 +66,7 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
   const debouncedSearchName = useDebounce<string>(deferredSearchName, 300);
 
   const { data: templates, isFetching } = useGetTemplatesBySearchQuery(debouncedSearchName, {
-    skip: Boolean(textInput.length <= 3),
+    skip: !textInput.length,
   });
 
   const links = [
