@@ -16,13 +16,11 @@ import {
 } from "@mui/material";
 import {
   Search as SearchIcon,
-  PushPinOutlined,
   FeedOutlined,
   ArrowDropUp,
   ArrowDropDown,
   Undo,
   Redo,
-  PushPin,
   Close,
   InfoOutlined,
 } from "@mui/icons-material";
@@ -198,7 +196,10 @@ export const DisplayActions: React.FC<Props> = ({
             gap={1}
             ml={"auto"}
           >
-            {SearchInput("left")}
+            {/* 
+              TODO: https://github.com/ysfbsf/promptify-next/issues/275
+              {SearchInput("left")} 
+            */}
 
             {false && (
               <React.Fragment>
@@ -240,7 +241,10 @@ export const DisplayActions: React.FC<Props> = ({
             gap={1}
             p={"8px 16px"}
           >
-            {showSearchBar && SearchInput("right")}
+            {/* 
+              TODO: https://github.com/ysfbsf/promptify-next/issues/275
+              {showSearchBar && SearchInput("right")}
+            */}
 
             {false && (
               <Button
