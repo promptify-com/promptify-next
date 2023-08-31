@@ -11,6 +11,6 @@ export const handleExport = async (data: any, fileType: "word" | "pdf", title: s
 
     URL.revokeObjectURL(url);
   } catch (error) {
-    console.error("Error exporting and downloading:", error);
+    console.error("Error downloading incoming data:", error);
   }
 };
