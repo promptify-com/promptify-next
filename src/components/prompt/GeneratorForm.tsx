@@ -368,21 +368,18 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     const shownInputs = new Map<string, Input>();
     const shownParams = new Map<number, Param>();
     await Promise.all(
-      [...templateData.prompts]
-        .sort((a, b) => a.order - b.order)
-        .map(async prompt => {
-          const inputs = getInputsFromString(prompt.content);
-          inputs.forEach(input => {
-            shownInputs.set(input.name, { ...input, prompt: prompt.id });
-          });
+      templateData.prompts.map(async prompt => {
+        const inputs = getInputsFromString(prompt.content);
+        inputs.forEach(input => {
+          shownInputs.set(input.name, { ...input, prompt: prompt.id });
+        });
 
-          const params = (await dispatch(templatesApi.endpoints.getPromptParams.initiate(prompt.id))).data;
-          params
-            ?.filter(param => param.is_visible)
-            .forEach(param => {
-              shownParams.set(param.parameter.id, { param, prompt: prompt.id });
-            });
-        }),
+        prompt.parameters
+          .filter(param => param.is_visible)
+          .forEach(param => {
+            shownParams.set(param.parameter.id, { param, prompt: prompt.id });
+          });
+      }),
     );
     setShownInputs(Array.from(shownInputs.values()));
     setShownParams(Array.from(shownParams.values()));

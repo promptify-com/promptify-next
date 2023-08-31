@@ -5,5 +5,4 @@ export * from "./getInputsFromString";
 export * from "./highlightSearch";
 export * from "./handleExecutionExport";
 export * from "./promptRandomId";
-export * from "./setStringFromArray";
 export * from "./htmlHelper";

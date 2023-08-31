@@ -26,6 +26,7 @@ export interface Prompts {
   output_format: string;
   prompt_output_variable: string;
   execution_priority: number;
+  parameters: PromptParams[];
 }
 
 export interface PromptParam {
@@ -34,6 +35,7 @@ export interface PromptParam {
   code: string;
   type: string;
   category: number;
+  score_descriptions: { description: string; score: number }[];
 }
 
 export interface PromptDescription {
@@ -42,11 +44,14 @@ export interface PromptDescription {
 }
 
 export interface PromptParams {
+  id: number;
   descriptions: PromptDescription[];
+  created_at: Date;
   score: number;
   parameter: PromptParam;
   is_visible: boolean;
   is_editable: boolean;
+  prompt: number;
 }
 
 interface ContextualOverrides {

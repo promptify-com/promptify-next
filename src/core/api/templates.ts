@@ -52,12 +52,6 @@ export const templatesApi = baseApi.injectEndpoints({
           method: "get",
         }),
       }),
-      getPromptParams: builder.query<PromptParams[], number>({
-        query: (id: number) => ({
-          url: `/api/meta/prompts/${id}/params`,
-          method: "get",
-        }),
-      }),
       getMyTemplates: builder.query<Templates[], void>({
         query: () => ({
           url: "/api/meta/templates/me",
@@ -109,7 +103,6 @@ export const {
   useDeleteTemplateMutation,
   useGetTemplatesByFilterQuery,
   useGetTemplatesBySearchQuery,
-  useGetPromptParamsQuery,
   useGetPromptTemplateBySlugQuery,
   useGetPromptTemplatesQuery,
   useGetMyTemplatesQuery,

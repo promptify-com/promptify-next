@@ -7,7 +7,6 @@ import { ExecutionCardGenerated } from "./ExecutionCardGenerated";
 import { DisplayActions } from "./DisplayActions";
 import ParagraphPlaceholder from "@/components/placeholders/ParagraphPlaceholder";
 import { useRouter } from "next/router";
-import moment from "moment";
 import { SparkExportPopup } from "../dialog/SparkExportPopup";
 import useBrowser from "@/hooks/useBrowser";
 
@@ -66,8 +65,19 @@ export const Display: React.FC<Props> = ({
 
   // If there is a new execution being generated, remove opacity layer
   useEffect(() => {
-    if (generatedExecution) setFirstLoad(false);
-  }, [generatedExecution]);
+    if (generatedExecution) {
+      setFirstLoad(false);
+    }
+
+    const routeChangeCompleteHandler = () => {
+      sparkHashQueryParam.current = null;
+    };
+    router.events.on("routeChangeComplete", routeChangeCompleteHandler);
+
+    return () => {
+      router.events.off("routeChangeComplete", routeChangeCompleteHandler);
+    };
+  }, [generatedExecution, router]);
 
   const handleSelectExecution = ({
     execution,
@@ -82,46 +92,24 @@ export const Display: React.FC<Props> = ({
 
     setSelectedExecution(execution);
   };
-  const sortedExecutions = useMemo(() => {
-    const _execuitons = (executions?.length ? [...executions] : [])
-      .reduce((uniqueExecs: TemplatesExecutions[], execution) => {
-        if (!uniqueExecs.some((item: TemplatesExecutions) => item.id === execution.id)) {
-          uniqueExecs.push(execution);
-        }
-        return uniqueExecs;
-      }, [])
-      .sort((a, b) => moment(b.created_at).diff(moment(a.created_at)));
 
-    if (sparkHashQueryParam.current) {
-      setSelectedExecution(hashedExecution);
-      replaceHistoryByPathname(`/prompt/${templateData.slug}`);
-
-      return _execuitons;
-    }
-
-    if (!executions?.length) {
-      setSelectedExecution(null);
-      return [];
-    }
-
-    const wantedExecutionId = sparkQueryParam ?? selectedExecution?.id.toString();
-
-    if (wantedExecutionId) {
-      const _selectedExecution = _execuitons.find(exec => exec.id.toString() === wantedExecutionId);
-
-      handleSelectExecution({ execution: _selectedExecution || _execuitons?.[0] || null, resetHash: true });
-    } else {
-      handleSelectExecution({ execution: _execuitons?.[0] || null, resetHash: true });
-    }
-
-    if (sparkQueryParam) {
-      replaceHistoryByPathname(`/prompt/${templateData.slug}`);
-    }
-
-    return _execuitons;
-  }, [executions]);
-
+  const selectedExecutionId = sparkQueryParam ?? selectedExecution?.id.toString();
   const isGeneratedExecutionEmpty = Boolean(generatedExecution && !generatedExecution?.data?.length);
+
+  if (sparkHashQueryParam.current) {
+    handleSelectExecution({ execution: hashedExecution });
+    replaceHistoryByPathname(`/prompt/${templateData.slug}`);
+  } else if (selectedExecutionId) {
+    const _selectedExecution = executions.find(_execution => _execution.id.toString() === selectedExecutionId);
+
+    handleSelectExecution({ execution: _selectedExecution || executions?.[0] || null, resetHash: true });
+  } else {
+    handleSelectExecution({ execution: executions?.[0] || null, resetHash: true });
+  }
+
+  if (sparkQueryParam) {
+    replaceHistoryByPathname(`/prompt/${templateData.slug}`);
+  }
 
   return (
     <Box
@@ -133,7 +121,7 @@ export const Display: React.FC<Props> = ({
       }}
     >
       <DisplayActions
-        executions={sortedExecutions}
+        executions={executions}
         selectedExecution={selectedExecution}
         setSelectedExecution={_execution => {
           handleSelectExecution({ execution: _execution, resetHash: true });

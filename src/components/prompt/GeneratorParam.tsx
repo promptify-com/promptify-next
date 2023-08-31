@@ -59,7 +59,7 @@ export const GeneratorParam: React.FC<GeneratorParamProps> = ({ promptId, params
                 {param.parameter.name}:
               </InputLabel>
               <GeneratorParamSlider
-                descriptions={param.descriptions}
+                descriptions={param.parameter.score_descriptions}
                 activeScore={activeScoreOverride} // Use the override value here
                 setScore={score => handleChangeScore(score, param.parameter.id)}
                 is_editable={param.is_editable}
