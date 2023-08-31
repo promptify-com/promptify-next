@@ -2,9 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { Box, Stack, Tooltip, Typography } from "@mui/material";
 import { PromptExecutions, Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { Subtitle } from "@/components/blocks";
-import { highlightSearch } from "@/common/helpers/highlightSearch";
 import { Error } from "@mui/icons-material";
-import { markdownToHTML } from "@/common/helpers/markdownToHTML";
+import { markdownToHTML } from "@/common/helpers";
 import DOMPurify from "isomorphic-dompurify";
 
 interface Props {
@@ -26,7 +25,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData, search
 
   useEffect(() => {
     const sortAndProcessExecutions = async () => {
-      const sortedByPrompts = [...execution.prompt_executions].sort((a, b) => {
+      const sortedByPrompts = [...(execution.prompt_executions || [])].sort((a, b) => {
         if (promptsOrderMap[a.prompt] === promptsOrderMap[b.prompt]) {
           return promptsExecutionOrderMap[a.prompt] - promptsExecutionOrderMap[b.prompt];
         }
