@@ -24,6 +24,7 @@ interface HomePageProps {
 }
 
 const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
+const MY_EXECUTIONS_LIMIT = 4;
 
 const HomePage: NextPage<HomePageProps> = ({ categories }) => {
   const router = useRouter();
@@ -33,7 +34,7 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
   const [getCurrentUser] = userApi.endpoints.getCurrentUser.useLazyQuery();
   const { data: myLatestExecutions, isLoading: isMyLatestExecutionsLoading } = useGetTemplatesExecutionsByMeQuery(
-    undefined,
+    MY_EXECUTIONS_LIMIT,
     {
       skip: !isValidUser,
     },
@@ -142,11 +143,11 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
               </Grid>
             ) : (
               <>
+                <WelcomeCard />
                 <CategoriesSection
                   categories={categories}
                   isLoading={isValidUser}
                 />
-                <WelcomeCard />
               </>
             )}
           </Grid>

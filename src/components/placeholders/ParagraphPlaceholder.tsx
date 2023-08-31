@@ -38,7 +38,12 @@ export default function ParagraphPlaceholder({ count = 12 }) {
             height={16}
             sx={{ marginBottom: "8px" }}
           />
-          <Skeleton animation="wave" variant="text" width={"70%"} height={16} />
+          <Skeleton
+            animation="wave"
+            variant="text"
+            width={"70%"}
+            height={16}
+          />
         </Box>
       ))}
     </Box>

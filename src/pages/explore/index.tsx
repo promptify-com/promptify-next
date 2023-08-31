@@ -1,39 +1,30 @@
 import React from "react";
 import { Box, Grid } from "@mui/material";
 import { NextPage } from "next";
+
 import { Layout } from "@/layout";
 import { CategoriesSection } from "@/components/explorer/CategoriesSection";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
-import { RootState } from "@/core/store";
 import { FiltersSelected } from "@/components/explorer/FiltersSelected";
-import { Category, SelectedFilters } from "@/core/api/dto/templates";
-import { useAppSelector } from "@/hooks/useStore";
-import { useExploreData } from "@/hooks/useExploreData";
+import { Category } from "@/core/api/dto/templates";
 import { authClient } from "@/common/axios";
+import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
 
 interface IProps {
   categories: Category[];
 }
 
 const ExplorePage: NextPage<IProps> = ({ categories }) => {
-  const filters = useAppSelector((state: RootState) => state.filters);
-  const { templates, isTemplatesLoading } = useExploreData();
-  function areAllStatesNull(filters: SelectedFilters): boolean {
-    return (
-      filters.engine === null &&
-      filters.tag.every((tag) => tag === null) &&
-      filters.title === null &&
-      filters.category === null &&
-      filters.subCategory === null
-    );
-  }
-
-  const allNull = areAllStatesNull(filters);
+  const { templates, hasNext, hasPrev, handleNextPage, handlePreviousPage, allFilterParamsNull, isFetching } =
+    useGetTemplatesByFilter();
 
   return (
     <>
       <Layout>
-        <Box mt={{ xs: 7, md: 0 }} padding={{ xs: "4px 0px", md: "0px 8px" }}>
+        <Box
+          mt={{ xs: 7, md: 0 }}
+          padding={{ xs: "4px 0px", md: "0px 8px" }}
+        >
           <Grid
             display={"flex"}
             flexDirection={"column"}
@@ -42,18 +33,22 @@ const ExplorePage: NextPage<IProps> = ({ categories }) => {
               padding: { xs: "16px", md: "32px" },
             }}
           >
-            <FiltersSelected show={!allNull} />
-            {allNull && (
+            <FiltersSelected show={!allFilterParamsNull} />
+            {allFilterParamsNull && (
               <CategoriesSection
                 categories={categories}
                 isLoading={false}
               />
             )}
             <TemplatesSection
-              filtred={!allNull}
-              templates={templates ?? []}
-              isLoading={isTemplatesLoading}
+              filtred={!allFilterParamsNull}
+              templates={templates?.results ?? []}
+              isLoading={isFetching}
               title="Best templates"
+              hasNext={hasNext}
+              hasPrev={hasPrev}
+              onNextPage={handleNextPage}
+              onPrevPage={handlePreviousPage}
             />
           </Grid>
         </Box>
@@ -63,8 +58,8 @@ const ExplorePage: NextPage<IProps> = ({ categories }) => {
 };
 
 export async function getServerSideProps() {
-  const responseCategories = await authClient.get('/api/meta/categories/');
-	const categories = responseCategories.data;
+  const responseCategories = await authClient.get("/api/meta/categories/");
+  const categories = responseCategories.data;
 
   return {
     props: {

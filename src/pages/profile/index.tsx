@@ -1,16 +1,13 @@
 import { Box, Grid, Typography } from "@mui/material";
-import { Connections, Home, Identy, AllTemplates } from "@/components/profile";
+import { Connections, Home, Identy, TemplatesManager } from "@/components/profile";
 import { Layout } from "@/layout";
 import Protected from "@/components/Protected";
-import { MyTemplates } from "@/components/profile/MyTemplates";
 import { useSelector } from "react-redux";
 import { RootState } from "@/core/store";
 import EditProfile from "@/components/profile/EditProfile";
 
 const Profile = () => {
-  const isEditMode = useSelector(
-    (state: RootState) => state.profile.showEditMode
-  );
+  const isEditMode = useSelector((state: RootState) => state.profile.showEditMode);
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
 
   return (
@@ -59,8 +56,16 @@ const Profile = () => {
                   <Home />
                   <Connections />
                   <Identy />
-                  <MyTemplates />
-                  {currentUser?.is_admin && <AllTemplates />}
+                  <TemplatesManager
+                    type={"user"}
+                    title="My templates"
+                  />
+                  {currentUser?.is_admin && (
+                    <TemplatesManager
+                      type={"admin"}
+                      title="All templates"
+                    />
+                  )}
                 </Box>
               </Box>
             </Grid>

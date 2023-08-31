@@ -25,11 +25,7 @@ export const Collections: React.FC<SideBarCollectionsProps> = ({
 
   return (
     <Box>
-      <ListSubheader
-        sx={{ fontSize: "12px", display: sidebarOpen ? "block" : "none" }}
-      >
-        COLLECTION
-      </ListSubheader>
+      <ListSubheader sx={{ fontSize: "12px", display: sidebarOpen ? "block" : "none" }}>COLLECTION</ListSubheader>
 
       <Box>
         {!isValidUser ? (
@@ -46,7 +42,10 @@ export const Collections: React.FC<SideBarCollectionsProps> = ({
                 pl: 3,
               }}
             >
-              <Grid display={"flex"} alignItems={"center"}>
+              <Grid
+                display={"flex"}
+                alignItems={"center"}
+              >
                 <FavoriteList />
                 <Typography
                   sx={{

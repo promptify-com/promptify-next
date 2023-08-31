@@ -17,19 +17,15 @@ import { AllInclusive, Close, InfoOutlined } from "@mui/icons-material";
 
 import TabsAndFormPlaceholder from "@/components/placeholders/TabsAndFormPlaceholder";
 
-
 import Storage from "@/common/storage";
 
 interface GeneratorFormProps {
   templateData: Templates;
   selectedExecution: TemplatesExecutions | null;
-  setNewExecutionData: (data: PromptLiveResponse) => void;
+  setGeneratedExecution: (data: PromptLiveResponse) => void;
   isGenerating: boolean;
   setIsGenerating: (status: boolean) => void;
   onError: (errMsg: string) => void;
-  exit: () => void;
-  setMobileTab: (value: number) => void;
-  setActiveTab: (value: number) => void;
 }
 
 export interface InputsErrors {
@@ -46,13 +42,10 @@ interface Param {
 export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   templateData,
   selectedExecution,
-  setNewExecutionData,
+  setGeneratedExecution,
   isGenerating,
   setIsGenerating,
   onError,
-  exit,
-  setMobileTab,
-  setActiveTab,
 }) => {
   const token = useToken();
   const { palette } = useTheme();
@@ -90,7 +83,16 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     if (shownInputs) {
       const updatedInputs = new Map<number, ResInputs>();
 
-      shownInputs.forEach((input) => {
+      const storedData = Storage.get("nodeInputsParamsData");
+      console.log("this is the : ", storedData);
+      if (storedData) {
+        setNodeInputs(storedData.inputs);
+        setNodeParams(storedData.params);
+        Storage.remove("nodeInputsParamsData");
+        return;
+      }
+
+      shownInputs.forEach(input => {
         const inputName = input.name;
 
         if (selectedExecution?.parameters) {
@@ -204,6 +206,10 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
   const validateAndGenerateExecution = () => {
     if (!token) {
+      if (allowReset) {
+        const nodeInputsAndParams = { inputs: nodeInputs, params: nodeParams };
+        Storage.set("nodeInputsParamsData", JSON.stringify(nodeInputsAndParams));
+      }
       return router.push("/signin");
     }
 
@@ -211,16 +217,11 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
     setIsGenerating(true);
 
-    setMobileTab(2);
-    setActiveTab(2);
-
     generateExecution(resPrompts);
   };
 
   const generateExecution = (executionData: ResPrompt[]) => {
     setLastExecution(JSON.parse(JSON.stringify(executionData)));
-
-    if (windowWidth < 900) setTimeout(() => exit(), 2000);
 
     let tempData: any[] = [];
     let url = `${process.env.NEXT_PUBLIC_API_URL}/api/meta/templates/${templateData.id}/execute/`;
@@ -350,7 +351,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   }, [newExecutionId]);
 
   useEffect(() => {
-    if (generatingResponse) setNewExecutionData(generatingResponse);
+    if (generatingResponse) setGeneratedExecution(generatingResponse);
   }, [generatingResponse]);
 
   useEffect(() => {
@@ -436,28 +437,10 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
   const allowReset = nodeInputs.some(input => Object.values(input.inputs).some(input => input.value));
 
-
-  useEffect(() => {
-    if (!token && allowReset) {
-      Storage.set("nodeInputsData", JSON.stringify(nodeInputs))
-    }
-  }, [nodeInputs]);
-
-
-  useEffect(() => {
-    if(token && shownInputs){
-      const storedData = Storage.get('nodeInputsData')
-      if (storedData) {
-        setNodeInputs(storedData);
-        Storage.remove("nodeInputsData")
-      }
-    }
-  }, [shownInputs]);
-
   return (
     <Stack
       sx={{
-        minHeight: "100%",
+        minHeight: { xs: "100%", md: "40svh" },
         bgcolor: "surface.2",
       }}
     >
@@ -626,7 +609,8 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
                       <AllInclusive fontSize="small" />
                     ) : (
                       <>
-                        {templateData.executions_count} of {templateData.executions_limit} left
+                        {templateData.executions_limit - templateData.executions_count} of{" "}
+                        {templateData.executions_limit} left
                         <InfoOutlined sx={{ fontSize: 16 }} />
                       </>
                     )}

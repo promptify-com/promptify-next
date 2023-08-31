@@ -11,15 +11,15 @@ export const executionsApi = baseApi.injectEndpoints({
         }),
         providesTags: ["Executions"],
       }),
-      getTemplatesExecutionsByMe: builder.query<TemplateExecutionsDisplay[], void>({
-        query: () => ({
-          url: `/api/meta/template-executions/me`,
+      getTemplatesExecutionsByMe: builder.query<TemplateExecutionsDisplay[], number | undefined>({
+        query: limit => ({
+          url: `/api/meta/template-executions/me/${limit ? `?limit=${limit}` : ""}`,
           method: "get",
         }),
         providesTags: ["Executions"],
       }),
       updateExecution: builder.mutation<TemplatesExecutions, { id: number; data: ITemplateExecutionPut }>({
-        query: ({ id, data }: { id: number; data: ITemplateExecutionPut }) => ({
+        query: ({ id, data }) => ({
           url: `/api/meta/template-executions/${id}/`,
           method: "patch",
           data,

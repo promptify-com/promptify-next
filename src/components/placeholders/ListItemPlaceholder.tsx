@@ -25,9 +25,23 @@ export default function ListItemPlaceholder() {
           }}
         />
       </Box>
-      <Box display="flex" flexDirection="column" width="100%">
-        <Skeleton variant="text" animation="wave" width="80%" height={20} />
-        <Skeleton variant="text" animation="wave" width="60%" height={20} />
+      <Box
+        display="flex"
+        flexDirection="column"
+        width="100%"
+      >
+        <Skeleton
+          variant="text"
+          animation="wave"
+          width="80%"
+          height={20}
+        />
+        <Skeleton
+          variant="text"
+          animation="wave"
+          width="60%"
+          height={20}
+        />
       </Box>
     </Box>
   );

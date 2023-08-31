@@ -47,7 +47,7 @@ export const SparksLayoutDesktop: FC<SparksLayoutProps> = ({
       <Grid
         onClick={() =>
           router.push({
-            pathname: `prompt/${template.slug}`,
+            pathname: `/prompt/${template.slug}`,
             query: {
               spark: execution.id,
             },

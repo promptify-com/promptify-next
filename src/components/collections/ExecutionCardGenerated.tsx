@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Stack, Typography } from "@mui/material";
 import { Subtitle } from "@/components/blocks";
-import { getMarkdownFromString } from "@/common/helpers/getMarkdownFromString";
+import { markdownToHTML } from "@/common/helpers/markdownToHTML";
 import { PromptLiveResponse } from "@/common/types/prompt";
 import { Templates } from "@/core/api/dto/templates";
 
@@ -11,42 +11,34 @@ interface Props {
 }
 
 export const ExecutionCardGenerated: React.FC<Props> = ({ execution, templateData }) => {
-
   const isImageOutput = (output: string): boolean => {
-    return (
-      output.endsWith(".png") ||
-      output.endsWith(".jpg") ||
-      output.endsWith(".jpeg") ||
-      output.endsWith(".webp")
-    );
+    return output.endsWith(".png") || output.endsWith(".jpg") || output.endsWith(".jpeg") || output.endsWith(".webp");
   };
 
   let floatImageSrc = "";
 
   return (
-    <Stack gap={1}
+    <Stack
+      gap={1}
       sx={{
         width: "70%",
         mx: "auto",
       }}
     >
       {execution.data?.map((exec, i) => {
-        const prompt = templateData.prompts.find(
-          (prompt) => prompt.id === exec.prompt
-        );
+        const prompt = templateData.prompts.find(prompt => prompt.id === exec.prompt);
         if (prompt?.show_output) {
           if (isImageOutput(exec.message)) {
             floatImageSrc = exec.message;
             return null;
           }
           return (
-            <Stack key={i}
+            <Stack
+              key={i}
               gap={1}
               sx={{ py: "24px" }}
             >
-              <Subtitle sx={{ fontSize: 24, fontWeight: 400, color: "onSurface" }}>
-                {prompt.title}
-              </Subtitle>
+              <Subtitle sx={{ fontSize: 24, fontWeight: 400, color: "onSurface" }}>{prompt.title}</Subtitle>
               <Typography
                 sx={{
                   fontSize: 15,
@@ -61,11 +53,8 @@ export const ExecutionCardGenerated: React.FC<Props> = ({ execution, templateDat
                     component={"img"}
                     alt={"Output Image"}
                     src={floatImageSrc}
-                    onError={(
-                      e: React.SyntheticEvent<HTMLImageElement, Event>
-                    ) => {
-                      (e.target as HTMLImageElement).src =
-                        "http://placehold.it/165x215";
+                    onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                      (e.target as HTMLImageElement).src = "http://placehold.it/165x215";
                     }}
                     sx={{
                       borderRadius: "8px",
@@ -79,7 +68,7 @@ export const ExecutionCardGenerated: React.FC<Props> = ({ execution, templateDat
                 )}
                 <div
                   dangerouslySetInnerHTML={{
-                    __html: getMarkdownFromString(exec.message),
+                    __html: exec.message,
                   }}
                 />
               </Typography>

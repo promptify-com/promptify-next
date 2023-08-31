@@ -29,8 +29,16 @@ export default function DetailsCardPlaceholder() {
         gap={1}
       >
         <Box>
-          <Skeleton animation="wave" height={15} width="100px" />
-          <Skeleton animation="wave" height={15} width="150px" />
+          <Skeleton
+            animation="wave"
+            height={15}
+            width="100px"
+          />
+          <Skeleton
+            animation="wave"
+            height={15}
+            width="150px"
+          />
         </Box>
 
         <Skeleton

@@ -1,15 +1,10 @@
 import React from "react";
-import {
-  Button,
-  Grid,
-  Typography,
-} from "@mui/material";
+import { Button, Grid, Typography } from "@mui/material";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 
 interface Props {
-  onChange: (tab: number) => void;
   setActiveTab: (tab: number) => void;
   activeTab: number;
 }
@@ -20,12 +15,7 @@ const mobileTabs = [
   { name: "Spark", icon: <MenuOutlinedIcon /> },
 ];
 
-export const BottomTabs: React.FC<Props> = ({
-  onChange,
-  setActiveTab,
-  activeTab,
-}) => {
-
+export const BottomTabs: React.FC<Props> = ({ setActiveTab, activeTab }) => {
   return (
     <Grid
       container
@@ -38,11 +28,14 @@ export const BottomTabs: React.FC<Props> = ({
         zIndex: 998,
         bgcolor: "surface.1",
         color: "onSurface",
-        boxShadow: activeTab === 0 ? "0px -8px 40px 0px rgba(93, 123, 186, 0.09), 0px -8px 10px 0px rgba(98, 98, 107, 0.03)" : "none",
+        boxShadow:
+          activeTab === 0
+            ? "0px -8px 40px 0px rgba(93, 123, 186, 0.09), 0px -8px 10px 0px rgba(98, 98, 107, 0.03)"
+            : "none",
         borderRadius: activeTab === 0 ? "16px 16px 0 0" : "0",
         p: "16px 24px",
         gap: 1,
-        flexWrap: "nowrap"
+        flexWrap: "nowrap",
       }}
     >
       {mobileTabs.map((tab, i) => (
@@ -71,19 +64,16 @@ export const BottomTabs: React.FC<Props> = ({
                 width: 20,
                 height: 20,
               },
-              '&:hover, &:focus': {
+              "&:hover, &:focus": {
                 color: "onSurface",
-                bgcolor: "surface.2"
+                bgcolor: "surface.2",
               },
             }}
             onClick={() => {
-              onChange(i);
               setActiveTab(i);
             }}
-            >
-            <Typography color="inherit">
-              {tab.name}
-            </Typography>
+          >
+            <Typography color="inherit">{tab.name}</Typography>
           </Button>
         </Grid>
       ))}

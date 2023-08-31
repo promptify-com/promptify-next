@@ -1,7 +1,6 @@
 import { FC, useMemo, useState } from "react";
-import { Box, Grid, Typography } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 import { Execution, ExecutionTemplatePopupType, TemplateExecutionsDisplay } from "@/core/api/dto/templates";
-
 import { SparksLayoutDesktop } from "./SparksLayoutDesktop";
 import { SparksLayoutMobile } from "./SparksLayoutMobile";
 import { SparkPopup } from "./dialog/SparkPopup";
@@ -50,7 +49,7 @@ const SparksContainer: FC<SparksContainerProps> = ({ templates }) => {
     executionTemplate: "desc",
     executionTime: "desc",
     executionFavorite: "desc",
-    currentType: "executionTitle",
+    currentType: "executionTime",
   });
 
   const toggleSortDirection = (sortType: CurrentSortType) => {
