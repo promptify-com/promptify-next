@@ -31,7 +31,7 @@ export const SparkExportPopup = ({ activeExecution, onClose }: SparkExportProps)
     if (activeExecution?.template) {
       const hasNotitle = activeExecution?.title.toLowerCase() === "untitled";
       return encodeURIComponent(hasNotitle ? activeExecution.template.title : activeExecution.title);
-    } else return activeExecution?.title;
+    } else return encodeURIComponent(activeExecution?.title);
   };
 
   const handleFacebookShare = () => {
