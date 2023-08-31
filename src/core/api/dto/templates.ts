@@ -1,13 +1,17 @@
 import { User, UserMin } from "./user";
 import { Prompts } from "./prompts";
-import { ExecutionTemplate } from "@/components/SparksContainer";
+export interface ExecutionTemplatePartial {
+  title: string;
+  thumbnail: string;
+  slug: string;
+}
 
 export interface ExecutionWithTemplate extends Execution {
-  template: ExecutionTemplate;
+  template: ExecutionTemplatePartial;
 }
 export interface SparksLayoutProps {
   execution: ExecutionWithTemplate;
-  template: ExecutionTemplate;
+  template: ExecutionTemplatePartial;
   onExecutionSaved: () => void;
   onOpenEdit: () => void;
   onOpenDelete: () => void;

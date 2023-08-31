@@ -16,7 +16,11 @@ interface SparkExportProps {
 }
 
 export const SparkExportPopup = ({ activeExecution, onClose }: SparkExportProps) => {
-  const sharedUrl = `${getBaseURL()}/prompt/${activeExecution?.template?.slug}?spark=${activeExecution?.id}`;
+  if (!activeExecution) {
+    throw new Error("Provided activeExecution is not a valid one!");
+  }
+
+  const sharedUrl = `${getBaseURL()}/prompt/${activeExecution.template?.slug}?spark=${activeExecution.id}`;
 
   const [exportExecution] = executionsApi.endpoints.exportExecution.useLazyQuery();
   const [copyToClipboard, copyResult] = useCopyToClipboard();
@@ -29,9 +33,11 @@ export const SparkExportPopup = ({ activeExecution, onClose }: SparkExportProps)
 
   const generateTitle = () => {
     if (activeExecution?.template) {
-      const hasNotitle = activeExecution?.title.toLowerCase() === "untitled";
+      const hasNotitle = activeExecution.title.toLowerCase() === "untitled";
       return encodeURIComponent(hasNotitle ? activeExecution.template.title : activeExecution.title);
-    } else return encodeURIComponent(activeExecution?.title);
+    } else {
+      return encodeURIComponent(activeExecution.title);
+    }
   };
 
   const handleFacebookShare = () => {
@@ -56,10 +62,9 @@ export const SparkExportPopup = ({ activeExecution, onClose }: SparkExportProps)
   };
 
   const handleExportExecution = async (fileType: "word" | "pdf") => {
-    if (activeExecution) {
-      const response = await exportExecution({ id: activeExecution.id, fileType }).unwrap();
-      downloadBlobObject(response, fileType, activeExecution.title);
-    }
+    const response = await exportExecution({ id: activeExecution.id, fileType }).unwrap();
+
+    downloadBlobObject(response, fileType, activeExecution.title);
   };
   return (
     <Dialog

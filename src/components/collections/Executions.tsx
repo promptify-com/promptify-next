@@ -1,21 +1,7 @@
 import React, { useState } from "react";
-import {
-  Box,
-  Button,
-  CircularProgress,
-  IconButton,
-  InputBase,
-  InputLabel,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Box, Button, CircularProgress, IconButton, InputBase, InputLabel, Stack, Typography } from "@mui/material";
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
-import {
-  Search as SearchIcon,
-  StarOutline as StarOutlineIcon,
-  Star as StarIcon,
-  Close,
-} from "@mui/icons-material";
+import { Search as SearchIcon, StarOutline as StarOutlineIcon, Star as StarIcon, Close } from "@mui/icons-material";
 import { SubjectIcon } from "@/assets/icons/SubjectIcon";
 import { ExecutionCard } from "./ExecutionCard";
 import { PromptLiveResponse } from "@/common/types/prompt";
@@ -42,23 +28,16 @@ export const Executions: React.FC<Props> = ({
 
   const allExecutions = executions
     .slice()
-    .sort(
-      (a, b) =>
-        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-    )
-    .filter((exec) => {
-      return exec.prompt_executions.some((promptExec) =>
-        promptExec.output.toLowerCase().includes(searchText.toLowerCase())
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+    .filter(exec => {
+      return (exec.prompt_executions || []).some(promptExec =>
+        promptExec.output.toLowerCase().includes(searchText.toLowerCase()),
       );
     });
 
-  const favoritedExecutions = allExecutions.filter(
-    (execution) => execution.is_favorite
-  );
+  const favoritedExecutions = allExecutions.filter(execution => execution.is_favorite);
 
-  const filteredExecutions = favoriteSearch
-    ? favoritedExecutions
-    : allExecutions;
+  const filteredExecutions = favoriteSearch ? favoritedExecutions : allExecutions;
 
   return (
     <Box sx={{ position: "relative", px: "16px" }}>
@@ -102,7 +81,7 @@ export const Executions: React.FC<Props> = ({
                     pr: "5px",
                   }}
                   value={searchText}
-                  onChange={(e) => {
+                  onChange={e => {
                     setSearchText(e.target.value);
                   }}
                 />
@@ -180,14 +159,12 @@ export const Executions: React.FC<Props> = ({
               padding: "0px",
             }}
             value={searchText}
-            onChange={(e) => {
+            onChange={e => {
               setSearchText(e.target.value);
             }}
           />
           <InputLabel htmlFor="exec">
-            <IconButton
-              sx={{ border: "none", p: 0, ":hover": { color: "tertiary" } }}
-            >
+            <IconButton sx={{ border: "none", p: 0, ":hover": { color: "tertiary" } }}>
               <SearchIcon />
             </IconButton>
           </InputLabel>
@@ -249,9 +226,7 @@ export const Executions: React.FC<Props> = ({
             );
           })
         ) : (
-          <Typography sx={{ mt: "40px", textAlign: "center" }}>
-            No sparks found
-          </Typography>
+          <Typography sx={{ mt: "40px", textAlign: "center" }}>No sparks found</Typography>
         )}
       </Box>
     </Box>
