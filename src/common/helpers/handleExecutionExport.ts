@@ -8,7 +8,7 @@ const extensionTypeMapping = {
   word: "docx",
 };
 
-export const handleExport = async (data: BlobPart, fileType: "word" | "pdf", title: string) => {
+export const downloadBlobObject = (data: BlobPart, fileType: "word" | "pdf", title: string) => {
   if (!contentTypeMapping[fileType]) {
     throw new Error(`File type "${fileType}" is not supported!`);
   }

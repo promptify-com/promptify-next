@@ -7,7 +7,7 @@ import PdfIcon from "@/assets/icons/PdfIcon";
 import WordIcon from "@/assets/icons/WordIcon";
 import LinkVariantIcon from "@/assets/icons/LinkVariantIcon";
 import useCopyToClipboard from "@/hooks/useCopyToClipboard";
-import { getBaseURL, handleExport } from "@/common/helpers";
+import { getBaseURL, downloadBlobObject } from "@/common/helpers";
 import { executionsApi } from "@/core/api/executions";
 
 interface SparkExportProps {
@@ -58,7 +58,7 @@ export const SparkExportPopup = ({ activeExecution, onClose }: SparkExportProps)
   const handleExportExecution = async (fileType: "word" | "pdf") => {
     if (activeExecution) {
       const response = await exportExecution({ id: activeExecution.id, fileType }).unwrap();
-      handleExport(response, fileType, activeExecution.title);
+      downloadBlobObject(response, fileType, activeExecution.title);
     }
   };
   return (

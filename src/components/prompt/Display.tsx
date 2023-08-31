@@ -30,7 +30,6 @@ export const Display: React.FC<Props> = ({
 }) => {
   const [firstLoad, setFirstLoad] = useState(true);
   const [search, setSearch] = useState<string>("");
-
   const router = useRouter();
   const sparkQueryParam = router.query?.spark as string;
   const [openExportPopup, setOpenExportpopup] = useState(false);
