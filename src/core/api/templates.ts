@@ -65,6 +65,12 @@ export const templatesApi = baseApi.injectEndpoints({
         }),
         providesTags: ["MyTemplates"],
       }),
+      getTemplatesBySearch: builder.query<Templates[], string>({
+        query: (query: string) => ({
+          url: `/api/meta/templates/search?query=${query}`,
+          method: "get",
+        }),
+      }),
       createTemplate: builder.mutation<Templates, IEditTemplate>({
         query: (data: IEditTemplate) => ({
           url: `/api/meta/templates/`,
@@ -102,6 +108,7 @@ export const {
   useGetTemplatesSuggestedQuery,
   useDeleteTemplateMutation,
   useGetTemplatesByFilterQuery,
+  useGetTemplatesBySearchQuery,
   useGetPromptParamsQuery,
   useGetPromptTemplateBySlugQuery,
   useGetPromptTemplatesQuery,

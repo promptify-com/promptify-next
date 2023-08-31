@@ -44,7 +44,11 @@ export const WelcomeCard = () => {
           mx: "auto",
         }}
       >
-        <Image src={require("@/assets/images/rocket.svg")} alt="rocket" fill />
+        <Image
+          src={require("@/assets/images/welcome.svg")}
+          alt="welcome"
+          fill
+        />
       </Stack>
 
       <Stack
@@ -77,12 +81,14 @@ export const WelcomeCard = () => {
             textAlign: { xs: "center", sm: "left" },
           }}
         >
-          Unleash your creative potential using Promptify, the ultimate ChatGPT
-          and AI-driven content generation and idea inspiration platform. Try it
-          today!
+          Unleash your creative potential using Promptify, the ultimate ChatGPT and AI-driven content generation and
+          idea inspiration platform. Try it today!
         </Typography>
 
-        <Stack direction={"row"} gap={"8px"}>
+        <Stack
+          direction={"row"}
+          gap={"8px"}
+        >
           <BaseButton
             sx={{
               fontStyle: "normal",

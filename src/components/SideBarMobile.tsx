@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useDeferredValue, useState } from "react";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { AutoAwesome, ClearRounded, HomeRounded, MenuBookRounded, MenuRounded, Search } from "@mui/icons-material";
 import {
@@ -27,6 +27,11 @@ import { Collections } from "./common/sidebar/Collections";
 import { useDispatch, useSelector } from "react-redux";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { RootState } from "@/core/store";
+import useDebounce from "@/hooks/useDebounce";
+import { useGetTemplatesBySearchQuery } from "@/core/api/templates";
+import CardTemplate from "./common/cards/CardTemplate";
+import CardTemplatePlaceholder from "./placeholders/CardTemplatePlaceHolder";
+import { NotFoundIcon } from "@/assets/icons/NotFoundIcon";
 
 type SidebarType = "navigation" | "profile";
 
@@ -46,14 +51,24 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
   setSidebarType,
 }) => {
   const router = useRouter();
-  const logout = useLogout();
-  const title = useSelector((state: RootState) => state.filters.title || "");
-  const dispatch = useDispatch();
   const pathname = router.pathname;
   const splittedPath = pathname.split("/");
-  const [textInput, setTextInput] = React.useState("");
+
+  const dispatch = useDispatch();
+  const logout = useLogout();
+
+  const title = useSelector((state: RootState) => state.filters.title || "");
   const isValidUser = useSelector(isValidUserFn);
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
+
+  const [textInput, setTextInput] = useState("");
+  const deferredSearchName = useDeferredValue(textInput);
+  const debouncedSearchName = useDebounce<string>(deferredSearchName, 300);
+
+  const { data: templates, isFetching } = useGetTemplatesBySearchQuery(debouncedSearchName, {
+    skip: !textInput.length,
+  });
+
   const links = [
     {
       label: "Homepage",
@@ -248,52 +263,88 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
                 />
               </Box>
             </Box>
-            <Box>
-              <List
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "12px",
-                  padding: "0px 22px",
-                }}
-              >
-                {links.map(link => (
-                  <ListItem
-                    key={link.label}
-                    disablePadding
-                    onClick={async () => {
-                      await navigateTo(link.href, link.external);
-                      onCloseDrawer();
-                    }}
-                  >
-                    <ListItemButton selected={link.active}>
-                      <ListItemIcon sx={{ color: "onSurface" }}>{link.icon}</ListItemIcon>
-                      <Typography
-                        sx={{ color: "onSurface" }}
-                        ml={-3}
-                      >
-                        {link.label}
-                      </Typography>
-                    </ListItemButton>
-                  </ListItem>
-                ))}
-              </List>
-              <Divider sx={{ mt: 1 }} />
-              {isValidUser ? (
-                <Box ml={1}>
-                  <Collections
-                    favCollection={collections}
-                    collectionLoading={isCollectionsLoading}
-                    isValidUser={isValidUser}
-                    sidebarOpen
-                  />
-                </Box>
-              ) : (
-                <List subheader={<ListSubheader>COLLECTION</ListSubheader>}>
-                  <CollectionsEmptyBox onExpand />
+            {textInput.length < 3 ? (
+              <Box>
+                <List
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "12px",
+                    padding: "0px 22px",
+                  }}
+                >
+                  {links.map(link => (
+                    <ListItem
+                      key={link.label}
+                      disablePadding
+                      onClick={async () => {
+                        await navigateTo(link.href, link.external);
+                        onCloseDrawer();
+                      }}
+                    >
+                      <ListItemButton selected={link.active}>
+                        <ListItemIcon sx={{ color: "onSurface" }}>{link.icon}</ListItemIcon>
+                        <Typography
+                          sx={{ color: "onSurface" }}
+                          ml={-3}
+                        >
+                          {link.label}
+                        </Typography>
+                      </ListItemButton>
+                    </ListItem>
+                  ))}
                 </List>
-              )}
-            </Box>
+                <Divider sx={{ mt: 1 }} />
+                {isValidUser ? (
+                  <Box ml={1}>
+                    <Collections
+                      favCollection={collections}
+                      collectionLoading={isCollectionsLoading}
+                      isValidUser={isValidUser}
+                      sidebarOpen
+                    />
+                  </Box>
+                ) : (
+                  <List subheader={<ListSubheader>COLLECTION</ListSubheader>}>
+                    <CollectionsEmptyBox onExpand />
+                  </List>
+                )}
+              </Box>
+            ) : (
+              <Grid p={"16px"}>
+                {isFetching ? (
+                  <CardTemplatePlaceholder count={5} />
+                ) : (
+                  <Grid
+                    display={"flex"}
+                    flexDirection={"column"}
+                    justifyContent={"center"}
+                    alignItems={"center"}
+                    minHeight={"20vh"}
+                  >
+                    {templates?.length !== 0 && !isFetching ? (
+                      <Grid
+                        display={"flex"}
+                        flexDirection={"column"}
+                        gap={"8px"}
+                        width={"100%"}
+                      >
+                        {templates?.map(template => (
+                          <CardTemplate
+                            key={template.id}
+                            template={template}
+                            query={debouncedSearchName}
+                            asResult
+                          />
+                        ))}
+                      </Grid>
+                    ) : (
+                      <NotFoundIcon />
+                    )}
+                  </Grid>
+                )}
+              </Grid>
+            )}
           </Box>
         ) : (
           <Box>

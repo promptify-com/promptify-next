@@ -2,6 +2,7 @@ import { BaseQueryFn } from "@reduxjs/toolkit/query";
 
 import axios, { AxiosError, AxiosRequestConfig } from "axios";
 import useToken from "@/hooks/useToken";
+import { ResponseType } from "./dto/templates";
 
 export const axiosBaseQuery =
   (
@@ -13,11 +14,12 @@ export const axiosBaseQuery =
       data?: AxiosRequestConfig["data"];
       params?: AxiosRequestConfig["params"];
       headers?: AxiosRequestConfig["headers"];
+      responseType?: ResponseType;
     },
     unknown,
     unknown
   > =>
-  async ({ url, method, data, params, headers }) => {
+  async ({ url, method, data, params, headers, responseType }) => {
     // If access token exists send the Authorization header
     const token = useToken();
     headers = headers || {};
@@ -32,13 +34,17 @@ export const axiosBaseQuery =
 
     try {
       const properUrl = url.endsWith("/") || url.includes("?") ? url : `${url}/`;
-      const result = await axios({
+      const axiosReq: AxiosRequestConfig = {
         url: baseUrl + properUrl,
         method,
         data,
         params,
         headers,
-      });
+      };
+      if (responseType) {
+        axiosReq.responseType = responseType;
+      }
+      const result = await axios(axiosReq);
       return { data: result.data };
     } catch (axiosError) {
       const err = axiosError as AxiosError;

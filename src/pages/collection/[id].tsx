@@ -93,7 +93,7 @@ export const Collection = ({ fetchedTemplate, fetchedTemplateError }: any) => {
 
   useEffect(() => {
     if (templateExecutions) {
-      const filteredTemplate = templateExecutions?.filter(tpm => !!tpm.prompt_executions.length) || [];
+      const filteredTemplate = templateExecutions?.filter(tpm => !!tpm.prompt_executions?.length) || [];
       const indx = Math.floor(Math.random() * filteredTemplate.length);
       setRandomTemplate(filteredTemplate[indx]);
     }

@@ -38,7 +38,6 @@ import { isValidUserFn } from "@/core/store/userSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { updateTemplateData } from "@/core/store/templatesSlice";
 import { RootState } from "@/core/store";
-
 import PromptPlaceholder from "@/components/placeholders/PromptPlaceHolder";
 
 const Prompt = () => {

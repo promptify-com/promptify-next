@@ -8,7 +8,8 @@ import { useGetTemplatesExecutionsByMeQuery } from "@/core/api/executions";
 import SparksTemplatePlaceholder from "@/components/placeholders/SparksTemplatePlaceholder";
 
 const Sparks = () => {
-  const { data: executedTemplates, isLoading: isExecutedTemplatesLoading } = useGetTemplatesExecutionsByMeQuery();
+  const { data: executedTemplates, isLoading: isExecutedTemplatesLoading } =
+    useGetTemplatesExecutionsByMeQuery(undefined);
 
   return (
     <Protected>

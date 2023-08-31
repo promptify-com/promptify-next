@@ -6,14 +6,13 @@ import BaseButton from "../base/BaseButton";
 import { Execution, ExecutionTemplatePopupType } from "@/core/api/dto/templates";
 import { useDeleteExecutionMutation, useUpdateExecutionMutation } from "@/core/api/executions";
 
-interface SparkPopupProps {
+interface SparkSaveDeletePopupProps {
   type: ExecutionTemplatePopupType;
-  open: boolean;
   onClose: () => void;
   activeExecution: Execution | null;
 }
 
-export const SparkPopup: React.FC<SparkPopupProps> = ({ open, type, activeExecution, onClose }) => {
+export const SparkSaveDeletePopup = ({ type, activeExecution, onClose }: SparkSaveDeletePopupProps) => {
   const [updateExecution, { isError }] = useUpdateExecutionMutation();
   const [deleteExecution, { isError: isDeleteExecutionError }] = useDeleteExecutionMutation();
   const [executionTitle, setExecutionTitle] = useState("");
@@ -43,7 +42,7 @@ export const SparkPopup: React.FC<SparkPopupProps> = ({ open, type, activeExecut
 
   return (
     <Dialog
-      open={open}
+      open
       onClose={() => onClose()}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"

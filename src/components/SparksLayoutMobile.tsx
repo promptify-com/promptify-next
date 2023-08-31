@@ -10,15 +10,15 @@ import {
   MenuItem,
   Typography,
 } from "@mui/material";
-import { CloudQueueOutlined, Delete, Edit, MoreVert } from "@mui/icons-material";
+import { Cloud, Delete, Edit, MoreVert } from "@mui/icons-material";
 import { useRouter } from "next/router";
-import { useDispatch } from "react-redux";
 
 import DraftSpark from "@/assets/icons/DraftSpark";
 import SavedSpark from "@/assets/icons/SavedSpark";
 import useTimestampConverter from "@/hooks/useTimestampConverter";
 import useTruncate from "@/hooks/useTruncate";
 import { SparksLayoutProps } from "@/core/api/dto/templates";
+import ShareIcon from "@/assets/icons/ShareIcon";
 
 export const SparksLayoutMobile: FC<SparksLayoutProps> = ({
   execution,
@@ -26,7 +26,7 @@ export const SparksLayoutMobile: FC<SparksLayoutProps> = ({
   onExecutionSaved,
   onOpenDelete,
   onOpenEdit,
-  onClosePopup,
+  onOpenExport,
 }) => {
   const router = useRouter();
 
@@ -167,6 +167,7 @@ export const SparksLayoutMobile: FC<SparksLayoutProps> = ({
           </ListItemIcon>
           <ListItemText>Rename</ListItemText>
         </MenuItem>
+
         {!execution.is_favorite && (
           <MenuItem
             onClick={() => {
@@ -175,7 +176,7 @@ export const SparksLayoutMobile: FC<SparksLayoutProps> = ({
             }}
           >
             <ListItemIcon>
-              <CloudQueueOutlined sx={{ fontSize: "18px" }} />
+              <Cloud sx={{ fontSize: "18px" }} />
             </ListItemIcon>
             <ListItemText>Save</ListItemText>
           </MenuItem>
@@ -191,6 +192,17 @@ export const SparksLayoutMobile: FC<SparksLayoutProps> = ({
             <Delete sx={{ fontSize: "18px" }} />
           </ListItemIcon>
           <ListItemText>Delete</ListItemText>
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            onOpenExport();
+            setAnchorEl(null);
+          }}
+        >
+          <ListItemIcon>
+            <ShareIcon />
+          </ListItemIcon>
+          <ListItemText>Export</ListItemText>
         </MenuItem>
       </Menu>
     </Grid>

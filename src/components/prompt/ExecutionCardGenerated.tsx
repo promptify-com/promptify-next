@@ -1,24 +1,42 @@
-import React, { useEffect, useRef } from "react";
-import { Box, Stack, Tooltip, Typography } from "@mui/material";
+import React, { useEffect, useRef, useState } from "react";
+import { Box, Stack, Typography } from "@mui/material";
 import { Subtitle } from "@/components/blocks";
-import { getMarkdownFromString } from "@/common/helpers/getMarkdownFromString";
-import { PromptLiveResponse } from "@/common/types/prompt";
+import { markdownToHTML } from "@/common/helpers";
+import { PromptLiveResponse, PromptLiveResponseData } from "@/common/types/prompt";
 import { Templates } from "@/core/api/dto/templates";
-import { Error } from "@mui/icons-material";
+import DOMPurify from "isomorphic-dompurify";
 
 interface Props {
   execution: PromptLiveResponse;
   templateData: Templates;
 }
 
-export const ExecutionCardGenerated: React.FC<Props> = ({
-  execution,
-  templateData,
-}) => {
+export const ExecutionCardGenerated: React.FC<Props> = ({ execution, templateData }) => {
+  const [liveExecutionData, setLiveExecutionData] = useState<PromptLiveResponseData[]>([]);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    document.addEventListener("wheel", (event) => {
+    const sortAndProcessExecutions = async () => {
+      if (execution.data) {
+        const processedOutputs = await Promise.all(
+          execution.data.map(async liveResponseData => {
+            return {
+              ...liveResponseData,
+              message: !isImageOutput(liveResponseData.message)
+                ? await markdownToHTML(liveResponseData.message)
+                : liveResponseData.message,
+            };
+          }),
+        );
+        setLiveExecutionData(processedOutputs);
+      }
+    };
+
+    sortAndProcessExecutions();
+  }, [execution.data]);
+
+  useEffect(() => {
+    document.addEventListener("wheel", event => {
       if (event.deltaY < 0) {
         clearInterval(interval);
       }
@@ -35,12 +53,7 @@ export const ExecutionCardGenerated: React.FC<Props> = ({
   }, []);
 
   const isImageOutput = (output: string): boolean => {
-    return (
-      output.endsWith(".png") ||
-      output.endsWith(".jpg") ||
-      output.endsWith(".jpeg") ||
-      output.endsWith(".webp")
-    );
+    return output.endsWith(".png") || output.endsWith(".jpg") || output.endsWith(".jpeg") || output.endsWith(".webp");
   };
 
   return (
@@ -51,25 +64,21 @@ export const ExecutionCardGenerated: React.FC<Props> = ({
         mx: "auto",
       }}
     >
-      {execution.data?.map((exec, i) => {
+      {liveExecutionData.map((exec, i) => {
         const prevItem = i > 0 && execution.data && execution.data[i - 1];
         const isPrevItemIsImage = prevItem && isImageOutput(prevItem?.message);
-        const nextItem = execution.data
-          ? i < execution.data.length - 1 && execution.data[i + 1]
-          : undefined;
+        const nextItem = execution.data ? i < execution.data.length - 1 && execution.data[i + 1] : undefined;
         const isNextItemIsText = nextItem && !isImageOutput(nextItem?.message);
 
-        const prompt = templateData.prompts.find(
-          (prompt) => prompt.id === exec.prompt
-        );
+        const prompt = templateData.prompts.find(prompt => prompt.id === exec.prompt);
         if (prompt?.show_output)
           return (
-            <Stack key={i} gap={1} sx={{ py: "24px" }}>
-              <Subtitle
-                sx={{ fontSize: 24, fontWeight: 400, color: "onSurface" }}
-              >
-                {prompt.title}
-              </Subtitle>
+            <Stack
+              key={i}
+              gap={1}
+              sx={{ py: "24px" }}
+            >
+              <Subtitle sx={{ fontSize: 24, fontWeight: 400, color: "onSurface" }}>{prompt.title}</Subtitle>
               {!isImageOutput(exec.message) && (
                 <Box>
                   {isPrevItemIsImage && (
@@ -77,11 +86,8 @@ export const ExecutionCardGenerated: React.FC<Props> = ({
                       component={"img"}
                       alt={"book cover"}
                       src={prevItem.message}
-                      onError={(
-                        e: React.SyntheticEvent<HTMLImageElement, Event>
-                      ) => {
-                        (e.target as HTMLImageElement).src =
-                          "http://placehold.it/165x215";
+                      onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                        (e.target as HTMLImageElement).src = "http://placehold.it/165x215";
                       }}
                       sx={{
                         borderRadius: "8px",
@@ -101,9 +107,31 @@ export const ExecutionCardGenerated: React.FC<Props> = ({
                       wordWrap: "break-word",
                       textAlign: "justify",
                       float: "none",
+                      ".highlight": {
+                        backgroundColor: "yellow",
+                        color: "black",
+                      },
+                      pre: {
+                        bgcolor: "#282a35",
+                        color: "common.white",
+                        m: "10px 0",
+                        borderRadius: "8px",
+                        overflow: "hidden",
+                        code: {
+                          display: "block",
+                          p: "16px 24px",
+                          overflow: "auto",
+                        },
+                        ".language": {
+                          p: "8px 24px",
+                          bgcolor: "#4d5562",
+                          color: "#ffffff",
+                          fontSize: 13,
+                        },
+                      },
                     }}
                     dangerouslySetInnerHTML={{
-                      __html: getMarkdownFromString(exec.message),
+                      __html: DOMPurify.sanitize(exec.message),
                     }}
                   />
                 </Box>
@@ -115,11 +143,8 @@ export const ExecutionCardGenerated: React.FC<Props> = ({
                     component={"img"}
                     alt={"book cover"}
                     src={exec.message}
-                    onError={(
-                      e: React.SyntheticEvent<HTMLImageElement, Event>
-                    ) => {
-                      (e.target as HTMLImageElement).src =
-                        "http://placehold.it/165x215";
+                    onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                      (e.target as HTMLImageElement).src = "http://placehold.it/165x215";
                     }}
                     sx={{
                       borderRadius: "8px",
