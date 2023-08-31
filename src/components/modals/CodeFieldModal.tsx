@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Modal from "@mui/material/Modal";
 import { Box, Button, Stack } from "@mui/material";
 import CodeField from "../common/forms/CodeField";
@@ -11,8 +11,6 @@ interface Props {
 }
 
 export default function CodeFieldModal({ open, setOpen, value, onChange }: Props) {
-  const [errors, setErrors] = useState<string[]>([]);
-
   return (
     <Modal
       open={open}
@@ -36,25 +34,7 @@ export default function CodeFieldModal({ open, setOpen, value, onChange }: Props
         <CodeField
           value={value}
           onChange={onChange}
-          onError={setErrors}
         />
-
-        {errors.length > 0 && (
-          <Box sx={{ m: "5px 14px" }}>
-            {errors.map((errMsg, i) => (
-              <Box
-                key={i}
-                sx={{
-                  fontSize: 12,
-                  color: "error.main",
-                  mb: "8px",
-                }}
-              >
-                {errMsg}
-              </Box>
-            ))}
-          </Box>
-        )}
         <Stack
           sx={{
             direction: "row",

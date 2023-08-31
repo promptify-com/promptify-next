@@ -4,7 +4,6 @@ import { TextField } from "@mui/material";
 interface Props {
   value?: string;
   onChange: (code: string) => void;
-  onError?: (errors: string[]) => void;
 }
 
 const CodeField: React.FC<Props> = ({ value, onChange }) => {
