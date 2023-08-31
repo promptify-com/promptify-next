@@ -230,7 +230,9 @@ export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title }) => {
       {isUserAdmin ? (
         <Grid width={"100%"}>
           {isAdminTemplatesLoading ? (
-            <CardTemplatePlaceholder count={4} />
+            <Box width={"100%"}>
+              <CardTemplatePlaceholder count={4} />
+            </Box>
           ) : (
             <Box
               display={"flex"}
@@ -276,7 +278,9 @@ export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title }) => {
       ) : (
         <Grid width={"100%"}>
           {isUserTemplatesFetching && userTemplates?.length === 0 ? (
-            <CardTemplatePlaceholder count={4} />
+            <Box width={"100%"}>
+              <CardTemplatePlaceholder count={4} />
+            </Box>
           ) : (
             <Box
               display={"flex"}
