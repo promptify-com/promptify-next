@@ -111,11 +111,12 @@ export const Display: React.FC<Props> = ({
         onOpenExport={() => setOpenExportpopup(true)}
       />
 
-      <SparkExportPopup
-        open={openExportPopup}
-        onClose={() => setOpenExportpopup(false)}
-        activeExecution={activeExecution}
-      />
+      {openExportPopup && (
+        <SparkExportPopup
+          onClose={() => setOpenExportpopup(false)}
+          activeExecution={activeExecution}
+        />
+      )}
 
       <Box sx={{ mx: "15px", opacity: firstLoad ? 0.5 : 1 }}>
         {

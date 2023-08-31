@@ -221,17 +221,21 @@ const SparksContainer: FC<SparksContainerProps> = ({ templates }) => {
           ))}
         </Box>
       </Grid>
-      <SparkSaveDeletePopup
-        type={popup}
-        open={popup === "delete" || popup === "update"}
-        activeExecution={activeExecution}
-        onClose={() => setPopup(null)}
-      />
-      <SparkExportPopup
-        open={popup === "export"}
-        onClose={() => setPopup(null)}
-        activeExecution={activeExecution}
-      />
+      {popup === "delete" ||
+        (popup === "update" && (
+          <SparkSaveDeletePopup
+            type={popup}
+            activeExecution={activeExecution}
+            onClose={() => setPopup(null)}
+          />
+        ))}
+
+      {popup === "export" && (
+        <SparkExportPopup
+          onClose={() => setPopup(null)}
+          activeExecution={activeExecution}
+        />
+      )}
     </Grid>
   );
 };

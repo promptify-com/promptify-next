@@ -8,12 +8,11 @@ import { useDeleteExecutionMutation, useUpdateExecutionMutation } from "@/core/a
 
 interface SparkSaveDeletePopupProps {
   type: ExecutionTemplatePopupType;
-  open: boolean;
   onClose: () => void;
   activeExecution: Execution | null;
 }
 
-export const SparkSaveDeletePopup = ({ open, type, activeExecution, onClose }: SparkSaveDeletePopupProps) => {
+export const SparkSaveDeletePopup = ({ type, activeExecution, onClose }: SparkSaveDeletePopupProps) => {
   const [updateExecution, { isError }] = useUpdateExecutionMutation();
   const [deleteExecution, { isError: isDeleteExecutionError }] = useDeleteExecutionMutation();
   const [executionTitle, setExecutionTitle] = useState("");
@@ -43,7 +42,7 @@ export const SparkSaveDeletePopup = ({ open, type, activeExecution, onClose }: S
 
   return (
     <Dialog
-      open={open}
+      open
       onClose={() => onClose()}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
