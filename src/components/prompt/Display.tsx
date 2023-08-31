@@ -67,7 +67,11 @@ export const Display: React.FC<Props> = ({
   }, [generatedExecution]);
 
   const sortedExecutions = useMemo(() => {
-    const _execuitons = [...(executions || [])]
+    if (!executions?.length) {
+      return [];
+    }
+
+    const _execuitons = [...executions]
       .reduce((uniqueExecs: TemplatesExecutions[], execution) => {
         if (!uniqueExecs.some((item: TemplatesExecutions) => item.id === execution.id)) {
           uniqueExecs.push(execution);
