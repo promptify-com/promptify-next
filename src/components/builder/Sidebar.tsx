@@ -257,11 +257,33 @@ export const Sidebar = ({
                     {parts.fullName}
                     {parts.required && "*"}:&nbsp;
                   </Typography>
-                  <Typography>{parts.type}</Typography>
-                  {parts.type === "choices" && (
-                    <Typography sx={{ opacity: 0.7, wordBreak: "break-word" }}>
-                      [{parts.choices?.toString()}]
-                    </Typography>
+                  {parts.type === "choices" ? (
+                    <Select
+                      sx={{
+                        ".MuiSelect-select": {
+                          p: "7px 20px",
+                          color: "common.white",
+                        },
+                      }}
+                      displayEmpty
+                    >
+                      <MenuItem
+                        sx={{ opacity: 0.7 }}
+                        selected
+                      >
+                        Select an option
+                      </MenuItem>
+                      {parts.choices?.map(choice => (
+                        <MenuItem
+                          key={choice}
+                          value={choice}
+                        >
+                          {choice}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  ) : (
+                    <Typography>{parts.type}</Typography>
                   )}
                 </Stack>
                 <Box borderBottom="1px solid grey" />
