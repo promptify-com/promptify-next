@@ -1,12 +1,25 @@
-export const handleExport = async (data: any, fileType: "word" | "pdf", title: string) => {
-  const isPdf = fileType === "pdf";
+const contentTypeMapping = {
+  pdf: "application/pdf",
+  word: "application/msword",
+};
+
+const extensionTypeMapping = {
+  pdf: "pdf",
+  word: "docx",
+};
+
+export const handleExport = async (data: BlobPart, fileType: "word" | "pdf", title: string) => {
+  if (!contentTypeMapping[fileType]) {
+    throw new Error(`File type "${fileType}" is not supported!`);
+  }
+
   try {
-    const blob = new Blob([data], { type: isPdf ? "application/pdf" : "application/msword" });
+    const blob = new Blob([data], { type: contentTypeMapping[fileType] });
     const url = URL.createObjectURL(blob);
 
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${title}.${isPdf ? "pdf" : "docx"}`;
+    a.download = `${title}.${extensionTypeMapping[fileType]}`;
     a.click();
 
     URL.revokeObjectURL(url);

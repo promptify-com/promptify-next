@@ -16,7 +16,7 @@ interface SparkExportProps {
 }
 
 export const SparkExportPopup = ({ activeExecution, onClose }: SparkExportProps) => {
-  const sharedUrl = `${getBaseURL()}/prompt/${activeExecution?.template?.slug}?=spark=${activeExecution?.id}`;
+  const sharedUrl = `${getBaseURL()}/prompt/${activeExecution?.template?.slug}?spark=${activeExecution?.id}`;
 
   const [exportExecution] = executionsApi.endpoints.exportExecution.useLazyQuery();
   const [copyToClipboard, copyResult] = useCopyToClipboard();
