@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { SparksLayoutProps } from "@/core/api/dto/templates";
-import { CloudQueueRounded, DeleteRounded, Edit } from "@mui/icons-material";
+import { CloudQueueRounded, DeleteRounded, Edit, GetAppRounded } from "@mui/icons-material";
 import { CardMedia, Grid, IconButton, Tooltip, Typography } from "@mui/material";
 
 import useTimestampConverter from "@/hooks/useTimestampConverter";
@@ -8,6 +8,7 @@ import useTruncate from "@/hooks/useTruncate";
 import DraftSpark from "@/assets/icons/DraftSpark";
 import SavedSpark from "@/assets/icons/SavedSpark";
 import { useRouter } from "next/router";
+import ShareIcon from "@/assets/icons/ShareIcon";
 
 export const SparksLayoutDesktop: FC<SparksLayoutProps> = ({
   execution,
@@ -15,6 +16,7 @@ export const SparksLayoutDesktop: FC<SparksLayoutProps> = ({
   onExecutionSaved,
   onOpenEdit,
   onOpenDelete,
+  onOpenExport,
 }) => {
   const router = useRouter();
   const { truncate } = useTruncate();
@@ -188,6 +190,22 @@ export const SparksLayoutDesktop: FC<SparksLayoutProps> = ({
             <DeleteRounded
               className="cellHovered"
               sx={{ opacity: 0.25, fontSize: "16px" }}
+            />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Export / Share">
+          <IconButton
+            onClick={onOpenExport}
+            sx={{
+              border: "none",
+              "&:hover": {
+                bgcolor: "surface.2",
+              },
+            }}
+          >
+            <ShareIcon
+              className="cellHovered"
+              opacity={0.2}
             />
           </IconButton>
         </Tooltip>

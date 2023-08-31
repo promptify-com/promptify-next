@@ -1,5 +1,5 @@
 import { baseApi } from "./api";
-import { ITemplateExecutionPut, TemplateExecutionsDisplay, TemplatesExecutions } from "./dto/templates";
+import { ITemplateExecutionPut, ResponseType, TemplateExecutionsDisplay, TemplatesExecutions } from "./dto/templates";
 
 export const executionsApi = baseApi.injectEndpoints({
   endpoints: builder => {
@@ -17,6 +17,15 @@ export const executionsApi = baseApi.injectEndpoints({
           method: "get",
         }),
         providesTags: ["Executions"],
+      }),
+      exportExecution: builder.query<ResponseType, { id: number; fileType: "word" | "pdf" }>({
+        query: ({ id, fileType }: { id: number; fileType: "word" | "pdf" }) => ({
+          url: `/api/meta/template-executions/${id}/export/?file_format=${fileType}`,
+          method: "get",
+          headers: { "Content-Type": fileType === "pdf" ? "application/pdf" : "application/msword" },
+          responseType: "arraybuffer",
+          keepUnusedDataFor: 1,
+        }),
       }),
       updateExecution: builder.mutation<TemplatesExecutions, { id: number; data: ITemplateExecutionPut }>({
         query: ({ id, data }) => ({
@@ -46,6 +55,7 @@ export const executionsApi = baseApi.injectEndpoints({
 
 export const {
   useGetExecutionsByTemplateQuery,
+  useExportExecutionQuery,
   useGetTemplatesExecutionsByMeQuery,
   useUpdateExecutionMutation,
   useDeleteExecutionMutation,

@@ -9,6 +9,7 @@ import { DisplayActions } from "./DisplayActions";
 import ParagraphPlaceholder from "@/components/placeholders/ParagraphPlaceholder";
 import { useRouter } from "next/router";
 import moment from "moment";
+import { SparkExportPopup } from "../dialog/SparkExportPopup";
 
 interface Props {
   templateData: Templates;
@@ -31,8 +32,24 @@ export const Display: React.FC<Props> = ({
   const [search, setSearch] = useState<string>("");
   const router = useRouter();
   const sparkQueryParam = router.query?.spark as string;
+  const [openExportPopup, setOpenExportpopup] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const activeExecution = useMemo(() => {
+    if (selectedExecution) {
+      return {
+        ...selectedExecution,
+        template: {
+          ...selectedExecution.template,
+          title: templateData.title,
+          slug: templateData.slug,
+          thumbnail: templateData.thumbnail,
+        },
+      };
+    }
+    return null;
+  }, [selectedExecution, templateData]);
 
   // click listener to remove opacity layer on first loaded execution
   useEffect(() => {
@@ -90,7 +107,15 @@ export const Display: React.FC<Props> = ({
         selectedExecution={selectedExecution}
         setSelectedExecution={setSelectedExecution}
         onSearch={text => setSearch(text)}
+        onOpenExport={() => setOpenExportpopup(true)}
       />
+
+      {openExportPopup && (
+        <SparkExportPopup
+          onClose={() => setOpenExportpopup(false)}
+          activeExecution={activeExecution}
+        />
+      )}
 
       <Box sx={{ mx: "15px", opacity: firstLoad ? 0.5 : 1 }}>
         {
