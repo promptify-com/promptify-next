@@ -1,13 +1,21 @@
 import { User, UserMin } from "./user";
 import { Prompts } from "./prompts";
-import { ExecutionTemplate } from "@/components/SparksContainer";
+export interface ExecutionTemplatePartial {
+  title: string;
+  thumbnail: string;
+  slug: string;
+}
 
+export interface ExecutionWithTemplate extends Execution {
+  template: ExecutionTemplatePartial;
+}
 export interface SparksLayoutProps {
-  execution: Execution;
-  template: ExecutionTemplate;
+  execution: ExecutionWithTemplate;
+  template: ExecutionTemplatePartial;
   onExecutionSaved: () => void;
   onOpenEdit: () => void;
   onOpenDelete: () => void;
+  onOpenExport: () => void;
   onClosePopup?: () => void;
 }
 
@@ -135,14 +143,20 @@ export interface PromptExecutions {
   errors: string;
 }
 
+export type ResponseType = "arraybuffer" | "blob" | "document" | "json" | "text" | "stream";
 export interface TemplatesExecutions {
   id: number;
   title: string;
   created_at: Date;
-  prompt_executions: PromptExecutions[];
+  prompt_executions?: PromptExecutions[];
   is_favorite: boolean;
-  parameters: { [key: string]: any };
-  contextual_overrides: { [key: string]: any };
+  parameters?: { [key: string]: any };
+  contextual_overrides?: { [key: string]: any };
+  template?: {
+    title: string;
+    slug: string;
+    thumbnail: string;
+  };
 }
 
 export interface ITemplateExecutionPut {
@@ -175,7 +189,7 @@ export interface PromptExecutions {
 export interface Execution {
   id: number;
   title: string;
-  created_at: string;
+  created_at: Date;
   is_favorite: boolean;
 }
 
@@ -232,4 +246,4 @@ export interface CollectionMutationParams {
   templateId: number;
 }
 
-export type ExecutionTemplatePopupType = "update" | "delete";
+export type ExecutionTemplatePopupType = "update" | "delete" | "export" | null;

@@ -10,6 +10,7 @@ import {
   Paper,
   Popper,
   Stack,
+  Tooltip,
   Typography,
   alpha,
   useTheme,
@@ -29,6 +30,7 @@ import { TemplatesExecutions } from "@/core/api/dto/templates";
 import { ExecutionsTabs } from "./ExecutionsTabs";
 import SavedSpark from "@/assets/icons/SavedSpark";
 import DraftSpark from "@/assets/icons/DraftSpark";
+import ShareIcon from "@/assets/icons/ShareIcon";
 
 interface Props {
   executions: TemplatesExecutions[];
@@ -36,6 +38,7 @@ interface Props {
   setSelectedExecution: (exec: TemplatesExecutions) => void;
   showSearchBar?: boolean;
   onSearch?: (text: string) => void;
+  onOpenExport: () => void;
 }
 
 export const DisplayActions: React.FC<Props> = ({
@@ -44,6 +47,7 @@ export const DisplayActions: React.FC<Props> = ({
   setSelectedExecution,
   showSearchBar,
   onSearch = () => {},
+  onOpenExport,
 }) => {
   const { palette } = useTheme();
 
@@ -200,32 +204,29 @@ export const DisplayActions: React.FC<Props> = ({
               TODO: https://github.com/ysfbsf/promptify-next/issues/275
               {SearchInput("left")} 
             */}
-
-            {false && (
-              <React.Fragment>
-                <IconButton sx={{ ...iconButtonStyle }}>
-                  <Undo />
-                </IconButton>
-                <IconButton sx={{ ...iconButtonStyle }}>
-                  <Redo />
-                </IconButton>
-                <Button
-                  sx={{ color: "onSurface", fontSize: 13, fontWeight: 500 }}
-                  startIcon={<FeedOutlined />}
-                  endIcon={Boolean(execsDropAnchor) ? <ArrowDropUp /> : <ArrowDropDown />}
-                  variant={"text"}
-                  onClick={e => setExecsDropAnchor(e.currentTarget)}
-                >
-                  Export
-                </Button>
-              </React.Fragment>
-            )}
+            <Tooltip title="Export">
+              <IconButton
+                onClick={onOpenExport}
+                sx={{
+                  border: "none",
+                  "&:hover": {
+                    bgcolor: "surface.2",
+                  },
+                }}
+              >
+                <ShareIcon />
+              </IconButton>
+            </Tooltip>
           </Stack>
         </Stack>
 
         {/* Small screen header */}
-        <Box>
+        <Box
+          display={"flex"}
+          alignItems={"center"}
+        >
           <Stack
+            flex={1}
             display={{ md: "none" }}
             direction={"row"}
             alignItems={"center"}
@@ -246,17 +247,19 @@ export const DisplayActions: React.FC<Props> = ({
               {showSearchBar && SearchInput("right")}
             */}
 
-            {false && (
-              <Button
-                sx={{ color: "onSurface", fontSize: 13, fontWeight: 500, ml: "auto" }}
-                startIcon={<FeedOutlined />}
-                endIcon={Boolean(execsDropAnchor) ? <ArrowDropUp /> : <ArrowDropDown />}
-                variant={"text"}
-                onClick={e => setExecsDropAnchor(e.currentTarget)}
+            <Tooltip title="Export">
+              <IconButton
+                onClick={onOpenExport}
+                sx={{
+                  border: "none",
+                  "&:hover": {
+                    bgcolor: "surface.2",
+                  },
+                }}
               >
-                Export
-              </Button>
-            )}
+                <ShareIcon />
+              </IconButton>
+            </Tooltip>
           </Stack>
         </Box>
 

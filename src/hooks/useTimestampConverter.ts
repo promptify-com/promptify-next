@@ -1,7 +1,7 @@
 import moment from "moment";
 
 function useTimestampConverter() {
-  const convertedTimestamp = (timestamp: string): string => {
+  const convertedTimestamp = (timestamp: string | Date): string => {
     if (!moment(timestamp).isValid()) {
       return "Some time ago";
     }

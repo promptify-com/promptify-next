@@ -22,7 +22,10 @@ export const store = (options?: ConfigureStoreOptions["preloadedState"] | undefi
       profile: profileSlice,
       user: userSlice,
     },
-    middleware: getDefaultMiddleware => getDefaultMiddleware().concat(baseApi.middleware),
+    middleware: getDefaultMiddleware =>
+      getDefaultMiddleware({
+        serializableCheck: false,
+      }).concat(baseApi.middleware),
     ...options,
   });
 

@@ -3,7 +3,6 @@ import { Box, IconButton, Stack, Typography, alpha, useTheme } from "@mui/materi
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { ContentCopy, StarOutline as StarOutlineIcon, Star as StarIcon } from "@mui/icons-material";
 import { Subtitle } from "@/components/blocks";
-import { markdownToHTML } from "@/common/helpers/markdownToHTML";
 import moment from "moment";
 import PromptifyLogo from "@/assets/images/promptify.png";
 import { addToFavorite, removeFromFavorite } from "@/hooks/api/executions";
@@ -38,7 +37,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData }) => {
 
   const copyFormattedOutput = async () => {
     let copyHTML = "";
-    for (const exec of execution.prompt_executions) {
+    for (const exec of execution.prompt_executions || []) {
       const prompt = templateData.prompts.find(prompt => prompt.id === exec.prompt);
       if (prompt?.show_output) {
         copyHTML += "<h2>" + prompt.title + "</h2>";
@@ -121,7 +120,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData }) => {
           </Typography>
         </Stack>
 
-        {execution.prompt_executions.map(exec => {
+        {(execution.prompt_executions || []).map(exec => {
           const prompt = templateData?.prompts?.find(prompt => prompt.id === exec.prompt);
           if (prompt?.show_output)
             return (

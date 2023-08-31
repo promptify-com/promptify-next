@@ -1,7 +1,6 @@
 import React from "react";
 import { Box, Stack, Typography } from "@mui/material";
 import { Subtitle } from "@/components/blocks";
-import { markdownToHTML } from "@/common/helpers/markdownToHTML";
 import { PromptLiveResponse } from "@/common/types/prompt";
 import { Templates } from "@/core/api/dto/templates";
 
