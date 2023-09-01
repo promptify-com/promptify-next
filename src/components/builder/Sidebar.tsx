@@ -1,23 +1,11 @@
 import React, { useEffect, useState } from "react";
-import {
-  Box,
-  CircularProgress,
-  FormControl,
-  IconButton,
-  MenuItem,
-  Select,
-  Typography,
-} from "@mui/material";
+import { Box, CircularProgress, FormControl, IconButton, MenuItem, Select, Stack, Typography } from "@mui/material";
 import { EditableTextField } from "@/components/blocks";
 import { PromptIcon, TrashIcon } from "@/assets/icons";
 import { IEngines } from "@/common/types";
 import { Stylizer } from "./Stylizer";
 import { Prompts } from "@/core/api/dto/prompts";
-import {
-  INodesData,
-  IPromptOptions,
-  IPromptParams,
-} from "@/common/types/builder";
+import { INodesData, IPromptOptions, IPromptParams } from "@/common/types/builder";
 import { Options } from "./Options";
 import { getInputsFromString } from "@/common/helpers/getInputsFromString";
 import { IPromptInput } from "@/common/types/prompt";
@@ -47,18 +35,12 @@ export const Sidebar = ({
   const [nodeInputs, setNodeInputs] = useState<IPromptInput[]>([]);
 
   const changeTitle = (title: string) => {
-    const findSelectedNode = nodesData?.find((node) => {
-      return (
-        node?.id?.toString() === selectedNode?.id ||
-        node?.temp_id === selectedNode?.temp_id
-      );
+    const findSelectedNode = nodesData?.find(node => {
+      return node?.id?.toString() === selectedNode?.id || node?.temp_id === selectedNode?.temp_id;
     });
 
-    const otherNodes = nodesData?.filter((node) => {
-      return (
-        node?.id?.toString() !== findSelectedNode?.id?.toString() ||
-        node?.temp_id !== findSelectedNode?.temp_id
-      );
+    const otherNodes = nodesData?.filter(node => {
+      return node?.id?.toString() !== findSelectedNode?.id?.toString() || node?.temp_id !== findSelectedNode?.temp_id;
     });
 
     if (findSelectedNode && otherNodes) {
@@ -69,18 +51,12 @@ export const Sidebar = ({
   };
 
   const changeEngineId = (id: number) => {
-    const findSelectedNode = nodesData?.find((node) => {
-      return (
-        node?.id?.toString() === selectedNode?.id ||
-        node?.temp_id === selectedNode?.temp_id
-      );
+    const findSelectedNode = nodesData?.find(node => {
+      return node?.id?.toString() === selectedNode?.id || node?.temp_id === selectedNode?.temp_id;
     });
 
-    const otherNodes = nodesData?.filter((node) => {
-      return (
-        node?.id?.toString() !== findSelectedNode?.id?.toString() ||
-        node?.temp_id !== findSelectedNode?.temp_id
-      );
+    const otherNodes = nodesData?.filter(node => {
+      return node?.id?.toString() !== findSelectedNode?.id?.toString() || node?.temp_id !== findSelectedNode?.temp_id;
     });
 
     if (findSelectedNode && otherNodes) {
@@ -90,18 +66,12 @@ export const Sidebar = ({
   };
 
   const changeText = (text: string) => {
-    const findSelectedNode = nodesData?.find((node) => {
-      return (
-        node?.id?.toString() === selectedNode?.id ||
-        node?.temp_id === selectedNode?.temp_id
-      );
+    const findSelectedNode = nodesData?.find(node => {
+      return node?.id?.toString() === selectedNode?.id || node?.temp_id === selectedNode?.temp_id;
     });
 
-    const otherNodes = nodesData?.filter((node) => {
-      return (
-        node?.id?.toString() !== findSelectedNode?.id?.toString() ||
-        node?.temp_id !== findSelectedNode?.temp_id
-      );
+    const otherNodes = nodesData?.filter(node => {
+      return node?.id?.toString() !== findSelectedNode?.id?.toString() || node?.temp_id !== findSelectedNode?.temp_id;
     });
 
     if (findSelectedNode && otherNodes) {
@@ -111,18 +81,12 @@ export const Sidebar = ({
   };
 
   const changePromptParams = (params: IPromptParams[]) => {
-    const findSelectedNode = nodesData?.find((node) => {
-      return (
-        node?.id?.toString() === selectedNode?.id ||
-        node?.temp_id === selectedNode?.temp_id
-      );
+    const findSelectedNode = nodesData?.find(node => {
+      return node?.id?.toString() === selectedNode?.id || node?.temp_id === selectedNode?.temp_id;
     });
 
-    const otherNodes = nodesData?.filter((node) => {
-      return (
-        node?.id?.toString() !== findSelectedNode?.id?.toString() ||
-        node?.temp_id !== findSelectedNode?.temp_id
-      );
+    const otherNodes = nodesData?.filter(node => {
+      return node?.id?.toString() !== findSelectedNode?.id?.toString() || node?.temp_id !== findSelectedNode?.temp_id;
     });
 
     if (findSelectedNode && otherNodes) {
@@ -133,18 +97,12 @@ export const Sidebar = ({
 
   const changePromptOptions = (options: IPromptOptions) => {
     // TODO: code to be refactored by creating findNode and filterNodes and apply it to all functions
-    const findSelectedNode = nodesData?.find((node) => {
-      return (
-        node?.id?.toString() === selectedNode?.id ||
-        node?.temp_id === selectedNode?.temp_id
-      );
+    const findSelectedNode = nodesData?.find(node => {
+      return node?.id?.toString() === selectedNode?.id || node?.temp_id === selectedNode?.temp_id;
     });
 
-    const otherNodes = nodesData?.filter((node) => {
-      return (
-        node?.id?.toString() !== findSelectedNode?.id?.toString() ||
-        node?.temp_id !== findSelectedNode?.temp_id
-      );
+    const otherNodes = nodesData?.filter(node => {
+      return node?.id?.toString() !== findSelectedNode?.id?.toString() || node?.temp_id !== findSelectedNode?.temp_id;
     });
 
     if (findSelectedNode && otherNodes) {
@@ -162,7 +120,10 @@ export const Sidebar = ({
   }, [selectedNodeData?.content]);
 
   return (
-    <Box height="100%" overflow="scroll">
+    <Box
+      height="100%"
+      overflow="scroll"
+    >
       <Box
         display="flex"
         flexDirection="row"
@@ -172,21 +133,31 @@ export const Sidebar = ({
         paddingTop="25px"
         paddingBottom="25px"
       >
-        <Box display="flex" flexDirection="row" alignItems="center">
+        <Box
+          display="flex"
+          flexDirection="row"
+          alignItems="center"
+        >
           <PromptIcon />
-          <Box flexDirection="column" ml="20px">
+          <Box
+            flexDirection="column"
+            ml="20px"
+          >
             <EditableTextField
               value={selectedNodeData?.title || ""}
               fontSize="1.2rem"
               setValue={changeTitle}
             />
 
-            <FormControl variant="standard" fullWidth>
+            <FormControl
+              variant="standard"
+              fullWidth
+            >
               {engines.length ? (
                 <Select
                   disableUnderline
                   value={selectedNodeData?.engine_id || 1}
-                  onChange={(e) => changeEngineId(Number(e.target.value))}
+                  onChange={e => changeEngineId(Number(e.target.value))}
                   sx={{
                     color: "white",
                     ".MuiOutlinedInput-notchedOutline": {
@@ -214,9 +185,12 @@ export const Sidebar = ({
                     },
                   }}
                 >
-                  {engines.map((engine) => {
+                  {engines.map(engine => {
                     return (
-                      <MenuItem value={engine.id} key={engine.id}>
+                      <MenuItem
+                        value={engine.id}
+                        key={engine.id}
+                      >
                         {engine.name}
                       </MenuItem>
                     );
@@ -229,7 +203,10 @@ export const Sidebar = ({
           </Box>
         </Box>
 
-        <IconButton sx={{ border: "none" }} onClick={removeNode}>
+        <IconButton
+          sx={{ border: "none" }}
+          onClick={removeNode}
+        >
           <TrashIcon />
         </IconButton>
       </Box>
@@ -255,35 +232,60 @@ export const Sidebar = ({
             }}
           />
         </Box>
-        <Box display="flex" flexDirection="column" width="100%">
+        <Box
+          display="flex"
+          flexDirection="column"
+          width="100%"
+        >
           {nodeInputs.map((parts, i) => {
             return (
               <Box key={i}>
-                <Box
-                  display="flex"
-                  flexDirection="row"
-                  mt="25px"
-                  mb="25px"
-                  ml="5rem"
+                <Stack
+                  flexDirection={"row"}
+                  sx={{
+                    mt: "25px",
+                    mb: "25px",
+                    ml: "2rem",
+                    "& p": {
+                      fontSize: "1rem",
+                      fontFamily: "Space Mono",
+                      color: "#FFF",
+                    },
+                  }}
                 >
-                  <Typography
-                    fontSize="1rem"
-                    fontFamily="Space Mono"
-                    color="#FFF"
-                    sx={{
-                      opacity: 0.6,
-                    }}
-                  >
-                    {parts.fullName}{parts.required && '*'}:&nbsp;
+                  <Typography sx={{ opacity: 0.6 }}>
+                    {parts.fullName}
+                    {parts.required && "*"}:&nbsp;
                   </Typography>
-                  <Typography
-                    fontSize="1rem"
-                    fontFamily="Space Mono"
-                    color="#FFF"
-                  >
-                    {parts.type}
-                  </Typography>
-                </Box>
+                  {parts.type === "choices" ? (
+                    <Select
+                      sx={{
+                        ".MuiSelect-select": {
+                          p: "7px 20px",
+                          color: "common.white",
+                        },
+                      }}
+                      displayEmpty
+                    >
+                      <MenuItem
+                        sx={{ opacity: 0.7 }}
+                        selected
+                      >
+                        Select an option
+                      </MenuItem>
+                      {parts.choices?.map(choice => (
+                        <MenuItem
+                          key={choice}
+                          value={choice}
+                        >
+                          {choice}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  ) : (
+                    <Typography>{parts.type}</Typography>
+                  )}
+                </Stack>
                 <Box borderBottom="1px solid grey" />
               </Box>
             );

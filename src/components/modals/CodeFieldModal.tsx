@@ -48,6 +48,11 @@ export default function CodeFieldModal({ open, setOpen, value, onChange }: Props
               width: "fit-content",
               m: "auto",
               px: 4,
+              bgcolor: "tertiary",
+              borderColor: "tertiary",
+              ":hover": {
+                color: "tertiary",
+              },
             }}
             onClick={() => setOpen(false)}
           >
