@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import Head from "next/head";
 import { KeyboardArrowLeft } from "@mui/icons-material";
-import { Box, Button, Grid } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 
 import { authClient } from "@/common/axios";
 import { SubCategoryCard } from "@/components/common/cards/CardSubcategory";
@@ -11,6 +11,7 @@ import { TemplatesSection } from "@/components/explorer/TemplatesSection";
 import { FiltersSelected } from "@/components/explorer/FiltersSelected";
 import SubCategoryPlaceholder from "@/components/placeholders/SubCategoryPlaceholder";
 import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
+import Breadcrumb from "@/components/design-system/Breadcrumb";
 
 export default function Page({ category }: { category: Category }) {
   const router = useRouter();
@@ -28,6 +29,11 @@ export default function Page({ category }: { category: Category }) {
   const navigateTo = (slug: string) => {
     router.push(`/explore/${category.slug}/${slug}`);
   };
+
+  const breadcrumbs = [
+    { label: category.name, link: `/explore/${category.slug}` },
+    { label: router.query.subcategorySlug },
+  ];
 
   return (
     <>
@@ -58,13 +64,10 @@ export default function Page({ category }: { category: Category }) {
                 width={"100%"}
               >
                 <Grid>
-                  <Button
-                    onClick={() => router.push("/explore")}
-                    variant="text"
-                    sx={{ fontSize: 19, color: "onSurface", ml: -3 }}
-                  >
-                    <KeyboardArrowLeft /> {category.name}
-                  </Button>
+                  <Box sx={{ display: "flex", alignItems: { xs: "self-start", md: "center" } }}>
+                    <KeyboardArrowLeft sx={{ mt: { xs: 0.3 } }} />
+                    <Breadcrumb crumbs={breadcrumbs} />
+                  </Box>
                 </Grid>
                 <Grid
                   display={"flex"}
