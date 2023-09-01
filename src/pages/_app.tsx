@@ -61,6 +61,14 @@ function App({ Component, ...rest }: AppProps) {
     };
   }, [router]);
 
+  useEffect(() => {
+    const viewportMetaTagElement = document?.querySelector("[name=viewport]") as HTMLMetaElement;
+
+    if (navigator.userAgent.indexOf("iPhone") > -1 && !viewportMetaTagElement.content.includes("maximum-scale=1")) {
+      viewportMetaTagElement.setAttribute("content", "width=device-width, initial-scale=1, maximum-scale=1");
+    }
+  }, []);
+
   return (
     <Provider store={store}>
       <ThemeProvider theme={theme}>
@@ -96,6 +104,10 @@ function App({ Component, ...rest }: AppProps) {
 
         <Head>
           <title>{pageProps?.title}</title>
+          <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1"
+          />
           <meta
             name="description"
             content={pageProps?.description}
