@@ -68,6 +68,9 @@ const ExecutionForm: React.FC<Props> = ({
   return (
     <Dialog
       open={isOpen}
+      sx={{
+        height: "100svh",
+      }}
       PaperProps={{
         sx: { bgcolor: "surface.1" },
       }}

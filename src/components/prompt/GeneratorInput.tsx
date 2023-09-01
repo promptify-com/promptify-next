@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Divider, IconButton, InputLabel, Stack, TextField } from "@mui/material";
+import { Box, Divider, IconButton, InputLabel, MenuItem, Select, Stack, TextField } from "@mui/material";
 import { InputsErrors } from "./GeneratorForm";
 import { Backspace } from "@mui/icons-material";
 import { ResInputs } from "@/core/api/dto/prompts";
@@ -93,7 +93,12 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
                     }}
                     color="custom"
                     variant="text"
-                    sx={{ border: "1px solid", borderRadius: "8px" }}
+                    sx={{
+                      flex: 1,
+                      border: "1px solid",
+                      borderRadius: "8px",
+                      color: errors[input.name] ? "error.main" : "tertiary",
+                    }}
                   >
                     {inputValue ? "Edit Code" : "Insert Code"}
                   </BaseButton>
@@ -104,58 +109,97 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
                     onChange={val => handleChange(val, input.name, input.type)}
                   />
                 </>
-              ) : (
-                <>
-                  <TextField
-                    sx={{
-                      flex: 1,
-                      height: "27px",
-                      ".MuiInputBase-input": {
-                        p: 0,
-                        color: "onSurface",
-                        fontSize: 13,
-                        fontWeight: 500,
-                        "&::placeholder": {
-                          color: "grey.600",
-                          opacity: 1,
-                        },
-                        "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
-                          WebkitAppearance: "none",
-                          margin: 0,
-                        },
-                        "&[type=number]": {
-                          MozAppearance: "textfield",
-                        },
-                      },
-                      ".MuiOutlinedInput-notchedOutline": {
-                        border: 0,
-                      },
-                      ".MuiInputBase-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                        border: 0,
-                      },
-                    }}
-                    placeholder={input.type === "number" ? "Write a number here.." : "Type here..."}
-                    type={input.type}
-                    value={inputValue}
-                    onChange={e => handleChange(e.target.value, input.name, input.type)}
-                  />
-                  <IconButton
-                    sx={{
-                      color: "grey.600",
-                      border: "none",
-                      p: "4px",
-                      ":hover": {
-                        color: "tertiary",
-                      },
-                      display: inputValue ? "inline-flex" : "none",
-                      height: "27px",
-                    }}
-                    onClick={() => handleChange("", input.name, input.type)}
+              ) : input.type === "choices" ? (
+                <Select
+                  sx={{
+                    flex: 1,
+                    ".MuiSelect-select": {
+                      p: "7px 20px",
+                      fontSize: 13,
+                      fontWeight: 500,
+                      opacity: inputValue ? 1 : 0.7,
+                    },
+                    ".MuiOutlinedInput-notchedOutline": {
+                      border: "1px solid",
+                      borderRadius: "8px",
+                      color: errors[input.name] ? "error.main" : "tertiary",
+                      borderColor: "inherit !important",
+                      borderWidth: "1px !important",
+                    },
+                  }}
+                  MenuProps={{
+                    sx: { ".MuiMenuItem-root": { fontSize: 14, fontWeight: 500 } },
+                  }}
+                  value={inputValue}
+                  onChange={e => handleChange(e.target.value as string, input.name, input.type)}
+                  displayEmpty
+                >
+                  <MenuItem
+                    value=""
+                    sx={{ opacity: 0.7 }}
                   >
-                    <Backspace />
-                  </IconButton>
-                </>
+                    Select an option
+                  </MenuItem>
+                  {input.choices?.map(choice => (
+                    <MenuItem
+                      key={choice}
+                      value={choice}
+                      selected={inputValue === choice}
+                    >
+                      {choice}
+                    </MenuItem>
+                  ))}
+                </Select>
+              ) : (
+                <TextField
+                  sx={{
+                    flex: 1,
+                    height: "27px",
+                    ".MuiInputBase-input": {
+                      p: 0,
+                      color: "onSurface",
+                      fontSize: 13,
+                      fontWeight: 500,
+                      "&::placeholder": {
+                        color: "grey.600",
+                        opacity: 1,
+                      },
+                      "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
+                        WebkitAppearance: "none",
+                        margin: 0,
+                      },
+                      "&[type=number]": {
+                        MozAppearance: "textfield",
+                      },
+                    },
+                    ".MuiOutlinedInput-notchedOutline": {
+                      border: 0,
+                    },
+                    ".MuiInputBase-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                      border: 0,
+                    },
+                  }}
+                  placeholder={input.type === "number" ? "Write a number here.." : "Type here..."}
+                  type={input.type}
+                  value={inputValue}
+                  onChange={e => handleChange(e.target.value, input.name, input.type)}
+                />
               )}
+              <IconButton
+                sx={{
+                  color: "grey.600",
+                  border: "none",
+                  p: "4px",
+                  ":hover": {
+                    color: "tertiary",
+                  },
+                  visibility: inputValue ? "visible" : "hidden",
+                  height: "27px",
+                }}
+                onClick={() => handleChange("", input.name, input.type)}
+              >
+                <Backspace />
+              </IconButton>
             </Stack>
           </React.Fragment>
         );

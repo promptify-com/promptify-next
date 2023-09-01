@@ -17,6 +17,8 @@ import { AllInclusive, Close, InfoOutlined } from "@mui/icons-material";
 
 import TabsAndFormPlaceholder from "@/components/placeholders/TabsAndFormPlaceholder";
 
+import Storage from "@/common/storage";
+
 interface GeneratorFormProps {
   templateData: Templates;
   selectedExecution: TemplatesExecutions | null;
@@ -80,6 +82,14 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   useEffect(() => {
     if (shownInputs) {
       const updatedInputs = new Map<number, ResInputs>();
+
+      const storedData = Storage.get("nodeInputsParamsData");
+      if (storedData) {
+        setNodeInputs(storedData.inputs);
+        setNodeParams(storedData.params);
+        Storage.remove("nodeInputsParamsData");
+        return;
+      }
 
       shownInputs.forEach(input => {
         const inputName = input.name;
@@ -195,6 +205,10 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
   const validateAndGenerateExecution = () => {
     if (!token) {
+      if (allowReset) {
+        const nodeInputsAndParams = { inputs: nodeInputs, params: nodeParams };
+        Storage.set("nodeInputsParamsData", JSON.stringify(nodeInputsAndParams));
+      }
       return router.push("/signin");
     }
 
