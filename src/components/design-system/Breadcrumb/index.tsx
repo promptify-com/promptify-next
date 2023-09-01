@@ -2,7 +2,7 @@ import { Breadcrumbs, Link, Typography } from "@mui/material";
 import { NavigateNext } from "@mui/icons-material";
 
 interface BreadcrumbItem {
-  label?: string;
+  label: string;
   link?: string;
 }
 
@@ -31,6 +31,7 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({ crumbs }) => {
             <Typography
               color="onSurface"
               fontSize={19}
+              sx={{ textTransform: "capitalize" }}
             >
               {crumb.label}
             </Typography>
