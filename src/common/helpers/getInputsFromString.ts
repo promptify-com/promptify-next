@@ -22,9 +22,13 @@ export const getInputsFromString = (str: string): IPromptInput[] => {
     const parts = match[1].split(":");
     const type = getType(parts[1]);
     const choices =
-      type === "choices" && parts[3].startsWith('"') && parts[3].endsWith('"') // options format: "option1,option2"
-        ? Array.from(new Set(parts[3].slice(1, -1).split(","))) // duplicates removed
+      type === "choices" && parts[3]?.startsWith('"') && parts[3]?.endsWith('"') // options format: "option1,option2"
+        ? Array.from(new Set(parts[3].slice(1, -1).split(","))).filter(option => option.trim()) // duplicates & empty options removed
         : null;
+
+    if (type === "choices" && !choices?.length) {
+      continue;
+    }
 
     const obj = {
       name: parts[0],
@@ -37,9 +41,7 @@ export const getInputsFromString = (str: string): IPromptInput[] => {
       choices: choices,
     };
 
-    if (!(type === "choices" && !obj.choices?.length)) {
-      matches.push(obj);
-    }
+    matches.push(obj);
   }
 
   return matches;
