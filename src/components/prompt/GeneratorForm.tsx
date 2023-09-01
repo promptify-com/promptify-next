@@ -84,7 +84,6 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
       const updatedInputs = new Map<number, ResInputs>();
 
       const storedData = Storage.get("nodeInputsParamsData");
-      console.log("this is the : ", storedData);
       if (storedData) {
         setNodeInputs(storedData.inputs);
         setNodeParams(storedData.params);
