@@ -35,7 +35,7 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
   return (
     <>
       <Box width={"100%"}>
-        {!filtred && <Typography fontSize={19}>{title}</Typography>}
+        {!filtred && (isLoading || !!templates?.length) && <Typography fontSize={19}>{title}</Typography>}
 
         {isLoading ? (
           isLatestTemplates ? (
@@ -99,9 +99,7 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
                   onPrevPage={onPrevPage}
                   onNextPage={onNextPage}
                 >
-                  {!isLoading &&
-                    !!templates &&
-                    templates.length > 0 &&
+                  {!!templates?.length &&
                     templates.map((template: TemplateExecutionsDisplay | Templates) => (
                       <Grid key={template.id}>
                         <CardTemplate
@@ -111,20 +109,6 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
                       </Grid>
                     ))}
                 </TemplatesPaginatedList>
-              </Grid>
-            )}
-
-            {!isLoading && !templates?.length && (
-              <Grid
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  width: "100%",
-                }}
-              >
-                <NotFoundIcon />
               </Grid>
             )}
           </Grid>
