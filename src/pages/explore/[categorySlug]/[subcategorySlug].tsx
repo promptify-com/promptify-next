@@ -30,9 +30,15 @@ export default function Page({ category }: { category: Category }) {
     router.push(`/explore/${category.slug}/${slug}`);
   };
 
+  const slugToTitle = (slug: string) => {
+    const words = slug.split("-");
+    const title = words.map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
+    return title;
+  };
+
   const breadcrumbs = [
     { label: category.name, link: `/explore/${category.slug}` },
-    { label: router.query.subcategorySlug },
+    { label: slugToTitle(router.query.subcategorySlug as string) }, // Assuming that subcategorySlug is always a string to prevent types error.
   ];
 
   return (
@@ -115,6 +121,7 @@ export async function getServerSideProps({ params }: any) {
   try {
     const categoryRes = await authClient.get(`/api/meta/categories/by-slug/${categorySlug}`);
     const category = categoryRes.data; // Extract the necessary data from the response
+
     return {
       props: {
         category,

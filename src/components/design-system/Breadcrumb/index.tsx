@@ -2,7 +2,7 @@ import { Breadcrumbs, Link, Typography } from "@mui/material";
 import { NavigateNext } from "@mui/icons-material";
 
 interface BreadcrumbItem {
-  label: string | string[] | undefined;
+  label?: string;
   link?: string;
 }
 
