@@ -18,12 +18,11 @@ interface Props {
 }
 
 export default function ApiAccessModal({ open, setOpen, executionData, templateData, token }: Props) {
-  const [copied, setCopied] = useState(false);
   const [snippet, setSnippet] = useState<any | null>(null);
   const [output, setOutput] = useState("");
   const [language, setLanguage] = useState("0");
 
-  const [copy] = useCopyToClipboard();
+  const [copy, result] = useCopyToClipboard();
 
   const handleChange = (event: SelectChangeEvent) => {
     setLanguage(event.target.value);
@@ -68,12 +67,6 @@ export default function ApiAccessModal({ open, setOpen, executionData, templateD
       }
     }
   }, [language, snippet]);
-
-  useEffect(() => {
-    if (copied) {
-      setTimeout(() => setCopied(false), 2000);
-    }
-  }, [copied]);
 
   return (
     <Modal
@@ -134,17 +127,16 @@ export default function ApiAccessModal({ open, setOpen, executionData, templateD
                 </Select>
               </FormControl>
               <Button
-                variant={copied ? "outlined" : "contained"}
+                variant={result?.state === "success" ? "outlined" : "contained"}
                 sx={{
                   borderRadius: "5px",
                 }}
                 onClick={() => {
                   copy(output);
-                  setCopied(true);
                 }}
-                disabled={copied}
+                disabled={result?.state === "success"}
               >
-                {copied ? "Copied" : "Copy"}
+                {result?.state === "success" ? "Copied" : "Copy"}
               </Button>
             </Box>
           </Box>

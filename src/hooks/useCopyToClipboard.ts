@@ -10,6 +10,10 @@ function useCopyToClipboard() {
       setResult({ state: "success" });
     } catch (e: any) {
       setResult({ state: "error", message: e.message });
+    } finally {
+      setTimeout(() => {
+        setResult(null);
+      }, 1000);
     }
   };
 
