@@ -118,7 +118,7 @@ export default function ApiAccessModal({ open, setOpen, value, onChange, languag
         <Box
           p="20px"
           bgcolor="#f2f5f9"
-          mt="40px"
+          mt={{ xs: "20px", md: "40px" }}
         >
           <Box
             display="flex"
