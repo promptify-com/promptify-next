@@ -134,11 +134,12 @@ export const SearchDialog: React.FC<SearchDialogProps> = ({ open, close }) => {
                 <Search />
               </IconButton>
               <InputBase
+                className={"data-hj-allow"}
                 onChange={e => {
                   setTextInput(e.target.value);
                 }}
                 defaultValue={title ?? textInput}
-                placeholder={"Search prompts, templates, collections, or ask something..."}
+                placeholder={"Search templates..."}
                 fullWidth
                 sx={{
                   fontSize: "13px",
