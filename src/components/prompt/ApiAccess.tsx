@@ -1,10 +1,12 @@
 import { ApiIcon } from "@/assets/icons";
 import { ResPrompt } from "@/core/api/dto/prompts";
 import { Templates } from "@/core/api/dto/templates";
-import { Box, Button, SelectChangeEvent, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { Bolt } from "@mui/icons-material";
-import ApiAccessModal from "../modals/ApiAccessModal";
+import dynamic from "next/dynamic";
+
+const ApiAccessModal = dynamic(() => import("../modals/ApiAccessModal"));
 
 interface Props {
   isConnected?: boolean;
