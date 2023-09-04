@@ -44,6 +44,15 @@ export const SparksLayoutMobile: FC<SparksLayoutProps> = ({
     setAnchorEl(null);
   };
 
+  const navigateToTemplate = () => {
+    router.push({
+      pathname: `/prompt/${template.slug}`,
+      query: {
+        spark: execution.id,
+      },
+    });
+  };
+
   return (
     <Grid
       my={"10px"}
@@ -57,7 +66,7 @@ export const SparksLayoutMobile: FC<SparksLayoutProps> = ({
       }}
     >
       <Grid
-        onClick={() => router.push(`prompt/${template.slug}`)}
+        onClick={navigateToTemplate}
         item
         display={"flex"}
         gap={1}
@@ -97,7 +106,7 @@ export const SparksLayoutMobile: FC<SparksLayoutProps> = ({
         </Box>
       </Grid>
       <Grid
-        onClick={() => router.push(`prompt/${template.slug}`)}
+        onClick={navigateToTemplate}
         item
         flex={1}
         display={"flex"}
