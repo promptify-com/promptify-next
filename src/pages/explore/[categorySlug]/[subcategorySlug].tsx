@@ -100,7 +100,6 @@ export default function Page({ category }: { category: Category }) {
                   hasPrev={!!templates?.previous}
                   onNextPage={handleNextPage}
                   onPrevPage={handlePreviousPage}
-                  type="subCategorySlug"
                 />
               </Box>
             )}

@@ -113,7 +113,7 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
             </Grid>
           )}
 
-          {type === "subCategorySlug" && !isLoading && !templates?.length && (
+          {type !== "yourLatestTemplates" && !isLoading && !templates?.length && (
             <Grid
               sx={{
                 display: "flex",
