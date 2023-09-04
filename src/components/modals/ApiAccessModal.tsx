@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Modal from "@mui/material/Modal";
 import { Box, Button, FormControl, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
 import { Light as SyntaxHighlighter } from "react-syntax-highlighter";
+import js from "react-syntax-highlighter/dist/cjs/languages/hljs/javascript";
 import { vs2015 } from "react-syntax-highlighter/dist/cjs/styles/hljs";
 import { Settings, KeyboardReturn } from "@mui/icons-material";
 import useCopyToClipboard from "@/hooks/useCopyToClipboard";
@@ -16,6 +17,8 @@ interface Props {
   templateData: Templates;
   token: string;
 }
+
+SyntaxHighlighter.registerLanguage("javascript", js);
 
 export default function ApiAccessModal({ open, setOpen, executionData, templateData, token }: Props) {
   const [snippet, setSnippet] = useState<any | null>(null);
