@@ -108,32 +108,29 @@ export const ApiAccess: React.FC<Props> = ({
       </Box>
       <Button
         variant={"contained"}
+        startIcon={<ApiIcon />}
         sx={{
           flex: 1,
-          p: "10px 25px",
+          p: "8px 22px",
+          fontSize: 15,
           fontWeight: 500,
-          borderColor: "primary.main",
+          border: "none",
           borderRadius: "999px",
-          bgcolor: "primary.main",
-          color: "onPrimary",
-          whiteSpace: "pre-line",
-          ":hover": {
-            bgcolor: "surface.1",
-            color: "primary.main",
+          bgcolor: "surface.3",
+          color: "onSurface",
+          svg: {
+            width: 24,
+            height: 24,
           },
-          ":disabled": {
+          ":hover": {
             bgcolor: "surface.4",
-            color: "onTertiary",
-            borderColor: "transparent",
           },
         }}
         disabled={!isConnected}
         onClick={() => setIsModalOpen(true)}
       >
-        <ApiIcon />
         <Typography
           display="flex"
-          ml={2}
           color={"inherit"}
         >
           Integrate this API
