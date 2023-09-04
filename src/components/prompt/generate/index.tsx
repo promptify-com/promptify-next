@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import { fetchEventSource } from "@microsoft/fetch-event-source";
+
 import { PromptParams, ResInputs, ResOverrides, ResPrompt } from "@/core/api/dto/prompts";
 import { IPromptInput, PromptLiveResponse } from "@/common/types/prompt";
 import useToken from "@/hooks/useToken";
 import { useAppDispatch } from "@/hooks/useStore";
 import { templatesApi } from "@/core/api/templates";
-
-import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { getInputsFromString } from "@/common/helpers/getInputsFromString";
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
-
-import { useRouter } from "next/router";
-
-import { ChatMode } from "./form/ChatMode";
-import { InputMode } from "./form/InputMode";
+import { ChatMode } from "./ChatMode";
+import { InputMode } from "./InputMode";
 
 interface GeneratePromptsProps {
   type: "chat" | "input";
@@ -421,42 +419,38 @@ export const GeneratePrompts: React.FC<GeneratePromptsProps> = ({
 
   return (
     <>
-      <ChatMode
-        inputs={shownInputs}
-        params={shownParams}
-        nodeInputs={nodeInputs}
-        generate={validateAndGenerateExecution}
-        isGenerating={isGenerating}
-        isFormFilled={filledForm}
-        templateData={templateData}
-        onReset={resetForm}
-        allowReset={allowReset}
-        errors={errors}
-      />
+      {type === "chat" && (
+        <ChatMode
+          inputs={shownInputs}
+          params={shownParams}
+          nodeInputs={nodeInputs}
+          generate={validateAndGenerateExecution}
+          isGenerating={isGenerating}
+          isFormFilled={filledForm}
+          templateData={templateData}
+          onReset={resetForm}
+          allowReset={allowReset}
+          errors={errors}
+        />
+      )}
 
-      <InputMode
-        inputs={shownInputs}
-        params={shownParams}
-        nodeInputs={nodeInputs}
-        setNodeInputs={setNodeInputs}
-        nodeParams={nodeParams}
-        setNodeParams={setNodeParams}
-        generate={validateAndGenerateExecution}
-        isGenerating={isGenerating}
-        isFormFilled={filledForm}
-        templateData={templateData}
-        onReset={resetForm}
-        allowReset={allowReset}
-        errors={errors}
-      />
+      {type === "input" && (
+        <InputMode
+          inputs={shownInputs}
+          params={shownParams}
+          nodeInputs={nodeInputs}
+          setNodeInputs={setNodeInputs}
+          nodeParams={nodeParams}
+          setNodeParams={setNodeParams}
+          generate={validateAndGenerateExecution}
+          isGenerating={isGenerating}
+          isFormFilled={filledForm}
+          templateData={templateData}
+          onReset={resetForm}
+          allowReset={allowReset}
+          errors={errors}
+        />
+      )}
     </>
   );
-};
-
-const keysStyle = {
-  padding: "2px 4px",
-  letterSpacing: "1px",
-  border: "1px solid #E1E2EC",
-  borderRadius: "4px",
-  boxShadow: "0px 2px 0px rgba(0, 0, 0, 0.12)",
 };

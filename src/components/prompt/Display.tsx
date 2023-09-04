@@ -1,15 +1,15 @@
 import React, { useEffect, useRef, useState, useMemo } from "react";
 import { Box, Grid, Typography } from "@mui/material";
+import { useRouter } from "next/router";
+import moment from "moment";
+
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { ExecutionCard } from "./ExecutionCard";
 import { PromptLiveResponse } from "@/common/types/prompt";
 import { ExecutionCardGenerated } from "./ExecutionCardGenerated";
 import { DisplayActions } from "./DisplayActions";
-
 import ParagraphPlaceholder from "@/components/placeholders/ParagraphPlaceholder";
-import { useRouter } from "next/router";
-import moment from "moment";
-import { GeneratePrompts } from "./GeneratePrompts";
+import { GeneratePrompts } from "./generate";
 
 interface Props {
   templateData: Templates;

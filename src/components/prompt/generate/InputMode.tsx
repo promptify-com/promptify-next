@@ -1,13 +1,13 @@
 import React from "react";
 import { Box, Button, CircularProgress, Stack, Typography, alpha, useTheme } from "@mui/material";
 import { PromptParams, ResInputs, ResOverrides } from "@/core/api/dto/prompts";
-import { IPromptInput, PromptLiveResponse } from "@/common/types/prompt";
+import { IPromptInput } from "@/common/types/prompt";
 import useToken from "@/hooks/useToken";
 
-import { GeneratorInput } from "../GeneratorInput";
-import { GeneratorParam } from "../GeneratorParam";
+import { GeneratorInput } from "./GeneratorInput";
+import { GeneratorParam } from "./GeneratorParam";
 
-import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
+import { Templates } from "@/core/api/dto/templates";
 import { LogoApp } from "@/assets/icons/LogoApp";
 
 import { AllInclusive, Close, InfoOutlined } from "@mui/icons-material";
@@ -154,8 +154,8 @@ export const InputMode: React.FC<InputModeProps> = ({
                   key={i}
                   params={[param.param]}
                   promptId={param.prompt}
-                  resOverrides={nodeParams}
-                  setResOverrides={setNodeParams}
+                  nodeParams={nodeParams}
+                  setNodeParams={setNodeParams}
                 />
               ))}
             </React.Fragment>
