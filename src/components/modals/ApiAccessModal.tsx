@@ -35,6 +35,7 @@ export default function ApiAccessModal({ open, setOpen, value, onChange, languag
           left: "50%",
           transform: "translate(-50%, -50%)",
           width: "80vw",
+          maxHeight: "80vh",
           bgcolor: "background.paper",
           boxShadow: 24,
           p: { xs: 2, md: 4 },
@@ -49,6 +50,7 @@ export default function ApiAccessModal({ open, setOpen, value, onChange, languag
             display="flex"
             alignItems="center"
             justifyContent="space-between"
+            flexDirection={{ xs: "column", md: "row" }}
           >
             <Box
               display="flex"
@@ -57,7 +59,7 @@ export default function ApiAccessModal({ open, setOpen, value, onChange, languag
               <SettingsIcon />
               <Typography
                 ml="1rem"
-                fontSize={{ xs: 14, md: 18 }}
+                fontSize={18}
               >
                 Integrate this API
               </Typography>
@@ -70,7 +72,7 @@ export default function ApiAccessModal({ open, setOpen, value, onChange, languag
                 <Select
                   value={language}
                   onChange={onChange}
-                  sx={{ height: "40px" }}
+                  sx={{ height: "40px", fontSize: "14px" }}
                 >
                   <MenuItem value={"0"}>cUrl</MenuItem>
                   <MenuItem value={"1"}>PHP - cUrl</MenuItem>
@@ -121,11 +123,12 @@ export default function ApiAccessModal({ open, setOpen, value, onChange, languag
           <Box
             display="flex"
             alignItems="center"
+            justifyContent={{ xs: "center", md: "flex-start" }}
           >
             <KeyboardReturnIcon />
             <Typography
               ml="1rem"
-              fontSize={{ xs: 14, md: 18 }}
+              fontSize={18}
             >
               Response Format
             </Typography>
