@@ -14,9 +14,8 @@ import { LogoApp } from "@/assets/icons/LogoApp";
 import { useWindowSize } from "usehooks-ts";
 import { useRouter } from "next/router";
 import { AllInclusive, Close, InfoOutlined } from "@mui/icons-material";
-
 import TabsAndFormPlaceholder from "@/components/placeholders/TabsAndFormPlaceholder";
-
+import ApiAccess from "./ApiAccess";
 import Storage from "@/common/storage";
 
 interface GeneratorFormProps {
@@ -537,7 +536,11 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
             </React.Fragment>
           )}
         </Box>
-
+        <ApiAccess
+          executionData={resPrompts}
+          templateData={templateData}
+          token={token}
+        />
         <Stack
           sx={{
             position: "sticky",
