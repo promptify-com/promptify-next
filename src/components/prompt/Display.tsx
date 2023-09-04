@@ -1,14 +1,16 @@
 import React, { useEffect, useRef, useState, useMemo } from "react";
-import { Box, Typography } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
+import { useRouter } from "next/router";
+import moment from "moment";
+
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { ExecutionCard } from "./ExecutionCard";
 import { PromptLiveResponse } from "@/common/types/prompt";
 import { ExecutionCardGenerated } from "./ExecutionCardGenerated";
 import { DisplayActions } from "./DisplayActions";
-
 import ParagraphPlaceholder from "@/components/placeholders/ParagraphPlaceholder";
-import { useRouter } from "next/router";
-import moment from "moment";
+import { GeneratePrompts } from "./GeneratePrompts";
+import { useWindowSize } from "usehooks-ts";
 import { SparkExportPopup } from "../dialog/SparkExportPopup";
 
 interface Props {
@@ -18,6 +20,10 @@ interface Props {
   selectedExecution: TemplatesExecutions | null;
   setSelectedExecution: (execution: TemplatesExecutions) => void;
   generatedExecution: PromptLiveResponse | null;
+  setGeneratedExecution: (data: PromptLiveResponse) => void;
+  isGenerating: boolean;
+  setIsGenerating: (status: boolean) => void;
+  onError: (errMsg: string) => void;
 }
 
 export const Display: React.FC<Props> = ({
@@ -26,8 +32,15 @@ export const Display: React.FC<Props> = ({
   isFetching,
   selectedExecution,
   setSelectedExecution,
+  setGeneratedExecution,
+  setIsGenerating,
+  onError,
+  isGenerating,
   generatedExecution,
 }) => {
+  const { width: windowWidth } = useWindowSize();
+
+  const [errorMessage, setErrorMessage] = useState("");
   const [firstLoad, setFirstLoad] = useState(true);
   const [search, setSearch] = useState<string>("");
   const router = useRouter();
@@ -98,51 +111,71 @@ export const Display: React.FC<Props> = ({
   }, [executions]);
 
   return (
-    <Box
-      ref={containerRef}
-      sx={{
-        minHeight: "calc(100% - 31px)",
-        position: "relative",
-        pb: { xs: "70px", md: "0" },
-      }}
+    <Grid
+      display={"flex"}
+      flexDirection={"column"}
+      gap={"24px"}
     >
-      <DisplayActions
-        executions={sortedExecutions}
-        selectedExecution={selectedExecution}
-        setSelectedExecution={setSelectedExecution}
-        onSearch={text => setSearch(text)}
-        onOpenExport={() => setOpenExportpopup(true)}
-      />
-
-      {openExportPopup && (
-        <SparkExportPopup
-          onClose={() => setOpenExportpopup(false)}
-          activeExecution={activeExecution}
+      {windowWidth > 960 && (
+        <GeneratePrompts
+          type="chat"
+          templateData={templateData}
+          selectedExecution={selectedExecution}
+          setGeneratedExecution={setGeneratedExecution}
+          isGenerating={isGenerating}
+          setIsGenerating={setIsGenerating}
+          onError={setErrorMessage}
         />
       )}
 
-      <Box sx={{ mx: "15px", opacity: firstLoad ? 0.5 : 1 }}>
-        {
-          // If there is a new execution being generated, show it first
-          generatedExecution ? (
-            <ExecutionCardGenerated
-              execution={generatedExecution}
-              templateData={templateData}
-            />
-          ) : // If there is no new execution being generated, show the selected execution
-          isFetching ? (
-            <ParagraphPlaceholder />
-          ) : selectedExecution ? (
-            <ExecutionCard
-              execution={selectedExecution}
-              templateData={templateData}
-              search={search}
-            />
-          ) : (
-            <Typography sx={{ mt: "40px", textAlign: "center" }}>No spark found</Typography>
-          )
-        }
+      <Box
+        ref={containerRef}
+        bgcolor={"surface.1"}
+        borderRadius={"16px"}
+        minHeight={{ xs: "100%", md: "calc(100vh - (95px + 48px + 24px))" }}
+        sx={{
+          position: "relative",
+          pb: { xs: "70px", md: "0" },
+        }}
+      >
+        <DisplayActions
+          executions={sortedExecutions}
+          selectedExecution={selectedExecution}
+          setSelectedExecution={setSelectedExecution}
+          onSearch={text => setSearch(text)}
+          //@ts-ignore
+          onOpenExport={activeExecution}
+        />
+        {openExportPopup && (
+          <SparkExportPopup
+            onClose={() => setOpenExportpopup(false)}
+            activeExecution={activeExecution}
+          />
+        )}
+
+        <Box sx={{ mx: "15px", opacity: firstLoad ? 0.5 : 1 }}>
+          {
+            // If there is a new execution being generated, show it first
+            generatedExecution ? (
+              <ExecutionCardGenerated
+                execution={generatedExecution}
+                templateData={templateData}
+              />
+            ) : // If there is no new execution being generated, show the selected execution
+            isFetching ? (
+              <ParagraphPlaceholder />
+            ) : selectedExecution ? (
+              <ExecutionCard
+                execution={selectedExecution}
+                templateData={templateData}
+                search={search}
+              />
+            ) : (
+              <Typography sx={{ mt: "40px", textAlign: "center" }}>No spark found</Typography>
+            )
+          }
+        </Box>
       </Box>
-    </Box>
+    </Grid>
   );
 };
