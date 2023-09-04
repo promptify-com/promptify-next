@@ -2,8 +2,7 @@ import { ApiIcon } from "@/assets/icons";
 import { ResPrompt } from "@/core/api/dto/prompts";
 import { Templates } from "@/core/api/dto/templates";
 import { Box, Button, SelectChangeEvent, Typography } from "@mui/material";
-import HTTPSnippet from "httpsnippet";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Bolt } from "@mui/icons-material";
 import ApiAccessModal from "../modals/ApiAccessModal";
 
@@ -25,53 +24,6 @@ const ApiAccess: React.FC<Props> = ({
   token,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [language, setLanguage] = useState("0");
-  const [output, setOutput] = useState("");
-  const [snippet, setSnippet] = useState<any | null>(null);
-
-  const handleChange = (event: SelectChangeEvent) => {
-    setLanguage(event.target.value);
-  };
-
-  useEffect(() => {
-    setSnippet(
-      new HTTPSnippet({
-        method: "POST",
-        url: `${process.env.NEXT_PUBLIC_API_URL}/api/meta/templates/${templateData.id}/execute/`,
-        headers: [
-          { name: "Authorization", value: `Token ${token}` },
-          { name: "Accept", value: "application/json" },
-          { name: "Content-Type", value: "application/json" },
-        ],
-        postData: { text: JSON.stringify(executionData) },
-      }),
-    );
-  }, [templateData, executionData]);
-
-  const options = { indent: "\t" };
-
-  useEffect(() => {
-    if (snippet) {
-      switch (language) {
-        case "0":
-          setOutput(snippet.convert("shell", "curl", options));
-          break;
-        case "1":
-          setOutput(snippet.convert("php", "curl", options));
-          break;
-        case "2":
-          setOutput(snippet.convert("python", "python3", options));
-          break;
-        case "3":
-          setOutput(snippet.convert("python", "requests", options));
-          break;
-        case "4":
-          setOutput(snippet.convert("javascript", "fetch", options));
-          break;
-        default:
-      }
-    }
-  }, [language, snippet]);
 
   return (
     <Box
@@ -162,9 +114,9 @@ const ApiAccess: React.FC<Props> = ({
       <ApiAccessModal
         open={isModalOpen}
         setOpen={setIsModalOpen}
-        value={output}
-        onChange={handleChange}
-        language={language}
+        executionData={executionData}
+        templateData={templateData}
+        token={token}
       />
     </Box>
   );

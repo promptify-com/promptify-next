@@ -5,18 +5,69 @@ import { Light as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vs2015 } from "react-syntax-highlighter/dist/cjs/styles/hljs";
 import { Settings, KeyboardReturn } from "@mui/icons-material";
 import useCopyToClipboard from "@/hooks/useCopyToClipboard";
+import HTTPSnippet from "httpsnippet";
+import { ResPrompt } from "@/core/api/dto/prompts";
+import { Templates } from "@/core/api/dto/templates";
 
 interface Props {
   open: boolean;
   setOpen: (val: boolean) => void;
-  value: string;
-  onChange: (event: SelectChangeEvent) => void;
-  language: string;
+  executionData: ResPrompt[];
+  templateData: Templates;
+  token: string;
 }
 
-export default function ApiAccessModal({ open, setOpen, value, onChange, language }: Props) {
+export default function ApiAccessModal({ open, setOpen, executionData, templateData, token }: Props) {
   const [copied, setCopied] = useState(false);
+  const [snippet, setSnippet] = useState<any | null>(null);
+  const [output, setOutput] = useState("");
+  const [language, setLanguage] = useState("0");
+
   const [copy] = useCopyToClipboard();
+
+  const handleChange = (event: SelectChangeEvent) => {
+    setLanguage(event.target.value);
+  };
+
+  useEffect(() => {
+    setSnippet(
+      new HTTPSnippet({
+        method: "POST",
+        url: `${process.env.NEXT_PUBLIC_API_URL}/api/meta/templates/${templateData.id}/execute/`,
+        headers: [
+          { name: "Authorization", value: `Token ${token}` },
+          { name: "Accept", value: "application/json" },
+          { name: "Content-Type", value: "application/json" },
+        ],
+        postData: { text: JSON.stringify(executionData) },
+      }),
+    );
+  }, [templateData, executionData]);
+
+  const options = { indent: "\t" };
+
+  useEffect(() => {
+    if (snippet) {
+      switch (language) {
+        case "0":
+          setOutput(snippet.convert("shell", "curl", options));
+          break;
+        case "1":
+          setOutput(snippet.convert("php", "curl", options));
+          break;
+        case "2":
+          setOutput(snippet.convert("python", "python3", options));
+          break;
+        case "3":
+          setOutput(snippet.convert("python", "requests", options));
+          break;
+        case "4":
+          setOutput(snippet.convert("javascript", "fetch", options));
+          break;
+        default:
+      }
+    }
+  }, [language, snippet]);
 
   useEffect(() => {
     if (copied) {
@@ -72,7 +123,7 @@ export default function ApiAccessModal({ open, setOpen, value, onChange, languag
               <FormControl sx={{ m: 1 }}>
                 <Select
                   value={language}
-                  onChange={onChange}
+                  onChange={handleChange}
                   sx={{ height: "40px", fontSize: "14px" }}
                 >
                   <MenuItem value={"0"}>cUrl</MenuItem>
@@ -88,7 +139,7 @@ export default function ApiAccessModal({ open, setOpen, value, onChange, languag
                   borderRadius: "5px",
                 }}
                 onClick={() => {
-                  copy(value);
+                  copy(output);
                   setCopied(true);
                 }}
                 disabled={copied}
@@ -107,7 +158,7 @@ export default function ApiAccessModal({ open, setOpen, value, onChange, languag
             showLineNumbers
             wrapLongLines
           >
-            {value}
+            {output}
           </SyntaxHighlighter>
         </Box>
         <Box
