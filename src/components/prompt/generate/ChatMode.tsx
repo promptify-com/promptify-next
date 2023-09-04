@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
   Box,
   Button,
+  Chip,
   CircularProgress,
   Grid,
   IconButton,
@@ -14,17 +15,16 @@ import {
   alpha,
   useTheme,
 } from "@mui/material";
-import { PromptDescription, PromptParam, ResInputs } from "@/core/api/dto/prompts";
+import { useWindowSize } from "usehooks-ts";
+import { AllInclusive, Clear, ExpandLess, ExpandMore, MoreVert, PlayArrow, Search, Send } from "@mui/icons-material";
+import { useSelector } from "react-redux";
+
+import { PromptDescription, PromptParam, ResInputs, ResOverrides } from "@/core/api/dto/prompts";
 import useToken from "@/hooks/useToken";
-
 import { Templates } from "@/core/api/dto/templates";
-
-import { AllInclusive, ExpandLess, ExpandMore, MoreVert, PlayArrow, Search, Send } from "@mui/icons-material";
-
 import TabsAndFormPlaceholder from "@/components/placeholders/TabsAndFormPlaceholder";
 import LogoAsAvatar from "@/assets/icons/LogoAsAvatar";
-import ChatFormCntent from "./ChatFormContent";
-import { useSelector } from "react-redux";
+import ChatFormContent from "./ChatFormContent";
 import { RootState } from "@/core/store";
 
 export interface InputsErrors {
@@ -53,6 +53,9 @@ interface ChatModeProps {
   inputs: Input[] | null;
   params: Param[] | null;
   nodeInputs: ResInputs[];
+  setNodeInputs: (obj: any) => void;
+  nodeParams: ResOverrides[];
+  setNodeParams: (obj: any) => void;
   errors: InputsErrors;
   generate: () => void;
   isGenerating: boolean;
@@ -66,6 +69,9 @@ export const ChatMode: React.FC<ChatModeProps> = ({
   inputs,
   params,
   nodeInputs,
+  setNodeInputs,
+  nodeParams,
+  setNodeParams,
   errors,
   generate,
   isGenerating,
@@ -76,24 +82,98 @@ export const ChatMode: React.FC<ChatModeProps> = ({
 }) => {
   const token = useToken();
   const { palette } = useTheme();
+  const { width: windowWidth } = useWindowSize();
 
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
 
   const [chatExpanded, setChatExpanded] = useState(true);
+  const [selectedNode, setSelectedNode] = useState<{ questionId: number; item: Input | Param | null } | null>({
+    questionId: 0,
+    item: null,
+  });
 
   let PromptsFields: (Input | Param)[] = [];
+
+  useEffect(() => {
+    if (inputs) {
+      setSelectedNode({ questionId: 0, item: inputs[0] });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isGenerating) {
+      setChatExpanded(false);
+    }
+  }, [isGenerating]);
+
+  const [value, setValue] = useState<string | number | null>();
+  useEffect(() => {
+    if (selectedNode?.item && "name" in selectedNode.item) {
+      let inputValue;
+      inputValue = nodeInputs.find(prompt => prompt.id === selectedNode.item?.prompt)?.inputs[selectedNode.item.name]
+        ?.value;
+
+      setValue(inputValue);
+    }
+  }, [nodeInputs, selectedNode]);
 
   if (inputs && params) {
     PromptsFields = [...inputs, ...params];
   }
 
-  function getItemName(item: Input | Param): string {
-    if ("name" in item) {
+  function getItemName(item: Input | Param | null | undefined): string {
+    if (!item) return "";
+    if (item && "name" in item) {
       return item.name;
     } else {
       return item.param.parameter.name;
     }
   }
+
+  function getItemValueType() {
+    if (selectedNode?.item && "name" in selectedNode.item) {
+      return selectedNode.item.type;
+    }
+  }
+
+  const handleChangeInput = (value: string = "", name: string = "", type: string = "") => {
+    if (selectedNode?.item && "name" in selectedNode.item) {
+      const { prompt: selectedPrompt } = selectedNode.item;
+      const resObj = nodeInputs.find(prompt => prompt.inputs[name]);
+      const resArr = [...nodeInputs];
+
+      if (!resObj) {
+        return setNodeInputs([
+          ...nodeInputs,
+          {
+            id: selectedPrompt,
+            inputs: {
+              [name]: {
+                value: type === "number" ? +value : value,
+              },
+            },
+          },
+        ]);
+      }
+
+      resArr.forEach((prompt: any, index: number) => {
+        if (prompt.id === selectedPrompt) {
+          resArr[index] = {
+            ...prompt,
+            inputs: {
+              ...prompt.inputs,
+              [name]: {
+                value: type === "number" ? +value : value,
+                required: resObj.inputs[name].required,
+              },
+            },
+          };
+        }
+      });
+
+      setNodeInputs([...resArr]);
+    }
+  };
 
   return (
     <Grid
@@ -102,7 +182,7 @@ export const ChatMode: React.FC<ChatModeProps> = ({
       borderRadius={"16px"}
     >
       <Accordion
-        expanded={chatExpanded}
+        expanded={windowWidth < 960 ? true : chatExpanded}
         onChange={() => setChatExpanded(prev => !prev)}
         sx={{
           boxShadow: "none",
@@ -197,7 +277,9 @@ export const ChatMode: React.FC<ChatModeProps> = ({
             >
               <LogoAsAvatar />
               <Grid flex={1}>
-                <Typography>Hi, {currentUser?.username}. Welcome. I can help you to plan Social Event.</Typography>
+                <Typography>
+                  Hi, {currentUser?.username}. Welcome. I can help you with your {templateData.title}
+                </Typography>
                 <Typography mt={4}> We need following things:</Typography>
                 <Grid
                   display={"flex"}
@@ -216,10 +298,14 @@ export const ChatMode: React.FC<ChatModeProps> = ({
                       }}
                     >
                       {!inputs || !params ? <TabsAndFormPlaceholder form={true} /> : null}
-                      <ChatFormCntent
+                      <ChatFormContent
                         PromptsFields={PromptsFields}
+                        selectedNode={selectedNode}
+                        setSelectedNode={setSelectedNode}
                         errors={errors}
                         nodeInputs={nodeInputs}
+                        nodeParams={nodeParams}
+                        setNodeParams={setNodeParams}
                         getItemName={getItemName}
                       />
 
@@ -261,7 +347,9 @@ export const ChatMode: React.FC<ChatModeProps> = ({
                             onClick={generate}
                           >
                             {token ? (
-                              <Typography sx={{ color: "inherit", fontSize: 15 }}>Start Generation</Typography>
+                              <Typography sx={{ color: "inherit", fontSize: { xs: 12, md: 15 } }}>
+                                Start Generation
+                              </Typography>
                             ) : (
                               <Typography color={"inherit"}>Sign in or Create an account</Typography>
                             )}
@@ -351,11 +439,30 @@ export const ChatMode: React.FC<ChatModeProps> = ({
                 minHeight={"32px"}
                 p={"8px 16px"}
               >
+                {selectedNode?.item && "name" in selectedNode.item && (
+                  <Button
+                    startIcon={<Clear onClick={() => setSelectedNode(null)} />}
+                    sx={{
+                      bgcolor: "surface.1",
+                      "&:hover": {
+                        bgcolor: "surface.1",
+                      },
+                    }}
+                  >
+                    {`Q${selectedNode.questionId + 1}. ${getItemName(selectedNode?.item)}`}
+                  </Button>
+                )}
                 <InputBase
+                  type={getItemValueType() === "number" ? "number" : "text"}
+                  value={selectedNode?.item ? value : ""}
+                  onChange={e => handleChangeInput(e.target.value, getItemName(selectedNode?.item), getItemValueType())}
                   sx={{ ml: 1, flex: 1, fontSize: 13, lineHeight: "22px", letterSpacing: "0.46px", fontWeight: "500" }}
-                  placeholder="Chat with Promptify"
+                  placeholder={
+                    selectedNode?.item && "name" in selectedNode.item ? "Type here..." : "Chat with Promptify"
+                  }
                   inputProps={{ "aria-label": "Name" }}
                 />
+
                 <Send />
               </Box>
             </Grid>

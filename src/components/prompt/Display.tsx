@@ -10,6 +10,7 @@ import { ExecutionCardGenerated } from "./ExecutionCardGenerated";
 import { DisplayActions } from "./DisplayActions";
 import ParagraphPlaceholder from "@/components/placeholders/ParagraphPlaceholder";
 import { GeneratePrompts } from "./generate";
+import { useWindowSize } from "usehooks-ts";
 
 interface Props {
   templateData: Templates;
@@ -36,6 +37,8 @@ export const Display: React.FC<Props> = ({
   isGenerating,
   generatedExecution,
 }) => {
+  const { width: windowWidth } = useWindowSize();
+
   const [errorMessage, setErrorMessage] = useState("");
   const [firstLoad, setFirstLoad] = useState(true);
   const [search, setSearch] = useState<string>("");
@@ -92,15 +95,17 @@ export const Display: React.FC<Props> = ({
       flexDirection={"column"}
       gap={"24px"}
     >
-      <GeneratePrompts
-        type="chat"
-        templateData={templateData}
-        selectedExecution={selectedExecution}
-        setGeneratedExecution={setGeneratedExecution}
-        isGenerating={isGenerating}
-        setIsGenerating={setIsGenerating}
-        onError={setErrorMessage}
-      />
+      {windowWidth > 960 && (
+        <GeneratePrompts
+          type="chat"
+          templateData={templateData}
+          selectedExecution={selectedExecution}
+          setGeneratedExecution={setGeneratedExecution}
+          isGenerating={isGenerating}
+          setIsGenerating={setIsGenerating}
+          onError={setErrorMessage}
+        />
+      )}
 
       <Box
         ref={containerRef}

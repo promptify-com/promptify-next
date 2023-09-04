@@ -10,7 +10,7 @@ import CodeFieldModal from "../../modals/CodeFieldModal";
 interface GeneratorInputProps {
   promptId: number;
   inputs: IPromptInput[];
-  resInputs: ResInputs[];
+  nodeInputs: ResInputs[];
   setNodeInputs: (obj: any) => void;
   errors: InputsErrors;
 }
@@ -19,18 +19,18 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
   promptId,
   inputs,
   setNodeInputs,
-  resInputs,
+  nodeInputs,
   errors,
 }) => {
   const [codeFieldOpen, setCodeFieldOpen] = useState(false);
 
   const handleChange = (value: string, name: string, type: string) => {
-    const resObj = resInputs.find(prompt => prompt.inputs[name]);
-    const resArr = [...resInputs];
+    const resObj = nodeInputs.find(prompt => prompt.inputs[name]);
+    const resArr = [...nodeInputs];
 
     if (!resObj) {
       return setNodeInputs([
-        ...resInputs,
+        ...nodeInputs,
         {
           id: promptId,
           inputs: {
@@ -63,7 +63,7 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
   return inputs.length > 0 ? (
     <Box>
       {inputs.map((input, index) => {
-        const inputValue = resInputs.find(prompt => prompt.id === promptId)?.inputs[input.name]?.value || "";
+        const inputValue = nodeInputs.find(prompt => prompt.id === promptId)?.inputs[input.name]?.value || "";
 
         return (
           <React.Fragment key={index}>

@@ -419,38 +419,37 @@ export const GeneratePrompts: React.FC<GeneratePromptsProps> = ({
 
   return (
     <>
-      {type === "chat" && (
-        <ChatMode
-          inputs={shownInputs}
-          params={shownParams}
-          nodeInputs={nodeInputs}
-          generate={validateAndGenerateExecution}
-          isGenerating={isGenerating}
-          isFormFilled={filledForm}
-          templateData={templateData}
-          onReset={resetForm}
-          allowReset={allowReset}
-          errors={errors}
-        />
-      )}
+      <ChatMode
+        inputs={shownInputs}
+        params={shownParams}
+        nodeInputs={nodeInputs}
+        setNodeInputs={setNodeInputs}
+        nodeParams={nodeParams}
+        setNodeParams={setNodeParams}
+        generate={validateAndGenerateExecution}
+        isGenerating={isGenerating}
+        isFormFilled={filledForm}
+        templateData={templateData}
+        onReset={resetForm}
+        allowReset={allowReset}
+        errors={errors}
+      />
 
-      {type === "input" && (
-        <InputMode
-          inputs={shownInputs}
-          params={shownParams}
-          nodeInputs={nodeInputs}
-          setNodeInputs={setNodeInputs}
-          nodeParams={nodeParams}
-          setNodeParams={setNodeParams}
-          generate={validateAndGenerateExecution}
-          isGenerating={isGenerating}
-          isFormFilled={filledForm}
-          templateData={templateData}
-          onReset={resetForm}
-          allowReset={allowReset}
-          errors={errors}
-        />
-      )}
+      {/* <InputMode
+        inputs={shownInputs}
+        params={shownParams}
+        nodeInputs={nodeInputs}
+        setNodeInputs={setNodeInputs}
+        nodeParams={nodeParams}
+        setNodeParams={setNodeParams}
+        generate={validateAndGenerateExecution}
+        isGenerating={isGenerating}
+        isFormFilled={filledForm}
+        templateData={templateData}
+        onReset={resetForm}
+        allowReset={allowReset}
+        errors={errors}
+      /> */}
     </>
   );
 };
