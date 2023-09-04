@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Box, Divider, IconButton, InputLabel, Stack, TextField } from "@mui/material";
-import { InputsErrors } from "./GeneratorForm";
+import { InputsErrors } from "./form/InputMode";
 import { Backspace } from "@mui/icons-material";
 import { ResInputs } from "@/core/api/dto/prompts";
 import { IPromptInput } from "@/common/types/prompt";
@@ -67,7 +67,6 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
 
         return (
           <React.Fragment key={index}>
-            <Divider sx={{ borderColor: "surface.3" }} />
             <Stack
               direction={"row"}
               alignItems={"center"}
