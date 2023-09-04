@@ -18,6 +18,7 @@ import { AllInclusive, Close, InfoOutlined } from "@mui/icons-material";
 import TabsAndFormPlaceholder from "@/components/placeholders/TabsAndFormPlaceholder";
 
 import Storage from "@/common/storage";
+import { ApiAccess } from "./ApiAccess";
 
 interface GeneratorFormProps {
   templateData: Templates;
@@ -537,7 +538,11 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
             </React.Fragment>
           )}
         </Box>
-
+        <ApiAccess
+          executionData={resPrompts}
+          templateData={templateData}
+          token={token}
+        />
         <Stack
           sx={{
             position: "sticky",
