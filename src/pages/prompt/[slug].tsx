@@ -22,7 +22,6 @@ import { mix } from "polished";
 import { useRouter } from "next/router";
 import { useGetPromptTemplateBySlugQuery, useViewTemplateMutation } from "@/core/api/templates";
 import { TemplatesExecutions } from "@/core/api/dto/templates";
-import { GeneratorForm } from "@/components/prompt/generate/InputMode";
 import { Display } from "@/components/prompt/Display";
 import { Details } from "@/components/prompt/Details";
 import { authClient } from "@/common/axios";
@@ -39,6 +38,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { updateTemplateData } from "@/core/store/templatesSlice";
 import { RootState } from "@/core/store";
 import PromptPlaceholder from "@/components/placeholders/PromptPlaceHolder";
+import { GeneratePrompts } from "@/components/prompt/generate";
 
 const Prompt = () => {
   const [selectedExecution, setSelectedExecution] = useState<TemplatesExecutions | null>(null);
@@ -206,30 +206,41 @@ const Prompt = () => {
               {windowWidth > 960 && (
                 <Grid
                   sx={{
-                    height: "100%",
-                    borderRadius: "16px",
-                    bgcolor: "surface.1",
-                    width: "401px",
-                    overflow: "hidden",
+                    position: "sticky",
+                    top: 0,
                     zIndex: 999,
+                    height: "100%",
+
+                    overflow: "auto",
+                    "&::-webkit-scrollbar": {
+                      width: "6px",
+                      p: 1,
+                      backgroundColor: "surface.5",
+                    },
+                    "&::-webkit-scrollbar-track": {
+                      webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
+                    },
+                    "&::-webkit-scrollbar-thumb": {
+                      backgroundColor: "surface.1",
+                      outline: "1px solid surface.1",
+                      borderRadius: "10px",
+                    },
                   }}
                 >
-                  <Stack>
+                  <Grid
+                    mr={1}
+                    bgcolor={"surface.1"}
+                    width={"396px"}
+                    borderRadius={"16px"}
+                    overflow={"hidden"}
+                  >
                     <DetailsCard templateData={fetchedTemplate} />
                     <Stack flex={1}>
                       <Box flex={1}>
                         <Details templateData={fetchedTemplate} />
-                        {/* <GeneratorForm
-                          templateData={fetchedTemplate}
-                          selectedExecution={selectedExecution}
-                          setGeneratedExecution={setGeneratedExecution}
-                          isGenerating={isGenerating}
-                          setIsGenerating={setIsGenerating}
-                          onError={setErrorMessage}
-                        /> */}
                       </Box>
                     </Stack>
-                  </Stack>
+                  </Grid>
                 </Grid>
               )}
 
@@ -257,20 +268,13 @@ const Prompt = () => {
                       mobile
                     />
                   </Grid>
-
-                  <Grid
-                    item
-                    xs={12}
-                    md={8}
-                    sx={{
-                      display: mobileTab === 1 ? "block" : "none",
-                      height: "100%",
-                      overflow: "auto",
-                      bgcolor: "surface.1",
-                      pb: "calc(74px + 90px)", // 74px Bottom tab bar height + 90px details card mini on the header
-                    }}
-                  >
-                    <GeneratorForm
+                </>
+              )}
+              {windowWidth < 960 && (
+                <>
+                  {mobileTab === 1 && (
+                    <GeneratePrompts
+                      type="chat"
                       templateData={fetchedTemplate}
                       selectedExecution={selectedExecution}
                       setGeneratedExecution={setGeneratedExecution}
@@ -278,7 +282,7 @@ const Prompt = () => {
                       setIsGenerating={setIsGenerating}
                       onError={setErrorMessage}
                     />
-                  </Grid>
+                  )}
                 </>
               )}
 
@@ -302,6 +306,7 @@ const Prompt = () => {
                     isFetching={isFetchingExecutions}
                     selectedExecution={selectedExecution}
                     setSelectedExecution={setSelectedExecution}
+                    isGenerating={isGenerating}
                     generatedExecution={generatedExecution}
                     setIsGenerating={setIsGenerating}
                     onError={setErrorMessage}

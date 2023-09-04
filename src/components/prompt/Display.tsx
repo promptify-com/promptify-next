@@ -12,6 +12,7 @@ import ParagraphPlaceholder from "@/components/placeholders/ParagraphPlaceholder
 import { useWindowSize } from "usehooks-ts";
 import { SparkExportPopup } from "../dialog/SparkExportPopup";
 import { GeneratePrompts } from "./generate";
+import { useWindowSize } from "usehooks-ts";
 
 interface Props {
   templateData: Templates;

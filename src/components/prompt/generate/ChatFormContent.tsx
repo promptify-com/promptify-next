@@ -15,20 +15,29 @@ interface Param {
   prompt: number;
   param: PromptParams;
 }
+type SelectedNodeType = { questionId: number; item: Input | Param | null } | null;
 
 interface ChatFormCntentProps {
   PromptsFields: (Input | Param)[];
   errors: InputsErrors;
   nodeInputs: ResInputs[];
+  nodeParams: any;
+  setNodeParams: (obj: any) => void;
   getItemName: (item: Input | Param) => string;
+  selectedNode: SelectedNodeType;
+  setSelectedNode: (selectedNode: SelectedNodeType) => void;
 }
 
-const ChatFormCntent: React.FC<ChatFormCntentProps> = ({ PromptsFields, errors, nodeInputs, getItemName }) => {
-  const [selectedNode, setSelectedNode] = useState<{ questionId: number; item: Input | Param | null } | null>({
-    questionId: 0,
-    item: null,
-  });
-
+const ChatFormContent: React.FC<ChatFormCntentProps> = ({
+  PromptsFields,
+  errors,
+  selectedNode,
+  nodeInputs,
+  nodeParams,
+  setNodeParams,
+  getItemName,
+  setSelectedNode,
+}) => {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
 
   const handleItemClick = (event: React.MouseEvent<HTMLButtonElement>, item: Input | Param) => {
@@ -38,6 +47,30 @@ const ChatFormCntent: React.FC<ChatFormCntentProps> = ({ PromptsFields, errors, 
     }
     setSelectedNode({ questionId, item });
   };
+
+  const handleChangeScore = (score: number) => {
+    if (selectedNode?.item && "param" in selectedNode.item) {
+      const { param, prompt } = selectedNode.item;
+      const newArray = JSON.parse(JSON.stringify(nodeParams));
+      const matchingObject = newArray.find((obj: { id: number }) => obj.id === prompt);
+
+      if (matchingObject) {
+        const matchingContext = matchingObject.contextual_overrides.find(
+          (c: any) => c.parameter === param.parameter.id,
+        );
+
+        if (matchingContext) {
+          matchingContext.score = score;
+        } else {
+          matchingObject.contextual_overrides.push({ parameter: param.parameter.id, score });
+        }
+      } else {
+        newArray.push({ id: prompt, contextual_overrides: [{ parameter: param.parameter.id, score }] });
+      }
+      setNodeParams(newArray);
+    }
+  };
+
   return (
     <List
       sx={{
@@ -72,6 +105,7 @@ const ChatFormCntent: React.FC<ChatFormCntentProps> = ({ PromptsFields, errors, 
                   cursor: "pointer",
                   fontSize: 13,
                   fontWeight: 500,
+                  whiteSpace: "pre-wrap",
                   color: errors[itemName] ? "error.main" : !!inputValue ? "success.main" : "#375CA9",
                 }}
               >
@@ -84,54 +118,54 @@ const ChatFormCntent: React.FC<ChatFormCntentProps> = ({ PromptsFields, errors, 
           </ListItemButton>
         );
       })}
-      {anchorEl && (
-        <Popover
-          open
-          anchorEl={anchorEl}
-          anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "left",
-          }}
-        >
-          {selectedNode?.item && "param" in selectedNode.item ? (
-            <Grid
-              width={"300px"}
-              borderRadius={"16px"}
-              overflow={"hidden"}
-              p={"16px"}
-              position={"relative"}
-              display={"flex"}
-              flexDirection={"column"}
-              gap={"16px"}
+
+      <Popover
+        open={!!anchorEl}
+        keepMounted
+        anchorEl={anchorEl}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+      >
+        {selectedNode?.item && "param" in selectedNode.item ? (
+          <Grid
+            width={"300px"}
+            borderRadius={"16px"}
+            overflow={"hidden"}
+            p={"16px"}
+            position={"relative"}
+            display={"flex"}
+            flexDirection={"column"}
+            gap={"16px"}
+          >
+            <IconButton
+              size="small"
+              onClick={() => setAnchorEl(null)}
+              sx={{
+                border: "none",
+                position: "absolute",
+                top: 2,
+                right: 2,
+              }}
             >
-              <IconButton
-                size="small"
-                onClick={() => setAnchorEl(null)}
-                sx={{
-                  border: "none",
-                  position: "absolute",
-                  top: 2,
-                  right: 2,
-                }}
-              >
-                <Clear />
-              </IconButton>
-              <Typography>
-                {" "}
-                {selectedNode.questionId + 1}.{selectedNode.item.param.parameter.name}
-              </Typography>
-              <GeneratorParamSlider
-                descriptions={selectedNode.item.param.descriptions}
-                activeScore={selectedNode.item.param.score}
-                setScore={() => {}}
-                is_editable={selectedNode.item.param.is_editable}
-              />
-            </Grid>
-          ) : null}
-        </Popover>
-      )}
+              <Clear />
+            </IconButton>
+            <Typography>
+              {" "}
+              {selectedNode.questionId + 1}.{selectedNode.item.param.parameter.name}
+            </Typography>
+            <GeneratorParamSlider
+              descriptions={selectedNode.item.param.descriptions}
+              activeScore={selectedNode.item.param.score}
+              setScore={score => handleChangeScore(score)}
+              is_editable={selectedNode.item.param.is_editable}
+            />
+          </Grid>
+        ) : null}
+      </Popover>
     </List>
   );
 };
 
-export default ChatFormCntent;
+export default ChatFormContent;

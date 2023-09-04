@@ -144,7 +144,7 @@ export const InputMode: React.FC<InputModeProps> = ({
                   key={i}
                   promptId={input.prompt}
                   inputs={[input]}
-                  resInputs={nodeInputs}
+                  nodeInputs={nodeInputs}
                   setNodeInputs={setNodeInputs}
                   errors={errors}
                 />

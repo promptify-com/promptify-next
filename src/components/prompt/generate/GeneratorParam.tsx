@@ -10,7 +10,7 @@ interface GeneratorParamProps {
   setNodeParams: (obj: any) => void;
 }
 
-export const GeneratorParam: React.FC<GeneratorParamProps> = ({ promptId, params, nodeParams, setNodeParans }) => {
+export const GeneratorParam: React.FC<GeneratorParamProps> = ({ promptId, params, nodeParams, setNodeParams }) => {
   const handleChangeScore = (score: number, parameter: number) => {
     const newArray = JSON.parse(JSON.stringify(nodeParams));
     const matchingObject = newArray.find((obj: { id: number }) => obj.id === promptId);
@@ -25,7 +25,7 @@ export const GeneratorParam: React.FC<GeneratorParamProps> = ({ promptId, params
       newArray.push({ id: promptId, contextual_overrides: [{ parameter, score }] });
     }
 
-    setNodeParans(newArray);
+    setNodeParams(newArray);
   };
 
   if (params.length === 0) {
