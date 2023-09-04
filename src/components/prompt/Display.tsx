@@ -9,9 +9,9 @@ import { PromptLiveResponse } from "@/common/types/prompt";
 import { ExecutionCardGenerated } from "./ExecutionCardGenerated";
 import { DisplayActions } from "./DisplayActions";
 import ParagraphPlaceholder from "@/components/placeholders/ParagraphPlaceholder";
-import { GeneratePrompts } from "./GeneratePrompts";
 import { useWindowSize } from "usehooks-ts";
 import { SparkExportPopup } from "../dialog/SparkExportPopup";
+import { GeneratePrompts } from "./generate";
 
 interface Props {
   templateData: Templates;

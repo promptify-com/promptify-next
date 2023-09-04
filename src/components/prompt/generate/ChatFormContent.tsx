@@ -3,7 +3,7 @@ import { List, ListItemButton, InputLabel, Typography, Box, Popover, Grid, IconB
 import { IPromptInput } from "@/common/types/prompt";
 import { PromptParams, ResInputs } from "@/core/api/dto/prompts";
 import { Clear } from "@mui/icons-material";
-import { GeneratorParamSlider } from "../GeneratorParamSlider";
+import { GeneratorParamSlider } from "./GeneratorParamSlider";
 
 export interface InputsErrors {
   [key: string]: number | boolean;
@@ -24,7 +24,7 @@ interface ChatFormCntentProps {
 }
 
 const ChatFormCntent: React.FC<ChatFormCntentProps> = ({ PromptsFields, errors, nodeInputs, getItemName }) => {
-  const [clickedItem, setClickedItem] = useState<{ questionId: number; item: Input | Param | null } | null>({
+  const [selectedNode, setSelectedNode] = useState<{ questionId: number; item: Input | Param | null } | null>({
     questionId: 0,
     item: null,
   });
@@ -36,7 +36,7 @@ const ChatFormCntent: React.FC<ChatFormCntentProps> = ({ PromptsFields, errors, 
     if ("param" in item) {
       setAnchorEl(event.currentTarget);
     }
-    setClickedItem({ questionId, item });
+    setSelectedNode({ questionId, item });
   };
   return (
     <List
@@ -53,7 +53,7 @@ const ChatFormCntent: React.FC<ChatFormCntentProps> = ({ PromptsFields, errors, 
         return (
           <ListItemButton
             key={i}
-            selected={i === clickedItem?.questionId}
+            selected={i === selectedNode?.questionId}
             //@ts-ignore
             onClick={e => handleItemClick(e, item)}
             sx={{
@@ -93,7 +93,7 @@ const ChatFormCntent: React.FC<ChatFormCntentProps> = ({ PromptsFields, errors, 
             horizontal: "left",
           }}
         >
-          {clickedItem?.item && "param" in clickedItem.item ? (
+          {selectedNode?.item && "param" in selectedNode.item ? (
             <Grid
               width={"300px"}
               borderRadius={"16px"}
@@ -118,13 +118,13 @@ const ChatFormCntent: React.FC<ChatFormCntentProps> = ({ PromptsFields, errors, 
               </IconButton>
               <Typography>
                 {" "}
-                {clickedItem.questionId + 1}.{clickedItem.item.param.parameter.name}
+                {selectedNode.questionId + 1}.{selectedNode.item.param.parameter.name}
               </Typography>
               <GeneratorParamSlider
-                descriptions={clickedItem.item.param.descriptions}
-                activeScore={clickedItem.item.param.score}
+                descriptions={selectedNode.item.param.descriptions}
+                activeScore={selectedNode.item.param.score}
                 setScore={() => {}}
-                is_editable={clickedItem.item.param.is_editable}
+                is_editable={selectedNode.item.param.is_editable}
               />
             </Grid>
           ) : null}

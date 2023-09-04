@@ -6,13 +6,13 @@ import { PromptParams } from "@/core/api/dto/prompts";
 interface GeneratorParamProps {
   promptId: number;
   params: PromptParams[];
-  resOverrides: any;
-  setResOverrides: (obj: any) => void;
+  nodeParams: any;
+  setNodeParams: (obj: any) => void;
 }
 
-export const GeneratorParam: React.FC<GeneratorParamProps> = ({ promptId, params, resOverrides, setResOverrides }) => {
+export const GeneratorParam: React.FC<GeneratorParamProps> = ({ promptId, params, nodeParams, setNodeParans }) => {
   const handleChangeScore = (score: number, parameter: number) => {
-    const newArray = JSON.parse(JSON.stringify(resOverrides));
+    const newArray = JSON.parse(JSON.stringify(nodeParams));
     const matchingObject = newArray.find((obj: { id: number }) => obj.id === promptId);
 
     if (matchingObject) {
@@ -25,7 +25,7 @@ export const GeneratorParam: React.FC<GeneratorParamProps> = ({ promptId, params
       newArray.push({ id: promptId, contextual_overrides: [{ parameter, score }] });
     }
 
-    setResOverrides(newArray);
+    setNodeParans(newArray);
   };
 
   if (params.length === 0) {
@@ -35,7 +35,7 @@ export const GeneratorParam: React.FC<GeneratorParamProps> = ({ promptId, params
   return (
     <Box>
       {params?.map((param, i) => {
-        const matchingObject = resOverrides.find((obj: { id: number }) => obj.id === promptId);
+        const matchingObject = nodeParams.find((obj: { id: number }) => obj.id === promptId);
         let activeScoreOverride = param.score; // default value
 
         if (matchingObject) {

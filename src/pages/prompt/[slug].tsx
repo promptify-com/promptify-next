@@ -22,7 +22,7 @@ import { mix } from "polished";
 import { useRouter } from "next/router";
 import { useGetPromptTemplateBySlugQuery, useViewTemplateMutation } from "@/core/api/templates";
 import { TemplatesExecutions } from "@/core/api/dto/templates";
-import { GeneratorForm } from "@/components/prompt/form/InputMode";
+import { GeneratorForm } from "@/components/prompt/generate/InputMode";
 import { Display } from "@/components/prompt/Display";
 import { Details } from "@/components/prompt/Details";
 import { authClient } from "@/common/axios";

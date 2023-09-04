@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { Box, IconButton, InputLabel, MenuItem, Select, Stack, TextField } from "@mui/material";
-import { InputsErrors } from "./GeneratePrompts";
+import { InputsErrors } from ".";
 import { Backspace } from "@mui/icons-material";
 import { ResInputs } from "@/core/api/dto/prompts";
 import { IPromptInput } from "@/common/types/prompt";
-import BaseButton from "../base/BaseButton";
-import CodeFieldModal from "../modals/CodeFieldModal";
+import BaseButton from "../../base/BaseButton";
+import CodeFieldModal from "../../modals/CodeFieldModal";
 
 interface GeneratorInputProps {
   promptId: number;
