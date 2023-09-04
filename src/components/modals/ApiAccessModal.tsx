@@ -43,9 +43,9 @@ export default function ApiAccessModal({ open, setOpen, executionData, templateD
     );
   }, [templateData, executionData]);
 
-  const options = { indent: "\t" };
-
   useEffect(() => {
+    const options = { indent: "\t" };
+
     if (snippet) {
       switch (language) {
         case "0":
