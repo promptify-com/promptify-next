@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import Modal from "@mui/material/Modal";
 import { Box, Button, FormControl, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
-import SyntaxHighlighter from "react-syntax-highlighter";
+import { Light as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vs2015 } from "react-syntax-highlighter/dist/cjs/styles/hljs";
-import SettingsIcon from "@mui/icons-material/Settings";
-import KeyboardReturnIcon from "@mui/icons-material/KeyboardReturn";
+import { Settings, KeyboardReturn } from "@mui/icons-material";
+import useCopyToClipboard from "@/hooks/useCopyToClipboard";
 
 interface Props {
   open: boolean;
@@ -16,6 +16,7 @@ interface Props {
 
 export default function ApiAccessModal({ open, setOpen, value, onChange, language }: Props) {
   const [copied, setCopied] = useState(false);
+  const [copy] = useCopyToClipboard();
 
   useEffect(() => {
     if (copied) {
@@ -56,7 +57,7 @@ export default function ApiAccessModal({ open, setOpen, value, onChange, languag
               display="flex"
               alignItems="center"
             >
-              <SettingsIcon />
+              <Settings />
               <Typography
                 ml="1rem"
                 fontSize={18}
@@ -86,16 +87,10 @@ export default function ApiAccessModal({ open, setOpen, value, onChange, languag
                 sx={{
                   borderRadius: "5px",
                 }}
-                onClick={() =>
-                  navigator.clipboard
-                    .writeText(value)
-                    .then(() => {
-                      setCopied(true);
-                    })
-                    .catch(error => {
-                      console.error("Error copying text to clipboard:", error);
-                    })
-                }
+                onClick={() => {
+                  copy(value);
+                  setCopied(true);
+                }}
                 disabled={copied}
               >
                 {copied ? "Copied" : "Copy"}
@@ -125,7 +120,7 @@ export default function ApiAccessModal({ open, setOpen, value, onChange, languag
             alignItems="center"
             justifyContent={{ xs: "center", md: "flex-start" }}
           >
-            <KeyboardReturnIcon />
+            <KeyboardReturn />
             <Typography
               ml="1rem"
               fontSize={18}

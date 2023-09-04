@@ -14,11 +14,12 @@ import { LogoApp } from "@/assets/icons/LogoApp";
 import { useWindowSize } from "usehooks-ts";
 import { useRouter } from "next/router";
 import { AllInclusive, Close, InfoOutlined } from "@mui/icons-material";
-
+import dynamic from "next/dynamic";
 import TabsAndFormPlaceholder from "@/components/placeholders/TabsAndFormPlaceholder";
 
 import Storage from "@/common/storage";
-import { ApiAccess } from "./ApiAccess";
+
+const ApiAccess = dynamic(() => import("./ApiAccess"));
 
 interface GeneratorFormProps {
   templateData: Templates;

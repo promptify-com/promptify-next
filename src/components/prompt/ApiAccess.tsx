@@ -4,7 +4,7 @@ import { Templates } from "@/core/api/dto/templates";
 import { Box, Button, SelectChangeEvent, Typography } from "@mui/material";
 import HTTPSnippet from "httpsnippet";
 import React, { useEffect, useState } from "react";
-import BoltIcon from "@mui/icons-material/Bolt";
+import { Bolt } from "@mui/icons-material";
 import ApiAccessModal from "../modals/ApiAccessModal";
 
 interface Props {
@@ -16,7 +16,7 @@ interface Props {
   token: string;
 }
 
-export const ApiAccess: React.FC<Props> = ({
+const ApiAccess: React.FC<Props> = ({
   isConnected = true,
   lastAccess = "2 hours ago",
   totalRuns = 246,
@@ -93,7 +93,7 @@ export const ApiAccess: React.FC<Props> = ({
         <Typography>Key Status:</Typography>
         {isConnected ? (
           <Box display="flex">
-            <BoltIcon
+            <Bolt
               fontSize="small"
               sx={{
                 color: "blue",
@@ -103,7 +103,7 @@ export const ApiAccess: React.FC<Props> = ({
           </Box>
         ) : (
           <Box display="flex">
-            <BoltIcon
+            <Bolt
               fontSize="small"
               sx={{
                 color: "red",
@@ -169,3 +169,5 @@ export const ApiAccess: React.FC<Props> = ({
     </Box>
   );
 };
+
+export default ApiAccess;
