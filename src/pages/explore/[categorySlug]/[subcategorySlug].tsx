@@ -32,7 +32,7 @@ export default function Page({ category }: { category: Category }) {
 
   const breadcrumbs = [
     { label: category.name, link: `/explore/${category.slug}` },
-    { label: (router.query.subcategorySlug as string).replace(/-/g, " ") }, // Assuming that subcategorySlug is always a string to prevent types error.
+    { label: (router.query.subcategorySlug as string).replace(/-/g, " ") },
   ];
 
   return (
