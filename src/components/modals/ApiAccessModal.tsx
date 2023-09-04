@@ -68,6 +68,13 @@ export default function ApiAccessModal({ open, setOpen, executionData, templateD
     }
   }, [language, snippet]);
 
+  const responseExample = `
+    {
+      response: text // 
+      completed: boolean // Is the response completed  
+    }
+    `;
+
   return (
     <Modal
       open={open}
@@ -177,10 +184,7 @@ export default function ApiAccessModal({ open, setOpen, executionData, templateD
             style={vs2015}
             customStyle={{ borderRadius: "10px" }}
           >
-            {`        {   
-            response: text //
-            completed: boolean // Is the response completed
-        }`}
+            {responseExample}
           </SyntaxHighlighter>
         </Box>
       </Box>
