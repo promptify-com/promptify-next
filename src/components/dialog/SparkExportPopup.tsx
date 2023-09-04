@@ -171,7 +171,7 @@ export const SparkExportPopup = ({ activeExecution, onClose }: SparkExportProps)
                   opacity: 0.8,
                 }}
               >
-                Export as Word Dodcument
+                Export as Word Document
               </Typography>
               <Typography
                 fontSize={12}

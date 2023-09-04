@@ -112,7 +112,7 @@ const SearchBar: React.FC<Props> = ({
               }}
               placeholder={
                 !!selectedTag && !selectedTag.length
-                  ? "Search prompts, templates, collections, or ask something..."
+                  ? "Search prompt templates..."
                   : ""
               }
               fullWidth
@@ -133,7 +133,7 @@ const SearchBar: React.FC<Props> = ({
                 fontWeight: 400,
               }}
             >
-              Search prompts, templates, collections, or ask something...
+              Search prompt templates...
             </Typography>
           )}
         </Grid>
