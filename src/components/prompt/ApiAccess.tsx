@@ -27,44 +27,51 @@ export const ApiAccess: React.FC<Props> = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [language, setLanguage] = useState("0");
   const [output, setOutput] = useState("");
+  const [snippet, setSnippet] = useState<any | null>(null);
 
   const handleChange = (event: SelectChangeEvent) => {
     setLanguage(event.target.value);
   };
 
-  const snippet = new HTTPSnippet({
-    method: "POST",
-    url: `${process.env.NEXT_PUBLIC_API_URL}/api/meta/templates/${templateData.id}/execute/`,
-    headers: [
-      { name: "Authorization", value: `Token ${token}` },
-      { name: "Accept", value: "application/json" },
-      { name: "Content-Type", value: "application/json" },
-    ],
-    postData: { text: JSON.stringify(executionData) },
-  });
+  useEffect(() => {
+    setSnippet(
+      new HTTPSnippet({
+        method: "POST",
+        url: `${process.env.NEXT_PUBLIC_API_URL}/api/meta/templates/${templateData.id}/execute/`,
+        headers: [
+          { name: "Authorization", value: `Token ${token}` },
+          { name: "Accept", value: "application/json" },
+          { name: "Content-Type", value: "application/json" },
+        ],
+        postData: { text: JSON.stringify(executionData) },
+      }),
+    );
+  }, [templateData, executionData]);
 
   const options = { indent: "\t" };
 
   useEffect(() => {
-    switch (language) {
-      case "0":
-        setOutput(snippet.convert("shell", "curl", options));
-        break;
-      case "1":
-        setOutput(snippet.convert("php", "curl", options));
-        break;
-      case "2":
-        setOutput(snippet.convert("python", "python3", options));
-        break;
-      case "3":
-        setOutput(snippet.convert("python", "requests", options));
-        break;
-      case "4":
-        setOutput(snippet.convert("javascript", "fetch", options));
-        break;
-      default:
+    if (snippet) {
+      switch (language) {
+        case "0":
+          setOutput(snippet.convert("shell", "curl", options));
+          break;
+        case "1":
+          setOutput(snippet.convert("php", "curl", options));
+          break;
+        case "2":
+          setOutput(snippet.convert("python", "python3", options));
+          break;
+        case "3":
+          setOutput(snippet.convert("python", "requests", options));
+          break;
+        case "4":
+          setOutput(snippet.convert("javascript", "fetch", options));
+          break;
+        default:
+      }
     }
-  }, [language]);
+  }, [language, snippet]);
 
   return (
     <Box
