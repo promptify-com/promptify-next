@@ -69,10 +69,10 @@ export default function ApiAccessModal({ open, setOpen, executionData, templateD
   }, [language, snippet]);
 
   const responseExample = `
-    {
-      response: text // 
-      completed: boolean // Is the response completed  
-    }
+{
+  response: text // 
+  completed: boolean // Is the response completed  
+}
     `;
 
   return (

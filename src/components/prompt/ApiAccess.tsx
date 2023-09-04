@@ -26,7 +26,6 @@ const ApiAccess: React.FC<Props> = ({
   token,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isClicked, setIsClicked] = useState(false);
 
   return (
     <Box
@@ -90,7 +89,6 @@ const ApiAccess: React.FC<Props> = ({
         }}
         disabled={!isConnected}
         onClick={() => {
-          setIsClicked(true);
           setIsModalOpen(true);
         }}
       >
@@ -117,7 +115,7 @@ const ApiAccess: React.FC<Props> = ({
         <Typography fontSize={12}>Total Runs:</Typography>
         <Typography fontSize={12}>{totalRuns}</Typography>
       </Box>
-      {isClicked && (
+      {isModalOpen && (
         <ApiAccessModal
           open={isModalOpen}
           setOpen={setIsModalOpen}
