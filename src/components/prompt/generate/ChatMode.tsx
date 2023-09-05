@@ -122,17 +122,17 @@ export const ChatMode: React.FC<ChatModeProps> = ({
 
   const handleNext = () => {
     if (PromptsFields.length === 0) {
-      return;
+      return null;
     }
     if (selectedNode) {
       const newIndex = selectedNode?.questionId;
 
-      if (newIndex < PromptsFields.length) {
+      if (newIndex < PromptsFields.length - 1) {
         setSelectedNode({
           questionId: newIndex + 1,
           item: PromptsFields[newIndex],
         });
-      } else {
+      } else if (isFormFilled) {
         generate();
       }
     }
