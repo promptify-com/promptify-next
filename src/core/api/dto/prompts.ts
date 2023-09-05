@@ -16,7 +16,13 @@ export interface Prompts {
   dependencies?: number[];
   is_visible: boolean;
   show_output: boolean;
-  model_parameters: { temperature: number; maximumLength: number; topP: number; presencePenalty: number; frequencyPenalty: number; } | null;
+  model_parameters: {
+    temperature: number;
+    maximumLength: number;
+    topP: number;
+    presencePenalty: number;
+    frequencyPenalty: number;
+  } | null;
   output_format: string;
   prompt_output_variable: string;
   execution_priority: number;
@@ -51,16 +57,16 @@ interface ContextualOverrides {
 export interface ResPrompt {
   prompt: number;
   contextual_overrides: ContextualOverrides[];
-  prompt_params: any;
+  prompt_params: Record<string, string | number | { value: string | number; required: boolean }>;
 }
 
 export interface ResInputs {
   id: number;
   inputs: {
-    [key:string]: {
-      value: string | number,
-      required: boolean
-    }
+    [key: string]: {
+      value: string | number;
+      required: boolean;
+    };
   };
 }
 

@@ -7,25 +7,25 @@ import vs2015 from "react-syntax-highlighter/dist/cjs/styles/hljs/vs2015";
 import { Settings, KeyboardReturn } from "@mui/icons-material";
 import useCopyToClipboard from "@/hooks/useCopyToClipboard";
 import HTTPSnippet from "httpsnippet";
-import { ResPrompt } from "@/core/api/dto/prompts";
 import { Templates } from "@/core/api/dto/templates";
+import { RootState } from "@/core/store";
+import { useSelector } from "react-redux";
+import useToken from "@/hooks/useToken";
 
 interface Props {
-  open: boolean;
-  setOpen: (val: boolean) => void;
-  executionData: ResPrompt[];
+  onClose: () => void;
   templateData: Templates;
-  token: string;
 }
 
 SyntaxHighlighter.registerLanguage("javascript", js);
 
-export default function ApiAccessModal({ open, setOpen, executionData, templateData, token }: Props) {
+export default function ApiAccessModal({ onClose, templateData }: Props) {
   const [snippet, setSnippet] = useState<any | null>(null);
   const [output, setOutput] = useState("");
   const [language, setLanguage] = useState("0");
-
   const [copy, result] = useCopyToClipboard();
+  const token = useToken();
+  const executionData = useSelector((state: RootState) => state.template.executionData);
 
   const handleChange = (event: SelectChangeEvent) => {
     setLanguage(event.target.value);
@@ -41,7 +41,7 @@ export default function ApiAccessModal({ open, setOpen, executionData, templateD
           { name: "Accept", value: "application/json" },
           { name: "Content-Type", value: "application/json" },
         ],
-        postData: { text: JSON.stringify(executionData) },
+        postData: { text: executionData },
       }),
     );
   }, [templateData, executionData]);
@@ -73,15 +73,15 @@ export default function ApiAccessModal({ open, setOpen, executionData, templateD
 
   const responseExample = `
 {
-  response: text // 
-  completed: boolean // Is the response completed  
+  response: text
+  completed: boolean
 }
     `;
 
   return (
     <Modal
-      open={open}
-      onClose={() => setOpen(false)}
+      open
+      onClose={onClose}
     >
       <Box
         sx={{
