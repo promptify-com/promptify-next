@@ -1,44 +1,19 @@
 import React from "react";
 import { Box, Button, CircularProgress, Stack, Typography, alpha, useTheme } from "@mui/material";
-import { PromptParams, ResInputs, ResOverrides } from "@/core/api/dto/prompts";
-import { IPromptInput } from "@/common/types/prompt";
-import useToken from "@/hooks/useToken";
-
-import { GeneratorInput } from "./GeneratorInput";
-import { GeneratorParam } from "./GeneratorParam";
-
-import { Templates } from "@/core/api/dto/templates";
-import { LogoApp } from "@/assets/icons/LogoApp";
-
 import { AllInclusive, Close, InfoOutlined } from "@mui/icons-material";
 
+import { GeneratePromptForm } from "@/core/api/dto/prompts";
+import useToken from "@/hooks/useToken";
+import { GeneratorInput } from "./GeneratorInput";
+import { GeneratorParam } from "./GeneratorParam";
+import { Templates } from "@/core/api/dto/templates";
+import { LogoApp } from "@/assets/icons/LogoApp";
 import TabsAndFormPlaceholder from "@/components/placeholders/TabsAndFormPlaceholder";
+import { InputsErrors } from ".";
 
-interface InputModeProps {
-  isGenerating: boolean;
-  inputs: Input[] | null;
-  params: Param[] | null;
-  nodeInputs: ResInputs[];
-  setNodeInputs: (obj: any) => void;
+interface InputModeProps extends GeneratePromptForm {
   errors: InputsErrors;
-  generate: () => void;
-  isFormFilled: boolean;
   templateData: Templates;
-  onReset: () => void;
-  allowReset: boolean;
-  nodeParams: ResOverrides[];
-  setNodeParams: (obj: any) => void;
-}
-
-export interface InputsErrors {
-  [key: string]: number | boolean;
-}
-interface Input extends IPromptInput {
-  prompt: number;
-}
-interface Param {
-  prompt: number;
-  param: PromptParams;
 }
 
 export const InputMode: React.FC<InputModeProps> = ({

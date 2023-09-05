@@ -4,6 +4,34 @@ interface Engine {
   icon: string;
 }
 
+export interface Input {
+  prompt: number;
+  name: string;
+  fullName: string;
+  type: string;
+  required: boolean;
+  defaultValue?: string | number | null;
+}
+export interface Param {
+  prompt: number;
+  param: PromptParams;
+}
+
+export interface GeneratePromptForm {
+  inputs: Input[] | null;
+  params: Param[] | null;
+  nodeInputs: ResInputs[];
+  setNodeInputs: (obj: any) => void;
+  nodeParams: ResOverrides[];
+  setNodeParams: (obj: any) => void;
+  // errors: InputsErrors;
+  generate: () => void;
+  isGenerating: boolean;
+  isFormFilled: boolean;
+  onReset: () => void;
+  allowReset: boolean;
+}
+
 export interface Prompts {
   id: number;
   order: number;

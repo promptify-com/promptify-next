@@ -18,50 +18,21 @@ import { useWindowSize } from "usehooks-ts";
 import { AllInclusive, Clear, ExpandLess, ExpandMore, MoreVert, PlayArrow, Search, Send } from "@mui/icons-material";
 import { useSelector } from "react-redux";
 
-import { PromptDescription, PromptParam, ResInputs, ResOverrides } from "@/core/api/dto/prompts";
+import { GeneratePromptForm, Input, Param } from "@/core/api/dto/prompts";
 import useToken from "@/hooks/useToken";
 import { Templates } from "@/core/api/dto/templates";
 import TabsAndFormPlaceholder from "@/components/placeholders/TabsAndFormPlaceholder";
 import LogoAsAvatar from "@/assets/icons/LogoAsAvatar";
 import ChatFormContent from "./ChatFormContent";
 import { RootState } from "@/core/store";
+import { InputsErrors } from ".";
+import { onInputChange } from "@/common/helpers/handleGeneratePrompt";
 
-export interface InputsErrors {
-  [key: string]: number | boolean;
-}
-interface Input {
-  name: string;
-  fullName: string;
-  type: string;
-  required: boolean;
-  defaultValue?: string | number | null;
-  prompt: number;
-}
-interface Param {
-  prompt: number;
-  param: {
-    descriptions: PromptDescription[];
-    score: number;
-    parameter: PromptParam;
-    is_visible: boolean;
-    is_editable: boolean;
-  };
-}
+export type SelectedNodeType = { questionId: number; item: Input | Param | null } | null;
 
-interface ChatModeProps {
-  inputs: Input[] | null;
-  params: Param[] | null;
-  nodeInputs: ResInputs[];
-  setNodeInputs: (obj: any) => void;
-  nodeParams: ResOverrides[];
-  setNodeParams: (obj: any) => void;
+interface ChatModeProps extends GeneratePromptForm {
   errors: InputsErrors;
-  generate: () => void;
-  isGenerating: boolean;
-  isFormFilled: boolean;
   templateData: Templates;
-  onReset: () => void;
-  allowReset: boolean;
 }
 
 export const ChatMode: React.FC<ChatModeProps> = ({
@@ -85,17 +56,23 @@ export const ChatMode: React.FC<ChatModeProps> = ({
 
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
 
+  const isParam = (node: Input | Param): node is Param => "param" in node;
+  const isParamSelected = (selectedNode: SelectedNodeType): selectedNode is { questionId: number; item: Param } => {
+    return selectedNode?.item !== null && selectedNode?.item !== undefined && isParam(selectedNode.item);
+  };
+
+  const [value, setValue] = useState<string | number | null>();
   const [chatExpanded, setChatExpanded] = useState(true);
 
-  const [selectedNodeIndex, setSelectedNodeIndex] = useState(0);
   const [selectedNode, setSelectedNode] = useState<{ questionId: number; item: Input | Param | null } | null>({
     questionId: 0,
     item: null,
   });
 
-  const isNodeInput = Boolean(selectedNode?.item && "name" in selectedNode.item);
-
   let PromptsFields: (Input | Param)[] = [];
+  if (inputs && params) {
+    PromptsFields = [...inputs, ...params];
+  }
 
   useEffect(() => {
     if (inputs) {
@@ -109,24 +86,21 @@ export const ChatMode: React.FC<ChatModeProps> = ({
     }
   }, [isGenerating]);
 
-  const [value, setValue] = useState<string | number | null>();
   useEffect(() => {
-    if (selectedNode?.item && "name" in selectedNode.item) {
-      let inputValue;
-      inputValue = nodeInputs.find(prompt => prompt.id === selectedNode.item?.prompt)?.inputs[selectedNode.item.name]
-        ?.value;
+    if (selectedNode && !isParamSelected(selectedNode)) {
+      const { item } = selectedNode;
+      if (item && !isParam(item)) {
+        let inputValue;
+        inputValue = nodeInputs.find(prompt => prompt.id === item?.prompt)?.inputs[item.name]?.value;
 
-      setValue(inputValue);
+        setValue(inputValue);
+      }
     }
   }, [nodeInputs, selectedNode]);
 
-  if (inputs && params) {
-    PromptsFields = [...inputs, ...params];
-  }
-
   function getItemName(item: Input | Param | null | undefined): string {
     if (!item) return "";
-    if (item && "name" in item) {
+    if (item && !isParam(item)) {
       return item.name;
     } else {
       return item.param.parameter.name;
@@ -134,49 +108,18 @@ export const ChatMode: React.FC<ChatModeProps> = ({
   }
 
   function getInputType() {
-    if (selectedNode?.item && "name" in selectedNode.item) {
+    if (selectedNode?.item && !isParam(selectedNode.item)) {
       return selectedNode.item.type;
     } else return "";
   }
 
   const handleChangeInput = (value: string, name: string, type: string) => {
-    if (selectedNode?.item && isNodeInput) {
-      const { prompt: selectedPrompt } = selectedNode.item;
-      const resObj = [...nodeInputs].find(prompt => prompt.inputs[name]);
-      const resArr = [...nodeInputs];
-
-      if (!resObj) {
-        return setNodeInputs([
-          ...nodeInputs,
-          {
-            id: selectedPrompt,
-            inputs: {
-              [name]: {
-                value: type === "number" ? +value : value,
-              },
-            },
-          },
-        ]);
-      }
-
-      resArr.forEach((prompt: any, index: number) => {
-        if (prompt.id === selectedPrompt) {
-          resArr[index] = {
-            ...prompt,
-            inputs: {
-              ...prompt.inputs,
-              [name]: {
-                value: type === "number" ? +value : value,
-                required: resObj.inputs[name].required,
-              },
-            },
-          };
-        }
-      });
-
-      setNodeInputs([...resArr]);
+    if (selectedNode?.item && !isParam(selectedNode.item)) {
+      const { prompt } = selectedNode.item;
+      onInputChange(nodeInputs, setNodeInputs, prompt, value, name, type);
     }
   };
+
   const handleNext = () => {
     if (PromptsFields.length === 0) {
       return;
@@ -185,8 +128,6 @@ export const ChatMode: React.FC<ChatModeProps> = ({
       const newIndex = selectedNode?.questionId;
 
       if (newIndex < PromptsFields.length) {
-        setSelectedNodeIndex(newIndex);
-
         setSelectedNode({
           questionId: newIndex + 1,
           item: PromptsFields[newIndex],
@@ -330,6 +271,8 @@ export const ChatMode: React.FC<ChatModeProps> = ({
                         nodeParams={nodeParams}
                         setNodeParams={setNodeParams}
                         getItemName={getItemName}
+                        isParam={isParam}
+                        isParamSelected={isParamSelected}
                       />
 
                       <Stack
@@ -463,7 +406,7 @@ export const ChatMode: React.FC<ChatModeProps> = ({
                 minHeight={"32px"}
                 p={"8px 16px"}
               >
-                {selectedNode && isNodeInput && (
+                {selectedNode?.item && !isParam(selectedNode.item) && (
                   <Button
                     startIcon={<Clear onClick={() => setSelectedNode(null)} />}
                     sx={{
@@ -481,7 +424,7 @@ export const ChatMode: React.FC<ChatModeProps> = ({
                   value={selectedNode?.item ? value : ""}
                   onChange={e => handleChangeInput(e.target.value, getItemName(selectedNode?.item), getInputType())}
                   sx={{ ml: 1, flex: 1, fontSize: 13, lineHeight: "22px", letterSpacing: "0.46px", fontWeight: "500" }}
-                  placeholder={isNodeInput ? "Type here..." : "Chat with Promptify"}
+                  placeholder={!isParamSelected(selectedNode) ? "Type here..." : "Chat with Promptify"}
                   inputProps={{ "aria-label": "Name" }}
                 />
 

@@ -2,21 +2,14 @@ import React, { useState } from "react";
 import { List, ListItemButton, InputLabel, Typography, Box, Popover, Grid, IconButton } from "@mui/material";
 import { Clear } from "@mui/icons-material";
 
-import { IPromptInput } from "@/common/types/prompt";
-import { PromptParams, ResInputs } from "@/core/api/dto/prompts";
+import { Input, Param, ResInputs } from "@/core/api/dto/prompts";
 import { GeneratorParamSlider } from "./GeneratorParamSlider";
+import { SelectedNodeType } from "./ChatMode";
+import { onScoreChange } from "@/common/helpers/handleGeneratePrompt";
 
 export interface InputsErrors {
   [key: string]: number | boolean;
 }
-interface Input extends IPromptInput {
-  prompt: number;
-}
-interface Param {
-  prompt: number;
-  param: PromptParams;
-}
-type SelectedNodeType = { questionId: number; item: Input | Param | null } | null;
 
 interface ChatFormCntentProps {
   PromptsFields: (Input | Param)[];
@@ -27,6 +20,11 @@ interface ChatFormCntentProps {
   getItemName: (item: Input | Param) => string;
   selectedNode: SelectedNodeType;
   setSelectedNode: (selectedNode: SelectedNodeType) => void;
+  isParam: (item: Input | Param) => item is Param;
+  isParamSelected: (selectedNode: SelectedNodeType) => selectedNode is {
+    questionId: number;
+    item: Param;
+  };
 }
 
 const ChatFormContent: React.FC<ChatFormCntentProps> = ({
@@ -38,12 +36,9 @@ const ChatFormContent: React.FC<ChatFormCntentProps> = ({
   setNodeParams,
   getItemName,
   setSelectedNode,
+  isParam,
+  isParamSelected,
 }) => {
-  const isParam = (node: Input | Param): node is Param => "param" in node;
-
-  const isParamSelected = (selectedNode: SelectedNodeType): selectedNode is { questionId: number; item: Param } => {
-    return selectedNode?.item !== null && selectedNode?.item !== undefined && isParam(selectedNode.item);
-  };
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
 
   const [score, setScore] = useState<number | null>(null);
@@ -64,24 +59,7 @@ const ChatFormContent: React.FC<ChatFormCntentProps> = ({
       const { item } = selectedNode;
       if (item) {
         const { param, prompt } = item;
-        const newArray = JSON.parse(JSON.stringify(nodeParams));
-        const matchingObject = newArray.find((obj: { id: number }) => obj.id === prompt);
-
-        if (matchingObject) {
-          const matchingContext = matchingObject.contextual_overrides.find(
-            (c: any) => c.parameter === param.parameter.id,
-          );
-
-          if (matchingContext) {
-            matchingContext.score = newScore;
-          } else {
-            matchingObject.contextual_overrides.push({ parameter: param.parameter.id, newScore });
-          }
-        } else {
-          newArray.push({ id: prompt, contextual_overrides: [{ parameter: param.parameter.id, newScore }] });
-        }
-        setNodeParams(newArray);
-
+        onScoreChange(nodeParams, setNodeParams, prompt, newScore, param.parameter.id);
         setParamSliderValues({ ...paramSliderValues, [param.parameter.id]: newScore });
       }
     }
