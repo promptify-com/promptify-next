@@ -40,7 +40,7 @@ export const onInputChange = (
     }
   });
 
-  setNodeInputs([...inputs]);
+  setNodeInputs(inputs);
 };
 
 export const onScoreChange = (

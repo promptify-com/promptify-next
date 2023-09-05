@@ -417,8 +417,8 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
                   key={i}
                   promptId={input.prompt}
                   inputs={[input]}
-                  resInputs={resInputs}
-                  setResInputs={setResInputs}
+                  nodeInputs={resInputs}
+                  setNodeInputs={setResInputs}
                   errors={errors}
                 />
               ))}
