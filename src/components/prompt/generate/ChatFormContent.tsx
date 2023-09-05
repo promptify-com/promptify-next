@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import { List, ListItemButton, InputLabel, Typography, Box, Popover, Grid, IconButton } from "@mui/material";
+import { Clear } from "@mui/icons-material";
+
 import { IPromptInput } from "@/common/types/prompt";
 import { PromptParams, ResInputs } from "@/core/api/dto/prompts";
-import { Clear } from "@mui/icons-material";
 import { GeneratorParamSlider } from "./GeneratorParamSlider";
 
 export interface InputsErrors {

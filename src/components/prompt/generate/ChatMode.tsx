@@ -5,7 +5,6 @@ import {
   AccordionSummary,
   Box,
   Button,
-  Chip,
   CircularProgress,
   Grid,
   IconButton,
@@ -87,10 +86,14 @@ export const ChatMode: React.FC<ChatModeProps> = ({
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
 
   const [chatExpanded, setChatExpanded] = useState(true);
+
+  const [selectedNodeIndex, setSelectedNodeIndex] = useState(0);
   const [selectedNode, setSelectedNode] = useState<{ questionId: number; item: Input | Param | null } | null>({
     questionId: 0,
     item: null,
   });
+
+  const isNodeInput = Boolean(selectedNode?.item && "name" in selectedNode.item);
 
   let PromptsFields: (Input | Param)[] = [];
 
@@ -98,7 +101,7 @@ export const ChatMode: React.FC<ChatModeProps> = ({
     if (inputs) {
       setSelectedNode({ questionId: 0, item: inputs[0] });
     }
-  }, []);
+  }, [inputs]);
 
   useEffect(() => {
     if (isGenerating) {
@@ -130,16 +133,16 @@ export const ChatMode: React.FC<ChatModeProps> = ({
     }
   }
 
-  function getItemValueType() {
+  function getInputType() {
     if (selectedNode?.item && "name" in selectedNode.item) {
       return selectedNode.item.type;
-    }
+    } else return "";
   }
 
-  const handleChangeInput = (value: string = "", name: string = "", type: string = "") => {
-    if (selectedNode?.item && "name" in selectedNode.item) {
+  const handleChangeInput = (value: string, name: string, type: string) => {
+    if (selectedNode?.item && isNodeInput) {
       const { prompt: selectedPrompt } = selectedNode.item;
-      const resObj = nodeInputs.find(prompt => prompt.inputs[name]);
+      const resObj = [...nodeInputs].find(prompt => prompt.inputs[name]);
       const resArr = [...nodeInputs];
 
       if (!resObj) {
@@ -174,6 +177,25 @@ export const ChatMode: React.FC<ChatModeProps> = ({
       setNodeInputs([...resArr]);
     }
   };
+  const handleNext = () => {
+    if (PromptsFields.length === 0) {
+      return;
+    }
+    if (selectedNode) {
+      const newIndex = selectedNode?.questionId;
+
+      if (newIndex < PromptsFields.length) {
+        setSelectedNodeIndex(newIndex);
+
+        setSelectedNode({
+          questionId: newIndex + 1,
+          item: PromptsFields[newIndex],
+        });
+      } else {
+        generate();
+      }
+    }
+  };
 
   return (
     <Grid
@@ -206,7 +228,7 @@ export const ChatMode: React.FC<ChatModeProps> = ({
           },
         }}
       >
-        <AccordionSummary>
+        <AccordionSummary sx={{ display: { xs: "none", md: "flex" } }}>
           <Grid
             display={"flex"}
             alignItems={"center"}
@@ -262,7 +284,7 @@ export const ChatMode: React.FC<ChatModeProps> = ({
         </AccordionSummary>
         <AccordionDetails
           sx={{
-            borderTop: "2px solid #ECECF4",
+            borderTop: { xs: "none", md: "2px solid #ECECF4" },
           }}
         >
           <Grid
@@ -273,6 +295,7 @@ export const ChatMode: React.FC<ChatModeProps> = ({
             <Grid
               p={"16px"}
               display={"flex"}
+              flexDirection={{ xs: "column", md: "row" }}
               gap={"16px"}
             >
               <LogoAsAvatar />
@@ -327,6 +350,7 @@ export const ChatMode: React.FC<ChatModeProps> = ({
                             sx={{
                               p: "10px 25px",
                               height: "36px",
+
                               fontWeight: 500,
                               borderColor: "primary.main",
                               borderRadius: "999px",
@@ -439,7 +463,7 @@ export const ChatMode: React.FC<ChatModeProps> = ({
                 minHeight={"32px"}
                 p={"8px 16px"}
               >
-                {selectedNode?.item && "name" in selectedNode.item && (
+                {selectedNode && isNodeInput && (
                   <Button
                     startIcon={<Clear onClick={() => setSelectedNode(null)} />}
                     sx={{
@@ -449,21 +473,24 @@ export const ChatMode: React.FC<ChatModeProps> = ({
                       },
                     }}
                   >
-                    {`Q${selectedNode.questionId + 1}. ${getItemName(selectedNode?.item)}`}
+                    {`Q${selectedNode?.questionId + 1}. ${getItemName(selectedNode?.item)}`}
                   </Button>
                 )}
                 <InputBase
-                  type={getItemValueType() === "number" ? "number" : "text"}
+                  type={getInputType() === "number" ? "number" : "text"}
                   value={selectedNode?.item ? value : ""}
-                  onChange={e => handleChangeInput(e.target.value, getItemName(selectedNode?.item), getItemValueType())}
+                  onChange={e => handleChangeInput(e.target.value, getItemName(selectedNode?.item), getInputType())}
                   sx={{ ml: 1, flex: 1, fontSize: 13, lineHeight: "22px", letterSpacing: "0.46px", fontWeight: "500" }}
-                  placeholder={
-                    selectedNode?.item && "name" in selectedNode.item ? "Type here..." : "Chat with Promptify"
-                  }
+                  placeholder={isNodeInput ? "Type here..." : "Chat with Promptify"}
                   inputProps={{ "aria-label": "Name" }}
                 />
 
-                <Send />
+                <Send
+                  onClick={() => handleNext()}
+                  sx={{
+                    cursor: "pointer",
+                  }}
+                />
               </Box>
             </Grid>
           </Grid>
