@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { List, ListItemButton, InputLabel, Typography, Box, Popover, Grid, IconButton } from "@mui/material";
 import { Clear } from "@mui/icons-material";
 
@@ -39,38 +39,100 @@ const ChatFormContent: React.FC<ChatFormCntentProps> = ({
   getItemName,
   setSelectedNode,
 }) => {
+  const isParam = (node: Input | Param): node is Param => "param" in node;
+
+  const isParamSelected = (selectedNode: SelectedNodeType): selectedNode is { questionId: number; item: Param } => {
+    return selectedNode?.item !== null && selectedNode?.item !== undefined && isParam(selectedNode.item);
+  };
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+
+  const [score, setScore] = useState<number | null>(null);
+  const [paramSliderValues, setParamSliderValues] = useState<{ [paramId: number]: number }>({});
 
   const handleItemClick = (event: React.MouseEvent<HTMLButtonElement>, item: Input | Param) => {
     const questionId = PromptsFields.findIndex(field => field === item);
-    if ("param" in item) {
+    if (isParam(item)) {
       setAnchorEl(event.currentTarget);
+      const initialScore = paramSliderValues[item.param.parameter.id] || 0;
+      setScore(initialScore);
     }
     setSelectedNode({ questionId, item });
   };
 
-  const handleChangeScore = (score: number) => {
-    if (selectedNode?.item && "param" in selectedNode.item) {
-      const { param, prompt } = selectedNode.item;
-      const newArray = JSON.parse(JSON.stringify(nodeParams));
-      const matchingObject = newArray.find((obj: { id: number }) => obj.id === prompt);
+  const handleChangeScore = (newScore: number) => {
+    if (isParamSelected(selectedNode)) {
+      const { item } = selectedNode;
+      if (item) {
+        const { param, prompt } = item;
+        const newArray = JSON.parse(JSON.stringify(nodeParams));
+        const matchingObject = newArray.find((obj: { id: number }) => obj.id === prompt);
 
-      if (matchingObject) {
-        const matchingContext = matchingObject.contextual_overrides.find(
-          (c: any) => c.parameter === param.parameter.id,
-        );
+        if (matchingObject) {
+          const matchingContext = matchingObject.contextual_overrides.find(
+            (c: any) => c.parameter === param.parameter.id,
+          );
 
-        if (matchingContext) {
-          matchingContext.score = score;
+          if (matchingContext) {
+            matchingContext.score = newScore;
+          } else {
+            matchingObject.contextual_overrides.push({ parameter: param.parameter.id, newScore });
+          }
         } else {
-          matchingObject.contextual_overrides.push({ parameter: param.parameter.id, score });
+          newArray.push({ id: prompt, contextual_overrides: [{ parameter: param.parameter.id, newScore }] });
         }
-      } else {
-        newArray.push({ id: prompt, contextual_overrides: [{ parameter: param.parameter.id, score }] });
+        setNodeParams(newArray);
+
+        setParamSliderValues({ ...paramSliderValues, [param.parameter.id]: newScore });
       }
-      setNodeParams(newArray);
     }
   };
+
+  const getInputValue = (item: Input | Param) => {
+    if (isParam(item)) return "";
+    return nodeInputs.find(prompt => prompt.id === item.prompt)?.inputs[item.name]?.value ?? "";
+  };
+
+  const isRequired = (item: Input | Param) => ("required" in item ? item.required : false);
+
+  const getLabelColor = (
+    itemName: string,
+    inputValue: string | number,
+    item: Input | Param,
+    score: number | null,
+    selectedNode: SelectedNodeType,
+    errors: InputsErrors,
+    paramSliderValues: { [paramId: number]: number },
+  ) => {
+    if (isParam(item) && score !== null && selectedNode?.item === item) {
+      if (score !== item.param.score) {
+        return "success.main";
+      } else {
+        return "initial";
+      }
+    } else if (errors[itemName]) {
+      return "error.main";
+    } else if (isParam(item) && paramSliderValues[item.param?.parameter.id] !== undefined) {
+      return "success.main";
+    } else if (!!inputValue) {
+      return "success.main";
+    } else {
+      return "#375CA9";
+    }
+  };
+
+  function getParamProperties(selectedNode: SelectedNodeType) {
+    if (isParamSelected(selectedNode)) {
+      const { param } = selectedNode.item;
+      return {
+        name: param.parameter.name,
+        descriptions: param.descriptions,
+        is_editable: param.is_editable,
+      };
+    }
+    return null;
+  }
+  const paramProperties = getParamProperties(selectedNode);
+  const { name: paramName, descriptions: paramDescriptions, is_editable: paramEditable } = paramProperties ?? {};
 
   return (
     <List
@@ -82,8 +144,10 @@ const ChatFormContent: React.FC<ChatFormCntentProps> = ({
     >
       {PromptsFields.map((item, i) => {
         const itemName = getItemName(item);
-        const inputValue = nodeInputs.find(prompt => prompt.id === item.prompt)?.inputs[itemName]?.value ?? "";
-        const isRequired = "required" in item ? item.required : false;
+        const inputValue = getInputValue(item);
+        const required = isRequired(item);
+        const labelColor = getLabelColor(itemName, inputValue, item, score, selectedNode, errors, paramSliderValues);
+
         return (
           <ListItemButton
             key={i}
@@ -107,12 +171,12 @@ const ChatFormContent: React.FC<ChatFormCntentProps> = ({
                   fontSize: 13,
                   fontWeight: 500,
                   whiteSpace: "pre-wrap",
-                  color: errors[itemName] ? "error.main" : !!inputValue ? "success.main" : "#375CA9",
+                  color: labelColor,
                 }}
               >
-                <Typography color={errors[itemName] ? "error.main" : !!inputValue ? "success.main" : "#375CA9"}>
+                <Typography color={labelColor}>
                   {i + 1}. {itemName}
-                  {isRequired ? "*" : ""}: {inputValue}
+                  {required ? "*" : ""}: {inputValue}
                 </Typography>
               </InputLabel>
             </Box>
@@ -122,14 +186,14 @@ const ChatFormContent: React.FC<ChatFormCntentProps> = ({
 
       <Popover
         open={!!anchorEl}
-        keepMounted
         anchorEl={anchorEl}
+        keepMounted
         anchorOrigin={{
           vertical: "bottom",
           horizontal: "left",
         }}
       >
-        {selectedNode?.item && "param" in selectedNode.item ? (
+        {isParamSelected(selectedNode) ? (
           <Grid
             width={"300px"}
             borderRadius={"16px"}
@@ -152,15 +216,15 @@ const ChatFormContent: React.FC<ChatFormCntentProps> = ({
             >
               <Clear />
             </IconButton>
+
             <Typography>
-              {" "}
-              {selectedNode.questionId + 1}.{selectedNode.item.param.parameter.name}
+              {selectedNode.questionId + 1}.{paramName}
             </Typography>
             <GeneratorParamSlider
-              descriptions={selectedNode.item.param.descriptions}
-              activeScore={selectedNode.item.param.score}
-              setScore={score => handleChangeScore(score)}
-              is_editable={selectedNode.item.param.is_editable}
+              activeScore={score}
+              setScore={newScore => handleChangeScore(newScore)}
+              descriptions={paramDescriptions}
+              is_editable={paramEditable}
             />
           </Grid>
         ) : null}
