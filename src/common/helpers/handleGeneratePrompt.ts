@@ -8,7 +8,7 @@ export const onInputChange = (
   name: string,
   type: string,
 ) => {
-  const selectedInput = [...nodeInputs].find(prompt => prompt.inputs[name]);
+  const selectedInput = nodeInputs.find(prompt => prompt.inputs[name]);
   const inputs = [...nodeInputs];
 
   if (!selectedInput) {

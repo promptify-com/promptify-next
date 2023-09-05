@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Box, Slider, Typography } from "@mui/material";
+
 import { PromptDescription } from "@/core/api/dto/prompts";
 
 interface PromptParamsDescriptionProps {

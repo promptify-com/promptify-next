@@ -9,12 +9,9 @@ import { useAppDispatch } from "@/hooks/useStore";
 import { templatesApi } from "@/core/api/templates";
 import { getInputsFromString } from "@/common/helpers/getInputsFromString";
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
-
 import Storage from "@/common/storage";
 import { updateExecutionData } from "@/core/store/templatesSlice";
-
 import { ChatMode } from "./ChatMode";
-import { InputMode } from "./InputMode";
 
 interface GeneratePromptsProps {
   type: "chat" | "input";
