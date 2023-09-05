@@ -4,6 +4,34 @@ interface Engine {
   icon: string;
 }
 
+export interface Input {
+  prompt: number;
+  name: string;
+  fullName: string;
+  type: string;
+  required: boolean;
+  defaultValue?: string | number | null;
+}
+export interface Param {
+  prompt: number;
+  param: PromptParams;
+}
+
+export interface GeneratePromptForm {
+  inputs: Input[] | null;
+  params: Param[] | null;
+  nodeInputs: ResInputs[];
+  setNodeInputs: (obj: any) => void;
+  nodeParams: ResOverrides[];
+  setNodeParams: (obj: any) => void;
+  // errors: InputsErrors;
+  generate: () => void;
+  isGenerating: boolean;
+  isFormFilled: boolean;
+  onReset: () => void;
+  allowReset: boolean;
+}
+
 export interface Prompts {
   id: number;
   order: number;
@@ -16,7 +44,13 @@ export interface Prompts {
   dependencies?: number[];
   is_visible: boolean;
   show_output: boolean;
-  model_parameters: { temperature: number; maximumLength: number; topP: number; presencePenalty: number; frequencyPenalty: number; } | null;
+  model_parameters: {
+    temperature: number;
+    maximumLength: number;
+    topP: number;
+    presencePenalty: number;
+    frequencyPenalty: number;
+  } | null;
   output_format: string;
   prompt_output_variable: string;
   execution_priority: number;
@@ -57,10 +91,10 @@ export interface ResPrompt {
 export interface ResInputs {
   id: number;
   inputs: {
-    [key:string]: {
-      value: string | number,
-      required: boolean
-    }
+    [key: string]: {
+      value: string | number;
+      required: boolean;
+    };
   };
 }
 

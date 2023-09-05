@@ -1,7 +1,9 @@
-import React, { use, useEffect } from "react";
+import React from "react";
 import { Box, Divider, InputLabel } from "@mui/material";
+
 import { GeneratorParamSlider } from "./GeneratorParamSlider";
 import { PromptParams } from "@/core/api/dto/prompts";
+import { onScoreChange } from "@/common/helpers/handleGeneratePrompt";
 
 interface GeneratorParamProps {
   promptId: number;
@@ -12,20 +14,7 @@ interface GeneratorParamProps {
 
 export const GeneratorParam: React.FC<GeneratorParamProps> = ({ promptId, params, nodeParams, setNodeParams }) => {
   const handleChangeScore = (score: number, parameter: number) => {
-    const newArray = JSON.parse(JSON.stringify(nodeParams));
-    const matchingObject = newArray.find((obj: { id: number }) => obj.id === promptId);
-
-    if (matchingObject) {
-      const matchingContext = matchingObject.contextual_overrides.find((c: any) => c.parameter === parameter);
-
-      matchingContext
-        ? (matchingContext.score = score)
-        : matchingObject.contextual_overrides.push({ parameter, score });
-    } else {
-      newArray.push({ id: promptId, contextual_overrides: [{ parameter, score }] });
-    }
-
-    setNodeParams(newArray);
+    onScoreChange(nodeParams, setNodeParams, promptId, score, parameter);
   };
 
   if (params.length === 0) {
