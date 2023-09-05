@@ -3,19 +3,19 @@ import { Box, Slider, Typography } from "@mui/material";
 import { PromptDescription } from "@/core/api/dto/prompts";
 
 interface PromptParamsDescriptionProps {
-  descriptions: PromptDescription[];
-  activeScore: number;
+  descriptions?: PromptDescription[];
+  activeScore: number | null;
   setScore: (score: number) => void;
-  is_editable: boolean;
+  is_editable?: boolean;
 }
 
 export const GeneratorParamSlider: React.FC<PromptParamsDescriptionProps> = ({
-  descriptions,
+  descriptions = [],
   activeScore,
   setScore,
-  is_editable,
+  is_editable = false,
 }) => {
-  const [activeMark, setActiveMark] = useState<number>(activeScore);
+  const [activeMark, setActiveMark] = useState<number | null>(activeScore);
   const activeDescription = descriptions.find(description => description.score === activeMark);
   const [displayTitle, setDisplayTitle] = useState("");
   const [displayDesc, setDisplayDesc] = useState("");
