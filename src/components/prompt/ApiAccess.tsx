@@ -9,34 +9,25 @@ import dynamic from "next/dynamic";
 const ApiAccessModal = dynamic(() => import("../modals/ApiAccessModal"));
 
 interface Props {
-  isConnected?: boolean;
-  lastAccess?: string;
-  totalRuns?: number;
-  executionData: ResPrompt[];
   templateData: Templates;
-  token: string;
 }
 
-const ApiAccess: React.FC<Props> = ({
-  isConnected = true,
-  lastAccess = "2 hours ago",
-  totalRuns = 246,
-  executionData,
-  templateData,
-  token,
-}) => {
+const isConnected = true;
+const lastAccess = "2 hours ago";
+const totalRuns = 246;
+
+const ApiAccess: React.FC<Props> = ({ templateData }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <Box
       display="flex"
       flexDirection="column"
-      p={"16px 8px 16px 16px"}
       gap="10px"
     >
       <Typography
-        color="primary"
-        fontSize={12}
+        color="tertiary"
+        fontSize={13}
       >
         API ACCESS
       </Typography>
@@ -117,11 +108,8 @@ const ApiAccess: React.FC<Props> = ({
       </Box>
       {isModalOpen && (
         <ApiAccessModal
-          open={isModalOpen}
-          setOpen={setIsModalOpen}
-          executionData={executionData}
+          onClose={() => setIsModalOpen(false)}
           templateData={templateData}
-          token={token}
         />
       )}
     </Box>

@@ -11,12 +11,11 @@ import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { getInputsFromString } from "@/common/helpers/getInputsFromString";
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { LogoApp } from "@/assets/icons/LogoApp";
-import { useWindowSize } from "usehooks-ts";
 import { useRouter } from "next/router";
 import { AllInclusive, Close, InfoOutlined } from "@mui/icons-material";
 import TabsAndFormPlaceholder from "@/components/placeholders/TabsAndFormPlaceholder";
-import ApiAccess from "./ApiAccess";
 import Storage from "@/common/storage";
+import { updateExecutionData } from "@/core/store/templatesSlice";
 
 interface GeneratorFormProps {
   templateData: Templates;
@@ -50,8 +49,6 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   const { palette } = useTheme();
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const { width: windowWidth } = useWindowSize();
-
   const [generatingResponse, setGeneratingResponse] = useState<PromptLiveResponse | null>(null);
   const [newExecutionId, setNewExecutionId] = useState<number | null>(null);
   const [resPrompts, setResPrompts] = useState<ResPrompt[]>([]);
@@ -63,17 +60,18 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   const [shownParams, setShownParams] = useState<Param[] | null>(null);
 
   const setDefaultResPrompts = () => {
-    const tempArr: ResPrompt[] = [...resPrompts];
+    const _initPromptsData: ResPrompt[] = [...resPrompts];
 
     templateData.prompts.forEach(prompt => {
-      const tempObj: ResPrompt = {} as ResPrompt;
-
-      tempObj.prompt = prompt.id;
-      tempObj.contextual_overrides = [];
-      tempObj.prompt_params = {};
-      tempArr.push(tempObj);
+      _initPromptsData.push({
+        prompt: prompt.id,
+        contextual_overrides: [],
+        prompt_params: {},
+      });
     });
-    setResPrompts([...tempArr]);
+
+    setResPrompts(_initPromptsData);
+    dispatch(updateExecutionData(JSON.stringify(_initPromptsData)));
   };
 
   // Set default inputs values from selected execution parameters
@@ -138,29 +136,30 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   }, [selectedExecution]);
 
   const changeResPrompts = () => {
-    const tempArr = [...resPrompts];
+    const _promptsData = [...resPrompts];
 
     if (nodeInputs.length > 0) {
-      tempArr.forEach((prompt, index) => {
+      _promptsData.forEach((prompt, index) => {
         const obj = nodeInputs.find(inputs => inputs.id === prompt.prompt);
         if (obj) {
           // Extract inputs values from nodeInputs item and put it as { inputName: inputValue }
           const values = Object.fromEntries(Object.entries(obj.inputs).map(([key, value]) => [key, value.value]));
-          tempArr[index].prompt_params = values;
+          _promptsData[index].prompt_params = values;
         }
       });
     }
 
     if (nodeParams.length > 0) {
-      tempArr.forEach((prompt, index) => {
+      _promptsData.forEach((prompt, index) => {
         const obj = nodeParams.find(overrides => overrides.id === prompt.prompt);
         if (obj) {
-          tempArr[index].contextual_overrides = obj.contextual_overrides;
+          _promptsData[index].contextual_overrides = obj.contextual_overrides;
         }
       });
     }
 
-    setResPrompts([...tempArr]);
+    setResPrompts(_promptsData);
+    dispatch(updateExecutionData(JSON.stringify(_promptsData)));
   };
 
   const isInputsFilled = () => {
@@ -536,11 +535,6 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
             </React.Fragment>
           )}
         </Box>
-        <ApiAccess
-          executionData={resPrompts}
-          templateData={templateData}
-          token={token}
-        />
         <Stack
           sx={{
             position: "sticky",
