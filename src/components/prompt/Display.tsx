@@ -111,8 +111,8 @@ export const Display: React.FC<Props> = ({
         ref={containerRef}
         bgcolor={"surface.1"}
         borderRadius={"16px"}
+        minHeight={{ xs: "100%", md: "calc(100vh - (95px + 48px + 24px))" }}
         sx={{
-          minHeight: "100%",
           position: "relative",
           pb: { xs: "70px", md: "0" },
         }}

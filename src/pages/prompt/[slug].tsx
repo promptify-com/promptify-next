@@ -1,8 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
 import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
   Alert,
   Box,
   Divider,
@@ -15,11 +12,13 @@ import {
   createTheme,
   useTheme,
 } from "@mui/material";
-import { ExpandMore } from "@mui/icons-material";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
 import materialDynamicColors from "material-dynamic-colors";
+import { useSelector, useDispatch } from "react-redux";
 import { mix } from "polished";
+import { useWindowSize } from "usehooks-ts";
 import { useRouter } from "next/router";
+
 import { useGetPromptTemplateBySlugQuery, useViewTemplateMutation } from "@/core/api/templates";
 import { TemplatesExecutions } from "@/core/api/dto/templates";
 import { Display } from "@/components/prompt/Display";
@@ -28,13 +27,11 @@ import { authClient } from "@/common/axios";
 import { DetailsCard } from "@/components/prompt/DetailsCard";
 import { PromptLiveResponse } from "@/common/types/prompt";
 import { Layout } from "@/layout";
-import { useWindowSize } from "usehooks-ts";
 import BottomTabs from "@/components/prompt/BottomTabs";
 import { DetailsCardMini } from "@/components/prompt/DetailsCardMini";
 import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
 import ExecutionForm from "@/components/prompt/ExecutionForm";
 import { isValidUserFn } from "@/core/store/userSlice";
-import { useSelector, useDispatch } from "react-redux";
 import { updateTemplateData } from "@/core/store/templatesSlice";
 import { RootState } from "@/core/store";
 import PromptPlaceholder from "@/components/placeholders/PromptPlaceHolder";
@@ -296,10 +293,7 @@ const Prompt = () => {
                   },
                 }}
               >
-                <Grid
-                  mr={1}
-                  height={"100%"}
-                >
+                <Grid mr={1}>
                   <Display
                     templateData={fetchedTemplate}
                     executions={templateExecutions || []}
