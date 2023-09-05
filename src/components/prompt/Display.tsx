@@ -143,8 +143,7 @@ export const Display: React.FC<Props> = ({
           selectedExecution={selectedExecution}
           setSelectedExecution={setSelectedExecution}
           onSearch={text => setSearch(text)}
-          //@ts-ignore
-          onOpenExport={activeExecution}
+          onOpenExport={() => setOpenExportpopup(true)}
         />
         {openExportPopup && (
           <SparkExportPopup
