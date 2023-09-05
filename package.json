@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "next lint --no-cache",
     "prepare": "husky install",
     "prettier:fix": "prettier src/**/*.{ts,tsx} --write"
   },
@@ -60,6 +60,8 @@
     "yup": "^1.2.0"
   },
   "devDependencies": {
+    "eslint": "8.48.0",
+    "eslint-config-next": "13.4.19",
     "husky": "^8.0.3",
     "lint-staged": "^14.0.0",
     "prettier": "3.0.2"

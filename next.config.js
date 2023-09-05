@@ -4,6 +4,9 @@ const nextConfig = {
   images: {
     domains: ["placehold.it", "promptify.s3.amazonaws.com"],
   },
+  eslint: {
+    dirs: ['common', 'assets', 'core', 'hooks', 'styles', 'themes', 'pages'],
+  },
 };
 
 if (
