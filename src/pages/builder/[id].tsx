@@ -63,6 +63,7 @@ export const Builder = () => {
   const [templateDrawerOpen, setTemplateDrawerOpen] = React.useState(Boolean(router.query.editor));
   const [publishTemplate] = usePublishTemplateMutation();
   const [snackBarInvalidVariables, setSnackBarInvalidVariables] = React.useState(false);
+  const [invalidVariableMessage, setInvalidVariableMessage] = React.useState("");
 
   // Remove 'editor' query param after first load to prevent open modal on every load
   useEffect(() => {
@@ -361,9 +362,15 @@ export const Builder = () => {
   const injectOrderAndSendRequest = () => {
     const data = dataForRequest.current;
 
-    const allPromptsValid = dataForRequest.current.prompts_list.every((prompt: any) =>
-      isPromptVariableValid(prompt.content),
-    );
+    const allPromptsValid = dataForRequest.current.prompts_list.every((prompt: any) => {
+      const validation = isPromptVariableValid(prompt.content);
+      if (!validation.isValid) {
+        setInvalidVariableMessage(validation.message);
+        return false;
+      }
+      return true;
+    });
+
     if (!allPromptsValid) {
       setSnackBarInvalidVariables(true);
       return;
@@ -402,7 +409,7 @@ export const Builder = () => {
 
     updateTemplate(Number(id), data).then(() => {
       setSnackBarOpen(true);
-      window.location.reload();
+      //window.location.reload();
     });
   };
 
@@ -609,7 +616,7 @@ export const Builder = () => {
             severity="error"
             sx={{ width: "100%", bgcolor: "#f85249" }}
           >
-            Please check your prompts variables, they're invalid.
+            You have entered an invalid prompt variable {invalidVariableMessage}
           </Alert>
         </Snackbar>
         <Dialog

@@ -1,4 +1,4 @@
-export const isPromptVariableValid = (content: string): boolean => {
+export const isPromptVariableValid = (content: string) => {
   const validTextRegex = /^[a-zA-Z]+$/;
   const regex = /{{(.*?)}}/g;
   const validTypes = ["text", "integer", "code", "choices"];
@@ -10,15 +10,24 @@ export const isPromptVariableValid = (content: string): boolean => {
     const type = parts[1];
 
     if (!validTextRegex.test(variableName)) {
-      return false;
+      return {
+        isValid: false,
+        message: `"${match[0]}"`,
+      };
     }
 
     if (!validTypes.includes(type)) {
-      return false;
+      return {
+        isValid: false,
+        message: `"${match[0]}"`,
+      };
     }
 
     if (parts[2] && parts[2] !== "true" && parts[2] !== "false") {
-      return false;
+      return {
+        isValid: false,
+        message: `"${match[0]}"`,
+      };
     }
 
     if (type === "choices") {
@@ -29,11 +38,16 @@ export const isPromptVariableValid = (content: string): boolean => {
           Array.from(new Set(parts[3].slice(1, -1).split(","))).every(option => option.trim())
         )
       ) {
-        console.log("CHOICES ERROR");
-        return false;
+        return {
+          isValid: false,
+          message: `"${match[0]}"`,
+        };
       }
     }
   }
 
-  return true;
+  return {
+    isValid: true,
+    message: "",
+  };
 };
