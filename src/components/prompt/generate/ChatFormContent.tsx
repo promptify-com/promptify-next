@@ -6,10 +6,7 @@ import { Input, Param, ResInputs } from "@/core/api/dto/prompts";
 import { GeneratorParamSlider } from "./GeneratorParamSlider";
 import { SelectedNodeType } from "./ChatMode";
 import { onScoreChange } from "@/common/helpers/handleGeneratePrompt";
-
-export interface InputsErrors {
-  [key: string]: number | boolean;
-}
+import { InputsErrors } from ".";
 
 interface ChatFormCntentProps {
   PromptsFields: (Input | Param)[];
