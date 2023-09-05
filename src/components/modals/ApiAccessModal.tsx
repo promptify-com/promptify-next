@@ -19,9 +19,70 @@ interface Props {
 
 SyntaxHighlighter.registerLanguage("javascript", js);
 
+const getExecutionSnippet = (token: string) =>
+  new HTTPSnippet({
+    method: "GET",
+    url: `${process.env.NEXT_PUBLIC_API_URL}/api/meta/template-executions/__template_execution_id__/`,
+    headers: [
+      { name: "Authorization", value: `Token ${token}` },
+      { name: "Accept", value: "application/json" },
+      { name: "Content-Type", value: "application/json" },
+    ],
+  });
+const snippetProps = {
+  language: "javascript",
+  style: vs2015,
+  customStyle: {
+    borderRadius: "10px",
+  },
+  showLineNumbers: true,
+  wrapLongLines: true,
+};
+
+const LanguageSelectorAndCopy = ({
+  language,
+  handleChange,
+  status,
+  onClick,
+}: {
+  language: string;
+  handleChange: (event: SelectChangeEvent) => void;
+  status: string;
+  onClick: () => void;
+}) => (
+  <Box
+    display="flex"
+    alignItems="center"
+  >
+    <FormControl sx={{ m: 1 }}>
+      <Select
+        value={language}
+        onChange={handleChange}
+        sx={{ height: "40px", fontSize: "14px" }}
+      >
+        <MenuItem value={"0"}>cUrl</MenuItem>
+        <MenuItem value={"1"}>PHP - cUrl</MenuItem>
+        <MenuItem value={"2"}>Python - http.client</MenuItem>
+        <MenuItem value={"3"}>Python - Requests</MenuItem>
+        <MenuItem value={"4"}>JavaScript - Fetch</MenuItem>
+      </Select>
+    </FormControl>
+    <Button
+      variant={status === "success" ? "outlined" : "contained"}
+      sx={{
+        borderRadius: "5px",
+      }}
+      onClick={onClick}
+      disabled={status === "success"}
+    >
+      {status === "success" ? "Copied" : "Copy"}
+    </Button>
+  </Box>
+);
+
 export default function ApiAccessModal({ onClose, templateData }: Props) {
   const [snippet, setSnippet] = useState<any | null>(null);
-  const [output, setOutput] = useState("");
+  const [output, setOutput] = useState<any[]>([]);
   const [language, setLanguage] = useState("0");
   const [copy, result] = useCopyToClipboard();
   const token = useToken();
@@ -35,7 +96,7 @@ export default function ApiAccessModal({ onClose, templateData }: Props) {
     setSnippet(
       new HTTPSnippet({
         method: "POST",
-        url: `${process.env.NEXT_PUBLIC_API_URL}/api/meta/templates/${templateData.id}/execute/`,
+        url: `${process.env.NEXT_PUBLIC_API_URL}/api/meta/templates/${templateData.id}/execute/?streaming=false`,
         headers: [
           { name: "Authorization", value: `Token ${token}` },
           { name: "Accept", value: "application/json" },
@@ -50,21 +111,32 @@ export default function ApiAccessModal({ onClose, templateData }: Props) {
     const options = { indent: "\t" };
 
     if (snippet) {
+      const snipperGETCode = getExecutionSnippet(token);
+
       switch (language) {
         case "0":
-          setOutput(snippet.convert("shell", "curl", options));
+          setOutput([snippet.convert("shell", "curl", options), snipperGETCode.convert("shell", "curl", options)]);
           break;
         case "1":
-          setOutput(snippet.convert("php", "curl", options));
+          setOutput([snippet.convert("php", "curl", options), snipperGETCode.convert("php", "curl", options)]);
           break;
         case "2":
-          setOutput(snippet.convert("python", "python3", options));
+          setOutput([
+            snippet.convert("python", "python3", options),
+            snipperGETCode.convert("python", "python3", options),
+          ]);
           break;
         case "3":
-          setOutput(snippet.convert("python", "requests", options));
+          setOutput([
+            snippet.convert("python", "requests", options),
+            snipperGETCode.convert("python", "requests", options),
+          ]);
           break;
         case "4":
-          setOutput(snippet.convert("javascript", "fetch", options));
+          setOutput([
+            snippet.convert("javascript", "fetch", options),
+            snipperGETCode.convert("javascript", "fetch", options),
+          ]);
           break;
         default:
       }
@@ -73,8 +145,7 @@ export default function ApiAccessModal({ onClose, templateData }: Props) {
 
   const responseExample = `
 {
-  response: text
-  completed: boolean
+  "template_execution_id": number,
 }
     `;
 
@@ -119,49 +190,19 @@ export default function ApiAccessModal({ onClose, templateData }: Props) {
                 Integrate this API
               </Typography>
             </Box>
-            <Box
-              display="flex"
-              alignItems="center"
-            >
-              <FormControl sx={{ m: 1 }}>
-                <Select
-                  value={language}
-                  onChange={handleChange}
-                  sx={{ height: "40px", fontSize: "14px" }}
-                >
-                  <MenuItem value={"0"}>cUrl</MenuItem>
-                  <MenuItem value={"1"}>PHP - cUrl</MenuItem>
-                  <MenuItem value={"2"}>Python - http.client</MenuItem>
-                  <MenuItem value={"3"}>Python - Requests</MenuItem>
-                  <MenuItem value={"4"}>JavaScript - Fetch</MenuItem>
-                </Select>
-              </FormControl>
-              <Button
-                variant={result?.state === "success" ? "outlined" : "contained"}
-                sx={{
-                  borderRadius: "5px",
-                }}
-                onClick={() => {
-                  copy(output);
-                }}
-                disabled={result?.state === "success"}
-              >
-                {result?.state === "success" ? "Copied" : "Copy"}
-              </Button>
-            </Box>
+            <LanguageSelectorAndCopy
+              language={language}
+              handleChange={handleChange}
+              status={result?.state ?? ""}
+              onClick={() => {
+                copy(
+                  `POST an execution:\n\`\`\`sh\n${output[0]}\n\`\`\`\n\nGET an execution:\n\`\`\`sh\n${output[1]}\n\`\`\`\``,
+                );
+              }}
+            />
           </Box>
 
-          <SyntaxHighlighter
-            language="javascript"
-            style={vs2015}
-            customStyle={{
-              borderRadius: "10px",
-            }}
-            showLineNumbers
-            wrapLongLines
-          >
-            {output}
-          </SyntaxHighlighter>
+          <SyntaxHighlighter {...snippetProps}>{output[0]}</SyntaxHighlighter>
         </Box>
         <Box
           p="20px"
@@ -189,6 +230,43 @@ export default function ApiAccessModal({ onClose, templateData }: Props) {
           >
             {responseExample}
           </SyntaxHighlighter>
+        </Box>
+        <Box
+          p="20px"
+          bgcolor="#f2f5f9"
+          mt={{ xs: "20px", md: "40px" }}
+        >
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="space-between"
+            flexDirection={{ xs: "column", md: "row" }}
+          >
+            <Box
+              display="flex"
+              alignItems="center"
+            >
+              <Settings />
+              <Typography
+                ml="1rem"
+                fontSize={18}
+              >
+                Get an execution
+              </Typography>
+            </Box>
+            <LanguageSelectorAndCopy
+              language={language}
+              handleChange={handleChange}
+              status={result?.state ?? ""}
+              onClick={() => {
+                copy(
+                  `POST an execution:\n\`\`\`sh\n${output[0]}\n\`\`\`\n\nGET an execution:\n\`\`\`sh\n${output[1]}\n\`\`\`\``,
+                );
+              }}
+            />
+          </Box>
+
+          <SyntaxHighlighter {...snippetProps}>{output[1]}</SyntaxHighlighter>
         </Box>
       </Box>
     </Modal>
