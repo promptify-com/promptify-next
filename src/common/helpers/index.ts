@@ -6,4 +6,4 @@ export * from "./highlightSearch";
 export * from "./handleExecutionExport";
 export * from "./promptRandomId";
 export * from "./setStringFromArray";
-export * from "./markdownToHTML";
+export * from "./htmlHelper";

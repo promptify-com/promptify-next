@@ -1,10 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Box, Stack, Typography } from "@mui/material";
 import { Subtitle } from "@/components/blocks";
-import { markdownToHTML } from "@/common/helpers";
+import { markdownToHTML, sanitizeHTML } from "@/common/helpers";
 import { PromptLiveResponse, PromptLiveResponseData } from "@/common/types/prompt";
 import { Templates } from "@/core/api/dto/templates";
-import DOMPurify from "isomorphic-dompurify";
 
 interface Props {
   execution: PromptLiveResponse;
@@ -112,26 +111,32 @@ export const ExecutionCardGenerated: React.FC<Props> = ({ execution, templateDat
                         color: "black",
                       },
                       pre: {
-                        bgcolor: "#282a35",
-                        color: "common.white",
                         m: "10px 0",
                         borderRadius: "8px",
                         overflow: "hidden",
                         code: {
-                          display: "block",
-                          p: "16px 24px",
-                          overflow: "auto",
+                          borderRadius: 0,
+                          m: 0,
                         },
-                        ".language": {
-                          p: "8px 24px",
-                          bgcolor: "#4d5562",
-                          color: "#ffffff",
-                          fontSize: 13,
-                        },
+                      },
+                      code: {
+                        display: "block",
+                        bgcolor: "#282a35",
+                        color: "common.white",
+                        borderRadius: "8px",
+                        p: "16px 24px",
+                        mb: "10px",
+                        overflow: "auto",
+                      },
+                      ".language-label": {
+                        p: "8px 24px",
+                        bgcolor: "#4d5562",
+                        color: "#ffffff",
+                        fontSize: 13,
                       },
                     }}
                     dangerouslySetInnerHTML={{
-                      __html: DOMPurify.sanitize(exec.message),
+                      __html: sanitizeHTML(exec.message),
                     }}
                   />
                 </Box>
