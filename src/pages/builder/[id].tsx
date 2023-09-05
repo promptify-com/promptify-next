@@ -409,7 +409,7 @@ export const Builder = () => {
 
     updateTemplate(Number(id), data).then(() => {
       setSnackBarOpen(true);
-      //window.location.reload();
+      window.location.reload();
     });
   };
 
