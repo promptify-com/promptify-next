@@ -221,14 +221,13 @@ const SparksContainer: FC<SparksContainerProps> = ({ templates }) => {
           ))}
         </Box>
       </Grid>
-      {popup === "delete" ||
-        (popup === "update" && (
-          <SparkSaveDeletePopup
-            type={popup}
-            activeExecution={activeExecution}
-            onClose={() => setPopup(null)}
-          />
-        ))}
+      {(popup === "delete" || popup === "update") && (
+        <SparkSaveDeletePopup
+          type={popup}
+          activeExecution={activeExecution}
+          onClose={() => setPopup(null)}
+        />
+      )}
 
       {popup === "export" && activeExecution?.id && (
         <SparkExportPopup
