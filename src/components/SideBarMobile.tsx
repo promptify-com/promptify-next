@@ -4,6 +4,7 @@ import { AutoAwesome, ClearRounded, HomeRounded, MenuBookRounded, MenuRounded, S
 import {
   Avatar,
   Box,
+  CircularProgress,
   Divider,
   Grid,
   InputBase,
@@ -69,6 +70,28 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
     skip: !textInput.length,
   });
 
+  const [isRouteChanging, setIsRouteChanging] = useState(false);
+
+  // Listen for route changes and show spinner during the transition
+  useEffect(() => {
+    const handleRouteChangeStart = () => {
+      setIsRouteChanging(true); // Route change started
+    };
+
+    const handleRouteChangeComplete = () => {
+      setIsRouteChanging(false);
+      onCloseDrawer();
+    };
+
+    router.events.on("routeChangeStart", handleRouteChangeStart);
+    router.events.on("routeChangeComplete", handleRouteChangeComplete);
+
+    return () => {
+      router.events.off("routeChangeStart", handleRouteChangeStart);
+      router.events.off("routeChangeComplete", handleRouteChangeComplete);
+    };
+  }, [router, onCloseDrawer]);
+
   const links = [
     {
       label: "Homepage",
@@ -126,14 +149,6 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
       skip: !isValidUser,
     },
   );
-  // Close the drawer when the router changes
-
-  useEffect(() => {
-    router.events.on("routeChangeComplete", onCloseDrawer);
-    return () => {
-      router.events.off("routeChangeComplete", onCloseDrawer);
-    };
-  }, [router, onCloseDrawer]);
 
   return (
     <SwipeableDrawer
@@ -319,37 +334,45 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
                 )}
               </Box>
             ) : (
-              <Grid p={"16px"}>
-                {isFetching ? (
-                  <CardTemplatePlaceholder count={5} />
-                ) : (
-                  <Grid
-                    display={"flex"}
-                    flexDirection={"column"}
-                    justifyContent={"center"}
-                    alignItems={"center"}
-                    minHeight={"20vh"}
-                  >
-                    {templates?.length !== 0 && !isFetching ? (
-                      <Grid
-                        display={"flex"}
-                        flexDirection={"column"}
-                        gap={"8px"}
-                        width={"100%"}
-                      >
-                        {templates?.map(template => (
-                          <CardTemplate
-                            key={template.id}
-                            template={template}
-                            query={debouncedSearchName}
-                            asResult
-                          />
-                        ))}
-                      </Grid>
-                    ) : (
-                      <NotFoundIcon />
-                    )}
+              <Grid
+                p={"16px"}
+                minHeight={templates?.length === 0 ? "70vh" : "auto"}
+                display={"flex"}
+                flexDirection={"column"}
+                justifyContent={"center"}
+                alignItems={"center"}
+                width={"100%"}
+              >
+                {isRouteChanging ? (
+                  // Render the loading spinner during route changes
+                  <CircularProgress />
+                ) : isFetching ? (
+                  // Render the loading spinner while fetching data
+                  <Grid width={"100%"}>
+                    <CardTemplatePlaceholder count={5} />
                   </Grid>
+                ) : templates?.length !== 0 && !isFetching ? (
+                  // Render search results
+                  <Grid>
+                    <Grid
+                      display={"flex"}
+                      flexDirection={"column"}
+                      gap={"8px"}
+                      width={"100%"}
+                    >
+                      {templates?.map(template => (
+                        <CardTemplate
+                          key={template.id}
+                          template={template}
+                          query={debouncedSearchName}
+                          asResult
+                        />
+                      ))}
+                    </Grid>
+                  </Grid>
+                ) : (
+                  // Render not found icon when there are no results
+                  <NotFoundIcon />
                 )}
               </Grid>
             )}
