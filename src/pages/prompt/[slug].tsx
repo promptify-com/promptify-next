@@ -83,7 +83,6 @@ const Prompt = () => {
         id: fetchedTemplate.id,
         is_favorite: fetchedTemplate.is_favorite,
         likes: fetchedTemplate.favorites_count,
-        isGenerating: false,
       }),
     );
   }

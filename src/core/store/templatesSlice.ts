@@ -9,6 +9,8 @@ export interface TemplatesProps {
   isGenerating: boolean;
 }
 
+type UpdateTemplateDataPayload = Pick<TemplatesProps, "is_favorite" | "id" | "likes">;
+
 const initialState: TemplatesProps = {
   is_favorite: false,
   id: 0,
@@ -25,7 +27,7 @@ export const templatesSlice = createSlice({
       state.is_favorite = action.payload;
       state.likes = action.payload ? state.likes + 1 : state.likes - 1;
     },
-    updateTemplateData: (state, action: PayloadAction<Omit<TemplatesProps, "executionData">>) => {
+    updateTemplateData: (state, action: PayloadAction<UpdateTemplateDataPayload>) => {
       state.is_favorite = action.payload.is_favorite;
       state.id = action.payload.id;
       state.likes = action.payload.likes;
