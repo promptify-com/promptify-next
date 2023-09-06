@@ -560,12 +560,16 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
             <Button
               variant={"contained"}
               startIcon={
-                token ? (
-                  <LogoApp
-                    width={18}
-                    color="white"
-                  />
-                ) : null
+                token && isGenerating ? (
+                  <CircularProgress size={16} />
+                ) : (
+                  token && (
+                    <LogoApp
+                      width={18}
+                      color="white"
+                    />
+                  )
+                )
               }
               sx={{
                 flex: 1,
@@ -591,26 +595,32 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
             >
               {token ? (
                 <React.Fragment>
-                  <Typography sx={{ ml: 2, color: "inherit", fontSize: 15 }}>Generate</Typography>
-                  <Typography sx={{ display: { md: "none" }, ml: "auto", color: "inherit", fontSize: 12 }}>
-                    ~360s
-                  </Typography>
-                  <Stack
-                    direction={"row"}
-                    alignItems={"center"}
-                    gap={0.5}
-                    sx={{ display: { xs: "none", md: "flex" }, ml: "auto", color: "inherit", fontSize: 12 }}
-                  >
-                    {templateData.executions_limit === -1 ? (
-                      <AllInclusive fontSize="small" />
-                    ) : (
-                      <>
-                        {templateData.executions_limit - templateData.executions_count} of{" "}
-                        {templateData.executions_limit} left
-                        <InfoOutlined sx={{ fontSize: 16 }} />
-                      </>
-                    )}
-                  </Stack>
+                  {isGenerating ? (
+                    <Typography>Generation in progress...</Typography>
+                  ) : (
+                    <>
+                      <Typography sx={{ ml: 2, color: "inherit", fontSize: 15 }}>Generate</Typography>
+                      <Typography sx={{ display: { md: "none" }, ml: "auto", color: "inherit", fontSize: 12 }}>
+                        ~360s
+                      </Typography>
+                      <Stack
+                        direction={"row"}
+                        alignItems={"center"}
+                        gap={0.5}
+                        sx={{ display: { xs: "none", md: "flex" }, ml: "auto", color: "inherit", fontSize: 12 }}
+                      >
+                        {templateData.executions_limit === -1 ? (
+                          <AllInclusive fontSize="small" />
+                        ) : (
+                          <>
+                            {templateData.executions_limit - templateData.executions_count} of{" "}
+                            {templateData.executions_limit} left
+                            <InfoOutlined sx={{ fontSize: 16 }} />
+                          </>
+                        )}
+                      </Stack>
+                    </>
+                  )}
                 </React.Fragment>
               ) : (
                 <Typography
