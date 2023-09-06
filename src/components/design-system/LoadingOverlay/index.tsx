@@ -10,7 +10,7 @@ interface LoadingOverlayProps {
 
 const LoadingOverlay: React.FC<LoadingOverlayProps> = ({ loading, children, size = 16 }) => {
   const { width: windowWidth } = useWindowSize();
-  const IS_MOBILE = windowWidth < 960;
+  const IS_MOBILE = windowWidth < 900;
 
   return (
     <Backdrop open={loading && IS_MOBILE}>
