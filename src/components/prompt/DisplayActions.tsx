@@ -204,19 +204,21 @@ export const DisplayActions: React.FC<Props> = ({
               TODO: https://github.com/ysfbsf/promptify-next/issues/275
               {SearchInput("left")} 
             */}
-            <Tooltip title="Export">
-              <IconButton
-                onClick={onOpenExport}
-                sx={{
-                  border: "none",
-                  "&:hover": {
-                    bgcolor: "surface.2",
-                  },
-                }}
-              >
-                <ShareIcon />
-              </IconButton>
-            </Tooltip>
+            {selectedExecution?.id && (
+              <Tooltip title="Export">
+                <IconButton
+                  onClick={onOpenExport}
+                  sx={{
+                    border: "none",
+                    "&:hover": {
+                      bgcolor: "surface.2",
+                    },
+                  }}
+                >
+                  <ShareIcon />
+                </IconButton>
+              </Tooltip>
+            )}
           </Stack>
         </Stack>
 

@@ -114,7 +114,7 @@ export const Display: React.FC<Props> = ({
         onOpenExport={() => setOpenExportpopup(true)}
       />
 
-      {openExportPopup && (
+      {openExportPopup && activeExecution?.id && (
         <SparkExportPopup
           onClose={() => setOpenExportpopup(false)}
           activeExecution={activeExecution}
