@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Box, Slider, Typography } from "@mui/material";
+
 import { PromptDescription } from "@/core/api/dto/prompts";
+import { useAppSelector } from "@/hooks/useStore";
 
 interface PromptParamsDescriptionProps {
   descriptions: PromptDescription[];
   activeScore: number;
   setScore: (score: number) => void;
   is_editable: boolean;
-  onGenerate: boolean;
 }
 
 export const GeneratorParamSlider: React.FC<PromptParamsDescriptionProps> = ({
@@ -15,8 +16,9 @@ export const GeneratorParamSlider: React.FC<PromptParamsDescriptionProps> = ({
   activeScore,
   setScore,
   is_editable,
-  onGenerate,
 }) => {
+  const isGenerating = useAppSelector(state => state.template.isGenerating);
+
   const [activeMark, setActiveMark] = useState<number>(activeScore);
   const activeDescription = descriptions.find(description => description.score === activeMark);
   const [displayTitle, setDisplayTitle] = useState("");
@@ -80,7 +82,7 @@ export const GeneratorParamSlider: React.FC<PromptParamsDescriptionProps> = ({
         {displayDesc}
       </Typography>
       <Slider
-        disabled={!is_editable || onGenerate}
+        disabled={!is_editable || isGenerating}
         sx={{
           height: "2px",
           flexShrink: 0,

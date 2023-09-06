@@ -6,6 +6,7 @@ export interface TemplatesProps {
   id: number;
   likes: number;
   executionData: string;
+  isGenerating: boolean;
 }
 
 const initialState: TemplatesProps = {
@@ -13,6 +14,7 @@ const initialState: TemplatesProps = {
   id: 0,
   likes: 0,
   executionData: "[]",
+  isGenerating: false,
 };
 
 export const templatesSlice = createSlice({
@@ -31,9 +33,14 @@ export const templatesSlice = createSlice({
     updateExecutionData: (state, action: PayloadAction<string>) => {
       state.executionData = action.payload;
     },
+
+    setGeneratingStatus: (state, action: PayloadAction<boolean>) => {
+      state.isGenerating = action.payload;
+    },
   },
 });
 
-export const { updateCurrentFavorite, updateTemplateData, updateExecutionData } = templatesSlice.actions;
+export const { updateCurrentFavorite, updateTemplateData, updateExecutionData, setGeneratingStatus } =
+  templatesSlice.actions;
 
 export default templatesSlice.reducer;

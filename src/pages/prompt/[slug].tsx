@@ -81,6 +81,7 @@ const Prompt = () => {
         id: fetchedTemplate.id,
         is_favorite: fetchedTemplate.is_favorite,
         likes: fetchedTemplate.favorites_count,
+        isGenerating: false,
       }),
     );
   }
@@ -263,8 +264,6 @@ const Prompt = () => {
                           templateData={fetchedTemplate}
                           selectedExecution={selectedExecution}
                           setGeneratedExecution={setGeneratedExecution}
-                          isGenerating={isGenerating}
-                          setIsGenerating={setIsGenerating}
                           onError={setErrorMessage}
                         />
                       </Box>
@@ -314,8 +313,6 @@ const Prompt = () => {
                       templateData={fetchedTemplate}
                       selectedExecution={selectedExecution}
                       setGeneratedExecution={setGeneratedExecution}
-                      isGenerating={isGenerating}
-                      setIsGenerating={setIsGenerating}
                       onError={setErrorMessage}
                     />
                   </Grid>

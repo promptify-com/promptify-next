@@ -31,6 +31,7 @@ import { ExecutionsTabs } from "./ExecutionsTabs";
 import SavedSpark from "@/assets/icons/SavedSpark";
 import DraftSpark from "@/assets/icons/DraftSpark";
 import ShareIcon from "@/assets/icons/ShareIcon";
+import { useAppSelector } from "@/hooks/useStore";
 
 interface Props {
   executions: TemplatesExecutions[];
@@ -50,6 +51,7 @@ export const DisplayActions: React.FC<Props> = ({
   onOpenExport,
 }) => {
   const { palette } = useTheme();
+  const isGenerating = useAppSelector(state => state.template.isGenerating);
 
   const [execsDropAnchor, setExecsDropAnchor] = useState<HTMLElement | null>(null);
   const [searchShown, setSearchShown] = useState(false);
@@ -119,6 +121,7 @@ export const DisplayActions: React.FC<Props> = ({
 
   const ExecutionsSelect = (
     <Button
+      disabled={isGenerating}
       sx={{
         width: "100%",
         maxWidth: "336px",

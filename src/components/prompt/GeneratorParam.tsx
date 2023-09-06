@@ -8,16 +8,9 @@ interface GeneratorParamProps {
   params: PromptParams[];
   resOverrides: any;
   setResOverrides: (obj: any) => void;
-  onGenerate: boolean;
 }
 
-export const GeneratorParam: React.FC<GeneratorParamProps> = ({
-  promptId,
-  params,
-  resOverrides,
-  setResOverrides,
-  onGenerate,
-}) => {
+export const GeneratorParam: React.FC<GeneratorParamProps> = ({ promptId, params, resOverrides, setResOverrides }) => {
   const handleChangeScore = (score: number, parameter: number) => {
     const newArray = JSON.parse(JSON.stringify(resOverrides));
     const matchingObject = newArray.find((obj: { id: number }) => obj.id === promptId);
@@ -70,7 +63,6 @@ export const GeneratorParam: React.FC<GeneratorParamProps> = ({
                 activeScore={activeScoreOverride} // Use the override value here
                 setScore={score => handleChangeScore(score, param.parameter.id)}
                 is_editable={param.is_editable}
-                onGenerate={onGenerate}
               />
             </Box>
           </React.Fragment>
