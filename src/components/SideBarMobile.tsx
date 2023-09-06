@@ -130,6 +130,9 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
 
   useEffect(() => {
     router.events.on("routeChangeComplete", onCloseDrawer);
+    return () => {
+      router.events.off("routeChangeComplete", onCloseDrawer);
+    };
   }, [router, onCloseDrawer]);
 
   return (
