@@ -26,7 +26,7 @@ import LogoAsAvatar from "@/assets/icons/LogoAsAvatar";
 import ChatFormContent from "./ChatFormContent";
 import { RootState } from "@/core/store";
 import { InputsErrors } from ".";
-import { onInputChange } from "@/common/helpers/handleGeneratePrompt";
+import { isParam, isParamSelected, onInputChange } from "@/common/helpers/handleGeneratePrompt";
 
 export type SelectedNodeType = { questionId: number; item: Input | Param | null } | null;
 
@@ -56,29 +56,15 @@ export const ChatMode: React.FC<ChatModeProps> = ({
 
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
 
-  const isParam = (node: Input | Param): node is Param => "param" in node;
-  const isParamSelected = (selectedNode: SelectedNodeType): selectedNode is { questionId: number; item: Param } => {
-    return selectedNode?.item !== null && selectedNode?.item !== undefined && isParam(selectedNode.item);
-  };
-
   const [value, setValue] = useState<string | number | null>();
   const [chatExpanded, setChatExpanded] = useState(true);
 
-  const [selectedNode, setSelectedNode] = useState<{ questionId: number; item: Input | Param | null } | null>({
-    questionId: 0,
-    item: null,
-  });
+  const [selectedNode, setSelectedNode] = useState<SelectedNodeType>(null);
 
-  let PromptsFields: (Input | Param)[] = [];
+  let promptsFields: (Input | Param)[] = [];
   if (inputs && params) {
-    PromptsFields = [...inputs, ...params];
+    promptsFields = [...inputs, ...params];
   }
-
-  useEffect(() => {
-    if (inputs) {
-      setSelectedNode({ questionId: 0, item: inputs[0] });
-    }
-  }, [inputs]);
 
   useEffect(() => {
     if (isGenerating) {
@@ -87,9 +73,9 @@ export const ChatMode: React.FC<ChatModeProps> = ({
   }, [isGenerating]);
 
   useEffect(() => {
-    if (selectedNode && !isParamSelected(selectedNode)) {
+    if (selectedNode?.item && !isParam(selectedNode.item)) {
       const { item } = selectedNode;
-      if (item && !isParam(item)) {
+      if (item) {
         let inputValue;
         inputValue = nodeInputs.find(prompt => prompt.id === item?.prompt)?.inputs[item.name]?.value;
 
@@ -121,16 +107,16 @@ export const ChatMode: React.FC<ChatModeProps> = ({
   };
 
   const handleNext = () => {
-    if (PromptsFields.length === 0) {
+    if (promptsFields.length === 0) {
       return null;
     }
     if (selectedNode) {
       const newIndex = selectedNode?.questionId;
 
-      if (newIndex < PromptsFields.length - 1) {
+      if (newIndex < promptsFields.length - 1) {
         setSelectedNode({
           questionId: newIndex + 1,
-          item: PromptsFields[newIndex],
+          item: promptsFields[newIndex],
         });
       } else if (isFormFilled) {
         generate();
@@ -143,6 +129,8 @@ export const ChatMode: React.FC<ChatModeProps> = ({
       width={"100%"}
       overflow={"hidden"}
       borderRadius={"16px"}
+      minHeight={{ xs: "70vh" }}
+      position={"relative"}
     >
       <Accordion
         expanded={windowWidth < 960 ? true : chatExpanded}
@@ -263,7 +251,7 @@ export const ChatMode: React.FC<ChatModeProps> = ({
                     >
                       {!inputs || !params ? <TabsAndFormPlaceholder form={true} /> : null}
                       <ChatFormContent
-                        PromptsFields={PromptsFields}
+                        promptsFields={promptsFields}
                         selectedNode={selectedNode}
                         setSelectedNode={setSelectedNode}
                         errors={errors}
@@ -271,15 +259,14 @@ export const ChatMode: React.FC<ChatModeProps> = ({
                         nodeParams={nodeParams}
                         setNodeParams={setNodeParams}
                         getItemName={getItemName}
-                        isParam={isParam}
-                        isParamSelected={isParamSelected}
                       />
 
                       <Stack
                         sx={{
                           bgcolor: "initial",
                           color: { xs: "onSurface", md: "initial" },
-                          zIndex: 999,
+                          zIndex: 9,
+                          mb: { xs: 6, md: 0 },
                         }}
                       >
                         <Stack
@@ -397,7 +384,14 @@ export const ChatMode: React.FC<ChatModeProps> = ({
                 </Grid>
               </Grid>
             </Grid>
-            <Grid p={"16px"}>
+            <Grid
+              p={"16px"}
+              position={{ xs: "fixed", md: "inherit" }}
+              bottom={"60px"}
+              zIndex={99}
+              left={0}
+              right={0}
+            >
               <Box
                 bgcolor={"surface.3"}
                 display={"flex"}
@@ -408,7 +402,6 @@ export const ChatMode: React.FC<ChatModeProps> = ({
               >
                 {selectedNode?.item && !isParam(selectedNode.item) && (
                   <Button
-                    startIcon={<Clear onClick={() => setSelectedNode(null)} />}
                     sx={{
                       bgcolor: "surface.1",
                       "&:hover": {

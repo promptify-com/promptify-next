@@ -5,11 +5,11 @@ import { Clear } from "@mui/icons-material";
 import { Input, Param, ResInputs } from "@/core/api/dto/prompts";
 import { GeneratorParamSlider } from "./GeneratorParamSlider";
 import { SelectedNodeType } from "./ChatMode";
-import { onScoreChange } from "@/common/helpers/handleGeneratePrompt";
+import { getInputValue, isParam, isParamSelected, onScoreChange } from "@/common/helpers/handleGeneratePrompt";
 import { InputsErrors } from ".";
 
 interface ChatFormCntentProps {
-  PromptsFields: (Input | Param)[];
+  promptsFields: (Input | Param)[];
   errors: InputsErrors;
   nodeInputs: ResInputs[];
   nodeParams: any;
@@ -17,15 +17,10 @@ interface ChatFormCntentProps {
   getItemName: (item: Input | Param) => string;
   selectedNode: SelectedNodeType;
   setSelectedNode: (selectedNode: SelectedNodeType) => void;
-  isParam: (item: Input | Param) => item is Param;
-  isParamSelected: (selectedNode: SelectedNodeType) => selectedNode is {
-    questionId: number;
-    item: Param;
-  };
 }
 
 const ChatFormContent: React.FC<ChatFormCntentProps> = ({
-  PromptsFields,
+  promptsFields,
   errors,
   selectedNode,
   nodeInputs,
@@ -33,8 +28,6 @@ const ChatFormContent: React.FC<ChatFormCntentProps> = ({
   setNodeParams,
   getItemName,
   setSelectedNode,
-  isParam,
-  isParamSelected,
 }) => {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
 
@@ -42,7 +35,7 @@ const ChatFormContent: React.FC<ChatFormCntentProps> = ({
   const [paramSliderValues, setParamSliderValues] = useState<{ [paramId: number]: number }>({});
 
   const handleItemClick = (event: React.MouseEvent<HTMLButtonElement>, item: Input | Param) => {
-    const questionId = PromptsFields.findIndex(field => field === item);
+    const questionId = promptsFields.findIndex(field => field === item);
     if (isParam(item)) {
       setAnchorEl(event.currentTarget);
       const initialScore = paramSliderValues[item.param.parameter.id] || 0;
@@ -60,11 +53,6 @@ const ChatFormContent: React.FC<ChatFormCntentProps> = ({
         setParamSliderValues({ ...paramSliderValues, [param.parameter.id]: newScore });
       }
     }
-  };
-
-  const getInputValue = (item: Input | Param) => {
-    if (isParam(item)) return "";
-    return nodeInputs.find(prompt => prompt.id === item.prompt)?.inputs[item.name]?.value ?? "";
   };
 
   const isRequired = (item: Input | Param) => ("required" in item ? item.required : false);
@@ -99,15 +87,18 @@ const ChatFormContent: React.FC<ChatFormCntentProps> = ({
     if (isParamSelected(selectedNode)) {
       const { param } = selectedNode.item;
       return {
-        name: param.parameter.name,
-        descriptions: param.descriptions,
-        is_editable: param.is_editable,
+        name: param.parameter.name ?? "",
+        descriptions: param.descriptions ?? [],
+        is_editable: param.is_editable ?? false,
       };
     }
     return null;
   }
   const paramProperties = getParamProperties(selectedNode);
-  const { name: paramName, descriptions: paramDescriptions, is_editable: paramEditable } = paramProperties ?? {};
+
+  const paramName = paramProperties?.name ?? "";
+  const paramDescriptions = paramProperties?.descriptions ?? [];
+  const paramEditable = paramProperties?.is_editable ?? false;
 
   return (
     <List
@@ -117,16 +108,16 @@ const ChatFormContent: React.FC<ChatFormCntentProps> = ({
         gap: "8px",
       }}
     >
-      {PromptsFields.map((item, i) => {
+      {promptsFields.map((item, idx) => {
         const itemName = getItemName(item);
-        const inputValue = getInputValue(item);
+        const inputValue = getInputValue(nodeInputs, item);
         const required = isRequired(item);
         const labelColor = getLabelColor(itemName, inputValue, item, score, selectedNode, errors, paramSliderValues);
 
         return (
           <ListItemButton
-            key={i}
-            selected={i === selectedNode?.questionId}
+            key={idx}
+            selected={idx === selectedNode?.questionId}
             //@ts-ignore
             onClick={e => handleItemClick(e, item)}
             sx={{
@@ -150,7 +141,7 @@ const ChatFormContent: React.FC<ChatFormCntentProps> = ({
                 }}
               >
                 <Typography color={labelColor}>
-                  {i + 1}. {itemName}
+                  {selectedNode?.questionId}. {itemName}
                   {required ? "*" : ""}: {inputValue}
                 </Typography>
               </InputLabel>
@@ -193,7 +184,7 @@ const ChatFormContent: React.FC<ChatFormCntentProps> = ({
             </IconButton>
 
             <Typography>
-              {selectedNode.questionId + 1}.{paramName}
+              {selectedNode.questionId}.{paramName}
             </Typography>
             <GeneratorParamSlider
               activeScore={score}

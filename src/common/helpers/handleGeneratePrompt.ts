@@ -1,4 +1,5 @@
-import { ResInputs, ResOverrides } from "@/core/api/dto/prompts";
+import { SelectedNodeType } from "@/components/prompt/generate/ChatMode";
+import { Input, Param, ResInputs, ResOverrides } from "@/core/api/dto/prompts";
 
 export const onInputChange = (
   nodeInputs: ResInputs[],
@@ -9,7 +10,6 @@ export const onInputChange = (
   type: string,
 ) => {
   const selectedInput = nodeInputs.find(prompt => prompt.inputs[name]);
-  const inputs = [...nodeInputs];
 
   if (!selectedInput) {
     return setNodeInputs([
@@ -25,22 +25,16 @@ export const onInputChange = (
     ]);
   }
 
-  inputs.forEach((prompt: any, index: number) => {
+  nodeInputs.forEach(prompt => {
     if (prompt.id === promptId) {
-      inputs[index] = {
-        ...prompt,
-        inputs: {
-          ...prompt.inputs,
-          [name]: {
-            value: type === "number" ? +value : value,
-            required: selectedInput.inputs[name].required,
-          },
-        },
+      prompt.inputs[name] = {
+        value: type === "number" ? +value : value,
+        required: selectedInput.inputs[name].required,
       };
     }
   });
 
-  setNodeInputs(inputs);
+  setNodeInputs([...nodeInputs]);
 };
 
 export const onScoreChange = (
@@ -50,11 +44,11 @@ export const onScoreChange = (
   score: number,
   parameter: number,
 ) => {
-  const params = JSON.parse(JSON.stringify(nodeParams));
+  const params = [...nodeParams];
   const matchingParam = params.find((obj: { id: number }) => obj.id === promptId);
 
   if (matchingParam) {
-    const matchingContext = matchingParam.contextual_overrides.find((c: any) => c.parameter === parameter);
+    const matchingContext = matchingParam.contextual_overrides.find(contexual => contexual.parameter === parameter);
 
     matchingContext ? (matchingContext.score = score) : matchingParam.contextual_overrides.push({ parameter, score });
   } else {
@@ -62,4 +56,17 @@ export const onScoreChange = (
   }
 
   setNodeParams(params);
+};
+export const getInputValue = (
+  nodeInputs: ResInputs[],
+
+  item: Input | Param,
+) => {
+  if (isParam(item)) return "";
+  return nodeInputs.find(prompt => prompt.id === item.prompt)?.inputs[item.name]?.value ?? "";
+};
+
+export const isParam = (node: Input | Param): node is Param => "param" in node;
+export const isParamSelected = (node: SelectedNodeType): node is { questionId: number; item: Param } => {
+  return node?.item !== null && node?.item !== undefined && isParam(node.item);
 };
