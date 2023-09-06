@@ -230,7 +230,7 @@ const SparksContainer: FC<SparksContainerProps> = ({ templates }) => {
           />
         ))}
 
-      {popup === "export" && (
+      {popup === "export" && activeExecution?.id && (
         <SparkExportPopup
           onClose={() => setPopup(null)}
           activeExecution={activeExecution}
