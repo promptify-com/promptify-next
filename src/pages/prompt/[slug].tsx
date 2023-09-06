@@ -39,11 +39,13 @@ import { useSelector, useDispatch } from "react-redux";
 import { updateTemplateData } from "@/core/store/templatesSlice";
 import { RootState } from "@/core/store";
 import PromptPlaceholder from "@/components/placeholders/PromptPlaceHolder";
+import { useAppSelector } from "@/hooks/useStore";
 
 const Prompt = () => {
+  const isGenerating = useAppSelector(state => state.template.isGenerating);
+
   const [selectedExecution, setSelectedExecution] = useState<TemplatesExecutions | null>(null);
   const [generatedExecution, setGeneratedExecution] = useState<PromptLiveResponse | null>(null);
-  const [isGenerating, setIsGenerating] = useState(false);
   const [executionFormOpen, setExecutionFormOpen] = useState(false);
   const [updateViewTemplate] = useViewTemplateMutation();
   const [errorMessage, setErrorMessage] = useState<string>("");
@@ -263,8 +265,6 @@ const Prompt = () => {
                           templateData={fetchedTemplate}
                           selectedExecution={selectedExecution}
                           setGeneratedExecution={setGeneratedExecution}
-                          isGenerating={isGenerating}
-                          setIsGenerating={setIsGenerating}
                           onError={setErrorMessage}
                         />
                       </Box>
@@ -314,8 +314,6 @@ const Prompt = () => {
                       templateData={fetchedTemplate}
                       selectedExecution={selectedExecution}
                       setGeneratedExecution={setGeneratedExecution}
-                      isGenerating={isGenerating}
-                      setIsGenerating={setIsGenerating}
                       onError={setErrorMessage}
                     />
                   </Grid>

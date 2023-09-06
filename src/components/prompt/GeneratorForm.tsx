@@ -3,7 +3,7 @@ import { Box, Button, CircularProgress, Stack, Typography, alpha, useTheme } fro
 import { PromptParams, ResInputs, ResOverrides, ResPrompt } from "@/core/api/dto/prompts";
 import { IPromptInput, PromptLiveResponse } from "@/common/types/prompt";
 import useToken from "@/hooks/useToken";
-import { useAppDispatch } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { templatesApi } from "@/core/api/templates";
 import { GeneratorInput } from "./GeneratorInput";
 import { GeneratorParam } from "./GeneratorParam";
@@ -15,14 +15,12 @@ import { useRouter } from "next/router";
 import { AllInclusive, Close, InfoOutlined } from "@mui/icons-material";
 import TabsAndFormPlaceholder from "@/components/placeholders/TabsAndFormPlaceholder";
 import Storage from "@/common/storage";
-import { updateExecutionData } from "@/core/store/templatesSlice";
+import { setGeneratingStatus, updateExecutionData } from "@/core/store/templatesSlice";
 
 interface GeneratorFormProps {
   templateData: Templates;
   selectedExecution: TemplatesExecutions | null;
   setGeneratedExecution: (data: PromptLiveResponse) => void;
-  isGenerating: boolean;
-  setIsGenerating: (status: boolean) => void;
   onError: (errMsg: string) => void;
 }
 
@@ -41,13 +39,12 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   templateData,
   selectedExecution,
   setGeneratedExecution,
-  isGenerating,
-  setIsGenerating,
   onError,
 }) => {
   const token = useToken();
   const { palette } = useTheme();
   const dispatch = useAppDispatch();
+  const isGenerating = useAppSelector(state => state.template.isGenerating);
   const router = useRouter();
   const [generatingResponse, setGeneratingResponse] = useState<PromptLiveResponse | null>(null);
   const [newExecutionId, setNewExecutionId] = useState<number | null>(null);
@@ -212,7 +209,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
     if (!validateInputs()) return;
 
-    setIsGenerating(true);
+    dispatch(setGeneratingStatus(true));
 
     generateExecution(resPrompts);
   };
@@ -235,7 +232,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
       async onopen(res) {
         if (res.ok && res.status === 200) {
-          setIsGenerating(true);
+          dispatch(setGeneratingStatus(true));
           setGeneratingResponse({ created_at: new Date(), data: [] });
         } else if (res.status >= 400 && res.status < 500 && res.status !== 429) {
           console.error("Client side error ", res);
@@ -327,12 +324,12 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
       },
       onerror(err) {
         console.error(err);
-        setIsGenerating(false);
+        dispatch(setGeneratingStatus(false));
         onError("Something went wrong. Please try again later");
         throw err; // rethrow to stop the operation
       },
       onclose() {
-        setIsGenerating(false);
+        dispatch(setGeneratingStatus(false));
       },
     });
   };
@@ -458,6 +455,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
           Inputs
         </Typography>
         <Button
+          disabled={isGenerating}
           variant="text"
           startIcon={<Close />}
           sx={{
@@ -560,12 +558,16 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
             <Button
               variant={"contained"}
               startIcon={
-                token ? (
-                  <LogoApp
-                    width={18}
-                    color="white"
-                  />
-                ) : null
+                token && isGenerating ? (
+                  <CircularProgress size={16} />
+                ) : (
+                  token && (
+                    <LogoApp
+                      width={18}
+                      color="white"
+                    />
+                  )
+                )
               }
               sx={{
                 flex: 1,
@@ -591,26 +593,32 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
             >
               {token ? (
                 <React.Fragment>
-                  <Typography sx={{ ml: 2, color: "inherit", fontSize: 15 }}>Generate</Typography>
-                  <Typography sx={{ display: { md: "none" }, ml: "auto", color: "inherit", fontSize: 12 }}>
-                    ~360s
-                  </Typography>
-                  <Stack
-                    direction={"row"}
-                    alignItems={"center"}
-                    gap={0.5}
-                    sx={{ display: { xs: "none", md: "flex" }, ml: "auto", color: "inherit", fontSize: 12 }}
-                  >
-                    {templateData.executions_limit === -1 ? (
-                      <AllInclusive fontSize="small" />
-                    ) : (
-                      <>
-                        {templateData.executions_limit - templateData.executions_count} of{" "}
-                        {templateData.executions_limit} left
-                        <InfoOutlined sx={{ fontSize: 16 }} />
-                      </>
-                    )}
-                  </Stack>
+                  {isGenerating ? (
+                    <Typography>Generation in progress...</Typography>
+                  ) : (
+                    <>
+                      <Typography sx={{ ml: 2, color: "inherit", fontSize: 15 }}>Generate</Typography>
+                      <Typography sx={{ display: { md: "none" }, ml: "auto", color: "inherit", fontSize: 12 }}>
+                        ~360s
+                      </Typography>
+                      <Stack
+                        direction={"row"}
+                        alignItems={"center"}
+                        gap={0.5}
+                        sx={{ display: { xs: "none", md: "flex" }, ml: "auto", color: "inherit", fontSize: 12 }}
+                      >
+                        {templateData.executions_limit === -1 ? (
+                          <AllInclusive fontSize="small" />
+                        ) : (
+                          <>
+                            {templateData.executions_limit - templateData.executions_count} of{" "}
+                            {templateData.executions_limit} left
+                            <InfoOutlined sx={{ fontSize: 16 }} />
+                          </>
+                        )}
+                      </Stack>
+                    </>
+                  )}
                 </React.Fragment>
               ) : (
                 <Typography

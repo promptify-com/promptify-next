@@ -6,6 +6,7 @@ import { ResInputs } from "@/core/api/dto/prompts";
 import { IPromptInput } from "@/common/types/prompt";
 import BaseButton from "../base/BaseButton";
 import CodeFieldModal from "../modals/CodeFieldModal";
+import { useAppSelector } from "@/hooks/useStore";
 
 interface GeneratorInputProps {
   promptId: number;
@@ -22,6 +23,8 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
   resInputs,
   errors,
 }) => {
+  const isGenerating = useAppSelector(state => state.template.isGenerating);
+
   const [codeFieldOpen, setCodeFieldOpen] = useState(false);
 
   const handleChange = (value: string, name: string, type: string) => {
@@ -87,6 +90,7 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
               {input.type === "code" ? (
                 <>
                   <BaseButton
+                    disabled={isGenerating}
                     size="small"
                     onClick={() => {
                       setCodeFieldOpen(true);
@@ -111,6 +115,7 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
                 </>
               ) : input.type === "choices" ? (
                 <Select
+                  disabled={isGenerating}
                   sx={{
                     flex: 1,
                     ".MuiSelect-select": {
@@ -152,6 +157,7 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
                 </Select>
               ) : (
                 <TextField
+                  disabled={isGenerating}
                   sx={{
                     flex: 1,
                     height: "27px",
@@ -186,6 +192,7 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
                 />
               )}
               <IconButton
+                disabled={isGenerating}
                 sx={{
                   color: "grey.600",
                   border: "none",
