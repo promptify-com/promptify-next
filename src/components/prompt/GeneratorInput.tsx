@@ -13,6 +13,7 @@ interface GeneratorInputProps {
   resInputs: ResInputs[];
   setNodeInputs: (obj: any) => void;
   errors: InputsErrors;
+  onGenerate: boolean;
 }
 
 export const GeneratorInput: React.FC<GeneratorInputProps> = ({
@@ -21,6 +22,7 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
   setNodeInputs,
   resInputs,
   errors,
+  onGenerate,
 }) => {
   const [codeFieldOpen, setCodeFieldOpen] = useState(false);
 
@@ -87,6 +89,7 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
               {input.type === "code" ? (
                 <>
                   <BaseButton
+                    disabled={onGenerate}
                     size="small"
                     onClick={() => {
                       setCodeFieldOpen(true);
@@ -111,6 +114,7 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
                 </>
               ) : input.type === "choices" ? (
                 <Select
+                  disabled={onGenerate}
                   sx={{
                     flex: 1,
                     ".MuiSelect-select": {
@@ -152,6 +156,7 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
                 </Select>
               ) : (
                 <TextField
+                  disabled={onGenerate}
                   sx={{
                     flex: 1,
                     height: "27px",
@@ -186,6 +191,7 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
                 />
               )}
               <IconButton
+                disabled={onGenerate}
                 sx={{
                   color: "grey.600",
                   border: "none",

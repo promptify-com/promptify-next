@@ -521,6 +521,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
                   resInputs={nodeInputs}
                   setNodeInputs={setNodeInputs}
                   errors={errors}
+                  onGenerate={isGenerating}
                 />
               ))}
               {shownParams.map((param, i) => (
@@ -530,6 +531,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
                   promptId={param.prompt}
                   resOverrides={nodeParams}
                   setResOverrides={setNodeParams}
+                  onGenerate={isGenerating}
                 />
               ))}
             </React.Fragment>

@@ -97,6 +97,8 @@ export const Display: React.FC<Props> = ({
     return _execuitons;
   }, [executions]);
 
+  const isGeneratedExecutionEmpty = Boolean(generatedExecution && !generatedExecution?.data?.length);
+
   return (
     <Box
       ref={containerRef}
@@ -113,7 +115,6 @@ export const Display: React.FC<Props> = ({
         onSearch={text => setSearch(text)}
         onOpenExport={() => setOpenExportpopup(true)}
       />
-
       {openExportPopup && activeExecution?.id && (
         <SparkExportPopup
           onClose={() => setOpenExportpopup(false)}
@@ -122,26 +123,24 @@ export const Display: React.FC<Props> = ({
       )}
 
       <Box sx={{ mx: "15px", opacity: firstLoad ? 0.5 : 1 }}>
-        {
-          // If there is a new execution being generated, show it first
-          generatedExecution ? (
-            <ExecutionCardGenerated
-              execution={generatedExecution}
-              templateData={templateData}
-            />
-          ) : // If there is no new execution being generated, show the selected execution
-          isFetching ? (
-            <ParagraphPlaceholder />
-          ) : selectedExecution ? (
-            <ExecutionCard
-              execution={selectedExecution}
-              templateData={templateData}
-              search={search}
-            />
-          ) : (
-            <Typography sx={{ mt: "40px", textAlign: "center" }}>No spark found</Typography>
-          )
-        }
+        {isGeneratedExecutionEmpty ? (
+          <ParagraphPlaceholder />
+        ) : generatedExecution?.data ? (
+          <ExecutionCardGenerated
+            execution={generatedExecution}
+            templateData={templateData}
+          />
+        ) : isFetching ? (
+          <ParagraphPlaceholder />
+        ) : selectedExecution ? (
+          <ExecutionCard
+            execution={selectedExecution}
+            templateData={templateData}
+            search={search}
+          />
+        ) : (
+          <Typography sx={{ mt: "40px", textAlign: "center" }}>No spark found</Typography>
+        )}
       </Box>
     </Box>
   );
