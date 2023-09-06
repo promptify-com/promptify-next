@@ -1,4 +1,4 @@
-import React, { useDeferredValue, useState } from "react";
+import React, { useDeferredValue, useEffect, useState } from "react";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { AutoAwesome, ClearRounded, HomeRounded, MenuBookRounded, MenuRounded, Search } from "@mui/icons-material";
 import {
@@ -126,6 +126,11 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
       skip: !isValidUser,
     },
   );
+  // Close the drawer when the router changes
+
+  useEffect(() => {
+    router.events.on("routeChangeComplete", onCloseDrawer);
+  }, [router, onCloseDrawer]);
 
   return (
     <SwipeableDrawer
