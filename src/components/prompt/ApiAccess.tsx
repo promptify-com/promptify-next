@@ -91,7 +91,7 @@ const ApiAccess: React.FC<Props> = ({ templateData }) => {
         </Typography>
       </Button>
       <Box
-        display="flex"
+        display="none"
         justifyContent="space-between"
         sx={{ opacity: 0.5 }}
       >
@@ -99,7 +99,7 @@ const ApiAccess: React.FC<Props> = ({ templateData }) => {
         <Typography fontSize={12}>{lastAccess}</Typography>
       </Box>
       <Box
-        display="flex"
+        display="none"
         justifyContent="space-between"
         sx={{ opacity: 0.5 }}
       >
