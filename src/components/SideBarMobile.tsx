@@ -1,9 +1,11 @@
-import React, { useDeferredValue, useState } from "react";
+import React, { useDeferredValue, useEffect, useState } from "react";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { AutoAwesome, ClearRounded, HomeRounded, MenuBookRounded, MenuRounded, Search } from "@mui/icons-material";
 import {
   Avatar,
+  Backdrop,
   Box,
+  CircularProgress,
   Divider,
   Grid,
   InputBase,
@@ -32,6 +34,7 @@ import { useGetTemplatesBySearchQuery } from "@/core/api/templates";
 import CardTemplate from "./common/cards/CardTemplate";
 import CardTemplatePlaceholder from "./placeholders/CardTemplatePlaceHolder";
 import { NotFoundIcon } from "@/assets/icons/NotFoundIcon";
+import LoadingOverlay from "./design-system/LoadingOverlay";
 
 type SidebarType = "navigation" | "profile";
 
@@ -68,6 +71,28 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
   const { data: templates, isFetching } = useGetTemplatesBySearchQuery(debouncedSearchName, {
     skip: !textInput.length,
   });
+
+  const [isRouteChanging, setIsRouteChanging] = useState(false);
+
+  // Listen for route changes and show spinner during the transition
+  useEffect(() => {
+    const handleRouteChangeStart = () => {
+      setIsRouteChanging(true); // Route change started
+    };
+
+    const handleRouteChangeComplete = () => {
+      setIsRouteChanging(false);
+      onCloseDrawer();
+    };
+
+    router.events.on("routeChangeStart", handleRouteChangeStart);
+    router.events.on("routeChangeComplete", handleRouteChangeComplete);
+
+    return () => {
+      router.events.off("routeChangeStart", handleRouteChangeStart);
+      router.events.off("routeChangeComplete", handleRouteChangeComplete);
+    };
+  }, [router, onCloseDrawer]);
 
   const links = [
     {
@@ -128,201 +153,207 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
   );
 
   return (
-    <SwipeableDrawer
-      anchor={"top"}
-      open={openDrawer}
-      onClose={onCloseDrawer}
-      onOpen={onOpenDrawer}
-    >
-      <Box minHeight={"100vh"}>
-        <Grid
-          height={"56px"}
-          width={"100%"}
-          justifyContent={"space-between"}
-          padding={"0px 4px"}
-          bgcolor={"surface.3"}
-          display={"flex"}
-          alignItems={"center"}
-        >
+    <LoadingOverlay loading={isRouteChanging}>
+      <SwipeableDrawer
+        anchor={"top"}
+        open={openDrawer}
+        onClose={onCloseDrawer}
+        onOpen={onOpenDrawer}
+      >
+        <Box minHeight={"100vh"}>
           <Grid
-            display={{ xs: "flex", md: "none" }}
-            width={75}
-            p={"0px 10px"}
-            alignItems={"center"}
-            height={48}
-            mt={1}
-          >
-            <LogoApp
-              width={23}
-              color="#56575c"
-            />
-            <Typography
-              sx={{ fontSize: 10, mt: 0.2, ml: 0.5 }}
-              fontWeight={"bold"}
-            >
-              beta
-            </Typography>
-          </Grid>
-          <Grid
-            display={{ xs: "flex", md: "none" }}
-            alignItems={"center"}
-            mr={1}
-            gap={2}
-          >
-            {type === "navigation" ? (
-              <Box>
-                {isValidUser && (
-                  <Avatar
-                    onClick={() => setSidebarType("profile")}
-                    src={currentUser?.avatar}
-                    alt={currentUser?.first_name}
-                    sx={{
-                      ml: "auto",
-                      cursor: "pointer",
-                      bgcolor: "black",
-                      borderRadius: { xs: "24px", sm: "36px" },
-                      width: "23px",
-                      height: "23px",
-                      padding: "1px",
-                      fontStyle: "normal",
-                      textAlign: "center",
-                      fontWeight: 400,
-                      fontSize: 10,
-                      textTransform: "capitalize",
-                      lineHeight: "20px",
-                      letterSpacing: "0.14px",
-                    }}
-                  />
-                )}
-              </Box>
-            ) : (
-              <Box
-                onClick={onCloseDrawer}
-                display={"flex"}
-                alignItems={"center"}
-                justifyContent={"center"}
-              >
-                <ClearRounded sx={{ fontSize: "26px", color: "#56575c" }} />
-              </Box>
-            )}
-
-            {type !== "profile" ? (
-              <Box
-                onClick={onCloseDrawer}
-                display={"flex"}
-                alignItems={"center"}
-                justifyContent={"center"}
-              >
-                <ClearRounded sx={{ fontSize: "26px", color: "#56575c" }} />
-              </Box>
-            ) : (
-              <Box
-                onClick={onCloseDrawer}
-                display={"flex"}
-                alignItems={"center"}
-                justifyContent={"center"}
-              >
-                <MenuRounded sx={{ fontSize: "26px", color: "#56575c" }} />
-              </Box>
-            )}
-          </Grid>
-        </Grid>
-        {type === "navigation" ? (
-          <Box
+            height={"56px"}
+            width={"100%"}
+            justifyContent={"space-between"}
+            padding={"0px 4px"}
+            bgcolor={"surface.3"}
             display={"flex"}
-            flexDirection={"column"}
-            padding={"22px 0px"}
-            gap={"16px"}
+            alignItems={"center"}
           >
-            <Box
-              position={"relative"}
-              bgcolor={"surface.3"}
-              p={"5px 15px"}
-              m={"0px 22px"}
-              gap={1}
-              borderRadius={"48px"}
-              display={"flex"}
+            <Grid
+              display={{ xs: "flex", md: "none" }}
+              width={75}
+              p={"0px 10px"}
               alignItems={"center"}
+              height={48}
+              mt={1}
             >
-              <Search onClick={onSearchClicked} />
-              <InputBase
-                sx={{ flex: 1 }}
-                placeholder="Search for templates..."
-                onChange={e => {
-                  setTextInput(e.target.value);
-                }}
-                value={textInput ?? title}
+              <LogoApp
+                width={23}
+                color="#56575c"
               />
+              <Typography
+                sx={{ fontSize: 10, mt: 0.2, ml: 0.5 }}
+                fontWeight={"bold"}
+              >
+                beta
+              </Typography>
+            </Grid>
+            <Grid
+              display={{ xs: "flex", md: "none" }}
+              alignItems={"center"}
+              mr={1}
+              gap={2}
+            >
+              {type === "navigation" ? (
+                <Box>
+                  {isValidUser && (
+                    <Avatar
+                      onClick={() => setSidebarType("profile")}
+                      src={currentUser?.avatar}
+                      alt={currentUser?.first_name}
+                      sx={{
+                        ml: "auto",
+                        cursor: "pointer",
+                        bgcolor: "black",
+                        borderRadius: { xs: "24px", sm: "36px" },
+                        width: "23px",
+                        height: "23px",
+                        padding: "1px",
+                        fontStyle: "normal",
+                        textAlign: "center",
+                        fontWeight: 400,
+                        fontSize: 10,
+                        textTransform: "capitalize",
+                        lineHeight: "20px",
+                        letterSpacing: "0.14px",
+                      }}
+                    />
+                  )}
+                </Box>
+              ) : (
+                <Box
+                  onClick={onCloseDrawer}
+                  display={"flex"}
+                  alignItems={"center"}
+                  justifyContent={"center"}
+                >
+                  <ClearRounded sx={{ fontSize: "26px", color: "#56575c" }} />
+                </Box>
+              )}
+
+              {type !== "profile" ? (
+                <Box
+                  onClick={onCloseDrawer}
+                  display={"flex"}
+                  alignItems={"center"}
+                  justifyContent={"center"}
+                >
+                  <ClearRounded sx={{ fontSize: "26px", color: "#56575c" }} />
+                </Box>
+              ) : (
+                <Box
+                  onClick={onCloseDrawer}
+                  display={"flex"}
+                  alignItems={"center"}
+                  justifyContent={"center"}
+                >
+                  <MenuRounded sx={{ fontSize: "26px", color: "#56575c" }} />
+                </Box>
+              )}
+            </Grid>
+          </Grid>
+          {type === "navigation" ? (
+            <Box
+              display={"flex"}
+              flexDirection={"column"}
+              padding={"22px 0px"}
+              gap={"16px"}
+            >
               <Box
+                position={"relative"}
+                bgcolor={"surface.3"}
+                p={"5px 15px"}
+                m={"0px 22px"}
+                gap={1}
+                borderRadius={"48px"}
                 display={"flex"}
                 alignItems={"center"}
               >
-                <LogoApp
-                  width={20}
-                  onClick={onSearchClicked}
-                />
-              </Box>
-            </Box>
-            {textInput.length < 3 ? (
-              <Box>
-                <List
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "12px",
-                    padding: "0px 22px",
+                <Search onClick={onSearchClicked} />
+                <InputBase
+                  sx={{ flex: 1 }}
+                  placeholder="Search for templates..."
+                  onChange={e => {
+                    setTextInput(e.target.value);
                   }}
+                  value={textInput ?? title}
+                />
+                <Box
+                  display={"flex"}
+                  alignItems={"center"}
                 >
-                  {links.map(link => (
-                    <ListItem
-                      key={link.label}
-                      disablePadding
-                      onClick={async () => {
-                        await navigateTo(link.href, link.external);
-                        onCloseDrawer();
-                      }}
-                    >
-                      <ListItemButton selected={link.active}>
-                        <ListItemIcon sx={{ color: "onSurface" }}>{link.icon}</ListItemIcon>
-                        <Typography
-                          sx={{ color: "onSurface" }}
-                          ml={-3}
-                        >
-                          {link.label}
-                        </Typography>
-                      </ListItemButton>
-                    </ListItem>
-                  ))}
-                </List>
-                <Divider sx={{ mt: 1 }} />
-                {isValidUser ? (
-                  <Box ml={1}>
-                    <Collections
-                      favCollection={collections}
-                      collectionLoading={isCollectionsLoading}
-                      isValidUser={isValidUser}
-                      sidebarOpen
-                    />
-                  </Box>
-                ) : (
-                  <List subheader={<ListSubheader>COLLECTION</ListSubheader>}>
-                    <CollectionsEmptyBox onExpand />
-                  </List>
-                )}
+                  <LogoApp
+                    width={20}
+                    onClick={onSearchClicked}
+                  />
+                </Box>
               </Box>
-            ) : (
-              <Grid p={"16px"}>
-                {isFetching ? (
-                  <CardTemplatePlaceholder count={5} />
-                ) : (
-                  <Grid
-                    display={"flex"}
-                    flexDirection={"column"}
-                    justifyContent={"center"}
-                    alignItems={"center"}
-                    minHeight={"20vh"}
+              {textInput.length < 3 ? (
+                <Box>
+                  <List
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "12px",
+                      padding: "0px 22px",
+                    }}
                   >
-                    {templates?.length !== 0 && !isFetching ? (
+                    {links.map(link => (
+                      <ListItem
+                        key={link.label}
+                        disablePadding
+                        onClick={async () => {
+                          await navigateTo(link.href, link.external);
+                          onCloseDrawer();
+                        }}
+                      >
+                        <ListItemButton selected={link.active}>
+                          <ListItemIcon sx={{ color: "onSurface" }}>{link.icon}</ListItemIcon>
+                          <Typography
+                            sx={{ color: "onSurface" }}
+                            ml={-3}
+                          >
+                            {link.label}
+                          </Typography>
+                        </ListItemButton>
+                      </ListItem>
+                    ))}
+                  </List>
+                  <Divider sx={{ mt: 1 }} />
+                  {isValidUser ? (
+                    <Box ml={1}>
+                      <Collections
+                        favCollection={collections}
+                        collectionLoading={isCollectionsLoading}
+                        isValidUser={isValidUser}
+                        sidebarOpen
+                      />
+                    </Box>
+                  ) : (
+                    <List subheader={<ListSubheader>COLLECTION</ListSubheader>}>
+                      <CollectionsEmptyBox onExpand />
+                    </List>
+                  )}
+                </Box>
+              ) : (
+                <Grid
+                  p={"16px"}
+                  minHeight={templates?.length === 0 ? "70vh" : "auto"}
+                  display={"flex"}
+                  flexDirection={"column"}
+                  justifyContent={"center"}
+                  alignItems={"center"}
+                  width={"100%"}
+                >
+                  {isFetching ? (
+                    // Render the loading spinner while fetching data
+                    <Grid width={"100%"}>
+                      <CardTemplatePlaceholder count={5} />
+                    </Grid>
+                  ) : templates?.length !== 0 && !isFetching ? (
+                    // Render search results
+                    <Grid>
                       <Grid
                         display={"flex"}
                         flexDirection={"column"}
@@ -338,142 +369,143 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
                           />
                         ))}
                       </Grid>
-                    ) : (
-                      <NotFoundIcon />
-                    )}
-                  </Grid>
-                )}
-              </Grid>
-            )}
-          </Box>
-        ) : (
-          <Box>
-            <Grid
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
+                    </Grid>
+                  ) : (
+                    // Render not found icon when there are no results
+                    <NotFoundIcon />
+                  )}
+                </Grid>
+              )}
+            </Box>
+          ) : (
+            <Box>
               <Grid
-                borderBottom={"1px solid #f5f5f5"}
                 sx={{
-                  width: "100%",
                   display: "flex",
                   flexDirection: "column",
-                  alignContent: "center",
                   justifyContent: "center",
                   alignItems: "center",
-                  py: "24px",
-                  gap: "8px",
                 }}
               >
-                <Box
-                  display={"flex"}
-                  justifyContent={"center"}
+                <Grid
+                  borderBottom={"1px solid #f5f5f5"}
+                  sx={{
+                    width: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignContent: "center",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    py: "24px",
+                    gap: "8px",
+                  }}
                 >
-                  <Avatar
-                    src={currentUser?.avatar}
-                    alt={currentUser?.first_name}
-                    sizes="40px"
-                    sx={{
-                      width: "90px",
-                      height: "90px",
-                      ml: "auto",
-                      cursor: "pointer",
-                      bgcolor: "black",
-                      padding: "1px",
-                      fontStyle: "normal",
-                      textAlign: "center",
-                      fontWeight: 500,
-                      fontSize: "60px",
-                      textTransform: "capitalize",
-                      lineHeight: "20px",
-                      letterSpacing: "0.14px",
-                    }}
-                  />
-                </Box>
-                <Box textAlign={"center"}>
-                  <Typography
-                    sx={{
-                      fontFamily: "Poppins",
-                      fontStyle: "normal",
-                      fontWeight: 500,
-                      fontSize: "20px",
-                      lineHeight: "160%",
-                      letterSpacing: "0.15px",
-                    }}
+                  <Box
+                    display={"flex"}
+                    justifyContent={"center"}
                   >
-                    {currentUser?.first_name} {currentUser?.last_name}
-                  </Typography>
-                  <Typography
-                    sx={{
-                      color: "text.secondary",
-                      fontFamily: "Poppins",
-                      fontStyle: "normal",
-                      fontWeight: 400,
-                      fontSize: "14px",
-                      lineHeight: "143%",
-                      letterSpacing: "0.15px",
-                    }}
-                  >
-                    {currentUser?.username}
-                  </Typography>
-                </Box>
-              </Grid>
-              <MenuList
-                autoFocusItem={false}
-                sx={{ width: "100%" }}
-              >
-                {Menu.map(el => (
-                  <MenuItem
-                    key={el.name}
-                    onClick={() => handleHeaderMenu(el)}
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      minHeight: "48px",
-                      gap: "15px",
-                      ml: 1,
-                    }}
-                  >
-                    {el.icon}
+                    <Avatar
+                      src={currentUser?.avatar}
+                      alt={currentUser?.first_name}
+                      sizes="40px"
+                      sx={{
+                        width: "90px",
+                        height: "90px",
+                        ml: "auto",
+                        cursor: "pointer",
+                        bgcolor: "black",
+                        padding: "1px",
+                        fontStyle: "normal",
+                        textAlign: "center",
+                        fontWeight: 500,
+                        fontSize: "60px",
+                        textTransform: "capitalize",
+                        lineHeight: "20px",
+                        letterSpacing: "0.14px",
+                      }}
+                    />
+                  </Box>
+                  <Box textAlign={"center"}>
                     <Typography
                       sx={{
                         fontFamily: "Poppins",
                         fontStyle: "normal",
-                        fontWeight: 400,
-                        fontSize: "16px",
-                        lineHeight: "150%",
+                        fontWeight: 500,
+                        fontSize: "20px",
+                        lineHeight: "160%",
                         letterSpacing: "0.15px",
-                        color: "onBackground",
                       }}
                     >
-                      {el.name}
+                      {currentUser?.first_name} {currentUser?.last_name}
                     </Typography>
-                  </MenuItem>
-                ))}
-              </MenuList>
-              <Grid
-                onClick={() => handleLogout()}
-                sx={{
-                  padding: "0 1.2em",
-                  display: "flex",
-                  width: "100%",
-                  cursor: "pointer",
-                  "&:hover": {
+                    <Typography
+                      sx={{
+                        color: "text.secondary",
+                        fontFamily: "Poppins",
+                        fontStyle: "normal",
+                        fontWeight: 400,
+                        fontSize: "14px",
+                        lineHeight: "143%",
+                        letterSpacing: "0.15px",
+                      }}
+                    >
+                      {currentUser?.username}
+                    </Typography>
+                  </Box>
+                </Grid>
+                <MenuList
+                  autoFocusItem={false}
+                  sx={{ width: "100%" }}
+                >
+                  {Menu.map(el => (
+                    <MenuItem
+                      key={el.name}
+                      onClick={() => handleHeaderMenu(el)}
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        minHeight: "48px",
+                        gap: "15px",
+                        ml: 1,
+                      }}
+                    >
+                      {el.icon}
+                      <Typography
+                        sx={{
+                          fontFamily: "Poppins",
+                          fontStyle: "normal",
+                          fontWeight: 400,
+                          fontSize: "16px",
+                          lineHeight: "150%",
+                          letterSpacing: "0.15px",
+                          color: "onBackground",
+                        }}
+                      >
+                        {el.name}
+                      </Typography>
+                    </MenuItem>
+                  ))}
+                </MenuList>
+                <Grid
+                  onClick={() => handleLogout()}
+                  sx={{
+                    padding: "0 1.2em",
+                    display: "flex",
+                    width: "100%",
                     cursor: "pointer",
-                    background: "#f5f5f5",
-                  },
-                }}
-              >
-                <Typography>Sign Out</Typography>
+                    "&:hover": {
+                      cursor: "pointer",
+                      background: "#f5f5f5",
+                    },
+                  }}
+                >
+                  <Typography>Sign Out</Typography>
+                </Grid>
               </Grid>
-            </Grid>
-          </Box>
-        )}
-      </Box>
-    </SwipeableDrawer>
+            </Box>
+          )}
+        </Box>
+      </SwipeableDrawer>
+    </LoadingOverlay>
   );
 };
