@@ -1,5 +1,5 @@
 import { Backdrop, CircularProgress } from "@mui/material";
-import React, { ReactNode } from "react"; // Import ReactNode type
+import React, { ReactNode } from "react";
 
 interface LoadingOverlayProps {
   loading: boolean;
