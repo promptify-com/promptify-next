@@ -1,6 +1,7 @@
+import React from "react";
 import { Backdrop, CircularProgress } from "@mui/material";
-import React, { ReactNode } from "react";
-import { useWindowSize } from "usehooks-ts";
+
+import { useRouteChangeOverlay } from "@/hooks/useRouteChangeOverlay";
 
 interface LoadingOverlayProps {
   size?: number;
@@ -11,8 +12,7 @@ const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
   size = 40,
   showOnDesktop = false, // Default to false, only show on mobile by default
 }) => {
-  const { width: windowWidth } = useWindowSize();
-  const IS_MOBILE = windowWidth < 900;
+  const { IS_MOBILE } = useRouteChangeOverlay();
 
   return (
     <Backdrop

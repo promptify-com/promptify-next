@@ -1,15 +1,14 @@
+import { useRouter } from "next/router";
+import { Box, Grid, List, ListSubheader, Typography } from "@mui/material";
+
 import { FavoriteList } from "@/assets/icons/FavoriteList";
 import { ICollectionById } from "@/common/types/collection";
-import { Box, Grid, List, ListSubheader, Typography } from "@mui/material";
 import { CollectionItem } from "./CollectionItem";
 import { ITemplate } from "@/common/types/template";
-import { useRouter } from "next/router";
 import { CollectionsEmptyBox } from "./CollectionsEmptyBox";
-
 import ListItemPlaceholder from "@/components/placeholders/ListItemPlaceholder";
 import LoadingOverlay from "@/components/design-system/LoadingOverlay";
-import { useEffect, useState } from "react";
-import { useWindowSize } from "usehooks-ts";
+import { useRouteChangeOverlay } from "@/hooks/useRouteChangeOverlay";
 
 interface SideBarCollectionsProps {
   sidebarOpen?: boolean;
@@ -26,33 +25,9 @@ export const Collections: React.FC<SideBarCollectionsProps> = ({
 }) => {
   const router = useRouter();
 
-  const [showOverlay, setShowOverlay] = useState(false);
-
-  useEffect(() => {
-    const handleRouteChangeStart = (url: string) => {
-      // Check if the route change is to template page
-      if (url.startsWith("/prompt/")) {
-        setShowOverlay(true);
-      } else {
-        setShowOverlay(false);
-      }
-    };
-
-    const handleRouteChangeComplete = () => {
-      setShowOverlay(false);
-    };
-
-    router.events.on("routeChangeStart", handleRouteChangeStart);
-    router.events.on("routeChangeComplete", handleRouteChangeComplete);
-
-    return () => {
-      router.events.off("routeChangeStart", handleRouteChangeStart);
-      router.events.off("routeChangeComplete", handleRouteChangeComplete);
-    };
-  }, [router]);
-
-  const { width: windowWidth } = useWindowSize();
-  const IS_MOBILE = windowWidth < 900;
+  const { IS_MOBILE, showOverlay } = useRouteChangeOverlay(url => {
+    return url.startsWith("/prompt/");
+  });
 
   return (
     <Box>

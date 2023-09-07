@@ -1,11 +1,9 @@
-import React, { useDeferredValue, useEffect, useState } from "react";
+import React, { useDeferredValue, useState } from "react";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { AutoAwesome, ClearRounded, HomeRounded, MenuBookRounded, MenuRounded, Search } from "@mui/icons-material";
 import {
   Avatar,
-  Backdrop,
   Box,
-  CircularProgress,
   Divider,
   Grid,
   InputBase,
@@ -20,13 +18,14 @@ import {
   Typography,
 } from "@mui/material";
 import { useRouter } from "next/router";
+import { useDispatch, useSelector } from "react-redux";
+
 import { setSelectedKeyword } from "@/core/store/filtersSlice";
 import { CollectionsEmptyBox } from "./common/sidebar/CollectionsEmptyBox";
 import { Menu, MenuType } from "@/common/constants";
 import useLogout from "@/hooks/useLogout";
 import { useGetCollectionTemplatesQuery } from "@/core/api/collections";
 import { Collections } from "./common/sidebar/Collections";
-import { useDispatch, useSelector } from "react-redux";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { RootState } from "@/core/store";
 import useDebounce from "@/hooks/useDebounce";
@@ -35,6 +34,7 @@ import CardTemplate from "./common/cards/CardTemplate";
 import CardTemplatePlaceholder from "./placeholders/CardTemplatePlaceHolder";
 import { NotFoundIcon } from "@/assets/icons/NotFoundIcon";
 import LoadingOverlay from "./design-system/LoadingOverlay";
+import { useRouteChangeOverlay } from "@/hooks/useRouteChangeOverlay";
 
 type SidebarType = "navigation" | "profile";
 
@@ -72,27 +72,7 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
     skip: !textInput.length,
   });
 
-  const [showOverlay, setShowOverlay] = useState(false);
-
-  // Listen for route changes and show spinner during the transition
-  useEffect(() => {
-    const handleRouteChangeStart = () => {
-      setShowOverlay(true); // Route change started
-    };
-
-    const handleRouteChangeComplete = () => {
-      setShowOverlay(false);
-      onCloseDrawer();
-    };
-
-    router.events.on("routeChangeStart", handleRouteChangeStart);
-    router.events.on("routeChangeComplete", handleRouteChangeComplete);
-
-    return () => {
-      router.events.off("routeChangeStart", handleRouteChangeStart);
-      router.events.off("routeChangeComplete", handleRouteChangeComplete);
-    };
-  }, [router, onCloseDrawer]);
+  const { showOverlay } = useRouteChangeOverlay(undefined, onCloseDrawer);
 
   const links = [
     {
