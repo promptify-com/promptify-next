@@ -1,12 +1,15 @@
+import { useRouter } from "next/router";
+import { Box, Grid, List, ListSubheader, Typography } from "@mui/material";
+
 import { FavoriteList } from "@/assets/icons/FavoriteList";
 import { ICollectionById } from "@/common/types/collection";
-import { Box, Grid, List, ListSubheader, Typography } from "@mui/material";
 import { CollectionItem } from "./CollectionItem";
 import { ITemplate } from "@/common/types/template";
-import { useRouter } from "next/router";
 import { CollectionsEmptyBox } from "./CollectionsEmptyBox";
-
 import ListItemPlaceholder from "@/components/placeholders/ListItemPlaceholder";
+import LoadingOverlay from "@/components/design-system/LoadingOverlay";
+import { useRouteChangeOverlay } from "@/hooks/useRouteChangeOverlay";
+import { determineIsMobile } from "@/common/helpers/determineIsMobile";
 
 interface SideBarCollectionsProps {
   sidebarOpen?: boolean;
@@ -22,6 +25,13 @@ export const Collections: React.FC<SideBarCollectionsProps> = ({
   collectionLoading,
 }) => {
   const router = useRouter();
+
+  const { showOverlay } = useRouteChangeOverlay({
+    shouldShowOverlayCallback: url => {
+      return url.startsWith("/prompt/");
+    },
+  });
+  const IS_MOBILE = determineIsMobile();
 
   return (
     <Box>
@@ -70,16 +80,20 @@ export const Collections: React.FC<SideBarCollectionsProps> = ({
               {collectionLoading ? (
                 <ListItemPlaceholder />
               ) : (
-                favCollection?.prompt_templates.map((item: ITemplate) => (
-                  <CollectionItem
-                    key={item.id}
-                    template={item}
-                    expanded={sidebarOpen}
-                    onClick={() => {
-                      router.push(`/prompt/${item.slug}`);
-                    }}
-                  />
-                ))
+                <>
+                  {!IS_MOBILE && showOverlay && <LoadingOverlay showOnDesktop />}
+
+                  {favCollection?.prompt_templates.map((item: ITemplate) => (
+                    <CollectionItem
+                      key={item.id}
+                      template={item}
+                      expanded={sidebarOpen}
+                      onClick={() => {
+                        router.push(`/prompt/${item.slug}`);
+                      }}
+                    />
+                  ))}
+                </>
               )}
             </List>
           </Box>

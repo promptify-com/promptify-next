@@ -1,27 +1,27 @@
+import React from "react";
 import { Backdrop, CircularProgress } from "@mui/material";
-import React, { ReactNode } from "react";
-import { useWindowSize } from "usehooks-ts";
+
+import { determineIsMobile } from "@/common/helpers/determineIsMobile";
 
 interface LoadingOverlayProps {
-  loading: boolean;
-  children: ReactNode;
   size?: number;
+  showOnDesktop?: boolean;
 }
 
-const LoadingOverlay: React.FC<LoadingOverlayProps> = ({ loading, children, size = 16 }) => {
-  const { width: windowWidth } = useWindowSize();
-  const IS_MOBILE = windowWidth < 900;
-
+const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
+  size = 40,
+  showOnDesktop = false, // Default to false, only show on mobile by default
+}) => {
+  const IS_MOBILE = determineIsMobile();
   return (
-    <Backdrop open={loading && IS_MOBILE}>
-      {loading ? (
-        <CircularProgress
-          color="inherit"
-          sx={{ fontSize: size }}
-        />
-      ) : (
-        <>{children}</>
-      )}
+    <Backdrop
+      sx={{ zIndex: 6666 }}
+      open={IS_MOBILE || showOnDesktop}
+    >
+      <CircularProgress
+        color="inherit"
+        size={size}
+      />
     </Backdrop>
   );
 };
