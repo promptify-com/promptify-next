@@ -436,6 +436,7 @@ export const Builder = () => {
               onPublish={() => handlePublishTemplate()}
               onDrawerOpen={() => toggleTemplateDrawer(true)}
               onSave={injectOrderAndSendRequest}
+              templateSlug={promptsData?.slug}
             />
           </Grid>
           <SwipeableDrawer
