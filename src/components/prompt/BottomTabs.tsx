@@ -65,8 +65,8 @@ export const BottomTabs: React.FC<Props> = ({ setActiveTab, activeTab }) => {
                 height: 20,
               },
               "&:hover, &:focus": {
-                color: "onSurface",
-                bgcolor: "surface.2",
+                bgcolor: activeTab === i ? "primary.main" : "transparent",
+                color: activeTab === i ? "onPrimary" : "onSurface",
               },
             }}
             onClick={() => {
