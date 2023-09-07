@@ -6,6 +6,7 @@ import { Sidebar } from "@/components/SideBar";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./core/store";
 import { setOpenSidebar } from "./core/store/sidebarSlice";
+import { theme } from "@/theme";
 
 export const Layout = ({ children }: { children: ReactNode }) => {
   const open = useSelector((state: RootState) => state.sidebar.open);
@@ -16,10 +17,13 @@ export const Layout = ({ children }: { children: ReactNode }) => {
   return (
     <>
       <Box sx={{ bgcolor: "surface.3" }}>
-        <Sidebar open={open} toggleSideBar={() => toggleSidebar()} />
+        <Sidebar
+          open={open}
+          toggleSideBar={() => toggleSidebar()}
+        />
         <Box
           sx={{
-            minHeight: "100vh",
+            minHeight: "100svh",
             maxWidth: {
               xs: "100%",
               md: open ? "calc(100% - 299px)" : "80%",
@@ -30,9 +34,16 @@ export const Layout = ({ children }: { children: ReactNode }) => {
           <Header transparent />
           <Box
             bgcolor={{ xs: "surface.1", md: "surface.3" }}
-            minHeight={{ xs: "calc(100svh - 60px)", md: "calc(100vh - 90px)" }}
+            minHeight={{
+              xs: `calc(100svh - ${theme.custom.headerHeight.xs})`,
+              md: `calc(100svh - ${theme.custom.headerHeight.md})`,
+            }}
           >
-            <Grid display={"flex"} flexDirection={"column"} gap={"16px"}>
+            <Grid
+              display={"flex"}
+              flexDirection={"column"}
+              gap={"16px"}
+            >
               {children}
             </Grid>
           </Box>
@@ -41,4 +52,3 @@ export const Layout = ({ children }: { children: ReactNode }) => {
     </>
   );
 };
-

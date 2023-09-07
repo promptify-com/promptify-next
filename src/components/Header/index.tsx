@@ -11,6 +11,7 @@ import { SideBarMobile } from "../SideBarMobile";
 import { RootState } from "@/core/store";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { useSelector } from "react-redux";
+import { theme } from "@/theme";
 
 interface HeaderProps {
   transparent?: boolean;
@@ -78,7 +79,10 @@ export const Header: React.FC<HeaderProps> = ({ transparent = false, fixed = fal
         alignItems: "center",
         justifyContent: "center",
         bgcolor: { xs: "surface.1", md: "surface.3" },
-        height: { xs: "58px", md: "90px" },
+        height: {
+          xs: theme.custom.headerHeight.xs,
+          md: theme.custom.headerHeight.md,
+        },
       }}
     >
       <Grid

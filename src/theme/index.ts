@@ -1,4 +1,4 @@
-import { createTheme } from "@mui/material";
+import { Theme, createTheme } from "@mui/material";
 
 interface SurfaceVariants {
   1: string;
@@ -8,46 +8,42 @@ interface SurfaceVariants {
   5: string;
 }
 
-declare module "@mui/material/styles" {
-  interface Palette {
-    onPrimary: string;
-    primaryContainer: string;
-    secondaryContainer: string;
-    tertiary: string;
-    tertiaryContainer: string;
-    onBackground: string;
-    errorContainer: string;
-    onError: string;
-    onErrorContainer: string;
-    surface: SurfaceVariants;
-    surfaceVariant: string;
-    onSurface: string;
-    onSurfaceVariant: string;
-    outline: string;
-    inverseOnSurface: string;
-    inverseSurface: string;
-  }
-  interface PaletteOptions {
-    onPrimary: string;
-    primaryContainer: string;
-    secondaryContainer: string;
-    tertiary: string;
-    tertiaryContainer: string;
-    onBackground: string;
-    errorContainer: string;
-    onError: string;
-    onErrorContainer: string;
-    surface: SurfaceVariants;
-    surfaceVariant: string;
-    onSurface: string;
-    onSurfaceVariant: string;
-    outline: string;
-    inverseOnSurface: string;
-    inverseSurface: string;
-  }
+interface CustomPalette {
+  onPrimary: string;
+  primaryContainer: string;
+  secondaryContainer: string;
+  tertiary: string;
+  tertiaryContainer: string;
+  onBackground: string;
+  errorContainer: string;
+  onError: string;
+  onErrorContainer: string;
+  surface: SurfaceVariants;
+  surfaceVariant: string;
+  onSurface: string;
+  onSurfaceVariant: string;
+  outline: string;
+  inverseOnSurface: string;
+  inverseSurface: string;
 }
 
-export let theme = createTheme({
+interface CustomTheme {
+  custom: {
+    headerHeight: {
+      xs: string;
+      md: string;
+    };
+  };
+}
+
+declare module "@mui/material/styles" {
+  interface Palette extends CustomPalette {}
+  interface PaletteOptions extends CustomPalette {}
+  interface Theme extends CustomTheme {}
+  interface ThemeOptions extends CustomTheme {}
+}
+
+export let theme: Theme = createTheme({
   typography: {
     fontFamily: ["Poppins", "Space Mono"].join(","),
   },
@@ -92,6 +88,12 @@ export let theme = createTheme({
     outline: "#FFC5C9",
     inverseOnSurface: "#F2F0F4",
     inverseSurface: "#303033",
+  },
+  custom: {
+    headerHeight: {
+      xs: "58px",
+      md: "90px",
+    },
   },
 });
 

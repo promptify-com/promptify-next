@@ -15,16 +15,7 @@ import {
   alpha,
   useTheme,
 } from "@mui/material";
-import {
-  Search as SearchIcon,
-  FeedOutlined,
-  ArrowDropUp,
-  ArrowDropDown,
-  Undo,
-  Redo,
-  Close,
-  InfoOutlined,
-} from "@mui/icons-material";
+import { Search as SearchIcon, ArrowDropUp, ArrowDropDown, Close, InfoOutlined } from "@mui/icons-material";
 import { SubjectIcon } from "@/assets/icons/SubjectIcon";
 import { TemplatesExecutions } from "@/core/api/dto/templates";
 import { ExecutionsTabs } from "./ExecutionsTabs";
@@ -273,6 +264,7 @@ export const DisplayActions: React.FC<Props> = ({
           anchorEl={execsDropAnchor}
           transition
           disablePortal
+          placement="auto"
         >
           {({ TransitionProps, placement }) => (
             <Grow

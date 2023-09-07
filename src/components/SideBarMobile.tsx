@@ -35,6 +35,7 @@ import CardTemplatePlaceholder from "./placeholders/CardTemplatePlaceHolder";
 import { NotFoundIcon } from "@/assets/icons/NotFoundIcon";
 import LoadingOverlay from "./design-system/LoadingOverlay";
 import { useRouteChangeOverlay } from "@/hooks/useRouteChangeOverlay";
+import { theme } from "@/theme";
 
 type SidebarType = "navigation" | "profile";
 
@@ -143,7 +144,7 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
 
       <Box minHeight={"100vh"}>
         <Grid
-          height={"56px"}
+          height={theme.custom.headerHeight.xs}
           width={"100%"}
           justifyContent={"space-between"}
           padding={"0px 4px"}
