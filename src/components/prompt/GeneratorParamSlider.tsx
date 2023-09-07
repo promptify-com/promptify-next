@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Box, Slider, Typography } from "@mui/material";
+
 import { PromptDescription } from "@/core/api/dto/prompts";
+import { useAppSelector } from "@/hooks/useStore";
 
 interface PromptParamsDescriptionProps {
   descriptions: PromptDescription[];
@@ -15,17 +17,17 @@ export const GeneratorParamSlider: React.FC<PromptParamsDescriptionProps> = ({
   setScore,
   is_editable,
 }) => {
+  const isGenerating = useAppSelector(state => state.template.isGenerating);
+
   const [activeMark, setActiveMark] = useState<number>(activeScore);
-  const activeDescription = descriptions.find(
-    (description) => description.score === activeMark
-  );
+  const activeDescription = descriptions.find(description => description.score === activeMark);
   const [displayTitle, setDisplayTitle] = useState("");
   const [displayDesc, setDisplayDesc] = useState("");
 
-  const marks = descriptions.map((description) => ({
+  const marks = descriptions.map(description => ({
     value: description.score,
   }));
-  const values = marks.map((obj) => obj.value);
+  const values = marks.map(obj => obj.value);
   const minValue = Math.min(...values);
   const maxValue = Math.max(...values);
 
@@ -53,7 +55,8 @@ export const GeneratorParamSlider: React.FC<PromptParamsDescriptionProps> = ({
 
   return (
     <Box>
-      <Typography component={"span"}
+      <Typography
+        component={"span"}
         sx={{
           color: "onSurface",
           fontSize: 13,
@@ -65,7 +68,8 @@ export const GeneratorParamSlider: React.FC<PromptParamsDescriptionProps> = ({
       >
         {displayTitle}
       </Typography>
-      <Typography component={"span"}
+      <Typography
+        component={"span"}
         sx={{
           color: "onSurface",
           fontSize: 13,
@@ -78,7 +82,7 @@ export const GeneratorParamSlider: React.FC<PromptParamsDescriptionProps> = ({
         {displayDesc}
       </Typography>
       <Slider
-        disabled={!is_editable}
+        disabled={!is_editable || isGenerating}
         sx={{
           height: "2px",
           flexShrink: 0,

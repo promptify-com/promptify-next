@@ -1,7 +1,7 @@
 import React from "react";
-import { Box, Chip, Stack, Typography } from "@mui/material";
+import { Box, Chip, Stack, Typography, Tooltip, IconButton } from "@mui/material";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
-import { ModeEdit, Publish } from "@mui/icons-material";
+import { ModeEdit, Publish, PreviewOutlined } from "@mui/icons-material";
 import BaseButton from "../base/BaseButton";
 import { TemplateStatus } from "@/core/api/dto/templates";
 
@@ -11,15 +11,10 @@ interface IHeader {
   onPublish: () => void;
   title: string;
   status: TemplateStatus;
+  templateSlug?: string;
 }
 
-export const Header = ({
-  onDrawerOpen,
-  onSave,
-  onPublish,
-  title,
-  status,
-}: IHeader) => {
+export const Header = ({ onDrawerOpen, onSave, onPublish, title, status, templateSlug }: IHeader) => {
   return (
     <Box
       bgcolor={"#262626"}
@@ -29,7 +24,11 @@ export const Header = ({
       px={{ xs: "10px", md: "50px" }}
       justifyContent="space-between"
     >
-      <Box display={"flex"} alignItems={"center"} gap={2}>
+      <Box
+        display={"flex"}
+        alignItems={"center"}
+        gap={2}
+      >
         <Stack
           direction={"row"}
           alignItems={"center"}
@@ -40,7 +39,10 @@ export const Header = ({
             sx={{ color: "white", fontSize: "1rem" }}
             dangerouslySetInnerHTML={{ __html: title }}
           />
-          <ModeEdit sx={{ cursor: "pointer" }} onClick={onDrawerOpen} />
+          <ModeEdit
+            sx={{ cursor: "pointer" }}
+            onClick={onDrawerOpen}
+          />
         </Stack>
 
         {status && (
@@ -52,7 +54,32 @@ export const Header = ({
           />
         )}
       </Box>
-      <Box display={"flex"} alignItems={"center"} gap={1}>
+      <Box
+        display={"flex"}
+        alignItems={"center"}
+        gap={1}
+      >
+        {templateSlug && (
+          <Tooltip title="Preview">
+            <IconButton
+              sx={{
+                display: { xs: "none", md: "inline-flex" },
+                bgcolor: "surface.2",
+                border: "none",
+                color: "onSurface",
+                "&:hover": {
+                  bgcolor: "surface.3",
+                  color: "onSurface",
+                },
+              }}
+              onClick={() => {
+                window.open(`/prompt/${templateSlug}`, "_blank");
+              }}
+            >
+              <PreviewOutlined />
+            </IconButton>
+          </Tooltip>
+        )}
         <BaseButton
           variant="contained"
           color="custom"

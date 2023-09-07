@@ -15,6 +15,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { RootState } from "@/core/store";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { useSelector } from "react-redux";
+import ApiAccess from "./ApiAccess";
 
 interface DetailsProps {
   templateData: Templates;
@@ -203,37 +204,40 @@ export const Details: React.FC<DetailsProps> = ({ templateData, setMobileTab = (
           </Stack>
         </Box>
         {!!templateData && (
-          <Box
-            sx={{
-              display: { xs: "none", md: "block" },
-              pb: "25px",
-            }}
-          >
-            <Subtitle sx={{ mb: "12px", color: "tertiary" }}>Actions</Subtitle>
-            <Stack gap={1}>
-              {(currentUser?.is_admin || currentUser?.id === templateData.created_by.id) && (
+          <>
+            <Box
+              sx={{
+                display: { xs: "none", md: "block" },
+                pb: "25px",
+              }}
+            >
+              <Subtitle sx={{ mb: "12px", color: "tertiary" }}>Actions</Subtitle>
+              <Stack gap={1}>
+                {(currentUser?.is_admin || currentUser?.id === templateData.created_by.id) && (
+                  <Button
+                    variant={"contained"}
+                    startIcon={<Create />}
+                    sx={templateBtnStyle}
+                    onClick={() => {
+                      window.open(window.location.origin + `/builder/${templateData.id}?editor=1`, "_blank");
+                    }}
+                  >
+                    Edit this Template
+                  </Button>
+                )}
                 <Button
                   variant={"contained"}
-                  startIcon={<Create />}
+                  startIcon={<Clone />}
                   sx={templateBtnStyle}
-                  onClick={() => {
-                    window.open(window.location.origin + `/builder/${templateData.id}?editor=1`, "_blank");
-                  }}
+                  onClick={cloneTemplate}
+                  disabled={isCloning}
                 >
-                  Edit this Template
+                  Clone and Edit
                 </Button>
-              )}
-              <Button
-                variant={"contained"}
-                startIcon={<Clone />}
-                sx={templateBtnStyle}
-                onClick={cloneTemplate}
-                disabled={isCloning}
-              >
-                Clone and Edit
-              </Button>
-            </Stack>
-          </Box>
+              </Stack>
+            </Box>
+            {isValidUser && <ApiAccess templateData={templateData} />}
+          </>
         )}
       </Box>
     </Box>

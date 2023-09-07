@@ -31,6 +31,20 @@ import { INodesData } from "@/common/types/builder";
 import TemplateForm from "@/components/common/forms/TemplateForm";
 import { Templates } from "@/core/api/dto/templates";
 import { promptRandomId } from "@/common/helpers/promptRandomId";
+import { isPromptVariableValid } from "@/common/helpers/isPromptVariableValid";
+
+import MuiAlert, { AlertProps } from "@mui/material/Alert";
+
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
+  return (
+    <MuiAlert
+      elevation={6}
+      ref={ref}
+      variant="filled"
+      {...props}
+    />
+  );
+});
 
 export const Builder = () => {
   const router = useRouter();
@@ -48,6 +62,8 @@ export const Builder = () => {
   const [snackBarOpen, setSnackBarOpen] = React.useState(false);
   const [templateDrawerOpen, setTemplateDrawerOpen] = React.useState(Boolean(router.query.editor));
   const [publishTemplate] = usePublishTemplateMutation();
+  const [snackBarInvalidVariables, setSnackBarInvalidVariables] = React.useState(false);
+  const [invalidVariableMessage, setInvalidVariableMessage] = React.useState("");
 
   // Remove 'editor' query param after first load to prevent open modal on every load
   useEffect(() => {
@@ -345,6 +361,21 @@ export const Builder = () => {
 
   const injectOrderAndSendRequest = () => {
     const data = dataForRequest.current;
+
+    const allPromptsValid = dataForRequest.current.prompts_list.every((prompt: any) => {
+      const validation = isPromptVariableValid(prompt.content);
+      if (!validation.isValid) {
+        setInvalidVariableMessage(validation.message);
+        return false;
+      }
+      return true;
+    });
+
+    if (!allPromptsValid) {
+      setSnackBarInvalidVariables(true);
+      return;
+    }
+
     // remove duplicated dependencies in the prompts
     data.prompts_list?.forEach((prompt: INodesData) => {
       prompt.dependencies = prompt.dependencies.filter((dependency: number, index: number, self: number[]) => {
@@ -405,6 +436,7 @@ export const Builder = () => {
               onPublish={() => handlePublishTemplate()}
               onDrawerOpen={() => toggleTemplateDrawer(true)}
               onSave={injectOrderAndSendRequest}
+              templateSlug={promptsData?.slug}
             />
           </Grid>
           <SwipeableDrawer
@@ -574,6 +606,20 @@ export const Builder = () => {
           message="Prompt template saved with success"
           onClose={() => setSnackBarOpen(false)}
         />
+        <Snackbar
+          open={snackBarInvalidVariables}
+          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+          autoHideDuration={4000}
+          onClose={() => setSnackBarInvalidVariables(false)}
+        >
+          <Alert
+            onClose={() => setSnackBarInvalidVariables(false)}
+            severity="error"
+            sx={{ width: "100%", bgcolor: "#f85249" }}
+          >
+            You have entered an invalid prompt variable {invalidVariableMessage}
+          </Alert>
+        </Snackbar>
         <Dialog
           open={confirmDialogOpen}
           onClose={() => setConfirmDialogOpen(false)}

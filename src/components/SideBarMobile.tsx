@@ -18,13 +18,14 @@ import {
   Typography,
 } from "@mui/material";
 import { useRouter } from "next/router";
+import { useDispatch, useSelector } from "react-redux";
+
 import { setSelectedKeyword } from "@/core/store/filtersSlice";
 import { CollectionsEmptyBox } from "./common/sidebar/CollectionsEmptyBox";
 import { Menu, MenuType } from "@/common/constants";
 import useLogout from "@/hooks/useLogout";
 import { useGetCollectionTemplatesQuery } from "@/core/api/collections";
 import { Collections } from "./common/sidebar/Collections";
-import { useDispatch, useSelector } from "react-redux";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { RootState } from "@/core/store";
 import useDebounce from "@/hooks/useDebounce";
@@ -32,6 +33,9 @@ import { useGetTemplatesBySearchQuery } from "@/core/api/templates";
 import CardTemplate from "./common/cards/CardTemplate";
 import CardTemplatePlaceholder from "./placeholders/CardTemplatePlaceHolder";
 import { NotFoundIcon } from "@/assets/icons/NotFoundIcon";
+import LoadingOverlay from "./design-system/LoadingOverlay";
+import { useRouteChangeOverlay } from "@/hooks/useRouteChangeOverlay";
+import { theme } from "@/theme";
 
 type SidebarType = "navigation" | "profile";
 
@@ -68,6 +72,8 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
   const { data: templates, isFetching } = useGetTemplatesBySearchQuery(debouncedSearchName, {
     skip: !textInput.length,
   });
+
+  const { showOverlay } = useRouteChangeOverlay({ onCloseDrawerCallback: onCloseDrawer });
 
   const links = [
     {
@@ -134,9 +140,11 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
       onClose={onCloseDrawer}
       onOpen={onOpenDrawer}
     >
+      {showOverlay && <LoadingOverlay />}
+
       <Box minHeight={"100vh"}>
         <Grid
-          height={"56px"}
+          height={theme.custom.headerHeight.xs}
           width={"100%"}
           justifyContent={"space-between"}
           padding={"0px 4px"}
@@ -311,37 +319,41 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
                 )}
               </Box>
             ) : (
-              <Grid p={"16px"}>
+              <Grid
+                p={"16px"}
+                minHeight={templates?.length === 0 ? "70vh" : "auto"}
+                display={"flex"}
+                flexDirection={"column"}
+                justifyContent={"center"}
+                alignItems={"center"}
+                width={"100%"}
+              >
                 {isFetching ? (
-                  <CardTemplatePlaceholder count={5} />
-                ) : (
-                  <Grid
-                    display={"flex"}
-                    flexDirection={"column"}
-                    justifyContent={"center"}
-                    alignItems={"center"}
-                    minHeight={"20vh"}
-                  >
-                    {templates?.length !== 0 && !isFetching ? (
-                      <Grid
-                        display={"flex"}
-                        flexDirection={"column"}
-                        gap={"8px"}
-                        width={"100%"}
-                      >
-                        {templates?.map(template => (
-                          <CardTemplate
-                            key={template.id}
-                            template={template}
-                            query={debouncedSearchName}
-                            asResult
-                          />
-                        ))}
-                      </Grid>
-                    ) : (
-                      <NotFoundIcon />
-                    )}
+                  // Render the loading spinner while fetching data
+                  <Grid width={"100%"}>
+                    <CardTemplatePlaceholder count={5} />
                   </Grid>
+                ) : templates?.length !== 0 && !isFetching ? (
+                  // Render search results
+                  <Grid width={"100%"}>
+                    <Grid
+                      display={"flex"}
+                      flexDirection={"column"}
+                      gap={"8px"}
+                    >
+                      {templates?.map(template => (
+                        <CardTemplate
+                          key={template.id}
+                          template={template}
+                          query={debouncedSearchName}
+                          asResult
+                        />
+                      ))}
+                    </Grid>
+                  </Grid>
+                ) : (
+                  // Render not found icon when there are no results
+                  <NotFoundIcon />
                 )}
               </Grid>
             )}

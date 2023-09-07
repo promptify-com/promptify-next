@@ -1,0 +1,119 @@
+import { ApiIcon } from "@/assets/icons";
+import { ResPrompt } from "@/core/api/dto/prompts";
+import { Templates } from "@/core/api/dto/templates";
+import { Box, Button, Typography } from "@mui/material";
+import React, { useState } from "react";
+import { Bolt } from "@mui/icons-material";
+import dynamic from "next/dynamic";
+
+const ApiAccessModal = dynamic(() => import("../modals/ApiAccessModal"));
+
+interface Props {
+  templateData: Templates;
+}
+
+const isConnected = true;
+const lastAccess = "2 hours ago";
+const totalRuns = 246;
+
+const ApiAccess: React.FC<Props> = ({ templateData }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  return (
+    <Box
+      display="flex"
+      flexDirection="column"
+      gap="10px"
+    >
+      <Typography
+        color="tertiary"
+        fontSize={13}
+      >
+        API ACCESS
+      </Typography>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+      >
+        <Typography>Key Status:</Typography>
+        {isConnected ? (
+          <Box display="flex">
+            <Bolt
+              fontSize="small"
+              sx={{
+                color: "blue",
+              }}
+            />
+            <Typography>Connected</Typography>
+          </Box>
+        ) : (
+          <Box display="flex">
+            <Bolt
+              fontSize="small"
+              sx={{
+                color: "red",
+              }}
+            />
+            <Typography>Disconnected</Typography>
+          </Box>
+        )}
+      </Box>
+      <Button
+        variant={"contained"}
+        startIcon={<ApiIcon />}
+        sx={{
+          flex: 1,
+          p: "8px 22px",
+          fontSize: 15,
+          fontWeight: 500,
+          border: "none",
+          borderRadius: "999px",
+          bgcolor: "surface.3",
+          color: "onSurface",
+          svg: {
+            width: 24,
+            height: 24,
+          },
+          ":hover": {
+            bgcolor: "surface.4",
+          },
+        }}
+        disabled={!isConnected}
+        onClick={() => {
+          setIsModalOpen(true);
+        }}
+      >
+        <Typography
+          display="flex"
+          color={"inherit"}
+        >
+          Integrate this API
+        </Typography>
+      </Button>
+      <Box
+        display="none"
+        justifyContent="space-between"
+        sx={{ opacity: 0.5 }}
+      >
+        <Typography fontSize={12}>Last access:</Typography>
+        <Typography fontSize={12}>{lastAccess}</Typography>
+      </Box>
+      <Box
+        display="none"
+        justifyContent="space-between"
+        sx={{ opacity: 0.5 }}
+      >
+        <Typography fontSize={12}>Total Runs:</Typography>
+        <Typography fontSize={12}>{totalRuns}</Typography>
+      </Box>
+      {isModalOpen && (
+        <ApiAccessModal
+          onClose={() => setIsModalOpen(false)}
+          templateData={templateData}
+        />
+      )}
+    </Box>
+  );
+};
+
+export default ApiAccess;

@@ -1,19 +1,20 @@
 import { FC } from "react";
-import { Delete, Edit, PreviewRounded, SettingsApplicationsRounded } from "@mui/icons-material";
+import { Delete, SettingsApplicationsRounded } from "@mui/icons-material";
 import { Box, Card, CardMedia, Chip, Grid, IconButton, Tooltip, Typography } from "@mui/material";
-
 import { Templates } from "@/core/api/dto/templates";
 import Image from "@/components/design-system/Image";
-import { UserType } from "./TemplatesManager";
+import { useRouter } from "next/router";
 
 interface TemplateManagerItemProps {
-  type: UserType;
   template: Templates;
-  onOpenEdit: () => void;
   onOpenDelete: () => void;
 }
 
-const TemplateManagerItem: FC<TemplateManagerItemProps> = ({ template, type, onOpenEdit, onOpenDelete }) => {
+const TemplateManagerItem: FC<TemplateManagerItemProps> = ({ template, onOpenDelete }) => {
+  const router = useRouter();
+
+  const navigateToTemplate = () => router.push(`/prompt/${template.slug}`);
+
   return (
     <Card
       key={template.id}
@@ -43,7 +44,9 @@ const TemplateManagerItem: FC<TemplateManagerItemProps> = ({ template, type, onO
               height: { xs: "90px", md: "60px" },
               width: "80px",
               borderRadius: "16px",
+              cursor: "pointer",
             }}
+            onClick={navigateToTemplate}
           >
             <Image
               src={template.thumbnail}
@@ -51,7 +54,15 @@ const TemplateManagerItem: FC<TemplateManagerItemProps> = ({ template, type, onO
               style={{ borderRadius: "16px", objectFit: "cover", width: "100%", height: "100%" }}
             />
           </CardMedia>
-          <Box>
+          <Box
+            sx={{
+              cursor: "pointer",
+              ":hover": {
+                opacity: 0.8,
+              },
+            }}
+            onClick={navigateToTemplate}
+          >
             <Typography>{template.title}</Typography>
           </Box>
           <Chip
@@ -66,9 +77,10 @@ const TemplateManagerItem: FC<TemplateManagerItemProps> = ({ template, type, onO
           ml={"auto"}
           gap={"8px"}
         >
-          <Tooltip title="Preview">
+          <Tooltip title="Builder">
             <IconButton
               sx={{
+                display: { xs: "none", md: "inline-flex" },
                 bgcolor: "surface.2",
                 border: "none",
                 color: "onSurface",
@@ -78,47 +90,10 @@ const TemplateManagerItem: FC<TemplateManagerItemProps> = ({ template, type, onO
                 },
               }}
               onClick={() => {
-                window.open(window.location.origin + `/prompt/${template.slug}`, "_blank");
+                window.open(window.location.origin + `/builder/${template.id}`, "_blank");
               }}
             >
-              <PreviewRounded />
-            </IconButton>
-          </Tooltip>
-          {type === "admin" && (
-            <Tooltip title="Builder">
-              <IconButton
-                sx={{
-                  bgcolor: "surface.2",
-                  border: "none",
-                  color: "onSurface",
-                  "&:hover": {
-                    bgcolor: "surface.3",
-                    color: "onSurface",
-                  },
-                }}
-                onClick={() => {
-                  window.open(window.location.origin + `/builder/${template.id}`, "_blank");
-                }}
-              >
-                <SettingsApplicationsRounded />
-              </IconButton>
-            </Tooltip>
-          )}
-
-          <Tooltip title="Edit">
-            <IconButton
-              sx={{
-                bgcolor: "surface.2",
-                border: "none",
-                color: "onSurface",
-                "&:hover": {
-                  bgcolor: "surface.3",
-                  color: "onSurface",
-                },
-              }}
-              onClick={onOpenEdit}
-            >
-              <Edit />
+              <SettingsApplicationsRounded />
             </IconButton>
           </Tooltip>
           <Tooltip title="Delete">

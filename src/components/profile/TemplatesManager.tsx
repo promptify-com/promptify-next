@@ -260,13 +260,7 @@ export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title }) => {
                   {filteredTemplates?.map((template: Templates) => (
                     <TemplateManagerItem
                       key={template.id}
-                      type={type}
                       template={template}
-                      onOpenEdit={() => {
-                        setSelectedTemplate(template);
-                        setTemplateFormType("edit");
-                        setTemplateFormOpen(true);
-                      }}
                       onOpenDelete={() => openDeletionModal(template)}
                     />
                   ))}
@@ -301,13 +295,7 @@ export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title }) => {
                 userTemplates?.map((template: Templates) => (
                   <TemplateManagerItem
                     key={template.id}
-                    type={type}
                     template={template}
-                    onOpenEdit={() => {
-                      setSelectedTemplate(template);
-                      setTemplateFormType("edit");
-                      setTemplateFormOpen(true);
-                    }}
                     onOpenDelete={() => openDeletionModal(template)}
                   />
                 ))

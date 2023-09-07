@@ -3,8 +3,7 @@ import { Box, Stack, Tooltip, Typography } from "@mui/material";
 import { PromptExecutions, Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { Subtitle } from "@/components/blocks";
 import { Error } from "@mui/icons-material";
-import { markdownToHTML } from "@/common/helpers";
-import DOMPurify from "isomorphic-dompurify";
+import { markdownToHTML, sanitizeHTML } from "@/common/helpers";
 
 interface Props {
   execution: TemplatesExecutions;
@@ -127,7 +126,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData, search
                       }}
                     />
                   )}
-                  <Typography
+                  <Box
                     sx={{
                       fontSize: 15,
                       fontWeight: 400,
@@ -140,26 +139,32 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData, search
                         color: "black",
                       },
                       pre: {
-                        bgcolor: "#282a35",
-                        color: "common.white",
                         m: "10px 0",
                         borderRadius: "8px",
                         overflow: "hidden",
                         code: {
-                          display: "block",
-                          p: "16px 24px",
-                          overflow: "auto",
+                          borderRadius: 0,
+                          m: 0,
                         },
-                        ".language": {
-                          p: "8px 24px",
-                          bgcolor: "#4d5562",
-                          color: "#ffffff",
-                          fontSize: 13,
-                        },
+                      },
+                      code: {
+                        display: "block",
+                        bgcolor: "#282a35",
+                        color: "common.white",
+                        borderRadius: "8px",
+                        p: "16px 24px",
+                        mb: "10px",
+                        overflow: "auto",
+                      },
+                      ".language-label": {
+                        p: "8px 24px",
+                        bgcolor: "#4d5562",
+                        color: "#ffffff",
+                        fontSize: 13,
                       },
                     }}
                     dangerouslySetInnerHTML={{
-                      __html: DOMPurify.sanitize(exec.output),
+                      __html: sanitizeHTML(exec.output),
                     }}
                   />
                 </Box>

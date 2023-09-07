@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "next lint --no-cache",
     "prepare": "husky install",
     "prettier:fix": "prettier src/**/*.{ts,tsx} --write"
   },
@@ -26,10 +26,12 @@
     "@types/node": "20.3.2",
     "@types/react": "18.2.14",
     "@types/react-dom": "18.2.6",
+    "@types/react-syntax-highlighter": "^15.5.7",
     "@types/yup": "^0.32.0",
     "axios": "^1.4.0",
     "elkjs": "^0.8.2",
     "formik": "^2.4.2",
+    "httpsnippet": "2.0.0",
     "isomorphic-dompurify": "^1.8.0",
     "material-dynamic-colors": "^0.1.7",
     "moment": "^2.29.4",
@@ -42,6 +44,7 @@
     "react-image-crop": "^10.1.5",
     "react-linkedin-login-oauth2": "^2.0.1",
     "react-redux": "^8.1.1",
+    "react-syntax-highlighter": "^15.5.0",
     "remark": "^14.0.3",
     "remark-html": "^15.0.2",
     "rete": "2.0.0-beta.6",
@@ -54,7 +57,9 @@
     "typescript": "5.1.6",
     "usehooks-ts": "^2.9.1",
     "web-worker": "^1.2.0",
-    "yup": "^1.2.0"
+    "yup": "^1.2.0",
+    "eslint": "8.48.0",
+    "eslint-config-next": "13.4.19"
   },
   "devDependencies": {
     "husky": "^8.0.3",

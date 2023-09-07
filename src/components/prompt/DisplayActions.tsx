@@ -15,22 +15,14 @@ import {
   alpha,
   useTheme,
 } from "@mui/material";
-import {
-  Search as SearchIcon,
-  FeedOutlined,
-  ArrowDropUp,
-  ArrowDropDown,
-  Undo,
-  Redo,
-  Close,
-  InfoOutlined,
-} from "@mui/icons-material";
+import { Search as SearchIcon, ArrowDropUp, ArrowDropDown, Close, InfoOutlined } from "@mui/icons-material";
 import { SubjectIcon } from "@/assets/icons/SubjectIcon";
 import { TemplatesExecutions } from "@/core/api/dto/templates";
 import { ExecutionsTabs } from "./ExecutionsTabs";
 import SavedSpark from "@/assets/icons/SavedSpark";
 import DraftSpark from "@/assets/icons/DraftSpark";
 import ShareIcon from "@/assets/icons/ShareIcon";
+import { useAppSelector } from "@/hooks/useStore";
 
 interface Props {
   executions: TemplatesExecutions[];
@@ -50,6 +42,7 @@ export const DisplayActions: React.FC<Props> = ({
   onOpenExport,
 }) => {
   const { palette } = useTheme();
+  const isGenerating = useAppSelector(state => state.template.isGenerating);
 
   const [execsDropAnchor, setExecsDropAnchor] = useState<HTMLElement | null>(null);
   const [searchShown, setSearchShown] = useState(false);
@@ -119,6 +112,7 @@ export const DisplayActions: React.FC<Props> = ({
 
   const ExecutionsSelect = (
     <Button
+      disabled={isGenerating}
       sx={{
         width: "100%",
         maxWidth: "336px",
@@ -204,19 +198,21 @@ export const DisplayActions: React.FC<Props> = ({
               TODO: https://github.com/ysfbsf/promptify-next/issues/275
               {SearchInput("left")} 
             */}
-            <Tooltip title="Export">
-              <IconButton
-                onClick={onOpenExport}
-                sx={{
-                  border: "none",
-                  "&:hover": {
-                    bgcolor: "surface.2",
-                  },
-                }}
-              >
-                <ShareIcon />
-              </IconButton>
-            </Tooltip>
+            {selectedExecution?.id && (
+              <Tooltip title="Export">
+                <IconButton
+                  onClick={onOpenExport}
+                  sx={{
+                    border: "none",
+                    "&:hover": {
+                      bgcolor: "surface.2",
+                    },
+                  }}
+                >
+                  <ShareIcon />
+                </IconButton>
+              </Tooltip>
+            )}
           </Stack>
         </Stack>
 
@@ -268,6 +264,7 @@ export const DisplayActions: React.FC<Props> = ({
           anchorEl={execsDropAnchor}
           transition
           disablePortal
+          placement="auto"
         >
           {({ TransitionProps, placement }) => (
             <Grow
