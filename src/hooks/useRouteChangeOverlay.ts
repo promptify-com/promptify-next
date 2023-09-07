@@ -7,7 +7,7 @@ interface Props {
 }
 
 export const useRouteChangeOverlay = ({
-  shouldShowOverlayCallback = () => false,
+  shouldShowOverlayCallback = () => true,
   onCloseDrawerCallback = () => {},
 }: Props = {}) => {
   const router = useRouter();
