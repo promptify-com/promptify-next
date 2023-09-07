@@ -39,9 +39,7 @@ const TemplateForm: React.FC<Props> = ({
   const { data: fetchedTags } = useGetTagsQuery();
   const [tags, setTags] = useState<string[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-
   const { data: user } = useGetCurrentUserQuery(token);
-
   const [createTemplate] = useCreateTemplateMutation();
   const [updateTemplate] = useUpdateTemplateMutation();
 

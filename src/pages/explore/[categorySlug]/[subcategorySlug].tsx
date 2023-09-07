@@ -79,7 +79,9 @@ export default function Page({ category }: { category: Category }) {
                   }}
                 >
                   {categories
-                    ?.filter((mainCat: Category) => category?.name == mainCat.parent?.name)
+                    ?.filter(
+                      subcategory => category?.name == subcategory.parent?.name && subcategory.prompt_template_count,
+                    )
                     .map(subcategory => (
                       <Grid key={subcategory.id}>
                         <SubCategoryCard
@@ -113,8 +115,8 @@ export default function Page({ category }: { category: Category }) {
 export async function getServerSideProps({ params }: any) {
   const { categorySlug } = params;
   try {
-    const categoryRes = await authClient.get(`/api/meta/categories/by-slug/${categorySlug}`);
-    const category = categoryRes.data; // Extract the necessary data from the response
+    const categoryRes = await authClient.get<Category>(`/api/meta/categories/by-slug/${categorySlug}`);
+    const category = categoryRes.data;
 
     return {
       props: {
