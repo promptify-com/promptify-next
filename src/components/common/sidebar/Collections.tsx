@@ -7,6 +7,9 @@ import { useRouter } from "next/router";
 import { CollectionsEmptyBox } from "./CollectionsEmptyBox";
 
 import ListItemPlaceholder from "@/components/placeholders/ListItemPlaceholder";
+import LoadingOverlay from "@/components/design-system/LoadingOverlay";
+import { useEffect, useState } from "react";
+import { useWindowSize } from "usehooks-ts";
 
 interface SideBarCollectionsProps {
   sidebarOpen?: boolean;
@@ -22,6 +25,34 @@ export const Collections: React.FC<SideBarCollectionsProps> = ({
   collectionLoading,
 }) => {
   const router = useRouter();
+
+  const [showOverlay, setShowOverlay] = useState(false);
+
+  useEffect(() => {
+    const handleRouteChangeStart = (url: string) => {
+      // Check if the route change is to template page
+      if (url.startsWith("/prompt/")) {
+        setShowOverlay(true);
+      } else {
+        setShowOverlay(false);
+      }
+    };
+
+    const handleRouteChangeComplete = () => {
+      setShowOverlay(false);
+    };
+
+    router.events.on("routeChangeStart", handleRouteChangeStart);
+    router.events.on("routeChangeComplete", handleRouteChangeComplete);
+
+    return () => {
+      router.events.off("routeChangeStart", handleRouteChangeStart);
+      router.events.off("routeChangeComplete", handleRouteChangeComplete);
+    };
+  }, [router]);
+
+  const { width: windowWidth } = useWindowSize();
+  const IS_MOBILE = windowWidth < 900;
 
   return (
     <Box>
@@ -70,16 +101,20 @@ export const Collections: React.FC<SideBarCollectionsProps> = ({
               {collectionLoading ? (
                 <ListItemPlaceholder />
               ) : (
-                favCollection?.prompt_templates.map((item: ITemplate) => (
-                  <CollectionItem
-                    key={item.id}
-                    template={item}
-                    expanded={sidebarOpen}
-                    onClick={() => {
-                      router.push(`/prompt/${item.slug}`);
-                    }}
-                  />
-                ))
+                <>
+                  {!IS_MOBILE && showOverlay && <LoadingOverlay showOnDesktop />}
+
+                  {favCollection?.prompt_templates.map((item: ITemplate) => (
+                    <CollectionItem
+                      key={item.id}
+                      template={item}
+                      expanded={sidebarOpen}
+                      onClick={() => {
+                        router.push(`/prompt/${item.slug}`);
+                      }}
+                    />
+                  ))}
+                </>
               )}
             </List>
           </Box>

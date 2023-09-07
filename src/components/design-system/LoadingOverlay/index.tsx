@@ -3,25 +3,26 @@ import React, { ReactNode } from "react";
 import { useWindowSize } from "usehooks-ts";
 
 interface LoadingOverlayProps {
-  loading: boolean;
-  children: ReactNode;
   size?: number;
+  showOnDesktop?: boolean;
 }
 
-const LoadingOverlay: React.FC<LoadingOverlayProps> = ({ loading, children, size = 16 }) => {
+const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
+  size = 40,
+  showOnDesktop = false, // Default to false, only show on mobile by default
+}) => {
   const { width: windowWidth } = useWindowSize();
   const IS_MOBILE = windowWidth < 900;
 
   return (
-    <Backdrop open={loading && IS_MOBILE}>
-      {loading ? (
-        <CircularProgress
-          color="inherit"
-          sx={{ fontSize: size }}
-        />
-      ) : (
-        <>{children}</>
-      )}
+    <Backdrop
+      sx={{ zIndex: 6666 }}
+      open={IS_MOBILE || showOnDesktop}
+    >
+      <CircularProgress
+        color="inherit"
+        size={size}
+      />
     </Backdrop>
   );
 };
