@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
-import { useWindowSize } from "usehooks-ts";
+interface Props {
+  shouldShowOverlayCallback?: (url: string) => boolean;
+  onCloseDrawerCallback?: () => void;
+}
 
-export const useRouteChangeOverlay = (
-  shouldShowOverlayCallback?: (url: string) => boolean,
-  onCloseDrawerCallback?: () => void,
-) => {
+export const useRouteChangeOverlay = ({
+  shouldShowOverlayCallback = () => false,
+  onCloseDrawerCallback = () => {},
+}: Props = {}) => {
   const router = useRouter();
-  const { width: windowWidth } = useWindowSize();
-
-  const IS_MOBILE = windowWidth < 900;
 
   const [showOverlay, setShowOverlay] = useState(false);
 
@@ -34,5 +34,5 @@ export const useRouteChangeOverlay = (
     };
   }, [router, shouldShowOverlayCallback, onCloseDrawerCallback]);
 
-  return { showOverlay, IS_MOBILE };
+  return { showOverlay };
 };

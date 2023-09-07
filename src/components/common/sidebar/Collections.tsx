@@ -9,6 +9,7 @@ import { CollectionsEmptyBox } from "./CollectionsEmptyBox";
 import ListItemPlaceholder from "@/components/placeholders/ListItemPlaceholder";
 import LoadingOverlay from "@/components/design-system/LoadingOverlay";
 import { useRouteChangeOverlay } from "@/hooks/useRouteChangeOverlay";
+import { determineIsMobile } from "@/common/helpers/determineIsMobile";
 
 interface SideBarCollectionsProps {
   sidebarOpen?: boolean;
@@ -25,9 +26,12 @@ export const Collections: React.FC<SideBarCollectionsProps> = ({
 }) => {
   const router = useRouter();
 
-  const { IS_MOBILE, showOverlay } = useRouteChangeOverlay(url => {
-    return url.startsWith("/prompt/");
+  const { showOverlay } = useRouteChangeOverlay({
+    shouldShowOverlayCallback: url => {
+      return url.startsWith("/prompt/");
+    },
   });
+  const IS_MOBILE = determineIsMobile();
 
   return (
     <Box>

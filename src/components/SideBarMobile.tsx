@@ -72,7 +72,7 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
     skip: !textInput.length,
   });
 
-  const { showOverlay } = useRouteChangeOverlay(undefined, onCloseDrawer);
+  const { showOverlay } = useRouteChangeOverlay({ onCloseDrawerCallback: onCloseDrawer });
 
   const links = [
     {

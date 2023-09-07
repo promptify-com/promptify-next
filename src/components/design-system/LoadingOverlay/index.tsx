@@ -1,7 +1,7 @@
 import React from "react";
 import { Backdrop, CircularProgress } from "@mui/material";
 
-import { useRouteChangeOverlay } from "@/hooks/useRouteChangeOverlay";
+import { determineIsMobile } from "@/common/helpers/determineIsMobile";
 
 interface LoadingOverlayProps {
   size?: number;
@@ -12,8 +12,7 @@ const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
   size = 40,
   showOnDesktop = false, // Default to false, only show on mobile by default
 }) => {
-  const { IS_MOBILE } = useRouteChangeOverlay();
-
+  const IS_MOBILE = determineIsMobile();
   return (
     <Backdrop
       sx={{ zIndex: 6666 }}
