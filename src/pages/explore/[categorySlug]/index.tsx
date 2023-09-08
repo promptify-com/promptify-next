@@ -64,7 +64,6 @@ export default function Page({ category }: { category: Category }) {
                   </Button>
                 </Link>
                 <Typography variant="body1">{category.description}</Typography>{" "}
-                {/* Adding category description using Typography */}
               </Grid>
               <Grid
                 display={"flex"}
@@ -76,7 +75,9 @@ export default function Page({ category }: { category: Category }) {
                 }}
               >
                 {categories
-                  ?.filter(mainCat => category?.name == mainCat.parent?.name)
+                  ?.filter(
+                    subcategory => category?.name == subcategory.parent?.name && subcategory.prompt_template_count,
+                  )
                   .map(subcategory => (
                     <Grid key={subcategory.id}>
                       <SubCategoryCard

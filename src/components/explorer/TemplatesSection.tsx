@@ -2,12 +2,12 @@ import { Box, Grid, Typography } from "@mui/material";
 
 import { NotFoundIcon } from "@/assets/icons/NotFoundIcon";
 import CardTemplate from "@/components/common/cards/CardTemplate";
-import { TemplateExecutionsDisplay, Templates } from "@/core/api/dto/templates";
+import { TemplateExecutionsDisplay, Templates, TemplatesWithPagination } from "@/core/api/dto/templates";
 import CardTemplateLast from "../common/cards/CardTemplateLast";
+import TemplatesPaginatedList from "../TemplatesPaginatedList";
 
 import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
 import LatestTemplatePlaceholder from "@/components/placeholders/LatestTemplatePlaceholder";
-
 import TemplatesInfiniteScroll from "../TemplatesInfiniteScroll";
 
 interface TemplatesSectionProps {
@@ -16,7 +16,10 @@ interface TemplatesSectionProps {
   filtred?: boolean;
   title?: string;
   isLatestTemplates?: boolean;
+  hasNext?: boolean;
+  hasPrev?: boolean;
   onNextPage?: () => void;
+  onPrevPage?: () => void;
   type?: string;
 }
 
@@ -29,6 +32,10 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
   onNextPage = () => {},
   type,
 }) => {
+  if (!isLoading && !templates?.length) {
+    return null;
+  }
+
   return (
     <Box width={"100%"}>
       {!filtred && (isLoading || !!templates?.length) && <Typography fontSize={19}>{title}</Typography>}
@@ -64,20 +71,18 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
           }}
         >
           {isLatestTemplates ? (
-            <Grid
-              display={"flex"}
-              flexWrap={{ xs: "nowrap", md: "wrap" }}
-              sx={{
-                gap: "1em",
-                width: "100%",
-                overflow: { xs: "auto", md: "initial" },
-                WebkitOverflowScrolling: { xs: "touch", md: "initial" },
-              }}
-            >
-              {!isLoading &&
-                !!templates &&
-                templates.length > 0 &&
-                templates.map((template: TemplateExecutionsDisplay | Templates) => (
+            !!templates?.length && (
+              <Grid
+                display={"flex"}
+                flexWrap={{ xs: "nowrap", md: "wrap" }}
+                sx={{
+                  gap: "1em",
+                  width: "100%",
+                  overflow: { xs: "auto", md: "initial" },
+                  WebkitOverflowScrolling: { xs: "touch", md: "initial" },
+                }}
+              >
+                {templates.map((template: TemplateExecutionsDisplay | Templates) => (
                   <Grid key={template.id}>
                     <CardTemplateLast
                       key={template.id}
@@ -85,7 +90,8 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
                     />
                   </Grid>
                 ))}
-            </Grid>
+              </Grid>
+            )
           ) : (
             <Grid>
               {/* <TemplatesPaginatedList
@@ -94,16 +100,20 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
                 hasPrev={hasPrev}
                 onPrevPage={onPrevPage}
                 onNextPage={onNextPage}
+                canBeShown={!type || !["myLatestExecutions", "suggestedTemplates"].includes(type)}
               >
                 {!!templates?.length &&
-                  templates.map((template: TemplateExecutionsDisplay | Templates) => (
-                    <Grid key={template.id}>
-                      <CardTemplate
-                        key={template.id}
-                        template={template as Templates}
-                      />
-                    </Grid>
-                  ))}
+                  templates.map((template: TemplateExecutionsDisplay | Templates, idx) => {
+                    console.log("template: ", template, idx);
+                    return (
+                      <Grid key={template.id}>
+                        <CardTemplate
+                          key={template.id}
+                          template={template as Templates}
+                        />
+                      </Grid>
+                    );
+                  })}
               </TemplatesPaginatedList> */}
 
               <TemplatesInfiniteScroll
@@ -111,20 +121,22 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
                 onLoadMore={onNextPage}
               >
                 {!!templates?.length &&
-                  templates.map((template: TemplateExecutionsDisplay | Templates) => (
-                    <Grid key={template.id}>
-                      <CardTemplate
-                        key={template.id}
-                        template={template as Templates}
-                      />
-                    </Grid>
-                  ))}
-                {isLoading && <p>LOADING MORE</p>}
+                  templates.map((template: TemplateExecutionsDisplay | Templates, idx) => {
+                    console.log("template: ", template, idx);
+                    return (
+                      <Grid key={template.id}>
+                        <CardTemplate
+                          key={template.id}
+                          template={template as Templates}
+                        />
+                      </Grid>
+                    );
+                  })}
               </TemplatesInfiniteScroll>
             </Grid>
           )}
 
-          {type !== "yourLatestTemplates" && !isLoading && !templates?.length && (
+          {type !== "myLatestExecutions" && !isLoading && !templates?.length && (
             <Grid
               sx={{
                 display: "flex",

@@ -222,6 +222,19 @@ export const SparkExportPopup = ({ activeExecution, onClose }: SparkExportProps)
             flexDirection={"column"}
             gap={"16px"}
           >
+            <Typography
+              fontSize={13}
+              fontWeight={500}
+              lineHeight={"13px"}
+              p={0}
+              display={"flex"}
+              justifyContent={"center"}
+              sx={{
+                opacity: 0.8,
+              }}
+            >
+              Anyone on the Internet with the link can view
+            </Typography>
             <BaseButton
               onClick={() => handleClickCopy()}
               variant="contained"

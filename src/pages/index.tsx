@@ -130,12 +130,13 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
                   isLoading={isMyLatestExecutionsLoading}
                   templates={myLatestExecutions}
                   title="Your Latest Templates:"
-                  type="yourLatestTemplates"
+                  type="myLatestExecutions"
                 />
                 <TemplatesSection
                   isLoading={isSuggestedTemplateLoading}
                   templates={suggestedTemplates}
                   title="You may like these templates:"
+                  type="suggestedTemplates"
                 />
                 <CategoriesSection
                   categories={categories}
@@ -159,8 +160,8 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
 };
 
 export async function getServerSideProps() {
-  const responseCategories = await authClient.get("/api/meta/categories/");
-  const categories = responseCategories.data;
+  const responseCategories = await authClient.get<Category[]>("/api/meta/categories/");
+  const categories = responseCategories.data?.filter(category => category.prompt_template_count);
 
   return {
     props: {

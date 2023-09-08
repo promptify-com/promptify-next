@@ -1,6 +1,7 @@
 import { Skeleton, Stack, Box, Grid } from "@mui/material";
 import DetailsCardPlaceholder from "./DetailsCardPlaceholder";
 import TabsAndFormPlaceholder from "./TabsAndFormPlaceholder";
+import { theme } from "@/theme";
 
 export default function PromptPlaceholder() {
   return (
@@ -10,8 +11,8 @@ export default function PromptPlaceholder() {
       sx={{
         mx: "auto",
         height: {
-          xs: "calc(100svh - 56px)",
-          md: "calc(100svh - (90px + 32px))",
+          xs: `calc(100svh - ${theme.custom.headerHeight.xs})`,
+          md: `calc(100svh - ${theme.custom.headerHeight.md})`,
         },
         width: { md: "calc(100% - 65px)" },
         bgcolor: "surface.2",
