@@ -2,12 +2,13 @@ import { Box, Grid, Typography } from "@mui/material";
 
 import { NotFoundIcon } from "@/assets/icons/NotFoundIcon";
 import CardTemplate from "@/components/common/cards/CardTemplate";
-import { TemplateExecutionsDisplay, Templates, TemplatesWithPagination } from "@/core/api/dto/templates";
+import { TemplateExecutionsDisplay, Templates } from "@/core/api/dto/templates";
 import CardTemplateLast from "../common/cards/CardTemplateLast";
-import TemplatesPaginatedList from "../TemplatesPaginatedList";
 
 import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
 import LatestTemplatePlaceholder from "@/components/placeholders/LatestTemplatePlaceholder";
+
+import TemplatesInfiniteScroll from "../TemplatesInfiniteScroll";
 
 interface TemplatesSectionProps {
   templates: Templates[] | TemplateExecutionsDisplay[] | undefined;
@@ -15,10 +16,7 @@ interface TemplatesSectionProps {
   filtred?: boolean;
   title?: string;
   isLatestTemplates?: boolean;
-  hasNext?: boolean;
-  hasPrev?: boolean;
   onNextPage?: () => void;
-  onPrevPage?: () => void;
   type?: string;
 }
 
@@ -28,10 +26,7 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
   filtred,
   title,
   isLatestTemplates = false,
-  hasNext = false,
-  hasPrev = false,
   onNextPage = () => {},
-  onPrevPage = () => {},
   type,
 }) => {
   return (
@@ -93,7 +88,7 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
             </Grid>
           ) : (
             <Grid>
-              <TemplatesPaginatedList
+              {/* <TemplatesPaginatedList
                 loading={isLoading}
                 hasNext={hasNext}
                 hasPrev={hasPrev}
@@ -109,7 +104,23 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
                       />
                     </Grid>
                   ))}
-              </TemplatesPaginatedList>
+              </TemplatesPaginatedList> */}
+
+              <TemplatesInfiniteScroll
+                loading={isLoading}
+                onLoadMore={onNextPage}
+              >
+                {!!templates?.length &&
+                  templates.map((template: TemplateExecutionsDisplay | Templates) => (
+                    <Grid key={template.id}>
+                      <CardTemplate
+                        key={template.id}
+                        template={template as Templates}
+                      />
+                    </Grid>
+                  ))}
+                {isLoading && <p>LOADING MORE</p>}
+              </TemplatesInfiniteScroll>
             </Grid>
           )}
 

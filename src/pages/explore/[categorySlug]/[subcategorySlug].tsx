@@ -13,18 +13,10 @@ import SubCategoryPlaceholder from "@/components/placeholders/SubCategoryPlaceho
 import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
 import Breadcrumb from "@/components/design-system/Breadcrumb";
 
-export default function Page({ category }: { category: Category }) {
+export default function Page({ category, subcategory }: { category: Category }) {
   const router = useRouter();
-  const {
-    templates,
-    isFetching,
-    categories,
-    isCategoryLoading,
-    subcategory,
-    allFilterParamsNull,
-    handleNextPage,
-    handlePreviousPage,
-  } = useGetTemplatesByFilter();
+  const { templates, isFetching, categories, isCategoryLoading, allFilterParamsNull, handleNextPage } =
+    useGetTemplatesByFilter(undefined, subcategory?.id);
 
   const navigateTo = (slug: string) => {
     router.push(`/explore/${category.slug}/${slug}`);
@@ -94,12 +86,9 @@ export default function Page({ category }: { category: Category }) {
 
                 <TemplatesSection
                   filtred={!allFilterParamsNull}
-                  templates={templates?.results ?? []}
+                  templates={templates ?? []}
                   isLoading={isFetching}
-                  hasNext={!!templates?.next}
-                  hasPrev={!!templates?.previous}
                   onNextPage={handleNextPage}
-                  onPrevPage={handlePreviousPage}
                 />
               </Box>
             )}
@@ -111,14 +100,17 @@ export default function Page({ category }: { category: Category }) {
 }
 
 export async function getServerSideProps({ params }: any) {
-  const { categorySlug } = params;
+  const { categorySlug, subcategorySlug } = params;
   try {
     const categoryRes = await authClient.get(`/api/meta/categories/by-slug/${categorySlug}`);
     const category = categoryRes.data; // Extract the necessary data from the response
+    const subcategoryRes = await authClient.get(`/api/meta/categories/by-slug/${subcategorySlug}`);
+    const subcategory = subcategoryRes.data; // Extract the necessary data from the response
 
     return {
       props: {
         category,
+        subcategory,
       },
     };
   } catch (error) {

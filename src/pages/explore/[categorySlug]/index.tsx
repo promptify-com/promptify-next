@@ -21,15 +21,16 @@ export default function Page({ category }: { category: Category }) {
     isCategoryLoading,
     categorySlug,
     allFilterParamsNull,
+    isTemplatesLoading,
     handleNextPage,
-    handlePreviousPage,
-  } = useGetTemplatesByFilter();
+  } = useGetTemplatesByFilter(category?.id);
   const goBack = () => {
     router.push("/explore");
   };
   const navigateTo = (item: Category) => {
     router.push(`/explore/${categorySlug}/${item.slug}`);
   };
+  console.log("Cat from Server here: ", category);
   return (
     <Layout>
       <Box
@@ -90,12 +91,9 @@ export default function Page({ category }: { category: Category }) {
               <FiltersSelected show={!allFilterParamsNull} />
               <TemplatesSection
                 filtred={!allFilterParamsNull}
-                templates={templates?.results ?? []}
-                isLoading={isFetching}
-                hasNext={!!templates?.next}
-                hasPrev={!!templates?.previous}
+                templates={templates ?? []}
+                isLoading={isTemplatesLoading}
                 onNextPage={handleNextPage}
-                onPrevPage={handlePreviousPage}
               />
             </Box>
           )}
