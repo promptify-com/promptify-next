@@ -130,12 +130,13 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
                   isLoading={isMyLatestExecutionsLoading}
                   templates={myLatestExecutions}
                   title="Your Latest Templates:"
-                  type="yourLatestTemplates"
+                  type="myLatestExecutions"
                 />
                 <TemplatesSection
                   isLoading={isSuggestedTemplateLoading}
                   templates={suggestedTemplates}
                   title="You may like these templates:"
+                  type="suggestedTemplates"
                 />
                 <CategoriesSection
                   categories={categories}
