@@ -9,6 +9,7 @@ interface TemplatesPaginatedListProps {
   loading: boolean;
   onNextPage: () => void;
   onPrevPage: () => void;
+  canBeShown?: boolean;
 }
 
 const TemplatesPaginatedList: FC<TemplatesPaginatedListProps> = ({
@@ -18,6 +19,7 @@ const TemplatesPaginatedList: FC<TemplatesPaginatedListProps> = ({
   onPrevPage,
   children,
   loading,
+  canBeShown = true,
 }) => {
   return (
     <Grid
@@ -28,7 +30,7 @@ const TemplatesPaginatedList: FC<TemplatesPaginatedListProps> = ({
       {children}
       <Grid
         p={"30px"}
-        display={"flex"}
+        display={canBeShown ? "flex" : "none"}
         justifyContent={"center"}
         alignItems={"center"}
       >

@@ -54,7 +54,10 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData, search
   }, [execution]);
 
   const isImageOutput = (output: string): boolean => {
-    return output.endsWith(".png") || output.endsWith(".jpg") || output.endsWith(".jpeg") || output.endsWith(".webp");
+    const IsImage =
+      output.endsWith(".png") || output.endsWith(".jpg") || output.endsWith(".jpeg") || output.endsWith(".webp");
+
+    return IsImage;
   };
 
   const executionError = (error: string | undefined) => {
@@ -86,7 +89,9 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData, search
       }}
     >
       <div ref={scrollRef}></div>
+
       <Typography sx={{ fontSize: 48, fontWeight: 400, color: "onSurface", py: "24px" }}>{execution.title}</Typography>
+
       {sortedExecutions?.map((exec, index) => {
         const prevItem = index > 0 && sortedExecutions[index - 1];
         const isPrevItemIsImage = prevItem && isImageOutput(prevItem?.output);
@@ -102,7 +107,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData, search
               sx={{ py: "24px" }}
             >
               <Subtitle sx={{ fontSize: 24, fontWeight: 400, color: "onSurface" }}>
-                {prompt.title}
+                {!isImageOutput(exec.output) && prompt.title}
                 {exec.errors && executionError(exec.errors)}
               </Subtitle>
               {/* is Text Output */}

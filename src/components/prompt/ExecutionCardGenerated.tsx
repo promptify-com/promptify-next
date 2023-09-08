@@ -77,7 +77,9 @@ export const ExecutionCardGenerated: React.FC<Props> = ({ execution, templateDat
               gap={1}
               sx={{ py: "24px" }}
             >
-              <Subtitle sx={{ fontSize: 24, fontWeight: 400, color: "onSurface" }}>{prompt.title}</Subtitle>
+              <Subtitle sx={{ fontSize: 24, fontWeight: 400, color: "onSurface" }}>
+                {!isImageOutput(exec.message) && prompt.title}
+              </Subtitle>
               {!isImageOutput(exec.message) && (
                 <Box>
                   {isPrevItemIsImage && (
