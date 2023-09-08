@@ -16,7 +16,7 @@ interface Props {
   executions: TemplatesExecutions[];
   isFetching?: boolean;
   selectedExecution: TemplatesExecutions | null;
-  setSelectedExecution: (execution: TemplatesExecutions) => void;
+  setSelectedExecution: (execution: TemplatesExecutions | null) => void;
   generatedExecution: PromptLiveResponse | null;
 }
 
@@ -68,6 +68,7 @@ export const Display: React.FC<Props> = ({
 
   const sortedExecutions = useMemo(() => {
     if (!executions?.length) {
+      setSelectedExecution(null);
       return [];
     }
 
