@@ -23,6 +23,10 @@ export const DetailsCard: React.FC<Props> = ({ templateData }) => {
   const isMdBreakpoint = useMediaQuery(breakpoints.up("md"));
   const borderRadiusValue = isMdBreakpoint ? "16px" : "0px";
 
+  const templateStatus =
+    templateData?.status !== "PUBLISHED" &&
+    `<span style="text-transform: lowercase; text-transform: capitalize; color: red">${templateData?.status.toLocaleLowerCase()}</span>`;
+
   return (
     <Box
       sx={{
@@ -67,7 +71,7 @@ export const DetailsCard: React.FC<Props> = ({ templateData }) => {
               fontSize={18}
               fontWeight={500}
               color={"onSurface"}
-              dangerouslySetInnerHTML={{ __html: templateData.title }}
+              dangerouslySetInnerHTML={{ __html: `${templateData.title} ${templateStatus}` }}
             />
             <Typography
               fontSize={12}
