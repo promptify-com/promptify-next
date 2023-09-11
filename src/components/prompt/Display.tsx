@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useMemo } from "react";
-import { Box, Typography } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { ExecutionCard } from "./ExecutionCard";
 import { PromptLiveResponse } from "@/common/types/prompt";
@@ -10,6 +10,8 @@ import ParagraphPlaceholder from "@/components/placeholders/ParagraphPlaceholder
 import { useRouter } from "next/router";
 import moment from "moment";
 import { SparkExportPopup } from "../dialog/SparkExportPopup";
+import { determineIsMobile } from "@/common/helpers/determineIsMobile";
+import { ChatMode } from "./generate/ChatBox";
 
 interface Props {
   templateData: Templates;
@@ -99,49 +101,54 @@ export const Display: React.FC<Props> = ({
 
   const isGeneratedExecutionEmpty = Boolean(generatedExecution && !generatedExecution?.data?.length);
 
-  return (
-    <Box
-      ref={containerRef}
-      sx={{
-        minHeight: "calc(100% - 31px)",
-        position: "relative",
-        pb: { xs: "70px", md: "0" },
-      }}
-    >
-      <DisplayActions
-        executions={sortedExecutions}
-        selectedExecution={selectedExecution}
-        setSelectedExecution={setSelectedExecution}
-        onSearch={text => setSearch(text)}
-        onOpenExport={() => setOpenExportpopup(true)}
-      />
-      {openExportPopup && activeExecution?.id && (
-        <SparkExportPopup
-          onClose={() => setOpenExportpopup(false)}
-          activeExecution={activeExecution}
-        />
-      )}
+  const IS_MOBILE = determineIsMobile();
 
-      <Box sx={{ mx: "15px", opacity: firstLoad ? 0.5 : 1 }}>
-        {isGeneratedExecutionEmpty ? (
-          <ParagraphPlaceholder />
-        ) : generatedExecution?.data ? (
-          <ExecutionCardGenerated
-            execution={generatedExecution}
-            templateData={templateData}
-          />
-        ) : isFetching ? (
-          <ParagraphPlaceholder />
-        ) : selectedExecution ? (
-          <ExecutionCard
-            execution={selectedExecution}
-            templateData={templateData}
-            search={search}
-          />
-        ) : (
-          <Typography sx={{ mt: "40px", textAlign: "center" }}>No spark found</Typography>
-        )}
+  return (
+    <Grid
+      display={"flex"}
+      flexDirection={"column"}
+      gap={"24px"}
+    >
+      {!IS_MOBILE && <ChatMode />}
+      <Box
+        ref={containerRef}
+        bgcolor={"surface.1"}
+        borderRadius={"16px"}
+        minHeight={{ xs: "100%", md: "calc(100vh - (95px + 48px + 24px))" }}
+        sx={{
+          position: "relative",
+          pb: { xs: "70px", md: "0" },
+        }}
+      >
+        <DisplayActions
+          executions={sortedExecutions}
+          selectedExecution={selectedExecution}
+          setSelectedExecution={setSelectedExecution}
+          onSearch={text => setSearch(text)}
+          onOpenExport={() => setOpenExportpopup(true)}
+        />
+
+        <Box sx={{ mx: "15px", opacity: firstLoad ? 0.5 : 1 }}>
+          {isGeneratedExecutionEmpty ? (
+            <ParagraphPlaceholder />
+          ) : generatedExecution?.data ? (
+            <ExecutionCardGenerated
+              execution={generatedExecution}
+              templateData={templateData}
+            />
+          ) : isFetching ? (
+            <ParagraphPlaceholder />
+          ) : selectedExecution ? (
+            <ExecutionCard
+              execution={selectedExecution}
+              templateData={templateData}
+              search={search}
+            />
+          ) : (
+            <Typography sx={{ mt: "40px", textAlign: "center" }}>No spark found</Typography>
+          )}
+        </Box>
       </Box>
-    </Box>
+    </Grid>
   );
 };

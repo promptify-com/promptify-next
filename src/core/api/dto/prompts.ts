@@ -74,3 +74,23 @@ export interface ResOverrides {
   id: number;
   contextual_overrides: ContextualOverrides[];
 }
+
+export interface TemplateQuestionGeneratorData {
+  prompt: number;
+  contextual_overrides: ContextualOverrides[];
+  prompt_params: {
+    TemplateData: {
+      id: number;
+      title: string;
+      description: string;
+      prompts: {
+        id: number;
+        execution_priority: number;
+        order: number;
+        title: string;
+        content: string;
+        parameters: string[];
+      };
+    };
+  };
+}
