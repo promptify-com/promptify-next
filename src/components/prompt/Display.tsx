@@ -5,19 +5,20 @@ import { ExecutionCard } from "./ExecutionCard";
 import { PromptLiveResponse } from "@/common/types/prompt";
 import { ExecutionCardGenerated } from "./ExecutionCardGenerated";
 import { DisplayActions } from "./DisplayActions";
-
 import ParagraphPlaceholder from "@/components/placeholders/ParagraphPlaceholder";
 import { useRouter } from "next/router";
 import moment from "moment";
 import { SparkExportPopup } from "../dialog/SparkExportPopup";
+import useBrowser from "@/hooks/useBrowser";
 
 interface Props {
   templateData: Templates;
   executions: TemplatesExecutions[];
   isFetching?: boolean;
   selectedExecution: TemplatesExecutions | null;
-  setSelectedExecution: (execution: TemplatesExecutions) => void;
+  setSelectedExecution: (execution: TemplatesExecutions | null) => void;
   generatedExecution: PromptLiveResponse | null;
+  hashedExecution: TemplatesExecutions | null;
 }
 
 export const Display: React.FC<Props> = ({
@@ -27,14 +28,16 @@ export const Display: React.FC<Props> = ({
   selectedExecution,
   setSelectedExecution,
   generatedExecution,
+  hashedExecution,
 }) => {
   const [firstLoad, setFirstLoad] = useState(true);
   const [search, setSearch] = useState<string>("");
   const router = useRouter();
   const sparkQueryParam = router.query?.spark as string;
+  const sparkHashQueryParam = useRef((router.query?.hash as string | null) ?? null);
   const [openExportPopup, setOpenExportpopup] = useState(false);
-
   const containerRef = useRef<HTMLDivElement>(null);
+  const { replaceHistoryByPathname } = useBrowser();
 
   const activeExecution = useMemo(() => {
     if (selectedExecution) {
@@ -66,12 +69,21 @@ export const Display: React.FC<Props> = ({
     if (generatedExecution) setFirstLoad(false);
   }, [generatedExecution]);
 
-  const sortedExecutions = useMemo(() => {
-    if (!executions?.length) {
-      return [];
+  const handleSelectExecution = ({
+    execution,
+    resetHash = false,
+  }: {
+    execution: TemplatesExecutions | null;
+    resetHash?: boolean;
+  }) => {
+    if (resetHash) {
+      sparkHashQueryParam.current = null;
     }
 
-    const _execuitons = [...executions]
+    setSelectedExecution(execution);
+  };
+  const sortedExecutions = useMemo(() => {
+    const _execuitons = (executions?.length ? [...executions] : [])
       .reduce((uniqueExecs: TemplatesExecutions[], execution) => {
         if (!uniqueExecs.some((item: TemplatesExecutions) => item.id === execution.id)) {
           uniqueExecs.push(execution);
@@ -80,18 +92,30 @@ export const Display: React.FC<Props> = ({
       }, [])
       .sort((a, b) => moment(b.created_at).diff(moment(a.created_at)));
 
+    if (sparkHashQueryParam.current) {
+      setSelectedExecution(hashedExecution);
+      replaceHistoryByPathname(`/prompt/${templateData.slug}`);
+
+      return _execuitons;
+    }
+
+    if (!executions?.length) {
+      setSelectedExecution(null);
+      return [];
+    }
+
     const wantedExecutionId = sparkQueryParam ?? selectedExecution?.id.toString();
 
     if (wantedExecutionId) {
       const _selectedExecution = _execuitons.find(exec => exec.id.toString() === wantedExecutionId);
 
-      setSelectedExecution(_selectedExecution || _execuitons?.[0] || null);
+      handleSelectExecution({ execution: _selectedExecution || _execuitons?.[0] || null, resetHash: true });
     } else {
-      setSelectedExecution(_execuitons?.[0] || null);
+      handleSelectExecution({ execution: _execuitons?.[0] || null, resetHash: true });
     }
 
     if (sparkQueryParam) {
-      router.replace({ pathname: `/prompt/${templateData.slug}` }, undefined, { shallow: true, scroll: false });
+      replaceHistoryByPathname(`/prompt/${templateData.slug}`);
     }
 
     return _execuitons;
@@ -111,9 +135,12 @@ export const Display: React.FC<Props> = ({
       <DisplayActions
         executions={sortedExecutions}
         selectedExecution={selectedExecution}
-        setSelectedExecution={setSelectedExecution}
+        setSelectedExecution={_execution => {
+          handleSelectExecution({ execution: _execution, resetHash: true });
+        }}
         onSearch={text => setSearch(text)}
         onOpenExport={() => setOpenExportpopup(true)}
+        sparkHashQueryParam={sparkHashQueryParam.current}
       />
       {openExportPopup && activeExecution?.id && (
         <SparkExportPopup
@@ -137,6 +164,7 @@ export const Display: React.FC<Props> = ({
             execution={selectedExecution}
             templateData={templateData}
             search={search}
+            sparkHashQueryParam={sparkHashQueryParam.current}
           />
         ) : (
           <Typography sx={{ mt: "40px", textAlign: "center" }}>No spark found</Typography>
