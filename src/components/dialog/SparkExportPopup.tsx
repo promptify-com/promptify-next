@@ -20,7 +20,7 @@ export const SparkExportPopup = ({ activeExecution, onClose }: SparkExportProps)
     throw new Error("Provided activeExecution is not a valid one!");
   }
 
-  const sharedUrl = `${getBaseURL()}/prompt/${activeExecution.template?.slug}?spark=${activeExecution.id}`;
+  const sharedUrl = `${getBaseURL()}/prompt/${activeExecution.template?.slug}/?hash=${activeExecution.hash}`;
 
   const [exportExecution] = executionsApi.endpoints.exportExecution.useLazyQuery();
   const [copyToClipboard, copyResult] = useCopyToClipboard();
@@ -236,7 +236,7 @@ export const SparkExportPopup = ({ activeExecution, onClose }: SparkExportProps)
               Anyone on the Internet with the link can view
             </Typography>
             <BaseButton
-              onClick={() => handleClickCopy()}
+              onClick={handleClickCopy}
               variant="contained"
               color="custom"
               sx={{

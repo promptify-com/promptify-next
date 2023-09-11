@@ -21,7 +21,7 @@ import materialDynamicColors from "material-dynamic-colors";
 import { mix } from "polished";
 import { useRouter } from "next/router";
 import { useGetPromptTemplateBySlugQuery, useViewTemplateMutation } from "@/core/api/templates";
-import { TemplatesExecutions } from "@/core/api/dto/templates";
+import { TemplatesExecutions, Templates } from "@/core/api/dto/templates";
 import { GeneratorForm } from "@/components/prompt/GeneratorForm";
 import { Display } from "@/components/prompt/Display";
 import { Details } from "@/components/prompt/Details";
@@ -40,10 +40,10 @@ import { updateTemplateData } from "@/core/store/templatesSlice";
 import { RootState } from "@/core/store";
 import PromptPlaceholder from "@/components/placeholders/PromptPlaceHolder";
 import { useAppSelector } from "@/hooks/useStore";
+import { getExecutionByHash } from "@/hooks/api/executions";
 
-const Prompt = () => {
+const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | null }) => {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
-
   const [selectedExecution, setSelectedExecution] = useState<TemplatesExecutions | null>(null);
   const [generatedExecution, setGeneratedExecution] = useState<PromptLiveResponse | null>(null);
   const [executionFormOpen, setExecutionFormOpen] = useState(false);
@@ -106,8 +106,10 @@ const Prompt = () => {
   }, [isGenerating, generatedExecution]);
 
   useEffect(() => {
-    if (isGenerating) setMobileTab(2);
-  }, [isGenerating]);
+    if (isGenerating || hashedExecution?.id) {
+      setMobileTab(2);
+    }
+  }, [isGenerating, hashedExecution]);
 
   // Keep tracking the current generated prompt
   const currentGeneratedPrompt = useMemo(() => {
@@ -344,6 +346,7 @@ const Prompt = () => {
                   selectedExecution={selectedExecution}
                   setSelectedExecution={setSelectedExecution}
                   generatedExecution={generatedExecution}
+                  hashedExecution={hashedExecution}
                 />
                 {currentGeneratedPrompt && (
                   <Box
@@ -404,12 +407,26 @@ const Prompt = () => {
   );
 };
 
-export async function getServerSideProps({ params }: any) {
+export async function getServerSideProps({ params, query }: { params: { slug: string }; query: { hash: string } }) {
   const { slug } = params;
+  const { hash } = query;
 
   try {
-    const templatesResponse = await authClient.get(`/api/meta/templates/by-slug/${slug}/`);
-    const fetchedTemplate = templatesResponse.data; // Extract the necessary data from the response
+    let fetchedTemplate: Templates;
+    let execution: TemplatesExecutions | null = null;
+
+    if (hash) {
+      const [_execution, _templatesResponse] = await Promise.all([
+        getExecutionByHash(hash),
+        authClient.get<Templates>(`/api/meta/templates/by-slug/${slug}/`),
+      ]);
+
+      execution = _execution;
+      fetchedTemplate = _templatesResponse.data;
+    } else {
+      const _templatesResponse = await authClient.get<Templates>(`/api/meta/templates/by-slug/${slug}/`);
+      fetchedTemplate = _templatesResponse.data;
+    }
 
     return {
       props: {
@@ -417,6 +434,7 @@ export async function getServerSideProps({ params }: any) {
         description: fetchedTemplate.meta_description || fetchedTemplate.description,
         meta_keywords: fetchedTemplate.meta_keywords,
         image: fetchedTemplate.thumbnail,
+        hashedExecution: execution,
       },
     };
   } catch (error) {
