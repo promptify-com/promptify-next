@@ -2,16 +2,16 @@ import React, { useEffect, useState } from "react";
 import { Box, CircularProgress, FormControl, IconButton, MenuItem, Select, Stack, Typography } from "@mui/material";
 import { EditableTextField } from "@/components/blocks";
 import { PromptIcon, TrashIcon } from "@/assets/icons";
-import { IEngines } from "@/common/types";
 import { Stylizer } from "./Stylizer";
 import { Prompts } from "@/core/api/dto/prompts";
 import { INodesData, IPromptOptions, IPromptParams } from "@/common/types/builder";
 import { Options } from "./Options";
 import { getInputsFromString } from "@/common/helpers/getInputsFromString";
 import { IPromptInput } from "@/common/types/prompt";
+import { Engine } from "@/core/api/dto/templates";
+import { useGetEnginesQuery } from "@/core/api/engines";
 
 interface ISidebar {
-  engines: IEngines[];
   prompts: Prompts[];
   selectedNode: any;
   removeNode: () => void;
@@ -24,7 +24,6 @@ interface ISidebar {
 }
 
 export const Sidebar = ({
-  engines,
   selectedNode,
   removeNode,
   updateTitle,
@@ -33,6 +32,7 @@ export const Sidebar = ({
   selectedNodeData,
 }: ISidebar) => {
   const [nodeInputs, setNodeInputs] = useState<IPromptInput[]>([]);
+  const { data: engines } = useGetEnginesQuery();
 
   const changeTitle = (title: string) => {
     const findSelectedNode = nodesData?.find(node => {
@@ -153,7 +153,7 @@ export const Sidebar = ({
               variant="standard"
               fullWidth
             >
-              {engines.length ? (
+              {engines?.length ? (
                 <Select
                   disableUnderline
                   value={selectedNodeData?.engine_id || 1}

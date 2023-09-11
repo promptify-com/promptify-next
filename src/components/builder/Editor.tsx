@@ -1,40 +1,26 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
-import {
-  NodeEditor,
-  GetSchemes,
-  ClassicPreset,
-  BaseSchemes,
-  NodeId,
-} from "rete";
+import { NodeEditor, GetSchemes, ClassicPreset, BaseSchemes, NodeId } from "rete";
 import { AreaPlugin, AreaExtensions } from "rete-area-plugin";
 import { BidirectFlow, ConnectionPlugin } from "rete-connection-plugin";
-import {
-  ReactRenderPlugin,
-  Presets,
-  ReactArea2D,
-} from "rete-react-render-plugin";
+import { ReactRenderPlugin, Presets, ReactArea2D } from "rete-react-render-plugin";
 import { CustomNode } from "./CustomNode";
 import { CustomSocket } from "./CustomSocket";
-import {
-  AutoArrangePlugin,
-  Presets as ArrangePresets,
-} from "rete-auto-arrange-plugin";
+import { AutoArrangePlugin, Presets as ArrangePresets } from "rete-auto-arrange-plugin";
 import { SelectableConnection } from "./SelectableConnection";
 import { PromptParams, Prompts } from "@/core/api/dto/prompts";
 import { INodesData } from "@/common/types/builder";
+import { Engine } from "@/core/api/dto/templates";
 
 export class Node extends ClassicPreset.Node {
-  width = 250;
-  height = 150;
+  width = 300;
+  height = 112;
   count = "";
   temp_id = 0;
+  engine = "";
 }
 
-class Connection extends ClassicPreset.Connection<
-  ClassicPreset.Node,
-  ClassicPreset.Node
-> {
+class Connection extends ClassicPreset.Connection<ClassicPreset.Node, ClassicPreset.Node> {
   selected?: boolean;
 }
 type Schemes = GetSchemes<Node, Connection>;
@@ -45,10 +31,11 @@ export async function createEditor(
   setSelectedNode: (val: any) => void,
   setSelectedConnection: (id: string | null) => void,
   prompts: Prompts[],
+  engines: Engine[] | undefined,
   nodeCount: number,
   setNodeCount: (val: number) => void,
   setNodesData: React.Dispatch<React.SetStateAction<INodesData[]>>,
-  updateTemplateDependencties: (val1: string, val2: string) => void
+  updateTemplateDependencties: (val1: string, val2: string) => void,
 ) {
   const editor = new NodeEditor<Schemes>();
   const area = new AreaPlugin<Schemes, AreaExtra>(container);
@@ -62,13 +49,11 @@ export async function createEditor(
   const setInitialNodes = async (id: string, prompt: Prompts) => {
     let promptParams: PromptParams[] = [];
     if (prompt) {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/meta/prompts/${prompt.id}/params`
-      );
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/meta/prompts/${prompt.id}/params`);
       promptParams = await response.json();
     }
 
-    const initialParams = promptParams?.map((param) => {
+    const initialParams = promptParams?.map(param => {
       return {
         parameter_id: param.parameter.id,
         score: param.score,
@@ -79,16 +64,14 @@ export async function createEditor(
       };
     });
 
-    setNodesData((prev) => [
+    setNodesData(prev => [
       ...prev,
       {
         id: Number(id),
         count: nodeCount.toString(),
         title: prompt?.title || `Prompt #${nodeCount}`,
-        content:
-          prompt?.content ||
-          "Describe here prompt parameters, for example {{name:John Doe}}",
-        engine_id: prompt?.engine?.id || 1,
+        content: prompt?.content || "Describe here prompt parameters, for example {{name:John Doe}}",
+        engine_id: prompt?.engine?.id || engines![0].id,
         dependencies: prompt?.dependencies || [],
         parameters: initialParams,
         order: 1,
@@ -109,7 +92,7 @@ export async function createEditor(
 
     const allNodes = editor.getNodes();
 
-    allNodes?.forEach((allNodesNode) => {
+    allNodes?.forEach(allNodesNode => {
       allNodesNode.selected = false;
       area.update("node", allNodesNode.id);
     });
@@ -120,6 +103,7 @@ export async function createEditor(
 
     if (prompt) {
       node.id = prompt.id.toString();
+      node.engine = prompt.engine.icon;
     }
 
     await editor.addNode(node);
@@ -133,36 +117,30 @@ export async function createEditor(
 
   // First, create all nodes
   const nodeCreationPromises = prompts.map((prompt: Prompts) => {
-    return createNode(prompt.title, prompt).then((data) =>
-      setInitialNodes(data.id, prompt)
-    );
+    console.log(prompt);
+    return createNode(prompt.title, prompt).then(data => setInitialNodes(data.id, prompt));
   });
 
   // After all nodes have been created, create connections
   Promise.all(nodeCreationPromises).then(() => {
     const connectionPromises: Promise<any>[] = [];
 
-    prompts.forEach((prompt) => {
+    prompts.forEach(prompt => {
       const allNodes = editor.getNodes();
 
-      const promptNode = allNodes?.filter((node) => {
+      const promptNode = allNodes?.filter(node => {
         return node?.id === prompt.id.toString();
       });
 
       if (prompt.dependencies) {
-        prompt.dependencies.forEach((dependency) => {
-          const depNode = allNodes?.filter((node) => {
+        prompt.dependencies.forEach(dependency => {
+          const depNode = allNodes?.filter(node => {
             return node?.id === dependency.toString();
           });
 
           if (depNode?.length && promptNode?.length) {
             const connectionPromise = editor.addConnection(
-              new ClassicPreset.Connection(
-                depNode[0],
-                "Output",
-                promptNode[0],
-                "Input"
-              )
+              new ClassicPreset.Connection(depNode[0], "Output", promptNode[0], "Input"),
             );
             connectionPromises.push(connectionPromise);
           }
@@ -180,7 +158,7 @@ export async function createEditor(
 
   AreaExtensions.selectableNodes(area, selector, { accumulating });
 
-  area.addPipe(async (context) => {
+  area.addPipe(async context => {
     if (context.type === "connectioncreated" && isLoaded) {
       let target: any = context.data.target;
       let source: any = context.data.source;
@@ -205,9 +183,7 @@ export async function createEditor(
       const connections = await editor.getConnections();
       connections.forEach(async (conn, i, self) => {
         const validator = conn.source + conn.target;
-        const existIndex = self.findIndex(
-          (checkConn) => checkConn.source + checkConn.target === validator
-        );
+        const existIndex = self.findIndex(checkConn => checkConn.source + checkConn.target === validator);
         if (i !== existIndex) {
           await editor.removeConnection(conn.id);
         }
@@ -218,7 +194,7 @@ export async function createEditor(
 
     if (context.type === "nodepicked") {
       const allNodes = editor.getNodes();
-      allNodes?.forEach((allNodesNode) => {
+      allNodes?.forEach(allNodesNode => {
         allNodesNode.selected = false;
         area.update("node", allNodesNode.id);
       });
@@ -232,7 +208,7 @@ export async function createEditor(
 
     if (context.type === "pointerdown") {
       const allNodes = editor.getNodes();
-      allNodes?.forEach((node) => {
+      allNodes?.forEach(node => {
         node.selected = false;
         area.update("node", node.id);
       });
@@ -259,7 +235,7 @@ export async function createEditor(
           return SelectableConnectionBind;
         },
       },
-    })
+    }),
   );
 
   connection.addPreset(() => new BidirectFlow());
@@ -295,7 +271,7 @@ export async function createEditor(
                   area.update("connection", id);
                 },
               },
-              accumulating.active()
+              accumulating.active(),
             );
           props.data.selected = true;
           area.update("connection", id);
@@ -304,10 +280,7 @@ export async function createEditor(
     );
   }
 
-  async function removeNodeWithConnections(
-    editor: NodeEditor<BaseSchemes>,
-    nodeId: NodeId
-  ) {
+  async function removeNodeWithConnections(editor: NodeEditor<BaseSchemes>, nodeId: NodeId) {
     for (const item of [...editor.getConnections()]) {
       if (item.source === nodeId || item.target === nodeId) {
         await editor.removeConnection(item.id);
@@ -315,7 +288,7 @@ export async function createEditor(
     }
     await editor.removeNode(nodeId);
   }
-  
+
   return {
     destroy: () => area.destroy(),
     editor,

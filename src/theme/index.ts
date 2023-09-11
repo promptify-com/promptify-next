@@ -61,7 +61,7 @@ export let theme: Theme = createTheme({
       main: "#3B4050",
     },
     secondary: {
-      main: "#585E71",
+      main: "#1B1B1E",
     },
     error: {
       main: "#BA1B1B",

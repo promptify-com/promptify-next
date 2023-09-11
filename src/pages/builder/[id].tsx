@@ -12,6 +12,8 @@ import {
   DialogTitle,
   Snackbar,
   SwipeableDrawer,
+  alpha,
+  Stack,
 } from "@mui/material";
 import { ClassicPreset } from "rete";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
@@ -34,6 +36,8 @@ import { promptRandomId } from "@/common/helpers/promptRandomId";
 import { isPromptVariableValid } from "@/common/helpers/isPromptVariableValid";
 
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
+import { theme } from "@/theme";
+import { useGetEnginesQuery } from "@/core/api/engines";
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return (
@@ -51,7 +55,7 @@ export const Builder = () => {
   const id = router.query.id;
   const [nodeCount, setNodeCount] = useState(1);
   const [prompts, setPrompts] = useState<Prompts[]>([]);
-  const [engines] = useEngines();
+  const { data: engines } = useGetEnginesQuery();
   const [selectedNode, setSelectedNode] = useState<any>(null);
   const [selectedNodeData, setSelectedNodeData] = useState<INodesData | null>(null);
   const [selectedConnection, setSelectedConnection] = useState<string | null>(null);
@@ -89,6 +93,7 @@ export const Builder = () => {
         setSelectedNode,
         setSelectedConnection,
         prompts,
+        engines,
         nodeCount,
         setNodeCount,
         setNodesData,
@@ -190,12 +195,13 @@ export const Builder = () => {
     const node = new Node(`Prompt #${nodeCount}`);
     node.addInput("Input", new ClassicPreset.Input(socket, "Input"));
     node.addOutput("Output", new ClassicPreset.Output(socket, "Output"));
+    node.engine = engines?.find(eng => eng.id === 1)?.icon || "";
 
     const allNodes = editor?.editor.getNodes();
 
-    allNodes?.forEach(allNodesNode => {
-      allNodesNode.selected = false;
-      editor?.area.update("node", allNodesNode.id);
+    allNodes?.forEach(_node => {
+      _node.selected = false;
+      editor?.area.update("node", _node.id);
     });
 
     await editor?.editor.addNode(node);
@@ -213,7 +219,7 @@ export const Builder = () => {
         count: nodeCount.toString(),
         title: `Prompt #${nodeCount}`,
         content: "Describe here prompt parameters, for example {{name:text}} or {{age:integer}}",
-        engine_id: 1,
+        engine_id: engines ? engines[0].id : 0,
         dependencies: [],
         parameters: [],
         order: 1,
@@ -232,6 +238,7 @@ export const Builder = () => {
       const node = new Node(`${selectedNodeData.title} - Copy`);
       node.addInput("Input", new ClassicPreset.Input(socket, "Input"));
       node.addOutput("Output", new ClassicPreset.Output(socket, "Output"));
+      node.engine = engines?.find(eng => eng.id === selectedNodeData.engine_id)?.icon || "";
 
       const allNodes = editor?.editor.getNodes();
 
@@ -461,10 +468,10 @@ export const Builder = () => {
           >
             <Box
               height={"calc(100vh - 80px)"}
-              bgcolor={"#525252"}
+              bgcolor={"surface.5"}
               position="relative"
               sx={{
-                backgroundImage: "radial-gradient(black 1px, transparent 0)",
+                backgroundImage: `radial-gradient(${alpha(theme.palette.grey[500], 0.5)} 1.3px, transparent 0)`,
                 backgroundSize: "30px 30px",
               }}
             >
@@ -473,7 +480,9 @@ export const Builder = () => {
                 style={{ height: "100%", width: "100%" }}
               ></div>
 
-              <Box
+              <Stack
+                direction={"row"}
+                gap={2}
                 sx={{
                   position: "absolute",
                   left: 50,
@@ -481,10 +490,16 @@ export const Builder = () => {
                 }}
               >
                 <Button
-                  sx={{ bgcolor: "black" }}
+                  variant="contained"
+                  sx={{
+                    ":hover": {
+                      bgcolor: "secondary.main",
+                      color: "onPrimary",
+                    },
+                  }}
                   onClick={() => createNode()}
                 >
-                  <Typography color={"white"}>Add Node</Typography>
+                  Add Node
                   <Typography
                     color={"white"}
                     sx={{ opacity: 0.4 }}
@@ -493,54 +508,59 @@ export const Builder = () => {
                   </Typography>
                 </Button>
                 {selectedNode && (
-                  <React.Fragment>
+                  <>
                     <Button
-                      sx={{ bgcolor: "black", ml: "10px" }}
+                      variant="contained"
+                      sx={{
+                        ":hover": {
+                          bgcolor: "secondary.main",
+                          color: "onPrimary",
+                        },
+                      }}
+                      startIcon={<ContentCopy sx={{ opacity: 0.4 }} />}
                       onClick={() => duplicateNode()}
                     >
-                      <Typography
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          color: "white",
-                        }}
-                      >
-                        <ContentCopy sx={{ opacity: 0.4, mr: "3px", fontSize: "medium" }} /> Duplicate
-                      </Typography>
+                      Duplicate
                     </Button>
                     <Button
-                      sx={{ bgcolor: "#f85149", ml: "10px" }}
+                      variant="contained"
+                      sx={{
+                        bgcolor: "#f85149",
+                        color: "onError",
+                        border: "none",
+                        ":hover": {
+                          bgcolor: "#f85149",
+                          color: "onError",
+                          opacity: 0.8,
+                        },
+                      }}
+                      startIcon={<DeleteIcon sx={{ opacity: 0.5 }} />}
                       onClick={() => setConfirmDialogOpen(true)}
                     >
-                      <Typography
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          color: "white",
-                        }}
-                      >
-                        <DeleteIcon sx={{ opacity: 0.5, mr: "3px", fontSize: "medium" }} /> Delete
-                      </Typography>
+                      Delete
                     </Button>
-                  </React.Fragment>
+                  </>
                 )}
                 {selectedConnection && (
                   <Button
-                    sx={{ bgcolor: "#f85149", ml: "10px" }}
-                    onClick={() => removeConnection()}
+                    variant="contained"
+                    sx={{
+                      bgcolor: "#f85149",
+                      color: "onError",
+                      border: "none",
+                      ":hover": {
+                        bgcolor: "#f85149",
+                        color: "onError",
+                        opacity: 0.8,
+                      },
+                    }}
+                    startIcon={<DeleteIcon sx={{ opacity: 0.5 }} />}
+                    onClick={removeConnection}
                   >
-                    <Typography
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        color: "white",
-                      }}
-                    >
-                      <DeleteIcon sx={{ opacity: 0.5, mr: "3px", fontSize: "medium" }} /> Delete
-                    </Typography>
+                    Delete
                   </Button>
                 )}
-              </Box>
+              </Stack>
               <Box
                 sx={{
                   position: "absolute",
@@ -585,7 +605,6 @@ export const Builder = () => {
               display={selectedNode ? "block" : "none"}
             >
               <Sidebar
-                engines={engines}
                 prompts={prompts}
                 selectedNode={selectedNode}
                 updateTitle={updateTitle}
