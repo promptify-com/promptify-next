@@ -110,10 +110,13 @@ export default function Page({ category, subcategory }: CategoryOrSubcategory) {
 export async function getServerSideProps({ params }: any) {
   const { categorySlug, subcategorySlug } = params;
   try {
-    const categoryRes = await authClient.get<Category>(`/api/meta/categories/by-slug/${categorySlug}`);
+    const categoryPromise = authClient.get<Category>(`/api/meta/categories/by-slug/${categorySlug}`);
+    const subcategoryPromise = authClient.get<Category>(`/api/meta/categories/by-slug/${subcategorySlug}`);
+
+    const [categoryRes, subcategoryRes] = await Promise.all([categoryPromise, subcategoryPromise]);
+
     const category = categoryRes.data;
-    const subcategoryRes = await authClient.get(`/api/meta/categories/by-slug/${subcategorySlug}`);
-    const subcategory = subcategoryRes.data; // Extract the necessary data from the response
+    const subcategory = subcategoryRes.data;
 
     return {
       props: {
