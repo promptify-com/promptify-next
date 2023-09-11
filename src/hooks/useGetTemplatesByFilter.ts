@@ -1,15 +1,16 @@
-import React from "react";
-import { useDeferredValue, useMemo, useState } from "react";
+import { useDeferredValue, useMemo, useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 
 import { RootState } from "@/core/store";
-import { useGetCategoriesQuery, useGetCategoryBySlugQuery } from "@/core/api/categories";
+import { useGetCategoriesQuery } from "@/core/api/categories";
 import { useGetTemplatesByFilterQuery } from "@/core/api/templates";
 import { FilterParams, SelectedFilters } from "@/core/api/dto/templates";
 import { useGetTagsPopularQuery } from "@/core/api/tags";
 import { useGetEnginesQuery } from "@/core/api/engines";
 import useDebounce from "./useDebounce";
+
+import { Templates } from "@/core/api/dto/templates";
 
 export function useGetTemplatesByFilter(catId?: number, subCatId?: number) {
   const router = useRouter();
@@ -52,18 +53,25 @@ export function useGetTemplatesByFilter(catId?: number, subCatId?: number) {
     engineId: engine?.id,
     categoryId: catId,
     subcategoryId: subCatId,
-    title: title ?? debouncedSearchName,
+    title: title ?? searchName,
     offset,
     limit: PAGINATION_LIMIT,
   };
   const { data: templates, isLoading: isTemplatesLoading, isFetching } = useGetTemplatesByFilterQuery(params);
 
-  const [allTemplates, setAllTemplates] = useState([]);
+  const [allTemplates, setAllTemplates] = useState<Templates[]>([]);
+  const [resetFlag, setResetFlag] = useState(true);
+  const [hasMore, setHasMore] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (templates?.results) {
-      // Merge the newly fetched templates with the existing ones
-      setAllTemplates(prevTemplates => prevTemplates.concat(templates?.results));
+      if (resetFlag) {
+        setAllTemplates(templates?.results);
+        setHasMore(templates?.results.length > 0);
+      } else {
+        setAllTemplates(prevTemplates => prevTemplates.concat(templates?.results));
+        setHasMore(templates?.results.length > 0);
+      }
     }
   }, [templates?.results]);
 
@@ -80,24 +88,15 @@ export function useGetTemplatesByFilter(catId?: number, subCatId?: number) {
 
   const resetOffest = () => {
     setOffset(0);
+    setResetFlag(true);
   };
 
   const handleNextPage = () => {
-    if (templates?.next) {
+    if (hasMore) {
       setOffset(prevOffset => prevOffset + PAGINATION_LIMIT);
+      setResetFlag(false);
     }
   };
-
-  console.log(templates?.count);
-
-  const handlePreviousPage = () => {
-    if (templates?.previous) {
-      setOffset(prevOffset => Math.max(0, prevOffset - PAGINATION_LIMIT));
-    }
-  };
-
-  const hasNext = !!templates?.next;
-  const hasPrev = !!templates?.previous;
 
   return {
     categorySlug,
@@ -116,5 +115,6 @@ export function useGetTemplatesByFilter(catId?: number, subCatId?: number) {
     isFetching,
     tags: tagsQuery.data,
     engines: enginesQuery.data,
+    hasMore,
   };
 }

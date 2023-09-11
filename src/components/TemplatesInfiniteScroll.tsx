@@ -1,37 +1,40 @@
-import { FC, ReactNode, useEffect, useRef } from "react";
+import { FC, ReactNode, useEffect, useRef, useCallback } from "react";
 import { Grid } from "@mui/material";
+import CardTemplatePlaceholder from "./placeholders/CardTemplatePlaceHolder";
 
 interface TemplatesInfiniteScrollProps {
   loading: boolean;
   onLoadMore: () => void;
   children: ReactNode;
+  hasMore: boolean;
 }
 
-const TemplatesInfiniteScroll: FC<TemplatesInfiniteScrollProps> = ({ loading, onLoadMore, children }) => {
-  const containerRef = useRef<HTMLDivElement | null>(null);
+const TemplatesInfiniteScroll: FC<TemplatesInfiniteScrollProps> = ({ loading, onLoadMore, children, hasMore }) => {
+  const observer = useRef<IntersectionObserver | null>(null);
 
-  const handleScroll = () => {
-    if (!loading && containerRef.current && containerRef.current.getBoundingClientRect().bottom <= window.innerHeight) {
-      onLoadMore();
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
+  const lastTemplateElementRef = useCallback(
+    (node: HTMLDivElement) => {
+      if (loading) return;
+      if (observer.current) observer.current.disconnect();
+      observer.current = new IntersectionObserver(entries => {
+        if (entries[0].isIntersecting && hasMore) {
+          onLoadMore();
+        }
+      });
+      if (node) observer.current.observe(node);
+    },
+    [loading, hasMore],
+  );
 
   return (
     <Grid
-      ref={containerRef}
       display={"flex"}
       flexDirection={"column"}
       gap={"16px"}
     >
       {children}
-      {loading && <p>Loading...</p>}
+      {loading && <CardTemplatePlaceholder count={1} />}
+      <div ref={lastTemplateElementRef}></div>
     </Grid>
   );
 };

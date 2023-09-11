@@ -2,9 +2,8 @@ import { Box, Grid, Typography } from "@mui/material";
 
 import { NotFoundIcon } from "@/assets/icons/NotFoundIcon";
 import CardTemplate from "@/components/common/cards/CardTemplate";
-import { TemplateExecutionsDisplay, Templates, TemplatesWithPagination } from "@/core/api/dto/templates";
+import { TemplateExecutionsDisplay, Templates } from "@/core/api/dto/templates";
 import CardTemplateLast from "../common/cards/CardTemplateLast";
-import TemplatesPaginatedList from "../TemplatesPaginatedList";
 
 import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
 import LatestTemplatePlaceholder from "@/components/placeholders/LatestTemplatePlaceholder";
@@ -21,6 +20,8 @@ interface TemplatesSectionProps {
   onNextPage?: () => void;
   onPrevPage?: () => void;
   type?: string;
+  hasMore: boolean;
+  templateLoading?: boolean;
 }
 
 export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
@@ -31,6 +32,8 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
   isLatestTemplates = false,
   onNextPage = () => {},
   type,
+  hasMore,
+  templateLoading,
 }) => {
   if (!isLoading && !templates?.length) {
     return null;
@@ -40,7 +43,7 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
     <Box width={"100%"}>
       {!filtred && (isLoading || !!templates?.length) && <Typography fontSize={19}>{title}</Typography>}
 
-      {isLoading ? (
+      {templateLoading ? (
         isLatestTemplates ? (
           <Grid
             display={"flex"}
@@ -94,35 +97,14 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
             )
           ) : (
             <Grid>
-              {/* <TemplatesPaginatedList
-                loading={isLoading}
-                hasNext={hasNext}
-                hasPrev={hasPrev}
-                onPrevPage={onPrevPage}
-                onNextPage={onNextPage}
-                canBeShown={!type || !["myLatestExecutions", "suggestedTemplates"].includes(type)}
-              >
-                {!!templates?.length &&
-                  templates.map((template: TemplateExecutionsDisplay | Templates, idx) => {
-                    console.log("template: ", template, idx);
-                    return (
-                      <Grid key={template.id}>
-                        <CardTemplate
-                          key={template.id}
-                          template={template as Templates}
-                        />
-                      </Grid>
-                    );
-                  })}
-              </TemplatesPaginatedList> */}
-
               <TemplatesInfiniteScroll
                 loading={isLoading}
                 onLoadMore={onNextPage}
+                hasMore={hasMore}
               >
                 {!!templates?.length &&
                   templates.map((template: TemplateExecutionsDisplay | Templates, idx) => {
-                    console.log("template: ", template, idx);
+                    // console.log("template: ", template, idx);
                     return (
                       <Grid key={template.id}>
                         <CardTemplate

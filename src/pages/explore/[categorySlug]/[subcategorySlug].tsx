@@ -13,9 +13,14 @@ import SubCategoryPlaceholder from "@/components/placeholders/SubCategoryPlaceho
 import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
 import Breadcrumb from "@/components/design-system/Breadcrumb";
 
-export default function Page({ category, subcategory }: { category: Category }) {
+interface CategoryOrSubcategory {
+  category: Category;
+  subcategory: Category;
+}
+
+export default function Page({ category, subcategory }: CategoryOrSubcategory) {
   const router = useRouter();
-  const { templates, isFetching, categories, isCategoryLoading, allFilterParamsNull, handleNextPage } =
+  const { templates, isFetching, categories, isCategoryLoading, allFilterParamsNull, hasMore, handleNextPage } =
     useGetTemplatesByFilter(undefined, subcategory?.id);
 
   const navigateTo = (slug: string) => {
@@ -91,6 +96,7 @@ export default function Page({ category, subcategory }: { category: Category }) 
                   templates={templates ?? []}
                   isLoading={isFetching}
                   onNextPage={handleNextPage}
+                  hasMore={hasMore}
                 />
               </Box>
             )}
@@ -119,6 +125,7 @@ export async function getServerSideProps({ params }: any) {
     return {
       props: {
         category: {},
+        subcategory: {},
       },
     };
   }

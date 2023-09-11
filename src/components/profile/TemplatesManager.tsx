@@ -37,6 +37,7 @@ import { ArrowLeft, ArrowRight, ArrowRightAlt, Search } from "@mui/icons-materia
 import TemplatesPaginatedList from "../TemplatesPaginatedList";
 import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
 import CardTemplatePlaceholder from "../placeholders/CardTemplatePlaceHolder";
+import TemplatesInfiniteScroll from "../TemplatesInfiniteScroll";
 
 export type UserType = "admin" | "user";
 
@@ -63,27 +64,26 @@ export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title }) => {
   const {
     templates: adminTemplates,
     isTemplatesLoading: isAdminTemplatesLoading,
-    hasNext,
-    hasPrev,
     handleNextPage,
-    handlePreviousPage,
     searchName,
     setSearchName,
     debouncedSearchName,
     resetOffest,
     isFetching,
+    hasMore,
   } = useGetTemplatesByFilter();
 
   const openDeletionModal = (template: Templates) => {
     setSelectedTemplate(template);
     setConfirmDialog(true);
   };
-
   const filteredTemplates = useMemo(() => {
     if (isUserAdmin && status !== "ALL" && adminTemplates) {
-      return adminTemplates.results.filter(template => template.status === status);
+      return adminTemplates.filter(template => {
+        return template?.status === status;
+      });
     }
-    return adminTemplates?.results ?? [];
+    return adminTemplates ?? [];
   }, [adminTemplates, status, isUserAdmin]);
 
   useEffect(() => {
@@ -250,12 +250,10 @@ export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title }) => {
                   <Typography variant="body1">No templates found.</Typography>
                 </Box>
               ) : (
-                <TemplatesPaginatedList
-                  hasNext={hasNext}
+                <TemplatesInfiniteScroll
                   loading={isFetching}
-                  hasPrev={hasPrev}
-                  onNextPage={handleNextPage}
-                  onPrevPage={handlePreviousPage}
+                  onLoadMore={handleNextPage}
+                  hasMore={hasMore}
                 >
                   {filteredTemplates?.map((template: Templates) => (
                     <TemplateManagerItem
@@ -264,7 +262,7 @@ export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title }) => {
                       onOpenDelete={() => openDeletionModal(template)}
                     />
                   ))}
-                </TemplatesPaginatedList>
+                </TemplatesInfiniteScroll>
               )}
             </Box>
           )}
