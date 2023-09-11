@@ -6,7 +6,7 @@ interface TemplatesInfiniteScrollProps {
   loading: boolean;
   onLoadMore: () => void;
   children: ReactNode;
-  hasMore: boolean;
+  hasMore?: boolean;
 }
 
 const TemplatesInfiniteScroll: FC<TemplatesInfiniteScrollProps> = ({ loading, onLoadMore, children, hasMore }) => {

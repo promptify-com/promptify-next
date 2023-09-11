@@ -15,12 +15,9 @@ interface TemplatesSectionProps {
   filtred?: boolean;
   title?: string;
   isLatestTemplates?: boolean;
-  hasNext?: boolean;
-  hasPrev?: boolean;
   onNextPage?: () => void;
-  onPrevPage?: () => void;
   type?: string;
-  hasMore: boolean;
+  hasMore?: boolean;
   templateLoading?: boolean;
 }
 
