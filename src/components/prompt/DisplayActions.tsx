@@ -31,6 +31,7 @@ interface Props {
   showSearchBar?: boolean;
   onSearch?: (text: string) => void;
   onOpenExport: () => void;
+  sparkHashQueryParam: string | null;
 }
 
 export const DisplayActions: React.FC<Props> = ({
@@ -40,6 +41,7 @@ export const DisplayActions: React.FC<Props> = ({
   showSearchBar,
   onSearch = () => {},
   onOpenExport,
+  sparkHashQueryParam,
 }) => {
   const { palette } = useTheme();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
@@ -129,7 +131,7 @@ export const DisplayActions: React.FC<Props> = ({
       onClick={e => setExecsDropAnchor(e.currentTarget)}
     >
       <Box sx={{ width: "80%", overflow: "hidden", textAlign: "left" }}>
-        {selectedExecution?.title || "Choose Spark..."}
+        {(!sparkHashQueryParam && selectedExecution?.title) || "Choose Spark..."}
       </Box>
     </Button>
   );
@@ -168,7 +170,7 @@ export const DisplayActions: React.FC<Props> = ({
             gap={1}
           >
             {ExecutionsSelect}
-            {!!selectedExecution && !selectedExecution?.is_favorite && (
+            {!sparkHashQueryParam && !!selectedExecution && !selectedExecution?.is_favorite && (
               <Typography
                 sx={{
                   p: "4px 8px",
@@ -290,6 +292,7 @@ export const DisplayActions: React.FC<Props> = ({
                         setSelectedExecution(exec);
                         setExecsDropAnchor(null);
                       }}
+                      sparkHashQueryParam={sparkHashQueryParam}
                     />
                   </Box>
                 </ClickAwayListener>

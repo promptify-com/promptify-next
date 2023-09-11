@@ -64,9 +64,15 @@ interface Props {
   executions: TemplatesExecutions[];
   selectedExecution: TemplatesExecutions | null;
   chooseExecution: (execution: TemplatesExecutions) => void;
+  sparkHashQueryParam: string | null;
 }
 
-export const ExecutionsTabs: React.FC<Props> = ({ executions, chooseExecution, selectedExecution }) => {
+export const ExecutionsTabs: React.FC<Props> = ({
+  executions,
+  chooseExecution,
+  selectedExecution,
+  sparkHashQueryParam,
+}) => {
   const { palette } = useTheme();
 
   const [updateExecution, { isError, isLoading }] = useUpdateExecutionMutation();
@@ -218,7 +224,7 @@ export const ExecutionsTabs: React.FC<Props> = ({ executions, chooseExecution, s
 
   return (
     <Box sx={{ width: { xs: "90svw", md: "401px" } }}>
-      {!!selectedExecution && (
+      {!sparkHashQueryParam && !!selectedExecution && (
         <Box sx={{ p: "16px", borderBottom: `1px solid ${palette.surface[5]}` }}>
           <Box display={renameAllow ? "none" : "block"}>
             <Stack
@@ -261,7 +267,9 @@ export const ExecutionsTabs: React.FC<Props> = ({ executions, chooseExecution, s
                   }}
                 >
                   {!selectedExecution?.is_favorite
-                    ? `This Spark is temporal and will be removed in ${executionTimeLeft(selectedExecution.created_at)}`
+                    ? `This Spark is temporal and will be removed in ${executionTimeLeft(
+                        selectedExecution.created_at as Date,
+                      )}`
                     : "This Spark is saved"}
                 </Typography>
               </Stack>
