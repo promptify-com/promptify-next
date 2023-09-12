@@ -14,6 +14,7 @@ import {
   SwipeableDrawer,
   alpha,
   Stack,
+  Drawer,
 } from "@mui/material";
 import { ClassicPreset } from "rete";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
@@ -24,7 +25,6 @@ import { Header } from "@/components/builder/Header";
 import { MinusIcon, PlusIcon } from "@/assets/icons";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Sidebar } from "@/components/builder/Sidebar";
-import { useEngines } from "@/hooks/api/engines";
 import { useGetPromptTemplatesQuery, usePublishTemplateMutation } from "@/core/api/templates";
 import { Prompts } from "@/core/api/dto/prompts";
 import { deletePrompt, updateTemplate } from "@/hooks/api/templates";
@@ -38,6 +38,7 @@ import { isPromptVariableValid } from "@/common/helpers/isPromptVariableValid";
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import { theme } from "@/theme";
 import { useGetEnginesQuery } from "@/core/api/engines";
+import { PromptForm } from "@/components/builder/PromptForm";
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return (
@@ -276,11 +277,22 @@ export const Builder = () => {
     }
   };
 
-  const updateTitle = (value: string) => {
-    if (selectedNode) {
-      selectedNode.label = value;
-      editor?.area.update("node", selectedNode.id);
-    }
+  const updateTitle = (title: string) => {
+    if (!title) return;
+
+    const _nodes = nodesData.map(node => {
+      if (
+        node.id === selectedNodeData?.id ||
+        (selectedNodeData?.temp_id && node.temp_id === selectedNodeData?.temp_id)
+      ) {
+        node.title = title;
+      }
+      return node;
+    });
+
+    setNodesData(_nodes);
+    selectedNode.label = title;
+    editor?.area.update("node", selectedNode.id);
   };
 
   const updateTemplateDependencties = (id: string, dependsOn: string) => {
@@ -446,25 +458,10 @@ export const Builder = () => {
               templateSlug={promptsData?.slug}
             />
           </Grid>
-          <SwipeableDrawer
-            anchor={"left"}
-            open={templateDrawerOpen}
-            onClose={() => toggleTemplateDrawer(false)}
-            onOpen={() => toggleTemplateDrawer(true)}
-          >
-            <Box sx={{ bgcolor: "#373737", p: "1rem" }}>
-              <TemplateForm
-                type="edit"
-                templateData={promptsData as Templates}
-                darkMode
-                onSaved={() => window.location.reload()}
-                onClose={() => toggleTemplateDrawer(false)}
-              />
-            </Box>
-          </SwipeableDrawer>
           <Grid
             item
             xs={selectedNode ? 9 : 12}
+            sx={{ flex: 1 }}
           >
             <Box
               height={"calc(100vh - 80px)"}
@@ -595,28 +592,49 @@ export const Builder = () => {
               </Box>
             </Box>
           </Grid>
-          <Grid
-            item
-            xs={selectedNode ? 3 : 0}
+          <SwipeableDrawer
+            anchor={"left"}
+            open={templateDrawerOpen}
+            onClose={() => toggleTemplateDrawer(false)}
+            onOpen={() => toggleTemplateDrawer(true)}
           >
-            <Box
-              bgcolor={"#373737"}
-              height={"calc(100vh - 80px)"}
-              display={selectedNode ? "block" : "none"}
-            >
-              <Sidebar
-                prompts={prompts}
-                selectedNode={selectedNode}
-                updateTitle={updateTitle}
-                removeNode={() => setConfirmDialogOpen(true)}
-                nodeCount={nodeCount}
-                nodesData={nodesData}
-                setNodesData={setNodesData}
-                selectedNodeData={selectedNodeData}
-                setSelectedNodeData={setSelectedNodeData}
+            <Box sx={{ bgcolor: "#373737", p: "1rem" }}>
+              <TemplateForm
+                type="edit"
+                templateData={promptsData as Templates}
+                darkMode
+                onSaved={() => window.location.reload()}
+                onClose={() => toggleTemplateDrawer(false)}
               />
             </Box>
-          </Grid>
+          </SwipeableDrawer>
+          <Drawer
+            variant="persistent"
+            anchor="right"
+            open={selectedNode}
+            sx={{
+              width: "360px",
+              flexShrink: 0,
+              "& .MuiDrawer-paper": {
+                width: "360px",
+                boxSizing: "border-box",
+              },
+            }}
+          >
+            <PromptForm
+              editorNode={selectedNode}
+              removeNode={() => setConfirmDialogOpen(true)}
+              updateTitle={updateTitle}
+              selectedNodeData={selectedNodeData}
+              setSelectedNodeData={setSelectedNodeData}
+              nodeCount={nodeCount}
+              nodesData={nodesData}
+              setNodesData={setNodesData}
+              close={() => {
+                setSelectedNode(null);
+              }}
+            />
+          </Drawer>
         </Grid>
         <Snackbar
           open={snackBarOpen}

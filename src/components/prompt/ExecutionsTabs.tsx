@@ -335,7 +335,7 @@ export const ExecutionsTabs: React.FC<Props> = ({
           {renameAllow && (
             <RenameForm
               label="Spark"
-              value={executionTitle}
+              initialValue={executionTitle}
               onChange={setExecutionTitle}
               onSave={renameSave}
               onCancel={() => {

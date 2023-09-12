@@ -98,6 +98,11 @@ export function CustomNode<Scheme extends ClassicScheme>(props: Props<Scheme>) {
           src={engine}
           alt={label}
           loading="lazy"
+          style={{
+            width: "24px",
+            height: "24px",
+            borderRadius: "50%",
+          }}
         />
         {label}
       </div>

@@ -1,27 +1,43 @@
-import React from "react";
+import React, { useState } from "react";
 import { Box, Button, Stack, TextField, alpha } from "@mui/material";
 import { Done } from "@mui/icons-material";
 import { theme } from "@/theme";
 
 interface Props {
   label: string;
-  value: string | undefined;
-  onChange: (value: string) => void;
-  onSave: () => void;
-  onCancel: () => void;
-  disabled: boolean;
+  initialValue: string | undefined;
+  onChange?: (value: string) => void;
+  onSave?: (value: string) => void;
+  onCancel?: () => void;
+  disabled?: boolean;
 }
 
-export const RenameForm: React.FC<Props> = ({ label, value, onChange, onSave, onCancel, disabled }) => {
+export const RenameForm: React.FC<Props> = ({
+  label,
+  initialValue,
+  onChange = () => {},
+  onSave = () => {},
+  onCancel = () => {},
+  disabled,
+}) => {
+  const [value, setValue] = useState(initialValue || "");
+
   return (
-    <Box>
+    <Box
+      sx={{
+        width: "100%",
+      }}
+    >
       <Box sx={{ py: "8px" }}>
         <TextField
           variant="standard"
           fullWidth
           label={`Rename ${label}`}
           value={value}
-          onChange={e => onChange(e.target.value)}
+          onChange={e => {
+            setValue(e.target.value);
+            onChange(e.target.value);
+          }}
         />
       </Box>
       <Stack
@@ -44,7 +60,7 @@ export const RenameForm: React.FC<Props> = ({ label, value, onChange, onSave, on
             ":disabled": { bgcolor: "transparent", borderColor: alpha(theme.palette.primary.main, 0.15) },
           }}
           disabled={!!!value?.length || disabled}
-          onClick={onSave}
+          onClick={() => onSave(value)}
         >
           Ok
         </Button>

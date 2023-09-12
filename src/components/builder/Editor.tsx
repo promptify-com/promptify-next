@@ -117,7 +117,6 @@ export async function createEditor(
 
   // First, create all nodes
   const nodeCreationPromises = prompts.map((prompt: Prompts) => {
-    console.log(prompt);
     return createNode(prompt.title, prompt).then(data => setInitialNodes(data.id, prompt));
   });
 
