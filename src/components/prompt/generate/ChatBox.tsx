@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Accordion, AccordionDetails, AccordionSummary, Grid, IconButton, Typography } from "@mui/material";
 import { useWindowSize } from "usehooks-ts";
 import { ExpandLess, ExpandMore, MoreVert, Search } from "@mui/icons-material";
@@ -7,7 +7,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/core/store";
 import { useAppSelector } from "@/hooks/useStore";
 import useToken from "@/hooks/useToken";
-import { generate } from "@/common/helpers/generate";
+import { generate } from "@/common/helpers/chatAnswersValidator";
 import useTimestampConverter from "@/hooks/useTimestampConverter";
 import { ChatMessages } from "./ChatInterface";
 import { ChatInput } from "./ChatInput";
@@ -40,107 +40,97 @@ export const ChatMode: React.FC = () => {
   const [userAnswer, setUserAnswer] = useState("");
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(1);
 
-  const [questions, setQuestions] = useState<TemplateQuestions[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
 
   const createdAt = convertedTimestamp(new Date());
 
-  useEffect(() => {
+  const templateQuestions: TemplateQuestions[] = useMemo(() => {
+    let questions: TemplateQuestions[] = [];
     if (template?.questions) {
-      setQuestions(prevQuestions => [...prevQuestions, ...template.questions]);
+      questions = questions.concat(template.questions);
     }
-    if (questions.length > 0 && messages.length === 0) {
-      const firstKey = Object.keys(questions[0])[0];
-      const firstQuestion = questions[0][firstKey];
-      setMessages([
-        {
-          text: `Hi, ${currentUser?.username}. Welcome. I can help you with your template`,
-          type: "text",
-          createdAt: createdAt,
-          fromUser: false,
-        },
-        {
-          text: firstQuestion.question,
-          type: firstQuestion.type,
-          createdAt: createdAt,
-          fromUser: false,
-        },
-      ]);
-    }
-  }, [template, questions]);
-
-  useEffect(() => {
-    if (template) {
-      let arr: IPromptInput[] = [];
-      template.prompts.forEach(prompt => {
-        arr = getInputsFromString(prompt.content);
-      });
-      console.log(arr);
-
-      generateQuestions();
-    }
+    return questions;
   }, [template]);
 
-  const generateQuestions = () => {
-    generate({ template, token });
-  };
+  if (templateQuestions.length > 0 && messages.length === 0) {
+    const firstKey = Object.keys(templateQuestions[0])[0];
+    const firstQuestion = templateQuestions[0][firstKey];
+    setMessages([
+      {
+        text: `Hi, ${currentUser?.username}. Welcome. I can help you with your template`,
+        type: "text",
+        createdAt: createdAt,
+        fromUser: false,
+      },
+      {
+        text: firstQuestion.question,
+        type: firstQuestion.type,
+        createdAt: createdAt,
+        fromUser: false,
+      },
+    ]);
+  }
 
   const getCurrentQuestion = () => {
-    if (questions.length > 0 && currentQuestionIndex < questions.length) {
-      const questionObj = questions[currentQuestionIndex];
+    if (templateQuestions.length > 0 && currentQuestionIndex < templateQuestions.length) {
+      const questionObj = templateQuestions[currentQuestionIndex];
       const key = Object.keys(questionObj)[0];
-      return questionObj[key];
+      return questionObj[key].question;
     }
+    return "";
   };
-
   const currentQuestion = getCurrentQuestion();
 
-  const validateAnswer = () => {
-    if (currentQuestion) {
-      const payload = {
-        question: currentQuestion.question,
-        answer: userAnswer,
-      };
-      generate({ template, token, isValidatingAnswer: true, payload });
-    }
+  const validateAnswer = async () => {
+    const payload = {
+      question: currentQuestion,
+      answer: userAnswer,
+    };
+
+    return await generate({ token, payload });
   };
 
-  const handleUserResponse = () => {
+  const handleUserResponse = async () => {
     if (userAnswer.trim() === "") {
       return;
     }
 
-    if (currentQuestion) {
-      const newUserMessage: Message = {
-        type: currentQuestion?.type,
-        text: userAnswer,
+    const newUserMessage: Message = {
+      text: userAnswer,
+      createdAt: createdAt,
+      fromUser: true,
+    };
+
+    setMessages(prevMessages => [...prevMessages, newUserMessage]);
+
+    const answerResponse = await validateAnswer();
+
+    if (answerResponse.approved) {
+      if (currentQuestionIndex < templateQuestions.length - 1) {
+        setCurrentQuestionIndex(currentQuestionIndex + 1);
+        setUserAnswer("");
+      }
+
+      let newAnswer = { question: currentQuestion, answer: userAnswer };
+      setAnswers(prevAnswers => [...prevAnswers, newAnswer]);
+
+      const nextBotMessage: Message = {
+        text: answerResponse.feedback + "." + currentQuestion, // feedback ,
+        type: "text",
         createdAt: createdAt,
-        fromUser: true,
+        fromUser: false,
       };
 
-      setMessages(prevMessages => [...prevMessages, newUserMessage]);
+      setMessages(prevMessages => prevMessages.concat(nextBotMessage));
+    } else {
+      // Please handle !answerResponse.approved case
+      const nextBotMessage = {
+        text: answerResponse.feedback,
+        createdAt: createdAt,
+        fromUser: false,
+      };
 
-      validateAnswer(); //check if answer is valid or not
-
-      const approved = true;
-      if (approved) {
-        if (currentQuestionIndex < questions.length - 1) {
-          setCurrentQuestionIndex(currentQuestionIndex + 1);
-          setUserAnswer("");
-        }
-
-        let newAnswer = { question: currentQuestion?.question, answer: userAnswer };
-        setAnswers(prevAnswers => [...prevAnswers, newAnswer]);
-
-        const nextBotMessage: Message = {
-          type: currentQuestion.type,
-          text: currentQuestion.question,
-          createdAt: createdAt,
-          fromUser: false,
-        };
-
-        setMessages(prevMessages => [...prevMessages, nextBotMessage]);
-      }
+      setMessages(prevMessages => prevMessages.concat(nextBotMessage));
     }
   };
 
@@ -242,7 +232,7 @@ export const ChatMode: React.FC = () => {
           <ChatInput
             onChange={setUserAnswer}
             value={userAnswer}
-            onSubmit={() => handleUserResponse()}
+            onSubmit={handleUserResponse}
           />
         </AccordionDetails>
       </Accordion>
