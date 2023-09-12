@@ -103,7 +103,6 @@ const MessageBlock = ({ message, hideHeader }: MessageBlockProps) => {
               Upload your code
             </Button>
           )}
-          {type === "choices" && !fromUser}
         </Grid>
       </Grid>
     </Grid>
