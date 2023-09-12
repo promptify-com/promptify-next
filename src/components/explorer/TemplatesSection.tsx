@@ -105,8 +105,7 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
                 canBeShown={!type || !["myLatestExecutions", "suggestedTemplates"].includes(type)}
               >
                 {!!templates?.length &&
-                  templates.map((template: TemplateExecutionsDisplay | Templates, idx) => {
-                    console.log("template: ", template, idx);
+                  templates.map((template: TemplateExecutionsDisplay | Templates) => {
                     return (
                       <Grid key={template.id}>
                         <CardTemplate

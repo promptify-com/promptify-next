@@ -200,6 +200,7 @@ export interface TemplateExecutionsDisplay {
   likes?: number;
   favorites_count: number;
 }
+export type TemplatesExecutionsByMePaginationResponse = { results: TemplateExecutionsDisplay[] };
 export interface SparkExecution {
   id: number;
   title: string;

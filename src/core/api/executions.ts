@@ -1,5 +1,13 @@
 import { baseApi } from "./api";
-import { ITemplateExecutionPut, ResponseType, TemplateExecutionsDisplay, TemplatesExecutions } from "./dto/templates";
+import {
+  ITemplateExecutionPut,
+  ResponseType,
+  TemplateExecutionsDisplay,
+  TemplatesExecutions,
+  TemplatesExecutionsByMePaginationResponse,
+} from "./dto/templates";
+
+type TemplatesExecutionsByMeResponse = TemplatesExecutionsByMePaginationResponse | TemplateExecutionsDisplay[];
 
 export const executionsApi = baseApi.injectEndpoints({
   endpoints: builder => {
@@ -11,7 +19,7 @@ export const executionsApi = baseApi.injectEndpoints({
         }),
         providesTags: ["Executions"],
       }),
-      getTemplatesExecutionsByMe: builder.query<TemplateExecutionsDisplay[], number | undefined>({
+      getTemplatesExecutionsByMe: builder.query<TemplatesExecutionsByMeResponse, number | undefined>({
         query: limit => ({
           url: `/api/meta/template-executions/me/${limit ? `?limit=${limit}` : ""}`,
           method: "get",
