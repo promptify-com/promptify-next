@@ -8,13 +8,12 @@ import {
   Stack,
   Tab,
   Tabs,
-  TextField,
   Typography,
   alpha,
   useTheme,
 } from "@mui/material";
 import { TemplatesExecutions } from "@/core/api/dto/templates";
-import { CloudQueue, Create, Delete, Done, PriorityHighOutlined } from "@mui/icons-material";
+import { CloudQueue, Create, Delete, PriorityHighOutlined } from "@mui/icons-material";
 import moment from "moment";
 import SavedSpark from "@/assets/icons/SavedSpark";
 import DraftSpark from "@/assets/icons/DraftSpark";
@@ -25,6 +24,7 @@ import {
 } from "@/core/api/executions";
 import { DeleteDialog } from "../dialog/DeleteDialog";
 import { executionTimeLeft } from "@/common/helpers/executionTimeLeft";
+import { RenameForm } from "../common/forms/RenameForm";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -333,60 +333,17 @@ export const ExecutionsTabs: React.FC<Props> = ({
             </Stack>
           </Box>
           {renameAllow && (
-            <Box>
-              <Box sx={{ py: "8px" }}>
-                <TextField
-                  variant="standard"
-                  fullWidth
-                  label="Rename Spark"
-                  value={executionTitle}
-                  onChange={e => setExecutionTitle(e.target.value)}
-                />
-              </Box>
-              <Stack
-                flexDirection={"row"}
-                alignItems={"flex-start"}
-                gap={1}
-                sx={{ py: "8px" }}
-              >
-                <Button
-                  variant="contained"
-                  startIcon={<Done />}
-                  sx={{
-                    borderColor: "primary.main",
-                    bgcolor: "primary.main",
-                    color: "onPrimary",
-                    fontSize: 13,
-                    fontWeight: 500,
-                    p: "4px 12px",
-                    ":hover": { color: "primary.main" },
-                    ":disabled": { bgcolor: "transparent", borderColor: alpha(palette.primary.main, 0.15) },
-                  }}
-                  disabled={!!!executionTitle?.length || isLoading}
-                  onClick={renameSave}
-                >
-                  Ok
-                </Button>
-                <Button
-                  variant="text"
-                  sx={{
-                    border: `1px solid ${alpha(palette.primary.main, 0.15)}`,
-                    bgcolor: "transparent",
-                    color: "onSurface",
-                    fontSize: 13,
-                    fontWeight: 500,
-                    p: "4px 12px",
-                  }}
-                  disabled={isLoading}
-                  onClick={() => {
-                    setRenameAllow(false);
-                    setExecutionTitle(selectedExecution?.title);
-                  }}
-                >
-                  Cancel
-                </Button>
-              </Stack>
-            </Box>
+            <RenameForm
+              label="Spark"
+              value={executionTitle}
+              onChange={setExecutionTitle}
+              onSave={renameSave}
+              onCancel={() => {
+                setRenameAllow(false);
+                setExecutionTitle(selectedExecution?.title);
+              }}
+              disabled={isLoading}
+            />
           )}
         </Box>
       )}
