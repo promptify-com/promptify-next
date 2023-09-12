@@ -24,13 +24,19 @@ export const useRouteChangeOverlay = ({
         onCloseDrawerCallback();
       }
     };
+    const handleRouteError = (error: any, url: string, { shallow }: any) => {
+      console.warn("[routeChangeError]", { cancelled: error.cancelled, shallow, url });
+      setShowOverlay(false);
+    };
 
     router.events.on("routeChangeStart", handleRouteChangeStart);
     router.events.on("routeChangeComplete", handleRouteChangeComplete);
+    router.events.on("routeChangeError", handleRouteError);
 
     return () => {
       router.events.off("routeChangeStart", handleRouteChangeStart);
       router.events.off("routeChangeComplete", handleRouteChangeComplete);
+      router.events.off("routeChangeError", handleRouteError);
     };
   }, [router, shouldShowOverlayCallback, onCloseDrawerCallback]);
 
