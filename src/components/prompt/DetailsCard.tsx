@@ -1,5 +1,5 @@
 import { Templates } from "@/core/api/dto/templates";
-import { Avatar, Box, Stack, Typography, useTheme, CardMedia, useMediaQuery } from "@mui/material";
+import { Avatar, Box, Stack, Typography, useTheme, CardMedia, useMediaQuery, Chip } from "@mui/material";
 import React from "react";
 import FavoriteIcon from "./FavoriteIcon";
 import Image from "@/components/design-system/Image";
@@ -22,6 +22,14 @@ export const DetailsCard: React.FC<Props> = ({ templateData }) => {
   // If the current breakpoint is medium (md) or larger,
   const isMdBreakpoint = useMediaQuery(breakpoints.up("md"));
   const borderRadiusValue = isMdBreakpoint ? "16px" : "0px";
+
+  const templateStatus = templateData?.status !== "PUBLISHED" && (
+    <Chip
+      label={templateData?.status}
+      size="small"
+      sx={{ fontSize: "12px", fontWeight: 500, ml: "8px" }}
+    />
+  );
 
   return (
     <Box
@@ -67,8 +75,11 @@ export const DetailsCard: React.FC<Props> = ({ templateData }) => {
               fontSize={18}
               fontWeight={500}
               color={"onSurface"}
-              dangerouslySetInnerHTML={{ __html: templateData.title }}
-            />
+            >
+              {templateData.title}
+              {templateStatus}
+            </Typography>
+
             <Typography
               fontSize={12}
               fontWeight={500}
