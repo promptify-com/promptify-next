@@ -8,7 +8,7 @@ import { RootState } from "@/core/store";
 import { useAppSelector } from "@/hooks/useStore";
 import useToken from "@/hooks/useToken";
 import { data } from "./data";
-import { generate } from "@/common/helpers/generate";
+import { generate } from "@/common/helpers/chatAnswersValidator";
 import useTimestampConverter from "@/hooks/useTimestampConverter";
 import { ChatMessages } from "./ChatInterface";
 import { ChatInput } from "./ChatInput";
@@ -74,16 +74,6 @@ export const ChatMode: React.FC = () => {
     }
   }, [question]);
 
-  useEffect(() => {
-    if (template) {
-      generateQuestions();
-    }
-  }, []);
-
-  const generateQuestions = () => {
-    generate({ template, token });
-  };
-
   const getCurrentQuestion = () => {
     if (question.length > 0 && currentQuestionIndex < question.length) {
       const questionObj = question[currentQuestionIndex];
@@ -93,16 +83,17 @@ export const ChatMode: React.FC = () => {
     return "";
   };
 
-  const validateAnswer = () => {
+  const validateAnswer = async () => {
     const currentQuestion = getCurrentQuestion();
     const payload = {
       question: currentQuestion,
       answer: userAnswer,
     };
-    generate({ template, token, isValidatingAnswer: true, payload });
+
+    return await generate({ token, payload });
   };
 
-  const handleUserResponse = () => {
+  const handleUserResponse = async () => {
     if (userAnswer.trim() === "") {
       return;
     }
@@ -117,10 +108,9 @@ export const ChatMode: React.FC = () => {
 
     setMessages(prevMessages => [...prevMessages, newUserMessage]);
 
-    validateAnswer(); //check if answer is valid or not
+    const answerResponse = await validateAnswer();
 
-    const approved = true;
-    if (approved) {
+    if (answerResponse.approved) {
       if (currentQuestionIndex < question.length - 1 && question.length !== currentQuestionIndex) {
         setCurrentQuestionIndex(currentQuestionIndex + 1);
         setUserAnswer("");
@@ -130,12 +120,21 @@ export const ChatMode: React.FC = () => {
       setAnswers(prevAnswers => [...prevAnswers, newAnswer]);
 
       const nextBotMessage = {
-        text: getCurrentQuestion(), // feedback ,
+        text: answerResponse.feedback + "." + getCurrentQuestion(), // feedback ,
         createdAt: createdAt,
         isUser: false,
       };
 
-      setMessages(prevMessages => [...prevMessages, nextBotMessage]);
+      setMessages(prevMessages => prevMessages.concat(nextBotMessage));
+    } else {
+      // Please handle !answerResponse.approved case
+      const nextBotMessage = {
+        text: answerResponse.feedback,
+        createdAt: createdAt,
+        isUser: false,
+      };
+
+      setMessages(prevMessages => prevMessages.concat(nextBotMessage));
     }
   };
 
@@ -237,7 +236,7 @@ export const ChatMode: React.FC = () => {
           <ChatInput
             onChange={setUserAnswer}
             value={userAnswer}
-            onSubmit={() => handleUserResponse()}
+            onSubmit={handleUserResponse}
           />
         </AccordionDetails>
       </Accordion>
