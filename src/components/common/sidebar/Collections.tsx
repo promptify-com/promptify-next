@@ -28,8 +28,7 @@ export const Collections: React.FC<SideBarCollectionsProps> = ({
 
   const { showOverlay } = useRouteChangeOverlay({
     shouldShowOverlayCallback: url => {
-      return false;
-      //return url.startsWith("/prompt/");
+      return url.startsWith("/prompt/");
     },
   });
   const IS_MOBILE = determineIsMobile();
