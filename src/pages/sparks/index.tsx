@@ -4,6 +4,7 @@ import { Layout } from "@/layout";
 import Protected from "@/components/Protected";
 import SparksContainer from "@/components/SparksContainer";
 import { useGetTemplatesExecutionsByMeQuery } from "@/core/api/executions";
+import { TemplateExecutionsDisplay } from "@/core/api/dto/templates";
 
 import SparksTemplatePlaceholder from "@/components/placeholders/SparksTemplatePlaceholder";
 
@@ -52,8 +53,8 @@ const Sparks = () => {
                 >
                   My Sparks
                 </Typography>
-                {executedTemplates?.length ? (
-                  <SparksContainer templates={executedTemplates} />
+                {(executedTemplates as unknown as TemplateExecutionsDisplay[])?.length ? (
+                  <SparksContainer templates={executedTemplates as TemplateExecutionsDisplay[]} />
                 ) : (
                   <Typography
                     sx={{

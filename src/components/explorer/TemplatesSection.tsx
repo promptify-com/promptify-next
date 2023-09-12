@@ -100,8 +100,7 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
                 hasMore={hasMore}
               >
                 {!!templates?.length &&
-                  templates.map((template: TemplateExecutionsDisplay | Templates, idx) => {
-                    // console.log("template: ", template, idx);
+                  templates.map((template: TemplateExecutionsDisplay | Templates) => {
                     return (
                       <Grid key={template.id}>
                         <CardTemplate
