@@ -75,22 +75,25 @@ export interface ResOverrides {
   contextual_overrides: ContextualOverrides[];
 }
 
+export interface QuestionAnswerParams {
+  question: string;
+  answer: string;
+}
+export interface TemplateDataParams {
+  TemplateData: {
+    id: number;
+    execution_priority: number;
+    order: number;
+    title: string;
+    content: string;
+    parameters: string[];
+  };
+}
+
+type PromptParamsGenerate = TemplateDataParams | QuestionAnswerParams;
+
 export interface TemplateQuestionGeneratorData {
   prompt: number;
   contextual_overrides: ContextualOverrides[];
-  prompt_params: {
-    TemplateData: {
-      id: number;
-      title: string;
-      description: string;
-      prompts: {
-        id: number;
-        execution_priority: number;
-        order: number;
-        title: string;
-        content: string;
-        parameters: string[];
-      };
-    };
-  };
+  prompt_params: PromptParamsGenerate;
 }

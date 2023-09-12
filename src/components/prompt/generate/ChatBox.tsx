@@ -1,31 +1,78 @@
 import React, { useState, useEffect } from "react";
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Box,
-  Grid,
-  IconButton,
-  InputBase,
-  Typography,
-} from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Grid, IconButton, Typography } from "@mui/material";
 import { useWindowSize } from "usehooks-ts";
-import { ExpandLess, ExpandMore, MoreVert, Search, Send } from "@mui/icons-material";
+import { ExpandLess, ExpandMore, MoreVert, Search } from "@mui/icons-material";
 import { useSelector } from "react-redux";
 
-import LogoAsAvatar from "@/assets/icons/LogoAvatar";
 import { RootState } from "@/core/store";
-import { TemplateQuestionGeneratorData } from "@/core/api/dto/prompts";
 import { useAppSelector } from "@/hooks/useStore";
 import useToken from "@/hooks/useToken";
-import { fetchEventSource } from "@microsoft/fetch-event-source";
+import { data } from "./data";
+import { generate } from "@/common/helpers/generate";
+import useTimestampConverter from "@/hooks/useTimestampConverter";
+import { ChatMessages } from "./ChatInterface";
+import { ChatInput } from "./ChatInput";
+
+export interface Question {
+  [key: string]: {
+    question: string;
+  };
+}
+
+export interface Message {
+  text: string;
+  createdAt: string;
+  isUser: boolean;
+}
+
+interface Answer {
+  inputName: string;
+  question: string;
+  answer: string;
+}
 
 export const ChatMode: React.FC = () => {
+  const { width: windowWidth } = useWindowSize();
+  const { convertedTimestamp } = useTimestampConverter();
+  const token = useToken();
+
+  const currentUser = useSelector((state: RootState) => state.user.currentUser);
   const template = useAppSelector(state => state.template.template);
 
-  function replacePlaceholders(text: string) {
-    return text.replace(/{{/g, "[[").replace(/}}/g, "]]");
-  }
+  const [chatExpanded, setChatExpanded] = useState(true);
+  const [answers, setAnswers] = useState<{ question: string; answer: string }[]>([]);
+  const [userAnswer, setUserAnswer] = useState("");
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(1);
+
+  const [question, setQuestion] = useState<Question[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
+
+  const createdAt = convertedTimestamp(new Date());
+
+  useEffect(() => {
+    if (data.length > 0 && question.length === 0) {
+      setQuestion(prevQuestions => [...prevQuestions, ...data]);
+    }
+  }, [data, question]);
+
+  useEffect(() => {
+    if (question.length > 0 && messages.length === 0) {
+      const secondQuestionKey = Object.keys(question[0])[0];
+      const secondQuestionText = question[0][secondQuestionKey].question;
+      setMessages([
+        {
+          text: `Hi, ${currentUser?.username}. Welcome. I can help you with your template`,
+          createdAt: createdAt,
+          isUser: false,
+        },
+        {
+          text: secondQuestionText,
+          createdAt: createdAt,
+          isUser: false,
+        },
+      ]);
+    }
+  }, [question]);
 
   useEffect(() => {
     if (template) {
@@ -33,68 +80,64 @@ export const ChatMode: React.FC = () => {
     }
   }, []);
 
-  const token = useToken();
-
   const generateQuestions = () => {
-    let data: TemplateQuestionGeneratorData[];
-
-    if (template) {
-      const modifiedTemplate = {
-        ...template,
-        prompts: template.prompts.map(prompt => ({
-          id: prompt.id,
-          order: prompt.order,
-          title: prompt.title,
-          execution_priority: prompt.execution_priority,
-          content: replacePlaceholders(prompt.content),
-          parameters: [],
-        })),
-      };
-      data = [
-        {
-          prompt: 1795,
-          contextual_overrides: [],
-          prompt_params: {
-            TemplateData: {
-              id: modifiedTemplate.id,
-              title: modifiedTemplate.title,
-              description: modifiedTemplate.description,
-              //@ts-ignore
-              prompts: modifiedTemplate.prompts,
-            },
-          },
-        },
-      ];
-      let url = `${process.env.NEXT_PUBLIC_API_URL}/api/meta/templates/515/execute/?streaming=true`;
-      //@ts-ignore
-      let markdownData = []; // Initialize an array to store messages
-      //@ts-ignore
-      // let questions = [];
-
-      fetchEventSource(url, {
-        method: "POST",
-        headers: {
-          Authorization: `Token ${token}`,
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-        openWhenHidden: true,
-
-        onmessage(msg) {
-          markdownData.push(msg.data);
-        },
-
-        onclose() {},
-      });
-    }
+    generate({ template, token });
   };
 
-  const { width: windowWidth } = useWindowSize();
+  const getCurrentQuestion = () => {
+    if (question.length > 0 && currentQuestionIndex < question.length) {
+      const questionObj = question[currentQuestionIndex];
+      const key = Object.keys(questionObj)[0];
+      return questionObj[key].question;
+    }
+    return "";
+  };
 
-  const currentUser = useSelector((state: RootState) => state.user.currentUser);
+  const validateAnswer = () => {
+    const currentQuestion = getCurrentQuestion();
+    const payload = {
+      question: currentQuestion,
+      answer: userAnswer,
+    };
+    generate({ template, token, isValidatingAnswer: true, payload });
+  };
 
-  const [chatExpanded, setChatExpanded] = useState(true);
+  const handleUserResponse = () => {
+    if (userAnswer.trim() === "") {
+      return;
+    }
+    const currentQuestion = getCurrentQuestion();
+
+    const newUserMessage = {
+      inputNane: "",
+      text: userAnswer,
+      createdAt: createdAt,
+      isUser: true,
+    };
+
+    setMessages(prevMessages => [...prevMessages, newUserMessage]);
+
+    validateAnswer(); //check if answer is valid or not
+
+    const approved = true;
+    if (approved) {
+      if (currentQuestionIndex < question.length - 1 && question.length !== currentQuestionIndex) {
+        setCurrentQuestionIndex(currentQuestionIndex + 1);
+        setUserAnswer("");
+      }
+
+      let newAnswer = { question: currentQuestion, answer: userAnswer };
+      setAnswers(prevAnswers => [...prevAnswers, newAnswer]);
+
+      const nextBotMessage = {
+        text: getCurrentQuestion(), // feedback ,
+        createdAt: createdAt,
+        isUser: false,
+      };
+
+      setMessages(prevMessages => [...prevMessages, nextBotMessage]);
+    }
+  };
 
   return (
     <Grid
@@ -185,57 +228,17 @@ export const ChatMode: React.FC = () => {
         </AccordionSummary>
         <AccordionDetails
           sx={{
+            display: "flex",
+            flexDirection: "column",
             borderTop: { xs: "none", md: "2px solid #ECECF4" },
           }}
         >
-          <Grid
-            display={"flex"}
-            flexDirection={"column"}
-            gap={"8px"}
-          >
-            <Grid
-              p={"16px"}
-              display={"flex"}
-              flexDirection={{ xs: "column", md: "row" }}
-              gap={"16px"}
-            >
-              <LogoAsAvatar />
-              <Grid flex={1}>
-                <Typography>Hi, {currentUser?.username}. Welcome. I can help you with your</Typography>
-                <Typography mt={4}> We need following things:</Typography>
-              </Grid>
-            </Grid>
-            <Grid
-              p={"16px"}
-              position={{ xs: "fixed", md: "inherit" }}
-              bottom={"60px"}
-              zIndex={99}
-              left={0}
-              right={0}
-            >
-              <Box
-                bgcolor={"surface.3"}
-                display={"flex"}
-                alignItems={"center"}
-                borderRadius="99px"
-                minHeight={"32px"}
-                p={"8px 16px"}
-              >
-                <InputBase
-                  sx={{ ml: 1, flex: 1, fontSize: 13, lineHeight: "22px", letterSpacing: "0.46px", fontWeight: "500" }}
-                  placeholder="Chat with Promptify"
-                  inputProps={{ "aria-label": "Name" }}
-                />
-
-                <Send
-                  onClick={() => {}}
-                  sx={{
-                    cursor: "pointer",
-                  }}
-                />
-              </Box>
-            </Grid>
-          </Grid>
+          <ChatMessages messages={messages} />
+          <ChatInput
+            onChange={setUserAnswer}
+            value={userAnswer}
+            onSubmit={() => handleUserResponse()}
+          />
         </AccordionDetails>
       </Accordion>
     </Grid>
