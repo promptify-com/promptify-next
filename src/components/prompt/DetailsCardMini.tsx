@@ -1,6 +1,6 @@
 import React from "react";
 import { Templates } from "@/core/api/dto/templates";
-import { Avatar, Box, Stack, Typography, alpha, useTheme } from "@mui/material";
+import { Avatar, Box, Stack, Typography, alpha, useTheme, Chip } from "@mui/material";
 import FavoriteIcon from "./FavoriteIcon";
 
 interface Props {
@@ -16,6 +16,14 @@ const favoriteIconStyle = {
 
 export const DetailsCardMini: React.FC<Props> = ({ templateData }) => {
   const { palette } = useTheme();
+
+  const templateStatus = templateData?.status !== "PUBLISHED" && (
+    <Chip
+      label={templateData?.status}
+      size="small"
+      sx={{ fontSize: "12px", fontWeight: 500, ml: "8px" }}
+    />
+  );
 
   return (
     <Box
@@ -53,8 +61,10 @@ export const DetailsCardMini: React.FC<Props> = ({ templateData }) => {
             fontSize={14}
             fontWeight={500}
             color={"onSurface"}
-            dangerouslySetInnerHTML={{ __html: templateData.title }}
-          />
+          >
+            {templateData.title}
+            {templateStatus}
+          </Typography>
         </Box>
         <FavoriteIcon style={favoriteIconStyle} />
         <Avatar
