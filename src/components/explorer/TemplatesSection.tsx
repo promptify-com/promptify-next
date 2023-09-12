@@ -38,7 +38,7 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
 
   return (
     <Box width={"100%"}>
-      {!filtred && (isLoading || !!templates?.length) && <Typography fontSize={19}>{title}</Typography>}
+      {!filtred && (templateLoading || !!templates?.length) && <Typography fontSize={19}>{title}</Typography>}
 
       {templateLoading ? (
         isLatestTemplates ? (

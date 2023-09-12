@@ -61,16 +61,13 @@ export function useGetTemplatesByFilter(catId?: number, subCatId?: number) {
 
   const [allTemplates, setAllTemplates] = useState<Templates[]>([]);
   const [resetFlag, setResetFlag] = useState(true);
-  const [hasMore, setHasMore] = useState(false);
 
   useEffect(() => {
     if (templates?.results) {
       if (resetFlag) {
         setAllTemplates(templates?.results);
-        setHasMore(templates?.results.length > 0);
       } else {
         setAllTemplates(prevTemplates => prevTemplates.concat(templates?.results));
-        setHasMore(templates?.results.length > 0);
       }
     }
   }, [templates?.results]);
@@ -92,11 +89,13 @@ export function useGetTemplatesByFilter(catId?: number, subCatId?: number) {
   };
 
   const handleNextPage = () => {
-    if (hasMore) {
+    if (!!templates?.next) {
       setOffset(prevOffset => prevOffset + PAGINATION_LIMIT);
       setResetFlag(false);
     }
   };
+
+  const hasMore = !!templates?.next;
 
   return {
     categorySlug,

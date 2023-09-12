@@ -16,11 +16,19 @@ const TemplatesInfiniteScroll: FC<TemplatesInfiniteScrollProps> = ({ loading, on
     (node: HTMLDivElement) => {
       if (loading) return;
       if (observer.current) observer.current.disconnect();
-      observer.current = new IntersectionObserver(entries => {
-        if (entries[0].isIntersecting && hasMore) {
-          onLoadMore();
-        }
-      });
+      const isMobile = window.innerWidth <= 600;
+
+      const rowHeight = isMobile ? 90 : 60;
+      const margin = `${2 * rowHeight}px`;
+
+      observer.current = new IntersectionObserver(
+        entries => {
+          if (entries[0].isIntersecting && hasMore) {
+            onLoadMore();
+          }
+        },
+        { rootMargin: margin },
+      );
       if (node) observer.current.observe(node);
     },
     [loading, hasMore],
@@ -33,7 +41,7 @@ const TemplatesInfiniteScroll: FC<TemplatesInfiniteScrollProps> = ({ loading, on
       gap={"16px"}
     >
       {children}
-      {loading && <CardTemplatePlaceholder count={1} />}
+      {loading && <CardTemplatePlaceholder count={4} />}
       <div ref={lastTemplateElementRef}></div>
     </Grid>
   );
