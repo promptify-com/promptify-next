@@ -12,6 +12,7 @@ import { FiltersSelected } from "@/components/explorer/FiltersSelected";
 import SubCategoryPlaceholder from "@/components/placeholders/SubCategoryPlaceholder";
 import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
 import Breadcrumb from "@/components/design-system/Breadcrumb";
+import { useGetCategoriesQuery } from "@/core/api/categories";
 
 interface CategoryOrSubcategory {
   category: Category;
@@ -20,8 +21,12 @@ interface CategoryOrSubcategory {
 
 export default function Page({ category, subcategory }: CategoryOrSubcategory) {
   const router = useRouter();
-  const { templates, isFetching, categories, isCategoryLoading, allFilterParamsNull, hasMore, handleNextPage } =
-    useGetTemplatesByFilter(undefined, subcategory?.id);
+  const { templates, isFetching, allFilterParamsNull, hasMore, handleNextPage } = useGetTemplatesByFilter(
+    undefined,
+    subcategory?.id,
+  );
+
+  const { data: categories, isLoading: isCategoryLoading } = useGetCategoriesQuery(undefined);
 
   const navigateTo = (slug: string) => {
     router.push(`/explore/${category.slug}/${slug}`);

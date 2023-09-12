@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 
 import { RootState } from "@/core/store";
-import { useGetCategoriesQuery } from "@/core/api/categories";
 import { useGetTemplatesByFilterQuery } from "@/core/api/templates";
 import { FilterParams, SelectedFilters } from "@/core/api/dto/templates";
 import { useGetTagsPopularQuery } from "@/core/api/tags";
@@ -21,10 +20,6 @@ export function useGetTemplatesByFilter(catId?: number, subCatId?: number) {
   };
 
   const { categorySlug, subcategorySlug } = router.query;
-
-  const { data: categories, isLoading: isCategoryLoading } = useGetCategoriesQuery(undefined, {
-    skip: !hasPathname("explore"),
-  });
 
   const tagsQuery = useGetTagsPopularQuery(undefined, { skip: !hasPathname("explore") });
   const enginesQuery = useGetEnginesQuery(undefined, { skip: !hasPathname("explore") });
@@ -104,8 +99,6 @@ export function useGetTemplatesByFilter(catId?: number, subCatId?: number) {
     debouncedSearchName,
     subcategorySlug,
     allFilterParamsNull,
-    categories,
-    isCategoryLoading,
     templates: allTemplates,
     isTemplatesLoading,
     filters,

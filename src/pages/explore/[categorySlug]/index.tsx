@@ -11,27 +11,21 @@ import { TemplatesSection } from "@/components/explorer/TemplatesSection";
 import { FiltersSelected } from "@/components/explorer/FiltersSelected";
 import SubCategoryPlaceholder from "@/components/placeholders/SubCategoryPlaceholder";
 import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
+import { useGetCategoriesQuery } from "@/core/api/categories";
 
 export default function Page({ category }: { category: Category }) {
   const router = useRouter();
-  const {
-    templates,
-    isFetching,
-    categories,
-    isCategoryLoading,
-    categorySlug,
-    allFilterParamsNull,
-    isTemplatesLoading,
-    hasMore,
-    handleNextPage,
-  } = useGetTemplatesByFilter(category?.id);
+  const { templates, isFetching, categorySlug, allFilterParamsNull, isTemplatesLoading, hasMore, handleNextPage } =
+    useGetTemplatesByFilter(category?.id);
+  const { data: categories, isLoading: isCategoryLoading } = useGetCategoriesQuery(undefined);
+
   const goBack = () => {
     router.push("/explore");
   };
   const navigateTo = (item: Category) => {
     router.push(`/explore/${categorySlug}/${item.slug}`);
   };
-
+  console.log(categories);
   return (
     <Layout>
       <Box
@@ -112,7 +106,7 @@ export async function getServerSideProps({ params }: any) {
   try {
     const categoryRes = await authClient.get(`/api/meta/categories/by-slug/${categorySlug}/`);
     const category = categoryRes.data; // Extract the necessary data from the response
-
+    console.log(category);
     return {
       props: {
         category,
