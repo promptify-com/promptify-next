@@ -26,7 +26,7 @@ export default function Page({ category, subcategory }: CategoryOrSubcategory) {
     subcategory?.id,
   );
 
-  const { data: categories, isLoading: isCategoryLoading } = useGetCategoriesQuery(undefined);
+  const { data: categories, isLoading: isCategoryLoading } = useGetCategoriesQuery();
 
   const navigateTo = (slug: string) => {
     router.push(`/explore/${category.slug}/${slug}`);

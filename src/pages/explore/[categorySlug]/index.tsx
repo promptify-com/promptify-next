@@ -17,7 +17,7 @@ export default function Page({ category }: { category: Category }) {
   const router = useRouter();
   const { templates, isFetching, categorySlug, allFilterParamsNull, isTemplatesLoading, hasMore, handleNextPage } =
     useGetTemplatesByFilter(category?.id);
-  const { data: categories, isLoading: isCategoryLoading } = useGetCategoriesQuery(undefined);
+  const { data: categories, isLoading: isCategoryLoading } = useGetCategoriesQuery();
 
   const goBack = () => {
     router.push("/explore");
