@@ -48,7 +48,7 @@ export function useGetTemplatesByFilter(catId?: number, subCatId?: number) {
     engineId: engine?.id,
     categoryId: catId,
     subcategoryId: subCatId,
-    title: title ?? searchName,
+    title: title ?? debouncedSearchName,
     offset,
     limit: PAGINATION_LIMIT,
   };

@@ -18,8 +18,9 @@ const TemplatesInfiniteScroll: FC<TemplatesInfiniteScrollProps> = ({ loading, on
       if (observer.current) observer.current.disconnect();
       const isMobile = window.innerWidth <= 600;
 
-      const rowHeight = isMobile ? 90 : 60;
-      const margin = `${2 * rowHeight}px`;
+      const rowHeight = isMobile ? 145 : 80;
+      const padding = 10;
+      const margin = `${rowHeight + 2 * padding}px`;
 
       observer.current = new IntersectionObserver(
         entries => {
