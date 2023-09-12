@@ -7,26 +7,22 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/core/store";
 import { useAppSelector } from "@/hooks/useStore";
 import useToken from "@/hooks/useToken";
-import { data } from "./data";
 import { generate } from "@/common/helpers/generate";
 import useTimestampConverter from "@/hooks/useTimestampConverter";
 import { ChatMessages } from "./ChatInterface";
 import { ChatInput } from "./ChatInput";
-
-export interface Question {
-  [key: string]: {
-    question: string;
-  };
-}
+import { getInputsFromString } from "@/common/helpers";
+import { IPromptInput } from "@/common/types/prompt";
+import { TemplateQuestions } from "@/core/api/dto/templates";
 
 export interface Message {
+  type?: "text" | "choices" | "number" | "code";
   text: string;
   createdAt: string;
-  isUser: boolean;
+  fromUser: boolean;
 }
 
 interface Answer {
-  inputName: string;
   question: string;
   answer: string;
 }
@@ -44,98 +40,107 @@ export const ChatMode: React.FC = () => {
   const [userAnswer, setUserAnswer] = useState("");
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(1);
 
-  const [question, setQuestion] = useState<Question[]>([]);
+  const [questions, setQuestions] = useState<TemplateQuestions[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
 
   const createdAt = convertedTimestamp(new Date());
 
   useEffect(() => {
-    if (data.length > 0 && question.length === 0) {
-      setQuestion(prevQuestions => [...prevQuestions, ...data]);
+    if (template?.questions) {
+      setQuestions(prevQuestions => [...prevQuestions, ...template.questions]);
     }
-  }, [data, question]);
-
-  useEffect(() => {
-    if (question.length > 0 && messages.length === 0) {
-      const secondQuestionKey = Object.keys(question[0])[0];
-      const secondQuestionText = question[0][secondQuestionKey].question;
+    if (questions.length > 0 && messages.length === 0) {
+      const firstKey = Object.keys(questions[0])[0];
+      const firstQuestion = questions[0][firstKey];
       setMessages([
         {
           text: `Hi, ${currentUser?.username}. Welcome. I can help you with your template`,
+          type: "text",
           createdAt: createdAt,
-          isUser: false,
+          fromUser: false,
         },
         {
-          text: secondQuestionText,
+          text: firstQuestion.question,
+          type: firstQuestion.type,
           createdAt: createdAt,
-          isUser: false,
+          fromUser: false,
         },
       ]);
     }
-  }, [question]);
+  }, [template, questions]);
 
   useEffect(() => {
     if (template) {
+      let arr: IPromptInput[] = [];
+      template.prompts.forEach(prompt => {
+        arr = getInputsFromString(prompt.content);
+      });
+      console.log(arr);
+
       generateQuestions();
     }
-  }, []);
+  }, [template]);
 
   const generateQuestions = () => {
     generate({ template, token });
   };
 
   const getCurrentQuestion = () => {
-    if (question.length > 0 && currentQuestionIndex < question.length) {
-      const questionObj = question[currentQuestionIndex];
+    if (questions.length > 0 && currentQuestionIndex < questions.length) {
+      const questionObj = questions[currentQuestionIndex];
       const key = Object.keys(questionObj)[0];
-      return questionObj[key].question;
+      return questionObj[key];
     }
-    return "";
   };
 
+  const currentQuestion = getCurrentQuestion();
+
   const validateAnswer = () => {
-    const currentQuestion = getCurrentQuestion();
-    const payload = {
-      question: currentQuestion,
-      answer: userAnswer,
-    };
-    generate({ template, token, isValidatingAnswer: true, payload });
+    if (currentQuestion) {
+      const payload = {
+        question: currentQuestion.question,
+        answer: userAnswer,
+      };
+      generate({ template, token, isValidatingAnswer: true, payload });
+    }
   };
 
   const handleUserResponse = () => {
     if (userAnswer.trim() === "") {
       return;
     }
-    const currentQuestion = getCurrentQuestion();
 
-    const newUserMessage = {
-      inputNane: "",
-      text: userAnswer,
-      createdAt: createdAt,
-      isUser: true,
-    };
-
-    setMessages(prevMessages => [...prevMessages, newUserMessage]);
-
-    validateAnswer(); //check if answer is valid or not
-
-    const approved = true;
-    if (approved) {
-      if (currentQuestionIndex < question.length - 1 && question.length !== currentQuestionIndex) {
-        setCurrentQuestionIndex(currentQuestionIndex + 1);
-        setUserAnswer("");
-      }
-
-      let newAnswer = { question: currentQuestion, answer: userAnswer };
-      setAnswers(prevAnswers => [...prevAnswers, newAnswer]);
-
-      const nextBotMessage = {
-        text: getCurrentQuestion(), // feedback ,
+    if (currentQuestion) {
+      const newUserMessage: Message = {
+        type: currentQuestion?.type,
+        text: userAnswer,
         createdAt: createdAt,
-        isUser: false,
+        fromUser: true,
       };
 
-      setMessages(prevMessages => [...prevMessages, nextBotMessage]);
+      setMessages(prevMessages => [...prevMessages, newUserMessage]);
+
+      validateAnswer(); //check if answer is valid or not
+
+      const approved = true;
+      if (approved) {
+        if (currentQuestionIndex < questions.length - 1) {
+          setCurrentQuestionIndex(currentQuestionIndex + 1);
+          setUserAnswer("");
+        }
+
+        let newAnswer = { question: currentQuestion?.question, answer: userAnswer };
+        setAnswers(prevAnswers => [...prevAnswers, newAnswer]);
+
+        const nextBotMessage: Message = {
+          type: currentQuestion.type,
+          text: currentQuestion.question,
+          createdAt: createdAt,
+          fromUser: false,
+        };
+
+        setMessages(prevMessages => [...prevMessages, nextBotMessage]);
+      }
     }
   };
 

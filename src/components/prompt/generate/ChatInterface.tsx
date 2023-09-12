@@ -14,9 +14,7 @@ export const ChatMessages = ({ messages }: { messages: Message[] }) => {
         <MessageBlock
           key={idx}
           hideHeader={idx === 1}
-          isUser={msg.isUser}
-          text={msg.text}
-          timestamp={msg.createdAt}
+          message={msg}
         />
       ))}
     </Grid>

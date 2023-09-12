@@ -1,18 +1,20 @@
 import React from "react";
-import { Avatar, Grid, Typography } from "@mui/material";
+import { Avatar, Button, Grid, Typography } from "@mui/material";
 import LogoAsAvatar from "@/assets/icons/LogoAvatar";
 import { useAppSelector } from "@/hooks/useStore";
+import { Message } from "./ChatBox";
 
 interface MessageBlockProps {
-  isUser: boolean;
-  text: string;
-  timestamp: string;
+  message: Message;
   hideHeader?: boolean;
 }
 
-const MessageBlock = ({ isUser, text, timestamp, hideHeader }: MessageBlockProps) => {
+const MessageBlock = ({ message, hideHeader }: MessageBlockProps) => {
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const name = isUser ? currentUser?.username : "Promptify";
+
+  const { fromUser, type, text, createdAt } = message;
+
+  const name = fromUser ? currentUser?.username : "Promptify";
 
   if (hideHeader) {
     // Render the message without the header (name and timestamp)
@@ -36,7 +38,7 @@ const MessageBlock = ({ isUser, text, timestamp, hideHeader }: MessageBlockProps
       flexDirection={{ xs: "column", md: "row" }}
       gap={"16px"}
     >
-      {isUser && currentUser ? (
+      {message.fromUser && currentUser ? (
         <Avatar
           src={currentUser.avatar}
           alt={currentUser.first_name}
@@ -74,10 +76,15 @@ const MessageBlock = ({ isUser, text, timestamp, hideHeader }: MessageBlockProps
               opacity: 0.5,
             }}
           >
-            {timestamp}
+            {createdAt}
           </Typography>
         </Grid>
-        <Grid>
+        <Grid
+          display={"flex"}
+          flexDirection={"column"}
+          gap={"8px"}
+          alignItems={"start"}
+        >
           <Typography
             fontSize={15}
             lineHeight={"24px"}
@@ -85,6 +92,18 @@ const MessageBlock = ({ isUser, text, timestamp, hideHeader }: MessageBlockProps
           >
             {text}
           </Typography>
+          {type === "code" && !fromUser && (
+            <Button
+              variant="outlined"
+              size="small"
+              sx={{
+                height: 30,
+              }}
+            >
+              Upload your code
+            </Button>
+          )}
+          {type === "choices" && !fromUser}
         </Grid>
       </Grid>
     </Grid>

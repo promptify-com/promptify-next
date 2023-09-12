@@ -97,7 +97,7 @@ export const generate = ({
       onmessage(msg) {
         try {
           markdownData.push(msg.data);
-          console.log(msg.data);
+          // console.log(msg.data);
         } catch (error) {
           console.error(error);
         }
