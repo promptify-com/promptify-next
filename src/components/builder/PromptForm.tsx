@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Box, IconButton, Stack, Tab, Tabs, Typography, alpha } from "@mui/material";
 import { RenameForm } from "../common/forms/RenameForm";
-import { INodesData, IPromptParams } from "@/common/types/builder";
+import { INodesData, IPromptOptions, IPromptParams } from "@/common/types/builder";
 import { Node } from "rete/_types/presets/classic";
 import { useGetEnginesQuery } from "@/core/api/engines";
 import { Close, DeleteOutline, ModeEdit, Settings, Tune } from "@mui/icons-material";
@@ -9,6 +9,7 @@ import { theme } from "@/theme";
 import Terminal from "@/assets/icons/Terminal";
 import { NodeContentForm } from "./NodeContentForm";
 import { Stylizer } from "./Stylizer";
+import { Options } from "./Options";
 
 const CustomTabPanel = (props: any) => {
   const { children, value, index, ...other } = props;
@@ -31,9 +32,7 @@ const a11yProps = (index: number) => {
 
 interface Props {
   close: () => void;
-  editorNode: Node;
   removeNode: () => void;
-  updateTitle: (value: string) => void | undefined;
   selectedNodeData: INodesData | null;
   setSelectedNodeData: (value: INodesData) => void;
   nodeCount: number;
@@ -44,7 +43,6 @@ interface Props {
 export const PromptForm: React.FC<Props> = ({
   close,
   removeNode,
-  updateTitle,
   selectedNodeData,
   setSelectedNodeData,
   nodesData,
@@ -66,7 +64,6 @@ export const PromptForm: React.FC<Props> = ({
       ...selectedNodeData,
       title,
     });
-    updateTitle(title);
   };
 
   const changeContent = (content: string) => {
@@ -84,6 +81,24 @@ export const PromptForm: React.FC<Props> = ({
     setSelectedNodeData({
       ...selectedNodeData,
       parameters: params,
+    });
+  };
+
+  const changePromptOptions = (options: IPromptOptions) => {
+    if (!selectedNodeData) return;
+
+    setSelectedNodeData({
+      ...selectedNodeData,
+      ...options,
+    });
+  };
+
+  const changePromptEngine = (engineId: number) => {
+    if (!selectedNodeData) return;
+
+    setSelectedNodeData({
+      ...selectedNodeData,
+      engine_id: engineId,
     });
   };
 
@@ -229,7 +244,11 @@ export const PromptForm: React.FC<Props> = ({
           value={tabsValue}
           index={2}
         >
-          Item Three
+          <Options
+            changeEngine={changePromptEngine}
+            onUpdateNodeOptions={changePromptOptions}
+            selectedNodeData={selectedNodeData}
+          />
         </CustomTabPanel>
       </Stack>
     </Stack>

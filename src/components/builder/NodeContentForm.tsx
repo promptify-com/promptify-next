@@ -43,7 +43,7 @@ export const NodeContentForm: React.FC<Props> = ({ content = "", onChange = () =
           options={nodesOptions}
           onChoose={id => console.log(id)}
         />
-        <Typography
+        {/* <Typography
           sx={{
             fontFamily: "Poppins",
             fontSize: 12,
@@ -56,7 +56,7 @@ export const NodeContentForm: React.FC<Props> = ({ content = "", onChange = () =
         <InlineOptions
           options={nodesOptions}
           onChoose={id => console.log(id)}
-        />
+        /> */}
       </Stack>
       <Divider />
       <Box

@@ -24,7 +24,6 @@ import { createEditor, Node } from "@/components/builder/Editor";
 import { Header } from "@/components/builder/Header";
 import { MinusIcon, PlusIcon } from "@/assets/icons";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Sidebar } from "@/components/builder/Sidebar";
 import { useGetPromptTemplatesQuery, usePublishTemplateMutation } from "@/core/api/templates";
 import { Prompts } from "@/core/api/dto/prompts";
 import { deletePrompt, updateTemplate } from "@/hooks/api/templates";
@@ -57,7 +56,7 @@ export const Builder = () => {
   const [nodeCount, setNodeCount] = useState(1);
   const [prompts, setPrompts] = useState<Prompts[]>([]);
   const { data: engines } = useGetEnginesQuery();
-  const [selectedNode, setSelectedNode] = useState<any>(null);
+  const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const [selectedNodeData, setSelectedNodeData] = useState<INodesData | null>(null);
   const [selectedConnection, setSelectedConnection] = useState<string | null>(null);
   const [nodesData, setNodesData] = useState<INodesData[]>([]);
@@ -98,7 +97,7 @@ export const Builder = () => {
         nodeCount,
         setNodeCount,
         setNodesData,
-        updateTemplateDependencties,
+        updateTemplateDependencies,
       );
     },
     [setSelectedNode, prompts, promptsData],
@@ -340,31 +339,39 @@ export const Builder = () => {
   };
 
   useEffect(() => {
-    if (selectedNodeData) updateNodes();
+    updateNodes();
   }, [selectedNodeData]);
-  const updateEditorTitle = (title: string) => {
-    if (!title) return;
-    selectedNode.label = title;
-    editor?.area.update("node", selectedNode.id);
+
+  const updateEditor = () => {
+    if (!!!selectedNode || !!!selectedNodeData) return;
+
+    const nodeId = Number(selectedNode.id || selectedNode.temp_id);
+    if (nodeId !== selectedNodeData.id && nodeId !== selectedNodeData.temp_id) return;
+
+    const engine = engines?.find(_engine => _engine.id === selectedNodeData?.engine_id);
+
+    if (selectedNode.label !== selectedNodeData.title || selectedNode.engine !== engine?.icon) {
+      selectedNode.label = selectedNodeData?.title;
+      selectedNode.engine = engine?.icon || "";
+      editor?.area.update("node", nodeId.toString());
+    }
   };
 
   const updateNodes = () => {
-    if (!selectedNodeData) return;
+    if (!!!selectedNode || !!!selectedNodeData) return;
 
     const _nodes = nodesData.map(node => {
-      if (
-        node.id === selectedNodeData?.id ||
-        (selectedNodeData?.temp_id && node.temp_id === selectedNodeData?.temp_id)
-      ) {
+      if (node.id === selectedNodeData.id || (selectedNodeData.temp_id && node.temp_id === selectedNodeData.temp_id)) {
         node = selectedNodeData;
       }
       return node;
     });
 
     setNodesData(_nodes);
+    updateEditor();
   };
 
-  const updateTemplateDependencties = (id: string, dependsOn: string) => {
+  const updateTemplateDependencies = (id: string, dependsOn: string) => {
     const data = dataForRequest.current;
     const currentPrompt = dataForRequest.current.prompts_list?.find((prompt: INodesData) => {
       return prompt.temp_id === Number(id) || prompt.id === Number(id);
@@ -627,9 +634,7 @@ export const Builder = () => {
             }}
           >
             <PromptForm
-              editorNode={selectedNode}
               removeNode={() => setConfirmDialogOpen(true)}
-              updateTitle={updateEditorTitle}
               selectedNodeData={selectedNodeData}
               setSelectedNodeData={setSelectedNodeData}
               nodeCount={nodeCount}

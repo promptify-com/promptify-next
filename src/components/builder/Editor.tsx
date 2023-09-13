@@ -35,7 +35,7 @@ export async function createEditor(
   nodeCount: number,
   setNodeCount: (val: number) => void,
   setNodesData: React.Dispatch<React.SetStateAction<INodesData[]>>,
-  updateTemplateDependencties: (val1: string, val2: string) => void,
+  updateTemplateDependencies: (val1: string, val2: string) => void,
 ) {
   const editor = new NodeEditor<Schemes>();
   const area = new AreaPlugin<Schemes, AreaExtra>(container);
@@ -188,7 +188,7 @@ export async function createEditor(
         }
       });
 
-      updateTemplateDependencties(target, source);
+      updateTemplateDependencies(target, source);
     }
 
     if (context.type === "nodepicked") {
