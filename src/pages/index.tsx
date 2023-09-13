@@ -16,7 +16,7 @@ import { useGetTemplatesExecutionsByMeQuery } from "@/core/api/executions";
 import { getPathURL, saveToken } from "@/common/utils";
 import { RootState } from "@/core/store";
 import { isValidUserFn, updateUser } from "@/core/store/userSlice";
-import { Category } from "@/core/api/dto/templates";
+import { Category, TemplatesExecutionsByMePaginationResponse } from "@/core/api/dto/templates";
 import { authClient } from "@/common/axios";
 
 interface HomePageProps {
@@ -128,7 +128,7 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
                 <TemplatesSection
                   isLatestTemplates
                   isLoading={isMyLatestExecutionsLoading}
-                  templates={myLatestExecutions}
+                  templates={(myLatestExecutions as TemplatesExecutionsByMePaginationResponse)?.results || []}
                   title="Your Latest Templates:"
                   type="myLatestExecutions"
                 />

@@ -15,7 +15,7 @@ interface IProps {
 }
 
 const ExplorePage: NextPage<IProps> = ({ categories }) => {
-  const { templates, hasNext, hasPrev, handleNextPage, handlePreviousPage, allFilterParamsNull, isFetching } =
+  const { templates, isTemplatesLoading, handleNextPage, hasMore, allFilterParamsNull, isFetching } =
     useGetTemplatesByFilter();
 
   return (
@@ -42,13 +42,12 @@ const ExplorePage: NextPage<IProps> = ({ categories }) => {
             )}
             <TemplatesSection
               filtred={!allFilterParamsNull}
-              templates={templates?.results ?? []}
+              templates={templates ?? []}
               isLoading={isFetching}
+              templateLoading={isTemplatesLoading}
               title="Best templates"
-              hasNext={hasNext}
-              hasPrev={hasPrev}
               onNextPage={handleNextPage}
-              onPrevPage={handlePreviousPage}
+              hasMore={hasMore}
             />
           </Grid>
         </Box>

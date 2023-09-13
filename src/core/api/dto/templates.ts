@@ -1,10 +1,7 @@
 import { User, UserMin } from "./user";
 import { Prompts } from "./prompts";
-export interface ExecutionTemplatePartial {
-  title: string;
-  thumbnail: string;
-  slug: string;
-}
+
+export type ExecutionTemplatePartial = Pick<Templates, "title" | "thumbnail" | "slug">;
 
 export interface ExecutionWithTemplate extends Execution {
   template: ExecutionTemplatePartial;
@@ -145,20 +142,11 @@ export interface TemplatesWithPagination {
   results: Templates[];
 }
 
-export interface PromptExecutions {
-  id: number;
-  prompt: number;
-  output: string;
-  prompt_executions: PromptExecutions[];
-  is_favorite: boolean;
-  errors: string;
-}
-
 export type ResponseType = "arraybuffer" | "blob" | "document" | "json" | "text" | "stream";
 export interface TemplatesExecutions {
   id: number;
   title: string;
-  created_at: Date;
+  created_at: Date | string;
   prompt_executions?: PromptExecutions[];
   is_favorite: boolean;
   parameters?: { [key: string]: any };
@@ -168,6 +156,7 @@ export interface TemplatesExecutions {
     slug: string;
     thumbnail: string;
   };
+  hash: string;
 }
 
 export interface ITemplateExecutionPut {
@@ -190,18 +179,20 @@ export interface PromptExecutions {
   executed_by: number;
   output: string;
   parameters: {
-    [key: number]: string | number;
+    [key: number | string]: string | number;
   };
-  content: string;
-  created_at: Date;
+  content?: string;
+  created_at: Date | string;
   tokens_spent: number;
+  errors?: string;
 }
 
 export interface Execution {
   id: number;
   title: string;
-  created_at: Date;
+  created_at: Date | string;
   is_favorite: boolean;
+  hash: string;
 }
 
 export interface TemplateExecutionsDisplay {
@@ -217,10 +208,10 @@ export interface TemplateExecutionsDisplay {
   tags: Tag[];
   slug: string;
   executions: Execution[];
-
   likes?: number;
   favorites_count: number;
 }
+export type TemplatesExecutionsByMePaginationResponse = { results: TemplateExecutionsDisplay[] };
 export interface SparkExecution {
   id: number;
   title: string;
@@ -235,6 +226,7 @@ export interface SparkExecution {
   created_at: string;
   prompt_executions: PromptExecutions[];
   is_favorite: boolean;
+  hash: string;
 }
 
 export interface SparkVersion {

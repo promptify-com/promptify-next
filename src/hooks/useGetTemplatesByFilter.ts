@@ -1,16 +1,17 @@
-import { useDeferredValue, useMemo, useState } from "react";
+import { useDeferredValue, useMemo, useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 
 import { RootState } from "@/core/store";
-import { useGetCategoriesQuery, useGetCategoryBySlugQuery } from "@/core/api/categories";
 import { useGetTemplatesByFilterQuery } from "@/core/api/templates";
 import { FilterParams, SelectedFilters } from "@/core/api/dto/templates";
 import { useGetTagsPopularQuery } from "@/core/api/tags";
 import { useGetEnginesQuery } from "@/core/api/engines";
 import useDebounce from "./useDebounce";
 
-export function useGetTemplatesByFilter() {
+import { Templates } from "@/core/api/dto/templates";
+
+export function useGetTemplatesByFilter(catId?: number, subCatId?: number) {
   const router = useRouter();
   const splittedPath = router.pathname.split("/");
 
@@ -19,16 +20,6 @@ export function useGetTemplatesByFilter() {
   };
 
   const { categorySlug, subcategorySlug } = router.query;
-
-  const { data: categories, isLoading: isCategoryLoading } = useGetCategoriesQuery(undefined, {
-    skip: !hasPathname("explore"),
-  });
-  const { data: category } = useGetCategoryBySlugQuery(categorySlug as string, {
-    skip: !hasPathname("[categorySlug]"),
-  });
-  const { data: subcategory } = useGetCategoryBySlugQuery(subcategorySlug as string, {
-    skip: !hasPathname("[subcategorySlug]"),
-  });
 
   const tagsQuery = useGetTagsPopularQuery(undefined, { skip: !hasPathname("explore") });
   const enginesQuery = useGetEnginesQuery(undefined, { skip: !hasPathname("explore") });
@@ -55,13 +46,26 @@ export function useGetTemplatesByFilter() {
   const params: FilterParams = {
     tag: memoizedFilteredTags,
     engineId: engine?.id,
-    categoryId: category?.id,
-    subcategoryId: subcategory?.id,
+    categoryId: catId,
+    subcategoryId: subCatId,
     title: title ?? debouncedSearchName,
     offset,
     limit: PAGINATION_LIMIT,
   };
   const { data: templates, isLoading: isTemplatesLoading, isFetching } = useGetTemplatesByFilterQuery(params);
+
+  const [allTemplates, setAllTemplates] = useState<Templates[]>([]);
+  const [resetFlag, setResetFlag] = useState(true);
+
+  useEffect(() => {
+    if (templates?.results) {
+      if (resetFlag) {
+        setAllTemplates(templates?.results);
+      } else {
+        setAllTemplates(prevTemplates => prevTemplates.concat(templates?.results));
+      }
+    }
+  }, [templates?.results]);
 
   function areAllStatesNull(filters: SelectedFilters): boolean {
     return (
@@ -76,22 +80,17 @@ export function useGetTemplatesByFilter() {
 
   const resetOffest = () => {
     setOffset(0);
+    setResetFlag(true);
   };
 
   const handleNextPage = () => {
-    if (templates?.next) {
+    if (!!templates?.next) {
       setOffset(prevOffset => prevOffset + PAGINATION_LIMIT);
+      setResetFlag(false);
     }
   };
 
-  const handlePreviousPage = () => {
-    if (templates?.previous) {
-      setOffset(prevOffset => Math.max(0, prevOffset - PAGINATION_LIMIT));
-    }
-  };
-
-  const hasNext = !!templates?.next;
-  const hasPrev = !!templates?.previous;
+  const hasMore = !!templates?.next;
 
   return {
     categorySlug,
@@ -99,20 +98,15 @@ export function useGetTemplatesByFilter() {
     setSearchName,
     debouncedSearchName,
     subcategorySlug,
-    subcategory,
     allFilterParamsNull,
-    categories,
-    isCategoryLoading,
-    templates,
+    templates: allTemplates,
     isTemplatesLoading,
     filters,
     handleNextPage,
-    handlePreviousPage,
-    hasPrev,
-    hasNext,
     resetOffest,
     isFetching,
     tags: tagsQuery.data,
     engines: enginesQuery.data,
+    hasMore,
   };
 }

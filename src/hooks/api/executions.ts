@@ -4,6 +4,7 @@ import {
   ITemplateExecutionPut,
   Spark,
   SparkExecution,
+  TemplatesExecutions,
 } from "@/core/api/dto/templates";
 import { authClient } from "../../common/axios";
 
@@ -77,4 +78,14 @@ export const unpinSpark = async (sparkId: number) => {
   return await authClient.delete(`/api/meta/sparks/${sparkId}/favorite/`).then(response => {
     return response.data;
   });
+};
+
+export const getExecutionByHash = async (hash: string): Promise<TemplatesExecutions> => {
+  return await authClient
+    .get(`/api/meta/template-executions/by-hash/${hash}/`, {
+      headers: { "Content-Type": "application/json" },
+    })
+    .then(response => {
+      return response.data;
+    });
 };

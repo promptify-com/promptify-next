@@ -4,15 +4,18 @@ import { PromptExecutions, Templates, TemplatesExecutions } from "@/core/api/dto
 import { Subtitle } from "@/components/blocks";
 import { Error } from "@mui/icons-material";
 import { markdownToHTML, sanitizeHTML } from "@/common/helpers";
+import { useRouter } from "next/router";
 
 interface Props {
   execution: TemplatesExecutions;
   templateData: Templates;
   search: string;
+  sparkHashQueryParam: string | null;
 }
 
-export const ExecutionCard: React.FC<Props> = ({ execution, templateData, search }) => {
+export const ExecutionCard: React.FC<Props> = ({ execution, templateData, sparkHashQueryParam, search }) => {
   const [sortedExecutions, setSortedExecutions] = useState<PromptExecutions[]>([]);
+  const router = useRouter();
 
   const promptsOrderMap: { [key: string]: number } = {};
   const promptsExecutionOrderMap: { [key: string]: number } = {};
@@ -99,17 +102,19 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData, search
         const isNextItemIsText = nextItem && !isImageOutput(nextItem?.output);
         const prompt = templateData.prompts.find(prompt => prompt.id === exec.prompt);
 
-        if (prompt?.show_output) {
+        if (prompt?.show_output || sparkHashQueryParam) {
           return (
             <Stack
               key={exec.id}
               gap={1}
               sx={{ py: "24px" }}
             >
-              <Subtitle sx={{ fontSize: 24, fontWeight: 400, color: "onSurface" }}>
-                {!isImageOutput(exec.output) && prompt.title}
-                {exec.errors && executionError(exec.errors)}
-              </Subtitle>
+              {prompt && (
+                <Subtitle sx={{ fontSize: 24, fontWeight: 400, color: "onSurface" }}>
+                  {!isImageOutput(exec.output) && prompt.title}
+                  {exec.errors && executionError(exec.errors)}
+                </Subtitle>
+              )}
               {/* is Text Output */}
               {!isImageOutput(exec.output) && (
                 <Box>
