@@ -532,7 +532,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
             alignItems: "flex-start",
             gap: "8px",
             maxHeight: { xs: "70vh", md: "calc(100vh - (194px))" },
-            minHeight: { xs: "80vh", md: "auto" },
+            minHeight: { xs: "calc(100vh - 240px)", md: "auto" },
             borderTop: { xs: "none", md: "2px solid #ECECF4" },
           }}
         >

@@ -39,6 +39,7 @@ export const ChatInterface = ({
       display={"flex"}
       flexDirection={"column"}
       alignItems={"start"}
+      pb={{ xs: "50px", md: 0 }}
       sx={{
         overflow: "auto",
 
