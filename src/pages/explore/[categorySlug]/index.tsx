@@ -11,25 +11,21 @@ import { TemplatesSection } from "@/components/explorer/TemplatesSection";
 import { FiltersSelected } from "@/components/explorer/FiltersSelected";
 import SubCategoryPlaceholder from "@/components/placeholders/SubCategoryPlaceholder";
 import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
+import { useGetCategoriesQuery } from "@/core/api/categories";
 
 export default function Page({ category }: { category: Category }) {
   const router = useRouter();
-  const {
-    templates,
-    isFetching,
-    categories,
-    isCategoryLoading,
-    categorySlug,
-    allFilterParamsNull,
-    handleNextPage,
-    handlePreviousPage,
-  } = useGetTemplatesByFilter();
+  const { templates, isFetching, categorySlug, allFilterParamsNull, isTemplatesLoading, hasMore, handleNextPage } =
+    useGetTemplatesByFilter(category?.id);
+  const { data: categories, isLoading: isCategoryLoading } = useGetCategoriesQuery();
+
   const goBack = () => {
     router.push("/explore");
   };
   const navigateTo = (item: Category) => {
     router.push(`/explore/${categorySlug}/${item.slug}`);
   };
+
   return (
     <Layout>
       <Box
@@ -91,12 +87,11 @@ export default function Page({ category }: { category: Category }) {
               <FiltersSelected show={!allFilterParamsNull} />
               <TemplatesSection
                 filtred={!allFilterParamsNull}
-                templates={templates?.results ?? []}
+                templates={templates ?? []}
                 isLoading={isFetching}
-                hasNext={!!templates?.next}
-                hasPrev={!!templates?.previous}
+                templateLoading={isTemplatesLoading}
                 onNextPage={handleNextPage}
-                onPrevPage={handlePreviousPage}
+                hasMore={hasMore}
               />
             </Box>
           )}

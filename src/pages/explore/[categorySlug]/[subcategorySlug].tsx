@@ -12,19 +12,21 @@ import { FiltersSelected } from "@/components/explorer/FiltersSelected";
 import SubCategoryPlaceholder from "@/components/placeholders/SubCategoryPlaceholder";
 import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
 import Breadcrumb from "@/components/design-system/Breadcrumb";
+import { useGetCategoriesQuery } from "@/core/api/categories";
 
-export default function Page({ category }: { category: Category }) {
+interface CategoryOrSubcategory {
+  category: Category;
+  subcategory: Category;
+}
+
+export default function Page({ category, subcategory }: CategoryOrSubcategory) {
   const router = useRouter();
-  const {
-    templates,
-    isFetching,
-    categories,
-    isCategoryLoading,
-    subcategory,
-    allFilterParamsNull,
-    handleNextPage,
-    handlePreviousPage,
-  } = useGetTemplatesByFilter();
+  const { templates, isFetching, allFilterParamsNull, hasMore, handleNextPage } = useGetTemplatesByFilter(
+    undefined,
+    subcategory?.id,
+  );
+
+  const { data: categories, isLoading: isCategoryLoading } = useGetCategoriesQuery();
 
   const navigateTo = (slug: string) => {
     router.push(`/explore/${category.slug}/${slug}`);
@@ -96,12 +98,10 @@ export default function Page({ category }: { category: Category }) {
 
                 <TemplatesSection
                   filtred={!allFilterParamsNull}
-                  templates={templates?.results ?? []}
+                  templates={templates ?? []}
                   isLoading={isFetching}
-                  hasNext={!!templates?.next}
-                  hasPrev={!!templates?.previous}
                   onNextPage={handleNextPage}
-                  onPrevPage={handlePreviousPage}
+                  hasMore={hasMore}
                 />
               </Box>
             )}
@@ -113,20 +113,27 @@ export default function Page({ category }: { category: Category }) {
 }
 
 export async function getServerSideProps({ params }: any) {
-  const { categorySlug } = params;
+  const { categorySlug, subcategorySlug } = params;
   try {
-    const categoryRes = await authClient.get<Category>(`/api/meta/categories/by-slug/${categorySlug}`);
+    const categoryPromise = authClient.get<Category>(`/api/meta/categories/by-slug/${categorySlug}`);
+    const subcategoryPromise = authClient.get<Category>(`/api/meta/categories/by-slug/${subcategorySlug}`);
+
+    const [categoryRes, subcategoryRes] = await Promise.all([categoryPromise, subcategoryPromise]);
+
     const category = categoryRes.data;
+    const subcategory = subcategoryRes.data;
 
     return {
       props: {
         category,
+        subcategory,
       },
     };
   } catch (error) {
     return {
       props: {
         category: {},
+        subcategory: {},
       },
     };
   }
