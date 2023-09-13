@@ -1,9 +1,10 @@
 import React, { useEffect, useRef } from "react";
-import { Button, Grid, Typography } from "@mui/material";
+import { Button, Grid, Typography, CircularProgress } from "@mui/material";
 
 import { IAnswer, IMessage } from "./ChatBox";
 import { Message } from "./Message";
 import { LogoApp } from "@/assets/icons/LogoApp";
+import { useAppSelector } from "@/hooks/useStore";
 
 interface Props {
   messages: IMessage[];
@@ -16,7 +17,7 @@ interface Props {
 
 export const ChatInterface = ({ messages, answers, onAnswerClear, onGenerate, showGenerate, onChange }: Props) => {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
-
+  const isGenerating = useAppSelector(state => state.template.isGenerating);
   useEffect(() => {
     if (messagesContainerRef.current) {
       messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
@@ -58,10 +59,14 @@ export const ChatInterface = ({ messages, answers, onAnswerClear, onGenerate, sh
         <Button
           onClick={onGenerate}
           startIcon={
-            <LogoApp
-              color="white"
-              width={20}
-            />
+            isGenerating ? (
+              <CircularProgress size={16} />
+            ) : (
+              <LogoApp
+                color="white"
+                width={20}
+              />
+            )
           }
           sx={{
             ml: 9,
@@ -79,9 +84,16 @@ export const ChatInterface = ({ messages, answers, onAnswerClear, onGenerate, sh
             },
           }}
           variant="contained"
+          disabled={isGenerating}
         >
-          <Typography sx={{ color: "inherit", fontSize: 13, lineHeight: "22px" }}>Generate</Typography>
-          <Typography sx={{ ml: 1.5, color: "inherit", fontSize: 12 }}>~36s</Typography>
+          {isGenerating ? (
+            <Typography>Generation in progress...</Typography>
+          ) : (
+            <>
+              <Typography sx={{ color: "inherit", fontSize: 13, lineHeight: "22px" }}>Generate</Typography>
+              <Typography sx={{ ml: 1.5, color: "inherit", fontSize: 12 }}>~36s</Typography>
+            </>
+          )}
         </Button>
       )}
 

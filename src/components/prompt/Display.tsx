@@ -11,7 +11,7 @@ import { useRouter } from "next/router";
 import moment from "moment";
 import { SparkExportPopup } from "../dialog/SparkExportPopup";
 import { determineIsMobile } from "@/common/helpers/determineIsMobile";
-import { ChatMode } from "./generate/ChatBox";
+import ChatMode from "./generate/ChatBox";
 
 interface Props {
   templateData: Templates;
@@ -20,6 +20,8 @@ interface Props {
   selectedExecution: TemplatesExecutions | null;
   setSelectedExecution: (execution: TemplatesExecutions) => void;
   generatedExecution: PromptLiveResponse | null;
+  setGeneratedExecution: (data: PromptLiveResponse) => void;
+  onError: (errMsg: string) => void;
 }
 
 export const Display: React.FC<Props> = ({
@@ -29,6 +31,8 @@ export const Display: React.FC<Props> = ({
   selectedExecution,
   setSelectedExecution,
   generatedExecution,
+  setGeneratedExecution,
+  onError,
 }) => {
   const [firstLoad, setFirstLoad] = useState(true);
   const [search, setSearch] = useState<string>("");
@@ -109,7 +113,12 @@ export const Display: React.FC<Props> = ({
       flexDirection={"column"}
       gap={"24px"}
     >
-      {!IS_MOBILE && <ChatMode />}
+      {!IS_MOBILE && (
+        <ChatMode
+          setGeneratedExecution={setGeneratedExecution}
+          onError={onError}
+        />
+      )}
       <Box
         ref={containerRef}
         bgcolor={"surface.1"}

@@ -44,7 +44,7 @@ import { updateTemplate, updateTemplateData } from "@/core/store/templatesSlice"
 import { RootState } from "@/core/store";
 import PromptPlaceholder from "@/components/placeholders/PromptPlaceHolder";
 import { useAppSelector } from "@/hooks/useStore";
-import { ChatMode } from "@/components/prompt/generate/ChatBox";
+import ChatMode from "@/components/prompt/generate/ChatBox";
 import { TemplateQuestionGeneratorData } from "@/core/api/dto/prompts";
 
 const Prompt = () => {
@@ -280,7 +280,16 @@ const Prompt = () => {
                   </Grid>
                 </>
               )}
-              {windowWidth < 960 && <>{mobileTab === 1 && <ChatMode />}</>}
+              {windowWidth < 960 && (
+                <>
+                  {mobileTab === 1 && (
+                    <ChatMode
+                      setGeneratedExecution={setGeneratedExecution}
+                      onError={setErrorMessage}
+                    />
+                  )}
+                </>
+              )}
 
               <Grid
                 flex={1}
@@ -300,6 +309,8 @@ const Prompt = () => {
                     selectedExecution={selectedExecution}
                     setSelectedExecution={setSelectedExecution}
                     generatedExecution={generatedExecution}
+                    setGeneratedExecution={setGeneratedExecution}
+                    onError={setErrorMessage}
                   />
                   {currentGeneratedPrompt && (
                     <Box

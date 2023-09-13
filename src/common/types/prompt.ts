@@ -20,4 +20,5 @@ export interface IPromptInput {
   required: boolean;
   defaultValue?: string | number | null;
   choices?: string[] | null;
+  prompt?: number;
 }

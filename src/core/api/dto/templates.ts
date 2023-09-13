@@ -101,6 +101,7 @@ export interface TemplateQuestions {
     required?: boolean;
     question: string;
     choices?: string[];
+    prompt?: number;
   };
 }
 export interface Templates {
