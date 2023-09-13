@@ -21,7 +21,7 @@ export const EngineParams: React.FC<Props> = ({ params, setParam }) => {
           type="number"
           fullWidth
           name="temperature"
-          value={params?.temperature}
+          value={params?.temperature || ""}
           onChange={e => setParam(e.target.name, e.target.value)}
         />
       </Box>
@@ -33,7 +33,7 @@ export const EngineParams: React.FC<Props> = ({ params, setParam }) => {
           type="number"
           fullWidth
           name="maximumLength"
-          value={params?.maximumLength}
+          value={params?.maximumLength || ""}
           onChange={e => setParam(e.target.name, e.target.value)}
         />
       </Box>
@@ -45,7 +45,7 @@ export const EngineParams: React.FC<Props> = ({ params, setParam }) => {
           type="number"
           fullWidth
           name="topP"
-          value={params?.topP}
+          value={params?.topP || ""}
           onChange={e => setParam(e.target.name, e.target.value)}
         />
       </Box>
@@ -57,7 +57,7 @@ export const EngineParams: React.FC<Props> = ({ params, setParam }) => {
           type="number"
           fullWidth
           name="presencePenalty"
-          value={params?.presencePenalty}
+          value={params?.presencePenalty || ""}
           onChange={e => setParam(e.target.name, e.target.value)}
         />
       </Box>
@@ -69,7 +69,7 @@ export const EngineParams: React.FC<Props> = ({ params, setParam }) => {
           type="number"
           fullWidth
           name="frequencyPenalty"
-          value={params?.frequencyPenalty}
+          value={params?.frequencyPenalty || ""}
           onChange={e => setParam(e.target.name, e.target.value)}
         />
       </Box>

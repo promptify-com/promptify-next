@@ -32,27 +32,38 @@ export const Options = ({ selectedNodeData, changeEngine, onUpdateNodeOptions }:
     prompt_output_variable: selectedNodeData?.prompt_output_variable || "",
   });
 
+  useEffect(() => {
+    setOptionsValues({
+      output_format: selectedNodeData?.output_format || "",
+      model_parameters: selectedNodeData?.model_parameters || null,
+      is_visible: selectedNodeData?.is_visible || false,
+      show_output: selectedNodeData?.show_output || false,
+      prompt_output_variable: selectedNodeData?.prompt_output_variable || "",
+    });
+  }, [selectedNodeData]);
+
   const setOptionValue = (e: React.ChangeEvent<HTMLInputElement>) => {
     let { name, value, type, checked } = e.target;
+    let values = optionsValues;
+
     if (type === "checkbox") {
-      setOptionsValues(prevState => ({
-        ...prevState,
+      values = {
+        ...optionsValues,
         [name]: checked,
-      }));
+      };
+      setOptionsValues(values);
     } else {
       // prompt_output_variable requires a $ prefix
       if (name === "prompt_output_variable") if (value.length && value[0] !== "$") value = "$" + value;
 
-      setOptionsValues(prevState => ({
-        ...prevState,
+      values = {
+        ...optionsValues,
         [name]: value,
-      }));
+      };
+      setOptionsValues(values);
     }
+    onUpdateNodeOptions(values);
   };
-
-  useEffect(() => {
-    onUpdateNodeOptions(optionsValues);
-  }, [optionsValues]);
 
   const setEngineParamValue = (param: string, value: string) => {
     setOptionsValues(prevState => ({
@@ -62,6 +73,13 @@ export const Options = ({ selectedNodeData, changeEngine, onUpdateNodeOptions }:
         [param]: parseFloat(value),
       },
     }));
+    onUpdateNodeOptions({
+      ...optionsValues,
+      model_parameters: {
+        ...optionsValues.model_parameters,
+        [param]: parseFloat(value),
+      },
+    });
   };
 
   const engine = useMemo(() => engines?.find(engine => engine.id === selectedNodeData?.engine_id), [selectedNodeData]);
@@ -123,6 +141,7 @@ export const Options = ({ selectedNodeData, changeEngine, onUpdateNodeOptions }:
           control={<Checkbox />}
           labelPlacement="end"
           label="Custom engine parameters"
+          checked={!useDefault}
           onChange={(e, checked) => setUseDefault(!checked)}
           sx={{
             svg: {
@@ -141,7 +160,7 @@ export const Options = ({ selectedNodeData, changeEngine, onUpdateNodeOptions }:
         />
         {!useDefault && (
           <EngineParams
-            params={optionsValues.model_parameters}
+            params={optionsValues?.model_parameters}
             setParam={setEngineParamValue}
           />
         )}
@@ -183,9 +202,9 @@ export const Options = ({ selectedNodeData, changeEngine, onUpdateNodeOptions }:
             control={<Switch color="primary" />}
             label="Is Visible?"
             labelPlacement="start"
-            checked={optionsValues.is_visible}
+            checked={optionsValues?.is_visible}
             name="is_visible"
-            value={optionsValues.is_visible}
+            value={optionsValues?.is_visible}
             onChange={(e: any) => setOptionValue(e)}
             sx={{
               "&.MuiFormControlLabel-root": {
@@ -200,9 +219,9 @@ export const Options = ({ selectedNodeData, changeEngine, onUpdateNodeOptions }:
             control={<Switch color="primary" />}
             label="Display Output"
             labelPlacement="start"
-            checked={optionsValues.show_output}
+            checked={optionsValues?.show_output}
             name="show_output"
-            value={optionsValues.show_output}
+            value={optionsValues?.show_output}
             onChange={(e: any) => setOptionValue(e)}
             sx={{
               "&.MuiFormControlLabel-root": {
