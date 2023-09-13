@@ -1,6 +1,5 @@
-import React, { useState } from "react";
-import { Box, Chip, Divider, Stack, TextField, Typography } from "@mui/material";
-import Popover from "@mui/material/Popover";
+import React from "react";
+import { Box, Divider, Stack, TextField, Typography } from "@mui/material";
 import { INodesData } from "@/common/types/builder";
 import { InlineOptions } from "../common/InlineOptions";
 import { getInputsFromString } from "@/common/helpers";

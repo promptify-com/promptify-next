@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import { Box, IconButton, Stack, Tab, Tabs, Typography, alpha } from "@mui/material";
 import { RenameForm } from "../common/forms/RenameForm";
-import { INodesData } from "@/common/types/builder";
+import { INodesData, IPromptParams } from "@/common/types/builder";
 import { Node } from "rete/_types/presets/classic";
 import { useGetEnginesQuery } from "@/core/api/engines";
 import { Close, DeleteOutline, ModeEdit, Settings, Tune } from "@mui/icons-material";
 import { theme } from "@/theme";
 import Terminal from "@/assets/icons/Terminal";
 import { NodeContentForm } from "./NodeContentForm";
+import { Stylizer } from "./Stylizer";
 
 const CustomTabPanel = (props: any) => {
   const { children, value, index, ...other } = props;
@@ -74,6 +75,15 @@ export const PromptForm: React.FC<Props> = ({
     setSelectedNodeData({
       ...selectedNodeData,
       content,
+    });
+  };
+
+  const changePromptParams = (params: IPromptParams[]) => {
+    if (!selectedNodeData) return;
+
+    setSelectedNodeData({
+      ...selectedNodeData,
+      parameters: params,
     });
   };
 
@@ -210,7 +220,10 @@ export const PromptForm: React.FC<Props> = ({
           value={tabsValue}
           index={1}
         >
-          Item Three
+          <Stylizer
+            changePromptParams={changePromptParams}
+            selectedNodeData={selectedNodeData}
+          />
         </CustomTabPanel>
         <CustomTabPanel
           value={tabsValue}
