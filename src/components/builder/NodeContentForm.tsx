@@ -49,7 +49,8 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, onChange = 
       str = nodesPresets.find(node => node.id === id)?.label || "";
     } else {
       const input = inputsPresets.find(input => input.id === id);
-      str = input ? "{{" + input.label + ":" + input.type + "}}" : "";
+      const type = input?.type === "number" ? "integer" : "number";
+      str = input ? "{{" + input.label + ":" + type + "}}" : "";
     }
 
     if (firstAppend) {
