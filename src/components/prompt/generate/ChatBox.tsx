@@ -1,16 +1,7 @@
 import React, { useState, useMemo, memo, useEffect } from "react";
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Button,
-  Chip,
-  Grid,
-  IconButton,
-  Typography,
-} from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Grid, IconButton, Typography } from "@mui/material";
 import { useWindowSize } from "usehooks-ts";
-import { Clear, ExpandLess, ExpandMore, MoreVert, Search } from "@mui/icons-material";
+import { ExpandLess, ExpandMore, MoreVert, Search } from "@mui/icons-material";
 import { useSelector } from "react-redux";
 import { ResPrompt } from "@/core/api/dto/prompts";
 
@@ -26,7 +17,6 @@ import { useRouter } from "next/router";
 import { TemplateQuestions } from "@/core/api/dto/templates";
 import { getInputsFromString } from "@/common/helpers";
 import { IPromptInput, PromptLiveResponse } from "@/common/types/prompt";
-import { LogoApp } from "@/assets/icons/LogoApp";
 import { useAppDispatch } from "@/hooks/useStore";
 import { setGeneratingStatus } from "@/core/store/templatesSlice";
 
@@ -36,6 +26,7 @@ export interface IMessage {
   fromUser: boolean;
   type?: "text" | "choices" | "number" | "code";
   choices?: string[];
+  id: number;
 }
 
 export interface IAnswer {
@@ -119,12 +110,14 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
         type: "text",
         createdAt: createdAt,
         fromUser: false,
+        id: 0,
       },
       {
         text: firstQuestion.question,
         type: firstQuestion.type,
         createdAt: createdAt,
         fromUser: false,
+        id: 1,
       },
     ]);
   }
@@ -170,6 +163,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
         type: currentQuestion.type,
         createdAt: createdAt,
         fromUser: true,
+        id: currentQuestionIndex + 1,
       };
 
       setMessages(prevMessages => prevMessages.concat(newUserMessage));
@@ -203,14 +197,19 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
 
         if (!questionObj) {
           nextBotMessage = {
-            text: "Great, let's generate it!!",
+            text: "Great, we can start template",
             type: "text",
             createdAt: createdAt,
             fromUser: false,
+            id: currentQuestionIndex + 1,
           };
           !showGenerate && setShowGenerate(true);
         } else {
           const nextQuestion = questionObj[Object.keys(questionObj)[0]];
+
+          if (!nextQuestion.required && !showGenerate) {
+            setShowGenerate(true);
+          }
 
           nextBotMessage = {
             text: nextQuestion.question,
@@ -218,6 +217,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
             type: nextQuestion.type,
             createdAt: createdAt,
             fromUser: false,
+            id: currentQuestionIndex + 1,
           };
         }
       } else {
@@ -230,6 +230,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
           type: currentQuestion.type,
           createdAt: createdAt,
           fromUser: false,
+          id: currentQuestionIndex + 1,
         };
       }
       setMessages(prevMessages => prevMessages.concat(nextBotMessage));
@@ -243,14 +244,19 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
 
       if (!questionObj) {
         nextBotMessage = {
-          text: "Great, let's generate it!!",
+          text: "Great, we can start template",
           type: "text",
           createdAt: createdAt,
           fromUser: false,
+          id: currentQuestionIndex + 1,
         };
         !showGenerate && setShowGenerate(true);
       } else {
         const nextQuestion = questionObj[Object.keys(questionObj)[0]];
+
+        if (!nextQuestion.required && !showGenerate) {
+          setShowGenerate(true);
+        }
 
         nextBotMessage = {
           text: nextQuestion.question,
@@ -258,6 +264,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
           type: nextQuestion.type,
           createdAt: createdAt,
           fromUser: false,
+          id: currentQuestionIndex + 1,
         };
       }
       let newAnswer: IAnswer = {

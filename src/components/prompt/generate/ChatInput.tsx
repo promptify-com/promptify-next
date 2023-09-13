@@ -43,11 +43,10 @@ export const ChatInput = ({ onChange, value, onSubmit, disabled }: ChatInputProp
             }
           }}
         />
-
         <Send
           onClick={onSubmit}
           sx={{
-            cursor: "pointer",
+            cursor: disabled ? "not-allowed" : "pointer",
           }}
         />
       </Box>
