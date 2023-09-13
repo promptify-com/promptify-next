@@ -277,45 +277,6 @@ export const Builder = () => {
     }
   };
 
-  const updateTitle = (title: string) => {
-    if (!title) return;
-
-    const _nodes = nodesData.map(node => {
-      if (
-        node.id === selectedNodeData?.id ||
-        (selectedNodeData?.temp_id && node.temp_id === selectedNodeData?.temp_id)
-      ) {
-        node.title = title;
-      }
-      return node;
-    });
-
-    setNodesData(_nodes);
-    selectedNode.label = title;
-    editor?.area.update("node", selectedNode.id);
-  };
-
-  const updateTemplateDependencties = (id: string, dependsOn: string) => {
-    const data = dataForRequest.current;
-    const currentPrompt = dataForRequest.current.prompts_list?.find((prompt: INodesData) => {
-      return prompt.temp_id === Number(id) || prompt.id === Number(id);
-    });
-
-    if (currentPrompt) {
-      currentPrompt.dependencies = [...currentPrompt.dependencies, Number(dependsOn)];
-
-      const allPrompts = data.prompts_list.filter((prompt: any) => {
-        return prompt.id !== currentPrompt?.id || prompt.temp_id !== currentPrompt?.temp_id;
-      });
-
-      const prompts = [...allPrompts, currentPrompt];
-      data.prompts_list = prompts;
-
-      dataForRequest.current = data;
-      setNodesData(prompts);
-    }
-  };
-
   const removeNode = async () => {
     setNodeCount(nodeCount - 1);
 
@@ -375,6 +336,52 @@ export const Builder = () => {
           setSelectedConnection(null);
         }
       }
+    }
+  };
+
+  useEffect(() => {
+    if (selectedNodeData) updateNodes();
+  }, [selectedNodeData]);
+  const updateEditorTitle = (title: string) => {
+    if (!title) return;
+    selectedNode.label = title;
+    editor?.area.update("node", selectedNode.id);
+  };
+
+  const updateNodes = () => {
+    if (!selectedNodeData) return;
+
+    const _nodes = nodesData.map(node => {
+      if (
+        node.id === selectedNodeData?.id ||
+        (selectedNodeData?.temp_id && node.temp_id === selectedNodeData?.temp_id)
+      ) {
+        node = selectedNodeData;
+      }
+      return node;
+    });
+
+    setNodesData(_nodes);
+  };
+
+  const updateTemplateDependencties = (id: string, dependsOn: string) => {
+    const data = dataForRequest.current;
+    const currentPrompt = dataForRequest.current.prompts_list?.find((prompt: INodesData) => {
+      return prompt.temp_id === Number(id) || prompt.id === Number(id);
+    });
+
+    if (currentPrompt) {
+      currentPrompt.dependencies = [...currentPrompt.dependencies, Number(dependsOn)];
+
+      const allPrompts = data.prompts_list.filter((prompt: any) => {
+        return prompt.id !== currentPrompt?.id || prompt.temp_id !== currentPrompt?.temp_id;
+      });
+
+      const prompts = [...allPrompts, currentPrompt];
+      data.prompts_list = prompts;
+
+      dataForRequest.current = data;
+      setNodesData(prompts);
     }
   };
 
@@ -464,7 +471,7 @@ export const Builder = () => {
             sx={{ flex: 1 }}
           >
             <Box
-              height={"calc(100vh - 80px)"}
+              height={"calc(100vh - 70.5px)"}
               bgcolor={"surface.5"}
               position="relative"
               sx={{
@@ -611,20 +618,18 @@ export const Builder = () => {
           <Drawer
             variant="persistent"
             anchor="right"
-            open={selectedNode}
+            open={!!selectedNode}
             sx={{
-              width: "360px",
-              flexShrink: 0,
+              width: "20svw",
               "& .MuiDrawer-paper": {
-                width: "360px",
-                boxSizing: "border-box",
+                width: "30svw",
               },
             }}
           >
             <PromptForm
               editorNode={selectedNode}
               removeNode={() => setConfirmDialogOpen(true)}
-              updateTitle={updateTitle}
+              updateTitle={updateEditorTitle}
               selectedNodeData={selectedNodeData}
               setSelectedNodeData={setSelectedNodeData}
               nodeCount={nodeCount}

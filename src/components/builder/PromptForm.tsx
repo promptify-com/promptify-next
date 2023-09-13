@@ -1,10 +1,32 @@
 import React, { useState } from "react";
-import { Box, IconButton, Stack, Typography } from "@mui/material";
+import { Box, IconButton, Stack, Tab, Tabs, Typography, alpha } from "@mui/material";
 import { RenameForm } from "../common/forms/RenameForm";
 import { INodesData } from "@/common/types/builder";
 import { Node } from "rete/_types/presets/classic";
 import { useGetEnginesQuery } from "@/core/api/engines";
-import { Close, DeleteOutline, ModeEdit } from "@mui/icons-material";
+import { Close, DeleteOutline, ModeEdit, Settings, Tune } from "@mui/icons-material";
+import { theme } from "@/theme";
+import Terminal from "@/assets/icons/Terminal";
+import { NodeContentForm } from "./NodeContentForm";
+
+const CustomTabPanel = (props: any) => {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <Box
+      hidden={value !== index}
+      {...other}
+    >
+      {value === index && <React.Fragment>{children}</React.Fragment>}
+    </Box>
+  );
+};
+const a11yProps = (index: number) => {
+  return {
+    id: `simple-tab-${index}`,
+    "aria-controls": `simple-tabpanel-${index}`,
+  };
+};
 
 interface Props {
   close: () => void;
@@ -14,7 +36,7 @@ interface Props {
   selectedNodeData: INodesData | null;
   setSelectedNodeData: (value: INodesData) => void;
   nodeCount: number;
-  nodesData: INodesData[] | null;
+  nodesData: INodesData[];
   setNodesData: (value: INodesData[]) => void;
 }
 
@@ -25,12 +47,16 @@ export const PromptForm: React.FC<Props> = ({
   selectedNodeData,
   setSelectedNodeData,
   nodesData,
-  setNodesData,
 }) => {
   const [renameAllow, setRenameAllow] = useState(false);
 
   const { data: engines } = useGetEnginesQuery();
   const engine = engines?.find(_engine => _engine.id === selectedNodeData?.engine_id);
+
+  const [tabsValue, setTabsValue] = useState(0);
+  const changeTab = (e: React.SyntheticEvent, newValue: number) => {
+    setTabsValue(newValue);
+  };
 
   const changeTitle = (title: string) => {
     if (!selectedNodeData || !title) return;
@@ -42,9 +68,19 @@ export const PromptForm: React.FC<Props> = ({
     updateTitle(title);
   };
 
+  const changeContent = (content: string) => {
+    if (!selectedNodeData || !content) return;
+
+    setSelectedNodeData({
+      ...selectedNodeData,
+      content,
+    });
+  };
+
   return (
-    <Box
+    <Stack
       sx={{
+        height: "100svh",
         bgcolor: "surface.1",
       }}
     >
@@ -128,6 +164,78 @@ export const PromptForm: React.FC<Props> = ({
           />
         )}
       </Box>
-    </Box>
+      <Stack sx={{ height: "calc(100% - 67px)" }}>
+        <Tabs
+          value={tabsValue}
+          onChange={changeTab}
+          textColor="primary"
+          indicatorColor="primary"
+          variant="fullWidth"
+          sx={{ p: "8px 0 0", borderBottom: "1px solid #ECECF4" }}
+        >
+          <Tab
+            label="Input"
+            {...a11yProps(0)}
+            icon={<Terminal />}
+            iconPosition="start"
+            sx={{ ...tabStyle, color: `${alpha(theme.palette.onSurface, 0.4)}` }}
+          />
+          <Tab
+            label="Stylizer"
+            {...a11yProps(1)}
+            icon={<Tune />}
+            iconPosition="start"
+            sx={{ ...tabStyle, color: `${alpha(theme.palette.onSurface, 0.4)}` }}
+          />
+          <Tab
+            label="Options"
+            {...a11yProps(2)}
+            icon={<Settings />}
+            iconPosition="start"
+            sx={{ ...tabStyle, color: `${alpha(theme.palette.onSurface, 0.4)}` }}
+          />
+        </Tabs>
+        <CustomTabPanel
+          value={tabsValue}
+          index={0}
+          sx={{ height: "calc(100% - 57px)" }}
+        >
+          <NodeContentForm
+            content={selectedNodeData?.content}
+            nodes={nodesData}
+            onChange={changeContent}
+          />
+        </CustomTabPanel>
+        <CustomTabPanel
+          value={tabsValue}
+          index={1}
+        >
+          Item Three
+        </CustomTabPanel>
+        <CustomTabPanel
+          value={tabsValue}
+          index={2}
+        >
+          Item Three
+        </CustomTabPanel>
+      </Stack>
+    </Stack>
   );
+};
+
+const tabStyle = {
+  fontSize: 13,
+  fontWeight: 500,
+  textTransform: "none",
+  p: "9px 16px",
+  minHeight: "auto",
+  svg: {
+    width: "20px",
+    height: "20px",
+    mr: "8px",
+    opacity: 0.5,
+  },
+  "&.Mui-selected svg": {
+    opacity: 1,
+  },
 };
