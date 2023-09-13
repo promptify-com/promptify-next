@@ -123,7 +123,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
   }
 
   const getCurrentQuestion = () => {
-    if (messages.length === 2) {
+    if (!answers.length) {
       const questionObj = templateQuestions[0];
       const key = Object.keys(questionObj)[0];
       return questionObj[key];
@@ -183,9 +183,9 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
       if (response?.approved) {
         setInValidating(false);
 
-        setCurrentQuestionIndex(currentQuestionIndex + 1);
+        answers.length && setCurrentQuestionIndex(currentQuestionIndex + 1);
         const newAnswer: IAnswer = {
-          question: response.feedback + ". " + currentQuestion.question,
+          question: currentQuestion.question,
           answer: userAnswer,
           required: currentQuestion.required,
           inputName: currentQuestion.name,
@@ -212,7 +212,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
           }
 
           nextBotMessage = {
-            text: nextQuestion.question,
+            text: response.feedback + ". " + nextQuestion.question,
             choices: nextQuestion.choices,
             type: nextQuestion.type,
             createdAt: createdAt,
@@ -275,7 +275,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
         prompt: currentQuestion.prompt,
       };
       setAnswers(prevAnswers => prevAnswers.concat(newAnswer));
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
+      answers.length && setCurrentQuestionIndex(currentQuestionIndex + 1);
 
       setMessages(prevMessages => prevMessages.concat(nextBotMessage));
     }
