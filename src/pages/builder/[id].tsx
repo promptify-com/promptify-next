@@ -612,7 +612,12 @@ export const Builder = () => {
             onClose={() => toggleTemplateDrawer(false)}
             onOpen={() => toggleTemplateDrawer(true)}
           >
-            <Box sx={{ bgcolor: "#373737", p: "1rem" }}>
+            <Box
+              sx={{
+                bgcolor: "#FDFBFF",
+                p: "24px 32px",
+              }}
+            >
               <TemplateForm
                 type="edit"
                 templateData={promptsData as Templates}
