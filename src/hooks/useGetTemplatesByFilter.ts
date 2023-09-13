@@ -33,6 +33,7 @@ export function useGetTemplatesByFilter(catId?: number, subCatId?: number) {
   const [searchName, setSearchName] = useState("");
   const deferredSearchName = useDeferredValue(searchName);
   const debouncedSearchName = useDebounce<string>(deferredSearchName, 300);
+  const [status, setStatus] = useState<string>();
 
   const memoizedFilteredTags = useMemo(() => {
     const filteredTags = tags
@@ -51,6 +52,7 @@ export function useGetTemplatesByFilter(catId?: number, subCatId?: number) {
     title: title ?? debouncedSearchName,
     offset,
     limit: PAGINATION_LIMIT,
+    status,
   };
   const { data: templates, isLoading: isTemplatesLoading, isFetching } = useGetTemplatesByFilterQuery(params);
 
@@ -108,5 +110,7 @@ export function useGetTemplatesByFilter(catId?: number, subCatId?: number) {
     tags: tagsQuery.data,
     engines: enginesQuery.data,
     hasMore,
+    status,
+    setStatus,
   };
 }
