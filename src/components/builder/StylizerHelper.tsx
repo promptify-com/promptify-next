@@ -46,12 +46,11 @@ export const StylizerHelper = ({
       {promptParams &&
         promptParams.map((param, i) => {
           return (
-            <Box>
+            <Box key={i}>
               <Stack
                 direction={"row"}
                 alignItems={"baseline"}
                 gap={2}
-                key={i}
               >
                 <Stack
                   gap={1}

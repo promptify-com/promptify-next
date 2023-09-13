@@ -226,7 +226,7 @@ export const PromptForm: React.FC<Props> = ({
           sx={{ height: "calc(100% - 57px)" }}
         >
           <NodeContentForm
-            content={selectedNodeData?.content}
+            selectedNodeData={selectedNodeData}
             nodes={nodesData}
             onChange={changeContent}
           />

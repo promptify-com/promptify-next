@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import { Box, Chip, Popover, Stack } from "@mui/material";
 
 interface IOption {
-  id: number | string | undefined;
+  id: number | undefined;
   label: string;
 }
 interface Props {
-  options?: IOption[];
+  options: IOption[];
   color?: string;
   bgcolor?: string;
   onChoose?: (option: IOption) => void;
