@@ -4,6 +4,7 @@ import LogoAsAvatar from "@/assets/icons/LogoAvatar";
 import { useAppSelector } from "@/hooks/useStore";
 import { IMessage } from "./ChatBox";
 import { ToggleButtonsGroup } from "@/components/design-system/ToggleButtonsGroup";
+import CodeFieldModal from "@/components/modals/CodeFieldModal";
 
 interface MessageBlockProps {
   message: IMessage;
@@ -18,10 +19,12 @@ export const Message = ({ message, hideHeader, onChangeValue }: MessageBlockProp
 
   const name = fromUser ? currentUser?.username : "Promptify";
 
-  const [selectedChoice, setSelectedChoice] = useState("");
+  const [selectedValue, setSelectedValue] = useState("");
+  const [popup, setPopup] = useState(false);
 
   const handleChange = (value: string) => {
-    setSelectedChoice(value);
+    setSelectedValue(value);
+
     if (onChangeValue) {
       onChangeValue(value);
     }
@@ -30,7 +33,11 @@ export const Message = ({ message, hideHeader, onChangeValue }: MessageBlockProp
   if (hideHeader) {
     // Render the message without the header (name and timestamp)
     return (
-      <Grid ml={9}>
+      <Grid
+        ml={{ xs: 6.5, md: 9 }}
+        mt={{ xs: -2, md: 0 }}
+        p={{ xs: "16px", md: "0px" }}
+      >
         <Typography
           fontSize={15}
           lineHeight={"24px"}
@@ -46,7 +53,6 @@ export const Message = ({ message, hideHeader, onChangeValue }: MessageBlockProp
     <Grid
       p={"16px"}
       display={"flex"}
-      flexDirection={{ xs: "column", md: "row" }}
       gap={"16px"}
     >
       {message.fromUser && currentUser ? (
@@ -54,7 +60,6 @@ export const Message = ({ message, hideHeader, onChangeValue }: MessageBlockProp
           src={currentUser.avatar}
           alt={currentUser.first_name}
           sx={{
-            display: { xs: "none", md: "flex" },
             width: 40,
             height: 40,
             bgcolor: "surface.5",
@@ -105,23 +110,31 @@ export const Message = ({ message, hideHeader, onChangeValue }: MessageBlockProp
           </Typography>
           {type === "code" && !fromUser && (
             <Button
+              onClick={() => setPopup(true)}
               variant="outlined"
               size="small"
               sx={{
                 height: 30,
               }}
             >
-              Upload your code
+              {selectedValue !== "" ? "Edit your code" : "Upload your code"}
             </Button>
           )}
           {type === "choices" && choices && !fromUser && (
             <ToggleButtonsGroup
               variant="vertical"
               items={choices}
-              value={selectedChoice}
+              value={selectedValue}
               onChange={handleChange}
             />
           )}
+          <CodeFieldModal
+            open={popup}
+            setOpen={setPopup}
+            value={selectedValue}
+            onChange={setSelectedValue}
+            onSubmit={handleChange}
+          />
         </Grid>
       </Grid>
     </Grid>

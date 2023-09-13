@@ -5,6 +5,7 @@ import { IAnswer, IMessage } from "./ChatBox";
 import { Message } from "./Message";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { useAppSelector } from "@/hooks/useStore";
+import ThreeDotsAnimation from "@/components/design-system/ThreeDotsAnimation";
 
 interface Props {
   messages: IMessage[];
@@ -13,9 +14,18 @@ interface Props {
   onGenerate: () => void;
   showGenerate: boolean;
   onChange?: (value: string) => void;
+  isValidating: boolean;
 }
 
-export const ChatInterface = ({ messages, answers, onAnswerClear, onGenerate, showGenerate, onChange }: Props) => {
+export const ChatInterface = ({
+  messages,
+  answers,
+  onAnswerClear,
+  onGenerate,
+  showGenerate,
+  onChange,
+  isValidating,
+}: Props) => {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   useEffect(() => {
@@ -55,6 +65,7 @@ export const ChatInterface = ({ messages, answers, onAnswerClear, onGenerate, sh
           onChangeValue={onChange}
         />
       ))}
+      <ThreeDotsAnimation loading={isValidating} />
       {showGenerate && (
         <Button
           onClick={onGenerate}

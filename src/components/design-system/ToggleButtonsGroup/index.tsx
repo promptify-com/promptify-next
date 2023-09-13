@@ -22,6 +22,7 @@ export const ToggleButtonsGroup = ({ items, onChange, variant, value }: Props) =
       {items?.map((item, idx) => (
         <ToggleButton
           key={idx}
+          disabled={value !== "" && value !== item}
           value={item}
           onChange={() => onChange(item)}
           sx={{
