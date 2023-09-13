@@ -1,6 +1,7 @@
-import { FC, ReactNode, useEffect, useRef, useCallback } from "react";
+import { FC, ReactNode, useRef, useCallback } from "react";
 import { Grid } from "@mui/material";
 import CardTemplatePlaceholder from "./placeholders/CardTemplatePlaceHolder";
+import { determineIsMobile } from "@/common/helpers/determineIsMobile";
 
 interface TemplatesInfiniteScrollProps {
   loading: boolean;
@@ -11,13 +12,14 @@ interface TemplatesInfiniteScrollProps {
 
 const TemplatesInfiniteScroll: FC<TemplatesInfiniteScrollProps> = ({ loading, onLoadMore, children, hasMore }) => {
   const observer = useRef<IntersectionObserver | null>(null);
-
+  const isMobile = determineIsMobile();
+  console.log(isMobile);
   const lastTemplateElementRef = useCallback(
     (node: HTMLDivElement) => {
       if (loading) return;
       if (observer.current) observer.current.disconnect();
-      const isMobile = window.innerWidth <= 600;
 
+      console.log(isMobile);
       const rowHeight = isMobile ? 145 : 80;
       const margin = `${2 * rowHeight}px`;
 
