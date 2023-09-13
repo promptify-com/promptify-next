@@ -154,6 +154,7 @@ const TemplateForm: React.FC<Props> = ({
           label="Template Name"
           variant="outlined"
           size="medium"
+          name="title"
           value={formik.values.title}
           onChange={formik.handleChange}
           error={formik.touched.title && formik.values.title === ""}
@@ -209,7 +210,10 @@ const TemplateForm: React.FC<Props> = ({
               }}
             />
           )}
-          <Box sx={{ width: "100%" }}>
+          <Box
+            component={"label"}
+            sx={{ width: "100%" }}
+          >
             <Stack
               direction={"row"}
               alignItems={"center"}
@@ -375,7 +379,7 @@ const TemplateForm: React.FC<Props> = ({
                 variant="outlined"
                 label={option}
                 {...getTagProps({ index })}
-                key={option}
+                key={index}
               />
             ))
           }
@@ -510,22 +514,6 @@ const TemplateForm: React.FC<Props> = ({
           </Stack>
 
           <Stack sx={boxStyle}>
-            {/* <Typography sx={typographyStyle}>Status</Typography>
-              <Select
-                sx={fieldStyle}
-                name="status"
-                value={formik.values.status}
-                onChange={formik.handleChange}
-              >
-                {TemplateStatusArray.map(status => (
-                  <MenuItem
-                    value={status}
-                    key={status}
-                  >
-                    {status}
-                  </MenuItem>
-                ))}
-              </Select> */}
             <Autocomplete
               value={formik.values.status}
               onChange={(event, newValue) => {
