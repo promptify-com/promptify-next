@@ -1,7 +1,16 @@
 import React, { useState, useMemo } from "react";
-import { Accordion, AccordionDetails, AccordionSummary, Grid, IconButton, Typography } from "@mui/material";
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Button,
+  Chip,
+  Grid,
+  IconButton,
+  Typography,
+} from "@mui/material";
 import { useWindowSize } from "usehooks-ts";
-import { ExpandLess, ExpandMore, MoreVert, Search } from "@mui/icons-material";
+import { Clear, ExpandLess, ExpandMore, MoreVert, Search } from "@mui/icons-material";
 import { useSelector } from "react-redux";
 
 import { RootState } from "@/core/store";
@@ -9,18 +18,27 @@ import { useAppSelector } from "@/hooks/useStore";
 import useToken from "@/hooks/useToken";
 import { generate } from "@/common/helpers/chatAnswersValidator";
 import useTimestampConverter from "@/hooks/useTimestampConverter";
-import { ChatMessages } from "./ChatInterface";
+import { ChatInterface } from "./ChatInterface";
 import { ChatInput } from "./ChatInput";
 
 import { TemplateQuestions } from "@/core/api/dto/templates";
 import { getInputsFromString } from "@/common/helpers";
 import { IPromptInput } from "@/common/types/prompt";
+import { LogoApp } from "@/assets/icons/LogoApp";
 
-export interface Message {
-  type?: "text" | "choices" | "number" | "code";
-  text: string;
+export interface IMessage {
+  text: string | undefined;
   createdAt: string;
   fromUser: boolean;
+  type?: "text" | "choices" | "number" | "code";
+  choices?: string[];
+}
+
+export interface IAnswer {
+  inputName: string;
+  required?: boolean;
+  question: string;
+  answer: string | number;
 }
 
 export const ChatMode: React.FC = () => {
@@ -30,16 +48,16 @@ export const ChatMode: React.FC = () => {
 
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
   const template = useAppSelector(state => state.template.template);
-
-  const [chatExpanded, setChatExpanded] = useState(true);
-  const [answers, setAnswers] = useState<{ question: string; answer: string }[]>([]);
-  const [userAnswer, setUserAnswer] = useState("");
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(1);
-
-  const [messages, setMessages] = useState<Message[]>([]);
-
   const createdAt = convertedTimestamp(new Date());
 
+  const [chatExpanded, setChatExpanded] = useState(true);
+
+  const [answers, setAnswers] = useState<IAnswer[]>([]);
+  const [userAnswer, setUserAnswer] = useState("");
+
+  const [messages, setMessages] = useState<IMessage[]>([]);
+
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(1);
   //@ts-ignore
   const templateQuestions: TemplateQuestions[] = useMemo(() => {
     let questions: TemplateQuestions[] = [];
@@ -55,13 +73,22 @@ export const ChatMode: React.FC = () => {
         prompts.push(...getInputsFromString(prompt.content));
       });
     }
+
     const updatedQuestions = questions.map((question, index) => {
       if (prompts[index]) {
-        return {
+        const { type, required, choices, name } = prompts[index];
+        // Create a new object with the desired structure
+        const updatedQuestion = {
           ...question,
-          required: prompts[index].required,
-          type: prompts[index].type,
+          [Object.keys(question)[0]]: {
+            ...question[Object.keys(question)[0]],
+            name,
+            required,
+            type,
+            choices,
+          },
         };
+        return updatedQuestion;
       }
       return question;
     });
@@ -111,43 +138,79 @@ export const ChatMode: React.FC = () => {
   };
 
   const handleUserResponse = async () => {
+    setUserAnswer("");
     if (userAnswer.trim() === "") {
       return;
     }
     if (currentQuestion) {
-      const newUserMessage: Message = {
+      const newUserMessage: IMessage = {
         text: userAnswer,
+        type: currentQuestion.type,
         createdAt: createdAt,
         fromUser: true,
       };
 
       setMessages(prevMessages => [...prevMessages, newUserMessage]);
+      let response:
+        | {
+            answer: string;
+            feedback: string;
+            approved: boolean;
+          }
+        | undefined = { approved: true, answer: "", feedback: "" };
+      if (currentQuestion.type !== "choices" && currentQuestion.type !== "code" && currentQuestion.required) {
+        response = await validateAnswer();
+      }
 
-      let approved = true;
-      if (approved) {
+      let nextBotMessage: IMessage;
+      if (response?.approved) {
         setCurrentQuestionIndex(currentQuestionIndex + 1);
         setUserAnswer("");
-        let newAnswer = { question: currentQuestion.question, answer: userAnswer };
+        let newAnswer: IAnswer = {
+          question: response.feedback + " " + currentQuestion.question,
+          answer: userAnswer,
+          required: currentQuestion.required,
+          inputName: currentQuestion.name,
+        };
         setAnswers(prevAnswers => [...prevAnswers, newAnswer]);
 
-        const nextBotMessage: Message = {
+        nextBotMessage = {
           text: currentQuestion.question,
+          choices: currentQuestion.choices,
           type: currentQuestion.type,
           createdAt: createdAt,
           fromUser: false,
         };
-
-        setMessages(prevMessages => prevMessages.concat(nextBotMessage));
       } else {
         // Please handle !answerResponse.approved case
-        const nextBotMessage = {
-          text: currentQuestion.question,
+        nextBotMessage = {
+          text: response?.feedback,
+          choices: currentQuestion.choices,
+          type: currentQuestion.type,
           createdAt: createdAt,
           fromUser: false,
         };
-        setUserAnswer("");
-        setMessages(prevMessages => prevMessages.concat(nextBotMessage));
       }
+      setMessages(prevMessages => prevMessages.concat(nextBotMessage));
+    }
+  };
+
+  const handleChange = (value: string) => {
+    if (currentQuestion) {
+      let newAnswer: IAnswer = {
+        question: currentQuestion.question,
+        required: currentQuestion.required,
+        inputName: currentQuestion.name,
+        answer: value,
+      };
+      setAnswers(prevAnswers => [...prevAnswers, newAnswer]);
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+      const nextBotMessage = {
+        text: currentQuestion.question,
+        createdAt: createdAt,
+        fromUser: false,
+      };
+      setMessages(prevMessages => prevMessages.concat(nextBotMessage));
     }
   };
 
@@ -156,7 +219,6 @@ export const ChatMode: React.FC = () => {
       width={"100%"}
       overflow={"hidden"}
       borderRadius={"16px"}
-      minHeight={{ xs: "70vh", md: "auto" }}
       position={"relative"}
     >
       <Accordion
@@ -242,10 +304,21 @@ export const ChatMode: React.FC = () => {
           sx={{
             display: "flex",
             flexDirection: "column",
+            alignItems: "flex-start",
+            gap: "8px",
+            maxHeight: { xs: "70vh", md: "calc(100vh - (194px))" },
             borderTop: { xs: "none", md: "2px solid #ECECF4" },
           }}
         >
-          <ChatMessages messages={messages} />
+          <ChatInterface
+            messages={messages}
+            answers={answers}
+            onAnswerClear={() => {}}
+            onChange={handleChange}
+            showGenerate={false}
+            onGenerate={() => {}}
+          />
+
           <ChatInput
             onChange={setUserAnswer}
             value={userAnswer}

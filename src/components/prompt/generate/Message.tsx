@@ -1,20 +1,31 @@
-import React from "react";
+import React, { useState } from "react";
 import { Avatar, Button, Grid, Typography } from "@mui/material";
 import LogoAsAvatar from "@/assets/icons/LogoAvatar";
 import { useAppSelector } from "@/hooks/useStore";
-import { Message } from "./ChatBox";
+import { IMessage } from "./ChatBox";
+import { ToggleButtonsGroup } from "@/components/design-system/ToggleButtonsGroup";
 
 interface MessageBlockProps {
-  message: Message;
+  message: IMessage;
   hideHeader?: boolean;
+  onChangeValue?: (value: string) => void;
 }
 
-const MessageBlock = ({ message, hideHeader }: MessageBlockProps) => {
+export const Message = ({ message, hideHeader, onChangeValue }: MessageBlockProps) => {
   const currentUser = useAppSelector(state => state.user.currentUser);
 
-  const { fromUser, type, text, createdAt } = message;
+  const { fromUser, type, text, createdAt, choices } = message;
 
   const name = fromUser ? currentUser?.username : "Promptify";
+
+  const [selectedChoice, setSelectedChoice] = useState("");
+
+  const handleChange = (value: string) => {
+    setSelectedChoice(value);
+    if (onChangeValue) {
+      onChangeValue(value);
+    }
+  };
 
   if (hideHeader) {
     // Render the message without the header (name and timestamp)
@@ -103,10 +114,16 @@ const MessageBlock = ({ message, hideHeader }: MessageBlockProps) => {
               Upload your code
             </Button>
           )}
+          {type === "choices" && choices && !fromUser && (
+            <ToggleButtonsGroup
+              variant="vertical"
+              items={choices}
+              value={selectedChoice}
+              onChange={handleChange}
+            />
+          )}
         </Grid>
       </Grid>
     </Grid>
   );
 };
-
-export default MessageBlock;

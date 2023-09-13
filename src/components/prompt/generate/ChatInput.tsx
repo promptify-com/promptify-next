@@ -15,7 +15,9 @@ export const ChatInput = ({ onChange, value, onSubmit }: ChatInputProps) => {
       position={{ xs: "fixed", md: "inherit" }}
       bottom={"60px"}
       zIndex={99}
+      width={"100%"}
       left={0}
+      flex={1}
       right={0}
     >
       <Box
@@ -27,6 +29,7 @@ export const ChatInput = ({ onChange, value, onSubmit }: ChatInputProps) => {
         p={"8px 16px"}
       >
         <InputBase
+          fullWidth
           sx={{ ml: 1, flex: 1, fontSize: 13, lineHeight: "22px", letterSpacing: "0.46px", fontWeight: "500" }}
           placeholder="Chat with Promptify"
           inputProps={{ "aria-label": "Name" }}

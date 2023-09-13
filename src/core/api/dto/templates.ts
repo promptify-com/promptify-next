@@ -97,8 +97,10 @@ export type TemplateStatus = "ALL" | "DRAFT" | "PENDING_REVIEW" | "PUBLISHED" | 
 export interface TemplateQuestions {
   [key: string]: {
     type?: "text" | "choices" | "number" | "code";
+    name: string;
     required?: boolean;
     question: string;
+    choices?: string[];
   };
 }
 export interface Templates {
