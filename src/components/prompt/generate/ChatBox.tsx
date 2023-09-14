@@ -147,7 +147,6 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
   };
 
   const currentQuestion = getCurrentQuestion();
-  console.log("currentQuestion:", currentQuestion);
 
   const validateAnswer = async () => {
     if (currentQuestion) {
