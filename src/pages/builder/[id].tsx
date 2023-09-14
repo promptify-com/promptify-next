@@ -345,15 +345,14 @@ export const Builder = () => {
   const updateEditor = () => {
     if (!!!selectedNode || !!!selectedNodeData) return;
 
-    const nodeId = Number(selectedNode.id || selectedNode.temp_id);
+    const nodeId = Number(selectedNode.id) || Number(selectedNode.temp_id);
     if (nodeId !== selectedNodeData.id && nodeId !== selectedNodeData.temp_id) return;
-
     const engine = engines?.find(_engine => _engine.id === selectedNodeData?.engine_id);
 
     if (selectedNode.label !== selectedNodeData.title || selectedNode.engine !== engine?.icon) {
       selectedNode.label = selectedNodeData?.title;
       selectedNode.engine = engine?.icon || "";
-      editor?.area.update("node", nodeId.toString());
+      editor?.area.update("node", selectedNode.id);
     }
   };
 
