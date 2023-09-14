@@ -195,7 +195,7 @@ export const Builder = () => {
     const node = new Node(`Prompt #${nodeCount}`);
     node.addInput("Input", new ClassicPreset.Input(socket, "Input"));
     node.addOutput("Output", new ClassicPreset.Output(socket, "Output"));
-    node.engine = engines?.find(eng => eng.id === 1)?.icon || "";
+    node.engineIcon = engines?.find(eng => eng.id === 1)?.icon || "";
 
     const allNodes = editor?.editor.getNodes();
 
@@ -238,7 +238,7 @@ export const Builder = () => {
       const node = new Node(`${selectedNodeData.title} - Copy`);
       node.addInput("Input", new ClassicPreset.Input(socket, "Input"));
       node.addOutput("Output", new ClassicPreset.Output(socket, "Output"));
-      node.engine = engines?.find(eng => eng.id === selectedNodeData.engine_id)?.icon || "";
+      node.engineIcon = engines?.find(eng => eng.id === selectedNodeData.engine_id)?.icon || "";
 
       const allNodes = editor?.editor.getNodes();
 
@@ -349,9 +349,9 @@ export const Builder = () => {
     if (nodeId !== selectedNodeData.id && nodeId !== selectedNodeData.temp_id) return;
     const engine = engines?.find(_engine => _engine.id === selectedNodeData?.engine_id);
 
-    if (selectedNode.label !== selectedNodeData.title || selectedNode.engine !== engine?.icon) {
+    if (selectedNode.label !== selectedNodeData.title || selectedNode.engineIcon !== engine?.icon) {
       selectedNode.label = selectedNodeData?.title;
-      selectedNode.engine = engine?.icon || "";
+      selectedNode.engineIcon = engine?.icon || "";
       editor?.area.update("node", selectedNode.id);
     }
   };

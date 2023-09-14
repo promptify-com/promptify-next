@@ -6,11 +6,11 @@ import styled from "styled-components";
 
 const { RefSocket } = Presets.classic;
 
-type NodeExtraData = { width?: number; height?: number; engine?: string };
+type NodeExtraData = { width?: number; height?: number; engineIcon?: string };
 
 export const NodeStyles = styled.div<NodeExtraData & { selected: boolean; styles?: (props: any) => any }>`
   width: 300px;
-  height: 112px;
+  min-height: 112px;
   background: #fdfbff;
   color: #1b1b1e;
   border: 2px solid;
@@ -28,6 +28,8 @@ export const NodeStyles = styled.div<NodeExtraData & { selected: boolean; styles
     padding: 16px;
     display: flex;
     gap: 8px;
+    white-space: nowrap;
+    overflow-x: hidden;
   }
   .header img {
     width: 24px;
@@ -81,7 +83,7 @@ export function CustomNode<Scheme extends ClassicScheme>(props: Props<Scheme>) {
   const outputs = Object.entries(props.data.outputs);
   const controls = Object.entries(props.data.controls);
   const selected = props.data.selected || false;
-  const { id, label, width, height, engine } = props.data;
+  const { id, label, width, height, engineIcon } = props.data;
 
   sortByIndex(inputs);
   sortByIndex(outputs);
@@ -95,7 +97,7 @@ export function CustomNode<Scheme extends ClassicScheme>(props: Props<Scheme>) {
     >
       <div className="header">
         <img
-          src={engine}
+          src={engineIcon}
           alt={label}
           loading="lazy"
           style={{

@@ -58,7 +58,7 @@ export const PromptForm: React.FC<Props> = ({
   };
 
   const changeTitle = (title: string) => {
-    if (!selectedNodeData || !title) return;
+    if (!selectedNodeData) return;
 
     setSelectedNodeData({
       ...selectedNodeData,
@@ -136,10 +136,9 @@ export const PromptForm: React.FC<Props> = ({
                 alignItems={"center"}
                 gap={0.5}
               >
-                <Typography
-                  sx={{ color: "onSurface", fontSize: 20, fontWeight: 400 }}
-                  dangerouslySetInnerHTML={{ __html: selectedNodeData?.title || "" }}
-                />
+                <Typography sx={{ color: "onSurface", fontSize: 20, fontWeight: 400 }}>
+                  {selectedNodeData?.title || ""}
+                </Typography>
                 <ModeEdit
                   sx={{ cursor: "pointer", fontSize: "16px" }}
                   onClick={() => setRenameAllow(true)}
@@ -234,6 +233,10 @@ export const PromptForm: React.FC<Props> = ({
         <CustomTabPanel
           value={tabsValue}
           index={1}
+          sx={{
+            height: "100%",
+            overflow: "auto",
+          }}
         >
           <Stylizer
             changePromptParams={changePromptParams}
@@ -243,6 +246,10 @@ export const PromptForm: React.FC<Props> = ({
         <CustomTabPanel
           value={tabsValue}
           index={2}
+          sx={{
+            height: "100%",
+            overflow: "auto",
+          }}
         >
           <Options
             changeEngine={changePromptEngine}

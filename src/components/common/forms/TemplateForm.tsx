@@ -28,6 +28,7 @@ import { useGetCurrentUserQuery } from "@/core/api/user";
 import { useCreateTemplateMutation, useUpdateTemplateMutation } from "@/core/api/templates";
 import { FormType } from "@/common/types/template";
 import { TemplateStatusArray } from "@/common/constants";
+import { getLanguageFromCode } from "@/common/helpers/getLanguageFromCode";
 
 interface Props {
   type?: FormType;
@@ -318,18 +319,7 @@ const TemplateForm: React.FC<Props> = ({
               label="Language"
             />
           )}
-          getOptionLabel={option => {
-            switch (option) {
-              case "en-us":
-                return "English";
-              case "es":
-                return "Spanish";
-              case "fr":
-                return "French";
-              default:
-                return "";
-            }
-          }}
+          getOptionLabel={getLanguageFromCode}
         />
       </Stack>
       {categories && (
@@ -391,7 +381,7 @@ const TemplateForm: React.FC<Props> = ({
         />
       </Stack>
 
-      {true && (
+      {user?.is_admin && (
         <Box>
           <Stack sx={boxStyle}>
             <TextField

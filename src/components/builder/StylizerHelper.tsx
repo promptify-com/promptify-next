@@ -75,7 +75,7 @@ export const StylizerHelper = ({
                     min={1}
                     max={6}
                     value={param.score}
-                    onChange={(e: any) => handleChangeScore(e.target.value as number, param.parameter_id)}
+                    onChange={(e: any) => handleChangeScore(parseInt(e.target.value), param.parameter_id)}
                   />
                 </Stack>
                 <Stack

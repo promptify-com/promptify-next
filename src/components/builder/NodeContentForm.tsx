@@ -3,8 +3,9 @@ import { Box, Divider, Stack, TextField, Typography } from "@mui/material";
 import { INodesData } from "@/common/types/builder";
 import { InlineOptions } from "../common/InlineOptions";
 import { getInputsFromString } from "@/common/helpers";
-import HighlightWithinTextarea from "react-highlight-within-textarea";
+import HighlightWithinTextarea, { Selection } from "react-highlight-within-textarea";
 
+type PresetType = "node" | "input";
 interface Props {
   selectedNodeData: INodesData | null;
   nodes: INodesData[];
@@ -34,45 +35,45 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, onChange = 
   );
   const nodesPresets = otherNodes.map(node => ({ id: node.id, label: node.prompt_output_variable || node.title }));
   const inputsPresets = otherNodes
-    .map(node => ({ id: node.id, label: getInputsFromString(node.content) }))
-    .filter(node => node.label && node.label.length)
+    .map(node => ({ id: node.id, inputs: getInputsFromString(node.content) }))
+    .filter(node => node.inputs && node.inputs.length)
     .flatMap(node =>
-      node.label.map(item => ({
+      node.inputs.map(input => ({
         id: node.id,
-        label: item.name,
-        type: item.type.replace("number", "integer"),
-        required: item.required,
-        choices: item.choices,
+        label: input.name,
+        type: input.type.replace("number", "integer"),
+        required: input.required,
+        choices: input.choices,
       })),
     );
 
-  const changeContent = (value: string, selection: any) => {
-    const { anchor, focus } = selection;
-    cursorPositionRef.current = focus || 0;
+  const changeContent = (value: string, selection: Selection | undefined) => {
+    cursorPositionRef.current = selection?.focus || 0;
     onChange(value);
     setFirstAppend(false);
   };
 
-  const addPreset = (type: "node" | "input", label: string | undefined) => {
+  const addPreset = (type: PresetType, label: string) => {
     if (!label) return;
 
-    let str = "";
+    let preset = "";
+
     if (type === "node") {
-      str = nodesPresets.find(node => node.label === label)?.label || "";
+      preset = nodesPresets.find(node => node.label === label)?.label || "";
     } else {
       const input = inputsPresets.find(input => input.label === label);
       const type = input?.type.replace("number", "integer");
-      str = input
+      preset = input
         ? "{{" + input.label + ":" + type + ":" + input.required + (input.choices ? `:"${input.choices}"` : "") + "}}"
         : "";
     }
 
     if (firstAppend) {
-      onChange(content + str + " ");
+      onChange(content + preset + " ");
     } else {
       const start = content.slice(0, cursorPositionRef.current);
       const end = content.slice(cursorPositionRef.current);
-      onChange(start + str + " " + end);
+      onChange(start + preset + " " + end);
     }
   };
 

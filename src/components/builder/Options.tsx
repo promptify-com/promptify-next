@@ -54,7 +54,7 @@ export const Options = ({ selectedNodeData, changeEngine, onUpdateNodeOptions }:
       setOptionsValues(values);
     } else {
       // prompt_output_variable requires a $ prefix
-      if (name === "prompt_output_variable") if (value.length && value[0] !== "$") value = "$" + value;
+      if (name === "prompt_output_variable" && value.length && value[0] !== "$") value = "$" + value;
 
       values = {
         ...optionsValues,

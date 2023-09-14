@@ -33,27 +33,20 @@ export const InlineOptions: React.FC<Props> = ({
     cursor: "pointer",
   };
 
-  const OptionChip = (option: IOption) => (
-    <Chip
-      label={option.label}
-      sx={ChipStyles}
-      onMouseDown={() => {
-        onChoose(option);
-        handleClose();
-      }}
-      size="small"
-    />
-  );
-
-  if (!!!options) return;
+  if (!options.length) return;
 
   return (
     <>
       {options.slice(0, 3).map((option, i) => (
-        <OptionChip
+        <Chip
           key={i}
-          id={option.id}
           label={option.label}
+          sx={ChipStyles}
+          onMouseDown={() => {
+            onChoose(option);
+            handleClose();
+          }}
+          size="small"
         />
       ))}
       {options.length > 3 && (
@@ -82,10 +75,15 @@ export const InlineOptions: React.FC<Props> = ({
               gap={0.5}
             >
               {options.slice(3).map((option, i) => (
-                <OptionChip
+                <Chip
                   key={i}
-                  id={option.id}
                   label={option.label}
+                  sx={ChipStyles}
+                  onMouseDown={() => {
+                    onChoose(option);
+                    handleClose();
+                  }}
+                  size="small"
                 />
               ))}
             </Stack>
