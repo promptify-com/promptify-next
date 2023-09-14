@@ -147,6 +147,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
   };
 
   const currentQuestion = getCurrentQuestion();
+  console.log("currentQuestion:", currentQuestion);
 
   const validateAnswer = async () => {
     if (currentQuestion) {
@@ -195,6 +196,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
         setInValidating(false);
 
         answers.length && setCurrentQuestionIndex(currentQuestionIndex + 1);
+
         const newAnswer: IAnswer = {
           question: currentQuestion.question,
           answer: userAnswer,
@@ -204,7 +206,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
         };
         setAnswers(prevAnswers => prevAnswers.concat(newAnswer));
 
-        const questionObj = templateQuestions[currentQuestionIndex + 1];
+        const questionObj = templateQuestions[answers.length ? currentQuestionIndex + 1 : currentQuestionIndex];
 
         if (!questionObj) {
           nextBotMessage = {
@@ -223,7 +225,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
           }
 
           nextBotMessage = {
-            text: response.feedback + ". " + nextQuestion.question,
+            text: response.feedback + nextQuestion.question,
             choices: nextQuestion.choices,
             type: nextQuestion.type,
             createdAt: createdAt,
@@ -250,7 +252,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
 
   const handleChange = (value: string) => {
     if (currentQuestion && (currentQuestion.type === "choices" || currentQuestion.type === "code")) {
-      const questionObj = templateQuestions[currentQuestionIndex + 1];
+      const questionObj = templateQuestions[answers.length ? currentQuestionIndex + 1 : currentQuestionIndex];
       let nextBotMessage: IMessage;
 
       if (!questionObj) {
@@ -394,7 +396,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
             const tempArr = [...tempData];
             const activePrompt = tempArr.findIndex(template => template.prompt === +prompt);
 
-            if (message === "[C OMPLETED]") {
+            if (message === "[C OMPLETED]" || message === "[COMPLETED]") {
               tempArr[activePrompt] = {
                 ...tempArr[activePrompt],
                 prompt,
