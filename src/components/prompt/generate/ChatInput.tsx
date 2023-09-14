@@ -30,9 +30,33 @@ export const ChatInput = ({ onChange, value, onSubmit, disabled }: ChatInputProp
         p={"8px 16px"}
       >
         <InputBase
+          multiline
           disabled={disabled}
           fullWidth
-          sx={{ ml: 1, flex: 1, fontSize: 13, lineHeight: "22px", letterSpacing: "0.46px", fontWeight: "500" }}
+          sx={{
+            ml: 1,
+            flex: 1,
+            fontSize: 13,
+            p: "3px",
+            lineHeight: "22px",
+            letterSpacing: "0.46px",
+            fontWeight: "500",
+            maxHeight: "60px",
+            overflow: "auto",
+            "&::-webkit-scrollbar": {
+              width: "3px",
+              p: 1,
+              backgroundColor: "surface.5",
+            },
+            "&::-webkit-scrollbar-track": {
+              webkitBoxShadow: "inset 0 0 16px rgba(0,0,0,0.00)",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              backgroundColor: "surface.3",
+              outline: "1px solid surface.1",
+              borderRadius: "10px",
+            },
+          }}
           placeholder="Chat with Promptify"
           inputProps={{ "aria-label": "Name" }}
           onChange={e => onChange(e.target.value)}
