@@ -1,10 +1,19 @@
 import React, { useState, useMemo, memo, useEffect } from "react";
-import { Accordion, AccordionDetails, AccordionSummary, Grid, IconButton, Typography } from "@mui/material";
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Grid,
+  IconButton,
+  Typography,
+  Button,
+  Stack,
+} from "@mui/material";
 import { useWindowSize } from "usehooks-ts";
 import { ExpandLess, ExpandMore, MoreVert, Search } from "@mui/icons-material";
 import { useSelector } from "react-redux";
 import { ResPrompt } from "@/core/api/dto/prompts";
-
+import { LogoApp } from "@/assets/icons/LogoApp";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { RootState } from "@/core/store";
 import { useAppSelector } from "@/hooks/useStore";
@@ -106,7 +115,9 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
     const firstQuestion = templateQuestions[0][firstKey];
     setMessages([
       {
-        text: `Hi, ${currentUser?.username}. Welcome. I can help you with your template`,
+        text: `Hi, ${
+          currentUser?.first_name ?? currentUser?.username ?? "There"
+        }. Welcome. I can help you with your template`,
         type: "text",
         createdAt: createdAt,
         fromUser: false,
@@ -546,12 +557,57 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
             isValidating={isValidating}
           />
 
-          <ChatInput
-            onChange={setUserAnswer}
-            value={userAnswer}
-            onSubmit={handleUserResponse}
-            disabled={isValidating}
-          />
+          {currentUser?.id ? (
+            <ChatInput
+              onChange={setUserAnswer}
+              value={userAnswer}
+              onSubmit={handleUserResponse}
+              disabled={isValidating}
+            />
+          ) : (
+            <Stack
+              direction={"column"}
+              alignItems={"center"}
+              justifyContent={"center"}
+              gap={1}
+              width={"100%"}
+              p={"16px 8px 16px 16px"}
+            >
+              <Button
+                onClick={() => {
+                  router.push("/signin");
+                }}
+                variant={"contained"}
+                startIcon={
+                  <LogoApp
+                    width={18}
+                    color="white"
+                  />
+                }
+                sx={{
+                  flex: 1,
+                  p: "10px 25px",
+                  fontWeight: 500,
+                  borderColor: "primary.main",
+                  borderRadius: "999px",
+                  bgcolor: "primary.main",
+                  color: "onPrimary",
+                  whiteSpace: "pre-line",
+                  ":hover": {
+                    bgcolor: "surface.1",
+                    color: "primary.main",
+                  },
+                }}
+              >
+                <Typography
+                  ml={2}
+                  color={"inherit"}
+                >
+                  Sign in or Create an account
+                </Typography>
+              </Button>
+            </Stack>
+          )}
         </AccordionDetails>
       </Accordion>
     </Grid>
