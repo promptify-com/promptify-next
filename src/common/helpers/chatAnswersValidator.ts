@@ -1,6 +1,7 @@
 import { QuestionAnswerParams, TemplateQuestionGeneratorData } from "@/core/api/dto/prompts";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { getExecutionById } from "@/hooks/api/executions";
+import { AnswerValidatorResponse } from "../types/chat";
 
 const answersValidatorTemplateId = 516;
 
@@ -10,11 +11,7 @@ export const generate = ({
 }: {
   token: string;
   payload: QuestionAnswerParams;
-}): Promise<{
-  answer: string;
-  feedback: string;
-  approved: boolean;
-}> => {
+}): Promise<AnswerValidatorResponse> => {
   return new Promise(resolve => {
     const data: TemplateQuestionGeneratorData[] = [
       {
@@ -23,7 +20,7 @@ export const generate = ({
         prompt_params: payload,
       },
     ];
-    const url = `https://api.promptify.com/api/v1/templates/${answersValidatorTemplateId}/execute/?streaming=false`;
+    const url = `https://api.promptify.com/api/v1/templates/${answersValidatorTemplateId}/execute/?streaming=true`;
     let templateExecutionId = 0;
 
     fetchEventSource(url, {

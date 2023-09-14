@@ -34,7 +34,7 @@ import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
 import ExecutionForm from "@/components/prompt/ExecutionForm";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { useSelector, useDispatch } from "react-redux";
-import { updateTemplate, updateTemplateData } from "@/core/store/templatesSlice";
+import { updateTemplate } from "@/core/store/templatesSlice";
 import { RootState } from "@/core/store";
 import PromptPlaceholder from "@/components/placeholders/PromptPlaceHolder";
 import { useAppSelector } from "@/hooks/useStore";
@@ -79,13 +79,6 @@ const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | nu
   // We need to set initial template store only once.
   if (fetchedTemplate && (!isSavedTemplateId || isSavedTemplateId !== fetchedTemplate.id)) {
     disptach(updateTemplate(fetchedTemplate));
-    disptach(
-      updateTemplateData({
-        id: fetchedTemplate.id,
-        is_favorite: fetchedTemplate.is_favorite,
-        likes: fetchedTemplate.favorites_count,
-      }),
-    );
   }
 
   useEffect(() => {

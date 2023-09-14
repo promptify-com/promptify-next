@@ -9,14 +9,11 @@ import {
   Button,
   Stack,
 } from "@mui/material";
-import { useWindowSize } from "usehooks-ts";
 import { ExpandLess, ExpandMore, MoreVert, Search } from "@mui/icons-material";
-import { useSelector } from "react-redux";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 
 import { ResPrompt } from "@/core/api/dto/prompts";
 import { LogoApp } from "@/assets/icons/LogoApp";
-import { RootState } from "@/core/store";
 import { useAppSelector, useAppDispatch } from "@/hooks/useStore";
 import useToken from "@/hooks/useToken";
 import { generate } from "@/common/helpers/chatAnswersValidator";
@@ -26,25 +23,10 @@ import { ChatInput } from "./ChatInput";
 import { useRouter } from "next/router";
 import { TemplateQuestions } from "@/core/api/dto/templates";
 import { getInputsFromString } from "@/common/helpers";
-import { IPromptInput, PromptLiveResponse, ChatMessageType } from "@/common/types/prompt";
+import { IPromptInput, PromptLiveResponse, InputType } from "@/common/types/prompt";
 import { setGeneratingStatus } from "@/core/store/templatesSlice";
-
-export interface IMessage {
-  text: string | undefined;
-  createdAt: string;
-  fromUser: boolean;
-  type?: ChatMessageType;
-  choices?: string[];
-  id: number;
-}
-
-export interface IAnswer {
-  inputName: string;
-  required?: boolean;
-  question: string;
-  answer: string | number;
-  prompt?: number;
-}
+import { AnswerValidatorResponse, IAnswer, IMessage } from "@/common/types/chat";
+import { determineIsMobile } from "@/common/helpers/determineIsMobile";
 
 interface Props {
   setGeneratedExecution: (data: PromptLiveResponse) => void;
@@ -52,11 +34,11 @@ interface Props {
 }
 
 const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
-  const { width: windowWidth } = useWindowSize();
+  const IS_MOBILE = determineIsMobile();
   const { convertedTimestamp } = useTimestampConverter();
   const token = useToken();
   const router = useRouter();
-  const currentUser = useSelector((state: RootState) => state.user.currentUser);
+  const currentUser = useAppSelector(state => state.user.currentUser);
   const template = useAppSelector(state => state.template.template);
   const createdAt = convertedTimestamp(new Date());
   const dispatch = useAppDispatch();
@@ -79,10 +61,9 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
         text: `Hi, ${
           currentUser?.first_name ?? currentUser?.username ?? "There"
         }. Welcome. I can help you with your template`,
-        type: "text" as ChatMessageType,
+        type: "text" as InputType,
         createdAt: createdAt,
         fromUser: false,
-        id: 0,
       },
     ];
 
@@ -95,36 +76,32 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
         type: firstQuestion.type!,
         createdAt: createdAt,
         fromUser: false,
-        id: 1,
       });
     }
 
     setMessages(welcomeMessage);
   };
-  //@ts-ignore
+
   const templateQuestions: TemplateQuestions[] = useMemo(() => {
+    if (!template) return [];
     let questions: TemplateQuestions[] = [];
 
-    if (template?.questions) {
-      setMessages([]);
+    if (template.questions) {
       setShowGenerate(false);
       questions = template.questions;
     }
 
     const prompts: IPromptInput[] = [];
 
-    if (template?.prompts) {
-      template.prompts.forEach(prompt => {
-        prompts.push(...getInputsFromString(prompt.content).map(obj => ({ ...obj, prompt: prompt.id })));
-      });
-    }
+    template.prompts.forEach(prompt => {
+      prompts.push(...getInputsFromString(prompt.content).map(obj => ({ ...obj, prompt: prompt.id })));
+    });
 
-    const updatedQuestions = questions.map((question, index) => {
+    const updatedQuestions: TemplateQuestions[] = questions.map((question, index) => {
       if (prompts[index]) {
         const { type, required, choices, name, prompt } = prompts[index];
         // Create a new object with the desired structure
         return {
-          ...question,
           [Object.keys(question)[0]]: {
             ...question[Object.keys(question)[0]],
             name,
@@ -137,10 +114,10 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
       }
       return question;
     });
-    //@ts-ignore to be refactored later to have same type as TemplateQuestions[]
     initialMessages(updatedQuestions);
     return updatedQuestions;
   }, [template]);
+
   const hasInitialTemplateQuestions = templateQuestions.length;
 
   const getCurrentQuestion = () => {
@@ -188,26 +165,17 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
         type: currentQuestion.type,
         createdAt: createdAt,
         fromUser: true,
-        id: currentQuestionIndex + 1,
       };
 
       setMessages(prevMessages => prevMessages.concat(newUserMessage));
 
-      let response:
-        | {
-            answer: string;
-            feedback: string;
-            approved: boolean;
-          }
-        | undefined = { approved: true, answer: "", feedback: "" };
+      let response: AnswerValidatorResponse | undefined = { approved: true, answer: "", feedback: "" };
       if (currentQuestion.type !== "choices" && currentQuestion.type !== "code" && currentQuestion.required) {
         response = await validateAnswer();
       }
 
       let nextBotMessage: IMessage;
       if (response?.approved) {
-        setInValidating(false);
-
         answers.length && setCurrentQuestionIndex(currentQuestionIndex + 1);
 
         const newAnswer: IAnswer = {
@@ -227,7 +195,6 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
             type: "text",
             createdAt: createdAt,
             fromUser: false,
-            id: currentQuestionIndex + 1,
           };
           !showGenerate && setShowGenerate(true);
         } else {
@@ -238,27 +205,23 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
           }
 
           nextBotMessage = {
-            text: response.feedback + nextQuestion.question,
+            text: response.feedback + ". " + nextQuestion.question,
             choices: nextQuestion.choices,
             type: nextQuestion.type,
             createdAt: createdAt,
             fromUser: false,
-            id: currentQuestionIndex + 1,
           };
         }
       } else {
-        // Please handle !answerResponse.approved case
-        setInValidating(false);
-
         nextBotMessage = {
           text: response?.feedback,
           choices: currentQuestion.choices,
           type: currentQuestion.type,
           createdAt: createdAt,
           fromUser: false,
-          id: currentQuestionIndex + 1,
         };
       }
+      setInValidating(false);
       setMessages(prevMessages => prevMessages.concat(nextBotMessage));
     }
   };
@@ -274,7 +237,6 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
           type: "text",
           createdAt: createdAt,
           fromUser: false,
-          id: currentQuestionIndex + 1,
         };
         !showGenerate && setShowGenerate(true);
       } else {
@@ -290,7 +252,6 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
           type: nextQuestion.type,
           createdAt: createdAt,
           fromUser: false,
-          id: currentQuestionIndex + 1,
         };
       }
       let newAnswer: IAnswer = {
@@ -382,36 +343,33 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
 
           if (msg.event === "infer" && msg.data) {
             if (message) {
-              const tempArr = [...tempData];
-              const activePrompt = tempArr.findIndex(template => template.prompt === +prompt);
+              const activePrompt = tempData.findIndex(template => template.prompt === +prompt);
 
               if (activePrompt === -1) {
-                tempArr.push({
+                tempData.push({
                   message,
                   prompt,
                 });
               } else {
-                tempArr[activePrompt] = {
-                  ...tempArr[activePrompt],
-                  message: tempArr[activePrompt].message + message,
+                tempData[activePrompt] = {
+                  ...tempData[activePrompt],
+                  message: tempData[activePrompt].message + message,
                   prompt,
                 };
               }
 
-              tempData = [...tempArr];
               setGeneratingResponse(prevState => ({
                 ...prevState,
                 created_at: prevState?.created_at || new Date(),
-                data: tempArr,
+                data: tempData,
               }));
             }
           } else {
-            const tempArr = [...tempData];
-            const activePrompt = tempArr.findIndex(template => template.prompt === +prompt);
+            const activePrompt = tempData.findIndex(template => template.prompt === +prompt);
 
             if (message === "[C OMPLETED]" || message === "[COMPLETED]") {
-              tempArr[activePrompt] = {
-                ...tempArr[activePrompt],
+              tempData[activePrompt] = {
+                ...tempData[activePrompt],
                 prompt,
                 isLoading: false,
                 isCompleted: true,
@@ -420,15 +378,15 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
 
             if (message === "[INITIALIZING]") {
               if (activePrompt === -1) {
-                tempArr.push({
+                tempData.push({
                   message: "",
                   prompt,
                   isLoading: true,
                   created_at: new Date(),
                 });
               } else {
-                tempArr[activePrompt] = {
-                  ...tempArr[activePrompt],
+                tempData[activePrompt] = {
+                  ...tempData[activePrompt],
                   prompt,
                   isLoading: true,
                 };
@@ -441,11 +399,10 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
               );
             }
 
-            tempData = [...tempArr];
             setGeneratingResponse(prevState => ({
               ...prevState,
               created_at: prevState?.created_at || new Date(),
-              data: tempArr,
+              data: tempData,
             }));
           }
         } catch {
@@ -473,7 +430,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
       position={"relative"}
     >
       <Accordion
-        expanded={windowWidth < 960 ? true : chatExpanded}
+        expanded={IS_MOBILE ? true : chatExpanded}
         onChange={() => setChatExpanded(prev => !prev)}
         sx={{
           boxShadow: "none",

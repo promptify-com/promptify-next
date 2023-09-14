@@ -100,28 +100,6 @@ export const templatesApi = baseApi.injectEndpoints({
           method: "post",
         }),
       }),
-
-      templateQuestionGenerator: builder.mutation<
-        Templates,
-        { id?: number; data: TemplateQuestionGeneratorData; streaming?: boolean }
-      >({
-        query: ({
-          data,
-          id = 515,
-          streaming = false,
-        }: {
-          data: TemplateQuestionGeneratorData;
-          id?: number;
-          streaming?: boolean;
-        }) => ({
-          url: `/api/meta/templates/${id}/execute/?streaming=${streaming}`,
-          method: "post",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          data,
-        }),
-      }),
     };
   },
 });
@@ -139,5 +117,4 @@ export const {
   useUpdateTemplateMutation,
   usePublishTemplateMutation,
   useViewTemplateMutation,
-  useTemplateQuestionGeneratorMutation,
 } = templatesApi;

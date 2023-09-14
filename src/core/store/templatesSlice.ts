@@ -33,11 +33,7 @@ export const templatesSlice = createSlice({
       state.is_favorite = action.payload;
       state.likes = action.payload ? state.likes + 1 : state.likes - 1;
     },
-    updateTemplateData: (state, action: PayloadAction<UpdateTemplateDataPayload>) => {
-      state.is_favorite = action.payload.is_favorite;
-      state.id = action.payload.id;
-      state.likes = action.payload.likes;
-    },
+
     updateExecutionData: (state, action: PayloadAction<string>) => {
       state.executionData = action.payload;
     },
@@ -48,7 +44,7 @@ export const templatesSlice = createSlice({
   },
 });
 
-export const { updateCurrentFavorite, updateTemplate, updateTemplateData, updateExecutionData, setGeneratingStatus } =
+export const { updateCurrentFavorite, updateTemplate, updateExecutionData, setGeneratingStatus } =
   templatesSlice.actions;
 
 export default templatesSlice.reducer;

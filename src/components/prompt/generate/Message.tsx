@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { Avatar, Button, Grid, Typography } from "@mui/material";
+
 import LogoAsAvatar from "@/assets/icons/LogoAvatar";
 import { useAppSelector } from "@/hooks/useStore";
-import { IMessage } from "./ChatBox";
 import { ToggleButtonsGroup } from "@/components/design-system/ToggleButtonsGroup";
 import CodeFieldModal from "@/components/modals/CodeFieldModal";
+import { IMessage } from "@/common/types/chat";
 
 interface MessageBlockProps {
   message: IMessage;
@@ -20,7 +21,7 @@ export const Message = ({ message, hideHeader, onChangeValue }: MessageBlockProp
   const name = fromUser ? currentUser?.username : "Promptify";
 
   const [selectedValue, setSelectedValue] = useState("");
-  const [popup, setPopup] = useState(false);
+  const [codeFieldPopup, setCodeFieldPopup] = useState(false);
 
   const handleChange = (value: string) => {
     setSelectedValue(value);
@@ -110,7 +111,7 @@ export const Message = ({ message, hideHeader, onChangeValue }: MessageBlockProp
           </Typography>
           {type === "code" && !fromUser && (
             <Button
-              onClick={() => setPopup(true)}
+              onClick={() => setCodeFieldPopup(true)}
               variant="outlined"
               size="small"
               sx={{
@@ -129,8 +130,8 @@ export const Message = ({ message, hideHeader, onChangeValue }: MessageBlockProp
             />
           )}
           <CodeFieldModal
-            open={popup}
-            setOpen={setPopup}
+            open={codeFieldPopup}
+            setOpen={setCodeFieldPopup}
             value={selectedValue}
             onChange={setSelectedValue}
             onSubmit={handleChange}

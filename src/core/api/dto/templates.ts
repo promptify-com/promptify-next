@@ -1,5 +1,6 @@
 import { User, UserMin } from "./user";
 import { Prompts } from "./prompts";
+import { InputType } from "@/common/types/prompt";
 
 export type ExecutionTemplatePartial = Pick<Templates, "title" | "thumbnail" | "slug">;
 
@@ -93,11 +94,11 @@ export type TemplateStatus = "ALL" | "DRAFT" | "PENDING_REVIEW" | "PUBLISHED" | 
 
 export interface TemplateQuestions {
   [key: string]: {
-    type?: "text" | "choices" | "number" | "code";
+    type?: InputType;
     name: string;
     required?: boolean;
     question: string;
-    choices?: string[];
+    choices?: string[] | null;
     prompt?: number;
   };
 }
