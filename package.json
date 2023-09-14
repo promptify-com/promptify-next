@@ -29,7 +29,10 @@
     "@types/react-syntax-highlighter": "^15.5.7",
     "@types/yup": "^0.32.0",
     "axios": "^1.4.0",
+    "draft-js": "^0.11.7",
     "elkjs": "^0.8.2",
+    "eslint": "8.48.0",
+    "eslint-config-next": "13.4.19",
     "formik": "^2.4.2",
     "httpsnippet": "2.0.0",
     "isomorphic-dompurify": "^1.8.0",
@@ -41,6 +44,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-github-login": "^1.0.3",
+    "react-highlight-within-textarea": "^3.2.1",
     "react-image-crop": "^10.1.5",
     "react-linkedin-login-oauth2": "^2.0.1",
     "react-redux": "^8.1.1",
@@ -57,9 +61,7 @@
     "typescript": "5.1.6",
     "usehooks-ts": "^2.9.1",
     "web-worker": "^1.2.0",
-    "yup": "^1.2.0",
-    "eslint": "8.48.0",
-    "eslint-config-next": "13.4.19"
+    "yup": "^1.2.0"
   },
   "devDependencies": {
     "husky": "^8.0.3",
