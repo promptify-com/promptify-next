@@ -277,7 +277,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
             const tempArr = [...tempData];
             const activePrompt = tempArr.findIndex(template => template.prompt === +prompt);
 
-            if (message === "[C OMPLETED]") {
+            if (message === "[C OMPLETED]" || message === "[COMPLETED]") {
               tempArr[activePrompt] = {
                 ...tempArr[activePrompt],
                 prompt,
