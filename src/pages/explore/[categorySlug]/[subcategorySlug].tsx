@@ -82,7 +82,10 @@ export default function Page({ category, subcategory }: CategoryOrSubcategory) {
                 >
                   {categories
                     ?.filter(
-                      subcategory => category?.name == subcategory.parent?.name && subcategory.prompt_template_count,
+                      subcategory =>
+                        category.is_visible &&
+                        subcategory.prompt_template_count &&
+                        category?.name === subcategory.parent?.name,
                     )
                     .map(subcategory => (
                       <Grid key={subcategory.id}>

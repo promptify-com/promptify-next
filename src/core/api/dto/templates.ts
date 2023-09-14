@@ -87,6 +87,7 @@ export interface Category {
   meta_description: string;
   meta_keywords: string;
   description: string;
+  is_visible: boolean;
 }
 
 export type TemplateStatus = "ALL" | "DRAFT" | "PENDING_REVIEW" | "PUBLISHED" | "ARCHIVED";
