@@ -72,11 +72,41 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(1);
   const [isValidating, setInValidating] = useState(false);
+
+  const initialMessages = (questions: TemplateQuestions[]) => {
+    const welcomeMessage = [
+      {
+        text: `Hi, ${
+          currentUser?.first_name ?? currentUser?.username ?? "There"
+        }. Welcome. I can help you with your template`,
+        type: "text" as ChatMessageType,
+        createdAt: createdAt,
+        fromUser: false,
+        id: 0,
+      },
+    ];
+
+    if (questions.length) {
+      const firstKey = Object.keys(questions[0])[0];
+      const firstQuestion = questions[0][firstKey];
+
+      welcomeMessage.push({
+        text: firstQuestion.question,
+        type: firstQuestion.type!,
+        createdAt: createdAt,
+        fromUser: false,
+        id: 1,
+      });
+    }
+
+    setMessages(welcomeMessage);
+  };
   //@ts-ignore
   const templateQuestions: TemplateQuestions[] = useMemo(() => {
     let questions: TemplateQuestions[] = [];
 
     if (template?.questions) {
+      setMessages([]);
       questions = template.questions;
     }
 
@@ -106,39 +136,11 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
       }
       return question;
     });
-
+    //@ts-ignore to be refactored later to have same type as TemplateQuestions[]
+    initialMessages(updatedQuestions);
     return updatedQuestions;
   }, [template]);
   const hasInitialTemplateQuestions = templateQuestions.length;
-
-  if (messages.length === 0) {
-    const welcomeMessage = [
-      {
-        text: `Hi, ${
-          currentUser?.first_name ?? currentUser?.username ?? "There"
-        }. Welcome. I can help you with your template`,
-        type: "text" as ChatMessageType,
-        createdAt: createdAt,
-        fromUser: false,
-        id: 0,
-      },
-    ];
-
-    if (hasInitialTemplateQuestions) {
-      const firstKey = Object.keys(templateQuestions[0])[0];
-      const firstQuestion = templateQuestions[0][firstKey];
-
-      welcomeMessage.push({
-        text: firstQuestion.question,
-        type: firstQuestion.type!,
-        createdAt: createdAt,
-        fromUser: false,
-        id: 1,
-      });
-    }
-
-    setMessages(welcomeMessage);
-  }
 
   const getCurrentQuestion = () => {
     if (!hasInitialTemplateQuestions) {
