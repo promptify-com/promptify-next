@@ -91,49 +91,68 @@ export const Options = ({ selectedNodeData, changeEngine, onUpdateNodeOptions }:
     >
       <Box>
         {engines?.length && (
-          <Autocomplete
-            sx={{ width: "100%" }}
-            options={engines}
-            autoHighlight
-            disableClearable
-            getOptionLabel={option => option.name}
-            value={engine}
-            onChange={(e, value) => changeEngine(value?.id || engines[0].id)}
-            renderOption={(props, option) => (
-              <Box
-                component="li"
-                sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
-                {...props}
-              >
-                <img
-                  loading="lazy"
-                  src={option.icon}
-                  srcSet={option.icon}
-                  style={{
-                    width: "24px",
-                    height: "24px",
-                    borderRadius: "50%",
-                  }}
-                />
-                {option.name}
-              </Box>
-            )}
-            renderInput={params => (
-              <TextField
-                {...params}
-                label="Engine"
-                sx={{
-                  color: "onSurface",
-                  ".MuiInputBase-root": {
-                    py: "4px",
-                  },
-                  ".MuiIconButton-root ": {
-                    border: "none",
-                  },
+          <Stack
+            flexDirection={"row"}
+            position={"relative"}
+          >
+            {engine && (
+              <img
+                src={engine?.icon}
+                style={{
+                  width: "24px",
+                  height: "24px",
+                  borderRadius: "50%",
+                  position: "absolute",
+                  top: "12px",
+                  left: "6px",
                 }}
               />
             )}
-          />
+            <Autocomplete
+              sx={{ width: "100%" }}
+              options={engines}
+              autoHighlight
+              disableClearable
+              getOptionLabel={option => option.name}
+              value={engine}
+              onChange={(e, value) => changeEngine(value?.id || engines[0].id)}
+              renderOption={(props, option) => (
+                <Box
+                  component="li"
+                  sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
+                  {...props}
+                >
+                  <img
+                    loading="lazy"
+                    src={option.icon}
+                    srcSet={option.icon}
+                    style={{
+                      width: "24px",
+                      height: "24px",
+                      borderRadius: "50%",
+                    }}
+                  />
+                  {option.name}
+                </Box>
+              )}
+              renderInput={params => (
+                <TextField
+                  {...params}
+                  label="Engine"
+                  sx={{
+                    color: "onSurface",
+                    ".MuiInputBase-root": {
+                      py: "4px",
+                      pl: "35px",
+                    },
+                    ".MuiIconButton-root ": {
+                      border: "none",
+                    },
+                  }}
+                />
+              )}
+            />
+          </Stack>
         )}
       </Box>
       <Box>
