@@ -1,6 +1,6 @@
-import React from 'react';
-import { ClassicScheme, Presets } from 'rete-react-render-plugin';
-import styled from 'styled-components';
+import React from "react";
+import { ClassicScheme, Presets } from "rete-react-render-plugin";
+import styled from "styled-components";
 
 const Svg = styled.svg`
   overflow: visible !important;
@@ -11,7 +11,7 @@ const Svg = styled.svg`
 const Path = styled.path<{ selected?: boolean; styles?: (props: any) => any }>`
   fill: none;
   stroke-width: 3px;
-  stroke: ${props => (props.selected ? 'red' : '#ebebeb')};
+  stroke: ${props => (props.selected ? "red" : "#1B1B1E")};
   pointer-events: auto;
   ${props => props.styles && props.styles(props)}
 `;
@@ -24,7 +24,7 @@ const HoverPath = styled.path`
 `;
 
 export function SelectableConnection(props: {
-  data: ClassicScheme['Connection'] & {
+  data: ClassicScheme["Connection"] & {
     selected?: boolean;
     isLoop?: boolean;
   };
@@ -42,7 +42,11 @@ export function SelectableConnection(props: {
       data-testid="connection"
     >
       <HoverPath d={path} />
-      <Path selected={props.data.selected} styles={props.styles} d={path} />
+      <Path
+        selected={props.data.selected}
+        styles={props.styles}
+        d={path}
+      />
     </Svg>
   );
 }

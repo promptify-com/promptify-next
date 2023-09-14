@@ -12,6 +12,9 @@ import {
   DialogTitle,
   Snackbar,
   SwipeableDrawer,
+  alpha,
+  Stack,
+  Drawer,
 } from "@mui/material";
 import { ClassicPreset } from "rete";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
@@ -21,8 +24,6 @@ import { createEditor, Node } from "@/components/builder/Editor";
 import { Header } from "@/components/builder/Header";
 import { MinusIcon, PlusIcon } from "@/assets/icons";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Sidebar } from "@/components/builder/Sidebar";
-import { useEngines } from "@/hooks/api/engines";
 import { useGetPromptTemplatesQuery, usePublishTemplateMutation } from "@/core/api/templates";
 import { Prompts } from "@/core/api/dto/prompts";
 import { deletePrompt, updateTemplate } from "@/hooks/api/templates";
@@ -34,6 +35,9 @@ import { promptRandomId } from "@/common/helpers/promptRandomId";
 import { isPromptVariableValid } from "@/common/helpers/isPromptVariableValid";
 
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
+import { theme } from "@/theme";
+import { useGetEnginesQuery } from "@/core/api/engines";
+import { PromptForm } from "@/components/builder/PromptForm";
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return (
@@ -51,8 +55,8 @@ export const Builder = () => {
   const id = router.query.id;
   const [nodeCount, setNodeCount] = useState(1);
   const [prompts, setPrompts] = useState<Prompts[]>([]);
-  const [engines] = useEngines();
-  const [selectedNode, setSelectedNode] = useState<any>(null);
+  const { data: engines } = useGetEnginesQuery();
+  const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const [selectedNodeData, setSelectedNodeData] = useState<INodesData | null>(null);
   const [selectedConnection, setSelectedConnection] = useState<string | null>(null);
   const [nodesData, setNodesData] = useState<INodesData[]>([]);
@@ -89,10 +93,11 @@ export const Builder = () => {
         setSelectedNode,
         setSelectedConnection,
         prompts,
+        engines,
         nodeCount,
         setNodeCount,
         setNodesData,
-        updateTemplateDependencties,
+        updateTemplateDependencies,
       );
     },
     [setSelectedNode, prompts, promptsData],
@@ -190,12 +195,13 @@ export const Builder = () => {
     const node = new Node(`Prompt #${nodeCount}`);
     node.addInput("Input", new ClassicPreset.Input(socket, "Input"));
     node.addOutput("Output", new ClassicPreset.Output(socket, "Output"));
+    node.engine = engines?.find(eng => eng.id === 1)?.icon || "";
 
     const allNodes = editor?.editor.getNodes();
 
-    allNodes?.forEach(allNodesNode => {
-      allNodesNode.selected = false;
-      editor?.area.update("node", allNodesNode.id);
+    allNodes?.forEach(_node => {
+      _node.selected = false;
+      editor?.area.update("node", _node.id);
     });
 
     await editor?.editor.addNode(node);
@@ -213,7 +219,7 @@ export const Builder = () => {
         count: nodeCount.toString(),
         title: `Prompt #${nodeCount}`,
         content: "Describe here prompt parameters, for example {{name:text}} or {{age:integer}}",
-        engine_id: 1,
+        engine_id: engines ? engines[0].id : 0,
         dependencies: [],
         parameters: [],
         order: 1,
@@ -232,6 +238,7 @@ export const Builder = () => {
       const node = new Node(`${selectedNodeData.title} - Copy`);
       node.addInput("Input", new ClassicPreset.Input(socket, "Input"));
       node.addOutput("Output", new ClassicPreset.Output(socket, "Output"));
+      node.engine = engines?.find(eng => eng.id === selectedNodeData.engine_id)?.icon || "";
 
       const allNodes = editor?.editor.getNodes();
 
@@ -266,34 +273,6 @@ export const Builder = () => {
           prompt_output_variable: `$temp_id_${node.temp_id}`,
         },
       ]);
-    }
-  };
-
-  const updateTitle = (value: string) => {
-    if (selectedNode) {
-      selectedNode.label = value;
-      editor?.area.update("node", selectedNode.id);
-    }
-  };
-
-  const updateTemplateDependencties = (id: string, dependsOn: string) => {
-    const data = dataForRequest.current;
-    const currentPrompt = dataForRequest.current.prompts_list?.find((prompt: INodesData) => {
-      return prompt.temp_id === Number(id) || prompt.id === Number(id);
-    });
-
-    if (currentPrompt) {
-      currentPrompt.dependencies = [...currentPrompt.dependencies, Number(dependsOn)];
-
-      const allPrompts = data.prompts_list.filter((prompt: any) => {
-        return prompt.id !== currentPrompt?.id || prompt.temp_id !== currentPrompt?.temp_id;
-      });
-
-      const prompts = [...allPrompts, currentPrompt];
-      data.prompts_list = prompts;
-
-      dataForRequest.current = data;
-      setNodesData(prompts);
     }
   };
 
@@ -356,6 +335,60 @@ export const Builder = () => {
           setSelectedConnection(null);
         }
       }
+    }
+  };
+
+  useEffect(() => {
+    updateNodes();
+  }, [selectedNodeData]);
+
+  const updateEditor = () => {
+    if (!!!selectedNode || !!!selectedNodeData) return;
+
+    const nodeId = Number(selectedNode.id || selectedNode.temp_id);
+    if (nodeId !== selectedNodeData.id && nodeId !== selectedNodeData.temp_id) return;
+
+    const engine = engines?.find(_engine => _engine.id === selectedNodeData?.engine_id);
+
+    if (selectedNode.label !== selectedNodeData.title || selectedNode.engine !== engine?.icon) {
+      selectedNode.label = selectedNodeData?.title;
+      selectedNode.engine = engine?.icon || "";
+      editor?.area.update("node", nodeId.toString());
+    }
+  };
+
+  const updateNodes = () => {
+    if (!!!selectedNode || !!!selectedNodeData) return;
+
+    const _nodes = nodesData.map(node => {
+      if (node.id === selectedNodeData.id || (selectedNodeData.temp_id && node.temp_id === selectedNodeData.temp_id)) {
+        node = selectedNodeData;
+      }
+      return node;
+    });
+
+    setNodesData(_nodes);
+    updateEditor();
+  };
+
+  const updateTemplateDependencies = (id: string, dependsOn: string) => {
+    const data = dataForRequest.current;
+    const currentPrompt = dataForRequest.current.prompts_list?.find((prompt: INodesData) => {
+      return prompt.temp_id === Number(id) || prompt.id === Number(id);
+    });
+
+    if (currentPrompt) {
+      currentPrompt.dependencies = [...currentPrompt.dependencies, Number(dependsOn)];
+
+      const allPrompts = data.prompts_list.filter((prompt: any) => {
+        return prompt.id !== currentPrompt?.id || prompt.temp_id !== currentPrompt?.temp_id;
+      });
+
+      const prompts = [...allPrompts, currentPrompt];
+      data.prompts_list = prompts;
+
+      dataForRequest.current = data;
+      setNodesData(prompts);
     }
   };
 
@@ -439,32 +472,17 @@ export const Builder = () => {
               templateSlug={promptsData?.slug}
             />
           </Grid>
-          <SwipeableDrawer
-            anchor={"left"}
-            open={templateDrawerOpen}
-            onClose={() => toggleTemplateDrawer(false)}
-            onOpen={() => toggleTemplateDrawer(true)}
-          >
-            <Box sx={{ bgcolor: "#373737", p: "1rem" }}>
-              <TemplateForm
-                type="edit"
-                templateData={promptsData as Templates}
-                darkMode
-                onSaved={() => window.location.reload()}
-                onClose={() => toggleTemplateDrawer(false)}
-              />
-            </Box>
-          </SwipeableDrawer>
           <Grid
             item
             xs={selectedNode ? 9 : 12}
+            sx={{ flex: 1 }}
           >
             <Box
-              height={"calc(100vh - 80px)"}
-              bgcolor={"#525252"}
+              height={"calc(100vh - 70.5px)"}
+              bgcolor={"surface.5"}
               position="relative"
               sx={{
-                backgroundImage: "radial-gradient(black 1px, transparent 0)",
+                backgroundImage: `radial-gradient(${alpha(theme.palette.grey[500], 0.5)} 1.3px, transparent 0)`,
                 backgroundSize: "30px 30px",
               }}
             >
@@ -473,7 +491,9 @@ export const Builder = () => {
                 style={{ height: "100%", width: "100%" }}
               ></div>
 
-              <Box
+              <Stack
+                direction={"row"}
+                gap={2}
                 sx={{
                   position: "absolute",
                   left: 50,
@@ -481,10 +501,16 @@ export const Builder = () => {
                 }}
               >
                 <Button
-                  sx={{ bgcolor: "black" }}
+                  variant="contained"
+                  sx={{
+                    ":hover": {
+                      bgcolor: "secondary.main",
+                      color: "onPrimary",
+                    },
+                  }}
                   onClick={() => createNode()}
                 >
-                  <Typography color={"white"}>Add Node</Typography>
+                  Add Node
                   <Typography
                     color={"white"}
                     sx={{ opacity: 0.4 }}
@@ -493,54 +519,59 @@ export const Builder = () => {
                   </Typography>
                 </Button>
                 {selectedNode && (
-                  <React.Fragment>
+                  <>
                     <Button
-                      sx={{ bgcolor: "black", ml: "10px" }}
+                      variant="contained"
+                      sx={{
+                        ":hover": {
+                          bgcolor: "secondary.main",
+                          color: "onPrimary",
+                        },
+                      }}
+                      startIcon={<ContentCopy sx={{ opacity: 0.4 }} />}
                       onClick={() => duplicateNode()}
                     >
-                      <Typography
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          color: "white",
-                        }}
-                      >
-                        <ContentCopy sx={{ opacity: 0.4, mr: "3px", fontSize: "medium" }} /> Duplicate
-                      </Typography>
+                      Duplicate
                     </Button>
                     <Button
-                      sx={{ bgcolor: "#f85149", ml: "10px" }}
+                      variant="contained"
+                      sx={{
+                        bgcolor: "#f85149",
+                        color: "onError",
+                        border: "none",
+                        ":hover": {
+                          bgcolor: "#f85149",
+                          color: "onError",
+                          opacity: 0.8,
+                        },
+                      }}
+                      startIcon={<DeleteIcon sx={{ opacity: 0.5 }} />}
                       onClick={() => setConfirmDialogOpen(true)}
                     >
-                      <Typography
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          color: "white",
-                        }}
-                      >
-                        <DeleteIcon sx={{ opacity: 0.5, mr: "3px", fontSize: "medium" }} /> Delete
-                      </Typography>
+                      Delete
                     </Button>
-                  </React.Fragment>
+                  </>
                 )}
                 {selectedConnection && (
                   <Button
-                    sx={{ bgcolor: "#f85149", ml: "10px" }}
-                    onClick={() => removeConnection()}
+                    variant="contained"
+                    sx={{
+                      bgcolor: "#f85149",
+                      color: "onError",
+                      border: "none",
+                      ":hover": {
+                        bgcolor: "#f85149",
+                        color: "onError",
+                        opacity: 0.8,
+                      },
+                    }}
+                    startIcon={<DeleteIcon sx={{ opacity: 0.5 }} />}
+                    onClick={removeConnection}
                   >
-                    <Typography
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        color: "white",
-                      }}
-                    >
-                      <DeleteIcon sx={{ opacity: 0.5, mr: "3px", fontSize: "medium" }} /> Delete
-                    </Typography>
+                    Delete
                   </Button>
                 )}
-              </Box>
+              </Stack>
               <Box
                 sx={{
                   position: "absolute",
@@ -575,29 +606,50 @@ export const Builder = () => {
               </Box>
             </Box>
           </Grid>
-          <Grid
-            item
-            xs={selectedNode ? 3 : 0}
+          <SwipeableDrawer
+            anchor={"left"}
+            open={templateDrawerOpen}
+            onClose={() => toggleTemplateDrawer(false)}
+            onOpen={() => toggleTemplateDrawer(true)}
           >
             <Box
-              bgcolor={"#373737"}
-              height={"calc(100vh - 80px)"}
-              display={selectedNode ? "block" : "none"}
+              sx={{
+                bgcolor: "#FDFBFF",
+                p: "24px 32px",
+              }}
             >
-              <Sidebar
-                engines={engines}
-                prompts={prompts}
-                selectedNode={selectedNode}
-                updateTitle={updateTitle}
-                removeNode={() => setConfirmDialogOpen(true)}
-                nodeCount={nodeCount}
-                nodesData={nodesData}
-                setNodesData={setNodesData}
-                selectedNodeData={selectedNodeData}
-                setSelectedNodeData={setSelectedNodeData}
+              <TemplateForm
+                type="edit"
+                templateData={promptsData as Templates}
+                darkMode
+                onSaved={() => window.location.reload()}
+                onClose={() => toggleTemplateDrawer(false)}
               />
             </Box>
-          </Grid>
+          </SwipeableDrawer>
+          <Drawer
+            variant="persistent"
+            anchor="right"
+            open={!!selectedNode}
+            sx={{
+              width: "20svw",
+              "& .MuiDrawer-paper": {
+                width: "30svw",
+              },
+            }}
+          >
+            <PromptForm
+              removeNode={() => setConfirmDialogOpen(true)}
+              selectedNodeData={selectedNodeData}
+              setSelectedNodeData={setSelectedNodeData}
+              nodeCount={nodeCount}
+              nodesData={nodesData}
+              setNodesData={setNodesData}
+              close={() => {
+                setSelectedNode(null);
+              }}
+            />
+          </Drawer>
         </Grid>
         <Snackbar
           open={snackBarOpen}

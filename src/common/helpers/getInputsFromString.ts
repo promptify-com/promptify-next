@@ -1,5 +1,6 @@
 import { IPromptInput } from "../types/prompt";
 
+// TODO: Prompt input number should fixed either "integer" or "number"
 const getType = (str: string) => {
   switch (str) {
     case "integer":
