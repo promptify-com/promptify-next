@@ -193,8 +193,7 @@ const TemplateForm: React.FC<Props> = ({
             display: "flex",
             alignContent: "flex-start",
             alignSelf: "stretch",
-            gap: "var(--2, 16px)",
-            padding: "var(--none, 0px)",
+            gap: "16px",
           }}
         >
           {formik.values.thumbnail && (
@@ -205,8 +204,8 @@ const TemplateForm: React.FC<Props> = ({
                 height: "180px",
                 width: "237px",
                 objectFit: "cover",
-                borderRadius: "var(--1, 8px)",
-                background: "var(--dynamic-m-3-surfaces-surface-5, #E1E2EC);",
+                borderRadius: "8px",
+                background: "surface.5",
               }}
             />
           )}
@@ -219,8 +218,8 @@ const TemplateForm: React.FC<Props> = ({
               alignItems={"center"}
               justifyContent={"center"}
               sx={{
-                bgcolor: "var(--dynamic-m-3-surfaces-surface-4, #E7E7F0)",
-                color: "var(--text-primary, #1B1B1E)",
+                bgcolor: "surface.4",
+                color: "primary.main",
                 border: "1px solid transparent",
                 borderRadius: "4px",
                 p: "8px",
@@ -356,13 +355,13 @@ const TemplateForm: React.FC<Props> = ({
         <TextField
           multiline
           maxRows={4}
+          fullWidth
           label="Template Context"
           variant="outlined"
           size="medium"
           name="context"
           value={formik.values.context}
           onChange={formik.handleChange}
-          fullWidth
         />
       </Stack>
       <Stack sx={boxStyle}>
@@ -392,7 +391,7 @@ const TemplateForm: React.FC<Props> = ({
         />
       </Stack>
 
-      {user?.is_admin && (
+      {true && (
         <Box>
           <Stack sx={boxStyle}>
             <TextField
@@ -402,7 +401,6 @@ const TemplateForm: React.FC<Props> = ({
               name="executions_limit"
               value={formik.values.executions_limit}
               onChange={formik.handleChange}
-              fullWidth
             />
           </Stack>
           <Stack sx={boxStyle}>
@@ -427,7 +425,6 @@ const TemplateForm: React.FC<Props> = ({
               value={formik.values.slug ?? ""}
               disabled={formik.values.slug === null}
               onChange={formik.handleChange}
-              fullWidth
             />
           </Stack>
 
@@ -453,7 +450,6 @@ const TemplateForm: React.FC<Props> = ({
               value={formik.values.meta_title ?? ""}
               disabled={formik.values.meta_title === null}
               onChange={formik.handleChange}
-              fullWidth
             />
           </Stack>
 
@@ -481,7 +477,6 @@ const TemplateForm: React.FC<Props> = ({
               value={formik.values.meta_description ?? ""}
               disabled={formik.values.meta_description === null}
               onChange={formik.handleChange}
-              fullWidth
             />
           </Stack>
 
@@ -509,7 +504,6 @@ const TemplateForm: React.FC<Props> = ({
               value={formik.values.meta_keywords ?? ""}
               disabled={formik.values.meta_keywords === null}
               onChange={formik.handleChange}
-              fullWidth
             />
           </Stack>
 
@@ -520,7 +514,6 @@ const TemplateForm: React.FC<Props> = ({
                 formik.setFieldValue("status", newValue);
               }}
               options={TemplateStatusArray}
-              fullWidth
               renderInput={params => (
                 <TextField
                   {...params}

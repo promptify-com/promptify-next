@@ -610,6 +610,12 @@ export const Builder = () => {
             open={templateDrawerOpen}
             onClose={() => toggleTemplateDrawer(false)}
             onOpen={() => toggleTemplateDrawer(true)}
+            PaperProps={{
+              sx: {
+                width: "430px",
+                minWidth: "30svw",
+              },
+            }}
           >
             <Box
               sx={{
@@ -631,9 +637,9 @@ export const Builder = () => {
             anchor="right"
             open={!!selectedNode}
             sx={{
-              width: "20svw",
               "& .MuiDrawer-paper": {
-                width: "30svw",
+                width: "430px",
+                minWidth: "30svw",
               },
             }}
           >

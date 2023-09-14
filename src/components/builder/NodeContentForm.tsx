@@ -41,6 +41,8 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, onChange = 
         id: node.id,
         label: item.name,
         type: item.type.replace("number", "integer"),
+        required: item.required,
+        choices: item.choices,
       })),
     );
 
@@ -60,7 +62,9 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, onChange = 
     } else {
       const input = inputsPresets.find(input => input.label === label);
       const type = input?.type.replace("number", "integer");
-      str = input ? "{{" + input.label + ":" + type + "}}" : "";
+      str = input
+        ? "{{" + input.label + ":" + type + ":" + input.required + (input.choices ? `:"${input.choices}"` : "") + "}}"
+        : "";
     }
 
     if (firstAppend) {

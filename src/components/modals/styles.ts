@@ -15,7 +15,7 @@ export const modalStyle = {
 };
 
 export const fieldStyle = {
-  width: { xs: "90%", md: "250px" },
+  width: { xs: "90%", md: "100%" },
   color: "inherit",
   ".MuiOutlinedInput-root": {
     color: "inherit",
