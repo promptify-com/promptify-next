@@ -12,11 +12,12 @@ import {
 import { useWindowSize } from "usehooks-ts";
 import { ExpandLess, ExpandMore, MoreVert, Search } from "@mui/icons-material";
 import { useSelector } from "react-redux";
+import { fetchEventSource } from "@microsoft/fetch-event-source";
+
 import { ResPrompt } from "@/core/api/dto/prompts";
 import { LogoApp } from "@/assets/icons/LogoApp";
-import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { RootState } from "@/core/store";
-import { useAppSelector } from "@/hooks/useStore";
+import { useAppSelector, useAppDispatch } from "@/hooks/useStore";
 import useToken from "@/hooks/useToken";
 import { generate } from "@/common/helpers/chatAnswersValidator";
 import useTimestampConverter from "@/hooks/useTimestampConverter";
@@ -26,7 +27,6 @@ import { useRouter } from "next/router";
 import { TemplateQuestions } from "@/core/api/dto/templates";
 import { getInputsFromString } from "@/common/helpers";
 import { IPromptInput, PromptLiveResponse, ChatMessageType } from "@/common/types/prompt";
-import { useAppDispatch } from "@/hooks/useStore";
 import { setGeneratingStatus } from "@/core/store/templatesSlice";
 
 export interface IMessage {
@@ -107,6 +107,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
 
     if (template?.questions) {
       setMessages([]);
+      setShowGenerate(false);
       questions = template.questions;
     }
 
