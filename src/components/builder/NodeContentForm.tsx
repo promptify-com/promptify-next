@@ -13,15 +13,12 @@ interface Props {
 export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, onChange = () => {}, nodes }) => {
   const cursorPositionRef = useRef(0);
   const [firstAppend, setFirstAppend] = useState(true);
-
   const content = selectedNodeData?.content || "";
-
   const otherNodes = nodes.filter(
     node =>
       (node.id !== selectedNodeData?.id && node.id !== selectedNodeData?.temp_id) ||
       (node.temp_id !== selectedNodeData?.id && node.temp_id !== selectedNodeData?.temp_id),
   );
-
   const nodesPresets = otherNodes.map(node => ({ id: node.id, label: node.prompt_output_variable || node.title }));
   const inputsPresets = otherNodes
     .map(node => ({ id: node.id, label: getInputsFromString(node.content) }))
