@@ -1,5 +1,5 @@
 import { baseApi } from "./api";
-import { PromptParams } from "./dto/prompts";
+import { PromptParams, TemplateQuestionGeneratorData } from "./dto/prompts";
 import { FilterParams, Templates, TemplatesWithPagination } from "./dto/templates";
 import { IEditTemplate } from "@/common/types/editTemplate";
 
@@ -101,6 +101,28 @@ export const templatesApi = baseApi.injectEndpoints({
           method: "post",
         }),
       }),
+
+      templateQuestionGenerator: builder.mutation<
+        Templates,
+        { id?: number; data: TemplateQuestionGeneratorData; streaming?: boolean }
+      >({
+        query: ({
+          data,
+          id = 515,
+          streaming = false,
+        }: {
+          data: TemplateQuestionGeneratorData;
+          id?: number;
+          streaming?: boolean;
+        }) => ({
+          url: `/api/meta/templates/${id}/execute/?streaming=${streaming}`,
+          method: "post",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          data,
+        }),
+      }),
     };
   },
 });
@@ -118,4 +140,5 @@ export const {
   useUpdateTemplateMutation,
   usePublishTemplateMutation,
   useViewTemplateMutation,
+  useTemplateQuestionGeneratorMutation,
 } = templatesApi;

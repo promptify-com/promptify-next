@@ -58,7 +58,7 @@ const ExplorePage: NextPage<IProps> = ({ categories }) => {
 
 export async function getServerSideProps() {
   const responseCategories = await authClient.get<Category[]>("/api/meta/categories/");
-  const categories = responseCategories.data?.filter(category => category.prompt_template_count);
+  const categories = responseCategories.data?.filter(category => category.prompt_template_count && category.is_visible);
 
   return {
     props: {

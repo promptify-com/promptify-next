@@ -9,15 +9,15 @@ export interface IPromptParams {
     description: string;
   }[];
 }
-
+export interface IEngineParams {
+  temperature?: number;
+  maximumLength?: number;
+  topP?: number;
+  presencePenalty?: number;
+  frequencyPenalty?: number;
+}
 export interface IPromptOptions {
-  model_parameters: {
-    temperature?: number;
-    maximumLength?: number;
-    topP?: number;
-    presencePenalty?: number;
-    frequencyPenalty?: number;
-  } | null;
+  model_parameters: IEngineParams | null;
   output_format: string;
   is_visible: boolean;
   show_output: boolean;
