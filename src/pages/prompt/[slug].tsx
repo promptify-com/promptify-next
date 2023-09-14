@@ -15,14 +15,12 @@ import {
   createTheme,
   useTheme,
 } from "@mui/material";
-import { ExpandMore } from "@mui/icons-material";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
 import materialDynamicColors from "material-dynamic-colors";
 import { mix } from "polished";
 import { useRouter } from "next/router";
 import { useGetPromptTemplateBySlugQuery, useViewTemplateMutation } from "@/core/api/templates";
 import { TemplatesExecutions, Templates } from "@/core/api/dto/templates";
-import { GeneratorForm } from "@/components/prompt/GeneratorForm";
 import { Display } from "@/components/prompt/Display";
 import { Details } from "@/components/prompt/Details";
 import { authClient } from "@/common/axios";
@@ -41,7 +39,6 @@ import { RootState } from "@/core/store";
 import PromptPlaceholder from "@/components/placeholders/PromptPlaceHolder";
 import { useAppSelector } from "@/hooks/useStore";
 import ChatMode from "@/components/prompt/generate/ChatBox";
-import { TemplateQuestionGeneratorData } from "@/core/api/dto/prompts";
 import { getExecutionByHash } from "@/hooks/api/executions";
 
 const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | null }) => {
@@ -279,14 +276,19 @@ const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | nu
                 </>
               )}
               {windowWidth < 960 && (
-                <>
-                  {mobileTab === 1 && (
-                    <ChatMode
-                      setGeneratedExecution={setGeneratedExecution}
-                      onError={setErrorMessage}
-                    />
-                  )}
-                </>
+                <Grid
+                  sx={{
+                    display: {
+                      xs: mobileTab === 1 ? "block" : "none",
+                      md: "block",
+                    },
+                  }}
+                >
+                  <ChatMode
+                    setGeneratedExecution={setGeneratedExecution}
+                    onError={setErrorMessage}
+                  />
+                </Grid>
               )}
 
               <Grid
