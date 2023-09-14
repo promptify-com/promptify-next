@@ -91,6 +91,16 @@ export interface Category {
 
 export type TemplateStatus = "ALL" | "DRAFT" | "PENDING_REVIEW" | "PUBLISHED" | "ARCHIVED";
 
+export interface TemplateQuestions {
+  [key: string]: {
+    type?: "text" | "choices" | "number" | "code";
+    name: string;
+    required?: boolean;
+    question: string;
+    choices?: string[];
+    prompt?: number;
+  };
+}
 export interface Templates {
   id: number;
   title: string;
@@ -107,6 +117,7 @@ export interface Templates {
   created_at: Date;
   updated_at: Date;
   prompts: Prompts[];
+  questions: TemplateQuestions[];
   tags: Tag[];
   executions_count: number;
   last_run: Date;
