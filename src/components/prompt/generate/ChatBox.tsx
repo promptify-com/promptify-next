@@ -72,11 +72,37 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(1);
   const [isValidating, setInValidating] = useState(false);
+
+  const initialMessages = (questions: TemplateQuestions[]) => {
+    if (questions) {
+      const firstKey = Object.keys(questions[0])[0];
+      const firstQuestion = questions[0][firstKey];
+      setMessages([
+        {
+          text: `Hi, ${
+            currentUser?.first_name ?? currentUser?.username ?? "There"
+          }. Welcome. I can help you with your template`,
+          type: "text",
+          createdAt: createdAt,
+          fromUser: false,
+          id: 0,
+        },
+        {
+          text: firstQuestion.question,
+          type: firstQuestion.type,
+          createdAt: createdAt,
+          fromUser: false,
+          id: 1,
+        },
+      ]);
+    }
+  };
   //@ts-ignore
   const templateQuestions: TemplateQuestions[] = useMemo(() => {
     let questions: TemplateQuestions[] = [];
 
     if (template?.questions) {
+      setMessages([]);
       questions = template.questions;
     }
 
@@ -106,32 +132,10 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
       }
       return question;
     });
-
+    //@ts-ignore to be refactored later to have same type as TemplateQuestions[]
+    initialMessages(updatedQuestions);
     return updatedQuestions;
   }, [template]);
-
-  if (templateQuestions.length > 0 && messages.length === 0) {
-    const firstKey = Object.keys(templateQuestions[0])[0];
-    const firstQuestion = templateQuestions[0][firstKey];
-    setMessages([
-      {
-        text: `Hi, ${
-          currentUser?.first_name ?? currentUser?.username ?? "There"
-        }. Welcome. I can help you with your template`,
-        type: "text",
-        createdAt: createdAt,
-        fromUser: false,
-        id: 0,
-      },
-      {
-        text: firstQuestion.question,
-        type: firstQuestion.type,
-        createdAt: createdAt,
-        fromUser: false,
-        id: 1,
-      },
-    ]);
-  }
 
   const getCurrentQuestion = () => {
     if (!answers.length) {
@@ -147,7 +151,6 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
   };
 
   const currentQuestion = getCurrentQuestion();
-  console.log("currentQuestion:", currentQuestion);
 
   const validateAnswer = async () => {
     if (currentQuestion) {
