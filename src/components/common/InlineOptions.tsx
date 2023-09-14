@@ -37,7 +37,7 @@ export const InlineOptions: React.FC<Props> = ({
     <Chip
       label={option.label}
       sx={ChipStyles}
-      onClick={() => {
+      onMouseDown={() => {
         onChoose(option);
         handleClose();
       }}
