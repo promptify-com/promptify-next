@@ -66,8 +66,8 @@ export const PromptForm: React.FC<Props> = ({
     });
   };
 
-  const changeContent = (content: string) => {
-    if (!selectedNodeData || !content) return;
+  const changeContent = (content: string = "") => {
+    if (!selectedNodeData) return;
 
     setSelectedNodeData({
       ...selectedNodeData,
