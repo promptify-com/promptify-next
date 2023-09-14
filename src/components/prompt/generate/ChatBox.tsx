@@ -25,7 +25,7 @@ import { ChatInput } from "./ChatInput";
 import { useRouter } from "next/router";
 import { TemplateQuestions } from "@/core/api/dto/templates";
 import { getInputsFromString } from "@/common/helpers";
-import { IPromptInput, PromptLiveResponse } from "@/common/types/prompt";
+import { IPromptInput, PromptLiveResponse, ChatMessageType } from "@/common/types/prompt";
 import { useAppDispatch } from "@/hooks/useStore";
 import { setGeneratingStatus } from "@/core/store/templatesSlice";
 
@@ -33,7 +33,7 @@ export interface IMessage {
   text: string | undefined;
   createdAt: string;
   fromUser: boolean;
-  type?: "text" | "choices" | "number" | "code";
+  type?: ChatMessageType;
   choices?: string[];
   id: number;
 }
@@ -109,31 +109,42 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
 
     return updatedQuestions;
   }, [template]);
+  const hasInitialTemplateQuestions = templateQuestions.length;
 
-  if (templateQuestions.length > 0 && messages.length === 0) {
-    const firstKey = Object.keys(templateQuestions[0])[0];
-    const firstQuestion = templateQuestions[0][firstKey];
-    setMessages([
+  if (messages.length === 0) {
+    const welcomeMessage = [
       {
         text: `Hi, ${
           currentUser?.first_name ?? currentUser?.username ?? "There"
         }. Welcome. I can help you with your template`,
-        type: "text",
+        type: "text" as ChatMessageType,
         createdAt: createdAt,
         fromUser: false,
         id: 0,
       },
-      {
+    ];
+
+    if (hasInitialTemplateQuestions) {
+      const firstKey = Object.keys(templateQuestions[0])[0];
+      const firstQuestion = templateQuestions[0][firstKey];
+
+      welcomeMessage.push({
         text: firstQuestion.question,
-        type: firstQuestion.type,
+        type: firstQuestion.type!,
         createdAt: createdAt,
         fromUser: false,
         id: 1,
-      },
-    ]);
+      });
+    }
+
+    setMessages(welcomeMessage);
   }
 
   const getCurrentQuestion = () => {
+    if (!hasInitialTemplateQuestions) {
+      return null;
+    }
+
     if (!answers.length) {
       const questionObj = templateQuestions[0];
       const key = Object.keys(questionObj)[0];
@@ -553,7 +564,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
             answers={answers}
             onAnswerClear={() => {}}
             onChange={handleChange}
-            showGenerate={showGenerate}
+            showGenerate={showGenerate || !hasInitialTemplateQuestions}
             onGenerate={generateExecutionHandler}
             isValidating={isValidating}
           />
@@ -563,7 +574,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
               onChange={setUserAnswer}
               value={userAnswer}
               onSubmit={handleUserResponse}
-              disabled={isValidating}
+              disabled={isValidating || !hasInitialTemplateQuestions}
             />
           ) : (
             <Stack
