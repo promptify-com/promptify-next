@@ -1,6 +1,6 @@
-import * as React from 'react';
-import styled from 'styled-components';
-import { ClassicScheme, Presets } from 'rete-react-render-plugin';
+import * as React from "react";
+import styled from "styled-components";
+import { ClassicScheme, Presets } from "rete-react-render-plugin";
 
 const { useConnection } = Presets.classic;
 
@@ -14,14 +14,14 @@ const Svg = styled.svg`
 
 const Path = styled.path<{ styles?: (props: any) => any }>`
   fill: none;
-  stroke-width: 2px;
-  stroke: #ebebeb;
+  stroke-width: 3px;
+  stroke: #1b1b1e;
   pointer-events: auto;
   ${props => props.styles && props.styles(props)}
 `;
 
 export function CustomConnection(props: {
-  data: ClassicScheme['Connection'] & { isLoop?: boolean };
+  data: ClassicScheme["Connection"] & { isLoop?: boolean };
   styles?: () => any;
 }) {
   const { path } = useConnection();
@@ -30,7 +30,10 @@ export function CustomConnection(props: {
 
   return (
     <Svg data-testid="connection">
-      <Path styles={props.styles} d={path} />
+      <Path
+        styles={props.styles}
+        d={path}
+      />
     </Svg>
   );
 }

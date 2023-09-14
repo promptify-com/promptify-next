@@ -1,9 +1,9 @@
 import React from "react";
-import { Box, Chip, Stack, Typography, Tooltip, IconButton } from "@mui/material";
-import PlayArrowIcon from "@mui/icons-material/PlayArrow";
-import { ModeEdit, Publish, PreviewOutlined } from "@mui/icons-material";
+import { Box, Chip, Stack, Typography, alpha } from "@mui/material";
+import { CloudOutlined, ModeEdit, RocketLaunch, VisibilityOutlined } from "@mui/icons-material";
 import BaseButton from "../base/BaseButton";
 import { TemplateStatus } from "@/core/api/dto/templates";
+import { theme } from "@/theme";
 
 interface IHeader {
   onDrawerOpen: () => void;
@@ -17,11 +17,10 @@ interface IHeader {
 export const Header = ({ onDrawerOpen, onSave, onPublish, title, status, templateSlug }: IHeader) => {
   return (
     <Box
-      bgcolor={"#262626"}
-      height="80px"
+      bgcolor={"surface.1"}
       display="flex"
       alignItems="center"
-      px={{ xs: "10px", md: "50px" }}
+      p={"16px 24px"}
       justifyContent="space-between"
     >
       <Box
@@ -33,14 +32,14 @@ export const Header = ({ onDrawerOpen, onSave, onPublish, title, status, templat
           direction={"row"}
           alignItems={"center"}
           gap={1}
-          sx={{ color: "white" }}
+          sx={{ color: "onSurface" }}
         >
           <Typography
-            sx={{ color: "white", fontSize: "1rem" }}
+            sx={{ color: "onSurface", fontSize: "16px" }}
             dangerouslySetInnerHTML={{ __html: title }}
           />
           <ModeEdit
-            sx={{ cursor: "pointer" }}
+            sx={{ cursor: "pointer", fontSize: "16px" }}
             onClick={onDrawerOpen}
           />
         </Stack>
@@ -48,8 +47,19 @@ export const Header = ({ onDrawerOpen, onSave, onPublish, title, status, templat
         {status && (
           <Chip
             label={status}
-            sx={{ color: "surface.3" }}
-            color={status === "PENDING_REVIEW" ? "info" : "primary"}
+            sx={{
+              bgcolor: "surface.3",
+              color: "onSurface",
+              fontSize: 13,
+              p: "7px 6px",
+              height: "auto",
+              ".MuiChip-label": {
+                textTransform: "lowercase",
+                ":first-letter": {
+                  textTransform: "uppercase",
+                },
+              },
+            }}
             size="small"
           />
         )}
@@ -60,39 +70,21 @@ export const Header = ({ onDrawerOpen, onSave, onPublish, title, status, templat
         gap={1}
       >
         {templateSlug && (
-          <Tooltip title="Preview">
-            <IconButton
-              sx={{
-                display: { xs: "none", md: "inline-flex" },
-                bgcolor: "surface.2",
-                border: "none",
-                color: "onSurface",
-                "&:hover": {
-                  bgcolor: "surface.3",
-                  color: "onSurface",
-                },
-              }}
-              onClick={() => {
-                window.open(`/prompt/${templateSlug}`, "_blank");
-              }}
-            >
-              <PreviewOutlined />
-            </IconButton>
-          </Tooltip>
+          <BaseButton
+            variant="text"
+            color="custom"
+            sx={btnStyle}
+            startIcon={<VisibilityOutlined sx={{ fontSize: 20 }} />}
+            onClick={() => window.open(`/prompt/${templateSlug}`, "_blank")}
+          >
+            Preview
+          </BaseButton>
         )}
         <BaseButton
-          variant="contained"
+          variant="text"
           color="custom"
-          customColor="black"
-          sx={{
-            border: "1px solid black",
-            fontSize: "0.8rem",
-            bgcolor: "black",
-            minWidth: 110,
-            justifyContent: "center",
-            color: "white",
-          }}
-          startIcon={<PlayArrowIcon sx={{ fontSize: "1rem" }} />}
+          sx={btnStyle}
+          startIcon={<CloudOutlined sx={{ fontSize: 20 }} />}
           onClick={() => onSave()}
         >
           Save
@@ -102,15 +94,29 @@ export const Header = ({ onDrawerOpen, onSave, onPublish, title, status, templat
           <BaseButton
             variant="contained"
             color="custom"
-            customColor="white"
-            sx={{ color: "onSurface" }}
+            sx={{
+              ...btnStyle,
+              bgcolor: "secondary.main",
+              color: "onPrimary",
+            }}
+            startIcon={<RocketLaunch sx={{ fontSize: 20 }} />}
             onClick={() => onPublish()}
           >
-            <Publish sx={{ fontSize: "1rem", mr: 1 }} />
             Publish
           </BaseButton>
         )}
       </Box>
     </Box>
   );
+};
+
+const btnStyle = {
+  color: "secondary.main",
+  fontSize: 14,
+  p: "6px 16px",
+  borderRadius: "8px",
+  border: `1px solid ${alpha(theme.palette.onSurface, 0.2)}`,
+  ":hover": {
+    bgcolor: "action.hover",
+  },
 };

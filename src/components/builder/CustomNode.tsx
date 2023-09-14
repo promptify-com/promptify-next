@@ -1,90 +1,61 @@
-import * as React from 'react';
-import { ClassicScheme, RenderEmit, Presets } from 'rete-react-render-plugin';
-import styled, { css } from 'styled-components';
-
-const $nodewidth = 300;
-const $socketmargin = 10;
-const $socketsize = 16;
+import { PromptIcon } from "@/assets/icons";
+import { Avatar } from "@mui/material";
+import * as React from "react";
+import { ClassicScheme, RenderEmit, Presets } from "rete-react-render-plugin";
+import styled from "styled-components";
 
 const { RefSocket } = Presets.classic;
 
-type NodeExtraData = { width?: number; height?: number };
+type NodeExtraData = { width?: number; height?: number; engine?: string };
 
-export const NodeStyles = styled.div<
-  NodeExtraData & { selected: boolean; styles?: (props: any) => any }
->`
-  background: #444444;
-  border: 3px solid grey;
-  border-radius: 10px;
+export const NodeStyles = styled.div<NodeExtraData & { selected: boolean; styles?: (props: any) => any }>`
+  width: 300px;
+  height: 112px;
+  background: #fdfbff;
+  color: #1b1b1e;
+  border: 2px solid;
+  border-color: ${props => (props.selected ? `black` : "transparent")};
+  border-radius: 16px;
   cursor: pointer;
-  box-sizing: border-box;
-  width: ${props => (Number.isFinite(props.width) ? `${props.width}px` : `${$nodewidth}px`)};
-  height: ${props => (Number.isFinite(props.height) ? `${props.height}px` : 'auto')};
-  padding-bottom: 6px;
-  position: relative;
-  user-select: none;
-  ${props =>
-    props.selected &&
-    css`
-      border-color: white;
-    `}
-  .title {
-    color: white;
-    font-family: sans-serif;
-    font-size: 18px;
-    padding: 8px;
-    padding-left: 25px;
-    background-color: #343434;
-    border-top-right-radius: 10px;
-    border-top-left-radius: 10px;
-    font-family: Space Mono;
-  }
-  .output {
-    text-align: right;
-    color: red;
+  box-shadow:
+    0px 6px 6px -3px rgba(225, 226, 236, 0.2),
+    0px 10px 14px 1px rgba(225, 226, 236, 0.14),
+    0px 4px 18px 3px rgba(27, 27, 30, 0.12);
+  .header {
+    font-size: 16px;
+    font-weight: 500;
+    font-family: Poppins;
+    padding: 16px;
     display: flex;
+    gap: 8px;
   }
-  .input {
-    text-align: left;
-    display: flex;
-    width: 80%;
+  .header img {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
   }
-  .output-socket {
-    text-align: right;
-    margin-right: 5px;
-    display: inline-block;
-    align-self: center;
-  }
-  .input-socket {
-    text-align: left;
-    margin-left: 5px;
-    display: inline-block;
-    align-self: center;
-  }
-  .input-title,
-  .output-title {
-    vertical-align: middle;
-    color: white;
-    display: inline-block;
-    font-family: sans-serif;
-    font-size: 14px;
-    margin: ${$socketmargin}px;
-    line-height: ${$socketsize}px;
-    font-family: Space Mono;
-    align-self: center;
-  }
-  .input-control {
-    z-index: 1;
-    width: calc(100% - ${$socketsize + 2 * $socketmargin}px);
-    vertical-align: middle;
-    display: inline-block;
-  }
-  .control {
-    display: block;
-    padding: ${$socketmargin}px ${$socketsize / 2 + $socketmargin}px;
+  hr {
+    border: 0.5px solid #e1e2ec;
+    margin: 0;
   }
   .body {
     display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 8px;
+  }
+  .input,
+  .output {
+    display: flex;
+    gap: 8px;
+    font-size: 14px;
+  }
+  .input-socket [title="socket"],
+  .output-socket [title="socket"] {
+    height: 12px;
+    width: 12px;
+    background: #e1e2ec;
+    border: none;
   }
   ${props => props.styles && props.styles(props)}
 `;
@@ -99,7 +70,7 @@ function sortByIndex<T extends [string, undefined | { index?: number }][]>(entri
 }
 
 type Props<S extends ClassicScheme> = {
-  data: S['Node'] & NodeExtraData;
+  data: S["Node"] & NodeExtraData;
   styles?: () => any;
   emit: RenderEmit<S>;
 };
@@ -110,7 +81,7 @@ export function CustomNode<Scheme extends ClassicScheme>(props: Props<Scheme>) {
   const outputs = Object.entries(props.data.outputs);
   const controls = Object.entries(props.data.controls);
   const selected = props.data.selected || false;
-  const { id, label, width, height } = props.data;
+  const { id, label, width, height, engine } = props.data;
 
   sortByIndex(inputs);
   sortByIndex(outputs);
@@ -119,19 +90,32 @@ export function CustomNode<Scheme extends ClassicScheme>(props: Props<Scheme>) {
   return (
     <NodeStyles
       selected={selected}
-      width={width}
-      height={height}
       styles={props.styles}
       data-testid="node"
     >
-      <div className="title" data-testid="title">
+      <div className="header">
+        <img
+          src={engine}
+          alt={label}
+          loading="lazy"
+          style={{
+            width: "24px",
+            height: "24px",
+            borderRadius: "50%",
+          }}
+        />
         {label}
       </div>
+      <hr />
       <div className="body">
         {inputs.map(
           ([key, input]) =>
             input && (
-              <div className="input" key={key} data-testid={`input-${key}`}>
+              <div
+                className="input"
+                key={key}
+                data-testid={`input-${key}`}
+              >
                 <RefSocket
                   name="input-socket"
                   emit={props.emit}
@@ -141,7 +125,10 @@ export function CustomNode<Scheme extends ClassicScheme>(props: Props<Scheme>) {
                   payload={input.socket}
                 />
                 {input && (!input.control || !input.showControl) && (
-                  <div className="input-title" data-testid="input-title">
+                  <div
+                    className="input-title"
+                    data-testid="input-title"
+                  >
                     {input?.label}
                   </div>
                 )}
@@ -151,8 +138,15 @@ export function CustomNode<Scheme extends ClassicScheme>(props: Props<Scheme>) {
         {outputs.map(
           ([key, output]) =>
             output && (
-              <div className="output" key={key} data-testid={`output-${key}`}>
-                <div className="output-title" data-testid="output-title">
+              <div
+                className="output"
+                key={key}
+                data-testid={`output-${key}`}
+              >
+                <div
+                  className="output-title"
+                  data-testid="output-title"
+                >
                   {output?.label}
                 </div>
                 <RefSocket
