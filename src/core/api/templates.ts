@@ -14,6 +14,7 @@ const getSearchParams = (params: FilterParams) => {
   params.ordering && searchParams.append("ordering", params.ordering);
   params.limit && searchParams.append("limit", String(params.limit));
   params.offset && searchParams.append("offset", String(params.offset));
+  params.status && searchParams.append("status", String(params.status));
 
   return searchParams.toString();
 };

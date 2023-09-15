@@ -9,15 +9,10 @@ interface Props {
   options: IOption[];
   color?: string;
   bgcolor?: string;
-  onChoose?: (option: IOption) => void;
+  onChoose: (option: IOption) => void;
 }
 
-export const InlineOptions: React.FC<Props> = ({
-  options,
-  color = "#9C27B0",
-  bgcolor = "#F3E5F5",
-  onChoose = () => {},
-}) => {
+export const InlineOptions: React.FC<Props> = ({ options, color = "#9C27B0", bgcolor = "#F3E5F5", onChoose }) => {
   const [showMore, setShowMore] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
@@ -33,27 +28,20 @@ export const InlineOptions: React.FC<Props> = ({
     cursor: "pointer",
   };
 
-  const OptionChip = (option: IOption) => (
-    <Chip
-      label={option.label}
-      sx={ChipStyles}
-      onMouseDown={() => {
-        onChoose(option);
-        handleClose();
-      }}
-      size="small"
-    />
-  );
-
-  if (!!!options) return;
+  if (!options.length) return;
 
   return (
     <>
       {options.slice(0, 3).map((option, i) => (
-        <OptionChip
+        <Chip
           key={i}
-          id={option.id}
           label={option.label}
+          sx={ChipStyles}
+          onMouseDown={() => {
+            onChoose(option);
+            handleClose();
+          }}
+          size="small"
         />
       ))}
       {options.length > 3 && (
@@ -82,10 +70,15 @@ export const InlineOptions: React.FC<Props> = ({
               gap={0.5}
             >
               {options.slice(3).map((option, i) => (
-                <OptionChip
+                <Chip
                   key={i}
-                  id={option.id}
                   label={option.label}
+                  sx={ChipStyles}
+                  onMouseDown={() => {
+                    onChoose(option);
+                    handleClose();
+                  }}
+                  size="small"
                 />
               ))}
             </Stack>

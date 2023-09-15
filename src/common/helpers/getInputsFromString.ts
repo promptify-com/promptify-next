@@ -1,9 +1,9 @@
 import { IPromptInput, ChatMessageType } from "../types/prompt";
 
-// TODO: Prompt input number should fixed either "integer" or "number"
 const getType = (str: string): ChatMessageType => {
   switch (str) {
     case "integer":
+    case "number":
       return "number";
     case "code":
       return "code";

@@ -3,18 +3,19 @@ import { Box, Divider, Stack, TextField, Typography } from "@mui/material";
 import { INodesData } from "@/common/types/builder";
 import { InlineOptions } from "../common/InlineOptions";
 import { getInputsFromString } from "@/common/helpers";
-import HighlightWithinTextarea from "react-highlight-within-textarea";
+import HighlightWithinTextarea, { Selection } from "react-highlight-within-textarea";
 
+type PresetType = "node" | "input";
 interface Props {
-  selectedNodeData: INodesData | null;
+  selectedNodeData: INodesData;
+  setSelectedNodeData: (node: INodesData) => void;
   nodes: INodesData[];
-  onChange?: (value: string) => void;
 }
 
-export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, onChange = () => {}, nodes }) => {
+export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelectedNodeData, nodes }) => {
   const cursorPositionRef = useRef(0);
   const [firstAppend, setFirstAppend] = useState(true);
-  const content = selectedNodeData?.content || "";
+  const content = selectedNodeData.content || "";
 
   const highlight = [
     {
@@ -29,46 +30,53 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, onChange = 
 
   const otherNodes = nodes.filter(
     node =>
-      (node.id !== selectedNodeData?.id && node.id !== selectedNodeData?.temp_id) ||
-      (node.temp_id !== selectedNodeData?.id && node.temp_id !== selectedNodeData?.temp_id),
+      (node.id !== selectedNodeData.id && node.id !== selectedNodeData.temp_id) ||
+      (node.temp_id !== selectedNodeData.id && node.temp_id !== selectedNodeData.temp_id),
   );
   const nodesPresets = otherNodes.map(node => ({ id: node.id, label: node.prompt_output_variable || node.title }));
   const inputsPresets = otherNodes
-    .map(node => ({ id: node.id, label: getInputsFromString(node.content) }))
-    .filter(node => node.label && node.label.length)
+    .map(node => ({ id: node.id, inputs: getInputsFromString(node.content) }))
+    .filter(node => node.inputs && node.inputs.length)
     .flatMap(node =>
-      node.label.map(item => ({
+      node.inputs.map(input => ({
         id: node.id,
-        label: item.name,
-        type: item.type.replace("number", "integer"),
+        label: input.name,
+        type: input.type,
+        required: input.required,
+        choices: input.choices,
       })),
     );
 
-  const changeContent = (value: string, selection: any) => {
-    const { anchor, focus } = selection;
-    cursorPositionRef.current = focus || 0;
-    onChange(value);
+  const changeContent = (content: string, selection?: Selection | undefined) => {
+    cursorPositionRef.current = selection?.focus || 0;
+    setSelectedNodeData({
+      ...selectedNodeData,
+      content,
+    });
     setFirstAppend(false);
   };
 
-  const addPreset = (type: "node" | "input", label: string | undefined) => {
+  const addPreset = (type: PresetType, label: string) => {
     if (!label) return;
 
-    let str = "";
+    let preset = "";
+
     if (type === "node") {
-      str = nodesPresets.find(node => node.label === label)?.label || "";
+      preset = nodesPresets.find(node => node.label === label)?.label || "";
     } else {
       const input = inputsPresets.find(input => input.label === label);
-      const type = input?.type.replace("number", "integer");
-      str = input ? "{{" + input.label + ":" + type + "}}" : "";
+      const type = input?.type;
+      preset = input
+        ? "{{" + input.label + ":" + type + ":" + input.required + (input.choices ? `:"${input.choices}"` : "") + "}}"
+        : "";
     }
 
     if (firstAppend) {
-      onChange(content + str + " ");
+      changeContent(content + preset + " ");
     } else {
       const start = content.slice(0, cursorPositionRef.current);
       const end = content.slice(cursorPositionRef.current);
-      onChange(start + str + " " + end);
+      changeContent(start + preset + " " + end);
     }
   };
 
@@ -136,14 +144,24 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, onChange = 
           overflow: "auto",
         }}
       >
-        <div className="area">
+        <Box
+          sx={{
+            p: "24px 32px",
+            height: "calc(100% - 48px)",
+            position: "relative",
+            ".public-DraftEditorPlaceholder-root": {
+              position: "absolute",
+            },
+          }}
+        >
           <HighlightWithinTextarea
             value={content}
             highlight={highlight}
             placeholder="..."
+            stripPastedStyles
             onChange={changeContent}
           />
-        </div>
+        </Box>
       </Box>
     </Stack>
   );
