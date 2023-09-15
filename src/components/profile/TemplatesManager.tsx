@@ -62,8 +62,6 @@ export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title }) => {
     isFetching,
     hasMore,
     status,
-    setStatus,
-    setResetOffset,
   } = useGetTemplatesByFilter();
 
   const openDeletionModal = (template: Templates) => {
@@ -73,7 +71,7 @@ export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title }) => {
 
   useEffect(() => {
     resetOffest();
-  }, [debouncedSearchName, status]);
+  }, [debouncedSearchName]);
 
   const confirmDelete = async () => {
     if (!selectedTemplate) return;
@@ -149,8 +147,7 @@ export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title }) => {
                 }}
                 value={status}
                 onChange={event => {
-                  setResetOffset(true);
-                  setStatus(event.target.value as TemplateStatus);
+                  resetOffest(event.target.value as TemplateStatus);
                 }}
               >
                 <option value="">All Status</option>

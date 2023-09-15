@@ -35,7 +35,6 @@ export function useGetTemplatesByFilter(catId?: number, subCatId?: number) {
   const debouncedSearchName = useDebounce<string>(deferredSearchName, 300);
 
   const [status, setStatus] = useState<string>();
-  const [resetOffset, setResetOffset] = useState(false);
 
   const memoizedFilteredTags = useMemo(() => {
     const filteredTags = tags
@@ -52,18 +51,17 @@ export function useGetTemplatesByFilter(catId?: number, subCatId?: number) {
     categoryId: catId,
     subcategoryId: subCatId,
     title: title ?? debouncedSearchName,
-    offset: resetOffset ? 0 : offset,
+    offset,
     limit: PAGINATION_LIMIT,
     status,
   };
   const { data: templates, isLoading: isTemplatesLoading, isFetching } = useGetTemplatesByFilterQuery(params);
 
   const [allTemplates, setAllTemplates] = useState<Templates[]>([]);
-  const [resetFlag, setResetFlag] = useState(true);
 
   useEffect(() => {
     if (templates?.results) {
-      if (resetFlag) {
+      if (offset === 0) {
         setAllTemplates(templates?.results);
       } else {
         setAllTemplates(prevTemplates => prevTemplates.concat(templates?.results));
@@ -82,16 +80,14 @@ export function useGetTemplatesByFilter(catId?: number, subCatId?: number) {
   }
   const allFilterParamsNull = areAllStatesNull(filters);
 
-  const resetOffest = () => {
+  const resetOffest = (status?: string) => {
     setOffset(0);
-    setResetFlag(true);
+    if (status) setStatus(status);
   };
 
   const handleNextPage = () => {
     if (!!templates?.next) {
-      setResetOffset(false);
       setOffset(prevOffset => prevOffset + PAGINATION_LIMIT);
-      setResetFlag(false);
     }
   };
 
@@ -114,7 +110,5 @@ export function useGetTemplatesByFilter(catId?: number, subCatId?: number) {
     engines: enginesQuery.data,
     hasMore,
     status,
-    setStatus,
-    setResetOffset,
   };
 }
