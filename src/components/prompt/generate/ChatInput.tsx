@@ -57,6 +57,9 @@ export const ChatInput = ({ onChange, value, onSubmit, disabled }: ChatInputProp
               outline: "1px solid surface.1",
               borderRadius: "10px",
             },
+            ".Mui-disabled": {
+              cursor: disabled ? "not-allowed" : "auto",
+            },
           }}
           placeholder="Chat with Promptify"
           inputProps={{ "aria-label": "Name" }}
