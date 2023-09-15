@@ -73,7 +73,7 @@ export const Message = ({ message, hideHeader, onChangeValue }: MessageBlockProp
       <Grid
         flex={1}
         ml={{ xs: hideHeader ? 6.5 : 0, md: hideHeader ? 7 : 0 }}
-        mt={{ xs: hideHeader ? -2 : 0, md: 0 }}
+        mt={{ xs: hideHeader ? -2 : 0, md: hideHeader ? -2 : 0 }}
         display={"flex"}
         flexDirection={"column"}
         gap={"8px"}
