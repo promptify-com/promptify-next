@@ -1,8 +1,7 @@
-import React, { useMemo, useState, FC, useEffect } from "react";
+import React, { useState, FC, useEffect } from "react";
 import {
   Box,
   Button,
-  Chip,
   Dialog,
   DialogActions,
   DialogContent,
@@ -14,16 +13,10 @@ import {
   Modal,
   NativeSelect,
   Stack,
-  TextField,
   Typography,
 } from "@mui/material";
 
-import {
-  templatesApi,
-  useDeleteTemplateMutation,
-  useGetMyTemplatesQuery,
-  useGetTemplatesByFilterQuery,
-} from "@/core/api/templates";
+import { useDeleteTemplateMutation, useGetMyTemplatesQuery } from "@/core/api/templates";
 import { TemplateStatus, Templates } from "@/core/api/dto/templates";
 import TemplateImportModal from "@/components/modals/TemplateImportModal";
 import TemplateForm from "@/components/common/forms/TemplateForm";
@@ -31,10 +24,8 @@ import BaseButton from "@/components/base/BaseButton";
 import { modalStyle } from "@/components/modals/styles";
 import { FormType } from "@/common/types/template";
 import { TemplateStatusArray } from "@/common/constants";
-import { PageLoading } from "../PageLoading";
 import TemplateManagerItem from "./TemplateManagerItem";
-import { ArrowLeft, ArrowRight, ArrowRightAlt, Search } from "@mui/icons-material";
-import TemplatesPaginatedList from "../TemplatesPaginatedList";
+import { Search } from "@mui/icons-material";
 import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
 import CardTemplatePlaceholder from "../placeholders/CardTemplatePlaceHolder";
 import TemplatesInfiniteScroll from "../TemplatesInfiniteScroll";
@@ -57,7 +48,6 @@ export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title }) => {
   const [templateImportOpen, setTemplateImportOpen] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<Templates | null>(null);
   const [templateFormType, setTemplateFormType] = useState<FormType>("create");
-  const [status, setStatus] = useState<TemplateStatus | null>("ALL");
   const [templateFormOpen, setTemplateFormOpen] = useState(false);
   const [confirmDialog, setConfirmDialog] = useState(false);
 
@@ -71,24 +61,17 @@ export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title }) => {
     resetOffest,
     isFetching,
     hasMore,
+    status,
   } = useGetTemplatesByFilter();
 
   const openDeletionModal = (template: Templates) => {
     setSelectedTemplate(template);
     setConfirmDialog(true);
   };
-  const filteredTemplates = useMemo(() => {
-    if (isUserAdmin && status !== "ALL" && adminTemplates) {
-      return adminTemplates.filter(template => {
-        return template?.status === status;
-      });
-    }
-    return adminTemplates ?? [];
-  }, [adminTemplates, status, isUserAdmin]);
 
   useEffect(() => {
     resetOffest();
-  }, [debouncedSearchName, status]);
+  }, [debouncedSearchName]);
 
   const confirmDelete = async () => {
     if (!selectedTemplate) return;
@@ -162,16 +145,16 @@ export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title }) => {
                 sx={{
                   fontSize: 15,
                 }}
-                value={status ?? "ALL"}
+                value={status}
                 onChange={event => {
-                  setStatus(event.target.value as TemplateStatus);
+                  resetOffest(event.target.value as TemplateStatus);
                 }}
               >
-                <option value="ALL">All Status</option>
+                <option value="">All Status</option>
                 {TemplateStatusArray.map((item: TemplateStatus) => (
                   <option
                     key={item}
-                    value={item}
+                    value={item?.toLowerCase()}
                   >
                     {item}
                   </option>
@@ -240,7 +223,7 @@ export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title }) => {
               gap={"14px"}
               width={"100%"}
             >
-              {filteredTemplates?.length === 0 ? (
+              {adminTemplates?.length === 0 ? (
                 <Box
                   display="flex"
                   alignItems="center"
@@ -255,7 +238,7 @@ export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title }) => {
                   onLoadMore={handleNextPage}
                   hasMore={hasMore}
                 >
-                  {filteredTemplates?.map((template: Templates) => (
+                  {adminTemplates?.map((template: Templates) => (
                     <TemplateManagerItem
                       key={template.id}
                       template={template}

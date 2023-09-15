@@ -25,6 +25,7 @@ export interface FilterParams {
   ordering?: string;
   limit?: number;
   offset?: number;
+  status?: string | null;
 }
 
 export interface SelectedFilters {
@@ -90,7 +91,7 @@ export interface Category {
   is_visible: boolean;
 }
 
-export type TemplateStatus = "ALL" | "DRAFT" | "PENDING_REVIEW" | "PUBLISHED" | "ARCHIVED";
+export type TemplateStatus = "DRAFT" | "PENDING_REVIEW" | "PUBLISHED" | "ARCHIVED";
 
 export interface TemplateQuestions {
   [key: string]: {
