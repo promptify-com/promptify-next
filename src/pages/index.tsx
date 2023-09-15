@@ -135,7 +135,7 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
                 <TemplatesSection
                   isLoading={isSuggestedTemplateLoading}
                   templates={suggestedTemplates}
-                  title="You may like these templates:"
+                  title=" You may like these prompt templates:"
                   type="suggestedTemplates"
                 />
                 <CategoriesSection
