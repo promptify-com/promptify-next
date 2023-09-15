@@ -134,6 +134,8 @@ export interface Templates {
   meta_description: string;
   meta_keywords: string;
   status: TemplateStatus;
+  last_api_run: Date;
+  api_runs: number;
 }
 
 export interface TemplatesWithPagination {

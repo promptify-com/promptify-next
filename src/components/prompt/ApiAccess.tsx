@@ -5,6 +5,7 @@ import { Box, Button, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { Bolt } from "@mui/icons-material";
 import dynamic from "next/dynamic";
+import moment from "moment";
 
 const ApiAccessModal = dynamic(() => import("../modals/ApiAccessModal"));
 
@@ -18,7 +19,7 @@ const totalRuns = 246;
 
 const ApiAccess: React.FC<Props> = ({ templateData }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  console.log(templateData);
   return (
     <Box
       display="flex"
@@ -91,20 +92,20 @@ const ApiAccess: React.FC<Props> = ({ templateData }) => {
         </Typography>
       </Button>
       <Box
-        display="none"
+        display="flex"
         justifyContent="space-between"
         sx={{ opacity: 0.5 }}
       >
         <Typography fontSize={12}>Last access:</Typography>
-        <Typography fontSize={12}>{lastAccess}</Typography>
+        <Typography fontSize={12}>{moment(templateData.last_api_run).fromNow()}</Typography>
       </Box>
       <Box
-        display="none"
+        display="flex"
         justifyContent="space-between"
         sx={{ opacity: 0.5 }}
       >
         <Typography fontSize={12}>Total Runs:</Typography>
-        <Typography fontSize={12}>{totalRuns}</Typography>
+        <Typography fontSize={12}>{templateData.api_runs}</Typography>
       </Box>
       {isModalOpen && (
         <ApiAccessModal
