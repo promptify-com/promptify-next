@@ -36,11 +36,7 @@ export const ChatInput = ({ onChange, value, onSubmit, disabled, answers, onAnsw
           alignItems={"flex-start"}
           alignContent={"flex-start"}
           alignSelf={"stretch"}
-          flexWrap={{ xs: "nowrap", md: "wrap" }}
-          sx={{
-            overflow: { xs: "auto", md: "initial" },
-            WebkitOverflowScrolling: { xs: "touch", md: "initial" },
-          }}
+          flexWrap={"wrap"}
           gap={"8px"}
         >
           {answers.map(answer => (
