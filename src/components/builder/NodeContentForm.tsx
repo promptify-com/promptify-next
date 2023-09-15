@@ -15,7 +15,7 @@ interface Props {
 export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelectedNodeData, nodes }) => {
   const cursorPositionRef = useRef(0);
   const [firstAppend, setFirstAppend] = useState(true);
-  const content = selectedNodeData?.content || "";
+  const content = selectedNodeData.content || "";
 
   const highlight = [
     {
@@ -30,8 +30,8 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
 
   const otherNodes = nodes.filter(
     node =>
-      (node.id !== selectedNodeData?.id && node.id !== selectedNodeData?.temp_id) ||
-      (node.temp_id !== selectedNodeData?.id && node.temp_id !== selectedNodeData?.temp_id),
+      (node.id !== selectedNodeData.id && node.id !== selectedNodeData.temp_id) ||
+      (node.temp_id !== selectedNodeData.id && node.temp_id !== selectedNodeData.temp_id),
   );
   const nodesPresets = otherNodes.map(node => ({ id: node.id, label: node.prompt_output_variable || node.title }));
   const inputsPresets = otherNodes
@@ -144,14 +144,24 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
           overflow: "auto",
         }}
       >
-        <div className="area">
+        <Box
+          sx={{
+            p: "24px 32px",
+            height: "calc(100% - 48px)",
+            position: "relative",
+            ".public-DraftEditorPlaceholder-root": {
+              position: "absolute",
+            },
+          }}
+        >
           <HighlightWithinTextarea
             value={content}
             highlight={highlight}
             placeholder="..."
+            stripPastedStyles
             onChange={changeContent}
           />
-        </div>
+        </Box>
       </Box>
     </Stack>
   );

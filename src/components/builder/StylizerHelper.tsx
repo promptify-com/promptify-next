@@ -1,46 +1,20 @@
-import React, { useState } from "react";
+import React from "react";
 import { Box, Typography, Slider, Stack, IconButton } from "@mui/material";
 import { IPromptParams } from "@/common/types/builder";
-import { IParameters } from "@/common/types";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityIconOff from "@mui/icons-material/VisibilityOff";
 import { DeleteOutline, LockOpen } from "@mui/icons-material";
 import LockIcon from "@mui/icons-material/Lock";
-import DeleteIcon from "@mui/icons-material/Delete";
 import { theme } from "@/theme";
 
 interface IProps {
-  parameters: IParameters[];
   promptParams: IPromptParams[] | undefined;
   handleChangeScore: (val1: number, val2: number) => void;
   handleChangeOptions: (parameterId: number, option: string, newVal: boolean) => void;
   removeParam: (paramId: number) => void;
 }
 
-export const StylizerHelper = ({
-  parameters,
-  promptParams,
-  handleChangeScore,
-  handleChangeOptions,
-  removeParam,
-}: IProps) => {
-  const getDescriptionName = (id: number) => {
-    const parameter = parameters.find(param => param.id === id);
-    return parameter?.name || "";
-  };
-
-  const getDescription = (id: number) => {
-    if (promptParams && parameters) {
-      const parameter = parameters.filter(param => param.id === id)[0]?.score_descriptions;
-      const allDescriptions = promptParams.find(description => {
-        return description.parameter_id === id;
-      });
-      const currentScore = allDescriptions?.score;
-      const description = parameter?.find(item => item.score === currentScore);
-      return description?.description || "";
-    }
-  };
-
+export const StylizerHelper = ({ promptParams, handleChangeScore, handleChangeOptions, removeParam }: IProps) => {
   return (
     <Stack gap={2}>
       {promptParams &&
@@ -65,7 +39,7 @@ export const StylizerHelper = ({
                       color: "onSurface",
                     }}
                   >
-                    {getDescriptionName(param.parameter_id)}
+                    {param.name}
                   </Typography>
                   <Slider
                     sx={{ color: theme.palette.onSurface }}
@@ -116,7 +90,7 @@ export const StylizerHelper = ({
                   my: "8px",
                 }}
               >
-                {getDescription(param.parameter_id)}
+                {param.descriptions?.find(desc => desc.score === param.score)?.description}
               </Typography>
             </Box>
           );

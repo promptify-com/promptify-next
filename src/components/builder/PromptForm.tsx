@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { Box, IconButton, Stack, Tab, Tabs, Typography, alpha } from "@mui/material";
 import { RenameForm } from "../common/forms/RenameForm";
-import { INodesData, IPromptOptions, IPromptParams } from "@/common/types/builder";
-import { Node } from "rete/_types/presets/classic";
+import { INodesData } from "@/common/types/builder";
 import { useGetEnginesQuery } from "@/core/api/engines";
 import { Close, DeleteOutline, ModeEdit, Settings, Tune } from "@mui/icons-material";
 import { theme } from "@/theme";

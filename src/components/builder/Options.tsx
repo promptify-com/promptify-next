@@ -12,7 +12,7 @@ interface OptionsProps {
 export const Options = ({ selectedNodeData, setSelectedNodeData }: OptionsProps) => {
   const { data: engines } = useGetEnginesQuery();
 
-  const [useDefault, setUseDefault] = useState(!!!selectedNodeData.model_parameters);
+  const [useDefault, setUseDefault] = useState(!selectedNodeData.model_parameters);
 
   const setOptionValue = (e: React.ChangeEvent<HTMLInputElement>) => {
     let { name, value, type, checked } = e.target;

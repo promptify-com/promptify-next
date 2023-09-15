@@ -30,7 +30,6 @@ import { deletePrompt, updateTemplate } from "@/hooks/api/templates";
 import { ContentCopy } from "@mui/icons-material";
 import { INodesData } from "@/common/types/builder";
 import TemplateForm from "@/components/common/forms/TemplateForm";
-import { Templates } from "@/core/api/dto/templates";
 import { promptRandomId } from "@/common/helpers/promptRandomId";
 import { isPromptVariableValid } from "@/common/helpers/isPromptVariableValid";
 
@@ -347,10 +346,10 @@ export const Builder = () => {
 
     const nodeId = Number(selectedNode.id) || Number(selectedNode.temp_id);
     if (nodeId !== selectedNodeData.id && nodeId !== selectedNodeData.temp_id) return;
-    const engine = engines?.find(_engine => _engine.id === selectedNodeData?.engine_id);
+    const engine = engines?.find(_engine => _engine.id === selectedNodeData.engine_id);
 
     if (selectedNode.label !== selectedNodeData.title || selectedNode.engineIcon !== engine?.icon) {
-      selectedNode.label = selectedNodeData?.title;
+      selectedNode.label = selectedNodeData.title;
       selectedNode.engineIcon = engine?.icon || "";
       editor?.area.update("node", selectedNode.id);
     }

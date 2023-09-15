@@ -21,6 +21,7 @@ import { INodesData, IPromptParams } from "@/common/types/builder";
 import { IParametersPreset } from "@/common/types/parametersPreset";
 import { Add, Bolt, Save } from "@mui/icons-material";
 import { theme } from "@/theme";
+import { IParameters } from "@/common/types";
 
 interface IProps {
   selectedNodeData: INodesData;
@@ -45,7 +46,7 @@ export const Stylizer = ({ selectedNodeData, setSelectedNodeData }: IProps) => {
   const handleChangeScore = (score: number, id: number) => {
     const newArray: IPromptParams[] = [];
 
-    selectedNodeData?.parameters.forEach(item => {
+    selectedNodeData.parameters.forEach(item => {
       newArray.push({
         parameter_id: item.parameter_id,
         score: item.parameter_id === id ? score : item.score,
@@ -61,15 +62,15 @@ export const Stylizer = ({ selectedNodeData, setSelectedNodeData }: IProps) => {
 
   const removeParam = (paramId: number) => {
     changePromptParams([
-      ...(selectedNodeData?.parameters.filter(param => param.parameter_id !== paramId) as IPromptParams[]),
+      ...(selectedNodeData.parameters.filter(param => param.parameter_id !== paramId) as IPromptParams[]),
     ]);
   };
 
   // Handles change of prompt parameter is_visible and is_editable.
   // Prefered to handle them dynamically [option] instead of switch depending on the option
   const handleChangeOptions = (parameterId: number, option: string, newVal: boolean) => {
-    if (selectedNodeData?.parameters) {
-      const updatedPromptParams = selectedNodeData?.parameters.map(param => {
+    if (selectedNodeData.parameters) {
+      const updatedPromptParams = selectedNodeData.parameters.map(param => {
         return {
           ...param,
           [option]: param.parameter_id === parameterId ? newVal : (param as any)[option],
@@ -79,27 +80,19 @@ export const Stylizer = ({ selectedNodeData, setSelectedNodeData }: IProps) => {
     }
   };
 
-  const handleClick = (id: number) => {
-    if (selectedNodeData?.parameters) {
-      const areIdAreAdded = selectedNodeData?.parameters?.find(prompt => {
-        return prompt.parameter_id === id;
-      });
-
-      if (!areIdAreAdded) {
-        changePromptParams([
-          ...selectedNodeData?.parameters,
-          {
-            parameter_id: id,
-            score: 1,
-            name: parameters.filter(param => param.id === id)[0].name,
-            is_visible: true,
-            is_editable: true,
-            descriptions: parameters.filter(param => param.id === id)[0].score_descriptions,
-          },
-        ]);
-        setOpenParamsModal(false);
-      }
-    }
+  const addParameter = (param: IParameters) => {
+    changePromptParams([
+      ...selectedNodeData.parameters,
+      {
+        parameter_id: param.id,
+        score: 1,
+        name: param.name,
+        is_visible: true,
+        is_editable: true,
+        descriptions: param.score_descriptions,
+      },
+    ]);
+    setOpenParamsModal(false);
   };
 
   const choosePreset = (preset: IParametersPreset) => {
@@ -119,10 +112,10 @@ export const Stylizer = ({ selectedNodeData, setSelectedNodeData }: IProps) => {
   };
 
   const saveNewPreset = () => {
-    if (selectedNodeData?.parameters.length) {
+    if (selectedNodeData.parameters.length) {
       const newPreset = {
         name: newPresetName,
-        parameters: selectedNodeData?.parameters.map(param => {
+        parameters: selectedNodeData.parameters.map(param => {
           return {
             id: param.parameter_id,
             score: param.score,
@@ -146,8 +139,7 @@ export const Stylizer = ({ selectedNodeData, setSelectedNodeData }: IProps) => {
       }}
     >
       <StylizerHelper
-        parameters={parameters}
-        promptParams={selectedNodeData?.parameters}
+        promptParams={selectedNodeData.parameters}
         handleChangeScore={handleChangeScore}
         handleChangeOptions={handleChangeOptions}
         removeParam={removeParam}
@@ -205,7 +197,7 @@ export const Stylizer = ({ selectedNodeData, setSelectedNodeData }: IProps) => {
         >
           Load preset
         </Button>
-        {selectedNodeData?.parameters && selectedNodeData?.parameters.length > 0 && (
+        {selectedNodeData.parameters && selectedNodeData.parameters.length > 0 && (
           <Button
             variant="text"
             startIcon={<Save />}
@@ -266,11 +258,10 @@ export const Stylizer = ({ selectedNodeData, setSelectedNodeData }: IProps) => {
       </Dialog>
 
       <ParametersModal
-        parameters={parameters}
         open={openParamsModal}
-        handleClose={() => setOpenParamsModal(false)}
-        handleClick={handleClick}
         selectedNodeData={selectedNodeData}
+        onClose={() => setOpenParamsModal(false)}
+        onClick={addParameter}
       />
 
       <Dialog
