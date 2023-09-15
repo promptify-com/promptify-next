@@ -94,13 +94,17 @@ export type TemplateStatus = "ALL" | "DRAFT" | "PENDING_REVIEW" | "PUBLISHED" | 
 
 export interface TemplateQuestions {
   [key: string]: {
-    type?: InputType;
-    name: string;
-    required?: boolean;
     question: string;
-    choices?: string[] | null;
-    prompt?: number;
   };
+}
+
+export interface UpdatedQuestionTemplate {
+  type?: InputType;
+  name: string;
+  required?: boolean;
+  question: string;
+  choices?: string[] | null;
+  prompt?: number;
 }
 export interface Templates {
   id: number;

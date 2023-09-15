@@ -1,16 +1,17 @@
 import React, { useEffect, useRef } from "react";
 import { Button, Grid, Typography, CircularProgress } from "@mui/material";
 
-import { IAnswer, IMessage } from "./ChatBox";
 import { Message } from "./Message";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { useAppSelector } from "@/hooks/useStore";
 import ThreeDotsAnimation from "@/components/design-system/ThreeDotsAnimation";
+import { Clear } from "@mui/icons-material";
+import { IAnswer, IMessage } from "@/common/types/chat";
 
 interface Props {
   messages: IMessage[];
   answers: IAnswer[];
-  onAnswerClear: () => void;
+  onAnswerClear: (answer: IAnswer) => void;
   onGenerate: () => void;
   showGenerate: boolean;
   onChange?: (value: string) => void;
@@ -37,6 +38,8 @@ export const ChatInterface = ({
     <Grid
       ref={messagesContainerRef}
       display={"flex"}
+      flex={1}
+      width={"100%"}
       flexDirection={"column"}
       alignItems={"start"}
       pb={{ xs: "50px", md: 0 }}
@@ -109,8 +112,9 @@ export const ChatInterface = ({
         </Button>
       )}
 
-      {/* {answers.length > 0 && (
+      {answers.length > 0 && (
         <Grid
+          mt={2}
           display={"flex"}
           alignItems={"center"}
           flexWrap={"wrap"}
@@ -119,10 +123,10 @@ export const ChatInterface = ({
         >
           {answers.map(answer => (
             <Button
+              onClick={() => onAnswerClear(answer)}
               key={answer.inputName}
               startIcon={
                 <Clear
-                  onClick={onAnswerClear}
                   sx={{
                     opacity: 0.5,
                   }}
@@ -132,7 +136,7 @@ export const ChatInterface = ({
               size="small"
               sx={{
                 p: "1px 10px",
-                fontSize: "11px",
+                fontSize: 15,
                 fontWeight: "500",
                 bgcolor: "surface.3",
                 color: "onSurface",
@@ -147,7 +151,7 @@ export const ChatInterface = ({
             </Button>
           ))}
         </Grid>
-      )} */}
+      )}
     </Grid>
   );
 };

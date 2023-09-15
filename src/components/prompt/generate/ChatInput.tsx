@@ -12,7 +12,8 @@ interface ChatInputProps {
 export const ChatInput = ({ onChange, value, onSubmit, disabled }: ChatInputProps) => {
   return (
     <Grid
-      p={"16px"}
+      p={"0px 16px"}
+      pb={"16px"}
       position={{ xs: "fixed", md: "inherit" }}
       bottom={"60px"}
       zIndex={99}
@@ -63,6 +64,7 @@ export const ChatInput = ({ onChange, value, onSubmit, disabled }: ChatInputProp
           value={value}
           onKeyPress={e => {
             if (e.key === "Enter") {
+              e.preventDefault();
               onSubmit();
             }
           }}

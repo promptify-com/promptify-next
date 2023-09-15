@@ -18,7 +18,7 @@ export const Message = ({ message, hideHeader, onChangeValue }: MessageBlockProp
 
   const { fromUser, type, text, createdAt, choices } = message;
 
-  const name = fromUser ? currentUser?.username : "Promptify";
+  const name = fromUser ? currentUser?.first_name ?? currentUser?.username : "Promptify";
 
   const [selectedValue, setSelectedValue] = useState("");
   const [codeFieldPopup, setCodeFieldPopup] = useState(false);
