@@ -7,8 +7,8 @@ interface Props {
   label: string;
   initialValue: string | undefined;
   onChange?: (value: string) => void;
-  onSave?: (value: string) => void;
-  onCancel?: () => void;
+  onSave: (value: string) => void;
+  onCancel: () => void;
   disabled?: boolean;
 }
 
@@ -16,8 +16,8 @@ export const RenameForm: React.FC<Props> = ({
   label,
   initialValue,
   onChange = () => {},
-  onSave = () => {},
-  onCancel = () => {},
+  onSave,
+  onCancel,
   disabled,
 }) => {
   const [value, setValue] = useState(initialValue || "");
@@ -59,7 +59,7 @@ export const RenameForm: React.FC<Props> = ({
             ":hover": { color: "primary.main" },
             ":disabled": { bgcolor: "transparent", borderColor: alpha(theme.palette.primary.main, 0.15) },
           }}
-          disabled={!!!value?.length || disabled}
+          disabled={!value?.length || disabled}
           onClick={() => onSave(value)}
         >
           Ok

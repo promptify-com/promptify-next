@@ -4,6 +4,7 @@ import { IPromptInput, InputType } from "../types/prompt";
 const getType = (str: string): InputType => {
   switch (str) {
     case "integer":
+    case "number":
       return "number";
     case "code":
       return "code";
