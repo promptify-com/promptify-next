@@ -7,12 +7,12 @@ import HighlightWithinTextarea, { Selection } from "react-highlight-within-texta
 
 type PresetType = "node" | "input";
 interface Props {
-  selectedNodeData: INodesData | null;
+  selectedNodeData: INodesData;
+  setSelectedNodeData: (node: INodesData) => void;
   nodes: INodesData[];
-  onChange?: (value: string) => void;
 }
 
-export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, onChange = () => {}, nodes }) => {
+export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelectedNodeData, nodes }) => {
   const cursorPositionRef = useRef(0);
   const [firstAppend, setFirstAppend] = useState(true);
   const content = selectedNodeData?.content || "";
@@ -47,9 +47,12 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, onChange = 
       })),
     );
 
-  const changeContent = (value: string, selection: Selection | undefined) => {
+  const changeContent = (content: string, selection?: Selection | undefined) => {
     cursorPositionRef.current = selection?.focus || 0;
-    onChange(value);
+    setSelectedNodeData({
+      ...selectedNodeData,
+      content,
+    });
     setFirstAppend(false);
   };
 
@@ -69,11 +72,11 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, onChange = 
     }
 
     if (firstAppend) {
-      onChange(content + preset + " ");
+      changeContent(content + preset + " ");
     } else {
       const start = content.slice(0, cursorPositionRef.current);
       const end = content.slice(cursorPositionRef.current);
-      onChange(start + preset + " " + end);
+      changeContent(start + preset + " " + end);
     }
   };
 

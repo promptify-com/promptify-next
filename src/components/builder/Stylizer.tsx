@@ -13,9 +13,6 @@ import {
   IconButton,
   alpha,
 } from "@mui/material";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import TuneIcon from "@mui/icons-material/Tune";
 import { useParameters } from "@/hooks/api/parameters";
 import { useParametersPresets, useUpdateParametersPresets } from "@/hooks/api/parametersPresets";
 import ParametersModal from "./ParametersModal";
@@ -26,17 +23,24 @@ import { Add, Bolt, Save } from "@mui/icons-material";
 import { theme } from "@/theme";
 
 interface IProps {
-  changePromptParams: (value: IPromptParams[]) => void;
-  selectedNodeData: INodesData | null;
+  selectedNodeData: INodesData;
+  setSelectedNodeData: (node: INodesData) => void;
 }
 
-export const Stylizer = ({ changePromptParams, selectedNodeData }: IProps) => {
+export const Stylizer = ({ selectedNodeData, setSelectedNodeData }: IProps) => {
   const [parameters] = useParameters();
   const [presets, setPresets] = useParametersPresets();
   const [expandPresets, setExpandPresets] = useState(false);
   const [openParamsModal, setOpenParamsModal] = useState(false);
   const [openNewPreset, setOpenNewPreset] = useState(false);
   const [newPresetName, setNewPresetName] = useState("");
+
+  const changePromptParams = (params: IPromptParams[]) => {
+    setSelectedNodeData({
+      ...selectedNodeData,
+      parameters: params,
+    });
+  };
 
   const handleChangeScore = (score: number, id: number) => {
     const newArray: IPromptParams[] = [];

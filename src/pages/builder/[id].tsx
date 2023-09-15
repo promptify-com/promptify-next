@@ -605,56 +605,60 @@ export const Builder = () => {
               </Box>
             </Box>
           </Grid>
-          <SwipeableDrawer
-            anchor={"left"}
-            open={templateDrawerOpen}
-            onClose={() => toggleTemplateDrawer(false)}
-            onOpen={() => toggleTemplateDrawer(true)}
-            PaperProps={{
-              sx: {
-                width: "430px",
-                minWidth: "30svw",
-              },
-            }}
-          >
-            <Box
-              sx={{
-                bgcolor: "#FDFBFF",
-                p: "24px 32px",
+          {!!promptsData && (
+            <SwipeableDrawer
+              anchor={"left"}
+              open={templateDrawerOpen}
+              onClose={() => toggleTemplateDrawer(false)}
+              onOpen={() => toggleTemplateDrawer(true)}
+              PaperProps={{
+                sx: {
+                  width: "430px",
+                  minWidth: "30svw",
+                },
               }}
             >
-              <TemplateForm
-                type="edit"
-                templateData={promptsData as Templates}
-                darkMode
-                onSaved={() => window.location.reload()}
-                onClose={() => toggleTemplateDrawer(false)}
-              />
-            </Box>
-          </SwipeableDrawer>
-          <Drawer
-            variant="persistent"
-            anchor="right"
-            open={!!selectedNode}
-            sx={{
-              "& .MuiDrawer-paper": {
-                width: "430px",
-                minWidth: "30svw",
-              },
-            }}
-          >
-            <PromptForm
-              removeNode={() => setConfirmDialogOpen(true)}
-              selectedNodeData={selectedNodeData}
-              setSelectedNodeData={setSelectedNodeData}
-              nodeCount={nodeCount}
-              nodesData={nodesData}
-              setNodesData={setNodesData}
-              close={() => {
-                setSelectedNode(null);
+              <Box
+                sx={{
+                  bgcolor: "#FDFBFF",
+                  p: "24px 32px",
+                }}
+              >
+                <TemplateForm
+                  type="edit"
+                  templateData={promptsData}
+                  darkMode
+                  onSaved={() => window.location.reload()}
+                  onClose={() => toggleTemplateDrawer(false)}
+                />
+              </Box>
+            </SwipeableDrawer>
+          )}
+          {!!selectedNode && !!selectedNodeData && (
+            <Drawer
+              variant="persistent"
+              anchor="right"
+              open={!!selectedNode && !!selectedNodeData}
+              sx={{
+                "& .MuiDrawer-paper": {
+                  width: "430px",
+                  minWidth: "30svw",
+                },
               }}
-            />
-          </Drawer>
+            >
+              <PromptForm
+                removeNode={() => setConfirmDialogOpen(true)}
+                selectedNodeData={selectedNodeData}
+                setSelectedNodeData={setSelectedNodeData}
+                nodeCount={nodeCount}
+                nodesData={nodesData}
+                setNodesData={setNodesData}
+                close={() => {
+                  setSelectedNode(null);
+                }}
+              />
+            </Drawer>
+          )}
         </Grid>
         <Snackbar
           open={snackBarOpen}

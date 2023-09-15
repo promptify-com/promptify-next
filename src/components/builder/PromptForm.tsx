@@ -33,7 +33,7 @@ const a11yProps = (index: number) => {
 interface Props {
   close: () => void;
   removeNode: () => void;
-  selectedNodeData: INodesData | null;
+  selectedNodeData: INodesData;
   setSelectedNodeData: (value: INodesData) => void;
   nodeCount: number;
   nodesData: INodesData[];
@@ -50,56 +50,11 @@ export const PromptForm: React.FC<Props> = ({
   const [renameAllow, setRenameAllow] = useState(false);
 
   const { data: engines } = useGetEnginesQuery();
-  const engine = engines?.find(_engine => _engine.id === selectedNodeData?.engine_id);
+  const engine = engines?.find(_engine => _engine.id === selectedNodeData.engine_id);
 
   const [tabsValue, setTabsValue] = useState(0);
   const changeTab = (e: React.SyntheticEvent, newValue: number) => {
     setTabsValue(newValue);
-  };
-
-  const changeTitle = (title: string) => {
-    if (!selectedNodeData) return;
-
-    setSelectedNodeData({
-      ...selectedNodeData,
-      title,
-    });
-  };
-
-  const changeContent = (content: string = "") => {
-    if (!selectedNodeData) return;
-
-    setSelectedNodeData({
-      ...selectedNodeData,
-      content,
-    });
-  };
-
-  const changePromptParams = (params: IPromptParams[]) => {
-    if (!selectedNodeData) return;
-
-    setSelectedNodeData({
-      ...selectedNodeData,
-      parameters: params,
-    });
-  };
-
-  const changePromptOptions = (options: IPromptOptions) => {
-    if (!selectedNodeData) return;
-
-    setSelectedNodeData({
-      ...selectedNodeData,
-      ...options,
-    });
-  };
-
-  const changePromptEngine = (engineId: number) => {
-    if (!selectedNodeData) return;
-
-    setSelectedNodeData({
-      ...selectedNodeData,
-      engine_id: engineId,
-    });
   };
 
   return (
@@ -137,7 +92,7 @@ export const PromptForm: React.FC<Props> = ({
                 gap={0.5}
               >
                 <Typography sx={{ color: "onSurface", fontSize: 20, fontWeight: 400 }}>
-                  {selectedNodeData?.title || ""}
+                  {selectedNodeData.title || ""}
                 </Typography>
                 <ModeEdit
                   sx={{ cursor: "pointer", fontSize: "16px" }}
@@ -177,14 +132,12 @@ export const PromptForm: React.FC<Props> = ({
         ) : (
           <RenameForm
             label="Prompt"
-            initialValue={selectedNodeData?.title}
+            initialValue={selectedNodeData.title}
             onSave={val => {
-              changeTitle(val);
+              setSelectedNodeData({ ...selectedNodeData, title: val });
               setRenameAllow(false);
             }}
-            onCancel={() => {
-              setRenameAllow(false);
-            }}
+            onCancel={() => setRenameAllow(false)}
           />
         )}
       </Box>
@@ -226,8 +179,8 @@ export const PromptForm: React.FC<Props> = ({
         >
           <NodeContentForm
             selectedNodeData={selectedNodeData}
+            setSelectedNodeData={setSelectedNodeData}
             nodes={nodesData}
-            onChange={changeContent}
           />
         </CustomTabPanel>
         <CustomTabPanel
@@ -239,8 +192,8 @@ export const PromptForm: React.FC<Props> = ({
           }}
         >
           <Stylizer
-            changePromptParams={changePromptParams}
             selectedNodeData={selectedNodeData}
+            setSelectedNodeData={setSelectedNodeData}
           />
         </CustomTabPanel>
         <CustomTabPanel
@@ -252,9 +205,8 @@ export const PromptForm: React.FC<Props> = ({
           }}
         >
           <Options
-            changeEngine={changePromptEngine}
-            onUpdateNodeOptions={changePromptOptions}
             selectedNodeData={selectedNodeData}
+            setSelectedNodeData={setSelectedNodeData}
           />
         </CustomTabPanel>
       </Stack>
