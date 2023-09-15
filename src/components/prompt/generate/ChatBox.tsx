@@ -471,6 +471,9 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
     setAnswers(updatedAnswers);
   };
 
+  const ExecutionCardHeaderHeight = "394px";
+  const BottomTabsMobileHeight = "240px";
+
   return (
     <Grid
       width={"100%"}
@@ -563,8 +566,8 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
             flexDirection: "column",
             alignItems: "flex-start",
             gap: "8px",
-            maxHeight: { xs: "70vh", md: "calc(100vh - 394px)" },
-            minHeight: { xs: "calc(100vh - 240px)", md: "auto" },
+            maxHeight: { xs: "70vh", md: `calc(100vh - ${ExecutionCardHeaderHeight})` },
+            minHeight: { xs: `calc(100vh - ${BottomTabsMobileHeight} )`, md: "auto" },
             borderTop: { xs: "none", md: "2px solid #ECECF4" },
           }}
         >
