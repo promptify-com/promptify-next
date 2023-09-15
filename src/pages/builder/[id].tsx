@@ -218,7 +218,7 @@ export const Builder = () => {
         temp_id: node.temp_id,
         count: nodeCount.toString(),
         title: `Prompt #${nodeCount}`,
-        content: "Describe here prompt parameters, for example {{name:text}} or {{age:integer}}",
+        content: "Describe here prompt parameters, for example {{name:text}} or {{age:number}}",
         engine_id: engines ? engines[0].id : 0,
         dependencies: [],
         parameters: [],

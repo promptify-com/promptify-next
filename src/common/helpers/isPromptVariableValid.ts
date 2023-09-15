@@ -1,7 +1,7 @@
 export const isPromptVariableValid = (content: string) => {
   const validTextRegex = /^[a-zA-Z]+$/;
   const regex = /{{(.*?)}}/g;
-  const validTypes = ["text", "integer", "code", "choices"];
+  const validTypes = ["text", "number", "integer", "code", "choices"];
   let match;
 
   while ((match = regex.exec(content)) !== null) {

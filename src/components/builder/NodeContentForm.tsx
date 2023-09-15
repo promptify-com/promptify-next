@@ -41,7 +41,7 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, onChange = 
       node.inputs.map(input => ({
         id: node.id,
         label: input.name,
-        type: input.type.replace("number", "integer"),
+        type: input.type,
         required: input.required,
         choices: input.choices,
       })),
@@ -62,7 +62,7 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, onChange = 
       preset = nodesPresets.find(node => node.label === label)?.label || "";
     } else {
       const input = inputsPresets.find(input => input.label === label);
-      const type = input?.type.replace("number", "integer");
+      const type = input?.type;
       preset = input
         ? "{{" + input.label + ":" + type + ":" + input.required + (input.choices ? `:"${input.choices}"` : "") + "}}"
         : "";
