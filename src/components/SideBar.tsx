@@ -104,7 +104,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
       external: false,
     },
     {
-      name: "Browse",
+      name: "Prompts",
       href: "/explore",
       icon: <Search />,
       active: isExplorePage,
@@ -216,7 +216,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
             <Grid key={item.name}>
               <ListItem
                 disablePadding
-                onClick={() => item.name == "Browse" && setShowFilters(!showFilters)}
+                onClick={() => item.name === "Prompts" && setShowFilters(!showFilters)}
               >
                 <Link
                   href={item.href}
@@ -226,7 +226,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
                   }}
                   target={item.external ? "_blank" : ""}
                   onClick={e => {
-                    if (item.name === "Browse" && isExplorePage) {
+                    if (item.name === "Prompts" && isExplorePage) {
                       e.preventDefault();
                     }
                   }}
@@ -272,7 +272,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
                         {item.name}
                       </Typography>
                     </Box>
-                    {item.name === "Browse" &&
+                    {item.name === "Prompts" &&
                       isExplorePage &&
                       (showFilters ? (
                         <ExpandLess sx={{ mr: -1, color: "text.secondary" }} />
@@ -283,7 +283,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
                 </Link>
               </ListItem>
               <Collapse
-                in={showFilters && isExplorePage && item.name === "Browse"}
+                in={showFilters && isExplorePage && item.name === "Prompts"}
                 timeout={"auto"}
                 unmountOnExit
               >

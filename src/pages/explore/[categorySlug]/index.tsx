@@ -55,7 +55,7 @@ export default function Page({ category }: { category: Category }) {
                     variant="text"
                     sx={{ fontSize: 19, color: "onSurface", ml: -3 }}
                   >
-                    <KeyboardArrowLeft /> {category.name}
+                    <KeyboardArrowLeft /> {category.name} Prompt Template
                   </Button>
                 </Link>
                 <Typography variant="body1">{category.description}</Typography>{" "}

@@ -41,7 +41,7 @@ export const links = [
     external: false,
   },
   {
-    label: "Browse",
+    label: "Prompts",
     icon: <Search />,
     href: "/explore",
     external: false,
