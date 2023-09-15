@@ -56,6 +56,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
   const [userAnswer, setUserAnswer] = useState("");
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [disableChatInput, setDisableChatInput] = useState(false);
 
   const initialMessages = (questions: UpdatedQuestionTemplate[]) => {
     const welcomeMessage = [
@@ -81,7 +82,6 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
     } else {
       setCurrentQuestionIndex(0);
     }
-
     setMessages(welcomeMessage);
     setAnswers([]);
     setShowGenerate(false);
@@ -111,7 +111,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
           required: required,
           type: type,
           choices: choices,
-          prompt: prompt,
+          prompt: prompt!,
         };
         updatedQuestions.push(updatedQuestion);
       }
@@ -121,9 +121,31 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
     return [updatedQuestions, inputs];
   }, [template]);
 
+  useEffect(() => {
+    if (generatingResponse) setGeneratedExecution(generatingResponse);
+  }, [generatingResponse]);
+
+  useEffect(() => {
+    if (newExecutionId) {
+      setGeneratingResponse(prevState => ({
+        id: newExecutionId,
+        created_at: prevState?.created_at ?? new Date(),
+        data: prevState?.data ?? [],
+      }));
+    }
+  }, [newExecutionId]);
+
+  useEffect(() => {
+    if (currentQuestion && (currentQuestion.type === "choices" || currentQuestion.type === "code")) {
+      setUserAnswer("");
+      setDisableChatInput(true);
+    } else setDisableChatInput(false);
+  }, [currentQuestionIndex]);
+
   const canShowGenerateButton =
     Boolean(templateQuestions.length && !templateQuestions[0].required) ||
     Boolean(!templateQuestions.length && !_inputs.length && template?.prompts.length);
+
   const canShowInputField =
     templateQuestions.length || Boolean(!templateQuestions.length && !_inputs.length && template?.prompts.length);
 
@@ -173,7 +195,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
 
       const newUserMessage: IMessage = {
         text: userAnswer,
-        type: currentQuestion.type,
+        type: currentQuestion.type!,
         createdAt: createdAt,
         fromUser: true,
       };
@@ -220,16 +242,16 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
           nextBotMessage = {
             text: formatFeedbackAndQuestion(response.feedback, nextQuestion.question),
             choices: nextQuestion.choices,
-            type: nextQuestion.type,
+            type: nextQuestion.type!,
             createdAt: createdAt,
             fromUser: false,
           };
         }
       } else {
         nextBotMessage = {
-          text: response?.feedback,
+          text: response?.feedback!,
           choices: currentQuestion.choices,
-          type: currentQuestion.type,
+          type: currentQuestion.type!,
           createdAt: createdAt,
           fromUser: false,
         };
@@ -260,7 +282,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
         nextBotMessage = {
           text: question.question,
           choices: question.choices,
-          type: question.type,
+          type: question.type!,
           createdAt: createdAt,
           fromUser: false,
         };
@@ -305,19 +327,6 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
     generateExecution(promptsData);
   };
 
-  useEffect(() => {
-    if (generatingResponse) setGeneratedExecution(generatingResponse);
-  }, [generatingResponse]);
-  useEffect(() => {
-    if (newExecutionId) {
-      setGeneratingResponse(prevState => ({
-        id: newExecutionId,
-        created_at: prevState?.created_at ?? new Date(),
-        data: prevState?.data ?? [],
-      }));
-    }
-  }, [newExecutionId]);
-
   const generateExecution = (executionData: ResPrompt[]) => {
     let tempData: any[] = [];
     let url = `https://api.promptify.com/api/v1/templates/${template!.id}/execute/`;
@@ -349,14 +358,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
           const prompt = parseData.prompt_id;
           const executionId = parseData.template_execution_id;
 
-          if (executionId) {
-            setNewExecutionId(executionId);
-            setGeneratingResponse(prevState => ({
-              id: newExecutionId!,
-              created_at: prevState?.created_at ?? new Date(),
-              data: prevState?.data ?? [],
-            }));
-          }
+          if (executionId) setNewExecutionId(executionId);
 
           if (msg.event === "infer" && msg.data) {
             if (message) {
@@ -443,17 +445,6 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
     });
   };
 
-  const [disableInput, setDisableInput] = useState(false);
-
-  useEffect(() => {
-    if (currentQuestion && (currentQuestion.type === "choices" || currentQuestion.type === "code")) {
-      setUserAnswer("");
-      setDisableInput(true);
-    } else setDisableInput(false);
-
-    console.log("herre", answers, currentQuestionIndex, templateQuestions);
-  }, [answers, currentQuestionIndex]);
-
   const handleAnswerSelect = (selectedAnswer: IAnswer) => {
     const questionIndex = templateQuestions.findIndex(question => question.name === selectedAnswer.inputName);
     const answerIndex = answers.findIndex(answer => answer.inputName === selectedAnswer.inputName);
@@ -461,7 +452,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
     const updatedAnswers = answerIndex !== -1 ? answers.slice(0, answerIndex) : answers;
 
     if (questionIndex !== -1) {
-      let newIndex = answers.length === 1 ? questionIndex + 1 : questionIndex;
+      let newIndex = questionIndex === 0 ? questionIndex + 1 : questionIndex;
       setCurrentQuestionIndex(newIndex);
     }
     if (showGenerate && selectedAnswer.required) {
@@ -471,7 +462,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
     let nextBotMessage: IMessage = {
       text: "Let's give this another go. " + question?.question,
       choices: question?.choices,
-      type: question?.type,
+      type: question?.type!,
       createdAt: createdAt,
       fromUser: false,
     };
@@ -579,8 +570,6 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
         >
           <ChatInterface
             messages={messages}
-            answers={answers}
-            onAnswerClear={handleAnswerSelect}
             onChange={handleChange}
             showGenerate={showGenerate || canShowGenerateButton}
             onGenerate={generateExecutionHandler}
@@ -589,10 +578,12 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
 
           {currentUser?.id ? (
             <ChatInput
+              answers={answers}
+              onAnswerClear={handleAnswerSelect}
               onChange={setUserAnswer}
               value={userAnswer}
               onSubmit={handleUserResponse}
-              disabled={isValidating || !canShowInputField || disableInput}
+              disabled={isValidating || !canShowInputField || disableChatInput}
             />
           ) : (
             <Stack

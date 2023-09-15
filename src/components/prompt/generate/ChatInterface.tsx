@@ -5,13 +5,10 @@ import { Message } from "./Message";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { useAppSelector } from "@/hooks/useStore";
 import ThreeDotsAnimation from "@/components/design-system/ThreeDotsAnimation";
-import { Clear } from "@mui/icons-material";
-import { IAnswer, IMessage } from "@/common/types/chat";
+import { IMessage } from "@/common/types/chat";
 
 interface Props {
   messages: IMessage[];
-  answers: IAnswer[];
-  onAnswerClear: (answer: IAnswer) => void;
   onGenerate: () => void;
   showGenerate: boolean;
   onChange?: (value: string) => void;
@@ -20,8 +17,7 @@ interface Props {
 
 export const ChatInterface = ({
   messages,
-  answers,
-  onAnswerClear,
+
   onGenerate,
   showGenerate,
   onChange,
@@ -35,9 +31,6 @@ export const ChatInterface = ({
     }
   }, [messages]);
 
-  function addSpaceBetweenCapitalized(text: string) {
-    return text.replace(/([a-z])([A-Z])/g, "$1 $2");
-  }
   return (
     <Grid
       ref={messagesContainerRef}
@@ -46,7 +39,7 @@ export const ChatInterface = ({
       width={"100%"}
       flexDirection={"column"}
       alignItems={"start"}
-      pb={{ xs: "50px", md: 0 }}
+      pb={{ xs: "120px", md: "8px" }}
       sx={{
         overflow: "auto",
 
@@ -114,49 +107,6 @@ export const ChatInterface = ({
             </>
           )}
         </Button>
-      )}
-
-      {answers.length > 0 && (
-        <Grid
-          mt={2}
-          display={"flex"}
-          alignItems={"center"}
-          flexWrap={"wrap"}
-          gap={"8px"}
-          p={"0px 16px"}
-        >
-          {answers.map(answer => (
-            <Button
-              onClick={() => onAnswerClear(answer)}
-              key={answer.inputName}
-              startIcon={
-                <Clear
-                  sx={{
-                    opacity: 0.5,
-                  }}
-                />
-              }
-              variant="contained"
-              size="small"
-              sx={{
-                p: "1px 10px",
-                fontSize: 15,
-                fontWeight: "500",
-                borderBottomRightRadius: "4px",
-                borderTopRightRadius: "4px",
-                bgcolor: "surface.3",
-                color: "onSurface",
-                borderColor: "surface.3",
-                ":hover": {
-                  bgcolor: "surface.3",
-                  color: "onSurface",
-                },
-              }}
-            >
-              {addSpaceBetweenCapitalized(answer.inputName)}
-            </Button>
-          ))}
-        </Grid>
       )}
     </Grid>
   );

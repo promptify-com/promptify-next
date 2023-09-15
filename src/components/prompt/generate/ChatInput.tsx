@@ -1,15 +1,20 @@
 import React from "react";
-import { Send } from "@mui/icons-material";
-import { Box, Grid, InputBase } from "@mui/material";
+import { Clear, Send } from "@mui/icons-material";
+import { Box, Button, Grid, InputBase } from "@mui/material";
+
+import { IAnswer } from "@/common/types/chat";
+import { addSpaceBetweenCapitalized } from "@/common/helpers/addSpaceBetweenCapitalized";
 
 interface ChatInputProps {
   onChange: (str: string) => void;
+  answers: IAnswer[];
+  onAnswerClear: (answer: IAnswer) => void;
   value: string;
   onSubmit: () => void;
   disabled: boolean;
 }
 
-export const ChatInput = ({ onChange, value, onSubmit, disabled }: ChatInputProps) => {
+export const ChatInput = ({ onChange, value, onSubmit, disabled, answers, onAnswerClear }: ChatInputProps) => {
   return (
     <Grid
       p={"0px 16px"}
@@ -20,8 +25,56 @@ export const ChatInput = ({ onChange, value, onSubmit, disabled }: ChatInputProp
       width={"100%"}
       left={0}
       flex={1}
+      display={"flex"}
+      flexDirection={"column"}
+      gap={"8px"}
       right={0}
     >
+      {answers.length > 0 && (
+        <Grid
+          display={"flex"}
+          alignItems={"flex-start"}
+          alignContent={"flex-start"}
+          alignSelf={"stretch"}
+          flexWrap={{ xs: "nowrap", md: "wrap" }}
+          sx={{
+            overflow: { xs: "auto", md: "initial" },
+            WebkitOverflowScrolling: { xs: "touch", md: "initial" },
+          }}
+          gap={"8px"}
+        >
+          {answers.map(answer => (
+            <Button
+              onClick={() => onAnswerClear(answer)}
+              key={answer.inputName}
+              startIcon={
+                <Clear
+                  sx={{
+                    opacity: 0.5,
+                  }}
+                />
+              }
+              variant="contained"
+              sx={{
+                p: "1px 10px",
+                fontSize: 15,
+                fontWeight: "500",
+                borderBottomRightRadius: "4px",
+                borderTopRightRadius: "4px",
+                bgcolor: "surface.3",
+                color: "onSurface",
+                borderColor: "surface.3",
+                ":hover": {
+                  bgcolor: "surface.5",
+                  color: "onSurface",
+                },
+              }}
+            >
+              {addSpaceBetweenCapitalized(answer.inputName)}
+            </Button>
+          ))}
+        </Grid>
+      )}
       <Box
         bgcolor={"surface.3"}
         display={"flex"}

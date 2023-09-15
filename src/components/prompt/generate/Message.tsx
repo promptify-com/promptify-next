@@ -23,13 +23,28 @@ export const Message = ({ message, hideHeader, onChangeValue }: MessageBlockProp
   const [selectedValue, setSelectedValue] = useState("");
   const [codeFieldPopup, setCodeFieldPopup] = useState(false);
 
+  const [codeUploaded, setCodeUploaded] = useState(false);
+
   const handleChange = (value: string) => {
     setSelectedValue(value);
 
     if (onChangeValue) {
       onChangeValue(value);
+      setCodeUploaded(true);
     }
   };
+
+  function getUploadStatusMessage() {
+    if (codeUploaded) {
+      return "Code uploaded";
+    } else if (!codeUploaded && selectedValue !== "" && !codeFieldPopup) {
+      return "Edit Your code";
+    } else {
+      return "Upload your code";
+    }
+  }
+
+  const uploadBtnName = getUploadStatusMessage();
 
   return (
     <Grid
@@ -59,7 +74,6 @@ export const Message = ({ message, hideHeader, onChangeValue }: MessageBlockProp
         flex={1}
         ml={{ xs: hideHeader ? 6.5 : 0, md: hideHeader ? 7 : 0 }}
         mt={{ xs: hideHeader ? -2 : 0, md: 0 }}
-        p={{ xs: "16px", md: "0px" }}
         display={"flex"}
         flexDirection={"column"}
         gap={"8px"}
@@ -105,18 +119,18 @@ export const Message = ({ message, hideHeader, onChangeValue }: MessageBlockProp
             <Button
               onClick={() => setCodeFieldPopup(true)}
               variant="outlined"
-              disabled={selectedValue !== ""}
+              disabled={codeUploaded}
               size="small"
               sx={{
                 height: 30,
               }}
             >
-              {selectedValue !== "" ? "Code uploaded" : "Upload your code"}
+              {uploadBtnName}
             </Button>
           )}
           {type === "choices" && choices && !fromUser && (
             <ToggleButtonsGroup
-              variant="vertical"
+              variant="horizontal"
               items={choices}
               value={selectedValue}
               onChange={handleChange}

@@ -101,10 +101,10 @@ export interface TemplateQuestions {
 export interface UpdatedQuestionTemplate {
   type?: InputType;
   name: string;
-  required?: boolean;
+  required: boolean;
   question: string;
   choices?: string[] | null;
-  prompt?: number;
+  prompt: number;
 }
 export interface Templates {
   id: number;

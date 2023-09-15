@@ -7,16 +7,16 @@ export interface AnswerValidatorResponse {
 }
 
 export interface IMessage {
-  text: string | undefined;
+  text: string;
   createdAt: string;
   fromUser: boolean;
-  type?: InputType;
+  type: InputType;
   choices?: string[] | null;
 }
 
 export interface IAnswer {
   inputName: string;
-  required?: boolean;
+  required: boolean;
   question: string;
   answer: string | number;
   prompt?: number;
