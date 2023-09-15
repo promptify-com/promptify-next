@@ -11,9 +11,10 @@ interface MessageBlockProps {
   message: IMessage;
   hideHeader?: boolean;
   onChangeValue?: (value: string) => void;
+  disabledChoices: boolean;
 }
 
-export const Message = ({ message, hideHeader, onChangeValue }: MessageBlockProps) => {
+export const Message = ({ message, hideHeader, onChangeValue, disabledChoices }: MessageBlockProps) => {
   const currentUser = useAppSelector(state => state.user.currentUser);
 
   const { fromUser, type, text, createdAt, choices } = message;
@@ -134,6 +135,7 @@ export const Message = ({ message, hideHeader, onChangeValue }: MessageBlockProp
               items={choices}
               value={selectedValue}
               onChange={handleChange}
+              disabled={disabledChoices || selectedValue !== ""}
             />
           )}
           <CodeFieldModal

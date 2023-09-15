@@ -15,14 +15,7 @@ interface Props {
   isValidating: boolean;
 }
 
-export const ChatInterface = ({
-  messages,
-
-  onGenerate,
-  showGenerate,
-  onChange,
-  isValidating,
-}: Props) => {
+export const ChatInterface = ({ messages, onGenerate, showGenerate, onChange, isValidating }: Props) => {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   useEffect(() => {
@@ -31,6 +24,10 @@ export const ChatInterface = ({
     }
   }, [messages]);
 
+  const isNotLastMessage = (message: IMessage) => {
+    const lastMessage = messages[messages.length - 1]; // Get the last message in the array
+    return message.type === "choices" && message !== lastMessage; // Check if the given message is not the last message
+  };
   return (
     <Grid
       ref={messagesContainerRef}
@@ -64,6 +61,7 @@ export const ChatInterface = ({
           hideHeader={idx === 1}
           message={msg}
           onChangeValue={onChange}
+          disabledChoices={isNotLastMessage(msg)}
         />
       ))}
       <ThreeDotsAnimation loading={isValidating} />

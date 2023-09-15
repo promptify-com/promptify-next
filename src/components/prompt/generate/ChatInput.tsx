@@ -12,9 +12,18 @@ interface ChatInputProps {
   value: string;
   onSubmit: () => void;
   disabled: boolean;
+  disabledTags: boolean;
 }
 
-export const ChatInput = ({ onChange, value, onSubmit, disabled, answers, onAnswerClear }: ChatInputProps) => {
+export const ChatInput = ({
+  onChange,
+  value,
+  onSubmit,
+  disabled,
+  answers,
+  onAnswerClear,
+  disabledTags,
+}: ChatInputProps) => {
   return (
     <Grid
       p={"0px 16px"}
@@ -42,6 +51,7 @@ export const ChatInput = ({ onChange, value, onSubmit, disabled, answers, onAnsw
           {answers.map(answer => (
             <Button
               onClick={() => onAnswerClear(answer)}
+              disabled={disabledTags}
               key={answer.inputName}
               startIcon={
                 <Clear
