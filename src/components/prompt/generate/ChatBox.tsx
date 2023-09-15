@@ -70,7 +70,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
     ];
 
     if (questions.length > 0) {
-      const firstQuestion = questions[0];
+      const firstQuestion = questions[currentQuestionIndex];
       welcomeMessage.push({
         text: firstQuestion?.question,
         type: firstQuestion.type!,
@@ -78,25 +78,23 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
         fromUser: false,
       });
       setCurrentQuestionIndex(1);
+    } else {
+      setCurrentQuestionIndex(0);
     }
-    console.log("messages", messages);
 
     setMessages(welcomeMessage);
+    setAnswers([]);
+    setShowGenerate(false);
   };
 
-  const templateQuestions: UpdatedQuestionTemplate[] = useMemo(() => {
-    if (!template) return [];
-    let questions: TemplateQuestions[] = [];
+  const [templateQuestions, _inputs]: [UpdatedQuestionTemplate[], IPromptInput[]] = useMemo(() => {
+    if (!template) return [[], []];
 
-    if (template.questions) {
-      setShowGenerate(false);
-      questions = template.questions;
-    }
-
-    const prompts: IPromptInput[] = [];
+    const questions: TemplateQuestions[] = template?.questions ?? [];
+    const inputs: IPromptInput[] = [];
 
     template.prompts.forEach(prompt => {
-      prompts.push(...getInputsFromString(prompt.content).map(obj => ({ ...obj, prompt: prompt.id })));
+      inputs.push(...getInputsFromString(prompt.content).map(obj => ({ ...obj, prompt: prompt.id })));
     });
 
     const updatedQuestions: UpdatedQuestionTemplate[] = [];
@@ -105,8 +103,8 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
       const question = questions[index];
       const key = Object.keys(question)[0];
 
-      if (prompts[index]) {
-        const { type, required, choices, name, prompt } = prompts[index];
+      if (inputs[index]) {
+        const { type, required, choices, name, prompt } = inputs[index];
         const updatedQuestion: UpdatedQuestionTemplate = {
           ...question[key],
           name,
@@ -120,13 +118,17 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
     }
     initialMessages(updatedQuestions);
 
-    return updatedQuestions;
+    return [updatedQuestions, inputs];
   }, [template]);
 
-  const hasInitialTemplateQuestions = templateQuestions.length;
+  const canShowGenerateButton =
+    Boolean(templateQuestions.length && !templateQuestions[0].required) ||
+    Boolean(!templateQuestions.length && !_inputs.length && template?.prompts.length);
+  const canShowInputField =
+    templateQuestions.length || Boolean(!templateQuestions.length && !_inputs.length && template?.prompts.length);
 
   const getCurrentQuestion = () => {
-    if (!hasInitialTemplateQuestions) {
+    if (!templateQuestions.length) {
       return null;
     }
 
@@ -153,13 +155,11 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
   };
 
   function formatFeedbackAndQuestion(feedback: string, nextQuestion: string) {
-    let formattedFeedback = !!feedback ? feedback : "";
-
-    if (!formattedFeedback.endsWith(".") && !formattedFeedback.endsWith("!")) {
-      formattedFeedback += ".";
+    if (feedback && !feedback.endsWith(".") && !feedback.endsWith("!")) {
+      feedback += ". ";
     }
 
-    return `${formattedFeedback} ${nextQuestion}`;
+    return `${feedback}${nextQuestion}`;
   }
 
   const handleUserResponse = async () => {
@@ -464,7 +464,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
       let newIndex = answers.length === 1 ? questionIndex + 1 : questionIndex;
       setCurrentQuestionIndex(newIndex);
     }
-    if (answers.length && showGenerate) {
+    if (showGenerate && selectedAnswer.required) {
       setShowGenerate(false);
     }
 
@@ -582,7 +582,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
             answers={answers}
             onAnswerClear={handleAnswerSelect}
             onChange={handleChange}
-            showGenerate={showGenerate || !hasInitialTemplateQuestions}
+            showGenerate={showGenerate || canShowGenerateButton}
             onGenerate={generateExecutionHandler}
             isValidating={isValidating}
           />
@@ -592,7 +592,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
               onChange={setUserAnswer}
               value={userAnswer}
               onSubmit={handleUserResponse}
-              disabled={isValidating || !hasInitialTemplateQuestions || disableInput}
+              disabled={isValidating || !canShowInputField || disableInput}
             />
           ) : (
             <Stack
