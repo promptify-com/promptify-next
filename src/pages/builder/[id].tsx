@@ -30,7 +30,6 @@ import { deletePrompt, updateTemplate } from "@/hooks/api/templates";
 import { ContentCopy } from "@mui/icons-material";
 import { INodesData } from "@/common/types/builder";
 import TemplateForm from "@/components/common/forms/TemplateForm";
-import { Templates } from "@/core/api/dto/templates";
 import { promptRandomId } from "@/common/helpers/promptRandomId";
 import { isPromptVariableValid } from "@/common/helpers/isPromptVariableValid";
 
@@ -195,7 +194,7 @@ export const Builder = () => {
     const node = new Node(`Prompt #${nodeCount}`);
     node.addInput("Input", new ClassicPreset.Input(socket, "Input"));
     node.addOutput("Output", new ClassicPreset.Output(socket, "Output"));
-    node.engine = engines?.find(eng => eng.id === 1)?.icon || "";
+    node.engineIcon = engines?.find(eng => eng.id === 1)?.icon || "";
 
     const allNodes = editor?.editor.getNodes();
 
@@ -218,7 +217,7 @@ export const Builder = () => {
         temp_id: node.temp_id,
         count: nodeCount.toString(),
         title: `Prompt #${nodeCount}`,
-        content: "Describe here prompt parameters, for example {{name:text}} or {{age:integer}}",
+        content: "Describe here prompt parameters, for example {{name:text}} or {{age:number}}",
         engine_id: engines ? engines[0].id : 0,
         dependencies: [],
         parameters: [],
@@ -238,7 +237,7 @@ export const Builder = () => {
       const node = new Node(`${selectedNodeData.title} - Copy`);
       node.addInput("Input", new ClassicPreset.Input(socket, "Input"));
       node.addOutput("Output", new ClassicPreset.Output(socket, "Output"));
-      node.engine = engines?.find(eng => eng.id === selectedNodeData.engine_id)?.icon || "";
+      node.engineIcon = engines?.find(eng => eng.id === selectedNodeData.engine_id)?.icon || "";
 
       const allNodes = editor?.editor.getNodes();
 
@@ -347,11 +346,11 @@ export const Builder = () => {
 
     const nodeId = Number(selectedNode.id) || Number(selectedNode.temp_id);
     if (nodeId !== selectedNodeData.id && nodeId !== selectedNodeData.temp_id) return;
-    const engine = engines?.find(_engine => _engine.id === selectedNodeData?.engine_id);
+    const engine = engines?.find(_engine => _engine.id === selectedNodeData.engine_id);
 
-    if (selectedNode.label !== selectedNodeData.title || selectedNode.engine !== engine?.icon) {
-      selectedNode.label = selectedNodeData?.title;
-      selectedNode.engine = engine?.icon || "";
+    if (selectedNode.label !== selectedNodeData.title || selectedNode.engineIcon !== engine?.icon) {
+      selectedNode.label = selectedNodeData.title;
+      selectedNode.engineIcon = engine?.icon || "";
       editor?.area.update("node", selectedNode.id);
     }
   };
@@ -605,50 +604,60 @@ export const Builder = () => {
               </Box>
             </Box>
           </Grid>
-          <SwipeableDrawer
-            anchor={"left"}
-            open={templateDrawerOpen}
-            onClose={() => toggleTemplateDrawer(false)}
-            onOpen={() => toggleTemplateDrawer(true)}
-          >
-            <Box
-              sx={{
-                bgcolor: "#FDFBFF",
-                p: "24px 32px",
+          {!!promptsData && (
+            <SwipeableDrawer
+              anchor={"left"}
+              open={templateDrawerOpen}
+              onClose={() => toggleTemplateDrawer(false)}
+              onOpen={() => toggleTemplateDrawer(true)}
+              PaperProps={{
+                sx: {
+                  width: "430px",
+                  minWidth: "30svw",
+                },
               }}
             >
-              <TemplateForm
-                type="edit"
-                templateData={promptsData as Templates}
-                darkMode
-                onSaved={() => window.location.reload()}
-                onClose={() => toggleTemplateDrawer(false)}
-              />
-            </Box>
-          </SwipeableDrawer>
-          <Drawer
-            variant="persistent"
-            anchor="right"
-            open={!!selectedNode}
-            sx={{
-              width: "20svw",
-              "& .MuiDrawer-paper": {
-                width: "30svw",
-              },
-            }}
-          >
-            <PromptForm
-              removeNode={() => setConfirmDialogOpen(true)}
-              selectedNodeData={selectedNodeData}
-              setSelectedNodeData={setSelectedNodeData}
-              nodeCount={nodeCount}
-              nodesData={nodesData}
-              setNodesData={setNodesData}
-              close={() => {
-                setSelectedNode(null);
+              <Box
+                sx={{
+                  bgcolor: "#FDFBFF",
+                  p: "24px 32px",
+                }}
+              >
+                <TemplateForm
+                  type="edit"
+                  templateData={promptsData}
+                  darkMode
+                  onSaved={() => window.location.reload()}
+                  onClose={() => toggleTemplateDrawer(false)}
+                />
+              </Box>
+            </SwipeableDrawer>
+          )}
+          {!!selectedNode && !!selectedNodeData && (
+            <Drawer
+              variant="persistent"
+              anchor="right"
+              open={!!selectedNode && !!selectedNodeData}
+              sx={{
+                "& .MuiDrawer-paper": {
+                  width: "430px",
+                  minWidth: "30svw",
+                },
               }}
-            />
-          </Drawer>
+            >
+              <PromptForm
+                removeNode={() => setConfirmDialogOpen(true)}
+                selectedNodeData={selectedNodeData}
+                setSelectedNodeData={setSelectedNodeData}
+                nodeCount={nodeCount}
+                nodesData={nodesData}
+                setNodesData={setNodesData}
+                close={() => {
+                  setSelectedNode(null);
+                }}
+              />
+            </Drawer>
+          )}
         </Grid>
         <Snackbar
           open={snackBarOpen}

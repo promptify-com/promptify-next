@@ -1,88 +1,48 @@
-import React, { useEffect, useMemo, useState } from "react";
-import {
-  Autocomplete,
-  Box,
-  Checkbox,
-  FormControlLabel,
-  InputLabel,
-  Stack,
-  Switch,
-  TextField,
-  Typography,
-} from "@mui/material";
-import { INodesData, IPromptOptions } from "@/common/types/builder";
+import React, { useMemo, useState } from "react";
+import { Autocomplete, Box, Checkbox, FormControlLabel, Stack, Switch, TextField, Typography } from "@mui/material";
+import { INodesData } from "@/common/types/builder";
 import { useGetEnginesQuery } from "@/core/api/engines";
 import { EngineParams } from "./EngineParams";
 
 interface OptionsProps {
-  selectedNodeData: INodesData | null;
-  changeEngine: (engineId: number) => void;
-  onUpdateNodeOptions: (options: IPromptOptions) => void;
+  selectedNodeData: INodesData;
+  setSelectedNodeData: (node: INodesData) => void;
 }
 
-export const Options = ({ selectedNodeData, changeEngine, onUpdateNodeOptions }: OptionsProps) => {
+export const Options = ({ selectedNodeData, setSelectedNodeData }: OptionsProps) => {
   const { data: engines } = useGetEnginesQuery();
 
-  const [useDefault, setUseDefault] = useState(!!!selectedNodeData?.model_parameters);
-  const [optionsValues, setOptionsValues] = useState<IPromptOptions>({
-    output_format: selectedNodeData?.output_format || "",
-    model_parameters: selectedNodeData?.model_parameters || null,
-    is_visible: selectedNodeData?.is_visible || false,
-    show_output: selectedNodeData?.show_output || false,
-    prompt_output_variable: selectedNodeData?.prompt_output_variable || "",
-  });
-
-  useEffect(() => {
-    setOptionsValues({
-      output_format: selectedNodeData?.output_format || "",
-      model_parameters: selectedNodeData?.model_parameters || null,
-      is_visible: selectedNodeData?.is_visible || false,
-      show_output: selectedNodeData?.show_output || false,
-      prompt_output_variable: selectedNodeData?.prompt_output_variable || "",
-    });
-  }, [selectedNodeData]);
+  const [useDefault, setUseDefault] = useState(!selectedNodeData.model_parameters);
 
   const setOptionValue = (e: React.ChangeEvent<HTMLInputElement>) => {
     let { name, value, type, checked } = e.target;
-    let values = optionsValues;
+    let optionVal: string | boolean = checked;
 
-    if (type === "checkbox") {
-      values = {
-        ...optionsValues,
-        [name]: checked,
-      };
-      setOptionsValues(values);
-    } else {
+    if (type !== "checkbox") {
       // prompt_output_variable requires a $ prefix
-      if (name === "prompt_output_variable") if (value.length && value[0] !== "$") value = "$" + value;
-
-      values = {
-        ...optionsValues,
-        [name]: value,
-      };
-      setOptionsValues(values);
+      if (name === "prompt_output_variable" && value.length && value[0] !== "$") {
+        value = "$" + value;
+      }
+      optionVal = value;
     }
-    onUpdateNodeOptions(values);
+
+    setSelectedNodeData({
+      ...selectedNodeData,
+      [name]: optionVal,
+    });
   };
 
   const setEngineParamValue = (param: string, value: string) => {
-    setOptionsValues(prevState => ({
-      ...prevState,
+    setSelectedNodeData({
+      ...selectedNodeData,
       model_parameters: {
-        ...prevState.model_parameters,
-        [param]: parseFloat(value),
-      },
-    }));
-    onUpdateNodeOptions({
-      ...optionsValues,
-      model_parameters: {
-        ...optionsValues.model_parameters,
+        ...selectedNodeData.model_parameters,
         [param]: parseFloat(value),
       },
     });
   };
 
-  const engine = useMemo(() => engines?.find(engine => engine.id === selectedNodeData?.engine_id), [selectedNodeData]);
+  const engine = useMemo(() => engines?.find(engine => engine.id === selectedNodeData.engine_id), [selectedNodeData]);
 
   return (
     <Stack
@@ -115,7 +75,12 @@ export const Options = ({ selectedNodeData, changeEngine, onUpdateNodeOptions }:
               disableClearable
               getOptionLabel={option => option.name}
               value={engine}
-              onChange={(e, value) => changeEngine(value?.id || engines[0].id)}
+              onChange={(e, value) =>
+                setSelectedNodeData({
+                  ...selectedNodeData,
+                  engine_id: value?.id || engines[0].id,
+                })
+              }
               renderOption={(props, option) => (
                 <Box
                   component="li"
@@ -179,7 +144,7 @@ export const Options = ({ selectedNodeData, changeEngine, onUpdateNodeOptions }:
         />
         {!useDefault && (
           <EngineParams
-            params={optionsValues?.model_parameters}
+            params={selectedNodeData.model_parameters}
             setParam={setEngineParamValue}
           />
         )}
@@ -201,7 +166,7 @@ export const Options = ({ selectedNodeData, changeEngine, onUpdateNodeOptions }:
           size="medium"
           fullWidth
           name="output_format"
-          value={optionsValues?.output_format}
+          value={selectedNodeData.output_format}
           onChange={setOptionValue}
         />
       </Box>
@@ -221,9 +186,9 @@ export const Options = ({ selectedNodeData, changeEngine, onUpdateNodeOptions }:
             control={<Switch color="primary" />}
             label="Is Visible?"
             labelPlacement="start"
-            checked={optionsValues?.is_visible}
+            checked={selectedNodeData.is_visible}
             name="is_visible"
-            value={optionsValues?.is_visible}
+            value={selectedNodeData.is_visible}
             onChange={(e: any) => setOptionValue(e)}
             sx={{
               "&.MuiFormControlLabel-root": {
@@ -238,9 +203,9 @@ export const Options = ({ selectedNodeData, changeEngine, onUpdateNodeOptions }:
             control={<Switch color="primary" />}
             label="Display Output"
             labelPlacement="start"
-            checked={optionsValues?.show_output}
+            checked={selectedNodeData.show_output}
             name="show_output"
-            value={optionsValues?.show_output}
+            value={selectedNodeData.show_output}
             onChange={(e: any) => setOptionValue(e)}
             sx={{
               "&.MuiFormControlLabel-root": {
@@ -272,7 +237,7 @@ export const Options = ({ selectedNodeData, changeEngine, onUpdateNodeOptions }:
             size="medium"
             fullWidth
             name="prompt_output_variable"
-            value={optionsValues?.prompt_output_variable}
+            value={selectedNodeData.prompt_output_variable}
             onChange={setOptionValue}
           />
         </Box>

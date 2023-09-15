@@ -229,17 +229,4 @@ body {
 }
 
 .area {
-  display: inline-flex;
-  -webkit-flex-direction: column;
-  -ms-flex-direction: column;
-  flex-direction: column;
-  position: relative;
-  min-width: 0;
-  padding: 0;
-  margin: 0;
-  border: 0;
-  vertical-align: top;
-  width: calc(100% - 64px);
-  border: none;
-  padding: 24px 32px;
 }

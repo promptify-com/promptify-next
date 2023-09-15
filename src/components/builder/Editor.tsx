@@ -17,7 +17,7 @@ export class Node extends ClassicPreset.Node {
   height = 112;
   count = "";
   temp_id = 0;
-  engine = "";
+  engineIcon = "";
 }
 
 class Connection extends ClassicPreset.Connection<ClassicPreset.Node, ClassicPreset.Node> {
@@ -103,7 +103,7 @@ export async function createEditor(
 
     if (prompt) {
       node.id = prompt.id.toString();
-      node.engine = prompt.engine.icon;
+      node.engineIcon = prompt.engine.icon;
     }
 
     await editor.addNode(node);
