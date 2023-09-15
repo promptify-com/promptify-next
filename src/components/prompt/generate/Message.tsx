@@ -31,71 +31,63 @@ export const Message = ({ message, hideHeader, onChangeValue }: MessageBlockProp
     }
   };
 
-  if (hideHeader) {
-    // Render the message without the header (name and timestamp)
-    return (
-      <Grid
-        ml={{ xs: 6.5, md: 9 }}
-        mt={{ xs: -2, md: 0 }}
-        p={{ xs: "16px", md: "0px" }}
-      >
-        <Typography
-          fontSize={15}
-          lineHeight={"24px"}
-          letterSpacing={"0.17px"}
-        >
-          {text}
-        </Typography>
-      </Grid>
-    );
-  }
-
   return (
     <Grid
       p={"16px"}
       display={"flex"}
       gap={"16px"}
     >
-      {message.fromUser && currentUser ? (
-        <Avatar
-          src={currentUser.avatar}
-          alt={currentUser.first_name}
-          sx={{
-            width: 40,
-            height: 40,
-            bgcolor: "surface.5",
-          }}
-        />
-      ) : (
-        <LogoAsAvatar />
+      {!hideHeader && (
+        <>
+          {message.fromUser && currentUser ? (
+            <Avatar
+              src={currentUser.avatar}
+              alt={currentUser.first_name}
+              sx={{
+                width: 40,
+                height: 40,
+                bgcolor: "surface.5",
+              }}
+            />
+          ) : (
+            <LogoAsAvatar />
+          )}
+        </>
       )}
+
       <Grid
         flex={1}
+        ml={{ xs: hideHeader ? 6.5 : 0, md: hideHeader ? 7 : 0 }}
+        mt={{ xs: hideHeader ? -2 : 0, md: 0 }}
+        p={{ xs: "16px", md: "0px" }}
         display={"flex"}
         flexDirection={"column"}
         gap={"8px"}
       >
-        <Grid
-          display={"flex"}
-          alignItems={"center"}
-          gap={"8px"}
-        >
-          <Typography
-            fontSize={12}
-            lineHeight={"17.16px"}
+        {!hideHeader && (
+          <Grid
+            display={"flex"}
+            alignItems={"center"}
+            gap={"8px"}
           >
-            {name}
-          </Typography>
-          <Typography
-            fontSize={12}
-            lineHeight={"17.16px"}
-            sx={{
-              opacity: 0.5,
-            }}
-          >
-            {createdAt}
-          </Typography>
-        </Grid>
+            <Typography
+              fontSize={12}
+              lineHeight={"17.16px"}
+            >
+              {name}
+            </Typography>
+            <Typography
+              fontSize={12}
+              lineHeight={"17.16px"}
+              sx={{
+                opacity: 0.5,
+              }}
+            >
+              {createdAt}
+            </Typography>
+          </Grid>
+        )}
+
         <Grid
           display={"flex"}
           flexDirection={"column"}
@@ -113,12 +105,13 @@ export const Message = ({ message, hideHeader, onChangeValue }: MessageBlockProp
             <Button
               onClick={() => setCodeFieldPopup(true)}
               variant="outlined"
+              disabled={selectedValue !== ""}
               size="small"
               sx={{
                 height: 30,
               }}
             >
-              {selectedValue !== "" ? "Edit your code" : "Upload your code"}
+              {selectedValue !== "" ? "Code uploaded" : "Upload your code"}
             </Button>
           )}
           {type === "choices" && choices && !fromUser && (

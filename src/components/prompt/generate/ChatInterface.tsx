@@ -34,6 +34,10 @@ export const ChatInterface = ({
       messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
     }
   }, [messages]);
+
+  function addSpaceBetweenCapitalized(text: string) {
+    return text.replace(/([a-z])([A-Z])/g, "$1 $2");
+  }
   return (
     <Grid
       ref={messagesContainerRef}
@@ -138,6 +142,8 @@ export const ChatInterface = ({
                 p: "1px 10px",
                 fontSize: 15,
                 fontWeight: "500",
+                borderBottomRightRadius: "4px",
+                borderTopRightRadius: "4px",
                 bgcolor: "surface.3",
                 color: "onSurface",
                 borderColor: "surface.3",
@@ -147,7 +153,7 @@ export const ChatInterface = ({
                 },
               }}
             >
-              {answer.inputName}
+              {addSpaceBetweenCapitalized(answer.inputName)}
             </Button>
           ))}
         </Grid>
