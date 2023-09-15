@@ -33,7 +33,9 @@ export function useGetTemplatesByFilter(catId?: number, subCatId?: number) {
   const [searchName, setSearchName] = useState("");
   const deferredSearchName = useDeferredValue(searchName);
   const debouncedSearchName = useDebounce<string>(deferredSearchName, 300);
+
   const [status, setStatus] = useState<string>();
+  const [resetOffset, setResetOffset] = useState(false);
 
   const memoizedFilteredTags = useMemo(() => {
     const filteredTags = tags
@@ -50,7 +52,7 @@ export function useGetTemplatesByFilter(catId?: number, subCatId?: number) {
     categoryId: catId,
     subcategoryId: subCatId,
     title: title ?? debouncedSearchName,
-    offset,
+    offset: resetOffset ? 0 : offset,
     limit: PAGINATION_LIMIT,
     status,
   };
@@ -87,6 +89,7 @@ export function useGetTemplatesByFilter(catId?: number, subCatId?: number) {
 
   const handleNextPage = () => {
     if (!!templates?.next) {
+      setResetOffset(false);
       setOffset(prevOffset => prevOffset + PAGINATION_LIMIT);
       setResetFlag(false);
     }
@@ -112,5 +115,6 @@ export function useGetTemplatesByFilter(catId?: number, subCatId?: number) {
     hasMore,
     status,
     setStatus,
+    setResetOffset,
   };
 }

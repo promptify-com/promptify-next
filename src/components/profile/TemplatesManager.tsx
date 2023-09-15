@@ -63,6 +63,7 @@ export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title }) => {
     hasMore,
     status,
     setStatus,
+    setResetOffset,
   } = useGetTemplatesByFilter();
 
   const openDeletionModal = (template: Templates) => {
@@ -146,8 +147,9 @@ export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title }) => {
                 sx={{
                   fontSize: 15,
                 }}
-                value={status ?? ""}
+                value={status}
                 onChange={event => {
+                  setResetOffset(true);
                   setStatus(event.target.value as TemplateStatus);
                 }}
               >
