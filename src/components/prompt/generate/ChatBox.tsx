@@ -231,14 +231,14 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
 
       let nextBotMessage: IMessage;
       if (response?.approved) {
+        const newAnswer: IAnswer = {
+          question: currentQuestion.question,
+          answer: userAnswer,
+          required: currentQuestion.required,
+          inputName: currentQuestion.name,
+          prompt: currentQuestion.prompt,
+        };
         setAnswers(prevAnswers => {
-          const newAnswer: IAnswer = {
-            question: currentQuestion.question,
-            answer: userAnswer,
-            required: currentQuestion.required,
-            inputName: currentQuestion.name,
-            prompt: currentQuestion.prompt,
-          };
           return prevAnswers.concat(newAnswer);
         });
 
@@ -284,10 +284,12 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
 
   const handleChange = (value: string) => {
     if (!isGenerating && value === "Yes") {
-      generateExecutionHandler();
-    } else if (!isGenerating && value === "No") {
       initialMessages(templateQuestions);
       setCurrentQuestionIndex(0);
+    } else if (!isGenerating && value === "No") {
+      setShowGenerateButton(false);
+      setDisableChatInput(true);
+      setAnswers([]);
     }
     if (resumedQuestion) {
       currentQuestion = resumedQuestion!;
