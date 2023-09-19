@@ -118,6 +118,18 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
         updatedQuestions.push(updatedQuestion);
       }
     }
+
+    // Sort updatedQuestions by the 'required' property in descending order (required: true first)
+    updatedQuestions.sort((a, b) => {
+      if (a.required && !b.required) {
+        return -1;
+      } else if (!a.required && b.required) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+
     initialMessages(updatedQuestions);
 
     return [updatedQuestions, inputs];
