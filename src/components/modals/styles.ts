@@ -15,7 +15,7 @@ export const modalStyle = {
 };
 
 export const fieldStyle = {
-  width: { xs: "90%", md: "250px" },
+  width: { xs: "90%", md: "100%" },
   color: "inherit",
   ".MuiOutlinedInput-root": {
     color: "inherit",
@@ -37,17 +37,18 @@ export const fieldStyle = {
 };
 
 export const boxStyle = {
-  flexDirection: { md: "row" },
   justifyContent: "space-between",
   gap: 1,
   marginTop: "25px",
 };
 
 export const buttonBoxStyle = {
+  padding: "var(--none, 0px)",
+  justifyContent: "flex-end",
+  alignItems: "flex-start",
+  alignSelf: "stretch",
   display: "flex",
   flexDirection: "row",
-  justifyContent: "center",
-  alignItems: "center",
   gap: 2,
   margin: "auto",
   marginTop: "50px",
@@ -68,7 +69,7 @@ export const typographyStyle = {
 };
 
 export const checkboxStyle = {
-  color: "grey.600",
+  color: "black",
   "label, svg": {
     color: "grey.600",
   },

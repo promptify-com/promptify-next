@@ -15,14 +15,12 @@ import {
   createTheme,
   useTheme,
 } from "@mui/material";
-import { ExpandMore } from "@mui/icons-material";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
 import materialDynamicColors from "material-dynamic-colors";
 import { mix } from "polished";
 import { useRouter } from "next/router";
 import { useGetPromptTemplateBySlugQuery, useViewTemplateMutation } from "@/core/api/templates";
 import { TemplatesExecutions, Templates } from "@/core/api/dto/templates";
-import { GeneratorForm } from "@/components/prompt/GeneratorForm";
 import { Display } from "@/components/prompt/Display";
 import { Details } from "@/components/prompt/Details";
 import { authClient } from "@/common/axios";
@@ -36,10 +34,11 @@ import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
 import ExecutionForm from "@/components/prompt/ExecutionForm";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { useSelector, useDispatch } from "react-redux";
-import { updateTemplateData } from "@/core/store/templatesSlice";
+import { updateTemplate, updateTemplateData } from "@/core/store/templatesSlice";
 import { RootState } from "@/core/store";
 import PromptPlaceholder from "@/components/placeholders/PromptPlaceHolder";
 import { useAppSelector } from "@/hooks/useStore";
+import ChatMode from "@/components/prompt/generate/ChatBox";
 import { getExecutionByHash } from "@/hooks/api/executions";
 
 const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | null }) => {
@@ -69,6 +68,7 @@ const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | nu
     error: fetchedTemplateError,
     isLoading: isLoadingTemplate,
   } = useGetPromptTemplateBySlugQuery(routerSlug);
+
   const {
     data: templateExecutions,
     error: templateExecutionsError,
@@ -78,6 +78,7 @@ const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | nu
 
   // We need to set initial template store only once.
   if (fetchedTemplate && (!isSavedTemplateId || isSavedTemplateId !== fetchedTemplate.id)) {
+    disptach(updateTemplate(fetchedTemplate));
     disptach(
       updateTemplateData({
         id: fetchedTemplate.id,
@@ -180,98 +181,71 @@ const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | nu
           ) : (
             <Grid
               mt={{ xs: 7, md: 0 }}
+              gap={"8px"}
               container
               sx={{
                 mx: "auto",
                 height: {
-                  xs: `calc(100svh - ${theme.custom.headerHeight.xs})`,
-                  md: `calc(100svh - ${theme.custom.headerHeight.md})`,
+                  xs: "calc(100svh - 56px)",
+                  md: "calc(100svh - 90px)",
                 },
                 width: { md: "calc(100% - 65px)" },
-                bgcolor: "surface.2",
-                borderTopLeftRadius: { md: "16px" },
-                borderTopRightRadius: { md: "16px" },
-                overflow: "hidden",
                 position: "relative",
+                overflow: "auto",
+
+                "&::-webkit-scrollbar": {
+                  width: "6px",
+                  p: 1,
+                  backgroundColor: "surface.5",
+                },
+                "&::-webkit-scrollbar-track": {
+                  webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
+                },
+                "&::-webkit-scrollbar-thumb": {
+                  backgroundColor: "surface.1",
+                  outline: "1px solid surface.1",
+                  borderRadius: "10px",
+                },
               }}
             >
               {windowWidth > 960 && (
                 <Grid
                   sx={{
-                    height: "100%",
-                    width: "401px",
-                    overflow: "auto",
-                    position: "relative",
+                    position: "sticky",
                     top: 0,
-                    left: 0,
-                    scrollbarColor: "red",
-                    right: 0,
                     zIndex: 999,
+                    height: "100%",
+
+                    overflow: "auto",
                     "&::-webkit-scrollbar": {
-                      width: "0.4em",
+                      width: "6px",
+                      p: 1,
+                      backgroundColor: "surface.5",
                     },
                     "&::-webkit-scrollbar-track": {
-                      boxShadow: "inset 0 0 6px rgba(0, 0, 0, 0.3)",
                       webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
                     },
                     "&::-webkit-scrollbar-thumb": {
-                      backgroundColor: "surface.3",
-                      outline: "1px solid surface.3",
+                      backgroundColor: "surface.1",
+                      outline: "1px solid surface.1",
                       borderRadius: "10px",
                     },
                   }}
                 >
-                  <Stack height={"100%"}>
+                  <Grid
+                    mr={1}
+                    bgcolor={"surface.1"}
+                    width={"396px"}
+                    borderRadius={"16px"}
+                    overflow={"hidden"}
+                  >
                     <DetailsCard templateData={fetchedTemplate} />
                     <Stack flex={1}>
                       <Box flex={1}>
-                        <Accordion
-                          sx={{
-                            boxShadow: "none",
-                            bgcolor: "surface.1",
-                            borderRadius: "0 0 16px 16px",
-                            overflow: "hidden",
-                            ".MuiAccordionDetails-root": {
-                              p: "0",
-                            },
-                            ".MuiAccordionSummary-root": {
-                              minHeight: "48px",
-                              ":hover": {
-                                opacity: 0.8,
-                                svg: {
-                                  color: "primary.main",
-                                },
-                              },
-                            },
-                            ".MuiAccordionSummary-content": {
-                              m: 0,
-                            },
-                          }}
-                        >
-                          <AccordionSummary expandIcon={<ExpandMore />}>
-                            <Typography
-                              sx={{
-                                fontSize: 12,
-                                fontWeight: 500,
-                                color: "primary.main",
-                              }}
-                            >
-                              More about template
-                            </Typography>
-                          </AccordionSummary>
-                          <AccordionDetails>
-                            <Details templateData={fetchedTemplate} />
-                          </AccordionDetails>
-                        </Accordion>
-                        <GeneratorForm
-                          templateData={fetchedTemplate}
-                          selectedExecution={selectedExecution}
-                          setGeneratedExecution={setGeneratedExecution}
-                          onError={setErrorMessage}
-                        />
+                        <Details templateData={fetchedTemplate} />
                       </Box>
                     </Stack>
-                  </Stack>
+                  </Grid>
                 </Grid>
               )}
 
@@ -299,80 +273,72 @@ const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | nu
                       mobile
                     />
                   </Grid>
-
-                  <Grid
-                    item
-                    xs={12}
-                    md={8}
-                    sx={{
-                      display: mobileTab === 1 ? "block" : "none",
-                      height: "100%",
-                      overflow: "auto",
-                      bgcolor: "surface.1",
-                      pb: "calc(74px + 90px)", // 74px Bottom tab bar height + 90px details card mini on the header
-                    }}
-                  >
-                    <GeneratorForm
-                      templateData={fetchedTemplate}
-                      selectedExecution={selectedExecution}
-                      setGeneratedExecution={setGeneratedExecution}
-                      onError={setErrorMessage}
-                    />
-                  </Grid>
                 </>
+              )}
+              {windowWidth < 960 && (
+                <Grid
+                  sx={{
+                    display: {
+                      xs: mobileTab === 1 ? "block" : "none",
+                      md: "block",
+                    },
+                  }}
+                >
+                  <ChatMode
+                    setGeneratedExecution={setGeneratedExecution}
+                    onError={setErrorMessage}
+                  />
+                </Grid>
               )}
 
               <Grid
                 flex={1}
+                borderRadius={"16p"}
                 sx={{
                   display: {
                     xs: mobileTab === 2 ? "block" : "none",
                     md: "block",
                   },
-                  height: {
-                    xs: "calc(100% - (74px + 90px))", // 74px Bottom tab bar height + 90px details card mini on the header
-                    md: "100%",
-                  },
-                  overflow: "auto",
-                  bgcolor: "surface.1",
-                  borderLeft: "1px solid #ECECF4",
-                  position: "relative",
                 }}
               >
-                <Display
-                  templateData={fetchedTemplate}
-                  executions={templateExecutions || []}
-                  isFetching={isFetchingExecutions}
-                  selectedExecution={selectedExecution}
-                  setSelectedExecution={setSelectedExecution}
-                  generatedExecution={generatedExecution}
-                  hashedExecution={hashedExecution}
-                />
-                {currentGeneratedPrompt && (
-                  <Box
-                    sx={{
-                      position: "sticky",
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      zIndex: 998,
-                      bgcolor: "surface.1",
-                    }}
-                  >
-                    <Divider sx={{ borderColor: "surface.3" }} />
-                    <Typography
+                <Grid mr={1}>
+                  <Display
+                    templateData={fetchedTemplate}
+                    executions={templateExecutions ?? []}
+                    isFetching={isFetchingExecutions}
+                    selectedExecution={selectedExecution}
+                    setSelectedExecution={setSelectedExecution}
+                    generatedExecution={generatedExecution}
+                    setGeneratedExecution={setGeneratedExecution}
+                    onError={setErrorMessage}
+                    hashedExecution={hashedExecution}
+                  />
+                  {currentGeneratedPrompt && (
+                    <Box
                       sx={{
-                        padding: "8px 16px 5px",
-                        textAlign: "right",
-                        fontSize: 11,
-                        fontWeight: 500,
-                        opacity: 0.3,
+                        position: "sticky",
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        zIndex: 998,
+                        bgcolor: "surface.1",
                       }}
                     >
-                      Prompt #{currentGeneratedPrompt.order}: {currentGeneratedPrompt.title}
-                    </Typography>
-                  </Box>
-                )}
+                      <Divider sx={{ borderColor: "surface.3" }} />
+                      <Typography
+                        sx={{
+                          padding: "8px 16px 5px",
+                          textAlign: "right",
+                          fontSize: 11,
+                          fontWeight: 500,
+                          opacity: 0.3,
+                        }}
+                      >
+                        Prompt #{currentGeneratedPrompt.order}: {currentGeneratedPrompt.title}
+                      </Typography>
+                    </Box>
+                  )}
+                </Grid>
               </Grid>
 
               <BottomTabs

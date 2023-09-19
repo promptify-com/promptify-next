@@ -84,7 +84,7 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
       external: false,
     },
     {
-      label: "Browse",
+      label: "Prompts",
       icon: <Search />,
       href: "/explore",
       active: splittedPath[1] == "explore",

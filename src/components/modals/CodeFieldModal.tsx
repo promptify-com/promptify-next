@@ -8,9 +8,16 @@ interface Props {
   setOpen: (val: boolean) => void;
   value: string;
   onChange: (value: string) => void;
+  onSubmit?: (value: string) => void;
 }
 
-export default function CodeFieldModal({ open, setOpen, value, onChange }: Props) {
+export default function CodeFieldModal({ open, setOpen, value, onChange, onSubmit }: Props) {
+  const handleSubmit = () => {
+    setOpen(false);
+    if (onSubmit) {
+      onSubmit(value);
+    }
+  };
   return (
     <Modal
       open={open}
@@ -54,7 +61,7 @@ export default function CodeFieldModal({ open, setOpen, value, onChange }: Props
                 color: "tertiary",
               },
             }}
-            onClick={() => setOpen(false)}
+            onClick={handleSubmit}
           >
             Confirm
           </Button>

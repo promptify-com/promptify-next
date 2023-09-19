@@ -55,7 +55,7 @@ export default function Page({ category }: { category: Category }) {
                     variant="text"
                     sx={{ fontSize: 19, color: "onSurface", ml: -3 }}
                   >
-                    <KeyboardArrowLeft /> {category.name}
+                    <KeyboardArrowLeft /> {category.name} Prompt Template
                   </Button>
                 </Link>
                 <Typography variant="body1">{category.description}</Typography>{" "}
@@ -71,7 +71,10 @@ export default function Page({ category }: { category: Category }) {
               >
                 {categories
                   ?.filter(
-                    subcategory => category?.name == subcategory.parent?.name && subcategory.prompt_template_count,
+                    subcategory =>
+                      subcategory.is_visible &&
+                      subcategory.prompt_template_count &&
+                      category?.name === subcategory.parent?.name,
                   )
                   .map(subcategory => (
                     <Grid key={subcategory.id}>

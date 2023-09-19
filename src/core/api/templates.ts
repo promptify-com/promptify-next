@@ -1,5 +1,5 @@
 import { baseApi } from "./api";
-import { PromptParams } from "./dto/prompts";
+import { PromptParams, TemplateQuestionGeneratorData } from "./dto/prompts";
 import { FilterParams, Templates, TemplatesWithPagination } from "./dto/templates";
 import { IEditTemplate } from "@/common/types/editTemplate";
 
@@ -14,6 +14,7 @@ const getSearchParams = (params: FilterParams) => {
   params.ordering && searchParams.append("ordering", params.ordering);
   params.limit && searchParams.append("limit", String(params.limit));
   params.offset && searchParams.append("offset", String(params.offset));
+  params.status && searchParams.append("status", String(params.status));
 
   return searchParams.toString();
 };
@@ -94,6 +95,28 @@ export const templatesApi = baseApi.injectEndpoints({
           method: "post",
         }),
       }),
+
+      templateQuestionGenerator: builder.mutation<
+        Templates,
+        { id?: number; data: TemplateQuestionGeneratorData; streaming?: boolean }
+      >({
+        query: ({
+          data,
+          id = 515,
+          streaming = false,
+        }: {
+          data: TemplateQuestionGeneratorData;
+          id?: number;
+          streaming?: boolean;
+        }) => ({
+          url: `/api/meta/templates/${id}/execute/?streaming=${streaming}`,
+          method: "post",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          data,
+        }),
+      }),
     };
   },
 });
@@ -110,4 +133,5 @@ export const {
   useUpdateTemplateMutation,
   usePublishTemplateMutation,
   useViewTemplateMutation,
+  useTemplateQuestionGeneratorMutation,
 } = templatesApi;

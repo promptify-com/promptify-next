@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useMemo } from "react";
-import { Box, Typography } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { ExecutionCard } from "./ExecutionCard";
 import { PromptLiveResponse } from "@/common/types/prompt";
@@ -8,6 +8,8 @@ import { DisplayActions } from "./DisplayActions";
 import ParagraphPlaceholder from "@/components/placeholders/ParagraphPlaceholder";
 import { useRouter } from "next/router";
 import { SparkExportPopup } from "../dialog/SparkExportPopup";
+import { determineIsMobile } from "@/common/helpers/determineIsMobile";
+import ChatMode from "./generate/ChatBox";
 import useBrowser from "@/hooks/useBrowser";
 
 interface Props {
@@ -17,6 +19,8 @@ interface Props {
   selectedExecution: TemplatesExecutions | null;
   setSelectedExecution: (execution: TemplatesExecutions | null) => void;
   generatedExecution: PromptLiveResponse | null;
+  setGeneratedExecution: (data: PromptLiveResponse) => void;
+  onError: (errMsg: string) => void;
   hashedExecution: TemplatesExecutions | null;
 }
 
@@ -27,6 +31,8 @@ export const Display: React.FC<Props> = ({
   selectedExecution,
   setSelectedExecution,
   generatedExecution,
+  setGeneratedExecution,
+  onError,
   hashedExecution,
 }) => {
   const [firstLoad, setFirstLoad] = useState(true);
@@ -111,53 +117,69 @@ export const Display: React.FC<Props> = ({
     replaceHistoryByPathname(`/prompt/${templateData.slug}`);
   }
 
+  const IS_MOBILE = determineIsMobile();
+
   return (
-    <Box
-      ref={containerRef}
-      sx={{
-        minHeight: "calc(100% - 31px)",
-        position: "relative",
-        pb: { xs: "70px", md: "0" },
-      }}
+    <Grid
+      display={"flex"}
+      flexDirection={"column"}
+      gap={"24px"}
     >
-      <DisplayActions
-        executions={executions}
-        selectedExecution={selectedExecution}
-        setSelectedExecution={_execution => {
-          handleSelectExecution({ execution: _execution, resetHash: true });
-        }}
-        onSearch={text => setSearch(text)}
-        onOpenExport={() => setOpenExportpopup(true)}
-        sparkHashQueryParam={sparkHashQueryParam.current}
-      />
-      {openExportPopup && activeExecution?.id && (
-        <SparkExportPopup
-          onClose={() => setOpenExportpopup(false)}
-          activeExecution={activeExecution}
+      {!IS_MOBILE && (
+        <ChatMode
+          setGeneratedExecution={setGeneratedExecution}
+          onError={onError}
         />
       )}
-
-      <Box sx={{ mx: "15px", opacity: firstLoad ? 0.5 : 1 }}>
-        {isGeneratedExecutionEmpty ? (
-          <ParagraphPlaceholder />
-        ) : generatedExecution?.data ? (
-          <ExecutionCardGenerated
-            execution={generatedExecution}
-            templateData={templateData}
+      <Box
+        ref={containerRef}
+        bgcolor={"surface.1"}
+        borderRadius={"16px"}
+        minHeight={{ xs: "100vh", md: "calc(100vh - (95px + 48px + 24px))" }}
+        sx={{
+          position: "relative",
+          pb: { xs: "70px", md: "0" },
+        }}
+      >
+        <DisplayActions
+          executions={sortedExecutions}
+          selectedExecution={selectedExecution}
+          setSelectedExecution={_execution => {
+            handleSelectExecution({ execution: _execution, resetHash: true });
+          }}
+          onSearch={text => setSearch(text)}
+          onOpenExport={() => setOpenExportpopup(true)}
+          sparkHashQueryParam={sparkHashQueryParam.current}
+        />
+        {openExportPopup && activeExecution?.id && (
+          <SparkExportPopup
+            onClose={() => setOpenExportpopup(false)}
+            activeExecution={activeExecution}
           />
-        ) : isFetching ? (
-          <ParagraphPlaceholder />
-        ) : selectedExecution ? (
-          <ExecutionCard
-            execution={selectedExecution}
-            templateData={templateData}
-            search={search}
-            sparkHashQueryParam={sparkHashQueryParam.current}
-          />
-        ) : (
-          <Typography sx={{ mt: "40px", textAlign: "center" }}>No spark found</Typography>
         )}
+
+        <Box sx={{ mx: "15px", opacity: firstLoad ? 0.5 : 1 }}>
+          {isGeneratedExecutionEmpty ? (
+            <ParagraphPlaceholder />
+          ) : generatedExecution?.data ? (
+            <ExecutionCardGenerated
+              execution={generatedExecution}
+              templateData={templateData}
+            />
+          ) : isFetching ? (
+            <ParagraphPlaceholder />
+          ) : selectedExecution ? (
+            <ExecutionCard
+              execution={selectedExecution}
+              templateData={templateData}
+              search={search}
+              sparkHashQueryParam={sparkHashQueryParam.current}
+            />
+          ) : (
+            <Typography sx={{ mt: "40px", textAlign: "center" }}>No spark found</Typography>
+          )}
+        </Box>
       </Box>
-    </Box>
+    </Grid>
   );
 };

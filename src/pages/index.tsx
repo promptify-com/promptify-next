@@ -135,7 +135,7 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
                 <TemplatesSection
                   isLoading={isSuggestedTemplateLoading}
                   templates={suggestedTemplates}
-                  title="You may like these templates:"
+                  title=" You may like these prompt templates:"
                   type="suggestedTemplates"
                 />
                 <CategoriesSection
@@ -161,7 +161,7 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
 
 export async function getServerSideProps() {
   const responseCategories = await authClient.get<Category[]>("/api/meta/categories/");
-  const categories = responseCategories.data?.filter(category => category.prompt_template_count);
+  const categories = responseCategories.data?.filter(category => category.prompt_template_count && category.is_visible);
 
   return {
     props: {
