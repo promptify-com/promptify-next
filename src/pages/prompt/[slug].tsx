@@ -31,7 +31,6 @@ import { useWindowSize } from "usehooks-ts";
 import BottomTabs from "@/components/prompt/BottomTabs";
 import { DetailsCardMini } from "@/components/prompt/DetailsCardMini";
 import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
-import ExecutionForm from "@/components/prompt/ExecutionForm";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { updateTemplate, updateTemplateData } from "@/core/store/templatesSlice";
@@ -40,14 +39,12 @@ import PromptPlaceholder from "@/components/placeholders/PromptPlaceHolder";
 import { useAppSelector } from "@/hooks/useStore";
 import ChatMode from "@/components/prompt/generate/ChatBox";
 import { getExecutionByHash } from "@/hooks/api/executions";
-import { GeneratorForm } from "@/components/prompt/GeneratorForm";
 import { ExpandMore } from "@mui/icons-material";
 
 const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | null }) => {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const [selectedExecution, setSelectedExecution] = useState<TemplatesExecutions | null>(null);
   const [generatedExecution, setGeneratedExecution] = useState<PromptLiveResponse | null>(null);
-  const [executionFormOpen, setExecutionFormOpen] = useState(false);
   const [updateViewTemplate] = useViewTemplateMutation();
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [mobileTab, setMobileTab] = useState(0);
@@ -103,7 +100,7 @@ const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | nu
       const promptNotCompleted = generatedExecution.data.find(execData => !execData.isCompleted);
       if (!promptNotCompleted) {
         setSelectedExecution(null);
-        setExecutionFormOpen(true);
+        refetchTemplateExecutions();
       }
     }
   }, [isGenerating, generatedExecution]);
@@ -241,6 +238,7 @@ const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | nu
                   <Stack flex={1}>
                     <Box flex={1}>
                       <Accordion
+                        expanded={true}
                         sx={{
                           boxShadow: "none",
                           bgcolor: "surface.1",
@@ -277,12 +275,6 @@ const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | nu
                           <Details templateData={fetchedTemplate} />
                         </AccordionDetails>
                       </Accordion>
-                      <GeneratorForm
-                        templateData={fetchedTemplate}
-                        selectedExecution={selectedExecution}
-                        setGeneratedExecution={setGeneratedExecution}
-                        onError={setErrorMessage}
-                      />
                     </Box>
                   </Stack>
                 </Stack>
@@ -387,17 +379,6 @@ const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | nu
               />
             </Grid>
           )}
-
-          <ExecutionForm
-            type="new"
-            isOpen={executionFormOpen}
-            executionId={generatedExecution?.id}
-            onClose={() => {
-              setGeneratedExecution(null);
-              setExecutionFormOpen(false);
-            }}
-            onCancel={() => refetchTemplateExecutions()}
-          />
 
           <Snackbar
             anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
