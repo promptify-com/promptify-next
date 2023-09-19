@@ -4,7 +4,6 @@ import { getExecutionById } from "@/hooks/api/executions";
 import { AnswerValidatorResponse } from "../types/chat";
 
 const answersValidatorTemplateId = 516;
-const { NEXT_PUBLIC_API_UR } = process.env;
 
 export const generate = ({
   token,
@@ -21,7 +20,7 @@ export const generate = ({
         prompt_params: payload,
       },
     ];
-    const url = `${NEXT_PUBLIC_API_UR}/api/v1/templates/${answersValidatorTemplateId}/execute/?streaming=true`;
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/templates/${answersValidatorTemplateId}/execute/?streaming=true`;
     let templateExecutionId = 0;
 
     fetchEventSource(url, {

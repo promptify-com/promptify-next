@@ -375,7 +375,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
 
   const generateExecution = (executionData: ResPrompt[]) => {
     let tempData: any[] = [];
-    let url = `https://api.promptify.com/api/v1/templates/${template!.id}/execute/`;
+    let url = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/templates/${template!.id}/execute/`;
 
     fetchEventSource(url, {
       method: "POST",
