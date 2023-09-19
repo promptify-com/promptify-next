@@ -3,18 +3,9 @@ import { remark } from "remark";
 import html from "remark-html";
 
 export const markdownToHTML = async (markdown: string) => {
-  const lines = markdown.split("\n");
-  const processedLines = lines.map(line => {
-    // Check if the line starts with more than 4 spaces
-    if (/^ {5,}/.test(line)) {
-      return line.replace(/^ {5,}/, "");
-    } else {
-      return line;
-    }
-  });
-
-  const processedMarkdown = processedLines.join("\n");
-  const processedContent = await remark().use(html, { sanitize: false }).process(processedMarkdown);
+  const processedContent = await remark()
+    .use(html, { sanitize: false })
+    .process(markdown.replace(/^\s+ {5,}(?![ ])/gm, "\n"));
 
   // remark set language name as <code class="language-js"></code>. extract language name and put in a seperated div
   const htmlContent = processedContent.toString().replace(/<code class="language-([^"]+)"/g, (match, language) => {
