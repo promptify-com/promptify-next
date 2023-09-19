@@ -117,7 +117,7 @@ export const Display: React.FC<Props> = ({
 
       handleSelectExecution({ execution: _selectedExecution || _execuitons?.[0] || null, resetHash: true });
     } else {
-      handleSelectExecution({ execution: _execuitons?.[0] || null, resetHash: true });
+      handleSelectExecution({ execution: templateData.example_execution || null, resetHash: true });
     }
 
     if (sparkQueryParam) {

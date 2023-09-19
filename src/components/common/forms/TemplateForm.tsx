@@ -15,9 +15,10 @@ import {
   Stack,
   IconButton,
   Icon,
+  FormControl,
 } from "@mui/material";
 import { useGetTagsQuery } from "@/core/api/tags";
-import { Templates } from "@/core/api/dto/templates";
+import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { IEditTemplate } from "@/common/types/editTemplate";
 import { authClient } from "@/common/axios";
 import { fieldStyle, boxStyle, buttonBoxStyle, typographyStyle, checkboxStyle } from "../../modals/styles";
@@ -29,6 +30,12 @@ import { useCreateTemplateMutation, useUpdateTemplateMutation } from "@/core/api
 import { FormType } from "@/common/types/template";
 import { TemplateStatusArray } from "@/common/constants";
 import { getLanguageFromCode } from "@/common/helpers/getLanguageFromCode";
+import {
+  executionsApi,
+  useGetExecutionsByTemplateQuery,
+  useUpdateExecutionExampleMutation,
+} from "@/core/api/executions";
+import { exec } from "child_process";
 
 interface Props {
   type?: FormType;
@@ -47,15 +54,26 @@ const TemplateForm: React.FC<Props> = ({
   darkMode = false,
 }) => {
   const token = useToken();
+
   const { data: categories } = useGetCategoriesQuery();
   const { data: fetchedTags } = useGetTagsQuery();
-  const [tags, setTags] = useState<string[]>([]);
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const { data: user } = useGetCurrentUserQuery(token);
   const [createTemplate] = useCreateTemplateMutation();
   const [updateTemplate] = useUpdateTemplateMutation();
+  const [getTemplateExecution] = executionsApi.endpoints.getExecutionsByTemplate.useLazyQuery();
+  const [updateExecutionExample] = useUpdateExecutionExampleMutation();
 
+  const [tags, setTags] = useState<string[]>([]);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [executions, setExecutions] = useState<TemplatesExecutions[]>();
+
+  const getExecutions = async () => {
+    if (!templateData) return null;
+    const response = await getTemplateExecution(templateData.id);
+    setExecutions(response.data);
+  };
   useEffect(() => {
+    getExecutions();
     setSelectedTags(templateData?.tags.map(tag => tag.name) ?? []);
   }, [templateData]);
 
@@ -101,6 +119,8 @@ const TemplateForm: React.FC<Props> = ({
       id: templateData?.id,
       data: values,
     });
+    if (!values.example_execution) return;
+    await updateExecutionExample({ id: templateData.id, data: { example_execution: values.example_execution.id } });
     handleSave();
   };
 
@@ -129,6 +149,9 @@ const TemplateForm: React.FC<Props> = ({
       meta_description: templateData?.meta_description ?? "",
       meta_keywords: templateData?.meta_keywords ?? "",
       status: templateData?.status ?? "DRAFT",
+      ...(type === "edit" && {
+        example_execution: templateData?.example_execution,
+      }),
       ...(type === "create" && { prompts_list: [] }),
     },
     enableReinitialize: true,
@@ -512,6 +535,29 @@ const TemplateForm: React.FC<Props> = ({
               )}
             />
           </Stack>
+          {type === "edit" && (
+            <Stack sx={boxStyle}>
+              <FormControl variant="standard">
+                <InputLabel id="execution-label">Execution Example</InputLabel>
+                <Select
+                  labelId="execution-label"
+                  value={formik.values.example_execution}
+                  onChange={event => {
+                    formik.setFieldValue("example_execution", event.target.value);
+                  }}
+                >
+                  {executions?.map(execution => (
+                    <MenuItem
+                      key={execution.id}
+                      value={execution.id}
+                    >
+                      {`#${execution.id} - ${execution.title}`}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Stack>
+          )}
         </Box>
       )}
       <Box sx={buttonBoxStyle}>
