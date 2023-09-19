@@ -177,7 +177,7 @@ export const Display: React.FC<Props> = ({
             <Typography sx={{ mt: "40px", textAlign: "center" }}>No spark found</Typography>
           ) : (
             <ExecutionCard
-              execution={generatedExecution?.data ? generatedExecution : selectedExecution}
+              execution={generatedExecution ?? selectedExecution}
               promptsData={templateData.prompts}
               search={search}
               sparkHashQueryParam={sparkHashQueryParam.current}
