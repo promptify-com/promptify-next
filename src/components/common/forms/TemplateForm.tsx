@@ -15,6 +15,7 @@ import {
   Stack,
   IconButton,
   Icon,
+  Switch,
 } from "@mui/material";
 import { useGetTagsQuery } from "@/core/api/tags";
 import { Templates } from "@/core/api/dto/templates";
@@ -129,6 +130,7 @@ const TemplateForm: React.FC<Props> = ({
       meta_description: templateData?.meta_description ?? "",
       meta_keywords: templateData?.meta_keywords ?? "",
       status: templateData?.status ?? "DRAFT",
+      is_internal: templateData?.is_internal ?? false,
       ...(type === "create" && { prompts_list: [] }),
     },
     enableReinitialize: true,
@@ -511,6 +513,22 @@ const TemplateForm: React.FC<Props> = ({
                 />
               )}
             />
+          </Stack>
+
+          <Stack sx={boxStyle}>
+            <Stack
+              direction={"row"}
+              alignItems={"center"}
+              sx={checkboxStyle}
+            >
+              <InputLabel>Is Internal?</InputLabel>
+              <Switch
+                checked={formik.values.is_internal}
+                onChange={() => {
+                  formik.setFieldValue("is_internal", !formik.values.is_internal);
+                }}
+              />
+            </Stack>
           </Stack>
         </Box>
       )}
