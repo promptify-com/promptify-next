@@ -314,7 +314,7 @@ const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | nu
                   </Grid>
                 </>
               )}
-              {windowWidth < 960 && (
+              {windowWidth < 960 && fetchedTemplate?.id && (
                 <Grid
                   sx={{
                     display: {
@@ -326,6 +326,7 @@ const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | nu
                   <ChatMode
                     setGeneratedExecution={setGeneratedExecution}
                     onError={setErrorMessage}
+                    key={fetchedTemplate.id}
                   />
                 </Grid>
               )}

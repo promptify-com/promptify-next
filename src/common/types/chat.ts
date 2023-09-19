@@ -12,6 +12,7 @@ export interface IMessage {
   fromUser: boolean;
   type: InputType;
   choices?: string[] | null;
+  startOver?: boolean;
 }
 
 export interface IAnswer {

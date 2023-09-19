@@ -234,6 +234,7 @@ export interface SparkExecution {
   prompt_executions: PromptExecutions[];
   is_favorite: boolean;
   hash: string;
+  errors?: string;
 }
 
 export interface SparkVersion {

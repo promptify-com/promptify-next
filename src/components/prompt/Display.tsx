@@ -44,7 +44,6 @@ export const Display: React.FC<Props> = ({
   const [openExportPopup, setOpenExportpopup] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const { replaceHistoryByPathname } = useBrowser();
-  const [chatModeKey, setChatModeKey] = useState(0);
 
   const activeExecution = useMemo(() => {
     if (selectedExecution) {

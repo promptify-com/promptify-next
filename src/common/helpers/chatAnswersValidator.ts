@@ -11,7 +11,7 @@ export const generate = ({
 }: {
   token: string;
   payload: QuestionAnswerParams;
-}): Promise<AnswerValidatorResponse> => {
+}): Promise<AnswerValidatorResponse | string> => {
   return new Promise(resolve => {
     const data: TemplateQuestionGeneratorData[] = [
       {
@@ -41,9 +41,17 @@ export const generate = ({
         } catch (_) {}
       },
       async onclose() {
-        const _execution = await getExecutionById(templateExecutionId);
+        try {
+          const _execution = await getExecutionById(templateExecutionId);
 
-        resolve(JSON.parse(_execution.prompt_executions[0].output.replace(/\n(\s+)?/g, "")));
+          if (_execution.errors) {
+            resolve("Something wrong happened");
+          }
+
+          resolve(JSON.parse(_execution.prompt_executions[0].output.replace(/\n(\s+)?/g, "")));
+        } catch (_) {
+          resolve("Something wrong happened");
+        }
       },
     });
   });
