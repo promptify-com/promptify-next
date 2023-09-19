@@ -120,7 +120,7 @@ const TemplateForm: React.FC<Props> = ({
       data: values,
     });
     if (!values.example_execution) return;
-    await updateExecutionExample({ id: templateData.id, data: { example_execution: values.example_execution.id } });
+    await updateExecutionExample({ id: templateData.id, data: { example_execution: values.example_execution } });
     handleSave();
   };
 
@@ -150,7 +150,7 @@ const TemplateForm: React.FC<Props> = ({
       meta_keywords: templateData?.meta_keywords ?? "",
       status: templateData?.status ?? "DRAFT",
       ...(type === "edit" && {
-        example_execution: templateData?.example_execution,
+        example_execution: templateData?.example_execution.id,
       }),
       ...(type === "create" && { prompts_list: [] }),
     },

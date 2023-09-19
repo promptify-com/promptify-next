@@ -21,5 +21,5 @@ export interface IEditTemplate {
   meta_description: string;
   meta_keywords: string;
   status: TemplateStatus;
-  example_execution?: TemplatesExecutions;
+  example_execution?: number;
 }
