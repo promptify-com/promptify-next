@@ -397,8 +397,6 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
       body: JSON.stringify(executionData),
       openWhenHidden: true,
       async onopen(res) {
-        setChatExpanded(false);
-
         if (res.ok && res.status === 200) {
           dispatch(setGeneratingStatus(true));
           setGeneratingResponse({ created_at: new Date(), data: [] });
@@ -583,30 +581,6 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
               >
                 Chat with Promptify
               </Typography>
-            </Grid>
-            <Grid>
-              <IconButton
-                onClick={e => {
-                  e.stopPropagation();
-                }}
-                size="small"
-                sx={{
-                  border: "none",
-                }}
-              >
-                <Search />
-              </IconButton>
-              <IconButton
-                onClick={e => {
-                  e.stopPropagation();
-                }}
-                size="small"
-                sx={{
-                  border: "none",
-                }}
-              >
-                <MoreVert />
-              </IconButton>
             </Grid>
           </Grid>
         </AccordionSummary>
