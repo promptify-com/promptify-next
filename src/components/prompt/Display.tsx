@@ -142,7 +142,7 @@ export const Display: React.FC<Props> = ({
         }}
       >
         <DisplayActions
-          executions={sortedExecutions}
+          executions={executions}
           selectedExecution={selectedExecution}
           setSelectedExecution={_execution => {
             handleSelectExecution({ execution: _execution, resetHash: true });
