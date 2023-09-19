@@ -11,7 +11,7 @@ import useDebounce from "./useDebounce";
 
 import { Templates } from "@/core/api/dto/templates";
 
-export function useGetTemplatesByFilter(catId?: number, subCatId?: number) {
+export function useGetTemplatesByFilter(catId?: number, subCatId?: number, runs?: string) {
   const router = useRouter();
   const splittedPath = router.pathname.split("/");
 
@@ -54,6 +54,7 @@ export function useGetTemplatesByFilter(catId?: number, subCatId?: number) {
     offset,
     limit: PAGINATION_LIMIT,
     status,
+    ordering: runs && "-runs",
   };
   const { data: templates, isLoading: isTemplatesLoading, isFetching } = useGetTemplatesByFilterQuery(params);
 
