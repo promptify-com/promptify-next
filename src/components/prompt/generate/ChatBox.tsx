@@ -80,7 +80,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
       welcomeMessage.push({
         text: `Hi, ${
           currentUser?.first_name ?? currentUser?.username ?? "There"
-        }. Welcome. I can help you with your template`,
+        }. Welcome. I can help you with the ${template?.title} template.`,
         type: "text" as InputType,
         createdAt: createdAt,
         fromUser: false,
