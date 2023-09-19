@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useMemo } from "react";
-import { Box, Grid, Typography } from "@mui/material";
+import { Box, Button, Grid, Typography } from "@mui/material";
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { ExecutionCard } from "./ExecutionCard";
 import { PromptLiveResponse } from "@/common/types/prompt";
@@ -44,6 +44,7 @@ export const Display: React.FC<Props> = ({
   const [openExportPopup, setOpenExportpopup] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const { replaceHistoryByPathname } = useBrowser();
+  const [chatModeKey, setChatModeKey] = useState(0);
 
   const activeExecution = useMemo(() => {
     if (selectedExecution) {
@@ -139,6 +140,7 @@ export const Display: React.FC<Props> = ({
     >
       {!IS_MOBILE && (
         <ChatMode
+          key={templateData.id}
           setGeneratedExecution={setGeneratedExecution}
           onError={onError}
         />
