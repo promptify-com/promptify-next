@@ -167,7 +167,7 @@ const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | nu
 
   const dynamicTheme = createTheme({ ...theme, palette });
 
-  if (fetchedTemplateError || templateExecutionsError) {
+  if (fetchedTemplateError) {
     router.push("/404");
     return;
   }
