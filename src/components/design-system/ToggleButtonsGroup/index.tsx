@@ -6,9 +6,10 @@ interface Props {
   variant: "horizontal" | "vertical";
   onChange: (item: string) => void;
   value: string;
+  disabled: boolean;
 }
 
-export const ToggleButtonsGroup = ({ items, onChange, variant, value }: Props) => {
+export const ToggleButtonsGroup = ({ items, onChange, variant, value, disabled }: Props) => {
   const containerStyle = {
     display: "flex",
     flexDirection: variant === "horizontal" ? "row" : "column",
@@ -22,7 +23,7 @@ export const ToggleButtonsGroup = ({ items, onChange, variant, value }: Props) =
       {items?.map((item, idx) => (
         <ToggleButton
           key={idx}
-          disabled={value !== "" && value !== item}
+          disabled={disabled}
           value={item}
           onChange={() => onChange(item)}
           sx={{
@@ -37,6 +38,9 @@ export const ToggleButtonsGroup = ({ items, onChange, variant, value }: Props) =
             color: value === item ? "white" : "onSurface",
             "&:hover": {
               bgcolor: value === item ? "success.main" : "surface.3",
+            },
+            ":disabled": {
+              color: value === item ? "white" : "gray",
             },
           }}
         >

@@ -1,6 +1,7 @@
 import { QuestionAnswerParams, TemplateQuestionGeneratorData } from "@/core/api/dto/prompts";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { getExecutionById } from "@/hooks/api/executions";
+import { AnswerValidatorResponse } from "../types/chat";
 
 const answersValidatorTemplateId = 516;
 
@@ -10,11 +11,7 @@ export const generate = ({
 }: {
   token: string;
   payload: QuestionAnswerParams;
-}): Promise<{
-  answer: string;
-  feedback: string;
-  approved: boolean;
-}> => {
+}): Promise<AnswerValidatorResponse | string> => {
   return new Promise(resolve => {
     const data: TemplateQuestionGeneratorData[] = [
       {
@@ -23,7 +20,7 @@ export const generate = ({
         prompt_params: payload,
       },
     ];
-    const url = `https://api.promptify.com/api/v1/templates/${answersValidatorTemplateId}/execute/?streaming=false`;
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/templates/${answersValidatorTemplateId}/execute/?streaming=true`;
     let templateExecutionId = 0;
 
     fetchEventSource(url, {
@@ -44,9 +41,17 @@ export const generate = ({
         } catch (_) {}
       },
       async onclose() {
-        const _execution = await getExecutionById(templateExecutionId);
+        try {
+          const _execution = await getExecutionById(templateExecutionId);
 
-        resolve(JSON.parse(_execution.prompt_executions[0].output.replace(/\n(\s+)?/g, "")));
+          if (_execution.errors) {
+            resolve("Something wrong happened");
+          }
+
+          resolve(JSON.parse(_execution.prompt_executions[0].output.replace(/\n(\s+)?/g, "")));
+        } catch (_) {
+          resolve("Something wrong happened");
+        }
       },
     });
   });

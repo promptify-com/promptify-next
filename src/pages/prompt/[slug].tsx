@@ -31,7 +31,6 @@ import { useWindowSize } from "usehooks-ts";
 import BottomTabs from "@/components/prompt/BottomTabs";
 import { DetailsCardMini } from "@/components/prompt/DetailsCardMini";
 import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
-import ExecutionForm from "@/components/prompt/ExecutionForm";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { updateTemplate, updateTemplateData } from "@/core/store/templatesSlice";
@@ -40,12 +39,14 @@ import PromptPlaceholder from "@/components/placeholders/PromptPlaceHolder";
 import { useAppSelector } from "@/hooks/useStore";
 import ChatMode from "@/components/prompt/generate/ChatBox";
 import { getExecutionByHash } from "@/hooks/api/executions";
+import { ExpandMore } from "@mui/icons-material";
+import ExecutionForm from "@/components/prompt/ExecutionForm";
+import { GeneratorForm } from "@/components/prompt/GeneratorForm";
 
 const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | null }) => {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const [selectedExecution, setSelectedExecution] = useState<TemplatesExecutions | null>(null);
   const [generatedExecution, setGeneratedExecution] = useState<PromptLiveResponse | null>(null);
-  const [executionFormOpen, setExecutionFormOpen] = useState(false);
   const [updateViewTemplate] = useViewTemplateMutation();
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [mobileTab, setMobileTab] = useState(0);
@@ -56,6 +57,7 @@ const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | nu
   const isValidUser = useSelector(isValidUserFn);
   const { width: windowWidth } = useWindowSize();
   const isSavedTemplateId = useSelector((state: RootState) => state.template.id);
+  const [executionFormOpen, setExecutionFormOpen] = useState(false);
 
   const routerSlug = router.query?.slug as string;
   if (!routerSlug) {
@@ -209,8 +211,11 @@ const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | nu
               }}
             >
               {windowWidth > 960 && (
-                <Grid
+                <Stack
+                  px={"4px"}
+                  maxWidth={"430px"}
                   sx={{
+                    borderRadius: "16px",
                     position: "sticky",
                     top: 0,
                     zIndex: 999,
@@ -232,21 +237,55 @@ const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | nu
                     },
                   }}
                 >
-                  <Grid
-                    mr={1}
-                    bgcolor={"surface.1"}
-                    width={"396px"}
-                    borderRadius={"16px"}
-                    overflow={"hidden"}
-                  >
-                    <DetailsCard templateData={fetchedTemplate} />
-                    <Stack flex={1}>
-                      <Box flex={1}>
-                        <Details templateData={fetchedTemplate} />
-                      </Box>
-                    </Stack>
-                  </Grid>
-                </Grid>
+                  <DetailsCard templateData={fetchedTemplate} />
+                  <Stack flex={1}>
+                    <Box flex={1}>
+                      <Accordion
+                        sx={{
+                          boxShadow: "none",
+                          bgcolor: "surface.1",
+                          overflow: "hidden",
+                          ".MuiAccordionDetails-root": {
+                            p: "0",
+                          },
+                          ".MuiAccordionSummary-root": {
+                            minHeight: "48px",
+                            ":hover": {
+                              opacity: 0.8,
+                              svg: {
+                                color: "primary.main",
+                              },
+                            },
+                          },
+                          ".MuiAccordionSummary-content": {
+                            m: 0,
+                          },
+                        }}
+                      >
+                        <AccordionSummary expandIcon={<ExpandMore />}>
+                          <Typography
+                            sx={{
+                              fontSize: 12,
+                              fontWeight: 500,
+                              color: "primary.main",
+                            }}
+                          >
+                            More about template
+                          </Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                          <Details templateData={fetchedTemplate} />
+                        </AccordionDetails>
+                      </Accordion>
+                      <GeneratorForm
+                        templateData={fetchedTemplate}
+                        selectedExecution={selectedExecution}
+                        setGeneratedExecution={setGeneratedExecution}
+                        onError={setErrorMessage}
+                      />
+                    </Box>
+                  </Stack>
+                </Stack>
               )}
 
               {windowWidth < 960 && (
@@ -275,21 +314,37 @@ const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | nu
                   </Grid>
                 </>
               )}
-              {windowWidth < 960 && (
-                <Grid
-                  sx={{
-                    display: {
-                      xs: mobileTab === 1 ? "block" : "none",
-                      md: "block",
-                    },
-                  }}
-                >
-                  <ChatMode
-                    setGeneratedExecution={setGeneratedExecution}
-                    onError={setErrorMessage}
-                  />
-                </Grid>
-              )}
+              {windowWidth < 960 ? (
+                !!fetchedTemplate?.questions?.length && fetchedTemplate?.status === "PUBLISHED" ? (
+                  <Grid
+                    sx={{
+                      display: {
+                        xs: mobileTab === 1 ? "block" : "none",
+                        md: "block",
+                      },
+                    }}
+                  >
+                    <ChatMode
+                      setGeneratedExecution={setGeneratedExecution}
+                      onError={setErrorMessage}
+                      key={fetchedTemplate.id}
+                    />
+                  </Grid>
+                ) : (
+                  <Grid
+                    sx={{
+                      display: mobileTab === 1 ? "flex" : "none",
+                      width: "100%",
+                      justifyContent: "center",
+                      height: "74%",
+                      alignItems: "center",
+                      overflow: "hidden",
+                    }}
+                  >
+                    Chat is unavailable
+                  </Grid>
+                )
+              ) : null}
 
               <Grid
                 flex={1}

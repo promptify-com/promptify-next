@@ -29,15 +29,16 @@ export const templatesSlice = createSlice({
     updateTemplate: (state, action: PayloadAction<Templates>) => {
       state.template = action.payload;
     },
-    updateCurrentFavorite: (state, action: PayloadAction<boolean>) => {
-      state.is_favorite = action.payload;
-      state.likes = action.payload ? state.likes + 1 : state.likes - 1;
-    },
     updateTemplateData: (state, action: PayloadAction<UpdateTemplateDataPayload>) => {
       state.is_favorite = action.payload.is_favorite;
       state.id = action.payload.id;
       state.likes = action.payload.likes;
     },
+    updateCurrentFavorite: (state, action: PayloadAction<boolean>) => {
+      state.is_favorite = action.payload;
+      state.likes = action.payload ? state.likes + 1 : state.likes - 1;
+    },
+
     updateExecutionData: (state, action: PayloadAction<string>) => {
       state.executionData = action.payload;
     },
