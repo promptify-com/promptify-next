@@ -515,22 +515,6 @@ const TemplateForm: React.FC<Props> = ({
               )}
             />
           </Stack>
-
-          {/* <Stack sx={boxStyle}>
-            <Stack
-              direction={"row"}
-              alignItems={"center"}
-              sx={checkboxStyle}
-            >
-              <InputLabel>Is Internal?</InputLabel>
-              <Switch
-                checked={formik.values.is_internal}
-                onChange={() => {
-                  formik.setFieldValue("is_internal", !formik.values.is_internal);
-                }}
-              />
-            </Stack>
-          </Stack> */}
           <FormControlLabel
             control={<Switch color="primary" />}
             label="Is Internal?"
