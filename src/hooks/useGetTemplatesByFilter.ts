@@ -11,7 +11,7 @@ import useDebounce from "./useDebounce";
 
 import { Templates } from "@/core/api/dto/templates";
 
-export function useGetTemplatesByFilter(catId?: number, subCatId?: number, runs?: string) {
+export function useGetTemplatesByFilter(catId?: number, subCatId?: number, ordering?: string) {
   const router = useRouter();
   const splittedPath = router.pathname.split("/");
 
