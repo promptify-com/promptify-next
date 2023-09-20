@@ -168,6 +168,10 @@ const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | nu
   };
 
   const dynamicTheme = createTheme({ ...theme, palette });
+  const isTemplatePublished = fetchedTemplate ? fetchedTemplate.status === "PUBLISHED" : false;
+  const templateInformationAccordionExpansion = isTemplatePublished
+    ? { defaultExpanded: true }
+    : { defaultExpanded: false };
 
   if (fetchedTemplateError) {
     router.push("/404");
@@ -241,6 +245,7 @@ const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | nu
                   <Stack flex={1}>
                     <Box flex={1}>
                       <Accordion
+                        key={fetchedTemplate?.id}
                         sx={{
                           boxShadow: "none",
                           bgcolor: "surface.1",
@@ -251,6 +256,7 @@ const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | nu
                           ".MuiAccordionSummary-root": {
                             minHeight: "48px",
                             ":hover": {
+                              cursor: isTemplatePublished ? "auto" : "pointer",
                               opacity: 0.8,
                               svg: {
                                 color: "primary.main",
@@ -261,8 +267,9 @@ const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | nu
                             m: 0,
                           },
                         }}
+                        {...templateInformationAccordionExpansion}
                       >
-                        <AccordionSummary expandIcon={<ExpandMore />}>
+                        <AccordionSummary expandIcon={isTemplatePublished ? null : <ExpandMore />}>
                           <Typography
                             sx={{
                               fontSize: 12,
@@ -277,12 +284,14 @@ const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | nu
                           <Details templateData={fetchedTemplate} />
                         </AccordionDetails>
                       </Accordion>
-                      <GeneratorForm
-                        templateData={fetchedTemplate}
-                        selectedExecution={selectedExecution}
-                        setGeneratedExecution={setGeneratedExecution}
-                        onError={setErrorMessage}
-                      />
+                      {!isTemplatePublished && (
+                        <GeneratorForm
+                          templateData={fetchedTemplate}
+                          selectedExecution={selectedExecution}
+                          setGeneratedExecution={setGeneratedExecution}
+                          onError={setErrorMessage}
+                        />
+                      )}
                     </Box>
                   </Stack>
                 </Stack>
@@ -315,7 +324,7 @@ const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | nu
                 </>
               )}
               {windowWidth < 960 ? (
-                !!fetchedTemplate?.questions?.length && fetchedTemplate?.status === "PUBLISHED" ? (
+                !!fetchedTemplate?.questions?.length && isTemplatePublished ? (
                   <Grid
                     sx={{
                       display: {
