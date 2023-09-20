@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useMemo } from "react";
-import { Box, Grid, Typography } from "@mui/material";
+import { Box, Button, Grid, Typography } from "@mui/material";
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { ExecutionCard } from "./ExecutionCard";
 import { PromptLiveResponse } from "@/common/types/prompt";
@@ -137,8 +137,9 @@ export const Display: React.FC<Props> = ({
       flexDirection={"column"}
       gap={"24px"}
     >
-      {!IS_MOBILE && (
+      {!IS_MOBILE && !!templateData?.questions?.length && templateData?.status === "PUBLISHED" && (
         <ChatMode
+          key={templateData.id}
           setGeneratedExecution={setGeneratedExecution}
           onError={onError}
         />
