@@ -1,33 +1,38 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Box, Stack, Tooltip, Typography } from "@mui/material";
-import { PromptExecutions, Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { Subtitle } from "@/components/blocks";
 import { Error } from "@mui/icons-material";
 import { markdownToHTML, sanitizeHTML } from "@/common/helpers";
-import { useRouter } from "next/router";
+import { DisplayPrompt, PromptLiveResponse } from "@/common/types/prompt";
+import { Prompts } from "@/core/api/dto/prompts";
+import { TemplatesExecutions } from "@/core/api/dto/templates";
+import templatesSlice from "@/core/store/templatesSlice";
+import { useSelector } from "react-redux";
+import { RootState } from "@/core/store";
 
 interface Props {
-  execution: TemplatesExecutions;
-  templateData: Templates;
+  execution: PromptLiveResponse | TemplatesExecutions | null;
+  promptsData: Prompts[];
   search: string;
   sparkHashQueryParam: string | null;
 }
 
-export const ExecutionCard: React.FC<Props> = ({ execution, templateData, sparkHashQueryParam, search }) => {
-  const [sortedExecutions, setSortedExecutions] = useState<PromptExecutions[]>([]);
-  const router = useRouter();
+export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, sparkHashQueryParam, search }) => {
+  const executionPrompts = execution && "data" in execution ? execution.data : execution?.prompt_executions;
+  const isGenerating = useSelector((state: RootState) => state.template.isGenerating);
+  const [sortedPrompts, setSortedPrompts] = useState<DisplayPrompt[]>([]);
 
   const promptsOrderMap: { [key: string]: number } = {};
   const promptsExecutionOrderMap: { [key: string]: number } = {};
 
-  templateData.prompts.forEach(prompt => {
+  promptsData.forEach(prompt => {
     promptsOrderMap[prompt.id] = prompt.order;
     promptsExecutionOrderMap[prompt.id] = prompt.execution_priority;
   });
 
   useEffect(() => {
     const sortAndProcessExecutions = async () => {
-      const sortedByPrompts = [...(execution.prompt_executions || [])].sort((a, b) => {
+      const sortedByPrompts = [...(executionPrompts || [])].sort((a, b) => {
         if (promptsOrderMap[a.prompt] === promptsOrderMap[b.prompt]) {
           return promptsExecutionOrderMap[a.prompt] - promptsExecutionOrderMap[b.prompt];
         }
@@ -36,18 +41,19 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData, sparkH
 
       const processedOutputs = await Promise.all(
         sortedByPrompts.map(async exec => {
+          const _content = "message" in exec ? exec.message : exec.output;
           return {
             ...exec,
-            output: !isImageOutput(exec.output) ? await markdownToHTML(exec.output) : exec.output,
+            content: !isImageOutput(_content) ? await markdownToHTML(_content) : _content,
           };
         }),
       );
 
-      setSortedExecutions(processedOutputs);
+      setSortedPrompts(processedOutputs);
     };
 
     sortAndProcessExecutions();
-  }, [execution.prompt_executions]);
+  }, [executionPrompts]);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -88,41 +94,44 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData, sparkH
       gap={1}
       sx={{
         width: { md: "70%" },
-        mx: "auto",
+        m: "20px auto",
       }}
     >
-      <div ref={scrollRef}></div>
+      {!templatesSlice && <div ref={scrollRef}></div>}
 
-      <Typography sx={{ fontSize: 48, fontWeight: 400, color: "onSurface", py: "24px" }}>{execution.title}</Typography>
-
-      {sortedExecutions?.map((exec, index) => {
-        const prevItem = index > 0 && sortedExecutions[index - 1];
-        const isPrevItemIsImage = prevItem && isImageOutput(prevItem?.output);
-        const nextItem = index < sortedExecutions.length - 1 && sortedExecutions[index + 1];
-        const isNextItemIsText = nextItem && !isImageOutput(nextItem?.output);
-        const prompt = templateData.prompts.find(prompt => prompt.id === exec.prompt);
+      {execution && "title" in execution && (
+        <Typography sx={{ fontSize: 48, fontWeight: 400, color: "onSurface", py: "24px" }}>
+          {execution.title}
+        </Typography>
+      )}
+      {sortedPrompts?.map((exec, index) => {
+        const prevItem = sortedPrompts[index - 1];
+        const isPrevItemImage = prevItem && isImageOutput(prevItem?.content);
+        const nextItem = sortedPrompts[index + 1];
+        const isNextItemText = nextItem && !isImageOutput(nextItem?.content);
+        const prompt = promptsData.find(prompt => prompt.id === exec.prompt);
 
         if (prompt?.show_output || sparkHashQueryParam) {
           return (
             <Stack
-              key={exec.id}
+              key={index}
               gap={1}
-              sx={{ py: "24px" }}
+              sx={{ pb: "24px" }}
             >
               {prompt && (
                 <Subtitle sx={{ fontSize: 24, fontWeight: 400, color: "onSurface" }}>
-                  {!isImageOutput(exec.output) && prompt.title}
+                  {!isImageOutput(exec.content) && prompt?.title}
                   {exec.errors && executionError(exec.errors)}
                 </Subtitle>
               )}
               {/* is Text Output */}
-              {!isImageOutput(exec.output) && (
+              {!isImageOutput(exec.content) && (
                 <Box>
-                  {isPrevItemIsImage && (
+                  {isPrevItemImage && (
                     <Box
                       component={"img"}
                       alt={"book cover"}
-                      src={prevItem.output}
+                      src={prevItem.content}
                       onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
                         (e.target as HTMLImageElement).src = "http://placehold.it/165x215";
                       }}
@@ -174,17 +183,17 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData, sparkH
                       },
                     }}
                     dangerouslySetInnerHTML={{
-                      __html: sanitizeHTML(exec.output),
+                      __html: sanitizeHTML(exec.content),
                     }}
                   />
                 </Box>
               )}
               {/* is Image Output and Next item is not text */}
-              {isImageOutput(exec.output) && !isNextItemIsText && (
+              {isImageOutput(exec.content) && !isNextItemText && (
                 <Box
                   component={"img"}
                   alt={"book cover"}
-                  src={exec.output}
+                  src={exec.content}
                   onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
                     (e.target as HTMLImageElement).src = "http://placehold.it/165x215";
                   }}
@@ -202,6 +211,8 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData, sparkH
           );
         }
       })}
+
+      {isGenerating && <div ref={scrollRef}></div>}
     </Stack>
   );
 };
