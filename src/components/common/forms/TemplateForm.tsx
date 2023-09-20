@@ -13,29 +13,22 @@ import {
   InputLabel,
   Checkbox,
   Stack,
-  IconButton,
-  Icon,
   FormControl,
 } from "@mui/material";
 import { useGetTagsQuery } from "@/core/api/tags";
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { IEditTemplate } from "@/common/types/editTemplate";
 import { authClient } from "@/common/axios";
-import { fieldStyle, boxStyle, buttonBoxStyle, typographyStyle, checkboxStyle } from "../../modals/styles";
+import { fieldStyle, boxStyle, buttonBoxStyle, checkboxStyle } from "../../modals/styles";
 import { useGetCategoriesQuery } from "@/core/api/categories";
-import { Close, Upload } from "@mui/icons-material";
+import { Close } from "@mui/icons-material";
 import useToken from "@/hooks/useToken";
 import { useGetCurrentUserQuery } from "@/core/api/user";
 import { useCreateTemplateMutation, useUpdateTemplateMutation } from "@/core/api/templates";
 import { FormType } from "@/common/types/template";
 import { TemplateStatusArray } from "@/common/constants";
 import { getLanguageFromCode } from "@/common/helpers/getLanguageFromCode";
-import {
-  executionsApi,
-  useGetExecutionsByTemplateQuery,
-  useUpdateExecutionExampleMutation,
-} from "@/core/api/executions";
-import { exec } from "child_process";
+import { executionsApi, useUpdateExecutionExampleMutation } from "@/core/api/executions";
 
 interface Props {
   type?: FormType;
