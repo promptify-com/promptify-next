@@ -40,6 +40,8 @@ import { useAppSelector } from "@/hooks/useStore";
 import ChatMode from "@/components/prompt/generate/ChatBox";
 import { getExecutionByHash } from "@/hooks/api/executions";
 import { ExpandMore } from "@mui/icons-material";
+import ExecutionForm from "@/components/prompt/ExecutionForm";
+import { GeneratorForm } from "@/components/prompt/GeneratorForm";
 
 const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | null }) => {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
@@ -55,6 +57,7 @@ const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | nu
   const isValidUser = useSelector(isValidUserFn);
   const { width: windowWidth } = useWindowSize();
   const isSavedTemplateId = useSelector((state: RootState) => state.template.id);
+  const [executionFormOpen, setExecutionFormOpen] = useState(false);
 
   const routerSlug = router.query?.slug as string;
   if (!routerSlug) {
@@ -100,7 +103,7 @@ const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | nu
       const promptNotCompleted = generatedExecution.data.find(execData => !execData.isCompleted);
       if (!promptNotCompleted) {
         setSelectedExecution(null);
-        refetchTemplateExecutions();
+        setExecutionFormOpen(true);
       }
     }
   }, [isGenerating, generatedExecution]);
@@ -238,7 +241,6 @@ const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | nu
                   <Stack flex={1}>
                     <Box flex={1}>
                       <Accordion
-                        expanded={true}
                         sx={{
                           boxShadow: "none",
                           bgcolor: "surface.1",
@@ -275,6 +277,12 @@ const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | nu
                           <Details templateData={fetchedTemplate} />
                         </AccordionDetails>
                       </Accordion>
+                      <GeneratorForm
+                        templateData={fetchedTemplate}
+                        selectedExecution={selectedExecution}
+                        setGeneratedExecution={setGeneratedExecution}
+                        onError={setErrorMessage}
+                      />
                     </Box>
                   </Stack>
                 </Stack>
@@ -306,22 +314,37 @@ const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | nu
                   </Grid>
                 </>
               )}
-              {windowWidth < 960 && fetchedTemplate?.id && (
-                <Grid
-                  sx={{
-                    display: {
-                      xs: mobileTab === 1 ? "block" : "none",
-                      md: "block",
-                    },
-                  }}
-                >
-                  <ChatMode
-                    setGeneratedExecution={setGeneratedExecution}
-                    onError={setErrorMessage}
-                    key={fetchedTemplate.id}
-                  />
-                </Grid>
-              )}
+              {windowWidth < 960 ? (
+                !!fetchedTemplate?.questions?.length && fetchedTemplate?.status === "PUBLISHED" ? (
+                  <Grid
+                    sx={{
+                      display: {
+                        xs: mobileTab === 1 ? "block" : "none",
+                        md: "block",
+                      },
+                    }}
+                  >
+                    <ChatMode
+                      setGeneratedExecution={setGeneratedExecution}
+                      onError={setErrorMessage}
+                      key={fetchedTemplate.id}
+                    />
+                  </Grid>
+                ) : (
+                  <Grid
+                    sx={{
+                      display: mobileTab === 1 ? "flex" : "none",
+                      width: "100%",
+                      justifyContent: "center",
+                      height: "74%",
+                      alignItems: "center",
+                      overflow: "hidden",
+                    }}
+                  >
+                    Chat is unavailable
+                  </Grid>
+                )
+              ) : null}
 
               <Grid
                 flex={1}
@@ -379,6 +402,17 @@ const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | nu
               />
             </Grid>
           )}
+
+          <ExecutionForm
+            type="new"
+            isOpen={executionFormOpen}
+            executionId={generatedExecution?.id}
+            onClose={() => {
+              setGeneratedExecution(null);
+              setExecutionFormOpen(false);
+            }}
+            onCancel={() => refetchTemplateExecutions()}
+          />
 
           <Snackbar
             anchorOrigin={{ vertical: "bottom", horizontal: "right" }}

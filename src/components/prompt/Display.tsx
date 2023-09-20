@@ -137,7 +137,7 @@ export const Display: React.FC<Props> = ({
       flexDirection={"column"}
       gap={"24px"}
     >
-      {!IS_MOBILE && (
+      {!IS_MOBILE && !!templateData?.questions?.length && templateData?.status === "PUBLISHED" && (
         <ChatMode
           key={templateData.id}
           setGeneratedExecution={setGeneratedExecution}

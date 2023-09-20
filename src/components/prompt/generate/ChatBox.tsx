@@ -178,13 +178,8 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
     }
   }, [isGenerating]);
 
-  const canShowGenerateButton =
-    Boolean(templateQuestions.length && !templateQuestions[0].required) ||
-    Boolean(!templateQuestions.length && !_inputs.length && template?.prompts.length);
-
-  const canShowInputField =
-    templateQuestions.length || Boolean(!templateQuestions.length && !_inputs.length && template?.prompts.length);
-
+  const canShowGenerateButton = Boolean(templateQuestions.length && !templateQuestions[0].required);
+  const disableChat = Boolean(!templateQuestions.length && !_inputs.length && template?.prompts.length);
   const currentQuestion = standingQuestions.length
     ? standingQuestions[standingQuestions.length - 1]
     : templateQuestions[currentQuestionIndex];
@@ -598,7 +593,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
           <ChatInterface
             messages={messages}
             onChange={handleChange}
-            showGenerate={showGenerateButton || canShowGenerateButton}
+            showGenerate={!disableChat || showGenerateButton || canShowGenerateButton}
             onGenerate={generateExecutionHandler}
             isValidating={isValidatingAnswer}
           />
@@ -610,8 +605,8 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
               onChange={setUserAnswer}
               value={userAnswer}
               onSubmit={handleUserResponse}
-              disabled={isValidatingAnswer || !canShowInputField || disableChatInput}
-              disabledTags={isValidatingAnswer || disableChatInput || isGenerating}
+              disabled={disableChat || isValidatingAnswer || disableChatInput}
+              disabledTags={disableChat || isValidatingAnswer || disableChatInput || isGenerating}
             />
           ) : (
             <Stack
