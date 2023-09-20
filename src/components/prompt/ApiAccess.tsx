@@ -93,10 +93,10 @@ const ApiAccess: React.FC<Props> = ({ templateData }) => {
       <Box sx={{ pb: "25px" }}>
         <Stack gap={1}>
           <Typography sx={detailsStyle}>
-            Last access: <span>{moment(templateData.last_api_run).fromNow()}</span>
+            Last access: <span>{templateData.last_api_run ? moment(templateData.last_api_run).fromNow() : "--"}</span>
           </Typography>
           <Typography sx={detailsStyle}>
-            Total Runs: <span>{templateData.api_runs}</span>
+            Total Runs: <span>{templateData.api_runs || "--"}</span>
           </Typography>
         </Stack>
       </Box>

@@ -94,7 +94,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, sparkHa
       gap={1}
       sx={{
         width: { md: "70%" },
-        m: "20px auto",
+        m: { md: "20px auto" },
       }}
     >
       {!templatesSlice && <div ref={scrollRef}></div>}
