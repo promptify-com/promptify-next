@@ -20,7 +20,7 @@ export const generate = ({
         prompt_params: payload,
       },
     ];
-    const url = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/templates/${answersValidatorTemplateId}/execute/?streaming=true`;
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/api/meta/templates/${answersValidatorTemplateId}/execute/`;
     let templateExecutionId = 0;
 
     fetchEventSource(url, {
