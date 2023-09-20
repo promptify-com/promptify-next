@@ -11,7 +11,7 @@ import { TemplatesSection } from "@/components/explorer/TemplatesSection";
 import { CategoriesSection } from "@/components/explorer/CategoriesSection";
 import { userApi } from "@/core/api/user";
 import { WelcomeCard } from "@/components/homepage/WelcomeCard";
-import { useGetTemplatesSuggestedQuery } from "@/core/api/templates";
+import { useGetTemplatesByFilterQuery, useGetTemplatesSuggestedQuery } from "@/core/api/templates";
 import { useGetTemplatesExecutionsByMeQuery } from "@/core/api/executions";
 import { getPathURL, saveToken } from "@/common/utils";
 import { RootState } from "@/core/store";
@@ -41,6 +41,16 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
   );
   const { data: suggestedTemplates, isLoading: isSuggestedTemplateLoading } = useGetTemplatesSuggestedQuery(undefined, {
     skip: !isValidUser,
+  });
+
+  const { data: popularTemplates, isLoading: isPopularTemplatesLoading } = useGetTemplatesByFilterQuery({
+    ordering: "-runs",
+    limit: 7,
+  });
+
+  const { data: latestTemplates, isLoading: isLatestTemplatesLoading } = useGetTemplatesByFilterQuery({
+    ordering: "-created_at",
+    limit: 7,
   });
 
   // TODO: move authentication logic to signin page instead
@@ -149,6 +159,18 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
                 <CategoriesSection
                   categories={categories}
                   isLoading={isValidUser}
+                />
+                <TemplatesSection
+                  isLoading={isPopularTemplatesLoading}
+                  templates={popularTemplates?.results}
+                  title="Most Popular Prompt Templates"
+                  type="popularTemplates"
+                />
+                <TemplatesSection
+                  isLoading={isLatestTemplatesLoading}
+                  templates={latestTemplates?.results}
+                  title="Latest Prompt Templates"
+                  type="latestTemplates"
                 />
               </>
             )}
