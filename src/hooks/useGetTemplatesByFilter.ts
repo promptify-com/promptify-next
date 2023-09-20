@@ -54,7 +54,7 @@ export function useGetTemplatesByFilter(catId?: number, subCatId?: number, order
     offset,
     limit: PAGINATION_LIMIT,
     status,
-    ordering: runs,
+    ordering,
   };
   const { data: templates, isLoading: isTemplatesLoading, isFetching } = useGetTemplatesByFilterQuery(params);
 
