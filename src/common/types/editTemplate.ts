@@ -21,4 +21,5 @@ export interface IEditTemplate {
   meta_description: string;
   meta_keywords: string;
   status: TemplateStatus;
+  is_internal?: boolean;
 }
