@@ -16,6 +16,7 @@ import {
   IconButton,
   Icon,
   Switch,
+  FormControlLabel,
 } from "@mui/material";
 import { useGetTagsQuery } from "@/core/api/tags";
 import { Templates } from "@/core/api/dto/templates";
@@ -515,7 +516,7 @@ const TemplateForm: React.FC<Props> = ({
             />
           </Stack>
 
-          <Stack sx={boxStyle}>
+          {/* <Stack sx={boxStyle}>
             <Stack
               direction={"row"}
               alignItems={"center"}
@@ -529,7 +530,26 @@ const TemplateForm: React.FC<Props> = ({
                 }}
               />
             </Stack>
-          </Stack>
+          </Stack> */}
+          <FormControlLabel
+            control={<Switch color="primary" />}
+            label="Is Internal?"
+            labelPlacement="start"
+            checked={formik.values.is_internal}
+            name="is_internal"
+            value={formik.values.is_internal}
+            onChange={() => {
+              formik.setFieldValue("is_internal", !formik.values.is_internal);
+            }}
+            sx={{
+              "&.MuiFormControlLabel-root": {
+                m: "20px 0",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              },
+            }}
+          />
         </Box>
       )}
       <Box sx={buttonBoxStyle}>
