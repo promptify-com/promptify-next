@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { Box, Divider, Grid, Stack, Typography } from "@mui/material";
+import { Box, Divider, Stack, Typography } from "@mui/material";
 import { Selection } from "react-highlight-within-textarea";
 
 import { INodesData, PresetType } from "@/common/types/builder";
@@ -70,54 +70,63 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
       }}
     >
       {(!!nodePresets.length || !!inputPresets.length) && (
-        <Grid>
-          <Stack
-            gap={1}
-            sx={{
-              p: "24px 32px",
-            }}
-          >
-            <Typography
-              sx={{
-                fontFamily: "Poppins",
-                fontSize: 12,
-                fontWeight: 400,
-                letterSpacing: "1px",
-              }}
+        <Stack
+          gap={1}
+          sx={{
+            p: "24px 32px",
+          }}
+        >
+          {!!nodePresets.length && (
+            <Stack
+              direction={"row"}
+              alignItems={"center"}
+              flexWrap={"wrap"}
+              gap={0.5}
             >
-              CONNECTED:
-            </Typography>
-            <Options
-              type="node"
-              variant="horizontal"
-              options={nodePresets}
-              onChoose={node => handlePreset({ type: "node", label: node.label, firstAppend: true })}
-            />
-          </Stack>
-          <Stack
-            direction={"row"}
-            alignItems={"center"}
-            flexWrap={"wrap"}
-            gap={0.5}
-          >
-            <Typography
-              sx={{
-                fontFamily: "Poppins",
-                fontSize: 12,
-                fontWeight: 400,
-                letterSpacing: "1px",
-              }}
+              <Typography
+                sx={{
+                  fontFamily: "Poppins",
+                  fontSize: 12,
+                  fontWeight: 400,
+                  letterSpacing: "1px",
+                }}
+              >
+                OUTPUT VARIABLES:
+              </Typography>
+              <Options
+                type="node"
+                variant="horizontal"
+                options={nodePresets}
+                onChoose={node => handlePreset({ type: "node", label: node.label, firstAppend: true })}
+              />
+            </Stack>
+          )}
+          {!!inputPresets.length && (
+            <Stack
+              direction={"row"}
+              alignItems={"center"}
+              flexWrap={"wrap"}
+              gap={0.5}
             >
-              INPUTS:
-            </Typography>
-            <Options
-              type="input"
-              variant="horizontal"
-              options={inputPresets}
-              onChoose={input => handlePreset({ type: "input", label: input.label, firstAppend: true })}
-            />
-          </Stack>
-        </Grid>
+              <Typography
+                sx={{
+                  fontFamily: "Poppins",
+                  fontSize: 12,
+                  fontWeight: 400,
+                  letterSpacing: "1px",
+                }}
+              >
+                INPUTS VARIABLES:
+              </Typography>
+              <Options
+                type="input"
+                variant="horizontal"
+                options={inputPresets}
+                onChoose={node => handlePreset({ type: "input", label: node.label, firstAppend: true })}
+              />
+            </Stack>
+          )}
+        </Stack>
       )}
       <Divider />
       <Box
