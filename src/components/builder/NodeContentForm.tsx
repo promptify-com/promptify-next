@@ -1,9 +1,10 @@
 import React, { useRef, useState } from "react";
-import { Box, Divider, Stack, TextField, Typography } from "@mui/material";
-import { INodesData } from "@/common/types/builder";
-import { InlineOptions } from "../common/InlineOptions";
-import { getInputsFromString } from "@/common/helpers";
+import { Box, Card, Divider, Stack, Typography } from "@mui/material";
 import HighlightWithinTextarea, { Selection } from "react-highlight-within-textarea";
+
+import { INodesData } from "@/common/types/builder";
+import { Options } from "../common/Options";
+import { getInputsFromString } from "@/common/helpers";
 
 type PresetType = "node" | "input";
 interface Props {
@@ -14,17 +15,33 @@ interface Props {
 
 export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelectedNodeData, nodes }) => {
   const cursorPositionRef = useRef(0);
+  const suggestionListRef = useRef<HTMLDivElement | null>(null);
+
   const [firstAppend, setFirstAppend] = useState(true);
+
+  const [suggestionList, setSuggestionList] = useState<{ id: number | undefined; label: string }[]>([]);
+  const [optionType, setOptionType] = useState<PresetType>("node");
+
+  const [lastPosition, setLastPosition] = useState<number>(0);
+
   const content = selectedNodeData.content || "";
 
   const highlight = [
     {
-      highlight: /(\$[\w]+)/g,
+      highlight: /(\$[\w]+)/g, // Highlight $ followed by word characters
       className: "output-variable",
     },
     {
-      highlight: /({{.*?}})/g,
+      highlight: /({{.*?}})/g, // Highlight {{ followed by any characters inside }}
       className: "input-variable",
+    },
+    {
+      highlight: /({{)/g, // Highlight plain {{
+      className: "input-variable",
+    },
+    {
+      highlight: /(\$)/g, // Highlight plain $
+      className: "output-variable",
     },
   ];
 
@@ -47,8 +64,37 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
       })),
     );
 
+  // Function to show suggestions based on user input
+  const showSuggestions = (value: string) => {
+    if (value.endsWith("{{")) {
+      setSuggestionList(inputsPresets);
+      setOptionType("input");
+    } else if (value.endsWith("$")) {
+      setSuggestionList(nodesPresets);
+      setOptionType("node");
+    } else {
+      setSuggestionList([]);
+    }
+  };
+
+  const updateSuggestionListPosition = () => {
+    if (suggestionListRef.current) {
+      const textarea = document.querySelector(".highlight-within-textarea");
+      if (textarea) {
+        const textareaRect = textarea.getBoundingClientRect();
+        suggestionListRef.current.style.left = `${textareaRect.left}px`;
+        suggestionListRef.current.style.top = `${textareaRect.bottom}px`;
+        suggestionListRef.current.style.width = `${textareaRect.width}px`;
+      }
+    }
+  };
+
   const changeContent = (content: string, selection?: Selection | undefined) => {
-    cursorPositionRef.current = selection?.focus || 0;
+    if (selection?.focus) {
+      setLastPosition(selection.focus);
+    }
+
+    cursorPositionRef.current = lastPosition;
     setSelectedNodeData({
       ...selectedNodeData,
       content,
@@ -78,6 +124,8 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
       const end = content.slice(cursorPositionRef.current);
       changeContent(start + preset + " " + end);
     }
+    setLastPosition(val => val + preset.length);
+    setSuggestionList([]); // clear
   };
 
   return (
@@ -108,7 +156,9 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
           >
             CONNECTED:
           </Typography>
-          <InlineOptions
+          <Options
+            type="node"
+            variant="horizontal"
             options={nodesPresets}
             onChoose={node => addPreset("node", node.label)}
           />
@@ -129,11 +179,11 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
           >
             INPUTS:
           </Typography>
-          <InlineOptions
+          <Options
+            type="input"
+            variant="horizontal"
             options={inputsPresets}
             onChoose={input => addPreset("input", input.label)}
-            bgcolor="#E0F2F1"
-            color="#00897B"
           />
         </Stack>
       </Stack>
@@ -159,8 +209,49 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
             highlight={highlight}
             placeholder="..."
             stripPastedStyles
-            onChange={changeContent}
+            onChange={(newValue, selection) => {
+              changeContent(newValue, selection);
+              showSuggestions(newValue);
+              updateSuggestionListPosition();
+            }}
           />
+          {suggestionList.length > 0 && (
+            <Card
+              ref={suggestionListRef}
+              elevation={2}
+              sx={{
+                padding: "16px",
+                minWidth: "200px",
+                position: "absolute",
+                zIndex: 999,
+                right: 0,
+                bgcolor: "surface.1",
+                maxHeight: "300px",
+                overflow: "auto",
+
+                "&::-webkit-scrollbar": {
+                  width: "4px",
+                  p: 1,
+                  backgroundColor: "surface.1",
+                },
+                "&::-webkit-scrollbar-track": {
+                  webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
+                },
+                "&::-webkit-scrollbar-thumb": {
+                  backgroundColor: "surface.5",
+                  outline: "1px solid surface.3",
+                  borderRadius: "10px",
+                },
+              }}
+            >
+              <Options
+                type={optionType}
+                variant="vertical"
+                options={suggestionList}
+                onChoose={option => addPreset(optionType, option.label)}
+              />
+            </Card>
+          )}
         </Box>
       </Box>
     </Stack>
