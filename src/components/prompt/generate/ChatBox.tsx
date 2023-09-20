@@ -1,17 +1,7 @@
 import React, { useState, useMemo, memo, useEffect } from "react";
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Grid,
-  IconButton,
-  Typography,
-  Button,
-  Stack,
-} from "@mui/material";
-import { ExpandLess, ExpandMore, MoreVert, Search } from "@mui/icons-material";
+import { Accordion, AccordionDetails, AccordionSummary, Grid, Typography, Button, Stack } from "@mui/material";
+import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
-
 import { ResPrompt } from "@/core/api/dto/prompts";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { useAppSelector, useAppDispatch } from "@/hooks/useStore";
@@ -380,7 +370,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
 
   const generateExecution = (executionData: ResPrompt[]) => {
     let tempData: any[] = [];
-    let url = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/templates/${template!.id}/execute/`;
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/api/meta/templates/${template!.id}/execute/`;
 
     fetchEventSource(url, {
       method: "POST",
@@ -593,7 +583,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
           <ChatInterface
             messages={messages}
             onChange={handleChange}
-            showGenerate={!disableChat || showGenerateButton || canShowGenerateButton}
+            showGenerate={Boolean((showGenerateButton || canShowGenerateButton) && currentUser?.id)}
             onGenerate={generateExecutionHandler}
             isValidating={isValidatingAnswer}
           />
