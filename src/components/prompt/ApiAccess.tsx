@@ -14,8 +14,6 @@ interface Props {
 }
 
 const isConnected = true;
-const lastAccess = "2 hours ago";
-const totalRuns = 246;
 
 const ApiAccess: React.FC<Props> = ({ templateData }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
