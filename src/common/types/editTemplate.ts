@@ -1,5 +1,4 @@
-import { Prompts } from "@/core/api/dto/prompts";
-import { Tag, TemplateStatus, TemplatesExecutions } from "@/core/api/dto/templates";
+import { Tag, TemplateStatus } from "@/core/api/dto/templates";
 import { INodesData } from "./builder";
 
 export interface IEditTemplate {
@@ -21,5 +20,5 @@ export interface IEditTemplate {
   meta_description: string;
   meta_keywords: string;
   status: TemplateStatus;
-  example_execution?: number;
+  example_execution?: number | null;
 }

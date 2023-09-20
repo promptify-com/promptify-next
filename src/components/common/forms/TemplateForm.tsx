@@ -150,7 +150,7 @@ const TemplateForm: React.FC<Props> = ({
       meta_keywords: templateData?.meta_keywords ?? "",
       status: templateData?.status ?? "DRAFT",
       ...(type === "edit" && {
-        example_execution: templateData?.example_execution.id,
+        example_execution: templateData?.example_execution?.id ?? null,
       }),
       ...(type === "create" && { prompts_list: [] }),
     },
