@@ -1,3 +1,5 @@
+import { Prompts } from "@/core/api/dto/prompts";
+
 export interface PromptLiveResponseData {
   message: string;
   prompt: number;
@@ -26,4 +28,13 @@ export interface IPromptInput {
 export interface IVariable {
   id: number | undefined;
   label: string;
+}
+export interface DisplayPrompt {
+  prompt: number;
+  content: string;
+  created_at: Date | string;
+  errors?: string;
+  isLoading?: boolean;
+  isCompleted?: boolean;
+  isFailed?: boolean;
 }

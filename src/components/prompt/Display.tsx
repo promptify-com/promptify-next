@@ -3,7 +3,6 @@ import { Box, Grid, Typography } from "@mui/material";
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { ExecutionCard } from "./ExecutionCard";
 import { PromptLiveResponse } from "@/common/types/prompt";
-import { ExecutionCardGenerated } from "./ExecutionCardGenerated";
 import { DisplayActions } from "./DisplayActions";
 import ParagraphPlaceholder from "@/components/placeholders/ParagraphPlaceholder";
 import { useRouter } from "next/router";
@@ -127,7 +126,8 @@ export const Display: React.FC<Props> = ({
     return _execuitons;
   }, [executions]);
 
-  const isGeneratedExecutionEmpty = Boolean(generatedExecution && !generatedExecution?.data?.length);
+  const isGeneratedExecutionEmpty = Boolean(generatedExecution && !generatedExecution.data?.length);
+  const executionIsLoading = isFetching || isGeneratedExecutionEmpty;
 
   const IS_MOBILE = determineIsMobile();
 
@@ -171,24 +171,17 @@ export const Display: React.FC<Props> = ({
         )}
 
         <Box sx={{ mx: "15px", opacity: firstLoad ? 0.5 : 1 }}>
-          {isGeneratedExecutionEmpty ? (
+          {executionIsLoading ? (
             <ParagraphPlaceholder />
-          ) : generatedExecution?.data ? (
-            <ExecutionCardGenerated
-              execution={generatedExecution}
-              templateData={templateData}
-            />
-          ) : isFetching ? (
-            <ParagraphPlaceholder />
-          ) : selectedExecution ? (
+          ) : !selectedExecution && isGeneratedExecutionEmpty ? (
+            <Typography sx={{ mt: "40px", textAlign: "center" }}>No spark found</Typography>
+          ) : (
             <ExecutionCard
-              execution={selectedExecution}
-              templateData={templateData}
+              execution={generatedExecution ?? selectedExecution}
+              promptsData={templateData.prompts}
               search={search}
               sparkHashQueryParam={sparkHashQueryParam.current}
             />
-          ) : (
-            <Typography sx={{ mt: "40px", textAlign: "center" }}>No spark found</Typography>
           )}
         </Box>
       </Box>
