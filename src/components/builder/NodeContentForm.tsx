@@ -77,18 +77,6 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
     }
   };
 
-  const updateSuggestionListPosition = () => {
-    if (suggestionListRef.current) {
-      const textarea = document.querySelector(".highlight-within-textarea");
-      if (textarea) {
-        const textareaRect = textarea.getBoundingClientRect();
-        suggestionListRef.current.style.left = `${textareaRect.left}px`;
-        suggestionListRef.current.style.top = `${textareaRect.bottom}px`;
-        suggestionListRef.current.style.width = `${textareaRect.width}px`;
-      }
-    }
-  };
-
   const changeContent = (content: string, selection?: Selection | undefined) => {
     if (selection?.focus) {
       setLastPosition(selection.focus + 1);
@@ -219,7 +207,6 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
             onChange={(newValue, selection) => {
               changeContent(newValue, selection);
               showSuggestions(newValue);
-              updateSuggestionListPosition();
             }}
           />
           {suggestionList.length > 0 && (
