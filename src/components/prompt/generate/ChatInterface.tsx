@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, Dispatch, SetStateAction } from "react";
 import { Button, Grid, Typography, CircularProgress } from "@mui/material";
 
 import { Message } from "./Message";
@@ -13,11 +13,20 @@ interface Props {
   showGenerate: boolean;
   onChange?: (value: string) => void;
   isValidating: boolean;
+  setIsSimulaitonStreaming: Dispatch<SetStateAction<boolean>>;
 }
 
-export const ChatInterface = ({ messages, onGenerate, showGenerate, onChange, isValidating }: Props) => {
+export const ChatInterface = ({
+  messages,
+  onGenerate,
+  showGenerate,
+  onChange,
+  isValidating,
+  setIsSimulaitonStreaming,
+}: Props) => {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
+
   useEffect(() => {
     if (messagesContainerRef.current) {
       messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
@@ -25,9 +34,9 @@ export const ChatInterface = ({ messages, onGenerate, showGenerate, onChange, is
   }, [messages]);
 
   const isNotLastMessage = (message: IMessage) => {
-    const lastMessage = messages[messages.length - 1]; // Get the last message in the array
-    return message.type === "choices" && message !== lastMessage; // Check if the given message is not the last message
+    return message.type === "choices" && message !== messages[messages.length - 1];
   };
+
   return (
     <Grid
       ref={messagesContainerRef}
@@ -62,6 +71,7 @@ export const ChatInterface = ({ messages, onGenerate, showGenerate, onChange, is
           message={msg}
           onChangeValue={onChange}
           disabledChoices={isNotLastMessage(msg)}
+          setIsSimulaitonStreaming={setIsSimulaitonStreaming}
         />
       ))}
       <ThreeDotsAnimation loading={isValidating} />
