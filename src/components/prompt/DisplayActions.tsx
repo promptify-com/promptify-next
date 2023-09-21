@@ -23,7 +23,7 @@ import SavedSpark from "@/assets/icons/SavedSpark";
 import DraftSpark from "@/assets/icons/DraftSpark";
 import ShareIcon from "@/assets/icons/ShareIcon";
 import { useAppSelector } from "@/hooks/useStore";
-import ThumbsFeedback from "../design-system/ThumbsFeedback";
+import ThumbsFeedback from "./ThumbsFeedback";
 
 interface Props {
   executions: TemplatesExecutions[];
@@ -191,7 +191,10 @@ export const DisplayActions: React.FC<Props> = ({
             )}
           </Stack>
 
-          <ThumbsFeedback selectedExecution={selectedExecution} />
+          <ThumbsFeedback
+            selectedExecution={selectedExecution}
+            sparkHash={sparkHashQueryParam}
+          />
 
           <Stack
             direction={"row"}
@@ -243,7 +246,10 @@ export const DisplayActions: React.FC<Props> = ({
             gap={1}
             p={"8px 16px"}
           >
-            <ThumbsFeedback selectedExecution={selectedExecution} />
+            <ThumbsFeedback
+              selectedExecution={selectedExecution}
+              sparkHash={sparkHashQueryParam}
+            />
 
             {/* 
               TODO: https://github.com/ysfbsf/promptify-next/issues/275

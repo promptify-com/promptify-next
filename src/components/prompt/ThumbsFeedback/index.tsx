@@ -5,13 +5,17 @@ import { TemplatesExecutions } from "@/core/api/dto/templates";
 
 interface FeedBackType {
   selectedExecution: TemplatesExecutions | null;
+  sparkHash: string | null;
 }
 
-const ThumbsFeedback: React.FC<FeedBackType> = ({ selectedExecution }) => {
+const ThumbsFeedback: React.FC<FeedBackType> = ({ selectedExecution, sparkHash }) => {
   const [updateExecution] = useUpdateExecutionMutation();
 
+  const isLiked = selectedExecution?.feedback === "LIKED";
+  const isDisliked = selectedExecution?.feedback === "DISLIKED";
+
   const handleFeedback = (feedbackType: string) => {
-    if (selectedExecution) {
+    if (selectedExecution && selectedExecution?.feedback !== feedbackType) {
       const feedbackData = {
         id: selectedExecution.id,
         data: {
@@ -23,7 +27,8 @@ const ThumbsFeedback: React.FC<FeedBackType> = ({ selectedExecution }) => {
   };
 
   return (
-    selectedExecution?.id && (
+    selectedExecution?.id &&
+    !sparkHash && (
       <Stack
         direction={"row"}
         alignItems={"center"}
@@ -38,7 +43,7 @@ const ThumbsFeedback: React.FC<FeedBackType> = ({ selectedExecution }) => {
               "&:hover": {
                 bgcolor: "surface.2",
               },
-              color: selectedExecution?.feedback === "LIKED" ? "success.main" : "initial",
+              color: isLiked ? "success.main" : "initial",
             }}
           >
             <ThumbUp />
@@ -52,7 +57,7 @@ const ThumbsFeedback: React.FC<FeedBackType> = ({ selectedExecution }) => {
               "&:hover": {
                 bgcolor: "surface.2",
               },
-              color: selectedExecution?.feedback === "DISLIKED" ? "error.main" : "initial",
+              color: isDisliked ? "error.main" : "initial",
             }}
           >
             <ThumbDown />
