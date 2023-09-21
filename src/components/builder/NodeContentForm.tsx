@@ -91,7 +91,7 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
 
   const changeContent = (content: string, selection?: Selection | undefined) => {
     if (selection?.focus) {
-      setLastPosition(selection.focus);
+      setLastPosition(selection.focus + 1);
     }
 
     cursorPositionRef.current = lastPosition;
@@ -106,15 +106,22 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
     if (!label) return;
 
     let preset = "";
-
     if (type === "node") {
-      preset = nodesPresets.find(node => node.label === label)?.label || "";
+      const matchedNode = nodesPresets.find(node => node.label === label);
+      if (matchedNode) {
+        preset = content.endsWith("$") ? matchedNode.label.slice(1) : matchedNode.label; // Remove the first character
+      }
     } else {
       const input = inputsPresets.find(input => input.label === label);
-      const type = input?.type;
-      preset = input
-        ? "{{" + input.label + ":" + type + ":" + input.required + (input.choices ? `:"${input.choices}"` : "") + "}}"
-        : "";
+
+      if (input) {
+        const type = input.type;
+        if (content.endsWith("{{")) {
+          preset = `${input.label}:${type}:${input.required}${input.choices ? `:"${input.choices}"` : ""}}}`;
+        } else {
+          preset = `{{${input.label}:${type}:${input.required}${input.choices ? `:"${input.choices}"` : ""}}}`;
+        }
+      }
     }
 
     if (firstAppend) {
