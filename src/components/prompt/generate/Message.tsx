@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, memo, useEffect, Dispatch, SetStateAction } from "react";
 import { Avatar, Button, Grid, Typography } from "@mui/material";
 
 import LogoAsAvatar from "@/assets/icons/LogoAvatar";
@@ -6,24 +6,48 @@ import { useAppSelector } from "@/hooks/useStore";
 import { ToggleButtonsGroup } from "@/components/design-system/ToggleButtonsGroup";
 import CodeFieldModal from "@/components/modals/CodeFieldModal";
 import { IMessage } from "@/common/types/chat";
+import useTextSimulationStreaming from "@/hooks/useTextSimulationStreaming";
 
 interface MessageBlockProps {
   message: IMessage;
   hideHeader?: boolean;
   onChangeValue?: (value: string) => void;
   disabledChoices: boolean;
+  setIsSimulaitonStreaming: Dispatch<SetStateAction<boolean>>;
 }
 
-export const Message = ({ message, hideHeader, onChangeValue, disabledChoices }: MessageBlockProps) => {
-  const currentUser = useAppSelector(state => state.user.currentUser);
+interface MessageContentProps {
+  content: string;
+  shouldStream: boolean;
+  setIsSimulaitonStreaming: Dispatch<SetStateAction<boolean>>;
+}
 
+const MessageContent = memo(({ content, shouldStream, setIsSimulaitonStreaming }: MessageContentProps) => {
+  const { streamedText, hasFinished } = useTextSimulationStreaming({
+    text: content,
+    shouldStream,
+    speed: Math.random() < 0.5 ? 100 : 80,
+  });
+
+  useEffect(() => {
+    hasFinished && setIsSimulaitonStreaming(false);
+  }, [hasFinished]);
+
+  return <>{streamedText}</>;
+});
+
+export const Message = ({
+  message,
+  hideHeader,
+  onChangeValue,
+  disabledChoices,
+  setIsSimulaitonStreaming,
+}: MessageBlockProps) => {
   const { fromUser, type, text, createdAt, choices } = message;
-
+  const currentUser = useAppSelector(state => state.user.currentUser);
   const name = fromUser ? currentUser?.first_name ?? currentUser?.username : "Promptify";
-
   const [selectedValue, setSelectedValue] = useState("");
   const [codeFieldPopup, setCodeFieldPopup] = useState(false);
-
   const [codeUploaded, setCodeUploaded] = useState(false);
 
   const handleChange = (value: string) => {
@@ -114,7 +138,11 @@ export const Message = ({ message, hideHeader, onChangeValue, disabledChoices }:
             lineHeight={"24px"}
             letterSpacing={"0.17px"}
           >
-            {text}
+            <MessageContent
+              content={text}
+              shouldStream={!fromUser}
+              setIsSimulaitonStreaming={setIsSimulaitonStreaming}
+            />
           </Typography>
           {type === "code" && !fromUser && (
             <Button
