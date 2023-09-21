@@ -14,14 +14,17 @@ import {
   Checkbox,
   Stack,
   FormControl,
+  FormControlLabel,
+  Switch,
 } from "@mui/material";
+import { Close } from "@mui/icons-material";
+
 import { useGetTagsQuery } from "@/core/api/tags";
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { IEditTemplate } from "@/common/types/editTemplate";
 import { authClient } from "@/common/axios";
-import { fieldStyle, boxStyle, buttonBoxStyle, checkboxStyle } from "../../modals/styles";
+import { fieldStyle, boxStyle, buttonBoxStyle, checkboxStyle } from "@/components/modals/styles";
 import { useGetCategoriesQuery } from "@/core/api/categories";
-import { Close } from "@mui/icons-material";
 import useToken from "@/hooks/useToken";
 import { useGetCurrentUserQuery } from "@/core/api/user";
 import { useCreateTemplateMutation, useUpdateTemplateMutation } from "@/core/api/templates";
@@ -139,6 +142,7 @@ const TemplateForm: React.FC<Props> = ({
       meta_description: templateData?.meta_description ?? "",
       meta_keywords: templateData?.meta_keywords ?? "",
       status: templateData?.status ?? "DRAFT",
+      is_internal: templateData?.is_internal ?? false,
       ...(type === "edit" && {
         example_execution_id: templateData?.example_execution?.id ?? null,
       }),
@@ -548,6 +552,25 @@ const TemplateForm: React.FC<Props> = ({
               </FormControl>
             </Stack>
           )}
+          <FormControlLabel
+            control={<Switch color="primary" />}
+            label="Is Internal?"
+            labelPlacement="start"
+            checked={formik.values.is_internal}
+            name="is_internal"
+            value={formik.values.is_internal}
+            onChange={() => {
+              formik.setFieldValue("is_internal", !formik.values.is_internal);
+            }}
+            sx={{
+              "&.MuiFormControlLabel-root": {
+                m: "20px 0",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              },
+            }}
+          />
         </Box>
       )}
       <Box sx={buttonBoxStyle}>

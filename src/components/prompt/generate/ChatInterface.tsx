@@ -1,45 +1,51 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, Dispatch, SetStateAction } from "react";
 import { Button, Grid, Typography, CircularProgress } from "@mui/material";
 
-import { IAnswer, IMessage } from "./ChatBox";
 import { Message } from "./Message";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { useAppSelector } from "@/hooks/useStore";
 import ThreeDotsAnimation from "@/components/design-system/ThreeDotsAnimation";
+import { IMessage } from "@/common/types/chat";
 
 interface Props {
   messages: IMessage[];
-  answers: IAnswer[];
-  onAnswerClear: () => void;
   onGenerate: () => void;
   showGenerate: boolean;
   onChange?: (value: string) => void;
   isValidating: boolean;
+  setIsSimulaitonStreaming: Dispatch<SetStateAction<boolean>>;
 }
 
 export const ChatInterface = ({
   messages,
-  answers,
-  onAnswerClear,
   onGenerate,
   showGenerate,
   onChange,
   isValidating,
+  setIsSimulaitonStreaming,
 }: Props) => {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
+
   useEffect(() => {
     if (messagesContainerRef.current) {
       messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
     }
   }, [messages]);
+
+  const isNotLastMessage = (message: IMessage) => {
+    return message.type === "choices" && message !== messages[messages.length - 1];
+  };
+
   return (
     <Grid
       ref={messagesContainerRef}
       display={"flex"}
+      flex={1}
+      width={"100%"}
       flexDirection={"column"}
       alignItems={"start"}
-      pb={{ xs: "50px", md: 0 }}
+      pb={{ xs: "120px", md: "8px" }}
       sx={{
         overflow: "auto",
 
@@ -64,6 +70,8 @@ export const ChatInterface = ({
           hideHeader={idx === 1}
           message={msg}
           onChangeValue={onChange}
+          disabledChoices={isNotLastMessage(msg)}
+          setIsSimulaitonStreaming={setIsSimulaitonStreaming}
         />
       ))}
       <ThreeDotsAnimation loading={isValidating} />
@@ -108,46 +116,6 @@ export const ChatInterface = ({
           )}
         </Button>
       )}
-
-      {/* {answers.length > 0 && (
-        <Grid
-          display={"flex"}
-          alignItems={"center"}
-          flexWrap={"wrap"}
-          gap={"8px"}
-          p={"0px 16px"}
-        >
-          {answers.map(answer => (
-            <Button
-              key={answer.inputName}
-              startIcon={
-                <Clear
-                  onClick={onAnswerClear}
-                  sx={{
-                    opacity: 0.5,
-                  }}
-                />
-              }
-              variant="contained"
-              size="small"
-              sx={{
-                p: "1px 10px",
-                fontSize: "11px",
-                fontWeight: "500",
-                bgcolor: "surface.3",
-                color: "onSurface",
-                borderColor: "surface.3",
-                ":hover": {
-                  bgcolor: "surface.3",
-                  color: "onSurface",
-                },
-              }}
-            >
-              {answer.inputName}
-            </Button>
-          ))}
-        </Grid>
-      )} */}
     </Grid>
   );
 };
