@@ -36,7 +36,6 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
   const template = useAppSelector(state => state.template.template);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const createdAt = convertedTimestamp(new Date());
-
   const [chatExpanded, setChatExpanded] = useState(true);
   const [showGenerateButton, setShowGenerateButton] = useState(false);
   const [isValidatingAnswer, setInValidatingAnswer] = useState(false);
@@ -45,10 +44,16 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
   const [answers, setAnswers] = useState<IAnswer[]>([]);
   const [userAnswer, setUserAnswer] = useState("");
   const [messages, setMessages] = useState<IMessage[]>([]);
+  const [queuedMessages, setQueuedMessages] = useState<IMessage[]>([]);
+  const [isSimulaitonStreaming, setIsSimulaitonStreaming] = useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [disableChatInput, setDisableChatInput] = useState(false);
   const [standingQuestions, setStandingQuestions] = useState<UpdatedQuestionTemplate[]>([]);
 
+  const addToQueuedMessages = (message: IMessage[]) => {
+    setQueuedMessages(prevMessages => prevMessages.concat(message));
+    setIsSimulaitonStreaming(true);
+  };
   const initialMessages = ({
     questions,
     startOver = false,
@@ -71,12 +76,18 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
 
     if (questions.length > 0) {
       const firstQuestion = questions[currentQuestionIndex];
-      welcomeMessage.push({
+      const firstQuestionMessage: IMessage = {
         text: firstQuestion.question,
         type: firstQuestion.type,
         createdAt: createdAt,
         fromUser: false,
-      });
+      };
+
+      if (!!welcomeMessage.length) {
+        addToQueuedMessages([firstQuestionMessage]);
+      } else {
+        welcomeMessage.push(firstQuestionMessage);
+      }
     }
 
     setCurrentQuestionIndex(0);
@@ -160,6 +171,15 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
     }
   }, [isGenerating]);
 
+  useEffect(() => {
+    if (!isSimulaitonStreaming && !!queuedMessages.length) {
+      const nextQueuedMessage = queuedMessages.pop()!;
+
+      setMessages(prevMessages => prevMessages.concat(nextQueuedMessage));
+      addToQueuedMessages(queuedMessages);
+    }
+  }, [isSimulaitonStreaming]);
+
   const canShowGenerateButton = Boolean(templateQuestions.length && !templateQuestions[0].required);
   const disableChat = Boolean(!templateQuestions.length && !_inputs.length && template?.prompts.length);
   const currentQuestion = standingQuestions.length
@@ -178,7 +198,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
   };
 
   const handleUserResponse = async () => {
-    if (userAnswer.trim() === "") {
+    if (userAnswer.trim() === "" || isSimulaitonStreaming) {
       return;
     }
     setUserAnswer("");
@@ -246,26 +266,20 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
 
           !isStandingQuestion && setCurrentQuestionIndex(currentQuestionIndex + 1);
 
-          nextBotMessage = {
-            text: response.feedback,
+          const nextMessage: IMessage = {
+            text: nextQuestion.question,
             choices: nextQuestion.choices,
             type: nextQuestion.type,
             createdAt: createdAt,
             fromUser: false,
           };
 
-          // temp workaround to separate feedback from actual question, this will be fixed in text streaming simulation
-          setTimeout(() => {
-            setMessages(prevMessages =>
-              prevMessages.concat({
-                text: nextQuestion.question,
-                choices: nextQuestion.choices,
-                type: nextQuestion.type,
-                createdAt: createdAt,
-                fromUser: false,
-              }),
-            );
-          }, 300);
+          if (response.feedback) {
+            nextBotMessage = { ...nextMessage, text: response.feedback };
+            addToQueuedMessages([nextMessage]);
+          } else {
+            nextBotMessage = nextMessage;
+          }
         }
       } else {
         nextBotMessage = {
@@ -283,6 +297,10 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
   };
 
   const handleChange = (value: string) => {
+    if (isSimulaitonStreaming) {
+      return;
+    }
+
     if (!isGenerating && messages[messages.length - 1].startOver) {
       if (value === "Yes") {
         initialMessages({ questions: templateQuestions, startOver: true });
@@ -491,6 +509,10 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
   };
 
   const handleAnswerSelect = (selectedAnswer: IAnswer) => {
+    if (isSimulaitonStreaming) {
+      return;
+    }
+
     const question = templateQuestions.find(question => question.name === selectedAnswer.inputName);
     const newStandingQuestions = standingQuestions.concat(question!).sort((a, b) => +a.required - +b.required);
     const askedQuestion = newStandingQuestions[newStandingQuestions.length - 1];
@@ -592,6 +614,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
             showGenerate={Boolean((showGenerateButton || canShowGenerateButton) && currentUser?.id)}
             onGenerate={generateExecutionHandler}
             isValidating={isValidatingAnswer}
+            setIsSimulaitonStreaming={setIsSimulaitonStreaming}
           />
 
           {currentUser?.id ? (
