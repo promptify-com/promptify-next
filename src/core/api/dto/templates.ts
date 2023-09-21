@@ -137,7 +137,7 @@ export interface Templates {
   status: TemplateStatus;
   last_api_run: Date;
   api_runs: number;
-  example_execution: TemplatesExecutions;
+  example_execution: TemplatesExecutions | null;
 }
 
 export interface TemplatesWithPagination {

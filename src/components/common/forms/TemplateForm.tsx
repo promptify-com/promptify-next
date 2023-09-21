@@ -28,7 +28,7 @@ import { useCreateTemplateMutation, useUpdateTemplateMutation } from "@/core/api
 import { FormType } from "@/common/types/template";
 import { TemplateStatusArray } from "@/common/constants";
 import { getLanguageFromCode } from "@/common/helpers/getLanguageFromCode";
-import { executionsApi, useUpdateExecutionExampleMutation } from "@/core/api/executions";
+import { executionsApi } from "@/core/api/executions";
 
 interface Props {
   type?: FormType;
@@ -54,7 +54,6 @@ const TemplateForm: React.FC<Props> = ({
   const [createTemplate] = useCreateTemplateMutation();
   const [updateTemplate] = useUpdateTemplateMutation();
   const [getTemplateExecution] = executionsApi.endpoints.getExecutionsByTemplate.useLazyQuery();
-  const [updateExecutionExample] = useUpdateExecutionExampleMutation();
 
   const [tags, setTags] = useState<string[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
@@ -112,8 +111,6 @@ const TemplateForm: React.FC<Props> = ({
       id: templateData?.id,
       data: values,
     });
-    if (!values.example_execution) return;
-    await updateExecutionExample({ id: templateData.id, data: { example_execution: values.example_execution } });
     handleSave();
   };
 
@@ -143,7 +140,7 @@ const TemplateForm: React.FC<Props> = ({
       meta_keywords: templateData?.meta_keywords ?? "",
       status: templateData?.status ?? "DRAFT",
       ...(type === "edit" && {
-        example_execution: templateData?.example_execution?.id ?? null,
+        example_execution_id: templateData?.example_execution?.id ?? null,
       }),
       ...(type === "create" && { prompts_list: [] }),
     },
@@ -534,9 +531,9 @@ const TemplateForm: React.FC<Props> = ({
                 <InputLabel id="execution-label">Execution Example</InputLabel>
                 <Select
                   labelId="execution-label"
-                  value={formik.values.example_execution}
+                  value={formik.values.example_execution_id}
                   onChange={event => {
-                    formik.setFieldValue("example_execution", event.target.value);
+                    formik.setFieldValue("example_execution_id", event.target.value);
                   }}
                 >
                   {executions?.map(execution => (

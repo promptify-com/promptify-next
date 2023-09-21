@@ -57,16 +57,6 @@ export const executionsApi = baseApi.injectEndpoints({
         }),
         invalidatesTags: ["Executions"],
       }),
-      updateExecutionExample: builder.mutation<
-        TemplatesExecutions,
-        { id: number; data: { example_execution: number } }
-      >({
-        query: ({ id, data }) => ({
-          url: `/api/meta/templates/${id}/`,
-          method: "put",
-          data,
-        }),
-      }),
     };
   },
 });
@@ -78,5 +68,4 @@ export const {
   useUpdateExecutionMutation,
   useDeleteExecutionMutation,
   useExecutionFavoriteMutation,
-  useUpdateExecutionExampleMutation,
 } = executionsApi;
