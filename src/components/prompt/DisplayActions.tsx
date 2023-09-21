@@ -191,10 +191,7 @@ export const DisplayActions: React.FC<Props> = ({
             )}
           </Stack>
 
-          <ThumbsFeedback
-            selectedExecution={selectedExecution}
-            sparkHash={sparkHashQueryParam}
-          />
+          {selectedExecution?.id && !sparkHashQueryParam && <ThumbsFeedback selectedExecution={selectedExecution} />}
 
           <Stack
             direction={"row"}
@@ -246,10 +243,7 @@ export const DisplayActions: React.FC<Props> = ({
             gap={1}
             p={"8px 16px"}
           >
-            <ThumbsFeedback
-              selectedExecution={selectedExecution}
-              sparkHash={sparkHashQueryParam}
-            />
+            {selectedExecution?.id && !sparkHashQueryParam && <ThumbsFeedback selectedExecution={selectedExecution} />}
 
             {/* 
               TODO: https://github.com/ysfbsf/promptify-next/issues/275

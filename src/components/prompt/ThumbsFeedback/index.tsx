@@ -5,10 +5,9 @@ import { TemplatesExecutions } from "@/core/api/dto/templates";
 
 interface FeedBackType {
   selectedExecution: TemplatesExecutions | null;
-  sparkHash: string | null;
 }
 
-const ThumbsFeedback: React.FC<FeedBackType> = ({ selectedExecution, sparkHash }) => {
+const ThumbsFeedback: React.FC<FeedBackType> = ({ selectedExecution }) => {
   const [updateExecution] = useUpdateExecutionMutation();
 
   const isLiked = selectedExecution?.feedback === "LIKED";
@@ -27,44 +26,41 @@ const ThumbsFeedback: React.FC<FeedBackType> = ({ selectedExecution, sparkHash }
   };
 
   return (
-    selectedExecution?.id &&
-    !sparkHash && (
-      <Stack
-        direction={"row"}
-        alignItems={"center"}
-        gap={1}
-        ml={"auto"}
-      >
-        <Tooltip title="LIKE">
-          <IconButton
-            onClick={() => handleFeedback("LIKED")}
-            sx={{
-              border: "none",
-              "&:hover": {
-                bgcolor: "surface.2",
-              },
-              color: isLiked ? "success.main" : "initial",
-            }}
-          >
-            <ThumbUp />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="DISLIKE">
-          <IconButton
-            onClick={() => handleFeedback("DISLIKED")}
-            sx={{
-              border: "none",
-              "&:hover": {
-                bgcolor: "surface.2",
-              },
-              color: isDisliked ? "error.main" : "initial",
-            }}
-          >
-            <ThumbDown />
-          </IconButton>
-        </Tooltip>
-      </Stack>
-    )
+    <Stack
+      direction={"row"}
+      alignItems={"center"}
+      gap={1}
+      ml={"auto"}
+    >
+      <Tooltip title="LIKE">
+        <IconButton
+          onClick={() => handleFeedback("LIKED")}
+          sx={{
+            border: "none",
+            "&:hover": {
+              bgcolor: "surface.2",
+            },
+            color: isLiked ? "success.main" : "initial",
+          }}
+        >
+          <ThumbUp />
+        </IconButton>
+      </Tooltip>
+      <Tooltip title="DISLIKE">
+        <IconButton
+          onClick={() => handleFeedback("DISLIKED")}
+          sx={{
+            border: "none",
+            "&:hover": {
+              bgcolor: "surface.2",
+            },
+            color: isDisliked ? "error.main" : "initial",
+          }}
+        >
+          <ThumbDown />
+        </IconButton>
+      </Tooltip>
+    </Stack>
   );
 };
 
