@@ -23,14 +23,6 @@ interface Props {
   onError: (errMsg: string) => void;
 }
 
-function formatFeedbackAndQuestion(feedback: string, nextQuestion: string) {
-  if (feedback && !feedback.endsWith(".") && !feedback.endsWith("!")) {
-    feedback += ". ";
-  }
-
-  return `${feedback}${nextQuestion}`;
-}
-
 const ExecutionCardHeaderHeight = "394px";
 const BottomTabsMobileHeight = "240px";
 
@@ -244,6 +236,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
             createdAt: createdAt,
             fromUser: false,
           };
+
           !showGenerateButton && setShowGenerateButton(true);
           setDisableChatInput(true);
         } else {
@@ -254,12 +247,25 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
           !isStandingQuestion && setCurrentQuestionIndex(currentQuestionIndex + 1);
 
           nextBotMessage = {
-            text: formatFeedbackAndQuestion(response.feedback, nextQuestion.question),
+            text: response.feedback,
             choices: nextQuestion.choices,
             type: nextQuestion.type,
             createdAt: createdAt,
             fromUser: false,
           };
+
+          // temp workaround to separate feedback from actual question, this will be fixed in text streaming simulation
+          setTimeout(() => {
+            setMessages(prevMessages =>
+              prevMessages.concat({
+                text: nextQuestion.question,
+                choices: nextQuestion.choices,
+                type: nextQuestion.type,
+                createdAt: createdAt,
+                fromUser: false,
+              }),
+            );
+          }, 300);
         }
       } else {
         nextBotMessage = {
@@ -271,8 +277,8 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
         };
       }
 
-      setInValidatingAnswer(false);
       setMessages(prevMessages => prevMessages.concat(nextBotMessage));
+      setInValidatingAnswer(false);
     }
   };
 
