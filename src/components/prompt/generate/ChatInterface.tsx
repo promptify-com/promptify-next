@@ -1,15 +1,17 @@
 import React, { useEffect, useRef, Dispatch, SetStateAction } from "react";
-import { Button, Grid, Typography, CircularProgress } from "@mui/material";
+import { Button, Grid, Typography, CircularProgress, Stack } from "@mui/material";
 
 import { Message } from "./Message";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { useAppSelector } from "@/hooks/useStore";
 import ThreeDotsAnimation from "@/components/design-system/ThreeDotsAnimation";
 import { IMessage } from "@/common/types/chat";
+import { Block } from "@mui/icons-material";
 
 interface Props {
   messages: IMessage[];
   onGenerate: () => void;
+  onAbort: () => void;
   showGenerate: boolean;
   onChange?: (value: string) => void;
   isValidating: boolean;
@@ -19,6 +21,7 @@ interface Props {
 export const ChatInterface = ({
   messages,
   onGenerate,
+  onAbort,
   showGenerate,
   onChange,
   isValidating,
@@ -75,47 +78,71 @@ export const ChatInterface = ({
         />
       ))}
       <ThreeDotsAnimation loading={isValidating} />
-      {showGenerate && (
-        <Button
-          onClick={onGenerate}
-          startIcon={
-            isGenerating ? (
-              <CircularProgress size={16} />
-            ) : (
-              <LogoApp
-                color="white"
-                width={20}
-              />
-            )
-          }
-          sx={{
-            ml: 9,
-            bgcolor: "primary.main",
-            borderColor: "primary.main",
-            borderRadius: "999px",
-            height: "22px",
-            p: "15px",
-            color: "15px",
-            fontWeight: 500,
-            ":hover": {
-              opacity: 0.9,
+      <Stack
+        direction={"row"}
+        gap={2}
+      >
+        {showGenerate && (
+          <Button
+            onClick={onGenerate}
+            startIcon={
+              isGenerating ? (
+                <CircularProgress size={16} />
+              ) : (
+                <LogoApp
+                  color="white"
+                  width={20}
+                />
+              )
+            }
+            sx={{
+              ml: 9,
               bgcolor: "primary.main",
-              color: "surface.1",
-            },
-          }}
-          variant="contained"
-          disabled={isGenerating}
-        >
-          {isGenerating ? (
-            <Typography>Generation in progress...</Typography>
-          ) : (
-            <>
-              <Typography sx={{ color: "inherit", fontSize: 13, lineHeight: "22px" }}>Generate</Typography>
-              <Typography sx={{ ml: 1.5, color: "inherit", fontSize: 12 }}>~36s</Typography>
-            </>
-          )}
-        </Button>
-      )}
+              borderColor: "primary.main",
+              borderRadius: "999px",
+              height: "22px",
+              p: "15px",
+              color: "15px",
+              fontWeight: 500,
+              ":hover": {
+                opacity: 0.9,
+                bgcolor: "primary.main",
+                color: "onPrimary",
+              },
+            }}
+            variant="contained"
+            disabled={isGenerating}
+          >
+            {isGenerating ? (
+              <Typography>Generation in progress...</Typography>
+            ) : (
+              <>
+                <Typography sx={{ color: "inherit", fontSize: 13, lineHeight: "22px" }}>Generate</Typography>
+                <Typography sx={{ ml: 1.5, color: "inherit", fontSize: 12 }}>~360s</Typography>
+              </>
+            )}
+          </Button>
+        )}
+        {isGenerating && (
+          <Button
+            variant="text"
+            startIcon={<Block />}
+            sx={{
+              border: "1px solid",
+              height: "22px",
+              p: "15px",
+              fontSize: 13,
+              fontWeight: 500,
+              ":hover": {
+                bgcolor: "action.hover",
+              },
+            }}
+            onClick={onAbort}
+          >
+            Abort
+          </Button>
+        )}
+      </Stack>
     </Grid>
   );
 };

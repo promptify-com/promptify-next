@@ -97,7 +97,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, sparkHa
         m: { md: "20px auto" },
       }}
     >
-      {!templatesSlice && <div ref={scrollRef}></div>}
+      {!isGenerating && <div ref={scrollRef}></div>}
 
       {execution && "title" in execution && (
         <Typography sx={{ fontSize: 48, fontWeight: 400, color: "onSurface", py: "24px" }}>
@@ -212,7 +212,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, sparkHa
         }
       })}
 
-      {isGenerating && <div ref={scrollRef}></div>}
+      {/* {isGenerating && <div ref={scrollRef}></div>} */}
     </Stack>
   );
 };

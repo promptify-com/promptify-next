@@ -17,9 +17,10 @@ import { IPromptInput, PromptLiveResponse, InputType } from "@/common/types/prom
 import { setGeneratingStatus } from "@/core/store/templatesSlice";
 import { AnswerValidatorResponse, IAnswer, IMessage } from "@/common/types/chat";
 import { determineIsMobile } from "@/common/helpers/determineIsMobile";
+import { useStopExecutionMutation } from "@/core/api/executions";
 
 interface Props {
-  setGeneratedExecution: (data: PromptLiveResponse) => void;
+  setGeneratedExecution: (data: PromptLiveResponse | null) => void;
   onError: (errMsg: string) => void;
 }
 
@@ -28,13 +29,16 @@ const BottomTabsMobileHeight = "240px";
 
 const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
   const IS_MOBILE = determineIsMobile();
-  const { convertedTimestamp } = useTimestampConverter();
   const token = useToken();
   const router = useRouter();
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(state => state.user.currentUser);
   const template = useAppSelector(state => state.template.template);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
+  const executeController = new AbortController();
+  const [stopExecution] = useStopExecutionMutation();
+
+  const { convertedTimestamp } = useTimestampConverter();
   const createdAt = convertedTimestamp(new Date());
   const [chatExpanded, setChatExpanded] = useState(true);
   const [showGenerateButton, setShowGenerateButton] = useState(false);
@@ -134,7 +138,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
   }, [template]);
 
   useEffect(() => {
-    if (generatingResponse) setGeneratedExecution(generatingResponse);
+    setGeneratedExecution(generatingResponse);
   }, [generatingResponse]);
 
   useEffect(() => {
@@ -405,6 +409,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
       },
       body: JSON.stringify(executionData),
       openWhenHidden: true,
+      signal: executeController.signal,
       async onopen(res) {
         if (res.ok && res.status === 200) {
           dispatch(setGeneratingStatus(true));
@@ -420,6 +425,11 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
           const message = parseData.message;
           const prompt = parseData.prompt_id;
           const executionId = parseData.template_execution_id;
+
+          if (message === "[ABORTED]") {
+            setGeneratingResponse(null);
+            return;
+          }
 
           if (executionId) setNewExecutionId(executionId);
 
@@ -452,15 +462,6 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
             const tempArr = tempData;
             const activePrompt = tempArr.findIndex(template => template.prompt === +prompt);
 
-            if (message === "[C OMPLETED]" || message === "[COMPLETED]") {
-              tempArr[activePrompt] = {
-                ...tempArr[activePrompt],
-                prompt,
-                isLoading: false,
-                isCompleted: true,
-              };
-            }
-
             if (message === "[INITIALIZING]") {
               if (activePrompt === -1) {
                 tempArr.push({
@@ -476,6 +477,15 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
                   isLoading: true,
                 };
               }
+            }
+
+            if (message === "[C OMPLETED]" || message === "[COMPLETED]") {
+              tempArr[activePrompt] = {
+                ...tempArr[activePrompt],
+                prompt,
+                isLoading: false,
+                isCompleted: true,
+              };
             }
 
             if (message.includes("[ERROR]")) {
@@ -506,6 +516,13 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
         dispatch(setGeneratingStatus(false));
       },
     });
+  };
+
+  const abortConnection = () => {
+    executeController.abort();
+    if (newExecutionId) {
+      stopExecution(newExecutionId);
+    }
   };
 
   const handleAnswerSelect = (selectedAnswer: IAnswer) => {
@@ -613,6 +630,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
             onChange={handleChange}
             showGenerate={Boolean((showGenerateButton || canShowGenerateButton) && currentUser?.id)}
             onGenerate={generateExecutionHandler}
+            onAbort={abortConnection}
             isValidating={isValidatingAnswer}
             setIsSimulaitonStreaming={setIsSimulaitonStreaming}
           />
