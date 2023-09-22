@@ -563,11 +563,13 @@ const TemplateForm: React.FC<Props> = ({
               formik.setFieldValue("is_internal", !formik.values.is_internal);
             }}
             sx={{
-              "&.MuiFormControlLabel-root": {
-                m: "20px 0",
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
+              m: "20px 0",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              ".MuiFormControlLabel-label": {
+                fontSize: "1rem",
+                fontWeight: 400,
               },
             }}
           />
