@@ -8,6 +8,12 @@ import { getInputsFromString } from "@/common/helpers";
 import { IVariable } from "@/common/types/prompt";
 
 type PresetType = "node" | "input";
+
+interface AddPresetParams {
+  type: PresetType;
+  label: string;
+  firstAppend?: boolean;
+}
 interface Props {
   selectedNodeData: INodesData;
   setSelectedNodeData: (node: INodesData) => void;
@@ -17,8 +23,6 @@ interface Props {
 export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelectedNodeData, nodes }) => {
   const cursorPositionRef = useRef(0);
   const suggestionListRef = useRef<HTMLDivElement | null>(null);
-
-  const [firstAppend, setFirstAppend] = useState(true);
 
   const [suggestionList, setSuggestionList] = useState<IVariable[]>([]);
   const [optionType, setOptionType] = useState<PresetType>("node");
@@ -95,15 +99,11 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
       ...selectedNodeData,
       content,
     });
-    setFirstAppend(false);
   };
 
-  const addPreset = (type: PresetType, label: string) => {
+  const addPreset = ({ type, label, firstAppend = false }: AddPresetParams) => {
     if (!label) return;
-
     let preset = "";
-    let start = content;
-    let end = "";
 
     if (type === "node") {
       const matchedNode = nodesPresets.find(node => node.label === label);
@@ -126,21 +126,23 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
       }
     }
 
-    if (highlightedOption) {
+    if (highlightedOption !== "" && !firstAppend) {
       preset = preset.substring(highlightedOption.length);
     }
 
-    if (!firstAppend) {
-      start = content.slice(0, cursorPositionRef.current);
-      end = content.slice(cursorPositionRef.current);
+    if (firstAppend) {
+      changeContent(content + preset + " ");
+    } else {
+      const start = content.slice(0, cursorPositionRef.current);
+      const end = content.slice(cursorPositionRef.current);
+      changeContent(start + preset + " " + end);
     }
 
-    changeContent(start + preset + " " + end);
     setLastPosition(val => val + preset.length);
   };
 
   const handleSuggestionSelect = (option: IVariable) => {
-    addPreset(optionType, option.label);
+    addPreset({ type: optionType, label: option.label });
     setHighlightedOption("");
     setSuggestionList([]);
   };
@@ -177,7 +179,7 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
             type="node"
             variant="horizontal"
             options={nodesPresets}
-            onChoose={node => addPreset("node", node.label)}
+            onChoose={node => addPreset({ type: "node", label: node.label, firstAppend: true })}
           />
         </Stack>
         <Stack
@@ -200,7 +202,7 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
             type="input"
             variant="horizontal"
             options={inputsPresets}
-            onChoose={input => addPreset("input", input.label)}
+            onChoose={input => addPreset({ type: "input", label: input.label, firstAppend: true })}
           />
         </Stack>
       </Stack>
