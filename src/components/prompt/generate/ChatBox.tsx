@@ -275,7 +275,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
           };
 
           if (response.feedback) {
-            nextBotMessage = { ...nextMessage, text: response.feedback };
+            nextBotMessage = { ...nextMessage, text: response.feedback, type: "text" };
             addToQueuedMessages([nextMessage]);
           } else {
             nextBotMessage = nextMessage;
