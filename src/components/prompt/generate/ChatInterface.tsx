@@ -6,12 +6,10 @@ import { LogoApp } from "@/assets/icons/LogoApp";
 import { useAppSelector } from "@/hooks/useStore";
 import ThreeDotsAnimation from "@/components/design-system/ThreeDotsAnimation";
 import { IMessage } from "@/common/types/chat";
-import { Block } from "@mui/icons-material";
 
 interface Props {
   messages: IMessage[];
   onGenerate: () => void;
-  onAbort: () => void;
   showGenerate: boolean;
   onChange?: (value: string) => void;
   isValidating: boolean;
@@ -21,7 +19,6 @@ interface Props {
 export const ChatInterface = ({
   messages,
   onGenerate,
-  onAbort,
   showGenerate,
   onChange,
   isValidating,
@@ -121,25 +118,6 @@ export const ChatInterface = ({
                 <Typography sx={{ ml: 1.5, color: "inherit", fontSize: 12 }}>~360s</Typography>
               </>
             )}
-          </Button>
-        )}
-        {isGenerating && (
-          <Button
-            variant="text"
-            startIcon={<Block />}
-            sx={{
-              border: "1px solid",
-              height: "22px",
-              p: "15px",
-              fontSize: 13,
-              fontWeight: 500,
-              ":hover": {
-                bgcolor: "action.hover",
-              },
-            }}
-            onClick={onAbort}
-          >
-            Abort
           </Button>
         )}
       </Stack>

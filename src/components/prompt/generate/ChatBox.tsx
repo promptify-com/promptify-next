@@ -1,6 +1,6 @@
-import React, { useState, useMemo, memo, useEffect } from "react";
+import React, { useState, useMemo, memo, useEffect, useRef } from "react";
 import { Accordion, AccordionDetails, AccordionSummary, Grid, Typography, Button, Stack } from "@mui/material";
-import { ExpandLess, ExpandMore } from "@mui/icons-material";
+import { Block, ExpandLess, ExpandMore } from "@mui/icons-material";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { ResPrompt } from "@/core/api/dto/prompts";
 import { LogoApp } from "@/assets/icons/LogoApp";
@@ -49,6 +49,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [disableChatInput, setDisableChatInput] = useState(false);
   const [standingQuestions, setStandingQuestions] = useState<UpdatedQuestionTemplate[]>([]);
+  let abortController = useRef(new AbortController());
 
   const addToQueuedMessages = (message: IMessage[]) => {
     setQueuedMessages(prevMessages => prevMessages.concat(message));
@@ -372,6 +373,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
     }
 
     dispatch(setGeneratingStatus(true));
+    setChatExpanded(false);
 
     const promptsData: ResPrompt[] = [];
 
@@ -405,6 +407,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
       },
       body: JSON.stringify(executionData),
       openWhenHidden: true,
+      signal: abortController.current.signal,
       async onopen(res) {
         if (res.ok && res.status === 200) {
           dispatch(setGeneratingStatus(true));
@@ -420,11 +423,6 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
           const message = parseData.message;
           const prompt = parseData.prompt_id;
           const executionId = parseData.template_execution_id;
-
-          if (message === "[ABORTED]") {
-            setGeneratingResponse(null);
-            return;
-          }
 
           if (executionId) setNewExecutionId(executionId);
 
@@ -514,6 +512,9 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
   };
 
   const abortConnection = () => {
+    abortController.current.abort();
+    setGeneratedExecution(null);
+    dispatch(setGeneratingStatus(false));
     if (newExecutionId) {
       stopExecution(newExecutionId);
     }
@@ -610,6 +611,28 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
                 Chat with Promptify
               </Typography>
             </Grid>
+            {isGenerating && (
+              <Button
+                variant="text"
+                startIcon={<Block />}
+                sx={{
+                  border: "1px solid",
+                  height: "22px",
+                  p: "15px",
+                  fontSize: 13,
+                  fontWeight: 500,
+                  ":hover": {
+                    bgcolor: "action.hover",
+                  },
+                }}
+                onClick={e => {
+                  e.stopPropagation();
+                  abortConnection();
+                }}
+              >
+                Abort
+              </Button>
+            )}
           </Grid>
         </AccordionSummary>
         <AccordionDetails
@@ -627,7 +650,6 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
             onChange={handleChange}
             showGenerate={Boolean((showGenerateButton || canShowGenerateButton) && currentUser?.id)}
             onGenerate={generateExecutionHandler}
-            onAbort={abortConnection}
             isValidating={isValidatingAnswer}
             setIsSimulaitonStreaming={setIsSimulaitonStreaming}
           />
