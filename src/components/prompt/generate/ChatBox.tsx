@@ -24,9 +24,6 @@ interface Props {
   onError: (errMsg: string) => void;
 }
 
-const ExecutionCardHeaderHeight = "394px";
-const BottomTabsMobileHeight = "240px";
-
 const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
   const IS_MOBILE = determineIsMobile();
   const token = useToken();
@@ -35,7 +32,6 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
   const currentUser = useAppSelector(state => state.user.currentUser);
   const template = useAppSelector(state => state.template.template);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
-  const executeController = new AbortController();
   const [stopExecution] = useStopExecutionMutation();
 
   const { convertedTimestamp } = useTimestampConverter();
@@ -409,7 +405,6 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
       },
       body: JSON.stringify(executionData),
       openWhenHidden: true,
-      signal: executeController.signal,
       async onopen(res) {
         if (res.ok && res.status === 200) {
           dispatch(setGeneratingStatus(true));
@@ -519,7 +514,6 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
   };
 
   const abortConnection = () => {
-    executeController.abort();
     if (newExecutionId) {
       stopExecution(newExecutionId);
     }
@@ -561,7 +555,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
       top={0}
       left={0}
       zIndex={1000}
-      border={"1px solid rgba(225, 226, 236, 0.2)"}
+      border={"1px solid rgba(225, 226, 236, .5)"}
     >
       <Accordion
         expanded={IS_MOBILE ? true : chatExpanded}
