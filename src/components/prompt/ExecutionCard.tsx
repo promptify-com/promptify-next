@@ -212,7 +212,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, sparkHa
         }
       })}
 
-      {/* {isGenerating && <div ref={scrollRef}></div>} */}
+      {isGenerating && <div ref={scrollRef}></div>}
     </Stack>
   );
 };

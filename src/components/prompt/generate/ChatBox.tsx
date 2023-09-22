@@ -557,7 +557,11 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
       width={"100%"}
       overflow={"hidden"}
       borderRadius={"16px"}
-      position={"relative"}
+      position={"sticky"}
+      top={0}
+      left={0}
+      zIndex={1000}
+      border={"1px solid rgba(225, 226, 236, 0.2)"}
     >
       <Accordion
         expanded={IS_MOBILE ? true : chatExpanded}
@@ -620,8 +624,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
             flexDirection: "column",
             alignItems: "flex-start",
             gap: "8px",
-            maxHeight: { xs: "70vh", md: `calc(100vh - ${ExecutionCardHeaderHeight})` },
-            minHeight: { xs: `calc(100vh - ${BottomTabsMobileHeight} )`, md: "auto" },
+            maxHeight: "50svh",
             borderTop: { xs: "none", md: "2px solid #ECECF4" },
           }}
         >
