@@ -26,7 +26,6 @@ const MessageContent = memo(({ content, shouldStream, setIsSimulaitonStreaming }
   const { streamedText, hasFinished } = useTextSimulationStreaming({
     text: content,
     shouldStream,
-    speed: Math.random() < 0.5 ? 100 : 80,
   });
 
   useEffect(() => {

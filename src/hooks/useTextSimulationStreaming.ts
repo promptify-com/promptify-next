@@ -3,10 +3,10 @@ import { useState, useEffect } from "react";
 export interface Props {
   text: string;
   shouldStream?: boolean;
-  speed: number;
+  speed?: number;
 }
 
-const useTextSimulationStreaming = ({ shouldStream = true, speed, text }: Props) => {
+const useTextSimulationStreaming = ({ shouldStream = true, speed = 50, text }: Props) => {
   if (!shouldStream || !text) {
     return { streamedText: text };
   }
