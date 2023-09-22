@@ -5,6 +5,7 @@ import HighlightWithinTextarea, { Selection } from "react-highlight-within-texta
 import { INodesData } from "@/common/types/builder";
 import { Options } from "../common/Options";
 import { getInputsFromString } from "@/common/helpers";
+import { IVariable } from "@/common/types/prompt";
 
 type PresetType = "node" | "input";
 interface Props {
@@ -19,8 +20,9 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
 
   const [firstAppend, setFirstAppend] = useState(true);
 
-  const [suggestionList, setSuggestionList] = useState<{ id: number | undefined; label: string }[]>([]);
+  const [suggestionList, setSuggestionList] = useState<IVariable[]>([]);
   const [optionType, setOptionType] = useState<PresetType>("node");
+  const [highlightedOption, setHighlightedOption] = useState("");
 
   const [lastPosition, setLastPosition] = useState<number>(0);
 
@@ -28,19 +30,11 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
 
   const highlight = [
     {
-      highlight: /(\$[\w]+)/g, // Highlight $ followed by word characters
-      className: "output-variable",
-    },
-    {
-      highlight: /({{.*?}})/g, // Highlight {{ followed by any characters inside }}
+      highlight: /{{.*?}}|{{/g, // Highlight {{ or {{ followed by any characters inside
       className: "input-variable",
     },
     {
-      highlight: /({{)/g, // Highlight plain {{
-      className: "input-variable",
-    },
-    {
-      highlight: /(\$)/g, // Highlight plain $
+      highlight: /\$[\w]*|\$/g, // Highlight $ followed by word characters or $
       className: "output-variable",
     },
   ];
@@ -64,24 +58,38 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
       })),
     );
 
-  // Function to show suggestions based on user input
   const showSuggestions = (value: string) => {
-    if (value.endsWith("{{")) {
-      setSuggestionList(inputsPresets);
+    let suggestionListArr: IVariable[];
+    let textAfterRegexValue = "";
+
+    const indexOfDoubleBrace = value.lastIndexOf("{{");
+    const indexOfDollarSign = value.lastIndexOf("$");
+
+    if (indexOfDoubleBrace > indexOfDollarSign) {
+      suggestionListArr = inputsPresets;
       setOptionType("input");
-    } else if (value.endsWith("$")) {
-      setSuggestionList(nodesPresets);
-      setOptionType("node");
+      textAfterRegexValue = value.substring(indexOfDoubleBrace + 2);
     } else {
-      setSuggestionList([]);
+      suggestionListArr = nodesPresets;
+      setOptionType("node");
+      textAfterRegexValue = value.substring(indexOfDollarSign + 1);
     }
+
+    if (textAfterRegexValue !== "") {
+      suggestionListArr = suggestionList.filter(suggestion =>
+        suggestion.label.toLowerCase().includes(textAfterRegexValue.toLowerCase()),
+      );
+    }
+    let highlightedOptionValue = `${optionType === "input" ? "{{" : "$"}${textAfterRegexValue}`;
+    setHighlightedOption(highlightedOptionValue);
+    setSuggestionList(suggestionListArr);
   };
 
   const changeContent = (content: string, selection?: Selection | undefined) => {
-    if (selection?.focus) {
-      setLastPosition(selection.focus + 1);
+    const { focus } = selection ?? {};
+    if (focus) {
+      setLastPosition(focus + 1);
     }
-
     cursorPositionRef.current = lastPosition;
     setSelectedNodeData({
       ...selectedNodeData,
@@ -94,10 +102,16 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
     if (!label) return;
 
     let preset = "";
+    let start = content;
+    let end = "";
+
     if (type === "node") {
       const matchedNode = nodesPresets.find(node => node.label === label);
       if (matchedNode) {
-        preset = content.endsWith("$") ? matchedNode.label.slice(1) : matchedNode.label; // Remove the first character
+        preset = matchedNode.label;
+        if (content.endsWith("$")) {
+          preset = preset.substring(1);
+        }
       }
     } else {
       const input = inputsPresets.find(input => input.label === label);
@@ -112,15 +126,23 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
       }
     }
 
-    if (firstAppend) {
-      changeContent(content + preset + " ");
-    } else {
-      const start = content.slice(0, cursorPositionRef.current);
-      const end = content.slice(cursorPositionRef.current);
-      changeContent(start + preset + " " + end);
+    if (highlightedOption) {
+      preset = preset.substring(highlightedOption.length);
     }
+
+    if (!firstAppend) {
+      start = content.slice(0, cursorPositionRef.current);
+      end = content.slice(cursorPositionRef.current);
+    }
+
+    changeContent(start + preset + " " + end);
     setLastPosition(val => val + preset.length);
-    setSuggestionList([]); // clear
+  };
+
+  const handleSuggestionSelect = (option: IVariable) => {
+    addPreset(optionType, option.label);
+    setHighlightedOption("");
+    setSuggestionList([]);
   };
 
   return (
@@ -215,10 +237,8 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
               elevation={2}
               sx={{
                 padding: "16px",
-                minWidth: "200px",
-                position: "absolute",
+                maxWidth: "200px",
                 zIndex: 999,
-                right: 0,
                 bgcolor: "surface.1",
                 maxHeight: "300px",
                 overflow: "auto",
@@ -242,7 +262,7 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
                 type={optionType}
                 variant="vertical"
                 options={suggestionList}
-                onChoose={option => addPreset(optionType, option.label)}
+                onChoose={handleSuggestionSelect}
               />
             </Card>
           )}

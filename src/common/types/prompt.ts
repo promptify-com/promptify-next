@@ -22,3 +22,8 @@ export interface IPromptInput {
   choices?: string[] | null;
   prompt?: number;
 }
+
+export interface IVariable {
+  id: number | undefined;
+  label: string;
+}
