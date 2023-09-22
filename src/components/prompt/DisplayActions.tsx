@@ -143,7 +143,7 @@ export const DisplayActions: React.FC<Props> = ({
     <Box
       sx={{
         position: { xs: "fixed", md: "sticky" },
-        top: { xs: "auto", md: 0 },
+        top: { xs: "auto", md: "48px" },
         bottom: { xs: "74px", md: "auto" },
         left: 0,
         right: 0,

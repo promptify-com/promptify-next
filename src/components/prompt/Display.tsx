@@ -19,7 +19,7 @@ interface Props {
   selectedExecution: TemplatesExecutions | null;
   setSelectedExecution: (execution: TemplatesExecutions | null) => void;
   generatedExecution: PromptLiveResponse | null;
-  setGeneratedExecution: (data: PromptLiveResponse) => void;
+  setGeneratedExecution: (data: PromptLiveResponse | null) => void;
   onError: (errMsg: string) => void;
   hashedExecution: TemplatesExecutions | null;
 }
