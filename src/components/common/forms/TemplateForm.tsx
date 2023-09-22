@@ -126,21 +126,21 @@ const TemplateForm: React.FC<Props> = ({
 
   const formik = useFormik<IEditTemplate>({
     initialValues: {
-      title: templateData?.title ?? "",
-      description: templateData?.description.replaceAll(/<\/?[^>]+(>|$)/gi, "") ?? "",
+      title: templateData?.title.replace(/<\/?[^>]+(>|$)/gi, "") ?? "",
+      description: templateData?.description.replace(/<\/?[^>]+(>|$)/gi, "") ?? "",
       duration: templateData?.duration?.toString() ?? "1",
       difficulty: templateData?.difficulty ?? "BEGINNER",
       is_visible: templateData?.is_visible ?? true,
       language: templateData?.language ?? "en-us",
       category: templateData?.category?.id ?? 1,
-      context: templateData?.context ?? "",
+      context: templateData?.context.replace(/<\/?[^>]+(>|$)/gi, "") ?? "",
       tags: templateData?.tags ?? [],
       thumbnail: templateData?.thumbnail ?? "",
       executions_limit: templateData?.executions_limit ?? -1,
-      slug: templateData?.slug ?? "",
-      meta_title: templateData?.meta_title ?? "",
-      meta_description: templateData?.meta_description ?? "",
-      meta_keywords: templateData?.meta_keywords ?? "",
+      slug: templateData?.slug.replace(/<\/?[^>]+(>|$)/gi, "") ?? "",
+      meta_title: templateData?.meta_title.replace(/<\/?[^>]+(>|$)/gi, "") ?? "",
+      meta_description: templateData?.meta_description.replace(/<\/?[^>]+(>|$)/gi, "") ?? "",
+      meta_keywords: templateData?.meta_keywords.replace(/<\/?[^>]+(>|$)/gi, "") ?? "",
       status: templateData?.status ?? "DRAFT",
       is_internal: templateData?.is_internal ?? false,
       ...(type === "edit" && {
