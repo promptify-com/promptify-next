@@ -25,7 +25,7 @@ export const SparkSaveDeletePopup = ({ type, activeExecution, onClose }: SparkSa
   const handleUpdateExecution = () => {
     if (activeExecution) {
       updateExecution({ id: activeExecution.id, data: { title: executionTitle } });
-      if (!isDeleteExecutionError) {
+      if (!isError) {
         onClose();
       }
     }
@@ -34,7 +34,7 @@ export const SparkSaveDeletePopup = ({ type, activeExecution, onClose }: SparkSa
   const handleDeleteExecution = () => {
     if (activeExecution) {
       deleteExecution(activeExecution.id);
-      if (!isError) {
+      if (!isDeleteExecutionError) {
         onClose();
       }
     }
