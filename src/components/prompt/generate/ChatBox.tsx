@@ -18,6 +18,8 @@ import { setGeneratingStatus } from "@/core/store/templatesSlice";
 import { AnswerValidatorResponse, IAnswer, IMessage } from "@/common/types/chat";
 import { determineIsMobile } from "@/common/helpers/determineIsMobile";
 import { useStopExecutionMutation } from "@/core/api/executions";
+import VaryModal from "./VaryModal";
+import { vary } from "@/common/helpers/varyValidator";
 
 interface Props {
   setGeneratedExecution: (data: PromptLiveResponse | null) => void;
@@ -40,7 +42,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
   const createdAt = convertedTimestamp(new Date());
   const [chatExpanded, setChatExpanded] = useState(true);
   const [showGenerateButton, setShowGenerateButton] = useState(false);
-  const [isValidatingAnswer, setInValidatingAnswer] = useState(false);
+  const [isValidatingAnswer, setIsValidatingAnswer] = useState(false);
   const [generatingResponse, setGeneratingResponse] = useState<PromptLiveResponse | null>(null);
   const [newExecutionId, setNewExecutionId] = useState<number | null>(null);
   const [answers, setAnswers] = useState<IAnswer[]>([]);
@@ -51,6 +53,8 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [disableChatInput, setDisableChatInput] = useState(false);
   const [standingQuestions, setStandingQuestions] = useState<UpdatedQuestionTemplate[]>([]);
+  const [varyOpen, setVaryOpen] = useState(false);
+
   let abortController = useRef(new AbortController());
 
   const addToQueuedMessages = (message: IMessage[]) => {
@@ -200,6 +204,44 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
     }
   };
 
+  const validateVary = async (variation: string) => {
+    if (variation) {
+      setIsValidatingAnswer(true);
+
+      const questionAnswerMap: Record<string, string | number> = {};
+      templateQuestions.forEach(question => {
+        const matchingAnswer = answers.find(answer => answer.inputName === question.name);
+        questionAnswerMap[question.name] = matchingAnswer?.answer || "";
+      });
+
+      const payload = {
+        prompt: variation,
+        variables: questionAnswerMap,
+      };
+
+      const varyResponse = await vary({ token, payload });
+
+      if (typeof varyResponse === "string") {
+        onError("Oopps, something happened. Please try again!");
+        setIsValidatingAnswer(false);
+        return;
+      }
+
+      const newAnswers = templateQuestions.map(question => {
+        return {
+          inputName: question.name,
+          required: question.required,
+          question: question.question,
+          answer: varyResponse[question.name],
+          prompt: question.prompt,
+        };
+      });
+
+      setAnswers(newAnswers);
+      setIsValidatingAnswer(false);
+    }
+  };
+
   const handleUserResponse = async () => {
     if (userAnswer.trim() === "" || isSimulaitonStreaming) {
       return;
@@ -207,7 +249,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
     setUserAnswer("");
 
     if (currentQuestion) {
-      setInValidatingAnswer(true);
+      setIsValidatingAnswer(true);
 
       const newUserMessage: IMessage = {
         text: userAnswer,
@@ -295,7 +337,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
       }
 
       setMessages(prevMessages => prevMessages.concat(nextBotMessage));
-      setInValidatingAnswer(false);
+      setIsValidatingAnswer(false);
     }
   };
 
@@ -652,8 +694,14 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
             onChange={handleChange}
             showGenerate={Boolean((showGenerateButton || canShowGenerateButton) && currentUser?.id)}
             onGenerate={generateExecutionHandler}
+            onVary={() => setVaryOpen(true)}
             isValidating={isValidatingAnswer}
             setIsSimulaitonStreaming={setIsSimulaitonStreaming}
+          />
+          <VaryModal
+            open={varyOpen}
+            setOpen={setVaryOpen}
+            onSubmit={variationTxt => validateVary(variationTxt)}
           />
 
           {currentUser?.id ? (

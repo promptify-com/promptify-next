@@ -79,6 +79,13 @@ export interface QuestionAnswerParams {
   question: string;
   answer: string;
 }
+export interface VaryParams {
+  prompt: string;
+  variables: {
+    [question: string]: string | number;
+  };
+}
+
 export interface TemplateDataParams {
   TemplateData: {
     id: number;
@@ -90,7 +97,7 @@ export interface TemplateDataParams {
   };
 }
 
-type PromptParamsGenerate = TemplateDataParams | QuestionAnswerParams;
+type PromptParamsGenerate = TemplateDataParams | QuestionAnswerParams | VaryParams;
 
 export interface TemplateQuestionGeneratorData {
   prompt: number;

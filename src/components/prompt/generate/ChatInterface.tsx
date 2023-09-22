@@ -6,10 +6,12 @@ import { LogoApp } from "@/assets/icons/LogoApp";
 import { useAppSelector } from "@/hooks/useStore";
 import ThreeDotsAnimation from "@/components/design-system/ThreeDotsAnimation";
 import { IMessage } from "@/common/types/chat";
+import { Edit } from "@mui/icons-material";
 
 interface Props {
   messages: IMessage[];
   onGenerate: () => void;
+  onVary: () => void;
   showGenerate: boolean;
   onChange?: (value: string) => void;
   isValidating: boolean;
@@ -19,6 +21,7 @@ interface Props {
 export const ChatInterface = ({
   messages,
   onGenerate,
+  onVary,
   showGenerate,
   onChange,
   isValidating,
@@ -78,6 +81,7 @@ export const ChatInterface = ({
       <Stack
         direction={"row"}
         gap={2}
+        px={3}
       >
         {showGenerate && (
           <Button
@@ -93,7 +97,6 @@ export const ChatInterface = ({
               )
             }
             sx={{
-              ml: 9,
               bgcolor: "primary.main",
               borderColor: "primary.main",
               borderRadius: "999px",
@@ -108,7 +111,7 @@ export const ChatInterface = ({
               },
             }}
             variant="contained"
-            disabled={isGenerating}
+            disabled={isGenerating || isValidating}
           >
             {isGenerating ? (
               <Typography>Generation in progress...</Typography>
@@ -120,6 +123,24 @@ export const ChatInterface = ({
             )}
           </Button>
         )}
+        <Button
+          variant="text"
+          startIcon={<Edit />}
+          sx={{
+            border: "1px solid",
+            height: "22px",
+            p: "15px",
+            fontSize: 13,
+            fontWeight: 500,
+            ":hover": {
+              bgcolor: "action.hover",
+            },
+          }}
+          disabled={isValidating || isGenerating}
+          onClick={onVary}
+        >
+          Vary
+        </Button>
       </Stack>
     </Grid>
   );
