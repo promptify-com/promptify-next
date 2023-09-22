@@ -142,7 +142,6 @@ export interface Templates {
   status: TemplateStatus;
   last_api_run: Date;
   api_runs: number;
-  example_execution: TemplatesExecutions | null;
   is_internal?: boolean;
 }
 
@@ -168,13 +167,10 @@ export interface TemplatesExecutions {
     thumbnail: string;
   };
   hash: string;
-  feedback?: string;
-  executed_by?: number;
 }
 
 export interface ITemplateExecutionPut {
   title?: string;
-  feedback?: string;
 }
 
 export interface ISparkWithTemplate {
@@ -224,6 +220,7 @@ export interface TemplateExecutionsDisplay {
   executions: Execution[];
   likes?: number;
   favorites_count: number;
+  is_internal?: boolean;
 }
 export type TemplatesExecutionsByMePaginationResponse = { results: TemplateExecutionsDisplay[] };
 export interface SparkExecution {

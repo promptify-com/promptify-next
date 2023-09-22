@@ -35,10 +35,11 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
   if (!isLoading && !templates?.length) {
     return null;
   }
+  const filteredTemplates = templates?.filter(template => !template?.is_internal);
 
   return (
     <Box width={"100%"}>
-      {!filtred && (templateLoading || !!templates?.length) && <Typography fontSize={19}>{title}</Typography>}
+      {!filtred && (templateLoading || !!filteredTemplates?.length) && <Typography fontSize={19}>{title}</Typography>}
 
       {templateLoading ? (
         isLatestTemplates ? (
@@ -71,7 +72,7 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
           }}
         >
           {isLatestTemplates ? (
-            !!templates?.length && (
+            !!filteredTemplates?.length && (
               <Grid
                 display={"flex"}
                 flexWrap={{ xs: "nowrap", md: "wrap" }}
@@ -82,7 +83,7 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
                   WebkitOverflowScrolling: { xs: "touch", md: "initial" },
                 }}
               >
-                {templates.map((template: TemplateExecutionsDisplay | Templates) => (
+                {filteredTemplates.map((template: TemplateExecutionsDisplay | Templates) => (
                   <Grid key={template.id}>
                     <CardTemplateLast
                       key={template.id}
@@ -99,8 +100,8 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
                 onLoadMore={onNextPage}
                 hasMore={hasMore}
               >
-                {!!templates?.length &&
-                  templates.map((template: TemplateExecutionsDisplay | Templates) => {
+                {!!filteredTemplates?.length &&
+                  filteredTemplates.map((template: TemplateExecutionsDisplay | Templates) => {
                     return (
                       <Grid key={template.id}>
                         <CardTemplate
