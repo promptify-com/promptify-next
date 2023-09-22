@@ -24,6 +24,8 @@ interface Props {
   onError: (errMsg: string) => void;
 }
 
+const BottomTabsMobileHeight = "240px";
+
 const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
   const IS_MOBILE = determineIsMobile();
   const token = useToken();
@@ -552,11 +554,10 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
       width={"100%"}
       overflow={"hidden"}
       borderRadius={"16px"}
-      position={"sticky"}
-      top={0}
-      left={0}
-      zIndex={1000}
-      border={"1px solid rgba(225, 226, 236, .5)"}
+      sx={{
+        position: { xs: "relative", md: "sticky" },
+        ...(!IS_MOBILE && { top: "0", left: "0", zIndex: 995, border: "1px solid rgba(225, 226, 236, .5)" }),
+      }}
     >
       <Accordion
         expanded={IS_MOBILE ? true : chatExpanded}
@@ -641,7 +642,8 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
             flexDirection: "column",
             alignItems: "flex-start",
             gap: "8px",
-            maxHeight: "50svh",
+            maxHeight: { xs: "70vh", md: "50svh" },
+            ...(IS_MOBILE && { minHeight: { xs: `calc(100vh - ${BottomTabsMobileHeight} )` } }),
             borderTop: { xs: "none", md: "2px solid #ECECF4" },
           }}
         >
