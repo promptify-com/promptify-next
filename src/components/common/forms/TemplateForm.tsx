@@ -13,24 +13,25 @@ import {
   InputLabel,
   Checkbox,
   Stack,
-  IconButton,
-  Icon,
-  Switch,
+  FormControl,
   FormControlLabel,
+  Switch,
 } from "@mui/material";
+import { Close } from "@mui/icons-material";
+
 import { useGetTagsQuery } from "@/core/api/tags";
-import { Templates } from "@/core/api/dto/templates";
+import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { IEditTemplate } from "@/common/types/editTemplate";
 import { authClient } from "@/common/axios";
-import { fieldStyle, boxStyle, buttonBoxStyle, typographyStyle, checkboxStyle } from "../../modals/styles";
+import { fieldStyle, boxStyle, buttonBoxStyle, checkboxStyle } from "@/components/modals/styles";
 import { useGetCategoriesQuery } from "@/core/api/categories";
-import { Close, Upload } from "@mui/icons-material";
 import useToken from "@/hooks/useToken";
 import { useGetCurrentUserQuery } from "@/core/api/user";
 import { useCreateTemplateMutation, useUpdateTemplateMutation } from "@/core/api/templates";
 import { FormType } from "@/common/types/template";
 import { TemplateStatusArray } from "@/common/constants";
 import { getLanguageFromCode } from "@/common/helpers/getLanguageFromCode";
+import { executionsApi } from "@/core/api/executions";
 
 interface Props {
   type?: FormType;
@@ -49,16 +50,26 @@ const TemplateForm: React.FC<Props> = ({
   darkMode = false,
 }) => {
   const token = useToken();
+
   const { data: categories } = useGetCategoriesQuery();
   const { data: fetchedTags } = useGetTagsQuery();
-  const [tags, setTags] = useState<string[]>([]);
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const { data: user } = useGetCurrentUserQuery(token);
   const [createTemplate] = useCreateTemplateMutation();
   const [updateTemplate] = useUpdateTemplateMutation();
+  const [getTemplateExecution] = executionsApi.endpoints.getExecutionsByTemplate.useLazyQuery();
 
-  useEffect(() => {
+  const [tags, setTags] = useState<string[]>([]);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [executions, setExecutions] = useState<TemplatesExecutions[]>();
+
+  const getExecutions = async () => {
+    if (!templateData) return null;
+    const response = await getTemplateExecution(templateData.id);
+    setExecutions(response.data);
     setSelectedTags(templateData?.tags.map(tag => tag.name) ?? []);
+  };
+  useEffect(() => {
+    getExecutions();
   }, [templateData]);
 
   useEffect(() => {
@@ -132,6 +143,9 @@ const TemplateForm: React.FC<Props> = ({
       meta_keywords: templateData?.meta_keywords ?? "",
       status: templateData?.status ?? "DRAFT",
       is_internal: templateData?.is_internal ?? false,
+      ...(type === "edit" && {
+        example_execution_id: templateData?.example_execution?.id ?? null,
+      }),
       ...(type === "create" && { prompts_list: [] }),
     },
     enableReinitialize: true,
@@ -515,6 +529,29 @@ const TemplateForm: React.FC<Props> = ({
               )}
             />
           </Stack>
+          {type === "edit" && (
+            <Stack sx={boxStyle}>
+              <FormControl variant="standard">
+                <InputLabel id="execution-label">Execution Example</InputLabel>
+                <Select
+                  labelId="execution-label"
+                  value={formik.values.example_execution_id}
+                  onChange={event => {
+                    formik.setFieldValue("example_execution_id", event.target.value);
+                  }}
+                >
+                  {executions?.map(execution => (
+                    <MenuItem
+                      key={execution.id}
+                      value={execution.id}
+                    >
+                      {`#${execution.id} - ${execution.title}`}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Stack>
+          )}
           <FormControlLabel
             control={<Switch color="primary" />}
             label="Is Internal?"
