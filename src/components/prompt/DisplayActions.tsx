@@ -137,6 +137,8 @@ export const DisplayActions: React.FC<Props> = ({
     </Button>
   );
 
+  const isExecutionOwner = executions.some(execution => execution?.executed_by === selectedExecution?.executed_by);
+
   return (
     <Box
       sx={{
@@ -191,7 +193,7 @@ export const DisplayActions: React.FC<Props> = ({
             )}
           </Stack>
 
-          {selectedExecution?.id && !sparkHashQueryParam && <ThumbsFeedback selectedExecution={selectedExecution} />}
+          {isExecutionOwner && <ThumbsFeedback selectedExecution={selectedExecution} />}
 
           <Stack
             direction={"row"}
@@ -243,7 +245,7 @@ export const DisplayActions: React.FC<Props> = ({
             gap={1}
             p={"8px 16px"}
           >
-            {selectedExecution?.id && !sparkHashQueryParam && <ThumbsFeedback selectedExecution={selectedExecution} />}
+            {isExecutionOwner && <ThumbsFeedback selectedExecution={selectedExecution} />}
 
             {/* 
               TODO: https://github.com/ysfbsf/promptify-next/issues/275

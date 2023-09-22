@@ -168,6 +168,7 @@ export interface TemplatesExecutions {
   };
   hash: string;
   feedback?: string;
+  executed_by?: number;
 }
 
 export interface ITemplateExecutionPut {
