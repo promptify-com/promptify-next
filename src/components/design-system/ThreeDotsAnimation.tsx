@@ -6,7 +6,7 @@ const ThreeDotsAnimation = ({ loading }: { loading: boolean }) => {
   if (loading) {
     return (
       <Grid
-        p={"0px 16px"}
+        p={"0px 16px 10px"}
         className="dot-container"
       >
         {dots.map(dotIndex => (
