@@ -16,7 +16,7 @@ export const isPromptVariableValid = (content: string) => {
       };
     }
 
-    if (!validTypes.includes(type)) {
+    if (type && !validTypes.includes(type)) {
       return {
         isValid: false,
         message: `"${match[0]}"`,
