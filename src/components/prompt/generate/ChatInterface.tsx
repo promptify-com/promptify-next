@@ -111,7 +111,7 @@ export const ChatInterface = ({
               },
             }}
             variant="contained"
-            disabled={isGenerating}
+            disabled={isGenerating || isValidating}
           >
             {isGenerating ? (
               <Typography>Generation in progress...</Typography>
@@ -136,6 +136,7 @@ export const ChatInterface = ({
               bgcolor: "action.hover",
             },
           }}
+          disabled={isValidating || isGenerating}
           onClick={onVary}
         >
           Vary

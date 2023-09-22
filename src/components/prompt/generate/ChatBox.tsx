@@ -42,7 +42,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
   const createdAt = convertedTimestamp(new Date());
   const [chatExpanded, setChatExpanded] = useState(true);
   const [showGenerateButton, setShowGenerateButton] = useState(false);
-  const [isValidatingAnswer, setInValidatingAnswer] = useState(false);
+  const [isValidatingAnswer, setIsValidatingAnswer] = useState(false);
   const [generatingResponse, setGeneratingResponse] = useState<PromptLiveResponse | null>(null);
   const [newExecutionId, setNewExecutionId] = useState<number | null>(null);
   const [answers, setAnswers] = useState<IAnswer[]>([]);
@@ -54,9 +54,9 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
   const [disableChatInput, setDisableChatInput] = useState(false);
   const [standingQuestions, setStandingQuestions] = useState<UpdatedQuestionTemplate[]>([]);
   const [varyOpen, setVaryOpen] = useState(false);
-  
+
   let abortController = useRef(new AbortController());
-  
+
   const addToQueuedMessages = (message: IMessage[]) => {
     setQueuedMessages(prevMessages => prevMessages.concat(message));
     setIsSimulaitonStreaming(true);
@@ -206,6 +206,8 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
 
   const validateVary = async (variation: string) => {
     if (variation) {
+      setIsValidatingAnswer(true);
+
       const questionAnswerMap: Record<string, string | number> = {};
       templateQuestions.forEach(question => {
         const matchingAnswer = answers.find(answer => answer.inputName === question.name);
@@ -221,6 +223,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
 
       if (typeof varyResponse === "string") {
         onError("Oopps, something happened. Please try again!");
+        setIsValidatingAnswer(false);
         return;
       }
 
@@ -235,6 +238,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
       });
 
       setAnswers(newAnswers);
+      setIsValidatingAnswer(false);
     }
   };
 
@@ -245,7 +249,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
     setUserAnswer("");
 
     if (currentQuestion) {
-      setInValidatingAnswer(true);
+      setIsValidatingAnswer(true);
 
       const newUserMessage: IMessage = {
         text: userAnswer,
@@ -333,7 +337,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
       }
 
       setMessages(prevMessages => prevMessages.concat(nextBotMessage));
-      setInValidatingAnswer(false);
+      setIsValidatingAnswer(false);
     }
   };
 
