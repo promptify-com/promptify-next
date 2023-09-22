@@ -5,6 +5,7 @@ import { Selection } from "react-highlight-within-textarea";
 import { INodesData, PresetType } from "@/common/types/builder";
 import { Options } from "../common/Options";
 import { getInputsFromString } from "@/common/helpers";
+import { IVariable } from "@/common/types/prompt";
 
 import { addPreset } from "@/common/helpers/addPreset";
 import { HighlightTextarea } from "./HighlightWithinTextarea";

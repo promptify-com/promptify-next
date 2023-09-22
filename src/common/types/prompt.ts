@@ -38,3 +38,7 @@ export interface DisplayPrompt {
   isCompleted?: boolean;
   isFailed?: boolean;
 }
+export interface IVariable {
+  id: number | undefined;
+  label: string;
+}
