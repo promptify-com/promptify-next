@@ -116,7 +116,7 @@ const TemplateForm: React.FC<Props> = ({
   const formik = useFormik<IEditTemplate>({
     initialValues: {
       title: templateData?.title ?? "",
-      description: templateData?.description ?? "",
+      description: templateData?.description.replaceAll(/<\/?[^>]+(>|$)/gi, "") ?? "",
       duration: templateData?.duration?.toString() ?? "1",
       difficulty: templateData?.difficulty ?? "BEGINNER",
       is_visible: templateData?.is_visible ?? true,
