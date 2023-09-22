@@ -168,10 +168,13 @@ export interface TemplatesExecutions {
     thumbnail: string;
   };
   hash: string;
+  feedback?: string;
+  executed_by?: number;
 }
 
 export interface ITemplateExecutionPut {
   title?: string;
+  feedback?: string;
 }
 
 export interface ISparkWithTemplate {

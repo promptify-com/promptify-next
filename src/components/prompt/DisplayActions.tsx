@@ -23,6 +23,7 @@ import SavedSpark from "@/assets/icons/SavedSpark";
 import DraftSpark from "@/assets/icons/DraftSpark";
 import ShareIcon from "@/assets/icons/ShareIcon";
 import { useAppSelector } from "@/hooks/useStore";
+import ThumbsFeedback from "./ThumbsFeedback";
 
 interface Props {
   executions: TemplatesExecutions[];
@@ -136,6 +137,8 @@ export const DisplayActions: React.FC<Props> = ({
     </Button>
   );
 
+  const isExecutionOwner = executions.some(execution => execution?.executed_by === selectedExecution?.executed_by);
+
   return (
     <Box
       sx={{
@@ -190,6 +193,8 @@ export const DisplayActions: React.FC<Props> = ({
             )}
           </Stack>
 
+          {isExecutionOwner && <ThumbsFeedback selectedExecution={selectedExecution} />}
+
           <Stack
             direction={"row"}
             alignItems={"center"}
@@ -240,11 +245,12 @@ export const DisplayActions: React.FC<Props> = ({
             gap={1}
             p={"8px 16px"}
           >
+            {isExecutionOwner && <ThumbsFeedback selectedExecution={selectedExecution} />}
+
             {/* 
               TODO: https://github.com/ysfbsf/promptify-next/issues/275
               {showSearchBar && SearchInput("right")}
             */}
-
             <Tooltip title="Export">
               <IconButton
                 onClick={onOpenExport}
