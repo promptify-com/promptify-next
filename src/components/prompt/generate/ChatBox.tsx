@@ -18,6 +18,8 @@ import { setGeneratingStatus } from "@/core/store/templatesSlice";
 import { AnswerValidatorResponse, IAnswer, IMessage } from "@/common/types/chat";
 import { determineIsMobile } from "@/common/helpers/determineIsMobile";
 import { useStopExecutionMutation } from "@/core/api/executions";
+import VaryModal from "./VaryModal";
+import { vary } from "@/common/helpers/varyValidator";
 
 interface Props {
   setGeneratedExecution: (data: PromptLiveResponse | null) => void;
@@ -51,8 +53,10 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [disableChatInput, setDisableChatInput] = useState(false);
   const [standingQuestions, setStandingQuestions] = useState<UpdatedQuestionTemplate[]>([]);
+  const [varyOpen, setVaryOpen] = useState(false);
+  
   let abortController = useRef(new AbortController());
-
+  
   const addToQueuedMessages = (message: IMessage[]) => {
     setQueuedMessages(prevMessages => prevMessages.concat(message));
     setIsSimulaitonStreaming(true);
@@ -197,6 +201,40 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
       };
 
       return await generate({ token, payload });
+    }
+  };
+
+  const validateVary = async (variation: string) => {
+    if (variation) {
+      const questionAnswerMap: Record<string, string | number> = {};
+      templateQuestions.forEach(question => {
+        const matchingAnswer = answers.find(answer => answer.inputName === question.name);
+        questionAnswerMap[question.name] = matchingAnswer?.answer || "";
+      });
+
+      const payload = {
+        prompt: variation,
+        variables: questionAnswerMap,
+      };
+
+      const varyResponse = await vary({ token, payload });
+
+      if (typeof varyResponse === "string") {
+        onError("Oopps, something happened. Please try again!");
+        return;
+      }
+
+      const newAnswers = templateQuestions.map(question => {
+        return {
+          inputName: question.name,
+          required: question.required,
+          question: question.question,
+          answer: varyResponse[question.name],
+          prompt: question.prompt,
+        };
+      });
+
+      setAnswers(newAnswers);
     }
   };
 
@@ -652,8 +690,14 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
             onChange={handleChange}
             showGenerate={Boolean((showGenerateButton || canShowGenerateButton) && currentUser?.id)}
             onGenerate={generateExecutionHandler}
+            onVary={() => setVaryOpen(true)}
             isValidating={isValidatingAnswer}
             setIsSimulaitonStreaming={setIsSimulaitonStreaming}
+          />
+          <VaryModal
+            open={varyOpen}
+            setOpen={setVaryOpen}
+            onSubmit={variationTxt => validateVary(variationTxt)}
           />
 
           {currentUser?.id ? (
