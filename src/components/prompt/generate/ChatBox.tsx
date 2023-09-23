@@ -600,7 +600,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
       borderRadius={"16px"}
       sx={{
         position: { xs: "relative", md: "sticky" },
-        ...(!IS_MOBILE && { top: "0", left: "0", zIndex: 1300, border: "1px solid rgba(225, 226, 236, .5)" }),
+        ...(!IS_MOBILE && { top: "0", left: "0", zIndex: 100, border: "1px solid rgba(225, 226, 236, .5)" }),
       }}
     >
       <Accordion
