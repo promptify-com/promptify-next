@@ -57,7 +57,6 @@ const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | nu
   const isValidUser = useSelector(isValidUserFn);
   const { width: windowWidth } = useWindowSize();
   const isSavedTemplateId = useSelector((state: RootState) => state.template.id);
-  const [executionFormOpen, setExecutionFormOpen] = useState(false);
 
   const routerSlug = router.query?.slug as string;
   if (!routerSlug) {
@@ -103,7 +102,8 @@ const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | nu
       const promptNotCompleted = generatedExecution.data.find(execData => !execData.isCompleted);
       if (!promptNotCompleted) {
         setSelectedExecution(null);
-        setExecutionFormOpen(true);
+        setGeneratedExecution(null);
+        refetchTemplateExecutions();
       }
     }
   }, [isGenerating, generatedExecution]);
@@ -411,17 +411,6 @@ const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | nu
               />
             </Grid>
           )}
-
-          <ExecutionForm
-            type="new"
-            isOpen={executionFormOpen}
-            executionId={generatedExecution?.id}
-            onClose={() => {
-              setGeneratedExecution(null);
-              setExecutionFormOpen(false);
-            }}
-            onCancel={() => refetchTemplateExecutions()}
-          />
 
           <Snackbar
             anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
