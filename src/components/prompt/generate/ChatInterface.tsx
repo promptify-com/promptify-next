@@ -6,12 +6,11 @@ import { LogoApp } from "@/assets/icons/LogoApp";
 import { useAppSelector } from "@/hooks/useStore";
 import ThreeDotsAnimation from "@/components/design-system/ThreeDotsAnimation";
 import { IMessage } from "@/common/types/chat";
-import { Edit } from "@mui/icons-material";
+import { PlayCircle } from "@mui/icons-material";
 
 interface Props {
   messages: IMessage[];
   onGenerate: () => void;
-  onVary: () => void;
   showGenerate: boolean;
   onChange?: (value: string) => void;
   isValidating: boolean;
@@ -21,7 +20,6 @@ interface Props {
 export const ChatInterface = ({
   messages,
   onGenerate,
-  onVary,
   showGenerate,
   onChange,
   isValidating,
@@ -90,9 +88,9 @@ export const ChatInterface = ({
               isGenerating ? (
                 <CircularProgress size={16} />
               ) : (
-                <LogoApp
-                  color="white"
-                  width={20}
+                <PlayCircle
+                  sx={{ color: "onPrimary" }}
+                  fontSize={"small"}
                 />
               )
             }
@@ -117,30 +115,12 @@ export const ChatInterface = ({
               <Typography>Generation in progress...</Typography>
             ) : (
               <>
-                <Typography sx={{ color: "inherit", fontSize: 13, lineHeight: "22px" }}>Generate</Typography>
+                <Typography sx={{ color: "inherit", fontSize: 15, lineHeight: "22px" }}>Generate</Typography>
                 <Typography sx={{ ml: 1.5, color: "inherit", fontSize: 12 }}>~360s</Typography>
               </>
             )}
           </Button>
         )}
-        <Button
-          variant="text"
-          startIcon={<Edit />}
-          sx={{
-            border: "1px solid",
-            height: "22px",
-            p: "15px",
-            fontSize: 13,
-            fontWeight: 500,
-            ":hover": {
-              bgcolor: "action.hover",
-            },
-          }}
-          disabled={isValidating || isGenerating}
-          onClick={onVary}
-        >
-          Vary
-        </Button>
       </Stack>
     </Grid>
   );
