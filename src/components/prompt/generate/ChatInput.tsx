@@ -1,5 +1,5 @@
 import React from "react";
-import { Clear, Send } from "@mui/icons-material";
+import { Clear, Edit, Send } from "@mui/icons-material";
 import { Box, Button, Grid, InputBase } from "@mui/material";
 
 import { IAnswer } from "@/common/types/chat";
@@ -13,6 +13,7 @@ interface ChatInputProps {
   onSubmit: () => void;
   disabled: boolean;
   disabledTags: boolean;
+  onVary: () => void;
 }
 
 export const ChatInput = ({
@@ -23,6 +24,7 @@ export const ChatInput = ({
   answers,
   onAnswerClear,
   disabledTags,
+  onVary,
 }: ChatInputProps) => {
   return (
     <Grid
@@ -76,9 +78,27 @@ export const ChatInput = ({
                 },
               }}
             >
-              {addSpaceBetweenCapitalized(answer.inputName)}
+              {addSpaceBetweenCapitalized(answer.inputName)} : {answer.answer}
             </Button>
           ))}
+          <Button
+            variant="text"
+            startIcon={<Edit />}
+            sx={{
+              border: "1px solid",
+              height: "22px",
+              p: "15px",
+              fontSize: 13,
+              fontWeight: 500,
+              ":hover": {
+                bgcolor: "action.hover",
+              },
+            }}
+            disabled={disabledTags}
+            onClick={onVary}
+          >
+            Vary
+          </Button>
         </Grid>
       )}
       <Box
