@@ -222,7 +222,7 @@ const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | nu
                     borderRadius: "16px",
                     position: "sticky",
                     top: 0,
-                    zIndex: 999,
+                    zIndex: 100,
                     height: "100%",
 
                     overflow: "auto",
