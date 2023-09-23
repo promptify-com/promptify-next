@@ -56,11 +56,6 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, sparkHa
   }, [executionPrompts]);
 
   const scrollRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    scrollRef.current?.scrollIntoView({
-      block: "end",
-    });
-  }, [execution]);
 
   const isImageOutput = (output: string): boolean => {
     const IsImage =
