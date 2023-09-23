@@ -227,15 +227,17 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
         return;
       }
 
-      const newAnswers = templateQuestions.map(question => {
-        return {
-          inputName: question.name,
-          required: question.required,
-          question: question.question,
-          answer: varyResponse[question.name],
-          prompt: question.prompt,
-        };
-      });
+      const newAnswers = templateQuestions
+        .map(question => {
+          return {
+            inputName: question.name,
+            required: question.required,
+            question: question.question,
+            answer: varyResponse[question.name],
+            prompt: question.prompt,
+          };
+        })
+        .filter(answer => answer.answer !== "");
 
       setAnswers(newAnswers);
       setIsValidatingAnswer(false);
@@ -598,7 +600,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
       borderRadius={"16px"}
       sx={{
         position: { xs: "relative", md: "sticky" },
-        ...(!IS_MOBILE && { top: "0", left: "0", zIndex: 995, border: "1px solid rgba(225, 226, 236, .5)" }),
+        ...(!IS_MOBILE && { top: "0", left: "0", zIndex: 1300, border: "1px solid rgba(225, 226, 236, .5)" }),
       }}
     >
       <Accordion
@@ -694,7 +696,6 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
             onChange={handleChange}
             showGenerate={Boolean((showGenerateButton || canShowGenerateButton) && currentUser?.id)}
             onGenerate={generateExecutionHandler}
-            onVary={() => setVaryOpen(true)}
             isValidating={isValidatingAnswer}
             setIsSimulaitonStreaming={setIsSimulaitonStreaming}
           />
@@ -713,6 +714,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
               onSubmit={handleUserResponse}
               disabled={disableChat || isValidatingAnswer || disableChatInput}
               disabledTags={disableChat || isValidatingAnswer || disableChatInput || isGenerating}
+              onVary={() => setVaryOpen(true)}
             />
           ) : (
             <Stack
