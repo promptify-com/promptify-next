@@ -272,7 +272,7 @@ export const DisplayActions: React.FC<Props> = ({
           anchorEl={execsDropAnchor}
           transition
           disablePortal
-          placement="auto"
+          placement="bottom-start"
         >
           {({ TransitionProps, placement }) => (
             <Grow
