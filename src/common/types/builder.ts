@@ -1,3 +1,5 @@
+import { ChatMessageType } from "./prompt";
+
 export interface IPromptParams {
   parameter_id: number;
   score: number;
@@ -37,3 +39,13 @@ export interface INodesData extends IPromptOptions {
 export interface HighlightWithinTextareaRef {
   editorContainer: HTMLDivElement;
 }
+
+export interface InputVariable {
+  id: number | undefined;
+  label: string;
+  type: ChatMessageType;
+  required: boolean;
+  choices: string[] | null | undefined;
+}
+
+export type PresetType = "node" | "input";

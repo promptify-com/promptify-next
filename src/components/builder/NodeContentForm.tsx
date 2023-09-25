@@ -1,20 +1,14 @@
-import React, { useRef, useState } from "react";
-import { Box, Card, Divider, Grid, Stack, Typography } from "@mui/material";
-import HighlightWithinTextarea, { Selection } from "react-highlight-within-textarea";
+import React, { useRef } from "react";
+import { Box, Divider, Stack, Typography } from "@mui/material";
+import { Selection } from "react-highlight-within-textarea";
 
-import { HighlightWithinTextareaRef, INodesData } from "@/common/types/builder";
+import { INodesData, PresetType } from "@/common/types/builder";
 import { Options } from "../common/Options";
 import { getInputsFromString } from "@/common/helpers";
-import { IVariable } from "@/common/types/prompt";
-import { useCursorPosition } from "@/hooks/useCursorPosition";
 
-type PresetType = "node" | "input";
+import { addPreset } from "@/common/helpers/addPreset";
+import { HighlightTextarea } from "./HighlightWithinTextarea";
 
-interface AddPresetParams {
-  type: PresetType | null;
-  label: string;
-  firstAppend?: boolean;
-}
 interface Props {
   selectedNodeData: INodesData;
   setSelectedNodeData: (node: INodesData) => void;
@@ -23,37 +17,16 @@ interface Props {
 
 export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelectedNodeData, nodes }) => {
   const cursorPositionRef = useRef(0);
-  const suggestionListRef = useRef<HTMLDivElement | null>(null);
-  const divRef = useRef<HighlightWithinTextareaRef | null>(null);
-
-  const [suggestionList, setSuggestionList] = useState<IVariable[]>([]);
-
-  const isSuggestionsVisible = Boolean(suggestionList.length > 0);
-
-  const cursorPosition = useCursorPosition(divRef, isSuggestionsVisible);
-  const [optionType, setOptionType] = useState<PresetType | null>(null);
-  const [highlightedOption, setHighlightedOption] = useState("");
 
   const content = selectedNodeData.content || "";
-
-  const highlight = [
-    {
-      highlight: /{{.*?}}|{{/g, // Highlight {{ or {{ followed by any characters inside
-      className: "input-variable",
-    },
-    {
-      highlight: /\$[\w]*|\$/g, // Highlight $ followed by word characters or $
-      className: "output-variable",
-    },
-  ];
 
   const otherNodes = nodes.filter(
     node =>
       (node.id !== selectedNodeData.id && node.id !== selectedNodeData.temp_id) ||
       (node.temp_id !== selectedNodeData.id && node.temp_id !== selectedNodeData.temp_id),
   );
-  const nodesPresets = otherNodes.map(node => ({ id: node.id, label: node.prompt_output_variable || node.title }));
-  const inputsPresets = otherNodes
+  const nodePresets = otherNodes.map(node => ({ id: node.id, label: node.prompt_output_variable || node.title }));
+  const inputPresets = otherNodes
     .map(node => ({ id: node.id, inputs: getInputsFromString(node.content) }))
     .filter(node => node.inputs && node.inputs.length)
     .flatMap(node =>
@@ -66,92 +39,28 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
       })),
     );
 
-  const showSuggestions = (value: string) => {
-    let suggestionListArr: IVariable[];
-    let textAfterRegexValue = "";
-
-    const indexOfDoubleBrace = value.lastIndexOf("{{");
-    const indexOfDollarSign = value.lastIndexOf("$");
-
-    if (indexOfDoubleBrace > indexOfDollarSign) {
-      suggestionListArr = inputsPresets;
-      setOptionType("input");
-      textAfterRegexValue = value.substring(indexOfDoubleBrace + 2);
-    } else {
-      suggestionListArr = nodesPresets;
-      setOptionType("node");
-      textAfterRegexValue = value.substring(indexOfDollarSign + 1);
-    }
-
-    if (textAfterRegexValue !== "") {
-      suggestionListArr = suggestionList.filter(suggestion =>
-        suggestion.label.toLowerCase().includes(textAfterRegexValue.toLowerCase()),
-      );
-    }
-    let highlightedOptionValue = `${optionType === "input" ? "{{" : "$"}${textAfterRegexValue}`;
-    setHighlightedOption(highlightedOptionValue);
-    setSuggestionList(suggestionListArr);
-  };
-
-  const changeContent = (content: string, selection?: Selection | undefined) => {
+  const changeContent = (content: string, selection?: Selection) => {
     const { focus } = selection ?? {};
     if (focus) {
       cursorPositionRef.current = focus + 1;
     }
-
-    console.log(cursorPositionRef.current);
-
     setSelectedNodeData({
       ...selectedNodeData,
       content,
     });
   };
 
-  const addPreset = ({ type, label, firstAppend = false }: AddPresetParams) => {
-    if (!label) return;
-    let preset = "";
-
-    if (type === "node") {
-      const matchedNode = nodesPresets.find(node => node.label === label);
-      if (matchedNode) {
-        preset = matchedNode.label;
-        if (content.endsWith("$")) {
-          preset = preset.substring(1);
-        }
-      }
-    } else {
-      const input = inputsPresets.find(input => input.label === label);
-
-      if (input) {
-        const type = input.type;
-        if (content.endsWith("{{")) {
-          preset = `${input.label}:${type}:${input.required}${input.choices ? `:"${input.choices}"` : ""}}}`;
-        } else {
-          preset = `{{${input.label}:${type}:${input.required}${input.choices ? `:"${input.choices}"` : ""}}}`;
-        }
-      }
-    }
-
-    if (highlightedOption !== "{{" && highlightedOption !== "$" && !firstAppend) {
-      preset = preset.substring(highlightedOption.length);
-    }
-
-    if (!firstAppend) {
-      changeContent(content + preset + " ");
-    } else {
-      const start = content.slice(0, cursorPositionRef.current);
-      const end = content.slice(cursorPositionRef.current);
-      changeContent(start + preset + " " + end);
-    }
-
-    cursorPositionRef.current = cursorPositionRef.current + preset.length;
-  };
-
-  const handleSuggestionSelect = (option: IVariable) => {
-    addPreset({ type: optionType, label: option.label });
-    setHighlightedOption("");
-    setSuggestionList([]);
-    setOptionType(null);
+  const handlePreset = ({ type, label, firstAppend }: { type: PresetType; label: string; firstAppend?: boolean }) => {
+    addPreset({
+      type,
+      label,
+      firstAppend,
+      nodePresets,
+      inputPresets,
+      onChange: changeContent,
+      cursorPositionRef,
+      content,
+    });
   };
 
   return (
@@ -185,8 +94,8 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
           <Options
             type="node"
             variant="horizontal"
-            options={nodesPresets}
-            onChoose={node => addPreset({ type: "node", label: node.label, firstAppend: true })}
+            options={nodePresets}
+            onChoose={node => handlePreset({ type: "node", label: node.label, firstAppend: true })}
           />
         </Stack>
         <Stack
@@ -208,8 +117,8 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
           <Options
             type="input"
             variant="horizontal"
-            options={inputsPresets}
-            onChoose={input => addPreset({ type: "input", label: input.label, firstAppend: true })}
+            options={inputPresets}
+            onChoose={input => handlePreset({ type: "input", label: input.label, firstAppend: true })}
           />
         </Stack>
       </Stack>
@@ -230,57 +139,13 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
             },
           }}
         >
-          <HighlightWithinTextarea
-            ref={divRef}
-            value={content}
-            highlight={highlight}
-            placeholder="..."
-            stripPastedStyles
-            onChange={(newValue, selection) => {
-              changeContent(newValue, selection);
-              showSuggestions(newValue);
-            }}
+          <HighlightTextarea
+            cursorPositionRef={cursorPositionRef}
+            content={content}
+            onChange={changeContent}
+            nodePresets={nodePresets}
+            inputPresets={inputPresets}
           />
-          {suggestionList.length > 0 && cursorPosition && (
-            <Card
-              ref={suggestionListRef}
-              elevation={2}
-              sx={{
-                padding: "16px",
-                maxWidth: "200px",
-                zIndex: 999,
-                bgcolor: "surface.1",
-                maxHeight: "300px",
-                overflow: "auto",
-                position: "absolute",
-                top: cursorPosition.y + "px",
-                left: cursorPosition.x + "px",
-
-                "&::-webkit-scrollbar": {
-                  width: "4px",
-                  p: 1,
-                  backgroundColor: "surface.1",
-                },
-                "&::-webkit-scrollbar-track": {
-                  webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
-                },
-                "&::-webkit-scrollbar-thumb": {
-                  backgroundColor: "surface.5",
-                  outline: "1px solid surface.3",
-                  borderRadius: "10px",
-                },
-              }}
-            >
-              {optionType && (
-                <Options
-                  type={optionType}
-                  variant="vertical"
-                  options={suggestionList}
-                  onChoose={handleSuggestionSelect}
-                />
-              )}
-            </Card>
-          )}
         </Box>
       </Box>
     </Stack>
