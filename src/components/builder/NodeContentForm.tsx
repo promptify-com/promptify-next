@@ -34,8 +34,6 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
   const [optionType, setOptionType] = useState<PresetType | null>(null);
   const [highlightedOption, setHighlightedOption] = useState("");
 
-  const [lastPosition, setLastPosition] = useState<number>(0);
-
   const content = selectedNodeData.content || "";
 
   const highlight = [
@@ -98,9 +96,11 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
   const changeContent = (content: string, selection?: Selection | undefined) => {
     const { focus } = selection ?? {};
     if (focus) {
-      setLastPosition(focus + 1);
+      cursorPositionRef.current = focus + 1;
     }
-    cursorPositionRef.current = lastPosition;
+
+    console.log(cursorPositionRef.current);
+
     setSelectedNodeData({
       ...selectedNodeData,
       content,
@@ -144,7 +144,7 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
       changeContent(start + preset + " " + end);
     }
 
-    setLastPosition(val => val + preset.length);
+    cursorPositionRef.current = cursorPositionRef.current + preset.length;
   };
 
   const handleSuggestionSelect = (option: IVariable) => {
