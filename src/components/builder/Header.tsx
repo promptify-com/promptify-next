@@ -22,6 +22,7 @@ export const Header = ({ onDrawerOpen, onSave, onPublish, title, status, templat
       alignItems="center"
       p={"16px 24px"}
       justifyContent="space-between"
+      border={`1px solid ${theme.palette.surface[3]}`}
     >
       <Box
         display={"flex"}
