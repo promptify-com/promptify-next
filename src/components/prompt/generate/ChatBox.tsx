@@ -130,7 +130,6 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
   };
   const [templateQuestions, _inputs]: [UpdatedQuestionTemplate[], IPromptInput[]] = useMemo(() => {
     if (!template) {
-      dispatchNewExecutionData([], []);
       return [[], []];
     }
 
@@ -141,7 +140,6 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
       inputs.push(...getInputsFromString(prompt.content).map(obj => ({ ...obj, prompt: prompt.id })));
     });
 
-    dispatchNewExecutionData([], inputs);
     const updatedQuestions: UpdatedQuestionTemplate[] = [];
 
     for (let index = 0; index < questions.length; index++) {
@@ -167,6 +165,10 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
     initialMessages({ questions: updatedQuestions });
 
     return [updatedQuestions, inputs];
+  }, [template]);
+
+  useEffect(() => {
+    dispatchNewExecutionData(answers, _inputs);
   }, [template]);
 
   useEffect(() => {
