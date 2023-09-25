@@ -99,113 +99,114 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, sparkHa
           {execution.title}
         </Typography>
       )}
-      {sortedPrompts?.map((exec, index) => {
-        const prevItem = sortedPrompts[index - 1];
-        const isPrevItemImage = prevItem && isImageOutput(prevItem?.content);
-        const nextItem = sortedPrompts[index + 1];
-        const isNextItemText = nextItem && !isImageOutput(nextItem?.content);
-        const prompt = promptsData.find(prompt => prompt.id === exec.prompt);
+      {execution &&
+        sortedPrompts?.map((exec, index) => {
+          const prevItem = sortedPrompts[index - 1];
+          const isPrevItemImage = prevItem && isImageOutput(prevItem?.content);
+          const nextItem = sortedPrompts[index + 1];
+          const isNextItemText = nextItem && !isImageOutput(nextItem?.content);
+          const prompt = promptsData.find(prompt => prompt.id === exec.prompt);
 
-        if (prompt?.show_output || sparkHashQueryParam) {
-          return (
-            <Stack
-              key={index}
-              gap={1}
-              sx={{ pb: "24px" }}
-            >
-              {prompt && (
-                <Subtitle sx={{ fontSize: 24, fontWeight: 400, color: "onSurface" }}>
-                  {!isImageOutput(exec.content) && prompt?.title}
-                  {exec.errors && executionError(exec.errors)}
-                </Subtitle>
-              )}
-              {/* is Text Output */}
-              {!isImageOutput(exec.content) && (
-                <Box>
-                  {isPrevItemImage && (
+          if (prompt?.show_output || sparkHashQueryParam) {
+            return (
+              <Stack
+                key={index}
+                gap={1}
+                sx={{ pb: "24px" }}
+              >
+                {prompt && (
+                  <Subtitle sx={{ fontSize: 24, fontWeight: 400, color: "onSurface" }}>
+                    {!isImageOutput(exec.content) && prompt?.title}
+                    {exec.errors && executionError(exec.errors)}
+                  </Subtitle>
+                )}
+                {/* is Text Output */}
+                {!isImageOutput(exec.content) && (
+                  <Box>
+                    {isPrevItemImage && (
+                      <Box
+                        component={"img"}
+                        alt={"book cover"}
+                        src={prevItem.content}
+                        onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                          (e.target as HTMLImageElement).src = "http://placehold.it/165x215";
+                        }}
+                        sx={{
+                          borderRadius: "8px",
+                          width: "40%",
+                          objectFit: "cover",
+                          float: "right",
+                          ml: "20px",
+                          mb: "10px",
+                        }}
+                      />
+                    )}
                     <Box
-                      component={"img"}
-                      alt={"book cover"}
-                      src={prevItem.content}
-                      onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-                        (e.target as HTMLImageElement).src = "http://placehold.it/165x215";
-                      }}
                       sx={{
-                        borderRadius: "8px",
-                        width: "40%",
-                        objectFit: "cover",
-                        float: "right",
-                        ml: "20px",
-                        mb: "10px",
+                        fontSize: 15,
+                        fontWeight: 400,
+                        color: "onSurface",
+                        wordWrap: "break-word",
+                        textAlign: "justify",
+                        float: "none",
+                        ".highlight": {
+                          backgroundColor: "yellow",
+                          color: "black",
+                        },
+                        pre: {
+                          m: "10px 0",
+                          borderRadius: "8px",
+                          overflow: "hidden",
+                          code: {
+                            borderRadius: 0,
+                            m: 0,
+                          },
+                        },
+                        code: {
+                          display: "block",
+                          bgcolor: "#282a35",
+                          color: "common.white",
+                          borderRadius: "8px",
+                          p: "16px 24px",
+                          mb: "10px",
+                          overflow: "auto",
+                        },
+                        ".language-label": {
+                          p: "8px 24px",
+                          bgcolor: "#4d5562",
+                          color: "#ffffff",
+                          fontSize: 13,
+                        },
+                      }}
+                      dangerouslySetInnerHTML={{
+                        __html: sanitizeHTML(exec.content),
                       }}
                     />
-                  )}
+                  </Box>
+                )}
+                {/* is Image Output and Next item is not text */}
+                {isImageOutput(exec.content) && !isNextItemText && (
                   <Box
-                    sx={{
-                      fontSize: 15,
-                      fontWeight: 400,
-                      color: "onSurface",
-                      wordWrap: "break-word",
-                      textAlign: "justify",
-                      float: "none",
-                      ".highlight": {
-                        backgroundColor: "yellow",
-                        color: "black",
-                      },
-                      pre: {
-                        m: "10px 0",
-                        borderRadius: "8px",
-                        overflow: "hidden",
-                        code: {
-                          borderRadius: 0,
-                          m: 0,
-                        },
-                      },
-                      code: {
-                        display: "block",
-                        bgcolor: "#282a35",
-                        color: "common.white",
-                        borderRadius: "8px",
-                        p: "16px 24px",
-                        mb: "10px",
-                        overflow: "auto",
-                      },
-                      ".language-label": {
-                        p: "8px 24px",
-                        bgcolor: "#4d5562",
-                        color: "#ffffff",
-                        fontSize: 13,
-                      },
+                    component={"img"}
+                    alt={"book cover"}
+                    src={exec.content}
+                    onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                      (e.target as HTMLImageElement).src = "http://placehold.it/165x215";
                     }}
-                    dangerouslySetInnerHTML={{
-                      __html: sanitizeHTML(exec.content),
+                    sx={{
+                      borderRadius: "8px",
+                      width: "40%",
+                      objectFit: "cover",
+                      float: "right",
+                      ml: "20px",
+                      mb: "10px",
                     }}
                   />
-                </Box>
-              )}
-              {/* is Image Output and Next item is not text */}
-              {isImageOutput(exec.content) && !isNextItemText && (
-                <Box
-                  component={"img"}
-                  alt={"book cover"}
-                  src={exec.content}
-                  onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-                    (e.target as HTMLImageElement).src = "http://placehold.it/165x215";
-                  }}
-                  sx={{
-                    borderRadius: "8px",
-                    width: "40%",
-                    objectFit: "cover",
-                    float: "right",
-                    ml: "20px",
-                    mb: "10px",
-                  }}
-                />
-              )}
-            </Stack>
-          );
-        }
-      })}
+                )}
+              </Stack>
+            );
+          }
+        })}
 
       {isGenerating && <div ref={scrollRef}></div>}
     </Stack>
