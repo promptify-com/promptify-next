@@ -9,8 +9,8 @@ import FavoriteMobileButton from "@/components/common/buttons/FavoriteMobileButt
 import { setSelectedTag } from "@/core/store/filtersSlice";
 import { Create } from "@mui/icons-material";
 import Clone from "@/assets/icons/Clone";
-import { templatesApi, useCreateTemplateMutation } from "@/core/api/templates";
-import { INodesData } from "@/common/types/builder";
+import { useCreateTemplateMutation } from "@/core/api/templates";
+import { IEditPrompts } from "@/common/types/builder";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { RootState } from "@/core/store";
 import { isValidUserFn } from "@/core/store/userSlice";
@@ -41,7 +41,7 @@ export const Details: React.FC<DetailsProps> = ({ templateData, setMobileTab = (
       setIsCloning(true);
 
       try {
-        const clonedPrompts: INodesData[] = templateData.prompts.map(prompt => {
+        const clonedPrompts: IEditPrompts[] = templateData.prompts.map(prompt => {
           const params = prompt.parameters.map(param => ({
             parameter_id: param.parameter.id,
             score: param.score,

@@ -1,18 +1,18 @@
 import React, { useRef, useState } from "react";
-import { Box, Divider, Stack, Typography } from "@mui/material";
-import { Selection } from "react-highlight-within-textarea";
-
-import { INodesData, PresetType } from "@/common/types/builder";
+import { PresetType } from "@/common/types/builder";
 import { Options } from "../common/Options";
+import { Box, Divider, Stack, Typography } from "@mui/material";
+import { IEditPrompts } from "@/common/types/builder";
 import { getInputsFromString } from "@/common/helpers";
-
 import { addPreset } from "@/common/helpers/addPreset";
 import { HighlightTextarea } from "./HighlightWithinTextarea";
+import { Selection } from "react-highlight-within-textarea";
+import { getBuilderVarsPresets } from "@/common/helpers/getBuilderVarsPresets";
 
 interface Props {
-  selectedNodeData: INodesData;
-  setSelectedNodeData: (node: INodesData) => void;
-  nodes: INodesData[];
+  selectedNodeData: IEditPrompts;
+  setSelectedNodeData: (node: IEditPrompts) => void;
+  nodes: IEditPrompts[];
 }
 
 export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelectedNodeData, nodes }) => {
@@ -21,24 +21,7 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
 
   const content = selectedNodeData.content || "";
 
-  const otherNodes = nodes.filter(
-    node =>
-      (node.id !== selectedNodeData.id && node.id !== selectedNodeData.temp_id) ||
-      (node.temp_id !== selectedNodeData.id && node.temp_id !== selectedNodeData.temp_id),
-  );
-  const outputPresets = otherNodes.map(node => ({ id: node.id, label: node.prompt_output_variable || node.title }));
-  const inputPresets = otherNodes
-    .map(node => ({ id: node.id, inputs: getInputsFromString(node.content) }))
-    .filter(node => node.inputs && node.inputs.length)
-    .flatMap(node =>
-      node.inputs.map(input => ({
-        id: node.id,
-        label: input.name,
-        type: input.type,
-        required: input.required,
-        choices: input.choices,
-      })),
-    );
+  const { outputPresets, inputPresets } = getBuilderVarsPresets(nodes, selectedNodeData);
 
   const contentHandler = (content: string, selection?: Selection) => {
     const { focus } = selection ?? {};

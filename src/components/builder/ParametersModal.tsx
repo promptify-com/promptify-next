@@ -3,20 +3,20 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import { IParameters } from "@/common/types";
-import { INodesData } from "@/common/types/builder";
-import { useParameters } from "@/hooks/api/parameters";
+import { IEditPrompts } from "@/common/types/builder";
+import { useGetParametersQuery } from "@/core/api/parameters";
 
 interface IModal {
   open: boolean;
-  selectedNodeData: INodesData | null;
+  selectedNodeData: IEditPrompts | null;
   onClose: (value: boolean) => void;
   onClick: (param: IParameters) => void;
 }
 
 export default function ParametersModal({ open, selectedNodeData, onClose, onClick }: IModal) {
-  const [parameters] = useParameters();
+  const { data: parameters } = useGetParametersQuery();
 
-  const params = parameters.filter(
+  const params = parameters?.filter(
     param => !selectedNodeData?.parameters.find(existsParam => existsParam.parameter_id === param.id),
   );
 
@@ -51,7 +51,7 @@ export default function ParametersModal({ open, selectedNodeData, onClose, onCli
         >
           Click on parameter to add
         </Typography>
-        {params.length ? (
+        {params?.length ? (
           params.map(parameter => {
             return (
               <Box
