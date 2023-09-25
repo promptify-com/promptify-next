@@ -1,5 +1,5 @@
 import { Tag, TemplateStatus } from "@/core/api/dto/templates";
-import { INodesData } from "./builder";
+import { IEditPrompts } from "./builder";
 
 export interface IEditTemplate {
   slug?: string;
@@ -14,7 +14,7 @@ export interface IEditTemplate {
   tags: Tag[] | [];
   thumbnail: string;
   example?: string;
-  prompts_list?: INodesData[] | [];
+  prompts_list?: IEditPrompts[] | [];
   executions_limit: number;
   meta_title: string;
   meta_description: string;

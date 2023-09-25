@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Box, IconButton, Stack, Tab, Tabs, Typography, alpha } from "@mui/material";
 import { RenameForm } from "../common/forms/RenameForm";
-import { INodesData } from "@/common/types/builder";
+import { IEditPrompts } from "@/common/types/builder";
 import { useGetEnginesQuery } from "@/core/api/engines";
 import { Close, DeleteOutline, ModeEdit, Settings, Tune } from "@mui/icons-material";
 import { theme } from "@/theme";
@@ -32,11 +32,11 @@ const a11yProps = (index: number) => {
 interface Props {
   close: () => void;
   removeNode: () => void;
-  selectedNodeData: INodesData;
-  setSelectedNodeData: (value: INodesData) => void;
+  selectedNodeData: IEditPrompts;
+  setSelectedNodeData: (value: IEditPrompts) => void;
   nodeCount: number;
-  nodesData: INodesData[];
-  setNodesData: (value: INodesData[]) => void;
+  nodesData: IEditPrompts[];
+  setNodesData: (value: IEditPrompts[]) => void;
 }
 
 export const PromptForm: React.FC<Props> = ({

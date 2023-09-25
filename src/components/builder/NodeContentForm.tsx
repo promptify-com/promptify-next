@@ -1,18 +1,17 @@
 import React, { useRef, useState } from "react";
-import { Box, Divider, Stack, Typography } from "@mui/material";
-import { Selection } from "react-highlight-within-textarea";
-
-import { INodesData, PresetType } from "@/common/types/builder";
+import { PresetType } from "@/common/types/builder";
 import { Options } from "../common/Options";
+import { Box, Divider, Stack, Typography } from "@mui/material";
+import { IEditPrompts } from "@/common/types/builder";
 import { getInputsFromString } from "@/common/helpers";
 
 import { addPreset } from "@/common/helpers/addPreset";
 import { HighlightTextarea } from "./HighlightWithinTextarea";
 
 interface Props {
-  selectedNodeData: INodesData;
-  setSelectedNodeData: (node: INodesData) => void;
-  nodes: INodesData[];
+  selectedNodeData: IEditPrompts;
+  setSelectedNodeData: (node: IEditPrompts) => void;
+  nodes: IEditPrompts[];
 }
 
 export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelectedNodeData, nodes }) => {

@@ -3,12 +3,12 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import { IParameters } from "@/common/types";
-import { INodesData } from "@/common/types/builder";
+import { IEditPrompts } from "@/common/types/builder";
 import { useParameters } from "@/hooks/api/parameters";
 
 interface IModal {
   open: boolean;
-  selectedNodeData: INodesData | null;
+  selectedNodeData: IEditPrompts | null;
   onClose: (value: boolean) => void;
   onClick: (param: IParameters) => void;
 }

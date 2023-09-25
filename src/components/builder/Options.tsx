@@ -1,12 +1,12 @@
 import React, { useMemo, useState } from "react";
 import { Autocomplete, Box, Checkbox, FormControlLabel, Stack, Switch, TextField, Typography } from "@mui/material";
-import { INodesData } from "@/common/types/builder";
+import { IEditPrompts } from "@/common/types/builder";
 import { useGetEnginesQuery } from "@/core/api/engines";
 import { EngineParams } from "./EngineParams";
 
 interface OptionsProps {
-  selectedNodeData: INodesData;
-  setSelectedNodeData: (node: INodesData) => void;
+  selectedNodeData: IEditPrompts;
+  setSelectedNodeData: (node: IEditPrompts) => void;
 }
 
 export const Options = ({ selectedNodeData, setSelectedNodeData }: OptionsProps) => {

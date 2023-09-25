@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useGetPromptTemplatesQuery } from "@/core/api/templates";
-import { INodesData } from "@/common/types/builder";
+import { IEditPrompts } from "@/common/types/builder";
 import {
   Accordion,
   AccordionDetails,

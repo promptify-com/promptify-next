@@ -9,7 +9,7 @@ import { CustomSocket } from "./CustomSocket";
 import { AutoArrangePlugin, Presets as ArrangePresets } from "rete-auto-arrange-plugin";
 import { SelectableConnection } from "./SelectableConnection";
 import { PromptParams, Prompts } from "@/core/api/dto/prompts";
-import { INodesData } from "@/common/types/builder";
+import { IEditPrompts } from "@/common/types/builder";
 import { Engine } from "@/core/api/dto/templates";
 
 export class Node extends ClassicPreset.Node {
@@ -34,7 +34,7 @@ export async function createEditor(
   engines: Engine[] | undefined,
   nodeCount: number,
   setNodeCount: (val: number) => void,
-  setNodesData: React.Dispatch<React.SetStateAction<INodesData[]>>,
+  setNodesData: React.Dispatch<React.SetStateAction<IEditPrompts[]>>,
   updateTemplateDependencies: (val1: string, val2: string) => void,
 ) {
   const editor = new NodeEditor<Schemes>();

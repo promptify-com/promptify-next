@@ -10,7 +10,7 @@ import { setSelectedTag } from "@/core/store/filtersSlice";
 import { Create } from "@mui/icons-material";
 import Clone from "@/assets/icons/Clone";
 import { templatesApi, useCreateTemplateMutation } from "@/core/api/templates";
-import { INodesData } from "@/common/types/builder";
+import { IEditPrompts, INodesData } from "@/common/types/builder";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { RootState } from "@/core/store";
 import { isValidUserFn } from "@/core/store/userSlice";

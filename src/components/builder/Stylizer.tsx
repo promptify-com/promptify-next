@@ -17,15 +17,15 @@ import { useParameters } from "@/hooks/api/parameters";
 import { useParametersPresets, useUpdateParametersPresets } from "@/hooks/api/parametersPresets";
 import ParametersModal from "./ParametersModal";
 import { StylizerHelper } from "./StylizerHelper";
-import { INodesData, IPromptParams } from "@/common/types/builder";
+import { IEditPrompts, IPromptParams } from "@/common/types/builder";
 import { IParametersPreset } from "@/common/types/parametersPreset";
 import { Add, Bolt, Save } from "@mui/icons-material";
 import { theme } from "@/theme";
 import { IParameters } from "@/common/types";
 
 interface IProps {
-  selectedNodeData: INodesData;
-  setSelectedNodeData: (node: INodesData) => void;
+  selectedNodeData: IEditPrompts;
+  setSelectedNodeData: (node: IEditPrompts) => void;
 }
 
 export const Stylizer = ({ selectedNodeData, setSelectedNodeData }: IProps) => {
