@@ -11,7 +11,7 @@ import { useCursorPosition } from "@/hooks/useCursorPosition";
 type PresetType = "node" | "input";
 
 interface AddPresetParams {
-  type: PresetType;
+  type: PresetType | null;
   label: string;
   firstAppend?: boolean;
 }
@@ -30,10 +30,8 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
 
   const isSuggestionsVisible = Boolean(suggestionList.length > 0);
 
-  console.log(isSuggestionsVisible);
-
   const cursorPosition = useCursorPosition(divRef, isSuggestionsVisible);
-  const [optionType, setOptionType] = useState<PresetType>("node");
+  const [optionType, setOptionType] = useState<PresetType | null>(null);
   const [highlightedOption, setHighlightedOption] = useState("");
 
   const [lastPosition, setLastPosition] = useState<number>(0);
@@ -134,7 +132,7 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
       }
     }
 
-    if (highlightedOption !== "" && !firstAppend) {
+    if (highlightedOption !== "{{" && highlightedOption !== "$" && !firstAppend) {
       preset = preset.substring(highlightedOption.length);
     }
 
@@ -153,6 +151,7 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
     addPreset({ type: optionType, label: option.label });
     setHighlightedOption("");
     setSuggestionList([]);
+    setOptionType(null);
   };
 
   return (
@@ -272,12 +271,14 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
                 },
               }}
             >
-              <Options
-                type={optionType}
-                variant="vertical"
-                options={suggestionList}
-                onChoose={handleSuggestionSelect}
-              />
+              {optionType && (
+                <Options
+                  type={optionType}
+                  variant="vertical"
+                  options={suggestionList}
+                  onChoose={handleSuggestionSelect}
+                />
+              )}
             </Card>
           )}
         </Box>
