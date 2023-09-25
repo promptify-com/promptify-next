@@ -26,6 +26,7 @@ export interface Prompts {
   output_format: string;
   prompt_output_variable: string;
   execution_priority: number;
+  parameters: PromptParams[];
 }
 
 export interface PromptParam {
@@ -34,6 +35,12 @@ export interface PromptParam {
   code: string;
   type: string;
   category: number;
+  score_descriptions: PromptParamScoreDescription[];
+}
+
+export interface PromptParamScoreDescription {
+  description: string;
+  score: number;
 }
 
 export interface PromptDescription {

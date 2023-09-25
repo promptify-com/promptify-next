@@ -41,37 +41,29 @@ export const Details: React.FC<DetailsProps> = ({ templateData, setMobileTab = (
       setIsCloning(true);
 
       try {
-        // sort based on order to prevent depending on prompt before its created
-        const orderedPrompts = [...templateData.prompts].sort((a, b) => a.order - b.order);
+        const clonedPrompts: INodesData[] = templateData.prompts.map(prompt => {
+          const params = prompt.parameters.map(param => ({
+            parameter_id: param.parameter.id,
+            score: param.score,
+            is_visible: param.is_visible,
+            is_editable: param.is_editable,
+          }));
 
-        const clonedPrompts: INodesData[] = await Promise.all(
-          // TODO: https://github.com/ysfbsf/promptify-next/issues/262
-          orderedPrompts.map(async prompt => {
-            const params = (await dispatch(templatesApi.endpoints.getPromptParams.initiate(prompt.id))).data?.map(
-              param => ({
-                parameter_id: param.parameter.id,
-                score: param.score,
-                is_visible: param.is_visible,
-                is_editable: param.is_editable,
-              }),
-            );
-
-            return {
-              temp_id: prompt.id,
-              title: prompt.title,
-              content: prompt.content,
-              engine_id: prompt.engine.id,
-              model_parameters: prompt.model_parameters,
-              dependencies: prompt.dependencies || [],
-              is_visible: prompt.is_visible,
-              show_output: prompt.show_output,
-              prompt_output_variable: prompt.prompt_output_variable,
-              order: prompt.order,
-              parameters: params || [],
-              output_format: prompt.output_format,
-            };
-          }),
-        );
+          return {
+            temp_id: prompt.id,
+            title: prompt.title,
+            content: prompt.content,
+            engine_id: prompt.engine.id,
+            model_parameters: prompt.model_parameters,
+            dependencies: prompt.dependencies || [],
+            is_visible: prompt.is_visible,
+            show_output: prompt.show_output,
+            prompt_output_variable: prompt.prompt_output_variable,
+            order: prompt.order,
+            parameters: params || [],
+            output_format: prompt.output_format,
+          };
+        });
 
         const response = await createTemplate({
           title: `${templateData.title} - Copy`,
