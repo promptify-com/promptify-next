@@ -1,11 +1,12 @@
 import React, { useRef, useState } from "react";
-import { Box, Card, Divider, Stack, Typography } from "@mui/material";
+import { Box, Card, Divider, Grid, Stack, Typography } from "@mui/material";
 import HighlightWithinTextarea, { Selection } from "react-highlight-within-textarea";
 
-import { INodesData } from "@/common/types/builder";
+import { HighlightWithinTextareaRef, INodesData } from "@/common/types/builder";
 import { Options } from "../common/Options";
 import { getInputsFromString } from "@/common/helpers";
 import { IVariable } from "@/common/types/prompt";
+import { useCursorPosition } from "@/hooks/useCursorPosition";
 
 type PresetType = "node" | "input";
 
@@ -23,8 +24,15 @@ interface Props {
 export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelectedNodeData, nodes }) => {
   const cursorPositionRef = useRef(0);
   const suggestionListRef = useRef<HTMLDivElement | null>(null);
+  const divRef = useRef<HighlightWithinTextareaRef | null>(null);
 
   const [suggestionList, setSuggestionList] = useState<IVariable[]>([]);
+
+  const isSuggestionsVisible = Boolean(suggestionList.length > 0);
+
+  console.log(isSuggestionsVisible);
+
+  const cursorPosition = useCursorPosition(divRef, isSuggestionsVisible);
   const [optionType, setOptionType] = useState<PresetType>("node");
   const [highlightedOption, setHighlightedOption] = useState("");
 
@@ -130,7 +138,7 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
       preset = preset.substring(highlightedOption.length);
     }
 
-    if (firstAppend) {
+    if (!firstAppend) {
       changeContent(content + preset + " ");
     } else {
       const start = content.slice(0, cursorPositionRef.current);
@@ -224,6 +232,7 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
           }}
         >
           <HighlightWithinTextarea
+            ref={divRef}
             value={content}
             highlight={highlight}
             placeholder="..."
@@ -233,7 +242,7 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
               showSuggestions(newValue);
             }}
           />
-          {suggestionList.length > 0 && (
+          {suggestionList.length > 0 && cursorPosition && (
             <Card
               ref={suggestionListRef}
               elevation={2}
@@ -244,6 +253,9 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
                 bgcolor: "surface.1",
                 maxHeight: "300px",
                 overflow: "auto",
+                position: "absolute",
+                top: cursorPosition.y + "px",
+                left: cursorPosition.x + "px",
 
                 "&::-webkit-scrollbar": {
                   width: "4px",

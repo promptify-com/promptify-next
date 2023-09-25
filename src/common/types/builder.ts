@@ -33,3 +33,7 @@ export interface INodesData extends IPromptOptions {
   parameters: IPromptParams[];
   order: number;
 }
+
+export interface HighlightWithinTextareaRef {
+  editorContainer: HTMLDivElement;
+}
