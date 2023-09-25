@@ -20,5 +20,5 @@ export interface IAnswer {
   required: boolean;
   question: string;
   answer: string | number;
-  prompt?: number;
+  prompt: number;
 }

@@ -14,7 +14,7 @@ import { useRouter } from "next/router";
 import { TemplateQuestions, UpdatedQuestionTemplate } from "@/core/api/dto/templates";
 import { getInputsFromString } from "@/common/helpers";
 import { IPromptInput, PromptLiveResponse, InputType } from "@/common/types/prompt";
-import { setGeneratingStatus } from "@/core/store/templatesSlice";
+import { setGeneratingStatus, updateExecutionData } from "@/core/store/templatesSlice";
 import { AnswerValidatorResponse, IAnswer, IMessage } from "@/common/types/chat";
 import { determineIsMobile } from "@/common/helpers/determineIsMobile";
 import { useStopExecutionMutation } from "@/core/api/executions";
@@ -102,9 +102,37 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
     setAnswers([]);
     setShowGenerateButton(false);
   };
+  const dispatchNewExecutionData = (answers: IAnswer[], inputs: IPromptInput[]) => {
+    const promptsData: Record<number, ResPrompt> = {};
 
+    inputs.forEach(_input => {
+      const _promptId = _input.prompt!;
+
+      if (promptsData[_promptId]) {
+        promptsData[_promptId].prompt_params = { ...promptsData[_promptId].prompt_params, [_input.name]: "" };
+      } else {
+        promptsData[_promptId] = {
+          prompt: _promptId,
+          contextual_overrides: [],
+          prompt_params: { [_input.name]: "" },
+        };
+      }
+    });
+
+    answers.forEach(_answer => {
+      promptsData[_answer.prompt].prompt_params = {
+        ...promptsData[_answer.prompt].prompt_params,
+        [_answer.inputName]: _answer.answer,
+      };
+    });
+
+    dispatch(updateExecutionData(JSON.stringify(Object.values(promptsData))));
+  };
   const [templateQuestions, _inputs]: [UpdatedQuestionTemplate[], IPromptInput[]] = useMemo(() => {
-    if (!template) return [[], []];
+    if (!template) {
+      dispatchNewExecutionData([], []);
+      return [[], []];
+    }
 
     const questions: TemplateQuestions[] = template?.questions ?? [];
     const inputs: IPromptInput[] = [];
@@ -113,6 +141,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
       inputs.push(...getInputsFromString(prompt.content).map(obj => ({ ...obj, prompt: prompt.id })));
     });
 
+    dispatchNewExecutionData([], inputs);
     const updatedQuestions: UpdatedQuestionTemplate[] = [];
 
     for (let index = 0; index < questions.length; index++) {
@@ -283,7 +312,14 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
           inputName: currentQuestion.name,
           prompt: currentQuestion.prompt,
         };
-        setAnswers(prevAnswers => prevAnswers.concat(newAnswer));
+        let newAnswers: IAnswer[] = [];
+
+        setAnswers(prevAnswers => {
+          newAnswers = prevAnswers.concat(newAnswer);
+
+          return newAnswers;
+        });
+        dispatchNewExecutionData(newAnswers, _inputs);
 
         const isStandingQuestion = !!standingQuestions.length;
 
@@ -368,8 +404,14 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
         answer: value,
         prompt: currentQuestion.prompt,
       };
+      let newAnswers: IAnswer[] = [];
 
-      setAnswers(prevAnswers => prevAnswers.concat(newAnswer));
+      setAnswers(prevAnswers => {
+        newAnswers = prevAnswers.concat(newAnswer);
+
+        return newAnswers;
+      });
+      dispatchNewExecutionData(newAnswers, _inputs);
 
       const isStandingQuestion = !!standingQuestions.length;
 
@@ -590,7 +632,15 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
     };
 
     setMessages(prevMessages => prevMessages.concat(nextBotMessage));
-    setAnswers(prevAnswers => prevAnswers.filter(answer => answer.inputName !== selectedAnswer.inputName));
+
+    let newAnswers: IAnswer[] = [];
+
+    setAnswers(prevAnswers => {
+      newAnswers = prevAnswers.filter(answer => answer.inputName !== selectedAnswer.inputName);
+
+      return newAnswers;
+    });
+    dispatchNewExecutionData(newAnswers, _inputs);
   };
 
   return (

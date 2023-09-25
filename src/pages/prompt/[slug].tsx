@@ -33,7 +33,7 @@ import { DetailsCardMini } from "@/components/prompt/DetailsCardMini";
 import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { useSelector, useDispatch } from "react-redux";
-import { updateTemplate, updateTemplateData } from "@/core/store/templatesSlice";
+import { updateTemplate, updateTemplateData, updateExecutionData } from "@/core/store/templatesSlice";
 import { RootState } from "@/core/store";
 import PromptPlaceholder from "@/components/placeholders/PromptPlaceHolder";
 import { useAppSelector } from "@/hooks/useStore";
@@ -49,11 +49,11 @@ const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | nu
   const [generatedExecution, setGeneratedExecution] = useState<PromptLiveResponse | null>(null);
   const [updateViewTemplate] = useViewTemplateMutation();
   const [errorMessage, setErrorMessage] = useState<string>("");
-  const [mobileTab, setMobileTab] = useState(0);
+  const [mobileTab, setMobileTab] = useState(1);
   const router = useRouter();
   const theme = useTheme();
   const [palette, setPalette] = useState(theme.palette);
-  const disptach = useDispatch();
+  const dispatch = useDispatch();
   const isValidUser = useSelector(isValidUserFn);
   const { width: windowWidth } = useWindowSize();
   const isSavedTemplateId = useSelector((state: RootState) => state.template.id);
@@ -79,8 +79,9 @@ const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | nu
 
   // We need to set initial template store only once.
   if (fetchedTemplate && (!isSavedTemplateId || isSavedTemplateId !== fetchedTemplate.id)) {
-    disptach(updateTemplate(fetchedTemplate));
-    disptach(
+    dispatch(updateTemplate(fetchedTemplate));
+    dispatch(updateExecutionData(JSON.stringify([])));
+    dispatch(
       updateTemplateData({
         id: fetchedTemplate.id,
         is_favorite: fetchedTemplate.is_favorite,

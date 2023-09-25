@@ -6,7 +6,7 @@ export interface Props {
   speed?: number;
 }
 
-const useTextSimulationStreaming = ({ shouldStream = true, speed = 50, text }: Props) => {
+const useTextSimulationStreaming = ({ shouldStream = true, speed = 20, text }: Props) => {
   if (!shouldStream || !text) {
     return { streamedText: text };
   }
