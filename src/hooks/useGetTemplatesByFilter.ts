@@ -94,7 +94,9 @@ export function useGetTemplatesByFilter(catId?: number, subCatId?: number, order
 
   const hasMore = !!templates?.next;
 
-  const filteredTemplates = admin ? allTemplates : allTemplates?.filter(template => !template?.is_internal);
+  const filteredTemplates = admin
+    ? allTemplates
+    : allTemplates?.filter(template => (typeof template?.is_internal === "undefined" ? true : !template.is_internal));
 
   return {
     categorySlug,
