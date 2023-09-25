@@ -1,4 +1,4 @@
-import { ChatMessageType } from "./prompt";
+import { InputType } from "./prompt";
 
 export interface IPromptParams {
   parameter_id: number;
@@ -43,7 +43,7 @@ export interface HighlightWithinTextareaRef {
 export interface InputVariable {
   id: number | undefined;
   label: string;
-  type: ChatMessageType;
+  type: InputType;
   required: boolean;
   choices: string[] | null | undefined;
 }
