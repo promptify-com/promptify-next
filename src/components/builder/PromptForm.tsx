@@ -7,7 +7,7 @@ import { Close, DeleteOutline, ModeEdit, Settings, Tune } from "@mui/icons-mater
 import { theme } from "@/theme";
 import Terminal from "@/assets/icons/Terminal";
 import { NodeContentForm } from "./NodeContentForm";
-import { Stylizer } from "./Stylizer";
+import { Styler } from "./Styler";
 import { Options } from "./Options";
 
 const CustomTabPanel = (props: any) => {
@@ -157,7 +157,7 @@ export const PromptForm: React.FC<Props> = ({
             sx={{ ...tabStyle, color: `${alpha(theme.palette.onSurface, 0.4)}` }}
           />
           <Tab
-            label="Stylizer"
+            label="Styler"
             {...a11yProps(1)}
             icon={<Tune />}
             iconPosition="start"
@@ -190,7 +190,7 @@ export const PromptForm: React.FC<Props> = ({
             overflow: "auto",
           }}
         >
-          <Stylizer
+          <Styler
             selectedNodeData={selectedNodeData}
             setSelectedNodeData={setSelectedNodeData}
           />

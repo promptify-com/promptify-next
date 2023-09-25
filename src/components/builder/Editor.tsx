@@ -4,7 +4,7 @@ import { NodeEditor, GetSchemes, ClassicPreset, BaseSchemes, NodeId } from "rete
 import { AreaPlugin, AreaExtensions } from "rete-area-plugin";
 import { BidirectFlow, ConnectionPlugin } from "rete-connection-plugin";
 import { ReactRenderPlugin, Presets, ReactArea2D } from "rete-react-render-plugin";
-import { CustomNode } from "./CustomNode";
+import { PromptCard } from "./PromptCard";
 import { CustomSocket } from "./CustomSocket";
 import { AutoArrangePlugin, Presets as ArrangePresets } from "rete-auto-arrange-plugin";
 import { SelectableConnection } from "./SelectableConnection";
@@ -225,7 +225,7 @@ export async function createEditor(
       area,
       customize: {
         node() {
-          return CustomNode;
+          return PromptCard;
         },
         socket() {
           return CustomSocket;

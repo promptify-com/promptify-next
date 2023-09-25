@@ -14,7 +14,7 @@ interface IProps {
   removeParam: (paramId: number) => void;
 }
 
-export const StylizerHelper = ({ promptParams, handleChangeScore, handleChangeOptions, removeParam }: IProps) => {
+export const StylerHelper = ({ promptParams, handleChangeScore, handleChangeOptions, removeParam }: IProps) => {
   return (
     <Stack gap={2}>
       {promptParams &&

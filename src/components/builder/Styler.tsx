@@ -16,7 +16,7 @@ import {
 import { useParameters } from "@/hooks/api/parameters";
 import { useParametersPresets, useUpdateParametersPresets } from "@/hooks/api/parametersPresets";
 import ParametersModal from "./ParametersModal";
-import { StylizerHelper } from "./StylizerHelper";
+import { StylerHelper } from "./StylerHelper";
 import { IEditPrompts, IPromptParams } from "@/common/types/builder";
 import { IParametersPreset } from "@/common/types/parametersPreset";
 import { Add, Bolt, Save } from "@mui/icons-material";
@@ -28,7 +28,7 @@ interface IProps {
   setSelectedNodeData: (node: IEditPrompts) => void;
 }
 
-export const Stylizer = ({ selectedNodeData, setSelectedNodeData }: IProps) => {
+export const Styler = ({ selectedNodeData, setSelectedNodeData }: IProps) => {
   const [parameters] = useParameters();
   const [presets, setPresets] = useParametersPresets();
   const [expandPresets, setExpandPresets] = useState(false);
@@ -138,7 +138,7 @@ export const Stylizer = ({ selectedNodeData, setSelectedNodeData }: IProps) => {
         p: "24px 32px",
       }}
     >
-      <StylizerHelper
+      <StylerHelper
         promptParams={selectedNodeData.parameters}
         handleChangeScore={handleChangeScore}
         handleChangeOptions={handleChangeOptions}

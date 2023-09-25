@@ -78,7 +78,7 @@ type Props<S extends ClassicScheme> = {
 };
 export type NodeComponent<Scheme extends ClassicScheme> = (props: Props<Scheme>) => JSX.Element;
 
-export function CustomNode<Scheme extends ClassicScheme>(props: Props<Scheme>) {
+export function PromptCard<Scheme extends ClassicScheme>(props: Props<Scheme>) {
   const inputs = Object.entries(props.data.inputs);
   const outputs = Object.entries(props.data.outputs);
   const controls = Object.entries(props.data.controls);
