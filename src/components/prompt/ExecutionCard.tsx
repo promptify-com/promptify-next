@@ -56,11 +56,6 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, sparkHa
   }, [executionPrompts]);
 
   const scrollRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    scrollRef.current?.scrollIntoView({
-      block: "end",
-    });
-  }, [execution]);
 
   const isImageOutput = (output: string): boolean => {
     const IsImage =
@@ -97,7 +92,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, sparkHa
         m: { md: "20px auto" },
       }}
     >
-      {!templatesSlice && <div ref={scrollRef}></div>}
+      {!isGenerating && <div ref={scrollRef}></div>}
 
       {execution && "title" in execution && (
         <Typography sx={{ fontSize: 48, fontWeight: 400, color: "onSurface", py: "24px" }}>

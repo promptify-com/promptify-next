@@ -25,6 +25,7 @@ import {
 import { DeleteDialog } from "../dialog/DeleteDialog";
 import { executionTimeLeft } from "@/common/helpers/executionTimeLeft";
 import { RenameForm } from "../common/forms/RenameForm";
+import useTruncate from "@/hooks/useTruncate";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -88,6 +89,8 @@ export const ExecutionsTabs: React.FC<Props> = ({
   const [renameAllow, setRenameAllow] = useState(false);
   const [deleteAllow, setDeleteAllow] = useState(false);
   const [executionToDelete, setExecutionToDelete] = useState<TemplatesExecutions | null>(null);
+
+  const { truncate } = useTruncate();
 
   useEffect(() => {
     setExecutionTitle(selectedExecution?.title);
@@ -162,7 +165,7 @@ export const ExecutionsTabs: React.FC<Props> = ({
                 wordBreak: "break-word",
               }}
             >
-              {execution.title}
+              {truncate(execution.title, { length: 35 })}
             </Typography>
             <Typography
               sx={{

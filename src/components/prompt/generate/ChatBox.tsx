@@ -1,6 +1,6 @@
-import React, { useState, useMemo, memo, useEffect } from "react";
+import React, { useState, useMemo, memo, useEffect, useRef } from "react";
 import { Accordion, AccordionDetails, AccordionSummary, Grid, Typography, Button, Stack } from "@mui/material";
-import { ExpandLess, ExpandMore } from "@mui/icons-material";
+import { Block, ExpandLess, ExpandMore } from "@mui/icons-material";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { ResPrompt } from "@/core/api/dto/prompts";
 import { LogoApp } from "@/assets/icons/LogoApp";
@@ -17,28 +17,32 @@ import { IPromptInput, PromptLiveResponse, InputType } from "@/common/types/prom
 import { setGeneratingStatus } from "@/core/store/templatesSlice";
 import { AnswerValidatorResponse, IAnswer, IMessage } from "@/common/types/chat";
 import { determineIsMobile } from "@/common/helpers/determineIsMobile";
+import { useStopExecutionMutation } from "@/core/api/executions";
+import VaryModal from "./VaryModal";
+import { vary } from "@/common/helpers/varyValidator";
 
 interface Props {
-  setGeneratedExecution: (data: PromptLiveResponse) => void;
+  setGeneratedExecution: (data: PromptLiveResponse | null) => void;
   onError: (errMsg: string) => void;
 }
 
-const ExecutionCardHeaderHeight = "394px";
 const BottomTabsMobileHeight = "240px";
 
 const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
   const IS_MOBILE = determineIsMobile();
-  const { convertedTimestamp } = useTimestampConverter();
   const token = useToken();
   const router = useRouter();
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(state => state.user.currentUser);
   const template = useAppSelector(state => state.template.template);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
+  const [stopExecution] = useStopExecutionMutation();
+
+  const { convertedTimestamp } = useTimestampConverter();
   const createdAt = convertedTimestamp(new Date());
   const [chatExpanded, setChatExpanded] = useState(true);
   const [showGenerateButton, setShowGenerateButton] = useState(false);
-  const [isValidatingAnswer, setInValidatingAnswer] = useState(false);
+  const [isValidatingAnswer, setIsValidatingAnswer] = useState(false);
   const [generatingResponse, setGeneratingResponse] = useState<PromptLiveResponse | null>(null);
   const [newExecutionId, setNewExecutionId] = useState<number | null>(null);
   const [answers, setAnswers] = useState<IAnswer[]>([]);
@@ -49,6 +53,9 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [disableChatInput, setDisableChatInput] = useState(false);
   const [standingQuestions, setStandingQuestions] = useState<UpdatedQuestionTemplate[]>([]);
+  const [varyOpen, setVaryOpen] = useState(false);
+
+  let abortController = useRef(new AbortController());
 
   const addToQueuedMessages = (message: IMessage[]) => {
     setQueuedMessages(prevMessages => prevMessages.concat(message));
@@ -134,7 +141,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
   }, [template]);
 
   useEffect(() => {
-    if (generatingResponse) setGeneratedExecution(generatingResponse);
+    setGeneratedExecution(generatingResponse);
   }, [generatingResponse]);
 
   useEffect(() => {
@@ -197,6 +204,46 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
     }
   };
 
+  const validateVary = async (variation: string) => {
+    if (variation) {
+      setIsValidatingAnswer(true);
+
+      const questionAnswerMap: Record<string, string | number> = {};
+      templateQuestions.forEach(question => {
+        const matchingAnswer = answers.find(answer => answer.inputName === question.name);
+        questionAnswerMap[question.name] = matchingAnswer?.answer || "";
+      });
+
+      const payload = {
+        prompt: variation,
+        variables: questionAnswerMap,
+      };
+
+      const varyResponse = await vary({ token, payload });
+
+      if (typeof varyResponse === "string") {
+        onError("Oopps, something happened. Please try again!");
+        setIsValidatingAnswer(false);
+        return;
+      }
+
+      const newAnswers = templateQuestions
+        .map(question => {
+          return {
+            inputName: question.name,
+            required: question.required,
+            question: question.question,
+            answer: varyResponse[question.name],
+            prompt: question.prompt,
+          };
+        })
+        .filter(answer => answer.answer !== "");
+
+      setAnswers(newAnswers);
+      setIsValidatingAnswer(false);
+    }
+  };
+
   const handleUserResponse = async () => {
     if (userAnswer.trim() === "" || isSimulaitonStreaming) {
       return;
@@ -204,7 +251,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
     setUserAnswer("");
 
     if (currentQuestion) {
-      setInValidatingAnswer(true);
+      setIsValidatingAnswer(true);
 
       const newUserMessage: IMessage = {
         text: userAnswer,
@@ -292,7 +339,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
       }
 
       setMessages(prevMessages => prevMessages.concat(nextBotMessage));
-      setInValidatingAnswer(false);
+      setIsValidatingAnswer(false);
     }
   };
 
@@ -372,6 +419,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
     }
 
     dispatch(setGeneratingStatus(true));
+    setChatExpanded(false);
 
     const promptsData: ResPrompt[] = [];
 
@@ -405,6 +453,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
       },
       body: JSON.stringify(executionData),
       openWhenHidden: true,
+      signal: abortController.current.signal,
       async onopen(res) {
         if (res.ok && res.status === 200) {
           dispatch(setGeneratingStatus(true));
@@ -452,15 +501,6 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
             const tempArr = tempData;
             const activePrompt = tempArr.findIndex(template => template.prompt === +prompt);
 
-            if (message === "[C OMPLETED]" || message === "[COMPLETED]") {
-              tempArr[activePrompt] = {
-                ...tempArr[activePrompt],
-                prompt,
-                isLoading: false,
-                isCompleted: true,
-              };
-            }
-
             if (message === "[INITIALIZING]") {
               if (activePrompt === -1) {
                 tempArr.push({
@@ -476,6 +516,15 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
                   isLoading: true,
                 };
               }
+            }
+
+            if (message === "[C OMPLETED]" || message === "[COMPLETED]") {
+              tempArr[activePrompt] = {
+                ...tempArr[activePrompt],
+                prompt,
+                isLoading: false,
+                isCompleted: true,
+              };
             }
 
             if (message.includes("[ERROR]")) {
@@ -506,6 +555,15 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
         dispatch(setGeneratingStatus(false));
       },
     });
+  };
+
+  const abortConnection = () => {
+    abortController.current.abort();
+    setGeneratedExecution(null);
+    dispatch(setGeneratingStatus(false));
+    if (newExecutionId) {
+      stopExecution(newExecutionId);
+    }
   };
 
   const handleAnswerSelect = (selectedAnswer: IAnswer) => {
@@ -540,7 +598,10 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
       width={"100%"}
       overflow={"hidden"}
       borderRadius={"16px"}
-      position={"relative"}
+      sx={{
+        position: { xs: "relative", md: "sticky" },
+        ...(!IS_MOBILE && { top: "0", left: "0", zIndex: 100, border: "1px solid rgba(225, 226, 236, .5)" }),
+      }}
     >
       <Accordion
         expanded={IS_MOBILE ? true : chatExpanded}
@@ -595,6 +656,28 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
                 Chat with Promptify
               </Typography>
             </Grid>
+            {isGenerating && (
+              <Button
+                variant="text"
+                startIcon={<Block />}
+                sx={{
+                  border: "1px solid",
+                  height: "22px",
+                  p: "15px",
+                  fontSize: 13,
+                  fontWeight: 500,
+                  ":hover": {
+                    bgcolor: "action.hover",
+                  },
+                }}
+                onClick={e => {
+                  e.stopPropagation();
+                  abortConnection();
+                }}
+              >
+                Abort
+              </Button>
+            )}
           </Grid>
         </AccordionSummary>
         <AccordionDetails
@@ -603,8 +686,8 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
             flexDirection: "column",
             alignItems: "flex-start",
             gap: "8px",
-            maxHeight: { xs: "70vh", md: `calc(100vh - ${ExecutionCardHeaderHeight})` },
-            minHeight: { xs: `calc(100vh - ${BottomTabsMobileHeight} )`, md: "auto" },
+            maxHeight: { xs: "70vh", md: "50svh" },
+            ...(IS_MOBILE && { minHeight: { xs: `calc(100vh - ${BottomTabsMobileHeight} )` } }),
             borderTop: { xs: "none", md: "2px solid #ECECF4" },
           }}
         >
@@ -616,6 +699,11 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
             isValidating={isValidatingAnswer}
             setIsSimulaitonStreaming={setIsSimulaitonStreaming}
           />
+          <VaryModal
+            open={varyOpen}
+            setOpen={setVaryOpen}
+            onSubmit={variationTxt => validateVary(variationTxt)}
+          />
 
           {currentUser?.id ? (
             <ChatInput
@@ -626,6 +714,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
               onSubmit={handleUserResponse}
               disabled={disableChat || isValidatingAnswer || disableChatInput}
               disabledTags={disableChat || isValidatingAnswer || disableChatInput || isGenerating}
+              onVary={() => setVaryOpen(true)}
             />
           ) : (
             <Stack
