@@ -458,11 +458,9 @@ export const Builder = () => {
     await publishTemplate(Number(id));
   };
 
-  if (promptsData) {
-    if (!(currentUser?.is_admin || currentUser?.id === promptsData?.created_by?.id)) {
-      router.push("/signin");
-      return null;
-    }
+  if (promptsData && !currentUser) {
+    router.push("/signin");
+    return null;
   }
 
   return (
