@@ -6,8 +6,6 @@ type CursorPosition = {
   y: number;
 };
 
-// Define a custom interface for divRef.current
-
 export function useCursorPosition(
   divRef: React.RefObject<HighlightWithinTextareaRef>,
   isSuggestionListVisible: boolean,
@@ -16,12 +14,11 @@ export function useCursorPosition(
 
   useEffect(() => {
     function handleCursorPositionChange() {
-      if (isSuggestionListVisible) {
+      if (isSuggestionListVisible && divRef.current) {
         const selection = window.getSelection();
         if (selection && selection.rangeCount > 0) {
           const range = selection.getRangeAt(0);
           const rect = range.getBoundingClientRect();
-          //@ts-ignore
           const divRect = divRef.current.editorContainer.getBoundingClientRect();
           const maxX = Math.min(rect.left - divRect.left, divRect.width - 170);
           const cursorCoordinates = {
