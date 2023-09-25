@@ -11,6 +11,7 @@ import { Templates } from "@/core/api/dto/templates";
 import { RootState } from "@/core/store";
 import { useSelector } from "react-redux";
 import useToken from "@/hooks/useToken";
+import { ResPrompt } from "@/core/api/dto/prompts";
 
 interface Props {
   onClose: () => void;
@@ -93,6 +94,16 @@ export default function ApiAccessModal({ onClose, templateData }: Props) {
   };
 
   useEffect(() => {
+    let parseExecutionData = executionData;
+
+    try {
+      parseExecutionData = JSON.stringify(
+        (JSON.parse(executionData) as ResPrompt[]).filter(
+          prompt => !!prompt.contextual_overrides.length || !!Object.keys(prompt.prompt_params).length,
+        ),
+      );
+    } catch (_) {}
+
     setSnippet(
       new HTTPSnippet({
         method: "POST",
