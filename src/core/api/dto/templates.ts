@@ -224,6 +224,7 @@ export interface TemplateExecutionsDisplay {
   executions: Execution[];
   likes?: number;
   favorites_count: number;
+  is_internal?: boolean;
 }
 export type TemplatesExecutionsByMePaginationResponse = { results: TemplateExecutionsDisplay[] };
 export interface SparkExecution {
