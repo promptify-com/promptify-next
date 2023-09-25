@@ -11,7 +11,7 @@ import useDebounce from "./useDebounce";
 
 import { Templates } from "@/core/api/dto/templates";
 
-export function useGetTemplatesByFilter(catId?: number, subCatId?: number, ordering?: string) {
+export function useGetTemplatesByFilter(catId?: number, subCatId?: number, ordering?: string, admin?: boolean) {
   const router = useRouter();
   const splittedPath = router.pathname.split("/");
 
@@ -94,6 +94,10 @@ export function useGetTemplatesByFilter(catId?: number, subCatId?: number, order
 
   const hasMore = !!templates?.next;
 
+  const filteredTemplates = admin
+    ? allTemplates
+    : allTemplates?.filter(template => (typeof template?.is_internal === "undefined" ? true : !template.is_internal));
+
   return {
     categorySlug,
     searchName,
@@ -101,7 +105,7 @@ export function useGetTemplatesByFilter(catId?: number, subCatId?: number, order
     debouncedSearchName,
     subcategorySlug,
     allFilterParamsNull,
-    templates: allTemplates,
+    templates: filteredTemplates,
     isTemplatesLoading,
     filters,
     handleNextPage,
