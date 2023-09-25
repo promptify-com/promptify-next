@@ -1,165 +1,228 @@
-import React, { useState, useMemo, memo, useEffect } from "react";
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Grid,
-  IconButton,
-  Typography,
-  Button,
-  Stack,
-} from "@mui/material";
-import { useWindowSize } from "usehooks-ts";
-import { ExpandLess, ExpandMore, MoreVert, Search } from "@mui/icons-material";
-import { useSelector } from "react-redux";
+import React, { useState, useMemo, memo, useEffect, useRef } from "react";
+import { Accordion, AccordionDetails, AccordionSummary, Grid, Typography, Button, Stack } from "@mui/material";
+import { Block, ExpandLess, ExpandMore } from "@mui/icons-material";
+import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { ResPrompt } from "@/core/api/dto/prompts";
 import { LogoApp } from "@/assets/icons/LogoApp";
-import { fetchEventSource } from "@microsoft/fetch-event-source";
-import { RootState } from "@/core/store";
-import { useAppSelector } from "@/hooks/useStore";
+import { useAppSelector, useAppDispatch } from "@/hooks/useStore";
 import useToken from "@/hooks/useToken";
 import { generate } from "@/common/helpers/chatAnswersValidator";
 import useTimestampConverter from "@/hooks/useTimestampConverter";
 import { ChatInterface } from "./ChatInterface";
 import { ChatInput } from "./ChatInput";
 import { useRouter } from "next/router";
-import { TemplateQuestions } from "@/core/api/dto/templates";
+import { TemplateQuestions, UpdatedQuestionTemplate } from "@/core/api/dto/templates";
 import { getInputsFromString } from "@/common/helpers";
-import { IPromptInput, PromptLiveResponse, ChatMessageType } from "@/common/types/prompt";
-import { useAppDispatch } from "@/hooks/useStore";
-import { setGeneratingStatus } from "@/core/store/templatesSlice";
-
-export interface IMessage {
-  text: string | undefined;
-  createdAt: string;
-  fromUser: boolean;
-  type?: ChatMessageType;
-  choices?: string[];
-  id: number;
-}
-
-export interface IAnswer {
-  inputName: string;
-  required?: boolean;
-  question: string;
-  answer: string | number;
-  prompt?: number;
-}
+import { IPromptInput, PromptLiveResponse, InputType } from "@/common/types/prompt";
+import { setGeneratingStatus, updateExecutionData } from "@/core/store/templatesSlice";
+import { AnswerValidatorResponse, IAnswer, IMessage } from "@/common/types/chat";
+import { determineIsMobile } from "@/common/helpers/determineIsMobile";
+import { useStopExecutionMutation } from "@/core/api/executions";
+import VaryModal from "./VaryModal";
+import { vary } from "@/common/helpers/varyValidator";
 
 interface Props {
-  setGeneratedExecution: (data: PromptLiveResponse) => void;
+  setGeneratedExecution: (data: PromptLiveResponse | null) => void;
   onError: (errMsg: string) => void;
 }
 
+const BottomTabsMobileHeight = "240px";
+
 const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
-  const { width: windowWidth } = useWindowSize();
-  const { convertedTimestamp } = useTimestampConverter();
+  const IS_MOBILE = determineIsMobile();
   const token = useToken();
   const router = useRouter();
-  const currentUser = useSelector((state: RootState) => state.user.currentUser);
-  const template = useAppSelector(state => state.template.template);
-  const createdAt = convertedTimestamp(new Date());
   const dispatch = useAppDispatch();
+  const currentUser = useAppSelector(state => state.user.currentUser);
+  const template = useAppSelector(state => state.template.template);
+  const isGenerating = useAppSelector(state => state.template.isGenerating);
+  const [stopExecution] = useStopExecutionMutation();
+
+  const { convertedTimestamp } = useTimestampConverter();
+  const createdAt = convertedTimestamp(new Date());
+  const [chatExpanded, setChatExpanded] = useState(true);
+  const [showGenerateButton, setShowGenerateButton] = useState(false);
+  const [isValidatingAnswer, setIsValidatingAnswer] = useState(false);
   const [generatingResponse, setGeneratingResponse] = useState<PromptLiveResponse | null>(null);
   const [newExecutionId, setNewExecutionId] = useState<number | null>(null);
-  const [chatExpanded, setChatExpanded] = useState(true);
-  const [showGenerate, setShowGenerate] = useState(false);
-
   const [answers, setAnswers] = useState<IAnswer[]>([]);
   const [userAnswer, setUserAnswer] = useState("");
-
   const [messages, setMessages] = useState<IMessage[]>([]);
+  const [queuedMessages, setQueuedMessages] = useState<IMessage[]>([]);
+  const [isSimulaitonStreaming, setIsSimulaitonStreaming] = useState(false);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [disableChatInput, setDisableChatInput] = useState(false);
+  const [standingQuestions, setStandingQuestions] = useState<UpdatedQuestionTemplate[]>([]);
+  const [varyOpen, setVaryOpen] = useState(false);
 
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(1);
-  const [isValidating, setInValidating] = useState(false);
+  let abortController = useRef(new AbortController());
 
-  const initialMessages = (questions: TemplateQuestions[]) => {
-    const welcomeMessage = [
-      {
+  const addToQueuedMessages = (message: IMessage[]) => {
+    setQueuedMessages(prevMessages => prevMessages.concat(message));
+    setIsSimulaitonStreaming(true);
+  };
+  const initialMessages = ({
+    questions,
+    startOver = false,
+  }: {
+    questions: UpdatedQuestionTemplate[];
+    startOver?: boolean;
+  }) => {
+    const welcomeMessage: IMessage[] = [];
+
+    if (!startOver) {
+      welcomeMessage.push({
         text: `Hi, ${
           currentUser?.first_name ?? currentUser?.username ?? "There"
-        }. Welcome. I can help you with your template`,
-        type: "text" as ChatMessageType,
+        }. Welcome. I can help you with the ${template?.title} template.`,
+        type: "text" as InputType,
         createdAt: createdAt,
         fromUser: false,
-        id: 0,
-      },
-    ];
+      });
+    }
 
-    if (questions.length) {
-      const firstKey = Object.keys(questions[0])[0];
-      const firstQuestion = questions[0][firstKey];
-
-      welcomeMessage.push({
+    if (questions.length > 0) {
+      const firstQuestion = questions[currentQuestionIndex];
+      const firstQuestionMessage: IMessage = {
         text: firstQuestion.question,
-        type: firstQuestion.type!,
+        type: firstQuestion.type,
         createdAt: createdAt,
         fromUser: false,
-        id: 1,
-      });
+      };
+
+      if (!!welcomeMessage.length) {
+        addToQueuedMessages([firstQuestionMessage]);
+      } else {
+        welcomeMessage.push(firstQuestionMessage);
+      }
     }
 
-    setMessages(welcomeMessage);
+    setCurrentQuestionIndex(0);
+    setMessages(_messages => _messages.concat(welcomeMessage));
+    setAnswers([]);
+    setShowGenerateButton(false);
   };
-  //@ts-ignore
-  const templateQuestions: TemplateQuestions[] = useMemo(() => {
-    let questions: TemplateQuestions[] = [];
+  const dispatchNewExecutionData = (answers: IAnswer[], inputs: IPromptInput[]) => {
+    const promptsData: Record<number, ResPrompt> = {};
 
-    if (template?.questions) {
-      setMessages([]);
-      questions = template.questions;
-    }
+    inputs.forEach(_input => {
+      const _promptId = _input.prompt!;
 
-    const prompts: IPromptInput[] = [];
-
-    if (template?.prompts) {
-      template.prompts.forEach(prompt => {
-        prompts.push(...getInputsFromString(prompt.content).map(obj => ({ ...obj, prompt: prompt.id })));
-      });
-    }
-
-    const updatedQuestions = questions.map((question, index) => {
-      if (prompts[index]) {
-        const { type, required, choices, name, prompt } = prompts[index];
-        // Create a new object with the desired structure
-        return {
-          ...question,
-          [Object.keys(question)[0]]: {
-            ...question[Object.keys(question)[0]],
-            name,
-            required,
-            type,
-            choices,
-            prompt,
-          },
+      if (promptsData[_promptId]) {
+        promptsData[_promptId].prompt_params = { ...promptsData[_promptId].prompt_params, [_input.name]: "" };
+      } else {
+        promptsData[_promptId] = {
+          prompt: _promptId,
+          contextual_overrides: [],
+          prompt_params: { [_input.name]: "" },
         };
       }
-      return question;
     });
-    //@ts-ignore to be refactored later to have same type as TemplateQuestions[]
-    initialMessages(updatedQuestions);
-    return updatedQuestions;
-  }, [template]);
-  const hasInitialTemplateQuestions = templateQuestions.length;
 
-  const getCurrentQuestion = () => {
-    if (!hasInitialTemplateQuestions) {
-      return null;
-    }
+    answers.forEach(_answer => {
+      promptsData[_answer.prompt].prompt_params = {
+        ...promptsData[_answer.prompt].prompt_params,
+        [_answer.inputName]: _answer.answer,
+      };
+    });
 
-    if (!answers.length) {
-      const questionObj = templateQuestions[0];
-      const key = Object.keys(questionObj)[0];
-      return questionObj[key];
-    } else if (currentQuestionIndex < templateQuestions.length) {
-      const questionObj = templateQuestions[currentQuestionIndex];
-      const key = Object.keys(questionObj)[0];
-      return questionObj[key];
-    }
-    return null;
+    dispatch(updateExecutionData(JSON.stringify(Object.values(promptsData))));
   };
+  const [templateQuestions, _inputs]: [UpdatedQuestionTemplate[], IPromptInput[]] = useMemo(() => {
+    if (!template) {
+      return [[], []];
+    }
 
-  const currentQuestion = getCurrentQuestion();
+    const questions: TemplateQuestions[] = template?.questions ?? [];
+    const inputs: IPromptInput[] = [];
+
+    template.prompts.forEach(prompt => {
+      inputs.push(...getInputsFromString(prompt.content).map(obj => ({ ...obj, prompt: prompt.id })));
+    });
+
+    const updatedQuestions: UpdatedQuestionTemplate[] = [];
+
+    for (let index = 0; index < questions.length; index++) {
+      const question = questions[index];
+      const key = Object.keys(question)[0];
+
+      if (inputs[index]) {
+        const { type, required, choices, name, prompt } = inputs[index];
+        const updatedQuestion: UpdatedQuestionTemplate = {
+          ...question[key],
+          name,
+          required: required,
+          type: type,
+          choices: choices,
+          prompt: prompt!,
+        };
+        updatedQuestions.push(updatedQuestion);
+      }
+    }
+
+    updatedQuestions.sort((a, b) => +b.required - +a.required);
+
+    initialMessages({ questions: updatedQuestions });
+
+    return [updatedQuestions, inputs];
+  }, [template]);
+
+  useEffect(() => {
+    dispatchNewExecutionData(answers, _inputs);
+  }, [template]);
+
+  useEffect(() => {
+    setGeneratedExecution(generatingResponse);
+  }, [generatingResponse]);
+
+  useEffect(() => {
+    if (newExecutionId) {
+      setGeneratingResponse(prevState => ({
+        id: newExecutionId,
+        created_at: prevState?.created_at ?? new Date(),
+        data: prevState?.data ?? [],
+      }));
+    }
+  }, [newExecutionId]);
+
+  useEffect(() => {
+    if (currentQuestion && (currentQuestion.type === "choices" || currentQuestion.type === "code")) {
+      setUserAnswer("");
+      setDisableChatInput(true);
+    } else setDisableChatInput(false);
+  }, [currentQuestionIndex]);
+
+  useEffect(() => {
+    if (!isGenerating && answers.length) {
+      const newBotMessage: IMessage = {
+        text: "Do you want to run this template again?",
+        fromUser: false,
+        type: "choices",
+        choices: ["Yes", "No"],
+        createdAt: createdAt,
+        startOver: true,
+      };
+      setShowGenerateButton(false);
+      setCurrentQuestionIndex(0);
+      setAnswers([]);
+      setMessages(prevMessages => prevMessages.concat(newBotMessage));
+    }
+  }, [isGenerating]);
+
+  useEffect(() => {
+    if (!isSimulaitonStreaming && !!queuedMessages.length) {
+      const nextQueuedMessage = queuedMessages.pop()!;
+
+      setMessages(prevMessages => prevMessages.concat(nextQueuedMessage));
+      addToQueuedMessages(queuedMessages);
+    }
+  }, [isSimulaitonStreaming]);
+
+  const canShowGenerateButton = Boolean(templateQuestions.length && !templateQuestions[0].required);
+  const disableChat = Boolean(!templateQuestions.length && !_inputs.length && template?.prompts.length);
+  const currentQuestion = standingQuestions.length
+    ? standingQuestions[standingQuestions.length - 1]
+    : templateQuestions[currentQuestionIndex];
 
   const validateAnswer = async () => {
     if (currentQuestion) {
@@ -172,43 +235,78 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
     }
   };
 
+  const validateVary = async (variation: string) => {
+    if (variation) {
+      setIsValidatingAnswer(true);
+
+      const questionAnswerMap: Record<string, string | number> = {};
+      templateQuestions.forEach(question => {
+        const matchingAnswer = answers.find(answer => answer.inputName === question.name);
+        questionAnswerMap[question.name] = matchingAnswer?.answer || "";
+      });
+
+      const payload = {
+        prompt: variation,
+        variables: questionAnswerMap,
+      };
+
+      const varyResponse = await vary({ token, payload });
+
+      if (typeof varyResponse === "string") {
+        onError("Oopps, something happened. Please try again!");
+        setIsValidatingAnswer(false);
+        return;
+      }
+
+      const newAnswers = templateQuestions
+        .map(question => {
+          return {
+            inputName: question.name,
+            required: question.required,
+            question: question.question,
+            answer: varyResponse[question.name],
+            prompt: question.prompt,
+          };
+        })
+        .filter(answer => answer.answer !== "");
+
+      setAnswers(newAnswers);
+      setIsValidatingAnswer(false);
+    }
+  };
+
   const handleUserResponse = async () => {
-    if (userAnswer.trim() === "") {
+    if (userAnswer.trim() === "" || isSimulaitonStreaming) {
       return;
     }
-
     setUserAnswer("");
 
     if (currentQuestion) {
-      setInValidating(true);
+      setIsValidatingAnswer(true);
 
       const newUserMessage: IMessage = {
         text: userAnswer,
         type: currentQuestion.type,
         createdAt: createdAt,
         fromUser: true,
-        id: currentQuestionIndex + 1,
       };
 
       setMessages(prevMessages => prevMessages.concat(newUserMessage));
 
-      let response:
-        | {
-            answer: string;
-            feedback: string;
-            approved: boolean;
-          }
-        | undefined = { approved: true, answer: "", feedback: "" };
+      let response: AnswerValidatorResponse | undefined | string = { approved: true, answer: "", feedback: "" };
+
       if (currentQuestion.type !== "choices" && currentQuestion.type !== "code" && currentQuestion.required) {
         response = await validateAnswer();
+
+        if (typeof response === "string") {
+          onError("Oopps, something happened. Please try again!");
+          return;
+        }
       }
 
       let nextBotMessage: IMessage;
+
       if (response?.approved) {
-        setInValidating(false);
-
-        answers.length && setCurrentQuestionIndex(currentQuestionIndex + 1);
-
         const newAnswer: IAnswer = {
           question: currentQuestion.question,
           answer: userAnswer,
@@ -216,72 +314,135 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
           inputName: currentQuestion.name,
           prompt: currentQuestion.prompt,
         };
-        setAnswers(prevAnswers => prevAnswers.concat(newAnswer));
+        let newAnswers: IAnswer[] = [];
 
-        const questionObj = templateQuestions[answers.length ? currentQuestionIndex + 1 : currentQuestionIndex];
+        setAnswers(prevAnswers => {
+          newAnswers = prevAnswers.concat(newAnswer);
 
-        if (!questionObj) {
+          return newAnswers;
+        });
+        dispatchNewExecutionData(newAnswers, _inputs);
+
+        const isStandingQuestion = !!standingQuestions.length;
+
+        if (standingQuestions.length) {
+          standingQuestions.pop();
+          setStandingQuestions(standingQuestions);
+        }
+
+        const nextQuestion = standingQuestions.length
+          ? standingQuestions[standingQuestions.length - 1]
+          : templateQuestions[isStandingQuestion ? currentQuestionIndex : currentQuestionIndex + 1];
+
+        if (!nextQuestion) {
           nextBotMessage = {
             text: "Great, we can start template",
             type: "text",
             createdAt: createdAt,
             fromUser: false,
-            id: currentQuestionIndex + 1,
           };
-          !showGenerate && setShowGenerate(true);
-        } else {
-          const nextQuestion = questionObj[Object.keys(questionObj)[0]];
 
-          if (!nextQuestion.required && !showGenerate) {
-            setShowGenerate(true);
+          !showGenerateButton && setShowGenerateButton(true);
+          setDisableChatInput(true);
+        } else {
+          if (!nextQuestion.required && !showGenerateButton) {
+            setShowGenerateButton(true);
           }
 
-          nextBotMessage = {
-            text: response.feedback + nextQuestion.question,
+          !isStandingQuestion && setCurrentQuestionIndex(currentQuestionIndex + 1);
+
+          const nextMessage: IMessage = {
+            text: nextQuestion.question,
             choices: nextQuestion.choices,
             type: nextQuestion.type,
             createdAt: createdAt,
             fromUser: false,
-            id: currentQuestionIndex + 1,
           };
+
+          if (response.feedback) {
+            nextBotMessage = { ...nextMessage, text: response.feedback, type: "text" };
+            addToQueuedMessages([nextMessage]);
+          } else {
+            nextBotMessage = nextMessage;
+          }
         }
       } else {
-        // Please handle !answerResponse.approved case
-        setInValidating(false);
-
         nextBotMessage = {
-          text: response?.feedback,
+          text: response?.feedback!,
           choices: currentQuestion.choices,
           type: currentQuestion.type,
           createdAt: createdAt,
           fromUser: false,
-          id: currentQuestionIndex + 1,
         };
       }
+
       setMessages(prevMessages => prevMessages.concat(nextBotMessage));
+      setIsValidatingAnswer(false);
     }
   };
 
   const handleChange = (value: string) => {
+    if (isSimulaitonStreaming) {
+      return;
+    }
+
+    if (!isGenerating && messages[messages.length - 1].startOver) {
+      if (value === "Yes") {
+        initialMessages({ questions: templateQuestions, startOver: true });
+      } else {
+        setShowGenerateButton(false);
+        setDisableChatInput(true);
+        setAnswers([]);
+      }
+
+      return;
+    }
+
     if (currentQuestion && (currentQuestion.type === "choices" || currentQuestion.type === "code")) {
-      const questionObj = templateQuestions[answers.length ? currentQuestionIndex + 1 : currentQuestionIndex];
+      const newAnswer: IAnswer = {
+        question: currentQuestion.question,
+        required: currentQuestion.required,
+        inputName: currentQuestion.name,
+        answer: value,
+        prompt: currentQuestion.prompt,
+      };
+      let newAnswers: IAnswer[] = [];
+
+      setAnswers(prevAnswers => {
+        newAnswers = prevAnswers.concat(newAnswer);
+
+        return newAnswers;
+      });
+      dispatchNewExecutionData(newAnswers, _inputs);
+
+      const isStandingQuestion = !!standingQuestions.length;
+
+      if (standingQuestions.length) {
+        standingQuestions.pop();
+        setStandingQuestions(standingQuestions);
+      }
+
+      const nextQuestion = standingQuestions.length
+        ? standingQuestions[standingQuestions.length - 1]
+        : templateQuestions[isStandingQuestion ? currentQuestionIndex : currentQuestionIndex + 1];
       let nextBotMessage: IMessage;
 
-      if (!questionObj) {
+      if (!nextQuestion) {
         nextBotMessage = {
           text: "Great, we can start template",
           type: "text",
           createdAt: createdAt,
           fromUser: false,
-          id: currentQuestionIndex + 1,
         };
-        !showGenerate && setShowGenerate(true);
-      } else {
-        const nextQuestion = questionObj[Object.keys(questionObj)[0]];
 
-        if (!nextQuestion.required && !showGenerate) {
-          setShowGenerate(true);
+        !showGenerateButton && setShowGenerateButton(true);
+        setDisableChatInput(true);
+      } else {
+        if (!nextQuestion.required && !showGenerateButton) {
+          setShowGenerateButton(true);
         }
+
+        !isStandingQuestion && setCurrentQuestionIndex(currentQuestionIndex + 1);
 
         nextBotMessage = {
           text: nextQuestion.question,
@@ -289,18 +450,8 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
           type: nextQuestion.type,
           createdAt: createdAt,
           fromUser: false,
-          id: currentQuestionIndex + 1,
         };
       }
-      let newAnswer: IAnswer = {
-        question: currentQuestion.question,
-        required: currentQuestion.required,
-        inputName: currentQuestion.name,
-        answer: value,
-        prompt: currentQuestion.prompt,
-      };
-      setAnswers(prevAnswers => prevAnswers.concat(newAnswer));
-      answers.length && setCurrentQuestionIndex(currentQuestionIndex + 1);
 
       setMessages(prevMessages => prevMessages.concat(nextBotMessage));
     }
@@ -312,6 +463,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
     }
 
     dispatch(setGeneratingStatus(true));
+    setChatExpanded(false);
 
     const promptsData: ResPrompt[] = [];
 
@@ -332,23 +484,9 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
     generateExecution(promptsData);
   };
 
-  useEffect(() => {
-    if (generatingResponse) setGeneratedExecution(generatingResponse);
-  }, [generatingResponse]);
-
-  useEffect(() => {
-    if (newExecutionId) {
-      setGeneratingResponse(prevState => ({
-        id: newExecutionId,
-        created_at: prevState?.created_at || new Date(),
-        data: prevState?.data || [],
-      }));
-    }
-  }, [newExecutionId]);
-
   const generateExecution = (executionData: ResPrompt[]) => {
     let tempData: any[] = [];
-    let url = `https://api.promptify.com/api/v1/templates/${template!.id}/execute/`;
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/api/meta/templates/${template!.id}/execute/`;
 
     fetchEventSource(url, {
       method: "POST",
@@ -359,9 +497,8 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
       },
       body: JSON.stringify(executionData),
       openWhenHidden: true,
+      signal: abortController.current.signal,
       async onopen(res) {
-        setChatExpanded(false);
-
         if (res.ok && res.status === 200) {
           dispatch(setGeneratingStatus(true));
           setGeneratingResponse({ created_at: new Date(), data: [] });
@@ -381,7 +518,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
 
           if (msg.event === "infer" && msg.data) {
             if (message) {
-              const tempArr = [...tempData];
+              const tempArr = tempData;
               const activePrompt = tempArr.findIndex(template => template.prompt === +prompt);
 
               if (activePrompt === -1) {
@@ -405,17 +542,8 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
               }));
             }
           } else {
-            const tempArr = [...tempData];
+            const tempArr = tempData;
             const activePrompt = tempArr.findIndex(template => template.prompt === +prompt);
-
-            if (message === "[C OMPLETED]" || message === "[COMPLETED]") {
-              tempArr[activePrompt] = {
-                ...tempArr[activePrompt],
-                prompt,
-                isLoading: false,
-                isCompleted: true,
-              };
-            }
 
             if (message === "[INITIALIZING]") {
               if (activePrompt === -1) {
@@ -434,17 +562,26 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
               }
             }
 
+            if (message === "[C OMPLETED]" || message === "[COMPLETED]") {
+              tempArr[activePrompt] = {
+                ...tempArr[activePrompt],
+                prompt,
+                isLoading: false,
+                isCompleted: true,
+              };
+            }
+
             if (message.includes("[ERROR]")) {
               onError(
                 message ? message.replace("[ERROR]", "") : "Something went wrong during the execution of this prompt",
               );
             }
 
-            tempData = [...tempArr];
+            tempData = tempArr;
             setGeneratingResponse(prevState => ({
               ...prevState,
               created_at: prevState?.created_at || new Date(),
-              data: tempArr,
+              data: tempData,
             }));
           }
         } catch {
@@ -464,15 +601,62 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
     });
   };
 
+  const abortConnection = () => {
+    abortController.current.abort();
+    setGeneratedExecution(null);
+    dispatch(setGeneratingStatus(false));
+    if (newExecutionId) {
+      stopExecution(newExecutionId);
+    }
+  };
+
+  const handleAnswerSelect = (selectedAnswer: IAnswer) => {
+    if (isSimulaitonStreaming) {
+      return;
+    }
+
+    const question = templateQuestions.find(question => question.name === selectedAnswer.inputName);
+    const newStandingQuestions = standingQuestions.concat(question!).sort((a, b) => +a.required - +b.required);
+    const askedQuestion = newStandingQuestions[newStandingQuestions.length - 1];
+
+    setStandingQuestions(newStandingQuestions);
+
+    if (showGenerateButton && selectedAnswer.required) {
+      setShowGenerateButton(false);
+    }
+
+    const nextBotMessage: IMessage = {
+      text: "Let's give this another go. " + askedQuestion.question,
+      choices: askedQuestion.choices,
+      type: askedQuestion.type,
+      createdAt: createdAt,
+      fromUser: false,
+    };
+
+    setMessages(prevMessages => prevMessages.concat(nextBotMessage));
+
+    let newAnswers: IAnswer[] = [];
+
+    setAnswers(prevAnswers => {
+      newAnswers = prevAnswers.filter(answer => answer.inputName !== selectedAnswer.inputName);
+
+      return newAnswers;
+    });
+    dispatchNewExecutionData(newAnswers, _inputs);
+  };
+
   return (
     <Grid
       width={"100%"}
       overflow={"hidden"}
       borderRadius={"16px"}
-      position={"relative"}
+      sx={{
+        position: { xs: "relative", md: "sticky" },
+        ...(!IS_MOBILE && { top: "0", left: "0", zIndex: 100, border: "1px solid rgba(225, 226, 236, .5)" }),
+      }}
     >
       <Accordion
-        expanded={windowWidth < 960 ? true : chatExpanded}
+        expanded={IS_MOBILE ? true : chatExpanded}
         onChange={() => setChatExpanded(prev => !prev)}
         sx={{
           boxShadow: "none",
@@ -524,30 +708,28 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
                 Chat with Promptify
               </Typography>
             </Grid>
-            <Grid>
-              <IconButton
+            {isGenerating && (
+              <Button
+                variant="text"
+                startIcon={<Block />}
+                sx={{
+                  border: "1px solid",
+                  height: "22px",
+                  p: "15px",
+                  fontSize: 13,
+                  fontWeight: 500,
+                  ":hover": {
+                    bgcolor: "action.hover",
+                  },
+                }}
                 onClick={e => {
                   e.stopPropagation();
-                }}
-                size="small"
-                sx={{
-                  border: "none",
+                  abortConnection();
                 }}
               >
-                <Search />
-              </IconButton>
-              <IconButton
-                onClick={e => {
-                  e.stopPropagation();
-                }}
-                size="small"
-                sx={{
-                  border: "none",
-                }}
-              >
-                <MoreVert />
-              </IconButton>
-            </Grid>
+                Abort
+              </Button>
+            )}
           </Grid>
         </AccordionSummary>
         <AccordionDetails
@@ -556,27 +738,35 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
             flexDirection: "column",
             alignItems: "flex-start",
             gap: "8px",
-            maxHeight: { xs: "70vh", md: "calc(100vh - (194px))" },
-            minHeight: { xs: "calc(100vh - 240px)", md: "auto" },
+            maxHeight: { xs: "70vh", md: "50svh" },
+            ...(IS_MOBILE && { minHeight: { xs: `calc(100vh - ${BottomTabsMobileHeight} )` } }),
             borderTop: { xs: "none", md: "2px solid #ECECF4" },
           }}
         >
           <ChatInterface
             messages={messages}
-            answers={answers}
-            onAnswerClear={() => {}}
             onChange={handleChange}
-            showGenerate={showGenerate || !hasInitialTemplateQuestions}
+            showGenerate={Boolean((showGenerateButton || canShowGenerateButton) && currentUser?.id)}
             onGenerate={generateExecutionHandler}
-            isValidating={isValidating}
+            isValidating={isValidatingAnswer}
+            setIsSimulaitonStreaming={setIsSimulaitonStreaming}
+          />
+          <VaryModal
+            open={varyOpen}
+            setOpen={setVaryOpen}
+            onSubmit={variationTxt => validateVary(variationTxt)}
           />
 
           {currentUser?.id ? (
             <ChatInput
+              answers={answers}
+              onAnswerClear={handleAnswerSelect}
               onChange={setUserAnswer}
               value={userAnswer}
               onSubmit={handleUserResponse}
-              disabled={isValidating || !hasInitialTemplateQuestions}
+              disabled={disableChat || isValidatingAnswer || disableChatInput}
+              disabledTags={disableChat || isValidatingAnswer || disableChatInput || isGenerating}
+              onVary={() => setVaryOpen(true)}
             />
           ) : (
             <Stack

@@ -1,21 +1,20 @@
-import { QuestionAnswerParams, TemplateQuestionGeneratorData } from "@/core/api/dto/prompts";
+import { TemplateQuestionGeneratorData, VaryParams } from "@/core/api/dto/prompts";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { getExecutionById } from "@/hooks/api/executions";
-import { AnswerValidatorResponse } from "../types/chat";
 
-const answersValidatorTemplateId = 516;
+const answersValidatorTemplateId = 547;
 
-export const generate = ({
+export const vary = ({
   token,
   payload,
 }: {
   token: string;
-  payload: QuestionAnswerParams;
-}): Promise<AnswerValidatorResponse | string> => {
+  payload: VaryParams;
+}): Promise<{ [question: string]: string | number } | string> => {
   return new Promise(resolve => {
     const data: TemplateQuestionGeneratorData[] = [
       {
-        prompt: 1796,
+        prompt: 2144,
         contextual_overrides: [],
         prompt_params: payload,
       },

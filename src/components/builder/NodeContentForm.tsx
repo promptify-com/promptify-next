@@ -69,59 +69,65 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
         height: "100%",
       }}
     >
-      <Stack
-        gap={1}
-        sx={{
-          p: "24px 32px",
-        }}
-      >
+      {(!!nodePresets.length || !!inputPresets.length) && (
         <Stack
-          direction={"row"}
-          alignItems={"center"}
-          flexWrap={"wrap"}
-          gap={0.5}
+          gap={1}
+          sx={{
+            p: "24px 32px",
+          }}
         >
-          <Typography
-            sx={{
-              fontFamily: "Poppins",
-              fontSize: 12,
-              fontWeight: 400,
-              letterSpacing: "1px",
-            }}
-          >
-            CONNECTED:
-          </Typography>
-          <Options
-            type="node"
-            variant="horizontal"
-            options={nodePresets}
-            onChoose={node => handlePreset({ type: "node", label: node.label, firstAppend: true })}
-          />
+          {!!nodePresets.length && (
+            <Stack
+              direction={"row"}
+              alignItems={"center"}
+              flexWrap={"wrap"}
+              gap={0.5}
+            >
+              <Typography
+                sx={{
+                  fontFamily: "Poppins",
+                  fontSize: 12,
+                  fontWeight: 400,
+                  letterSpacing: "1px",
+                }}
+              >
+                OUTPUT VARIABLES:
+              </Typography>
+              <Options
+                type="node"
+                variant="horizontal"
+                options={inputPresets}
+                onChoose={node => handlePreset({ type: "node", label: node.label, firstAppend: true })}
+              />
+            </Stack>
+          )}
+          {!!inputPresets.length && (
+            <Stack
+              direction={"row"}
+              alignItems={"center"}
+              flexWrap={"wrap"}
+              gap={0.5}
+            >
+              <Typography
+                sx={{
+                  fontFamily: "Poppins",
+                  fontSize: 12,
+                  fontWeight: 400,
+                  letterSpacing: "1px",
+                }}
+              >
+                INPUTS VARIABLES:
+              </Typography>
+              <Options
+                type="input"
+                variant="horizontal"
+                options={inputPresets}
+                onChoose={input => handlePreset({ type: "input", label: input.label, firstAppend: true })}
+              />
+            </Stack>
+          )}
         </Stack>
-        <Stack
-          direction={"row"}
-          alignItems={"center"}
-          flexWrap={"wrap"}
-          gap={0.5}
-        >
-          <Typography
-            sx={{
-              fontFamily: "Poppins",
-              fontSize: 12,
-              fontWeight: 400,
-              letterSpacing: "1px",
-            }}
-          >
-            INPUTS:
-          </Typography>
-          <Options
-            type="input"
-            variant="horizontal"
-            options={inputPresets}
-            onChoose={input => handlePreset({ type: "input", label: input.label, firstAppend: true })}
-          />
-        </Stack>
-      </Stack>
+      )}
       <Divider />
       <Box
         sx={{

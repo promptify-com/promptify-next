@@ -122,13 +122,14 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
   useEffect(() => {
     if (selectedExecution?.contextual_overrides) {
-      const overrides = Object.entries(selectedExecution.contextual_overrides)
+      const nodeParams = Object.entries(selectedExecution.contextual_overrides)
         .map(([promptId, values]) => ({
           id: +promptId,
           contextual_overrides: values,
         }))
         .filter(override => override.contextual_overrides.length > 0);
-      setNodeParams(overrides);
+
+      setNodeParams(nodeParams);
     }
   }, [selectedExecution]);
 
@@ -367,23 +368,21 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   const removeDuplicates = async () => {
     const shownInputs = new Map<string, Input>();
     const shownParams = new Map<number, Param>();
-    await Promise.all(
-      [...templateData.prompts]
-        .sort((a, b) => a.order - b.order)
-        .map(async prompt => {
-          const inputs = getInputsFromString(prompt.content);
-          inputs.forEach(input => {
-            shownInputs.set(input.name, { ...input, prompt: prompt.id });
-          });
 
-          const params = (await dispatch(templatesApi.endpoints.getPromptParams.initiate(prompt.id))).data;
-          params
-            ?.filter(param => param.is_visible)
-            .forEach(param => {
-              shownParams.set(param.parameter.id, { param, prompt: prompt.id });
-            });
-        }),
-    );
+    templateData.prompts.forEach(prompt => {
+      const inputs = getInputsFromString(prompt.content);
+
+      inputs.forEach(input => {
+        shownInputs.set(input.name, { ...input, prompt: prompt.id });
+      });
+
+      prompt.parameters
+        .filter(param => param.is_visible)
+        .forEach(param => {
+          shownParams.set(param.parameter.id, { param, prompt: prompt.id });
+        });
+    });
+
     setShownInputs(Array.from(shownInputs.values()));
     setShownParams(Array.from(shownParams.values()));
   };
@@ -526,8 +525,8 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
                   key={i}
                   params={[param.param]}
                   promptId={param.prompt}
-                  resOverrides={nodeParams}
-                  setResOverrides={setNodeParams}
+                  nodeParams={nodeParams}
+                  setNodeParams={setNodeParams}
                 />
               ))}
             </React.Fragment>

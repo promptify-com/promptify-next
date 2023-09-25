@@ -26,6 +26,7 @@ export interface Prompts {
   output_format: string;
   prompt_output_variable: string;
   execution_priority: number;
+  parameters: PromptParams[];
 }
 
 export interface PromptParam {
@@ -34,6 +35,12 @@ export interface PromptParam {
   code: string;
   type: string;
   category: number;
+  score_descriptions: PromptParamScoreDescription[];
+}
+
+export interface PromptParamScoreDescription {
+  description: string;
+  score: number;
 }
 
 export interface PromptDescription {
@@ -79,6 +86,13 @@ export interface QuestionAnswerParams {
   question: string;
   answer: string;
 }
+export interface VaryParams {
+  prompt: string;
+  variables: {
+    [question: string]: string | number;
+  };
+}
+
 export interface TemplateDataParams {
   TemplateData: {
     id: number;
@@ -90,7 +104,7 @@ export interface TemplateDataParams {
   };
 }
 
-type PromptParamsGenerate = TemplateDataParams | QuestionAnswerParams;
+type PromptParamsGenerate = TemplateDataParams | QuestionAnswerParams | VaryParams;
 
 export interface TemplateQuestionGeneratorData {
   prompt: number;

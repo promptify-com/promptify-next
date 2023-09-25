@@ -1,6 +1,7 @@
-import { IPromptInput, ChatMessageType } from "../types/prompt";
+import { IPromptInput, InputType } from "../types/prompt";
 
-const getType = (str: string): ChatMessageType => {
+// TODO: Prompt input number should fixed either "integer" or "number"
+const getType = (str: string): InputType => {
   switch (str) {
     case "integer":
     case "number":

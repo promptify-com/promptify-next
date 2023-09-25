@@ -1,9 +1,8 @@
 import React, { useEffect, useRef, useState, useMemo } from "react";
-import { Box, Grid, Typography } from "@mui/material";
+import { Box, Button, Grid, Typography } from "@mui/material";
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { ExecutionCard } from "./ExecutionCard";
 import { PromptLiveResponse } from "@/common/types/prompt";
-import { ExecutionCardGenerated } from "./ExecutionCardGenerated";
 import { DisplayActions } from "./DisplayActions";
 import ParagraphPlaceholder from "@/components/placeholders/ParagraphPlaceholder";
 import { useRouter } from "next/router";
@@ -20,7 +19,7 @@ interface Props {
   selectedExecution: TemplatesExecutions | null;
   setSelectedExecution: (execution: TemplatesExecutions | null) => void;
   generatedExecution: PromptLiveResponse | null;
-  setGeneratedExecution: (data: PromptLiveResponse) => void;
+  setGeneratedExecution: (data: PromptLiveResponse | null) => void;
   onError: (errMsg: string) => void;
   hashedExecution: TemplatesExecutions | null;
 }
@@ -88,46 +87,31 @@ export const Display: React.FC<Props> = ({
 
     setSelectedExecution(execution);
   };
-  const sortedExecutions = useMemo(() => {
-    const _execuitons = (executions?.length ? [...executions] : [])
-      .reduce((uniqueExecs: TemplatesExecutions[], execution) => {
-        if (!uniqueExecs.some((item: TemplatesExecutions) => item.id === execution.id)) {
-          uniqueExecs.push(execution);
-        }
-        return uniqueExecs;
-      }, [])
-      .sort((a, b) => moment(b.created_at).diff(moment(a.created_at)));
 
-    if (sparkHashQueryParam.current) {
+  useEffect(() => {
+    if (sparkHashQueryParam.current && hashedExecution) {
       setSelectedExecution(hashedExecution);
       replaceHistoryByPathname(`/prompt/${templateData.slug}`);
-
-      return _execuitons;
-    }
-
-    if (!executions?.length) {
-      setSelectedExecution(null);
-      return [];
+      return;
     }
 
     const wantedExecutionId = sparkQueryParam ?? selectedExecution?.id.toString();
 
     if (wantedExecutionId) {
-      const _selectedExecution = _execuitons.find(exec => exec.id.toString() === wantedExecutionId);
+      const _selectedExecution = executions.find(exec => exec.id.toString() === wantedExecutionId);
 
-      handleSelectExecution({ execution: _selectedExecution || _execuitons?.[0] || null, resetHash: true });
+      handleSelectExecution({ execution: _selectedExecution || executions?.[0] || null, resetHash: true });
     } else {
-      handleSelectExecution({ execution: _execuitons?.[0] || null, resetHash: true });
+      handleSelectExecution({ execution: templateData.example_execution || executions?.[0] || null, resetHash: true });
     }
 
     if (sparkQueryParam) {
       replaceHistoryByPathname(`/prompt/${templateData.slug}`);
     }
-
-    return _execuitons;
   }, [executions]);
 
-  const isGeneratedExecutionEmpty = Boolean(generatedExecution && !generatedExecution?.data?.length);
+  const isGeneratedExecutionEmpty = Boolean(generatedExecution && !generatedExecution.data?.length);
+  const executionIsLoading = isFetching || isGeneratedExecutionEmpty;
 
   const IS_MOBILE = determineIsMobile();
 
@@ -137,8 +121,9 @@ export const Display: React.FC<Props> = ({
       flexDirection={"column"}
       gap={"24px"}
     >
-      {!IS_MOBILE && (
+      {!IS_MOBILE && !!templateData?.questions?.length && templateData?.status === "PUBLISHED" && (
         <ChatMode
+          key={templateData.id}
           setGeneratedExecution={setGeneratedExecution}
           onError={onError}
         />
@@ -154,7 +139,7 @@ export const Display: React.FC<Props> = ({
         }}
       >
         <DisplayActions
-          executions={sortedExecutions}
+          executions={executions}
           selectedExecution={selectedExecution}
           setSelectedExecution={_execution => {
             handleSelectExecution({ execution: _execution, resetHash: true });
@@ -171,24 +156,17 @@ export const Display: React.FC<Props> = ({
         )}
 
         <Box sx={{ mx: "15px", opacity: firstLoad ? 0.5 : 1 }}>
-          {isGeneratedExecutionEmpty ? (
+          {executionIsLoading ? (
             <ParagraphPlaceholder />
-          ) : generatedExecution?.data ? (
-            <ExecutionCardGenerated
-              execution={generatedExecution}
-              templateData={templateData}
-            />
-          ) : isFetching ? (
-            <ParagraphPlaceholder />
-          ) : selectedExecution ? (
+          ) : !selectedExecution && isGeneratedExecutionEmpty ? (
+            <Typography sx={{ mt: "40px", textAlign: "center" }}>No spark found</Typography>
+          ) : (
             <ExecutionCard
-              execution={selectedExecution}
-              templateData={templateData}
+              execution={generatedExecution ?? selectedExecution}
+              promptsData={templateData.prompts}
               search={search}
               sparkHashQueryParam={sparkHashQueryParam.current}
             />
-          ) : (
-            <Typography sx={{ mt: "40px", textAlign: "center" }}>No spark found</Typography>
           )}
         </Box>
       </Box>
