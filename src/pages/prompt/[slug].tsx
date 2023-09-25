@@ -78,17 +78,19 @@ const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | nu
   } = useGetExecutionsByTemplateQuery(isValidUser && fetchedTemplate?.id ? fetchedTemplate.id : skipToken);
 
   // We need to set initial template store only once.
-  if (fetchedTemplate && (!isSavedTemplateId || isSavedTemplateId !== fetchedTemplate.id)) {
-    dispatch(updateTemplate(fetchedTemplate));
-    dispatch(updateExecutionData(JSON.stringify([])));
-    dispatch(
-      updateTemplateData({
-        id: fetchedTemplate.id,
-        is_favorite: fetchedTemplate.is_favorite,
-        likes: fetchedTemplate.favorites_count,
-      }),
-    );
-  }
+  useEffect(() => {
+    if (fetchedTemplate?.id && (!isSavedTemplateId || isSavedTemplateId !== fetchedTemplate.id)) {
+      dispatch(updateTemplate(fetchedTemplate));
+      dispatch(updateExecutionData(JSON.stringify([])));
+      dispatch(
+        updateTemplateData({
+          id: fetchedTemplate.id,
+          is_favorite: fetchedTemplate.is_favorite,
+          likes: fetchedTemplate.favorites_count,
+        }),
+      );
+    }
+  }, [fetchedTemplate, isSavedTemplateId]);
 
   useEffect(() => {
     if (fetchedTemplate?.id && isValidUser) {
