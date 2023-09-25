@@ -458,7 +458,7 @@ export const Builder = () => {
     await publishTemplate(Number(id));
   };
 
-  if (promptsData && !currentUser) {
+  if (!currentUser?.id) {
     router.push("/signin");
     return null;
   }
