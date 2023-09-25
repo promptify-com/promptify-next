@@ -37,9 +37,7 @@ import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import { theme } from "@/theme";
 import { useGetEnginesQuery } from "@/core/api/engines";
 import { PromptForm } from "@/components/builder/PromptForm";
-
-import { useSelector } from "react-redux";
-import { RootState } from "@/core/store";
+import useToken from "@/hooks/useToken";
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return (
@@ -70,11 +68,14 @@ export const Builder = () => {
   const [publishTemplate] = usePublishTemplateMutation();
   const [snackBarInvalidVariables, setSnackBarInvalidVariables] = React.useState(false);
   const [invalidVariableMessage, setInvalidVariableMessage] = React.useState("");
-
-  const currentUser = useSelector((state: RootState) => state.user.currentUser);
+  const token = useToken();
 
   // Remove 'editor' query param after first load to prevent open modal on every load
   useEffect(() => {
+    if (!token) {
+      router.push("/signin");
+    }
+
     if (router.query.editor) {
       const { editor, ...restQueryParams } = router.query;
 
@@ -457,11 +458,6 @@ export const Builder = () => {
     injectOrderAndSendRequest();
     await publishTemplate(Number(id));
   };
-
-  if (!currentUser?.id) {
-    router.push("/signin");
-    return null;
-  }
 
   return (
     <>
