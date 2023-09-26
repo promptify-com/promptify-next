@@ -27,43 +27,26 @@ export const addPreset = ({
 }: AddPresetParams) => {
   if (!label) return;
 
+  const input = inputPresets.find(input => input.label === label);
+  const matchedNode = nodePresets.find(node => node.label === label);
   const cursorPosition = cursorPositionRef.current;
-  let notTheLastIndex = cursorPosition < content.length - 1;
 
   let preset = "";
 
   if (type === "node") {
-    const matchedNode = nodePresets.find(node => node.label === label);
-    if (matchedNode) {
-      preset = matchedNode.label;
-      if (content.endsWith("$")) {
-        preset = preset.substring(1);
-      }
-    }
-  } else {
-    const input = inputPresets.find(input => input.label === label);
-    if (input) {
-      const type = input.type;
-      if (content.endsWith("{{")) {
-        preset = `${input.label}:${type}:${input.required}${input.choices ? `:"${input.choices}"` : ""}}}`;
-      } else {
-        preset = `{{${input.label}:${type}:${input.required}${input.choices ? `:"${input.choices}"` : ""}}}`;
-      }
-    }
+    preset = matchedNode ? matchedNode.label : "";
+  } else if (input) {
+    const { type, required, choices, label } = input;
+    preset = `{{${label}:${type}:${required}${choices ? `:"${choices}"` : ""}}}`;
   }
 
-  if (valueAfterRegex && valueAfterRegex !== "{{" && valueAfterRegex !== "$") {
-    preset = preset.substring(valueAfterRegex.length);
+  let start = content.slice(0, cursorPosition);
+  if (valueAfterRegex) {
+    start = start.slice(0, -valueAfterRegex.length);
   }
+  let end = content.slice(cursorPosition);
+  let newValue = start + " " + preset + " " + end;
 
-  const start = content.slice(0, cursorPosition);
-  const end = content.slice(cursorPosition);
-
-  let newValue = start + preset + " " + end;
-  if (!firstAppend && !notTheLastIndex) {
-    newValue = content + preset + " ";
-  }
   onChange(newValue);
-
-  cursorPositionRef.current = cursorPosition + preset.length;
+  cursorPositionRef.current = cursorPosition + preset.length + 1;
 };

@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Box, Divider, Stack, Typography } from "@mui/material";
 import { Selection } from "react-highlight-within-textarea";
 
-import { IHandlePreset, INodesData, PresetType } from "@/common/types/builder";
+import { INodesData, PresetType } from "@/common/types/builder";
 import { Options } from "../common/Options";
 import { getInputsFromString } from "@/common/helpers";
 
@@ -50,10 +50,6 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
       content,
     });
   };
-  // useEffect(() => {
-  //   console.log("zzasd", cursorPositionRef.current);
-  //   console.log("reddas", highlightedOption);
-  // }, [cursorPositionRef.current]);
 
   const handlePreset = ({ type, label, firstAppend }: { type: PresetType; label: string; firstAppend?: boolean }) => {
     addPreset({

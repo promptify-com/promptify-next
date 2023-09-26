@@ -55,10 +55,8 @@ export const HighlightTextarea = ({
   const showSuggestions = (value: string) => {
     let suggestionListArr: IVariable[] = [];
 
-    const cursorPosition = cursorPositionRef.current;
-
-    const indexOfDoubleBrace = value.lastIndexOf("{{", cursorPosition);
-    const indexOfDollarSign = value.lastIndexOf("$", cursorPosition);
+    const indexOfDoubleBrace = value.lastIndexOf("{{", cursorPositionRef.current);
+    const indexOfDollarSign = value.lastIndexOf("$", cursorPositionRef.current);
 
     if (indexOfDoubleBrace > indexOfDollarSign) {
       suggestionListArr = inputPresets;
@@ -72,13 +70,12 @@ export const HighlightTextarea = ({
       return;
     }
 
-    let start = (indexOfDoubleBrace > indexOfDollarSign ? indexOfDoubleBrace : indexOfDollarSign) + 2;
-    let end = cursorPosition;
+    let start = indexOfDoubleBrace > indexOfDollarSign ? indexOfDoubleBrace + 2 : indexOfDollarSign + 1;
+    let end = cursorPositionRef.current;
 
     while (end < value.length && /^[a-zA-Z0-9_]+$/.test(value.charAt(end))) {
       end++;
     }
-
     const textAfterRegexValue = value.substring(start, end).trim();
 
     if (textAfterRegexValue !== "") {
