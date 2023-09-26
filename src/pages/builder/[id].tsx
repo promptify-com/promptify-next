@@ -30,8 +30,8 @@ import { deletePrompt, updateTemplate } from "@/hooks/api/templates";
 import { ContentCopy } from "@mui/icons-material";
 import { IEditPrompts } from "@/common/types/builder";
 import TemplateForm from "@/components/common/forms/TemplateForm";
-import { promptRandomId } from "@/common/helpers/promptRandomId";
 import { isPromptVariableValid } from "@/common/helpers/promptValidator";
+import { randomId } from "@/common/helpers";
 
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import { theme } from "@/theme";
@@ -215,7 +215,7 @@ export const Builder = () => {
     setSelectedNode(node);
     node.selected = true;
     node.count = nodeCount.toString();
-    node.temp_id = promptRandomId();
+    node.temp_id = randomId();
 
     setNodesData(prev => [
       ...prev,
@@ -258,7 +258,7 @@ export const Builder = () => {
       setSelectedNode(node);
       node.selected = true;
       node.count = nodeCount.toString();
-      node.temp_id = promptRandomId();
+      node.temp_id = randomId();
 
       setNodesData(prev => [
         ...prev,

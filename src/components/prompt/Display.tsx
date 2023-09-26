@@ -1,16 +1,16 @@
 import React, { useEffect, useRef, useState, useMemo } from "react";
-import { Box, Button, Grid, Typography } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { ExecutionCard } from "./ExecutionCard";
 import { PromptLiveResponse } from "@/common/types/prompt";
 import { DisplayActions } from "./DisplayActions";
 import ParagraphPlaceholder from "@/components/placeholders/ParagraphPlaceholder";
 import { useRouter } from "next/router";
-import moment from "moment";
 import { SparkExportPopup } from "../dialog/SparkExportPopup";
-import { determineIsMobile } from "@/common/helpers/determineIsMobile";
+import { isDesktopViewPort } from "@/common/helpers";
 import ChatMode from "./generate/ChatBox";
 import useBrowser from "@/hooks/useBrowser";
+import ClientOnly from "@/components/base/ClientOnly";
 
 interface Props {
   templateData: Templates;
@@ -43,7 +43,6 @@ export const Display: React.FC<Props> = ({
   const [openExportPopup, setOpenExportpopup] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const { replaceHistoryByPathname } = useBrowser();
-
   const activeExecution = useMemo(() => {
     if (selectedExecution) {
       return {
@@ -58,6 +57,9 @@ export const Display: React.FC<Props> = ({
     }
     return null;
   }, [selectedExecution, templateData]);
+  const isGeneratedExecutionEmpty = Boolean(generatedExecution && !generatedExecution.data?.length);
+  const executionIsLoading = isFetching || isGeneratedExecutionEmpty;
+  const isDesktopView = isDesktopViewPort();
 
   // click listener to remove opacity layer on first loaded execution
   useEffect(() => {
@@ -110,24 +112,21 @@ export const Display: React.FC<Props> = ({
     }
   }, [executions]);
 
-  const isGeneratedExecutionEmpty = Boolean(generatedExecution && !generatedExecution.data?.length);
-  const executionIsLoading = isFetching || isGeneratedExecutionEmpty;
-
-  const IS_MOBILE = determineIsMobile();
-
   return (
     <Grid
       display={"flex"}
       flexDirection={"column"}
       gap={"24px"}
     >
-      {!IS_MOBILE && !!templateData?.questions?.length && templateData?.status === "PUBLISHED" && (
-        <ChatMode
-          key={templateData.id}
-          setGeneratedExecution={setGeneratedExecution}
-          onError={onError}
-          template={templateData}
-        />
+      {isDesktopView && !!templateData?.questions?.length && templateData?.status === "PUBLISHED" && (
+        <ClientOnly>
+          <ChatMode
+            key={templateData.id}
+            setGeneratedExecution={setGeneratedExecution}
+            onError={onError}
+            template={templateData}
+          />
+        </ClientOnly>
       )}
       <Box
         ref={containerRef}

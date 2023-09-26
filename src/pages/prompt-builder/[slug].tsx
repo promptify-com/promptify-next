@@ -10,7 +10,7 @@ import TemplateForm from "@/components/common/forms/TemplateForm";
 import { PromptCardAccordion } from "@/components/builder/PromptCardAccordion";
 import { IEditPrompts } from "@/common/types/builder";
 import { Add } from "@mui/icons-material";
-import { promptRandomId } from "@/common/helpers";
+import { randomId } from "@/common/helpers";
 import { isPromptVariableValid } from "@/common/helpers/promptValidator";
 import { updateTemplate } from "@/hooks/api/templates";
 
@@ -61,7 +61,7 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
   };
 
   const createPrompt = (order: number) => {
-    const temp_id = promptRandomId();
+    const temp_id = randomId();
     const _newPrompt = {
       temp_id: temp_id,
       title: `Prompt #${order}`,
@@ -104,7 +104,7 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
     );
     if (!duplicateData) return;
 
-    const temp_id = promptRandomId();
+    const temp_id = randomId();
     const _newPrompt = {
       ...duplicateData,
       temp_id: temp_id,

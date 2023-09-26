@@ -16,6 +16,7 @@ import { RootState } from "@/core/store";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { useSelector } from "react-redux";
 import ApiAccess from "./ApiAccess";
+import { stripTags } from "@/common/helpers";
 
 interface DetailsProps {
   templateData: Templates;
@@ -131,10 +132,9 @@ export const Details: React.FC<DetailsProps> = ({ templateData, setMobileTab = (
           )}
         </Stack>
         <Box sx={{ py: "16px" }}>
-          <Typography
-            sx={{ fontSize: 12, fontWeight: 400, color: "onSurface" }}
-            dangerouslySetInnerHTML={{ __html: templateData.description }}
-          />
+          <Typography sx={{ fontSize: 12, fontWeight: 400, color: "onSurface" }}>
+            {stripTags(templateData.description)}
+          </Typography>
         </Box>
         <Stack
           direction={"row"}
