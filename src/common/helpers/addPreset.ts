@@ -17,7 +17,7 @@ interface AddPresetParams {
 export const addPreset = ({
   type,
   label,
-  firstAppend = false,
+  firstAppend = true,
   nodePresets,
   inputPresets,
   valueAfterRegex,
@@ -26,6 +26,10 @@ export const addPreset = ({
   onChange,
 }: AddPresetParams) => {
   if (!label) return;
+
+  const cursorPosition = cursorPositionRef.current;
+  let notTheLastIndex = cursorPosition < content.length - 1;
+
   let preset = "";
 
   if (type === "node") {
@@ -38,7 +42,6 @@ export const addPreset = ({
     }
   } else {
     const input = inputPresets.find(input => input.label === label);
-
     if (input) {
       const type = input.type;
       if (content.endsWith("{{")) {
@@ -48,19 +51,19 @@ export const addPreset = ({
       }
     }
   }
-  if (valueAfterRegex) {
-    if (valueAfterRegex !== "{{" && valueAfterRegex !== "$" && !firstAppend) {
-      preset = preset.substring(valueAfterRegex.length);
-    }
+
+  if (valueAfterRegex && valueAfterRegex !== "{{" && valueAfterRegex !== "$") {
+    preset = preset.substring(valueAfterRegex.length);
   }
 
-  if (!firstAppend) {
-    onChange(content + preset + " ");
-  } else {
-    const start = content.slice(0, cursorPositionRef.current);
-    const end = content.slice(cursorPositionRef.current);
-    onChange(start + preset + " " + end);
-  }
+  const start = content.slice(0, cursorPosition);
+  const end = content.slice(cursorPosition);
 
-  cursorPositionRef.current = cursorPositionRef.current + preset.length;
+  let newValue = start + preset + " " + end;
+  if (!firstAppend && !notTheLastIndex) {
+    newValue = content + preset + " ";
+  }
+  onChange(newValue);
+
+  cursorPositionRef.current = cursorPosition + preset.length;
 };

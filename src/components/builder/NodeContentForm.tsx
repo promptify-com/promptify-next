@@ -1,8 +1,8 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Box, Divider, Stack, Typography } from "@mui/material";
 import { Selection } from "react-highlight-within-textarea";
 
-import { INodesData, PresetType } from "@/common/types/builder";
+import { IHandlePreset, INodesData, PresetType } from "@/common/types/builder";
 import { Options } from "../common/Options";
 import { getInputsFromString } from "@/common/helpers";
 
@@ -17,6 +17,7 @@ interface Props {
 
 export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelectedNodeData, nodes }) => {
   const cursorPositionRef = useRef(0);
+  const [highlightedOption, setHighlitedOption] = useState("");
 
   const content = selectedNodeData.content || "";
 
@@ -42,13 +43,17 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
   const changeContent = (content: string, selection?: Selection) => {
     const { focus } = selection ?? {};
     if (focus) {
-      cursorPositionRef.current = focus + 1;
+      cursorPositionRef.current = focus;
     }
     setSelectedNodeData({
       ...selectedNodeData,
       content,
     });
   };
+  // useEffect(() => {
+  //   console.log("zzasd", cursorPositionRef.current);
+  //   console.log("reddas", highlightedOption);
+  // }, [cursorPositionRef.current]);
 
   const handlePreset = ({ type, label, firstAppend }: { type: PresetType; label: string; firstAppend?: boolean }) => {
     addPreset({
@@ -96,8 +101,8 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
               <Options
                 type="node"
                 variant="horizontal"
-                options={inputPresets}
-                onChoose={node => handlePreset({ type: "node", label: node.label, firstAppend: true })}
+                options={nodePresets}
+                onChoose={node => handlePreset({ type: "node", label: node.label })}
               />
             </Stack>
           )}
@@ -122,7 +127,7 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
                 type="input"
                 variant="horizontal"
                 options={inputPresets}
-                onChoose={input => handlePreset({ type: "input", label: input.label, firstAppend: true })}
+                onChoose={input => handlePreset({ type: "input", label: input.label })}
               />
             </Stack>
           )}
@@ -151,6 +156,8 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
             onChange={changeContent}
             nodePresets={nodePresets}
             inputPresets={inputPresets}
+            highlitedValue={highlightedOption}
+            setHighlitedValue={setHighlitedOption}
           />
         </Box>
       </Box>

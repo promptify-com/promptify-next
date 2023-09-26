@@ -14,6 +14,8 @@ interface Props {
   nodePresets: IVariable[];
   content: string;
   onChange: (str: string, Selection?: Selection) => void;
+  highlitedValue: string;
+  setHighlitedValue: (str: string) => void;
 }
 
 interface IHandlePreset {
@@ -24,7 +26,7 @@ interface IHandlePreset {
 
 const highlight = [
   {
-    highlight: /{{.*?}}|{{/g, // Highlight {{ or {{ followed by any characters inside
+    highlight: /{{(?!{)\S*?}}|{{/g,
     className: "input-variable",
   },
   {
@@ -33,9 +35,16 @@ const highlight = [
   },
 ];
 
-export const HighlightTextarea = ({ inputPresets, nodePresets, cursorPositionRef, content, onChange }: Props) => {
+export const HighlightTextarea = ({
+  inputPresets,
+  nodePresets,
+  cursorPositionRef,
+  content,
+  onChange,
+  highlitedValue,
+  setHighlitedValue,
+}: Props) => {
   const [optionType, setOptionType] = useState<PresetType | null>(null);
-  const [highlightedOption, setHighlightedOption] = useState("");
 
   const [suggestionList, setSuggestionList] = useState<IVariable[]>([]);
   const isSuggestionsVisible = Boolean(suggestionList.length > 0);
@@ -45,7 +54,6 @@ export const HighlightTextarea = ({ inputPresets, nodePresets, cursorPositionRef
 
   const showSuggestions = (value: string) => {
     let suggestionListArr: IVariable[] = [];
-    let textAfterRegexValue = "";
 
     const cursorPosition = cursorPositionRef.current;
 
@@ -55,21 +63,32 @@ export const HighlightTextarea = ({ inputPresets, nodePresets, cursorPositionRef
     if (indexOfDoubleBrace > indexOfDollarSign) {
       suggestionListArr = inputPresets;
       setOptionType("input");
-      textAfterRegexValue = value.substring(indexOfDoubleBrace + 2, cursorPosition);
-    } else {
+    } else if (indexOfDoubleBrace < indexOfDollarSign) {
       suggestionListArr = nodePresets;
       setOptionType("node");
-      textAfterRegexValue = value.substring(indexOfDollarSign + 1, cursorPosition);
+    } else {
+      setOptionType(null);
+      setHighlitedValue("");
+      return;
     }
 
-    if (textAfterRegexValue.trim() !== "") {
+    let start = (indexOfDoubleBrace > indexOfDollarSign ? indexOfDoubleBrace : indexOfDollarSign) + 2;
+    let end = cursorPosition;
+
+    while (end < value.length && /^[a-zA-Z0-9_]+$/.test(value.charAt(end))) {
+      end++;
+    }
+
+    const textAfterRegexValue = value.substring(start, end).trim();
+
+    if (textAfterRegexValue !== "") {
       suggestionListArr = suggestionListArr.filter(suggestion =>
         suggestion.label.toLowerCase().includes(textAfterRegexValue.toLowerCase()),
       );
     }
 
     let highlightedOptionValue = `${optionType === "input" ? "{{" : "$"}${textAfterRegexValue}`;
-    setHighlightedOption(highlightedOptionValue);
+    setHighlitedValue(highlightedOptionValue);
     setSuggestionList(suggestionListArr);
   };
 
@@ -81,17 +100,19 @@ export const HighlightTextarea = ({ inputPresets, nodePresets, cursorPositionRef
       nodePresets,
       inputPresets,
       onChange,
-      valueAfterRegex: highlightedOption,
+      valueAfterRegex: highlitedValue,
       cursorPositionRef,
       content,
     });
   };
 
   const handleSuggestionSelect = (option: IVariable) => {
-    handlePreset({ type: optionType, label: option.label });
-    setHighlightedOption("");
-    setSuggestionList([]);
+    handlePreset({ type: optionType, label: option.label, firstAppend: false });
     setOptionType(null);
+    setHighlitedValue("");
+    console.log("after select", highlitedValue);
+
+    setSuggestionList([]);
   };
 
   return (

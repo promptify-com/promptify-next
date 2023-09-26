@@ -20,7 +20,7 @@ export function useCursorPosition(
           const range = selection.getRangeAt(0);
           const rect = range.getBoundingClientRect();
           const divRect = divRef.current.editorContainer.getBoundingClientRect();
-          const maxX = Math.min(rect.left - divRect.left, divRect.width - 170);
+          const maxX = Math.min(rect.left - divRect.left, divRect.width * 0.7);
           const cursorCoordinates = {
             x: maxX,
             y: rect.top - divRect.top + rect.height + 30,
