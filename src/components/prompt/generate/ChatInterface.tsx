@@ -1,32 +1,16 @@
 import React, { useEffect, useRef, Dispatch, SetStateAction } from "react";
-import { Button, Grid, Typography, CircularProgress, Stack } from "@mui/material";
+import { Grid } from "@mui/material";
 
 import { Message } from "./Message";
-import { LogoApp } from "@/assets/icons/LogoApp";
-import { useAppSelector } from "@/hooks/useStore";
-import ThreeDotsAnimation from "@/components/design-system/ThreeDotsAnimation";
 import { IMessage } from "@/common/types/chat";
-import { PlayCircle } from "@mui/icons-material";
-
 interface Props {
   messages: IMessage[];
-  onGenerate: () => void;
-  showGenerate: boolean;
   onChange?: (value: string) => void;
-  isValidating: boolean;
   setIsSimulaitonStreaming: Dispatch<SetStateAction<boolean>>;
 }
 
-export const ChatInterface = ({
-  messages,
-  onGenerate,
-  showGenerate,
-  onChange,
-  isValidating,
-  setIsSimulaitonStreaming,
-}: Props) => {
+export const ChatInterface = ({ messages, onChange, setIsSimulaitonStreaming }: Props) => {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
-  const isGenerating = useAppSelector(state => state.template.isGenerating);
 
   useEffect(() => {
     if (messagesContainerRef.current) {
@@ -42,11 +26,10 @@ export const ChatInterface = ({
     <Grid
       ref={messagesContainerRef}
       display={"flex"}
-      flex={1}
       width={"100%"}
       flexDirection={"column"}
       alignItems={"start"}
-      pb={{ xs: "120px", md: "8px" }}
+      pb={"8px"}
       sx={{
         overflow: "auto",
         overscrollBehavior: "contain",
@@ -75,53 +58,6 @@ export const ChatInterface = ({
           setIsSimulaitonStreaming={setIsSimulaitonStreaming}
         />
       ))}
-      <ThreeDotsAnimation loading={isValidating} />
-      <Stack
-        direction={"row"}
-        gap={2}
-        px={3}
-      >
-        {showGenerate && (
-          <Button
-            onClick={onGenerate}
-            startIcon={
-              isGenerating ? (
-                <CircularProgress size={16} />
-              ) : (
-                <PlayCircle
-                  sx={{ color: "onPrimary" }}
-                  fontSize={"small"}
-                />
-              )
-            }
-            sx={{
-              bgcolor: "primary.main",
-              borderColor: "primary.main",
-              borderRadius: "999px",
-              height: "22px",
-              p: "15px",
-              color: "15px",
-              fontWeight: 500,
-              ":hover": {
-                opacity: 0.9,
-                bgcolor: "primary.main",
-                color: "onPrimary",
-              },
-            }}
-            variant="contained"
-            disabled={isGenerating || isValidating}
-          >
-            {isGenerating ? (
-              <Typography>Generation in progress...</Typography>
-            ) : (
-              <>
-                <Typography sx={{ color: "inherit", fontSize: 15, lineHeight: "22px" }}>Generate</Typography>
-                <Typography sx={{ ml: 1.5, color: "inherit", fontSize: 12 }}>~360s</Typography>
-              </>
-            )}
-          </Button>
-        )}
-      </Stack>
     </Grid>
   );
 };
