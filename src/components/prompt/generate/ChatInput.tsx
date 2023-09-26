@@ -1,10 +1,12 @@
 import React, { useState } from "react";
-import { Clear, Edit, Send } from "@mui/icons-material";
-import { Box, Button, Chip, Grid, InputBase, Popover, Stack } from "@mui/material";
+import { Clear, Edit, PlayCircle, Send } from "@mui/icons-material";
+import { Box, Button, Chip, CircularProgress, Grid, InputBase, Popover, Stack, Typography } from "@mui/material";
 
 import { IAnswer } from "@/common/types/chat";
 import { addSpaceBetweenCapitalized } from "@/common/helpers/addSpaceBetweenCapitalized";
 import useTruncate from "@/hooks/useTruncate";
+import { useAppSelector } from "@/hooks/useStore";
+import ThreeDotsAnimation from "@/components/design-system/ThreeDotsAnimation";
 
 interface ChatInputProps {
   onChange: (str: string) => void;
@@ -15,6 +17,9 @@ interface ChatInputProps {
   disabled: boolean;
   disabledTags: boolean;
   onVary: () => void;
+  onGenerate: () => void;
+  showGenerate: boolean;
+  isValidating: boolean;
 }
 
 export const ChatInput = ({
@@ -26,8 +31,13 @@ export const ChatInput = ({
   onAnswerClear,
   disabledTags,
   onVary,
+  onGenerate,
+  showGenerate,
+  isValidating,
 }: ChatInputProps) => {
   const { truncate } = useTruncate();
+  const isGenerating = useAppSelector(state => state.template.isGenerating);
+
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
   const handleClose = () => setAnchorEl(null);
@@ -36,17 +46,64 @@ export const ChatInput = ({
     <Grid
       p={"0px 16px"}
       pb={"16px"}
-      position={{ xs: "fixed", md: "inherit" }}
-      bottom={"60px"}
-      zIndex={99}
+      position={"relative"}
       width={"100%"}
       left={0}
-      flex={1}
       display={"flex"}
       flexDirection={"column"}
       gap={"8px"}
       right={0}
+      mt={"auto"}
     >
+      <Box
+        display={"flex"}
+        flexDirection={"column"}
+        alignItems={"start"}
+      >
+        <ThreeDotsAnimation loading={isValidating} />
+        {showGenerate && (
+          <Button
+            onClick={onGenerate}
+            startIcon={
+              isGenerating ? (
+                <CircularProgress size={16} />
+              ) : (
+                <PlayCircle
+                  sx={{ color: "onPrimary" }}
+                  fontSize={"small"}
+                />
+              )
+            }
+            sx={{
+              bgcolor: "primary.main",
+              borderColor: "primary.main",
+              borderRadius: "999px",
+              height: "22px",
+              p: "15px",
+              ml: "0px",
+              color: "15px",
+              fontWeight: 500,
+              ":hover": {
+                opacity: 0.9,
+                bgcolor: "primary.main",
+                color: "onPrimary",
+              },
+            }}
+            variant="contained"
+            disabled={isGenerating || isValidating}
+          >
+            {isGenerating ? (
+              <Typography>Generation in progress...</Typography>
+            ) : (
+              <>
+                <Typography sx={{ color: "inherit", fontSize: 15, lineHeight: "22px" }}>Generate</Typography>
+                <Typography sx={{ ml: 1.5, color: "inherit", fontSize: 12 }}>~360s</Typography>
+              </>
+            )}
+          </Button>
+        )}
+      </Box>
+
       {answers.length > 0 && (
         <Grid
           display={"flex"}
