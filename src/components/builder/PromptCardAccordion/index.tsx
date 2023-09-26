@@ -1,15 +1,5 @@
 import { PlayCircle } from "@mui/icons-material";
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Box,
-  Button,
-  Divider,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Divider, Stack, TextField, Typography } from "@mui/material";
 import React from "react";
 import { Header } from "./Header";
 import { StylerAccordion } from "./StylerAccordion";
@@ -21,9 +11,7 @@ interface Props {
 
 export const PromptCardAccordion = ({ prompt }: Props) => {
   return (
-    <Accordion
-      key={prompt.id}
-      defaultExpanded
+    <Box
       sx={{
         bgcolor: "surface.1",
         m: "24px 0 !important",
@@ -37,21 +25,15 @@ export const PromptCardAccordion = ({ prompt }: Props) => {
         },
       }}
     >
-      <AccordionSummary
+      <Box
         sx={{
-          ".MuiAccordionSummary-content": {
-            m: "0 !important",
-            py: "12px",
-          },
-          "&.Mui-expanded": {
-            minHeight: "48px !important",
-          },
+          p: "12px",
         }}
       >
         <Header prompt={prompt} />
-      </AccordionSummary>
+      </Box>
       <Divider sx={{ borderColor: "surface.3" }} />
-      <AccordionDetails
+      <Box
         sx={{
           p: 0,
         }}
@@ -98,7 +80,7 @@ export const PromptCardAccordion = ({ prompt }: Props) => {
         </Box>
 
         <StylerAccordion prompt={prompt} />
-      </AccordionDetails>
-    </Accordion>
+      </Box>
+    </Box>
   );
 };
