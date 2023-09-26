@@ -746,9 +746,6 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
           <ChatInterface
             messages={messages}
             onChange={handleChange}
-            showGenerate={Boolean((showGenerateButton || canShowGenerateButton) && currentUser?.id)}
-            onGenerate={generateExecutionHandler}
-            isValidating={isValidatingAnswer}
             setIsSimulaitonStreaming={setIsSimulaitonStreaming}
           />
           <VaryModal
@@ -756,7 +753,6 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
             setOpen={setVaryOpen}
             onSubmit={variationTxt => validateVary(variationTxt)}
           />
-
           {currentUser?.id ? (
             <ChatInput
               answers={answers}
@@ -767,6 +763,9 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
               disabled={disableChat || isValidatingAnswer || disableChatInput}
               disabledTags={disableChat || isValidatingAnswer || disableChatInput || isGenerating}
               onVary={() => setVaryOpen(true)}
+              showGenerate={Boolean((showGenerateButton || canShowGenerateButton) && currentUser?.id)}
+              onGenerate={generateExecutionHandler}
+              isValidating={isValidatingAnswer}
             />
           ) : (
             <Stack
