@@ -1,6 +1,4 @@
-import { Prompts } from "@/core/api/dto/prompts";
-import { theme } from "@/theme";
-import { ArrowDropDown, Menu, MoreVert, PlayCircle, Settings } from "@mui/icons-material";
+import { PlayCircle } from "@mui/icons-material";
 import {
   Accordion,
   AccordionDetails,
@@ -8,7 +6,6 @@ import {
   Box,
   Button,
   Divider,
-  IconButton,
   Stack,
   TextField,
   Typography,
@@ -16,9 +13,10 @@ import {
 import React from "react";
 import { Header } from "./Header";
 import { StylerAccordion } from "./StylerAccordion";
+import { IEditPrompts } from "@/common/types/builder";
 
 interface Props {
-  prompt: Prompts;
+  prompt: IEditPrompts;
 }
 
 export const PromptCardAccordion = ({ prompt }: Props) => {
@@ -41,11 +39,12 @@ export const PromptCardAccordion = ({ prompt }: Props) => {
     >
       <AccordionSummary
         sx={{
-          ".MuiAccordionSummary-content, .Mui-expanded": {
-            m: "12px 0 !important",
-            alignItems: "center",
-            gap: 2,
-            minHeight: "42px",
+          ".MuiAccordionSummary-content": {
+            m: "0 !important",
+            py: "12px",
+          },
+          "&.Mui-expanded": {
+            minHeight: "48px !important",
           },
         }}
       >

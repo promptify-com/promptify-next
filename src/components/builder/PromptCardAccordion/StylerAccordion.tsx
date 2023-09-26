@@ -1,32 +1,29 @@
 import DramaMasks from "@/assets/icons/DramaMasks";
 import { Prompts } from "@/core/api/dto/prompts";
 import { theme } from "@/theme";
-import { AddCircle, ArrowDropDown, Menu, MoreVert, Settings } from "@mui/icons-material";
+import { AddCircle, ExpandMore } from "@mui/icons-material";
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  Box,
-  Button,
   Chip,
-  Divider,
   IconButton,
   Stack,
-  TextField,
   Typography,
   alpha,
 } from "@mui/material";
 import React from "react";
+import { Styler } from "../Styler/Styler";
+import { IEditPrompts } from "@/common/types/builder";
 
 interface Props {
-  prompt: Prompts;
+  prompt: IEditPrompts;
 }
 
 export const StylerAccordion = ({ prompt }: Props) => {
   return (
     <Accordion
       key={prompt.id}
-      defaultExpanded
       sx={{
         m: "0 24px !important",
         border: `1px solid ${theme.palette.divider}`,
@@ -37,13 +34,15 @@ export const StylerAccordion = ({ prompt }: Props) => {
       }}
     >
       <AccordionSummary
+        expandIcon={<ExpandMore />}
         sx={{
-          ".MuiAccordionSummary-content, &.Mui-expanded": {
-            m: "0",
-            p: "4px 8px 4px 16px",
+          ".MuiAccordionSummary-content": {
+            m: 0,
             alignItems: "center",
             gap: 2,
-            minHeight: "48px",
+          },
+          "&.Mui-expanded": {
+            minHeight: "48px !important",
           },
         }}
       >
@@ -68,8 +67,8 @@ export const StylerAccordion = ({ prompt }: Props) => {
           </Typography>
           {prompt.parameters.slice(0, 1).map(param => (
             <Chip
-              key={param.parameter.id}
-              label={param.parameter.name}
+              key={param.parameter_id}
+              label={param.name}
               sx={{
                 height: "fit-content",
                 p: "3px 4px",
@@ -97,6 +96,13 @@ export const StylerAccordion = ({ prompt }: Props) => {
           </IconButton>
         </Stack>
       </AccordionSummary>
+      <AccordionDetails>
+        <Styler
+          selectedNodeData={prompt}
+          setSelectedNodeData={() => {}}
+          version="v2"
+        />
+      </AccordionDetails>
     </Accordion>
   );
 };

@@ -1,4 +1,6 @@
+import { IEditPrompts } from "@/common/types/builder";
 import { Prompts } from "@/core/api/dto/prompts";
+import { useGetEnginesQuery } from "@/core/api/engines";
 import { theme } from "@/theme";
 import { ArrowDropDown, Menu, MoreVert, Settings } from "@mui/icons-material";
 import {
@@ -16,15 +18,20 @@ import {
 import React from "react";
 
 interface Props {
-  prompt: Prompts;
+  prompt: IEditPrompts;
 }
 
 export const Header = ({ prompt }: Props) => {
+  const { data: engines } = useGetEnginesQuery();
+
+  const promptEngine = engines?.find(engine => engine.id === prompt.engine_id);
+
   return (
     <Stack
       direction={"row"}
       alignItems={"center"}
       gap={2}
+      width={"100%"}
     >
       <Menu
         sx={{
@@ -39,8 +46,8 @@ export const Header = ({ prompt }: Props) => {
       <Typography>#{prompt.order}</Typography>
       <Button endIcon={<ArrowDropDown />}>
         <img
-          src={prompt.engine.icon}
-          alt={prompt.engine.name}
+          src={promptEngine?.icon}
+          alt={promptEngine?.name}
           loading="lazy"
           style={{
             width: "24px",
@@ -48,7 +55,7 @@ export const Header = ({ prompt }: Props) => {
             borderRadius: "50%",
           }}
         />
-        {prompt.engine.name}
+        {promptEngine?.name}
       </Button>
       <Stack
         flex={1}

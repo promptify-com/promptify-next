@@ -6,21 +6,34 @@ import VisibilityIconOff from "@mui/icons-material/VisibilityOff";
 import { DeleteOutline, LockOpen } from "@mui/icons-material";
 import LockIcon from "@mui/icons-material/Lock";
 import { theme } from "@/theme";
+import { StylerVersions } from "./Styler";
 
 interface IProps {
   promptParams: IPromptParams[] | undefined;
   handleChangeScore: (val1: number, val2: number) => void;
   handleChangeOptions: (parameterId: number, option: string, newVal: boolean) => void;
   removeParam: (paramId: number) => void;
+  version?: StylerVersions;
 }
 
-export const StylerHelper = ({ promptParams, handleChangeScore, handleChangeOptions, removeParam }: IProps) => {
+export const ParamSlider = ({
+  promptParams,
+  handleChangeScore,
+  handleChangeOptions,
+  removeParam,
+  version = "v1",
+}: IProps) => {
   return (
     <Stack gap={2}>
       {promptParams &&
         promptParams.map((param, i) => {
           return (
-            <Box key={i}>
+            <Box
+              key={i}
+              sx={{
+                padding: version === "v1" ? 0 : "8px 16px",
+              }}
+            >
               <Stack
                 direction={"row"}
                 alignItems={"baseline"}
@@ -28,19 +41,35 @@ export const StylerHelper = ({ promptParams, handleChangeScore, handleChangeOpti
               >
                 <Stack
                   gap={1}
+                  direction={version === "v1" ? "column" : "row"}
+                  alignItems={version === "v1" ? "flex-start" : "center"}
                   sx={{
                     flex: 1,
                   }}
                 >
-                  <Typography
-                    sx={{
-                      fontSize: 16,
-                      fontWeight: 500,
-                      color: "onSurface",
-                    }}
-                  >
-                    {param.name}
-                  </Typography>
+                  <Box>
+                    <Typography
+                      sx={{
+                        fontSize: 14,
+                        fontWeight: 500,
+                        color: "onSurface",
+                      }}
+                    >
+                      {param.name}
+                    </Typography>
+                    {version === "v2" && (
+                      <Typography
+                        sx={{
+                          fontSize: 12,
+                          fontWeight: 400,
+                          color: "onSurface",
+                          my: "8px",
+                        }}
+                      >
+                        {param.descriptions?.find(desc => desc.score === param.score)?.description}
+                      </Typography>
+                    )}
+                  </Box>
                   <Slider
                     sx={{ color: theme.palette.onSurface }}
                     step={1}
@@ -53,12 +82,17 @@ export const StylerHelper = ({ promptParams, handleChangeScore, handleChangeOpti
                   />
                 </Stack>
                 <Stack
+                  direction={version === "v1" ? "column" : "row"}
+                  alignSelf={version === "v1" ? "baseline" : "center"}
                   alignItems={"flex-end"}
                   gap={1}
                 >
                   <IconButton
                     onClick={() => removeParam(param.parameter_id)}
-                    sx={IconButtonStyles}
+                    sx={{
+                      ...IconButtonStyles,
+                      order: version === "v1" ? 0 : 1,
+                    }}
                   >
                     <DeleteOutline sx={{ fontSize: 20 }} />
                   </IconButton>
@@ -66,6 +100,7 @@ export const StylerHelper = ({ promptParams, handleChangeScore, handleChangeOpti
                     direction={"row"}
                     alignItems={"center"}
                     gap={1}
+                    // order={0}
                   >
                     <IconButton
                       onClick={() => handleChangeOptions(param.parameter_id, "is_editable", !param.is_editable)}
@@ -82,16 +117,18 @@ export const StylerHelper = ({ promptParams, handleChangeScore, handleChangeOpti
                   </Stack>
                 </Stack>
               </Stack>
-              <Typography
-                sx={{
-                  fontSize: 12,
-                  fontWeight: 400,
-                  color: "onSurface",
-                  my: "8px",
-                }}
-              >
-                {param.descriptions?.find(desc => desc.score === param.score)?.description}
-              </Typography>
+              {version === "v1" && (
+                <Typography
+                  sx={{
+                    fontSize: 12,
+                    fontWeight: 400,
+                    color: "onSurface",
+                    my: "8px",
+                  }}
+                >
+                  {param.descriptions?.find(desc => desc.score === param.score)?.description}
+                </Typography>
+              )}
             </Box>
           );
         })}

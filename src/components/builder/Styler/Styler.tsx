@@ -15,20 +15,22 @@ import {
 } from "@mui/material";
 import { useParameters } from "@/hooks/api/parameters";
 import { useParametersPresets, useUpdateParametersPresets } from "@/hooks/api/parametersPresets";
-import ParametersModal from "./ParametersModal";
-import { StylerHelper } from "./StylerHelper";
 import { IEditPrompts, IPromptParams } from "@/common/types/builder";
 import { IParametersPreset } from "@/common/types/parametersPreset";
-import { Add, Bolt, Save } from "@mui/icons-material";
+import { Add, AddCircle, Bolt, ContentCopy, Save } from "@mui/icons-material";
 import { theme } from "@/theme";
 import { IParameters } from "@/common/types";
+import { ParamSlider } from "./ParamSlider";
+import ParametersModal from "../ParametersModal";
 
+export type StylerVersions = "v1" | "v2";
 interface IProps {
   selectedNodeData: IEditPrompts;
   setSelectedNodeData: (node: IEditPrompts) => void;
+  version?: StylerVersions;
 }
 
-export const Styler = ({ selectedNodeData, setSelectedNodeData }: IProps) => {
+export const Styler = ({ selectedNodeData, setSelectedNodeData, version = "v1" }: IProps) => {
   const [parameters] = useParameters();
   const [presets, setPresets] = useParametersPresets();
   const [expandPresets, setExpandPresets] = useState(false);
@@ -135,88 +137,135 @@ export const Styler = ({ selectedNodeData, setSelectedNodeData }: IProps) => {
     <Stack
       gap={3}
       sx={{
-        p: "24px 32px",
+        p: version === "v1" ? "24px 32px" : "0",
       }}
     >
-      <StylerHelper
+      <ParamSlider
         promptParams={selectedNodeData.parameters}
         handleChangeScore={handleChangeScore}
         handleChangeOptions={handleChangeOptions}
         removeParam={removeParam}
+        version={version}
       />
-      <Stack
-        direction={"row"}
-        alignItems={"center"}
-        gap={1}
-      >
-        <IconButton
-          onClick={() => setOpenParamsModal(true)}
-          sx={{
-            border: "none",
-            backgroundColor: "surface.2",
-            "&:hover": {
-              backgroundColor: "surface.3",
-            },
-            svg: {
-              width: 20,
-              height: 20,
-            },
-          }}
+
+      {version === "v1" ? (
+        <>
+          <Stack
+            direction={"row"}
+            alignItems={"center"}
+            gap={1}
+          >
+            <IconButton
+              onClick={() => setOpenParamsModal(true)}
+              sx={{
+                border: "none",
+                backgroundColor: "surface.2",
+                "&:hover": {
+                  backgroundColor: "surface.3",
+                },
+                svg: {
+                  width: 20,
+                  height: 20,
+                },
+              }}
+            >
+              <Add />
+            </IconButton>
+            <Typography
+              sx={{
+                fontSize: 13,
+                fontWeight: 500,
+                color: alpha(theme.palette.secondary.light, 0.45),
+              }}
+            >
+              Add new parameter
+            </Typography>
+          </Stack>
+          <Stack
+            direction={"row"}
+            alignItems={"center"}
+            gap={2}
+          >
+            <Button
+              variant="text"
+              startIcon={<Bolt />}
+              sx={{
+                color: "onSurface",
+                border: `1px solid ${alpha(theme.palette.onSurface, 0.1)}`,
+                fontSize: 13,
+                fontWeight: 500,
+                p: "4px 15px",
+                ":hover": {
+                  bgcolor: "surface.3",
+                },
+              }}
+              onClick={() => setExpandPresets(true)}
+            >
+              Load preset
+            </Button>
+            {selectedNodeData.parameters && selectedNodeData.parameters.length > 0 && (
+              <Button
+                variant="text"
+                startIcon={<Save />}
+                sx={{
+                  color: "onSurface",
+                  border: `1px solid ${alpha(theme.palette.onSurface, 0.1)}`,
+                  fontSize: 13,
+                  fontWeight: 500,
+                  p: "4px 15px",
+                  ":hover": {
+                    bgcolor: "surface.3",
+                  },
+                }}
+                onClick={() => setOpenNewPreset(true)}
+              >
+                Save as preset
+              </Button>
+            )}
+          </Stack>
+        </>
+      ) : (
+        <Stack
+          direction={"row"}
+          alignItems={"center"}
+          gap={2}
         >
-          <Add />
-        </IconButton>
-        <Typography
-          sx={{
-            fontSize: 13,
-            fontWeight: 500,
-            color: alpha(theme.palette.secondary.light, 0.45),
-          }}
-        >
-          Add new parameter
-        </Typography>
-      </Stack>
-      <Stack
-        direction={"row"}
-        alignItems={"center"}
-        gap={2}
-      >
-        <Button
-          variant="text"
-          startIcon={<Bolt />}
-          sx={{
-            color: "onSurface",
-            border: `1px solid ${alpha(theme.palette.onSurface, 0.1)}`,
-            fontSize: 13,
-            fontWeight: 500,
-            p: "4px 15px",
-            ":hover": {
-              bgcolor: "surface.3",
-            },
-          }}
-          onClick={() => setExpandPresets(true)}
-        >
-          Load preset
-        </Button>
-        {selectedNodeData.parameters && selectedNodeData.parameters.length > 0 && (
-          <Button
-            variant="text"
-            startIcon={<Save />}
+          <IconButton
+            onClick={() => setOpenParamsModal(true)}
             sx={{
-              color: "onSurface",
-              border: `1px solid ${alpha(theme.palette.onSurface, 0.1)}`,
-              fontSize: 13,
+              border: "none",
+              fontSize: 14,
               fontWeight: 500,
-              p: "4px 15px",
-              ":hover": {
-                bgcolor: "surface.3",
+              borderRadius: "999px",
+              gap: 1,
+              p: "6px 16px",
+              bgcolor: "surface.4",
+              "&:hover": {
+                bgcolor: "action.hover",
               },
             }}
-            onClick={() => setOpenNewPreset(true)}
           >
-            Save as preset
-          </Button>
-        )}
-      </Stack>
+            <AddCircle /> Add
+          </IconButton>
+          <IconButton
+            onClick={() => setExpandPresets(true)}
+            sx={{
+              border: "none",
+              fontSize: 14,
+              fontWeight: 500,
+              borderRadius: "999px",
+              gap: 1,
+              p: "6px 16px",
+              bgcolor: "surface.4",
+              "&:hover": {
+                bgcolor: "action.hover",
+              },
+            }}
+          >
+            <ContentCopy /> Copy...
+          </IconButton>
+        </Stack>
+      )}
 
       <Dialog
         onClose={() => setExpandPresets(false)}

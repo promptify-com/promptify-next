@@ -7,7 +7,7 @@ import { Close, DeleteOutline, ModeEdit, Settings, Tune } from "@mui/icons-mater
 import { theme } from "@/theme";
 import Terminal from "@/assets/icons/Terminal";
 import { NodeContentForm } from "./NodeContentForm";
-import { Styler } from "./Styler";
+import { Styler } from "./Styler/Styler";
 import { Options } from "./Options";
 
 const CustomTabPanel = (props: any) => {

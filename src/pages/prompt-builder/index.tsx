@@ -7,10 +7,12 @@ import { RootState } from "@/core/store";
 import { setOpenSidebar } from "@/core/store/sidebarSlice";
 import { Header } from "@/components/builder/Header";
 import TemplateForm from "@/components/common/forms/TemplateForm";
-import { useGetEnginesQuery } from "@/core/api/engines";
 import { PromptCardAccordion } from "@/components/builder/PromptCardAccordion";
+import { IEditPrompts } from "@/common/types/builder";
+import { Prompts } from "@/core/api/dto/prompts";
+import { useGetEnginesQuery } from "@/core/api/engines";
 
-const templateId = 521;
+const templateId = 571;
 
 export const Builder = () => {
   const sidebarOpen = useSelector((state: RootState) => state.sidebar.open);
@@ -18,17 +20,49 @@ export const Builder = () => {
   const toggleSidebar = () => {
     dispatch(setOpenSidebar(!sidebarOpen));
   };
+  const { data: engines } = useGetEnginesQuery();
   const [templateDrawerOpen, setTemplateDrawerOpen] = React.useState(false);
   const { data: fetchedTemplate } = useGetPromptTemplatesQuery(templateId);
   const [templateData, setTemplateData] = useState(fetchedTemplate);
-  const prompts = useRef(fetchedTemplate?.prompts);
-  const { data: engines } = useGetEnginesQuery();
+  const prompts = useRef<IEditPrompts[]>([]);
 
   useEffect(() => {
     setTemplateData(fetchedTemplate);
-    prompts.current = fetchedTemplate?.prompts;
+    initPrompts();
   }, [fetchedTemplate]);
-  console.log(prompts.current);
+
+  const initPrompts = () => {
+    if (fetchedTemplate?.prompts) {
+      const _prompts = fetchedTemplate?.prompts.map(prompt => {
+        const initialParams = prompt.parameters?.map(param => ({
+          parameter_id: param.parameter.id,
+          score: param.score,
+          name: param.parameter.name,
+          is_visible: param.is_visible,
+          is_editable: param.is_editable,
+          descriptions: param.parameter.score_descriptions,
+        }));
+        console.log(initialParams);
+        return {
+          id: prompt.id,
+          count: prompts.toString(),
+          title: prompt?.title || `Prompt #1`,
+          content: prompt?.content || "Describe here prompt parameters, for example {{name:John Doe}}",
+          engine_id: prompt?.engine?.id || engines![0].id,
+          dependencies: prompt?.dependencies || [],
+          parameters: initialParams,
+          order: 1,
+          output_format: prompt?.output_format,
+          model_parameters: prompt?.model_parameters,
+          is_visible: prompt?.is_visible,
+          show_output: prompt?.show_output,
+          prompt_output_variable: prompt?.prompt_output_variable,
+        };
+      });
+
+      prompts.current = _prompts;
+    }
+  };
 
   return (
     <Box
