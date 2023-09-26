@@ -49,3 +49,9 @@ export interface InputVariable {
 }
 
 export type PresetType = "node" | "input";
+
+export interface IHandlePreset {
+  type: PresetType | null;
+  label: string;
+  firstAppend?: boolean;
+}
