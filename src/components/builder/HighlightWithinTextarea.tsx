@@ -54,38 +54,35 @@ export const HighlightTextarea = ({
 
   const showSuggestions = (value: string) => {
     let suggestionListArr: IVariable[] = [];
+    let currentRgx = "";
 
     const indexOfDoubleBrace = value.lastIndexOf("{{", cursorPositionRef.current);
     const indexOfDollarSign = value.lastIndexOf("$", cursorPositionRef.current);
 
     if (indexOfDoubleBrace > indexOfDollarSign) {
       suggestionListArr = inputPresets;
+      currentRgx = "{{";
       setOptionType("input");
     } else if (indexOfDoubleBrace < indexOfDollarSign) {
       suggestionListArr = nodePresets;
+      currentRgx = "$";
       setOptionType("node");
-    } else {
-      setOptionType(null);
-      setHighlitedValue("");
-      return;
     }
 
     let start = indexOfDoubleBrace > indexOfDollarSign ? indexOfDoubleBrace + 2 : indexOfDollarSign + 1;
     let end = cursorPositionRef.current;
 
-    while (end < value.length && /^[a-zA-Z0-9_]+$/.test(value.charAt(end))) {
-      end++;
-    }
-    const textAfterRegexValue = value.substring(start, end).trim();
+    const textAfterRegexValue = value.substring(start, end);
 
-    if (textAfterRegexValue !== "") {
+    if (textAfterRegexValue !== "" && textAfterRegexValue.includes(" ")) {
       suggestionListArr = suggestionListArr.filter(suggestion =>
         suggestion.label.toLowerCase().includes(textAfterRegexValue.toLowerCase()),
       );
     }
 
-    let highlightedOptionValue = `${optionType === "input" ? "{{" : "$"}${textAfterRegexValue}`;
-    setHighlitedValue(highlightedOptionValue);
+    let newVal = currentRgx + textAfterRegexValue;
+
+    setHighlitedValue(newVal);
     setSuggestionList(suggestionListArr);
   };
 
