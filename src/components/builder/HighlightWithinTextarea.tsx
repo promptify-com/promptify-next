@@ -21,7 +21,6 @@ interface Props {
 interface IHandlePreset {
   type: PresetType | null;
   label: string;
-  firstAppend?: boolean;
 }
 
 const highlight = [
@@ -74,7 +73,7 @@ export const HighlightTextarea = ({
 
     const textAfterRegexValue = value.substring(start, end);
 
-    if (textAfterRegexValue !== "" && textAfterRegexValue.includes(" ")) {
+    if (textAfterRegexValue !== "") {
       suggestionListArr = suggestionListArr.filter(suggestion =>
         suggestion.label.toLowerCase().includes(textAfterRegexValue.toLowerCase()),
       );
@@ -86,11 +85,10 @@ export const HighlightTextarea = ({
     setSuggestionList(suggestionListArr);
   };
 
-  const handlePreset = ({ type, label, firstAppend }: IHandlePreset) => {
+  const handlePreset = ({ type, label }: IHandlePreset) => {
     addPreset({
       type,
       label,
-      firstAppend,
       nodePresets,
       inputPresets,
       onChange,
@@ -101,11 +99,9 @@ export const HighlightTextarea = ({
   };
 
   const handleSuggestionSelect = (option: IVariable) => {
-    handlePreset({ type: optionType, label: option.label, firstAppend: false });
+    handlePreset({ type: optionType, label: option.label });
     setOptionType(null);
     setHighlitedValue("");
-    console.log("after select", highlitedValue);
-
     setSuggestionList([]);
   };
 

@@ -5,7 +5,6 @@ import { IVariable } from "../types/prompt";
 interface AddPresetParams {
   type: PresetType | null;
   label: string;
-  firstAppend?: boolean;
   nodePresets: IVariable[];
   inputPresets: InputVariable[];
   valueAfterRegex?: string;
@@ -14,10 +13,26 @@ interface AddPresetParams {
   onChange: (str: string) => void;
 }
 
+function findFirstSpaceIndex(text: string, cursorPosition: number) {
+  const regex = /(\{\{|\$)\w+/g;
+  let match;
+  let lastMatch;
+  while ((match = regex.exec(text)) && match.index <= cursorPosition) {
+    lastMatch = match;
+  }
+
+  if (lastMatch) {
+    const spaceIndex = text.indexOf(" ", lastMatch.index + lastMatch[0].length);
+    if (spaceIndex !== -1) {
+      return spaceIndex;
+    }
+  }
+  return -1;
+}
+
 export const addPreset = ({
   type,
   label,
-  firstAppend = true,
   nodePresets,
   inputPresets,
   valueAfterRegex,
@@ -41,11 +56,18 @@ export const addPreset = ({
   }
 
   let start = content.slice(0, cursorPosition);
+  let end = content.slice(cursorPosition);
+
+  let isCursorWithinVar = findFirstSpaceIndex(content, cursorPosition) > cursorPosition;
+
   if (valueAfterRegex) {
     start = start.slice(0, -valueAfterRegex.length);
   }
-  let end = content.slice(cursorPosition);
-  let newValue = start + " " + preset + " " + end;
+  if (isCursorWithinVar) {
+    end = content.slice(findFirstSpaceIndex(content, cursorPosition));
+  }
+
+  let newValue = start + preset + " " + end;
 
   onChange(newValue);
   cursorPositionRef.current = cursorPosition + preset.length + 1;

@@ -51,11 +51,10 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
     });
   };
 
-  const handlePreset = ({ type, label, firstAppend }: { type: PresetType; label: string; firstAppend?: boolean }) => {
+  const handlePreset = ({ type, label }: { type: PresetType; label: string }) => {
     addPreset({
       type,
       label,
-      firstAppend,
       nodePresets,
       inputPresets,
       onChange: changeContent,
