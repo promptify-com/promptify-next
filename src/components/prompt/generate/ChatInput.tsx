@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Clear, Edit, PlayCircle, Send } from "@mui/icons-material";
 import { Box, Button, Chip, CircularProgress, Grid, InputBase, Popover, Stack, Typography } from "@mui/material";
 
@@ -7,6 +7,7 @@ import { addSpaceBetweenCapitalized } from "@/common/helpers/addSpaceBetweenCapi
 import { useAppSelector } from "@/hooks/useStore";
 import ThreeDotsAnimation from "@/components/design-system/ThreeDotsAnimation";
 import useTruncate from "@/hooks/useTruncate";
+import { calculateTruncateLength } from "@/common/helpers/calculateTruncateLength";
 
 interface ChatInputProps {
   onChange: (str: string) => void;
@@ -37,12 +38,14 @@ export const ChatInput = ({
 }: ChatInputProps) => {
   const { truncate } = useTruncate();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
-  const handleClose = () => setAnchorEl(null);
+  const dynamicLength = calculateTruncateLength(containerRef);
 
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   return (
     <Grid
+      ref={containerRef}
       p={"0px 16px"}
       pb={"16px"}
       position={"relative"}
@@ -140,7 +143,8 @@ export const ChatInput = ({
                 },
               }}
             >
-              {addSpaceBetweenCapitalized(answer.inputName)} : {truncate(answer.answer as string, { length: 30 })}
+              {addSpaceBetweenCapitalized(answer.inputName)} :{" "}
+              {truncate(answer.answer as string, { length: dynamicLength })}
             </Button>
           ))}
           {answers.length > 3 && (
@@ -163,7 +167,7 @@ export const ChatInput = ({
                 <Popover
                   open
                   anchorEl={anchorEl}
-                  onClose={handleClose}
+                  onClose={() => setAnchorEl(null)}
                   anchorOrigin={{
                     vertical: "bottom",
                     horizontal: "left",
