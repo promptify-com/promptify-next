@@ -1,3 +1,5 @@
+import { InputType } from "./prompt";
+
 export interface IPromptParams {
   parameter_id: number;
   score: number;
@@ -32,4 +34,31 @@ export interface INodesData extends IPromptOptions {
   dependencies: number[];
   parameters: IPromptParams[];
   order: number;
+}
+
+export interface HighlightWithinTextareaRef {
+  editorContainer: HTMLDivElement;
+}
+
+export interface InputVariable {
+  id?: number;
+  label: string;
+  type: InputType;
+  required: boolean;
+  choices?: string[] | null;
+}
+
+export interface Preset extends OutputVariable {}
+
+export interface OutputVariable {
+  id?: number;
+  label: string;
+}
+
+export type PresetType = "output" | "input";
+
+export interface IHandlePreset {
+  type: PresetType | null;
+  label: string;
+  firstAppend?: boolean;
 }

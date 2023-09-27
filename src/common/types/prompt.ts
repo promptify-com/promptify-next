@@ -1,5 +1,3 @@
-import { Prompts } from "@/core/api/dto/prompts";
-
 export interface PromptLiveResponseData {
   message: string;
   prompt: number;
