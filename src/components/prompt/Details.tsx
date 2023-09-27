@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Button, Chip, Popover, Stack, Typography, alpha, useTheme } from "@mui/material";
+import { Box, Button, Chip, Stack, Typography, alpha, useTheme } from "@mui/material";
 import { Templates } from "@/core/api/dto/templates";
 import { Subtitle } from "@/components/blocks";
 import moment from "moment";
@@ -9,7 +9,7 @@ import FavoriteMobileButton from "@/components/common/buttons/FavoriteMobileButt
 import { setSelectedTag } from "@/core/store/filtersSlice";
 import { Create } from "@mui/icons-material";
 import Clone from "@/assets/icons/Clone";
-import { templatesApi, useCreateTemplateMutation } from "@/core/api/templates";
+import { useCreateTemplateMutation } from "@/core/api/templates";
 import { INodesData } from "@/common/types/builder";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { RootState } from "@/core/store";
@@ -26,18 +26,11 @@ interface DetailsProps {
 export const Details: React.FC<DetailsProps> = ({ templateData, setMobileTab = () => {}, mobile }) => {
   const router = useRouter();
   const { palette } = useTheme();
-  const [createTemplate] = useCreateTemplateMutation();
   const dispatch = useAppDispatch();
-
   const [isCloning, setIsCloning] = useState(false);
   const isValidUser = useSelector(isValidUserFn);
   const currentUser = useAppSelector((state: RootState) => state.user.currentUser);
-
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+  const [createTemplate] = useCreateTemplateMutation();
 
   const cloneTemplate = async () => {
     if (!isValidUser) {
@@ -143,94 +136,34 @@ export const Details: React.FC<DetailsProps> = ({ templateData, setMobileTab = (
             dangerouslySetInnerHTML={{ __html: templateData.description }}
           />
         </Box>
-        <Stack>
+        <Stack
+          direction={"row"}
+          flexWrap={"wrap"}
+          gap={1}
+          sx={{ pb: "25px" }}
+        >
           {templateData.tags.length > 0 ? (
-            <Stack
-              direction={"row"}
-              flexWrap={"wrap"}
-              gap={"8px"}
-              alignItems={"center"}
-              pb={"16px"}
-            >
-              {templateData.tags.slice(0, 3).map(tag => (
-                <Chip
-                  key={tag.id}
-                  onClick={() => {
-                    dispatch(setSelectedTag(tag));
-                    router.push("/explore");
-                  }}
-                  variant={"filled"}
-                  label={tag.name}
-                  sx={{
-                    fontSize: 13,
-                    fontWeight: 400,
-                    bgcolor: "surface.3",
-                    color: "onSurface",
-                    "&:hover": {
-                      bgcolor: "action.hover",
-                    },
-                  }}
-                />
-              ))}
+            templateData.tags.map(tag => (
+              <Chip
+                key={tag.id}
+                onClick={() => {
+                  dispatch(setSelectedTag(tag));
 
-              {templateData.tags.length > 3 && (
-                <>
-                  <Chip
-                    label="+"
-                    onClick={e => setAnchorEl(e.currentTarget)}
-                    sx={{
-                      fontSize: 13,
-                      fontWeight: 400,
-                      bgcolor: "surface.3",
-                      color: "onSurface",
-                      "&:hover": {
-                        bgcolor: "action.hover",
-                      },
-                    }}
-                    size="small"
-                  />
-
-                  {anchorEl && (
-                    <Popover
-                      open
-                      anchorEl={anchorEl}
-                      onClose={handleClose}
-                      anchorOrigin={{
-                        vertical: "bottom",
-                        horizontal: "left",
-                      }}
-                    >
-                      <Stack
-                        alignItems={"flex-start"}
-                        p={1}
-                        gap={0.5}
-                      >
-                        {templateData.tags.slice(3).map(tag => (
-                          <Chip
-                            key={tag.id}
-                            label={tag.name}
-                            onClick={() => {
-                              dispatch(setSelectedTag(tag));
-                              router.push("/explore");
-                            }}
-                            sx={{
-                              fontSize: 13,
-                              fontWeight: 400,
-                              bgcolor: "surface.3",
-                              color: "onSurface",
-                              "&:hover": {
-                                bgcolor: "action.hover",
-                              },
-                            }}
-                            size="small"
-                          />
-                        ))}
-                      </Stack>
-                    </Popover>
-                  )}
-                </>
-              )}
-            </Stack>
+                  router.push("/explore");
+                }}
+                variant={"filled"}
+                label={tag.name}
+                sx={{
+                  fontSize: 13,
+                  fontWeight: 400,
+                  bgcolor: "surface.3",
+                  color: "onSurface",
+                  "&:hover": {
+                    bgcolor: "action.hover",
+                  },
+                }}
+              />
+            ))
           ) : (
             <Typography
               fontSize={12}
