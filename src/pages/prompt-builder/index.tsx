@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useGetPromptTemplatesQuery } from "@/core/api/templates";
-import { Box, Stack, SwipeableDrawer, Typography } from "@mui/material";
+import { Box, Button, Stack, SwipeableDrawer, Typography } from "@mui/material";
 import { Sidebar } from "@/components/SideBar";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/core/store";
@@ -10,10 +10,12 @@ import TemplateForm from "@/components/common/forms/TemplateForm";
 import { PromptCardAccordion } from "@/components/builder/PromptCardAccordion";
 import { IEditPrompts } from "@/common/types/builder";
 import { useGetEnginesQuery } from "@/core/api/engines";
+import { Add } from "@mui/icons-material";
+import { promptRandomId } from "@/common/helpers";
 
 const templateId = 571;
 
-export const Builder = () => {
+export const PromptBuilder = () => {
   const sidebarOpen = useSelector((state: RootState) => state.sidebar.open);
   const dispatch = useDispatch();
   const toggleSidebar = () => {
@@ -66,18 +68,39 @@ export const Builder = () => {
   const changePrompt = (prompt: IEditPrompts) => {
     const _prompts = prompts.map(prevPrompt => {
       if (
-        prevPrompt.id === prompt.id ||
-        prevPrompt.id === prompt.temp_id ||
-        prevPrompt.temp_id === prompt.id ||
-        prevPrompt.temp_id === prompt.temp_id
+        (prompt.id && prevPrompt.id && prompt.id === prevPrompt.id) ||
+        (prompt.temp_id && prevPrompt.temp_id && prompt.temp_id === prevPrompt.temp_id)
       ) {
         return prompt;
       }
       return prevPrompt;
     });
-    console.log(_prompts);
 
     setPrompts(_prompts);
+  };
+
+  const createPrompt = () => {
+    const count = prompts.length.toString();
+    const temp_id = promptRandomId();
+
+    setPrompts(prev => [
+      ...prev,
+      {
+        temp_id: temp_id,
+        count: count,
+        title: `Prompt #${count}`,
+        content: "Describe here prompt parameters, for example {{name:text}} or {{age:number}}",
+        engine_id: engines ? engines[0].id : 0,
+        dependencies: [],
+        parameters: [],
+        order: 1,
+        output_format: "",
+        model_parameters: null,
+        is_visible: true,
+        show_output: true,
+        prompt_output_variable: `$temp_id_${temp_id}`,
+      },
+    ]);
   };
 
   return (
@@ -109,7 +132,8 @@ export const Builder = () => {
         <Box
           sx={{
             width: "70%",
-            m: "20px auto",
+            mx: "auto",
+            p: "24px 0 40px",
           }}
         >
           <Stack
@@ -123,15 +147,42 @@ export const Builder = () => {
             </Typography>
           </Stack>
 
-          {prompts.map(prompt => {
-            return (
-              <PromptCardAccordion
-                key={prompt.id}
-                prompt={prompt}
-                setPrompt={changePrompt}
-              />
-            );
-          })}
+          <Stack
+            alignItems={"center"}
+            gap={3}
+          >
+            {prompts.map(prompt => {
+              return (
+                <>
+                  <Box width={"100%"}>
+                    <PromptCardAccordion
+                      key={prompt.id}
+                      prompt={prompt}
+                      setPrompt={changePrompt}
+                    />
+                  </Box>
+                  <Button
+                    variant="contained"
+                    startIcon={<Add />}
+                    sx={{
+                      bgcolor: "surface.1",
+                      color: "text.primary",
+                      p: "6px 16px",
+                      border: "none",
+                      fontSize: 14,
+                      fontWeight: 500,
+                      ":hover": {
+                        bgcolor: "action.hover",
+                      },
+                    }}
+                    onClick={createPrompt}
+                  >
+                    New prompt
+                  </Button>
+                </>
+              );
+            })}
+          </Stack>
         </Box>
 
         {!!templateData && (
@@ -177,4 +228,4 @@ export async function getServerSideProps() {
     },
   };
 }
-export default Builder;
+export default PromptBuilder;
