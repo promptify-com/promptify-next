@@ -12,10 +12,12 @@ import { IEditPrompts } from "@/common/types/builder";
 import { useGetEnginesQuery } from "@/core/api/engines";
 import { Add } from "@mui/icons-material";
 import { promptRandomId } from "@/common/helpers";
-
-const templateId = 571;
+import { useRouter } from "next/router";
+import { skipToken } from "@reduxjs/toolkit/dist/query";
 
 export const PromptBuilder = () => {
+  const router = useRouter();
+  const id = router.query.id;
   const sidebarOpen = useSelector((state: RootState) => state.sidebar.open);
   const dispatch = useDispatch();
   const toggleSidebar = () => {
@@ -23,7 +25,7 @@ export const PromptBuilder = () => {
   };
   const { data: engines } = useGetEnginesQuery();
   const [templateDrawerOpen, setTemplateDrawerOpen] = React.useState(false);
-  const { data: fetchedTemplate } = useGetPromptTemplatesQuery(templateId);
+  const { data: fetchedTemplate } = useGetPromptTemplatesQuery(id ? +id : skipToken);
   const [templateData, setTemplateData] = useState(fetchedTemplate);
   const [prompts, setPrompts] = useState<IEditPrompts[]>([]);
 
@@ -79,28 +81,38 @@ export const PromptBuilder = () => {
     setPrompts(_prompts);
   };
 
-  const createPrompt = () => {
+  const createPrompt = (order: number) => {
     const count = prompts.length.toString();
     const temp_id = promptRandomId();
+    const _newPrompt = {
+      temp_id: temp_id,
+      count: count,
+      title: `Prompt #${count}`,
+      content: "Describe here prompt parameters, for example {{name:text}} or {{age:number}}",
+      engine_id: engines ? engines[0].id : 0,
+      dependencies: [],
+      parameters: [],
+      order: order,
+      output_format: "",
+      model_parameters: null,
+      is_visible: true,
+      show_output: true,
+      prompt_output_variable: `$temp_id_${temp_id}`,
+    };
 
-    setPrompts(prev => [
-      ...prev,
-      {
-        temp_id: temp_id,
-        count: count,
-        title: `Prompt #${count}`,
-        content: "Describe here prompt parameters, for example {{name:text}} or {{age:number}}",
-        engine_id: engines ? engines[0].id : 0,
-        dependencies: [],
-        parameters: [],
-        order: 1,
-        output_format: "",
-        model_parameters: null,
-        is_visible: true,
-        show_output: true,
-        prompt_output_variable: `$temp_id_${temp_id}`,
-      },
-    ]);
+    let _prompts = prompts;
+    let isNext = false;
+    _prompts.forEach(prompt => {
+      if (prompt.order === order) {
+        _prompts.push(_newPrompt);
+        isNext = true;
+      }
+      if (isNext) prompt.order = order + 1;
+    });
+
+    console.log(_prompts);
+
+    setPrompts(_prompts);
   };
 
   return (
@@ -151,9 +163,9 @@ export const PromptBuilder = () => {
             alignItems={"center"}
             gap={3}
           >
-            {prompts.map(prompt => {
+            {prompts.map((prompt, i) => {
               return (
-                <>
+                <React.Fragment key={i}>
                   <Box width={"100%"}>
                     <PromptCardAccordion
                       key={prompt.id}
@@ -175,11 +187,11 @@ export const PromptBuilder = () => {
                         bgcolor: "action.hover",
                       },
                     }}
-                    onClick={createPrompt}
+                    onClick={() => createPrompt(i + 1)}
                   >
                     New prompt
                   </Button>
-                </>
+                </React.Fragment>
               );
             })}
           </Stack>
