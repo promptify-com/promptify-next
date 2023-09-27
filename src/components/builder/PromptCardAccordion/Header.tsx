@@ -4,6 +4,7 @@ import { useGetEnginesQuery } from "@/core/api/engines";
 import { ArrowDropDown, Menu, MoreVert, Settings } from "@mui/icons-material";
 import { Button, IconButton, Popover, Stack, Typography } from "@mui/material";
 import React, { useState } from "react";
+import { EngineParamsSlider } from "../EngineParamsSlider";
 
 interface Props {
   prompt: IEditPrompts;
@@ -13,10 +14,17 @@ export const Header = ({ prompt }: Props) => {
   const { data: engines } = useGetEnginesQuery();
   const [showEngines, setShowEngines] = useState(false);
   const [enginesAnchor, setEnginesAnchor] = useState<HTMLElement | null>(null);
+  const [showSettings, setShowSettings] = useState(false);
+  const [settingsAnchor, setSettingsAnchor] = useState<HTMLElement | null>(null);
 
   const closeEnginesModal = () => {
     setEnginesAnchor(null);
     setShowEngines(false);
+  };
+
+  const closeSettingsModal = () => {
+    setSettingsAnchor(null);
+    setShowSettings(false);
   };
 
   const promptEngine = engines?.find(engine => engine.id === prompt.engine_id);
@@ -43,7 +51,6 @@ export const Header = ({ prompt }: Props) => {
         <Button
           endIcon={<ArrowDropDown />}
           onClick={e => {
-            e.stopPropagation();
             setEnginesAnchor(e.currentTarget);
             setShowEngines(true);
           }}
@@ -93,7 +100,10 @@ export const Header = ({ prompt }: Props) => {
             </Typography>
           )}
           <IconButton
-            onClick={() => {}}
+            onClick={e => {
+              setSettingsAnchor(e.currentTarget);
+              setShowSettings(true);
+            }}
             sx={{
               border: "none",
               "&:hover": {
@@ -138,6 +148,33 @@ export const Header = ({ prompt }: Props) => {
             console.log(engine);
             closeEnginesModal();
           }}
+        />
+      </Popover>
+      <Popover
+        open={showSettings}
+        anchorEl={settingsAnchor}
+        onClose={closeSettingsModal}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "center",
+        }}
+        sx={{
+          height: "480px",
+          maxHeight: "60svh",
+          width: "530px",
+          maxWidth: "60svw",
+          ".MuiPaper-root": {
+            width: "100%",
+          },
+        }}
+      >
+        <EngineParamsSlider
+          engineParams={prompt.model_parameters}
+          onSave={params => {
+            console.log(params);
+            closeSettingsModal();
+          }}
+          onCancel={closeSettingsModal}
         />
       </Popover>
     </>
