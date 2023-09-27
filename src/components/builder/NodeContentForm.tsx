@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { Box, Divider, Stack, Typography } from "@mui/material";
 import { Selection } from "react-highlight-within-textarea";
 
@@ -26,7 +26,7 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
       (node.id !== selectedNodeData.id && node.id !== selectedNodeData.temp_id) ||
       (node.temp_id !== selectedNodeData.id && node.temp_id !== selectedNodeData.temp_id),
   );
-  const nodePresets = otherNodes.map(node => ({ id: node.id, label: node.prompt_output_variable || node.title }));
+  const outputPresets = otherNodes.map(node => ({ id: node.id, label: node.prompt_output_variable || node.title }));
   const inputPresets = otherNodes
     .map(node => ({ id: node.id, inputs: getInputsFromString(node.content) }))
     .filter(node => node.inputs && node.inputs.length)
@@ -40,7 +40,7 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
       })),
     );
 
-  const changeContent = (content: string, selection?: Selection) => {
+  const contentHandler = (content: string, selection?: Selection) => {
     const { focus } = selection ?? {};
     if (focus) {
       cursorPositionRef.current = focus;
@@ -51,13 +51,13 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
     });
   };
 
-  const handlePreset = ({ type, label }: { type: PresetType; label: string }) => {
+  const presetHandler = ({ type, label }: { type: PresetType; label: string }) => {
     addPreset({
       type,
       label,
-      nodePresets,
+      outputPresets,
       inputPresets,
-      onChange: changeContent,
+      onChange: contentHandler,
       cursorPositionRef,
       content,
     });
@@ -69,14 +69,14 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
         height: "100%",
       }}
     >
-      {(!!nodePresets.length || !!inputPresets.length) && (
+      {(!!outputPresets.length || !!inputPresets.length) && (
         <Stack
           gap={1}
           sx={{
             p: "24px 32px",
           }}
         >
-          {!!nodePresets.length && (
+          {!!outputPresets.length && (
             <Stack
               direction={"row"}
               alignItems={"center"}
@@ -94,10 +94,10 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
                 OUTPUT VARIABLES:
               </Typography>
               <Options
-                type="node"
+                type="output"
                 variant="horizontal"
-                options={nodePresets}
-                onChoose={node => handlePreset({ type: "node", label: node.label })}
+                options={outputPresets}
+                onChoose={output => presetHandler({ type: "output", label: output.label })}
               />
             </Stack>
           )}
@@ -122,7 +122,7 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
                 type="input"
                 variant="horizontal"
                 options={inputPresets}
-                onChoose={input => handlePreset({ type: "input", label: input.label })}
+                onChoose={input => presetHandler({ type: "input", label: input.label })}
               />
             </Stack>
           )}
@@ -148,8 +148,8 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
           <HighlightTextarea
             cursorPositionRef={cursorPositionRef}
             content={content}
-            onChange={changeContent}
-            nodePresets={nodePresets}
+            onChange={contentHandler}
+            outputPresets={outputPresets}
             inputPresets={inputPresets}
             highlitedValue={highlightedOption}
             setHighlitedValue={setHighlitedOption}

@@ -30,10 +30,6 @@ export function useCursorPosition(
         }
       }
     }
-
-    if (isSuggestionListVisible && divRef.current) {
-      handleCursorPositionChange();
-    }
   }, [isSuggestionListVisible]);
 
   return cursorPosition;

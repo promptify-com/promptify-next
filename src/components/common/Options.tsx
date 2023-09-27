@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { Chip, Grid, Popover, Stack } from "@mui/material";
-import { IVariable } from "@/common/types/prompt";
+import { Preset, PresetType } from "@/common/types/builder";
 
 interface Props {
   variant: "horizontal" | "vertical";
-  type: "node" | "input";
-  options: IVariable[];
-  onChoose: (option: IVariable) => void;
+  type: PresetType;
+  options: Preset[];
+  onChoose: (option: Preset) => void;
 }
 
 export const Options: React.FC<Props> = ({ options, onChoose, variant, type }) => {

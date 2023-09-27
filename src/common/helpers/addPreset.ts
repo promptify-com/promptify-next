@@ -1,11 +1,10 @@
 import { MutableRefObject } from "react";
-import { InputVariable, PresetType } from "../types/builder";
-import { IVariable } from "../types/prompt";
+import { InputVariable, OutputVariable, PresetType } from "../types/builder";
 
 interface AddPresetParams {
-  type: PresetType | null;
+  type: PresetType;
   label: string;
-  nodePresets: IVariable[];
+  outputPresets: OutputVariable[];
   inputPresets: InputVariable[];
   hasValueAfterRegex?: string;
   content: string;
@@ -33,7 +32,7 @@ function findFirstSpaceIndex(text: string, cursorPosition: number) {
 export const addPreset = ({
   type,
   label,
-  nodePresets,
+  outputPresets,
   inputPresets,
   hasValueAfterRegex,
   content,
@@ -42,17 +41,19 @@ export const addPreset = ({
 }: AddPresetParams) => {
   if (!label) return;
 
-  const input = inputPresets.find(input => input.label === label);
-  const matchedNode = nodePresets.find(node => node.label === label);
   const cursorPosition = cursorPositionRef.current;
 
   let preset = "";
 
-  if (type === "node") {
-    preset = matchedNode ? matchedNode.label : "";
-  } else if (input) {
-    const { type, required, choices, label } = input;
-    preset = `{{${label}:${type}:${required}${choices ? `:"${choices}"` : ""}}}`;
+  if (type === "output") {
+    const output = outputPresets.find(node => node.label === label);
+    preset = output ? output.label : "";
+  } else {
+    const input = inputPresets.find(input => input.label === label);
+    if (input) {
+      const { type, required, choices, label } = input;
+      preset = `{{${label}:${type}:${required}${choices ? `:"${choices}"` : ""}}}`;
+    }
   }
 
   let start = content.slice(0, cursorPosition);

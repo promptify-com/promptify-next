@@ -1,15 +1,14 @@
 import React from "react";
 import { Card, Grid } from "@mui/material";
 
-import { PresetType } from "@/common/types/builder";
-import { IVariable } from "@/common/types/prompt";
+import { Preset, PresetType } from "@/common/types/builder";
 import { Options } from "@/components/common/Options";
 
 interface Props {
-  suggestionList: IVariable[];
+  suggestionList: Preset[];
   position: { x: number; y: number } | null;
-  optionType: PresetType | null;
-  onSelect: (option: IVariable) => void;
+  optionType: PresetType;
+  onSelect: (option: Preset) => void;
 }
 
 export const SuggestionsList = ({ suggestionList, position, optionType, onSelect }: Props) => {
@@ -44,14 +43,12 @@ export const SuggestionsList = ({ suggestionList, position, optionType, onSelect
             },
           }}
         >
-          {optionType && (
-            <Options
-              type={optionType}
-              variant="vertical"
-              options={suggestionList}
-              onChoose={onSelect}
-            />
-          )}
+          <Options
+            type={optionType}
+            variant="vertical"
+            options={suggestionList}
+            onChoose={onSelect}
+          />
         </Card>
       )}
     </Grid>

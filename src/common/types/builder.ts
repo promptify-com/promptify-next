@@ -41,14 +41,21 @@ export interface HighlightWithinTextareaRef {
 }
 
 export interface InputVariable {
-  id: number | undefined;
+  id?: number;
   label: string;
   type: InputType;
   required: boolean;
-  choices: string[] | null | undefined;
+  choices?: string[] | null;
 }
 
-export type PresetType = "node" | "input";
+export interface Preset extends OutputVariable {}
+
+export interface OutputVariable {
+  id?: number;
+  label: string;
+}
+
+export type PresetType = "output" | "input";
 
 export interface IHandlePreset {
   type: PresetType | null;

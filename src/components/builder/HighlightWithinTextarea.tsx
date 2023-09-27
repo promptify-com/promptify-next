@@ -3,24 +3,18 @@ import HighlightWithinTextarea, { Selection } from "react-highlight-within-texta
 import { Grid } from "@mui/material";
 
 import { addPreset } from "@/common/helpers/addPreset";
-import { HighlightWithinTextareaRef, InputVariable, PresetType } from "@/common/types/builder";
-import { IVariable } from "@/common/types/prompt";
+import { HighlightWithinTextareaRef, InputVariable, OutputVariable, Preset, PresetType } from "@/common/types/builder";
 import { useCursorPosition } from "@/hooks/useCursorPosition";
 import { SuggestionsList } from "./SuggestionsList";
 
 interface Props {
   cursorPositionRef: MutableRefObject<number>;
   inputPresets: InputVariable[];
-  nodePresets: IVariable[];
+  outputPresets: OutputVariable[];
   content: string;
   onChange: (str: string, Selection?: Selection) => void;
   highlitedValue: string;
   setHighlitedValue: (str: string) => void;
-}
-
-interface IHandlePreset {
-  type: PresetType | null;
-  label: string;
 }
 
 const highlight = [
@@ -36,24 +30,23 @@ const highlight = [
 
 export const HighlightTextarea = ({
   inputPresets,
-  nodePresets,
+  outputPresets,
   cursorPositionRef,
   content,
   onChange,
   highlitedValue,
   setHighlitedValue,
 }: Props) => {
-  const [optionType, setOptionType] = useState<PresetType | null>(null);
-
-  const [suggestionList, setSuggestionList] = useState<IVariable[]>([]);
-  const isSuggestionsVisible = Boolean(suggestionList.length > 0);
-
+  const [optionType, setOptionType] = useState<PresetType>("input");
+  const [suggestionList, setSuggestionList] = useState<Preset[]>([]);
   const divRef = useRef<HighlightWithinTextareaRef | null>(null);
+
+  const isSuggestionsVisible = Boolean(suggestionList.length > 0);
   const cursorPosition = useCursorPosition(divRef, isSuggestionsVisible);
 
   const showSuggestions = (value: string) => {
-    let suggestionListArr: IVariable[] = [];
-    let currentRgx = "";
+    let suggestions: Preset[] = [];
+    let currentRegex = "";
 
     const cursorPosition = cursorPositionRef.current;
     const charBeforeCursor = value.charAt(cursorPosition - 1);
@@ -61,13 +54,15 @@ export const HighlightTextarea = ({
     const indexOfDollarSign = value.lastIndexOf("$", cursorPosition);
 
     if (indexOfDoubleBrace > indexOfDollarSign) {
-      suggestionListArr = inputPresets;
-      currentRgx = "{{";
+      suggestions = inputPresets;
+      currentRegex = "{{";
       setOptionType("input");
     } else if (indexOfDoubleBrace < indexOfDollarSign && charBeforeCursor !== " ") {
-      suggestionListArr = nodePresets;
-      currentRgx = "$";
-      setOptionType("node");
+      suggestions = outputPresets;
+      currentRegex = "$";
+      setOptionType("output");
+    } else {
+      return;
     }
 
     let start = indexOfDoubleBrace > indexOfDollarSign ? indexOfDoubleBrace + 2 : indexOfDollarSign + 1;
@@ -76,33 +71,29 @@ export const HighlightTextarea = ({
     const textAfterRegexValue = value.substring(start, end);
 
     if (textAfterRegexValue !== "") {
-      suggestionListArr = suggestionListArr.filter(suggestion =>
-        suggestion.label.toLowerCase().includes(textAfterRegexValue.toLowerCase()),
+      suggestions = suggestions.filter(suggestion =>
+        suggestion.label.toLowerCase().startsWith(textAfterRegexValue.toLowerCase()),
       );
     }
 
-    let newVal = currentRgx + textAfterRegexValue;
+    let newVal = currentRegex + textAfterRegexValue;
 
     setHighlitedValue(newVal);
-    setSuggestionList(suggestionListArr);
+    setSuggestionList(suggestions);
   };
 
-  const handlePreset = ({ type, label }: IHandlePreset) => {
+  const handleSuggestionSelect = (option: Preset) => {
     addPreset({
-      type,
-      label,
-      nodePresets,
+      type: optionType,
+      label: option.label,
+      outputPresets,
       inputPresets,
       onChange,
       hasValueAfterRegex: highlitedValue,
       cursorPositionRef,
       content,
     });
-  };
 
-  const handleSuggestionSelect = (option: IVariable) => {
-    handlePreset({ type: optionType, label: option.label });
-    setOptionType(null);
     setHighlitedValue("");
     setSuggestionList([]);
   };
