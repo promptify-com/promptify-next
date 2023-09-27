@@ -6,6 +6,8 @@ import { Button, IconButton, Popover, Stack, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { EngineParamsSlider } from "../EngineParamsSlider";
 import { OutputOptions } from "./OutputOptions";
+import ArrowRightBottom from "@/assets/icons/ArrowRightBottom";
+import { theme } from "@/theme";
 
 interface Props {
   prompt: IEditPrompts;
@@ -27,15 +29,12 @@ export const Footer = ({ prompt, setPrompt }: Props) => {
         direction={"row"}
         alignItems={"center"}
         gap={1}
-        p={"12px"}
+        p={"12px 16px"}
       >
-        <SubdirectoryArrowRight
-          sx={{
-            width: 24,
-            height: 24,
-            color: "action.active",
-            opacity: 0.5,
-          }}
+        <ArrowRightBottom
+          size="20"
+          color={theme.palette.action.active}
+          opacity={0.5}
         />
         <Typography
           sx={{

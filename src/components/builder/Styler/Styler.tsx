@@ -203,7 +203,7 @@ export const Styler = ({ selectedNodeData, setSelectedNodeData, version = "v1" }
             >
               Load preset
             </Button>
-            {selectedNodeData.parameters && selectedNodeData.parameters.length > 0 && (
+            {selectedNodeData.parameters.length > 0 && (
               <Button
                 variant="text"
                 startIcon={<Save />}
@@ -230,23 +230,25 @@ export const Styler = ({ selectedNodeData, setSelectedNodeData, version = "v1" }
           alignItems={"center"}
           gap={2}
         >
-          <IconButton
-            onClick={() => setOpenParamsModal(true)}
-            sx={{
-              border: "none",
-              fontSize: 14,
-              fontWeight: 500,
-              borderRadius: "999px",
-              gap: 1,
-              p: "6px 16px",
-              bgcolor: "surface.4",
-              "&:hover": {
-                bgcolor: "action.hover",
-              },
-            }}
-          >
-            <AddCircle /> Add
-          </IconButton>
+          {selectedNodeData.parameters.length > 0 && (
+            <IconButton
+              onClick={() => setOpenNewPreset(true)}
+              sx={{
+                border: "none",
+                fontSize: 14,
+                fontWeight: 500,
+                borderRadius: "999px",
+                gap: 1,
+                p: "6px 16px",
+                bgcolor: "surface.4",
+                "&:hover": {
+                  bgcolor: "action.hover",
+                },
+              }}
+            >
+              <AddCircle /> Add
+            </IconButton>
+          )}
           <IconButton
             onClick={() => setExpandPresets(true)}
             sx={{
