@@ -37,7 +37,6 @@ export const ChatInput = ({
 }: ChatInputProps) => {
   const { truncate } = useTruncate();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
-
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
   const handleClose = () => setAnchorEl(null);
