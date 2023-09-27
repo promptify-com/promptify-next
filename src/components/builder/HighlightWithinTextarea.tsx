@@ -29,7 +29,7 @@ const highlight = [
     className: "input-variable",
   },
   {
-    highlight: /\$[\w]*|\$/g, // Highlight $ followed by word characters or $
+    highlight: /\$[\w]*|\$/g,
     className: "output-variable",
   },
 ];
@@ -55,21 +55,23 @@ export const HighlightTextarea = ({
     let suggestionListArr: IVariable[] = [];
     let currentRgx = "";
 
-    const indexOfDoubleBrace = value.lastIndexOf("{{", cursorPositionRef.current);
-    const indexOfDollarSign = value.lastIndexOf("$", cursorPositionRef.current);
+    const cursorPosition = cursorPositionRef.current;
+    const charBeforeCursor = value.charAt(cursorPosition - 1);
+    const indexOfDoubleBrace = value.lastIndexOf("{{", cursorPosition);
+    const indexOfDollarSign = value.lastIndexOf("$", cursorPosition);
 
     if (indexOfDoubleBrace > indexOfDollarSign) {
       suggestionListArr = inputPresets;
       currentRgx = "{{";
       setOptionType("input");
-    } else if (indexOfDoubleBrace < indexOfDollarSign) {
+    } else if (indexOfDoubleBrace < indexOfDollarSign && charBeforeCursor !== " ") {
       suggestionListArr = nodePresets;
       currentRgx = "$";
       setOptionType("node");
     }
 
     let start = indexOfDoubleBrace > indexOfDollarSign ? indexOfDoubleBrace + 2 : indexOfDollarSign + 1;
-    let end = cursorPositionRef.current;
+    let end = cursorPosition;
 
     const textAfterRegexValue = value.substring(start, end);
 
@@ -92,7 +94,7 @@ export const HighlightTextarea = ({
       nodePresets,
       inputPresets,
       onChange,
-      valueAfterRegex: highlitedValue,
+      hasValueAfterRegex: highlitedValue,
       cursorPositionRef,
       content,
     });

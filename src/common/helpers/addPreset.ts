@@ -7,7 +7,7 @@ interface AddPresetParams {
   label: string;
   nodePresets: IVariable[];
   inputPresets: InputVariable[];
-  valueAfterRegex?: string;
+  hasValueAfterRegex?: string;
   content: string;
   cursorPositionRef: MutableRefObject<number>;
   onChange: (str: string) => void;
@@ -35,7 +35,7 @@ export const addPreset = ({
   label,
   nodePresets,
   inputPresets,
-  valueAfterRegex,
+  hasValueAfterRegex,
   content,
   cursorPositionRef,
   onChange,
@@ -60,14 +60,16 @@ export const addPreset = ({
 
   let isCursorWithinVar = findFirstSpaceIndex(content, cursorPosition) > cursorPosition;
 
-  if (valueAfterRegex) {
-    start = start.slice(0, -valueAfterRegex.length);
+  if (hasValueAfterRegex) {
+    start = start.slice(0, -hasValueAfterRegex.length);
   }
   if (isCursorWithinVar) {
     end = content.slice(findFirstSpaceIndex(content, cursorPosition));
   }
 
-  let newValue = start + preset + " " + end;
+  const addSpace = isCursorWithinVar ? "" : " ";
+
+  let newValue = start + preset + addSpace + end;
 
   onChange(newValue);
   cursorPositionRef.current = cursorPosition + preset.length + 1;
