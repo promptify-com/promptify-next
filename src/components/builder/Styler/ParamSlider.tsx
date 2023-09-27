@@ -37,7 +37,7 @@ export const ParamSlider = ({
               <Stack
                 direction={"row"}
                 alignItems={"baseline"}
-                gap={2}
+                gap={3}
               >
                 <Stack
                   gap={1}
@@ -47,7 +47,7 @@ export const ParamSlider = ({
                     flex: 1,
                   }}
                 >
-                  <Box>
+                  <Box flex={2}>
                     <Typography
                       sx={{
                         fontSize: 14,
@@ -71,7 +71,7 @@ export const ParamSlider = ({
                     )}
                   </Box>
                   <Slider
-                    sx={{ color: theme.palette.onSurface }}
+                    sx={{ flex: 1.5, color: theme.palette.onSurface }}
                     step={1}
                     marks
                     size="small"

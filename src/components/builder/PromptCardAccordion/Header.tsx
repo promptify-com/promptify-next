@@ -8,9 +8,10 @@ import { EngineParamsSlider } from "../EngineParamsSlider";
 
 interface Props {
   prompt: IEditPrompts;
+  setPrompt: (prompt: IEditPrompts) => void;
 }
 
-export const Header = ({ prompt }: Props) => {
+export const Header = ({ prompt, setPrompt }: Props) => {
   const { data: engines } = useGetEnginesQuery();
   const [showEngines, setShowEngines] = useState(false);
   const [enginesAnchor, setEnginesAnchor] = useState<HTMLElement | null>(null);
@@ -81,24 +82,22 @@ export const Header = ({ prompt }: Props) => {
           justifyContent={"flex-end"}
           gap={1}
         >
-          {prompt.model_parameters && (
-            <Typography
-              sx={{
-                fontSize: 12,
-                fontWeight: 400,
-                color: "onSurface",
-                opacity: 0.5,
-                whiteSpace: "nowrap",
-                width: "200px",
-                overflow: "hidden",
-              }}
-            >
-              Max Length: {prompt.model_parameters.maximumLength || 0}, Temperature:{" "}
-              {prompt.model_parameters.temperature || 0}, Top P: {prompt.model_parameters.topP || 0}, Frequency Penalty:{" "}
-              {prompt.model_parameters.frequencyPenalty || 0}, Presence Penalty:{" "}
-              {prompt.model_parameters.presencePenalty || 0}
-            </Typography>
-          )}
+          <Typography
+            sx={{
+              fontSize: 12,
+              fontWeight: 400,
+              color: "onSurface",
+              opacity: 0.5,
+              whiteSpace: "nowrap",
+              width: "200px",
+              overflow: "hidden",
+            }}
+          >
+            Max Length: {prompt.model_parameters?.maximumLength || 0}, Temperature:{" "}
+            {prompt.model_parameters?.temperature || 0}, Top P: {prompt.model_parameters?.topP || 0}, Frequency Penalty:{" "}
+            {prompt.model_parameters?.frequencyPenalty || 0}, Presence Penalty:{" "}
+            {prompt.model_parameters?.presencePenalty || 0}
+          </Typography>
           <IconButton
             onClick={e => {
               setSettingsAnchor(e.currentTarget);
@@ -145,7 +144,7 @@ export const Header = ({ prompt }: Props) => {
       >
         <EnginesGroups
           onChange={engine => {
-            console.log(engine);
+            setPrompt({ ...prompt, engine_id: engine.id });
             closeEnginesModal();
           }}
         />
@@ -171,7 +170,7 @@ export const Header = ({ prompt }: Props) => {
         <EngineParamsSlider
           engineParams={prompt.model_parameters}
           onSave={params => {
-            console.log(params);
+            setPrompt({ ...prompt, model_parameters: params });
             closeSettingsModal();
           }}
           onCancel={closeSettingsModal}

@@ -9,7 +9,6 @@ import { Header } from "@/components/builder/Header";
 import TemplateForm from "@/components/common/forms/TemplateForm";
 import { PromptCardAccordion } from "@/components/builder/PromptCardAccordion";
 import { IEditPrompts } from "@/common/types/builder";
-import { Prompts } from "@/core/api/dto/prompts";
 import { useGetEnginesQuery } from "@/core/api/engines";
 
 const templateId = 571;
@@ -24,7 +23,7 @@ export const Builder = () => {
   const [templateDrawerOpen, setTemplateDrawerOpen] = React.useState(false);
   const { data: fetchedTemplate } = useGetPromptTemplatesQuery(templateId);
   const [templateData, setTemplateData] = useState(fetchedTemplate);
-  const prompts = useRef<IEditPrompts[]>([]);
+  const [prompts, setPrompts] = useState<IEditPrompts[]>([]);
 
   useEffect(() => {
     setTemplateData(fetchedTemplate);
@@ -33,8 +32,8 @@ export const Builder = () => {
 
   const initPrompts = () => {
     if (fetchedTemplate?.prompts) {
-      const _prompts = fetchedTemplate?.prompts.map(prompt => {
-        const initialParams = prompt.parameters?.map(param => ({
+      const _prompts = fetchedTemplate.prompts.map(prompt => {
+        const initialParams = prompt.parameters.map(param => ({
           parameter_id: param.parameter.id,
           score: param.score,
           name: param.parameter.name,
@@ -42,26 +41,43 @@ export const Builder = () => {
           is_editable: param.is_editable,
           descriptions: param.parameter.score_descriptions,
         }));
-        console.log(initialParams);
+
         return {
           id: prompt.id,
           count: prompts.toString(),
-          title: prompt?.title || `Prompt #1`,
-          content: prompt?.content || "Describe here prompt parameters, for example {{name:John Doe}}",
-          engine_id: prompt?.engine?.id || engines![0].id,
-          dependencies: prompt?.dependencies || [],
+          title: prompt.title || `Prompt #1`,
+          content: prompt.content || "Describe here prompt parameters, for example {{name:John Doe}}",
+          engine_id: prompt.engine?.id || engines![0].id,
+          dependencies: prompt.dependencies || [],
           parameters: initialParams,
           order: 1,
-          output_format: prompt?.output_format,
-          model_parameters: prompt?.model_parameters,
-          is_visible: prompt?.is_visible,
-          show_output: prompt?.show_output,
-          prompt_output_variable: prompt?.prompt_output_variable,
+          output_format: prompt.output_format,
+          model_parameters: prompt.model_parameters,
+          is_visible: prompt.is_visible,
+          show_output: prompt.show_output,
+          prompt_output_variable: prompt.prompt_output_variable,
         };
       });
 
-      prompts.current = _prompts;
+      setPrompts(_prompts);
     }
+  };
+
+  const changePrompt = (prompt: IEditPrompts) => {
+    const _prompts = prompts.map(prevPrompt => {
+      if (
+        prevPrompt.id === prompt.id ||
+        prevPrompt.id === prompt.temp_id ||
+        prevPrompt.temp_id === prompt.id ||
+        prevPrompt.temp_id === prompt.temp_id
+      ) {
+        return prompt;
+      }
+      return prevPrompt;
+    });
+    console.log(_prompts);
+
+    setPrompts(_prompts);
   };
 
   return (
@@ -92,7 +108,7 @@ export const Builder = () => {
 
         <Box
           sx={{
-            width: "60%",
+            width: "70%",
             m: "20px auto",
           }}
         >
@@ -107,11 +123,12 @@ export const Builder = () => {
             </Typography>
           </Stack>
 
-          {prompts.current?.map(prompt => {
+          {prompts.map(prompt => {
             return (
               <PromptCardAccordion
                 key={prompt.id}
                 prompt={prompt}
+                setPrompt={changePrompt}
               />
             );
           })}

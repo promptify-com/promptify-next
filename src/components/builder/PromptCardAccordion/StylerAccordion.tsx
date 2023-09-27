@@ -18,9 +18,10 @@ import { IEditPrompts } from "@/common/types/builder";
 
 interface Props {
   prompt: IEditPrompts;
+  setPrompt: (prompt: IEditPrompts) => void;
 }
 
-export const StylerAccordion = ({ prompt }: Props) => {
+export const StylerAccordion = ({ prompt, setPrompt }: Props) => {
   return (
     <Accordion
       key={prompt.id}
@@ -99,7 +100,7 @@ export const StylerAccordion = ({ prompt }: Props) => {
       <AccordionDetails>
         <Styler
           selectedNodeData={prompt}
-          setSelectedNodeData={() => {}}
+          setSelectedNodeData={setPrompt}
           version="v2"
         />
       </AccordionDetails>

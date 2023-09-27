@@ -1,15 +1,19 @@
-import { PlayCircle } from "@mui/icons-material";
+import { ModeEdit, PlayCircle } from "@mui/icons-material";
 import { Box, Button, Divider, Stack, TextField, Typography } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import { Header } from "./Header";
 import { StylerAccordion } from "./StylerAccordion";
 import { IEditPrompts } from "@/common/types/builder";
+import { RenameForm } from "@/components/common/forms/RenameForm";
 
 interface Props {
   prompt: IEditPrompts;
+  setPrompt: (prompt: IEditPrompts) => void;
 }
 
-export const PromptCardAccordion = ({ prompt }: Props) => {
+export const PromptCardAccordion = ({ prompt, setPrompt }: Props) => {
+  const [renameAllow, setRenameAllow] = useState(false);
+
   return (
     <Box
       sx={{
@@ -30,7 +34,10 @@ export const PromptCardAccordion = ({ prompt }: Props) => {
           p: "12px",
         }}
       >
-        <Header prompt={prompt} />
+        <Header
+          prompt={prompt}
+          setPrompt={setPrompt}
+        />
       </Box>
       <Divider sx={{ borderColor: "surface.3" }} />
       <Box
@@ -44,8 +51,36 @@ export const PromptCardAccordion = ({ prompt }: Props) => {
           alignItems={"center"}
           p={"8px 16px 8px 24px"}
         >
-          <Typography>{prompt.title}</Typography>
-          <Button startIcon={<PlayCircle />}>Test run</Button>
+          {!renameAllow ? (
+            <>
+              <Stack
+                direction={"row"}
+                alignItems={"center"}
+                gap={1}
+              >
+                <Typography
+                  sx={{ color: "onSurface", fontSize: 14, fontWeight: 500, opacity: 0.8, ":hover": { opacity: 1 } }}
+                >
+                  {prompt.title || ""}
+                </Typography>
+                <ModeEdit
+                  sx={{ cursor: "pointer", fontSize: "16px" }}
+                  onClick={() => setRenameAllow(true)}
+                />
+              </Stack>
+              <Button startIcon={<PlayCircle />}>Test run</Button>
+            </>
+          ) : (
+            <RenameForm
+              label="Prompt"
+              initialValue={prompt.title}
+              onSave={val => {
+                setPrompt({ ...prompt, title: val });
+                setRenameAllow(false);
+              }}
+              onCancel={() => setRenameAllow(false)}
+            />
+          )}
         </Stack>
         <Box>
           <Typography
@@ -62,15 +97,15 @@ export const PromptCardAccordion = ({ prompt }: Props) => {
           </Typography>
           <TextField
             multiline
-            maxRows={4}
+            maxRows={10}
             fullWidth
             variant="outlined"
             name="description"
             value={prompt.content}
-            onChange={() => {}}
+            onChange={e => setPrompt({ ...prompt, content: e.target.value })}
             InputProps={{
               sx: {
-                p: "12px 0 24px 24px",
+                p: "12px 24px",
                 ".MuiOutlinedInput-notchedOutline": {
                   border: "none",
                 },
@@ -79,7 +114,10 @@ export const PromptCardAccordion = ({ prompt }: Props) => {
           />
         </Box>
 
-        <StylerAccordion prompt={prompt} />
+        <StylerAccordion
+          prompt={prompt}
+          setPrompt={setPrompt}
+        />
       </Box>
     </Box>
   );
