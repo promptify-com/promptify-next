@@ -72,7 +72,7 @@ export const HighlightTextarea = ({
 
     if (textAfterRegexValue !== "") {
       suggestions = suggestions.filter(suggestion =>
-        suggestion.label.toLowerCase().startsWith(textAfterRegexValue.toLowerCase()),
+        suggestion.label.toLowerCase().includes(textAfterRegexValue.toLowerCase()),
       );
     }
 
