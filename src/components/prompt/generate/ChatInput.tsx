@@ -109,9 +109,7 @@ export const ChatInput = ({
       {answers.length > 0 && (
         <Grid
           display={"flex"}
-          alignItems={"flex-start"}
-          alignContent={"flex-start"}
-          alignSelf={"stretch"}
+          alignItems={"center"}
           flexWrap={"wrap"}
           gap={"8px"}
         >
@@ -148,7 +146,12 @@ export const ChatInput = ({
             </Button>
           ))}
           {answers.length > 3 && (
-            <>
+            <Grid
+              display={"flex"}
+              alignItems={"center"}
+              flexWrap={"wrap"}
+              gap={"8px"}
+            >
               <Chip
                 label="+"
                 onClick={e => setAnchorEl(e.currentTarget)}
@@ -213,7 +216,7 @@ export const ChatInput = ({
                   </Stack>
                 </Popover>
               )}
-            </>
+            </Grid>
           )}
           <Button
             variant="text"
