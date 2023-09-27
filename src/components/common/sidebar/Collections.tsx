@@ -16,9 +16,8 @@ interface SideBarCollectionsProps {
   isValidUser: boolean | undefined;
   favCollection: ICollectionById | null;
   collectionLoading: boolean;
-
-  isExplorePage: boolean;
-  isFilterShowing: boolean;
+  isExplorePage?: boolean;
+  isFilterShowing?: boolean;
 }
 
 export const Collections: React.FC<SideBarCollectionsProps> = ({
