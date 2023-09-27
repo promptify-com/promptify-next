@@ -94,8 +94,13 @@ export const EngineParamsSlider: React.FC<Props> = ({ engineParams, onSave, onCa
           direction={"row"}
           flexWrap={"wrap"}
         >
-          {Object.entries(params).map(param => (
-            <Box width={"50%"}>{CustomSlider(param[0], param[1])}</Box>
+          {Object.entries(params).map((param, i) => (
+            <Box
+              key={i}
+              width={"50%"}
+            >
+              {CustomSlider(param[0], param[1])}
+            </Box>
           ))}
         </Stack>
       </Box>

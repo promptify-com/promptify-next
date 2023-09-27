@@ -82,7 +82,7 @@ export const PromptBuilder = () => {
   };
 
   const createPrompt = (order: number) => {
-    const count = prompts.length.toString();
+    const count = prompts.length;
     const temp_id = promptRandomId();
     const _newPrompt = {
       temp_id: temp_id,
@@ -100,17 +100,17 @@ export const PromptBuilder = () => {
       prompt_output_variable: `$temp_id_${temp_id}`,
     };
 
-    let _prompts = prompts;
-    let isNext = false;
-    _prompts.forEach(prompt => {
-      if (prompt.order === order) {
-        _prompts.push(_newPrompt);
-        isNext = true;
-      }
-      if (isNext) prompt.order = order + 1;
-    });
-
-    console.log(_prompts);
+    const _prompts: IEditPrompts[] = prompts
+      .map(prompt => {
+        if (prompt.order === order - 1) {
+          return [prompt, _newPrompt];
+        }
+        if (prompt.order >= order) {
+          return { ...prompt, order: prompt.order + 1 };
+        }
+        return prompt;
+      })
+      .flat();
 
     setPrompts(_prompts);
   };
@@ -164,6 +164,7 @@ export const PromptBuilder = () => {
             gap={3}
           >
             {prompts.map((prompt, i) => {
+              const order = i + 2;
               return (
                 <React.Fragment key={i}>
                   <Box width={"100%"}>
@@ -187,7 +188,7 @@ export const PromptBuilder = () => {
                         bgcolor: "action.hover",
                       },
                     }}
-                    onClick={() => createPrompt(i + 1)}
+                    onClick={() => createPrompt(order)}
                   >
                     New prompt
                   </Button>

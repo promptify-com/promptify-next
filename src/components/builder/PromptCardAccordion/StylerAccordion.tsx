@@ -191,6 +191,7 @@ export const StylerAccordion = ({ prompt, setPrompt }: Props) => {
             <Box>
               {parameters.map(param => (
                 <Button
+                  key={param.id}
                   sx={{
                     width: "100%",
                     justifyContent: "flex-start",

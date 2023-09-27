@@ -42,8 +42,8 @@ export const EnginesGroups: React.FC<Props> = ({ onChange }) => {
           gap={3}
         >
           {engineGroups &&
-            Object.keys(engineGroups)?.map(group => (
-              <Box>
+            Object.keys(engineGroups)?.map((group, i) => (
+              <Box key={i}>
                 <Typography
                   sx={{
                     p: "14px 16px",
@@ -57,6 +57,7 @@ export const EnginesGroups: React.FC<Props> = ({ onChange }) => {
                 </Typography>
                 {engineGroups[group].map(engine => (
                   <Button
+                    key={engine.id}
                     sx={{
                       width: "100%",
                       justifyContent: "flex-start",
