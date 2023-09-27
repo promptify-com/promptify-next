@@ -37,13 +37,11 @@ export const StylerAccordion = ({ prompt, setPrompt }: Props) => {
       <AccordionSummary
         expandIcon={<ExpandMore />}
         sx={{
+          minHeight: "42px !important",
           ".MuiAccordionSummary-content": {
             m: 0,
             alignItems: "center",
             gap: 2,
-          },
-          "&.Mui-expanded": {
-            minHeight: "48px !important",
           },
         }}
       >
@@ -62,6 +60,7 @@ export const StylerAccordion = ({ prompt, setPrompt }: Props) => {
               fontSize: 15,
               fontWeight: 500,
               color: "onSurface",
+              opacity: 0.8,
             }}
           >
             Style options:

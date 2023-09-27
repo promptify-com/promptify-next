@@ -3,6 +3,7 @@ import { Autocomplete, Box, Checkbox, FormControlLabel, Stack, Switch, TextField
 import { IEditPrompts } from "@/common/types/builder";
 import { useGetEnginesQuery } from "@/core/api/engines";
 import { EngineParams } from "./EngineParams";
+import { validatePromptOutput } from "@/common/helpers/promptValidator";
 
 interface OptionsProps {
   selectedNodeData: IEditPrompts;
@@ -20,8 +21,8 @@ export const Options = ({ selectedNodeData, setSelectedNodeData }: OptionsProps)
 
     if (type !== "checkbox") {
       // prompt_output_variable requires a $ prefix
-      if (name === "prompt_output_variable" && value.length && value[0] !== "$") {
-        value = "$" + value;
+      if (name === "prompt_output_variable") {
+        value = validatePromptOutput(value);
       }
       optionVal = value;
     }

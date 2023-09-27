@@ -5,6 +5,7 @@ import { Header } from "./Header";
 import { StylerAccordion } from "./StylerAccordion";
 import { IEditPrompts } from "@/common/types/builder";
 import { RenameForm } from "@/components/common/forms/RenameForm";
+import { Footer } from "./Footer";
 
 interface Props {
   prompt: IEditPrompts;
@@ -29,16 +30,10 @@ export const PromptCardAccordion = ({ prompt, setPrompt }: Props) => {
         },
       }}
     >
-      <Box
-        sx={{
-          p: "12px",
-        }}
-      >
-        <Header
-          prompt={prompt}
-          setPrompt={setPrompt}
-        />
-      </Box>
+      <Header
+        prompt={prompt}
+        setPrompt={setPrompt}
+      />
       <Divider sx={{ borderColor: "surface.3" }} />
       <Box
         sx={{
@@ -57,12 +52,14 @@ export const PromptCardAccordion = ({ prompt, setPrompt }: Props) => {
                 direction={"row"}
                 alignItems={"center"}
                 gap={1}
+                sx={{
+                  opacity: 0.5,
+                  ":hover": {
+                    opacity: 1,
+                  },
+                }}
               >
-                <Typography
-                  sx={{ color: "onSurface", fontSize: 14, fontWeight: 500, opacity: 0.8, ":hover": { opacity: 1 } }}
-                >
-                  {prompt.title || ""}
-                </Typography>
+                <Typography sx={{ color: "onSurface", fontSize: 14, fontWeight: 500 }}>{prompt.title || ""}</Typography>
                 <ModeEdit
                   sx={{ cursor: "pointer", fontSize: "16px" }}
                   onClick={() => setRenameAllow(true)}
@@ -115,6 +112,11 @@ export const PromptCardAccordion = ({ prompt, setPrompt }: Props) => {
         </Box>
 
         <StylerAccordion
+          prompt={prompt}
+          setPrompt={setPrompt}
+        />
+
+        <Footer
           prompt={prompt}
           setPrompt={setPrompt}
         />

@@ -31,7 +31,7 @@ import { ContentCopy } from "@mui/icons-material";
 import { IEditPrompts } from "@/common/types/builder";
 import TemplateForm from "@/components/common/forms/TemplateForm";
 import { promptRandomId } from "@/common/helpers/promptRandomId";
-import { isPromptVariableValid } from "@/common/helpers/isPromptVariableValid";
+import { isPromptVariableValid } from "@/common/helpers/promptValidator";
 
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import { theme } from "@/theme";

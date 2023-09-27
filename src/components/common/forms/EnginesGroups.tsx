@@ -26,7 +26,10 @@ export const EnginesGroups: React.FC<Props> = ({ onChange }) => {
   );
 
   return (
-    <Stack height={"100%"}>
+    <Stack
+      height={"100%"}
+      width={"100%"}
+    >
       <Box p={"16px"}>Select AI Engine:</Box>
       <Divider sx={{ borderColor: "surface.3" }} />
       <Box

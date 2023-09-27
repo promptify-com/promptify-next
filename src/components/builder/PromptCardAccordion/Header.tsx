@@ -36,7 +36,7 @@ export const Header = ({ prompt, setPrompt }: Props) => {
         direction={"row"}
         alignItems={"center"}
         gap={2}
-        width={"100%"}
+        p={"12px"}
       >
         <Menu
           sx={{
