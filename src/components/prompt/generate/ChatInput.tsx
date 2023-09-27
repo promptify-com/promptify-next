@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { Clear, Edit, Send } from "@mui/icons-material";
-import { Box, Button, Grid, InputBase } from "@mui/material";
+import { Box, Button, Chip, Grid, InputBase, Popover, Stack } from "@mui/material";
 
 import { IAnswer } from "@/common/types/chat";
 import { addSpaceBetweenCapitalized } from "@/common/helpers/addSpaceBetweenCapitalized";
+import useTruncate from "@/hooks/useTruncate";
 
 interface ChatInputProps {
   onChange: (str: string) => void;
@@ -26,6 +27,11 @@ export const ChatInput = ({
   disabledTags,
   onVary,
 }: ChatInputProps) => {
+  const { truncate } = useTruncate();
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+
+  const handleClose = () => setAnchorEl(null);
+
   return (
     <Grid
       p={"0px 16px"}
@@ -50,7 +56,7 @@ export const ChatInput = ({
           flexWrap={"wrap"}
           gap={"8px"}
         >
-          {answers.map(answer => (
+          {answers.slice(0, 3).map(answer => (
             <Button
               onClick={() => onAnswerClear(answer)}
               disabled={disabledTags}
@@ -78,9 +84,77 @@ export const ChatInput = ({
                 },
               }}
             >
-              {addSpaceBetweenCapitalized(answer.inputName)} : {answer.answer}
+              {addSpaceBetweenCapitalized(answer.inputName)} : {truncate(answer.answer as string, { length: 30 })}
             </Button>
           ))}
+          {answers.length > 3 && (
+            <>
+              <Chip
+                label="+"
+                onClick={e => setAnchorEl(e.currentTarget)}
+                sx={{
+                  bgcolor: "surface.3",
+                  color: "onSurface",
+                  borderColor: "surface.3",
+                  ":hover": {
+                    bgcolor: "surface.5",
+                    color: "onSurface",
+                  },
+                }}
+                size="small"
+              />
+              {anchorEl && (
+                <Popover
+                  open
+                  anchorEl={anchorEl}
+                  onClose={handleClose}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "left",
+                  }}
+                >
+                  <Stack
+                    alignItems={"flex-start"}
+                    p={1}
+                    gap={0.5}
+                  >
+                    {answers.slice(3).map(answer => (
+                      <Button
+                        onClick={() => onAnswerClear(answer)}
+                        disabled={disabledTags}
+                        key={answer.inputName}
+                        startIcon={
+                          <Clear
+                            sx={{
+                              opacity: 0.5,
+                            }}
+                          />
+                        }
+                        variant="contained"
+                        sx={{
+                          p: "1px 10px",
+                          fontSize: 15,
+                          fontWeight: "500",
+                          borderBottomRightRadius: "4px",
+                          borderTopRightRadius: "4px",
+                          bgcolor: "surface.3",
+                          color: "onSurface",
+                          borderColor: "surface.3",
+                          ":hover": {
+                            bgcolor: "surface.5",
+                            color: "onSurface",
+                          },
+                        }}
+                      >
+                        {addSpaceBetweenCapitalized(answer.inputName)} :{" "}
+                        {truncate(answer.answer as string, { length: 30 })}
+                      </Button>
+                    ))}
+                  </Stack>
+                </Popover>
+              )}
+            </>
+          )}
           <Button
             variant="text"
             startIcon={<Edit />}
