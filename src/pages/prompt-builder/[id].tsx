@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useGetPromptTemplatesQuery } from "@/core/api/templates";
+import { useGetPromptTemplatesQuery, usePublishTemplateMutation } from "@/core/api/templates";
 import { Alert, Box, Button, Snackbar, Stack, SwipeableDrawer, Typography } from "@mui/material";
 import { Sidebar } from "@/components/SideBar";
 import { useDispatch, useSelector } from "react-redux";
@@ -28,6 +28,7 @@ export const PromptBuilder = () => {
   const { data: fetchedTemplate } = useGetPromptTemplatesQuery(id ? +id : skipToken);
   const [templateData, setTemplateData] = useState(fetchedTemplate);
   const [prompts, setPrompts] = useState<IEditPrompts[]>([]);
+  const [publishTemplate] = usePublishTemplateMutation();
   const [messageSnackBar, setMessageSnackBar] = React.useState({ status: false, message: "" });
   const [errorSnackBar, setErrorSnackBar] = React.useState({ status: false, message: "" });
 
@@ -86,7 +87,7 @@ export const PromptBuilder = () => {
     const temp_id = promptRandomId();
     const _newPrompt = {
       temp_id: temp_id,
-      title: `Prompt #${prompts.length}`,
+      title: `Prompt #${order}`,
       content: "Describe here prompt parameters, for example {{name:text}} or {{age:number}}",
       engine_id: engines ? engines[0].id : 0,
       dependencies: [],
@@ -98,6 +99,11 @@ export const PromptBuilder = () => {
       show_output: true,
       prompt_output_variable: `$temp_id_${temp_id}`,
     };
+
+    if (!prompts.length) {
+      setPrompts([_newPrompt]);
+      return;
+    }
 
     const _prompts: IEditPrompts[] = prompts
       .map(prompt => {
@@ -114,7 +120,7 @@ export const PromptBuilder = () => {
     setPrompts(_prompts);
   };
 
-  const saveTemplate = () => {
+  const handleSaveTemplate = () => {
     if (!templateData) {
       setErrorSnackBar({ status: true, message: "Please try again or refresh the page" });
       return;
@@ -154,10 +160,20 @@ export const PromptBuilder = () => {
         })),
       })),
     };
-    updateTemplate(Number(id), _template).then(() => {
+    updateTemplate(templateData.id, _template).then(() => {
       setMessageSnackBar({ status: true, message: "Prompt template saved with success" });
       window.location.reload();
     });
+  };
+
+  const handlePublishTemplate = async () => {
+    if (!templateData) {
+      setErrorSnackBar({ status: true, message: "Please try again or refresh the page" });
+      return;
+    }
+
+    await publishTemplate(templateData.id);
+    window.location.reload();
   };
 
   return (
@@ -180,10 +196,10 @@ export const PromptBuilder = () => {
         <Header
           status={templateData?.status || "DRAFT"}
           title={templateData?.title || ""}
-          onPublish={() => {}}
-          onDrawerOpen={() => setTemplateDrawerOpen(true)}
-          onSave={saveTemplate}
           templateSlug={templateData?.slug}
+          onPublish={handlePublishTemplate}
+          onSave={handleSaveTemplate}
+          onDrawerOpen={() => setTemplateDrawerOpen(true)}
         />
 
         <Box
@@ -208,38 +224,60 @@ export const PromptBuilder = () => {
             alignItems={"center"}
             gap={3}
           >
-            {prompts.map((prompt, i) => {
-              const order = i + 2;
-              return (
-                <React.Fragment key={i}>
-                  <Box width={"100%"}>
-                    <PromptCardAccordion
-                      key={prompt.id}
-                      prompt={prompt}
-                      setPrompt={changePrompt}
-                    />
-                  </Box>
-                  <Button
-                    variant="contained"
-                    startIcon={<Add />}
-                    sx={{
-                      bgcolor: "surface.1",
-                      color: "text.primary",
-                      p: "6px 16px",
-                      border: "none",
-                      fontSize: 14,
-                      fontWeight: 500,
-                      ":hover": {
-                        bgcolor: "action.hover",
-                      },
-                    }}
-                    onClick={() => createPrompt(order)}
-                  >
-                    New prompt
-                  </Button>
-                </React.Fragment>
-              );
-            })}
+            {prompts.length ? (
+              prompts.map((prompt, i) => {
+                const order = i + 2;
+                return (
+                  <React.Fragment key={i}>
+                    <Box width={"100%"}>
+                      <PromptCardAccordion
+                        key={prompt.id}
+                        prompt={prompt}
+                        setPrompt={changePrompt}
+                      />
+                    </Box>
+                    <Button
+                      variant="contained"
+                      startIcon={<Add />}
+                      sx={{
+                        bgcolor: "surface.1",
+                        color: "text.primary",
+                        p: "6px 16px",
+                        border: "none",
+                        fontSize: 14,
+                        fontWeight: 500,
+                        ":hover": {
+                          bgcolor: "action.hover",
+                        },
+                      }}
+                      onClick={() => createPrompt(order)}
+                    >
+                      New prompt
+                    </Button>
+                  </React.Fragment>
+                );
+              })
+            ) : (
+              <Button
+                variant="contained"
+                startIcon={<Add />}
+                sx={{
+                  mt: "20svh",
+                  bgcolor: "surface.1",
+                  color: "text.primary",
+                  p: "6px 16px",
+                  border: "none",
+                  fontSize: 14,
+                  fontWeight: 500,
+                  ":hover": {
+                    bgcolor: "action.hover",
+                  },
+                }}
+                onClick={() => createPrompt(1)}
+              >
+                New prompt
+              </Button>
+            )}
           </Stack>
         </Box>
 
