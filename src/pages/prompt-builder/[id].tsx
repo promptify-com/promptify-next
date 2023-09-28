@@ -16,9 +16,9 @@ import { useRouter } from "next/router";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
 import { isPromptVariableValid } from "@/common/helpers/promptValidator";
 import { updateTemplate } from "@/hooks/api/templates";
-
 import { setOpenSidebarRight } from "@/core/store/sidebarRightSlice";
 import { SidebarRight } from "@/components/SideBarRight";
+import BuilderPromptPlaceholder from "@/components/placeholders/BuilderPromptPlaceholder";
 
 export const PromptBuilder = () => {
   const router = useRouter();
@@ -28,7 +28,7 @@ export const PromptBuilder = () => {
   const toggleSidebar = () => dispatch(setOpenSidebar(!sidebarOpen));
   const { data: engines } = useGetEnginesQuery();
   const [templateDrawerOpen, setTemplateDrawerOpen] = React.useState(false);
-  const { data: fetchedTemplate } = useGetPromptTemplatesQuery(id ? +id : skipToken);
+  const { data: fetchedTemplate, isLoading } = useGetPromptTemplatesQuery(id ? +id : skipToken);
   const [templateData, setTemplateData] = useState(fetchedTemplate);
   const [prompts, setPrompts] = useState<IEditPrompts[]>([]);
   const [publishTemplate] = usePublishTemplateMutation();
@@ -239,65 +239,69 @@ export const PromptBuilder = () => {
             </Typography>
           </Stack>
 
-          <Stack
-            alignItems={"center"}
-            gap={3}
-          >
-            {prompts.length ? (
-              prompts.map((prompt, i) => {
-                const order = i + 2;
-                return (
-                  <React.Fragment key={i}>
-                    <Box width={"100%"}>
-                      <PromptCardAccordion
-                        key={prompt.id}
-                        prompt={prompt}
-                        setPrompt={changePrompt}
-                      />
-                    </Box>
-                    <Button
-                      variant="contained"
-                      startIcon={<Add />}
-                      sx={{
-                        bgcolor: "surface.1",
-                        color: "text.primary",
-                        p: "6px 16px",
-                        border: "none",
-                        fontSize: 14,
-                        fontWeight: 500,
-                        ":hover": {
-                          bgcolor: "action.hover",
-                        },
-                      }}
-                      onClick={() => createPrompt(order)}
-                    >
-                      New prompt
-                    </Button>
-                  </React.Fragment>
-                );
-              })
-            ) : (
-              <Button
-                variant="contained"
-                startIcon={<Add />}
-                sx={{
-                  mt: "20svh",
-                  bgcolor: "surface.1",
-                  color: "text.primary",
-                  p: "6px 16px",
-                  border: "none",
-                  fontSize: 14,
-                  fontWeight: 500,
-                  ":hover": {
-                    bgcolor: "action.hover",
-                  },
-                }}
-                onClick={() => createPrompt(1)}
-              >
-                New prompt
-              </Button>
-            )}
-          </Stack>
+          {isLoading ? (
+            <BuilderPromptPlaceholder />
+          ) : (
+            <Stack
+              alignItems={"center"}
+              gap={3}
+            >
+              {prompts.length ? (
+                prompts.map((prompt, i) => {
+                  const order = i + 2;
+                  return (
+                    <React.Fragment key={i}>
+                      <Box width={"100%"}>
+                        <PromptCardAccordion
+                          key={prompt.id}
+                          prompt={prompt}
+                          setPrompt={changePrompt}
+                        />
+                      </Box>
+                      <Button
+                        variant="contained"
+                        startIcon={<Add />}
+                        sx={{
+                          bgcolor: "surface.1",
+                          color: "text.primary",
+                          p: "6px 16px",
+                          border: "none",
+                          fontSize: 14,
+                          fontWeight: 500,
+                          ":hover": {
+                            bgcolor: "action.hover",
+                          },
+                        }}
+                        onClick={() => createPrompt(order)}
+                      >
+                        New prompt
+                      </Button>
+                    </React.Fragment>
+                  );
+                })
+              ) : (
+                <Button
+                  variant="contained"
+                  startIcon={<Add />}
+                  sx={{
+                    mt: "20svh",
+                    bgcolor: "surface.1",
+                    color: "text.primary",
+                    p: "6px 16px",
+                    border: "none",
+                    fontSize: 14,
+                    fontWeight: 500,
+                    ":hover": {
+                      bgcolor: "action.hover",
+                    },
+                  }}
+                  onClick={() => createPrompt(1)}
+                >
+                  New prompt
+                </Button>
+              )}
+            </Stack>
+          )}
         </Box>
 
         {!!templateData && (
