@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useGetPromptTemplatesQuery } from "@/core/api/templates";
-import { Box, Button, Stack, SwipeableDrawer, Typography } from "@mui/material";
+import { Alert, Box, Button, Snackbar, Stack, SwipeableDrawer, Typography } from "@mui/material";
 import { Sidebar } from "@/components/SideBar";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/core/store";
@@ -14,20 +14,22 @@ import { Add } from "@mui/icons-material";
 import { promptRandomId } from "@/common/helpers";
 import { useRouter } from "next/router";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
+import { isPromptVariableValid } from "@/common/helpers/promptValidator";
+import { updateTemplate } from "@/hooks/api/templates";
 
 export const PromptBuilder = () => {
   const router = useRouter();
   const id = router.query.id;
   const sidebarOpen = useSelector((state: RootState) => state.sidebar.open);
   const dispatch = useDispatch();
-  const toggleSidebar = () => {
-    dispatch(setOpenSidebar(!sidebarOpen));
-  };
+  const toggleSidebar = () => dispatch(setOpenSidebar(!sidebarOpen));
   const { data: engines } = useGetEnginesQuery();
   const [templateDrawerOpen, setTemplateDrawerOpen] = React.useState(false);
   const { data: fetchedTemplate } = useGetPromptTemplatesQuery(id ? +id : skipToken);
   const [templateData, setTemplateData] = useState(fetchedTemplate);
   const [prompts, setPrompts] = useState<IEditPrompts[]>([]);
+  const [messageSnackBar, setMessageSnackBar] = React.useState({ status: false, message: "" });
+  const [errorSnackBar, setErrorSnackBar] = React.useState({ status: false, message: "" });
 
   useEffect(() => {
     setTemplateData(fetchedTemplate);
@@ -48,7 +50,6 @@ export const PromptBuilder = () => {
 
         return {
           id: prompt.id,
-          count: prompts.toString(),
           title: prompt.title || `Prompt #1`,
           content: prompt.content || "Describe here prompt parameters, for example {{name:John Doe}}",
           engine_id: prompt.engine?.id || engines![0].id,
@@ -82,12 +83,10 @@ export const PromptBuilder = () => {
   };
 
   const createPrompt = (order: number) => {
-    const count = prompts.length;
     const temp_id = promptRandomId();
     const _newPrompt = {
       temp_id: temp_id,
-      count: count,
-      title: `Prompt #${count}`,
+      title: `Prompt #${prompts.length}`,
       content: "Describe here prompt parameters, for example {{name:text}} or {{age:number}}",
       engine_id: engines ? engines[0].id : 0,
       dependencies: [],
@@ -115,6 +114,52 @@ export const PromptBuilder = () => {
     setPrompts(_prompts);
   };
 
+  const saveTemplate = () => {
+    if (!templateData) {
+      setErrorSnackBar({ status: true, message: "Please try again or refresh the page" });
+      return;
+    }
+
+    const invalids: string[] = [];
+    prompts.map(prompt => {
+      const validation = isPromptVariableValid(prompt.content);
+      if (!validation.isValid) {
+        invalids.push(validation.message);
+      }
+    });
+
+    if (invalids.length) {
+      setErrorSnackBar({ status: true, message: `You have entered an invalid prompt variable ${invalids.toString()}` });
+      return;
+    }
+
+    const _template: any = {
+      title: templateData.title,
+      description: templateData.description,
+      example: templateData.example,
+      thumbnail: templateData.thumbnail,
+      is_visible: templateData.is_visible,
+      language: templateData.language,
+      duration: templateData.duration.toString(),
+      category: templateData.category.id,
+      difficulty: templateData.difficulty,
+      status: templateData.status,
+      prompts_list: prompts.map(prompt => ({
+        ...prompt,
+        parameters: prompt?.parameters?.map(params => ({
+          parameter_id: params.parameter_id,
+          score: params.score,
+          is_visible: params.is_visible,
+          is_editable: params.is_editable,
+        })),
+      })),
+    };
+    updateTemplate(Number(id), _template).then(() => {
+      setMessageSnackBar({ status: true, message: "Prompt template saved with success" });
+      window.location.reload();
+    });
+  };
+
   return (
     <Box
       sx={{
@@ -137,7 +182,7 @@ export const PromptBuilder = () => {
           title={templateData?.title || ""}
           onPublish={() => {}}
           onDrawerOpen={() => setTemplateDrawerOpen(true)}
-          onSave={() => {}}
+          onSave={saveTemplate}
           templateSlug={templateData?.slug}
         />
 
@@ -228,6 +273,27 @@ export const PromptBuilder = () => {
           </SwipeableDrawer>
         )}
       </Box>
+      <Snackbar
+        open={messageSnackBar.status}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+        autoHideDuration={3000}
+        message="Prompt template saved with success"
+        onClose={() => setMessageSnackBar({ status: false, message: "" })}
+      />
+      <Snackbar
+        open={errorSnackBar.status}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+        autoHideDuration={4000}
+        onClose={() => setErrorSnackBar({ status: false, message: "" })}
+      >
+        <Alert
+          onClose={() => setErrorSnackBar({ status: false, message: "" })}
+          severity="error"
+          sx={{ width: "100%", bgcolor: "errorContainer", color: "onErrorContainer" }}
+        >
+          {errorSnackBar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
