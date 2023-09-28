@@ -17,6 +17,9 @@ import { skipToken } from "@reduxjs/toolkit/dist/query";
 import { isPromptVariableValid } from "@/common/helpers/promptValidator";
 import { updateTemplate } from "@/hooks/api/templates";
 
+import { setOpenSidebarRight } from "@/core/store/sidebarRightSlice";
+import { SidebarRight } from "@/components/SideBarRight";
+
 export const PromptBuilder = () => {
   const router = useRouter();
   const id = router.query.id;
@@ -31,6 +34,15 @@ export const PromptBuilder = () => {
   const [publishTemplate] = usePublishTemplateMutation();
   const [messageSnackBar, setMessageSnackBar] = React.useState({ status: false, message: "" });
   const [errorSnackBar, setErrorSnackBar] = React.useState({ status: false, message: "" });
+
+  const sidebarRightOpen = useSelector((state: RootState) => state.sidebarRight.open);
+
+  const toggleSidebarRight = () => {
+    dispatch(setOpenSidebarRight(true));
+  };
+  const closeSidebarRight = () => {
+    dispatch(setOpenSidebarRight(false));
+  };
 
   useEffect(() => {
     setTemplateData(fetchedTemplate);
@@ -191,6 +203,7 @@ export const PromptBuilder = () => {
       <Box
         sx={{
           ml: sidebarOpen ? "299px" : "86px",
+          mr: sidebarRightOpen ? "352px" : "0px",
         }}
       >
         <Header
@@ -200,6 +213,12 @@ export const PromptBuilder = () => {
           onPublish={handlePublishTemplate}
           onSave={handleSaveTemplate}
           onDrawerOpen={() => setTemplateDrawerOpen(true)}
+        />
+
+        <SidebarRight
+          open={sidebarRightOpen}
+          toggleSideBarRight={() => toggleSidebarRight()}
+          closeSideBarRight={() => closeSidebarRight()}
         />
 
         <Box
