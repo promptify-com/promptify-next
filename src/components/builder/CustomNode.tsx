@@ -1,62 +1,12 @@
 import * as React from "react";
 import { ClassicScheme, RenderEmit, Presets } from "rete-react-render-plugin";
 import { Divider, Paper } from "@mui/material";
-import { makeStyles } from "@mui/styles";
+
+import styles from "@/styles/builder.module.css";
 
 const { RefSocket } = Presets.classic;
 
 type NodeExtraData = { width?: number; height?: number; engineIcon?: string };
-
-const useStyles = makeStyles({
-  nodeStyles: {
-    width: 300,
-    borderColor: "transparent",
-    minHeight: 112,
-    background: "#fdfbff",
-    color: "#1b1b1e",
-    border: "2px solid",
-    borderRadius: 16,
-    cursor: "pointer",
-    boxShadow: `
-      0px 6px 6px -3px rgba(225, 226, 236, 0.2),
-      0px 10px 14px 1px rgba(225, 226, 236, 0.14),
-      0px 4px 18px 3px rgba(27, 27, 30, 0.12)
-    `,
-  },
-  selected: {
-    borderColor: "black",
-  },
-  header: {
-    fontSize: 16,
-    fontWeight: 500,
-    fontFamily: "Poppins",
-    padding: 16,
-    display: "flex",
-    gap: 8,
-    whiteSpace: "nowrap",
-    overflowX: "hidden",
-  },
-  headerImg: {
-    width: 24,
-    height: 24,
-    borderRadius: "50%",
-  },
-  hr: {
-    border: "0.5px solid #e1e2ec",
-    margin: 0,
-  },
-  body: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: "16px 8px",
-  },
-  ioContainer: {
-    display: "flex",
-    gap: 8,
-    fontSize: 14,
-  },
-});
 
 function sortByIndex<T extends [string, undefined | { index?: number }][]>(entries: T) {
   entries.sort((a, b) => {
@@ -81,15 +31,13 @@ export function CustomNode<Scheme extends ClassicScheme>(props: Props<Scheme>) {
   const selected = props.data.selected || false;
   const { id, label, engineIcon } = props.data;
 
-  const classes = useStyles();
-
   sortByIndex(inputs);
   sortByIndex(outputs);
   sortByIndex(controls);
 
   return (
-    <Paper className={`${classes.nodeStyles} ${selected ? classes.selected : ""}`}>
-      <div className={classes.header}>
+    <div className={`${styles.nodeStyles} ${selected ? styles.selected : ""}`}>
+      <div className={styles.header}>
         <img
           src={engineIcon}
           alt={label}
@@ -109,12 +57,12 @@ export function CustomNode<Scheme extends ClassicScheme>(props: Props<Scheme>) {
           },
         }}
       />
-      <div className={classes.body}>
+      <div className={styles.body}>
         {inputs.map(
           ([key, input]) =>
             input && (
               <div
-                className={classes.ioContainer}
+                className={styles.ioContainer}
                 key={key}
                 data-testid={`input-${key}`}
               >
@@ -141,7 +89,7 @@ export function CustomNode<Scheme extends ClassicScheme>(props: Props<Scheme>) {
           ([key, output]) =>
             output && (
               <div
-                className={`${classes.ioContainer}`}
+                className={`${styles.ioContainer}`}
                 key={key}
                 data-testid={`output-${key}`}
               >
@@ -163,6 +111,6 @@ export function CustomNode<Scheme extends ClassicScheme>(props: Props<Scheme>) {
             ),
         )}
       </div>
-    </Paper>
+    </div>
   );
 }

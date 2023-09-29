@@ -1,7 +1,6 @@
 import React from "react";
 import { ClassicScheme, Presets } from "rete-react-render-plugin";
-import { makeStyles } from "@mui/styles";
-
+import styles from "@/styles/builder.module.css";
 type SelectableConnectionProps = {
   data: ClassicScheme["Connection"] & {
     selected?: boolean;
@@ -11,32 +10,18 @@ type SelectableConnectionProps = {
 };
 
 export function SelectableConnection({ data, click }: SelectableConnectionProps) {
-  const useStyles = makeStyles({
-    svg: {
-      overflow: "visible !important",
-      position: "absolute",
-      pointerEvents: "none",
-    },
-    path: {
-      fill: "none",
-      strokeWidth: "3px",
-      stroke: data.selected ? "red" : "#1B1B1E",
-      pointerEvents: "auto",
-    },
-  });
   const { path } = Presets.classic.useConnection();
-  const classes = useStyles();
 
   if (!path) return null;
 
   return (
     <svg
-      className={classes.svg}
+      className={styles.svg}
       onClick={click}
       data-testid="connection"
     >
       <path
-        className={classes.path}
+        className={`${styles.path} ${data.selected ? styles.pathSelected : ""}`}
         d={path}
       />
     </svg>
