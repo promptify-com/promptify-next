@@ -16,8 +16,6 @@ interface SideBarCollectionsProps {
   isValidUser: boolean | undefined;
   favCollection: ICollectionById | null;
   collectionLoading: boolean;
-  isExplorePage?: boolean;
-  isFilterShowing?: boolean;
 }
 
 export const Collections: React.FC<SideBarCollectionsProps> = ({
@@ -25,9 +23,6 @@ export const Collections: React.FC<SideBarCollectionsProps> = ({
   isValidUser,
   favCollection,
   collectionLoading,
-
-  isExplorePage,
-  isFilterShowing,
 }) => {
   const router = useRouter();
 
@@ -45,7 +40,7 @@ export const Collections: React.FC<SideBarCollectionsProps> = ({
         {!isValidUser ? (
           <CollectionsEmptyBox onExpand={sidebarOpen} />
         ) : (
-          <Box sx={{ height: isExplorePage && isFilterShowing ? "50vh" : "auto" }}>
+          <Box>
             <Grid
               display={"flex"}
               alignItems={"center"}

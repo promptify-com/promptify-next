@@ -167,6 +167,10 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
           display={"flex"}
           flexDirection={"column"}
           gap={1}
+          className="sidebar-list"
+          sx={{
+            overflow: showFilters ? "scroll" : "none",
+          }}
         >
           <Grid
             display={"flex"}
@@ -296,33 +300,13 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
             </Grid>
           ))}
           <Divider />
-          <Box
-            className="sidebar-list"
-            sx={{
-              height: isExplorePage && showFilters ? "300px" : "auto",
-              overflow: isExplorePage && showFilters ? "scroll" : "none",
-              overflowX: "hidden",
-              "::-webkit-scrollbar": {
-                width: "0.5rem",
-              },
-              "::-webkit-scrollbar-track": {
-                background: "transparent",
-              },
-              "::-webkit-scrollbar-thumb": {
-                background: "transparent",
-                borderRadius: "0.25rem",
-              },
-            }}
-          >
-            <Collections
-              favCollection={collections}
-              collectionLoading={isCollectionsLoading}
-              isValidUser={isValidUser}
-              sidebarOpen={open || expandedOnHover}
-              isExplorePage={isExplorePage}
-              isFilterShowing={showFilters}
-            />
-          </Box>
+
+          <Collections
+            favCollection={collections}
+            collectionLoading={isCollectionsLoading}
+            isValidUser={isValidUser}
+            sidebarOpen={open || expandedOnHover}
+          />
         </Box>
       </Drawer>
     </Box>
