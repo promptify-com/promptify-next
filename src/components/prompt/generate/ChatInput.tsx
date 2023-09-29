@@ -42,6 +42,15 @@ export const ChatInput = ({
 
   const dynamicLength = calculateTruncateLength(containerRef);
 
+  const getAnswerName = (answer: IAnswer) => {
+    return ` ${truncate(addSpaceBetweenCapitalized(answer.inputName), { length: dynamicLength })} : ${truncate(
+      answer.answer as string,
+      {
+        length: dynamicLength,
+      },
+    )}`;
+  };
+
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   return (
     <Grid
@@ -141,8 +150,7 @@ export const ChatInput = ({
                 },
               }}
             >
-              {addSpaceBetweenCapitalized(answer.inputName)} :{" "}
-              {truncate(answer.answer as string, { length: dynamicLength })}
+              {getAnswerName(answer)}
             </Button>
           ))}
           {answers.length > 3 && (
@@ -209,8 +217,7 @@ export const ChatInput = ({
                           },
                         }}
                       >
-                        {addSpaceBetweenCapitalized(answer.inputName)} :{" "}
-                        {truncate(answer.answer as string, { length: 30 })}
+                        {getAnswerName(answer)}
                       </Button>
                     ))}
                   </Stack>
