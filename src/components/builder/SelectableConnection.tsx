@@ -1,52 +1,44 @@
 import React from "react";
 import { ClassicScheme, Presets } from "rete-react-render-plugin";
-import styled from "styled-components";
+import { makeStyles } from "@mui/styles";
 
-const Svg = styled.svg`
-  overflow: visible !important;
-  position: absolute;
-  pointer-events: none;
-`;
-
-const Path = styled.path<{ selected?: boolean; styles?: (props: any) => any }>`
-  fill: none;
-  stroke-width: 3px;
-  stroke: ${props => (props.selected ? "red" : "#1B1B1E")};
-  pointer-events: auto;
-  ${props => props.styles && props.styles(props)}
-`;
-
-const HoverPath = styled.path`
-  fill: none;
-  stroke-width: 15px;
-  pointer-events: auto;
-  stroke: transparent;
-`;
-
-export function SelectableConnection(props: {
+type SelectableConnectionProps = {
   data: ClassicScheme["Connection"] & {
     selected?: boolean;
     isLoop?: boolean;
   };
   click?: () => void;
-  styles?: () => any;
-}) {
+};
+
+export function SelectableConnection({ data, click }: SelectableConnectionProps) {
+  const useStyles = makeStyles({
+    svg: {
+      overflow: "visible !important",
+      position: "absolute",
+      pointerEvents: "none",
+    },
+    path: {
+      fill: "none",
+      strokeWidth: "3px",
+      stroke: data.selected ? "red" : "#1B1B1E",
+      pointerEvents: "auto",
+    },
+  });
   const { path } = Presets.classic.useConnection();
+  const classes = useStyles();
 
   if (!path) return null;
 
   return (
-    <Svg
-      //   onPointerDown={(e: PointerEvent) => e.stopPropagation()}
-      onClick={props.click}
+    <svg
+      className={classes.svg}
+      onClick={click}
       data-testid="connection"
     >
-      <HoverPath d={path} />
-      <Path
-        selected={props.data.selected}
-        styles={props.styles}
+      <path
+        className={classes.path}
         d={path}
       />
-    </Svg>
+    </svg>
   );
 }
