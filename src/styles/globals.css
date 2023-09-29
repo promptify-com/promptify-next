@@ -27,13 +27,6 @@ body {
 }
 
 
-/* [title^='socket'] {
-  background: #E1E2EC !important;
-  border: none !important;
-  height: 12px !important;
-  width: 12px !important;
-} */
-
 .resp-justity {
   justify-content: center;
 }
