@@ -43,6 +43,7 @@ export const Header = ({ prompt, setPrompt }: Props) => {
             width: 24,
             height: 24,
             opacity: 0.3,
+            cursor: "pointer",
             ":hover": {
               opacity: 1,
             },

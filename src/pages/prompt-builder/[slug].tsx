@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { usePublishTemplateMutation } from "@/core/api/templates";
 import { Alert, Box, Button, Snackbar, Stack, SwipeableDrawer, Typography } from "@mui/material";
 import { Sidebar } from "@/components/SideBar";
@@ -7,7 +7,6 @@ import { RootState } from "@/core/store";
 import { setOpenSidebar } from "@/core/store/sidebarSlice";
 import { Header } from "@/components/builder/Header";
 import TemplateForm from "@/components/common/forms/TemplateForm";
-import { PromptCardAccordion } from "@/components/builder/PromptCardAccordion";
 import { IEditPrompts } from "@/common/types/builder";
 import { Add } from "@mui/icons-material";
 import { promptRandomId } from "@/common/helpers";
@@ -16,24 +15,27 @@ import { updateTemplate } from "@/hooks/api/templates";
 import { setOpenSidebarRight } from "@/core/store/sidebarRightSlice";
 import { SidebarRight } from "@/components/SideBarRight";
 import { Engine, Templates } from "@/core/api/dto/templates";
-import { authClient } from "@/common/axios";
+import { client } from "@/common/axios";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
+import PromptList from "@/components/builder/PromptCardAccordion/PromptsList";
 
 interface PromptBuilderProps {
   templateData: Templates;
   initPrompts: IEditPrompts[];
   engines: Engine[];
+  initPromptsOrders: { promptId: number; order: number }[];
 }
 
 export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuilderProps) => {
   const sidebarOpen = useSelector((state: RootState) => state.sidebar.open);
   const dispatch = useDispatch();
   const [templateDrawerOpen, setTemplateDrawerOpen] = useState(false);
-  const [prompts, setPrompts] = useState<IEditPrompts[]>(initPrompts);
   const [publishTemplate] = usePublishTemplateMutation();
   const [messageSnackBar, setMessageSnackBar] = useState({ status: false, message: "" });
   const [errorSnackBar, setErrorSnackBar] = useState({ status: false, message: "" });
   const sidebarRightOpen = useSelector((state: RootState) => state.sidebarRight.open);
-  console.log("templateData:", templateData);
+
   const toggleSidebar = () => dispatch(setOpenSidebar(!sidebarOpen));
   const toggleSidebarRight = () => {
     dispatch(setOpenSidebarRight(true));
@@ -41,103 +43,53 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
   const closeSidebarRight = () => {
     dispatch(setOpenSidebarRight(false));
   };
+  const handleSaveTemplate = () => {};
 
-  const changePrompt = (prompt: IEditPrompts) => {
-    const _prompts = prompts.map(prevPrompt => {
-      if (
-        (prompt.id && prevPrompt.id && prompt.id === prevPrompt.id) ||
-        (prompt.temp_id && prevPrompt.temp_id && prompt.temp_id === prevPrompt.temp_id)
-      ) {
-        return prompt;
-      }
-      return prevPrompt;
-    });
+  // const handleSaveTemplate = () => {
+  //   if (!templateData) {
+  //     setErrorSnackBar({ status: true, message: "Please try again or refresh the page" });
+  //     return;
+  //   }
 
-    setPrompts(_prompts);
-  };
+  //   const invalids: string[] = [];
+  //   prompts.map(prompt => {
+  //     const validation = isPromptVariableValid(prompt.content);
+  //     if (!validation.isValid) {
+  //       invalids.push(validation.message);
+  //     }
+  //   });
 
-  const createPrompt = (order: number) => {
-    const temp_id = promptRandomId();
-    const _newPrompt = {
-      temp_id: temp_id,
-      title: `Prompt #${order}`,
-      content: "Describe here prompt parameters, for example {{name:text}} or {{age:number}}",
-      engine_id: engines ? engines[0].id : 0,
-      dependencies: [],
-      parameters: [],
-      order: order,
-      output_format: "",
-      model_parameters: null,
-      is_visible: true,
-      show_output: true,
-      prompt_output_variable: `$temp_id_${temp_id}`,
-    };
+  //   if (invalids.length) {
+  //     setErrorSnackBar({ status: true, message: `You have entered an invalid prompt variable ${invalids.toString()}` });
+  //     return;
+  //   }
 
-    if (!prompts.length) {
-      setPrompts([_newPrompt]);
-      return;
-    }
-
-    const _prompts: IEditPrompts[] = prompts
-      .map(prompt => {
-        if (prompt.order === order - 1) {
-          return [prompt, _newPrompt];
-        }
-        if (prompt.order >= order) {
-          return { ...prompt, order: prompt.order + 1 };
-        }
-        return prompt;
-      })
-      .flat();
-
-    setPrompts(_prompts);
-  };
-
-  const handleSaveTemplate = () => {
-    if (!templateData) {
-      setErrorSnackBar({ status: true, message: "Please try again or refresh the page" });
-      return;
-    }
-
-    const invalids: string[] = [];
-    prompts.map(prompt => {
-      const validation = isPromptVariableValid(prompt.content);
-      if (!validation.isValid) {
-        invalids.push(validation.message);
-      }
-    });
-
-    if (invalids.length) {
-      setErrorSnackBar({ status: true, message: `You have entered an invalid prompt variable ${invalids.toString()}` });
-      return;
-    }
-
-    const _template: any = {
-      title: templateData.title,
-      description: templateData.description,
-      example: templateData.example,
-      thumbnail: templateData.thumbnail,
-      is_visible: templateData.is_visible,
-      language: templateData.language,
-      duration: templateData.duration.toString(),
-      category: templateData.category.id,
-      difficulty: templateData.difficulty,
-      status: templateData.status,
-      prompts_list: prompts.map(prompt => ({
-        ...prompt,
-        parameters: prompt?.parameters?.map(params => ({
-          parameter_id: params.parameter_id,
-          score: params.score,
-          is_visible: params.is_visible,
-          is_editable: params.is_editable,
-        })),
-      })),
-    };
-    updateTemplate(templateData.id, _template).then(() => {
-      setMessageSnackBar({ status: true, message: "Prompt template saved with success" });
-      window.location.reload();
-    });
-  };
+  //   const _template: any = {
+  //     title: templateData.title,
+  //     description: templateData.description,
+  //     example: templateData.example,
+  //     thumbnail: templateData.thumbnail,
+  //     is_visible: templateData.is_visible,
+  //     language: templateData.language,
+  //     duration: templateData.duration.toString(),
+  //     category: templateData.category.id,
+  //     difficulty: templateData.difficulty,
+  //     status: templateData.status,
+  //     prompts_list: prompts.map(prompt => ({
+  //       ...prompt,
+  //       parameters: prompt?.parameters?.map(params => ({
+  //         parameter_id: params.parameter_id,
+  //         score: params.score,
+  //         is_visible: params.is_visible,
+  //         is_editable: params.is_editable,
+  //       })),
+  //     })),
+  //   };
+  //   updateTemplate(templateData.id, _template).then(() => {
+  //     setMessageSnackBar({ status: true, message: "Prompt template saved with success" });
+  //     window.location.reload();
+  //   });
+  // };
 
   const handlePublishTemplate = async () => {
     if (!templateData) {
@@ -204,60 +156,12 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
             alignItems={"center"}
             gap={3}
           >
-            {prompts.length ? (
-              prompts.map((prompt, i) => {
-                const order = i + 2;
-                return (
-                  <React.Fragment key={i}>
-                    <Box width={"100%"}>
-                      <PromptCardAccordion
-                        key={prompt.id}
-                        prompt={prompt}
-                        setPrompt={changePrompt}
-                      />
-                    </Box>
-                    <Button
-                      variant="contained"
-                      startIcon={<Add />}
-                      sx={{
-                        bgcolor: "surface.1",
-                        color: "text.primary",
-                        p: "6px 16px",
-                        border: "none",
-                        fontSize: 14,
-                        fontWeight: 500,
-                        ":hover": {
-                          bgcolor: "action.hover",
-                        },
-                      }}
-                      onClick={() => createPrompt(order)}
-                    >
-                      New prompt
-                    </Button>
-                  </React.Fragment>
-                );
-              })
-            ) : (
-              <Button
-                variant="contained"
-                startIcon={<Add />}
-                sx={{
-                  mt: "20svh",
-                  bgcolor: "surface.1",
-                  color: "text.primary",
-                  p: "6px 16px",
-                  border: "none",
-                  fontSize: 14,
-                  fontWeight: 500,
-                  ":hover": {
-                    bgcolor: "action.hover",
-                  },
-                }}
-                onClick={() => createPrompt(1)}
-              >
-                New prompt
-              </Button>
-            )}
+            <DndProvider backend={HTML5Backend}>
+              <PromptList
+                initPrompts={initPrompts}
+                engines={engines}
+              />
+            </DndProvider>
           </Stack>
         </Box>
 
@@ -279,15 +183,7 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
                 bgcolor: "#FDFBFF",
                 p: "24px 32px",
               }}
-            >
-              <TemplateForm
-                type="edit"
-                templateData={templateData}
-                darkMode
-                onSaved={() => window.location.reload()}
-                onClose={() => setTemplateDrawerOpen(false)}
-              />
-            </Box>
+            ></Box>
           </SwipeableDrawer>
         )}
       </Box>
@@ -318,7 +214,7 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
 
 const initPrompts = (template: Templates, engines: Engine[]) => {
   if (template?.prompts) {
-    const _prompts = template.prompts.map(prompt => {
+    const _prompts = template.prompts.map((prompt, index) => {
       const initialParams = prompt.parameters.map(param => ({
         parameter_id: param.parameter.id,
         score: param.score,
@@ -335,7 +231,7 @@ const initPrompts = (template: Templates, engines: Engine[]) => {
         engine_id: prompt.engine?.id || engines![0].id,
         dependencies: prompt.dependencies || [],
         parameters: initialParams,
-        order: 1,
+        order: index + 1,
         output_format: prompt.output_format,
         model_parameters: prompt.model_parameters,
         is_visible: prompt.is_visible,
@@ -348,18 +244,20 @@ const initPrompts = (template: Templates, engines: Engine[]) => {
   }
 };
 
-export async function getServerSideProps({ params }: { params: { id: string } }) {
-  const { id } = params;
+export async function getServerSideProps({ params }: { params: { slug: string } }) {
+  const { slug } = params;
   let engines: Engine[] = [];
   let templateData: Templates = {} as Templates;
+  let _initPrompts: ReturnType<typeof initPrompts> = [];
 
   try {
     const [_engines, _fetchedTemplate] = await Promise.all([
-      authClient.get<Engine[]>(`/api/meta/engines`),
-      authClient.get<Templates>(`/api/meta/templates/${id}/`),
+      client.get<Engine[]>(`/api/meta/engines`),
+      client.get<Templates>(`/api/meta/templates/by-slug/${slug}/`),
     ]);
     templateData = _fetchedTemplate.data;
     engines = _engines.data;
+    _initPrompts = initPrompts(templateData, engines) ?? [];
   } catch (error) {
     console.error("Template/engines request failed:", error);
   }
@@ -370,7 +268,7 @@ export async function getServerSideProps({ params }: { params: { id: string } })
       description:
         "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
       templateData,
-      initPrompts: initPrompts(templateData, engines) ?? [],
+      initPrompts: _initPrompts,
       engines,
     },
   };

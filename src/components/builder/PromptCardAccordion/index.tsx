@@ -1,22 +1,58 @@
 import { ModeEdit, PlayCircle } from "@mui/icons-material";
 import { Box, Button, Divider, Stack, TextField, Typography } from "@mui/material";
-import React, { useState } from "react";
+import React, { useState, memo } from "react";
 import { Header } from "./Header";
 import { StylerAccordion } from "./StylerAccordion";
 import { IEditPrompts } from "@/common/types/builder";
 import { RenameForm } from "@/components/common/forms/RenameForm";
 import { Footer } from "./Footer";
+import { useDrag, useDrop, ConnectableElement } from "react-dnd";
 
 interface Props {
   prompt: IEditPrompts;
   setPrompt: (prompt: IEditPrompts) => void;
+  findPromptIndex: (id: number) => number;
+  movePrompt: (id: number, atIndex: number) => void;
 }
 
-export const PromptCardAccordion = ({ prompt, setPrompt }: Props) => {
+export const PromptCardAccordion = memo(({ prompt, setPrompt, movePrompt, findPromptIndex }: Props) => {
   const [renameAllow, setRenameAllow] = useState(false);
+  const promptId = prompt.id! ?? prompt.temp_id;
+  const originalIndex = findPromptIndex(promptId);
+  const [{ isDragging }, drag] = useDrag(
+    () => ({
+      type: "prompt",
+      item: { id: promptId, originalIndex },
+      collect: monitor => ({
+        isDragging: monitor.isDragging(),
+      }),
+      end: (item, monitor) => {
+        const { id: droppedId, originalIndex } = item;
+        const didDrop = monitor.didDrop();
+        if (!didDrop) {
+          movePrompt(droppedId, originalIndex);
+        }
+      },
+    }),
+    [promptId, originalIndex, movePrompt],
+  );
+  const [, drop] = useDrop(
+    () => ({
+      accept: "prompt",
+      hover({ id: draggedId }: { id: number }) {
+        if (draggedId !== promptId) {
+          const overIndex = findPromptIndex(promptId);
+          movePrompt(draggedId, overIndex);
+        }
+      },
+    }),
+    [findPromptIndex, movePrompt],
+  );
+  const opacity = isDragging ? 0 : 1;
 
   return (
     <Box
+      ref={(node: ConnectableElement) => drag(drop(node))}
       sx={{
         bgcolor: "surface.1",
         m: "24px 0 !important",
@@ -28,6 +64,7 @@ export const PromptCardAccordion = ({ prompt, setPrompt }: Props) => {
           boxShadow:
             "0px 3px 3px -2px rgba(225, 226, 236, 0.20), 0px 3px 4px 0px rgba(225, 226, 236, 0.14), 0px 1px 8px 0px rgba(27, 27, 30, 0.12)",
         },
+        opacity,
       }}
     >
       <Header
@@ -123,4 +160,4 @@ export const PromptCardAccordion = ({ prompt, setPrompt }: Props) => {
       </Box>
     </Box>
   );
-};
+});

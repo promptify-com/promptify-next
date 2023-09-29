@@ -42,6 +42,8 @@
     "next-redux-wrapper": "^8.1.0",
     "polished": "^4.2.2",
     "react": "18.2.0",
+    "react-dnd": "^16.0.1",
+    "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "18.2.0",
     "react-github-login": "^1.0.3",
     "react-highlight-within-textarea": "^3.2.1",
