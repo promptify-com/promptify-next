@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useGetPromptTemplatesQuery, usePublishTemplateMutation } from "@/core/api/templates";
+import React, { useState } from "react";
+import { usePublishTemplateMutation } from "@/core/api/templates";
 import { Alert, Box, Button, Snackbar, Stack, SwipeableDrawer, Typography } from "@mui/material";
 import { Sidebar } from "@/components/SideBar";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,76 +9,37 @@ import { Header } from "@/components/builder/Header";
 import TemplateForm from "@/components/common/forms/TemplateForm";
 import { PromptCardAccordion } from "@/components/builder/PromptCardAccordion";
 import { IEditPrompts } from "@/common/types/builder";
-import { useGetEnginesQuery } from "@/core/api/engines";
 import { Add } from "@mui/icons-material";
 import { promptRandomId } from "@/common/helpers";
-import { useRouter } from "next/router";
-import { skipToken } from "@reduxjs/toolkit/dist/query";
 import { isPromptVariableValid } from "@/common/helpers/promptValidator";
 import { updateTemplate } from "@/hooks/api/templates";
 import { setOpenSidebarRight } from "@/core/store/sidebarRightSlice";
 import { SidebarRight } from "@/components/SideBarRight";
-import BuilderPromptPlaceholder from "@/components/placeholders/BuilderPromptPlaceholder";
+import { Engine, Templates } from "@/core/api/dto/templates";
+import { authClient } from "@/common/axios";
 
-export const PromptBuilder = () => {
-  const router = useRouter();
-  const id = router.query.id;
+interface PromptBuilderProps {
+  templateData: Templates;
+  initPrompts: IEditPrompts[];
+  engines: Engine[];
+}
+
+export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuilderProps) => {
   const sidebarOpen = useSelector((state: RootState) => state.sidebar.open);
   const dispatch = useDispatch();
-  const toggleSidebar = () => dispatch(setOpenSidebar(!sidebarOpen));
-  const { data: engines } = useGetEnginesQuery();
-  const [templateDrawerOpen, setTemplateDrawerOpen] = React.useState(false);
-  const { data: fetchedTemplate, isLoading } = useGetPromptTemplatesQuery(id ? +id : skipToken);
-  const [templateData, setTemplateData] = useState(fetchedTemplate);
-  const [prompts, setPrompts] = useState<IEditPrompts[]>([]);
+  const [templateDrawerOpen, setTemplateDrawerOpen] = useState(false);
+  const [prompts, setPrompts] = useState<IEditPrompts[]>(initPrompts);
   const [publishTemplate] = usePublishTemplateMutation();
-  const [messageSnackBar, setMessageSnackBar] = React.useState({ status: false, message: "" });
-  const [errorSnackBar, setErrorSnackBar] = React.useState({ status: false, message: "" });
-
+  const [messageSnackBar, setMessageSnackBar] = useState({ status: false, message: "" });
+  const [errorSnackBar, setErrorSnackBar] = useState({ status: false, message: "" });
   const sidebarRightOpen = useSelector((state: RootState) => state.sidebarRight.open);
-
+  console.log("templateData:", templateData);
+  const toggleSidebar = () => dispatch(setOpenSidebar(!sidebarOpen));
   const toggleSidebarRight = () => {
     dispatch(setOpenSidebarRight(true));
   };
   const closeSidebarRight = () => {
     dispatch(setOpenSidebarRight(false));
-  };
-
-  useEffect(() => {
-    setTemplateData(fetchedTemplate);
-    initPrompts();
-  }, [fetchedTemplate]);
-
-  const initPrompts = () => {
-    if (fetchedTemplate?.prompts) {
-      const _prompts = fetchedTemplate.prompts.map(prompt => {
-        const initialParams = prompt.parameters.map(param => ({
-          parameter_id: param.parameter.id,
-          score: param.score,
-          name: param.parameter.name,
-          is_visible: param.is_visible,
-          is_editable: param.is_editable,
-          descriptions: param.parameter.score_descriptions,
-        }));
-
-        return {
-          id: prompt.id,
-          title: prompt.title || `Prompt #1`,
-          content: prompt.content || "Describe here prompt parameters, for example {{name:John Doe}}",
-          engine_id: prompt.engine?.id || engines![0].id,
-          dependencies: prompt.dependencies || [],
-          parameters: initialParams,
-          order: 1,
-          output_format: prompt.output_format,
-          model_parameters: prompt.model_parameters,
-          is_visible: prompt.is_visible,
-          show_output: prompt.show_output,
-          prompt_output_variable: prompt.prompt_output_variable,
-        };
-      });
-
-      setPrompts(_prompts);
-    }
   };
 
   const changePrompt = (prompt: IEditPrompts) => {
@@ -239,69 +200,65 @@ export const PromptBuilder = () => {
             </Typography>
           </Stack>
 
-          {isLoading ? (
-            <BuilderPromptPlaceholder />
-          ) : (
-            <Stack
-              alignItems={"center"}
-              gap={3}
-            >
-              {prompts.length ? (
-                prompts.map((prompt, i) => {
-                  const order = i + 2;
-                  return (
-                    <React.Fragment key={i}>
-                      <Box width={"100%"}>
-                        <PromptCardAccordion
-                          key={prompt.id}
-                          prompt={prompt}
-                          setPrompt={changePrompt}
-                        />
-                      </Box>
-                      <Button
-                        variant="contained"
-                        startIcon={<Add />}
-                        sx={{
-                          bgcolor: "surface.1",
-                          color: "text.primary",
-                          p: "6px 16px",
-                          border: "none",
-                          fontSize: 14,
-                          fontWeight: 500,
-                          ":hover": {
-                            bgcolor: "action.hover",
-                          },
-                        }}
-                        onClick={() => createPrompt(order)}
-                      >
-                        New prompt
-                      </Button>
-                    </React.Fragment>
-                  );
-                })
-              ) : (
-                <Button
-                  variant="contained"
-                  startIcon={<Add />}
-                  sx={{
-                    mt: "20svh",
-                    bgcolor: "surface.1",
-                    color: "text.primary",
-                    p: "6px 16px",
-                    border: "none",
-                    fontSize: 14,
-                    fontWeight: 500,
-                    ":hover": {
-                      bgcolor: "action.hover",
-                    },
-                  }}
-                  onClick={() => createPrompt(1)}
-                >
-                  New prompt
-                </Button>
-              )}
-            </Stack>
-          )}
+          <Stack
+            alignItems={"center"}
+            gap={3}
+          >
+            {prompts.length ? (
+              prompts.map((prompt, i) => {
+                const order = i + 2;
+                return (
+                  <React.Fragment key={i}>
+                    <Box width={"100%"}>
+                      <PromptCardAccordion
+                        key={prompt.id}
+                        prompt={prompt}
+                        setPrompt={changePrompt}
+                      />
+                    </Box>
+                    <Button
+                      variant="contained"
+                      startIcon={<Add />}
+                      sx={{
+                        bgcolor: "surface.1",
+                        color: "text.primary",
+                        p: "6px 16px",
+                        border: "none",
+                        fontSize: 14,
+                        fontWeight: 500,
+                        ":hover": {
+                          bgcolor: "action.hover",
+                        },
+                      }}
+                      onClick={() => createPrompt(order)}
+                    >
+                      New prompt
+                    </Button>
+                  </React.Fragment>
+                );
+              })
+            ) : (
+              <Button
+                variant="contained"
+                startIcon={<Add />}
+                sx={{
+                  mt: "20svh",
+                  bgcolor: "surface.1",
+                  color: "text.primary",
+                  p: "6px 16px",
+                  border: "none",
+                  fontSize: 14,
+                  fontWeight: 500,
+                  ":hover": {
+                    bgcolor: "action.hover",
+                  },
+                }}
+                onClick={() => createPrompt(1)}
+              >
+                New prompt
+              </Button>
+            )}
+          </Stack>
         </Box>
 
         {!!templateData && (
@@ -359,12 +316,62 @@ export const PromptBuilder = () => {
   );
 };
 
-export async function getServerSideProps() {
+const initPrompts = (template: Templates, engines: Engine[]) => {
+  if (template?.prompts) {
+    const _prompts = template.prompts.map(prompt => {
+      const initialParams = prompt.parameters.map(param => ({
+        parameter_id: param.parameter.id,
+        score: param.score,
+        name: param.parameter.name,
+        is_visible: param.is_visible,
+        is_editable: param.is_editable,
+        descriptions: param.parameter.score_descriptions,
+      }));
+
+      return {
+        id: prompt.id,
+        title: prompt.title || `Prompt #1`,
+        content: prompt.content || "Describe here prompt parameters, for example {{name:text}}",
+        engine_id: prompt.engine?.id || engines![0].id,
+        dependencies: prompt.dependencies || [],
+        parameters: initialParams,
+        order: 1,
+        output_format: prompt.output_format,
+        model_parameters: prompt.model_parameters,
+        is_visible: prompt.is_visible,
+        show_output: prompt.show_output,
+        prompt_output_variable: prompt.prompt_output_variable,
+      };
+    });
+
+    return _prompts;
+  }
+};
+
+export async function getServerSideProps({ params }: { params: { id: string } }) {
+  const { id } = params;
+  let engines: Engine[] = [];
+  let templateData: Templates = {} as Templates;
+
+  try {
+    const [_engines, _fetchedTemplate] = await Promise.all([
+      authClient.get<Engine[]>(`/api/meta/engines`),
+      authClient.get<Templates>(`/api/meta/templates/${id}/`),
+    ]);
+    templateData = _fetchedTemplate.data;
+    engines = _engines.data;
+  } catch (error) {
+    console.error("Template/engines request failed:", error);
+  }
+
   return {
     props: {
       title: "Promptify | Boost Your Creativity",
       description:
         "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
+      templateData,
+      initPrompts: initPrompts(templateData, engines) ?? [],
+      engines,
     },
   };
 }
