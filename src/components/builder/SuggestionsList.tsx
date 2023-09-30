@@ -13,7 +13,7 @@ interface Props {
 
 export const SuggestionsList = ({ suggestionList, position, optionType, onSelect }: Props) => {
   return (
-    <Grid>
+    <>
       {suggestionList.length > 0 && position && (
         <Card
           elevation={2}
@@ -51,6 +51,6 @@ export const SuggestionsList = ({ suggestionList, position, optionType, onSelect
           />
         </Card>
       )}
-    </Grid>
+    </>
   );
 };

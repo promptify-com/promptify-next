@@ -4,12 +4,12 @@ import { NodeEditor, GetSchemes, ClassicPreset, BaseSchemes, NodeId } from "rete
 import { AreaPlugin, AreaExtensions } from "rete-area-plugin";
 import { BidirectFlow, ConnectionPlugin } from "rete-connection-plugin";
 import { ReactRenderPlugin, Presets, ReactArea2D } from "rete-react-render-plugin";
-import { CustomNode } from "./CustomNode";
+import { PromptCard } from "./PromptCard";
 import { CustomSocket } from "./CustomSocket";
 import { AutoArrangePlugin, Presets as ArrangePresets } from "rete-auto-arrange-plugin";
 import { SelectableConnection } from "./SelectableConnection";
 import { PromptParams, Prompts } from "@/core/api/dto/prompts";
-import { INodesData } from "@/common/types/builder";
+import { IEditPrompts } from "@/common/types/builder";
 import { Engine } from "@/core/api/dto/templates";
 
 export class Node extends ClassicPreset.Node {
@@ -34,7 +34,7 @@ export async function createEditor(
   engines: Engine[] | undefined,
   nodeCount: number,
   setNodeCount: (val: number) => void,
-  setNodesData: React.Dispatch<React.SetStateAction<INodesData[]>>,
+  setNodesData: React.Dispatch<React.SetStateAction<IEditPrompts[]>>,
   updateTemplateDependencies: (val1: string, val2: string) => void,
 ) {
   const editor = new NodeEditor<Schemes>();
@@ -225,7 +225,7 @@ export async function createEditor(
       area,
       customize: {
         node() {
-          return CustomNode;
+          return PromptCard;
         },
         socket() {
           return CustomSocket;

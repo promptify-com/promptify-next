@@ -25,7 +25,7 @@ export interface IPromptOptions {
   show_output: boolean;
   prompt_output_variable: string;
 }
-export interface INodesData extends IPromptOptions {
+export interface IEditPrompts extends IPromptOptions {
   id?: number;
   temp_id?: number;
   title: string;

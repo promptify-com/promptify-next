@@ -1,0 +1,167 @@
+import { ModeEdit, PlayCircle } from "@mui/icons-material";
+import { Box, Button, Divider, Stack, Typography } from "@mui/material";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { Header } from "./Header";
+import { StylerAccordion } from "./StylerAccordion";
+import { IEditPrompts } from "@/common/types/builder";
+import { RenameForm } from "@/components/common/forms/RenameForm";
+import { Footer } from "./Footer";
+import { HighlightTextarea } from "../HighlightWithinTextarea";
+import { Selection } from "react-highlight-within-textarea";
+import { getBuilderVarsPresets } from "@/common/helpers/getBuilderVarsPresets";
+import { Engine } from "@/core/api/dto/templates";
+
+interface Props {
+  prompt: IEditPrompts;
+  setPrompt: (prompt: IEditPrompts) => void;
+  deletePrompt: () => void;
+  duplicatePrompt: () => void;
+  prompts: IEditPrompts[];
+  engines: Engine[];
+}
+
+export const PromptCardAccordion = ({ prompt, setPrompt, deletePrompt, duplicatePrompt, prompts, engines }: Props) => {
+  const [promptData, setPromptData] = useState(prompt);
+  const [renameAllow, setRenameAllow] = useState(false);
+  const cursorPositionRef = useRef(0);
+  const [highlightedOption, setHighlitedOption] = useState("");
+
+  useEffect(() => {
+    setPromptData(prompt);
+  }, [prompt]);
+
+  const updatePrompt = (newPromptData: IEditPrompts) => {
+    setPromptData(newPromptData);
+    setPrompt(newPromptData);
+  };
+
+  const contentHandler = (content: string, selection?: Selection) => {
+    const { focus } = selection ?? {};
+    if (focus) {
+      cursorPositionRef.current = focus;
+    }
+    updatePrompt({
+      ...promptData,
+      content,
+    });
+  };
+
+  const { outputPresets, inputPresets } = useMemo(() => getBuilderVarsPresets(prompts, promptData), [prompts]);
+
+  return (
+    <Box
+      sx={{
+        bgcolor: "surface.1",
+        m: "24px 0 !important",
+        borderRadius: "16px !important",
+        boxShadow: "none",
+        transition: "box-shadow 0.3s ease-in-out",
+        ":before": { display: "none" },
+        ":hover": {
+          boxShadow:
+            "0px 3px 3px -2px rgba(225, 226, 236, 0.20), 0px 3px 4px 0px rgba(225, 226, 236, 0.14), 0px 1px 8px 0px rgba(27, 27, 30, 0.12)",
+        },
+      }}
+    >
+      <Header
+        prompt={promptData}
+        setPrompt={updatePrompt}
+        deletePrompt={deletePrompt}
+        duplicatePrompt={duplicatePrompt}
+        engines={engines}
+      />
+      <Divider sx={{ borderColor: "surface.3" }} />
+      <Box
+        sx={{
+          p: 0,
+        }}
+      >
+        <Stack
+          direction={"row"}
+          justifyContent={"space-between"}
+          alignItems={"center"}
+          p={"8px 16px 8px 24px"}
+        >
+          {!renameAllow ? (
+            <>
+              <Stack
+                direction={"row"}
+                alignItems={"center"}
+                gap={1}
+                sx={{
+                  opacity: 0.5,
+                  ":hover": {
+                    opacity: 1,
+                  },
+                }}
+              >
+                <Typography sx={{ color: "onSurface", fontSize: 14, fontWeight: 500 }}>
+                  {promptData.title || ""}
+                </Typography>
+                <ModeEdit
+                  sx={{ cursor: "pointer", fontSize: "16px" }}
+                  onClick={() => setRenameAllow(true)}
+                />
+              </Stack>
+              <Button startIcon={<PlayCircle />}>Test run</Button>
+            </>
+          ) : (
+            <RenameForm
+              label="Prompt"
+              initialValue={promptData.title}
+              onSave={val => {
+                updatePrompt({ ...promptData, title: val });
+                setRenameAllow(false);
+              }}
+              onCancel={() => setRenameAllow(false)}
+            />
+          )}
+        </Stack>
+        <Box p={"8px 16px 8px 24px"}>
+          <Typography
+            sx={{
+              py: "8px",
+              fontSize: 11,
+              fontWeight: 500,
+              letterSpacing: 0.8,
+              textTransform: "uppercase",
+              color: "text.secondary",
+            }}
+          >
+            Prompt Instructions:
+          </Typography>
+          <Box
+            sx={{
+              height: "250px",
+              maxHeight: "25svh",
+              py: "12px",
+              overflow: "auto",
+              overscrollBehavior: "contain",
+              position: "relative",
+            }}
+          >
+            <HighlightTextarea
+              cursorPositionRef={cursorPositionRef}
+              content={promptData.content}
+              onChange={contentHandler}
+              outputPresets={outputPresets}
+              inputPresets={inputPresets}
+              highlitedValue={highlightedOption}
+              setHighlitedValue={setHighlitedOption}
+            />
+          </Box>
+        </Box>
+
+        <StylerAccordion
+          prompt={promptData}
+          setPrompt={updatePrompt}
+        />
+
+        <Footer
+          prompt={promptData}
+          setPrompt={updatePrompt}
+        />
+      </Box>
+    </Box>
+  );
+};

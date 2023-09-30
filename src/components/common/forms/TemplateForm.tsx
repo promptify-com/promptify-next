@@ -35,7 +35,7 @@ import { executionsApi } from "@/core/api/executions";
 
 interface Props {
   type?: FormType;
-  templateData: Templates | null;
+  templateData: Templates | null | undefined;
   modalNew?: boolean;
   onSaved?: () => void;
   onClose?: () => void;
