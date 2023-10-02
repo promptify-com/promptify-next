@@ -14,6 +14,7 @@ import { getBuilderVarsPresets } from "@/common/helpers/getBuilderVarsPresets";
 
 interface Props {
   prompt: IEditPrompts;
+  order: number;
   setPrompt: (prompt: IEditPrompts) => void;
   deletePrompt: () => void;
   duplicatePrompt: () => void;
@@ -25,6 +26,7 @@ interface Props {
 
 export const PromptCardAccordion = ({
   prompt,
+  order,
   setPrompt,
   deletePrompt,
   duplicatePrompt,
@@ -111,6 +113,7 @@ export const PromptCardAccordion = ({
     >
       <Header
         prompt={promptData}
+        order={order}
         setPrompt={updatePrompt}
         deletePrompt={deletePrompt}
         duplicatePrompt={duplicatePrompt}

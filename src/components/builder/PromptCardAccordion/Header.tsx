@@ -8,13 +8,14 @@ import { Engine } from "@/core/api/dto/templates";
 
 interface Props {
   prompt: IEditPrompts;
+  order: number;
   setPrompt: (prompt: IEditPrompts) => void;
   deletePrompt: () => void;
   duplicatePrompt: () => void;
   engines: Engine[];
 }
 
-export const Header = ({ prompt, setPrompt, deletePrompt, duplicatePrompt, engines }: Props) => {
+export const Header = ({ prompt, order, setPrompt, deletePrompt, duplicatePrompt, engines }: Props) => {
   const [showEngines, setShowEngines] = useState(false);
   const [enginesAnchor, setEnginesAnchor] = useState<HTMLElement | null>(null);
   const [showSettings, setShowSettings] = useState(false);
@@ -51,7 +52,7 @@ export const Header = ({ prompt, setPrompt, deletePrompt, duplicatePrompt, engin
             },
           }}
         />
-        <Typography>#{prompt.order}</Typography>
+        <Typography>#{order}</Typography>
         <Button
           endIcon={<ArrowDropDown />}
           onClick={e => {

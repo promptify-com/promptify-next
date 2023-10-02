@@ -82,14 +82,15 @@ const PromptList = ({ initPrompts, setPromptsData, engines }: Props) => {
     let _prompts: IEditPrompts[] = [_newPrompt];
     if (promptsData.current.length) {
       _prompts = promptsData.current
-        .map(prompt => {
-          if (prompt.order === order - 1) {
-            return [prompt, _newPrompt];
+        .map((prompt, i) => {
+          i++;
+          if (i === order - 1) {
+            return [{ ...prompt, order: i }, _newPrompt];
           }
-          if (prompt.order >= order) {
-            return { ...prompt, order: prompt.order + 1 };
+          if (i >= order) {
+            return { ...prompt, order: i + 1 };
           }
-          return prompt;
+          return { ...prompt, order: i };
         })
         .flat();
     }
@@ -99,7 +100,7 @@ const PromptList = ({ initPrompts, setPromptsData, engines }: Props) => {
     setPromptsData(_prompts);
   };
 
-  const duplicatePrompt = (duplicatedPrompt: IEditPrompts) => {
+  const duplicatePrompt = (duplicatedPrompt: IEditPrompts, order: number) => {
     const duplicateData = promptsData.current.find(
       prompt =>
         (duplicatedPrompt.id && prompt.id && duplicatedPrompt.id === prompt.id) ||
@@ -112,19 +113,20 @@ const PromptList = ({ initPrompts, setPromptsData, engines }: Props) => {
       ...duplicateData,
       temp_id: temp_id,
       title: `${duplicateData.title} - Copy`,
-      order: duplicateData.order + 1,
+      order: order,
       dependencies: [],
     };
 
     const _prompts: IEditPrompts[] = promptsData.current
-      .map(prompt => {
-        if (prompt.order === duplicatedPrompt.order) {
-          return [prompt, _newPrompt];
+      .map((prompt, i) => {
+        i++;
+        if (i === order - 1) {
+          return [{ ...prompt, order: i }, _newPrompt];
         }
-        if (prompt.order >= _newPrompt.order) {
-          return { ...prompt, order: prompt.order + 1 };
+        if (i >= order) {
+          return { ...prompt, order: i + 1 };
         }
-        return prompt;
+        return { ...prompt, order: i };
       })
       .flat();
 
@@ -135,11 +137,7 @@ const PromptList = ({ initPrompts, setPromptsData, engines }: Props) => {
 
   const deletePrompt = (deletePrompt: IEditPrompts) => {
     const _prompts = promptsData.current
-      .filter(
-        prompt =>
-          (deletePrompt.id && prompt.id && deletePrompt.id !== prompt.id) ||
-          (deletePrompt.temp_id && prompt.temp_id && deletePrompt.temp_id !== prompt.temp_id),
-      )
+      .filter(prompt => deletePrompt.id !== prompt.id || deletePrompt.temp_id !== prompt.temp_id)
       .map(prompt => {
         if (prompt.order > deletePrompt.order) {
           return { ...prompt, order: prompt.order - 1 };
@@ -159,17 +157,18 @@ const PromptList = ({ initPrompts, setPromptsData, engines }: Props) => {
       gap={3}
     >
       {prompts.length ? (
-        prompts.map((prompt, i) => {
-          const order = i + 2;
+        prompts.map((prompt, index) => {
+          index++; // start from 1
           return (
-            <Fragment key={i}>
+            <Fragment key={index}>
               <Box width={"100%"}>
                 <PromptCardAccordion
                   key={prompt.id}
                   prompt={prompt}
+                  order={index}
                   setPrompt={changePrompt}
                   deletePrompt={() => deletePrompt(prompt)}
-                  duplicatePrompt={() => duplicatePrompt(prompt)}
+                  duplicatePrompt={() => duplicatePrompt(prompt, index + 1)}
                   prompts={prompts}
                   engines={engines}
                   movePrompt={movePrompt}
@@ -190,7 +189,7 @@ const PromptList = ({ initPrompts, setPromptsData, engines }: Props) => {
                     bgcolor: "action.hover",
                   },
                 }}
-                onClick={() => createPrompt(order)}
+                onClick={() => createPrompt(index + 1)}
               >
                 New prompt
               </Button>
