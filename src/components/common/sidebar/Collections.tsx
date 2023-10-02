@@ -32,7 +32,6 @@ export const Collections: React.FC<SideBarCollectionsProps> = ({
     },
   });
   const IS_MOBILE = determineIsMobile();
-
   return (
     <Box>
       <ListSubheader sx={{ fontSize: "12px", display: sidebarOpen ? "block" : "none" }}>COLLECTION</ListSubheader>
