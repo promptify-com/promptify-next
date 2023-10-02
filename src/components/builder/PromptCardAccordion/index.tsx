@@ -1,6 +1,6 @@
 import { ModeEdit, PlayCircle } from "@mui/icons-material";
 import { Box, Button, Divider, Stack, Typography } from "@mui/material";
-import React, { memo, useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Header } from "./Header";
 import { StylerAccordion } from "./StylerAccordion";
 import { IEditPrompts } from "@/common/types/builder";
@@ -91,7 +91,6 @@ export const PromptCardAccordion = ({
     }),
     [findPromptIndex, movePrompt],
   );
-  const opacity = isDragging ? 0 : 1;
 
   return (
     <Box
@@ -107,6 +106,7 @@ export const PromptCardAccordion = ({
           boxShadow:
             "0px 3px 3px -2px rgba(225, 226, 236, 0.20), 0px 3px 4px 0px rgba(225, 226, 236, 0.14), 0px 1px 8px 0px rgba(27, 27, 30, 0.12)",
         },
+        opacity: isDragging ? 0 : 1,
       }}
     >
       <Header

@@ -1,4 +1,4 @@
-import { MutableRefObject, useRef, useState } from "react";
+import { MutableRefObject, useEffect, useRef, useState } from "react";
 import HighlightWithinTextarea, { Selection } from "react-highlight-within-textarea";
 import { Grid } from "@mui/material";
 
@@ -97,6 +97,11 @@ export const HighlightTextarea = ({
     setHighlitedValue("");
     setSuggestionList([]);
   };
+
+  // no SSR for HighlightTextarea as it produces "data-offset-key" mismatches
+  const [isClient, setIsClient] = useState(false);
+  useEffect(() => setIsClient(true), []);
+  if (!isClient) return null;
 
   return (
     <Grid>
