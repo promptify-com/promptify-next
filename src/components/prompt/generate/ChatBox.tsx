@@ -16,7 +16,7 @@ import { getInputsFromString } from "@/common/helpers";
 import { IPromptInput, PromptLiveResponse, InputType } from "@/common/types/prompt";
 import { setGeneratingStatus, updateExecutionData } from "@/core/store/templatesSlice";
 import { AnswerValidatorResponse, IAnswer, IMessage } from "@/common/types/chat";
-import { determineIsMobile } from "@/common/helpers/determineIsMobile";
+import { isDesktopViewPort } from "@/common/helpers";
 import { useStopExecutionMutation } from "@/core/api/executions";
 import VaryModal from "./VaryModal";
 import { vary } from "@/common/helpers/varyValidator";
@@ -30,7 +30,7 @@ interface Props {
 const BottomTabsMobileHeight = "240px";
 
 const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template }) => {
-  const IS_MOBILE = determineIsMobile();
+  const isDesktopView = isDesktopViewPort();
   const token = useToken();
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -653,11 +653,11 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
       borderRadius={"16px"}
       sx={{
         position: { xs: "relative", md: "sticky" },
-        ...(!IS_MOBILE && { top: "0", left: "0", zIndex: 100, border: "1px solid rgba(225, 226, 236, .5)" }),
+        ...(isDesktopView && { top: "0", left: "0", zIndex: 100, border: "1px solid rgba(225, 226, 236, .5)" }),
       }}
     >
       <Accordion
-        expanded={IS_MOBILE ? true : chatExpanded}
+        expanded={chatExpanded}
         onChange={() => setChatExpanded(prev => !prev)}
         sx={{
           boxShadow: "none",
@@ -740,7 +740,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
             alignItems: "flex-start",
             gap: "8px",
             maxHeight: { xs: "70vh", md: "50svh" },
-            ...(IS_MOBILE && { minHeight: { xs: `calc(100vh - ${BottomTabsMobileHeight} )` } }),
+            ...(!isDesktopView && { minHeight: { xs: `calc(100vh - ${BottomTabsMobileHeight} )` } }),
             borderTop: { xs: "none", md: "2px solid #ECECF4" },
           }}
         >

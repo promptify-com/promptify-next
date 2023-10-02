@@ -30,8 +30,8 @@ import { useGetCurrentUserQuery } from "@/core/api/user";
 import { useCreateTemplateMutation, useUpdateTemplateMutation } from "@/core/api/templates";
 import { FormType } from "@/common/types/template";
 import { TemplateStatusArray } from "@/common/constants";
-import { getLanguageFromCode } from "@/common/helpers/getLanguageFromCode";
 import { executionsApi } from "@/core/api/executions";
+import { stripTags, getLanguageFromCode } from "@/common/helpers";
 
 interface Props {
   type?: FormType;
@@ -126,21 +126,21 @@ const TemplateForm: React.FC<Props> = ({
 
   const formik = useFormik<IEditTemplate>({
     initialValues: {
-      title: templateData?.title.replace(/<\/?[^>]+(>|$)/gi, "") ?? "",
-      description: templateData?.description.replace(/<\/?[^>]+(>|$)/gi, "") ?? "",
+      title: templateData?.title ? stripTags(templateData.title) : "",
+      description: templateData?.description ? stripTags(templateData.description) : "",
       duration: templateData?.duration?.toString() ?? "1",
       difficulty: templateData?.difficulty ?? "BEGINNER",
       is_visible: templateData?.is_visible ?? true,
       language: templateData?.language ?? "en-us",
       category: templateData?.category?.id ?? 1,
-      context: templateData?.context.replace(/<\/?[^>]+(>|$)/gi, "") ?? "",
+      context: templateData?.context ? stripTags(templateData.context) : "",
       tags: templateData?.tags ?? [],
       thumbnail: templateData?.thumbnail ?? "",
       executions_limit: templateData?.executions_limit ?? -1,
-      slug: templateData?.slug.replace(/<\/?[^>]+(>|$)/gi, "") ?? "",
-      meta_title: templateData?.meta_title.replace(/<\/?[^>]+(>|$)/gi, "") ?? "",
-      meta_description: templateData?.meta_description.replace(/<\/?[^>]+(>|$)/gi, "") ?? "",
-      meta_keywords: templateData?.meta_keywords.replace(/<\/?[^>]+(>|$)/gi, "") ?? "",
+      slug: templateData?.slug ? stripTags(templateData.slug) : "",
+      meta_title: templateData?.meta_title ? stripTags(templateData.meta_title) : "",
+      meta_description: templateData?.meta_description ? stripTags(templateData.meta_description) : "",
+      meta_keywords: templateData?.meta_keywords ? stripTags(templateData.meta_keywords) : "",
       status: templateData?.status ?? "DRAFT",
       is_internal: templateData?.is_internal ?? false,
       ...(type === "edit" && {

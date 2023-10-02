@@ -7,7 +7,7 @@ import PdfIcon from "@/assets/icons/PdfIcon";
 import WordIcon from "@/assets/icons/WordIcon";
 import LinkVariantIcon from "@/assets/icons/LinkVariantIcon";
 import useCopyToClipboard from "@/hooks/useCopyToClipboard";
-import { getBaseURL, downloadBlobObject } from "@/common/helpers";
+import { getBaseUrl, downloadBlobObject } from "@/common/helpers";
 import { executionsApi } from "@/core/api/executions";
 
 interface SparkExportProps {
@@ -20,7 +20,7 @@ export const SparkExportPopup = ({ activeExecution, onClose }: SparkExportProps)
     throw new Error("Provided activeExecution is not a valid one!");
   }
 
-  const sharedUrl = `${getBaseURL()}/prompt/${activeExecution.template?.slug}/?hash=${activeExecution.hash}`;
+  const sharedUrl = `${getBaseUrl}/prompt/${activeExecution.template?.slug}/?hash=${activeExecution.hash}`;
 
   const [exportExecution] = executionsApi.endpoints.exportExecution.useLazyQuery();
   const [copyToClipboard, copyResult] = useCopyToClipboard();

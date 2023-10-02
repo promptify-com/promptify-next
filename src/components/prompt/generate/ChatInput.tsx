@@ -3,9 +3,9 @@ import { Clear, Edit, PlayCircle, Send } from "@mui/icons-material";
 import { Box, Button, CircularProgress, Grid, InputBase, Typography } from "@mui/material";
 
 import { IAnswer } from "@/common/types/chat";
-import { addSpaceBetweenCapitalized } from "@/common/helpers/addSpaceBetweenCapitalized";
 import { useAppSelector } from "@/hooks/useStore";
 import ThreeDotsAnimation from "@/components/design-system/ThreeDotsAnimation";
+import { addSpaceBetweenCapitalized } from "@/common/helpers";
 
 interface ChatInputProps {
   onChange: (str: string) => void;
@@ -35,6 +35,7 @@ export const ChatInput = ({
   isValidating,
 }: ChatInputProps) => {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
+
   return (
     <Grid
       p={"0px 16px"}
