@@ -1,11 +1,11 @@
-import { MutableRefObject, useRef, useState } from "react";
+import { MutableRefObject, useEffect, useRef, useState } from "react";
 import HighlightWithinTextarea, { Selection } from "react-highlight-within-textarea";
 import { Grid } from "@mui/material";
-
 import { addPreset } from "@/common/helpers/addPreset";
 import { HighlightWithinTextareaRef, InputVariable, OutputVariable, Preset, PresetType } from "@/common/types/builder";
 import { useCursorPosition } from "@/hooks/useCursorPosition";
 import { SuggestionsList } from "./SuggestionsList";
+import ClientOnly from "../base/ClientOnly";
 
 interface Props {
   cursorPositionRef: MutableRefObject<number>;
@@ -99,24 +99,26 @@ export const HighlightTextarea = ({
   };
 
   return (
-    <Grid>
-      <HighlightWithinTextarea
-        ref={divRef}
-        value={content}
-        highlight={highlight}
-        placeholder="..."
-        stripPastedStyles
-        onChange={(newValue, selection) => {
-          onChange(newValue, selection);
-          showSuggestions(newValue);
-        }}
-      />
-      <SuggestionsList
-        suggestionList={suggestionList}
-        position={cursorPosition}
-        optionType={optionType}
-        onSelect={handleSuggestionSelect}
-      />
-    </Grid>
+    <ClientOnly>
+      <Grid>
+        <HighlightWithinTextarea
+          ref={divRef}
+          value={content}
+          highlight={highlight}
+          placeholder="..."
+          stripPastedStyles
+          onChange={(newValue, selection) => {
+            onChange(newValue, selection);
+            showSuggestions(newValue);
+          }}
+        />
+        <SuggestionsList
+          suggestionList={suggestionList}
+          position={cursorPosition}
+          optionType={optionType}
+          onSelect={handleSuggestionSelect}
+        />
+      </Grid>
+    </ClientOnly>
   );
 };

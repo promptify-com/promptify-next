@@ -5,7 +5,6 @@ import {
   Grid,
   Icon,
   IconButton,
-  Link,
   ListItem,
   ListItemButton,
   ListItemIcon,
@@ -19,12 +18,13 @@ import PaperIcon from "@/assets/icons/PaperIcon";
 
 interface SideBarRightProps {
   open: boolean;
-  toggleSideBarRight: (name: string) => void;
+  openSideBarRight: () => void;
   closeSideBarRight: () => void;
 }
+
 const drawerWidth = 352;
 
-export const SidebarRight: React.FC<SideBarRightProps> = ({ open, toggleSideBarRight, closeSideBarRight }) => {
+export const SidebarRight: React.FC<SideBarRightProps> = ({ open, openSideBarRight, closeSideBarRight }) => {
   const theme = useTheme();
 
   const navItems = [
@@ -91,7 +91,7 @@ export const SidebarRight: React.FC<SideBarRightProps> = ({ open, toggleSideBarR
           <Grid key={item.name}>
             <ListItem
               disablePadding
-              onClick={() => toggleSideBarRight(item.name)}
+              onClick={openSideBarRight}
             >
               <ListItemButton
                 sx={{

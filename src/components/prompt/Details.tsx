@@ -205,13 +205,16 @@ export const Details: React.FC<DetailsProps> = ({ templateData, setMobileTab = (
             >
               <Subtitle sx={{ mb: "12px", color: "tertiary" }}>Actions</Subtitle>
               <Stack gap={1}>
-                {(currentUser?.is_admin || currentUser?.id === templateData.created_by.id) && (
+                {currentUser?.id === templateData.created_by.id && (
                   <Button
                     variant={"contained"}
                     startIcon={<Create />}
                     sx={templateBtnStyle}
                     onClick={() => {
-                      window.open(window.location.origin + `/builder/${templateData.id}?editor=1`, "_blank");
+                      const path = currentUser?.is_admin
+                        ? `/builder/${templateData.id}?editor=1`
+                        : `/prompt-builder/${templateData.slug}?editor=1`;
+                      window.open(window.location.origin + path, "_blank");
                     }}
                   >
                     Edit this Template

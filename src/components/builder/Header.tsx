@@ -10,15 +10,16 @@ import { RootState } from "@/core/store";
 import { ProfileDropDown } from "../ProfileMenu";
 
 interface IHeader {
-  onDrawerOpen: () => void;
   onSave: () => void;
   onPublish: () => void;
   title: string;
   status: TemplateStatus;
   templateSlug?: string;
+  onEditTemplate: () => void;
+  profile?: boolean;
 }
 
-export const Header = ({ onDrawerOpen, onSave, onPublish, title, status, templateSlug }: IHeader) => {
+export const Header = ({ onSave, onPublish, title, status, templateSlug, onEditTemplate, profile }: IHeader) => {
   const isValidUser = useSelector(isValidUserFn);
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
   const menuAnchorRef = useRef<HTMLDivElement | null>(null);
@@ -71,7 +72,7 @@ export const Header = ({ onDrawerOpen, onSave, onPublish, title, status, templat
             />
             <ModeEdit
               sx={{ cursor: "pointer", fontSize: "16px" }}
-              onClick={onDrawerOpen}
+              onClick={onEditTemplate}
             />
           </Stack>
 
@@ -140,7 +141,7 @@ export const Header = ({ onDrawerOpen, onSave, onPublish, title, status, templat
           )}
         </Stack>
       </Stack>
-      {isValidUser && (
+      {isValidUser && profile && (
         <Box>
           <Avatar
             ref={menuAnchorRef}
