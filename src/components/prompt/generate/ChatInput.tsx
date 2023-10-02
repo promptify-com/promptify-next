@@ -37,18 +37,21 @@ export const ChatInput = ({
   isValidating,
 }: ChatInputProps) => {
   const { truncate } = useTruncate();
+
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  const dynamicLength = calculateTruncateLength(containerRef);
-
   const getAnswerName = (answer: IAnswer) => {
-    return ` ${truncate(addSpaceBetweenCapitalized(answer.inputName), { length: dynamicLength })} : ${truncate(
-      answer.answer as string,
-      {
-        length: dynamicLength,
-      },
-    )}`;
+    const totalLength = calculateTruncateLength(containerRef);
+    const inputNameAllocatedLength = Math.floor(0.6 * totalLength);
+    const answerAllocatedLength = totalLength - inputNameAllocatedLength;
+
+    const truncatedInputName = truncate(addSpaceBetweenCapitalized(answer.inputName), {
+      length: inputNameAllocatedLength,
+    });
+    const truncatedAnswer = truncate(answer.answer as string, { length: answerAllocatedLength });
+
+    return ` ${truncatedInputName} : ${truncatedAnswer}`;
   };
 
   const isGenerating = useAppSelector(state => state.template.isGenerating);
@@ -59,11 +62,9 @@ export const ChatInput = ({
       pb={"16px"}
       position={"relative"}
       width={"100%"}
-      left={0}
       display={"flex"}
       flexDirection={"column"}
       gap={"8px"}
-      right={0}
       mt={"auto"}
     >
       <Box
@@ -118,7 +119,7 @@ export const ChatInput = ({
       {answers.length > 0 && (
         <Grid
           display={"flex"}
-          alignItems={"center"}
+          alignItems={{ xs: "start", md: "center" }}
           flexWrap={"wrap"}
           gap={"8px"}
         >
