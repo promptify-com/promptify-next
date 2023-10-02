@@ -92,3 +92,18 @@ export const Keywords: any[] = [
     name: "Social Media",
   },
 ];
+
+export const LANGUAGES_CODE_MAPPING: Record<string, string> = {
+  es: "Spanish",
+  fr: "French",
+  en: "English",
+};
+
+export enum CONNECTIONS {
+  GOOGLE = "Google",
+  WINDOWS = "Windows",
+  LINKEDIN = "Linkedin",
+  REDDIT = "Reddit",
+  MICROSOFT = "Microsoft",
+  GITHUB = "Github",
+}
