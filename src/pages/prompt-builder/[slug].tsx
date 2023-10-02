@@ -31,7 +31,7 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
   const token = useToken();
   const sidebarOpen = useSelector((state: RootState) => state.sidebar.open);
   const promptsData = useRef(initPrompts);
-  const [templateDrawerOpen, setTemplateDrawerOpen] = useState(false);
+  const [templateDrawerOpen, setTemplateDrawerOpen] = useState(Boolean(router.query.editor));
   const [publishTemplate] = usePublishTemplateMutation();
   const [messageSnackBar, setMessageSnackBar] = useState({ status: false, message: "" });
   const [errorSnackBar, setErrorSnackBar] = useState({ status: false, message: "" });
@@ -43,7 +43,20 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
     if (!token) {
       router.push("/signin");
     }
-  }, []);
+
+    if (router.query.editor) {
+      const { editor, ...restQueryParams } = router.query;
+
+      router.replace(
+        {
+          pathname: router.pathname,
+          query: restQueryParams,
+        },
+        undefined,
+        { scroll: false, shallow: true },
+      );
+    }
+  }, [router.query]);
 
   const handleSaveTemplate = async () => {
     if (!templateData) {
