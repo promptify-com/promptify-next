@@ -68,13 +68,15 @@ export const StylerAccordion = ({ prompt, setPrompt }: Props) => {
         }}
       >
         <AccordionSummary
-          expandIcon={<ExpandMore />}
+          expandIcon={<ExpandMore sx={{ ml: "10px" }} />}
           sx={{
-            minHeight: "42px !important",
+            minHeight: "auto !important",
+            py: "8px",
             ".MuiAccordionSummary-content": {
               m: 0,
               alignItems: "center",
               gap: 2,
+              width: "100%",
             },
           }}
         >
@@ -85,8 +87,9 @@ export const StylerAccordion = ({ prompt, setPrompt }: Props) => {
           <Stack
             direction={"row"}
             alignItems={"center"}
-            flexWrap={"wrap"}
+            flexWrap={"nowrap"}
             gap={0.5}
+            width={"100%"}
           >
             <Typography
               sx={{
@@ -94,6 +97,7 @@ export const StylerAccordion = ({ prompt, setPrompt }: Props) => {
                 fontWeight: 500,
                 color: "onSurface",
                 opacity: 0.8,
+                whiteSpace: "nowrap",
               }}
             >
               Style options:

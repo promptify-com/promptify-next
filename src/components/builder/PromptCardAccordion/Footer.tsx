@@ -38,6 +38,7 @@ export const Footer = ({ prompt, setPrompt }: Props) => {
             fontSize: 12,
             fontWeight: 500,
             color: "onSurface",
+            whiteSpace: "nowrap",
           }}
         >
           Generated content format:
@@ -49,8 +50,8 @@ export const Footer = ({ prompt, setPrompt }: Props) => {
             color: "onSurface",
             opacity: 0.5,
             whiteSpace: "nowrap",
-            maxWidth: "200px",
             overflow: "hidden",
+            maxWidth: "40%",
           }}
         >
           {prompt.output_format ? prompt.output_format + " ," : ""}
@@ -84,6 +85,7 @@ export const Footer = ({ prompt, setPrompt }: Props) => {
               fontSize: 12,
               fontWeight: 500,
               color: "onSurface",
+              whiteSpace: "nowrap",
             }}
           >
             Save result as:
@@ -98,9 +100,21 @@ export const Footer = ({ prompt, setPrompt }: Props) => {
               fontSize: 13,
               fontWeight: 500,
               color: "#9C27B0",
+              px: "6px",
             }}
           >
-            {prompt.prompt_output_variable || "..."}
+            <Typography
+              component={"span"}
+              sx={{
+                fontSize: "inherit",
+                fontWeight: "inherit",
+                color: "inherit",
+                width: "80px",
+                overflow: "hidden",
+              }}
+            >
+              {prompt.prompt_output_variable || "..."}
+            </Typography>
           </Button>
         </Stack>
       </Stack>

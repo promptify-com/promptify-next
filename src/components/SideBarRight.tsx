@@ -28,25 +28,25 @@ export const SidebarRight: React.FC<SideBarRightProps> = ({ open, openSideBarRig
   const theme = useTheme();
 
   const navItems = [
-    // {
-    //   name: "list",
-    //   icon: <FormatListBulleted />,
-    // },
-    // {
-    //   name: "paper",
-    //   icon: <PaperIcon />,
-    //   external: false,
-    // },
+    {
+      name: "list",
+      icon: <FormatListBulleted />,
+    },
+    {
+      name: "paper",
+      icon: <PaperIcon />,
+      external: false,
+    },
     {
       name: "help",
       icon: <HelpIcon />,
       external: false,
     },
-    // {
-    //   name: "api",
-    //   icon: <ApiIcon />,
-    //   external: false,
-    // },
+    {
+      name: "api",
+      icon: <ApiIcon />,
+      external: false,
+    },
   ];
 
   return (

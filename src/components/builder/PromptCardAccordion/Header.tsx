@@ -64,6 +64,7 @@ export const Header = ({ prompt, setPrompt, deletePrompt, duplicatePrompt, engin
             color: "text.primary",
             alignItems: "center",
             gap: 0.5,
+            px: "8px",
           }}
         >
           <img
@@ -76,7 +77,17 @@ export const Header = ({ prompt, setPrompt, deletePrompt, duplicatePrompt, engin
               borderRadius: "50%",
             }}
           />
-          {promptEngine?.name}
+          <Typography
+            component={"span"}
+            sx={{
+              fontSize: "inherit",
+              fontWeight: "inherit",
+              color: "inherit",
+              overflow: "hidden",
+            }}
+          >
+            {promptEngine?.name}
+          </Typography>
         </Button>
         <IconButton
           onClick={e => {
@@ -99,7 +110,6 @@ export const Header = ({ prompt, setPrompt, deletePrompt, duplicatePrompt, engin
             color: "onSurface",
             opacity: 0.5,
             whiteSpace: "nowrap",
-            width: "200px",
             overflow: "hidden",
           }}
         >
