@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { Box, IconButton, Stack, Tab, Tabs, Typography, alpha } from "@mui/material";
 import { RenameForm } from "../common/forms/RenameForm";
-import { INodesData } from "@/common/types/builder";
+import { IEditPrompts } from "@/common/types/builder";
 import { useGetEnginesQuery } from "@/core/api/engines";
 import { Close, DeleteOutline, ModeEdit, Settings, Tune } from "@mui/icons-material";
 import { theme } from "@/theme";
 import Terminal from "@/assets/icons/Terminal";
 import { NodeContentForm } from "./NodeContentForm";
-import { Stylizer } from "./Stylizer";
+import { Styler } from "./Styler/Styler";
 import { Options } from "./Options";
 
 const CustomTabPanel = (props: any) => {
@@ -32,11 +32,11 @@ const a11yProps = (index: number) => {
 interface Props {
   close: () => void;
   removeNode: () => void;
-  selectedNodeData: INodesData;
-  setSelectedNodeData: (value: INodesData) => void;
+  selectedNodeData: IEditPrompts;
+  setSelectedNodeData: (value: IEditPrompts) => void;
   nodeCount: number;
-  nodesData: INodesData[];
-  setNodesData: (value: INodesData[]) => void;
+  nodesData: IEditPrompts[];
+  setNodesData: (value: IEditPrompts[]) => void;
 }
 
 export const PromptForm: React.FC<Props> = ({
@@ -157,7 +157,7 @@ export const PromptForm: React.FC<Props> = ({
             sx={{ ...tabStyle, color: `${alpha(theme.palette.onSurface, 0.4)}` }}
           />
           <Tab
-            label="Stylizer"
+            label="Styler"
             {...a11yProps(1)}
             icon={<Tune />}
             iconPosition="start"
@@ -190,7 +190,7 @@ export const PromptForm: React.FC<Props> = ({
             overflow: "auto",
           }}
         >
-          <Stylizer
+          <Styler
             selectedNodeData={selectedNodeData}
             setSelectedNodeData={setSelectedNodeData}
           />

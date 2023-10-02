@@ -1,0 +1,56 @@
+.nodeStyles {
+    width: 300px;
+    border: transparent !important;
+    min-height: 112px;
+    color: #1b1b1e;
+    border-radius: 16px;
+    cursor: "pointer";
+    background: var(--dynamic-m-3-surfaces-surface-1, #FDFBFF);
+    box-shadow: 0px 6px 6px -3px rgba(225, 226, 236, 0.20), 0px 10px 14px 1px rgba(225, 226, 236, 0.14), 0px 4px 18px 3px rgba(27, 27, 30, 0.12);
+}
+  .selected {
+    border: 2px solid var(--secondary-main, #1B1B1E) !important;
+  }
+  .header {
+    font-size: 16px;
+    font-weight: 500;
+    padding: 16px;
+    display: flex;
+    gap: 8px;
+    white-space: nowrap;
+    overflow-x: hidden;
+  }
+  .headerImg {
+    width: 24;
+    height: 24;
+    border-radius: "50%";
+  }
+
+  .body {
+    display: flex ;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 8px;
+  }
+
+  .ioContainer {
+    display: flex !important;
+    gap: 8px;
+    font-size: 14px;
+  }
+
+  .svg {
+    overflow: visible !important;
+    position: absolute;
+    pointer-events: none;
+  }
+  .path {
+    fill: none;
+    stroke-width: 3px;
+    stroke:#1B1B1E;
+    pointer-events: auto;
+  }
+  .pathSelected {
+    stroke:red !important;
+
+  }

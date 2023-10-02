@@ -30,6 +30,7 @@ import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
 interface SideBarProps {
   open: boolean;
   toggleSideBar: () => void;
+  fullHeight?: boolean;
 }
 
 const drawerWidth = 299;
@@ -72,7 +73,7 @@ const Drawer = styled(MuiDrawer, {
   }),
 }));
 
-export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
+export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar, fullHeight = false }) => {
   const pathname = usePathname();
   const isExplorePage = pathname.split("/")[1] === "explore";
   const isValidUser = useSelector(isValidUserFn);
@@ -147,16 +148,16 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
           alignItems: "center",
           justifyContent: "center",
           "& .MuiDrawer-paper": {
-            my: "2vh",
-            borderRadius: "0px 8px 8px 0px",
-            height: "96vh",
+            my: !fullHeight ? "2svh" : 0,
+            borderRadius: !fullHeight ? "0px 8px 8px 0px" : 0,
+            height: fullHeight ? "100svh" : "96svh",
             boxShadow:
               !open && expandedOnHover
                 ? "0px 7px 8px -4px #00000033, 0px 12px 17px 2px #00000024, 0px 5px 22px 4px #0000001F"
                 : "",
             boxSizing: "border-box",
             overflow: "hidden",
-            bgcolor: "white",
+            bgcolor: "surface.1",
             border: "none",
           },
         }}

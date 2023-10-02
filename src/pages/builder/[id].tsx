@@ -28,10 +28,10 @@ import { useGetPromptTemplatesQuery, usePublishTemplateMutation } from "@/core/a
 import { Prompts } from "@/core/api/dto/prompts";
 import { deletePrompt, updateTemplate } from "@/hooks/api/templates";
 import { ContentCopy } from "@mui/icons-material";
-import { INodesData } from "@/common/types/builder";
+import { IEditPrompts } from "@/common/types/builder";
 import TemplateForm from "@/components/common/forms/TemplateForm";
 import { promptRandomId } from "@/common/helpers/promptRandomId";
-import { isPromptVariableValid } from "@/common/helpers/isPromptVariableValid";
+import { isPromptVariableValid } from "@/common/helpers/promptValidator";
 
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import { theme } from "@/theme";
@@ -57,9 +57,9 @@ export const Builder = () => {
   const [prompts, setPrompts] = useState<Prompts[]>([]);
   const { data: engines } = useGetEnginesQuery();
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
-  const [selectedNodeData, setSelectedNodeData] = useState<INodesData | null>(null);
+  const [selectedNodeData, setSelectedNodeData] = useState<IEditPrompts | null>(null);
   const [selectedConnection, setSelectedConnection] = useState<string | null>(null);
-  const [nodesData, setNodesData] = useState<INodesData[]>([]);
+  const [nodesData, setNodesData] = useState<IEditPrompts[]>([]);
   const { data: promptsData } = useGetPromptTemplatesQuery(id ? +id : skipToken);
   const dataForRequest = useRef({} as any);
   const [confirmDialogOpen, setConfirmDialogOpen] = React.useState(false);
@@ -286,7 +286,7 @@ export const Builder = () => {
 
     const data = dataForRequest.current;
 
-    const currentPrompt = dataForRequest.current.prompts_list.find((prompt: INodesData) => {
+    const currentPrompt = dataForRequest.current.prompts_list.find((prompt: IEditPrompts) => {
       return prompt?.id?.toString() === selectedNode?.id || prompt?.temp_id === selectedNode?.temp_id;
     });
 
@@ -295,14 +295,14 @@ export const Builder = () => {
       await deletePrompt(Number(currentPrompt.id));
     }
 
-    const allPrompts = data.prompts_list.filter((prompt: INodesData) => {
+    const allPrompts = data.prompts_list.filter((prompt: IEditPrompts) => {
       return prompt?.id?.toString() !== currentPrompt?.id?.toString() || prompt?.temp_id !== currentPrompt?.temp_id;
     });
 
     data.prompts_list = allPrompts;
 
     // remove the ID of the prompt from the dependencies of other prompts
-    allPrompts.forEach((prompt: INodesData) => {
+    allPrompts.forEach((prompt: IEditPrompts) => {
       prompt.dependencies = prompt.dependencies.filter((dependency: number) => {
         return dependency !== currentPrompt?.id && dependency !== currentPrompt?.temp_id;
       });
@@ -334,7 +334,7 @@ export const Builder = () => {
           if (targetNode) {
             targetNode.dependencies = targetNode?.dependencies.filter(dep => dep.toString() !== source?.id);
 
-            setNodesData(prev => [...prev.filter(node => node.id !== targetNode?.id), targetNode as INodesData]);
+            setNodesData(prev => [...prev.filter(node => node.id !== targetNode?.id), targetNode as IEditPrompts]);
           }
           await editor?.removeConnection(selectedConnection);
           setSelectedConnection(null);
@@ -377,7 +377,7 @@ export const Builder = () => {
 
   const updateTemplateDependencies = (id: string, dependsOn: string) => {
     const data = dataForRequest.current;
-    const currentPrompt = dataForRequest.current.prompts_list?.find((prompt: INodesData) => {
+    const currentPrompt = dataForRequest.current.prompts_list?.find((prompt: IEditPrompts) => {
       return prompt.temp_id === Number(id) || prompt.id === Number(id);
     });
 
@@ -414,13 +414,13 @@ export const Builder = () => {
     }
 
     // remove duplicated dependencies in the prompts
-    data.prompts_list?.forEach((prompt: INodesData) => {
+    data.prompts_list?.forEach((prompt: IEditPrompts) => {
       prompt.dependencies = prompt.dependencies.filter((dependency: number, index: number, self: number[]) => {
         return self.indexOf(dependency) === index;
       });
     });
 
-    function getOrder(node: INodesData) {
+    function getOrder(node: IEditPrompts) {
       if (!node?.dependencies) {
         return 1;
       } else {

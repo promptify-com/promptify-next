@@ -49,7 +49,7 @@ export let theme: Theme = createTheme({
   },
   palette: {
     common: { black: "#1D2028", white: "#fff" },
-    action: { disabled: "grey", focusOpacity: 0 },
+    action: { active: "#1B1B1E", disabled: "grey", focusOpacity: 0 },
     grey: {
       "100": "#F5F5F5",
       "300": "#EFF0F3",

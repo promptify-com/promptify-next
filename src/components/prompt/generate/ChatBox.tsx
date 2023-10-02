@@ -11,7 +11,7 @@ import useTimestampConverter from "@/hooks/useTimestampConverter";
 import { ChatInterface } from "./ChatInterface";
 import { ChatInput } from "./ChatInput";
 import { useRouter } from "next/router";
-import { TemplateQuestions, UpdatedQuestionTemplate } from "@/core/api/dto/templates";
+import { TemplateQuestions, Templates, UpdatedQuestionTemplate } from "@/core/api/dto/templates";
 import { getInputsFromString } from "@/common/helpers";
 import { IPromptInput, PromptLiveResponse, InputType } from "@/common/types/prompt";
 import { setGeneratingStatus, updateExecutionData } from "@/core/store/templatesSlice";
@@ -24,17 +24,17 @@ import { vary } from "@/common/helpers/varyValidator";
 interface Props {
   setGeneratedExecution: (data: PromptLiveResponse | null) => void;
   onError: (errMsg: string) => void;
+  template: Templates;
 }
 
 const BottomTabsMobileHeight = "240px";
 
-const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
+const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template }) => {
   const IS_MOBILE = determineIsMobile();
   const token = useToken();
   const router = useRouter();
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const template = useAppSelector(state => state.template.template);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const [stopExecution] = useStopExecutionMutation();
 
@@ -57,8 +57,8 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
 
   let abortController = useRef(new AbortController());
 
-  const addToQueuedMessages = (message: IMessage[]) => {
-    setQueuedMessages(prevMessages => prevMessages.concat(message));
+  const addToQueuedMessages = (messages: IMessage[]) => {
+    setQueuedMessages(messages);
     setIsSimulaitonStreaming(true);
   };
   const initialMessages = ({
@@ -98,7 +98,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
     }
 
     setCurrentQuestionIndex(0);
-    setMessages(_messages => _messages.concat(welcomeMessage));
+    setMessages(welcomeMessage);
     setAnswers([]);
     setShowGenerateButton(false);
   };
@@ -361,7 +361,8 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError }) => {
 
           if (response.feedback) {
             nextBotMessage = { ...nextMessage, text: response.feedback, type: "text" };
-            addToQueuedMessages([nextMessage]);
+
+            addToQueuedMessages(queuedMessages.concat(nextMessage));
           } else {
             nextBotMessage = nextMessage;
           }

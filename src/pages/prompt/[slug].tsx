@@ -33,7 +33,7 @@ import { DetailsCardMini } from "@/components/prompt/DetailsCardMini";
 import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { useSelector, useDispatch } from "react-redux";
-import { updateTemplate, updateTemplateData, updateExecutionData } from "@/core/store/templatesSlice";
+import { updateTemplateData, updateExecutionData } from "@/core/store/templatesSlice";
 import { RootState } from "@/core/store";
 import PromptPlaceholder from "@/components/placeholders/PromptPlaceHolder";
 import { useAppSelector } from "@/hooks/useStore";
@@ -80,7 +80,6 @@ const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | nu
   // We need to set initial template store only once.
   useEffect(() => {
     if (fetchedTemplate?.id && (!isSavedTemplateId || isSavedTemplateId !== fetchedTemplate.id)) {
-      dispatch(updateTemplate(fetchedTemplate));
       dispatch(updateExecutionData(JSON.stringify([])));
       dispatch(
         updateTemplateData({
@@ -340,6 +339,7 @@ const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | nu
                       setGeneratedExecution={setGeneratedExecution}
                       onError={setErrorMessage}
                       key={fetchedTemplate.id}
+                      template={fetchedTemplate}
                     />
                   </Grid>
                 ) : (

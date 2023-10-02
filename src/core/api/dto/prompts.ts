@@ -1,3 +1,5 @@
+import { IParameters } from "@/common/types";
+
 interface Engine {
   id: number;
   name: string;
@@ -51,7 +53,7 @@ export interface PromptDescription {
 export interface PromptParams {
   descriptions: PromptDescription[];
   score: number;
-  parameter: PromptParam;
+  parameter: IParameters;
   is_visible: boolean;
   is_editable: boolean;
 }
