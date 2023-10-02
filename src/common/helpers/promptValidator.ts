@@ -1,7 +1,7 @@
 export const isPromptVariableValid = (content: string) => {
   const validTextRegex = /^[a-zA-Z]+$/;
   const regex = /{{(.*?)}}/g;
-  const validTypes = ["text", "number", "integer", "code", "choices"];
+  const validTypes = ["text", "number", "integer", "code", "choices", "file"];
   let match;
 
   while ((match = regex.exec(content)) !== null) {
@@ -37,6 +37,20 @@ export const isPromptVariableValid = (content: string) => {
           parts[3]?.endsWith('"') &&
           Array.from(new Set(parts[3].slice(1, -1).split(","))).every(option => option.trim())
         )
+      ) {
+        return {
+          isValid: false,
+          message: `"${match[0]}"`,
+        };
+      }
+    }
+
+    if (type === "file") {
+      const allowedExtensions = parts[3]?.split(",");
+
+      if (
+        !Array.isArray(allowedExtensions) ||
+        !allowedExtensions.every(ext => ["pdf", "docx", "txt"].includes(ext.trim()))
       ) {
         return {
           isValid: false,
