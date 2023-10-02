@@ -8,7 +8,6 @@ import profileSlice from "./profileSlice";
 import { baseApi } from "../api/api";
 import userSlice from "./userSlice";
 
-import sidebarRightSlice from "./sidebarRightSlice";
 export interface State {
   tick: string;
 }
@@ -20,7 +19,6 @@ export const store = (options?: ConfigureStoreOptions["preloadedState"] | undefi
       template: templatesSlice.reducer,
       filters: filterSlice,
       sidebar: sidebarSlice,
-      sidebarRight: sidebarRightSlice,
       profile: profileSlice,
       user: userSlice,
     },

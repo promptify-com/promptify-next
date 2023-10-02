@@ -33,16 +33,7 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
   const [errorSnackBar, setErrorSnackBar] = useState({ status: false, message: "" });
   const dispatch = useDispatch();
   const toggleSidebar = () => dispatch(setOpenSidebar(!sidebarOpen));
-  const [toggleSideBarRight, setToggleSideBarRight] = useState(false);
-
-  const toggleSidebarRight = (name: string) => {
-    if (name === "help") {
-      setToggleSideBarRight(true);
-    }
-  };
-  const closeSidebarRight = () => {
-    setToggleSideBarRight(false);
-  };
+  const [openSideBarRight, setOpenSideBarRight] = useState(false);
 
   const handleSaveTemplate = async () => {
     if (!templateData) {
@@ -108,18 +99,18 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
     >
       <Sidebar
         open={sidebarOpen}
-        toggleSideBar={() => toggleSidebar()}
+        toggleSideBar={toggleSidebar}
         fullHeight
       />
       <SidebarRight
-        open={toggleSideBarRight}
-        toggleSideBarRight={() => {}}
-        closeSideBarRight={() => closeSidebarRight()}
+        open={openSideBarRight}
+        openSideBarRight={() => setOpenSideBarRight(true)}
+        closeSideBarRight={() => setOpenSideBarRight(false)}
       />
       <Box
         sx={{
           ml: sidebarOpen ? "299px" : "86px",
-          mr: toggleSideBarRight ? "352px" : "0px",
+          mr: openSideBarRight ? "352px" : "0px",
         }}
       >
         <Header
