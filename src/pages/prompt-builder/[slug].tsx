@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { usePublishTemplateMutation } from "@/core/api/templates";
 import { Alert, Box, Snackbar, Stack, SwipeableDrawer, Typography } from "@mui/material";
 import { Sidebar } from "@/components/SideBar";
@@ -16,6 +16,8 @@ import { client } from "@/common/axios";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import PromptList from "@/components/builder/PromptCardAccordion/PromptList";
+import { useRouter } from "next/router";
+import useToken from "@/hooks/useToken";
 
 interface PromptBuilderProps {
   templateData: Templates;
@@ -25,6 +27,8 @@ interface PromptBuilderProps {
 }
 
 export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuilderProps) => {
+  const router = useRouter();
+  const token = useToken();
   const sidebarOpen = useSelector((state: RootState) => state.sidebar.open);
   const promptsData = useRef(initPrompts);
   const [templateDrawerOpen, setTemplateDrawerOpen] = useState(false);
@@ -34,6 +38,12 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
   const dispatch = useDispatch();
   const toggleSidebar = () => dispatch(setOpenSidebar(!sidebarOpen));
   const [openSideBarRight, setOpenSideBarRight] = useState(false);
+
+  useEffect(() => {
+    if (!token) {
+      router.push("/signin");
+    }
+  }, []);
 
   const handleSaveTemplate = async () => {
     if (!templateData) {
@@ -119,7 +129,8 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
           templateSlug={templateData?.slug}
           onPublish={handlePublishTemplate}
           onSave={handleSaveTemplate}
-          onDrawerOpen={() => setTemplateDrawerOpen(true)}
+          onEditTemplate={() => setTemplateDrawerOpen(true)}
+          profile
         />
 
         <Box

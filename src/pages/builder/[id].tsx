@@ -471,9 +471,9 @@ export const Builder = () => {
               status={dataForRequest.current.status}
               title={dataForRequest.current.title}
               onPublish={() => handlePublishTemplate()}
-              onDrawerOpen={() => toggleTemplateDrawer(true)}
               onSave={injectOrderAndSendRequest}
               templateSlug={promptsData?.slug}
+              onEditTemplate={() => toggleTemplateDrawer(true)}
             />
           </Grid>
           <Grid
