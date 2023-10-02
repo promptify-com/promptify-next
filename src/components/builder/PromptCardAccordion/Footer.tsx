@@ -1,7 +1,7 @@
+import React, { useState } from "react";
 import { IEditPrompts } from "@/common/types/builder";
 import { ArrowDropDown } from "@mui/icons-material";
 import { Button, Popover, Stack, Typography } from "@mui/material";
-import React, { useState } from "react";
 import { OutputOptions } from "./OutputOptions";
 import ArrowRightBottom from "@/assets/icons/ArrowRightBottom";
 import { theme } from "@/theme";

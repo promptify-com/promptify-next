@@ -1,6 +1,6 @@
 import { ModeEdit, PlayCircle } from "@mui/icons-material";
 import { Box, Button, Divider, Stack, Typography } from "@mui/material";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { memo, useEffect, useMemo, useRef, useState } from "react";
 import { Header } from "./Header";
 import { StylerAccordion } from "./StylerAccordion";
 import { IEditPrompts } from "@/common/types/builder";
@@ -8,8 +8,9 @@ import { RenameForm } from "@/components/common/forms/RenameForm";
 import { Footer } from "./Footer";
 import { HighlightTextarea } from "../HighlightWithinTextarea";
 import { Selection } from "react-highlight-within-textarea";
-import { getBuilderVarsPresets } from "@/common/helpers/getBuilderVarsPresets";
 import { Engine } from "@/core/api/dto/templates";
+import { useDrag, useDrop, ConnectableElement } from "react-dnd";
+import { getBuilderVarsPresets } from "@/common/helpers/getBuilderVarsPresets";
 
 interface Props {
   prompt: IEditPrompts;
@@ -18,13 +19,26 @@ interface Props {
   duplicatePrompt: () => void;
   prompts: IEditPrompts[];
   engines: Engine[];
+  findPromptIndex: (id: number) => number;
+  movePrompt: (id: number, atIndex: number) => void;
 }
 
-export const PromptCardAccordion = ({ prompt, setPrompt, deletePrompt, duplicatePrompt, prompts, engines }: Props) => {
+export const PromptCardAccordion = ({
+  prompt,
+  setPrompt,
+  deletePrompt,
+  duplicatePrompt,
+  prompts,
+  engines,
+  movePrompt,
+  findPromptIndex,
+}: Props) => {
   const [promptData, setPromptData] = useState(prompt);
   const [renameAllow, setRenameAllow] = useState(false);
   const cursorPositionRef = useRef(0);
   const [highlightedOption, setHighlitedOption] = useState("");
+
+  const { outputPresets, inputPresets } = useMemo(() => getBuilderVarsPresets(prompts, promptData), [prompts]);
 
   useEffect(() => {
     setPromptData(prompt);
@@ -46,10 +60,42 @@ export const PromptCardAccordion = ({ prompt, setPrompt, deletePrompt, duplicate
     });
   };
 
-  const { outputPresets, inputPresets } = useMemo(() => getBuilderVarsPresets(prompts, promptData), [prompts]);
+  const promptId = prompt.id! ?? prompt.temp_id;
+  const originalIndex = findPromptIndex(promptId);
+  const [{ isDragging }, drag] = useDrag(
+    () => ({
+      type: "prompt",
+      item: { id: promptId, originalIndex },
+      collect: monitor => ({
+        isDragging: monitor.isDragging(),
+      }),
+      end: (item, monitor) => {
+        const { id: droppedId, originalIndex } = item;
+        const didDrop = monitor.didDrop();
+        if (!didDrop) {
+          movePrompt(droppedId, originalIndex);
+        }
+      },
+    }),
+    [promptId, originalIndex, movePrompt],
+  );
+  const [, drop] = useDrop(
+    () => ({
+      accept: "prompt",
+      hover({ id: draggedId }: { id: number }) {
+        if (draggedId !== promptId) {
+          const overIndex = findPromptIndex(promptId);
+          movePrompt(draggedId, overIndex);
+        }
+      },
+    }),
+    [findPromptIndex, movePrompt],
+  );
+  const opacity = isDragging ? 0 : 1;
 
   return (
     <Box
+      ref={(node: ConnectableElement) => drag(drop(node))}
       sx={{
         bgcolor: "surface.1",
         m: "24px 0 !important",
