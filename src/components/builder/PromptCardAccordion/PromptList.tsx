@@ -85,12 +85,9 @@ const PromptList = ({ initPrompts, setPromptsData, engines }: Props) => {
         .map((prompt, i) => {
           i++;
           if (i === order - 1) {
-            return [{ ...prompt, order: i }, _newPrompt];
+            return [prompt, _newPrompt];
           }
-          if (i >= order) {
-            return { ...prompt, order: i + 1 };
-          }
-          return { ...prompt, order: i };
+          return prompt;
         })
         .flat();
     }
@@ -121,12 +118,9 @@ const PromptList = ({ initPrompts, setPromptsData, engines }: Props) => {
       .map((prompt, i) => {
         i++;
         if (i === order - 1) {
-          return [{ ...prompt, order: i }, _newPrompt];
+          return [prompt, _newPrompt];
         }
-        if (i >= order) {
-          return { ...prompt, order: i + 1 };
-        }
-        return { ...prompt, order: i };
+        return prompt;
       })
       .flat();
 
@@ -136,14 +130,9 @@ const PromptList = ({ initPrompts, setPromptsData, engines }: Props) => {
   };
 
   const deletePrompt = (deletePrompt: IEditPrompts) => {
-    const _prompts = promptsData.current
-      .filter(prompt => deletePrompt.id !== prompt.id || deletePrompt.temp_id !== prompt.temp_id)
-      .map(prompt => {
-        if (prompt.order > deletePrompt.order) {
-          return { ...prompt, order: prompt.order - 1 };
-        }
-        return prompt;
-      });
+    const _prompts = promptsData.current.filter(
+      prompt => deletePrompt.id !== prompt.id || deletePrompt.temp_id !== prompt.temp_id,
+    );
 
     promptsData.current = _prompts;
     setPrompts(_prompts);
