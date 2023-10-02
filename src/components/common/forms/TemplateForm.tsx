@@ -22,7 +22,6 @@ import { Close } from "@mui/icons-material";
 import { useGetTagsQuery } from "@/core/api/tags";
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { IEditTemplate } from "@/common/types/editTemplate";
-import { authClient } from "@/common/axios";
 import { fieldStyle, boxStyle, buttonBoxStyle, checkboxStyle } from "@/components/modals/styles";
 import { useGetCategoriesQuery } from "@/core/api/categories";
 import useToken from "@/hooks/useToken";
@@ -285,9 +284,6 @@ const TemplateForm: React.FC<Props> = ({
                 hidden
                 accept="image/*"
                 type="file"
-                // onChange={(args: any) => {
-                //   getUrlImage(args.target.files[0]);
-                // }}
                 onChange={(args: any) => {
                   handleImageChange(args.target.files[0]);
                 }}
