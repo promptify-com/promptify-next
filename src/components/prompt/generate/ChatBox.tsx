@@ -193,23 +193,6 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
   }, [currentQuestionIndex]);
 
   useEffect(() => {
-    if (!isGenerating && answers.length) {
-      const newBotMessage: IMessage = {
-        text: "Do you want to run this template again?",
-        fromUser: false,
-        type: "choices",
-        choices: ["Yes", "No"],
-        createdAt: createdAt,
-        startOver: true,
-      };
-      setShowGenerateButton(false);
-      setCurrentQuestionIndex(0);
-      setAnswers([]);
-      setMessages(prevMessages => prevMessages.concat(newBotMessage));
-    }
-  }, [isGenerating]);
-
-  useEffect(() => {
     if (!isSimulaitonStreaming && !!queuedMessages.length) {
       const nextQueuedMessage = queuedMessages.pop()!;
 
@@ -384,18 +367,6 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
 
   const handleChange = (value: string) => {
     if (isSimulaitonStreaming) {
-      return;
-    }
-
-    if (!isGenerating && messages[messages.length - 1].startOver) {
-      if (value === "Yes") {
-        initialMessages({ questions: templateQuestions, startOver: true });
-      } else {
-        setShowGenerateButton(false);
-        setDisableChatInput(true);
-        setAnswers([]);
-      }
-
       return;
     }
 
@@ -592,11 +563,13 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
         }
       },
       onerror(err) {
+        setDisableChatInput(false);
         dispatch(setGeneratingStatus(false));
         onError("Something went wrong. Please try again later");
         throw err; // rethrow to stop the operation
       },
       onclose() {
+        setDisableChatInput(false);
         dispatch(setGeneratingStatus(false));
       },
     });
