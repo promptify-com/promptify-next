@@ -51,3 +51,10 @@ export const isPromptVariableValid = (content: string) => {
     message: "",
   };
 };
+
+export const validatePromptOutput = (value: string) => {
+  if (value.length && value[0] !== "$") {
+    return "$" + value;
+  }
+  return value;
+};

@@ -1,83 +1,49 @@
 import React, { useRef, useState } from "react";
-import { Box, Divider, Stack, TextField, Typography } from "@mui/material";
-import { INodesData } from "@/common/types/builder";
-import { InlineOptions } from "../common/InlineOptions";
+import { PresetType } from "@/common/types/builder";
+import { Options } from "../common/Options";
+import { Box, Divider, Stack, Typography } from "@mui/material";
+import { IEditPrompts } from "@/common/types/builder";
 import { getInputsFromString } from "@/common/helpers";
-import HighlightWithinTextarea, { Selection } from "react-highlight-within-textarea";
+import { addPreset } from "@/common/helpers/addPreset";
+import { HighlightTextarea } from "./HighlightWithinTextarea";
+import { Selection } from "react-highlight-within-textarea";
+import { getBuilderVarsPresets } from "@/common/helpers/getBuilderVarsPresets";
 
-type PresetType = "node" | "input";
 interface Props {
-  selectedNodeData: INodesData;
-  setSelectedNodeData: (node: INodesData) => void;
-  nodes: INodesData[];
+  selectedNodeData: IEditPrompts;
+  setSelectedNodeData: (node: IEditPrompts) => void;
+  nodes: IEditPrompts[];
 }
 
 export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelectedNodeData, nodes }) => {
   const cursorPositionRef = useRef(0);
-  const [firstAppend, setFirstAppend] = useState(true);
+  const [highlightedOption, setHighlitedOption] = useState("");
+
   const content = selectedNodeData.content || "";
 
-  const highlight = [
-    {
-      highlight: /(\$[\w]+)/g,
-      className: "output-variable",
-    },
-    {
-      highlight: /({{.*?}})/g,
-      className: "input-variable",
-    },
-  ];
+  const { outputPresets, inputPresets } = getBuilderVarsPresets(nodes, selectedNodeData);
 
-  const otherNodes = nodes.filter(
-    node =>
-      (node.id !== selectedNodeData.id && node.id !== selectedNodeData.temp_id) ||
-      (node.temp_id !== selectedNodeData.id && node.temp_id !== selectedNodeData.temp_id),
-  );
-  const nodesPresets = otherNodes.map(node => ({ id: node.id, label: node.prompt_output_variable || node.title }));
-  const inputsPresets = otherNodes
-    .map(node => ({ id: node.id, inputs: getInputsFromString(node.content) }))
-    .filter(node => node.inputs && node.inputs.length)
-    .flatMap(node =>
-      node.inputs.map(input => ({
-        id: node.id,
-        label: input.name,
-        type: input.type,
-        required: input.required,
-        choices: input.choices,
-      })),
-    );
-
-  const changeContent = (content: string, selection?: Selection | undefined) => {
-    cursorPositionRef.current = selection?.focus || 0;
+  const contentHandler = (content: string, selection?: Selection) => {
+    const { focus } = selection ?? {};
+    if (focus) {
+      cursorPositionRef.current = focus;
+    }
     setSelectedNodeData({
       ...selectedNodeData,
       content,
     });
-    setFirstAppend(false);
   };
 
-  const addPreset = (type: PresetType, label: string) => {
-    if (!label) return;
-
-    let preset = "";
-
-    if (type === "node") {
-      preset = nodesPresets.find(node => node.label === label)?.label || "";
-    } else {
-      const input = inputsPresets.find(input => input.label === label);
-      const type = input?.type;
-      preset = input
-        ? "{{" + input.label + ":" + type + ":" + input.required + (input.choices ? `:"${input.choices}"` : "") + "}}"
-        : "";
-    }
-
-    if (firstAppend) {
-      changeContent(content + preset + " ");
-    } else {
-      const start = content.slice(0, cursorPositionRef.current);
-      const end = content.slice(cursorPositionRef.current);
-      changeContent(start + preset + " " + end);
-    }
+  const presetHandler = ({ type, label }: { type: PresetType; label: string }) => {
+    addPreset({
+      type,
+      label,
+      outputPresets,
+      inputPresets,
+      onChange: contentHandler,
+      cursorPositionRef,
+      content,
+    });
   };
 
   return (
@@ -86,14 +52,14 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
         height: "100%",
       }}
     >
-      {(!!nodesPresets.length || !!inputsPresets.length) && (
+      {(!!outputPresets.length || !!inputPresets.length) && (
         <Stack
           gap={1}
           sx={{
             p: "24px 32px",
           }}
         >
-          {!!nodesPresets.length && (
+          {!!outputPresets.length && (
             <Stack
               direction={"row"}
               alignItems={"center"}
@@ -110,13 +76,15 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
               >
                 OUTPUT VARIABLES:
               </Typography>
-              <InlineOptions
-                options={nodesPresets}
-                onChoose={node => addPreset("node", node.label)}
+              <Options
+                type="output"
+                variant="horizontal"
+                options={outputPresets}
+                onChoose={output => presetHandler({ type: "output", label: output.label })}
               />
             </Stack>
           )}
-          {!!inputsPresets.length && (
+          {!!inputPresets.length && (
             <Stack
               direction={"row"}
               alignItems={"center"}
@@ -133,11 +101,11 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
               >
                 INPUTS VARIABLES:
               </Typography>
-              <InlineOptions
-                options={inputsPresets}
-                onChoose={input => addPreset("input", input.label)}
-                bgcolor="#E0F2F1"
-                color="#00897B"
+              <Options
+                type="input"
+                variant="horizontal"
+                options={inputPresets}
+                onChoose={input => presetHandler({ type: "input", label: input.label })}
               />
             </Stack>
           )}
@@ -160,12 +128,14 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
             },
           }}
         >
-          <HighlightWithinTextarea
-            value={content}
-            highlight={highlight}
-            placeholder="..."
-            stripPastedStyles
-            onChange={changeContent}
+          <HighlightTextarea
+            cursorPositionRef={cursorPositionRef}
+            content={content}
+            onChange={contentHandler}
+            outputPresets={outputPresets}
+            inputPresets={inputPresets}
+            highlitedValue={highlightedOption}
+            setHighlitedValue={setHighlitedOption}
           />
         </Box>
       </Box>

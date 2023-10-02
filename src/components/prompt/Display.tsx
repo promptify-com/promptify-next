@@ -126,6 +126,7 @@ export const Display: React.FC<Props> = ({
           key={templateData.id}
           setGeneratedExecution={setGeneratedExecution}
           onError={onError}
+          template={templateData}
         />
       )}
       <Box

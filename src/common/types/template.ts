@@ -1,5 +1,5 @@
 import { Category } from "@/core/api/dto/templates";
-import { INodesData } from "./builder";
+import { IEditPrompts } from "./builder";
 
 export type FormType = "create" | "edit";
 
@@ -15,5 +15,5 @@ export interface ITemplate {
   category: Category;
   difficulty: string;
   duration: string;
-  prompts_list?: INodesData[];
+  prompts_list?: IEditPrompts[];
 }

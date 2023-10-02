@@ -1,6 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import { Templates } from "../api/dto/templates";
 
 export interface TemplatesProps {
   is_favorite: boolean;
@@ -8,7 +7,6 @@ export interface TemplatesProps {
   likes: number;
   executionData: string;
   isGenerating: boolean;
-  template: Templates | null;
 }
 
 type UpdateTemplateDataPayload = Pick<TemplatesProps, "is_favorite" | "id" | "likes">;
@@ -17,7 +15,6 @@ const initialState: TemplatesProps = {
   is_favorite: false,
   id: 0,
   likes: 0,
-  template: null,
   executionData: "[]",
   isGenerating: false,
 };
@@ -26,9 +23,6 @@ export const templatesSlice = createSlice({
   name: "templates",
   initialState,
   reducers: {
-    updateTemplate: (state, action: PayloadAction<Templates>) => {
-      state.template = action.payload;
-    },
     updateTemplateData: (state, action: PayloadAction<UpdateTemplateDataPayload>) => {
       state.is_favorite = action.payload.is_favorite;
       state.id = action.payload.id;
@@ -49,7 +43,7 @@ export const templatesSlice = createSlice({
   },
 });
 
-export const { updateCurrentFavorite, updateTemplate, updateTemplateData, updateExecutionData, setGeneratingStatus } =
+export const { updateCurrentFavorite, updateTemplateData, updateExecutionData, setGeneratingStatus } =
   templatesSlice.actions;
 
 export default templatesSlice.reducer;
