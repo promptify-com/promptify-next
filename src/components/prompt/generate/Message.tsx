@@ -1,4 +1,4 @@
-import React, { useState, memo, useEffect, Dispatch, SetStateAction } from "react";
+import React, { useState, memo, useEffect, Dispatch, SetStateAction, useRef } from "react";
 import { Avatar, Button, Grid, Typography } from "@mui/material";
 
 import LogoAsAvatar from "@/assets/icons/LogoAvatar";
@@ -7,6 +7,7 @@ import { ToggleButtonsGroup } from "@/components/design-system/ToggleButtonsGrou
 import CodeFieldModal from "@/components/modals/CodeFieldModal";
 import { IMessage } from "@/common/types/chat";
 import useTextSimulationStreaming from "@/hooks/useTextSimulationStreaming";
+import { wrapLongWords } from "@/common/helpers/wrapLongWords";
 
 interface MessageBlockProps {
   message: IMessage;
@@ -32,7 +33,7 @@ const MessageContent = memo(({ content, shouldStream, setIsSimulaitonStreaming }
     hasFinished && setIsSimulaitonStreaming(false);
   }, [hasFinished]);
 
-  return <>{streamedText}</>;
+  return <>{wrapLongWords(streamedText, 30)}</>;
 });
 
 export const Message = ({
@@ -44,7 +45,9 @@ export const Message = ({
 }: MessageBlockProps) => {
   const { fromUser, type, text, createdAt, choices } = message;
   const currentUser = useAppSelector(state => state.user.currentUser);
+
   const name = fromUser ? currentUser?.first_name ?? currentUser?.username : "Promptify";
+
   const [selectedValue, setSelectedValue] = useState("");
   const [codeFieldPopup, setCodeFieldPopup] = useState(false);
   const [codeUploaded, setCodeUploaded] = useState(false);
