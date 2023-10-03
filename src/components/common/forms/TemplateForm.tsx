@@ -31,7 +31,7 @@ import { useCreateTemplateMutation, useUpdateTemplateMutation } from "@/core/api
 import { FormType } from "@/common/types/template";
 import { TemplateStatusArray } from "@/common/constants";
 import { executionsApi } from "@/core/api/executions";
-import { stripTags, getLanguageFromCode } from "@/common/helpers";
+import { stripTags, getLanguageFromCode, getBaseUrl } from "@/common/helpers";
 
 interface Props {
   type?: FormType;
@@ -118,10 +118,10 @@ const TemplateForm: React.FC<Props> = ({
   };
 
   const onCreateTemplate = async (values: IEditTemplate) => {
-    const response = await createTemplate(values).unwrap();
-    const { id } = response;
+    const { slug } = await createTemplate(values).unwrap();
+
     handleSave();
-    window.open(window.location.origin + `/builder/${id}`, "_blank");
+    window.open(`${getBaseUrl}/prompt-builder/${slug}`, "_blank");
   };
 
   const formik = useFormik<IEditTemplate>({
