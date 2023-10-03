@@ -24,7 +24,7 @@ import { createEditor, Node } from "@/components/builder/Editor";
 import { Header } from "@/components/builder/Header";
 import { MinusIcon, PlusIcon } from "@/assets/icons";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useGetPromptTemplatesQuery, usePublishTemplateMutation } from "@/core/api/templates";
+import { useGetPromptTemplateBySlugQuery, usePublishTemplateMutation } from "@/core/api/templates";
 import { Prompts } from "@/core/api/dto/prompts";
 import { deletePrompt, updateTemplate } from "@/hooks/api/templates";
 import { ContentCopy } from "@mui/icons-material";
@@ -38,6 +38,7 @@ import { theme } from "@/theme";
 import { useGetEnginesQuery } from "@/core/api/engines";
 import { PromptForm } from "@/components/builder/PromptForm";
 import useToken from "@/hooks/useToken";
+import { BUILDER_TYPE } from "@/common/constants";
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return (
@@ -52,7 +53,13 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props,
 
 export const Builder = () => {
   const router = useRouter();
-  const id = router.query.id;
+  const slug = router.query.slug as string;
+
+  if (!slug) {
+    router.push("/404");
+    return null;
+  }
+
   const [nodeCount, setNodeCount] = useState(1);
   const [prompts, setPrompts] = useState<Prompts[]>([]);
   const { data: engines } = useGetEnginesQuery();
@@ -60,7 +67,7 @@ export const Builder = () => {
   const [selectedNodeData, setSelectedNodeData] = useState<IEditPrompts | null>(null);
   const [selectedConnection, setSelectedConnection] = useState<string | null>(null);
   const [nodesData, setNodesData] = useState<IEditPrompts[]>([]);
-  const { data: promptsData } = useGetPromptTemplatesQuery(id ? +id : skipToken);
+  const { data: promptsData } = useGetPromptTemplateBySlugQuery(slug ? slug : skipToken);
   const dataForRequest = useRef({} as any);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [snackBarOpen, setSnackBarOpen] = useState(false);
@@ -442,7 +449,7 @@ export const Builder = () => {
       return a.order - b.order;
     });
 
-    updateTemplate(Number(id), data).then(() => {
+    updateTemplate(promptsData!.id, data).then(() => {
       setSnackBarOpen(true);
       window.location.reload();
     });
@@ -454,7 +461,7 @@ export const Builder = () => {
 
   const handlePublishTemplate = async () => {
     injectOrderAndSendRequest();
-    await publishTemplate(Number(id));
+    await publishTemplate(promptsData!.id);
   };
 
   return (
@@ -472,6 +479,7 @@ export const Builder = () => {
               onSave={injectOrderAndSendRequest}
               templateData={promptsData}
               onEditTemplate={() => toggleTemplateDrawer(true)}
+              type={BUILDER_TYPE.ADMIN}
             />
           </Grid>
           <Grid

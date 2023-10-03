@@ -6,6 +6,7 @@ import Image from "@/components/design-system/Image";
 import { useRouter } from "next/router";
 import { useAppSelector } from "@/hooks/useStore";
 import { RootState } from "@/core/store";
+import { getBaseUrl } from "@/common/helpers";
 
 interface TemplateManagerItemProps {
   template: Templates;
@@ -93,8 +94,7 @@ const TemplateManagerItem: FC<TemplateManagerItemProps> = ({ template, onOpenDel
                 },
               }}
               onClick={() => {
-                const path = currentUser?.is_admin ? `/builder/${template.id}` : `/prompt-builder/${template.slug}`;
-                window.open(window.location.origin + path, "_blank");
+                window.open(`${getBaseUrl}/prompt-builder/${template.slug}`, "_blank");
               }}
             >
               <SettingsApplicationsRounded />

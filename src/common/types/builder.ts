@@ -56,6 +56,7 @@ export interface OutputVariable {
 }
 
 export type PresetType = "output" | "input";
+export type BuilderType = "user" | "admin";
 
 export interface IHandlePreset {
   type: PresetType | null;

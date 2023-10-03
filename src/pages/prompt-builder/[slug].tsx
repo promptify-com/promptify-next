@@ -19,6 +19,7 @@ import PromptList from "@/components/builder/PromptCardAccordion/PromptList";
 import { useRouter } from "next/router";
 import useToken from "@/hooks/useToken";
 import { IEditTemplate } from "@/common/types/editTemplate";
+import { BUILDER_TYPE } from "@/common/constants";
 
 interface PromptBuilderProps {
   templateData: Templates;
@@ -28,6 +29,12 @@ interface PromptBuilderProps {
 
 export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuilderProps) => {
   const router = useRouter();
+
+  if (!templateData?.id) {
+    router.push("/404");
+    return null;
+  }
+
   const token = useToken();
   const sidebarOpen = useSelector((state: RootState) => state.sidebar.open);
   const promptsRefData = useRef(initPrompts);
@@ -155,7 +162,7 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
           onPublish={handlePublishTemplate}
           onSave={handleSaveTemplate}
           onEditTemplate={() => setTemplateDrawerOpen(true)}
-          profile
+          type={BUILDER_TYPE.USER}
         />
 
         <Box

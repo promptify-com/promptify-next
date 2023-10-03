@@ -16,7 +16,7 @@ import { RootState } from "@/core/store";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { useSelector } from "react-redux";
 import ApiAccess from "./ApiAccess";
-import { stripTags } from "@/common/helpers";
+import { stripTags, getBaseUrl } from "@/common/helpers";
 
 interface DetailsProps {
   templateData: Templates;
@@ -66,7 +66,7 @@ export const Details: React.FC<DetailsProps> = ({ templateData, setMobileTab = (
           };
         });
 
-        const response = await createTemplate({
+        const { slug } = await createTemplate({
           title: `${templateData.title} - Copy`,
           description: templateData.description,
           duration: templateData.duration.toString(),
@@ -85,8 +85,7 @@ export const Details: React.FC<DetailsProps> = ({ templateData, setMobileTab = (
           prompts_list: clonedPrompts,
         }).unwrap();
 
-        const { id, slug } = response;
-        window.open(window.location.origin + `/builder/${id}?editor=1`, "_blank");
+        window.open(`${getBaseUrl}/prompt-builder/${slug}?editor=1`, "_blank");
         router.push(`/prompt/${slug}`);
       } catch (err) {
         console.error(err);
@@ -205,16 +204,13 @@ export const Details: React.FC<DetailsProps> = ({ templateData, setMobileTab = (
             >
               <Subtitle sx={{ mb: "12px", color: "tertiary" }}>Actions</Subtitle>
               <Stack gap={1}>
-                {currentUser?.id === templateData.created_by.id && (
+                {(currentUser?.is_admin || currentUser?.id === templateData.created_by.id) && (
                   <Button
                     variant={"contained"}
                     startIcon={<Create />}
                     sx={templateBtnStyle}
                     onClick={() => {
-                      const path = currentUser?.is_admin
-                        ? `/builder/${templateData.id}?editor=1`
-                        : `/prompt-builder/${templateData.slug}?editor=1`;
-                      window.open(window.location.origin + path, "_blank");
+                      window.open(`${getBaseUrl}/prompt-builder/${templateData.slug}?editor=1`, "_blank");
                     }}
                   >
                     Edit this Template
