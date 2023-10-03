@@ -23,14 +23,13 @@ interface PromptBuilderProps {
   templateData: Templates;
   initPrompts: IEditPrompts[];
   engines: Engine[];
-  initPromptsOrders: { promptId: number; order: number }[];
 }
 
 export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuilderProps) => {
   const router = useRouter();
   const token = useToken();
   const sidebarOpen = useSelector((state: RootState) => state.sidebar.open);
-  const promptsData = useRef(initPrompts);
+  const promptsRefData = useRef(initPrompts);
   const [templateDrawerOpen, setTemplateDrawerOpen] = useState(Boolean(router.query.editor));
   const [publishTemplate] = usePublishTemplateMutation();
   const [messageSnackBar, setMessageSnackBar] = useState({ status: false, message: "" });
@@ -65,7 +64,7 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
     }
 
     const invalids: string[] = [];
-    promptsData.current.map(prompt => {
+    promptsRefData.current.map(prompt => {
       const validation = isPromptVariableValid(prompt.content);
       if (!validation.isValid) {
         invalids.push(validation.message);
@@ -88,7 +87,7 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
       category: templateData.category.id,
       difficulty: templateData.difficulty,
       status: templateData.status,
-      prompts_list: promptsData.current.map(prompt => ({
+      prompts_list: promptsRefData.current.map(prompt => ({
         ...prompt,
         parameters: prompt?.parameters?.map(params => ({
           parameter_id: params.parameter_id,
@@ -167,8 +166,7 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
           <Box>
             <DndProvider backend={HTML5Backend}>
               <PromptList
-                initPrompts={initPrompts}
-                setPromptsData={data => (promptsData.current = data)}
+                promptsRefData={promptsRefData}
                 engines={engines}
               />
             </DndProvider>
@@ -232,7 +230,7 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
 
 const initPrompts = (template: Templates, engines: Engine[]) => {
   if (template?.prompts) {
-    const _prompts = template.prompts.map(prompt => {
+    const _prompts = template.prompts.map((prompt, index) => {
       const initialParams = prompt.parameters.map(param => ({
         parameter_id: param.parameter.id,
         score: param.score,
@@ -249,7 +247,7 @@ const initPrompts = (template: Templates, engines: Engine[]) => {
         engine_id: prompt.engine?.id || engines![0].id,
         dependencies: prompt.dependencies || [],
         parameters: initialParams,
-        order: prompt.order,
+        order: index + 1,
         output_format: prompt.output_format,
         model_parameters: prompt.model_parameters,
         is_visible: prompt.is_visible,
