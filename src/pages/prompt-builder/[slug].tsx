@@ -150,7 +150,11 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
       />
       <SidebarRight
         open={openSideBarRight}
-        openSideBarRight={() => setOpenSideBarRight(true)}
+        openSideBarRight={(itemName: string) => {
+          if (itemName === "help") {
+            setOpenSideBarRight(true);
+          }
+        }}
         closeSideBarRight={() => setOpenSideBarRight(false)}
       />
       <Box

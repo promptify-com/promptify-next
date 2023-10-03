@@ -18,7 +18,7 @@ import PaperIcon from "@/assets/icons/PaperIcon";
 
 interface SideBarRightProps {
   open: boolean;
-  openSideBarRight: () => void;
+  openSideBarRight: (itemName: string) => void;
   closeSideBarRight: () => void;
 }
 
@@ -91,7 +91,7 @@ export const SidebarRight: React.FC<SideBarRightProps> = ({ open, openSideBarRig
           <Grid key={item.name}>
             <ListItem
               disablePadding
-              onClick={openSideBarRight}
+              onClick={() => openSideBarRight(item.name)}
             >
               <ListItemButton
                 sx={{
