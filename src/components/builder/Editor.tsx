@@ -49,8 +49,8 @@ export async function createEditor(
   const setInitialNodes = async (id: string, prompt: Prompts) => {
     let promptParams: PromptParams[] = [];
     if (prompt) {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/meta/prompts/${prompt.id}/params`);
-      promptParams = await response.json();
+      const response = (await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/meta/prompts/${prompt.id}/params`)).json();
+      if (Array.isArray(response)) promptParams = response;
     }
 
     const initialParams = promptParams?.map(param => {

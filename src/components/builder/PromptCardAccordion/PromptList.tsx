@@ -102,11 +102,18 @@ const PromptList = ({ promptsRefData, engines }: Props) => {
 
     const temp_id = randomId();
     const _newPrompt = {
-      ...duplicateData,
       temp_id: temp_id,
       title: `${duplicateData.title} - Copy`,
+      content: duplicateData.content,
+      engine_id: duplicateData.engine_id,
+      dependencies: duplicateData.dependencies,
+      parameters: duplicateData.parameters,
       order: order,
-      dependencies: [],
+      output_format: duplicateData.output_format,
+      model_parameters: duplicateData.model_parameters,
+      is_visible: duplicateData.is_visible,
+      show_output: duplicateData.show_output,
+      prompt_output_variable: `$temp_id_${temp_id}`,
     };
 
     const _prompts: IEditPrompts[] = promptsRefData.current
