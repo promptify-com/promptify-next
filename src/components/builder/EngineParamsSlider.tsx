@@ -1,24 +1,7 @@
 import React, { useState } from "react";
-import { Box, Button, Divider, Slider, Stack, Typography } from "@mui/material";
+import { Box, Button, Divider, Stack } from "@mui/material";
 import { IEngineParams } from "@/common/types/builder";
-import { theme } from "@/theme";
-
-const getParamLabel = (name: string) => {
-  switch (name) {
-    case "temperature":
-      return "Temperature";
-    case "maximumLength":
-      return "Maximum Length";
-    case "topP":
-      return "Top P";
-    case "presencePenalty":
-      return "Presence Penalty";
-    case "frequencyPenalty":
-      return "Frequency Penalty";
-    default:
-      return name;
-  }
-};
+import { ParamSliderInline } from "../design-system/ParamSliderInline";
 
 interface Props {
   engineParams: IEngineParams | null | undefined;
@@ -34,52 +17,6 @@ export const EngineParamsSlider: React.FC<Props> = ({ engineParams, onSave, onCa
     presencePenalty: engineParams?.presencePenalty || 0,
     frequencyPenalty: engineParams?.frequencyPenalty || 0,
   });
-
-  const setParam = (name: string, val: number) => {
-    setParams({
-      ...params,
-      [name]: val,
-    });
-  };
-
-  const CustomSlider = (name: string, value = 0) => (
-    <Box p={"8px 24px"}>
-      <Stack
-        direction={"row"}
-        alignItems={"center"}
-        justifyContent={"space-between"}
-        py={"8px"}
-      >
-        <Typography
-          sx={{
-            fontSize: 14,
-            fontWeight: 500,
-            color: "onSurface",
-          }}
-        >
-          {getParamLabel(name)}
-        </Typography>
-        <Typography
-          sx={{
-            fontSize: 14,
-            fontWeight: 400,
-            color: "onSurface",
-          }}
-        >
-          {value}
-        </Typography>
-      </Stack>
-      <Slider
-        sx={{ color: theme.palette.onSurface }}
-        step={1}
-        min={0}
-        max={100}
-        size="small"
-        value={value}
-        onChange={(e, val) => setParam(name, Number(val))}
-      />
-    </Box>
-  );
 
   return (
     <Stack height={"100%"}>
@@ -99,7 +36,11 @@ export const EngineParamsSlider: React.FC<Props> = ({ engineParams, onSave, onCa
               key={i}
               width={"50%"}
             >
-              {CustomSlider(param[0], param[1])}
+              <ParamSliderInline
+                label={param[0]}
+                value={param[1]}
+                onChange={val => setParams(prevParams => ({ ...prevParams, [param[0]]: val }))}
+              />
             </Box>
           ))}
         </Stack>

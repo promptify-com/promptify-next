@@ -10,12 +10,12 @@ import {
 import BaseButton from "../base/BaseButton";
 import { TemplateStatus } from "@/core/api/dto/templates";
 import { theme } from "@/theme";
-import { useSelector } from "react-redux";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { RootState } from "@/core/store";
 import { ProfileDropDown } from "../ProfileMenu";
 import { BuilderType } from "@/common/types/builder";
 import { BUILDER_TYPE } from "@/common/constants";
+import { useAppSelector } from "@/hooks/useStore";
 
 interface IHeader {
   onSave: () => void;
@@ -28,8 +28,8 @@ interface IHeader {
 }
 
 export const Header = ({ onSave, onPublish, title, status, templateSlug, onEditTemplate, type }: IHeader) => {
-  const isValidUser = useSelector(isValidUserFn);
-  const currentUser = useSelector((state: RootState) => state.user.currentUser);
+  const isValidUser = useAppSelector(isValidUserFn);
+  const currentUser = useAppSelector((state: RootState) => state.user.currentUser);
   const menuAnchorRef = useRef<HTMLDivElement | null>(null);
   const [isMenuShown, setIsMenuShown] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -74,10 +74,7 @@ export const Header = ({ onSave, onPublish, title, status, templateSlug, onEditT
             gap={1}
             sx={{ color: "onSurface" }}
           >
-            <Typography
-              sx={{ color: "onSurface", fontSize: "16px" }}
-              dangerouslySetInnerHTML={{ __html: title }}
-            />
+            <Typography sx={{ color: "onSurface", fontSize: "16px" }}>{title}</Typography>
             <ModeEdit
               sx={{ cursor: "pointer", fontSize: "16px" }}
               onClick={onEditTemplate}
