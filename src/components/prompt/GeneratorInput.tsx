@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { Box, Divider, IconButton, InputLabel, MenuItem, Select, Stack, TextField } from "@mui/material";
+import React, { useState } from "react";
+import { Box, Button, Divider, IconButton, Input, InputLabel, MenuItem, Select, Stack, TextField } from "@mui/material";
 import { InputsErrors } from "./GeneratorForm";
-import { Backspace } from "@mui/icons-material";
+import { Backspace, CloudUpload } from "@mui/icons-material";
 import { ResInputs } from "@/core/api/dto/prompts";
 import { IPromptInput } from "@/common/types/prompt";
 import BaseButton from "../base/BaseButton";
@@ -16,6 +16,32 @@ interface GeneratorInputProps {
   errors: InputsErrors;
 }
 
+type FileType = "pdf" | "docx" | "txt";
+
+const getMimeType = (extension: string): string | undefined => {
+  switch (extension) {
+    case "pdf":
+      return "application/pdf";
+    case "docx":
+      return "application/msword";
+    case "txt":
+      return "text/plain";
+    default:
+      return undefined;
+  }
+};
+
+const generateAcceptString = (types: FileType[]): string => {
+  const mimeTypes: string[] = [];
+  types.forEach(type => {
+    const mimeType = getMimeType(type);
+    if (mimeType) {
+      mimeTypes.push(mimeType);
+    }
+  });
+  return mimeTypes.join(",");
+};
+
 export const GeneratorInput: React.FC<GeneratorInputProps> = ({
   promptId,
   inputs,
@@ -27,10 +53,11 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
 
   const [codeFieldOpen, setCodeFieldOpen] = useState(false);
 
-  const handleChange = (value: string, name: string, type: string) => {
+  const handleChange = (value: string | File, name: string, type: string) => {
     const resObj = resInputs.find(prompt => prompt.inputs[name]);
     const resArr = [...resInputs];
 
+    if (!value) return;
     if (!resObj) {
       return setNodeInputs([
         ...resInputs,
@@ -155,6 +182,31 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
                     </MenuItem>
                   ))}
                 </Select>
+              ) : input.type === "file" ? (
+                <Button
+                  component="label"
+                  variant="contained"
+                  startIcon={<CloudUpload />}
+                  sx={{ border: `2px solid ${errors[input.name] ? "error.main" : "tertiary"}` }}
+                >
+                  Upload file
+                  <input
+                    hidden
+                    accept={generateAcceptString(input?.file as FileType[])}
+                    type="file"
+                    style={{
+                      flex: 1,
+                      clip: "rect(0 0 0 0)",
+                      clipPath: "inset(50%)",
+                      height: "auto",
+                      overflow: "hidden",
+                      position: "absolute",
+                      whiteSpace: "nowrap",
+                      width: 1,
+                    }}
+                    onChange={e => handleChange(e.target?.files[0], input.name, input.type)}
+                  />
+                </Button>
               ) : (
                 <TextField
                   disabled={isGenerating}

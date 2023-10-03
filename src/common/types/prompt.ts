@@ -12,7 +12,7 @@ export interface PromptLiveResponse {
   created_at: Date;
   data: PromptLiveResponseData[] | undefined;
 }
-export type InputType = "text" | "choices" | "number" | "code";
+export type InputType = "text" | "choices" | "number" | "code" | "file";
 export interface IPromptInput {
   name: string;
   fullName: string;
@@ -21,6 +21,7 @@ export interface IPromptInput {
   defaultValue?: string | number | null;
   choices?: string[] | null;
   prompt?: number;
+  file?: string | string[] | null;
 }
 
 export interface DisplayPrompt {

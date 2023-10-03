@@ -16,6 +16,7 @@ import { AllInclusive, Close, InfoOutlined } from "@mui/icons-material";
 import TabsAndFormPlaceholder from "@/components/placeholders/TabsAndFormPlaceholder";
 import Storage from "@/common/storage";
 import { setGeneratingStatus, updateExecutionData } from "@/core/store/templatesSlice";
+import { uploadFile } from "@/core/api/uploadFile";
 
 interface GeneratorFormProps {
   templateData: Templates;
@@ -199,7 +200,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     return true;
   };
 
-  const validateAndGenerateExecution = () => {
+  const validateAndGenerateExecution = async () => {
     if (!token) {
       if (allowReset) {
         const nodeInputsAndParams = { inputs: nodeInputs, params: nodeParams };
@@ -210,9 +211,49 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
     if (!validateInputs()) return;
 
-    dispatch(setGeneratingStatus(true));
+    const hasTypeFile = shownInputs?.some(item => item.type === "file");
 
-    generateExecution(resPrompts);
+    if (hasTypeFile) {
+      let filePath = null;
+      let keyName: string = "";
+
+      for (const key in resPrompts[0]?.prompt_params) {
+        if (Object.prototype.hasOwnProperty.call(resPrompts[0]?.prompt_params, key)) {
+          const value = resPrompts[0]?.prompt_params[key];
+          if (value instanceof File) {
+            filePath = value;
+            keyName = key;
+            break;
+          }
+        }
+      }
+
+      try {
+        if (filePath) {
+          const fileUrl = await uploadFile(filePath);
+          if (fileUrl) {
+            const newResPrompts = resPrompts.map(item => {
+              if (item.prompt_params) {
+                const updatedPromptParams = {
+                  ...item.prompt_params,
+                  [keyName]: fileUrl,
+                };
+                return {
+                  ...item,
+                  prompt_params: updatedPromptParams,
+                };
+              }
+              return item;
+            });
+            dispatch(setGeneratingStatus(true));
+            generateExecution(newResPrompts);
+          }
+        }
+      } catch (_) {}
+    } else {
+      dispatch(setGeneratingStatus(true));
+      generateExecution(resPrompts);
+    }
   };
 
   const generateExecution = (executionData: ResPrompt[]) => {
