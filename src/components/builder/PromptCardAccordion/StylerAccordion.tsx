@@ -21,6 +21,7 @@ import { Styler } from "../Styler/Styler";
 import { IEditPrompts } from "@/common/types/builder";
 import { IParameters } from "@/common/types";
 import { useGetParametersQuery } from "@/core/api/parameters";
+import { BUILDER_TYPE } from "@/common/constants";
 
 interface Props {
   prompt: IEditPrompts;
@@ -110,6 +111,7 @@ export const StylerAccordion = ({ prompt, setPrompt }: Props) => {
                 whiteSpace: "nowrap",
                 maxWidth: "500px",
                 overflow: "hidden",
+                textOverflow: "ellipsis",
               }}
             >
               {prompt.parameters.slice(0, 2).map(param => {
@@ -160,7 +162,7 @@ export const StylerAccordion = ({ prompt, setPrompt }: Props) => {
           <Styler
             selectedNodeData={prompt}
             setSelectedNodeData={setPrompt}
-            version="v2"
+            type={BUILDER_TYPE.USER}
           />
         </AccordionDetails>
       </Accordion>

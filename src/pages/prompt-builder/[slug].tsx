@@ -18,19 +18,20 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import PromptList from "@/components/builder/PromptCardAccordion/PromptList";
 import { useRouter } from "next/router";
 import useToken from "@/hooks/useToken";
+import { IEditTemplate } from "@/common/types/editTemplate";
+import { BUILDER_TYPE } from "@/common/constants";
 
 interface PromptBuilderProps {
   templateData: Templates;
   initPrompts: IEditPrompts[];
   engines: Engine[];
-  initPromptsOrders: { promptId: number; order: number }[];
 }
 
 export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuilderProps) => {
   const router = useRouter();
   const token = useToken();
   const sidebarOpen = useSelector((state: RootState) => state.sidebar.open);
-  const promptsData = useRef(initPrompts);
+  const promptsRefData = useRef(initPrompts);
   const [templateDrawerOpen, setTemplateDrawerOpen] = useState(Boolean(router.query.editor));
   const [publishTemplate] = usePublishTemplateMutation();
   const [messageSnackBar, setMessageSnackBar] = useState({ status: false, message: "" });
@@ -38,6 +39,15 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
   const dispatch = useDispatch();
   const toggleSidebar = () => dispatch(setOpenSidebar(!sidebarOpen));
   const [openSideBarRight, setOpenSideBarRight] = useState(false);
+
+  useEffect(() => {
+    if (!templateData?.id) {
+      router.push("/404");
+      return;
+    }
+
+    toggleSidebar();
+  }, []);
 
   useEffect(() => {
     if (!token) {
@@ -65,19 +75,35 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
     }
 
     const invalids: string[] = [];
-    promptsData.current.map(prompt => {
+    for (let i = 0; i < promptsRefData.current.length; i++) {
+      const prompt = promptsRefData.current[i];
       const validation = isPromptVariableValid(prompt.content);
       if (!validation.isValid) {
         invalids.push(validation.message);
+        break;
       }
-    });
+    }
 
     if (invalids.length) {
       setErrorSnackBar({ status: true, message: `You have entered an invalid prompt variable ${invalids.toString()}` });
       return;
     }
 
-    const _template: any = {
+    const _prompts = promptsRefData.current.map((prompt, index, array) => {
+      const depend = array[index - 1]?.id || array[index - 1]?.temp_id;
+      return {
+        ...prompt,
+        dependencies: depend ? [depend] : [],
+        parameters: prompt?.parameters?.map(params => ({
+          parameter_id: params.parameter_id,
+          score: params.score,
+          is_visible: params.is_visible,
+          is_editable: params.is_editable,
+        })),
+      };
+    });
+
+    const _template: IEditTemplate = {
       title: templateData.title,
       description: templateData.description,
       example: templateData.example,
@@ -88,15 +114,13 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
       category: templateData.category.id,
       difficulty: templateData.difficulty,
       status: templateData.status,
-      prompts_list: promptsData.current.map(prompt => ({
-        ...prompt,
-        parameters: prompt?.parameters?.map(params => ({
-          parameter_id: params.parameter_id,
-          score: params.score,
-          is_visible: params.is_visible,
-          is_editable: params.is_editable,
-        })),
-      })),
+      prompts_list: _prompts,
+      context: templateData.context,
+      tags: templateData.tags,
+      executions_limit: templateData.executions_limit,
+      meta_title: templateData.meta_title,
+      meta_description: templateData.meta_description,
+      meta_keywords: templateData.meta_keywords,
     };
 
     await updateTemplate(templateData.id, _template);
@@ -127,7 +151,11 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
       />
       <SidebarRight
         open={openSideBarRight}
-        openSideBarRight={() => setOpenSideBarRight(true)}
+        openSideBarRight={(itemName: string) => {
+          if (itemName === "help") {
+            setOpenSideBarRight(true);
+          }
+        }}
         closeSideBarRight={() => setOpenSideBarRight(false)}
       />
       <Box
@@ -139,11 +167,11 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
         <Header
           status={templateData?.status || "DRAFT"}
           title={templateData?.title || ""}
-          templateSlug={templateData?.slug}
+          templateSlug={templateData.slug}
           onPublish={handlePublishTemplate}
           onSave={handleSaveTemplate}
           onEditTemplate={() => setTemplateDrawerOpen(true)}
-          profile
+          type={BUILDER_TYPE.USER}
         />
 
         <Box
@@ -167,8 +195,7 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
           <Box>
             <DndProvider backend={HTML5Backend}>
               <PromptList
-                initPrompts={initPrompts}
-                setPromptsData={data => (promptsData.current = data)}
+                promptsRefData={promptsRefData}
                 engines={engines}
               />
             </DndProvider>
@@ -232,7 +259,7 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
 
 const initPrompts = (template: Templates, engines: Engine[]) => {
   if (template?.prompts) {
-    const _prompts = template.prompts.map(prompt => {
+    const _prompts = template.prompts.map((prompt, index) => {
       const initialParams = prompt.parameters.map(param => ({
         parameter_id: param.parameter.id,
         score: param.score,
@@ -249,7 +276,7 @@ const initPrompts = (template: Templates, engines: Engine[]) => {
         engine_id: prompt.engine?.id || engines![0].id,
         dependencies: prompt.dependencies || [],
         parameters: initialParams,
-        order: prompt.order,
+        order: index + 1,
         output_format: prompt.output_format,
         model_parameters: prompt.model_parameters,
         is_visible: prompt.is_visible,

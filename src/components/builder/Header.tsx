@@ -1,13 +1,21 @@
-import React, { useRef, useState } from "react";
-import { Avatar, Box, Chip, Stack, Typography, alpha } from "@mui/material";
-import { CloudOutlined, ModeEdit, RocketLaunch, VisibilityOutlined } from "@mui/icons-material";
+import React, { useState } from "react";
+import { Chip, Stack, Typography, alpha } from "@mui/material";
+import {
+  CloudOutlined,
+  ModeEdit,
+  RocketLaunch,
+  VisibilityOutlined,
+  SettingsApplicationsRounded,
+} from "@mui/icons-material";
 import BaseButton from "../base/BaseButton";
 import { TemplateStatus } from "@/core/api/dto/templates";
 import { theme } from "@/theme";
-import { useSelector } from "react-redux";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { RootState } from "@/core/store";
-import { ProfileDropDown } from "../ProfileMenu";
+import { BuilderType } from "@/common/types/builder";
+import { BUILDER_TYPE } from "@/common/constants";
+import { useAppSelector } from "@/hooks/useStore";
+import { ProfileMenu } from "@/components/ProfileMenu";
 
 interface IHeader {
   onSave: () => void;
@@ -16,14 +24,12 @@ interface IHeader {
   status: TemplateStatus;
   templateSlug?: string;
   onEditTemplate: () => void;
-  profile?: boolean;
+  type: BuilderType;
 }
 
-export const Header = ({ onSave, onPublish, title, status, templateSlug, onEditTemplate, profile }: IHeader) => {
-  const isValidUser = useSelector(isValidUserFn);
-  const currentUser = useSelector((state: RootState) => state.user.currentUser);
-  const menuAnchorRef = useRef<HTMLDivElement | null>(null);
-  const [isMenuShown, setIsMenuShown] = useState(false);
+export const Header = ({ onSave, onPublish, title, status, templateSlug, onEditTemplate, type }: IHeader) => {
+  const isValidUser = useAppSelector(isValidUserFn);
+  const currentUser = useAppSelector((state: RootState) => state.user.currentUser);
   const [isSaving, setIsSaving] = useState(false);
 
   const handleSaveTemplate = async () => {
@@ -66,10 +72,7 @@ export const Header = ({ onSave, onPublish, title, status, templateSlug, onEditT
             gap={1}
             sx={{ color: "onSurface" }}
           >
-            <Typography
-              sx={{ color: "onSurface", fontSize: "16px" }}
-              dangerouslySetInnerHTML={{ __html: title }}
-            />
+            <Typography sx={{ color: "onSurface", fontSize: "16px" }}>{title}</Typography>
             <ModeEdit
               sx={{ cursor: "pointer", fontSize: "16px" }}
               onClick={onEditTemplate}
@@ -101,17 +104,30 @@ export const Header = ({ onSave, onPublish, title, status, templateSlug, onEditT
           alignItems={"center"}
           gap={1}
         >
-          {templateSlug && (
-            <BaseButton
-              variant="text"
-              color="custom"
-              sx={btnStyle}
-              startIcon={<VisibilityOutlined sx={{ fontSize: 20 }} />}
-              onClick={() => window.open(`/prompt/${templateSlug}`, "_blank")}
-            >
-              Preview
-            </BaseButton>
-          )}
+          {templateSlug ? (
+            <>
+              {currentUser?.is_admin && type === BUILDER_TYPE.USER && (
+                <BaseButton
+                  variant="text"
+                  color="custom"
+                  sx={btnStyle}
+                  startIcon={<SettingsApplicationsRounded sx={{ fontSize: 20 }} />}
+                  onClick={() => window.open(`/builder/${templateSlug}`, "_blank")}
+                >
+                  Admin builder
+                </BaseButton>
+              )}
+              <BaseButton
+                variant="text"
+                color="custom"
+                sx={btnStyle}
+                startIcon={<VisibilityOutlined sx={{ fontSize: 20 }} />}
+                onClick={() => window.open(`/prompt/${templateSlug}`, "_blank")}
+              >
+                Preview
+              </BaseButton>
+            </>
+          ) : null}
           <BaseButton
             variant="text"
             color="custom"
@@ -141,37 +157,7 @@ export const Header = ({ onSave, onPublish, title, status, templateSlug, onEditT
           )}
         </Stack>
       </Stack>
-      {isValidUser && profile && (
-        <Box>
-          <Avatar
-            ref={menuAnchorRef}
-            onClick={() => setIsMenuShown(!isMenuShown)}
-            src={currentUser?.avatar}
-            alt={currentUser?.first_name}
-            sx={{
-              ml: "auto",
-              cursor: "pointer",
-              bgcolor: "black",
-              borderRadius: { xs: "24px", sm: "36px" },
-              width: { xs: "24px", sm: "40px" },
-              height: { xs: "24px", sm: "40px" },
-              fontStyle: "normal",
-              textAlign: "center",
-              fontWeight: 400,
-              fontSize: { sm: "30px" },
-              textTransform: "capitalize",
-              lineHeight: "20px",
-              letterSpacing: "0.14px",
-            }}
-          />
-          <ProfileDropDown
-            anchorElement={menuAnchorRef.current}
-            open={isMenuShown}
-            onToggle={() => setIsMenuShown(!isMenuShown)}
-            onClose={() => setIsMenuShown(false)}
-          />
-        </Box>
-      )}
+      {isValidUser && type === BUILDER_TYPE.USER && <ProfileMenu />}
     </Stack>
   );
 };

@@ -42,10 +42,6 @@ export const PromptCardAccordion = ({
 
   const { outputPresets, inputPresets } = useMemo(() => getBuilderVarsPresets(prompts, promptData), [prompts]);
 
-  useEffect(() => {
-    setPromptData(prompt);
-  }, [prompt]);
-
   const updatePrompt = (newPromptData: IEditPrompts) => {
     setPromptData(newPromptData);
     setPrompt(newPromptData);

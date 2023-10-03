@@ -18,7 +18,7 @@ import PaperIcon from "@/assets/icons/PaperIcon";
 
 interface SideBarRightProps {
   open: boolean;
-  openSideBarRight: () => void;
+  openSideBarRight: (itemName: string) => void;
   closeSideBarRight: () => void;
 }
 
@@ -91,7 +91,7 @@ export const SidebarRight: React.FC<SideBarRightProps> = ({ open, openSideBarRig
           <Grid key={item.name}>
             <ListItem
               disablePadding
-              onClick={openSideBarRight}
+              onClick={() => openSideBarRight(item.name)}
             >
               <ListItemButton
                 sx={{
@@ -250,86 +250,6 @@ export const SidebarRight: React.FC<SideBarRightProps> = ({ open, openSideBarRig
             Chains transform AI writing from rambling monologues to structured dialogues. Progressively direct the AI
             and watch ideas blossom.
           </Typography>
-
-          {/* <Box
-            sx={{
-              display: "flex",
-              padding: "var(--none, 0px)",
-              flexDirection: "column",
-              alignItems: "flex-start",
-              gap: "var(--1, 8px)",
-              alignSelf: "stretch",
-            }}
-          >
-            <Link
-              href="#"
-              sx={{ textDecoration: "underline", color: "blue" }}
-            >
-              What is Prompt
-            </Link>
-            <Link
-              href="#"
-              sx={{ textDecoration: "underline", color: "blue" }}
-            >
-              What is GPT
-            </Link>
-            <Link
-              href="#"
-              sx={{ textDecoration: "underline", color: "blue" }}
-            >
-              How to choose model
-            </Link>
-            <Link
-              href="#"
-              sx={{ textDecoration: "underline", color: "blue" }}
-            >
-              How to use variables
-            </Link>
-            <Link
-              href="#"
-              sx={{ textDecoration: "underline", color: "blue" }}
-            >
-              How to set output
-            </Link>
-            <Link
-              href="#"
-              sx={{ textDecoration: "underline", color: "blue" }}
-            >
-              How to use AP
-            </Link>
-          </Box>
-
-          <Typography
-            variant="h5"
-            sx={{
-              color: "#000",
-              fontFeatureSettings: "'clig' off, 'liga' off",
-              fontFamily: "Poppins",
-              fontSize: "24px",
-              fontStyle: "normal",
-              fontWeight: "400",
-              lineHeight: "130%",
-            }}
-          >
-            FAQ
-          </Typography>
-
-          <Typography
-            sx={{
-              color: "var(--onSurface, #1B1B1E)",
-              fontFamily: "Poppins",
-              fontSize: "12px",
-              fontStyle: "normal",
-              fontWeight: "400",
-              lineHeight: "160%",
-            }}
-          >
-            Without wasting a moment, they packed their bags with provisions and magical artifacts passed down through
-            generations. Lili, with her magical map in hand, led the way, weaving through enchanted forests with trees
-            that whispered secrets and leaves that danced in the moonlight. As they ventured deeper into the woods, they
-            stumbled upon a peculiar signpost, pointing in multiple directions. Chris, always the pragmatic thinker,
-            scratched his head and said, "Which way should we go? Left or right, up or down?"
-          </Typography> */}
         </Box>
       </Drawer>
     </Box>
