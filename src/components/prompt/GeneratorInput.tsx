@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Box, Divider, IconButton, InputLabel, MenuItem, Select, Stack, TextField } from "@mui/material";
 import { InputsErrors } from "./GeneratorForm";
 import { Backspace } from "@mui/icons-material";
-import { ResInputs } from "@/core/api/dto/prompts";
 import { IPromptInput } from "@/common/types/prompt";
 import BaseButton from "../base/BaseButton";
 import CodeFieldModal from "../modals/CodeFieldModal";
@@ -11,19 +10,14 @@ import { useAppSelector } from "@/hooks/useStore";
 interface GeneratorInputProps {
   promptId: number;
   inputs: IPromptInput[];
-  resInputs: ResInputs[];
   setNodeInputs: (obj: any) => void;
   errors: InputsErrors;
 }
 
-export const GeneratorInput: React.FC<GeneratorInputProps> = ({
-  promptId,
-  inputs,
-  setNodeInputs,
-  resInputs,
-  errors,
-}) => {
+export const GeneratorInput: React.FC<GeneratorInputProps> = ({ promptId, inputs, setNodeInputs, errors }) => {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
+
+  const resInputs = useAppSelector(state => state.template.answeredInputs);
 
   const [codeFieldOpen, setCodeFieldOpen] = useState(false);
 
@@ -59,7 +53,6 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
         };
       }
     });
-
     setNodeInputs([...resArr]);
   };
 

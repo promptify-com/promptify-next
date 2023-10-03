@@ -2,7 +2,7 @@ import React, { useState, useMemo, memo, useEffect, useRef } from "react";
 import { Accordion, AccordionDetails, AccordionSummary, Grid, Typography, Button, Stack } from "@mui/material";
 import { Block, ExpandLess, ExpandMore } from "@mui/icons-material";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
-import { ResPrompt } from "@/core/api/dto/prompts";
+import { ResInputs, ResPrompt } from "@/core/api/dto/prompts";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { useAppSelector, useAppDispatch } from "@/hooks/useStore";
 import useToken from "@/hooks/useToken";
@@ -14,7 +14,7 @@ import { useRouter } from "next/router";
 import { TemplateQuestions, Templates, UpdatedQuestionTemplate } from "@/core/api/dto/templates";
 import { getInputsFromString } from "@/common/helpers";
 import { IPromptInput, PromptLiveResponse, InputType } from "@/common/types/prompt";
-import { setGeneratingStatus, updateExecutionData } from "@/core/store/templatesSlice";
+import { setGeneratingStatus, updateAnsweredInputs, updateExecutionData } from "@/core/store/templatesSlice";
 import { AnswerValidatorResponse, IAnswer, IMessage } from "@/common/types/chat";
 import { isDesktopViewPort } from "@/common/helpers";
 import { useStopExecutionMutation } from "@/core/api/executions";
@@ -38,6 +38,8 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const [stopExecution] = useStopExecutionMutation();
 
+  const storedInputs = useAppSelector(state => state.template.answeredInputs);
+
   const { convertedTimestamp } = useTimestampConverter();
   const createdAt = convertedTimestamp(new Date());
   const [chatExpanded, setChatExpanded] = useState(true);
@@ -54,6 +56,15 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
   const [disableChatInput, setDisableChatInput] = useState(false);
   const [standingQuestions, setStandingQuestions] = useState<UpdatedQuestionTemplate[]>([]);
   const [varyOpen, setVaryOpen] = useState(false);
+  const [answeredInputs, setAnsweredInputs] = useState<ResInputs[]>(storedInputs);
+
+  useEffect(() => {
+    setAnsweredInputs(storedInputs);
+  }, [storedInputs]);
+
+  useEffect(() => {
+    dispatch(updateAnsweredInputs(answeredInputs));
+  }, [answeredInputs]);
 
   let abortController = useRef(new AbortController());
 
@@ -258,6 +269,21 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
     }
   };
 
+  const modifyStoredInputValue = (question: UpdatedQuestionTemplate, userAnswer: string | number) => {
+    const existingEntryIndex = answeredInputs.findIndex(entry => entry.id === question.prompt);
+
+    if (existingEntryIndex !== -1) {
+      setAnsweredInputs(prevInputs => {
+        const updatedInputs = JSON.parse(JSON.stringify(prevInputs));
+
+        if (updatedInputs[existingEntryIndex].inputs[question.name]) {
+          updatedInputs[existingEntryIndex].inputs[question.name].value = userAnswer;
+        }
+        return updatedInputs;
+      });
+    }
+  };
+
   const handleUserResponse = async () => {
     if (userAnswer.trim() === "" || isSimulaitonStreaming) {
       return;
@@ -350,6 +376,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
             nextBotMessage = nextMessage;
           }
         }
+        modifyStoredInputValue(currentQuestion, userAnswer);
       } else {
         nextBotMessage = {
           text: response?.feedback!,
@@ -385,6 +412,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
 
         return newAnswers;
       });
+      modifyStoredInputValue(currentQuestion, value);
       dispatchNewExecutionData(newAnswers, _inputs);
 
       const isStandingQuestion = !!standingQuestions.length;
