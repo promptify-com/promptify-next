@@ -43,7 +43,7 @@ export const ChatInput = ({
 
   const getAnswerName = (answer: IAnswer) => {
     const totalLength = calculateTruncateLength(containerRef);
-    const inputNameAllocatedLength = Math.floor(0.6 * totalLength);
+    const inputNameAllocatedLength = Math.floor(0.4 * totalLength);
     const answerAllocatedLength = totalLength - inputNameAllocatedLength;
 
     const truncatedInputName = truncate(addSpaceBetweenCapitalized(answer.inputName), {
