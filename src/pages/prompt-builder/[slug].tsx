@@ -47,6 +47,10 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
   const [openSideBarRight, setOpenSideBarRight] = useState(false);
 
   useEffect(() => {
+    toggleSidebar();
+  }, []);
+
+  useEffect(() => {
     if (!token) {
       router.push("/signin");
     }
@@ -148,7 +152,11 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
       />
       <SidebarRight
         open={openSideBarRight}
-        openSideBarRight={() => setOpenSideBarRight(true)}
+        openSideBarRight={(itemName: string) => {
+          if (itemName === "help") {
+            setOpenSideBarRight(true);
+          }
+        }}
         closeSideBarRight={() => setOpenSideBarRight(false)}
       />
       <Box
