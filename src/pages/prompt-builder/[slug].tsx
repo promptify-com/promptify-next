@@ -75,12 +75,14 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
     }
 
     const invalids: string[] = [];
-    promptsRefData.current.map(prompt => {
+    for (let i = 0; i < promptsRefData.current.length; i++) {
+      const prompt = promptsRefData.current[i];
       const validation = isPromptVariableValid(prompt.content);
       if (!validation.isValid) {
         invalids.push(validation.message);
+        break;
       }
-    });
+    }
 
     if (invalids.length) {
       setErrorSnackBar({ status: true, message: `You have entered an invalid prompt variable ${invalids.toString()}` });
