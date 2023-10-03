@@ -12,7 +12,7 @@ export interface MenuType {
   href: string;
 }
 
-export const Menu: MenuType[] = [
+export const ProfileMenuItems: MenuType[] = [
   {
     id: 1,
     icon: <Setting />,

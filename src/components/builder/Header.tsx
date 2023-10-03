@@ -1,5 +1,5 @@
-import React, { useRef, useState } from "react";
-import { Avatar, Box, Chip, Stack, Typography, alpha } from "@mui/material";
+import React, { useState } from "react";
+import { Chip, Stack, Typography, alpha } from "@mui/material";
 import {
   CloudOutlined,
   ModeEdit,
@@ -12,10 +12,10 @@ import { TemplateStatus } from "@/core/api/dto/templates";
 import { theme } from "@/theme";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { RootState } from "@/core/store";
-import { ProfileDropDown } from "../ProfileMenu";
 import { BuilderType } from "@/common/types/builder";
 import { BUILDER_TYPE } from "@/common/constants";
 import { useAppSelector } from "@/hooks/useStore";
+import { ProfileMenu } from "@/components/ProfileMenu";
 
 interface IHeader {
   onSave: () => void;
@@ -30,8 +30,6 @@ interface IHeader {
 export const Header = ({ onSave, onPublish, title, status, templateSlug, onEditTemplate, type }: IHeader) => {
   const isValidUser = useAppSelector(isValidUserFn);
   const currentUser = useAppSelector((state: RootState) => state.user.currentUser);
-  const menuAnchorRef = useRef<HTMLDivElement | null>(null);
-  const [isMenuShown, setIsMenuShown] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
   const handleSaveTemplate = async () => {
@@ -159,37 +157,7 @@ export const Header = ({ onSave, onPublish, title, status, templateSlug, onEditT
           )}
         </Stack>
       </Stack>
-      {isValidUser && type === BUILDER_TYPE.USER && (
-        <Box>
-          <Avatar
-            ref={menuAnchorRef}
-            onClick={() => setIsMenuShown(!isMenuShown)}
-            src={currentUser?.avatar}
-            alt={currentUser?.first_name}
-            sx={{
-              ml: "auto",
-              cursor: "pointer",
-              bgcolor: "black",
-              borderRadius: { xs: "24px", sm: "36px" },
-              width: { xs: "24px", sm: "40px" },
-              height: { xs: "24px", sm: "40px" },
-              fontStyle: "normal",
-              textAlign: "center",
-              fontWeight: 400,
-              fontSize: { sm: "30px" },
-              textTransform: "capitalize",
-              lineHeight: "20px",
-              letterSpacing: "0.14px",
-            }}
-          />
-          <ProfileDropDown
-            anchorElement={menuAnchorRef.current}
-            open={isMenuShown}
-            onToggle={() => setIsMenuShown(!isMenuShown)}
-            onClose={() => setIsMenuShown(false)}
-          />
-        </Box>
-      )}
+      {isValidUser && type === BUILDER_TYPE.USER && <ProfileMenu />}
     </Stack>
   );
 };

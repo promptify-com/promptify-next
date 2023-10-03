@@ -22,7 +22,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { setSelectedKeyword } from "@/core/store/filtersSlice";
 import { CollectionsEmptyBox } from "./common/sidebar/CollectionsEmptyBox";
-import { Menu, MenuType } from "@/common/constants";
+import { MenuType, ProfileMenuItems } from "@/common/constants";
 import useLogout from "@/hooks/useLogout";
 import { useGetCollectionTemplatesQuery } from "@/core/api/collections";
 import { Collections } from "./common/sidebar/Collections";
@@ -438,10 +438,10 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
                 autoFocusItem={false}
                 sx={{ width: "100%" }}
               >
-                {Menu.map(el => (
+                {ProfileMenuItems.map(item => (
                   <MenuItem
-                    key={el.name}
-                    onClick={() => handleHeaderMenu(el)}
+                    key={item.name}
+                    onClick={() => handleHeaderMenu(item)}
                     sx={{
                       display: "flex",
                       alignItems: "center",
@@ -450,7 +450,7 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
                       ml: 1,
                     }}
                   >
-                    {el.icon}
+                    {item.icon}
                     <Typography
                       sx={{
                         fontFamily: "Poppins",
@@ -462,7 +462,7 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
                         color: "onBackground",
                       }}
                     >
-                      {el.name}
+                      {item.name}
                     </Typography>
                   </MenuItem>
                 ))}
