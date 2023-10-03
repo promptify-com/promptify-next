@@ -66,7 +66,7 @@ const TemplateForm: React.FC<Props> = ({
     if (!templateData) return null;
     const response = await getTemplateExecution(templateData.id);
     setExecutions(response.data);
-    setSelectedTags(templateData?.tags.map(tag => tag.name) ?? []);
+    setSelectedTags(templateData?.tags?.map(tag => tag.name) ?? []);
   };
   useEffect(() => {
     getExecutions();
