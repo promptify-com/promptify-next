@@ -27,6 +27,12 @@ interface PromptBuilderProps {
 
 export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuilderProps) => {
   const router = useRouter();
+
+  if (!templateData?.id) {
+    router.push("/404");
+    return null;
+  }
+
   const token = useToken();
   const sidebarOpen = useSelector((state: RootState) => state.sidebar.open);
   const promptsRefData = useRef(initPrompts);

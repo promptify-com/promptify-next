@@ -66,7 +66,7 @@ export const Details: React.FC<DetailsProps> = ({ templateData, setMobileTab = (
           };
         });
 
-        const response = await createTemplate({
+        const { slug } = await createTemplate({
           title: `${templateData.title} - Copy`,
           description: templateData.description,
           duration: templateData.duration.toString(),
@@ -85,8 +85,7 @@ export const Details: React.FC<DetailsProps> = ({ templateData, setMobileTab = (
           prompts_list: clonedPrompts,
         }).unwrap();
 
-        const { id, slug } = response;
-        window.open(window.location.origin + `/builder/${id}?editor=1`, "_blank");
+        window.open(`${getBaseUrl}/prompt-builder/${slug}?editor=1`, "_blank");
         router.push(`/prompt/${slug}`);
       } catch (err) {
         console.error(err);
