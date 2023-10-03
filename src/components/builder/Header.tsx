@@ -1,6 +1,12 @@
 import React, { useRef, useState } from "react";
 import { Avatar, Box, Chip, Stack, Typography, alpha } from "@mui/material";
-import { CloudOutlined, ModeEdit, RocketLaunch, VisibilityOutlined } from "@mui/icons-material";
+import {
+  CloudOutlined,
+  ModeEdit,
+  RocketLaunch,
+  VisibilityOutlined,
+  SettingsApplicationsRounded,
+} from "@mui/icons-material";
 import BaseButton from "../base/BaseButton";
 import { TemplateStatus } from "@/core/api/dto/templates";
 import { theme } from "@/theme";
@@ -8,6 +14,8 @@ import { useSelector } from "react-redux";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { RootState } from "@/core/store";
 import { ProfileDropDown } from "../ProfileMenu";
+import { BuilderType } from "@/common/types/builder";
+import { BUILDER_TYPE } from "@/common/constants";
 
 interface IHeader {
   onSave: () => void;
@@ -16,10 +24,10 @@ interface IHeader {
   status: TemplateStatus;
   templateSlug?: string;
   onEditTemplate: () => void;
-  profile?: boolean;
+  type: BuilderType;
 }
 
-export const Header = ({ onSave, onPublish, title, status, templateSlug, onEditTemplate, profile }: IHeader) => {
+export const Header = ({ onSave, onPublish, title, status, templateSlug, onEditTemplate, type }: IHeader) => {
   const isValidUser = useSelector(isValidUserFn);
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
   const menuAnchorRef = useRef<HTMLDivElement | null>(null);
@@ -101,17 +109,30 @@ export const Header = ({ onSave, onPublish, title, status, templateSlug, onEditT
           alignItems={"center"}
           gap={1}
         >
-          {templateSlug && (
-            <BaseButton
-              variant="text"
-              color="custom"
-              sx={btnStyle}
-              startIcon={<VisibilityOutlined sx={{ fontSize: 20 }} />}
-              onClick={() => window.open(`/prompt/${templateSlug}`, "_blank")}
-            >
-              Preview
-            </BaseButton>
-          )}
+          {templateSlug ? (
+            <>
+              {currentUser?.is_admin && type === BUILDER_TYPE.USER && (
+                <BaseButton
+                  variant="text"
+                  color="custom"
+                  sx={btnStyle}
+                  startIcon={<SettingsApplicationsRounded sx={{ fontSize: 20 }} />}
+                  onClick={() => window.open(`/builder/${templateSlug}`, "_blank")}
+                >
+                  Admin builder
+                </BaseButton>
+              )}
+              <BaseButton
+                variant="text"
+                color="custom"
+                sx={btnStyle}
+                startIcon={<VisibilityOutlined sx={{ fontSize: 20 }} />}
+                onClick={() => window.open(`/prompt/${templateSlug}`, "_blank")}
+              >
+                Preview
+              </BaseButton>
+            </>
+          ) : null}
           <BaseButton
             variant="text"
             color="custom"
@@ -141,7 +162,7 @@ export const Header = ({ onSave, onPublish, title, status, templateSlug, onEditT
           )}
         </Stack>
       </Stack>
-      {isValidUser && profile && (
+      {isValidUser && type === BUILDER_TYPE.USER && (
         <Box>
           <Avatar
             ref={menuAnchorRef}

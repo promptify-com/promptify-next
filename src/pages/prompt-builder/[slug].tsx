@@ -18,6 +18,7 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import PromptList from "@/components/builder/PromptCardAccordion/PromptList";
 import { useRouter } from "next/router";
 import useToken from "@/hooks/useToken";
+import { BUILDER_TYPE } from "@/common/constants";
 
 interface PromptBuilderProps {
   templateData: Templates;
@@ -148,7 +149,7 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
           onPublish={handlePublishTemplate}
           onSave={handleSaveTemplate}
           onEditTemplate={() => setTemplateDrawerOpen(true)}
-          profile
+          type={BUILDER_TYPE.USER}
         />
 
         <Box

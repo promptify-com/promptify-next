@@ -107,3 +107,8 @@ export enum CONNECTIONS {
   MICROSOFT = "Microsoft",
   GITHUB = "Github",
 }
+
+export enum BUILDER_TYPE {
+  USER = "user",
+  ADMIN = "admin",
+}

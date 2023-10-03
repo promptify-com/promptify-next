@@ -38,6 +38,7 @@ import { theme } from "@/theme";
 import { useGetEnginesQuery } from "@/core/api/engines";
 import { PromptForm } from "@/components/builder/PromptForm";
 import useToken from "@/hooks/useToken";
+import { BUILDER_TYPE } from "@/common/constants";
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return (
@@ -478,6 +479,7 @@ export const Builder = () => {
               onSave={injectOrderAndSendRequest}
               templateSlug={promptsData?.slug}
               onEditTemplate={() => toggleTemplateDrawer(true)}
+              type={BUILDER_TYPE.ADMIN}
             />
           </Grid>
           <Grid
