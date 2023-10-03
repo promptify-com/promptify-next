@@ -13,7 +13,7 @@ import { ChatInput } from "./ChatInput";
 import { useRouter } from "next/router";
 import { TemplateQuestions, Templates, UpdatedQuestionTemplate } from "@/core/api/dto/templates";
 import { getInputsFromString } from "@/common/helpers";
-import { IPromptInput, PromptLiveResponse, InputType } from "@/common/types/prompt";
+import { IPromptInput, PromptLiveResponse, InputType, PromptLiveResponseData } from "@/common/types/prompt";
 import { setGeneratingStatus, updateExecutionData } from "@/core/store/templatesSlice";
 import { AnswerValidatorResponse, IAnswer, IMessage } from "@/common/types/chat";
 import { isDesktopViewPort } from "@/common/helpers";
@@ -43,7 +43,10 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
   const [chatExpanded, setChatExpanded] = useState(true);
   const [showGenerateButton, setShowGenerateButton] = useState(false);
   const [isValidatingAnswer, setIsValidatingAnswer] = useState(false);
-  const [generatingResponse, setGeneratingResponse] = useState<PromptLiveResponse | null>(null);
+  const [generatingResponse, setGeneratingResponse] = useState<PromptLiveResponse>({
+    created_at: new Date(),
+    data: [],
+  });
   const [newExecutionId, setNewExecutionId] = useState<number | null>(null);
   const [answers, setAnswers] = useState<IAnswer[]>([]);
   const [userAnswer, setUserAnswer] = useState("");
@@ -174,16 +177,6 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
   useEffect(() => {
     setGeneratedExecution(generatingResponse);
   }, [generatingResponse]);
-
-  useEffect(() => {
-    if (newExecutionId) {
-      setGeneratingResponse(prevState => ({
-        id: newExecutionId,
-        created_at: prevState?.created_at ?? new Date(),
-        data: prevState?.data ?? [],
-      }));
-    }
-  }, [newExecutionId]);
 
   useEffect(() => {
     if (currentQuestion && (currentQuestion.type === "choices" || currentQuestion.type === "code")) {
@@ -457,7 +450,6 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
   };
 
   const generateExecution = (executionData: ResPrompt[]) => {
-    let tempData: any[] = [];
     const url = `${process.env.NEXT_PUBLIC_API_URL}/api/meta/templates/${template!.id}/execute/`;
 
     fetchEventSource(url, {
@@ -486,75 +478,61 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
           const prompt = parseData.prompt_id;
           const executionId = parseData.template_execution_id;
 
-          if (executionId) setNewExecutionId(executionId);
+          if (executionId) {
+            setNewExecutionId(executionId);
+            setGeneratingResponse(prevState => ({
+              id: executionId,
+              created_at: prevState.created_at,
+              data: prevState.data,
+            }));
+          }
 
           if (msg.event === "infer" && msg.data) {
             if (message) {
-              const tempArr = tempData;
-              const activePrompt = tempArr.findIndex(template => template.prompt === +prompt);
+              setGeneratingResponse(prevState => {
+                const activePromptIndex = prevState.data.findIndex(promptData => promptData.prompt === +prompt);
 
-              if (activePrompt === -1) {
-                tempArr.push({
-                  message,
-                  prompt,
-                });
-              } else {
-                tempArr[activePrompt] = {
-                  ...tempArr[activePrompt],
-                  message: tempArr[activePrompt].message + message,
-                  prompt,
-                };
-              }
+                if (activePromptIndex === -1) {
+                  prevState.data.push({ message, prompt, created_at: new Date() });
+                } else {
+                  prevState.data[activePromptIndex].message += message;
+                }
 
-              tempData = [...tempArr];
-              setGeneratingResponse(prevState => ({
-                ...prevState,
-                created_at: prevState?.created_at || new Date(),
-                data: tempArr,
-              }));
+                return { id: prevState.id, created_at: prevState.created_at, data: [...prevState.data] };
+              });
             }
           } else {
-            const tempArr = tempData;
-            const activePrompt = tempArr.findIndex(template => template.prompt === +prompt);
-
-            if (message === "[INITIALIZING]") {
-              if (activePrompt === -1) {
-                tempArr.push({
-                  message: "",
-                  prompt,
-                  isLoading: true,
-                  created_at: new Date(),
-                });
-              } else {
-                tempArr[activePrompt] = {
-                  ...tempArr[activePrompt],
-                  prompt,
-                  isLoading: true,
-                };
-              }
-            }
-
-            if (message === "[C OMPLETED]" || message === "[COMPLETED]") {
-              tempArr[activePrompt] = {
-                ...tempArr[activePrompt],
-                prompt,
-                isLoading: false,
-                isCompleted: true,
-              };
-            }
-
             if (message.includes("[ERROR]")) {
               onError(
                 message ? message.replace("[ERROR]", "") : "Something went wrong during the execution of this prompt",
               );
+
+              return;
             }
 
-            tempData = tempArr;
-            setGeneratingResponse(prevState => ({
-              ...prevState,
-              created_at: prevState?.created_at || new Date(),
-              data: tempData,
-            }));
+            setGeneratingResponse(prevState => {
+              const activePromptIndex = prevState.data.findIndex(promptData => promptData.prompt === +prompt);
+
+              if (message === "[INITIALIZING]") {
+                if (activePromptIndex === -1) {
+                  prevState.data.push({
+                    message: "",
+                    prompt,
+                    isLoading: true,
+                    created_at: new Date(),
+                  });
+                } else {
+                  prevState.data[activePromptIndex].isLoading = true;
+                }
+              }
+
+              if (message === "[C OMPLETED]" || message === "[COMPLETED]") {
+                prevState.data[activePromptIndex].isLoading = false;
+                prevState.data[activePromptIndex].isCompleted = true;
+              }
+
+              return { id: prevState.id, created_at: prevState.created_at, data: [...prevState.data] };
+            });
           }
         } catch {
           console.error(msg);
