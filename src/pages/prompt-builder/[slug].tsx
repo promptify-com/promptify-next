@@ -158,7 +158,7 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
         <Header
           status={templateData?.status || "DRAFT"}
           title={templateData?.title || ""}
-          templateData={templateData}
+          templateSlug={templateData.slug}
           onPublish={handlePublishTemplate}
           onSave={handleSaveTemplate}
           onEditTemplate={() => setTemplateDrawerOpen(true)}

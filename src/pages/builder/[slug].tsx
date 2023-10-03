@@ -477,7 +477,7 @@ export const Builder = () => {
               title={dataForRequest.current.title}
               onPublish={() => handlePublishTemplate()}
               onSave={injectOrderAndSendRequest}
-              templateData={promptsData}
+              templateSlug={promptsData?.slug}
               onEditTemplate={() => toggleTemplateDrawer(true)}
               type={BUILDER_TYPE.ADMIN}
             />
