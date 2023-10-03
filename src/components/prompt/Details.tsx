@@ -132,7 +132,7 @@ export const Details: React.FC<DetailsProps> = ({ templateData, setMobileTab = (
         </Stack>
         <Box sx={{ py: "16px" }}>
           <Typography sx={{ fontSize: 12, fontWeight: 400, color: "onSurface" }}>
-            {stripTags(templateData.description)}
+            {templateData.description ? stripTags(templateData.description) : null}
           </Typography>
         </Box>
         <Stack
@@ -141,7 +141,7 @@ export const Details: React.FC<DetailsProps> = ({ templateData, setMobileTab = (
           gap={1}
           sx={{ pb: "25px" }}
         >
-          {templateData.tags.length > 0 ? (
+          {templateData.tags?.length > 0 ? (
             templateData.tags.map(tag => (
               <Chip
                 key={tag.id}
@@ -204,7 +204,7 @@ export const Details: React.FC<DetailsProps> = ({ templateData, setMobileTab = (
             >
               <Subtitle sx={{ mb: "12px", color: "tertiary" }}>Actions</Subtitle>
               <Stack gap={1}>
-                {(currentUser?.is_admin || currentUser?.id === templateData.created_by.id) && (
+                {(currentUser?.is_admin || currentUser?.id === templateData.created_by?.id) && (
                   <Button
                     variant={"contained"}
                     startIcon={<Create />}

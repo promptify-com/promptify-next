@@ -54,12 +54,6 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props,
 export const Builder = () => {
   const router = useRouter();
   const slug = router.query.slug as string;
-
-  if (!slug) {
-    router.push("/404");
-    return null;
-  }
-
   const [nodeCount, setNodeCount] = useState(1);
   const [prompts, setPrompts] = useState<Prompts[]>([]);
   const { data: engines } = useGetEnginesQuery();
@@ -78,8 +72,16 @@ export const Builder = () => {
   const token = useToken();
 
   useEffect(() => {
+    if (!slug) {
+      router.push("/404");
+      return;
+    }
+  }, []);
+
+  useEffect(() => {
     if (!token) {
       router.push("/signin");
+      return;
     }
 
     if (router.query.editor) {

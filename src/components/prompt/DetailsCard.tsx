@@ -28,6 +28,7 @@ export const DetailsCard: React.FC<Props> = ({ templateData }) => {
       label={templateData?.status}
       size="small"
       sx={{ fontSize: "12px", fontWeight: 500, ml: "8px" }}
+      component={"span"}
     />
   );
 
@@ -84,7 +85,7 @@ export const DetailsCard: React.FC<Props> = ({ templateData }) => {
               fontSize={12}
               fontWeight={500}
               color={"grey.600"}
-              dangerouslySetInnerHTML={{ __html: templateData.category.name }}
+              dangerouslySetInnerHTML={{ __html: templateData.category?.name }}
             />
           </Stack>
           <Stack
@@ -95,8 +96,8 @@ export const DetailsCard: React.FC<Props> = ({ templateData }) => {
           >
             <FavoriteIcon style={favoriteIconStyle} />
             <Avatar
-              src={templateData.created_by.avatar}
-              alt={templateData.created_by.username}
+              src={templateData.created_by?.avatar}
+              alt={templateData.created_by?.username}
               sx={{ width: 32, height: 32 }}
             />
           </Stack>
@@ -108,8 +109,8 @@ export const DetailsCard: React.FC<Props> = ({ templateData }) => {
           sx={{ display: { md: "none" } }}
         >
           <Avatar
-            src={templateData.created_by.avatar}
-            alt={templateData.created_by.username}
+            src={templateData.created_by?.avatar}
+            alt={templateData.created_by?.username}
             sx={{ width: 32, height: 32 }}
           />
           <Typography fontSize={12}>
@@ -122,7 +123,7 @@ export const DetailsCard: React.FC<Props> = ({ templateData }) => {
               </>
             ) : (
               <>
-                {templateData.created_by.username.charAt(0).toUpperCase() + templateData.created_by.username.slice(1)}
+                {templateData.created_by?.username.charAt(0).toUpperCase() + templateData.created_by?.username.slice(1)}
               </>
             )}
           </Typography>
