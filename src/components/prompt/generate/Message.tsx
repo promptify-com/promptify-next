@@ -1,4 +1,4 @@
-import React, { useState, memo, useEffect, Dispatch, SetStateAction } from "react";
+import React, { useState, memo, useEffect, Dispatch, SetStateAction, useRef } from "react";
 import { Avatar, Button, Grid, Typography } from "@mui/material";
 
 import LogoAsAvatar from "@/assets/icons/LogoAvatar";
@@ -44,7 +44,9 @@ export const Message = ({
 }: MessageBlockProps) => {
   const { fromUser, type, text, createdAt, choices } = message;
   const currentUser = useAppSelector(state => state.user.currentUser);
+
   const name = fromUser ? currentUser?.first_name ?? currentUser?.username : "Promptify";
+
   const [selectedValue, setSelectedValue] = useState("");
   const [codeFieldPopup, setCodeFieldPopup] = useState(false);
   const [codeUploaded, setCodeUploaded] = useState(false);

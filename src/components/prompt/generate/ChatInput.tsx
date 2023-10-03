@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import { Clear, Edit, PlayCircle, Send } from "@mui/icons-material";
-import { Box, Button, CircularProgress, Grid, InputBase, Typography } from "@mui/material";
+import { Box, Button, Chip, CircularProgress, Grid, InputBase, Popover, Stack, Typography } from "@mui/material";
 
 import { IAnswer } from "@/common/types/chat";
 import { useAppSelector } from "@/hooks/useStore";
 import ThreeDotsAnimation from "@/components/design-system/ThreeDotsAnimation";
+import useTruncate from "@/hooks/useTruncate";
+import { calculateTruncateLength } from "@/common/helpers/calculateTruncateLength";
 import { addSpaceBetweenCapitalized } from "@/common/helpers";
 
 interface ChatInputProps {
@@ -34,19 +36,36 @@ export const ChatInput = ({
   showGenerate,
   isValidating,
 }: ChatInputProps) => {
+  const { truncate } = useTruncate();
+
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  const getAnswerName = (answer: IAnswer) => {
+    const totalLength = calculateTruncateLength(containerRef);
+    const inputNameAllocatedLength = Math.floor(0.4 * totalLength);
+    const answerAllocatedLength = totalLength - inputNameAllocatedLength;
+
+    const truncatedInputName = truncate(addSpaceBetweenCapitalized(answer.inputName), {
+      length: inputNameAllocatedLength,
+    });
+    const truncatedAnswer = truncate(answer.answer as string, { length: answerAllocatedLength });
+
+    return ` ${truncatedInputName} : ${truncatedAnswer}`;
+  };
+
   const isGenerating = useAppSelector(state => state.template.isGenerating);
 
   return (
     <Grid
+      ref={containerRef}
       p={"0px 16px"}
       pb={"16px"}
       position={"relative"}
       width={"100%"}
-      left={0}
       display={"flex"}
       flexDirection={"column"}
       gap={"8px"}
-      right={0}
       mt={"auto"}
     >
       <Box
@@ -101,13 +120,11 @@ export const ChatInput = ({
       {answers.length > 0 && (
         <Grid
           display={"flex"}
-          alignItems={"flex-start"}
-          alignContent={"flex-start"}
-          alignSelf={"stretch"}
+          alignItems={{ xs: "start", md: "center" }}
           flexWrap={"wrap"}
           gap={"8px"}
         >
-          {answers.map(answer => (
+          {answers.slice(0, 3).map(answer => (
             <Button
               onClick={() => onAnswerClear(answer)}
               disabled={disabledTags}
@@ -135,9 +152,81 @@ export const ChatInput = ({
                 },
               }}
             >
-              {addSpaceBetweenCapitalized(answer.inputName)} : {answer.answer}
+              {getAnswerName(answer)}
             </Button>
           ))}
+          {answers.length > 3 && (
+            <Grid
+              display={"flex"}
+              alignItems={"center"}
+              flexWrap={"wrap"}
+              gap={"8px"}
+            >
+              <Chip
+                label="+"
+                onClick={e => setAnchorEl(e.currentTarget)}
+                sx={{
+                  bgcolor: "surface.3",
+                  color: "onSurface",
+                  borderColor: "surface.3",
+                  ":hover": {
+                    bgcolor: "surface.5",
+                    color: "onSurface",
+                  },
+                }}
+                size="small"
+              />
+              {anchorEl && (
+                <Popover
+                  open
+                  anchorEl={anchorEl}
+                  onClose={() => setAnchorEl(null)}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "left",
+                  }}
+                >
+                  <Stack
+                    alignItems={"flex-start"}
+                    p={1}
+                    gap={0.5}
+                  >
+                    {answers.slice(3).map(answer => (
+                      <Button
+                        onClick={() => onAnswerClear(answer)}
+                        disabled={disabledTags}
+                        key={answer.inputName}
+                        startIcon={
+                          <Clear
+                            sx={{
+                              opacity: 0.5,
+                            }}
+                          />
+                        }
+                        variant="contained"
+                        sx={{
+                          p: "1px 10px",
+                          fontSize: 15,
+                          fontWeight: "500",
+                          borderBottomRightRadius: "4px",
+                          borderTopRightRadius: "4px",
+                          bgcolor: "surface.3",
+                          color: "onSurface",
+                          borderColor: "surface.3",
+                          ":hover": {
+                            bgcolor: "surface.5",
+                            color: "onSurface",
+                          },
+                        }}
+                      >
+                        {getAnswerName(answer)}
+                      </Button>
+                    ))}
+                  </Stack>
+                </Popover>
+              )}
+            </Grid>
+          )}
           <Button
             variant="text"
             startIcon={<Edit />}
