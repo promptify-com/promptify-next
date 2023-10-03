@@ -7,7 +7,6 @@ import { ToggleButtonsGroup } from "@/components/design-system/ToggleButtonsGrou
 import CodeFieldModal from "@/components/modals/CodeFieldModal";
 import { IMessage } from "@/common/types/chat";
 import useTextSimulationStreaming from "@/hooks/useTextSimulationStreaming";
-import { wrapLongWords } from "@/common/helpers/wrapLongWords";
 
 interface MessageBlockProps {
   message: IMessage;
@@ -33,7 +32,7 @@ const MessageContent = memo(({ content, shouldStream, setIsSimulaitonStreaming }
     hasFinished && setIsSimulaitonStreaming(false);
   }, [hasFinished]);
 
-  return <>{wrapLongWords(streamedText, 30)}</>;
+  return <>{streamedText}</>;
 });
 
 export const Message = ({
