@@ -53,6 +53,8 @@ export const isPromptVariableValid = (content: string) => {
 };
 
 export const validatePromptOutput = (value: string) => {
+  value = value.replace(/\s/g, "");
+
   if (value.length && value[0] !== "$") {
     return "$" + value;
   }

@@ -19,7 +19,7 @@ import { skipToken } from "@reduxjs/toolkit/dist/query";
 import materialDynamicColors from "material-dynamic-colors";
 import { mix } from "polished";
 import { useRouter } from "next/router";
-import { useGetPromptTemplateBySlugQuery, useViewTemplateMutation } from "@/core/api/templates";
+import { useViewTemplateMutation } from "@/core/api/templates";
 import { TemplatesExecutions, Templates } from "@/core/api/dto/templates";
 import { Display } from "@/components/prompt/Display";
 import { Details } from "@/components/prompt/Details";
@@ -27,7 +27,6 @@ import { authClient } from "@/common/axios";
 import { DetailsCard } from "@/components/prompt/DetailsCard";
 import { PromptLiveResponse } from "@/common/types/prompt";
 import { Layout } from "@/layout";
-import { useWindowSize } from "usehooks-ts";
 import BottomTabs from "@/components/prompt/BottomTabs";
 import { DetailsCardMini } from "@/components/prompt/DetailsCardMini";
 import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
@@ -40,10 +39,15 @@ import { useAppSelector } from "@/hooks/useStore";
 import ChatMode from "@/components/prompt/generate/ChatBox";
 import { getExecutionByHash } from "@/hooks/api/executions";
 import { ExpandMore } from "@mui/icons-material";
-import ExecutionForm from "@/components/prompt/ExecutionForm";
 import { GeneratorForm } from "@/components/prompt/GeneratorForm";
+import { isDesktopViewPort } from "@/common/helpers";
 
-const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | null }) => {
+interface TemplateProps {
+  hashedExecution: TemplatesExecutions | null;
+  fetchedTemplate: Templates | null;
+}
+
+const Template = ({ hashedExecution, fetchedTemplate }: TemplateProps) => {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const [selectedExecution, setSelectedExecution] = useState<TemplatesExecutions | null>(null);
   const [generatedExecution, setGeneratedExecution] = useState<PromptLiveResponse | null>(null);
@@ -55,31 +59,22 @@ const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | nu
   const [palette, setPalette] = useState(theme.palette);
   const dispatch = useDispatch();
   const isValidUser = useSelector(isValidUserFn);
-  const { width: windowWidth } = useWindowSize();
-  const isSavedTemplateId = useSelector((state: RootState) => state.template.id);
+  const isDesktopView = isDesktopViewPort();
+  const savedTemplateId = useSelector((state: RootState) => state.template.id);
 
-  const routerSlug = router.query?.slug as string;
-  if (!routerSlug) {
+  if (!fetchedTemplate?.id) {
     router.push("/404");
     return;
   }
 
   const {
-    data: fetchedTemplate,
-    error: fetchedTemplateError,
-    isLoading: isLoadingTemplate,
-  } = useGetPromptTemplateBySlugQuery(routerSlug);
-
-  const {
     data: templateExecutions,
-    error: templateExecutionsError,
     isFetching: isFetchingExecutions,
     refetch: refetchTemplateExecutions,
-  } = useGetExecutionsByTemplateQuery(isValidUser && fetchedTemplate?.id ? fetchedTemplate.id : skipToken);
+  } = useGetExecutionsByTemplateQuery(isValidUser ? fetchedTemplate.id : skipToken);
 
-  // We need to set initial template store only once.
   useEffect(() => {
-    if (fetchedTemplate?.id && (!isSavedTemplateId || isSavedTemplateId !== fetchedTemplate.id)) {
+    if (!savedTemplateId || savedTemplateId !== fetchedTemplate.id) {
       dispatch(updateExecutionData(JSON.stringify([])));
       dispatch(
         updateTemplateData({
@@ -88,14 +83,16 @@ const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | nu
           likes: fetchedTemplate.favorites_count,
         }),
       );
-    }
-  }, [fetchedTemplate, isSavedTemplateId]);
 
-  useEffect(() => {
-    if (fetchedTemplate?.id && isValidUser) {
+      if (fetchedTemplate.thumbnail) {
+        fetchDynamicColors();
+      }
+    }
+
+    if (isValidUser) {
       updateViewTemplate(fetchedTemplate.id);
     }
-  }, [fetchedTemplate?.id, isValidUser]);
+  }, [fetchedTemplate, savedTemplateId]);
 
   // After new generated execution is completed - refetch the executions list and clear the generatedExecution state
   // All prompts should be completed - isCompleted: true
@@ -126,14 +123,8 @@ const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | nu
     return null;
   }, [fetchedTemplate, generatedExecution]);
 
-  useEffect(() => {
-    if (fetchedTemplate?.thumbnail) {
-      fetchDynamicColors();
-    }
-  }, [fetchedTemplate]);
-
   const fetchDynamicColors = () => {
-    materialDynamicColors(fetchedTemplate?.thumbnail)
+    materialDynamicColors(fetchedTemplate.thumbnail)
       .then((imgPalette: IMaterialDynamicColorsTheme) => {
         const newPalette: Palette = {
           ...theme.palette,
@@ -175,16 +166,11 @@ const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | nu
     ? { defaultExpanded: true }
     : { defaultExpanded: false };
 
-  if (fetchedTemplateError) {
-    router.push("/404");
-    return;
-  }
-
   return (
     <>
       <ThemeProvider theme={dynamicTheme}>
         <Layout>
-          {!fetchedTemplate || isLoadingTemplate ? (
+          {!fetchedTemplate ? (
             <PromptPlaceholder />
           ) : (
             <Grid
@@ -216,7 +202,7 @@ const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | nu
                 },
               }}
             >
-              {windowWidth > 960 && (
+              {isDesktopView && (
                 <Stack
                   px={"4px"}
                   maxWidth={"430px"}
@@ -299,7 +285,7 @@ const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | nu
                 </Stack>
               )}
 
-              {windowWidth < 960 && (
+              {!isDesktopView && (
                 <>
                   {mobileTab !== 0 && <DetailsCardMini templateData={fetchedTemplate} />}
 
@@ -325,7 +311,7 @@ const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | nu
                   </Grid>
                 </>
               )}
-              {windowWidth < 960 ? (
+              {!isDesktopView ? (
                 !!fetchedTemplate?.questions?.length && isTemplatePublished ? (
                   <Grid
                     sx={{
@@ -432,9 +418,9 @@ const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | nu
 export async function getServerSideProps({ params, query }: { params: { slug: string }; query: { hash: string } }) {
   const { slug } = params;
   const { hash } = query;
+  let fetchedTemplate: Templates | null = null;
 
   try {
-    let fetchedTemplate: Templates;
     let execution: TemplatesExecutions | null = null;
 
     if (hash) {
@@ -457,6 +443,7 @@ export async function getServerSideProps({ params, query }: { params: { slug: st
         meta_keywords: fetchedTemplate.meta_keywords,
         image: fetchedTemplate.thumbnail,
         hashedExecution: execution,
+        fetchedTemplate,
       },
     };
   } catch (error) {
@@ -465,8 +452,10 @@ export async function getServerSideProps({ params, query }: { params: { slug: st
         title: "Promptify | Boost Your Creativity",
         description:
           "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
+        fetchedTemplate,
       },
     };
   }
 }
-export default Prompt;
+
+export default Template;

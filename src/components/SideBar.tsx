@@ -168,6 +168,10 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar, fullHeigh
           display={"flex"}
           flexDirection={"column"}
           gap={1}
+          className="sidebar-list"
+          sx={{
+            overflow: showFilters ? "scroll" : "none",
+          }}
         >
           <Grid
             display={"flex"}
@@ -297,6 +301,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar, fullHeigh
             </Grid>
           ))}
           <Divider />
+
           <Collections
             favCollection={collections}
             collectionLoading={isCollectionsLoading}

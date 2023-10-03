@@ -16,6 +16,7 @@ import { RootState } from "@/core/store";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { useSelector } from "react-redux";
 import ApiAccess from "./ApiAccess";
+import { stripTags } from "@/common/helpers";
 
 interface DetailsProps {
   templateData: Templates;
@@ -131,10 +132,9 @@ export const Details: React.FC<DetailsProps> = ({ templateData, setMobileTab = (
           )}
         </Stack>
         <Box sx={{ py: "16px" }}>
-          <Typography
-            sx={{ fontSize: 12, fontWeight: 400, color: "onSurface" }}
-            dangerouslySetInnerHTML={{ __html: templateData.description }}
-          />
+          <Typography sx={{ fontSize: 12, fontWeight: 400, color: "onSurface" }}>
+            {stripTags(templateData.description)}
+          </Typography>
         </Box>
         <Stack
           direction={"row"}
@@ -205,13 +205,16 @@ export const Details: React.FC<DetailsProps> = ({ templateData, setMobileTab = (
             >
               <Subtitle sx={{ mb: "12px", color: "tertiary" }}>Actions</Subtitle>
               <Stack gap={1}>
-                {(currentUser?.is_admin || currentUser?.id === templateData.created_by.id) && (
+                {currentUser?.id === templateData.created_by.id && (
                   <Button
                     variant={"contained"}
                     startIcon={<Create />}
                     sx={templateBtnStyle}
                     onClick={() => {
-                      window.open(window.location.origin + `/builder/${templateData.id}?editor=1`, "_blank");
+                      const path = currentUser?.is_admin
+                        ? `/builder/${templateData.id}?editor=1`
+                        : `/prompt-builder/${templateData.slug}?editor=1`;
+                      window.open(window.location.origin + path, "_blank");
                     }}
                   >
                     Edit this Template

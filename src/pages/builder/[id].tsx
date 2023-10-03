@@ -30,8 +30,8 @@ import { deletePrompt, updateTemplate } from "@/hooks/api/templates";
 import { ContentCopy } from "@mui/icons-material";
 import { IEditPrompts } from "@/common/types/builder";
 import TemplateForm from "@/components/common/forms/TemplateForm";
-import { promptRandomId } from "@/common/helpers/promptRandomId";
 import { isPromptVariableValid } from "@/common/helpers/promptValidator";
+import { randomId } from "@/common/helpers";
 
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import { theme } from "@/theme";
@@ -62,15 +62,14 @@ export const Builder = () => {
   const [nodesData, setNodesData] = useState<IEditPrompts[]>([]);
   const { data: promptsData } = useGetPromptTemplatesQuery(id ? +id : skipToken);
   const dataForRequest = useRef({} as any);
-  const [confirmDialogOpen, setConfirmDialogOpen] = React.useState(false);
-  const [snackBarOpen, setSnackBarOpen] = React.useState(false);
-  const [templateDrawerOpen, setTemplateDrawerOpen] = React.useState(Boolean(router.query.editor));
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [snackBarOpen, setSnackBarOpen] = useState(false);
+  const [templateDrawerOpen, setTemplateDrawerOpen] = useState(Boolean(router.query.editor));
   const [publishTemplate] = usePublishTemplateMutation();
-  const [snackBarInvalidVariables, setSnackBarInvalidVariables] = React.useState(false);
-  const [invalidVariableMessage, setInvalidVariableMessage] = React.useState("");
+  const [snackBarInvalidVariables, setSnackBarInvalidVariables] = useState(false);
+  const [invalidVariableMessage, setInvalidVariableMessage] = useState("");
   const token = useToken();
 
-  // Remove 'editor' query param after first load to prevent open modal on every load
   useEffect(() => {
     if (!token) {
       router.push("/signin");
@@ -79,7 +78,6 @@ export const Builder = () => {
     if (router.query.editor) {
       const { editor, ...restQueryParams } = router.query;
 
-      // Replace the route without causing a re-render, and without changing the scroll position
       router.replace(
         {
           pathname: router.pathname,
@@ -215,7 +213,7 @@ export const Builder = () => {
     setSelectedNode(node);
     node.selected = true;
     node.count = nodeCount.toString();
-    node.temp_id = promptRandomId();
+    node.temp_id = randomId();
 
     setNodesData(prev => [
       ...prev,
@@ -258,7 +256,7 @@ export const Builder = () => {
       setSelectedNode(node);
       node.selected = true;
       node.count = nodeCount.toString();
-      node.temp_id = promptRandomId();
+      node.temp_id = randomId();
 
       setNodesData(prev => [
         ...prev,
@@ -471,9 +469,9 @@ export const Builder = () => {
               status={dataForRequest.current.status}
               title={dataForRequest.current.title}
               onPublish={() => handlePublishTemplate()}
-              onDrawerOpen={() => toggleTemplateDrawer(true)}
               onSave={injectOrderAndSendRequest}
               templateSlug={promptsData?.slug}
+              onEditTemplate={() => toggleTemplateDrawer(true)}
             />
           </Grid>
           <Grid

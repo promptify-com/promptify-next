@@ -3,11 +3,11 @@ import { Clear, Edit, PlayCircle, Send } from "@mui/icons-material";
 import { Box, Button, Chip, CircularProgress, Grid, InputBase, Popover, Stack, Typography } from "@mui/material";
 
 import { IAnswer } from "@/common/types/chat";
-import { addSpaceBetweenCapitalized } from "@/common/helpers/addSpaceBetweenCapitalized";
 import { useAppSelector } from "@/hooks/useStore";
 import ThreeDotsAnimation from "@/components/design-system/ThreeDotsAnimation";
 import useTruncate from "@/hooks/useTruncate";
 import { calculateTruncateLength } from "@/common/helpers/calculateTruncateLength";
+import { addSpaceBetweenCapitalized } from "@/common/helpers";
 
 interface ChatInputProps {
   onChange: (str: string) => void;
@@ -55,6 +55,7 @@ export const ChatInput = ({
   };
 
   const isGenerating = useAppSelector(state => state.template.isGenerating);
+
   return (
     <Grid
       ref={containerRef}

@@ -9,7 +9,7 @@ import { CollectionsEmptyBox } from "./CollectionsEmptyBox";
 import ListItemPlaceholder from "@/components/placeholders/ListItemPlaceholder";
 import LoadingOverlay from "@/components/design-system/LoadingOverlay";
 import { useRouteChangeOverlay } from "@/hooks/useRouteChangeOverlay";
-import { determineIsMobile } from "@/common/helpers/determineIsMobile";
+import { isDesktopViewPort } from "@/common/helpers";
 
 interface SideBarCollectionsProps {
   sidebarOpen?: boolean;
@@ -25,13 +25,12 @@ export const Collections: React.FC<SideBarCollectionsProps> = ({
   collectionLoading,
 }) => {
   const router = useRouter();
-
   const { showOverlay } = useRouteChangeOverlay({
     shouldShowOverlayCallback: url => {
       return url.startsWith("/prompt/");
     },
   });
-  const IS_MOBILE = determineIsMobile();
+  const isDesktopView = isDesktopViewPort();
 
   return (
     <Box>
@@ -81,7 +80,7 @@ export const Collections: React.FC<SideBarCollectionsProps> = ({
                 <ListItemPlaceholder />
               ) : (
                 <>
-                  {!IS_MOBILE && showOverlay && <LoadingOverlay showOnDesktop />}
+                  {isDesktopView && showOverlay && <LoadingOverlay showOnDesktop />}
 
                   {favCollection?.prompt_templates.map((item: ITemplate) => (
                     <CollectionItem

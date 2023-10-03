@@ -8,13 +8,14 @@ import { Engine } from "@/core/api/dto/templates";
 
 interface Props {
   prompt: IEditPrompts;
+  order: number;
   setPrompt: (prompt: IEditPrompts) => void;
   deletePrompt: () => void;
   duplicatePrompt: () => void;
   engines: Engine[];
 }
 
-export const Header = ({ prompt, setPrompt, deletePrompt, duplicatePrompt, engines }: Props) => {
+export const Header = ({ prompt, order, setPrompt, deletePrompt, duplicatePrompt, engines }: Props) => {
   const [showEngines, setShowEngines] = useState(false);
   const [enginesAnchor, setEnginesAnchor] = useState<HTMLElement | null>(null);
   const [showSettings, setShowSettings] = useState(false);
@@ -45,12 +46,13 @@ export const Header = ({ prompt, setPrompt, deletePrompt, duplicatePrompt, engin
             width: 24,
             height: 24,
             opacity: 0.3,
+            cursor: "pointer",
             ":hover": {
               opacity: 1,
             },
           }}
         />
-        <Typography>#{prompt.order}</Typography>
+        <Typography>#{order}</Typography>
         <Button
           endIcon={<ArrowDropDown />}
           onClick={e => {
@@ -63,6 +65,7 @@ export const Header = ({ prompt, setPrompt, deletePrompt, duplicatePrompt, engin
             color: "text.primary",
             alignItems: "center",
             gap: 0.5,
+            px: "8px",
           }}
         >
           <img
@@ -75,7 +78,17 @@ export const Header = ({ prompt, setPrompt, deletePrompt, duplicatePrompt, engin
               borderRadius: "50%",
             }}
           />
-          {promptEngine?.name}
+          <Typography
+            component={"span"}
+            sx={{
+              fontSize: "inherit",
+              fontWeight: "inherit",
+              color: "inherit",
+              overflow: "hidden",
+            }}
+          >
+            {promptEngine?.name}
+          </Typography>
         </Button>
         <IconButton
           onClick={e => {
@@ -98,7 +111,6 @@ export const Header = ({ prompt, setPrompt, deletePrompt, duplicatePrompt, engin
             color: "onSurface",
             opacity: 0.5,
             whiteSpace: "nowrap",
-            width: "200px",
             overflow: "hidden",
           }}
         >
