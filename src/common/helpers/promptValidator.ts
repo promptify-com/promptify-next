@@ -46,9 +46,12 @@ export const isPromptVariableValid = (content: string) => {
     }
 
     if (type === "file") {
-      const extensions = parts[3].split(",");
+      const extensions = parts[3]?.split(",");
       const validExtensions = ["pdf", "docx", "txt"];
-      if (extensions.length !== 3 || !validExtensions.every(ext => extensions.includes(ext))) {
+      const validExtensionCount = extensions.filter(ext => validExtensions.includes(ext.trim())).length;
+      const invalidExtensions = extensions.filter(ext => !validExtensions.includes(ext.trim())).length;
+
+      if (validExtensionCount <= 0 || invalidExtensions > 0 || extensions.length > 3) {
         return {
           isValid: false,
           message: `"${match[0]}"`,
