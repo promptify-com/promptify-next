@@ -18,6 +18,7 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import PromptList from "@/components/builder/PromptCardAccordion/PromptList";
 import { useRouter } from "next/router";
 import useToken from "@/hooks/useToken";
+import { IEditTemplate } from "@/common/types/editTemplate";
 import { BUILDER_TYPE } from "@/common/constants";
 
 interface PromptBuilderProps {
@@ -87,7 +88,21 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
       return;
     }
 
-    const _template: any = {
+    const _prompts = promptsRefData.current.map((prompt, index, array) => {
+      const depend = array[index - 1]?.id || array[index - 1]?.temp_id;
+      return {
+        ...prompt,
+        dependencies: depend ? [depend] : [],
+        parameters: prompt?.parameters?.map(params => ({
+          parameter_id: params.parameter_id,
+          score: params.score,
+          is_visible: params.is_visible,
+          is_editable: params.is_editable,
+        })),
+      };
+    });
+
+    const _template: IEditTemplate = {
       title: templateData.title,
       description: templateData.description,
       example: templateData.example,
@@ -98,15 +113,13 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
       category: templateData.category.id,
       difficulty: templateData.difficulty,
       status: templateData.status,
-      prompts_list: promptsRefData.current.map(prompt => ({
-        ...prompt,
-        parameters: prompt?.parameters?.map(params => ({
-          parameter_id: params.parameter_id,
-          score: params.score,
-          is_visible: params.is_visible,
-          is_editable: params.is_editable,
-        })),
-      })),
+      prompts_list: _prompts,
+      context: templateData.context,
+      tags: templateData.tags,
+      executions_limit: templateData.executions_limit,
+      meta_title: templateData.meta_title,
+      meta_description: templateData.meta_description,
+      meta_keywords: templateData.meta_keywords,
     };
 
     await updateTemplate(templateData.id, _template);
@@ -149,7 +162,7 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
         <Header
           status={templateData?.status || "DRAFT"}
           title={templateData?.title || ""}
-          templateSlug={templateData?.slug}
+          templateSlug={templateData.slug}
           onPublish={handlePublishTemplate}
           onSave={handleSaveTemplate}
           onEditTemplate={() => setTemplateDrawerOpen(true)}
