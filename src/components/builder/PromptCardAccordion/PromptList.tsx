@@ -145,7 +145,7 @@ const PromptList = ({ promptsRefData, engines }: Props) => {
             <Fragment key={index}>
               <Box width={"100%"}>
                 <PromptCardAccordion
-                  key={prompt.id}
+                  key={prompt.id ?? prompt.temp_id}
                   prompt={prompt}
                   order={index}
                   setPrompt={changePrompt}
