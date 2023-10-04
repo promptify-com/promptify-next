@@ -233,7 +233,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
       try {
         if (filePath) {
           const responseData = await uploadFile(filePath);
-          if (responseData) {
+          if ("data" in responseData) {
             const { file_url } = responseData?.data;
             const newResPrompts = resPrompts.map(item => {
               if (item.prompt_params) {

@@ -114,7 +114,7 @@ const TemplateForm: React.FC<Props> = ({
       if (selectedFile) {
         const responseData = await uploadFile(selectedFile);
 
-        if (responseData) {
+        if ("data" in responseData) {
           const { file_url } = responseData?.data;
           values.thumbnail = file_url;
         }
@@ -134,8 +134,9 @@ const TemplateForm: React.FC<Props> = ({
       try {
         const responseData = await uploadFile(selectedFile);
 
-        if (responseData) {
-          const { file_url } = responseData?.data;
+        if ("data" in responseData) {
+          const { file_url } = responseData.data;
+
           values.thumbnail = file_url;
           const { slug } = await createTemplate(values).unwrap();
 
