@@ -31,7 +31,7 @@ import { FormType } from "@/common/types/template";
 import { TemplateStatusArray } from "@/common/constants";
 import { executionsApi } from "@/core/api/executions";
 import { stripTags, getLanguageFromCode } from "@/common/helpers";
-import { uploadFile } from "@/core/api/uploadFile";
+import { useUploadFileMutation } from "@/core/api/uploadFile";
 
 interface Props {
   type?: FormType;
@@ -57,6 +57,8 @@ const TemplateForm: React.FC<Props> = ({
   const [createTemplate] = useCreateTemplateMutation();
   const [updateTemplate] = useUpdateTemplateMutation();
   const [getTemplateExecution] = executionsApi.endpoints.getExecutionsByTemplate.useLazyQuery();
+
+  const [uploadFile] = useUploadFileMutation();
 
   const [tags, setTags] = useState<string[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
@@ -110,9 +112,11 @@ const TemplateForm: React.FC<Props> = ({
     if (!templateData) return;
     try {
       if (selectedFile) {
-        const fileUrl = await uploadFile(selectedFile);
-        if (fileUrl) {
-          values.thumbnail = fileUrl;
+        const responseData = await uploadFile(selectedFile);
+
+        if (responseData) {
+          const { file_url } = responseData?.data;
+          values.thumbnail = file_url;
         }
       }
 
@@ -128,9 +132,11 @@ const TemplateForm: React.FC<Props> = ({
   const onCreateTemplate = async (values: IEditTemplate) => {
     if (selectedFile) {
       try {
-        const fileUrl = await uploadFile(selectedFile);
-        if (fileUrl) {
-          values.thumbnail = fileUrl;
+        const responseData = await uploadFile(selectedFile);
+
+        if (responseData) {
+          const { file_url } = responseData?.data;
+          values.thumbnail = file_url;
           const response = await createTemplate(values).unwrap();
           const { id } = response;
           handleSave();

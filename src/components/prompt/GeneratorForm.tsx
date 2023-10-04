@@ -16,7 +16,7 @@ import { AllInclusive, Close, InfoOutlined } from "@mui/icons-material";
 import TabsAndFormPlaceholder from "@/components/placeholders/TabsAndFormPlaceholder";
 import Storage from "@/common/storage";
 import { setGeneratingStatus, updateExecutionData } from "@/core/store/templatesSlice";
-import { uploadFile } from "@/core/api/uploadFile";
+import { useUploadFileMutation } from "@/core/api/uploadFile";
 
 interface GeneratorFormProps {
   templateData: Templates;
@@ -56,6 +56,8 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   const [errors, setErrors] = useState<InputsErrors>({});
   const [shownInputs, setShownInputs] = useState<Input[] | null>(null);
   const [shownParams, setShownParams] = useState<Param[] | null>(null);
+
+  const [uploadFile] = useUploadFileMutation();
 
   const setDefaultResPrompts = () => {
     const _initPromptsData: ResPrompt[] = [...resPrompts];
@@ -230,13 +232,14 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
       try {
         if (filePath) {
-          const fileUrl = await uploadFile(filePath);
-          if (fileUrl) {
+          const responseData = await uploadFile(filePath);
+          if (responseData) {
+            const { file_url } = responseData?.data;
             const newResPrompts = resPrompts.map(item => {
               if (item.prompt_params) {
                 const updatedPromptParams = {
                   ...item.prompt_params,
-                  [keyName]: fileUrl,
+                  [keyName]: file_url,
                 };
                 return {
                   ...item,

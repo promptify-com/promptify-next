@@ -21,11 +21,11 @@ type FileType = "pdf" | "docx" | "txt";
 const getMimeType = (extension: string): string | undefined => {
   switch (extension) {
     case "pdf":
-      return "application/pdf";
+      return ".pdf";
     case "docx":
-      return "application/msword";
+      return ".docx";
     case "txt":
-      return "text/plain";
+      return ".txt";
     default:
       return undefined;
   }
@@ -204,7 +204,11 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
                       whiteSpace: "nowrap",
                       width: 1,
                     }}
-                    onChange={e => handleChange(e.target?.files[0], input.name, input.type)}
+                    onChange={e => {
+                      if (e.target.files && e.target.files.length > 0) {
+                        handleChange(e.target.files[0], input.name, input.type);
+                      }
+                    }}
                   />
                 </Button>
               ) : (
