@@ -23,6 +23,12 @@ export interface IPromptInput {
   prompt?: number;
 }
 
+export type AnsweredInputType = {
+  promptId: number;
+  inputName: string;
+  value: string | number;
+};
+
 export interface DisplayPrompt {
   prompt: number;
   content: string;

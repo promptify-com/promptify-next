@@ -1,4 +1,4 @@
-import { ResInputs } from "./../api/dto/prompts";
+import { AnsweredInputType } from "@/common/types/prompt";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
@@ -8,7 +8,7 @@ export interface TemplatesProps {
   likes: number;
   executionData: string;
   isGenerating: boolean;
-  answeredInputs: ResInputs[];
+  answeredInput: AnsweredInputType | null;
 }
 
 type UpdateTemplateDataPayload = Pick<TemplatesProps, "is_favorite" | "id" | "likes">;
@@ -19,7 +19,7 @@ const initialState: TemplatesProps = {
   likes: 0,
   executionData: "[]",
   isGenerating: false,
-  answeredInputs: [],
+  answeredInput: null,
 };
 
 export const templatesSlice = createSlice({
@@ -43,8 +43,8 @@ export const templatesSlice = createSlice({
     setGeneratingStatus: (state, action: PayloadAction<boolean>) => {
       state.isGenerating = action.payload;
     },
-    updateAnsweredInputs: (state, action: PayloadAction<ResInputs[]>) => {
-      state.answeredInputs = action.payload;
+    updateAnsweredInput: (state, action: PayloadAction<AnsweredInputType>) => {
+      state.answeredInput = action.payload;
     },
   },
 });
@@ -54,7 +54,7 @@ export const {
   updateTemplateData,
   updateExecutionData,
   setGeneratingStatus,
-  updateAnsweredInputs,
+  updateAnsweredInput,
 } = templatesSlice.actions;
 
 export default templatesSlice.reducer;

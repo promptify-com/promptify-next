@@ -14,7 +14,7 @@ import { useRouter } from "next/router";
 import { AllInclusive, Close, InfoOutlined } from "@mui/icons-material";
 import TabsAndFormPlaceholder from "@/components/placeholders/TabsAndFormPlaceholder";
 import Storage from "@/common/storage";
-import { setGeneratingStatus, updateAnsweredInputs, updateExecutionData } from "@/core/store/templatesSlice";
+import { setGeneratingStatus, updateExecutionData } from "@/core/store/templatesSlice";
 
 interface GeneratorFormProps {
   templateData: Templates;
@@ -55,7 +55,22 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   const [shownInputs, setShownInputs] = useState<Input[] | null>(null);
   const [shownParams, setShownParams] = useState<Param[] | null>(null);
 
-  dispatch(updateAnsweredInputs(nodeInputs));
+  const answeredInput = useAppSelector(state => state.template.answeredInput);
+  useEffect(() => {
+    if (answeredInput) {
+      setNodeInputs(prevState => {
+        const newState = [...prevState];
+        const targetIndex = newState.findIndex(item => item.id === answeredInput.promptId);
+        if (targetIndex !== -1) {
+          const inputKey = answeredInput.inputName;
+          if (newState[targetIndex].inputs[inputKey]) {
+            newState[targetIndex].inputs[inputKey].value = answeredInput.value;
+          }
+        }
+        return newState;
+      });
+    }
+  }, [answeredInput]);
 
   const setDefaultResPrompts = () => {
     const _initPromptsData: ResPrompt[] = [...resPrompts];
@@ -515,6 +530,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
                   key={i}
                   promptId={input.prompt}
                   inputs={[input]}
+                  nodeInputs={nodeInputs}
                   setNodeInputs={setNodeInputs}
                   errors={errors}
                 />
