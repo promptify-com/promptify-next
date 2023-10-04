@@ -13,7 +13,7 @@ import {
   IconButton,
   alpha,
 } from "@mui/material";
-import { IEditPrompts, IPromptParams } from "@/common/types/builder";
+import { BuilderType, IEditPrompts, IPromptParams } from "@/common/types/builder";
 import { IParametersPreset } from "@/common/types/parametersPreset";
 import { Add, AddCircle, Bolt, ContentCopy, Save } from "@mui/icons-material";
 import { theme } from "@/theme";
@@ -25,15 +25,15 @@ import {
   useGetParametersPresetsQuery,
   useGetParametersQuery,
 } from "@/core/api/parameters";
+import { BUILDER_TYPE } from "@/common/constants";
 
-export type StylerVersions = "v1" | "v2";
 interface IProps {
   selectedNodeData: IEditPrompts;
   setSelectedNodeData: (node: IEditPrompts) => void;
-  version?: StylerVersions;
+  type: BuilderType;
 }
 
-export const Styler = ({ selectedNodeData, setSelectedNodeData, version = "v1" }: IProps) => {
+export const Styler = ({ selectedNodeData, setSelectedNodeData, type }: IProps) => {
   const { data: parameters } = useGetParametersQuery();
   const { data: presets } = useGetParametersPresetsQuery();
   const [createParametersPreset] = useCreateParametersPresetMutation();
@@ -139,7 +139,7 @@ export const Styler = ({ selectedNodeData, setSelectedNodeData, version = "v1" }
     <Stack
       gap={3}
       sx={{
-        p: version === "v1" ? "24px 32px" : "0",
+        p: type === BUILDER_TYPE.ADMIN ? "24px 32px" : "0",
       }}
     >
       <ParamSlider
@@ -147,10 +147,10 @@ export const Styler = ({ selectedNodeData, setSelectedNodeData, version = "v1" }
         handleChangeScore={handleChangeScore}
         handleChangeOptions={handleChangeOptions}
         removeParam={removeParam}
-        version={version}
+        type={type}
       />
 
-      {version === "v1" ? (
+      {type === BUILDER_TYPE.ADMIN ? (
         <>
           <Stack
             direction={"row"}

@@ -62,7 +62,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   const setDefaultResPrompts = () => {
     const _initPromptsData: ResPrompt[] = [...resPrompts];
 
-    templateData.prompts.forEach(prompt => {
+    templateData.prompts?.forEach(prompt => {
       _initPromptsData.push({
         prompt: prompt.id,
         contextual_overrides: [],
@@ -413,7 +413,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     const shownInputs = new Map<string, Input>();
     const shownParams = new Map<number, Param>();
 
-    templateData.prompts.forEach(prompt => {
+    templateData.prompts?.forEach(prompt => {
       const inputs = getInputsFromString(prompt.content);
 
       inputs.forEach(input => {

@@ -22,6 +22,7 @@ export const DetailsCardMini: React.FC<Props> = ({ templateData }) => {
       label={templateData?.status}
       size="small"
       sx={{ fontSize: "12px", fontWeight: 500, ml: "8px" }}
+      component={"span"}
     />
   );
 
@@ -68,8 +69,8 @@ export const DetailsCardMini: React.FC<Props> = ({ templateData }) => {
         </Box>
         <FavoriteIcon style={favoriteIconStyle} />
         <Avatar
-          src={templateData.created_by.avatar}
-          alt={templateData.created_by.username}
+          src={templateData.created_by?.avatar}
+          alt={templateData.created_by?.username}
           sx={{ width: 40, height: 40 }}
         />
       </Stack>

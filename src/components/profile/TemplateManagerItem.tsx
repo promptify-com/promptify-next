@@ -4,6 +4,9 @@ import { Box, Card, CardMedia, Chip, Grid, IconButton, Tooltip, Typography } fro
 import { Templates } from "@/core/api/dto/templates";
 import Image from "@/components/design-system/Image";
 import { useRouter } from "next/router";
+import { useAppSelector } from "@/hooks/useStore";
+import { RootState } from "@/core/store";
+import { getBaseUrl } from "@/common/helpers";
 
 interface TemplateManagerItemProps {
   template: Templates;
@@ -12,6 +15,7 @@ interface TemplateManagerItemProps {
 
 const TemplateManagerItem: FC<TemplateManagerItemProps> = ({ template, onOpenDelete }) => {
   const router = useRouter();
+  const currentUser = useAppSelector((state: RootState) => state.user.currentUser);
 
   const navigateToTemplate = () => router.push(`/prompt/${template.slug}`);
 
@@ -90,7 +94,7 @@ const TemplateManagerItem: FC<TemplateManagerItemProps> = ({ template, onOpenDel
                 },
               }}
               onClick={() => {
-                window.open(window.location.origin + `/builder/${template.id}`, "_blank");
+                window.open(`${getBaseUrl}/prompt-builder/${template.slug}`, "_blank");
               }}
             >
               <SettingsApplicationsRounded />

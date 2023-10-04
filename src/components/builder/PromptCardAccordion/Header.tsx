@@ -85,6 +85,7 @@ export const Header = ({ prompt, order, setPrompt, deletePrompt, duplicatePrompt
               fontWeight: "inherit",
               color: "inherit",
               overflow: "hidden",
+              textOverflow: "ellipsis",
             }}
           >
             {promptEngine?.name}
@@ -112,6 +113,7 @@ export const Header = ({ prompt, order, setPrompt, deletePrompt, duplicatePrompt
             opacity: 0.5,
             whiteSpace: "nowrap",
             overflow: "hidden",
+            textOverflow: "ellipsis",
           }}
         >
           Max Length: {prompt.model_parameters?.maximumLength || 0}, Temperature:{" "}

@@ -9,6 +9,7 @@ import Terminal from "@/assets/icons/Terminal";
 import { NodeContentForm } from "./NodeContentForm";
 import { Styler } from "./Styler/Styler";
 import { Options } from "./Options";
+import { BUILDER_TYPE } from "@/common/constants";
 
 const CustomTabPanel = (props: any) => {
   const { children, value, index, ...other } = props;
@@ -193,6 +194,7 @@ export const PromptForm: React.FC<Props> = ({
           <Styler
             selectedNodeData={selectedNodeData}
             setSelectedNodeData={setSelectedNodeData}
+            type={BUILDER_TYPE.ADMIN}
           />
         </CustomTabPanel>
         <CustomTabPanel

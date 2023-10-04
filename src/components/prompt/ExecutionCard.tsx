@@ -25,7 +25,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, sparkHa
   const promptsOrderMap: { [key: string]: number } = {};
   const promptsExecutionOrderMap: { [key: string]: number } = {};
 
-  promptsData.forEach(prompt => {
+  promptsData?.forEach(prompt => {
     promptsOrderMap[prompt.id] = prompt.order;
     promptsExecutionOrderMap[prompt.id] = prompt.execution_priority;
   });

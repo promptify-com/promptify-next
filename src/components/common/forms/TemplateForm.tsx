@@ -30,7 +30,7 @@ import { useCreateTemplateMutation, useUpdateTemplateMutation } from "@/core/api
 import { FormType } from "@/common/types/template";
 import { TemplateStatusArray } from "@/common/constants";
 import { executionsApi } from "@/core/api/executions";
-import { stripTags, getLanguageFromCode } from "@/common/helpers";
+import { stripTags, getLanguageFromCode, getBaseUrl } from "@/common/helpers";
 import { useUploadFileMutation } from "@/core/api/uploadFile";
 
 interface Props {
@@ -69,7 +69,7 @@ const TemplateForm: React.FC<Props> = ({
     if (!templateData) return null;
     const response = await getTemplateExecution(templateData.id);
     setExecutions(response.data);
-    setSelectedTags(templateData?.tags.map(tag => tag.name) ?? []);
+    setSelectedTags(templateData?.tags?.map(tag => tag.name) ?? []);
   };
   useEffect(() => {
     getExecutions();
@@ -137,10 +137,10 @@ const TemplateForm: React.FC<Props> = ({
         if (responseData) {
           const { file_url } = responseData?.data;
           values.thumbnail = file_url;
-          const response = await createTemplate(values).unwrap();
-          const { id } = response;
+          const { slug } = await createTemplate(values).unwrap();
+
           handleSave();
-          window.open(window.location.origin + `/builder/${id}`, "_blank");
+          window.open(`${getBaseUrl}/prompt-builder/${slug}`, "_blank");
         }
       } catch (_) {}
     }
