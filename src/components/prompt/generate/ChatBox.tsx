@@ -653,10 +653,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
       width={"100%"}
       overflow={"hidden"}
       borderRadius={"16px"}
-      sx={{
-        position: { xs: "relative", md: "sticky" },
-        ...(isDesktopView && { top: "0", left: "0", zIndex: 100, border: "1px solid rgba(225, 226, 236, .5)" }),
-      }}
+      border="1px solid rgba(225, 226, 236, .5)"
     >
       <Accordion
         expanded={chatExpanded}
@@ -696,7 +693,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
               alignItems={"center"}
               gap={"16px"}
             >
-              {!chatExpanded ? <ExpandMore sx={{ fontSize: 16 }} /> : <ExpandLess sx={{ fontSize: 16 }} />}
+              {!chatExpanded ? <ExpandLess sx={{ fontSize: 16 }} /> : <ExpandMore sx={{ fontSize: 16 }} />}
 
               <Typography
                 px={"8px"}
@@ -741,7 +738,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
             flexDirection: "column",
             alignItems: "flex-start",
             gap: "8px",
-            maxHeight: { xs: "70vh", md: "50svh" },
+            maxHeight: { xs: "70vh", md: "35svh" },
             ...(!isDesktopView && { minHeight: { xs: `calc(100vh - ${BottomTabsMobileHeight} )` } }),
             borderTop: { xs: "none", md: "2px solid #ECECF4" },
           }}

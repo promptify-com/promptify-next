@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useMemo } from "react";
-import { Box, Grid, Typography } from "@mui/material";
+import { Box, Divider, Grid, Typography } from "@mui/material";
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { ExecutionCard } from "./ExecutionCard";
 import { PromptLiveResponse } from "@/common/types/prompt";
@@ -112,29 +112,29 @@ export const Display: React.FC<Props> = ({
     }
   }, [executions]);
 
+  const currentGeneratedPrompt = useMemo(() => {
+    if (generatedExecution?.data?.length) {
+      const loadingPrompt = generatedExecution.data.find(prompt => prompt.isLoading);
+      const prompt = templateData.prompts.find(prompt => prompt.id === loadingPrompt?.prompt);
+      if (prompt) return prompt;
+    }
+
+    return null;
+  }, [templateData, generatedExecution]);
+
   const showChatForm = !!templateData?.questions?.length && templateData?.status === "PUBLISHED";
 
   return (
     <Grid
       display={"flex"}
       flexDirection={"column"}
-      gap={"24px"}
+      gap={"8px"}
     >
-      {isDesktopView && showChatForm && (
-        <ClientOnly>
-          <ChatMode
-            key={templateData.id}
-            setGeneratedExecution={setGeneratedExecution}
-            onError={onError}
-            template={templateData}
-          />
-        </ClientOnly>
-      )}
       <Box
         ref={containerRef}
         bgcolor={"surface.1"}
         borderRadius={"16px"}
-        minHeight={{ xs: "100vh", md: "calc(100vh - (95px + 48px + 24px))" }}
+        minHeight={{ xs: "100vh", md: "calc(100vh - (95px + 24px))" }}
         sx={{
           position: "relative",
           pb: { xs: "70px", md: "0" },
@@ -173,6 +173,50 @@ export const Display: React.FC<Props> = ({
           )}
         </Box>
       </Box>
+      {isDesktopView && showChatForm && (
+        <Box
+          sx={{
+            position: "sticky",
+            bottom: currentGeneratedPrompt ? "30px" : "5px",
+            left: 0,
+            right: 0,
+          }}
+        >
+          <ClientOnly>
+            <ChatMode
+              key={templateData.id}
+              setGeneratedExecution={setGeneratedExecution}
+              onError={onError}
+              template={templateData}
+            />
+          </ClientOnly>
+        </Box>
+      )}
+      {currentGeneratedPrompt && (
+        <Box
+          sx={{
+            position: "sticky",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            zIndex: 998,
+            bgcolor: "surface.1",
+          }}
+        >
+          <Divider sx={{ borderColor: "surface.3" }} />
+          <Typography
+            sx={{
+              padding: "8px 16px 5px",
+              textAlign: "right",
+              fontSize: 11,
+              fontWeight: 500,
+              opacity: 0.3,
+            }}
+          >
+            Prompt #{currentGeneratedPrompt.order}: {currentGeneratedPrompt.title}
+          </Typography>
+        </Box>
+      )}
     </Grid>
   );
 };
