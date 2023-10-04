@@ -175,7 +175,9 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
   }, [template]);
 
   useEffect(() => {
-    setGeneratedExecution(generatingResponse);
+    if (answers.length) {
+      setGeneratedExecution(generatingResponse);
+    }
   }, [generatingResponse]);
 
   useEffect(() => {
