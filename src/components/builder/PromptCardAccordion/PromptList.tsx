@@ -6,6 +6,8 @@ import { Box, Button, Stack } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import { randomId } from "@/common/helpers";
 import { Engine } from "@/core/api/dto/templates";
+import { useDeletePromptMutation } from "@/core/api/templates";
+import { DeleteDialog } from "@/components/dialog/DeleteDialog";
 
 interface Props {
   promptsRefData: MutableRefObject<IEditPrompts[]>;
@@ -13,6 +15,8 @@ interface Props {
 }
 const PromptList = ({ promptsRefData, engines }: Props) => {
   const [promptsList, setPromptsList] = useState<IEditPrompts[]>(promptsRefData.current);
+  const [promptToDelete, setPromptToDelete] = useState<IEditPrompts | null>(null);
+  const [deletePrompt] = useDeletePromptMutation();
 
   const [, drop] = useDrop(() => ({ accept: "prompt" }));
   const findPromptIndex = useCallback(
@@ -130,13 +134,20 @@ const PromptList = ({ promptsRefData, engines }: Props) => {
     setPromptsList(_prompts);
   };
 
-  const deletePrompt = (deletePrompt: IEditPrompts) => {
+  const removePrompt = async () => {
+    if (!promptToDelete) return;
+
+    if (promptToDelete.id) {
+      await deletePrompt(promptToDelete.id);
+    }
+
     const _prompts = promptsRefData.current.filter(
-      prompt => deletePrompt.id !== prompt.id || deletePrompt.temp_id !== prompt.temp_id,
+      prompt => promptToDelete.id !== prompt.id || promptToDelete.temp_id !== prompt.temp_id,
     );
 
     promptsRefData.current = _prompts;
     setPromptsList(_prompts);
+    setPromptToDelete(null);
   };
 
   return (
@@ -156,7 +167,7 @@ const PromptList = ({ promptsRefData, engines }: Props) => {
                   prompt={prompt}
                   order={index}
                   setPrompt={changePrompt}
-                  deletePrompt={() => deletePrompt(prompt)}
+                  deletePrompt={() => setPromptToDelete(prompt)}
                   duplicatePrompt={() => duplicatePrompt(prompt, index + 1)}
                   prompts={promptsList}
                   engines={engines}
@@ -205,6 +216,15 @@ const PromptList = ({ promptsRefData, engines }: Props) => {
         >
           New prompt
         </Button>
+      )}
+      {promptToDelete && (
+        <DeleteDialog
+          open={true}
+          dialogTitle="Delete Prompt"
+          dialogContentText={`Are you sure you want to delete ${promptToDelete.title || "this prompt"}?`}
+          onClose={() => setPromptToDelete(null)}
+          onSubmit={removePrompt}
+        />
       )}
     </Stack>
   );

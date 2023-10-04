@@ -24,9 +24,13 @@ import { createEditor, Node } from "@/components/builder/Editor";
 import { Header } from "@/components/builder/Header";
 import { MinusIcon, PlusIcon } from "@/assets/icons";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useGetPromptTemplateBySlugQuery, usePublishTemplateMutation } from "@/core/api/templates";
+import {
+  useDeletePromptMutation,
+  useGetPromptTemplateBySlugQuery,
+  usePublishTemplateMutation,
+} from "@/core/api/templates";
 import { Prompts } from "@/core/api/dto/prompts";
-import { deletePrompt, updateTemplate } from "@/hooks/api/templates";
+import { updateTemplate } from "@/hooks/api/templates";
 import { ContentCopy } from "@mui/icons-material";
 import { IEditPrompts } from "@/common/types/builder";
 import TemplateForm from "@/components/common/forms/TemplateForm";
@@ -66,6 +70,7 @@ export const Builder = () => {
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [snackBarOpen, setSnackBarOpen] = useState(false);
   const [templateDrawerOpen, setTemplateDrawerOpen] = useState(Boolean(router.query.editor));
+  const [deletePrompt] = useDeletePromptMutation();
   const [publishTemplate] = usePublishTemplateMutation();
   const [snackBarInvalidVariables, setSnackBarInvalidVariables] = useState(false);
   const [invalidVariableMessage, setInvalidVariableMessage] = useState("");
@@ -299,7 +304,7 @@ export const Builder = () => {
 
     // Remove the prompt from the backend
     if (currentPrompt?.id) {
-      await deletePrompt(Number(currentPrompt.id));
+      await deletePrompt(currentPrompt.id);
     }
 
     const allPrompts = data.prompts_list.filter((prompt: IEditPrompts) => {
