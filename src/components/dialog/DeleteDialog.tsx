@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import {
   Button,
   CircularProgress,
@@ -8,7 +9,6 @@ import {
   DialogTitle,
 } from "@mui/material";
 import { red } from "@mui/material/colors";
-import React, { useState } from "react";
 
 interface DeleteDialogProps {
   open: boolean;
@@ -26,6 +26,12 @@ export const DeleteDialog: React.FC<DeleteDialogProps> = ({
   onSubmit,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (open) {
+      setIsLoading(false);
+    }
+  }, [open]);
 
   return (
     <Dialog

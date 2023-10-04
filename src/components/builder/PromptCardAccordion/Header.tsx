@@ -5,7 +5,6 @@ import { Button, IconButton, Popover, Stack, Tooltip, Typography } from "@mui/ma
 import React, { useState } from "react";
 import { EngineParamsSlider } from "../EngineParamsSlider";
 import { Engine } from "@/core/api/dto/templates";
-import { DeleteDialog } from "@/components/dialog/DeleteDialog";
 
 interface Props {
   prompt: IEditPrompts;
@@ -21,7 +20,6 @@ export const Header = ({ prompt, order, setPrompt, deletePrompt, duplicatePrompt
   const [enginesAnchor, setEnginesAnchor] = useState<HTMLElement | null>(null);
   const [showSettings, setShowSettings] = useState(false);
   const [settingsAnchor, setSettingsAnchor] = useState<HTMLElement | null>(null);
-  const [deleteConfirm, setDeleteConfirm] = useState(false);
 
   const closeEnginesModal = () => {
     setEnginesAnchor(null);
@@ -150,7 +148,7 @@ export const Header = ({ prompt, order, setPrompt, deletePrompt, duplicatePrompt
             placement="top"
           >
             <IconButton
-              onClick={() => setDeleteConfirm(true)}
+              onClick={deletePrompt}
               sx={{
                 border: "none",
                 "&:hover": {
@@ -215,16 +213,6 @@ export const Header = ({ prompt, order, setPrompt, deletePrompt, duplicatePrompt
           onCancel={closeSettingsModal}
         />
       </Popover>
-      <DeleteDialog
-        open={deleteConfirm}
-        dialogTitle="Delete Prompt"
-        dialogContentText={`Are you sure you want to delete ${prompt.title || "this prompt"}?`}
-        onClose={() => setDeleteConfirm(false)}
-        onSubmit={async () => {
-          await deletePrompt();
-          setDeleteConfirm(false);
-        }}
-      />
     </>
   );
 };
