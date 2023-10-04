@@ -221,8 +221,8 @@ export const Header = ({ prompt, order, setPrompt, deletePrompt, duplicatePrompt
         dialogContentText={`Are you sure you want to delete ${prompt.title || "this prompt"}?`}
         onClose={() => setDeleteConfirm(false)}
         onSubmit={async () => {
+          await deletePrompt();
           setDeleteConfirm(false);
-          deletePrompt();
         }}
       />
     </>

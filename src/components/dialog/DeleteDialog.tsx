@@ -6,17 +6,15 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Typography,
 } from "@mui/material";
 import { red } from "@mui/material/colors";
-import React from "react";
+import React, { useState } from "react";
 
 interface DeleteDialogProps {
   open: boolean;
   dialogTitle: string;
   dialogContentText: string;
   onClose: () => void;
-  onSubmitLoading?: boolean;
   onSubmit: () => void;
 }
 
@@ -25,9 +23,10 @@ export const DeleteDialog: React.FC<DeleteDialogProps> = ({
   dialogTitle,
   dialogContentText,
   onClose,
-  onSubmitLoading,
   onSubmit,
 }) => {
+  const [isLoading, setIsLoading] = useState(false);
+
   return (
     <Dialog
       open={open}
@@ -56,7 +55,10 @@ export const DeleteDialog: React.FC<DeleteDialogProps> = ({
           Cancel
         </Button>
         <Button
-          onClick={() => onSubmit()}
+          onClick={() => {
+            onSubmit();
+            setIsLoading(true);
+          }}
           sx={{
             bgcolor: red[400],
             color: "white",
@@ -65,8 +67,9 @@ export const DeleteDialog: React.FC<DeleteDialogProps> = ({
               bgcolor: red[700],
             },
           }}
+          disabled={isLoading}
         >
-          {onSubmitLoading ? <CircularProgress size={20} /> : <span>Confirm</span>}
+          {isLoading ? <CircularProgress size={20} /> : <span>Confirm</span>}
         </Button>
       </DialogActions>
     </Dialog>

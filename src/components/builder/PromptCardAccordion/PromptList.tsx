@@ -6,7 +6,7 @@ import { Box, Button, Stack } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import { randomId } from "@/common/helpers";
 import { Engine } from "@/core/api/dto/templates";
-import { deletePrompt } from "@/hooks/api/templates";
+import { useDeletePromptMutation } from "@/core/api/templates";
 
 interface Props {
   promptsRefData: MutableRefObject<IEditPrompts[]>;
@@ -14,6 +14,7 @@ interface Props {
 }
 const PromptList = ({ promptsRefData, engines }: Props) => {
   const [promptsList, setPromptsList] = useState<IEditPrompts[]>(promptsRefData.current);
+  const [deletePrompt] = useDeletePromptMutation();
 
   const [, drop] = useDrop(() => ({ accept: "prompt" }));
   const findPromptIndex = useCallback(
@@ -131,17 +132,17 @@ const PromptList = ({ promptsRefData, engines }: Props) => {
     setPromptsList(_prompts);
   };
 
-  const removePrompt = (removedPrompt: IEditPrompts) => {
+  const removePrompt = async (removedPrompt: IEditPrompts) => {
+    if (removedPrompt.id) {
+      await deletePrompt(removedPrompt.id);
+    }
+
     const _prompts = promptsRefData.current.filter(
       prompt => removedPrompt.id !== prompt.id || removedPrompt.temp_id !== prompt.temp_id,
     );
 
     promptsRefData.current = _prompts;
     setPromptsList(_prompts);
-
-    if (removedPrompt.id) {
-      deletePrompt(removedPrompt.id);
-    }
   };
 
   return (
