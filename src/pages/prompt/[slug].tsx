@@ -173,10 +173,11 @@ const Template = ({ hashedExecution, fetchedTemplate }: TemplateProps) => {
             <PromptPlaceholder />
           ) : (
             <Grid
-              mt={{ xs: 7, md: 0 }}
               gap={"8px"}
               container
+              flexWrap={{ md: "nowrap" }}
               sx={{
+                mt: { xs: 7, md: 0 },
                 mx: "auto",
                 height: {
                   xs: "calc(100svh - 56px)",
@@ -345,7 +346,7 @@ const Template = ({ hashedExecution, fetchedTemplate }: TemplateProps) => {
 
               <Grid
                 flex={1}
-                borderRadius={"16p"}
+                borderRadius={"16px"}
                 sx={{
                   display: {
                     xs: mobileTab === 2 ? "block" : "none",
