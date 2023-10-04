@@ -1,8 +1,8 @@
 import { ITemplate } from "@/common/types/template";
 import { CardMedia, Grid, ListItem, ListItemButton, Typography } from "@mui/material";
 import { useRouter } from "next/router";
-
 import Image from "@/components/design-system/Image";
+import useTruncate from "@/hooks/useTruncate";
 
 interface CollectionItemProps {
   expanded?: boolean;
@@ -13,12 +13,8 @@ interface CollectionItemProps {
 export const CollectionItem: React.FC<CollectionItemProps> = ({ expanded, template, onClick }) => {
   const router = useRouter();
   const slug = router.query?.slug;
-  const truncatedTilte = (str: string) => {
-    if (str.length > 22) {
-      return str.slice(0, 22) + "...";
-    }
-    return str;
-  };
+  const { truncate } = useTruncate();
+
   return (
     <ListItem disablePadding>
       <ListItemButton
@@ -33,7 +29,7 @@ export const CollectionItem: React.FC<CollectionItemProps> = ({ expanded, templa
           p: "8px",
           width: "100%",
         }}
-        selected={template.slug == slug}
+        selected={template.slug === slug}
       >
         <Grid>
           <CardMedia
@@ -63,7 +59,7 @@ export const CollectionItem: React.FC<CollectionItemProps> = ({ expanded, templa
             letterSpacing={"0.15px"}
             whiteSpace={"pre-wrap"}
           >
-            {template.title}
+            {truncate(template.title, { length: 34 })}
           </Typography>
           <Typography
             fontSize={12}
@@ -73,7 +69,7 @@ export const CollectionItem: React.FC<CollectionItemProps> = ({ expanded, templa
             letterSpacing={"0.25px"}
             color={"text.secondary"}
           >
-            {truncatedTilte(template.category.name)}
+            {truncate(template.category.name, { length: 25 })}
           </Typography>
         </Grid>
       </ListItemButton>
