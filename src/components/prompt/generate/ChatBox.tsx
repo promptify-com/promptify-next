@@ -55,6 +55,8 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
   const [standingQuestions, setStandingQuestions] = useState<UpdatedQuestionTemplate[]>([]);
   const [varyOpen, setVaryOpen] = useState(false);
 
+  const currentAnsweredInputs = useAppSelector(state => state.template.answeredInputs);
+
   let abortController = useRef(new AbortController());
 
   const addToQueuedMessages = (messages: IMessage[]) => {
@@ -241,18 +243,29 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
         return;
       }
 
+      let answeredInputs: AnsweredInputType[] = [];
       const newAnswers = templateQuestions
         .map(question => {
+          const answer = varyResponse[question.name];
+
+          if (answer) {
+            answeredInputs.push({
+              promptId: question.prompt,
+              inputName: question.name,
+              value: answer,
+            });
+          }
           return {
             inputName: question.name,
             required: question.required,
             question: question.question,
-            answer: varyResponse[question.name],
             prompt: question.prompt,
+            answer,
           };
         })
         .filter(answer => answer.answer !== "");
 
+      dispatch(updateAnsweredInput(answeredInputs));
       setAnswers(newAnswers);
       setIsValidatingAnswer(false);
     }
@@ -265,7 +278,21 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
       value,
       inputName,
     };
-    dispatch(updateAnsweredInput(newValue));
+
+    const existingIndex = currentAnsweredInputs.findIndex(
+      item => item.promptId === prompt && item.inputName === inputName,
+    );
+
+    const updatedAnsweredInputs = [...currentAnsweredInputs];
+
+    if (existingIndex !== -1) {
+      const updatedItem = { ...updatedAnsweredInputs[existingIndex], value: value };
+      updatedAnsweredInputs[existingIndex] = updatedItem;
+    } else {
+      updatedAnsweredInputs.push({ ...newValue });
+    }
+
+    dispatch(updateAnsweredInput(updatedAnsweredInputs));
   };
 
   const handleUserResponse = async () => {

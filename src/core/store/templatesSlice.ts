@@ -8,7 +8,7 @@ export interface TemplatesProps {
   likes: number;
   executionData: string;
   isGenerating: boolean;
-  answeredInput: AnsweredInputType | null;
+  answeredInputs: AnsweredInputType[];
 }
 
 type UpdateTemplateDataPayload = Pick<TemplatesProps, "is_favorite" | "id" | "likes">;
@@ -19,7 +19,7 @@ const initialState: TemplatesProps = {
   likes: 0,
   executionData: "[]",
   isGenerating: false,
-  answeredInput: null,
+  answeredInputs: [],
 };
 
 export const templatesSlice = createSlice({
@@ -43,8 +43,8 @@ export const templatesSlice = createSlice({
     setGeneratingStatus: (state, action: PayloadAction<boolean>) => {
       state.isGenerating = action.payload;
     },
-    updateAnsweredInput: (state, action: PayloadAction<AnsweredInputType>) => {
-      state.answeredInput = action.payload;
+    updateAnsweredInput: (state, action: PayloadAction<AnsweredInputType[]>) => {
+      state.answeredInputs = action.payload;
     },
   },
 });
