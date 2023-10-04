@@ -148,8 +148,9 @@ const CardTemplateLast: React.FC<CardTemplateLastProps> = ({ template }) => {
                     letterSpacing: "0.17px",
                     color: "onSurface",
                   }}
+                  title={template.executions[0].title}
                 >
-                  {template.executions[0].title}
+                  {truncate(template.executions[0].title, { length: 38 })}
                 </Typography>
               </Box>
 
