@@ -63,9 +63,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
         const targetIndex = newState.findIndex(item => item.id === answeredInput.promptId);
         if (targetIndex !== -1) {
           const inputKey = answeredInput.inputName;
-          if (newState[targetIndex].inputs[inputKey]) {
-            newState[targetIndex].inputs[inputKey].value = answeredInput.value;
-          }
+          newState[targetIndex].inputs[inputKey].value = answeredInput.value;
         }
         return newState;
       });

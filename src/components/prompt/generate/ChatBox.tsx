@@ -601,6 +601,16 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
       return;
     }
 
+    const answer: IAnswer = {
+      question: selectedAnswer.question,
+      required: selectedAnswer.required,
+      inputName: selectedAnswer.inputName,
+      prompt: selectedAnswer.prompt,
+      answer: "",
+    };
+
+    modifyStoredInputValue(answer);
+
     const question = templateQuestions.find(question => question.name === selectedAnswer.inputName);
     const newStandingQuestions = standingQuestions.concat(question!).sort((a, b) => +a.required - +b.required);
     const askedQuestion = newStandingQuestions[newStandingQuestions.length - 1];
