@@ -1,5 +1,4 @@
 import DramaMasks from "@/assets/icons/DramaMasks";
-import { Prompts } from "@/core/api/dto/prompts";
 import { theme } from "@/theme";
 import { AddCircle, ExpandMore } from "@mui/icons-material";
 import {
@@ -69,7 +68,7 @@ export const StylerAccordion = ({ prompt, setPrompt }: Props) => {
         }}
       >
         <AccordionSummary
-          expandIcon={<ExpandMore sx={{ ml: "10px" }} />}
+          expandIcon={<ExpandMore />}
           sx={{
             minHeight: "auto !important",
             py: "8px",
@@ -78,6 +77,9 @@ export const StylerAccordion = ({ prompt, setPrompt }: Props) => {
               alignItems: "center",
               gap: 2,
               width: "100%",
+            },
+            ".Mui-expanded": {
+              m: 0,
             },
           }}
         >

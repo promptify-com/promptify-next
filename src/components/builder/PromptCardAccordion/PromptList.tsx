@@ -146,6 +146,7 @@ const PromptList = ({ promptsRefData, engines }: Props) => {
       prompt => promptToDelete.id !== prompt.id || promptToDelete.temp_id !== prompt.temp_id,
     );
 
+    setPromptToDelete(null);
     promptsRefData.current = _prompts;
     setPromptsList(_prompts);
   };
