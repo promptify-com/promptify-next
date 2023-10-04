@@ -1,19 +1,19 @@
 import React from "react";
 import { Box, Typography, Slider, Stack, IconButton } from "@mui/material";
-import { IPromptParams } from "@/common/types/builder";
+import { BuilderType, IPromptParams } from "@/common/types/builder";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityIconOff from "@mui/icons-material/VisibilityOff";
 import { DeleteOutline, LockOpen } from "@mui/icons-material";
 import LockIcon from "@mui/icons-material/Lock";
 import { theme } from "@/theme";
-import { StylerVersions } from "./Styler";
+import { BUILDER_TYPE } from "@/common/constants";
 
 interface IProps {
   promptParams: IPromptParams[] | undefined;
   handleChangeScore: (val1: number, val2: number) => void;
   handleChangeOptions: (parameterId: number, option: string, newVal: boolean) => void;
   removeParam: (paramId: number) => void;
-  version?: StylerVersions;
+  type: BuilderType;
 }
 
 export const ParamSlider = ({
@@ -21,7 +21,7 @@ export const ParamSlider = ({
   handleChangeScore,
   handleChangeOptions,
   removeParam,
-  version = "v1",
+  type = BUILDER_TYPE.ADMIN,
 }: IProps) => {
   return (
     <Stack gap={2}>
@@ -31,7 +31,7 @@ export const ParamSlider = ({
             <Box
               key={i}
               sx={{
-                padding: version === "v1" ? 0 : "8px 16px",
+                padding: type === BUILDER_TYPE.ADMIN ? 0 : "8px 16px",
               }}
             >
               <Stack
@@ -41,8 +41,8 @@ export const ParamSlider = ({
               >
                 <Stack
                   gap={1}
-                  direction={version === "v1" ? "column" : "row"}
-                  alignItems={version === "v1" ? "flex-start" : "center"}
+                  direction={type === BUILDER_TYPE.ADMIN ? "column" : "row"}
+                  alignItems={type === BUILDER_TYPE.ADMIN ? "flex-start" : "center"}
                   sx={{
                     flex: 1,
                   }}
@@ -57,7 +57,7 @@ export const ParamSlider = ({
                     >
                       {param.name}
                     </Typography>
-                    {version === "v2" && (
+                    {type === BUILDER_TYPE.USER && (
                       <Typography
                         sx={{
                           fontSize: 12,
@@ -82,8 +82,8 @@ export const ParamSlider = ({
                   />
                 </Stack>
                 <Stack
-                  direction={version === "v1" ? "column" : "row"}
-                  alignSelf={version === "v1" ? "baseline" : "center"}
+                  direction={type === BUILDER_TYPE.ADMIN ? "column" : "row"}
+                  alignSelf={type === BUILDER_TYPE.ADMIN ? "baseline" : "center"}
                   alignItems={"flex-end"}
                   gap={1}
                 >
@@ -91,7 +91,7 @@ export const ParamSlider = ({
                     onClick={() => removeParam(param.parameter_id)}
                     sx={{
                       ...IconButtonStyles,
-                      order: version === "v1" ? 0 : 1,
+                      order: type === BUILDER_TYPE.ADMIN ? 0 : 1,
                     }}
                   >
                     <DeleteOutline sx={{ fontSize: 20 }} />
@@ -117,7 +117,7 @@ export const ParamSlider = ({
                   </Stack>
                 </Stack>
               </Stack>
-              {version === "v1" && (
+              {type === BUILDER_TYPE.ADMIN && (
                 <Typography
                   sx={{
                     fontSize: 12,

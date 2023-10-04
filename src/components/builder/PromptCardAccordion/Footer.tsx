@@ -50,8 +50,9 @@ export const Footer = ({ prompt, setPrompt }: Props) => {
             color: "onSurface",
             opacity: 0.5,
             whiteSpace: "nowrap",
-            overflow: "hidden",
             maxWidth: "40%",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
           }}
         >
           {prompt.output_format ? prompt.output_format + " ," : ""}
@@ -111,6 +112,7 @@ export const Footer = ({ prompt, setPrompt }: Props) => {
                 color: "inherit",
                 width: "80px",
                 overflow: "hidden",
+                textOverflow: "ellipsis",
               }}
             >
               {prompt.prompt_output_variable || "..."}

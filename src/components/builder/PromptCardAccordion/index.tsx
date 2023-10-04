@@ -1,6 +1,6 @@
 import { ModeEdit, PlayCircle } from "@mui/icons-material";
 import { Box, Button, Divider, Stack, Typography } from "@mui/material";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { Header } from "./Header";
 import { StylerAccordion } from "./StylerAccordion";
 import { IEditPrompts } from "@/common/types/builder";
@@ -41,10 +41,6 @@ export const PromptCardAccordion = ({
   const [highlightedOption, setHighlitedOption] = useState("");
 
   const { outputPresets, inputPresets } = useMemo(() => getBuilderVarsPresets(prompts, promptData), [prompts]);
-
-  useEffect(() => {
-    setPromptData(prompt);
-  }, [prompt]);
 
   const updatePrompt = (newPromptData: IEditPrompts) => {
     setPromptData(newPromptData);

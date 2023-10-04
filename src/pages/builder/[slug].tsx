@@ -24,9 +24,13 @@ import { createEditor, Node } from "@/components/builder/Editor";
 import { Header } from "@/components/builder/Header";
 import { MinusIcon, PlusIcon } from "@/assets/icons";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useGetPromptTemplatesQuery, usePublishTemplateMutation } from "@/core/api/templates";
+import {
+  useDeletePromptMutation,
+  useGetPromptTemplateBySlugQuery,
+  usePublishTemplateMutation,
+} from "@/core/api/templates";
 import { Prompts } from "@/core/api/dto/prompts";
-import { deletePrompt, updateTemplate } from "@/hooks/api/templates";
+import { updateTemplate } from "@/hooks/api/templates";
 import { ContentCopy } from "@mui/icons-material";
 import { IEditPrompts } from "@/common/types/builder";
 import TemplateForm from "@/components/common/forms/TemplateForm";
@@ -38,6 +42,7 @@ import { theme } from "@/theme";
 import { useGetEnginesQuery } from "@/core/api/engines";
 import { PromptForm } from "@/components/builder/PromptForm";
 import useToken from "@/hooks/useToken";
+import { BUILDER_TYPE } from "@/common/constants";
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return (
@@ -52,7 +57,7 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props,
 
 export const Builder = () => {
   const router = useRouter();
-  const id = router.query.id;
+  const slug = router.query.slug as string;
   const [nodeCount, setNodeCount] = useState(1);
   const [prompts, setPrompts] = useState<Prompts[]>([]);
   const { data: engines } = useGetEnginesQuery();
@@ -60,19 +65,28 @@ export const Builder = () => {
   const [selectedNodeData, setSelectedNodeData] = useState<IEditPrompts | null>(null);
   const [selectedConnection, setSelectedConnection] = useState<string | null>(null);
   const [nodesData, setNodesData] = useState<IEditPrompts[]>([]);
-  const { data: promptsData } = useGetPromptTemplatesQuery(id ? +id : skipToken);
+  const { data: promptsData } = useGetPromptTemplateBySlugQuery(slug ? slug : skipToken);
   const dataForRequest = useRef({} as any);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [snackBarOpen, setSnackBarOpen] = useState(false);
   const [templateDrawerOpen, setTemplateDrawerOpen] = useState(Boolean(router.query.editor));
+  const [deletePrompt] = useDeletePromptMutation();
   const [publishTemplate] = usePublishTemplateMutation();
   const [snackBarInvalidVariables, setSnackBarInvalidVariables] = useState(false);
   const [invalidVariableMessage, setInvalidVariableMessage] = useState("");
   const token = useToken();
 
   useEffect(() => {
+    if (!slug) {
+      router.push("/404");
+      return;
+    }
+  }, []);
+
+  useEffect(() => {
     if (!token) {
       router.push("/signin");
+      return;
     }
 
     if (router.query.editor) {
@@ -290,7 +304,7 @@ export const Builder = () => {
 
     // Remove the prompt from the backend
     if (currentPrompt?.id) {
-      await deletePrompt(Number(currentPrompt.id));
+      await deletePrompt(currentPrompt.id);
     }
 
     const allPrompts = data.prompts_list.filter((prompt: IEditPrompts) => {
@@ -442,7 +456,7 @@ export const Builder = () => {
       return a.order - b.order;
     });
 
-    updateTemplate(Number(id), data).then(() => {
+    updateTemplate(promptsData!.id, data).then(() => {
       setSnackBarOpen(true);
       window.location.reload();
     });
@@ -454,7 +468,7 @@ export const Builder = () => {
 
   const handlePublishTemplate = async () => {
     injectOrderAndSendRequest();
-    await publishTemplate(Number(id));
+    await publishTemplate(promptsData!.id);
   };
 
   return (
@@ -472,6 +486,7 @@ export const Builder = () => {
               onSave={injectOrderAndSendRequest}
               templateSlug={promptsData?.slug}
               onEditTemplate={() => toggleTemplateDrawer(true)}
+              type={BUILDER_TYPE.ADMIN}
             />
           </Grid>
           <Grid

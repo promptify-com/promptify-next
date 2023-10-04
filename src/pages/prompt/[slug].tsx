@@ -44,7 +44,7 @@ import { isDesktopViewPort } from "@/common/helpers";
 
 interface TemplateProps {
   hashedExecution: TemplatesExecutions | null;
-  fetchedTemplate: Templates | null;
+  fetchedTemplate: Templates;
 }
 
 const Template = ({ hashedExecution, fetchedTemplate }: TemplateProps) => {
@@ -61,12 +61,6 @@ const Template = ({ hashedExecution, fetchedTemplate }: TemplateProps) => {
   const isValidUser = useSelector(isValidUserFn);
   const isDesktopView = isDesktopViewPort();
   const savedTemplateId = useSelector((state: RootState) => state.template.id);
-
-  if (!fetchedTemplate?.id) {
-    router.push("/404");
-    return;
-  }
-
   const {
     data: templateExecutions,
     isFetching: isFetchingExecutions,
@@ -74,6 +68,11 @@ const Template = ({ hashedExecution, fetchedTemplate }: TemplateProps) => {
   } = useGetExecutionsByTemplateQuery(isValidUser ? fetchedTemplate.id : skipToken);
 
   useEffect(() => {
+    if (!fetchedTemplate?.id) {
+      router.push("/404");
+      return;
+    }
+
     if (!savedTemplateId || savedTemplateId !== fetchedTemplate.id) {
       dispatch(updateExecutionData(JSON.stringify([])));
       dispatch(
@@ -414,7 +413,7 @@ const Template = ({ hashedExecution, fetchedTemplate }: TemplateProps) => {
 export async function getServerSideProps({ params, query }: { params: { slug: string }; query: { hash: string } }) {
   const { slug } = params;
   const { hash } = query;
-  let fetchedTemplate: Templates | null = null;
+  let fetchedTemplate: Templates = {} as Templates;
 
   try {
     let execution: TemplatesExecutions | null = null;

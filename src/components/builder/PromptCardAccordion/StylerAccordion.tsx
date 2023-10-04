@@ -1,5 +1,4 @@
 import DramaMasks from "@/assets/icons/DramaMasks";
-import { Prompts } from "@/core/api/dto/prompts";
 import { theme } from "@/theme";
 import { AddCircle, ExpandMore } from "@mui/icons-material";
 import {
@@ -21,6 +20,7 @@ import { Styler } from "../Styler/Styler";
 import { IEditPrompts } from "@/common/types/builder";
 import { IParameters } from "@/common/types";
 import { useGetParametersQuery } from "@/core/api/parameters";
+import { BUILDER_TYPE } from "@/common/constants";
 
 interface Props {
   prompt: IEditPrompts;
@@ -68,7 +68,7 @@ export const StylerAccordion = ({ prompt, setPrompt }: Props) => {
         }}
       >
         <AccordionSummary
-          expandIcon={<ExpandMore sx={{ ml: "10px" }} />}
+          expandIcon={<ExpandMore />}
           sx={{
             minHeight: "auto !important",
             py: "8px",
@@ -77,6 +77,9 @@ export const StylerAccordion = ({ prompt, setPrompt }: Props) => {
               alignItems: "center",
               gap: 2,
               width: "100%",
+            },
+            ".Mui-expanded": {
+              m: 0,
             },
           }}
         >
@@ -110,6 +113,7 @@ export const StylerAccordion = ({ prompt, setPrompt }: Props) => {
                 whiteSpace: "nowrap",
                 maxWidth: "500px",
                 overflow: "hidden",
+                textOverflow: "ellipsis",
               }}
             >
               {prompt.parameters.slice(0, 2).map(param => {
@@ -160,7 +164,7 @@ export const StylerAccordion = ({ prompt, setPrompt }: Props) => {
           <Styler
             selectedNodeData={prompt}
             setSelectedNodeData={setPrompt}
-            version="v2"
+            type={BUILDER_TYPE.USER}
           />
         </AccordionDetails>
       </Accordion>

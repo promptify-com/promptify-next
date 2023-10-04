@@ -12,7 +12,7 @@ export interface MenuType {
   href: string;
 }
 
-export const Menu: MenuType[] = [
+export const ProfileMenuItems: MenuType[] = [
   {
     id: 1,
     icon: <Setting />,
@@ -106,4 +106,9 @@ export enum CONNECTIONS {
   REDDIT = "Reddit",
   MICROSOFT = "Microsoft",
   GITHUB = "Github",
+}
+
+export enum BUILDER_TYPE {
+  USER = "user",
+  ADMIN = "admin",
 }

@@ -470,7 +470,6 @@ export const ExecutionsTabs: React.FC<Props> = ({
             setDeleteAllow(false);
             setExecutionToDelete(null);
           }}
-          onSubmitLoading={isLoading}
         />
       )}
     </Box>
