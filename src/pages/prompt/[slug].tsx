@@ -175,7 +175,7 @@ const Template = ({ hashedExecution, fetchedTemplate }: TemplateProps) => {
             <Grid
               gap={"8px"}
               container
-              flexWrap={{ md: "nowrap" }}
+              flexWrap={isDesktopView ? "nowrap" : "wrap"}
               sx={{
                 mt: { xs: 7, md: 0 },
                 mx: "auto",
