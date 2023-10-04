@@ -16,7 +16,6 @@ interface Props {
 const PromptList = ({ promptsRefData, engines }: Props) => {
   const [promptsList, setPromptsList] = useState<IEditPrompts[]>(promptsRefData.current);
   const [promptToDelete, setPromptToDelete] = useState<IEditPrompts | null>(null);
-  const [deleteConfirm, setDeleteConfirm] = useState(false);
   const [deletePrompt] = useDeletePromptMutation();
 
   const [, drop] = useDrop(() => ({ accept: "prompt" }));
@@ -146,9 +145,9 @@ const PromptList = ({ promptsRefData, engines }: Props) => {
       prompt => promptToDelete.id !== prompt.id || promptToDelete.temp_id !== prompt.temp_id,
     );
 
-    setPromptToDelete(null);
     promptsRefData.current = _prompts;
     setPromptsList(_prompts);
+    setPromptToDelete(null);
   };
 
   return (
@@ -168,10 +167,7 @@ const PromptList = ({ promptsRefData, engines }: Props) => {
                   prompt={prompt}
                   order={index}
                   setPrompt={changePrompt}
-                  deletePrompt={() => {
-                    setPromptToDelete(prompt);
-                    setDeleteConfirm(true);
-                  }}
+                  deletePrompt={() => setPromptToDelete(prompt)}
                   duplicatePrompt={() => duplicatePrompt(prompt, index + 1)}
                   prompts={promptsList}
                   engines={engines}
@@ -223,14 +219,11 @@ const PromptList = ({ promptsRefData, engines }: Props) => {
       )}
       {promptToDelete && (
         <DeleteDialog
-          open={deleteConfirm}
+          open={true}
           dialogTitle="Delete Prompt"
           dialogContentText={`Are you sure you want to delete ${promptToDelete.title || "this prompt"}?`}
-          onClose={() => setDeleteConfirm(false)}
-          onSubmit={async () => {
-            await removePrompt();
-            setDeleteConfirm(false);
-          }}
+          onClose={() => setPromptToDelete(null)}
+          onSubmit={removePrompt}
         />
       )}
     </Stack>
