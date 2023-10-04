@@ -6,6 +6,7 @@ import { Box, Button, Stack } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import { randomId } from "@/common/helpers";
 import { Engine } from "@/core/api/dto/templates";
+import { deletePrompt } from "@/hooks/api/templates";
 
 interface Props {
   promptsRefData: MutableRefObject<IEditPrompts[]>;
@@ -130,13 +131,17 @@ const PromptList = ({ promptsRefData, engines }: Props) => {
     setPromptsList(_prompts);
   };
 
-  const deletePrompt = (deletePrompt: IEditPrompts) => {
+  const removePrompt = (removedPrompt: IEditPrompts) => {
     const _prompts = promptsRefData.current.filter(
-      prompt => deletePrompt.id !== prompt.id || deletePrompt.temp_id !== prompt.temp_id,
+      prompt => removedPrompt.id !== prompt.id || removedPrompt.temp_id !== prompt.temp_id,
     );
 
     promptsRefData.current = _prompts;
     setPromptsList(_prompts);
+
+    if (removedPrompt.id) {
+      deletePrompt(removedPrompt.id);
+    }
   };
 
   return (
@@ -156,7 +161,7 @@ const PromptList = ({ promptsRefData, engines }: Props) => {
                   prompt={prompt}
                   order={index}
                   setPrompt={changePrompt}
-                  deletePrompt={() => deletePrompt(prompt)}
+                  deletePrompt={() => removePrompt(prompt)}
                   duplicatePrompt={() => duplicatePrompt(prompt, index + 1)}
                   prompts={promptsList}
                   engines={engines}

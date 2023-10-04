@@ -16,7 +16,7 @@ interface DeleteDialogProps {
   dialogTitle: string;
   dialogContentText: string;
   onClose: () => void;
-  onSubmitLoading: boolean;
+  onSubmitLoading?: boolean;
   onSubmit: () => void;
 }
 
@@ -35,13 +35,14 @@ export const DeleteDialog: React.FC<DeleteDialogProps> = ({
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
-      <DialogTitle id="alert-dialog-title" fontSize={26}>
+      <DialogTitle
+        id="alert-dialog-title"
+        fontSize={26}
+      >
         {dialogTitle}
       </DialogTitle>
       <DialogContent>
-        <DialogContentText id="alert-dialog-description">
-          {dialogContentText}
-        </DialogContentText>
+        <DialogContentText id="alert-dialog-description">{dialogContentText}</DialogContentText>
       </DialogContent>
       <DialogActions>
         <Button
@@ -65,11 +66,7 @@ export const DeleteDialog: React.FC<DeleteDialogProps> = ({
             },
           }}
         >
-          {onSubmitLoading ? (
-            <CircularProgress size={20} />
-          ) : (
-            <span>Confirm</span>
-          )}
+          {onSubmitLoading ? <CircularProgress size={20} /> : <span>Confirm</span>}
         </Button>
       </DialogActions>
     </Dialog>
