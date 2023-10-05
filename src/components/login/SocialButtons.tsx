@@ -1,9 +1,9 @@
 import { GitHub, LinkedIn } from "@mui/icons-material";
 import { Box, Grid, Snackbar, Typography } from "@mui/material";
-import { useGoogleLogin } from "@react-oauth/google";
 import { useRef, useState, forwardRef } from "react";
 import GitHubLogin from "react-github-login";
 import { useLinkedIn } from "react-linkedin-login-oauth2";
+import { useGoogleLogin } from "@react-oauth/google";
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import { AxiosResponse } from "axios";
 import { Google } from "@/assets/icons/google";
@@ -37,7 +37,7 @@ interface IProps {
   from: string;
 }
 
-export const SocialButtons: React.FC<IProps> = ({ preLogin, isChecked, setErrorCheckBox, from }) => {
+export default function SocialButtons({ preLogin, isChecked, setErrorCheckBox, from }: IProps) {
   const githubButtonRef = useRef<HTMLButtonElement | null>(null);
   const [open, setOpen] = useState(false);
   const [attemptError, setAttemptError] = useState(false);
@@ -67,8 +67,7 @@ export const SocialButtons: React.FC<IProps> = ({ preLogin, isChecked, setErrorC
     setAttemptError(false);
     preLogin(true);
   };
-
-  const loginGoogle = useGoogleLogin({
+  const loginWithGoogle = useGoogleLogin({
     onSuccess: ({ code }) => {
       initAttempt();
       client
@@ -166,7 +165,7 @@ export const SocialButtons: React.FC<IProps> = ({ preLogin, isChecked, setErrorC
         </Box>
       )}
       <Grid
-        onClick={() => validateConsent(loginGoogle)}
+        onClick={() => validateConsent(loginWithGoogle)}
         sx={{
           display: "flex",
           justifyContent: "center",
@@ -338,4 +337,4 @@ export const SocialButtons: React.FC<IProps> = ({ preLogin, isChecked, setErrorC
       </Snackbar>
     </Box>
   );
-};
+}

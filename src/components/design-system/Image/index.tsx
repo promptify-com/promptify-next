@@ -7,9 +7,18 @@ interface NextImageProps {
   style?: React.CSSProperties;
   width?: number;
   height?: number;
+  loading?: "eager" | "lazy";
 }
 
-const Image: React.FC<NextImageProps> = ({ src, alt, priority = false, style = {}, width = 0, height = 0 }) => {
+const Image: React.FC<NextImageProps> = ({
+  src,
+  alt,
+  priority = false,
+  style = {},
+  width = 0,
+  height = 0,
+  loading,
+}) => {
   return (
     <NextImage
       src={src}
@@ -19,6 +28,7 @@ const Image: React.FC<NextImageProps> = ({ src, alt, priority = false, style = {
       sizes="100vw" // This is helping us to tell Next.js Image component to resize the image to fit the width of its container.
       priority={priority}
       style={style}
+      {...(loading && { loading })}
     />
   );
 };

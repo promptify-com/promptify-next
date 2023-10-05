@@ -20,14 +20,12 @@ if (
     hideSourceMaps: true,
   };
 
-  const sentryWebpackPluginOptions = {
+  module.exports = withSentryConfig(nextConfig, {
     org: "matious-corp",
     project: "promptify-web-production",
     silent: true,
     authToken: process.env.SENTRY_AUTH_TOKEN,
-  };
-
-  module.exports = withSentryConfig(nextConfig, sentryWebpackPluginOptions);
+  });
 } else {
   module.exports = nextConfig;
 }
