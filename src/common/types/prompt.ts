@@ -10,7 +10,7 @@ export interface PromptLiveResponseData {
 export interface PromptLiveResponse {
   id?: number;
   created_at: Date;
-  data: PromptLiveResponseData[] | undefined;
+  data: PromptLiveResponseData[];
 }
 export type InputType = "text" | "choices" | "number" | "code" | "file";
 export interface IPromptInput {
