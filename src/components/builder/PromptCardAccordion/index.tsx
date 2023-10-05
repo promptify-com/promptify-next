@@ -40,7 +40,7 @@ export const PromptCardAccordion = ({
   const cursorPositionRef = useRef(0);
   const [highlightedOption, setHighlitedOption] = useState("");
 
-  const { outputPresets, inputPresets } = useMemo(() => getBuilderVarsPresets(prompts, promptData), [prompts]);
+  const { outputPresets, inputPresets } = useMemo(() => getBuilderVarsPresets(prompts, promptData, false), [prompts]);
 
   const updatePrompt = (newPromptData: IEditPrompts) => {
     setPromptData(newPromptData);
@@ -180,19 +180,18 @@ export const PromptCardAccordion = ({
               height: "250px",
               maxHeight: "25svh",
               py: "12px",
-              overflow: "auto",
-              overscrollBehavior: "contain",
               position: "relative",
             }}
           >
             <HighlightTextarea
+              prompt={promptData}
               cursorPositionRef={cursorPositionRef}
-              content={promptData.content}
               onChange={contentHandler}
               outputPresets={outputPresets}
               inputPresets={inputPresets}
               highlitedValue={highlightedOption}
               setHighlitedValue={setHighlitedOption}
+              type={"user"}
             />
           </Box>
         </Box>

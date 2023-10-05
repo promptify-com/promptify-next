@@ -12,6 +12,7 @@ interface Props {
 }
 
 export const SuggestionsList = ({ suggestionList, position, optionType, onSelect }: Props) => {
+  console.log(suggestionList);
   return (
     <>
       {suggestionList.length > 0 && position && (
@@ -47,7 +48,7 @@ export const SuggestionsList = ({ suggestionList, position, optionType, onSelect
             type={optionType}
             variant="vertical"
             options={suggestionList}
-            onChoose={onSelect}
+            onSelect={onSelect}
           />
         </Card>
       )}

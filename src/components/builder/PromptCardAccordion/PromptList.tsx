@@ -169,7 +169,7 @@ const PromptList = ({ promptsRefData, engines }: Props) => {
                   setPrompt={changePrompt}
                   deletePrompt={() => setPromptToDelete(prompt)}
                   duplicatePrompt={() => duplicatePrompt(prompt, index + 1)}
-                  prompts={promptsList}
+                  prompts={promptsRefData.current}
                   engines={engines}
                   movePrompt={movePrompt}
                   findPromptIndex={findPromptIndex}
