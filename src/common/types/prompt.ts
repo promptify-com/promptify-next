@@ -21,7 +21,7 @@ export interface IPromptInput {
   defaultValue?: string | number | null;
   choices?: string[] | null;
   prompt?: number;
-  file?: string | string[] | null;
+  fileExtensions?: string[] | null;
 }
 
 export interface DisplayPrompt {
@@ -33,3 +33,5 @@ export interface DisplayPrompt {
   isCompleted?: boolean;
   isFailed?: boolean;
 }
+
+export type FileType = "pdf" | "docx" | "txt";

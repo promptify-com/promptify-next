@@ -3,7 +3,7 @@ import { Box, Button, Divider, IconButton, Input, InputLabel, MenuItem, Select, 
 import { InputsErrors } from "./GeneratorForm";
 import { Backspace, CloudUpload } from "@mui/icons-material";
 import { ResInputs } from "@/core/api/dto/prompts";
-import { IPromptInput } from "@/common/types/prompt";
+import { FileType, IPromptInput } from "@/common/types/prompt";
 import BaseButton from "../base/BaseButton";
 import CodeFieldModal from "../modals/CodeFieldModal";
 import { useAppSelector } from "@/hooks/useStore";
@@ -16,29 +16,38 @@ interface GeneratorInputProps {
   errors: InputsErrors;
 }
 
-type FileType = "pdf" | "docx" | "txt";
+// const getMimeType = (extension: string): string | undefined => {
+//   switch (extension) {
+//     case "pdf":
+//       return ".pdf";
+//     case "docx":
+//       return ".docx";
+//     case "txt":
+//       return ".txt";
+//     default:
+//       return undefined;
+//   }
+// };
 
-const getMimeType = (extension: string): string | undefined => {
-  switch (extension) {
-    case "pdf":
-      return ".pdf";
-    case "docx":
-      return ".docx";
-    case "txt":
-      return ".txt";
-    default:
-      return undefined;
-  }
+// const generateAcceptString = (types: FileType[]): string => {
+//   const mimeTypes: string[] = [];
+//   types.forEach(type => {
+//     const mimeType = getMimeType(type);
+//     if (mimeType) {
+//       mimeTypes.push(mimeType);
+//     }
+//   });
+//   return mimeTypes.join(",");
+// };
+
+const extensionToMimeType = {
+  pdf: ".pdf",
+  docx: ".docx",
+  txt: ".txt",
 };
 
 const generateAcceptString = (types: FileType[]): string => {
-  const mimeTypes: string[] = [];
-  types.forEach(type => {
-    const mimeType = getMimeType(type);
-    if (mimeType) {
-      mimeTypes.push(mimeType);
-    }
-  });
+  const mimeTypes = types.map(type => extensionToMimeType[type]).filter(Boolean);
   return mimeTypes.join(",");
 };
 
@@ -192,7 +201,7 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
                   Upload file
                   <input
                     hidden
-                    accept={generateAcceptString(input?.file as FileType[])}
+                    accept={generateAcceptString(input?.fileExtensions as FileType[])}
                     type="file"
                     style={{
                       flex: 1,

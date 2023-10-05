@@ -34,9 +34,10 @@ export const getInputsFromString = (str: string): IPromptInput[] => {
       continue;
     }
 
-    const file = type === "file" ? Array.from(new Set(parts[3]?.split(",").filter(option => option.trim()))) : null;
+    const fileExtensions =
+      type === "file" ? Array.from(new Set(parts[3]?.split(",").filter(option => option.trim()))) : null;
 
-    if (type === "file" && !file?.length) {
+    if (type === "file" && !fileExtensions?.length) {
       continue;
     }
 
@@ -49,7 +50,7 @@ export const getInputsFromString = (str: string): IPromptInput[] => {
       type: type,
       required: parts[2] ? parts[2].toLowerCase() !== "false" : true, // required by default
       choices: choices,
-      file: file,
+      file: fileExtensions,
     };
 
     matches.push(obj);
