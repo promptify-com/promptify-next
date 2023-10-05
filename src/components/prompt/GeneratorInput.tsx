@@ -40,15 +40,15 @@ interface GeneratorInputProps {
 //   return mimeTypes.join(",");
 // };
 
-const extensionToMimeType = {
+const extensionType = {
   pdf: ".pdf",
   docx: ".docx",
   txt: ".txt",
 };
 
 const generateAcceptString = (types: FileType[]): string => {
-  const mimeTypes = types.map(type => extensionToMimeType[type]).filter(Boolean);
-  return mimeTypes.join(",");
+  const extensionTypes = types.map(type => extensionType[type]).filter(Boolean);
+  return extensionTypes.join(",");
 };
 
 export const GeneratorInput: React.FC<GeneratorInputProps> = ({

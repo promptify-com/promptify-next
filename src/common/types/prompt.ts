@@ -35,3 +35,10 @@ export interface DisplayPrompt {
 }
 
 export type FileType = "pdf" | "docx" | "txt";
+
+export interface FileResponse {
+  data?: {
+    file_url: string;
+  };
+  error?: unknown;
+}

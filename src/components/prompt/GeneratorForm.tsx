@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Box, Button, CircularProgress, Stack, Typography, alpha, useTheme } from "@mui/material";
 import { PromptParams, ResInputs, ResOverrides, ResPrompt } from "@/core/api/dto/prompts";
-import { IPromptInput, PromptLiveResponse } from "@/common/types/prompt";
+import { FileResponse, IPromptInput, PromptLiveResponse } from "@/common/types/prompt";
 import useToken from "@/hooks/useToken";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { templatesApi } from "@/core/api/templates";
@@ -220,7 +220,8 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
       let keyName: string = "";
 
       for (const key in resPrompts[0]?.prompt_params) {
-        if (Object.prototype.hasOwnProperty.call(resPrompts[0]?.prompt_params, key)) {
+        // if (Object.prototype.hasOwnProperty.call(resPrompts[0]?.prompt_params, key)) {
+        if (resPrompts[0]?.prompt_params[key]) {
           const value = resPrompts[0]?.prompt_params[key];
           if (value instanceof File) {
             filePath = value;
@@ -232,8 +233,8 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
       try {
         if (filePath) {
-          const responseData = await uploadFile(filePath);
-          if ("data" in responseData) {
+          const responseData = (await uploadFile(filePath)) as FileResponse;
+          if (responseData?.data) {
             const { file_url } = responseData?.data;
             const newResPrompts = resPrompts.map(item => {
               if (item.prompt_params) {

@@ -1,13 +1,10 @@
 import { baseApi } from "./api";
-
-interface UploadResponse {
-  file_url: string;
-}
+import { FileResponse } from "@/common/types/prompt";
 
 export const uploadFileApi = baseApi.injectEndpoints({
   endpoints: builder => {
     return {
-      uploadFile: builder.mutation<UploadResponse, File>({
+      uploadFile: builder.mutation<FileResponse, File>({
         query: file => {
           const formData = new FormData();
           formData.append("file", file);
