@@ -50,7 +50,7 @@ export const getInputsFromString = (str: string): IPromptInput[] => {
       type: type,
       required: parts[2] ? parts[2].toLowerCase() !== "false" : true, // required by default
       choices: choices,
-      file: fileExtensions,
+      fileExtensions: fileExtensions,
     };
 
     matches.push(obj);

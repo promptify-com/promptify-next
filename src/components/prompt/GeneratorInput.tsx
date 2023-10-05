@@ -15,8 +15,6 @@ interface GeneratorInputProps {
   setNodeInputs: (obj: any) => void;
   errors: InputsErrors;
 }
-
-// const getMimeType = (extension: string): string | undefined => {
 //   switch (extension) {
 //     case "pdf":
 //       return ".pdf";
@@ -30,6 +28,7 @@ interface GeneratorInputProps {
 // };
 
 // const generateAcceptString = (types: FileType[]): string => {
+//   console.log(types);
 //   const mimeTypes: string[] = [];
 //   types.forEach(type => {
 //     const mimeType = getMimeType(type);
@@ -62,39 +61,71 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
 
   const [codeFieldOpen, setCodeFieldOpen] = useState(false);
 
-  const handleChange = (value: string | File, name: string, type: string) => {
+  const handleChange = (value: string | FileList, name: string, type: string) => {
     const resObj = resInputs.find(prompt => prompt.inputs[name]);
     const resArr = [...resInputs];
 
     if (!value) return;
-    if (!resObj) {
-      return setNodeInputs([
-        ...resInputs,
-        {
-          id: promptId,
-          inputs: {
-            [name]: {
-              value: type === "number" ? +value : value,
-            },
-          },
-        },
-      ]);
-    }
 
-    resArr.forEach((prompt: any, index: number) => {
-      if (prompt.id === promptId) {
-        resArr[index] = {
-          ...prompt,
-          inputs: {
-            ...prompt.inputs,
-            [name]: {
-              value: type === "number" ? +value : value,
-              required: resObj.inputs[name].required,
+    if (type === "file") {
+      if (!resObj) {
+        return setNodeInputs([
+          ...resInputs,
+          {
+            id: promptId,
+            inputs: {
+              [name]: {
+                value: Array.from(value as FileList),
+              },
             },
           },
-        };
+        ]);
       }
-    });
+
+      resArr.forEach((prompt: any, index: number) => {
+        if (prompt.id === promptId) {
+          resArr[index] = {
+            ...prompt,
+            inputs: {
+              ...prompt.inputs,
+              [name]: {
+                value: Array.from(value as FileList),
+                required: resObj.inputs[name].required,
+              },
+            },
+          };
+        }
+      });
+    } else {
+      if (!resObj) {
+        return setNodeInputs([
+          ...resInputs,
+          {
+            id: promptId,
+            inputs: {
+              [name]: {
+                value: type === "number" ? +value : value,
+              },
+            },
+          },
+        ]);
+      }
+
+      resArr.forEach((prompt: any, index: number) => {
+        if (prompt.id === promptId) {
+          resArr[index] = {
+            ...prompt,
+            inputs: {
+              ...prompt.inputs,
+              [name]: {
+                value: type === "number" ? +value : value,
+                required: resObj.inputs[name].required,
+              },
+            },
+          };
+        }
+      });
+    }
 
     setNodeInputs([...resArr]);
   };
@@ -215,9 +246,10 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
                     }}
                     onChange={e => {
                       if (e.target.files && e.target.files.length > 0) {
-                        handleChange(e.target.files[0], input.name, input.type);
+                        handleChange(e.target.files, input.name, input.type);
                       }
                     }}
+                    multiple
                   />
                 </Button>
               ) : (

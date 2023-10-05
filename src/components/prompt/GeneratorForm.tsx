@@ -17,6 +17,7 @@ import TabsAndFormPlaceholder from "@/components/placeholders/TabsAndFormPlaceho
 import Storage from "@/common/storage";
 import { setGeneratingStatus, updateExecutionData } from "@/core/store/templatesSlice";
 import { useUploadFileMutation } from "@/core/api/uploadFile";
+import { uploadFileHelper } from "@/common/helpers/uploadFileHelper";
 
 interface GeneratorFormProps {
   templateData: Templates;
@@ -218,9 +219,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     if (hasTypeFile) {
       let filePath = null;
       let keyName: string = "";
-
       for (const key in resPrompts[0]?.prompt_params) {
-        // if (Object.prototype.hasOwnProperty.call(resPrompts[0]?.prompt_params, key)) {
         if (resPrompts[0]?.prompt_params[key]) {
           const value = resPrompts[0]?.prompt_params[key];
           if (value instanceof File) {
@@ -231,29 +230,26 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
         }
       }
 
-      try {
-        if (filePath) {
-          const responseData = (await uploadFile(filePath)) as FileResponse;
-          if (responseData?.data) {
-            const { file_url } = responseData?.data;
-            const newResPrompts = resPrompts.map(item => {
-              if (item.prompt_params) {
-                const updatedPromptParams = {
-                  ...item.prompt_params,
-                  [keyName]: file_url,
-                };
-                return {
-                  ...item,
-                  prompt_params: updatedPromptParams,
-                };
-              }
-              return item;
-            });
-            dispatch(setGeneratingStatus(true));
-            generateExecution(newResPrompts);
-          }
+      if (filePath) {
+        const fileUrl = await uploadFileHelper(uploadFile, filePath);
+        if (fileUrl) {
+          const newResPrompts = resPrompts.map(item => {
+            if (item.prompt_params) {
+              const updatedPromptParams = {
+                ...item.prompt_params,
+                [keyName]: fileUrl,
+              };
+              return {
+                ...item,
+                prompt_params: updatedPromptParams,
+              };
+            }
+            return item;
+          });
+          dispatch(setGeneratingStatus(true));
+          generateExecution(newResPrompts);
         }
-      } catch (_) {}
+      }
     } else {
       dispatch(setGeneratingStatus(true));
       generateExecution(resPrompts);

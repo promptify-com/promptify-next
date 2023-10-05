@@ -113,44 +113,31 @@ const TemplateForm: React.FC<Props> = ({
   const onEditTemplate = async (values: IEditTemplate) => {
     if (!templateData) return;
     if (selectedFile) {
-      const fileUrl = await uploadFile(uploadFile, selectedFile);
-    }
-    try {
-      if (selectedFile) {
-        const responseData = (await uploadFile(selectedFile)) as FileResponse;
-
-        if (responseData?.data) {
-          const { file_url } = responseData?.data;
-          values.thumbnail = file_url;
-        }
+      const fileUrl = await uploadFileHelper(uploadFile, selectedFile);
+      console.log(fileUrl);
+      if (fileUrl) {
+        values.thumbnail = fileUrl;
       }
+    }
+    await updateTemplate({
+      id: templateData.id,
+      data: values,
+    });
 
-      await updateTemplate({
-        id: templateData.id,
-        data: values,
-      });
-
-      handleSave();
-    } catch (_) {}
+    handleSave();
   };
 
   const onCreateTemplate = async (values: IEditTemplate) => {
     if (selectedFile) {
       const fileUrl = await uploadFileHelper(uploadFile, selectedFile);
 
-      try {
-        const responseData = (await uploadFile(selectedFile)) as FileResponse;
+      if (fileUrl) {
+        values.thumbnail = fileUrl;
+        const { slug } = await createTemplate(values).unwrap();
 
-        if (responseData?.data) {
-          const { file_url } = responseData.data;
-
-          values.thumbnail = file_url;
-          const { slug } = await createTemplate(values).unwrap();
-
-          handleSave();
-          window.open(`${getBaseUrl}/prompt-builder/${slug}`, "_blank");
-        }
-      } catch (_) {}
+        handleSave();
+        window.open(`${getBaseUrl}/prompt-builder/${slug}`, "_blank");
+      }
     }
   };
 
