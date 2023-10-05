@@ -12,7 +12,6 @@ interface Props {
 }
 
 export const SuggestionsList = ({ suggestionList, position, optionType, onSelect }: Props) => {
-  console.log(suggestionList);
   return (
     <>
       {suggestionList.length > 0 && position && (

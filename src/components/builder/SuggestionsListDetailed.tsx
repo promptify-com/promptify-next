@@ -10,7 +10,7 @@ interface Props {
   position: { x: number; y: number } | null;
   optionType: PresetType;
   onSelect: (option: Preset, type: PresetType) => void;
-  previousPreset: Preset;
+  previousPresets: Preset[];
 }
 
 export const SuggestionsListDetailed = ({
@@ -19,7 +19,7 @@ export const SuggestionsListDetailed = ({
   position,
   optionType,
   onSelect,
-  previousPreset,
+  previousPresets,
 }: Props) => {
   const autocompleteInput = () => {
     let suggestion = <span className="high-input">{highlightValue}</span>;
@@ -43,9 +43,7 @@ export const SuggestionsListDetailed = ({
     return suggestion;
   };
 
-  const previousPromptPreset: Preset = {
-    label: previousPreset?.label,
-  };
+  const showOutputPresets = (optionType === "output" || highlightValue === "{{") && previousPresets.length > 0;
 
   return (
     <>
@@ -118,27 +116,29 @@ export const SuggestionsListDetailed = ({
               </Typography>
             </Stack>
           )}
-          <Box
-            sx={{
-              p: "16px",
-              borderBottom: "1px solid #E1E2EC",
-            }}
-          >
-            <Typography
-              fontSize={12}
-              fontWeight={400}
-              mb={1}
+          {optionType === "input" && (
+            <Box
+              sx={{
+                p: "16px",
+                borderBottom: "1px solid #E1E2EC",
+              }}
             >
-              Prompt details asked to the user:
-            </Typography>
-            <Options
-              type={optionType}
-              variant="horizontal"
-              options={suggestionList}
-              onSelect={option => onSelect(option, optionType)}
-            />
-          </Box>
-          {optionType === "input" && previousPromptPreset.label && (
+              <Typography
+                fontSize={12}
+                fontWeight={400}
+                mb={1}
+              >
+                Prompt details asked to the user:
+              </Typography>
+              <Options
+                type={optionType}
+                variant="horizontal"
+                options={suggestionList}
+                onSelect={option => onSelect(option, optionType)}
+              />
+            </Box>
+          )}
+          {showOutputPresets && (
             <Box
               sx={{
                 p: "16px",
@@ -155,7 +155,7 @@ export const SuggestionsListDetailed = ({
               <Options
                 type={"output"}
                 variant="horizontal"
-                options={[previousPromptPreset]}
+                options={previousPresets}
                 onSelect={option => onSelect(option, "output")}
               />
             </Box>

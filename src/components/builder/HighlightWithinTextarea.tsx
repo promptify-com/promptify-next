@@ -109,8 +109,10 @@ export const HighlightTextarea = ({
     setSuggestionList([]);
   };
 
-  const previousOutput =
-    outputPresets[outputPresets.findIndex(output => output.label === prompt.prompt_output_variable) - 1];
+  const previousOutputs = outputPresets.slice(
+    0,
+    outputPresets.findIndex(preset => preset.label === prompt.prompt_output_variable),
+  );
 
   return (
     <ClientOnly>
@@ -146,7 +148,7 @@ export const HighlightTextarea = ({
             position={cursorPosition}
             optionType={optionType}
             onSelect={handleSuggestionSelect}
-            previousPreset={previousOutput}
+            previousPresets={previousOutputs}
           />
         )}
       </Grid>
