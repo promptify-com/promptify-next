@@ -653,7 +653,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
       width={"100%"}
       overflow={"hidden"}
       borderRadius={"16px"}
-      border="1px solid rgba(225, 226, 236, .5)"
+      {...(isDesktopView && { border: "1px solid rgba(225, 226, 236, .5)" })}
     >
       <Accordion
         expanded={chatExpanded}

@@ -40,6 +40,7 @@ import { getExecutionByHash } from "@/hooks/api/executions";
 import { ExpandMore } from "@mui/icons-material";
 import { GeneratorForm } from "@/components/prompt/GeneratorForm";
 import { isDesktopViewPort } from "@/common/helpers";
+import GeneratedExecutionFooter from "@/components/prompt/GeneratedExecutionFooter";
 
 interface TemplateProps {
   hashedExecution: TemplatesExecutions | null;
@@ -350,6 +351,12 @@ const Template = ({ hashedExecution, fetchedTemplate }: TemplateProps) => {
                     onError={setErrorMessage}
                     hashedExecution={hashedExecution}
                   />
+                  {!isDesktopView && (
+                    <GeneratedExecutionFooter
+                      execution={generatedExecution}
+                      template={fetchedTemplate}
+                    />
+                  )}
                 </Grid>
               </Grid>
 
