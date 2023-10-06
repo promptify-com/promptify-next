@@ -7,7 +7,8 @@ import PdfIcon from "@/assets/icons/PdfIcon";
 import WordIcon from "@/assets/icons/WordIcon";
 import LinkVariantIcon from "@/assets/icons/LinkVariantIcon";
 import useCopyToClipboard from "@/hooks/useCopyToClipboard";
-import { getBaseUrl, downloadBlobObject } from "@/common/helpers";
+import { getBaseUrl } from "@/common/helpers";
+import { downloadBlobObject } from "@/common/helpers/handleExecutionExport";
 import { executionsApi } from "@/core/api/executions";
 
 interface SparkExportProps {

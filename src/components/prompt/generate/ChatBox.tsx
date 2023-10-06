@@ -2,7 +2,7 @@ import React, { useState, useMemo, memo, useEffect, useRef } from "react";
 import { Accordion, AccordionDetails, AccordionSummary, Grid, Typography, Button, Stack } from "@mui/material";
 import { Block, ExpandLess, ExpandMore } from "@mui/icons-material";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
-import { ResInputs, ResPrompt } from "@/core/api/dto/prompts";
+import { ResPrompt } from "@/core/api/dto/prompts";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { useAppSelector, useAppDispatch } from "@/hooks/useStore";
 import useToken from "@/hooks/useToken";
@@ -12,7 +12,7 @@ import { ChatInterface } from "./ChatInterface";
 import { ChatInput } from "./ChatInput";
 import { useRouter } from "next/router";
 import { TemplateQuestions, Templates, UpdatedQuestionTemplate } from "@/core/api/dto/templates";
-import { getInputsFromString } from "@/common/helpers";
+import { getInputsFromString } from "@/common/helpers/getInputsFromString";
 import { IPromptInput, PromptLiveResponse, InputType, AnsweredInputType } from "@/common/types/prompt";
 import { setGeneratingStatus, updateAnsweredInput, updateExecutionData } from "@/core/store/templatesSlice";
 import { AnswerValidatorResponse, IAnswer, IMessage } from "@/common/types/chat";
@@ -177,7 +177,9 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
   }, [template]);
 
   useEffect(() => {
-    setGeneratedExecution(generatingResponse);
+    if (answers.length) {
+      setGeneratedExecution(generatingResponse);
+    }
   }, [generatingResponse]);
 
   useEffect(() => {
