@@ -112,13 +112,15 @@ export const Display: React.FC<Props> = ({
     }
   }, [executions]);
 
+  const showChatForm = !!templateData?.questions?.length && templateData?.status === "PUBLISHED";
+
   return (
     <Grid
       display={"flex"}
       flexDirection={"column"}
       gap={"24px"}
     >
-      {isDesktopView && !!templateData?.questions?.length && templateData?.status === "PUBLISHED" && (
+      {isDesktopView && showChatForm && (
         <ClientOnly>
           <ChatMode
             key={templateData.id}
@@ -147,6 +149,7 @@ export const Display: React.FC<Props> = ({
           onSearch={text => setSearch(text)}
           onOpenExport={() => setOpenExportpopup(true)}
           sparkHashQueryParam={sparkHashQueryParam.current}
+          showChatForm={showChatForm}
         />
         {openExportPopup && activeExecution?.id && (
           <SparkExportPopup
