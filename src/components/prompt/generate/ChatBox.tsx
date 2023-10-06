@@ -13,8 +13,8 @@ import { ChatInput } from "./ChatInput";
 import { useRouter } from "next/router";
 import { TemplateQuestions, Templates, UpdatedQuestionTemplate } from "@/core/api/dto/templates";
 import { getInputsFromString } from "@/common/helpers/getInputsFromString";
-import { IPromptInput, PromptLiveResponse, InputType, PromptLiveResponseData } from "@/common/types/prompt";
-import { setGeneratingStatus, updateExecutionData } from "@/core/store/templatesSlice";
+import { IPromptInput, PromptLiveResponse, InputType, AnsweredInputType } from "@/common/types/prompt";
+import { setGeneratingStatus, updateAnsweredInput, updateExecutionData } from "@/core/store/templatesSlice";
 import { AnswerValidatorResponse, IAnswer, IMessage } from "@/common/types/chat";
 import { isDesktopViewPort } from "@/common/helpers";
 import { useStopExecutionMutation } from "@/core/api/executions";
@@ -57,6 +57,8 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
   const [disableChatInput, setDisableChatInput] = useState(false);
   const [standingQuestions, setStandingQuestions] = useState<UpdatedQuestionTemplate[]>([]);
   const [varyOpen, setVaryOpen] = useState(false);
+
+  const currentAnsweredInputs = useAppSelector(state => state.template.answeredInputs);
 
   let abortController = useRef(new AbortController());
 
@@ -236,21 +238,56 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
         return;
       }
 
+      let answeredInputs: AnsweredInputType[] = [];
       const newAnswers = templateQuestions
         .map(question => {
+          const answer = varyResponse[question.name];
+
+          if (answer) {
+            answeredInputs.push({
+              promptId: question.prompt,
+              inputName: question.name,
+              value: answer,
+            });
+          }
           return {
             inputName: question.name,
             required: question.required,
             question: question.question,
-            answer: varyResponse[question.name],
             prompt: question.prompt,
+            answer,
           };
         })
         .filter(answer => answer.answer !== "");
 
+      dispatch(updateAnsweredInput(answeredInputs));
       setAnswers(newAnswers);
       setIsValidatingAnswer(false);
     }
+  };
+
+  const modifyStoredInputValue = (answer: IAnswer) => {
+    const { inputName, prompt, answer: value } = answer;
+    const newValue: AnsweredInputType = {
+      promptId: prompt,
+      value,
+      inputName,
+    };
+
+    const existingIndex = currentAnsweredInputs.findIndex(
+      item => item.promptId === prompt && item.inputName === inputName,
+    );
+
+    const updatedAnsweredInputs = [...currentAnsweredInputs];
+
+    if (existingIndex !== -1) {
+      const updatedItem = { ...updatedAnsweredInputs[existingIndex], value: value };
+      updatedAnsweredInputs[existingIndex] = updatedItem;
+    } else {
+      updatedAnsweredInputs.push({ ...newValue });
+    }
+
+    dispatch(updateAnsweredInput(updatedAnsweredInputs));
   };
 
   const handleUserResponse = async () => {
@@ -345,6 +382,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
             nextBotMessage = nextMessage;
           }
         }
+        modifyStoredInputValue(newAnswer);
       } else {
         nextBotMessage = {
           text: response?.feedback!,
@@ -380,6 +418,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
 
         return newAnswers;
       });
+      modifyStoredInputValue(newAnswer);
       dispatchNewExecutionData(newAnswers, _inputs);
 
       const isStandingQuestion = !!standingQuestions.length;
@@ -568,6 +607,16 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
     if (isSimulaitonStreaming) {
       return;
     }
+
+    const answer: IAnswer = {
+      question: selectedAnswer.question,
+      required: selectedAnswer.required,
+      inputName: selectedAnswer.inputName,
+      prompt: selectedAnswer.prompt,
+      answer: "",
+    };
+
+    modifyStoredInputValue(answer);
 
     const question = templateQuestions.find(question => question.name === selectedAnswer.inputName);
     const newStandingQuestions = standingQuestions.concat(question!).sort((a, b) => +a.required - +b.required);

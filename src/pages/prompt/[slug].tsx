@@ -161,9 +161,6 @@ const Template = ({ hashedExecution, fetchedTemplate }: TemplateProps) => {
 
   const dynamicTheme = createTheme({ ...theme, palette });
   const isTemplatePublished = fetchedTemplate ? fetchedTemplate.status === "PUBLISHED" : false;
-  const templateInformationAccordionExpansion = isTemplatePublished
-    ? { defaultExpanded: true }
-    : { defaultExpanded: false };
 
   return (
     <>
@@ -234,7 +231,9 @@ const Template = ({ hashedExecution, fetchedTemplate }: TemplateProps) => {
                       <Accordion
                         key={fetchedTemplate?.id}
                         sx={{
+                          mb: -1,
                           boxShadow: "none",
+                          borderRadius: "16px",
                           bgcolor: "surface.1",
                           overflow: "hidden",
                           ".MuiAccordionDetails-root": {
@@ -254,9 +253,8 @@ const Template = ({ hashedExecution, fetchedTemplate }: TemplateProps) => {
                             m: 0,
                           },
                         }}
-                        {...templateInformationAccordionExpansion}
                       >
-                        <AccordionSummary expandIcon={isTemplatePublished ? null : <ExpandMore />}>
+                        <AccordionSummary expandIcon={<ExpandMore />}>
                           <Typography
                             sx={{
                               fontSize: 12,
@@ -271,14 +269,12 @@ const Template = ({ hashedExecution, fetchedTemplate }: TemplateProps) => {
                           <Details templateData={fetchedTemplate} />
                         </AccordionDetails>
                       </Accordion>
-                      {!isTemplatePublished && (
-                        <GeneratorForm
-                          templateData={fetchedTemplate}
-                          selectedExecution={selectedExecution}
-                          setGeneratedExecution={setGeneratedExecution}
-                          onError={setErrorMessage}
-                        />
-                      )}
+                      <GeneratorForm
+                        templateData={fetchedTemplate}
+                        selectedExecution={selectedExecution}
+                        setGeneratedExecution={setGeneratedExecution}
+                        onError={setErrorMessage}
+                      />
                     </Box>
                   </Stack>
                 </Stack>
