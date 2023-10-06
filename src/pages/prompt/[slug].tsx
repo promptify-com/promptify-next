@@ -163,6 +163,7 @@ const Template = ({ hashedExecution, fetchedTemplate }: TemplateProps) => {
               mt={{ xs: 7, md: 0 }}
               gap={"8px"}
               container
+              flexWrap={{ md: "nowrap" }}
               sx={{
                 mx: "auto",
                 height: {
@@ -192,6 +193,7 @@ const Template = ({ hashedExecution, fetchedTemplate }: TemplateProps) => {
                 <Stack
                   px={"4px"}
                   maxWidth={"430px"}
+                  width={{ md: "40%" }}
                   sx={{
                     borderRadius: "16px",
                     position: "sticky",
@@ -331,7 +333,8 @@ const Template = ({ hashedExecution, fetchedTemplate }: TemplateProps) => {
 
               <Grid
                 flex={1}
-                borderRadius={"16p"}
+                borderRadius={"16px"}
+                width={{ md: "60%" }}
                 sx={{
                   display: {
                     xs: mobileTab === 2 ? "block" : "none",
