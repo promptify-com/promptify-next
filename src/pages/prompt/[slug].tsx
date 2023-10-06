@@ -59,7 +59,6 @@ const Template = ({ hashedExecution, fetchedTemplate }: TemplateProps) => {
   const [palette, setPalette] = useState(theme.palette);
   const dispatch = useDispatch();
   const isValidUser = useSelector(isValidUserFn);
-  const isDesktopView = isDesktopViewPort();
   const savedTemplateId = useSelector((state: RootState) => state.template.id);
   const {
     data: templateExecutions,
@@ -150,7 +149,8 @@ const Template = ({ hashedExecution, fetchedTemplate }: TemplateProps) => {
   };
 
   const dynamicTheme = createTheme({ ...theme, palette });
-  const isTemplatePublished = fetchedTemplate ? fetchedTemplate.status === "PUBLISHED" : false;
+  const isTemplatePublished = fetchedTemplate.status === "PUBLISHED";
+  const desktopViewPort = isDesktopViewPort();
 
   return (
     <>
@@ -189,11 +189,11 @@ const Template = ({ hashedExecution, fetchedTemplate }: TemplateProps) => {
                 },
               }}
             >
-              {isDesktopView && (
+              {desktopViewPort && (
                 <Stack
                   px={"4px"}
                   maxWidth={"430px"}
-                  width={{ md: "40%" }}
+                  width={{ md: "38%" }}
                   sx={{
                     borderRadius: "16px",
                     position: "sticky",
@@ -272,7 +272,7 @@ const Template = ({ hashedExecution, fetchedTemplate }: TemplateProps) => {
                 </Stack>
               )}
 
-              {!isDesktopView && (
+              {!desktopViewPort && (
                 <>
                   {mobileTab !== 0 && <DetailsCardMini templateData={fetchedTemplate} />}
 
@@ -298,7 +298,7 @@ const Template = ({ hashedExecution, fetchedTemplate }: TemplateProps) => {
                   </Grid>
                 </>
               )}
-              {!isDesktopView ? (
+              {!desktopViewPort ? (
                 !!fetchedTemplate?.questions?.length && isTemplatePublished ? (
                   <Grid
                     sx={{
@@ -334,7 +334,7 @@ const Template = ({ hashedExecution, fetchedTemplate }: TemplateProps) => {
               <Grid
                 flex={1}
                 borderRadius={"16px"}
-                width={{ md: "60%" }}
+                width={{ md: "62%" }}
                 sx={{
                   display: {
                     xs: mobileTab === 2 ? "block" : "none",
@@ -354,7 +354,7 @@ const Template = ({ hashedExecution, fetchedTemplate }: TemplateProps) => {
                     onError={setErrorMessage}
                     hashedExecution={hashedExecution}
                   />
-                  {!isDesktopView && (
+                  {!desktopViewPort && (
                     <GeneratedExecutionFooter
                       execution={generatedExecution}
                       template={fetchedTemplate}
@@ -384,7 +384,15 @@ const Template = ({ hashedExecution, fetchedTemplate }: TemplateProps) => {
   );
 };
 
-export async function getServerSideProps({ params, query }: { params: { slug: string }; query: { hash: string } }) {
+export async function getServerSideProps({
+  params,
+  query,
+}: {
+  params: {
+    slug: string;
+  };
+  query: { hash: string };
+}) {
   const { slug } = params;
   const { hash } = query;
   let fetchedTemplate: Templates = {} as Templates;
