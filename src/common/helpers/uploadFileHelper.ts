@@ -1,4 +1,4 @@
-import { FileResponse } from "../types/prompt";
+import { FileResponse, FileType } from "../types/prompt";
 
 type UploadFunction = (
   uploadFileMutation: (selectedFile: File) => unknown,
@@ -17,4 +17,15 @@ export const uploadFileHelper: UploadFunction = async (uploadFileMutation, selec
     console.error(error);
   }
   return undefined;
+};
+
+const extensionType = {
+  pdf: ".pdf",
+  docx: ".docx",
+  txt: ".txt",
+};
+
+export const generateAcceptString = (types: FileType[]): string => {
+  const extensionTypes = types.map(type => extensionType[type]).filter(Boolean);
+  return extensionTypes.join(",");
 };

@@ -7,6 +7,7 @@ import { FileType, IPromptInput } from "@/common/types/prompt";
 import BaseButton from "../base/BaseButton";
 import CodeFieldModal from "../modals/CodeFieldModal";
 import { useAppSelector } from "@/hooks/useStore";
+import { generateAcceptString } from "@/common/helpers/uploadFileHelper";
 
 interface GeneratorInputProps {
   promptId: number;
@@ -39,16 +40,16 @@ interface GeneratorInputProps {
 //   return mimeTypes.join(",");
 // };
 
-const extensionType = {
-  pdf: ".pdf",
-  docx: ".docx",
-  txt: ".txt",
-};
+// const extensionType = {
+//   pdf: ".pdf",
+//   docx: ".docx",
+//   txt: ".txt",
+// };
 
-const generateAcceptString = (types: FileType[]): string => {
-  const extensionTypes = types.map(type => extensionType[type]).filter(Boolean);
-  return extensionTypes.join(",");
-};
+// const generateAcceptString = (types: FileType[]): string => {
+//   const extensionTypes = types.map(type => extensionType[type]).filter(Boolean);
+//   return extensionTypes.join(",");
+// };
 
 export const GeneratorInput: React.FC<GeneratorInputProps> = ({
   promptId,

@@ -218,41 +218,72 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
     if (hasTypeFile) {
       let filePath = null;
+      let filePaths: File[] = [];
       let keyName: string = "";
       for (const key in resPrompts[0]?.prompt_params) {
         if (resPrompts[0]?.prompt_params[key]) {
           const value = resPrompts[0]?.prompt_params[key];
-          if (value instanceof File) {
-            filePath = value;
+          keyName = key;
+
+          if (Array.isArray(value) && value.every(item => item instanceof File)) {
+            filePaths = filePaths.concat(value);
             keyName = key;
-            break;
           }
         }
       }
 
-      if (filePath) {
-        const fileUrl = await uploadFileHelper(uploadFile, filePath);
-        if (fileUrl) {
-          const newResPrompts = resPrompts.map(item => {
-            if (item.prompt_params) {
-              const updatedPromptParams = {
-                ...item.prompt_params,
-                [keyName]: fileUrl,
-              };
-              return {
-                ...item,
-                prompt_params: updatedPromptParams,
-              };
-            }
-            return item;
-          });
-          dispatch(setGeneratingStatus(true));
-          generateExecution(newResPrompts);
+      if (filePaths.length > 0) {
+        const fileUrls: string[] = [];
+
+        for (let i = 0; i < filePaths.length; i++) {
+          const filePath = filePaths[i];
+
+          const fileUrl = await uploadFileHelper(uploadFile, filePath);
+          if (fileUrl) {
+            fileUrls.push(fileUrl);
+          }
         }
+
+        const newResPrompts = resPrompts.map(item => {
+          if (item.prompt_params) {
+            const updatedPromptParams = {
+              ...item.prompt_params,
+              [keyName]: fileUrls,
+            };
+            return {
+              ...item,
+              prompt_params: updatedPromptParams,
+            };
+          }
+          return item;
+        });
+        console.log("fileUrls: ", fileUrls);
+        console.log("New Resp: ", newResPrompts);
       }
+
+      // if (filePath) {
+      //   const fileUrl = await uploadFileHelper(uploadFile, filePath);
+      //   if (fileUrl) {
+      //     const newResPrompts = resPrompts.map(item => {
+      //       if (item.prompt_params) {
+      //         const updatedPromptParams = {
+      //           ...item.prompt_params,
+      //           [keyName]: fileUrl,
+      //         };
+      //         return {
+      //           ...item,
+      //           prompt_params: updatedPromptParams,
+      //         };
+      //       }
+      //       return item;
+      //     });
+      //     dispatch(setGeneratingStatus(true));
+      //     generateExecution(newResPrompts);
+      //   }
+      // }
     } else {
-      dispatch(setGeneratingStatus(true));
-      generateExecution(resPrompts);
+      // dispatch(setGeneratingStatus(true));
+      // generateExecution(resPrompts);
     }
   };
 
