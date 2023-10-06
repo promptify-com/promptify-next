@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Box } from "@mui/material";
+import Box from "@mui/material/Box";
 import { PageLoading } from "@/components/PageLoading";
 import useToken from "@/hooks/useToken";
 import { LoginLayout } from "@/components/login/LoginLayout";
@@ -44,14 +44,8 @@ const Login = () => {
   );
 };
 
-export async function getServerSideProps() {
-  return {
-    props: {
-      title: "Promptify | Boost Your Creativity",
-      description:
-        "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
-    },
-  };
+export async function getStaticProps() {
+  return { props: {} };
 }
 
 export default Login;

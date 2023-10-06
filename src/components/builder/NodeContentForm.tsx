@@ -3,7 +3,6 @@ import { PresetType } from "@/common/types/builder";
 import { Options } from "../common/Options";
 import { Box, Divider, Stack, Typography } from "@mui/material";
 import { IEditPrompts } from "@/common/types/builder";
-import { getInputsFromString } from "@/common/helpers";
 import { addPreset } from "@/common/helpers/addPreset";
 import { HighlightTextarea } from "./HighlightWithinTextarea";
 import { Selection } from "react-highlight-within-textarea";

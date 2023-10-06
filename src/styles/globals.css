@@ -34,10 +34,7 @@ body {
   .resp-justity {
     justify-content: flex-start;
   }
-}
-/* .scroll-class-name{
-  width:1px
-} */
+
 .sparkContainer {
   cursor: pointer !important;
 }
@@ -142,18 +139,6 @@ body {
   width: 20%;
 }
 
-/* @media (max-width: 850px) {
-  .img-template {
-    width:100% !important;
-  }
-} */
-
-/* @media (max-width: 1000px) {
-  .img-template {
-    width:70% !important;
-  }
-} */
-
 @media (max-width: 1470px) {
   .img-template {
     width: 45% !important;
@@ -229,5 +214,4 @@ body {
   padding-right: 5px;
 }
 
-.area {
 }

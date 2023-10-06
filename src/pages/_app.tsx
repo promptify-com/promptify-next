@@ -1,10 +1,7 @@
 import "@/styles/globals.css";
-import "@fontsource/poppins/300.css";
 import "@fontsource/poppins/400.css";
 import "@fontsource/poppins/500.css";
-import "@fontsource/poppins/700.css";
 import "@fontsource/space-mono/400.css";
-import "@fontsource/space-mono/700.css";
 import type { AppProps } from "next/app";
 import { ThemeProvider } from "@mui/material";
 import { wrapper } from "@/core/store";
@@ -72,12 +69,14 @@ function App({ Component, ...rest }: AppProps) {
   return (
     <Provider store={store}>
       <ThemeProvider theme={theme}>
-        <Script
-          strategy="lazyOnload"
-          src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS}`}
-        />
-        <Script strategy="lazyOnload">
-          {`
+        {router.pathname !== "/signin" && (
+          <>
+            <Script
+              strategy="lazyOnload"
+              src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS}`}
+            />
+            <Script strategy="lazyOnload">
+              {`
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){dataLayer.push(arguments);}
                 gtag('js', new Date());
@@ -85,11 +84,11 @@ function App({ Component, ...rest }: AppProps) {
                 page_path: window.location.pathname,
                 });
             `}
-        </Script>
-        <Script
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `
+            </Script>
+            <Script
+              strategy="afterInteractive"
+              dangerouslySetInnerHTML={{
+                __html: `
               (function(h,o,t,j,a,r){
                 h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
                 h._hjSettings={hjid:${process.env.NEXT_PUBLIC_HOTJAR_ID},hjsv:6};
@@ -99,26 +98,34 @@ function App({ Component, ...rest }: AppProps) {
                 a.appendChild(r);
               })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
               `,
-          }}
-        />
+              }}
+            />
+          </>
+        )}
 
         <Head>
-          <title>{pageProps?.title}</title>
+          <title>{pageProps?.title ?? "Promptify | Boost Your Creativity"}</title>
           <meta
             name="viewport"
             content="width=device-width, initial-scale=1"
           />
           <meta
             name="description"
-            content={pageProps?.description}
+            content={
+              pageProps?.description ??
+              "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out."
+            }
           />
           <meta
             property="og:title"
-            content={pageProps?.title}
+            content={pageProps?.title ?? "Promptify | Boost Your Creativity"}
           />
           <meta
             property="og:description"
-            content={pageProps?.description}
+            content={
+              pageProps?.description ??
+              "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out."
+            }
           />
           <meta
             property="og:image"

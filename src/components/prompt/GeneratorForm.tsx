@@ -4,7 +4,6 @@ import { PromptParams, ResInputs, ResOverrides, ResPrompt } from "@/core/api/dto
 import { IPromptInput, PromptLiveResponse } from "@/common/types/prompt";
 import useToken from "@/hooks/useToken";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { templatesApi } from "@/core/api/templates";
 import { GeneratorInput } from "./GeneratorInput";
 import { GeneratorParam } from "./GeneratorParam";
 import { fetchEventSource } from "@microsoft/fetch-event-source";

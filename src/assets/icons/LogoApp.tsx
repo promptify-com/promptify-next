@@ -1,18 +1,13 @@
-import React, { CSSProperties } from "react";
+import React, { type CSSProperties } from "react";
 
 type Props = {
   width?: number;
   color?: string;
-  style?: React.CSSProperties;
+  style?: CSSProperties;
   onClick?: () => void;
 };
 
-export const LogoApp: React.FC<Props> = ({
-  width = 37,
-  color = "#1D2028",
-  style,
-  onClick
-}) => (
+export const LogoApp: React.FC<Props> = ({ width = 37, color = "#1D2028", style, onClick }) => (
   <svg
     width={width}
     style={style}
