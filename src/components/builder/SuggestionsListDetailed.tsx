@@ -1,8 +1,9 @@
-import React from "react";
-import { Box, Card, Stack, Typography, alpha } from "@mui/material";
+import React, { useEffect, useMemo, useState } from "react";
+import { Box, Card, Chip, Stack, Typography, alpha } from "@mui/material";
 import { Preset, PresetType } from "@/common/types/builder";
 import { Options } from "@/components/common/Options";
 import { theme } from "@/theme";
+import { InputType } from "@/common/types/prompt";
 
 interface Props {
   highlightValue: string;
@@ -11,6 +12,7 @@ interface Props {
   optionType: PresetType;
   onSelect: (option: Preset, type: PresetType) => void;
   previousPresets: Preset[];
+  setType: (type: InputType) => void;
 }
 
 export const SuggestionsListDetailed = ({
@@ -20,34 +22,56 @@ export const SuggestionsListDetailed = ({
   optionType,
   onSelect,
   previousPresets,
+  setType,
 }: Props) => {
-  const autocompleteInput = () => {
-    let suggestion = <span className="high-input">{highlightValue}</span>;
+  const [open, setOpen] = useState(false);
+  const [showTypes, setShowTypes] = useState(false);
+
+  useEffect(() => {
+    if (optionType === "input") {
+      setOpen(highlightValue.includes("{{") && !highlightValue.includes("}}"));
+    } else {
+      setOpen(highlightValue === "$");
+    }
+  }, [highlightValue]);
+
+  const handleSelect = (option: Preset, type: PresetType) => {
+    onSelect(option, type);
+    setOpen(false);
+  };
+
+  const autocompleteInput = useMemo(() => {
+    let suggestion;
+    setShowTypes(false);
 
     if (highlightValue === "{{") {
       suggestion = (
         <>
           <span className="high-input">{"{{"}</span>
-          {"InputName:type}}"}
+          {"InputName:text}}"}
         </>
       );
     } else if (highlightValue.startsWith("{{") && !highlightValue.includes(":")) {
       suggestion = (
         <>
           <span className="high-input">{`{{${highlightValue.slice(2)}`}</span>
-          {":type}}"}
+          {":text}}"}
         </>
       );
+    } else if (!highlightValue.includes("}}")) {
+      suggestion = <span className="high-input">{highlightValue}</span>;
+      setShowTypes(true);
     }
 
     return suggestion;
-  };
+  }, [highlightValue]);
 
-  const showOutputPresets = (optionType === "output" || highlightValue === "{{") && previousPresets.length > 0;
+  const showPreviousOutputs = (optionType === "output" || highlightValue === "{{") && previousPresets.length > 0;
+  const types: InputType[] = ["text", "number", "choices", "code"];
 
   return (
     <>
-      {suggestionList.length > 0 && position && (
+      {open && position && (
         <Card
           elevation={2}
           sx={{
@@ -102,21 +126,59 @@ export const SuggestionsListDetailed = ({
                   },
                 }}
               >
-                {autocompleteInput()}
+                {autocompleteInput}
               </Typography>
-              <Typography
-                sx={{
-                  fontSize: 12,
-                  fontWeight: 400,
-                  color: "text.secondary",
-                  opacity: 0.5,
-                }}
-              >
-                Use simple text for name
-              </Typography>
+              {showTypes ? (
+                <>
+                  <Typography
+                    sx={{
+                      fontSize: 12,
+                      fontWeight: 400,
+                      color: "text.secondary",
+                      opacity: 0.5,
+                    }}
+                  >
+                    Possible variable types:
+                  </Typography>
+                  <Stack
+                    direction={"row"}
+                    gap={0.5}
+                  >
+                    {types.map(type => (
+                      <Chip
+                        key={type}
+                        label={type}
+                        sx={{
+                          bgcolor: "#E0F2F1",
+                          color: "#00897B",
+                          fontSize: 12,
+                          fontWeight: 500,
+                          cursor: "default",
+                          ":hover": {
+                            bgcolor: "#E0F2F1",
+                          },
+                        }}
+                        onClick={() => setType(type)}
+                        size="small"
+                      />
+                    ))}
+                  </Stack>
+                </>
+              ) : (
+                <Typography
+                  sx={{
+                    fontSize: 12,
+                    fontWeight: 400,
+                    color: "text.secondary",
+                    opacity: 0.5,
+                  }}
+                >
+                  Use simple text for name
+                </Typography>
+              )}
             </Stack>
           )}
-          {optionType === "input" && (
+          {suggestionList.length > 0 && optionType === "input" && (
             <Box
               sx={{
                 p: "16px",
@@ -134,11 +196,11 @@ export const SuggestionsListDetailed = ({
                 type={optionType}
                 variant="horizontal"
                 options={suggestionList}
-                onSelect={option => onSelect(option, optionType)}
+                onSelect={option => handleSelect(option, optionType)}
               />
             </Box>
           )}
-          {showOutputPresets && (
+          {showPreviousOutputs && (
             <Box
               sx={{
                 p: "16px",
@@ -156,7 +218,7 @@ export const SuggestionsListDetailed = ({
                 type={"output"}
                 variant="horizontal"
                 options={previousPresets}
-                onSelect={option => onSelect(option, "output")}
+                onSelect={option => handleSelect(option, "output")}
               />
             </Box>
           )}

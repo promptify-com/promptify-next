@@ -15,6 +15,7 @@ import { useCursorPosition } from "@/hooks/useCursorPosition";
 import { SuggestionsList } from "./SuggestionsList";
 import ClientOnly from "../base/ClientOnly";
 import { SuggestionsListDetailed } from "./SuggestionsListDetailed";
+import { InputType } from "zlib";
 
 interface Props {
   prompt: IEditPrompts;
@@ -109,6 +110,10 @@ export const HighlightTextarea = ({
     setSuggestionList([]);
   };
 
+  const handleTypeSelect = (type: InputType) => {
+    console.log(type);
+  };
+
   const previousOutputs = outputPresets.slice(
     0,
     outputPresets.findIndex(preset => preset.label === prompt.prompt_output_variable),
@@ -149,6 +154,7 @@ export const HighlightTextarea = ({
             optionType={optionType}
             onSelect={handleSuggestionSelect}
             previousPresets={previousOutputs}
+            setType={handleTypeSelect}
           />
         )}
       </Grid>
