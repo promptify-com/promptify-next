@@ -150,7 +150,6 @@ export const Display: React.FC<Props> = ({
           onSearch={text => setSearch(text)}
           onOpenExport={() => setOpenExportpopup(true)}
           sparkHashQueryParam={sparkHashQueryParam.current}
-          showChatForm={showChatForm}
         />
         {openExportPopup && activeExecution?.id && (
           <SparkExportPopup

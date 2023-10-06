@@ -33,7 +33,6 @@ interface Props {
   onSearch?: (text: string) => void;
   onOpenExport: () => void;
   sparkHashQueryParam: string | null;
-  showChatForm: boolean;
 }
 
 export const DisplayActions: React.FC<Props> = ({
@@ -44,7 +43,6 @@ export const DisplayActions: React.FC<Props> = ({
   onSearch = () => {},
   onOpenExport,
   sparkHashQueryParam,
-  showChatForm,
 }) => {
   const { palette } = useTheme();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
@@ -145,7 +143,7 @@ export const DisplayActions: React.FC<Props> = ({
     <Box
       sx={{
         position: { xs: "fixed", md: "sticky" },
-        top: { xs: "auto", md: showChatForm ? "48px" : "0px" },
+        top: { xs: "auto", md: "0px" },
         bottom: { xs: "74px", md: "auto" },
         left: 0,
         right: 0,
