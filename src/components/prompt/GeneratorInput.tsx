@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Box, Divider, IconButton, InputLabel, MenuItem, Select, Stack, TextField } from "@mui/material";
-import { InputsErrors } from "./GeneratorForm";
 import { Backspace } from "@mui/icons-material";
+
+import { InputsErrors } from "./GeneratorForm";
 import { IPromptInput } from "@/common/types/prompt";
 import BaseButton from "../base/BaseButton";
 import CodeFieldModal from "../modals/CodeFieldModal";
@@ -12,7 +13,7 @@ interface GeneratorInputProps {
   promptId: number;
   inputs: IPromptInput[];
   nodeInputs: ResInputs[];
-  setNodeInputs: (obj: any) => void;
+  setNodeInputs: (updatedNodes: ResInputs[]) => void;
   errors: InputsErrors;
 }
 
@@ -24,42 +25,27 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
   errors,
 }) => {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
-
   const [codeFieldOpen, setCodeFieldOpen] = useState(false);
 
   const handleChange = (value: string, name: string, type: string) => {
-    const targetdNode = nodeInputs.find(prompt => prompt.inputs[name]);
-    const inputs = nodeInputs;
-
-    if (!targetdNode) {
-      return setNodeInputs([
-        ...nodeInputs,
-        {
-          id: promptId,
+    const updatedNodes = nodeInputs.map(node => {
+      const targetNode = node.inputs[name];
+      if (targetNode) {
+        return {
+          ...node,
           inputs: {
+            ...node.inputs,
             [name]: {
+              ...targetNode,
               value: type === "number" ? +value : value,
-            },
-          },
-        },
-      ]);
-    }
-
-    inputs.forEach((prompt: any, index: number) => {
-      if (prompt.id === promptId) {
-        inputs[index] = {
-          ...prompt,
-          inputs: {
-            ...prompt.inputs,
-            [name]: {
-              value: type === "number" ? +value : value,
-              required: targetdNode.inputs[name].required,
             },
           },
         };
       }
+      return node;
     });
-    setNodeInputs([...inputs]);
+
+    setNodeInputs(updatedNodes);
   };
 
   return inputs.length > 0 ? (
