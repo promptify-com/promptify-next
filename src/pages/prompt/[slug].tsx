@@ -1,11 +1,10 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
   Alert,
   Box,
-  Divider,
   Grid,
   Palette,
   Snackbar,
@@ -41,6 +40,7 @@ import { getExecutionByHash } from "@/hooks/api/executions";
 import { ExpandMore } from "@mui/icons-material";
 import { GeneratorForm } from "@/components/prompt/GeneratorForm";
 import { isDesktopViewPort } from "@/common/helpers";
+import GeneratedExecutionFooter from "@/components/prompt/GeneratedExecutionFooter";
 
 interface TemplateProps {
   hashedExecution: TemplatesExecutions | null;
@@ -111,16 +111,6 @@ const Template = ({ hashedExecution, fetchedTemplate }: TemplateProps) => {
       setMobileTab(2);
     }
   }, [isGenerating, hashedExecution]);
-
-  // Keep tracking the current generated prompt
-  const currentGeneratedPrompt = useMemo(() => {
-    if (fetchedTemplate && generatedExecution?.data?.length) {
-      const loadingPrompt = generatedExecution.data.find(prompt => prompt.isLoading);
-      const prompt = fetchedTemplate.prompts.find(prompt => prompt.id === loadingPrompt?.prompt);
-      if (prompt) return prompt;
-    }
-    return null;
-  }, [fetchedTemplate, generatedExecution]);
 
   const fetchDynamicColors = () => {
     materialDynamicColors(fetchedTemplate.thumbnail)
@@ -361,30 +351,11 @@ const Template = ({ hashedExecution, fetchedTemplate }: TemplateProps) => {
                     onError={setErrorMessage}
                     hashedExecution={hashedExecution}
                   />
-                  {currentGeneratedPrompt && (
-                    <Box
-                      sx={{
-                        position: "sticky",
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        zIndex: 998,
-                        bgcolor: "surface.1",
-                      }}
-                    >
-                      <Divider sx={{ borderColor: "surface.3" }} />
-                      <Typography
-                        sx={{
-                          padding: "8px 16px 5px",
-                          textAlign: "right",
-                          fontSize: 11,
-                          fontWeight: 500,
-                          opacity: 0.3,
-                        }}
-                      >
-                        Prompt #{currentGeneratedPrompt.order}: {currentGeneratedPrompt.title}
-                      </Typography>
-                    </Box>
+                  {!isDesktopView && (
+                    <GeneratedExecutionFooter
+                      execution={generatedExecution}
+                      template={fetchedTemplate}
+                    />
                   )}
                 </Grid>
               </Grid>
