@@ -154,7 +154,6 @@ export const SuggestionsListDetailed = ({
                             color: "#00897B",
                             fontSize: 12,
                             fontWeight: 500,
-                            cursor: "default",
                             ":hover": {
                               bgcolor: "#E0F2F1",
                             },

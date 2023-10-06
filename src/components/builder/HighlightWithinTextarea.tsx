@@ -111,7 +111,10 @@ export const HighlightTextarea = ({
   };
 
   const handleTypeSelect = (type: InputType) => {
-    console.log(type);
+    const _newSugg: Preset = {
+      label: `${highlitedValue.slice(0, highlitedValue.indexOf(":") + 1) + type}}}`,
+    };
+    handleSuggestionSelect(_newSugg, "input");
   };
 
   const previousOutputs = outputPresets.slice(
