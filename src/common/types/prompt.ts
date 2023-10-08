@@ -27,6 +27,7 @@ export type AnsweredInputType = {
   promptId: number;
   inputName: string;
   value: string | number;
+  modifiedFrom: "input" | "chat";
 };
 
 export interface DisplayPrompt {

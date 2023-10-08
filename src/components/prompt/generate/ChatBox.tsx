@@ -198,6 +198,111 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
     }
   }, [isSimulaitonStreaming]);
 
+  const getUnansweredQuestions = (currentAnswers: IAnswer[]) => {
+    const answeredQuestionNames = currentAnswers.map(input => input.inputName);
+    return templateQuestions.filter(question => !answeredQuestionNames.includes(question.name));
+  };
+
+  const getNextQuestion = (currentQuestionIndex: number, currentAnswers: IAnswer[]) => {
+    const potentialNextQuestion = templateQuestions[currentQuestionIndex + 1];
+    const unansweredQuestions = getUnansweredQuestions(currentAnswers);
+
+    if (potentialNextQuestion && !unansweredQuestions.includes(potentialNextQuestion)) {
+      return potentialNextQuestion;
+    }
+    return unansweredQuestions[0];
+  };
+
+  const handleSyncForms = (currentAnswers: IAnswer[]) => {
+    const updatedInput = currentAnsweredInputs[0];
+    const updatedQuestionIndex = templateQuestions.findIndex(question => updatedInput.inputName === question.name);
+    const updatedQuestion = templateQuestions[updatedQuestionIndex];
+
+    let nextMessages: IMessage[] = [];
+
+    if (updatedQuestion !== currentQuestion && updatedInput.value !== "") {
+      nextMessages.push({
+        text: updatedQuestion.question,
+        choices: updatedQuestion.choices,
+        type: updatedQuestion.type,
+        createdAt: createdAt,
+        fromUser: false,
+      });
+
+      updatedQuestion.type === "text" &&
+        nextMessages.push({
+          text: updatedInput.value as string,
+          choices: updatedQuestion.choices,
+          type: updatedQuestion.type,
+          createdAt: createdAt,
+          fromUser: true,
+        });
+    }
+
+    const nextQuestion = getNextQuestion(updatedQuestionIndex, currentAnswers);
+
+    if (!nextQuestion) {
+      nextMessages.push({
+        text: "Great, we can start template",
+        type: "text",
+        createdAt: createdAt,
+        fromUser: false,
+      });
+
+      !showGenerateButton && setShowGenerateButton(true);
+      setDisableChatInput(true);
+    } else {
+      if (!nextQuestion.required && !showGenerateButton) {
+        setShowGenerateButton(true);
+      } else {
+        setShowGenerateButton(false);
+      }
+      nextMessages.push({
+        text: nextQuestion.question,
+        choices: nextQuestion.choices,
+        type: nextQuestion.type,
+        createdAt: createdAt,
+        fromUser: false,
+      });
+    }
+
+    nextQuestion && setCurrentQuestionIndex(updatedQuestionIndex + 1);
+
+    setMessages(prevMessages => prevMessages.concat(nextMessages));
+  };
+
+  useEffect(() => {
+    if (currentAnsweredInputs.length === 0) return;
+
+    if (currentAnsweredInputs[0].modifiedFrom === "input") {
+      const updatedInput = currentAnsweredInputs[0];
+      const matchedTemplate = templateQuestions.find(question => question.name === updatedInput.inputName);
+
+      setAnswers(prevAnswers => {
+        let updatedAnswers = [...prevAnswers];
+
+        const indexToUpdate = prevAnswers.findIndex(answer => answer.inputName === updatedInput.inputName);
+
+        if (indexToUpdate !== -1) {
+          updatedAnswers[indexToUpdate].answer = updatedInput.value;
+        } else if (matchedTemplate) {
+          const newAnswer = {
+            inputName: updatedInput.inputName,
+            required: matchedTemplate.required,
+            question: matchedTemplate.question,
+            prompt: updatedInput.promptId,
+            answer: updatedInput.value,
+          };
+          updatedAnswers.push(newAnswer);
+        }
+
+        handleSyncForms(updatedAnswers);
+
+        return updatedAnswers.filter(answer => Boolean(answer.answer));
+      });
+    }
+  }, [currentAnsweredInputs, templateQuestions]);
+
   const canShowGenerateButton = Boolean(templateQuestions.length && !templateQuestions[0].required);
   const disableChat = Boolean(!templateQuestions.length && !_inputs.length && template?.prompts.length);
   const currentQuestion = standingQuestions.length
@@ -248,6 +353,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
               promptId: question.prompt,
               inputName: question.name,
               value: answer,
+              modifiedFrom: "chat",
             });
           }
           return {
@@ -268,24 +374,20 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
 
   const modifyStoredInputValue = (answer: IAnswer) => {
     const { inputName, prompt, answer: value } = answer;
+
     const newValue: AnsweredInputType = {
       promptId: prompt,
       value,
       inputName,
+      modifiedFrom: "chat",
     };
 
-    const existingIndex = currentAnsweredInputs.findIndex(
-      item => item.promptId === prompt && item.inputName === inputName,
-    );
+    const existingItem = currentAnsweredInputs[0];
 
-    const updatedAnsweredInputs = [...currentAnsweredInputs];
+    const shouldUpdateExistingItem =
+      existingItem && existingItem.promptId === prompt && existingItem.inputName === inputName;
 
-    if (existingIndex !== -1) {
-      const updatedItem = { ...updatedAnsweredInputs[existingIndex], value: value };
-      updatedAnsweredInputs[existingIndex] = updatedItem;
-    } else {
-      updatedAnsweredInputs.push({ ...newValue });
-    }
+    const updatedAnsweredInputs = shouldUpdateExistingItem ? [{ ...existingItem, value }] : [newValue];
 
     dispatch(updateAnsweredInput(updatedAnsweredInputs));
   };

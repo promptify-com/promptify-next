@@ -56,19 +56,17 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   const [shownParams, setShownParams] = useState<Param[] | null>(null);
 
   const answeredInputs = useAppSelector(state => state.template.answeredInputs);
-
   useEffect(() => {
     if (answeredInputs && answeredInputs.length > 0) {
+      const updatedInput = answeredInputs[0];
+
       setNodeInputs(prevState => {
         const newState = [...prevState];
+        const targetIndex = newState.findIndex(item => item.id === updatedInput.promptId);
 
-        answeredInputs.forEach(input => {
-          const targetIndex = newState.findIndex(item => item.id === input.promptId);
-          if (targetIndex !== -1 && newState[targetIndex].inputs[input.inputName]) {
-            newState[targetIndex].inputs[input.inputName].value = input.value;
-          }
-        });
-
+        if (targetIndex !== -1 && newState[targetIndex].inputs[updatedInput.inputName]) {
+          newState[targetIndex].inputs[updatedInput.inputName].value = updatedInput.value;
+        }
         return newState;
       });
     }
