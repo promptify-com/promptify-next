@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Card, Chip, ClickAwayListener, Stack, Typography, alpha } from "@mui/material";
 import { Preset, PresetType } from "@/common/types/builder";
 import { Options } from "@/components/common/Options";
@@ -28,10 +28,16 @@ export const SuggestionsListDetailed = ({
   const [showTypes, setShowTypes] = useState(false);
 
   useEffect(() => {
-    if (optionType === "input") {
-      setOpen(highlightValue.includes("{{") && !highlightValue.includes("}}"));
-    } else {
+    setShowTypes(false);
+
+    if (optionType === "output") {
       setOpen(highlightValue === "$");
+    } else {
+      setOpen(highlightValue.includes("{{") && !highlightValue.includes("}}"));
+
+      if (highlightValue.includes(":")) {
+        setShowTypes(true);
+      }
     }
   }, [highlightValue]);
 
@@ -40,9 +46,8 @@ export const SuggestionsListDetailed = ({
     setOpen(false);
   };
 
-  const autocompleteInput = useMemo(() => {
+  const autocompleteInput = () => {
     let suggestion;
-    setShowTypes(false);
 
     if (highlightValue === "{{") {
       suggestion = (
@@ -60,11 +65,10 @@ export const SuggestionsListDetailed = ({
       );
     } else if (!highlightValue.includes("}}")) {
       suggestion = <span className="high-input">{highlightValue}</span>;
-      setShowTypes(true);
     }
 
     return suggestion;
-  }, [highlightValue]);
+  };
 
   const showPreviousOutputs = (optionType === "output" || highlightValue === "{{") && previousPresets.length > 0;
   const types: InputType[] = ["text", "number", "choices", "code"];
@@ -127,7 +131,7 @@ export const SuggestionsListDetailed = ({
                     },
                   }}
                 >
-                  {autocompleteInput}
+                  {autocompleteInput()}
                 </Typography>
                 {showTypes ? (
                   <>

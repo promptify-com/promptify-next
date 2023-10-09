@@ -136,7 +136,6 @@ export const HighlightTextarea = ({
           placeholder="..."
           stripPastedStyles
           onChange={(newValue, selection) => {
-            newValue = newValue.replace(/{{[^{}]*[^}]*(?:}}|$)/g, match => match.replace(/\s/g, ""));
             onChange(newValue, selection);
             showSuggestions(newValue);
           }}
