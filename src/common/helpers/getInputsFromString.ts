@@ -15,6 +15,7 @@ const getType = (str: string): InputType => {
   }
 };
 
+// TODO: getInputsFromString should return inputs filtered by name
 export const getInputsFromString = (str: string): IPromptInput[] => {
   const regex = /{{(.*?)}}/g;
   const matches = [];

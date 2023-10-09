@@ -79,7 +79,7 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
                 type="output"
                 variant="horizontal"
                 options={outputPresets}
-                onChoose={output => presetHandler({ type: "output", label: output.label })}
+                onSelect={output => presetHandler({ type: "output", label: output.label })}
               />
             </Stack>
           )}
@@ -104,7 +104,7 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
                 type="input"
                 variant="horizontal"
                 options={inputPresets}
-                onChoose={input => presetHandler({ type: "input", label: input.label })}
+                onSelect={input => presetHandler({ type: "input", label: input.label })}
               />
             </Stack>
           )}
@@ -128,13 +128,14 @@ export const NodeContentForm: React.FC<Props> = ({ selectedNodeData, setSelected
           }}
         >
           <HighlightTextarea
+            prompt={selectedNodeData}
             cursorPositionRef={cursorPositionRef}
-            content={content}
             onChange={contentHandler}
             outputPresets={outputPresets}
             inputPresets={inputPresets}
             highlitedValue={highlightedOption}
             setHighlitedValue={setHighlitedOption}
+            type="admin"
           />
         </Box>
       </Box>

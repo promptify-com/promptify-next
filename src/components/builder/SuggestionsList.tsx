@@ -47,7 +47,7 @@ export const SuggestionsList = ({ suggestionList, position, optionType, onSelect
             type={optionType}
             variant="vertical"
             options={suggestionList}
-            onChoose={onSelect}
+            onSelect={onSelect}
           />
         </Card>
       )}

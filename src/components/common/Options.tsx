@@ -6,10 +6,10 @@ interface Props {
   variant: "horizontal" | "vertical";
   type: PresetType;
   options: Preset[];
-  onChoose: (option: Preset) => void;
+  onSelect: (option: Preset) => void;
 }
 
-export const Options: React.FC<Props> = ({ options, onChoose, variant, type }) => {
+export const Options: React.FC<Props> = ({ options, onSelect, variant, type }) => {
   const [showMore, setShowMore] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
@@ -22,6 +22,7 @@ export const Options: React.FC<Props> = ({ options, onChoose, variant, type }) =
     bgcolor: type === "input" ? "#E0F2F1" : "#F3E5F5",
     color: type === "input" ? "#00897B" : "#9C27B0",
     fontSize: 12,
+    fontWeight: 500,
     cursor: "pointer",
   };
 
@@ -29,59 +30,66 @@ export const Options: React.FC<Props> = ({ options, onChoose, variant, type }) =
 
   return (
     <>
-      {variant === "horizontal" &&
-        options.slice(0, 3).map((option, i) => (
-          <Chip
-            key={i}
-            label={option.label}
-            sx={ChipStyles}
-            onMouseDown={() => {
-              onChoose(option);
-              handleClose();
-            }}
-            size="small"
-          />
-        ))}
-      {variant === "horizontal" && options.length > 3 && (
-        <>
-          <Chip
-            label="4"
-            onClick={e => {
-              setAnchorEl(e.currentTarget);
-              setShowMore(true);
-            }}
-            sx={ChipStyles}
-            size="small"
-          />
-          <Popover
-            open={showMore}
-            anchorEl={anchorEl}
-            onClose={handleClose}
-            anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "left",
-            }}
-          >
-            <Stack
-              alignItems={"flex-start"}
-              p={1}
-              gap={0.5}
-            >
-              {options.slice(3).map((option, i) => (
-                <Chip
-                  key={i}
-                  label={option.label}
-                  sx={ChipStyles}
-                  onMouseDown={() => {
-                    onChoose(option);
-                    handleClose();
-                  }}
-                  size="small"
-                />
-              ))}
-            </Stack>
-          </Popover>
-        </>
+      {variant === "horizontal" && (
+        <Stack
+          direction={"row"}
+          gap={0.5}
+          flexWrap={"wrap"}
+        >
+          {options.slice(0, 3).map((option, i) => (
+            <Chip
+              key={i}
+              label={option.label}
+              sx={ChipStyles}
+              onMouseDown={() => {
+                onSelect(option);
+                handleClose();
+              }}
+              size="small"
+            />
+          ))}
+          {options.length > 3 && (
+            <>
+              <Chip
+                label="4"
+                onClick={e => {
+                  setAnchorEl(e.currentTarget);
+                  setShowMore(true);
+                }}
+                sx={ChipStyles}
+                size="small"
+              />
+              <Popover
+                open={showMore}
+                anchorEl={anchorEl}
+                onClose={handleClose}
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "left",
+                }}
+              >
+                <Stack
+                  alignItems={"flex-start"}
+                  p={1}
+                  gap={0.5}
+                >
+                  {options.slice(3).map((option, i) => (
+                    <Chip
+                      key={i}
+                      label={option.label}
+                      sx={ChipStyles}
+                      onMouseDown={() => {
+                        onSelect(option);
+                        handleClose();
+                      }}
+                      size="small"
+                    />
+                  ))}
+                </Stack>
+              </Popover>
+            </>
+          )}
+        </Stack>
       )}
       {variant === "vertical" && (
         <Grid
@@ -96,7 +104,7 @@ export const Options: React.FC<Props> = ({ options, onChoose, variant, type }) =
               label={option.label}
               sx={ChipStyles}
               onMouseDown={() => {
-                onChoose(option);
+                onSelect(option);
                 handleClose();
               }}
               size="small"
