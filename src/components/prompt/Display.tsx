@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useMemo } from "react";
-import { Box, Grid, Typography } from "@mui/material";
+import { Box, Divider, Grid, Typography } from "@mui/material";
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { ExecutionCard } from "./ExecutionCard";
 import { PromptLiveResponse } from "@/common/types/prompt";
@@ -11,6 +11,7 @@ import { isDesktopViewPort } from "@/common/helpers";
 import ChatMode from "./generate/ChatBox";
 import useBrowser from "@/hooks/useBrowser";
 import ClientOnly from "@/components/base/ClientOnly";
+import GeneratedExecutionFooter from "./GeneratedExecutionFooter";
 
 interface Props {
   templateData: Templates;
@@ -112,27 +113,29 @@ export const Display: React.FC<Props> = ({
     }
   }, [executions]);
 
+  const currentGeneratedPrompt = useMemo(() => {
+    if (generatedExecution?.data?.length) {
+      const loadingPrompt = generatedExecution.data.find(prompt => prompt.isLoading);
+      const prompt = templateData.prompts.find(prompt => prompt.id === loadingPrompt?.prompt);
+      if (prompt) return prompt;
+    }
+
+    return null;
+  }, [templateData, generatedExecution]);
+
+  const showChatForm = !!templateData?.questions?.length && templateData?.status === "PUBLISHED";
+
   return (
     <Grid
       display={"flex"}
       flexDirection={"column"}
-      gap={"24px"}
+      gap={"8px"}
     >
-      {isDesktopView && !!templateData?.questions?.length && templateData?.status === "PUBLISHED" && (
-        <ClientOnly>
-          <ChatMode
-            key={templateData.id}
-            setGeneratedExecution={setGeneratedExecution}
-            onError={onError}
-            template={templateData}
-          />
-        </ClientOnly>
-      )}
       <Box
         ref={containerRef}
         bgcolor={"surface.1"}
         borderRadius={"16px"}
-        minHeight={{ xs: "100vh", md: "calc(100vh - (95px + 48px + 24px))" }}
+        minHeight={{ xs: "100vh", md: "calc(100vh - (95px + 24px))" }}
         sx={{
           position: "relative",
           pb: { xs: "70px", md: "0" },
@@ -170,6 +173,29 @@ export const Display: React.FC<Props> = ({
           )}
         </Box>
       </Box>
+      {isDesktopView && showChatForm && (
+        <Box
+          sx={{
+            position: "sticky",
+            bottom: currentGeneratedPrompt ? "30px" : "5px",
+            left: 0,
+            right: 0,
+          }}
+        >
+          <ClientOnly>
+            <ChatMode
+              key={templateData.id}
+              setGeneratedExecution={setGeneratedExecution}
+              onError={onError}
+              template={templateData}
+            />
+          </ClientOnly>
+        </Box>
+      )}
+      <GeneratedExecutionFooter
+        execution={generatedExecution}
+        template={templateData}
+      />
     </Grid>
   );
 };

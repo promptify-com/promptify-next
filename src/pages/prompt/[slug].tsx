@@ -1,11 +1,10 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
   Alert,
   Box,
-  Divider,
   Grid,
   Palette,
   Snackbar,
@@ -41,6 +40,7 @@ import { getExecutionByHash } from "@/hooks/api/executions";
 import { ExpandMore } from "@mui/icons-material";
 import { GeneratorForm } from "@/components/prompt/GeneratorForm";
 import { isDesktopViewPort } from "@/common/helpers";
+import GeneratedExecutionFooter from "@/components/prompt/GeneratedExecutionFooter";
 
 interface TemplateProps {
   hashedExecution: TemplatesExecutions | null;
@@ -59,7 +59,6 @@ const Template = ({ hashedExecution, fetchedTemplate }: TemplateProps) => {
   const [palette, setPalette] = useState(theme.palette);
   const dispatch = useDispatch();
   const isValidUser = useSelector(isValidUserFn);
-  const isDesktopView = isDesktopViewPort();
   const savedTemplateId = useSelector((state: RootState) => state.template.id);
   const {
     data: templateExecutions,
@@ -112,16 +111,6 @@ const Template = ({ hashedExecution, fetchedTemplate }: TemplateProps) => {
     }
   }, [isGenerating, hashedExecution]);
 
-  // Keep tracking the current generated prompt
-  const currentGeneratedPrompt = useMemo(() => {
-    if (fetchedTemplate && generatedExecution?.data?.length) {
-      const loadingPrompt = generatedExecution.data.find(prompt => prompt.isLoading);
-      const prompt = fetchedTemplate.prompts.find(prompt => prompt.id === loadingPrompt?.prompt);
-      if (prompt) return prompt;
-    }
-    return null;
-  }, [fetchedTemplate, generatedExecution]);
-
   const fetchDynamicColors = () => {
     materialDynamicColors(fetchedTemplate.thumbnail)
       .then((imgPalette: IMaterialDynamicColorsTheme) => {
@@ -160,10 +149,8 @@ const Template = ({ hashedExecution, fetchedTemplate }: TemplateProps) => {
   };
 
   const dynamicTheme = createTheme({ ...theme, palette });
-  const isTemplatePublished = fetchedTemplate ? fetchedTemplate.status === "PUBLISHED" : false;
-  const templateInformationAccordionExpansion = isTemplatePublished
-    ? { defaultExpanded: true }
-    : { defaultExpanded: false };
+  const isTemplatePublished = fetchedTemplate.status === "PUBLISHED";
+  const desktopViewPort = isDesktopViewPort();
 
   return (
     <>
@@ -176,6 +163,7 @@ const Template = ({ hashedExecution, fetchedTemplate }: TemplateProps) => {
               mt={{ xs: 7, md: 0 }}
               gap={"8px"}
               container
+              flexWrap={{ md: "nowrap" }}
               sx={{
                 mx: "auto",
                 height: {
@@ -201,10 +189,11 @@ const Template = ({ hashedExecution, fetchedTemplate }: TemplateProps) => {
                 },
               }}
             >
-              {isDesktopView && (
+              {desktopViewPort && (
                 <Stack
                   px={"4px"}
                   maxWidth={"430px"}
+                  width={{ md: "38%" }}
                   sx={{
                     borderRadius: "16px",
                     position: "sticky",
@@ -234,7 +223,9 @@ const Template = ({ hashedExecution, fetchedTemplate }: TemplateProps) => {
                       <Accordion
                         key={fetchedTemplate?.id}
                         sx={{
+                          mb: -1,
                           boxShadow: "none",
+                          borderRadius: "16px",
                           bgcolor: "surface.1",
                           overflow: "hidden",
                           ".MuiAccordionDetails-root": {
@@ -254,9 +245,8 @@ const Template = ({ hashedExecution, fetchedTemplate }: TemplateProps) => {
                             m: 0,
                           },
                         }}
-                        {...templateInformationAccordionExpansion}
                       >
-                        <AccordionSummary expandIcon={isTemplatePublished ? null : <ExpandMore />}>
+                        <AccordionSummary expandIcon={<ExpandMore />}>
                           <Typography
                             sx={{
                               fontSize: 12,
@@ -271,20 +261,18 @@ const Template = ({ hashedExecution, fetchedTemplate }: TemplateProps) => {
                           <Details templateData={fetchedTemplate} />
                         </AccordionDetails>
                       </Accordion>
-                      {!isTemplatePublished && (
-                        <GeneratorForm
-                          templateData={fetchedTemplate}
-                          selectedExecution={selectedExecution}
-                          setGeneratedExecution={setGeneratedExecution}
-                          onError={setErrorMessage}
-                        />
-                      )}
+                      <GeneratorForm
+                        templateData={fetchedTemplate}
+                        selectedExecution={selectedExecution}
+                        setGeneratedExecution={setGeneratedExecution}
+                        onError={setErrorMessage}
+                      />
                     </Box>
                   </Stack>
                 </Stack>
               )}
 
-              {!isDesktopView && (
+              {!desktopViewPort && (
                 <>
                   {mobileTab !== 0 && <DetailsCardMini templateData={fetchedTemplate} />}
 
@@ -310,7 +298,7 @@ const Template = ({ hashedExecution, fetchedTemplate }: TemplateProps) => {
                   </Grid>
                 </>
               )}
-              {!isDesktopView ? (
+              {!desktopViewPort ? (
                 !!fetchedTemplate?.questions?.length && isTemplatePublished ? (
                   <Grid
                     sx={{
@@ -345,7 +333,8 @@ const Template = ({ hashedExecution, fetchedTemplate }: TemplateProps) => {
 
               <Grid
                 flex={1}
-                borderRadius={"16p"}
+                borderRadius={"16px"}
+                width={{ md: "62%" }}
                 sx={{
                   display: {
                     xs: mobileTab === 2 ? "block" : "none",
@@ -365,30 +354,11 @@ const Template = ({ hashedExecution, fetchedTemplate }: TemplateProps) => {
                     onError={setErrorMessage}
                     hashedExecution={hashedExecution}
                   />
-                  {currentGeneratedPrompt && (
-                    <Box
-                      sx={{
-                        position: "sticky",
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        zIndex: 998,
-                        bgcolor: "surface.1",
-                      }}
-                    >
-                      <Divider sx={{ borderColor: "surface.3" }} />
-                      <Typography
-                        sx={{
-                          padding: "8px 16px 5px",
-                          textAlign: "right",
-                          fontSize: 11,
-                          fontWeight: 500,
-                          opacity: 0.3,
-                        }}
-                      >
-                        Prompt #{currentGeneratedPrompt.order}: {currentGeneratedPrompt.title}
-                      </Typography>
-                    </Box>
+                  {!desktopViewPort && (
+                    <GeneratedExecutionFooter
+                      execution={generatedExecution}
+                      template={fetchedTemplate}
+                    />
                   )}
                 </Grid>
               </Grid>
@@ -414,7 +384,15 @@ const Template = ({ hashedExecution, fetchedTemplate }: TemplateProps) => {
   );
 };
 
-export async function getServerSideProps({ params, query }: { params: { slug: string }; query: { hash: string } }) {
+export async function getServerSideProps({
+  params,
+  query,
+}: {
+  params: {
+    slug: string;
+  };
+  query: { hash: string };
+}) {
   const { slug } = params;
   const { hash } = query;
   let fetchedTemplate: Templates = {} as Templates;

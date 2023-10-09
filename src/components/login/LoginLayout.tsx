@@ -1,19 +1,19 @@
-import { useState, FC } from "react";
-import { Box, CardMedia, Checkbox, Grid, Typography } from "@mui/material";
-import { GoogleOAuthProvider } from "@react-oauth/google";
+import { useState, type FC } from "react";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import Checkbox from "@mui/material/Checkbox";
 import { LogoApp } from "@/assets/icons/LogoApp";
-import { IContinueWithSocialMediaResponse } from "@/common/types";
-import { SocialButtons } from "./SocialButtons";
-import { SigninImage } from "@/assets/icons/SigninImage";
 import { useRouter } from "next/router";
+import Image from "../design-system/Image";
+import { isDesktopViewPort } from "@/common/helpers";
+import SocialButtons from "./SocialMediaAuth";
 
 interface IProps {
   preLogin: (isLoading: boolean) => void;
 }
 
-export const LoginLayout: FC<IProps> = ({
-  preLogin,
-}) => {
+export const LoginLayout: FC<IProps> = ({ preLogin }) => {
   const [isChecked, setIsChecked] = useState(false);
   const [errorCheckBox, setErrorCheckBox] = useState<boolean>(true);
   const router = useRouter();
@@ -22,6 +22,7 @@ export const LoginLayout: FC<IProps> = ({
     setIsChecked(!isChecked);
     setErrorCheckBox(true);
   };
+  const desktopView = isDesktopViewPort();
 
   return (
     <Box
@@ -35,7 +36,7 @@ export const LoginLayout: FC<IProps> = ({
     >
       <Grid
         sx={{
-          width: { xs: "100%", lg: "50%" },
+          width: { xs: "100%", md: "50%" },
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -46,7 +47,7 @@ export const LoginLayout: FC<IProps> = ({
           className="button-style"
           sx={{
             height: { xs: "100%", sm: "70vh" },
-            width: "100%",
+            width: { xs: "100%", md: "50%" },
             display: "flex",
             justifyContent: "center",
             alignItems: { xs: "center", sm: "flex-start" },
@@ -67,7 +68,7 @@ export const LoginLayout: FC<IProps> = ({
           >
             <Box
               sx={{
-                marginTop: { xs: "40px", sm: "0em" },
+                marginTop: { xs: "20px", sm: "0em" },
                 marginBottom: { xs: "10px", sm: "0em" },
               }}
             >
@@ -88,9 +89,9 @@ export const LoginLayout: FC<IProps> = ({
               Promptify
             </Typography>
             <Typography
-              sx={{fontSize: 10}}
+              sx={{ fontSize: 10 }}
               mt={0.5}
-              fontWeight={'bold'}
+              fontWeight={"bold"}
             >
               beta
             </Typography>
@@ -130,17 +131,12 @@ export const LoginLayout: FC<IProps> = ({
               Please, register via social network
             </Typography>
           </Grid>
-          <GoogleOAuthProvider
-            clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID as string}
-          >
-            <SocialButtons
-              preLogin={preLogin}
-              isChecked={isChecked}
-              setErrorCheckBox={setErrorCheckBox}
-              from={from}
-            />
-          </GoogleOAuthProvider>
-
+          <SocialButtons
+            preLogin={preLogin}
+            isChecked={isChecked}
+            setErrorCheckBox={setErrorCheckBox}
+            from={from}
+          />
           {from === "signup" && (
             <Grid
               sx={{
@@ -169,7 +165,7 @@ export const LoginLayout: FC<IProps> = ({
                   letterSpacing: "0.15px",
                   color: errorCheckBox ? "#1D2028" : "red",
                   display: "inline",
-                  cursor: "pointer"
+                  cursor: "pointer",
                 }}
                 onClick={handleCheckboxChange}
               >
@@ -189,6 +185,7 @@ export const LoginLayout: FC<IProps> = ({
                   onClick={() => {
                     window.open("https://blog.promptify.com/post/terms-of-use", "_blank");
                   }}
+                  component={"span"}
                 >
                   Terms or Conditions
                 </Typography>
@@ -204,17 +201,36 @@ export const LoginLayout: FC<IProps> = ({
           display: { xs: "flex", sm: "none", lg: "flex" },
           justifyContent: "flex-end",
           alignItems: "flex-end",
+          position: "relative",
         }}
       >
-        <CardMedia
+        <Grid
           sx={{
-            padding: { xs: "0px", sm: "24px" },
-            width: "100%",
-            height: "100%",
-            boxSizing: "border-box",
-            position: "relative",
+            width: { xs: "100%", md: "50%" },
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
           }}
         >
+          <Image
+            style={{
+              boxSizing: "border-box",
+              borderRadius: "26px",
+              position: "absolute",
+              top: desktopView ? "5px" : "0px",
+              maxHeight: "99svh",
+              left: "50%",
+              transform: "translateX(-50%)",
+              objectFit: desktopView ? "cover" : "contain",
+              height: "auto",
+              width: desktopView ? "90%" : "100%",
+            }}
+            alt="Signin"
+            src={require("@/assets/images/signup.webp")}
+            loading={"eager"}
+            priority
+          />
+
           <Box
             sx={{
               display: "flex",
@@ -234,7 +250,10 @@ export const LoginLayout: FC<IProps> = ({
                 display: { xs: "none", sm: "block" },
               }}
             >
-              <LogoApp width={53} color={"#fff"} />
+              <LogoApp
+                width={53}
+                color={"#fff"}
+              />
             </Box>
 
             <Typography
@@ -248,14 +267,11 @@ export const LoginLayout: FC<IProps> = ({
                 letterSpacing: "0.15px",
               }}
             >
-              Unleash your creative potential using Promptify, the ultimate
-              ChatGPT and AI-driven content generation and idea inspiration
-              platform
+              Unleash your creative potential using Promptify, the ultimate ChatGPT and AI-driven content generation and
+              idea inspiration platform
             </Typography>
           </Box>
-
-          <SigninImage style={{ borderRadius: "25px" }} />
-        </CardMedia>
+        </Grid>
       </Grid>
     </Box>
   );

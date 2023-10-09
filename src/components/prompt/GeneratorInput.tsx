@@ -1,19 +1,20 @@
 import React, { useState } from "react";
-import { Box, Button, Divider, IconButton, Input, InputLabel, MenuItem, Select, Stack, TextField } from "@mui/material";
+import { Box, Divider, IconButton, InputLabel, MenuItem, Select, Stack, TextField } from "@mui/material";
+import { Backspace } from "@mui/icons-material";
+
 import { InputsErrors } from "./GeneratorForm";
-import { Backspace, CloudUpload } from "@mui/icons-material";
-import { ResInputs } from "@/core/api/dto/prompts";
-import { FileType, IPromptInput } from "@/common/types/prompt";
+import { IPromptInput } from "@/common/types/prompt";
 import BaseButton from "../base/BaseButton";
 import CodeFieldModal from "../modals/CodeFieldModal";
 import { useAppSelector } from "@/hooks/useStore";
+import { ResInputs } from "@/core/api/dto/prompts";
 import { generateAcceptString } from "@/common/helpers/uploadFileHelper";
 
 interface GeneratorInputProps {
   promptId: number;
   inputs: IPromptInput[];
-  resInputs: ResInputs[];
-  setNodeInputs: (obj: any) => void;
+  nodeInputs: ResInputs[];
+  setNodeInputs: (updatedNodes: ResInputs[]) => void;
   errors: InputsErrors;
 }
 //   switch (extension) {
@@ -54,87 +55,38 @@ interface GeneratorInputProps {
 export const GeneratorInput: React.FC<GeneratorInputProps> = ({
   promptId,
   inputs,
+  nodeInputs,
   setNodeInputs,
-  resInputs,
   errors,
 }) => {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
-
   const [codeFieldOpen, setCodeFieldOpen] = useState(false);
 
   const handleChange = (value: string | FileList, name: string, type: string) => {
-    const resObj = resInputs.find(prompt => prompt.inputs[name]);
-    const resArr = [...resInputs];
-
-    if (!value) return;
-
-    if (type === "file") {
-      if (!resObj) {
-        return setNodeInputs([
-          ...resInputs,
-          {
-            id: promptId,
-            inputs: {
-              [name]: {
-                value: Array.from(value as FileList),
-              },
+    const updatedNodes = nodeInputs.map(node => {
+      const targetNode = node.inputs[name];
+      if (targetNode) {
+        return {
+          ...node,
+          inputs: {
+            ...node.inputs,
+            [name]: {
+              ...targetNode,
+              value: type === "number" ? +value : value,
             },
           },
-        ]);
+        };
       }
+      return node;
+    });
 
-      resArr.forEach((prompt: any, index: number) => {
-        if (prompt.id === promptId) {
-          resArr[index] = {
-            ...prompt,
-            inputs: {
-              ...prompt.inputs,
-              [name]: {
-                value: Array.from(value as FileList),
-                required: resObj.inputs[name].required,
-              },
-            },
-          };
-        }
-      });
-    } else {
-      if (!resObj) {
-        return setNodeInputs([
-          ...resInputs,
-          {
-            id: promptId,
-            inputs: {
-              [name]: {
-                value: type === "number" ? +value : value,
-              },
-            },
-          },
-        ]);
-      }
-
-      resArr.forEach((prompt: any, index: number) => {
-        if (prompt.id === promptId) {
-          resArr[index] = {
-            ...prompt,
-            inputs: {
-              ...prompt.inputs,
-              [name]: {
-                value: type === "number" ? +value : value,
-                required: resObj.inputs[name].required,
-              },
-            },
-          };
-        }
-      });
-    }
-
-    setNodeInputs([...resArr]);
+    setNodeInputs(updatedNodes);
   };
 
   return inputs.length > 0 ? (
     <Box>
       {inputs.map((input, index) => {
-        const inputValue = resInputs.find(prompt => prompt.id === promptId)?.inputs[input.name]?.value || "";
+        const value = nodeInputs.find(prompt => prompt.id === promptId)?.inputs[input.name]?.value || "";
 
         return (
           <React.Fragment key={index}>
@@ -172,12 +124,12 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
                       color: errors[input.name] ? "error.main" : "tertiary",
                     }}
                   >
-                    {inputValue ? "Edit Code" : "Insert Code"}
+                    {value ? "Edit Code" : "Insert Code"}
                   </BaseButton>
                   <CodeFieldModal
                     open={codeFieldOpen}
                     setOpen={setCodeFieldOpen}
-                    value={inputValue as string}
+                    value={value as string}
                     onChange={val => handleChange(val, input.name, input.type)}
                   />
                 </>
@@ -190,7 +142,7 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
                       p: "7px 20px",
                       fontSize: 13,
                       fontWeight: 500,
-                      opacity: inputValue ? 1 : 0.7,
+                      opacity: value ? 1 : 0.7,
                     },
                     ".MuiOutlinedInput-notchedOutline": {
                       border: "1px solid",
@@ -203,7 +155,7 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
                   MenuProps={{
                     sx: { ".MuiMenuItem-root": { fontSize: 14, fontWeight: 500 } },
                   }}
-                  value={inputValue}
+                  value={value}
                   onChange={e => handleChange(e.target.value as string, input.name, input.type)}
                   displayEmpty
                 >
@@ -217,7 +169,7 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
                     <MenuItem
                       key={choice}
                       value={choice}
-                      selected={inputValue === choice}
+                      selected={value === choice}
                     >
                       {choice}
                     </MenuItem>
@@ -285,7 +237,7 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
                   }}
                   placeholder={input.type === "number" ? "Write a number here.." : "Type here..."}
                   type={input.type}
-                  value={inputValue}
+                  value={value}
                   onChange={e => handleChange(e.target.value, input.name, input.type)}
                 />
               )}
@@ -298,7 +250,7 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
                   ":hover": {
                     color: "tertiary",
                   },
-                  visibility: inputValue ? "visible" : "hidden",
+                  visibility: value ? "visible" : "hidden",
                   height: "27px",
                 }}
                 onClick={() => handleChange("", input.name, input.type)}

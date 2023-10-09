@@ -24,6 +24,12 @@ export interface IPromptInput {
   fileExtensions?: string[] | null;
 }
 
+export type AnsweredInputType = {
+  promptId: number;
+  inputName: string;
+  value: string | number;
+};
+
 export interface DisplayPrompt {
   prompt: number;
   content: string;
