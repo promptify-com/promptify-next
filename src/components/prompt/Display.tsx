@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState, useMemo } from "react";
-import { Box, Divider, Grid, Typography } from "@mui/material";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { ExecutionCard } from "./ExecutionCard";
 import { PromptLiveResponse } from "@/common/types/prompt";
@@ -11,7 +13,6 @@ import { isDesktopViewPort } from "@/common/helpers";
 import ChatMode from "./generate/ChatBox";
 import useBrowser from "@/hooks/useBrowser";
 import ClientOnly from "@/components/base/ClientOnly";
-import GeneratedExecutionFooter from "./GeneratedExecutionFooter";
 
 interface Props {
   templateData: Templates;
@@ -192,10 +193,6 @@ export const Display: React.FC<Props> = ({
           </ClientOnly>
         </Box>
       )}
-      <GeneratedExecutionFooter
-        execution={generatedExecution}
-        template={templateData}
-      />
     </Grid>
   );
 };

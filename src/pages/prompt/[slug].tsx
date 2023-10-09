@@ -1,46 +1,25 @@
-import React, { useEffect, useState } from "react";
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Alert,
-  Box,
-  Grid,
-  Palette,
-  Snackbar,
-  Stack,
-  ThemeProvider,
-  Typography,
-  createTheme,
-  useTheme,
-} from "@mui/material";
+import { useEffect, useState } from "react";
+import Alert from "@mui/material/Alert";
+import Snackbar from "@mui/material/Snackbar";
+import { type Palette, ThemeProvider, createTheme, useTheme } from "@mui/material";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
 import materialDynamicColors from "material-dynamic-colors";
 import { mix } from "polished";
 import { useRouter } from "next/router";
 import { useViewTemplateMutation } from "@/core/api/templates";
 import { TemplatesExecutions, Templates } from "@/core/api/dto/templates";
-import { Display } from "@/components/prompt/Display";
-import { Details } from "@/components/prompt/Details";
 import { authClient } from "@/common/axios";
-import { DetailsCard } from "@/components/prompt/DetailsCard";
 import { PromptLiveResponse } from "@/common/types/prompt";
 import { Layout } from "@/layout";
-import BottomTabs from "@/components/prompt/BottomTabs";
-import { DetailsCardMini } from "@/components/prompt/DetailsCardMini";
 import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { updateTemplateData, updateExecutionData } from "@/core/store/templatesSlice";
 import { RootState } from "@/core/store";
-import PromptPlaceholder from "@/components/placeholders/PromptPlaceHolder";
 import { useAppSelector } from "@/hooks/useStore";
-import ChatMode from "@/components/prompt/generate/ChatBox";
 import { getExecutionByHash } from "@/hooks/api/executions";
-import { ExpandMore } from "@mui/icons-material";
-import { GeneratorForm } from "@/components/prompt/GeneratorForm";
-import { isDesktopViewPort } from "@/common/helpers";
-import GeneratedExecutionFooter from "@/components/prompt/GeneratedExecutionFooter";
+import TemplateMobile from "@/components/prompt/TemplateMobile";
+import TemplateDesktop from "@/components/prompt/TemplateDesktop";
 
 interface TemplateProps {
   hashedExecution: TemplatesExecutions | null;
@@ -53,7 +32,6 @@ const Template = ({ hashedExecution, fetchedTemplate }: TemplateProps) => {
   const [generatedExecution, setGeneratedExecution] = useState<PromptLiveResponse | null>(null);
   const [updateViewTemplate] = useViewTemplateMutation();
   const [errorMessage, setErrorMessage] = useState<string>("");
-  const [mobileTab, setMobileTab] = useState(1);
   const router = useRouter();
   const theme = useTheme();
   const [palette, setPalette] = useState(theme.palette);
@@ -105,12 +83,6 @@ const Template = ({ hashedExecution, fetchedTemplate }: TemplateProps) => {
     }
   }, [isGenerating, generatedExecution]);
 
-  useEffect(() => {
-    if (isGenerating || hashedExecution?.id) {
-      setMobileTab(2);
-    }
-  }, [isGenerating, hashedExecution]);
-
   const fetchDynamicColors = () => {
     materialDynamicColors(fetchedTemplate.thumbnail)
       .then((imgPalette: IMaterialDynamicColorsTheme) => {
@@ -149,225 +121,37 @@ const Template = ({ hashedExecution, fetchedTemplate }: TemplateProps) => {
   };
 
   const dynamicTheme = createTheme({ ...theme, palette });
-  const isTemplatePublished = fetchedTemplate.status === "PUBLISHED";
-  const desktopViewPort = isDesktopViewPort();
+  const isMobileView = router.query.viewport === "mobile";
 
   return (
     <>
       <ThemeProvider theme={dynamicTheme}>
         <Layout>
-          {!fetchedTemplate ? (
-            <PromptPlaceholder />
+          {isMobileView ? (
+            <TemplateMobile
+              generatedExecution={generatedExecution}
+              setGeneratedExecution={setGeneratedExecution}
+              isGenerating={isGenerating}
+              hashedExecution={hashedExecution}
+              template={fetchedTemplate}
+              setErrorMessage={setErrorMessage}
+              templateExecutions={templateExecutions}
+              isFetchingExecutions={isFetchingExecutions}
+              selectedExecution={selectedExecution}
+              setSelectedExecution={setSelectedExecution}
+            />
           ) : (
-            <Grid
-              mt={{ xs: 7, md: 0 }}
-              gap={"8px"}
-              container
-              flexWrap={{ md: "nowrap" }}
-              sx={{
-                mx: "auto",
-                height: {
-                  xs: "calc(100svh - 56px)",
-                  md: "calc(100svh - 90px)",
-                },
-                width: { md: "calc(100% - 65px)" },
-                position: "relative",
-                overflow: "auto",
-
-                "&::-webkit-scrollbar": {
-                  width: "6px",
-                  p: 1,
-                  backgroundColor: "surface.5",
-                },
-                "&::-webkit-scrollbar-track": {
-                  webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
-                },
-                "&::-webkit-scrollbar-thumb": {
-                  backgroundColor: "surface.1",
-                  outline: "1px solid surface.1",
-                  borderRadius: "10px",
-                },
-              }}
-            >
-              {desktopViewPort && (
-                <Stack
-                  px={"4px"}
-                  maxWidth={"430px"}
-                  width={{ md: "38%" }}
-                  sx={{
-                    borderRadius: "16px",
-                    position: "sticky",
-                    top: 0,
-                    zIndex: 100,
-                    height: "100%",
-
-                    overflow: "auto",
-                    "&::-webkit-scrollbar": {
-                      width: "6px",
-                      p: 1,
-                      backgroundColor: "surface.5",
-                    },
-                    "&::-webkit-scrollbar-track": {
-                      webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
-                    },
-                    "&::-webkit-scrollbar-thumb": {
-                      backgroundColor: "surface.1",
-                      outline: "1px solid surface.1",
-                      borderRadius: "10px",
-                    },
-                  }}
-                >
-                  <DetailsCard templateData={fetchedTemplate} />
-                  <Stack flex={1}>
-                    <Box flex={1}>
-                      <Accordion
-                        key={fetchedTemplate?.id}
-                        sx={{
-                          mb: -1,
-                          boxShadow: "none",
-                          borderRadius: "16px",
-                          bgcolor: "surface.1",
-                          overflow: "hidden",
-                          ".MuiAccordionDetails-root": {
-                            p: "0",
-                          },
-                          ".MuiAccordionSummary-root": {
-                            minHeight: "48px",
-                            ":hover": {
-                              cursor: isTemplatePublished ? "auto" : "pointer",
-                              opacity: 0.8,
-                              svg: {
-                                color: "primary.main",
-                              },
-                            },
-                          },
-                          ".MuiAccordionSummary-content": {
-                            m: 0,
-                          },
-                        }}
-                      >
-                        <AccordionSummary expandIcon={<ExpandMore />}>
-                          <Typography
-                            sx={{
-                              fontSize: 12,
-                              fontWeight: 500,
-                              color: "primary.main",
-                            }}
-                          >
-                            More about template
-                          </Typography>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                          <Details templateData={fetchedTemplate} />
-                        </AccordionDetails>
-                      </Accordion>
-                      <GeneratorForm
-                        templateData={fetchedTemplate}
-                        selectedExecution={selectedExecution}
-                        setGeneratedExecution={setGeneratedExecution}
-                        onError={setErrorMessage}
-                      />
-                    </Box>
-                  </Stack>
-                </Stack>
-              )}
-
-              {!desktopViewPort && (
-                <>
-                  {mobileTab !== 0 && <DetailsCardMini templateData={fetchedTemplate} />}
-
-                  <Grid
-                    item
-                    xs={12}
-                    md={8}
-                    sx={{
-                      display: mobileTab === 0 ? "block" : "none",
-                      height: "100%",
-                      overflow: "auto",
-                      bgcolor: "surface.1",
-                      position: "relative",
-                      pb: "75px", // Bottom tab bar height
-                    }}
-                  >
-                    <DetailsCard templateData={fetchedTemplate} />
-                    <Details
-                      templateData={fetchedTemplate}
-                      setMobileTab={setMobileTab}
-                      mobile
-                    />
-                  </Grid>
-                </>
-              )}
-              {!desktopViewPort ? (
-                !!fetchedTemplate?.questions?.length && isTemplatePublished ? (
-                  <Grid
-                    sx={{
-                      display: {
-                        xs: mobileTab === 1 ? "block" : "none",
-                        md: "block",
-                      },
-                    }}
-                  >
-                    <ChatMode
-                      setGeneratedExecution={setGeneratedExecution}
-                      onError={setErrorMessage}
-                      key={fetchedTemplate.id}
-                      template={fetchedTemplate}
-                    />
-                  </Grid>
-                ) : (
-                  <Grid
-                    sx={{
-                      display: mobileTab === 1 ? "flex" : "none",
-                      width: "100%",
-                      justifyContent: "center",
-                      height: "74%",
-                      alignItems: "center",
-                      overflow: "hidden",
-                    }}
-                  >
-                    Chat is unavailable
-                  </Grid>
-                )
-              ) : null}
-
-              <Grid
-                flex={1}
-                borderRadius={"16px"}
-                width={{ md: "62%" }}
-                sx={{
-                  display: {
-                    xs: mobileTab === 2 ? "block" : "none",
-                    md: "block",
-                  },
-                }}
-              >
-                <Grid mr={1}>
-                  <Display
-                    templateData={fetchedTemplate}
-                    executions={templateExecutions ?? []}
-                    isFetching={isFetchingExecutions}
-                    selectedExecution={selectedExecution}
-                    setSelectedExecution={setSelectedExecution}
-                    generatedExecution={generatedExecution}
-                    setGeneratedExecution={setGeneratedExecution}
-                    onError={setErrorMessage}
-                    hashedExecution={hashedExecution}
-                  />
-                  {!desktopViewPort && (
-                    <GeneratedExecutionFooter
-                      execution={generatedExecution}
-                      template={fetchedTemplate}
-                    />
-                  )}
-                </Grid>
-              </Grid>
-
-              <BottomTabs
-                setActiveTab={setMobileTab}
-                activeTab={mobileTab}
-              />
-            </Grid>
+            <TemplateDesktop
+              generatedExecution={generatedExecution}
+              setGeneratedExecution={setGeneratedExecution}
+              hashedExecution={hashedExecution}
+              template={fetchedTemplate}
+              setErrorMessage={setErrorMessage}
+              templateExecutions={templateExecutions}
+              isFetchingExecutions={isFetchingExecutions}
+              selectedExecution={selectedExecution}
+              setSelectedExecution={setSelectedExecution}
+            />
           )}
 
           <Snackbar
@@ -391,7 +175,9 @@ export async function getServerSideProps({
   params: {
     slug: string;
   };
-  query: { hash: string };
+  query: {
+    hash: string;
+  };
 }) {
   const { slug } = params;
   const { hash } = query;
