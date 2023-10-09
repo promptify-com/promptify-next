@@ -1,4 +1,4 @@
-import { IEditPrompts } from "../types/builder";
+import { IEditPrompts, InputVariable } from "../types/builder";
 import { getInputsFromString } from "./getInputsFromString";
 
 export const getBuilderVarsPresets = (nodes: IEditPrompts[], selectedNode: IEditPrompts, filter = true) => {
@@ -23,8 +23,16 @@ export const getBuilderVarsPresets = (nodes: IEditPrompts[], selectedNode: IEdit
       })),
     );
 
+  const uniqueInputPresets = new Map<string, InputVariable>();
+  inputPresets.forEach(input => {
+    if (!uniqueInputPresets.has(input.label)) {
+      uniqueInputPresets.set(input.label, input);
+    }
+  });
+  const filteredInputPresets: InputVariable[] = Array.from(uniqueInputPresets.values());
+
   return {
     outputPresets,
-    inputPresets,
+    inputPresets: filteredInputPresets,
   };
 };

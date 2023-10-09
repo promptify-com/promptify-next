@@ -15,7 +15,7 @@ import { useCursorPosition } from "@/hooks/useCursorPosition";
 import { SuggestionsList } from "./SuggestionsList";
 import ClientOnly from "../base/ClientOnly";
 import { SuggestionsListDetailed } from "./SuggestionsListDetailed";
-import { InputType } from "zlib";
+import { InputType } from "@/common/types/prompt";
 
 interface Props {
   prompt: IEditPrompts;
