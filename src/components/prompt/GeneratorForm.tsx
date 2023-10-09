@@ -4,7 +4,6 @@ import { PromptParams, ResInputs, ResOverrides, ResPrompt } from "@/core/api/dto
 import { IPromptInput, PromptLiveResponse } from "@/common/types/prompt";
 import useToken from "@/hooks/useToken";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { templatesApi } from "@/core/api/templates";
 import { GeneratorInput } from "./GeneratorInput";
 import { GeneratorParam } from "./GeneratorParam";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
@@ -56,6 +55,25 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   const [shownInputs, setShownInputs] = useState<Input[] | null>(null);
   const [shownParams, setShownParams] = useState<Param[] | null>(null);
 
+  const answeredInputs = useAppSelector(state => state.template.answeredInputs);
+
+  useEffect(() => {
+    if (answeredInputs && answeredInputs.length > 0) {
+      setNodeInputs(prevState => {
+        const newState = [...prevState];
+
+        answeredInputs.forEach(input => {
+          const targetIndex = newState.findIndex(item => item.id === input.promptId);
+          if (targetIndex !== -1 && newState[targetIndex].inputs[input.inputName]) {
+            newState[targetIndex].inputs[input.inputName].value = input.value;
+          }
+        });
+
+        return newState;
+      });
+    }
+  }, [answeredInputs]);
+
   const setDefaultResPrompts = () => {
     const _initPromptsData: ResPrompt[] = [...resPrompts];
 
@@ -70,7 +88,6 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     setResPrompts(_initPromptsData);
     dispatch(updateExecutionData(JSON.stringify(_initPromptsData)));
   };
-
   // Set default inputs values from selected execution parameters
   // Fetched execution also provides old / no more existed inputs values, needed to filter depending on shown inputs
   useEffect(() => {
@@ -522,7 +539,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
                   key={i}
                   promptId={input.prompt}
                   inputs={[input]}
-                  resInputs={nodeInputs}
+                  nodeInputs={nodeInputs}
                   setNodeInputs={setNodeInputs}
                   errors={errors}
                 />

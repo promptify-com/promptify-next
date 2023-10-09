@@ -1,3 +1,4 @@
+import { AnsweredInputType } from "@/common/types/prompt";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
@@ -7,6 +8,7 @@ export interface TemplatesProps {
   likes: number;
   executionData: string;
   isGenerating: boolean;
+  answeredInputs: AnsweredInputType[];
 }
 
 type UpdateTemplateDataPayload = Pick<TemplatesProps, "is_favorite" | "id" | "likes">;
@@ -17,6 +19,7 @@ const initialState: TemplatesProps = {
   likes: 0,
   executionData: "[]",
   isGenerating: false,
+  answeredInputs: [],
 };
 
 export const templatesSlice = createSlice({
@@ -40,10 +43,18 @@ export const templatesSlice = createSlice({
     setGeneratingStatus: (state, action: PayloadAction<boolean>) => {
       state.isGenerating = action.payload;
     },
+    updateAnsweredInput: (state, action: PayloadAction<AnsweredInputType[]>) => {
+      state.answeredInputs = action.payload;
+    },
   },
 });
 
-export const { updateCurrentFavorite, updateTemplateData, updateExecutionData, setGeneratingStatus } =
-  templatesSlice.actions;
+export const {
+  updateCurrentFavorite,
+  updateTemplateData,
+  updateExecutionData,
+  setGeneratingStatus,
+  updateAnsweredInput,
+} = templatesSlice.actions;
 
 export default templatesSlice.reducer;
