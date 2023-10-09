@@ -52,9 +52,7 @@ export const HighlightTextarea = ({
   const [optionType, setOptionType] = useState<PresetType>("input");
   const [suggestionList, setSuggestionList] = useState<Preset[]>([]);
   const divRef = useRef<HighlightWithinTextareaRef | null>(null);
-
-  const isSuggestionsVisible = Boolean(suggestionList.length > 0);
-  const cursorPosition = useCursorPosition(divRef, isSuggestionsVisible);
+  const cursorPosition = useCursorPosition(divRef, highlitedValue);
 
   const showSuggestions = (value: string) => {
     let suggestions: Preset[] = [];
@@ -138,6 +136,7 @@ export const HighlightTextarea = ({
           placeholder="..."
           stripPastedStyles
           onChange={(newValue, selection) => {
+            newValue = newValue.replace(/{{[^{}]*[^}]*(?:}}|$)/g, match => match.replace(/\s/g, ""));
             onChange(newValue, selection);
             showSuggestions(newValue);
           }}
