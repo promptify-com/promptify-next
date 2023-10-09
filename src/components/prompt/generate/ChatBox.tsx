@@ -599,6 +599,22 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
     dispatchNewExecutionData(newAnswers, _inputs);
   };
 
+  const prompts = template.prompts;
+  const hasContent = prompts.some(prompt => prompt.content);
+  const shouldShowGenerate = !hasContent && _inputs.length === 0;
+
+  let isButtonDisabled = true;
+
+  if (!!currentUser?.id) {
+    if (canShowGenerateButton) {
+      isButtonDisabled = true;
+    } else if (!shouldShowGenerate) {
+      isButtonDisabled = true;
+    } else {
+      isButtonDisabled = false;
+    }
+  }
+
   return (
     <Grid
       width={"100%"}
@@ -717,7 +733,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
               disabled={disableChat || isValidatingAnswer || disableChatInput}
               disabledTags={disableChat || isValidatingAnswer || disableChatInput || isGenerating}
               onVary={() => setVaryOpen(true)}
-              showGenerate={Boolean((showGenerateButton || canShowGenerateButton) && currentUser?.id)}
+              showGenerate={isButtonDisabled}
               onGenerate={generateExecutionHandler}
               isValidating={isValidatingAnswer}
             />

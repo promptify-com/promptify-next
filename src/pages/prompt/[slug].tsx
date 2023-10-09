@@ -5,6 +5,8 @@ import {
   AccordionSummary,
   Alert,
   Box,
+  Button,
+  CircularProgress,
   Divider,
   Grid,
   Palette,
@@ -32,15 +34,17 @@ import { DetailsCardMini } from "@/components/prompt/DetailsCardMini";
 import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { useSelector, useDispatch } from "react-redux";
-import { updateTemplateData, updateExecutionData } from "@/core/store/templatesSlice";
+import { updateTemplateData, updateExecutionData, setGeneratingStatus } from "@/core/store/templatesSlice";
 import { RootState } from "@/core/store";
 import PromptPlaceholder from "@/components/placeholders/PromptPlaceHolder";
 import { useAppSelector } from "@/hooks/useStore";
 import ChatMode from "@/components/prompt/generate/ChatBox";
 import { getExecutionByHash } from "@/hooks/api/executions";
-import { ExpandMore } from "@mui/icons-material";
+import { ExpandMore, PlayCircle } from "@mui/icons-material";
 import { GeneratorForm } from "@/components/prompt/GeneratorForm";
 import { isDesktopViewPort } from "@/common/helpers";
+import useToken from "@/hooks/useToken";
+import { GeneratorButton } from "@/components/prompt/GeneratorButton";
 
 interface TemplateProps {
   hashedExecution: TemplatesExecutions | null;
@@ -338,7 +342,12 @@ const Template = ({ hashedExecution, fetchedTemplate }: TemplateProps) => {
                       overflow: "hidden",
                     }}
                   >
-                    Chat is unavailable
+                    <GeneratorButton
+                      templateData={fetchedTemplate}
+                      selectedExecution={selectedExecution}
+                      setGeneratedExecution={setGeneratedExecution}
+                      onError={setErrorMessage}
+                    />
                   </Grid>
                 )
               ) : null}

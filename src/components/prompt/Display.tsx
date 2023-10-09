@@ -118,7 +118,7 @@ export const Display: React.FC<Props> = ({
       flexDirection={"column"}
       gap={"24px"}
     >
-      {isDesktopView && !!templateData?.questions?.length && templateData?.status === "PUBLISHED" && (
+      {isDesktopView && templateData?.status !== "PUBLISHED" && (
         <ClientOnly>
           <ChatMode
             key={templateData.id}
