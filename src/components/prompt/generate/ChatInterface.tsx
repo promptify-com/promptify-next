@@ -19,11 +19,7 @@ export const ChatInterface = ({ messages, onChange, setIsSimulaitonStreaming }: 
   };
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      scrollToBottom();
-    }, 0);
-
-    return () => clearTimeout(timer);
+    scrollToBottom();
   }, [messages]);
 
   const isNotLastMessage = (message: IMessage) => {
