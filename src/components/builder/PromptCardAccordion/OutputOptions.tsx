@@ -4,7 +4,11 @@ import {
   Box,
   Button,
   Divider,
+  FormControl,
   FormControlLabel,
+  InputLabel,
+  MenuItem,
+  Select,
   Stack,
   Switch,
   TextField,
@@ -22,12 +26,15 @@ interface Props {
 export const OutputOptions: React.FC<Props> = ({ prompt, onSave, onCancel }) => {
   const [promptData, setPromptData] = useState(prompt);
 
+  const titleFormats = ["JSON", "XML", "Markdown"];
+
   return (
     <Stack
-      height={"100%"}
-      width={"100%"}
+      minWidth={"648px"}
+      minHeight={"500px"}
+      position={"relative"}
     >
-      <Box p={"16px"}>Generated content format:</Box>
+      <Typography p={"16px"}>Generated content format:</Typography>
       <Divider sx={{ borderColor: "surface.3" }} />
       <Box
         sx={{
@@ -54,7 +61,7 @@ export const OutputOptions: React.FC<Props> = ({ prompt, onSave, onCancel }) => 
           gap={3}
           py={"8px"}
         >
-          <Box>
+          <Box flex={1}>
             <Typography
               sx={{
                 fontSize: 14,
@@ -65,20 +72,28 @@ export const OutputOptions: React.FC<Props> = ({ prompt, onSave, onCancel }) => 
             >
               Text output format:
             </Typography>
-            <Autocomplete
-              freeSolo
-              options={["JSON", "XML", "Markdown"]}
-              renderInput={params => (
-                <TextField
-                  {...params}
-                  label="Format"
-                />
-              )}
-              value={promptData.output_format}
-              onInputChange={(e, value) => setPromptData({ ...promptData, output_format: value })}
+            <FormControl
+              fullWidth
+              variant="outlined"
               size="small"
-              clearIcon={false}
-            />
+            >
+              <InputLabel id="format-select-label">Format</InputLabel>
+              <Select
+                labelId="format-select-label"
+                value={promptData.output_format}
+                onChange={e => setPromptData({ ...promptData, output_format: e.target.value })}
+                label="Format"
+              >
+                {titleFormats.map(format => (
+                  <MenuItem
+                    key={format}
+                    value={format}
+                  >
+                    {format}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Box>
           <Box>
             <Box
@@ -138,6 +153,9 @@ export const OutputOptions: React.FC<Props> = ({ prompt, onSave, onCancel }) => 
         justifyContent={"flex-end"}
         gap={2}
         p={"16px 24px"}
+        position={"fixed"}
+        right={2}
+        bottom={2}
       >
         <Button
           variant="text"

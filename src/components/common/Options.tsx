@@ -23,6 +23,7 @@ export const Options: React.FC<Props> = ({ options, onChoose, variant, type }) =
     color: type === "input" ? "#00897B" : "#9C27B0",
     fontSize: 12,
     cursor: "pointer",
+    fontFamily: "Roboto Mono",
   };
 
   if (!options.length) return;

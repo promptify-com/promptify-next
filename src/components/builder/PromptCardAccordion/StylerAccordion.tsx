@@ -54,6 +54,13 @@ export const StylerAccordion = ({ prompt, setPrompt }: Props) => {
     });
   };
 
+  const getAvailableParameters = () => {
+    if (parameters) {
+      const addedParameterIds = new Set(prompt.parameters.map(p => p.parameter_id));
+      return parameters.filter(param => !addedParameterIds.has(param.id));
+    }
+  };
+
   return (
     <>
       <Accordion
@@ -197,7 +204,7 @@ export const StylerAccordion = ({ prompt, setPrompt }: Props) => {
             }}
           >
             <Box>
-              {parameters?.map(param => (
+              {getAvailableParameters()?.map(param => (
                 <Button
                   key={param.id}
                   sx={{

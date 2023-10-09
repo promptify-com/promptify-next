@@ -105,7 +105,7 @@ export const HighlightTextarea = ({
           ref={divRef}
           value={content}
           highlight={highlight}
-          placeholder="..."
+          placeholder="///Write Prompt instructions here"
           stripPastedStyles
           onChange={(newValue, selection) => {
             onChange(newValue, selection);

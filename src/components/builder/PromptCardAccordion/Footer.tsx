@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { IEditPrompts } from "@/common/types/builder";
 import { ArrowDropDown } from "@mui/icons-material";
-import { Button, Popover, Stack, Typography } from "@mui/material";
+import { Button, Popover, Popper, Stack, Typography } from "@mui/material";
 import { OutputOptions } from "./OutputOptions";
 import ArrowRightBottom from "@/assets/icons/ArrowRightBottom";
 import { theme } from "@/theme";
@@ -56,7 +56,7 @@ export const Footer = ({ prompt, setPrompt }: Props) => {
           }}
         >
           {prompt.output_format ? prompt.output_format + " ," : ""}
-          Visbility: {prompt.is_visible ? "On" : "Off"}, Title: {prompt.prompt_output_variable || "..."}
+          Visbility: {prompt.is_visible ? "On" : "Off"}, Title: {!!prompt.prompt_output_variable ? "On" : "Off"}
         </Typography>
         <Button
           variant="text"
@@ -120,13 +120,23 @@ export const Footer = ({ prompt, setPrompt }: Props) => {
           </Button>
         </Stack>
       </Stack>
-      <Popover
+      <Popper
         open={showOptions}
         anchorEl={optionsAnchor}
-        onClose={closeOptionsModal}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "left",
+        placement="bottom-start"
+        modifiers={[
+          {
+            name: "offset",
+            options: {
+              offset: [15, 10],
+            },
+          },
+        ]}
+        sx={{
+          bgcolor: "surface.1",
+          borderRadius: "6px",
+          zIndex: 1,
+          boxShadow: "0px 2px 12px rgba(0, 0, 0, 0.15)",
         }}
       >
         <OutputOptions
@@ -137,7 +147,7 @@ export const Footer = ({ prompt, setPrompt }: Props) => {
           }}
           onCancel={closeOptionsModal}
         />
-      </Popover>
+      </Popper>
     </>
   );
 };
