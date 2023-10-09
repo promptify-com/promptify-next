@@ -6,14 +6,11 @@ type CursorPosition = {
   y: number;
 };
 
-export function useCursorPosition(
-  divRef: React.RefObject<HighlightWithinTextareaRef>,
-  isSuggestionListVisible: boolean,
-) {
+export function useCursorPosition(divRef: React.RefObject<HighlightWithinTextareaRef>, selectedHighlight: string) {
   const [cursorPosition, setCursorPosition] = useState<CursorPosition | null>(null);
 
   useEffect(() => {
-    if (isSuggestionListVisible && divRef.current) {
+    if (selectedHighlight && divRef.current) {
       const selection = window.getSelection();
       if (selection && selection.rangeCount > 0) {
         const range = selection.getRangeAt(0);
@@ -28,7 +25,7 @@ export function useCursorPosition(
         setCursorPosition(cursorCoordinates);
       }
     }
-  }, [isSuggestionListVisible]);
+  }, [selectedHighlight]);
 
   return cursorPosition;
 }
