@@ -19,10 +19,6 @@ interface GeneratorButtonProps {
   onError: (errMsg: string) => void;
 }
 
-interface InputsErrors {
-  [key: string]: number | boolean;
-}
-
 interface Input extends IPromptInput {
   prompt: number;
 }
@@ -159,7 +155,7 @@ export const GeneratorButton: React.FC<GeneratorButtonProps> = ({
   };
 
   const generateExecution = (executionData: ResPrompt[]) => {
-    setLastExecution(JSON.parse(JSON.stringify(executionData)));
+    setLastExecution([...executionData]);
 
     let tempData: any[] = [];
     let url = `${process.env.NEXT_PUBLIC_API_URL}/api/meta/templates/${templateData.id}/execute/`;
@@ -330,33 +326,32 @@ export const GeneratorButton: React.FC<GeneratorButtonProps> = ({
     setShownParams(Array.from(shownParams.values()));
   };
 
-  // Keyboard shortcuts
-  const handleKeyboard = (e: KeyboardEvent) => {
-    // prevent trigger if typing inside input
-    const target = e.target as HTMLElement;
-    if (!["INPUT", "TEXTAREA"].includes(target.tagName)) {
-      if (e.shiftKey && e.code === "KeyR" && lastExecution) {
-        generateExecution(lastExecution);
-      }
-    }
-  };
-
   useEffect(() => {
-    window.addEventListener("keydown", handleKeyboard);
-    return () => window.removeEventListener("keydown", handleKeyboard);
-  }, [handleKeyboard]);
+    const handleKeyboard = (e: KeyboardEvent) => {
+      // prevent trigger if typing inside input
+      const target = e.target as HTMLElement;
+      if (!["INPUT", "TEXTAREA"].includes(target.tagName)) {
+        if (e.shiftKey && e.code === "KeyR" && lastExecution) {
+          generateExecution(lastExecution);
+        }
+      }
+    };
 
-  const filledForm = nodeInputs.every(nodeInput =>
-    Object.values(nodeInput.inputs)
-      .filter(input => input.required)
-      .every(input => input.value),
-  );
+    window.addEventListener("keydown", handleKeyboard);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyboard);
+    };
+  }, [lastExecution]);
 
   const prompts = templateData.prompts;
-  const hasContent = prompts.some(prompt => prompt.content);
-  const shouldShowGenerate = !hasContent && nodeInputs.length === 0;
+  const promptHasContent = prompts.some(prompt => prompt.content);
+  const nodeInputsRequired = nodeInputs.some(input =>
+    Object.values(input.inputs).some(input => input.required === true),
+  );
+  const hasContentAndNodeRequired = promptHasContent && nodeInputsRequired;
 
-  const isButtonDisabled = isGenerating ? true : shouldShowGenerate;
+  const isButtonDisabled = isGenerating ? true : !hasContentAndNodeRequired;
 
   return (
     <Button

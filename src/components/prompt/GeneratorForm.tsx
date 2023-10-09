@@ -448,11 +448,13 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   const allowReset = nodeInputs.some(input => Object.values(input.inputs).some(input => input.value));
 
   const prompts = templateData.prompts;
-  const hasContent = prompts.some(prompt => prompt.content);
-  // const shouldShowGenerate = hasContent && nodeInputs.length === 0;
-  const shouldShowGenerate = !hasContent && nodeInputs.length === 0;
+  const promptHasContent = prompts.some(prompt => prompt.content);
+  const nodeInputsRequired = nodeInputs.some(input =>
+    Object.values(input.inputs).some(input => input.required === true),
+  );
+  const hasContentAndNodeRequired = promptHasContent && nodeInputsRequired;
 
-  const isButtonDisabled = token ? (isGenerating ? true : shouldShowGenerate) : true;
+  const isButtonDisabled = token ? (isGenerating ? true : !hasContentAndNodeRequired) : true;
 
   return (
     <Stack

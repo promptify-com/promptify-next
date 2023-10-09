@@ -649,20 +649,9 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
   };
 
   const prompts = template.prompts;
-  const hasContent = prompts.some(prompt => prompt.content);
-  const shouldShowGenerate = !hasContent && _inputs.length === 0;
-
-  let isButtonDisabled = true;
-
-  if (!!currentUser?.id) {
-    if (canShowGenerateButton) {
-      isButtonDisabled = true;
-    } else if (!shouldShowGenerate) {
-      isButtonDisabled = true;
-    } else {
-      isButtonDisabled = false;
-    }
-  }
+  const promptHasContent = prompts.some(prompt => prompt.content);
+  const nodeInputsRequired = _inputs.some(input => input.required === true);
+  const hasContentAndNodeRequired = promptHasContent && nodeInputsRequired;
 
   return (
     <Grid
@@ -779,9 +768,10 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
               disabled={disableChat || isValidatingAnswer || disableChatInput}
               disabledTags={disableChat || isValidatingAnswer || disableChatInput || isGenerating}
               onVary={() => setVaryOpen(true)}
-              showGenerate={isButtonDisabled}
+              showGenerate={Boolean((showGenerateButton || canShowGenerateButton) && currentUser?.id)}
               onGenerate={generateExecutionHandler}
               isValidating={isValidatingAnswer}
+              buttonShouldDisabled={!hasContentAndNodeRequired}
             />
           ) : (
             <Stack
