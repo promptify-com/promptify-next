@@ -213,6 +213,16 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
     return unansweredQuestions[0];
   };
 
+  const allRequiredQuestionsAnswered = (templateQuestions: UpdatedQuestionTemplate[], answers: IAnswer[]): boolean => {
+    const requiredQuestionNames = templateQuestions
+      .filter(question => question.required)
+      .map(question => question.name);
+
+    const answeredQuestionNames = answers.map(answer => answer.inputName);
+
+    return requiredQuestionNames.every(name => answeredQuestionNames.includes(name));
+  };
+
   const handleSyncForms = (currentAnswers: IAnswer[]) => {
     const updatedInput = currentAnsweredInputs[0];
     const updatedQuestionIndex = templateQuestions.findIndex(question => updatedInput.inputName === question.name);
@@ -252,11 +262,6 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
       !showGenerateButton && setShowGenerateButton(true);
       setDisableChatInput(true);
     } else {
-      if (!nextQuestion.required && !showGenerateButton) {
-        setShowGenerateButton(true);
-      } else {
-        setShowGenerateButton(false);
-      }
       nextMessages.push({
         text: nextQuestion.question,
         choices: nextQuestion.choices,
@@ -270,6 +275,14 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
 
     setMessages(prevMessages => prevMessages.concat(nextMessages));
   };
+
+  useEffect(() => {
+    if (allRequiredQuestionsAnswered(templateQuestions, answers)) {
+      setShowGenerateButton(true);
+    } else {
+      setShowGenerateButton(false);
+    }
+  }, [answers, templateQuestions]);
 
   useEffect(() => {
     if (currentAnsweredInputs.length === 0) return;
