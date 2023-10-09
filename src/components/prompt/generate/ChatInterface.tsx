@@ -12,10 +12,18 @@ interface Props {
 export const ChatInterface = ({ messages, onChange, setIsSimulaitonStreaming }: Props) => {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => {
+  const scrollToBottom = () => {
     if (messagesContainerRef.current) {
       messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
     }
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      scrollToBottom();
+    }, 0);
+
+    return () => clearTimeout(timer);
   }, [messages]);
 
   const isNotLastMessage = (message: IMessage) => {
@@ -56,6 +64,7 @@ export const ChatInterface = ({ messages, onChange, setIsSimulaitonStreaming }: 
           onChangeValue={onChange}
           disabledChoices={isNotLastMessage(msg)}
           setIsSimulaitonStreaming={setIsSimulaitonStreaming}
+          onScrollToBottom={scrollToBottom}
         />
       ))}
     </Grid>
