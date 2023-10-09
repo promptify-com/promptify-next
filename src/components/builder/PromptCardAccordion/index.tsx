@@ -1,6 +1,6 @@
 import { ModeEdit, PlayCircle } from "@mui/icons-material";
 import { Box, Button, Divider, Stack, Typography } from "@mui/material";
-import React, { useMemo, useRef, useState } from "react";
+import React, { memo, useMemo, useRef, useState } from "react";
 import { Header } from "./Header";
 import { StylerAccordion } from "./StylerAccordion";
 import { IEditPrompts } from "@/common/types/builder";
@@ -24,7 +24,7 @@ interface Props {
   movePrompt: (id: number, atIndex: number) => void;
 }
 
-export const PromptCardAccordion = ({
+const PromptCardAccordion = ({
   prompt,
   order,
   setPrompt,
@@ -209,3 +209,5 @@ export const PromptCardAccordion = ({
     </Box>
   );
 };
+
+export default memo(PromptCardAccordion);
