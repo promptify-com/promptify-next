@@ -239,7 +239,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
         fromUser: false,
       });
 
-      updatedQuestion.type === "text" &&
+      ["text", "number"].includes(updatedQuestion.type) &&
         nextMessages.push({
           text: updatedInput.value as string,
           choices: updatedQuestion.choices,
@@ -269,9 +269,8 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
         createdAt: createdAt,
         fromUser: false,
       });
+      setCurrentQuestionIndex(updatedQuestionIndex + 1);
     }
-
-    nextQuestion && setCurrentQuestionIndex(updatedQuestionIndex + 1);
 
     setMessages(prevMessages => prevMessages.concat(nextMessages));
   };
