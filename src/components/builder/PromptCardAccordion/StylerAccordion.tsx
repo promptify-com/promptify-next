@@ -38,6 +38,10 @@ export const StylerAccordion = ({ prompt, setPrompt }: Props) => {
   };
 
   const addParameter = (param: IParameters) => {
+    if (prompt.parameters.some(p => p.parameter_id === param.id)) {
+      return;
+    }
+
     setPrompt({
       ...prompt,
       parameters: [
@@ -52,13 +56,6 @@ export const StylerAccordion = ({ prompt, setPrompt }: Props) => {
         },
       ],
     });
-  };
-
-  const getAvailableParameters = () => {
-    if (parameters) {
-      const addedParameterIds = new Set(prompt.parameters.map(p => p.parameter_id));
-      return parameters.filter(param => !addedParameterIds.has(param.id));
-    }
   };
 
   return (
@@ -204,7 +201,7 @@ export const StylerAccordion = ({ prompt, setPrompt }: Props) => {
             }}
           >
             <Box>
-              {getAvailableParameters()?.map(param => (
+              {parameters?.map(param => (
                 <Button
                   key={param.id}
                   sx={{
@@ -219,6 +216,7 @@ export const StylerAccordion = ({ prompt, setPrompt }: Props) => {
                       bgcolor: "action.hover",
                     },
                   }}
+                  disabled={prompt.parameters.some(prompt => prompt.parameter_id === param.id)}
                   onClick={() => {
                     addParameter(param);
                     closeParamsModal();
