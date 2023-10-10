@@ -14,26 +14,33 @@ interface MessageBlockProps {
   onChangeValue?: (value: string) => void;
   disabledChoices: boolean;
   setIsSimulaitonStreaming: Dispatch<SetStateAction<boolean>>;
+  onScrollToBottom: () => void;
 }
 
 interface MessageContentProps {
   content: string;
   shouldStream: boolean;
   setIsSimulaitonStreaming: Dispatch<SetStateAction<boolean>>;
+  onStreamingFinished: () => void;
 }
 
-const MessageContent = memo(({ content, shouldStream, setIsSimulaitonStreaming }: MessageContentProps) => {
-  const { streamedText, hasFinished } = useTextSimulationStreaming({
-    text: content,
-    shouldStream,
-  });
+const MessageContent = memo(
+  ({ content, shouldStream, setIsSimulaitonStreaming, onStreamingFinished }: MessageContentProps) => {
+    const { streamedText, hasFinished } = useTextSimulationStreaming({
+      text: content,
+      shouldStream,
+    });
 
-  useEffect(() => {
-    hasFinished && setIsSimulaitonStreaming(false);
-  }, [hasFinished]);
+    useEffect(() => {
+      if (hasFinished) {
+        setIsSimulaitonStreaming(false);
+        onStreamingFinished();
+      }
+    }, [hasFinished]);
 
-  return <>{streamedText}</>;
-});
+    return <>{streamedText}</>;
+  },
+);
 
 export const Message = ({
   message,
@@ -41,6 +48,7 @@ export const Message = ({
   onChangeValue,
   disabledChoices,
   setIsSimulaitonStreaming,
+  onScrollToBottom,
 }: MessageBlockProps) => {
   const { fromUser, type, text, createdAt, choices } = message;
   const currentUser = useAppSelector(state => state.user.currentUser);
@@ -143,6 +151,7 @@ export const Message = ({
               content={text}
               shouldStream={!fromUser}
               setIsSimulaitonStreaming={setIsSimulaitonStreaming}
+              onStreamingFinished={onScrollToBottom}
             />
           </Typography>
           {type === "code" && !fromUser && (

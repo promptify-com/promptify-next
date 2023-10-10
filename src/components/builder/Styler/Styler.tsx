@@ -26,6 +26,7 @@ import {
   useGetParametersQuery,
 } from "@/core/api/parameters";
 import { BUILDER_TYPE } from "@/common/constants";
+import { addParameter } from "@/common/helpers/addParameter";
 
 interface IProps {
   selectedNodeData: IEditPrompts;
@@ -86,18 +87,12 @@ export const Styler = ({ selectedNodeData, setSelectedNodeData, type }: IProps) 
     }
   };
 
-  const addParameter = (param: IParameters) => {
-    changePromptParams([
-      ...selectedNodeData.parameters,
-      {
-        parameter_id: param.id,
-        score: 1,
-        name: param.name,
-        is_visible: true,
-        is_editable: true,
-        descriptions: param.score_descriptions,
-      },
-    ]);
+  const createParameter = (param: IParameters) => {
+    const newParameters = addParameter({
+      prompt: selectedNodeData,
+      newParameter: param,
+    });
+    changePromptParams(newParameters.parameters);
     setOpenParamsModal(false);
   };
 
@@ -230,11 +225,34 @@ export const Styler = ({ selectedNodeData, setSelectedNodeData, type }: IProps) 
         <Stack
           direction={"row"}
           alignItems={"center"}
-          gap={2}
+          justifyContent={"space-between"}
         >
-          {selectedNodeData.parameters.length > 0 && (
+          <Stack
+            direction={"row"}
+            alignItems={"center"}
+            gap={2}
+          >
+            {selectedNodeData.parameters.length > 0 && (
+              <IconButton
+                onClick={() => setOpenNewPreset(true)}
+                sx={{
+                  border: "none",
+                  fontSize: 14,
+                  fontWeight: 500,
+                  borderRadius: "999px",
+                  gap: 1,
+                  p: "6px 16px",
+                  bgcolor: "surface.4",
+                  "&:hover": {
+                    bgcolor: "action.hover",
+                  },
+                }}
+              >
+                <AddCircle /> Add
+              </IconButton>
+            )}
             <IconButton
-              onClick={() => setOpenNewPreset(true)}
+              onClick={() => setExpandPresets(true)}
               sx={{
                 border: "none",
                 fontSize: 14,
@@ -248,26 +266,27 @@ export const Styler = ({ selectedNodeData, setSelectedNodeData, type }: IProps) 
                 },
               }}
             >
-              <AddCircle /> Add
+              <ContentCopy /> Copy...
+            </IconButton>
+          </Stack>
+          {selectedNodeData.parameters.length !== 0 && (
+            <IconButton
+              onClick={() => changePromptParams([])}
+              sx={{
+                border: "none",
+                fontSize: 14,
+                fontWeight: 500,
+                borderRadius: "999px",
+                gap: 1,
+                p: "6px 16px",
+                "&:hover": {
+                  bgcolor: "action.hover",
+                },
+              }}
+            >
+              Clear
             </IconButton>
           )}
-          <IconButton
-            onClick={() => setExpandPresets(true)}
-            sx={{
-              border: "none",
-              fontSize: 14,
-              fontWeight: 500,
-              borderRadius: "999px",
-              gap: 1,
-              p: "6px 16px",
-              bgcolor: "surface.4",
-              "&:hover": {
-                bgcolor: "action.hover",
-              },
-            }}
-          >
-            <ContentCopy /> Copy...
-          </IconButton>
         </Stack>
       )}
 
@@ -314,7 +333,7 @@ export const Styler = ({ selectedNodeData, setSelectedNodeData, type }: IProps) 
         open={openParamsModal}
         selectedNodeData={selectedNodeData}
         onClose={() => setOpenParamsModal(false)}
-        onClick={addParameter}
+        onClick={createParameter}
       />
 
       <Dialog
