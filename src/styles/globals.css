@@ -37,6 +37,7 @@ body {
   .resp-justity {
     justify-content: flex-start;
   }
+}
 
 .sparkContainer {
   cursor: pointer !important;
@@ -216,5 +217,3 @@ body {
   border-radius: 10px;
   padding-right: 5px;
 }
-
-}   
