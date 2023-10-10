@@ -12,22 +12,17 @@ import Storage from "@/common/storage";
 
 import { setGeneratingStatus, updateExecutionData } from "@/core/store/templatesSlice";
 
-interface GeneratorButtonProps {
+interface ButtonGenerateExecutionProps {
   templateData: Templates;
   selectedExecution: TemplatesExecutions | null;
   setGeneratedExecution: (data: PromptLiveResponse) => void;
   onError: (errMsg: string) => void;
 }
-
 interface Input extends IPromptInput {
   prompt: number;
 }
-interface Param {
-  prompt: number;
-  param: PromptParams;
-}
 
-export const GeneratorButton: React.FC<GeneratorButtonProps> = ({
+export const ButtonGenerateExecution: React.FC<ButtonGenerateExecutionProps> = ({
   templateData,
   selectedExecution,
   setGeneratedExecution,
@@ -43,7 +38,6 @@ export const GeneratorButton: React.FC<GeneratorButtonProps> = ({
   const [nodeInputs, setNodeInputs] = useState<ResInputs[]>([]);
   const [nodeParams, setNodeParams] = useState<ResOverrides[]>([]);
   const [shownInputs, setShownInputs] = useState<Input[] | null>(null);
-  const [shownParams, setShownParams] = useState<Param[] | null>(null);
 
   const setDefaultResPrompts = () => {
     const _initPromptsData: ResPrompt[] = [...resPrompts];
@@ -306,24 +300,14 @@ export const GeneratorButton: React.FC<GeneratorButtonProps> = ({
 
   const removeDuplicates = async () => {
     const shownInputs = new Map<string, Input>();
-    const shownParams = new Map<number, Param>();
 
     templateData.prompts?.forEach(prompt => {
       const inputs = getInputsFromString(prompt.content);
-
       inputs.forEach(input => {
         shownInputs.set(input.name, { ...input, prompt: prompt.id });
       });
-
-      prompt.parameters
-        .filter(param => param.is_visible)
-        .forEach(param => {
-          shownParams.set(param.parameter.id, { param, prompt: prompt.id });
-        });
     });
-
     setShownInputs(Array.from(shownInputs.values()));
-    setShownParams(Array.from(shownParams.values()));
   };
 
   useEffect(() => {

@@ -41,7 +41,7 @@ import { ExpandMore, PlayCircle } from "@mui/icons-material";
 import { GeneratorForm } from "@/components/prompt/GeneratorForm";
 import { isDesktopViewPort } from "@/common/helpers";
 import GeneratedExecutionFooter from "@/components/prompt/GeneratedExecutionFooter";
-import { GeneratorButton } from "@/components/prompt/GeneratorButton";
+import { ButtonGenerateExecution } from "@/components/prompt/ButtonGenerateExecution";
 
 interface TemplateProps {
   hashedExecution: TemplatesExecutions | null;
@@ -327,7 +327,7 @@ const Template = ({ hashedExecution, fetchedTemplate }: TemplateProps) => {
                       overflow: "hidden",
                     }}
                   >
-                    <GeneratorButton
+                    <ButtonGenerateExecution
                       templateData={fetchedTemplate}
                       selectedExecution={selectedExecution}
                       setGeneratedExecution={setGeneratedExecution}
