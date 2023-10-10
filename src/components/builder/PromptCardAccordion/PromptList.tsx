@@ -1,5 +1,5 @@
 import { Fragment, useCallback, useState, memo, MutableRefObject } from "react";
-import { PromptCardAccordion } from "@/components/builder/PromptCardAccordion";
+import PromptCardAccordion from "@/components/builder/PromptCardAccordion";
 import { IEditPrompts } from "@/common/types/builder";
 import { useDrop } from "react-dnd";
 import { Box, Button, Stack } from "@mui/material";
@@ -10,11 +10,11 @@ import { useDeletePromptMutation } from "@/core/api/templates";
 import { DeleteDialog } from "@/components/dialog/DeleteDialog";
 
 interface Props {
-  promptsRefData: MutableRefObject<IEditPrompts[]>;
+  prompts: IEditPrompts[];
+  setPrompts: (prompts: IEditPrompts[]) => void;
   engines: Engine[];
 }
-const PromptList = ({ promptsRefData, engines }: Props) => {
-  const [promptsList, setPromptsList] = useState<IEditPrompts[]>(promptsRefData.current);
+const PromptList = ({ prompts, setPrompts, engines }: Props) => {
   const [promptToDelete, setPromptToDelete] = useState<IEditPrompts | null>(null);
   const [deletePrompt] = useDeletePromptMutation();
 
@@ -23,33 +23,32 @@ const PromptList = ({ promptsRefData, engines }: Props) => {
     (id: number) => {
       let promptIndex = 0;
 
-      promptsList.find((prompt, idx) => {
+      prompts.find((prompt, idx) => {
         promptIndex = idx;
         return prompt.id === id || prompt.temp_id === id;
       });
 
       return promptIndex;
     },
-    [promptsList],
+    [prompts],
   );
   const movePrompt = useCallback(
     (id: number, atIndex: number) => {
       const index = findPromptIndex(id);
-      let _prompts = promptsRefData.current;
+      let _prompts = prompts;
 
       const targetPromptOrder = _prompts.splice(index, 1);
       _prompts.splice(atIndex, 0, targetPromptOrder[0]);
 
       _prompts = _prompts.map((prompt, index) => ({ ...prompt, order: index + 1 }));
 
-      promptsRefData.current = _prompts;
-      setPromptsList(_prompts);
+      setPrompts(_prompts);
     },
-    [findPromptIndex, promptsList],
+    [findPromptIndex, prompts],
   );
 
   const changePrompt = (prompt: IEditPrompts) => {
-    const _prompts = promptsRefData.current.map(prevPrompt => {
+    const _prompts = prompts.map(prevPrompt => {
       if (
         (prompt.id && prevPrompt.id && prompt.id === prevPrompt.id) ||
         (prompt.temp_id && prevPrompt.temp_id && prompt.temp_id === prevPrompt.temp_id)
@@ -59,7 +58,7 @@ const PromptList = ({ promptsRefData, engines }: Props) => {
       return prevPrompt;
     });
 
-    promptsRefData.current = _prompts;
+    setPrompts(_prompts);
   };
 
   const createPrompt = (order: number) => {
@@ -80,8 +79,8 @@ const PromptList = ({ promptsRefData, engines }: Props) => {
     };
 
     let _prompts: IEditPrompts[] = [_newPrompt];
-    if (promptsRefData.current.length) {
-      _prompts = promptsRefData.current
+    if (prompts.length) {
+      _prompts = prompts
         .map((prompt, i) => {
           i++;
           if (i === order - 1) {
@@ -92,12 +91,11 @@ const PromptList = ({ promptsRefData, engines }: Props) => {
         .flat();
     }
 
-    promptsRefData.current = _prompts;
-    setPromptsList(_prompts);
+    setPrompts(_prompts);
   };
 
   const duplicatePrompt = (duplicatedPrompt: IEditPrompts, order: number) => {
-    const duplicateData = promptsRefData.current.find(
+    const duplicateData = prompts.find(
       prompt =>
         (duplicatedPrompt.id && prompt.id && duplicatedPrompt.id === prompt.id) ||
         (duplicatedPrompt.temp_id && prompt.temp_id && duplicatedPrompt.temp_id === prompt.temp_id),
@@ -120,7 +118,7 @@ const PromptList = ({ promptsRefData, engines }: Props) => {
       prompt_output_variable: `$temp_id_${temp_id}`,
     };
 
-    const _prompts: IEditPrompts[] = promptsRefData.current
+    const _prompts: IEditPrompts[] = prompts
       .map((prompt, i) => {
         i++;
         if (i === order - 1) {
@@ -130,8 +128,7 @@ const PromptList = ({ promptsRefData, engines }: Props) => {
       })
       .flat();
 
-    promptsRefData.current = _prompts;
-    setPromptsList(_prompts);
+    setPrompts(_prompts);
   };
 
   const removePrompt = async () => {
@@ -141,12 +138,11 @@ const PromptList = ({ promptsRefData, engines }: Props) => {
       await deletePrompt(promptToDelete.id);
     }
 
-    const _prompts = promptsRefData.current.filter(
+    const _prompts = prompts.filter(
       prompt => promptToDelete.id !== prompt.id || promptToDelete.temp_id !== prompt.temp_id,
     );
 
-    promptsRefData.current = _prompts;
-    setPromptsList(_prompts);
+    setPrompts(_prompts);
     setPromptToDelete(null);
   };
 
@@ -156,8 +152,8 @@ const PromptList = ({ promptsRefData, engines }: Props) => {
       alignItems={"center"}
       gap={3}
     >
-      {promptsList.length ? (
-        promptsList.map((prompt, index) => {
+      {prompts.length ? (
+        prompts.map((prompt, index) => {
           index++; // start from 1
           return (
             <Fragment key={index}>
@@ -169,7 +165,7 @@ const PromptList = ({ promptsRefData, engines }: Props) => {
                   setPrompt={changePrompt}
                   deletePrompt={() => setPromptToDelete(prompt)}
                   duplicatePrompt={() => duplicatePrompt(prompt, index + 1)}
-                  prompts={promptsList}
+                  prompts={prompts}
                   engines={engines}
                   movePrompt={movePrompt}
                   findPromptIndex={findPromptIndex}

@@ -53,6 +53,10 @@ export const addPreset = ({
     if (input) {
       const { type, required, choices, label } = input;
       preset = `{{${label}:${type}:${required}${choices ? `:"${choices}"` : ""}}}`;
+    } else {
+      const _var = label.slice(2, label.indexOf(":"));
+      const _type = label.slice(label.indexOf(":") + 1, label.indexOf("}}"));
+      preset = `{{${_var}:${_type}:true${_type === "choices" ? `:"1,2,3"` : ""}}}`;
     }
   }
 
