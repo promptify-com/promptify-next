@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap');
 html {
   width: 100%;
   height: 100%;
@@ -28,11 +27,8 @@ body {
 }
 
  .public-DraftEditor-content {
-   font-family: 'Roboto Mono', monospace;
-  }
-
-
-
+   font-family: 'Space Mono', monospace;
+}
 
 .resp-justity {
   justify-content: center;
