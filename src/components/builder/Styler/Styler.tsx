@@ -26,6 +26,7 @@ import {
   useGetParametersQuery,
 } from "@/core/api/parameters";
 import { BUILDER_TYPE } from "@/common/constants";
+import { addParameter } from "@/common/helpers/addParameter";
 
 interface IProps {
   selectedNodeData: IEditPrompts;
@@ -86,18 +87,12 @@ export const Styler = ({ selectedNodeData, setSelectedNodeData, type }: IProps) 
     }
   };
 
-  const addParameter = (param: IParameters) => {
-    changePromptParams([
-      ...selectedNodeData.parameters,
-      {
-        parameter_id: param.id,
-        score: 1,
-        name: param.name,
-        is_visible: true,
-        is_editable: true,
-        descriptions: param.score_descriptions,
-      },
-    ]);
+  const createParameter = (param: IParameters) => {
+    const newParameters = addParameter({
+      prompt: selectedNodeData,
+      newParameter: param,
+    });
+    changePromptParams(newParameters.parameters);
     setOpenParamsModal(false);
   };
 
@@ -314,7 +309,7 @@ export const Styler = ({ selectedNodeData, setSelectedNodeData, type }: IProps) 
         open={openParamsModal}
         selectedNodeData={selectedNodeData}
         onClose={() => setOpenParamsModal(false)}
-        onClick={addParameter}
+        onClick={createParameter}
       />
 
       <Dialog

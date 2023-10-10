@@ -56,7 +56,7 @@ export const Footer = ({ prompt, setPrompt }: Props) => {
           }}
         >
           {prompt.output_format ? prompt.output_format + " ," : ""}
-          Visbility: {prompt.is_visible ? "On" : "Off"}, Title: {!!prompt.prompt_output_variable ? "On" : "Off"}
+          Title: {prompt.is_visible ? "On" : "Off"},
         </Typography>
         <Button
           variant="text"

@@ -21,6 +21,7 @@ import { IEditPrompts } from "@/common/types/builder";
 import { IParameters } from "@/common/types";
 import { useGetParametersQuery } from "@/core/api/parameters";
 import { BUILDER_TYPE } from "@/common/constants";
+import { addParameter } from "@/common/helpers/addParameter";
 
 interface Props {
   prompt: IEditPrompts;
@@ -37,25 +38,12 @@ export const StylerAccordion = ({ prompt, setPrompt }: Props) => {
     setShowParams(false);
   };
 
-  const addParameter = (param: IParameters) => {
-    if (prompt.parameters.some(p => p.parameter_id === param.id)) {
-      return;
-    }
-
-    setPrompt({
-      ...prompt,
-      parameters: [
-        ...prompt.parameters,
-        {
-          parameter_id: param.id,
-          score: 1,
-          name: param.name,
-          is_visible: true,
-          is_editable: true,
-          descriptions: param.score_descriptions,
-        },
-      ],
+  const createParameter = (param: IParameters) => {
+    const updatedPrompt = addParameter({
+      prompt,
+      newParameter: param,
     });
+    setPrompt(updatedPrompt);
   };
 
   return (
@@ -218,7 +206,7 @@ export const StylerAccordion = ({ prompt, setPrompt }: Props) => {
                   }}
                   disabled={prompt.parameters.some(prompt => prompt.parameter_id === param.id)}
                   onClick={() => {
-                    addParameter(param);
+                    createParameter(param);
                     closeParamsModal();
                   }}
                 >
