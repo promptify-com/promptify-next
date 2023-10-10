@@ -651,7 +651,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
   const prompts = template.prompts;
   const promptHasContent = prompts.some(prompt => prompt.content);
   const nodeInputsRequired = _inputs.some(input => input.required === true);
-  const hasContentAndNodeRequired = promptHasContent && nodeInputsRequired;
+  const hasContentAndNodeRequired = promptHasContent && !nodeInputsRequired;
 
   return (
     <Grid
