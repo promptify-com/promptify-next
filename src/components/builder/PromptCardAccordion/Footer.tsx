@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { IEditPrompts } from "@/common/types/builder";
 import { ArrowDropDown } from "@mui/icons-material";
-import { Button, Popover, Popper, Stack, Typography } from "@mui/material";
+import { Button, Popper, Stack, Typography } from "@mui/material";
 import { OutputOptions } from "./OutputOptions";
 import ArrowRightBottom from "@/assets/icons/ArrowRightBottom";
 import { theme } from "@/theme";
@@ -56,7 +56,7 @@ export const Footer = ({ prompt, setPrompt }: Props) => {
           }}
         >
           {prompt.output_format ? prompt.output_format + " ," : ""}
-          Title: {prompt.is_visible ? "On" : "Off"},
+          Visibility: {prompt.show_output ? "On" : "Off"}, Title: {prompt.is_visible ? "On" : "Off"}
         </Typography>
         <Button
           variant="text"

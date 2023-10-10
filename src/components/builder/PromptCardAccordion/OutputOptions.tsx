@@ -109,7 +109,7 @@ export const OutputOptions: React.FC<Props> = ({ prompt, onSave, onCancel }) => 
                   py: "8px",
                 }}
               >
-                Make the Prompt Output Visible?
+                Make the Prompt Title Visible?
               </Typography>
               <FormControlLabel
                 control={<Switch color="primary" />}
@@ -133,7 +133,7 @@ export const OutputOptions: React.FC<Props> = ({ prompt, onSave, onCancel }) => 
                   py: "8px",
                 }}
               >
-                Make the Prompt Title Visible?
+                Make the Prompt Output Visible?
               </Typography>
               <FormControlLabel
                 control={<Switch color="primary" />}
