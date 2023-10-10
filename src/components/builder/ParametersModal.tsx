@@ -5,6 +5,7 @@ import Modal from "@mui/material/Modal";
 import { IParameters } from "@/common/types";
 import { IEditPrompts } from "@/common/types/builder";
 import { useGetParametersQuery } from "@/core/api/parameters";
+import { Button, ListItemButton } from "@mui/material";
 
 interface IModal {
   open: boolean;
@@ -15,10 +16,6 @@ interface IModal {
 
 export default function ParametersModal({ open, selectedNodeData, onClose, onClick }: IModal) {
   const { data: parameters } = useGetParametersQuery();
-
-  const params = parameters?.filter(
-    param => !selectedNodeData?.parameters.find(existsParam => existsParam.parameter_id === param.id),
-  );
 
   return (
     <Modal
@@ -51,25 +48,25 @@ export default function ParametersModal({ open, selectedNodeData, onClose, onCli
         >
           Click on parameter to add
         </Typography>
-        {params?.length ? (
-          params.map(parameter => {
+        {parameters?.length ? (
+          parameters.map(parameter => {
             return (
-              <Box
+              <ListItemButton
                 key={parameter.id}
                 onClick={() => onClick(parameter)}
+                disabled={selectedNodeData?.parameters.some(prompt => prompt.parameter_id === parameter.id)}
+                sx={{
+                  mt: 2,
+                  fontFamily: "Space Mono",
+                  fontSize: 16,
+                  cursor: "pointer",
+                  color: "black",
+                  width: "100%",
+                  textAlign: "start",
+                }}
               >
-                <Typography
-                  sx={{
-                    mt: 2,
-                    fontFamily: "Space Mono",
-                    fontSize: 16,
-                    cursor: "pointer",
-                    color: "black",
-                  }}
-                >
-                  {parameter.name}
-                </Typography>
-              </Box>
+                {parameter.name}
+              </ListItemButton>
             );
           })
         ) : (

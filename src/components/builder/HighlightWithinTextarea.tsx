@@ -133,7 +133,7 @@ export const HighlightTextarea = ({
           ref={divRef}
           value={prompt.content}
           highlight={highlight}
-          placeholder="..."
+          placeholder="///Write Prompt instructions here"
           stripPastedStyles
           onChange={(newValue, selection) => {
             newValue = newValue.replace(/\{\{([^{}]*?)\}\}/g, (match, group) => `{{${group.replace(/\s+/g, "")}}}`);
