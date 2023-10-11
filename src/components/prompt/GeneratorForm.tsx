@@ -15,6 +15,7 @@ import { AllInclusive, Close, InfoOutlined } from "@mui/icons-material";
 import TabsAndFormPlaceholder from "@/components/placeholders/TabsAndFormPlaceholder";
 import Storage from "@/common/storage";
 import { setGeneratingStatus, updateExecutionData } from "@/core/store/templatesSlice";
+import ClientOnly from "../base/ClientOnly";
 
 interface GeneratorFormProps {
   templateData: Templates;
@@ -571,80 +572,82 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
             gap={1}
             p={"16px 8px 16px 16px"}
           >
-            <Button
-              variant={"contained"}
-              startIcon={
-                token && isGenerating ? (
-                  <CircularProgress size={16} />
-                ) : (
-                  token && (
-                    <LogoApp
-                      width={18}
-                      color="white"
-                    />
-                  )
-                )
-              }
-              sx={{
-                flex: 1,
-                p: "10px 25px",
-                fontWeight: 500,
-                borderColor: "primary.main",
-                borderRadius: "999px",
-                bgcolor: "primary.main",
-                color: "onPrimary",
-                whiteSpace: "pre-line",
-                ":hover": {
-                  bgcolor: "surface.1",
-                  color: "primary.main",
-                },
-                ":disabled": {
-                  bgcolor: "surface.4",
-                  color: "onTertiary",
-                  borderColor: "transparent",
-                },
-              }}
-              disabled={!token ? false : isGenerating ? true : !filledForm}
-              onClick={validateAndGenerateExecution}
-            >
-              {token ? (
-                <React.Fragment>
-                  {isGenerating ? (
-                    <Typography>Generation in progress...</Typography>
+            <ClientOnly>
+              <Button
+                variant={"contained"}
+                startIcon={
+                  token && isGenerating ? (
+                    <CircularProgress size={16} />
                   ) : (
-                    <>
-                      <Typography sx={{ ml: 2, color: "inherit", fontSize: 15 }}>Generate</Typography>
-                      <Typography sx={{ display: { md: "none" }, ml: "auto", color: "inherit", fontSize: 12 }}>
-                        ~360s
-                      </Typography>
-                      <Stack
-                        direction={"row"}
-                        alignItems={"center"}
-                        gap={0.5}
-                        sx={{ display: { xs: "none", md: "flex" }, ml: "auto", color: "inherit", fontSize: 12 }}
-                      >
-                        {templateData.executions_limit === -1 ? (
-                          <AllInclusive fontSize="small" />
-                        ) : (
-                          <>
-                            {templateData.executions_limit - templateData.executions_count} of{" "}
-                            {templateData.executions_limit} left
-                            <InfoOutlined sx={{ fontSize: 16 }} />
-                          </>
-                        )}
-                      </Stack>
-                    </>
-                  )}
-                </React.Fragment>
-              ) : (
-                <Typography
-                  ml={2}
-                  color={"inherit"}
-                >
-                  Sign in or Create an account
-                </Typography>
-              )}
-            </Button>
+                    token && (
+                      <LogoApp
+                        width={18}
+                        color="white"
+                      />
+                    )
+                  )
+                }
+                sx={{
+                  flex: 1,
+                  p: "10px 25px",
+                  fontWeight: 500,
+                  borderColor: "primary.main",
+                  borderRadius: "999px",
+                  bgcolor: "primary.main",
+                  color: "onPrimary",
+                  whiteSpace: "pre-line",
+                  ":hover": {
+                    bgcolor: "surface.1",
+                    color: "primary.main",
+                  },
+                  ":disabled": {
+                    bgcolor: "surface.4",
+                    color: "onTertiary",
+                    borderColor: "transparent",
+                  },
+                }}
+                disabled={!token ? false : isGenerating ? true : !filledForm}
+                onClick={validateAndGenerateExecution}
+              >
+                {token ? (
+                  <>
+                    {isGenerating ? (
+                      <Typography>Generation in progress...</Typography>
+                    ) : (
+                      <>
+                        <Typography sx={{ ml: 2, color: "inherit", fontSize: 15 }}>Generate</Typography>
+                        <Typography sx={{ display: { md: "none" }, ml: "auto", color: "inherit", fontSize: 12 }}>
+                          ~360s
+                        </Typography>
+                        <Stack
+                          direction={"row"}
+                          alignItems={"center"}
+                          gap={0.5}
+                          sx={{ display: { xs: "none", md: "flex" }, ml: "auto", color: "inherit", fontSize: 12 }}
+                        >
+                          {templateData.executions_limit === -1 ? (
+                            <AllInclusive fontSize="small" />
+                          ) : (
+                            <>
+                              {templateData.executions_limit - templateData.executions_count} of{" "}
+                              {templateData.executions_limit} left
+                              <InfoOutlined sx={{ fontSize: 16 }} />
+                            </>
+                          )}
+                        </Stack>
+                      </>
+                    )}
+                  </>
+                ) : (
+                  <Typography
+                    ml={2}
+                    color={"inherit"}
+                  >
+                    Sign in or Create an account
+                  </Typography>
+                )}
+              </Button>
+            </ClientOnly>
             <Box
               sx={{
                 position: "relative",
