@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useState, memo, MutableRefObject } from "react";
+import { Fragment, useCallback, useState, memo } from "react";
 import PromptCardAccordion from "@/components/builder/PromptCardAccordion";
 import { IEditPrompts } from "@/common/types/builder";
 import { useDrop } from "react-dnd";
@@ -163,7 +163,10 @@ const PromptList = ({ prompts, setPrompts, engines }: Props) => {
           index++; // start from 1
           return (
             <Fragment key={index}>
-              <Box width={"100%"}>
+              <Box
+                width={"100%"}
+                id={`prompt-${prompt.id ?? prompt.temp_id}-${prompt.title}`}
+              >
                 <PromptCardAccordion
                   key={prompt.id ?? prompt.temp_id}
                   prompt={prompt}

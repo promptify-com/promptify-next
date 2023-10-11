@@ -1,99 +1,164 @@
-import React, { useEffect, useState } from "react";
-
-import { ConnectableElement, DndProvider } from "react-dnd";
+import React, { memo, useCallback, useEffect, useRef, useState } from "react";
+import { ConnectableElement, DndProvider, useDrag, useDrop } from "react-dnd";
 import { Box, IconButton, Stack, Typography } from "@mui/material";
+import { HTML5Backend } from "react-dnd-html5-backend";
 import { Edit, Menu } from "@mui/icons-material";
 
-import { HTML5Backend } from "react-dnd-html5-backend";
-import { usePromptDragHandler } from "@/hooks/usePromptDragHandler";
 import { IEditPrompts } from "@/common/types/builder";
-import PromptItemPlaceholder from "./PromptItemPlaceholder";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { handlePrompts } from "@/core/store/builderSlice";
+import { Engine } from "@/core/api/dto/templates";
 
 interface DraggableContentProps {
   prompt: IEditPrompts;
   order: number;
-  onStartDragging: () => void;
-  onStopDragging: () => void;
+  prompts: IEditPrompts[];
+  engines: Engine[];
+  findPromptIndex: (id: number) => number;
+  movePrompt: (id: number, atIndex: number) => void;
 }
 
-const DraggableContent = ({ prompt, order, onStartDragging, onStopDragging }: DraggableContentProps) => {
-  const promptId = prompt.id ?? prompt.temp_id ?? -1;
+interface PromptSequenceListProps {
+  prompts: IEditPrompts[];
+  setPrompts: (prompts: IEditPrompts[]) => void;
+  engines: Engine[];
+}
 
-  const { drag, drop, engines, isDragging } = usePromptDragHandler(promptId);
+const DraggableContent = memo(
+  ({ prompt, order, findPromptIndex, movePrompt, prompts, engines }: DraggableContentProps) => {
+    const dispatch = useAppDispatch();
+    const promptId = prompt.id! ?? prompt.temp_id;
+    const promptEngine = engines?.find(engine => engine.id === prompt.engine_id);
+    const originalIndex = findPromptIndex(promptId);
 
-  useEffect(() => {
-    if (isDragging) {
-      console.log("started");
-      onStartDragging();
-    } else {
-      console.log("stoped");
-      onStopDragging();
-    }
-  }, [isDragging]);
+    const [{ isDragging }, drag] = useDrag(
+      () => ({
+        type: "prompt",
+        item: { id: promptId, originalIndex },
+        collect: monitor => ({
+          isDragging: monitor.isDragging(),
+        }),
+        end: (item, monitor) => {
+          const { id: droppedId, originalIndex } = item;
+          const didDrop = monitor.didDrop();
+          if (!didDrop) {
+            movePrompt(droppedId, originalIndex);
+          }
+          dispatch(handlePrompts(prompts));
+        },
+      }),
+      [promptId, originalIndex, movePrompt],
+    );
 
-  const promptEngine = engines?.find(engine => engine.id === prompt.engine_id);
+    const [, drop] = useDrop(
+      () => ({
+        accept: "prompt",
+        hover({ id: draggedId }: { id: number }) {
+          if (draggedId !== promptId) {
+            const overIndex = findPromptIndex(promptId);
+            movePrompt(draggedId, overIndex);
+          }
+        },
+      }),
+      [findPromptIndex, movePrompt],
+    );
 
-  return (
-    <Stack
-      ref={(node: ConnectableElement) => drag(drop(node))}
-      key={prompt.id}
-      p={1}
-      direction={"row"}
-      justifyContent={"space-between"}
-      alignItems={"center"}
-      sx={{
-        userSelect: "none",
-      }}
-      gap={2}
-    >
-      <Stack>
-        <Menu
+    const handleClick = () => {
+      const element = document.getElementById(`prompt-${prompt.id ?? prompt.temp_id}-${prompt.title}`);
+      if (element) {
+        const y =
+          element.getBoundingClientRect().top + window.pageYOffset - window.innerHeight / 2 + element.clientHeight / 2;
+        window.scrollTo({ top: y, behavior: "smooth" });
+      }
+    };
+
+    return (
+      <Stack
+        ref={(node: ConnectableElement) => drag(drop(node))}
+        key={prompt.id}
+        p={1}
+        direction={"row"}
+        justifyContent={"space-between"}
+        alignItems={"center"}
+        sx={{
+          userSelect: "none",
+          borderRadius: "8px",
+          border: isDragging ? "1px dashed var(--primary-main, #375CA9)" : "none",
+          backgroundColor: isDragging ? "rgba(55, 92, 169, 0.08)" : "none",
+        }}
+        gap={2}
+      >
+        <Stack>
+          <Menu
+            sx={{
+              width: 24,
+              height: 24,
+              opacity: 0.3,
+              cursor: "pointer",
+              ":hover": {
+                opacity: 1,
+              },
+            }}
+          />
+        </Stack>
+        <Stack
+          direction={"row"}
+          gap={2}
+          flex={1}
+          alignItems={"center"}
+        >
+          <img
+            src={promptEngine?.icon}
+            alt={promptEngine?.name}
+            loading="lazy"
+            style={{
+              width: "32px",
+              height: "32px",
+              borderRadius: "50%",
+            }}
+          />
+          <Typography> Prompt #{order}</Typography>
+        </Stack>
+        <IconButton
+          onClick={handleClick}
           sx={{
-            width: 24,
-            height: 24,
-            opacity: 0.3,
-            cursor: "pointer",
-            ":hover": {
-              opacity: 1,
+            border: "none",
+            "&:hover": {
+              bgcolor: "surface.2",
             },
           }}
-        />
+        >
+          <Edit />
+        </IconButton>
       </Stack>
-      <Stack
-        direction={"row"}
-        gap={2}
-        flex={1}
-        alignItems={"center"}
-      >
-        <img
-          src={promptEngine?.icon}
-          alt={promptEngine?.name}
-          loading="lazy"
-          style={{
-            width: "32px",
-            height: "32px",
-            borderRadius: "50%",
-          }}
-        />
-        <Typography> Prompt #{order}</Typography>
-      </Stack>
-      <IconButton
-        sx={{
-          border: "none",
-          "&:hover": {
-            bgcolor: "surface.2",
-          },
-        }}
-      >
-        <Edit />
-      </IconButton>
-    </Stack>
-  );
-};
+    );
+  },
+);
 
-const PromptSequenceList = () => {
-  const [currentlyDraggingId, setCurrentlyDraggingId] = useState<number | null>(null);
-  const { prompts, drop } = usePromptDragHandler(currentlyDraggingId!);
+const PromptSequenceList = memo(({ prompts, setPrompts, engines }: PromptSequenceListProps) => {
+  const [, drop] = useDrop(() => ({ accept: "prompt" }));
+
+  const findPromptIndex = useCallback(
+    (id: number) => {
+      return prompts.findIndex(prompt => prompt.id === id || prompt.temp_id === id);
+    },
+    [prompts],
+  );
+
+  const movePrompt = useCallback(
+    (id: number, atIndex: number) => {
+      const index = findPromptIndex(id);
+      const _promptsCopy = [...prompts];
+
+      const targetPromptOrder = _promptsCopy.splice(index, 1);
+      _promptsCopy.splice(atIndex, 0, targetPromptOrder[0]);
+
+      const reorderedPrompts = _promptsCopy.map((prompt, index) => ({ ...prompt, order: index + 1 }));
+
+      setPrompts(reorderedPrompts);
+    },
+    [findPromptIndex, prompts],
+  );
 
   return (
     <Stack
@@ -107,18 +172,15 @@ const PromptSequenceList = () => {
         <Stack width={"100%"}>
           {prompts.map((prompt, index) => {
             index++;
-            const promptId = prompt.id ?? prompt.temp_id;
-            if (promptId === currentlyDraggingId) {
-              return <PromptItemPlaceholder key={prompt.id} />;
-            }
             return (
               <DraggableContent
                 key={prompt.id}
                 prompt={prompt}
                 order={index}
-                //@ts-ignore
-                onStartDragging={() => setCurrentlyDraggingId(prompt.id)}
-                onStopDragging={() => setCurrentlyDraggingId(null)}
+                movePrompt={movePrompt}
+                findPromptIndex={findPromptIndex}
+                prompts={prompts}
+                engines={engines}
               />
             );
           })}
@@ -126,13 +188,25 @@ const PromptSequenceList = () => {
       )}
     </Stack>
   );
-};
+});
 
 const PromptSequence = () => {
+  const storedPrompts = useAppSelector(state => state.builder.prompts);
+  const storedEngines = useAppSelector(state => state.builder.engines);
+
+  const [prompts, setPrompts] = useState<IEditPrompts[]>(storedPrompts);
+
+  useEffect(() => {
+    setPrompts(storedPrompts);
+  }, [storedPrompts]);
   return (
     <Box>
       <DndProvider backend={HTML5Backend}>
-        <PromptSequenceList />
+        <PromptSequenceList
+          prompts={prompts}
+          setPrompts={setPrompts}
+          engines={storedEngines}
+        />
       </DndProvider>
     </Box>
   );
