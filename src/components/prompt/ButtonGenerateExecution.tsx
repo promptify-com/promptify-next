@@ -29,20 +29,7 @@ export const ButtonGenerateExecution: React.FC<ButtonGenerateExecutionProps> = (
 
   const { generateExecution, generatingResponse } = useGenerateExecution(templateData?.id, onError);
 
-  const _inputs: IPromptInput[] = useMemo(() => {
-    if (!templateData) {
-      return [];
-    }
-    const inputs: IPromptInput[] = [];
-    templateData.prompts.forEach(prompt => {
-      inputs.push(...getInputsFromString(prompt.content).map(obj => ({ ...obj, prompt: prompt.id })));
-    });
-
-    return inputs;
-  }, [templateData]);
-
-  const prompts = templateData.prompts;
-  const promptHasContent = prompts.some(prompt => prompt.content);
+  const promptHasContent = templateData.prompts.some(prompt => prompt.content);
   const isButtonDisabled = isGenerating ? true : !promptHasContent;
 
   const validateAndGenerateExecution = () => {

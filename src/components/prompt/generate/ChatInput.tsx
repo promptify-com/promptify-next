@@ -76,7 +76,7 @@ export const ChatInput = ({
         alignItems={"start"}
       >
         <ThreeDotsAnimation loading={isValidating} />
-        {!showGenerate && (
+        {showGenerate && (
           <Button
             onClick={onGenerate}
             startIcon={
