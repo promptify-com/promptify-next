@@ -47,7 +47,7 @@ export const LoginLayout: FC<IProps> = ({ preLogin }) => {
           className="button-style"
           sx={{
             height: { xs: "100%", sm: "70vh" },
-            width: { xs: "100%", md: "50%" },
+            width: "100%",
             display: "flex",
             justifyContent: "center",
             alignItems: { xs: "center", sm: "flex-start" },
