@@ -1,64 +1,64 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { Typography, Button, CircularProgress } from "@mui/material";
-import { ResInputs, ResOverrides, ResPrompt } from "@/core/api/dto/prompts";
 import { IPromptInput, PromptLiveResponse } from "@/common/types/prompt";
 import useToken from "@/hooks/useToken";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { fetchEventSource } from "@microsoft/fetch-event-source";
-import { getInputsFromString } from "@/common/helpers/getInputsFromString";
-import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
-import { PlayCircle } from "@mui/icons-material";
-import Storage from "@/common/storage";
 
-import { setGeneratingStatus, updateExecutionData } from "@/core/store/templatesSlice";
+import { getInputsFromString } from "@/common/helpers/getInputsFromString";
+import { Templates } from "@/core/api/dto/templates";
+import { PlayCircle } from "@mui/icons-material";
+
+import { setGeneratingStatus } from "@/core/store/templatesSlice";
 import router from "next/router";
 import useGenerateExecution from "@/hooks/useGenerateExecution";
 
 interface ButtonGenerateExecutionProps {
   templateData: Templates;
-  selectedExecution: TemplatesExecutions | null;
   setGeneratedExecution: (data: PromptLiveResponse) => void;
   onError: (errMsg: string) => void;
 }
-interface Input extends IPromptInput {
-  prompt: number;
-}
 
-export const ButtonGenerateExecution: React.FC<ButtonGenerateExecutionProps> = ({ templateData, onError }) => {
+export const ButtonGenerateExecution: React.FC<ButtonGenerateExecutionProps> = ({
+  templateData,
+  setGeneratedExecution,
+  onError,
+}) => {
   const token = useToken();
   const dispatch = useAppDispatch();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
 
-  const { generateExecution } = useGenerateExecution(templateData?.id, onError);
+  const { generateExecution, generatingResponse } = useGenerateExecution(templateData?.id, onError);
 
-  const [_inputs]: [IPromptInput[]] = useMemo(() => {
+  const _inputs: IPromptInput[] = useMemo(() => {
     if (!templateData) {
-      return [[]];
+      return [];
     }
     const inputs: IPromptInput[] = [];
     templateData.prompts.forEach(prompt => {
       inputs.push(...getInputsFromString(prompt.content).map(obj => ({ ...obj, prompt: prompt.id })));
     });
 
-    return [inputs];
+    return inputs;
   }, [templateData]);
 
   const prompts = templateData.prompts;
   const promptHasContent = prompts.some(prompt => prompt.content);
   const nodeInputsRequired = _inputs.some(input => input.required === true);
-  const hasContentAndNodeRequired = promptHasContent && !nodeInputsRequired;
-  const isButtonDisabled = isGenerating ? true : !hasContentAndNodeRequired;
+  const hasContentAndNodeNotRequired = promptHasContent && !nodeInputsRequired;
+  const isButtonDisabled = isGenerating ? true : !hasContentAndNodeNotRequired;
 
   const validateAndGenerateExecution = () => {
     if (!token) {
       return router.push("/signin");
     }
 
-    if (hasContentAndNodeRequired) {
-      dispatch(setGeneratingStatus(true));
-      generateExecution([]);
-    }
+    dispatch(setGeneratingStatus(true));
+    generateExecution([]);
   };
+
+  useEffect(() => {
+    if (generatingResponse) setGeneratedExecution(generatingResponse);
+  }, [generatingResponse]);
 
   return (
     <Button

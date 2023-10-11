@@ -9,13 +9,8 @@ import { setGeneratingStatus } from "@/core/store/templatesSlice";
 const useGenerateExecution = (templateId: number, onError: (errMsg: string) => void) => {
   const token = useToken();
   const dispatch = useAppDispatch();
-  const [generatingResponse, setGeneratingResponse] = useState<PromptLiveResponse>({
-    created_at: new Date(),
-    data: [],
-  });
-
+  const [generatingResponse, setGeneratingResponse] = useState<PromptLiveResponse | null>(null);
   const [lastExecution, setLastExecution] = useState<ResPrompt[] | null>(null);
-  const [newExecutionId, setNewExecutionId] = useState<number | null>(null);
 
   const generateExecution = (executionData: ResPrompt[]) => {
     setLastExecution([...executionData]);
@@ -48,7 +43,6 @@ const useGenerateExecution = (templateId: number, onError: (errMsg: string) => v
           const executionId = parseData.template_execution_id;
 
           if (executionId) {
-            setNewExecutionId(executionId);
             setGeneratingResponse(prevState => ({
               id: executionId,
               created_at: prevState?.created_at || new Date(),
@@ -59,6 +53,9 @@ const useGenerateExecution = (templateId: number, onError: (errMsg: string) => v
           if (msg.event === "infer" && msg.data) {
             if (message) {
               setGeneratingResponse(prevState => {
+                if (!prevState) {
+                  return { created_at: new Date(), data: [] };
+                }
                 const activePromptIndex = prevState?.data.findIndex(promptData => promptData.prompt === +prompt);
 
                 if (activePromptIndex === -1) {
@@ -80,6 +77,9 @@ const useGenerateExecution = (templateId: number, onError: (errMsg: string) => v
             }
 
             setGeneratingResponse(prevState => {
+              if (!prevState) {
+                return { created_at: new Date(), data: [] };
+              }
               const activePromptIndex = prevState?.data.findIndex(promptData => promptData.prompt === +prompt);
 
               if (message === "[INITIALIZING]") {
@@ -117,7 +117,7 @@ const useGenerateExecution = (templateId: number, onError: (errMsg: string) => v
     });
   };
 
-  return { generateExecution, generatingResponse, setGeneratingResponse, lastExecution, newExecutionId };
+  return { generateExecution, generatingResponse, lastExecution };
 };
 
 export default useGenerateExecution;

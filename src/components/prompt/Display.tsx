@@ -59,7 +59,7 @@ export const Display: React.FC<Props> = ({
     return null;
   }, [selectedExecution, templateData]);
   const isGeneratedExecutionEmpty = Boolean(generatedExecution && !generatedExecution.data?.length);
-  const executionIsLoading = isFetching;
+  const executionIsLoading = isFetching || isGeneratedExecutionEmpty;
   const isDesktopView = isDesktopViewPort();
 
   // click listener to remove opacity layer on first loaded execution

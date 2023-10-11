@@ -329,7 +329,6 @@ const Template = ({ hashedExecution, fetchedTemplate }: TemplateProps) => {
                   >
                     <ButtonGenerateExecution
                       templateData={fetchedTemplate}
-                      selectedExecution={selectedExecution}
                       setGeneratedExecution={setGeneratedExecution}
                       onError={setErrorMessage}
                     />

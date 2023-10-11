@@ -53,8 +53,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   const [shownInputs, setShownInputs] = useState<Input[] | null>(null);
   const [shownParams, setShownParams] = useState<Param[] | null>(null);
 
-  const { generateExecution, generatingResponse, setGeneratingResponse, lastExecution, newExecutionId } =
-    useGenerateExecution(templateData?.id, onError);
+  const { generateExecution, generatingResponse, lastExecution } = useGenerateExecution(templateData?.id, onError);
 
   const answeredInputs = useAppSelector(state => state.template.answeredInputs);
 
@@ -233,15 +232,15 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     generateExecution(resPrompts);
   };
 
-  useEffect(() => {
-    if (newExecutionId) {
-      setGeneratingResponse(prevState => ({
-        id: newExecutionId,
-        created_at: prevState?.created_at || new Date(),
-        data: prevState?.data || [],
-      }));
-    }
-  }, [newExecutionId]);
+  // useEffect(() => {
+  //   if (newExecutionId) {
+  //     setGeneratingResponse(prevState => ({
+  //       id: newExecutionId,
+  //       created_at: prevState?.created_at || new Date(),
+  //       data: prevState?.data || [],
+  //     }));
+  //   }
+  // }, [newExecutionId]);
 
   useEffect(() => {
     if (generatingResponse) setGeneratedExecution(generatingResponse);
@@ -325,17 +324,11 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
       .filter(input => input.required)
       .every(input => input.value),
   );
-
   const allowReset = nodeInputs.some(input => Object.values(input.inputs).some(input => input.value));
-
   const prompts = templateData.prompts;
   const promptHasContent = prompts.some(prompt => prompt.content);
-  const nodeInputsRequired = nodeInputs.some(input =>
-    Object.values(input.inputs).some(input => input.required === true),
-  );
-  const hasContentAndNodeRequired = promptHasContent && !nodeInputsRequired;
-
-  const isButtonDisabled = token ? (isGenerating ? true : !hasContentAndNodeRequired) : true;
+  const hasContentOrFormFilled = !filledForm ? true : promptHasContent ? false : true;
+  const isButtonDisabled = token ? (isGenerating ? true : hasContentOrFormFilled) : true;
 
   return (
     <Stack

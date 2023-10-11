@@ -133,44 +133,49 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
 
     dispatch(updateExecutionData(JSON.stringify(Object.values(promptsData))));
   };
-  const [templateQuestions, _inputs]: [UpdatedQuestionTemplate[], IPromptInput[]] = useMemo(() => {
-    if (!template) {
-      return [[], []];
-    }
-
-    const questions: TemplateQuestions[] = template?.questions ?? [];
-    const inputs: IPromptInput[] = [];
-
-    template.prompts.forEach(prompt => {
-      inputs.push(...getInputsFromString(prompt.content).map(obj => ({ ...obj, prompt: prompt.id })));
-    });
-
-    const updatedQuestions: UpdatedQuestionTemplate[] = [];
-
-    for (let index = 0; index < questions.length; index++) {
-      const question = questions[index];
-      const key = Object.keys(question)[0];
-
-      if (inputs[index]) {
-        const { type, required, choices, name, prompt } = inputs[index];
-        const updatedQuestion: UpdatedQuestionTemplate = {
-          ...question[key],
-          name,
-          required: required,
-          type: type,
-          choices: choices,
-          prompt: prompt!,
-        };
-        updatedQuestions.push(updatedQuestion);
+  const [templateQuestions, _inputs, promptHasContent]: [UpdatedQuestionTemplate[], IPromptInput[], Boolean] =
+    useMemo(() => {
+      if (!template) {
+        return [[], [], false];
       }
-    }
 
-    updatedQuestions.sort((a, b) => +b.required - +a.required);
+      const questions: TemplateQuestions[] = template?.questions ?? [];
+      const inputs: IPromptInput[] = [];
+      let promptHasContent = false;
 
-    initialMessages({ questions: updatedQuestions });
+      template.prompts.forEach(prompt => {
+        if (prompt.content) {
+          promptHasContent = true;
+        }
+        inputs.push(...getInputsFromString(prompt.content).map(obj => ({ ...obj, prompt: prompt.id })));
+      });
 
-    return [updatedQuestions, inputs];
-  }, [template]);
+      const updatedQuestions: UpdatedQuestionTemplate[] = [];
+
+      for (let index = 0; index < questions.length; index++) {
+        const question = questions[index];
+        const key = Object.keys(question)[0];
+
+        if (inputs[index]) {
+          const { type, required, choices, name, prompt } = inputs[index];
+          const updatedQuestion: UpdatedQuestionTemplate = {
+            ...question[key],
+            name,
+            required: required,
+            type: type,
+            choices: choices,
+            prompt: prompt!,
+          };
+          updatedQuestions.push(updatedQuestion);
+        }
+      }
+
+      updatedQuestions.sort((a, b) => +b.required - +a.required);
+
+      initialMessages({ questions: updatedQuestions });
+
+      return [updatedQuestions, inputs, promptHasContent];
+    }, [template]);
 
   useEffect(() => {
     dispatchNewExecutionData(answers, _inputs);
@@ -203,6 +208,8 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
   const currentQuestion = standingQuestions.length
     ? standingQuestions[standingQuestions.length - 1]
     : templateQuestions[currentQuestionIndex];
+
+  const disabledButton = !_inputs.length && promptHasContent;
 
   const validateAnswer = async () => {
     if (currentQuestion) {
@@ -648,11 +655,6 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
     dispatchNewExecutionData(newAnswers, _inputs);
   };
 
-  const prompts = template.prompts;
-  const promptHasContent = prompts.some(prompt => prompt.content);
-  const nodeInputsRequired = _inputs.some(input => input.required === true);
-  const hasContentAndNodeRequired = promptHasContent && !nodeInputsRequired;
-
   return (
     <Grid
       width={"100%"}
@@ -771,7 +773,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
               showGenerate={Boolean((showGenerateButton || canShowGenerateButton) && currentUser?.id)}
               onGenerate={generateExecutionHandler}
               isValidating={isValidatingAnswer}
-              buttonShouldDisabled={!hasContentAndNodeRequired}
+              disabledButton={!disabledButton}
             />
           ) : (
             <Stack
