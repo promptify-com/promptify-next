@@ -1,3 +1,4 @@
+import { FC, ReactNode, useState } from "react";
 import {
   Box,
   Divider,
@@ -12,22 +13,33 @@ import {
 } from "@mui/material";
 import { Close, FormatListBulleted } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
+
 import HelpIcon from "@/assets/icons/HelpIcon";
 import { ApiIcon } from "@/assets/icons";
 import PaperIcon from "@/assets/icons/PaperIcon";
-
-interface SideBarRightProps {
-  open: boolean;
-  openSideBarRight: (itemName: string) => void;
-  closeSideBarRight: () => void;
-}
+import Help from "./Help";
+import { useAppDispatch } from "@/hooks/useStore";
+import { setOpenBuilderSidebar } from "@/core/store/sidebarSlice";
+import PromptSequence from "./PromptSequence";
 
 const drawerWidth = 352;
 
-export const SidebarRight: React.FC<SideBarRightProps> = ({ open, openSideBarRight, closeSideBarRight }) => {
+type LinkName = "list" | "paper" | "help" | "api";
+
+interface Link {
+  name: LinkName;
+  icon: ReactNode;
+}
+
+export const SidebarRight: FC = () => {
+  const [open, setOpen] = useState(false);
+  const dispatch = useAppDispatch();
+
+  const [activeLink, setActiveLink] = useState<LinkName>();
+
   const theme = useTheme();
 
-  const navItems = [
+  const Links: Link[] = [
     {
       name: "list",
       icon: <FormatListBulleted />,
@@ -35,20 +47,27 @@ export const SidebarRight: React.FC<SideBarRightProps> = ({ open, openSideBarRig
     {
       name: "paper",
       icon: <PaperIcon />,
-      external: false,
     },
     {
       name: "help",
       icon: <HelpIcon />,
-      external: false,
     },
     {
       name: "api",
       icon: <ApiIcon />,
-      external: false,
     },
   ];
 
+  const handleOpenSidebar = (link: LinkName) => {
+    setOpen(true);
+    setActiveLink(link);
+    dispatch(setOpenBuilderSidebar(true));
+  };
+
+  const handleCloseSidebar = () => {
+    setOpen(false);
+    dispatch(setOpenBuilderSidebar(false));
+  };
   return (
     <Box
       sx={{
@@ -87,11 +106,11 @@ export const SidebarRight: React.FC<SideBarRightProps> = ({ open, openSideBarRig
         flexDirection={"column"}
         gap={1}
       >
-        {navItems.map(item => (
-          <Grid key={item.name}>
+        {Links.map(link => (
+          <Grid key={link.name}>
             <ListItem
               disablePadding
-              onClick={() => openSideBarRight(item.name)}
+              onClick={() => handleOpenSidebar(link.name)}
             >
               <ListItemButton
                 sx={{
@@ -119,7 +138,7 @@ export const SidebarRight: React.FC<SideBarRightProps> = ({ open, openSideBarRig
                       justifyContent: "center",
                     }}
                   >
-                    <Icon>{item.icon}</Icon>
+                    <Icon>{link.icon}</Icon>
                   </ListItemIcon>
                 </Box>
               </ListItemButton>
@@ -159,111 +178,23 @@ export const SidebarRight: React.FC<SideBarRightProps> = ({ open, openSideBarRig
               fontWeight: "400",
               lineHeight: "140%",
               letterSpacing: "0.5px",
+              textTransform: "capitalize",
             }}
           >
-            Help
+            {activeLink === "list" ? "Prompt Sequence" : activeLink}
           </Typography>
 
           <IconButton
-            onClick={closeSideBarRight}
+            onClick={() => handleCloseSidebar()}
             sx={{ marginLeft: "auto" }}
           >
             <Close />
           </IconButton>
         </Box>
         <Divider />
-        <Box
-          sx={{
-            display: "flex",
-            height: "815px",
-            padding: "var(--2, 16px) var(--3, 24px)",
-            flexDirection: "column",
-            alignItems: "flex-start",
-            gap: "24px",
-            alignSelf: "stretch",
-            bgcolor: "surface.1",
-          }}
-        >
-          <Typography
-            variant="caption"
-            sx={{
-              color: "#000",
-              fontFeatureSettings: "'clig' off, 'liga' off",
-              fontFamily: "Poppins",
-              fontSize: "12px",
-              fontStyle: "normal",
-              fontWeight: "400",
-              lineHeight: "166%",
-              letterSpacing: "0.4px",
-            }}
-          >
-            Home
-          </Typography>
-
-          <Typography
-            variant="h4"
-            sx={{
-              color: "#000",
-              fontFeatureSettings: "'clig' off, 'liga' off",
-              fontFamily: "Poppins",
-              fontSize: "34px",
-              fontStyle: "normal",
-              fontWeight: "400",
-              lineHeight: "120%",
-            }}
-          >
-            Get Started
-          </Typography>
-
-          <Typography
-            variant="body2"
-            sx={typographyStyle}
-          >
-            Each prompt builds on the last, passing context between them. Responses get progressively more detailed and
-            nuanced.
-          </Typography>
-
-          <Typography
-            variant="body2"
-            sx={typographyStyle}
-          >
-            It's like asking a series of logical follow-up questions, leading the AI through a reasoning process.
-          </Typography>
-
-          <Typography
-            variant="body2"
-            sx={typographyStyle}
-          >
-            Build chains from reusable template prompts or by capturing previous outputs as variables.
-          </Typography>
-
-          <Typography
-            variant="body2"
-            sx={typographyStyle}
-          >
-            The result - sophisticated content tailored to your needs, without losing relevance across long texts.
-          </Typography>
-
-          <Typography
-            variant="body2"
-            sx={typographyStyle}
-          >
-            Chains transform AI writing from rambling monologues to structured dialogues. Progressively direct the AI
-            and watch ideas blossom.
-          </Typography>
-        </Box>
+        {activeLink === "list" && <PromptSequence />}
+        {activeLink === "help" && <Help />}
       </Drawer>
     </Box>
   );
-};
-
-const typographyStyle = {
-  color: "var(--onSurface, #1B1B1E)",
-  fontFeatureSettings: "'clig' off, 'liga' off",
-  fontFamily: "Poppins",
-  fontSize: "14px",
-  fontStyle: "normal",
-  fontWeight: 400,
-  lineHeight: "140%",
-  letterSpacing: "0.2px",
 };

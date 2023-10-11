@@ -5,14 +5,14 @@ import { Header } from "@/components/Header";
 import { Sidebar } from "@/components/SideBar";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./core/store";
-import { setOpenSidebar } from "./core/store/sidebarSlice";
+import { setOpenDefaultSidebar } from "./core/store/sidebarSlice";
 import { theme } from "@/theme";
 
 export const Layout = ({ children }: { children: ReactNode }) => {
-  const open = useSelector((state: RootState) => state.sidebar.open);
+  const open = useSelector((state: RootState) => state.sidebar.defaultSidebarOpen);
   const dispatch = useDispatch();
   const toggleSidebar = () => {
-    dispatch(setOpenSidebar(!open));
+    dispatch(setOpenDefaultSidebar(!open));
   };
   return (
     <>
