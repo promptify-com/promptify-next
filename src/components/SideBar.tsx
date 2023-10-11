@@ -26,10 +26,10 @@ import { useSelector } from "react-redux";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { RootState } from "@/core/store";
 import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { setOpenDefaultSidebar } from "@/core/store/sidebarSlice";
 
 interface SideBarProps {
-  open: boolean;
-  toggleSideBar: () => void;
   fullHeight?: boolean;
 }
 
@@ -73,8 +73,9 @@ const Drawer = styled(MuiDrawer, {
   }),
 }));
 
-export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar, fullHeight = false }) => {
+export const DefaultSidebar: React.FC<SideBarProps> = ({ fullHeight = false }) => {
   const pathname = usePathname();
+  const dispatch = useAppDispatch();
   const isExplorePage = pathname.split("/")[1] === "explore";
   const isValidUser = useSelector(isValidUserFn);
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
@@ -88,6 +89,19 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar, fullHeigh
   const [expandedOnHover, setExpandedOnHover] = useState<boolean>(false);
   const [showExpandIcon, setShowExpandIcon] = useState<boolean>(false);
   const [showFilters, setShowFilters] = useState<boolean>(true);
+
+  const defaultSidebarOpen = useAppSelector(state => state.sidebar.defaultSidebarOpen);
+
+  const [open, setOpen] = useState(defaultSidebarOpen);
+
+  useEffect(() => {
+    setOpen(defaultSidebarOpen);
+  }, [defaultSidebarOpen]);
+
+  const toggleSidebar = () => {
+    setOpen(!open);
+    dispatch(setOpenDefaultSidebar(!open));
+  };
 
   useEffect(() => {
     if (expandedOnHover || open) {
@@ -205,7 +219,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar, fullHeigh
               </Link>
             </Box>
             <IconButton
-              onClick={toggleSideBar}
+              onClick={toggleSidebar}
               sx={{
                 opacity: showExpandIcon ? 1 : 0,
                 border: "none",

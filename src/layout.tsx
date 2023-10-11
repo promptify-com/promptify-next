@@ -1,34 +1,27 @@
 import { ReactNode } from "react";
 import { Box, Grid } from "@mui/material";
+import { useSelector } from "react-redux";
 
 import { Header } from "@/components/Header";
-import { Sidebar } from "@/components/SideBar";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "./core/store";
-import { setOpenDefaultSidebar } from "./core/store/sidebarSlice";
+import { DefaultSidebar } from "@/components/SideBar";
+import { RootState } from "@/core/store";
 import { theme } from "@/theme";
 
 export const Layout = ({ children }: { children: ReactNode }) => {
-  const open = useSelector((state: RootState) => state.sidebar.defaultSidebarOpen);
-  const dispatch = useDispatch();
-  const toggleSidebar = () => {
-    dispatch(setOpenDefaultSidebar(!open));
-  };
+  const defaultSidebarOpen = useSelector((state: RootState) => state.sidebar.defaultSidebarOpen);
+
   return (
     <>
       <Box sx={{ bgcolor: "surface.3" }}>
-        <Sidebar
-          open={open}
-          toggleSideBar={() => toggleSidebar()}
-        />
+        <DefaultSidebar />
         <Box
           sx={{
             minHeight: "100svh",
             maxWidth: {
               xs: "100%",
-              md: open ? "calc(100% - 299px)" : "80%",
+              md: defaultSidebarOpen ? `calc(100% - ${theme.custom.defaultSidebarWidth})` : "80%",
             },
-            m: { md: open ? "0px 0px 0px auto" : "0px auto 0px auto" },
+            m: { md: defaultSidebarOpen ? "0px 0px 0px auto" : "0px auto 0px auto" },
           }}
         >
           <Header transparent />

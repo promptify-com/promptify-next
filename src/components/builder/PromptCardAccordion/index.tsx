@@ -75,7 +75,6 @@ const PromptCardAccordion = ({
         const { id: droppedId, originalIndex } = item;
         const didDrop = monitor.didDrop();
         if (!didDrop) {
-          dispatch(handlePrompts(prompts));
           movePrompt(droppedId, originalIndex);
         }
       },

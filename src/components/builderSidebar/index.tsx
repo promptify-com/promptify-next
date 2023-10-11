@@ -31,7 +31,7 @@ interface Link {
   icon: ReactNode;
 }
 
-export const SidebarRight: FC = () => {
+export const BuilderSidebar: FC = () => {
   const [open, setOpen] = useState(false);
   const dispatch = useAppDispatch();
 
@@ -152,7 +152,6 @@ export const SidebarRight: FC = () => {
           flexShrink: 0,
           "& .MuiDrawer-paper": {
             width: drawerWidth,
-            boxShadow: "3px 0px 10px rgba(0, 0, 0, 0.2)",
           },
         }}
         variant="persistent"

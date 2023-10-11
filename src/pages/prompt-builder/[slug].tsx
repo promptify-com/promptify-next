@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { usePublishTemplateMutation } from "@/core/api/templates";
 import { Alert, Box, Snackbar, Stack, SwipeableDrawer, Typography } from "@mui/material";
-import { Sidebar } from "@/components/SideBar";
+import { DefaultSidebar } from "@/components/SideBar";
 
 import { setOpenDefaultSidebar } from "@/core/store/sidebarSlice";
 import { Header } from "@/components/builder/Header";
@@ -9,7 +9,7 @@ import TemplateForm from "@/components/common/forms/TemplateForm";
 import { IEditPrompts } from "@/common/types/builder";
 import { isPromptVariableValid } from "@/common/helpers/promptValidator";
 import { updateTemplate } from "@/hooks/api/templates";
-import { SidebarRight } from "@/components/builder-sidebar";
+import { BuilderSidebar } from "@/components/builderSidebar";
 import { Engine, Templates } from "@/core/api/dto/templates";
 import { client } from "@/common/axios";
 import { DndProvider } from "react-dnd";
@@ -51,7 +51,7 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
     if (!storedEngines.length) {
       dispatch(handleEngines(engines));
     }
-  }, [dispatch, initPrompts, engines]);
+  }, [initPrompts, engines]);
 
   useEffect(() => {
     setPrompts(storedPrompts);
@@ -161,12 +161,8 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
         minHeight: "100svh",
       }}
     >
-      <Sidebar
-        open={defaultSidebarOpen}
-        toggleSideBar={toggleSidebar}
-        fullHeight
-      />
-      <SidebarRight />
+      <DefaultSidebar fullHeight />
+      <BuilderSidebar />
       <Box
         sx={{
           ml: defaultSidebarOpen ? "299px" : "86px",
