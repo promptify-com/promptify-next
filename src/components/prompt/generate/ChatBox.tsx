@@ -208,8 +208,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
   const currentQuestion = standingQuestions.length
     ? standingQuestions[standingQuestions.length - 1]
     : templateQuestions[currentQuestionIndex];
-
-  const disabledButton = !_inputs.length && promptHasContent;
+  const disabledButton = _inputs.length !== 0 || promptHasContent;
 
   const validateAnswer = async () => {
     if (currentQuestion) {
