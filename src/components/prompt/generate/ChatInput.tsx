@@ -21,6 +21,7 @@ interface ChatInputProps {
   onGenerate: () => void;
   showGenerate: boolean;
   isValidating: boolean;
+  disabledButton: boolean;
 }
 
 export const ChatInput = ({
@@ -35,6 +36,7 @@ export const ChatInput = ({
   onGenerate,
   showGenerate,
   isValidating,
+  disabledButton,
 }: ChatInputProps) => {
   const { truncate } = useTruncate();
 
@@ -103,7 +105,7 @@ export const ChatInput = ({
               },
             }}
             variant="contained"
-            disabled={isGenerating || isValidating}
+            disabled={isGenerating || isValidating || disabledButton}
           >
             {isGenerating ? (
               <Typography>Generation in progress...</Typography>
