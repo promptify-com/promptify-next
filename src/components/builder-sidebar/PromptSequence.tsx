@@ -200,7 +200,28 @@ const PromptSequence = () => {
     setPrompts(storedPrompts);
   }, [storedPrompts]);
   return (
-    <Box>
+    <Box
+      bgcolor={"surface.1"}
+      height={"96vh"}
+      overflow={"hidden"}
+      sx={{
+        overflow: "auto",
+
+        "&::-webkit-scrollbar": {
+          width: "6px",
+          p: 1,
+          backgroundColor: "surface.2",
+        },
+        "&::-webkit-scrollbar-track": {
+          webkitBoxShadow: "inset 3px 41px 16px gray",
+        },
+        "&::-webkit-scrollbar-thumb": {
+          backgroundColor: "surface.5",
+          outline: "1px solid surface.5",
+          borderRadius: "10px",
+        },
+      }}
+    >
       <DndProvider backend={HTML5Backend}>
         <PromptSequenceList
           prompts={prompts}

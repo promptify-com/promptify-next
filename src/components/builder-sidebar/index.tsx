@@ -186,7 +186,12 @@ export const SidebarRight: FC = () => {
 
           <IconButton
             onClick={() => handleCloseSidebar()}
-            sx={{ marginLeft: "auto" }}
+            sx={{
+              border: "none",
+              "&:hover": {
+                bgcolor: "surface.2",
+              },
+            }}
           >
             <Close />
           </IconButton>
