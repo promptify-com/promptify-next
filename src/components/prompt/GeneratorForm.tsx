@@ -232,16 +232,6 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     generateExecution(resPrompts);
   };
 
-  // useEffect(() => {
-  //   if (newExecutionId) {
-  //     setGeneratingResponse(prevState => ({
-  //       id: newExecutionId,
-  //       created_at: prevState?.created_at || new Date(),
-  //       data: prevState?.data || [],
-  //     }));
-  //   }
-  // }, [newExecutionId]);
-
   useEffect(() => {
     if (generatingResponse) setGeneratedExecution(generatingResponse);
   }, [generatingResponse]);
