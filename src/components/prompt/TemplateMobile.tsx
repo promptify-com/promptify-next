@@ -9,6 +9,7 @@ import GeneratedExecutionFooter from "./GeneratedExecutionFooter";
 import BottomTabs from "./BottomTabs";
 import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import type { PromptLiveResponse } from "@/common/types/prompt";
+import { ButtonGenerateExecution } from "./ButtonGenerateExecution";
 
 interface TemplateMobileProps {
   hashedExecution: TemplatesExecutions | null;
@@ -112,7 +113,11 @@ export default function TemplateMobile({
           alignItems={"center"}
           overflow={"hidden"}
         >
-          Chat is unavailable
+          <ButtonGenerateExecution
+            templateData={template}
+            setGeneratedExecution={setGeneratedExecution}
+            onError={setErrorMessage}
+          />
         </Grid>
       )}
 
