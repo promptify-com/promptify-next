@@ -13,7 +13,7 @@ const useGenerateExecution = (templateId: number, onError: (errMsg: string) => v
   const [lastExecution, setLastExecution] = useState<ResPrompt[] | null>(null);
 
   const generateExecution = (executionData: ResPrompt[]) => {
-    setLastExecution([...executionData]);
+    setLastExecution(executionData);
     const url = `${process.env.NEXT_PUBLIC_API_URL}/api/meta/templates/${templateId}/execute/`;
 
     fetchEventSource(url, {

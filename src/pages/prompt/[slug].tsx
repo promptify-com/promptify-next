@@ -14,7 +14,7 @@ import { Layout } from "@/layout";
 import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { useSelector, useDispatch } from "react-redux";
-import { updateTemplateData, updateExecutionData, setGeneratingStatus } from "@/core/store/templatesSlice";
+import { updateTemplateData, updateExecutionData } from "@/core/store/templatesSlice";
 import { RootState } from "@/core/store";
 import { useAppSelector } from "@/hooks/useStore";
 import { getExecutionByHash } from "@/hooks/api/executions";

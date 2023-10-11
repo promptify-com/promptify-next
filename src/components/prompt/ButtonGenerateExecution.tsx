@@ -43,9 +43,7 @@ export const ButtonGenerateExecution: React.FC<ButtonGenerateExecutionProps> = (
 
   const prompts = templateData.prompts;
   const promptHasContent = prompts.some(prompt => prompt.content);
-  const nodeInputsRequired = _inputs.some(input => input.required === true);
-  const hasContentAndNodeNotRequired = promptHasContent && !nodeInputsRequired;
-  const isButtonDisabled = isGenerating ? true : !hasContentAndNodeNotRequired;
+  const isButtonDisabled = isGenerating ? true : !promptHasContent;
 
   const validateAndGenerateExecution = () => {
     if (!token) {
