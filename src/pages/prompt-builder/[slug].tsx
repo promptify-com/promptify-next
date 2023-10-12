@@ -31,7 +31,7 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
   const router = useRouter();
   const token = useToken();
   const sidebarOpen = useSelector((state: RootState) => state.sidebar.open);
-  const promptsRefData = useRef(initPrompts);
+  const [prompts, setPrompts] = useState(initPrompts);
   const [templateDrawerOpen, setTemplateDrawerOpen] = useState(Boolean(router.query.editor));
   const [publishTemplate] = usePublishTemplateMutation();
   const [messageSnackBar, setMessageSnackBar] = useState({ status: false, message: "" });
@@ -75,8 +75,8 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
     }
 
     const invalids: string[] = [];
-    for (let i = 0; i < promptsRefData.current.length; i++) {
-      const prompt = promptsRefData.current[i];
+    for (let i = 0; i < prompts.length; i++) {
+      const prompt = prompts[i];
       const validation = isPromptVariableValid(prompt.content);
       if (!validation.isValid) {
         invalids.push(validation.message);
@@ -89,7 +89,7 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
       return;
     }
 
-    const _prompts = promptsRefData.current.map((prompt, index, array) => {
+    const _prompts = prompts.map((prompt, index, array) => {
       const depend = array[index - 1]?.id || array[index - 1]?.temp_id;
       return {
         ...prompt,
@@ -195,7 +195,8 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
           <Box>
             <DndProvider backend={HTML5Backend}>
               <PromptList
-                promptsRefData={promptsRefData}
+                prompts={prompts}
+                setPrompts={setPrompts}
                 engines={engines}
               />
             </DndProvider>

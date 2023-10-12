@@ -1,6 +1,6 @@
 import { ModeEdit, PlayCircle } from "@mui/icons-material";
 import { Box, Button, Divider, Stack, Typography } from "@mui/material";
-import React, { useMemo, useRef, useState } from "react";
+import React, { memo, useMemo, useRef, useState } from "react";
 import { Header } from "./Header";
 import { StylerAccordion } from "./StylerAccordion";
 import { IEditPrompts } from "@/common/types/builder";
@@ -24,7 +24,7 @@ interface Props {
   movePrompt: (id: number, atIndex: number) => void;
 }
 
-export const PromptCardAccordion = ({
+const PromptCardAccordion = ({
   prompt,
   order,
   setPrompt,
@@ -40,7 +40,7 @@ export const PromptCardAccordion = ({
   const cursorPositionRef = useRef(0);
   const [highlightedOption, setHighlitedOption] = useState("");
 
-  const { outputPresets, inputPresets } = useMemo(() => getBuilderVarsPresets(prompts, promptData), [prompts]);
+  const { outputPresets, inputPresets } = useMemo(() => getBuilderVarsPresets(prompts, promptData, false), [prompts]);
 
   const updatePrompt = (newPromptData: IEditPrompts) => {
     setPromptData(newPromptData);
@@ -180,19 +180,18 @@ export const PromptCardAccordion = ({
               height: "250px",
               maxHeight: "25svh",
               py: "12px",
-              overflow: "auto",
-              overscrollBehavior: "contain",
               position: "relative",
             }}
           >
             <HighlightTextarea
+              prompt={promptData}
               cursorPositionRef={cursorPositionRef}
-              content={promptData.content}
               onChange={contentHandler}
               outputPresets={outputPresets}
               inputPresets={inputPresets}
               highlitedValue={highlightedOption}
               setHighlitedValue={setHighlitedOption}
+              type={"user"}
             />
           </Box>
         </Box>
@@ -210,3 +209,5 @@ export const PromptCardAccordion = ({
     </Box>
   );
 };
+
+export default memo(PromptCardAccordion);
