@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { Box, Divider, IconButton, InputLabel, MenuItem, Select, Stack, TextField } from "@mui/material";
-import { Backspace } from "@mui/icons-material";
+import { Box, Button, Divider, IconButton, InputLabel, MenuItem, Select, Stack, TextField } from "@mui/material";
+import { Backspace, CloudUpload } from "@mui/icons-material";
 
 import { InputsErrors } from "./GeneratorForm";
-import { IPromptInput } from "@/common/types/prompt";
+import { FileType, IPromptInput } from "@/common/types/prompt";
 import BaseButton from "../base/BaseButton";
 import CodeFieldModal from "../modals/CodeFieldModal";
 import { useAppSelector } from "@/hooks/useStore";
@@ -66,16 +66,29 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
     const updatedNodes = nodeInputs.map(node => {
       const targetNode = node.inputs[name];
       if (targetNode) {
-        return {
-          ...node,
-          inputs: {
-            ...node.inputs,
-            [name]: {
-              ...targetNode,
-              value: type === "number" ? +value : value,
+        if (type === "file") {
+          return {
+            ...node,
+            inputs: {
+              ...node.inputs,
+              [name]: {
+                ...targetNode,
+                value: type === "file" ? Array.from(value as FileList) : value,
+              },
             },
-          },
-        };
+          };
+        } else {
+          return {
+            ...node,
+            inputs: {
+              ...node.inputs,
+              [name]: {
+                ...targetNode,
+                value: type === "number" ? +value : value,
+              },
+            },
+          };
+        }
       }
       return node;
     });
