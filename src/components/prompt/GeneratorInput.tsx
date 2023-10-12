@@ -30,7 +30,7 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const [codeFieldOpen, setCodeFieldOpen] = useState(false);
 
-  const debouncedDispatch = useDebouncedDispatch(answeredInputsArray => {
+  const debouncedDispatch = useDebouncedDispatch((answeredInputsArray: AnsweredInputType[]) => {
     dispatch(updateAnsweredInput(answeredInputsArray));
   }, 700);
 

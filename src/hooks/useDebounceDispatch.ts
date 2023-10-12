@@ -1,9 +1,8 @@
 import { useRef, useEffect, useCallback } from "react";
 
-export function useDebouncedDispatch(fn: (...args: any[]) => void, delay: number) {
+export function useDebouncedDispatch<T extends (...args: any) => any>(fn: T, delay: number) {
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Clean up on component unmount
   useEffect(() => {
     return () => {
       if (timeoutRef.current) {
@@ -13,7 +12,7 @@ export function useDebouncedDispatch(fn: (...args: any[]) => void, delay: number
   }, []);
 
   const debouncedFn = useCallback(
-    (...args: any[]) => {
+    (...args: Parameters<T>) => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
@@ -25,5 +24,5 @@ export function useDebouncedDispatch(fn: (...args: any[]) => void, delay: number
     [fn, delay],
   );
 
-  return debouncedFn;
+  return debouncedFn as T;
 }
