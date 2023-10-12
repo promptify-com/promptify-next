@@ -90,16 +90,9 @@ export const DefaultSidebar: React.FC<SideBarProps> = ({ fullHeight = false }) =
   const [showExpandIcon, setShowExpandIcon] = useState<boolean>(false);
   const [showFilters, setShowFilters] = useState<boolean>(true);
 
-  const defaultSidebarOpen = useAppSelector(state => state.sidebar.defaultSidebarOpen);
-
-  const [open, setOpen] = useState(defaultSidebarOpen);
-
-  useEffect(() => {
-    setOpen(defaultSidebarOpen);
-  }, [defaultSidebarOpen]);
+  const open = useAppSelector(state => state.sidebar.defaultSidebarOpen);
 
   const toggleSidebar = () => {
-    setOpen(!open);
     dispatch(setOpenDefaultSidebar(!open));
   };
 
