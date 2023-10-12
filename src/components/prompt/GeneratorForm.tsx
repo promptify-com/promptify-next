@@ -240,57 +240,41 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
     if (hasTypeFile) {
       const fileData: FileData = {};
-      const uploadPromises = [];
-      let filePaths: File[] = [];
-      let keyNames: string[] = [];
 
       for (const key in resPrompts[0]?.prompt_params) {
-        if (resPrompts[0]?.prompt_params[key]) {
-          const value = resPrompts[0]?.prompt_params[key];
-          if (value instanceof File) {
-            filePaths.push(value);
-            keyNames.push(key);
-          }
+        const value = resPrompts[0]?.prompt_params[key];
+        if (value instanceof File) {
+          fileData[key] = value;
         }
       }
 
-      keyNames.forEach((key, index) => {
-        fileData[key] = filePaths[index];
-      });
-
-      for (const key in fileData) {
+      const uploadFilePromises = Object.keys(fileData).map(key => {
         const file = fileData[key];
         if (file) {
-          uploadPromises.push(uploadFileHelper(uploadFile, file as File));
+          return uploadFileHelper(uploadFile, file as File).then(fileUrl => ({ key, fileUrl }));
         }
-      }
+        return Promise.resolve({ key, fileUrl: undefined });
+      });
 
-      Promise.all(uploadPromises)
-        .then(fileUrls => {
-          fileUrls.forEach((fileUrl, index) => {
-            const key = keyNames[index];
-            fileData[key] = fileUrl;
-          });
-          const newResPrompts = resPrompts.map(item => {
-            if (item.prompt_params) {
-              const updatedPromptParams = {
-                ...item.prompt_params,
-                ...fileData,
-              };
-              return {
-                ...item,
-                prompt_params: updatedPromptParams,
-              };
-            }
-            return item;
-          });
-
-          dispatch(setGeneratingStatus(true));
-          generateExecution(newResPrompts as ResPrompt[]);
-        })
-        .catch(error => {
-          console.error("Error uploading files:", error);
+      Promise.all(uploadFilePromises).then(results => {
+        results.forEach(({ key, fileUrl }) => {
+          fileData[key] = fileUrl;
         });
+
+        const newResPrompts = resPrompts.map(item => {
+          if (item.prompt_params) {
+            const updatedPromptParams = { ...item.prompt_params, ...fileData };
+            return {
+              ...item,
+              prompt_params: updatedPromptParams,
+            };
+          }
+          return item;
+        });
+
+        dispatch(setGeneratingStatus(true));
+        generateExecution(newResPrompts as ResPrompt[]);
+      });
     } else {
       dispatch(setGeneratingStatus(true));
       generateExecution(resPrompts);
