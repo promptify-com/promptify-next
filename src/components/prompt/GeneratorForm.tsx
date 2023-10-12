@@ -6,7 +6,6 @@ import useToken from "@/hooks/useToken";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { GeneratorInput } from "./GeneratorInput";
 import { GeneratorParam } from "./GeneratorParam";
-import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { getInputsFromString } from "@/common/helpers/getInputsFromString";
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { LogoApp } from "@/assets/icons/LogoApp";
@@ -15,6 +14,8 @@ import { AllInclusive, Close, InfoOutlined } from "@mui/icons-material";
 import TabsAndFormPlaceholder from "@/components/placeholders/TabsAndFormPlaceholder";
 import Storage from "@/common/storage";
 import { setGeneratingStatus, updateExecutionData } from "@/core/store/templatesSlice";
+import ClientOnly from "../base/ClientOnly";
+import useGenerateExecution from "@/hooks/useGenerateExecution";
 
 interface GeneratorFormProps {
   templateData: Templates;
@@ -45,15 +46,15 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   const dispatch = useAppDispatch();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const router = useRouter();
-  const [generatingResponse, setGeneratingResponse] = useState<PromptLiveResponse | null>(null);
-  const [newExecutionId, setNewExecutionId] = useState<number | null>(null);
+
   const [resPrompts, setResPrompts] = useState<ResPrompt[]>([]);
-  const [lastExecution, setLastExecution] = useState<ResPrompt[] | null>(null);
   const [nodeInputs, setNodeInputs] = useState<ResInputs[]>([]);
   const [nodeParams, setNodeParams] = useState<ResOverrides[]>([]);
   const [errors, setErrors] = useState<InputsErrors>({});
   const [shownInputs, setShownInputs] = useState<Input[] | null>(null);
   const [shownParams, setShownParams] = useState<Param[] | null>(null);
+
+  const { generateExecution, generatingResponse, lastExecution } = useGenerateExecution(templateData?.id, onError);
 
   const answeredInputs = useAppSelector(state => state.template.answeredInputs);
   useEffect(() => {
@@ -230,136 +231,6 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     generateExecution(resPrompts);
   };
 
-  const generateExecution = (executionData: ResPrompt[]) => {
-    setLastExecution(JSON.parse(JSON.stringify(executionData)));
-
-    let tempData: any[] = [];
-    let url = `${process.env.NEXT_PUBLIC_API_URL}/api/meta/templates/${templateData.id}/execute/`;
-
-    fetchEventSource(url, {
-      method: "POST",
-      headers: {
-        Authorization: `Token ${token}`,
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(executionData),
-      openWhenHidden: true,
-
-      async onopen(res) {
-        if (res.ok && res.status === 200) {
-          dispatch(setGeneratingStatus(true));
-          setGeneratingResponse({ created_at: new Date(), data: [] });
-        } else if (res.status >= 400 && res.status < 500 && res.status !== 429) {
-          console.error("Client side error ", res);
-          onError("Something went wrong. Please try again later");
-        }
-      },
-      onmessage(msg) {
-        try {
-          const parseData = JSON.parse(msg.data.replace(/'/g, '"'));
-          const message = parseData.message;
-          const prompt = parseData.prompt_id;
-          const executionId = parseData.template_execution_id;
-
-          if (executionId) setNewExecutionId(executionId);
-
-          if (msg.event === "infer" && msg.data) {
-            if (message) {
-              const tempArr = [...tempData];
-              const activePrompt = tempArr.findIndex(template => template.prompt === +prompt);
-
-              if (activePrompt === -1) {
-                tempArr.push({
-                  message,
-                  prompt,
-                });
-              } else {
-                tempArr[activePrompt] = {
-                  ...tempArr[activePrompt],
-                  message: tempArr[activePrompt].message + message,
-                  prompt,
-                };
-              }
-
-              tempData = [...tempArr];
-              setGeneratingResponse(prevState => ({
-                ...prevState,
-                created_at: prevState?.created_at || new Date(),
-                data: tempArr,
-              }));
-            }
-          } else {
-            const tempArr = [...tempData];
-            const activePrompt = tempArr.findIndex(template => template.prompt === +prompt);
-
-            if (message === "[C OMPLETED]" || message === "[COMPLETED]") {
-              tempArr[activePrompt] = {
-                ...tempArr[activePrompt],
-                prompt,
-                isLoading: false,
-                isCompleted: true,
-              };
-            }
-
-            if (message === "[INITIALIZING]") {
-              if (activePrompt === -1) {
-                tempArr.push({
-                  message: "",
-                  prompt,
-                  isLoading: true,
-                  created_at: new Date(),
-                });
-              } else {
-                tempArr[activePrompt] = {
-                  ...tempArr[activePrompt],
-                  prompt,
-                  isLoading: true,
-                };
-              }
-            }
-
-            if (message.includes("[ERROR]")) {
-              onError(
-                message ? message.replace("[ERROR]", "") : "Something went wrong during the execution of this prompt",
-              );
-            }
-
-            tempData = [...tempArr];
-            setGeneratingResponse(prevState => ({
-              ...prevState,
-              created_at: prevState?.created_at || new Date(),
-              data: tempArr,
-            }));
-          }
-        } catch {
-          console.error(msg);
-          // TODO: this is triggered event when there is no error
-          // onError(msg.data.slice(0, 100));
-        }
-      },
-      onerror(err) {
-        console.error(err);
-        dispatch(setGeneratingStatus(false));
-        onError("Something went wrong. Please try again later");
-        throw err; // rethrow to stop the operation
-      },
-      onclose() {
-        dispatch(setGeneratingStatus(false));
-      },
-    });
-  };
-
-  useEffect(() => {
-    if (newExecutionId) {
-      setGeneratingResponse(prevState => ({
-        id: newExecutionId,
-        created_at: prevState?.created_at || new Date(),
-        data: prevState?.data || [],
-      }));
-    }
-  }, [newExecutionId]);
-
   useEffect(() => {
     if (generatingResponse) setGeneratedExecution(generatingResponse);
   }, [generatingResponse]);
@@ -442,8 +313,11 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
       .filter(input => input.required)
       .every(input => input.value),
   );
-
   const allowReset = nodeInputs.some(input => Object.values(input.inputs).some(input => input.value));
+  const prompts = templateData.prompts;
+  const promptHasContent = prompts.some(prompt => prompt.content);
+  const hasContentOrFormFilled = !filledForm ? true : promptHasContent ? false : true;
+  const isButtonDisabled = token ? (isGenerating ? true : hasContentOrFormFilled) : true;
 
   return (
     <Stack
@@ -569,80 +443,82 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
             gap={1}
             p={"16px 8px 16px 16px"}
           >
-            <Button
-              variant={"contained"}
-              startIcon={
-                token && isGenerating ? (
-                  <CircularProgress size={16} />
-                ) : (
-                  token && (
-                    <LogoApp
-                      width={18}
-                      color="white"
-                    />
-                  )
-                )
-              }
-              sx={{
-                flex: 1,
-                p: "10px 25px",
-                fontWeight: 500,
-                borderColor: "primary.main",
-                borderRadius: "999px",
-                bgcolor: "primary.main",
-                color: "onPrimary",
-                whiteSpace: "pre-line",
-                ":hover": {
-                  bgcolor: "surface.1",
-                  color: "primary.main",
-                },
-                ":disabled": {
-                  bgcolor: "surface.4",
-                  color: "onTertiary",
-                  borderColor: "transparent",
-                },
-              }}
-              disabled={!token ? false : isGenerating ? true : !filledForm}
-              onClick={validateAndGenerateExecution}
-            >
-              {token ? (
-                <React.Fragment>
-                  {isGenerating ? (
-                    <Typography>Generation in progress...</Typography>
+            <ClientOnly>
+              <Button
+                variant={"contained"}
+                startIcon={
+                  token && isGenerating ? (
+                    <CircularProgress size={16} />
                   ) : (
-                    <>
-                      <Typography sx={{ ml: 2, color: "inherit", fontSize: 15 }}>Generate</Typography>
-                      <Typography sx={{ display: { md: "none" }, ml: "auto", color: "inherit", fontSize: 12 }}>
-                        ~360s
-                      </Typography>
-                      <Stack
-                        direction={"row"}
-                        alignItems={"center"}
-                        gap={0.5}
-                        sx={{ display: { xs: "none", md: "flex" }, ml: "auto", color: "inherit", fontSize: 12 }}
-                      >
-                        {templateData.executions_limit === -1 ? (
-                          <AllInclusive fontSize="small" />
-                        ) : (
-                          <>
-                            {templateData.executions_limit - templateData.executions_count} of{" "}
-                            {templateData.executions_limit} left
-                            <InfoOutlined sx={{ fontSize: 16 }} />
-                          </>
-                        )}
-                      </Stack>
-                    </>
-                  )}
-                </React.Fragment>
-              ) : (
-                <Typography
-                  ml={2}
-                  color={"inherit"}
-                >
-                  Sign in or Create an account
-                </Typography>
-              )}
-            </Button>
+                    token && (
+                      <LogoApp
+                        width={18}
+                        color="white"
+                      />
+                    )
+                  )
+                }
+                sx={{
+                  flex: 1,
+                  p: "10px 25px",
+                  fontWeight: 500,
+                  borderColor: "primary.main",
+                  borderRadius: "999px",
+                  bgcolor: "primary.main",
+                  color: "onPrimary",
+                  whiteSpace: "pre-line",
+                  ":hover": {
+                    bgcolor: "surface.1",
+                    color: "primary.main",
+                  },
+                  ":disabled": {
+                    bgcolor: "surface.4",
+                    color: "onTertiary",
+                    borderColor: "transparent",
+                  },
+                }}
+                disabled={isButtonDisabled}
+                onClick={validateAndGenerateExecution}
+              >
+                {token ? (
+                  <>
+                    {isGenerating ? (
+                      <Typography>Generation in progress...</Typography>
+                    ) : (
+                      <>
+                        <Typography sx={{ ml: 2, color: "inherit", fontSize: 15 }}>Generate</Typography>
+                        <Typography sx={{ display: { md: "none" }, ml: "auto", color: "inherit", fontSize: 12 }}>
+                          ~360s
+                        </Typography>
+                        <Stack
+                          direction={"row"}
+                          alignItems={"center"}
+                          gap={0.5}
+                          sx={{ display: { xs: "none", md: "flex" }, ml: "auto", color: "inherit", fontSize: 12 }}
+                        >
+                          {templateData.executions_limit === -1 ? (
+                            <AllInclusive fontSize="small" />
+                          ) : (
+                            <>
+                              {templateData.executions_limit - templateData.executions_count} of{" "}
+                              {templateData.executions_limit} left
+                              <InfoOutlined sx={{ fontSize: 16 }} />
+                            </>
+                          )}
+                        </Stack>
+                      </>
+                    )}
+                  </>
+                ) : (
+                  <Typography
+                    ml={2}
+                    color={"inherit"}
+                  >
+                    Sign in or Create an account
+                  </Typography>
+                )}
+              </Button>
+            </ClientOnly>
             <Box
               sx={{
                 position: "relative",

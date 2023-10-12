@@ -26,6 +26,9 @@ body {
   width: 100%;
 }
 
+ .public-DraftEditor-content {
+   font-family: 'Space Mono', monospace;
+}
 .dot-container {
   display: flex;
   justify-content: center;
