@@ -17,40 +17,6 @@ interface GeneratorInputProps {
   setNodeInputs: (updatedNodes: ResInputs[]) => void;
   errors: InputsErrors;
 }
-//   switch (extension) {
-//     case "pdf":
-//       return ".pdf";
-//     case "docx":
-//       return ".docx";
-//     case "txt":
-//       return ".txt";
-//     default:
-//       return undefined;
-//   }
-// };
-
-// const generateAcceptString = (types: FileType[]): string => {
-//   console.log(types);
-//   const mimeTypes: string[] = [];
-//   types.forEach(type => {
-//     const mimeType = getMimeType(type);
-//     if (mimeType) {
-//       mimeTypes.push(mimeType);
-//     }
-//   });
-//   return mimeTypes.join(",");
-// };
-
-// const extensionType = {
-//   pdf: ".pdf",
-//   docx: ".docx",
-//   txt: ".txt",
-// };
-
-// const generateAcceptString = (types: FileType[]): string => {
-//   const extensionTypes = types.map(type => extensionType[type]).filter(Boolean);
-//   return extensionTypes.join(",");
-// };
 
 export const GeneratorInput: React.FC<GeneratorInputProps> = ({
   promptId,
@@ -62,35 +28,19 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const [codeFieldOpen, setCodeFieldOpen] = useState(false);
 
-  const handleChange = (value: string | FileList, name: string, type: string) => {
+  const handleChange = (value: string | File, name: string, type: string) => {
     const updatedNodes = nodeInputs.map(node => {
       const targetNode = node.inputs[name];
-      if (targetNode) {
-        if (type === "file") {
-          return {
-            ...node,
-            inputs: {
-              ...node.inputs,
-              [name]: {
-                ...targetNode,
-                value: type === "file" ? Array.from(value as FileList) : value,
-              },
-            },
-          };
-        } else {
-          return {
-            ...node,
-            inputs: {
-              ...node.inputs,
-              [name]: {
-                ...targetNode,
-                value: type === "number" ? +value : value,
-              },
-            },
-          };
-        }
-      }
-      return node;
+      return {
+        ...node,
+        inputs: {
+          ...node.inputs,
+          [name]: {
+            ...targetNode,
+            value: type === "number" ? +value : value,
+          },
+        },
+      };
     });
 
     setNodeInputs(updatedNodes);
@@ -212,10 +162,9 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
                     }}
                     onChange={e => {
                       if (e.target.files && e.target.files.length > 0) {
-                        handleChange(e.target.files, input.name, input.type);
+                        handleChange(e.target.files[0], input.name, input.type);
                       }
                     }}
-                    multiple
                   />
                 </Button>
               ) : (

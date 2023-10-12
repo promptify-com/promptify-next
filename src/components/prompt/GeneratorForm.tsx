@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Box, Button, CircularProgress, Stack, Typography, alpha, useTheme } from "@mui/material";
 import { PromptParams, ResInputs, ResOverrides, ResPrompt } from "@/core/api/dto/prompts";
-import { FileResponse, IPromptInput, PromptLiveResponse } from "@/common/types/prompt";
+import { IPromptInput, PromptLiveResponse } from "@/common/types/prompt";
 import useToken from "@/hooks/useToken";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { GeneratorInput } from "./GeneratorInput";
@@ -35,6 +35,10 @@ interface Input extends IPromptInput {
 interface Param {
   prompt: number;
   param: PromptParams;
+}
+
+interface FileData {
+  [key: string]: File | string | undefined;
 }
 
 export const GeneratorForm: React.FC<GeneratorFormProps> = ({
@@ -231,76 +235,65 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     }
 
     if (!validateInputs()) return;
+
     const hasTypeFile = shownInputs?.some(item => item.type === "file");
 
     if (hasTypeFile) {
-      let filePath = null;
+      const fileData: FileData = {};
+      const uploadPromises = [];
       let filePaths: File[] = [];
-      let keyName: string = "";
+      let keyNames: string[] = [];
+
       for (const key in resPrompts[0]?.prompt_params) {
         if (resPrompts[0]?.prompt_params[key]) {
           const value = resPrompts[0]?.prompt_params[key];
-          keyName = key;
-
-          if (Array.isArray(value) && value.every(item => item instanceof File)) {
-            filePaths = filePaths.concat(value);
-            keyName = key;
+          if (value instanceof File) {
+            filePaths.push(value);
+            keyNames.push(key);
           }
         }
       }
 
-      if (filePaths.length > 0) {
-        const fileUrls: string[] = [];
+      keyNames.forEach((key, index) => {
+        fileData[key] = filePaths[index];
+      });
 
-        for (let i = 0; i < filePaths.length; i++) {
-          const filePath = filePaths[i];
-
-          const fileUrl = await uploadFileHelper(uploadFile, filePath);
-          if (fileUrl) {
-            fileUrls.push(fileUrl);
-          }
+      for (const key in fileData) {
+        const file = fileData[key];
+        if (file) {
+          uploadPromises.push(uploadFileHelper(uploadFile, file as File));
         }
+      }
 
-        const newResPrompts = resPrompts.map(item => {
-          if (item.prompt_params) {
-            const updatedPromptParams = {
-              ...item.prompt_params,
-              [keyName]: fileUrls,
-            };
-            return {
-              ...item,
-              prompt_params: updatedPromptParams,
-            };
-          }
-          return item;
+      Promise.all(uploadPromises)
+        .then(fileUrls => {
+          fileUrls.forEach((fileUrl, index) => {
+            const key = keyNames[index];
+            fileData[key] = fileUrl;
+          });
+          const newResPrompts = resPrompts.map(item => {
+            if (item.prompt_params) {
+              const updatedPromptParams = {
+                ...item.prompt_params,
+                ...fileData,
+              };
+              return {
+                ...item,
+                prompt_params: updatedPromptParams,
+              };
+            }
+            return item;
+          });
+
+          dispatch(setGeneratingStatus(true));
+          generateExecution(newResPrompts as ResPrompt[]);
+        })
+        .catch(error => {
+          console.error("Error uploading files:", error);
         });
-        console.log("fileUrls: ", fileUrls);
-        console.log("New Resp: ", newResPrompts);
-      }
-
-      // if (filePath) {
-      //   const fileUrl = await uploadFileHelper(uploadFile, filePath);
-      //   if (fileUrl) {
-      //     const newResPrompts = resPrompts.map(item => {
-      //       if (item.prompt_params) {
-      //         const updatedPromptParams = {
-      //           ...item.prompt_params,
-      //           [keyName]: fileUrl,
-      //         };
-      //         return {
-      //           ...item,
-      //           prompt_params: updatedPromptParams,
-      //         };
-      //       }
-      //       return item;
-      //     });
-      //     dispatch(setGeneratingStatus(true));
-      //     generateExecution(newResPrompts);
-      //   }
-      // }
     } else {
-      // dispatch(setGeneratingStatus(true));
-      // generateExecution(resPrompts);
+      dispatch(setGeneratingStatus(true));
+      generateExecution(resPrompts);
     }
   };
 
