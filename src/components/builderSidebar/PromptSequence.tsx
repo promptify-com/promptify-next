@@ -137,14 +137,12 @@ const DraggableContent = memo(
 
 const PromptSequenceList = memo(({ prompts, setPrompts, engines }: PromptSequenceListProps) => {
   const [, drop] = useDrop(() => ({ accept: "prompt" }));
-
   const findPromptIndex = useCallback(
     (id: number) => {
       return prompts.findIndex(prompt => prompt.id === id || prompt.temp_id === id);
     },
     [prompts],
   );
-
   const movePrompt = useCallback(
     (id: number, atIndex: number) => {
       const index = findPromptIndex(id);
@@ -196,8 +194,17 @@ const PromptSequence = () => {
 
   const [prompts, setPrompts] = useState<IEditPrompts[]>(storedPrompts);
 
+  const promptsRef = useRef(prompts);
+
   useEffect(() => {
-    setPrompts(storedPrompts);
+    promptsRef.current = prompts;
+  }, [prompts]);
+
+  useEffect(() => {
+    if (JSON.stringify(storedPrompts) !== JSON.stringify(promptsRef.current)) {
+      console.log("sss");
+      setPrompts(storedPrompts);
+    }
   }, [storedPrompts]);
   return (
     <Box

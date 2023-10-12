@@ -45,7 +45,6 @@ const PromptList = ({ prompts, setPrompts, engines }: Props) => {
       _promptsCopy.splice(atIndex, 0, targetPromptOrder[0]);
 
       const reorderedPrompts = _promptsCopy.map((prompt, index) => ({ ...prompt, order: index + 1 }));
-
       setPrompts(reorderedPrompts);
       dispatch(handlePrompts(reorderedPrompts));
     },

@@ -11,8 +11,6 @@ import { Selection } from "react-highlight-within-textarea";
 import { Engine } from "@/core/api/dto/templates";
 import { useDrag, useDrop, ConnectableElement } from "react-dnd";
 import { getBuilderVarsPresets } from "@/common/helpers/getBuilderVarsPresets";
-import { useAppDispatch } from "@/hooks/useStore";
-import { handlePrompts } from "@/core/store/builderSlice";
 
 interface Props {
   prompt: IEditPrompts;
@@ -41,8 +39,6 @@ const PromptCardAccordion = ({
   const [renameAllow, setRenameAllow] = useState(false);
   const cursorPositionRef = useRef(0);
   const [highlightedOption, setHighlitedOption] = useState("");
-
-  const dispatch = useAppDispatch();
 
   const { outputPresets, inputPresets } = useMemo(() => getBuilderVarsPresets(prompts, promptData, false), [prompts]);
 

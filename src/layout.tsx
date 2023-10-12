@@ -1,14 +1,13 @@
 import { ReactNode } from "react";
 import { Box, Grid } from "@mui/material";
-import { useSelector } from "react-redux";
 
 import { Header } from "@/components/Header";
 import { DefaultSidebar } from "@/components/SideBar";
-import { RootState } from "@/core/store";
 import { theme } from "@/theme";
+import { useAppSelector } from "./hooks/useStore";
 
 export const Layout = ({ children }: { children: ReactNode }) => {
-  const defaultSidebarOpen = useSelector((state: RootState) => state.sidebar.defaultSidebarOpen);
+  const defaultSidebarOpen = useAppSelector(state => state.sidebar.defaultSidebarOpen);
 
   return (
     <>
