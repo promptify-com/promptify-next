@@ -194,6 +194,10 @@ const PromptSequence = () => {
 
   const [prompts, setPrompts] = useState<IEditPrompts[]>(storedPrompts);
 
+  useEffect(() => {
+    setPrompts(storedPrompts);
+  }, [storedPrompts]);
+
   return (
     <Box
       bgcolor={"surface.1"}
