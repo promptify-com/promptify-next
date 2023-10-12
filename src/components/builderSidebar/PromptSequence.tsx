@@ -194,18 +194,6 @@ const PromptSequence = () => {
 
   const [prompts, setPrompts] = useState<IEditPrompts[]>(storedPrompts);
 
-  const promptsRef = useRef(prompts);
-
-  useEffect(() => {
-    promptsRef.current = prompts;
-  }, [prompts]);
-
-  useEffect(() => {
-    if (JSON.stringify(storedPrompts) !== JSON.stringify(promptsRef.current)) {
-      console.log("sss");
-      setPrompts(storedPrompts);
-    }
-  }, [storedPrompts]);
   return (
     <Box
       bgcolor={"surface.1"}
