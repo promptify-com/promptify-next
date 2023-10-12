@@ -29,6 +29,7 @@ interface CustomPalette {
 
 interface CustomTheme {
   custom: {
+    defaultSidebarWidth: string;
     headerHeight: {
       xs: string;
       md: string;
@@ -90,6 +91,7 @@ export let theme: Theme = createTheme({
     inverseSurface: "#303033",
   },
   custom: {
+    defaultSidebarWidth: "299px",
     headerHeight: {
       xs: "58px",
       md: "90px",
