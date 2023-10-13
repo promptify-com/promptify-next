@@ -263,7 +263,17 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
         const newResPrompts = resPrompts.map(item => {
           if (item.prompt_params) {
-            const updatedPromptParams = { ...item.prompt_params, ...fileData };
+            // const nonEmptyFileData = Object.entries(fileData)
+            //   .filter(([key, value]) => value !== "")
+            //   .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});
+            // console.log("Checking: ", nonEmptyFileData);
+            // const updatedPromptParams = { ...fileData };
+            const updatedPromptParams = {
+              ...Object.entries(item.prompt_params)
+                .filter(([key, value]) => value !== "")
+                .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {}),
+              ...fileData,
+            };
             return {
               ...item,
               prompt_params: updatedPromptParams,
