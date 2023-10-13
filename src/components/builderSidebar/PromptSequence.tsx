@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useEffect, useRef, useState } from "react";
+import React, { memo, useCallback, useEffect, useState } from "react";
 import { ConnectableElement, DndProvider, useDrag, useDrop } from "react-dnd";
 import { Box, IconButton, Stack, Typography } from "@mui/material";
 import { HTML5Backend } from "react-dnd-html5-backend";
@@ -8,6 +8,8 @@ import { IEditPrompts } from "@/common/types/builder";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { handlePrompts } from "@/core/store/builderSlice";
 import { Engine } from "@/core/api/dto/templates";
+import { useScrollToElement } from "@/hooks/useScrollToElement";
+import { promptComputeDomId } from "@/common/helpers";
 
 interface DraggableContentProps {
   prompt: IEditPrompts;
@@ -27,6 +29,8 @@ interface PromptSequenceListProps {
 const DraggableContent = memo(
   ({ prompt, order, findPromptIndex, movePrompt, prompts, engines }: DraggableContentProps) => {
     const dispatch = useAppDispatch();
+    const setSmoothScrollTarget = useScrollToElement("smooth");
+
     const promptId = prompt.id! ?? prompt.temp_id;
     const promptEngine = engines?.find(engine => engine.id === prompt.engine_id);
     const originalIndex = findPromptIndex(promptId);
@@ -49,6 +53,9 @@ const DraggableContent = memo(
       }),
       [promptId, originalIndex, movePrompt],
     );
+    const scrollSmoothTo = () => {
+      setSmoothScrollTarget(`#${promptComputeDomId(prompt)}`);
+    };
 
     const [, drop] = useDrop(
       () => ({
@@ -62,15 +69,6 @@ const DraggableContent = memo(
       }),
       [findPromptIndex, movePrompt],
     );
-
-    const handleClick = () => {
-      const element = document.getElementById(`prompt-${prompt.id ?? prompt.temp_id}-${prompt.title}`);
-      if (element) {
-        const y =
-          element.getBoundingClientRect().top + window.pageYOffset - window.innerHeight / 2 + element.clientHeight / 2;
-        window.scrollTo({ top: y, behavior: "smooth" });
-      }
-    };
 
     return (
       <Stack
@@ -120,7 +118,7 @@ const DraggableContent = memo(
           <Typography> Prompt #{order}</Typography>
         </Stack>
         <IconButton
-          onClick={handleClick}
+          onClick={scrollSmoothTo}
           sx={{
             border: "none",
             "&:hover": {
