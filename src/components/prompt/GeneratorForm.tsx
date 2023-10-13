@@ -262,23 +262,18 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
         });
 
         const newResPrompts = resPrompts.map(item => {
-          if (item.prompt_params) {
-            const updatedPromptParams = {
-              ...Object.entries(item.prompt_params)
-                .filter(([key, value]) => value !== "")
-                .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {}),
-              ...fileData,
-            };
-            return {
-              ...item,
-              prompt_params: updatedPromptParams,
-            };
-          }
+          const updatedPromptParams = {
+            ...Object.entries(item.prompt_params)
+              .filter(([key, value]) => value !== "")
+              .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {}),
+            ...fileData,
+          };
+          item.prompt_params = updatedPromptParams;
           return item;
         });
 
         dispatch(setGeneratingStatus(true));
-        generateExecution(newResPrompts as ResPrompt[]);
+        generateExecution(newResPrompts);
       });
     } else {
       dispatch(setGeneratingStatus(true));

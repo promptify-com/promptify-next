@@ -114,7 +114,6 @@ const TemplateForm: React.FC<Props> = ({
     if (!templateData) return;
     if (selectedFile) {
       const fileUrl = await uploadFileHelper(uploadFile, selectedFile);
-      console.log(fileUrl);
       if (fileUrl) {
         values.thumbnail = fileUrl;
       }

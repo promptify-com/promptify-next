@@ -13,10 +13,7 @@ export const uploadFileHelper: UploadFunction = async (uploadFileMutation, selec
       const { file_url } = responseData.data;
       return file_url;
     }
-  } catch (error) {
-    console.error(error);
-  }
-  return undefined;
+  } catch (_) {}
 };
 
 const extensionType = {

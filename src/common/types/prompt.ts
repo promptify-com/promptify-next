@@ -21,7 +21,7 @@ export interface IPromptInput {
   defaultValue?: string | number | null;
   choices?: string[] | null;
   prompt?: number;
-  fileExtensions?: string[] | null;
+  fileExtensions: string[];
 }
 
 export type AnsweredInputType = {

@@ -36,9 +36,9 @@ export const getInputsFromString = (str: string): IPromptInput[] => {
     }
 
     const fileExtensions =
-      type === "file" ? Array.from(new Set(parts[3]?.split(",").filter(option => option.trim()))) : null;
+      type === "file" ? Array.from(new Set(parts[3]?.split(",").filter(option => option.trim()))) : [];
 
-    if (type === "file" && !fileExtensions?.length) {
+    if (type === "file" && !fileExtensions.length) {
       continue;
     }
 
