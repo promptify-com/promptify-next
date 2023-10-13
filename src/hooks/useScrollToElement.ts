@@ -1,19 +1,19 @@
 import { useEffect, useState } from "react";
 
 export const useScrollToElement = (behavior: "auto" | "smooth") => {
-  const [scrollTarget, setScrollTarget] = useState<string | null>(null);
+  const [querySelector, setQuerySelector] = useState<string | null>(null);
 
   useEffect(() => {
-    if (scrollTarget) {
-      const element = document.getElementById(scrollTarget);
+    if (querySelector) {
+      const element = document.getElementById(querySelector);
       if (element) {
         const y =
           element.getBoundingClientRect().top + window.scrollY - window.innerHeight / 2 + element.clientHeight / 2;
         window.scrollTo({ top: y, behavior });
-        setScrollTarget(null);
+        setQuerySelector(null);
       }
     }
-  }, [scrollTarget]);
+  }, [querySelector]);
 
-  return setScrollTarget;
+  return setQuerySelector;
 };

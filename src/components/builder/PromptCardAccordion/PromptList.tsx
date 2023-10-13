@@ -4,7 +4,7 @@ import { IEditPrompts } from "@/common/types/builder";
 import { useDrop } from "react-dnd";
 import { Box, Button, Stack } from "@mui/material";
 import { Add } from "@mui/icons-material";
-import { randomId } from "@/common/helpers";
+import { promptComputeDomId, randomId } from "@/common/helpers";
 import { Engine } from "@/core/api/dto/templates";
 import { useDeletePromptMutation } from "@/core/api/templates";
 import { DeleteDialog } from "@/components/dialog/DeleteDialog";
@@ -101,7 +101,7 @@ const PromptList = ({ prompts, setPrompts, engines }: Props) => {
 
     setPrompts(_prompts);
     dispatch(handlePrompts(_prompts));
-    setSmoothScrollTarget(`prompt-${temp_id}-${_newPrompt.title}`);
+    setSmoothScrollTarget(promptComputeDomId(_newPrompt));
   };
 
   const duplicatePrompt = (duplicatedPrompt: IEditPrompts, order: number) => {
@@ -156,10 +156,6 @@ const PromptList = ({ prompts, setPrompts, engines }: Props) => {
     setPromptToDelete(null);
   };
 
-  const computeDomId = (prompt: IEditPrompts): string => {
-    return `prompt-${prompt.id ?? prompt.temp_id}-${prompt.title}`;
-  };
-
   return (
     <Stack
       ref={drop}
@@ -173,7 +169,7 @@ const PromptList = ({ prompts, setPrompts, engines }: Props) => {
             <Fragment key={index}>
               <Box
                 width={"100%"}
-                id={computeDomId(prompt)}
+                id={promptComputeDomId(prompt)}
               >
                 <PromptCardAccordion
                   key={prompt.id ?? prompt.temp_id}

@@ -142,7 +142,9 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
 
     await updateTemplate(templateData.id, _template);
     setMessageSnackBar({ status: true, message: "Prompt template saved with success" });
-    window.location.reload();
+    setTimeout(() => {
+      window.location.reload();
+    }, 700);
   };
 
   const handlePublishTemplate = async () => {
@@ -282,7 +284,7 @@ const initPrompts = (template: Templates, engines: Engine[]) => {
         id: prompt.id,
         title: prompt.title || `Prompt #1`,
         content: prompt.content || "Describe here prompt parameters, for example {{name:text}}",
-        engine_id: prompt.engine?.id || textEngine?.id || engines![0].id,
+        engine_id: prompt.engine?.id || textEngine?.id,
         dependencies: prompt.dependencies || [],
         parameters: initialParams,
         order: index + 1,

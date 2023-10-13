@@ -9,6 +9,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { handlePrompts } from "@/core/store/builderSlice";
 import { Engine } from "@/core/api/dto/templates";
 import { useScrollToElement } from "@/hooks/useScrollToElement";
+import { promptComputeDomId } from "@/common/helpers";
 
 interface DraggableContentProps {
   prompt: IEditPrompts;
@@ -53,7 +54,7 @@ const DraggableContent = memo(
       [promptId, originalIndex, movePrompt],
     );
     const scrollSmoothTo = () => {
-      setSmoothScrollTarget(`prompt-${prompt.id ?? prompt.temp_id}-${prompt.title}`);
+      setSmoothScrollTarget(promptComputeDomId(prompt));
     };
 
     const [, drop] = useDrop(
