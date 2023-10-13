@@ -101,7 +101,7 @@ const PromptList = ({ prompts, setPrompts, engines }: Props) => {
 
     setPrompts(_prompts);
     dispatch(handlePrompts(_prompts));
-    setSmoothScrollTarget(promptComputeDomId(_newPrompt));
+    setSmoothScrollTarget(`#${promptComputeDomId(_newPrompt)}`);
   };
 
   const duplicatePrompt = (duplicatedPrompt: IEditPrompts, order: number) => {
