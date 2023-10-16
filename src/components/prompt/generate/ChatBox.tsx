@@ -20,6 +20,7 @@ import { isDesktopViewPort } from "@/common/helpers";
 import { useStopExecutionMutation } from "@/core/api/executions";
 import VaryModal from "./VaryModal";
 import { vary } from "@/common/helpers/varyValidator";
+import { parseMessageData } from "@/common/helpers/parseMessageData";
 
 interface Props {
   setGeneratedExecution: (data: PromptLiveResponse | null) => void;
@@ -520,7 +521,8 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
       },
       onmessage(msg) {
         try {
-          const parseData = JSON.parse(msg.data.replace(/'/g, '"'));
+          const parseData = parseMessageData(msg.data);
+
           const message = parseData.message;
           const prompt = parseData.prompt_id;
           const executionId = parseData.template_execution_id;
