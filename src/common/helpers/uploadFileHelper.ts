@@ -20,7 +20,7 @@ export type SelectedFile = {
   promptId: number;
   file: File;
 };
-
+console.log("");
 export const uploadFileHelper: UploadFunction = async (uploadFileMutation, selectedFile) => {
   try {
     if (selectedFile.file instanceof File) {
