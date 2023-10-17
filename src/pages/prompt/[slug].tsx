@@ -26,13 +26,13 @@ interface TemplateProps {
   fetchedTemplate: Templates;
 }
 
-const Template = ({ hashedExecution, fetchedTemplate }: TemplateProps) => {
+function Template({ hashedExecution, fetchedTemplate }: TemplateProps) {
+  const router = useRouter();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const [selectedExecution, setSelectedExecution] = useState<TemplatesExecutions | null>(null);
   const [generatedExecution, setGeneratedExecution] = useState<PromptLiveResponse | null>(null);
   const [updateViewTemplate] = useViewTemplateMutation();
   const [errorMessage, setErrorMessage] = useState<string>("");
-  const router = useRouter();
   const theme = useTheme();
   const [palette, setPalette] = useState(theme.palette);
   const dispatch = useDispatch();
@@ -166,7 +166,7 @@ const Template = ({ hashedExecution, fetchedTemplate }: TemplateProps) => {
       </ThemeProvider>
     </>
   );
-};
+}
 
 export async function getServerSideProps({
   params,
@@ -182,7 +182,7 @@ export async function getServerSideProps({
   const { slug } = params;
   const { hash } = query;
   let fetchedTemplate: Templates = {} as Templates;
-  console.log("slug:", slug);
+
   try {
     let execution: TemplatesExecutions | null = null;
 
@@ -197,7 +197,6 @@ export async function getServerSideProps({
     } else {
       const _templatesResponse = await authClient.get<Templates>(`/api/meta/templates/by-slug/${slug}/`);
       fetchedTemplate = _templatesResponse.data;
-      console.log("_templatesResponse:", _templatesResponse.data);
     }
 
     return {

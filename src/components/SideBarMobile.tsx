@@ -36,6 +36,7 @@ import { NotFoundIcon } from "@/assets/icons/NotFoundIcon";
 import LoadingOverlay from "./design-system/LoadingOverlay";
 import { useRouteChangeOverlay } from "@/hooks/useRouteChangeOverlay";
 import { theme } from "@/theme";
+import { redirectToPath } from "@/common/helpers";
 
 type SidebarType = "navigation" | "profile";
 
@@ -286,6 +287,10 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
                       key={link.label}
                       disablePadding
                       onClick={async () => {
+                        if (link.href === "/") {
+                          redirectToPath("/");
+                          return;
+                        }
                         await navigateTo(link.href, link.external);
                         onCloseDrawer();
                       }}

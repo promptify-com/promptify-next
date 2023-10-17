@@ -2,13 +2,13 @@ import { FC } from "react";
 import { SparksLayoutProps } from "@/core/api/dto/templates";
 import { CloudQueueRounded, DeleteRounded, Edit, GetAppRounded } from "@mui/icons-material";
 import { CardMedia, Grid, IconButton, Tooltip, Typography } from "@mui/material";
-
 import useTimestampConverter from "@/hooks/useTimestampConverter";
 import useTruncate from "@/hooks/useTruncate";
 import DraftSpark from "@/assets/icons/DraftSpark";
 import SavedSpark from "@/assets/icons/SavedSpark";
 import { useRouter } from "next/router";
 import ShareIcon from "@/assets/icons/ShareIcon";
+import { redirectToPath } from "@/common/helpers";
 
 export const SparksLayoutDesktop: FC<SparksLayoutProps> = ({
   execution,
@@ -47,14 +47,9 @@ export const SparksLayoutDesktop: FC<SparksLayoutProps> = ({
         {execution.is_favorite ? <SavedSpark /> : <DraftSpark />}
       </Grid>
       <Grid
-        onClick={() =>
-          router.push({
-            pathname: `/prompt/${template.slug}`,
-            query: {
-              spark: execution.id,
-            },
-          })
-        }
+        onClick={() => {
+          redirectToPath(`/prompt/${template.slug}`, { spark: `${execution.id}` });
+        }}
         item
         md={2}
         lg={3}
@@ -90,7 +85,9 @@ export const SparksLayoutDesktop: FC<SparksLayoutProps> = ({
       </Grid>
 
       <Grid
-        onClick={() => router.push(`prompt/${template.slug}`)}
+        onClick={() => {
+          redirectToPath(`prompt/${template.slug}`);
+        }}
         item
         md={4}
         padding={"16px"}
