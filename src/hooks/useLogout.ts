@@ -1,10 +1,9 @@
-import { useRouter } from "next/router";
 import Storage from "@/common/storage";
 import { useDispatch } from "react-redux";
 import { updateUser } from "@/core/store/userSlice";
+import { redirectToPath } from "@/common/helpers";
 
 const useLogout = () => {
-  const router = useRouter();
   const dispatch = useDispatch();
 
   return async () => {
@@ -13,9 +12,7 @@ const useLogout = () => {
       Storage.remove("currentUser");
 
       dispatch(updateUser(null));
-
-      await router.push("/");
-
+      redirectToPath("/");
       resolve(true);
     });
   };
