@@ -182,7 +182,7 @@ export async function getServerSideProps({
   const { slug } = params;
   const { hash } = query;
   let fetchedTemplate: Templates = {} as Templates;
-
+  console.log("slug:", slug);
   try {
     let execution: TemplatesExecutions | null = null;
 
@@ -197,6 +197,7 @@ export async function getServerSideProps({
     } else {
       const _templatesResponse = await authClient.get<Templates>(`/api/meta/templates/by-slug/${slug}/`);
       fetchedTemplate = _templatesResponse.data;
+      console.log("_templatesResponse:", _templatesResponse.data);
     }
 
     return {
