@@ -17,7 +17,7 @@ import { setGeneratingStatus, updateExecutionData } from "@/core/store/templates
 import ClientOnly from "../base/ClientOnly";
 import useGenerateExecution from "@/hooks/useGenerateExecution";
 import { useUploadFileMutation } from "@/core/api/uploadFile";
-import { uploadFileHelper } from "@/common/helpers/uploadFileHelper";
+import { SelectedFile, uploadFileHelperObject } from "@/common/helpers/uploadFileHelper";
 
 interface GeneratorFormProps {
   templateData: Templates;
@@ -38,8 +38,22 @@ interface Param {
 }
 
 interface FileData {
-  [key: string]: File | string | undefined;
+  key: string;
+  promptId: number;
+  file: File;
 }
+
+const deleteFileInputIfEmpty = (prompts: ResPrompt[], inputs: Input[]) => {
+  for (const prompt of prompts) {
+    const prompt_params = prompt.prompt_params;
+    for (const key in prompt_params) {
+      const showInputItem = inputs?.find(inputItem => inputItem.prompt === prompt.prompt && inputItem.name === key);
+      if (showInputItem && showInputItem.type === "file" && prompt_params[key] === "") {
+        delete prompt_params[key];
+      }
+    }
+  }
+};
 
 export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   templateData,
@@ -224,7 +238,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     setErrors({});
     return true;
   };
-
+  console.log(nodeInputs);
   const validateAndGenerateExecution = async () => {
     if (!token) {
       if (allowReset) {
@@ -239,42 +253,75 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     const hasTypeFile = shownInputs?.some(item => item.type === "file");
 
     if (hasTypeFile) {
-      const fileData: FileData = {};
-
-      for (const key in resPrompts[0]?.prompt_params) {
-        const value = resPrompts[0]?.prompt_params[key];
-        if (value instanceof File) {
-          fileData[key] = value;
+      let fileData: FileData[] = [];
+      resPrompts.forEach(resPrompt => {
+        const promptId = resPrompt.prompt;
+        for (const key in resPrompt.prompt_params) {
+          const value = resPrompt.prompt_params[key];
+          if (value instanceof File) {
+            fileData.push({ key, promptId, file: value });
+          }
         }
+      });
+
+      const uploadFilePromises = fileData.map(fileObject => {
+        return uploadFileHelperObject(uploadFile, fileObject);
+      });
+      const results = await Promise.allSettled(uploadFilePromises);
+      const undefinedValues: any[] = [];
+      const definedValues: any[] = [];
+      let hasUndefined = false;
+
+      results.forEach(result => {
+        if (result.status === "fulfilled") {
+          if (result.value[result.value.key] === undefined) {
+            undefinedValues.push(result);
+            hasUndefined = true;
+          } else {
+            definedValues.push(result);
+          }
+        }
+      });
+
+      if (undefinedValues.length > 0) {
+        undefinedValues.forEach(value => {
+          setErrors({ ...errors, [value.value.key]: true });
+        });
       }
 
-      const uploadFilePromises = Object.keys(fileData).map(key => {
-        const file = fileData[key];
-        if (file) {
-          return uploadFileHelper(uploadFile, file as File).then(fileUrl => ({ key, fileUrl }));
+      if (definedValues.length > 0 && undefinedValues.length > 0) {
+        const newArr = definedValues.map(result => {
+          if (result.status === "fulfilled") {
+            const obj = nodeInputs.find(inputs => inputs.id === result.value.promptId);
+            if (obj) {
+              const tmp = obj.inputs[result.value.key];
+              obj.inputs[result.value.key] = { ...tmp, value: result.value[result.value.key] };
+            }
+            return obj;
+          }
+        });
+        setNodeInputs(newArr as ResInputs[]);
+      }
+
+      if (!hasUndefined) {
+        if (results.length > 0) {
+          results.forEach(result => {
+            if (result.status === "fulfilled") {
+              const matchingData = resPrompts.find(data => data.prompt === result.value.promptId);
+              if (matchingData) {
+                matchingData.prompt_params[result.value.key] = result.value[result.value.key];
+              }
+            }
+          });
+          deleteFileInputIfEmpty(resPrompts, shownInputs!);
+          dispatch(setGeneratingStatus(true));
+          generateExecution(resPrompts);
+        } else {
+          deleteFileInputIfEmpty(resPrompts, shownInputs!);
+          dispatch(setGeneratingStatus(true));
+          generateExecution(resPrompts);
         }
-        return Promise.resolve({ key, fileUrl: undefined });
-      });
-
-      Promise.all(uploadFilePromises).then(results => {
-        results.forEach(({ key, fileUrl }) => {
-          fileData[key] = fileUrl;
-        });
-
-        const newResPrompts = resPrompts.map(item => {
-          const updatedPromptParams = {
-            ...Object.entries(item.prompt_params)
-              .filter(([key, value]) => value !== "")
-              .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {}),
-            ...fileData,
-          };
-          item.prompt_params = updatedPromptParams;
-          return item;
-        });
-
-        dispatch(setGeneratingStatus(true));
-        generateExecution(newResPrompts);
-      });
+      }
     } else {
       dispatch(setGeneratingStatus(true));
       generateExecution(resPrompts);
