@@ -1,6 +1,6 @@
 import { FileResponse, FileType } from "../types/prompt";
 
-interface FileReponse {
+export interface FileReponse {
   key?: string;
   promptId?: number;
   fileUrl?: string;
@@ -39,6 +39,7 @@ export const uploadFileHelper: UploadFunction = async (uploadFileMutation, selec
           ...selectedFile,
           file: undefined,
         };
+
         return rest;
       }
     }
