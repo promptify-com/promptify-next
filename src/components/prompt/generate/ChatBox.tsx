@@ -203,19 +203,23 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
     }
   }, [isSimulaitonStreaming]);
 
-  const getUnansweredQuestions = (currentAnswers: IAnswer[]) => {
+  const getNextQuestion = (currentAnswers: IAnswer[]) => {
     const answeredQuestionNames = currentAnswers.map(input => input.inputName);
-    return templateQuestions.filter(question => !answeredQuestionNames.includes(question.name));
-  };
 
-  const getNextQuestion = (currentQuestionIndex: number, currentAnswers: IAnswer[]) => {
-    const potentialNextQuestion = templateQuestions[currentQuestionIndex + 1];
-    const unansweredQuestions = getUnansweredQuestions(currentAnswers);
+    const lastAnsweredQuestionName = answeredQuestionNames[answeredQuestionNames.length - 1];
+    const lastAnsweredQuestionIndex = templateQuestions.findIndex(q => q.name === lastAnsweredQuestionName);
 
-    if (potentialNextQuestion && !unansweredQuestions.includes(potentialNextQuestion)) {
-      return potentialNextQuestion;
+    const questionsAfterLastAnswered = templateQuestions.slice(lastAnsweredQuestionIndex + 1);
+    const questionsBeforeLastAnswered = templateQuestions.slice(0, lastAnsweredQuestionIndex);
+
+    const nextUnansweredAfter = questionsAfterLastAnswered.find(
+      question => !answeredQuestionNames.includes(question.name),
+    );
+    if (nextUnansweredAfter) {
+      return nextUnansweredAfter;
     }
-    return unansweredQuestions[0];
+
+    return questionsBeforeLastAnswered.find(question => !answeredQuestionNames.includes(question.name));
   };
 
   const allRequiredQuestionsAnswered = (templateQuestions: UpdatedQuestionTemplate[], answers: IAnswer[]): boolean => {
@@ -254,7 +258,9 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
         });
     }
 
-    const nextQuestion = getNextQuestion(updatedQuestionIndex, currentAnswers);
+    const nextQuestion = getNextQuestion(currentAnswers);
+
+    console.log(nextQuestion);
 
     if (!nextQuestion) {
       nextMessages.push({
@@ -267,6 +273,8 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
       !showGenerateButton && setShowGenerateButton(true);
       setDisableChatInput(true);
     } else {
+      const nextIndex = templateQuestions.indexOf(nextQuestion);
+
       nextMessages.push({
         text: nextQuestion.question,
         choices: nextQuestion.choices,
@@ -274,7 +282,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
         createdAt: createdAt,
         fromUser: false,
       });
-      setCurrentQuestionIndex(updatedQuestionIndex + 1);
+      setCurrentQuestionIndex(nextIndex);
     }
 
     setMessages(prevMessages => prevMessages.concat(nextMessages));
