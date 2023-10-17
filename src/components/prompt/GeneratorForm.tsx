@@ -17,7 +17,7 @@ import { setGeneratingStatus, updateExecutionData } from "@/core/store/templates
 import ClientOnly from "../base/ClientOnly";
 import useGenerateExecution from "@/hooks/useGenerateExecution";
 import { useUploadFileMutation } from "@/core/api/uploadFile";
-import { SelectedFile, uploadFileHelperObject } from "@/common/helpers/uploadFileHelper";
+import { uploadFileHelperObject } from "@/common/helpers/uploadFileHelper";
 
 interface GeneratorFormProps {
   templateData: Templates;
@@ -73,6 +73,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   const [errors, setErrors] = useState<InputsErrors>({});
   const [shownInputs, setShownInputs] = useState<Input[] | null>(null);
   const [shownParams, setShownParams] = useState<Param[] | null>(null);
+  const [uploadFailed, setUploadFailed] = useState(false);
 
   const { generateExecution, generatingResponse, lastExecution } = useGenerateExecution(templateData?.id, onError);
 
@@ -238,7 +239,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     setErrors({});
     return true;
   };
-  console.log(nodeInputs);
+
   const validateAndGenerateExecution = async () => {
     if (!token) {
       if (allowReset) {
@@ -287,6 +288,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
         undefinedValues.forEach(value => {
           setErrors({ ...errors, [value.value.key]: true });
         });
+        setUploadFailed(true);
       }
 
       if (definedValues.length > 0 && undefinedValues.length > 0) {
@@ -304,6 +306,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
       }
 
       if (!hasUndefined) {
+        setUploadFailed(false);
         if (results.length > 0) {
           results.forEach(result => {
             if (result.status === "fulfilled") {
@@ -665,7 +668,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
               textAlign: "center",
             }}
           >
-            Fill all the inputs
+            {uploadFailed ? "File upload failed" : "Fill all the inputs"}
           </Typography>
         )}
 
