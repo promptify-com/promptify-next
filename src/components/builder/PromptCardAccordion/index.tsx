@@ -11,6 +11,7 @@ import { Selection } from "react-highlight-within-textarea";
 import { Engine } from "@/core/api/dto/templates";
 import { useDrag, useDrop, ConnectableElement } from "react-dnd";
 import { getBuilderVarsPresets } from "@/common/helpers/getBuilderVarsPresets";
+import { useDebouncedDispatch } from "@/hooks/useDebounceDispatch";
 
 interface Props {
   prompt: IEditPrompts;
@@ -42,9 +43,13 @@ const PromptCardAccordion = ({
 
   const { outputPresets, inputPresets } = useMemo(() => getBuilderVarsPresets(prompts, promptData, false), [prompts]);
 
+  const dispatchUpdatePrompt = useDebouncedDispatch((prompt: IEditPrompts) => {
+    setPrompt(prompt);
+  }, 700);
+
   const updatePrompt = (newPromptData: IEditPrompts) => {
     setPromptData(newPromptData);
-    setPrompt(newPromptData);
+    dispatchUpdatePrompt(newPromptData);
   };
 
   const contentHandler = (content: string, selection?: Selection) => {

@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect } from "react";
 import { LANGUAGES_CODE_MAPPING } from "../constants";
 import { useWindowSize } from "usehooks-ts";
+import { IEditPrompts } from "../types/builder";
 
 export const isBrowser = () => typeof window !== "undefined";
 export const isomorphicLayoutEffect = isBrowser() ? useLayoutEffect : useEffect;
@@ -17,3 +18,6 @@ export const isDesktopViewPort = () => {
   return width >= 1024;
 };
 export const addSpaceBetweenCapitalized = (text: string) => text.replace(/([a-z])([A-Z])/g, "$1 $2");
+
+export const promptComputeDomId = (prompt: IEditPrompts): string =>
+  `prompt-${prompt.id ?? prompt.temp_id}-${prompt.title.toLowerCase().replace(/[^\w]/g, "-")}`;

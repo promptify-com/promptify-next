@@ -59,12 +59,13 @@ export interface TemplateIds {
   tagId: number;
 }
 
+export type EngineOutput = "TEXT" | "IMAGE";
 export interface Engine {
   icon: string;
   id: number;
   input_type: string;
   name: string;
-  output_type: string;
+  output_type: EngineOutput;
   provider: string;
 }
 export interface Tag {

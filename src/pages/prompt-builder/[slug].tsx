@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { usePublishTemplateMutation } from "@/core/api/templates";
 import { Alert, Box, Snackbar, Stack, SwipeableDrawer, Typography } from "@mui/material";
 import { DefaultSidebar } from "@/components/SideBar";
@@ -142,6 +142,9 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
 
     await updateTemplate(templateData.id, _template);
     setMessageSnackBar({ status: true, message: "Prompt template saved with success" });
+    setTimeout(() => {
+      window.location.reload();
+    }, 700);
   };
 
   const handlePublishTemplate = async () => {
@@ -264,6 +267,8 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
 };
 
 const initPrompts = (template: Templates, engines: Engine[]) => {
+  const textEngine = engines.find(engine => engine.output_type === "TEXT");
+
   if (template?.prompts) {
     const _prompts = template.prompts.map((prompt, index) => {
       const initialParams = prompt.parameters.map(param => ({
@@ -279,7 +284,7 @@ const initPrompts = (template: Templates, engines: Engine[]) => {
         id: prompt.id,
         title: prompt.title || `Prompt #1`,
         content: prompt.content || "Describe here prompt parameters, for example {{name:text}}",
-        engine_id: prompt.engine?.id || engines![0].id,
+        engine_id: prompt.engine?.id || textEngine?.id,
         dependencies: prompt.dependencies || [],
         parameters: initialParams,
         order: index + 1,
