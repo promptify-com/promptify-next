@@ -113,9 +113,10 @@ const TemplateForm: React.FC<Props> = ({
   const onEditTemplate = async (values: IEditTemplate) => {
     if (!templateData) return;
     if (selectedFile) {
-      const fileUrl = await uploadFileHelper(uploadFile, selectedFile);
-      if (fileUrl) {
-        values.thumbnail = fileUrl;
+      const result = await uploadFileHelper(uploadFile, { file: selectedFile });
+
+      if (result) {
+        values.thumbnail = result.fileUrl as string;
       }
     }
     await updateTemplate({
@@ -128,10 +129,10 @@ const TemplateForm: React.FC<Props> = ({
 
   const onCreateTemplate = async (values: IEditTemplate) => {
     if (selectedFile) {
-      const fileUrl = await uploadFileHelper(uploadFile, selectedFile);
+      const result = await uploadFileHelper(uploadFile, { file: selectedFile });
 
-      if (fileUrl) {
-        values.thumbnail = fileUrl;
+      if (result) {
+        values.thumbnail = result.fileUrl as string;
         const { slug } = await createTemplate(values).unwrap();
 
         handleSave();

@@ -1,9 +1,19 @@
 import { FileResponse, FileType } from "../types/prompt";
 
+interface FileReponse {
+  key?: string;
+  promptId?: number;
+  fileUrl?: string;
+}
+
 type UploadFunction = (
   uploadFileMutation: (selectedFile: File) => unknown,
-  selectedFile: File,
-) => Promise<string | undefined>;
+  selectedFile: {
+    file: File;
+    promptId?: number;
+    key?: string;
+  },
+) => Promise<FileReponse | undefined>;
 
 export type SelectedFile = {
   key: string;
@@ -11,22 +21,25 @@ export type SelectedFile = {
   file: File;
 };
 
-export const uploadFileHelperObject = async (
-  uploadFileMutation: (selectedFile: File) => unknown,
-  selectedFile: SelectedFile,
-) => {
-  const fileUrl = await uploadFileHelper(uploadFileMutation, selectedFile.file);
-  const { file, ...rest } = { [selectedFile.key]: fileUrl, ...selectedFile, file: undefined };
-  return rest;
-};
-
 export const uploadFileHelper: UploadFunction = async (uploadFileMutation, selectedFile) => {
   try {
-    if (selectedFile instanceof File) {
-      const responseData = (await uploadFileMutation(selectedFile)) as FileResponse;
+    if (selectedFile.file instanceof File) {
+      const responseData = (await uploadFileMutation(selectedFile.file)) as FileResponse;
       if (responseData?.data) {
         const { file_url } = responseData.data;
-        return file_url;
+        const { file, ...rest } = {
+          [selectedFile.key ? selectedFile.key : "fileUrl"]: file_url,
+          ...selectedFile,
+          file: undefined,
+        };
+        return rest;
+      } else {
+        const { file, ...rest } = {
+          [selectedFile.key ? selectedFile.key : "fileUrl"]: undefined,
+          ...selectedFile,
+          file: undefined,
+        };
+        return rest;
       }
     }
   } catch (_) {}

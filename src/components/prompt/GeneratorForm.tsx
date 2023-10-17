@@ -17,7 +17,7 @@ import { setGeneratingStatus, updateExecutionData } from "@/core/store/templates
 import ClientOnly from "../base/ClientOnly";
 import useGenerateExecution from "@/hooks/useGenerateExecution";
 import { useUploadFileMutation } from "@/core/api/uploadFile";
-import { uploadFileHelperObject } from "@/common/helpers/uploadFileHelper";
+import { uploadFileHelper } from "@/common/helpers/uploadFileHelper";
 
 interface GeneratorFormProps {
   templateData: Templates;
@@ -73,7 +73,6 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   const [errors, setErrors] = useState<InputsErrors>({});
   const [shownInputs, setShownInputs] = useState<Input[] | null>(null);
   const [shownParams, setShownParams] = useState<Param[] | null>(null);
-  const [uploadFailed, setUploadFailed] = useState(false);
 
   const { generateExecution, generatingResponse, lastExecution } = useGenerateExecution(templateData?.id, onError);
 
@@ -239,7 +238,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     setErrors({});
     return true;
   };
-
+  console.log(nodeInputs);
   const validateAndGenerateExecution = async () => {
     if (!token) {
       if (allowReset) {
@@ -254,77 +253,56 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     const hasTypeFile = shownInputs?.some(item => item.type === "file");
 
     if (hasTypeFile) {
-      let fileData: FileData[] = [];
-      resPrompts.forEach(resPrompt => {
+      const fileData: FileData[] = resPrompts.reduce((acc: FileData[], resPrompt) => {
         const promptId = resPrompt.prompt;
-        for (const key in resPrompt.prompt_params) {
-          const value = resPrompt.prompt_params[key];
-          if (value instanceof File) {
-            fileData.push({ key, promptId, file: value });
-          }
-        }
-      });
+        const fileEntries = Object.entries(resPrompt.prompt_params).filter(([key, value]) => value instanceof File);
+        const fileDataEntries = fileEntries.map(([key, file]) => ({ key, promptId, file: file as File }));
+        return acc.concat(fileDataEntries);
+      }, []);
 
       const uploadFilePromises = fileData.map(fileObject => {
-        return uploadFileHelperObject(uploadFile, fileObject);
+        return uploadFileHelper(uploadFile, fileObject);
       });
       const results = await Promise.allSettled(uploadFilePromises);
-      const undefinedValues: any[] = [];
-      const definedValues: any[] = [];
-      let hasUndefined = false;
 
       results.forEach(result => {
         if (result.status === "fulfilled") {
           if (result.value[result.value.key] === undefined) {
-            undefinedValues.push(result);
-            hasUndefined = true;
+            setErrors({ ...errors, [result.value.key]: true });
+            const newNodeInputs: ResInputs[] = [];
+            const nodeObject = nodeInputs.find(inputs => inputs.id === result.value.promptId);
+            if (nodeObject) {
+              const tmp = nodeObject.inputs[result.value.key];
+              nodeObject.inputs[result.value.key] = { ...tmp, value: "" };
+            }
+            newNodeInputs.push(nodeObject as ResInputs);
+            setNodeInputs(newNodeInputs);
+            deleteFileInputIfEmpty(resPrompts, shownInputs!);
           } else {
-            definedValues.push(result);
+            const newNodeInputs: ResInputs[] = [];
+            const nodeObject = nodeInputs.find(inputs => inputs.id === result.value.promptId);
+            if (nodeObject) {
+              const tmp = nodeObject.inputs[result.value.key];
+              nodeObject.inputs[result.value.key] = { ...tmp, value: result.value[result.value.key] };
+            }
+            newNodeInputs.push(nodeObject as ResInputs);
+            setNodeInputs(newNodeInputs);
+            deleteFileInputIfEmpty(resPrompts, shownInputs!);
           }
         }
       });
 
-      if (undefinedValues.length > 0) {
-        undefinedValues.forEach(value => {
-          setErrors({ ...errors, [value.value.key]: true });
-        });
-        setUploadFailed(true);
-      }
-
-      if (definedValues.length > 0 && undefinedValues.length > 0) {
-        const newArr = definedValues.map(result => {
-          if (result.status === "fulfilled") {
-            const obj = nodeInputs.find(inputs => inputs.id === result.value.promptId);
-            if (obj) {
-              const tmp = obj.inputs[result.value.key];
-              obj.inputs[result.value.key] = { ...tmp, value: result.value[result.value.key] };
-            }
-            return obj;
+      results.forEach(result => {
+        if (result.status === "fulfilled") {
+          const matchingData = resPrompts.find(data => data.prompt === result.value.promptId);
+          if (matchingData) {
+            matchingData.prompt_params[result.value.key] = result.value[result.value.key];
           }
-        });
-        setNodeInputs(newArr as ResInputs[]);
-      }
-
-      if (!hasUndefined) {
-        setUploadFailed(false);
-        if (results.length > 0) {
-          results.forEach(result => {
-            if (result.status === "fulfilled") {
-              const matchingData = resPrompts.find(data => data.prompt === result.value.promptId);
-              if (matchingData) {
-                matchingData.prompt_params[result.value.key] = result.value[result.value.key];
-              }
-            }
-          });
-          deleteFileInputIfEmpty(resPrompts, shownInputs!);
-          dispatch(setGeneratingStatus(true));
-          generateExecution(resPrompts);
-        } else {
-          deleteFileInputIfEmpty(resPrompts, shownInputs!);
-          dispatch(setGeneratingStatus(true));
-          generateExecution(resPrompts);
         }
-      }
+      });
+      setErrors({});
+      dispatch(setGeneratingStatus(true));
+      generateExecution(resPrompts);
     } else {
       dispatch(setGeneratingStatus(true));
       generateExecution(resPrompts);
@@ -668,7 +646,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
               textAlign: "center",
             }}
           >
-            {uploadFailed ? "File upload failed" : "Fill all the inputs"}
+            Fill all the inputs
           </Typography>
         )}
 
