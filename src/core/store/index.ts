@@ -7,6 +7,7 @@ import sidebarSlice from "./sidebarSlice";
 import profileSlice from "./profileSlice";
 import { baseApi } from "../api/api";
 import userSlice from "./userSlice";
+import builderSlice from "./builderSlice";
 
 export interface State {
   tick: string;
@@ -21,6 +22,7 @@ export const store = (options?: ConfigureStoreOptions["preloadedState"] | undefi
       sidebar: sidebarSlice,
       profile: profileSlice,
       user: userSlice,
+      builder: builderSlice,
     },
     middleware: getDefaultMiddleware =>
       getDefaultMiddleware({

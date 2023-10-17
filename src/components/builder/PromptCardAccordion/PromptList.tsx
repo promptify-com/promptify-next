@@ -1,13 +1,16 @@
-import { Fragment, useCallback, useState, memo, MutableRefObject } from "react";
+import { Fragment, useCallback, useState, memo, useEffect } from "react";
 import PromptCardAccordion from "@/components/builder/PromptCardAccordion";
 import { IEditPrompts } from "@/common/types/builder";
 import { useDrop } from "react-dnd";
 import { Box, Button, Stack } from "@mui/material";
 import { Add } from "@mui/icons-material";
-import { randomId } from "@/common/helpers";
+import { promptComputeDomId, randomId } from "@/common/helpers";
 import { Engine } from "@/core/api/dto/templates";
 import { useDeletePromptMutation } from "@/core/api/templates";
 import { DeleteDialog } from "@/components/dialog/DeleteDialog";
+import { useAppDispatch } from "@/hooks/useStore";
+import { handlePrompts } from "@/core/store/builderSlice";
+import { useScrollToElement } from "@/hooks/useScrollToElement";
 
 interface Props {
   prompts: IEditPrompts[];
@@ -17,6 +20,9 @@ interface Props {
 const PromptList = ({ prompts, setPrompts, engines }: Props) => {
   const [promptToDelete, setPromptToDelete] = useState<IEditPrompts | null>(null);
   const [deletePrompt] = useDeletePromptMutation();
+
+  const dispatch = useAppDispatch();
+  const setSmoothScrollTarget = useScrollToElement("smooth");
 
   const [, drop] = useDrop(() => ({ accept: "prompt" }));
   const findPromptIndex = useCallback(
@@ -35,14 +41,14 @@ const PromptList = ({ prompts, setPrompts, engines }: Props) => {
   const movePrompt = useCallback(
     (id: number, atIndex: number) => {
       const index = findPromptIndex(id);
-      let _prompts = prompts;
+      const _promptsCopy = [...prompts];
 
-      const targetPromptOrder = _prompts.splice(index, 1);
-      _prompts.splice(atIndex, 0, targetPromptOrder[0]);
+      const targetPromptOrder = _promptsCopy.splice(index, 1);
+      _promptsCopy.splice(atIndex, 0, targetPromptOrder[0]);
 
-      _prompts = _prompts.map((prompt, index) => ({ ...prompt, order: index + 1 }));
-
-      setPrompts(_prompts);
+      const reorderedPrompts = _promptsCopy.map((prompt, index) => ({ ...prompt, order: index + 1 }));
+      setPrompts(reorderedPrompts);
+      dispatch(handlePrompts(reorderedPrompts));
     },
     [findPromptIndex, prompts],
   );
@@ -59,15 +65,17 @@ const PromptList = ({ prompts, setPrompts, engines }: Props) => {
     });
 
     setPrompts(_prompts);
+    dispatch(handlePrompts(_prompts));
   };
 
   const createPrompt = (order: number) => {
+    const textEngine = engines.find(engine => engine.output_type === "TEXT");
     const temp_id = randomId();
     const _newPrompt = {
       temp_id: temp_id,
       title: `Prompt #${order}`,
       content: "Describe here prompt parameters, for example {{name:text}} or {{age:number}}",
-      engine_id: engines ? engines[0]?.id : 0,
+      engine_id: textEngine?.id || 0,
       dependencies: [],
       parameters: [],
       order: order,
@@ -92,6 +100,8 @@ const PromptList = ({ prompts, setPrompts, engines }: Props) => {
     }
 
     setPrompts(_prompts);
+    dispatch(handlePrompts(_prompts));
+    setSmoothScrollTarget(`#${promptComputeDomId(_newPrompt)}`);
   };
 
   const duplicatePrompt = (duplicatedPrompt: IEditPrompts, order: number) => {
@@ -157,7 +167,10 @@ const PromptList = ({ prompts, setPrompts, engines }: Props) => {
           index++; // start from 1
           return (
             <Fragment key={index}>
-              <Box width={"100%"}>
+              <Box
+                width={"100%"}
+                id={promptComputeDomId(prompt)}
+              >
                 <PromptCardAccordion
                   key={prompt.id ?? prompt.temp_id}
                   prompt={prompt}

@@ -1,16 +1,15 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { usePublishTemplateMutation } from "@/core/api/templates";
 import { Alert, Box, Snackbar, Stack, SwipeableDrawer, Typography } from "@mui/material";
-import { Sidebar } from "@/components/SideBar";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@/core/store";
-import { setOpenSidebar } from "@/core/store/sidebarSlice";
+import { DefaultSidebar } from "@/components/SideBar";
+
+import { setOpenDefaultSidebar } from "@/core/store/sidebarSlice";
 import { Header } from "@/components/builder/Header";
 import TemplateForm from "@/components/common/forms/TemplateForm";
 import { IEditPrompts } from "@/common/types/builder";
 import { isPromptVariableValid } from "@/common/helpers/promptValidator";
 import { updateTemplate } from "@/hooks/api/templates";
-import { SidebarRight } from "@/components/SideBarRight";
+import { BuilderSidebar } from "@/components/builderSidebar";
 import { Engine, Templates } from "@/core/api/dto/templates";
 import { client } from "@/common/axios";
 import { DndProvider } from "react-dnd";
@@ -20,6 +19,8 @@ import { useRouter } from "next/router";
 import useToken from "@/hooks/useToken";
 import { IEditTemplate } from "@/common/types/editTemplate";
 import { BUILDER_TYPE } from "@/common/constants";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { handleEngines, handlePrompts } from "@/core/store/builderSlice";
 
 interface PromptBuilderProps {
   templateData: Templates;
@@ -30,15 +31,31 @@ interface PromptBuilderProps {
 export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuilderProps) => {
   const router = useRouter();
   const token = useToken();
-  const sidebarOpen = useSelector((state: RootState) => state.sidebar.open);
+  const defaultSidebarOpen = useAppSelector(state => state.sidebar.defaultSidebarOpen);
+  const builderSidebarOpen = useAppSelector(state => state.sidebar.builderSidebarOpen);
   const [prompts, setPrompts] = useState(initPrompts);
   const [templateDrawerOpen, setTemplateDrawerOpen] = useState(Boolean(router.query.editor));
   const [publishTemplate] = usePublishTemplateMutation();
   const [messageSnackBar, setMessageSnackBar] = useState({ status: false, message: "" });
   const [errorSnackBar, setErrorSnackBar] = useState({ status: false, message: "" });
-  const dispatch = useDispatch();
-  const toggleSidebar = () => dispatch(setOpenSidebar(!sidebarOpen));
-  const [openSideBarRight, setOpenSideBarRight] = useState(false);
+  const dispatch = useAppDispatch();
+  const toggleSidebar = () => dispatch(setOpenDefaultSidebar(!defaultSidebarOpen));
+
+  const storedPrompts = useAppSelector(state => state.builder.prompts);
+  const storedEngines = useAppSelector(state => state.builder.engines);
+  useEffect(() => {
+    if (!storedPrompts.length) {
+      dispatch(handlePrompts(initPrompts));
+    }
+
+    if (!storedEngines.length) {
+      dispatch(handleEngines(engines));
+    }
+  }, [initPrompts, engines]);
+
+  useEffect(() => {
+    setPrompts(storedPrompts);
+  }, [storedPrompts]);
 
   useEffect(() => {
     if (!templateData?.id) {
@@ -125,6 +142,9 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
 
     await updateTemplate(templateData.id, _template);
     setMessageSnackBar({ status: true, message: "Prompt template saved with success" });
+    setTimeout(() => {
+      window.location.reload();
+    }, 700);
   };
 
   const handlePublishTemplate = async () => {
@@ -144,24 +164,12 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
         minHeight: "100svh",
       }}
     >
-      <Sidebar
-        open={sidebarOpen}
-        toggleSideBar={toggleSidebar}
-        fullHeight
-      />
-      <SidebarRight
-        open={openSideBarRight}
-        openSideBarRight={(itemName: string) => {
-          if (itemName === "help") {
-            setOpenSideBarRight(true);
-          }
-        }}
-        closeSideBarRight={() => setOpenSideBarRight(false)}
-      />
+      <DefaultSidebar fullHeight />
+      <BuilderSidebar />
       <Box
         sx={{
-          ml: sidebarOpen ? "299px" : "86px",
-          mr: openSideBarRight ? "352px" : "0px",
+          ml: defaultSidebarOpen ? "299px" : "86px",
+          mr: builderSidebarOpen ? "352px" : "0px",
         }}
       >
         <Header
@@ -259,6 +267,8 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
 };
 
 const initPrompts = (template: Templates, engines: Engine[]) => {
+  const textEngine = engines.find(engine => engine.output_type === "TEXT");
+
   if (template?.prompts) {
     const _prompts = template.prompts.map((prompt, index) => {
       const initialParams = prompt.parameters.map(param => ({
@@ -274,7 +284,7 @@ const initPrompts = (template: Templates, engines: Engine[]) => {
         id: prompt.id,
         title: prompt.title || `Prompt #1`,
         content: prompt.content || "Describe here prompt parameters, for example {{name:text}}",
-        engine_id: prompt.engine?.id || engines![0].id,
+        engine_id: prompt.engine?.id || textEngine?.id,
         dependencies: prompt.dependencies || [],
         parameters: initialParams,
         order: index + 1,
