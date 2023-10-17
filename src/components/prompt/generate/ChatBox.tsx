@@ -203,6 +203,24 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
     }
   }, [isSimulaitonStreaming]);
 
+  const allRequiredQuestionsAnswered = (templateQuestions: UpdatedQuestionTemplate[], answers: IAnswer[]): boolean => {
+    const requiredQuestionNames = templateQuestions
+      .filter(question => question.required)
+      .map(question => question.name);
+
+    const answeredQuestionNames = answers.map(answer => answer.inputName);
+
+    return requiredQuestionNames.every(name => answeredQuestionNames.includes(name));
+  };
+
+  useEffect(() => {
+    if (allRequiredQuestionsAnswered(templateQuestions, answers)) {
+      setShowGenerateButton(true);
+    } else {
+      setShowGenerateButton(false);
+    }
+  }, [answers, templateQuestions]);
+
   const getNextQuestion = (currentAnswers: IAnswer[]) => {
     const answeredQuestionNames = currentAnswers.map(input => input.inputName);
 
@@ -220,16 +238,6 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
     }
 
     return questionsBeforeLastAnswered.find(question => !answeredQuestionNames.includes(question.name));
-  };
-
-  const allRequiredQuestionsAnswered = (templateQuestions: UpdatedQuestionTemplate[], answers: IAnswer[]): boolean => {
-    const requiredQuestionNames = templateQuestions
-      .filter(question => question.required)
-      .map(question => question.name);
-
-    const answeredQuestionNames = answers.map(answer => answer.inputName);
-
-    return requiredQuestionNames.every(name => answeredQuestionNames.includes(name));
   };
 
   const handleSyncForms = (currentAnswers: IAnswer[]) => {
@@ -260,8 +268,6 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
 
     const nextQuestion = getNextQuestion(currentAnswers);
 
-    console.log(nextQuestion);
-
     if (!nextQuestion) {
       nextMessages.push({
         text: "Great, we can start template",
@@ -287,14 +293,6 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
 
     setMessages(prevMessages => prevMessages.concat(nextMessages));
   };
-
-  useEffect(() => {
-    if (allRequiredQuestionsAnswered(templateQuestions, answers)) {
-      setShowGenerateButton(true);
-    } else {
-      setShowGenerateButton(false);
-    }
-  }, [answers, templateQuestions]);
 
   useEffect(() => {
     if (currentAnsweredInputs.length === 0) return;
