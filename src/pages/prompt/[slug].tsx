@@ -123,6 +123,8 @@ const Template = ({ hashedExecution, fetchedTemplate }: TemplateProps) => {
   const dynamicTheme = createTheme({ ...theme, palette });
   const isMobileView = router.query.viewport === "mobile";
 
+  console.log("router:", router.asPath, router.query, { router });
+
   return (
     <>
       <ThemeProvider theme={dynamicTheme}>
@@ -197,6 +199,7 @@ export async function getServerSideProps({
     } else {
       const _templatesResponse = await authClient.get<Templates>(`/api/meta/templates/by-slug/${slug}/`);
       fetchedTemplate = _templatesResponse.data;
+      console.log("_templatesResponse:", _templatesResponse.data);
     }
 
     return {

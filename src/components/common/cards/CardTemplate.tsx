@@ -45,7 +45,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({ template, noRedirect = fals
     <Box
       onClick={() => {
         if (!noRedirect) {
-          router.push(`/prompt/${template.slug}`);
+          router.push(`/prompt/${template.slug}`, undefined, { shallow: false, scroll: true });
         }
       }}
     >
