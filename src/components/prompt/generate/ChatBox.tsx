@@ -276,7 +276,6 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
         fromUser: false,
       });
 
-      !showGenerateButton && setShowGenerateButton(true);
       setDisableChatInput(true);
     } else {
       const nextIndex = templateQuestions.indexOf(nextQuestion);
