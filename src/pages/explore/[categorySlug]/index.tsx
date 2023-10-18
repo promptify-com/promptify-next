@@ -12,6 +12,7 @@ import { FiltersSelected } from "@/components/explorer/FiltersSelected";
 import SubCategoryPlaceholder from "@/components/placeholders/SubCategoryPlaceholder";
 import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
 import { useGetCategoriesQuery } from "@/core/api/categories";
+import { redirectToPath } from "@/common/helpers";
 
 export default function Page({ category }: { category: Category }) {
   const router = useRouter();
@@ -23,7 +24,7 @@ export default function Page({ category }: { category: Category }) {
     router.push("/explore");
   };
   const navigateTo = (item: Category) => {
-    router.push(`/explore/${categorySlug}/${item.slug}`);
+    redirectToPath(`/explore/${categorySlug}/${item.slug}`);
   };
 
   return (

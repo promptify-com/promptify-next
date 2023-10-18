@@ -12,6 +12,7 @@ import { RootState } from "@/core/store";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { useSelector } from "react-redux";
 import { theme } from "@/theme";
+import { redirectToPath } from "@/common/helpers";
 
 interface HeaderProps {
   transparent?: boolean;
@@ -95,7 +96,9 @@ export const Header: React.FC<HeaderProps> = ({ transparent = false, fixed = fal
         }}
       >
         <Grid
-          onClick={() => router.push("/")}
+          onClick={() => {
+            redirectToPath("/");
+          }}
           display={{ xs: "flex", md: "none" }}
           width={75}
           p={"0px 10px"}

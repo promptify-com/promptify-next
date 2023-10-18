@@ -13,6 +13,7 @@ import SubCategoryPlaceholder from "@/components/placeholders/SubCategoryPlaceho
 import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
 import Breadcrumb from "@/components/design-system/Breadcrumb";
 import { useGetCategoriesQuery } from "@/core/api/categories";
+import { redirectToPath } from "@/common/helpers";
 
 interface CategoryOrSubcategory {
   category: Category;
@@ -29,7 +30,7 @@ export default function Page({ category, subcategory }: CategoryOrSubcategory) {
   const { data: categories, isLoading: isCategoryLoading } = useGetCategoriesQuery();
 
   const navigateTo = (slug: string) => {
-    router.push(`/explore/${category.slug}/${slug}`);
+    redirectToPath(`/explore/${category.slug}/${slug}`);
   };
 
   const breadcrumbs = [

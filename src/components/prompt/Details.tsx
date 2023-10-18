@@ -16,7 +16,7 @@ import { RootState } from "@/core/store";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { useSelector } from "react-redux";
 import ApiAccess from "./ApiAccess";
-import { stripTags, getBaseUrl } from "@/common/helpers";
+import { stripTags, getBaseUrl, redirectToPath } from "@/common/helpers";
 
 interface DetailsProps {
   templateData: Templates;
@@ -86,7 +86,7 @@ export const Details: React.FC<DetailsProps> = ({ templateData, setMobileTab = (
         }).unwrap();
 
         window.open(`${getBaseUrl}/prompt-builder/${slug}?editor=1`, "_blank");
-        router.push(`/prompt/${slug}`);
+        redirectToPath(`/prompt/${slug}`);
       } catch (err) {
         console.error(err);
       } finally {

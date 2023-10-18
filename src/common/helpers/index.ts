@@ -18,6 +18,22 @@ export const isDesktopViewPort = () => {
   return width >= 1024;
 };
 export const addSpaceBetweenCapitalized = (text: string) => text.replace(/([a-z])([A-Z])/g, "$1 $2");
-
 export const promptComputeDomId = (prompt: IEditPrompts): string =>
   `prompt-${prompt.id ?? prompt.temp_id}-${prompt.title.toLowerCase().replace(/[^\w]/g, "-")}`;
+
+export const redirectToPath = (path: string, searchParams: Record<string, string | number> = {}) => {
+  if (!isBrowser()) {
+    return;
+  }
+
+  const newUrl = new URL(window.location.origin);
+  newUrl.pathname = path;
+
+  if (!!Object.keys(searchParams).length) {
+    for (const param in searchParams) {
+      newUrl.searchParams.set(param, `${searchParams[param]}`);
+    }
+  }
+
+  window.location.href = newUrl.toString();
+};

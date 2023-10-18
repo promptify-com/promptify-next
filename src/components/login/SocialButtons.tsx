@@ -12,10 +12,10 @@ import { IContinueWithSocialMediaResponse } from "@/common/types";
 import { savePathURL, saveToken } from "@/common/utils";
 import { Microsoft } from "@/assets/icons/microsoft";
 import { getPathURL } from "@/common/utils";
-import { useRouter } from "next/router";
 import { updateUser } from "@/core/store/userSlice";
 import { useDispatch } from "react-redux";
 import { userApi } from "@/core/api/user";
+import { redirectToPath } from "@/common/helpers";
 
 const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
 
@@ -41,7 +41,6 @@ export default function SocialButtons({ preLogin, isChecked, setErrorCheckBox, f
   const githubButtonRef = useRef<HTMLButtonElement | null>(null);
   const [open, setOpen] = useState(false);
   const [attemptError, setAttemptError] = useState(false);
-  const router = useRouter();
   const dispatch = useDispatch();
   const [getCurrentUser] = userApi.endpoints.getCurrentUser.useLazyQuery();
   const doPostLogin = async (response: AxiosResponse<IContinueWithSocialMediaResponse> | null) => {
@@ -55,7 +54,7 @@ export default function SocialButtons({ preLogin, isChecked, setErrorCheckBox, f
       dispatch(updateUser(payload));
       saveToken({ token });
 
-      router.push(path || "/");
+      redirectToPath(path || "/");
       return;
     }
 
