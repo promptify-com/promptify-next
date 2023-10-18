@@ -280,7 +280,6 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
       setDisableChatInput(true);
     } else {
       const nextIndex = templateQuestions.indexOf(nextQuestion);
-
       nextMessages.push({
         text: nextQuestion.question,
         choices: nextQuestion.choices,
@@ -297,7 +296,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
   useEffect(() => {
     if (currentAnsweredInputs.length === 0) return;
 
-    if (currentAnsweredInputs[0].modifiedFrom === "input") {
+    if (currentAnsweredInputs[0].modifiedFrom === "input" && currentAnsweredInputs[0].value !== "") {
       const updatedInput = currentAnsweredInputs[0];
       const matchedTemplate = templateQuestions.find(question => question.name === updatedInput.inputName);
 
