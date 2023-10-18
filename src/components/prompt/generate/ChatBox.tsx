@@ -294,35 +294,34 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
   };
 
   useEffect(() => {
-    if (currentAnsweredInputs.length === 0) return;
+    const [firstAnsweredInput] = currentAnsweredInputs;
 
-    if (currentAnsweredInputs[0].modifiedFrom === "input" && currentAnsweredInputs[0].value !== "") {
-      const updatedInput = currentAnsweredInputs[0];
-      const matchedTemplate = templateQuestions.find(question => question.name === updatedInput.inputName);
+    if (!firstAnsweredInput || firstAnsweredInput.modifiedFrom !== "input" || firstAnsweredInput.value === "") return;
 
-      setAnswers(prevAnswers => {
-        let updatedAnswers = [...prevAnswers];
+    const { inputName, promptId } = firstAnsweredInput;
 
-        const indexToUpdate = prevAnswers.findIndex(answer => answer.inputName === updatedInput.inputName);
+    const matchedTemplate = templateQuestions.find(question => question.name === inputName);
 
-        if (indexToUpdate !== -1) {
-          updatedAnswers[indexToUpdate].answer = updatedInput.value;
-        } else if (matchedTemplate) {
-          const newAnswer = {
-            inputName: updatedInput.inputName,
-            required: matchedTemplate.required,
-            question: matchedTemplate.question,
-            prompt: updatedInput.promptId,
-            answer: updatedInput.value,
-          };
-          updatedAnswers.push(newAnswer);
-        }
+    setAnswers(prevAnswers => {
+      const updatedAnswers = [...prevAnswers];
+      const indexToUpdate = prevAnswers.findIndex(answer => answer.inputName === inputName);
 
-        handleSyncForms(updatedAnswers);
+      if (indexToUpdate !== -1) {
+        updatedAnswers[indexToUpdate].answer = firstAnsweredInput.value;
+      } else if (matchedTemplate) {
+        updatedAnswers.push({
+          inputName,
+          required: matchedTemplate.required,
+          question: matchedTemplate.question,
+          prompt: promptId,
+          answer: firstAnsweredInput.value,
+        });
+      }
 
-        return updatedAnswers.filter(answer => Boolean(answer.answer));
-      });
-    }
+      handleSyncForms(updatedAnswers);
+
+      return updatedAnswers.filter(answer => Boolean(answer.answer));
+    });
   }, [currentAnsweredInputs, templateQuestions]);
 
   const canShowGenerateButton = Boolean(templateQuestions.length && !templateQuestions[0].required);
@@ -389,7 +388,20 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
         })
         .filter(answer => answer.answer !== "");
 
-      dispatch(updateAnsweredInput(answeredInputs));
+      let delay = 0;
+      const delayInterval = 500;
+      answeredInputs.forEach(input => {
+        setTimeout(() => {
+          dispatch(updateAnsweredInput([input]));
+        }, delay);
+        delay += delayInterval;
+      });
+
+      setTimeout(() => {
+        setAnswers(newAnswers);
+        setIsValidatingAnswer(false);
+      }, delay);
+
       setAnswers(newAnswers);
       setIsValidatingAnswer(false);
     }
