@@ -178,7 +178,7 @@ export const Display: React.FC<Props> = ({
         <Box
           sx={{
             position: "sticky",
-            bottom: currentGeneratedPrompt ? "30px" : "5px",
+            bottom: currentGeneratedPrompt ? "30px" : "0px",
             left: 0,
             right: 0,
           }}

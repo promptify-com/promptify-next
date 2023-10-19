@@ -71,7 +71,7 @@ export const Message = ({
   };
 
   function getUploadStatusMessage() {
-    if (codeUploaded) {
+    if (codeUploaded || disableUploadButton) {
       return "Code uploaded";
     } else if (!codeUploaded && selectedValue !== "" && !codeFieldPopup) {
       return "Edit Your code";

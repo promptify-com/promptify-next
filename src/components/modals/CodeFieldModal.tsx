@@ -16,6 +16,7 @@ export default function CodeFieldModal({ open, setOpen, value, onChange, onSubmi
 
   const handleSubmit = () => {
     setOpen(false);
+    if (tempValue.trim() === "") return;
     onChange(tempValue);
     if (onSubmit) {
       onSubmit(tempValue);
