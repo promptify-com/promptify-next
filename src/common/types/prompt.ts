@@ -23,11 +23,13 @@ export interface IPromptInput {
   prompt?: number;
 }
 
+export type FormMode = "input" | "chat";
+
 export type AnsweredInputType = {
   promptId: number;
   inputName: string;
   value: string | number;
-  modifiedFrom: "input" | "chat";
+  modifiedFrom: FormMode;
 };
 
 export interface DisplayPrompt {

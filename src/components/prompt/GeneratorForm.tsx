@@ -57,20 +57,22 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   const { generateExecution, generatingResponse, lastExecution } = useGenerateExecution(templateData?.id, onError);
 
   const answeredInputs = useAppSelector(state => state.template.answeredInputs);
+
   useEffect(() => {
-    if (answeredInputs && answeredInputs.length > 0) {
-      const updatedInput = answeredInputs[0];
+    const updatedInput = answeredInputs[0];
 
-      setNodeInputs(prevState => {
-        const newState = [...prevState];
-        const targetIndex = newState.findIndex(item => item.id === updatedInput.promptId);
-
-        if (targetIndex !== -1 && newState[targetIndex].inputs[updatedInput.inputName]) {
-          newState[targetIndex].inputs[updatedInput.inputName].value = updatedInput.value;
+    if (updatedInput && updatedInput.modifiedFrom === "input") return;
+    setNodeInputs(prevState => {
+      const newState = [...prevState];
+      answeredInputs.forEach(input => {
+        const targetIndex = newState.findIndex(item => item.id === input.promptId);
+        if (targetIndex !== -1 && newState[targetIndex].inputs[input.inputName]) {
+          newState[targetIndex].inputs[input.inputName].value = input.value;
         }
-        return newState;
       });
-    }
+
+      return newState;
+    });
   }, [answeredInputs]);
 
   const setDefaultResPrompts = () => {
