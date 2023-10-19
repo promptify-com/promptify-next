@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Modal from "@mui/material/Modal";
 import { Box, Button, Stack } from "@mui/material";
 import CodeField from "../common/forms/CodeField";
@@ -12,16 +12,23 @@ interface Props {
 }
 
 export default function CodeFieldModal({ open, setOpen, value, onChange, onSubmit }: Props) {
+  const [tempValue, setTempValue] = useState(value);
+
   const handleSubmit = () => {
     setOpen(false);
+    onChange(tempValue);
     if (onSubmit) {
-      onSubmit(value);
+      onSubmit(tempValue);
     }
   };
+
   return (
     <Modal
       open={open}
-      onClose={() => setOpen(false)}
+      onClose={() => {
+        setOpen(false);
+        setTempValue(value);
+      }}
     >
       <Box
         sx={{
@@ -39,8 +46,8 @@ export default function CodeFieldModal({ open, setOpen, value, onChange, onSubmi
         }}
       >
         <CodeField
-          value={value}
-          onChange={onChange}
+          value={tempValue}
+          onChange={setTempValue}
         />
         <Stack
           sx={{

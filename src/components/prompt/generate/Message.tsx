@@ -15,6 +15,7 @@ interface MessageBlockProps {
   disabledChoices: boolean;
   setIsSimulaitonStreaming: Dispatch<SetStateAction<boolean>>;
   onScrollToBottom: () => void;
+  disableUploadButton: boolean;
 }
 
 interface MessageContentProps {
@@ -49,6 +50,7 @@ export const Message = ({
   disabledChoices,
   setIsSimulaitonStreaming,
   onScrollToBottom,
+  disableUploadButton,
 }: MessageBlockProps) => {
   const { fromUser, type, text, createdAt, choices } = message;
   const currentUser = useAppSelector(state => state.user.currentUser);
@@ -158,7 +160,7 @@ export const Message = ({
             <Button
               onClick={() => setCodeFieldPopup(true)}
               variant="outlined"
-              disabled={codeUploaded}
+              disabled={disableUploadButton}
               size="small"
               sx={{
                 height: 30,
