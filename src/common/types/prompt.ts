@@ -1,3 +1,7 @@
+export type InputType = "text" | "choices" | "number" | "code" | "file";
+
+export type FileType = "pdf" | "docx" | "txt";
+
 export interface PromptLiveResponseData {
   message: string;
   prompt: number;
@@ -12,7 +16,6 @@ export interface PromptLiveResponse {
   created_at: Date;
   data: PromptLiveResponseData[];
 }
-export type InputType = "text" | "choices" | "number" | "code" | "file";
 export interface IPromptInput {
   name: string;
   fullName: string;
@@ -40,9 +43,7 @@ export interface DisplayPrompt {
   isFailed?: boolean;
 }
 
-export type FileType = "pdf" | "docx" | "txt";
-
-export interface FileResponse {
+export interface UploadFileResponse {
   data?: {
     file_url: string;
   };

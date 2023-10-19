@@ -69,9 +69,7 @@ const useGenerateExecution = (templateId: number, onError: (errMsg: string) => v
             }
           } else {
             if (message.includes("[ERROR]")) {
-              onError(
-                message ? message.replace("[ERROR]", "") : "Something went wrong during the execution of this prompt",
-              );
+              onError(message.replace("[ERROR]", ""));
 
               return;
             }

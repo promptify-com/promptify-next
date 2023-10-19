@@ -242,37 +242,34 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   const handleFileUploads = async () => {
     const fileData: FileData[] = resPrompts.reduce((acc: FileData[], resPrompt) => {
       const promptId = resPrompt.prompt;
-      const fileEntries = Object.entries(resPrompt.prompt_params).filter(([_, value]) => value instanceof File);
-      const fileDataEntries = fileEntries.map(([key, file]) => ({ key, promptId, file: file as File }));
+      const fileDataEntries = Object.entries(resPrompt.prompt_params)
+        .filter(([_, value]) => value instanceof File)
+        .map(([key, file]) => ({ key, promptId, file: file as File }));
+
       return acc.concat(fileDataEntries);
     }, []);
-    const uploadFilePromises = fileData.map(fileObject => uploadFileHelper(uploadFile, fileObject));
-    const results = await Promise.allSettled(uploadFilePromises);
+
+    const results = await Promise.allSettled(fileData.map(fileObject => uploadFileHelper(uploadFile, fileObject)));
+
     results.forEach(result => {
-      if (result.status !== "fulfilled" || !result.value) return;
-      const { key, promptId } = result.value;
-      const currentKey = key as keyof FileReponse;
-      const newNodeInputs: ResInputs[] = [];
-      const nodeObject = nodeInputs.find(inputs => inputs.id === promptId);
-      if (!nodeObject) return;
-      const currentValue = result.value[currentKey] as string | number | File;
-      const tmp = nodeObject.inputs[currentKey];
-      if (currentValue === undefined) {
-        nodeObject.inputs[currentKey] = { ...tmp, value: "" };
-        setErrors({ ...errors, [currentKey]: true });
-      } else {
-        nodeObject.inputs[currentKey] = { ...tmp, value: currentValue };
-      }
-      newNodeInputs.push(nodeObject as ResInputs);
-      setNodeInputs(newNodeInputs);
-      deleteFileInputIfEmpty(resPrompts, shownInputs!);
-    });
-    results.forEach(result => {
-      if (result.status !== "fulfilled" || !result.value) return;
-      const key = result.value.key as keyof FileReponse;
-      const matchingData = resPrompts.find(data => data.prompt === result.value?.promptId);
-      if (matchingData) {
-        matchingData.prompt_params[key] = result.value[key] as string | number | File;
+      if (result.status === "fulfilled" && result.value) {
+        const { key, promptId } = result.value;
+        const currentKey = key as keyof FileReponse;
+        const nodeObject = nodeInputs.find(inputs => inputs.id === promptId);
+
+        if (nodeObject) {
+          const currentValue = result.value[currentKey];
+          const tmp = nodeObject.inputs[currentKey];
+          nodeObject.inputs[currentKey] = { ...tmp, value: currentValue || "" };
+          setErrors({ ...errors, [currentKey]: currentValue === undefined });
+          setNodeInputs([nodeObject]);
+        }
+
+        const matchingData = resPrompts.find(data => data.prompt === promptId);
+
+        if (matchingData) {
+          matchingData.prompt_params[currentKey] = result.value[currentKey] as string | number | File;
+        }
       }
     });
   };
@@ -288,6 +285,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     if (!validateInputs()) return;
     const hasTypeFile = shownInputs?.some(item => item.type === "file");
     if (hasTypeFile) {
+      deleteFileInputIfEmpty(resPrompts, shownInputs!);
       await handleFileUploads();
     }
     setErrors({});

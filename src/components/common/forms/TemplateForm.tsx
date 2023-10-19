@@ -32,7 +32,6 @@ import { TemplateStatusArray } from "@/common/constants";
 import { executionsApi } from "@/core/api/executions";
 import { stripTags, getLanguageFromCode, getBaseUrl } from "@/common/helpers";
 import { useUploadFileMutation } from "@/core/api/uploadFile";
-import { FileResponse } from "@/common/types/prompt";
 import { uploadFileHelper } from "@/common/helpers/uploadFileHelper";
 
 interface Props {
@@ -89,10 +88,8 @@ const TemplateForm: React.FC<Props> = ({
   }, [selectedTags]);
 
   const handleImageChange = (image: File) => {
-    if (image) {
-      setSelectedFile(image);
-      formik.setFieldValue("thumbnail", URL.createObjectURL(image));
-    }
+    setSelectedFile(image);
+    formik.setFieldValue("thumbnail", URL.createObjectURL(image));
   };
 
   const addNewTag = (newValue: string[]) => {
@@ -105,7 +102,7 @@ const TemplateForm: React.FC<Props> = ({
     thumbnail: string().min(1).required("required"),
   });
 
-  const handleSave = async () => {
+  const handleSave = () => {
     onSaved();
     formik.resetForm();
   };
@@ -115,7 +112,7 @@ const TemplateForm: React.FC<Props> = ({
     if (selectedFile) {
       const result = await uploadFileHelper(uploadFile, { file: selectedFile });
 
-      if (result) {
+      if (result?.fileUrl) {
         values.thumbnail = result.fileUrl as string;
       }
     }
@@ -285,8 +282,11 @@ const TemplateForm: React.FC<Props> = ({
                 hidden
                 accept="image/*"
                 type="file"
-                onChange={(args: any) => {
-                  handleImageChange(args.target.files[0]);
+                onChange={e => {
+                  const file = e.target.files && e.target.files[0];
+                  if (file) {
+                    handleImageChange(file);
+                  }
                 }}
               />
             </Stack>

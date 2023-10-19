@@ -1,4 +1,4 @@
-import { FileResponse, FileType } from "../types/prompt";
+import { UploadFileResponse, FileType } from "@/common/types/prompt";
 
 export interface FileReponse {
   key?: string;
@@ -23,26 +23,15 @@ export type SelectedFile = {
 
 export const uploadFileHelper: UploadFunction = async (uploadFileMutation, selectedFile) => {
   try {
-    if (selectedFile.file instanceof File) {
-      const responseData = (await uploadFileMutation(selectedFile.file)) as FileResponse;
-      if (responseData?.data) {
-        const { file_url } = responseData.data;
-        const { file, ...rest } = {
-          [selectedFile.key ? selectedFile.key : "fileUrl"]: file_url,
-          ...selectedFile,
-          file: undefined,
-        };
-        return rest;
-      } else {
-        const { file, ...rest } = {
-          [selectedFile.key ? selectedFile.key : "fileUrl"]: undefined,
-          ...selectedFile,
-          file: undefined,
-        };
+    const responseData = (await uploadFileMutation(selectedFile.file)) as UploadFileResponse;
 
-        return rest;
-      }
-    }
+    const { file, ...rest } = {
+      [selectedFile.key ?? "fileUrl"]: responseData.data?.file_url || undefined,
+      ...selectedFile,
+      file: undefined,
+    };
+
+    return rest;
   } catch (_) {}
 };
 
@@ -52,7 +41,7 @@ const extensionType = {
   txt: ".txt",
 };
 
-export const generateAcceptString = (types: FileType[]): string => {
+export const getFileTypesExtensions = (types: FileType[]): string => {
   const extensionTypes = types.map(type => extensionType[type]).filter(Boolean);
   return extensionTypes.join(",");
 };
