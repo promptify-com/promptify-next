@@ -17,7 +17,7 @@ import { setGeneratingStatus, updateExecutionData } from "@/core/store/templates
 import ClientOnly from "../base/ClientOnly";
 import useGenerateExecution from "@/hooks/useGenerateExecution";
 import { useUploadFileMutation } from "@/core/api/uploadFile";
-import { uploadFileHelper, FileReponse } from "@/common/helpers/uploadFileHelper";
+import { uploadFileHelper, FileReponse, SelectedFile } from "@/common/helpers/uploadFileHelper";
 
 interface GeneratorFormProps {
   templateData: Templates;
@@ -35,12 +35,6 @@ interface Input extends IPromptInput {
 interface Param {
   prompt: number;
   param: PromptParams;
-}
-
-interface FileData {
-  key: string;
-  promptId: number;
-  file: File;
 }
 
 const deleteFileInputIfEmpty = (prompts: ResPrompt[], inputs: Input[]) => {
@@ -180,7 +174,6 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
       _promptsData.forEach((prompt, index) => {
         const obj = nodeInputs.find(inputs => inputs.id === prompt.prompt);
         if (obj) {
-          // Extract inputs values from nodeInputs item and put it as { inputName: inputValue }
           const values = Object.fromEntries(Object.entries(obj.inputs).map(([key, value]) => [key, value.value]));
           _promptsData[index].prompt_params = values;
         }
@@ -240,7 +233,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   };
 
   const handleFileUploads = async () => {
-    const fileData: FileData[] = resPrompts.reduce((acc: FileData[], resPrompt) => {
+    const fileData = resPrompts.reduce((acc: SelectedFile[], resPrompt) => {
       const promptId = resPrompt.prompt;
       const fileDataEntries = Object.entries(resPrompt.prompt_params)
         .filter(([_, value]) => value instanceof File)
@@ -251,27 +244,31 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
     const results = await Promise.allSettled(fileData.map(fileObject => uploadFileHelper(uploadFile, fileObject)));
 
+    const validNodeInputs: ResInputs[] = [];
+
     results.forEach(result => {
       if (result.status === "fulfilled" && result.value) {
-        const { key, promptId } = result.value;
-        const currentKey = key as keyof FileReponse;
-        const nodeObject = nodeInputs.find(inputs => inputs.id === promptId);
+        const { key, promptId, file } = result.value;
+        const currentKey = key as keyof SelectedFile;
+        const prompt = nodeInputs.find(inputs => inputs.id === promptId);
 
-        if (nodeObject) {
-          const currentValue = result.value[currentKey];
-          const tmp = nodeObject.inputs[currentKey];
-          nodeObject.inputs[currentKey] = { ...tmp, value: currentValue || "" };
-          setErrors({ ...errors, [currentKey]: currentValue === undefined });
-          setNodeInputs([nodeObject]);
+        if (prompt) {
+          prompt.inputs[currentKey] = {
+            ...prompt.inputs[currentKey],
+            value: file || "",
+          };
+          setErrors({ ...errors, [currentKey]: file === undefined });
+          validNodeInputs.push(prompt);
         }
 
         const matchingData = resPrompts.find(data => data.prompt === promptId);
 
         if (matchingData) {
-          matchingData.prompt_params[currentKey] = result.value[currentKey] as string | number | File;
+          matchingData.prompt_params[currentKey] = file as string | number;
         }
       }
     });
+    setNodeInputs(validNodeInputs);
   };
 
   const validateAndGenerateExecution = async () => {
@@ -376,8 +373,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
       .every(input => input.value),
   );
   const allowReset = nodeInputs.some(input => Object.values(input.inputs).some(input => input.value));
-  const prompts = templateData.prompts;
-  const promptHasContent = prompts.some(prompt => prompt.content);
+  const promptHasContent = templateData.prompts?.some(prompt => prompt.content);
   const hasContentOrFormFilled = !filledForm ? true : promptHasContent ? false : true;
   const isButtonDisabled = token ? (isGenerating ? true : hasContentOrFormFilled) : true;
 

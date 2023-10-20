@@ -8,7 +8,7 @@ import BaseButton from "../base/BaseButton";
 import CodeFieldModal from "../modals/CodeFieldModal";
 import { useAppSelector } from "@/hooks/useStore";
 import { ResInputs } from "@/core/api/dto/prompts";
-import { getFileTypesExtensions } from "@/common/helpers/uploadFileHelper";
+import { getFileTypeExtensionsAsString } from "@/common/helpers/uploadFileHelper";
 
 interface GeneratorInputProps {
   promptId: number;
@@ -142,13 +142,12 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
                 <Button
                   component="label"
                   variant="contained"
-                  startIcon={<CloudUpload />}
                   sx={{ border: `2px solid ${errors[input.name] ? "error.main" : "tertiary"}` }}
                 >
                   Upload file
                   <input
                     hidden
-                    accept={getFileTypesExtensions(input.fileExtensions as FileType[])}
+                    accept={getFileTypeExtensionsAsString(input.fileExtensions as FileType[])}
                     type="file"
                     style={{
                       flex: 1,

@@ -45,7 +45,7 @@ export interface DisplayPrompt {
 
 export interface UploadFileResponse {
   data?: {
-    file_url: string;
+    file_url?: string;
   };
   error?: unknown;
 }

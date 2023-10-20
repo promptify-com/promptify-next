@@ -112,8 +112,8 @@ const TemplateForm: React.FC<Props> = ({
     if (selectedFile) {
       const result = await uploadFileHelper(uploadFile, { file: selectedFile });
 
-      if (result?.fileUrl) {
-        values.thumbnail = result.fileUrl as string;
+      if (typeof result?.file === "string") {
+        values.thumbnail = result.file;
       }
     }
     await updateTemplate({
@@ -128,8 +128,8 @@ const TemplateForm: React.FC<Props> = ({
     if (selectedFile) {
       const result = await uploadFileHelper(uploadFile, { file: selectedFile });
 
-      if (result) {
-        values.thumbnail = result.fileUrl as string;
+      if (typeof result?.file === "string") {
+        values.thumbnail = result.file;
         const { slug } = await createTemplate(values).unwrap();
 
         handleSave();

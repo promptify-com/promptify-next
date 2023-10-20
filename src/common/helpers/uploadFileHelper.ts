@@ -3,35 +3,30 @@ import { UploadFileResponse, FileType } from "@/common/types/prompt";
 export interface FileReponse {
   key?: string;
   promptId?: number;
-  fileUrl?: string;
+  file?: string;
 }
 
 type UploadFunction = (
   uploadFileMutation: (selectedFile: File) => unknown,
-  selectedFile: {
-    file: File;
-    promptId?: number;
-    key?: string;
-  },
-) => Promise<FileReponse | undefined>;
+  selectedFile: SelectedFile,
+) => Promise<SelectedFile | undefined>;
 
 export type SelectedFile = {
-  key: string;
-  promptId: number;
-  file: File;
+  key?: string;
+  promptId?: number;
+  file: File | string | undefined;
 };
 
 export const uploadFileHelper: UploadFunction = async (uploadFileMutation, selectedFile) => {
+  if (!(selectedFile.file instanceof File)) return;
+
   try {
     const responseData = (await uploadFileMutation(selectedFile.file)) as UploadFileResponse;
 
-    const { file, ...rest } = {
-      [selectedFile.key ?? "fileUrl"]: responseData.data?.file_url || undefined,
+    return {
       ...selectedFile,
-      file: undefined,
+      file: responseData.data?.file_url,
     };
-
-    return rest;
   } catch (_) {}
 };
 
@@ -41,7 +36,7 @@ const extensionType = {
   txt: ".txt",
 };
 
-export const getFileTypesExtensions = (types: FileType[]): string => {
+export const getFileTypeExtensionsAsString = (types: FileType[]): string => {
   const extensionTypes = types.map(type => extensionType[type]).filter(Boolean);
   return extensionTypes.join(",");
 };
