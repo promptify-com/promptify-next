@@ -89,9 +89,11 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
 
     if (questions.length > 0) {
       const firstQuestion = questions[currentQuestionIndex];
+      const { question, type, choices } = firstQuestion;
       const firstQuestionMessage: IMessage = {
-        text: firstQuestion.question,
-        type: firstQuestion.type,
+        text: question,
+        type,
+        choices,
         createdAt: createdAt,
         fromUser: false,
       };
