@@ -418,15 +418,17 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
     dispatch(updateAnsweredInput([newValue]));
   };
 
-  const handleUserResponse = async () => {
-    if (userAnswer.trim() === "" || isSimulaitonStreaming) {
+  const handleUserInput = async (value?: string) => {
+    const isChoiceOrCode = currentQuestion.type === "choices" || currentQuestion.type === "code";
+    if (isSimulaitonStreaming || (!isChoiceOrCode && userAnswer.trim() === "")) {
       return;
     }
+
     setUserAnswer("");
 
-    if (currentQuestion) {
-      setIsValidatingAnswer(true);
+    const userResponse = value || userAnswer;
 
+    if (!isChoiceOrCode) {
       const newUserMessage: IMessage = {
         text: userAnswer,
         type: currentQuestion.type,
@@ -435,111 +437,35 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
       };
 
       setMessages(prevMessages => prevMessages.concat(newUserMessage));
+    }
 
-      let response: AnswerValidatorResponse | undefined | string = { approved: true, answer: "", feedback: "" };
+    let response: AnswerValidatorResponse | undefined | string = { approved: true, answer: "", feedback: "" };
 
-      if (currentQuestion.type !== "choices" && currentQuestion.type !== "code" && currentQuestion.required) {
-        response = await validateAnswer();
+    if (!isChoiceOrCode && currentQuestion.required) {
+      setIsValidatingAnswer(true);
 
-        if (typeof response === "string") {
-          onError("Oopps, something happened. Please try again!");
-          return;
-        }
-      }
-
-      let nextBotMessage: IMessage;
-
-      if (response?.approved) {
-        const newAnswer: IAnswer = {
-          question: currentQuestion.question,
-          answer: userAnswer,
-          required: currentQuestion.required,
-          inputName: currentQuestion.name,
-          prompt: currentQuestion.prompt,
-        };
-        const newAnswers: IAnswer[] = answers.concat(newAnswer);
-
-        setAnswers(newAnswers);
-        dispatchNewExecutionData(newAnswers, _inputs);
-
-        const isStandingQuestion = !!standingQuestions.length;
-
-        if (standingQuestions.length) {
-          standingQuestions.pop();
-          setStandingQuestions(standingQuestions);
-        }
-
-        const nextQuestion = standingQuestions.length
-          ? standingQuestions[standingQuestions.length - 1]
-          : getNextQuestion(newAnswers);
-
-        if (!nextQuestion) {
-          nextBotMessage = {
-            text: "Great, we can start template",
-            type: "text",
-            createdAt: createdAt,
-            fromUser: false,
-          };
-
-          !showGenerateButton && setShowGenerateButton(true);
-        } else {
-          if (!nextQuestion.required && !showGenerateButton) {
-            setShowGenerateButton(true);
-          }
-
-          const nextMessage: IMessage = {
-            text: nextQuestion.question,
-            choices: nextQuestion.choices,
-            type: nextQuestion.type,
-            createdAt: createdAt,
-            fromUser: false,
-          };
-
-          if (response.feedback) {
-            nextBotMessage = { ...nextMessage, text: response.feedback, type: "text" };
-
-            addToQueuedMessages(queuedMessages.concat(nextMessage));
-          } else {
-            nextBotMessage = nextMessage;
-          }
-        }
-        modifyStoredInputValue(newAnswer);
-      } else {
-        nextBotMessage = {
-          text: response?.feedback!,
-          choices: currentQuestion.choices,
-          type: currentQuestion.type,
-          createdAt: createdAt,
-          fromUser: false,
-        };
-      }
-
-      setMessages(prevMessages => prevMessages.concat(nextBotMessage));
+      response = await validateAnswer();
       setIsValidatingAnswer(false);
-    }
-  };
 
-  const handleChange = (value: string) => {
-    if (isSimulaitonStreaming) {
-      return;
+      if (typeof response === "string") {
+        onError("Oopps, something happened. Please try again!");
+        return;
+      }
     }
+    let nextBotMessage: IMessage;
 
-    if (currentQuestion && (currentQuestion.type === "choices" || currentQuestion.type === "code")) {
+    if (response?.approved) {
       const newAnswer: IAnswer = {
         question: currentQuestion.question,
+        answer: userResponse,
         required: currentQuestion.required,
         inputName: currentQuestion.name,
-        answer: value,
         prompt: currentQuestion.prompt,
       };
-
       const newAnswers: IAnswer[] = answers.concat(newAnswer);
 
       setAnswers(newAnswers);
-      modifyStoredInputValue(newAnswer);
       dispatchNewExecutionData(newAnswers, _inputs);
-
-      const isStandingQuestion = !!standingQuestions.length;
 
       if (standingQuestions.length) {
         standingQuestions.pop();
@@ -550,8 +476,6 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
         ? standingQuestions[standingQuestions.length - 1]
         : getNextQuestion(newAnswers);
 
-      let nextBotMessage: IMessage;
-
       if (!nextQuestion) {
         nextBotMessage = {
           text: "Great, we can start template",
@@ -560,17 +484,33 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
           fromUser: false,
         };
       } else {
-        nextBotMessage = {
+        const nextMessage: IMessage = {
           text: nextQuestion.question,
           choices: nextQuestion.choices,
           type: nextQuestion.type,
           createdAt: createdAt,
           fromUser: false,
         };
-      }
 
-      setMessages(prevMessages => prevMessages.concat(nextBotMessage));
+        if (response.feedback) {
+          nextBotMessage = { ...nextMessage, text: response.feedback, type: "text" };
+
+          addToQueuedMessages(queuedMessages.concat(nextMessage));
+        } else {
+          nextBotMessage = nextMessage;
+        }
+      }
+      modifyStoredInputValue(newAnswer);
+    } else {
+      nextBotMessage = {
+        text: response?.feedback!,
+        choices: currentQuestion.choices,
+        type: currentQuestion.type,
+        createdAt: createdAt,
+        fromUser: false,
+      };
     }
+    setMessages(prevMessages => prevMessages.concat(nextBotMessage));
   };
 
   const generateExecutionHandler = () => {
@@ -846,7 +786,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
         >
           <ChatInterface
             messages={messages}
-            onChange={handleChange}
+            onChange={handleUserInput}
             setIsSimulaitonStreaming={setIsSimulaitonStreaming}
           />
           <VaryModal
@@ -860,7 +800,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
               onAnswerClear={handleAnswerSelect}
               onChange={setUserAnswer}
               value={userAnswer}
-              onSubmit={handleUserResponse}
+              onSubmit={handleUserInput}
               disabled={disableChat || isValidatingAnswer || disableChatInput}
               disabledTags={disableChat || isValidatingAnswer || disableChatInput || isGenerating}
               onVary={() => setVaryOpen(true)}
