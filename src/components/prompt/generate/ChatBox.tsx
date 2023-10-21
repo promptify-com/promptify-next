@@ -282,9 +282,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
         createdAt: createdAt,
         fromUser: false,
       });
-
-      setDisableChatInput(true);
-    } else {
+    } else if (targetQuestion.name !== nextQuestion.name || !currentQuestion) {
       nextMessages.push({
         text: nextQuestion.question,
         choices: nextQuestion.choices,
@@ -332,12 +330,16 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
   }, [currentAnsweredInputs, templateQuestions]);
 
   const canShowGenerateButton = Boolean(templateQuestions.length && !templateQuestions[0].required);
+
   const currentQuestion = standingQuestions.length
     ? standingQuestions[standingQuestions.length - 1]
     : (getNextQuestion(answers) as UpdatedQuestionTemplate);
+
   const disableChat =
     Boolean(!templateQuestions.length && !_inputs.length && template?.prompts.length) ||
-    ["choices", "code"].includes(currentQuestion?.type);
+    ["choices", "code"].includes(currentQuestion?.type) ||
+    !currentQuestion;
+
   const disabledButton = _inputs.length !== 0 || promptHasContent;
 
   const validateAnswer = async () => {
@@ -404,10 +406,10 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
   };
 
   const modifyStoredInputValue = (answer: IAnswer) => {
-    const { inputName, prompt, answer: value } = answer;
+    const { inputName, prompt: promptId, answer: value } = answer;
 
     const newValue: AnsweredInputType = {
-      promptId: prompt,
+      promptId,
       value,
       inputName,
       modifiedFrom: "chat",
@@ -480,7 +482,6 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
           };
 
           !showGenerateButton && setShowGenerateButton(true);
-          setDisableChatInput(true);
         } else {
           if (!nextQuestion.required && !showGenerateButton) {
             setShowGenerateButton(true);
@@ -558,12 +559,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
           createdAt: createdAt,
           fromUser: false,
         };
-        setDisableChatInput(true);
       } else {
-        if (!nextQuestion.required && !showGenerateButton) {
-          setShowGenerateButton(true);
-        }
-
         nextBotMessage = {
           text: nextQuestion.question,
           choices: nextQuestion.choices,
@@ -736,10 +732,6 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
     const askedQuestion = newStandingQuestions[newStandingQuestions.length - 1];
 
     setStandingQuestions(newStandingQuestions);
-
-    if (showGenerateButton && selectedAnswer.required) {
-      setShowGenerateButton(false);
-    }
 
     const nextBotMessage: IMessage = {
       text: "Let's give this another go. " + askedQuestion.question,
