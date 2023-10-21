@@ -178,13 +178,15 @@ export const Message = ({
               disabled={disabledChoices || selectedValue !== ""}
             />
           )}
-          <CodeFieldModal
-            open={codeFieldPopup}
-            setOpen={setCodeFieldPopup}
-            value={selectedValue}
-            onChange={setSelectedValue}
-            onSubmit={handleChange}
-          />
+
+          {codeFieldPopup && (
+            <CodeFieldModal
+              open
+              setOpen={setCodeFieldPopup}
+              value={selectedValue}
+              onSubmit={handleChange}
+            />
+          )}
         </Grid>
       </Grid>
     </Grid>

@@ -54,7 +54,6 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [queuedMessages, setQueuedMessages] = useState<IMessage[]>([]);
   const [isSimulaitonStreaming, setIsSimulaitonStreaming] = useState(false);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [disableChatInput, setDisableChatInput] = useState(false);
   const [standingQuestions, setStandingQuestions] = useState<UpdatedQuestionTemplate[]>([]);
   const [varyOpen, setVaryOpen] = useState(false);
@@ -88,7 +87,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
     }
 
     if (questions.length > 0) {
-      const firstQuestion = questions[currentQuestionIndex];
+      const firstQuestion = questions[0];
       const { question, type, choices } = firstQuestion;
       const firstQuestionMessage: IMessage = {
         text: question,
@@ -105,7 +104,6 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
       }
     }
 
-    setCurrentQuestionIndex(0);
     setMessages(welcomeMessage);
     setAnswers([]);
     setShowGenerateButton(false);
@@ -197,13 +195,6 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
   }, [generatingResponse]);
 
   useEffect(() => {
-    if (currentQuestion && (currentQuestion.type === "choices" || currentQuestion.type === "code")) {
-      setUserAnswer("");
-      setDisableChatInput(true);
-    } else setDisableChatInput(false);
-  }, [currentQuestionIndex]);
-
-  useEffect(() => {
     if (!isSimulaitonStreaming && !!queuedMessages.length) {
       const nextQueuedMessage = queuedMessages.pop()!;
 
@@ -242,11 +233,16 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
     const nextUnansweredAfter = questionsAfterLastAnswered.find(
       question => !answeredQuestionNames.includes(question.name),
     );
+
     if (nextUnansweredAfter) {
       return nextUnansweredAfter;
     }
 
-    return questionsBeforeLastAnswered.find(question => !answeredQuestionNames.includes(question.name));
+    const remaingQuestion = questionsBeforeLastAnswered.find(
+      question => !answeredQuestionNames.includes(question.name),
+    );
+
+    return remaingQuestion;
   };
 
   const handleSyncForm = (
@@ -257,7 +253,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
     const { question, choices, type } = targetQuestion;
     const nextMessages: IMessage[] = [];
 
-    if (targetQuestion.name !== currentQuestion.name) {
+    if (currentQuestion && targetQuestion.name !== currentQuestion.name) {
       nextMessages.push({
         text: question,
         choices,
@@ -266,15 +262,16 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
         fromUser: false,
       });
     }
-
-    ["text", "number"].includes(type) &&
-      nextMessages.push({
-        text: updatedInput.value as string,
-        choices,
-        type,
-        createdAt: createdAt,
-        fromUser: true,
-      });
+    if (updatedInput.value) {
+      ["text", "number"].includes(type) &&
+        nextMessages.push({
+          text: updatedInput.value as string,
+          choices,
+          type,
+          createdAt: createdAt,
+          fromUser: true,
+        });
+    }
 
     const nextQuestion = getNextQuestion(currentAnswers);
 
@@ -288,7 +285,6 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
 
       setDisableChatInput(true);
     } else {
-      const nextIndex = templateQuestions.indexOf(nextQuestion);
       nextMessages.push({
         text: nextQuestion.question,
         choices: nextQuestion.choices,
@@ -296,7 +292,6 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
         createdAt: createdAt,
         fromUser: false,
       });
-      setCurrentQuestionIndex(nextIndex);
     }
 
     setMessages(prevMessages => prevMessages.concat(nextMessages));
@@ -327,18 +322,22 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
             answer: value,
           });
         }
-        handleSyncForm(prevAnswers, firstAnsweredInput, targetQuestion);
       }
 
-      return prevAnswers.filter(answer => Boolean(answer.answer));
+      const filtredAnswers = prevAnswers.filter(answer => Boolean(answer.answer));
+      handleSyncForm(filtredAnswers, firstAnsweredInput, targetQuestion);
+
+      return filtredAnswers;
     });
   }, [currentAnsweredInputs, templateQuestions]);
 
   const canShowGenerateButton = Boolean(templateQuestions.length && !templateQuestions[0].required);
-  const disableChat = Boolean(!templateQuestions.length && !_inputs.length && template?.prompts.length);
   const currentQuestion = standingQuestions.length
     ? standingQuestions[standingQuestions.length - 1]
-    : templateQuestions[currentQuestionIndex];
+    : (getNextQuestion(answers) as UpdatedQuestionTemplate);
+  const disableChat =
+    Boolean(!templateQuestions.length && !_inputs.length && template?.prompts.length) ||
+    ["choices", "code"].includes(currentQuestion?.type);
   const disabledButton = _inputs.length !== 0 || promptHasContent;
 
   const validateAnswer = async () => {
@@ -456,13 +455,9 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
           inputName: currentQuestion.name,
           prompt: currentQuestion.prompt,
         };
-        let newAnswers: IAnswer[] = [];
+        const newAnswers: IAnswer[] = answers.concat(newAnswer);
 
-        setAnswers(prevAnswers => {
-          newAnswers = prevAnswers.concat(newAnswer);
-
-          return newAnswers;
-        });
+        setAnswers(newAnswers);
         dispatchNewExecutionData(newAnswers, _inputs);
 
         const isStandingQuestion = !!standingQuestions.length;
@@ -474,7 +469,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
 
         const nextQuestion = standingQuestions.length
           ? standingQuestions[standingQuestions.length - 1]
-          : templateQuestions[isStandingQuestion ? currentQuestionIndex : currentQuestionIndex + 1];
+          : getNextQuestion(newAnswers);
 
         if (!nextQuestion) {
           nextBotMessage = {
@@ -490,8 +485,6 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
           if (!nextQuestion.required && !showGenerateButton) {
             setShowGenerateButton(true);
           }
-
-          !isStandingQuestion && setCurrentQuestionIndex(currentQuestionIndex + 1);
 
           const nextMessage: IMessage = {
             text: nextQuestion.question,
@@ -538,13 +531,10 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
         answer: value,
         prompt: currentQuestion.prompt,
       };
-      let newAnswers: IAnswer[] = [];
 
-      setAnswers(prevAnswers => {
-        newAnswers = prevAnswers.concat(newAnswer);
+      const newAnswers: IAnswer[] = answers.concat(newAnswer);
 
-        return newAnswers;
-      });
+      setAnswers(newAnswers);
       modifyStoredInputValue(newAnswer);
       dispatchNewExecutionData(newAnswers, _inputs);
 
@@ -557,7 +547,8 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
 
       const nextQuestion = standingQuestions.length
         ? standingQuestions[standingQuestions.length - 1]
-        : templateQuestions[isStandingQuestion ? currentQuestionIndex : currentQuestionIndex + 1];
+        : getNextQuestion(newAnswers);
+
       let nextBotMessage: IMessage;
 
       if (!nextQuestion) {
@@ -572,8 +563,6 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
         if (!nextQuestion.required && !showGenerateButton) {
           setShowGenerateButton(true);
         }
-
-        !isStandingQuestion && setCurrentQuestionIndex(currentQuestionIndex + 1);
 
         nextBotMessage = {
           text: nextQuestion.question,
@@ -762,13 +751,9 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
 
     setMessages(prevMessages => prevMessages.concat(nextBotMessage));
 
-    let newAnswers: IAnswer[] = [];
+    const newAnswers: IAnswer[] = answers.filter(answer => answer.inputName !== selectedAnswer.inputName);
 
-    setAnswers(prevAnswers => {
-      newAnswers = prevAnswers.filter(answer => answer.inputName !== selectedAnswer.inputName);
-
-      return newAnswers;
-    });
+    setAnswers(newAnswers);
     dispatchNewExecutionData(newAnswers, _inputs);
   };
 

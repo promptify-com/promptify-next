@@ -104,12 +104,14 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
                   >
                     {value ? "Edit Code" : "Insert Code"}
                   </BaseButton>
-                  <CodeFieldModal
-                    open={codeFieldOpen}
-                    setOpen={setCodeFieldOpen}
-                    value={value as string}
-                    onChange={val => handleChange(val, input.name, input.type)}
-                  />
+                  {codeFieldOpen && (
+                    <CodeFieldModal
+                      open
+                      setOpen={setCodeFieldOpen}
+                      value={value as string}
+                      onSubmit={val => handleChange(val, input.name, input.type)}
+                    />
+                  )}
                 </>
               ) : input.type === "choices" ? (
                 <Select

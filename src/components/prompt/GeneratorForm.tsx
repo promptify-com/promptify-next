@@ -61,7 +61,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   useEffect(() => {
     const updatedInput = answeredInputs[0];
 
-    if (updatedInput && updatedInput.modifiedFrom === "input") return;
+    if (!updatedInput || updatedInput.modifiedFrom === "input") return;
     setNodeInputs(prevState => {
       const newState = [...prevState];
       answeredInputs.forEach(input => {

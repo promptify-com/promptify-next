@@ -7,21 +7,15 @@ interface Props {
   open: boolean;
   setOpen: (val: boolean) => void;
   value: string;
-  onChange: (value: string) => void;
   onSubmit?: (value: string) => void;
 }
 
-export default function CodeFieldModal({ open, setOpen, value, onChange, onSubmit }: Props) {
+export default function CodeFieldModal({ open, setOpen, value, onSubmit }: Props) {
   const [tempValue, setTempValue] = useState(value);
-
-  useEffect(() => {
-    setTempValue(value);
-  }, [value]);
 
   const handleSubmit = () => {
     setOpen(false);
-    if (tempValue.trim() === "") return;
-    onChange(tempValue);
+    // if (tempValue.trim() === "") return;
     if (onSubmit) {
       onSubmit(tempValue);
     }
@@ -32,7 +26,6 @@ export default function CodeFieldModal({ open, setOpen, value, onChange, onSubmi
       open={open}
       onClose={() => {
         setOpen(false);
-        setTempValue(value);
       }}
     >
       <Box
