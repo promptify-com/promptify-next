@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Modal from "@mui/material/Modal";
 import { Box, Button, Stack } from "@mui/material";
 import CodeField from "../common/forms/CodeField";
@@ -15,7 +15,6 @@ export default function CodeFieldModal({ open, setOpen, value, onSubmit }: Props
 
   const handleSubmit = () => {
     setOpen(false);
-    // if (tempValue.trim() === "") return;
     if (onSubmit) {
       onSubmit(tempValue);
     }

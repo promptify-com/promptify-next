@@ -50,7 +50,6 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
   });
   const [newExecutionId, setNewExecutionId] = useState<number | null>(null);
   const [answers, setAnswers] = useState<IAnswer[]>([]);
-  const [userAnswer, setUserAnswer] = useState("");
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [queuedMessages, setQueuedMessages] = useState<IMessage[]>([]);
   const [isSimulaitonStreaming, setIsSimulaitonStreaming] = useState(false);
@@ -208,6 +207,10 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
       .filter(question => question.required)
       .map(question => question.name);
 
+    if (!requiredQuestionNames.length) {
+      return true;
+    }
+
     const answeredQuestionNamesSet = new Set(answers.map(answer => answer.inputName));
 
     return requiredQuestionNames.every(name => answeredQuestionNamesSet.has(name));
@@ -238,11 +241,11 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
       return nextUnansweredAfter;
     }
 
-    const remaingQuestion = questionsBeforeLastAnswered.find(
+    const remainingQuestion = questionsBeforeLastAnswered.find(
       question => !answeredQuestionNames.includes(question.name),
     );
 
-    return remaingQuestion;
+    return remainingQuestion;
   };
 
   const handleSyncForm = (
@@ -262,15 +265,14 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
         fromUser: false,
       });
     }
-    if (updatedInput.value) {
-      ["text", "number"].includes(type) &&
-        nextMessages.push({
-          text: updatedInput.value as string,
-          choices,
-          type,
-          createdAt: createdAt,
-          fromUser: true,
-        });
+    if (updatedInput.value && ["text", "number"].includes(type)) {
+      nextMessages.push({
+        text: updatedInput.value as string,
+        choices,
+        type,
+        createdAt: createdAt,
+        fromUser: true,
+      });
     }
 
     const nextQuestion = getNextQuestion(currentAnswers);
@@ -310,22 +312,20 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
       if (indexToUpdate !== -1) {
         prevAnswers[indexToUpdate].answer = value;
       }
-      if (value && indexToUpdate === -1) {
-        if (targetQuestion) {
-          prevAnswers.push({
-            inputName,
-            required: targetQuestion.required,
-            question: targetQuestion.question,
-            prompt: promptId,
-            answer: value,
-          });
-        }
+      if (value && indexToUpdate === -1 && targetQuestion) {
+        prevAnswers.push({
+          inputName,
+          required: targetQuestion.required,
+          question: targetQuestion.question,
+          prompt: promptId,
+          answer: value,
+        });
       }
 
-      const filtredAnswers = prevAnswers.filter(answer => Boolean(answer.answer));
-      handleSyncForm(filtredAnswers, firstAnsweredInput, targetQuestion);
+      const filteredAnswers = prevAnswers.filter(answer => Boolean(answer.answer));
+      handleSyncForm(filteredAnswers, firstAnsweredInput, targetQuestion);
 
-      return filtredAnswers;
+      return filteredAnswers;
     });
   }, [currentAnsweredInputs, templateQuestions]);
 
@@ -342,11 +342,11 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
 
   const disabledButton = _inputs.length !== 0 || promptHasContent;
 
-  const validateAnswer = async () => {
+  const validateAnswer = async (value: string) => {
     if (currentQuestion) {
       const payload = {
         question: currentQuestion.question,
-        answer: userAnswer,
+        answer: value,
       };
 
       return await generate({ token, payload });
@@ -418,20 +418,19 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
     dispatch(updateAnsweredInput([newValue]));
   };
 
-  const handleUserInput = async (value?: string) => {
-    const isChoiceOrCode = currentQuestion.type === "choices" || currentQuestion.type === "code";
-    if (isSimulaitonStreaming || (!isChoiceOrCode && userAnswer.trim() === "")) {
+  const handleUserInput = async (value: string) => {
+    const { name: inputName, required, type, question, prompt, choices } = currentQuestion;
+
+    if (isSimulaitonStreaming || value.trim() === "") {
       return;
     }
 
-    setUserAnswer("");
-
-    const userResponse = value || userAnswer;
+    const isChoiceOrCode = ["choices", "code"].includes(type);
 
     if (!isChoiceOrCode) {
       const newUserMessage: IMessage = {
-        text: userAnswer,
-        type: currentQuestion.type,
+        text: value,
+        type,
         createdAt: createdAt,
         fromUser: true,
       };
@@ -441,10 +440,10 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
 
     let response: AnswerValidatorResponse | undefined | string = { approved: true, answer: "", feedback: "" };
 
-    if (!isChoiceOrCode && currentQuestion.required) {
+    if (!isChoiceOrCode && required) {
       setIsValidatingAnswer(true);
 
-      response = await validateAnswer();
+      response = await validateAnswer(value);
       setIsValidatingAnswer(false);
 
       if (typeof response === "string") {
@@ -456,11 +455,11 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
 
     if (response?.approved) {
       const newAnswer: IAnswer = {
-        question: currentQuestion.question,
-        answer: userResponse,
-        required: currentQuestion.required,
-        inputName: currentQuestion.name,
-        prompt: currentQuestion.prompt,
+        question,
+        required,
+        inputName,
+        prompt,
+        answer: value,
       };
       const newAnswers: IAnswer[] = answers.concat(newAnswer);
 
@@ -504,10 +503,10 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
     } else {
       nextBotMessage = {
         text: response?.feedback!,
-        choices: currentQuestion.choices,
-        type: currentQuestion.type,
         createdAt: createdAt,
         fromUser: false,
+        choices,
+        type,
       };
     }
     setMessages(prevMessages => prevMessages.concat(nextBotMessage));
@@ -652,7 +651,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
     }
   };
 
-  const handleAnswerSelect = (selectedAnswer: IAnswer) => {
+  const handleAnswerClear = (selectedAnswer: IAnswer) => {
     if (isSimulaitonStreaming) {
       return;
     }
@@ -797,9 +796,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
           {currentUser?.id ? (
             <ChatInput
               answers={answers}
-              onAnswerClear={handleAnswerSelect}
-              onChange={setUserAnswer}
-              value={userAnswer}
+              onAnswerClear={handleAnswerClear}
               onSubmit={handleUserInput}
               disabled={disableChat || isValidatingAnswer || disableChatInput}
               disabledTags={disableChat || isValidatingAnswer || disableChatInput || isGenerating}

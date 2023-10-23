@@ -124,7 +124,7 @@ export const Display: React.FC<Props> = ({
     return null;
   }, [templateData, generatedExecution]);
 
-  const showChatForm = !!templateData?.questions?.length;
+  const showChatForm = !!templateData?.questions?.length && templateData?.status === "PUBLISHED";
 
   return (
     <Grid

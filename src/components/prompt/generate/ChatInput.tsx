@@ -8,13 +8,12 @@ import ThreeDotsAnimation from "@/components/design-system/ThreeDotsAnimation";
 import useTruncate from "@/hooks/useTruncate";
 import { calculateTruncateLength } from "@/common/helpers/calculateTruncateLength";
 import { addSpaceBetweenCapitalized } from "@/common/helpers";
+import MessageSender from "./MessageSender";
 
 interface ChatInputProps {
-  onChange: (str: string) => void;
   answers: IAnswer[];
   onAnswerClear: (answer: IAnswer) => void;
-  value: string;
-  onSubmit: () => void;
+  onSubmit: (value: string) => void;
   disabled: boolean;
   disabledTags: boolean;
   onVary: () => void;
@@ -25,8 +24,6 @@ interface ChatInputProps {
 }
 
 export const ChatInput = ({
-  onChange,
-  value,
   onSubmit,
   disabled,
   answers,
@@ -249,63 +246,11 @@ export const ChatInput = ({
           </Button>
         </Grid>
       )}
-      <Box
-        bgcolor={"surface.3"}
-        display={"flex"}
-        alignItems={"center"}
-        borderRadius="99px"
-        minHeight={"32px"}
-        p={"8px 16px"}
-      >
-        <InputBase
-          multiline
-          disabled={disabled}
-          fullWidth
-          sx={{
-            ml: 1,
-            flex: 1,
-            fontSize: 13,
-            p: "3px",
-            lineHeight: "22px",
-            letterSpacing: "0.46px",
-            fontWeight: "500",
-            maxHeight: "60px",
-            overflow: "auto",
-            "&::-webkit-scrollbar": {
-              width: "3px",
-              p: 1,
-              backgroundColor: "surface.5",
-            },
-            "&::-webkit-scrollbar-track": {
-              webkitBoxShadow: "inset 0 0 16px rgba(0,0,0,0.00)",
-            },
-            "&::-webkit-scrollbar-thumb": {
-              backgroundColor: "surface.3",
-              outline: "1px solid surface.1",
-              borderRadius: "10px",
-            },
-            ".Mui-disabled": {
-              cursor: disabled ? "not-allowed" : "auto",
-            },
-          }}
-          placeholder="Chat with Promptify"
-          inputProps={{ "aria-label": "Name" }}
-          onChange={e => onChange(e.target.value)}
-          value={value}
-          onKeyPress={e => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              onSubmit();
-            }
-          }}
-        />
-        <Send
-          onClick={onSubmit}
-          sx={{
-            cursor: disabled ? "not-allowed" : "pointer",
-          }}
-        />
-      </Box>
+
+      <MessageSender
+        onSubmit={onSubmit}
+        disabled={disabled}
+      />
     </Grid>
   );
 };
