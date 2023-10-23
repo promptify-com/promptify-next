@@ -3,11 +3,13 @@ import { Box, Divider, IconButton, InputLabel, MenuItem, Select, Stack, TextFiel
 import { Backspace } from "@mui/icons-material";
 
 import { InputsErrors } from "./GeneratorForm";
-import { IPromptInput } from "@/common/types/prompt";
+import { AnsweredInputType, IPromptInput } from "@/common/types/prompt";
 import BaseButton from "../base/BaseButton";
 import CodeFieldModal from "../modals/CodeFieldModal";
-import { useAppSelector } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { ResInputs } from "@/core/api/dto/prompts";
+import { useDebouncedDispatch } from "@/hooks/useDebounceDispatch";
+import { updateAnsweredInput } from "@/core/store/templatesSlice";
 
 interface GeneratorInputProps {
   promptId: number;
@@ -24,10 +26,21 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
   setNodeInputs,
   errors,
 }) => {
+  const dispatch = useAppDispatch();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const [codeFieldOpen, setCodeFieldOpen] = useState(false);
 
+  const debouncedDispatch = useDebouncedDispatch((answeredInputsArray: AnsweredInputType[]) => {
+    dispatch(updateAnsweredInput(answeredInputsArray));
+  }, 700);
+
   const handleChange = (value: string, name: string, type: string) => {
+    let newValue: AnsweredInputType = {
+      inputName: name,
+      promptId,
+      value,
+      modifiedFrom: "input",
+    };
     const updatedNodes = nodeInputs.map(node => {
       const targetNode = node.inputs[name];
       if (targetNode) {
@@ -44,8 +57,8 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
       }
       return node;
     });
-
     setNodeInputs(updatedNodes);
+    debouncedDispatch([newValue]);
   };
 
   return inputs.length > 0 ? (
@@ -91,12 +104,14 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
                   >
                     {value ? "Edit Code" : "Insert Code"}
                   </BaseButton>
-                  <CodeFieldModal
-                    open={codeFieldOpen}
-                    setOpen={setCodeFieldOpen}
-                    value={value as string}
-                    onChange={val => handleChange(val, input.name, input.type)}
-                  />
+                  {codeFieldOpen && (
+                    <CodeFieldModal
+                      open
+                      setOpen={setCodeFieldOpen}
+                      value={value as string}
+                      onSubmit={val => handleChange(val, input.name, input.type)}
+                    />
+                  )}
                 </>
               ) : input.type === "choices" ? (
                 <Select
