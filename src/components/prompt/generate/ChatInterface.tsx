@@ -26,6 +26,8 @@ export const ChatInterface = ({ messages, onChange, setIsSimulaitonStreaming }: 
     return message.type === "choices" && message !== messages[messages.length - 1];
   };
 
+  const lastMessageIsCode = messages.length > 0 && messages[messages.length - 1].type === "code";
+
   return (
     <Grid
       ref={messagesContainerRef}
@@ -61,6 +63,7 @@ export const ChatInterface = ({ messages, onChange, setIsSimulaitonStreaming }: 
           disabledChoices={isNotLastMessage(msg)}
           setIsSimulaitonStreaming={setIsSimulaitonStreaming}
           onScrollToBottom={scrollToBottom}
+          disableUploadButton={!lastMessageIsCode}
         />
       ))}
     </Grid>

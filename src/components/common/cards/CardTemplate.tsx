@@ -5,9 +5,9 @@ import ArrowBackIosRoundedIcon from "@mui/icons-material/ArrowBackIosRounded";
 import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
 import { setSelectedTag } from "@/core/store/filtersSlice";
-
 import Image from "@/components/design-system/Image";
 import useTruncate from "@/hooks/useTruncate";
+import { redirectToPath } from "@/common/helpers";
 
 type CardTemplateProps = {
   template: Templates | TemplateExecutionsDisplay;
@@ -45,7 +45,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({ template, noRedirect = fals
     <Box
       onClick={() => {
         if (!noRedirect) {
-          router.push(`/prompt/${template.slug}`);
+          redirectToPath(`/prompt/${template.slug}`);
         }
       }}
     >

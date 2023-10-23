@@ -15,6 +15,7 @@ interface MessageBlockProps {
   disabledChoices: boolean;
   setIsSimulaitonStreaming: Dispatch<SetStateAction<boolean>>;
   onScrollToBottom: () => void;
+  disableUploadButton: boolean;
 }
 
 interface MessageContentProps {
@@ -49,6 +50,7 @@ export const Message = ({
   disabledChoices,
   setIsSimulaitonStreaming,
   onScrollToBottom,
+  disableUploadButton,
 }: MessageBlockProps) => {
   const { fromUser, type, text, createdAt, choices } = message;
   const currentUser = useAppSelector(state => state.user.currentUser);
@@ -69,10 +71,8 @@ export const Message = ({
   };
 
   function getUploadStatusMessage() {
-    if (codeUploaded) {
+    if ((selectedValue !== "" && codeUploaded) || disableUploadButton) {
       return "Code uploaded";
-    } else if (!codeUploaded && selectedValue !== "" && !codeFieldPopup) {
-      return "Edit Your code";
     } else {
       return "Upload your code";
     }
@@ -158,7 +158,7 @@ export const Message = ({
             <Button
               onClick={() => setCodeFieldPopup(true)}
               variant="outlined"
-              disabled={codeUploaded}
+              disabled={disableUploadButton}
               size="small"
               sx={{
                 height: 30,
@@ -176,13 +176,15 @@ export const Message = ({
               disabled={disabledChoices || selectedValue !== ""}
             />
           )}
-          <CodeFieldModal
-            open={codeFieldPopup}
-            setOpen={setCodeFieldPopup}
-            value={selectedValue}
-            onChange={setSelectedValue}
-            onSubmit={handleChange}
-          />
+
+          {codeFieldPopup && (
+            <CodeFieldModal
+              open
+              setOpen={setCodeFieldPopup}
+              value={selectedValue}
+              onSubmit={handleChange}
+            />
+          )}
         </Grid>
       </Grid>
     </Grid>

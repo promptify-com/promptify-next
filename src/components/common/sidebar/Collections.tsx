@@ -1,6 +1,4 @@
-import { useRouter } from "next/router";
 import { Box, Grid, List, ListSubheader, Typography } from "@mui/material";
-
 import { FavoriteList } from "@/assets/icons/FavoriteList";
 import { ICollectionById } from "@/common/types/collection";
 import { CollectionItem } from "./CollectionItem";
@@ -10,6 +8,7 @@ import ListItemPlaceholder from "@/components/placeholders/ListItemPlaceholder";
 import LoadingOverlay from "@/components/design-system/LoadingOverlay";
 import { useRouteChangeOverlay } from "@/hooks/useRouteChangeOverlay";
 import { isDesktopViewPort } from "@/common/helpers";
+import { redirectToPath } from "@/common/helpers";
 
 interface SideBarCollectionsProps {
   sidebarOpen?: boolean;
@@ -24,7 +23,6 @@ export const Collections: React.FC<SideBarCollectionsProps> = ({
   favCollection,
   collectionLoading,
 }) => {
-  const router = useRouter();
   const { showOverlay } = useRouteChangeOverlay({
     shouldShowOverlayCallback: url => {
       return url.startsWith("/prompt/");
@@ -88,7 +86,7 @@ export const Collections: React.FC<SideBarCollectionsProps> = ({
                       template={item}
                       expanded={sidebarOpen}
                       onClick={() => {
-                        router.push(`/prompt/${item.slug}`);
+                        redirectToPath(`/prompt/${item.slug}`);
                       }}
                     />
                   ))}
