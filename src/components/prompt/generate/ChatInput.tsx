@@ -239,7 +239,6 @@ export const ChatInput = ({
                 bgcolor: "action.hover",
               },
             }}
-            disabled={disabledTags}
             onClick={onVary}
           >
             Vary

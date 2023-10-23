@@ -419,11 +419,11 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
   };
 
   const handleUserInput = async (value: string) => {
-    const { name: inputName, required, type, question, prompt, choices } = currentQuestion;
-
-    if (isSimulaitonStreaming || value.trim() === "") {
+    if (!currentQuestion || isSimulaitonStreaming || value.trim() === "") {
       return;
     }
+
+    const { name: inputName, required, type, question, prompt, choices } = currentQuestion;
 
     const isChoiceOrCode = ["choices", "code"].includes(type);
 
