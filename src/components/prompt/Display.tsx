@@ -13,6 +13,7 @@ import { isDesktopViewPort } from "@/common/helpers";
 import ChatMode from "./generate/ChatBox";
 import useBrowser from "@/hooks/useBrowser";
 import ClientOnly from "@/components/base/ClientOnly";
+import GeneratedExecutionFooter from "./GeneratedExecutionFooter";
 
 interface Props {
   templateData: Templates;
@@ -192,6 +193,12 @@ export const Display: React.FC<Props> = ({
             />
           </ClientOnly>
         </Box>
+      )}
+      {currentGeneratedPrompt && (
+        <GeneratedExecutionFooter
+          prompt={currentGeneratedPrompt}
+          isMobile={!isDesktopView}
+        />
       )}
     </Grid>
   );

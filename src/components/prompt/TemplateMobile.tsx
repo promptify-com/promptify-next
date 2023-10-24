@@ -138,10 +138,6 @@ export default function TemplateMobile({
             onError={setErrorMessage}
             hashedExecution={hashedExecution}
           />
-          <GeneratedExecutionFooter
-            execution={generatedExecution}
-            template={template}
-          />
         </Grid>
       </Grid>
 
