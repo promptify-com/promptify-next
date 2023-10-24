@@ -1,9 +1,18 @@
 import { ReactNode } from "react";
-import { AutoAwesome, HomeRounded, MenuBookRounded, Search } from "@mui/icons-material";
+import {
+  AutoAwesome,
+  AutoAwesomeOutlined,
+  HomeRounded,
+  MenuBookRounded,
+  RocketLaunchOutlined,
+  Search,
+  SettingsOutlined,
+} from "@mui/icons-material/";
 
 import { Prompt } from "@/assets/icons/prompts";
 import { Setting } from "@/assets/icons/setting";
 import { TemplateStatus } from "@/core/api/dto/templates";
+import { DeploymentStatus } from "../types/deployments";
 
 export interface MenuType {
   id: number;
@@ -15,21 +24,27 @@ export interface MenuType {
 export const ProfileMenuItems: MenuType[] = [
   {
     id: 1,
-    icon: <Setting />,
-    href: "/profile",
-    name: "Settings",
-  },
-  {
-    id: 2,
-    icon: <AutoAwesome />,
+    icon: <AutoAwesomeOutlined />,
     href: "/sparks",
     name: "My Sparks",
   },
   {
-    id: 3,
+    id: 2,
     icon: <Prompt />,
     href: "/profile/#my-templates",
     name: "My Templates",
+  },
+  {
+    id: 3,
+    icon: <RocketLaunchOutlined />,
+    href: "/deployments",
+    name: "My Deployements",
+  },
+  {
+    id: 4,
+    icon: <SettingsOutlined />,
+    href: "/profile",
+    name: "Settings",
   },
 ];
 
@@ -61,6 +76,8 @@ export const links = [
 ];
 
 export const TemplateStatusArray: TemplateStatus[] = ["ARCHIVED", "DRAFT", "PENDING_REVIEW", "PUBLISHED"];
+
+export const DeploymentsStatusArray: DeploymentStatus[] = ["STOPPED", "CREATED", "DONE", "DEPLOYING", "FAILED"];
 
 export const Keywords: any[] = [
   {
