@@ -1,27 +1,15 @@
-import { PromptLiveResponse } from "@/common/types/prompt";
-import { Templates } from "@/core/api/dto/templates";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
-import { useMemo } from "react";
+import { Prompts } from "@/core/api/dto/prompts";
 
 interface Props {
-  template: Templates;
-  execution: PromptLiveResponse | null;
+  prompt: Prompts | null;
+  isMobile: boolean;
 }
 
-export default function GeneratedExecutionFooter({ template, execution }: Props) {
-  const currentGeneratedPrompt = useMemo(() => {
-    if (execution?.data?.length) {
-      const loadingPrompt = execution.data.find(prompt => prompt.isLoading);
-      const prompt = template.prompts.find(prompt => prompt.id === loadingPrompt?.prompt);
-      if (prompt) return prompt;
-    }
-
-    return null;
-  }, [template, execution]);
-
-  if (!currentGeneratedPrompt) {
+export default function GeneratedExecutionFooter({ prompt, isMobile }: Props) {
+  if (!prompt) {
     return null;
   }
 
@@ -29,7 +17,7 @@ export default function GeneratedExecutionFooter({ template, execution }: Props)
     <Box
       sx={{
         position: "sticky",
-        bottom: 0,
+        bottom: isMobile ? "129px" : 0,
         left: 0,
         right: 0,
         zIndex: 998,
@@ -46,7 +34,7 @@ export default function GeneratedExecutionFooter({ template, execution }: Props)
           opacity: 0.3,
         }}
       >
-        Prompt #{currentGeneratedPrompt.order}: {currentGeneratedPrompt.title}
+        Prompt #{prompt.order}: {prompt.title}
       </Typography>
     </Box>
   );
