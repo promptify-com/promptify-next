@@ -279,14 +279,21 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
       }
       return router.push("/signin");
     }
-    if (!validateInputs()) return;
+
+    dispatch(setGeneratingStatus(true));
+
     const hasTypeFile = shownInputs?.some(item => item.type === "file");
     if (hasTypeFile) {
       deleteFileInputIfEmpty(resPrompts, shownInputs!);
       await handleFileUploads();
     }
+
+    if (!validateInputs()) {
+      dispatch(setGeneratingStatus(false));
+      return;
+    }
+
     setErrors({});
-    dispatch(setGeneratingStatus(true));
     generateExecution(resPrompts);
   };
 
@@ -626,7 +633,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
               textAlign: "center",
             }}
           >
-            Fill all the inputs
+            Please fill all required inputs
           </Typography>
         )}
 

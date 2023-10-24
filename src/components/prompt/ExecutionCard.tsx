@@ -6,7 +6,6 @@ import { markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
 import { DisplayPrompt, PromptLiveResponse } from "@/common/types/prompt";
 import { Prompts } from "@/core/api/dto/prompts";
 import { TemplatesExecutions } from "@/core/api/dto/templates";
-import templatesSlice from "@/core/store/templatesSlice";
 import { useSelector } from "react-redux";
 import { RootState } from "@/core/store";
 

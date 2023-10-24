@@ -1,7 +1,17 @@
 import React, { useState } from "react";
-import { Box, Button, Divider, IconButton, InputLabel, MenuItem, Select, Stack, TextField } from "@mui/material";
-import { Backspace, CloudUpload } from "@mui/icons-material";
-
+import {
+  Box,
+  Button,
+  Divider,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
+  Stack,
+  TextField,
+  Tooltip,
+} from "@mui/material";
+import { Backspace, Error } from "@mui/icons-material";
 import { InputsErrors } from "./GeneratorForm";
 import { FileType, IPromptInput } from "@/common/types/prompt";
 import BaseButton from "../base/BaseButton";
@@ -139,33 +149,56 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
                   ))}
                 </Select>
               ) : input.type === "file" ? (
-                <Button
-                  component="label"
-                  variant="contained"
-                  sx={{ border: `2px solid ${errors[input.name] ? "error.main" : "tertiary"}` }}
+                <Stack
+                  direction={"row"}
+                  alignItems={"center"}
+                  gap={1}
                 >
-                  Upload file
-                  <input
-                    hidden
-                    accept={getFileTypeExtensionsAsString(input.fileExtensions as FileType[])}
-                    type="file"
-                    style={{
-                      flex: 1,
-                      clip: "rect(0 0 0 0)",
-                      clipPath: "inset(50%)",
-                      height: "auto",
-                      overflow: "hidden",
-                      position: "absolute",
-                      whiteSpace: "nowrap",
-                      width: 1,
-                    }}
-                    onChange={e => {
-                      if (e.target.files && e.target.files.length > 0) {
-                        handleChange(e.target.files[0], input.name, input.type);
-                      }
-                    }}
-                  />
-                </Button>
+                  <Button
+                    component="label"
+                    variant="contained"
+                    sx={{ border: "2px solid", borderColor: errors[input.name] ? "error.main" : "" }}
+                  >
+                    Upload file
+                    <input
+                      hidden
+                      accept={getFileTypeExtensionsAsString(input.fileExtensions as FileType[])}
+                      type="file"
+                      style={{
+                        flex: 1,
+                        clip: "rect(0 0 0 0)",
+                        clipPath: "inset(50%)",
+                        height: "auto",
+                        overflow: "hidden",
+                        position: "absolute",
+                        whiteSpace: "nowrap",
+                        width: 1,
+                      }}
+                      onChange={e => {
+                        if (e.target.files && e.target.files.length > 0) {
+                          handleChange(e.target.files[0], input.name, input.type);
+                        }
+                      }}
+                    />
+                  </Button>
+                  {errors[input.name] && (
+                    <Tooltip
+                      title={"The file uploaded is invalid"}
+                      placement="right"
+                      arrow
+                      componentsProps={{
+                        tooltip: {
+                          sx: { bgcolor: "error.main", color: "onError", fontSize: 10, fontWeight: 500 },
+                        },
+                        arrow: {
+                          sx: { color: "error.main" },
+                        },
+                      }}
+                    >
+                      <Error sx={{ color: "error.main", width: 20, height: 20 }} />
+                    </Tooltip>
+                  )}
+                </Stack>
               ) : (
                 <TextField
                   disabled={isGenerating}
