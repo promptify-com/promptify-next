@@ -40,17 +40,14 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
 
   const handleChange = (value: string | File, name: string, type: string) => {
     const updatedNodes = nodeInputs.map(node => {
-      const targetNode = node.inputs[name];
-      return {
-        ...node,
-        inputs: {
-          ...node.inputs,
-          [name]: {
-            ...targetNode,
-            value: type === "number" ? +value : value,
-          },
-        },
-      };
+      const targetInput = node.inputs[name];
+      if (targetInput) {
+        node.inputs[name] = {
+          ...targetInput,
+          value: type === "number" ? +value : value,
+        };
+      }
+      return node;
     });
 
     setNodeInputs(updatedNodes);
@@ -183,7 +180,7 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
                   </Button>
                   {errors[input.name] && (
                     <Tooltip
-                      title={"The file uploaded is invalid"}
+                      title={"The uploaded file is invalid"}
                       placement="right"
                       arrow
                       componentsProps={{

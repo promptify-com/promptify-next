@@ -41,8 +41,8 @@ const deleteFileInputIfEmpty = (prompts: ResPrompt[], inputs: Input[]) => {
   for (const prompt of prompts) {
     const prompt_params = prompt.prompt_params;
     for (const key in prompt_params) {
-      const showInputItem = inputs?.find(inputItem => inputItem.prompt === prompt.prompt && inputItem.name === key);
-      if (showInputItem && showInputItem.type === "file" && prompt_params[key] === "") {
+      const enteredInput = inputs?.find(inputItem => inputItem.prompt === prompt.prompt && inputItem.name === key);
+      if (enteredInput && enteredInput.type === "file" && prompt_params[key] === "") {
         delete prompt_params[key];
       }
     }
@@ -233,16 +233,16 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   };
 
   const handleFileUploads = async () => {
-    const fileData = resPrompts.reduce((acc: SelectedFile[], resPrompt) => {
+    const fileData = resPrompts.reduce((files: SelectedFile[], resPrompt) => {
       const promptId = resPrompt.prompt;
       const fileDataEntries = Object.entries(resPrompt.prompt_params)
         .filter(([_, value]) => value instanceof File)
         .map(([key, file]) => ({ key, promptId, file: file as File }));
 
-      return acc.concat(fileDataEntries);
+      return files.concat(fileDataEntries);
     }, []);
 
-    const results = await Promise.allSettled(fileData.map(fileObject => uploadFileHelper(uploadFile, fileObject)));
+    const results = await Promise.allSettled(fileData.map(file => uploadFileHelper(uploadFile, file)));
 
     const validNodeInputs: ResInputs[] = [];
 
@@ -253,12 +253,13 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
         const prompt = nodeInputs.find(inputs => inputs.id === promptId);
 
         if (prompt) {
-          prompt.inputs[currentKey] = {
-            ...prompt.inputs[currentKey],
-            value: file || "",
-          };
-          setErrors({ ...errors, [currentKey]: file === undefined });
+          prompt.inputs[currentKey].value = file || "";
           validNodeInputs.push(prompt);
+
+          if (!file) {
+            errors[currentKey] = true;
+            setErrors(errors);
+          }
         }
 
         const matchingData = resPrompts.find(data => data.prompt === promptId);
