@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Box, Button, Chip, Stack, Typography, alpha, useTheme } from "@mui/material";
 import { Templates } from "@/core/api/dto/templates";
 import { Subtitle } from "@/components/blocks";
-import moment from "moment";
 import { useRouter } from "next/router";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import FavoriteMobileButton from "@/components/common/buttons/FavoriteMobileButton";
@@ -17,6 +16,7 @@ import { isValidUserFn } from "@/core/store/userSlice";
 import { useSelector } from "react-redux";
 import ApiAccess from "./ApiAccess";
 import { stripTags, getBaseUrl, redirectToPath } from "@/common/helpers";
+import { formatDate, timeAgo } from "@/common/helpers/timeManipulation";
 
 interface DetailsProps {
   templateData: Templates;
@@ -177,14 +177,14 @@ export const Details: React.FC<DetailsProps> = ({ templateData, setMobileTab = (
           <Stack gap={1}>
             {templateData.last_run && (
               <Typography sx={detailsStyle}>
-                Last run: <span>{moment(templateData.last_run).fromNow()}</span>
+                Last run: <span>{templateData.last_run ? timeAgo(templateData.last_run) : "--"}</span>
               </Typography>
             )}
             <Typography sx={detailsStyle}>
-              Updated: <span>{moment(templateData.updated_at).format("D MMMM YYYY")}</span>
+              Updated: <span>{formatDate(templateData.updated_at)}</span>
             </Typography>
             <Typography sx={detailsStyle}>
-              Created: <span>{moment(templateData.created_at).format("D MMMM YYYY")}</span>
+              Created: <span>{formatDate(templateData.created_at)}</span>
             </Typography>
             <Typography sx={detailsStyle}>
               Views: <span>{templateData.views}</span>
