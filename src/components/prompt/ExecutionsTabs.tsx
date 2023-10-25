@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -15,7 +15,6 @@ import {
 } from "@mui/material";
 import { TemplatesExecutions } from "@/core/api/dto/templates";
 import { CloudQueue, Create, Delete, PriorityHighOutlined } from "@mui/icons-material";
-import moment from "moment";
 import SavedSpark from "@/assets/icons/SavedSpark";
 import DraftSpark from "@/assets/icons/DraftSpark";
 import {
@@ -24,7 +23,7 @@ import {
   useUpdateExecutionMutation,
 } from "@/core/api/executions";
 import { DeleteDialog } from "../dialog/DeleteDialog";
-import { executionTimeLeft } from "@/common/helpers/executionTimeLeft";
+import { timeAgo, timeLeft } from "@/common/helpers/timeManipulation";
 import { RenameForm } from "../common/forms/RenameForm";
 import useTruncate from "@/hooks/useTruncate";
 
@@ -141,7 +140,7 @@ const ExecutionCard = ({
               opacity: 0.5,
             }}
           >
-            {moment(execution.created_at).fromNow()}
+            {timeAgo(execution.created_at)}
           </Typography>
         </Stack>
         <IconButton
@@ -210,7 +209,6 @@ export const ExecutionsTabs: React.FC<Props> = ({
   sparkHashQueryParam,
 }) => {
   const { palette } = useTheme();
-
   const [updateExecution, { isError, isLoading }] = useUpdateExecutionMutation();
   const [favoriteExecution] = useExecutionFavoriteMutation();
   const [deleteExecution] = useDeleteExecutionMutation();
@@ -222,19 +220,7 @@ export const ExecutionsTabs: React.FC<Props> = ({
   const [renameAllow, setRenameAllow] = useState(false);
   const [deleteAllow, setDeleteAllow] = useState(false);
   const [executionToDelete, setExecutionToDelete] = useState<TemplatesExecutions | null>(null);
-  const [allExecutions, savedExecutions] = useMemo(() => {
-    const _executions = executions
-      .reduce((uniqueExecs: TemplatesExecutions[], execution) => {
-        if (!uniqueExecs.some((item: TemplatesExecutions) => item.id === execution.id)) {
-          uniqueExecs.push(execution);
-        }
-        return uniqueExecs;
-      }, [])
-      .sort((a, b) => moment(b.created_at).diff(moment(a.created_at)));
-    const savedExecutions = _executions.filter(execution => execution.is_favorite);
-
-    return [_executions, savedExecutions];
-  }, [executions]);
+  const savedExecutions = executions.filter(execution => execution.is_favorite);
 
   useEffect(() => {
     setExecutionTitle(selectedExecution?.title);
@@ -307,9 +293,7 @@ export const ExecutionsTabs: React.FC<Props> = ({
                   }}
                 >
                   {!selectedExecution?.is_favorite
-                    ? `This Spark is temporal and will be removed in ${executionTimeLeft(
-                        selectedExecution.created_at as Date,
-                      )}`
+                    ? `This Spark is temporal and will be removed in ${timeLeft(selectedExecution.created_at as Date)}`
                     : "This Spark is saved"}
                 </Typography>
               </Stack>
@@ -414,7 +398,7 @@ export const ExecutionsTabs: React.FC<Props> = ({
       >
         <Stack height={"100%"}>
           <ExecutionsList
-            executions={allExecutions}
+            executions={executions}
             chooseExecution={chooseExecution}
             palette={palette}
             setExecutionToDelete={setExecutionToDelete}

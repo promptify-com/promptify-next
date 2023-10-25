@@ -46,7 +46,6 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   const dispatch = useAppDispatch();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const router = useRouter();
-
   const [resPrompts, setResPrompts] = useState<ResPrompt[]>([]);
   const [nodeInputs, setNodeInputs] = useState<ResInputs[]>([]);
   const [nodeParams, setNodeParams] = useState<ResOverrides[]>([]);
