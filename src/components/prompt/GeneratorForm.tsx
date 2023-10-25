@@ -53,6 +53,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   const [errors, setErrors] = useState<InputsErrors>({});
   const [shownInputs, setShownInputs] = useState<Input[] | null>(null);
   const [shownParams, setShownParams] = useState<Param[] | null>(null);
+  const [userSavedFormData, setUserSavedFormData] = useState(false);
 
   const { generateExecution, generatingResponse, lastExecution } = useGenerateExecution(templateData?.id, onError);
 
@@ -94,12 +95,16 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   useEffect(() => {
     if (shownInputs) {
       const updatedInputs = new Map<number, ResInputs>();
-
       const storedData = Storage.get("nodeInputsParamsData");
+
       if (storedData) {
         setNodeInputs(storedData.inputs);
         setNodeParams(storedData.params);
+        setUserSavedFormData(true);
         Storage.remove("nodeInputsParamsData");
+      }
+
+      if (userSavedFormData || storedData) {
         return;
       }
 
@@ -319,7 +324,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   const prompts = templateData.prompts;
   const promptHasContent = prompts.some(prompt => prompt.content);
   const hasContentOrFormFilled = !filledForm ? true : promptHasContent ? false : true;
-  const isButtonDisabled = token ? (isGenerating ? true : hasContentOrFormFilled) : true;
+  const isButtonDisabled = isGenerating ? true : hasContentOrFormFilled;
 
   return (
     <Stack
