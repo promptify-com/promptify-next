@@ -247,21 +247,19 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     const validNodeInputs: ResInputs[] = [];
 
     results.forEach(result => {
-      if (result.status) {
-        const { key, promptId, file } = result.status === "fulfilled" ? result.value : result.reason;
-        const currentKey = key as string;
-        const prompt = nodeInputs.find(inputs => inputs.id === promptId);
+      const { key, promptId, file } = result.status === "fulfilled" ? result.value : result.reason;
+      const currentKey = key as string;
+      const prompt = nodeInputs.find(inputs => inputs.id === promptId);
 
-        if (prompt) {
-          prompt.inputs[currentKey].value = file || "";
-          validNodeInputs.push(prompt);
-        }
+      if (prompt) {
+        prompt.inputs[currentKey].value = file || "";
+        validNodeInputs.push(prompt);
+      }
 
-        const matchingData = resPrompts.find(data => data.prompt === promptId);
+      const matchingData = resPrompts.find(data => data.prompt === promptId);
 
-        if (matchingData) {
-          matchingData.prompt_params[currentKey] = file as string | number;
-        }
+      if (matchingData) {
+        matchingData.prompt_params[currentKey] = file as string | number;
       }
     });
     setNodeInputs(validNodeInputs);
@@ -276,18 +274,13 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
       return router.push("/signin");
     }
 
-    if (!validateInputs()) return;
-
     const hasTypeFile = shownInputs?.some(item => item.type === "file");
     if (hasTypeFile) {
       deleteFileInputIfEmpty(resPrompts, shownInputs!);
       await handleFileUploads();
     }
 
-    if (!validateInputs()) {
-      dispatch(setGeneratingStatus(false));
-      return;
-    }
+    if (!validateInputs()) return;
 
     setErrors({});
     dispatch(setGeneratingStatus(true));

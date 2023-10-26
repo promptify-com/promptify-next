@@ -254,6 +254,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
               promptId: question.prompt,
               inputName: question.name,
               value: answer,
+              modifiedFrom: "chat",
             });
           }
           return {
@@ -278,6 +279,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
       promptId: prompt,
       value,
       inputName,
+      modifiedFrom: "chat",
     };
 
     const existingIndex = currentAnsweredInputs.findIndex(
