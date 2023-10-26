@@ -26,8 +26,8 @@ interface GeneratorFormProps {
   onError: (errMsg: string) => void;
 }
 
-export interface InputsErrors {
-  [key: string]: number | boolean;
+interface InputsErrors {
+  [key: string]: number;
 }
 interface Input extends IPromptInput {
   prompt: number;
@@ -65,6 +65,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   const [nodeInputs, setNodeInputs] = useState<ResInputs[]>([]);
   const [nodeParams, setNodeParams] = useState<ResOverrides[]>([]);
   const [errors, setErrors] = useState<InputsErrors>({});
+  const [fileErrors, setFileErrors] = useState<InputsErrors>({});
   const [shownInputs, setShownInputs] = useState<Input[] | null>(null);
   const [shownParams, setShownParams] = useState<Param[] | null>(null);
 
@@ -233,6 +234,8 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   };
 
   const handleFileUploads = async () => {
+    setFileErrors({});
+
     const fileData = resPrompts.reduce((files: SelectedFile[], resPrompt) => {
       const promptId = resPrompt.prompt;
       const fileDataEntries = Object.entries(resPrompt.prompt_params)
@@ -244,20 +247,26 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
     const results = await Promise.allSettled(fileData.map(file => uploadFileHelper(uploadFile, file)));
 
-    const validNodeInputs: ResInputs[] = [];
+    const validNodeInputs = nodeInputs.filter(nodeInput =>
+      Object.values(nodeInput.inputs).every(input => !(input instanceof File)),
+    );
 
     results.forEach(result => {
       const { key, promptId, file } = result.status === "fulfilled" ? result.value : result.reason;
       const currentKey = key as string;
-      const prompt = nodeInputs.find(inputs => inputs.id === promptId);
 
+      if (!file) {
+        fileErrors[currentKey] = promptId;
+        setFileErrors(fileErrors);
+      }
+
+      const prompt = nodeInputs.find(inputs => inputs.id === promptId);
       if (prompt) {
         prompt.inputs[currentKey].value = file || "";
         validNodeInputs.push(prompt);
       }
 
       const matchingData = resPrompts.find(data => data.prompt === promptId);
-
       if (matchingData) {
         matchingData.prompt_params[currentKey] = file as string | number;
       }
@@ -458,10 +467,11 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
                 <GeneratorInput
                   key={i}
                   promptId={input.prompt}
-                  inputs={[input]}
+                  inputData={input}
                   nodeInputs={nodeInputs}
                   setNodeInputs={setNodeInputs}
-                  errors={errors}
+                  error={input.name in errors}
+                  fileError={input.name in fileErrors}
                 />
               ))}
               {shownParams.map((param, i) => (
