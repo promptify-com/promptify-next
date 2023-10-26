@@ -27,10 +27,13 @@ export interface IPromptInput {
   fileExtensions: string[];
 }
 
+export type FormMode = "input" | "chat";
+
 export type AnsweredInputType = {
   promptId: number;
   inputName: string;
-  value: string | number;
+  value: string | number | File;
+  modifiedFrom: FormMode;
 };
 
 export interface DisplayPrompt {
