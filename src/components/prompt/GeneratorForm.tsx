@@ -247,19 +247,14 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     const validNodeInputs: ResInputs[] = [];
 
     results.forEach(result => {
-      if (result.status === "fulfilled" && result.value) {
-        const { key, promptId, file } = result.value;
-        const currentKey = key as keyof SelectedFile;
+      if (result.status) {
+        const { key, promptId, file } = result.status === "fulfilled" ? result.value : result.reason;
+        const currentKey = key as string;
         const prompt = nodeInputs.find(inputs => inputs.id === promptId);
 
         if (prompt) {
           prompt.inputs[currentKey].value = file || "";
           validNodeInputs.push(prompt);
-
-          if (!file) {
-            errors[currentKey] = true;
-            setErrors(errors);
-          }
         }
 
         const matchingData = resPrompts.find(data => data.prompt === promptId);
@@ -281,7 +276,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
       return router.push("/signin");
     }
 
-    dispatch(setGeneratingStatus(true));
+    if (!validateInputs()) return;
 
     const hasTypeFile = shownInputs?.some(item => item.type === "file");
     if (hasTypeFile) {
@@ -295,6 +290,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     }
 
     setErrors({});
+    dispatch(setGeneratingStatus(true));
     generateExecution(resPrompts);
   };
 

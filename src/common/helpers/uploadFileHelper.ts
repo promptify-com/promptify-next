@@ -22,12 +22,16 @@ export const uploadFileHelper: UploadFunction = async (uploadFileMutation, selec
 
   try {
     const responseData = (await uploadFileMutation(selectedFile.file)) as UploadFileResponse;
-
     return {
       ...selectedFile,
       file: responseData.data?.file_url,
     };
-  } catch (_) {}
+  } catch (_) {
+    throw {
+      ...selectedFile,
+      file: undefined,
+    };
+  }
 };
 
 const extensionType = {
