@@ -27,7 +27,6 @@ interface GeneratorInputProps {
   nodeInputs: ResInputs[];
   setNodeInputs: (updatedNodes: ResInputs[]) => void;
   error: boolean;
-  fileError: boolean;
 }
 
 export const GeneratorInput: React.FC<GeneratorInputProps> = ({
@@ -36,15 +35,10 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
   nodeInputs,
   setNodeInputs,
   error,
-  fileError,
 }) => {
   const [_error, setError] = useState(error);
-  const [_fileError, setFileError] = useState(fileError);
 
-  useEffect(() => {
-    setError(error);
-    setFileError(fileError);
-  }, [error, fileError]);
+  useEffect(() => setError(error), [error]);
 
   const dispatch = useAppDispatch();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
@@ -56,7 +50,6 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
 
   const handleChange = (value: string | File, name: string, type: string) => {
     setError(false);
-    setFileError(false);
 
     let newValue: AnsweredInputType = {
       inputName: name,
@@ -202,7 +195,7 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
                 }}
               />
             </Button>
-            {_fileError && (
+            {_error && (
               <Tooltip
                 title={"The uploaded file is invalid"}
                 placement="right"
