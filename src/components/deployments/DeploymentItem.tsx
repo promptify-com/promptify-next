@@ -12,6 +12,12 @@ const DeploymentItem = ({ item }: DeploymentItem) => {
     <Grid
       container
       alignItems={"center"}
+      sx={{
+        p: "16px",
+        "&:hover": {
+          bgcolor: "action.hover",
+        },
+      }}
     >
       <Grid
         item

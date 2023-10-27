@@ -22,17 +22,23 @@ import React, { useMemo, useState } from "react";
 import BaseButton from "@/components/base/BaseButton";
 import { deployments } from "./data";
 import { DeploymentsStatusArray } from "@/common/constants";
-import DeploymentItem from "@/components/deployments/DeploymentItem";
 import DeploymentList from "@/components/deployments/DeploymentList";
 import { DeploymentStatus } from "@/common/types/deployments";
+import CreateDeploymentPopup from "@/components/deployments/CreateDeploymentPopup";
+import { useGetDeploymentsQuery } from "@/core/api/deployments";
 
 const MyDeploymentsPage = () => {
   const [searchName, setSearchName] = useState("");
-  const [status, setStatus] = useState<DeploymentStatus>();
+  const [status, setStatus] = useState<DeploymentStatus | string>("");
+  const [openpopup, setOpenpopup] = useState(false);
+
+  const { data } = useGetDeploymentsQuery();
+
+  console.log(data);
 
   const filteredDeployments = useMemo(() => {
     return deployments.filter(deployment => {
-      const matchesStatus = status ? deployment.status === status : true;
+      const matchesStatus = status !== "" ? deployment.status === status : true;
       const matchesName = deployment.model.toLowerCase().includes(searchName.toLowerCase());
       return matchesStatus && matchesName;
     });
@@ -115,6 +121,7 @@ const MyDeploymentsPage = () => {
                         labelId="selectStatus"
                         value={status}
                         label="Status"
+                        autoWidth
                         onChange={e => setStatus(e.target.value as DeploymentStatus)}
                       >
                         {DeploymentsStatusArray.map((status, idx) => (
@@ -133,6 +140,7 @@ const MyDeploymentsPage = () => {
                     color="primary"
                     sx={btnStyle}
                     startIcon={<Add sx={{ fontSize: 20 }} />}
+                    onClick={() => setOpenpopup(true)}
                   >
                     Create
                   </BaseButton>
@@ -158,6 +166,7 @@ const MyDeploymentsPage = () => {
               </Stack>
             )}
           </Grid>
+          {openpopup && <CreateDeploymentPopup onClose={() => setOpenpopup(false)} />}
         </Box>
       </Layout>
     </Protected>

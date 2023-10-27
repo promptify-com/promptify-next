@@ -38,7 +38,7 @@ export const ProfileMenuItems: MenuType[] = [
     id: 3,
     icon: <RocketLaunchOutlined />,
     href: "/deployments",
-    name: "My Deployements",
+    name: "My Deployments",
   },
   {
     id: 4,
