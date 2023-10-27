@@ -26,21 +26,9 @@ export const getInputsFromString = (str: string): IPromptInput[] => {
   while ((match = regex.exec(str)) !== null) {
     const parts = match[1].split(":");
     const type = getType(parts[1]);
-    const choices =
-      type === "choices" && parts[3]?.startsWith('"') && parts[3]?.endsWith('"') // options format: "option1,option2"
-        ? Array.from(new Set(parts[3].slice(1, -1).split(","))).filter(option => option.trim()) // duplicates & empty options removed
-        : null;
+    const options = parts[3] ? Array.from(new Set(parts[3].split(",").filter(option => option.trim()))) : [];
 
-    if (type === "choices" && !choices?.length) {
-      continue;
-    }
-
-    const fileExtensions =
-      type === "file" ? Array.from(new Set(parts[3]?.split(",").filter(option => option.trim()))) : [];
-
-    if (type === "file" && !fileExtensions.length) {
-      continue;
-    }
+    if (["choices", "file"].includes(type) && !options?.length) continue;
 
     const obj = {
       name: parts[0],
@@ -50,8 +38,8 @@ export const getInputsFromString = (str: string): IPromptInput[] => {
         .replace(/^./, parts[0][0].toUpperCase()),
       type: type,
       required: parts[2] ? parts[2].toLowerCase() !== "false" : true, // required by default
-      choices: choices,
-      fileExtensions: fileExtensions,
+      choices: options,
+      fileExtensions: options,
     };
 
     matches.push(obj);

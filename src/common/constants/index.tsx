@@ -4,6 +4,7 @@ import { AutoAwesome, HomeRounded, MenuBookRounded, Search } from "@mui/icons-ma
 import { Prompt } from "@/assets/icons/prompts";
 import { Setting } from "@/assets/icons/setting";
 import { TemplateStatus } from "@/core/api/dto/templates";
+import { InputType } from "@/common/types/prompt";
 
 export interface MenuType {
   id: number;
@@ -112,3 +113,5 @@ export enum BUILDER_TYPE {
   USER = "user",
   ADMIN = "admin",
 }
+
+export const BuilderInputTypes: InputType[] = ["text", "number", "integer", "code", "choices", "file"];

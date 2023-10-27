@@ -45,7 +45,8 @@ export interface InputVariable {
   label: string;
   type: InputType;
   required: boolean;
-  choices?: string[] | null;
+  choices?: string[];
+  fileExtensions?: string[];
 }
 
 export interface Preset extends OutputVariable {}

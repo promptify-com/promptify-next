@@ -1,4 +1,4 @@
-export type InputType = "text" | "choices" | "number" | "code" | "file";
+export type InputType = "text" | "choices" | "number" | "integer" | "code" | "file";
 
 export type FileType = "pdf" | "docx" | "txt";
 
@@ -22,9 +22,9 @@ export interface IPromptInput {
   type: InputType;
   required: boolean;
   defaultValue?: string | number | null;
-  choices?: string[] | null;
+  choices?: string[];
+  fileExtensions?: string[];
   prompt?: number;
-  fileExtensions: string[];
 }
 
 export type FormMode = "input" | "chat";
