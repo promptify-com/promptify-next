@@ -10,19 +10,16 @@ const DeploymentList = ({ items }: { items: Deployment[] }) => {
     <Stack
       bgcolor={"surface.1"}
       borderRadius={"16px"}
-      p={"16px"}
       direction={"column"}
+      overflow={"hidden"}
       gap={2}
     >
-      <Stack
-        direction={"column"}
-        gap={"18px"}
-      >
+      <Stack direction={"column"}>
         <TableHeader />
 
-        {items.map(deployment => (
+        {items.map((deployment, idx) => (
           <DeploymentItem
-            key={deployment.createdAt}
+            key={idx}
             item={deployment}
           />
         ))}

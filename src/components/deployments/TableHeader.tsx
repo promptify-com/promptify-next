@@ -3,7 +3,10 @@ import { Grid, Typography } from "@mui/material";
 
 const TableHeader = () => {
   return (
-    <Grid container>
+    <Grid
+      container
+      p={"16px"}
+    >
       <Grid
         item
         md={3}
