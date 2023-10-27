@@ -1,11 +1,10 @@
 import { ApiIcon } from "@/assets/icons";
-import { ResPrompt } from "@/core/api/dto/prompts";
 import { Templates } from "@/core/api/dto/templates";
 import { Box, Button, Stack, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { Bolt } from "@mui/icons-material";
 import dynamic from "next/dynamic";
-import moment from "moment";
+import { timeAgo } from "@/common/helpers/timeManipulation";
 
 const ApiAccessModal = dynamic(() => import("../modals/ApiAccessModal"));
 
@@ -93,7 +92,7 @@ const ApiAccess: React.FC<Props> = ({ templateData }) => {
       <Box sx={{ pb: "25px" }}>
         <Stack gap={1}>
           <Typography sx={detailsStyle}>
-            Last access: <span>{templateData.last_api_run ? moment(templateData.last_api_run).fromNow() : "--"}</span>
+            Last access: <span>{templateData.last_api_run ? timeAgo(templateData.last_api_run) : "--"}</span>
           </Typography>
           <Typography sx={detailsStyle}>
             Total Runs: <span>{templateData.api_runs || "--"}</span>

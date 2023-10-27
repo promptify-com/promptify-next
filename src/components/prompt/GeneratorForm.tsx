@@ -60,33 +60,33 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   const dispatch = useAppDispatch();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const router = useRouter();
-
   const [resPrompts, setResPrompts] = useState<ResPrompt[]>([]);
   const [nodeInputs, setNodeInputs] = useState<ResInputs[]>([]);
   const [nodeParams, setNodeParams] = useState<ResOverrides[]>([]);
   const [errors, setErrors] = useState<InputsErrors>({});
   const [shownInputs, setShownInputs] = useState<Input[] | null>(null);
   const [shownParams, setShownParams] = useState<Param[] | null>(null);
+  const [userSavedFormData, setUserSavedFormData] = useState(false);
 
   const { generateExecution, generatingResponse, lastExecution } = useGenerateExecution(templateData?.id, onError);
 
   const answeredInputs = useAppSelector(state => state.template.answeredInputs);
 
   useEffect(() => {
-    if (answeredInputs && answeredInputs.length > 0) {
-      setNodeInputs(prevState => {
-        const newState = [...prevState];
+    const updatedInput = answeredInputs[0];
 
-        answeredInputs.forEach(input => {
-          const targetIndex = newState.findIndex(item => item.id === input.promptId);
-          if (targetIndex !== -1 && newState[targetIndex].inputs[input.inputName]) {
-            newState[targetIndex].inputs[input.inputName].value = input.value;
-          }
-        });
-
-        return newState;
+    if (!updatedInput || updatedInput.modifiedFrom === "input") return;
+    setNodeInputs(prevState => {
+      const newState = [...prevState];
+      answeredInputs.forEach(input => {
+        const targetIndex = newState.findIndex(item => item.id === input.promptId);
+        if (targetIndex !== -1 && newState[targetIndex].inputs[input.inputName]) {
+          newState[targetIndex].inputs[input.inputName].value = input.value;
+        }
       });
-    }
+
+      return newState;
+    });
   }, [answeredInputs]);
 
   const [uploadFile] = useUploadFileMutation();
@@ -110,12 +110,16 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   useEffect(() => {
     if (shownInputs) {
       const updatedInputs = new Map<number, ResInputs>();
-
       const storedData = Storage.get("nodeInputsParamsData");
+
       if (storedData) {
         setNodeInputs(storedData.inputs);
         setNodeParams(storedData.params);
+        setUserSavedFormData(true);
         Storage.remove("nodeInputsParamsData");
+      }
+
+      if (userSavedFormData || storedData) {
         return;
       }
 
@@ -379,7 +383,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   const allowReset = nodeInputs.some(input => Object.values(input.inputs).some(input => input.value));
   const promptHasContent = templateData.prompts?.some(prompt => prompt.content);
   const hasContentOrFormFilled = !filledForm ? true : promptHasContent ? false : true;
-  const isButtonDisabled = token ? (isGenerating ? true : hasContentOrFormFilled) : true;
+  const isButtonDisabled = isGenerating ? true : hasContentOrFormFilled;
 
   return (
     <Stack

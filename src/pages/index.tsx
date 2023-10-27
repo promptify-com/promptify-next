@@ -2,7 +2,6 @@ import { Box, Grid, Typography } from "@mui/material";
 import React, { useEffect } from "react";
 import { AxiosResponse } from "axios";
 import { NextPage } from "next";
-import { useRouter } from "next/router";
 import { useSelector, useDispatch } from "react-redux";
 import { IContinueWithSocialMediaResponse } from "@/common/types";
 import { client } from "@/common/axios";
@@ -18,6 +17,7 @@ import { RootState } from "@/core/store";
 import { isValidUserFn, updateUser } from "@/core/store/userSlice";
 import { Category, TemplatesExecutionsByMePaginationResponse } from "@/core/api/dto/templates";
 import { authClient } from "@/common/axios";
+import { redirectToPath } from "@/common/helpers";
 
 interface HomePageProps {
   categories: Category[];
@@ -27,7 +27,6 @@ const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
 const MY_EXECUTIONS_LIMIT = 4;
 
 const HomePage: NextPage<HomePageProps> = ({ categories }) => {
-  const router = useRouter();
   const path = getPathURL();
   const dispatch = useDispatch();
   const isValidUser = useSelector(isValidUserFn);
@@ -69,9 +68,9 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
 
     saveToken({ token });
     const payload = await getCurrentUser(token).unwrap();
-    dispatch(updateUser(payload));
 
-    router.push(path || "/");
+    dispatch(updateUser(payload));
+    redirectToPath(path || "/");
   };
 
   // TODO: move authentication logic to signin page instead

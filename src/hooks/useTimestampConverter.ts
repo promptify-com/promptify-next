@@ -1,18 +1,14 @@
-import moment from "moment";
+import { formatDate, timeAgo } from "@/common/helpers/timeManipulation";
 
 function useTimestampConverter() {
-  const convertedTimestamp = (timestamp: string | Date): string => {
-    if (!moment(timestamp).isValid()) {
-      return "Some time ago";
-    }
+  const convertedTimestamp = (input: string | Date): string => {
+    const _timeAgo = timeAgo(input);
+    const duration = _timeAgo.replace(/(\w*)/g, chars => (chars.length >= 3 && chars !== "ago" ? chars : ""))?.trim();
 
-    const date = moment(timestamp);
-    const currentDate = moment();
-
-    if (date.isSame(currentDate, "day")) {
-      return date.fromNow(); // E.g., "2 hours ago"
+    if (["minutes", "seconds", "hours", "day"].includes(duration)) {
+      return _timeAgo;
     } else {
-      return date.format("LL"); // E.g., "August 18, 2023"
+      return formatDate(input);
     }
   };
 

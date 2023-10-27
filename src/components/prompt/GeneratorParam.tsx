@@ -12,24 +12,28 @@ interface GeneratorParamProps {
 
 export const GeneratorParam: React.FC<GeneratorParamProps> = ({ promptId, params, nodeParams, setNodeParams }) => {
   const handleChangeScore = (score: number, parameter: number) => {
-    const nodeParam = nodeParams.find(_nodeParam => _nodeParam.id === promptId);
+    let nodeParam = nodeParams.find(_nodeParam => _nodeParam.id === promptId);
+    const updatedNodeParams = [...nodeParams];
 
-    if (nodeParam) {
-      const matchingContext = nodeParam.contextual_overrides.find(
-        contextual_override => contextual_override.parameter === parameter,
-      );
-
-      matchingContext ? (matchingContext.score = score) : nodeParam.contextual_overrides.push({ parameter, score });
-    } else {
-      nodeParams.push({ id: promptId, contextual_overrides: [{ parameter, score }] });
+    if (!nodeParam) {
+      nodeParam = { id: promptId, contextual_overrides: [] };
+      updatedNodeParams.push(nodeParam);
     }
 
-    setNodeParams(nodeParams);
+    const matchingContext = nodeParam.contextual_overrides.find(
+      contextual_override => contextual_override.parameter === parameter,
+    );
+
+    if (matchingContext) {
+      matchingContext.score = score;
+    } else {
+      nodeParam.contextual_overrides.push({ parameter, score });
+    }
+
+    setNodeParams(updatedNodeParams);
   };
 
-  if (params.length === 0) {
-    return null;
-  }
+  if (params.length === 0) return null;
 
   return (
     <Box>
