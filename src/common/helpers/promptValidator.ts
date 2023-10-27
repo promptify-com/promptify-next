@@ -2,7 +2,7 @@ import { BuilderInputTypes } from "@/common/constants";
 import { InputType } from "@/common/types/prompt";
 
 export const isPromptVariableValid = (content: string) => {
-  const validTextRegex = /^[a-zA-Z]+$/;
+  const validTextRegex = /^[a-zA-Z0-9]+$/;
   const regex = /{{(.*?)}}/g;
   let match;
 
