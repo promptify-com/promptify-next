@@ -116,7 +116,7 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
                 open
                 setOpen={setCodeFieldOpen}
                 value={value as string}
-                onChange={val => handleChange(val, inputData.name, inputData.type)}
+                onSubmit={val => handleChange(val, inputData.name, inputData.type)}
               />
             )}
           </>

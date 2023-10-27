@@ -91,7 +91,7 @@ export interface QuestionAnswerParams {
 export interface VaryParams {
   prompt: string;
   variables: {
-    [question: string]: string | number;
+    [question: string]: string | number | File;
   };
 }
 

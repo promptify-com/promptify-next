@@ -19,6 +19,6 @@ export interface IAnswer {
   inputName: string;
   required: boolean;
   question: string;
-  answer: string | number;
+  answer: string | number | File;
   prompt: number;
 }

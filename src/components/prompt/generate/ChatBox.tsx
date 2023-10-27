@@ -358,7 +358,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
     if (variation) {
       setIsValidatingAnswer(true);
 
-      const questionAnswerMap: Record<string, string | number> = {};
+      const questionAnswerMap: Record<string, string | number | File> = {};
       templateQuestions.forEach(question => {
         const matchingAnswer = answers.find(answer => answer.inputName === question.name);
         questionAnswerMap[question.name] = matchingAnswer?.answer || "";
