@@ -2,12 +2,16 @@ import { Deployment } from "@/common/types/deployments";
 import { Grid, Typography } from "@mui/material";
 import React from "react";
 import { StatusChip } from "./StatusChip";
+import InstanceLabel from "./InstanceLabel";
+import useTimestampConverter from "@/hooks/useTimestampConverter";
 
 interface DeploymentItem {
   item: Deployment;
 }
 
 const DeploymentItem = ({ item }: DeploymentItem) => {
+  const { convertedTimestamp } = useTimestampConverter();
+
   return (
     <Grid
       container
@@ -23,14 +27,14 @@ const DeploymentItem = ({ item }: DeploymentItem) => {
         item
         md={3}
       >
-        <Typography> {item.model} </Typography>
+        <Typography> {item.model.name} </Typography>
       </Grid>
 
       <Grid
         item
         md={4}
       >
-        <Typography> {item.instance}</Typography>
+        {InstanceLabel(item.instance)}
       </Grid>
       <Grid
         item
@@ -58,7 +62,7 @@ const DeploymentItem = ({ item }: DeploymentItem) => {
             opacity: 0.4,
           }}
         >
-          {item.createdAt}
+          {convertedTimestamp(item.created_at)}
         </Typography>
       </Grid>
     </Grid>

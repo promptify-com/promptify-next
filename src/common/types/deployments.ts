@@ -1,10 +1,13 @@
-export type DeploymentStatus = "DONE" | "STOPPED" | "DEPLOYING" | "FAILED" | "CREATED";
+export type DeploymentStatus = "done" | "stopped" | "deploying" | "failed" | "created";
 
 export interface Deployment {
-  model: string;
-  instance: string;
+  id: number;
+  user: number;
+  failure_reason: string | null;
+  model: ModelFields;
+  instance: Instance;
   status: DeploymentStatus;
-  createdAt: string;
+  created_at: string;
 }
 
 export interface CreateDeployment {

@@ -17,12 +17,13 @@ const DeploymentList = ({ items }: { items: Deployment[] }) => {
       <Stack direction={"column"}>
         <TableHeader />
 
-        {items.map((deployment, idx) => (
-          <DeploymentItem
-            key={idx}
-            item={deployment}
-          />
-        ))}
+        {items &&
+          items.map((deployment, idx) => (
+            <DeploymentItem
+              key={idx}
+              item={deployment}
+            />
+          ))}
       </Stack>
     </Stack>
   );

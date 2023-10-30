@@ -10,6 +10,7 @@ import {
 } from "@/core/api/deployments";
 import { models } from "@/pages/deployments/data";
 import { useAppSelector } from "@/hooks/useStore";
+import InstanceLabel from "./InstanceLabel";
 
 interface CreateFormProps {
   onClose: () => void;
@@ -41,7 +42,6 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
 
   const isProviderSelected = provider !== "";
   const isRegionSelected = region !== "";
-  const isInstanceSelected = instance !== "";
 
   const { data: instances, isFetching: isInstancesFetching } = useGetInstancesQuery(
     { region: region.toString() },
@@ -57,20 +57,6 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
     return Object.values(obj).every(value => value !== "");
   }
 
-  const getInstanceLabel = (item: Instance) => {
-    return (
-      <>
-        {item.instance_type}{" "}
-        <Typography
-          component="span"
-          variant="body2"
-          sx={{ opacity: 0.6 }}
-        >
-          (cost ${item.cost}/h, {item.vcpus}vcpus, {item.num_gpus}gpus, {item.memory}memory)
-        </Typography>
-      </>
-    );
-  };
   return (
     <form onSubmit={formik.handleSubmit}>
       <Grid
@@ -148,7 +134,7 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
                     key={idx}
                     value={instance.id}
                   >
-                    {getInstanceLabel(instance)}
+                    {InstanceLabel(instance)}
                   </MenuItem>
                 ))}
             </Select>
