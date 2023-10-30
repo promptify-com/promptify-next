@@ -25,11 +25,10 @@ function Deployments() {
 
   const { data: deployments, isLoading } = useGetDeploymentsQuery();
 
-  const trimmedSearchName = searchName.trim().toLowerCase();
   const filteredDeployments =
     deployments?.filter(deployment => {
       const matchesStatus = !status || deployment.status.toLowerCase() === status.toLowerCase();
-      const matchesName = !trimmedSearchName || deployment.model?.name.toLowerCase().includes(trimmedSearchName);
+      const matchesName = deployment.model?.name.toLowerCase().includes(searchName);
       return matchesStatus && matchesName;
     }) ?? [];
 
@@ -91,9 +90,8 @@ function Deployments() {
                       sx={{ minWidth: 120 }}
                       size="small"
                     >
-                      <InputLabel id="selectStatus">Status</InputLabel>
+                      <InputLabel>Status</InputLabel>
                       <Select
-                        labelId="selectStatus"
                         value={status}
                         label="Status"
                         autoWidth

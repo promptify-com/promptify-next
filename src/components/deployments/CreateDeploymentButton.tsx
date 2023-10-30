@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { theme } from "@/theme";
-import { Add } from "@mui/icons-material";
+import Add from "@mui/icons-material/Add";
 import { alpha } from "@mui/material";
 
 import BaseButton from "../base/BaseButton";
