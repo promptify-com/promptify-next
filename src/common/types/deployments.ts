@@ -10,13 +10,18 @@ export interface Deployment {
   created_at: string;
 }
 
-export interface CreateDeployment {
+export interface FormikCreateDeployment {
   user: number;
   provider: string;
   region: string;
   instance: string;
   llm: string;
   model: string;
+}
+
+export interface CreateDeployment {
+  model: string;
+  instance: string;
 }
 
 export interface Region {
@@ -51,20 +56,10 @@ export interface Model {
   fields: ModelFields;
 }
 
-//QUERY PARAMS
 export interface RegionParams {
-  name?: string;
-  short_name?: string;
-  endpoint?: string;
-  protocol?: string;
   provider?: string;
 }
 
 export interface InstanceParams {
-  instance_type?: string;
-  vcpus?: string;
-  num_gpus?: string;
-  memory?: string;
-  cost?: string;
   region?: string;
 }

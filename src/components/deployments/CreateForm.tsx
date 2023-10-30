@@ -1,7 +1,13 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Grid, Typography, Button, Stack, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { useFormik } from "formik";
-import { CreateDeployment, Instance, Model } from "@/common/types/deployments";
+import Grid from "@mui/material/Grid";
+import Button from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
+
+import type { CreateDeployment, FormikCreateDeployment } from "@/common/types/deployments";
 import BaseButton from "../base/BaseButton";
 import {
   useCreateDeploymentMutation,
@@ -11,6 +17,7 @@ import {
 import { models } from "@/common/constants";
 import { useAppSelector } from "@/hooks/useStore";
 import InstanceLabel from "./InstanceLabel";
+import { allFieldsFilled } from "@/common/helpers";
 
 interface CreateFormProps {
   onClose: () => void;
@@ -21,13 +28,18 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
 
   const currentUser = useAppSelector(state => state.user.currentUser);
 
-  const handleCreateDeployment = async (values: CreateDeployment) => {
-    console.log(values);
-    const data = await createDeployment(values).unwrap();
+  const handleCreateDeployment = async (values: FormikCreateDeployment) => {
+    const { model, instance } = values;
+    const payload: CreateDeployment = {
+      instance,
+      model,
+    };
+    const data = await createDeployment(payload).unwrap();
     console.log(data);
+    onClose();
   };
 
-  const formik = useFormik<CreateDeployment>({
+  const formik = useFormik<FormikCreateDeployment>({
     initialValues: {
       provider: "",
       user: currentUser?.id!,
@@ -53,10 +65,6 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
     { skip: !isProviderSelected },
   );
 
-  function allFieldsFilled(obj: Record<string, any>): boolean {
-    return Object.values(obj).every(value => value !== "");
-  }
-
   return (
     <form onSubmit={formik.handleSubmit}>
       <Grid
@@ -67,7 +75,6 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
         p={1}
         pb={9}
       >
-        {/* Provider  */}
         <Grid item>
           <FormControl sx={{ minWidth: 520 }}>
             <InputLabel> Select Cloud Provider</InputLabel>
@@ -85,7 +92,6 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
             </Select>
           </FormControl>
         </Grid>
-        {/* Region */}
         <Grid item>
           <FormControl sx={{ minWidth: 520 }}>
             <InputLabel> Select Region</InputLabel>
@@ -102,18 +108,18 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
               }}
             >
               {regions &&
-                regions.map((region, idx) => (
+                regions.map(region => (
                   <MenuItem
-                    key={idx}
+                    key={region.id}
                     value={region.id}
                   >
-                    {region.short_name}
+                    {region.name} - ({region.short_name}){" "}
                   </MenuItem>
                 ))}
             </Select>
           </FormControl>
         </Grid>
-        {/* Instance  */}
+
         <Grid item>
           <FormControl sx={{ minWidth: 520 }}>
             <InputLabel> Select Instance</InputLabel>
@@ -129,18 +135,17 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
               }}
             >
               {instances &&
-                instances.map((instance, idx) => (
+                instances.map(instance => (
                   <MenuItem
-                    key={idx}
+                    key={instance.id}
                     value={instance.id}
                   >
-                    {InstanceLabel(instance)}
+                    <InstanceLabel instance={instance} />
                   </MenuItem>
                 ))}
             </Select>
           </FormControl>
         </Grid>
-        {/* LLM SOURCE  */}
 
         <Grid item>
           <FormControl sx={{ minWidth: 520 }}>
@@ -158,7 +163,6 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
             </Select>
           </FormControl>
         </Grid>
-
         <Grid item>
           <FormControl sx={{ minWidth: 520 }}>
             <InputLabel>Select Model</InputLabel>

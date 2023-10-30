@@ -1,5 +1,7 @@
+import Chip from "@mui/material/Chip";
+import { styled } from "@mui/material/styles";
+
 import { DeploymentStatus } from "@/common/types/deployments";
-import { Chip, styled } from "@mui/material";
 
 export const StatusChip = styled(Chip)(({ status }: { status: DeploymentStatus }) => {
   const getStatusStyles = () => {

@@ -1,23 +1,21 @@
 import React, { useMemo, useState } from "react";
-import { Add } from "@mui/icons-material";
-import {
-  Box,
-  FormControl,
-  Grid,
-  InputLabel,
-  MenuItem,
-  Select,
-  Stack,
-  TextField,
-  Typography,
-  alpha,
-} from "@mui/material";
-import { theme } from "@/theme";
+import Add from "@mui/icons-material/Add";
+import Box from "@mui/material/Box";
+import FormControl from "@mui/material/FormControl";
+import Grid from "@mui/material/Grid";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import TextField from "@mui/material/TextField";
+import { alpha } from "@mui/material/styles";
 
-import { useGetDeploymentsQuery } from "@/core/api/deployments";
 import { Layout } from "@/layout";
-import { DeploymentsStatusArray } from "@/common/constants";
-import { DeploymentStatus } from "@/common/types/deployments";
+import { theme } from "@/theme";
+import { DeploymentStatuses } from "@/common/constants";
+import { useGetDeploymentsQuery } from "@/core/api/deployments";
+import type { DeploymentStatus } from "@/common/types/deployments";
 import Protected from "@/components/Protected";
 import BaseButton from "@/components/base/BaseButton";
 import DeploymentList from "@/components/deployments/DeploymentList";
@@ -25,7 +23,7 @@ import SparksTemplatePlaceholder from "@/components/placeholders/SparksTemplateP
 import CreateDeploymentPopup from "@/components/deployments/CreateDeploymentPopup";
 import ActiveFilters from "@/components/deployments/ActiveFilters";
 
-const MyDeploymentsPage = () => {
+function Deployments() {
   const [searchName, setSearchName] = useState("");
   const [status, setStatus] = useState<DeploymentStatus | string>("");
   const [openpopup, setOpenpopup] = useState(false);
@@ -34,13 +32,11 @@ const MyDeploymentsPage = () => {
   const filteredDeployments = useMemo(() => {
     if (!deployments) return [];
 
-    return deployments
-      .filter(deployment => {
-        const matchesStatus = status ? deployment.status.toLowerCase() === status.toLowerCase() : true;
-        const matchesName = deployment.model?.name.toLowerCase().includes(searchName.trim().toLowerCase()) ?? false;
-        return matchesStatus && matchesName;
-      })
-      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    return deployments.filter(deployment => {
+      const matchesStatus = status ? deployment.status.toLowerCase() === status.toLowerCase() : true;
+      const matchesName = deployment.model?.name.toLowerCase().includes(searchName.trim().toLowerCase()) ?? false;
+      return matchesStatus && matchesName;
+    });
   }, [searchName, status, deployments]);
 
   return (
@@ -109,7 +105,7 @@ const MyDeploymentsPage = () => {
                         autoWidth
                         onChange={e => setStatus(e.target.value as DeploymentStatus)}
                       >
-                        {DeploymentsStatusArray.map((status, idx) => (
+                        {DeploymentStatuses.map((status, idx) => (
                           <MenuItem
                             key={idx}
                             value={status}
@@ -156,9 +152,9 @@ const MyDeploymentsPage = () => {
       </Layout>
     </Protected>
   );
-};
+}
 
-export default MyDeploymentsPage;
+export default Deployments;
 
 const btnStyle = {
   color: "surface.1",

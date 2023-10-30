@@ -1,6 +1,7 @@
-import { Deployment } from "@/common/types/deployments";
-import { Grid, Typography } from "@mui/material";
-import React from "react";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+
+import type { Deployment } from "@/common/types/deployments";
 import { StatusChip } from "./StatusChip";
 import InstanceLabel from "./InstanceLabel";
 import useTimestampConverter from "@/hooks/useTimestampConverter";
@@ -23,7 +24,7 @@ const DeploymentItem = ({ item }: DeploymentItem) => {
           bgcolor: "action.hover",
         },
       }}
-      rowSpacing={1}
+      rowSpacing={{ xs: 1, md: 0 }}
     >
       <Grid
         item
@@ -53,7 +54,7 @@ const DeploymentItem = ({ item }: DeploymentItem) => {
         xs={12}
         md={4}
       >
-        {InstanceLabel(item.instance)}
+        <InstanceLabel instance={item.instance} />
       </Grid>
       <Grid
         item

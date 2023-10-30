@@ -1,11 +1,10 @@
-import React from "react";
-import { Stack } from "@mui/material";
+import Stack from "@mui/material/Stack";
 
+import type { Deployment } from "@/common/types/deployments";
 import DeploymentItem from "./DeploymentItem";
 import TableHeader from "./TableHeader";
-import { Deployment } from "@/common/types/deployments";
 
-const DeploymentList = ({ items }: { items: Deployment[] }) => {
+function DeploymentList({ items }: { items: Deployment[] }) {
   return (
     <Stack
       bgcolor={"surface.1"}
@@ -18,15 +17,15 @@ const DeploymentList = ({ items }: { items: Deployment[] }) => {
         <TableHeader />
 
         {items &&
-          items.map((deployment, idx) => (
+          items.map(deployment => (
             <DeploymentItem
-              key={idx}
+              key={deployment.id}
               item={deployment}
             />
           ))}
       </Stack>
     </Stack>
   );
-};
+}
 
 export default DeploymentList;

@@ -1,7 +1,7 @@
-import React from "react";
-import { Grid, Typography } from "@mui/material";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
 
-const TableHeader = () => {
+function TableHeader() {
   return (
     <Grid
       container
@@ -63,6 +63,6 @@ const TableHeader = () => {
       </Grid>
     </Grid>
   );
-};
+}
 
 export default TableHeader;

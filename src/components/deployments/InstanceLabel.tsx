@@ -1,20 +1,20 @@
-import { Instance } from "@/common/types/deployments";
-import { Typography } from "@mui/material";
-import React from "react";
+import Typography from "@mui/material/Typography";
 
-const InstanceLabel = (item: Instance) => {
+import type { Instance } from "@/common/types/deployments";
+
+function InstanceLabel({ instance }: { instance: Instance }) {
   return (
     <>
-      {item.instance_type}{" "}
+      {instance.instance_type}{" "}
       <Typography
         component="span"
         variant="body2"
         sx={{ opacity: 0.6 }}
       >
-        (cost ${item.cost}/h, {item.vcpus}vcpus, {item.num_gpus}gpus, {item.memory}memory)
+        (cost ${instance.cost}/h, {instance.vcpus}vcpus, {instance.num_gpus}gpus, {instance.memory}memory)
       </Typography>
     </>
   );
-};
+}
 
 export default InstanceLabel;

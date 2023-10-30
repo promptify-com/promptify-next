@@ -1,6 +1,6 @@
-import { DeploymentStatus } from "@/common/types/deployments";
-import { Chip, Stack } from "@mui/material";
-import React from "react";
+import Chip from "@mui/material/Chip";
+import Stack from "@mui/material/Stack";
+import type { DeploymentStatus } from "@/common/types/deployments";
 
 interface ActiveFiltersProps {
   status: DeploymentStatus | string;
@@ -9,14 +9,18 @@ interface ActiveFiltersProps {
   onClearSearch: () => void;
 }
 
-const ActiveFilters: React.FC<ActiveFiltersProps> = ({ status, onClearStatus, searchName, onClearSearch }) => {
+function ActiveFilters({ status, onClearStatus, searchName, onClearSearch }: ActiveFiltersProps) {
+  if (!status && !searchName) {
+    return null;
+  }
+
   return (
     <Stack
-      direction={"row"}
-      gap={"8px"}
-      alignItems={"center"}
+      direction="row"
+      gap="8px"
+      alignItems="center"
     >
-      {status !== "" && (
+      {status && (
         <Chip
           label={status}
           onDelete={onClearStatus}
@@ -30,7 +34,7 @@ const ActiveFilters: React.FC<ActiveFiltersProps> = ({ status, onClearStatus, se
         />
       )}
 
-      {searchName !== "" && (
+      {searchName && (
         <Chip
           label={searchName}
           onDelete={onClearSearch}
@@ -45,6 +49,6 @@ const ActiveFilters: React.FC<ActiveFiltersProps> = ({ status, onClearStatus, se
       )}
     </Stack>
   );
-};
+}
 
 export default ActiveFilters;
