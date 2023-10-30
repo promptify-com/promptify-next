@@ -79,7 +79,6 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
           <FormControl sx={{ minWidth: 520 }}>
             <InputLabel> Select Cloud Provider</InputLabel>
             <Select
-              labelId="selectStatus"
               value={provider}
               label="Select   Cloud Provider"
               autoWidth
@@ -96,7 +95,6 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
           <FormControl sx={{ minWidth: 520 }}>
             <InputLabel> Select Region</InputLabel>
             <Select
-              labelId="selectStatus"
               value={region}
               label="Select Region"
               disabled={!isProviderSelected}
