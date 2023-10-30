@@ -70,15 +70,17 @@ const MyDeploymentsPage = () => {
                 </Typography>
 
                 <Stack
-                  mt={3}
-                  direction="row"
+                  direction={{ xs: "column-reverse", md: "row" }}
+                  gap={2}
                   justifyContent="space-between"
                   alignItems="center"
                 >
                   <Stack
                     direction="row"
                     alignItems="center"
+                    justifyContent="start"
                     gap={"8px"}
+                    width={"100%"}
                   >
                     <Box
                       display="flex"
@@ -118,15 +120,21 @@ const MyDeploymentsPage = () => {
                       </Select>
                     </FormControl>
                   </Stack>
-                  <BaseButton
-                    variant="contained"
-                    color="primary"
-                    sx={btnStyle}
-                    startIcon={<Add sx={{ fontSize: 20 }} />}
-                    onClick={() => setOpenpopup(true)}
+                  <Stack
+                    direction={"row"}
+                    width={"100%"}
+                    justifyContent={"end"}
                   >
-                    Create
-                  </BaseButton>
+                    <BaseButton
+                      variant="contained"
+                      color="primary"
+                      sx={btnStyle}
+                      startIcon={<Add sx={{ fontSize: 20 }} />}
+                      onClick={() => setOpenpopup(true)}
+                    >
+                      Create
+                    </BaseButton>
+                  </Stack>
                 </Stack>
                 <ActiveFilters
                   status={status}

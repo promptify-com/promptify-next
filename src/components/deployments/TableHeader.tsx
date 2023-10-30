@@ -5,6 +5,7 @@ const TableHeader = () => {
   return (
     <Grid
       container
+      display={{ xs: "none", md: "flex" }}
       p={"16px"}
     >
       <Grid

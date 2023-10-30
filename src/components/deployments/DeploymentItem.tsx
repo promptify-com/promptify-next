@@ -15,16 +15,19 @@ const DeploymentItem = ({ item }: DeploymentItem) => {
   return (
     <Grid
       container
+      my={{ xs: 1, md: 0 }}
       alignItems={"center"}
       sx={{
-        p: "16px",
+        p: { md: "16px" },
         "&:hover": {
           bgcolor: "action.hover",
         },
       }}
+      rowSpacing={1}
     >
       <Grid
         item
+        xs={8}
         md={3}
       >
         <Typography> {item.model.name} </Typography>
@@ -32,13 +35,29 @@ const DeploymentItem = ({ item }: DeploymentItem) => {
 
       <Grid
         item
+        display={{ xs: "flex", md: "none" }}
+        justifyContent={"end"}
+        alignItems={"center"}
+        md={2}
+        xs={4}
+      >
+        <StatusChip
+          size="small"
+          label={item.status}
+          status={item.status}
+        />
+      </Grid>
+
+      <Grid
+        item
+        xs={12}
         md={4}
       >
         {InstanceLabel(item.instance)}
       </Grid>
       <Grid
         item
-        display={"flex"}
+        display={{ xs: "none", md: "flex" }}
         justifyContent={"center"}
         alignItems={"center"}
         md={2}
