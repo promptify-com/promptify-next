@@ -1,5 +1,4 @@
-import React, { useMemo, useState } from "react";
-import Add from "@mui/icons-material/Add";
+import { useState } from "react";
 import Box from "@mui/material/Box";
 import FormControl from "@mui/material/FormControl";
 import Grid from "@mui/material/Grid";
@@ -9,35 +8,30 @@ import Select from "@mui/material/Select";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
-import { alpha } from "@mui/material/styles";
 
 import { Layout } from "@/layout";
-import { theme } from "@/theme";
 import { DeploymentStatuses } from "@/common/constants";
 import { useGetDeploymentsQuery } from "@/core/api/deployments";
 import type { DeploymentStatus } from "@/common/types/deployments";
 import Protected from "@/components/Protected";
-import BaseButton from "@/components/base/BaseButton";
 import DeploymentList from "@/components/deployments/DeploymentList";
 import SparksTemplatePlaceholder from "@/components/placeholders/SparksTemplatePlaceholder";
-import CreateDeploymentPopup from "@/components/deployments/CreateDeploymentPopup";
 import ActiveFilters from "@/components/deployments/ActiveFilters";
+import CreateDeploymentButton from "@/components/deployments/CreateDeploymentButton";
 
 function Deployments() {
   const [searchName, setSearchName] = useState("");
   const [status, setStatus] = useState<DeploymentStatus | string>("");
-  const [openpopup, setOpenpopup] = useState(false);
+
   const { data: deployments, isLoading } = useGetDeploymentsQuery();
 
-  const filteredDeployments = useMemo(() => {
-    if (!deployments) return [];
-
-    return deployments.filter(deployment => {
-      const matchesStatus = status ? deployment.status.toLowerCase() === status.toLowerCase() : true;
-      const matchesName = deployment.model?.name.toLowerCase().includes(searchName.trim().toLowerCase()) ?? false;
+  const trimmedSearchName = searchName.trim().toLowerCase();
+  const filteredDeployments =
+    deployments?.filter(deployment => {
+      const matchesStatus = !status || deployment.status.toLowerCase() === status.toLowerCase();
+      const matchesName = !trimmedSearchName || deployment.model?.name.toLowerCase().includes(trimmedSearchName);
       return matchesStatus && matchesName;
-    });
-  }, [searchName, status, deployments]);
+    }) ?? [];
 
   return (
     <Protected>
@@ -121,15 +115,7 @@ function Deployments() {
                     width={"100%"}
                     justifyContent={"end"}
                   >
-                    <BaseButton
-                      variant="contained"
-                      color="primary"
-                      sx={btnStyle}
-                      startIcon={<Add sx={{ fontSize: 20 }} />}
-                      onClick={() => setOpenpopup(true)}
-                    >
-                      Create
-                    </BaseButton>
+                    <CreateDeploymentButton />
                   </Stack>
                 </Stack>
                 <ActiveFilters
@@ -147,7 +133,6 @@ function Deployments() {
               </Stack>
             )}
           </Grid>
-          {openpopup && <CreateDeploymentPopup onClose={() => setOpenpopup(false)} />}
         </Box>
       </Layout>
     </Protected>
@@ -155,14 +140,3 @@ function Deployments() {
 }
 
 export default Deployments;
-
-const btnStyle = {
-  color: "surface.1",
-  fontSize: 14,
-  p: "6px 16px",
-  borderRadius: "8px",
-  border: `1px solid ${alpha(theme.palette.onSurface, 0.2)}`,
-  ":hover": {
-    bgcolor: "action.hover",
-  },
-};
