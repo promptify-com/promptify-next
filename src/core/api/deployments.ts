@@ -1,5 +1,12 @@
 import { baseApi } from "./api";
-import { CreateDeployment, Instance, InstanceParams, Region, RegionParams } from "@/common/types/deployments";
+import {
+  CreateDeployment,
+  Deployment,
+  Instance,
+  InstanceParams,
+  Region,
+  RegionParams,
+} from "@/common/types/deployments";
 
 const getInstancesParams = (params: InstanceParams) => {
   const instancesParams = new URLSearchParams();
@@ -50,7 +57,7 @@ export const deploymentsApi = baseApi.injectEndpoints({
         keepUnusedDataFor: 60 * 60,
       }),
 
-      getDeployments: builder.query<any[], void>({
+      getDeployments: builder.query<Deployment[], void>({
         query: () => ({
           url: `/api/aithos/deployments`,
           method: "get",
