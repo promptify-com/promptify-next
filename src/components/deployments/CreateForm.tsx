@@ -8,7 +8,7 @@ import {
   useGetInstancesQuery,
   useGetRegionsByQueryParamsQuery,
 } from "@/core/api/deployments";
-import { models } from "@/pages/deployments/data";
+import { models } from "@/common/constants";
 import { useAppSelector } from "@/hooks/useStore";
 import InstanceLabel from "./InstanceLabel";
 
