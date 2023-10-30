@@ -17,6 +17,7 @@ import { useSelector } from "react-redux";
 import ApiAccess from "./ApiAccess";
 import { stripTags, getBaseUrl, redirectToPath } from "@/common/helpers";
 import { formatDate, timeAgo } from "@/common/helpers/timeManipulation";
+import ClientOnly from "../base/ClientOnly";
 
 interface DetailsProps {
   templateData: Templates;
@@ -176,9 +177,11 @@ export const Details: React.FC<DetailsProps> = ({ templateData, setMobileTab = (
           <Subtitle sx={{ mb: "12px", color: "tertiary" }}>Metrics Overview</Subtitle>
           <Stack gap={1}>
             {templateData.last_run && (
-              <Typography sx={detailsStyle}>
-                Last run: <span>{templateData.last_run ? timeAgo(templateData.last_run) : "--"}</span>
-              </Typography>
+              <ClientOnly>
+                <Typography sx={detailsStyle}>
+                  Last run: <span>{templateData.last_run ? timeAgo(templateData.last_run) : "--"}</span>
+                </Typography>
+              </ClientOnly>
             )}
             <Typography sx={detailsStyle}>
               Updated: <span>{formatDate(templateData.updated_at)}</span>
