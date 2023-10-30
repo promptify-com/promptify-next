@@ -1,5 +1,5 @@
-import React, { useState, memo, useEffect, Dispatch, SetStateAction, useRef } from "react";
-import { Avatar, Button, Grid, Typography } from "@mui/material";
+import React, { useState, memo, useEffect, Dispatch, SetStateAction } from "react";
+import { Avatar, Button, Grid, Stack, Tooltip, Typography } from "@mui/material";
 
 import LogoAsAvatar from "@/assets/icons/LogoAvatar";
 import { useAppSelector } from "@/hooks/useStore";
@@ -7,15 +7,19 @@ import { ToggleButtonsGroup } from "@/components/design-system/ToggleButtonsGrou
 import CodeFieldModal from "@/components/modals/CodeFieldModal";
 import { IMessage } from "@/common/types/chat";
 import useTextSimulationStreaming from "@/hooks/useTextSimulationStreaming";
+import { FileType, UploadFileResponse } from "@/common/types/prompt";
+import { getFileTypeExtensionsAsString } from "@/common/helpers/uploadFileHelper";
+import { Error } from "@mui/icons-material";
+import { useUploadFileMutation } from "@/core/api/uploadFile";
 
 interface MessageBlockProps {
   message: IMessage;
   hideHeader?: boolean;
-  onChangeValue?: (value: string) => void;
+  onChangeValue: (value: string) => void;
   disabledChoices: boolean;
   setIsSimulaitonStreaming: Dispatch<SetStateAction<boolean>>;
   onScrollToBottom: () => void;
-  disableUploadButton: boolean;
+  lastMessage: IMessage;
 }
 
 interface MessageContentProps {
@@ -50,28 +54,46 @@ export const Message = ({
   disabledChoices,
   setIsSimulaitonStreaming,
   onScrollToBottom,
-  disableUploadButton,
+  lastMessage,
 }: MessageBlockProps) => {
-  const { fromUser, type, text, createdAt, choices } = message;
+  const { fromUser, type, text, createdAt, choices, fileExtensions } = message;
   const currentUser = useAppSelector(state => state.user.currentUser);
+  const [uploadFile] = useUploadFileMutation();
 
   const name = fromUser ? currentUser?.first_name ?? currentUser?.username : "Promptify";
 
   const [selectedValue, setSelectedValue] = useState("");
   const [codeFieldPopup, setCodeFieldPopup] = useState(false);
   const [codeUploaded, setCodeUploaded] = useState(false);
+  const [uploadError, setUploadError] = useState(false);
 
   const handleChange = (value: string) => {
     setSelectedValue(value);
+    onChangeValue(value);
+    setCodeUploaded(true);
+  };
 
-    if (onChangeValue) {
-      onChangeValue(value);
-      setCodeUploaded(true);
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const file = e.target.files[0];
+      setSelectedValue(file.name);
+      setUploadError(false);
+      try {
+        const res = (await uploadFile(file)) as UploadFileResponse;
+        const fileUrl = res.data?.file_url;
+        if (fileUrl) {
+          onChangeValue(fileUrl);
+        } else {
+          setUploadError(true);
+        }
+      } catch (_) {
+        setUploadError(true);
+      }
     }
   };
 
   function getUploadStatusMessage() {
-    if ((selectedValue !== "" && codeUploaded) || disableUploadButton) {
+    if ((selectedValue !== "" && codeUploaded) || !(lastMessage.type === "code")) {
       return "Code uploaded";
     } else {
       return "Upload your code";
@@ -154,11 +176,11 @@ export const Message = ({
               onStreamingFinished={onScrollToBottom}
             />
           </Typography>
-          {type === "code" && !fromUser && (
+          {type === "code" && (
             <Button
               onClick={() => setCodeFieldPopup(true)}
               variant="outlined"
-              disabled={disableUploadButton}
+              disabled={!(lastMessage.type === "code")}
               size="small"
               sx={{
                 height: 30,
@@ -167,7 +189,7 @@ export const Message = ({
               {uploadBtnName}
             </Button>
           )}
-          {type === "choices" && choices && !fromUser && (
+          {type === "choices" && choices && (
             <ToggleButtonsGroup
               variant="horizontal"
               items={choices}
@@ -175,6 +197,49 @@ export const Message = ({
               onChange={handleChange}
               disabled={disabledChoices || selectedValue !== ""}
             />
+          )}
+          {type === "file" && (
+            <Stack
+              direction={"row"}
+              alignItems={"center"}
+              gap={0.5}
+            >
+              <Button
+                component="label"
+                variant="outlined"
+                disabled={!(lastMessage.type === "file")}
+                size="small"
+                sx={{
+                  height: 30,
+                  borderColor: uploadError ? "error.main" : "primary.main",
+                }}
+              >
+                {selectedValue || "Upload file"}
+                <input
+                  hidden
+                  accept={getFileTypeExtensionsAsString(fileExtensions as FileType[])}
+                  type="file"
+                  onChange={handleUpload}
+                />
+              </Button>
+              {uploadError && (
+                <Tooltip
+                  title={"The uploaded file is invalid"}
+                  placement="right"
+                  arrow
+                  componentsProps={{
+                    tooltip: {
+                      sx: { bgcolor: "error.main", color: "onError", fontSize: 11, fontWeight: 500 },
+                    },
+                    arrow: {
+                      sx: { color: "error.main" },
+                    },
+                  }}
+                >
+                  <Error sx={{ color: "error.main", width: 20, height: 20 }} />
+                </Tooltip>
+              )}
+            </Stack>
           )}
 
           {codeFieldPopup && (

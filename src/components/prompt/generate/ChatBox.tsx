@@ -88,11 +88,12 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
 
     if (questions.length > 0) {
       const firstQuestion = questions[0];
-      const { question, type, choices } = firstQuestion;
+      const { question, type, choices, fileExtensions } = firstQuestion;
       const firstQuestionMessage: IMessage = {
         text: question,
         type,
         choices,
+        fileExtensions,
         createdAt: createdAt,
         fromUser: false,
       };
@@ -158,13 +159,14 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
         const key = Object.keys(question)[0];
 
         if (inputs[index]) {
-          const { type, required, choices, name, prompt } = inputs[index];
+          const { type, required, choices, fileExtensions, name, prompt } = inputs[index];
           const updatedQuestion: UpdatedQuestionTemplate = {
             ...question[key],
             name,
-            required: required,
-            type: type,
-            choices: choices,
+            required,
+            type,
+            choices,
+            fileExtensions,
             prompt: prompt!,
           };
           updatedQuestions.push(updatedQuestion);
@@ -254,13 +256,14 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
     updatedInput: AnsweredInputType,
     targetQuestion: UpdatedQuestionTemplate,
   ) => {
-    const { question, choices, type } = targetQuestion;
+    const { question, choices, fileExtensions, type } = targetQuestion;
     const nextMessages: IMessage[] = [];
 
     if (currentQuestion && targetQuestion.name !== currentQuestion.name) {
       nextMessages.push({
         text: question,
         choices,
+        fileExtensions,
         type,
         createdAt: createdAt,
         fromUser: false,
@@ -270,6 +273,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
       nextMessages.push({
         text: updatedInput.value as string,
         choices,
+        fileExtensions,
         type,
         createdAt: createdAt,
         fromUser: true,
@@ -289,6 +293,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
       nextMessages.push({
         text: nextQuestion.question,
         choices: nextQuestion.choices,
+        fileExtensions: nextQuestion.fileExtensions,
         type: nextQuestion.type,
         createdAt: createdAt,
         fromUser: false,
@@ -338,7 +343,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
 
   const disableChat =
     Boolean(!templateQuestions.length && !_inputs.length && template?.prompts.length) ||
-    ["choices", "code"].includes(currentQuestion?.type) ||
+    ["choices", "code", "file"].includes(currentQuestion?.type) ||
     !currentQuestion;
 
   const disabledButton = _inputs.length !== 0 || promptHasContent;
@@ -424,11 +429,11 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
       return;
     }
 
-    const { name: inputName, required, type, question, prompt, choices } = currentQuestion;
+    const { name: inputName, required, type, question, prompt, choices, fileExtensions } = currentQuestion;
 
-    const isChoiceOrCode = ["choices", "code"].includes(type);
+    const isText = !["choices", "code", "file"].includes(type);
 
-    if (!isChoiceOrCode) {
+    if (isText) {
       const newUserMessage: IMessage = {
         text: value,
         type,
@@ -441,7 +446,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
 
     let response: AnswerValidatorResponse | undefined | string = { approved: true, answer: "", feedback: "" };
 
-    if (!isChoiceOrCode && required) {
+    if (isText && required) {
       setIsValidatingAnswer(true);
 
       response = await validateAnswer(value);
@@ -487,6 +492,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
         const nextMessage: IMessage = {
           text: nextQuestion.question,
           choices: nextQuestion.choices,
+          fileExtensions: nextQuestion.fileExtensions,
           type: nextQuestion.type,
           createdAt: createdAt,
           fromUser: false,
@@ -507,6 +513,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
         createdAt: createdAt,
         fromUser: false,
         choices,
+        fileExtensions,
         type,
       };
     }
@@ -677,6 +684,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
     const nextBotMessage: IMessage = {
       text: "Let's give this another go. " + askedQuestion.question,
       choices: askedQuestion.choices,
+      fileExtensions: askedQuestion.fileExtensions,
       type: askedQuestion.type,
       createdAt: createdAt,
       fromUser: false,
