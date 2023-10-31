@@ -7,15 +7,14 @@ import { ToggleButtonsGroup } from "@/components/design-system/ToggleButtonsGrou
 import CodeFieldModal from "@/components/modals/CodeFieldModal";
 import { IMessage } from "@/common/types/chat";
 import useTextSimulationStreaming from "@/hooks/useTextSimulationStreaming";
-import { FileType, UploadFileResponse } from "@/common/types/prompt";
+import { FileType } from "@/common/types/prompt";
 import { getFileTypeExtensionsAsString } from "@/common/helpers/uploadFileHelper";
-import { Error } from "@mui/icons-material";
 import { useUploadFileMutation } from "@/core/api/uploadFile";
 
 interface MessageBlockProps {
   message: IMessage;
   hideHeader?: boolean;
-  onChangeValue: (value: string) => void;
+  onChangeValue: (value: string | File) => void;
   disabledChoices: boolean;
   setIsSimulaitonStreaming: Dispatch<SetStateAction<boolean>>;
   onScrollToBottom: () => void;
@@ -65,7 +64,6 @@ export const Message = ({
   const [selectedValue, setSelectedValue] = useState("");
   const [codeFieldPopup, setCodeFieldPopup] = useState(false);
   const [codeUploaded, setCodeUploaded] = useState(false);
-  const [uploadError, setUploadError] = useState(false);
 
   const handleChange = (value: string) => {
     setSelectedValue(value);
@@ -77,18 +75,7 @@ export const Message = ({
     if (e.target.files) {
       const file = e.target.files[0];
       setSelectedValue(file.name);
-      setUploadError(false);
-      try {
-        const res = (await uploadFile(file)) as UploadFileResponse;
-        const fileUrl = res.data?.file_url;
-        if (fileUrl) {
-          onChangeValue(fileUrl);
-        } else {
-          setUploadError(true);
-        }
-      } catch (_) {
-        setUploadError(true);
-      }
+      onChangeValue(file);
     }
   };
 
@@ -211,7 +198,6 @@ export const Message = ({
                 size="small"
                 sx={{
                   height: 30,
-                  borderColor: uploadError ? "error.main" : "primary.main",
                 }}
               >
                 {selectedValue || "Upload file"}
@@ -222,23 +208,6 @@ export const Message = ({
                   onChange={handleUpload}
                 />
               </Button>
-              {uploadError && (
-                <Tooltip
-                  title={"The uploaded file is invalid"}
-                  placement="right"
-                  arrow
-                  componentsProps={{
-                    tooltip: {
-                      sx: { bgcolor: "error.main", color: "onError", fontSize: 11, fontWeight: 500 },
-                    },
-                    arrow: {
-                      sx: { color: "error.main" },
-                    },
-                  }}
-                >
-                  <Error sx={{ color: "error.main", width: 20, height: 20 }} />
-                </Tooltip>
-              )}
             </Stack>
           )}
 

@@ -5,7 +5,7 @@ import { Message } from "./Message";
 import { IMessage } from "@/common/types/chat";
 interface Props {
   messages: IMessage[];
-  onChange: (value: string) => void;
+  onChange: (value: string | File) => void;
   setIsSimulaitonStreaming: Dispatch<SetStateAction<boolean>>;
 }
 

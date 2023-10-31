@@ -14,7 +14,13 @@ import { ChatInterface } from "./ChatInterface";
 import { ChatInput } from "./ChatInput";
 import { TemplateQuestions, Templates, UpdatedQuestionTemplate } from "@/core/api/dto/templates";
 import { getInputsFromString } from "@/common/helpers/getInputsFromString";
-import { IPromptInput, PromptLiveResponse, InputType, AnsweredInputType } from "@/common/types/prompt";
+import {
+  IPromptInput,
+  PromptLiveResponse,
+  InputType,
+  AnsweredInputType,
+  UploadFileResponse,
+} from "@/common/types/prompt";
 import { setGeneratingStatus, updateAnsweredInput, updateExecutionData } from "@/core/store/templatesSlice";
 import { AnswerValidatorResponse, IAnswer, IMessage } from "@/common/types/chat";
 import { isDesktopViewPort } from "@/common/helpers";
@@ -22,6 +28,7 @@ import { useStopExecutionMutation } from "@/core/api/executions";
 import VaryModal from "./VaryModal";
 import { vary } from "@/common/helpers/varyValidator";
 import { parseMessageData } from "@/common/helpers/parseMessageData";
+import { useUploadFileMutation } from "@/core/api/uploadFile";
 
 interface Props {
   setGeneratedExecution: (data: PromptLiveResponse | null) => void;
@@ -39,6 +46,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
   const currentUser = useAppSelector(state => state.user.currentUser);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const [stopExecution] = useStopExecutionMutation();
+  const [uploadFile] = useUploadFileMutation();
 
   const { convertedTimestamp } = useTimestampConverter();
   const createdAt = convertedTimestamp(new Date());
@@ -424,18 +432,19 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
     dispatch(updateAnsweredInput([newValue]));
   };
 
-  const handleUserInput = async (value: string) => {
-    if (!currentQuestion || isSimulaitonStreaming || value.trim() === "") {
+  const handleUserInput = async (value: string | File) => {
+    const isFile = value instanceof File;
+    if (!currentQuestion || isSimulaitonStreaming || (!isFile && value.trim() === "")) {
       return;
     }
 
     const { name: inputName, required, type, question, prompt, choices, fileExtensions } = currentQuestion;
 
-    const isText = !["choices", "code", "file"].includes(type);
+    const isText = !isFile && !["choices", "code", "file"].includes(type);
 
     if (isText) {
       const newUserMessage: IMessage = {
-        text: value,
+        text: isFile ? value.name : value,
         type,
         createdAt: createdAt,
         fromUser: true,
@@ -520,16 +529,46 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
     setMessages(prevMessages => prevMessages.concat(nextBotMessage));
   };
 
-  const generateExecutionHandler = () => {
+  const validateAndUploadFiles = () =>
+    new Promise<IAnswer[]>(async (resolve, reject) => {
+      const _answers = [...answers];
+      for (const answer of _answers) {
+        if (answer.answer instanceof File) {
+          let fileUrl: string | undefined;
+          try {
+            const res = (await uploadFile(answer.answer)) as UploadFileResponse;
+            fileUrl = res.data?.file_url;
+          } catch (_) {}
+
+          if (fileUrl) {
+            answer.answer = fileUrl;
+          } else {
+            handleAnswerClear(answer, true);
+            reject();
+            return;
+          }
+        }
+      }
+      resolve(_answers);
+    });
+
+  const generateExecutionHandler = async () => {
     if (!token) {
       return router.push("/signin");
+    }
+
+    let _answers: IAnswer[] = [];
+    try {
+      _answers = await validateAndUploadFiles();
+    } catch (_) {
+      return;
     }
 
     dispatch(setGeneratingStatus(true));
 
     const promptsData: ResPrompt[] = [];
 
-    answers.forEach(_answer => {
+    _answers.forEach(_answer => {
       const _prompt = promptsData.find(_data => _data.prompt === _answer.prompt);
 
       if (!_prompt) {
@@ -660,7 +699,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
     }
   };
 
-  const handleAnswerClear = (selectedAnswer: IAnswer) => {
+  const handleAnswerClear = (selectedAnswer: IAnswer, invalid = false) => {
     if (isSimulaitonStreaming) {
       return;
     }
@@ -681,8 +720,9 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
 
     setStandingQuestions(newStandingQuestions);
 
+    const invalidTxt = invalid ? `Your answer for ${selectedAnswer.inputName} is invalid. ` : "";
     const nextBotMessage: IMessage = {
-      text: "Let's give this another go. " + askedQuestion.question,
+      text: invalidTxt + "Let's give it another go. " + askedQuestion.question,
       choices: askedQuestion.choices,
       fileExtensions: askedQuestion.fileExtensions,
       type: askedQuestion.type,
