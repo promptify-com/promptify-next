@@ -69,6 +69,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
   const currentAnsweredInputs = useAppSelector(state => state.template.answeredInputs);
 
   let abortController = useRef(new AbortController());
+  let uploadedFiles = useRef(new Map<string, string>());
 
   const addToQueuedMessages = (messages: IMessage[]) => {
     setQueuedMessages(messages);
@@ -530,10 +531,10 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
   };
 
   const validateAndUploadFiles = () =>
-    new Promise<IAnswer[]>(async (resolve, reject) => {
+    new Promise<boolean>(async resolve => {
       const _answers = [...answers];
       for (const answer of _answers) {
-        if (answer.answer instanceof File) {
+        if (answer.answer instanceof File && !uploadedFiles.current.get(answer.inputName)) {
           let fileUrl: string | undefined;
           try {
             const res = (await uploadFile(answer.answer)) as UploadFileResponse;
@@ -541,15 +542,15 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
           } catch (_) {}
 
           if (fileUrl) {
-            answer.answer = fileUrl;
+            uploadedFiles.current.set(answer.inputName, fileUrl);
           } else {
             handleAnswerClear(answer, true);
-            reject();
+            resolve(false);
             return;
           }
         }
       }
-      resolve(_answers);
+      resolve(true);
     });
 
   const generateExecutionHandler = async () => {
@@ -557,28 +558,25 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
       return router.push("/signin");
     }
 
-    let _answers: IAnswer[] = [];
-    try {
-      _answers = await validateAndUploadFiles();
-    } catch (_) {
-      return;
-    }
+    const filesUploaded = await validateAndUploadFiles();
+    if (!filesUploaded) return;
 
     dispatch(setGeneratingStatus(true));
 
     const promptsData: ResPrompt[] = [];
 
-    _answers.forEach(_answer => {
+    answers.forEach(_answer => {
       const _prompt = promptsData.find(_data => _data.prompt === _answer.prompt);
+      const value = _answer.answer instanceof File ? uploadedFiles.current.get(_answer.inputName) : _answer.answer;
 
       if (!_prompt) {
         promptsData.push({
           contextual_overrides: [],
           prompt: _answer.prompt!,
-          prompt_params: { [_answer.inputName]: _answer.answer },
+          prompt_params: { [_answer.inputName]: value || "" },
         });
       } else {
-        _prompt.prompt_params[_answer.inputName] = _answer.answer;
+        _prompt.prompt_params[_answer.inputName] = value || "";
       }
     });
 
