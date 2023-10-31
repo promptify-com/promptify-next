@@ -81,7 +81,7 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
             value={provider}
             label="Select   Cloud Provider"
             autoWidth
-            MenuProps={{ PaperProps: { sx: { maxHeight: 300, minWidth: { md: 520 } } } }}
+            MenuProps={selectMenuProps}
             onChange={event => {
               formik.setFieldValue("provider", event.target.value);
             }}
@@ -97,14 +97,7 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
             disabled={!isProviderSelected}
             variant={!isProviderSelected ? "filled" : "outlined"}
             autoWidth
-            MenuProps={{
-              PaperProps: {
-                sx: {
-                  maxHeight: 300,
-                  minWidth: { md: 520 },
-                },
-              },
-            }}
+            MenuProps={selectMenuProps}
             onChange={event => {
               formik.setFieldValue("region", event.target.value);
             }}
@@ -128,14 +121,7 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
             autoWidth
             disabled={!isRegionSelected}
             variant={!isRegionSelected ? "filled" : "outlined"}
-            MenuProps={{
-              PaperProps: {
-                sx: {
-                  maxHeight: 300,
-                  minWidth: { md: 520 },
-                },
-              },
-            }}
+            MenuProps={selectMenuProps}
             onChange={event => {
               formik.setFieldValue("instance", event.target.value);
             }}
@@ -157,14 +143,7 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
             value={llm}
             label="Select LLM source"
             autoWidth
-            MenuProps={{
-              PaperProps: {
-                sx: {
-                  maxHeight: 300,
-                  minWidth: { md: 520 },
-                },
-              },
-            }}
+            MenuProps={selectMenuProps}
             onChange={event => {
               formik.setFieldValue("llm", event.target.value);
             }}
@@ -178,14 +157,7 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
             value={model}
             label="Select Model"
             autoWidth
-            MenuProps={{
-              PaperProps: {
-                sx: {
-                  maxHeight: 300,
-                  minWidth: { md: 520 },
-                },
-              },
-            }}
+            MenuProps={selectMenuProps}
             onChange={event => {
               formik.setFieldValue("model", event.target.value);
             }}
@@ -226,6 +198,15 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
       </Stack>
     </form>
   );
+};
+
+const selectMenuProps = {
+  PaperProps: {
+    sx: {
+      maxHeight: 300,
+      minWidth: { md: 520 },
+    },
+  },
 };
 
 export default CreateForm;
