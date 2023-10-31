@@ -68,122 +68,138 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
   return (
     <form onSubmit={formik.handleSubmit}>
       <Grid
-        container
+        display={"flex"}
         direction={"column"}
-        alignItems={"start"}
-        spacing={3}
-        p={1}
-        pb={9}
+        alignItems={"center"}
+        pt={1}
+        pb={6}
+        gap={2}
       >
-        <Grid item>
-          <FormControl sx={{ minWidth: 520 }}>
-            <InputLabel> Select Cloud Provider</InputLabel>
-            <Select
-              value={provider}
-              label="Select   Cloud Provider"
-              autoWidth
-              MenuProps={{ PaperProps: { sx: { maxHeight: 300, width: 520 } } }}
-              onChange={event => {
-                formik.setFieldValue("provider", event.target.value);
-              }}
-            >
-              <MenuItem value={1}>AWS</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
-        <Grid item>
-          <FormControl sx={{ minWidth: 520 }}>
-            <InputLabel> Select Region</InputLabel>
-            <Select
-              value={region}
-              label="Select Region"
-              disabled={!isProviderSelected}
-              variant={!isProviderSelected ? "filled" : "outlined"}
-              autoWidth
-              MenuProps={{ PaperProps: { sx: { maxHeight: 300, width: 520 } } }}
-              onChange={event => {
-                formik.setFieldValue("region", event.target.value);
-              }}
-            >
-              {regions &&
-                regions.map(region => (
-                  <MenuItem
-                    key={region.id}
-                    value={region.id}
-                  >
-                    {region.name} - ({region.short_name}){" "}
-                  </MenuItem>
-                ))}
-            </Select>
-          </FormControl>
-        </Grid>
-
-        <Grid item>
-          <FormControl sx={{ minWidth: 520 }}>
-            <InputLabel> Select Instance</InputLabel>
-            <Select
-              value={instance}
-              label="Select Instance"
-              autoWidth
-              disabled={!isRegionSelected}
-              variant={!isRegionSelected ? "filled" : "outlined"}
-              MenuProps={{ PaperProps: { sx: { maxHeight: 300, width: 520 } } }}
-              onChange={event => {
-                formik.setFieldValue("instance", event.target.value);
-              }}
-            >
-              {instances &&
-                instances.map(instance => (
-                  <MenuItem
-                    key={instance.id}
-                    value={instance.id}
-                  >
-                    <InstanceLabel instance={instance} />
-                  </MenuItem>
-                ))}
-            </Select>
-          </FormControl>
-        </Grid>
-
-        <Grid item>
-          <FormControl sx={{ minWidth: 520 }}>
-            <InputLabel> Select LLM source</InputLabel>
-            <Select
-              value={llm}
-              label="Select LLM source"
-              autoWidth
-              MenuProps={{ PaperProps: { sx: { maxHeight: 300, width: 520 } } }}
-              onChange={event => {
-                formik.setFieldValue("llm", event.target.value);
-              }}
-            >
-              <MenuItem value={1}>HuggingFace</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
-        <Grid item>
-          <FormControl sx={{ minWidth: 520 }}>
-            <InputLabel>Select Model</InputLabel>
-            <Select
-              value={model}
-              label="Select Model"
-              autoWidth
-              MenuProps={{ PaperProps: { sx: { maxHeight: 300, width: 520 } } }}
-              onChange={event => {
-                formik.setFieldValue("model", event.target.value);
-              }}
-            >
-              {models.map(model => (
+        <FormControl fullWidth>
+          <InputLabel> Select Cloud Provider</InputLabel>
+          <Select
+            value={provider}
+            label="Select   Cloud Provider"
+            autoWidth
+            MenuProps={{ PaperProps: { sx: { maxHeight: 300, minWidth: { md: 520 } } } }}
+            onChange={event => {
+              formik.setFieldValue("provider", event.target.value);
+            }}
+          >
+            <MenuItem value={1}>AWS</MenuItem>
+          </Select>
+        </FormControl>
+        <FormControl fullWidth>
+          <InputLabel> Select Region</InputLabel>
+          <Select
+            value={region}
+            label="Select Region"
+            disabled={!isProviderSelected}
+            variant={!isProviderSelected ? "filled" : "outlined"}
+            autoWidth
+            MenuProps={{
+              PaperProps: {
+                sx: {
+                  maxHeight: 300,
+                  minWidth: { md: 520 },
+                },
+              },
+            }}
+            onChange={event => {
+              formik.setFieldValue("region", event.target.value);
+            }}
+          >
+            {regions &&
+              regions.map(region => (
                 <MenuItem
-                  key={model.pk}
-                  value={model.pk}
+                  key={region.id}
+                  value={region.id}
                 >
-                  {model.fields.name}
+                  {region.name} - ({region.short_name})
                 </MenuItem>
               ))}
-            </Select>
-          </FormControl>
-        </Grid>
+          </Select>
+        </FormControl>
+        <FormControl fullWidth>
+          <InputLabel> Select Instance</InputLabel>
+          <Select
+            value={instance}
+            label="Select Instance"
+            autoWidth
+            disabled={!isRegionSelected}
+            variant={!isRegionSelected ? "filled" : "outlined"}
+            MenuProps={{
+              PaperProps: {
+                sx: {
+                  maxHeight: 300,
+                  minWidth: { md: 520 },
+                },
+              },
+            }}
+            onChange={event => {
+              formik.setFieldValue("instance", event.target.value);
+            }}
+          >
+            {instances &&
+              instances.map(instance => (
+                <MenuItem
+                  key={instance.id}
+                  value={instance.id}
+                >
+                  <InstanceLabel instance={instance} />
+                </MenuItem>
+              ))}
+          </Select>
+        </FormControl>
+        <FormControl fullWidth>
+          <InputLabel> Select LLM source</InputLabel>
+          <Select
+            value={llm}
+            label="Select LLM source"
+            autoWidth
+            MenuProps={{
+              PaperProps: {
+                sx: {
+                  maxHeight: 300,
+                  minWidth: { md: 520 },
+                },
+              },
+            }}
+            onChange={event => {
+              formik.setFieldValue("llm", event.target.value);
+            }}
+          >
+            <MenuItem value={1}>HuggingFace</MenuItem>
+          </Select>
+        </FormControl>
+        <FormControl fullWidth>
+          <InputLabel>Select Model</InputLabel>
+          <Select
+            value={model}
+            label="Select Model"
+            autoWidth
+            MenuProps={{
+              PaperProps: {
+                sx: {
+                  maxHeight: 300,
+                  minWidth: { md: 520 },
+                },
+              },
+            }}
+            onChange={event => {
+              formik.setFieldValue("model", event.target.value);
+            }}
+          >
+            {models.map(model => (
+              <MenuItem
+                key={model.pk}
+                value={model.pk}
+              >
+                {model.fields.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
       </Grid>
 
       <Stack

@@ -77,7 +77,7 @@ export const links = [
 
 export const TemplateStatusArray: TemplateStatus[] = ["ARCHIVED", "DRAFT", "PENDING_REVIEW", "PUBLISHED"];
 
-export const DeploymentStatuses: DeploymentStatus[] = ["stopped", "created", "done", "deploying", "failed"];
+export const deploymentStatuses: DeploymentStatus[] = ["stopped", "created", "done", "deploying", "failed"];
 
 export const Keywords: any[] = [
   {

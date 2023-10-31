@@ -13,10 +13,13 @@ function CreateDeploymentPopup({ onClose }: CreateDeploymentPopupProps) {
     <Dialog
       open
       maxWidth={"lg"}
-      onClose={onClose}
     >
       <DialogTitle fontSize={"22px"}>Create New Deployment</DialogTitle>
-      <DialogContent>
+      <DialogContent
+        sx={{
+          minWidth: { md: "520px" },
+        }}
+      >
         <CreateForm onClose={onClose} />
       </DialogContent>
     </Dialog>

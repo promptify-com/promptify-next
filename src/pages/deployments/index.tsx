@@ -10,7 +10,7 @@ import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 
 import { Layout } from "@/layout";
-import { DeploymentStatuses } from "@/common/constants";
+import { deploymentStatuses } from "@/common/constants";
 import { useGetDeploymentsQuery } from "@/core/api/deployments";
 import type { DeploymentStatus } from "@/common/types/deployments";
 import Protected from "@/components/Protected";
@@ -83,7 +83,7 @@ function Deployments() {
                         size="small"
                         variant="outlined"
                         value={searchName}
-                        onChange={e => setSearchName(e.target.value)}
+                        onChange={e => setSearchName(e.target.value.trim().toLowerCase())}
                       />
                     </Box>
                     <FormControl
@@ -97,7 +97,7 @@ function Deployments() {
                         autoWidth
                         onChange={e => setStatus(e.target.value as DeploymentStatus)}
                       >
-                        {DeploymentStatuses.map((status, idx) => (
+                        {deploymentStatuses.map((status, idx) => (
                           <MenuItem
                             key={idx}
                             value={status}
