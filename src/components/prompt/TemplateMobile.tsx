@@ -5,38 +5,20 @@ import { DetailsCard } from "./DetailsCard";
 import { Details } from "./Details";
 import ChatMode from "./generate/ChatBox";
 import { Display } from "./Display";
-import GeneratedExecutionFooter from "./GeneratedExecutionFooter";
 import BottomTabs from "./BottomTabs";
 import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
-import type { PromptLiveResponse } from "@/common/types/prompt";
 import { ButtonGenerateExecution } from "./ButtonGenerateExecution";
+import { useAppSelector } from "@/hooks/useStore";
 
 interface TemplateMobileProps {
   hashedExecution: TemplatesExecutions | null;
   template: Templates;
-  isGenerating: boolean;
-  setGeneratedExecution: Dispatch<SetStateAction<PromptLiveResponse | null>>;
-  generatedExecution: PromptLiveResponse | null;
   setErrorMessage: Dispatch<SetStateAction<string>>;
-  templateExecutions: TemplatesExecutions[] | undefined;
-  isFetchingExecutions: boolean;
-  selectedExecution: TemplatesExecutions | null;
-  setSelectedExecution: Dispatch<SetStateAction<TemplatesExecutions | null>>;
 }
 
-export default function TemplateMobile({
-  template,
-  hashedExecution,
-  isGenerating,
-  setGeneratedExecution,
-  setErrorMessage,
-  templateExecutions,
-  isFetchingExecutions,
-  selectedExecution,
-  setSelectedExecution,
-  generatedExecution,
-}: TemplateMobileProps) {
+export default function TemplateMobile({ template, hashedExecution, setErrorMessage }: TemplateMobileProps) {
   const [mobileTab, setMobileTab] = useState(1);
+  const isGenerating = useAppSelector(state => state.template.isGenerating);
 
   useEffect(() => {
     if (isGenerating || hashedExecution?.id) {
@@ -44,8 +26,8 @@ export default function TemplateMobile({
     }
   }, [isGenerating, hashedExecution]);
 
-  const isTemplatePublished = template.status === "PUBLISHED";
-  const displayChatBox = !!template?.questions?.length && isTemplatePublished;
+  const isTemplatePublished = template?.status === "PUBLISHED";
+  const displayChatBox = !!template?.questions?.length && isTemplatePublished && mobileTab === 1;
 
   return (
     <Grid
@@ -72,14 +54,11 @@ export default function TemplateMobile({
         },
       }}
     >
-      <>
-        {mobileTab !== 0 && <DetailsCardMini templateData={template} />}
-
+      {mobileTab === 0 ? (
         <Grid
           item
           xs={12}
           md={8}
-          display={mobileTab === 0 ? "block" : "none"}
           height={"100%"}
           overflow={"auto"}
           bgcolor={"surface.1"}
@@ -93,14 +72,15 @@ export default function TemplateMobile({
             mobile
           />
         </Grid>
-      </>
+      ) : (
+        <DetailsCardMini templateData={template} />
+      )}
 
       {displayChatBox ? (
-        <Grid display={mobileTab === 1 ? "block" : "none"}>
+        <Grid>
           <ChatMode
-            setGeneratedExecution={setGeneratedExecution}
             onError={setErrorMessage}
-            key={template.id}
+            key={template?.id}
             template={template}
           />
         </Grid>
@@ -115,7 +95,6 @@ export default function TemplateMobile({
         >
           <ButtonGenerateExecution
             templateData={template}
-            setGeneratedExecution={setGeneratedExecution}
             onError={setErrorMessage}
           />
         </Grid>
@@ -129,12 +108,6 @@ export default function TemplateMobile({
         <Grid mr={1}>
           <Display
             templateData={template}
-            executions={templateExecutions ?? []}
-            isFetching={isFetchingExecutions}
-            selectedExecution={selectedExecution}
-            setSelectedExecution={setSelectedExecution}
-            generatedExecution={generatedExecution}
-            setGeneratedExecution={setGeneratedExecution}
             onError={setErrorMessage}
             hashedExecution={hashedExecution}
           />

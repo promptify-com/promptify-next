@@ -5,6 +5,7 @@ import { PromptLiveResponse } from "@/common/types/prompt";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { ResPrompt } from "@/core/api/dto/prompts";
 import { setGeneratingStatus } from "@/core/store/templatesSlice";
+import { parseMessageData } from "@/common/helpers/parseMessageData";
 
 const useGenerateExecution = (templateId: number, onError: (errMsg: string) => void) => {
   const token = useToken();
@@ -37,16 +38,21 @@ const useGenerateExecution = (templateId: number, onError: (errMsg: string) => v
       },
       onmessage(msg) {
         try {
-          const parseData = JSON.parse(msg.data.replace(/'/g, '"'));
+          const parseData = parseMessageData(msg.data);
           const message = parseData.message;
           const prompt = parseData.prompt_id;
           const executionId = parseData.template_execution_id;
+
+          // event: status, data:{"message": "[CONNECTED]"}
+          if (message === "[CONNECTED]") {
+            return;
+          }
 
           if (executionId) {
             setGeneratingResponse(prevState => ({
               id: executionId,
               created_at: prevState?.created_at || new Date(),
-              data: prevState?.data || [],
+              data: [...(prevState?.data || [])],
             }));
           }
 
@@ -56,15 +62,20 @@ const useGenerateExecution = (templateId: number, onError: (errMsg: string) => v
                 if (!prevState) {
                   return { created_at: new Date(), data: [] };
                 }
-                const activePromptIndex = prevState?.data.findIndex(promptData => promptData.prompt === +prompt);
+
+                const newState = { ...prevState, data: [...prevState.data] };
+                const activePromptIndex = newState.data.findIndex(promptData => promptData.prompt === +prompt);
 
                 if (activePromptIndex === -1) {
-                  prevState?.data.push({ message, prompt, created_at: new Date() });
+                  newState.data.push({ message, prompt, created_at: new Date() });
                 } else {
-                  prevState.data[activePromptIndex].message += message;
+                  newState.data[activePromptIndex] = {
+                    ...newState.data[activePromptIndex],
+                    message: newState.data[activePromptIndex].message + message,
+                  };
                 }
 
-                return { id: prevState?.id, created_at: prevState?.created_at, data: [...(prevState?.data || [])] };
+                return newState;
               });
             }
           } else {
@@ -80,30 +91,39 @@ const useGenerateExecution = (templateId: number, onError: (errMsg: string) => v
               if (!prevState) {
                 return { created_at: new Date(), data: [] };
               }
-              const activePromptIndex = prevState?.data.findIndex(promptData => promptData.prompt === +prompt);
+
+              const newState = { ...prevState, data: [...prevState.data] };
+              const activePromptIndex = newState.data.findIndex(promptData => promptData.prompt === +prompt);
 
               if (message === "[INITIALIZING]") {
                 if (activePromptIndex === -1) {
-                  prevState?.data.push({
+                  newState.data.push({
                     message: "",
                     prompt,
                     isLoading: true,
                     created_at: new Date(),
                   });
                 } else {
-                  prevState!.data[activePromptIndex].isLoading = true;
+                  newState.data[activePromptIndex] = {
+                    ...newState.data[activePromptIndex],
+                    isLoading: true,
+                  };
                 }
               }
-              if (message === "[C OMPLETED]" || message === "[COMPLETED]") {
-                prevState!.data[activePromptIndex].isLoading = false;
-                prevState!.data[activePromptIndex].isCompleted = true;
+
+              if (message === "[COMPLETED]") {
+                newState.data[activePromptIndex] = {
+                  ...newState.data[activePromptIndex],
+                  isLoading: false,
+                  isCompleted: true,
+                };
               }
 
-              return { id: prevState?.id, created_at: prevState?.created_at, data: [...(prevState?.data || [])] };
+              return newState;
             });
           }
         } catch {
-          console.error(msg);
+          console.info("invalid incoming msg:", msg);
         }
       },
       onerror(err) {

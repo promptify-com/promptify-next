@@ -12,8 +12,8 @@ interface GeneratorParamProps {
 
 export const GeneratorParam: React.FC<GeneratorParamProps> = ({ promptId, params, nodeParams, setNodeParams }) => {
   const handleChangeScore = (score: number, parameter: number) => {
-    let nodeParam = nodeParams.find(_nodeParam => _nodeParam.id === promptId);
     const updatedNodeParams = [...nodeParams];
+    let nodeParam = updatedNodeParams.find(_nodeParam => _nodeParam.id === promptId);
 
     if (!nodeParam) {
       nodeParam = { id: promptId, contextual_overrides: [] };

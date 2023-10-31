@@ -1,4 +1,4 @@
-import type { Dispatch, SetStateAction } from "react";
+import { type Dispatch, type SetStateAction } from "react";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
@@ -12,32 +12,15 @@ import { Details } from "./Details";
 import { GeneratorForm } from "./GeneratorForm";
 import { Display } from "./Display";
 import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
-import type { PromptLiveResponse } from "@/common/types/prompt";
 
 interface TemplateDesktopProps {
   hashedExecution: TemplatesExecutions | null;
   template: Templates;
-  setGeneratedExecution: Dispatch<SetStateAction<PromptLiveResponse | null>>;
-  generatedExecution: PromptLiveResponse | null;
   setErrorMessage: Dispatch<SetStateAction<string>>;
-  templateExecutions: TemplatesExecutions[] | undefined;
-  isFetchingExecutions: boolean;
-  selectedExecution: TemplatesExecutions | null;
-  setSelectedExecution: Dispatch<SetStateAction<TemplatesExecutions | null>>;
 }
 
-export default function TemplateDesktop({
-  template,
-  selectedExecution,
-  setGeneratedExecution,
-  templateExecutions,
-  setErrorMessage,
-  isFetchingExecutions,
-  setSelectedExecution,
-  generatedExecution,
-  hashedExecution,
-}: TemplateDesktopProps) {
-  const isTemplatePublished = template.status === "PUBLISHED";
+export default function TemplateDesktop({ template, setErrorMessage, hashedExecution }: TemplateDesktopProps) {
+  const isTemplatePublished = template?.status === "PUBLISHED";
 
   return (
     <Grid
@@ -138,8 +121,6 @@ export default function TemplateDesktop({
             </Accordion>
             <GeneratorForm
               templateData={template}
-              selectedExecution={selectedExecution}
-              setGeneratedExecution={setGeneratedExecution}
               onError={setErrorMessage}
             />
           </Box>
@@ -155,12 +136,6 @@ export default function TemplateDesktop({
         <Grid mr={1}>
           <Display
             templateData={template}
-            executions={templateExecutions ?? []}
-            isFetching={isFetchingExecutions}
-            selectedExecution={selectedExecution}
-            setSelectedExecution={setSelectedExecution}
-            generatedExecution={generatedExecution}
-            setGeneratedExecution={setGeneratedExecution}
             onError={setErrorMessage}
             hashedExecution={hashedExecution}
           />

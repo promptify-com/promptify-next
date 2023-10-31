@@ -1,37 +1,26 @@
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { Typography, Button, CircularProgress } from "@mui/material";
-import { IPromptInput, PromptLiveResponse } from "@/common/types/prompt";
 import useToken from "@/hooks/useToken";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-
-import { getInputsFromString } from "@/common/helpers/getInputsFromString";
 import { Templates } from "@/core/api/dto/templates";
 import { PlayCircle } from "@mui/icons-material";
-
 import { setGeneratingStatus } from "@/core/store/templatesSlice";
 import router from "next/router";
 import useGenerateExecution from "@/hooks/useGenerateExecution";
+import { setGeneratedExecution } from "@/core/store/executionsSlice";
 
 interface ButtonGenerateExecutionProps {
   templateData: Templates;
-  setGeneratedExecution: (data: PromptLiveResponse) => void;
   onError: (errMsg: string) => void;
 }
 
-export const ButtonGenerateExecution: React.FC<ButtonGenerateExecutionProps> = ({
-  templateData,
-  setGeneratedExecution,
-  onError,
-}) => {
+export const ButtonGenerateExecution: React.FC<ButtonGenerateExecutionProps> = ({ templateData, onError }) => {
   const token = useToken();
   const dispatch = useAppDispatch();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
-
   const { generateExecution, generatingResponse } = useGenerateExecution(templateData?.id, onError);
-
   const promptHasContent = templateData.prompts.some(prompt => prompt.content);
   const isButtonDisabled = isGenerating ? true : !promptHasContent;
-
   const validateAndGenerateExecution = () => {
     if (!token) {
       return router.push("/signin");
@@ -42,7 +31,9 @@ export const ButtonGenerateExecution: React.FC<ButtonGenerateExecutionProps> = (
   };
 
   useEffect(() => {
-    if (generatingResponse) setGeneratedExecution(generatingResponse);
+    if (generatingResponse) {
+      dispatch(setGeneratedExecution(generatingResponse));
+    }
   }, [generatingResponse]);
 
   return (
