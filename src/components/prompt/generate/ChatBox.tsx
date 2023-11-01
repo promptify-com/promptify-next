@@ -445,7 +445,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
 
     if (isText) {
       const newUserMessage: IMessage = {
-        text: isFile ? value.name : value,
+        text: value,
         type,
         createdAt: createdAt,
         fromUser: true,
@@ -579,6 +579,8 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
         _prompt.prompt_params[_answer.inputName] = value || "";
       }
     });
+
+    uploadedFiles.current.clear();
 
     generateExecution(promptsData);
   };
@@ -718,7 +720,8 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
 
     setStandingQuestions(newStandingQuestions);
 
-    const invalidTxt = invalid ? `Your answer for ${selectedAnswer.inputName} is invalid. ` : "";
+    const invalidTxt =
+      invalid && question?.type === "file" ? `The uploaded file for ${selectedAnswer.inputName} is invalid. ` : "";
     const nextBotMessage: IMessage = {
       text: invalidTxt + "Let's give it another go. " + askedQuestion.question,
       choices: askedQuestion.choices,

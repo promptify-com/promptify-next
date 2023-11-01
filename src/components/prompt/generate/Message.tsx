@@ -1,6 +1,5 @@
 import React, { useState, memo, useEffect, Dispatch, SetStateAction } from "react";
-import { Avatar, Button, Grid, Stack, Tooltip, Typography } from "@mui/material";
-
+import { Avatar, Button, Grid, Stack, Typography } from "@mui/material";
 import LogoAsAvatar from "@/assets/icons/LogoAvatar";
 import { useAppSelector } from "@/hooks/useStore";
 import { ToggleButtonsGroup } from "@/components/design-system/ToggleButtonsGroup";
@@ -9,7 +8,6 @@ import { IMessage } from "@/common/types/chat";
 import useTextSimulationStreaming from "@/hooks/useTextSimulationStreaming";
 import { FileType } from "@/common/types/prompt";
 import { getFileTypeExtensionsAsString } from "@/common/helpers/uploadFileHelper";
-import { useUploadFileMutation } from "@/core/api/uploadFile";
 
 interface MessageBlockProps {
   message: IMessage;
@@ -57,18 +55,15 @@ export const Message = ({
 }: MessageBlockProps) => {
   const { fromUser, type, text, createdAt, choices, fileExtensions } = message;
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const [uploadFile] = useUploadFileMutation();
 
   const name = fromUser ? currentUser?.first_name ?? currentUser?.username : "Promptify";
 
   const [selectedValue, setSelectedValue] = useState("");
   const [codeFieldPopup, setCodeFieldPopup] = useState(false);
-  const [codeUploaded, setCodeUploaded] = useState(false);
 
   const handleChange = (value: string) => {
     setSelectedValue(value);
     onChangeValue(value);
-    setCodeUploaded(true);
   };
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -78,16 +73,6 @@ export const Message = ({
       onChangeValue(file);
     }
   };
-
-  function getUploadStatusMessage() {
-    if ((selectedValue !== "" && codeUploaded) || !(lastMessage.type === "code")) {
-      return "Code uploaded";
-    } else {
-      return "Upload your code";
-    }
-  }
-
-  const uploadBtnName = getUploadStatusMessage();
 
   return (
     <Grid
@@ -167,13 +152,13 @@ export const Message = ({
             <Button
               onClick={() => setCodeFieldPopup(true)}
               variant="outlined"
-              disabled={!(lastMessage.type === "code")}
+              disabled={lastMessage.type !== "code"}
               size="small"
               sx={{
                 height: 30,
               }}
             >
-              {uploadBtnName}
+              {selectedValue || lastMessage.type !== "code" ? "Code uploaded" : "Upload your code"}
             </Button>
           )}
           {type === "choices" && choices && (
@@ -194,7 +179,7 @@ export const Message = ({
               <Button
                 component="label"
                 variant="outlined"
-                disabled={!(lastMessage.type === "file")}
+                disabled={lastMessage.type !== "file"}
                 size="small"
                 sx={{
                   height: 30,
