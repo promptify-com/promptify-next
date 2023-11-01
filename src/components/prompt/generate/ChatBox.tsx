@@ -68,8 +68,8 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
 
   const currentAnsweredInputs = useAppSelector(state => state.template.answeredInputs);
 
-  let abortController = useRef(new AbortController());
-  let uploadedFiles = useRef(new Map<string, string>());
+  const abortController = useRef(new AbortController());
+  const uploadedFiles = useRef(new Map<string, string>());
 
   const addToQueuedMessages = (messages: IMessage[]) => {
     setQueuedMessages(messages);
@@ -534,7 +534,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
     new Promise<boolean>(async resolve => {
       const _answers = [...answers];
       for (const answer of _answers) {
-        if (answer.answer instanceof File && !uploadedFiles.current.get(answer.inputName)) {
+        if (answer.answer instanceof File && !uploadedFiles.current.has(answer.inputName)) {
           let fileUrl: string | undefined;
           try {
             const res = (await uploadFile(answer.answer)) as UploadFileResponse;
@@ -545,8 +545,10 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
             uploadedFiles.current.set(answer.inputName, fileUrl);
           } else {
             handleAnswerClear(answer, true);
-            resolve(false);
-            return;
+            if (answer.required) {
+              resolve(false);
+              return;
+            }
           }
         }
       }
@@ -567,16 +569,19 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
 
     answers.forEach(_answer => {
       const _prompt = promptsData.find(_data => _data.prompt === _answer.prompt);
-      const value = _answer.answer instanceof File ? uploadedFiles.current.get(_answer.inputName) : _answer.answer;
+      const isFile = _answer.answer instanceof File;
+      const value = isFile ? uploadedFiles.current.get(_answer.inputName) : _answer.answer;
+
+      if (!value) return;
 
       if (!_prompt) {
         promptsData.push({
           contextual_overrides: [],
           prompt: _answer.prompt!,
-          prompt_params: { [_answer.inputName]: value || "" },
+          prompt_params: { [_answer.inputName]: value },
         });
       } else {
-        _prompt.prompt_params[_answer.inputName] = value || "";
+        _prompt.prompt_params[_answer.inputName] = value;
       }
     });
 
@@ -721,7 +726,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
     setStandingQuestions(newStandingQuestions);
 
     const invalidTxt =
-      invalid && question?.type === "file" ? `The uploaded file for ${selectedAnswer.inputName} is invalid. ` : "";
+      invalid && question?.type === "file" ? `The uploaded file for "${selectedAnswer.inputName}" is invalid. ` : "";
     const nextBotMessage: IMessage = {
       text: invalidTxt + "Let's give it another go. " + askedQuestion.question,
       choices: askedQuestion.choices,
