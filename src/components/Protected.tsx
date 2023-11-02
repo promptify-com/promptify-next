@@ -9,7 +9,7 @@ interface IProps extends PropsWithChildren {
   showLoadingPage?: boolean;
 }
 
-const protectedRoutes = ["profile", "sparks"];
+const protectedRoutes = ["profile", "sparks", "deployments"];
 
 const Protected: React.FC<IProps> = ({ children, showLoadingPage }) => {
   const router = useRouter();
