@@ -35,9 +35,10 @@ export type UserType = "admin" | "user";
 interface TemplateManagerProps {
   type: UserType;
   title: string;
+  id?: string;
 }
 
-export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title }) => {
+export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title, id }) => {
   const isUserAdmin = type === "admin";
 
   const { data: userTemplates, isFetching: isUserTemplatesFetching } = useGetMyTemplatesQuery(undefined, {
@@ -82,6 +83,7 @@ export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title }) => {
 
   return (
     <Box
+      id={id}
       sx={{
         display: "flex",
         flexDirection: "column",
