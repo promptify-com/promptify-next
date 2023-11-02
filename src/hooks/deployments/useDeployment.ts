@@ -37,6 +37,7 @@ export const useDeployment = (onClose: () => void) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(payload),
+      openWhenHidden: true,
       signal: abortController.current.signal,
 
       async onopen(res) {
