@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useFormik } from "formik";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
@@ -8,86 +7,26 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 
-import type { CreateDeployment, FormikCreateDeployment } from "@/common/types/deployments";
+import type { FormikCreateDeployment } from "@/common/types/deployments";
 import BaseButton from "../base/BaseButton";
-import { useGetInstancesQuery, useGetRegionsByQueryParamsQuery } from "@/core/api/deployments";
 import { models } from "@/common/constants";
 import { useAppSelector } from "@/hooks/useStore";
 import InstanceLabel from "./InstanceLabel";
 import { allFieldsFilled } from "@/common/helpers";
-import { fetchEventSource } from "@microsoft/fetch-event-source";
-import useToken from "@/hooks/useToken";
+
 import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
 import Logs from "./Logs";
+import { useDeployment } from "@/hooks/deployments/useDeployment";
+import { useFormSelects } from "@/hooks/deployments/useFormSelects";
 
 interface CreateFormProps {
   onClose: () => void;
 }
 
 const CreateForm = ({ onClose }: CreateFormProps) => {
-  const token = useToken();
-  const [deploymentStatus, setDeploymentStatus] = useState<"creating" | "InService" | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [logs, setLogs] = useState<string[]>([]);
   const currentUser = useAppSelector(state => state.user.currentUser);
-
-  const resetValues = () => {
-    setErrorMessage(null);
-    setDeploymentStatus(null);
-  };
-
-  const handleCreateDeployment = async (values: FormikCreateDeployment) => {
-    resetValues();
-    const url = `${process.env.NEXT_PUBLIC_API_URL}/api/aithos/deployments/`;
-    const { model, instance } = values;
-    const payload: CreateDeployment = {
-      instance,
-      model,
-    };
-
-    fetchEventSource(url, {
-      method: "POST",
-      headers: {
-        Authorization: `Token ${token}`,
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-      async onopen(res) {
-        if (res.ok && res.status === 200) {
-          setLogs(["Initiating deployment process... "]);
-        } else if (res.status >= 400 && res.status < 500 && res.status !== 429) {
-          setErrorMessage("Limited service! try another time");
-          console.error("Client side error ", res);
-        }
-      },
-      onmessage(msg) {
-        if (msg.event === "status" && msg.data) {
-          try {
-            const data = JSON.parse(msg.data);
-            setLogs(prevLogs => [...prevLogs, data.message]);
-
-            if (data.message.includes("Creating")) {
-              setDeploymentStatus("creating");
-            } else if (data.message.includes("InService")) {
-              setDeploymentStatus("InService");
-              setTimeout(() => {
-                onClose();
-              }, 800);
-            }
-          } catch (error) {
-            setErrorMessage("An error occurred while processing the deployment status.");
-            console.error("Error parsing message data", error);
-          }
-        }
-      },
-      onerror(err) {
-        console.log(err, "something went wrong");
-        setErrorMessage("Limited service! try another time");
-      },
-    });
-  };
+  const { handleCreateDeployment, handleClose, isDeploying, errorMessage, logs } = useDeployment(onClose);
 
   const formik = useFormik<FormikCreateDeployment>({
     initialValues: {
@@ -102,15 +41,7 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
   });
   const { region, provider, instance, llm, model } = formik.values;
 
-  const isProviderSelected = provider !== "";
-  const isRegionSelected = region !== "";
-
-  const { data: instances } = useGetInstancesQuery({ region: region.toString() }, { skip: !isRegionSelected });
-
-  const { data: regions } = useGetRegionsByQueryParamsQuery(
-    { provider: provider.toString() },
-    { skip: !isProviderSelected },
-  );
+  const { instances, regions, isProviderSelected, isRegionSelected } = useFormSelects(provider, region);
 
   return (
     <form onSubmit={formik.handleSubmit}>
@@ -128,6 +59,7 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
             value={provider}
             label="Select   Cloud Provider"
             autoWidth
+            disabled={isDeploying}
             MenuProps={selectMenuProps}
             onChange={event => {
               formik.setFieldValue("provider", event.target.value);
@@ -141,7 +73,7 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
           <Select
             value={region}
             label="Select Region"
-            disabled={!isProviderSelected}
+            disabled={!isProviderSelected || isDeploying}
             variant={!isProviderSelected ? "filled" : "outlined"}
             autoWidth
             MenuProps={selectMenuProps}
@@ -166,7 +98,7 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
             value={instance}
             label="Select Instance"
             autoWidth
-            disabled={!isRegionSelected}
+            disabled={!isRegionSelected || isDeploying}
             variant={!isRegionSelected ? "filled" : "outlined"}
             MenuProps={selectMenuProps}
             onChange={event => {
@@ -189,6 +121,7 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
           <Select
             value={llm}
             label="Select LLM source"
+            disabled={isDeploying}
             autoWidth
             MenuProps={selectMenuProps}
             onChange={event => {
@@ -204,6 +137,7 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
             value={model}
             label="Select Model"
             autoWidth
+            disabled={isDeploying}
             MenuProps={selectMenuProps}
             onChange={event => {
               formik.setFieldValue("model", event.target.value);
@@ -241,12 +175,12 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
         direction={"row"}
         justifyContent={"end"}
       >
-        <Button onClick={onClose}>{deploymentStatus === "creating" ? "Close" : "Cancel"}</Button>{" "}
+        <Button onClick={handleClose}>{isDeploying ? "Close" : "Cancel"}</Button>{" "}
         <BaseButton
           type="submit"
           variant={"contained"}
           color={"primary"}
-          disabled={!allFieldsFilled(formik.values) || deploymentStatus === "creating"}
+          disabled={!allFieldsFilled(formik.values) || isDeploying}
           sx={{
             p: "6px 16px",
             borderRadius: "8px",
@@ -259,8 +193,8 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
           }}
           autoFocus
         >
-          {!deploymentStatus ? (
-            <Typography color={"white"}>Deploy</Typography>
+          {!isDeploying ? (
+            <span>Deploy</span>
           ) : (
             <>
               <Typography mr={1}>Deploying</Typography>
