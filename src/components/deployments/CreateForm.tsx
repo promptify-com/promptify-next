@@ -24,6 +24,21 @@ interface CreateFormProps {
   onClose: () => void;
 }
 
+const DataLoading = ({ loading }: { loading: boolean }) => {
+  return (
+    <>
+      {loading && (
+        <Stack
+          direction={"row"}
+          justifyContent={"center"}
+        >
+          <CircularProgress />
+        </Stack>
+      )}
+    </>
+  );
+};
+
 const CreateForm = ({ onClose }: CreateFormProps) => {
   const currentUser = useAppSelector(state => state.user.currentUser);
   const { handleCreateDeployment, handleClose, isDeploying, errorMessage, logs } = useDeployment(onClose);
@@ -41,7 +56,8 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
   });
   const { region, provider, instance, llm, model } = formik.values;
 
-  const { instances, regions, isProviderSelected, isRegionSelected } = useFormSelects(provider, region);
+  const { instances, regions, isProviderSelected, isRegionSelected, isInstanceFetching, isRegionFetching } =
+    useFormSelects(provider, region);
 
   return (
     <form onSubmit={formik.handleSubmit}>
@@ -79,8 +95,10 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
             MenuProps={selectMenuProps}
             onChange={event => {
               formik.setFieldValue("region", event.target.value);
+              formik.setFieldValue("instance", "");
             }}
           >
+            <DataLoading loading={isRegionFetching} />
             {regions &&
               regions.map(region => (
                 <MenuItem
@@ -105,6 +123,18 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
               formik.setFieldValue("instance", event.target.value);
             }}
           >
+            <DataLoading loading={isInstanceFetching} />
+
+            {!instances?.length && (
+              <Typography
+                variant="body2"
+                color="textSecondary"
+                align="center"
+                sx={{ mt: 1, wordBreak: "break-word" }}
+              >
+                No available instances found in the selected region
+              </Typography>
+            )}
             {instances &&
               instances.map(instance => (
                 <MenuItem
@@ -211,7 +241,7 @@ const selectMenuProps = {
   PaperProps: {
     sx: {
       maxHeight: 300,
-      minWidth: { md: 520 },
+      width: { md: 520 },
     },
   },
 };

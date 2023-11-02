@@ -23,7 +23,7 @@ function Deployments() {
   const [searchName, setSearchName] = useState("");
   const [status, setStatus] = useState<DeploymentStatus | string>("");
 
-  const { data: deployments, isLoading } = useGetDeploymentsQuery();
+  const { data: deployments, isLoading, refetch } = useGetDeploymentsQuery();
 
   const filteredDeployments =
     deployments?.filter(deployment => {
@@ -31,6 +31,10 @@ function Deployments() {
       const matchesName = deployment.model?.name.toLowerCase().includes(searchName);
       return matchesStatus && matchesName;
     }) ?? [];
+
+  const refetchData = () => {
+    refetch();
+  };
 
   return (
     <Protected>
@@ -113,7 +117,7 @@ function Deployments() {
                     width={"100%"}
                     justifyContent={"end"}
                   >
-                    <CreateDeploymentButton />
+                    <CreateDeploymentButton onRefetch={refetchData} />
                   </Stack>
                 </Stack>
                 <ActiveFilters

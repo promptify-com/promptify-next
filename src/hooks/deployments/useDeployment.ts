@@ -21,6 +21,7 @@ export const useDeployment = (onClose: () => void) => {
 
   const handleCreateDeployment = (values: FormikCreateDeployment) => {
     resetValues();
+    setDeploymentStatus("creating");
     const url = `${process.env.NEXT_PUBLIC_API_URL}/api/aithos/deployments/`;
     const { model, instance } = values;
     const payload: CreateDeployment = {
@@ -42,7 +43,6 @@ export const useDeployment = (onClose: () => void) => {
         if (res.ok && res.status === 200) {
           setLogs(["Initiating deployment process... "]);
         } else if (res.status >= 400 && res.status < 500 && res.status !== 429) {
-          setErrorMessage("Limited service! try another time");
           console.error("Client side error ", res);
         }
       },
@@ -52,9 +52,7 @@ export const useDeployment = (onClose: () => void) => {
             const data = JSON.parse(msg.data);
             setLogs(prevLogs => [...prevLogs, data.message]);
 
-            if (data.message.includes("Creating")) {
-              setDeploymentStatus("creating");
-            } else if (data.message.includes("InService")) {
+            if (data.message.includes("InService")) {
               setDeploymentStatus("InService");
               setTimeout(() => {
                 onClose();
@@ -70,6 +68,9 @@ export const useDeployment = (onClose: () => void) => {
         console.log(err, "something went wrong");
         setErrorMessage("Limited service! try another time");
       },
+    }).catch(error => {
+      console.error("Network error:", error);
+      setErrorMessage("An error occurred while creating the deployment.");
     });
   };
 
