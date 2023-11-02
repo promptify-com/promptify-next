@@ -9,10 +9,10 @@ export const useDeployment = (onClose: () => void) => {
   const token = useToken();
 
   const [deploymentStatus, setDeploymentStatus] = useState<"creating" | "InService" | null>(null);
-
-  const isDeploying = deploymentStatus === "creating";
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [logs, setLogs] = useState<string[]>([]);
+
+  const isDeploying = deploymentStatus === "creating";
 
   const resetValues = () => {
     setErrorMessage(null);
