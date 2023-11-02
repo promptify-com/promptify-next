@@ -29,6 +29,7 @@ import VaryModal from "./VaryModal";
 import { vary } from "@/common/helpers/varyValidator";
 import { parseMessageData } from "@/common/helpers/parseMessageData";
 import { useUploadFileMutation } from "@/core/api/uploadFile";
+import { uploadFileHelper } from "@/common/helpers/uploadFileHelper";
 
 interface Props {
   setGeneratedExecution: (data: PromptLiveResponse | null) => void;
@@ -532,16 +533,12 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
 
   const validateAndUploadFiles = () =>
     new Promise<boolean>(async resolve => {
-      const _answers = [...answers];
-      for (const answer of _answers) {
+      for (const answer of answers) {
         if (answer.answer instanceof File && !uploadedFiles.current.has(answer.inputName)) {
-          let fileUrl: string | undefined;
-          try {
-            const res = (await uploadFile(answer.answer)) as UploadFileResponse;
-            fileUrl = res.data?.file_url;
-          } catch (_) {}
+          const res = await uploadFileHelper(uploadFile, { file: answer.answer });
+          const fileUrl = res?.file;
 
-          if (fileUrl) {
+          if (typeof fileUrl === "string" && fileUrl) {
             uploadedFiles.current.set(answer.inputName, fileUrl);
           } else {
             handleAnswerClear(answer, true);
