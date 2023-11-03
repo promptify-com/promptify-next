@@ -16,6 +16,7 @@ import { getPathURL, saveToken } from "@/common/utils";
 import { RootState } from "@/core/store";
 import { isValidUserFn, updateUser } from "@/core/store/userSlice";
 import { Category, TemplatesExecutionsByMePaginationResponse } from "@/core/api/dto/templates";
+import { authClient } from "@/common/axios";
 import { redirectToPath } from "@/common/helpers";
 import useToken from "@/hooks/useToken";
 import ClientOnly from "@/components/base/ClientOnly";
@@ -195,13 +196,8 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
 };
 
 export async function getServerSideProps() {
-  const responseCategories = await fetch(process.env.NEXT_PUBLIC_API_URL + "/api/meta/categories/", {
-    next: { revalidate: 3600 },
-    cache: "force-cache",
-  });
-  const categories = (await responseCategories.json())?.filter(
-    (category: Category) => category.prompt_template_count && category.is_visible,
-  );
+  const responseCategories = await authClient.get<Category[]>("/api/meta/categories/");
+  const categories = responseCategories.data?.filter(category => category.prompt_template_count && category.is_visible);
 
   return {
     props: {
