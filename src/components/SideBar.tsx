@@ -28,6 +28,7 @@ import { RootState } from "@/core/store";
 import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setOpenDefaultSidebar } from "@/core/store/sidebarSlice";
+import { redirectToPath } from "@/common/helpers";
 
 interface SideBarProps {
   fullHeight?: boolean;
@@ -110,6 +111,7 @@ export const DefaultSidebar: React.FC<SideBarProps> = ({ fullHeight = false }) =
       icon: <Home />,
       active: pathname === "/",
       external: false,
+      reload: true,
     },
     {
       name: "Prompts",
@@ -117,6 +119,7 @@ export const DefaultSidebar: React.FC<SideBarProps> = ({ fullHeight = false }) =
       icon: <Search />,
       active: isExplorePage,
       external: false,
+      reload: true,
     },
     {
       name: "My Sparks",
@@ -124,6 +127,7 @@ export const DefaultSidebar: React.FC<SideBarProps> = ({ fullHeight = false }) =
       icon: <AutoAwesome />,
       active: pathname === "/sparks",
       external: false,
+      reload: false,
     },
     {
       name: "Learn",
@@ -131,6 +135,7 @@ export const DefaultSidebar: React.FC<SideBarProps> = ({ fullHeight = false }) =
       icon: <MenuBookRounded />,
       active: pathname === "/learn",
       external: true,
+      reload: false,
     },
   ];
 
@@ -238,8 +243,17 @@ export const DefaultSidebar: React.FC<SideBarProps> = ({ fullHeight = false }) =
                   }}
                   target={item.external ? "_blank" : ""}
                   onClick={e => {
-                    if (item.name === "Prompts" && isExplorePage) {
+                    if (item.external) {
+                      return;
+                    }
+
+                    if (item.active) {
                       e.preventDefault();
+                    }
+
+                    if (item.reload && !item.active) {
+                      e.stopPropagation();
+                      redirectToPath(item.href);
                     }
                   }}
                 >
@@ -255,7 +269,6 @@ export const DefaultSidebar: React.FC<SideBarProps> = ({ fullHeight = false }) =
                     <Box
                       style={{
                         textDecoration: "none",
-
                         display: "flex",
                         width: open || expandedOnHover ? "100%" : "auto",
                         alignItems: "center",
