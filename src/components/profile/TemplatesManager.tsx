@@ -63,7 +63,7 @@ export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title, id }) 
     isFetching,
     hasMore,
     status,
-  } = useGetTemplatesByFilter(undefined, undefined, undefined, true);
+  } = useGetTemplatesByFilter({ admin: true });
 
   const openDeletionModal = (template: Templates) => {
     setSelectedTemplate(template);

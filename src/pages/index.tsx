@@ -1,5 +1,5 @@
 import { Box, Grid, Typography } from "@mui/material";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { AxiosResponse } from "axios";
 import { NextPage } from "next";
 import { useSelector, useDispatch } from "react-redux";
@@ -18,6 +18,8 @@ import { isValidUserFn, updateUser } from "@/core/store/userSlice";
 import { Category, TemplatesExecutionsByMePaginationResponse } from "@/core/api/dto/templates";
 import { authClient } from "@/common/axios";
 import { redirectToPath } from "@/common/helpers";
+import useToken from "@/hooks/useToken";
+import ClientOnly from "@/components/base/ClientOnly";
 
 interface HomePageProps {
   categories: Category[];
@@ -27,6 +29,7 @@ const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
 const MY_EXECUTIONS_LIMIT = 4;
 
 const HomePage: NextPage<HomePageProps> = ({ categories }) => {
+  const token = useToken();
   const path = getPathURL();
   const dispatch = useDispatch();
   const isValidUser = useSelector(isValidUserFn);
@@ -42,15 +45,25 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
     skip: !isValidUser,
   });
 
-  const { data: popularTemplates, isLoading: isPopularTemplatesLoading } = useGetTemplatesByFilterQuery({
-    ordering: "-runs",
-    limit: 7,
-  });
+  const { data: popularTemplates, isLoading: isPopularTemplatesLoading } = useGetTemplatesByFilterQuery(
+    {
+      ordering: "-runs",
+      limit: 7,
+    },
+    {
+      skip: token,
+    },
+  );
 
-  const { data: latestTemplates, isLoading: isLatestTemplatesLoading } = useGetTemplatesByFilterQuery({
-    ordering: "-created_at",
-    limit: 7,
-  });
+  const { data: latestTemplates, isLoading: isLatestTemplatesLoading } = useGetTemplatesByFilterQuery(
+    {
+      ordering: "-created_at",
+      limit: 7,
+    },
+    {
+      skip: token,
+    },
+  );
 
   // TODO: move authentication logic to signin page instead
   const doPostLogin = async (response: AxiosResponse<IContinueWithSocialMediaResponse>) => {
@@ -108,71 +121,73 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
               padding: { xs: "16px", md: "32px" },
             }}
           >
-            {isValidUser ? (
-              <Grid
-                flexDirection="column"
-                display={"flex"}
-                gap={"56px"}
-              >
+            <ClientOnly>
+              {isValidUser ? (
                 <Grid
-                  sx={{
-                    alignItems: "center",
-                    width: "100%",
-                  }}
+                  flexDirection="column"
+                  display={"flex"}
+                  gap={"56px"}
                 >
-                  <Typography
+                  <Grid
                     sx={{
-                      fontFamily: "Poppins",
-                      fontStyle: "normal",
-                      fontWeight: 500,
-                      fontSize: { xs: "30px", sm: "48px" },
-                      lineHeight: { xs: "30px", md: "56px" },
-                      color: "#1D2028",
-                      marginLeft: { xs: "0px", sm: "0px" },
+                      alignItems: "center",
+                      width: "100%",
                     }}
                   >
-                    Welcome, {currentUser?.username}
-                  </Typography>
+                    <Typography
+                      sx={{
+                        fontFamily: "Poppins",
+                        fontStyle: "normal",
+                        fontWeight: 500,
+                        fontSize: { xs: "30px", sm: "48px" },
+                        lineHeight: { xs: "30px", md: "56px" },
+                        color: "#1D2028",
+                        marginLeft: { xs: "0px", sm: "0px" },
+                      }}
+                    >
+                      Welcome, {currentUser?.username}
+                    </Typography>
+                  </Grid>
+                  <TemplatesSection
+                    isLatestTemplates
+                    isLoading={isMyLatestExecutionsLoading}
+                    templates={(myLatestExecutions as TemplatesExecutionsByMePaginationResponse)?.results || []}
+                    title="Your Latest Templates:"
+                    type="myLatestExecutions"
+                  />
+                  <TemplatesSection
+                    isLoading={isSuggestedTemplateLoading}
+                    templates={suggestedTemplates}
+                    title=" You may like these prompt templates:"
+                    type="suggestedTemplates"
+                  />
+                  <CategoriesSection
+                    categories={categories}
+                    isLoading={!isValidUser}
+                  />
                 </Grid>
-                <TemplatesSection
-                  isLatestTemplates
-                  isLoading={isMyLatestExecutionsLoading}
-                  templates={(myLatestExecutions as TemplatesExecutionsByMePaginationResponse)?.results || []}
-                  title="Your Latest Templates:"
-                  type="myLatestExecutions"
-                />
-                <TemplatesSection
-                  isLoading={isSuggestedTemplateLoading}
-                  templates={suggestedTemplates}
-                  title=" You may like these prompt templates:"
-                  type="suggestedTemplates"
-                />
-                <CategoriesSection
-                  categories={categories}
-                  isLoading={!isValidUser}
-                />
-              </Grid>
-            ) : (
-              <>
-                <WelcomeCard />
-                <CategoriesSection
-                  categories={categories}
-                  isLoading={isValidUser}
-                />
-                <TemplatesSection
-                  isLoading={isPopularTemplatesLoading}
-                  templates={popularTemplates?.results}
-                  title="Most Popular Prompt Templates"
-                  type="popularTemplates"
-                />
-                <TemplatesSection
-                  isLoading={isLatestTemplatesLoading}
-                  templates={latestTemplates?.results}
-                  title="Latest Prompt Templates"
-                  type="latestTemplates"
-                />
-              </>
-            )}
+              ) : (
+                <>
+                  <WelcomeCard />
+                  <CategoriesSection
+                    categories={categories}
+                    isLoading={isValidUser}
+                  />
+                  <TemplatesSection
+                    isLoading={isPopularTemplatesLoading}
+                    templates={popularTemplates?.results}
+                    title="Most Popular Prompt Templates"
+                    type="popularTemplates"
+                  />
+                  <TemplatesSection
+                    isLoading={isLatestTemplatesLoading}
+                    templates={latestTemplates?.results}
+                    title="Latest Prompt Templates"
+                    type="latestTemplates"
+                  />
+                </>
+              )}
+            </ClientOnly>
           </Grid>
         </Box>
       </Layout>

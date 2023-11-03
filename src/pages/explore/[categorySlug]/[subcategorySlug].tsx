@@ -22,10 +22,9 @@ interface CategoryOrSubcategory {
 
 export default function Page({ category, subcategory }: CategoryOrSubcategory) {
   const router = useRouter();
-  const { templates, isFetching, allFilterParamsNull, hasMore, handleNextPage } = useGetTemplatesByFilter(
-    undefined,
-    subcategory?.id,
-  );
+  const { templates, isFetching, allFilterParamsNull, hasMore, handleNextPage } = useGetTemplatesByFilter({
+    subCatId: subcategory?.id,
+  });
 
   const { data: categories, isLoading: isCategoryLoading } = useGetCategoriesQuery();
 
