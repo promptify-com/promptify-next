@@ -124,14 +124,7 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
             }}
           >
             {!instances?.length ? (
-              <Typography
-                variant="body2"
-                color="textSecondary"
-                align="center"
-                sx={{ mt: 1, wordBreak: "break-word" }}
-              >
-                No available instances found in the selected region
-              </Typography>
+              <MenuItem disabled>No available instances found in the selected region</MenuItem>
             ) : (
               <DataLoading loading={isInstanceFetching} />
             )}
