@@ -35,7 +35,7 @@ const DraggableContent = memo(
     const promptEngine = engines?.find(engine => engine.id === prompt.engine_id);
     const originalIndex = findPromptIndex(promptId);
 
-    const [{ isDragging }, drag] = useDrag(
+    const [{ isDragging }, drag, preview] = useDrag(
       () => ({
         type: "prompt",
         item: { id: promptId, originalIndex },
@@ -72,7 +72,7 @@ const DraggableContent = memo(
 
     return (
       <Stack
-        ref={(node: ConnectableElement) => drag(drop(node))}
+        ref={(node: ConnectableElement) => preview(drop(node))}
         key={prompt.id}
         p={1}
         direction={"row"}
@@ -86,7 +86,7 @@ const DraggableContent = memo(
         }}
         gap={2}
       >
-        <Stack>
+        <Box ref={(node: ConnectableElement) => drag(drop(node))}>
           <Menu
             sx={{
               width: 24,
@@ -98,7 +98,7 @@ const DraggableContent = memo(
               },
             }}
           />
-        </Stack>
+        </Box>
         <Stack
           direction={"row"}
           gap={2}
@@ -115,7 +115,18 @@ const DraggableContent = memo(
               borderRadius: "50%",
             }}
           />
-          <Typography> Prompt #{order}</Typography>
+          <Stack>
+            <Typography>{prompt.title}</Typography>
+            <Typography
+              sx={{
+                fontSize: 12,
+                fontWeight: 400,
+                color: "text.secondary",
+              }}
+            >
+              {promptEngine?.name}
+            </Typography>
+          </Stack>
         </Stack>
         <IconButton
           onClick={scrollSmoothTo}
