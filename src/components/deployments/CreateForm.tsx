@@ -123,9 +123,7 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
               formik.setFieldValue("instance", event.target.value);
             }}
           >
-            <DataLoading loading={isInstanceFetching} />
-
-            {!instances?.length && (
+            {!instances?.length ? (
               <Typography
                 variant="body2"
                 color="textSecondary"
@@ -134,6 +132,8 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
               >
                 No available instances found in the selected region
               </Typography>
+            ) : (
+              <DataLoading loading={isInstanceFetching} />
             )}
             {instances &&
               instances.map(instance => (
