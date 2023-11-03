@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 
 import useToken from "@/hooks/useToken";
-import { CreateDeployment, FormikCreateDeployment } from "@/common/types/deployments";
+import type { CreateDeployment, FormikCreateDeployment } from "@/common/types/deployments";
 
 export const useDeployment = (onClose: () => void) => {
   const abortController = useRef(new AbortController());
