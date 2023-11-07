@@ -1,3 +1,7 @@
+export type InputType = "text" | "choices" | "number" | "integer" | "code" | "file";
+
+export type FileType = "pdf" | "docx" | "txt";
+
 export interface PromptLiveResponseData {
   message: string;
   prompt: number;
@@ -12,14 +16,14 @@ export interface PromptLiveResponse {
   created_at: Date;
   data: PromptLiveResponseData[];
 }
-export type InputType = "text" | "choices" | "number" | "code";
 export interface IPromptInput {
   name: string;
   fullName: string;
   type: InputType;
   required: boolean;
   defaultValue?: string | number | null;
-  choices?: string[] | null;
+  choices?: string[];
+  fileExtensions?: string[];
   prompt?: number;
 }
 
@@ -28,7 +32,7 @@ export type FormMode = "input" | "chat";
 export type AnsweredInputType = {
   promptId: number;
   inputName: string;
-  value: string | number;
+  value: string | number | File;
   modifiedFrom: FormMode;
 };
 
@@ -40,4 +44,11 @@ export interface DisplayPrompt {
   isLoading?: boolean;
   isCompleted?: boolean;
   isFailed?: boolean;
+}
+
+export interface UploadFileResponse {
+  data?: {
+    file_url?: string;
+  };
+  error?: unknown;
 }

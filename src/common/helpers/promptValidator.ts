@@ -1,13 +1,15 @@
+import { BuilderInputTypes } from "@/common/constants";
+import { InputType } from "@/common/types/prompt";
+
 export const isPromptVariableValid = (content: string) => {
-  const validTextRegex = /^[a-zA-Z]+$/;
+  const validTextRegex = /^[a-zA-Z0-9]+$/;
   const regex = /{{(.*?)}}/g;
-  const validTypes = ["text", "number", "integer", "code", "choices"];
   let match;
 
   while ((match = regex.exec(content)) !== null) {
     const parts = match[1].split(":");
     const variableName = parts[0];
-    const type = parts[1];
+    const type = parts[1] as InputType;
 
     if (!validTextRegex.test(variableName)) {
       return {
@@ -16,7 +18,7 @@ export const isPromptVariableValid = (content: string) => {
       };
     }
 
-    if (type && !validTypes.includes(type)) {
+    if (type && !BuilderInputTypes.includes(type)) {
       return {
         isValid: false,
         message: `"${match[0]}"`,
@@ -31,13 +33,19 @@ export const isPromptVariableValid = (content: string) => {
     }
 
     if (type === "choices") {
-      if (
-        !(
-          parts[3]?.startsWith('"') &&
-          parts[3]?.endsWith('"') &&
-          Array.from(new Set(parts[3].slice(1, -1).split(","))).every(option => option.trim())
-        )
-      ) {
+      if (!parts[3]?.split(",").every(option => option.trim())) {
+        return {
+          isValid: false,
+          message: `"${match[0]}"`,
+        };
+      }
+    }
+
+    if (type === "file") {
+      const extensions = (parts[3]?.split(",") || []).map(ext => ext.trim());
+      const validExtensions = ["pdf", "docx", "txt"];
+
+      if (extensions.length === 0 || extensions.length > 3 || extensions.some(ext => !validExtensions.includes(ext))) {
         return {
           isValid: false,
           message: `"${match[0]}"`,

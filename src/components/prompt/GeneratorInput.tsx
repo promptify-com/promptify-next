@@ -1,31 +1,45 @@
-import React, { useState } from "react";
-import { Box, Divider, IconButton, InputLabel, MenuItem, Select, Stack, TextField } from "@mui/material";
-import { Backspace } from "@mui/icons-material";
-
-import { InputsErrors } from "./GeneratorForm";
-import { AnsweredInputType, IPromptInput } from "@/common/types/prompt";
+import React, { useEffect, useState } from "react";
+import {
+  Box,
+  Button,
+  Divider,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
+  Stack,
+  TextField,
+  Tooltip,
+} from "@mui/material";
+import { Backspace, Error } from "@mui/icons-material";
+import { AnsweredInputType, IPromptInput, FileType } from "@/common/types/prompt";
 import BaseButton from "../base/BaseButton";
 import CodeFieldModal from "../modals/CodeFieldModal";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { ResInputs } from "@/core/api/dto/prompts";
+import { getFileTypeExtensionsAsString } from "@/common/helpers/uploadFileHelper";
 import { useDebouncedDispatch } from "@/hooks/useDebounceDispatch";
 import { updateAnsweredInput } from "@/core/store/templatesSlice";
 
 interface GeneratorInputProps {
   promptId: number;
-  inputs: IPromptInput[];
+  inputData: IPromptInput;
   nodeInputs: ResInputs[];
   setNodeInputs: (updatedNodes: ResInputs[]) => void;
-  errors: InputsErrors;
+  error: boolean;
 }
 
 export const GeneratorInput: React.FC<GeneratorInputProps> = ({
   promptId,
-  inputs,
+  inputData,
   nodeInputs,
   setNodeInputs,
-  errors,
+  error,
 }) => {
+  const [_error, setError] = useState(error);
+
+  useEffect(() => setError(error), [error]);
+
   const dispatch = useAppDispatch();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const [codeFieldOpen, setCodeFieldOpen] = useState(false);
@@ -34,7 +48,9 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
     dispatch(updateAnsweredInput(answeredInputsArray));
   }, 700);
 
-  const handleChange = (value: string, name: string, type: string) => {
+  const handleChange = (value: string | File, name: string, type: string) => {
+    setError(false);
+
     let newValue: AnsweredInputType = {
       inputName: name,
       promptId,
@@ -42,17 +58,11 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
       modifiedFrom: "input",
     };
     const updatedNodes = nodeInputs.map(node => {
-      const targetNode = node.inputs[name];
-      if (targetNode) {
-        return {
-          ...node,
-          inputs: {
-            ...node.inputs,
-            [name]: {
-              ...targetNode,
-              value: type === "number" ? +value : value,
-            },
-          },
+      const targetInput = node.inputs[name];
+      if (targetInput) {
+        node.inputs[name] = {
+          ...targetInput,
+          value: type === "number" ? +value : value,
         };
       }
       return node;
@@ -61,156 +71,201 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
     debouncedDispatch([newValue]);
   };
 
-  return inputs.length > 0 ? (
-    <Box>
-      {inputs.map((input, index) => {
-        const value = nodeInputs.find(prompt => prompt.id === promptId)?.inputs[input.name]?.value || "";
+  const value = nodeInputs.find(prompt => prompt.id === promptId)?.inputs[inputData.name]?.value || "";
 
-        return (
-          <React.Fragment key={index}>
-            <Divider sx={{ borderColor: "surface.3" }} />
-            <Stack
-              direction={"row"}
-              alignItems={"center"}
-              gap={1}
-              sx={{ p: "16px 8px 16px 16px" }}
+  return (
+    <Box>
+      <Divider sx={{ borderColor: "surface.3" }} />
+      <Stack
+        direction={"row"}
+        alignItems={"center"}
+        gap={1}
+        sx={{ p: "16px 8px 16px 16px" }}
+      >
+        <InputLabel
+          sx={{
+            fontSize: 13,
+            fontWeight: 500,
+            color: _error ? "error.main" : "tertiary",
+            height: "27px",
+          }}
+        >
+          {inputData.fullName} {inputData.required ? "*" : ""} :
+        </InputLabel>
+        {inputData.type === "code" ? (
+          <>
+            <BaseButton
+              disabled={isGenerating}
+              size="small"
+              onClick={() => {
+                setCodeFieldOpen(true);
+              }}
+              color="custom"
+              variant="text"
+              sx={{
+                flex: 1,
+                border: "1px solid",
+                borderRadius: "8px",
+                color: _error ? "error.main" : "tertiary",
+              }}
             >
-              <InputLabel
-                sx={{
-                  fontSize: 13,
-                  fontWeight: 500,
-                  color: errors[input.name] ? "error.main" : "tertiary",
-                  height: "27px",
-                }}
+              {value ? "Edit Code" : "Insert Code"}
+            </BaseButton>
+            {codeFieldOpen && (
+              <CodeFieldModal
+                open
+                setOpen={setCodeFieldOpen}
+                value={value as string}
+                onSubmit={val => handleChange(val, inputData.name, inputData.type)}
+              />
+            )}
+          </>
+        ) : inputData.type === "choices" ? (
+          <Select
+            disabled={isGenerating}
+            sx={{
+              flex: 1,
+              ".MuiSelect-select": {
+                p: "7px 20px",
+                fontSize: 13,
+                fontWeight: 500,
+                opacity: value ? 1 : 0.7,
+              },
+              ".MuiOutlinedInput-notchedOutline": {
+                border: "1px solid",
+                borderRadius: "8px",
+                color: _error ? "error.main" : "tertiary",
+                borderColor: "inherit !important",
+                borderWidth: "1px !important",
+              },
+            }}
+            MenuProps={{
+              sx: { ".MuiMenuItem-root": { fontSize: 14, fontWeight: 500 } },
+            }}
+            value={value}
+            onChange={e => handleChange(e.target.value as string, inputData.name, inputData.type)}
+            displayEmpty
+          >
+            <MenuItem
+              value=""
+              sx={{ opacity: 0.7 }}
+            >
+              Select an option
+            </MenuItem>
+            {inputData.choices?.map(choice => (
+              <MenuItem
+                key={choice}
+                value={choice}
+                selected={value === choice}
               >
-                {input.fullName} {input.required ? "*" : ""} :
-              </InputLabel>
-              {input.type === "code" ? (
-                <>
-                  <BaseButton
-                    disabled={isGenerating}
-                    size="small"
-                    onClick={() => {
-                      setCodeFieldOpen(true);
-                    }}
-                    color="custom"
-                    variant="text"
-                    sx={{
-                      flex: 1,
-                      border: "1px solid",
-                      borderRadius: "8px",
-                      color: errors[input.name] ? "error.main" : "tertiary",
-                    }}
-                  >
-                    {value ? "Edit Code" : "Insert Code"}
-                  </BaseButton>
-                  {codeFieldOpen && (
-                    <CodeFieldModal
-                      open
-                      setOpen={setCodeFieldOpen}
-                      value={value as string}
-                      onSubmit={val => handleChange(val, input.name, input.type)}
-                    />
-                  )}
-                </>
-              ) : input.type === "choices" ? (
-                <Select
-                  disabled={isGenerating}
-                  sx={{
-                    flex: 1,
-                    ".MuiSelect-select": {
-                      p: "7px 20px",
-                      fontSize: 13,
-                      fontWeight: 500,
-                      opacity: value ? 1 : 0.7,
-                    },
-                    ".MuiOutlinedInput-notchedOutline": {
-                      border: "1px solid",
-                      borderRadius: "8px",
-                      color: errors[input.name] ? "error.main" : "tertiary",
-                      borderColor: "inherit !important",
-                      borderWidth: "1px !important",
-                    },
-                  }}
-                  MenuProps={{
-                    sx: { ".MuiMenuItem-root": { fontSize: 14, fontWeight: 500 } },
-                  }}
-                  value={value}
-                  onChange={e => handleChange(e.target.value as string, input.name, input.type)}
-                  displayEmpty
-                >
-                  <MenuItem
-                    value=""
-                    sx={{ opacity: 0.7 }}
-                  >
-                    Select an option
-                  </MenuItem>
-                  {input.choices?.map(choice => (
-                    <MenuItem
-                      key={choice}
-                      value={choice}
-                      selected={value === choice}
-                    >
-                      {choice}
-                    </MenuItem>
-                  ))}
-                </Select>
-              ) : (
-                <TextField
-                  disabled={isGenerating}
-                  sx={{
-                    flex: 1,
-                    height: "27px",
-                    ".MuiInputBase-input": {
-                      p: 0,
-                      color: "onSurface",
-                      fontSize: 13,
-                      fontWeight: 500,
-                      "&::placeholder": {
-                        color: "grey.600",
-                        opacity: 1,
-                      },
-                      "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
-                        WebkitAppearance: "none",
-                        margin: 0,
-                      },
-                      "&[type=number]": {
-                        MozAppearance: "textfield",
-                      },
-                    },
-                    ".MuiOutlinedInput-notchedOutline": {
-                      border: 0,
-                    },
-                    ".MuiInputBase-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                      border: 0,
-                    },
-                  }}
-                  placeholder={input.type === "number" ? "Write a number here.." : "Type here..."}
-                  type={input.type}
-                  value={value}
-                  onChange={e => handleChange(e.target.value, input.name, input.type)}
-                />
-              )}
-              <IconButton
-                disabled={isGenerating}
-                sx={{
-                  color: "grey.600",
-                  border: "none",
-                  p: "4px",
-                  ":hover": {
-                    color: "tertiary",
+                {choice}
+              </MenuItem>
+            ))}
+          </Select>
+        ) : inputData.type === "file" ? (
+          <Stack
+            direction={"row"}
+            alignItems={"center"}
+            gap={1}
+            flex={1}
+          >
+            <Button
+              component="label"
+              variant="contained"
+              sx={{ border: "2px solid", borderColor: _error ? "error.main" : "" }}
+            >
+              Upload file
+              <input
+                hidden
+                accept={getFileTypeExtensionsAsString(inputData.fileExtensions as FileType[])}
+                type="file"
+                style={{
+                  clip: "rect(0 0 0 0)",
+                  clipPath: "inset(50%)",
+                  height: "auto",
+                  overflow: "hidden",
+                  position: "absolute",
+                  whiteSpace: "nowrap",
+                  width: 1,
+                }}
+                onChange={e => {
+                  if (e.target.files && e.target.files.length > 0) {
+                    handleChange(e.target.files[0], inputData.name, inputData.type);
+                  }
+                }}
+              />
+            </Button>
+            {_error && (
+              <Tooltip
+                title={"The uploaded file is invalid"}
+                placement="right"
+                arrow
+                componentsProps={{
+                  tooltip: {
+                    sx: { bgcolor: "error.main", color: "onError", fontSize: 10, fontWeight: 500 },
                   },
-                  visibility: value ? "visible" : "hidden",
-                  height: "27px",
+                  arrow: {
+                    sx: { color: "error.main" },
+                  },
                 }}
-                onClick={() => handleChange("", input.name, input.type)}
               >
-                <Backspace />
-              </IconButton>
-            </Stack>
-          </React.Fragment>
-        );
-      })}
+                <Error sx={{ color: "error.main", width: 20, height: 20 }} />
+              </Tooltip>
+            )}
+          </Stack>
+        ) : (
+          <TextField
+            disabled={isGenerating}
+            sx={{
+              flex: 1,
+              height: "27px",
+              ".MuiInputBase-input": {
+                p: 0,
+                color: "onSurface",
+                fontSize: 13,
+                fontWeight: 500,
+                "&::placeholder": {
+                  color: "grey.600",
+                  opacity: 1,
+                },
+                "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
+                  WebkitAppearance: "none",
+                  margin: 0,
+                },
+                "&[type=number]": {
+                  MozAppearance: "textfield",
+                },
+              },
+              ".MuiOutlinedInput-notchedOutline": {
+                border: 0,
+              },
+              ".MuiInputBase-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                border: 0,
+              },
+            }}
+            placeholder={inputData.type === "number" ? "Write a number here.." : "Type here..."}
+            type={inputData.type}
+            value={value}
+            onChange={e => handleChange(e.target.value, inputData.name, inputData.type)}
+          />
+        )}
+        <IconButton
+          disabled={isGenerating}
+          sx={{
+            color: "grey.600",
+            border: "none",
+            p: "4px",
+            ":hover": {
+              color: "tertiary",
+            },
+            visibility: value ? "visible" : "hidden",
+            height: "27px",
+          }}
+          onClick={() => handleChange("", inputData.name, inputData.type)}
+        >
+          <Backspace />
+        </IconButton>
+      </Stack>
     </Box>
-  ) : null;
+  );
 };

@@ -22,7 +22,6 @@ import { Close } from "@mui/icons-material";
 import { useGetTagsQuery } from "@/core/api/tags";
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { IEditTemplate } from "@/common/types/editTemplate";
-import { authClient } from "@/common/axios";
 import { fieldStyle, boxStyle, buttonBoxStyle, checkboxStyle } from "@/components/modals/styles";
 import { useGetCategoriesQuery } from "@/core/api/categories";
 import useToken from "@/hooks/useToken";
@@ -32,6 +31,8 @@ import { FormType } from "@/common/types/template";
 import { TemplateStatusArray } from "@/common/constants";
 import { executionsApi } from "@/core/api/executions";
 import { stripTags, getLanguageFromCode, getBaseUrl } from "@/common/helpers";
+import { useUploadFileMutation } from "@/core/api/uploadFile";
+import { uploadFileHelper } from "@/common/helpers/uploadFileHelper";
 
 interface Props {
   type?: FormType;
@@ -58,9 +59,12 @@ const TemplateForm: React.FC<Props> = ({
   const [updateTemplate] = useUpdateTemplateMutation();
   const [getTemplateExecution] = executionsApi.endpoints.getExecutionsByTemplate.useLazyQuery();
 
+  const [uploadFile] = useUploadFileMutation();
+
   const [tags, setTags] = useState<string[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [executions, setExecutions] = useState<TemplatesExecutions[]>();
+  const [selectedFile, setSelectedFile] = useState<File>();
 
   const getExecutions = async () => {
     if (!templateData) return null;
@@ -83,14 +87,9 @@ const TemplateForm: React.FC<Props> = ({
     );
   }, [selectedTags]);
 
-  // TODO - No need to upload image and then preview it, just preview it and upload on submit
-  const getUrlImage = async (image: File) => {
-    const file = new FormData();
-    file.append("file", image);
-    const {
-      data: { file_url },
-    } = await authClient.post("/api/upload/", file);
-    formik.setFieldValue("thumbnail", file_url);
+  const handleImageChange = (image: File) => {
+    setSelectedFile(image);
+    formik.setFieldValue("thumbnail", URL.createObjectURL(image));
   };
 
   const addNewTag = (newValue: string[]) => {
@@ -110,18 +109,33 @@ const TemplateForm: React.FC<Props> = ({
 
   const onEditTemplate = async (values: IEditTemplate) => {
     if (!templateData) return;
+    if (selectedFile) {
+      const result = await uploadFileHelper(uploadFile, { file: selectedFile });
+
+      if (typeof result?.file === "string") {
+        values.thumbnail = result.file;
+      }
+    }
     await updateTemplate({
-      id: templateData?.id,
+      id: templateData.id,
       data: values,
     });
+
     handleSave();
   };
 
   const onCreateTemplate = async (values: IEditTemplate) => {
-    const { slug } = await createTemplate(values).unwrap();
+    if (selectedFile) {
+      const result = await uploadFileHelper(uploadFile, { file: selectedFile });
 
-    handleSave();
-    window.open(`${getBaseUrl}/prompt-builder/${slug}`, "_blank");
+      if (typeof result?.file === "string") {
+        values.thumbnail = result.file;
+        const { slug } = await createTemplate(values).unwrap();
+
+        handleSave();
+        window.open(`${getBaseUrl}/prompt-builder/${slug}`, "_blank");
+      }
+    }
   };
 
   const formik = useFormik<IEditTemplate>({
@@ -268,8 +282,11 @@ const TemplateForm: React.FC<Props> = ({
                 hidden
                 accept="image/*"
                 type="file"
-                onChange={(args: any) => {
-                  getUrlImage(args.target.files[0]);
+                onChange={e => {
+                  const file = e.target.files && e.target.files[0];
+                  if (file) {
+                    handleImageChange(file);
+                  }
                 }}
               />
             </Stack>

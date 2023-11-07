@@ -106,7 +106,8 @@ export interface UpdatedQuestionTemplate {
   name: string;
   required: boolean;
   question: string;
-  choices?: string[] | null;
+  choices?: string[];
+  fileExtensions?: string[];
   prompt: number;
 }
 export interface Templates {

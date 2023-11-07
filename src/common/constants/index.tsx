@@ -11,6 +11,7 @@ import {
 
 import { Prompt } from "@/assets/icons/prompts";
 import { TemplateStatus } from "@/core/api/dto/templates";
+import { InputType } from "@/common/types/prompt";
 import { DeploymentStatus } from "../types/deployments";
 import { Model } from "@/common/types/deployments";
 
@@ -129,6 +130,8 @@ export enum BUILDER_TYPE {
   USER = "user",
   ADMIN = "admin",
 }
+
+export const BuilderInputTypes: InputType[] = ["text", "number", "integer", "code", "choices", "file"];
 
 export const models: Model[] = [
   {

@@ -20,6 +20,7 @@ export const getBuilderVarsPresets = (nodes: IEditPrompts[], selectedNode: IEdit
         type: input.type,
         required: input.required,
         choices: input.choices,
+        fileExtensions: input.fileExtensions,
       })),
     );
 

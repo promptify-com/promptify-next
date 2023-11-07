@@ -51,12 +51,14 @@ export const addPreset = ({
   } else {
     const input = inputPresets.find(input => input.label === label);
     if (input) {
-      const { type, required, choices, label } = input;
-      preset = `{{${label}:${type}:${required}${choices ? `:"${choices}"` : ""}}}`;
+      const { label, type, required, choices, fileExtensions } = input;
+      const options = type === "choices" ? choices : type === "file" ? fileExtensions : undefined;
+      preset = `{{${label}:${type}:${required}${options ? `:${options}` : ""}}}`;
     } else {
       const _var = label.slice(2, label.indexOf(":"));
       const _type = label.slice(label.indexOf(":") + 1, label.indexOf("}}"));
-      preset = `{{${_var}:${_type}:true${_type === "choices" ? `:"1,2,3"` : ""}}}`;
+      const choices = _type === "choices" ? ":1,2,3" : _type === "file" ? ":pdf,docx,txt" : "";
+      preset = `{{${_var}:${_type}:true${choices}}}`;
     }
   }
 

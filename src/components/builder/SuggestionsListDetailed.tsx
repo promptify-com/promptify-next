@@ -71,7 +71,7 @@ export const SuggestionsListDetailed = ({
   };
 
   const showPreviousOutputs = (optionType === "output" || highlightValue === "{{") && previousPresets.length > 0;
-  const types: InputType[] = ["text", "number", "choices", "code"];
+  const types: InputType[] = ["text", "number", "choices", "code", "file"];
 
   return (
     <>

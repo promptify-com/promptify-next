@@ -16,6 +16,8 @@ import Storage from "@/common/storage";
 import { setGeneratingStatus, updateExecutionData } from "@/core/store/templatesSlice";
 import ClientOnly from "../base/ClientOnly";
 import useGenerateExecution from "@/hooks/useGenerateExecution";
+import { useUploadFileMutation } from "@/core/api/uploadFile";
+import { uploadFileHelper, SelectedFile } from "@/common/helpers/uploadFileHelper";
 import { setGeneratedExecution } from "@/core/store/executionsSlice";
 
 interface GeneratorFormProps {
@@ -23,8 +25,8 @@ interface GeneratorFormProps {
   onError: (errMsg: string) => void;
 }
 
-export interface InputsErrors {
-  [key: string]: number | boolean;
+interface InputsErrors {
+  [key: string]: number;
 }
 interface Input extends IPromptInput {
   prompt: number;
@@ -33,6 +35,18 @@ interface Param {
   prompt: number;
   param: PromptParams;
 }
+
+const deleteFileInputIfEmpty = (prompts: ResPrompt[], inputs: Input[]) => {
+  for (const prompt of prompts) {
+    const prompt_params = prompt.prompt_params;
+    for (const key in prompt_params) {
+      const enteredInput = inputs?.find(inputItem => inputItem.prompt === prompt.prompt && inputItem.name === key);
+      if (enteredInput && enteredInput.type === "file" && prompt_params[key] === "") {
+        delete prompt_params[key];
+      }
+    }
+  }
+};
 
 export const GeneratorForm: React.FC<GeneratorFormProps> = ({ templateData, onError }) => {
   const token = useToken();
@@ -69,6 +83,22 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({ templateData, onEr
     });
   }, [answeredInputs]);
 
+  const [uploadFile] = useUploadFileMutation();
+
+  const setDefaultResPrompts = () => {
+    const _initPromptsData: ResPrompt[] = [...resPrompts];
+
+    templateData.prompts?.forEach(prompt => {
+      _initPromptsData.push({
+        prompt: prompt.id,
+        contextual_overrides: [],
+        prompt_params: {},
+      });
+    });
+
+    setResPrompts(_initPromptsData);
+    dispatch(updateExecutionData(JSON.stringify(_initPromptsData)));
+  };
   // Set default inputs values from selected execution parameters
   // Fetched execution also provides old / no more existed inputs values, needed to filter depending on shown inputs
   useEffect(() => {
@@ -213,7 +243,6 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({ templateData, onEr
       _promptsData.forEach((prompt, index) => {
         const obj = nodeInputs.find(inputs => inputs.id === prompt.prompt);
         if (obj) {
-          // Extract inputs values from nodeInputs item and put it as { inputName: inputValue }
           const values = Object.fromEntries(Object.entries(obj.inputs).map(([key, value]) => [key, value.value]));
           _promptsData[index].prompt_params = values;
         }
@@ -257,14 +286,58 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({ templateData, onEr
     const unFilledInputs = isInputsFilled();
 
     if (Object.keys(unFilledInputs).length > 0) {
-      setErrors({ ...unFilledInputs });
+      setErrors({ ...errors, ...unFilledInputs });
       return false;
     }
 
-    setErrors({});
     return true;
   };
-  const validateAndGenerateExecution = () => {
+
+  const handleFileUploads = () =>
+    new Promise<boolean>(async resolve => {
+      const fileData = resPrompts.reduce((files: SelectedFile[], resPrompt) => {
+        const promptId = resPrompt.prompt;
+        const fileDataEntries = Object.entries(resPrompt.prompt_params)
+          .filter(([_, value]) => value instanceof File)
+          .map(([key, file]) => ({ key, promptId, file: file as File }));
+
+        return files.concat(fileDataEntries);
+      }, []);
+
+      const results = await Promise.allSettled(fileData.map(file => uploadFileHelper(uploadFile, file)));
+
+      const validNodeInputs = nodeInputs.filter(nodeInput =>
+        Object.values(nodeInput.inputs).every(input => !(input.value instanceof File)),
+      );
+
+      let hasErrors = false;
+      results.forEach(result => {
+        const { key, promptId, file } = result.status === "fulfilled" ? result.value : result.reason;
+        const currentKey = key as string;
+
+        if (!file) {
+          errors[currentKey] = promptId;
+          hasErrors = true;
+        }
+
+        const prompt = nodeInputs.find(inputs => inputs.id === promptId);
+        if (prompt) {
+          prompt.inputs[currentKey].value = file || "";
+          validNodeInputs.push(prompt);
+        }
+
+        const matchingData = resPrompts.find(data => data.prompt === promptId);
+        if (matchingData) {
+          matchingData.prompt_params[currentKey] = file as string | number;
+        }
+      });
+
+      setNodeInputs(validNodeInputs);
+      setErrors(errors);
+      resolve(hasErrors);
+    });
+
+  const validateAndGenerateExecution = async () => {
     if (!token) {
       if (allowReset) {
         const nodeInputsAndParams = { inputs: nodeInputs, params: nodeParams };
@@ -273,10 +346,18 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({ templateData, onEr
       return router.push("/signin");
     }
 
+    const hasTypeFile = shownInputs?.some(item => item.type === "file");
+    let hasFileErrors = false;
+    if (hasTypeFile) {
+      deleteFileInputIfEmpty(resPrompts, shownInputs!);
+      hasFileErrors = await handleFileUploads();
+    }
+
     if (!validateInputs()) return;
 
-    dispatch(setGeneratingStatus(true));
+    if (!hasFileErrors) setErrors({});
 
+    dispatch(setGeneratingStatus(true));
     generateExecution(resPrompts);
   };
   const resetForm = () => {
@@ -392,10 +473,10 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({ templateData, onEr
                 <GeneratorInput
                   key={i}
                   promptId={input.prompt}
-                  inputs={[input]}
+                  inputData={input}
                   nodeInputs={nodeInputs}
                   setNodeInputs={setNodeInputs}
-                  errors={errors}
+                  error={input.name in errors}
                 />
               ))}
               {shownParams.map((param, i) => (
@@ -557,7 +638,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({ templateData, onEr
               textAlign: "center",
             }}
           >
-            Fill all the inputs
+            Please fill all required inputs
           </Typography>
         )}
 
