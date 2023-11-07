@@ -30,7 +30,6 @@ export const deploymentsApi = baseApi.injectEndpoints({
         }),
         keepUnusedDataFor: 60 * 60,
       }),
-
       getRegionsByQueryParams: builder.query<Region[], RegionParams>({
         query: (params: RegionParams) => ({
           url: `/api/aithos/regions/?${getRegionsParams(params)}`,
@@ -45,7 +44,6 @@ export const deploymentsApi = baseApi.injectEndpoints({
         }),
         keepUnusedDataFor: 60 * 60,
       }),
-
       getDeployments: builder.query<Deployment[], void>({
         query: () => ({
           url: `/api/aithos/deployments`,
@@ -62,6 +60,25 @@ export const deploymentsApi = baseApi.injectEndpoints({
         }),
         invalidatesTags: ["Deployments"],
       }),
+      deleteDeployment: builder.mutation({
+        query: (id: number) => ({
+          url: `/api/aithos/deployments/${id}/`,
+          method: "delete",
+        }),
+        async onQueryStarted(id, { dispatch, queryFulfilled }) {
+          const patchResult = dispatch(
+            deploymentsApi.util.updateQueryData("getDeployments", undefined, deploymentsDraft => {
+              return deploymentsDraft.filter(deployment => deployment.id !== id);
+            }),
+          );
+
+          try {
+            await queryFulfilled;
+          } catch {
+            patchResult.undo();
+          }
+        },
+      }),
     };
   },
 });
@@ -72,4 +89,5 @@ export const {
   useGetRegionsByQueryParamsQuery,
   useGetDeploymentsQuery,
   useCreateDeploymentMutation,
+  useDeleteDeploymentMutation,
 } = deploymentsApi;
