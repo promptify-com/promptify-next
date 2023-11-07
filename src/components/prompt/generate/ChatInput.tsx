@@ -48,9 +48,10 @@ export const ChatInput = ({
     const truncatedInputName = truncate(addSpaceBetweenCapitalized(answer.inputName), {
       length: inputNameAllocatedLength,
     });
-    const truncatedAnswer = truncate(answer.answer as string, { length: answerAllocatedLength });
+    const name = answer.answer instanceof File ? answer.answer.name : answer.answer;
+    const truncatedAnswer = truncate(name.toString(), { length: answerAllocatedLength });
 
-    return ` ${truncatedInputName} : ${truncatedAnswer}`;
+    return `${truncatedInputName}: ${truncatedAnswer}`;
   };
 
   const isGenerating = useAppSelector(state => state.template.isGenerating);

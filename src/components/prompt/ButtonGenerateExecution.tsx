@@ -1,13 +1,10 @@
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { Typography, Button, CircularProgress } from "@mui/material";
-import { IPromptInput, PromptLiveResponse } from "@/common/types/prompt";
+import { PromptLiveResponse } from "@/common/types/prompt";
 import useToken from "@/hooks/useToken";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-
-import { getInputsFromString } from "@/common/helpers/getInputsFromString";
 import { Templates } from "@/core/api/dto/templates";
 import { PlayCircle } from "@mui/icons-material";
-
 import { setGeneratingStatus } from "@/core/store/templatesSlice";
 import router from "next/router";
 import useGenerateExecution from "@/hooks/useGenerateExecution";

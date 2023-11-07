@@ -12,6 +12,7 @@ export interface IMessage {
   fromUser: boolean;
   type: InputType;
   choices?: string[] | null;
+  fileExtensions?: string[];
   startOver?: boolean;
 }
 

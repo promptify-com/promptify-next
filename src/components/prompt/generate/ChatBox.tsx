@@ -14,7 +14,13 @@ import { ChatInterface } from "./ChatInterface";
 import { ChatInput } from "./ChatInput";
 import { TemplateQuestions, Templates, UpdatedQuestionTemplate } from "@/core/api/dto/templates";
 import { getInputsFromString } from "@/common/helpers/getInputsFromString";
-import { IPromptInput, PromptLiveResponse, InputType, AnsweredInputType } from "@/common/types/prompt";
+import {
+  IPromptInput,
+  PromptLiveResponse,
+  InputType,
+  AnsweredInputType,
+  UploadFileResponse,
+} from "@/common/types/prompt";
 import { setGeneratingStatus, updateAnsweredInput, updateExecutionData } from "@/core/store/templatesSlice";
 import { AnswerValidatorResponse, IAnswer, IMessage } from "@/common/types/chat";
 import { isDesktopViewPort } from "@/common/helpers";
@@ -22,6 +28,8 @@ import { useStopExecutionMutation } from "@/core/api/executions";
 import VaryModal from "./VaryModal";
 import { vary } from "@/common/helpers/varyValidator";
 import { parseMessageData } from "@/common/helpers/parseMessageData";
+import { useUploadFileMutation } from "@/core/api/uploadFile";
+import { uploadFileHelper } from "@/common/helpers/uploadFileHelper";
 
 interface Props {
   setGeneratedExecution: (data: PromptLiveResponse | null) => void;
@@ -39,6 +47,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
   const currentUser = useAppSelector(state => state.user.currentUser);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const [stopExecution] = useStopExecutionMutation();
+  const [uploadFile] = useUploadFileMutation();
 
   const { convertedTimestamp } = useTimestampConverter();
   const createdAt = convertedTimestamp(new Date());
@@ -60,7 +69,8 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
 
   const currentAnsweredInputs = useAppSelector(state => state.template.answeredInputs);
 
-  let abortController = useRef(new AbortController());
+  const abortController = useRef(new AbortController());
+  const uploadedFiles = useRef(new Map<string, string>());
 
   const addToQueuedMessages = (messages: IMessage[]) => {
     setQueuedMessages(messages);
@@ -88,11 +98,12 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
 
     if (questions.length > 0) {
       const firstQuestion = questions[0];
-      const { question, type, choices } = firstQuestion;
+      const { question, type, choices, fileExtensions } = firstQuestion;
       const firstQuestionMessage: IMessage = {
         text: question,
         type,
         choices,
+        fileExtensions,
         createdAt: createdAt,
         fromUser: false,
       };
@@ -158,13 +169,14 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
         const key = Object.keys(question)[0];
 
         if (inputs[index]) {
-          const { type, required, choices, name, prompt } = inputs[index];
+          const { type, required, choices, fileExtensions, name, prompt } = inputs[index];
           const updatedQuestion: UpdatedQuestionTemplate = {
             ...question[key],
             name,
-            required: required,
-            type: type,
-            choices: choices,
+            required,
+            type,
+            choices,
+            fileExtensions,
             prompt: prompt!,
           };
           updatedQuestions.push(updatedQuestion);
@@ -254,13 +266,14 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
     updatedInput: AnsweredInputType,
     targetQuestion: UpdatedQuestionTemplate,
   ) => {
-    const { question, choices, type } = targetQuestion;
+    const { question, choices, fileExtensions, type } = targetQuestion;
     const nextMessages: IMessage[] = [];
 
     if (currentQuestion && targetQuestion.name !== currentQuestion.name) {
       nextMessages.push({
         text: question,
         choices,
+        fileExtensions,
         type,
         createdAt: createdAt,
         fromUser: false,
@@ -270,6 +283,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
       nextMessages.push({
         text: updatedInput.value as string,
         choices,
+        fileExtensions,
         type,
         createdAt: createdAt,
         fromUser: true,
@@ -289,6 +303,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
       nextMessages.push({
         text: nextQuestion.question,
         choices: nextQuestion.choices,
+        fileExtensions: nextQuestion.fileExtensions,
         type: nextQuestion.type,
         createdAt: createdAt,
         fromUser: false,
@@ -338,7 +353,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
 
   const disableChat =
     Boolean(!templateQuestions.length && !_inputs.length && template?.prompts.length) ||
-    ["choices", "code"].includes(currentQuestion?.type) ||
+    ["choices", "code", "file"].includes(currentQuestion?.type) ||
     !currentQuestion;
 
   const disabledButton = _inputs.length !== 0 || promptHasContent;
@@ -419,16 +434,17 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
     dispatch(updateAnsweredInput([newValue]));
   };
 
-  const handleUserInput = async (value: string) => {
-    if (!currentQuestion || isSimulaitonStreaming || value.trim() === "") {
+  const handleUserInput = async (value: string | File) => {
+    const isFile = value instanceof File;
+    if (!currentQuestion || isSimulaitonStreaming || (!isFile && value.trim() === "")) {
       return;
     }
 
-    const { name: inputName, required, type, question, prompt, choices } = currentQuestion;
+    const { name: inputName, required, type, question, prompt, choices, fileExtensions } = currentQuestion;
 
-    const isChoiceOrCode = ["choices", "code"].includes(type);
+    const isText = !isFile && !["choices", "code", "file"].includes(type);
 
-    if (!isChoiceOrCode) {
+    if (isText) {
       const newUserMessage: IMessage = {
         text: value,
         type,
@@ -441,7 +457,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
 
     let response: AnswerValidatorResponse | undefined | string = { approved: true, answer: "", feedback: "" };
 
-    if (!isChoiceOrCode && required) {
+    if (isText && required) {
       setIsValidatingAnswer(true);
 
       response = await validateAnswer(value);
@@ -487,6 +503,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
         const nextMessage: IMessage = {
           text: nextQuestion.question,
           choices: nextQuestion.choices,
+          fileExtensions: nextQuestion.fileExtensions,
           type: nextQuestion.type,
           createdAt: createdAt,
           fromUser: false,
@@ -507,16 +524,41 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
         createdAt: createdAt,
         fromUser: false,
         choices,
+        fileExtensions,
         type,
       };
     }
     setMessages(prevMessages => prevMessages.concat(nextBotMessage));
   };
 
-  const generateExecutionHandler = () => {
+  const validateAndUploadFiles = () =>
+    new Promise<boolean>(async resolve => {
+      for (const answer of answers) {
+        if (answer.answer instanceof File && !uploadedFiles.current.has(answer.inputName)) {
+          const res = await uploadFileHelper(uploadFile, { file: answer.answer });
+          const fileUrl = res?.file;
+
+          if (typeof fileUrl === "string" && fileUrl) {
+            uploadedFiles.current.set(answer.inputName, fileUrl);
+          } else {
+            handleAnswerClear(answer, true);
+            if (answer.required) {
+              resolve(false);
+              return;
+            }
+          }
+        }
+      }
+      resolve(true);
+    });
+
+  const generateExecutionHandler = async () => {
     if (!token) {
       return router.push("/signin");
     }
+
+    const filesUploaded = await validateAndUploadFiles();
+    if (!filesUploaded) return;
 
     dispatch(setGeneratingStatus(true));
 
@@ -524,17 +566,23 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
 
     answers.forEach(_answer => {
       const _prompt = promptsData.find(_data => _data.prompt === _answer.prompt);
+      const isFile = _answer.answer instanceof File;
+      const value = isFile ? uploadedFiles.current.get(_answer.inputName) : _answer.answer;
+
+      if (!value) return;
 
       if (!_prompt) {
         promptsData.push({
           contextual_overrides: [],
           prompt: _answer.prompt!,
-          prompt_params: { [_answer.inputName]: _answer.answer },
+          prompt_params: { [_answer.inputName]: value },
         });
       } else {
-        _prompt.prompt_params[_answer.inputName] = _answer.answer;
+        _prompt.prompt_params[_answer.inputName] = value;
       }
     });
+
+    uploadedFiles.current.clear();
 
     generateExecution(promptsData);
   };
@@ -653,7 +701,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
     }
   };
 
-  const handleAnswerClear = (selectedAnswer: IAnswer) => {
+  const handleAnswerClear = (selectedAnswer: IAnswer, invalid = false) => {
     if (isSimulaitonStreaming) {
       return;
     }
@@ -674,9 +722,12 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
 
     setStandingQuestions(newStandingQuestions);
 
+    const invalidTxt =
+      invalid && question?.type === "file" ? `The uploaded file for "${selectedAnswer.inputName}" is invalid. ` : "";
     const nextBotMessage: IMessage = {
-      text: "Let's give this another go. " + askedQuestion.question,
+      text: invalidTxt + "Let's give it another go. " + askedQuestion.question,
       choices: askedQuestion.choices,
+      fileExtensions: askedQuestion.fileExtensions,
       type: askedQuestion.type,
       createdAt: createdAt,
       fromUser: false,
