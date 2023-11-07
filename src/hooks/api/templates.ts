@@ -1,5 +1,6 @@
-import { authClient } from "../../common/axios";
-import { IEditTemplate } from "../../common/types/editTemplate";
+import { authClient } from "@/common/axios";
+import { IEditTemplate } from "@/common/types/editTemplate";
+import { Templates } from "@/core/api/dto/templates";
 
 export const updateTemplate = async (id: number, data: IEditTemplate) => {
   return await authClient
@@ -41,4 +42,14 @@ export const removeTemplateLike = async (templateId: number) => {
   return await authClient.delete(`/api/meta/templates/${templateId}/like/`).then(response => {
     return response.data;
   });
+};
+
+export const getTemplateBySlug = async (slug: string): Promise<Templates> => {
+  return await authClient
+    .get(`/api/meta/templates/by-slug/${slug}/`, {
+      headers: { "Content-Type": "application/json" },
+    })
+    .then(response => {
+      return response.data;
+    });
 };

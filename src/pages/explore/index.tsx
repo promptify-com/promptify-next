@@ -16,7 +16,7 @@ interface IProps {
 
 const ExplorePage: NextPage<IProps> = ({ categories }) => {
   const { templates, isTemplatesLoading, handleNextPage, hasMore, allFilterParamsNull, isFetching } =
-    useGetTemplatesByFilter(undefined, undefined, "-runs");
+    useGetTemplatesByFilter({ ordering: "-runs" });
 
   return (
     <>

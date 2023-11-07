@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Box, Button, CircularProgress, Stack, Typography, alpha, useTheme } from "@mui/material";
 import { PromptParams, ResInputs, ResOverrides, ResPrompt } from "@/core/api/dto/prompts";
-import { IPromptInput, PromptLiveResponse } from "@/common/types/prompt";
+import type { IPromptInput } from "@/common/types/prompt";
 import useToken from "@/hooks/useToken";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { GeneratorInput } from "./GeneratorInput";
 import { GeneratorParam } from "./GeneratorParam";
 import { getInputsFromString } from "@/common/helpers/getInputsFromString";
-import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
+import type { Templates } from "@/core/api/dto/templates";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { useRouter } from "next/router";
 import { AllInclusive, Close, InfoOutlined } from "@mui/icons-material";
@@ -18,11 +18,10 @@ import ClientOnly from "../base/ClientOnly";
 import useGenerateExecution from "@/hooks/useGenerateExecution";
 import { useUploadFileMutation } from "@/core/api/uploadFile";
 import { uploadFileHelper, SelectedFile } from "@/common/helpers/uploadFileHelper";
+import { setGeneratedExecution } from "@/core/store/executionsSlice";
 
 interface GeneratorFormProps {
   templateData: Templates;
-  selectedExecution: TemplatesExecutions | null;
-  setGeneratedExecution: (data: PromptLiveResponse) => void;
   onError: (errMsg: string) => void;
 }
 
@@ -49,12 +48,7 @@ const deleteFileInputIfEmpty = (prompts: ResPrompt[], inputs: Input[]) => {
   }
 };
 
-export const GeneratorForm: React.FC<GeneratorFormProps> = ({
-  templateData,
-  selectedExecution,
-  setGeneratedExecution,
-  onError,
-}) => {
+export const GeneratorForm: React.FC<GeneratorFormProps> = ({ templateData, onError }) => {
   const token = useToken();
   const { palette } = useTheme();
   const dispatch = useAppDispatch();
@@ -67,15 +61,15 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
   const [shownInputs, setShownInputs] = useState<Input[] | null>(null);
   const [shownParams, setShownParams] = useState<Param[] | null>(null);
   const [userSavedFormData, setUserSavedFormData] = useState(false);
-
-  const { generateExecution, generatingResponse, lastExecution } = useGenerateExecution(templateData?.id, onError);
-
   const answeredInputs = useAppSelector(state => state.template.answeredInputs);
+  const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
+  const { generateExecution, generatingResponse, lastExecution } = useGenerateExecution(templateData?.id, onError);
 
   useEffect(() => {
     const updatedInput = answeredInputs[0];
 
     if (!updatedInput || updatedInput.modifiedFrom === "input") return;
+
     setNodeInputs(prevState => {
       const newState = [...prevState];
       answeredInputs.forEach(input => {
@@ -171,6 +165,77 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     }
   }, [selectedExecution]);
 
+  useEffect(() => {
+    if (generatingResponse) {
+      dispatch(setGeneratedExecution(generatingResponse));
+    }
+  }, [generatingResponse]);
+
+  useEffect(() => {
+    if (!templateData.prompts?.length) {
+      return;
+    }
+
+    const setDefaultResPrompts = () => {
+      const _initPromptsData: ResPrompt[] = [...resPrompts];
+
+      templateData.prompts?.forEach(prompt => {
+        _initPromptsData.push({
+          prompt: prompt.id,
+          contextual_overrides: [],
+          prompt_params: {},
+        });
+      });
+
+      setResPrompts(_initPromptsData);
+      dispatch(updateExecutionData(JSON.stringify(_initPromptsData)));
+    };
+    const removeDuplicates = async () => {
+      const shownInputs = new Map<string, Input>();
+      const shownParams = new Map<number, Param>();
+
+      templateData.prompts?.forEach(prompt => {
+        const inputs = getInputsFromString(prompt.content);
+
+        inputs.forEach(input => {
+          shownInputs.set(input.name, { ...input, prompt: prompt.id });
+        });
+
+        prompt.parameters
+          .filter(param => param.is_visible)
+          .forEach(param => {
+            shownParams.set(param.parameter.id, { param, prompt: prompt.id });
+          });
+      });
+
+      setShownInputs(Array.from(shownInputs.values()));
+      setShownParams(Array.from(shownParams.values()));
+    };
+
+    setDefaultResPrompts();
+    removeDuplicates();
+  }, []);
+
+  useEffect(() => {
+    if (resPrompts.length > 0) {
+      changeResPrompts();
+    }
+  }, [nodeInputs, nodeParams]);
+
+  useEffect(() => {
+    const handleKeyboard = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      if (!["INPUT", "TEXTAREA"].includes(target.tagName)) {
+        if (e.shiftKey && e.code === "KeyR" && lastExecution) {
+          generateExecution(lastExecution);
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyboard);
+    return () => window.removeEventListener("keydown", handleKeyboard);
+  }, [lastExecution]);
+
   const changeResPrompts = () => {
     const _promptsData = [...resPrompts];
 
@@ -196,7 +261,6 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     setResPrompts(_promptsData);
     dispatch(updateExecutionData(JSON.stringify(_promptsData)));
   };
-
   const isInputsFilled = () => {
     const tempErrors: InputsErrors = {};
 
@@ -218,7 +282,6 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
     return tempErrors;
   };
-
   const validateInputs = () => {
     const unFilledInputs = isInputsFilled();
 
@@ -297,49 +360,6 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     dispatch(setGeneratingStatus(true));
     generateExecution(resPrompts);
   };
-
-  useEffect(() => {
-    if (generatingResponse) setGeneratedExecution(generatingResponse);
-  }, [generatingResponse]);
-
-  useEffect(() => {
-    if (templateData) {
-      setDefaultResPrompts();
-    }
-  }, [templateData]);
-
-  useEffect(() => {
-    if (resPrompts.length > 0) {
-      changeResPrompts();
-    }
-  }, [nodeInputs, nodeParams]);
-
-  useEffect(() => {
-    removeDuplicates();
-  }, [templateData]);
-
-  const removeDuplicates = async () => {
-    const shownInputs = new Map<string, Input>();
-    const shownParams = new Map<number, Param>();
-
-    templateData.prompts?.forEach(prompt => {
-      const inputs = getInputsFromString(prompt.content);
-
-      inputs.forEach(input => {
-        shownInputs.set(input.name, { ...input, prompt: prompt.id });
-      });
-
-      prompt.parameters
-        .filter(param => param.is_visible)
-        .forEach(param => {
-          shownParams.set(param.parameter.id, { param, prompt: prompt.id });
-        });
-    });
-
-    setShownInputs(Array.from(shownInputs.values()));
-    setShownParams(Array.from(shownParams.values()));
-  };
-
   const resetForm = () => {
     const resetedNodeInputs = nodeInputs.map(nodeInput => {
       const updatedInputs = Object.keys(nodeInput.inputs).reduce((inputs: ResInputs["inputs"], inputKey) => {
@@ -358,22 +378,6 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
     setNodeInputs(resetedNodeInputs);
   };
-
-  // Keyboard shortcuts
-  const handleKeyboard = (e: KeyboardEvent) => {
-    // prevent trigger if typing inside input
-    const target = e.target as HTMLElement;
-    if (!["INPUT", "TEXTAREA"].includes(target.tagName)) {
-      if (e.shiftKey && e.code === "KeyR" && lastExecution) {
-        generateExecution(lastExecution);
-      }
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener("keydown", handleKeyboard);
-    return () => window.removeEventListener("keydown", handleKeyboard);
-  }, [handleKeyboard]);
 
   const filledForm = nodeInputs.every(nodeInput =>
     Object.values(nodeInput.inputs)

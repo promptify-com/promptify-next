@@ -59,6 +59,7 @@ const Profile = () => {
                   <TemplatesManager
                     type={"user"}
                     title="My templates"
+                    id="my-templates"
                   />
                   {currentUser?.is_admin && (
                     <TemplatesManager

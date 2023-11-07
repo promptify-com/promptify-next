@@ -30,16 +30,16 @@ import { vary } from "@/common/helpers/varyValidator";
 import { parseMessageData } from "@/common/helpers/parseMessageData";
 import { useUploadFileMutation } from "@/core/api/uploadFile";
 import { uploadFileHelper } from "@/common/helpers/uploadFileHelper";
+import { setGeneratedExecution } from "@/core/store/executionsSlice";
 
 interface Props {
-  setGeneratedExecution: (data: PromptLiveResponse | null) => void;
   onError: (errMsg: string) => void;
   template: Templates;
 }
 
 const BottomTabsMobileHeight = "240px";
 
-const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template }) => {
+const ChatMode: React.FC<Props> = ({ onError, template }) => {
   const isDesktopView = isDesktopViewPort();
   const token = useToken();
   const router = useRouter();
@@ -66,7 +66,6 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
   const [disableChatInput, setDisableChatInput] = useState(false);
   const [standingQuestions, setStandingQuestions] = useState<UpdatedQuestionTemplate[]>([]);
   const [varyOpen, setVaryOpen] = useState(false);
-
   const currentAnsweredInputs = useAppSelector(state => state.template.answeredInputs);
 
   const abortController = useRef(new AbortController());
@@ -202,7 +201,7 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
 
   useEffect(() => {
     if (answers.length) {
-      setGeneratedExecution(generatingResponse);
+      dispatch(setGeneratedExecution(generatingResponse));
     }
   }, [generatingResponse]);
 
@@ -612,10 +611,14 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
       onmessage(msg) {
         try {
           const parseData = parseMessageData(msg.data);
-
           const message = parseData.message;
           const prompt = parseData.prompt_id;
           const executionId = parseData.template_execution_id;
+
+          // event: status, data:{"message": "[CONNECTED]"}
+          if (message === "[CONNECTED]") {
+            return;
+          }
 
           if (executionId) {
             setNewExecutionId(executionId);
@@ -629,15 +632,19 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
           if (msg.event === "infer" && msg.data) {
             if (message) {
               setGeneratingResponse(prevState => {
-                const activePromptIndex = prevState.data.findIndex(promptData => promptData.prompt === +prompt);
+                const newState = { ...prevState, data: [...prevState.data] };
+                const activePromptIndex = newState.data.findIndex(promptData => promptData.prompt === +prompt);
 
                 if (activePromptIndex === -1) {
-                  prevState.data.push({ message, prompt, created_at: new Date() });
+                  newState.data.push({ message, prompt, created_at: new Date() });
                 } else {
-                  prevState.data[activePromptIndex].message += message;
+                  newState.data[activePromptIndex] = {
+                    ...newState.data[activePromptIndex],
+                    message: newState.data[activePromptIndex].message + message,
+                  };
                 }
 
-                return { id: prevState.id, created_at: prevState.created_at, data: [...prevState.data] };
+                return newState;
               });
             }
           } else {
@@ -650,33 +657,38 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
             }
 
             setGeneratingResponse(prevState => {
-              const activePromptIndex = prevState.data.findIndex(promptData => promptData.prompt === +prompt);
+              const newState = { ...prevState, data: [...prevState.data] };
+              const activePromptIndex = newState.data.findIndex(promptData => promptData.prompt === +prompt);
 
               if (message === "[INITIALIZING]") {
                 if (activePromptIndex === -1) {
-                  prevState.data.push({
+                  newState.data.push({
                     message: "",
                     prompt,
                     isLoading: true,
                     created_at: new Date(),
                   });
                 } else {
-                  prevState.data[activePromptIndex].isLoading = true;
+                  newState.data[activePromptIndex] = {
+                    ...newState.data[activePromptIndex],
+                    isLoading: true,
+                  };
                 }
               }
 
-              if (message === "[C OMPLETED]" || message === "[COMPLETED]") {
-                prevState.data[activePromptIndex].isLoading = false;
-                prevState.data[activePromptIndex].isCompleted = true;
+              if (message === "[COMPLETED]") {
+                newState.data[activePromptIndex] = {
+                  ...newState.data[activePromptIndex],
+                  isLoading: false,
+                  isCompleted: true,
+                };
               }
 
-              return { id: prevState.id, created_at: prevState.created_at, data: [...prevState.data] };
+              return newState;
             });
           }
         } catch {
-          console.error(msg);
-          // TODO: this is triggered event when there is no error
-          // onError(msg.data.slice(0, 100));
+          console.info("invalid incoming msg:", msg);
         }
       },
       onerror(err) {
@@ -694,8 +706,9 @@ const ChatMode: React.FC<Props> = ({ setGeneratedExecution, onError, template })
 
   const abortConnection = () => {
     abortController.current.abort();
-    setGeneratedExecution(null);
+    dispatch(setGeneratedExecution(null));
     dispatch(setGeneratingStatus(false));
+
     if (newExecutionId) {
       stopExecution(newExecutionId);
     }

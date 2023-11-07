@@ -1,15 +1,15 @@
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
-import { Prompts } from "@/core/api/dto/prompts";
 
 interface Props {
-  prompt: Prompts | null;
+  title: string;
+  order: number;
   isMobile: boolean;
 }
 
-export default function GeneratedExecutionFooter({ prompt, isMobile }: Props) {
-  if (!prompt) {
+export default function GeneratedExecutionFooter({ title, order, isMobile }: Props) {
+  if (!title || !order) {
     return null;
   }
 
@@ -34,7 +34,7 @@ export default function GeneratedExecutionFooter({ prompt, isMobile }: Props) {
           opacity: 0.3,
         }}
       >
-        Prompt #{prompt.order}: {prompt.title}
+        Prompt #{order}: {title}
       </Typography>
     </Box>
   );

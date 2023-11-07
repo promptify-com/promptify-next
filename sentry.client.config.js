@@ -7,7 +7,8 @@ if (process.env.NEXT_PUBLIC_SENTRY_DSN && process.env.NODE_ENV === 'production')
             new Sentry.BrowserTracing(),
             new Sentry.Replay(),
         ],
-        tracesSampleRate: 0.5,
+        tracePropagationTargets: [/^https:\/\/api.promptify.com/],
+        tracesSampleRate: 0.8,
         replaysSessionSampleRate: 0.1,
         replaysOnErrorSampleRate: 1.0,
         ignoreErrors: [

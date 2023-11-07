@@ -85,8 +85,9 @@ export const DetailsCard: React.FC<Props> = ({ templateData }) => {
               fontSize={12}
               fontWeight={500}
               color={"grey.600"}
-              dangerouslySetInnerHTML={{ __html: templateData.category?.name }}
-            />
+            >
+              {templateData.category?.name}
+            </Typography>
           </Stack>
           <Stack
             direction={"row"}

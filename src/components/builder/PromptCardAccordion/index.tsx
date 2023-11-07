@@ -65,7 +65,7 @@ const PromptCardAccordion = ({
 
   const promptId = prompt.id! ?? prompt.temp_id;
   const originalIndex = findPromptIndex(promptId);
-  const [{ isDragging }, drag] = useDrag(
+  const [{ isDragging }, drag, preview] = useDrag(
     () => ({
       type: "prompt",
       item: { id: promptId, originalIndex },
@@ -97,7 +97,7 @@ const PromptCardAccordion = ({
 
   return (
     <Box
-      ref={(node: ConnectableElement) => drag(drop(node))}
+      ref={(node: ConnectableElement) => preview(drop(node))}
       sx={{
         bgcolor: "surface.1",
         m: "24px 0 !important",
@@ -119,6 +119,7 @@ const PromptCardAccordion = ({
         deletePrompt={deletePrompt}
         duplicatePrompt={duplicatePrompt}
         engines={engines}
+        dragPreview={(node: ConnectableElement) => drag(drop(node))}
       />
       <Divider sx={{ borderColor: "surface.3" }} />
       <Box

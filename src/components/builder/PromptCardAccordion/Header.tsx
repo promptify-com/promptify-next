@@ -5,6 +5,7 @@ import { Button, IconButton, Popover, Stack, Tooltip, Typography } from "@mui/ma
 import React, { useState } from "react";
 import { EngineParamsSlider } from "../EngineParamsSlider";
 import { Engine } from "@/core/api/dto/templates";
+import { ConnectDragSource } from "react-dnd";
 
 interface Props {
   prompt: IEditPrompts;
@@ -13,9 +14,10 @@ interface Props {
   deletePrompt: () => void;
   duplicatePrompt: () => void;
   engines: Engine[];
+  dragPreview: ConnectDragSource;
 }
 
-export const Header = ({ prompt, order, setPrompt, deletePrompt, duplicatePrompt, engines }: Props) => {
+export const Header = ({ prompt, order, setPrompt, deletePrompt, duplicatePrompt, engines, dragPreview }: Props) => {
   const [showEngines, setShowEngines] = useState(false);
   const [enginesAnchor, setEnginesAnchor] = useState<HTMLElement | null>(null);
   const [showSettings, setShowSettings] = useState(false);
@@ -41,17 +43,20 @@ export const Header = ({ prompt, order, setPrompt, deletePrompt, duplicatePrompt
         gap={2}
         p={"12px"}
       >
-        <Menu
+        <Button
+          ref={dragPreview}
           sx={{
             width: 24,
             height: 24,
-            opacity: 0.3,
-            cursor: "pointer",
+            minWidth: "auto",
+            opacity: 0.4,
             ":hover": {
               opacity: 1,
             },
           }}
-        />
+        >
+          <Menu />
+        </Button>
         <Typography>#{order}</Typography>
         <Button
           endIcon={<ArrowDropDown />}

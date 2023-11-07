@@ -76,7 +76,7 @@ interface ExecutionCardProps {
   setDeleteAllow: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const ExecutionCard = ({
+const ExecutionCardInternal = ({
   execution,
   chooseExecution,
   selectedExecution,
@@ -166,7 +166,7 @@ const ExecutionCard = ({
   );
 };
 
-const ExecutionsList = ({
+const ExecutionsListInternal = ({
   executions,
   chooseExecution,
   selectedExecution,
@@ -184,7 +184,7 @@ const ExecutionsList = ({
   >
     {executions.length ? (
       executions.map(exec => (
-        <ExecutionCard
+        <ExecutionCardInternal
           key={exec.id}
           execution={exec}
           chooseExecution={chooseExecution}
@@ -397,7 +397,7 @@ export const ExecutionsTabs: React.FC<Props> = ({
         index={0}
       >
         <Stack height={"100%"}>
-          <ExecutionsList
+          <ExecutionsListInternal
             executions={executions}
             chooseExecution={chooseExecution}
             palette={palette}
@@ -429,7 +429,7 @@ export const ExecutionsTabs: React.FC<Props> = ({
         index={1}
       >
         <Stack height={"100%"}>
-          <ExecutionsList
+          <ExecutionsListInternal
             executions={savedExecutions}
             chooseExecution={chooseExecution}
             palette={palette}
