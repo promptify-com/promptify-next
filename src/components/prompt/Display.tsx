@@ -10,9 +10,7 @@ import ParagraphPlaceholder from "@/components/placeholders/ParagraphPlaceholder
 import { useRouter } from "next/router";
 import { SparkExportPopup } from "../dialog/SparkExportPopup";
 import { isDesktopViewPort } from "@/common/helpers";
-import ChatMode from "./generate/ChatBox";
 import useBrowser from "@/hooks/useBrowser";
-import ClientOnly from "@/components/base/ClientOnly";
 import GeneratedExecutionFooter from "./GeneratedExecutionFooter";
 import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
@@ -138,7 +136,6 @@ export const Display: React.FC<Props> = ({ templateData, onError, hashedExecutio
 
     return null;
   }, [generatedExecution]);
-  const showChatForm = !!templateData?.questions?.length && templateData?.status === "PUBLISHED";
 
   return (
     <Grid
@@ -149,7 +146,6 @@ export const Display: React.FC<Props> = ({ templateData, onError, hashedExecutio
       <Box
         ref={containerRef}
         bgcolor={"surface.1"}
-        borderRadius={"16px"}
         minHeight={{ xs: "100vh", md: "calc(100vh - (95px + 24px))" }}
         sx={{
           position: "relative",
@@ -188,24 +184,6 @@ export const Display: React.FC<Props> = ({ templateData, onError, hashedExecutio
           )}
         </Box>
       </Box>
-      {isDesktopView && showChatForm && (
-        <Box
-          sx={{
-            position: "sticky",
-            bottom: currentGeneratedPrompt ? "30px" : "0px",
-            left: 0,
-            right: 0,
-          }}
-        >
-          <ClientOnly>
-            <ChatMode
-              key={templateData.id}
-              onError={onError}
-              template={templateData}
-            />
-          </ClientOnly>
-        </Box>
-      )}
       {currentGeneratedPrompt && (
         <GeneratedExecutionFooter
           title={currentGeneratedPrompt.title}

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, Dispatch, SetStateAction } from "react";
-import { Grid } from "@mui/material";
+import { Grid, Stack } from "@mui/material";
 
 import { Message } from "./Message";
 import { IMessage } from "@/common/types/chat";
@@ -29,12 +29,9 @@ export const ChatInterface = ({ messages, onChange, setIsSimulaitonStreaming }: 
   const lastMessage = messages[messages.length - 1];
 
   return (
-    <Grid
+    <Stack
       ref={messagesContainerRef}
-      display={"flex"}
-      width={"100%"}
-      flexDirection={"column"}
-      alignItems={"start"}
+      height={"calc(100% - 72px)"}
       pb={"8px"}
       sx={{
         overflow: "auto",
@@ -54,6 +51,7 @@ export const ChatInterface = ({ messages, onChange, setIsSimulaitonStreaming }: 
         },
       }}
     >
+      <div style={{ marginTop: "auto" }}></div>
       {messages.map((msg, idx) => (
         <Message
           key={idx}
@@ -66,6 +64,6 @@ export const ChatInterface = ({ messages, onChange, setIsSimulaitonStreaming }: 
           lastMessage={lastMessage}
         />
       ))}
-    </Grid>
+    </Stack>
   );
 };

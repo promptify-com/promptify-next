@@ -1,5 +1,5 @@
 import React, { useState, useMemo, memo, useEffect, useRef } from "react";
-import { Accordion, AccordionDetails, AccordionSummary, Grid, Typography, Button, Stack } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Grid, Typography, Button, Stack, Box } from "@mui/material";
 import { Block, ExpandLess, ExpandMore } from "@mui/icons-material";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { useRouter } from "next/router";
@@ -755,170 +755,122 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
   };
 
   return (
-    <Grid
+    <Box
       width={"100%"}
-      overflow={"hidden"}
-      borderRadius={"16px"}
-      {...(isDesktopView && { border: "1px solid rgba(225, 226, 236, .5)" })}
+      height={"100%"}
     >
-      <Accordion
-        expanded={chatExpanded}
-        onChange={() => setChatExpanded(prev => !prev)}
+      <Stack
+        direction={"row"}
+        alignItems={"center"}
         sx={{
-          boxShadow: "none",
           bgcolor: "surface.1",
-          borderRadius: "16px",
-          overflow: "hidden",
-          ".MuiAccordionDetails-root": {
-            p: "0",
-          },
-          ".MuiAccordionSummary-root": {
-            minHeight: "48px",
-            ":hover": {
-              opacity: 0.8,
-              svg: {
-                color: "primary.main",
-              },
-            },
-          },
-          ".MuiAccordionSummary-content": {
-            m: 0,
-          },
+          p: "24px 8px 24px 16px",
         }}
       >
-        <AccordionSummary sx={{ display: { xs: "none", md: "flex" } }}>
-          <Grid
-            display={"flex"}
-            alignItems={"center"}
-            gap={"16px"}
-            width={"100%"}
-            justifyContent={"space-between"}
-          >
-            <Grid
-              display={"flex"}
-              alignItems={"center"}
-              gap={"16px"}
-            >
-              {!chatExpanded ? <ExpandLess sx={{ fontSize: 16 }} /> : <ExpandMore sx={{ fontSize: 16 }} />}
-
-              <Typography
-                px={"8px"}
-                sx={{
-                  fontSize: 13,
-                  lineHeight: "22px",
-                  letterSpacing: "0.46px",
-                  color: "onSurface",
-                  opacity: 0.8,
-                }}
-              >
-                Chat with Promptify
-              </Typography>
-            </Grid>
-            {isGenerating && (
-              <Button
-                variant="text"
-                startIcon={<Block />}
-                sx={{
-                  border: "1px solid",
-                  height: "22px",
-                  p: "15px",
-                  fontSize: 13,
-                  fontWeight: 500,
-                  ":hover": {
-                    bgcolor: "action.hover",
-                  },
-                }}
-                onClick={e => {
-                  e.stopPropagation();
-                  abortConnection();
-                }}
-              >
-                Abort
-              </Button>
-            )}
-          </Grid>
-        </AccordionSummary>
-        <AccordionDetails
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "flex-start",
-            gap: "8px",
-            maxHeight: { xs: "70vh", md: "35svh" },
-            ...(!isDesktopView && { minHeight: { xs: `calc(100vh - ${BottomTabsMobileHeight} )` } }),
-            borderTop: { xs: "none", md: "2px solid #ECECF4" },
-          }}
+        <Typography
+          fontSize={12}
+          fontWeight={500}
+          letterSpacing={2}
+          textTransform={"uppercase"}
         >
-          <ChatInterface
-            messages={messages}
-            onChange={handleUserInput}
-            setIsSimulaitonStreaming={setIsSimulaitonStreaming}
+          Chat With Promptify
+        </Typography>
+        {isGenerating && (
+          <Button
+            variant="text"
+            startIcon={<Block />}
+            sx={{
+              border: "1px solid",
+              height: "22px",
+              p: "15px",
+              fontSize: 13,
+              fontWeight: 500,
+              ":hover": {
+                bgcolor: "action.hover",
+              },
+            }}
+            onClick={e => {
+              e.stopPropagation();
+              abortConnection();
+            }}
+          >
+            Abort
+          </Button>
+        )}
+      </Stack>
+      <Stack
+        justifyContent={"flex-end"}
+        height={"calc(100% - (66px + 72px))"}
+      >
+        <ChatInterface
+          messages={messages}
+          onChange={handleUserInput}
+          setIsSimulaitonStreaming={setIsSimulaitonStreaming}
+        />
+        <VaryModal
+          open={varyOpen}
+          setOpen={setVaryOpen}
+          onSubmit={variationTxt => validateVary(variationTxt)}
+        />
+        {currentUser?.id ? (
+          <ChatInput
+            answers={answers}
+            onAnswerClear={handleAnswerClear}
+            onSubmit={handleUserInput}
+            disabled={disableChat || isValidatingAnswer || disableChatInput}
+            disabledTags={disableChat || isValidatingAnswer || disableChatInput || isGenerating}
+            onVary={() => setVaryOpen(true)}
+            showGenerate={Boolean((showGenerateButton || canShowGenerateButton) && currentUser?.id)}
+            onGenerate={generateExecutionHandler}
+            isValidating={isValidatingAnswer}
+            disabledButton={!disabledButton}
           />
-          <VaryModal
-            open={varyOpen}
-            setOpen={setVaryOpen}
-            onSubmit={variationTxt => validateVary(variationTxt)}
-          />
-          {currentUser?.id ? (
-            <ChatInput
-              answers={answers}
-              onAnswerClear={handleAnswerClear}
-              onSubmit={handleUserInput}
-              disabled={disableChat || isValidatingAnswer || disableChatInput}
-              disabledTags={disableChat || isValidatingAnswer || disableChatInput || isGenerating}
-              onVary={() => setVaryOpen(true)}
-              showGenerate={Boolean((showGenerateButton || canShowGenerateButton) && currentUser?.id)}
-              onGenerate={generateExecutionHandler}
-              isValidating={isValidatingAnswer}
-              disabledButton={!disabledButton}
-            />
-          ) : (
-            <Stack
-              direction={"column"}
-              alignItems={"center"}
-              justifyContent={"center"}
-              gap={1}
-              width={"100%"}
-              p={"16px 8px 16px 16px"}
+        ) : (
+          <Stack
+            direction={"column"}
+            alignItems={"center"}
+            justifyContent={"center"}
+            gap={1}
+            width={"100%"}
+            p={"16px 8px 16px 16px"}
+          >
+            <Button
+              onClick={() => {
+                router.push("/signin");
+              }}
+              variant={"contained"}
+              startIcon={
+                <LogoApp
+                  width={18}
+                  color="white"
+                />
+              }
+              sx={{
+                flex: 1,
+                p: "10px 25px",
+                fontWeight: 500,
+                borderColor: "primary.main",
+                borderRadius: "999px",
+                bgcolor: "primary.main",
+                color: "onPrimary",
+                whiteSpace: "pre-line",
+                ":hover": {
+                  bgcolor: "surface.1",
+                  color: "primary.main",
+                },
+              }}
             >
-              <Button
-                onClick={() => {
-                  router.push("/signin");
-                }}
-                variant={"contained"}
-                startIcon={
-                  <LogoApp
-                    width={18}
-                    color="white"
-                  />
-                }
-                sx={{
-                  flex: 1,
-                  p: "10px 25px",
-                  fontWeight: 500,
-                  borderColor: "primary.main",
-                  borderRadius: "999px",
-                  bgcolor: "primary.main",
-                  color: "onPrimary",
-                  whiteSpace: "pre-line",
-                  ":hover": {
-                    bgcolor: "surface.1",
-                    color: "primary.main",
-                  },
-                }}
+              <Typography
+                ml={2}
+                color={"inherit"}
               >
-                <Typography
-                  ml={2}
-                  color={"inherit"}
-                >
-                  Sign in or Create an account
-                </Typography>
-              </Button>
-            </Stack>
-          )}
-        </AccordionDetails>
-      </Accordion>
-    </Grid>
+                Sign in or Create an account
+              </Typography>
+            </Button>
+          </Stack>
+        )}
+      </Stack>
+    </Box>
   );
 };
 
