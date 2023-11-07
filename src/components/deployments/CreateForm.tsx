@@ -7,37 +7,41 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 
-import type { CreateDeployment, FormikCreateDeployment } from "@/common/types/deployments";
+import type { FormikCreateDeployment } from "@/common/types/deployments";
 import BaseButton from "../base/BaseButton";
-import {
-  useCreateDeploymentMutation,
-  useGetInstancesQuery,
-  useGetRegionsByQueryParamsQuery,
-} from "@/core/api/deployments";
 import { models } from "@/common/constants";
 import { useAppSelector } from "@/hooks/useStore";
 import InstanceLabel from "./InstanceLabel";
 import { allFieldsFilled } from "@/common/helpers";
 
+import Typography from "@mui/material/Typography";
+import CircularProgress from "@mui/material/CircularProgress";
+import Logs from "./Logs";
+import { useDeployment } from "@/hooks/deployments/useDeployment";
+import { useFormSelects } from "@/hooks/deployments/useFormSelects";
+
 interface CreateFormProps {
   onClose: () => void;
 }
 
+const DataLoading = ({ loading }: { loading: boolean }) => {
+  return (
+    <>
+      {loading && (
+        <Stack
+          direction={"row"}
+          justifyContent={"center"}
+        >
+          <CircularProgress />
+        </Stack>
+      )}
+    </>
+  );
+};
+
 const CreateForm = ({ onClose }: CreateFormProps) => {
-  const [createDeployment] = useCreateDeploymentMutation();
-
   const currentUser = useAppSelector(state => state.user.currentUser);
-
-  const handleCreateDeployment = async (values: FormikCreateDeployment) => {
-    const { model, instance } = values;
-    const payload: CreateDeployment = {
-      instance,
-      model,
-    };
-    const data = await createDeployment(payload).unwrap();
-    console.log(data);
-    onClose();
-  };
+  const { handleCreateDeployment, handleClose, isDeploying, errorMessage, logs } = useDeployment(onClose);
 
   const formik = useFormik<FormikCreateDeployment>({
     initialValues: {
@@ -52,24 +56,14 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
   });
   const { region, provider, instance, llm, model } = formik.values;
 
-  const isProviderSelected = provider !== "";
-  const isRegionSelected = region !== "";
-
-  const { data: instances, isFetching: isInstancesFetching } = useGetInstancesQuery(
-    { region: region.toString() },
-    { skip: !isRegionSelected },
-  );
-
-  const { data: regions, isFetching: isRegionFetching } = useGetRegionsByQueryParamsQuery(
-    { provider: provider.toString() },
-    { skip: !isProviderSelected },
-  );
+  const { instances, regions, isProviderSelected, isRegionSelected, isInstanceFetching, isRegionFetching } =
+    useFormSelects(provider, region);
 
   return (
     <form onSubmit={formik.handleSubmit}>
       <Grid
         display={"flex"}
-        direction={"column"}
+        flexDirection={"column"}
         alignItems={"center"}
         pt={1}
         pb={6}
@@ -81,6 +75,7 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
             value={provider}
             label="Select   Cloud Provider"
             autoWidth
+            disabled={isDeploying}
             MenuProps={selectMenuProps}
             onChange={event => {
               formik.setFieldValue("provider", event.target.value);
@@ -94,14 +89,16 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
           <Select
             value={region}
             label="Select Region"
-            disabled={!isProviderSelected}
+            disabled={!isProviderSelected || isDeploying}
             variant={!isProviderSelected ? "filled" : "outlined"}
             autoWidth
             MenuProps={selectMenuProps}
             onChange={event => {
               formik.setFieldValue("region", event.target.value);
+              formik.setFieldValue("instance", "");
             }}
           >
+            <DataLoading loading={isRegionFetching} />
             {regions &&
               regions.map(region => (
                 <MenuItem
@@ -119,13 +116,18 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
             value={instance}
             label="Select Instance"
             autoWidth
-            disabled={!isRegionSelected}
+            disabled={!isRegionSelected || isDeploying}
             variant={!isRegionSelected ? "filled" : "outlined"}
             MenuProps={selectMenuProps}
             onChange={event => {
               formik.setFieldValue("instance", event.target.value);
             }}
           >
+            {!instances?.length ? (
+              <MenuItem disabled>No available instances found in the selected region</MenuItem>
+            ) : (
+              <DataLoading loading={isInstanceFetching} />
+            )}
             {instances &&
               instances.map(instance => (
                 <MenuItem
@@ -142,6 +144,7 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
           <Select
             value={llm}
             label="Select LLM source"
+            disabled={isDeploying}
             autoWidth
             MenuProps={selectMenuProps}
             onChange={event => {
@@ -157,6 +160,7 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
             value={model}
             label="Select Model"
             autoWidth
+            disabled={isDeploying}
             MenuProps={selectMenuProps}
             onChange={event => {
               formik.setFieldValue("model", event.target.value);
@@ -173,27 +177,53 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
           </Select>
         </FormControl>
       </Grid>
-
+      <Grid
+        item
+        mb={3}
+        display={"flex"}
+        flexDirection={"column"}
+        gap={1}
+      >
+        {errorMessage && (
+          <Typography
+            variant="body2"
+            color={"red"}
+          >
+            {errorMessage}
+          </Typography>
+        )}
+        <Logs items={logs} />
+      </Grid>
       <Stack
         direction={"row"}
         justifyContent={"end"}
       >
-        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={handleClose}>{isDeploying ? "Close" : "Cancel"}</Button>{" "}
         <BaseButton
           type="submit"
           variant={"contained"}
           color={"primary"}
-          disabled={!allFieldsFilled(formik.values)}
+          disabled={!allFieldsFilled(formik.values) || isDeploying}
           sx={{
             p: "6px 16px",
             borderRadius: "8px",
             ":disabled": {
               border: "none",
             },
+            ":hover": {
+              bgcolor: "primary",
+            },
           }}
           autoFocus
         >
-          Run
+          {!isDeploying ? (
+            <span>Deploy</span>
+          ) : (
+            <>
+              <Typography mr={1}>Deploying</Typography>
+              <CircularProgress size={18} />
+            </>
+          )}
         </BaseButton>
       </Stack>
     </form>
@@ -204,7 +234,7 @@ const selectMenuProps = {
   PaperProps: {
     sx: {
       maxHeight: 300,
-      minWidth: { md: 520 },
+      width: { md: 520 },
     },
   },
 };

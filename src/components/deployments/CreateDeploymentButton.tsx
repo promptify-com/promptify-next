@@ -6,7 +6,7 @@ import { alpha } from "@mui/material";
 import BaseButton from "../base/BaseButton";
 import CreateDeploymentPopup from "./CreateDeploymentPopup";
 
-function CreateDeploymentButton() {
+function CreateDeploymentButton({ onRefetch }: { onRefetch: () => void }) {
   const [openpopup, setOpenpopup] = useState(false);
   return (
     <>
@@ -19,7 +19,14 @@ function CreateDeploymentButton() {
       >
         Create
       </BaseButton>
-      {openpopup && <CreateDeploymentPopup onClose={() => setOpenpopup(false)} />}
+      {openpopup && (
+        <CreateDeploymentPopup
+          onClose={() => {
+            setOpenpopup(false);
+            onRefetch();
+          }}
+        />
+      )}
     </>
   );
 }
