@@ -1,12 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { Box, Button, IconButton, Stack, Tooltip, Typography, alpha, useTheme } from "@mui/material";
-import { Edit, InfoOutlined } from "@mui/icons-material";
+import { Box, Button, Divider, IconButton, Stack, Tooltip, Typography, alpha, useTheme } from "@mui/material";
+import {
+  Bookmark,
+  BookmarkBorder,
+  Delete,
+  DeleteOutline,
+  Edit,
+  InfoOutlined,
+  ShareOutlined,
+} from "@mui/icons-material";
 import { TemplatesExecutions } from "@/core/api/dto/templates";
-import ShareIcon from "@/assets/icons/ShareIcon";
 import { useAppSelector } from "@/hooks/useStore";
 import { RenameForm } from "../common/forms/RenameForm";
-import { useUpdateExecutionMutation } from "@/core/api/executions";
+import {
+  useDeleteExecutionMutation,
+  useExecutionFavoriteMutation,
+  useUpdateExecutionMutation,
+} from "@/core/api/executions";
 import useTruncate from "@/hooks/useTruncate";
+import { DeleteDialog } from "../dialog/DeleteDialog";
 
 interface Props {
   selectedExecution: TemplatesExecutions | null;
@@ -17,9 +29,13 @@ export const DisplayActions: React.FC<Props> = ({ selectedExecution, onOpenExpor
   const { palette } = useTheme();
   const { truncate } = useTruncate();
   const [updateExecution, { isError, isLoading }] = useUpdateExecutionMutation();
+  const [deleteExecution] = useDeleteExecutionMutation();
+  const [favoriteExecution] = useExecutionFavoriteMutation();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
+
   const [executionTitle, setExecutionTitle] = useState(selectedExecution?.title);
-  const [renameAllow, setRenameAllow] = useState(false);
+  const [renameAllowed, setRenameAllowed] = useState(false);
+  const [deleteAllowed, setDeleteAllowed] = useState(false);
 
   useEffect(() => {
     setExecutionTitle(selectedExecution?.title);
@@ -32,8 +48,18 @@ export const DisplayActions: React.FC<Props> = ({ selectedExecution, onOpenExpor
         data: { title: executionTitle },
       });
       if (!isError && !isLoading) {
-        setRenameAllow(false);
+        setRenameAllowed(false);
       }
+    }
+  };
+
+  const saveExecution = async () => {
+    if (!!!selectedExecution || selectedExecution?.is_favorite) return;
+
+    try {
+      await favoriteExecution(selectedExecution.id);
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -59,7 +85,7 @@ export const DisplayActions: React.FC<Props> = ({ selectedExecution, onOpenExpor
         <Stack
           display={{ xs: "none", md: "flex" }}
           direction={"row"}
-          alignItems={"center"}
+          alignItems={"baseline"}
           justifyContent={"space-between"}
           gap={1}
         >
@@ -67,9 +93,9 @@ export const DisplayActions: React.FC<Props> = ({ selectedExecution, onOpenExpor
             direction={"row"}
             alignItems={"center"}
             gap={1}
-            minWidth={"30%"}
+            width={"30%"}
           >
-            {!renameAllow ? (
+            {!renameAllowed ? (
               <Button
                 endIcon={<Edit />}
                 sx={{
@@ -84,10 +110,21 @@ export const DisplayActions: React.FC<Props> = ({ selectedExecution, onOpenExpor
                   ":hover": {
                     bgcolor: "surface.2",
                   },
+                  svg: {
+                    fontSize: "18px !important",
+                  },
                 }}
-                onClick={() => setRenameAllow(true)}
+                onClick={() => setRenameAllowed(true)}
               >
-                {truncate(executionTitle || "", { length: 35 })}
+                <Typography
+                  sx={{
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  {truncate(executionTitle || "", { length: 35 })}
+                </Typography>
               </Button>
             ) : (
               <RenameForm
@@ -96,7 +133,7 @@ export const DisplayActions: React.FC<Props> = ({ selectedExecution, onOpenExpor
                 onChange={setExecutionTitle}
                 onSave={renameSave}
                 onCancel={() => {
-                  setRenameAllow(false);
+                  setRenameAllowed(false);
                   setExecutionTitle(selectedExecution?.title);
                 }}
                 disabled={isLoading}
@@ -108,18 +145,52 @@ export const DisplayActions: React.FC<Props> = ({ selectedExecution, onOpenExpor
             alignItems={"center"}
             gap={1}
           >
+            <Tooltip
+              title="Delete"
+              enterDelay={1000}
+              enterNextDelay={1000}
+            >
+              <IconButton
+                sx={actionBtnStyle}
+                onClick={e => {
+                  e.stopPropagation();
+                  setDeleteAllowed(true);
+                }}
+              >
+                <DeleteOutline />
+              </IconButton>
+            </Tooltip>
+            <Divider
+              orientation="vertical"
+              sx={{ width: "1px", height: "25px", borderColor: "surface.5" }}
+            />
+            <Tooltip
+              title="Save"
+              enterDelay={1000}
+              enterNextDelay={1000}
+            >
+              <IconButton
+                sx={actionBtnStyle}
+                onClick={saveExecution}
+              >
+                {selectedExecution?.is_favorite ? <Bookmark /> : <BookmarkBorder />}
+              </IconButton>
+            </Tooltip>
+            <Divider
+              orientation="vertical"
+              sx={{ width: "1px", height: "25px", borderColor: "surface.5" }}
+            />
             {selectedExecution?.id && (
-              <Tooltip title="Export">
+              <Tooltip
+                title="Share"
+                enterDelay={1000}
+                enterNextDelay={1000}
+              >
                 <IconButton
                   onClick={onOpenExport}
-                  sx={{
-                    border: "none",
-                    "&:hover": {
-                      bgcolor: "surface.2",
-                    },
-                  }}
+                  sx={actionBtnStyle}
                 >
-                  <ShareIcon />
+                  <ShareOutlined />
                 </IconButton>
               </Tooltip>
             )}
@@ -156,20 +227,38 @@ export const DisplayActions: React.FC<Props> = ({ selectedExecution, onOpenExpor
                   },
                 }}
               >
-                <ShareIcon />
+                <ShareOutlined />
               </IconButton>
             </Tooltip>
           </Stack>
         </Box>
       </Box>
+
+      {deleteAllowed && selectedExecution && (
+        <DeleteDialog
+          open={deleteAllowed}
+          dialogTitle="Delete Spark"
+          dialogContentText={`Are you sure you want to delete ${selectedExecution.title || "this"} Spark?`}
+          onClose={() => {
+            setDeleteAllowed(false);
+          }}
+          onSubmit={async () => {
+            await deleteExecution(selectedExecution.id);
+            setDeleteAllowed(false);
+          }}
+        />
+      )}
     </Box>
   );
 };
 
-const iconButtonStyle = {
+const actionBtnStyle = {
   border: "none",
   p: "8px",
-  color: "onBackground",
-  opacity: 0.8,
-  ":hover": { opacity: 1, color: "onBackground" },
+  "&:hover": {
+    bgcolor: "surface.2",
+  },
+  svg: {
+    fontSize: "16px",
+  },
 };
