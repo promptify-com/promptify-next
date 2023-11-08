@@ -1,10 +1,11 @@
 import { CollectionMutationParams, Templates } from "./dto/templates";
 import { baseApi } from "./api";
+import type { ICollectionById } from "@/common/types/collection";
 
 export const collectionsApi = baseApi.injectEndpoints({
   endpoints: builder => {
     return {
-      getCollectionTemplates: builder.query<any, number>({
+      getCollectionTemplates: builder.query<ICollectionById, number>({
         query: (id: number) => ({
           url: `/api/meta/collections/${id}`,
           method: "get",
