@@ -1,8 +1,10 @@
-import { Box, Skeleton } from "@mui/material";
+import Box from "@mui/material/Box";
+import Skeleton from "@mui/material/Skeleton";
 
-export default function ListItemPlaceholder() {
-  return (
+export default function ListItemPlaceholder({ count = 5 }) {
+  return Array.from({ length: count }).map((_, index) => (
     <Box
+      key={index}
       sx={{
         minHeight: 48,
         mx: 1,
@@ -44,5 +46,5 @@ export default function ListItemPlaceholder() {
         />
       </Box>
     </Box>
-  );
+  ));
 }

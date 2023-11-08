@@ -19,12 +19,9 @@ import { styled, Theme, CSSObject } from "@mui/material/styles";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { SidebarIcon } from "@/assets/icons/Sidebar";
 import { Collections } from "@/components/common/sidebar/Collections";
-import { useGetCollectionTemplatesQuery } from "@/core/api/collections";
 import { ExploreFilterSideBar } from "@/components/explorer/ExploreFilterSideBar";
 import { SideBarCloseIcon } from "@/assets/icons/SideBarClose";
-import { useSelector } from "react-redux";
 import { isValidUserFn } from "@/core/store/userSlice";
-import { RootState } from "@/core/store";
 import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setOpenDefaultSidebar } from "@/core/store/sidebarSlice";
@@ -78,19 +75,11 @@ export const DefaultSidebar: React.FC<SideBarProps> = ({ fullHeight = false }) =
   const pathname = usePathname();
   const dispatch = useAppDispatch();
   const isExplorePage = pathname.split("/")[1] === "explore";
-  const isValidUser = useSelector(isValidUserFn);
-  const currentUser = useSelector((state: RootState) => state.user.currentUser);
-  const { data: collections, isLoading: isCollectionsLoading } = useGetCollectionTemplatesQuery(
-    currentUser?.favorite_collection_id as number,
-    {
-      skip: !isValidUser,
-    },
-  );
+  const isValidUser = useAppSelector(isValidUserFn);
   const { tags, engines } = useGetTemplatesByFilter();
   const [expandedOnHover, setExpandedOnHover] = useState<boolean>(false);
   const [showExpandIcon, setShowExpandIcon] = useState<boolean>(false);
   const [showFilters, setShowFilters] = useState<boolean>(true);
-
   const open = useAppSelector(state => state.sidebar.defaultSidebarOpen);
 
   const toggleSidebar = () => {
@@ -322,12 +311,7 @@ export const DefaultSidebar: React.FC<SideBarProps> = ({ fullHeight = false }) =
           ))}
           <Divider />
 
-          <Collections
-            favCollection={collections}
-            collectionLoading={isCollectionsLoading}
-            isValidUser={isValidUser}
-            sidebarOpen={open || expandedOnHover}
-          />
+          <Collections sidebarOpen={open || expandedOnHover} />
         </Box>
       </Drawer>
     </Box>
