@@ -57,6 +57,7 @@ export default function Header({ template }: TemplateHeaderProps) {
       justifyContent={"space-between"}
       sx={{
         p: "8px 16px",
+        bgcolor: "surface.1",
       }}
     >
       <Breadcrumbs

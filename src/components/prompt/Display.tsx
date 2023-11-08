@@ -145,7 +145,7 @@ export const Display: React.FC<Props> = ({ templateData, onError, hashedExecutio
     >
       <Box
         ref={containerRef}
-        bgcolor={"surface.1"}
+        bgcolor={"surface.3"}
         minHeight={{ xs: "100vh", md: "calc(100vh - (95px + 24px))" }}
         sx={{
           position: "relative",
@@ -153,14 +153,9 @@ export const Display: React.FC<Props> = ({ templateData, onError, hashedExecutio
         }}
       >
         <DisplayActions
-          executions={executions ?? []}
           selectedExecution={selectedExecution}
-          setSelectedExecution={_execution => {
-            handleSelectExecution({ execution: _execution, resetHash: true });
-          }}
-          onSearch={text => setSearch(text)}
           onOpenExport={() => setOpenExportpopup(true)}
-          sparkHashQueryParam={sparkHashQueryParam.current}
+          // sparkHashQueryParam={sparkHashQueryParam.current}
         />
         {openExportPopup && activeExecution?.id && (
           <SparkExportPopup
@@ -169,7 +164,13 @@ export const Display: React.FC<Props> = ({ templateData, onError, hashedExecutio
           />
         )}
 
-        <Box sx={{ mx: "15px", opacity: firstLoad ? 0.5 : 1 }}>
+        <Box
+          sx={{
+            opacity: firstLoad ? 0.5 : 1,
+            bgcolor: "surface.1",
+            borderRadius: "16px 16px 0px 0px",
+          }}
+        >
           {executionIsLoading ? (
             <ParagraphPlaceholder />
           ) : !selectedExecution && isGeneratedExecutionEmpty ? (
