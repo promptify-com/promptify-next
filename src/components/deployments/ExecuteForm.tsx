@@ -4,10 +4,12 @@ import BaseButton from "../base/BaseButton";
 import { CreateDeployment, Deployment } from "@/common/types/deployments";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import useToken from "@/hooks/useToken";
-import { Box, FormControl, Input, InputLabel } from "@mui/material";
+import { Box, FormControl, Grid, Input, InputLabel } from "@mui/material";
 import { useEffect, useState } from "react";
 import { parseMessageData } from "@/common/helpers/parseMessageData";
 import { sanitizeHTML } from "@/common/helpers/htmlHelper";
+import MessageSender from "../prompt/generate/MessageSender";
+import ParagraphPlaceholder from "../placeholders/ParagraphPlaceholder";
 interface ExecuteFormProps {
   onClose: () => void;
   item: Deployment;
@@ -16,28 +18,18 @@ interface ExecuteFormProps {
 function ExecuteForm({ onClose, item }: ExecuteFormProps) {
   const token = useToken();
 
-  const [inputValue, setInputValue] = useState("");
   const [executionContent, setExecutionContent] = useState<string[]>([]);
-  const [processedMessages, setProcessedMessages] = useState<string[]>([]);
+  const [isGenerating, setIsGenerating] = useState(false);
 
-  useEffect(() => {
-    // If there's any processing or sorting needed, do it here
-    const processed = executionContent.map(message => {
-      // Process each message if needed, for now, we'll just pass it through
-      return message;
-    });
+  const handleExecute = (value: string) => {
+    setIsGenerating(true);
 
-    // Set the processed messages
-    setProcessedMessages(processed);
-  }, [executionContent]);
-
-  const handleExecute = () => {
     const { instance, model, id } = item;
 
     const payload = {
       instance: instance.id,
       model: model.id,
-      inputs: inputValue,
+      inputs: value,
     };
     const url = `${process.env.NEXT_PUBLIC_API_URL}/api/aithos/deployments/${id}/execute/`;
     fetchEventSource(url, {
@@ -59,18 +51,19 @@ function ExecuteForm({ onClose, item }: ExecuteFormProps) {
         try {
           const parseData = parseMessageData(msg.data);
           const message = parseData.message;
-          if (message === "[CONNECTED]") {
+          if (message === "[CONNECTED]" || message === "[COMPLETED]") {
             return;
           }
           if (message) {
             setExecutionContent(prevState => [...prevState, message]);
+            setIsGenerating(false);
           }
-          console.log(message);
         } catch (error) {
           console.error("Error parsing message data", error);
         }
       },
       onerror(err) {
+        setIsGenerating(false);
         console.log(err, "something went wrong");
       },
     });
@@ -81,21 +74,24 @@ function ExecuteForm({ onClose, item }: ExecuteFormProps) {
       gap={"12px"}
       pt={1}
     >
-      <FormControl>
-        <InputLabel>Type something</InputLabel>
-        <Input
-          type="text"
-          value={inputValue}
-          onChange={e => setInputValue(e.target.value)}
-        />
-      </FormControl>
       <Stack
-        minWidth={{ md: "800px" }}
+        width={{ md: "600px" }}
         direction={"row"}
+        alignItems={"start"}
+        justifyContent={"start"}
+        sx={{
+          overflowY: "auto",
+        }}
         flexWrap={"wrap"}
+        maxHeight={"50vh"}
         gap={1}
       >
-        {processedMessages.map((message, index) => (
+        {isGenerating && (
+          <Grid width={"100%"}>
+            <ParagraphPlaceholder />
+          </Grid>
+        )}
+        {executionContent.map((message, index) => (
           <Box
             key={index}
             display={"flex"}
@@ -141,31 +137,26 @@ function ExecuteForm({ onClose, item }: ExecuteFormProps) {
           />
         ))}
       </Stack>
+
       <Stack
-        mt={4}
         direction={"row"}
         justifyContent={"end"}
+        alignItems={"center"}
+        gap={1}
       >
-        <Button onClick={onClose}>{true ? "Close" : "Cancel"}</Button>
+        <Stack flex={1}>
+          <MessageSender
+            placeholder="Type something"
+            disabled={isGenerating || !!executionContent.length}
+            onSubmit={handleExecute}
+          />
+        </Stack>
         <BaseButton
-          type="submit"
-          variant={"contained"}
-          onClick={() => handleExecute()}
-          color={"primary"}
-          disabled={inputValue === ""}
-          sx={{
-            p: "6px 16px",
-            borderRadius: "8px",
-            ":disabled": {
-              border: "none",
-            },
-            ":hover": {
-              bgcolor: "primary",
-            },
-          }}
-          autoFocus
+          variant="contained"
+          color="primary"
+          onClick={onClose}
         >
-          <span>Execute</span>
+          {true ? "Close" : "Cancel"}
         </BaseButton>
       </Stack>
     </Stack>

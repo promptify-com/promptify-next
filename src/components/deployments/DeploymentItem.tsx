@@ -99,6 +99,8 @@ function DeploymentItem({ item, onDelete }: DeploymentItem) {
         {...(isDesktop ? { pr: "13px" } : { width: "50%" })}
       >
         <Typography
+          display={"flex"}
+          alignItems={"center"}
           sx={{
             fontSize: 12,
             opacity: isDesktop ? 0.4 : 1,
@@ -111,6 +113,7 @@ function DeploymentItem({ item, onDelete }: DeploymentItem) {
             <IconButton
               onClick={onDelete}
               sx={{
+                mt: -0.4,
                 border: "none",
                 "&:hover": {
                   bgcolor: "surface.2",
@@ -129,8 +132,8 @@ function DeploymentItem({ item, onDelete }: DeploymentItem) {
               />
             </IconButton>
           </Tooltip>
+          <ExecuteDeploymentButton item={item} />
         </Typography>
-        <ExecuteDeploymentButton item={item} />
       </Grid>
     </Grid>
   );

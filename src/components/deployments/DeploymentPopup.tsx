@@ -13,7 +13,7 @@ interface DeploymentPopupProps {
 }
 
 function DeployementPopup({ onClose, variant, item }: DeploymentPopupProps) {
-  const PopupTitle = variant === "create" ? "Create New Deployment" : "Execute Deployement";
+  const PopupTitle = variant === "create" ? "Create New Deployment" : `Try ${item?.model.name}`;
   return (
     <Dialog
       open

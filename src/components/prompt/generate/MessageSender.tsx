@@ -5,9 +5,10 @@ import { Send } from "@mui/icons-material";
 interface MessageSenderProps {
   onSubmit: (value: string) => void;
   disabled: boolean;
+  placeholder?: string;
 }
 
-const MessageSender: React.FC<MessageSenderProps> = ({ onSubmit, disabled }) => {
+const MessageSender: React.FC<MessageSenderProps> = ({ onSubmit, disabled, placeholder = "Chat with Promptify" }) => {
   const [localValue, setLocalValue] = useState("");
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -62,7 +63,7 @@ const MessageSender: React.FC<MessageSenderProps> = ({ onSubmit, disabled }) => 
             cursor: disabled ? "not-allowed" : "auto",
           },
         }}
-        placeholder="Chat with Promptify"
+        placeholder={placeholder}
         inputProps={{ "aria-label": "Name" }}
         onChange={e => setLocalValue(e.target.value)}
         value={localValue}
