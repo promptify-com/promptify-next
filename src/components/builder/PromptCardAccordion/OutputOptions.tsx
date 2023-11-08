@@ -23,10 +23,10 @@ interface Props {
   onCancel: () => void;
 }
 
+const titleFormats = ["JSON", "XML", "Markdown", "Custom"];
+
 export const OutputOptions: React.FC<Props> = ({ prompt, onSave, onCancel }) => {
   const [promptData, setPromptData] = useState(prompt);
-
-  const titleFormats = ["JSON", "XML", "Markdown"];
 
   return (
     <Stack
@@ -87,7 +87,7 @@ export const OutputOptions: React.FC<Props> = ({ prompt, onSave, onCancel }) => 
                 {titleFormats.map(format => (
                   <MenuItem
                     key={format}
-                    value={format}
+                    value={format.toLowerCase()}
                   >
                     {format}
                   </MenuItem>
