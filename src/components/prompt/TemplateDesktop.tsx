@@ -3,11 +3,10 @@ import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import { Display } from "./Display";
 import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
-import { alpha } from "@mui/material";
-import { theme } from "@/theme";
 import ClientOnly from "../base/ClientOnly";
 import ChatMode from "./generate/ChatBox";
 import Header from "./Header";
+import { Sidebar } from "./Sidebar";
 
 interface TemplateDesktopProps {
   hashedExecution: TemplatesExecutions | null;
@@ -96,16 +95,9 @@ export default function TemplateDesktop({ template, setErrorMessage, hashedExecu
             />
           </Grid>
         )}
+
+        <Sidebar />
       </Grid>
     </Stack>
   );
 }
-
-const breadcrumbStyle = {
-  color: alpha(theme.palette.text.secondary, 0.45),
-  fontSize: 13,
-  p: "8px 11px",
-  ":hover": {
-    color: theme.palette.text.secondary,
-  },
-};
