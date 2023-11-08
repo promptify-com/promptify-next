@@ -1,6 +1,6 @@
 import Stack from "@mui/material/Stack";
 import type { Templates } from "@/core/api/dto/templates";
-import { Avatar, Breadcrumbs, Button, CardMedia, Link, alpha } from "@mui/material";
+import { Avatar, Box, Breadcrumbs, Button, CardMedia, Link, alpha } from "@mui/material";
 import { ArrowBackIosNew, Tune } from "@mui/icons-material";
 import { theme } from "@/theme";
 import FavoriteIcon from "./FavoriteIcon";
@@ -81,6 +81,7 @@ export default function Header({ template }: TemplateHeaderProps) {
               sx: {
                 color: "secondary.main",
                 fontSize: 13,
+                fontWeight: 500,
                 gap: 1,
                 svg: {
                   width: 20,
@@ -95,17 +96,22 @@ export default function Header({ template }: TemplateHeaderProps) {
             p: "8px 11px",
             color: "secondary.main",
             fontSize: 13,
+            fontWeight: 500,
             gap: 1,
           }}
         >
           <Tune sx={{ fontSize: 20 }} />
           Customize
         </Button>
-        <Button
+        <Stack
+          direction={"row"}
+          alignItems={"center"}
+          gap={0.5}
           sx={{
             p: "8px 11px",
             color: "secondary.main",
             fontSize: 13,
+            fontWeight: 500,
             gap: 1,
           }}
         >
@@ -115,7 +121,7 @@ export default function Header({ template }: TemplateHeaderProps) {
             alt={template.created_by.username}
             sx={{ width: 30, height: 30 }}
           />
-        </Button>
+        </Stack>
       </Stack>
     </Stack>
   );

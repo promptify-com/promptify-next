@@ -1,21 +1,10 @@
-import { type Dispatch, type SetStateAction } from "react";
+import { useState, type Dispatch, type SetStateAction } from "react";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
-import Box from "@mui/material/Box";
-import Accordion from "@mui/material/Accordion";
-import AccordionSummary from "@mui/material/AccordionSummary";
-import Typography from "@mui/material/Typography";
-import ExpandMore from "@mui/icons-material/ExpandMore";
-import AccordionDetails from "@mui/material/AccordionDetails";
-import { DetailsCard } from "./DetailsCard";
-import { Details } from "./Details";
-import { GeneratorForm } from "./GeneratorForm";
 import { Display } from "./Display";
 import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
-import { Avatar, Breadcrumbs, Button, CardMedia, Link, alpha } from "@mui/material";
-import { ArrowBackIosNew, Tune } from "@mui/icons-material";
+import { alpha } from "@mui/material";
 import { theme } from "@/theme";
-import FavoriteIcon from "./FavoriteIcon";
 import ClientOnly from "../base/ClientOnly";
 import ChatMode from "./generate/ChatBox";
 import Header from "./Header";
@@ -28,6 +17,7 @@ interface TemplateDesktopProps {
 
 export default function TemplateDesktop({ template, setErrorMessage, hashedExecution }: TemplateDesktopProps) {
   const isTemplatePublished = template?.status === "PUBLISHED";
+  const [chatFullScreen, setChatFullScreen] = useState(false);
 
   return (
     <Stack gap={"1px"}>
@@ -60,8 +50,7 @@ export default function TemplateDesktop({ template, setErrorMessage, hashedExecu
         }}
       >
         <Stack
-          maxWidth={"430px"}
-          width={"38%"}
+          width={chatFullScreen ? "100%" : "38%"}
           position={"sticky"}
           top={0}
           zIndex={100}
@@ -93,17 +82,20 @@ export default function TemplateDesktop({ template, setErrorMessage, hashedExecu
           </ClientOnly>
         </Stack>
 
-        <Grid
-          flex={1}
-          width={"62%"}
-          display={"block"}
-        >
-          <Display
-            templateData={template}
-            onError={setErrorMessage}
-            hashedExecution={hashedExecution}
-          />
-        </Grid>
+        {!chatFullScreen && (
+          <Grid
+            flex={1}
+            width={"62%"}
+            display={"block"}
+          >
+            <Display
+              templateData={template}
+              onError={setErrorMessage}
+              close={() => setChatFullScreen(true)}
+              hashedExecution={hashedExecution}
+            />
+          </Grid>
+        )}
       </Grid>
     </Stack>
   );

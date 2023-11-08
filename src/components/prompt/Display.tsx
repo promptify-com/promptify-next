@@ -4,7 +4,6 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { ExecutionCard } from "./ExecutionCard";
-import { PromptLiveResponse } from "@/common/types/prompt";
 import { DisplayActions } from "./DisplayActions";
 import ParagraphPlaceholder from "@/components/placeholders/ParagraphPlaceholder";
 import { useRouter } from "next/router";
@@ -21,10 +20,11 @@ import { setGeneratedExecution, setSelectedExecution } from "@/core/store/execut
 interface Props {
   templateData: Templates;
   onError: (errMsg: string) => void;
+  close: () => void;
   hashedExecution: TemplatesExecutions | null;
 }
 
-export const Display: React.FC<Props> = ({ templateData, onError, hashedExecution }) => {
+export const Display: React.FC<Props> = ({ templateData, onError, close, hashedExecution }) => {
   const [firstLoad, setFirstLoad] = useState(true);
   const [search, setSearch] = useState<string>("");
   const router = useRouter();
@@ -155,6 +155,7 @@ export const Display: React.FC<Props> = ({ templateData, onError, hashedExecutio
         <DisplayActions
           selectedExecution={selectedExecution}
           onOpenExport={() => setOpenExportpopup(true)}
+          close={close}
           // sparkHashQueryParam={sparkHashQueryParam.current}
         />
         {openExportPopup && activeExecution?.id && (

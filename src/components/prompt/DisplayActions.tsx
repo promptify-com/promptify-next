@@ -1,14 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Box, Button, Divider, IconButton, Stack, Tooltip, Typography, alpha, useTheme } from "@mui/material";
-import {
-  Bookmark,
-  BookmarkBorder,
-  Delete,
-  DeleteOutline,
-  Edit,
-  InfoOutlined,
-  ShareOutlined,
-} from "@mui/icons-material";
+import { Box, Button, Divider, IconButton, Stack, Tooltip, Typography, useTheme } from "@mui/material";
+import { Bookmark, BookmarkBorder, Close, DeleteOutline, Edit, ShareOutlined } from "@mui/icons-material";
 import { TemplatesExecutions } from "@/core/api/dto/templates";
 import { useAppSelector } from "@/hooks/useStore";
 import { RenameForm } from "../common/forms/RenameForm";
@@ -23,9 +15,10 @@ import { DeleteDialog } from "../dialog/DeleteDialog";
 interface Props {
   selectedExecution: TemplatesExecutions | null;
   onOpenExport: () => void;
+  close: () => void;
 }
 
-export const DisplayActions: React.FC<Props> = ({ selectedExecution, onOpenExport }) => {
+export const DisplayActions: React.FC<Props> = ({ selectedExecution, onOpenExport, close }) => {
   const { palette } = useTheme();
   const { truncate } = useTruncate();
   const [updateExecution, { isError, isLoading }] = useUpdateExecutionMutation();
@@ -66,6 +59,7 @@ export const DisplayActions: React.FC<Props> = ({ selectedExecution, onOpenExpor
   return (
     <Box
       sx={{
+        bgcolor: "surface.3",
         position: { xs: "fixed", md: "sticky" },
         top: { xs: "auto", md: "0px" },
         bottom: { xs: "74px", md: "auto" },
@@ -95,50 +89,51 @@ export const DisplayActions: React.FC<Props> = ({ selectedExecution, onOpenExpor
             gap={1}
             width={"30%"}
           >
-            {!renameAllowed ? (
-              <Button
-                endIcon={<Edit />}
-                sx={{
-                  width: "100%",
-                  fontSize: 15,
-                  fontWeight: 500,
-                  p: "4px 10px",
-                  color: "onSurface",
-                  whiteSpace: "normal",
-                  wordBreak: "break-word",
-                  justifyContent: "space-between",
-                  ":hover": {
-                    bgcolor: "surface.2",
-                  },
-                  svg: {
-                    fontSize: "18px !important",
-                  },
-                }}
-                onClick={() => setRenameAllowed(true)}
-              >
-                <Typography
+            {selectedExecution &&
+              (!renameAllowed ? (
+                <Button
+                  endIcon={<Edit />}
                   sx={{
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
+                    width: "100%",
+                    fontSize: 15,
+                    fontWeight: 500,
+                    p: "4px 10px",
+                    color: "onSurface",
+                    whiteSpace: "normal",
+                    wordBreak: "break-word",
+                    justifyContent: "space-between",
+                    ":hover": {
+                      bgcolor: "surface.2",
+                    },
+                    svg: {
+                      fontSize: "18px !important",
+                    },
                   }}
+                  onClick={() => setRenameAllowed(true)}
                 >
-                  {truncate(executionTitle || "", { length: 35 })}
-                </Typography>
-              </Button>
-            ) : (
-              <RenameForm
-                label="Spark"
-                initialValue={executionTitle}
-                onChange={setExecutionTitle}
-                onSave={renameSave}
-                onCancel={() => {
-                  setRenameAllowed(false);
-                  setExecutionTitle(selectedExecution?.title);
-                }}
-                disabled={isLoading}
-              />
-            )}
+                  <Typography
+                    sx={{
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    {truncate(executionTitle || "", { length: 35 })}
+                  </Typography>
+                </Button>
+              ) : (
+                <RenameForm
+                  label="Spark"
+                  initialValue={executionTitle}
+                  onChange={setExecutionTitle}
+                  onSave={renameSave}
+                  onCancel={() => {
+                    setRenameAllowed(false);
+                    setExecutionTitle(selectedExecution?.title);
+                  }}
+                  disabled={isLoading}
+                />
+              ))}
           </Stack>
           <Stack
             direction={"row"}
@@ -194,6 +189,15 @@ export const DisplayActions: React.FC<Props> = ({ selectedExecution, onOpenExpor
                 </IconButton>
               </Tooltip>
             )}
+            <IconButton
+              sx={{
+                ...actionBtnStyle,
+                opacity: 0.45,
+              }}
+              onClick={close}
+            >
+              <Close />
+            </IconButton>
           </Stack>
         </Stack>
 
@@ -257,6 +261,7 @@ const actionBtnStyle = {
   p: "8px",
   "&:hover": {
     bgcolor: "surface.2",
+    opacity: 1,
   },
   svg: {
     fontSize: "16px",
