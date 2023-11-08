@@ -9,6 +9,8 @@ import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 import DeleteRounded from "@mui/icons-material/DeleteRounded";
 import { isDesktopViewPort } from "@/common/helpers";
+import { Button } from "@mui/material";
+import { ExecuteDeploymentButton } from "./ExecuteDeploymentButton";
 
 interface DeploymentItem {
   item: Deployment;
@@ -129,6 +131,7 @@ function DeploymentItem({ item, onDelete }: DeploymentItem) {
             </IconButton>
           </Tooltip>
         </Typography>
+        <ExecuteDeploymentButton item={item} />
       </Grid>
     </Grid>
   );

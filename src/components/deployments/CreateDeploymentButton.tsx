@@ -4,7 +4,7 @@ import Add from "@mui/icons-material/Add";
 import { alpha } from "@mui/material";
 
 import BaseButton from "../base/BaseButton";
-import CreateDeploymentPopup from "./CreateDeploymentPopup";
+import CreateDeploymentPopup from "./DeploymentPopup";
 
 function CreateDeploymentButton({ onRefetch }: { onRefetch: () => void }) {
   const [openpopup, setOpenpopup] = useState(false);
@@ -21,6 +21,7 @@ function CreateDeploymentButton({ onRefetch }: { onRefetch: () => void }) {
       </BaseButton>
       {openpopup && (
         <CreateDeploymentPopup
+          variant="create"
           onClose={() => {
             setOpenpopup(false);
             onRefetch();
