@@ -5,6 +5,8 @@ import type { Deployment } from "@/common/types/deployments";
 import { StatusChip } from "./StatusChip";
 import InstanceLabel from "./InstanceLabel";
 import useTimestampConverter from "@/hooks/useTimestampConverter";
+import { Button } from "@mui/material";
+import { ExecuteDeploymentButton } from "./ExecuteDeploymentButton";
 
 interface DeploymentItem {
   item: Deployment;
@@ -71,10 +73,8 @@ const DeploymentItem = ({ item }: DeploymentItem) => {
       </Grid>
       <Grid
         item
-        display={"flex"}
-        justifyContent={"end"}
         pr={"13px"}
-        md={3}
+        md={1}
       >
         <Typography
           sx={{
@@ -84,6 +84,14 @@ const DeploymentItem = ({ item }: DeploymentItem) => {
         >
           {convertedTimestamp(item.created_at)}
         </Typography>
+      </Grid>
+      <Grid
+        item
+        display={"flex"}
+        justifyContent={"end"}
+        md={2}
+      >
+        <ExecuteDeploymentButton item={item} />
       </Grid>
     </Grid>
   );

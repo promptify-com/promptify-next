@@ -44,6 +44,7 @@ export interface Instance {
 }
 
 export interface ModelFields {
+  id: number;
   model_id: string;
   name: string;
   source: string;

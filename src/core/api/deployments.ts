@@ -54,22 +54,9 @@ export const deploymentsApi = baseApi.injectEndpoints({
         keepUnusedDataFor: 60 * 15,
         providesTags: ["Deployments"],
       }),
-      createDeployment: builder.mutation({
-        query: (data: CreateDeployment) => ({
-          url: `/api/aithos/deployments/`,
-          method: "post",
-          data,
-        }),
-        invalidatesTags: ["Deployments"],
-      }),
     };
   },
 });
 
-export const {
-  useGetInstancesQuery,
-  useGetRegionsByIdQuery,
-  useGetRegionsByQueryParamsQuery,
-  useGetDeploymentsQuery,
-  useCreateDeploymentMutation,
-} = deploymentsApi;
+export const { useGetInstancesQuery, useGetRegionsByIdQuery, useGetRegionsByQueryParamsQuery, useGetDeploymentsQuery } =
+  deploymentsApi;

@@ -48,17 +48,29 @@ function TableHeader() {
         <Typography>Status</Typography>
       </Grid>
       <Grid
+        display={"flex"}
+        justifyContent={"center"}
+        alignItems={"center"}
+        item
+        md={2}
+        sx={{
+          opacity: 0.5,
+        }}
+      >
+        <Typography>Created at</Typography>
+      </Grid>
+      <Grid
         item
         display={"flex"}
         justifyContent={"end"}
-        md={3}
+        md={2}
       >
         <Typography
           sx={{
             opacity: 0.5,
           }}
         >
-          Created at
+          Actions
         </Typography>
       </Grid>
     </Grid>
