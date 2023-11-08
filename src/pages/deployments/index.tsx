@@ -22,16 +22,13 @@ import CreateDeploymentButton from "@/components/deployments/CreateDeploymentBut
 function Deployments() {
   const [searchName, setSearchName] = useState("");
   const [status, setStatus] = useState<DeploymentStatus | string>("");
-
   const { data: deployments, isLoading, refetch } = useGetDeploymentsQuery();
-
   const filteredDeployments =
     deployments?.filter(deployment => {
       const matchesStatus = !status || deployment.status.toLowerCase() === status.toLowerCase();
       const matchesName = deployment.model?.name.toLowerCase().includes(searchName);
       return matchesStatus && matchesName;
     }) ?? [];
-
   const refetchData = () => {
     refetch();
   };

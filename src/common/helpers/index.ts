@@ -15,7 +15,7 @@ export const highlightSearch = (searchString: string, searchValue: string): stri
 export const getBaseUrl = typeof window !== "undefined" && window.location.origin;
 export const isDesktopViewPort = () => {
   const { width } = useWindowSize();
-  return width >= 1024;
+  return width >= 900;
 };
 export const addSpaceBetweenCapitalized = (text: string) => text.replace(/([a-z])([A-Z])/g, "$1 $2");
 export const promptComputeDomId = (prompt: IEditPrompts): string =>

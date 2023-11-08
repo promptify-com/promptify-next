@@ -5,13 +5,19 @@ import type { Deployment } from "@/common/types/deployments";
 import { StatusChip } from "./StatusChip";
 import InstanceLabel from "./InstanceLabel";
 import useTimestampConverter from "@/hooks/useTimestampConverter";
+import Tooltip from "@mui/material/Tooltip";
+import IconButton from "@mui/material/IconButton";
+import DeleteRounded from "@mui/icons-material/DeleteRounded";
+import { isDesktopViewPort } from "@/common/helpers";
 
 interface DeploymentItem {
   item: Deployment;
+  onDelete: () => void;
 }
 
-const DeploymentItem = ({ item }: DeploymentItem) => {
+function DeploymentItem({ item, onDelete }: DeploymentItem) {
   const { convertedTimestamp } = useTimestampConverter();
+  const isDesktop = isDesktopViewPort();
 
   return (
     <Grid
@@ -29,11 +35,10 @@ const DeploymentItem = ({ item }: DeploymentItem) => {
       <Grid
         item
         xs={8}
-        md={3}
+        md={2}
       >
         <Typography> {item.model.name} </Typography>
       </Grid>
-
       <Grid
         item
         display={{ xs: "flex", md: "none" }}
@@ -48,7 +53,6 @@ const DeploymentItem = ({ item }: DeploymentItem) => {
           status={item.status}
         />
       </Grid>
-
       <Grid
         item
         xs={12}
@@ -72,9 +76,10 @@ const DeploymentItem = ({ item }: DeploymentItem) => {
       <Grid
         item
         display={"flex"}
-        justifyContent={"end"}
+        justifyContent={isDesktop ? "center" : "start"}
         pr={"13px"}
-        md={3}
+        md={2}
+        {...(!isDesktop && { width: "50%" })}
       >
         <Typography
           sx={{
@@ -85,8 +90,48 @@ const DeploymentItem = ({ item }: DeploymentItem) => {
           {convertedTimestamp(item.created_at)}
         </Typography>
       </Grid>
+      <Grid
+        item
+        display={"flex"}
+        justifyContent={"end"}
+        md={2}
+        {...(isDesktop ? { pr: "13px" } : { width: "50%" })}
+      >
+        <Typography
+          sx={{
+            fontSize: 12,
+            opacity: isDesktop ? 0.4 : 1,
+            "&:hover": {
+              opacity: 1,
+            },
+          }}
+        >
+          <Tooltip title="Delete">
+            <IconButton
+              onClick={onDelete}
+              sx={{
+                border: "none",
+                "&:hover": {
+                  bgcolor: "surface.2",
+                  opacity: 1,
+                },
+              }}
+            >
+              <DeleteRounded
+                sx={{
+                  opacity: isDesktop ? 0.25 : 1,
+                  fontSize: "16px",
+                  "&:hover": {
+                    opacity: 1,
+                  },
+                }}
+              />
+            </IconButton>
+          </Tooltip>
+        </Typography>
+      </Grid>
     </Grid>
   );
-};
+}
 
 export default DeploymentItem;
