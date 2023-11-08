@@ -135,6 +135,14 @@ function App({ Component, ...rest }: AppProps) {
             property="keywords"
             content={pageProps?.meta_keywords}
           />
+          <link
+            rel="preconnect"
+            href={process.env.NEXT_PUBLIC_API_URL}
+          />
+          <link
+            rel="preconnect"
+            href="https://promptify.s3.amazonaws.com"
+          />
         </Head>
         <Component {...pageProps} />
       </ThemeProvider>
