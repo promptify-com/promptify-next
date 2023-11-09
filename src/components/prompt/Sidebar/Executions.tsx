@@ -1,10 +1,11 @@
 import { CardExecution } from "@/components/common/cards/CardExecution";
+import { CardExecutionPlaceholder } from "@/components/placeholders/CardExecutionPlaceholder";
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
 import { setGeneratedExecution, setSelectedExecution, setSparkHashQueryParam } from "@/core/store/executionsSlice";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { useAppSelector } from "@/hooks/useStore";
-import { Stack } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
@@ -22,7 +23,7 @@ export const Executions: React.FC<ExecutionsProps> = ({ template }) => {
 
   const {
     data: executions,
-    isFetching,
+    isLoading,
     refetch: refetchTemplateExecutions,
   } = useGetExecutionsByTemplateQuery(isValidUser ? template.id : skipToken);
 
@@ -75,12 +76,18 @@ export const Executions: React.FC<ExecutionsProps> = ({ template }) => {
         p: "24px",
       }}
     >
-      {executions?.map(execution => (
-        <CardExecution
-          key={execution.id}
-          execution={execution}
-        />
-      ))}
+      {isLoading ? (
+        Array.from({ length: 2 }, _ => <CardExecutionPlaceholder />)
+      ) : executions && executions.length > 0 ? (
+        executions.map(execution => (
+          <CardExecution
+            key={execution.id}
+            execution={execution}
+          />
+        ))
+      ) : (
+        <Typography>No sparks found</Typography>
+      )}
     </Stack>
   );
 };

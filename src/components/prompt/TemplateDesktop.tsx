@@ -98,7 +98,6 @@ export default function TemplateDesktop({ template, setErrorMessage }: TemplateD
 
         {!chatFullScreen && (
           <Grid
-            flex={1}
             width={"62%"}
             display={"block"}
           >

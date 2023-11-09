@@ -1,16 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Box, Button, Divider, IconButton, Stack, Tooltip, Typography, useTheme } from "@mui/material";
 import { Bookmark, BookmarkBorder, Close, DeleteOutline, Edit, ShareOutlined } from "@mui/icons-material";
-import { TemplatesExecutions } from "@/core/api/dto/templates";
+import { ExecutionTemplatePopupType, TemplatesExecutions } from "@/core/api/dto/templates";
 import { useAppSelector } from "@/hooks/useStore";
-import { RenameForm } from "../common/forms/RenameForm";
-import {
-  useDeleteExecutionMutation,
-  useExecutionFavoriteMutation,
-  useUpdateExecutionMutation,
-} from "@/core/api/executions";
+import { useExecutionFavoriteMutation } from "@/core/api/executions";
 import useTruncate from "@/hooks/useTruncate";
-import { DeleteDialog } from "../dialog/DeleteDialog";
+import { SparkSaveDeletePopup } from "@/components/dialog/SparkSaveDeletePopup";
 
 interface Props {
   selectedExecution: TemplatesExecutions | null;
@@ -21,30 +16,15 @@ interface Props {
 export const DisplayActions: React.FC<Props> = ({ selectedExecution, onOpenExport, close }) => {
   const { palette } = useTheme();
   const { truncate } = useTruncate();
-  const [updateExecution, { isError, isLoading }] = useUpdateExecutionMutation();
-  const [deleteExecution] = useDeleteExecutionMutation();
   const [favoriteExecution] = useExecutionFavoriteMutation();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
 
   const [executionTitle, setExecutionTitle] = useState(selectedExecution?.title);
-  const [renameAllowed, setRenameAllowed] = useState(false);
-  const [deleteAllowed, setDeleteAllowed] = useState(false);
+  const [popup, setPopup] = useState<ExecutionTemplatePopupType>(null);
 
   useEffect(() => {
     setExecutionTitle(selectedExecution?.title);
   }, [selectedExecution]);
-
-  const renameSave = async () => {
-    if (executionTitle?.length && selectedExecution?.id) {
-      await updateExecution({
-        id: selectedExecution?.id,
-        data: { title: executionTitle },
-      });
-      if (!isError && !isLoading) {
-        setRenameAllowed(false);
-      }
-    }
-  };
 
   const saveExecution = async () => {
     if (!!!selectedExecution || selectedExecution?.is_favorite) return;
@@ -79,7 +59,7 @@ export const DisplayActions: React.FC<Props> = ({ selectedExecution, onOpenExpor
         <Stack
           display={{ xs: "none", md: "flex" }}
           direction={"row"}
-          alignItems={"baseline"}
+          alignItems={"center"}
           justifyContent={"space-between"}
           gap={1}
         >
@@ -89,51 +69,38 @@ export const DisplayActions: React.FC<Props> = ({ selectedExecution, onOpenExpor
             gap={1}
             width={"40%"}
           >
-            {selectedExecution &&
-              (!renameAllowed ? (
-                <Button
-                  endIcon={<Edit />}
+            {selectedExecution && (
+              <Button
+                endIcon={<Edit />}
+                sx={{
+                  width: "100%",
+                  fontSize: 15,
+                  fontWeight: 500,
+                  p: "4px 10px",
+                  color: "onSurface",
+                  whiteSpace: "normal",
+                  wordBreak: "break-word",
+                  justifyContent: "space-between",
+                  ":hover": {
+                    bgcolor: "surface.2",
+                  },
+                  svg: {
+                    fontSize: "18px !important",
+                  },
+                }}
+                onClick={() => setPopup("update")}
+              >
+                <Typography
                   sx={{
-                    width: "100%",
-                    fontSize: 15,
-                    fontWeight: 500,
-                    p: "4px 10px",
-                    color: "onSurface",
-                    whiteSpace: "normal",
-                    wordBreak: "break-word",
-                    justifyContent: "space-between",
-                    ":hover": {
-                      bgcolor: "surface.2",
-                    },
-                    svg: {
-                      fontSize: "18px !important",
-                    },
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
                   }}
-                  onClick={() => setRenameAllowed(true)}
                 >
-                  <Typography
-                    sx={{
-                      whiteSpace: "nowrap",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                    }}
-                  >
-                    {truncate(executionTitle || "", { length: 35 })}
-                  </Typography>
-                </Button>
-              ) : (
-                <RenameForm
-                  label="Spark"
-                  initialValue={executionTitle}
-                  onChange={setExecutionTitle}
-                  onSave={renameSave}
-                  onCancel={() => {
-                    setRenameAllowed(false);
-                    setExecutionTitle(selectedExecution?.title);
-                  }}
-                  disabled={isLoading}
-                />
-              ))}
+                  {truncate(executionTitle || "", { length: 35 })}
+                </Typography>
+              </Button>
+            )}
           </Stack>
           <Stack
             direction={"row"}
@@ -149,7 +116,7 @@ export const DisplayActions: React.FC<Props> = ({ selectedExecution, onOpenExpor
                 sx={actionBtnStyle}
                 onClick={e => {
                   e.stopPropagation();
-                  setDeleteAllowed(true);
+                  setPopup("delete");
                 }}
               >
                 <DeleteOutline />
@@ -238,18 +205,11 @@ export const DisplayActions: React.FC<Props> = ({ selectedExecution, onOpenExpor
         </Box>
       </Box>
 
-      {deleteAllowed && selectedExecution && (
-        <DeleteDialog
-          open={deleteAllowed}
-          dialogTitle="Delete Spark"
-          dialogContentText={`Are you sure you want to delete ${selectedExecution.title || "this"} Spark?`}
-          onClose={() => {
-            setDeleteAllowed(false);
-          }}
-          onSubmit={async () => {
-            await deleteExecution(selectedExecution.id);
-            setDeleteAllowed(false);
-          }}
+      {(popup === "delete" || popup === "update") && (
+        <SparkSaveDeletePopup
+          type={popup}
+          activeExecution={selectedExecution}
+          onClose={() => setPopup(null)}
         />
       )}
     </Box>
