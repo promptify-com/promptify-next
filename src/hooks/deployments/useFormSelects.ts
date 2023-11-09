@@ -10,9 +10,7 @@ export const useFormSelects = (provider: string, region: string) => {
   const isProviderSelected = provider !== "";
   const isRegionSelected = region !== "";
 
-  const { data: models, isFetching: isModelsFetching } = useGetModelsQuery(offset, {
-    skip: isProviderSelected && isRegionSelected,
-  });
+  const { data: models, isFetching: isModelsFetching } = useGetModelsQuery(offset);
 
   const { data: instances, isFetching: isInstanceFetching } = useGetInstancesQuery(
     { region: region.toString() },

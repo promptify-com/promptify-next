@@ -211,14 +211,7 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
               ))}
             <div ref={lastTemplateElementRef}></div>
 
-            {isModelsFetching && (
-              <MenuItem
-                value="loading"
-                disabled
-              >
-                Loading...
-              </MenuItem>
-            )}
+            <DataLoading loading={isModelsFetching} />
           </Select>
         </FormControl>
       </Grid>
