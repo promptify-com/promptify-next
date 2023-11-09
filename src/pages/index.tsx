@@ -1,5 +1,5 @@
 import { Box, Grid, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { AxiosResponse } from "axios";
 import { NextPage } from "next";
 import { useSelector, useDispatch } from "react-redux";
@@ -19,6 +19,8 @@ import { Category, TemplatesExecutionsByMePaginationResponse } from "@/core/api/
 import { redirectToPath } from "@/common/helpers";
 import useToken from "@/hooks/useToken";
 import ClientOnly from "@/components/base/ClientOnly";
+import { NextResponse } from "next/server";
+import { getCategories } from "@/hooks/api/categories";
 
 interface HomePageProps {
   categories: Category[];
@@ -194,14 +196,14 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
   );
 };
 
-export async function getServerSideProps() {
-  const responseCategories = await fetch(process.env.NEXT_PUBLIC_API_URL + "/api/meta/categories/", {
-    next: { revalidate: 3600 },
-    cache: "force-cache",
-  });
-  const categories = (await responseCategories.json())?.filter(
-    (category: Category) => category.prompt_template_count && category.is_visible,
-  );
+export async function getServerSideProps({
+  res,
+}: {
+  res: NextResponse & { setHeader: (name: string, value: string) => void };
+}) {
+  res.setHeader("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=60");
+
+  const categories = await getCategories();
 
   return {
     props: {
