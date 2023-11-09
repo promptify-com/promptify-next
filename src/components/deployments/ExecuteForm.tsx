@@ -42,9 +42,7 @@ function ExecuteForm({ onClose, item }: ExecuteFormProps) {
       },
       body: JSON.stringify(payload),
       async onopen(res) {
-        if (res.ok && res.status === 200) {
-          console.log("worked");
-        } else if (res.status >= 400 && res.status < 500 && res.status !== 429) {
+        if (res.status >= 400 && res.status < 500 && res.status !== 429) {
           console.error("Client side error ", res);
         }
       },
@@ -52,9 +50,7 @@ function ExecuteForm({ onClose, item }: ExecuteFormProps) {
         try {
           const parseData = parseMessageData(msg.data);
           const message = parseData.message;
-          if (message === "[CONNECTED]" || message === "[COMPLETED]") {
-            return;
-          }
+
           if (message) {
             setExecutionContent(prevState => [...prevState, message]);
             setIsGenerating(false);
