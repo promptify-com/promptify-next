@@ -1,21 +1,26 @@
-import { useState, type Dispatch, type SetStateAction } from "react";
+import { useState, type Dispatch, type SetStateAction, useEffect } from "react";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import { Display } from "./Display";
-import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
+import type { Templates } from "@/core/api/dto/templates";
 import ClientOnly from "../base/ClientOnly";
 import ChatMode from "./generate/ChatBox";
 import Header from "./Header";
 import { Sidebar } from "./Sidebar";
+import { useAppSelector } from "@/hooks/useStore";
 
 interface TemplateDesktopProps {
-  hashedExecution: TemplatesExecutions | null;
   template: Templates;
   setErrorMessage: Dispatch<SetStateAction<string>>;
 }
 
-export default function TemplateDesktop({ template, setErrorMessage, hashedExecution }: TemplateDesktopProps) {
-  const [chatFullScreen, setChatFullScreen] = useState(false);
+export default function TemplateDesktop({ template, setErrorMessage }: TemplateDesktopProps) {
+  const [chatFullScreen, setChatFullScreen] = useState(true);
+  const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
+
+  useEffect(() => {
+    setChatFullScreen(!selectedExecution);
+  }, [selectedExecution]);
 
   return (
     <Stack gap={"1px"}>
@@ -94,10 +99,7 @@ export default function TemplateDesktop({ template, setErrorMessage, hashedExecu
           </Grid>
         )}
 
-        <Sidebar
-          template={template}
-          hashedExecution={hashedExecution}
-        />
+        <Sidebar template={template} />
       </Grid>
     </Stack>
   );

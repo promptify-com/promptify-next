@@ -54,9 +54,7 @@ export const Display: React.FC<Props> = ({ templateData, onError, close }) => {
 
   useEffect(() => {
     // If there is a new execution being generated, remove opacity layer
-    if (generatedExecution) {
-      setFirstLoad(false);
-    }
+    setFirstLoad(!generatedExecution);
   }, [generatedExecution]);
 
   const currentGeneratedPrompt = useMemo(() => {

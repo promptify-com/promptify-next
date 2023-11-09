@@ -8,15 +8,14 @@ import { useAppSelector } from "@/hooks/useStore";
 import { Stack } from "@mui/material";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
 import { useRouter } from "next/router";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 
 interface ExecutionsProps {
   template: Templates;
-  hashedExecution: TemplatesExecutions | null;
 }
 
-export const Executions: React.FC<ExecutionsProps> = ({ template, hashedExecution }) => {
+export const Executions: React.FC<ExecutionsProps> = ({ template }) => {
   const router = useRouter();
   const dispatch = useDispatch();
   const isValidUser = useAppSelector(isValidUserFn);
@@ -24,12 +23,7 @@ export const Executions: React.FC<ExecutionsProps> = ({ template, hashedExecutio
   const { replaceHistoryByPathname } = useBrowser();
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
-  const sparkHashQueryParam = useAppSelector(state => state.executions.sparkHashQueryParam);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
-
-  useEffect(() => {
-    setSparkHashQueryParam((router.query?.hash as string | null) ?? null);
-  }, [router.query?.hash]);
 
   const {
     data: executions,
@@ -45,7 +39,7 @@ export const Executions: React.FC<ExecutionsProps> = ({ template, hashedExecutio
     resetHash?: boolean;
   }) => {
     if (resetHash) {
-      setSparkHashQueryParam(null);
+      dispatch(setSparkHashQueryParam(null));
     }
 
     dispatch(setSelectedExecution(execution));
@@ -64,12 +58,6 @@ export const Executions: React.FC<ExecutionsProps> = ({ template, hashedExecutio
   }, [isGenerating, generatedExecution]);
 
   useEffect(() => {
-    if (sparkHashQueryParam && hashedExecution) {
-      dispatch(setSelectedExecution(hashedExecution));
-      replaceHistoryByPathname(`/prompt/${template.slug}`);
-      return;
-    }
-
     if (!executions) {
       return;
     }
@@ -79,9 +67,9 @@ export const Executions: React.FC<ExecutionsProps> = ({ template, hashedExecutio
     if (wantedExecutionId) {
       const _selectedExecution = executions.find(exec => exec.id.toString() === wantedExecutionId);
 
-      handleSelectExecution({ execution: _selectedExecution || executions?.[0] || null, resetHash: true });
+      handleSelectExecution({ execution: _selectedExecution || null, resetHash: true });
     } else {
-      handleSelectExecution({ execution: template.example_execution || executions?.[0] || null, resetHash: true });
+      handleSelectExecution({ execution: template.example_execution || null, resetHash: true });
     }
 
     if (sparkQueryParam) {

@@ -7,7 +7,7 @@ import { setOpenBuilderSidebar } from "@/core/store/sidebarSlice";
 import NoteStackIcon from "@/assets/icons/NoteStackIcon";
 import ExtensionSettingsIcon from "@/assets/icons/ExtensionSettingsIcon";
 import { Executions } from "@/components/prompt/Sidebar/Executions";
-import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
+import { Templates } from "@/core/api/dto/templates";
 
 const drawerWidth = 352;
 
@@ -20,10 +20,9 @@ interface Link {
 }
 interface SidebarProps {
   template: Templates;
-  hashedExecution: TemplatesExecutions | null;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ template, hashedExecution }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ template }) => {
   const [open, setOpen] = useState(false);
   const dispatch = useAppDispatch();
 
@@ -130,12 +129,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ template, hashedExecution }) =
             <Close />
           </IconButton>
         </Box>
-        <Box display={activeLink?.name === "executions" ? "block" : "none"}>
-          <Executions
-            template={template}
-            hashedExecution={hashedExecution}
-          />
-        </Box>
+        {activeLink?.name === "executions" && <Executions template={template} />}
       </Drawer>
       <Box
         display={"flex"}
