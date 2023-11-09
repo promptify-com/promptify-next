@@ -136,6 +136,13 @@ function ExecuteForm({ onClose, item }: ExecuteFormProps) {
           />
         ))}
       </Stack>
+      <Stack flex={1}>
+        <MessageSender
+          placeholder="Type something"
+          disabled={isGenerating || !!executionContent.length}
+          onSubmit={handleExecute}
+        />
+      </Stack>
 
       <Stack
         direction={"row"}
@@ -143,13 +150,6 @@ function ExecuteForm({ onClose, item }: ExecuteFormProps) {
         alignItems={"center"}
         gap={1}
       >
-        <Stack flex={1}>
-          <MessageSender
-            placeholder="Type something"
-            disabled={isGenerating || !!executionContent.length}
-            onSubmit={handleExecute}
-          />
-        </Stack>
         <BaseButton
           variant="contained"
           color="primary"

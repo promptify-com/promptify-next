@@ -1,10 +1,10 @@
 import { useState } from "react";
-import type { Deployment } from "@/common/types/deployments";
-import Button from "@mui/material/Button";
-import DeployementPopup from "./DeploymentPopup";
-import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
-import { PlayCircle } from "@mui/icons-material";
+import Tooltip from "@mui/material/Tooltip";
+import PlayCircle from "@mui/icons-material/PlayCircle";
+
+import type { Deployment } from "@/common/types/deployments";
+import DeployementPopup from "./DeploymentPopup";
 import { isDesktopViewPort } from "@/common/helpers";
 import ExecuteForm from "./ExecuteForm";
 
