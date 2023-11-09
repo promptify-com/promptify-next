@@ -50,7 +50,9 @@ function ExecuteForm({ onClose, item }: ExecuteFormProps) {
         try {
           const parseData = parseMessageData(msg.data);
           const message = parseData.message;
-
+          if (message === "[CONNECTED]" || message === "[COMPLETED]") {
+            return;
+          }
           if (message) {
             setExecutionContent(prevState => [...prevState, message]);
             setIsGenerating(false);
