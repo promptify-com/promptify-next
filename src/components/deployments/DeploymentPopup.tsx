@@ -1,29 +1,29 @@
+import { ReactNode } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 
-import CreateForm from "./CreateForm";
-
-interface CreateDeploymentPopupProps {
-  onClose: () => void;
+interface DeploymentPopupProps {
+  title: string;
+  children: ReactNode;
 }
 
-function CreateDeploymentPopup({ onClose }: CreateDeploymentPopupProps) {
+function DeployementPopup({ title, children }: DeploymentPopupProps) {
   return (
     <Dialog
       open
       maxWidth={"lg"}
     >
-      <DialogTitle fontSize={"22px"}>Create New Deployment</DialogTitle>
+      <DialogTitle fontSize={"22px"}>{title}</DialogTitle>
       <DialogContent
         sx={{
           minWidth: { md: "520px" },
         }}
       >
-        <CreateForm onClose={onClose} />
+        {children}
       </DialogContent>
     </Dialog>
   );
 }
 
-export default CreateDeploymentPopup;
+export default DeployementPopup;

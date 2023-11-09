@@ -44,6 +44,7 @@ export interface Instance {
 }
 
 export interface ModelFields {
+  id: number;
   model_id: string;
   name: string;
   source: string;
@@ -54,6 +55,13 @@ export interface Model {
   model: string;
   pk: number;
   fields: ModelFields;
+}
+
+export interface ModelsWithPagination {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: ModelFields[];
 }
 
 export interface RegionParams {

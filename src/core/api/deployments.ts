@@ -1,9 +1,9 @@
 import { baseApi } from "./api";
-import {
-  CreateDeployment,
+import type {
   Deployment,
   Instance,
   InstanceParams,
+  ModelsWithPagination,
   Region,
   RegionParams,
 } from "@/common/types/deployments";
@@ -44,6 +44,13 @@ export const deploymentsApi = baseApi.injectEndpoints({
         }),
         keepUnusedDataFor: 60 * 60,
       }),
+      getModels: builder.query<ModelsWithPagination, number>({
+        query: (offset: number) => ({
+          url: `/api/aithos/models/?limit=20&?offset=${offset}`,
+          method: "get",
+        }),
+        keepUnusedDataFor: 60 * 15,
+      }),
       getDeployments: builder.query<Deployment[], void>({
         query: () => ({
           url: `/api/aithos/deployments`,
@@ -52,14 +59,7 @@ export const deploymentsApi = baseApi.injectEndpoints({
         keepUnusedDataFor: 60 * 15,
         providesTags: ["Deployments"],
       }),
-      createDeployment: builder.mutation({
-        query: (data: CreateDeployment) => ({
-          url: `/api/aithos/deployments/`,
-          method: "post",
-          data,
-        }),
-        invalidatesTags: ["Deployments"],
-      }),
+
       deleteDeployment: builder.mutation({
         query: (id: number) => ({
           url: `/api/aithos/deployments/${id}/`,
@@ -88,6 +88,6 @@ export const {
   useGetRegionsByIdQuery,
   useGetRegionsByQueryParamsQuery,
   useGetDeploymentsQuery,
-  useCreateDeploymentMutation,
+  useGetModelsQuery,
   useDeleteDeploymentMutation,
 } = deploymentsApi;

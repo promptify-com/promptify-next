@@ -9,6 +9,7 @@ import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 import DeleteRounded from "@mui/icons-material/DeleteRounded";
 import { isDesktopViewPort } from "@/common/helpers";
+import { ExecuteDeploymentButton } from "./ExecuteDeploymentButton";
 
 interface DeploymentItem {
   item: Deployment;
@@ -98,6 +99,8 @@ function DeploymentItem({ item, onDelete }: DeploymentItem) {
         {...(isDesktop ? { pr: "13px" } : { width: "50%" })}
       >
         <Typography
+          display={"flex"}
+          alignItems={"center"}
           sx={{
             fontSize: 12,
             opacity: isDesktop ? 0.4 : 1,
@@ -110,6 +113,7 @@ function DeploymentItem({ item, onDelete }: DeploymentItem) {
             <IconButton
               onClick={onDelete}
               sx={{
+                mt: -0.4,
                 border: "none",
                 "&:hover": {
                   bgcolor: "surface.2",
@@ -128,6 +132,7 @@ function DeploymentItem({ item, onDelete }: DeploymentItem) {
               />
             </IconButton>
           </Tooltip>
+          {item.status === "done" && <ExecuteDeploymentButton item={item} />}
         </Typography>
       </Grid>
     </Grid>
