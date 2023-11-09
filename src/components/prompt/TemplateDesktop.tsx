@@ -15,7 +15,6 @@ interface TemplateDesktopProps {
 }
 
 export default function TemplateDesktop({ template, setErrorMessage, hashedExecution }: TemplateDesktopProps) {
-  const isTemplatePublished = template?.status === "PUBLISHED";
   const [chatFullScreen, setChatFullScreen] = useState(false);
 
   return (
@@ -91,12 +90,14 @@ export default function TemplateDesktop({ template, setErrorMessage, hashedExecu
               templateData={template}
               onError={setErrorMessage}
               close={() => setChatFullScreen(true)}
-              hashedExecution={hashedExecution}
             />
           </Grid>
         )}
 
-        <Sidebar />
+        <Sidebar
+          template={template}
+          hashedExecution={hashedExecution}
+        />
       </Grid>
     </Stack>
   );

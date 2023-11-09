@@ -8,16 +8,16 @@ import { Prompts } from "@/core/api/dto/prompts";
 import { TemplatesExecutions } from "@/core/api/dto/templates";
 import { useSelector } from "react-redux";
 import { RootState } from "@/core/store";
+import { useAppSelector } from "@/hooks/useStore";
 
 interface Props {
   execution: PromptLiveResponse | TemplatesExecutions | null;
   promptsData: Prompts[];
-  search: string;
-  sparkHashQueryParam: string | null;
 }
 
-export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, sparkHashQueryParam, search }) => {
+export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
   const executionPrompts = execution && "data" in execution ? execution.data : execution?.prompt_executions;
+  const sparkHashQueryParam = useAppSelector(state => state.executions.sparkHashQueryParam);
   const isGenerating = useSelector((state: RootState) => state.template.isGenerating);
   const [sortedPrompts, setSortedPrompts] = useState<DisplayPrompt[]>([]);
 

@@ -2,43 +2,29 @@ import React, { useEffect, useRef, useState, useMemo } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
+import { Templates } from "@/core/api/dto/templates";
 import { ExecutionCard } from "./ExecutionCard";
 import { DisplayActions } from "./DisplayActions";
 import ParagraphPlaceholder from "@/components/placeholders/ParagraphPlaceholder";
-import { useRouter } from "next/router";
 import { SparkExportPopup } from "../dialog/SparkExportPopup";
 import { isDesktopViewPort } from "@/common/helpers";
-import useBrowser from "@/hooks/useBrowser";
 import GeneratedExecutionFooter from "./GeneratedExecutionFooter";
-import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
-import { skipToken } from "@reduxjs/toolkit/dist/query";
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { isValidUserFn } from "@/core/store/userSlice";
-import { setGeneratedExecution, setSelectedExecution } from "@/core/store/executionsSlice";
+import { useAppSelector } from "@/hooks/useStore";
 
 interface Props {
   templateData: Templates;
   onError: (errMsg: string) => void;
   close: () => void;
-  hashedExecution: TemplatesExecutions | null;
 }
 
-export const Display: React.FC<Props> = ({ templateData, onError, close, hashedExecution }) => {
+export const Display: React.FC<Props> = ({ templateData, onError, close }) => {
   const [firstLoad, setFirstLoad] = useState(true);
-  const [search, setSearch] = useState<string>("");
-  const router = useRouter();
-  const dispatch = useAppDispatch();
-  const sparkQueryParam = router.query?.spark as string;
-  const sparkHashQueryParam = useRef((router.query?.hash as string | null) ?? null);
   const [openExportPopup, setOpenExportpopup] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const isValidUser = useAppSelector(isValidUserFn);
-  const { replaceHistoryByPathname } = useBrowser();
   const isDesktopView = isDesktopViewPort();
-  const isGenerating = useAppSelector(state => state.template.isGenerating);
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
+  const isFetching = useAppSelector(state => state.executions.isFetching);
   const activeExecution = useMemo(() => {
     if (selectedExecution) {
       return {
@@ -54,42 +40,7 @@ export const Display: React.FC<Props> = ({ templateData, onError, close, hashedE
     return null;
   }, [selectedExecution]);
   const isGeneratedExecutionEmpty = Boolean(generatedExecution && !generatedExecution.data?.length);
-  const {
-    data: executions,
-    isFetching,
-    refetch: refetchTemplateExecutions,
-  } = useGetExecutionsByTemplateQuery(isValidUser ? templateData.id : skipToken);
   const executionIsLoading = isFetching || isGeneratedExecutionEmpty;
-  const handleSelectExecution = ({
-    execution,
-    resetHash = false,
-  }: {
-    execution: TemplatesExecutions | null;
-    resetHash?: boolean;
-  }) => {
-    if (resetHash) {
-      sparkHashQueryParam.current = null;
-    }
-
-    dispatch(setSelectedExecution(execution));
-  };
-
-  useEffect(() => {
-    if (!isGenerating && generatedExecution?.data?.length) {
-      const promptNotCompleted = generatedExecution.data.find(execData => !execData.isCompleted);
-
-      if (!promptNotCompleted) {
-        dispatch(setSelectedExecution(null));
-        dispatch(setGeneratedExecution(null));
-        refetchTemplateExecutions();
-      }
-    }
-
-    // If there is a new execution being generated, remove opacity layer
-    if (generatedExecution) {
-      setFirstLoad(false);
-    }
-  }, [isGenerating, generatedExecution]);
 
   // click listener to remove opacity layer on first loaded execution
   useEffect(() => {
@@ -102,30 +53,11 @@ export const Display: React.FC<Props> = ({ templateData, onError, close, hashedE
   }, []);
 
   useEffect(() => {
-    if (sparkHashQueryParam.current && hashedExecution) {
-      dispatch(setSelectedExecution(hashedExecution));
-      replaceHistoryByPathname(`/prompt/${templateData.slug}`);
-      return;
+    // If there is a new execution being generated, remove opacity layer
+    if (generatedExecution) {
+      setFirstLoad(false);
     }
-
-    if (!executions) {
-      return;
-    }
-
-    const wantedExecutionId = sparkQueryParam ?? selectedExecution?.id.toString();
-
-    if (wantedExecutionId) {
-      const _selectedExecution = executions.find(exec => exec.id.toString() === wantedExecutionId);
-
-      handleSelectExecution({ execution: _selectedExecution || executions?.[0] || null, resetHash: true });
-    } else {
-      handleSelectExecution({ execution: templateData.example_execution || executions?.[0] || null, resetHash: true });
-    }
-
-    if (sparkQueryParam) {
-      replaceHistoryByPathname(`/prompt/${templateData.slug}`);
-    }
-  }, [executions]);
+  }, [generatedExecution]);
 
   const currentGeneratedPrompt = useMemo(() => {
     if (generatedExecution?.data?.length) {
@@ -156,7 +88,6 @@ export const Display: React.FC<Props> = ({ templateData, onError, close, hashedE
           selectedExecution={selectedExecution}
           onOpenExport={() => setOpenExportpopup(true)}
           close={close}
-          // sparkHashQueryParam={sparkHashQueryParam.current}
         />
         {openExportPopup && activeExecution?.id && (
           <SparkExportPopup
@@ -180,8 +111,6 @@ export const Display: React.FC<Props> = ({ templateData, onError, close, hashedE
             <ExecutionCard
               execution={generatedExecution ?? selectedExecution}
               promptsData={templateData.prompts}
-              search={search}
-              sparkHashQueryParam={sparkHashQueryParam.current}
             />
           )}
         </Box>

@@ -1,4 +1,4 @@
-import { FC, ReactNode, useState } from "react";
+import { ReactNode, useState } from "react";
 import { Box, Drawer, Grid, Icon, IconButton, ListItem, ListItemButton, ListItemIcon, Typography } from "@mui/material";
 import { Api, ChatBubbleOutline, Close, InfoOutlined } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
@@ -6,6 +6,8 @@ import { useAppDispatch } from "@/hooks/useStore";
 import { setOpenBuilderSidebar } from "@/core/store/sidebarSlice";
 import NoteStackIcon from "@/assets/icons/NoteStackIcon";
 import ExtensionSettingsIcon from "@/assets/icons/ExtensionSettingsIcon";
+import { Executions } from "@/components/prompt/Sidebar/Executions";
+import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 
 const drawerWidth = 352;
 
@@ -16,8 +18,12 @@ interface Link {
   icon: ReactNode;
   title: string;
 }
+interface SidebarProps {
+  template: Templates;
+  hashedExecution: TemplatesExecutions | null;
+}
 
-export const Sidebar: FC = () => {
+export const Sidebar: React.FC<SidebarProps> = ({ template, hashedExecution }) => {
   const [open, setOpen] = useState(false);
   const dispatch = useAppDispatch();
 
@@ -75,8 +81,12 @@ export const Sidebar: FC = () => {
       }}
     >
       <Drawer
+        variant="persistent"
+        anchor="right"
+        open={open}
         sx={{
           width: open ? drawerWidth : 0,
+          transition: theme.transitions.create("width", { duration: 200 }),
           position: "relative",
           "& .MuiDrawer-paper": {
             position: "absolute",
@@ -88,9 +98,6 @@ export const Sidebar: FC = () => {
             borderLeft: `1px solid ${theme.palette.surface[3]}`,
           },
         }}
-        variant="persistent"
-        anchor="right"
-        open={open}
       >
         <Box
           bgcolor={"surface.1"}
@@ -123,8 +130,12 @@ export const Sidebar: FC = () => {
             <Close />
           </IconButton>
         </Box>
-        {/* {activeLink === "executions" && <PromptSequence />}
-        {activeLink === "help" && <Help />} */}
+        <Box display={activeLink?.name === "executions" ? "block" : "none"}>
+          <Executions
+            template={template}
+            hashedExecution={hashedExecution}
+          />
+        </Box>
       </Drawer>
       <Box
         display={"flex"}
