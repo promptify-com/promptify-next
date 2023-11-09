@@ -1,7 +1,12 @@
-import { Card, CardActionArea, CardContent, Typography } from "@mui/material";
+import { Box, Card, IconButton, Stack, Tooltip, Typography } from "@mui/material";
 import { TemplatesExecutions } from "@/core/api/dto/templates";
 import { useDispatch } from "react-redux";
 import { setSelectedExecution } from "@/core/store/executionsSlice";
+import { Bookmark, BookmarkBorder } from "@mui/icons-material";
+import { isImageOutput, markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
+import { useEffect, useState } from "react";
+import { useAppSelector } from "@/hooks/useStore";
+import { useExecutionFavoriteMutation } from "@/core/api/executions";
 
 interface CardExecutionProps {
   execution: TemplatesExecutions;
@@ -9,55 +14,109 @@ interface CardExecutionProps {
 
 export const CardExecution: React.FC<CardExecutionProps> = ({ execution }) => {
   const dispatch = useDispatch();
+  const [content, setContent] = useState<string>("");
+  const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
+  const isSelected = execution.id === selectedExecution?.id;
+  const [favoriteExecution] = useExecutionFavoriteMutation();
+
+  const getContent = async () => {
+    const prompt = execution.prompt_executions?.find(exec => !isImageOutput(exec.output));
+    const fetchedContent = await markdownToHTML(prompt?.output || "");
+    setContent(fetchedContent);
+  };
+  useEffect(() => {
+    getContent();
+  }, []);
 
   const handleClick = () => {
     dispatch(setSelectedExecution(execution));
   };
 
+  const saveExecution = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    try {
+      await favoriteExecution(execution.id);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <Card
       onClick={handleClick}
-      title={execution.title}
       elevation={0}
       sx={{
-        maxWidth: "200px",
-        width: "200px",
-        bgcolor: "transparent",
-        borderRadius: "27px",
-        overflow: "hidden",
-        "&:hover": {
-          bgcolor: "white",
+        bgcolor: isSelected ? "primaryContainer" : "surface.3",
+        borderRadius: "8px",
+        p: "8px",
+        cursor: "pointer",
+        "&:hover, &:focus": {
+          bgcolor: isSelected ? "primaryContainer" : "surface.5",
         },
       }}
     >
-      <CardActionArea
-        sx={{
-          position: "relative",
-        }}
+      <Stack
+        direction={"row"}
+        alignItems={"center"}
+        gap={1}
+        py={"4px"}
       >
+        <Tooltip
+          title="Save"
+          enterDelay={1000}
+          enterNextDelay={1000}
+        >
+          <IconButton
+            onClick={saveExecution}
+            sx={{
+              border: "none",
+              p: "6px",
+              "&:hover": {
+                bgcolor: "surface.2",
+                opacity: 1,
+              },
+              svg: {
+                width: "24px",
+                height: "24px",
+              },
+            }}
+          >
+            {execution.is_favorite ? <Bookmark /> : <BookmarkBorder />}
+          </IconButton>
+        </Tooltip>
         <Typography
-          variant="h1"
-          fontSize={16}
-          fontWeight={500}
-          lineHeight={"20.8px"}
-          color={"white"}
-          mx={2}
-          position={"absolute"}
-          top={8}
+          sx={{
+            width: "80%",
+            whiteSpace: "nowrap",
+            textOverflow: "ellipsis",
+            overflow: "hidden",
+            fontSize: 12,
+            fontWeight: 500,
+            color: "onSurface",
+          }}
         >
           {execution.title}
         </Typography>
-        <CardContent sx={{ padding: "8px", m: 0 }}>
-          <Typography
-            gutterBottom
-            fontSize={12}
-            lineHeight={"16.8px"}
-            component="div"
-          >
-            {execution.title}
-          </Typography>
-        </CardContent>
-      </CardActionArea>
+      </Stack>
+      <Box
+        sx={{
+          bgcolor: "surface.1",
+          p: "16px 12px",
+          borderRadius: "10px",
+          height: "15svh",
+          overflow: "hidden",
+        }}
+      >
+        <Typography sx={{ fontSize: 14, fontWeight: 500, color: "onSurface", py: "12px" }}>
+          {execution.title}
+        </Typography>
+        <Typography
+          sx={{ fontSize: 12, fontWeight: 400, color: "onSurface" }}
+          dangerouslySetInnerHTML={{
+            __html: sanitizeHTML(content),
+          }}
+        />
+      </Box>
     </Card>
   );
 };

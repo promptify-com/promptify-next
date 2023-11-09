@@ -8,6 +8,8 @@ import ChatMode from "./generate/ChatBox";
 import Header from "./Header";
 import { Sidebar } from "./Sidebar";
 import { useAppSelector } from "@/hooks/useStore";
+import { useDispatch } from "react-redux";
+import { setSelectedExecution } from "@/core/store/executionsSlice";
 
 interface TemplateDesktopProps {
   template: Templates;
@@ -15,15 +17,24 @@ interface TemplateDesktopProps {
 }
 
 export default function TemplateDesktop({ template, setErrorMessage }: TemplateDesktopProps) {
+  const dispatch = useDispatch();
   const [chatFullScreen, setChatFullScreen] = useState(true);
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
+
+  const closeExecutionDisplay = () => {
+    setChatFullScreen(true);
+    dispatch(setSelectedExecution(null));
+  };
 
   useEffect(() => {
     setChatFullScreen(!selectedExecution);
   }, [selectedExecution]);
 
   return (
-    <Stack gap={"1px"}>
+    <Stack
+      height={"calc(100svh - 90px)"}
+      gap={"1px"}
+    >
       <Header template={template} />
       <Grid
         mt={0}
@@ -31,9 +42,9 @@ export default function TemplateDesktop({ template, setErrorMessage }: TemplateD
         container
         flexWrap={"nowrap"}
         mx={"auto"}
-        height={"calc(100svh - 90px)"}
         bgcolor={"surface.1"}
         width={"100%"}
+        height={"calc(100% - 68px)"}
         position={"relative"}
         overflow={"auto"}
         sx={{
@@ -94,7 +105,7 @@ export default function TemplateDesktop({ template, setErrorMessage }: TemplateD
             <Display
               templateData={template}
               onError={setErrorMessage}
-              close={() => setChatFullScreen(true)}
+              close={closeExecutionDisplay}
             />
           </Grid>
         )}

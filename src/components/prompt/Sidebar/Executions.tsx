@@ -69,7 +69,12 @@ export const Executions: React.FC<ExecutionsProps> = ({ template }) => {
   }, [executions]);
 
   return (
-    <Stack gap={1}>
+    <Stack
+      gap={2}
+      sx={{
+        p: "24px",
+      }}
+    >
       {executions?.map(execution => (
         <CardExecution
           key={execution.id}

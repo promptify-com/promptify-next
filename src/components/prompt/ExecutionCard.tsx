@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Box, Stack, Tooltip, Typography } from "@mui/material";
 import { Subtitle } from "@/components/blocks";
 import { Error } from "@mui/icons-material";
-import { markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
+import { isImageOutput, markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
 import { DisplayPrompt, PromptLiveResponse } from "@/common/types/prompt";
 import { Prompts } from "@/core/api/dto/prompts";
 import { TemplatesExecutions } from "@/core/api/dto/templates";
@@ -55,13 +55,6 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
   }, [executionPrompts]);
 
   const scrollRef = useRef<HTMLDivElement>(null);
-
-  const isImageOutput = (output: string): boolean => {
-    const IsImage =
-      output.endsWith(".png") || output.endsWith(".jpg") || output.endsWith(".jpeg") || output.endsWith(".webp");
-
-    return IsImage;
-  };
 
   const executionError = (error: string | undefined) => {
     return (

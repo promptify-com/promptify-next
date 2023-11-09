@@ -87,7 +87,7 @@ export const DisplayActions: React.FC<Props> = ({ selectedExecution, onOpenExpor
             direction={"row"}
             alignItems={"center"}
             gap={1}
-            width={"30%"}
+            width={"40%"}
           >
             {selectedExecution &&
               (!renameAllowed ? (

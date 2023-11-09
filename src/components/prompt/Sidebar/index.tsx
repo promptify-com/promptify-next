@@ -1,5 +1,16 @@
 import { ReactNode, useState } from "react";
-import { Box, Drawer, Grid, Icon, IconButton, ListItem, ListItemButton, ListItemIcon, Typography } from "@mui/material";
+import {
+  Box,
+  Drawer,
+  Grid,
+  Icon,
+  IconButton,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { Api, ChatBubbleOutline, Close, InfoOutlined } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 import { useAppDispatch } from "@/hooks/useStore";
@@ -98,12 +109,18 @@ export const Sidebar: React.FC<SidebarProps> = ({ template }) => {
           },
         }}
       >
-        <Box
-          bgcolor={"surface.1"}
-          display="flex"
+        <Stack
+          direction={"row"}
           alignItems="center"
-          p={"16px 24px"}
           justifyContent="space-between"
+          sx={{
+            bgcolor: "surface.1",
+            p: "16px 24px",
+            position: "sticky",
+            top: 0,
+            left: 0,
+            zIndex: 1300,
+          }}
         >
           <Typography
             sx={{
@@ -128,7 +145,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ template }) => {
           >
             <Close />
           </IconButton>
-        </Box>
+        </Stack>
         {activeLink?.name === "executions" && <Executions template={template} />}
       </Drawer>
       <Box
