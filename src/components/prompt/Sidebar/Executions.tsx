@@ -3,11 +3,9 @@ import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
 import { setGeneratedExecution, setSelectedExecution, setSparkHashQueryParam } from "@/core/store/executionsSlice";
 import { isValidUserFn } from "@/core/store/userSlice";
-import useBrowser from "@/hooks/useBrowser";
 import { useAppSelector } from "@/hooks/useStore";
 import { Stack } from "@mui/material";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
-import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 
@@ -16,11 +14,8 @@ interface ExecutionsProps {
 }
 
 export const Executions: React.FC<ExecutionsProps> = ({ template }) => {
-  const router = useRouter();
   const dispatch = useDispatch();
   const isValidUser = useAppSelector(isValidUserFn);
-  const sparkQueryParam = router.query?.spark as string;
-  const { replaceHistoryByPathname } = useBrowser();
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
@@ -62,7 +57,7 @@ export const Executions: React.FC<ExecutionsProps> = ({ template }) => {
       return;
     }
 
-    const wantedExecutionId = sparkQueryParam ?? selectedExecution?.id.toString();
+    const wantedExecutionId = selectedExecution?.id.toString();
 
     if (wantedExecutionId) {
       const _selectedExecution = executions.find(exec => exec.id.toString() === wantedExecutionId);
@@ -70,10 +65,6 @@ export const Executions: React.FC<ExecutionsProps> = ({ template }) => {
       handleSelectExecution({ execution: _selectedExecution || null, resetHash: true });
     } else {
       handleSelectExecution({ execution: template.example_execution || null, resetHash: true });
-    }
-
-    if (sparkQueryParam) {
-      replaceHistoryByPathname(`/prompt/${template.slug}`);
     }
   }, [executions]);
 

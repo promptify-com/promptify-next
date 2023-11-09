@@ -48,7 +48,7 @@ export const SparksLayoutDesktop: FC<SparksLayoutProps> = ({
       </Grid>
       <Grid
         onClick={() => {
-          redirectToPath(`/prompt/${template.slug}`, { spark: `${execution.id}` });
+          redirectToPath(`/prompt/${template.slug}`, { hash: `${execution.hash}` });
         }}
         item
         md={2}
