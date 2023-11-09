@@ -57,6 +57,13 @@ export interface Model {
   fields: ModelFields;
 }
 
+export interface ModelsWithPagination {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: ModelFields[];
+}
+
 export interface RegionParams {
   provider?: string;
 }

@@ -9,16 +9,16 @@ import Select from "@mui/material/Select";
 
 import type { FormikCreateDeployment } from "@/common/types/deployments";
 import BaseButton from "../base/BaseButton";
-import { models } from "@/common/constants";
 import { useAppSelector } from "@/hooks/useStore";
 import InstanceLabel from "./InstanceLabel";
-import { allFieldsFilled } from "@/common/helpers";
+import { allFieldsFilled, isDesktopViewPort } from "@/common/helpers";
 
 import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
 import Logs from "./Logs";
 import { useDeployment } from "@/hooks/deployments/useDeployment";
 import { useFormSelects } from "@/hooks/deployments/useFormSelects";
+import { useCallback, useRef } from "react";
 
 interface CreateFormProps {
   onClose: () => void;
@@ -56,8 +56,42 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
   });
   const { region, provider, instance, llm, model } = formik.values;
 
-  const { instances, regions, isProviderSelected, isRegionSelected, isInstanceFetching, isRegionFetching } =
-    useFormSelects(provider, region);
+  const {
+    instances,
+    regions,
+    models,
+    fetchMoreModels,
+    isModelsFetching,
+    hasMoreModels,
+    isProviderSelected,
+    isRegionSelected,
+    isInstanceFetching,
+    isRegionFetching,
+  } = useFormSelects(provider, region);
+
+  const observer = useRef<IntersectionObserver | null>(null);
+  const isMobile = !isDesktopViewPort();
+
+  const lastTemplateElementRef = useCallback(
+    (node: HTMLDivElement) => {
+      if (isModelsFetching) return;
+      if (observer.current) observer.current.disconnect();
+
+      const rowHeight = isMobile ? 145 : 80;
+      const margin = `${2 * rowHeight}px`;
+
+      observer.current = new IntersectionObserver(
+        entries => {
+          if (entries[0].isIntersecting && hasMoreModels) {
+            fetchMoreModels();
+          }
+        },
+        { rootMargin: margin },
+      );
+      if (node) observer.current.observe(node);
+    },
+    [isModelsFetching, hasMoreModels],
+  );
 
   return (
     <form onSubmit={formik.handleSubmit}>
@@ -166,14 +200,25 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
               formik.setFieldValue("model", event.target.value);
             }}
           >
-            {models.map(model => (
+            {models &&
+              models.map(model => (
+                <MenuItem
+                  key={model.id}
+                  value={model.id}
+                >
+                  {model.name}
+                </MenuItem>
+              ))}
+            <div ref={lastTemplateElementRef}></div>
+
+            {isModelsFetching && (
               <MenuItem
-                key={model.pk}
-                value={model.pk}
+                value="loading"
+                disabled
               >
-                {model.fields.name}
+                Loading...
               </MenuItem>
-            ))}
+            )}
           </Select>
         </FormControl>
       </Grid>

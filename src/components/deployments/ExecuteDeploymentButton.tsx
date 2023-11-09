@@ -6,6 +6,7 @@ import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 import { PlayCircle } from "@mui/icons-material";
 import { isDesktopViewPort } from "@/common/helpers";
+import ExecuteForm from "./ExecuteForm";
 
 interface Props {
   item: Deployment;
@@ -17,26 +18,11 @@ export function ExecuteDeploymentButton({ item }: Props) {
 
   return (
     <>
-      {/* <Button
-        variant={item.status === "done" ? "outlined" : "contained"}
-        size="small"
-        onClick={() => setOpenPopup(true)}
-        disabled={item.status !== "done"}
-        sx={{
-          height: "30px",
-          width: "75px",
-          border: item.status === "done" ? "1px solid gray" : "none",
-        }}
-      >
-        Execute
-      </Button> */}
-
       <Tooltip title="Try it">
         <IconButton
           onClick={() => setOpenPopup(true)}
           sx={{
             border: "none",
-            display: item.status !== "done" ? "none" : "block",
             "&:hover": {
               bgcolor: "surface.2",
               opacity: 1,
@@ -56,11 +42,12 @@ export function ExecuteDeploymentButton({ item }: Props) {
       </Tooltip>
 
       {openPopup && (
-        <DeployementPopup
-          variant="execute"
-          onClose={() => setOpenPopup(false)}
-          item={item}
-        />
+        <DeployementPopup title={`Try ${item.model.name}`}>
+          <ExecuteForm
+            item={item!}
+            onClose={() => setOpenPopup(false)}
+          />
+        </DeployementPopup>
       )}
     </>
   );

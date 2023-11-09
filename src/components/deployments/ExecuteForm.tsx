@@ -1,15 +1,16 @@
-import Button from "@mui/material/Button";
+import { useState } from "react";
 import Stack from "@mui/material/Stack";
-import BaseButton from "../base/BaseButton";
-import { CreateDeployment, Deployment } from "@/common/types/deployments";
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
+
+import BaseButton from "../base/BaseButton";
+import { Deployment } from "@/common/types/deployments";
 import useToken from "@/hooks/useToken";
-import { Box, FormControl, Grid, Input, InputLabel } from "@mui/material";
-import { useEffect, useState } from "react";
 import { parseMessageData } from "@/common/helpers/parseMessageData";
 import { sanitizeHTML } from "@/common/helpers/htmlHelper";
-import MessageSender from "../prompt/generate/MessageSender";
-import ParagraphPlaceholder from "../placeholders/ParagraphPlaceholder";
+import MessageSender from "@/components/prompt/generate/MessageSender";
+import ParagraphPlaceholder from "@/components/placeholders/ParagraphPlaceholder";
 interface ExecuteFormProps {
   onClose: () => void;
   item: Deployment;

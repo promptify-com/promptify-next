@@ -132,7 +132,7 @@ function DeploymentItem({ item, onDelete }: DeploymentItem) {
               />
             </IconButton>
           </Tooltip>
-          <ExecuteDeploymentButton item={item} />
+          {item.status === "done" && <ExecuteDeploymentButton item={item} />}
         </Typography>
       </Grid>
     </Grid>
