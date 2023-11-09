@@ -6,8 +6,8 @@ import { useRouter } from "next/router";
 import useTruncate from "@/hooks/useTruncate";
 import SavedSpark from "@/assets/icons/SavedSpark";
 import NoSpark from "@/assets/icons/NoSpark";
-
 import Image from "@/components/design-system/Image";
+import { redirectToPath } from "@/common/helpers";
 
 type CardTemplateLastProps = {
   template: TemplateExecutionsDisplay;
@@ -20,7 +20,9 @@ const CardTemplateLast: React.FC<CardTemplateLastProps> = ({ template }) => {
   return (
     <Box>
       <Card
-        onClick={() => router.push(`prompt/${template.slug}`)}
+        onClick={() => {
+          redirectToPath(`prompt/${template.slug}`);
+        }}
         sx={{
           cursor: "pointer",
           maxWidth: "266px",
@@ -148,18 +150,16 @@ const CardTemplateLast: React.FC<CardTemplateLastProps> = ({ template }) => {
                     letterSpacing: "0.17px",
                     color: "onSurface",
                   }}
+                  title={template.executions[0].title}
                 >
-                  {template.executions[0].title}
+                  {truncate(template.executions[0].title, { length: 38 })}
                 </Typography>
               </Box>
 
               <IconButton
-                onClick={() =>
-                  router.push({
-                    pathname: `prompt/${template.slug}`,
-                    query: { spark: template.executions[0].id },
-                  })
-                }
+                onClick={() => {
+                  redirectToPath(`prompt/${template.slug}`, { spark: template.executions[0].id });
+                }}
                 sx={{
                   border: "none",
                   "&:hover": {

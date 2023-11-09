@@ -1,31 +1,32 @@
 import React, { useEffect, useState } from "react";
 import { Box, Button, CircularProgress, Stack, Typography, alpha, useTheme } from "@mui/material";
 import { PromptParams, ResInputs, ResOverrides, ResPrompt } from "@/core/api/dto/prompts";
-import { IPromptInput, PromptLiveResponse } from "@/common/types/prompt";
+import type { IPromptInput } from "@/common/types/prompt";
 import useToken from "@/hooks/useToken";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { templatesApi } from "@/core/api/templates";
 import { GeneratorInput } from "./GeneratorInput";
 import { GeneratorParam } from "./GeneratorParam";
-import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { getInputsFromString } from "@/common/helpers/getInputsFromString";
-import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
+import type { Templates } from "@/core/api/dto/templates";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { useRouter } from "next/router";
 import { AllInclusive, Close, InfoOutlined } from "@mui/icons-material";
 import TabsAndFormPlaceholder from "@/components/placeholders/TabsAndFormPlaceholder";
 import Storage from "@/common/storage";
 import { setGeneratingStatus, updateExecutionData } from "@/core/store/templatesSlice";
+import ClientOnly from "../base/ClientOnly";
+import useGenerateExecution from "@/hooks/useGenerateExecution";
+import { useUploadFileMutation } from "@/core/api/uploadFile";
+import { uploadFileHelper, SelectedFile } from "@/common/helpers/uploadFileHelper";
+import { setGeneratedExecution } from "@/core/store/executionsSlice";
 
 interface GeneratorFormProps {
   templateData: Templates;
-  selectedExecution: TemplatesExecutions | null;
-  setGeneratedExecution: (data: PromptLiveResponse) => void;
   onError: (errMsg: string) => void;
 }
 
-export interface InputsErrors {
-  [key: string]: number | boolean;
+interface InputsErrors {
+  [key: string]: number;
 }
 interface Input extends IPromptInput {
   prompt: number;
@@ -35,31 +36,59 @@ interface Param {
   param: PromptParams;
 }
 
-export const GeneratorForm: React.FC<GeneratorFormProps> = ({
-  templateData,
-  selectedExecution,
-  setGeneratedExecution,
-  onError,
-}) => {
+const deleteFileInputIfEmpty = (prompts: ResPrompt[], inputs: Input[]) => {
+  for (const prompt of prompts) {
+    const prompt_params = prompt.prompt_params;
+    for (const key in prompt_params) {
+      const enteredInput = inputs?.find(inputItem => inputItem.prompt === prompt.prompt && inputItem.name === key);
+      if (enteredInput && enteredInput.type === "file" && prompt_params[key] === "") {
+        delete prompt_params[key];
+      }
+    }
+  }
+};
+
+export const GeneratorForm: React.FC<GeneratorFormProps> = ({ templateData, onError }) => {
   const token = useToken();
   const { palette } = useTheme();
   const dispatch = useAppDispatch();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const router = useRouter();
-  const [generatingResponse, setGeneratingResponse] = useState<PromptLiveResponse | null>(null);
-  const [newExecutionId, setNewExecutionId] = useState<number | null>(null);
   const [resPrompts, setResPrompts] = useState<ResPrompt[]>([]);
-  const [lastExecution, setLastExecution] = useState<ResPrompt[] | null>(null);
   const [nodeInputs, setNodeInputs] = useState<ResInputs[]>([]);
   const [nodeParams, setNodeParams] = useState<ResOverrides[]>([]);
   const [errors, setErrors] = useState<InputsErrors>({});
   const [shownInputs, setShownInputs] = useState<Input[] | null>(null);
   const [shownParams, setShownParams] = useState<Param[] | null>(null);
+  const [userSavedFormData, setUserSavedFormData] = useState(false);
+  const answeredInputs = useAppSelector(state => state.template.answeredInputs);
+  const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
+  const { generateExecution, generatingResponse, lastExecution } = useGenerateExecution(templateData?.id, onError);
+
+  useEffect(() => {
+    const updatedInput = answeredInputs[0];
+
+    if (!updatedInput || updatedInput.modifiedFrom === "input") return;
+
+    setNodeInputs(prevState => {
+      const newState = [...prevState];
+      answeredInputs.forEach(input => {
+        const targetIndex = newState.findIndex(item => item.id === input.promptId);
+        if (targetIndex !== -1 && newState[targetIndex].inputs[input.inputName]) {
+          newState[targetIndex].inputs[input.inputName].value = input.value;
+        }
+      });
+
+      return newState;
+    });
+  }, [answeredInputs]);
+
+  const [uploadFile] = useUploadFileMutation();
 
   const setDefaultResPrompts = () => {
     const _initPromptsData: ResPrompt[] = [...resPrompts];
 
-    templateData.prompts.forEach(prompt => {
+    templateData.prompts?.forEach(prompt => {
       _initPromptsData.push({
         prompt: prompt.id,
         contextual_overrides: [],
@@ -70,18 +99,21 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     setResPrompts(_initPromptsData);
     dispatch(updateExecutionData(JSON.stringify(_initPromptsData)));
   };
-
   // Set default inputs values from selected execution parameters
   // Fetched execution also provides old / no more existed inputs values, needed to filter depending on shown inputs
   useEffect(() => {
     if (shownInputs) {
       const updatedInputs = new Map<number, ResInputs>();
-
       const storedData = Storage.get("nodeInputsParamsData");
+
       if (storedData) {
         setNodeInputs(storedData.inputs);
         setNodeParams(storedData.params);
+        setUserSavedFormData(true);
         Storage.remove("nodeInputsParamsData");
+      }
+
+      if (userSavedFormData || storedData) {
         return;
       }
 
@@ -122,15 +154,87 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
   useEffect(() => {
     if (selectedExecution?.contextual_overrides) {
-      const overrides = Object.entries(selectedExecution.contextual_overrides)
+      const nodeParams = Object.entries(selectedExecution.contextual_overrides)
         .map(([promptId, values]) => ({
           id: +promptId,
           contextual_overrides: values,
         }))
         .filter(override => override.contextual_overrides.length > 0);
-      setNodeParams(overrides);
+
+      setNodeParams(nodeParams);
     }
   }, [selectedExecution]);
+
+  useEffect(() => {
+    if (generatingResponse) {
+      dispatch(setGeneratedExecution(generatingResponse));
+    }
+  }, [generatingResponse]);
+
+  useEffect(() => {
+    if (!templateData.prompts?.length) {
+      return;
+    }
+
+    const setDefaultResPrompts = () => {
+      const _initPromptsData: ResPrompt[] = [...resPrompts];
+
+      templateData.prompts?.forEach(prompt => {
+        _initPromptsData.push({
+          prompt: prompt.id,
+          contextual_overrides: [],
+          prompt_params: {},
+        });
+      });
+
+      setResPrompts(_initPromptsData);
+      dispatch(updateExecutionData(JSON.stringify(_initPromptsData)));
+    };
+    const removeDuplicates = async () => {
+      const shownInputs = new Map<string, Input>();
+      const shownParams = new Map<number, Param>();
+
+      templateData.prompts?.forEach(prompt => {
+        const inputs = getInputsFromString(prompt.content);
+
+        inputs.forEach(input => {
+          shownInputs.set(input.name, { ...input, prompt: prompt.id });
+        });
+
+        prompt.parameters
+          .filter(param => param.is_visible)
+          .forEach(param => {
+            shownParams.set(param.parameter.id, { param, prompt: prompt.id });
+          });
+      });
+
+      setShownInputs(Array.from(shownInputs.values()));
+      setShownParams(Array.from(shownParams.values()));
+    };
+
+    setDefaultResPrompts();
+    removeDuplicates();
+  }, []);
+
+  useEffect(() => {
+    if (resPrompts.length > 0) {
+      changeResPrompts();
+    }
+  }, [nodeInputs, nodeParams]);
+
+  useEffect(() => {
+    const handleKeyboard = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      if (!["INPUT", "TEXTAREA"].includes(target.tagName)) {
+        if (e.shiftKey && e.code === "KeyR" && lastExecution) {
+          generateExecution(lastExecution);
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyboard);
+    return () => window.removeEventListener("keydown", handleKeyboard);
+  }, [lastExecution]);
 
   const changeResPrompts = () => {
     const _promptsData = [...resPrompts];
@@ -139,7 +243,6 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
       _promptsData.forEach((prompt, index) => {
         const obj = nodeInputs.find(inputs => inputs.id === prompt.prompt);
         if (obj) {
-          // Extract inputs values from nodeInputs item and put it as { inputName: inputValue }
           const values = Object.fromEntries(Object.entries(obj.inputs).map(([key, value]) => [key, value.value]));
           _promptsData[index].prompt_params = values;
         }
@@ -158,7 +261,6 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     setResPrompts(_promptsData);
     dispatch(updateExecutionData(JSON.stringify(_promptsData)));
   };
-
   const isInputsFilled = () => {
     const tempErrors: InputsErrors = {};
 
@@ -180,25 +282,62 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
 
     return tempErrors;
   };
-
   const validateInputs = () => {
     const unFilledInputs = isInputsFilled();
 
-    if (!token) {
-      setErrors({});
-      return true;
-    }
-
     if (Object.keys(unFilledInputs).length > 0) {
-      setErrors({ ...unFilledInputs });
+      setErrors({ ...errors, ...unFilledInputs });
       return false;
     }
 
-    setErrors({});
     return true;
   };
 
-  const validateAndGenerateExecution = () => {
+  const handleFileUploads = () =>
+    new Promise<boolean>(async resolve => {
+      const fileData = resPrompts.reduce((files: SelectedFile[], resPrompt) => {
+        const promptId = resPrompt.prompt;
+        const fileDataEntries = Object.entries(resPrompt.prompt_params)
+          .filter(([_, value]) => value instanceof File)
+          .map(([key, file]) => ({ key, promptId, file: file as File }));
+
+        return files.concat(fileDataEntries);
+      }, []);
+
+      const results = await Promise.allSettled(fileData.map(file => uploadFileHelper(uploadFile, file)));
+
+      const validNodeInputs = nodeInputs.filter(nodeInput =>
+        Object.values(nodeInput.inputs).every(input => !(input.value instanceof File)),
+      );
+
+      let hasErrors = false;
+      results.forEach(result => {
+        const { key, promptId, file } = result.status === "fulfilled" ? result.value : result.reason;
+        const currentKey = key as string;
+
+        if (!file) {
+          errors[currentKey] = promptId;
+          hasErrors = true;
+        }
+
+        const prompt = nodeInputs.find(inputs => inputs.id === promptId);
+        if (prompt) {
+          prompt.inputs[currentKey].value = file || "";
+          validNodeInputs.push(prompt);
+        }
+
+        const matchingData = resPrompts.find(data => data.prompt === promptId);
+        if (matchingData) {
+          matchingData.prompt_params[currentKey] = file as string | number;
+        }
+      });
+
+      setNodeInputs(validNodeInputs);
+      setErrors(errors);
+      resolve(hasErrors);
+    });
+
+  const validateAndGenerateExecution = async () => {
     if (!token) {
       if (allowReset) {
         const nodeInputsAndParams = { inputs: nodeInputs, params: nodeParams };
@@ -207,187 +346,20 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
       return router.push("/signin");
     }
 
+    const hasTypeFile = shownInputs?.some(item => item.type === "file");
+    let hasFileErrors = false;
+    if (hasTypeFile) {
+      deleteFileInputIfEmpty(resPrompts, shownInputs!);
+      hasFileErrors = await handleFileUploads();
+    }
+
     if (!validateInputs()) return;
 
-    dispatch(setGeneratingStatus(true));
+    if (!hasFileErrors) setErrors({});
 
+    dispatch(setGeneratingStatus(true));
     generateExecution(resPrompts);
   };
-
-  const generateExecution = (executionData: ResPrompt[]) => {
-    setLastExecution(JSON.parse(JSON.stringify(executionData)));
-
-    let tempData: any[] = [];
-    let url = `${process.env.NEXT_PUBLIC_API_URL}/api/meta/templates/${templateData.id}/execute/`;
-
-    fetchEventSource(url, {
-      method: "POST",
-      headers: {
-        Authorization: `Token ${token}`,
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(executionData),
-      openWhenHidden: true,
-
-      async onopen(res) {
-        if (res.ok && res.status === 200) {
-          dispatch(setGeneratingStatus(true));
-          setGeneratingResponse({ created_at: new Date(), data: [] });
-        } else if (res.status >= 400 && res.status < 500 && res.status !== 429) {
-          console.error("Client side error ", res);
-          onError("Something went wrong. Please try again later");
-        }
-      },
-      onmessage(msg) {
-        try {
-          const parseData = JSON.parse(msg.data.replace(/'/g, '"'));
-          const message = parseData.message;
-          const prompt = parseData.prompt_id;
-          const executionId = parseData.template_execution_id;
-
-          if (executionId) setNewExecutionId(executionId);
-
-          if (msg.event === "infer" && msg.data) {
-            if (message) {
-              const tempArr = [...tempData];
-              const activePrompt = tempArr.findIndex(template => template.prompt === +prompt);
-
-              if (activePrompt === -1) {
-                tempArr.push({
-                  message,
-                  prompt,
-                });
-              } else {
-                tempArr[activePrompt] = {
-                  ...tempArr[activePrompt],
-                  message: tempArr[activePrompt].message + message,
-                  prompt,
-                };
-              }
-
-              tempData = [...tempArr];
-              setGeneratingResponse(prevState => ({
-                ...prevState,
-                created_at: prevState?.created_at || new Date(),
-                data: tempArr,
-              }));
-            }
-          } else {
-            const tempArr = [...tempData];
-            const activePrompt = tempArr.findIndex(template => template.prompt === +prompt);
-
-            if (message === "[COMPLETED]") {
-              tempArr[activePrompt] = {
-                ...tempArr[activePrompt],
-                prompt,
-                isLoading: false,
-                isCompleted: true,
-              };
-            }
-
-            if (message === "[INITIALIZING]") {
-              if (activePrompt === -1) {
-                tempArr.push({
-                  message: "",
-                  prompt,
-                  isLoading: true,
-                  created_at: new Date(),
-                });
-              } else {
-                tempArr[activePrompt] = {
-                  ...tempArr[activePrompt],
-                  prompt,
-                  isLoading: true,
-                };
-              }
-            }
-
-            if (message.includes("[ERROR]")) {
-              onError(
-                message ? message.replace("[ERROR]", "") : "Something went wrong during the execution of this prompt",
-              );
-            }
-
-            tempData = [...tempArr];
-            setGeneratingResponse(prevState => ({
-              ...prevState,
-              created_at: prevState?.created_at || new Date(),
-              data: tempArr,
-            }));
-          }
-        } catch {
-          console.error(msg);
-          // TODO: this is triggered event when there is no error
-          // onError(msg.data.slice(0, 100));
-        }
-      },
-      onerror(err) {
-        console.error(err);
-        dispatch(setGeneratingStatus(false));
-        onError("Something went wrong. Please try again later");
-        throw err; // rethrow to stop the operation
-      },
-      onclose() {
-        dispatch(setGeneratingStatus(false));
-      },
-    });
-  };
-
-  useEffect(() => {
-    if (newExecutionId) {
-      setGeneratingResponse(prevState => ({
-        id: newExecutionId,
-        created_at: prevState?.created_at || new Date(),
-        data: prevState?.data || [],
-      }));
-    }
-  }, [newExecutionId]);
-
-  useEffect(() => {
-    if (generatingResponse) setGeneratedExecution(generatingResponse);
-  }, [generatingResponse]);
-
-  useEffect(() => {
-    if (templateData) {
-      setDefaultResPrompts();
-    }
-  }, [templateData]);
-
-  useEffect(() => {
-    if (resPrompts.length > 0) {
-      changeResPrompts();
-    }
-  }, [nodeInputs, nodeParams]);
-
-  useEffect(() => {
-    removeDuplicates();
-  }, [templateData]);
-
-  const removeDuplicates = async () => {
-    const shownInputs = new Map<string, Input>();
-    const shownParams = new Map<number, Param>();
-    await Promise.all(
-      [...templateData.prompts]
-        .sort((a, b) => a.order - b.order)
-        .map(async prompt => {
-          const inputs = getInputsFromString(prompt.content);
-          inputs.forEach(input => {
-            shownInputs.set(input.name, { ...input, prompt: prompt.id });
-          });
-
-          const params = (await dispatch(templatesApi.endpoints.getPromptParams.initiate(prompt.id))).data;
-          params
-            ?.filter(param => param.is_visible)
-            .forEach(param => {
-              shownParams.set(param.parameter.id, { param, prompt: prompt.id });
-            });
-        }),
-    );
-    setShownInputs(Array.from(shownInputs.values()));
-    setShownParams(Array.from(shownParams.values()));
-  };
-
   const resetForm = () => {
     const resetedNodeInputs = nodeInputs.map(nodeInput => {
       const updatedInputs = Object.keys(nodeInput.inputs).reduce((inputs: ResInputs["inputs"], inputKey) => {
@@ -407,29 +379,15 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
     setNodeInputs(resetedNodeInputs);
   };
 
-  // Keyboard shortcuts
-  const handleKeyboard = (e: KeyboardEvent) => {
-    // prevent trigger if typing inside input
-    const target = e.target as HTMLElement;
-    if (!["INPUT", "TEXTAREA"].includes(target.tagName)) {
-      if (e.shiftKey && e.code === "KeyR" && lastExecution) {
-        generateExecution(lastExecution);
-      }
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener("keydown", handleKeyboard);
-    return () => window.removeEventListener("keydown", handleKeyboard);
-  }, [handleKeyboard]);
-
   const filledForm = nodeInputs.every(nodeInput =>
     Object.values(nodeInput.inputs)
       .filter(input => input.required)
       .every(input => input.value),
   );
-
   const allowReset = nodeInputs.some(input => Object.values(input.inputs).some(input => input.value));
+  const promptHasContent = templateData.prompts?.some(prompt => prompt.content);
+  const hasContentOrFormFilled = !filledForm ? true : promptHasContent ? false : true;
+  const isButtonDisabled = isGenerating ? true : hasContentOrFormFilled;
 
   return (
     <Stack
@@ -515,10 +473,10 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
                 <GeneratorInput
                   key={i}
                   promptId={input.prompt}
-                  inputs={[input]}
-                  resInputs={nodeInputs}
+                  inputData={input}
+                  nodeInputs={nodeInputs}
                   setNodeInputs={setNodeInputs}
-                  errors={errors}
+                  error={input.name in errors}
                 />
               ))}
               {shownParams.map((param, i) => (
@@ -526,8 +484,8 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
                   key={i}
                   params={[param.param]}
                   promptId={param.prompt}
-                  resOverrides={nodeParams}
-                  setResOverrides={setNodeParams}
+                  nodeParams={nodeParams}
+                  setNodeParams={setNodeParams}
                 />
               ))}
             </React.Fragment>
@@ -555,80 +513,82 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
             gap={1}
             p={"16px 8px 16px 16px"}
           >
-            <Button
-              variant={"contained"}
-              startIcon={
-                token && isGenerating ? (
-                  <CircularProgress size={16} />
-                ) : (
-                  token && (
-                    <LogoApp
-                      width={18}
-                      color="white"
-                    />
-                  )
-                )
-              }
-              sx={{
-                flex: 1,
-                p: "10px 25px",
-                fontWeight: 500,
-                borderColor: "primary.main",
-                borderRadius: "999px",
-                bgcolor: "primary.main",
-                color: "onPrimary",
-                whiteSpace: "pre-line",
-                ":hover": {
-                  bgcolor: "surface.1",
-                  color: "primary.main",
-                },
-                ":disabled": {
-                  bgcolor: "surface.4",
-                  color: "onTertiary",
-                  borderColor: "transparent",
-                },
-              }}
-              disabled={!token ? false : isGenerating ? true : !filledForm}
-              onClick={validateAndGenerateExecution}
-            >
-              {token ? (
-                <React.Fragment>
-                  {isGenerating ? (
-                    <Typography>Generation in progress...</Typography>
+            <ClientOnly>
+              <Button
+                variant={"contained"}
+                startIcon={
+                  token && isGenerating ? (
+                    <CircularProgress size={16} />
                   ) : (
-                    <>
-                      <Typography sx={{ ml: 2, color: "inherit", fontSize: 15 }}>Generate</Typography>
-                      <Typography sx={{ display: { md: "none" }, ml: "auto", color: "inherit", fontSize: 12 }}>
-                        ~360s
-                      </Typography>
-                      <Stack
-                        direction={"row"}
-                        alignItems={"center"}
-                        gap={0.5}
-                        sx={{ display: { xs: "none", md: "flex" }, ml: "auto", color: "inherit", fontSize: 12 }}
-                      >
-                        {templateData.executions_limit === -1 ? (
-                          <AllInclusive fontSize="small" />
-                        ) : (
-                          <>
-                            {templateData.executions_limit - templateData.executions_count} of{" "}
-                            {templateData.executions_limit} left
-                            <InfoOutlined sx={{ fontSize: 16 }} />
-                          </>
-                        )}
-                      </Stack>
-                    </>
-                  )}
-                </React.Fragment>
-              ) : (
-                <Typography
-                  ml={2}
-                  color={"inherit"}
-                >
-                  Sign in or Create an account
-                </Typography>
-              )}
-            </Button>
+                    token && (
+                      <LogoApp
+                        width={18}
+                        color="white"
+                      />
+                    )
+                  )
+                }
+                sx={{
+                  flex: 1,
+                  p: "10px 25px",
+                  fontWeight: 500,
+                  borderColor: "primary.main",
+                  borderRadius: "999px",
+                  bgcolor: "primary.main",
+                  color: "onPrimary",
+                  whiteSpace: "pre-line",
+                  ":hover": {
+                    bgcolor: "surface.1",
+                    color: "primary.main",
+                  },
+                  ":disabled": {
+                    bgcolor: "surface.4",
+                    color: "onTertiary",
+                    borderColor: "transparent",
+                  },
+                }}
+                disabled={isButtonDisabled}
+                onClick={validateAndGenerateExecution}
+              >
+                {token ? (
+                  <>
+                    {isGenerating ? (
+                      <Typography>Generation in progress...</Typography>
+                    ) : (
+                      <>
+                        <Typography sx={{ ml: 2, color: "inherit", fontSize: 15 }}>Generate</Typography>
+                        <Typography sx={{ display: { md: "none" }, ml: "auto", color: "inherit", fontSize: 12 }}>
+                          ~360s
+                        </Typography>
+                        <Stack
+                          direction={"row"}
+                          alignItems={"center"}
+                          gap={0.5}
+                          sx={{ display: { xs: "none", md: "flex" }, ml: "auto", color: "inherit", fontSize: 12 }}
+                        >
+                          {templateData.executions_limit === -1 ? (
+                            <AllInclusive fontSize="small" />
+                          ) : (
+                            <>
+                              {templateData.executions_limit - templateData.executions_count} of{" "}
+                              {templateData.executions_limit} left
+                              <InfoOutlined sx={{ fontSize: 16 }} />
+                            </>
+                          )}
+                        </Stack>
+                      </>
+                    )}
+                  </>
+                ) : (
+                  <Typography
+                    ml={2}
+                    color={"inherit"}
+                  >
+                    Sign in or Create an account
+                  </Typography>
+                )}
+              </Button>
+            </ClientOnly>
             <Box
               sx={{
                 position: "relative",
@@ -678,7 +638,7 @@ export const GeneratorForm: React.FC<GeneratorFormProps> = ({
               textAlign: "center",
             }}
           >
-            Fill all the inputs
+            Please fill all required inputs
           </Typography>
         )}
 

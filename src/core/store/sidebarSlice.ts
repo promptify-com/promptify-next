@@ -1,21 +1,23 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 const initialState = {
-  open: true,
-
+  defaultSidebarOpen: true,
+  builderSidebarOpen: false,
 };
 
 const sidebarSlice = createSlice({
   name: "sidebar",
   initialState,
   reducers: {
-    setOpenSidebar: (state, action: PayloadAction<boolean>) => {
-      state.open = action.payload;
+    setOpenDefaultSidebar: (state, action: PayloadAction<boolean>) => {
+      state.defaultSidebarOpen = action.payload;
     },
-   
+    setOpenBuilderSidebar: (state, action: PayloadAction<boolean>) => {
+      state.builderSidebarOpen = action.payload;
+    },
   },
 });
 
-export const {setOpenSidebar} = sidebarSlice.actions;
+export const { setOpenDefaultSidebar, setOpenBuilderSidebar } = sidebarSlice.actions;
 
 export default sidebarSlice.reducer;

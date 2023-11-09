@@ -3,6 +3,7 @@ const nextConfig = {
   reactStrictMode: false,
   images: {
     domains: ["placehold.it", "promptify.s3.amazonaws.com"],
+    minimumCacheTTL: 60 * 60,
   },
   eslint: {
     dirs: ['common', 'assets', 'core', 'hooks', 'styles', 'themes', 'pages'],
@@ -20,14 +21,12 @@ if (
     hideSourceMaps: true,
   };
 
-  const sentryWebpackPluginOptions = {
+  module.exports = withSentryConfig(nextConfig, {
     org: "matious-corp",
     project: "promptify-web-production",
     silent: true,
     authToken: process.env.SENTRY_AUTH_TOKEN,
-  };
-
-  module.exports = withSentryConfig(nextConfig, sentryWebpackPluginOptions);
+  });
 } else {
   module.exports = nextConfig;
 }

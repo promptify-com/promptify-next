@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { Avatar, Box, Grid, Typography } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
@@ -6,12 +6,13 @@ import { useRouter } from "next/router";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import SearchBar from "@/components/explorer/SearchBar";
 import { SearchDialog } from "./SearchDialog";
-import { ProfileDropDown } from "@/components/ProfileMenu";
+import { ProfileMenu } from "@/components/ProfileMenu";
 import { SideBarMobile } from "../SideBarMobile";
 import { RootState } from "@/core/store";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { useSelector } from "react-redux";
 import { theme } from "@/theme";
+import { redirectToPath } from "@/common/helpers";
 
 interface HeaderProps {
   transparent?: boolean;
@@ -57,9 +58,7 @@ export const Header: React.FC<HeaderProps> = ({ transparent = false, fixed = fal
   const router = useRouter();
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
   const isValidUser = useSelector(isValidUserFn);
-  const [isMenuShown, setIsMenuShown] = useState(false);
   const [openSearchDialog, setOpenSearchDialog] = useState<boolean>(false);
-  const menuAnchorRef = useRef<HTMLDivElement | null>(null);
   const [openSidebar, setOpenSidebar] = useState<boolean>(false);
   const [sidebarType, setSidebarType] = useState<SidebarType>("navigation");
 
@@ -97,7 +96,9 @@ export const Header: React.FC<HeaderProps> = ({ transparent = false, fixed = fal
         }}
       >
         <Grid
-          onClick={() => router.push("/")}
+          onClick={() => {
+            redirectToPath("/");
+          }}
           display={{ xs: "flex", md: "none" }}
           width={75}
           p={"0px 10px"}
@@ -192,27 +193,7 @@ export const Header: React.FC<HeaderProps> = ({ transparent = false, fixed = fal
           <Box sx={{ display: { xs: "none", md: "flex" } }}>
             <Box>
               {isValidUser ? (
-                <Avatar
-                  ref={menuAnchorRef}
-                  onClick={() => setIsMenuShown(!isMenuShown)}
-                  src={currentUser?.avatar}
-                  alt={currentUser?.first_name}
-                  sx={{
-                    ml: "auto",
-                    cursor: "pointer",
-                    bgcolor: "black",
-                    borderRadius: { xs: "24px", sm: "36px" },
-                    width: { xs: "24px", sm: "40px" },
-                    height: { xs: "24px", sm: "40px" },
-                    fontStyle: "normal",
-                    textAlign: "center",
-                    fontWeight: 400,
-                    fontSize: { sm: "30px" },
-                    textTransform: "capitalize",
-                    lineHeight: "20px",
-                    letterSpacing: "0.14px",
-                  }}
-                />
+                <ProfileMenu />
               ) : (
                 <Box
                   display={"flex"}
@@ -273,12 +254,6 @@ export const Header: React.FC<HeaderProps> = ({ transparent = false, fixed = fal
             </Box>
           </Box>
         </Box>
-        <ProfileDropDown
-          anchorElement={menuAnchorRef.current}
-          open={isMenuShown}
-          onToggle={() => setIsMenuShown(!isMenuShown)}
-          onClose={() => setIsMenuShown(false)}
-        />
         <SideBarMobile
           type={sidebarType}
           openDrawer={openSidebar}

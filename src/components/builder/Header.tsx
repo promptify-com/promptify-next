@@ -1,116 +1,174 @@
-import React from "react";
-import { Box, Chip, Stack, Typography, Tooltip, IconButton } from "@mui/material";
-import PlayArrowIcon from "@mui/icons-material/PlayArrow";
-import { ModeEdit, Publish, PreviewOutlined } from "@mui/icons-material";
+import React, { useState } from "react";
+import { Chip, Stack, Typography, alpha } from "@mui/material";
+import {
+  CloudOutlined,
+  ModeEdit,
+  RocketLaunch,
+  VisibilityOutlined,
+  SettingsApplicationsRounded,
+} from "@mui/icons-material";
 import BaseButton from "../base/BaseButton";
 import { TemplateStatus } from "@/core/api/dto/templates";
+import { theme } from "@/theme";
+import { isValidUserFn } from "@/core/store/userSlice";
+import { RootState } from "@/core/store";
+import { BuilderType } from "@/common/types/builder";
+import { BUILDER_TYPE } from "@/common/constants";
+import { useAppSelector } from "@/hooks/useStore";
+import { ProfileMenu } from "@/components/ProfileMenu";
 
 interface IHeader {
-  onDrawerOpen: () => void;
   onSave: () => void;
   onPublish: () => void;
   title: string;
   status: TemplateStatus;
   templateSlug?: string;
+  onEditTemplate: () => void;
+  type: BuilderType;
 }
 
-export const Header = ({ onDrawerOpen, onSave, onPublish, title, status, templateSlug }: IHeader) => {
+export const Header = ({ onSave, onPublish, title, status, templateSlug, onEditTemplate, type }: IHeader) => {
+  const isValidUser = useAppSelector(isValidUserFn);
+  const currentUser = useAppSelector((state: RootState) => state.user.currentUser);
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSaveTemplate = async () => {
+    setIsSaving(true);
+    await onSave();
+    setIsSaving(false);
+  };
+
+  const handlePublishTemplate = async () => {
+    setIsSaving(true);
+    await onPublish();
+    setIsSaving(false);
+  };
+
   return (
-    <Box
-      bgcolor={"#262626"}
-      height="80px"
-      display="flex"
-      alignItems="center"
-      px={{ xs: "10px", md: "50px" }}
-      justifyContent="space-between"
+    <Stack
+      direction={"row"}
+      alignItems={"center"}
+      gap={10}
+      bgcolor={"surface.1"}
+      p={"16px 24px"}
+      border={`1px solid ${theme.palette.surface[3]}`}
+      zIndex={3}
+      position={"relative"}
     >
-      <Box
-        display={"flex"}
+      <Stack
+        flex={1}
+        direction={"row"}
         alignItems={"center"}
-        gap={2}
+        justifyContent={"space-between"}
       >
         <Stack
           direction={"row"}
           alignItems={"center"}
-          gap={1}
-          sx={{ color: "white" }}
+          gap={2}
         >
-          <Typography
-            sx={{ color: "white", fontSize: "1rem" }}
-            dangerouslySetInnerHTML={{ __html: title }}
-          />
-          <ModeEdit
-            sx={{ cursor: "pointer" }}
-            onClick={onDrawerOpen}
-          />
-        </Stack>
+          <Stack
+            direction={"row"}
+            alignItems={"center"}
+            gap={1}
+            sx={{ color: "onSurface" }}
+          >
+            <Typography sx={{ color: "onSurface", fontSize: "16px" }}>{title}</Typography>
+            <ModeEdit
+              sx={{ cursor: "pointer", fontSize: "16px" }}
+              onClick={onEditTemplate}
+            />
+          </Stack>
 
-        {status && (
-          <Chip
-            label={status}
-            sx={{ color: "surface.3" }}
-            color={status === "PENDING_REVIEW" ? "info" : "primary"}
-            size="small"
-          />
-        )}
-      </Box>
-      <Box
-        display={"flex"}
-        alignItems={"center"}
-        gap={1}
-      >
-        {templateSlug && (
-          <Tooltip title="Preview">
-            <IconButton
+          {status && (
+            <Chip
+              label={status}
               sx={{
-                display: { xs: "none", md: "inline-flex" },
-                bgcolor: "surface.2",
-                border: "none",
+                bgcolor: "surface.3",
                 color: "onSurface",
-                "&:hover": {
-                  bgcolor: "surface.3",
-                  color: "onSurface",
+                fontSize: 13,
+                p: "7px 6px",
+                height: "auto",
+                ".MuiChip-label": {
+                  textTransform: "lowercase",
+                  ":first-letter": {
+                    textTransform: "uppercase",
+                  },
                 },
               }}
-              onClick={() => {
-                window.open(`/prompt/${templateSlug}`, "_blank");
-              }}
-            >
-              <PreviewOutlined />
-            </IconButton>
-          </Tooltip>
-        )}
-        <BaseButton
-          variant="contained"
-          color="custom"
-          customColor="black"
-          sx={{
-            border: "1px solid black",
-            fontSize: "0.8rem",
-            bgcolor: "black",
-            minWidth: 110,
-            justifyContent: "center",
-            color: "white",
-          }}
-          startIcon={<PlayArrowIcon sx={{ fontSize: "1rem" }} />}
-          onClick={() => onSave()}
+              size="small"
+            />
+          )}
+        </Stack>
+        <Stack
+          direction={"row"}
+          alignItems={"center"}
+          gap={1}
         >
-          Save
-        </BaseButton>
-
-        {status === "DRAFT" && (
+          {templateSlug ? (
+            <>
+              {currentUser?.is_admin && type === BUILDER_TYPE.USER && (
+                <BaseButton
+                  variant="text"
+                  color="custom"
+                  sx={btnStyle}
+                  startIcon={<SettingsApplicationsRounded sx={{ fontSize: 20 }} />}
+                  onClick={() => window.open(`/builder/${templateSlug}`, "_blank")}
+                >
+                  Admin builder
+                </BaseButton>
+              )}
+              <BaseButton
+                variant="text"
+                color="custom"
+                sx={btnStyle}
+                startIcon={<VisibilityOutlined sx={{ fontSize: 20 }} />}
+                onClick={() => window.open(`/prompt/${templateSlug}`, "_blank")}
+              >
+                Preview
+              </BaseButton>
+            </>
+          ) : null}
           <BaseButton
-            variant="contained"
+            variant="text"
             color="custom"
-            customColor="white"
-            sx={{ color: "onSurface" }}
-            onClick={() => onPublish()}
+            sx={btnStyle}
+            startIcon={<CloudOutlined sx={{ fontSize: 20 }} />}
+            disabled={isSaving}
+            onClick={handleSaveTemplate}
           >
-            <Publish sx={{ fontSize: "1rem", mr: 1 }} />
-            Publish
+            Save
           </BaseButton>
-        )}
-      </Box>
-    </Box>
+
+          {status === "DRAFT" && (
+            <BaseButton
+              variant="contained"
+              color="custom"
+              sx={{
+                ...btnStyle,
+                bgcolor: "secondary.main",
+                color: "onPrimary",
+              }}
+              startIcon={<RocketLaunch sx={{ fontSize: 20 }} />}
+              disabled={isSaving}
+              onClick={handlePublishTemplate}
+            >
+              Publish
+            </BaseButton>
+          )}
+        </Stack>
+      </Stack>
+      {isValidUser && type === BUILDER_TYPE.USER && <ProfileMenu />}
+    </Stack>
   );
+};
+
+const btnStyle = {
+  color: "secondary.main",
+  fontSize: 14,
+  p: "6px 16px",
+  borderRadius: "8px",
+  border: `1px solid ${alpha(theme.palette.onSurface, 0.2)}`,
+  ":hover": {
+    bgcolor: "action.hover",
+  },
 };

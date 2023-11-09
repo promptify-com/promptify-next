@@ -1,134 +1,64 @@
-import React, { useEffect, useMemo, useState } from "react";
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Alert,
-  Box,
-  Divider,
-  Grid,
-  Palette,
-  Snackbar,
-  Stack,
-  ThemeProvider,
-  Typography,
-  createTheme,
-  useTheme,
-} from "@mui/material";
-import { ExpandMore } from "@mui/icons-material";
-import { skipToken } from "@reduxjs/toolkit/dist/query";
+import { useEffect, useState } from "react";
+import Alert from "@mui/material/Alert";
+import Snackbar from "@mui/material/Snackbar";
+import { type Palette, ThemeProvider, createTheme, useTheme } from "@mui/material";
 import materialDynamicColors from "material-dynamic-colors";
 import { mix } from "polished";
 import { useRouter } from "next/router";
-import { useGetPromptTemplateBySlugQuery, useViewTemplateMutation } from "@/core/api/templates";
+import { useViewTemplateMutation } from "@/core/api/templates";
 import { TemplatesExecutions, Templates } from "@/core/api/dto/templates";
-import { GeneratorForm } from "@/components/prompt/GeneratorForm";
-import { Display } from "@/components/prompt/Display";
-import { Details } from "@/components/prompt/Details";
-import { authClient } from "@/common/axios";
-import { DetailsCard } from "@/components/prompt/DetailsCard";
-import { PromptLiveResponse } from "@/common/types/prompt";
 import { Layout } from "@/layout";
-import { useWindowSize } from "usehooks-ts";
-import BottomTabs from "@/components/prompt/BottomTabs";
-import { DetailsCardMini } from "@/components/prompt/DetailsCardMini";
-import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
-import ExecutionForm from "@/components/prompt/ExecutionForm";
 import { isValidUserFn } from "@/core/store/userSlice";
-import { useSelector, useDispatch } from "react-redux";
 import { updateTemplateData } from "@/core/store/templatesSlice";
-import { RootState } from "@/core/store";
-import PromptPlaceholder from "@/components/placeholders/PromptPlaceHolder";
-import { useAppSelector } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { getExecutionByHash } from "@/hooks/api/executions";
+import TemplateMobile from "@/components/prompt/TemplateMobile";
+import TemplateDesktop from "@/components/prompt/TemplateDesktop";
+import { getTemplateBySlug } from "@/hooks/api/templates";
+import { redirectToPath } from "@/common/helpers";
 
-const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | null }) => {
-  const isGenerating = useAppSelector(state => state.template.isGenerating);
-  const [selectedExecution, setSelectedExecution] = useState<TemplatesExecutions | null>(null);
-  const [generatedExecution, setGeneratedExecution] = useState<PromptLiveResponse | null>(null);
-  const [executionFormOpen, setExecutionFormOpen] = useState(false);
+interface TemplateProps {
+  hashedExecution: TemplatesExecutions | null;
+  fetchedTemplate: Templates;
+}
+
+function Template({ hashedExecution, fetchedTemplate }: TemplateProps) {
+  const router = useRouter();
   const [updateViewTemplate] = useViewTemplateMutation();
   const [errorMessage, setErrorMessage] = useState<string>("");
-  const [mobileTab, setMobileTab] = useState(0);
-  const router = useRouter();
   const theme = useTheme();
   const [palette, setPalette] = useState(theme.palette);
-  const disptach = useDispatch();
-  const isValidUser = useSelector(isValidUserFn);
-  const { width: windowWidth } = useWindowSize();
-  const isSavedTemplateId = useSelector((state: RootState) => state.template.id);
+  const dispatch = useAppDispatch();
+  const isValidUser = useAppSelector(isValidUserFn);
+  const savedTemplateId = useAppSelector(state => state.template.id);
 
-  const routerSlug = router.query?.slug as string;
-  if (!routerSlug) {
-    router.push("/404");
+  useEffect(() => {
+    if (!savedTemplateId || savedTemplateId !== fetchedTemplate.id) {
+      dispatch(
+        updateTemplateData({
+          id: fetchedTemplate.id,
+          is_favorite: fetchedTemplate.is_favorite,
+          likes: fetchedTemplate.favorites_count,
+        }),
+      );
+
+      if (fetchedTemplate.thumbnail) {
+        fetchDynamicColors();
+      }
+    }
+
+    if (isValidUser) {
+      updateViewTemplate(fetchedTemplate.id);
+    }
+  }, [isValidUser]);
+
+  if (!fetchedTemplate.id) {
+    redirectToPath("/404");
     return;
   }
 
-  const {
-    data: fetchedTemplate,
-    error: fetchedTemplateError,
-    isLoading: isLoadingTemplate,
-  } = useGetPromptTemplateBySlugQuery(routerSlug);
-  const {
-    data: templateExecutions,
-    error: templateExecutionsError,
-    isFetching: isFetchingExecutions,
-    refetch: refetchTemplateExecutions,
-  } = useGetExecutionsByTemplateQuery(isValidUser && fetchedTemplate?.id ? fetchedTemplate.id : skipToken);
-
-  // We need to set initial template store only once.
-  if (fetchedTemplate && (!isSavedTemplateId || isSavedTemplateId !== fetchedTemplate.id)) {
-    disptach(
-      updateTemplateData({
-        id: fetchedTemplate.id,
-        is_favorite: fetchedTemplate.is_favorite,
-        likes: fetchedTemplate.favorites_count,
-      }),
-    );
-  }
-
-  useEffect(() => {
-    if (fetchedTemplate?.id && isValidUser) {
-      updateViewTemplate(fetchedTemplate.id);
-    }
-  }, [fetchedTemplate?.id, isValidUser]);
-
-  // After new generated execution is completed - refetch the executions list and clear the generatedExecution state
-  // All prompts should be completed - isCompleted: true
-  useEffect(() => {
-    if (!isGenerating && generatedExecution?.data?.length) {
-      const promptNotCompleted = generatedExecution.data.find(execData => !execData.isCompleted);
-      if (!promptNotCompleted) {
-        setSelectedExecution(null);
-        setExecutionFormOpen(true);
-      }
-    }
-  }, [isGenerating, generatedExecution]);
-
-  useEffect(() => {
-    if (isGenerating || hashedExecution?.id) {
-      setMobileTab(2);
-    }
-  }, [isGenerating, hashedExecution]);
-
-  // Keep tracking the current generated prompt
-  const currentGeneratedPrompt = useMemo(() => {
-    if (fetchedTemplate && generatedExecution?.data?.length) {
-      const loadingPrompt = generatedExecution.data.find(prompt => prompt.isLoading);
-      const prompt = fetchedTemplate.prompts.find(prompt => prompt.id === loadingPrompt?.prompt);
-      if (prompt) return prompt;
-    }
-    return null;
-  }, [fetchedTemplate, generatedExecution]);
-
-  useEffect(() => {
-    if (fetchedTemplate?.thumbnail) {
-      fetchDynamicColors();
-    }
-  }, [fetchedTemplate]);
-
   const fetchDynamicColors = () => {
-    materialDynamicColors(fetchedTemplate?.thumbnail)
+    materialDynamicColors(fetchedTemplate.thumbnail)
       .then((imgPalette: IMaterialDynamicColorsTheme) => {
         const newPalette: Palette = {
           ...theme.palette,
@@ -163,269 +93,73 @@ const Prompt = ({ hashedExecution }: { hashedExecution: TemplatesExecutions | nu
         console.warn("Error fetching dynamic colors");
       });
   };
-
   const dynamicTheme = createTheme({ ...theme, palette });
-
-  if (fetchedTemplateError || templateExecutionsError) {
-    router.push("/404");
-    return;
-  }
+  const isMobileView = router.query.viewport === "mobile";
 
   return (
-    <>
-      <ThemeProvider theme={dynamicTheme}>
-        <Layout>
-          {!fetchedTemplate || isLoadingTemplate ? (
-            <PromptPlaceholder />
-          ) : (
-            <Grid
-              mt={{ xs: 7, md: 0 }}
-              container
-              sx={{
-                mx: "auto",
-                height: {
-                  xs: `calc(100svh - ${theme.custom.headerHeight.xs})`,
-                  md: `calc(100svh - ${theme.custom.headerHeight.md})`,
-                },
-                width: { md: "calc(100% - 65px)" },
-                bgcolor: "surface.2",
-                borderTopLeftRadius: { md: "16px" },
-                borderTopRightRadius: { md: "16px" },
-                overflow: "hidden",
-                position: "relative",
-              }}
-            >
-              {windowWidth > 960 && (
-                <Grid
-                  sx={{
-                    height: "100%",
-                    width: "401px",
-                    overflow: "auto",
-                    position: "relative",
-                    top: 0,
-                    left: 0,
-                    scrollbarColor: "red",
-                    right: 0,
-                    zIndex: 999,
-                    "&::-webkit-scrollbar": {
-                      width: "0.4em",
-                    },
-                    "&::-webkit-scrollbar-track": {
-                      boxShadow: "inset 0 0 6px rgba(0, 0, 0, 0.3)",
-                      webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
-                    },
-                    "&::-webkit-scrollbar-thumb": {
-                      backgroundColor: "surface.3",
-                      outline: "1px solid surface.3",
-                      borderRadius: "10px",
-                    },
-                  }}
-                >
-                  <Stack height={"100%"}>
-                    <DetailsCard templateData={fetchedTemplate} />
-                    <Stack flex={1}>
-                      <Box flex={1}>
-                        <Accordion
-                          sx={{
-                            boxShadow: "none",
-                            bgcolor: "surface.1",
-                            borderRadius: "0 0 16px 16px",
-                            overflow: "hidden",
-                            ".MuiAccordionDetails-root": {
-                              p: "0",
-                            },
-                            ".MuiAccordionSummary-root": {
-                              minHeight: "48px",
-                              ":hover": {
-                                opacity: 0.8,
-                                svg: {
-                                  color: "primary.main",
-                                },
-                              },
-                            },
-                            ".MuiAccordionSummary-content": {
-                              m: 0,
-                            },
-                          }}
-                        >
-                          <AccordionSummary expandIcon={<ExpandMore />}>
-                            <Typography
-                              sx={{
-                                fontSize: 12,
-                                fontWeight: 500,
-                                color: "primary.main",
-                              }}
-                            >
-                              More about template
-                            </Typography>
-                          </AccordionSummary>
-                          <AccordionDetails>
-                            <Details templateData={fetchedTemplate} />
-                          </AccordionDetails>
-                        </Accordion>
-                        <GeneratorForm
-                          templateData={fetchedTemplate}
-                          selectedExecution={selectedExecution}
-                          setGeneratedExecution={setGeneratedExecution}
-                          onError={setErrorMessage}
-                        />
-                      </Box>
-                    </Stack>
-                  </Stack>
-                </Grid>
-              )}
-
-              {windowWidth < 960 && (
-                <>
-                  {mobileTab !== 0 && <DetailsCardMini templateData={fetchedTemplate} />}
-
-                  <Grid
-                    item
-                    xs={12}
-                    md={8}
-                    sx={{
-                      display: mobileTab === 0 ? "block" : "none",
-                      height: "100%",
-                      overflow: "auto",
-                      bgcolor: "surface.1",
-                      position: "relative",
-                      pb: "75px", // Bottom tab bar height
-                    }}
-                  >
-                    <DetailsCard templateData={fetchedTemplate} />
-                    <Details
-                      templateData={fetchedTemplate}
-                      setMobileTab={setMobileTab}
-                      mobile
-                    />
-                  </Grid>
-
-                  <Grid
-                    item
-                    xs={12}
-                    md={8}
-                    sx={{
-                      display: mobileTab === 1 ? "block" : "none",
-                      height: "100%",
-                      overflow: "auto",
-                      bgcolor: "surface.1",
-                      pb: "calc(74px + 90px)", // 74px Bottom tab bar height + 90px details card mini on the header
-                    }}
-                  >
-                    <GeneratorForm
-                      templateData={fetchedTemplate}
-                      selectedExecution={selectedExecution}
-                      setGeneratedExecution={setGeneratedExecution}
-                      onError={setErrorMessage}
-                    />
-                  </Grid>
-                </>
-              )}
-
-              <Grid
-                flex={1}
-                sx={{
-                  display: {
-                    xs: mobileTab === 2 ? "block" : "none",
-                    md: "block",
-                  },
-                  height: {
-                    xs: "calc(100% - (74px + 90px))", // 74px Bottom tab bar height + 90px details card mini on the header
-                    md: "100%",
-                  },
-                  overflow: "auto",
-                  bgcolor: "surface.1",
-                  borderLeft: "1px solid #ECECF4",
-                  position: "relative",
-                }}
-              >
-                <Display
-                  templateData={fetchedTemplate}
-                  executions={templateExecutions || []}
-                  isFetching={isFetchingExecutions}
-                  selectedExecution={selectedExecution}
-                  setSelectedExecution={setSelectedExecution}
-                  generatedExecution={generatedExecution}
-                  hashedExecution={hashedExecution}
-                />
-                {currentGeneratedPrompt && (
-                  <Box
-                    sx={{
-                      position: "sticky",
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      zIndex: 998,
-                      bgcolor: "surface.1",
-                    }}
-                  >
-                    <Divider sx={{ borderColor: "surface.3" }} />
-                    <Typography
-                      sx={{
-                        padding: "8px 16px 5px",
-                        textAlign: "right",
-                        fontSize: 11,
-                        fontWeight: 500,
-                        opacity: 0.3,
-                      }}
-                    >
-                      Prompt #{currentGeneratedPrompt.order}: {currentGeneratedPrompt.title}
-                    </Typography>
-                  </Box>
-                )}
-              </Grid>
-
-              <BottomTabs
-                setActiveTab={setMobileTab}
-                activeTab={mobileTab}
-              />
-            </Grid>
-          )}
-
-          <ExecutionForm
-            type="new"
-            isOpen={executionFormOpen}
-            executionId={generatedExecution?.id}
-            onClose={() => {
-              setGeneratedExecution(null);
-              setExecutionFormOpen(false);
-            }}
-            onCancel={() => refetchTemplateExecutions()}
+    <ThemeProvider theme={dynamicTheme}>
+      <Layout>
+        {isMobileView ? (
+          <TemplateMobile
+            hashedExecution={hashedExecution}
+            template={fetchedTemplate}
+            setErrorMessage={setErrorMessage}
           />
+        ) : (
+          <TemplateDesktop
+            hashedExecution={hashedExecution}
+            template={fetchedTemplate}
+            setErrorMessage={setErrorMessage}
+          />
+        )}
 
-          <Snackbar
-            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-            open={errorMessage.length > 0}
-            autoHideDuration={6000}
-            onClose={() => setErrorMessage("")}
-          >
-            <Alert severity={"error"}>{errorMessage}</Alert>
-          </Snackbar>
-        </Layout>
-      </ThemeProvider>
-    </>
+        <Snackbar
+          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+          open={errorMessage.length > 0}
+          autoHideDuration={6000}
+          onClose={() => setErrorMessage("")}
+        >
+          <Alert severity={"error"}>{errorMessage}</Alert>
+        </Snackbar>
+      </Layout>
+    </ThemeProvider>
   );
-};
+}
 
-export async function getServerSideProps({ params, query }: { params: { slug: string }; query: { hash: string } }) {
+export async function getServerSideProps({
+  params,
+  query,
+}: {
+  params: {
+    slug: string;
+  };
+  query: {
+    hash: string;
+  };
+}) {
   const { slug } = params;
   const { hash } = query;
+  let fetchedTemplate: Templates = {} as Templates;
+  let hashedExecution: TemplatesExecutions | null = null;
+
+  if (hash) {
+    const [_execution, _templatesResponse] = await Promise.allSettled([
+      getExecutionByHash(hash),
+      getTemplateBySlug(slug),
+    ]);
+
+    if (_execution.status === "fulfilled") {
+      hashedExecution = _execution.value;
+    }
+    if (_templatesResponse.status === "fulfilled") {
+      fetchedTemplate = _templatesResponse.value;
+    }
+  }
 
   try {
-    let fetchedTemplate: Templates;
-    let execution: TemplatesExecutions | null = null;
-
-    if (hash) {
-      const [_execution, _templatesResponse] = await Promise.all([
-        getExecutionByHash(hash),
-        authClient.get<Templates>(`/api/meta/templates/by-slug/${slug}/`),
-      ]);
-
-      execution = _execution;
-      fetchedTemplate = _templatesResponse.data;
-    } else {
-      const _templatesResponse = await authClient.get<Templates>(`/api/meta/templates/by-slug/${slug}/`);
-      fetchedTemplate = _templatesResponse.data;
+    if (!hash) {
+      const _templatesResponse = await getTemplateBySlug(slug);
+      fetchedTemplate = _templatesResponse;
     }
 
     return {
@@ -434,7 +168,8 @@ export async function getServerSideProps({ params, query }: { params: { slug: st
         description: fetchedTemplate.meta_description || fetchedTemplate.description,
         meta_keywords: fetchedTemplate.meta_keywords,
         image: fetchedTemplate.thumbnail,
-        hashedExecution: execution,
+        hashedExecution,
+        fetchedTemplate,
       },
     };
   } catch (error) {
@@ -443,8 +178,11 @@ export async function getServerSideProps({ params, query }: { params: { slug: st
         title: "Promptify | Boost Your Creativity",
         description:
           "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
+        fetchedTemplate,
+        hashedExecution,
       },
     };
   }
 }
-export default Prompt;
+
+export default Template;

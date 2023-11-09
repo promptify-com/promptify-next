@@ -2,20 +2,22 @@ import React, { useState } from "react";
 import { Box, Button, Chip, Stack, Typography, alpha, useTheme } from "@mui/material";
 import { Templates } from "@/core/api/dto/templates";
 import { Subtitle } from "@/components/blocks";
-import moment from "moment";
 import { useRouter } from "next/router";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import FavoriteMobileButton from "@/components/common/buttons/FavoriteMobileButton";
 import { setSelectedTag } from "@/core/store/filtersSlice";
 import { Create } from "@mui/icons-material";
 import Clone from "@/assets/icons/Clone";
-import { templatesApi, useCreateTemplateMutation } from "@/core/api/templates";
-import { INodesData } from "@/common/types/builder";
+import { useCreateTemplateMutation } from "@/core/api/templates";
+import { IEditPrompts } from "@/common/types/builder";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { RootState } from "@/core/store";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { useSelector } from "react-redux";
 import ApiAccess from "./ApiAccess";
+import { stripTags, getBaseUrl, redirectToPath } from "@/common/helpers";
+import { formatDate, timeAgo } from "@/common/helpers/timeManipulation";
+import ClientOnly from "../base/ClientOnly";
 
 interface DetailsProps {
   templateData: Templates;
@@ -41,39 +43,31 @@ export const Details: React.FC<DetailsProps> = ({ templateData, setMobileTab = (
       setIsCloning(true);
 
       try {
-        // sort based on order to prevent depending on prompt before its created
-        const orderedPrompts = [...templateData.prompts].sort((a, b) => a.order - b.order);
+        const clonedPrompts: IEditPrompts[] = templateData.prompts.map(prompt => {
+          const params = prompt.parameters.map(param => ({
+            parameter_id: param.parameter.id,
+            score: param.score,
+            is_visible: param.is_visible,
+            is_editable: param.is_editable,
+          }));
 
-        const clonedPrompts: INodesData[] = await Promise.all(
-          // TODO: https://github.com/ysfbsf/promptify-next/issues/262
-          orderedPrompts.map(async prompt => {
-            const params = (await dispatch(templatesApi.endpoints.getPromptParams.initiate(prompt.id))).data?.map(
-              param => ({
-                parameter_id: param.parameter.id,
-                score: param.score,
-                is_visible: param.is_visible,
-                is_editable: param.is_editable,
-              }),
-            );
+          return {
+            temp_id: prompt.id,
+            title: prompt.title,
+            content: prompt.content,
+            engine_id: prompt.engine.id,
+            model_parameters: prompt.model_parameters,
+            dependencies: prompt.dependencies || [],
+            is_visible: prompt.is_visible,
+            show_output: prompt.show_output,
+            prompt_output_variable: prompt.prompt_output_variable,
+            order: prompt.order,
+            parameters: params || [],
+            output_format: prompt.output_format,
+          };
+        });
 
-            return {
-              temp_id: prompt.id,
-              title: prompt.title,
-              content: prompt.content,
-              engine_id: prompt.engine.id,
-              model_parameters: prompt.model_parameters,
-              dependencies: prompt.dependencies || [],
-              is_visible: prompt.is_visible,
-              show_output: prompt.show_output,
-              prompt_output_variable: prompt.prompt_output_variable,
-              order: prompt.order,
-              parameters: params || [],
-              output_format: prompt.output_format,
-            };
-          }),
-        );
-
-        const response = await createTemplate({
+        const { slug } = await createTemplate({
           title: `${templateData.title} - Copy`,
           description: templateData.description,
           duration: templateData.duration.toString(),
@@ -92,9 +86,8 @@ export const Details: React.FC<DetailsProps> = ({ templateData, setMobileTab = (
           prompts_list: clonedPrompts,
         }).unwrap();
 
-        const { id, slug } = response;
-        window.open(window.location.origin + `/builder/${id}?editor=1`, "_blank");
-        router.push(`/prompt/${slug}`);
+        window.open(`${getBaseUrl}/prompt-builder/${slug}?editor=1`, "_blank");
+        redirectToPath(`/prompt/${slug}`);
       } catch (err) {
         console.error(err);
       } finally {
@@ -139,10 +132,9 @@ export const Details: React.FC<DetailsProps> = ({ templateData, setMobileTab = (
           )}
         </Stack>
         <Box sx={{ py: "16px" }}>
-          <Typography
-            sx={{ fontSize: 12, fontWeight: 400, color: "onSurface" }}
-            dangerouslySetInnerHTML={{ __html: templateData.description }}
-          />
+          <Typography sx={{ fontSize: 12, fontWeight: 400, color: "onSurface" }}>
+            {templateData.description ? stripTags(templateData.description) : null}
+          </Typography>
         </Box>
         <Stack
           direction={"row"}
@@ -150,7 +142,7 @@ export const Details: React.FC<DetailsProps> = ({ templateData, setMobileTab = (
           gap={1}
           sx={{ pb: "25px" }}
         >
-          {templateData.tags.length > 0 ? (
+          {templateData.tags?.length > 0 ? (
             templateData.tags.map(tag => (
               <Chip
                 key={tag.id}
@@ -185,15 +177,17 @@ export const Details: React.FC<DetailsProps> = ({ templateData, setMobileTab = (
           <Subtitle sx={{ mb: "12px", color: "tertiary" }}>Metrics Overview</Subtitle>
           <Stack gap={1}>
             {templateData.last_run && (
-              <Typography sx={detailsStyle}>
-                Last run: <span>{moment(templateData.last_run).fromNow()}</span>
-              </Typography>
+              <ClientOnly>
+                <Typography sx={detailsStyle}>
+                  Last run: <span>{templateData.last_run ? timeAgo(templateData.last_run) : "--"}</span>
+                </Typography>
+              </ClientOnly>
             )}
             <Typography sx={detailsStyle}>
-              Updated: <span>{moment(templateData.updated_at).format("D MMMM YYYY")}</span>
+              Updated: <span>{formatDate(templateData.updated_at)}</span>
             </Typography>
             <Typography sx={detailsStyle}>
-              Created: <span>{moment(templateData.created_at).format("D MMMM YYYY")}</span>
+              Created: <span>{formatDate(templateData.created_at)}</span>
             </Typography>
             <Typography sx={detailsStyle}>
               Views: <span>{templateData.views}</span>
@@ -213,13 +207,13 @@ export const Details: React.FC<DetailsProps> = ({ templateData, setMobileTab = (
             >
               <Subtitle sx={{ mb: "12px", color: "tertiary" }}>Actions</Subtitle>
               <Stack gap={1}>
-                {(currentUser?.is_admin || currentUser?.id === templateData.created_by.id) && (
+                {(currentUser?.is_admin || currentUser?.id === templateData.created_by?.id) && (
                   <Button
                     variant={"contained"}
                     startIcon={<Create />}
                     sx={templateBtnStyle}
                     onClick={() => {
-                      window.open(window.location.origin + `/builder/${templateData.id}?editor=1`, "_blank");
+                      window.open(`${getBaseUrl}/prompt-builder/${templateData.slug}?editor=1`, "_blank");
                     }}
                   >
                     Edit this Template

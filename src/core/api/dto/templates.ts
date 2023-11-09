@@ -1,5 +1,6 @@
 import { User, UserMin } from "./user";
 import { Prompts } from "./prompts";
+import { InputType } from "@/common/types/prompt";
 
 export type ExecutionTemplatePartial = Pick<Templates, "title" | "thumbnail" | "slug">;
 
@@ -25,6 +26,7 @@ export interface FilterParams {
   ordering?: string;
   limit?: number;
   offset?: number;
+  status?: string | null;
 }
 
 export interface SelectedFilters {
@@ -57,12 +59,13 @@ export interface TemplateIds {
   tagId: number;
 }
 
+export type EngineOutput = "TEXT" | "IMAGE";
 export interface Engine {
   icon: string;
   id: number;
   input_type: string;
   name: string;
-  output_type: string;
+  output_type: EngineOutput;
   provider: string;
 }
 export interface Tag {
@@ -87,10 +90,26 @@ export interface Category {
   meta_description: string;
   meta_keywords: string;
   description: string;
+  is_visible: boolean;
 }
 
-export type TemplateStatus = "ALL" | "DRAFT" | "PENDING_REVIEW" | "PUBLISHED" | "ARCHIVED";
+export type TemplateStatus = "DRAFT" | "PENDING_REVIEW" | "PUBLISHED" | "ARCHIVED";
 
+export interface TemplateQuestions {
+  [key: string]: {
+    question: string;
+  };
+}
+
+export interface UpdatedQuestionTemplate {
+  type: InputType;
+  name: string;
+  required: boolean;
+  question: string;
+  choices?: string[];
+  fileExtensions?: string[];
+  prompt: number;
+}
 export interface Templates {
   id: number;
   title: string;
@@ -107,6 +126,7 @@ export interface Templates {
   created_at: Date;
   updated_at: Date;
   prompts: Prompts[];
+  questions: TemplateQuestions[];
   tags: Tag[];
   executions_count: number;
   last_run: Date;
@@ -122,6 +142,10 @@ export interface Templates {
   meta_description: string;
   meta_keywords: string;
   status: TemplateStatus;
+  last_api_run: Date;
+  api_runs: number;
+  example_execution: TemplatesExecutions | null;
+  is_internal?: boolean;
 }
 
 export interface TemplatesWithPagination {
@@ -146,10 +170,13 @@ export interface TemplatesExecutions {
     thumbnail: string;
   };
   hash: string;
+  feedback?: string;
+  executed_by?: number;
 }
 
 export interface ITemplateExecutionPut {
   title?: string;
+  feedback?: string;
 }
 
 export interface ISparkWithTemplate {
@@ -199,6 +226,7 @@ export interface TemplateExecutionsDisplay {
   executions: Execution[];
   likes?: number;
   favorites_count: number;
+  is_internal?: boolean;
 }
 export type TemplatesExecutionsByMePaginationResponse = { results: TemplateExecutionsDisplay[] };
 export interface SparkExecution {
@@ -216,6 +244,7 @@ export interface SparkExecution {
   prompt_executions: PromptExecutions[];
   is_favorite: boolean;
   hash: string;
+  errors?: string;
 }
 
 export interface SparkVersion {

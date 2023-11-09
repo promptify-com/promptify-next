@@ -1,50 +1,53 @@
 import React from "react";
 import { Box, Divider, InputLabel } from "@mui/material";
 import { GeneratorParamSlider } from "./GeneratorParamSlider";
-import { PromptParams } from "@/core/api/dto/prompts";
+import { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
 
 interface GeneratorParamProps {
   promptId: number;
   params: PromptParams[];
-  resOverrides: any;
-  setResOverrides: (obj: any) => void;
+  nodeParams: ResOverrides[];
+  setNodeParams: (data: ResOverrides[]) => void;
 }
 
-export const GeneratorParam: React.FC<GeneratorParamProps> = ({ promptId, params, resOverrides, setResOverrides }) => {
+export const GeneratorParam: React.FC<GeneratorParamProps> = ({ promptId, params, nodeParams, setNodeParams }) => {
   const handleChangeScore = (score: number, parameter: number) => {
-    const newArray = JSON.parse(JSON.stringify(resOverrides));
-    const matchingObject = newArray.find((obj: { id: number }) => obj.id === promptId);
+    const updatedNodeParams = [...nodeParams];
+    let nodeParam = updatedNodeParams.find(_nodeParam => _nodeParam.id === promptId);
 
-    if (matchingObject) {
-      const matchingContext = matchingObject.contextual_overrides.find((c: any) => c.parameter === parameter);
-
-      matchingContext
-        ? (matchingContext.score = score)
-        : matchingObject.contextual_overrides.push({ parameter, score });
-    } else {
-      newArray.push({ id: promptId, contextual_overrides: [{ parameter, score }] });
+    if (!nodeParam) {
+      nodeParam = { id: promptId, contextual_overrides: [] };
+      updatedNodeParams.push(nodeParam);
     }
 
-    setResOverrides(newArray);
+    const matchingContext = nodeParam.contextual_overrides.find(
+      contextual_override => contextual_override.parameter === parameter,
+    );
+
+    if (matchingContext) {
+      matchingContext.score = score;
+    } else {
+      nodeParam.contextual_overrides.push({ parameter, score });
+    }
+
+    setNodeParams(updatedNodeParams);
   };
 
-  if (params.length === 0) {
-    return null;
-  }
+  if (params.length === 0) return null;
 
   return (
     <Box>
       {params?.map((param, i) => {
-        const matchingObject = resOverrides.find((obj: { id: number }) => obj.id === promptId);
-        let activeScoreOverride = param.score; // default value
+        const nodeParam = nodeParams.find(_nodeParam => _nodeParam.id === promptId);
+        let activeScoreParam = param.score; // default value
 
-        if (matchingObject) {
-          const matchingContext = matchingObject.contextual_overrides.find(
-            (c: any) => c.parameter === param.parameter.id,
+        if (nodeParam) {
+          const matchingContext = nodeParam.contextual_overrides.find(
+            contextual_override => contextual_override.parameter === param.parameter.id,
           );
 
           if (matchingContext) {
-            activeScoreOverride = matchingContext.score;
+            activeScoreParam = matchingContext.score;
           }
         }
 
@@ -59,8 +62,8 @@ export const GeneratorParam: React.FC<GeneratorParamProps> = ({ promptId, params
                 {param.parameter.name}:
               </InputLabel>
               <GeneratorParamSlider
-                descriptions={param.descriptions}
-                activeScore={activeScoreOverride} // Use the override value here
+                descriptions={param.parameter.score_descriptions}
+                activeScore={activeScoreParam}
                 setScore={score => handleChangeScore(score, param.parameter.id)}
                 is_editable={param.is_editable}
               />

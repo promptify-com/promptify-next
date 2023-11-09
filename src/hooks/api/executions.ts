@@ -3,6 +3,7 @@ import {
   ISparkWithTemplate,
   ITemplateExecutionPut,
   Spark,
+  SparkExecution,
   TemplatesExecutions,
 } from "@/core/api/dto/templates";
 import { authClient } from "../../common/axios";
@@ -31,6 +32,12 @@ export const exportExecutionTest = async (id: number, fileType: "word" | "pdf") 
     .then(response => {
       return response.data;
     });
+};
+
+export const getExecutionById = async (id: number): Promise<SparkExecution> => {
+  return await authClient.get(`/api/meta/template-executions/${id}`).then(response => {
+    return response.data;
+  });
 };
 
 export const createSpark = async (data: ISparkWithTemplate): Promise<Spark> => {

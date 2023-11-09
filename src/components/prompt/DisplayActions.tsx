@@ -23,6 +23,7 @@ import SavedSpark from "@/assets/icons/SavedSpark";
 import DraftSpark from "@/assets/icons/DraftSpark";
 import ShareIcon from "@/assets/icons/ShareIcon";
 import { useAppSelector } from "@/hooks/useStore";
+import ThumbsFeedback from "./ThumbsFeedback";
 
 interface Props {
   executions: TemplatesExecutions[];
@@ -136,15 +137,17 @@ export const DisplayActions: React.FC<Props> = ({
     </Button>
   );
 
+  const isExecutionOwner = executions.some(execution => execution?.executed_by === selectedExecution?.executed_by);
+
   return (
     <Box
       sx={{
         position: { xs: "fixed", md: "sticky" },
-        top: { xs: "auto", md: 0 },
+        top: { xs: "auto", md: "0px" },
         bottom: { xs: "74px", md: "auto" },
         left: 0,
         right: 0,
-        zIndex: 999,
+        zIndex: 90,
         bgcolor: "surface.1",
         p: { md: "16px 16px 16px 24px" },
         borderRadius: "24px 24px 0 0",
@@ -189,6 +192,8 @@ export const DisplayActions: React.FC<Props> = ({
               </Typography>
             )}
           </Stack>
+
+          {isExecutionOwner && <ThumbsFeedback selectedExecution={selectedExecution} />}
 
           <Stack
             direction={"row"}
@@ -240,11 +245,12 @@ export const DisplayActions: React.FC<Props> = ({
             gap={1}
             p={"8px 16px"}
           >
+            {isExecutionOwner && <ThumbsFeedback selectedExecution={selectedExecution} />}
+
             {/* 
               TODO: https://github.com/ysfbsf/promptify-next/issues/275
               {showSearchBar && SearchInput("right")}
             */}
-
             <Tooltip title="Export">
               <IconButton
                 onClick={onOpenExport}
@@ -266,7 +272,7 @@ export const DisplayActions: React.FC<Props> = ({
           anchorEl={execsDropAnchor}
           transition
           disablePortal
-          placement="auto"
+          placement="bottom-start"
         >
           {({ TransitionProps, placement }) => (
             <Grow

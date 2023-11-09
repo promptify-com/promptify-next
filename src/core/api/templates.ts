@@ -1,5 +1,5 @@
 import { baseApi } from "./api";
-import { PromptParams } from "./dto/prompts";
+import { PromptParams, TemplateQuestionGeneratorData } from "./dto/prompts";
 import { FilterParams, Templates, TemplatesWithPagination } from "./dto/templates";
 import { IEditTemplate } from "@/common/types/editTemplate";
 
@@ -14,6 +14,7 @@ const getSearchParams = (params: FilterParams) => {
   params.ordering && searchParams.append("ordering", params.ordering);
   params.limit && searchParams.append("limit", String(params.limit));
   params.offset && searchParams.append("offset", String(params.offset));
+  params.status && searchParams.append("status", String(params.status));
 
   return searchParams.toString();
 };
@@ -56,6 +57,12 @@ export const templatesApi = baseApi.injectEndpoints({
         query: (id: number) => ({
           url: `/api/meta/prompts/${id}/params`,
           method: "get",
+        }),
+      }),
+      deletePrompt: builder.mutation({
+        query: (id: number) => ({
+          url: `/api/meta/prompts/${id}`,
+          method: "delete",
         }),
       }),
       getMyTemplates: builder.query<Templates[], void>({
@@ -110,6 +117,7 @@ export const {
   useGetTemplatesByFilterQuery,
   useGetTemplatesBySearchQuery,
   useGetPromptParamsQuery,
+  useDeletePromptMutation,
   useGetPromptTemplateBySlugQuery,
   useGetPromptTemplatesQuery,
   useGetMyTemplatesQuery,

@@ -29,6 +29,7 @@ interface CustomPalette {
 
 interface CustomTheme {
   custom: {
+    defaultSidebarWidth: string;
     headerHeight: {
       xs: string;
       md: string;
@@ -49,7 +50,7 @@ export let theme: Theme = createTheme({
   },
   palette: {
     common: { black: "#1D2028", white: "#fff" },
-    action: { disabled: "grey", focusOpacity: 0 },
+    action: { active: "#1B1B1E", disabled: "grey", focusOpacity: 0 },
     grey: {
       "100": "#F5F5F5",
       "300": "#EFF0F3",
@@ -61,7 +62,7 @@ export let theme: Theme = createTheme({
       main: "#3B4050",
     },
     secondary: {
-      main: "#585E71",
+      main: "#1B1B1E",
     },
     error: {
       main: "#BA1B1B",
@@ -90,6 +91,7 @@ export let theme: Theme = createTheme({
     inverseSurface: "#303033",
   },
   custom: {
+    defaultSidebarWidth: "299px",
     headerHeight: {
       xs: "58px",
       md: "90px",

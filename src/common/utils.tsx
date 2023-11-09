@@ -1,7 +1,7 @@
 import React from "react";
 import { IConnection } from "./types";
 import { Window, LinkedIn, Reddit, GitHub } from "@mui/icons-material";
-import { CONNECTIONS } from "./constants/connections";
+import { CONNECTIONS } from "./constants";
 import { Google } from "../assets/icons/google";
 import { Microsoft } from "../assets/icons/microsoft";
 import Storage from "./storage";

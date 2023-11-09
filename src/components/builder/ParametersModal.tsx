@@ -3,51 +3,40 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import { IParameters } from "@/common/types";
-import { INodesData } from "@/common/types/builder";
-
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "white",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
-  overflow: "scroll",
-  height: "80vh",
-};
+import { IEditPrompts } from "@/common/types/builder";
+import { useGetParametersQuery } from "@/core/api/parameters";
+import { Button, ListItemButton } from "@mui/material";
 
 interface IModal {
-  parameters: IParameters[];
   open: boolean;
-  handleClose: (value: boolean) => void;
-  handleClick: (value: number) => void;
-  selectedNodeData: INodesData | null;
+  selectedNodeData: IEditPrompts | null;
+  onClose: (value: boolean) => void;
+  onClick: (param: IParameters) => void;
 }
 
-export default function ParametersModal({
-  parameters,
-  open,
-  handleClose,
-  handleClick,
-  selectedNodeData,
-}: IModal) {
-  const checkAreChoosen = (id: number) => {
-    const areIdAreAdded = selectedNodeData?.parameters?.find((prompt) => {
-      return prompt.parameter_id === id;
-    });
-    if (areIdAreAdded) {
-      return true;
-    } else {
-      return false;
-    }
-  };
+export default function ParametersModal({ open, selectedNodeData, onClose, onClick }: IModal) {
+  const { data: parameters } = useGetParametersQuery();
 
   return (
-    <Modal open={open} onClose={handleClose}>
-      <Box sx={style}>
+    <Modal
+      open={open}
+      onClose={onClose}
+    >
+      <Box
+        sx={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: 400,
+          bgcolor: "white",
+          borderRadius: "8px",
+          boxShadow: 24,
+          p: 4,
+          overflow: "scroll",
+          height: "80vh",
+        }}
+      >
         <Typography
           sx={{
             display: "flex",
@@ -59,32 +48,40 @@ export default function ParametersModal({
         >
           Click on parameter to add
         </Typography>
-        {parameters.map((parameter) => {
-          return (
-            <Box
-              key={parameter.id}
-              onClick={() => {
-                if (!checkAreChoosen(parameter.id)) {
-                  handleClick(parameter.id);
-                }
-              }}
-            >
-              <Typography
+        {parameters?.length ? (
+          parameters.map(parameter => {
+            return (
+              <ListItemButton
+                key={parameter.id}
+                onClick={() => onClick(parameter)}
+                disabled={selectedNodeData?.parameters.some(prompt => prompt.parameter_id === parameter.id)}
                 sx={{
                   mt: 2,
                   fontFamily: "Space Mono",
                   fontSize: 16,
-                  cursor: checkAreChoosen(parameter.id)
-                    ? "not-allowed"
-                    : "pointer",
-                  color: checkAreChoosen(parameter.id) ? "grey" : "black",
+                  cursor: "pointer",
+                  color: "black",
+                  width: "100%",
+                  textAlign: "start",
                 }}
               >
                 {parameter.name}
-              </Typography>
-            </Box>
-          );
-        })}
+              </ListItemButton>
+            );
+          })
+        ) : (
+          <Typography
+            sx={{
+              fontSize: 14,
+              fontWeight: "400",
+              color: "grey",
+              py: "20svh",
+              textAlign: "center",
+            }}
+          >
+            No parameters found
+          </Typography>
+        )}
       </Box>
     </Modal>
   );

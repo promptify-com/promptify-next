@@ -1,18 +1,17 @@
 import { useState } from "react";
-import { Box } from "@mui/material";
+import Box from "@mui/material/Box";
 import { PageLoading } from "@/components/PageLoading";
 import useToken from "@/hooks/useToken";
 import { LoginLayout } from "@/components/login/LoginLayout";
-import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import { isValidUserFn } from "@/core/store/userSlice";
 import useLogout from "@/hooks/useLogout";
 import { deletePathURL, getPathURL } from "@/common/utils";
 
 import SigninPlaceholder from "@/components/placeholders/SigninPlaceholder";
+import { redirectToPath } from "@/common/helpers";
 
 const Login = () => {
-  const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const saveToken = useToken();
   const isValidUser = useSelector(isValidUserFn);
@@ -27,7 +26,8 @@ const Login = () => {
         deletePathURL();
         return;
       }
-      router.push("/");
+
+      redirectToPath("/");
     }
 
     return <PageLoading />;
@@ -44,14 +44,8 @@ const Login = () => {
   );
 };
 
-export async function getServerSideProps() {
-  return {
-    props: {
-      title: "Promptify | Boost Your Creativity",
-      description:
-        "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
-    },
-  };
+export async function getStaticProps() {
+  return { props: {} };
 }
 
 export default Login;

@@ -1,37 +1,31 @@
-import { useRouter } from "next/router";
-import { Box, Grid, List, ListSubheader, Typography } from "@mui/material";
-
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import List from "@mui/material/List";
+import ListSubheader from "@mui/material/ListSubheader";
+import Typography from "@mui/material/Typography";
 import { FavoriteList } from "@/assets/icons/FavoriteList";
-import { ICollectionById } from "@/common/types/collection";
-import { CollectionItem } from "./CollectionItem";
-import { ITemplate } from "@/common/types/template";
 import { CollectionsEmptyBox } from "./CollectionsEmptyBox";
-import ListItemPlaceholder from "@/components/placeholders/ListItemPlaceholder";
 import LoadingOverlay from "@/components/design-system/LoadingOverlay";
 import { useRouteChangeOverlay } from "@/hooks/useRouteChangeOverlay";
-import { determineIsMobile } from "@/common/helpers/determineIsMobile";
+import { isDesktopViewPort } from "@/common/helpers";
+import { useAppSelector } from "@/hooks/useStore";
+import { isValidUserFn } from "@/core/store/userSlice";
+import lazy from "next/dynamic";
+
+const CollectionsListLazy = lazy(() => import("./CollectionsList"));
 
 interface SideBarCollectionsProps {
   sidebarOpen?: boolean;
-  isValidUser: boolean | undefined;
-  favCollection: ICollectionById | null;
-  collectionLoading: boolean;
 }
 
-export const Collections: React.FC<SideBarCollectionsProps> = ({
-  sidebarOpen,
-  isValidUser,
-  favCollection,
-  collectionLoading,
-}) => {
-  const router = useRouter();
-
+export const Collections: React.FC<SideBarCollectionsProps> = ({ sidebarOpen }) => {
   const { showOverlay } = useRouteChangeOverlay({
     shouldShowOverlayCallback: url => {
       return url.startsWith("/prompt/");
     },
   });
-  const IS_MOBILE = determineIsMobile();
+  const isValidUser = useAppSelector(isValidUserFn);
+  const isDesktopView = isDesktopViewPort();
 
   return (
     <Box>
@@ -77,24 +71,8 @@ export const Collections: React.FC<SideBarCollectionsProps> = ({
                 overflowX: "hidden",
               }}
             >
-              {collectionLoading ? (
-                <ListItemPlaceholder />
-              ) : (
-                <>
-                  {!IS_MOBILE && showOverlay && <LoadingOverlay showOnDesktop />}
-
-                  {favCollection?.prompt_templates.map((item: ITemplate) => (
-                    <CollectionItem
-                      key={item.id}
-                      template={item}
-                      expanded={sidebarOpen}
-                      onClick={() => {
-                        router.push(`/prompt/${item.slug}`);
-                      }}
-                    />
-                  ))}
-                </>
-              )}
+              {isDesktopView && showOverlay && <LoadingOverlay showOnDesktop />}
+              <CollectionsListLazy sidebarOpen={sidebarOpen} />
             </List>
           </Box>
         )}

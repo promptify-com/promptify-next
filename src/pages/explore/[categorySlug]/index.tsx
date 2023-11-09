@@ -11,25 +11,22 @@ import { TemplatesSection } from "@/components/explorer/TemplatesSection";
 import { FiltersSelected } from "@/components/explorer/FiltersSelected";
 import SubCategoryPlaceholder from "@/components/placeholders/SubCategoryPlaceholder";
 import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
+import { useGetCategoriesQuery } from "@/core/api/categories";
+import { redirectToPath } from "@/common/helpers";
 
 export default function Page({ category }: { category: Category }) {
   const router = useRouter();
-  const {
-    templates,
-    isFetching,
-    categories,
-    isCategoryLoading,
-    categorySlug,
-    allFilterParamsNull,
-    handleNextPage,
-    handlePreviousPage,
-  } = useGetTemplatesByFilter();
+  const { templates, isFetching, categorySlug, allFilterParamsNull, isTemplatesLoading, hasMore, handleNextPage } =
+    useGetTemplatesByFilter({ catId: category?.id });
+  const { data: categories, isLoading: isCategoryLoading } = useGetCategoriesQuery();
+
   const goBack = () => {
     router.push("/explore");
   };
   const navigateTo = (item: Category) => {
-    router.push(`/explore/${categorySlug}/${item.slug}`);
+    redirectToPath(`/explore/${categorySlug}/${item.slug}`);
   };
+
   return (
     <Layout>
       <Box
@@ -59,7 +56,7 @@ export default function Page({ category }: { category: Category }) {
                     variant="text"
                     sx={{ fontSize: 19, color: "onSurface", ml: -3 }}
                   >
-                    <KeyboardArrowLeft /> {category.name}
+                    <KeyboardArrowLeft /> {category.name} Prompt Template
                   </Button>
                 </Link>
                 <Typography variant="body1">{category.description}</Typography>{" "}
@@ -75,7 +72,10 @@ export default function Page({ category }: { category: Category }) {
               >
                 {categories
                   ?.filter(
-                    subcategory => category?.name == subcategory.parent?.name && subcategory.prompt_template_count,
+                    subcategory =>
+                      subcategory.is_visible &&
+                      subcategory.prompt_template_count &&
+                      category?.name === subcategory.parent?.name,
                   )
                   .map(subcategory => (
                     <Grid key={subcategory.id}>
@@ -91,12 +91,11 @@ export default function Page({ category }: { category: Category }) {
               <FiltersSelected show={!allFilterParamsNull} />
               <TemplatesSection
                 filtred={!allFilterParamsNull}
-                templates={templates?.results ?? []}
+                templates={templates ?? []}
                 isLoading={isFetching}
-                hasNext={!!templates?.next}
-                hasPrev={!!templates?.previous}
+                templateLoading={isTemplatesLoading}
                 onNextPage={handleNextPage}
-                onPrevPage={handlePreviousPage}
+                hasMore={hasMore}
               />
             </Box>
           )}

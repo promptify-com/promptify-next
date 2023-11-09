@@ -1,33 +1,37 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Box, Stack, Tooltip, Typography } from "@mui/material";
-import { PromptExecutions, Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { Subtitle } from "@/components/blocks";
 import { Error } from "@mui/icons-material";
-import { markdownToHTML, sanitizeHTML } from "@/common/helpers";
-import { useRouter } from "next/router";
+import { markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
+import { DisplayPrompt, PromptLiveResponse } from "@/common/types/prompt";
+import { Prompts } from "@/core/api/dto/prompts";
+import { TemplatesExecutions } from "@/core/api/dto/templates";
+import { useSelector } from "react-redux";
+import { RootState } from "@/core/store";
 
 interface Props {
-  execution: TemplatesExecutions;
-  templateData: Templates;
+  execution: PromptLiveResponse | TemplatesExecutions | null;
+  promptsData: Prompts[];
   search: string;
   sparkHashQueryParam: string | null;
 }
 
-export const ExecutionCard: React.FC<Props> = ({ execution, templateData, sparkHashQueryParam, search }) => {
-  const [sortedExecutions, setSortedExecutions] = useState<PromptExecutions[]>([]);
-  const router = useRouter();
+export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, sparkHashQueryParam, search }) => {
+  const executionPrompts = execution && "data" in execution ? execution.data : execution?.prompt_executions;
+  const isGenerating = useSelector((state: RootState) => state.template.isGenerating);
+  const [sortedPrompts, setSortedPrompts] = useState<DisplayPrompt[]>([]);
 
   const promptsOrderMap: { [key: string]: number } = {};
   const promptsExecutionOrderMap: { [key: string]: number } = {};
 
-  templateData.prompts.forEach(prompt => {
+  promptsData?.forEach(prompt => {
     promptsOrderMap[prompt.id] = prompt.order;
     promptsExecutionOrderMap[prompt.id] = prompt.execution_priority;
   });
 
   useEffect(() => {
     const sortAndProcessExecutions = async () => {
-      const sortedByPrompts = [...(execution.prompt_executions || [])].sort((a, b) => {
+      const sortedByPrompts = [...(executionPrompts || [])].sort((a, b) => {
         if (promptsOrderMap[a.prompt] === promptsOrderMap[b.prompt]) {
           return promptsExecutionOrderMap[a.prompt] - promptsExecutionOrderMap[b.prompt];
         }
@@ -36,25 +40,21 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData, sparkH
 
       const processedOutputs = await Promise.all(
         sortedByPrompts.map(async exec => {
+          const _content = "message" in exec ? exec.message : exec.output;
           return {
             ...exec,
-            output: !isImageOutput(exec.output) ? await markdownToHTML(exec.output) : exec.output,
+            content: !isImageOutput(_content) ? await markdownToHTML(_content) : _content,
           };
         }),
       );
 
-      setSortedExecutions(processedOutputs);
+      setSortedPrompts(processedOutputs);
     };
 
     sortAndProcessExecutions();
-  }, [execution.prompt_executions]);
+  }, [executionPrompts]);
 
   const scrollRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    scrollRef.current?.scrollIntoView({
-      block: "end",
-    });
-  }, [execution]);
 
   const isImageOutput = (output: string): boolean => {
     const IsImage =
@@ -88,120 +88,126 @@ export const ExecutionCard: React.FC<Props> = ({ execution, templateData, sparkH
       gap={1}
       sx={{
         width: { md: "70%" },
-        mx: "auto",
+        m: { md: "20px auto" },
       }}
     >
-      <div ref={scrollRef}></div>
+      {!isGenerating && <div ref={scrollRef}></div>}
 
-      <Typography sx={{ fontSize: 48, fontWeight: 400, color: "onSurface", py: "24px" }}>{execution.title}</Typography>
+      {execution && "title" in execution && (
+        <Typography sx={{ fontSize: 48, fontWeight: 400, color: "onSurface", py: "24px" }}>
+          {execution.title}
+        </Typography>
+      )}
+      {execution &&
+        sortedPrompts?.map((exec, index) => {
+          const prevItem = sortedPrompts[index - 1];
+          const isPrevItemImage = prevItem && isImageOutput(prevItem?.content);
+          const nextItem = sortedPrompts[index + 1];
+          const isNextItemText = nextItem && !isImageOutput(nextItem?.content);
+          const prompt = promptsData.find(prompt => prompt.id === exec.prompt);
 
-      {sortedExecutions?.map((exec, index) => {
-        const prevItem = index > 0 && sortedExecutions[index - 1];
-        const isPrevItemIsImage = prevItem && isImageOutput(prevItem?.output);
-        const nextItem = index < sortedExecutions.length - 1 && sortedExecutions[index + 1];
-        const isNextItemIsText = nextItem && !isImageOutput(nextItem?.output);
-        const prompt = templateData.prompts.find(prompt => prompt.id === exec.prompt);
-
-        if (prompt?.show_output || sparkHashQueryParam) {
-          return (
-            <Stack
-              key={exec.id}
-              gap={1}
-              sx={{ py: "24px" }}
-            >
-              {prompt && (
-                <Subtitle sx={{ fontSize: 24, fontWeight: 400, color: "onSurface" }}>
-                  {!isImageOutput(exec.output) && prompt.title}
-                  {exec.errors && executionError(exec.errors)}
-                </Subtitle>
-              )}
-              {/* is Text Output */}
-              {!isImageOutput(exec.output) && (
-                <Box>
-                  {isPrevItemIsImage && (
+          if (prompt?.show_output || sparkHashQueryParam) {
+            return (
+              <Stack
+                key={index}
+                gap={1}
+                sx={{ pb: "24px" }}
+              >
+                {prompt && (
+                  <Subtitle sx={{ fontSize: 24, fontWeight: 400, color: "onSurface" }}>
+                    {!isImageOutput(exec.content) && prompt?.title}
+                    {exec.errors && executionError(exec.errors)}
+                  </Subtitle>
+                )}
+                {/* is Text Output */}
+                {!isImageOutput(exec.content) && (
+                  <Box>
+                    {isPrevItemImage && (
+                      <Box
+                        component={"img"}
+                        alt={"book cover"}
+                        src={prevItem.content}
+                        onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                          (e.target as HTMLImageElement).src = "http://placehold.it/165x215";
+                        }}
+                        sx={{
+                          borderRadius: "8px",
+                          width: "40%",
+                          objectFit: "cover",
+                          float: "right",
+                          ml: "20px",
+                          mb: "10px",
+                        }}
+                      />
+                    )}
                     <Box
-                      component={"img"}
-                      alt={"book cover"}
-                      src={prevItem.output}
-                      onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-                        (e.target as HTMLImageElement).src = "http://placehold.it/165x215";
-                      }}
                       sx={{
-                        borderRadius: "8px",
-                        width: "40%",
-                        objectFit: "cover",
-                        float: "right",
-                        ml: "20px",
-                        mb: "10px",
+                        fontSize: 15,
+                        fontWeight: 400,
+                        color: "onSurface",
+                        wordWrap: "break-word",
+                        textAlign: "justify",
+                        float: "none",
+                        ".highlight": {
+                          backgroundColor: "yellow",
+                          color: "black",
+                        },
+                        pre: {
+                          m: "10px 0",
+                          borderRadius: "8px",
+                          overflow: "hidden",
+                          code: {
+                            borderRadius: 0,
+                            m: 0,
+                          },
+                        },
+                        code: {
+                          display: "block",
+                          bgcolor: "#282a35",
+                          color: "common.white",
+                          borderRadius: "8px",
+                          p: "16px 24px",
+                          mb: "10px",
+                          overflow: "auto",
+                        },
+                        ".language-label": {
+                          p: "8px 24px",
+                          bgcolor: "#4d5562",
+                          color: "#ffffff",
+                          fontSize: 13,
+                        },
+                      }}
+                      dangerouslySetInnerHTML={{
+                        __html: sanitizeHTML(exec.content),
                       }}
                     />
-                  )}
+                  </Box>
+                )}
+                {/* is Image Output and Next item is not text */}
+                {isImageOutput(exec.content) && !isNextItemText && (
                   <Box
-                    sx={{
-                      fontSize: 15,
-                      fontWeight: 400,
-                      color: "onSurface",
-                      wordWrap: "break-word",
-                      textAlign: "justify",
-                      float: "none",
-                      ".highlight": {
-                        backgroundColor: "yellow",
-                        color: "black",
-                      },
-                      pre: {
-                        m: "10px 0",
-                        borderRadius: "8px",
-                        overflow: "hidden",
-                        code: {
-                          borderRadius: 0,
-                          m: 0,
-                        },
-                      },
-                      code: {
-                        display: "block",
-                        bgcolor: "#282a35",
-                        color: "common.white",
-                        borderRadius: "8px",
-                        p: "16px 24px",
-                        mb: "10px",
-                        overflow: "auto",
-                      },
-                      ".language-label": {
-                        p: "8px 24px",
-                        bgcolor: "#4d5562",
-                        color: "#ffffff",
-                        fontSize: 13,
-                      },
+                    component={"img"}
+                    alt={"book cover"}
+                    src={exec.content}
+                    onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                      (e.target as HTMLImageElement).src = "http://placehold.it/165x215";
                     }}
-                    dangerouslySetInnerHTML={{
-                      __html: sanitizeHTML(exec.output),
+                    sx={{
+                      borderRadius: "8px",
+                      width: "40%",
+                      objectFit: "cover",
+                      float: "right",
+                      ml: "20px",
+                      mb: "10px",
                     }}
                   />
-                </Box>
-              )}
-              {/* is Image Output and Next item is not text */}
-              {isImageOutput(exec.output) && !isNextItemIsText && (
-                <Box
-                  component={"img"}
-                  alt={"book cover"}
-                  src={exec.output}
-                  onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-                    (e.target as HTMLImageElement).src = "http://placehold.it/165x215";
-                  }}
-                  sx={{
-                    borderRadius: "8px",
-                    width: "40%",
-                    objectFit: "cover",
-                    float: "right",
-                    ml: "20px",
-                    mb: "10px",
-                  }}
-                />
-              )}
-            </Stack>
-          );
-        }
-      })}
+                )}
+              </Stack>
+            );
+          }
+        })}
+
+      {isGenerating && <div ref={scrollRef}></div>}
     </Stack>
   );
 };

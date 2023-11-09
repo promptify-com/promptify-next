@@ -1,9 +1,19 @@
 import { ReactNode } from "react";
-import { AutoAwesome, HomeRounded, MenuBookRounded, Search } from "@mui/icons-material";
+import {
+  AutoAwesome,
+  AutoAwesomeOutlined,
+  HomeRounded,
+  MenuBookRounded,
+  RocketLaunchOutlined,
+  Search,
+  SettingsOutlined,
+} from "@mui/icons-material/";
 
 import { Prompt } from "@/assets/icons/prompts";
-import { Setting } from "@/assets/icons/setting";
 import { TemplateStatus } from "@/core/api/dto/templates";
+import { InputType } from "@/common/types/prompt";
+import { DeploymentStatus } from "../types/deployments";
+import { Model } from "@/common/types/deployments";
 
 export interface MenuType {
   id: number;
@@ -12,24 +22,30 @@ export interface MenuType {
   href: string;
 }
 
-export const Menu: MenuType[] = [
+export const ProfileMenuItems: MenuType[] = [
   {
     id: 1,
-    icon: <Setting />,
-    href: "/profile",
-    name: "Settings",
-  },
-  {
-    id: 2,
-    icon: <AutoAwesome />,
+    icon: <AutoAwesomeOutlined />,
     href: "/sparks",
     name: "My Sparks",
   },
   {
-    id: 3,
+    id: 2,
     icon: <Prompt />,
     href: "/profile/#my-templates",
     name: "My Templates",
+  },
+  {
+    id: 3,
+    icon: <RocketLaunchOutlined />,
+    href: "/deployments",
+    name: "My Deployments",
+  },
+  {
+    id: 4,
+    icon: <SettingsOutlined />,
+    href: "/profile",
+    name: "Settings",
   },
 ];
 
@@ -41,7 +57,7 @@ export const links = [
     external: false,
   },
   {
-    label: "Browse",
+    label: "Prompts",
     icon: <Search />,
     href: "/explore",
     external: false,
@@ -61,6 +77,8 @@ export const links = [
 ];
 
 export const TemplateStatusArray: TemplateStatus[] = ["ARCHIVED", "DRAFT", "PENDING_REVIEW", "PUBLISHED"];
+
+export const deploymentStatuses: DeploymentStatus[] = ["stopped", "created", "done", "deploying", "failed"];
 
 export const Keywords: any[] = [
   {
@@ -92,3 +110,25 @@ export const Keywords: any[] = [
     name: "Social Media",
   },
 ];
+
+export const LANGUAGES_CODE_MAPPING: Record<string, string> = {
+  es: "Spanish",
+  fr: "French",
+  en: "English",
+};
+
+export enum CONNECTIONS {
+  GOOGLE = "Google",
+  WINDOWS = "Windows",
+  LINKEDIN = "Linkedin",
+  REDDIT = "Reddit",
+  MICROSOFT = "Microsoft",
+  GITHUB = "Github",
+}
+
+export enum BUILDER_TYPE {
+  USER = "user",
+  ADMIN = "admin",
+}
+
+export const BuilderInputTypes: InputType[] = ["text", "number", "integer", "code", "choices", "file"];

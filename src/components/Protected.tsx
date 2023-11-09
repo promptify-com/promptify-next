@@ -3,12 +3,13 @@ import { useSelector } from "react-redux";
 import { PageLoading } from "./PageLoading";
 import { useRouter } from "next/router";
 import { isValidUserFn } from "@/core/store/userSlice";
+import { redirectToPath } from "@/common/helpers";
 
 interface IProps extends PropsWithChildren {
   showLoadingPage?: boolean;
 }
 
-const protectedRoutes = ["profile", "sparks"];
+const protectedRoutes = ["profile", "sparks", "deployments"];
 
 const Protected: React.FC<IProps> = ({ children, showLoadingPage }) => {
   const router = useRouter();
@@ -21,7 +22,7 @@ const Protected: React.FC<IProps> = ({ children, showLoadingPage }) => {
     if (!isValidUser && protectedRoutes.includes(currentPathName)) {
       timeoutId = setTimeout(() => {
         clearTimeout(timeoutId);
-        router.push("/");
+        redirectToPath("/");
       }, 800);
     }
 

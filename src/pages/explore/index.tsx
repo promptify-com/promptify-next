@@ -15,8 +15,8 @@ interface IProps {
 }
 
 const ExplorePage: NextPage<IProps> = ({ categories }) => {
-  const { templates, hasNext, hasPrev, handleNextPage, handlePreviousPage, allFilterParamsNull, isFetching } =
-    useGetTemplatesByFilter();
+  const { templates, isTemplatesLoading, handleNextPage, hasMore, allFilterParamsNull, isFetching } =
+    useGetTemplatesByFilter({ ordering: "-runs" });
 
   return (
     <>
@@ -42,13 +42,12 @@ const ExplorePage: NextPage<IProps> = ({ categories }) => {
             )}
             <TemplatesSection
               filtred={!allFilterParamsNull}
-              templates={templates?.results ?? []}
+              templates={templates ?? []}
               isLoading={isFetching}
+              templateLoading={isTemplatesLoading}
               title="Best templates"
-              hasNext={hasNext}
-              hasPrev={hasPrev}
               onNextPage={handleNextPage}
-              onPrevPage={handlePreviousPage}
+              hasMore={hasMore}
             />
           </Grid>
         </Box>
@@ -59,7 +58,7 @@ const ExplorePage: NextPage<IProps> = ({ categories }) => {
 
 export async function getServerSideProps() {
   const responseCategories = await authClient.get<Category[]>("/api/meta/categories/");
-  const categories = responseCategories.data?.filter(category => category.prompt_template_count);
+  const categories = responseCategories.data?.filter(category => category.prompt_template_count && category.is_visible);
 
   return {
     props: {

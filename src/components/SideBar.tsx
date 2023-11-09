@@ -19,17 +19,16 @@ import { styled, Theme, CSSObject } from "@mui/material/styles";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { SidebarIcon } from "@/assets/icons/Sidebar";
 import { Collections } from "@/components/common/sidebar/Collections";
-import { useGetCollectionTemplatesQuery } from "@/core/api/collections";
 import { ExploreFilterSideBar } from "@/components/explorer/ExploreFilterSideBar";
 import { SideBarCloseIcon } from "@/assets/icons/SideBarClose";
-import { useSelector } from "react-redux";
 import { isValidUserFn } from "@/core/store/userSlice";
-import { RootState } from "@/core/store";
 import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { setOpenDefaultSidebar } from "@/core/store/sidebarSlice";
+import { redirectToPath } from "@/common/helpers";
 
 interface SideBarProps {
-  open: boolean;
-  toggleSideBar: () => void;
+  fullHeight?: boolean;
 }
 
 const drawerWidth = 299;
@@ -72,21 +71,20 @@ const Drawer = styled(MuiDrawer, {
   }),
 }));
 
-export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
+export const DefaultSidebar: React.FC<SideBarProps> = ({ fullHeight = false }) => {
   const pathname = usePathname();
+  const dispatch = useAppDispatch();
   const isExplorePage = pathname.split("/")[1] === "explore";
-  const isValidUser = useSelector(isValidUserFn);
-  const currentUser = useSelector((state: RootState) => state.user.currentUser);
-  const { data: collections, isLoading: isCollectionsLoading } = useGetCollectionTemplatesQuery(
-    currentUser?.favorite_collection_id as number,
-    {
-      skip: !isValidUser,
-    },
-  );
+  const isValidUser = useAppSelector(isValidUserFn);
   const { tags, engines } = useGetTemplatesByFilter();
   const [expandedOnHover, setExpandedOnHover] = useState<boolean>(false);
   const [showExpandIcon, setShowExpandIcon] = useState<boolean>(false);
   const [showFilters, setShowFilters] = useState<boolean>(true);
+  const open = useAppSelector(state => state.sidebar.defaultSidebarOpen);
+
+  const toggleSidebar = () => {
+    dispatch(setOpenDefaultSidebar(!open));
+  };
 
   useEffect(() => {
     if (expandedOnHover || open) {
@@ -102,13 +100,15 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
       icon: <Home />,
       active: pathname === "/",
       external: false,
+      reload: true,
     },
     {
-      name: "Browse",
+      name: "Prompts",
       href: "/explore",
       icon: <Search />,
       active: isExplorePage,
       external: false,
+      reload: true,
     },
     {
       name: "My Sparks",
@@ -116,6 +116,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
       icon: <AutoAwesome />,
       active: pathname === "/sparks",
       external: false,
+      reload: false,
     },
     {
       name: "Learn",
@@ -123,6 +124,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
       icon: <MenuBookRounded />,
       active: pathname === "/learn",
       external: true,
+      reload: false,
     },
   ];
 
@@ -147,16 +149,16 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
           alignItems: "center",
           justifyContent: "center",
           "& .MuiDrawer-paper": {
-            my: "2vh",
-            borderRadius: "0px 8px 8px 0px",
-            height: "96vh",
+            my: !fullHeight ? "2svh" : 0,
+            borderRadius: !fullHeight ? "0px 8px 8px 0px" : 0,
+            height: fullHeight ? "100svh" : "96svh",
             boxShadow:
               !open && expandedOnHover
                 ? "0px 7px 8px -4px #00000033, 0px 12px 17px 2px #00000024, 0px 5px 22px 4px #0000001F"
                 : "",
             boxSizing: "border-box",
             overflow: "hidden",
-            bgcolor: "white",
+            bgcolor: "surface.1",
             border: "none",
           },
         }}
@@ -167,6 +169,10 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
           display={"flex"}
           flexDirection={"column"}
           gap={1}
+          className="sidebar-list"
+          sx={{
+            overflow: showFilters ? "scroll" : "none",
+          }}
         >
           <Grid
             display={"flex"}
@@ -200,7 +206,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
               </Link>
             </Box>
             <IconButton
-              onClick={toggleSideBar}
+              onClick={toggleSidebar}
               sx={{
                 opacity: showExpandIcon ? 1 : 0,
                 border: "none",
@@ -216,7 +222,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
             <Grid key={item.name}>
               <ListItem
                 disablePadding
-                onClick={() => item.name == "Browse" && setShowFilters(!showFilters)}
+                onClick={() => item.name === "Prompts" && setShowFilters(!showFilters)}
               >
                 <Link
                   href={item.href}
@@ -226,8 +232,17 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
                   }}
                   target={item.external ? "_blank" : ""}
                   onClick={e => {
-                    if (item.name === "Browse" && isExplorePage) {
+                    if (item.external) {
+                      return;
+                    }
+
+                    if (item.active) {
                       e.preventDefault();
+                    }
+
+                    if (item.reload && !item.active) {
+                      e.stopPropagation();
+                      redirectToPath(item.href);
                     }
                   }}
                 >
@@ -243,7 +258,6 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
                     <Box
                       style={{
                         textDecoration: "none",
-
                         display: "flex",
                         width: open || expandedOnHover ? "100%" : "auto",
                         alignItems: "center",
@@ -272,7 +286,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
                         {item.name}
                       </Typography>
                     </Box>
-                    {item.name === "Browse" &&
+                    {item.name === "Prompts" &&
                       isExplorePage &&
                       (showFilters ? (
                         <ExpandLess sx={{ mr: -1, color: "text.secondary" }} />
@@ -283,7 +297,7 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
                 </Link>
               </ListItem>
               <Collapse
-                in={showFilters && isExplorePage && item.name === "Browse"}
+                in={showFilters && isExplorePage && item.name === "Prompts"}
                 timeout={"auto"}
                 unmountOnExit
               >
@@ -296,12 +310,8 @@ export const Sidebar: React.FC<SideBarProps> = ({ open, toggleSideBar }) => {
             </Grid>
           ))}
           <Divider />
-          <Collections
-            favCollection={collections}
-            collectionLoading={isCollectionsLoading}
-            isValidUser={isValidUser}
-            sidebarOpen={open || expandedOnHover}
-          />
+
+          <Collections sidebarOpen={open || expandedOnHover} />
         </Box>
       </Drawer>
     </Box>

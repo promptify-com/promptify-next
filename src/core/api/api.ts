@@ -22,6 +22,9 @@ export const baseApi = createApi({
     "Sparks",
     "MyTemplates",
     "Executions",
+    "Parameters",
+    "ParametersPresets",
+    "Deployments",
   ],
   endpoints: () => ({}),
 });

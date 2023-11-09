@@ -8,14 +8,13 @@ import {
   Stack,
   Tab,
   Tabs,
-  TextField,
   Typography,
   alpha,
   useTheme,
+  Palette,
 } from "@mui/material";
 import { TemplatesExecutions } from "@/core/api/dto/templates";
-import { CloudQueue, Create, Delete, Done, PriorityHighOutlined } from "@mui/icons-material";
-import moment from "moment";
+import { CloudQueue, Create, Delete, PriorityHighOutlined } from "@mui/icons-material";
 import SavedSpark from "@/assets/icons/SavedSpark";
 import DraftSpark from "@/assets/icons/DraftSpark";
 import {
@@ -24,7 +23,9 @@ import {
   useUpdateExecutionMutation,
 } from "@/core/api/executions";
 import { DeleteDialog } from "../dialog/DeleteDialog";
-import { executionTimeLeft } from "@/common/helpers/executionTimeLeft";
+import { timeAgo, timeLeft } from "@/common/helpers/timeManipulation";
+import { RenameForm } from "../common/forms/RenameForm";
+import useTruncate from "@/hooks/useTruncate";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -67,6 +68,140 @@ interface Props {
   sparkHashQueryParam: string | null;
 }
 
+interface ExecutionCardProps {
+  chooseExecution: (execution: TemplatesExecutions) => void;
+  selectedExecution: TemplatesExecutions | null;
+  palette: Palette;
+  setExecutionToDelete: React.Dispatch<React.SetStateAction<TemplatesExecutions | null>>;
+  setDeleteAllow: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const ExecutionCardInternal = ({
+  execution,
+  chooseExecution,
+  selectedExecution,
+  palette,
+  setExecutionToDelete,
+  setDeleteAllow,
+}: ExecutionCardProps & { execution: TemplatesExecutions }) => {
+  const { truncate } = useTruncate();
+
+  return (
+    <MenuItem
+      key={execution.id}
+      sx={{
+        borderTop: "1px solid #E3E3E3",
+        p: "16px",
+        opacity: 0.85,
+        "&:hover": {
+          opacity: 1,
+          bgcolor: "surface.2",
+          ".delete-btn": {
+            display: "inline-flex",
+          },
+        },
+      }}
+      onClick={() => chooseExecution(execution)}
+    >
+      <Stack
+        direction={"row"}
+        alignItems={"center"}
+        gap={2}
+        width={"100%"}
+      >
+        {execution.is_favorite ? (
+          <SavedSpark
+            size="32"
+            color={execution.id === selectedExecution?.id ? palette.primary.main : palette.onSurface}
+          />
+        ) : (
+          <DraftSpark
+            size="32"
+            color={execution.id === selectedExecution?.id ? palette.primary.main : palette.onSurface}
+          />
+        )}
+        <Stack>
+          <Typography
+            sx={{
+              fontWeight: 500,
+              fontSize: 14,
+              color: execution.id === selectedExecution?.id ? "primary.main" : "onSurface",
+              whiteSpace: "normal",
+              wordBreak: "break-word",
+            }}
+          >
+            {truncate(execution.title, { length: 35 })}
+          </Typography>
+          <Typography
+            sx={{
+              fontWeight: 400,
+              fontSize: 12,
+              color: "onSurface",
+              opacity: 0.5,
+            }}
+          >
+            {timeAgo(execution.created_at)}
+          </Typography>
+        </Stack>
+        <IconButton
+          className="delete-btn"
+          sx={{
+            display: "none",
+            ml: "auto",
+            border: "none",
+            "&:hover": {
+              bgcolor: "surface.5",
+            },
+          }}
+          onClick={e => {
+            e.stopPropagation();
+            setExecutionToDelete(execution);
+            setDeleteAllow(true);
+          }}
+        >
+          <Delete sx={{ fontSize: "16px" }} />
+        </IconButton>
+      </Stack>
+    </MenuItem>
+  );
+};
+
+const ExecutionsListInternal = ({
+  executions,
+  chooseExecution,
+  selectedExecution,
+  palette,
+  setExecutionToDelete,
+  setDeleteAllow,
+}: ExecutionCardProps & { executions: TemplatesExecutions[] }) => (
+  <MenuList
+    sx={{
+      flex: 1,
+      p: 0,
+      overflow: "auto",
+      overscrollBehavior: "contain",
+    }}
+  >
+    {executions.length ? (
+      executions.map(exec => (
+        <ExecutionCardInternal
+          key={exec.id}
+          execution={exec}
+          chooseExecution={chooseExecution}
+          palette={palette}
+          setExecutionToDelete={setExecutionToDelete}
+          setDeleteAllow={setDeleteAllow}
+          selectedExecution={selectedExecution}
+        />
+      ))
+    ) : (
+      <Stack sx={{ height: "100%", justifyContent: "center", alignItems: "center" }}>
+        <Typography sx={{ color: "onSurface", opacity: 0.5 }}>No sparks found</Typography>
+      </Stack>
+    )}
+  </MenuList>
+);
+
 export const ExecutionsTabs: React.FC<Props> = ({
   executions,
   chooseExecution,
@@ -74,20 +209,18 @@ export const ExecutionsTabs: React.FC<Props> = ({
   sparkHashQueryParam,
 }) => {
   const { palette } = useTheme();
-
   const [updateExecution, { isError, isLoading }] = useUpdateExecutionMutation();
   const [favoriteExecution] = useExecutionFavoriteMutation();
   const [deleteExecution] = useDeleteExecutionMutation();
-
   const [tabsValue, setTabsValue] = useState(0);
   const changeTab = (e: React.SyntheticEvent, newValue: number) => {
     setTabsValue(newValue);
   };
-
   const [executionTitle, setExecutionTitle] = useState(selectedExecution?.title);
   const [renameAllow, setRenameAllow] = useState(false);
   const [deleteAllow, setDeleteAllow] = useState(false);
   const [executionToDelete, setExecutionToDelete] = useState<TemplatesExecutions | null>(null);
+  const savedExecutions = executions.filter(execution => execution.is_favorite);
 
   useEffect(() => {
     setExecutionTitle(selectedExecution?.title);
@@ -114,113 +247,6 @@ export const ExecutionsTabs: React.FC<Props> = ({
       console.error(error);
     }
   };
-
-  const pinnedExecutions = executions.filter(execution => execution.is_favorite);
-
-  const ExecutionCard = ({ execution }: { execution: TemplatesExecutions }) => {
-    return (
-      <MenuItem
-        key={execution.id}
-        sx={{
-          borderTop: "1px solid #E3E3E3",
-          p: "16px",
-          opacity: 0.85,
-          "&:hover": {
-            opacity: 1,
-            bgcolor: "surface.2",
-            ".delete-btn": {
-              display: "inline-flex",
-            },
-          },
-        }}
-        onClick={() => chooseExecution(execution)}
-      >
-        <Stack
-          direction={"row"}
-          alignItems={"center"}
-          gap={2}
-          width={"100%"}
-        >
-          {execution.is_favorite ? (
-            <SavedSpark
-              size="32"
-              color={execution.id === selectedExecution?.id ? palette.primary.main : palette.onSurface}
-            />
-          ) : (
-            <DraftSpark
-              size="32"
-              color={execution.id === selectedExecution?.id ? palette.primary.main : palette.onSurface}
-            />
-          )}
-          <Stack>
-            <Typography
-              sx={{
-                fontWeight: 500,
-                fontSize: 14,
-                color: execution.id === selectedExecution?.id ? "primary.main" : "onSurface",
-                whiteSpace: "normal",
-                wordBreak: "break-word",
-              }}
-            >
-              {execution.title}
-            </Typography>
-            <Typography
-              sx={{
-                fontWeight: 400,
-                fontSize: 12,
-                color: "onSurface",
-                opacity: 0.5,
-              }}
-            >
-              {moment(execution.created_at).fromNow()}
-            </Typography>
-          </Stack>
-          <IconButton
-            className="delete-btn"
-            sx={{
-              display: "none",
-              ml: "auto",
-              border: "none",
-              "&:hover": {
-                bgcolor: "surface.5",
-              },
-            }}
-            onClick={e => {
-              e.stopPropagation();
-              setExecutionToDelete(execution);
-              setDeleteAllow(true);
-            }}
-          >
-            <Delete sx={{ fontSize: "16px" }} />
-          </IconButton>
-        </Stack>
-      </MenuItem>
-    );
-  };
-
-  const ExecutionsList = (executionList: TemplatesExecutions[]) => (
-    <MenuList
-      sx={{
-        flex: 1,
-        p: 0,
-        overflow: "auto",
-        overscrollBehavior: "contain",
-      }}
-    >
-      {executionList.length ? (
-        executionList.map(exec => (
-          <ExecutionCard
-            key={exec.id}
-            execution={exec}
-          />
-        ))
-      ) : (
-        <Stack sx={{ height: "100%", justifyContent: "center", alignItems: "center" }}>
-          <Typography sx={{ color: "onSurface", opacity: 0.5 }}>No sparks found</Typography>
-        </Stack>
-      )}
-    </MenuList>
-  );
 
   return (
     <Box sx={{ width: { xs: "90svw", md: "401px" } }}>
@@ -267,9 +293,7 @@ export const ExecutionsTabs: React.FC<Props> = ({
                   }}
                 >
                   {!selectedExecution?.is_favorite
-                    ? `This Spark is temporal and will be removed in ${executionTimeLeft(
-                        selectedExecution.created_at as Date,
-                      )}`
+                    ? `This Spark is temporal and will be removed in ${timeLeft(selectedExecution.created_at as Date)}`
                     : "This Spark is saved"}
                 </Typography>
               </Stack>
@@ -333,60 +357,17 @@ export const ExecutionsTabs: React.FC<Props> = ({
             </Stack>
           </Box>
           {renameAllow && (
-            <Box>
-              <Box sx={{ py: "8px" }}>
-                <TextField
-                  variant="standard"
-                  fullWidth
-                  label="Rename Spark"
-                  value={executionTitle}
-                  onChange={e => setExecutionTitle(e.target.value)}
-                />
-              </Box>
-              <Stack
-                flexDirection={"row"}
-                alignItems={"flex-start"}
-                gap={1}
-                sx={{ py: "8px" }}
-              >
-                <Button
-                  variant="contained"
-                  startIcon={<Done />}
-                  sx={{
-                    borderColor: "primary.main",
-                    bgcolor: "primary.main",
-                    color: "onPrimary",
-                    fontSize: 13,
-                    fontWeight: 500,
-                    p: "4px 12px",
-                    ":hover": { color: "primary.main" },
-                    ":disabled": { bgcolor: "transparent", borderColor: alpha(palette.primary.main, 0.15) },
-                  }}
-                  disabled={!!!executionTitle?.length || isLoading}
-                  onClick={renameSave}
-                >
-                  Ok
-                </Button>
-                <Button
-                  variant="text"
-                  sx={{
-                    border: `1px solid ${alpha(palette.primary.main, 0.15)}`,
-                    bgcolor: "transparent",
-                    color: "onSurface",
-                    fontSize: 13,
-                    fontWeight: 500,
-                    p: "4px 12px",
-                  }}
-                  disabled={isLoading}
-                  onClick={() => {
-                    setRenameAllow(false);
-                    setExecutionTitle(selectedExecution?.title);
-                  }}
-                >
-                  Cancel
-                </Button>
-              </Stack>
-            </Box>
+            <RenameForm
+              label="Spark"
+              initialValue={executionTitle}
+              onChange={setExecutionTitle}
+              onSave={renameSave}
+              onCancel={() => {
+                setRenameAllow(false);
+                setExecutionTitle(selectedExecution?.title);
+              }}
+              disabled={isLoading}
+            />
           )}
         </Box>
       )}
@@ -416,7 +397,14 @@ export const ExecutionsTabs: React.FC<Props> = ({
         index={0}
       >
         <Stack height={"100%"}>
-          {ExecutionsList(executions)}
+          <ExecutionsListInternal
+            executions={executions}
+            chooseExecution={chooseExecution}
+            palette={palette}
+            setExecutionToDelete={setExecutionToDelete}
+            setDeleteAllow={setDeleteAllow}
+            selectedExecution={selectedExecution}
+          />
           <Stack
             direction={"row"}
             alignItems={"center"}
@@ -440,7 +428,16 @@ export const ExecutionsTabs: React.FC<Props> = ({
         value={tabsValue}
         index={1}
       >
-        <Stack height={"100%"}>{ExecutionsList(pinnedExecutions)}</Stack>
+        <Stack height={"100%"}>
+          <ExecutionsListInternal
+            executions={savedExecutions}
+            chooseExecution={chooseExecution}
+            palette={palette}
+            setExecutionToDelete={setExecutionToDelete}
+            setDeleteAllow={setDeleteAllow}
+            selectedExecution={selectedExecution}
+          />
+        </Stack>
       </CustomTabPanel>
 
       {!!executionToDelete && (
@@ -457,7 +454,6 @@ export const ExecutionsTabs: React.FC<Props> = ({
             setDeleteAllow(false);
             setExecutionToDelete(null);
           }}
-          onSubmitLoading={isLoading}
         />
       )}
     </Box>

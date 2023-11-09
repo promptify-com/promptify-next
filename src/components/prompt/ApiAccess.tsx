@@ -1,20 +1,18 @@
 import { ApiIcon } from "@/assets/icons";
-import { ResPrompt } from "@/core/api/dto/prompts";
 import { Templates } from "@/core/api/dto/templates";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Stack, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { Bolt } from "@mui/icons-material";
-import dynamic from "next/dynamic";
+import lazy from "next/dynamic";
+import { timeAgo } from "@/common/helpers/timeManipulation";
 
-const ApiAccessModal = dynamic(() => import("../modals/ApiAccessModal"));
+const ApiAccessModal = lazy(() => import("../modals/ApiAccessModal"));
 
 interface Props {
   templateData: Templates;
 }
 
 const isConnected = true;
-const lastAccess = "2 hours ago";
-const totalRuns = 246;
 
 const ApiAccess: React.FC<Props> = ({ templateData }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -90,22 +88,18 @@ const ApiAccess: React.FC<Props> = ({ templateData }) => {
           Integrate this API
         </Typography>
       </Button>
-      <Box
-        display="none"
-        justifyContent="space-between"
-        sx={{ opacity: 0.5 }}
-      >
-        <Typography fontSize={12}>Last access:</Typography>
-        <Typography fontSize={12}>{lastAccess}</Typography>
+
+      <Box sx={{ pb: "25px" }}>
+        <Stack gap={1}>
+          <Typography sx={detailsStyle}>
+            Last access: <span>{templateData.last_api_run ? timeAgo(templateData.last_api_run) : "--"}</span>
+          </Typography>
+          <Typography sx={detailsStyle}>
+            Total Runs: <span>{templateData.api_runs || "--"}</span>
+          </Typography>
+        </Stack>
       </Box>
-      <Box
-        display="none"
-        justifyContent="space-between"
-        sx={{ opacity: 0.5 }}
-      >
-        <Typography fontSize={12}>Total Runs:</Typography>
-        <Typography fontSize={12}>{totalRuns}</Typography>
-      </Box>
+
       {isModalOpen && (
         <ApiAccessModal
           onClose={() => setIsModalOpen(false)}
@@ -117,3 +111,15 @@ const ApiAccess: React.FC<Props> = ({ templateData }) => {
 };
 
 export default ApiAccess;
+
+const detailsStyle = {
+  fontSize: 14,
+  fontWeight: 400,
+  color: "grey.600",
+  span: {
+    color: "common.black",
+  },
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+};

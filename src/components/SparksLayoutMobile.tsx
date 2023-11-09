@@ -11,14 +11,13 @@ import {
   Typography,
 } from "@mui/material";
 import { Cloud, Delete, Edit, MoreVert } from "@mui/icons-material";
-import { useRouter } from "next/router";
-
 import DraftSpark from "@/assets/icons/DraftSpark";
 import SavedSpark from "@/assets/icons/SavedSpark";
 import useTimestampConverter from "@/hooks/useTimestampConverter";
 import useTruncate from "@/hooks/useTruncate";
 import { SparksLayoutProps } from "@/core/api/dto/templates";
 import ShareIcon from "@/assets/icons/ShareIcon";
+import { redirectToPath } from "@/common/helpers";
 
 export const SparksLayoutMobile: FC<SparksLayoutProps> = ({
   execution,
@@ -28,8 +27,6 @@ export const SparksLayoutMobile: FC<SparksLayoutProps> = ({
   onOpenEdit,
   onOpenExport,
 }) => {
-  const router = useRouter();
-
   const { truncate } = useTruncate();
   const { convertedTimestamp } = useTimestampConverter();
 
@@ -45,12 +42,7 @@ export const SparksLayoutMobile: FC<SparksLayoutProps> = ({
   };
 
   const navigateToTemplate = () => {
-    router.push({
-      pathname: `/prompt/${template.slug}`,
-      query: {
-        spark: execution.id,
-      },
-    });
+    redirectToPath(`/prompt/${template.slug}`, { spark: execution.id });
   };
 
   return (

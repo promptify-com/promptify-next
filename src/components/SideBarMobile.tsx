@@ -1,30 +1,31 @@
 import React, { useDeferredValue, useState } from "react";
 import { LogoApp } from "@/assets/icons/LogoApp";
-import { AutoAwesome, ClearRounded, HomeRounded, MenuBookRounded, MenuRounded, Search } from "@mui/icons-material";
-import {
-  Avatar,
-  Box,
-  Divider,
-  Grid,
-  InputBase,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListSubheader,
-  MenuItem,
-  MenuList,
-  SwipeableDrawer,
-  Typography,
-} from "@mui/material";
+import AutoAwesome from "@mui/icons-material/AutoAwesome";
+import ClearRounded from "@mui/icons-material/ClearRounded";
+import HomeRounded from "@mui/icons-material/HomeRounded";
+import MenuBookRounded from "@mui/icons-material/MenuBookRounded";
+import MenuRounded from "@mui/icons-material/MenuRounded";
+import Search from "@mui/icons-material/Search";
+import Avatar from "@mui/material/Avatar";
+import Box from "@mui/material/Box";
+import Divider from "@mui/material/Divider";
+import Grid from "@mui/material/Grid";
+import InputBase from "@mui/material/InputBase";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListSubheader from "@mui/material/ListSubheader";
+import MenuItem from "@mui/material/MenuItem";
+import MenuList from "@mui/material/MenuList";
+import SwipeableDrawer from "@mui/material/SwipeableDrawer";
+import Typography from "@mui/material/Typography";
 import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
-
 import { setSelectedKeyword } from "@/core/store/filtersSlice";
 import { CollectionsEmptyBox } from "./common/sidebar/CollectionsEmptyBox";
-import { Menu, MenuType } from "@/common/constants";
+import { MenuType, ProfileMenuItems } from "@/common/constants";
 import useLogout from "@/hooks/useLogout";
-import { useGetCollectionTemplatesQuery } from "@/core/api/collections";
 import { Collections } from "./common/sidebar/Collections";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { RootState } from "@/core/store";
@@ -36,6 +37,7 @@ import { NotFoundIcon } from "@/assets/icons/NotFoundIcon";
 import LoadingOverlay from "./design-system/LoadingOverlay";
 import { useRouteChangeOverlay } from "@/hooks/useRouteChangeOverlay";
 import { theme } from "@/theme";
+import { redirectToPath } from "@/common/helpers";
 
 type SidebarType = "navigation" | "profile";
 
@@ -57,24 +59,18 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
   const router = useRouter();
   const pathname = router.pathname;
   const splittedPath = pathname.split("/");
-
   const dispatch = useDispatch();
   const logout = useLogout();
-
   const title = useSelector((state: RootState) => state.filters.title || "");
   const isValidUser = useSelector(isValidUserFn);
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
-
   const [textInput, setTextInput] = useState("");
   const deferredSearchName = useDeferredValue(textInput);
   const debouncedSearchName = useDebounce<string>(deferredSearchName, 300);
-
   const { data: templates, isFetching } = useGetTemplatesBySearchQuery(debouncedSearchName, {
     skip: !textInput.length,
   });
-
   const { showOverlay } = useRouteChangeOverlay({ onCloseDrawerCallback: onCloseDrawer });
-
   const links = [
     {
       label: "Homepage",
@@ -84,7 +80,7 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
       external: false,
     },
     {
-      label: "Browse",
+      label: "Prompts",
       icon: <Search />,
       href: "/explore",
       active: splittedPath[1] == "explore",
@@ -126,12 +122,6 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
     router.push({ pathname: "/explore" });
     onCloseDrawer();
   };
-  const { data: collections, isLoading: isCollectionsLoading } = useGetCollectionTemplatesQuery(
-    currentUser?.favorite_collection_id as number,
-    {
-      skip: !isValidUser,
-    },
-  );
 
   return (
     <SwipeableDrawer
@@ -286,6 +276,10 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
                       key={link.label}
                       disablePadding
                       onClick={async () => {
+                        if (link.href === "/") {
+                          redirectToPath("/");
+                          return;
+                        }
                         await navigateTo(link.href, link.external);
                         onCloseDrawer();
                       }}
@@ -305,12 +299,7 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
                 <Divider sx={{ mt: 1 }} />
                 {isValidUser ? (
                   <Box ml={1}>
-                    <Collections
-                      favCollection={collections}
-                      collectionLoading={isCollectionsLoading}
-                      isValidUser={isValidUser}
-                      sidebarOpen
-                    />
+                    <Collections sidebarOpen />
                   </Box>
                 ) : (
                   <List subheader={<ListSubheader>COLLECTION</ListSubheader>}>
@@ -438,10 +427,10 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
                 autoFocusItem={false}
                 sx={{ width: "100%" }}
               >
-                {Menu.map(el => (
+                {ProfileMenuItems.map(item => (
                   <MenuItem
-                    key={el.name}
-                    onClick={() => handleHeaderMenu(el)}
+                    key={item.name}
+                    onClick={() => handleHeaderMenu(item)}
                     sx={{
                       display: "flex",
                       alignItems: "center",
@@ -450,7 +439,7 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
                       ml: 1,
                     }}
                   >
-                    {el.icon}
+                    {item.icon}
                     <Typography
                       sx={{
                         fontFamily: "Poppins",
@@ -462,7 +451,7 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
                         color: "onBackground",
                       }}
                     >
-                      {el.name}
+                      {item.name}
                     </Typography>
                   </MenuItem>
                 ))}

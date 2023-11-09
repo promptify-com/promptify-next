@@ -1,7 +1,6 @@
 import { Box, Grid, Typography } from "@mui/material";
 import { CategoryCard } from "@/components/common/cards/CardCategory";
 import { Category } from "@/core/api/dto/templates";
-
 import CategoriesPlaceholder from "@/components/placeholders/CategoriesPlaceHolder";
 
 interface CategoriesSectionProps {
@@ -21,7 +20,7 @@ export const CategoriesSection: React.FC<CategoriesSectionProps> = ({ isLoading,
         display={"flex"}
         flexDirection={"column"}
       >
-        {!isLoading && <Typography fontSize={19}> Browse Category </Typography>}
+        {!isLoading && <Typography fontSize={19}> Prompt Template Category </Typography>}
         {isLoading ? (
           <Grid
             display={"flex"}
@@ -49,7 +48,7 @@ export const CategoriesSection: React.FC<CategoriesSectionProps> = ({ isLoading,
             }}
           >
             {categories
-              ?.filter(mainCat => !mainCat.parent)
+              ?.filter(category => !category.parent && category.is_visible && category.prompt_template_count)
               .map(category => (
                 <Grid key={category.id}>
                   <CategoryCard

@@ -1,4 +1,6 @@
-import { Box, Grid, Skeleton } from "@mui/material";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import Skeleton from "@mui/material/Skeleton";
 
 export default function SigninPlaceholder({ signup = false }) {
   return (

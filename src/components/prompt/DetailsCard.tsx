@@ -1,5 +1,5 @@
 import { Templates } from "@/core/api/dto/templates";
-import { Avatar, Box, Stack, Typography, useTheme, CardMedia, useMediaQuery } from "@mui/material";
+import { Avatar, Box, Stack, Typography, useTheme, CardMedia, useMediaQuery, Chip } from "@mui/material";
 import React from "react";
 import FavoriteIcon from "./FavoriteIcon";
 import Image from "@/components/design-system/Image";
@@ -22,6 +22,15 @@ export const DetailsCard: React.FC<Props> = ({ templateData }) => {
   // If the current breakpoint is medium (md) or larger,
   const isMdBreakpoint = useMediaQuery(breakpoints.up("md"));
   const borderRadiusValue = isMdBreakpoint ? "16px" : "0px";
+
+  const templateStatus = templateData?.status !== "PUBLISHED" && (
+    <Chip
+      label={templateData?.status}
+      size="small"
+      sx={{ fontSize: "12px", fontWeight: 500, ml: "8px" }}
+      component={"span"}
+    />
+  );
 
   return (
     <Box
@@ -67,14 +76,18 @@ export const DetailsCard: React.FC<Props> = ({ templateData }) => {
               fontSize={18}
               fontWeight={500}
               color={"onSurface"}
-              dangerouslySetInnerHTML={{ __html: templateData.title }}
-            />
+            >
+              {templateData.title}
+              {templateStatus}
+            </Typography>
+
             <Typography
               fontSize={12}
               fontWeight={500}
               color={"grey.600"}
-              dangerouslySetInnerHTML={{ __html: templateData.category.name }}
-            />
+            >
+              {templateData.category?.name}
+            </Typography>
           </Stack>
           <Stack
             direction={"row"}
@@ -84,8 +97,8 @@ export const DetailsCard: React.FC<Props> = ({ templateData }) => {
           >
             <FavoriteIcon style={favoriteIconStyle} />
             <Avatar
-              src={templateData.created_by.avatar}
-              alt={templateData.created_by.username}
+              src={templateData.created_by?.avatar}
+              alt={templateData.created_by?.username}
               sx={{ width: 32, height: 32 }}
             />
           </Stack>
@@ -97,8 +110,8 @@ export const DetailsCard: React.FC<Props> = ({ templateData }) => {
           sx={{ display: { md: "none" } }}
         >
           <Avatar
-            src={templateData.created_by.avatar}
-            alt={templateData.created_by.username}
+            src={templateData.created_by?.avatar}
+            alt={templateData.created_by?.username}
             sx={{ width: 32, height: 32 }}
           />
           <Typography fontSize={12}>
@@ -111,7 +124,7 @@ export const DetailsCard: React.FC<Props> = ({ templateData }) => {
               </>
             ) : (
               <>
-                {templateData.created_by.username.charAt(0).toUpperCase() + templateData.created_by.username.slice(1)}
+                {templateData.created_by?.username.charAt(0).toUpperCase() + templateData.created_by?.username.slice(1)}
               </>
             )}
           </Typography>
