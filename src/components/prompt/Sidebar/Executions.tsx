@@ -86,7 +86,17 @@ export const Executions: React.FC<ExecutionsProps> = ({ template }) => {
           />
         ))
       ) : (
-        <Typography>No sparks found</Typography>
+        <Typography
+          sx={{
+            mt: "20svh",
+            textAlign: "center",
+            fontSize: 12,
+            fontWeight: 400,
+            color: "onSurface",
+          }}
+        >
+          No sparks yet
+        </Typography>
       )}
     </Stack>
   );
