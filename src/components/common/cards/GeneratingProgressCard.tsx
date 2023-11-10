@@ -23,7 +23,7 @@ export const GeneratingProgressCard: React.FC<CardProps> = ({ onCancel }) => {
         alignItems={"center"}
         gap={2}
       >
-        <Box
+        <Stack
           sx={{
             position: "relative",
             bgcolor: "surface.1",
@@ -31,7 +31,7 @@ export const GeneratingProgressCard: React.FC<CardProps> = ({ onCancel }) => {
             borderRadius: "8px",
           }}
         >
-          <Box
+          <Stack
             sx={{
               position: "absolute",
               top: "50%",
@@ -43,7 +43,7 @@ export const GeneratingProgressCard: React.FC<CardProps> = ({ onCancel }) => {
               color={theme.palette.primary.main}
               width={24}
             />
-          </Box>
+          </Stack>
           <CircularProgress
             size={52}
             sx={{
@@ -53,7 +53,7 @@ export const GeneratingProgressCard: React.FC<CardProps> = ({ onCancel }) => {
               },
             }}
           />
-        </Box>
+        </Stack>
         <Stack gap={0.5}>
           <Typography
             fontSize={12}

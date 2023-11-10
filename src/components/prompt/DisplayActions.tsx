@@ -1,11 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { Box, Button, Divider, IconButton, Stack, Tooltip, Typography, useTheme } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Divider,
+  IconButton,
+  Stack,
+  Tooltip,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import { Bookmark, BookmarkBorder, Close, DeleteOutline, Edit, ShareOutlined } from "@mui/icons-material";
 import { ExecutionTemplatePopupType, TemplatesExecutions } from "@/core/api/dto/templates";
 import { useAppSelector } from "@/hooks/useStore";
 import { useExecutionFavoriteMutation } from "@/core/api/executions";
 import useTruncate from "@/hooks/useTruncate";
 import { SparkSaveDeletePopup } from "@/components/dialog/SparkSaveDeletePopup";
+import { LogoApp } from "@/assets/icons/LogoApp";
+import { theme } from "@/theme";
 
 interface Props {
   selectedExecution: TemplatesExecutions | null;
@@ -63,13 +75,13 @@ export const DisplayActions: React.FC<Props> = ({ selectedExecution, onOpenExpor
           justifyContent={"space-between"}
           gap={1}
         >
-          <Stack
-            direction={"row"}
-            alignItems={"center"}
-            gap={1}
-            width={"40%"}
-          >
-            {selectedExecution && (
+          {!isGenerating ? (
+            <Stack
+              direction={"row"}
+              alignItems={"center"}
+              gap={1}
+              width={"40%"}
+            >
               <Button
                 endIcon={<Edit />}
                 sx={{
@@ -100,8 +112,56 @@ export const DisplayActions: React.FC<Props> = ({ selectedExecution, onOpenExpor
                   {truncate(executionTitle || "", { length: 35 })}
                 </Typography>
               </Button>
-            )}
-          </Stack>
+            </Stack>
+          ) : (
+            <Stack
+              direction={"row"}
+              alignItems={"center"}
+              gap={2}
+            >
+              <Box
+                sx={{
+                  position: "relative",
+                  bgcolor: "surface.1",
+                  p: "4px",
+                  borderRadius: "8px",
+                  display: "flex",
+                }}
+              >
+                <Box
+                  sx={{
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%,-50%)",
+                    display: "flex",
+                  }}
+                >
+                  <LogoApp
+                    color={theme.palette.primary.main}
+                    width={14}
+                  />
+                </Box>
+                <CircularProgress
+                  size={32}
+                  sx={{
+                    color: "primary.main",
+                    ".MuiCircularProgress-circle": {
+                      strokeWidth: 2.5,
+                    },
+                  }}
+                />
+              </Box>
+              <Typography
+                fontSize={15}
+                fontWeight={500}
+                color={"text.secondary"}
+                sx={{ opacity: 0.5 }}
+              >
+                Generating in progress...
+              </Typography>
+            </Stack>
+          )}
           <Stack
             direction={"row"}
             alignItems={"center"}

@@ -10,7 +10,7 @@ import { addSpaceBetweenCapitalized } from "@/common/helpers";
 import MessageSender from "./MessageSender";
 import { useDispatch } from "react-redux";
 import { setGeneratedExecution } from "@/core/store/executionsSlice";
-import { setGeneratingStatus } from "@/core/store/templatesSlice";
+import { setChatFullScreenStatus, setGeneratingStatus } from "@/core/store/templatesSlice";
 import { GeneratingProgressCard } from "@/components/common/cards/GeneratingProgressCard";
 
 interface ChatInputProps {
@@ -43,7 +43,6 @@ export const ChatInput = ({
   const { truncate } = useTruncate();
   const dispatch = useDispatch();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
-  const isFullScreen = useAppSelector(state => state.template.isChatFullScreen);
 
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -66,6 +65,7 @@ export const ChatInput = ({
     abortGenerating();
     dispatch(setGeneratedExecution(null));
     dispatch(setGeneratingStatus(false));
+    dispatch(setChatFullScreenStatus(true));
   };
 
   return (
