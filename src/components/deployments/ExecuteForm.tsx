@@ -1,16 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Stack from "@mui/material/Stack";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
-
 import BaseButton from "../base/BaseButton";
 import { Deployment } from "@/common/types/deployments";
 import useToken from "@/hooks/useToken";
 import { parseMessageData } from "@/common/helpers/parseMessageData";
-import { sanitizeHTML } from "@/common/helpers/htmlHelper";
+import { markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
 import MessageSender from "@/components/prompt/generate/MessageSender";
 import ParagraphPlaceholder from "@/components/placeholders/ParagraphPlaceholder";
+
 interface ExecuteFormProps {
   onClose: () => void;
   item: Deployment;
@@ -18,15 +18,29 @@ interface ExecuteFormProps {
 
 function ExecuteForm({ onClose, item }: ExecuteFormProps) {
   const token = useToken();
-
-  const [executionContent, setExecutionContent] = useState<string[]>([]);
+  const [executionContent, setExecutionContent] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
+  const [html, setHtml] = useState("");
+
+  useEffect(() => {
+    if (!executionContent) {
+      return;
+    }
+
+    const generateFinalHtml = async () => {
+      const _html = await markdownToHTML(executionContent);
+      setHtml(_html);
+    };
+
+    generateFinalHtml();
+  }, [executionContent]);
 
   const handleExecute = (value: string) => {
     setIsGenerating(true);
+    setExecutionContent("");
+    setHtml("");
 
     const { instance, model, id } = item;
-
     const payload = {
       instance: instance.id,
       model: model.id,
@@ -41,6 +55,7 @@ function ExecuteForm({ onClose, item }: ExecuteFormProps) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(payload),
+      openWhenHidden: true,
       async onopen(res) {
         if (res.status >= 400 && res.status < 500 && res.status !== 429) {
           console.error("Client side error ", res);
@@ -50,12 +65,13 @@ function ExecuteForm({ onClose, item }: ExecuteFormProps) {
         try {
           const parseData = parseMessageData(msg.data);
           const message = parseData.message;
+
           if (message === "[CONNECTED]" || message === "[COMPLETED]") {
             return;
           }
+
           if (message) {
-            setExecutionContent(prevState => [...prevState, message]);
-            setIsGenerating(false);
+            setExecutionContent(prevMessage => prevMessage + message);
           }
         } catch (error) {
           console.error("Error parsing message data", error);
@@ -65,8 +81,12 @@ function ExecuteForm({ onClose, item }: ExecuteFormProps) {
         setIsGenerating(false);
         console.log(err, "something went wrong");
       },
+      onclose() {
+        setIsGenerating(false);
+      },
     });
   };
+
   return (
     <Stack
       direction={"column"}
@@ -85,15 +105,14 @@ function ExecuteForm({ onClose, item }: ExecuteFormProps) {
         maxHeight={"50vh"}
         gap={1}
       >
-        {isGenerating && (
+        {isGenerating && !html.length && (
           <Grid width={"100%"}>
             <ParagraphPlaceholder />
           </Grid>
         )}
-        {executionContent.map((message, index) => (
+        {html && (
           <Box
-            key={index}
-            display={"flex"}
+            display={"block"}
             sx={{
               fontSize: 15,
               fontWeight: 400,
@@ -129,17 +148,20 @@ function ExecuteForm({ onClose, item }: ExecuteFormProps) {
                 color: "#ffffff",
                 fontSize: 13,
               },
+              "& h2": {
+                margin: 0,
+              },
             }}
             dangerouslySetInnerHTML={{
-              __html: sanitizeHTML(message),
+              __html: sanitizeHTML(html),
             }}
           />
-        ))}
+        )}
       </Stack>
       <Stack flex={1}>
         <MessageSender
           placeholder="Type something"
-          disabled={isGenerating || !!executionContent.length}
+          disabled={isGenerating}
           onSubmit={handleExecute}
         />
       </Stack>
