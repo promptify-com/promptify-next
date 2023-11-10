@@ -1,8 +1,13 @@
 import { Templates } from "@/core/api/dto/templates";
-import { Avatar, Box, Stack, Typography, useTheme, CardMedia, useMediaQuery, Chip } from "@mui/material";
-import React from "react";
+import { useTheme, useMediaQuery } from "@mui/material";
+import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import CardMedia from "@mui/material/CardMedia";
+import Chip from "@mui/material/Chip";
 import FavoriteIcon from "./FavoriteIcon";
 import Image from "@/components/design-system/Image";
+import { theme } from "@/theme";
 
 interface Props {
   templateData: Templates;
@@ -15,7 +20,7 @@ const favoriteIconStyle = {
   },
 };
 
-export const DetailsCard: React.FC<Props> = ({ templateData }) => {
+export function DetailsCard({ templateData }: Props) {
   const { breakpoints } = useTheme();
 
   // Determine the appropriate border radius value based on the breakpoint
@@ -96,10 +101,15 @@ export const DetailsCard: React.FC<Props> = ({ templateData }) => {
             sx={{ display: { xs: "none", md: "flex" } }}
           >
             <FavoriteIcon style={favoriteIconStyle} />
-            <Avatar
-              src={templateData.created_by?.avatar}
-              alt={templateData.created_by?.username}
-              sx={{ width: 32, height: 32 }}
+            <Image
+              src={templateData.created_by.avatar}
+              alt={templateData.created_by.first_name}
+              width={32}
+              height={32}
+              style={{
+                backgroundColor: theme.palette.surface[5],
+                borderRadius: "50%",
+              }}
             />
           </Stack>
         </Stack>
@@ -109,10 +119,15 @@ export const DetailsCard: React.FC<Props> = ({ templateData }) => {
           gap={1}
           sx={{ display: { md: "none" } }}
         >
-          <Avatar
-            src={templateData.created_by?.avatar}
-            alt={templateData.created_by?.username}
-            sx={{ width: 32, height: 32 }}
+          <Image
+            src={templateData.created_by.avatar}
+            alt={templateData.created_by.first_name}
+            width={32}
+            height={32}
+            style={{
+              backgroundColor: theme.palette.surface[5],
+              borderRadius: "50%",
+            }}
           />
           <Typography fontSize={12}>
             by{" "}
@@ -132,4 +147,4 @@ export const DetailsCard: React.FC<Props> = ({ templateData }) => {
       </Stack>
     </Box>
   );
-};
+}
