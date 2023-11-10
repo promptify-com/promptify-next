@@ -24,15 +24,13 @@ import { parseMessageData } from "@/common/helpers/parseMessageData";
 import { useUploadFileMutation } from "@/core/api/uploadFile";
 import { uploadFileHelper } from "@/common/helpers/uploadFileHelper";
 import { setGeneratedExecution } from "@/core/store/executionsSlice";
-import { TemplateDetailsCard } from "./TemplateDetailsCard";
 
 interface Props {
   onError: (errMsg: string) => void;
   template: Templates;
-  isFullScreen: boolean;
 }
 
-const ChatMode: React.FC<Props> = ({ onError, template, isFullScreen }) => {
+const ChatMode: React.FC<Props> = ({ onError, template }) => {
   const token = useToken();
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -795,34 +793,12 @@ const ChatMode: React.FC<Props> = ({ onError, template, isFullScreen }) => {
         height={"calc(100% - 66px)"}
         gap={2}
       >
-        <Stack
-          gap={3}
-          sx={{
-            overflow: "auto",
-            overscrollBehavior: "contain",
-            "&::-webkit-scrollbar": {
-              width: "6px",
-              p: 1,
-              backgroundColor: "surface.5",
-            },
-            "&::-webkit-scrollbar-track": {
-              webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
-            },
-            "&::-webkit-scrollbar-thumb": {
-              backgroundColor: "surface.1",
-              outline: "1px solid surface.1",
-              borderRadius: "10px",
-            },
-          }}
-        >
-          <div style={{ marginTop: "auto" }}></div>
-          {isFullScreen && <TemplateDetailsCard template={template} />}
-          <ChatInterface
-            messages={messages}
-            onChange={handleUserInput}
-            setIsSimulaitonStreaming={setIsSimulaitonStreaming}
-          />
-        </Stack>
+        <ChatInterface
+          template={template}
+          messages={messages}
+          onChange={handleUserInput}
+          setIsSimulaitonStreaming={setIsSimulaitonStreaming}
+        />
         <VaryModal
           open={varyOpen}
           setOpen={setVaryOpen}

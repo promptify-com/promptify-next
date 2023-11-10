@@ -10,6 +10,7 @@ import { Sidebar } from "./Sidebar";
 import { useAppSelector } from "@/hooks/useStore";
 import { useDispatch } from "react-redux";
 import { setSelectedExecution } from "@/core/store/executionsSlice";
+import { setChatFullScreenStatus } from "@/core/store/templatesSlice";
 
 interface TemplateDesktopProps {
   template: Templates;
@@ -18,16 +19,16 @@ interface TemplateDesktopProps {
 
 export default function TemplateDesktop({ template, setErrorMessage }: TemplateDesktopProps) {
   const dispatch = useDispatch();
-  const [chatFullScreen, setChatFullScreen] = useState(true);
+  const chatFullScreen = useAppSelector(state => state.template.isChatFullScreen);
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
 
   const closeExecutionDisplay = () => {
-    setChatFullScreen(true);
+    dispatch(setChatFullScreenStatus(true));
     dispatch(setSelectedExecution(null));
   };
 
   useEffect(() => {
-    setChatFullScreen(!selectedExecution);
+    dispatch(setChatFullScreenStatus(!selectedExecution));
   }, [selectedExecution]);
 
   return (
@@ -92,7 +93,6 @@ export default function TemplateDesktop({ template, setErrorMessage }: TemplateD
             <ChatMode
               onError={setErrorMessage}
               template={template}
-              isFullScreen={chatFullScreen}
             />
           </ClientOnly>
         </Stack>
