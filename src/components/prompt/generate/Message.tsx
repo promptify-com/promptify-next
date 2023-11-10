@@ -76,7 +76,7 @@ export const Message = ({
 
   return (
     <Grid
-      p={"16px"}
+      py={"16px"}
       display={"flex"}
       gap={"16px"}
     >

@@ -1,6 +1,6 @@
 import React, { useState, useMemo, memo, useEffect, useRef } from "react";
-import { Accordion, AccordionDetails, AccordionSummary, Grid, Typography, Button, Stack, Box } from "@mui/material";
-import { Block, ExpandLess, ExpandMore } from "@mui/icons-material";
+import { Typography, Button, Stack, Box } from "@mui/material";
+import { Block } from "@mui/icons-material";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { useRouter } from "next/router";
 
@@ -14,16 +14,9 @@ import { ChatInterface } from "./ChatInterface";
 import { ChatInput } from "./ChatInput";
 import { TemplateQuestions, Templates, UpdatedQuestionTemplate } from "@/core/api/dto/templates";
 import { getInputsFromString } from "@/common/helpers/getInputsFromString";
-import {
-  IPromptInput,
-  PromptLiveResponse,
-  InputType,
-  AnsweredInputType,
-  UploadFileResponse,
-} from "@/common/types/prompt";
+import { IPromptInput, PromptLiveResponse, InputType, AnsweredInputType } from "@/common/types/prompt";
 import { setGeneratingStatus, updateAnsweredInput, updateExecutionData } from "@/core/store/templatesSlice";
 import { AnswerValidatorResponse, IAnswer, IMessage } from "@/common/types/chat";
-import { isDesktopViewPort } from "@/common/helpers";
 import { useStopExecutionMutation } from "@/core/api/executions";
 import VaryModal from "./VaryModal";
 import { vary } from "@/common/helpers/varyValidator";
@@ -31,16 +24,15 @@ import { parseMessageData } from "@/common/helpers/parseMessageData";
 import { useUploadFileMutation } from "@/core/api/uploadFile";
 import { uploadFileHelper } from "@/common/helpers/uploadFileHelper";
 import { setGeneratedExecution } from "@/core/store/executionsSlice";
+import { TemplateDetailsCard } from "./TemplateDetailsCard";
 
 interface Props {
   onError: (errMsg: string) => void;
   template: Templates;
+  isFullScreen: boolean;
 }
 
-const BottomTabsMobileHeight = "240px";
-
-const ChatMode: React.FC<Props> = ({ onError, template }) => {
-  const isDesktopView = isDesktopViewPort();
+const ChatMode: React.FC<Props> = ({ onError, template, isFullScreen }) => {
   const token = useToken();
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -800,13 +792,37 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
       </Stack>
       <Stack
         justifyContent={"flex-end"}
-        height={"calc(100% - (66px + 72px))"}
+        height={"calc(100% - 66px)"}
+        gap={2}
       >
-        <ChatInterface
-          messages={messages}
-          onChange={handleUserInput}
-          setIsSimulaitonStreaming={setIsSimulaitonStreaming}
-        />
+        <Stack
+          gap={3}
+          sx={{
+            overflow: "auto",
+            overscrollBehavior: "contain",
+            "&::-webkit-scrollbar": {
+              width: "6px",
+              p: 1,
+              backgroundColor: "surface.5",
+            },
+            "&::-webkit-scrollbar-track": {
+              webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              backgroundColor: "surface.1",
+              outline: "1px solid surface.1",
+              borderRadius: "10px",
+            },
+          }}
+        >
+          <div style={{ marginTop: "auto" }}></div>
+          {isFullScreen && <TemplateDetailsCard template={template} />}
+          <ChatInterface
+            messages={messages}
+            onChange={handleUserInput}
+            setIsSimulaitonStreaming={setIsSimulaitonStreaming}
+          />
+        </Stack>
         <VaryModal
           open={varyOpen}
           setOpen={setVaryOpen}

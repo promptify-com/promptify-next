@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, Dispatch, SetStateAction } from "react";
-import { Grid, Stack } from "@mui/material";
+import { Divider, Grid, Stack } from "@mui/material";
 
 import { Message } from "./Message";
 import { IMessage } from "@/common/types/chat";
@@ -31,27 +31,19 @@ export const ChatInterface = ({ messages, onChange, setIsSimulaitonStreaming }: 
   return (
     <Stack
       ref={messagesContainerRef}
-      height={"calc(100% - 72px)"}
       pb={"8px"}
-      sx={{
-        overflow: "auto",
-        overscrollBehavior: "contain",
-        "&::-webkit-scrollbar": {
-          width: "6px",
-          p: 1,
-          backgroundColor: "surface.5",
-        },
-        "&::-webkit-scrollbar-track": {
-          webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
-        },
-        "&::-webkit-scrollbar-thumb": {
-          backgroundColor: "surface.1",
-          outline: "1px solid surface.1",
-          borderRadius: "10px",
-        },
-      }}
+      mx={"40px"}
     >
-      <div style={{ marginTop: "auto" }}></div>
+      <Divider
+        sx={{
+          fontSize: 12,
+          fontWeight: 400,
+          color: "onSurface",
+          opacity: 0.5,
+        }}
+      >
+        New messages
+      </Divider>
       {messages.map((msg, idx) => (
         <Message
           key={idx}

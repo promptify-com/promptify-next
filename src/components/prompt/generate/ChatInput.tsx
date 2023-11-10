@@ -66,7 +66,6 @@ export const ChatInput = ({
       display={"flex"}
       flexDirection={"column"}
       gap={"8px"}
-      mt={"auto"}
     >
       <Box
         display={"flex"}

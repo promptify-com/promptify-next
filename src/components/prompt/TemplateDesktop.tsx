@@ -92,6 +92,7 @@ export default function TemplateDesktop({ template, setErrorMessage }: TemplateD
             <ChatMode
               onError={setErrorMessage}
               template={template}
+              isFullScreen={chatFullScreen}
             />
           </ClientOnly>
         </Stack>
