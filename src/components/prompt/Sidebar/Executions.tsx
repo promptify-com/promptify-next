@@ -77,7 +77,7 @@ export const Executions: React.FC<ExecutionsProps> = ({ template }) => {
       }}
     >
       {isLoading ? (
-        Array.from({ length: 2 }, _ => <CardExecutionPlaceholder />)
+        Array.from({ length: 2 }, (_, i) => <CardExecutionPlaceholder key={i} />)
       ) : executions && executions.length > 0 ? (
         executions.map(execution => (
           <CardExecution

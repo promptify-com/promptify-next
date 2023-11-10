@@ -1,7 +1,6 @@
 import React, { useRef, useState } from "react";
-import { Clear, Edit, PlayCircle, Send } from "@mui/icons-material";
-import { Box, Button, Chip, CircularProgress, Grid, InputBase, Popover, Stack, Typography } from "@mui/material";
-
+import { Clear, Edit, PlayCircle } from "@mui/icons-material";
+import { Box, Button, Chip, Grid, Popover, Stack } from "@mui/material";
 import { IAnswer } from "@/common/types/chat";
 import { useAppSelector } from "@/hooks/useStore";
 import ThreeDotsAnimation from "@/components/design-system/ThreeDotsAnimation";
@@ -9,6 +8,10 @@ import useTruncate from "@/hooks/useTruncate";
 import { calculateTruncateLength } from "@/common/helpers/calculateTruncateLength";
 import { addSpaceBetweenCapitalized } from "@/common/helpers";
 import MessageSender from "./MessageSender";
+import { useDispatch } from "react-redux";
+import { setGeneratedExecution } from "@/core/store/executionsSlice";
+import { setGeneratingStatus } from "@/core/store/templatesSlice";
+import { GeneratingProgressCard } from "@/components/common/cards/GeneratingProgressCard";
 
 interface ChatInputProps {
   answers: IAnswer[];
@@ -21,6 +24,7 @@ interface ChatInputProps {
   showGenerate: boolean;
   isValidating: boolean;
   disabledButton: boolean;
+  abortGenerating: () => void;
 }
 
 export const ChatInput = ({
@@ -34,8 +38,12 @@ export const ChatInput = ({
   showGenerate,
   isValidating,
   disabledButton,
+  abortGenerating,
 }: ChatInputProps) => {
   const { truncate } = useTruncate();
+  const dispatch = useDispatch();
+  const isGenerating = useAppSelector(state => state.template.isGenerating);
+  const isFullScreen = useAppSelector(state => state.template.isChatFullScreen);
 
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -54,15 +62,18 @@ export const ChatInput = ({
     return `${truncatedInputName}: ${truncatedAnswer}`;
   };
 
-  const isGenerating = useAppSelector(state => state.template.isGenerating);
+  const abortConnection = () => {
+    abortGenerating();
+    dispatch(setGeneratedExecution(null));
+    dispatch(setGeneratingStatus(false));
+  };
 
   return (
     <Grid
       ref={containerRef}
-      p={"0px 16px"}
-      pb={"16px"}
+      mx={"40px"}
+      mb={"16px"}
       position={"relative"}
-      width={"100%"}
       display={"flex"}
       flexDirection={"column"}
       gap={"8px"}
@@ -73,18 +84,14 @@ export const ChatInput = ({
         alignItems={"start"}
       >
         <ThreeDotsAnimation loading={isValidating} />
-        {showGenerate && (
+        {showGenerate && !isGenerating && (
           <Button
             onClick={onGenerate}
-            startIcon={
-              isGenerating ? (
-                <CircularProgress size={16} />
-              ) : (
-                <PlayCircle
-                  sx={{ color: "onPrimary" }}
-                  fontSize={"small"}
-                />
-              )
+            endIcon={
+              <PlayCircle
+                sx={{ color: "onPrimary" }}
+                fontSize={"small"}
+              />
             }
             sx={{
               bgcolor: "primary.main",
@@ -104,16 +111,10 @@ export const ChatInput = ({
             variant="contained"
             disabled={isGenerating || isValidating || disabledButton}
           >
-            {isGenerating ? (
-              <Typography>Generation in progress...</Typography>
-            ) : (
-              <>
-                <Typography sx={{ color: "inherit", fontSize: 15, lineHeight: "22px" }}>Generate</Typography>
-                <Typography sx={{ ml: 1.5, color: "inherit", fontSize: 12 }}>~360s</Typography>
-              </>
-            )}
+            Run prompt
           </Button>
         )}
+        {isGenerating && <GeneratingProgressCard onCancel={abortConnection} />}
       </Box>
 
       {answers.length > 0 && (
@@ -142,6 +143,7 @@ export const ChatInput = ({
                 fontWeight: "500",
                 borderBottomRightRadius: "4px",
                 borderTopRightRadius: "4px",
+                whiteSpace: "pre-wrap",
                 bgcolor: "surface.3",
                 color: "onSurface",
                 borderColor: "surface.3",

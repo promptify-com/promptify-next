@@ -15,7 +15,12 @@ import { ChatInput } from "./ChatInput";
 import { TemplateQuestions, Templates, UpdatedQuestionTemplate } from "@/core/api/dto/templates";
 import { getInputsFromString } from "@/common/helpers/getInputsFromString";
 import { IPromptInput, PromptLiveResponse, InputType, AnsweredInputType } from "@/common/types/prompt";
-import { setGeneratingStatus, updateAnsweredInput, updateExecutionData } from "@/core/store/templatesSlice";
+import {
+  setChatFullScreenStatus,
+  setGeneratingStatus,
+  updateAnsweredInput,
+  updateExecutionData,
+} from "@/core/store/templatesSlice";
 import { AnswerValidatorResponse, IAnswer, IMessage } from "@/common/types/chat";
 import { useStopExecutionMutation } from "@/core/api/executions";
 import VaryModal from "./VaryModal";
@@ -573,6 +578,8 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
 
     uploadedFiles.current.clear();
 
+    dispatch(setChatFullScreenStatus(false));
+
     generateExecution(promptsData);
   };
 
@@ -696,9 +703,6 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
 
   const abortConnection = () => {
     abortController.current.abort();
-    dispatch(setGeneratedExecution(null));
-    dispatch(setGeneratingStatus(false));
-
     if (newExecutionId) {
       stopExecution(newExecutionId);
     }
@@ -765,28 +769,6 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
         >
           Chat With Promptify
         </Typography>
-        {isGenerating && (
-          <Button
-            variant="text"
-            startIcon={<Block />}
-            sx={{
-              border: "1px solid",
-              height: "22px",
-              p: "15px",
-              fontSize: 13,
-              fontWeight: 500,
-              ":hover": {
-                bgcolor: "action.hover",
-              },
-            }}
-            onClick={e => {
-              e.stopPropagation();
-              abortConnection();
-            }}
-          >
-            Abort
-          </Button>
-        )}
       </Stack>
       <Stack
         justifyContent={"flex-end"}
@@ -816,6 +798,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
             onGenerate={generateExecutionHandler}
             isValidating={isValidatingAnswer}
             disabledButton={!disabledButton}
+            abortGenerating={abortConnection}
           />
         ) : (
           <Stack
