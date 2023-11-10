@@ -8,6 +8,7 @@ import { IMessage } from "@/common/types/chat";
 import useTextSimulationStreaming from "@/hooks/useTextSimulationStreaming";
 import { FileType } from "@/common/types/prompt";
 import { getFileTypeExtensionsAsString } from "@/common/helpers/uploadFileHelper";
+import { timeAgo } from "@/common/helpers/timeManipulation";
 
 interface MessageBlockProps {
   message: IMessage;
@@ -125,7 +126,7 @@ export const Message = ({
                 opacity: 0.5,
               }}
             >
-              {createdAt}
+              {timeAgo(createdAt)}
             </Typography>
           </Grid>
         )}

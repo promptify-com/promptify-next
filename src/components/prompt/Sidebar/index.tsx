@@ -99,6 +99,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ template }) => {
           transition: theme.transitions.create("width", { duration: 200 }),
           position: "relative",
           "& .MuiDrawer-paper": {
+            display: open ? "flex" : "none",
             position: "absolute",
             left: 0,
             top: 0,

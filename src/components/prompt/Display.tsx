@@ -75,9 +75,10 @@ export const Display: React.FC<Props> = ({ templateData, onError, close }) => {
     >
       <Box
         ref={containerRef}
-        bgcolor={"surface.3"}
-        minHeight={{ xs: "100vh", md: "calc(100vh - (95px + 24px))" }}
         sx={{
+          bgcolor: "surface.3",
+          minHeight: { xs: "100vh", md: "calc(100vh - (90px + 68px))" },
+          height: "1px",
           position: "relative",
           pb: { xs: "70px", md: "0" },
         }}
@@ -96,15 +97,26 @@ export const Display: React.FC<Props> = ({ templateData, onError, close }) => {
 
         <Box
           sx={{
+            height: "calc(100% - 67px)",
             opacity: firstLoad ? 0.5 : 1,
             bgcolor: "surface.1",
             borderRadius: "16px 16px 0px 0px",
+            position: "relative",
           }}
         >
           {executionIsLoading ? (
             <ParagraphPlaceholder />
           ) : !selectedExecution && isGeneratedExecutionEmpty ? (
-            <Typography sx={{ mt: "40px", textAlign: "center" }}>No spark found</Typography>
+            <Typography
+              sx={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%,-50%)",
+              }}
+            >
+              No spark found
+            </Typography>
           ) : (
             <ExecutionCard
               execution={generatedExecution ?? selectedExecution}
