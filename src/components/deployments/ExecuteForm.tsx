@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Stack from "@mui/material/Stack";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
@@ -21,6 +21,7 @@ function ExecuteForm({ onClose, item }: ExecuteFormProps) {
   const [executionContent, setExecutionContent] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [html, setHtml] = useState("");
+  const executionRefElm = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (!executionContent) {
@@ -30,6 +31,10 @@ function ExecuteForm({ onClose, item }: ExecuteFormProps) {
     const generateFinalHtml = async () => {
       const _html = await markdownToHTML(executionContent);
       setHtml(_html);
+
+      if (executionRefElm.current) {
+        executionRefElm.current.scrollIntoView({ block: "end", behavior: "smooth" });
+      }
     };
 
     generateFinalHtml();
@@ -112,6 +117,7 @@ function ExecuteForm({ onClose, item }: ExecuteFormProps) {
         )}
         {html && (
           <Box
+            ref={executionRefElm}
             display={"block"}
             sx={{
               fontSize: 15,
@@ -120,6 +126,8 @@ function ExecuteForm({ onClose, item }: ExecuteFormProps) {
               wordWrap: "break-word",
               textAlign: "justify",
               float: "none",
+              overflowY: "scroll",
+              height: "100%",
               ".highlight": {
                 backgroundColor: "yellow",
                 color: "black",
