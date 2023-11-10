@@ -96,7 +96,7 @@ function DeploymentItem({ item, onDelete }: DeploymentItem) {
         display={"flex"}
         justifyContent={"end"}
         md={2}
-        {...(isDesktop ? { pr: "13px" } : { width: "50%" })}
+        {...(isDesktop ? { pr: "0px" } : { width: "50%" })}
       >
         <Typography
           display={"flex"}
