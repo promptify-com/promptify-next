@@ -1,13 +1,19 @@
-import React from "react";
-import { Avatar, Box, Card, CardMedia, Chip, Grid, Stack, Typography } from "@mui/material";
-import { TemplateExecutionsDisplay, Templates } from "@/core/api/dto/templates";
+import Chip from "@mui/material/Chip";
+import Stack from "@mui/material/Stack";
+import Box from "@mui/material/Box";
+import Card from "@mui/material/Card";
+import CardMedia from "@mui/material/CardMedia";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
 import ArrowBackIosRoundedIcon from "@mui/icons-material/ArrowBackIosRounded";
+import type { TemplateExecutionsDisplay, Templates } from "@/core/api/dto/templates";
 import { useRouter } from "next/router";
-import { useDispatch } from "react-redux";
 import { setSelectedTag } from "@/core/store/filtersSlice";
 import Image from "@/components/design-system/Image";
 import useTruncate from "@/hooks/useTruncate";
-import { redirectToPath } from "@/common/helpers";
+import { isDesktopViewPort, redirectToPath } from "@/common/helpers";
+import { theme } from "@/theme";
+import { useAppDispatch } from "@/hooks/useStore";
 
 type CardTemplateProps = {
   template: Templates | TemplateExecutionsDisplay;
@@ -16,10 +22,11 @@ type CardTemplateProps = {
   asResult?: boolean;
 };
 
-const CardTemplate: React.FC<CardTemplateProps> = ({ template, noRedirect = false, query, asResult = false }) => {
+function CardTemplate({ template, noRedirect = false, query, asResult = false }: CardTemplateProps) {
   const router = useRouter();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { truncate } = useTruncate();
+  const isDesktop = isDesktopViewPort();
 
   const highlightSearchQuery = (text: string) => {
     if (!query) return text;
@@ -121,14 +128,15 @@ const CardTemplate: React.FC<CardTemplateProps> = ({ template, noRedirect = fals
                 </Typography>
               </Grid>
             </Grid>
-            <Avatar
-              src={template.created_by.avatar}
-              alt={template.created_by.first_name}
-              sx={{
-                display: { xs: asResult ? "none" : "flex", md: "none" },
-                width: 32,
-                height: 32,
-                bgcolor: "surface.5",
+            <Image
+              src={template.created_by?.avatar ?? ""}
+              alt={template.created_by.first_name.slice(0, 1)}
+              width={32}
+              height={32}
+              style={{
+                display: isDesktop ? "none" : asResult ? "none" : "flex",
+                backgroundColor: theme.palette.surface[5],
+                borderRadius: "50%",
               }}
             />
           </Grid>
@@ -189,14 +197,15 @@ const CardTemplate: React.FC<CardTemplateProps> = ({ template, noRedirect = fals
                 {template.favorites_count || 0}
               </Stack>
             </Grid>
-            <Avatar
-              src={template.created_by.avatar}
-              alt={template.created_by.first_name}
-              sx={{
-                display: { xs: "none", md: "flex" },
-                width: 32,
-                height: 32,
-                bgcolor: "surface.5",
+            <Image
+              src={template.created_by?.avatar ?? ""}
+              alt={template.created_by.first_name.slice(0, 1)}
+              width={32}
+              height={32}
+              style={{
+                display: isDesktop ? "flex" : "none",
+                backgroundColor: theme.palette.surface[5],
+                borderRadius: "50%",
               }}
             />
           </Grid>
@@ -204,6 +213,6 @@ const CardTemplate: React.FC<CardTemplateProps> = ({ template, noRedirect = fals
       </Card>
     </Box>
   );
-};
+}
 
 export default CardTemplate;

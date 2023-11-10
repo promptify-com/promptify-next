@@ -1,21 +1,25 @@
-import React from "react";
-import { Avatar, Box, Card, CardMedia, Grid, IconButton, Typography } from "@mui/material";
-import { TemplateExecutionsDisplay } from "@/core/api/dto/templates";
-import { Favorite, PlayCircle } from "@mui/icons-material";
-import { useRouter } from "next/router";
+import Box from "@mui/material/Box";
+import Card from "@mui/material/Card";
+import CardMedia from "@mui/material/CardMedia";
+import Grid from "@mui/material/Grid";
+import IconButton from "@mui/material/IconButton";
+import Typography from "@mui/material/Typography";
+import Favorite from "@mui/icons-material/Favorite";
+import PlayCircle from "@mui/icons-material/PlayCircle";
+import type { TemplateExecutionsDisplay } from "@/core/api/dto/templates";
 import useTruncate from "@/hooks/useTruncate";
 import SavedSpark from "@/assets/icons/SavedSpark";
 import NoSpark from "@/assets/icons/NoSpark";
 import Image from "@/components/design-system/Image";
 import { redirectToPath } from "@/common/helpers";
+import { theme } from "@/theme";
 
 type CardTemplateLastProps = {
   template: TemplateExecutionsDisplay;
 };
 
-const CardTemplateLast: React.FC<CardTemplateLastProps> = ({ template }) => {
+function CardTemplateLast({ template }: CardTemplateLastProps) {
   const { truncate } = useTruncate();
-  const router = useRouter();
 
   return (
     <Box>
@@ -117,13 +121,14 @@ const CardTemplateLast: React.FC<CardTemplateLastProps> = ({ template }) => {
                 <Favorite sx={{ fontSize: 18 }} />
                 {template.favorites_count || 0}
               </Box>
-              <Avatar
+              <Image
                 src={template.created_by.avatar}
                 alt={template.created_by.first_name}
-                sx={{
-                  width: 32,
-                  height: 32,
-                  bgcolor: "surface.5",
+                width={32}
+                height={32}
+                style={{
+                  backgroundColor: theme.palette.surface[5],
+                  borderRadius: "50%",
                 }}
               />
             </Grid>
@@ -203,6 +208,6 @@ const CardTemplateLast: React.FC<CardTemplateLastProps> = ({ template }) => {
       </Card>
     </Box>
   );
-};
+}
 
 export default CardTemplateLast;
