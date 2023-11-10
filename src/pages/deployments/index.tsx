@@ -15,9 +15,9 @@ import { useGetDeploymentsQuery } from "@/core/api/deployments";
 import type { DeploymentStatus } from "@/common/types/deployments";
 import Protected from "@/components/Protected";
 import DeploymentList from "@/components/deployments/DeploymentList";
-import SparksTemplatePlaceholder from "@/components/placeholders/SparksTemplatePlaceholder";
 import ActiveFilters from "@/components/deployments/ActiveFilters";
 import CreateDeploymentButton from "@/components/deployments/CreateDeploymentButton";
+import DeploymentPlaceholder from "@/components/placeholders/DeploymentPlaceholder";
 
 function Deployments() {
   const [searchName, setSearchName] = useState("");
@@ -44,7 +44,7 @@ function Deployments() {
             {isLoading ? (
               <Box>
                 <Box bgcolor="surface.1">
-                  <SparksTemplatePlaceholder count={3} />
+                  <DeploymentPlaceholder count={4} />
                 </Box>
               </Box>
             ) : (
