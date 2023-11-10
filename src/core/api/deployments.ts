@@ -46,7 +46,7 @@ export const deploymentsApi = baseApi.injectEndpoints({
       }),
       getModels: builder.query<ModelsWithPagination, number>({
         query: (offset: number) => ({
-          url: `/api/aithos/models/?limit=20&?offset=${offset}`,
+          url: `/api/aithos/models/?limit=20&offset=${offset}`,
           method: "get",
         }),
         keepUnusedDataFor: 60 * 15,
