@@ -1,11 +1,10 @@
-import * as Sentry from "@sentry/nextjs";
-
+import { init } from "@sentry/nextjs";
 if (process.env.NEXT_PUBLIC_SENTRY_DSN && process.env.NODE_ENV === 'production') {
-    Sentry.init({
+    init({
         dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
         integrations: [
-            new Sentry.BrowserTracing(),
-            new Sentry.Replay(),
+            // new Sentry.BrowserTracing(),
+            // new Sentry.Replay(),
         ],
         tracePropagationTargets: [/^https:\/\/api.promptify.com/],
         tracesSampleRate: 0.8,
@@ -31,4 +30,7 @@ if (process.env.NEXT_PUBLIC_SENTRY_DSN && process.env.NODE_ENV === 'production')
             /metrics\.itunes\.apple\.com\.edgesuite\.net\//i,
         ]
     });
+    const { Replay, BrowserTracing } = await import("@sentry/nextjs")
+    Sentry.Integrations(new Replay());
+    Sentry.Integrations(new BrowserTracing());
 }

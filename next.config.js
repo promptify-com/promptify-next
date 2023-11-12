@@ -19,6 +19,10 @@ if (
 
   nextConfig.sentry = {
     hideSourceMaps: true,
+    widenClientFileUpload: true,
+    transpileClientSDK: false,
+    tunnelRoute: "/monitoring",
+    disableLogger: true
   };
 
   module.exports = withSentryConfig(nextConfig, {
