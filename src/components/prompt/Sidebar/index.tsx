@@ -21,6 +21,7 @@ import { Templates } from "@/core/api/dto/templates";
 import { Executions } from "./Executions";
 import { TemplateDetails } from "./TemplateDetails";
 import { ApiAccess } from "./ApiAccess";
+import { Extension } from "./Extension";
 
 const drawerWidth = 352;
 
@@ -152,6 +153,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ template }) => {
         {activeLink?.name === "executions" && <Executions template={template} />}
         {activeLink?.name === "details" && <TemplateDetails template={template} />}
         {activeLink?.name === "api" && <ApiAccess template={template} />}
+        {activeLink?.name === "extension" && <Extension />}
       </Drawer>
       <Box
         display={"flex"}
