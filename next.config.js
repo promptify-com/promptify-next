@@ -11,7 +11,7 @@ const nextConfig = {
 };
 
 if (
-  process.env.NODE_ENV === "production" &&
+  process.env.NODE_ENV === "productionasd" &&
   process.env.NEXT_PUBLIC_SENTRY_DSN &&
   process.env.SENTRY_AUTH_TOKEN
 ) {
