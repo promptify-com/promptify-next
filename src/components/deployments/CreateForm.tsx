@@ -19,9 +19,9 @@ import { useDeployment } from "@/hooks/deployments/useDeployment";
 import { useFormSelects } from "@/hooks/deployments/useFormSelects";
 import useDebounce from "@/hooks/useDebounce";
 import type { FormikCreateDeployment } from "@/common/types/deployments";
+import { allFieldsFilled, isDesktopViewPort } from "@/common/helpers";
 import BaseButton from "../base/BaseButton";
 import InstanceLabel from "./InstanceLabel";
-import { allFieldsFilled } from "@/common/helpers";
 import Logs from "./Logs";
 
 interface CreateFormProps {
@@ -76,6 +76,7 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
     isRegionFetching,
   } = useFormSelects(provider, region, deboundedSearchText);
 
+  const isMobile = !isDesktopViewPort();
   const observer = useRef<IntersectionObserver | null>(null);
 
   const lastModelRef = useCallback(
@@ -83,13 +84,16 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
       if (isModelsFetching) return;
       if (observer.current) observer.current.disconnect();
 
+      const rowHeight = isMobile ? 145 : 80;
+      const margin = `${2 * rowHeight}px`;
+
       observer.current = new IntersectionObserver(
         entries => {
           if (entries[0].isIntersecting && hasMoreModels) {
             fetchMoreModels();
           }
         },
-        { rootMargin: "300px" },
+        { rootMargin: margin },
       );
       if (node) observer.current.observe(node);
     },
