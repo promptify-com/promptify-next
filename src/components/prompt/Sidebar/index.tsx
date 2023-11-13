@@ -22,6 +22,7 @@ import { Executions } from "./Executions";
 import { TemplateDetails } from "./TemplateDetails";
 import { ApiAccess } from "./ApiAccess";
 import { Extension } from "./Extension";
+import { Feedback } from "./Feedback";
 
 const drawerWidth = 352;
 
@@ -151,9 +152,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ template }) => {
           </IconButton>
         </Stack>
         {activeLink?.name === "executions" && <Executions template={template} />}
-        {activeLink?.name === "details" && <TemplateDetails template={template} />}
+        {activeLink?.name === "feedback" && <Feedback />}
         {activeLink?.name === "api" && <ApiAccess template={template} />}
         {activeLink?.name === "extension" && <Extension />}
+        {activeLink?.name === "details" && <TemplateDetails template={template} />}
       </Drawer>
       <Box
         display={"flex"}
