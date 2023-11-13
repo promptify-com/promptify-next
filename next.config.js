@@ -10,7 +10,7 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+module.exports = nextConfig;
 
 // if (
 //   process.env.NODE_ENV === "productionasd" &&
