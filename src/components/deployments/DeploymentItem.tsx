@@ -1,13 +1,15 @@
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
+import Tooltip from "@mui/material/Tooltip";
+import IconButton from "@mui/material/IconButton";
+import DeleteRounded from "@mui/icons-material/DeleteRounded";
+import Zoom from "@mui/material/Zoom";
+import ErrorOutline from "@mui/icons-material/ErrorOutline";
 
 import type { Deployment } from "@/common/types/deployments";
 import { StatusChip } from "./StatusChip";
 import InstanceLabel from "./InstanceLabel";
 import useTimestampConverter from "@/hooks/useTimestampConverter";
-import Tooltip from "@mui/material/Tooltip";
-import IconButton from "@mui/material/IconButton";
-import DeleteRounded from "@mui/icons-material/DeleteRounded";
 import { isDesktopViewPort } from "@/common/helpers";
 import { ExecuteDeploymentButton } from "./ExecuteDeploymentButton";
 
@@ -73,6 +75,21 @@ function DeploymentItem({ item, onDelete }: DeploymentItem) {
           label={item.status}
           status={item.status}
         />
+        {item.status === "failed" && (
+          <Tooltip
+            TransitionComponent={Zoom}
+            title={item.failure_reason}
+          >
+            <ErrorOutline
+              sx={{
+                fontSize: 18,
+                ml: 1,
+                cursor: "pointer",
+                color: "#ef4444",
+              }}
+            />
+          </Tooltip>
+        )}
       </Grid>
       <Grid
         item

@@ -8,49 +8,56 @@ import type {
   RegionParams,
 } from "@/common/types/deployments";
 
-const getInstancesParams = (params: InstanceParams) => {
-  const instancesParams = new URLSearchParams();
-  params.region && instancesParams.append("region", params.region);
-  return instancesParams.toString();
-};
-
-const getRegionsParams = (params: RegionParams) => {
-  const regionParams = new URLSearchParams();
-  params.provider && regionParams.append("provider", params.provider);
-  return regionParams.toString();
-};
-
 export const deploymentsApi = baseApi.injectEndpoints({
   endpoints: builder => {
     return {
       getInstances: builder.query<Instance[], InstanceParams>({
-        query: (params: InstanceParams) => ({
-          url: `/api/aithos/instances/?${getInstancesParams(params)}`,
-          method: "get",
-        }),
+        query: (params: InstanceParams) => {
+          const queryParams = new URLSearchParams();
+          if (params.region) {
+            queryParams.append("region", params.region);
+          }
+          return {
+            url: `/api/aithos/instances/?${queryParams.toString()}`,
+            method: "get",
+          };
+        },
         keepUnusedDataFor: 60 * 60,
       }),
-      getRegionsByQueryParams: builder.query<Region[], RegionParams>({
-        query: (params: RegionParams) => ({
-          url: `/api/aithos/regions/?${getRegionsParams(params)}`,
-          method: "get",
-        }),
+
+      getRegions: builder.query<Region[], RegionParams>({
+        query: (params: RegionParams) => {
+          const queryParams = new URLSearchParams();
+          if (params.provider) {
+            queryParams.append("provider", params.provider);
+          }
+
+          return {
+            url: `/api/aithos/regions/?${queryParams.toString()}`,
+            method: "get",
+          };
+        },
         keepUnusedDataFor: 60 * 60,
       }),
-      getRegionsById: builder.query<Region[], number>({
-        query: (id: number) => ({
-          url: `/api/aithos/regions/${id}`,
-          method: "get",
-        }),
-        keepUnusedDataFor: 60 * 60,
+
+      getModels: builder.query<ModelsWithPagination, { limit: number; offset: number; query?: string }>({
+        query: ({ limit, offset, query }) => {
+          const queryParams = new URLSearchParams({
+            limit: `${limit}`,
+            offset: `${offset}`,
+          });
+
+          if (query) {
+            queryParams.append("query", query);
+          }
+
+          return {
+            url: `/api/aithos/models/?${queryParams.toString()}`,
+            method: "get",
+          };
+        },
       }),
-      getModels: builder.query<ModelsWithPagination, number>({
-        query: (offset: number) => ({
-          url: `/api/aithos/models/?limit=20&offset=${offset}`,
-          method: "get",
-        }),
-        keepUnusedDataFor: 60 * 15,
-      }),
+
       getDeployments: builder.query<Deployment[], void>({
         query: () => ({
           url: `/api/aithos/deployments`,
@@ -85,8 +92,7 @@ export const deploymentsApi = baseApi.injectEndpoints({
 
 export const {
   useGetInstancesQuery,
-  useGetRegionsByIdQuery,
-  useGetRegionsByQueryParamsQuery,
+  useGetRegionsQuery,
   useGetDeploymentsQuery,
   useGetModelsQuery,
   useDeleteDeploymentMutation,
