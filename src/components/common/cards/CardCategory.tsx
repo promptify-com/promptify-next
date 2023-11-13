@@ -2,7 +2,7 @@ import { Card, CardActionArea, CardContent, CardMedia, Typography } from "@mui/m
 import { Category } from "@/core/api/dto/templates";
 import { useSelector } from "react-redux";
 import { isValidUserFn } from "@/core/store/userSlice";
-import Image from "@/components/design-system/Image";
+import Image from "next/image";
 import { redirectToPath } from "@/common/helpers";
 
 export const CategoryCard = ({ category, href }: { category: Category; href: string }) => {
@@ -39,10 +39,18 @@ export const CategoryCard = ({ category, href }: { category: Category; href: str
             height: "200px",
           }}
         >
-          <Image
+          {/* <Image
             src={category.image}
             alt={category.name}
             style={{ borderRadius: "16px", objectFit: "cover", width: "100%", height: "100%" }}
+            priority={!isValidUser}
+          /> */}
+          <Image
+            src={category.image}
+            alt={category.name}
+            layout="fill"
+            objectFit="cover"
+            style={{ borderRadius: "16px" }}
             priority={!isValidUser}
           />
         </CardMedia>

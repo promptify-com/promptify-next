@@ -6,11 +6,11 @@ import { NextPage } from "next";
 import { useSelector, useDispatch } from "react-redux";
 import { IContinueWithSocialMediaResponse } from "@/common/types";
 import { client } from "@/common/axios";
-import { Layout } from "@/layout";
+// import { Layout } from "@/layout";
 // import { TemplatesSection } from "@/components/explorer/TemplatesSection";
 // import { CategoriesSection } from "@/components/explorer/CategoriesSection";
 import { userApi } from "@/core/api/user";
-// import { WelcomeCard } from "@/components/homepage/WelcomeCard";
+import { WelcomeCard } from "@/components/homepage/WelcomeCard";
 import { useGetTemplatesByFilterQuery, useGetTemplatesSuggestedQuery } from "@/core/api/templates";
 import { useGetTemplatesExecutionsByMeQuery } from "@/core/api/executions";
 import { getPathURL, saveToken } from "@/common/utils";
@@ -23,6 +23,9 @@ import ClientOnly from "@/components/base/ClientOnly";
 import { NextResponse } from "next/server";
 import { getCategories } from "@/hooks/api/categories";
 
+// Import Layout
+const Layout = dynamic(() => import("@/layout").then(mod => mod.Layout));
+
 // Import TemplatesSection using dynamic
 const TemplatesSection = dynamic(() =>
   import("@/components/explorer/TemplatesSection").then(mod => mod.TemplatesSection),
@@ -34,7 +37,7 @@ const CategoriesSection = dynamic(() =>
 );
 
 // Import WelcomeCard using dynamic
-const WelcomeCard = dynamic(() => import("@/components/homepage/WelcomeCard").then(mod => mod.WelcomeCard));
+// const WelcomeCard = dynamic(() => import("@/components/homepage/WelcomeCard").then(mod => mod.WelcomeCard));
 
 interface HomePageProps {
   categories: Category[];
