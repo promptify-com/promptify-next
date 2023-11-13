@@ -25,7 +25,7 @@ export const deploymentsApi = baseApi.injectEndpoints({
         keepUnusedDataFor: 60 * 60,
       }),
 
-      getRegionsByQueryParams: builder.query<Region[], RegionParams>({
+      getRegions: builder.query<Region[], RegionParams>({
         query: (params: RegionParams) => {
           const queryParams = new URLSearchParams();
           if (params.provider) {
@@ -92,7 +92,7 @@ export const deploymentsApi = baseApi.injectEndpoints({
 
 export const {
   useGetInstancesQuery,
-  useGetRegionsByQueryParamsQuery,
+  useGetRegionsQuery,
   useGetDeploymentsQuery,
   useGetModelsQuery,
   useDeleteDeploymentMutation,

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import type { ModelFields } from "@/common/types/deployments";
-import { useGetInstancesQuery, useGetModelsQuery, useGetRegionsByQueryParamsQuery } from "@/core/api/deployments";
+import { useGetInstancesQuery, useGetModelsQuery, useGetRegionsQuery } from "@/core/api/deployments";
 
 export const useFormSelects = (provider: string, region: string, query?: string) => {
   const PAGINATION_LIMIT = 20;
@@ -17,7 +17,7 @@ export const useFormSelects = (provider: string, region: string, query?: string)
     { region: region.toString() },
     { skip: !isRegionSelected },
   );
-  const { data: regions, isFetching: isRegionFetching } = useGetRegionsByQueryParamsQuery(
+  const { data: regions, isFetching: isRegionFetching } = useGetRegionsQuery(
     { provider: provider.toString() },
     { skip: !isProviderSelected },
   );
