@@ -11,14 +11,11 @@ import { Layout } from "@/layout";
 // import { CategoriesSection } from "@/components/explorer/CategoriesSection";
 import { userApi } from "@/core/api/user";
 import { WelcomeCard } from "@/components/homepage/WelcomeCard";
-import { useGetTemplatesByFilterQuery, useGetTemplatesSuggestedQuery } from "@/core/api/templates";
-import { useGetTemplatesExecutionsByMeQuery } from "@/core/api/executions";
 import { getPathURL, saveToken } from "@/common/utils";
 import { RootState } from "@/core/store";
 import { isValidUserFn, updateUser } from "@/core/store/userSlice";
-import { Category, TemplatesExecutionsByMePaginationResponse } from "@/core/api/dto/templates";
+import { Category } from "@/core/api/dto/templates";
 import { redirectToPath } from "@/common/helpers";
-import useToken from "@/hooks/useToken";
 import ClientOnly from "@/components/base/ClientOnly";
 import { NextResponse } from "next/server";
 import { getCategories } from "@/hooks/api/categories";
@@ -26,15 +23,11 @@ import { getCategories } from "@/hooks/api/categories";
 // Import Layout
 // const Layout = dynamic(() => import("@/layout").then(mod => mod.Layout));
 
-// Import TemplatesSection using dynamic
-const TemplatesSection = dynamic(() =>
-  import("@/components/explorer/TemplatesSection").then(mod => mod.TemplatesSection),
-);
-
-// Import CategoriesSection using dynamic
 const CategoriesSection = dynamic(() =>
   import("@/components/explorer/CategoriesSection").then(mod => mod.CategoriesSection),
 );
+
+const TemplatesData = dynamic(() => import("@/components/homepage/TemplatesData").then(mod => mod.TemplatesData));
 
 // Import WelcomeCard using dynamic
 // const WelcomeCard = dynamic(() => import("@/components/homepage/WelcomeCard").then(mod => mod.WelcomeCard));
@@ -44,44 +37,13 @@ interface HomePageProps {
 }
 
 const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
-const MY_EXECUTIONS_LIMIT = 4;
 
 const HomePage: NextPage<HomePageProps> = ({ categories }) => {
-  const token = useToken();
   const path = getPathURL();
   const dispatch = useDispatch();
   const isValidUser = useSelector(isValidUserFn);
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
   const [getCurrentUser] = userApi.endpoints.getCurrentUser.useLazyQuery();
-  const { data: myLatestExecutions, isLoading: isMyLatestExecutionsLoading } = useGetTemplatesExecutionsByMeQuery(
-    MY_EXECUTIONS_LIMIT,
-    {
-      skip: !isValidUser,
-    },
-  );
-  const { data: suggestedTemplates, isLoading: isSuggestedTemplateLoading } = useGetTemplatesSuggestedQuery(undefined, {
-    skip: !isValidUser,
-  });
-
-  const { data: popularTemplates, isLoading: isPopularTemplatesLoading } = useGetTemplatesByFilterQuery(
-    {
-      ordering: "-runs",
-      limit: 7,
-    },
-    {
-      skip: token,
-    },
-  );
-
-  const { data: latestTemplates, isLoading: isLatestTemplatesLoading } = useGetTemplatesByFilterQuery(
-    {
-      ordering: "-created_at",
-      limit: 7,
-    },
-    {
-      skip: token,
-    },
-  );
 
   // TODO: move authentication logic to signin page instead
   const doPostLogin = async (response: AxiosResponse<IContinueWithSocialMediaResponse>) => {
@@ -166,19 +128,7 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
                       Welcome, {currentUser?.username}
                     </Typography>
                   </Grid>
-                  <TemplatesSection
-                    isLatestTemplates
-                    isLoading={isMyLatestExecutionsLoading}
-                    templates={(myLatestExecutions as TemplatesExecutionsByMePaginationResponse)?.results || []}
-                    title="Your Latest Templates:"
-                    type="myLatestExecutions"
-                  />
-                  <TemplatesSection
-                    isLoading={isSuggestedTemplateLoading}
-                    templates={suggestedTemplates}
-                    title=" You may like these prompt templates:"
-                    type="suggestedTemplates"
-                  />
+                  <TemplatesData />
                   <CategoriesSection
                     categories={categories}
                     isLoading={!isValidUser}
@@ -191,18 +141,7 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
                     categories={categories}
                     isLoading={isValidUser}
                   />
-                  <TemplatesSection
-                    isLoading={isPopularTemplatesLoading}
-                    templates={popularTemplates?.results}
-                    title="Most Popular Prompt Templates"
-                    type="popularTemplates"
-                  />
-                  <TemplatesSection
-                    isLoading={isLatestTemplatesLoading}
-                    templates={latestTemplates?.results}
-                    title="Latest Prompt Templates"
-                    type="latestTemplates"
-                  />
+                  <TemplatesData />
                 </>
               )}
             </ClientOnly>
@@ -213,26 +152,13 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
   );
 };
 
-// export async function getServerSideProps({
-//   res,
-// }: {
-//   res: NextResponse & { setHeader: (name: string, value: string) => void };
-// }) {
-//   res.setHeader("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=60");
+export async function getServerSideProps({
+  res,
+}: {
+  res: NextResponse & { setHeader: (name: string, value: string) => void };
+}) {
+  res.setHeader("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=60");
 
-//   const categories = await getCategories();
-
-//   return {
-//     props: {
-//       title: "Promptify | Boost Your Creativity",
-//       description:
-//         "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
-//       categories,
-//     },
-//   };
-// }
-
-export async function getStaticProps() {
   const categories = await getCategories();
 
   return {
@@ -244,5 +170,18 @@ export async function getStaticProps() {
     },
   };
 }
+
+// export async function getStaticProps() {
+//   const categories = await getCategories();
+
+//   return {
+//     props: {
+//       title: "Promptify | Boost Your Creativity",
+//       description:
+//         "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
+//       categories,
+//     },
+//   };
+// }
 
 export default HomePage;

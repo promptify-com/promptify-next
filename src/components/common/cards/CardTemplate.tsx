@@ -9,7 +9,8 @@ import ArrowBackIosRoundedIcon from "@mui/icons-material/ArrowBackIosRounded";
 import type { TemplateExecutionsDisplay, Templates } from "@/core/api/dto/templates";
 import { useRouter } from "next/router";
 import { setSelectedTag } from "@/core/store/filtersSlice";
-import Image from "@/components/design-system/Image";
+// import Image from "@/components/design-system/Image";
+import Image from "next/image";
 import useTruncate from "@/hooks/useTruncate";
 import { isDesktopViewPort, redirectToPath } from "@/common/helpers";
 import { theme } from "@/theme";
@@ -94,12 +95,20 @@ function CardTemplate({ template, noRedirect = false, query, asResult = false }:
                     borderRadius: "16px",
                     width: { xs: "98px", sm: "72px" },
                     height: { xs: "73px", sm: "54px" },
+                    position: "relative",
                   }}
                 >
-                  <Image
+                  {/* <Image
                     src={template.thumbnail}
                     alt={template.title}
                     style={{ borderRadius: "16%", objectFit: "cover", width: "100%", height: "100%" }}
+                  /> */}
+                  <Image
+                    src={template.thumbnail}
+                    alt={template.title}
+                    fill
+                    sizes="(min-width: 1200px) 100vw, (min-width: 768px) 100vw, 100vw"
+                    style={{ borderRadius: "16%", objectFit: "cover" }}
                   />
                 </CardMedia>
               </Grid>
@@ -128,7 +137,7 @@ function CardTemplate({ template, noRedirect = false, query, asResult = false }:
                 </Typography>
               </Grid>
             </Grid>
-            <Image
+            {/* <Image
               src={template.created_by?.avatar ?? ""}
               alt={template.created_by.first_name.slice(0, 1)}
               width={32}
@@ -137,6 +146,18 @@ function CardTemplate({ template, noRedirect = false, query, asResult = false }:
                 display: isDesktop ? "none" : asResult ? "none" : "flex",
                 backgroundColor: theme.palette.surface[5],
                 borderRadius: "50%",
+              }}
+            /> */}
+            <Image
+              src={template.created_by?.avatar ?? ""}
+              alt={template.created_by?.first_name?.charAt(0) || ""}
+              width={32}
+              height={32}
+              style={{
+                display: isDesktop ? "none" : asResult ? "none" : "flex",
+                backgroundColor: theme.palette.surface[5],
+                borderRadius: "50%",
+                objectFit: "cover",
               }}
             />
           </Grid>
@@ -197,7 +218,7 @@ function CardTemplate({ template, noRedirect = false, query, asResult = false }:
                 {template.favorites_count || 0}
               </Stack>
             </Grid>
-            <Image
+            {/* <Image
               src={template.created_by?.avatar ?? ""}
               alt={template.created_by.first_name.slice(0, 1)}
               width={32}
@@ -206,6 +227,18 @@ function CardTemplate({ template, noRedirect = false, query, asResult = false }:
                 display: isDesktop ? "flex" : "none",
                 backgroundColor: theme.palette.surface[5],
                 borderRadius: "50%",
+              }}
+            /> */}
+            <Image
+              src={template.created_by?.avatar ?? ""}
+              alt={template.created_by?.first_name?.charAt(0) || ""}
+              width={32}
+              height={32}
+              style={{
+                display: isDesktop ? "flex" : "none",
+                backgroundColor: theme.palette.surface[5],
+                borderRadius: "50%",
+                objectFit: "cover",
               }}
             />
           </Grid>

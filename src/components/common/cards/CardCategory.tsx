@@ -37,6 +37,7 @@ export const CategoryCard = ({ category, href }: { category: Category; href: str
             borderRadius: "16px",
             width: "100%",
             height: "200px",
+            position: "relative",
           }}
         >
           {/* <Image
@@ -48,9 +49,11 @@ export const CategoryCard = ({ category, href }: { category: Category; href: str
           <Image
             src={category.image}
             alt={category.name}
-            layout="fill"
-            objectFit="cover"
-            style={{ borderRadius: "16px" }}
+            fill
+            // fill
+            // objectFit="cover"
+            sizes="(min-width: 1200px) 543px, (min-width: 768px) 50vw, 100vw"
+            style={{ borderRadius: "16px", objectFit: "cover" }}
             priority={!isValidUser}
             placeholder="blur"
             blurDataURL={

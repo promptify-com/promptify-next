@@ -10,7 +10,8 @@ import type { TemplateExecutionsDisplay } from "@/core/api/dto/templates";
 import useTruncate from "@/hooks/useTruncate";
 import SavedSpark from "@/assets/icons/SavedSpark";
 import NoSpark from "@/assets/icons/NoSpark";
-import Image from "@/components/design-system/Image";
+// import Image from "@/components/design-system/Image";
+import Image from "next/image";
 import { redirectToPath } from "@/common/helpers";
 import { theme } from "@/theme";
 
@@ -48,10 +49,21 @@ function CardTemplateLast({ template }: CardTemplateLastProps) {
             objectFit: "cover",
           }}
         >
-          <Image
+          {/* <Image
             src={template.thumbnail}
             alt={template.title}
             style={{ borderRadius: "16px 16px 0px 0px", objectFit: "cover", width: "100%", height: "100%" }}
+          /> */}
+          <Image
+            src={template.thumbnail}
+            alt={template.title}
+            style={{
+              borderRadius: "16px 16px 0px 0px",
+              width: "100%",
+              height: "100%",
+              overflow: "hidden",
+              objectFit: "cover", // Ensures the border-radius clips the image
+            }}
           />
         </CardMedia>
 
@@ -121,7 +133,7 @@ function CardTemplateLast({ template }: CardTemplateLastProps) {
                 <Favorite sx={{ fontSize: 18 }} />
                 {template.favorites_count || 0}
               </Box>
-              <Image
+              {/* <Image
                 src={template.created_by.avatar}
                 alt={template.created_by.first_name}
                 width={32}
@@ -129,6 +141,17 @@ function CardTemplateLast({ template }: CardTemplateLastProps) {
                 style={{
                   backgroundColor: theme.palette.surface[5],
                   borderRadius: "50%",
+                }}
+              /> */}
+              <Image
+                src={template.created_by?.avatar || ""}
+                alt={template.created_by?.first_name || ""}
+                width={32}
+                height={32}
+                style={{
+                  backgroundColor: theme.palette.surface[5],
+                  borderRadius: "50%",
+                  objectFit: "cover",
                 }}
               />
             </Grid>
