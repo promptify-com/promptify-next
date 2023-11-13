@@ -19,6 +19,7 @@ import NoteStackIcon from "@/assets/icons/NoteStackIcon";
 import ExtensionSettingsIcon from "@/assets/icons/ExtensionSettingsIcon";
 import { Executions } from "@/components/prompt/Sidebar/Executions";
 import { Templates } from "@/core/api/dto/templates";
+import { TemplateDetails } from "@/components/prompt/Sidebar/TemplateDetails";
 
 const drawerWidth = 352;
 
@@ -148,6 +149,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ template }) => {
           </IconButton>
         </Stack>
         {activeLink?.name === "executions" && <Executions template={template} />}
+        {activeLink?.name === "details" && <TemplateDetails template={template} />}
       </Drawer>
       <Box
         display={"flex"}

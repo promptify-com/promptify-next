@@ -43,7 +43,6 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const [stopExecution] = useStopExecutionMutation();
   const [uploadFile] = useUploadFileMutation();
-
   const { convertedTimestamp } = useTimestampConverter();
   const createdAt = convertedTimestamp(new Date());
   const [chatExpanded, setChatExpanded] = useState(true);
