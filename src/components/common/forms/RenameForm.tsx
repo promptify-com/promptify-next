@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Box, Button, Stack, TextField, alpha } from "@mui/material";
-import { Done } from "@mui/icons-material";
+import Done from "@mui/icons-material/Done";
 import { theme } from "@/theme";
 
 interface Props {

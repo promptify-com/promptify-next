@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { LinkOff } from "@mui/icons-material";
+import LinkOff from "@mui/icons-material/LinkOff";
 import { Avatar, Box, Snackbar, Typography, useTheme, useMediaQuery } from "@mui/material";
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import { useRouter } from "next/router";

@@ -1,6 +1,7 @@
 import { memo } from "react";
 import { Typography, SxProps } from "@mui/material";
-import { Favorite, FavoriteBorder } from "@mui/icons-material";
+import Favorite from "@mui/icons-material/Favorite";
+import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
 import useSaveFavoriteTemplate from "@/hooks/useSaveFavoriteTemplate";
 
 interface Props {

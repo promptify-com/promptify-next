@@ -1,10 +1,10 @@
 import React from "react";
 import { Avatar, Box, Typography } from "@mui/material";
-import { Mode } from "@mui/icons-material";
+import Mode from "@mui/icons-material/Mode";
 import { useDispatch, useSelector } from "react-redux";
 import BaseButton from "@/components/base/BaseButton";
 import { showProfileInEditMode } from "@/core/store/profileSlice";
-import { RootState } from '@/core/store';
+import { RootState } from "@/core/store";
 
 export const Home = () => {
   const dispatch = useDispatch();

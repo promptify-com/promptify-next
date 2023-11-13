@@ -15,7 +15,11 @@ import {
   alpha,
   useTheme,
 } from "@mui/material";
-import { Search as SearchIcon, ArrowDropUp, ArrowDropDown, Close, InfoOutlined } from "@mui/icons-material";
+import SearchIcon from "@mui/icons-material/Search";
+import ArrowDropUp from "@mui/icons-material/ArrowDropUp";
+import ArrowDropDown from "@mui/icons-material/ArrowDropDown";
+import Close from "@mui/icons-material/Close";
+import InfoOutlined from "@mui/icons-material/InfoOutlined";
 import { SubjectIcon } from "@/assets/icons/SubjectIcon";
 import { TemplatesExecutions } from "@/core/api/dto/templates";
 import { ExecutionsTabs } from "./ExecutionsTabs";

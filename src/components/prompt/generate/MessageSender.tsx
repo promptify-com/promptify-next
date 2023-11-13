@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { InputBase, Box } from "@mui/material";
-import { Send } from "@mui/icons-material";
+import Send from "@mui/icons-material/SEnd";
 
 interface MessageSenderProps {
   onSubmit: (value: string) => void;

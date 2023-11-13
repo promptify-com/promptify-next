@@ -14,7 +14,10 @@ import {
   Palette,
 } from "@mui/material";
 import { TemplatesExecutions } from "@/core/api/dto/templates";
-import { CloudQueue, Create, Delete, PriorityHighOutlined } from "@mui/icons-material";
+import CloudQueue from "@mui/icons-material/CloudQueue";
+import Create from "@mui/icons-material/Create";
+import Delete from "@mui/icons-material/Delete";
+import PriorityHighOutlined from "@mui/icons-material/PriorityHighOutlined";
 import SavedSpark from "@/assets/icons/SavedSpark";
 import DraftSpark from "@/assets/icons/DraftSpark";
 import {

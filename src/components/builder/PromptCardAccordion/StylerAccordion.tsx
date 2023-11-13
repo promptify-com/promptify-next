@@ -1,6 +1,7 @@
 import DramaMasks from "@/assets/icons/DramaMasks";
 import { theme } from "@/theme";
-import { AddCircle, ExpandMore } from "@mui/icons-material";
+import AddCircle from "@mui/icons-material/AddCircle";
+import ExpandMore from "@mui/icons-material/ExpandMore";
 import {
   Accordion,
   AccordionDetails,

@@ -1,14 +1,11 @@
 import { ReactNode } from "react";
-import {
-  AutoAwesome,
-  AutoAwesomeOutlined,
-  HomeRounded,
-  MenuBookRounded,
-  RocketLaunchOutlined,
-  Search,
-  SettingsOutlined,
-} from "@mui/icons-material/";
-
+import AutoAwesome from "@mui/icons-material/AutoAwesome";
+import AutoAwesomeOutlined from "@mui/icons-material/AutoAwesomeOutlined";
+import HomeRounded from "@mui/icons-material/HomeRounded";
+import MenuBookRounded from "@mui/icons-material/MenuBookRounded";
+import RocketLaunchOutlined from "@mui/icons-material/RocketLaunchOutlined";
+import Search from "@mui/icons-material/Search";
+import SettingsOutlined from "@mui/icons-material/SettingsOutlined";
 import { Prompt } from "@/assets/icons/prompts";
 import { TemplateStatus } from "@/core/api/dto/templates";
 import { InputType } from "@/common/types/prompt";

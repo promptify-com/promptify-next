@@ -1,4 +1,5 @@
-import { Check, DeleteRounded } from "@mui/icons-material";
+import Check from "@mui/icons-material/Check";
+import DeleteRounded from "@mui/icons-material/DeleteRounded";
 import { Dialog, Grid, TextField, Typography } from "@mui/material";
 import { red } from "@mui/material/colors";
 import React, { useEffect, useState } from "react";

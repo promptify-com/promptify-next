@@ -5,7 +5,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import * as React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setSelectedKeyword } from "@/core/store/filtersSlice";
-import { Search } from "@mui/icons-material";
+import Search from "@mui/icons-material/Search";
 import { useRouter } from "next/router";
 import { RootState } from "@/core/store";
 import SearchByKeywords from "./SearchByKeywords";

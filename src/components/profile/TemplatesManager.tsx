@@ -25,7 +25,7 @@ import { modalStyle } from "@/components/modals/styles";
 import { FormType } from "@/common/types/template";
 import { TemplateStatusArray } from "@/common/constants";
 import TemplateManagerItem from "./TemplateManagerItem";
-import { Search } from "@mui/icons-material";
+import Search from "@mui/icons-material/Search";
 import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
 import CardTemplatePlaceholder from "../placeholders/CardTemplatePlaceHolder";
 import TemplatesInfiniteScroll from "../TemplatesInfiniteScroll";

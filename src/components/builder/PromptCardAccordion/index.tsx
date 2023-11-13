@@ -1,4 +1,5 @@
-import { ModeEdit, PlayCircle } from "@mui/icons-material";
+import ModeEdit from "@mui/icons-material/ModeEdit";
+import PlayCircle from "@mui/icons-material/PlayCircle";
 import { Box, Button, Divider, Stack, Typography } from "@mui/material";
 import React, { memo, useMemo, useRef, useState } from "react";
 import { Header } from "./Header";

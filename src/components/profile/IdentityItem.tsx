@@ -16,7 +16,7 @@ import { Check } from "@/assets/icons";
 import { IOption, IQuestion } from "@/common/types";
 import { useUpdateAnswers } from "@/hooks/api/user";
 import Image from "next/image";
-import { Edit } from "@mui/icons-material";
+import Edit from "@mui/icons-material/Edit";
 
 interface IProps {
   question: IQuestion;
@@ -25,28 +25,20 @@ interface IProps {
   length: number;
 }
 
-export const IdentityItem: React.FC<IProps> = ({
-  length,
-  question,
-  index,
-  defaultOption,
-}) => {
+export const IdentityItem: React.FC<IProps> = ({ length, question, index, defaultOption }) => {
   const [open, setOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState<IOption | null>(defaultOption ?? null);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleToggle = () => {
-    setOpen((prevOpen) => !prevOpen);
+    setOpen(prevOpen => !prevOpen);
   };
 
   const prevOpen = React.useRef(open);
   const anchorRef = React.useRef<HTMLButtonElement>(null);
 
   const handleClose = (event: Event | React.SyntheticEvent) => {
-    if (
-      anchorRef.current &&
-      anchorRef.current.contains(event.target as HTMLElement)
-    ) {
+    if (anchorRef.current && anchorRef.current.contains(event.target as HTMLElement)) {
       return;
     }
 
@@ -64,10 +56,7 @@ export const IdentityItem: React.FC<IProps> = ({
 
   const [setUserAnswer] = useUpdateAnswers();
 
-  const handleOptionSelection = async (
-    e: React.SyntheticEvent,
-    option: IOption
-  ) => {
+  const handleOptionSelection = async (e: React.SyntheticEvent, option: IOption) => {
     setSelectedOption(option);
     handleClose(e);
     setIsLoading(true);
@@ -117,7 +106,11 @@ export const IdentityItem: React.FC<IProps> = ({
             alignItems={{ xs: "start", md: "center" }}
             gap={2}
           >
-            <Grid item xs={12} md={6}>
+            <Grid
+              item
+              xs={12}
+              md={6}
+            >
               <Typography
                 sx={{
                   fontFamily: "Poppins",
@@ -181,7 +174,10 @@ export const IdentityItem: React.FC<IProps> = ({
             disabled={isLoading}
           >
             {isLoading ? (
-              <CircularProgress sx={{ color: "black" }} size={24} />
+              <CircularProgress
+                sx={{ color: "black" }}
+                size={24}
+              />
             ) : (
               <Edit sx={{ fontSize: "44px" }} />
             )}
@@ -202,8 +198,7 @@ export const IdentityItem: React.FC<IProps> = ({
           <Grow
             {...TransitionProps}
             style={{
-              transformOrigin:
-                placement === "left-end" ? "left top" : "left top",
+              transformOrigin: placement === "left-end" ? "left top" : "left top",
             }}
           >
             <Paper
@@ -230,10 +225,10 @@ export const IdentityItem: React.FC<IProps> = ({
                       {question.text}
                     </Typography>
                   </MenuItem>
-                  {question.options.map((option) => {
+                  {question.options.map(option => {
                     return (
                       <MenuItem
-                        onClick={(e) => handleOptionSelection(e, option)}
+                        onClick={e => handleOptionSelection(e, option)}
                         sx={{
                           borderTop: "1px solid #E3E3E3",
                           display: "flex",
@@ -243,7 +238,10 @@ export const IdentityItem: React.FC<IProps> = ({
                         }}
                         key={option.id}
                       >
-                        <Box display="flex" alignItems="center">
+                        <Box
+                          display="flex"
+                          alignItems="center"
+                        >
                           <Image
                             src={require(`../../assets/images/animals/${option.text}.jpg`)}
                             alt={"Unicorn"}
@@ -256,11 +254,7 @@ export const IdentityItem: React.FC<IProps> = ({
                             fontWeight={500}
                             fontSize="0.9rem"
                             ml="1rem"
-                            color={
-                              option.id === selectedOption?.id
-                                ? "#0F6FFF"
-                                : "#000"
-                            }
+                            color={option.id === selectedOption?.id ? "#0F6FFF" : "#000"}
                           >
                             {option.text}
                           </Typography>

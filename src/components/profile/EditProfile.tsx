@@ -2,20 +2,20 @@ import React from "react";
 import { useRouter } from "next/router";
 import { useFormik } from "formik";
 import { Box, Button, CircularProgress, Grid, Typography } from "@mui/material";
-import { ArrowBackIosRounded } from "@mui/icons-material";
+import ArrowBackIosRounded from "@mui/icons-material/ArrowBackIosRounded";
 import { useDispatch, useSelector } from "react-redux";
 import { Layout } from "@/layout";
 import { showProfileInEditMode } from "@/core/store/profileSlice";
 import { IEditProfile } from "@/common/types";
-import { useUpdateUserProfileMutation } from '@/core/api/user';
+import { useUpdateUserProfileMutation } from "@/core/api/user";
 import { NameInfo } from "@/components/accountInfo/NameInfo";
 import { About } from "@/components/accountInfo/About";
 import { Gender } from "@/components/accountInfo/Gender";
 import { ProfileImage } from "@/components/accountInfo/ProfileImage";
 import useToken from "@/hooks/useToken";
-import useLogout from '@/hooks/useLogout';
+import useLogout from "@/hooks/useLogout";
 import { RootState } from "@/core/store";
-import { updateUser } from '@/core/store/userSlice';
+import { updateUser } from "@/core/store/userSlice";
 
 export const EditProfile = () => {
   const router = useRouter();
@@ -51,13 +51,20 @@ export const EditProfile = () => {
 
   return (
     <Layout>
-      <Box mt={{ xs: 7, md: 0 }} padding={{ xs: "4px 0px", md: "0px 8px" }}>
+      <Box
+        mt={{ xs: 7, md: 0 }}
+        padding={{ xs: "4px 0px", md: "0px 8px" }}
+      >
         <Grid
           sx={{
             padding: { xs: "16px", md: "32px" },
           }}
         >
-          <Grid display={"flex"} flexDirection={"column"} gap={"16px"}>
+          <Grid
+            display={"flex"}
+            flexDirection={"column"}
+            gap={"16px"}
+          >
             <Box
               display="flex"
               justifyContent={{ xs: "center", sm: "flex-start" }}
@@ -88,7 +95,10 @@ export const EditProfile = () => {
                 width={"100%"}
               >
                 <NameInfo formik={formik} />
-                <ProfileImage user={currentUser} token={savedToken} />
+                <ProfileImage
+                  user={currentUser}
+                  token={savedToken}
+                />
                 <Gender formik={formik} />
                 <About formik={formik} />
               </Box>
@@ -105,11 +115,7 @@ export const EditProfile = () => {
                 onClick={formik.submitForm}
                 disabled={isLoading}
               >
-                {isLoading ? (
-                  <CircularProgress size={23} />
-                ) : (
-                  <Typography color={"surface.1"}>Save profile</Typography>
-                )}
+                {isLoading ? <CircularProgress size={23} /> : <Typography color={"surface.1"}>Save profile</Typography>}
               </Button>
             </Box>
           </Grid>

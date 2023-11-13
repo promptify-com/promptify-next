@@ -4,7 +4,8 @@ import { Box, Button, FormControl, MenuItem, Select, SelectChangeEvent, Typograp
 import { Light as SyntaxHighlighter } from "react-syntax-highlighter";
 import js from "react-syntax-highlighter/dist/cjs/languages/hljs/javascript";
 import vs2015 from "react-syntax-highlighter/dist/cjs/styles/hljs/vs2015";
-import { Settings, KeyboardReturn } from "@mui/icons-material";
+import Settings from "@mui/icons-material/Settings";
+import KeyboardReturn from "@mui/icons-material/KeyboardReturn";
 import useCopyToClipboard from "@/hooks/useCopyToClipboard";
 import HTTPSnippet from "httpsnippet";
 import { Templates } from "@/core/api/dto/templates";

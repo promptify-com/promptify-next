@@ -1,16 +1,13 @@
 import React from "react";
-import {
-  Code,
-  ModelTraining,
-  TextFields,
-  PersonalVideo,
-  LibraryMusic,
-  Pets,
-  Yard,
-  BugReport,
-  Forest,
-} from "@mui/icons-material";
-
+import Code from "@mui/icons-material/Code";
+import ModelTraining from "@mui/icons-material/ModelTraining";
+import TextFields from "@mui/icons-material/TextFields";
+import PersonalVideo from "@mui/icons-material/PersonalVideo";
+import LibraryMusic from "@mui/icons-material/LibraryMusic";
+import Pets from "@mui/icons-material/Pets";
+import Yard from "@mui/icons-material/Yard";
+import BugReport from "@mui/icons-material/BugReport";
+import Forest from "@mui/icons-material/Forest";
 export const promptCards = [
   { name: "Code Snippets", icon: <Code />, id: 0 },
   { name: "Model Training", icon: <ModelTraining />, id: 1 },

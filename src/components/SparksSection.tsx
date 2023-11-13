@@ -1,5 +1,10 @@
 import { FC } from "react";
-import { ArrowDropDown, CloudQueueRounded, DeleteRounded, Edit, MoreVert } from "@mui/icons-material";
+import ArrowDropDown from "@mui/icons-material/ArrowDropDown";
+import CloudQueueRounded from "@mui/icons-material/CloudQueueRounded";
+import DeleteRounded from "@mui/icons-material/DeleteRounded";
+import Edit from "@mui/icons-material/Edit";
+import MoreVert from "@mui/icons-material/MoreVert";
+
 import { Box, CardMedia, Grid, IconButton, Tooltip, Typography } from "@mui/material";
 import { TemplateExecutionsDisplay } from "@/core/api/dto/templates";
 import SavedSpark from "@/assets/icons/SavedSpark";

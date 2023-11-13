@@ -1,6 +1,6 @@
 import { Popover, TextField, Typography } from "@mui/material";
 import * as React from "react";
-import ModeEditIcon from "@mui/icons-material/ModeEdit";
+import ModeEdit from "@mui/icons-material/ModeEdit";
 import { CommonProps } from "@mui/material/OverridableComponent";
 import { useEffect } from "react";
 
@@ -52,7 +52,7 @@ export const EditableTextField = ({
         }}
         onClick={handleClick}
       >
-        {name} <ModeEditIcon sx={{ fontSize, ml: "10px" }} />
+        {name} <ModeEdit sx={{ fontSize, ml: "10px" }} />
       </Typography>
 
       <Popover

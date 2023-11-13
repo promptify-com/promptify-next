@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from "react";
-import FemaleIcon from "@mui/icons-material/Female";
-import MaleIcon from "@mui/icons-material/Male";
-import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
-import { Box, Icon, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { FormikProps } from "formik";
 import { IEditProfile } from "@/common/types";
 
@@ -36,22 +33,27 @@ export const Gender: React.FC<IProps> = ({ formik }) => {
       padding={{ md: "16px" }}
       borderRadius={"16px"}
     >
-      <Typography fontWeight={500} fontSize="18px" textAlign={"start"}>
+      <Typography
+        fontWeight={500}
+        fontSize="18px"
+        textAlign={"start"}
+      >
         Gender
       </Typography>
-      <Box display="flex" alignItems="center" flexWrap={"wrap"} gap={"16px"}>
-        {gendersData.map((gender) => {
+      <Box
+        display="flex"
+        alignItems="center"
+        flexWrap={"wrap"}
+        gap={"16px"}
+      >
+        {gendersData.map(gender => {
           return (
             <Box
               key={gender.code}
               border="1px solid var(--primary-main, #3B4050)"
               padding={"6px 16px"}
               borderRadius="16px"
-              bgcolor={
-                checked === gender.code
-                  ? "var(--primary-main, #3B4050)"
-                  : "surface.1"
-              }
+              bgcolor={checked === gender.code ? "var(--primary-main, #3B4050)" : "surface.1"}
               display="flex"
               justifyContent="center"
               alignItems="center"
@@ -62,14 +64,9 @@ export const Gender: React.FC<IProps> = ({ formik }) => {
               sx={{ cursor: "pointer" }}
             >
               {/* <Icon xs>{gender.icon}</Icon> */}
-              <Typography
-                color={checked === gender.code ? "surface.1" : "#454545"}
-              >
-                {gender.name}
-              </Typography>
+              <Typography color={checked === gender.code ? "surface.1" : "#454545"}>{gender.name}</Typography>
             </Box>
           );
-          
         })}
       </Box>
       <Typography

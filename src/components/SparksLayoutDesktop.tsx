@@ -1,6 +1,8 @@
 import { FC } from "react";
 import { SparksLayoutProps } from "@/core/api/dto/templates";
-import { CloudQueueRounded, DeleteRounded, Edit, GetAppRounded } from "@mui/icons-material";
+import CloudQueueRounded from "@mui/icons-material/CloudQueueRounded";
+import DeleteRounded from "@mui/icons-material/DeleteRounded";
+import Edit from "@mui/icons-material/Edit";
 import { CardMedia, Grid, IconButton, Tooltip, Typography } from "@mui/material";
 import useTimestampConverter from "@/hooks/useTimestampConverter";
 import useTruncate from "@/hooks/useTruncate";

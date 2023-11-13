@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Box, Stack, Tooltip, Typography } from "@mui/material";
 import { Subtitle } from "@/components/blocks";
-import { Error } from "@mui/icons-material";
+import Error from "@mui/icons-material/Error";
 import { markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
 import { DisplayPrompt, PromptLiveResponse } from "@/common/types/prompt";
 import { Prompts } from "@/core/api/dto/prompts";

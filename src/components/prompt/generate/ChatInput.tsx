@@ -1,5 +1,7 @@
 import React, { useRef, useState } from "react";
-import { Clear, Edit, PlayCircle, Send } from "@mui/icons-material";
+import Clear from "@mui/icons-material/Clear";
+import Edit from "@mui/icons-material/Edit";
+import PlayCircle from "@mui/icons-material/PlayCircle";
 import { Box, Button, Chip, CircularProgress, Grid, InputBase, Popover, Stack, Typography } from "@mui/material";
 
 import { IAnswer } from "@/common/types/chat";

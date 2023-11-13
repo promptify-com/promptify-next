@@ -3,7 +3,11 @@ import { Box, IconButton, Stack, Tab, Tabs, Typography, alpha } from "@mui/mater
 import { RenameForm } from "../common/forms/RenameForm";
 import { IEditPrompts } from "@/common/types/builder";
 import { useGetEnginesQuery } from "@/core/api/engines";
-import { Close, DeleteOutline, ModeEdit, Settings, Tune } from "@mui/icons-material";
+import Close from "@mui/icons-material/Close";
+import DeleteOutline from "@mui/icons-material/DeleteOutline";
+import ModeEdit from "@mui/icons-material/ModeEdit";
+import Settings from "@mui/icons-material/Settings";
+import Tune from "@mui/icons-material/Tune";
 import { theme } from "@/theme";
 import Terminal from "@/assets/icons/Terminal";
 import { NodeContentForm } from "./NodeContentForm";

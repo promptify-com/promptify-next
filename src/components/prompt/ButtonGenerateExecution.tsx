@@ -3,7 +3,7 @@ import { Typography, Button, CircularProgress } from "@mui/material";
 import useToken from "@/hooks/useToken";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { Templates } from "@/core/api/dto/templates";
-import { PlayCircle } from "@mui/icons-material";
+import PlayCircle from "@mui/icons-material/PlayCircle";
 import { setGeneratingStatus } from "@/core/store/templatesSlice";
 import router from "next/router";
 import useGenerateExecution from "@/hooks/useGenerateExecution";

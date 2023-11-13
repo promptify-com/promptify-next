@@ -31,7 +31,7 @@ import {
 } from "@/core/api/templates";
 import { Prompts } from "@/core/api/dto/prompts";
 import { updateTemplate } from "@/hooks/api/templates";
-import { ContentCopy } from "@mui/icons-material";
+import ContentCopy from "@mui/icons-material/ContentCopy";
 import { IEditPrompts } from "@/common/types/builder";
 import TemplateForm from "@/components/common/forms/TemplateForm";
 import { isPromptVariableValid } from "@/common/helpers/promptValidator";

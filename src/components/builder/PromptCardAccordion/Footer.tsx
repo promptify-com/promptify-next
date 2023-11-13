@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { IEditPrompts } from "@/common/types/builder";
-import { ArrowDropDown } from "@mui/icons-material";
+import ArrowDropDown from "@mui/icons-material/ArrowDropDown";
 import { Button, Popper, Stack, Typography } from "@mui/material";
 import { OutputOptions } from "./OutputOptions";
 import ArrowRightBottom from "@/assets/icons/ArrowRightBottom";

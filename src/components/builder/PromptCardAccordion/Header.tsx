@@ -1,6 +1,10 @@
 import { IEditPrompts } from "@/common/types/builder";
 import { EnginesGroups } from "@/components/common/forms/EnginesGroups";
-import { ArrowDropDown, ContentCopy, DeleteOutline, Menu, Settings } from "@mui/icons-material";
+import ArrowDropDown from "@mui/icons-material/ArrowDropDown";
+import ContentCopy from "@mui/icons-material/ContentCopy";
+import DeleteOutline from "@mui/icons-material/DeleteOutline";
+import Menu from "@mui/icons-material/Menu";
+import Settings from "@mui/icons-material/Settings";
 import { Button, IconButton, Popover, Stack, Tooltip, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { EngineParamsSlider } from "../EngineParamsSlider";

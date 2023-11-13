@@ -1,5 +1,5 @@
 import React from "react";
-import { Clear } from "@mui/icons-material";
+import Clear from "@mui/icons-material/Clear";
 import { Chip, Avatar, Grid } from "@mui/material";
 
 import { TemplateExecutionsDisplay } from "@/core/api/dto/templates";

@@ -2,7 +2,8 @@ import React, { memo, useCallback, useEffect, useState } from "react";
 import { ConnectableElement, DndProvider, useDrag, useDrop } from "react-dnd";
 import { Box, IconButton, Stack, Typography } from "@mui/material";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { Edit, Menu } from "@mui/icons-material";
+import Edit from "@mui/icons-material/Edit";
+import Menu from "@mui/icons-material/Menu";
 
 import { IEditPrompts } from "@/common/types/builder";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";

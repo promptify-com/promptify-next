@@ -15,7 +15,12 @@ import {
 } from "@mui/material";
 import { BuilderType, IEditPrompts, IPromptParams } from "@/common/types/builder";
 import { IParametersPreset } from "@/common/types/parametersPreset";
-import { Add, AddCircle, Bolt, ContentCopy, Save } from "@mui/icons-material";
+import Add from "@mui/icons-material/Add";
+import AddCircle from "@mui/icons-material/AddCircle";
+import Bolt from "@mui/icons-material/Bolt";
+import ContentCopy from "@mui/icons-material/ContentCopy";
+import Save from "@mui/icons-material/Save";
+
 import { theme } from "@/theme";
 import { IParameters } from "@/common/types";
 import { ParamSlider } from "./ParamSlider";

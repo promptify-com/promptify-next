@@ -11,7 +11,8 @@ import {
   TextField,
   Tooltip,
 } from "@mui/material";
-import { Backspace, Error } from "@mui/icons-material";
+import Backspace from "@mui/icons-material/Backspace";
+import Error from "@mui/icons-material/Error";
 import { AnsweredInputType, IPromptInput, FileType } from "@/common/types/prompt";
 import BaseButton from "../base/BaseButton";
 import CodeFieldModal from "../modals/CodeFieldModal";

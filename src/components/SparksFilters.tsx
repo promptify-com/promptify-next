@@ -1,5 +1,9 @@
 import React, { useMemo, useState } from "react";
-import { ArrowDropDown, FilterList, Search, SortRounded } from "@mui/icons-material";
+import ArrowDropDown from "@mui/icons-material/ArrowDropDown";
+import FilterList from "@mui/icons-material/FilterList";
+import Search from "@mui/icons-material/Search";
+import SortRounded from "@mui/icons-material/SortRounded";
+
 import {
   Box,
   Dialog,

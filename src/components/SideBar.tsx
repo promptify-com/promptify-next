@@ -14,7 +14,12 @@ import {
 import MuiDrawer from "@mui/material/Drawer";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { AutoAwesome, ExpandLess, ExpandMore, Home, MenuBookRounded, Search } from "@mui/icons-material";
+import AutoAwesome from "@mui/icons-material/AutoAwesome";
+import ExpandLess from "@mui/icons-material/ExpandLess";
+import ExpandMore from "@mui/icons-material/ExpandMore";
+import Home from "@mui/icons-material/Home";
+import MenuBookRounded from "@mui/icons-material/MenuBookRounded";
+import Search from "@mui/icons-material/Search";
 import { styled, Theme, CSSObject } from "@mui/material/styles";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { SidebarIcon } from "@/assets/icons/Sidebar";

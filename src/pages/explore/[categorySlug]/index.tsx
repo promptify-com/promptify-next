@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { KeyboardArrowLeft } from "@mui/icons-material";
+import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import { Box, Button, Grid, Typography } from "@mui/material";
 
 import { authClient } from "@/common/axios";

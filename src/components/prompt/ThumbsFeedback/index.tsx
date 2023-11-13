@@ -1,5 +1,6 @@
 import { IconButton, Stack, Tooltip } from "@mui/material";
-import { ThumbUp, ThumbDown } from "@mui/icons-material";
+import ThumbUp from "@mui/icons-material/ThumbUp";
+import ThumbDown from "@mui/icons-material/ThumbDown";
 import { useUpdateExecutionMutation } from "@/core/api/executions";
 import { TemplatesExecutions } from "@/core/api/dto/templates";
 

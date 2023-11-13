@@ -1,6 +1,7 @@
 import React, { FC, ReactNode, useEffect } from "react";
 import { Button, Grid } from "@mui/material";
-import { ArrowLeft, ArrowRight } from "@mui/icons-material";
+import ArrowLeft from "@mui/icons-material/ArrowLeft";
+import ArrowRight from "@mui/icons-material/ArrowRight";
 
 interface TemplatesPaginatedListProps {
   children: ReactNode;

@@ -17,7 +17,7 @@ import {
   FormControlLabel,
   Switch,
 } from "@mui/material";
-import { Close } from "@mui/icons-material";
+import Close from "@mui/icons-material/Close";
 
 import { useGetTagsQuery } from "@/core/api/tags";
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";

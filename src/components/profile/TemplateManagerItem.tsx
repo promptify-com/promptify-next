@@ -1,5 +1,7 @@
 import { FC } from "react";
-import { Delete, SettingsApplicationsRounded } from "@mui/icons-material";
+import Delete from "@mui/icons-material/Delete";
+import SettingsApplicationsRounded from "@mui/icons-material/SettingsApplicationsRounded";
+
 import { Box, Card, CardMedia, Chip, Grid, IconButton, Tooltip, Typography } from "@mui/material";
 import { Templates } from "@/core/api/dto/templates";
 import Image from "@/components/design-system/Image";

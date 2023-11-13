@@ -10,7 +10,12 @@ import {
   MenuItem,
   Typography,
 } from "@mui/material";
-import { Cloud, Delete, Edit, MoreVert } from "@mui/icons-material";
+
+import Cloud from "@mui/icons-material/Cloud";
+import Delete from "@mui/icons-material/Delete";
+import Edit from "@mui/icons-material/Edit";
+import MoreVert from "@mui/icons-material/MoreVert";
+
 import DraftSpark from "@/assets/icons/DraftSpark";
 import SavedSpark from "@/assets/icons/SavedSpark";
 import useTimestampConverter from "@/hooks/useTimestampConverter";

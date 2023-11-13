@@ -1,4 +1,5 @@
-import { GitHub, LinkedIn } from "@mui/icons-material";
+import GitHub from "@mui/icons-material/GitHub";
+import LinkedIn from "@mui/icons-material/LinkedIn";
 import { Box, Grid, Snackbar, Typography } from "@mui/material";
 import { useRef, useState, forwardRef } from "react";
 import GitHubLogin from "react-github-login";

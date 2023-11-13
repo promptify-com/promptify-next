@@ -3,7 +3,7 @@ import PromptCardAccordion from "@/components/builder/PromptCardAccordion";
 import { IEditPrompts } from "@/common/types/builder";
 import { useDrop } from "react-dnd";
 import { Box, Button, Stack } from "@mui/material";
-import { Add } from "@mui/icons-material";
+import Add from "@mui/icons-material/Add";
 import { promptComputeDomId, randomId } from "@/common/helpers";
 import { Engine } from "@/core/api/dto/templates";
 import { useDeletePromptMutation } from "@/core/api/templates";

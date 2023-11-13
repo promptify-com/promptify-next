@@ -1,5 +1,10 @@
 import { Box, Dialog, Divider, Grid, IconButton, Typography } from "@mui/material";
-import { Check, Email, FacebookRounded, GetAppRounded, Reddit, Twitter } from "@mui/icons-material";
+import Check from "@mui/icons-material/Check";
+import Email from "@mui/icons-material/Email";
+import FacebookRounded from "@mui/icons-material/FacebookRounded";
+import GetAppRounded from "@mui/icons-material/GetAppRounded";
+import Reddit from "@mui/icons-material/Reddit";
+import Twitter from "@mui/icons-material/Twitter";
 
 import BaseButton from "../base/BaseButton";
 import { TemplatesExecutions } from "@/core/api/dto/templates";

@@ -1,5 +1,5 @@
 import { Breadcrumbs, Link, Typography } from "@mui/material";
-import { NavigateNext } from "@mui/icons-material";
+import NavigateNext from "@mui/icons-material/NavigateNext";
 
 interface BreadcrumbItem {
   label: string;

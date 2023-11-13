@@ -1,6 +1,8 @@
 import React, { useState, useMemo, memo, useEffect, useRef } from "react";
 import { Accordion, AccordionDetails, AccordionSummary, Grid, Typography, Button, Stack } from "@mui/material";
-import { Block, ExpandLess, ExpandMore } from "@mui/icons-material";
+import Block from "@mui/icons-material/Block";
+import ExpandLess from "@mui/icons-material/ExpandLess";
+import ExpandMore from "@mui/icons-material/ExpandMore";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { useRouter } from "next/router";
 

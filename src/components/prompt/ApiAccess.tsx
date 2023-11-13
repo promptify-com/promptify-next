@@ -2,7 +2,7 @@ import { ApiIcon } from "@/assets/icons";
 import { Templates } from "@/core/api/dto/templates";
 import { Box, Button, Stack, Typography } from "@mui/material";
 import React, { useState } from "react";
-import { Bolt } from "@mui/icons-material";
+import Bolt from "@mui/icons-material/Bolt";
 import lazy from "next/dynamic";
 import { timeAgo } from "@/common/helpers/timeManipulation";
 

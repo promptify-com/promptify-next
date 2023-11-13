@@ -11,7 +11,8 @@ import {
   ListItemIcon,
   Typography,
 } from "@mui/material";
-import { Close, FormatListBulleted } from "@mui/icons-material";
+import Close from "@mui/icons-material/Close";
+import FormatListBulleted from "@mui/icons-material/FormatListBulleted";
 import { useTheme } from "@mui/material/styles";
 
 import HelpIcon from "@/assets/icons/HelpIcon";

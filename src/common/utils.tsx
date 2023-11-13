@@ -1,6 +1,9 @@
 import React from "react";
 import { IConnection } from "./types";
-import { Window, LinkedIn, Reddit, GitHub } from "@mui/icons-material";
+import Window from "@mui/icons-material/Window";
+import LinkedIn from "@mui/icons-material/LinkedIn";
+import Reddit from "@mui/icons-material/Reddit";
+import GitHub from "@mui/icons-material/GitHub";
 import { CONNECTIONS } from "./constants";
 import { Google } from "../assets/icons/google";
 import { Microsoft } from "../assets/icons/microsoft";
