@@ -223,9 +223,7 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
                 onChange={e => setSearchText(e.target.value)}
               />
             </ListSubheader>
-            {isModelsFetching ? (
-              <DataLoading loading={isModelsFetching} />
-            ) : models && models.length > 0 ? (
+            {models &&
               models.map((model, index) => (
                 <MenuItem
                   key={index}
@@ -233,11 +231,9 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
                 >
                   {model.name}
                 </MenuItem>
-              ))
-            ) : (
-              <MenuItem disabled>No models available</MenuItem>
-            )}
-
+              ))}
+            {!isModelsFetching && !models.length && <MenuItem disabled>No models available</MenuItem>}
+            <DataLoading loading={isModelsFetching} />
             <div ref={lastModelRef}></div>
           </Select>
         </FormControl>
