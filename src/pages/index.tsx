@@ -1,15 +1,16 @@
 import { Box, Grid, Typography } from "@mui/material";
 import React, { useEffect } from "react";
+import dynamic from "next/dynamic";
 import { AxiosResponse } from "axios";
 import { NextPage } from "next";
 import { useSelector, useDispatch } from "react-redux";
 import { IContinueWithSocialMediaResponse } from "@/common/types";
 import { client } from "@/common/axios";
 import { Layout } from "@/layout";
-import { TemplatesSection } from "@/components/explorer/TemplatesSection";
-import { CategoriesSection } from "@/components/explorer/CategoriesSection";
+// import { TemplatesSection } from "@/components/explorer/TemplatesSection";
+// import { CategoriesSection } from "@/components/explorer/CategoriesSection";
 import { userApi } from "@/core/api/user";
-import { WelcomeCard } from "@/components/homepage/WelcomeCard";
+// import { WelcomeCard } from "@/components/homepage/WelcomeCard";
 import { useGetTemplatesByFilterQuery, useGetTemplatesSuggestedQuery } from "@/core/api/templates";
 import { useGetTemplatesExecutionsByMeQuery } from "@/core/api/executions";
 import { getPathURL, saveToken } from "@/common/utils";
@@ -21,6 +22,19 @@ import useToken from "@/hooks/useToken";
 import ClientOnly from "@/components/base/ClientOnly";
 import { NextResponse } from "next/server";
 import { getCategories } from "@/hooks/api/categories";
+
+// Import TemplatesSection using dynamic
+const TemplatesSection = dynamic(() =>
+  import("@/components/explorer/TemplatesSection").then(mod => mod.TemplatesSection),
+);
+
+// Import CategoriesSection using dynamic
+const CategoriesSection = dynamic(() =>
+  import("@/components/explorer/CategoriesSection").then(mod => mod.CategoriesSection),
+);
+
+// Import WelcomeCard using dynamic
+const WelcomeCard = dynamic(() => import("@/components/homepage/WelcomeCard").then(mod => mod.WelcomeCard));
 
 interface HomePageProps {
   categories: Category[];
