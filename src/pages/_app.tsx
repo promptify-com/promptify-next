@@ -3,6 +3,7 @@ import "@fontsource/poppins/400.css";
 import "@fontsource/poppins/500.css";
 import "@fontsource/space-mono/400.css";
 import type { AppProps } from "next/app";
+import { hotjar } from "react-hotjar";
 import { ThemeProvider } from "@mui/material";
 import { wrapper } from "@/core/store";
 import { theme } from "@/theme";
@@ -66,30 +67,40 @@ function App({ Component, ...rest }: AppProps) {
     }
   }, []);
 
+  useEffect(() => {
+    const hotjarId: number = Number(process.env.NEXT_PUBLIC_HOTJAR_ID) || 0;
+    // Check if hotjarId is defined before calling initialize
+    if (hotjarId !== 0) {
+      hotjar.initialize(hotjarId, 6);
+    }
+  }, []);
+
   return (
     <Provider store={store}>
       <ThemeProvider theme={theme}>
         {router.pathname !== "/signin" && (
           <>
             <Script
-              strategy="lazyOnload"
-              async
+              strategy="afterInteractive"
+              defer
               src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS}`}
             />
             <Script
-              strategy="lazyOnload"
-              async
-            >
-              {`
+              id="gtag-init"
+              strategy="afterInteractive"
+              dangerouslySetInnerHTML={{
+                __html: `
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){dataLayer.push(arguments);}
                 gtag('js', new Date());
                 gtag('config', '${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS}', {
                 page_path: window.location.pathname,
                 });
-            `}
-            </Script>
-            <Script
+                `,
+              }}
+            />
+
+            {/* <Script
               strategy="lazyOnload"
               async
               dangerouslySetInnerHTML={{
@@ -104,7 +115,7 @@ function App({ Component, ...rest }: AppProps) {
               })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
               `,
               }}
-            />
+            /> */}
           </>
         )}
 

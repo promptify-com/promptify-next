@@ -5913,6 +5913,11 @@ react-highlight-within-textarea@^3.2.1:
   resolved "https://registry.yarnpkg.com/react-highlight-within-textarea/-/react-highlight-within-textarea-3.2.1.tgz#abb608c3bb6f33b551d81f898c8b2e8870f2534b"
   integrity sha512-ettN+GQfNLg6zCcpatsT9yhgpwEh5dV+tRKEmZu9+DnvLL7t1Bm/0wZ2tTC+G7wAZngJ2HbMlusJXR6v3Cs4PQ==
 
+react-hotjar@^6.1.0:
+  version "6.1.0"
+  resolved "https://registry.yarnpkg.com/react-hotjar/-/react-hotjar-6.1.0.tgz#910dd5d002f5043a6f34ae7ada545b2aace1edae"
+  integrity sha512-V1UJixDMspAIrbGIFG282U7mH2aK1JBid0YR8F9oscb6lTkjMga+gst2gesxJDsqsax+k+lM1LqRXYzmUu8izA==
+
 react-image-crop@^10.1.5:
   version "10.1.5"
   resolved "https://registry.yarnpkg.com/react-image-crop/-/react-image-crop-10.1.5.tgz#60f9d81405b01b6925629cae235e8406616fc0e5"

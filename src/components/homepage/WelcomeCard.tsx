@@ -45,7 +45,7 @@ export const WelcomeCard = () => {
         }}
       >
         <Image
-          src={require("@/assets/images/welcome.svg")}
+          src={require("/welcome.svg")}
           alt="welcome"
           fill
           priority={true}
