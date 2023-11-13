@@ -141,6 +141,11 @@ function App({ Component, ...rest }: AppProps) {
             content={pageProps?.meta_keywords}
           />
           <link
+            rel="preload"
+            as="image"
+            href="/welcome.svg"
+          />
+          <link
             rel="preconnect"
             href={process.env.NEXT_PUBLIC_API_URL}
           />
