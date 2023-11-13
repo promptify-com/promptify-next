@@ -17,9 +17,10 @@ import { useAppDispatch } from "@/hooks/useStore";
 import { setOpenBuilderSidebar } from "@/core/store/sidebarSlice";
 import NoteStackIcon from "@/assets/icons/NoteStackIcon";
 import ExtensionSettingsIcon from "@/assets/icons/ExtensionSettingsIcon";
-import { Executions } from "@/components/prompt/Sidebar/Executions";
 import { Templates } from "@/core/api/dto/templates";
-import { TemplateDetails } from "@/components/prompt/Sidebar/TemplateDetails";
+import { Executions } from "./Executions";
+import { TemplateDetails } from "./TemplateDetails";
+import { ApiAccess } from "./ApiAccess";
 
 const drawerWidth = 352;
 
@@ -150,6 +151,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ template }) => {
         </Stack>
         {activeLink?.name === "executions" && <Executions template={template} />}
         {activeLink?.name === "details" && <TemplateDetails template={template} />}
+        {activeLink?.name === "api" && <ApiAccess template={template} />}
       </Drawer>
       <Box
         display={"flex"}

@@ -72,9 +72,7 @@ export const Executions: React.FC<ExecutionsProps> = ({ template }) => {
   return (
     <Stack
       gap={2}
-      sx={{
-        p: "24px",
-      }}
+      p={"24px"}
     >
       {isLoading ? (
         Array.from({ length: 2 }, (_, i) => <CardExecutionPlaceholder key={i} />)
