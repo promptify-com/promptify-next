@@ -5,6 +5,9 @@ const nextConfig = {
     domains: ["placehold.it", "promptify.s3.amazonaws.com"],
     minimumCacheTTL: 60 * 60,
   },
+  experimental: {
+    optimizePackageImports: ['common', 'assets', 'core', 'hooks', 'styles', 'themes', 'pages']
+  },
   eslint: {
     dirs: ['common', 'assets', 'core', 'hooks', 'styles', 'themes', 'pages'],
   },
