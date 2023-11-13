@@ -6,7 +6,7 @@ import { NextPage } from "next";
 import { useSelector, useDispatch } from "react-redux";
 import { IContinueWithSocialMediaResponse } from "@/common/types";
 import { client } from "@/common/axios";
-// import { Layout } from "@/layout";
+import { Layout } from "@/layout";
 // import { TemplatesSection } from "@/components/explorer/TemplatesSection";
 // import { CategoriesSection } from "@/components/explorer/CategoriesSection";
 import { userApi } from "@/core/api/user";
@@ -24,7 +24,7 @@ import { NextResponse } from "next/server";
 import { getCategories } from "@/hooks/api/categories";
 
 // Import Layout
-const Layout = dynamic(() => import("@/layout").then(mod => mod.Layout));
+// const Layout = dynamic(() => import("@/layout").then(mod => mod.Layout));
 
 // Import TemplatesSection using dynamic
 const TemplatesSection = dynamic(() =>
