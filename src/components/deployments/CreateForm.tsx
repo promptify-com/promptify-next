@@ -202,6 +202,7 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
             value={model}
             MenuProps={selectMenuProps}
             label="Select Model"
+            disabled={isDeploying}
             onChange={event => {
               formik.setFieldValue("model", event.target.value);
             }}
@@ -220,14 +221,11 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
                   ),
                 }}
                 onChange={e => setSearchText(e.target.value)}
-                onKeyDown={e => {
-                  if (e.key !== "Escape") {
-                    e.stopPropagation();
-                  }
-                }}
               />
             </ListSubheader>
-            {models &&
+            {isModelsFetching ? (
+              <DataLoading loading={isModelsFetching} />
+            ) : models && models.length > 0 ? (
               models.map((model, index) => (
                 <MenuItem
                   key={index}
@@ -235,8 +233,11 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
                 >
                   {model.name}
                 </MenuItem>
-              ))}
-            <DataLoading loading={isModelsFetching} />
+              ))
+            ) : (
+              <MenuItem disabled>No models available</MenuItem>
+            )}
+
             <div ref={lastModelRef}></div>
           </Select>
         </FormControl>
