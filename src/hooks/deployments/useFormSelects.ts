@@ -11,7 +11,7 @@ export const useFormSelects = (provider: string, region: string, query?: string)
   const isProviderSelected = provider !== "";
   const isRegionSelected = region !== "";
 
-  const { data: models, isFetching: isModelsFetching } = useGetModelsQuery({ offset, query });
+  const { data: models, isFetching: isModelsFetching } = useGetModelsQuery({ limit: PAGINATION_LIMIT, offset, query });
 
   const { data: instances, isFetching: isInstanceFetching } = useGetInstancesQuery(
     { region: region.toString() },

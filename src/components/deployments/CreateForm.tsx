@@ -224,9 +224,9 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
               />
             </ListSubheader>
             {models &&
-              models.map((model, index) => (
+              models.map(model => (
                 <MenuItem
-                  key={index}
+                  key={model.id}
                   value={model.id}
                 >
                   {model.name}
