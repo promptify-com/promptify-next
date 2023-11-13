@@ -1,3 +1,4 @@
+import { useCallback, useRef, useState } from "react";
 import { useFormik } from "formik";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
@@ -6,19 +7,22 @@ import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
-
-import type { FormikCreateDeployment } from "@/common/types/deployments";
-import BaseButton from "../base/BaseButton";
-import { useAppSelector } from "@/hooks/useStore";
-import InstanceLabel from "./InstanceLabel";
-import { allFieldsFilled, isDesktopViewPort } from "@/common/helpers";
-
+import ListSubheader from "@mui/material/ListSubheader";
 import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
-import Logs from "./Logs";
+import Search from "@mui/icons-material/Search";
+import InputAdornment from "@mui/material/InputAdornment";
+import TextField from "@mui/material/TextField";
+
+import { useAppSelector } from "@/hooks/useStore";
 import { useDeployment } from "@/hooks/deployments/useDeployment";
 import { useFormSelects } from "@/hooks/deployments/useFormSelects";
-import { useCallback, useRef } from "react";
+import useDebounce from "@/hooks/useDebounce";
+import type { FormikCreateDeployment } from "@/common/types/deployments";
+import BaseButton from "../base/BaseButton";
+import InstanceLabel from "./InstanceLabel";
+import { allFieldsFilled } from "@/common/helpers";
+import Logs from "./Logs";
 
 interface CreateFormProps {
   onClose: () => void;
@@ -42,6 +46,9 @@ const DataLoading = ({ loading }: { loading: boolean }) => {
 const CreateForm = ({ onClose }: CreateFormProps) => {
   const currentUser = useAppSelector(state => state.user.currentUser);
   const { handleCreateDeployment, handleClose, isDeploying, errorMessage, logs } = useDeployment(onClose);
+
+  const [searchText, setSearchText] = useState("");
+  const deboundedSearchText = useDebounce(searchText, 300);
 
   const formik = useFormik<FormikCreateDeployment>({
     initialValues: {
@@ -67,18 +74,14 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
     isRegionSelected,
     isInstanceFetching,
     isRegionFetching,
-  } = useFormSelects(provider, region);
+  } = useFormSelects(provider, region, deboundedSearchText);
 
   const observer = useRef<IntersectionObserver | null>(null);
-  const isMobile = !isDesktopViewPort();
 
-  const lastTemplateElementRef = useCallback(
+  const lastModelRef = useCallback(
     (node: HTMLDivElement) => {
       if (isModelsFetching) return;
       if (observer.current) observer.current.disconnect();
-
-      const rowHeight = isMobile ? 145 : 80;
-      const margin = `${2 * rowHeight}px`;
 
       observer.current = new IntersectionObserver(
         entries => {
@@ -86,11 +89,11 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
             fetchMoreModels();
           }
         },
-        { rootMargin: margin },
+        { rootMargin: "300px" },
       );
       if (node) observer.current.observe(node);
     },
-    [isModelsFetching, hasMoreModels],
+    [isModelsFetching, hasMoreModels, fetchMoreModels],
   );
 
   return (
@@ -188,30 +191,49 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
             <MenuItem value={1}>HuggingFace</MenuItem>
           </Select>
         </FormControl>
+
         <FormControl fullWidth>
           <InputLabel>Select Model</InputLabel>
           <Select
             value={model}
-            label="Select Model"
-            autoWidth
-            disabled={isDeploying}
             MenuProps={selectMenuProps}
+            label="Select Model"
             onChange={event => {
               formik.setFieldValue("model", event.target.value);
             }}
           >
+            <ListSubheader>
+              <TextField
+                size="small"
+                autoFocus
+                placeholder="Type to search..."
+                fullWidth
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Search />
+                    </InputAdornment>
+                  ),
+                }}
+                onChange={e => setSearchText(e.target.value)}
+                onKeyDown={e => {
+                  if (e.key !== "Escape") {
+                    e.stopPropagation();
+                  }
+                }}
+              />
+            </ListSubheader>
             {models &&
-              models.map(model => (
+              models.map((model, index) => (
                 <MenuItem
-                  key={model.id}
+                  key={index}
                   value={model.id}
                 >
                   {model.name}
                 </MenuItem>
               ))}
-            <div ref={lastTemplateElementRef}></div>
-
             <DataLoading loading={isModelsFetching} />
+            <div ref={lastModelRef}></div>
           </Select>
         </FormControl>
       </Grid>

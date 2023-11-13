@@ -44,13 +44,24 @@ export const deploymentsApi = baseApi.injectEndpoints({
         }),
         keepUnusedDataFor: 60 * 60,
       }),
-      getModels: builder.query<ModelsWithPagination, number>({
-        query: (offset: number) => ({
-          url: `/api/aithos/models/?limit=20&offset=${offset}`,
-          method: "get",
-        }),
-        keepUnusedDataFor: 60 * 15,
+      getModels: builder.query<ModelsWithPagination, { offset: number; query?: string }>({
+        query: ({ offset, query }) => {
+          const queryParams = new URLSearchParams({
+            limit: "20",
+            offset: `${offset}`,
+          });
+
+          if (query) {
+            queryParams.append("query", query);
+          }
+
+          return {
+            url: `/api/aithos/models/?${queryParams.toString()}`,
+            method: "get",
+          };
+        },
       }),
+
       getDeployments: builder.query<Deployment[], void>({
         query: () => ({
           url: `/api/aithos/deployments`,
