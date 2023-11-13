@@ -1,23 +1,29 @@
-import { Box, Grid, Typography } from "@mui/material";
 import React, { useEffect } from "react";
 import dynamic from "next/dynamic";
+import { useDispatch, useSelector } from "react-redux";
 import { AxiosResponse } from "axios";
 import { NextPage } from "next";
-import { useSelector, useDispatch } from "react-redux";
 import { IContinueWithSocialMediaResponse } from "@/common/types";
 import { client } from "@/common/axios";
 import { Layout } from "@/layout";
-// import { TemplatesSection } from "@/components/explorer/TemplatesSection";
-// import { CategoriesSection } from "@/components/explorer/CategoriesSection";
 import { userApi } from "@/core/api/user";
 import { WelcomeCard } from "@/components/homepage/WelcomeCard";
 import { getPathURL, saveToken } from "@/common/utils";
 import { RootState } from "@/core/store";
 import { isValidUserFn, updateUser } from "@/core/store/userSlice";
-import { Category } from "@/core/api/dto/templates";
 import { redirectToPath } from "@/common/helpers";
 import ClientOnly from "@/components/base/ClientOnly";
 import { NextResponse } from "next/server";
+
+// Import only specific components or functions from MUI
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+
+// Import only needed types from your API
+import { Category } from "@/core/api/dto/templates";
+
+// Import only the necessary function from the categories hook
 import { getCategories } from "@/hooks/api/categories";
 
 // Import Layout
