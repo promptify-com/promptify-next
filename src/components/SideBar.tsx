@@ -183,6 +183,7 @@ export const DefaultSidebar: React.FC<SideBarProps> = ({ fullHeight = false }) =
             <Box sx={{ textAlign: "center" }}>
               <Link
                 href="/"
+                prefetch={false}
                 style={{
                   textDecoration: "none",
                   display: "flex",
@@ -226,6 +227,7 @@ export const DefaultSidebar: React.FC<SideBarProps> = ({ fullHeight = false }) =
               >
                 <Link
                   href={item.href}
+                  prefetch={false}
                   style={{
                     width: "100%",
                     textDecoration: "none",

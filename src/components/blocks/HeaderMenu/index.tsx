@@ -1,9 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { Box, Typography } from "@mui/material";
-import {
-  headerMenuItems,
-  headerMenuItemsMobile,
-} from "./const/headerMenuItems";
+import { headerMenuItems, headerMenuItemsMobile } from "./const/headerMenuItems";
 import Link from "next/link";
 
 interface IHeaderMenu {
@@ -13,12 +10,7 @@ interface IHeaderMenu {
   setHash: (value: string) => void;
 }
 
-export const HeaderMenu = ({
-  hash,
-  setShowMenu,
-  mobile,
-  setHash,
-}: IHeaderMenu) => {
+export const HeaderMenu = ({ hash, setShowMenu, mobile, setHash }: IHeaderMenu) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -47,11 +39,12 @@ export const HeaderMenu = ({
           zIndex={2}
           ref={scrollContainerRef}
         >
-          {headerMenuItemsMobile.map((item) => {
+          {headerMenuItemsMobile.map(item => {
             return (
               <Link
                 key={item.id}
                 href={`#${item.link}`}
+                prefetch={false}
                 style={{
                   textDecorationLine: "none",
                   display: "flex",
@@ -93,11 +86,12 @@ export const HeaderMenu = ({
           display="flex"
           flexDirection="column"
         >
-          {headerMenuItems.map((item) => {
+          {headerMenuItems.map(item => {
             return (
               <Link
                 key={item.id}
                 href={`#${item.link}`}
+                prefetch={false}
                 style={{
                   textDecorationLine: "none",
                   display: "flex",

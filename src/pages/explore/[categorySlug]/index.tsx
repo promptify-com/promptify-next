@@ -50,6 +50,7 @@ export default function Page({ category }: { category: Category }) {
                 <Link
                   style={{ textDecoration: "none" }}
                   href={"/explore"}
+                  prefetch={false}
                 >
                   <Button
                     onClick={() => goBack()}
