@@ -52,6 +52,10 @@ export const CategoryCard = ({ category, href }: { category: Category; href: str
             objectFit="cover"
             style={{ borderRadius: "16px" }}
             priority={!isValidUser}
+            placeholder="blur"
+            blurDataURL={
+              "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAAhklEQVR42mNk+M9QzwAQRN5V0dhcRI4RB64h1FEI5KDvYIJKrEOTIUciiuAhGWcgUAIKAAr0Gbn8BAAAAAElFTkSuQmCC"
+            }
           />
         </CardMedia>
 

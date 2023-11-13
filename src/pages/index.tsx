@@ -213,13 +213,26 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
   );
 };
 
-export async function getServerSideProps({
-  res,
-}: {
-  res: NextResponse & { setHeader: (name: string, value: string) => void };
-}) {
-  res.setHeader("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=60");
+// export async function getServerSideProps({
+//   res,
+// }: {
+//   res: NextResponse & { setHeader: (name: string, value: string) => void };
+// }) {
+//   res.setHeader("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=60");
 
+//   const categories = await getCategories();
+
+//   return {
+//     props: {
+//       title: "Promptify | Boost Your Creativity",
+//       description:
+//         "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
+//       categories,
+//     },
+//   };
+// }
+
+export async function getStaticProps() {
   const categories = await getCategories();
 
   return {
