@@ -54,17 +54,14 @@ function Sidebar() {
 
   if (isTemplatePage) {
     const slug = pathname.split("/")[2];
-    navItems = [
-      ...navItems,
-      {
-        name: "Prompt Builder",
-        href: `/prompt-builder/${slug}`,
-        icon: <Inventory2Rounded />,
-        active: pathname.includes("/prompt-builder"),
-        external: true,
-        reload: false,
-      },
-    ];
+    navItems.push({
+      name: "Prompt Builder",
+      href: `/prompt-builder/${slug}`,
+      icon: <Inventory2Rounded />,
+      active: pathname.includes("/prompt-builder"),
+      external: true,
+      reload: false,
+    });
   }
 
   navItems.push({
