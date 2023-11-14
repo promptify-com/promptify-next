@@ -64,6 +64,7 @@ function CardTemplateLast({ template }: CardTemplateLastProps) {
               overflow: "hidden",
               objectFit: "cover", // Ensures the border-radius clips the image
             }}
+            loading="lazy"
           />
         </CardMedia>
 

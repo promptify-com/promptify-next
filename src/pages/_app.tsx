@@ -1,8 +1,11 @@
+import localFont from "next/font/local";
+
 import "@/styles/globals.css";
-import "@fontsource/poppins/400.css";
-import "@fontsource/poppins/500.css";
-import "@fontsource/space-mono/400.css";
+import "@/assets/fonts/poppins-latin-500.css";
+import "@/assets/fonts/poppins-latin-400.css";
+import "@/assets/fonts/mono-space-latin-400.css";
 import type { AppProps } from "next/app";
+import dynamic from "next/dynamic";
 import { ThemeProvider } from "@mui/material";
 import { wrapper } from "@/core/store";
 import { theme } from "@/theme";
@@ -16,6 +19,13 @@ import { userApi } from "@/core/api/user";
 import Storage from "@/common/storage";
 import { useRouter } from "next/router";
 import { deletePathURL, savePathURL } from "@/common/utils";
+
+const AnalyticsScripts = dynamic(
+  () => import("@/components/global/AnalyticsScript").then(mod => mod.AnalyticsScripts),
+  {
+    ssr: false,
+  },
+);
 
 function App({ Component, ...rest }: AppProps) {
   const { store, props } = wrapper.useWrappedStore(rest);
@@ -120,46 +130,7 @@ function App({ Component, ...rest }: AppProps) {
           /> */}
         </Head>
         <Component {...pageProps} />
-        {router.pathname !== "/signin" && (
-          <>
-            <Script
-              strategy="afterInteractive"
-              defer
-              src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS}`}
-            />
-            <Script
-              id="gtag-init"
-              strategy="afterInteractive"
-              dangerouslySetInnerHTML={{
-                __html: `
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-                gtag('config', '${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS}', {
-                page_path: window.location.pathname,
-                });
-                `,
-              }}
-            />
-
-            <Script
-              strategy="afterInteractive"
-              async
-              dangerouslySetInnerHTML={{
-                __html: `
-              (function(h,o,t,j,a,r){
-                h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
-                h._hjSettings={hjid:${process.env.NEXT_PUBLIC_HOTJAR_ID},hjsv:6};
-                a=o.getElementsByTagName('head')[0];
-                r=o.createElement('script');r.async=1;
-                r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
-                a.appendChild(r);
-              })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
-              `,
-              }}
-            />
-          </>
-        )}
+        {router.pathname !== "/signin" && <AnalyticsScripts />}
       </ThemeProvider>
     </Provider>
   );

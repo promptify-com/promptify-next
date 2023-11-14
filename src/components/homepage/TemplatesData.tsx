@@ -1,17 +1,13 @@
 // TemplatesData.tsx
 
 import React from "react";
-import dynamic from "next/dynamic";
 import { useGetTemplatesByFilterQuery, useGetTemplatesSuggestedQuery } from "@/core/api/templates";
 import { useGetTemplatesExecutionsByMeQuery } from "@/core/api/executions";
 import { TemplatesExecutionsByMePaginationResponse } from "@/core/api/dto/templates";
 import { useSelector } from "react-redux";
 import { isValidUserFn } from "@/core/store/userSlice";
 import useToken from "@/hooks/useToken";
-
-const TemplatesSection = dynamic(() =>
-  import("@/components/explorer/TemplatesSection").then(mod => mod.TemplatesSection),
-);
+import { TemplatesSection } from "../explorer/TemplatesSection";
 
 export const TemplatesData: React.FC = () => {
   const token = useToken();

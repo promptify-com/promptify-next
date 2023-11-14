@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+
 const nextConfig = {
   reactStrictMode: false,
   images: {
@@ -18,8 +19,15 @@ const nextConfig = {
     dirs: ['common', 'assets', 'core', 'hooks', 'styles', 'themes', 'pages'],
   },
 };
-
-module.exports = nextConfig;
+const withPlugins = require('next-compose-plugins')
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
+  openAnalyzer: false,
+})
+module.exports = withPlugins([
+  [withBundleAnalyzer],
+  nextConfig
+])
 
 // if (
 //   process.env.NODE_ENV === "productionasd" &&

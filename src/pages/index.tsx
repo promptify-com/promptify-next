@@ -103,6 +103,7 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
             sx={{
               padding: { xs: "16px", md: "32px" },
             }}
+            ref={ref}
           >
             <ClientOnly>
               {isValidUser ? (
@@ -175,7 +176,7 @@ export async function getServerSideProps({
 }
 
 // export async function getStaticProps() {
-//   const categories = await getCategories();
+//   const categories = await getCategories("homepage");
 
 //   return {
 //     props: {

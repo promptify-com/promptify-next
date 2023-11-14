@@ -39,6 +39,7 @@
     "isomorphic-dompurify": "^1.8.0",
     "material-dynamic-colors": "^0.1.7",
     "next": "13.5",
+    "next-compose-plugins": "^2.2.1",
     "next-redux-wrapper": "^8.1.0",
     "polished": "^4.2.2",
     "react": "18.2.0",
@@ -69,6 +70,7 @@
     "yup": "^1.2.0"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^14.0.2",
     "husky": "^8.0.3",
     "lint-staged": "^14.0.0",
     "prettier": "3.0.2",
