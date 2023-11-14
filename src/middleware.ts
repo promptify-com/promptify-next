@@ -7,6 +7,10 @@ export const config = {
 
 export function middleware(request: NextRequest) {
   const viewport = getDeviceType(request.headers.get("user-agent"));
+  console.log("[Next:middleware]:", {
+    au: request.headers.get("user-agent"),
+    headers: request.headers,
+  });
 
   request.nextUrl.searchParams.set("viewport", viewport);
 

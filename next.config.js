@@ -8,6 +8,7 @@ const nextConfig = {
   eslint: {
     dirs: ['common', 'assets', 'core', 'hooks', 'styles', 'themes', 'pages'],
   },
+  poweredByHeader: false
 };
 
 if (
