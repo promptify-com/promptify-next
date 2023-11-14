@@ -58,9 +58,6 @@ function Sidebar() {
       external: true,
       reload: false,
     },
-  ];
-
-  const BottomList: NavItem[] = [
     {
       name: "Learn & Help",
       href: "https://blog.promptify.com/",
@@ -94,7 +91,7 @@ function Sidebar() {
         }}
       >
         <List>
-          {navItems.map((item, index) => (
+          {navItems.slice(0, -1).map((item, index) => (
             <SidebarItem
               key={index}
               navItem={item}
@@ -102,14 +99,7 @@ function Sidebar() {
           ))}
         </List>
 
-        <List>
-          {BottomList.map((item, index) => (
-            <SidebarItem
-              key={index}
-              navItem={item}
-            />
-          ))}
-        </List>
+        <List>{navItems.length > 0 && <SidebarItem navItem={navItems[navItems.length - 1]} />} </List>
       </Grid>
     </Drawer>
   );
