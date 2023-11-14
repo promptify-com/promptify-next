@@ -70,18 +70,20 @@ export const Header: React.FC<HeaderProps> = ({ transparent = false, fixed = fal
     <Box
       sx={{
         width: "100%",
-        background: transparent ? "transparent" : "#F6F5FF",
+        background: transparent ? "transparent" : "surface.1",
         position: { xs: "fixed", md: fixed ? "fixed" : "relative" },
         zIndex: 1000,
         top: 0,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        bgcolor: { xs: "surface.1", md: "surface.3" },
+        bgcolor: { xs: "surface.1", md: "surface.1" },
         height: {
           xs: theme.custom.headerHeight.xs,
           md: theme.custom.headerHeight.md,
         },
+        borderBottomRightRadius: "16px",
+        borderBottomLeftRadius: "16px",
       }}
     >
       <Grid
@@ -90,7 +92,7 @@ export const Header: React.FC<HeaderProps> = ({ transparent = false, fixed = fal
           display: "flex",
           width: "100%",
           gap: "30px",
-          padding: { xs: "0 4px ", md: "1.5em 2em" },
+          padding: { xs: "0 4px ", md: "0 24px" },
           alignItems: "center",
           borderBottom: { xs: "2px solid #E1E2EC", md: "none" },
         }}
@@ -99,20 +101,18 @@ export const Header: React.FC<HeaderProps> = ({ transparent = false, fixed = fal
           onClick={() => {
             redirectToPath("/");
           }}
-          display={{ xs: "flex", md: "none" }}
-          width={75}
+          display="flex"
           p={"0px 10px"}
           alignItems={"center"}
           height={48}
-          mt={1}
           sx={{}}
         >
           <LogoApp width={23} />
           <Typography
-            sx={{ fontSize: 10, mt: 0.2, ml: 0.5 }}
-            fontWeight={"bold"}
+            sx={{ fontSize: 19, ml: 1 }}
+            fontWeight={500}
           >
-            beta
+            Promptify
           </Typography>
         </Grid>
         <Grid

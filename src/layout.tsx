@@ -11,24 +11,33 @@ export const Layout = ({ children }: { children: ReactNode }) => {
 
   return (
     <>
-      <Box sx={{ bgcolor: "surface.1" }}>
+      <Box sx={{ bgcolor: "surface.3" }}>
         <Sidebar />
         <Box
+          display={"flex"}
+          flexDirection={"column"}
+          gap={"2px"}
           sx={{
             minHeight: "100svh",
+
             maxWidth: {
               xs: "100%",
-              md: defaultSidebarOpen ? `calc(100% - ${theme.custom.defaultSidebarWidth})` : "80%",
+              md: `calc(100% - 96px)`,
             },
             m: { md: defaultSidebarOpen ? "0px 0px 0px auto" : "0px auto 0px auto" },
           }}
         >
           <Header transparent />
           <Box
-            bgcolor={{ xs: "surface.1", md: "surface.1" }}
+            bgcolor={"surface.1"}
             minHeight={{
               xs: `calc(100svh - ${theme.custom.headerHeight.xs})`,
               md: `calc(100svh - ${theme.custom.headerHeight.md})`,
+            }}
+            sx={{
+              borderTopLeftRadius: "16px",
+              borderTopRightRadius: "16px",
+              overflow: "hidden",
             }}
           >
             <Grid

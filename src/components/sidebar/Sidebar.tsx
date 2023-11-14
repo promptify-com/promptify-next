@@ -14,10 +14,10 @@ import SidebarItem from "./SidebarItem";
 function Sidebar() {
   const pathname = usePathname();
   const isExplorePage = pathname.split("/")[1] === "explore";
-  const isBuilderPage = pathname.split("/")[1] === "prompt-builder";
+  const isTemplatePage = pathname.split("/")[1] === "prompt";
   const isValidUser = useAppSelector(isValidUserFn);
 
-  const navItems: NavItem[] = [
+  let navItems: NavItem[] = [
     {
       name: "Home",
       href: "/",
@@ -42,31 +42,38 @@ function Sidebar() {
       external: false,
       reload: false,
     },
-    {
-      name: "Prompt builder",
-      href: "/prompt-builder/personal-performance-acc237c8?viewport=desktop",
-      icon: <Inventory2Rounded />,
-      active: isBuilderPage,
-      external: true,
-      reload: false,
-    },
-    {
-      name: "Chrome Extension",
-      href: "#",
-      icon: <ExtensionRounded />,
-      active: false,
-      external: true,
-      reload: false,
-    },
-    {
-      name: "Learn & Help",
-      href: "https://blog.promptify.com/",
-      icon: <HelpRounded />,
-      active: false,
-      external: true,
-      reload: false,
-    },
   ];
+
+  if (isTemplatePage) {
+    navItems = [
+      ...navItems,
+      {
+        name: "Prompt Builder",
+        href: "/prompt-builder/personal-performance-acc237c8?viewport=desktop",
+        icon: <Inventory2Rounded />,
+        active: pathname.includes("/prompt-builder"),
+        external: true,
+        reload: false,
+      },
+      {
+        name: "Chrome Extension",
+        href: "#",
+        icon: <ExtensionRounded />,
+        active: false,
+        external: true,
+        reload: false,
+      },
+    ];
+  }
+
+  navItems.push({
+    name: "Learn & Help",
+    href: "https://blog.promptify.com/",
+    icon: <HelpRounded />,
+    active: false,
+    external: true,
+    reload: false,
+  });
 
   return (
     <Drawer
