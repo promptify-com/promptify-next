@@ -139,7 +139,7 @@ export default function Header({ template }: TemplateHeaderProps) {
   return (
     <Stack
       direction={"row"}
-      alignItems={"center"}
+      alignItems={"baseline"}
       justifyContent={"space-between"}
       sx={{
         p: "8px 16px",

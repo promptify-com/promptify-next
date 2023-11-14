@@ -11,7 +11,7 @@ import { Edit } from "@mui/icons-material";
 interface Props {
   questions: UpdatedQuestionTemplate[];
   answers: IAnswer[];
-  onChange: (value: string | File, name: string, type: string) => void;
+  onChange: (value: string | File, question: UpdatedQuestionTemplate) => void;
 }
 
 export const InputsForm = ({ questions, answers, onChange }: Props) => {
@@ -22,6 +22,7 @@ export const InputsForm = ({ questions, answers, onChange }: Props) => {
     <Stack gap={1}>
       {questions.map(question => {
         const value = answers.find(answer => answer.inputName === question.name)?.answer || "";
+        const isFile = value instanceof File;
         return (
           <Stack
             direction={"row"}
@@ -50,17 +51,22 @@ export const InputsForm = ({ questions, answers, onChange }: Props) => {
                   sx={{
                     border: "1px solid",
                     borderRadius: "8px",
-                    color: "primary.main",
+                    borderColor: "secondary.main",
+                    color: "secondary.main",
+                    p: "3px 12px",
+                    ":hover": {
+                      bgcolor: "action.hover",
+                    },
                   }}
                 >
-                  {value ? "Edit Code" : "Insert Code"}
+                  {!isFile && value ? value : "Insert Code"}
                 </BaseButton>
                 {codeFieldOpen && (
                   <CodeFieldModal
                     open
                     setOpen={setCodeFieldOpen}
                     value={value as string}
-                    onSubmit={val => onChange(val, question.name, question.type)}
+                    onSubmit={val => onChange(val, question)}
                   />
                 )}
               </>
@@ -74,19 +80,17 @@ export const InputsForm = ({ questions, answers, onChange }: Props) => {
                     fontWeight: 400,
                     opacity: value ? 1 : 0.7,
                   },
-                  ".MuiOutlinedInput-notchedOutline": {
-                    border: "1px solid",
+                  ".MuiOutlinedInput-notchedOutline, .Mui-focused": {
                     borderRadius: "8px",
-                    color: "primary.main",
-                    borderColor: "inherit !important",
                     borderWidth: "1px !important",
+                    borderColor: "secondary.main",
                   },
                 }}
                 MenuProps={{
                   sx: { ".MuiMenuItem-root": { fontSize: 14, fontWeight: 400 } },
                 }}
                 value={value}
-                onChange={e => onChange(e.target.value as string, question.name, question.type)}
+                onChange={e => onChange(e.target.value as string, question)}
                 displayEmpty
               >
                 <MenuItem
@@ -110,14 +114,13 @@ export const InputsForm = ({ questions, answers, onChange }: Props) => {
                 direction={"row"}
                 alignItems={"center"}
                 gap={1}
-                flex={1}
               >
                 <Button
                   component="label"
                   variant="contained"
-                  sx={{ border: "1px solid", borderColor: "", p: "3px 12px", fontSize: 14, fontWeight: 500 }}
+                  sx={{ border: "1px solid", p: "3px 12px", fontSize: 14, fontWeight: 500 }}
                 >
-                  Upload file
+                  {isFile ? value.name : "Upload file"}
                   <input
                     hidden
                     accept={getFileTypeExtensionsAsString(question.fileExtensions as FileType[])}
@@ -133,7 +136,7 @@ export const InputsForm = ({ questions, answers, onChange }: Props) => {
                     }}
                     onChange={e => {
                       if (e.target.files && e.target.files.length > 0) {
-                        onChange(e.target.files[0], question.name, question.type);
+                        onChange(e.target.files[0], question);
                       }
                     }}
                   />
@@ -170,24 +173,20 @@ export const InputsForm = ({ questions, answers, onChange }: Props) => {
                 placeholder={question.required ? "Required" : "Optional"}
                 type={question.type}
                 value={value}
-                onChange={e => onChange(e.target.value, question.name, question.type)}
+                onChange={e => onChange(e.target.value, question)}
               />
             )}
-            <IconButton
-              disabled={isGenerating}
-              sx={{
-                color: "grey.600",
-                border: "none",
-                p: "4px",
-                ":hover": {
+            {!["file", "code", "choices"].includes(question.type) && (
+              <Edit
+                sx={{
+                  fontSize: 16,
                   color: "primary.main",
-                },
-                visibility: value ? "visible" : "hidden",
-              }}
-              onClick={() => onChange("", question.name, question.type)}
-            >
-              <Edit />
-            </IconButton>
+                  border: "none",
+                  p: "4px",
+                  opacity: !value ? 0.5 : 1,
+                }}
+              />
+            )}
           </Stack>
         );
       })}

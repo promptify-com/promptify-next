@@ -29,7 +29,7 @@ const MessageSender: React.FC<MessageSenderProps> = ({ onSubmit, disabled, place
       display={"flex"}
       alignItems={"center"}
       borderRadius="99px"
-      minHeight={"32px"}
+      m={"16px 24px"}
       p={"8px 16px"}
     >
       <InputBase

@@ -10,7 +10,7 @@ import { InputsForm } from "./Inputsform";
 interface Props {
   template: Templates;
   messages: IMessage[];
-  onChange: (value: string | File) => void;
+  onChange: (value: string | File, question: UpdatedQuestionTemplate) => void;
   setIsSimulaitonStreaming: Dispatch<SetStateAction<boolean>>;
   questions: UpdatedQuestionTemplate[];
   answers: IAnswer[];
@@ -35,7 +35,7 @@ export const ChatInterface = ({
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messages, isFullScreen]);
 
   return (
     <Stack
@@ -93,7 +93,7 @@ export const ChatInterface = ({
                 <InputsForm
                   questions={questions}
                   answers={answers}
-                  onChange={(val, name, type) => console.log(val, name, type)}
+                  onChange={onChange}
                 />
               </Box>
             )}
