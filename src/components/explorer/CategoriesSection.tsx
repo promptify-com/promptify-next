@@ -47,16 +47,14 @@ export const CategoriesSection: React.FC<CategoriesSectionProps> = ({ isLoading,
               WebkitOverflowScrolling: { xs: "touch", md: "initial" },
             }}
           >
-            {categories
-              ?.filter(category => !category.parent && category.is_visible && category.prompt_template_count)
-              .map(category => (
-                <Grid key={category.id}>
-                  <CategoryCard
-                    category={category}
-                    href={`/explore/${category.slug}`}
-                  />
-                </Grid>
-              ))}
+            {categories.map(category => (
+              <Grid key={category.id}>
+                <CategoryCard
+                  category={category}
+                  href={`/explore/${category.slug}`}
+                />
+              </Grid>
+            ))}
           </Grid>
         )}
       </Box>

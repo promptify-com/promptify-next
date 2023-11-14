@@ -69,6 +69,57 @@ function App({ Component, ...rest }: AppProps) {
   return (
     <Provider store={store}>
       <ThemeProvider theme={theme}>
+        <Head>
+          <title>{pageProps?.title ?? "Promptify | Boost Your Creativity"}</title>
+          <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1"
+          />
+          <meta
+            name="description"
+            content={
+              pageProps?.description ??
+              "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out."
+            }
+          />
+          <meta
+            property="og:title"
+            content={pageProps?.title ?? "Promptify | Boost Your Creativity"}
+          />
+          <meta
+            property="og:description"
+            content={
+              pageProps?.description ??
+              "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out."
+            }
+          />
+          <meta
+            property="og:image"
+            content={pageProps?.image}
+          />
+          <meta
+            property="keywords"
+            content={pageProps?.meta_keywords}
+          />
+          <link
+            rel="preload"
+            as="image"
+            href="/welcome.svg"
+          />
+          {/* <link
+            rel="preconnect"
+            href={process.env.NEXT_PUBLIC_API_URL}
+          /> */}
+          <link
+            rel="icon"
+            href="/favicon.ico"
+          />
+          {/* <link
+            rel="preconnect"
+            href="https://promptify.s3.amazonaws.com"
+          /> */}
+        </Head>
+        <Component {...pageProps} />
         {router.pathname !== "/signin" && (
           <>
             <Script
@@ -109,49 +160,6 @@ function App({ Component, ...rest }: AppProps) {
             />
           </>
         )}
-
-        <Head>
-          <title>{pageProps?.title ?? "Promptify | Boost Your Creativity"}</title>
-          <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1"
-          />
-          <meta
-            name="description"
-            content={
-              pageProps?.description ??
-              "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out."
-            }
-          />
-          <meta
-            property="og:title"
-            content={pageProps?.title ?? "Promptify | Boost Your Creativity"}
-          />
-          <meta
-            property="og:description"
-            content={
-              pageProps?.description ??
-              "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out."
-            }
-          />
-          <meta
-            property="og:image"
-            content={pageProps?.image}
-          />
-          <meta
-            property="keywords"
-            content={pageProps?.meta_keywords}
-          />
-          <link
-            rel="preconnect"
-            href={process.env.NEXT_PUBLIC_API_URL}
-          />
-          <link
-            rel="preconnect"
-            href="https://promptify.s3.amazonaws.com"
-          />
-        </Head>
-        <Component {...pageProps} />
       </ThemeProvider>
     </Provider>
   );

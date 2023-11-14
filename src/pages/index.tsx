@@ -14,7 +14,7 @@ import { isValidUserFn, updateUser } from "@/core/store/userSlice";
 import { redirectToPath } from "@/common/helpers";
 import ClientOnly from "@/components/base/ClientOnly";
 import { NextResponse } from "next/server";
-
+import { useInView } from "react-intersection-observer";
 // Import only specific components or functions from MUI
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
@@ -22,21 +22,14 @@ import Typography from "@mui/material/Typography";
 
 // Import only needed types from your API
 import { Category } from "@/core/api/dto/templates";
-
+import { CategoriesSection } from "@/components/explorer/CategoriesSection";
 // Import only the necessary function from the categories hook
 import { getCategories } from "@/hooks/api/categories";
+import LoadingOverlay from "@/components/design-system/LoadingOverlay";
 
-// Import Layout
-// const Layout = dynamic(() => import("@/layout").then(mod => mod.Layout));
-
-const CategoriesSection = dynamic(() =>
-  import("@/components/explorer/CategoriesSection").then(mod => mod.CategoriesSection),
-);
-
-const TemplatesData = dynamic(() => import("@/components/homepage/TemplatesData").then(mod => mod.TemplatesData));
-
-// Import WelcomeCard using dynamic
-// const WelcomeCard = dynamic(() => import("@/components/homepage/WelcomeCard").then(mod => mod.WelcomeCard));
+const TemplatesData = dynamic(() => import("@/components/homepage/TemplatesData").then(mod => mod.TemplatesData), {
+  loading: () => <LoadingOverlay />, // Optional loading indicator
+});
 
 interface HomePageProps {
   categories: Category[];
@@ -49,7 +42,6 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
   const dispatch = useDispatch();
   const isValidUser = useSelector(isValidUserFn);
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
-  const [getCurrentUser] = userApi.endpoints.getCurrentUser.useLazyQuery();
 
   // TODO: move authentication logic to signin page instead
   const doPostLogin = async (response: AxiosResponse<IContinueWithSocialMediaResponse>) => {
@@ -66,6 +58,7 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
     }
 
     saveToken({ token });
+    const [getCurrentUser] = userApi.endpoints.getCurrentUser.useLazyQuery();
     const payload = await getCurrentUser(token).unwrap();
 
     dispatch(updateUser(payload));
@@ -91,6 +84,10 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
         });
     }
   }, []);
+
+  const [ref, inView] = useInView({
+    triggerOnce: true, // Only trigger once
+  });
 
   return (
     <>
@@ -134,7 +131,7 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
                       Welcome, {currentUser?.username}
                     </Typography>
                   </Grid>
-                  <TemplatesData />
+                  {inView && <TemplatesData />}
                   <CategoriesSection
                     categories={categories}
                     isLoading={!isValidUser}
@@ -147,7 +144,7 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
                     categories={categories}
                     isLoading={isValidUser}
                   />
-                  <TemplatesData />
+                  {inView && <TemplatesData />}
                 </>
               )}
             </ClientOnly>
@@ -165,7 +162,7 @@ export async function getServerSideProps({
 }) {
   res.setHeader("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=60");
 
-  const categories = await getCategories();
+  const categories = await getCategories("homepage");
 
   return {
     props: {

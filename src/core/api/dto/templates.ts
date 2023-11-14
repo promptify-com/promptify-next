@@ -93,6 +93,14 @@ export interface Category {
   is_visible: boolean;
 }
 
+export interface HomePageSimplifiedCategory {
+  id: number;
+  name: string;
+  image: string;
+  prompt_template_count: number;
+  slug: string;
+}
+
 export type TemplateStatus = "DRAFT" | "PENDING_REVIEW" | "PUBLISHED" | "ARCHIVED";
 
 export interface TemplateQuestions {

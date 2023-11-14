@@ -48,6 +48,7 @@
     "react-github-login": "^1.0.3",
     "react-highlight-within-textarea": "^3.2.1",
     "react-image-crop": "^10.1.5",
+    "react-intersection-observer": "^9.5.3",
     "react-linkedin-login-oauth2": "^2.0.1",
     "react-redux": "^8.1.1",
     "react-syntax-highlighter": "^15.5.0",
