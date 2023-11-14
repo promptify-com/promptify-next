@@ -6,28 +6,21 @@ const nextConfig = {
     domains: ["placehold.it", "promptify.s3.amazonaws.com"],
     minimumCacheTTL: 60 * 60,
   },
-  experimental: {
-    optimizePackageImports: [
-    "@emotion/react",
-    "@emotion/styled",
-    "@mui/icons-material",
-    "@mui/lab",
-    "@mui/material",
-    "styled-components"]
-  },
   eslint: {
     dirs: ['common', 'assets', 'core', 'hooks', 'styles', 'themes', 'pages'],
   },
 };
-const withPlugins = require('next-compose-plugins')
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: process.env.ANALYZE === 'true',
-  openAnalyzer: false,
-})
-module.exports = withPlugins([
-  [withBundleAnalyzer],
-  nextConfig
-])
+  
+if(process.env.NODE_ENV === "production") {
+  module.exports = nextConfig
+} else {
+  const withBundleAnalyzer = require('@next/bundle-analyzer')({
+    enabled: process.env.ANALYZE === 'true',
+  })
+  module.exports = withBundleAnalyzer(nextConfig);
+}
+
+
 
 // if (
 //   process.env.NODE_ENV === "productionasd" &&

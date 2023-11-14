@@ -1,4 +1,4 @@
-import { Theme, createTheme } from "@mui/material";
+import { Theme, createTheme } from "@mui/material/styles";
 
 interface SurfaceVariants {
   1: string;

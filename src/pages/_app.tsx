@@ -1,18 +1,13 @@
-import localFont from "next/font/local";
-
 import "@/styles/globals.css";
-import "@/assets/fonts/poppins-latin-500.css";
-import "@/assets/fonts/poppins-latin-400.css";
-import "@/assets/fonts/mono-space-latin-400.css";
+
 import type { AppProps } from "next/app";
 import dynamic from "next/dynamic";
-import { ThemeProvider } from "@mui/material";
+import { ThemeProvider } from "@mui/material/styles";
 import { wrapper } from "@/core/store";
 import { theme } from "@/theme";
 import Head from "next/head";
-import Script from "next/script";
 import { Provider } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import useToken from "@/hooks/useToken";
 import { isValidUserFn, updateUser } from "@/core/store/userSlice";
 import { userApi } from "@/core/api/user";
@@ -33,6 +28,25 @@ function App({ Component, ...rest }: AppProps) {
   const isValidUser = isValidUserFn(store.getState());
   const storedToken = useToken();
   const router = useRouter();
+  const [pageFullyLoaded, setPageFullyLoaded] = useState(false);
+
+  useEffect(() => {
+    const onPageLoad = () => {
+      setPageFullyLoaded(true);
+      // do something else
+    };
+
+    if (typeof window !== "undefined") {
+      if (document.readyState === "complete") {
+        onPageLoad();
+      } else {
+        window.addEventListener("load", onPageLoad, false);
+
+        // Remove the event listener when the component unmounts
+        return () => window.removeEventListener("load", onPageLoad);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     const _updateUser = async () => {
@@ -80,6 +94,10 @@ function App({ Component, ...rest }: AppProps) {
     <Provider store={store}>
       <ThemeProvider theme={theme}>
         <Head>
+          <link
+            rel="stylesheet"
+            href="/styles/global.css"
+          />
           <title>{pageProps?.title ?? "Promptify | Boost Your Creativity"}</title>
           <meta
             name="viewport"
@@ -112,25 +130,24 @@ function App({ Component, ...rest }: AppProps) {
             content={pageProps?.meta_keywords}
           />
           <link
-            rel="preload"
-            as="image"
-            href="/welcome.svg"
-          />
-          {/* <link
-            rel="preconnect"
-            href={process.env.NEXT_PUBLIC_API_URL}
-          /> */}
-          <link
             rel="icon"
             href="/favicon.ico"
           />
-          {/* <link
+          <link
+            rel="preconnect"
+            href={process.env.NEXT_PUBLIC_API_URL}
+          />
+          <link
             rel="preconnect"
             href="https://promptify.s3.amazonaws.com"
-          /> */}
+          />
+          <link
+            rel="preconnect"
+            href="https://promptify.adtitan.io/"
+          />
         </Head>
         <Component {...pageProps} />
-        {router.pathname !== "/signin" && <AnalyticsScripts />}
+        {router.pathname !== "/signin" && pageFullyLoaded && <AnalyticsScripts />}
       </ThemeProvider>
     </Provider>
   );
