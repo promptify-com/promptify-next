@@ -42,6 +42,14 @@ function Sidebar() {
       external: false,
       reload: false,
     },
+    {
+      name: "Chrome Extension",
+      href: "#",
+      icon: <ExtensionRounded />,
+      active: false,
+      external: false,
+      reload: false,
+    },
   ];
 
   if (isTemplatePage) {
@@ -54,14 +62,6 @@ function Sidebar() {
         icon: <Inventory2Rounded />,
         active: pathname.includes("/prompt-builder"),
         external: true,
-        reload: false,
-      },
-      {
-        name: "Chrome Extension",
-        href: "#",
-        icon: <ExtensionRounded />,
-        active: false,
-        external: false,
         reload: false,
       },
     ];
