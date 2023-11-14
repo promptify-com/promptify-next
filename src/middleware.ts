@@ -1,16 +1,12 @@
-import { type NextRequest, NextResponse } from "next/server";
-import { getDeviceType } from "./common/helpers/ua-parser";
+import { NextRequest, NextResponse, userAgent } from "next/server";
 
 export const config = {
   matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 };
 
 export function middleware(request: NextRequest) {
-  const viewport = getDeviceType(request.headers.get("user-agent"));
-  console.log("[Next:middleware]:", {
-    au: request.headers.get("user-agent"),
-    headers: request.headers,
-  });
+  const { device } = userAgent(request);
+  const viewport = device.type === "mobile" ? "mobile" : "desktop";
 
   request.nextUrl.searchParams.set("viewport", viewport);
 
