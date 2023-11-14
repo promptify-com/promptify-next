@@ -6,7 +6,6 @@ import { ResPrompt } from "@/core/api/dto/prompts";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { useAppSelector, useAppDispatch } from "@/hooks/useStore";
 import useToken from "@/hooks/useToken";
-import { generate } from "@/common/helpers/chatAnswersValidator";
 import useTimestampConverter from "@/hooks/useTimestampConverter";
 import { ChatInterface } from "./ChatInterface";
 import { ChatInput } from "./ChatInput";
@@ -19,9 +18,8 @@ import {
   updateAnsweredInput,
   updateExecutionData,
 } from "@/core/store/templatesSlice";
-import { AnswerValidatorResponse, IAnswer, IMessage } from "@/common/types/chat";
+import { IAnswer, IMessage } from "@/common/types/chat";
 import { useStopExecutionMutation } from "@/core/api/executions";
-import VaryModal from "./VaryModal";
 import { vary } from "@/common/helpers/varyValidator";
 import { parseMessageData } from "@/common/helpers/parseMessageData";
 import { useUploadFileMutation } from "@/core/api/uploadFile";
@@ -38,7 +36,6 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const isGenerating = useAppSelector(state => state.template.isGenerating);
   const [stopExecution] = useStopExecutionMutation();
   const [uploadFile] = useUploadFileMutation();
   const { convertedTimestamp } = useTimestampConverter();
@@ -56,8 +53,6 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
   const [isSimulaitonStreaming, setIsSimulaitonStreaming] = useState(false);
   const [disableChatInput, setDisableChatInput] = useState(false);
   const [standingQuestions, setStandingQuestions] = useState<UpdatedQuestionTemplate[]>([]);
-  const [varyOpen, setVaryOpen] = useState(false);
-  const currentAnsweredInputs = useAppSelector(state => state.template.answeredInputs);
 
   const abortController = useRef(new AbortController());
   const uploadedFiles = useRef(new Map<string, string>());
@@ -252,37 +247,6 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
 
     return remainingQuestion;
   };
-
-  useEffect(() => {
-    const [firstAnsweredInput] = currentAnsweredInputs;
-
-    if (!firstAnsweredInput || firstAnsweredInput.modifiedFrom !== "input") return;
-
-    const { inputName, promptId, value } = firstAnsweredInput;
-
-    const targetQuestion = templateQuestions.find(question => question.name === inputName) as UpdatedQuestionTemplate;
-
-    setAnswers(prevAnswers => {
-      const indexToUpdate = prevAnswers.findIndex(answer => answer.inputName === inputName);
-
-      if (indexToUpdate !== -1) {
-        prevAnswers[indexToUpdate].answer = value;
-      }
-      if (value && indexToUpdate === -1 && targetQuestion) {
-        prevAnswers.push({
-          inputName,
-          required: targetQuestion.required,
-          question: targetQuestion.question,
-          prompt: promptId,
-          answer: value,
-        });
-      }
-
-      const filteredAnswers = prevAnswers.filter(answer => Boolean(answer.answer));
-
-      return filteredAnswers;
-    });
-  }, [currentAnsweredInputs, templateQuestions]);
 
   const canShowGenerateButton = Boolean(templateQuestions.length && !templateQuestions[0].required);
 
@@ -643,11 +607,6 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
           messages={messages}
           onChange={handleUserInput}
           setIsSimulaitonStreaming={setIsSimulaitonStreaming}
-        />
-        <VaryModal
-          open={varyOpen}
-          setOpen={setVaryOpen}
-          onSubmit={variationTxt => validateVary(variationTxt)}
         />
         {currentUser?.id ? (
           <ChatInput

@@ -78,9 +78,8 @@ export const ChatInterface = ({
           New messages
         </Divider>
         {messages.map((msg, idx) => (
-          <>
+          <React.Fragment key={idx}>
             <Message
-              key={idx}
               message={msg}
               setIsSimulaitonStreaming={setIsSimulaitonStreaming}
               onScrollToBottom={scrollToBottom}
@@ -97,7 +96,7 @@ export const ChatInterface = ({
                 />
               </Box>
             )}
-          </>
+          </React.Fragment>
         ))}
       </Stack>
     </Stack>
