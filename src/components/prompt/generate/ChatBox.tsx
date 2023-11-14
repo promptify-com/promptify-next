@@ -1,9 +1,7 @@
 import React, { useState, useMemo, memo, useEffect, useRef } from "react";
 import { Typography, Button, Stack, Box } from "@mui/material";
-import { Block } from "@mui/icons-material";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { useRouter } from "next/router";
-
 import { ResPrompt } from "@/core/api/dto/prompts";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { useAppSelector, useAppDispatch } from "@/hooks/useStore";
@@ -14,7 +12,7 @@ import { ChatInterface } from "./ChatInterface";
 import { ChatInput } from "./ChatInput";
 import { TemplateQuestions, Templates, UpdatedQuestionTemplate } from "@/core/api/dto/templates";
 import { getInputsFromString } from "@/common/helpers/getInputsFromString";
-import { IPromptInput, PromptLiveResponse, InputType, AnsweredInputType } from "@/common/types/prompt";
+import { IPromptInput, PromptLiveResponse, AnsweredInputType } from "@/common/types/prompt";
 import {
   setChatFullScreenStatus,
   setGeneratingStatus,
@@ -45,7 +43,6 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
   const [uploadFile] = useUploadFileMutation();
   const { convertedTimestamp } = useTimestampConverter();
   const createdAt = convertedTimestamp(new Date());
-  const [chatExpanded, setChatExpanded] = useState(true);
   const [showGenerateButton, setShowGenerateButton] = useState(false);
   const [isValidatingAnswer, setIsValidatingAnswer] = useState(false);
   const [generatingResponse, setGeneratingResponse] = useState<PromptLiveResponse>({
@@ -79,32 +76,39 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
     const welcomeMessage: IMessage[] = [];
 
     if (!startOver) {
-      welcomeMessage.push({
-        text: `Hi, ${
-          currentUser?.first_name ?? currentUser?.username ?? "There"
-        }. Welcome. I can help you with the ${template?.title} template.`,
-        type: "text" as InputType,
-        createdAt: createdAt,
-        fromUser: false,
-      });
+      welcomeMessage.push(
+        {
+          text: `Hi, ${
+            currentUser?.first_name ?? currentUser?.username ?? "There"
+          }! Ready to work on ${template?.title} ?`,
+          type: "text",
+          createdAt: createdAt,
+          fromUser: false,
+        },
+        {
+          text: "This is a list of information we need to execute this template:",
+          type: "form",
+          createdAt: createdAt,
+          fromUser: false,
+          noHeader: true,
+        },
+      );
     }
 
     if (questions.length > 0) {
-      const firstQuestion = questions[0];
-      const { question, type, choices, fileExtensions } = firstQuestion;
-      const firstQuestionMessage: IMessage = {
-        text: question,
-        type,
-        choices,
-        fileExtensions,
+      let allQuestions = questions.map(_q => _q.question);
+      const allQuestionsMessage: IMessage = {
+        text: allQuestions.join(" "),
+        type: "text",
         createdAt: createdAt,
         fromUser: false,
+        noHeader: true,
       };
 
       if (!!welcomeMessage.length) {
-        addToQueuedMessages([firstQuestionMessage]);
+        addToQueuedMessages([allQuestionsMessage]);
       } else {
-        welcomeMessage.push(firstQuestionMessage);
+        welcomeMessage.push(allQuestionsMessage);
       }
     }
 
@@ -162,10 +166,11 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
         const key = Object.keys(question)[0];
 
         if (inputs[index]) {
-          const { type, required, choices, fileExtensions, name, prompt } = inputs[index];
+          const { type, required, choices, fileExtensions, name, fullName, prompt } = inputs[index];
           const updatedQuestion: UpdatedQuestionTemplate = {
             ...question[key],
             name,
+            fullName,
             required,
             type,
             choices,
@@ -182,12 +187,6 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
 
       return [updatedQuestions, inputs, promptHasContent];
     }, [template]);
-
-  useEffect(() => {
-    if (isGenerating && chatExpanded) {
-      setChatExpanded(false);
-    }
-  }, [isGenerating]);
 
   useEffect(() => {
     dispatchNewExecutionData(answers, _inputs);
@@ -254,58 +253,6 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
     return remainingQuestion;
   };
 
-  const handleSyncForm = (
-    currentAnswers: IAnswer[],
-    updatedInput: AnsweredInputType,
-    targetQuestion: UpdatedQuestionTemplate,
-  ) => {
-    const { question, choices, fileExtensions, type } = targetQuestion;
-    const nextMessages: IMessage[] = [];
-
-    if (currentQuestion && targetQuestion.name !== currentQuestion.name) {
-      nextMessages.push({
-        text: question,
-        choices,
-        fileExtensions,
-        type,
-        createdAt: createdAt,
-        fromUser: false,
-      });
-    }
-    if (updatedInput.value && ["text", "number"].includes(type)) {
-      nextMessages.push({
-        text: updatedInput.value as string,
-        choices,
-        fileExtensions,
-        type,
-        createdAt: createdAt,
-        fromUser: true,
-      });
-    }
-
-    const nextQuestion = getNextQuestion(currentAnswers);
-
-    if (!nextQuestion) {
-      nextMessages.push({
-        text: "Great, we can start template",
-        type: "text",
-        createdAt: createdAt,
-        fromUser: false,
-      });
-    } else if (targetQuestion.name !== nextQuestion.name || !currentQuestion) {
-      nextMessages.push({
-        text: nextQuestion.question,
-        choices: nextQuestion.choices,
-        fileExtensions: nextQuestion.fileExtensions,
-        type: nextQuestion.type,
-        createdAt: createdAt,
-        fromUser: false,
-      });
-    }
-
-    setMessages(prevMessages => prevMessages.concat(nextMessages));
-  };
-
   useEffect(() => {
     const [firstAnsweredInput] = currentAnsweredInputs;
 
@@ -332,7 +279,6 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
       }
 
       const filteredAnswers = prevAnswers.filter(answer => Boolean(answer.answer));
-      handleSyncForm(filteredAnswers, firstAnsweredInput, targetQuestion);
 
       return filteredAnswers;
     });
@@ -440,7 +386,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
     if (isText) {
       const newUserMessage: IMessage = {
         text: value,
-        type,
+        type: "text",
         createdAt: createdAt,
         fromUser: true,
       };
@@ -497,7 +443,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
           text: nextQuestion.question,
           choices: nextQuestion.choices,
           fileExtensions: nextQuestion.fileExtensions,
-          type: nextQuestion.type,
+          type: "text",
           createdAt: createdAt,
           fromUser: false,
         };
@@ -518,7 +464,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
         fromUser: false,
         choices,
         fileExtensions,
-        type,
+        type: "text",
       };
     }
     setMessages(prevMessages => prevMessages.concat(nextBotMessage));
@@ -734,7 +680,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
       text: invalidTxt + "Let's give it another go. " + askedQuestion.question,
       choices: askedQuestion.choices,
       fileExtensions: askedQuestion.fileExtensions,
-      type: askedQuestion.type,
+      type: "text",
       createdAt: createdAt,
       fromUser: false,
     };
@@ -775,6 +721,8 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
         gap={2}
       >
         <ChatInterface
+          questions={templateQuestions}
+          answers={answers}
           template={template}
           messages={messages}
           onChange={handleUserInput}
@@ -789,7 +737,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
           <ChatInput
             answers={answers}
             onAnswerClear={handleAnswerClear}
-            onSubmit={handleUserInput}
+            onSubmit={validateVary}
             disabled={disableChat || isValidatingAnswer || disableChatInput}
             disabledTags={disableChat || isValidatingAnswer || disableChatInput || isGenerating}
             onVary={() => setVaryOpen(true)}

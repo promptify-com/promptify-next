@@ -104,6 +104,7 @@ export interface TemplateQuestions {
 export interface UpdatedQuestionTemplate {
   type: InputType;
   name: string;
+  fullName: string;
   required: boolean;
   question: string;
   choices?: string[];

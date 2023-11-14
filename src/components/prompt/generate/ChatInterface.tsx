@@ -1,19 +1,29 @@
 import React, { useEffect, useRef, Dispatch, SetStateAction } from "react";
-import { Divider, Grid, Stack } from "@mui/material";
+import { Box, Divider, Stack } from "@mui/material";
 
 import { Message } from "./Message";
-import { IMessage } from "@/common/types/chat";
+import { IAnswer, IMessage } from "@/common/types/chat";
 import { TemplateDetailsCard } from "./TemplateDetailsCard";
-import { Templates } from "@/core/api/dto/templates";
+import { Templates, UpdatedQuestionTemplate } from "@/core/api/dto/templates";
 import { useAppSelector } from "@/hooks/useStore";
+import { InputsForm } from "./Inputsform";
 interface Props {
   template: Templates;
   messages: IMessage[];
   onChange: (value: string | File) => void;
   setIsSimulaitonStreaming: Dispatch<SetStateAction<boolean>>;
+  questions: UpdatedQuestionTemplate[];
+  answers: IAnswer[];
 }
 
-export const ChatInterface = ({ template, messages, onChange, setIsSimulaitonStreaming }: Props) => {
+export const ChatInterface = ({
+  template,
+  messages,
+  onChange,
+  setIsSimulaitonStreaming,
+  questions,
+  answers,
+}: Props) => {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const isFullScreen = useAppSelector(state => state.template.isChatFullScreen);
 
@@ -26,12 +36,6 @@ export const ChatInterface = ({ template, messages, onChange, setIsSimulaitonStr
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
-
-  const isNotLastMessage = (message: IMessage) => {
-    return message.type === "choices" && message !== messages[messages.length - 1];
-  };
-
-  const lastMessage = messages[messages.length - 1];
 
   return (
     <Stack
@@ -74,16 +78,26 @@ export const ChatInterface = ({ template, messages, onChange, setIsSimulaitonStr
           New messages
         </Divider>
         {messages.map((msg, idx) => (
-          <Message
-            key={idx}
-            hideHeader={idx === 1}
-            message={msg}
-            onChangeValue={onChange}
-            disabledChoices={isNotLastMessage(msg)}
-            setIsSimulaitonStreaming={setIsSimulaitonStreaming}
-            onScrollToBottom={scrollToBottom}
-            lastMessage={lastMessage}
-          />
+          <>
+            <Message
+              key={idx}
+              message={msg}
+              setIsSimulaitonStreaming={setIsSimulaitonStreaming}
+              onScrollToBottom={scrollToBottom}
+            />
+            {msg.type === "form" && (
+              <Box
+                ml={{ xs: 6.5, md: 7 }}
+                mb={2}
+              >
+                <InputsForm
+                  questions={questions}
+                  answers={answers}
+                  onChange={(val, name, type) => console.log(val, name, type)}
+                />
+              </Box>
+            )}
+          </>
         ))}
       </Stack>
     </Stack>
