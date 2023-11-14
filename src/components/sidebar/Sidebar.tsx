@@ -45,11 +45,12 @@ function Sidebar() {
   ];
 
   if (isTemplatePage) {
+    const slug = pathname.split("/")[2];
     navItems = [
       ...navItems,
       {
         name: "Prompt Builder",
-        href: "/prompt-builder/personal-performance-acc237c8?viewport=desktop",
+        href: `/prompt-builder/${slug}`,
         icon: <Inventory2Rounded />,
         active: pathname.includes("/prompt-builder"),
         external: true,
@@ -60,7 +61,7 @@ function Sidebar() {
         href: "#",
         icon: <ExtensionRounded />,
         active: false,
-        external: true,
+        external: false,
         reload: false,
       },
     ];
