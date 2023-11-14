@@ -64,7 +64,7 @@ export async function getServerSideProps({
 }) {
   res.setHeader("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=60");
 
-  const categories = await getCategories();
+  const categories = await getCategories("other");
 
   return {
     props: {
