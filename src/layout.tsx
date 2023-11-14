@@ -2,17 +2,17 @@ import { ReactNode } from "react";
 import { Box, Grid } from "@mui/material";
 
 import { Header } from "@/components/Header";
-import { DefaultSidebar } from "@/components/SideBar";
 import { theme } from "@/theme";
 import { useAppSelector } from "./hooks/useStore";
+import Sidebar from "./components/sidebar/Sidebar";
 
 export const Layout = ({ children }: { children: ReactNode }) => {
   const defaultSidebarOpen = useAppSelector(state => state.sidebar.defaultSidebarOpen);
 
   return (
     <>
-      <Box sx={{ bgcolor: "surface.3" }}>
-        <DefaultSidebar />
+      <Box sx={{ bgcolor: "surface.1" }}>
+        <Sidebar />
         <Box
           sx={{
             minHeight: "100svh",
@@ -25,7 +25,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
         >
           <Header transparent />
           <Box
-            bgcolor={{ xs: "surface.1", md: "surface.3" }}
+            bgcolor={{ xs: "surface.1", md: "surface.1" }}
             minHeight={{
               xs: `calc(100svh - ${theme.custom.headerHeight.xs})`,
               md: `calc(100svh - ${theme.custom.headerHeight.md})`,

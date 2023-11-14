@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { usePublishTemplateMutation } from "@/core/api/templates";
 import { Alert, Box, Snackbar, Stack, SwipeableDrawer, Typography } from "@mui/material";
-import { DefaultSidebar } from "@/components/SideBar";
 
 import { setOpenDefaultSidebar } from "@/core/store/sidebarSlice";
 import { Header } from "@/components/builder/Header";
@@ -21,6 +20,7 @@ import { IEditTemplate } from "@/common/types/editTemplate";
 import { BUILDER_TYPE } from "@/common/constants";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { handleEngines, handlePrompts } from "@/core/store/builderSlice";
+import Sidebar from "@/components/sidebar/Sidebar";
 
 interface PromptBuilderProps {
   templateData: Templates;
@@ -164,11 +164,11 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
         minHeight: "100svh",
       }}
     >
-      <DefaultSidebar fullHeight />
+      <Sidebar />
       <BuilderSidebar />
       <Box
         sx={{
-          ml: defaultSidebarOpen ? "299px" : "86px",
+          ml: "86px",
           mr: builderSidebarOpen ? "352px" : "0px",
         }}
       >
