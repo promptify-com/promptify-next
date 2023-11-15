@@ -8,6 +8,7 @@ export interface TemplatesProps {
   likes: number;
   executionData: string;
   isGenerating: boolean;
+  isChatFullScreen: boolean;
   answeredInputs: AnsweredInputType[];
 }
 
@@ -19,6 +20,7 @@ const initialState: TemplatesProps = {
   likes: 0,
   executionData: "[]",
   isGenerating: false,
+  isChatFullScreen: true,
   answeredInputs: [],
 };
 
@@ -43,6 +45,9 @@ export const templatesSlice = createSlice({
     setGeneratingStatus: (state, action: PayloadAction<boolean>) => {
       state.isGenerating = action.payload;
     },
+    setChatFullScreenStatus: (state, action: PayloadAction<boolean>) => {
+      state.isChatFullScreen = action.payload;
+    },
     updateAnsweredInput: (state, action: PayloadAction<AnsweredInputType[]>) => {
       state.answeredInputs = action.payload;
     },
@@ -54,6 +59,7 @@ export const {
   updateTemplateData,
   updateExecutionData,
   setGeneratingStatus,
+  setChatFullScreenStatus,
   updateAnsweredInput,
 } = templatesSlice.actions;
 

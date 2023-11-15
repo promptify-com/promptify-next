@@ -1,9 +1,7 @@
 import React, { useState, useMemo, memo, useEffect, useRef } from "react";
-import { Accordion, AccordionDetails, AccordionSummary, Grid, Typography, Button, Stack } from "@mui/material";
-import { Block, ExpandLess, ExpandMore } from "@mui/icons-material";
+import { Typography, Button, Stack, Box } from "@mui/material";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { useRouter } from "next/router";
-
 import { ResPrompt } from "@/core/api/dto/prompts";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { useAppSelector, useAppDispatch } from "@/hooks/useStore";
@@ -14,16 +12,14 @@ import { ChatInterface } from "./ChatInterface";
 import { ChatInput } from "./ChatInput";
 import { TemplateQuestions, Templates, UpdatedQuestionTemplate } from "@/core/api/dto/templates";
 import { getInputsFromString } from "@/common/helpers/getInputsFromString";
+import { IPromptInput, PromptLiveResponse, AnsweredInputType } from "@/common/types/prompt";
 import {
-  IPromptInput,
-  PromptLiveResponse,
-  InputType,
-  AnsweredInputType,
-  UploadFileResponse,
-} from "@/common/types/prompt";
-import { setGeneratingStatus, updateAnsweredInput, updateExecutionData } from "@/core/store/templatesSlice";
+  setChatFullScreenStatus,
+  setGeneratingStatus,
+  updateAnsweredInput,
+  updateExecutionData,
+} from "@/core/store/templatesSlice";
 import { AnswerValidatorResponse, IAnswer, IMessage } from "@/common/types/chat";
-import { isDesktopViewPort } from "@/common/helpers";
 import { useStopExecutionMutation } from "@/core/api/executions";
 import VaryModal from "./VaryModal";
 import { vary } from "@/common/helpers/varyValidator";
@@ -37,10 +33,7 @@ interface Props {
   template: Templates;
 }
 
-const BottomTabsMobileHeight = "240px";
-
 const ChatMode: React.FC<Props> = ({ onError, template }) => {
-  const isDesktopView = isDesktopViewPort();
   const token = useToken();
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -48,10 +41,8 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const [stopExecution] = useStopExecutionMutation();
   const [uploadFile] = useUploadFileMutation();
-
   const { convertedTimestamp } = useTimestampConverter();
   const createdAt = convertedTimestamp(new Date());
-  const [chatExpanded, setChatExpanded] = useState(true);
   const [showGenerateButton, setShowGenerateButton] = useState(false);
   const [isValidatingAnswer, setIsValidatingAnswer] = useState(false);
   const [generatingResponse, setGeneratingResponse] = useState<PromptLiveResponse>({
@@ -85,32 +76,39 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
     const welcomeMessage: IMessage[] = [];
 
     if (!startOver) {
-      welcomeMessage.push({
-        text: `Hi, ${
-          currentUser?.first_name ?? currentUser?.username ?? "There"
-        }. Welcome. I can help you with the ${template?.title} template.`,
-        type: "text" as InputType,
-        createdAt: createdAt,
-        fromUser: false,
-      });
+      welcomeMessage.push(
+        {
+          text: `Hi, ${
+            currentUser?.first_name ?? currentUser?.username ?? "There"
+          }! Ready to work on ${template?.title} ?`,
+          type: "text",
+          createdAt: createdAt,
+          fromUser: false,
+        },
+        {
+          text: "This is a list of information we need to execute this template:",
+          type: "form",
+          createdAt: createdAt,
+          fromUser: false,
+          noHeader: true,
+        },
+      );
     }
 
     if (questions.length > 0) {
-      const firstQuestion = questions[0];
-      const { question, type, choices, fileExtensions } = firstQuestion;
-      const firstQuestionMessage: IMessage = {
-        text: question,
-        type,
-        choices,
-        fileExtensions,
+      let allQuestions = questions.map(_q => _q.question);
+      const allQuestionsMessage: IMessage = {
+        text: allQuestions.join(" "),
+        type: "text",
         createdAt: createdAt,
         fromUser: false,
+        noHeader: true,
       };
 
       if (!!welcomeMessage.length) {
-        addToQueuedMessages([firstQuestionMessage]);
+        addToQueuedMessages([allQuestionsMessage]);
       } else {
-        welcomeMessage.push(firstQuestionMessage);
+        welcomeMessage.push(allQuestionsMessage);
       }
     }
 
@@ -168,10 +166,11 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
         const key = Object.keys(question)[0];
 
         if (inputs[index]) {
-          const { type, required, choices, fileExtensions, name, prompt } = inputs[index];
+          const { type, required, choices, fileExtensions, name, fullName, prompt } = inputs[index];
           const updatedQuestion: UpdatedQuestionTemplate = {
             ...question[key],
             name,
+            fullName,
             required,
             type,
             choices,
@@ -188,12 +187,6 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
 
       return [updatedQuestions, inputs, promptHasContent];
     }, [template]);
-
-  useEffect(() => {
-    if (isGenerating && chatExpanded) {
-      setChatExpanded(false);
-    }
-  }, [isGenerating]);
 
   useEffect(() => {
     dispatchNewExecutionData(answers, _inputs);
@@ -260,58 +253,6 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
     return remainingQuestion;
   };
 
-  const handleSyncForm = (
-    currentAnswers: IAnswer[],
-    updatedInput: AnsweredInputType,
-    targetQuestion: UpdatedQuestionTemplate,
-  ) => {
-    const { question, choices, fileExtensions, type } = targetQuestion;
-    const nextMessages: IMessage[] = [];
-
-    if (currentQuestion && targetQuestion.name !== currentQuestion.name) {
-      nextMessages.push({
-        text: question,
-        choices,
-        fileExtensions,
-        type,
-        createdAt: createdAt,
-        fromUser: false,
-      });
-    }
-    if (updatedInput.value && ["text", "number"].includes(type)) {
-      nextMessages.push({
-        text: updatedInput.value as string,
-        choices,
-        fileExtensions,
-        type,
-        createdAt: createdAt,
-        fromUser: true,
-      });
-    }
-
-    const nextQuestion = getNextQuestion(currentAnswers);
-
-    if (!nextQuestion) {
-      nextMessages.push({
-        text: "Great, we can start template",
-        type: "text",
-        createdAt: createdAt,
-        fromUser: false,
-      });
-    } else if (targetQuestion.name !== nextQuestion.name || !currentQuestion) {
-      nextMessages.push({
-        text: nextQuestion.question,
-        choices: nextQuestion.choices,
-        fileExtensions: nextQuestion.fileExtensions,
-        type: nextQuestion.type,
-        createdAt: createdAt,
-        fromUser: false,
-      });
-    }
-
-    setMessages(prevMessages => prevMessages.concat(nextMessages));
-  };
-
   useEffect(() => {
     const [firstAnsweredInput] = currentAnsweredInputs;
 
@@ -338,7 +279,6 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
       }
 
       const filteredAnswers = prevAnswers.filter(answer => Boolean(answer.answer));
-      handleSyncForm(filteredAnswers, firstAnsweredInput, targetQuestion);
 
       return filteredAnswers;
     });
@@ -346,27 +286,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
 
   const canShowGenerateButton = Boolean(templateQuestions.length && !templateQuestions[0].required);
 
-  const currentQuestion = standingQuestions.length
-    ? standingQuestions[standingQuestions.length - 1]
-    : (getNextQuestion(answers) as UpdatedQuestionTemplate);
-
-  const disableChat =
-    Boolean(!templateQuestions.length && !_inputs.length && template?.prompts.length) ||
-    ["choices", "code", "file"].includes(currentQuestion?.type) ||
-    !currentQuestion;
-
   const disabledButton = _inputs.length !== 0 || promptHasContent;
-
-  const validateAnswer = async (value: string) => {
-    if (currentQuestion) {
-      const payload = {
-        question: currentQuestion.question,
-        answer: value,
-      };
-
-      return await generate({ token, payload });
-    }
-  };
 
   const validateVary = async (variation: string) => {
     if (variation) {
@@ -433,43 +353,16 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
     dispatch(updateAnsweredInput([newValue]));
   };
 
-  const handleUserInput = async (value: string | File) => {
-    const isFile = value instanceof File;
-    if (!currentQuestion || isSimulaitonStreaming || (!isFile && value.trim() === "")) {
+  const handleUserInput = async (value: string | File, currentQuestion: UpdatedQuestionTemplate) => {
+    if (isSimulaitonStreaming) {
       return;
     }
 
     const { name: inputName, required, type, question, prompt, choices, fileExtensions } = currentQuestion;
 
-    const isText = !isFile && !["choices", "code", "file"].includes(type);
+    const _answers = [...answers.filter(answer => answer.inputName !== inputName)];
 
-    if (isText) {
-      const newUserMessage: IMessage = {
-        text: value,
-        type,
-        createdAt: createdAt,
-        fromUser: true,
-      };
-
-      setMessages(prevMessages => prevMessages.concat(newUserMessage));
-    }
-
-    let response: AnswerValidatorResponse | undefined | string = { approved: true, answer: "", feedback: "" };
-
-    if (isText && required) {
-      setIsValidatingAnswer(true);
-
-      response = await validateAnswer(value);
-      setIsValidatingAnswer(false);
-
-      if (typeof response === "string") {
-        onError("Oopps, something happened. Please try again!");
-        return;
-      }
-    }
-    let nextBotMessage: IMessage;
-
-    if (response?.approved) {
+    if (!(!(value instanceof File) && value.trim() === "")) {
       const newAnswer: IAnswer = {
         question,
         required,
@@ -477,57 +370,20 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
         prompt,
         answer: value,
       };
-      const newAnswers: IAnswer[] = answers.concat(newAnswer);
-
-      setAnswers(newAnswers);
-      dispatchNewExecutionData(newAnswers, _inputs);
-
-      if (standingQuestions.length) {
-        standingQuestions.pop();
-        setStandingQuestions(standingQuestions);
-      }
-
-      const nextQuestion = standingQuestions.length
-        ? standingQuestions[standingQuestions.length - 1]
-        : getNextQuestion(newAnswers);
-
-      if (!nextQuestion) {
-        nextBotMessage = {
-          text: "Great, we can start template",
-          type: "text",
-          createdAt: createdAt,
-          fromUser: false,
-        };
-      } else {
-        const nextMessage: IMessage = {
-          text: nextQuestion.question,
-          choices: nextQuestion.choices,
-          fileExtensions: nextQuestion.fileExtensions,
-          type: nextQuestion.type,
-          createdAt: createdAt,
-          fromUser: false,
-        };
-
-        if (response.feedback) {
-          nextBotMessage = { ...nextMessage, text: response.feedback, type: "text" };
-
-          addToQueuedMessages(queuedMessages.concat(nextMessage));
-        } else {
-          nextBotMessage = nextMessage;
-        }
-      }
-      modifyStoredInputValue(newAnswer);
-    } else {
-      nextBotMessage = {
-        text: response?.feedback!,
-        createdAt: createdAt,
-        fromUser: false,
-        choices,
-        fileExtensions,
-        type,
-      };
+      _answers.push(newAnswer);
     }
-    setMessages(prevMessages => prevMessages.concat(nextBotMessage));
+
+    setAnswers(_answers);
+    dispatchNewExecutionData(_answers, _inputs);
+
+    // const newUserMessage: IMessage = {
+    //   text: value,
+    //   type: "text",
+    //   createdAt: createdAt,
+    //   fromUser: true,
+    // };
+
+    // setMessages(prevMessages => prevMessages.concat(newUserMessage));
   };
 
   const validateAndUploadFiles = () =>
@@ -582,6 +438,8 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
     });
 
     uploadedFiles.current.clear();
+
+    dispatch(setChatFullScreenStatus(false));
 
     generateExecution(promptsData);
   };
@@ -706,9 +564,6 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
 
   const abortConnection = () => {
     abortController.current.abort();
-    dispatch(setGeneratedExecution(null));
-    dispatch(setGeneratingStatus(false));
-
     if (newExecutionId) {
       stopExecution(newExecutionId);
     }
@@ -741,7 +596,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
       text: invalidTxt + "Let's give it another go. " + askedQuestion.question,
       choices: askedQuestion.choices,
       fileExtensions: askedQuestion.fileExtensions,
-      type: askedQuestion.type,
+      type: "text",
       createdAt: createdAt,
       fromUser: false,
     };
@@ -755,170 +610,103 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
   };
 
   return (
-    <Grid
+    <Box
       width={"100%"}
-      overflow={"hidden"}
-      borderRadius={"16px"}
-      {...(isDesktopView && { border: "1px solid rgba(225, 226, 236, .5)" })}
+      height={"100%"}
     >
-      <Accordion
-        expanded={chatExpanded}
-        onChange={() => setChatExpanded(prev => !prev)}
+      <Stack
+        direction={"row"}
+        alignItems={"center"}
         sx={{
-          boxShadow: "none",
           bgcolor: "surface.1",
-          borderRadius: "16px",
-          overflow: "hidden",
-          ".MuiAccordionDetails-root": {
-            p: "0",
-          },
-          ".MuiAccordionSummary-root": {
-            minHeight: "48px",
-            ":hover": {
-              opacity: 0.8,
-              svg: {
-                color: "primary.main",
-              },
-            },
-          },
-          ".MuiAccordionSummary-content": {
-            m: 0,
-          },
+          p: "24px 8px 24px 16px",
         }}
       >
-        <AccordionSummary sx={{ display: { xs: "none", md: "flex" } }}>
-          <Grid
-            display={"flex"}
-            alignItems={"center"}
-            gap={"16px"}
-            width={"100%"}
-            justifyContent={"space-between"}
-          >
-            <Grid
-              display={"flex"}
-              alignItems={"center"}
-              gap={"16px"}
-            >
-              {!chatExpanded ? <ExpandLess sx={{ fontSize: 16 }} /> : <ExpandMore sx={{ fontSize: 16 }} />}
-
-              <Typography
-                px={"8px"}
-                sx={{
-                  fontSize: 13,
-                  lineHeight: "22px",
-                  letterSpacing: "0.46px",
-                  color: "onSurface",
-                  opacity: 0.8,
-                }}
-              >
-                Chat with Promptify
-              </Typography>
-            </Grid>
-            {isGenerating && (
-              <Button
-                variant="text"
-                startIcon={<Block />}
-                sx={{
-                  border: "1px solid",
-                  height: "22px",
-                  p: "15px",
-                  fontSize: 13,
-                  fontWeight: 500,
-                  ":hover": {
-                    bgcolor: "action.hover",
-                  },
-                }}
-                onClick={e => {
-                  e.stopPropagation();
-                  abortConnection();
-                }}
-              >
-                Abort
-              </Button>
-            )}
-          </Grid>
-        </AccordionSummary>
-        <AccordionDetails
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "flex-start",
-            gap: "8px",
-            maxHeight: { xs: "70vh", md: "35svh" },
-            ...(!isDesktopView && { minHeight: { xs: `calc(100vh - ${BottomTabsMobileHeight} )` } }),
-            borderTop: { xs: "none", md: "2px solid #ECECF4" },
-          }}
+        <Typography
+          fontSize={12}
+          fontWeight={500}
+          letterSpacing={2}
+          textTransform={"uppercase"}
         >
-          <ChatInterface
-            messages={messages}
-            onChange={handleUserInput}
-            setIsSimulaitonStreaming={setIsSimulaitonStreaming}
+          Chat With Promptify
+        </Typography>
+      </Stack>
+      <Stack
+        justifyContent={"flex-end"}
+        height={"calc(100% - 66px)"}
+        gap={2}
+      >
+        <ChatInterface
+          questions={templateQuestions}
+          answers={answers}
+          template={template}
+          messages={messages}
+          onChange={handleUserInput}
+          setIsSimulaitonStreaming={setIsSimulaitonStreaming}
+        />
+        <VaryModal
+          open={varyOpen}
+          setOpen={setVaryOpen}
+          onSubmit={variationTxt => validateVary(variationTxt)}
+        />
+        {currentUser?.id ? (
+          <ChatInput
+            onSubmit={validateVary}
+            disabled={isValidatingAnswer || disableChatInput}
+            onClear={() => setAnswers([])}
+            showClear={answers.length > 0}
+            showGenerate={Boolean((showGenerateButton || canShowGenerateButton) && currentUser?.id)}
+            onGenerate={generateExecutionHandler}
+            isValidating={isValidatingAnswer}
+            disabledButton={!disabledButton}
+            abortGenerating={abortConnection}
           />
-          <VaryModal
-            open={varyOpen}
-            setOpen={setVaryOpen}
-            onSubmit={variationTxt => validateVary(variationTxt)}
-          />
-          {currentUser?.id ? (
-            <ChatInput
-              answers={answers}
-              onAnswerClear={handleAnswerClear}
-              onSubmit={handleUserInput}
-              disabled={disableChat || isValidatingAnswer || disableChatInput}
-              disabledTags={disableChat || isValidatingAnswer || disableChatInput || isGenerating}
-              onVary={() => setVaryOpen(true)}
-              showGenerate={Boolean((showGenerateButton || canShowGenerateButton) && currentUser?.id)}
-              onGenerate={generateExecutionHandler}
-              isValidating={isValidatingAnswer}
-              disabledButton={!disabledButton}
-            />
-          ) : (
-            <Stack
-              direction={"column"}
-              alignItems={"center"}
-              justifyContent={"center"}
-              gap={1}
-              width={"100%"}
-              p={"16px 8px 16px 16px"}
+        ) : (
+          <Stack
+            direction={"column"}
+            alignItems={"center"}
+            justifyContent={"center"}
+            gap={1}
+            width={"100%"}
+            p={"16px 8px 16px 16px"}
+          >
+            <Button
+              onClick={() => {
+                router.push("/signin");
+              }}
+              variant={"contained"}
+              startIcon={
+                <LogoApp
+                  width={18}
+                  color="white"
+                />
+              }
+              sx={{
+                flex: 1,
+                p: "10px 25px",
+                fontWeight: 500,
+                borderColor: "primary.main",
+                borderRadius: "999px",
+                bgcolor: "primary.main",
+                color: "onPrimary",
+                whiteSpace: "pre-line",
+                ":hover": {
+                  bgcolor: "surface.1",
+                  color: "primary.main",
+                },
+              }}
             >
-              <Button
-                onClick={() => {
-                  router.push("/signin");
-                }}
-                variant={"contained"}
-                startIcon={
-                  <LogoApp
-                    width={18}
-                    color="white"
-                  />
-                }
-                sx={{
-                  flex: 1,
-                  p: "10px 25px",
-                  fontWeight: 500,
-                  borderColor: "primary.main",
-                  borderRadius: "999px",
-                  bgcolor: "primary.main",
-                  color: "onPrimary",
-                  whiteSpace: "pre-line",
-                  ":hover": {
-                    bgcolor: "surface.1",
-                    color: "primary.main",
-                  },
-                }}
+              <Typography
+                ml={2}
+                color={"inherit"}
               >
-                <Typography
-                  ml={2}
-                  color={"inherit"}
-                >
-                  Sign in or Create an account
-                </Typography>
-              </Button>
-            </Stack>
-          )}
-        </AccordionDetails>
-      </Accordion>
-    </Grid>
+                Sign in or Create an account
+              </Typography>
+            </Button>
+          </Stack>
+        )}
+      </Stack>
+    </Box>
   );
 };
 

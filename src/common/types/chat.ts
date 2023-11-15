@@ -1,5 +1,3 @@
-import { InputType } from "./prompt";
-
 export interface AnswerValidatorResponse {
   answer: string;
   feedback: string;
@@ -10,10 +8,11 @@ export interface IMessage {
   text: string;
   createdAt: string;
   fromUser: boolean;
-  type: InputType;
+  type: "text" | "form";
   choices?: string[] | null;
   fileExtensions?: string[];
   startOver?: boolean;
+  noHeader?: boolean;
 }
 
 export interface IAnswer {

@@ -1,22 +1,15 @@
-import React, { useState, memo, useEffect, Dispatch, SetStateAction } from "react";
-import { Avatar, Button, Grid, Stack, Typography } from "@mui/material";
+import React, { memo, useEffect, Dispatch, SetStateAction } from "react";
+import { Avatar, Box, Grid, Stack, Typography } from "@mui/material";
 import LogoAsAvatar from "@/assets/icons/LogoAvatar";
 import { useAppSelector } from "@/hooks/useStore";
-import { ToggleButtonsGroup } from "@/components/design-system/ToggleButtonsGroup";
-import CodeFieldModal from "@/components/modals/CodeFieldModal";
 import { IMessage } from "@/common/types/chat";
 import useTextSimulationStreaming from "@/hooks/useTextSimulationStreaming";
-import { FileType } from "@/common/types/prompt";
-import { getFileTypeExtensionsAsString } from "@/common/helpers/uploadFileHelper";
+import { timeAgo } from "@/common/helpers/timeManipulation";
 
 interface MessageBlockProps {
   message: IMessage;
-  hideHeader?: boolean;
-  onChangeValue: (value: string | File) => void;
-  disabledChoices: boolean;
   setIsSimulaitonStreaming: Dispatch<SetStateAction<boolean>>;
   onScrollToBottom: () => void;
-  lastMessage: IMessage;
 }
 
 interface MessageContentProps {
@@ -44,43 +37,19 @@ const MessageContent = memo(
   },
 );
 
-export const Message = ({
-  message,
-  hideHeader,
-  onChangeValue,
-  disabledChoices,
-  setIsSimulaitonStreaming,
-  onScrollToBottom,
-  lastMessage,
-}: MessageBlockProps) => {
-  const { fromUser, type, text, createdAt, choices, fileExtensions } = message;
+export const Message = ({ message, setIsSimulaitonStreaming, onScrollToBottom }: MessageBlockProps) => {
+  const { fromUser, text, createdAt } = message;
   const currentUser = useAppSelector(state => state.user.currentUser);
 
   const name = fromUser ? currentUser?.first_name ?? currentUser?.username : "Promptify";
 
-  const [selectedValue, setSelectedValue] = useState("");
-  const [codeFieldPopup, setCodeFieldPopup] = useState(false);
-
-  const handleChange = (value: string) => {
-    setSelectedValue(value);
-    onChangeValue(value);
-  };
-
-  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const file = e.target.files[0];
-      setSelectedValue(file.name);
-      onChangeValue(file);
-    }
-  };
-
   return (
     <Grid
-      p={"16px"}
+      py={"16px"}
       display={"flex"}
       gap={"16px"}
     >
-      {!hideHeader && (
+      {!message.noHeader && (
         <>
           {message.fromUser && currentUser ? (
             <Avatar
@@ -100,13 +69,13 @@ export const Message = ({
 
       <Grid
         flex={1}
-        ml={{ xs: hideHeader ? 6.5 : 0, md: hideHeader ? 7 : 0 }}
-        mt={{ xs: hideHeader ? -2 : 0, md: hideHeader ? -2 : 0 }}
+        ml={{ xs: message.noHeader ? 6.5 : 0, md: message.noHeader ? 7 : 0 }}
+        mt={{ xs: message.noHeader ? -1.5 : 0, md: message.noHeader ? -1.5 : 0 }}
         display={"flex"}
         flexDirection={"column"}
         gap={"8px"}
       >
-        {!hideHeader && (
+        {!message.noHeader && (
           <Grid
             display={"flex"}
             alignItems={"center"}
@@ -125,7 +94,7 @@ export const Message = ({
                 opacity: 0.5,
               }}
             >
-              {createdAt}
+              {timeAgo(createdAt)}
             </Typography>
           </Grid>
         )}
@@ -140,6 +109,7 @@ export const Message = ({
             fontSize={15}
             lineHeight={"24px"}
             letterSpacing={"0.17px"}
+            color={"onSurface"}
           >
             <MessageContent
               content={text}
@@ -148,62 +118,6 @@ export const Message = ({
               onStreamingFinished={onScrollToBottom}
             />
           </Typography>
-          {type === "code" && (
-            <Button
-              onClick={() => setCodeFieldPopup(true)}
-              variant="outlined"
-              disabled={lastMessage.type !== "code"}
-              size="small"
-              sx={{
-                height: 30,
-              }}
-            >
-              {selectedValue || lastMessage.type !== "code" ? "Code uploaded" : "Upload your code"}
-            </Button>
-          )}
-          {type === "choices" && choices && (
-            <ToggleButtonsGroup
-              variant="horizontal"
-              items={choices}
-              value={selectedValue}
-              onChange={handleChange}
-              disabled={disabledChoices || selectedValue !== ""}
-            />
-          )}
-          {type === "file" && (
-            <Stack
-              direction={"row"}
-              alignItems={"center"}
-              gap={0.5}
-            >
-              <Button
-                component="label"
-                variant="outlined"
-                disabled={lastMessage.type !== "file"}
-                size="small"
-                sx={{
-                  height: 30,
-                }}
-              >
-                {selectedValue || "Upload file"}
-                <input
-                  hidden
-                  accept={getFileTypeExtensionsAsString(fileExtensions as FileType[])}
-                  type="file"
-                  onChange={handleUpload}
-                />
-              </Button>
-            </Stack>
-          )}
-
-          {codeFieldPopup && (
-            <CodeFieldModal
-              open
-              setOpen={setCodeFieldPopup}
-              value={selectedValue}
-              onSubmit={handleChange}
-            />
-          )}
         </Grid>
       </Grid>
     </Grid>

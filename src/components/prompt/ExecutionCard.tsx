@@ -2,22 +2,22 @@ import React, { useEffect, useRef, useState } from "react";
 import { Box, Stack, Tooltip, Typography } from "@mui/material";
 import { Subtitle } from "@/components/blocks";
 import { Error } from "@mui/icons-material";
-import { markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
+import { isImageOutput, markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
 import { DisplayPrompt, PromptLiveResponse } from "@/common/types/prompt";
 import { Prompts } from "@/core/api/dto/prompts";
 import { TemplatesExecutions } from "@/core/api/dto/templates";
 import { useSelector } from "react-redux";
 import { RootState } from "@/core/store";
+import { useAppSelector } from "@/hooks/useStore";
 
 interface Props {
   execution: PromptLiveResponse | TemplatesExecutions | null;
   promptsData: Prompts[];
-  search: string;
-  sparkHashQueryParam: string | null;
 }
 
-export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, sparkHashQueryParam, search }) => {
+export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
   const executionPrompts = execution && "data" in execution ? execution.data : execution?.prompt_executions;
+  const sparkHashQueryParam = useAppSelector(state => state.executions.sparkHashQueryParam);
   const isGenerating = useSelector((state: RootState) => state.template.isGenerating);
   const [sortedPrompts, setSortedPrompts] = useState<DisplayPrompt[]>([]);
 
@@ -55,13 +55,6 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, sparkHa
   }, [executionPrompts]);
 
   const scrollRef = useRef<HTMLDivElement>(null);
-
-  const isImageOutput = (output: string): boolean => {
-    const IsImage =
-      output.endsWith(".png") || output.endsWith(".jpg") || output.endsWith(".jpeg") || output.endsWith(".webp");
-
-    return IsImage;
-  };
 
   const executionError = (error: string | undefined) => {
     return (

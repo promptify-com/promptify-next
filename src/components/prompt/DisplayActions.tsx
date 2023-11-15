@@ -2,155 +2,63 @@ import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
-  ClickAwayListener,
-  Collapse,
-  Grow,
+  CircularProgress,
+  Divider,
   IconButton,
-  InputBase,
-  Paper,
-  Popper,
   Stack,
   Tooltip,
   Typography,
-  alpha,
   useTheme,
 } from "@mui/material";
-import { Search as SearchIcon, ArrowDropUp, ArrowDropDown, Close, InfoOutlined } from "@mui/icons-material";
-import { SubjectIcon } from "@/assets/icons/SubjectIcon";
-import { TemplatesExecutions } from "@/core/api/dto/templates";
-import { ExecutionsTabs } from "./ExecutionsTabs";
-import SavedSpark from "@/assets/icons/SavedSpark";
-import DraftSpark from "@/assets/icons/DraftSpark";
-import ShareIcon from "@/assets/icons/ShareIcon";
+import { Bookmark, BookmarkBorder, Close, DeleteOutline, Edit, ShareOutlined } from "@mui/icons-material";
+import { ExecutionTemplatePopupType, TemplatesExecutions } from "@/core/api/dto/templates";
 import { useAppSelector } from "@/hooks/useStore";
-import ThumbsFeedback from "./ThumbsFeedback";
+import { useExecutionFavoriteMutation } from "@/core/api/executions";
+import useTruncate from "@/hooks/useTruncate";
+import { SparkSaveDeletePopup } from "@/components/dialog/SparkSaveDeletePopup";
+import { LogoApp } from "@/assets/icons/LogoApp";
+import { theme } from "@/theme";
 
 interface Props {
-  executions: TemplatesExecutions[];
   selectedExecution: TemplatesExecutions | null;
-  setSelectedExecution: (exec: TemplatesExecutions) => void;
-  showSearchBar?: boolean;
-  onSearch?: (text: string) => void;
   onOpenExport: () => void;
-  sparkHashQueryParam: string | null;
+  close: () => void;
 }
 
-export const DisplayActions: React.FC<Props> = ({
-  executions,
-  selectedExecution,
-  setSelectedExecution,
-  showSearchBar,
-  onSearch = () => {},
-  onOpenExport,
-  sparkHashQueryParam,
-}) => {
+export const DisplayActions: React.FC<Props> = ({ selectedExecution, onOpenExport, close }) => {
   const { palette } = useTheme();
+  const { truncate } = useTruncate();
+  const [favoriteExecution] = useExecutionFavoriteMutation();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
 
-  const [execsDropAnchor, setExecsDropAnchor] = useState<HTMLElement | null>(null);
-  const [searchShown, setSearchShown] = useState(false);
-  const [searchText, setSearchText] = useState<string>("");
+  const [executionTitle, setExecutionTitle] = useState(selectedExecution?.title);
+  const [popup, setPopup] = useState<ExecutionTemplatePopupType>(null);
 
   useEffect(() => {
-    onSearch(searchText);
-  }, [searchText]);
+    setExecutionTitle(selectedExecution?.title);
+  }, [selectedExecution]);
 
-  useEffect(() => {
-    if (!searchText) return;
+  const saveExecution = async () => {
+    if (!!!selectedExecution || selectedExecution?.is_favorite) return;
 
-    if (searchShown) {
-      onSearch(searchText);
-    } else {
-      onSearch("");
+    try {
+      await favoriteExecution(selectedExecution.id);
+    } catch (error) {
+      console.error(error);
     }
-  }, [searchShown]);
-
-  const SearchInput = (direction: "right" | "left") => (
-    <Stack
-      direction={"row"}
-      alignItems={"center"}
-    >
-      <Collapse
-        orientation="horizontal"
-        in={searchShown}
-        sx={{ order: direction === "right" ? 1 : 0 }}
-      >
-        <Stack
-          direction={"row"}
-          alignItems={"center"}
-          spacing={1}
-          sx={{
-            position: "sticky",
-            top: 0,
-            right: 0,
-            bgcolor: "surface.2",
-            p: "5px 10px",
-            borderRadius: "99px",
-            color: "onSurface",
-          }}
-        >
-          <SubjectIcon />
-          <InputBase
-            id="exec"
-            placeholder={"Search..."}
-            fullWidth
-            sx={{
-              flex: 1,
-              fontSize: 13,
-              fontWeight: 400,
-            }}
-            value={searchText}
-            onChange={e => setSearchText(e.target.value)}
-          />
-        </Stack>
-      </Collapse>
-      <IconButton
-        sx={{ ...iconButtonStyle }}
-        onClick={() => setSearchShown(!searchShown)}
-      >
-        {searchShown ? <Close /> : <SearchIcon />}
-      </IconButton>
-    </Stack>
-  );
-
-  const ExecutionsSelect = (
-    <Button
-      disabled={isGenerating}
-      sx={{
-        width: "100%",
-        maxWidth: "336px",
-        color: "onSurface",
-        fontSize: 13,
-        fontWeight: 500,
-        justifyContent: "space-between",
-        ":hover": { bgcolor: "action.hover" },
-        ".MuiButton-startIcon": { m: 0 },
-      }}
-      startIcon={selectedExecution?.is_favorite ? <SavedSpark /> : <DraftSpark />}
-      endIcon={Boolean(execsDropAnchor) ? <ArrowDropUp /> : <ArrowDropDown />}
-      variant={"text"}
-      onClick={e => setExecsDropAnchor(e.currentTarget)}
-    >
-      <Box sx={{ width: "80%", overflow: "hidden", textAlign: "left" }}>
-        {(!sparkHashQueryParam && selectedExecution?.title) || "Choose Spark..."}
-      </Box>
-    </Button>
-  );
-
-  const isExecutionOwner = executions.some(execution => execution?.executed_by === selectedExecution?.executed_by);
+  };
 
   return (
     <Box
       sx={{
+        bgcolor: "surface.3",
         position: { xs: "fixed", md: "sticky" },
         top: { xs: "auto", md: "0px" },
         bottom: { xs: "74px", md: "auto" },
         left: 0,
         right: 0,
         zIndex: 90,
-        bgcolor: "surface.1",
-        p: { md: "16px 16px 16px 24px" },
-        borderRadius: "24px 24px 0 0",
+        p: { md: "8px 8px 8px 16px" },
         borderBottom: { xs: `1px solid ${palette.surface[5]}`, md: "none" },
         boxShadow: {
           xs: "0px -8px 40px 0px rgba(93, 123, 186, 0.09), 0px -8px 10px 0px rgba(98, 98, 107, 0.03)",
@@ -164,62 +72,159 @@ export const DisplayActions: React.FC<Props> = ({
           display={{ xs: "none", md: "flex" }}
           direction={"row"}
           alignItems={"center"}
+          justifyContent={"space-between"}
           gap={1}
         >
-          <Stack
-            flex={1}
-            direction={"row"}
-            alignItems={"center"}
-            gap={1}
-          >
-            {ExecutionsSelect}
-            {!sparkHashQueryParam && !!selectedExecution && !selectedExecution?.is_favorite && (
-              <Typography
+          {!isGenerating ? (
+            <Stack
+              direction={"row"}
+              alignItems={"center"}
+              gap={1}
+              width={"40%"}
+            >
+              <Button
+                endIcon={<Edit />}
                 sx={{
-                  p: "4px 8px",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 1,
-                  color: `${alpha(palette.onSurface, 0.5)}`,
-                  fontSize: 12,
-                  fontWeight: 400,
+                  width: "100%",
+                  fontSize: 15,
+                  fontWeight: 500,
+                  p: "4px 10px",
+                  color: "onSurface",
+                  whiteSpace: "normal",
+                  wordBreak: "break-word",
+                  justifyContent: "space-between",
+                  ":hover": {
+                    bgcolor: "surface.2",
+                  },
                   svg: {
-                    fontSize: 16,
+                    fontSize: "18px !important",
                   },
                 }}
+                onClick={() => setPopup("update")}
               >
-                <InfoOutlined /> This spark not saved yet...
+                <Typography
+                  sx={{
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  {truncate(executionTitle || "", { length: 35 })}
+                </Typography>
+              </Button>
+            </Stack>
+          ) : (
+            <Stack
+              direction={"row"}
+              alignItems={"center"}
+              gap={2}
+            >
+              <Box
+                sx={{
+                  position: "relative",
+                  bgcolor: "surface.1",
+                  p: "4px",
+                  borderRadius: "8px",
+                  display: "flex",
+                }}
+              >
+                <Box
+                  sx={{
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%,-50%)",
+                    display: "flex",
+                  }}
+                >
+                  <LogoApp
+                    color={theme.palette.primary.main}
+                    width={14}
+                  />
+                </Box>
+                <CircularProgress
+                  size={32}
+                  sx={{
+                    color: "primary.main",
+                    ".MuiCircularProgress-circle": {
+                      strokeWidth: 2.5,
+                    },
+                  }}
+                />
+              </Box>
+              <Typography
+                fontSize={15}
+                fontWeight={500}
+                color={"text.secondary"}
+                sx={{ opacity: 0.5 }}
+              >
+                Generating in progress...
               </Typography>
-            )}
-          </Stack>
-
-          {isExecutionOwner && <ThumbsFeedback selectedExecution={selectedExecution} />}
-
+            </Stack>
+          )}
           <Stack
             direction={"row"}
             alignItems={"center"}
             gap={1}
-            ml={"auto"}
           >
-            {/* 
-              TODO: https://github.com/ysfbsf/promptify-next/issues/275
-              {SearchInput("left")} 
-            */}
+            <Tooltip
+              title="Delete"
+              enterDelay={1000}
+              enterNextDelay={1000}
+            >
+              <IconButton
+                sx={actionBtnStyle}
+                onClick={e => {
+                  e.stopPropagation();
+                  setPopup("delete");
+                }}
+              >
+                <DeleteOutline />
+              </IconButton>
+            </Tooltip>
+            <Divider
+              orientation="vertical"
+              sx={{ width: "1px", height: "25px", borderColor: "surface.5" }}
+            />
+            <Tooltip
+              title="Save"
+              enterDelay={1000}
+              enterNextDelay={1000}
+            >
+              <IconButton
+                sx={actionBtnStyle}
+                onClick={saveExecution}
+              >
+                {selectedExecution?.is_favorite ? <Bookmark /> : <BookmarkBorder />}
+              </IconButton>
+            </Tooltip>
+            <Divider
+              orientation="vertical"
+              sx={{ width: "1px", height: "25px", borderColor: "surface.5" }}
+            />
             {selectedExecution?.id && (
-              <Tooltip title="Export">
+              <Tooltip
+                title="Share"
+                enterDelay={1000}
+                enterNextDelay={1000}
+              >
                 <IconButton
                   onClick={onOpenExport}
-                  sx={{
-                    border: "none",
-                    "&:hover": {
-                      bgcolor: "surface.2",
-                    },
-                  }}
+                  sx={actionBtnStyle}
                 >
-                  <ShareIcon />
+                  <ShareOutlined />
                 </IconButton>
               </Tooltip>
             )}
+            <IconButton
+              sx={{
+                ...actionBtnStyle,
+                opacity: 0.45,
+              }}
+              onClick={close}
+            >
+              <Close />
+            </IconButton>
           </Stack>
         </Stack>
 
@@ -235,9 +240,7 @@ export const DisplayActions: React.FC<Props> = ({
             alignItems={"center"}
             gap={1}
             p={"8px 16px"}
-          >
-            {ExecutionsSelect}
-          </Stack>
+          ></Stack>
           <Stack
             display={{ md: "none" }}
             direction={"row"}
@@ -245,12 +248,6 @@ export const DisplayActions: React.FC<Props> = ({
             gap={1}
             p={"8px 16px"}
           >
-            {isExecutionOwner && <ThumbsFeedback selectedExecution={selectedExecution} />}
-
-            {/* 
-              TODO: https://github.com/ysfbsf/promptify-next/issues/275
-              {showSearchBar && SearchInput("right")}
-            */}
             <Tooltip title="Export">
               <IconButton
                 onClick={onOpenExport}
@@ -261,60 +258,32 @@ export const DisplayActions: React.FC<Props> = ({
                   },
                 }}
               >
-                <ShareIcon />
+                <ShareOutlined />
               </IconButton>
             </Tooltip>
           </Stack>
         </Box>
-
-        <Popper
-          open={Boolean(execsDropAnchor)}
-          anchorEl={execsDropAnchor}
-          transition
-          disablePortal
-          placement="bottom-start"
-        >
-          {({ TransitionProps, placement }) => (
-            <Grow
-              {...TransitionProps}
-              style={{ transformOrigin: "center top" }}
-            >
-              <Paper
-                sx={{
-                  bgcolor: "surface.1",
-                  borderRadius: "16px",
-                  overflow: "hidden",
-                  boxShadow:
-                    "0px 10px 13px -6px rgba(0, 0, 0, 0.20), 0px 20px 31px 3px rgba(0, 0, 0, 0.14), 0px 8px 38px 7px rgba(0, 0, 0, 0.12)",
-                }}
-                elevation={0}
-              >
-                <ClickAwayListener onClickAway={() => setExecsDropAnchor(null)}>
-                  <Box>
-                    <ExecutionsTabs
-                      executions={executions}
-                      selectedExecution={selectedExecution}
-                      chooseExecution={exec => {
-                        setSelectedExecution(exec);
-                        setExecsDropAnchor(null);
-                      }}
-                      sparkHashQueryParam={sparkHashQueryParam}
-                    />
-                  </Box>
-                </ClickAwayListener>
-              </Paper>
-            </Grow>
-          )}
-        </Popper>
       </Box>
+
+      {(popup === "delete" || popup === "update") && (
+        <SparkSaveDeletePopup
+          type={popup}
+          activeExecution={selectedExecution}
+          onClose={() => setPopup(null)}
+        />
+      )}
     </Box>
   );
 };
 
-const iconButtonStyle = {
+const actionBtnStyle = {
   border: "none",
   p: "8px",
-  color: "onBackground",
-  opacity: 0.8,
-  ":hover": { opacity: 1, color: "onBackground" },
+  "&:hover": {
+    bgcolor: "surface.2",
+    opacity: 1,
+  },
+  svg: {
+    fontSize: "16px",
+  },
 };

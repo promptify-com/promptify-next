@@ -1,16 +1,31 @@
 import React, { useEffect, useRef, Dispatch, SetStateAction } from "react";
-import { Grid } from "@mui/material";
+import { Box, Divider, Stack } from "@mui/material";
 
 import { Message } from "./Message";
-import { IMessage } from "@/common/types/chat";
+import { IAnswer, IMessage } from "@/common/types/chat";
+import { TemplateDetailsCard } from "./TemplateDetailsCard";
+import { Templates, UpdatedQuestionTemplate } from "@/core/api/dto/templates";
+import { useAppSelector } from "@/hooks/useStore";
+import { InputsForm } from "./Inputsform";
 interface Props {
+  template: Templates;
   messages: IMessage[];
-  onChange: (value: string | File) => void;
+  onChange: (value: string | File, question: UpdatedQuestionTemplate) => void;
   setIsSimulaitonStreaming: Dispatch<SetStateAction<boolean>>;
+  questions: UpdatedQuestionTemplate[];
+  answers: IAnswer[];
 }
 
-export const ChatInterface = ({ messages, onChange, setIsSimulaitonStreaming }: Props) => {
+export const ChatInterface = ({
+  template,
+  messages,
+  onChange,
+  setIsSimulaitonStreaming,
+  questions,
+  answers,
+}: Props) => {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
+  const isFullScreen = useAppSelector(state => state.template.isChatFullScreen);
 
   const scrollToBottom = () => {
     if (messagesContainerRef.current) {
@@ -20,22 +35,12 @@ export const ChatInterface = ({ messages, onChange, setIsSimulaitonStreaming }: 
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
-
-  const isNotLastMessage = (message: IMessage) => {
-    return message.type === "choices" && message !== messages[messages.length - 1];
-  };
-
-  const lastMessage = messages[messages.length - 1];
+  }, [messages, isFullScreen]);
 
   return (
-    <Grid
+    <Stack
       ref={messagesContainerRef}
-      display={"flex"}
-      width={"100%"}
-      flexDirection={"column"}
-      alignItems={"start"}
-      pb={"8px"}
+      gap={3}
       sx={{
         overflow: "auto",
         overscrollBehavior: "contain",
@@ -54,18 +59,47 @@ export const ChatInterface = ({ messages, onChange, setIsSimulaitonStreaming }: 
         },
       }}
     >
-      {messages.map((msg, idx) => (
-        <Message
-          key={idx}
-          hideHeader={idx === 1}
-          message={msg}
-          onChangeValue={onChange}
-          disabledChoices={isNotLastMessage(msg)}
-          setIsSimulaitonStreaming={setIsSimulaitonStreaming}
-          onScrollToBottom={scrollToBottom}
-          lastMessage={lastMessage}
-        />
-      ))}
-    </Grid>
+      <div style={{ marginTop: "auto" }}></div>
+
+      {isFullScreen && <TemplateDetailsCard template={template} />}
+
+      <Stack
+        pb={"8px"}
+        mx={"40px"}
+      >
+        <Divider
+          sx={{
+            fontSize: 12,
+            fontWeight: 400,
+            color: "onSurface",
+            opacity: 0.5,
+          }}
+        >
+          New messages
+        </Divider>
+        {messages.map((msg, idx) => (
+          <>
+            <Message
+              key={idx}
+              message={msg}
+              setIsSimulaitonStreaming={setIsSimulaitonStreaming}
+              onScrollToBottom={scrollToBottom}
+            />
+            {msg.type === "form" && (
+              <Box
+                ml={{ xs: 6.5, md: 7 }}
+                mb={2}
+              >
+                <InputsForm
+                  questions={questions}
+                  answers={answers}
+                  onChange={onChange}
+                />
+              </Box>
+            )}
+          </>
+        ))}
+      </Stack>
+    </Stack>
   );
 };

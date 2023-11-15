@@ -16,6 +16,8 @@ import TemplateMobile from "@/components/prompt/TemplateMobile";
 import TemplateDesktop from "@/components/prompt/TemplateDesktop";
 import { getTemplateBySlug } from "@/hooks/api/templates";
 import { redirectToPath } from "@/common/helpers";
+import { setSelectedExecution, setSparkHashQueryParam } from "@/core/store/executionsSlice";
+import useBrowser from "@/hooks/useBrowser";
 
 interface TemplateProps {
   hashedExecution: TemplatesExecutions | null;
@@ -24,6 +26,7 @@ interface TemplateProps {
 
 function Template({ hashedExecution, fetchedTemplate }: TemplateProps) {
   const router = useRouter();
+  const { replaceHistoryByPathname } = useBrowser();
   const [updateViewTemplate] = useViewTemplateMutation();
   const [errorMessage, setErrorMessage] = useState<string>("");
   const theme = useTheme();
@@ -31,6 +34,7 @@ function Template({ hashedExecution, fetchedTemplate }: TemplateProps) {
   const dispatch = useAppDispatch();
   const isValidUser = useAppSelector(isValidUserFn);
   const savedTemplateId = useAppSelector(state => state.template.id);
+  const sparkHashQueryParam = (router.query?.hash as string | null) ?? null;
 
   useEffect(() => {
     if (!savedTemplateId || savedTemplateId !== fetchedTemplate.id) {
@@ -51,6 +55,16 @@ function Template({ hashedExecution, fetchedTemplate }: TemplateProps) {
       updateViewTemplate(fetchedTemplate.id);
     }
   }, [isValidUser]);
+
+  useEffect(() => {
+    dispatch(setSparkHashQueryParam(sparkHashQueryParam));
+
+    if (sparkHashQueryParam && hashedExecution) {
+      dispatch(setSelectedExecution(hashedExecution));
+      replaceHistoryByPathname(`/prompt/${fetchedTemplate.slug}`);
+      return;
+    }
+  }, [sparkHashQueryParam]);
 
   if (!fetchedTemplate.id) {
     redirectToPath("/404");
@@ -98,7 +112,7 @@ function Template({ hashedExecution, fetchedTemplate }: TemplateProps) {
 
   return (
     <ThemeProvider theme={dynamicTheme}>
-      <Layout>
+      <Layout fullWidth>
         {isMobileView ? (
           <TemplateMobile
             hashedExecution={hashedExecution}
@@ -107,7 +121,6 @@ function Template({ hashedExecution, fetchedTemplate }: TemplateProps) {
           />
         ) : (
           <TemplateDesktop
-            hashedExecution={hashedExecution}
             template={fetchedTemplate}
             setErrorMessage={setErrorMessage}
           />
