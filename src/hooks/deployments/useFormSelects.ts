@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 
 import type { ModelFields } from "@/common/types/deployments";
-import { useGetInstancesQuery, useGetModelsQuery, useGetRegionsByQueryParamsQuery } from "@/core/api/deployments";
+import { useGetInstancesQuery, useGetModelsQuery, useGetRegionsQuery } from "@/core/api/deployments";
 
-export const useFormSelects = (provider: string, region: string) => {
+export const useFormSelects = (provider: string, region: string, query?: string) => {
   const PAGINATION_LIMIT = 20;
   const [offset, setOffset] = useState(0);
   const [localModels, setLocalModels] = useState<ModelFields[]>([]);
@@ -11,20 +11,25 @@ export const useFormSelects = (provider: string, region: string) => {
   const isProviderSelected = provider !== "";
   const isRegionSelected = region !== "";
 
-  const { data: models, isFetching: isModelsFetching } = useGetModelsQuery(offset);
+  const { data: models, isFetching: isModelsFetching } = useGetModelsQuery({ limit: PAGINATION_LIMIT, offset, query });
 
   const { data: instances, isFetching: isInstanceFetching } = useGetInstancesQuery(
     { region: region.toString() },
     { skip: !isRegionSelected },
   );
-  const { data: regions, isFetching: isRegionFetching } = useGetRegionsByQueryParamsQuery(
+  const { data: regions, isFetching: isRegionFetching } = useGetRegionsQuery(
     { provider: provider.toString() },
     { skip: !isProviderSelected },
   );
 
   useEffect(() => {
-    if (models && models?.results.length > 0) {
-      setLocalModels(prevModels => prevModels.concat(models.results));
+    setLocalModels([]);
+    setOffset(0);
+  }, [query]);
+
+  useEffect(() => {
+    if (models && models.results.length > 0) {
+      setLocalModels(prevModels => [...prevModels, ...models.results]);
     }
   }, [models]);
 

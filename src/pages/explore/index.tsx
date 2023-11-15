@@ -1,14 +1,13 @@
-import React from "react";
-import { Box, Grid } from "@mui/material";
-import { NextPage } from "next";
-
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import type { GetServerSideProps, NextPage } from "next";
 import { Layout } from "@/layout";
 import { CategoriesSection } from "@/components/explorer/CategoriesSection";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
 import { FiltersSelected } from "@/components/explorer/FiltersSelected";
 import { Category } from "@/core/api/dto/templates";
-import { authClient } from "@/common/axios";
 import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
+import { getCategories } from "@/hooks/api/categories";
 
 interface IProps {
   categories: Category[];
@@ -56,9 +55,10 @@ const ExplorePage: NextPage<IProps> = ({ categories }) => {
   );
 };
 
-export async function getServerSideProps() {
-  const responseCategories = await authClient.get<Category[]>("/api/meta/categories/");
-  const categories = responseCategories.data?.filter(category => category.prompt_template_count && category.is_visible);
+export const getServerSideProps: GetServerSideProps = async ({ res }) => {
+  res.setHeader("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=60");
+
+  const categories = await getCategories();
 
   return {
     props: {
@@ -68,6 +68,6 @@ export async function getServerSideProps() {
       categories,
     },
   };
-}
+};
 
 export default ExplorePage;
