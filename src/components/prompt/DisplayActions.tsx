@@ -18,6 +18,7 @@ import useTruncate from "@/hooks/useTruncate";
 import { SparkSaveDeletePopup } from "@/components/dialog/SparkSaveDeletePopup";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { theme } from "@/theme";
+import { ProgressLogo } from "../common/ProgressLogo";
 
 interface Props {
   selectedExecution: TemplatesExecutions | null;
@@ -119,39 +120,7 @@ export const DisplayActions: React.FC<Props> = ({ selectedExecution, onOpenExpor
               alignItems={"center"}
               gap={2}
             >
-              <Box
-                sx={{
-                  position: "relative",
-                  bgcolor: "surface.1",
-                  p: "4px",
-                  borderRadius: "8px",
-                  display: "flex",
-                }}
-              >
-                <Box
-                  sx={{
-                    position: "absolute",
-                    top: "50%",
-                    left: "50%",
-                    transform: "translate(-50%,-50%)",
-                    display: "flex",
-                  }}
-                >
-                  <LogoApp
-                    color={theme.palette.primary.main}
-                    width={14}
-                  />
-                </Box>
-                <CircularProgress
-                  size={32}
-                  sx={{
-                    color: "primary.main",
-                    ".MuiCircularProgress-circle": {
-                      strokeWidth: 2.5,
-                    },
-                  }}
-                />
-              </Box>
+              <ProgressLogo size="small" />
               <Typography
                 fontSize={15}
                 fontWeight={500}

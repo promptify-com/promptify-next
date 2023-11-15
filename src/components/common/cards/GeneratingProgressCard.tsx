@@ -2,6 +2,7 @@ import { Box, Button, CircularProgress, Stack, Typography } from "@mui/material"
 import React from "react";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { theme } from "@/theme";
+import { ProgressLogo } from "../ProgressLogo";
 
 type CardProps = {
   onCancel: () => void;
@@ -23,37 +24,7 @@ export const GeneratingProgressCard: React.FC<CardProps> = ({ onCancel }) => {
         alignItems={"center"}
         gap={2}
       >
-        <Stack
-          sx={{
-            position: "relative",
-            bgcolor: "surface.1",
-            p: "8px",
-            borderRadius: "8px",
-          }}
-        >
-          <Stack
-            sx={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%,-50%)",
-            }}
-          >
-            <LogoApp
-              color={theme.palette.primary.main}
-              width={24}
-            />
-          </Stack>
-          <CircularProgress
-            size={52}
-            sx={{
-              color: "primary.main",
-              ".MuiCircularProgress-circle": {
-                strokeWidth: 2,
-              },
-            }}
-          />
-        </Stack>
+        <ProgressLogo />
         <Stack gap={0.5}>
           <Typography
             fontSize={12}
