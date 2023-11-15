@@ -173,6 +173,7 @@ export interface TemplatesExecutions {
   hash: string;
   feedback?: string;
   executed_by?: number;
+  errors?: string;
 }
 
 export interface ITemplateExecutionPut {
@@ -230,23 +231,6 @@ export interface TemplateExecutionsDisplay {
   is_internal?: boolean;
 }
 export type TemplatesExecutionsByMePaginationResponse = { results: TemplateExecutionsDisplay[] };
-export interface SparkExecution {
-  id: number;
-  title: string;
-  parameters: {
-    [key: number]: string | number;
-  };
-  contextual_overrides: {
-    [key: number]: [];
-  };
-  template: number;
-  executed_by: number;
-  created_at: string;
-  prompt_executions: PromptExecutions[];
-  is_favorite: boolean;
-  hash: string;
-  errors?: string;
-}
 
 export interface SparkVersion {
   id: number;

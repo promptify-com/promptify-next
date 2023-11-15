@@ -80,8 +80,9 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
     <Stack
       gap={1}
       sx={{
-        width: { md: "70%" },
-        m: { md: "20px auto" },
+        width: { md: "80%" },
+        m: { md: "auto" },
+        py: { md: "48px" },
       }}
     >
       {!isGenerating && <div ref={scrollRef}></div>}

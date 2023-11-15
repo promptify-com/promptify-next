@@ -98,6 +98,7 @@ export const Display: React.FC<Props> = ({ templateData, onError, close }) => {
         <Box
           sx={{
             height: "calc(100% - 67px)",
+            overflow: "auto",
             opacity: firstLoad ? 0.5 : 1,
             bgcolor: "surface.1",
             borderRadius: "16px 16px 0px 0px",

@@ -24,7 +24,8 @@ import { vary } from "@/common/helpers/varyValidator";
 import { parseMessageData } from "@/common/helpers/parseMessageData";
 import { useUploadFileMutation } from "@/core/api/uploadFile";
 import { uploadFileHelper } from "@/common/helpers/uploadFileHelper";
-import { setGeneratedExecution } from "@/core/store/executionsSlice";
+import { setGeneratedExecution, setSelectedExecution } from "@/core/store/executionsSlice";
+import { getExecutionById } from "@/hooks/api/executions";
 
 interface Props {
   onError: (errMsg: string) => void;
@@ -40,6 +41,8 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
   const [uploadFile] = useUploadFileMutation();
   const { convertedTimestamp } = useTimestampConverter();
   const createdAt = convertedTimestamp(new Date());
+  const isGenerating = useAppSelector(state => state.template.isGenerating);
+  const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
   const [showGenerateButton, setShowGenerateButton] = useState(false);
   const [isValidatingAnswer, setIsValidatingAnswer] = useState(false);
   const [generatingResponse, setGeneratingResponse] = useState<PromptLiveResponse>({
@@ -202,7 +205,25 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
     }
   }, [isSimulaitonStreaming]);
 
-  const allRequiredQuestionsAnswered = (): boolean => {
+  useEffect(() => {
+    if (!isGenerating && generatedExecution?.data?.length) {
+      const allPromptsCompleted = generatedExecution.data.every(execData => execData.isCompleted);
+
+      if (allPromptsCompleted) {
+        selectGeneratedExecution();
+        dispatch(setGeneratedExecution(null));
+      }
+    }
+  }, [isGenerating, generatedExecution]);
+
+  const selectGeneratedExecution = async () => {
+    if (generatedExecution?.id) {
+      const _newExecution = await getExecutionById(generatedExecution.id);
+      dispatch(setSelectedExecution(_newExecution));
+    }
+  };
+
+  const allRequiredQuestionsAnswered = (templateQuestions: UpdatedQuestionTemplate[], answers: IAnswer[]): boolean => {
     const requiredQuestionNames = templateQuestions
       .filter(question => question.required)
       .map(question => question.name);
@@ -217,7 +238,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
   };
 
   useEffect(() => {
-    if (allRequiredQuestionsAnswered()) {
+    if (allRequiredQuestionsAnswered(templateQuestions, answers)) {
       setShowGenerateButton(true);
     } else {
       setShowGenerateButton(false);
@@ -286,7 +307,9 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
       setAnswers(newAnswers);
       setIsValidatingAnswer(false);
 
-      const isReady = allRequiredQuestionsAnswered() ? "We are ready to create a new document. " : "";
+      const isReady = allRequiredQuestionsAnswered(templateQuestions, newAnswers)
+        ? " We are ready to create a new document."
+        : "";
       const botMessage: IMessage = {
         text: `Ok!${isReady} I have prepared the incoming parameters, please check!`,
         type: "form",
