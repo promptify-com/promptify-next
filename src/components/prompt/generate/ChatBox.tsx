@@ -53,7 +53,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
   const [answers, setAnswers] = useState<IAnswer[]>([]);
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [queuedMessages, setQueuedMessages] = useState<IMessage[]>([]);
-  const [isSimulaitonStreaming, setIsSimulaitonStreaming] = useState(false);
+  const [isSimulationStreaming, setIsSimulationStreaming] = useState(false);
   const [disableChatInput, setDisableChatInput] = useState(false);
   const [standingQuestions, setStandingQuestions] = useState<UpdatedQuestionTemplate[]>([]);
 
@@ -62,7 +62,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
 
   const addToQueuedMessages = (messages: IMessage[]) => {
     setQueuedMessages(messages);
-    setIsSimulaitonStreaming(true);
+    setIsSimulationStreaming(true);
   };
   const initialMessages = ({
     questions,
@@ -197,13 +197,13 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
   }, [generatingResponse]);
 
   useEffect(() => {
-    if (!isSimulaitonStreaming && !!queuedMessages.length) {
+    if (!isSimulationStreaming && !!queuedMessages.length) {
       const nextQueuedMessage = queuedMessages.pop()!;
 
       setMessages(prevMessages => prevMessages.concat(nextQueuedMessage));
       addToQueuedMessages(queuedMessages);
     }
-  }, [isSimulaitonStreaming]);
+  }, [isSimulationStreaming]);
 
   useEffect(() => {
     if (!isGenerating && generatedExecution?.data?.length) {
@@ -335,7 +335,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
   };
 
   const handleUserInput = async (value: string | File, currentQuestion: UpdatedQuestionTemplate) => {
-    if (isSimulaitonStreaming) {
+    if (isSimulationStreaming) {
       return;
     }
 
@@ -542,7 +542,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
   };
 
   const handleAnswerClear = (selectedAnswer: IAnswer, invalid = false) => {
-    if (isSimulaitonStreaming) {
+    if (isSimulationStreaming) {
       return;
     }
 
@@ -614,7 +614,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
           template={template}
           messages={messages}
           onChange={handleUserInput}
-          setIsSimulaitonStreaming={setIsSimulaitonStreaming}
+          setIsSimulationStreaming={setIsSimulationStreaming}
         />
         {currentUser?.id ? (
           <ChatInput

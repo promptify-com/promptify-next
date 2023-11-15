@@ -11,7 +11,7 @@ interface Props {
   template: Templates;
   messages: IMessage[];
   onChange: (value: string | File, question: UpdatedQuestionTemplate) => void;
-  setIsSimulaitonStreaming: Dispatch<SetStateAction<boolean>>;
+  setIsSimulationStreaming: Dispatch<SetStateAction<boolean>>;
   questions: UpdatedQuestionTemplate[];
   answers: IAnswer[];
 }
@@ -20,7 +20,7 @@ export const ChatInterface = ({
   template,
   messages,
   onChange,
-  setIsSimulaitonStreaming,
+  setIsSimulationStreaming,
   questions,
   answers,
 }: Props) => {
@@ -81,7 +81,7 @@ export const ChatInterface = ({
           <React.Fragment key={idx}>
             <Message
               message={msg}
-              setIsSimulaitonStreaming={setIsSimulaitonStreaming}
+              setIsSimulationStreaming={setIsSimulationStreaming}
               onScrollToBottom={scrollToBottom}
             />
             {msg.type === "form" && (

@@ -1,43 +1,18 @@
-import React, { memo, useEffect, Dispatch, SetStateAction } from "react";
-import { Avatar, Box, Grid, Stack, Typography } from "@mui/material";
+import React, { Dispatch, SetStateAction } from "react";
+import { Avatar, Grid, Typography } from "@mui/material";
 import LogoAsAvatar from "@/assets/icons/LogoAvatar";
 import { useAppSelector } from "@/hooks/useStore";
 import { IMessage } from "@/common/types/chat";
-import useTextSimulationStreaming from "@/hooks/useTextSimulationStreaming";
 import { timeAgo } from "@/common/helpers/timeManipulation";
+import { StreamContent } from "./StreamContent";
 
 interface MessageBlockProps {
   message: IMessage;
-  setIsSimulaitonStreaming: Dispatch<SetStateAction<boolean>>;
+  setIsSimulationStreaming: Dispatch<SetStateAction<boolean>>;
   onScrollToBottom: () => void;
 }
 
-interface MessageContentProps {
-  content: string;
-  shouldStream: boolean;
-  setIsSimulaitonStreaming: Dispatch<SetStateAction<boolean>>;
-  onStreamingFinished: () => void;
-}
-
-const MessageContent = memo(
-  ({ content, shouldStream, setIsSimulaitonStreaming, onStreamingFinished }: MessageContentProps) => {
-    const { streamedText, hasFinished } = useTextSimulationStreaming({
-      text: content,
-      shouldStream,
-    });
-
-    useEffect(() => {
-      if (hasFinished) {
-        setIsSimulaitonStreaming(false);
-        onStreamingFinished();
-      }
-    }, [hasFinished]);
-
-    return <>{streamedText}</>;
-  },
-);
-
-export const Message = ({ message, setIsSimulaitonStreaming, onScrollToBottom }: MessageBlockProps) => {
+export const Message = ({ message, setIsSimulationStreaming, onScrollToBottom }: MessageBlockProps) => {
   const { fromUser, text, createdAt } = message;
   const currentUser = useAppSelector(state => state.user.currentUser);
 
@@ -111,10 +86,10 @@ export const Message = ({ message, setIsSimulaitonStreaming, onScrollToBottom }:
             letterSpacing={"0.17px"}
             color={"onSurface"}
           >
-            <MessageContent
+            <StreamContent
               content={text}
               shouldStream={!fromUser}
-              setIsSimulaitonStreaming={setIsSimulaitonStreaming}
+              setIsSimulationStreaming={setIsSimulationStreaming}
               onStreamingFinished={onScrollToBottom}
             />
           </Typography>
