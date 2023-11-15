@@ -55,6 +55,11 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
   }, [executionPrompts]);
 
   const scrollRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({
+      block: "end",
+    });
+  }, [execution]);
 
   const executionError = (error: string | undefined) => {
     return (

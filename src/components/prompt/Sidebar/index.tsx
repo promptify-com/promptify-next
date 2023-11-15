@@ -58,7 +58,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ template }) => {
     },
     {
       name: "api",
-      icon: <Api />,
+      icon: <Api sx={{ color: "primary.main" }} />,
       title: "API access",
     },
     {
