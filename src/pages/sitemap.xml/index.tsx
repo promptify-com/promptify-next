@@ -18,18 +18,25 @@ function generateSiteMap(templates: Template[], categories: Category[]) {
   <url>
     <loc>https://app.promptify.com/explore</loc>
   </url>`;
-  xml += templates?.reduce((acc, { slug }) => {
-    acc += `<url><loc>${`https://app.promptify.com/prompt/${slug}`}</loc></url>`;
 
-    return acc;
-  }, "");
-  xml += categories
-    ?.filter(({ slug }) => slug !== null)
-    .reduce((acc, { slug }) => {
-      acc += `<url><loc>${`https://app.promptify.com/explore/${slug}`}</loc></url>`;
+  if (!!templates?.length) {
+    xml += templates?.reduce((acc, { slug }) => {
+      acc += `<url><loc>${`https://app.promptify.com/prompt/${slug}`}</loc></url>`;
 
       return acc;
     }, "");
+  }
+
+  if (!!categories?.length) {
+    xml += categories
+      ?.filter(({ slug }) => slug !== null)
+      .reduce((acc, { slug }) => {
+        acc += `<url><loc>${`https://app.promptify.com/explore/${slug}`}</loc></url>`;
+
+        return acc;
+      }, "");
+  }
+
   xml += `</urlset>`;
 
   return xml;
