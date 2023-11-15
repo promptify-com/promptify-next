@@ -47,7 +47,11 @@ export const vary = ({
             resolve("Something wrong happened");
           }
 
-          resolve(JSON.parse(_execution.prompt_executions[0].output.replace(/\n(\s+)?/g, "")));
+          resolve(
+            _execution.prompt_executions[0]
+              ? JSON.parse(_execution.prompt_executions[0].output.replace(/\n(\s+)?/g, ""))
+              : {},
+          );
         } catch (_) {
           resolve("Something wrong happened");
         }

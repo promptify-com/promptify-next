@@ -20,11 +20,12 @@ export const InputsForm = ({ questions, answers, onChange }: Props) => {
 
   return (
     <Stack gap={1}>
-      {questions.map(question => {
+      {questions.map((question, idx) => {
         const value = answers.find(answer => answer.inputName === question.name)?.answer || "";
         const isFile = value instanceof File;
         return (
           <Stack
+            key={idx}
             direction={"row"}
             alignItems={"center"}
             gap={1}
@@ -117,8 +118,15 @@ export const InputsForm = ({ questions, answers, onChange }: Props) => {
               >
                 <Button
                   component="label"
-                  variant="contained"
-                  sx={{ border: "1px solid", p: "3px 12px", fontSize: 14, fontWeight: 500 }}
+                  sx={{
+                    border: "1px solid",
+                    borderColor: "secondary.main",
+                    color: "secondary.main",
+                    p: "3px 12px",
+                    ":hover": {
+                      bgcolor: "action.hover",
+                    },
+                  }}
                 >
                   {isFile ? value.name : "Upload file"}
                   <input

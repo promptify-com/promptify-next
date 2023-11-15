@@ -202,7 +202,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
     }
   }, [isSimulaitonStreaming]);
 
-  const allRequiredQuestionsAnswered = (templateQuestions: UpdatedQuestionTemplate[], answers: IAnswer[]): boolean => {
+  const allRequiredQuestionsAnswered = (): boolean => {
     const requiredQuestionNames = templateQuestions
       .filter(question => question.required)
       .map(question => question.name);
@@ -217,36 +217,12 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
   };
 
   useEffect(() => {
-    if (allRequiredQuestionsAnswered(templateQuestions, answers)) {
+    if (allRequiredQuestionsAnswered()) {
       setShowGenerateButton(true);
     } else {
       setShowGenerateButton(false);
     }
   }, [answers, templateQuestions]);
-
-  const getNextQuestion = (currentAnswers: IAnswer[]) => {
-    const answeredQuestionNames = currentAnswers.map(input => input.inputName);
-
-    const lastAnsweredQuestionName = answeredQuestionNames[answeredQuestionNames.length - 1];
-    const lastAnsweredQuestionIndex = templateQuestions.findIndex(q => q.name === lastAnsweredQuestionName);
-
-    const questionsAfterLastAnswered = templateQuestions.slice(lastAnsweredQuestionIndex + 1);
-    const questionsBeforeLastAnswered = templateQuestions.slice(0, lastAnsweredQuestionIndex);
-
-    const nextUnansweredAfter = questionsAfterLastAnswered.find(
-      question => !answeredQuestionNames.includes(question.name),
-    );
-
-    if (nextUnansweredAfter) {
-      return nextUnansweredAfter;
-    }
-
-    const remainingQuestion = questionsBeforeLastAnswered.find(
-      question => !answeredQuestionNames.includes(question.name),
-    );
-
-    return remainingQuestion;
-  };
 
   const canShowGenerateButton = Boolean(templateQuestions.length && !templateQuestions[0].required);
 
@@ -254,6 +230,14 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
 
   const validateVary = async (variation: string) => {
     if (variation) {
+      const userMessage: IMessage = {
+        text: variation,
+        type: "text",
+        createdAt: createdAt,
+        fromUser: true,
+      };
+      setMessages(prevMessages => prevMessages.concat(userMessage));
+
       setIsValidatingAnswer(true);
 
       const questionAnswerMap: Record<string, string | number | File> = {};
@@ -270,7 +254,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
       const varyResponse = await vary({ token, payload });
 
       if (typeof varyResponse === "string") {
-        onError("Oopps, something happened. Please try again!");
+        onError("Oops, Please try again!");
         setIsValidatingAnswer(false);
         return;
       }
@@ -293,7 +277,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
             required: question.required,
             question: question.question,
             prompt: question.prompt,
-            answer,
+            answer: answer || "",
           };
         })
         .filter(answer => answer.answer !== "");
@@ -301,6 +285,16 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
       dispatch(updateAnsweredInput(answeredInputs));
       setAnswers(newAnswers);
       setIsValidatingAnswer(false);
+
+      const isReady = allRequiredQuestionsAnswered() ? "We are ready to create a new document. " : "";
+      const botMessage: IMessage = {
+        text: `Ok!${isReady} I have prepared the incoming parameters, please check!`,
+        type: "form",
+        createdAt: createdAt,
+        fromUser: false,
+      };
+
+      setMessages(prevMessages => prevMessages.concat(botMessage));
     }
   };
 
@@ -339,15 +333,6 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
 
     setAnswers(_answers);
     dispatchNewExecutionData(_answers, _inputs);
-
-    // const newUserMessage: IMessage = {
-    //   text: value,
-    //   type: "text",
-    //   createdAt: createdAt,
-    //   fromUser: true,
-    // };
-
-    // setMessages(prevMessages => prevMessages.concat(newUserMessage));
   };
 
   const validateAndUploadFiles = () =>
