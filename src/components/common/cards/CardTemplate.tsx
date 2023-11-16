@@ -97,7 +97,7 @@ function CardTemplate({ template, noRedirect = false, query, asResult = false }:
                   }}
                 >
                   <Image
-                    src={template.thumbnail}
+                    src={template.thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
                     alt={template.title}
                     style={{ borderRadius: "16%", objectFit: "cover", width: "100%", height: "100%" }}
                   />
@@ -129,8 +129,8 @@ function CardTemplate({ template, noRedirect = false, query, asResult = false }:
               </Grid>
             </Grid>
             <Image
-              src={template.created_by?.avatar ?? ""}
-              alt={template.created_by.first_name.slice(0, 1)}
+              src={template.created_by?.avatar ?? require("@/assets/images/default-avatar.jpg")}
+              alt={template.created_by?.first_name?.slice(0, 1) ?? "P"}
               width={32}
               height={32}
               style={{
@@ -198,8 +198,8 @@ function CardTemplate({ template, noRedirect = false, query, asResult = false }:
               </Stack>
             </Grid>
             <Image
-              src={template.created_by?.avatar ?? ""}
-              alt={template.created_by.first_name.slice(0, 1)}
+              src={template.created_by?.avatar ?? require("@/assets/images/default-avatar.jpg")}
+              alt={template.created_by?.first_name?.slice(0, 1) ?? "P"}
               width={32}
               height={32}
               style={{

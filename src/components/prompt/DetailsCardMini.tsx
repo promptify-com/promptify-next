@@ -60,7 +60,7 @@ export function DetailsCardMini({ templateData }: Props) {
           }}
         >
           <Image
-            src={templateData.thumbnail || "http://placehold.it/240x150"}
+            src={templateData.thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
             alt={templateData.title}
             style={{
               backgroundColor: theme.palette.surface[5],
@@ -83,8 +83,8 @@ export function DetailsCardMini({ templateData }: Props) {
         </Box>
         <FavoriteIcon style={favoriteIconStyle} />
         <Image
-          src={templateData.created_by.avatar}
-          alt={templateData.created_by.first_name}
+          src={templateData.created_by?.avatar ?? require("@/assets/images/default-avatar.jpg")}
+          alt={templateData.created_by?.first_name ?? "Promptify"}
           width={40}
           height={40}
           style={{

@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: false,
   images: {
-    domains: ["placehold.it", "promptify.s3.amazonaws.com"],
+    domains: ["promptify.s3.amazonaws.com"],
     minimumCacheTTL: 60 * 60,
   },
   eslint: {

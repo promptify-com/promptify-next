@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Avatar, Box, Grid, Typography } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import { useRouter } from "next/router";
@@ -13,6 +13,7 @@ import { isValidUserFn } from "@/core/store/userSlice";
 import { useSelector } from "react-redux";
 import { theme } from "@/theme";
 import { redirectToPath } from "@/common/helpers";
+import Image from "next/image";
 
 interface HeaderProps {
   transparent?: boolean;
@@ -139,16 +140,21 @@ export const Header: React.FC<HeaderProps> = ({ transparent = false, fixed = fal
                 setSidebarType("profile");
               }}
             >
-              <Avatar
-                sx={{
-                  width: "23px",
-                  height: "23px",
-                  bgcolor: "black",
-                  fontSize: 10,
+              <Image
+                src={currentUser?.avatar ?? require("@/assets/images/default-avatar.jpg")}
+                alt={currentUser?.first_name?.slice(0, 1) ?? "P"}
+                width={23}
+                height={23}
+                style={{
+                  backgroundColor: "black",
+                  color: "white",
+                  fontSize: 12,
                   textTransform: "capitalize",
+                  display: "block",
+                  borderRadius: "50%",
+                  textAlign: "center",
+                  lineHeight: "22px",
                 }}
-                src={currentUser?.avatar}
-                alt={currentUser?.first_name}
               />
             </Box>
           )}
