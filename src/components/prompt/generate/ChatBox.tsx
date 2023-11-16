@@ -9,7 +9,7 @@ import useToken from "@/hooks/useToken";
 import useTimestampConverter from "@/hooks/useTimestampConverter";
 import { ChatInterface } from "./ChatInterface";
 import { ChatInput } from "./ChatInput";
-import { TemplateQuestions, Templates, UpdatedQuestionTemplate } from "@/core/api/dto/templates";
+import { TemplateQuestions, Templates, TemplatesExecutions, UpdatedQuestionTemplate } from "@/core/api/dto/templates";
 import { getInputsFromString } from "@/common/helpers/getInputsFromString";
 import { IPromptInput, PromptLiveResponse, AnsweredInputType } from "@/common/types/prompt";
 import {
@@ -315,7 +315,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
         fromUser: false,
       };
 
-      setMessages(prevMessages => prevMessages.filter(msg => msg.type === "text").concat(botMessage));
+      setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat(botMessage));
     }
   };
 
@@ -408,6 +408,26 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
     });
 
     uploadedFiles.current.clear();
+
+    dispatch(setChatFullScreenStatus(false));
+
+    generateExecution(promptsData);
+  };
+
+  const regenerateHandler = async (execution: TemplatesExecutions) => {
+    dispatch(setGeneratingStatus(true));
+
+    const promptsData: ResPrompt[] = [];
+
+    if (execution.parameters) {
+      Object.entries(execution.parameters).forEach(param => {
+        promptsData.push({
+          contextual_overrides: [],
+          prompt: +param[0],
+          prompt_params: param[1],
+        });
+      });
+    }
 
     dispatch(setChatFullScreenStatus(false));
 
@@ -620,6 +640,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
           messages={messages}
           onChange={handleUserInput}
           setIsSimulationStreaming={setIsSimulationStreaming}
+          regenerate={regenerateHandler}
         />
         {currentUser?.id ? (
           <ChatInput

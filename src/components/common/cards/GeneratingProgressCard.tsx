@@ -1,7 +1,5 @@
-import { Box, Button, CircularProgress, Stack, Typography } from "@mui/material";
+import { Button, Stack, Typography } from "@mui/material";
 import React from "react";
-import { LogoApp } from "@/assets/icons/LogoApp";
-import { theme } from "@/theme";
 import { ProgressLogo } from "../ProgressLogo";
 
 type CardProps = {

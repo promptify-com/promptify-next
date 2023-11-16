@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import { DeleteOutline, PlayCircle } from "@mui/icons-material";
-import { Button, Grid, Stack, Typography } from "@mui/material";
+import { Box, Button, Grid, Stack, Typography } from "@mui/material";
 import { useAppSelector } from "@/hooks/useStore";
 import MessageSender from "./MessageSender";
 import { useDispatch } from "react-redux";
@@ -59,7 +59,12 @@ export const ChatInput = ({
         gap={2}
       >
         {isGenerating ? (
-          <GeneratingProgressCard onCancel={abortConnection} />
+          <Box
+            width={"100%"}
+            maxWidth={"360px"}
+          >
+            <GeneratingProgressCard onCancel={abortConnection} />
+          </Box>
         ) : isValidating ? (
           <Stack
             direction={"row"}

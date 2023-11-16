@@ -1,7 +1,8 @@
-import { IconButton, Stack, Tooltip } from "@mui/material";
-import { ThumbUp, ThumbDown } from "@mui/icons-material";
+import { Button, Stack } from "@mui/material";
 import { useUpdateExecutionMutation } from "@/core/api/executions";
 import { TemplatesExecutions } from "@/core/api/dto/templates";
+import { Happy } from "@/assets/icons/Happy";
+import { Sad } from "@/assets/icons/Sad";
 
 interface FeedBackType {
   selectedExecution: TemplatesExecutions | null;
@@ -9,9 +10,6 @@ interface FeedBackType {
 
 const ThumbsFeedback: React.FC<FeedBackType> = ({ selectedExecution }) => {
   const [updateExecution] = useUpdateExecutionMutation();
-
-  const isLiked = selectedExecution?.feedback === "LIKED";
-  const isDisliked = selectedExecution?.feedback === "DISLIKED";
 
   const handleFeedback = (feedbackType: string) => {
     if (selectedExecution && selectedExecution?.feedback !== feedbackType) {
@@ -30,36 +28,45 @@ const ThumbsFeedback: React.FC<FeedBackType> = ({ selectedExecution }) => {
       direction={"row"}
       alignItems={"center"}
       gap={1}
-      ml={"auto"}
     >
-      <Tooltip title="LIKE">
-        <IconButton
-          onClick={() => handleFeedback("LIKED")}
-          sx={{
-            border: "none",
-            "&:hover": {
-              bgcolor: "surface.2",
-            },
-            color: isLiked ? "success.main" : "initial",
-          }}
-        >
-          <ThumbUp />
-        </IconButton>
-      </Tooltip>
-      <Tooltip title="DISLIKE">
-        <IconButton
-          onClick={() => handleFeedback("DISLIKED")}
-          sx={{
-            border: "none",
-            "&:hover": {
-              bgcolor: "surface.2",
-            },
-            color: isDisliked ? "error.main" : "initial",
-          }}
-        >
-          <ThumbDown />
-        </IconButton>
-      </Tooltip>
+      <Button
+        onClick={() => handleFeedback("LIKED")}
+        variant="text"
+        startIcon={<Happy />}
+        sx={{
+          height: "22px",
+          p: "15px",
+          fontSize: 13,
+          fontWeight: 500,
+          border: "1px solid",
+          borderColor: "divider",
+          color: "secondary.main",
+          ":hover": {
+            bgcolor: "action.hover",
+          },
+        }}
+      >
+        Good
+      </Button>
+      <Button
+        onClick={() => handleFeedback("DISLIKED")}
+        variant="text"
+        startIcon={<Sad />}
+        sx={{
+          height: "22px",
+          p: "15px",
+          fontSize: 13,
+          fontWeight: 500,
+          border: "1px solid",
+          borderColor: "divider",
+          color: "secondary.main",
+          ":hover": {
+            bgcolor: "action.hover",
+          },
+        }}
+      >
+        Bad
+      </Button>
     </Stack>
   );
 };

@@ -1,12 +1,14 @@
 import React, { useEffect, useRef, Dispatch, SetStateAction } from "react";
-import { Box, Divider, Stack } from "@mui/material";
+import { Box, Button, Divider, Stack } from "@mui/material";
 import { Message } from "./Message";
 import { IAnswer, IMessage } from "@/common/types/chat";
 import { TemplateDetailsCard } from "./TemplateDetailsCard";
-import { Templates, UpdatedQuestionTemplate } from "@/core/api/dto/templates";
+import { Templates, TemplatesExecutions, UpdatedQuestionTemplate } from "@/core/api/dto/templates";
 import { useAppSelector } from "@/hooks/useStore";
 import { InputsForm } from "./Inputsform";
 import { CardExecution } from "@/components/common/cards/CardExecution";
+import ThumbsFeedback from "../ThumbsFeedback";
+import { Replay } from "@mui/icons-material";
 
 interface Props {
   template: Templates;
@@ -15,6 +17,7 @@ interface Props {
   setIsSimulationStreaming: Dispatch<SetStateAction<boolean>>;
   questions: UpdatedQuestionTemplate[];
   answers: IAnswer[];
+  regenerate: (execution: TemplatesExecutions) => void;
 }
 
 export const ChatInterface = ({
@@ -24,6 +27,7 @@ export const ChatInterface = ({
   setIsSimulationStreaming,
   questions,
   answers,
+  regenerate,
 }: Props) => {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const isFullScreen = useAppSelector(state => state.template.isChatFullScreen);
@@ -99,16 +103,48 @@ export const ChatInterface = ({
               </Box>
             )}
             {msg.type === "spark" && msg.spark && (
-              <Box
+              <Stack
                 ml={{ xs: 6.5, md: 7 }}
                 mb={2}
-                maxWidth={"360px"}
+                gap={2}
               >
-                <CardExecution
-                  execution={msg.spark}
-                  noSave
-                />
-              </Box>
+                <Box maxWidth={"360px"}>
+                  <CardExecution
+                    execution={msg.spark}
+                    noSave
+                  />
+                </Box>
+
+                <Stack
+                  direction={"row"}
+                  alignItems={"center"}
+                  flexWrap={"wrap"}
+                  gap={1}
+                >
+                  <ThumbsFeedback selectedExecution={msg.spark} />
+                  <Button
+                    onClick={() => {
+                      if (msg.spark) regenerate(msg.spark);
+                    }}
+                    variant="text"
+                    startIcon={<Replay />}
+                    sx={{
+                      height: "22px",
+                      p: "15px",
+                      fontSize: 13,
+                      fontWeight: 500,
+                      border: "1px solid",
+                      borderColor: "divider",
+                      color: "secondary.main",
+                      ":hover": {
+                        bgcolor: "action.hover",
+                      },
+                    }}
+                  >
+                    Try again
+                  </Button>
+                </Stack>
+              </Stack>
             )}
           </React.Fragment>
         ))}
