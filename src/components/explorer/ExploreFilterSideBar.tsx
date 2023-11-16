@@ -22,12 +22,11 @@ interface ExploreFilterSideBarProps {
   tags: Tag[] | undefined;
 }
 
+const listHeaderStyle = { fontSize: "12px", ml: "17px", borderRadius: "16px", textAlign: "center" };
 export const ExploreFilterSideBar: React.FC<ExploreFilterSideBarProps> = ({ engines, tags, sidebarOpen }) => {
   const [itemsToShow, setItemsToShow] = useState<number>(3);
-
   const filters = useSelector((state: RootState) => state.filters);
   const dispatch = useDispatch();
-
   const handleEngineSelect = (engine: Engine | null) => {
     dispatch(setSelectedEngine(engine));
   };
@@ -38,20 +37,19 @@ export const ExploreFilterSideBar: React.FC<ExploreFilterSideBarProps> = ({ engi
       dispatch(setSelectedTag(tag));
     }
   };
-
   const showmore = () => {
     if (engines?.length) {
       setItemsToShow(engines.length);
     }
   };
   const { engine: storedEngine, tag: storedTags } = filters;
-
   const showless = () => {
     setItemsToShow(3);
   };
+
   return (
     <Box sx={{ opacity: sidebarOpen ? 1 : 0 }}>
-      <List subheader={<ListSubheader sx={{ fontSize: "12px", ml: "17px" }}>ENGINES</ListSubheader>}>
+      <List subheader={<ListSubheader sx={listHeaderStyle}>ENGINES</ListSubheader>}>
         <Grid
           className="sidebar-list"
           sx={{
@@ -76,13 +74,13 @@ export const ExploreFilterSideBar: React.FC<ExploreFilterSideBarProps> = ({ engi
                   }
                   alt={engine.name}
                   sx={{
-                    width: "30px",
-                    height: "30px",
-                    mr: "18px",
+                    width: "25px",
+                    height: "25px",
+                    mr: "8px",
                   }}
                 />
                 <Typography
-                  fontSize={14}
+                  fontSize={13}
                   fontWeight={500}
                   color={"onSurface"}
                 >
@@ -104,7 +102,7 @@ export const ExploreFilterSideBar: React.FC<ExploreFilterSideBarProps> = ({ engi
           {itemsToShow === 3 ? "See all" : "Show less"}
         </Button>
       </List>
-      <List subheader={<ListSubheader sx={{ fontSize: "12px", ml: "17px" }}>POPULAR TAGS</ListSubheader>}>
+      <List subheader={<ListSubheader sx={{ ...listHeaderStyle, mb: "10px" }}>POPULAR TAGS</ListSubheader>}>
         <Grid
           display={"flex"}
           flexDirection={"column"}
@@ -115,7 +113,7 @@ export const ExploreFilterSideBar: React.FC<ExploreFilterSideBarProps> = ({ engi
           {tags?.map(tag => (
             <Chip
               sx={{
-                bgcolor: storedTags.includes(tag) ? "#9DB2BF" : "surface.3",
+                bgcolor: storedTags.includes(tag) ? "#9DB2BF" : "surface.5",
                 fontSize: 14,
                 fontWeight: 500,
                 lineHeight: "18px",

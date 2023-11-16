@@ -6,8 +6,24 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import Typography from "@mui/material/Typography";
 import { redirectToPath } from "@/common/helpers";
 import type { NavItem } from "@/common/types/sidebar";
+import ExpandLess from "@mui/icons-material/ExpandLess";
+import ExpandMore from "@mui/icons-material/ExpandMore";
+import Collapse from "@mui/material/Collapse";
+import { ExploreFilterSideBar } from "../explorer/ExploreFilterSideBar";
+import { Engine, Tag } from "@/core/api/dto/templates";
+import { theme } from "@/theme";
+import { Box } from "@mui/material";
 
-function SidebarItem({ navItem, isPromptsPage }: { navItem: NavItem; isPromptsPage: boolean }) {
+interface Props {
+  navItem: NavItem;
+  isPromptsPage: boolean;
+  showFilters: boolean;
+  onClick?: () => void;
+  tags?: Tag[];
+  engines?: Engine[];
+}
+
+function SidebarItem({ navItem, isPromptsPage, showFilters, onClick, engines, tags }: Props) {
   return (
     <Link
       href={navItem.href}
@@ -21,11 +37,8 @@ function SidebarItem({ navItem, isPromptsPage }: { navItem: NavItem; isPromptsPa
         disablePadding
         sx={{
           ...(navItem.active && {
-            ".MuiListItemIcon-root": {
-              backgroundColor: "surface.1",
-              ".MuiSvgIcon-root": {
-                color: "#375CA9",
-              },
+            ".MuiSvgIcon-root": {
+              fill: theme.palette.primary.main,
             },
             ".MuiTypography-root": {
               color: "#375CA9",
@@ -33,22 +46,16 @@ function SidebarItem({ navItem, isPromptsPage }: { navItem: NavItem; isPromptsPa
           }),
           padding: "8px",
           "&:hover": {
-            // ".MuiListItemIcon-root": {
             backgroundColor: "surface.1",
             borderRadius: "8px",
             ".MuiSvgIcon-root": {
               transform: "scale(1.1)",
             },
-            // },
-            // ".MuiTypography-root, .MuiSvgIcon-root": {
-            //   color: "#375CA9",
-            // },
-          },
-          ".MuiSvgIcon-root": {
-            transition: "transform 0.3s ease, color 0.3s ease",
           },
         }}
         onClick={e => {
+          onClick?.();
+
           if (navItem.external) {
             return;
           }
@@ -67,6 +74,7 @@ function SidebarItem({ navItem, isPromptsPage }: { navItem: NavItem; isPromptsPa
           sx={{
             display: "flex",
             flexDirection: isPromptsPage ? "row" : "column",
+            justifyContent: isPromptsPage ? "space-between" : "flex-start",
             width: isPromptsPage ? "100%" : "auto",
             textAlign: "center",
             "&:hover": {
@@ -76,43 +84,64 @@ function SidebarItem({ navItem, isPromptsPage }: { navItem: NavItem; isPromptsPa
             },
           }}
         >
-          <ListItemIcon
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: isPromptsPage ? "flex-end" : "center",
-              minWidth: "40px",
-              borderRadius: "6px",
-              height: "40px",
-              alignItems: "center",
-              color: "#67677C",
-              ".MuiListItemIcon-root": {
-                minWidth: "40px",
-                width: "40px",
-              },
-            }}
-          >
-            <Icon
+          <Box sx={{ minWidth: "40px", display: isPromptsPage ? "flex" : "block" }}>
+            <ListItemIcon
               sx={{
-                width: "32px",
-                height: "32px",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: isPromptsPage ? "flex-end" : "center",
+                minWidth: "40px",
+                borderRadius: "6px",
+                height: "40px",
+                alignItems: "center",
+                color: "#67677C",
+                ".MuiListItemIcon-root": {
+                  minWidth: "40px",
+                  width: "40px",
+                },
               }}
             >
-              {navItem.icon}
-            </Icon>
-          </ListItemIcon>
-          <Typography
-            sx={{
-              mt: 0.5,
-            }}
-            fontSize={14}
-            fontWeight={500}
-            color={"onSurface"}
-          >
-            {navItem.name}
-          </Typography>
+              <Icon
+                sx={{
+                  width: "32px",
+                  height: "32px",
+                }}
+              >
+                {navItem.icon}
+              </Icon>
+            </ListItemIcon>
+            <Typography
+              sx={{
+                mt: 0.5,
+                alignSelf: isPromptsPage ? "center" : "flex-start",
+              }}
+              fontSize={14}
+              fontWeight={500}
+              color={"onSurface"}
+            >
+              {navItem.name}
+            </Typography>
+          </Box>
+          {isPromptsPage && navItem.href === "/explore" ? (
+            showFilters ? (
+              <ExpandLess sx={{ mr: -1, color: "text.secondary" }} />
+            ) : (
+              <ExpandMore sx={{ mr: -1, color: "text.secondary" }} />
+            )
+          ) : null}
         </ListItemButton>
       </ListItem>
+      <Collapse
+        in={showFilters && isPromptsPage && navItem.href === "/explore"}
+        timeout={"auto"}
+        unmountOnExit
+      >
+        <ExploreFilterSideBar
+          engines={engines}
+          tags={tags}
+          sidebarOpen
+        />
+      </Collapse>
     </Link>
   );
 }

@@ -2,7 +2,7 @@ import StickyNote2 from "@mui/icons-material/StickyNote2";
 import Home from "@mui/icons-material/Home";
 import Drawer from "@mui/material/Drawer";
 import { usePathname } from "next/navigation";
-import React from "react";
+import React, { useState } from "react";
 import { useAppSelector } from "@/hooks/useStore";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { ExtensionRounded, FolderSpecial, HelpRounded, Inventory2Rounded } from "@mui/icons-material";
@@ -11,13 +11,15 @@ import Grid from "@mui/material/Grid";
 import { NavItem } from "@/common/types/sidebar";
 import SidebarItem from "./SidebarItem";
 import { theme } from "@/theme";
+import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
 
 function Sidebar() {
   const pathname = usePathname();
   const isPromptsPage = pathname.split("/")[1] === "explore";
   const isTemplatePage = pathname.split("/")[1] === "prompt";
   const isValidUser = useAppSelector(isValidUserFn);
-
+  const [showFilters, setShowFilters] = useState(isPromptsPage);
+  const { tags, engines } = useGetTemplatesByFilter();
   const navItems: NavItem[] = [
     {
       name: "Home",
@@ -47,6 +49,7 @@ function Sidebar() {
 
   if (isTemplatePage) {
     const slug = pathname.split("/")[2];
+
     navItems.push({
       name: "Prompt Builder",
       href: `/prompt-builder/${slug}`,
@@ -92,7 +95,9 @@ function Sidebar() {
         display={"flex"}
         flexDirection="column"
         justifyContent="space-between"
+        className="sidebar-list"
         sx={{
+          overflow: showFilters ? "scroll" : "none",
           bgcolor: "surface.3",
           width: isPromptsPage ? theme.custom.defaultSidebarWidth : theme.custom.leftClosedSidebarWidth,
           padding: "8px 4px",
@@ -100,11 +105,15 @@ function Sidebar() {
         }}
       >
         <List>
-          {navItems.slice(0, -1).map((item, index) => (
+          {navItems.slice(0, -1).map(item => (
             <SidebarItem
-              key={index}
+              key={item.href}
               navItem={item}
               isPromptsPage={isPromptsPage}
+              showFilters={showFilters}
+              onClick={() => item.href === "/explore" && setShowFilters(!showFilters)}
+              engines={engines}
+              tags={tags}
             />
           ))}
         </List>
@@ -114,6 +123,7 @@ function Sidebar() {
             <SidebarItem
               navItem={navItems[navItems.length - 1]}
               isPromptsPage={isPromptsPage}
+              showFilters={showFilters}
             />
           )}{" "}
         </List>
