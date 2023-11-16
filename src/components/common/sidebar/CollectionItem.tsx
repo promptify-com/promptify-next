@@ -42,9 +42,11 @@ export const CollectionItem: React.FC<CollectionItemProps> = ({ expanded, templa
             }}
           >
             <Image
-              src={template.thumbnail}
-              alt={template.title}
-              style={{ borderRadius: "16px", objectFit: "cover", width: "100%", height: "100%" }}
+              src={template.thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
+              alt={template.title?.slice(0, 2) ?? "P"}
+              width={expanded ? 48 : 38}
+              height={38}
+              style={{ borderRadius: "16px", objectFit: "cover" }}
             />
           </CardMedia>
         </Grid>

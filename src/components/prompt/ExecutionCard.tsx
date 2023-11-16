@@ -128,7 +128,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, sparkHa
                         alt={"book cover"}
                         src={prevItem.content}
                         onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-                          (e.target as HTMLImageElement).src = "http://placehold.it/165x215";
+                          (e.target as HTMLImageElement).src = require("@/assets/images/default-thumbnail.jpg");
                         }}
                         sx={{
                           borderRadius: "8px",
@@ -190,7 +190,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, sparkHa
                     alt={"book cover"}
                     src={exec.content}
                     onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-                      (e.target as HTMLImageElement).src = "http://placehold.it/165x215";
+                      (e.target as HTMLImageElement).src = require("@/assets/images/default-thumbnail.jpg");
                     }}
                     sx={{
                       borderRadius: "8px",

@@ -1,10 +1,10 @@
-import React from "react";
-import { Avatar, Box, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { Mode } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
 import BaseButton from "@/components/base/BaseButton";
 import { showProfileInEditMode } from "@/core/store/profileSlice";
-import { RootState } from '@/core/store';
+import { RootState } from "@/core/store";
+import Image from "../design-system/Image";
 
 export const Home = () => {
   const dispatch = useDispatch();
@@ -39,16 +39,21 @@ export const Home = () => {
           gap={"16px"}
         >
           <Box>
-            <Avatar
-              sx={{
-                height: "72px",
-                width: "72px",
-                bgcolor: "onSurface",
+            <Image
+              src={currentUser?.avatar ?? require("@/assets/images/default-avatar.jpg")}
+              alt={currentUser?.username?.slice(0, 1) ?? "P"}
+              width={72}
+              height={72}
+              style={{
+                display: "block",
                 fontSize: 40,
+                borderRadius: "50%",
+                color: "#fff",
+                backgroundColor: "black",
                 textTransform: "capitalize",
+                lineHeight: "71px",
+                textAlign: "center",
               }}
-              src={currentUser?.avatar}
-              alt={currentUser?.username}
             />
           </Box>
           <Box

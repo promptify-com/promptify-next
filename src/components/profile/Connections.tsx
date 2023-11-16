@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { LinkOff } from "@mui/icons-material";
-import { Avatar, Box, Snackbar, Typography, useTheme, useMediaQuery } from "@mui/material";
+import { Box, Snackbar, Typography, useTheme, useMediaQuery } from "@mui/material";
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import { useRouter } from "next/router";
 import { AlertContent, IConnection, IContinueWithSocialMediaResponse } from "@/common/types";
@@ -9,6 +9,7 @@ import AddConnectionDialog from "@/components/dialog/AddConnectionDialog";
 import DeleteConnectionDialog from "@/components/dialog/DeleteConnectionDialog";
 import { useConnectionss, useDeleteConnection } from "@/hooks/api/connections";
 import useTruncate from "@/hooks/useTruncate";
+import Image from "../design-system/Image";
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return (
@@ -184,8 +185,12 @@ export const Connections = () => {
                   }}
                 >
                   <Box>
-                    <Avatar
-                      sx={{
+                    <Image
+                      src={require("@/assets/images/default-avatar.jpg")}
+                      alt={customConnection?.avatar?.slice(0, 1) ?? "P"}
+                      width={isMediumScreensUp ? 48 : 36}
+                      height={isMediumScreensUp ? 48 : 36}
+                      style={{
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
@@ -195,12 +200,10 @@ export const Connections = () => {
                         overflow: "hidden",
                         color: "#fff",
                         backgroundColor: "black",
-                        height: { xs: "36px", md: "48px" },
-                        width: { xs: "36px", md: "48px" },
+                        textTransform: "capitalize",
+                        lineHeight: isMediumScreensUp ? "47px" : "35px",
+                        textAlign: "center",
                       }}
-                      src={""}
-                      component={"image"}
-                      alt={customConnection.avatar}
                     />
                   </Box>
                   <Box>

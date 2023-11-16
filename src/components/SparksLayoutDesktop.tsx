@@ -9,6 +9,7 @@ import SavedSpark from "@/assets/icons/SavedSpark";
 import { useRouter } from "next/router";
 import ShareIcon from "@/assets/icons/ShareIcon";
 import { redirectToPath } from "@/common/helpers";
+import Image from "./design-system/Image";
 
 export const SparksLayoutDesktop: FC<SparksLayoutProps> = ({
   execution,
@@ -103,10 +104,13 @@ export const SparksLayoutDesktop: FC<SparksLayoutProps> = ({
             height: { xs: "73px", sm: "31px" },
             objectFit: "cover",
           }}
-          component="img"
-          image={template.thumbnail}
-          alt={template.title}
-        />
+        >
+          <Image
+            src={template.thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
+            alt={template.title}
+            style={{ borderRadius: "8px", objectFit: "cover", width: "100%", height: "100%" }}
+          />
+        </CardMedia>
         <Typography
           fontSize={13}
           fontWeight={500}
