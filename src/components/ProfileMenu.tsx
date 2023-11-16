@@ -16,6 +16,7 @@ import { MenuType, ProfileMenuItems } from "@/common/constants";
 import { useSelector } from "react-redux";
 import { RootState } from "@/core/store";
 import { useRef, useState } from "react";
+import Image from "./design-system/Image";
 
 export const ProfileMenu = () => {
   const router = useRouter();
@@ -39,8 +40,8 @@ export const ProfileMenu = () => {
       <Avatar
         ref={menuAnchorRef}
         onClick={() => setIsMenuShown(!isMenuShown)}
-        src={currentUser?.avatar}
-        alt={currentUser?.first_name}
+        src={currentUser?.avatar ?? require("@/assets/images/default-avatar.jpg")}
+        alt={currentUser?.first_name ?? "Promptify"}
         sx={{
           ml: "auto",
           cursor: "pointer",
@@ -110,20 +111,22 @@ export const ProfileMenu = () => {
                       display={"flex"}
                       justifyContent={"center"}
                     >
-                      <Avatar
-                        src={currentUser?.avatar}
-                        alt={currentUser?.first_name}
-                        sizes="40px"
-                        sx={{
-                          width: "90px",
-                          height: "90px",
-                          bgcolor: currentUser?.avatar ? "" : "black",
+                      <Image
+                        src={currentUser?.avatar ?? require("@/assets/images/default-avatar.jpg")}
+                        alt={currentUser?.first_name?.slice(0, 1) ?? "P"}
+                        width={90}
+                        height={90}
+                        style={{
+                          backgroundColor: "black",
+                          color: "white",
+                          fontSize: "40px",
                           padding: "1px",
                           fontWeight: 500,
-                          fontSize: { sm: "60px" },
                           textTransform: "capitalize",
-                          lineHeight: "20px",
+                          lineHeight: "89px",
+                          textAlign: "center",
                           letterSpacing: "0.14px",
+                          borderRadius: "50%",
                         }}
                       />
                     </Box>

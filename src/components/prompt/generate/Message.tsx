@@ -1,5 +1,5 @@
 import React, { useState, memo, useEffect, Dispatch, SetStateAction } from "react";
-import { Avatar, Button, Grid, Stack, Typography } from "@mui/material";
+import { Button, Grid, Stack, Typography } from "@mui/material";
 import LogoAsAvatar from "@/assets/icons/LogoAvatar";
 import { useAppSelector } from "@/hooks/useStore";
 import { ToggleButtonsGroup } from "@/components/design-system/ToggleButtonsGroup";
@@ -8,6 +8,8 @@ import { IMessage } from "@/common/types/chat";
 import useTextSimulationStreaming from "@/hooks/useTextSimulationStreaming";
 import { FileType } from "@/common/types/prompt";
 import { getFileTypeExtensionsAsString } from "@/common/helpers/uploadFileHelper";
+import Image from "@/components/design-system/Image";
+import { theme } from "@/theme";
 
 interface MessageBlockProps {
   message: IMessage;
@@ -83,13 +85,14 @@ export const Message = ({
       {!hideHeader && (
         <>
           {message.fromUser && currentUser ? (
-            <Avatar
-              src={currentUser.avatar}
-              alt={currentUser.first_name}
-              sx={{
-                width: 40,
-                height: 40,
-                bgcolor: "surface.5",
+            <Image
+              src={currentUser?.avatar ?? require("@/assets/images/default-avatar.jpg")}
+              alt={currentUser?.first_name?.slice(0, 1) ?? "P"}
+              width={40}
+              height={40}
+              style={{
+                backgroundColor: theme.palette.surface[5],
+                borderRadius: "50%",
               }}
             />
           ) : (

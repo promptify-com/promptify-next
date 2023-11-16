@@ -56,7 +56,7 @@ const SelectedFiltersSection: React.FC<SelectedFiltersSectionProps> = ({
             avatar={
               <Avatar
                 alt={selectedTemplate.title}
-                src={selectedTemplate.thumbnail}
+                src={selectedTemplate.thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
               />
             }
             label={selectedTemplate.title}

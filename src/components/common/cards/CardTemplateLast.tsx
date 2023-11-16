@@ -49,7 +49,7 @@ function CardTemplateLast({ template }: CardTemplateLastProps) {
           }}
         >
           <Image
-            src={template.thumbnail}
+            src={template.thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
             alt={template.title}
             style={{ borderRadius: "16px 16px 0px 0px", objectFit: "cover", width: "100%", height: "100%" }}
           />
@@ -122,8 +122,8 @@ function CardTemplateLast({ template }: CardTemplateLastProps) {
                 {template.favorites_count || 0}
               </Box>
               <Image
-                src={template.created_by.avatar}
-                alt={template.created_by.first_name}
+                src={template.created_by?.avatar ?? require("@/assets/images/default-avatar.jpg")}
+                alt={template.created_by?.first_name ?? "Promptify"}
                 width={32}
                 height={32}
                 style={{
