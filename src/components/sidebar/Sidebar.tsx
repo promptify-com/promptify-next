@@ -10,14 +10,15 @@ import List from "@mui/material/List";
 import Grid from "@mui/material/Grid";
 import { NavItem } from "@/common/types/sidebar";
 import SidebarItem from "./SidebarItem";
+import { theme } from "@/theme";
 
 function Sidebar() {
   const pathname = usePathname();
-  const isExplorePage = pathname.split("/")[1] === "explore";
+  const isPromptsPage = pathname.split("/")[1] === "explore";
   const isTemplatePage = pathname.split("/")[1] === "prompt";
   const isValidUser = useAppSelector(isValidUserFn);
 
-  let navItems: NavItem[] = [
+  const navItems: NavItem[] = [
     {
       name: "Home",
       href: "/",
@@ -30,7 +31,7 @@ function Sidebar() {
       name: "Prompts",
       href: "/explore",
       icon: <StickyNote2 />,
-      active: isExplorePage,
+      active: isPromptsPage,
       external: false,
       reload: true,
     },
@@ -39,14 +40,6 @@ function Sidebar() {
       href: isValidUser ? "/sparks" : "/signin",
       icon: <FolderSpecial />,
       active: pathname === "/sparks",
-      external: false,
-      reload: false,
-    },
-    {
-      name: "Chrome Extension",
-      href: "#",
-      icon: <ExtensionRounded />,
-      active: false,
       external: false,
       reload: false,
     },
@@ -64,14 +57,24 @@ function Sidebar() {
     });
   }
 
-  navItems.push({
-    name: "Learn & Help",
-    href: "https://blog.promptify.com/",
-    icon: <HelpRounded />,
-    active: false,
-    external: true,
-    reload: false,
-  });
+  navItems.push(
+    {
+      name: "Chrome Extension",
+      href: "#",
+      icon: <ExtensionRounded />,
+      active: false,
+      external: false,
+      reload: false,
+    },
+    {
+      name: "Learn & Help",
+      href: "https://blog.promptify.com/",
+      icon: <HelpRounded />,
+      active: false,
+      external: true,
+      reload: false,
+    },
+  );
 
   return (
     <Drawer
@@ -79,6 +82,7 @@ function Sidebar() {
       variant="permanent"
       anchor="left"
       sx={{
+        display: { xs: "none", md: "flex" },
         "& .MuiDrawer-paper": {
           borderRight: "none",
         },
@@ -90,7 +94,7 @@ function Sidebar() {
         justifyContent="space-between"
         sx={{
           bgcolor: "surface.3",
-          width: "96px",
+          width: isPromptsPage ? theme.custom.defaultSidebarWidth : theme.custom.leftClosedSidebarWidth,
           padding: "8px 4px",
           height: "100vh",
         }}
@@ -100,11 +104,19 @@ function Sidebar() {
             <SidebarItem
               key={index}
               navItem={item}
+              isPromptsPage={isPromptsPage}
             />
           ))}
         </List>
 
-        <List>{navItems.length > 0 && <SidebarItem navItem={navItems[navItems.length - 1]} />} </List>
+        <List>
+          {navItems.length > 0 && (
+            <SidebarItem
+              navItem={navItems[navItems.length - 1]}
+              isPromptsPage={isPromptsPage}
+            />
+          )}{" "}
+        </List>
       </Grid>
     </Drawer>
   );

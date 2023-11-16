@@ -4,11 +4,10 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import Typography from "@mui/material/Typography";
-
 import { redirectToPath } from "@/common/helpers";
 import type { NavItem } from "@/common/types/sidebar";
 
-function SidebarItem({ navItem }: { navItem: NavItem }) {
+function SidebarItem({ navItem, isPromptsPage }: { navItem: NavItem; isPromptsPage: boolean }) {
   return (
     <Link
       href={navItem.href}
@@ -34,16 +33,16 @@ function SidebarItem({ navItem }: { navItem: NavItem }) {
           }),
           padding: "8px",
           "&:hover": {
-            ".MuiListItemIcon-root": {
-              backgroundColor: "surface.1",
-              ".MuiSvgIcon-root": {
-                transform: "scale(1.1)",
-                color: "#375CA9",
-              },
+            // ".MuiListItemIcon-root": {
+            backgroundColor: "surface.1",
+            borderRadius: "8px",
+            ".MuiSvgIcon-root": {
+              transform: "scale(1.1)",
             },
-            ".MuiTypography-root, .MuiSvgIcon-root": {
-              color: "#375CA9",
-            },
+            // },
+            // ".MuiTypography-root, .MuiSvgIcon-root": {
+            //   color: "#375CA9",
+            // },
           },
           ".MuiSvgIcon-root": {
             transition: "transform 0.3s ease, color 0.3s ease",
@@ -67,10 +66,13 @@ function SidebarItem({ navItem }: { navItem: NavItem }) {
         <ListItemButton
           sx={{
             display: "flex",
-            flexDirection: "column",
+            flexDirection: isPromptsPage ? "row" : "column",
+            width: isPromptsPage ? "100%" : "auto",
             textAlign: "center",
             "&:hover": {
-              backgroundColor: "surface.3",
+              backgroundColor: "surface.1",
+              borderRadius: "8px",
+              color: "onSurface",
             },
           }}
         >
@@ -78,7 +80,7 @@ function SidebarItem({ navItem }: { navItem: NavItem }) {
             sx={{
               display: "flex",
               flexDirection: "column",
-              justifyContent: "center",
+              justifyContent: isPromptsPage ? "flex-end" : "center",
               minWidth: "40px",
               borderRadius: "6px",
               height: "40px",
@@ -103,7 +105,7 @@ function SidebarItem({ navItem }: { navItem: NavItem }) {
             sx={{
               mt: 0.5,
             }}
-            fontSize={12}
+            fontSize={14}
             fontWeight={500}
             color={"onSurface"}
           >

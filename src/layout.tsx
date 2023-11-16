@@ -1,13 +1,13 @@
 import { ReactNode } from "react";
 import { Box, Grid } from "@mui/material";
-
 import { Header } from "@/components/Header";
 import { theme } from "@/theme";
-import { useAppSelector } from "./hooks/useStore";
 import Sidebar from "./components/sidebar/Sidebar";
+import { usePathname } from "next/navigation";
 
 export const Layout = ({ children }: { children: ReactNode }) => {
-  const defaultSidebarOpen = useAppSelector(state => state.sidebar.defaultSidebarOpen);
+  const pathname = usePathname();
+  const isPromptsPage = pathname.split("/")[1] === "explore";
 
   return (
     <>
@@ -19,12 +19,13 @@ export const Layout = ({ children }: { children: ReactNode }) => {
           gap={"2px"}
           sx={{
             minHeight: "100svh",
-
             maxWidth: {
               xs: "100%",
-              md: `calc(100% - 96px)`,
+              md: isPromptsPage
+                ? `calc(100% - ${theme.custom.defaultSidebarWidth})`
+                : `calc(100% - ${theme.custom.leftClosedSidebarWidth})`,
             },
-            m: { md: defaultSidebarOpen ? "0px 0px 0px auto" : "0px auto 0px auto" },
+            m: { md: `0px 0px 0px auto` },
           }}
         >
           <Header transparent />
