@@ -77,8 +77,8 @@ export const ChatInterface = ({
         >
           New messages
         </Divider>
-        {messages.map((msg, idx) => (
-          <React.Fragment key={idx}>
+        {messages.map(msg => (
+          <React.Fragment key={msg.id}>
             <Message
               message={msg}
               setIsSimulationStreaming={setIsSimulationStreaming}
@@ -93,6 +93,7 @@ export const ChatInterface = ({
                   questions={questions}
                   answers={answers}
                   onChange={onChange}
+                  setIsSimulationStreaming={setIsSimulationStreaming}
                 />
               </Box>
             )}

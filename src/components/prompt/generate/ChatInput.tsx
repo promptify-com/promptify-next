@@ -58,7 +58,9 @@ export const ChatInput = ({
         direction={"row"}
         gap={2}
       >
-        {isValidating && (
+        {isGenerating ? (
+          <GeneratingProgressCard onCancel={abortConnection} />
+        ) : isValidating ? (
           <Stack
             direction={"row"}
             gap={2}
@@ -86,49 +88,50 @@ export const ChatInput = ({
               </Typography>
             </Stack>
           </Stack>
-        )}
-        {showGenerate && !isGenerating && (
+        ) : (
           <>
-            <Button
-              onClick={onGenerate}
-              endIcon={<PlayCircle />}
-              sx={{
-                height: "22px",
-                p: "15px",
-                fontSize: 13,
-                fontWeight: 500,
-                ":hover": {
-                  bgcolor: "action.hover",
-                },
-              }}
-              variant="contained"
-              disabled={isGenerating || isValidating || disabledButton}
-            >
-              Run prompt
-            </Button>
-            <Button
-              variant="text"
-              endIcon={<DeleteOutline />}
-              sx={{
-                height: "22px",
-                p: "15px",
-                fontSize: 13,
-                fontWeight: 500,
-                border: "1px solid",
-                borderColor: "divider",
-                color: "secondary.main",
-                ":hover": {
-                  bgcolor: "action.hover",
-                },
-              }}
-              onClick={onClear}
-            >
-              Clear
-            </Button>
+            {showGenerate && !isGenerating && (
+              <Button
+                onClick={onGenerate}
+                endIcon={<PlayCircle />}
+                sx={{
+                  height: "22px",
+                  p: "15px",
+                  fontSize: 13,
+                  fontWeight: 500,
+                  ":hover": {
+                    bgcolor: "action.hover",
+                  },
+                }}
+                variant="contained"
+                disabled={isGenerating || isValidating || disabledButton}
+              >
+                Run prompt
+              </Button>
+            )}
+            {showClear && (
+              <Button
+                variant="text"
+                endIcon={<DeleteOutline />}
+                sx={{
+                  height: "22px",
+                  p: "15px",
+                  fontSize: 13,
+                  fontWeight: 500,
+                  border: "1px solid",
+                  borderColor: "divider",
+                  color: "secondary.main",
+                  ":hover": {
+                    bgcolor: "action.hover",
+                  },
+                }}
+                onClick={onClear}
+              >
+                Clear
+              </Button>
+            )}
           </>
         )}
-
-        {isGenerating && <GeneratingProgressCard onCancel={abortConnection} />}
       </Stack>
 
       <MessageSender

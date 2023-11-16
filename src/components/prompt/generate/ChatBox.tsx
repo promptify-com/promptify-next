@@ -26,6 +26,7 @@ import { useUploadFileMutation } from "@/core/api/uploadFile";
 import { uploadFileHelper } from "@/common/helpers/uploadFileHelper";
 import { setGeneratedExecution, setSelectedExecution } from "@/core/store/executionsSlice";
 import { getExecutionById } from "@/hooks/api/executions";
+import { randomId } from "@/common/helpers";
 
 interface Props {
   onError: (errMsg: string) => void;
@@ -64,38 +65,31 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
     setQueuedMessages(messages);
     setIsSimulationStreaming(true);
   };
-  const initialMessages = ({
-    questions,
-    startOver = false,
-  }: {
-    questions: UpdatedQuestionTemplate[];
-    startOver?: boolean;
-  }) => {
-    const welcomeMessage: IMessage[] = [];
-
-    if (!startOver) {
-      welcomeMessage.push(
-        {
-          text: `Hi, ${
-            currentUser?.first_name ?? currentUser?.username ?? "There"
-          }! Ready to work on ${template?.title} ?`,
-          type: "text",
-          createdAt: createdAt,
-          fromUser: false,
-        },
-        {
-          text: "This is a list of information we need to execute this template:",
-          type: "form",
-          createdAt: createdAt,
-          fromUser: false,
-          noHeader: true,
-        },
-      );
-    }
+  const initialMessages = (questions: UpdatedQuestionTemplate[]) => {
+    const welcomeMessages: IMessage[] = [
+      {
+        id: randomId(),
+        text: `Hi, ${
+          currentUser?.first_name ?? currentUser?.username ?? "There"
+        }! Ready to work on ${template?.title} ?`,
+        type: "text",
+        createdAt: createdAt,
+        fromUser: false,
+      },
+      {
+        id: randomId(),
+        text: "This is a list of information we need to execute this template:",
+        type: "form",
+        createdAt: createdAt,
+        fromUser: false,
+        noHeader: true,
+      },
+    ];
 
     if (questions.length > 0) {
       let allQuestions = questions.map(_q => _q.question);
       const allQuestionsMessage: IMessage = {
+        id: randomId(),
         text: allQuestions.join(" "),
         type: "text",
         createdAt: createdAt,
@@ -103,14 +97,10 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
         noHeader: true,
       };
 
-      if (!!welcomeMessage.length) {
-        addToQueuedMessages([allQuestionsMessage]);
-      } else {
-        welcomeMessage.push(allQuestionsMessage);
-      }
+      addToQueuedMessages([allQuestionsMessage]);
     }
 
-    setMessages(welcomeMessage);
+    setMessages(welcomeMessages);
     setAnswers([]);
     setShowGenerateButton(false);
   };
@@ -181,7 +171,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
 
       updatedQuestions.sort((a, b) => +b.required - +a.required);
 
-      initialMessages({ questions: updatedQuestions });
+      initialMessages(updatedQuestions);
 
       return [updatedQuestions, inputs, promptHasContent];
     }, [template]);
@@ -245,13 +235,14 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
     }
   }, [answers, templateQuestions]);
 
-  const canShowGenerateButton = Boolean(templateQuestions.length && !templateQuestions[0].required);
+  const canShowGenerateButton = Boolean(!templateQuestions.length || !templateQuestions[0]?.required);
 
   const disabledButton = _inputs.length !== 0 || promptHasContent;
 
   const validateVary = async (variation: string) => {
     if (variation) {
       const userMessage: IMessage = {
+        id: randomId(),
         text: variation,
         type: "text",
         createdAt: createdAt,
@@ -311,13 +302,14 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
         ? " We are ready to create a new document."
         : "";
       const botMessage: IMessage = {
+        id: randomId(),
         text: `Ok!${isReady} I have prepared the incoming parameters, please check!`,
         type: "form",
         createdAt: createdAt,
         fromUser: false,
       };
 
-      setMessages(prevMessages => prevMessages.concat(botMessage));
+      setMessages(prevMessages => prevMessages.filter(msg => msg.type === "text").concat(botMessage));
     }
   };
 
@@ -565,6 +557,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
     const invalidTxt =
       invalid && question?.type === "file" ? `The uploaded file for "${selectedAnswer.inputName}" is invalid. ` : "";
     const nextBotMessage: IMessage = {
+      id: randomId(),
       text: invalidTxt + "Let's give it another go. " + askedQuestion.question,
       choices: askedQuestion.choices,
       fileExtensions: askedQuestion.fileExtensions,
@@ -622,7 +615,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
             disabled={isValidatingAnswer || disableChatInput}
             onClear={() => setAnswers([])}
             showClear={answers.length > 0}
-            showGenerate={Boolean((showGenerateButton || canShowGenerateButton) && currentUser?.id)}
+            showGenerate={showGenerateButton || canShowGenerateButton}
             onGenerate={generateExecutionHandler}
             isValidating={isValidatingAnswer}
             disabledButton={!disabledButton}

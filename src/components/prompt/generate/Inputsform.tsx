@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import { Button, InputLabel, MenuItem, Select, Stack, TextField } from "@mui/material";
 import { IAnswer } from "@/common/types/chat";
 import { UpdatedQuestionTemplate } from "@/core/api/dto/templates";
@@ -13,9 +13,10 @@ interface Props {
   questions: UpdatedQuestionTemplate[];
   answers: IAnswer[];
   onChange: (value: string | File, question: UpdatedQuestionTemplate) => void;
+  setIsSimulationStreaming: Dispatch<SetStateAction<boolean>>;
 }
 
-export const InputsForm = ({ questions, answers, onChange }: Props) => {
+export const InputsForm = ({ questions, answers, onChange, setIsSimulationStreaming }: Props) => {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const [codeFieldOpen, setCodeFieldOpen] = useState(false);
   const [showInputs, setShowInputs] = useState(false);
@@ -40,8 +41,9 @@ export const InputsForm = ({ questions, answers, onChange }: Props) => {
               }}
             >
               <StreamContent
-                content={question.fullName}
+                content={`${question.fullName}:`}
                 shouldStream
+                setIsSimulationStreaming={setIsSimulationStreaming}
                 onStreamingFinished={() => setShowInputs(true)}
                 speed={120}
               />

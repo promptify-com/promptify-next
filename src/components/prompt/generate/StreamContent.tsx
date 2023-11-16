@@ -4,7 +4,7 @@ import { Dispatch, SetStateAction, memo, useEffect } from "react";
 interface StreamContentProps {
   content: string;
   shouldStream: boolean;
-  setIsSimulationStreaming?: Dispatch<SetStateAction<boolean>>;
+  setIsSimulationStreaming: Dispatch<SetStateAction<boolean>>;
   onStreamingFinished: () => void;
   speed?: number;
 }
@@ -20,9 +20,7 @@ export const StreamContent = memo(
     useEffect(() => {
       if (hasFinished) {
         onStreamingFinished();
-        if (setIsSimulationStreaming) {
-          setIsSimulationStreaming(false);
-        }
+        setIsSimulationStreaming(false);
       }
     }, [hasFinished]);
 
