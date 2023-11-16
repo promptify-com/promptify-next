@@ -10,9 +10,10 @@ import { useExecutionFavoriteMutation } from "@/core/api/executions";
 
 interface CardExecutionProps {
   execution: TemplatesExecutions;
+  noSave?: boolean;
 }
 
-export const CardExecution: React.FC<CardExecutionProps> = ({ execution }) => {
+export const CardExecution: React.FC<CardExecutionProps> = ({ execution, noSave }) => {
   const dispatch = useDispatch();
   const [content, setContent] = useState<string>("");
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
@@ -59,31 +60,33 @@ export const CardExecution: React.FC<CardExecutionProps> = ({ execution }) => {
         direction={"row"}
         alignItems={"center"}
         gap={1}
-        py={"4px"}
+        p={"4px"}
       >
-        <Tooltip
-          title="Save"
-          enterDelay={1000}
-          enterNextDelay={1000}
-        >
-          <IconButton
-            onClick={saveExecution}
-            sx={{
-              border: "none",
-              p: "6px",
-              "&:hover": {
-                bgcolor: "surface.2",
-                opacity: 1,
-              },
-              svg: {
-                width: "24px",
-                height: "24px",
-              },
-            }}
+        {!noSave && (
+          <Tooltip
+            title="Save"
+            enterDelay={1000}
+            enterNextDelay={1000}
           >
-            {execution.is_favorite ? <Bookmark /> : <BookmarkBorder />}
-          </IconButton>
-        </Tooltip>
+            <IconButton
+              onClick={saveExecution}
+              sx={{
+                border: "none",
+                p: "6px",
+                "&:hover": {
+                  bgcolor: "surface.2",
+                  opacity: 1,
+                },
+                svg: {
+                  width: "24px",
+                  height: "24px",
+                },
+              }}
+            >
+              {execution.is_favorite ? <Bookmark /> : <BookmarkBorder />}
+            </IconButton>
+          </Tooltip>
+        )}
         <Typography
           sx={{
             width: "80%",

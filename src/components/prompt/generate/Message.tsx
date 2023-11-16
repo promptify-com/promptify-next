@@ -1,10 +1,11 @@
 import React, { Dispatch, SetStateAction } from "react";
-import { Avatar, Grid, Typography } from "@mui/material";
-import LogoAsAvatar from "@/assets/icons/LogoAvatar";
+import { Avatar, Grid, Stack, Typography } from "@mui/material";
 import { useAppSelector } from "@/hooks/useStore";
 import { IMessage } from "@/common/types/chat";
 import { timeAgo } from "@/common/helpers/timeManipulation";
 import { StreamContent } from "./StreamContent";
+import { CheckCircle } from "@mui/icons-material";
+import { LogoApp } from "@/assets/icons/LogoApp";
 
 interface MessageBlockProps {
   message: IMessage;
@@ -26,18 +27,35 @@ export const Message = ({ message, setIsSimulationStreaming, onScrollToBottom }:
     >
       {!message.noHeader && (
         <>
-          {message.fromUser && currentUser ? (
+          {message.type === "spark" ? (
+            <Stack
+              alignItems={"center"}
+              justifyContent={"center"}
+              sx={{ width: 32, height: 32, borderRadius: "50%", bgcolor: "primaryContainer" }}
+            >
+              <CheckCircle sx={{ color: "primary.main" }} />
+            </Stack>
+          ) : message.fromUser && currentUser ? (
             <Avatar
               src={currentUser.avatar}
               alt={currentUser.first_name}
               sx={{
-                width: 40,
-                height: 40,
+                width: 32,
+                height: 32,
                 bgcolor: "surface.5",
               }}
             />
           ) : (
-            <LogoAsAvatar />
+            <Stack
+              alignItems={"center"}
+              justifyContent={"center"}
+              sx={{ width: 32, height: 32, borderRadius: "50%", bgcolor: "#000" }}
+            >
+              <LogoApp
+                width={18}
+                color="#fff"
+              />
+            </Stack>
           )}
         </>
       )}
@@ -54,17 +72,31 @@ export const Message = ({ message, setIsSimulationStreaming, onScrollToBottom }:
           <Grid
             display={"flex"}
             alignItems={"center"}
+            flexWrap={"wrap"}
             gap={"8px"}
           >
             <Typography
               fontSize={12}
-              lineHeight={"17.16px"}
+              fontWeight={600}
+              color={"onSurface"}
             >
               {name}
             </Typography>
+            {message.type === "spark" && (
+              <Typography
+                fontSize={12}
+                color={"text.secondary"}
+                sx={{
+                  opacity: 0.45,
+                }}
+              >
+                Successfully done generation
+              </Typography>
+            )}
             <Typography
               fontSize={12}
-              lineHeight={"17.16px"}
+              fontWeight={400}
+              color={"onSurface"}
               sx={{
                 opacity: 0.5,
               }}
@@ -82,7 +114,6 @@ export const Message = ({ message, setIsSimulationStreaming, onScrollToBottom }:
         >
           <Typography
             fontSize={15}
-            lineHeight={"24px"}
             letterSpacing={"0.17px"}
             color={"onSurface"}
           >

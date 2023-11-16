@@ -48,7 +48,7 @@ export const vary = ({
           }
 
           resolve(
-            _execution.prompt_executions
+            _execution.prompt_executions && _execution.prompt_executions[0]
               ? JSON.parse(_execution.prompt_executions[0].output.replace(/\n(\s+)?/g, ""))
               : {},
           );

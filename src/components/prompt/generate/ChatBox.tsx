@@ -210,6 +210,16 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
     if (generatedExecution?.id) {
       const _newExecution = await getExecutionById(generatedExecution.id);
       dispatch(setSelectedExecution(_newExecution));
+
+      const generatedExecutionMessage: IMessage = {
+        id: randomId(),
+        text: "",
+        type: "spark",
+        createdAt: createdAt,
+        fromUser: false,
+        spark: _newExecution,
+      };
+      setMessages(prevMessages => prevMessages.concat(generatedExecutionMessage));
     }
   };
 
@@ -234,10 +244,6 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
       setShowGenerateButton(false);
     }
   }, [answers, templateQuestions]);
-
-  const canShowGenerateButton = Boolean(!templateQuestions.length || !templateQuestions[0]?.required);
-
-  const disabledButton = _inputs.length !== 0 || promptHasContent;
 
   const validateVary = async (variation: string) => {
     if (variation) {
@@ -574,6 +580,12 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
     dispatchNewExecutionData(newAnswers, _inputs);
   };
 
+  const canShowGenerateButton = Boolean(!templateQuestions.length || !templateQuestions[0]?.required);
+
+  const disabledButton = _inputs.length !== 0 || promptHasContent;
+
+  const showClearBtn = messages[messages.length - 1]?.type === "form" && answers.length > 0;
+
   return (
     <Box
       width={"100%"}
@@ -614,7 +626,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
             onSubmit={validateVary}
             disabled={isValidatingAnswer || disableChatInput}
             onClear={() => setAnswers([])}
-            showClear={answers.length > 0}
+            showClear={showClearBtn}
             showGenerate={showGenerateButton || canShowGenerateButton}
             onGenerate={generateExecutionHandler}
             isValidating={isValidatingAnswer}

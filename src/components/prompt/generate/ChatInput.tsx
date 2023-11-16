@@ -90,7 +90,7 @@ export const ChatInput = ({
           </Stack>
         ) : (
           <>
-            {showGenerate && !isGenerating && (
+            {showGenerate && (
               <Button
                 onClick={onGenerate}
                 endIcon={<PlayCircle />}

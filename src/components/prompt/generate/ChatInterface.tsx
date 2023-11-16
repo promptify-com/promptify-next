@@ -1,12 +1,13 @@
 import React, { useEffect, useRef, Dispatch, SetStateAction } from "react";
 import { Box, Divider, Stack } from "@mui/material";
-
 import { Message } from "./Message";
 import { IAnswer, IMessage } from "@/common/types/chat";
 import { TemplateDetailsCard } from "./TemplateDetailsCard";
 import { Templates, UpdatedQuestionTemplate } from "@/core/api/dto/templates";
 import { useAppSelector } from "@/hooks/useStore";
 import { InputsForm } from "./Inputsform";
+import { CardExecution } from "@/components/common/cards/CardExecution";
+
 interface Props {
   template: Templates;
   messages: IMessage[];
@@ -94,6 +95,18 @@ export const ChatInterface = ({
                   answers={answers}
                   onChange={onChange}
                   setIsSimulationStreaming={setIsSimulationStreaming}
+                />
+              </Box>
+            )}
+            {msg.type === "spark" && msg.spark && (
+              <Box
+                ml={{ xs: 6.5, md: 7 }}
+                mb={2}
+                maxWidth={"360px"}
+              >
+                <CardExecution
+                  execution={msg.spark}
+                  noSave
                 />
               </Box>
             )}
