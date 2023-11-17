@@ -1,4 +1,4 @@
-import { BuilderInputTypes } from "@/common/constants";
+import { BUILDER_INPUT_TYPES } from "@/common/constants";
 import { InputType } from "@/common/types/prompt";
 
 export const isPromptVariableValid = (content: string) => {
@@ -18,7 +18,7 @@ export const isPromptVariableValid = (content: string) => {
       };
     }
 
-    if (type && !BuilderInputTypes.includes(type)) {
+    if (type && !BUILDER_INPUT_TYPES.includes(type)) {
       return {
         isValid: false,
         message: `"${match[0]}"`,

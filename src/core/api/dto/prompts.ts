@@ -1,3 +1,4 @@
+import { OutputFormat } from "@/common/constants";
 import { IParameters } from "@/common/types";
 
 interface Engine {
@@ -112,4 +113,5 @@ export interface TemplateQuestionGeneratorData {
   prompt: number;
   contextual_overrides: ContextualOverrides[];
   prompt_params: PromptParamsGenerate;
+  output_format?: OutputFormat;
 }

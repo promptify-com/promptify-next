@@ -13,7 +13,6 @@ import { Prompt } from "@/assets/icons/prompts";
 import { TemplateStatus } from "@/core/api/dto/templates";
 import { InputType } from "@/common/types/prompt";
 import { DeploymentStatus } from "../types/deployments";
-import { Model } from "@/common/types/deployments";
 
 export interface MenuType {
   id: number;
@@ -131,4 +130,8 @@ export enum BUILDER_TYPE {
   ADMIN = "admin",
 }
 
-export const BuilderInputTypes: InputType[] = ["text", "number", "integer", "code", "choices", "file"];
+export const BUILDER_INPUT_TYPES: InputType[] = ["text", "number", "integer", "code", "choices", "file"];
+
+export const OUTPUT_FORMATS = ["JSON", "XML", "Markdown", "Custom"] as const;
+
+export type OutputFormat = (typeof OUTPUT_FORMATS)[number];

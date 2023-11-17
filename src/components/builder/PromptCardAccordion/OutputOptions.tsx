@@ -16,14 +16,13 @@ import {
 } from "@mui/material";
 import { IEditPrompts } from "@/common/types/builder";
 import { validatePromptOutput } from "@/common/helpers/promptValidator";
+import { OUTPUT_FORMATS } from "@/common/constants";
 
 interface Props {
   prompt: IEditPrompts;
   onSave: (prompt: IEditPrompts) => void;
   onCancel: () => void;
 }
-
-const titleFormats = ["JSON", "XML", "Markdown", "Custom"];
 
 export const OutputOptions: React.FC<Props> = ({ prompt, onSave, onCancel }) => {
   const [promptData, setPromptData] = useState(prompt);
@@ -84,7 +83,7 @@ export const OutputOptions: React.FC<Props> = ({ prompt, onSave, onCancel }) => 
                 onChange={e => setPromptData({ ...promptData, output_format: e.target.value })}
                 label="Format"
               >
-                {titleFormats.map(format => (
+                {OUTPUT_FORMATS.map(format => (
                   <MenuItem
                     key={format}
                     value={format.toLowerCase()}

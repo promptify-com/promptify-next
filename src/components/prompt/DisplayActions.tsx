@@ -65,43 +65,109 @@ export const DisplayActions: React.FC<Props> = ({ selectedExecution, onOpenExpor
           gap={1}
         >
           {!isGenerating ? (
-            <Stack
-              direction={"row"}
-              alignItems={"center"}
-              gap={1}
-              width={"40%"}
-            >
-              <Button
-                endIcon={<Edit />}
-                sx={{
-                  width: "100%",
-                  fontSize: 15,
-                  fontWeight: 500,
-                  p: "4px 10px",
-                  color: "onSurface",
-                  whiteSpace: "normal",
-                  wordBreak: "break-word",
-                  justifyContent: "space-between",
-                  ":hover": {
-                    bgcolor: "surface.2",
-                  },
-                  svg: {
-                    fontSize: "18px !important",
-                  },
-                }}
-                onClick={() => setPopup("update")}
+            <>
+              <Stack
+                direction={"row"}
+                alignItems={"center"}
+                gap={1}
+                width={"40%"}
               >
-                <Typography
+                <Button
+                  endIcon={<Edit />}
                   sx={{
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
+                    width: "100%",
+                    fontSize: 15,
+                    fontWeight: 500,
+                    p: "4px 10px",
+                    color: "onSurface",
+                    whiteSpace: "normal",
+                    wordBreak: "break-word",
+                    justifyContent: "space-between",
+                    ":hover": {
+                      bgcolor: "surface.2",
+                    },
+                    svg: {
+                      fontSize: "18px !important",
+                    },
                   }}
+                  onClick={() => setPopup("update")}
                 >
-                  {truncate(executionTitle || "", { length: 35 })}
-                </Typography>
-              </Button>
-            </Stack>
+                  <Typography
+                    sx={{
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    {truncate(executionTitle || "", { length: 35 })}
+                  </Typography>
+                </Button>
+              </Stack>
+              <Stack
+                direction={"row"}
+                alignItems={"center"}
+                gap={1}
+              >
+                <Tooltip
+                  title="Delete"
+                  enterDelay={1000}
+                  enterNextDelay={1000}
+                >
+                  <IconButton
+                    sx={actionBtnStyle}
+                    onClick={e => {
+                      e.stopPropagation();
+                      setPopup("delete");
+                    }}
+                  >
+                    <DeleteOutline />
+                  </IconButton>
+                </Tooltip>
+                <Divider
+                  orientation="vertical"
+                  sx={{ width: "1px", height: "25px", borderColor: "surface.5" }}
+                />
+                <Tooltip
+                  title="Save"
+                  enterDelay={1000}
+                  enterNextDelay={1000}
+                >
+                  <IconButton
+                    sx={actionBtnStyle}
+                    onClick={saveExecution}
+                  >
+                    {selectedExecution?.is_favorite ? <Bookmark /> : <BookmarkBorder />}
+                  </IconButton>
+                </Tooltip>
+                <Divider
+                  orientation="vertical"
+                  sx={{ width: "1px", height: "25px", borderColor: "surface.5" }}
+                />
+                {selectedExecution?.id && (
+                  <Tooltip
+                    title="Share"
+                    enterDelay={1000}
+                    enterNextDelay={1000}
+                  >
+                    <IconButton
+                      onClick={onOpenExport}
+                      sx={actionBtnStyle}
+                    >
+                      <ShareOutlined />
+                    </IconButton>
+                  </Tooltip>
+                )}
+                <IconButton
+                  sx={{
+                    ...actionBtnStyle,
+                    opacity: 0.45,
+                  }}
+                  onClick={close}
+                >
+                  <Close />
+                </IconButton>
+              </Stack>
+            </>
           ) : (
             <Stack
               direction={"row"}
@@ -119,70 +185,6 @@ export const DisplayActions: React.FC<Props> = ({ selectedExecution, onOpenExpor
               </Typography>
             </Stack>
           )}
-          <Stack
-            direction={"row"}
-            alignItems={"center"}
-            gap={1}
-          >
-            <Tooltip
-              title="Delete"
-              enterDelay={1000}
-              enterNextDelay={1000}
-            >
-              <IconButton
-                sx={actionBtnStyle}
-                onClick={e => {
-                  e.stopPropagation();
-                  setPopup("delete");
-                }}
-              >
-                <DeleteOutline />
-              </IconButton>
-            </Tooltip>
-            <Divider
-              orientation="vertical"
-              sx={{ width: "1px", height: "25px", borderColor: "surface.5" }}
-            />
-            <Tooltip
-              title="Save"
-              enterDelay={1000}
-              enterNextDelay={1000}
-            >
-              <IconButton
-                sx={actionBtnStyle}
-                onClick={saveExecution}
-              >
-                {selectedExecution?.is_favorite ? <Bookmark /> : <BookmarkBorder />}
-              </IconButton>
-            </Tooltip>
-            <Divider
-              orientation="vertical"
-              sx={{ width: "1px", height: "25px", borderColor: "surface.5" }}
-            />
-            {selectedExecution?.id && (
-              <Tooltip
-                title="Share"
-                enterDelay={1000}
-                enterNextDelay={1000}
-              >
-                <IconButton
-                  onClick={onOpenExport}
-                  sx={actionBtnStyle}
-                >
-                  <ShareOutlined />
-                </IconButton>
-              </Tooltip>
-            )}
-            <IconButton
-              sx={{
-                ...actionBtnStyle,
-                opacity: 0.45,
-              }}
-              onClick={close}
-            >
-              <Close />
-            </IconButton>
-          </Stack>
         </Stack>
 
         {/* Small screen header */}

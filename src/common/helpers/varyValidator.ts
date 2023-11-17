@@ -17,6 +17,7 @@ export const vary = ({
         prompt: 2144,
         contextual_overrides: [],
         prompt_params: payload,
+        output_format: "JSON",
       },
     ];
     const url = `${process.env.NEXT_PUBLIC_API_URL}/api/meta/templates/${answersValidatorTemplateId}/execute/`;
