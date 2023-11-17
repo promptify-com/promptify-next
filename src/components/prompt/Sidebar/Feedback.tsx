@@ -9,6 +9,7 @@ export const Feedback = () => {
       <TextField
         label="Leave your comment"
         multiline
+        disabled
         sx={{
           color: "text.primary",
           fontSize: 16,
