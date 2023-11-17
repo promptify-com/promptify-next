@@ -1,19 +1,25 @@
 import { ReactNode } from "react";
 import {
+  Api,
   AutoAwesome,
   AutoAwesomeOutlined,
+  ChatBubbleOutline,
   HomeRounded,
+  InfoOutlined,
   MenuBookRounded,
   RocketLaunchOutlined,
   Search,
   SettingsOutlined,
+  Tune,
 } from "@mui/icons-material/";
 
 import { Prompt } from "@/assets/icons/prompts";
 import { TemplateStatus } from "@/core/api/dto/templates";
 import { InputType } from "@/common/types/prompt";
 import { DeploymentStatus } from "../types/deployments";
-import { Model } from "@/common/types/deployments";
+import { Link } from "../types/TemplateToolbar";
+import NoteStackIcon from "@/assets/icons/NoteStackIcon";
+import ExtensionSettingsIcon from "@/assets/icons/ExtensionSettingsIcon";
 
 export interface MenuType {
   id: number;
@@ -132,3 +138,37 @@ export enum BUILDER_TYPE {
 }
 
 export const BuilderInputTypes: InputType[] = ["text", "number", "integer", "code", "choices", "file"];
+
+export const ToolbarItems: Link[] = [
+  {
+    name: "customize",
+    icon: <Tune />,
+    title: "Customize",
+  },
+
+  {
+    name: "executions",
+    icon: <NoteStackIcon />,
+    title: "My Works",
+  },
+  {
+    name: "feedback",
+    icon: <ChatBubbleOutline />,
+    title: "Feedback",
+  },
+  {
+    name: "api",
+    icon: <Api />,
+    title: "API access",
+  },
+  {
+    name: "extension",
+    icon: <ExtensionSettingsIcon />,
+    title: "Extension settings",
+  },
+  {
+    name: "details",
+    icon: <InfoOutlined />,
+    title: "Template details",
+  },
+];
