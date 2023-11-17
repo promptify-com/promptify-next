@@ -6,7 +6,7 @@ import type { Templates } from "@/core/api/dto/templates";
 import ClientOnly from "../base/ClientOnly";
 import ChatMode from "./generate/ChatBox";
 import Header from "./Header";
-import { Sidebar } from "./Sidebar";
+import TemplateToolbar from "./Toolbar";
 import { useAppSelector } from "@/hooks/useStore";
 import { useDispatch } from "react-redux";
 import { setSelectedExecution } from "@/core/store/executionsSlice";
@@ -65,7 +65,7 @@ export default function TemplateDesktop({ template, setErrorMessage }: TemplateD
         }}
       >
         <Stack
-          width={chatFullScreen ? "100%" : "38%"}
+          width={"100%"}
           position={"sticky"}
           top={0}
           zIndex={100}
@@ -97,7 +97,7 @@ export default function TemplateDesktop({ template, setErrorMessage }: TemplateD
           </ClientOnly>
         </Stack>
 
-        {!chatFullScreen && (
+        {/* {!chatFullScreen && (
           <Grid
             width={"62%"}
             display={"block"}
@@ -108,9 +108,9 @@ export default function TemplateDesktop({ template, setErrorMessage }: TemplateD
               close={closeExecutionDisplay}
             />
           </Grid>
-        )}
+        )} */}
 
-        <Sidebar template={template} />
+        <TemplateToolbar template={template} />
       </Grid>
     </Stack>
   );

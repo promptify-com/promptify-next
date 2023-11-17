@@ -151,7 +151,7 @@ export default function Header({ template }: TemplateHeaderProps) {
       >
         {breadcrumbs}
       </Breadcrumbs>
-      <Stack
+      {/* <Stack
         direction={"row"}
         alignItems={"center"}
         gap={1}
@@ -225,7 +225,7 @@ export default function Header({ template }: TemplateHeaderProps) {
             sx={{ width: 30, height: 30 }}
           />
         </Stack>
-      </Stack>
+      </Stack> */}
     </Stack>
   );
 }

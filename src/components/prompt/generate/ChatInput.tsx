@@ -47,8 +47,6 @@ export const ChatInput = ({
   return (
     <Grid
       ref={containerRef}
-      mx={"40px"}
-      mb={"16px"}
       position={"relative"}
       display={"flex"}
       flexDirection={"column"}
@@ -59,7 +57,7 @@ export const ChatInput = ({
         gap={2}
       >
         <ThreeDotsAnimation loading={isValidating} />
-        {showGenerate && !isGenerating && (
+        {/* {showGenerate && !isGenerating && (
           <>
             <Button
               onClick={onGenerate}
@@ -100,7 +98,7 @@ export const ChatInput = ({
           </>
         )}
 
-        {isGenerating && <GeneratingProgressCard onCancel={abortConnection} />}
+        {isGenerating && <GeneratingProgressCard onCancel={abortConnection} />} */}
       </Stack>
 
       <MessageSender

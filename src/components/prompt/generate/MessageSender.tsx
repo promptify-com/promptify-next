@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { InputBase, Box } from "@mui/material";
-import { Send } from "@mui/icons-material";
+import { ArrowUpward, KeyboardCommandKey, Send } from "@mui/icons-material";
 
 interface MessageSenderProps {
   onSubmit: (value: string) => void;
@@ -29,9 +29,9 @@ const MessageSender: React.FC<MessageSenderProps> = ({ onSubmit, disabled, place
       display={"flex"}
       alignItems={"center"}
       borderRadius="99px"
-      m={"16px 24px"}
       p={"8px 16px"}
     >
+      <KeyboardCommandKey sx={{ fontSize: "20px", color: "text.secondary" }} />
       <InputBase
         multiline
         disabled={disabled}
@@ -69,12 +69,31 @@ const MessageSender: React.FC<MessageSenderProps> = ({ onSubmit, disabled, place
         value={localValue}
         onKeyPress={handleKeyPress}
       />
-      <Send
-        onClick={handleSubmit}
+
+      <Box
         sx={{
-          cursor: disabled ? "not-allowed" : "pointer",
+          padding: "4px",
+          width: "25px",
+          height: "25px",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          borderRadius: "99px",
+          bgcolor: localValue !== "" ? "#375CA91A" : undefined,
+          color: localValue !== "" ? "#375CA9" : "surface.1",
+          ":hover": {
+            bgcolor: localValue !== "" ? "#375CA9" : undefined,
+            color: localValue !== "" ? "white" : undefined,
+          },
         }}
-      />
+      >
+        <ArrowUpward
+          onClick={handleSubmit}
+          sx={{
+            cursor: disabled ? "not-allowed" : "pointer",
+          }}
+        />
+      </Box>
     </Box>
   );
 };

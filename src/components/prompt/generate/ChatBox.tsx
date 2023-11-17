@@ -1,5 +1,5 @@
 import React, { useState, useMemo, memo, useEffect, useRef } from "react";
-import { Typography, Button, Stack, Box } from "@mui/material";
+import { Typography, Button, Stack, Box, Grid, IconButton } from "@mui/material";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { useRouter } from "next/router";
 import { ResPrompt } from "@/core/api/dto/prompts";
@@ -27,6 +27,9 @@ import { parseMessageData } from "@/common/helpers/parseMessageData";
 import { useUploadFileMutation } from "@/core/api/uploadFile";
 import { uploadFileHelper } from "@/common/helpers/uploadFileHelper";
 import { setGeneratedExecution } from "@/core/store/executionsSlice";
+import { TemplateDetailsCard } from "./TemplateDetailsCard";
+import { PlusIcon } from "@/assets/icons";
+import { Add } from "@mui/icons-material";
 
 interface Props {
   onError: (errMsg: string) => void;
@@ -76,40 +79,16 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
     const welcomeMessage: IMessage[] = [];
 
     if (!startOver) {
-      welcomeMessage.push(
-        {
-          text: `Hi, ${
-            currentUser?.first_name ?? currentUser?.username ?? "There"
-          }! Ready to work on ${template?.title} ?`,
-          type: "text",
-          createdAt: createdAt,
-          fromUser: false,
-        },
-        {
-          text: "This is a list of information we need to execute this template:",
-          type: "form",
-          createdAt: createdAt,
-          fromUser: false,
-          noHeader: true,
-        },
-      );
-    }
-
-    if (questions.length > 0) {
       let allQuestions = questions.map(_q => _q.question);
-      const allQuestionsMessage: IMessage = {
-        text: allQuestions.join(" "),
+
+      welcomeMessage.push({
+        text: `Hi, ${
+          currentUser?.first_name ?? currentUser?.username ?? "There"
+        }! Ready to work on ${template?.title} ? ${allQuestions.join(" ")}`,
         type: "text",
         createdAt: createdAt,
         fromUser: false,
-        noHeader: true,
-      };
-
-      if (!!welcomeMessage.length) {
-        addToQueuedMessages([allQuestionsMessage]);
-      } else {
-        welcomeMessage.push(allQuestionsMessage);
-      }
+      });
     }
 
     setMessages(welcomeMessage);
@@ -375,15 +354,6 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
 
     setAnswers(_answers);
     dispatchNewExecutionData(_answers, _inputs);
-
-    // const newUserMessage: IMessage = {
-    //   text: value,
-    //   type: "text",
-    //   createdAt: createdAt,
-    //   fromUser: true,
-    // };
-
-    // setMessages(prevMessages => prevMessages.concat(newUserMessage));
   };
 
   const validateAndUploadFiles = () =>
@@ -611,101 +581,155 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
 
   return (
     <Box
-      width={"100%"}
-      height={"100%"}
+      width={"80%"}
+      mx={"auto"}
+      position={"relative"}
+      height={"90%"}
     >
       <Stack
-        direction={"row"}
-        alignItems={"center"}
-        sx={{
-          bgcolor: "surface.1",
-          p: "24px 8px 24px 16px",
-        }}
-      >
-        <Typography
-          fontSize={12}
-          fontWeight={500}
-          letterSpacing={2}
-          textTransform={"uppercase"}
-        >
-          Chat With Promptify
-        </Typography>
-      </Stack>
-      <Stack
         justifyContent={"flex-end"}
-        height={"calc(100% - 66px)"}
         gap={2}
+        height={"100%"}
       >
-        <ChatInterface
-          questions={templateQuestions}
-          answers={answers}
-          template={template}
-          messages={messages}
-          onChange={handleUserInput}
-          setIsSimulaitonStreaming={setIsSimulaitonStreaming}
-        />
+        <Stack
+          sx={{
+            overflow: "auto",
+            overscrollBehavior: "contain",
+            "&::-webkit-scrollbar": {
+              width: "6px",
+              p: 1,
+              backgroundColor: "surface.5",
+            },
+            "&::-webkit-scrollbar-track": {
+              webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              backgroundColor: "surface.1",
+              outline: "1px solid surface.1",
+              borderRadius: "10px",
+            },
+          }}
+        >
+          <TemplateDetailsCard template={template} />
+          <ChatInterface
+            questions={templateQuestions}
+            answers={answers}
+            messages={messages}
+            onChange={handleUserInput}
+            setIsSimulaitonStreaming={setIsSimulaitonStreaming}
+          />
+        </Stack>
         <VaryModal
           open={varyOpen}
           setOpen={setVaryOpen}
           onSubmit={variationTxt => validateVary(variationTxt)}
         />
-        {currentUser?.id ? (
-          <ChatInput
-            onSubmit={validateVary}
-            disabled={isValidatingAnswer || disableChatInput}
-            onClear={() => setAnswers([])}
-            showClear={answers.length > 0}
-            showGenerate={Boolean((showGenerateButton || canShowGenerateButton) && currentUser?.id)}
-            onGenerate={generateExecutionHandler}
-            isValidating={isValidatingAnswer}
-            disabledButton={!disabledButton}
-            abortGenerating={abortConnection}
-          />
-        ) : (
-          <Stack
-            direction={"column"}
-            alignItems={"center"}
-            justifyContent={"center"}
-            gap={1}
-            width={"100%"}
-            p={"16px 8px 16px 16px"}
-          >
-            <Button
-              onClick={() => {
-                router.push("/signin");
-              }}
-              variant={"contained"}
-              startIcon={
-                <LogoApp
-                  width={18}
-                  color="white"
-                />
-              }
-              sx={{
-                flex: 1,
-                p: "10px 25px",
-                fontWeight: 500,
-                borderColor: "primary.main",
-                borderRadius: "999px",
-                bgcolor: "primary.main",
-                color: "onPrimary",
-                whiteSpace: "pre-line",
-                ":hover": {
-                  bgcolor: "surface.1",
-                  color: "primary.main",
-                },
-              }}
-            >
-              <Typography
-                ml={2}
-                color={"inherit"}
-              >
-                Sign in or Create an account
-              </Typography>
-            </Button>
-          </Stack>
-        )}
       </Stack>
+      <Box
+        position="absolute"
+        bottom={10}
+        left={0}
+        right={0}
+      >
+        <Grid
+          sx={{
+            position: "absolute",
+            width: "100%",
+          }}
+        >
+          {currentUser?.id ? (
+            <Stack
+              pt={2}
+              direction={"row"}
+              width={"100%"}
+              alignItems={"center"}
+              justifyContent={"center"}
+              gap={"8px"}
+            >
+              <Box
+                mt={0.5}
+                sx={{
+                  padding: "4px",
+                  width: "30px",
+                  height: "30px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  borderRadius: "8px",
+                  bgcolor: "#375CA91A",
+                  color: "#375CA9",
+                  ":hover": {
+                    bgcolor: "#375CA9",
+                    color: "white",
+                  },
+                }}
+              >
+                <Add
+                  sx={{
+                    fontSize: 24,
+                  }}
+                />
+              </Box>
+              <Box width={"90%"}>
+                <ChatInput
+                  onSubmit={validateVary}
+                  disabled={isValidatingAnswer || disableChatInput}
+                  onClear={() => setAnswers([])}
+                  showClear={answers.length > 0}
+                  showGenerate={Boolean((showGenerateButton || canShowGenerateButton) && currentUser?.id)}
+                  onGenerate={generateExecutionHandler}
+                  isValidating={isValidatingAnswer}
+                  disabledButton={!disabledButton}
+                  abortGenerating={abortConnection}
+                />
+              </Box>
+            </Stack>
+          ) : (
+            <Stack
+              direction={"column"}
+              alignItems={"center"}
+              justifyContent={"center"}
+              gap={1}
+              width={"100%"}
+              p={"16px 8px 16px 16px"}
+            >
+              <Button
+                onClick={() => {
+                  router.push("/signin");
+                }}
+                variant={"contained"}
+                startIcon={
+                  <LogoApp
+                    width={18}
+                    color="white"
+                  />
+                }
+                sx={{
+                  flex: 1,
+                  p: "10px 25px",
+                  fontWeight: 500,
+                  borderColor: "primary.main",
+                  borderRadius: "999px",
+                  bgcolor: "primary.main",
+                  color: "onPrimary",
+                  whiteSpace: "pre-line",
+                  ":hover": {
+                    bgcolor: "surface.1",
+                    color: "primary.main",
+                  },
+                }}
+              >
+                <Typography
+                  ml={2}
+                  color={"inherit"}
+                >
+                  Sign in or Create an account
+                </Typography>
+              </Button>
+            </Stack>
+          )}
+        </Grid>
+      </Box>
     </Box>
   );
 };
