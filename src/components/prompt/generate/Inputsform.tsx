@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
-import { Button, InputLabel, MenuItem, Select, Stack, TextField } from "@mui/material";
+import { Button, InputLabel, MenuItem, Select, Stack, TextField, Tooltip } from "@mui/material";
 import { IAnswer } from "@/common/types/chat";
 import { UpdatedQuestionTemplate } from "@/core/api/dto/templates";
 import BaseButton from "@/components/base/BaseButton";
@@ -7,7 +7,7 @@ import CodeFieldModal from "@/components/modals/CodeFieldModal";
 import { useAppSelector } from "@/hooks/useStore";
 import { getFileTypeExtensionsAsString } from "@/common/helpers/uploadFileHelper";
 import { FileType } from "@/common/types/prompt";
-import { Edit } from "@mui/icons-material";
+import { Edit, Error } from "@mui/icons-material";
 import { StreamContent } from "./StreamContent";
 interface Props {
   questions: UpdatedQuestionTemplate[];
@@ -24,7 +24,8 @@ export const InputsForm = ({ questions, answers, onChange, setIsSimulationStream
   return (
     <Stack gap={1}>
       {questions.map((question, idx) => {
-        const value = answers.find(answer => answer.inputName === question.name)?.answer || "";
+        const answer = answers.find(answer => answer.inputName === question.name);
+        const value = answer?.answer || "";
         const isFile = value instanceof File;
         return (
           <Stack
@@ -63,7 +64,7 @@ export const InputsForm = ({ questions, answers, onChange, setIsSimulationStream
                       sx={{
                         border: "1px solid",
                         borderRadius: "8px",
-                        borderColor: "secondary.main",
+                        borderColor: answer?.error ? "error.main" : "secondary.main",
                         color: "secondary.main",
                         p: "3px 12px",
                         ":hover": {
@@ -95,7 +96,7 @@ export const InputsForm = ({ questions, answers, onChange, setIsSimulationStream
                       ".MuiOutlinedInput-notchedOutline, .Mui-focused": {
                         borderRadius: "8px",
                         borderWidth: "1px !important",
-                        borderColor: "secondary.main",
+                        borderColor: answer?.error ? "error.main" : "secondary.main",
                       },
                     }}
                     MenuProps={{
@@ -131,7 +132,7 @@ export const InputsForm = ({ questions, answers, onChange, setIsSimulationStream
                       component="label"
                       sx={{
                         border: "1px solid",
-                        borderColor: "secondary.main",
+                        borderColor: answer?.error ? "error.main" : "secondary.main",
                         color: "secondary.main",
                         p: "3px 12px",
                         ":hover": {
@@ -160,6 +161,23 @@ export const InputsForm = ({ questions, answers, onChange, setIsSimulationStream
                         }}
                       />
                     </Button>
+                    {answer?.error && (
+                      <Tooltip
+                        title={"The uploaded file is invalid"}
+                        placement="right"
+                        arrow
+                        componentsProps={{
+                          tooltip: {
+                            sx: { bgcolor: "error.main", color: "onError", fontSize: 10, fontWeight: 500 },
+                          },
+                          arrow: {
+                            sx: { color: "error.main" },
+                          },
+                        }}
+                      >
+                        <Error sx={{ color: "error.main", width: 20, height: 20 }} />
+                      </Tooltip>
+                    )}
                   </Stack>
                 ) : (
                   <TextField

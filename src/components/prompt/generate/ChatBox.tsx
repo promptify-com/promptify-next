@@ -348,6 +348,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
         inputName,
         prompt,
         answer: value,
+        error: false,
       };
       _answers.push(newAnswer);
     }
