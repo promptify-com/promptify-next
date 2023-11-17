@@ -112,7 +112,7 @@ function Template({ hashedExecution, fetchedTemplate }: TemplateProps) {
 
   return (
     <ThemeProvider theme={dynamicTheme}>
-      <Layout fullWidth>
+      <Layout>
         {isMobileView ? (
           <TemplateMobile
             hashedExecution={hashedExecution}
