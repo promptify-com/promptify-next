@@ -160,7 +160,7 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
   return (
     <Box
       sx={{
-        bgcolor: "surface.3",
+        bgcolor: "surface.4",
         minHeight: "100svh",
       }}
     >

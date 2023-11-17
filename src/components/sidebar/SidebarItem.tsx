@@ -43,10 +43,10 @@ function SidebarItem({ navItem, isPromptsPage, showFilters, onClick, engines, ta
             ".MuiTypography-root": {
               color: "#375CA9",
             },
-            mb: "10px",
+            mb: isPromptsPage ? "10px" : 0,
           }),
           padding: "8px",
-          height: "56px",
+          height: isPromptsPage ? "56px" : "auto",
           "&:hover": {
             backgroundColor: "surface.1",
             borderRadius: "8px",
