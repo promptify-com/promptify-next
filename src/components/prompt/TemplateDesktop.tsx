@@ -104,7 +104,6 @@ export default function TemplateDesktop({ template, setErrorMessage }: TemplateD
           >
             <Display
               templateData={template}
-              onError={setErrorMessage}
               close={closeExecutionDisplay}
             />
           </Grid>

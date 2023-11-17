@@ -56,7 +56,6 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
   const [queuedMessages, setQueuedMessages] = useState<IMessage[]>([]);
   const [isSimulationStreaming, setIsSimulationStreaming] = useState(false);
   const [disableChatInput, setDisableChatInput] = useState(false);
-  const [standingQuestions, setStandingQuestions] = useState<UpdatedQuestionTemplate[]>([]);
 
   const abortController = useRef(new AbortController());
   const uploadedFiles = useRef(new Map<string, string>());
@@ -574,47 +573,6 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
     if (newExecutionId) {
       stopExecution(newExecutionId);
     }
-  };
-
-  const handleAnswerClear = (selectedAnswer: IAnswer, invalid = false) => {
-    if (isSimulationStreaming) {
-      return;
-    }
-
-    const answer: IAnswer = {
-      question: selectedAnswer.question,
-      required: selectedAnswer.required,
-      inputName: selectedAnswer.inputName,
-      prompt: selectedAnswer.prompt,
-      answer: "",
-    };
-
-    modifyStoredInputValue(answer);
-
-    const question = templateQuestions.find(question => question.name === selectedAnswer.inputName);
-    const newStandingQuestions = standingQuestions.concat(question!).sort((a, b) => +a.required - +b.required);
-    const askedQuestion = newStandingQuestions[newStandingQuestions.length - 1];
-
-    setStandingQuestions(newStandingQuestions);
-
-    const invalidTxt =
-      invalid && question?.type === "file" ? `The uploaded file for "${selectedAnswer.inputName}" is invalid. ` : "";
-    const nextBotMessage: IMessage = {
-      id: randomId(),
-      text: invalidTxt + "Let's give it another go. " + askedQuestion.question,
-      choices: askedQuestion.choices,
-      fileExtensions: askedQuestion.fileExtensions,
-      type: "text",
-      createdAt: createdAt,
-      fromUser: false,
-    };
-
-    setMessages(prevMessages => prevMessages.concat(nextBotMessage));
-
-    const newAnswers: IAnswer[] = answers.filter(answer => answer.inputName !== selectedAnswer.inputName);
-
-    setAnswers(newAnswers);
-    dispatchNewExecutionData(newAnswers, _inputs);
   };
 
   const canShowGenerateButton = Boolean(!templateQuestions.length || !templateQuestions[0]?.required);

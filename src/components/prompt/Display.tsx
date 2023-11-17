@@ -13,11 +13,11 @@ import { useAppSelector } from "@/hooks/useStore";
 
 interface Props {
   templateData: Templates;
-  onError: (errMsg: string) => void;
   close: () => void;
 }
 
-export const Display: React.FC<Props> = ({ templateData, onError, close }) => {
+export const Display: React.FC<Props> = ({ templateData, close }) => {
+  const currentUser = useAppSelector(state => state.user.currentUser);
   const [firstLoad, setFirstLoad] = useState(true);
   const [openExportPopup, setOpenExportpopup] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -83,16 +83,20 @@ export const Display: React.FC<Props> = ({ templateData, onError, close }) => {
           pb: { xs: "70px", md: "0" },
         }}
       >
-        <DisplayActions
-          selectedExecution={selectedExecution}
-          onOpenExport={() => setOpenExportpopup(true)}
-          close={close}
-        />
-        {openExportPopup && activeExecution?.id && (
-          <SparkExportPopup
-            onClose={() => setOpenExportpopup(false)}
-            activeExecution={activeExecution}
-          />
+        {currentUser?.id && (
+          <>
+            <DisplayActions
+              selectedExecution={selectedExecution}
+              onOpenExport={() => setOpenExportpopup(true)}
+              close={close}
+            />
+            {openExportPopup && activeExecution?.id && (
+              <SparkExportPopup
+                onClose={() => setOpenExportpopup(false)}
+                activeExecution={activeExecution}
+              />
+            )}
+          </>
         )}
 
         <Box

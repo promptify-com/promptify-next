@@ -1,23 +1,11 @@
 import React, { useEffect, useState } from "react";
-import {
-  Box,
-  Button,
-  CircularProgress,
-  Divider,
-  IconButton,
-  Stack,
-  Tooltip,
-  Typography,
-  useTheme,
-} from "@mui/material";
+import { Box, Button, Divider, IconButton, Stack, Tooltip, Typography, useTheme } from "@mui/material";
 import { Bookmark, BookmarkBorder, Close, DeleteOutline, Edit, ShareOutlined } from "@mui/icons-material";
 import { ExecutionTemplatePopupType, TemplatesExecutions } from "@/core/api/dto/templates";
 import { useAppSelector } from "@/hooks/useStore";
 import { useExecutionFavoriteMutation } from "@/core/api/executions";
 import useTruncate from "@/hooks/useTruncate";
 import { SparkSaveDeletePopup } from "@/components/dialog/SparkSaveDeletePopup";
-import { LogoApp } from "@/assets/icons/LogoApp";
-import { theme } from "@/theme";
 import { ProgressLogo } from "../common/ProgressLogo";
 
 interface Props {
