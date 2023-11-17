@@ -368,8 +368,10 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
             if (typeof fileUrl === "string" && fileUrl) {
               uploadedFiles.current.set(answer.inputName, fileUrl);
             } else {
-              status = false;
               answer.error = true;
+              if (answer.required) {
+                status = false;
+              }
             }
           }
           return answer;

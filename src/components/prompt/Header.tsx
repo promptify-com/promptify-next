@@ -7,13 +7,12 @@ import FavoriteIcon from "./FavoriteIcon";
 import { useAppSelector } from "@/hooks/useStore";
 import { getBaseUrl, redirectToPath } from "@/common/helpers";
 import { IEditPrompts } from "@/common/types/builder";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { useRouter } from "next/router";
 import { useCreateTemplateMutation } from "@/core/api/templates";
 import Clone from "@/assets/icons/Clone";
 import { useRef } from "react";
-import { setSelectedTag } from "@/core/store/filtersSlice";
 
 interface TemplateHeaderProps {
   template: Templates;
@@ -21,7 +20,6 @@ interface TemplateHeaderProps {
 
 export default function Header({ template }: TemplateHeaderProps) {
   const router = useRouter();
-  const dispatch = useDispatch();
   const currentUser = useAppSelector(state => state.user.currentUser);
   const isValidUser = useSelector(isValidUserFn);
   const [createTemplate] = useCreateTemplateMutation();
@@ -29,7 +27,6 @@ export default function Header({ template }: TemplateHeaderProps) {
   const isCloning = useRef(false);
 
   const cloneTemplate = async () => {
-    console.log(isCloning.current);
     if (!isValidUser) {
       return router.push("/signin");
     }
@@ -101,12 +98,7 @@ export default function Header({ template }: TemplateHeaderProps) {
     </Link>,
     <Link
       key="1"
-      href="/explore"
-      onClick={e => {
-        e.preventDefault();
-        dispatch(setSelectedTag(template.category));
-        router.push("/explore");
-      }}
+      href={`/explore/${template.category.slug}`}
       sx={breadcrumbStyle}
     >
       {template.category.name}
@@ -179,7 +171,7 @@ export default function Header({ template }: TemplateHeaderProps) {
         </Button>
         {currentUser?.is_admin || currentUser?.id === template.created_by.id ? (
           <Button
-            onClick={() => redirectToPath(`/prompt-builder/${template.slug}`, { editor: 1 })}
+            onClick={() => window.open(`${getBaseUrl}/prompt-builder/${template.slug}?editor=1`, "_blank")}
             sx={{
               p: "8px 11px",
               color: "secondary.main",
