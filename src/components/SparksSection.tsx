@@ -7,6 +7,7 @@ import DraftSpark from "@/assets/icons/DraftSpark";
 import useTruncate from "@/hooks/useTruncate";
 import useTimestampConverter from "@/hooks/useTimestampConverter";
 import BaseButton from "./base/BaseButton";
+import Image from "./design-system/Image";
 
 interface SparksSectionProps {
   templates: TemplateExecutionsDisplay[];
@@ -100,10 +101,13 @@ const SparksSection: FC<SparksSectionProps> = ({ templates }) => {
                       height: { xs: "73px", sm: "31px" },
                       objectFit: "cover",
                     }}
-                    component="img"
-                    image={template.thumbnail}
-                    alt={template.title}
-                  />
+                  >
+                    <Image
+                      src={template.thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
+                      alt={template.title}
+                      style={{ borderRadius: "8px", objectFit: "cover", width: "100%", height: "100%" }}
+                    />
+                  </CardMedia>
                   <Typography
                     fontSize={13}
                     fontWeight={500}
@@ -220,10 +224,15 @@ const SparksSection: FC<SparksSectionProps> = ({ templates }) => {
                       height: "68px",
                       objectFit: "cover",
                     }}
-                    component="img"
-                    image={template.thumbnail}
-                    alt={template.title}
-                  />
+                  >
+                    <Image
+                      src={template.thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
+                      alt={template.title}
+                      width={90}
+                      height={68}
+                      style={{ borderRadius: "16px", objectFit: "cover", zIndex: 1 }}
+                    />
+                  </CardMedia>
                   <Box
                     position={"absolute"}
                     bottom={"-1px"}

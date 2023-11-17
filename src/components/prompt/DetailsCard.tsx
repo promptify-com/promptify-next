@@ -55,7 +55,7 @@ export function DetailsCard({ templateData }: Props) {
         }}
       >
         <Image
-          src={templateData.thumbnail || "http://placehold.it/240x150"}
+          src={templateData.thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
           alt={templateData.title}
           style={{ borderRadius: borderRadiusValue, objectFit: "cover", width: "100%", height: "100%" }}
         />
@@ -102,8 +102,8 @@ export function DetailsCard({ templateData }: Props) {
           >
             <FavoriteIcon style={favoriteIconStyle} />
             <Image
-              src={templateData.created_by.avatar}
-              alt={templateData.created_by.first_name}
+              src={templateData.created_by?.avatar ?? require("@/assets/images/default-avatar.jpg")}
+              alt={templateData.created_by?.first_name ?? "Promptify"}
               width={32}
               height={32}
               style={{
@@ -120,8 +120,8 @@ export function DetailsCard({ templateData }: Props) {
           sx={{ display: { md: "none" } }}
         >
           <Image
-            src={templateData.created_by.avatar}
-            alt={templateData.created_by.first_name}
+            src={templateData.created_by?.avatar ?? require("@/assets/images/default-avatar.jpg")}
+            alt={templateData.created_by.first_name ?? "Promptify"}
             width={32}
             height={32}
             style={{

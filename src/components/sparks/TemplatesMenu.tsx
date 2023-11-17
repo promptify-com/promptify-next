@@ -2,6 +2,7 @@ import React from "react";
 import { CardMedia, ListItemButton, Typography, Chip, Grid, List, Divider, Box } from "@mui/material";
 import useTruncate from "@/hooks/useTruncate";
 import { TemplateExecutionsDisplay } from "@/core/api/dto/templates";
+import Image from "../design-system/Image";
 
 interface TemplatesMenuSectionProps {
   templates: TemplateExecutionsDisplay[];
@@ -86,10 +87,15 @@ const TemplatesMenuSection: React.FC<TemplatesMenuSectionProps> = ({
                     height: "31px",
                     objectFit: "cover",
                   }}
-                  component="img"
-                  image={template.thumbnail}
-                  alt={template.title}
-                />
+                >
+                  <Image
+                    src={template.thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
+                    alt={template.title}
+                    width={41}
+                    height={31}
+                    style={{ borderRadius: "8px", objectFit: "cover", zIndex: 1 }}
+                  />
+                </CardMedia>
                 <Typography
                   fontSize={"13px"}
                   lineHeight={"140%"}

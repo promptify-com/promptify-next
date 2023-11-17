@@ -18,6 +18,7 @@ import useTruncate from "@/hooks/useTruncate";
 import { SparksLayoutProps } from "@/core/api/dto/templates";
 import ShareIcon from "@/assets/icons/ShareIcon";
 import { redirectToPath } from "@/common/helpers";
+import Image from "./design-system/Image";
 
 export const SparksLayoutMobile: FC<SparksLayoutProps> = ({
   execution,
@@ -74,10 +75,15 @@ export const SparksLayoutMobile: FC<SparksLayoutProps> = ({
             height: "68px",
             objectFit: "cover",
           }}
-          component="img"
-          image={template.thumbnail}
-          alt={template.title}
-        />
+        >
+          <Image
+            src={template.thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
+            alt={template.title}
+            width={90}
+            height={68}
+            style={{ borderRadius: "16px", objectFit: "cover" }}
+          />
+        </CardMedia>
         <Box
           position={"absolute"}
           bottom={"-0.5px"}

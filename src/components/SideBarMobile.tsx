@@ -38,6 +38,7 @@ import LoadingOverlay from "./design-system/LoadingOverlay";
 import { useRouteChangeOverlay } from "@/hooks/useRouteChangeOverlay";
 import { theme } from "@/theme";
 import { redirectToPath } from "@/common/helpers";
+import Image from "./design-system/Image";
 
 type SidebarType = "navigation" | "profile";
 
@@ -170,24 +171,24 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
             {type === "navigation" ? (
               <Box>
                 {isValidUser && (
-                  <Avatar
+                  <Image
                     onClick={() => setSidebarType("profile")}
-                    src={currentUser?.avatar}
-                    alt={currentUser?.first_name}
-                    sx={{
-                      ml: "auto",
+                    src={currentUser?.avatar ?? require("@/assets/images/default-avatar.jpg")}
+                    alt={currentUser?.first_name?.slice(0, 1) ?? "P"}
+                    width={23}
+                    height={23}
+                    style={{
+                      marginLeft: "auto",
                       cursor: "pointer",
-                      bgcolor: "black",
-                      borderRadius: { xs: "24px", sm: "36px" },
-                      width: "23px",
-                      height: "23px",
+                      backgroundColor: "black",
+                      borderRadius: "30px",
                       padding: "1px",
                       fontStyle: "normal",
                       textAlign: "center",
                       fontWeight: 400,
                       fontSize: 10,
                       textTransform: "capitalize",
-                      lineHeight: "20px",
+                      lineHeight: "22px",
                       letterSpacing: "0.14px",
                     }}
                   />
@@ -374,24 +375,25 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
                   display={"flex"}
                   justifyContent={"center"}
                 >
-                  <Avatar
-                    src={currentUser?.avatar}
-                    alt={currentUser?.first_name}
-                    sizes="40px"
-                    sx={{
-                      width: "90px",
-                      height: "90px",
-                      ml: "auto",
+                  <Image
+                    src={currentUser?.avatar ?? require("@/assets/images/default-avatar.jpg")}
+                    alt={currentUser?.first_name?.slice(0, 1) ?? "P"}
+                    width={90}
+                    height={90}
+                    style={{
+                      marginLeft: "auto",
                       cursor: "pointer",
-                      bgcolor: "black",
+                      backgroundColor: "black",
+                      color: "white",
                       padding: "1px",
                       fontStyle: "normal",
                       textAlign: "center",
                       fontWeight: 500,
                       fontSize: "60px",
                       textTransform: "capitalize",
-                      lineHeight: "20px",
+                      lineHeight: "89px",
                       letterSpacing: "0.14px",
+                      borderRadius: "50%",
                     }}
                   />
                 </Box>
