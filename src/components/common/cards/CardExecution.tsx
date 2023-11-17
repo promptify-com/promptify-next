@@ -7,13 +7,14 @@ import { isImageOutput, markdownToHTML, sanitizeHTML } from "@/common/helpers/ht
 import { useEffect, useState } from "react";
 import { useAppSelector } from "@/hooks/useStore";
 import { useExecutionFavoriteMutation } from "@/core/api/executions";
+import { getAbbreviation } from "@/common/helpers";
 
 interface CardExecutionProps {
   execution: TemplatesExecutions;
-  noSave?: boolean;
+  min?: boolean;
 }
 
-export const CardExecution: React.FC<CardExecutionProps> = ({ execution, noSave }) => {
+export const CardExecution: React.FC<CardExecutionProps> = ({ execution, min }) => {
   const dispatch = useDispatch();
   const [content, setContent] = useState<string>("");
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
@@ -56,70 +57,104 @@ export const CardExecution: React.FC<CardExecutionProps> = ({ execution, noSave 
         },
       }}
     >
-      <Stack
-        direction={"row"}
-        alignItems={"center"}
-        gap={1}
-        p={"4px"}
-      >
-        {!noSave && (
-          <Tooltip
-            title="Save"
-            enterDelay={1000}
-            enterNextDelay={1000}
+      {min ? (
+        <Stack
+          direction={"row"}
+          alignItems={"center"}
+          gap={1}
+        >
+          <Typography
+            fontSize={18}
+            fontWeight={700}
+            color={"primary.contrastText"}
+            sx={{
+              bgcolor: "primary.main",
+              p: "12px",
+              borderRadius: "8px",
+            }}
           >
-            <IconButton
-              onClick={saveExecution}
+            {getAbbreviation(execution.title)}
+          </Typography>
+          <Typography
+            sx={{
+              width: "90%",
+              whiteSpace: "nowrap",
+              textOverflow: "ellipsis",
+              overflow: "hidden",
+              fontSize: 12,
+              fontWeight: 500,
+              color: "onSurface",
+            }}
+          >
+            {execution.title}
+          </Typography>
+        </Stack>
+      ) : (
+        <>
+          <Stack
+            direction={"row"}
+            alignItems={"center"}
+            gap={1}
+            p={"4px"}
+          >
+            <Tooltip
+              title="Save"
+              enterDelay={1000}
+              enterNextDelay={1000}
+            >
+              <IconButton
+                onClick={saveExecution}
+                sx={{
+                  border: "none",
+                  p: "6px",
+                  "&:hover": {
+                    bgcolor: "surface.2",
+                    opacity: 1,
+                  },
+                  svg: {
+                    width: "24px",
+                    height: "24px",
+                  },
+                }}
+              >
+                {execution.is_favorite ? <Bookmark /> : <BookmarkBorder />}
+              </IconButton>
+            </Tooltip>
+            <Typography
               sx={{
-                border: "none",
-                p: "6px",
-                "&:hover": {
-                  bgcolor: "surface.2",
-                  opacity: 1,
-                },
-                svg: {
-                  width: "24px",
-                  height: "24px",
-                },
+                width: "80%",
+                whiteSpace: "nowrap",
+                textOverflow: "ellipsis",
+                overflow: "hidden",
+                fontSize: 12,
+                fontWeight: 500,
+                color: "onSurface",
               }}
             >
-              {execution.is_favorite ? <Bookmark /> : <BookmarkBorder />}
-            </IconButton>
-          </Tooltip>
-        )}
-        <Typography
-          sx={{
-            width: "80%",
-            whiteSpace: "nowrap",
-            textOverflow: "ellipsis",
-            overflow: "hidden",
-            fontSize: 12,
-            fontWeight: 500,
-            color: "onSurface",
-          }}
-        >
-          {execution.title}
-        </Typography>
-      </Stack>
-      <Box
-        sx={{
-          bgcolor: "surface.1",
-          p: "16px 12px",
-          borderRadius: "10px",
-          height: "15svh",
-          overflow: "hidden",
-        }}
-      >
-        <Typography sx={{ fontSize: 14, fontWeight: 500, color: "onSurface", py: "12px" }}>
-          {execution.title}
-        </Typography>
-        <Typography
-          sx={{ fontSize: 12, fontWeight: 400, color: "onSurface" }}
-          dangerouslySetInnerHTML={{
-            __html: sanitizeHTML(content),
-          }}
-        />
-      </Box>
+              {execution.title}
+            </Typography>
+          </Stack>
+          <Box
+            sx={{
+              bgcolor: "surface.1",
+              p: "16px 12px",
+              borderRadius: "10px",
+              height: "15svh",
+              overflow: "hidden",
+            }}
+          >
+            <Typography sx={{ fontSize: 14, fontWeight: 500, color: "onSurface", py: "12px" }}>
+              {execution.title}
+            </Typography>
+            <Typography
+              sx={{ fontSize: 12, fontWeight: 400, color: "onSurface" }}
+              dangerouslySetInnerHTML={{
+                __html: sanitizeHTML(content),
+              }}
+            />
+          </Box>
+        </>
+      )}
     </Card>
   );
 };

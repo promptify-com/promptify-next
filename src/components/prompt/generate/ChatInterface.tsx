@@ -110,7 +110,7 @@ export const ChatInterface = ({
                 <Box maxWidth={"360px"}>
                   <CardExecution
                     execution={msg.spark}
-                    noSave
+                    min
                   />
                 </Box>
 
