@@ -46,6 +46,14 @@ function Sidebar() {
       reload: false,
     },
   ];
+  const learnHelpNavItem = {
+    name: "Learn & Help",
+    href: "https://blog.promptify.com/",
+    icon: <HelpRounded />,
+    active: false,
+    external: true,
+    reload: false,
+  };
 
   if (isTemplatePage) {
     const slug = pathname.split("/")[2];
@@ -60,24 +68,14 @@ function Sidebar() {
     });
   }
 
-  navItems.push(
-    {
-      name: "Chrome Extension",
-      href: "#",
-      icon: <ExtensionRounded />,
-      active: false,
-      external: false,
-      reload: false,
-    },
-    {
-      name: "Learn & Help",
-      href: "https://blog.promptify.com/",
-      icon: <HelpRounded />,
-      active: false,
-      external: true,
-      reload: false,
-    },
-  );
+  navItems.push({
+    name: "Chrome Extension",
+    href: "#",
+    icon: <ExtensionRounded />,
+    active: false,
+    external: false,
+    reload: false,
+  });
 
   return (
     <Drawer
@@ -105,7 +103,7 @@ function Sidebar() {
         }}
       >
         <List>
-          {navItems.slice(0, -1).map(item => (
+          {navItems.map(item => (
             <SidebarItem
               key={item.href}
               navItem={item}
@@ -117,15 +115,12 @@ function Sidebar() {
             />
           ))}
         </List>
-
         <List sx={{ p: 0 }}>
-          {navItems.length > 0 && (
-            <SidebarItem
-              navItem={navItems[navItems.length - 1]}
-              isPromptsPage={isPromptsPage}
-              showFilters={showFilters}
-            />
-          )}{" "}
+          <SidebarItem
+            navItem={learnHelpNavItem}
+            isPromptsPage={isPromptsPage}
+            showFilters={showFilters}
+          />
         </List>
       </Grid>
     </Drawer>
