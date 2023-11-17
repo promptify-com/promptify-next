@@ -2,12 +2,13 @@
 const nextConfig = {
   reactStrictMode: false,
   images: {
-    domains: ["placehold.it", "promptify.s3.amazonaws.com"],
+    domains: ["promptify.s3.amazonaws.com"],
     minimumCacheTTL: 60 * 60,
   },
   eslint: {
     dirs: ['common', 'assets', 'core', 'hooks', 'styles', 'themes', 'pages'],
   },
+  poweredByHeader: false
 };
 
 if (

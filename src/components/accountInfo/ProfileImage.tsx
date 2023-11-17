@@ -1,20 +1,13 @@
 import React, { useRef, useState } from "react";
-import {
-  Avatar,
-  Box,
-  Button,
-  CircularProgress,
-  Grid,
-  Modal,
-  Typography,
-} from "@mui/material";
+import { Avatar, Box, Button, CircularProgress, Grid, Modal, Typography } from "@mui/material";
 import ReactCrop, { PixelCrop, type Crop } from "react-image-crop";
 import { Buffer } from "buffer";
 import "react-image-crop/dist/ReactCrop.css";
-import { useUpdateUserProfileMutation } from '@/core/api/user';
+import { useUpdateUserProfileMutation } from "@/core/api/user";
 import { User } from "@/core/api/dto/user";
 import { useDispatch } from "react-redux";
-import { updateUser } from '@/core/store/userSlice';
+import { updateUser } from "@/core/store/userSlice";
+import Image from "../design-system/Image";
 
 interface IProps {
   user: User | null;
@@ -81,7 +74,7 @@ export const ProfileImage: React.FC<IProps> = ({ user, token }) => {
             0,
             0,
             crop.width * scaleX,
-            crop.height * scaleY
+            crop.height * scaleY,
           );
         }
 
@@ -91,10 +84,7 @@ export const ProfileImage: React.FC<IProps> = ({ user, token }) => {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           const fileType = base64Image.split(";")[0].split(":")[1];
 
-          const buffer = Buffer.from(
-            base64Image.replace(/^data:image\/\w+;base64,/, ""),
-            "base64"
-          );
+          const buffer = Buffer.from(base64Image.replace(/^data:image\/\w+;base64,/, ""), "base64");
           return new File([buffer], "fileName", { type: fileType });
         }
       }
@@ -111,7 +101,11 @@ export const ProfileImage: React.FC<IProps> = ({ user, token }) => {
       padding={{ md: "16px" }}
       borderRadius={"16px"}
     >
-      <Typography fontWeight={500} fontSize="18px" textAlign={"start"}>
+      <Typography
+        fontWeight={500}
+        fontSize="18px"
+        textAlign={"start"}
+      >
         Profile Image
       </Typography>
       <Grid
@@ -123,10 +117,26 @@ export const ProfileImage: React.FC<IProps> = ({ user, token }) => {
         gap={2}
       >
         <Grid>
-          <Avatar
-            src={user?.avatar}
-            alt={user?.username}
-            sx={{ width: "150px", height: "150px" }}
+          <Image
+            src={user?.avatar ?? require("@/assets/images/default-avatar.jpg")}
+            alt={user?.username?.slice(0, 1) ?? "P"}
+            width={150}
+            height={150}
+            style={{
+              backgroundColor: "black",
+              color: "white",
+              fontSize: "40px",
+              padding: "1px",
+              fontWeight: 500,
+              textTransform: "capitalize",
+              lineHeight: "149px",
+              textAlign: "center",
+              letterSpacing: "0.14px",
+              borderRadius: "50%",
+              width: "150px",
+              height: "150px",
+              display: "block",
+            }}
           />
         </Grid>
         <Grid
@@ -217,16 +227,12 @@ export const ProfileImage: React.FC<IProps> = ({ user, token }) => {
           >
             <ReactCrop
               crop={crop}
-              onChange={(c) => setCrop(c)}
-              onComplete={(c) => setCompletedCrop(c)}
+              onChange={c => setCrop(c)}
+              onComplete={c => setCompletedCrop(c)}
               aspect={aspect}
             >
               <img
-                src={
-                  selectedImage
-                    ? URL.createObjectURL(selectedImage)
-                    : "no-image"
-                }
+                src={selectedImage ? URL.createObjectURL(selectedImage) : "no-image"}
                 ref={imgRef}
                 alt={"profile image"}
                 style={{ maxHeight: "70vh" }}
@@ -234,7 +240,12 @@ export const ProfileImage: React.FC<IProps> = ({ user, token }) => {
             </ReactCrop>
           </Box>
 
-          <Box display="flex" justifyContent="flex-end" mb="2rem" mr="2rem">
+          <Box
+            display="flex"
+            justifyContent="flex-end"
+            mb="2rem"
+            mr="2rem"
+          >
             <Button
               sx={{
                 color: "#424242",

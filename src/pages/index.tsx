@@ -1,7 +1,9 @@
-import { Box, Grid, Typography } from "@mui/material";
-import React, { useEffect } from "react";
-import { AxiosResponse } from "axios";
-import { NextPage } from "next";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import { useEffect } from "react";
+import type { AxiosResponse } from "axios";
+import type { GetServerSideProps, NextPage } from "next";
 import { useSelector, useDispatch } from "react-redux";
 import { IContinueWithSocialMediaResponse } from "@/common/types";
 import { client } from "@/common/axios";
@@ -19,7 +21,6 @@ import { Category, TemplatesExecutionsByMePaginationResponse } from "@/core/api/
 import { redirectToPath } from "@/common/helpers";
 import useToken from "@/hooks/useToken";
 import ClientOnly from "@/components/base/ClientOnly";
-import { NextResponse } from "next/server";
 import { getCategories } from "@/hooks/api/categories";
 
 interface HomePageProps {
@@ -196,11 +197,7 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
   );
 };
 
-export async function getServerSideProps({
-  res,
-}: {
-  res: NextResponse & { setHeader: (name: string, value: string) => void };
-}) {
+export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   res.setHeader("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=60");
 
   const categories = await getCategories();
@@ -213,6 +210,6 @@ export async function getServerSideProps({
       categories,
     },
   };
-}
+};
 
 export default HomePage;

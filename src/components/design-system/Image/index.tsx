@@ -8,6 +8,7 @@ interface NextImageProps {
   width?: number;
   height?: number;
   loading?: "eager" | "lazy";
+  onClick?: () => void;
 }
 
 const Image: React.FC<NextImageProps> = ({
@@ -18,6 +19,7 @@ const Image: React.FC<NextImageProps> = ({
   width = 0,
   height = 0,
   loading,
+  onClick,
 }) => {
   return (
     <NextImage
@@ -29,6 +31,7 @@ const Image: React.FC<NextImageProps> = ({
       priority={priority}
       style={style}
       {...(loading && { loading })}
+      onClick={onClick}
     />
   );
 };
