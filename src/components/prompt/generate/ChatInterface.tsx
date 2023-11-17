@@ -7,7 +7,7 @@ import { Templates, TemplatesExecutions, UpdatedQuestionTemplate } from "@/core/
 import { useAppSelector } from "@/hooks/useStore";
 import { InputsForm } from "./Inputsform";
 import { CardExecution } from "@/components/common/cards/CardExecution";
-import ThumbsFeedback from "../ThumbsFeedback";
+import FeedbackThumbs from "../FeedbackThumbs";
 import { Replay } from "@mui/icons-material";
 
 interface Props {
@@ -121,7 +121,7 @@ export const ChatInterface = ({
                   flexWrap={"wrap"}
                   gap={1}
                 >
-                  <ThumbsFeedback selectedExecution={msg.spark} />
+                  <FeedbackThumbs execution={msg.spark} />
                   <Button
                     onClick={() => {
                       if (msg.spark) regenerate(msg.spark);

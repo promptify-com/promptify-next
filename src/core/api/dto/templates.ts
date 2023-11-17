@@ -157,6 +157,9 @@ export interface TemplatesWithPagination {
 }
 
 export type ResponseType = "arraybuffer" | "blob" | "document" | "json" | "text" | "stream";
+
+export type FeedbackType = "NEUTRAL" | "LIKED" | "DISLIKED";
+
 export interface TemplatesExecutions {
   id: number;
   title: string;
@@ -171,7 +174,7 @@ export interface TemplatesExecutions {
     thumbnail: string;
   };
   hash: string;
-  feedback?: string;
+  feedback?: FeedbackType;
   executed_by?: number;
   errors?: string;
 }

@@ -1,28 +1,36 @@
 import { Button, Stack } from "@mui/material";
 import { useUpdateExecutionMutation } from "@/core/api/executions";
-import { TemplatesExecutions } from "@/core/api/dto/templates";
+import { FeedbackType, TemplatesExecutions } from "@/core/api/dto/templates";
 import { Happy } from "@/assets/icons/Happy";
 import { Sad } from "@/assets/icons/Sad";
+import { useState } from "react";
 
-interface FeedBackType {
-  selectedExecution: TemplatesExecutions | null;
+interface newFeedBack {
+  execution: TemplatesExecutions;
 }
 
-const ThumbsFeedback: React.FC<FeedBackType> = ({ selectedExecution }) => {
+const FeedbackThumbs: React.FC<newFeedBack> = ({ execution }) => {
   const [updateExecution] = useUpdateExecutionMutation();
+  const [feedback, setFeedback] = useState(execution.feedback);
 
-  const handleFeedback = (feedbackType: string) => {
-    if (selectedExecution && selectedExecution?.feedback !== feedbackType) {
+  const handleFeedback = (newFeedback: FeedbackType) => {
+    if (feedback !== newFeedback) {
+      setFeedback(newFeedback);
+
       const feedbackData = {
-        id: selectedExecution.id,
+        id: execution.id,
         data: {
-          feedback: feedbackType,
+          feedback: newFeedback,
         },
       };
       updateExecution(feedbackData);
     }
   };
 
+  const liked = feedback === "LIKED";
+  const disliked = feedback === "DISLIKED";
+
+  console.log(execution);
   return (
     <Stack
       direction={"row"}
@@ -39,7 +47,7 @@ const ThumbsFeedback: React.FC<FeedBackType> = ({ selectedExecution }) => {
           fontSize: 13,
           fontWeight: 500,
           border: "1px solid",
-          borderColor: "divider",
+          borderColor: liked ? "#ABE88F" : "divider",
           color: "secondary.main",
           ":hover": {
             bgcolor: "action.hover",
@@ -58,7 +66,7 @@ const ThumbsFeedback: React.FC<FeedBackType> = ({ selectedExecution }) => {
           fontSize: 13,
           fontWeight: 500,
           border: "1px solid",
-          borderColor: "divider",
+          borderColor: disliked ? "#FF624D" : "divider",
           color: "secondary.main",
           ":hover": {
             bgcolor: "action.hover",
@@ -71,4 +79,4 @@ const ThumbsFeedback: React.FC<FeedBackType> = ({ selectedExecution }) => {
   );
 };
 
-export default ThumbsFeedback;
+export default FeedbackThumbs;
