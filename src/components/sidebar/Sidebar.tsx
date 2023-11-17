@@ -118,7 +118,7 @@ function Sidebar() {
           ))}
         </List>
 
-        <List>
+        <List sx={{ p: 0 }}>
           {navItems.length > 0 && (
             <SidebarItem
               navItem={navItems[navItems.length - 1]}

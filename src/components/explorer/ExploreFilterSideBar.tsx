@@ -22,7 +22,7 @@ interface ExploreFilterSideBarProps {
   tags: Tag[] | undefined;
 }
 
-const listHeaderStyle = { fontSize: "12px", ml: "17px", borderRadius: "16px", textAlign: "center" };
+const listHeaderStyle = { fontSize: "12px", m: "0 5px", borderRadius: "16px", textAlign: "center" };
 export const ExploreFilterSideBar: React.FC<ExploreFilterSideBarProps> = ({ engines, tags, sidebarOpen }) => {
   const [itemsToShow, setItemsToShow] = useState<number>(3);
   const filters = useSelector((state: RootState) => state.filters);
@@ -48,7 +48,7 @@ export const ExploreFilterSideBar: React.FC<ExploreFilterSideBarProps> = ({ engi
   };
 
   return (
-    <Box sx={{ opacity: sidebarOpen ? 1 : 0 }}>
+    <Box sx={{ opacity: sidebarOpen ? 1 : 0, width: "96%", margin: "0 auto" }}>
       <List subheader={<ListSubheader sx={listHeaderStyle}>ENGINES</ListSubheader>}>
         <Grid
           className="sidebar-list"
@@ -64,7 +64,7 @@ export const ExploreFilterSideBar: React.FC<ExploreFilterSideBarProps> = ({ engi
               key={engine.name}
             >
               <ListItemButton
-                sx={{ borderRadius: "8px", minHeight: 48, mx: 1, px: 3.0 }}
+                sx={{ borderRadius: "8px", minHeight: 48, px: 2.5 }}
                 onClick={() => handleEngineSelect(engine)}
                 selected={storedEngine?.id == engine.id}
               >
@@ -108,7 +108,7 @@ export const ExploreFilterSideBar: React.FC<ExploreFilterSideBarProps> = ({ engi
           flexDirection={"column"}
           alignItems={"start"}
           gap={"8px"}
-          ml={"29px"}
+          ml={"20px"}
         >
           {tags?.map(tag => (
             <Chip
