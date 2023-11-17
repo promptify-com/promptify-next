@@ -1,5 +1,5 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
-import { Button, InputLabel, MenuItem, Select, Stack, TextField, Tooltip } from "@mui/material";
+import React, { useRef, useState } from "react";
+import { Button, IconButton, InputLabel, MenuItem, Select, Stack, TextField, Tooltip } from "@mui/material";
 import { IAnswer } from "@/common/types/chat";
 import { UpdatedQuestionTemplate } from "@/core/api/dto/templates";
 import BaseButton from "@/components/base/BaseButton";
@@ -17,6 +17,7 @@ interface Props {
 export const InputsForm = ({ questions, answers, onChange }: Props) => {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const [codeFieldOpen, setCodeFieldOpen] = useState(false);
+  const fieldRefs = useRef<(HTMLInputElement | null)[]>(Array(questions.length).fill(null));
 
   return (
     <Stack gap={1}>
@@ -29,6 +30,7 @@ export const InputsForm = ({ questions, answers, onChange }: Props) => {
             key={idx}
             direction={"row"}
             alignItems={"center"}
+            flexWrap={"wrap"}
             gap={1}
           >
             <InputLabel
@@ -170,6 +172,7 @@ export const InputsForm = ({ questions, answers, onChange }: Props) => {
               </Stack>
             ) : (
               <TextField
+                inputRef={ref => (fieldRefs.current[idx] = ref)}
                 disabled={isGenerating}
                 sx={{
                   ".MuiInputBase-input": {
@@ -204,12 +207,16 @@ export const InputsForm = ({ questions, answers, onChange }: Props) => {
             )}
             {!["file", "code", "choices"].includes(question.type) && (
               <Edit
+                onClick={() => fieldRefs.current[idx]?.focus()}
                 sx={{
                   fontSize: 16,
                   color: "primary.main",
-                  border: "none",
                   p: "4px",
-                  opacity: !value ? 0.5 : 1,
+                  cursor: "pointer",
+                  opacity: value ? 0.7 : 0.5,
+                  ":hover": {
+                    opacity: 1,
+                  },
                 }}
               />
             )}
