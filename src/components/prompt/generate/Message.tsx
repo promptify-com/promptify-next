@@ -62,7 +62,7 @@ export const Message = ({ message, setIsSimulationStreaming, onScrollToBottom }:
 
       <Grid
         flex={1}
-        ml={{ xs: message.noHeader ? 6.5 : 0, md: message.noHeader ? 7 : 0 }}
+        ml={{ xs: message.noHeader ? 6.5 : 0, md: message.noHeader ? 6 : 0 }}
         mt={{ xs: message.noHeader ? -1.5 : 0, md: message.noHeader ? -1.5 : 0 }}
         display={"flex"}
         flexDirection={"column"}

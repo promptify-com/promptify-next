@@ -25,4 +25,5 @@ export interface IAnswer {
   question: string;
   answer: string | number | File;
   prompt: number;
+  error?: boolean;
 }

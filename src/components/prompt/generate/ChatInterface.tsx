@@ -91,7 +91,7 @@ export const ChatInterface = ({
             />
             {msg.type === "form" && (
               <Box
-                ml={{ xs: 6.5, md: 7 }}
+                ml={{ xs: 6.5, md: 6 }}
                 mb={2}
               >
                 <InputsForm

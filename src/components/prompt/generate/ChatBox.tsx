@@ -337,7 +337,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
       return;
     }
 
-    const { name: inputName, required, type, question, prompt, choices, fileExtensions } = currentQuestion;
+    const { name: inputName, required, question, prompt } = currentQuestion;
 
     const _answers = [...answers.filter(answer => answer.inputName !== inputName)];
 
@@ -357,24 +357,26 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
   };
 
   const validateAndUploadFiles = () =>
-    new Promise<boolean>(async resolve => {
-      for (const answer of answers) {
-        if (answer.answer instanceof File && !uploadedFiles.current.has(answer.inputName)) {
-          const res = await uploadFileHelper(uploadFile, { file: answer.answer });
-          const fileUrl = res?.file;
+    new Promise<{ status: boolean; answers: IAnswer[] }>(async resolve => {
+      let status = true;
+      const _answers = await Promise.all(
+        [...answers].map(async answer => {
+          if (answer.answer instanceof File && !uploadedFiles.current.has(answer.inputName)) {
+            const res = await uploadFileHelper(uploadFile, { file: answer.answer });
+            const fileUrl = res?.file;
 
-          if (typeof fileUrl === "string" && fileUrl) {
-            uploadedFiles.current.set(answer.inputName, fileUrl);
-          } else {
-            handleAnswerClear(answer, true);
-            if (answer.required) {
-              resolve(false);
-              return;
+            if (typeof fileUrl === "string" && fileUrl) {
+              uploadedFiles.current.set(answer.inputName, fileUrl);
+            } else {
+              status = false;
+              answer.error = true;
             }
           }
-        }
-      }
-      resolve(true);
+          return answer;
+        }),
+      );
+      setAnswers(_answers);
+      resolve({ status, answers: _answers });
     });
 
   const generateExecutionHandler = async () => {
@@ -383,7 +385,21 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
     }
 
     const filesUploaded = await validateAndUploadFiles();
-    if (!filesUploaded) return;
+    if (!filesUploaded.status) {
+      const invalids = filesUploaded.answers
+        .filter(answers => answers.error)
+        .map(answer => templateQuestions.find(question => question.name === answer.inputName)?.fullName);
+      const botMessage: IMessage = {
+        id: randomId(),
+        text: `Please enter valid answers for "${invalids.join(", ")}"`,
+        type: "form",
+        createdAt: createdAt,
+        fromUser: false,
+      };
+
+      setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat(botMessage));
+      return;
+    }
 
     dispatch(setGeneratingStatus(true));
 
