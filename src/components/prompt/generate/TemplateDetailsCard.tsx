@@ -21,24 +21,17 @@ export const TemplateDetailsCard: React.FC<TemplateDetailsCardProps> = ({ templa
         alignItems={"flex-start"}
         sx={{
           flexWrap: { xs: "wrap", md: "nowrap" },
-          bgcolor: "surface.5",
+          bgcolor: "surface.2",
           borderRadius: "48px",
         }}
       >
         <Stack
           gap={2}
           sx={{
-            p: "48px 72px 48px 54px",
+            p: "48px 72px 98px 54px",
           }}
         >
           <Stack gap={1}>
-            <Typography
-              fontSize={14}
-              fontWeight={500}
-              color={alpha(theme.palette.text.secondary, 0.45)}
-            >
-              {template.category.name}
-            </Typography>
             <Typography
               fontSize={36}
               fontWeight={400}
@@ -72,7 +65,7 @@ export const TemplateDetailsCard: React.FC<TemplateDetailsCardProps> = ({ templa
                   sx={{
                     fontSize: 13,
                     fontWeight: 400,
-                    bgcolor: "surface.1",
+                    bgcolor: "surface.3",
                     color: "onSurface",
                     p: "3px 0",
                     height: "auto",
