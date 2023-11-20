@@ -1,16 +1,13 @@
-import { useState, type Dispatch, type SetStateAction, useEffect } from "react";
+import { type Dispatch, type SetStateAction } from "react";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
-import { Display } from "./Display";
+
 import type { Templates } from "@/core/api/dto/templates";
 import ClientOnly from "../base/ClientOnly";
 import ChatMode from "./generate/ChatBox";
 import Header from "./Header";
 import TemplateToolbar from "./Toolbar";
-import { useAppSelector } from "@/hooks/useStore";
-import { useDispatch } from "react-redux";
-import { setSelectedExecution } from "@/core/store/executionsSlice";
-import { setChatFullScreenStatus } from "@/core/store/templatesSlice";
+import ToolbarDrawer from "./Toolbar/ToolbarDrawer";
 
 interface TemplateDesktopProps {
   template: Templates;
@@ -18,31 +15,15 @@ interface TemplateDesktopProps {
 }
 
 export default function TemplateDesktop({ template, setErrorMessage }: TemplateDesktopProps) {
-  const dispatch = useDispatch();
-  const chatFullScreen = useAppSelector(state => state.template.isChatFullScreen);
-  const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
-
-  const closeExecutionDisplay = () => {
-    dispatch(setChatFullScreenStatus(true));
-    dispatch(setSelectedExecution(null));
-  };
-
-  useEffect(() => {
-    dispatch(setChatFullScreenStatus(!selectedExecution));
-  }, [selectedExecution]);
-
   return (
     <Stack
       height={"calc(100svh - 90px)"}
-      gap={"1px"}
+      position={"relative"}
     >
       <Header template={template} />
       <Grid
-        mt={0}
-        gap={"1px"}
-        container
+        display={"flex"}
         flexWrap={"nowrap"}
-        mx={"auto"}
         bgcolor={"surface.1"}
         width={"100%"}
         height={"calc(100% - 68px)"}
@@ -66,28 +47,8 @@ export default function TemplateDesktop({ template, setErrorMessage }: TemplateD
       >
         <Stack
           width={"100%"}
-          position={"sticky"}
-          top={0}
           zIndex={100}
           height={"100%"}
-          overflow={"auto"}
-          borderRight={"1px solid"}
-          sx={{
-            borderColor: "surface.3",
-            "&::-webkit-scrollbar": {
-              width: "6px",
-              p: 1,
-              backgroundColor: "surface.5",
-            },
-            "&::-webkit-scrollbar-track": {
-              webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
-            },
-            "&::-webkit-scrollbar-thumb": {
-              backgroundColor: "surface.1",
-              outline: "1px solid surface.1",
-              borderRadius: "10px",
-            },
-          }}
         >
           <ClientOnly>
             <ChatMode
@@ -97,20 +58,8 @@ export default function TemplateDesktop({ template, setErrorMessage }: TemplateD
           </ClientOnly>
         </Stack>
 
-        {/* {!chatFullScreen && (
-          <Grid
-            width={"62%"}
-            display={"block"}
-          >
-            <Display
-              templateData={template}
-              onError={setErrorMessage}
-              close={closeExecutionDisplay}
-            />
-          </Grid>
-        )} */}
-
         <TemplateToolbar template={template} />
+        <ToolbarDrawer template={template} />
       </Grid>
     </Stack>
   );

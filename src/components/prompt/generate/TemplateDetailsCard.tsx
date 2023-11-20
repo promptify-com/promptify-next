@@ -14,8 +14,9 @@ export const TemplateDetailsCard: React.FC<TemplateDetailsCardProps> = ({ templa
   const router = useRouter();
 
   return (
-    <Box mx={"40px"}>
+    <Box>
       <Stack
+        pb={"20px"}
         direction={"row"}
         justifyContent={"space-between"}
         alignItems={"flex-start"}
@@ -28,7 +29,7 @@ export const TemplateDetailsCard: React.FC<TemplateDetailsCardProps> = ({ templa
         <Stack
           gap={2}
           sx={{
-            p: "48px 72px 98px 54px",
+            p: "48px 72px 38px 54px",
           }}
         >
           <Stack gap={1}>
@@ -80,7 +81,7 @@ export const TemplateDetailsCard: React.FC<TemplateDetailsCardProps> = ({ templa
         <CardMedia
           sx={{
             width: "351px",
-            height: "262px",
+            height: "202px",
             objectFit: "cover",
             borderRadius: "48px",
           }}

@@ -6,8 +6,8 @@ import Stack from "@mui/material/Stack";
 import { Message } from "./Message";
 import { IAnswer, IMessage } from "@/common/types/chat";
 import type { UpdatedQuestionTemplate } from "@/core/api/dto/templates";
-import { useAppSelector } from "@/hooks/useStore";
 import { InputsForm } from "./Inputsform";
+
 interface Props {
   messages: IMessage[];
   onChange: (value: string | File, question: UpdatedQuestionTemplate) => void;
@@ -26,17 +26,12 @@ export const ChatInterface = ({
   onGenerate,
 }: Props) => {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
-  const isFullScreen = useAppSelector(state => state.template.isChatFullScreen);
 
   const scrollToBottom = () => {
     if (messagesContainerRef.current) {
       messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
     }
   };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages, isFullScreen]);
 
   function getCurrentDateFormatted(): string {
     const currentDate = new Date();
@@ -53,13 +48,11 @@ export const ChatInterface = ({
     <Stack
       ref={messagesContainerRef}
       gap={3}
+      position={"relative"}
     >
       <div style={{ marginTop: "auto" }}></div>
 
-      <Stack
-        pb={"38px"}
-        mx={"40px"}
-      >
+      <Stack pb={"38px"}>
         <Divider
           sx={{
             fontSize: 12,
@@ -78,6 +71,7 @@ export const ChatInterface = ({
             onScrollToBottom={scrollToBottom}
           />
         ))}
+
         <Box>
           <InputsForm
             questions={questions}

@@ -1,6 +1,8 @@
 import ExtensionSettingsIcon from "@/assets/icons/ExtensionSettingsIcon";
 import NoteStackIcon from "@/assets/icons/NoteStackIcon";
 import type { Link, LinkName } from "@/common/types/TemplateToolbar";
+import { openToolbarDrawer, setActiveToolbarLink } from "@/core/store/templatesSlice";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Icon from "@mui/material/Icon";
@@ -11,21 +13,24 @@ import React from "react";
 
 interface Props {
   item: Link;
-  onOpen: (item: Link) => void;
   onClick: (item: Link) => void;
-  selected?: LinkName;
 }
 
-function ToolbarItem({ item, onClick, onOpen, selected }: Props) {
+function ToolbarItem({ item, onClick }: Props) {
+  const dispatch = useAppDispatch();
+
+  const activeLink = useAppSelector(state => state.template.activeSideBarLink);
+
   const handleClick = (link: Link) => {
     if (link.name === "customize") {
       onClick(link);
     } else {
-      onOpen(link);
+      dispatch(openToolbarDrawer(true));
+      dispatch(setActiveToolbarLink(link));
     }
   };
 
-  const isSelected = selected === item.name;
+  const isSelected = activeLink?.name === item.name;
 
   const renderIcon = () => {
     const iconColor = isSelected ? "#375CA9" : "#1B1B1E";
@@ -48,7 +53,7 @@ function ToolbarItem({ item, onClick, onOpen, selected }: Props) {
           sx={{
             borderRadius: "16px",
             padding: "12px",
-            backgroundColor: isSelected ? "#375CA91A" : undefined, // Conditional background color
+            backgroundColor: isSelected ? "#375CA91A" : undefined,
           }}
         >
           <Box

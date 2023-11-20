@@ -1,3 +1,4 @@
+import { Link } from "@/common/types/TemplateToolbar";
 import { AnsweredInputType } from "@/common/types/prompt";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
@@ -8,8 +9,9 @@ export interface TemplatesProps {
   likes: number;
   executionData: string;
   isGenerating: boolean;
-  isChatFullScreen: boolean;
+  isSidebarExpanded: boolean;
   answeredInputs: AnsweredInputType[];
+  activeSideBarLink: Link | null;
 }
 
 type UpdateTemplateDataPayload = Pick<TemplatesProps, "is_favorite" | "id" | "likes">;
@@ -20,7 +22,8 @@ const initialState: TemplatesProps = {
   likes: 0,
   executionData: "[]",
   isGenerating: false,
-  isChatFullScreen: true,
+  isSidebarExpanded: false,
+  activeSideBarLink: null,
   answeredInputs: [],
 };
 
@@ -45,11 +48,12 @@ export const templatesSlice = createSlice({
     setGeneratingStatus: (state, action: PayloadAction<boolean>) => {
       state.isGenerating = action.payload;
     },
-    setChatFullScreenStatus: (state, action: PayloadAction<boolean>) => {
-      state.isChatFullScreen = action.payload;
+    openToolbarDrawer: (state, action: PayloadAction<boolean>) => {
+      state.isSidebarExpanded = action.payload;
     },
-    updateAnsweredInput: (state, action: PayloadAction<AnsweredInputType[]>) => {
-      state.answeredInputs = action.payload;
+
+    setActiveToolbarLink: (state, action: PayloadAction<Link | null>) => {
+      state.activeSideBarLink = action.payload;
     },
   },
 });
@@ -59,8 +63,8 @@ export const {
   updateTemplateData,
   updateExecutionData,
   setGeneratingStatus,
-  setChatFullScreenStatus,
-  updateAnsweredInput,
+  openToolbarDrawer,
+  setActiveToolbarLink,
 } = templatesSlice.actions;
 
 export default templatesSlice.reducer;

@@ -9,6 +9,7 @@ export const Extension = () => {
     <Stack
       alignItems={"center"}
       gap={3}
+      width={"300px"}
       p={"24px"}
     >
       <Image

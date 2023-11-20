@@ -1,7 +1,13 @@
-import React, { useState, useMemo, memo, useEffect, useRef } from "react";
-import { Typography, Button, Stack, Box, Grid, IconButton } from "@mui/material";
+import { useState, useMemo, memo, useEffect, useRef } from "react";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { useRouter } from "next/router";
+import Add from "@mui/icons-material/Add";
+import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
+import Grid from "@mui/material/Grid";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+
 import { ResPrompt } from "@/core/api/dto/prompts";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { useAppSelector, useAppDispatch } from "@/hooks/useStore";
@@ -10,14 +16,8 @@ import useTimestampConverter from "@/hooks/useTimestampConverter";
 import { ChatInterface } from "./ChatInterface";
 import { ChatInput } from "./ChatInput";
 import { TemplateQuestions, Templates, UpdatedQuestionTemplate } from "@/core/api/dto/templates";
-import { getInputsFromString } from "@/common/helpers/getInputsFromString";
 import { IPromptInput, PromptLiveResponse, AnsweredInputType } from "@/common/types/prompt";
-import {
-  setChatFullScreenStatus,
-  setGeneratingStatus,
-  updateAnsweredInput,
-  updateExecutionData,
-} from "@/core/store/templatesSlice";
+import { setGeneratingStatus, updateExecutionData } from "@/core/store/templatesSlice";
 import { IAnswer, IMessage } from "@/common/types/chat";
 import { useStopExecutionMutation } from "@/core/api/executions";
 import VaryModal from "./VaryModal";
@@ -27,8 +27,8 @@ import { useUploadFileMutation } from "@/core/api/uploadFile";
 import { uploadFileHelper } from "@/common/helpers/uploadFileHelper";
 import { setGeneratedExecution } from "@/core/store/executionsSlice";
 import { TemplateDetailsCard } from "./TemplateDetailsCard";
-import { Add } from "@mui/icons-material";
 import useChatBox from "@/hooks/useChatBox";
+import { InputsForm } from "./Inputsform";
 
 interface Props {
   onError: (errMsg: string) => void;
@@ -41,6 +41,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(state => state.user.currentUser);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
+  const isSidebarExpanded = useAppSelector(state => state.template.isSidebarExpanded);
   const [stopExecution] = useStopExecutionMutation();
   const [uploadFile] = useUploadFileMutation();
   const { convertedTimestamp } = useTimestampConverter();
@@ -305,23 +306,9 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
         })
         .filter(answer => answer.answer !== "");
 
-      dispatch(updateAnsweredInput(answeredInputs));
       setAnswers(newAnswers);
       setIsValidatingAnswer(false);
     }
-  };
-
-  const modifyStoredInputValue = (answer: IAnswer) => {
-    const { inputName, prompt: promptId, answer: value } = answer;
-
-    const newValue: AnsweredInputType = {
-      promptId,
-      value,
-      inputName,
-      modifiedFrom: "chat",
-    };
-
-    dispatch(updateAnsweredInput([newValue]));
   };
 
   const handleUserInput = async (value: string | File, currentQuestion: UpdatedQuestionTemplate) => {
@@ -382,8 +369,6 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
     const promptsData = preparePromptsData(uploadedFiles.current, answers, template.prompts);
 
     uploadedFiles.current.clear();
-
-    dispatch(setChatFullScreenStatus(false));
 
     generateExecution(promptsData);
   };
@@ -531,8 +516,6 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
       answer: "",
     };
 
-    modifyStoredInputValue(answer);
-
     const question = templateQuestions.find(question => question.name === selectedAnswer.inputName);
     const newStandingQuestions = standingQuestions.concat(question!).sort((a, b) => +a.required - +b.required);
     const askedQuestion = newStandingQuestions[newStandingQuestions.length - 1];
@@ -560,15 +543,17 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
 
   return (
     <Box
-      width={"80%"}
+      width={isSidebarExpanded ? "100%" : "80%"}
       mx={"auto"}
-      position={"relative"}
       height={"90%"}
+      position={"relative"}
     >
       <Stack
-        justifyContent={"flex-end"}
         gap={2}
+        justifyContent={"flex-end"}
         height={"100%"}
+        position={"relative"}
+        overflow={"auto"}
       >
         <Stack
           sx={{
@@ -589,15 +574,21 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
             },
           }}
         >
-          <TemplateDetailsCard template={template} />
-          <ChatInterface
-            questions={templateQuestions}
-            answers={answers}
-            messages={messages}
-            onChange={handleUserInput}
-            setIsSimulaitonStreaming={setIsSimulaitonStreaming}
-            onGenerate={generateExecutionHandler}
-          />
+          <Stack
+            position={"sticky"}
+            bottom={0}
+            mx={"40px"}
+          >
+            <TemplateDetailsCard template={template} />
+            <ChatInterface
+              messages={messages}
+              setIsSimulaitonStreaming={setIsSimulaitonStreaming}
+              questions={templateQuestions}
+              answers={answers}
+              onChange={handleUserInput}
+              onGenerate={generateExecutionHandler}
+            />
+          </Stack>
         </Stack>
         <VaryModal
           open={varyOpen}

@@ -225,7 +225,11 @@ export const InputsForm = ({ questions, answers, onChange, onGenerate }: Props) 
                     >
                       {question.fullName} {question.required && <span>*</span>} :
                     </InputLabel>
-                    <Stack flex={1}>
+                    <Stack
+                      flex={1}
+                      display={"flex"}
+                      alignItems={"start"}
+                    >
                       {question.type === "code" ? (
                         <>
                           <BaseButton
@@ -391,17 +395,6 @@ export const InputsForm = ({ questions, answers, onChange, onGenerate }: Props) 
                         <HelpOutline />
                       </IconButton>
                     </Stack>
-                    {/* {!["file", "code", "choices"].includes(question.type) && (
-                      <Edit
-                        sx={{
-                          fontSize: 16,
-                          color: "primary.main",
-                          border: "none",
-                          p: "4px",
-                          opacity: !value ? 0.5 : 1,
-                        }}
-                      />
-                    )} */}
                   </Stack>
                 );
               })}
