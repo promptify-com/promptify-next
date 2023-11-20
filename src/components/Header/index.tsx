@@ -1,5 +1,8 @@
 import React, { useState } from "react";
-import { Box, Grid, Typography } from "@mui/material";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 import SearchIcon from "@mui/icons-material/Search";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import { useRouter } from "next/router";
@@ -12,15 +15,17 @@ import { RootState } from "@/core/store";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { useSelector } from "react-redux";
 import { theme } from "@/theme";
-import { redirectToPath } from "@/common/helpers";
-import Image from "next/image";
+import { isDesktopViewPort, redirectToPath } from "@/common/helpers";
+import Image from "../design-system/Image";
+import FavoritesListDesktop from "@/assets/icons/FavoritesListDesktop";
 
-interface HeaderProps {
+interface Props {
   transparent?: boolean;
   fixed?: boolean;
   keyWord?: string;
   setKeyWord?: React.Dispatch<React.SetStateAction<string>>;
   handleKeyPress?: React.KeyboardEventHandler<HTMLInputElement>;
+  onFavoritesListClick: () => void;
 }
 
 type SidebarType = "navigation" | "profile";
@@ -55,10 +60,17 @@ const Login = () => {
   );
 };
 
-export const Header: React.FC<HeaderProps> = ({ transparent = false, fixed = false, keyWord = "", setKeyWord }) => {
+export default function Header({
+  transparent = false,
+  fixed = false,
+  keyWord = "",
+  setKeyWord,
+  onFavoritesListClick,
+}: Props) {
   const router = useRouter();
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
   const isValidUser = useSelector(isValidUserFn);
+  const desktopView = isDesktopViewPort();
   const [openSearchDialog, setOpenSearchDialog] = useState<boolean>(false);
   const [openSidebar, setOpenSidebar] = useState<boolean>(false);
   const [sidebarType, setSidebarType] = useState<SidebarType>("navigation");
@@ -199,7 +211,14 @@ export const Header: React.FC<HeaderProps> = ({ transparent = false, fixed = fal
           <Box sx={{ display: { xs: "none", md: "flex" } }}>
             <Box>
               {isValidUser ? (
-                <ProfileMenu />
+                <Stack
+                  direction={"row"}
+                  alignItems={"center"}
+                  spacing={2}
+                >
+                  <FavoritesListDesktop onClick={onFavoritesListClick} />
+                  <ProfileMenu />
+                </Stack>
               ) : (
                 <Box
                   display={"flex"}
@@ -260,14 +279,16 @@ export const Header: React.FC<HeaderProps> = ({ transparent = false, fixed = fal
             </Box>
           </Box>
         </Box>
-        <SideBarMobile
-          type={sidebarType}
-          openDrawer={openSidebar}
-          onCloseDrawer={() => setOpenSidebar(false)}
-          onOpenDrawer={() => setOpenSidebar(true)}
-          setSidebarType={setSidebarType}
-        />
+        {!desktopView && (
+          <SideBarMobile
+            type={sidebarType}
+            openDrawer={openSidebar}
+            onCloseDrawer={() => setOpenSidebar(false)}
+            onOpenDrawer={() => setOpenSidebar(true)}
+            setSidebarType={setSidebarType}
+          />
+        )}
       </Grid>
     </Box>
   );
-};
+}

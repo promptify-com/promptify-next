@@ -31,6 +31,7 @@ interface CustomTheme {
   custom: {
     defaultSidebarWidth: string;
     leftClosedSidebarWidth: string;
+    favoritesListWidth: string;
     headerHeight: {
       xs: string;
       md: string;
@@ -94,6 +95,7 @@ export let theme: Theme = createTheme({
   custom: {
     defaultSidebarWidth: "230px",
     leftClosedSidebarWidth: "125px",
+    favoritesListWidth: "300px",
     headerHeight: {
       xs: "58px",
       md: "90px",

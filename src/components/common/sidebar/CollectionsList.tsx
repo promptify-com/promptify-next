@@ -7,9 +7,10 @@ import ListItemPlaceholder from "@/components/placeholders/ListItemPlaceholder";
 
 interface Props {
   sidebarOpen?: boolean;
+  listItemsCount?: number;
 }
 
-export default function CollectionsList({ sidebarOpen }: Props) {
+export default function CollectionsList({ sidebarOpen, listItemsCount = 7 }: Props) {
   const isValidUser = useAppSelector(isValidUserFn);
   const currentUser = useAppSelector(state => state.user.currentUser);
   const { data: collections } = useGetCollectionTemplatesQuery(currentUser?.favorite_collection_id as number, {
@@ -17,7 +18,7 @@ export default function CollectionsList({ sidebarOpen }: Props) {
   });
 
   return !collections ? (
-    <ListItemPlaceholder />
+    <ListItemPlaceholder count={listItemsCount} />
   ) : (
     collections.prompt_templates.map(item => (
       <CollectionItem

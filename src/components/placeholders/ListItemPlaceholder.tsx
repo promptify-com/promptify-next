@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import Skeleton from "@mui/material/Skeleton";
 
-export default function ListItemPlaceholder({ count = 5 }) {
+export default function ListItemPlaceholder({ count = 7 }) {
   return Array.from({ length: count }).map((_, index) => (
     <Box
       key={index}
