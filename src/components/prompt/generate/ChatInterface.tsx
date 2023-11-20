@@ -46,10 +46,15 @@ export const ChatInterface = ({
     return currentDate.toLocaleDateString("en-US", options);
   }
 
+  const lastFormMessage = messages
+    .slice()
+    .reverse()
+    .find(msg => msg.type === "form");
+
   return (
     <Stack
+      mt={2}
       ref={messagesContainerRef}
-      gap={3}
       position={"relative"}
     >
       <div style={{ marginTop: "auto" }}></div>
@@ -72,7 +77,7 @@ export const ChatInterface = ({
               setIsSimulaitonStreaming={setIsSimulaitonStreaming}
               onScrollToBottom={scrollToBottom}
             />
-            {msg.type === "form" && (
+            {msg.type === "form" && msg.id === lastFormMessage?.id && (
               <Box>
                 <InputsForm
                   abortGenerating={onAbort}
