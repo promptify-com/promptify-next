@@ -212,30 +212,6 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
     }
   }, [answers, templateQuestions]);
 
-  const getNextQuestion = (currentAnswers: IAnswer[]) => {
-    const answeredQuestionNames = currentAnswers.map(input => input.inputName);
-
-    const lastAnsweredQuestionName = answeredQuestionNames[answeredQuestionNames.length - 1];
-    const lastAnsweredQuestionIndex = templateQuestions.findIndex(q => q.name === lastAnsweredQuestionName);
-
-    const questionsAfterLastAnswered = templateQuestions.slice(lastAnsweredQuestionIndex + 1);
-    const questionsBeforeLastAnswered = templateQuestions.slice(0, lastAnsweredQuestionIndex);
-
-    const nextUnansweredAfter = questionsAfterLastAnswered.find(
-      question => !answeredQuestionNames.includes(question.name),
-    );
-
-    if (nextUnansweredAfter) {
-      return nextUnansweredAfter;
-    }
-
-    const remainingQuestion = questionsBeforeLastAnswered.find(
-      question => !answeredQuestionNames.includes(question.name),
-    );
-
-    return remainingQuestion;
-  };
-
   useEffect(() => {
     const [firstAnsweredInput] = currentAnsweredInputs;
 
@@ -317,6 +293,15 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
 
       setAnswers(newAnswers);
       setIsValidatingAnswer(false);
+      const nextBotMessage: IMessage = {
+        id: randomId(),
+        text: "Let's give it another go. ",
+        type: "form",
+        createdAt: createdAt,
+        fromUser: false,
+      };
+
+      setMessages(prevMessages => prevMessages.concat(nextBotMessage));
     }
   };
 
@@ -341,8 +326,12 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
     }
 
     setAnswers(_answers);
+
     dispatchNewExecutionData(_answers, _inputs);
   };
+  useEffect(() => {
+    console.log(messages);
+  }, [messages]);
 
   const validateAndUploadFiles = () =>
     new Promise<boolean>(async resolve => {
