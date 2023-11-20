@@ -1,6 +1,8 @@
 import { ReactNode, useState } from "react";
 import {
+  Badge,
   Box,
+  Chip,
   Drawer,
   Grid,
   Icon,
@@ -13,7 +15,7 @@ import {
 } from "@mui/material";
 import { Api, ChatBubbleOutline, Close, InfoOutlined } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
-import { useAppDispatch } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setOpenBuilderSidebar } from "@/core/store/sidebarSlice";
 import NoteStackIcon from "@/assets/icons/NoteStackIcon";
 import ExtensionSettingsIcon from "@/assets/icons/ExtensionSettingsIcon";
@@ -23,6 +25,9 @@ import { TemplateDetails } from "./TemplateDetails";
 import { ApiAccess } from "./ApiAccess";
 import { Extension } from "./Extension";
 import { Feedback } from "./Feedback";
+import { isValidUserFn } from "@/core/store/userSlice";
+import { skipToken } from "@reduxjs/toolkit/dist/query";
+import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
 
 const drawerWidth = 352;
 
@@ -40,7 +45,12 @@ interface SidebarProps {
 export const Sidebar: React.FC<SidebarProps> = ({ template }) => {
   const [open, setOpen] = useState(false);
   const dispatch = useAppDispatch();
-
+  const isValidUser = useAppSelector(isValidUserFn);
+  const {
+    data: executions,
+    isLoading: isExecutionsLoading,
+    refetch: refetchTemplateExecutions,
+  } = useGetExecutionsByTemplateQuery(isValidUser ? template.id : skipToken);
   const [activeLink, setActiveLink] = useState<Link>();
 
   const theme = useTheme();
@@ -151,7 +161,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ template }) => {
             <Close />
           </IconButton>
         </Stack>
-        {activeLink?.name === "executions" && <Executions template={template} />}
+        {activeLink?.name === "executions" && (
+          <Executions
+            template={template}
+            executions={executions}
+            isExecutionsLoading={isExecutionsLoading}
+            refetchTemplateExecutions={refetchTemplateExecutions}
+          />
+        )}
         {activeLink?.name === "feedback" && <Feedback />}
         {activeLink?.name === "api" && <ApiAccess template={template} />}
         {activeLink?.name === "extension" && <Extension />}
@@ -195,9 +212,23 @@ export const Sidebar: React.FC<SidebarProps> = ({ template }) => {
                       mr: "auto",
                       color: "onSurface",
                       justifyContent: "center",
+                      position: "relative",
                     }}
                   >
-                    <Icon>{link.icon}</Icon>
+                    {link.name === "executions" && executions?.length ? (
+                      <Badge
+                        badgeContent={executions.length}
+                        sx={{
+                          ".MuiBadge-badge.MuiBadge-standard": {
+                            bgcolor: "surface.5",
+                          },
+                        }}
+                      >
+                        <Icon>{link.icon}</Icon>
+                      </Badge>
+                    ) : (
+                      <Icon>{link.icon}</Icon>
+                    )}
                   </ListItemIcon>
                 </Box>
               </ListItemButton>

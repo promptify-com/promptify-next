@@ -39,9 +39,17 @@ const a11yProps = (index: number) => {
 
 interface ExecutionsProps {
   template: Templates;
+  executions: TemplatesExecutions[] | undefined;
+  isExecutionsLoading: boolean;
+  refetchTemplateExecutions: () => void;
 }
 
-export const Executions: React.FC<ExecutionsProps> = ({ template }) => {
+export const Executions: React.FC<ExecutionsProps> = ({
+  template,
+  executions,
+  isExecutionsLoading,
+  refetchTemplateExecutions,
+}) => {
   const dispatch = useDispatch();
   const isValidUser = useAppSelector(isValidUserFn);
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
@@ -52,11 +60,11 @@ export const Executions: React.FC<ExecutionsProps> = ({ template }) => {
     setTabsValue(newValue);
   };
 
-  const {
-    data: executions,
-    isLoading,
-    refetch: refetchTemplateExecutions,
-  } = useGetExecutionsByTemplateQuery(isValidUser ? template.id : skipToken);
+  // const {
+  //   data: executions,
+  //   isLoading,
+  //   refetch: refetchTemplateExecutions,
+  // } = useGetExecutionsByTemplateQuery(isValidUser ? template.id : skipToken);
 
   const handleSelectExecution = ({
     execution,
@@ -105,7 +113,7 @@ export const Executions: React.FC<ExecutionsProps> = ({ template }) => {
 
   return (
     <Stack px={"24px"}>
-      {isLoading ? (
+      {isExecutionsLoading ? (
         Array.from({ length: 2 }, (_, i) => <CardExecutionPlaceholder key={i} />)
       ) : (
         <>
