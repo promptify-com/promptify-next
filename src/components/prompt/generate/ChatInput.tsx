@@ -1,13 +1,14 @@
 import React, { useRef } from "react";
 import { DeleteOutline, PlayCircle } from "@mui/icons-material";
-import { Button, Grid, Stack } from "@mui/material";
+import { Box, Button, Grid, Stack, Typography } from "@mui/material";
 import { useAppSelector } from "@/hooks/useStore";
 import ThreeDotsAnimation from "@/components/design-system/ThreeDotsAnimation";
 import MessageSender from "./MessageSender";
 import { useDispatch } from "react-redux";
 import { setGeneratedExecution } from "@/core/store/executionsSlice";
-import { setChatFullScreenStatus, setGeneratingStatus } from "@/core/store/templatesSlice";
+import { setGeneratingStatus } from "@/core/store/templatesSlice";
 import { GeneratingProgressCard } from "@/components/common/cards/GeneratingProgressCard";
+import { ProgressLogo } from "@/components/common/ProgressLogo";
 
 interface ChatInputProps {
   onSubmit: (value: string) => void;
@@ -41,7 +42,6 @@ export const ChatInput = ({
     abortGenerating();
     dispatch(setGeneratedExecution(null));
     dispatch(setGeneratingStatus(false));
-    dispatch(setChatFullScreenStatus(true));
   };
 
   return (
@@ -56,7 +56,37 @@ export const ChatInput = ({
         direction={"row"}
         gap={2}
       >
-        <ThreeDotsAnimation loading={isValidating} />
+        {isGenerating ? (
+          <Box
+            width={"100%"}
+            maxWidth={"360px"}
+          >
+            <GeneratingProgressCard onCancel={abortConnection} />
+          </Box>
+        ) : isValidating ? (
+          <Stack
+            direction={"row"}
+            gap={2}
+            alignItems={"center"}
+          >
+            <ProgressLogo size="small" />
+            <Stack
+              direction={"row"}
+              gap={1}
+            >
+              <Typography
+                fontSize={15}
+                fontWeight={400}
+                color={"onSurface"}
+                sx={{ opacity: 0.6 }}
+              >
+                Promptify is thinking...
+              </Typography>
+            </Stack>
+          </Stack>
+        ) : null}
+
+        {/* <ThreeDotsAnimation loading={isValidating} /> */}
         {/* {showGenerate && !isGenerating && (
           <>
             <Button

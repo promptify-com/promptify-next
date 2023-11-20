@@ -48,7 +48,8 @@ export const vary = ({
           }
 
           resolve(JSON.parse(_execution.prompt_executions[0].output.replace(/\n(\s+)?/g, "")));
-        } catch (_) {
+        } catch (err) {
+          console.warn("Vary error:", err);
           resolve("Something wrong happened");
         }
       },
