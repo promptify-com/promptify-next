@@ -63,18 +63,25 @@ export const CardExecution: React.FC<CardExecutionProps> = ({ execution, min }) 
           alignItems={"center"}
           gap={1}
         >
-          <Typography
-            fontSize={18}
-            fontWeight={700}
-            color={"primary.contrastText"}
+          <Stack
+            alignItems={"center"}
+            justifyContent={"center"}
             sx={{
+              width: 38,
+              height: 38,
+              p: "8px",
               bgcolor: "primary.main",
-              p: "12px",
               borderRadius: "8px",
             }}
           >
-            {getAbbreviation(execution.title)}
-          </Typography>
+            <Typography
+              fontSize={18}
+              fontWeight={700}
+              color={"primary.contrastText"}
+            >
+              {getAbbreviation(execution.title)}
+            </Typography>
+          </Stack>
           <Typography
             sx={{
               width: "90%",
@@ -143,23 +150,9 @@ export const CardExecution: React.FC<CardExecutionProps> = ({ execution, min }) 
               overflow: "hidden",
             }}
           >
-            <Stack
-              alignItems={"center"}
-              justifyContent={"center"}
-              sx={{
-                width: 38,
-                height: 38,
-                p: "8px",
-              }}
-            >
-              <Typography
-                fontSize={14}
-                fontWeight={500}
-                color={"onSurface"}
-              >
-                {execution.title}
-              </Typography>
-            </Stack>
+            <Typography sx={{ fontSize: 14, fontWeight: 500, color: "onSurface", py: "12px" }}>
+              {execution.title}
+            </Typography>
             <Typography
               sx={{ fontSize: 12, fontWeight: 400, color: "onSurface" }}
               dangerouslySetInnerHTML={{

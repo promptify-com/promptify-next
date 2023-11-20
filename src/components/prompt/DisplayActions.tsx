@@ -7,6 +7,7 @@ import { useExecutionFavoriteMutation } from "@/core/api/executions";
 import useTruncate from "@/hooks/useTruncate";
 import { SparkSaveDeletePopup } from "@/components/dialog/SparkSaveDeletePopup";
 import { ProgressLogo } from "../common/ProgressLogo";
+import { getAbbreviation } from "@/common/helpers";
 
 interface Props {
   selectedExecution: TemplatesExecutions | null;
@@ -73,6 +74,7 @@ export const DisplayActions: React.FC<Props> = ({ selectedExecution, onOpenExpor
                 width={"40%"}
               >
                 <Button
+                  onClick={() => setPopup("update")}
                   endIcon={<Edit />}
                   sx={{
                     width: "100%",
@@ -90,17 +92,42 @@ export const DisplayActions: React.FC<Props> = ({ selectedExecution, onOpenExpor
                       fontSize: "18px !important",
                     },
                   }}
-                  onClick={() => setPopup("update")}
                 >
-                  <Typography
-                    sx={{
-                      whiteSpace: "nowrap",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                    }}
+                  <Stack
+                    direction={"row"}
+                    alignItems={"center"}
+                    justifyContent={"center"}
+                    gap={1}
                   >
-                    {truncate(executionTitle || "", { length: 35 })}
-                  </Typography>
+                    <Stack
+                      alignItems={"center"}
+                      justifyContent={"center"}
+                      sx={{
+                        width: 28,
+                        height: 28,
+                        p: "4px",
+                        bgcolor: "primary.main",
+                        borderRadius: "8px",
+                      }}
+                    >
+                      <Typography
+                        fontSize={16}
+                        fontWeight={700}
+                        color={"primary.contrastText"}
+                      >
+                        {getAbbreviation(executionTitle || "")}
+                      </Typography>
+                    </Stack>
+                    <Typography
+                      sx={{
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      {truncate(executionTitle || "", { length: 35 })}
+                    </Typography>
+                  </Stack>
                 </Button>
               </Stack>
               <Stack
@@ -181,7 +208,7 @@ export const DisplayActions: React.FC<Props> = ({ selectedExecution, onOpenExpor
                 color={"text.secondary"}
                 sx={{ opacity: 0.5 }}
               >
-                Generating in progress...
+                Generation in progress...
               </Typography>
             </Stack>
           )}

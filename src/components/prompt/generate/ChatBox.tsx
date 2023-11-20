@@ -577,7 +577,9 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
             disabled={isValidatingAnswer || disableChatInput}
             onClear={() => setAnswers([])}
             showClear={showClearBtn}
-            showGenerate={showGenerateButton || canShowGenerateButton}
+            showGenerate={
+              (showGenerateButton && messages[messages.length - 1]?.type !== "spark") || canShowGenerateButton
+            }
             onGenerate={generateExecutionHandler}
             isValidating={isValidatingAnswer}
             disabledButton={!disabledButton}

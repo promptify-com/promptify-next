@@ -114,8 +114,10 @@ export const Message = ({ message, setIsSimulationStreaming, onScrollToBottom }:
           alignItems={"start"}
         >
           <Typography
-            fontSize={15}
+            fontSize={14}
+            fontWeight={400}
             letterSpacing={"0.17px"}
+            lineHeight={"160%"}
             color={"onSurface"}
           >
             <StreamContent

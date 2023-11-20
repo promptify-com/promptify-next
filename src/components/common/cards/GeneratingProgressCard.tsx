@@ -29,7 +29,7 @@ export const GeneratingProgressCard: React.FC<CardProps> = ({ onCancel }) => {
             fontWeight={500}
             color={"onSurface"}
           >
-            Generating in progress...
+            Generation in progress...
           </Typography>
           <Typography
             fontSize={10}

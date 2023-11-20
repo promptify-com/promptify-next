@@ -30,7 +30,6 @@ const FeedbackThumbs: React.FC<newFeedBack> = ({ execution }) => {
   const liked = feedback === "LIKED";
   const disliked = feedback === "DISLIKED";
 
-  console.log(execution);
   return (
     <Stack
       direction={"row"}

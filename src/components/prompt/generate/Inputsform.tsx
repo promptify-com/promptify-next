@@ -42,7 +42,6 @@ export const InputsForm = ({ questions, answers, onChange, setIsSimulationStream
           textMeasureElement.innerHTML = value.toString() || (question.required ? "Required" : "Optional");
           document.body.appendChild(textMeasureElement);
           const width = textMeasureElement.offsetWidth;
-          console.log(width);
           document.body.removeChild(textMeasureElement);
           return width;
         };

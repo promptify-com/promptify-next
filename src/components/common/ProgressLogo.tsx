@@ -16,7 +16,7 @@ export const ProgressLogo: React.FC<Props> = ({ size = "small", color }) => {
       sx={{
         position: "relative",
         bgcolor: "surface.1",
-        p: "8px",
+        p: isSmall ? "4px" : "8px",
         borderRadius: "8px",
       }}
     >
