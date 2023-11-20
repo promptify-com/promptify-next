@@ -27,6 +27,7 @@ import { uploadFileHelper } from "@/common/helpers/uploadFileHelper";
 import { setGeneratedExecution, setSelectedExecution } from "@/core/store/executionsSlice";
 import { getExecutionById } from "@/hooks/api/executions";
 import { randomId } from "@/common/helpers";
+import useChatBox from "@/hooks/useChatBox";
 
 interface Props {
   onError: (errMsg: string) => void;
@@ -56,6 +57,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
   const [queuedMessages, setQueuedMessages] = useState<IMessage[]>([]);
   const [isSimulationStreaming, setIsSimulationStreaming] = useState(false);
   const [disableChatInput, setDisableChatInput] = useState(false);
+  const { prepareAndRemoveDuplicateInputs, preparePromptsData } = useChatBox();
 
   const abortController = useRef(new AbortController());
   const uploadedFiles = useRef(new Map<string, string>());
@@ -136,16 +138,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
       }
 
       const questions: TemplateQuestions[] = template?.questions ?? [];
-      const inputs: IPromptInput[] = [];
-      let promptHasContent = false;
-
-      template.prompts.forEach(prompt => {
-        if (prompt.content) {
-          promptHasContent = true;
-        }
-        inputs.push(...getInputsFromString(prompt.content).map(obj => ({ ...obj, prompt: prompt.id })));
-      });
-
+      const { inputs, promptHasContent } = prepareAndRemoveDuplicateInputs(template.prompts);
       const updatedQuestions: UpdatedQuestionTemplate[] = [];
 
       for (let index = 0; index < questions.length; index++) {
@@ -405,25 +398,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
 
     dispatch(setGeneratingStatus(true));
 
-    const promptsData: ResPrompt[] = [];
-
-    answers.forEach(_answer => {
-      const _prompt = promptsData.find(_data => _data.prompt === _answer.prompt);
-      const isFile = _answer.answer instanceof File;
-      const value = isFile ? uploadedFiles.current.get(_answer.inputName) : _answer.answer;
-
-      if (!value) return;
-
-      if (!_prompt) {
-        promptsData.push({
-          contextual_overrides: [],
-          prompt: _answer.prompt!,
-          prompt_params: { [_answer.inputName]: value },
-        });
-      } else {
-        _prompt.prompt_params[_answer.inputName] = value;
-      }
-    });
+    const promptsData = preparePromptsData(uploadedFiles.current, answers, template.prompts);
 
     uploadedFiles.current.clear();
 
