@@ -37,8 +37,14 @@ function SidebarItem({ navItem, isPromptsPage, showFilters, onClick, engines, ta
         disablePadding
         sx={{
           ...(navItem.active && {
-            ".MuiSvgIcon-root": {
-              fill: theme.palette.primary.main,
+            ".MuiListItemIcon-root span.MuiIcon-root.material-icons": {
+              ...(!isPromptsPage && {
+                bgcolor: "surface.1",
+                display: "block",
+                padding: "8px",
+                borderRadius: "8px",
+                color: "#375CA9",
+              }),
             },
             ".MuiTypography-root": {
               color: "#375CA9",
@@ -47,13 +53,6 @@ function SidebarItem({ navItem, isPromptsPage, showFilters, onClick, engines, ta
           }),
           padding: "8px",
           height: isPromptsPage ? "56px" : "auto",
-          "&:hover": {
-            backgroundColor: "surface.1",
-            borderRadius: "8px",
-            ".MuiSvgIcon-root": {
-              transform: "scale(1.1)",
-            },
-          },
         }}
         onClick={e => {
           onClick?.();
@@ -80,9 +79,20 @@ function SidebarItem({ navItem, isPromptsPage, showFilters, onClick, engines, ta
             width: isPromptsPage ? "100%" : "auto",
             textAlign: "center",
             "&:hover": {
-              backgroundColor: "surface.1",
-              borderRadius: "8px",
-              color: "onSurface",
+              bgcolor: "transparent",
+              ".MuiListItemIcon-root span.MuiIcon-root.material-icons": {
+                borderRadius: "8px",
+                color: "#375CA9",
+                ...(!isPromptsPage && {
+                  bgcolor: "surface.1",
+                  display: "block",
+                  padding: "8px",
+                }),
+              },
+              ".MuiTypography-root": {
+                color: "#375CA9",
+              },
+              ...(isPromptsPage && { bgcolor: "surface.1", borderRadius: "8px", color: "onSurface" }),
             },
           }}
         >
