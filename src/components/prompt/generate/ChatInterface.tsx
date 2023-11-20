@@ -98,6 +98,8 @@ export const ChatInterface = ({
                   questions={questions}
                   answers={answers}
                   onChange={onChange}
+                  setIsSimulationStreaming={setIsSimulationStreaming}
+                  onScrollToBottom={scrollToBottom}
                 />
               </Box>
             )}

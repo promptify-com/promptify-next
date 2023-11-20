@@ -48,9 +48,6 @@ export const templatesSlice = createSlice({
     setChatFullScreenStatus: (state, action: PayloadAction<boolean>) => {
       state.isChatFullScreen = action.payload;
     },
-    updateAnsweredInput: (state, action: PayloadAction<AnsweredInputType[]>) => {
-      state.answeredInputs = action.payload;
-    },
   },
 });
 
@@ -60,7 +57,6 @@ export const {
   updateExecutionData,
   setGeneratingStatus,
   setChatFullScreenStatus,
-  updateAnsweredInput,
 } = templatesSlice.actions;
 
 export default templatesSlice.reducer;

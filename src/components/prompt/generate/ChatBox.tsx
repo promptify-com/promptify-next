@@ -10,14 +10,8 @@ import useTimestampConverter from "@/hooks/useTimestampConverter";
 import { ChatInterface } from "./ChatInterface";
 import { ChatInput } from "./ChatInput";
 import { TemplateQuestions, Templates, TemplatesExecutions, UpdatedQuestionTemplate } from "@/core/api/dto/templates";
-import { getInputsFromString } from "@/common/helpers/getInputsFromString";
 import { IPromptInput, PromptLiveResponse, AnsweredInputType } from "@/common/types/prompt";
-import {
-  setChatFullScreenStatus,
-  setGeneratingStatus,
-  updateAnsweredInput,
-  updateExecutionData,
-} from "@/core/store/templatesSlice";
+import { setChatFullScreenStatus, setGeneratingStatus, updateExecutionData } from "@/core/store/templatesSlice";
 import { IAnswer, IMessage } from "@/common/types/chat";
 import { useStopExecutionMutation } from "@/core/api/executions";
 import { vary } from "@/common/helpers/varyValidator";
@@ -67,41 +61,38 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
     setIsSimulationStreaming(true);
   };
   const initialMessages = (questions: UpdatedQuestionTemplate[]) => {
-    const welcomeMessages: IMessage[] = [
-      {
-        id: randomId(),
-        text: `Hi, ${
-          currentUser?.first_name ?? currentUser?.username ?? "There"
-        }! Ready to work on ${template?.title} ?`,
-        type: "text",
-        createdAt: createdAt,
-        fromUser: false,
-      },
-      {
-        id: randomId(),
-        text: "This is a list of information we need to execute this template:",
-        type: "form",
-        createdAt: createdAt,
-        fromUser: false,
-        noHeader: true,
-      },
-    ];
+    const welcomeMessage: IMessage = {
+      id: randomId(),
+      text: `Hi, ${currentUser?.first_name ?? currentUser?.username ?? "There"}! Ready to work on ${template?.title} ?`,
+      type: "text",
+      createdAt: createdAt,
+      fromUser: false,
+    };
 
     if (questions.length > 0) {
       let allQuestions = questions.map(_q => _q.question);
-      const allQuestionsMessage: IMessage = {
-        id: randomId(),
-        text: allQuestions.join(" "),
-        type: "text",
-        createdAt: createdAt,
-        fromUser: false,
-        noHeader: true,
-      };
 
-      addToQueuedMessages([allQuestionsMessage]);
+      addToQueuedMessages([
+        {
+          id: randomId(),
+          text: allQuestions.join(" "),
+          type: "text",
+          createdAt: createdAt,
+          fromUser: false,
+          noHeader: true,
+        },
+        {
+          id: randomId(),
+          text: "This is a list of information we need to execute this template:",
+          type: "form",
+          createdAt: createdAt,
+          fromUser: false,
+          noHeader: true,
+        },
+      ]);
     }
 
-    setMessages(welcomeMessages);
+    setMessages([welcomeMessage]);
     setAnswers([]);
     setShowGenerateButton(false);
   };
@@ -292,7 +283,6 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
         })
         .filter(answer => answer.answer !== "");
 
-      dispatch(updateAnsweredInput(answeredInputs));
       setAnswers(newAnswers);
       setIsValidatingAnswer(false);
 
@@ -309,19 +299,6 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
 
       setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat(botMessage));
     }
-  };
-
-  const modifyStoredInputValue = (answer: IAnswer) => {
-    const { inputName, prompt: promptId, answer: value } = answer;
-
-    const newValue: AnsweredInputType = {
-      promptId,
-      value,
-      inputName,
-      modifiedFrom: "chat",
-    };
-
-    dispatch(updateAnsweredInput([newValue]));
   };
 
   const handleUserInput = async (value: string | File, currentQuestion: UpdatedQuestionTemplate) => {
