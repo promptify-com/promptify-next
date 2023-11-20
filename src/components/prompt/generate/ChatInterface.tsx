@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, Dispatch, SetStateAction } from "react";
-import { Box, Button, Divider, Stack } from "@mui/material";
+import { Box, Button, Divider, Stack, Typography } from "@mui/material";
 import { Message } from "./Message";
 import { IAnswer, IMessage } from "@/common/types/chat";
 import { TemplateDetailsCard } from "./TemplateDetailsCard";
@@ -30,7 +30,7 @@ export const ChatInterface = ({
   regenerate,
 }: Props) => {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
-  const isFullScreen = useAppSelector(state => state.template.isChatFullScreen);
+  const isChatFullScreen = useAppSelector(state => state.template.isChatFullScreen);
 
   const scrollToBottom = () => {
     if (messagesContainerRef.current) {
@@ -40,7 +40,7 @@ export const ChatInterface = ({
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, isFullScreen]);
+  }, [messages, isChatFullScreen]);
 
   return (
     <Stack
@@ -66,11 +66,11 @@ export const ChatInterface = ({
     >
       <div style={{ marginTop: "auto" }}></div>
 
-      {isFullScreen && <TemplateDetailsCard template={template} />}
+      {isChatFullScreen && <TemplateDetailsCard template={template} />}
 
       <Stack
         pb={"8px"}
-        mx={"40px"}
+        mx={isChatFullScreen ? "40px" : "32px"}
       >
         <Divider
           sx={{
@@ -91,7 +91,7 @@ export const ChatInterface = ({
             />
             {msg.type === "form" && (
               <Box
-                ml={{ xs: 6.5, md: 6 }}
+                ml={isChatFullScreen ? "48px" : 0}
                 mb={2}
               >
                 <InputsForm
@@ -105,7 +105,7 @@ export const ChatInterface = ({
             )}
             {msg.type === "spark" && msg.spark && (
               <Stack
-                ml={{ xs: 6.5, md: 7 }}
+                mx={isChatFullScreen ? "48px" : "0"}
                 mb={2}
                 gap={2}
               >
@@ -116,35 +116,45 @@ export const ChatInterface = ({
                   />
                 </Box>
 
-                <Stack
-                  direction={"row"}
-                  alignItems={"center"}
-                  flexWrap={"wrap"}
-                  gap={1}
-                >
-                  <FeedbackThumbs execution={msg.spark} />
-                  <Button
-                    onClick={() => {
-                      if (msg.spark) regenerate(msg.spark);
-                    }}
-                    variant="text"
-                    startIcon={<Replay />}
-                    sx={{
-                      height: "22px",
-                      p: "15px",
-                      fontSize: 13,
-                      fontWeight: 500,
-                      border: "1px solid",
-                      borderColor: "divider",
-                      color: "secondary.main",
-                      ":hover": {
-                        bgcolor: "action.hover",
-                      },
-                    }}
+                <Box>
+                  <Typography
+                    fontSize={12}
+                    fontWeight={500}
+                    color={"onSurface"}
+                    mb={"10px"}
                   >
-                    Try again
-                  </Button>
-                </Stack>
+                    Quick Feedback
+                  </Typography>
+                  <Stack
+                    direction={"row"}
+                    alignItems={"center"}
+                    flexWrap={"wrap"}
+                    gap={1}
+                  >
+                    <FeedbackThumbs execution={msg.spark} />
+                    <Button
+                      onClick={() => {
+                        if (msg.spark) regenerate(msg.spark);
+                      }}
+                      variant="text"
+                      startIcon={<Replay />}
+                      sx={{
+                        height: "22px",
+                        p: "15px",
+                        fontSize: 13,
+                        fontWeight: 500,
+                        border: "1px solid",
+                        borderColor: "divider",
+                        color: "secondary.main",
+                        ":hover": {
+                          bgcolor: "action.hover",
+                        },
+                      }}
+                    >
+                      Try again
+                    </Button>
+                  </Stack>
+                </Box>
               </Stack>
             )}
           </React.Fragment>

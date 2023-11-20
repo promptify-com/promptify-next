@@ -16,6 +16,7 @@ interface MessageBlockProps {
 export const Message = ({ message, setIsSimulationStreaming, onScrollToBottom }: MessageBlockProps) => {
   const { fromUser, text, createdAt } = message;
   const currentUser = useAppSelector(state => state.user.currentUser);
+  const isChatFullScreen = useAppSelector(state => state.template.isChatFullScreen);
 
   const name = fromUser ? currentUser?.first_name ?? currentUser?.username : "Promptify";
 
@@ -25,7 +26,7 @@ export const Message = ({ message, setIsSimulationStreaming, onScrollToBottom }:
       display={"flex"}
       gap={"16px"}
     >
-      {!message.noHeader && (
+      {isChatFullScreen && !message.noHeader && (
         <>
           {message.type === "spark" ? (
             <Stack
@@ -62,8 +63,8 @@ export const Message = ({ message, setIsSimulationStreaming, onScrollToBottom }:
 
       <Grid
         flex={1}
-        ml={{ xs: message.noHeader ? 6.5 : 0, md: message.noHeader ? 6 : 0 }}
-        mt={{ xs: message.noHeader ? -1.5 : 0, md: message.noHeader ? -1.5 : 0 }}
+        ml={isChatFullScreen && message.noHeader ? "48px" : 0}
+        mt={message.noHeader ? -1.5 : 0}
         display={"flex"}
         flexDirection={"column"}
         gap={"8px"}

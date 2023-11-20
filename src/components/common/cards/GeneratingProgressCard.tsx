@@ -14,7 +14,7 @@ export const GeneratingProgressCard: React.FC<CardProps> = ({ onCancel }) => {
         p: "8px",
         borderRadius: "16px",
         bgcolor: "surface.3",
-        width: "100%",
+        width: "calc(100% - 16px)",
       }}
     >
       <Stack

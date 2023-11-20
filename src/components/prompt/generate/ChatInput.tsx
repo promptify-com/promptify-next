@@ -34,6 +34,7 @@ export const ChatInput = ({
 }: ChatInputProps) => {
   const dispatch = useDispatch();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
+  const isChatFullScreen = useAppSelector(state => state.template.isChatFullScreen);
 
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -47,7 +48,6 @@ export const ChatInput = ({
   return (
     <Grid
       ref={containerRef}
-      mx={"40px"}
       mb={"16px"}
       position={"relative"}
       display={"flex"}
@@ -61,17 +61,19 @@ export const ChatInput = ({
         {isGenerating ? (
           <Box
             width={"100%"}
-            maxWidth={"360px"}
+            maxWidth={isChatFullScreen ? "360px" : "100%"}
+            mx={isChatFullScreen ? "88px" : "32px"}
           >
             <GeneratingProgressCard onCancel={abortConnection} />
           </Box>
         ) : isValidating ? (
           <Stack
             direction={"row"}
-            gap={2}
+            gap={1}
             alignItems={"center"}
+            ml={"32px"}
           >
-            <ProgressLogo size="small" />
+            {isChatFullScreen && <ProgressLogo size="small" />}
             <Stack
               direction={"row"}
               gap={1}
@@ -94,7 +96,13 @@ export const ChatInput = ({
             </Stack>
           </Stack>
         ) : (
-          <>
+          <Stack
+            direction={"row"}
+            alignItems={"center"}
+            gap={2}
+            flexWrap={"wrap"}
+            mx={isChatFullScreen ? "88px" : "32px"}
+          >
             {showGenerate && (
               <Button
                 onClick={onGenerate}
@@ -135,7 +143,7 @@ export const ChatInput = ({
                 Clear
               </Button>
             )}
-          </>
+          </Stack>
         )}
       </Stack>
 

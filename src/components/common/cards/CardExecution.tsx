@@ -143,9 +143,23 @@ export const CardExecution: React.FC<CardExecutionProps> = ({ execution, min }) 
               overflow: "hidden",
             }}
           >
-            <Typography sx={{ fontSize: 14, fontWeight: 500, color: "onSurface", py: "12px" }}>
-              {execution.title}
-            </Typography>
+            <Stack
+              alignItems={"center"}
+              justifyContent={"center"}
+              sx={{
+                width: 38,
+                height: 38,
+                p: "8px",
+              }}
+            >
+              <Typography
+                fontSize={14}
+                fontWeight={500}
+                color={"onSurface"}
+              >
+                {execution.title}
+              </Typography>
+            </Stack>
             <Typography
               sx={{ fontSize: 12, fontWeight: 400, color: "onSurface" }}
               dangerouslySetInnerHTML={{
