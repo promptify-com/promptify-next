@@ -3,7 +3,6 @@ import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
-import { useAppDispatch } from "@/hooks/useStore";
 import MessageSender from "./MessageSender";
 import { ProgressLogo } from "@/components/common/ProgressLogo";
 
@@ -16,8 +15,6 @@ interface ChatInputProps {
 
 export const ChatInput = ({ onSubmit, disabled, isValidating, disabledButton }: ChatInputProps) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
-
-  const dispatch = useAppDispatch();
 
   return (
     <Grid

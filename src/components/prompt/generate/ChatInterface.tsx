@@ -54,7 +54,11 @@ export const ChatInterface = ({
     >
       <div style={{ marginTop: "auto" }}></div>
 
-      <Stack pb={"38px"}>
+      <Stack
+        pb={"38px"}
+        gap={1}
+        direction={"column"}
+      >
         <Divider
           sx={{
             fontSize: 12,
