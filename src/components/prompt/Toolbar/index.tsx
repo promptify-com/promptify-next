@@ -10,6 +10,10 @@ import ListItem from "@mui/material/ListItem";
 import type { Link } from "@/common/types/TemplateToolbar";
 import { ToolbarItems } from "@/common/constants";
 import { Templates } from "@/core/api/dto/templates";
+import { useAppSelector } from "@/hooks/useStore";
+import { isValidUserFn } from "@/core/store/userSlice";
+import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
+import { skipToken } from "@reduxjs/toolkit/dist/query";
 
 interface Props {
   template: Templates;
@@ -22,6 +26,8 @@ function TemplateToolbar({ template }: Props) {
       window.open(url, "_blank");
     }
   };
+  const isValidUser = useAppSelector(isValidUserFn);
+  const { data: executions } = useGetExecutionsByTemplateQuery(isValidUser ? template.id : skipToken);
 
   return (
     <Box height={"100%"}>
@@ -98,6 +104,7 @@ function TemplateToolbar({ template }: Props) {
               key={link.title}
               item={link}
               onClick={handleItemClick}
+              executionsLength={executions?.length ?? 0}
             />
           ))}
         </Box>

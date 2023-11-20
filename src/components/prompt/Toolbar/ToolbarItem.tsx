@@ -3,6 +3,7 @@ import NoteStackIcon from "@/assets/icons/NoteStackIcon";
 import type { Link, LinkName } from "@/common/types/TemplateToolbar";
 import { openToolbarDrawer, setActiveToolbarLink } from "@/core/store/templatesSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { Badge } from "@mui/material";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Icon from "@mui/material/Icon";
@@ -14,9 +15,10 @@ import React from "react";
 interface Props {
   item: Link;
   onClick: (item: Link) => void;
+  executionsLength: number;
 }
 
-function ToolbarItem({ item, onClick }: Props) {
+function ToolbarItem({ item, onClick, executionsLength }: Props) {
   const dispatch = useAppDispatch();
 
   const activeLink = useAppSelector(state => state.template.activeSideBarLink);
@@ -73,7 +75,20 @@ function ToolbarItem({ item, onClick }: Props) {
                 justifyContent: "center",
               }}
             >
-              <Icon>{renderIcon()}</Icon>
+              {executionsLength && item.name === "executions" ? (
+                <Badge
+                  badgeContent={executionsLength}
+                  sx={{
+                    ".MuiBadge-badge.MuiBadge-standard": {
+                      bgcolor: "surface.5",
+                    },
+                  }}
+                >
+                  <Icon>{renderIcon()}</Icon>
+                </Badge>
+              ) : (
+                <Icon>{renderIcon()}</Icon>
+              )}
             </ListItemIcon>
           </Box>
         </ListItemButton>
