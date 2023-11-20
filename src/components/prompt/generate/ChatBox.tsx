@@ -267,12 +267,19 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
     });
   }, [currentAnsweredInputs, templateQuestions]);
 
-  const canShowGenerateButton = Boolean(templateQuestions.length && !templateQuestions[0].required);
-
   const disabledButton = _inputs.length !== 0 || promptHasContent;
 
   const validateVary = async (variation: string) => {
     if (variation) {
+      const userMessage: IMessage = {
+        id: randomId(),
+        text: variation,
+        type: "text",
+        createdAt: createdAt,
+        fromUser: true,
+      };
+      setMessages(prevMessages => prevMessages.concat(userMessage));
+
       setIsValidatingAnswer(true);
 
       const questionAnswerMap: Record<string, string | number | File> = {};
@@ -294,19 +301,10 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
         return;
       }
 
-      const answeredInputs: AnsweredInputType[] = [];
       const newAnswers = templateQuestions
         .map(question => {
           const answer = varyResponse[question.name];
 
-          if (answer) {
-            answeredInputs.push({
-              promptId: question.prompt,
-              inputName: question.name,
-              value: answer,
-              modifiedFrom: "chat",
-            });
-          }
           return {
             inputName: question.name,
             required: question.required,

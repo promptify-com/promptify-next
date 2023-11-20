@@ -1,9 +1,11 @@
 import { useRef } from "react";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 
-import ThreeDotsAnimation from "@/components/design-system/ThreeDotsAnimation";
+import { useAppDispatch } from "@/hooks/useStore";
 import MessageSender from "./MessageSender";
+import { ProgressLogo } from "@/components/common/ProgressLogo";
 
 interface ChatInputProps {
   onSubmit: (value: string) => void;
@@ -14,6 +16,8 @@ interface ChatInputProps {
 
 export const ChatInput = ({ onSubmit, disabled, isValidating, disabledButton }: ChatInputProps) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
+
+  const dispatch = useAppDispatch();
 
   return (
     <Grid
@@ -27,7 +31,28 @@ export const ChatInput = ({ onSubmit, disabled, isValidating, disabledButton }: 
         direction={"row"}
         gap={2}
       >
-        <ThreeDotsAnimation loading={isValidating} />
+        {isValidating && (
+          <Stack
+            direction={"row"}
+            gap={2}
+            alignItems={"center"}
+          >
+            <ProgressLogo size="small" />
+            <Stack
+              direction={"row"}
+              gap={1}
+            >
+              <Typography
+                fontSize={15}
+                fontWeight={400}
+                color={"onSurface"}
+                sx={{ opacity: 0.6 }}
+              >
+                Promptify is thinking...
+              </Typography>
+            </Stack>
+          </Stack>
+        )}
       </Stack>
 
       <MessageSender

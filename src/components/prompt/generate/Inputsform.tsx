@@ -123,7 +123,7 @@ export const InputsForm = ({ questions, answers, onChange, onGenerate, abortGene
             </Typography>
           </Stack>
 
-          {true ? (
+          {isGenerating ? (
             <Button
               onClick={abortGenerating}
               endIcon={<HighlightOff />}
@@ -167,7 +167,7 @@ export const InputsForm = ({ questions, answers, onChange, onGenerate, abortGene
             </Stack>
           )}
 
-          <Stack>
+          <Stack mt={0.5}>
             {expanded ? (
               <Box sx={{ p: 1 }}>
                 <UnfoldLess
