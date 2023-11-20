@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction, useRef, useState } from "react";
-import { Button, InputLabel, MenuItem, OutlinedInput, Select, Stack, Tooltip } from "@mui/material";
+import { Button, InputLabel, MenuItem, OutlinedInput, Select, Stack, TextField, Tooltip } from "@mui/material";
 import { IAnswer } from "@/common/types/chat";
 import { UpdatedQuestionTemplate } from "@/core/api/dto/templates";
 import BaseButton from "@/components/base/BaseButton";
@@ -33,12 +33,25 @@ export const InputsForm = ({ questions, answers, onChange, setIsSimulationStream
         const answer = answers.find(answer => answer.inputName === question.name);
         const value = answer?.answer || "";
         const isFile = value instanceof File;
+        const dynamicWidth = () => {
+          const textMeasureElement = document.createElement("span");
+          textMeasureElement.style.fontSize = "14px";
+          textMeasureElement.style.fontWeight = "400";
+          textMeasureElement.style.position = "absolute";
+          textMeasureElement.style.visibility = "hidden";
+          textMeasureElement.innerHTML = value.toString() || (question.required ? "Required" : "Optional");
+          document.body.appendChild(textMeasureElement);
+          const width = textMeasureElement.offsetWidth;
+          console.log(width);
+          document.body.removeChild(textMeasureElement);
+          return width;
+        };
+
         return (
           <Stack
             key={idx}
             direction={"row"}
             alignItems={"center"}
-            flexWrap={"wrap"}
             gap={1}
           >
             <InputLabel
@@ -194,56 +207,56 @@ export const InputsForm = ({ questions, answers, onChange, setIsSimulationStream
                     )}
                   </Stack>
                 ) : (
-                  <OutlinedInput
-                    inputRef={ref => (fieldRefs.current[idx] = ref)}
-                    disabled={isGenerating}
-                    placeholder={question.required ? "Required" : "Optional"}
-                    type={question.type}
-                    value={value}
-                    onChange={e => onChange(e.target.value, question)}
-                    sx={{
-                      minWidth: 260,
-                      flex: value ? 1 : 0,
-                      ".MuiInputBase-input": {
+                  <>
+                    <TextField
+                      inputRef={ref => (fieldRefs.current[idx] = ref)}
+                      disabled={isGenerating}
+                      placeholder={question.required ? "Required" : "Optional"}
+                      type={question.type}
+                      value={value}
+                      onChange={e => onChange(e.target.value, question)}
+                      sx={{
+                        width: dynamicWidth(),
                         p: 0,
-                        color: "onSurface",
-                        fontSize: 14,
-                        fontWeight: 400,
-                        "&::placeholder": {
-                          color: "text.secondary",
-                          opacity: 0.65,
-                        },
-                        "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
-                          WebkitAppearance: "none",
-                          margin: 0,
-                        },
-                        "&[type=number]": {
-                          MozAppearance: "textfield",
-                        },
-                      },
-                      ".MuiOutlinedInput-notchedOutline": {
-                        border: 0,
-                      },
-                      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                        border: 0,
-                      },
-                    }}
-                    endAdornment={
-                      <Edit
-                        onClick={() => fieldRefs.current[idx]?.focus()}
-                        sx={{
-                          fontSize: 16,
-                          color: "primary.main",
-                          p: "4px",
-                          cursor: "pointer",
-                          opacity: value ? 0.7 : 0.5,
-                          ":hover": {
-                            opacity: 1,
+                        ".MuiInputBase-input": {
+                          p: 0,
+                          color: "onSurface",
+                          fontSize: 14,
+                          fontWeight: 400,
+                          "&::placeholder": {
+                            color: "text.secondary",
+                            opacity: 0.65,
                           },
-                        }}
-                      />
-                    }
-                  />
+                          "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
+                            WebkitAppearance: "none",
+                            margin: 0,
+                          },
+                          "&[type=number]": {
+                            MozAppearance: "textfield",
+                          },
+                        },
+                        ".MuiOutlinedInput-notchedOutline": {
+                          border: 0,
+                        },
+                        ".MuiInputBase-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                          border: 0,
+                        },
+                      }}
+                    />
+                    <Edit
+                      onClick={() => fieldRefs.current[idx]?.focus()}
+                      sx={{
+                        fontSize: 16,
+                        color: "primary.main",
+                        p: "4px",
+                        cursor: "pointer",
+                        opacity: value ? 0.7 : 0.5,
+                        ":hover": {
+                          opacity: 1,
+                        },
+                      }}
+                    />
+                  </>
                 )}
               </>
             )}
