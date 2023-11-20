@@ -5,6 +5,7 @@ export interface AnswerValidatorResponse {
 }
 
 export interface IMessage {
+  id: number;
   text: string;
   createdAt: string;
   fromUser: boolean;

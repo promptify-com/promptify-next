@@ -1,13 +1,11 @@
-import React, { memo, useEffect, Dispatch, SetStateAction } from "react";
-import Avatar from "@mui/material/Avatar";
+import { memo, useEffect, Dispatch, SetStateAction, useState } from "react";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
+import Stack from "@mui/material/Stack";
 
-import LogoAsAvatar from "@/assets/icons/LogoAvatar";
 import { useAppSelector } from "@/hooks/useStore";
 import { IMessage } from "@/common/types/chat";
 import useTextSimulationStreaming from "@/hooks/useTextSimulationStreaming";
-import { timeAgo } from "@/common/helpers/timeManipulation";
 
 interface MessageBlockProps {
   message: IMessage;
@@ -41,17 +39,35 @@ const MessageContent = memo(
 );
 
 export const Message = ({ message, setIsSimulaitonStreaming, onScrollToBottom }: MessageBlockProps) => {
-  const { fromUser, text, createdAt } = message;
+  const [isHovered, setIsHovered] = useState(false);
+
+  const { fromUser, text, createdAt, type } = message;
   const currentUser = useAppSelector(state => state.user.currentUser);
 
   const name = fromUser ? currentUser?.first_name ?? currentUser?.username : "Promptify";
+
+  if (type === "form") return;
 
   return (
     <Grid
       py={"16px"}
       display={"flex"}
+      flexDirection={"column"}
       gap={"16px"}
+      position={"relative"}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
+      {isHovered && (
+        <Typography
+          sx={{ position: "absolute", top: -5, left: 2, opacity: 0.5 }}
+          fontSize={12}
+          variant="caption"
+        >
+          {name} - {createdAt}
+        </Typography>
+      )}
+
       <Grid
         flex={1}
         display={"flex"}

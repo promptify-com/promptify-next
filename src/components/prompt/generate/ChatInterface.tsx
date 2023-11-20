@@ -1,4 +1,4 @@
-import { useEffect, useRef, Dispatch, SetStateAction } from "react";
+import { useEffect, useRef, Dispatch, SetStateAction, Fragment } from "react";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
@@ -15,6 +15,7 @@ interface Props {
   questions: UpdatedQuestionTemplate[];
   answers: IAnswer[];
   onGenerate: () => void;
+  onAbort: () => void;
 }
 
 export const ChatInterface = ({
@@ -24,6 +25,7 @@ export const ChatInterface = ({
   questions,
   answers,
   onGenerate,
+  onAbort,
 }: Props) => {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
@@ -63,23 +65,26 @@ export const ChatInterface = ({
         >
           {getCurrentDateFormatted()}
         </Divider>
-        {messages.map((msg, index) => (
-          <Message
-            key={index}
-            message={msg}
-            setIsSimulaitonStreaming={setIsSimulaitonStreaming}
-            onScrollToBottom={scrollToBottom}
-          />
+        {messages.map(msg => (
+          <Fragment key={msg.id}>
+            <Message
+              message={msg}
+              setIsSimulaitonStreaming={setIsSimulaitonStreaming}
+              onScrollToBottom={scrollToBottom}
+            />
+            {msg.type === "form" && (
+              <Box>
+                <InputsForm
+                  abortGenerating={onAbort}
+                  questions={questions}
+                  answers={answers}
+                  onChange={onChange}
+                  onGenerate={onGenerate}
+                />
+              </Box>
+            )}
+          </Fragment>
         ))}
-
-        <Box>
-          <InputsForm
-            questions={questions}
-            answers={answers}
-            onChange={onChange}
-            onGenerate={onGenerate}
-          />
-        </Box>
       </Stack>
     </Stack>
   );

@@ -11,6 +11,7 @@ import {
   Edit,
   ExpandMore,
   HelpOutline,
+  HighlightOff,
   InfoOutlined,
   PlayCircle,
   UnfoldLess,
@@ -34,9 +35,10 @@ interface Props {
   answers: IAnswer[];
   onChange: (value: string | File, question: UpdatedQuestionTemplate) => void;
   onGenerate: () => void;
+  abortGenerating: () => void;
 }
 
-export const InputsForm = ({ questions, answers, onChange, onGenerate }: Props) => {
+export const InputsForm = ({ questions, answers, onChange, onGenerate, abortGenerating }: Props) => {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const [codeFieldOpen, setCodeFieldOpen] = useState(false);
 
@@ -106,7 +108,7 @@ export const InputsForm = ({ questions, answers, onChange, onGenerate }: Props) 
               lineHeight={"120%"}
               letterSpacing={"0.2px"}
             >
-              New prompt
+              {isGenerating ? "Generation in progress..." : "New Prompt"}
             </Typography>
             <Typography
               sx={{
@@ -117,33 +119,54 @@ export const InputsForm = ({ questions, answers, onChange, onGenerate }: Props) 
                 opacity: 0.7,
               }}
             >
-              About 360s generation time
+              {isGenerating ? "About 360s Left" : "About 360s generation time"}
             </Typography>
           </Stack>
 
-          <Stack
-            direction={"row"}
-            alignItems={"center"}
-          >
-            {expanded && (
-              <Button
-                onClick={onGenerate}
-                endIcon={<PlayCircle />}
-                sx={{
-                  height: "22px",
-                  p: "15px",
-                  fontSize: 13,
-                  fontWeight: 500,
-                  ":hover": {
-                    bgcolor: "action.hover",
-                  },
-                }}
-                variant="contained"
-              >
-                Run prompt
-              </Button>
-            )}
-          </Stack>
+          {true ? (
+            <Button
+              onClick={abortGenerating}
+              endIcon={<HighlightOff />}
+              sx={{
+                height: "22px",
+                p: "15px",
+                color: "onSurface",
+                fontSize: 13,
+                fontWeight: 500,
+                ":hover": {
+                  bgcolor: "action.hover",
+                },
+              }}
+              variant="text"
+            >
+              Cancel
+            </Button>
+          ) : (
+            <Stack
+              direction={"row"}
+              alignItems={"center"}
+            >
+              {expanded && (
+                <Button
+                  onClick={onGenerate}
+                  endIcon={<PlayCircle />}
+                  sx={{
+                    height: "22px",
+                    p: "15px",
+                    fontSize: 13,
+                    fontWeight: 500,
+                    ":hover": {
+                      bgcolor: "action.hover",
+                    },
+                  }}
+                  variant="contained"
+                >
+                  Run prompt
+                </Button>
+              )}
+            </Stack>
+          )}
+
           <Stack>
             {expanded ? (
               <Box sx={{ p: 1 }}>

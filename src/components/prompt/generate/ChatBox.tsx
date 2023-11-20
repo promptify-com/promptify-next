@@ -28,7 +28,7 @@ import { uploadFileHelper } from "@/common/helpers/uploadFileHelper";
 import { setGeneratedExecution } from "@/core/store/executionsSlice";
 import { TemplateDetailsCard } from "./TemplateDetailsCard";
 import useChatBox from "@/hooks/useChatBox";
-import { InputsForm } from "./Inputsform";
+import { randomId } from "@/common/helpers";
 
 interface Props {
   onError: (errMsg: string) => void;
@@ -82,14 +82,25 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
     if (!startOver) {
       let allQuestions = questions.map(_q => _q.question);
 
-      welcomeMessage.push({
-        text: `Hi, ${
-          currentUser?.first_name ?? currentUser?.username ?? "There"
-        }! Ready to work on ${template?.title} ? ${allQuestions.join(" ")}`,
-        type: "text",
-        createdAt: createdAt,
-        fromUser: false,
-      });
+      welcomeMessage.push(
+        {
+          id: randomId(),
+          text: `Hi, ${
+            currentUser?.first_name ?? currentUser?.username ?? "There"
+          }! Ready to work on ${template?.title} ? ${allQuestions.join(" ")}`,
+          type: "text",
+          createdAt: createdAt,
+          fromUser: false,
+        },
+        {
+          id: randomId(),
+          text: "This is a list of information we need to execute this template:",
+          type: "form",
+          createdAt: createdAt,
+          fromUser: false,
+          noHeader: true,
+        },
+      );
     }
 
     setMessages(welcomeMessage);
@@ -525,6 +536,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
     const invalidTxt =
       invalid && question?.type === "file" ? `The uploaded file for "${selectedAnswer.inputName}" is invalid. ` : "";
     const nextBotMessage: IMessage = {
+      id: randomId(),
       text: invalidTxt + "Let's give it another go. " + askedQuestion.question,
       choices: askedQuestion.choices,
       fileExtensions: askedQuestion.fileExtensions,
@@ -587,6 +599,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
               answers={answers}
               onChange={handleUserInput}
               onGenerate={generateExecutionHandler}
+              onAbort={abortConnection}
             />
           </Stack>
         </Stack>
@@ -645,13 +658,8 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
                 <ChatInput
                   onSubmit={validateVary}
                   disabled={isValidatingAnswer || disableChatInput}
-                  onClear={() => setAnswers([])}
-                  showClear={answers.length > 0}
-                  showGenerate={Boolean((showGenerateButton || canShowGenerateButton) && currentUser?.id)}
-                  onGenerate={generateExecutionHandler}
                   isValidating={isValidatingAnswer}
                   disabledButton={!disabledButton}
-                  abortGenerating={abortConnection}
                 />
               </Box>
             </Stack>
