@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { InputBase, Box } from "@mui/material";
-import { Send } from "@mui/icons-material";
+import React, { useRef, useState } from "react";
+import { InputBase, Box, IconButton } from "@mui/material";
+import { ArrowForward, KeyboardCommandKey, Send } from "@mui/icons-material";
 
 interface MessageSenderProps {
   onSubmit: (value: string) => void;
@@ -10,6 +10,7 @@ interface MessageSenderProps {
 
 const MessageSender: React.FC<MessageSenderProps> = ({ onSubmit, disabled, placeholder = "Chat with Promptify" }) => {
   const [localValue, setLocalValue] = useState("");
+  const fieldRef = useRef<HTMLInputElement | null>(null);
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
@@ -30,12 +31,23 @@ const MessageSender: React.FC<MessageSenderProps> = ({ onSubmit, disabled, place
       alignItems={"center"}
       borderRadius="99px"
       m={"16px 24px"}
-      p={"8px 16px"}
+      p={"8px"}
     >
       <InputBase
+        inputRef={ref => (fieldRef.current = ref)}
         multiline
         disabled={disabled}
         fullWidth
+        placeholder={placeholder}
+        inputProps={{ "aria-label": "Name" }}
+        startAdornment={
+          <IconButton onClick={() => fieldRef.current?.focus()}>
+            <KeyboardCommandKey />
+          </IconButton>
+        }
+        onChange={e => setLocalValue(e.target.value)}
+        value={localValue}
+        onKeyPress={handleKeyPress}
         sx={{
           ml: 1,
           flex: 1,
@@ -46,6 +58,9 @@ const MessageSender: React.FC<MessageSenderProps> = ({ onSubmit, disabled, place
           fontWeight: "500",
           maxHeight: "60px",
           overflow: "auto",
+          "&.MuiInputBase-root": {
+            m: 0,
+          },
           "&::-webkit-scrollbar": {
             width: "3px",
             p: 1,
@@ -62,19 +77,33 @@ const MessageSender: React.FC<MessageSenderProps> = ({ onSubmit, disabled, place
           ".Mui-disabled": {
             cursor: disabled ? "not-allowed" : "auto",
           },
+          button: {
+            p: "4px",
+            color: "text.secondary",
+            opacity: 0.45,
+            mr: "8px",
+            border: "none",
+            ":hover": {
+              bgcolor: "surface.1",
+            },
+          },
         }}
-        placeholder={placeholder}
-        inputProps={{ "aria-label": "Name" }}
-        onChange={e => setLocalValue(e.target.value)}
-        value={localValue}
-        onKeyPress={handleKeyPress}
       />
-      <Send
+      <IconButton
         onClick={handleSubmit}
+        disabled={!localValue}
         sx={{
-          cursor: disabled ? "not-allowed" : "pointer",
+          border: "none",
+          bgcolor: localValue ? "primary.light" : "transparent",
+          p: "4px",
         }}
-      />
+      >
+        <ArrowForward
+          sx={{
+            color: "surface.1",
+          }}
+        />
+      </IconButton>
     </Box>
   );
 };

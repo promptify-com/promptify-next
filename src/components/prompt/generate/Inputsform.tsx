@@ -1,5 +1,15 @@
 import React, { useRef, useState } from "react";
-import { Button, IconButton, InputLabel, MenuItem, Select, Stack, TextField, Tooltip } from "@mui/material";
+import {
+  Button,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  OutlinedInput,
+  Select,
+  Stack,
+  TextField,
+  Tooltip,
+} from "@mui/material";
 import { IAnswer } from "@/common/types/chat";
 import { UpdatedQuestionTemplate } from "@/core/api/dto/templates";
 import BaseButton from "@/components/base/BaseButton";
@@ -171,10 +181,16 @@ export const InputsForm = ({ questions, answers, onChange }: Props) => {
                 )}
               </Stack>
             ) : (
-              <TextField
+              <OutlinedInput
                 inputRef={ref => (fieldRefs.current[idx] = ref)}
                 disabled={isGenerating}
+                placeholder={question.required ? "Required" : "Optional"}
+                type={question.type}
+                value={value}
+                onChange={e => onChange(e.target.value, question)}
                 sx={{
+                  minWidth: 260,
+                  flex: value ? 1 : 0,
                   ".MuiInputBase-input": {
                     p: 0,
                     color: "onSurface",
@@ -195,29 +211,25 @@ export const InputsForm = ({ questions, answers, onChange }: Props) => {
                   ".MuiOutlinedInput-notchedOutline": {
                     border: 0,
                   },
-                  ".MuiInputBase-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
                     border: 0,
                   },
                 }}
-                placeholder={question.required ? "Required" : "Optional"}
-                type={question.type}
-                value={value}
-                onChange={e => onChange(e.target.value, question)}
-              />
-            )}
-            {!["file", "code", "choices"].includes(question.type) && (
-              <Edit
-                onClick={() => fieldRefs.current[idx]?.focus()}
-                sx={{
-                  fontSize: 16,
-                  color: "primary.main",
-                  p: "4px",
-                  cursor: "pointer",
-                  opacity: value ? 0.7 : 0.5,
-                  ":hover": {
-                    opacity: 1,
-                  },
-                }}
+                endAdornment={
+                  <Edit
+                    onClick={() => fieldRefs.current[idx]?.focus()}
+                    sx={{
+                      fontSize: 16,
+                      color: "primary.main",
+                      p: "4px",
+                      cursor: "pointer",
+                      opacity: value ? 0.7 : 0.5,
+                      ":hover": {
+                        opacity: 1,
+                      },
+                    }}
+                  />
+                }
               />
             )}
           </Stack>
