@@ -47,7 +47,7 @@ export const vary = ({
             resolve("Something wrong happened");
           }
 
-          resolve(JSON.parse(_execution.prompt_executions[0].output.replace(/\n(\s+)?/g, "")));
+          resolve(JSON.parse(_execution.prompt_executions[0].output.replace(/\n(\s+)?/g, "").replace(/\'/g, '"')));
         } catch (err) {
           console.warn("Vary error:", err);
           resolve("Something wrong happened");
