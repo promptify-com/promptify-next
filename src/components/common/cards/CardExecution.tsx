@@ -6,7 +6,7 @@ import { Bookmark, BookmarkBorder } from "@mui/icons-material";
 import { isImageOutput, markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
 import { useEffect, useState } from "react";
 import { useAppSelector } from "@/hooks/useStore";
-import { useExecutionFavoriteMutation } from "@/core/api/executions";
+import { useDeleteExecutionFavoriteMutation, useExecutionFavoriteMutation } from "@/core/api/executions";
 import { getAbbreviation } from "@/common/helpers";
 
 interface CardExecutionProps {
@@ -20,6 +20,7 @@ export const CardExecution: React.FC<CardExecutionProps> = ({ execution, min }) 
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
   const isSelected = execution.id === selectedExecution?.id;
   const [favoriteExecution] = useExecutionFavoriteMutation();
+  const [deleteExecutionFavorite] = useDeleteExecutionFavoriteMutation();
 
   const getContent = async () => {
     const prompt = execution.prompt_executions?.find(exec => !isImageOutput(exec.output));
@@ -37,7 +38,11 @@ export const CardExecution: React.FC<CardExecutionProps> = ({ execution, min }) 
   const saveExecution = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     try {
-      await favoriteExecution(execution.id);
+      if (execution.is_favorite) {
+        await deleteExecutionFavorite(execution.id);
+      } else {
+        await favoriteExecution(execution.id);
+      }
     } catch (error) {
       console.error(error);
     }

@@ -3,7 +3,7 @@ import { Box, Button, Divider, IconButton, Stack, Tooltip, Typography, useTheme 
 import { Bookmark, BookmarkBorder, Close, DeleteOutline, Edit, ShareOutlined } from "@mui/icons-material";
 import { ExecutionTemplatePopupType, TemplatesExecutions } from "@/core/api/dto/templates";
 import { useAppSelector } from "@/hooks/useStore";
-import { useExecutionFavoriteMutation } from "@/core/api/executions";
+import { useDeleteExecutionFavoriteMutation, useExecutionFavoriteMutation } from "@/core/api/executions";
 import useTruncate from "@/hooks/useTruncate";
 import { SparkSaveDeletePopup } from "@/components/dialog/SparkSaveDeletePopup";
 import { ProgressLogo } from "../common/ProgressLogo";
@@ -19,6 +19,7 @@ export const DisplayActions: React.FC<Props> = ({ selectedExecution, onOpenExpor
   const { palette } = useTheme();
   const { truncate } = useTruncate();
   const [favoriteExecution] = useExecutionFavoriteMutation();
+  const [deleteExecutionFavorite] = useDeleteExecutionFavoriteMutation();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
 
   const [executionTitle, setExecutionTitle] = useState(selectedExecution?.title);
@@ -29,10 +30,14 @@ export const DisplayActions: React.FC<Props> = ({ selectedExecution, onOpenExpor
   }, [selectedExecution]);
 
   const saveExecution = async () => {
-    if (!!!selectedExecution || selectedExecution?.is_favorite) return;
+    if (!!!selectedExecution) return;
 
     try {
-      await favoriteExecution(selectedExecution.id);
+      if (selectedExecution.is_favorite) {
+        await deleteExecutionFavorite(selectedExecution.id);
+      } else {
+        await favoriteExecution(selectedExecution.id);
+      }
     } catch (error) {
       console.error(error);
     }
@@ -71,7 +76,6 @@ export const DisplayActions: React.FC<Props> = ({ selectedExecution, onOpenExpor
                 direction={"row"}
                 alignItems={"center"}
                 gap={1}
-                width={"40%"}
               >
                 <Button
                   onClick={() => setPopup("update")}

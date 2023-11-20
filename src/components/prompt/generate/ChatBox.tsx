@@ -385,23 +385,37 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
   };
 
   const regenerateHandler = async (execution: TemplatesExecutions) => {
-    dispatch(setGeneratingStatus(true));
-
-    const promptsData: ResPrompt[] = [];
-
+    let newAnswers: IAnswer[] = [];
     if (execution.parameters) {
-      Object.entries(execution.parameters).forEach(param => {
-        promptsData.push({
-          contextual_overrides: [],
-          prompt: +param[0],
-          prompt_params: param[1],
-        });
-      });
+      const _params = execution.parameters;
+      newAnswers = templateQuestions
+        .map(question => {
+          const answer = _params[question.prompt][question.name];
+          return {
+            inputName: question.name,
+            required: question.required,
+            question: question.question,
+            prompt: question.prompt,
+            answer: answer || "",
+          };
+        })
+        .filter(answer => answer.answer !== "");
     }
 
-    dispatch(setChatFullScreenStatus(false));
+    setAnswers(newAnswers);
 
-    generateExecution(promptsData);
+    const isReady = allRequiredQuestionsAnswered(templateQuestions, newAnswers)
+      ? " We are ready to create a new document."
+      : "";
+    const botMessage: IMessage = {
+      id: randomId(),
+      text: `Ok!${isReady} I have prepared the incoming parameters, please check!`,
+      type: "form",
+      createdAt: createdAt,
+      fromUser: false,
+    };
+
+    setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat(botMessage));
   };
 
   const generateExecution = (executionData: ResPrompt[]) => {
@@ -545,7 +559,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
         alignItems={"center"}
         sx={{
           bgcolor: "surface.1",
-          p: "24px 8px 24px 16px",
+          p: "24px 8px 24px 28px",
         }}
       >
         <Typography

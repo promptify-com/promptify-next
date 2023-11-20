@@ -57,6 +57,13 @@ export const executionsApi = baseApi.injectEndpoints({
         }),
         invalidatesTags: ["Executions"],
       }),
+      deleteExecutionFavorite: builder.mutation<TemplatesExecutions, number>({
+        query: (id: number) => ({
+          url: `/api/meta/template-executions/${id}/favorite/`,
+          method: "delete",
+        }),
+        invalidatesTags: ["Executions"],
+      }),
       stopExecution: builder.mutation<TemplatesExecutions, number>({
         query: (id: number) => ({
           url: `/api/meta/template-executions/${id}/stop/`,
@@ -75,5 +82,6 @@ export const {
   useUpdateExecutionMutation,
   useDeleteExecutionMutation,
   useExecutionFavoriteMutation,
+  useDeleteExecutionFavoriteMutation,
   useStopExecutionMutation,
 } = executionsApi;
