@@ -14,9 +14,17 @@ interface Props {
   setIsSimulaitonStreaming: Dispatch<SetStateAction<boolean>>;
   questions: UpdatedQuestionTemplate[];
   answers: IAnswer[];
+  onGenerate: () => void;
 }
 
-export const ChatInterface = ({ messages, onChange, setIsSimulaitonStreaming, questions, answers }: Props) => {
+export const ChatInterface = ({
+  messages,
+  onChange,
+  setIsSimulaitonStreaming,
+  questions,
+  answers,
+  onGenerate,
+}: Props) => {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const isFullScreen = useAppSelector(state => state.template.isChatFullScreen);
 
@@ -75,6 +83,7 @@ export const ChatInterface = ({ messages, onChange, setIsSimulaitonStreaming, qu
             questions={questions}
             answers={answers}
             onChange={onChange}
+            onGenerate={onGenerate}
           />
         </Box>
       </Stack>

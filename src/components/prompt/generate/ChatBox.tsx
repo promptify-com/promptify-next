@@ -6,7 +6,6 @@ import { ResPrompt } from "@/core/api/dto/prompts";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { useAppSelector, useAppDispatch } from "@/hooks/useStore";
 import useToken from "@/hooks/useToken";
-import { generate } from "@/common/helpers/chatAnswersValidator";
 import useTimestampConverter from "@/hooks/useTimestampConverter";
 import { ChatInterface } from "./ChatInterface";
 import { ChatInput } from "./ChatInput";
@@ -19,7 +18,7 @@ import {
   updateAnsweredInput,
   updateExecutionData,
 } from "@/core/store/templatesSlice";
-import { AnswerValidatorResponse, IAnswer, IMessage } from "@/common/types/chat";
+import { IAnswer, IMessage } from "@/common/types/chat";
 import { useStopExecutionMutation } from "@/core/api/executions";
 import VaryModal from "./VaryModal";
 import { vary } from "@/common/helpers/varyValidator";
@@ -28,8 +27,8 @@ import { useUploadFileMutation } from "@/core/api/uploadFile";
 import { uploadFileHelper } from "@/common/helpers/uploadFileHelper";
 import { setGeneratedExecution } from "@/core/store/executionsSlice";
 import { TemplateDetailsCard } from "./TemplateDetailsCard";
-import { PlusIcon } from "@/assets/icons";
 import { Add } from "@mui/icons-material";
+import useChatBox from "@/hooks/useChatBox";
 
 interface Props {
   onError: (errMsg: string) => void;
@@ -61,6 +60,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
   const [standingQuestions, setStandingQuestions] = useState<UpdatedQuestionTemplate[]>([]);
   const [varyOpen, setVaryOpen] = useState(false);
   const currentAnsweredInputs = useAppSelector(state => state.template.answeredInputs);
+  const { preparePromptsData, prepareAndRemoveDuplicateInputs } = useChatBox();
 
   const abortController = useRef(new AbortController());
   const uploadedFiles = useRef(new Map<string, string>());
@@ -128,15 +128,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
       }
 
       const questions: TemplateQuestions[] = template?.questions ?? [];
-      const inputs: IPromptInput[] = [];
-      let promptHasContent = false;
-
-      template.prompts.forEach(prompt => {
-        if (prompt.content) {
-          promptHasContent = true;
-        }
-        inputs.push(...getInputsFromString(prompt.content).map(obj => ({ ...obj, prompt: prompt.id })));
-      });
+      const { inputs, promptHasContent } = prepareAndRemoveDuplicateInputs(template.prompts);
 
       const updatedQuestions: UpdatedQuestionTemplate[] = [];
 
@@ -387,25 +379,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
 
     dispatch(setGeneratingStatus(true));
 
-    const promptsData: ResPrompt[] = [];
-
-    answers.forEach(_answer => {
-      const _prompt = promptsData.find(_data => _data.prompt === _answer.prompt);
-      const isFile = _answer.answer instanceof File;
-      const value = isFile ? uploadedFiles.current.get(_answer.inputName) : _answer.answer;
-
-      if (!value) return;
-
-      if (!_prompt) {
-        promptsData.push({
-          contextual_overrides: [],
-          prompt: _answer.prompt!,
-          prompt_params: { [_answer.inputName]: value },
-        });
-      } else {
-        _prompt.prompt_params[_answer.inputName] = value;
-      }
-    });
+    const promptsData = preparePromptsData(uploadedFiles.current, answers, template.prompts);
 
     uploadedFiles.current.clear();
 
@@ -522,6 +496,11 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
       onerror(err) {
         setDisableChatInput(false);
         dispatch(setGeneratingStatus(false));
+
+        if (abortController.current.signal.aborted) {
+          return;
+        }
+
         onError("Something went wrong. Please try again later");
         throw err; // rethrow to stop the operation
       },
@@ -617,6 +596,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
             messages={messages}
             onChange={handleUserInput}
             setIsSimulaitonStreaming={setIsSimulaitonStreaming}
+            onGenerate={generateExecutionHandler}
           />
         </Stack>
         <VaryModal

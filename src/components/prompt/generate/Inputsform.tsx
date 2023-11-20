@@ -33,9 +33,10 @@ interface Props {
   questions: UpdatedQuestionTemplate[];
   answers: IAnswer[];
   onChange: (value: string | File, question: UpdatedQuestionTemplate) => void;
+  onGenerate: () => void;
 }
 
-export const InputsForm = ({ questions, answers, onChange }: Props) => {
+export const InputsForm = ({ questions, answers, onChange, onGenerate }: Props) => {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const [codeFieldOpen, setCodeFieldOpen] = useState(false);
 
@@ -126,7 +127,7 @@ export const InputsForm = ({ questions, answers, onChange }: Props) => {
           >
             {expanded && (
               <Button
-                onClick={() => {}}
+                onClick={onGenerate}
                 endIcon={<PlayCircle />}
                 sx={{
                   height: "22px",
@@ -202,6 +203,7 @@ export const InputsForm = ({ questions, answers, onChange }: Props) => {
                 const isFile = value instanceof File;
                 return (
                   <Stack
+                    key={question.name}
                     direction={"row"}
                     p={"6px"}
                     alignItems={"center"}
