@@ -8,7 +8,7 @@ export const ChromeIcon = ({ size = "32" }) => (
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
-    <g clip-path="url(#clip0_1608_11825)">
+    <g clipPath="url(#clip0_1608_11825)">
       <path
         d="M16 23.9961C20.4183 23.9961 24 20.4144 24 15.9961C24 11.5778 20.4183 7.99609 16 7.99609C11.5817 7.99609 8 11.5778 8 15.9961C8 20.4144 11.5817 23.9961 16 23.9961Z"
         fill="white"
@@ -39,10 +39,10 @@ export const ChromeIcon = ({ size = "32" }) => (
         y2="10"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#D93025" />
+        <stop stopColor="#D93025" />
         <stop
           offset="1"
-          stop-color="#EA4335"
+          stopColor="#EA4335"
         />
       </linearGradient>
       <linearGradient
@@ -53,10 +53,10 @@ export const ChromeIcon = ({ size = "32" }) => (
         y2="7.78902"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#FCC934" />
+        <stop stopColor="#FCC934" />
         <stop
           offset="1"
-          stop-color="#FBBC04"
+          stopColor="#FBBC04"
         />
       </linearGradient>
       <linearGradient
@@ -67,10 +67,10 @@ export const ChromeIcon = ({ size = "32" }) => (
         y2="7.00391"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#1E8E3E" />
+        <stop stopColor="#1E8E3E" />
         <stop
           offset="1"
-          stop-color="#34A853"
+          stopColor="#34A853"
         />
       </linearGradient>
       <clipPath id="clip0_1608_11825">
