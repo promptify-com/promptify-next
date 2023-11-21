@@ -10,6 +10,7 @@ interface MessageSenderProps {
 
 const MessageSender: React.FC<MessageSenderProps> = ({ onSubmit, disabled, placeholder = "Chat with Promptify" }) => {
   const [localValue, setLocalValue] = useState("");
+  const [isFocused, setIsFocused] = useState(false);
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
@@ -23,16 +24,22 @@ const MessageSender: React.FC<MessageSenderProps> = ({ onSubmit, disabled, place
     setLocalValue("");
   };
 
+  const hasNoValue = localValue !== "";
+
   return (
     <Box
-      bgcolor={"surface.3"}
       display={"flex"}
+      position={"relative"}
+      bgcolor={isFocused || hasNoValue ? "surface.1" : "surface.3"}
       alignItems={"center"}
+      boxShadow={isFocused || hasNoValue ? "0px 4px 8px 0px #E1E2EC, 0px 0px 4px 0px rgba(0, 0, 0, 0.10)" : undefined}
       borderRadius="99px"
       p={"8px 16px"}
     >
-      <KeyboardCommandKey sx={{ fontSize: "20px", color: "text.secondary" }} />
+      <KeyboardCommandKey sx={{ fontSize: "20px", color: "text.secondary", position: "absolute", left: 9, top: 12 }} />
       <InputBase
+        onFocus={() => setIsFocused(true)} // Set focus state to true
+        onBlur={() => setIsFocused(false)}
         multiline
         disabled={disabled}
         fullWidth
@@ -41,6 +48,8 @@ const MessageSender: React.FC<MessageSenderProps> = ({ onSubmit, disabled, place
           flex: 1,
           fontSize: 13,
           p: "3px",
+          pl: "10px",
+          pr: "40px",
           lineHeight: "22px",
           letterSpacing: "0.46px",
           fontWeight: "500",
@@ -72,6 +81,9 @@ const MessageSender: React.FC<MessageSenderProps> = ({ onSubmit, disabled, place
 
       <Box
         sx={{
+          position: "absolute",
+          top: 5,
+          right: 13,
           padding: "4px",
           width: "25px",
           height: "25px",
@@ -79,12 +91,10 @@ const MessageSender: React.FC<MessageSenderProps> = ({ onSubmit, disabled, place
           justifyContent: "center",
           alignItems: "center",
           borderRadius: "99px",
-          bgcolor: localValue !== "" ? "#375CA91A" : undefined,
-          color: localValue !== "" ? "#375CA9" : "surface.1",
-          ":hover": {
-            bgcolor: localValue !== "" ? "#375CA9" : undefined,
-            color: localValue !== "" ? "white" : undefined,
-          },
+          opacity: !hasNoValue ? 0.3 : 1,
+          bgcolor: !hasNoValue ? undefined : "#375CA9",
+          color: !hasNoValue ? undefined : "white",
+          ":hover": {},
         }}
       >
         <ArrowUpward

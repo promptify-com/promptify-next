@@ -615,7 +615,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
       </Stack>
       <Box
         position="absolute"
-        bottom={10}
+        bottom={20}
         left={0}
         right={0}
       >
@@ -636,7 +636,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
             >
               <Box
                 onClick={addNewPrompt}
-                mt={0.5}
+                mt={1}
                 sx={{
                   padding: "4px",
                   width: "30px",
