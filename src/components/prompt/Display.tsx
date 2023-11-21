@@ -12,7 +12,7 @@ import GeneratedExecutionFooter from "./GeneratedExecutionFooter";
 import { useAppSelector } from "@/hooks/useStore";
 
 import { useDispatch } from "react-redux";
-import { setActiveToolbarLink, setChatFullScreenStatus } from "@/core/store/templatesSlice";
+import { setChatFullScreenStatus } from "@/core/store/templatesSlice";
 
 interface Props {
   mode: "chat" | "display";
@@ -22,7 +22,7 @@ interface Props {
 
 export const Display: React.FC<Props> = ({ mode, templateData, close }) => {
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const [firstLoad, setFirstLoad] = useState(true);
+  const [firstLoad, setFirstLoad] = useState(false);
   const [openExportPopup, setOpenExportpopup] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const isDesktopView = isDesktopViewPort();
@@ -58,11 +58,6 @@ export const Display: React.FC<Props> = ({ mode, templateData, close }) => {
 
     return () => container?.removeEventListener("click", handleClick);
   }, []);
-
-  useEffect(() => {
-    // If there is a new execution being generated, remove opacity layer
-    setFirstLoad(!generatedExecution);
-  }, [generatedExecution]);
 
   useEffect(() => {
     if (isGenerating) {
