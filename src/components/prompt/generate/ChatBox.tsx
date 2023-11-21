@@ -83,8 +83,16 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
         },
         {
           id: randomId(),
-          text: "This is a list of information we need to execute this template:",
+          text: "",
           type: "form",
+          createdAt: createdAt,
+          fromUser: false,
+          noHeader: true,
+        },
+        {
+          id: randomId(),
+          text: "This is a list of information we need to execute this template:",
+          type: "text",
           createdAt: createdAt,
           fromUser: false,
           noHeader: true,
@@ -292,10 +300,21 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
       const botMessage: IMessage = {
         id: randomId(),
         text: `Ok!${isReady} I have prepared the incoming parameters, please check!`,
-        type: "form",
+        type: "text",
         createdAt: createdAt,
         fromUser: false,
       };
+
+      addToQueuedMessages([
+        {
+          id: randomId(),
+          text: "",
+          type: "form",
+          createdAt: createdAt,
+          fromUser: false,
+          noHeader: true,
+        },
+      ]);
 
       setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat(botMessage));
     }
@@ -410,10 +429,21 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
     const botMessage: IMessage = {
       id: randomId(),
       text: `Ok!${isReady} I have prepared the incoming parameters, please check!`,
-      type: "form",
+      type: "text",
       createdAt: createdAt,
       fromUser: false,
     };
+
+    addToQueuedMessages([
+      {
+        id: randomId(),
+        text: "",
+        type: "form",
+        createdAt: createdAt,
+        fromUser: false,
+        noHeader: true,
+      },
+    ]);
 
     setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat(botMessage));
   };

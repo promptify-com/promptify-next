@@ -32,9 +32,9 @@ export const Message = ({ message, setIsSimulationStreaming, onScrollToBottom }:
             <Stack
               alignItems={"center"}
               justifyContent={"center"}
-              sx={{ width: 32, height: 32, borderRadius: "50%", bgcolor: "primaryContainer" }}
+              sx={{ width: 32, height: 32, borderRadius: "50%", bgcolor: "#375CA91F" }}
             >
-              <CheckCircle sx={{ color: "primary.main" }} />
+              <CheckCircle sx={{ color: "#375CA9" }} />
             </Stack>
           ) : message.fromUser && currentUser ? (
             <Avatar

@@ -53,12 +53,12 @@ export const CardExecution: React.FC<CardExecutionProps> = ({ execution, min }) 
       onClick={handleClick}
       elevation={0}
       sx={{
-        bgcolor: isSelected ? "primaryContainer" : "surface.3",
+        bgcolor: isSelected && !min ? "primaryContainer" : "surface.3",
         borderRadius: "8px",
         p: "8px",
         cursor: "pointer",
         "&:hover, &:focus": {
-          bgcolor: isSelected ? "primaryContainer" : "surface.5",
+          bgcolor: isSelected && !min ? "primaryContainer" : "surface.5",
         },
       }}
     >

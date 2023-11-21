@@ -71,7 +71,7 @@ export const ChatInput = ({
             direction={"row"}
             gap={1}
             alignItems={"center"}
-            ml={"32px"}
+            ml={"40px"}
           >
             {isChatFullScreen && <ProgressLogo size="small" />}
             <Stack

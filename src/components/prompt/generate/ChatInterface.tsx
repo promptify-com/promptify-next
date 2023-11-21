@@ -93,6 +93,7 @@ export const ChatInterface = ({
               <Box
                 ml={isChatFullScreen ? "48px" : 0}
                 mb={2}
+                mt={msg.noHeader ? -2.5 : 0}
               >
                 <InputsForm
                   questions={questions}
