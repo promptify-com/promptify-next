@@ -30,7 +30,7 @@ function Inputsform({ questions, answers, onChange }: Props) {
   return (
     <Stack gap={1}>
       {questions.map(question => {
-        const value = answers.find(answer => answer.inputName === question.name)?.answer || "";
+        const value = answers.find(answer => answer.inputName === question.name)?.answer ?? "";
         const isFile = value instanceof File;
         return (
           <Stack

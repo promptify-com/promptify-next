@@ -70,6 +70,10 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
     setQueuedMessages(messages);
     setIsSimulaitonStreaming(true);
   };
+
+  useEffect(() => {
+    console.log("valuee", isSimulaitonStreaming);
+  }, [isSimulaitonStreaming]);
   const initialMessages = ({
     questions,
     startOver = false,
@@ -588,11 +592,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
             },
           }}
         >
-          <Stack
-            position={"sticky"}
-            bottom={0}
-            mx={"40px"}
-          >
+          <Stack mx={"40px"}>
             <TemplateDetailsCard template={template} />
             <ChatInterface
               template={template}
@@ -604,6 +604,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
               onChange={handleUserInput}
               onGenerate={generateExecutionHandler}
               onAbort={abortConnection}
+              onClear={() => setAnswers([])}
             />
           </Stack>
         </Stack>

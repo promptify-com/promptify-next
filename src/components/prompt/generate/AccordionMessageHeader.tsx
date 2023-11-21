@@ -14,17 +14,29 @@ import AvatarWithInitials from "../AvatarWithInitials";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 import { DeleteOutline, ShareOutlined, StarOutline } from "@mui/icons-material";
+import Close from "@mui/icons-material/Close";
 
 interface Props {
   mode: "execution" | "input";
   isExpanded: boolean;
   onGenerate: () => void;
   onCancel: () => void;
+  onClear: () => void;
+  showClear: boolean;
   showGenerate: boolean;
   changeMode: (mode: "execution" | "input") => void;
 }
 
-function AccordionMessageHeader({ mode, isExpanded, onGenerate, onCancel, showGenerate, changeMode }: Props) {
+function AccordionMessageHeader({
+  mode,
+  isExpanded,
+  onGenerate,
+  onClear,
+  showClear,
+  onCancel,
+  showGenerate,
+  changeMode,
+}: Props) {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   return (
     <AccordionSummary
@@ -120,11 +132,35 @@ function AccordionMessageHeader({ mode, isExpanded, onGenerate, onCancel, showGe
           </Typography>
         </Stack>
 
-        <Stack
-          direction={"row"}
-          alignItems={"center"}
-        >
-          {mode === "input" && isExpanded && (
+        {mode === "input" && isExpanded && (
+          <Stack
+            direction={"row"}
+            gap={1}
+            alignItems={"center"}
+          >
+            {showClear && (
+              <Button
+                onClick={e => {
+                  e.stopPropagation();
+                  onClear();
+                }}
+                endIcon={<Close />}
+                sx={{
+                  height: "20px",
+                  p: "15px",
+                  color: "onSurface",
+                  fontSize: 15,
+                  fontWeight: 500,
+                  ":hover": {
+                    bgcolor: "action.hover",
+                  },
+                }}
+                variant="text"
+              >
+                Clear
+              </Button>
+            )}
+
             <Button
               onClick={event => {
                 event.stopPropagation();
@@ -150,8 +186,8 @@ function AccordionMessageHeader({ mode, isExpanded, onGenerate, onCancel, showGe
             >
               Run prompts
             </Button>
-          )}
-        </Stack>
+          </Stack>
+        )}
 
         {mode === "execution" && (
           <>

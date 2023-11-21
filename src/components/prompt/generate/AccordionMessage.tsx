@@ -17,6 +17,7 @@ interface Props {
   questions: UpdatedQuestionTemplate[];
   answers: IAnswer[];
   onChange: (value: string | File, question: UpdatedQuestionTemplate) => void;
+  onClear: () => void;
   onGenerate: () => void;
   abortGenerating: () => void;
   showGenerate: boolean;
@@ -28,6 +29,7 @@ export const AccordionMessage = ({
   questions,
   answers,
   onChange,
+  onClear,
   onGenerate,
   abortGenerating,
   showGenerate,
@@ -48,6 +50,8 @@ export const AccordionMessage = ({
       onChange={(_e, isExpanded) => handleExpandChange(isExpanded)}
     >
       <AccordionMessageHeader
+        onClear={onClear}
+        showClear={Boolean(answers.length)}
         showGenerate={showGenerate}
         isExpanded={expanded}
         onGenerate={onGenerate}

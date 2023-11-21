@@ -1,7 +1,6 @@
 import { memo, useEffect, Dispatch, SetStateAction, useState } from "react";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
-import Stack from "@mui/material/Stack";
 
 import { useAppSelector } from "@/hooks/useStore";
 import { IMessage } from "@/common/types/chat";

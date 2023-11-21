@@ -17,6 +17,7 @@ interface Props {
   answers: IAnswer[];
   onGenerate: () => void;
   onAbort: () => void;
+  onClear: () => void;
   showGenerate: boolean;
 }
 
@@ -30,6 +31,7 @@ export const ChatInterface = ({
   onGenerate,
   showGenerate,
   onAbort,
+  onClear,
 }: Props) => {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
@@ -84,6 +86,7 @@ export const ChatInterface = ({
             {msg.type === "form" && msg.id === lastFormMessage?.id && (
               <Box>
                 <AccordionMessage
+                  onClear={onClear}
                   template={template}
                   showGenerate={showGenerate}
                   abortGenerating={onAbort}
