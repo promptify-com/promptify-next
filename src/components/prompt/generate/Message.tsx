@@ -46,7 +46,16 @@ export const Message = ({ message, setIsSimulaitonStreaming, onScrollToBottom }:
 
   const name = fromUser ? currentUser?.first_name ?? currentUser?.username : "Promptify";
 
-  if (type === "form") return;
+  useEffect(() => {
+    if (type === "form") {
+      setIsSimulaitonStreaming(false);
+      onScrollToBottom();
+    }
+  }, []);
+
+  if (type === "form") {
+    return;
+  }
   if (text === "") return;
 
   return (

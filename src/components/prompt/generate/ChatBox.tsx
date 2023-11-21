@@ -71,10 +71,10 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
   const abortController = useRef(new AbortController());
   const uploadedFiles = useRef(new Map<string, string>());
 
-  const addToQueuedMessages = (messages: IMessage[], setStreaming: boolean = true) => {
+  const addToQueuedMessages = (messages: IMessage[]) => {
     setQueuedMessages(messages);
 
-    setIsSimulaitonStreaming(setStreaming);
+    setIsSimulaitonStreaming(true);
   };
 
   const initialMessages = ({
@@ -100,19 +100,16 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
       });
     }
 
-    addToQueuedMessages(
-      [
-        {
-          id: randomId(),
-          text: "This is a list of information we need to execute this template:",
-          type: "form",
-          createdAt: createdAt,
-          fromUser: false,
-          noHeader: true,
-        },
-      ],
-      false,
-    );
+    addToQueuedMessages([
+      {
+        id: randomId(),
+        text: "This is a list of information we need to execute this template:",
+        type: "form",
+        createdAt: createdAt,
+        fromUser: false,
+        noHeader: true,
+      },
+    ]);
 
     setMessages(welcomeMessage);
     setAnswers([]);
