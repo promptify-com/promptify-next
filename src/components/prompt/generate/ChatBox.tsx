@@ -573,9 +573,10 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
     }
   };
 
-  const canShowGenerateButton = Boolean(!templateQuestions.length || !templateQuestions[0]?.required);
-
-  const disabledButton = _inputs.length !== 0 || promptHasContent;
+  const showGenerate =
+    !isSimulationStreaming &&
+    ((showGenerateButton && messages[messages.length - 1]?.type !== "spark") ||
+      Boolean(!templateQuestions.length || !templateQuestions[0]?.required));
 
   const showClearBtn = messages[messages.length - 1]?.type === "form" && answers.length > 0;
 
@@ -618,15 +619,12 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
         {currentUser?.id ? (
           <ChatInput
             onSubmit={validateVary}
-            disabled={isValidatingAnswer || disableChatInput}
+            disabled={isValidatingAnswer || disableChatInput || _inputs.length === 0}
             onClear={() => setAnswers([])}
             showClear={showClearBtn}
-            showGenerate={
-              (showGenerateButton && messages[messages.length - 1]?.type !== "spark") || canShowGenerateButton
-            }
+            showGenerate={showGenerate}
             onGenerate={generateExecutionHandler}
             isValidating={isValidatingAnswer}
-            disabledButton={!disabledButton}
             abortGenerating={abortConnection}
           />
         ) : (

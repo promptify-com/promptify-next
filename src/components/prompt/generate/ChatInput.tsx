@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import { DeleteOutline, PlayCircle } from "@mui/icons-material";
-import { Box, Button, Grid, Stack, Typography } from "@mui/material";
+import { Box, Button, Fade, Grid, Stack, Typography } from "@mui/material";
 import { useAppSelector } from "@/hooks/useStore";
 import MessageSender from "./MessageSender";
 import { useDispatch } from "react-redux";
@@ -17,7 +17,6 @@ interface ChatInputProps {
   showGenerate: boolean;
   showClear: boolean;
   isValidating: boolean;
-  disabledButton: boolean;
   abortGenerating: () => void;
 }
 
@@ -29,7 +28,6 @@ export const ChatInput = ({
   showGenerate,
   showClear,
   isValidating,
-  disabledButton,
   abortGenerating,
 }: ChatInputProps) => {
   const dispatch = useDispatch();
@@ -104,23 +102,28 @@ export const ChatInput = ({
             mx={isChatFullScreen ? "88px" : "32px"}
           >
             {showGenerate && (
-              <Button
-                onClick={onGenerate}
-                endIcon={<PlayCircle />}
-                sx={{
-                  height: "22px",
-                  p: "15px",
-                  fontSize: 13,
-                  fontWeight: 500,
-                  ":hover": {
-                    bgcolor: "action.hover",
-                  },
-                }}
-                variant="contained"
-                disabled={isGenerating || isValidating || disabledButton}
+              <Fade
+                in
+                timeout={500}
               >
-                Run prompt
-              </Button>
+                <Button
+                  onClick={onGenerate}
+                  endIcon={<PlayCircle />}
+                  sx={{
+                    height: "22px",
+                    p: "15px",
+                    fontSize: 13,
+                    fontWeight: 500,
+                    ":hover": {
+                      bgcolor: "action.hover",
+                    },
+                  }}
+                  variant="contained"
+                  disabled={isGenerating || isValidating}
+                >
+                  Run prompt
+                </Button>
+              </Fade>
             )}
             {showClear && (
               <Button
