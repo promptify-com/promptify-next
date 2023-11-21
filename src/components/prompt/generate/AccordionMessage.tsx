@@ -95,6 +95,9 @@ export const AccordionMessage = ({
                 <Display
                   mode="chat"
                   templateData={template}
+                  close={() => {
+                    console.log("close");
+                  }}
                 />
                 {!isGenerating && <Stack direction={"column"}></Stack>}
               </>

@@ -269,3 +269,4 @@ export interface CollectionMutationParams {
 }
 
 export type ExecutionTemplatePopupType = "update" | "delete" | "export" | null;
+export type FeedbackType = "NEUTRAL" | "LIKED" | "DISLIKED";

@@ -107,8 +107,11 @@ export default function TemplateMobile({ template, hashedExecution, setErrorMess
       >
         <Grid mr={1}>
           {/* TODO: double check if we still need this for mobile.
-           onError={setErrorMessage} close={() => setMobileTab(1)} */}
-          <Display templateData={template} />
+           onError={setErrorMessage} */}
+          <Display
+            templateData={template}
+            close={() => setMobileTab(1)}
+          />
         </Grid>
       </Grid>
 
