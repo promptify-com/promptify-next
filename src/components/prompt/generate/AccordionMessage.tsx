@@ -54,6 +54,7 @@ export const AccordionMessage = ({
   const createdAt = convertedTimestamp(new Date());
 
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
+  const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
 
   return (
     <Accordion
@@ -110,7 +111,7 @@ export const AccordionMessage = ({
                     console.log("close");
                   }}
                 />
-                {!isGenerating && selectedExecution && (
+                {!isGenerating && generatedExecution && selectedExecution && (
                   <Stack
                     direction={"column"}
                     alignItems={"center"}
@@ -118,21 +119,7 @@ export const AccordionMessage = ({
                     top={"40%"}
                     right={"0"}
                   >
-                    <FeedbackThumbs
-                      execution={selectedExecution}
-                      onRetry={() => {
-                        if (setMessages) {
-                          const formMessage: IMessage = {
-                            id: randomId(),
-                            text: "",
-                            type: "form",
-                            createdAt: createdAt,
-                            fromUser: false,
-                          };
-                          setMessages(prevMessages => prevMessages.concat(formMessage));
-                        }
-                      }}
-                    />
+                    <FeedbackThumbs execution={selectedExecution} />
                   </Stack>
                 )}
               </>

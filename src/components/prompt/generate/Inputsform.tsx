@@ -40,7 +40,8 @@ function Inputsform({ questions, answers, onChange }: Props) {
           document.body.appendChild(textMeasureElement);
           const width = textMeasureElement.offsetWidth;
           document.body.removeChild(textMeasureElement);
-          return width;
+
+          return width < 700 ? width : 900;
         };
         const value = answers.find(answer => answer.inputName === question.name)?.answer ?? "";
         const isFile = value instanceof File;

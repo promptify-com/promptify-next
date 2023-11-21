@@ -660,6 +660,9 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
             alignItems={"center"}
             justifyContent={"center"}
             gap={"8px"}
+            sx={{
+              zIndex: 555,
+            }}
           >
             <Box
               onClick={addNewPrompt}

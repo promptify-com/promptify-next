@@ -6,14 +6,16 @@ import { useUpdateExecutionMutation } from "@/core/api/executions";
 import { FeedbackType, TemplatesExecutions } from "@/core/api/dto/templates";
 import { useState } from "react";
 import { Replay } from "@mui/icons-material";
+import { useAppDispatch } from "@/hooks/useStore";
+import { setAccordionChatMode } from "@/core/store/templatesSlice";
 
 interface newFeedBack {
   execution: TemplatesExecutions;
-  onRetry: () => void;
 }
 
-export default function FeedbackThumbs({ execution, onRetry }: newFeedBack) {
+export default function FeedbackThumbs({ execution }: newFeedBack) {
   const [updateExecution] = useUpdateExecutionMutation();
+  const dispatch = useAppDispatch();
   const [feedback, setFeedback] = useState(execution.feedback);
   const handleFeedback = (newFeedback: FeedbackType) => {
     if (feedback !== newFeedback) {
@@ -60,7 +62,9 @@ export default function FeedbackThumbs({ execution, onRetry }: newFeedBack) {
         }}
       />
       <Button
-        onClick={onRetry}
+        onClick={() => {
+          dispatch(setAccordionChatMode("input"));
+        }}
         variant="text"
         startIcon={<Replay />}
         sx={{

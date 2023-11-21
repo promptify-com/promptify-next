@@ -180,7 +180,7 @@ function AccordionMessageHeader({
               {mode === "execution" && (
                 <>
                   {isGenerating ? "Generation in progress..." : executionTitle ?? "Untitled"}
-                  {executionTitle && (
+                  {executionTitle && !isGenerating && (
                     <Tooltip
                       title="Rename"
                       placement="top"
@@ -211,9 +211,7 @@ function AccordionMessageHeader({
               }}
             >
               {mode === "input" && "About 360s generation time"}
-              {mode === "execution" && (
-                <>{isGenerating ? "About 360s Left" : "Text with markup. 12k words, 3 images"}</>
-              )}
+              {mode === "execution" && <>{isGenerating ? "About 360s Left" : ""}</>}
             </Typography>
           </Stack>
 
