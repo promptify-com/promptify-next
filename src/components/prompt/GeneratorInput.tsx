@@ -19,7 +19,6 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { ResInputs } from "@/core/api/dto/prompts";
 import { getFileTypeExtensionsAsString } from "@/common/helpers/uploadFileHelper";
 import { useDebouncedDispatch } from "@/hooks/useDebounceDispatch";
-import { updateAnsweredInput } from "@/core/store/templatesSlice";
 
 interface GeneratorInputProps {
   promptId: number;
@@ -44,10 +43,6 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const [codeFieldOpen, setCodeFieldOpen] = useState(false);
 
-  const debouncedDispatch = useDebouncedDispatch((answeredInputsArray: AnsweredInputType[]) => {
-    dispatch(updateAnsweredInput(answeredInputsArray));
-  }, 700);
-
   const handleChange = (value: string | File, name: string, type: string) => {
     setError(false);
 
@@ -68,7 +63,6 @@ export const GeneratorInput: React.FC<GeneratorInputProps> = ({
       return node;
     });
     setNodeInputs(updatedNodes);
-    debouncedDispatch([newValue]);
   };
 
   const value = nodeInputs.find(prompt => prompt.id === promptId)?.inputs[inputData.name]?.value || "";
