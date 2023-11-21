@@ -43,7 +43,7 @@ export function useGetTemplatesByFilter({
   const deferredSearchName = useDeferredValue(searchName);
   const debouncedSearchName = useDebounce<string>(deferredSearchName, 300);
   const [status, setStatus] = useState<string>();
-  const PAGINATION_LIMIT = 10;
+  const PAGINATION_LIMIT = templateLimit ?? 10;
   const memoizedFilteredTags = useMemo(() => {
     const filteredTags = tags
       .filter(item => item !== null)
@@ -59,7 +59,7 @@ export function useGetTemplatesByFilter({
     subcategoryId: subCatId,
     title: title ?? debouncedSearchName,
     offset,
-    limit: !offset && templateLimit ? templateLimit : PAGINATION_LIMIT,
+    limit: PAGINATION_LIMIT,
     status,
     ordering,
   };
