@@ -220,7 +220,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ template }) => {
                         badgeContent={executions.length}
                         sx={{
                           ".MuiBadge-badge.MuiBadge-standard": {
-                            bgcolor: "surface.5",
+                            bgcolor: "surface.1",
+                            fontSize: 10,
+                            fontWeight: 500,
+                            border: "1px solid",
+                            borderColor: "divider",
+                            height: 20,
+                            minWidth: 20,
+                            p: "0 3px",
                           },
                         }}
                       >

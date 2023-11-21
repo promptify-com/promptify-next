@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction, useRef, useState } from "react";
-import { Button, Fade, InputLabel, MenuItem, OutlinedInput, Select, Stack, TextField, Tooltip } from "@mui/material";
+import { Button, Fade, InputLabel, MenuItem, Select, Stack, TextField, Tooltip } from "@mui/material";
 import { IAnswer } from "@/common/types/chat";
 import { UpdatedQuestionTemplate } from "@/core/api/dto/templates";
 import BaseButton from "@/components/base/BaseButton";
@@ -8,7 +8,6 @@ import { useAppSelector } from "@/hooks/useStore";
 import { getFileTypeExtensionsAsString } from "@/common/helpers/uploadFileHelper";
 import { FileType } from "@/common/types/prompt";
 import { Edit, Error } from "@mui/icons-material";
-import { StreamContent } from "./StreamContent";
 interface Props {
   questions: UpdatedQuestionTemplate[];
   answers: IAnswer[];
