@@ -1,4 +1,6 @@
-import { Grid, Card, Skeleton } from "@mui/material";
+import Grid from "@mui/material/Grid";
+import Card from "@mui/material/Card";
+import Skeleton from "@mui/material/Skeleton";
 
 export default function CardTemplatePlaceholder({ count = 6 }) {
   return Array.from({ length: count }).map((_, index) => (

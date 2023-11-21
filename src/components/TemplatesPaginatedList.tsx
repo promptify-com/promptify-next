@@ -4,8 +4,8 @@ import { ArrowLeft, ArrowRight } from "@mui/icons-material";
 
 interface TemplatesPaginatedListProps {
   children: ReactNode;
-  hasNext: boolean;
-  hasPrev: boolean;
+  hasNext?: boolean;
+  hasPrev?: boolean;
   loading: boolean;
   onNextPage: () => void;
   onPrevPage: () => void;
