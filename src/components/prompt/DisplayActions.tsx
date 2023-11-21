@@ -23,7 +23,7 @@ export const DisplayActions: React.FC<Props> = ({ selectedExecution, onOpenExpor
   const isGenerating = useAppSelector(state => state.template.isGenerating);
 
   const [executionTitle, setExecutionTitle] = useState(selectedExecution?.title);
-  const [popup, setPopup] = useState<ExecutionTemplatePopupType>(null);
+  const [executionPopup, setExecutionPopup] = useState<ExecutionTemplatePopupType>(null);
 
   useEffect(() => {
     setExecutionTitle(selectedExecution?.title);
@@ -78,7 +78,7 @@ export const DisplayActions: React.FC<Props> = ({ selectedExecution, onOpenExpor
                 gap={1}
               >
                 <Button
-                  onClick={() => setPopup("update")}
+                  onClick={() => setExecutionPopup("update")}
                   endIcon={<Edit />}
                   sx={{
                     width: "100%",
@@ -148,7 +148,7 @@ export const DisplayActions: React.FC<Props> = ({ selectedExecution, onOpenExpor
                     sx={actionBtnStyle}
                     onClick={e => {
                       e.stopPropagation();
-                      setPopup("delete");
+                      setExecutionPopup("delete");
                     }}
                   >
                     <DeleteOutline />
@@ -255,11 +255,12 @@ export const DisplayActions: React.FC<Props> = ({ selectedExecution, onOpenExpor
         </Box>
       </Box>
 
-      {(popup === "delete" || popup === "update") && (
+      {(executionPopup === "delete" || executionPopup === "update") && (
         <SparkSaveDeletePopup
-          type={popup}
+          type={executionPopup}
           activeExecution={selectedExecution}
-          onClose={() => setPopup(null)}
+          onClose={() => setExecutionPopup(null)}
+          onUpdate={execution => setExecutionTitle(execution.title)}
         />
       )}
     </Box>
