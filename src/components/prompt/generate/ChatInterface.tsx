@@ -19,6 +19,7 @@ interface Props {
   onAbort: () => void;
   onClear: () => void;
   showGenerate: boolean;
+  setMessages: Dispatch<SetStateAction<IMessage[]>>;
 }
 
 export const ChatInterface = ({
@@ -32,6 +33,7 @@ export const ChatInterface = ({
   showGenerate,
   onAbort,
   onClear,
+  setMessages,
 }: Props) => {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
@@ -88,6 +90,7 @@ export const ChatInterface = ({
                 <AccordionMessage
                   onClear={onClear}
                   template={template}
+                  setMessages={setMessages}
                   showGenerate={showGenerate}
                   abortGenerating={onAbort}
                   questions={questions}

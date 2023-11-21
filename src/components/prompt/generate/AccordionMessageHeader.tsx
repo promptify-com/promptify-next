@@ -13,12 +13,14 @@ import PlayCircle from "@mui/icons-material/PlayCircle";
 import AvatarWithInitials from "../AvatarWithInitials";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
-import { DeleteOutline, ShareOutlined, Star, StarOutline } from "@mui/icons-material";
+import { DeleteOutline, Edit, ShareOutlined, Star, StarOutline } from "@mui/icons-material";
 import Close from "@mui/icons-material/Close";
 import { ExecutionTemplatePopupType, TemplatesExecutions } from "@/core/api/dto/templates";
 import { useDeleteExecutionFavoriteMutation, useExecutionFavoriteMutation } from "@/core/api/executions";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { SparkSaveDeletePopup } from "@/components/dialog/SparkSaveDeletePopup";
+import { IMessage } from "@/common/types/chat";
+import { SparkExportPopup } from "@/components/dialog/SparkExportPopup";
 
 interface Props {
   selectedExecution: TemplatesExecutions | null;
@@ -30,7 +32,7 @@ interface Props {
   showClear: boolean;
   showGenerate: boolean;
   changeMode: (mode: "execution" | "input") => void;
-  executionTitle?: string;
+  setMessages: Dispatch<SetStateAction<IMessage[]>>;
 }
 
 function AccordionMessageHeader({
@@ -43,6 +45,7 @@ function AccordionMessageHeader({
   onCancel,
   showGenerate,
   changeMode,
+  setMessages,
 }: Props) {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
 
@@ -51,6 +54,8 @@ function AccordionMessageHeader({
 
   const [executionPopup, setExecutionPopup] = useState<ExecutionTemplatePopupType>(null);
   const [executionTitle, setExecutionTitle] = useState(selectedExecution?.title);
+
+  const [openExportPopup, setOpenExportpopup] = useState(false);
 
   useEffect(() => {
     setExecutionTitle(selectedExecution?.title);
@@ -71,261 +76,305 @@ function AccordionMessageHeader({
   };
 
   return (
-    <AccordionSummary
-      sx={{
-        mb: -4,
-        bgcolor: "surface.2",
-        borderRadius: "0px 16px 16px 16px",
-      }}
-    >
-      <Stack
-        direction={"row"}
-        gap={"8px"}
-        width={"100%"}
-        alignItems={"center"}
+    <>
+      <AccordionSummary
+        sx={{
+          mb: -4,
+          bgcolor: "surface.2",
+          borderRadius: "0px 16px 16px 16px",
+        }}
       >
-        {mode === "execution" && (
-          <>
-            {isGenerating ? (
-              <CircularProgress
-                size={42}
+        <Stack
+          direction={"row"}
+          gap={"8px"}
+          width={"100%"}
+          alignItems={"center"}
+        >
+          {mode === "execution" && (
+            <>
+              {isGenerating ? (
+                <CircularProgress
+                  size={42}
+                  sx={{
+                    color: "grey.400",
+                    borderRadius: "50%",
+                  }}
+                />
+              ) : (
+                <AvatarWithInitials title="Test Title" />
+              )}
+            </>
+          )}
+
+          {mode === "input" && (
+            <Box
+              position={"relative"}
+              mt={0.5}
+              sx={{
+                padding: "4px",
+                width: "40px",
+                height: "40px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                borderRadius: "8px",
+                border: "1px dashed #375CA9 ",
+                bgcolor: "#375CA91A",
+                color: "#375CA9",
+              }}
+            >
+              <Add
                 sx={{
-                  color: "grey.400",
-                  borderRadius: "50%",
+                  fontSize: 32,
                 }}
               />
-            ) : (
-              <AvatarWithInitials title="Test Title" />
-            )}
-          </>
-        )}
+              <Box
+                position={"absolute"}
+                width={"13px"}
+                height={"13px"}
+                borderRadius={"4px 0px 8px 0px"}
+                bgcolor={"surface.1"}
+                bottom={0}
+                right={0}
+              />
+            </Box>
+          )}
 
-        {mode === "input" && (
-          <Box
-            position={"relative"}
-            mt={0.5}
-            sx={{
-              padding: "4px",
-              width: "40px",
-              height: "40px",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              borderRadius: "8px",
-              border: "1px dashed #375CA9 ",
-              bgcolor: "#375CA91A",
-              color: "#375CA9",
-            }}
-          >
-            <Add
-              sx={{
-                fontSize: 32,
-              }}
-            />
-            <Box
-              position={"absolute"}
-              width={"13px"}
-              height={"13px"}
-              borderRadius={"4px 0px 8px 0px"}
-              bgcolor={"surface.1"}
-              bottom={0}
-              right={0}
-            />
-          </Box>
-        )}
-
-        <Stack
-          flex={1}
-          direction={"column"}
-          gap={"2px"}
-        >
-          <Typography
-            fontSize={"15px"}
-            lineHeight={"120%"}
-            letterSpacing={"0.2px"}
-          >
-            {mode === "input" && "New Prompt"}
-
-            {mode === "execution" && <>{isGenerating ? "Generation in progress..." : executionTitle ?? "Untitled"}</>}
-          </Typography>
-          <Typography
-            sx={{
-              fontSize: 12,
-              fontWeight: 400,
-              lineHeight: "143%",
-              letterSpacing: "0.17px",
-              opacity: 0.7,
-            }}
-          >
-            {mode === "input" && "About 360s generation time"}
-            {mode === "execution" && <>{isGenerating ? "About 360s Left" : "Text with markup. 12k words, 3 images"}</>}
-          </Typography>
-        </Stack>
-
-        {mode === "input" && isExpanded && (
           <Stack
-            direction={"row"}
-            gap={1}
-            alignItems={"center"}
+            flex={1}
+            direction={"column"}
+            gap={"2px"}
           >
-            {showClear && (
-              <Button
-                onClick={e => {
-                  e.stopPropagation();
-                  onClear();
-                }}
-                endIcon={<Close />}
-                sx={{
-                  height: "20px",
-                  p: "15px",
-                  color: "onSurface",
-                  fontSize: 15,
-                  fontWeight: 500,
-                  ":hover": {
-                    bgcolor: "action.hover",
-                  },
-                }}
-                variant="text"
-              >
-                Clear
-              </Button>
-            )}
-
-            <Button
-              onClick={event => {
-                event.stopPropagation();
-                changeMode("execution");
-                onGenerate();
-              }}
-              endIcon={<PlayCircle />}
-              sx={{
-                height: "22px",
-                p: "15px",
-                fontSize: 15,
-                opacity: showGenerate ? 1 : 0.4,
-                lineHeight: "110%",
-                letterSpacing: "0.2px",
-                fontWeight: 500,
-                color: showGenerate ? "primary" : "onSurface",
-                ":hover": {
-                  bgcolor: "action.hover",
-                },
-              }}
-              variant={showGenerate ? "contained" : "text"}
-              disabled={!showGenerate}
+            <Typography
+              fontSize={"15px"}
+              lineHeight={"120%"}
+              letterSpacing={"0.2px"}
             >
-              Run prompts
-            </Button>
-          </Stack>
-        )}
+              {mode === "input" && "New Prompt"}
 
-        {mode === "execution" && (
-          <>
-            {isGenerating ? (
+              {mode === "execution" && (
+                <>
+                  {isGenerating ? "Generation in progress..." : executionTitle ?? "Untitled"}
+                  {executionTitle && (
+                    <Tooltip
+                      title="Rename"
+                      placement="top"
+                    >
+                      <IconButton
+                        onClick={e => {
+                          e.stopPropagation();
+                          setExecutionPopup("update");
+                        }}
+                        sx={{
+                          border: "none",
+                        }}
+                      >
+                        <Edit />
+                      </IconButton>
+                    </Tooltip>
+                  )}
+                </>
+              )}
+            </Typography>
+            <Typography
+              sx={{
+                fontSize: 12,
+                fontWeight: 400,
+                lineHeight: "143%",
+                letterSpacing: "0.17px",
+                opacity: 0.7,
+              }}
+            >
+              {mode === "input" && "About 360s generation time"}
+              {mode === "execution" && (
+                <>{isGenerating ? "About 360s Left" : "Text with markup. 12k words, 3 images"}</>
+              )}
+            </Typography>
+          </Stack>
+
+          {mode === "input" && isExpanded && (
+            <Stack
+              direction={"row"}
+              gap={1}
+              alignItems={"center"}
+            >
+              {showClear && (
+                <Button
+                  onClick={e => {
+                    e.stopPropagation();
+                    onClear();
+                  }}
+                  endIcon={<Close />}
+                  sx={{
+                    height: "20px",
+                    p: "15px",
+                    color: "onSurface",
+                    fontSize: 15,
+                    fontWeight: 500,
+                    ":hover": {
+                      bgcolor: "action.hover",
+                    },
+                  }}
+                  variant="text"
+                >
+                  Clear
+                </Button>
+              )}
+
               <Button
-                onClick={onCancel}
-                endIcon={<HighlightOff />}
+                onClick={event => {
+                  event.stopPropagation();
+                  changeMode("execution");
+                  onGenerate();
+                }}
+                endIcon={<PlayCircle />}
                 sx={{
                   height: "22px",
                   p: "15px",
-                  color: "onSurface",
-                  fontSize: 13,
+                  fontSize: 15,
+                  opacity: showGenerate ? 1 : 0.4,
+                  lineHeight: "110%",
+                  letterSpacing: "0.2px",
                   fontWeight: 500,
+                  color: showGenerate ? "primary" : "onSurface",
                   ":hover": {
                     bgcolor: "action.hover",
                   },
                 }}
-                variant="text"
+                variant={showGenerate ? "contained" : "text"}
+                disabled={!showGenerate}
               >
-                Cancel
+                Run prompts
               </Button>
-            ) : (
-              <Stack
-                direction={"row"}
-                gap={"8px"}
-              >
-                <Tooltip
-                  title={selectedExecution?.is_favorite ? "Unsave" : "Add to favorite"}
-                  placement="top"
-                >
-                  <IconButton
-                    onClick={e => {
-                      e.stopPropagation();
-                      saveExecution();
-                    }}
-                    sx={{
-                      border: "none",
-                    }}
-                  >
-                    {selectedExecution?.is_favorite ? <Star /> : <StarOutline />}
-                  </IconButton>
-                </Tooltip>{" "}
-                <Tooltip
-                  title="Share"
-                  placement="top"
-                >
-                  <IconButton
-                    sx={{
-                      border: "none",
-                    }}
-                  >
-                    <ShareOutlined />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip
-                  title="Delete"
-                  placement="top"
-                >
-                  <IconButton
-                    sx={{
-                      border: "none",
-                    }}
-                  >
-                    <DeleteOutline />
-                  </IconButton>
-                </Tooltip>
-              </Stack>
-            )}
-          </>
-        )}
-
-        <Stack mt={0.5}>
-          {isExpanded ? (
-            <Box sx={{ p: 1 }}>
-              <UnfoldLess
-                sx={{
-                  fontSize: 20,
-                }}
-              />
-            </Box>
-          ) : (
-            <Button
-              sx={{
-                mr: -1.5,
-                color: "onSurface",
-              }}
-            >
-              Expand
-              <UnfoldLess
-                sx={{
-                  fontSize: 20,
-                  ml: 1,
-                }}
-              />
-            </Button>
+            </Stack>
           )}
-        </Stack>
 
-        {(executionPopup === "delete" || executionPopup === "update") && (
-          <SparkSaveDeletePopup
-            type={executionPopup}
-            activeExecution={selectedExecution}
-            onClose={() => setExecutionPopup(null)}
-            onUpdate={execution => setExecutionTitle(execution.title)}
-          />
-        )}
-      </Stack>
-    </AccordionSummary>
+          {mode === "execution" && (
+            <>
+              {isGenerating ? (
+                <Button
+                  onClick={e => {
+                    e.stopPropagation();
+                    onCancel();
+                  }}
+                  endIcon={<HighlightOff />}
+                  sx={{
+                    height: "22px",
+                    p: "15px",
+                    color: "onSurface",
+                    fontSize: 13,
+                    fontWeight: 500,
+                    ":hover": {
+                      bgcolor: "action.hover",
+                    },
+                  }}
+                  variant="text"
+                >
+                  Cancel
+                </Button>
+              ) : (
+                <Stack
+                  direction={"row"}
+                  gap={"8px"}
+                >
+                  <Tooltip
+                    title={selectedExecution?.is_favorite ? "Unsave" : "Add to favorite"}
+                    placement="top"
+                  >
+                    <IconButton
+                      onClick={e => {
+                        e.stopPropagation();
+                        saveExecution();
+                      }}
+                      sx={{
+                        border: "none",
+                      }}
+                    >
+                      {selectedExecution?.is_favorite ? <Star /> : <StarOutline />}
+                    </IconButton>
+                  </Tooltip>{" "}
+                  <Tooltip
+                    title="Share"
+                    placement="top"
+                  >
+                    <IconButton
+                      onClick={e => {
+                        e.stopPropagation();
+                        setOpenExportpopup(true);
+                      }}
+                      sx={{
+                        border: "none",
+                      }}
+                    >
+                      <ShareOutlined />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip
+                    title="Delete"
+                    placement="top"
+                  >
+                    <IconButton
+                      onClick={e => {
+                        e.stopPropagation();
+                        setExecutionPopup("delete");
+                      }}
+                      sx={{
+                        border: "none",
+                      }}
+                    >
+                      <DeleteOutline />
+                    </IconButton>
+                  </Tooltip>
+                </Stack>
+              )}
+            </>
+          )}
+
+          <Stack mt={0.5}>
+            {isExpanded ? (
+              <Box sx={{ p: 1 }}>
+                <UnfoldLess
+                  sx={{
+                    fontSize: 20,
+                  }}
+                />
+              </Box>
+            ) : (
+              <Button
+                sx={{
+                  mr: -1.5,
+                  color: "onSurface",
+                }}
+              >
+                Expand
+                <UnfoldLess
+                  sx={{
+                    fontSize: 20,
+                    ml: 1,
+                  }}
+                />
+              </Button>
+            )}
+          </Stack>
+        </Stack>
+      </AccordionSummary>
+      {(executionPopup === "delete" || executionPopup === "update") && (
+        <SparkSaveDeletePopup
+          type={executionPopup}
+          activeExecution={selectedExecution}
+          onClose={() => setExecutionPopup(null)}
+          onUpdate={execution => setExecutionTitle(execution.title)}
+          setMessages={setMessages}
+        />
+      )}
+
+      {openExportPopup && selectedExecution?.id && (
+        <SparkExportPopup
+          onClose={() => setOpenExportpopup(false)}
+          activeExecution={selectedExecution}
+        />
+      )}
+    </>
   );
 }
 

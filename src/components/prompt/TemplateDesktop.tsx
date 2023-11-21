@@ -36,6 +36,7 @@ export default function TemplateDesktop({ template, setErrorMessage }: TemplateD
     isLoading: isExecutionsLoading,
     refetch: refetchTemplateExecutions,
   } = useGetExecutionsByTemplateQuery(isValidUser ? template.id : skipToken);
+
   const closeExecutionDisplay = () => {
     dispatch(setChatFullScreenStatus(true));
     dispatch(setSelectedExecution(null));

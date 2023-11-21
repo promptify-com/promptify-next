@@ -12,7 +12,7 @@ import GeneratedExecutionFooter from "./GeneratedExecutionFooter";
 import { useAppSelector } from "@/hooks/useStore";
 
 import { useDispatch } from "react-redux";
-import { setChatFullScreenStatus } from "@/core/store/templatesSlice";
+import { setActiveToolbarLink, setChatFullScreenStatus } from "@/core/store/templatesSlice";
 
 interface Props {
   mode: "chat" | "display";
@@ -67,8 +67,15 @@ export const Display: React.FC<Props> = ({ mode, templateData, close }) => {
   useEffect(() => {
     if (isGenerating) {
       dispatch(setChatFullScreenStatus(true));
+      setActiveToolbarLink(null);
     }
   }, [isGenerating, generatedExecution]);
+
+  useEffect(() => {
+    if (!selectedExecution) {
+      dispatch(setChatFullScreenStatus(true));
+    }
+  }, [selectedExecution]);
 
   const currentGeneratedPrompt = useMemo(() => {
     if (generatedExecution?.data?.length) {

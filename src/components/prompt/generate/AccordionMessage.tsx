@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 
 import Stack from "@mui/material/Stack";
 import Accordion from "@mui/material/Accordion";
@@ -6,7 +6,7 @@ import Typography from "@mui/material/Typography";
 import AccordionDetails from "@mui/material/AccordionDetails";
 
 import { useAppSelector } from "@/hooks/useStore";
-import { IAnswer } from "@/common/types/chat";
+import { IAnswer, IMessage } from "@/common/types/chat";
 import { Display } from "../Display";
 import Inputsform from "./Inputsform";
 import AccordionMessageHeader from "./AccordionMessageHeader";
@@ -14,6 +14,8 @@ import type { Templates, UpdatedQuestionTemplate } from "@/core/api/dto/template
 import FeedbackThumbs from "../FeedbackThumbs";
 import Button from "@mui/material/Button";
 import { Replay } from "@mui/icons-material";
+import useTimestampConverter from "@/hooks/useTimestampConverter";
+import { randomId } from "@/common/helpers";
 
 type Modes = "input" | "execution";
 interface Props {
@@ -25,6 +27,7 @@ interface Props {
   abortGenerating: () => void;
   showGenerate: boolean;
   template: Templates;
+  setMessages: Dispatch<SetStateAction<IMessage[]>>;
 }
 
 export const AccordionMessage = ({
@@ -36,6 +39,7 @@ export const AccordionMessage = ({
   onGenerate,
   abortGenerating,
   showGenerate,
+  setMessages,
 }: Props) => {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
 
@@ -46,6 +50,9 @@ export const AccordionMessage = ({
     setExpanded(isExpanded);
   };
 
+  const { convertedTimestamp } = useTimestampConverter();
+  const createdAt = convertedTimestamp(new Date());
+
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
 
   return (
@@ -55,6 +62,7 @@ export const AccordionMessage = ({
       onChange={(_e, isExpanded) => handleExpandChange(isExpanded)}
     >
       <AccordionMessageHeader
+        setMessages={setMessages}
         selectedExecution={selectedExecution}
         onClear={onClear}
         showClear={Boolean(answers.length)}
@@ -114,7 +122,16 @@ export const AccordionMessage = ({
                     <Button
                       onClick={() => {
                         console.log("replay");
-                        // if (msg.spark) regenerate(msg.spark);
+                        if (setMessages) {
+                          const formMessage: IMessage = {
+                            id: randomId(),
+                            text: "",
+                            type: "form",
+                            createdAt: createdAt,
+                            fromUser: false,
+                          };
+                          setMessages(prevMessages => prevMessages.concat(formMessage));
+                        }
                       }}
                       variant="text"
                       startIcon={<Replay />}

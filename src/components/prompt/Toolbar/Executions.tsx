@@ -15,6 +15,7 @@ import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setGeneratedExecution, setSelectedExecution, setSparkHashQueryParam } from "@/core/store/executionsSlice";
+import { setChatFullScreenStatus } from "@/core/store/templatesSlice";
 
 interface ExecutionsProps {
   template: Templates;
@@ -88,6 +89,11 @@ export const Executions: React.FC<ExecutionsProps> = ({ template }) => {
     selectedTab === 0 ? execution.is_favorite : !execution.is_favorite,
   );
 
+  const handleClick = (execution: TemplatesExecutions) => {
+    dispatch(setChatFullScreenStatus(false));
+    dispatch(setSelectedExecution(execution));
+  };
+
   return (
     <Stack
       width={"300px"}
@@ -125,6 +131,7 @@ export const Executions: React.FC<ExecutionsProps> = ({ template }) => {
           >
             {filteredExecutions?.map(execution => (
               <ListItem
+                onClick={() => handleClick(execution)}
                 sx={{ borderRadius: "8px", overflow: "hidden" }}
                 key={execution.id}
                 disablePadding

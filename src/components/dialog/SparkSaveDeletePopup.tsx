@@ -1,22 +1,36 @@
 import { Check, DeleteRounded } from "@mui/icons-material";
 import { Dialog, Grid, TextField, Typography } from "@mui/material";
 import { red } from "@mui/material/colors";
-import React, { useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import BaseButton from "../base/BaseButton";
 import { Execution, ExecutionTemplatePopupType } from "@/core/api/dto/templates";
 import { useDeleteExecutionMutation, useUpdateExecutionMutation } from "@/core/api/executions";
+import { IMessage } from "@/common/types/chat";
+import useTimestampConverter from "@/hooks/useTimestampConverter";
+import { randomId } from "@/common/helpers";
 
 interface SparkSaveDeletePopupProps {
   type: ExecutionTemplatePopupType;
   onClose: () => void;
   activeExecution: Execution | null;
   onUpdate?: (execution: Execution) => void;
+  setMessages?: Dispatch<SetStateAction<IMessage[]>>;
 }
 
-export const SparkSaveDeletePopup = ({ type, activeExecution, onClose, onUpdate }: SparkSaveDeletePopupProps) => {
+export const SparkSaveDeletePopup = ({
+  type,
+  activeExecution,
+  onClose,
+  onUpdate,
+  setMessages,
+}: SparkSaveDeletePopupProps) => {
   const [updateExecution, { isError }] = useUpdateExecutionMutation();
   const [deleteExecution, { isError: isDeleteExecutionError }] = useDeleteExecutionMutation();
   const [executionTitle, setExecutionTitle] = useState("");
+
+  const { convertedTimestamp } = useTimestampConverter();
+  const createdAt = convertedTimestamp(new Date());
+
   useEffect(() => {
     if (activeExecution && activeExecution.title !== "") {
       setExecutionTitle(activeExecution.title);
@@ -36,6 +50,16 @@ export const SparkSaveDeletePopup = ({ type, activeExecution, onClose, onUpdate 
   const handleDeleteExecution = () => {
     if (activeExecution) {
       deleteExecution(activeExecution.id);
+      if (setMessages) {
+        const formMessage: IMessage = {
+          id: randomId(),
+          text: "",
+          type: "form",
+          createdAt: createdAt,
+          fromUser: false,
+        };
+        setMessages(prevMessages => prevMessages.concat(formMessage));
+      }
       if (!isDeleteExecutionError) {
         onClose();
       }
@@ -43,12 +67,7 @@ export const SparkSaveDeletePopup = ({ type, activeExecution, onClose, onUpdate 
   };
 
   return (
-    <Dialog
-      open
-      onClose={() => onClose()}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-    >
+    <Dialog open>
       {type === "update" ? (
         <Grid
           width={"318px"}

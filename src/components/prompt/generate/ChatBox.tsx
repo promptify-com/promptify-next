@@ -71,12 +71,10 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
   const abortController = useRef(new AbortController());
   const uploadedFiles = useRef(new Map<string, string>());
 
-  const addToQueuedMessages = (messages: IMessage[], { skipSimulation = false }: { skipSimulation?: boolean }) => {
+  const addToQueuedMessages = (messages: IMessage[]) => {
     setQueuedMessages(messages);
 
-    if (!skipSimulation) {
-      setIsSimulaitonStreaming(true);
-    }
+    setIsSimulaitonStreaming(true);
   };
 
   const initialMessages = ({
@@ -102,19 +100,17 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
       });
     }
 
-    addToQueuedMessages(
-      [
-        {
-          id: randomId(),
-          text: "This is a list of information we need to execute this template:",
-          type: "form",
-          createdAt: createdAt,
-          fromUser: false,
-          noHeader: true,
-        },
-      ],
-      { skipSimulation: true },
-    );
+    addToQueuedMessages([
+      {
+        id: randomId(),
+        text: "This is a list of information we need to execute this template:",
+        type: "form",
+        createdAt: createdAt,
+        fromUser: false,
+        noHeader: true,
+      },
+    ]);
+    setIsSimulaitonStreaming(false);
 
     setMessages(welcomeMessage);
     setAnswers([]);
@@ -199,7 +195,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
       const nextQueuedMessage = queuedMessages.pop()!;
 
       setMessages(prevMessages => prevMessages.concat(nextQueuedMessage));
-      addToQueuedMessages(queuedMessages, { skipSimulation: false });
+      addToQueuedMessages(queuedMessages);
     }
   }, [isSimulaitonStreaming]);
 
@@ -631,6 +627,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
             <ChatInterface
               template={template}
               messages={messages}
+              setMessages={setMessages}
               setIsSimulaitonStreaming={setIsSimulaitonStreaming}
               questions={templateQuestions}
               answers={answers}
