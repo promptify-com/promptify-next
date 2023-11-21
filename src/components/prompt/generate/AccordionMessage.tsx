@@ -34,10 +34,11 @@ export const AccordionMessage = ({
   abortGenerating,
   showGenerate,
 }: Props) => {
-  const isGenerating = useAppSelector(state => state.template.isGenerating);
+  const isGenerating = true;
+  // useAppSelector(state => state.template.isGenerating);
 
   const [expanded, setExpanded] = useState(true);
-  const [mode, setMode] = useState<Modes>("input");
+  const [mode, setMode] = useState<Modes>("execution");
 
   const handleExpandChange = (isExpanded: boolean) => {
     setExpanded(isExpanded);

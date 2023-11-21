@@ -10,6 +10,10 @@ import { SparkExportPopup } from "../dialog/SparkExportPopup";
 import { isDesktopViewPort } from "@/common/helpers";
 import GeneratedExecutionFooter from "./GeneratedExecutionFooter";
 import { useAppSelector } from "@/hooks/useStore";
+import Button from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
+import FeedbackThumbs from "./FeedbackThumbs";
+import { Replay } from "@mui/icons-material";
 
 interface Props {
   templateData: Templates;
@@ -21,7 +25,21 @@ export const Display: React.FC<Props> = ({ templateData }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const isDesktopView = isDesktopViewPort();
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
-  const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
+  const generatedExecution = {
+    id: 123,
+    created_at: new Date(),
+    data: [
+      {
+        isLoading: false,
+        message: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla sed quam a sem ornare varius. Nunc consequat facilisis eleifend. Suspendisse eu ligula in libero molestie faucibus. Aliquam nec quam vitae magna congue congue. Aliquam finibus eros non laoreet malesuada. Nullam iaculis sagittis elit, ut gravida neque ornare non. Phasellus laoreet ultrices erat, sed lobortis turpis ullamcorper vel. Suspendisse luctus lectus sit amet ante rhoncus consequat. Pellentesque feugiat elit quis libero tempus, commodo porttitor massa tincidunt. Donec dictum et urna at mattis. Integer ut condimentum purus, in condimentum velit. Aliquam finibus imperdiet maximus. Aenean magna massa, vehicula eu feugiat sed, ornare sed mauris.
+
+      Sed maximus rutrum nisi, at tincidunt est lobortis at. Mauris iaculis, ligula id tristique lacinia, libero nunc viverra risus, ac vulputate ligula leo id risus. Etiam ornare felis mauris, sed vehicula magna gravida blandit. Aenean eu accumsan libero. Etiam nec laoreet felis. Nunc vel augue vel nisl vehicula semper at ut libero. Morbi eu nunc vel dolor efficitur viverra. Mauris augue risus, convallis eu nisi pretium, semper mattis ex. Nulla maximus erat et lectus imperdiet tincidunt. In sit amet tincidunt eros, ut vestibulum risus. Maecenas in sem magna. Nullam non eros accumsan, fringilla risus non, facilisis arcu. Fusce facilisis rutrum erat, vitae facilisis magna laoreet ut. Suspendisse nec mauris vitae felis auctor mattis. Nam id ex eget augue sagittis fermentum ac sed turpis.`,
+        prompt: 1542,
+        created_at: new Date(),
+      },
+    ],
+  };
+  // useAppSelector(state => state.executions.generatedExecution);
   const isFetching = useAppSelector(state => state.executions.isFetching);
   const activeExecution = useMemo(() => {
     if (selectedExecution) {
@@ -100,10 +118,45 @@ export const Display: React.FC<Props> = ({ templateData }) => {
               No spark found
             </Typography>
           ) : (
-            <ExecutionCard
-              execution={generatedExecution ?? selectedExecution}
-              promptsData={templateData.prompts}
-            />
+            <Stack flexDirection={"row"}>
+              <ExecutionCard
+                execution={generatedExecution ?? selectedExecution}
+                promptsData={templateData.prompts}
+              />
+              {selectedExecution && (
+                <Stack
+                  gap={2}
+                  position={"relative"}
+                  width={"5%"}
+                >
+                  <Stack
+                    direction={"column"}
+                    alignItems={"center"}
+                    position={"absolute"}
+                    top={"40%"}
+                    right={"-8px"}
+                  >
+                    <FeedbackThumbs execution={selectedExecution} />
+                    <Button
+                      onClick={() => {
+                        console.log("replay");
+                        // if (msg.spark) regenerate(msg.spark);
+                      }}
+                      variant="text"
+                      startIcon={<Replay />}
+                      sx={{
+                        height: "22px",
+                        width: "22px",
+                        mt: "8px",
+                        ":hover": {
+                          bgcolor: "action.hover",
+                        },
+                      }}
+                    />
+                  </Stack>
+                </Stack>
+              )}
+            </Stack>
           )}
         </Box>
       </Box>
