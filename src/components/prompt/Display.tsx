@@ -10,10 +10,9 @@ import { SparkExportPopup } from "../dialog/SparkExportPopup";
 import { isDesktopViewPort } from "@/common/helpers";
 import GeneratedExecutionFooter from "./GeneratedExecutionFooter";
 import { useAppSelector } from "@/hooks/useStore";
-import Button from "@mui/material/Button";
-import Stack from "@mui/material/Stack";
-import FeedbackThumbs from "./FeedbackThumbs";
-import { Replay } from "@mui/icons-material";
+
+import { useDispatch } from "react-redux";
+import { setChatFullScreenStatus } from "@/core/store/templatesSlice";
 
 interface Props {
   mode: "chat" | "display";
@@ -29,6 +28,7 @@ export const Display: React.FC<Props> = ({ mode, templateData, close }) => {
   const isDesktopView = isDesktopViewPort();
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
+  const isGenerating = useAppSelector(state => state.template.isGenerating);
   const isFetching = useAppSelector(state => state.executions.isFetching);
   const activeExecution = useMemo(() => {
     if (selectedExecution) {
@@ -47,6 +47,8 @@ export const Display: React.FC<Props> = ({ mode, templateData, close }) => {
   const isGeneratedExecutionEmpty = Boolean(generatedExecution && !generatedExecution.data?.length);
   const executionIsLoading = isFetching || isGeneratedExecutionEmpty;
 
+  const dispatch = useDispatch();
+
   // click listener to remove opacity layer on first loaded execution
   useEffect(() => {
     const handleClick = () => setFirstLoad(false);
@@ -61,6 +63,12 @@ export const Display: React.FC<Props> = ({ mode, templateData, close }) => {
     // If there is a new execution being generated, remove opacity layer
     setFirstLoad(!generatedExecution);
   }, [generatedExecution]);
+
+  useEffect(() => {
+    if (isGenerating) {
+      dispatch(setChatFullScreenStatus(true));
+    }
+  }, [isGenerating, generatedExecution]);
 
   const currentGeneratedPrompt = useMemo(() => {
     if (generatedExecution?.data?.length) {

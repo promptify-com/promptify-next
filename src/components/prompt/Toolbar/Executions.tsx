@@ -18,6 +18,9 @@ import { setGeneratedExecution, setSelectedExecution, setSparkHashQueryParam } f
 
 interface ExecutionsProps {
   template: Templates;
+  executions: TemplatesExecutions[];
+  isExecutionsLoading: boolean;
+  refetchTemplateExecutions: () => void;
 }
 
 export const Executions: React.FC<ExecutionsProps> = ({ template }) => {

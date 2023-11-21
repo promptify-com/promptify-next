@@ -1,8 +1,8 @@
-import { type Dispatch, type SetStateAction } from "react";
+import { useEffect, type Dispatch, type SetStateAction } from "react";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 
-import type { Templates } from "@/core/api/dto/templates";
+import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import ClientOnly from "../base/ClientOnly";
 import ChatMode from "./generate/ChatBox";
 import Header from "./Header";
@@ -11,7 +11,11 @@ import ToolbarDrawer from "./Toolbar/ToolbarDrawer";
 import { Display } from "./Display";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setChatFullScreenStatus } from "@/core/store/templatesSlice";
-import { setSelectedExecution } from "@/core/store/executionsSlice";
+import { setGeneratedExecution, setSelectedExecution, setSparkHashQueryParam } from "@/core/store/executionsSlice";
+import { isValidUserFn } from "@/core/store/userSlice";
+import { skipToken } from "@reduxjs/toolkit/dist/query";
+
+import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
 
 interface TemplateDesktopProps {
   template: Templates;
@@ -22,10 +26,62 @@ export default function TemplateDesktop({ template, setErrorMessage }: TemplateD
   const dispatch = useAppDispatch();
   const chatFullScreen = useAppSelector(state => state.template.isChatFullScreen);
 
+  const isValidUser = useAppSelector(isValidUserFn);
+  const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
+  const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
+  const isGenerating = useAppSelector(state => state.template.isGenerating);
+
+  const {
+    data: executions,
+    isLoading: isExecutionsLoading,
+    refetch: refetchTemplateExecutions,
+  } = useGetExecutionsByTemplateQuery(isValidUser ? template.id : skipToken);
   const closeExecutionDisplay = () => {
     dispatch(setChatFullScreenStatus(true));
     dispatch(setSelectedExecution(null));
   };
+
+  useEffect(() => {
+    if (!isGenerating && generatedExecution?.data?.length) {
+      const promptNotCompleted = generatedExecution.data.find(execData => !execData.isCompleted);
+
+      if (!promptNotCompleted) {
+        dispatch(setSelectedExecution(null));
+        dispatch(setGeneratedExecution(null));
+        refetchTemplateExecutions();
+      }
+    }
+  }, [isGenerating, generatedExecution]);
+
+  const handleSelectExecution = ({
+    execution,
+    resetHash = false,
+  }: {
+    execution: TemplatesExecutions | null;
+    resetHash?: boolean;
+  }) => {
+    if (resetHash) {
+      dispatch(setSparkHashQueryParam(null));
+    }
+
+    dispatch(setSelectedExecution(execution));
+  };
+
+  useEffect(() => {
+    if (!executions) {
+      return;
+    }
+
+    const wantedExecutionId = selectedExecution?.id.toString();
+
+    if (wantedExecutionId) {
+      const _selectedExecution = executions.find(exec => exec.id.toString() === wantedExecutionId);
+
+      handleSelectExecution({ execution: _selectedExecution || null, resetHash: true });
+    } else {
+      handleSelectExecution({ execution: template.example_execution || null, resetHash: true });
+    }
+  }, [executions]);
   return (
     <Stack
       height={"calc(100svh - 90px)"}
@@ -106,7 +162,12 @@ export default function TemplateDesktop({ template, setErrorMessage }: TemplateD
         )}
 
         <TemplateToolbar template={template} />
-        <ToolbarDrawer template={template} />
+        <ToolbarDrawer
+          template={template}
+          executions={executions!}
+          isExecutionsLoading={isExecutionsLoading}
+          refetchTemplateExecutions={refetchTemplateExecutions}
+        />
       </Grid>
     </Stack>
   );

@@ -12,13 +12,16 @@ import { Extension } from "./Extension";
 import { ApiAccess } from "./ApiAccess";
 import { TemplateDetails } from "./TemplateDetails";
 import { openToolbarDrawer, setActiveToolbarLink } from "@/core/store/templatesSlice";
-import type { Templates } from "@/core/api/dto/templates";
+import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 
 interface Props {
   template: Templates;
+  executions: TemplatesExecutions[];
+  isExecutionsLoading: boolean;
+  refetchTemplateExecutions: () => void;
 }
 
-function ToolbarDrawer({ template }: Props) {
+function ToolbarDrawer({ template, executions, isExecutionsLoading, refetchTemplateExecutions }: Props) {
   const DRAWER_WIDTH = 352;
 
   const theme = useTheme();
@@ -79,7 +82,14 @@ function ToolbarDrawer({ template }: Props) {
           <Close />
         </IconButton>
       </Stack>
-      {activeLink?.name === "executions" && <Executions template={template} />}
+      {activeLink?.name === "executions" && (
+        <Executions
+          template={template}
+          executions={executions}
+          isExecutionsLoading={isExecutionsLoading}
+          refetchTemplateExecutions={refetchTemplateExecutions}
+        />
+      )}
       {activeLink?.name === "feedback" && <Feedback />}
       {activeLink?.name === "api" && <ApiAccess template={template} />}
       {activeLink?.name === "extension" && <Extension />}

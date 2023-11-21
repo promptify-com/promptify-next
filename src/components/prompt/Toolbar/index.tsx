@@ -30,7 +30,11 @@ function TemplateToolbar({ template }: Props) {
   const { data: executions } = useGetExecutionsByTemplateQuery(isValidUser ? template.id : skipToken);
 
   return (
-    <Box height={"100%"}>
+    <Box
+      height={"100%"}
+      position={"sticky"}
+      top={0}
+    >
       <Box
         sx={{
           display: "flex",
