@@ -11,6 +11,7 @@ export interface TemplatesProps {
   isGenerating: boolean;
   isSidebarExpanded: boolean;
   answeredInputs: AnsweredInputType[];
+  isChatFullScreen: boolean;
   activeSideBarLink: Link | null;
 }
 
@@ -24,6 +25,7 @@ const initialState: TemplatesProps = {
   isGenerating: false,
   isSidebarExpanded: false,
   activeSideBarLink: null,
+  isChatFullScreen: true,
   answeredInputs: [],
 };
 
@@ -52,6 +54,10 @@ export const templatesSlice = createSlice({
       state.isSidebarExpanded = action.payload;
     },
 
+    setChatFullScreenStatus: (state, action: PayloadAction<boolean>) => {
+      state.isChatFullScreen = action.payload;
+    },
+
     setActiveToolbarLink: (state, action: PayloadAction<Link | null>) => {
       state.activeSideBarLink = action.payload;
     },
@@ -64,6 +70,7 @@ export const {
   updateExecutionData,
   setGeneratingStatus,
   openToolbarDrawer,
+  setChatFullScreenStatus,
   setActiveToolbarLink,
 } = templatesSlice.actions;
 

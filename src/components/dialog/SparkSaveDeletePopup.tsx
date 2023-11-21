@@ -10,9 +10,10 @@ interface SparkSaveDeletePopupProps {
   type: ExecutionTemplatePopupType;
   onClose: () => void;
   activeExecution: Execution | null;
+  onUpdate?: (execution: Execution) => void;
 }
 
-export const SparkSaveDeletePopup = ({ type, activeExecution, onClose }: SparkSaveDeletePopupProps) => {
+export const SparkSaveDeletePopup = ({ type, activeExecution, onClose, onUpdate }: SparkSaveDeletePopupProps) => {
   const [updateExecution, { isError }] = useUpdateExecutionMutation();
   const [deleteExecution, { isError: isDeleteExecutionError }] = useDeleteExecutionMutation();
   const [executionTitle, setExecutionTitle] = useState("");
@@ -26,6 +27,7 @@ export const SparkSaveDeletePopup = ({ type, activeExecution, onClose }: SparkSa
     if (activeExecution) {
       updateExecution({ id: activeExecution.id, data: { title: executionTitle } });
       if (!isError) {
+        if (onUpdate) onUpdate({ ...activeExecution, title: executionTitle });
         onClose();
       }
     }

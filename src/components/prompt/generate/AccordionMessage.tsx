@@ -85,8 +85,15 @@ export const AccordionMessage = ({
             mt={-1}
             bgcolor={"surface.1"}
             borderRadius={"8px"}
+            position={"relative"}
+            padding={mode === "execution" ? "16px 64px 48px 64px" : undefined}
           >
-            {mode === "execution" && <Display templateData={template} />}
+            {mode === "execution" && (
+              <>
+                <Display templateData={template} />
+                {!isGenerating && <Stack direction={"column"}></Stack>}
+              </>
+            )}
             {mode === "input" && (
               <Inputsform
                 questions={questions}

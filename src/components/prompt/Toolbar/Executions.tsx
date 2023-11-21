@@ -1,4 +1,4 @@
-import { SyntheticEvent, useState } from "react";
+import { SyntheticEvent, useEffect, useState } from "react";
 import Stack from "@mui/material/Stack";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -10,32 +10,80 @@ import { skipToken } from "@reduxjs/toolkit/dist/query";
 
 import { CardExecution } from "@/components/common/cards/CardExecution";
 import { CardExecutionPlaceholder } from "@/components/placeholders/CardExecutionPlaceholder";
-import { Templates } from "@/core/api/dto/templates";
+import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
 import { isValidUserFn } from "@/core/store/userSlice";
-import { useAppSelector } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { setGeneratedExecution, setSelectedExecution, setSparkHashQueryParam } from "@/core/store/executionsSlice";
 
 interface ExecutionsProps {
   template: Templates;
 }
 
 export const Executions: React.FC<ExecutionsProps> = ({ template }) => {
-  const isValidUser = useAppSelector(isValidUserFn);
   const [selectedTab, setSelectedTab] = useState(0);
 
-  const { data: executions, isLoading } = useGetExecutionsByTemplateQuery(isValidUser ? template.id : skipToken);
+  const dispatch = useAppDispatch();
+  const isValidUser = useAppSelector(isValidUserFn);
+  const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
+  const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
+  const isGenerating = useAppSelector(state => state.template.isGenerating);
 
-  const hasSavedExecutions = executions?.some(execution => execution.is_favorite);
-  const hasUnsavedExecutions = executions?.some(execution => !execution.is_favorite);
+  const {
+    data: executions,
+    isLoading: isExecutionsLoading,
+    refetch: refetchTemplateExecutions,
+  } = useGetExecutionsByTemplateQuery(isValidUser ? template.id : skipToken);
+
+  const handleSelectExecution = ({
+    execution,
+    resetHash = false,
+  }: {
+    execution: TemplatesExecutions | null;
+    resetHash?: boolean;
+  }) => {
+    if (resetHash) {
+      dispatch(setSparkHashQueryParam(null));
+    }
+
+    dispatch(setSelectedExecution(execution));
+  };
+
+  useEffect(() => {
+    if (!isGenerating && generatedExecution?.data?.length) {
+      const promptNotCompleted = generatedExecution.data.find(execData => !execData.isCompleted);
+
+      if (!promptNotCompleted) {
+        dispatch(setSelectedExecution(null));
+        dispatch(setGeneratedExecution(null));
+        refetchTemplateExecutions();
+      }
+    }
+  }, [isGenerating, generatedExecution]);
+
+  useEffect(() => {
+    if (!executions) {
+      return;
+    }
+
+    const wantedExecutionId = selectedExecution?.id.toString();
+
+    if (wantedExecutionId) {
+      const _selectedExecution = executions.find(exec => exec.id.toString() === wantedExecutionId);
+
+      handleSelectExecution({ execution: _selectedExecution || null, resetHash: true });
+    } else {
+      handleSelectExecution({ execution: template.example_execution || null, resetHash: true });
+    }
+  }, [executions]);
 
   const handleTabChange = (_event: SyntheticEvent, newValue: number) => {
     setSelectedTab(newValue);
   };
 
-  const filteredExecutions = executions?.filter(execution => {
-    if (selectedTab === 0) return true;
-    return selectedTab === 1 ? execution.is_favorite : !execution.is_favorite;
-  });
+  const filteredExecutions = executions?.filter(execution =>
+    selectedTab === 0 ? execution.is_favorite : !execution.is_favorite,
+  );
 
   return (
     <Stack
@@ -43,7 +91,7 @@ export const Executions: React.FC<ExecutionsProps> = ({ template }) => {
       gap={2}
       p={"0px 24px"}
     >
-      {isLoading ? (
+      {isExecutionsLoading ? (
         Array.from({ length: 2 }, (_, i) => <CardExecutionPlaceholder key={i} />)
       ) : executions && executions.length > 0 ? (
         <>
@@ -53,38 +101,35 @@ export const Executions: React.FC<ExecutionsProps> = ({ template }) => {
             aria-label="execution tabs"
           >
             <Tab
-              label="All"
+              label="Saved"
               sx={{
                 minWidth: "40px",
               }}
             />
-            {hasSavedExecutions && (
-              <Tab
-                sx={{
-                  minWidth: "40px",
-                }}
-                label="Saved"
-              />
-            )}
-            {hasUnsavedExecutions && (
-              <Tab
-                sx={{
-                  minWidth: "40px",
-                }}
-                label="Unsaved"
-              />
-            )}
+            <Tab
+              label="Unsaved"
+              sx={{
+                minWidth: "40px",
+              }}
+            />
           </Tabs>
-          <List>
+          <List
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "8px",
+            }}
+          >
             {filteredExecutions?.map(execution => (
               <ListItem
+                sx={{ borderRadius: "8px", overflow: "hidden" }}
                 key={execution.id}
                 disablePadding
               >
                 <ListItemButton
+                  selected={selectedExecution?.id === execution.id}
                   sx={{
-                    py: "10px",
-                    px: "0.5px",
+                    p: 1,
                   }}
                 >
                   <CardExecution execution={execution} />
@@ -103,7 +148,20 @@ export const Executions: React.FC<ExecutionsProps> = ({ template }) => {
             color: "onSurface",
           }}
         >
-          No sparks yet
+          {selectedTab === 0 ? "No saved executions found." : "No unsaved executions found."}
+        </Typography>
+      )}
+      {filteredExecutions?.length === 0 && (
+        <Typography
+          sx={{
+            mt: "20svh",
+            textAlign: "center",
+            fontSize: 12,
+            fontWeight: 400,
+            color: "onSurface",
+          }}
+        >
+          {selectedTab === 0 ? "No saved executions found." : "No unsaved executions found."}
         </Typography>
       )}
     </Stack>
