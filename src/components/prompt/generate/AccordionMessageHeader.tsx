@@ -21,7 +21,8 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { SparkSaveDeletePopup } from "@/components/dialog/SparkSaveDeletePopup";
 import { IMessage } from "@/common/types/chat";
 import { SparkExportPopup } from "@/components/dialog/SparkExportPopup";
-import { setAccordionChatMode } from "@/core/store/templatesSlice";
+import { setAccordionChatMode, setGeneratingStatus } from "@/core/store/templatesSlice";
+import { setGeneratedExecution } from "@/core/store/executionsSlice";
 
 interface Props {
   selectedExecution: TemplatesExecutions | null;
@@ -73,6 +74,13 @@ function AccordionMessageHeader({
     } catch (error) {
       console.error(error);
     }
+  };
+
+  const abortConnection = () => {
+    onCancel();
+    dispatch(setGeneratedExecution(null));
+    dispatch(setGeneratingStatus(false));
+    dispatch(setAccordionChatMode("input"));
   };
 
   return (
@@ -255,7 +263,7 @@ function AccordionMessageHeader({
                 <Button
                   onClick={e => {
                     e.stopPropagation();
-                    onCancel();
+                    abortConnection();
                   }}
                   endIcon={<HighlightOff />}
                   sx={{
