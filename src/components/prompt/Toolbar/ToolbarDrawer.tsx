@@ -39,7 +39,7 @@ function ToolbarDrawer({ template, executions, isExecutionsLoading, refetchTempl
         width: sideBarOpen ? DRAWER_WIDTH : 0,
         transition: theme.transitions.create("width", { duration: 200 }),
         "& .MuiDrawer-paper": {
-          mt: "90px",
+          mt: "92px",
           bgcolor: "surface.1",
           borderLeft: "none",
         },

@@ -111,6 +111,7 @@ export default function TemplateMobile({ template, hashedExecution, setErrorMess
           <Display
             templateData={template}
             close={() => setMobileTab(1)}
+            mode={"display"}
           />
         </Grid>
       </Grid>

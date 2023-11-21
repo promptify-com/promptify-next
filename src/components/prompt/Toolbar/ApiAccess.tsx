@@ -16,9 +16,9 @@ export const ApiAccess: React.FC<ApiAccessProps> = ({ template }) => {
 
   return (
     <Stack
-      alignItems={"center"}
-      gap={3}
-      p={"24px"}
+      width={"300px"}
+      gap={2}
+      p={"0px 24px"}
     >
       <ApiAccessIcon />
 

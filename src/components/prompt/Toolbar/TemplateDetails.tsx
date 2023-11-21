@@ -16,9 +16,10 @@ export const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template }) =>
 
   return (
     <Stack
-      gap={3}
+      gap={2}
       width={"300px"}
       p={"24px"}
+      mb={"80px"}
     >
       <CardMedia
         sx={{
