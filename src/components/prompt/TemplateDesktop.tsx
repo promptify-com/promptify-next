@@ -117,7 +117,7 @@ export default function TemplateDesktop({ template, setErrorMessage }: TemplateD
         }}
       >
         <Stack
-          width={chatFullScreen ? "100%" : "58%"}
+          width={"100%"}
           position={"sticky"}
           top={0}
           zIndex={100}
@@ -148,19 +148,6 @@ export default function TemplateDesktop({ template, setErrorMessage }: TemplateD
             />
           </ClientOnly>
         </Stack>
-
-        {!chatFullScreen && (
-          <Grid
-            width={"52%"}
-            display={"block"}
-          >
-            <Display
-              mode="display"
-              templateData={template}
-              close={closeExecutionDisplay}
-            />
-          </Grid>
-        )}
 
         <TemplateToolbar template={template} />
         <ToolbarDrawer

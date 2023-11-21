@@ -67,7 +67,6 @@ export const Display: React.FC<Props> = ({ mode, templateData, close }) => {
   useEffect(() => {
     if (isGenerating) {
       dispatch(setChatFullScreenStatus(true));
-      setActiveToolbarLink(null);
     }
   }, [isGenerating, generatedExecution]);
 

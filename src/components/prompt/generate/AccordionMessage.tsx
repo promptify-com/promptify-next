@@ -42,9 +42,9 @@ export const AccordionMessage = ({
   setMessages,
 }: Props) => {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
+  const mode = useAppSelector(state => state.template.accordionChatMode);
 
   const [expanded, setExpanded] = useState(true);
-  const [mode, setMode] = useState<Modes>("input");
 
   const handleExpandChange = (isExpanded: boolean) => {
     setExpanded(isExpanded);
@@ -71,7 +71,6 @@ export const AccordionMessage = ({
         onGenerate={onGenerate}
         onCancel={abortGenerating}
         mode={mode}
-        changeMode={setMode}
       />
 
       <AccordionDetails

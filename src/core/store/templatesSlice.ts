@@ -13,6 +13,7 @@ export interface TemplatesProps {
   answeredInputs: AnsweredInputType[];
   isChatFullScreen: boolean;
   activeSideBarLink: Link | null;
+  accordionChatMode: "execution" | "input";
 }
 
 type UpdateTemplateDataPayload = Pick<TemplatesProps, "is_favorite" | "id" | "likes">;
@@ -27,6 +28,7 @@ const initialState: TemplatesProps = {
   activeSideBarLink: null,
   isChatFullScreen: true,
   answeredInputs: [],
+  accordionChatMode: "input",
 };
 
 export const templatesSlice = createSlice({
@@ -61,6 +63,9 @@ export const templatesSlice = createSlice({
     setActiveToolbarLink: (state, action: PayloadAction<Link | null>) => {
       state.activeSideBarLink = action.payload;
     },
+    setAccordionChatMode: (state, action: PayloadAction<"execution" | "input">) => {
+      state.accordionChatMode = action.payload;
+    },
   },
 });
 
@@ -72,6 +77,7 @@ export const {
   openToolbarDrawer,
   setChatFullScreenStatus,
   setActiveToolbarLink,
+  setAccordionChatMode,
 } = templatesSlice.actions;
 
 export default templatesSlice.reducer;

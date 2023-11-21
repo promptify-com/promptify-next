@@ -590,7 +590,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
 
   return (
     <Box
-      width={isSidebarExpanded || !chatFullScreen ? "100%" : "80%"}
+      width={isSidebarExpanded ? "100%" : "80%"}
       height={"100%"}
       mx={"auto"}
     >
@@ -621,7 +621,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
           }}
         >
           <Stack mx={"40px"}>
-            {chatFullScreen && <TemplateDetailsCard template={template} />}
+            <TemplateDetailsCard template={template} />
 
             <ChatInterface
               template={template}

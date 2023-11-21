@@ -5,7 +5,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
-import { useAppSelector } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import Add from "@mui/icons-material/Add";
 import HighlightOff from "@mui/icons-material/HighlightOff";
 import UnfoldLess from "@mui/icons-material/UnfoldLess";
@@ -21,6 +21,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { SparkSaveDeletePopup } from "@/components/dialog/SparkSaveDeletePopup";
 import { IMessage } from "@/common/types/chat";
 import { SparkExportPopup } from "@/components/dialog/SparkExportPopup";
+import { setAccordionChatMode } from "@/core/store/templatesSlice";
 
 interface Props {
   selectedExecution: TemplatesExecutions | null;
@@ -31,7 +32,6 @@ interface Props {
   onClear: () => void;
   showClear: boolean;
   showGenerate: boolean;
-  changeMode: (mode: "execution" | "input") => void;
   setMessages: Dispatch<SetStateAction<IMessage[]>>;
 }
 
@@ -44,10 +44,10 @@ function AccordionMessageHeader({
   showClear,
   onCancel,
   showGenerate,
-  changeMode,
   setMessages,
 }: Props) {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
+  const dispatch = useAppDispatch();
 
   const [favoriteExecution] = useExecutionFavoriteMutation();
   const [deleteExecutionFavorite] = useDeleteExecutionFavoriteMutation();
@@ -224,7 +224,7 @@ function AccordionMessageHeader({
               <Button
                 onClick={event => {
                   event.stopPropagation();
-                  changeMode("execution");
+                  dispatch(setAccordionChatMode("execution"));
                   onGenerate();
                 }}
                 endIcon={<PlayCircle />}
