@@ -44,8 +44,9 @@ export const generate = ({
         try {
           const _execution = await getExecutionById(templateExecutionId);
 
-          if (_execution.errors) {
+          if (_execution.errors || !_execution.prompt_executions?.length) {
             resolve("Something wrong happened");
+            return;
           }
 
           resolve(JSON.parse(_execution.prompt_executions[0].output.replace(/\n(\s+)?/g, "")));
