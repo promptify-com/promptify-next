@@ -13,10 +13,15 @@ import PlayCircle from "@mui/icons-material/PlayCircle";
 import AvatarWithInitials from "../AvatarWithInitials";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
-import { DeleteOutline, ShareOutlined, StarOutline } from "@mui/icons-material";
+import { DeleteOutline, ShareOutlined, Star, StarOutline } from "@mui/icons-material";
 import Close from "@mui/icons-material/Close";
+import { ExecutionTemplatePopupType, TemplatesExecutions } from "@/core/api/dto/templates";
+import { useDeleteExecutionFavoriteMutation, useExecutionFavoriteMutation } from "@/core/api/executions";
+import { useEffect, useState } from "react";
+import { SparkSaveDeletePopup } from "@/components/dialog/SparkSaveDeletePopup";
 
 interface Props {
+  selectedExecution: TemplatesExecutions | null;
   mode: "execution" | "input";
   isExpanded: boolean;
   onGenerate: () => void;
@@ -29,6 +34,7 @@ interface Props {
 }
 
 function AccordionMessageHeader({
+  selectedExecution,
   mode,
   isExpanded,
   onGenerate,
@@ -37,9 +43,32 @@ function AccordionMessageHeader({
   onCancel,
   showGenerate,
   changeMode,
-  executionTitle,
 }: Props) {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
+
+  const [favoriteExecution] = useExecutionFavoriteMutation();
+  const [deleteExecutionFavorite] = useDeleteExecutionFavoriteMutation();
+
+  const [executionPopup, setExecutionPopup] = useState<ExecutionTemplatePopupType>(null);
+  const [executionTitle, setExecutionTitle] = useState(selectedExecution?.title);
+
+  useEffect(() => {
+    setExecutionTitle(selectedExecution?.title);
+  }, [selectedExecution]);
+
+  const saveExecution = async () => {
+    if (!!!selectedExecution) return;
+
+    try {
+      if (selectedExecution.is_favorite) {
+        await deleteExecutionFavorite(selectedExecution.id);
+      } else {
+        await favoriteExecution(selectedExecution.id);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <AccordionSummary
@@ -216,15 +245,19 @@ function AccordionMessageHeader({
                 gap={"8px"}
               >
                 <Tooltip
-                  title="Save"
+                  title={selectedExecution?.is_favorite ? "Unsave" : "Add to favorite"}
                   placement="top"
                 >
                   <IconButton
+                    onClick={e => {
+                      e.stopPropagation();
+                      saveExecution();
+                    }}
                     sx={{
                       border: "none",
                     }}
                   >
-                    <StarOutline />
+                    {selectedExecution?.is_favorite ? <Star /> : <StarOutline />}
                   </IconButton>
                 </Tooltip>{" "}
                 <Tooltip
@@ -282,6 +315,15 @@ function AccordionMessageHeader({
             </Button>
           )}
         </Stack>
+
+        {(executionPopup === "delete" || executionPopup === "update") && (
+          <SparkSaveDeletePopup
+            type={executionPopup}
+            activeExecution={selectedExecution}
+            onClose={() => setExecutionPopup(null)}
+            onUpdate={execution => setExecutionTitle(execution.title)}
+          />
+        )}
       </Stack>
     </AccordionSummary>
   );

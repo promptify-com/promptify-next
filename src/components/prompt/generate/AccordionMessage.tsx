@@ -11,6 +11,9 @@ import { Display } from "../Display";
 import Inputsform from "./Inputsform";
 import AccordionMessageHeader from "./AccordionMessageHeader";
 import type { Templates, UpdatedQuestionTemplate } from "@/core/api/dto/templates";
+import FeedbackThumbs from "../FeedbackThumbs";
+import Button from "@mui/material/Button";
+import { Replay } from "@mui/icons-material";
 
 type Modes = "input" | "execution";
 interface Props {
@@ -52,6 +55,7 @@ export const AccordionMessage = ({
       onChange={(_e, isExpanded) => handleExpandChange(isExpanded)}
     >
       <AccordionMessageHeader
+        selectedExecution={selectedExecution}
         onClear={onClear}
         showClear={Boolean(answers.length)}
         showGenerate={showGenerate}
@@ -60,7 +64,6 @@ export const AccordionMessage = ({
         onCancel={abortGenerating}
         mode={mode}
         changeMode={setMode}
-        executionTitle={selectedExecution?.title}
       />
 
       <AccordionDetails
@@ -99,7 +102,33 @@ export const AccordionMessage = ({
                     console.log("close");
                   }}
                 />
-                {!isGenerating && <Stack direction={"column"}></Stack>}
+                {!isGenerating && selectedExecution && (
+                  <Stack
+                    direction={"column"}
+                    alignItems={"center"}
+                    position={"absolute"}
+                    top={"40%"}
+                    right={"0"}
+                  >
+                    <FeedbackThumbs execution={selectedExecution} />
+                    <Button
+                      onClick={() => {
+                        console.log("replay");
+                        // if (msg.spark) regenerate(msg.spark);
+                      }}
+                      variant="text"
+                      startIcon={<Replay />}
+                      sx={{
+                        height: "22px",
+                        width: "22px",
+                        mt: "8px",
+                        ":hover": {
+                          bgcolor: "action.hover",
+                        },
+                      }}
+                    />
+                  </Stack>
+                )}
               </>
             )}
             {mode === "input" && (

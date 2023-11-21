@@ -42,6 +42,8 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(state => state.user.currentUser);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
+  const chatFullScreen = useAppSelector(state => state.template.isChatFullScreen);
+
   const isSidebarExpanded = useAppSelector(state => state.template.isSidebarExpanded);
   const [stopExecution] = useStopExecutionMutation();
   const [uploadFile] = useUploadFileMutation();
@@ -62,7 +64,6 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
   const [standingQuestions, setStandingQuestions] = useState<UpdatedQuestionTemplate[]>([]);
   const [varyOpen, setVaryOpen] = useState(false);
   const currentAnsweredInputs = useAppSelector(state => state.template.answeredInputs);
-  const chatFullScreen = useAppSelector(state => state.template.isChatFullScreen);
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
 
   const { preparePromptsData, prepareAndRemoveDuplicateInputs } = useChatBox();
@@ -70,9 +71,12 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
   const abortController = useRef(new AbortController());
   const uploadedFiles = useRef(new Map<string, string>());
 
-  const addToQueuedMessages = (messages: IMessage[]) => {
+  const addToQueuedMessages = (messages: IMessage[], { skipSimulation = false }: { skipSimulation?: boolean }) => {
     setQueuedMessages(messages);
-    setIsSimulaitonStreaming(true);
+
+    if (!skipSimulation) {
+      setIsSimulaitonStreaming(true);
+    }
   };
 
   const initialMessages = ({
@@ -98,16 +102,19 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
       });
     }
 
-    addToQueuedMessages([
-      {
-        id: randomId(),
-        text: "This is a list of information we need to execute this template:",
-        type: "form",
-        createdAt: createdAt,
-        fromUser: false,
-        noHeader: true,
-      },
-    ]);
+    addToQueuedMessages(
+      [
+        {
+          id: randomId(),
+          text: "This is a list of information we need to execute this template:",
+          type: "form",
+          createdAt: createdAt,
+          fromUser: false,
+          noHeader: true,
+        },
+      ],
+      { skipSimulation: true },
+    );
 
     setMessages(welcomeMessage);
     setAnswers([]);
@@ -192,7 +199,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
       const nextQueuedMessage = queuedMessages.pop()!;
 
       setMessages(prevMessages => prevMessages.concat(nextQueuedMessage));
-      addToQueuedMessages(queuedMessages);
+      addToQueuedMessages(queuedMessages, { skipSimulation: false });
     }
   }, [isSimulaitonStreaming]);
 
@@ -588,7 +595,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
 
   return (
     <Box
-      width={isSidebarExpanded ? "100%" : "80%"}
+      width={isSidebarExpanded || !chatFullScreen ? "100%" : "80%"}
       mx={"auto"}
       height={"90%"}
       position={"relative"}
@@ -600,9 +607,28 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
         position={"relative"}
         overflow={"auto"}
       >
-        <Stack>
+        <Stack
+          sx={{
+            overflow: "auto",
+            overscrollBehavior: "contain",
+            "&::-webkit-scrollbar": {
+              width: "6px",
+              p: 1,
+              backgroundColor: "surface.5",
+            },
+            "&::-webkit-scrollbar-track": {
+              webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              backgroundColor: "surface.1",
+              outline: "1px solid surface.1",
+              borderRadius: "10px",
+            },
+          }}
+        >
           <Stack mx={"40px"}>
             {chatFullScreen && <TemplateDetailsCard template={template} />}
+
             <ChatInterface
               template={template}
               messages={messages}

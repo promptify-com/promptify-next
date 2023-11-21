@@ -148,10 +148,10 @@ export const Executions: React.FC<ExecutionsProps> = ({ template }) => {
             color: "onSurface",
           }}
         >
-          {selectedTab === 0 ? "No saved executions found." : "No unsaved executions found."}
+          No spark found
         </Typography>
       )}
-      {filteredExecutions?.length === 0 && (
+      {filteredExecutions?.length === 0 && executions?.length! > 0 && (
         <Typography
           sx={{
             mt: "20svh",

@@ -60,7 +60,7 @@ export default function TemplateDesktop({ template, setErrorMessage }: TemplateD
         }}
       >
         <Stack
-          width={chatFullScreen ? "100%" : "38%"}
+          width={chatFullScreen ? "100%" : "58%"}
           position={"sticky"}
           top={0}
           zIndex={100}
@@ -94,7 +94,7 @@ export default function TemplateDesktop({ template, setErrorMessage }: TemplateD
 
         {!chatFullScreen && (
           <Grid
-            width={"62%"}
+            width={"52%"}
             display={"block"}
           >
             <Display

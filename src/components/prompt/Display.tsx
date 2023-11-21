@@ -85,7 +85,6 @@ export const Display: React.FC<Props> = ({ mode, templateData, close }) => {
         sx={{
           bgcolor: isDisplayMode ? "surface.3" : "transparent",
           minHeight: { xs: "100vh", md: isDisplayMode ? "calc(100vh - (90px + 68px))" : "auto" },
-          height: "1px",
           position: "relative",
           pb: { xs: "70px", md: "0" },
         }}
@@ -130,45 +129,10 @@ export const Display: React.FC<Props> = ({ mode, templateData, close }) => {
               No spark found
             </Typography>
           ) : (
-            <Stack flexDirection={"row"}>
-              <ExecutionCard
-                execution={generatedExecution ?? selectedExecution}
-                promptsData={templateData.prompts}
-              />
-              {selectedExecution && (
-                <Stack
-                  gap={2}
-                  position={"relative"}
-                  width={"5%"}
-                >
-                  <Stack
-                    direction={"column"}
-                    alignItems={"center"}
-                    position={"absolute"}
-                    top={"40%"}
-                    right={"-8px"}
-                  >
-                    <FeedbackThumbs execution={selectedExecution} />
-                    <Button
-                      onClick={() => {
-                        console.log("replay");
-                        // if (msg.spark) regenerate(msg.spark);
-                      }}
-                      variant="text"
-                      startIcon={<Replay />}
-                      sx={{
-                        height: "22px",
-                        width: "22px",
-                        mt: "8px",
-                        ":hover": {
-                          bgcolor: "action.hover",
-                        },
-                      }}
-                    />
-                  </Stack>
-                </Stack>
-              )}
-            </Stack>
+            <ExecutionCard
+              execution={generatedExecution ?? selectedExecution}
+              promptsData={templateData.prompts}
+            />
           )}
         </Box>
       </Box>

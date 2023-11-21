@@ -30,6 +30,8 @@ export const ChatInput = ({ onSubmit, disabled, isValidating, disabledButton }: 
       >
         {isValidating && (
           <Stack
+            position={"absolute"}
+            top={-30}
             direction={"row"}
             gap={2}
             alignItems={"center"}
