@@ -283,15 +283,29 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
 
   const addNewPrompt = () => {
     dispatch(setAccordionChatMode("input"));
-    const nextBotMessage: IMessage = {
+    const isReady = allRequiredQuestionsAnswered(templateQuestions, answers)
+      ? " We are ready to create a new document."
+      : "";
+    const botMessage: IMessage = {
       id: randomId(),
-      text: "Let's give it another go. ",
-      type: "form",
+      text: `Ok!${isReady} I have prepared the incoming parameters, please check!`,
+      type: "text",
       createdAt: createdAt,
       fromUser: false,
     };
 
-    setMessages(prevMessages => prevMessages.concat(nextBotMessage));
+    addToQueuedMessages([
+      {
+        id: randomId(),
+        text: "",
+        type: "form",
+        createdAt: createdAt,
+        fromUser: false,
+        noHeader: true,
+      },
+    ]);
+
+    setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat(botMessage));
   };
 
   const validateVary = async (variation: string) => {
@@ -398,18 +412,28 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
       return router.push("/signin");
     }
 
+    const NextMessages: IMessage[] = [
+      {
+        id: randomId(),
+        text: `Run Prompt`,
+        type: "text",
+        createdAt: createdAt,
+        fromUser: true,
+      },
+      {
+        id: randomId(),
+        text: "",
+        type: "form",
+        createdAt: createdAt,
+        fromUser: false,
+        noHeader: true,
+      },
+    ];
+
+    setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat(NextMessages));
+
     const filesUploaded = await validateAndUploadFiles();
     if (!filesUploaded) return;
-
-    const nextBotMessage: IMessage = {
-      id: randomId(),
-      text: "Run Prompt",
-      type: "text",
-      createdAt: createdAt,
-      fromUser: true,
-    };
-
-    setMessages(prevMessages => prevMessages.concat(nextBotMessage));
 
     dispatch(setGeneratingStatus(true));
 

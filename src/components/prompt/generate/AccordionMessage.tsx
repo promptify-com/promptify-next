@@ -12,10 +12,8 @@ import Inputsform from "./Inputsform";
 import AccordionMessageHeader from "./AccordionMessageHeader";
 import type { Templates, UpdatedQuestionTemplate } from "@/core/api/dto/templates";
 import FeedbackThumbs from "../FeedbackThumbs";
-import Button from "@mui/material/Button";
-import { Replay } from "@mui/icons-material";
+
 import useTimestampConverter from "@/hooks/useTimestampConverter";
-import { randomId } from "@/common/helpers";
 
 type Modes = "input" | "execution";
 interface Props {
@@ -111,7 +109,7 @@ export const AccordionMessage = ({
                     console.log("close");
                   }}
                 />
-                {!isGenerating && generatedExecution && selectedExecution && (
+                {!isGenerating && selectedExecution && (
                   <Stack
                     direction={"column"}
                     alignItems={"center"}
@@ -119,7 +117,7 @@ export const AccordionMessage = ({
                     top={"40%"}
                     right={"0"}
                   >
-                    <FeedbackThumbs execution={selectedExecution} />
+                    <FeedbackThumbs execution={selectedExecution!} />
                   </Stack>
                 )}
               </>
