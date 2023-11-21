@@ -62,6 +62,7 @@ export const AccordionMessage = ({
       onChange={(_e, isExpanded) => handleExpandChange(isExpanded)}
     >
       <AccordionMessageHeader
+        template={template}
         setMessages={setMessages}
         selectedExecution={selectedExecution}
         onClear={onClear}

@@ -70,12 +70,6 @@ export const Display: React.FC<Props> = ({ mode, templateData, close }) => {
     }
   }, [isGenerating, generatedExecution]);
 
-  useEffect(() => {
-    if (!selectedExecution) {
-      dispatch(setChatFullScreenStatus(true));
-    }
-  }, [selectedExecution]);
-
   const currentGeneratedPrompt = useMemo(() => {
     if (generatedExecution?.data?.length) {
       const loadingPrompt = generatedExecution.data.find(prompt => prompt.isLoading);

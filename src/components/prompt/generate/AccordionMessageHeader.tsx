@@ -15,9 +15,9 @@ import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 import { DeleteOutline, Edit, ShareOutlined, Star, StarOutline } from "@mui/icons-material";
 import Close from "@mui/icons-material/Close";
-import { ExecutionTemplatePopupType, TemplatesExecutions } from "@/core/api/dto/templates";
+import { ExecutionTemplatePopupType, Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { useDeleteExecutionFavoriteMutation, useExecutionFavoriteMutation } from "@/core/api/executions";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 import { SparkSaveDeletePopup } from "@/components/dialog/SparkSaveDeletePopup";
 import { IMessage } from "@/common/types/chat";
 import { SparkExportPopup } from "@/components/dialog/SparkExportPopup";
@@ -25,6 +25,7 @@ import { setAccordionChatMode, setGeneratingStatus } from "@/core/store/template
 import { setGeneratedExecution } from "@/core/store/executionsSlice";
 
 interface Props {
+  template: Templates;
   selectedExecution: TemplatesExecutions | null;
   mode: "execution" | "input";
   isExpanded: boolean;
@@ -37,6 +38,7 @@ interface Props {
 }
 
 function AccordionMessageHeader({
+  template,
   selectedExecution,
   mode,
   isExpanded,
@@ -82,6 +84,21 @@ function AccordionMessageHeader({
     dispatch(setGeneratingStatus(false));
     dispatch(setAccordionChatMode("input"));
   };
+
+  const activeExecution = useMemo(() => {
+    if (selectedExecution) {
+      return {
+        ...selectedExecution,
+        template: {
+          ...selectedExecution.template,
+          title: template.title,
+          slug: template.slug,
+          thumbnail: template.thumbnail,
+        },
+      };
+    }
+    return null;
+  }, [selectedExecution]);
 
   return (
     <>
@@ -379,7 +396,7 @@ function AccordionMessageHeader({
       {openExportPopup && selectedExecution?.id && (
         <SparkExportPopup
           onClose={() => setOpenExportpopup(false)}
-          activeExecution={selectedExecution}
+          activeExecution={activeExecution}
         />
       )}
     </>
