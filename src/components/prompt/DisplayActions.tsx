@@ -110,7 +110,7 @@ export const DisplayActions: React.FC<Props> = ({ selectedExecution, onOpenExpor
                         width: 28,
                         height: 28,
                         p: "4px",
-                        bgcolor: "primary.main",
+                        bgcolor: "#375CA9",
                         borderRadius: "8px",
                       }}
                     >

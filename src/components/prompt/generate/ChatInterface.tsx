@@ -124,7 +124,7 @@ export const ChatInterface = ({
                     color={"onSurface"}
                     mb={"10px"}
                   >
-                    Quick Feedback
+                    Quick Feedback:
                   </Typography>
                   <Stack
                     direction={"row"}

@@ -75,7 +75,7 @@ export const CardExecution: React.FC<CardExecutionProps> = ({ execution, min }) 
               width: 38,
               height: 38,
               p: "8px",
-              bgcolor: "primary.main",
+              bgcolor: "#375CA9",
               borderRadius: "8px",
             }}
           >
