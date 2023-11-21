@@ -36,7 +36,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
   const [stopExecution] = useStopExecutionMutation();
   const [uploadFile] = useUploadFileMutation();
   const { convertedTimestamp } = useTimestampConverter();
-  const createdAt = convertedTimestamp(new Date());
+  const createdAt = convertedTimestamp(new Date(new Date().getTime() + 2000));
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
   const [showGenerateButton, setShowGenerateButton] = useState(false);
