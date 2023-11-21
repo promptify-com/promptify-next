@@ -6,6 +6,7 @@ import Stack from "@mui/material/Stack";
 import { useAppSelector } from "@/hooks/useStore";
 import { IMessage } from "@/common/types/chat";
 import useTextSimulationStreaming from "@/hooks/useTextSimulationStreaming";
+import { Bolt } from "@mui/icons-material";
 
 interface MessageBlockProps {
   message: IMessage;
@@ -78,7 +79,7 @@ export const Message = ({ message, setIsSimulaitonStreaming, onScrollToBottom }:
         flex={1}
         display={"flex"}
         flexDirection={"column"}
-        width={fromUser ? "80%" : "100%"}
+        width={fromUser ? "content-fit" : "100%"}
         gap={"8px"}
         ml={"auto"}
         padding={" 8px 16px 8px 24px"}
@@ -95,8 +96,11 @@ export const Message = ({ message, setIsSimulaitonStreaming, onScrollToBottom }:
             fontSize={15}
             lineHeight={"24px"}
             letterSpacing={"0.17px"}
+            display={"flex"}
+            alignItems={"center"}
             color={fromUser ? "#725472" : "onSurface"}
           >
+            {text === "Run Prompt" && <Bolt />}
             <MessageContent
               content={text}
               shouldStream={!fromUser}

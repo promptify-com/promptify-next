@@ -13,11 +13,9 @@ import { useAppSelector } from "@/hooks/useStore";
 
 interface Props {
   templateData: Templates;
-  onError: (errMsg: string) => void;
-  close: () => void;
 }
 
-export const Display: React.FC<Props> = ({ templateData, onError, close }) => {
+export const Display: React.FC<Props> = ({ templateData }) => {
   const [firstLoad, setFirstLoad] = useState(true);
   const [openExportPopup, setOpenExportpopup] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -76,28 +74,12 @@ export const Display: React.FC<Props> = ({ templateData, onError, close }) => {
       <Box
         ref={containerRef}
         sx={{
-          bgcolor: "surface.3",
-          minHeight: { xs: "100vh", md: "calc(100vh - (90px + 68px))" },
-          height: "1px",
           position: "relative",
           pb: { xs: "70px", md: "0" },
         }}
       >
-        <DisplayActions
-          selectedExecution={selectedExecution}
-          onOpenExport={() => setOpenExportpopup(true)}
-          close={close}
-        />
-        {openExportPopup && activeExecution?.id && (
-          <SparkExportPopup
-            onClose={() => setOpenExportpopup(false)}
-            activeExecution={activeExecution}
-          />
-        )}
-
         <Box
           sx={{
-            height: "calc(100% - 67px)",
             opacity: firstLoad ? 0.5 : 1,
             bgcolor: "surface.1",
             borderRadius: "16px 16px 0px 0px",

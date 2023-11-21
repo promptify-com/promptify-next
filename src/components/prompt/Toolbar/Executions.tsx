@@ -83,7 +83,8 @@ export const Executions: React.FC<ExecutionsProps> = ({ template }) => {
               >
                 <ListItemButton
                   sx={{
-                    p: 1,
+                    py: "10px",
+                    px: "0.5px",
                   }}
                 >
                   <CardExecution execution={execution} />

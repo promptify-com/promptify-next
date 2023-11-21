@@ -245,6 +245,18 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
 
   const disabledButton = _inputs.length !== 0 || promptHasContent;
 
+  const addNewPrompt = () => {
+    const nextBotMessage: IMessage = {
+      id: randomId(),
+      text: "Let's give it another go. ",
+      type: "form",
+      createdAt: createdAt,
+      fromUser: false,
+    };
+
+    setMessages(prevMessages => prevMessages.concat(nextBotMessage));
+  };
+
   const validateVary = async (variation: string) => {
     if (variation) {
       const userMessage: IMessage = {
@@ -293,15 +305,8 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
 
       setAnswers(newAnswers);
       setIsValidatingAnswer(false);
-      const nextBotMessage: IMessage = {
-        id: randomId(),
-        text: "Let's give it another go. ",
-        type: "form",
-        createdAt: createdAt,
-        fromUser: false,
-      };
 
-      setMessages(prevMessages => prevMessages.concat(nextBotMessage));
+      addNewPrompt();
     }
   };
 
@@ -361,6 +366,16 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
 
     const filesUploaded = await validateAndUploadFiles();
     if (!filesUploaded) return;
+
+    const nextBotMessage: IMessage = {
+      id: randomId(),
+      text: "Run Prompt",
+      type: "text",
+      createdAt: createdAt,
+      fromUser: true,
+    };
+
+    setMessages(prevMessages => prevMessages.concat(nextBotMessage));
 
     dispatch(setGeneratingStatus(true));
 
@@ -580,10 +595,12 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
           >
             <TemplateDetailsCard template={template} />
             <ChatInterface
+              template={template}
               messages={messages}
               setIsSimulaitonStreaming={setIsSimulaitonStreaming}
               questions={templateQuestions}
               answers={answers}
+              showGenerate={showGenerateButton}
               onChange={handleUserInput}
               onGenerate={generateExecutionHandler}
               onAbort={abortConnection}
@@ -618,6 +635,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
               gap={"8px"}
             >
               <Box
+                onClick={addNewPrompt}
                 mt={0.5}
                 sx={{
                   padding: "4px",

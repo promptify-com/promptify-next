@@ -1,14 +1,15 @@
-import { useEffect, useRef, Dispatch, SetStateAction, Fragment } from "react";
+import { useRef, Dispatch, SetStateAction, Fragment } from "react";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
 
 import { Message } from "./Message";
 import { IAnswer, IMessage } from "@/common/types/chat";
-import type { UpdatedQuestionTemplate } from "@/core/api/dto/templates";
-import { InputsForm } from "./Inputsform";
+import type { Templates, UpdatedQuestionTemplate } from "@/core/api/dto/templates";
+import { AccordionMessage } from "./AccordionMessage";
 
 interface Props {
+  template: Templates;
   messages: IMessage[];
   onChange: (value: string | File, question: UpdatedQuestionTemplate) => void;
   setIsSimulaitonStreaming: Dispatch<SetStateAction<boolean>>;
@@ -16,15 +17,18 @@ interface Props {
   answers: IAnswer[];
   onGenerate: () => void;
   onAbort: () => void;
+  showGenerate: boolean;
 }
 
 export const ChatInterface = ({
+  template,
   messages,
   onChange,
   setIsSimulaitonStreaming,
   questions,
   answers,
   onGenerate,
+  showGenerate,
   onAbort,
 }: Props) => {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
@@ -79,7 +83,9 @@ export const ChatInterface = ({
             />
             {msg.type === "form" && msg.id === lastFormMessage?.id && (
               <Box>
-                <InputsForm
+                <AccordionMessage
+                  template={template}
+                  showGenerate={showGenerate}
                   abortGenerating={onAbort}
                   questions={questions}
                   answers={answers}
