@@ -81,7 +81,7 @@ export const Executions: React.FC<ExecutionsProps> = ({ template }) => {
     setSelectedTab(newValue);
   };
 
-  const filteredExecutions = executions?.filter(execution =>
+  const filteredExecutions: TemplatesExecutions[] | undefined = executions?.filter(execution =>
     selectedTab === 0 ? execution.is_favorite : !execution.is_favorite,
   );
 

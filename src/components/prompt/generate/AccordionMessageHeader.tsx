@@ -25,6 +25,7 @@ interface Props {
   showClear: boolean;
   showGenerate: boolean;
   changeMode: (mode: "execution" | "input") => void;
+  executionTitle?: string;
 }
 
 function AccordionMessageHeader({
@@ -36,8 +37,10 @@ function AccordionMessageHeader({
   onCancel,
   showGenerate,
   changeMode,
+  executionTitle,
 }: Props) {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
+
   return (
     <AccordionSummary
       sx={{
@@ -114,9 +117,7 @@ function AccordionMessageHeader({
           >
             {mode === "input" && "New Prompt"}
 
-            {mode === "execution" && (
-              <>{isGenerating ? "Generation in progress..." : "The Whimsical World of Narnia"}</>
-            )}
+            {mode === "execution" && <>{isGenerating ? "Generation in progress..." : executionTitle ?? "Untitled"}</>}
           </Typography>
           <Typography
             sx={{
