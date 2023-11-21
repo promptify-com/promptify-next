@@ -61,6 +61,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
   const [standingQuestions, setStandingQuestions] = useState<UpdatedQuestionTemplate[]>([]);
   const [varyOpen, setVaryOpen] = useState(false);
   const currentAnsweredInputs = useAppSelector(state => state.template.answeredInputs);
+  const chatFullScreen = useAppSelector(state => state.template.isChatFullScreen);
   const { preparePromptsData, prepareAndRemoveDuplicateInputs } = useChatBox();
 
   const abortController = useRef(new AbortController());
@@ -71,9 +72,6 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
     setIsSimulaitonStreaming(true);
   };
 
-  useEffect(() => {
-    console.log("valuee", isSimulaitonStreaming);
-  }, [isSimulaitonStreaming]);
   const initialMessages = ({
     questions,
     startOver = false,
@@ -338,9 +336,6 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
 
     dispatchNewExecutionData(_answers, _inputs);
   };
-  useEffect(() => {
-    console.log(messages);
-  }, [messages]);
 
   const validateAndUploadFiles = () =>
     new Promise<boolean>(async resolve => {
@@ -573,27 +568,9 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
         position={"relative"}
         overflow={"auto"}
       >
-        <Stack
-          sx={{
-            overflow: "auto",
-            overscrollBehavior: "contain",
-            "&::-webkit-scrollbar": {
-              width: "6px",
-              p: 1,
-              backgroundColor: "surface.5",
-            },
-            "&::-webkit-scrollbar-track": {
-              webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
-            },
-            "&::-webkit-scrollbar-thumb": {
-              backgroundColor: "surface.1",
-              outline: "1px solid surface.1",
-              borderRadius: "10px",
-            },
-          }}
-        >
+        <Stack>
           <Stack mx={"40px"}>
-            <TemplateDetailsCard template={template} />
+            {chatFullScreen && <TemplateDetailsCard template={template} />}
             <ChatInterface
               template={template}
               messages={messages}

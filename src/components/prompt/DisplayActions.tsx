@@ -1,23 +1,13 @@
 import React, { useEffect, useState } from "react";
-import {
-  Box,
-  Button,
-  CircularProgress,
-  Divider,
-  IconButton,
-  Stack,
-  Tooltip,
-  Typography,
-  useTheme,
-} from "@mui/material";
+import { Box, Button, Divider, IconButton, Stack, Tooltip, Typography, useTheme } from "@mui/material";
 import { Bookmark, BookmarkBorder, Close, DeleteOutline, Edit, ShareOutlined } from "@mui/icons-material";
 import { ExecutionTemplatePopupType, TemplatesExecutions } from "@/core/api/dto/templates";
 import { useAppSelector } from "@/hooks/useStore";
-import { useExecutionFavoriteMutation } from "@/core/api/executions";
+import { useDeleteExecutionFavoriteMutation, useExecutionFavoriteMutation } from "@/core/api/executions";
 import useTruncate from "@/hooks/useTruncate";
 import { SparkSaveDeletePopup } from "@/components/dialog/SparkSaveDeletePopup";
-import { LogoApp } from "@/assets/icons/LogoApp";
-import { theme } from "@/theme";
+import { ProgressLogo } from "../common/ProgressLogo";
+import AvatarWithInitials from "./AvatarWithInitials";
 
 interface Props {
   selectedExecution: TemplatesExecutions | null;
@@ -29,20 +19,25 @@ export const DisplayActions: React.FC<Props> = ({ selectedExecution, onOpenExpor
   const { palette } = useTheme();
   const { truncate } = useTruncate();
   const [favoriteExecution] = useExecutionFavoriteMutation();
+  const [deleteExecutionFavorite] = useDeleteExecutionFavoriteMutation();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
 
   const [executionTitle, setExecutionTitle] = useState(selectedExecution?.title);
-  const [popup, setPopup] = useState<ExecutionTemplatePopupType>(null);
+  const [executionPopup, setExecutionPopup] = useState<ExecutionTemplatePopupType>(null);
 
   useEffect(() => {
     setExecutionTitle(selectedExecution?.title);
   }, [selectedExecution]);
 
   const saveExecution = async () => {
-    if (!!!selectedExecution || selectedExecution?.is_favorite) return;
+    if (!!!selectedExecution) return;
 
     try {
-      await favoriteExecution(selectedExecution.id);
+      if (selectedExecution.is_favorite) {
+        await deleteExecutionFavorite(selectedExecution.id);
+      } else {
+        await favoriteExecution(selectedExecution.id);
+      }
     } catch (error) {
       console.error(error);
     }
@@ -76,156 +71,133 @@ export const DisplayActions: React.FC<Props> = ({ selectedExecution, onOpenExpor
           gap={1}
         >
           {!isGenerating ? (
-            <Stack
-              direction={"row"}
-              alignItems={"center"}
-              gap={1}
-              width={"40%"}
-            >
-              <Button
-                endIcon={<Edit />}
-                sx={{
-                  width: "100%",
-                  fontSize: 15,
-                  fontWeight: 500,
-                  p: "4px 10px",
-                  color: "onSurface",
-                  whiteSpace: "normal",
-                  wordBreak: "break-word",
-                  justifyContent: "space-between",
-                  ":hover": {
-                    bgcolor: "surface.2",
-                  },
-                  svg: {
-                    fontSize: "18px !important",
-                  },
-                }}
-                onClick={() => setPopup("update")}
+            <>
+              <Stack
+                direction={"row"}
+                alignItems={"center"}
+                gap={1}
               >
-                <Typography
+                <Button
+                  onClick={() => setExecutionPopup("update")}
+                  endIcon={<Edit />}
                   sx={{
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
+                    width: "100%",
+                    fontSize: 15,
+                    fontWeight: 500,
+                    p: "4px 10px",
+                    color: "onSurface",
+                    whiteSpace: "normal",
+                    wordBreak: "break-word",
+                    justifyContent: "space-between",
+                    ":hover": {
+                      bgcolor: "surface.2",
+                    },
+                    svg: {
+                      fontSize: "18px !important",
+                    },
                   }}
                 >
-                  {truncate(executionTitle || "", { length: 35 })}
-                </Typography>
-              </Button>
-            </Stack>
+                  <Stack
+                    direction={"row"}
+                    alignItems={"center"}
+                    justifyContent={"center"}
+                    gap={1}
+                  >
+                    <AvatarWithInitials title={executionTitle! ?? "Untitled"} />
+                    <Typography
+                      sx={{
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      {truncate(executionTitle || "", { length: 35 })}
+                    </Typography>
+                  </Stack>
+                </Button>
+              </Stack>
+              <Stack
+                direction={"row"}
+                alignItems={"center"}
+                gap={1}
+              >
+                <Tooltip
+                  title="Delete"
+                  enterDelay={1000}
+                  enterNextDelay={1000}
+                >
+                  <IconButton
+                    sx={actionBtnStyle}
+                    onClick={e => {
+                      e.stopPropagation();
+                      setExecutionPopup("delete");
+                    }}
+                  >
+                    <DeleteOutline />
+                  </IconButton>
+                </Tooltip>
+                <Divider
+                  orientation="vertical"
+                  sx={{ width: "1px", height: "25px", borderColor: "surface.5" }}
+                />
+                <Tooltip
+                  title="Save"
+                  enterDelay={1000}
+                  enterNextDelay={1000}
+                >
+                  <IconButton
+                    sx={actionBtnStyle}
+                    onClick={saveExecution}
+                  >
+                    {selectedExecution?.is_favorite ? <Bookmark /> : <BookmarkBorder />}
+                  </IconButton>
+                </Tooltip>
+                <Divider
+                  orientation="vertical"
+                  sx={{ width: "1px", height: "25px", borderColor: "surface.5" }}
+                />
+                {selectedExecution?.id && (
+                  <Tooltip
+                    title="Share"
+                    enterDelay={1000}
+                    enterNextDelay={1000}
+                  >
+                    <IconButton
+                      onClick={onOpenExport}
+                      sx={actionBtnStyle}
+                    >
+                      <ShareOutlined />
+                    </IconButton>
+                  </Tooltip>
+                )}
+                <IconButton
+                  sx={{
+                    ...actionBtnStyle,
+                    opacity: 0.45,
+                  }}
+                  onClick={close}
+                >
+                  <Close />
+                </IconButton>
+              </Stack>
+            </>
           ) : (
             <Stack
               direction={"row"}
               alignItems={"center"}
               gap={2}
             >
-              <Box
-                sx={{
-                  position: "relative",
-                  bgcolor: "surface.1",
-                  p: "4px",
-                  borderRadius: "8px",
-                  display: "flex",
-                }}
-              >
-                <Box
-                  sx={{
-                    position: "absolute",
-                    top: "50%",
-                    left: "50%",
-                    transform: "translate(-50%,-50%)",
-                    display: "flex",
-                  }}
-                >
-                  <LogoApp
-                    color={theme.palette.primary.main}
-                    width={14}
-                  />
-                </Box>
-                <CircularProgress
-                  size={32}
-                  sx={{
-                    color: "primary.main",
-                    ".MuiCircularProgress-circle": {
-                      strokeWidth: 2.5,
-                    },
-                  }}
-                />
-              </Box>
+              <ProgressLogo size="small" />
               <Typography
                 fontSize={15}
                 fontWeight={500}
                 color={"text.secondary"}
                 sx={{ opacity: 0.5 }}
               >
-                Generating in progress...
+                Generation in progress...
               </Typography>
             </Stack>
           )}
-          <Stack
-            direction={"row"}
-            alignItems={"center"}
-            gap={1}
-          >
-            <Tooltip
-              title="Delete"
-              enterDelay={1000}
-              enterNextDelay={1000}
-            >
-              <IconButton
-                sx={actionBtnStyle}
-                onClick={e => {
-                  e.stopPropagation();
-                  setPopup("delete");
-                }}
-              >
-                <DeleteOutline />
-              </IconButton>
-            </Tooltip>
-            <Divider
-              orientation="vertical"
-              sx={{ width: "1px", height: "25px", borderColor: "surface.5" }}
-            />
-            <Tooltip
-              title="Save"
-              enterDelay={1000}
-              enterNextDelay={1000}
-            >
-              <IconButton
-                sx={actionBtnStyle}
-                onClick={saveExecution}
-              >
-                {selectedExecution?.is_favorite ? <Bookmark /> : <BookmarkBorder />}
-              </IconButton>
-            </Tooltip>
-            <Divider
-              orientation="vertical"
-              sx={{ width: "1px", height: "25px", borderColor: "surface.5" }}
-            />
-            {selectedExecution?.id && (
-              <Tooltip
-                title="Share"
-                enterDelay={1000}
-                enterNextDelay={1000}
-              >
-                <IconButton
-                  onClick={onOpenExport}
-                  sx={actionBtnStyle}
-                >
-                  <ShareOutlined />
-                </IconButton>
-              </Tooltip>
-            )}
-            <IconButton
-              sx={{
-                ...actionBtnStyle,
-                opacity: 0.45,
-              }}
-              onClick={close}
-            >
-              <Close />
-            </IconButton>
-          </Stack>
         </Stack>
 
         {/* Small screen header */}
@@ -265,11 +237,12 @@ export const DisplayActions: React.FC<Props> = ({ selectedExecution, onOpenExpor
         </Box>
       </Box>
 
-      {(popup === "delete" || popup === "update") && (
+      {(executionPopup === "delete" || executionPopup === "update") && (
         <SparkSaveDeletePopup
-          type={popup}
+          type={executionPopup}
           activeExecution={selectedExecution}
-          onClose={() => setPopup(null)}
+          onClose={() => setExecutionPopup(null)}
+          onUpdate={execution => setExecutionTitle(execution.title)}
         />
       )}
     </Box>

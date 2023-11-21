@@ -1,14 +1,11 @@
-import { Avatar, Box, Card, IconButton, Stack, Tooltip, Typography } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 import { TemplatesExecutions } from "@/core/api/dto/templates";
 import { useDispatch } from "react-redux";
 import { setSelectedExecution } from "@/core/store/executionsSlice";
-import { Bookmark, BookmarkBorder } from "@mui/icons-material";
-import { isImageOutput, markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
-import { useEffect, useState } from "react";
-import { useAppSelector } from "@/hooks/useStore";
-import { useExecutionFavoriteMutation } from "@/core/api/executions";
+
 import useTruncate from "@/hooks/useTruncate";
 import AvatarWithInitials from "@/components/prompt/AvatarWithInitials";
+import { setChatFullScreenStatus } from "@/core/store/templatesSlice";
 
 interface CardExecutionProps {
   execution: TemplatesExecutions;
@@ -16,37 +13,17 @@ interface CardExecutionProps {
 
 export const CardExecution: React.FC<CardExecutionProps> = ({ execution }) => {
   const dispatch = useDispatch();
-  const [content, setContent] = useState<string>("");
-  const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
-  const isSelected = execution.id === selectedExecution?.id;
-  const [favoriteExecution] = useExecutionFavoriteMutation();
-
-  const getContent = async () => {
-    const prompt = execution.prompt_executions?.find(exec => !isImageOutput(exec.output));
-    const fetchedContent = await markdownToHTML(prompt?.output || "");
-    setContent(fetchedContent);
-  };
-  useEffect(() => {
-    getContent();
-  }, []);
 
   const handleClick = () => {
+    dispatch(setChatFullScreenStatus(false));
     dispatch(setSelectedExecution(execution));
-  };
-
-  const saveExecution = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    try {
-      await favoriteExecution(execution.id);
-    } catch (error) {
-      console.error(error);
-    }
   };
 
   const { truncate } = useTruncate();
 
   return (
     <Stack
+      onClick={handleClick}
       direction={"row"}
       gap={"8px"}
     >
