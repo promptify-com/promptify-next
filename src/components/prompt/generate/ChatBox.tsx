@@ -557,14 +557,13 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
   return (
     <Box
       width={isSidebarExpanded ? "100%" : "80%"}
+      height={"100%"}
       mx={"auto"}
-      height={"90%"}
-      position={"relative"}
     >
       <Stack
         gap={2}
         justifyContent={"flex-end"}
-        height={"100%"}
+        minHeight={"calc(100% - 72px)"}
         position={"relative"}
         overflow={"auto"}
       >
@@ -592,105 +591,99 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
         />
       </Stack>
       <Box
-        position="absolute"
-        bottom={20}
+        position="sticky"
+        bottom={0}
         left={0}
         right={0}
+        bgcolor={"surface.1"}
+        pb={"20px"}
       >
-        <Grid
-          sx={{
-            position: "absolute",
-            width: "100%",
-          }}
-        >
-          {currentUser?.id ? (
-            <Stack
-              pt={2}
-              direction={"row"}
-              width={"100%"}
-              alignItems={"center"}
-              justifyContent={"center"}
-              gap={"8px"}
+        {currentUser?.id ? (
+          <Stack
+            direction={"row"}
+            width={"100%"}
+            alignItems={"center"}
+            justifyContent={"center"}
+            gap={"8px"}
+          >
+            <Box
+              onClick={addNewPrompt}
+              mt={1}
+              sx={{
+                padding: "4px",
+                width: "30px",
+                height: "30px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                borderRadius: "8px",
+                bgcolor: "#375CA91A",
+                color: "#375CA9",
+                ":hover": {
+                  bgcolor: "#375CA9",
+                  color: "white",
+                },
+              }}
             >
-              <Box
-                onClick={addNewPrompt}
-                mt={1}
+              <Add
                 sx={{
-                  padding: "4px",
-                  width: "30px",
-                  height: "30px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  borderRadius: "8px",
-                  bgcolor: "#375CA91A",
-                  color: "#375CA9",
-                  ":hover": {
-                    bgcolor: "#375CA9",
-                    color: "white",
-                  },
+                  fontSize: 24,
                 }}
-              >
-                <Add
-                  sx={{
-                    fontSize: 24,
-                  }}
+              />
+            </Box>
+            <Box width={"90%"}>
+              <ChatInput
+                onSubmit={validateVary}
+                disabled={isValidatingAnswer || disableChatInput}
+                isValidating={isValidatingAnswer}
+                disabledButton={!disabledButton}
+              />
+            </Box>
+          </Stack>
+        ) : (
+          <Stack
+            direction={"column"}
+            alignItems={"center"}
+            justifyContent={"center"}
+            gap={1}
+            width={"100%"}
+            p={"16px 8px 16px 16px"}
+          >
+            <Button
+              onClick={() => {
+                router.push("/signin");
+              }}
+              variant={"contained"}
+              startIcon={
+                <LogoApp
+                  width={18}
+                  color="white"
                 />
-              </Box>
-              <Box width={"90%"}>
-                <ChatInput
-                  onSubmit={validateVary}
-                  disabled={isValidatingAnswer || disableChatInput}
-                  isValidating={isValidatingAnswer}
-                  disabledButton={!disabledButton}
-                />
-              </Box>
-            </Stack>
-          ) : (
-            <Stack
-              direction={"column"}
-              alignItems={"center"}
-              justifyContent={"center"}
-              gap={1}
-              width={"100%"}
-              p={"16px 8px 16px 16px"}
+              }
+              sx={{
+                flex: 1,
+                p: "10px 25px",
+                fontWeight: 500,
+                borderColor: "primary.main",
+                borderRadius: "999px",
+                bgcolor: "primary.main",
+                color: "onPrimary",
+                whiteSpace: "pre-line",
+                ":hover": {
+                  bgcolor: "surface.1",
+                  color: "primary.main",
+                },
+              }}
             >
-              <Button
-                onClick={() => {
-                  router.push("/signin");
-                }}
-                variant={"contained"}
-                startIcon={
-                  <LogoApp
-                    width={18}
-                    color="white"
-                  />
-                }
-                sx={{
-                  flex: 1,
-                  p: "10px 25px",
-                  fontWeight: 500,
-                  borderColor: "primary.main",
-                  borderRadius: "999px",
-                  bgcolor: "primary.main",
-                  color: "onPrimary",
-                  whiteSpace: "pre-line",
-                  ":hover": {
-                    bgcolor: "surface.1",
-                    color: "primary.main",
-                  },
-                }}
+              <Typography
+                ml={2}
+                color={"inherit"}
               >
-                <Typography
-                  ml={2}
-                  color={"inherit"}
-                >
-                  Sign in or Create an account
-                </Typography>
-              </Button>
-            </Stack>
-          )}
-        </Grid>
+                Sign in or Create an account
+              </Typography>
+            </Button>
+          </Stack>
+        )}
       </Box>
     </Box>
   );
