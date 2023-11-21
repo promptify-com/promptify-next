@@ -25,10 +25,11 @@ import { vary } from "@/common/helpers/varyValidator";
 import { parseMessageData } from "@/common/helpers/parseMessageData";
 import { useUploadFileMutation } from "@/core/api/uploadFile";
 import { uploadFileHelper } from "@/common/helpers/uploadFileHelper";
-import { setGeneratedExecution } from "@/core/store/executionsSlice";
+import { setGeneratedExecution, setSelectedExecution } from "@/core/store/executionsSlice";
 import { TemplateDetailsCard } from "./TemplateDetailsCard";
 import useChatBox from "@/hooks/useChatBox";
 import { randomId } from "@/common/helpers";
+import { getExecutionById } from "@/hooks/api/executions";
 
 interface Props {
   onError: (errMsg: string) => void;
@@ -62,6 +63,8 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
   const [varyOpen, setVaryOpen] = useState(false);
   const currentAnsweredInputs = useAppSelector(state => state.template.answeredInputs);
   const chatFullScreen = useAppSelector(state => state.template.isChatFullScreen);
+  const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
+
   const { preparePromptsData, prepareAndRemoveDuplicateInputs } = useChatBox();
 
   const abortController = useRef(new AbortController());
@@ -84,26 +87,27 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
     if (!startOver) {
       let allQuestions = questions.map(_q => _q.question);
 
-      welcomeMessage.push(
-        {
-          id: randomId(),
-          text: `Hi, ${
-            currentUser?.first_name ?? currentUser?.username ?? "There"
-          }! Ready to work on ${template?.title} ? ${allQuestions.join(" ")}`,
-          type: "text",
-          createdAt: createdAt,
-          fromUser: false,
-        },
-        {
-          id: randomId(),
-          text: "This is a list of information we need to execute this template:",
-          type: "form",
-          createdAt: createdAt,
-          fromUser: false,
-          noHeader: true,
-        },
-      );
+      welcomeMessage.push({
+        id: randomId(),
+        text: `Hi, ${
+          currentUser?.first_name ?? currentUser?.username ?? "There"
+        }! Ready to work on ${template?.title} ? ${allQuestions.join(" ")}`,
+        type: "text",
+        createdAt: createdAt,
+        fromUser: false,
+      });
     }
+
+    addToQueuedMessages([
+      {
+        id: randomId(),
+        text: "This is a list of information we need to execute this template:",
+        type: "form",
+        createdAt: createdAt,
+        fromUser: false,
+        noHeader: true,
+      },
+    ]);
 
     setMessages(welcomeMessage);
     setAnswers([]);
@@ -191,6 +195,34 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
       addToQueuedMessages(queuedMessages);
     }
   }, [isSimulaitonStreaming]);
+
+  useEffect(() => {
+    if (!isGenerating && generatedExecution?.data?.length) {
+      const allPromptsCompleted = generatedExecution.data.every(execData => execData.isCompleted);
+
+      if (allPromptsCompleted) {
+        selectGeneratedExecution();
+        dispatch(setGeneratedExecution(null));
+      }
+    }
+  }, [isGenerating, generatedExecution]);
+
+  const selectGeneratedExecution = async () => {
+    if (generatedExecution?.id) {
+      const _newExecution = await getExecutionById(generatedExecution.id);
+      dispatch(setSelectedExecution(_newExecution));
+
+      const generatedExecutionMessage: IMessage = {
+        id: randomId(),
+        text: "",
+        type: "spark",
+        createdAt: createdAt,
+        fromUser: false,
+        spark: _newExecution,
+      };
+      setMessages(prevMessages => prevMessages.concat(generatedExecutionMessage));
+    }
+  };
 
   const allRequiredQuestionsAnswered = (templateQuestions: UpdatedQuestionTemplate[], answers: IAnswer[]): boolean => {
     const requiredQuestionNames = templateQuestions

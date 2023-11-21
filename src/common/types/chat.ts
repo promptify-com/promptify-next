@@ -1,3 +1,5 @@
+import { TemplatesExecutions } from "@/core/api/dto/templates";
+
 export interface AnswerValidatorResponse {
   answer: string;
   feedback: string;
@@ -9,7 +11,8 @@ export interface IMessage {
   text: string;
   createdAt: string;
   fromUser: boolean;
-  type: "text" | "form";
+  type: "text" | "form" | "spark";
+  spark?: TemplatesExecutions;
   choices?: string[] | null;
   fileExtensions?: string[];
   startOver?: boolean;

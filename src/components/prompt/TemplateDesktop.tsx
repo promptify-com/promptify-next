@@ -98,6 +98,7 @@ export default function TemplateDesktop({ template, setErrorMessage }: TemplateD
             display={"block"}
           >
             <Display
+              mode="display"
               templateData={template}
               close={closeExecutionDisplay}
             />

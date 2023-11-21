@@ -43,6 +43,8 @@ export const AccordionMessage = ({
     setExpanded(isExpanded);
   };
 
+  const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
+
   return (
     <Accordion
       elevation={0}
@@ -58,6 +60,7 @@ export const AccordionMessage = ({
         onCancel={abortGenerating}
         mode={mode}
         changeMode={setMode}
+        executionTitle={selectedExecution?.title}
       />
 
       <AccordionDetails
@@ -89,7 +92,10 @@ export const AccordionMessage = ({
           >
             {mode === "execution" && (
               <>
-                <Display templateData={template} />
+                <Display
+                  mode="chat"
+                  templateData={template}
+                />
                 {!isGenerating && <Stack direction={"column"}></Stack>}
               </>
             )}

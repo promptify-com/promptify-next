@@ -12,11 +12,12 @@ import GeneratedExecutionFooter from "./GeneratedExecutionFooter";
 import { useAppSelector } from "@/hooks/useStore";
 
 interface Props {
+  mode: "chat" | "display";
   templateData: Templates;
-  close: () => void;
+  close?: () => void;
 }
 
-export const Display: React.FC<Props> = ({ templateData, close }) => {
+export const Display: React.FC<Props> = ({ mode, templateData, close }) => {
   const currentUser = useAppSelector(state => state.user.currentUser);
   const [firstLoad, setFirstLoad] = useState(true);
   const [openExportPopup, setOpenExportpopup] = useState(false);
@@ -67,6 +68,8 @@ export const Display: React.FC<Props> = ({ templateData, close }) => {
     return null;
   }, [generatedExecution]);
 
+  const isDisplayMode = mode === "display";
+
   return (
     <Grid
       display={"flex"}
@@ -76,19 +79,19 @@ export const Display: React.FC<Props> = ({ templateData, close }) => {
       <Box
         ref={containerRef}
         sx={{
-          bgcolor: "surface.3",
-          minHeight: { xs: "100vh", md: "calc(100vh - (90px + 68px))" },
+          bgcolor: isDisplayMode ? "surface.3" : "transparent",
+          minHeight: { xs: "100vh", md: isDisplayMode ? "calc(100vh - (90px + 68px))" : "auto" },
           height: "1px",
           position: "relative",
           pb: { xs: "70px", md: "0" },
         }}
       >
-        {currentUser?.id && (
+        {currentUser?.id && mode === "display" && (
           <>
             <DisplayActions
               selectedExecution={selectedExecution}
               onOpenExport={() => setOpenExportpopup(true)}
-              close={close}
+              close={close!}
             />
             {openExportPopup && activeExecution?.id && (
               <SparkExportPopup
@@ -101,7 +104,7 @@ export const Display: React.FC<Props> = ({ templateData, close }) => {
 
         <Box
           sx={{
-            height: "calc(100% - 67px)",
+            height: isDisplayMode ? "calc(100% - 67px)" : "auto",
             overflow: "auto",
             opacity: firstLoad ? 0.5 : 1,
             bgcolor: "surface.1",
@@ -110,7 +113,7 @@ export const Display: React.FC<Props> = ({ templateData, close }) => {
           }}
         >
           {executionIsLoading ? (
-            <ParagraphPlaceholder />
+            <ParagraphPlaceholder count={2} />
           ) : !selectedExecution && isGeneratedExecutionEmpty ? (
             <Typography
               sx={{
