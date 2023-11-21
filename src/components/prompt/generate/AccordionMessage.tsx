@@ -118,10 +118,9 @@ export const AccordionMessage = ({
                     top={"40%"}
                     right={"0"}
                   >
-                    <FeedbackThumbs execution={selectedExecution} />
-                    <Button
-                      onClick={() => {
-                        console.log("replay");
+                    <FeedbackThumbs
+                      execution={selectedExecution}
+                      onRetry={() => {
                         if (setMessages) {
                           const formMessage: IMessage = {
                             id: randomId(),
@@ -132,16 +131,6 @@ export const AccordionMessage = ({
                           };
                           setMessages(prevMessages => prevMessages.concat(formMessage));
                         }
-                      }}
-                      variant="text"
-                      startIcon={<Replay />}
-                      sx={{
-                        height: "22px",
-                        width: "22px",
-                        mt: "8px",
-                        ":hover": {
-                          bgcolor: "action.hover",
-                        },
                       }}
                     />
                   </Stack>

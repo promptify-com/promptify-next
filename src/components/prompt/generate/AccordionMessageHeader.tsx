@@ -389,7 +389,6 @@ function AccordionMessageHeader({
           activeExecution={selectedExecution}
           onClose={() => setExecutionPopup(null)}
           onUpdate={execution => setExecutionTitle(execution.title)}
-          setMessages={setMessages}
         />
       )}
 

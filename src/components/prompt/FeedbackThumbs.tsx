@@ -5,12 +5,14 @@ import MoodBadSharp from "@mui/icons-material/MoodBadSharp";
 import { useUpdateExecutionMutation } from "@/core/api/executions";
 import { FeedbackType, TemplatesExecutions } from "@/core/api/dto/templates";
 import { useState } from "react";
+import { Replay } from "@mui/icons-material";
 
 interface newFeedBack {
   execution: TemplatesExecutions;
+  onRetry: () => void;
 }
 
-export default function FeedbackThumbs({ execution }: newFeedBack) {
+export default function FeedbackThumbs({ execution, onRetry }: newFeedBack) {
   const [updateExecution] = useUpdateExecutionMutation();
   const [feedback, setFeedback] = useState(execution.feedback);
   const handleFeedback = (newFeedback: FeedbackType) => {
@@ -49,6 +51,18 @@ export default function FeedbackThumbs({ execution }: newFeedBack) {
         onClick={() => handleFeedback("DISLIKED")}
         variant="text"
         startIcon={<MoodBadSharp />}
+        sx={{
+          height: "22px",
+          p: "15px",
+          ":hover": {
+            bgcolor: "action.hover",
+          },
+        }}
+      />
+      <Button
+        onClick={onRetry}
+        variant="text"
+        startIcon={<Replay />}
         sx={{
           height: "22px",
           p: "15px",

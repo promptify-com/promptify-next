@@ -17,7 +17,7 @@ import { ChatInterface } from "./ChatInterface";
 import { ChatInput } from "./ChatInput";
 import { TemplateQuestions, Templates, UpdatedQuestionTemplate } from "@/core/api/dto/templates";
 import { IPromptInput, PromptLiveResponse, AnsweredInputType } from "@/common/types/prompt";
-import { setGeneratingStatus, updateExecutionData } from "@/core/store/templatesSlice";
+import { setAccordionChatMode, setGeneratingStatus, updateExecutionData } from "@/core/store/templatesSlice";
 import { IAnswer, IMessage } from "@/common/types/chat";
 import { useStopExecutionMutation } from "@/core/api/executions";
 import VaryModal from "./VaryModal";
@@ -282,6 +282,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
   const disabledButton = _inputs.length !== 0 || promptHasContent;
 
   const addNewPrompt = () => {
+    dispatch(setAccordionChatMode("input"));
     const nextBotMessage: IMessage = {
       id: randomId(),
       text: "Let's give it another go. ",

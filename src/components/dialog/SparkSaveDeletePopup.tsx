@@ -1,35 +1,27 @@
 import { Check, DeleteRounded } from "@mui/icons-material";
 import { Dialog, Grid, TextField, Typography } from "@mui/material";
 import { red } from "@mui/material/colors";
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import BaseButton from "../base/BaseButton";
 import { Execution, ExecutionTemplatePopupType } from "@/core/api/dto/templates";
 import { useDeleteExecutionMutation, useUpdateExecutionMutation } from "@/core/api/executions";
-import { IMessage } from "@/common/types/chat";
-import useTimestampConverter from "@/hooks/useTimestampConverter";
-import { randomId } from "@/common/helpers";
+
+import { useAppDispatch } from "@/hooks/useStore";
+import { setAccordionChatMode } from "@/core/store/templatesSlice";
 
 interface SparkSaveDeletePopupProps {
   type: ExecutionTemplatePopupType;
   onClose: () => void;
   activeExecution: Execution | null;
   onUpdate?: (execution: Execution) => void;
-  setMessages?: Dispatch<SetStateAction<IMessage[]>>;
 }
 
-export const SparkSaveDeletePopup = ({
-  type,
-  activeExecution,
-  onClose,
-  onUpdate,
-  setMessages,
-}: SparkSaveDeletePopupProps) => {
+export const SparkSaveDeletePopup = ({ type, activeExecution, onClose, onUpdate }: SparkSaveDeletePopupProps) => {
   const [updateExecution, { isError }] = useUpdateExecutionMutation();
   const [deleteExecution, { isError: isDeleteExecutionError }] = useDeleteExecutionMutation();
   const [executionTitle, setExecutionTitle] = useState("");
 
-  const { convertedTimestamp } = useTimestampConverter();
-  const createdAt = convertedTimestamp(new Date());
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (activeExecution && activeExecution.title !== "") {
@@ -49,17 +41,9 @@ export const SparkSaveDeletePopup = ({
 
   const handleDeleteExecution = () => {
     if (activeExecution) {
+      dispatch(setAccordionChatMode("input"));
       deleteExecution(activeExecution.id);
-      if (setMessages) {
-        const formMessage: IMessage = {
-          id: randomId(),
-          text: "",
-          type: "form",
-          createdAt: createdAt,
-          fromUser: false,
-        };
-        setMessages(prevMessages => prevMessages.concat(formMessage));
-      }
+
       if (!isDeleteExecutionError) {
         onClose();
       }
