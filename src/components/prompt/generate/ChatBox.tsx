@@ -19,7 +19,7 @@ import { TemplateQuestions, Templates, UpdatedQuestionTemplate } from "@/core/ap
 import { IPromptInput, PromptLiveResponse, AnsweredInputType } from "@/common/types/prompt";
 import { setAccordionChatMode, setGeneratingStatus, updateExecutionData } from "@/core/store/templatesSlice";
 import { IAnswer, IMessage } from "@/common/types/chat";
-import { useStopExecutionMutation } from "@/core/api/executions";
+import { executionsApi, useStopExecutionMutation } from "@/core/api/executions";
 import VaryModal from "./VaryModal";
 import { vary } from "@/common/helpers/varyValidator";
 import { parseMessageData } from "@/common/helpers/parseMessageData";
@@ -204,6 +204,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
       if (allPromptsCompleted) {
         selectGeneratedExecution();
         dispatch(setGeneratedExecution(null));
+        dispatch(executionsApi.util.invalidateTags(["Executions"]));
       }
     }
   }, [isGenerating, generatedExecution]);
