@@ -3,19 +3,20 @@ import { Box, Button, Divider, Stack, Typography } from "@mui/material";
 import { Message } from "./Message";
 import { IAnswer, IMessage } from "@/common/types/chat";
 import { TemplateDetailsCard } from "./TemplateDetailsCard";
-import { Templates, TemplatesExecutions, UpdatedQuestionTemplate } from "@/core/api/dto/templates";
+import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { useAppSelector } from "@/hooks/useStore";
 import { InputsForm } from "./Inputsform";
 import { CardExecution } from "@/components/common/cards/CardExecution";
 import FeedbackThumbs from "../FeedbackThumbs";
 import { Replay } from "@mui/icons-material";
+import { IPromptInputQuestion } from "@/common/types/prompt";
 
 interface Props {
   template: Templates;
   messages: IMessage[];
-  onChange: (value: string | File, question: UpdatedQuestionTemplate) => void;
+  onChange: (value: string | File, question: IPromptInputQuestion) => void;
   setIsSimulationStreaming: Dispatch<SetStateAction<boolean>>;
-  questions: UpdatedQuestionTemplate[];
+  inputs: IPromptInputQuestion[];
   answers: IAnswer[];
   regenerate: (execution: TemplatesExecutions) => void;
 }
@@ -25,7 +26,7 @@ export const ChatInterface = ({
   messages,
   onChange,
   setIsSimulationStreaming,
-  questions,
+  inputs,
   answers,
   regenerate,
 }: Props) => {
@@ -96,7 +97,7 @@ export const ChatInterface = ({
                 mt={msg.noHeader ? -2.5 : 0}
               >
                 <InputsForm
-                  questions={questions}
+                  inputs={inputs}
                   answers={answers}
                   onChange={onChange}
                   setIsSimulationStreaming={setIsSimulationStreaming}

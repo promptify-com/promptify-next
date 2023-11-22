@@ -1,18 +1,14 @@
 import { getInputsFromString } from "@/common/helpers/getInputsFromString";
 import type { IAnswer } from "@/common/types/chat";
 import type { IPromptInput } from "@/common/types/prompt";
-import type { Prompts, ResPrompt } from "@/core/api/dto/prompts";
+import type { PromptParams, Prompts, ResPrompt } from "@/core/api/dto/prompts";
 
 export default function useChatBox() {
   const prepareAndRemoveDuplicateInputs = (templatePrompts: Prompts[]) => {
     const inputs: IPromptInput[] = [];
-    let promptHasContent = false;
+    const params: PromptParams[] = [];
 
     templatePrompts.forEach(prompt => {
-      if (prompt.content) {
-        promptHasContent = true;
-      }
-
       // remove duplicate inputs
       const _inputs = getInputsFromString(prompt.content).filter(
         _input => !inputs.some(__input => __input.name === _input.name),
@@ -29,11 +25,12 @@ export default function useChatBox() {
           return _input;
         }),
       );
+      params.push(...prompt.parameters);
     });
 
     return {
       inputs,
-      promptHasContent,
+      params,
     };
   };
   const preparePromptsData = (uploadedFiles: Map<string, string>, answers: IAnswer[], templatePrompts: Prompts[]) => {

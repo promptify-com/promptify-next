@@ -27,6 +27,17 @@ export interface IPromptInput {
   prompt?: number;
 }
 
+export interface IPromptInputQuestion {
+  type: InputType;
+  name: string;
+  fullName: string;
+  required: boolean;
+  question: string;
+  choices?: string[];
+  fileExtensions?: string[];
+  prompt: number;
+}
+
 export type FormMode = "input" | "chat";
 
 export type AnsweredInputType = {

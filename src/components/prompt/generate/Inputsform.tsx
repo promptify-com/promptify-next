@@ -1,25 +1,24 @@
 import React, { Dispatch, SetStateAction, useRef, useState } from "react";
 import { Button, Fade, InputLabel, MenuItem, Select, Stack, TextField, Tooltip } from "@mui/material";
 import { IAnswer } from "@/common/types/chat";
-import { UpdatedQuestionTemplate } from "@/core/api/dto/templates";
 import BaseButton from "@/components/base/BaseButton";
 import CodeFieldModal from "@/components/modals/CodeFieldModal";
 import { useAppSelector } from "@/hooks/useStore";
 import { getFileTypeExtensionsAsString } from "@/common/helpers/uploadFileHelper";
-import { FileType } from "@/common/types/prompt";
+import { FileType, IPromptInputQuestion } from "@/common/types/prompt";
 import { Edit, Error } from "@mui/icons-material";
 interface Props {
-  questions: UpdatedQuestionTemplate[];
+  inputs: IPromptInputQuestion[];
   answers: IAnswer[];
-  onChange: (value: string | File, question: UpdatedQuestionTemplate) => void;
+  onChange: (value: string | File, question: IPromptInputQuestion) => void;
   setIsSimulationStreaming: Dispatch<SetStateAction<boolean>>;
   onScrollToBottom: () => void;
 }
 
-export const InputsForm = ({ questions, answers, onChange, setIsSimulationStreaming, onScrollToBottom }: Props) => {
+export const InputsForm = ({ inputs, answers, onChange, setIsSimulationStreaming, onScrollToBottom }: Props) => {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const [codeFieldOpen, setCodeFieldOpen] = useState(false);
-  const fieldRefs = useRef<(HTMLInputElement | null)[]>(Array(questions.length).fill(null));
+  const fieldRefs = useRef<(HTMLInputElement | null)[]>(Array(inputs.length).fill(null));
 
   const handleInputsShown = () => {
     setIsSimulationStreaming(false);
@@ -34,8 +33,9 @@ export const InputsForm = ({ questions, answers, onChange, setIsSimulationStream
       onTransitionEnd={handleInputsShown}
     >
       <Stack gap={1}>
-        {questions.map((question, idx) => {
-          const answer = answers.find(answer => answer.inputName === question.name);
+        {inputs.map((input, idx) => {
+          const { name, required, question, fullName, type, choices, fileExtensions } = input;
+          const answer = answers.find(answer => answer.inputName === name);
           const value = answer?.answer || "";
           const isFile = value instanceof File;
           const dynamicWidth = () => {
@@ -44,7 +44,7 @@ export const InputsForm = ({ questions, answers, onChange, setIsSimulationStream
             textMeasureElement.style.fontWeight = "400";
             textMeasureElement.style.position = "absolute";
             textMeasureElement.style.visibility = "hidden";
-            textMeasureElement.innerHTML = value.toString() || (question.required ? "Required" : "Optional");
+            textMeasureElement.innerHTML = value.toString() || (required ? "Required" : "Optional");
             document.body.appendChild(textMeasureElement);
             const width = textMeasureElement.offsetWidth;
             document.body.removeChild(textMeasureElement);
@@ -66,9 +66,9 @@ export const InputsForm = ({ questions, answers, onChange, setIsSimulationStream
                   overflow: "visible",
                 }}
               >
-                {question.fullName} :
+                {fullName} :
               </InputLabel>
-              {question.type === "code" ? (
+              {type === "code" ? (
                 <>
                   <BaseButton
                     disabled={isGenerating}
@@ -96,11 +96,11 @@ export const InputsForm = ({ questions, answers, onChange, setIsSimulationStream
                       open
                       setOpen={setCodeFieldOpen}
                       value={value as string}
-                      onSubmit={val => onChange(val, question)}
+                      onSubmit={val => onChange(val, input)}
                     />
                   )}
                 </>
-              ) : question.type === "choices" ? (
+              ) : type === "choices" ? (
                 <Select
                   disabled={isGenerating}
                   sx={{
@@ -120,7 +120,7 @@ export const InputsForm = ({ questions, answers, onChange, setIsSimulationStream
                     sx: { ".MuiMenuItem-root": { fontSize: 14, fontWeight: 400 } },
                   }}
                   value={value}
-                  onChange={e => onChange(e.target.value as string, question)}
+                  onChange={e => onChange(e.target.value as string, input)}
                   displayEmpty
                 >
                   <MenuItem
@@ -129,7 +129,7 @@ export const InputsForm = ({ questions, answers, onChange, setIsSimulationStream
                   >
                     Select an option
                   </MenuItem>
-                  {question.choices?.map(choice => (
+                  {choices?.map(choice => (
                     <MenuItem
                       key={choice}
                       value={choice}
@@ -139,7 +139,7 @@ export const InputsForm = ({ questions, answers, onChange, setIsSimulationStream
                     </MenuItem>
                   ))}
                 </Select>
-              ) : question.type === "file" ? (
+              ) : type === "file" ? (
                 <Stack
                   direction={"row"}
                   alignItems={"center"}
@@ -160,7 +160,7 @@ export const InputsForm = ({ questions, answers, onChange, setIsSimulationStream
                     {isFile ? value.name : "Upload file"}
                     <input
                       hidden
-                      accept={getFileTypeExtensionsAsString(question.fileExtensions as FileType[])}
+                      accept={getFileTypeExtensionsAsString(fileExtensions as FileType[])}
                       type="file"
                       style={{
                         clip: "rect(0 0 0 0)",
@@ -173,7 +173,7 @@ export const InputsForm = ({ questions, answers, onChange, setIsSimulationStream
                       }}
                       onChange={e => {
                         if (e.target.files && e.target.files.length > 0) {
-                          onChange(e.target.files[0], question);
+                          onChange(e.target.files[0], input);
                         }
                       }}
                     />
@@ -201,10 +201,10 @@ export const InputsForm = ({ questions, answers, onChange, setIsSimulationStream
                   <TextField
                     inputRef={ref => (fieldRefs.current[idx] = ref)}
                     disabled={isGenerating}
-                    placeholder={question.required ? "Required" : "Optional"}
-                    type={question.type}
+                    placeholder={required ? "Required" : "Optional"}
+                    type={type}
                     value={value}
-                    onChange={e => onChange(e.target.value, question)}
+                    onChange={e => onChange(e.target.value, input)}
                     sx={{
                       width: dynamicWidth(),
                       p: 0,
