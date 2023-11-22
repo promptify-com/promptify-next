@@ -283,7 +283,9 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
 
   const addNewPrompt = ({ startOver = false }: { startOver: boolean }) => {
     dispatch(setAccordionChatMode("input"));
-    setAnswers([]);
+    if (startOver) {
+      setAnswers([]);
+    }
 
     let allQuestions = templateQuestions.map(_q => _q.question);
 
