@@ -10,6 +10,7 @@ import { CardExecution } from "@/components/common/cards/CardExecution";
 import FeedbackThumbs from "../FeedbackThumbs";
 import { Replay } from "@mui/icons-material";
 import { IPromptInputQuestion } from "@/common/types/prompt";
+import { PromptParams } from "@/core/api/dto/prompts";
 
 interface Props {
   template: Templates;
@@ -17,6 +18,7 @@ interface Props {
   onChange: (value: string | File, question: IPromptInputQuestion) => void;
   setIsSimulationStreaming: Dispatch<SetStateAction<boolean>>;
   inputs: IPromptInputQuestion[];
+  params: PromptParams[];
   answers: IAnswer[];
   regenerate: (execution: TemplatesExecutions) => void;
 }
@@ -27,6 +29,7 @@ export const ChatInterface = ({
   onChange,
   setIsSimulationStreaming,
   inputs,
+  params,
   answers,
   regenerate,
 }: Props) => {
@@ -98,6 +101,7 @@ export const ChatInterface = ({
               >
                 <InputsForm
                   inputs={inputs}
+                  params={params}
                   answers={answers}
                   onChange={onChange}
                   setIsSimulationStreaming={setIsSimulationStreaming}

@@ -3,7 +3,7 @@ import Grid from "@mui/material/Grid";
 import { DetailsCardMini } from "./DetailsCardMini";
 import { DetailsCard } from "./DetailsCard";
 import { Details } from "./Details";
-import ChatMode from "./generate/ChatBox";
+import ChatBox from "./ChatBox";
 import { Display } from "./Display";
 import BottomTabs from "./BottomTabs";
 import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
@@ -78,7 +78,7 @@ export default function TemplateMobile({ template, hashedExecution, setErrorMess
 
       {displayChatBox ? (
         <Grid>
-          <ChatMode
+          <ChatBox
             onError={setErrorMessage}
             key={template?.id}
             template={template}

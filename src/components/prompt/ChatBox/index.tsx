@@ -27,7 +27,7 @@ interface Props {
   template: Templates;
 }
 
-const ChatMode: React.FC<Props> = ({ onError, template }) => {
+const ChatBox: React.FC<Props> = ({ onError, template }) => {
   const token = useToken();
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -609,6 +609,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
       >
         <ChatInterface
           inputs={_inputs}
+          params={_params}
           answers={answers}
           template={template}
           messages={messages}
@@ -676,4 +677,4 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
   );
 };
 
-export default memo(ChatMode);
+export default memo(ChatBox);

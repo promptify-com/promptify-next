@@ -7,15 +7,25 @@ import { useAppSelector } from "@/hooks/useStore";
 import { getFileTypeExtensionsAsString } from "@/common/helpers/uploadFileHelper";
 import { FileType, IPromptInputQuestion } from "@/common/types/prompt";
 import { Edit, Error } from "@mui/icons-material";
+import { PromptParams } from "@/core/api/dto/prompts";
+
 interface Props {
   inputs: IPromptInputQuestion[];
+  params: PromptParams[];
   answers: IAnswer[];
   onChange: (value: string | File, question: IPromptInputQuestion) => void;
   setIsSimulationStreaming: Dispatch<SetStateAction<boolean>>;
   onScrollToBottom: () => void;
 }
 
-export const InputsForm = ({ inputs, answers, onChange, setIsSimulationStreaming, onScrollToBottom }: Props) => {
+export const InputsForm = ({
+  inputs,
+  params,
+  answers,
+  onChange,
+  setIsSimulationStreaming,
+  onScrollToBottom,
+}: Props) => {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const [codeFieldOpen, setCodeFieldOpen] = useState(false);
   const fieldRefs = useRef<(HTMLInputElement | null)[]>(Array(inputs.length).fill(null));
@@ -34,7 +44,7 @@ export const InputsForm = ({ inputs, answers, onChange, setIsSimulationStreaming
     >
       <Stack gap={1}>
         {inputs.map((input, idx) => {
-          const { name, required, question, fullName, type, choices, fileExtensions } = input;
+          const { name, required, fullName, type, choices, fileExtensions } = input;
           const answer = answers.find(answer => answer.inputName === name);
           const value = answer?.answer || "";
           const isFile = value instanceof File;
@@ -89,7 +99,7 @@ export const InputsForm = ({ inputs, answers, onChange, setIsSimulationStreaming
                       },
                     }}
                   >
-                    {!isFile && value ? value : "Insert Code"}
+                    {!isFile && value ? "Code inserted" : "Insert code"}
                   </BaseButton>
                   {codeFieldOpen && (
                     <CodeFieldModal

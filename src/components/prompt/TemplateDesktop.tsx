@@ -4,7 +4,7 @@ import Stack from "@mui/material/Stack";
 import { Display } from "./Display";
 import type { Templates } from "@/core/api/dto/templates";
 import ClientOnly from "../base/ClientOnly";
-import ChatMode from "./generate/ChatBox";
+import ChatBox from "./ChatBox";
 import Header from "./Header";
 import { Sidebar } from "./Sidebar";
 import { useAppSelector } from "@/hooks/useStore";
@@ -90,7 +90,7 @@ export default function TemplateDesktop({ template, setErrorMessage }: TemplateD
           }}
         >
           <ClientOnly>
-            <ChatMode
+            <ChatBox
               onError={setErrorMessage}
               template={template}
             />
