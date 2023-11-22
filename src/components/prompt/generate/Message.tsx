@@ -102,7 +102,7 @@ export const Message = ({ message, setIsSimulationStreaming, onScrollToBottom }:
                 opacity: 0.5,
               }}
             >
-              {createdAt}
+              {timeAgo(createdAt)}
             </Typography>
           </Grid>
         )}

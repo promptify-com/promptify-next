@@ -9,7 +9,7 @@ export interface AnswerValidatorResponse {
 export interface IMessage {
   id: number;
   text: string;
-  createdAt: string;
+  createdAt: Date;
   fromUser: boolean;
   type: "text" | "form" | "spark";
   choices?: string[] | null;

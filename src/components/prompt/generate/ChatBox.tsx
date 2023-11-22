@@ -35,8 +35,6 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
   const currentUser = useAppSelector(state => state.user.currentUser);
   const [stopExecution] = useStopExecutionMutation();
   const [uploadFile] = useUploadFileMutation();
-  const { convertedTimestamp } = useTimestampConverter();
-  const createdAt = convertedTimestamp(new Date(new Date().getTime() + 2000));
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
   const [showGenerateButton, setShowGenerateButton] = useState(false);
@@ -65,7 +63,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
       id: randomId(),
       text: `Hi, ${currentUser?.first_name ?? currentUser?.username ?? "There"}! Ready to work on ${template?.title} ?`,
       type: "text",
-      createdAt: createdAt,
+      createdAt: new Date(),
       fromUser: false,
     };
 
@@ -77,7 +75,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
           id: randomId(),
           text: allQuestions.join(" "),
           type: "text",
-          createdAt: createdAt,
+          createdAt: new Date(),
           fromUser: false,
           noHeader: true,
         },
@@ -85,7 +83,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
           id: randomId(),
           text: "",
           type: "form",
-          createdAt: createdAt,
+          createdAt: new Date(),
           fromUser: false,
           noHeader: true,
         },
@@ -93,7 +91,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
           id: randomId(),
           text: "This is a list of information we need to execute this template:",
           type: "text",
-          createdAt: createdAt,
+          createdAt: new Date(),
           fromUser: false,
           noHeader: true,
         },
@@ -206,7 +204,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
         id: randomId(),
         text: "",
         type: "spark",
-        createdAt: createdAt,
+        createdAt: new Date(),
         fromUser: false,
         spark: _newExecution,
       };
@@ -242,7 +240,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
         id: randomId(),
         text: variation,
         type: "text",
-        createdAt: createdAt,
+        createdAt: new Date(),
         fromUser: true,
       };
       setMessages(prevMessages => prevMessages.concat(userMessage));
@@ -301,7 +299,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
         id: randomId(),
         text: `Ok!${isReady} I have prepared the incoming parameters, please check!`,
         type: "text",
-        createdAt: createdAt,
+        createdAt: new Date(),
         fromUser: false,
       };
 
@@ -310,7 +308,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
           id: randomId(),
           text: "",
           type: "form",
-          createdAt: createdAt,
+          createdAt: new Date(),
           fromUser: false,
           noHeader: true,
         },
@@ -384,7 +382,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
         id: randomId(),
         text: `Please enter valid answers for "${invalids.join(", ")}"`,
         type: "form",
-        createdAt: createdAt,
+        createdAt: new Date(),
         fromUser: false,
       };
 
@@ -430,7 +428,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
       id: randomId(),
       text: `Ok!${isReady} I have prepared the incoming parameters, please check!`,
       type: "text",
-      createdAt: createdAt,
+      createdAt: new Date(),
       fromUser: false,
     };
 
@@ -439,7 +437,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
         id: randomId(),
         text: "",
         type: "form",
-        createdAt: createdAt,
+        createdAt: new Date(),
         fromUser: false,
         noHeader: true,
       },
