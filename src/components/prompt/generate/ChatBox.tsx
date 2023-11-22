@@ -13,7 +13,7 @@ import { TemplateQuestions, Templates, TemplatesExecutions, UpdatedQuestionTempl
 import { IPromptInput, PromptLiveResponse, AnsweredInputType } from "@/common/types/prompt";
 import { setChatFullScreenStatus, setGeneratingStatus, updateExecutionData } from "@/core/store/templatesSlice";
 import { IAnswer, IMessage } from "@/common/types/chat";
-import { useStopExecutionMutation } from "@/core/api/executions";
+import { executionsApi, useStopExecutionMutation } from "@/core/api/executions";
 import { vary } from "@/common/helpers/varyValidator";
 import { parseMessageData } from "@/common/helpers/parseMessageData";
 import { useUploadFileMutation } from "@/core/api/uploadFile";
@@ -191,6 +191,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
       if (allPromptsCompleted) {
         selectGeneratedExecution();
         dispatch(setGeneratedExecution(null));
+        dispatch(executionsApi.util.invalidateTags(["Executions"]));
       }
     }
   }, [isGenerating, generatedExecution]);
