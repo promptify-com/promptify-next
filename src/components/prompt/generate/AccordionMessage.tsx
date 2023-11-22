@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 
 import Stack from "@mui/material/Stack";
 import Accordion from "@mui/material/Accordion";
@@ -27,7 +27,6 @@ interface Props {
   setMessages: Dispatch<SetStateAction<IMessage[]>>;
   onScrollToBottom: () => void;
   setIsSimulationStreaming: Dispatch<SetStateAction<boolean>>;
-  adjustScroll: (height: number) => void;
 }
 
 export const AccordionMessage = ({
@@ -42,7 +41,6 @@ export const AccordionMessage = ({
   setMessages,
   onScrollToBottom,
   setIsSimulationStreaming,
-  adjustScroll,
 }: Props) => {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const mode = useAppSelector(state => state.template.accordionChatMode);
@@ -52,19 +50,11 @@ export const AccordionMessage = ({
 
   const handleExpandChange = (isExpanded: boolean) => {
     setExpanded(isExpanded);
-
-    setTimeout(() => {
-      if (accordionRef.current) {
-        const accordionHeight = isExpanded ? accordionRef.current.clientHeight : 0;
-        console.log("Accordion Height:", accordionHeight);
-        adjustScroll(accordionHeight);
-      }
-    }, 300);
   };
 
   const handleShowAccordion = () => {
     setIsSimulationStreaming(false);
-    onScrollToBottom();
+    // onScrollToBottom();
   };
 
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
@@ -81,6 +71,9 @@ export const AccordionMessage = ({
         elevation={0}
         expanded={expanded}
         onChange={(_e, isExpanded) => handleExpandChange(isExpanded)}
+        sx={{
+          mb: 4,
+        }}
       >
         <AccordionMessageHeader
           template={template}

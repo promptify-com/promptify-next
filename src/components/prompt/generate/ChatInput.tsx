@@ -7,6 +7,7 @@ import MessageSender from "./MessageSender";
 import { ProgressLogo } from "@/components/common/ProgressLogo";
 import Box from "@mui/material/Box";
 import Add from "@mui/icons-material/Add";
+import { useAppSelector } from "@/hooks/useStore";
 
 interface ChatInputProps {
   onSubmit: (value: string) => void;
@@ -18,6 +19,7 @@ interface ChatInputProps {
 
 export const ChatInput = ({ onSubmit, disabled, isValidating, disabledButton, addNewPrompt }: ChatInputProps) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const mode = useAppSelector(state => state.template.accordionChatMode);
 
   return (
     <Grid
@@ -62,30 +64,33 @@ export const ChatInput = ({ onSubmit, disabled, isValidating, disabledButton, ad
         gap={"8px"}
         alignItems={"center"}
       >
-        <Box
-          onClick={addNewPrompt}
-          sx={{
-            padding: "4px",
-            width: "30px",
-            height: "30px",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            borderRadius: "8px",
-            bgcolor: "#375CA91A",
-            color: "#375CA9",
-            ":hover": {
-              bgcolor: "#375CA9",
-              color: "white",
-            },
-          }}
-        >
-          <Add
+        {mode === "execution" && (
+          <Box
+            onClick={addNewPrompt}
             sx={{
-              fontSize: 24,
+              padding: "4px",
+              width: "30px",
+              height: "30px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              borderRadius: "8px",
+              bgcolor: "#375CA91A",
+              color: "#375CA9",
+              ":hover": {
+                bgcolor: "#375CA9",
+                color: "white",
+              },
             }}
-          />
-        </Box>
+          >
+            <Add
+              sx={{
+                fontSize: 24,
+              }}
+            />
+          </Box>
+        )}
+
         <Box flex={1}>
           <MessageSender
             onSubmit={onSubmit}

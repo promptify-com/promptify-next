@@ -66,14 +66,6 @@ export const ChatInterface = ({
     .reverse()
     .find(msg => msg.type === "form");
 
-  const adjustScrollForAccordion = (accordionHeight: number) => {
-    if (messagesContainerRef.current) {
-      const newScrollTop =
-        messagesContainerRef.current.scrollHeight - messagesContainerRef.current.clientHeight + accordionHeight;
-      messagesContainerRef.current.scrollTop = newScrollTop;
-    }
-  };
-
   return (
     <Stack
       ref={messagesContainerRef}
@@ -133,7 +125,6 @@ export const ChatInterface = ({
                   onGenerate={onGenerate}
                   onScrollToBottom={scrollToBottom}
                   setIsSimulationStreaming={setIsSimulaitonStreaming}
-                  adjustScroll={adjustScrollForAccordion}
                 />
               </Box>
             )}

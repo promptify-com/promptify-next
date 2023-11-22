@@ -281,14 +281,19 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
 
   const disabledButton = _inputs.length !== 0 || promptHasContent;
 
-  const addNewPrompt = () => {
+  const addNewPrompt = ({ startOver = false }: { startOver: boolean }) => {
     dispatch(setAccordionChatMode("input"));
-    const isReady = allRequiredQuestionsAnswered(templateQuestions, answers)
-      ? " We are ready to create a new document."
-      : "";
+    setAnswers([]);
+
+    let allQuestions = templateQuestions.map(_q => _q.question);
+
+    const text =
+      allRequiredQuestionsAnswered(templateQuestions, answers) && !startOver
+        ? `Good! Let’s imagine something like this! Prepared request for you, please check input information and we are ready to start! `
+        : `Let's give this another try! ${allQuestions.join(" ")}?`;
     const botMessage: IMessage = {
       id: randomId(),
-      text: `Ok!${isReady} I have prepared the incoming parameters, please check!`,
+      text,
       type: "text",
       createdAt: createdAt,
       fromUser: false,
@@ -357,7 +362,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
       setAnswers(newAnswers);
       setIsValidatingAnswer(false);
 
-      addNewPrompt();
+      addNewPrompt({ startOver: false });
     }
   };
 
@@ -616,14 +621,13 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
   return (
     <Box
       width={isSidebarExpanded ? "100%" : "80%"}
-      height={"100%"}
       mx={"auto"}
+      height={"100%"}
     >
       <Stack
-        gap={2}
         justifyContent={"flex-end"}
-        minHeight={"calc(100% - 72px)"}
-        position={"relative"}
+        height={"calc(100% - 20px)"}
+        gap={2}
       >
         <ChatInterface
           template={template}
@@ -638,40 +642,14 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
           onAbort={abortConnection}
           onClear={() => setAnswers([])}
         />
-        <VaryModal
-          open={varyOpen}
-          setOpen={setVaryOpen}
-          onSubmit={variationTxt => validateVary(variationTxt)}
-        />
-      </Stack>
-      <Box
-        position="sticky"
-        bottom={0}
-        left={0}
-        right={0}
-        bgcolor={"surface.1"}
-        pb={"20px"}
-      >
         {currentUser?.id ? (
-          <Stack
-            flex={1}
-            direction={"row"}
-            width={"100%"}
-            alignItems={"center"}
-            justifyContent={"center"}
-            gap={"8px"}
-            sx={{
-              zIndex: 555,
-            }}
-          >
-            <ChatInput
-              addNewPrompt={addNewPrompt}
-              onSubmit={validateVary}
-              disabled={isValidatingAnswer || disableChatInput}
-              isValidating={isValidatingAnswer}
-              disabledButton={!disabledButton}
-            />
-          </Stack>
+          <ChatInput
+            addNewPrompt={() => addNewPrompt({ startOver: true })}
+            onSubmit={validateVary}
+            disabled={isValidatingAnswer || disableChatInput}
+            isValidating={isValidatingAnswer}
+            disabledButton={!disabledButton}
+          />
         ) : (
           <Stack
             direction={"column"}
@@ -716,7 +694,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
             </Button>
           </Stack>
         )}
-      </Box>
+      </Stack>
     </Box>
   );
 };
