@@ -42,7 +42,6 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(state => state.user.currentUser);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
-  const chatFullScreen = useAppSelector(state => state.template.isChatFullScreen);
 
   const isSidebarExpanded = useAppSelector(state => state.template.isSidebarExpanded);
   const [stopExecution] = useStopExecutionMutation();
@@ -624,45 +623,20 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
         justifyContent={"flex-end"}
         minHeight={"calc(100% - 72px)"}
         position={"relative"}
-        overflow={"auto"}
       >
-        <Stack
-          sx={{
-            overflow: "auto",
-            overscrollBehavior: "contain",
-            "&::-webkit-scrollbar": {
-              width: "6px",
-              p: 1,
-              backgroundColor: "surface.5",
-            },
-            "&::-webkit-scrollbar-track": {
-              webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
-            },
-            "&::-webkit-scrollbar-thumb": {
-              backgroundColor: "surface.1",
-              outline: "1px solid surface.1",
-              borderRadius: "10px",
-            },
-          }}
-        >
-          <Stack mx={"40px"}>
-            <TemplateDetailsCard template={template} />
-
-            <ChatInterface
-              template={template}
-              messages={messages}
-              setMessages={setMessages}
-              setIsSimulaitonStreaming={setIsSimulaitonStreaming}
-              questions={templateQuestions}
-              answers={answers}
-              showGenerate={showGenerateButton}
-              onChange={handleUserInput}
-              onGenerate={generateExecutionHandler}
-              onAbort={abortConnection}
-              onClear={() => setAnswers([])}
-            />
-          </Stack>
-        </Stack>
+        <ChatInterface
+          template={template}
+          messages={messages}
+          setMessages={setMessages}
+          setIsSimulaitonStreaming={setIsSimulaitonStreaming}
+          questions={templateQuestions}
+          answers={answers}
+          showGenerate={showGenerateButton}
+          onChange={handleUserInput}
+          onGenerate={generateExecutionHandler}
+          onAbort={abortConnection}
+          onClear={() => setAnswers([])}
+        />
         <VaryModal
           open={varyOpen}
           setOpen={setVaryOpen}
@@ -679,6 +653,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
       >
         {currentUser?.id ? (
           <Stack
+            flex={1}
             direction={"row"}
             width={"100%"}
             alignItems={"center"}
@@ -688,39 +663,13 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
               zIndex: 555,
             }}
           >
-            <Box
-              onClick={addNewPrompt}
-              mt={1}
-              sx={{
-                padding: "4px",
-                width: "30px",
-                height: "30px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                borderRadius: "8px",
-                bgcolor: "#375CA91A",
-                color: "#375CA9",
-                ":hover": {
-                  bgcolor: "#375CA9",
-                  color: "white",
-                },
-              }}
-            >
-              <Add
-                sx={{
-                  fontSize: 24,
-                }}
-              />
-            </Box>
-            <Box width={"90%"}>
-              <ChatInput
-                onSubmit={validateVary}
-                disabled={isValidatingAnswer || disableChatInput}
-                isValidating={isValidatingAnswer}
-                disabledButton={!disabledButton}
-              />
-            </Box>
+            <ChatInput
+              addNewPrompt={addNewPrompt}
+              onSubmit={validateVary}
+              disabled={isValidatingAnswer || disableChatInput}
+              isValidating={isValidatingAnswer}
+              disabledButton={!disabledButton}
+            />
           </Stack>
         ) : (
           <Stack

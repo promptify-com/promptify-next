@@ -119,7 +119,7 @@ export default function TemplateDesktop({ template, setErrorMessage }: TemplateD
         <Stack
           width={"100%"}
           position={"sticky"}
-          top={0}
+          bottom={0}
           zIndex={100}
           height={"100%"}
           overflow={"auto"}

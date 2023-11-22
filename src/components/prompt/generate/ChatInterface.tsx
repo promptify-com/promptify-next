@@ -7,6 +7,8 @@ import { Message } from "./Message";
 import { IAnswer, IMessage } from "@/common/types/chat";
 import type { Templates, UpdatedQuestionTemplate } from "@/core/api/dto/templates";
 import { AccordionMessage } from "./AccordionMessage";
+import { useAppSelector } from "@/hooks/useStore";
+import { TemplateDetailsCard } from "./TemplateDetailsCard";
 
 interface Props {
   template: Templates;
@@ -36,16 +38,17 @@ export const ChatInterface = ({
   setMessages,
 }: Props) => {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
+  const isGenerating = useAppSelector(state => state.template.isGenerating);
 
   const scrollToBottom = () => {
     if (messagesContainerRef.current) {
-      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight + 140;
     }
   };
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messages, isGenerating]);
 
   function getCurrentDateFormatted(): string {
     const currentDate = new Date();
@@ -63,13 +66,40 @@ export const ChatInterface = ({
     .reverse()
     .find(msg => msg.type === "form");
 
+  const adjustScrollForAccordion = (accordionHeight: number) => {
+    if (messagesContainerRef.current) {
+      const newScrollTop =
+        messagesContainerRef.current.scrollHeight - messagesContainerRef.current.clientHeight + accordionHeight;
+      messagesContainerRef.current.scrollTop = newScrollTop;
+    }
+  };
+
   return (
     <Stack
-      mt={2}
       ref={messagesContainerRef}
-      position={"relative"}
+      gap={3}
+      mx={"40px"}
+      sx={{
+        overflow: "auto",
+        overscrollBehavior: "contain",
+        "&::-webkit-scrollbar": {
+          width: "6px",
+          p: 1,
+          backgroundColor: "surface.5",
+        },
+        "&::-webkit-scrollbar-track": {
+          webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
+        },
+        "&::-webkit-scrollbar-thumb": {
+          backgroundColor: "surface.1",
+          outline: "1px solid surface.1",
+          borderRadius: "10px",
+        },
+      }}
     >
       <div style={{ marginTop: "auto" }}></div>
+
+      <TemplateDetailsCard template={template} />
 
       <Stack pb={"38px"}>
         <Divider
@@ -101,6 +131,9 @@ export const ChatInterface = ({
                   answers={answers}
                   onChange={onChange}
                   onGenerate={onGenerate}
+                  onScrollToBottom={scrollToBottom}
+                  setIsSimulationStreaming={setIsSimulaitonStreaming}
+                  adjustScroll={adjustScrollForAccordion}
                 />
               </Box>
             )}

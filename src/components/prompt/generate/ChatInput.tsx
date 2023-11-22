@@ -5,15 +5,18 @@ import Typography from "@mui/material/Typography";
 
 import MessageSender from "./MessageSender";
 import { ProgressLogo } from "@/components/common/ProgressLogo";
+import Box from "@mui/material/Box";
+import Add from "@mui/icons-material/Add";
 
 interface ChatInputProps {
   onSubmit: (value: string) => void;
   disabled: boolean;
   isValidating: boolean;
   disabledButton: boolean;
+  addNewPrompt: () => void;
 }
 
-export const ChatInput = ({ onSubmit, disabled, isValidating, disabledButton }: ChatInputProps) => {
+export const ChatInput = ({ onSubmit, disabled, isValidating, disabledButton, addNewPrompt }: ChatInputProps) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   return (
@@ -21,6 +24,8 @@ export const ChatInput = ({ onSubmit, disabled, isValidating, disabledButton }: 
       ref={containerRef}
       position={"relative"}
       display={"flex"}
+      width={"100%"}
+      px={"40px"}
       flexDirection={"column"}
       gap={"8px"}
     >
@@ -30,8 +35,6 @@ export const ChatInput = ({ onSubmit, disabled, isValidating, disabledButton }: 
       >
         {isValidating && (
           <Stack
-            position={"absolute"}
-            top={-30}
             direction={"row"}
             gap={2}
             alignItems={"center"}
@@ -54,10 +57,42 @@ export const ChatInput = ({ onSubmit, disabled, isValidating, disabledButton }: 
         )}
       </Stack>
 
-      <MessageSender
-        onSubmit={onSubmit}
-        disabled={disabled || disabledButton}
-      />
+      <Stack
+        direction={"row"}
+        gap={"8px"}
+        alignItems={"center"}
+      >
+        <Box
+          onClick={addNewPrompt}
+          sx={{
+            padding: "4px",
+            width: "30px",
+            height: "30px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            borderRadius: "8px",
+            bgcolor: "#375CA91A",
+            color: "#375CA9",
+            ":hover": {
+              bgcolor: "#375CA9",
+              color: "white",
+            },
+          }}
+        >
+          <Add
+            sx={{
+              fontSize: 24,
+            }}
+          />
+        </Box>
+        <Box flex={1}>
+          <MessageSender
+            onSubmit={onSubmit}
+            disabled={disabled || disabledButton}
+          />
+        </Box>
+      </Stack>
     </Grid>
   );
 };
