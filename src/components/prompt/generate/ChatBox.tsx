@@ -17,7 +17,7 @@ import { ChatInterface } from "./ChatInterface";
 import { ChatInput } from "./ChatInput";
 import { TemplateQuestions, Templates, UpdatedQuestionTemplate } from "@/core/api/dto/templates";
 import { IPromptInput, PromptLiveResponse, AnsweredInputType } from "@/common/types/prompt";
-import { setGeneratingStatus, updateExecutionData } from "@/core/store/templatesSlice";
+import { setAccordionChatMode, setGeneratingStatus, updateExecutionData } from "@/core/store/templatesSlice";
 import { IAnswer, IMessage } from "@/common/types/chat";
 import { executionsApi, useStopExecutionMutation } from "@/core/api/executions";
 import VaryModal from "./VaryModal";
@@ -283,15 +283,30 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
   const disabledButton = _inputs.length !== 0 || promptHasContent;
 
   const addNewPrompt = () => {
-    const nextBotMessage: IMessage = {
+    dispatch(setAccordionChatMode("input"));
+    const isReady = allRequiredQuestionsAnswered(templateQuestions, answers)
+      ? " We are ready to create a new document."
+      : "";
+    const botMessage: IMessage = {
       id: randomId(),
-      text: "Let's give it another go. ",
-      type: "form",
+      text: `Ok!${isReady} I have prepared the incoming parameters, please check!`,
+      type: "text",
       createdAt: createdAt,
       fromUser: false,
     };
 
-    setMessages(prevMessages => prevMessages.concat(nextBotMessage));
+    addToQueuedMessages([
+      {
+        id: randomId(),
+        text: "",
+        type: "form",
+        createdAt: createdAt,
+        fromUser: false,
+        noHeader: true,
+      },
+    ]);
+
+    setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat(botMessage));
   };
 
   const validateVary = async (variation: string) => {
@@ -398,18 +413,28 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
       return router.push("/signin");
     }
 
+    const NextMessages: IMessage[] = [
+      {
+        id: randomId(),
+        text: `Run Prompt`,
+        type: "text",
+        createdAt: createdAt,
+        fromUser: true,
+      },
+      {
+        id: randomId(),
+        text: "",
+        type: "form",
+        createdAt: createdAt,
+        fromUser: false,
+        noHeader: true,
+      },
+    ];
+
+    setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat(NextMessages));
+
     const filesUploaded = await validateAndUploadFiles();
     if (!filesUploaded) return;
-
-    const nextBotMessage: IMessage = {
-      id: randomId(),
-      text: "Run Prompt",
-      type: "text",
-      createdAt: createdAt,
-      fromUser: true,
-    };
-
-    setMessages(prevMessages => prevMessages.concat(nextBotMessage));
 
     dispatch(setGeneratingStatus(true));
 
@@ -591,7 +616,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
 
   return (
     <Box
-      width={isSidebarExpanded || !chatFullScreen ? "100%" : "80%"}
+      width={isSidebarExpanded ? "100%" : "80%"}
       height={"100%"}
       mx={"auto"}
     >
@@ -622,7 +647,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
           }}
         >
           <Stack mx={"40px"}>
-            {chatFullScreen && <TemplateDetailsCard template={template} />}
+            <TemplateDetailsCard template={template} />
 
             <ChatInterface
               template={template}
@@ -660,6 +685,9 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
             alignItems={"center"}
             justifyContent={"center"}
             gap={"8px"}
+            sx={{
+              zIndex: 555,
+            }}
           >
             <Box
               onClick={addNewPrompt}

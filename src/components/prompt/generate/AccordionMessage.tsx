@@ -12,10 +12,8 @@ import Inputsform from "./Inputsform";
 import AccordionMessageHeader from "./AccordionMessageHeader";
 import type { Templates, UpdatedQuestionTemplate } from "@/core/api/dto/templates";
 import FeedbackThumbs from "../FeedbackThumbs";
-import Button from "@mui/material/Button";
-import { Replay } from "@mui/icons-material";
+
 import useTimestampConverter from "@/hooks/useTimestampConverter";
-import { randomId } from "@/common/helpers";
 
 type Modes = "input" | "execution";
 interface Props {
@@ -42,9 +40,9 @@ export const AccordionMessage = ({
   setMessages,
 }: Props) => {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
+  const mode = useAppSelector(state => state.template.accordionChatMode);
 
   const [expanded, setExpanded] = useState(true);
-  const [mode, setMode] = useState<Modes>("input");
 
   const handleExpandChange = (isExpanded: boolean) => {
     setExpanded(isExpanded);
@@ -54,6 +52,7 @@ export const AccordionMessage = ({
   const createdAt = convertedTimestamp(new Date());
 
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
+  const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
 
   return (
     <Accordion
@@ -62,6 +61,7 @@ export const AccordionMessage = ({
       onChange={(_e, isExpanded) => handleExpandChange(isExpanded)}
     >
       <AccordionMessageHeader
+        template={template}
         setMessages={setMessages}
         selectedExecution={selectedExecution}
         onClear={onClear}
@@ -71,7 +71,6 @@ export const AccordionMessage = ({
         onGenerate={onGenerate}
         onCancel={abortGenerating}
         mode={mode}
-        changeMode={setMode}
       />
 
       <AccordionDetails
@@ -118,32 +117,7 @@ export const AccordionMessage = ({
                     top={"40%"}
                     right={"0"}
                   >
-                    <FeedbackThumbs execution={selectedExecution} />
-                    <Button
-                      onClick={() => {
-                        console.log("replay");
-                        if (setMessages) {
-                          const formMessage: IMessage = {
-                            id: randomId(),
-                            text: "",
-                            type: "form",
-                            createdAt: createdAt,
-                            fromUser: false,
-                          };
-                          setMessages(prevMessages => prevMessages.concat(formMessage));
-                        }
-                      }}
-                      variant="text"
-                      startIcon={<Replay />}
-                      sx={{
-                        height: "22px",
-                        width: "22px",
-                        mt: "8px",
-                        ":hover": {
-                          bgcolor: "action.hover",
-                        },
-                      }}
-                    />
+                    <FeedbackThumbs execution={selectedExecution!} />
                   </Stack>
                 )}
               </>

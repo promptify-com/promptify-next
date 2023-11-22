@@ -14,24 +14,17 @@ export const CardExecution: React.FC<CardExecutionProps> = ({ execution }) => {
   return (
     <Stack
       direction={"row"}
+      alignItems={"center"}
       gap={"8px"}
     >
       <AvatarWithInitials title={execution.title} />
-      <Stack>
+      <Stack flex={1}>
         <Typography
           sx={{
             fontSize: 15,
           }}
         >
-          {truncate(execution.title, { length: 30 })}
-        </Typography>
-        <Typography
-          sx={{
-            fontSize: 12,
-            opacity: 0.7,
-          }}
-        >
-          Text with markup. 12k words, 3 images
+          {truncate(execution.title, { length: 50 })}
         </Typography>
       </Stack>
     </Stack>

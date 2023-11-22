@@ -34,7 +34,6 @@ const MessageSender: React.FC<MessageSenderProps> = ({ onSubmit, disabled, place
       alignItems={"center"}
       boxShadow={isFocused || hasNoValue ? "0px 4px 8px 0px #E1E2EC, 0px 0px 4px 0px rgba(0, 0, 0, 0.10)" : undefined}
       borderRadius="99px"
-      zIndex={44444444444}
       p={"8px 16px"}
     >
       <KeyboardCommandKey sx={{ fontSize: "20px", color: "text.secondary", position: "absolute", left: 9, top: 12 }} />

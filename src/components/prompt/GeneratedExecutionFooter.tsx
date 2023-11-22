@@ -20,7 +20,6 @@ export default function GeneratedExecutionFooter({ title, order, isMobile }: Pro
         bottom: isMobile ? "129px" : 0,
         left: 0,
         right: 0,
-        zIndex: 998,
         bgcolor: "surface.1",
       }}
     >

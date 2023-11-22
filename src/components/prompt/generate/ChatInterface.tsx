@@ -1,4 +1,4 @@
-import { useRef, Dispatch, SetStateAction, Fragment } from "react";
+import { useRef, Dispatch, SetStateAction, Fragment, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
@@ -43,6 +43,10 @@ export const ChatInterface = ({
     }
   };
 
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
   function getCurrentDateFormatted(): string {
     const currentDate = new Date();
     const options: Intl.DateTimeFormatOptions = {
@@ -86,7 +90,7 @@ export const ChatInterface = ({
               onScrollToBottom={scrollToBottom}
             />
             {msg.type === "form" && msg.id === lastFormMessage?.id && (
-              <Box>
+              <Box mt={1}>
                 <AccordionMessage
                   onClear={onClear}
                   template={template}

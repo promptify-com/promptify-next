@@ -3,7 +3,7 @@ import InputLabel from "@mui/material/InputLabel";
 import Radio from "@mui/material/Radio";
 import Select from "@mui/material/Select";
 import Stack from "@mui/material/Stack";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Button from "@mui/material/Button";
 import { getFileTypeExtensionsAsString } from "@/common/helpers/uploadFileHelper";
 import TextField from "@mui/material/TextField";
@@ -30,6 +30,19 @@ function Inputsform({ questions, answers, onChange }: Props) {
   return (
     <Stack gap={1}>
       {questions.map(question => {
+        const dynamicWidth = () => {
+          const textMeasureElement = document.createElement("span");
+          textMeasureElement.style.fontSize = "14px";
+          textMeasureElement.style.fontWeight = "400";
+          textMeasureElement.style.position = "absolute";
+          textMeasureElement.style.visibility = "hidden";
+          textMeasureElement.innerHTML = value.toString() || "Type here";
+          document.body.appendChild(textMeasureElement);
+          const width = textMeasureElement.offsetWidth;
+          document.body.removeChild(textMeasureElement);
+
+          return width < 700 ? width : 900;
+        };
         const value = answers.find(answer => answer.inputName === question.name)?.answer ?? "";
         const isFile = value instanceof File;
         return (
@@ -171,6 +184,7 @@ function Inputsform({ questions, answers, onChange }: Props) {
                   sx={{
                     ".MuiInputBase-input": {
                       p: 0,
+                      width: dynamicWidth,
                       color: "onSurface",
                       fontSize: 14,
                       fontWeight: 400,

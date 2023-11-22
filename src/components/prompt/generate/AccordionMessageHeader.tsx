@@ -5,7 +5,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
-import { useAppSelector } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import Add from "@mui/icons-material/Add";
 import HighlightOff from "@mui/icons-material/HighlightOff";
 import UnfoldLess from "@mui/icons-material/UnfoldLess";
@@ -15,14 +15,17 @@ import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 import { DeleteOutline, Edit, ShareOutlined, Star, StarOutline } from "@mui/icons-material";
 import Close from "@mui/icons-material/Close";
-import { ExecutionTemplatePopupType, TemplatesExecutions } from "@/core/api/dto/templates";
+import { ExecutionTemplatePopupType, Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { useDeleteExecutionFavoriteMutation, useExecutionFavoriteMutation } from "@/core/api/executions";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 import { SparkSaveDeletePopup } from "@/components/dialog/SparkSaveDeletePopup";
 import { IMessage } from "@/common/types/chat";
 import { SparkExportPopup } from "@/components/dialog/SparkExportPopup";
+import { setAccordionChatMode, setGeneratingStatus } from "@/core/store/templatesSlice";
+import { setGeneratedExecution } from "@/core/store/executionsSlice";
 
 interface Props {
+  template: Templates;
   selectedExecution: TemplatesExecutions | null;
   mode: "execution" | "input";
   isExpanded: boolean;
@@ -31,11 +34,11 @@ interface Props {
   onClear: () => void;
   showClear: boolean;
   showGenerate: boolean;
-  changeMode: (mode: "execution" | "input") => void;
   setMessages: Dispatch<SetStateAction<IMessage[]>>;
 }
 
 function AccordionMessageHeader({
+  template,
   selectedExecution,
   mode,
   isExpanded,
@@ -44,10 +47,10 @@ function AccordionMessageHeader({
   showClear,
   onCancel,
   showGenerate,
-  changeMode,
   setMessages,
 }: Props) {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
+  const dispatch = useAppDispatch();
 
   const [favoriteExecution] = useExecutionFavoriteMutation();
   const [deleteExecutionFavorite] = useDeleteExecutionFavoriteMutation();
@@ -74,6 +77,28 @@ function AccordionMessageHeader({
       console.error(error);
     }
   };
+
+  const abortConnection = () => {
+    onCancel();
+    dispatch(setGeneratedExecution(null));
+    dispatch(setGeneratingStatus(false));
+    dispatch(setAccordionChatMode("input"));
+  };
+
+  const activeExecution = useMemo(() => {
+    if (selectedExecution) {
+      return {
+        ...selectedExecution,
+        template: {
+          ...selectedExecution.template,
+          title: template.title,
+          slug: template.slug,
+          thumbnail: template.thumbnail,
+        },
+      };
+    }
+    return null;
+  }, [selectedExecution]);
 
   return (
     <>
@@ -155,7 +180,7 @@ function AccordionMessageHeader({
               {mode === "execution" && (
                 <>
                   {isGenerating ? "Generation in progress..." : executionTitle ?? "Untitled"}
-                  {executionTitle && (
+                  {executionTitle && !isGenerating && (
                     <Tooltip
                       title="Rename"
                       placement="top"
@@ -186,9 +211,7 @@ function AccordionMessageHeader({
               }}
             >
               {mode === "input" && "About 360s generation time"}
-              {mode === "execution" && (
-                <>{isGenerating ? "About 360s Left" : "Text with markup. 12k words, 3 images"}</>
-              )}
+              {mode === "execution" && <>{isGenerating ? "About 360s Left" : ""}</>}
             </Typography>
           </Stack>
 
@@ -224,7 +247,7 @@ function AccordionMessageHeader({
               <Button
                 onClick={event => {
                   event.stopPropagation();
-                  changeMode("execution");
+                  dispatch(setAccordionChatMode("execution"));
                   onGenerate();
                 }}
                 endIcon={<PlayCircle />}
@@ -255,7 +278,7 @@ function AccordionMessageHeader({
                 <Button
                   onClick={e => {
                     e.stopPropagation();
-                    onCancel();
+                    abortConnection();
                   }}
                   endIcon={<HighlightOff />}
                   sx={{
@@ -364,14 +387,13 @@ function AccordionMessageHeader({
           activeExecution={selectedExecution}
           onClose={() => setExecutionPopup(null)}
           onUpdate={execution => setExecutionTitle(execution.title)}
-          setMessages={setMessages}
         />
       )}
 
       {openExportPopup && selectedExecution?.id && (
         <SparkExportPopup
           onClose={() => setOpenExportpopup(false)}
-          activeExecution={selectedExecution}
+          activeExecution={activeExecution}
         />
       )}
     </>
