@@ -236,21 +236,18 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
 
   const addNewPrompt = ({ startOver = false }: { startOver: boolean }) => {
     dispatch(setAccordionChatMode("input"));
-    setAnswers([]);
-
-    let allQuestions = _inputs.map(input => input.question);
-
-    const text =
-      allRequiredQuestionsAnswered(_inputs, answers) && !startOver
-        ? `Good! Let’s imagine something like this! Prepared request for you, please check input information and we are ready to start! `
-        : `Let's give this another try! ${allQuestions.join(" ")}?`;
-    const botMessage: IMessage = {
-      id: randomId(),
-      text,
-      type: "text",
-      createdAt: createdAt,
-      fromUser: false,
-    };
+    if (startOver) {
+      setAnswers([]);
+    } else {
+      const botMessage: IMessage = {
+        id: randomId(),
+        text: `Good! Let’s imagine something like this! Prepared request for you, please check input information and we are ready to start!  `,
+        type: "text",
+        createdAt: createdAt,
+        fromUser: false,
+      };
+      setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat(botMessage));
+    }
 
     addToQueuedMessages([
       {
@@ -262,8 +259,6 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
         noHeader: true,
       },
     ]);
-
-    setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat(botMessage));
   };
 
   const validateVary = async (variation: string) => {

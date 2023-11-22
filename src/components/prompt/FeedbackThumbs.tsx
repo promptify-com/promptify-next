@@ -9,6 +9,7 @@ import { useUpdateExecutionMutation } from "@/core/api/executions";
 import { FeedbackType, TemplatesExecutions } from "@/core/api/dto/templates";
 import { useAppDispatch } from "@/hooks/useStore";
 import { setAccordionChatMode } from "@/core/store/templatesSlice";
+import { Tooltip } from "@mui/material";
 
 interface newFeedBack {
   execution: TemplatesExecutions;
@@ -32,68 +33,99 @@ export default function FeedbackThumbs({ execution }: newFeedBack) {
     }
   };
 
+  const commonPopperProps = {
+    modifiers: [
+      {
+        name: "offset",
+        options: {
+          offset: [0, -5],
+        },
+      },
+    ],
+  };
+
   return (
     <Stack
       direction={"column"}
       alignItems={"center"}
       gap={1}
     >
-      <IconButton
-        size="large"
-        onClick={() => handleFeedback("LIKED")}
-        sx={{
-          p: "15px",
-          border: "none",
-          bgcolor: "surface.2",
-
-          ":hover": {
-            bgcolor: "action.hover",
-          },
-        }}
+      <Tooltip
+        title="Good"
+        arrow
+        PopperProps={commonPopperProps}
       >
-        <TagFacesSharp
+        <IconButton
+          size="large"
+          onClick={() => handleFeedback("LIKED")}
           sx={{
-            color: execution.feedback === "LIKED" ? "green" : "inherit",
-          }}
-        />
-      </IconButton>
-      <IconButton
-        size="large"
-        onClick={() => handleFeedback("DISLIKED")}
-        sx={{
-          p: "15px",
-          border: "none",
-          bgcolor: "surface.2",
+            p: "15px",
+            border: "none",
+            bgcolor: "surface.2",
 
-          ":hover": {
-            bgcolor: "action.hover",
-          },
-        }}
+            ":hover": {
+              color: "green",
+              bgcolor: "action.hover",
+            },
+          }}
+        >
+          <TagFacesSharp
+            sx={{
+              color: execution.feedback === "LIKED" ? "green" : "inherit",
+            }}
+          />
+        </IconButton>
+      </Tooltip>
+
+      <Tooltip
+        title="Bad"
+        arrow
+        PopperProps={commonPopperProps}
       >
-        <MoodBadSharp
+        <IconButton
+          size="large"
+          onClick={() => handleFeedback("DISLIKED")}
           sx={{
-            color: execution.feedback === "DISLIKED" ? "red" : "inherit",
+            p: "15px",
+            border: "none",
+            bgcolor: "surface.2",
+
+            ":hover": {
+              color: "red",
+              bgcolor: "action.hover",
+            },
           }}
-        />
-      </IconButton>
-
-      <IconButton
-        size="large"
-        onClick={() => {
-          dispatch(setAccordionChatMode("input"));
-        }}
-        sx={{
-          p: "15px",
-          border: "none",
-          bgcolor: "surface.2",
-
-          ":hover": {
-            bgcolor: "action.hover",
-          },
-        }}
+        >
+          <MoodBadSharp
+            sx={{
+              color: execution.feedback === "DISLIKED" ? "red" : "inherit",
+            }}
+          />
+        </IconButton>
+      </Tooltip>
+      <Tooltip
+        title="Repeat"
+        arrow
+        PopperProps={commonPopperProps}
       >
-        <Replay />
-      </IconButton>
+        <IconButton
+          size="large"
+          onClick={() => {
+            dispatch(setAccordionChatMode("input"));
+          }}
+          sx={{
+            p: "15px",
+            border: "none",
+            bgcolor: "surface.2",
+
+            ":hover": {
+              bgcolor: "action.hover",
+            },
+          }}
+        >
+          <Replay />
+        </IconButton>
+      </Tooltip>
     </Stack>
   );
 }

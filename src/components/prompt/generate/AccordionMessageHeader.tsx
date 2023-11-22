@@ -13,7 +13,7 @@ import PlayCircle from "@mui/icons-material/PlayCircle";
 import AvatarWithInitials from "../AvatarWithInitials";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
-import { DeleteOutline, Edit, ShareOutlined, Star, StarOutline } from "@mui/icons-material";
+import { DeleteOutline, Edit, ShareOutlined, Star, StarOutline, UnfoldMore } from "@mui/icons-material";
 import Close from "@mui/icons-material/Close";
 import { ExecutionTemplatePopupType, Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { useDeleteExecutionFavoriteMutation, useExecutionFavoriteMutation } from "@/core/api/executions";
@@ -23,6 +23,7 @@ import { IMessage } from "@/common/types/chat";
 import { SparkExportPopup } from "@/components/dialog/SparkExportPopup";
 import { setAccordionChatMode, setGeneratingStatus } from "@/core/store/templatesSlice";
 import { setGeneratedExecution } from "@/core/store/executionsSlice";
+import useTruncate from "@/hooks/useTruncate";
 
 interface Props {
   template: Templates;
@@ -51,6 +52,7 @@ function AccordionMessageHeader({
 }: Props) {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const dispatch = useAppDispatch();
+  const { truncate } = useTruncate();
 
   const [favoriteExecution] = useExecutionFavoriteMutation();
   const [deleteExecutionFavorite] = useDeleteExecutionFavoriteMutation();
@@ -100,6 +102,17 @@ function AccordionMessageHeader({
     return null;
   }, [selectedExecution]);
 
+  const commonPopperProps = {
+    modifiers: [
+      {
+        name: "offset",
+        options: {
+          offset: [0, -5],
+        },
+      },
+    ],
+  };
+
   return (
     <>
       <AccordionSummary
@@ -126,7 +139,7 @@ function AccordionMessageHeader({
                   }}
                 />
               ) : (
-                <AvatarWithInitials title="Test Title" />
+                <AvatarWithInitials title={selectedExecution?.title ?? "Untitled"} />
               )}
             </>
           )}
@@ -179,19 +192,25 @@ function AccordionMessageHeader({
 
               {mode === "execution" && (
                 <>
-                  {isGenerating ? "Generation in progress..." : executionTitle ?? "Untitled"}
+                  {isGenerating ? "Generation in progress..." : truncate(executionTitle ?? "Untitled", { length: 80 })}
                   {executionTitle && !isGenerating && (
                     <Tooltip
+                      arrow
                       title="Rename"
-                      placement="top"
+                      PopperProps={commonPopperProps}
                     >
                       <IconButton
+                        size="large"
                         onClick={e => {
                           e.stopPropagation();
                           setExecutionPopup("update");
                         }}
                         sx={{
                           border: "none",
+                          ml: 1,
+                          ":hover": {
+                            bgcolor: "surface.4",
+                          },
                         }}
                       >
                         <Edit />
@@ -282,7 +301,7 @@ function AccordionMessageHeader({
                   }}
                   endIcon={<HighlightOff />}
                   sx={{
-                    height: "22px",
+                    height: "34px",
                     p: "15px",
                     color: "onSurface",
                     fontSize: 13,
@@ -301,16 +320,21 @@ function AccordionMessageHeader({
                   gap={"8px"}
                 >
                   <Tooltip
-                    title={selectedExecution?.is_favorite ? "Unsave" : "Add to favorite"}
-                    placement="top"
+                    title={selectedExecution?.is_favorite ? "remove from works" : "Add to works"}
+                    arrow
+                    PopperProps={commonPopperProps}
                   >
                     <IconButton
+                      size="large"
                       onClick={e => {
                         e.stopPropagation();
                         saveExecution();
                       }}
                       sx={{
                         border: "none",
+                        ":hover": {
+                          bgcolor: "surface.4",
+                        },
                       }}
                     >
                       {selectedExecution?.is_favorite ? <Star /> : <StarOutline />}
@@ -318,15 +342,20 @@ function AccordionMessageHeader({
                   </Tooltip>{" "}
                   <Tooltip
                     title="Share"
-                    placement="top"
+                    arrow
+                    PopperProps={commonPopperProps}
                   >
                     <IconButton
+                      size="large"
                       onClick={e => {
                         e.stopPropagation();
                         setOpenExportpopup(true);
                       }}
                       sx={{
                         border: "none",
+                        ":hover": {
+                          bgcolor: "surface.4",
+                        },
                       }}
                     >
                       <ShareOutlined />
@@ -334,15 +363,21 @@ function AccordionMessageHeader({
                   </Tooltip>
                   <Tooltip
                     title="Delete"
-                    placement="top"
+                    arrow
+                    PopperProps={commonPopperProps}
                   >
                     <IconButton
+                      size="large"
                       onClick={e => {
                         e.stopPropagation();
                         setExecutionPopup("delete");
                       }}
                       sx={{
                         border: "none",
+                        ":hover": {
+                          color: "red",
+                          bgcolor: "surface.4",
+                        },
                       }}
                     >
                       <DeleteOutline />
@@ -353,20 +388,45 @@ function AccordionMessageHeader({
             </>
           )}
 
-          <Stack mt={0.5}>
+          <Stack>
             {isExpanded ? (
-              <Box sx={{ p: 1 }}>
-                <UnfoldLess
+              <Tooltip
+                title="Collapse"
+                arrow
+                placement="top"
+                PopperProps={commonPopperProps}
+              >
+                <IconButton
+                  size="large"
                   sx={{
-                    fontSize: 20,
+                    border: "none",
+                    fontSize: "50px",
+
+                    ":hover": {
+                      bgcolor: "surface.4",
+                    },
                   }}
-                />
-              </Box>
+                >
+                  <UnfoldLess
+                    fontSize="inherit"
+                    sx={{
+                      fontSize: "50px",
+                    }}
+                  />
+                </IconButton>
+              </Tooltip>
             ) : (
               <Button
+                variant="text"
                 sx={{
-                  mr: -1.5,
+                  height: "34px",
+                  p: "15px",
                   color: "onSurface",
+                  fontSize: 13,
+                  fontWeight: 500,
+                  ":hover": {
+                    bgcolor: "action.hover",
+                  },
                 }}
               >
                 Expand

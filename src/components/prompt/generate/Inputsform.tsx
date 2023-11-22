@@ -3,7 +3,7 @@ import InputLabel from "@mui/material/InputLabel";
 import Radio from "@mui/material/Radio";
 import Select from "@mui/material/Select";
 import Stack from "@mui/material/Stack";
-import { useRef, useState } from "react";
+import { createRef, useRef, useState } from "react";
 import Button from "@mui/material/Button";
 import { getFileTypeExtensionsAsString } from "@/common/helpers/uploadFileHelper";
 import TextField from "@mui/material/TextField";
@@ -26,23 +26,17 @@ interface Props {
 function Inputsform({ inputs, answers, onChange }: Props) {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const [codeFieldOpen, setCodeFieldOpen] = useState(false);
-  const dynamicWidth = (value: string) => {
-    const textMeasureElement = document.createElement("span");
-    textMeasureElement.style.fontSize = "14px";
-    textMeasureElement.style.fontWeight = "400";
-    textMeasureElement.style.position = "absolute";
-    textMeasureElement.style.visibility = "hidden";
-    textMeasureElement.innerHTML = value.toString() || "Type here";
-    document.body.appendChild(textMeasureElement);
-    const width = textMeasureElement.offsetWidth;
-    document.body.removeChild(textMeasureElement);
 
-    return width < 700 ? width : 900;
+  const parentRefs = useRef<Array<React.RefObject<HTMLDivElement>>>(inputs.map(() => createRef()));
+
+  const dynamicWidth = (index: number) => {
+    const parentElement = parentRefs.current[index].current;
+    return parentElement ? parentElement.offsetWidth : "auto";
   };
 
   return (
     <Stack gap={1}>
-      {inputs.map(input => {
+      {inputs.map((input, index) => {
         const value = answers.find(answer => answer.inputName === input.name)?.answer ?? "";
         const isFile = value instanceof File;
         return (
@@ -72,6 +66,7 @@ function Inputsform({ inputs, answers, onChange }: Props) {
             <Stack
               flex={1}
               display={"flex"}
+              ref={parentRefs.current[index]}
               alignItems={"start"}
             >
               {input.type === "code" ? (
@@ -184,7 +179,7 @@ function Inputsform({ inputs, answers, onChange }: Props) {
                   sx={{
                     ".MuiInputBase-input": {
                       p: 0,
-                      width: dynamicWidth(value as string),
+                      width: dynamicWidth(index),
                       color: "onSurface",
                       fontSize: 14,
                       fontWeight: 400,
