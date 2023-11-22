@@ -25,6 +25,7 @@ export interface IPromptInput {
   choices?: string[];
   fileExtensions?: string[];
   prompt?: number;
+  question?: string;
 }
 
 export type FormMode = "input" | "chat";

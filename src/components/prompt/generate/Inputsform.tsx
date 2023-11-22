@@ -14,40 +14,40 @@ import CodeFieldModal from "@/components/modals/CodeFieldModal";
 import type { UpdatedQuestionTemplate } from "@/core/api/dto/templates";
 import { useAppSelector } from "@/hooks/useStore";
 import IconButton from "@mui/material/IconButton";
-import { FileType } from "@/common/types/prompt";
+import { FileType, IPromptInput } from "@/common/types/prompt";
 import { HelpOutline } from "@mui/icons-material";
 
 interface Props {
-  questions: UpdatedQuestionTemplate[];
+  inputs: IPromptInput[];
   answers: IAnswer[];
-  onChange: (value: string | File, question: UpdatedQuestionTemplate) => void;
+  onChange: (value: string | File, input: IPromptInput) => void;
 }
 
-function Inputsform({ questions, answers, onChange }: Props) {
+function Inputsform({ inputs, answers, onChange }: Props) {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const [codeFieldOpen, setCodeFieldOpen] = useState(false);
+  const dynamicWidth = (value: string) => {
+    const textMeasureElement = document.createElement("span");
+    textMeasureElement.style.fontSize = "14px";
+    textMeasureElement.style.fontWeight = "400";
+    textMeasureElement.style.position = "absolute";
+    textMeasureElement.style.visibility = "hidden";
+    textMeasureElement.innerHTML = value.toString() || "Type here";
+    document.body.appendChild(textMeasureElement);
+    const width = textMeasureElement.offsetWidth;
+    document.body.removeChild(textMeasureElement);
+
+    return width < 700 ? width : 900;
+  };
 
   return (
     <Stack gap={1}>
-      {questions.map(question => {
-        const dynamicWidth = () => {
-          const textMeasureElement = document.createElement("span");
-          textMeasureElement.style.fontSize = "14px";
-          textMeasureElement.style.fontWeight = "400";
-          textMeasureElement.style.position = "absolute";
-          textMeasureElement.style.visibility = "hidden";
-          textMeasureElement.innerHTML = value.toString() || "Type here";
-          document.body.appendChild(textMeasureElement);
-          const width = textMeasureElement.offsetWidth;
-          document.body.removeChild(textMeasureElement);
-
-          return width < 700 ? width : 900;
-        };
-        const value = answers.find(answer => answer.inputName === question.name)?.answer ?? "";
+      {inputs.map(input => {
+        const value = answers.find(answer => answer.inputName === input.name)?.answer ?? "";
         const isFile = value instanceof File;
         return (
           <Stack
-            key={question.name}
+            key={input.name}
             direction={"row"}
             p={"6px"}
             alignItems={"center"}
@@ -67,14 +67,14 @@ function Inputsform({ questions, answers, onChange }: Props) {
                 color: "primary.main",
               }}
             >
-              {question.fullName} {question.required && <span>*</span>} :
+              {input.fullName} {input.required && <span>*</span>} :
             </InputLabel>
             <Stack
               flex={1}
               display={"flex"}
               alignItems={"start"}
             >
-              {question.type === "code" ? (
+              {input.type === "code" ? (
                 <>
                   <BaseButton
                     disabled={isGenerating}
@@ -102,11 +102,11 @@ function Inputsform({ questions, answers, onChange }: Props) {
                       open
                       setOpen={setCodeFieldOpen}
                       value={value as string}
-                      onSubmit={val => onChange(val, question)}
+                      onSubmit={val => onChange(val, input)}
                     />
                   )}
                 </>
-              ) : question.type === "choices" ? (
+              ) : input.type === "choices" ? (
                 <Select
                   disabled={isGenerating}
                   sx={{
@@ -126,7 +126,7 @@ function Inputsform({ questions, answers, onChange }: Props) {
                     sx: { ".MuiMenuItem-root": { fontSize: 14, fontWeight: 400 } },
                   }}
                   value={value}
-                  onChange={e => onChange(e.target.value as string, question)}
+                  onChange={e => onChange(e.target.value as string, input)}
                   displayEmpty
                 >
                   <MenuItem
@@ -135,7 +135,7 @@ function Inputsform({ questions, answers, onChange }: Props) {
                   >
                     Select an option
                   </MenuItem>
-                  {question.choices?.map(choice => (
+                  {input.choices?.map(choice => (
                     <MenuItem
                       key={choice}
                       value={choice}
@@ -145,7 +145,7 @@ function Inputsform({ questions, answers, onChange }: Props) {
                     </MenuItem>
                   ))}
                 </Select>
-              ) : question.type === "file" ? (
+              ) : input.type === "file" ? (
                 <Stack
                   direction={"row"}
                   alignItems={"center"}
@@ -159,7 +159,7 @@ function Inputsform({ questions, answers, onChange }: Props) {
                     {isFile ? value.name : "Upload file"}
                     <input
                       hidden
-                      accept={getFileTypeExtensionsAsString(question.fileExtensions as FileType[])}
+                      accept={getFileTypeExtensionsAsString(input.fileExtensions as FileType[])}
                       type="file"
                       style={{
                         clip: "rect(0 0 0 0)",
@@ -172,7 +172,7 @@ function Inputsform({ questions, answers, onChange }: Props) {
                       }}
                       onChange={e => {
                         if (e.target.files && e.target.files.length > 0) {
-                          onChange(e.target.files[0], question);
+                          onChange(e.target.files[0], input);
                         }
                       }}
                     />
@@ -184,7 +184,7 @@ function Inputsform({ questions, answers, onChange }: Props) {
                   sx={{
                     ".MuiInputBase-input": {
                       p: 0,
-                      width: dynamicWidth,
+                      width: dynamicWidth(value as string),
                       color: "onSurface",
                       fontSize: 14,
                       fontWeight: 400,
@@ -208,9 +208,9 @@ function Inputsform({ questions, answers, onChange }: Props) {
                     },
                   }}
                   placeholder={"Type here"}
-                  type={question.type}
+                  type={input.type}
                   value={value}
-                  onChange={e => onChange(e.target.value, question)}
+                  onChange={e => onChange(e.target.value, input)}
                 />
               )}
             </Stack>
@@ -219,7 +219,7 @@ function Inputsform({ questions, answers, onChange }: Props) {
               alignItems={"center"}
               gap={"8px"}
             >
-              {question.required && (
+              {input.required && (
                 <Typography
                   sx={{
                     fontSize: 15,

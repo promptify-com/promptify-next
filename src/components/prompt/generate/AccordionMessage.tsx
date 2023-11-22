@@ -13,12 +13,13 @@ import AccordionMessageHeader from "./AccordionMessageHeader";
 import type { Templates, UpdatedQuestionTemplate } from "@/core/api/dto/templates";
 import FeedbackThumbs from "../FeedbackThumbs";
 import Fade from "@mui/material/Fade";
+import { IPromptInput } from "@/common/types/prompt";
 
 type Modes = "input" | "execution";
 interface Props {
-  questions: UpdatedQuestionTemplate[];
+  inputs: IPromptInput[];
   answers: IAnswer[];
-  onChange: (value: string | File, question: UpdatedQuestionTemplate) => void;
+  onChange: (value: string | File, input: IPromptInput) => void;
   onClear: () => void;
   onGenerate: () => void;
   abortGenerating: () => void;
@@ -31,7 +32,7 @@ interface Props {
 
 export const AccordionMessage = ({
   template,
-  questions,
+  inputs,
   answers,
   onChange,
   onClear,
@@ -139,7 +140,7 @@ export const AccordionMessage = ({
               )}
               {mode === "input" && (
                 <Inputsform
-                  questions={questions}
+                  inputs={inputs}
                   answers={answers}
                   onChange={onChange}
                 />

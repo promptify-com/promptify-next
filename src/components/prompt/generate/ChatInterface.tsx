@@ -9,13 +9,14 @@ import type { Templates, UpdatedQuestionTemplate } from "@/core/api/dto/template
 import { AccordionMessage } from "./AccordionMessage";
 import { useAppSelector } from "@/hooks/useStore";
 import { TemplateDetailsCard } from "./TemplateDetailsCard";
+import { IPromptInput } from "@/common/types/prompt";
 
 interface Props {
   template: Templates;
   messages: IMessage[];
-  onChange: (value: string | File, question: UpdatedQuestionTemplate) => void;
+  onChange: (value: string | File, input: IPromptInput) => void;
   setIsSimulaitonStreaming: Dispatch<SetStateAction<boolean>>;
-  questions: UpdatedQuestionTemplate[];
+  inputs: IPromptInput[];
   answers: IAnswer[];
   onGenerate: () => void;
   onAbort: () => void;
@@ -29,7 +30,7 @@ export const ChatInterface = ({
   messages,
   onChange,
   setIsSimulaitonStreaming,
-  questions,
+  inputs,
   answers,
   onGenerate,
   showGenerate,
@@ -119,7 +120,7 @@ export const ChatInterface = ({
                   setMessages={setMessages}
                   showGenerate={showGenerate}
                   abortGenerating={onAbort}
-                  questions={questions}
+                  inputs={inputs}
                   answers={answers}
                   onChange={onChange}
                   onGenerate={onGenerate}

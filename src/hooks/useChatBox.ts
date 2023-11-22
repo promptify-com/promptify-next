@@ -24,12 +24,16 @@ export default function useChatBox() {
 
       inputs.push(
         ..._inputs.map(_input => {
-          _input["prompt"] = prompt.id;
+          _input.prompt = prompt.id;
+          _input.question = "";
 
           return _input;
         }),
       );
     });
+
+    // sort by required inputs first on top
+    inputs.sort((a, b) => +b.required - +a.required);
 
     return {
       inputs,

@@ -60,7 +60,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
   const [queuedMessages, setQueuedMessages] = useState<IMessage[]>([]);
   const [isSimulaitonStreaming, setIsSimulaitonStreaming] = useState(false);
   const [disableChatInput, setDisableChatInput] = useState(false);
-  const [standingQuestions, setStandingQuestions] = useState<UpdatedQuestionTemplate[]>([]);
+  const [standingQuestions, setStandingQuestions] = useState<IPromptInput[]>([]);
   const [varyOpen, setVaryOpen] = useState(false);
   const currentAnsweredInputs = useAppSelector(state => state.template.answeredInputs);
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
@@ -76,17 +76,11 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
     setIsSimulaitonStreaming(true);
   };
 
-  const initialMessages = ({
-    questions,
-    startOver = false,
-  }: {
-    questions: UpdatedQuestionTemplate[];
-    startOver?: boolean;
-  }) => {
+  const initialMessages = ({ inputs, startOver = false }: { inputs: IPromptInput[]; startOver?: boolean }) => {
     const welcomeMessage: IMessage[] = [];
 
     if (!startOver) {
-      let allQuestions = questions.map(_q => _q.question);
+      let allQuestions = inputs.map(input => input.question);
 
       welcomeMessage.push({
         id: randomId(),
@@ -140,43 +134,35 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
 
     dispatch(updateExecutionData(JSON.stringify(Object.values(promptsData))));
   };
-  const [templateQuestions, _inputs, promptHasContent]: [UpdatedQuestionTemplate[], IPromptInput[], Boolean] =
-    useMemo(() => {
-      if (!template) {
-        return [[], [], false];
-      }
+  const [_inputs, promptHasContent]: [IPromptInput[], Boolean] = useMemo(() => {
+    if (!template) {
+      return [[], false];
+    }
 
-      const questions: TemplateQuestions[] = template?.questions ?? [];
-      const { inputs, promptHasContent } = prepareAndRemoveDuplicateInputs(template.prompts);
+    let { inputs, promptHasContent } = prepareAndRemoveDuplicateInputs(template.prompts);
 
-      const updatedQuestions: UpdatedQuestionTemplate[] = [];
+    if (template.questions?.length) {
+      const normalizeQuestions: Record<string, string> = template.questions.reduce(
+        (acc, question) => {
+          const key = Object.keys(question)[0];
+          acc[key] = question[key].question;
 
-      for (let index = 0; index < questions.length; index++) {
-        const question = questions[index];
-        const key = Object.keys(question)[0];
+          return acc;
+        },
+        {} as Record<string, string>,
+      );
 
-        if (inputs[index]) {
-          const { type, required, choices, fileExtensions, name, fullName, prompt } = inputs[index];
-          const updatedQuestion: UpdatedQuestionTemplate = {
-            ...question[key],
-            name,
-            fullName,
-            required,
-            type,
-            choices,
-            fileExtensions,
-            prompt: prompt!,
-          };
-          updatedQuestions.push(updatedQuestion);
-        }
-      }
+      inputs = inputs.map(input => {
+        input.question = normalizeQuestions[input.name] ?? "";
 
-      updatedQuestions.sort((a, b) => +b.required - +a.required);
+        return input;
+      });
+    }
 
-      initialMessages({ questions: updatedQuestions });
+    initialMessages({ inputs });
 
-      return [updatedQuestions, inputs, promptHasContent];
-    }, [template]);
+    return [inputs, promptHasContent];
+  }, [template]);
 
   useEffect(() => {
     dispatchNewExecutionData(answers, _inputs);
@@ -226,71 +212,36 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
     }
   };
 
-  const allRequiredQuestionsAnswered = (templateQuestions: UpdatedQuestionTemplate[], answers: IAnswer[]): boolean => {
-    const requiredQuestionNames = templateQuestions
-      .filter(question => question.required)
-      .map(question => question.name);
+  const allRequiredQuestionsAnswered = (inputs: IPromptInput[], answers: IAnswer[]): boolean => {
+    const requiredInputs = inputs.filter(input => input.required).map(input => input.name);
 
-    if (!requiredQuestionNames.length) {
+    if (!requiredInputs.length) {
       return true;
     }
 
-    const answeredQuestionNamesSet = new Set(answers.map(answer => answer.inputName));
+    const answeredInputsSet = new Set(answers.map(answer => answer.inputName));
 
-    return requiredQuestionNames.every(name => answeredQuestionNamesSet.has(name));
+    return requiredInputs.every(name => answeredInputsSet.has(name));
   };
 
   useEffect(() => {
-    if (allRequiredQuestionsAnswered(templateQuestions, answers)) {
+    if (allRequiredQuestionsAnswered(_inputs, answers)) {
       setShowGenerateButton(true);
     } else {
       setShowGenerateButton(false);
     }
-  }, [answers, templateQuestions]);
-
-  useEffect(() => {
-    const [firstAnsweredInput] = currentAnsweredInputs;
-
-    if (!firstAnsweredInput || firstAnsweredInput.modifiedFrom !== "input") return;
-
-    const { inputName, promptId, value } = firstAnsweredInput;
-
-    const targetQuestion = templateQuestions.find(question => question.name === inputName) as UpdatedQuestionTemplate;
-
-    setAnswers(prevAnswers => {
-      const indexToUpdate = prevAnswers.findIndex(answer => answer.inputName === inputName);
-
-      if (indexToUpdate !== -1) {
-        prevAnswers[indexToUpdate].answer = value;
-      }
-      if (value && indexToUpdate === -1 && targetQuestion) {
-        prevAnswers.push({
-          inputName,
-          required: targetQuestion.required,
-          question: targetQuestion.question,
-          prompt: promptId,
-          answer: value,
-        });
-      }
-
-      const filteredAnswers = prevAnswers.filter(answer => Boolean(answer.answer));
-
-      return filteredAnswers;
-    });
-  }, [currentAnsweredInputs, templateQuestions]);
+  }, [answers]);
 
   const disabledButton = _inputs.length !== 0 || promptHasContent;
 
   const addNewPrompt = ({ startOver = false }: { startOver: boolean }) => {
     dispatch(setAccordionChatMode("input"));
-    if (startOver) {
-      setAnswers([]);
-    }
+    setAnswers([]);
 
-    let allQuestions = templateQuestions.map(_q => _q.question);
+    let allQuestions = _inputs.map(input => input.question);
 
     const text =
-      allRequiredQuestionsAnswered(templateQuestions, answers) && !startOver
+      allRequiredQuestionsAnswered(_inputs, answers) && !startOver
         ? `Good! Let’s imagine something like this! Prepared request for you, please check input information and we are ready to start! `
         : `Let's give this another try! ${allQuestions.join(" ")}?`;
     const botMessage: IMessage = {
@@ -329,9 +280,9 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
       setIsValidatingAnswer(true);
 
       const questionAnswerMap: Record<string, string | number | File> = {};
-      templateQuestions.forEach(question => {
-        const matchingAnswer = answers.find(answer => answer.inputName === question.name);
-        questionAnswerMap[question.name] = matchingAnswer?.answer || "";
+      _inputs.forEach(input => {
+        const matchingAnswer = answers.find(answer => answer.inputName === input.name);
+        questionAnswerMap[input.name] = matchingAnswer?.answer || "";
       });
 
       const payload = {
@@ -347,15 +298,15 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
         return;
       }
 
-      const newAnswers = templateQuestions
-        .map(question => {
-          const answer = varyResponse[question.name];
+      const newAnswers = _inputs
+        .map(input => {
+          const answer = varyResponse[input.name];
 
           return {
-            inputName: question.name,
-            required: question.required,
-            question: question.question,
-            prompt: question.prompt,
+            inputName: input.name,
+            required: input.required,
+            question: input.question!,
+            prompt: input.prompt!,
             answer,
           };
         })
@@ -368,21 +319,21 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
     }
   };
 
-  const handleUserInput = async (value: string | File, currentQuestion: UpdatedQuestionTemplate) => {
+  const handleUserInput = async (value: string | File, input: IPromptInput) => {
     if (isSimulaitonStreaming) {
       return;
     }
 
-    const { name: inputName, required, type, question, prompt, choices, fileExtensions } = currentQuestion;
+    const { name: inputName, required } = input;
 
     const _answers = [...answers.filter(answer => answer.inputName !== inputName)];
 
     if (!(!(value instanceof File) && value.trim() === "")) {
       const newAnswer: IAnswer = {
-        question,
+        question: input.question!,
         required,
         inputName,
-        prompt,
+        prompt: input.prompt!,
         answer: value,
       };
       _answers.push(newAnswer);
@@ -594,14 +545,14 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
       answer: "",
     };
 
-    const question = templateQuestions.find(question => question.name === selectedAnswer.inputName);
-    const newStandingQuestions = standingQuestions.concat(question!).sort((a, b) => +a.required - +b.required);
+    const input = _inputs.find(_input => _input.name === selectedAnswer.inputName);
+    const newStandingQuestions = standingQuestions.concat(input!).sort((a, b) => +a.required - +b.required);
     const askedQuestion = newStandingQuestions[newStandingQuestions.length - 1];
 
     setStandingQuestions(newStandingQuestions);
 
     const invalidTxt =
-      invalid && question?.type === "file" ? `The uploaded file for "${selectedAnswer.inputName}" is invalid. ` : "";
+      invalid && input?.type === "file" ? `The uploaded file for "${selectedAnswer.inputName}" is invalid. ` : "";
     const nextBotMessage: IMessage = {
       id: randomId(),
       text: invalidTxt + "Let's give it another go. " + askedQuestion.question,
@@ -636,7 +587,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
           messages={messages}
           setMessages={setMessages}
           setIsSimulaitonStreaming={setIsSimulaitonStreaming}
-          questions={templateQuestions}
+          inputs={_inputs}
           answers={answers}
           showGenerate={showGenerateButton}
           onChange={handleUserInput}
