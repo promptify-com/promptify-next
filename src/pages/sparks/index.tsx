@@ -39,7 +39,7 @@ const Sparks = () => {
                 </Box>
 
                 <Box bgcolor={"surface.1"}>
-                  <SparksTemplatePlaceholder count={3} />
+                  <SparksTemplatePlaceholder />
                 </Box>
               </>
             ) : (
@@ -51,7 +51,7 @@ const Sparks = () => {
                   lineHeight={"34.32px"}
                   letterSpacing={"0.17"}
                 >
-                  My Sparks
+                  My works
                 </Typography>
                 {(executedTemplates as unknown as TemplateExecutionsDisplay[])?.length ? (
                   <SparksContainer templates={executedTemplates as TemplateExecutionsDisplay[]} />
@@ -64,7 +64,7 @@ const Sparks = () => {
                       mt: "50px",
                     }}
                   >
-                    No sparks found
+                    No works found
                   </Typography>
                 )}
               </Stack>

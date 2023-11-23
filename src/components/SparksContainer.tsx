@@ -1,5 +1,6 @@
-import { FC, useMemo, useState } from "react";
-import { Box, Grid } from "@mui/material";
+import { useMemo, useState } from "react";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
 import {
   Execution,
   ExecutionTemplatePopupType,
@@ -7,12 +8,11 @@ import {
   TemplateExecutionsDisplay,
   TemplatesExecutions,
 } from "@/core/api/dto/templates";
-
-import { SparksLayoutDesktop } from "./SparksLayoutDesktop";
+import SparksLayoutDesktop from "./SparksLayoutDesktop";
 import { SparksLayoutMobile } from "./SparksLayoutMobile";
 import { SparkSaveDeletePopup } from "./dialog/SparkSaveDeletePopup";
 import { useExecutionFavoriteMutation } from "@/core/api/executions";
-import SparkFilters, { TabValueType } from "./SparksFilters";
+import SparkFilters, { type TabValueType } from "./SparksFilters";
 import { SparkExportPopup } from "./dialog/SparkExportPopup";
 
 interface SparksContainerProps {
@@ -28,7 +28,7 @@ type SortStateWithCurrentType = SortDirectionState & {
   currentType: CurrentSortType;
 };
 
-const SparksContainer: FC<SparksContainerProps> = ({ templates }) => {
+export default function SparksContainer({ templates }: SparksContainerProps) {
   const [popup, setPopup] = useState<ExecutionTemplatePopupType>(null);
   const [activeExecution, setActiveExecution] = useState<TemplatesExecutions | null>(null);
 
@@ -237,6 +237,4 @@ const SparksContainer: FC<SparksContainerProps> = ({ templates }) => {
       )}
     </Grid>
   );
-};
-
-export default SparksContainer;
+}

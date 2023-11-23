@@ -1,16 +1,28 @@
 import { FC, ReactNode, useRef, useCallback } from "react";
-import { Grid } from "@mui/material";
+import Grid from "@mui/material/Grid";
 import CardTemplatePlaceholder from "./placeholders/CardTemplatePlaceHolder";
 import { isDesktopViewPort } from "@/common/helpers";
+import TemplatesPaginatedList from "./TemplatesPaginatedList";
 
 interface TemplatesInfiniteScrollProps {
   loading: boolean;
   onLoadMore: () => void;
   children: ReactNode;
   hasMore?: boolean;
+  isInfiniteScrolling?: boolean;
+  hasPrev?: boolean;
+  onLoadLess?: () => void;
 }
 
-const TemplatesInfiniteScroll: FC<TemplatesInfiniteScrollProps> = ({ loading, onLoadMore, children, hasMore }) => {
+const TemplatesInfiniteScroll: FC<TemplatesInfiniteScrollProps> = ({
+  loading,
+  onLoadMore,
+  children,
+  hasMore,
+  isInfiniteScrolling = true,
+  hasPrev,
+  onLoadLess = () => {},
+}) => {
   const observer = useRef<IntersectionObserver | null>(null);
   const isMobile = !isDesktopViewPort();
 
@@ -41,9 +53,24 @@ const TemplatesInfiniteScroll: FC<TemplatesInfiniteScrollProps> = ({ loading, on
       flexDirection={"column"}
       gap={"16px"}
     >
-      {children}
-      {loading && <CardTemplatePlaceholder count={4} />}
-      <div ref={lastTemplateElementRef}></div>
+      {isInfiniteScrolling ? (
+        <>
+          {children}
+          {loading && <CardTemplatePlaceholder count={5} />}
+          <div ref={lastTemplateElementRef}></div>
+        </>
+      ) : (
+        <TemplatesPaginatedList
+          hasNext={hasMore}
+          hasPrev={hasPrev}
+          canBeShown={hasMore || hasPrev}
+          onNextPage={onLoadMore}
+          onPrevPage={onLoadLess}
+          loading={loading}
+        >
+          {loading ? <CardTemplatePlaceholder count={5} /> : <>{children}</>}
+        </TemplatesPaginatedList>
+      )}
     </Grid>
   );
 };

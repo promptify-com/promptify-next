@@ -175,7 +175,7 @@ const SparkFilters: React.FC<TemplateFilterProps> = ({
             bgcolor={"surface.5"}
             item
             flex={1}
-            md={3}
+            md={5}
             padding={{ xs: "0px 8px", md: "0px 8px" }}
             display={"flex"}
             justifyContent={"space-between"}
@@ -275,7 +275,7 @@ const SparkFilters: React.FC<TemplateFilterProps> = ({
             bgcolor={"surface.5"}
             item
             padding={"8px 8px 8px 16px"}
-            lg={4}
+            md={3}
             display={{ xs: "none", md: "flex" }}
             justifyContent={"space-between"}
             alignItems={"center"}
@@ -287,7 +287,7 @@ const SparkFilters: React.FC<TemplateFilterProps> = ({
               letterSpacing={"0.17px"}
               sx={{ opacity: 0.75, display: "flex", alignItems: "center", gap: "8px" }}
             >
-              Template
+              Prompt Template
               <ArrowDropDown sx={{ fontSize: "16px" }} />
             </Typography>
             <IconButton
@@ -313,6 +313,8 @@ const SparkFilters: React.FC<TemplateFilterProps> = ({
             display={{ xs: "none", md: "flex" }}
             gap={"8px"}
             alignItems={"center"}
+            justifyContent={"space-between"}
+            md={1.5}
           >
             <Typography
               fontSize={13}
@@ -350,6 +352,7 @@ const SparkFilters: React.FC<TemplateFilterProps> = ({
             justifyContent={"end"}
             flex={1}
             padding={"8px 16px"}
+            md={1.8}
           >
             <Typography
               fontSize={13}
