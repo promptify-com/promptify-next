@@ -1,6 +1,7 @@
 import { useEffect, type Dispatch, type SetStateAction } from "react";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
+import { skipToken } from "@reduxjs/toolkit/dist/query";
 
 import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import ClientOnly from "../base/ClientOnly";
@@ -8,13 +9,10 @@ import ChatMode from "./generate/ChatBox";
 import Header from "./Header";
 import TemplateToolbar from "./Toolbar";
 import ToolbarDrawer from "./Toolbar/ToolbarDrawer";
-import { Display } from "./Display";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { setChatFullScreenStatus } from "@/core/store/templatesSlice";
+import { setAccordionChatMode } from "@/core/store/templatesSlice";
 import { setGeneratedExecution, setSelectedExecution, setSparkHashQueryParam } from "@/core/store/executionsSlice";
 import { isValidUserFn } from "@/core/store/userSlice";
-import { skipToken } from "@reduxjs/toolkit/dist/query";
-
 import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
 
 interface TemplateDesktopProps {
@@ -24,7 +22,6 @@ interface TemplateDesktopProps {
 
 export default function TemplateDesktop({ template, setErrorMessage }: TemplateDesktopProps) {
   const dispatch = useAppDispatch();
-  const chatFullScreen = useAppSelector(state => state.template.isChatFullScreen);
 
   const isValidUser = useAppSelector(isValidUserFn);
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
@@ -36,11 +33,6 @@ export default function TemplateDesktop({ template, setErrorMessage }: TemplateD
     isLoading: isExecutionsLoading,
     refetch: refetchTemplateExecutions,
   } = useGetExecutionsByTemplateQuery(isValidUser ? template.id : skipToken);
-
-  const closeExecutionDisplay = () => {
-    dispatch(setChatFullScreenStatus(true));
-    dispatch(setSelectedExecution(null));
-  };
 
   useEffect(() => {
     if (!isGenerating && generatedExecution?.data?.length) {
@@ -83,6 +75,13 @@ export default function TemplateDesktop({ template, setErrorMessage }: TemplateD
       handleSelectExecution({ execution: template.example_execution || null, resetHash: true });
     }
   }, [executions]);
+
+  useEffect(() => {
+    if (selectedExecution) {
+      dispatch(setAccordionChatMode("execution"));
+    }
+  }, [selectedExecution]);
+
   return (
     <Stack
       height={"calc(100svh - 90px)"}
