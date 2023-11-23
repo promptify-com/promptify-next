@@ -81,7 +81,7 @@ export const Message = ({ message, setIsSimulaitonStreaming, onScrollToBottom }:
           fontSize={12}
           variant="caption"
         >
-          {name} - {timeAgo(createdAt)}
+          {name} {timeAgo(createdAt)}
         </Typography>
       )}
 

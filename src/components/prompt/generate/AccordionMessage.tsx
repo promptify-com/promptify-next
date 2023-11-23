@@ -14,11 +14,15 @@ import type { Templates } from "@/core/api/dto/templates";
 import FeedbackThumbs from "../FeedbackThumbs";
 import Fade from "@mui/material/Fade";
 import { IPromptInput } from "@/common/types/prompt";
+import { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
 
 interface Props {
   inputs: IPromptInput[];
+  params: PromptParams[];
+  paramsValues: ResOverrides[];
   answers: IAnswer[];
-  onChange: (value: string | File, input: IPromptInput) => void;
+  onChangeInput: (value: string | File, input: IPromptInput) => void;
+  onChangeParam: (value: number, param: PromptParams) => void;
   onClear: () => void;
   onGenerate: () => void;
   abortGenerating: () => void;
@@ -31,8 +35,11 @@ interface Props {
 export const AccordionMessage = ({
   template,
   inputs,
+  params,
+  paramsValues,
   answers,
-  onChange,
+  onChangeInput,
+  onChangeParam,
   onClear,
   onGenerate,
   abortGenerating,
@@ -131,8 +138,11 @@ export const AccordionMessage = ({
               {mode === "input" && (
                 <Inputsform
                   inputs={inputs}
+                  params={params}
+                  paramsValues={paramsValues}
                   answers={answers}
-                  onChange={onChange}
+                  onChangeInput={onChangeInput}
+                  onChangeParam={onChangeParam}
                 />
               )}
             </Stack>

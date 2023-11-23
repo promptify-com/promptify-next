@@ -12,15 +12,18 @@ import { TemplateDetailsCard } from "./TemplateDetailsCard";
 import { IPromptInput } from "@/common/types/prompt";
 import Typography from "@mui/material/Typography";
 import { timeAgo } from "@/common/helpers/timeManipulation";
-import { IPromptParams } from "@/common/types/builder";
+import { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
 
 interface Props {
   template: Templates;
   messages: IMessage[];
-  onChange: (value: string | File, input: IPromptInput) => void;
+  onChangeInput: (value: string | File, input: IPromptInput) => void;
+  onChangeParam: (value: number, param: PromptParams) => void;
   setIsSimulaitonStreaming: Dispatch<SetStateAction<boolean>>;
   inputs: IPromptInput[];
   answers: IAnswer[];
+  params: PromptParams[];
+  paramsValues: ResOverrides[];
   onGenerate: () => void;
   onAbort: () => void;
   onClear: () => void;
@@ -31,7 +34,8 @@ interface Props {
 export const ChatInterface = ({
   template,
   messages,
-  onChange,
+  onChangeInput,
+  onChangeParam,
   setIsSimulaitonStreaming,
   inputs,
   answers,
@@ -40,6 +44,8 @@ export const ChatInterface = ({
   onAbort,
   onClear,
   setMessages,
+  params,
+  paramsValues,
 }: Props) => {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
@@ -139,7 +145,7 @@ export const ChatInterface = ({
                     fontSize={12}
                     variant="caption"
                   >
-                    Promptify - {timeAgo(msg.createdAt)}
+                    Promptify {timeAgo(msg.createdAt)}
                   </Typography>
                 )}
                 <AccordionMessage
@@ -149,8 +155,11 @@ export const ChatInterface = ({
                   showGenerate={showGenerate}
                   abortGenerating={onAbort}
                   inputs={inputs}
+                  params={params}
+                  paramsValues={paramsValues}
                   answers={answers}
-                  onChange={onChange}
+                  onChangeInput={onChangeInput}
+                  onChangeParam={onChangeParam}
                   onGenerate={onGenerate}
                   setIsSimulationStreaming={setIsSimulaitonStreaming}
                 />

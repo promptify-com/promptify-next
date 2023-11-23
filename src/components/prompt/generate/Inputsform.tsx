@@ -16,14 +16,19 @@ import BaseButton from "@/components/base/BaseButton";
 import CodeFieldModal from "@/components/modals/CodeFieldModal";
 import { useAppSelector } from "@/hooks/useStore";
 import type { FileType, IPromptInput } from "@/common/types/prompt";
+import { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
+import { FormParam } from "./FormParams";
 
 interface Props {
   inputs: IPromptInput[];
+  params: PromptParams[];
+  paramsValues: ResOverrides[];
   answers: IAnswer[];
-  onChange: (value: string | File, input: IPromptInput) => void;
+  onChangeInput: (value: string | File, input: IPromptInput) => void;
+  onChangeParam: (value: number, param: PromptParams) => void;
 }
 
-function Inputsform({ inputs, answers, onChange }: Props) {
+function Inputsform({ inputs, answers, onChangeInput, onChangeParam, params, paramsValues }: Props) {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const [codeFieldOpen, setCodeFieldOpen] = useState(false);
 
@@ -39,6 +44,7 @@ function Inputsform({ inputs, answers, onChange }: Props) {
             p={"6px"}
             alignItems={"center"}
             gap={1}
+            borderBottom={"1px solid #ECECF4"}
           >
             <Radio
               size="small"
@@ -89,7 +95,7 @@ function Inputsform({ inputs, answers, onChange }: Props) {
                       open
                       setOpen={setCodeFieldOpen}
                       value={value as string}
-                      onSubmit={val => onChange(val, input)}
+                      onSubmit={val => onChangeInput(val, input)}
                     />
                   )}
                 </>
@@ -113,7 +119,7 @@ function Inputsform({ inputs, answers, onChange }: Props) {
                     sx: { ".MuiMenuItem-root": { fontSize: 14, fontWeight: 400 } },
                   }}
                   value={value}
-                  onChange={e => onChange(e.target.value as string, input)}
+                  onChange={e => onChangeInput(e.target.value as string, input)}
                   displayEmpty
                 >
                   <MenuItem
@@ -159,7 +165,7 @@ function Inputsform({ inputs, answers, onChange }: Props) {
                       }}
                       onChange={e => {
                         if (e.target.files && e.target.files.length > 0) {
-                          onChange(e.target.files[0], input);
+                          onChangeInput(e.target.files[0], input);
                         }
                       }}
                     />
@@ -197,7 +203,7 @@ function Inputsform({ inputs, answers, onChange }: Props) {
                   placeholder={"Type here"}
                   type={input.type}
                   value={value}
-                  onChange={e => onChange(e.target.value, input)}
+                  onChange={e => onChangeInput(e.target.value, input)}
                 />
               )}
             </Stack>
@@ -228,6 +234,18 @@ function Inputsform({ inputs, answers, onChange }: Props) {
               </IconButton>
             </Stack>
           </Stack>
+        );
+      })}
+
+      {params?.map(param => {
+        const paramValue = paramsValues.find(paramVal => paramVal.id === param.prompt);
+        return (
+          <FormParam
+            key={param.parameter.id}
+            param={param}
+            paramValue={paramValue}
+            onChange={onChangeParam}
+          />
         );
       })}
     </Stack>
