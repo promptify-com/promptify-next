@@ -54,7 +54,12 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
     sortAndProcessExecutions();
   }, [executionPrompts]);
 
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    containerRef.current?.scrollIntoView({
+      block: isGenerating ? "end" : "start",
+    });
+  }, [execution]);
 
   const executionError = (error: string | undefined) => {
     return (
@@ -78,12 +83,11 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
 
   return (
     <Stack
+      ref={containerRef}
       gap={1}
       p={"16px"}
       width={"95%"}
     >
-      {!isGenerating && <div ref={scrollRef}></div>}
-
       {execution && "title" in execution && (
         <Typography sx={{ fontSize: 48, fontWeight: 400, color: "onSurface", py: "24px" }}>
           {execution.title}
@@ -197,8 +201,6 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
             );
           }
         })}
-
-      {isGenerating && <div ref={scrollRef}></div>}
     </Stack>
   );
 };
