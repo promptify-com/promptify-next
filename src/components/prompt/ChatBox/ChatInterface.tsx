@@ -10,27 +10,31 @@ import { CardExecution } from "@/components/common/cards/CardExecution";
 import FeedbackThumbs from "../FeedbackThumbs";
 import { Replay } from "@mui/icons-material";
 import { IPromptInputQuestion } from "@/common/types/prompt";
-import { PromptParams } from "@/core/api/dto/prompts";
+import { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
 
 interface Props {
   template: Templates;
   messages: IMessage[];
-  onChange: (value: string | File, question: IPromptInputQuestion) => void;
+  onChangeInput: (value: string | File, question: IPromptInputQuestion) => void;
+  onChangeParam: (value: number, param: PromptParams) => void;
   setIsSimulationStreaming: Dispatch<SetStateAction<boolean>>;
   inputs: IPromptInputQuestion[];
-  params: PromptParams[];
   answers: IAnswer[];
+  params: PromptParams[];
+  paramsValues: ResOverrides[];
   regenerate: (execution: TemplatesExecutions) => void;
 }
 
 export const ChatInterface = ({
   template,
   messages,
-  onChange,
+  onChangeInput,
+  onChangeParam,
   setIsSimulationStreaming,
   inputs,
-  params,
   answers,
+  params,
+  paramsValues,
   regenerate,
 }: Props) => {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
@@ -103,7 +107,9 @@ export const ChatInterface = ({
                   inputs={inputs}
                   params={params}
                   answers={answers}
-                  onChange={onChange}
+                  paramsValues={paramsValues}
+                  onChangeInput={onChangeInput}
+                  onChangeParam={onChangeParam}
                   setIsSimulationStreaming={setIsSimulationStreaming}
                   onScrollToBottom={scrollToBottom}
                 />

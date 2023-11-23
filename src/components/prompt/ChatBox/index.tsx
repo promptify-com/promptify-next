@@ -2,7 +2,7 @@ import React, { useState, useMemo, memo, useEffect, useRef } from "react";
 import { Typography, Button, Stack, Box } from "@mui/material";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { useRouter } from "next/router";
-import { PromptParams, ResPrompt } from "@/core/api/dto/prompts";
+import { PromptParams, ResOverrides, ResPrompt } from "@/core/api/dto/prompts";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { useAppSelector, useAppDispatch } from "@/hooks/useStore";
 import useToken from "@/hooks/useToken";
@@ -44,6 +44,7 @@ const ChatBox: React.FC<Props> = ({ onError, template }) => {
   });
   const [newExecutionId, setNewExecutionId] = useState<number | null>(null);
   const [answers, setAnswers] = useState<IAnswer[]>([]);
+  const [paramsValues, setParamsValues] = useState<ResOverrides[]>([]);
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [queuedMessages, setQueuedMessages] = useState<IMessage[]>([]);
   const [isSimulationStreaming, setIsSimulationStreaming] = useState(false);
@@ -137,33 +138,36 @@ const ChatBox: React.FC<Props> = ({ onError, template }) => {
       return [[], []];
     }
 
-    const inputsQuestions: IPromptInputQuestion[] = [];
     const { inputs, params } = prepareAndRemoveDuplicateInputs(template.prompts);
     const questions = template.questions;
 
-    for (let index = 0; index < questions.length; index++) {
-      const question = questions[index];
-      const key = Object.keys(question)[0];
+    const inputsQuestions: IPromptInputQuestion[] = [];
+    questions.forEach((question, idx) => {
+      if (!inputs[idx]) return;
 
-      if (inputs[index]) {
-        const { type, required, choices, fileExtensions, name, fullName, prompt } = inputs[index];
-        const updatedQuestion: IPromptInputQuestion = {
-          ...question[key],
-          name,
-          fullName,
-          required,
-          type,
-          choices,
-          fileExtensions,
-          prompt: prompt!,
-        };
-        inputsQuestions.push(updatedQuestion);
-      }
-    }
+      const { type, required, choices, fileExtensions, name, fullName, prompt } = inputs[idx];
+      const key = Object.keys(question)[0];
+      inputsQuestions.push({
+        ...question[key],
+        name,
+        fullName,
+        required,
+        type,
+        choices,
+        fileExtensions,
+        prompt: prompt!,
+      });
+    });
 
     inputsQuestions.sort((a, b) => +b.required - +a.required);
 
     initialMessages(inputsQuestions);
+
+    const valuesMap = new Map<number, ResOverrides>();
+    params.forEach(_param => {
+      valuesMap.set(_param.prompt, { id: _param.prompt, contextual_overrides: [] });
+    });
+    setParamsValues(Array.from(valuesMap.values()));
 
     return [inputsQuestions, params];
   }, [template]);
@@ -320,7 +324,7 @@ const ChatBox: React.FC<Props> = ({ onError, template }) => {
     }
   };
 
-  const handleUserInput = async (value: string | File, currentQuestion: IPromptInputQuestion) => {
+  const handleUserInput = (value: string | File, currentQuestion: IPromptInputQuestion) => {
     if (isSimulationStreaming) {
       return;
     }
@@ -342,6 +346,19 @@ const ChatBox: React.FC<Props> = ({ onError, template }) => {
     }
 
     setAnswers(_answers);
+  };
+
+  const handleUserParam = (value: number, param: PromptParams) => {
+    const paramId = param.parameter.id;
+    setParamsValues(prevValues =>
+      prevValues.map(paramValue => {
+        if (paramValue.id === param.prompt) {
+          const others = paramValue.contextual_overrides.filter(val => val.parameter !== paramId);
+          paramValue.contextual_overrides = others.concat({ parameter: paramId, score: value });
+        }
+        return paramValue;
+      }),
+    );
   };
 
   const validateAndUploadFiles = () =>
@@ -393,7 +410,7 @@ const ChatBox: React.FC<Props> = ({ onError, template }) => {
 
     dispatch(setGeneratingStatus(true));
 
-    const promptsData = preparePromptsData(uploadedFiles.current, answers, template.prompts);
+    const promptsData = preparePromptsData(uploadedFiles.current, answers, paramsValues, template.prompts);
 
     uploadedFiles.current.clear();
 
@@ -611,16 +628,18 @@ const ChatBox: React.FC<Props> = ({ onError, template }) => {
           inputs={_inputs}
           params={_params}
           answers={answers}
+          paramsValues={paramsValues}
           template={template}
           messages={messages}
-          onChange={handleUserInput}
+          onChangeInput={handleUserInput}
+          onChangeParam={handleUserParam}
           setIsSimulationStreaming={setIsSimulationStreaming}
           regenerate={regenerateHandler}
         />
         {currentUser?.id ? (
           <ChatInput
             onSubmit={validateVary}
-            disabled={isValidatingAnswer || disableChatInput || _inputs.length === 0}
+            disabled={isValidatingAnswer || isGenerating || disableChatInput || _inputs.length === 0}
             onClear={() => setAnswers([])}
             showClear={showClearBtn}
             showGenerate={showGenerate}

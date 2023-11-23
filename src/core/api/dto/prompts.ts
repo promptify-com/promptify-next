@@ -57,6 +57,7 @@ export interface PromptParams {
   parameter: IParameters;
   is_visible: boolean;
   is_editable: boolean;
+  prompt: number;
 }
 
 interface ContextualOverrides {

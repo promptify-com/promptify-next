@@ -1,7 +1,7 @@
 import { getInputsFromString } from "@/common/helpers/getInputsFromString";
 import type { IAnswer } from "@/common/types/chat";
 import type { IPromptInput } from "@/common/types/prompt";
-import type { PromptParams, Prompts, ResPrompt } from "@/core/api/dto/prompts";
+import type { PromptParams, Prompts, ResOverrides, ResPrompt } from "@/core/api/dto/prompts";
 
 export default function useChatBox() {
   const prepareAndRemoveDuplicateInputs = (templatePrompts: Prompts[]) => {
@@ -25,7 +25,9 @@ export default function useChatBox() {
           return _input;
         }),
       );
-      params.push(...prompt.parameters);
+
+      const _params = prompt.parameters.filter(_param => !params.find(p => p.parameter.id === _param.parameter.id));
+      params.push(..._params);
     });
 
     return {
@@ -33,7 +35,12 @@ export default function useChatBox() {
       params,
     };
   };
-  const preparePromptsData = (uploadedFiles: Map<string, string>, answers: IAnswer[], templatePrompts: Prompts[]) => {
+  const preparePromptsData = (
+    uploadedFiles: Map<string, string>,
+    answers: IAnswer[],
+    paramsValues: ResOverrides[],
+    templatePrompts: Prompts[],
+  ) => {
     const promptsData: ResPrompt[] = [];
 
     // we need to go through all inputs per prompt if exist, then create new entry for them
@@ -56,8 +63,10 @@ export default function useChatBox() {
         return;
       }
 
+      const _paramValues = paramsValues.find(param => param.id === prompt.id);
+
       promptsData.push({
-        contextual_overrides: [],
+        contextual_overrides: _paramValues?.contextual_overrides || [],
         prompt: prompt.id,
         prompt_params,
       });
