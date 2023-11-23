@@ -1,7 +1,6 @@
 import React from "react";
-import { Box, CardMedia, Chip, Stack, Typography, alpha } from "@mui/material";
+import { Box, CardMedia, Chip, Stack, Typography } from "@mui/material";
 import { Templates } from "@/core/api/dto/templates";
-import { theme } from "@/theme";
 import { useDispatch } from "react-redux";
 import { setSelectedTag } from "@/core/store/filtersSlice";
 import { useRouter } from "next/router";
@@ -16,31 +15,30 @@ export const TemplateDetailsCard: React.FC<TemplateDetailsCardProps> = ({ templa
   return (
     <Box>
       <Stack
-        pb={"20px"}
+        pl={"40px"}
         direction={"row"}
         justifyContent={"space-between"}
         alignItems={"flex-start"}
         sx={{
           flexWrap: { xs: "wrap", md: "nowrap" },
           bgcolor: "surface.2",
-          borderRadius: "48px",
+          borderRadius: "16px",
         }}
       >
         <Stack
+          flex={1}
           gap={2}
           sx={{
-            p: "48px 72px 38px 54px",
+            p: "40px 24px 40px 16px",
           }}
         >
-          <Stack gap={1}>
-            <Typography
-              fontSize={36}
-              fontWeight={400}
-              color={"text.primary"}
-            >
-              {template.title}
-            </Typography>
-          </Stack>
+          <Typography
+            fontSize={36}
+            fontWeight={400}
+            color={"text.primary"}
+          >
+            {template.title}
+          </Typography>
           <Typography
             fontSize={14}
             fontWeight={400}
@@ -78,17 +76,20 @@ export const TemplateDetailsCard: React.FC<TemplateDetailsCardProps> = ({ templa
               ))}
           </Stack>
         </Stack>
-        <CardMedia
-          sx={{
-            width: "351px",
-            height: "202px",
-            objectFit: "cover",
-            borderRadius: "48px",
-          }}
-          component="img"
-          image={template.thumbnail}
-          alt={template.title}
-        />
+
+        <Stack pb={"24px"}>
+          <CardMedia
+            sx={{
+              width: "351px",
+              height: "222px",
+              objectFit: "cover",
+              borderRadius: "16px",
+            }}
+            component="img"
+            image={template.thumbnail}
+            alt={template.title}
+          />
+        </Stack>
       </Stack>
     </Box>
   );
