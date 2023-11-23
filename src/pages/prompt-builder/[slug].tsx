@@ -21,6 +21,7 @@ import { BUILDER_TYPE } from "@/common/constants";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { handleEngines, handlePrompts } from "@/core/store/builderSlice";
 import Sidebar from "@/components/sidebar/Sidebar";
+import { theme } from "@/theme";
 
 interface PromptBuilderProps {
   templateData: Templates;
@@ -168,7 +169,7 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
       <BuilderSidebar />
       <Box
         sx={{
-          ml: "86px",
+          ml: theme.custom.leftClosedSidebarWidth,
           mr: builderSidebarOpen ? "352px" : "0px",
         }}
       >

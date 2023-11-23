@@ -16,14 +16,9 @@ import { Box } from "@mui/material";
 
 interface Props {
   navItem: NavItem;
-  isPromptsPage: boolean;
-  showFilters: boolean;
-  onClick?: () => void;
-  tags?: Tag[];
-  engines?: Engine[];
 }
 
-function SidebarItem({ navItem, isPromptsPage, showFilters, onClick, engines, tags }: Props) {
+function SidebarItem({ navItem }: Props) {
   return (
     <Link
       href={navItem.href}
@@ -38,26 +33,34 @@ function SidebarItem({ navItem, isPromptsPage, showFilters, onClick, engines, ta
         sx={{
           ...(navItem.active && {
             ".MuiSvgIcon-root": {
-              fill: theme.palette.primary.main,
+              fill: "#375CA9",
+              transform: "scale(1.1)",
             },
             ".MuiTypography-root": {
               color: "#375CA9",
             },
-            mb: isPromptsPage ? "10px" : 0,
+            ".MuiListItemIcon-root": {
+              backgroundColor: "surface.1",
+            },
           }),
           padding: "8px",
-          height: isPromptsPage ? "56px" : "auto",
+          height: "auto",
           "&:hover": {
-            backgroundColor: "surface.1",
+            backgroundColor: "transparent",
             borderRadius: "8px",
             ".MuiSvgIcon-root": {
               transform: "scale(1.1)",
+              fill: "#375CA9",
+            },
+            ".MuiTypography-root": {
+              color: "#375CA9",
+            },
+            ".MuiListItemIcon-root": {
+              backgroundColor: "surface.1",
             },
           },
         }}
         onClick={e => {
-          onClick?.();
-
           if (navItem.external) {
             return;
           }
@@ -75,23 +78,23 @@ function SidebarItem({ navItem, isPromptsPage, showFilters, onClick, engines, ta
         <ListItemButton
           sx={{
             display: "flex",
-            flexDirection: isPromptsPage ? "row" : "column",
-            justifyContent: isPromptsPage ? "space-between" : "flex-start",
-            width: isPromptsPage ? "100%" : "auto",
+            flexDirection: "column",
+            justifyContent: "flex-start",
+            width: "auto",
             textAlign: "center",
             "&:hover": {
-              backgroundColor: "surface.1",
+              backgroundColor: "transparent",
               borderRadius: "8px",
               color: "onSurface",
             },
           }}
         >
-          <Box sx={{ minWidth: "40px", display: isPromptsPage ? "flex" : "block" }}>
+          <Box sx={{ minWidth: "40px", display: "block" }}>
             <ListItemIcon
               sx={{
                 display: "flex",
                 flexDirection: "column",
-                justifyContent: isPromptsPage ? "flex-end" : "center",
+                justifyContent: "center",
                 minWidth: "40px",
                 borderRadius: "6px",
                 height: "40px",
@@ -115,35 +118,17 @@ function SidebarItem({ navItem, isPromptsPage, showFilters, onClick, engines, ta
             <Typography
               sx={{
                 mt: 0.5,
-                alignSelf: isPromptsPage ? "center" : "flex-start",
+                alignSelf: "flex-start",
               }}
-              fontSize={14}
+              fontSize={12}
               fontWeight={500}
               color={"onSurface"}
             >
               {navItem.name}
             </Typography>
           </Box>
-          {isPromptsPage && navItem.href === "/explore" ? (
-            showFilters ? (
-              <ExpandLess sx={{ mr: -1, color: "text.secondary" }} />
-            ) : (
-              <ExpandMore sx={{ mr: -1, color: "text.secondary" }} />
-            )
-          ) : null}
         </ListItemButton>
       </ListItem>
-      <Collapse
-        in={showFilters && isPromptsPage && navItem.href === "/explore"}
-        timeout={"auto"}
-        unmountOnExit
-      >
-        <ExploreFilterSideBar
-          engines={engines}
-          tags={tags}
-          sidebarOpen
-        />
-      </Collapse>
     </Link>
   );
 }

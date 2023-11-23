@@ -4,7 +4,7 @@ export interface Deployment {
   id: number;
   user: number;
   failure_reason: string | null;
-  model: ModelFields;
+  model: Model;
   instance: Instance;
   status: DeploymentStatus;
   created_at: string;
@@ -43,7 +43,7 @@ export interface Instance {
   region: number;
 }
 
-export interface ModelFields {
+export interface Model {
   id: number;
   model_id: string;
   name: string;
@@ -51,23 +51,23 @@ export interface ModelFields {
   task: string;
 }
 
-export interface Model {
-  model: string;
-  pk: number;
-  fields: ModelFields;
-}
-
-export interface ModelsWithPagination {
+export interface PaginationData<T> {
   count: number;
   next: string | null;
   previous: string | null;
-  results: ModelFields[];
+  results: T[];
 }
 
 export interface RegionParams {
   provider?: string;
 }
 
-export interface InstanceParams {
+export interface FilterParams {
+  limit: number;
+  offset: number;
+  query?: string;
   region?: string;
+  type?: FetchingDataType;
 }
+
+export type FetchingDataType = "models" | "instances";

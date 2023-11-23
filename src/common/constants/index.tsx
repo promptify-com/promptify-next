@@ -13,7 +13,6 @@ import { Prompt } from "@/assets/icons/prompts";
 import { TemplateStatus } from "@/core/api/dto/templates";
 import { InputType } from "@/common/types/prompt";
 import { DeploymentStatus } from "../types/deployments";
-import { Model } from "@/common/types/deployments";
 
 export interface MenuType {
   id: number;
