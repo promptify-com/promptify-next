@@ -6,7 +6,7 @@ import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 
-import { ResPrompt } from "@/core/api/dto/prompts";
+import { PromptParams, ResOverrides, ResPrompt } from "@/core/api/dto/prompts";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { useAppSelector, useAppDispatch } from "@/hooks/useStore";
 import useToken from "@/hooks/useToken";
@@ -55,6 +55,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
   const [disableChatInput, setDisableChatInput] = useState(false);
   const [standingQuestions, setStandingQuestions] = useState<IPromptInput[]>([]);
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
+  const [paramsValues, setParamsValues] = useState<ResOverrides[]>([]);
 
   const { preparePromptsData, prepareAndRemoveDuplicateInputs } = useChatBox();
 
@@ -127,12 +128,12 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
 
     dispatch(updateExecutionData(JSON.stringify(Object.values(promptsData))));
   };
-  const [_inputs, promptHasContent]: [IPromptInput[], Boolean] = useMemo(() => {
+  const [_inputs, _params, promptHasContent]: [IPromptInput[], PromptParams[], Boolean] = useMemo(() => {
     if (!template) {
-      return [[], false];
+      return [[], [], false];
     }
 
-    let { inputs, promptHasContent } = prepareAndRemoveDuplicateInputs(template.prompts);
+    let { inputs, params, promptHasContent } = prepareAndRemoveDuplicateInputs(template.prompts);
 
     if (template.questions?.length) {
       const normalizeQuestions: Record<string, string> = template.questions.reduce(
@@ -154,7 +155,13 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
 
     initialMessages({ inputs });
 
-    return [inputs, promptHasContent];
+    const valuesMap = new Map<number, ResOverrides>();
+    params.forEach(_param => {
+      valuesMap.set(_param.prompt, { id: _param.prompt, contextual_overrides: [] });
+    });
+    setParamsValues(Array.from(valuesMap.values()));
+
+    return [inputs, params, promptHasContent];
   }, [template]);
 
   useEffect(() => {
@@ -307,6 +314,19 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
     }
   };
 
+  const handleUserParam = (value: number, param: PromptParams) => {
+    const paramId = param.parameter.id;
+    setParamsValues(prevValues =>
+      prevValues.map(paramValue => {
+        if (paramValue.id === param.prompt) {
+          const others = paramValue.contextual_overrides.filter(val => val.parameter !== paramId);
+          paramValue.contextual_overrides = others.concat({ parameter: paramId, score: value });
+        }
+        return paramValue;
+      }),
+    );
+  };
+
   const handleUserInput = async (value: string | File, input: IPromptInput) => {
     if (isSimulaitonStreaming) {
       return;
@@ -383,7 +403,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
 
     dispatch(setGeneratingStatus(true));
 
-    const promptsData = preparePromptsData(uploadedFiles.current, answers, template.prompts);
+    const promptsData = preparePromptsData(uploadedFiles.current, answers, paramsValues, template.prompts);
 
     uploadedFiles.current.clear();
 
@@ -576,9 +596,12 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
           setMessages={setMessages}
           setIsSimulaitonStreaming={setIsSimulaitonStreaming}
           inputs={_inputs}
+          params={_params}
+          paramsValues={paramsValues}
           answers={answers}
           showGenerate={showGenerateButton}
-          onChange={handleUserInput}
+          onChangeInput={handleUserInput}
+          onChangeParam={handleUserParam}
           onGenerate={generateExecutionHandler}
           onAbort={abortConnection}
           onClear={() => setAnswers([])}
