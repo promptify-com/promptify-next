@@ -53,7 +53,7 @@ export const ChatInterface = ({
 
   const scrollToBottom = () => {
     if (messagesContainerRef.current) {
-      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight + 140;
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight - 300;
     }
   };
 

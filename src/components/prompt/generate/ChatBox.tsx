@@ -259,6 +259,8 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
         noHeader: true,
       },
     ]);
+
+    setIsSimulaitonStreaming(false);
   };
 
   const validateVary = async (variation: string) => {
