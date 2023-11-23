@@ -45,12 +45,20 @@ export const Message = ({ message, setIsSimulaitonStreaming, onScrollToBottom }:
   const { fromUser, text, createdAt, type } = message;
   const currentUser = useAppSelector(state => state.user.currentUser);
 
+  const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
+  const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
+  const accordionMode = useAppSelector(state => state.template.accordionChatMode);
+
   const name = fromUser ? currentUser?.first_name ?? currentUser?.username : "Promptify";
 
   if (type === "form") {
     return;
   }
-  if (text === "") return;
+  if (
+    text === "" ||
+    (accordionMode === "execution" && text === "Run Prompt" && selectedExecution && !generatedExecution)
+  )
+    return;
 
   return (
     <Grid
