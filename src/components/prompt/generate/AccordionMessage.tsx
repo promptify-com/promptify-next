@@ -10,12 +10,11 @@ import { IAnswer, IMessage } from "@/common/types/chat";
 import { Display } from "../Display";
 import Inputsform from "./Inputsform";
 import AccordionMessageHeader from "./AccordionMessageHeader";
-import type { Templates, UpdatedQuestionTemplate } from "@/core/api/dto/templates";
+import type { Templates } from "@/core/api/dto/templates";
 import FeedbackThumbs from "../FeedbackThumbs";
 import Fade from "@mui/material/Fade";
 import { IPromptInput } from "@/common/types/prompt";
 
-type Modes = "input" | "execution";
 interface Props {
   inputs: IPromptInput[];
   answers: IAnswer[];
@@ -26,7 +25,6 @@ interface Props {
   showGenerate: boolean;
   template: Templates;
   setMessages: Dispatch<SetStateAction<IMessage[]>>;
-  onScrollToBottom: () => void;
   setIsSimulationStreaming: Dispatch<SetStateAction<boolean>>;
 }
 
@@ -40,7 +38,6 @@ export const AccordionMessage = ({
   abortGenerating,
   showGenerate,
   setMessages,
-  onScrollToBottom,
   setIsSimulationStreaming,
 }: Props) => {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
@@ -55,7 +52,6 @@ export const AccordionMessage = ({
 
   const handleShowAccordion = () => {
     setIsSimulationStreaming(false);
-    // onScrollToBottom();
   };
 
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
@@ -108,7 +104,6 @@ export const AccordionMessage = ({
               {isGenerating ? "Generation Result" : "PROMPT Template information"}
             </Typography>
             <Stack
-              mt={-1}
               bgcolor={"surface.1"}
               borderRadius={"8px"}
               position={"relative"}
@@ -119,9 +114,6 @@ export const AccordionMessage = ({
                   <Display
                     mode="chat"
                     templateData={template}
-                    close={() => {
-                      console.log("close");
-                    }}
                   />
                   {!isGenerating && selectedExecution && (
                     <Stack
@@ -131,7 +123,7 @@ export const AccordionMessage = ({
                       top={"40%"}
                       right={"10px"}
                     >
-                      <FeedbackThumbs execution={selectedExecution!} />
+                      <FeedbackThumbs execution={selectedExecution} />
                     </Stack>
                   )}
                 </>

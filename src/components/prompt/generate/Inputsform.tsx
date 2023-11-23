@@ -8,13 +8,13 @@ import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import HelpOutline from "@mui/icons-material/HelpOutline";
+import IconButton from "@mui/material/IconButton";
 
 import { IAnswer } from "@/common/types/chat";
 import { getFileTypeExtensionsAsString } from "@/common/helpers/uploadFileHelper";
 import BaseButton from "@/components/base/BaseButton";
 import CodeFieldModal from "@/components/modals/CodeFieldModal";
 import { useAppSelector } from "@/hooks/useStore";
-import IconButton from "@mui/material/IconButton";
 import type { FileType, IPromptInput } from "@/common/types/prompt";
 
 interface Props {

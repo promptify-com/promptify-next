@@ -12,6 +12,7 @@ import { TemplateDetailsCard } from "./TemplateDetailsCard";
 import { IPromptInput } from "@/common/types/prompt";
 import Typography from "@mui/material/Typography";
 import { timeAgo } from "@/common/helpers/timeManipulation";
+import { IPromptParams } from "@/common/types/builder";
 
 interface Props {
   template: Templates;
@@ -151,7 +152,6 @@ export const ChatInterface = ({
                   answers={answers}
                   onChange={onChange}
                   onGenerate={onGenerate}
-                  onScrollToBottom={scrollToBottom}
                   setIsSimulationStreaming={setIsSimulaitonStreaming}
                 />
               </Box>
