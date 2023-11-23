@@ -8,6 +8,7 @@ import { ProgressLogo } from "@/components/common/ProgressLogo";
 import Box from "@mui/material/Box";
 import Add from "@mui/icons-material/Add";
 import { useAppSelector } from "@/hooks/useStore";
+import { Tooltip } from "@mui/material";
 
 interface ChatInputProps {
   onSubmit: (value: string) => void;
@@ -65,30 +66,39 @@ export const ChatInput = ({ onSubmit, disabled, isValidating, disabledButton, ad
         alignItems={"center"}
       >
         {mode === "execution" && (
-          <Box
-            onClick={addNewPrompt}
-            sx={{
-              padding: "4px",
-              width: "30px",
-              height: "30px",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              borderRadius: "8px",
-              bgcolor: "#375CA91A",
-              color: "#375CA9",
-              ":hover": {
-                bgcolor: "#375CA9",
-                color: "white",
-              },
-            }}
+          <Tooltip
+            title="Add new Prompt"
+            arrow
           >
-            <Add
+            <Box
+              onClick={addNewPrompt}
               sx={{
-                fontSize: 24,
+                padding: "4px",
+                cursor: "pointer",
+                width: "30px",
+                height: "30px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                borderRadius: "8px",
+                bgcolor: "#375CA91A",
+                color: "#375CA9",
+                transition: "all 0.3s ease-in-out",
+
+                ":hover": {
+                  bgcolor: "#375CA9",
+                  color: "white",
+                  borderRadius: "99px",
+                },
               }}
-            />
-          </Box>
+            >
+              <Add
+                sx={{
+                  fontSize: 24,
+                }}
+              />
+            </Box>
+          </Tooltip>
         )}
 
         <Box flex={1}>

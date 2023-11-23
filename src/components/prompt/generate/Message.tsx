@@ -6,6 +6,7 @@ import { useAppSelector } from "@/hooks/useStore";
 import { IMessage } from "@/common/types/chat";
 import useTextSimulationStreaming from "@/hooks/useTextSimulationStreaming";
 import { Bolt } from "@mui/icons-material";
+import { timeAgo } from "@/common/helpers/timeManipulation";
 
 interface MessageBlockProps {
   message: IMessage;
@@ -53,7 +54,6 @@ export const Message = ({ message, setIsSimulaitonStreaming, onScrollToBottom }:
 
   return (
     <Grid
-      py={"16px"}
       display={"flex"}
       flexDirection={"column"}
       gap={"16px"}
@@ -65,7 +65,7 @@ export const Message = ({ message, setIsSimulaitonStreaming, onScrollToBottom }:
         <Typography
           sx={{
             position: "absolute",
-            top: -2,
+            top: -20,
             opacity: 0.5,
             right: fromUser ? 0 : "",
             left: !fromUser ? 2 : "",
@@ -73,7 +73,7 @@ export const Message = ({ message, setIsSimulaitonStreaming, onScrollToBottom }:
           fontSize={12}
           variant="caption"
         >
-          {name} - {createdAt}
+          {name} - {timeAgo(createdAt)}
         </Typography>
       )}
 

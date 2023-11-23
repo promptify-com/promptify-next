@@ -96,7 +96,6 @@ export const Executions: React.FC<ExecutionsProps> = ({ template }) => {
 
   return (
     <Stack
-      width={"300px"}
       gap={2}
       p={"0px 24px"}
     >

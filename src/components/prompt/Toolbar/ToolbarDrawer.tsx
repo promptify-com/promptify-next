@@ -40,6 +40,7 @@ function ToolbarDrawer({ template, executions, isExecutionsLoading, refetchTempl
         transition: theme.transitions.create("width", { duration: 200 }),
         "& .MuiDrawer-paper": {
           mt: "92px",
+          width: 360,
           bgcolor: "surface.1",
           borderLeft: "none",
         },

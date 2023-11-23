@@ -2,7 +2,7 @@ import { formatDate, timeAgo } from "@/common/helpers/timeManipulation";
 import ClientOnly from "@/components/base/ClientOnly";
 import { Templates } from "@/core/api/dto/templates";
 import { setSelectedTag } from "@/core/store/filtersSlice";
-import { CardMedia, Chip, Stack, Typography } from "@mui/material";
+import { CardMedia, Chip, Stack, Typography, useTheme } from "@mui/material";
 import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
 
@@ -13,6 +13,28 @@ interface TemplateDetailsProps {
 export const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template }) => {
   const router = useRouter();
   const dispatch = useDispatch();
+
+  const { palette } = useTheme();
+
+  const titleStyle = {
+    fontSize: 12,
+    fontWeight: 500,
+    textTransform: "uppercase",
+    color: palette.primary.main,
+  };
+  const detailsStyle = {
+    fontSize: 12,
+    lineHeight: "17.16px",
+    letterSpacing: "0.17px",
+    fontWeight: 400,
+    color: "grey.500",
+    span: {
+      color: "onSurface",
+    },
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+  };
 
   return (
     <Stack
@@ -99,22 +121,4 @@ export const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template }) =>
       </Stack>
     </Stack>
   );
-};
-
-const titleStyle = {
-  fontSize: 12,
-  fontWeight: 500,
-  textTransform: "uppercase",
-  color: "onSurface",
-};
-const detailsStyle = {
-  fontSize: 14,
-  fontWeight: 400,
-  color: "grey.600",
-  span: {
-    color: "onSurface",
-  },
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
 };

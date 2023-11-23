@@ -51,7 +51,6 @@ function ToolbarItem({ item, onClick, executionsLength }: Props) {
       <ListItem disablePadding>
         <ListItemButton
           onClick={() => handleClick(item)}
-          disabled={item.name === "feedback"}
           sx={{
             borderRadius: "16px",
             padding: "12px",

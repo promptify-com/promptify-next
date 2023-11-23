@@ -16,9 +16,10 @@ export const ApiAccess: React.FC<ApiAccessProps> = ({ template }) => {
 
   return (
     <Stack
-      width={"300px"}
       gap={2}
       p={"0px 24px"}
+      textAlign={"center"}
+      alignItems={"center"}
     >
       <ApiAccessIcon />
 
@@ -26,15 +27,13 @@ export const ApiAccess: React.FC<ApiAccessProps> = ({ template }) => {
         fontSize={22}
         fontWeight={500}
         color={"text.primary"}
-        textAlign={"center"}
       >
         Access to this template through Promptify API
       </Typography>
       <Typography
         fontSize={14}
         fontWeight={400}
-        color={alpha(theme.palette.text.secondary, 0.45)}
-        textAlign={"center"}
+        color={alpha(theme.palette.text.secondary, 0.8)}
       >
         Unlock the power of generated content on your site
       </Typography>
@@ -56,18 +55,18 @@ export const ApiAccess: React.FC<ApiAccessProps> = ({ template }) => {
       >
         Enable API
       </Button>
-      {/* <Link
+      <Link
         href={"#"}
-        style={{textDecoration: "none"}}
-      > */}
-      <Typography
-        fontSize={13}
-        fontWeight={400}
-        color={"primary.main"}
+        style={{ textDecoration: "none" }}
       >
-        Learn more about API
-      </Typography>
-      {/* </Link> */}
+        <Typography
+          fontSize={13}
+          fontWeight={400}
+          color={"primary.main"}
+        >
+          Learn more about API
+        </Typography>
+      </Link>
 
       {isModalOpen && (
         <ApiAccessModal

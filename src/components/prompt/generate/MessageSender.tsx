@@ -36,7 +36,9 @@ const MessageSender: React.FC<MessageSenderProps> = ({ onSubmit, disabled, place
       borderRadius="99px"
       p={"8px 16px"}
     >
-      <KeyboardCommandKey sx={{ fontSize: "20px", color: "text.secondary", position: "absolute", left: 9, top: 12 }} />
+      <KeyboardCommandKey
+        sx={{ fontSize: "20px", color: "text.secondary", position: "absolute", left: 9, top: 11, opacity: 0.5 }}
+      />
       <InputBase
         onFocus={() => setIsFocused(true)} // Set focus state to true
         onBlur={() => setIsFocused(false)}
@@ -44,12 +46,12 @@ const MessageSender: React.FC<MessageSenderProps> = ({ onSubmit, disabled, place
         disabled={disabled}
         fullWidth
         sx={{
-          ml: 1,
           flex: 1,
           fontSize: 13,
           p: "3px",
-          pl: "10px",
-          pr: "40px",
+          ml: "20px",
+          mr: "40px",
+          color: "onSurface",
           lineHeight: "22px",
           letterSpacing: "0.46px",
           fontWeight: "500",
@@ -91,9 +93,8 @@ const MessageSender: React.FC<MessageSenderProps> = ({ onSubmit, disabled, place
           justifyContent: "center",
           alignItems: "center",
           borderRadius: "99px",
-          opacity: !hasNoValue ? 0.3 : 1,
           bgcolor: !hasNoValue ? undefined : "#375CA9",
-          color: !hasNoValue ? undefined : "white",
+          color: "white",
           ":hover": {},
         }}
       >

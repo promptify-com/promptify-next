@@ -1,10 +1,8 @@
 import { useState, useMemo, memo, useEffect, useRef } from "react";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { useRouter } from "next/router";
-import Add from "@mui/icons-material/Add";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
-import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 
@@ -12,21 +10,18 @@ import { ResPrompt } from "@/core/api/dto/prompts";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { useAppSelector, useAppDispatch } from "@/hooks/useStore";
 import useToken from "@/hooks/useToken";
-import useTimestampConverter from "@/hooks/useTimestampConverter";
 import { ChatInterface } from "./ChatInterface";
 import { ChatInput } from "./ChatInput";
-import { TemplateQuestions, Templates, UpdatedQuestionTemplate } from "@/core/api/dto/templates";
-import { IPromptInput, PromptLiveResponse, AnsweredInputType } from "@/common/types/prompt";
+import { Templates } from "@/core/api/dto/templates";
+import { IPromptInput, PromptLiveResponse } from "@/common/types/prompt";
 import { setAccordionChatMode, setGeneratingStatus, updateExecutionData } from "@/core/store/templatesSlice";
 import { IAnswer, IMessage } from "@/common/types/chat";
 import { executionsApi, useStopExecutionMutation } from "@/core/api/executions";
-import VaryModal from "./VaryModal";
 import { vary } from "@/common/helpers/varyValidator";
 import { parseMessageData } from "@/common/helpers/parseMessageData";
 import { useUploadFileMutation } from "@/core/api/uploadFile";
 import { uploadFileHelper } from "@/common/helpers/uploadFileHelper";
 import { setGeneratedExecution, setSelectedExecution } from "@/core/store/executionsSlice";
-import { TemplateDetailsCard } from "./TemplateDetailsCard";
 import useChatBox from "@/hooks/useChatBox";
 import { randomId } from "@/common/helpers";
 import { getExecutionById } from "@/hooks/api/executions";
@@ -46,8 +41,6 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
   const isSidebarExpanded = useAppSelector(state => state.template.isSidebarExpanded);
   const [stopExecution] = useStopExecutionMutation();
   const [uploadFile] = useUploadFileMutation();
-  const { convertedTimestamp } = useTimestampConverter();
-  const createdAt = convertedTimestamp(new Date());
   const [showGenerateButton, setShowGenerateButton] = useState(false);
   const [isValidatingAnswer, setIsValidatingAnswer] = useState(false);
   const [generatingResponse, setGeneratingResponse] = useState<PromptLiveResponse>({
@@ -61,8 +54,6 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
   const [isSimulaitonStreaming, setIsSimulaitonStreaming] = useState(false);
   const [disableChatInput, setDisableChatInput] = useState(false);
   const [standingQuestions, setStandingQuestions] = useState<IPromptInput[]>([]);
-  const [varyOpen, setVaryOpen] = useState(false);
-  const currentAnsweredInputs = useAppSelector(state => state.template.answeredInputs);
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
 
   const { preparePromptsData, prepareAndRemoveDuplicateInputs } = useChatBox();
@@ -75,6 +66,8 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
 
     setIsSimulaitonStreaming(true);
   };
+
+  const createdAt = new Date();
 
   const initialMessages = ({ inputs, startOver = false }: { inputs: IPromptInput[]; startOver?: boolean }) => {
     const welcomeMessage: IMessage[] = [];

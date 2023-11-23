@@ -1,4 +1,4 @@
-import { useRef, Dispatch, SetStateAction, Fragment, useEffect } from "react";
+import { useRef, Dispatch, SetStateAction, Fragment, useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
@@ -10,6 +10,8 @@ import { AccordionMessage } from "./AccordionMessage";
 import { useAppSelector } from "@/hooks/useStore";
 import { TemplateDetailsCard } from "./TemplateDetailsCard";
 import { IPromptInput } from "@/common/types/prompt";
+import Typography from "@mui/material/Typography";
+import { timeAgo } from "@/common/helpers/timeManipulation";
 
 interface Props {
   template: Templates;
@@ -40,6 +42,7 @@ export const ChatInterface = ({
 }: Props) => {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
+  const [isHovered, setIsHovered] = useState(false);
 
   const scrollToBottom = () => {
     if (messagesContainerRef.current) {
@@ -94,7 +97,11 @@ export const ChatInterface = ({
 
       <TemplateDetailsCard template={template} />
 
-      <Stack pb={"38px"}>
+      <Stack
+        pb={"38px"}
+        direction={"column"}
+        gap={3}
+      >
         <Divider
           sx={{
             fontSize: 12,
@@ -105,6 +112,7 @@ export const ChatInterface = ({
         >
           {getCurrentDateFormatted()}
         </Divider>
+
         {messages.map(msg => (
           <Fragment key={msg.id}>
             <Message
@@ -113,7 +121,26 @@ export const ChatInterface = ({
               onScrollToBottom={scrollToBottom}
             />
             {msg.type === "form" && msg.id === lastFormMessage?.id && (
-              <Box mt={1}>
+              <Box
+                position={"relative"}
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+              >
+                {isHovered && (
+                  <Typography
+                    sx={{
+                      position: "absolute",
+                      top: -20,
+                      opacity: 0.5,
+                      left: 2,
+                      zIndex: 999,
+                    }}
+                    fontSize={12}
+                    variant="caption"
+                  >
+                    Promptify - {timeAgo(msg.createdAt)}
+                  </Typography>
+                )}
                 <AccordionMessage
                   onClear={onClear}
                   template={template}

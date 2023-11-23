@@ -9,7 +9,7 @@ export interface AnswerValidatorResponse {
 export interface IMessage {
   id: number;
   text: string;
-  createdAt: string;
+  createdAt: Date | string;
   fromUser: boolean;
   type: "text" | "form" | "spark";
   spark?: TemplatesExecutions;

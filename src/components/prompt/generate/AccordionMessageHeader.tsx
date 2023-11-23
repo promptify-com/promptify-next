@@ -117,7 +117,6 @@ function AccordionMessageHeader({
     <>
       <AccordionSummary
         sx={{
-          mb: -4,
           bgcolor: "surface.2",
           borderRadius: "0px 16px 16px 16px",
         }}

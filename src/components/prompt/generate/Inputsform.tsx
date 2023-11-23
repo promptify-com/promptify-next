@@ -1,21 +1,21 @@
+import { useState } from "react";
 import MenuItem from "@mui/material/MenuItem";
 import InputLabel from "@mui/material/InputLabel";
 import Radio from "@mui/material/Radio";
+import Button from "@mui/material/Button";
 import Select from "@mui/material/Select";
 import Stack from "@mui/material/Stack";
-import { createRef, useRef, useState } from "react";
-import Button from "@mui/material/Button";
-import { getFileTypeExtensionsAsString } from "@/common/helpers/uploadFileHelper";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
+import HelpOutline from "@mui/icons-material/HelpOutline";
+
 import { IAnswer } from "@/common/types/chat";
+import { getFileTypeExtensionsAsString } from "@/common/helpers/uploadFileHelper";
 import BaseButton from "@/components/base/BaseButton";
 import CodeFieldModal from "@/components/modals/CodeFieldModal";
-import type { UpdatedQuestionTemplate } from "@/core/api/dto/templates";
 import { useAppSelector } from "@/hooks/useStore";
 import IconButton from "@mui/material/IconButton";
-import { FileType, IPromptInput } from "@/common/types/prompt";
-import { HelpOutline } from "@mui/icons-material";
+import type { FileType, IPromptInput } from "@/common/types/prompt";
 
 interface Props {
   inputs: IPromptInput[];
@@ -27,16 +27,9 @@ function Inputsform({ inputs, answers, onChange }: Props) {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const [codeFieldOpen, setCodeFieldOpen] = useState(false);
 
-  const parentRefs = useRef<Array<React.RefObject<HTMLDivElement>>>(inputs.map(() => createRef()));
-
-  const dynamicWidth = (index: number) => {
-    const parentElement = parentRefs.current[index].current;
-    return parentElement ? parentElement.offsetWidth : "auto";
-  };
-
   return (
     <Stack gap={1}>
-      {inputs.map((input, index) => {
+      {inputs.map(input => {
         const value = answers.find(answer => answer.inputName === input.name)?.answer ?? "";
         const isFile = value instanceof File;
         return (
@@ -66,7 +59,6 @@ function Inputsform({ inputs, answers, onChange }: Props) {
             <Stack
               flex={1}
               display={"flex"}
-              ref={parentRefs.current[index]}
               alignItems={"start"}
             >
               {input.type === "code" ? (
@@ -175,11 +167,11 @@ function Inputsform({ inputs, answers, onChange }: Props) {
                 </Stack>
               ) : (
                 <TextField
+                  fullWidth
                   disabled={isGenerating}
                   sx={{
                     ".MuiInputBase-input": {
                       p: 0,
-                      width: dynamicWidth(index),
                       color: "onSurface",
                       fontSize: 14,
                       fontWeight: 400,
