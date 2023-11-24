@@ -19,6 +19,9 @@ interface TemplatesSectionProps {
   type?: string;
   hasMore?: boolean;
   templateLoading?: boolean;
+  isInfiniteScrolling?: boolean;
+  hasPrev?: boolean;
+  onPrevPage?: () => void;
 }
 
 export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
@@ -31,6 +34,9 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
   type,
   hasMore,
   templateLoading,
+  isInfiniteScrolling = true,
+  hasPrev,
+  onPrevPage = () => {},
 }) => {
   if (!isLoading && !templates?.length) {
     return null;
@@ -54,7 +60,7 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
             <LatestTemplatePlaceholder count={4} />
           </Grid>
         ) : (
-          <CardTemplatePlaceholder count={4} />
+          <CardTemplatePlaceholder count={5} />
         )
       ) : (
         <Grid
@@ -98,6 +104,9 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
                 loading={isLoading}
                 onLoadMore={onNextPage}
                 hasMore={hasMore}
+                isInfiniteScrolling={isInfiniteScrolling}
+                hasPrev={hasPrev}
+                onLoadLess={onPrevPage}
               >
                 {!!templates?.length &&
                   templates.map((template: TemplateExecutionsDisplay | Templates) => {

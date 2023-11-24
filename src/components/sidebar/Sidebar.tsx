@@ -11,15 +11,13 @@ import Grid from "@mui/material/Grid";
 import { NavItem } from "@/common/types/sidebar";
 import SidebarItem from "./SidebarItem";
 import { theme } from "@/theme";
-import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
 
 function Sidebar() {
   const pathname = usePathname();
   const isPromptsPage = pathname.split("/")[1] === "explore";
   const isTemplatePage = pathname.split("/")[1] === "prompt";
+  const slug = isTemplatePage ? pathname.split("/")[2] : "create";
   const isValidUser = useAppSelector(isValidUserFn);
-  const [showFilters, setShowFilters] = useState(isPromptsPage);
-  const { tags, engines } = useGetTemplatesByFilter();
   const navItems: NavItem[] = [
     {
       name: "Home",
@@ -45,6 +43,22 @@ function Sidebar() {
       external: false,
       reload: false,
     },
+    {
+      name: "Prompt Builder",
+      href: isValidUser ? `/prompt-builder/${slug}` : "/signin",
+      icon: <Inventory2Rounded />,
+      active: pathname.includes("/prompt-builder"),
+      external: isValidUser,
+      reload: false,
+    },
+    {
+      name: "Chrome Extension",
+      href: "#",
+      icon: <ExtensionRounded />,
+      active: false,
+      external: false,
+      reload: false,
+    },
   ];
   const learnHelpNavItem = {
     name: "Learn & Help",
@@ -54,28 +68,6 @@ function Sidebar() {
     external: true,
     reload: false,
   };
-
-  if (isTemplatePage) {
-    const slug = pathname.split("/")[2];
-
-    navItems.push({
-      name: "Prompt Builder",
-      href: `/prompt-builder/${slug}`,
-      icon: <Inventory2Rounded />,
-      active: pathname.includes("/prompt-builder"),
-      external: true,
-      reload: false,
-    });
-  }
-
-  navItems.push({
-    name: "Chrome Extension",
-    href: "#",
-    icon: <ExtensionRounded />,
-    active: false,
-    external: false,
-    reload: false,
-  });
 
   return (
     <Drawer
@@ -95,9 +87,9 @@ function Sidebar() {
         justifyContent="space-between"
         className="sidebar-list"
         sx={{
-          overflow: showFilters ? "scroll" : "none",
+          overflow: "none",
           bgcolor: "surface.3",
-          width: isPromptsPage ? theme.custom.defaultSidebarWidth : theme.custom.leftClosedSidebarWidth,
+          width: theme.custom.leftClosedSidebarWidth,
           padding: "8px 4px",
           height: "100vh",
         }}
@@ -105,22 +97,13 @@ function Sidebar() {
         <List>
           {navItems.map(item => (
             <SidebarItem
-              key={item.href}
+              key={item.name.replace(" ", "-")}
               navItem={item}
-              isPromptsPage={isPromptsPage}
-              showFilters={showFilters}
-              onClick={() => item.href === "/explore" && setShowFilters(!showFilters)}
-              engines={engines}
-              tags={tags}
             />
           ))}
         </List>
         <List sx={{ p: 0 }}>
-          <SidebarItem
-            navItem={learnHelpNavItem}
-            isPromptsPage={isPromptsPage}
-            showFilters={showFilters}
-          />
+          <SidebarItem navItem={learnHelpNavItem} />
         </List>
       </Grid>
     </Drawer>
