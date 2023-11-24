@@ -1,12 +1,12 @@
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
-
+import { Dispatch, SetStateAction, useRef, useState } from "react";
 import Stack from "@mui/material/Stack";
 import Accordion from "@mui/material/Accordion";
 import Typography from "@mui/material/Typography";
 import AccordionDetails from "@mui/material/AccordionDetails";
+import { keyframes } from "@mui/material";
 
 import { useAppSelector } from "@/hooks/useStore";
-import { IAnswer, IMessage } from "@/common/types/chat";
+import { IAnswer } from "@/common/types/chat";
 import { Display } from "../Display";
 import Inputsform from "./Inputsform";
 import AccordionMessageHeader from "./AccordionMessageHeader";
@@ -15,6 +15,7 @@ import FeedbackThumbs from "../FeedbackThumbs";
 import Fade from "@mui/material/Fade";
 import { IPromptInput } from "@/common/types/prompt";
 import { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
+import PromptContent from "./PromptContent";
 
 interface Props {
   inputs: IPromptInput[];
@@ -28,7 +29,6 @@ interface Props {
   abortGenerating: () => void;
   showGenerate: boolean;
   template: Templates;
-  setMessages: Dispatch<SetStateAction<IMessage[]>>;
   setIsSimulationStreaming: Dispatch<SetStateAction<boolean>>;
 }
 
@@ -44,7 +44,6 @@ export const AccordionMessage = ({
   onGenerate,
   abortGenerating,
   showGenerate,
-  setMessages,
   setIsSimulationStreaming,
 }: Props) => {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
@@ -52,6 +51,8 @@ export const AccordionMessage = ({
 
   const [expanded, setExpanded] = useState(true);
   const accordionRef = useRef<HTMLDivElement>(null);
+
+  const [showPrompts, setShowPrompts] = useState(false);
 
   const handleExpandChange = (isExpanded: boolean) => {
     setExpanded(isExpanded);
@@ -62,6 +63,16 @@ export const AccordionMessage = ({
   };
 
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
+
+  const expandAnimation = keyframes`
+  from { width: 0%; }
+  to { width: 20%; }
+`;
+
+  const collapseAnimation = keyframes`
+  from { width: 20%; }
+  to { width: 0%; }
+`;
 
   return (
     <Fade
@@ -78,8 +89,6 @@ export const AccordionMessage = ({
       >
         <AccordionMessageHeader
           template={template}
-          setMessages={setMessages}
-          selectedExecution={selectedExecution}
           onClear={onClear}
           showClear={Boolean(answers.length)}
           showGenerate={showGenerate}
@@ -87,6 +96,8 @@ export const AccordionMessage = ({
           onGenerate={onGenerate}
           onCancel={abortGenerating}
           mode={mode}
+          showPrompts={showPrompts}
+          toggleShowPrompts={() => setShowPrompts(!showPrompts)}
         />
 
         <AccordionDetails
@@ -110,30 +121,66 @@ export const AccordionMessage = ({
             >
               {isGenerating ? "Generation Result" : "PROMPT Template information"}
             </Typography>
+
             <Stack
+              width={"w00%"}
               bgcolor={"surface.1"}
               borderRadius={"8px"}
               position={"relative"}
-              padding={mode === "execution" ? "16px 64px 48px 64px" : undefined}
             >
               {mode === "execution" && (
-                <>
-                  <Display
-                    mode="chat"
-                    templateData={template}
-                  />
-                  {!isGenerating && selectedExecution && (
+                <Stack direction={"row"}>
+                  <Stack
+                    padding={mode === "execution" ? "16px 64px 48px 64px" : undefined}
+                    width={showPrompts ? "80%" : "100%"}
+                    position={"relative"}
+                  >
+                    <Display
+                      mode="chat"
+                      templateData={template}
+                    />
+                    {!isGenerating && selectedExecution && (
+                      <Stack
+                        direction={"column"}
+                        alignItems={"center"}
+                        position={"absolute"}
+                        top={"30%"}
+                        right={"10px"}
+                      >
+                        <FeedbackThumbs execution={selectedExecution} />
+                      </Stack>
+                    )}
+                  </Stack>
+
+                  {showPrompts && (
                     <Stack
-                      direction={"column"}
-                      alignItems={"center"}
-                      position={"absolute"}
-                      top={"40%"}
-                      right={"10px"}
+                      mt={10}
+                      mr={3}
+                      borderLeft={"2px solid #ECECF4"}
+                      px={"10px"}
+                      display={"flex"}
+                      flexDirection={"column"}
+                      gap={2}
+                      sx={{
+                        width: showPrompts ? "20%" : "0%",
+                        overflow: "hidden",
+                        animation: `${showPrompts ? expandAnimation : collapseAnimation} 300ms forwards`,
+                      }}
                     >
-                      <FeedbackThumbs execution={selectedExecution} />
+                      {template.prompts.map((prompt, index) => {
+                        index++; // Start with 1
+                        return (
+                          <PromptContent
+                            key={prompt.id}
+                            prompt={prompt}
+                            answers={answers}
+                            id={index}
+                          />
+                        );
+                      })}
                     </Stack>
                   )}
-                </>
+                </Stack>
               )}
               {mode === "input" && (
                 <Inputsform

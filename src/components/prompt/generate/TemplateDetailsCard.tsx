@@ -64,7 +64,7 @@ export const TemplateDetailsCard: React.FC<TemplateDetailsCardProps> = ({ templa
                   sx={{
                     fontSize: 13,
                     fontWeight: 400,
-                    bgcolor: "surface.3",
+                    bgcolor: "surface.4",
                     color: "onSurface",
                     p: "3px 0",
                     height: "auto",

@@ -595,7 +595,6 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
         <ChatInterface
           template={template}
           messages={messages}
-          setMessages={setMessages}
           setIsSimulaitonStreaming={setIsSimulaitonStreaming}
           inputs={_inputs}
           params={_params}

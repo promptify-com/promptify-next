@@ -32,7 +32,7 @@ export const FormParam: React.FC<GeneratorParamProps> = ({ param, paramValue, on
       direction={"row"}
       alignItems={"center"}
       flexWrap={"wrap"}
-      p={"16px 8px"}
+      p={"16px 6px"}
       gap={1}
       borderBottom={"1px solid #ECECF4"}
     >

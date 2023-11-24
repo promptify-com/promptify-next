@@ -5,7 +5,7 @@ import Stack from "@mui/material/Stack";
 
 import { Message } from "./Message";
 import { IAnswer, IMessage } from "@/common/types/chat";
-import type { Templates, UpdatedQuestionTemplate } from "@/core/api/dto/templates";
+import type { Templates } from "@/core/api/dto/templates";
 import { AccordionMessage } from "./AccordionMessage";
 import { useAppSelector } from "@/hooks/useStore";
 import { TemplateDetailsCard } from "./TemplateDetailsCard";
@@ -28,7 +28,6 @@ interface Props {
   onAbort: () => void;
   onClear: () => void;
   showGenerate: boolean;
-  setMessages: Dispatch<SetStateAction<IMessage[]>>;
 }
 
 export const ChatInterface = ({
@@ -43,7 +42,6 @@ export const ChatInterface = ({
   showGenerate,
   onAbort,
   onClear,
-  setMessages,
   params,
   paramsValues,
 }: Props) => {
@@ -151,7 +149,6 @@ export const ChatInterface = ({
                 <AccordionMessage
                   onClear={onClear}
                   template={template}
-                  setMessages={setMessages}
                   showGenerate={showGenerate}
                   abortGenerating={onAbort}
                   inputs={inputs}

@@ -4,6 +4,7 @@ import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import { useEffect, useMemo, useState } from "react";
 
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import Add from "@mui/icons-material/Add";
@@ -13,21 +14,27 @@ import PlayCircle from "@mui/icons-material/PlayCircle";
 import AvatarWithInitials from "../AvatarWithInitials";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
-import { DeleteOutline, Edit, ShareOutlined, Star, StarOutline, UnfoldMore } from "@mui/icons-material";
+import {
+  DeleteOutline,
+  Edit,
+  RemoveRedEyeOutlined,
+  ShareOutlined,
+  Star,
+  StarOutline,
+  VisibilityOff,
+} from "@mui/icons-material";
 import Close from "@mui/icons-material/Close";
-import { ExecutionTemplatePopupType, Templates, TemplatesExecutions } from "@/core/api/dto/templates";
+import { ExecutionTemplatePopupType, Templates } from "@/core/api/dto/templates";
 import { useDeleteExecutionFavoriteMutation, useExecutionFavoriteMutation } from "@/core/api/executions";
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 import { SparkSaveDeletePopup } from "@/components/dialog/SparkSaveDeletePopup";
-import { IMessage } from "@/common/types/chat";
 import { SparkExportPopup } from "@/components/dialog/SparkExportPopup";
 import { setAccordionChatMode, setGeneratingStatus } from "@/core/store/templatesSlice";
 import { setGeneratedExecution } from "@/core/store/executionsSlice";
 import useTruncate from "@/hooks/useTruncate";
+import Grid from "@mui/material/Grid";
 
 interface Props {
   template: Templates;
-  selectedExecution: TemplatesExecutions | null;
   mode: "execution" | "input";
   isExpanded: boolean;
   onGenerate: () => void;
@@ -35,12 +42,12 @@ interface Props {
   onClear: () => void;
   showClear: boolean;
   showGenerate: boolean;
-  setMessages: Dispatch<SetStateAction<IMessage[]>>;
+  showPrompts: boolean;
+  toggleShowPrompts: () => void;
 }
 
 function AccordionMessageHeader({
   template,
-  selectedExecution,
   mode,
   isExpanded,
   onGenerate,
@@ -48,7 +55,8 @@ function AccordionMessageHeader({
   showClear,
   onCancel,
   showGenerate,
-  setMessages,
+  showPrompts,
+  toggleShowPrompts,
 }: Props) {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const dispatch = useAppDispatch();
@@ -56,6 +64,8 @@ function AccordionMessageHeader({
 
   const [favoriteExecution] = useExecutionFavoriteMutation();
   const [deleteExecutionFavorite] = useDeleteExecutionFavoriteMutation();
+
+  const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
 
   const [executionPopup, setExecutionPopup] = useState<ExecutionTemplatePopupType>(null);
   const [executionTitle, setExecutionTitle] = useState(selectedExecution?.title);
@@ -199,7 +209,6 @@ function AccordionMessageHeader({
                       PopperProps={commonPopperProps}
                     >
                       <IconButton
-                        size="large"
                         onClick={e => {
                           e.stopPropagation();
                           setExecutionPopup("update");
@@ -293,95 +302,168 @@ function AccordionMessageHeader({
           {mode === "execution" && (
             <>
               {isGenerating ? (
-                <Button
-                  onClick={e => {
-                    e.stopPropagation();
-                    abortConnection();
-                  }}
-                  endIcon={<HighlightOff />}
-                  sx={{
-                    height: "34px",
-                    p: "15px",
-                    color: "onSurface",
-                    fontSize: 13,
-                    fontWeight: 500,
-                    ":hover": {
-                      bgcolor: "action.hover",
-                    },
-                  }}
-                  variant="text"
+                <Grid
+                  display={"flex"}
+                  alignItems={"center"}
                 >
-                  Cancel
-                </Button>
+                  <Button
+                    onClick={e => {
+                      e.stopPropagation();
+                      abortConnection();
+                    }}
+                    endIcon={<HighlightOff />}
+                    sx={{
+                      height: "34px",
+                      p: "15px",
+                      color: "onSurface",
+                      fontSize: 13,
+                      fontWeight: 500,
+                      ":hover": {
+                        bgcolor: "action.hover",
+                      },
+                    }}
+                    variant="text"
+                  >
+                    Cancel
+                  </Button>
+
+                  <Tooltip
+                    title="Show Prompts"
+                    arrow
+                    PopperProps={commonPopperProps}
+                  >
+                    <IconButton
+                      size="large"
+                      onClick={e => {
+                        e.stopPropagation();
+                        toggleShowPrompts();
+                      }}
+                      sx={{
+                        border: "none",
+                        ":hover": {
+                          bgcolor: "surface.4",
+                        },
+                      }}
+                    >
+                      {!showPrompts ? <RemoveRedEyeOutlined /> : <VisibilityOff />}
+                    </IconButton>
+                  </Tooltip>
+                </Grid>
               ) : (
                 <Stack
                   direction={"row"}
                   gap={"8px"}
+                  alignItems={"center"}
+                  mt={-1}
                 >
-                  <Tooltip
-                    title={selectedExecution?.is_favorite ? "remove from works" : "Add to works"}
-                    arrow
-                    PopperProps={commonPopperProps}
+                  <Box
+                    borderRight={"2px solid #ECECF4"}
+                    pr={1}
+                    height={"30px"}
                   >
-                    <IconButton
-                      size="large"
-                      onClick={e => {
-                        e.stopPropagation();
-                        saveExecution();
-                      }}
-                      sx={{
-                        border: "none",
-                        ":hover": {
-                          bgcolor: "surface.4",
-                        },
-                      }}
+                    <Tooltip
+                      title={selectedExecution?.is_favorite ? "Remove from works" : "Add to works"}
+                      arrow
+                      PopperProps={commonPopperProps}
                     >
-                      {selectedExecution?.is_favorite ? <Star /> : <StarOutline />}
-                    </IconButton>
-                  </Tooltip>{" "}
-                  <Tooltip
-                    title="Share"
-                    arrow
-                    PopperProps={commonPopperProps}
+                      <IconButton
+                        onClick={e => {
+                          e.stopPropagation();
+                          saveExecution();
+                        }}
+                        sx={{
+                          border: "none",
+                          ":hover": {
+                            bgcolor: "surface.4",
+                          },
+                        }}
+                      >
+                        {selectedExecution?.is_favorite ? <Star /> : <StarOutline />}
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
+
+                  <Box
+                    borderRight={"2px solid #ECECF4"}
+                    pr={1}
+                    height={"30px"}
                   >
-                    <IconButton
-                      size="large"
-                      onClick={e => {
-                        e.stopPropagation();
-                        setOpenExportpopup(true);
-                      }}
-                      sx={{
-                        border: "none",
-                        ":hover": {
-                          bgcolor: "surface.4",
-                        },
-                      }}
+                    <Tooltip
+                      title={!showPrompts ? "Show Prompts" : "Hide Prompts"}
+                      arrow
+                      PopperProps={commonPopperProps}
                     >
-                      <ShareOutlined />
-                    </IconButton>
-                  </Tooltip>
-                  <Tooltip
-                    title="Delete"
-                    arrow
-                    PopperProps={commonPopperProps}
+                      <IconButton
+                        onClick={e => {
+                          e.stopPropagation();
+                          toggleShowPrompts();
+                        }}
+                        sx={{
+                          border: "none",
+                          ":hover": {
+                            bgcolor: "surface.4",
+                          },
+                        }}
+                      >
+                        {!showPrompts ? <RemoveRedEyeOutlined /> : <VisibilityOff />}
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
+
+                  <Box
+                    borderRight={"2px solid #ECECF4"}
+                    pr={1}
+                    height={"30px"}
                   >
-                    <IconButton
-                      size="large"
-                      onClick={e => {
-                        e.stopPropagation();
-                        setExecutionPopup("delete");
-                      }}
-                      sx={{
-                        border: "none",
-                        ":hover": {
-                          color: "red",
-                          bgcolor: "surface.4",
-                        },
-                      }}
+                    <Tooltip
+                      title="Share"
+                      arrow
+                      PopperProps={commonPopperProps}
                     >
-                      <DeleteOutline />
-                    </IconButton>
-                  </Tooltip>
+                      <IconButton
+                        onClick={e => {
+                          e.stopPropagation();
+                          setOpenExportpopup(true);
+                        }}
+                        sx={{
+                          border: "none",
+                          ":hover": {
+                            bgcolor: "surface.4",
+                          },
+                        }}
+                      >
+                        <ShareOutlined />
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
+
+                  <Box
+                    borderRight={"2px solid #ECECF4"}
+                    pr={1}
+                    height={"30px"}
+                  >
+                    <Tooltip
+                      title="Delete"
+                      arrow
+                      PopperProps={commonPopperProps}
+                    >
+                      <IconButton
+                        onClick={e => {
+                          e.stopPropagation();
+                          setExecutionPopup("delete");
+                        }}
+                        sx={{
+                          border: "none",
+                          ":hover": {
+                            color: "red",
+                            bgcolor: "surface.4",
+                          },
+                        }}
+                      >
+                        <DeleteOutline />
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
                 </Stack>
               )}
             </>
@@ -396,7 +478,6 @@ function AccordionMessageHeader({
                 PopperProps={commonPopperProps}
               >
                 <IconButton
-                  size="large"
                   sx={{
                     border: "none",
                     fontSize: "50px",
