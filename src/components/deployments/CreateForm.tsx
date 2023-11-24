@@ -96,12 +96,10 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
         </FormControl>
 
         <SearchableInputField
-          value={instance}
           name={"instance"}
           label={"Select Instance"}
           setFieldValue={formik.setFieldValue}
           isDeploying={isDeploying}
-          selectMenuProps={selectMenuProps}
           regionValue={region}
         />
 
@@ -122,12 +120,10 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
         </FormControl>
 
         <SearchableInputField
-          value={model}
           name={"model"}
           label={"Select Model"}
           setFieldValue={formik.setFieldValue}
           isDeploying={isDeploying}
-          selectMenuProps={selectMenuProps}
           regionValue={region}
         />
       </Grid>
