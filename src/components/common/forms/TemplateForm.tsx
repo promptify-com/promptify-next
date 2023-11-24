@@ -33,12 +33,13 @@ import { executionsApi } from "@/core/api/executions";
 import { stripTags, getLanguageFromCode, getBaseUrl } from "@/common/helpers";
 import { useUploadFileMutation } from "@/core/api/uploadFile";
 import { uploadFileHelper } from "@/common/helpers/uploadFileHelper";
+import { usePathname } from "next/navigation";
 
 interface Props {
   type?: FormType;
   templateData: Templates | null | undefined;
   modalNew?: boolean;
-  onSaved?: () => void;
+  onSaved?: (template?: Templates) => void;
   onClose?: () => void;
   darkMode?: boolean;
 }
@@ -51,20 +52,18 @@ const TemplateForm: React.FC<Props> = ({
   darkMode = false,
 }) => {
   const token = useToken();
-
   const { data: categories } = useGetCategoriesQuery();
   const { data: fetchedTags } = useGetTagsQuery();
   const { data: user } = useGetCurrentUserQuery(token);
   const [createTemplate] = useCreateTemplateMutation();
   const [updateTemplate] = useUpdateTemplateMutation();
   const [getTemplateExecution] = executionsApi.endpoints.getExecutionsByTemplate.useLazyQuery();
-
   const [uploadFile] = useUploadFileMutation();
-
   const [tags, setTags] = useState<string[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [executions, setExecutions] = useState<TemplatesExecutions[]>();
   const [selectedFile, setSelectedFile] = useState<File>();
+  const pathname = usePathname();
 
   const getExecutions = async () => {
     if (!templateData) return null;
@@ -102,8 +101,8 @@ const TemplateForm: React.FC<Props> = ({
     thumbnail: string().min(1).required("required"),
   });
 
-  const handleSave = () => {
-    onSaved();
+  const handleSave = (newTemplate?: Templates) => {
+    onSaved(newTemplate);
     formik.resetForm();
   };
 
@@ -130,10 +129,14 @@ const TemplateForm: React.FC<Props> = ({
 
       if (typeof result?.file === "string") {
         values.thumbnail = result.file;
-        const { slug } = await createTemplate(values).unwrap();
+        const newTemplate = await createTemplate(values).unwrap();
 
-        handleSave();
-        window.open(`${getBaseUrl}/prompt-builder/${slug}`, "_blank");
+        handleSave(newTemplate);
+
+        if (type === "create" && pathname === "/prompt-builder/create") {
+          return;
+        }
+        window.open(`${getBaseUrl}/prompt-builder/${newTemplate.slug}`, "_blank");
       }
     }
   };
