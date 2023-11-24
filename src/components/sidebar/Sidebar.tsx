@@ -16,6 +16,7 @@ function Sidebar() {
   const pathname = usePathname();
   const isPromptsPage = pathname.split("/")[1] === "explore";
   const isTemplatePage = pathname.split("/")[1] === "prompt";
+  const slug = isTemplatePage ? pathname.split("/")[2] : "create";
   const isValidUser = useAppSelector(isValidUserFn);
   const navItems: NavItem[] = [
     {
@@ -42,6 +43,22 @@ function Sidebar() {
       external: false,
       reload: false,
     },
+    {
+      name: "Prompt Builder",
+      href: isValidUser ? `/prompt-builder/${slug}` : "/signin",
+      icon: <Inventory2Rounded />,
+      active: pathname.includes("/prompt-builder"),
+      external: isValidUser,
+      reload: false,
+    },
+    {
+      name: "Chrome Extension",
+      href: "#",
+      icon: <ExtensionRounded />,
+      active: false,
+      external: false,
+      reload: false,
+    },
   ];
   const learnHelpNavItem = {
     name: "Learn & Help",
@@ -51,28 +68,6 @@ function Sidebar() {
     external: true,
     reload: false,
   };
-
-  if (isTemplatePage) {
-    const slug = pathname.split("/")[2];
-
-    navItems.push({
-      name: "Prompt Builder",
-      href: `/prompt-builder/${slug}`,
-      icon: <Inventory2Rounded />,
-      active: pathname.includes("/prompt-builder"),
-      external: true,
-      reload: false,
-    });
-  }
-
-  navItems.push({
-    name: "Chrome Extension",
-    href: "#",
-    icon: <ExtensionRounded />,
-    active: false,
-    external: false,
-    reload: false,
-  });
 
   return (
     <Drawer
@@ -102,7 +97,7 @@ function Sidebar() {
         <List>
           {navItems.map(item => (
             <SidebarItem
-              key={item.href}
+              key={item.name.replace(" ", "-")}
               navItem={item}
             />
           ))}
