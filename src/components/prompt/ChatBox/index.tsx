@@ -139,10 +139,9 @@ const ChatBox: React.FC<Props> = ({ onError, template }) => {
     }
 
     const { inputs, params } = prepareAndRemoveDuplicateInputs(template.prompts);
-    const questions = template.questions;
 
     const inputsQuestions: IPromptInputQuestion[] = [];
-    questions.forEach((question, idx) => {
+    template.questions?.forEach((question, idx) => {
       if (!inputs[idx]) return;
 
       const { type, required, choices, fileExtensions, name, fullName, prompt } = inputs[idx];

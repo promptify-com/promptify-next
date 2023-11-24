@@ -116,7 +116,7 @@ export interface Templates {
   created_at: Date;
   updated_at: Date;
   prompts: Prompts[];
-  questions: TemplateQuestions[];
+  questions: TemplateQuestions[] | null;
   tags: Tag[];
   executions_count: number;
   last_run: Date;

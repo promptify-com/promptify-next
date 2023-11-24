@@ -66,6 +66,7 @@ export default function TemplateDesktop({ template, setErrorMessage }: TemplateD
       >
         <Stack
           width={chatFullScreen ? "100%" : "38%"}
+          minWidth={360}
           position={"sticky"}
           top={0}
           zIndex={100}
