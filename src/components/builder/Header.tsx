@@ -16,6 +16,7 @@ import { BuilderType } from "@/common/types/builder";
 import { BUILDER_TYPE } from "@/common/constants";
 import { useAppSelector } from "@/hooks/useStore";
 import { ProfileMenu } from "@/components/ProfileMenu";
+import { usePathname } from "next/navigation";
 
 interface IHeader {
   onSave: () => void;
@@ -31,6 +32,7 @@ export const Header = ({ onSave, onPublish, title, status, templateSlug, onEditT
   const isValidUser = useAppSelector(isValidUserFn);
   const currentUser = useAppSelector((state: RootState) => state.user.currentUser);
   const [isSaving, setIsSaving] = useState(false);
+  const pathname = usePathname();
 
   const handleSaveTemplate = async () => {
     setIsSaving(true);
@@ -139,7 +141,7 @@ export const Header = ({ onSave, onPublish, title, status, templateSlug, onEditT
             Save
           </BaseButton>
 
-          {status === "DRAFT" && (
+          {status === "DRAFT" && pathname !== "/prompt-builder/create" && (
             <BaseButton
               variant="contained"
               color="custom"

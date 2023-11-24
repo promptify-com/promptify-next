@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { usePublishTemplateMutation } from "@/core/api/templates";
 import { Alert, Box, Snackbar, Stack, SwipeableDrawer, Typography } from "@mui/material";
 
-import { setOpenDefaultSidebar } from "@/core/store/sidebarSlice";
 import { Header } from "@/components/builder/Header";
 import TemplateForm from "@/components/common/forms/TemplateForm";
 import { IEditPrompts } from "@/common/types/builder";
@@ -32,7 +31,6 @@ interface PromptBuilderProps {
 export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuilderProps) => {
   const router = useRouter();
   const token = useToken();
-  const defaultSidebarOpen = useAppSelector(state => state.sidebar.defaultSidebarOpen);
   const builderSidebarOpen = useAppSelector(state => state.sidebar.builderSidebarOpen);
   const [prompts, setPrompts] = useState(initPrompts);
   const [templateDrawerOpen, setTemplateDrawerOpen] = useState(Boolean(router.query.editor));
@@ -40,10 +38,10 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
   const [messageSnackBar, setMessageSnackBar] = useState({ status: false, message: "" });
   const [errorSnackBar, setErrorSnackBar] = useState({ status: false, message: "" });
   const dispatch = useAppDispatch();
-  const toggleSidebar = () => dispatch(setOpenDefaultSidebar(!defaultSidebarOpen));
-
   const storedPrompts = useAppSelector(state => state.builder.prompts);
   const storedEngines = useAppSelector(state => state.builder.engines);
+  const createMode = router.query.slug === "create" ? "create" : "edit";
+
   useEffect(() => {
     if (!storedPrompts.length) {
       dispatch(handlePrompts(initPrompts));
@@ -57,15 +55,6 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
   useEffect(() => {
     setPrompts(storedPrompts);
   }, [storedPrompts]);
-
-  useEffect(() => {
-    if (!templateData?.id) {
-      router.push("/404");
-      return;
-    }
-
-    toggleSidebar();
-  }, []);
 
   useEffect(() => {
     if (!token) {
@@ -86,9 +75,21 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
     }
   }, [router.query]);
 
-  const handleSaveTemplate = async () => {
-    if (!templateData) {
-      setErrorSnackBar({ status: true, message: "Please try again or refresh the page" });
+  const handleSaveTemplate = async (newTemplate?: Templates) => {
+    if (newTemplate) {
+      templateData = newTemplate;
+    }
+
+    if (!templateData.id) {
+      let message = "Please try again or refresh the page";
+
+      if (createMode === "create") {
+        message = "Please try again, and make sure you've entered template information!";
+        setTemplateDrawerOpen(true);
+      }
+
+      setErrorSnackBar({ status: true, message });
+      createMode === "create" && setTemplateDrawerOpen(true);
       return;
     }
 
@@ -144,13 +145,24 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
     await updateTemplate(templateData.id, _template);
     setMessageSnackBar({ status: true, message: "Prompt template saved with success" });
     setTimeout(() => {
-      window.location.reload();
+      if (newTemplate) {
+        window.location.href = window.location.href.replace("create", newTemplate.slug);
+      } else {
+        window.location.reload();
+      }
     }, 700);
   };
 
   const handlePublishTemplate = async () => {
-    if (!templateData) {
-      setErrorSnackBar({ status: true, message: "Please try again or refresh the page" });
+    if (!templateData.id) {
+      let message = "Please try again or refresh the page";
+
+      if (createMode === "create") {
+        message = "Please try again, and make sure you've entered template information!";
+        setTemplateDrawerOpen(true);
+      }
+
+      setErrorSnackBar({ status: true, message });
       return;
     }
 
@@ -232,10 +244,12 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
               }}
             >
               <TemplateForm
-                type="edit"
+                type={createMode}
                 templateData={templateData}
                 darkMode
-                onSaved={() => window.location.reload()}
+                onSaved={template =>
+                  router.query.slug === "create" ? handleSaveTemplate(template) : window.location.reload()
+                }
                 onClose={() => setTemplateDrawerOpen(false)}
               />
             </Box>
@@ -251,7 +265,7 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
       />
       <Snackbar
         open={errorSnackBar.status}
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
         autoHideDuration={4000}
         onClose={() => setErrorSnackBar({ status: false, message: "" })}
       >
@@ -268,9 +282,8 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
 };
 
 const initPrompts = (template: Templates, engines: Engine[]) => {
-  const textEngine = engines.find(engine => engine.output_type === "TEXT");
-
   if (template?.prompts) {
+    const textEngine = engines.find(engine => engine.output_type === "TEXT");
     const _prompts = template.prompts.map((prompt, index) => {
       const initialParams = prompt.parameters.map(param => ({
         parameter_id: param.parameter.id,
@@ -308,13 +321,25 @@ export async function getServerSideProps({ params }: { params: { slug: string } 
   let _initPrompts: ReturnType<typeof initPrompts> = [];
 
   try {
-    const [_fetchedTemplate, _engines] = await Promise.all([
-      client.get<Templates>(`/api/meta/templates/by-slug/${slug}/`),
-      client.get<Engine[]>(`/api/meta/engines`),
-    ]);
-    templateData = _fetchedTemplate.data;
-    engines = _engines.data;
-    _initPrompts = initPrompts(templateData, engines) ?? [];
+    if (slug === "create") {
+      const _engines = await client.get<Engine[]>(`/api/meta/engines`);
+      engines = _engines.data;
+      templateData.title = "new_template_12345";
+    } else {
+      const [_fetchedTemplate, _engines] = await Promise.allSettled([
+        client.get<Templates>(`/api/meta/templates/by-slug/${slug}/`),
+        client.get<Engine[]>(`/api/meta/engines`),
+      ]);
+
+      if (_fetchedTemplate.status === "fulfilled") {
+        templateData = _fetchedTemplate.value.data;
+        _initPrompts = initPrompts(templateData, engines) ?? [];
+      }
+
+      if (_engines.status === "fulfilled") {
+        engines = _engines.value.data;
+      }
+    }
   } catch (error) {
     console.error("Template/engines request failed:", error);
   }
