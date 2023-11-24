@@ -24,6 +24,7 @@ export const useDeployment = (onClose: () => void) => {
     setDeploymentStatus("creating");
     const url = `${process.env.NEXT_PUBLIC_API_URL}/api/aithos/deployments/`;
     const { model, instance } = values;
+
     const payload: CreateDeployment = {
       instance,
       model,

@@ -16,9 +16,18 @@ interface Props {
   subCatId?: number;
   ordering?: string;
   admin?: boolean;
+  templateLimit?: number;
+  paginatedList?: boolean;
 }
 
-export function useGetTemplatesByFilter({ catId, subCatId, ordering, admin = false }: Props = {}) {
+export function useGetTemplatesByFilter({
+  catId,
+  subCatId,
+  ordering,
+  admin = false,
+  templateLimit,
+  paginatedList = false,
+}: Props = {}) {
   const router = useRouter();
   const splittedPath = router.pathname.split("/");
   const hasPathname = (route: "explore" | "[categorySlug]" | "[subcategorySlug]") => {
@@ -29,12 +38,12 @@ export function useGetTemplatesByFilter({ catId, subCatId, ordering, admin = fal
   const enginesQuery = useGetEnginesQuery(undefined, { skip: !hasPathname("explore") });
   const filters = useSelector((state: RootState) => state.filters);
   const { tag: tags, engine, title } = filters;
-  const PAGINATION_LIMIT = 10;
   const [offset, setOffset] = useState(0);
   const [searchName, setSearchName] = useState("");
   const deferredSearchName = useDeferredValue(searchName);
   const debouncedSearchName = useDebounce<string>(deferredSearchName, 300);
   const [status, setStatus] = useState<string>();
+  const PAGINATION_LIMIT = templateLimit ?? 10;
   const memoizedFilteredTags = useMemo(() => {
     const filteredTags = tags
       .filter(item => item !== null)
@@ -64,7 +73,7 @@ export function useGetTemplatesByFilter({ catId, subCatId, ordering, admin = fal
 
   useEffect(() => {
     if (templates?.results) {
-      if (offset === 0) {
+      if (offset === 0 || paginatedList) {
         setAllTemplates(templates?.results);
       } else {
         setAllTemplates(prevTemplates => prevTemplates.concat(templates?.results));
@@ -93,8 +102,14 @@ export function useGetTemplatesByFilter({ catId, subCatId, ordering, admin = fal
       setOffset(prevOffset => prevOffset + PAGINATION_LIMIT);
     }
   };
+  const handlePrevPage = () => {
+    if (!!templates?.previous) {
+      setOffset(prevOffset => prevOffset - PAGINATION_LIMIT);
+    }
+  };
 
   const hasMore = !!templates?.next;
+  const hasPrev = !!templates?.previous;
 
   const filteredTemplates = admin
     ? allTemplates
@@ -117,5 +132,7 @@ export function useGetTemplatesByFilter({ catId, subCatId, ordering, admin = fal
     engines: enginesQuery.data,
     hasMore,
     status,
+    hasPrev,
+    handlePrevPage,
   };
 }
