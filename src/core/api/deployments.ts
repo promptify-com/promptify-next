@@ -47,6 +47,7 @@ export const deploymentsApi = baseApi.injectEndpoints({
             method: "get",
           };
         },
+        keepUnusedDataFor: 60 * 30,
       }),
 
       getDeployments: builder.query<Deployment[], void>({
