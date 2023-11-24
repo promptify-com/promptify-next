@@ -15,7 +15,7 @@ import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setGeneratedExecution, setSelectedExecution, setSparkHashQueryParam } from "@/core/store/executionsSlice";
-import { setAccordionChatMode, setChatFullScreenStatus } from "@/core/store/templatesSlice";
+import { setAccordionChatMode, setExecutionLastExecuted } from "@/core/store/templatesSlice";
 
 interface ExecutionsProps {
   template: Templates;
@@ -92,6 +92,7 @@ export const Executions: React.FC<ExecutionsProps> = ({ template }) => {
   const handleClick = (execution: TemplatesExecutions) => {
     dispatch(setSelectedExecution(execution));
     dispatch(setAccordionChatMode("execution"));
+    dispatch(setExecutionLastExecuted(false));
   };
 
   return (
