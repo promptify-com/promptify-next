@@ -3,12 +3,8 @@ import { Box, Grid } from "@mui/material";
 import { Header } from "@/components/Header";
 import { theme } from "@/theme";
 import Sidebar from "./components/sidebar/Sidebar";
-import { usePathname } from "next/navigation";
 
 export const Layout = ({ children }: { children: ReactNode }) => {
-  const pathname = usePathname();
-  const isPromptsPage = pathname.split("/")[1] === "explore";
-
   return (
     <>
       <Box sx={{ bgcolor: "surface.3" }}>
@@ -21,9 +17,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
             minHeight: "100svh",
             maxWidth: {
               xs: "100%",
-              md: isPromptsPage
-                ? `calc(100% - ${theme.custom.defaultSidebarWidth})`
-                : `calc(100% - ${theme.custom.leftClosedSidebarWidth})`,
+              md: `calc(100% - ${theme.custom.leftClosedSidebarWidth})`,
             },
             m: { md: `0px 0px 0px auto` },
           }}

@@ -93,7 +93,7 @@ export let theme: Theme = createTheme({
   },
   custom: {
     defaultSidebarWidth: "230px",
-    leftClosedSidebarWidth: "125px",
+    leftClosedSidebarWidth: "88px",
     headerHeight: {
       xs: "58px",
       md: "90px",

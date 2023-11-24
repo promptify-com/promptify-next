@@ -11,15 +11,12 @@ import Grid from "@mui/material/Grid";
 import { NavItem } from "@/common/types/sidebar";
 import SidebarItem from "./SidebarItem";
 import { theme } from "@/theme";
-import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
 
 function Sidebar() {
   const pathname = usePathname();
   const isPromptsPage = pathname.split("/")[1] === "explore";
   const isTemplatePage = pathname.split("/")[1] === "prompt";
   const isValidUser = useAppSelector(isValidUserFn);
-  const [showFilters, setShowFilters] = useState(isPromptsPage);
-  const { tags, engines } = useGetTemplatesByFilter();
   const navItems: NavItem[] = [
     {
       name: "Home",
@@ -95,9 +92,9 @@ function Sidebar() {
         justifyContent="space-between"
         className="sidebar-list"
         sx={{
-          overflow: showFilters ? "scroll" : "none",
+          overflow: "none",
           bgcolor: "surface.3",
-          width: isPromptsPage ? theme.custom.defaultSidebarWidth : theme.custom.leftClosedSidebarWidth,
+          width: theme.custom.leftClosedSidebarWidth,
           padding: "8px 4px",
           height: "100vh",
         }}
@@ -107,20 +104,11 @@ function Sidebar() {
             <SidebarItem
               key={item.href}
               navItem={item}
-              isPromptsPage={isPromptsPage}
-              showFilters={showFilters}
-              onClick={() => item.href === "/explore" && setShowFilters(!showFilters)}
-              engines={engines}
-              tags={tags}
             />
           ))}
         </List>
         <List sx={{ p: 0 }}>
-          <SidebarItem
-            navItem={learnHelpNavItem}
-            isPromptsPage={isPromptsPage}
-            showFilters={showFilters}
-          />
+          <SidebarItem navItem={learnHelpNavItem} />
         </List>
       </Grid>
     </Drawer>
