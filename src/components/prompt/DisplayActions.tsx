@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Box, Button, Divider, IconButton, Stack, Tooltip, Typography, useTheme } from "@mui/material";
-import { Bookmark, BookmarkBorder, Close, DeleteOutline, Edit, ShareOutlined } from "@mui/icons-material";
+import {
+  Bookmark,
+  BookmarkBorder,
+  Close,
+  DeleteOutline,
+  Edit,
+  ShareOutlined,
+  VisibilityOff,
+  VisibilityOutlined,
+} from "@mui/icons-material";
 import { ExecutionTemplatePopupType, TemplatesExecutions } from "@/core/api/dto/templates";
 import { useAppSelector } from "@/hooks/useStore";
 import { useDeleteExecutionFavoriteMutation, useExecutionFavoriteMutation } from "@/core/api/executions";
@@ -13,9 +22,17 @@ interface Props {
   selectedExecution: TemplatesExecutions | null;
   onOpenExport: () => void;
   close: () => void;
+  previewExecution: boolean;
+  toggleExecutionPreview: () => void;
 }
 
-export const DisplayActions: React.FC<Props> = ({ selectedExecution, onOpenExport, close }) => {
+export const DisplayActions: React.FC<Props> = ({
+  selectedExecution,
+  onOpenExport,
+  close,
+  previewExecution,
+  toggleExecutionPreview,
+}) => {
   const { palette } = useTheme();
   const { truncate } = useTruncate();
   const [favoriteExecution] = useExecutionFavoriteMutation();
@@ -139,6 +156,22 @@ export const DisplayActions: React.FC<Props> = ({ selectedExecution, onOpenExpor
                 alignItems={"center"}
                 gap={1}
               >
+                <Tooltip
+                  title="Preview"
+                  enterDelay={1000}
+                  enterNextDelay={1000}
+                >
+                  <IconButton
+                    sx={actionBtnStyle}
+                    onClick={toggleExecutionPreview}
+                  >
+                    {previewExecution ? <VisibilityOff /> : <VisibilityOutlined />}
+                  </IconButton>
+                </Tooltip>
+                <Divider
+                  orientation="vertical"
+                  sx={{ width: "1px", height: "25px", borderColor: "surface.5" }}
+                />
                 <Tooltip
                   title="Delete"
                   enterDelay={1000}

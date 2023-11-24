@@ -10,6 +10,8 @@ import { SparkExportPopup } from "../dialog/SparkExportPopup";
 import { isDesktopViewPort } from "@/common/helpers";
 import GeneratedExecutionFooter from "./GeneratedExecutionFooter";
 import { useAppSelector } from "@/hooks/useStore";
+import { Stack } from "@mui/material";
+import ExecutionContentPreview from "./ExecutionContentPreview";
 
 interface Props {
   templateData: Templates;
@@ -20,6 +22,7 @@ export const Display: React.FC<Props> = ({ templateData, close }) => {
   const currentUser = useAppSelector(state => state.user.currentUser);
   const [firstLoad, setFirstLoad] = useState(true);
   const [openExportPopup, setOpenExportpopup] = useState(false);
+  const [previewExecution, setPreviewExecution] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const isDesktopView = isDesktopViewPort();
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
@@ -89,6 +92,8 @@ export const Display: React.FC<Props> = ({ templateData, close }) => {
               selectedExecution={selectedExecution}
               onOpenExport={() => setOpenExportpopup(true)}
               close={close}
+              previewExecution={previewExecution}
+              toggleExecutionPreview={() => setPreviewExecution(!previewExecution)}
             />
             {openExportPopup && activeExecution?.id && (
               <SparkExportPopup
@@ -123,10 +128,38 @@ export const Display: React.FC<Props> = ({ templateData, close }) => {
               No spark found
             </Typography>
           ) : (
-            <ExecutionCard
-              execution={generatedExecution ?? selectedExecution}
-              promptsData={templateData.prompts}
-            />
+            <Stack
+              direction={"row"}
+              gap={1}
+            >
+              <Box
+                sx={{
+                  width: { md: previewExecution ? "75%" : "100%" },
+                  borderRight: previewExecution ? "1px solid" : "0",
+                  borderColor: "divider",
+                }}
+              >
+                <ExecutionCard
+                  execution={generatedExecution ?? selectedExecution}
+                  promptsData={templateData.prompts}
+                />
+              </Box>
+              {selectedExecution && previewExecution && (
+                <Box
+                  sx={{
+                    width: previewExecution ? "25%" : "0%",
+                    position: "sticky",
+                    top: 0,
+                    height: "fit-content",
+                  }}
+                >
+                  <ExecutionContentPreview
+                    prompts={templateData.prompts}
+                    execution={selectedExecution}
+                  />
+                </Box>
+              )}
+            </Stack>
           )}
         </Box>
       </Box>
