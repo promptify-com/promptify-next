@@ -10,6 +10,7 @@ import { FeedbackType, TemplatesExecutions } from "@/core/api/dto/templates";
 import { useAppDispatch } from "@/hooks/useStore";
 import { setAccordionChatMode } from "@/core/store/templatesSlice";
 import { Tooltip } from "@mui/material";
+import { setSelectedExecution } from "@/core/store/executionsSlice";
 
 interface newFeedBack {
   execution: TemplatesExecutions;
@@ -112,6 +113,7 @@ export default function FeedbackThumbs({ execution }: newFeedBack) {
           size="large"
           onClick={() => {
             dispatch(setAccordionChatMode("input"));
+            dispatch(setSelectedExecution(null));
           }}
           sx={{
             p: "15px",

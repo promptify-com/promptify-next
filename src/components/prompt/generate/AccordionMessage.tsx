@@ -155,9 +155,9 @@ export const AccordionMessage = ({
                   {showPrompts && (
                     <Stack
                       mt={10}
-                      mr={3}
                       borderLeft={"2px solid #ECECF4"}
-                      px={"10px"}
+                      pl={"20px"}
+                      pr={"80px"}
                       display={"flex"}
                       flexDirection={"column"}
                       gap={2}
@@ -172,6 +172,7 @@ export const AccordionMessage = ({
                         return (
                           <PromptContent
                             key={prompt.id}
+                            execution={selectedExecution}
                             prompt={prompt}
                             answers={answers}
                             id={index}

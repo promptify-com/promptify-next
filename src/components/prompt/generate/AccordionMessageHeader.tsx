@@ -66,7 +66,6 @@ function AccordionMessageHeader({
   const [deleteExecutionFavorite] = useDeleteExecutionFavoriteMutation();
 
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
-  const isLastExecuted = useAppSelector(state => state.template.isLastExecuted);
 
   const [executionPopup, setExecutionPopup] = useState<ExecutionTemplatePopupType>(null);
   const [executionTitle, setExecutionTitle] = useState(selectedExecution?.title);
@@ -328,28 +327,26 @@ function AccordionMessageHeader({
                     Cancel
                   </Button>
 
-                  {isLastExecuted && (
-                    <Tooltip
-                      title="Show Prompts"
-                      arrow
-                      PopperProps={commonPopperProps}
+                  <Tooltip
+                    title="Show Prompts"
+                    arrow
+                    PopperProps={commonPopperProps}
+                  >
+                    <IconButton
+                      onClick={e => {
+                        e.stopPropagation();
+                        toggleShowPrompts();
+                      }}
+                      sx={{
+                        border: "none",
+                        ":hover": {
+                          bgcolor: "surface.4",
+                        },
+                      }}
                     >
-                      <IconButton
-                        onClick={e => {
-                          e.stopPropagation();
-                          toggleShowPrompts();
-                        }}
-                        sx={{
-                          border: "none",
-                          ":hover": {
-                            bgcolor: "surface.4",
-                          },
-                        }}
-                      >
-                        {!showPrompts ? <RemoveRedEyeOutlined /> : <VisibilityOff />}
-                      </IconButton>
-                    </Tooltip>
-                  )}
+                      {!showPrompts ? <RemoveRedEyeOutlined /> : <VisibilityOff />}
+                    </IconButton>
+                  </Tooltip>
                 </Grid>
               ) : (
                 <Stack
@@ -385,34 +382,32 @@ function AccordionMessageHeader({
                     </Tooltip>
                   </Box>
 
-                  {isLastExecuted && (
-                    <Box
-                      borderRight={"2px solid #ECECF4"}
-                      pr={1}
-                      height={"30px"}
+                  <Box
+                    borderRight={"2px solid #ECECF4"}
+                    pr={1}
+                    height={"30px"}
+                  >
+                    <Tooltip
+                      title={!showPrompts ? "Show Prompts" : "Hide Prompts"}
+                      arrow
+                      PopperProps={commonPopperProps}
                     >
-                      <Tooltip
-                        title={!showPrompts ? "Show Prompts" : "Hide Prompts"}
-                        arrow
-                        PopperProps={commonPopperProps}
+                      <IconButton
+                        onClick={e => {
+                          e.stopPropagation();
+                          toggleShowPrompts();
+                        }}
+                        sx={{
+                          border: "none",
+                          ":hover": {
+                            bgcolor: "surface.4",
+                          },
+                        }}
                       >
-                        <IconButton
-                          onClick={e => {
-                            e.stopPropagation();
-                            toggleShowPrompts();
-                          }}
-                          sx={{
-                            border: "none",
-                            ":hover": {
-                              bgcolor: "surface.4",
-                            },
-                          }}
-                        >
-                          {!showPrompts ? <RemoveRedEyeOutlined /> : <VisibilityOff />}
-                        </IconButton>
-                      </Tooltip>
-                    </Box>
-                  )}
+                        {!showPrompts ? <RemoveRedEyeOutlined /> : <VisibilityOff />}
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
 
                   <Box
                     borderRight={"2px solid #ECECF4"}

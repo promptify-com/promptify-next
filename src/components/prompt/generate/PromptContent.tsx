@@ -2,14 +2,16 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import type { IAnswer } from "@/common/types/chat";
 import type { Prompts } from "@/core/api/dto/prompts";
+import { TemplatesExecutions } from "@/core/api/dto/templates";
 
 interface Props {
+  execution: TemplatesExecutions | null;
   prompt: Prompts;
   answers: IAnswer[];
   id: number;
 }
 
-function PromptContent({ prompt, id, answers }: Props) {
+function PromptContent({ execution, prompt, id, answers }: Props) {
   function replacePlaceholdersWithAnswers(content: string, answers: IAnswer[]): React.ReactNode {
     const regex = /{{(.*?):.*?}}/g;
 
@@ -19,15 +21,32 @@ function PromptContent({ prompt, id, answers }: Props) {
     content.replace(regex, (match, inputName, index) => {
       parts.push(content.slice(lastIndex, index));
 
-      const answer = answers.find(a => a.inputName === inputName);
+      let replacement: string | undefined;
 
-      if (answer && typeof answer.answer === "string") {
+      if (execution && execution.parameters) {
+        for (const promptId in execution.parameters) {
+          if (execution.parameters.hasOwnProperty(promptId)) {
+            const params = execution.parameters[promptId];
+            if (params[inputName]) {
+              replacement = params[inputName] as string;
+              break;
+            }
+          }
+        }
+      } else {
+        const answer = answers.find(a => a.inputName === inputName);
+        if (answer && typeof answer.answer === "string") {
+          replacement = answer.answer;
+        }
+      }
+
+      if (replacement) {
         parts.push(
           <span
             key={index}
             style={{ color: "#375CA9", fontWeight: "600" }}
           >
-            {answer.answer}
+            {replacement}
           </span>,
         );
       } else {

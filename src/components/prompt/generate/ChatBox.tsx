@@ -14,12 +14,7 @@ import { ChatInterface } from "./ChatInterface";
 import { ChatInput } from "./ChatInput";
 import { Templates } from "@/core/api/dto/templates";
 import { IPromptInput, PromptLiveResponse } from "@/common/types/prompt";
-import {
-  setAccordionChatMode,
-  setExecutionLastExecuted,
-  setGeneratingStatus,
-  updateExecutionData,
-} from "@/core/store/templatesSlice";
+import { setAccordionChatMode, setGeneratingStatus, updateExecutionData } from "@/core/store/templatesSlice";
 import { IAnswer, IMessage } from "@/common/types/chat";
 import { executionsApi, useStopExecutionMutation } from "@/core/api/executions";
 import { vary } from "@/common/helpers/varyValidator";
@@ -241,6 +236,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
 
   const addNewPrompt = ({ startOver = false }: { startOver: boolean }) => {
     dispatch(setAccordionChatMode("input"));
+    dispatch(setSelectedExecution(null));
     if (startOver) {
       setAnswers([]);
     } else {
@@ -409,7 +405,6 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
     if (!filesUploaded) return;
 
     dispatch(setGeneratingStatus(true));
-    dispatch(setExecutionLastExecuted(true));
 
     const promptsData = preparePromptsData(uploadedFiles.current, answers, paramsValues, template.prompts);
 
