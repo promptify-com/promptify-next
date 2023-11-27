@@ -8,6 +8,7 @@ import { FiltersSelected } from "@/components/explorer/FiltersSelected";
 import { Category } from "@/core/api/dto/templates";
 import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
 import { getCategories } from "@/hooks/api/categories";
+import { useGetsuggestedTemplatesByCategoryQuery } from "@/core/api/templates";
 
 interface Props {
   categories: Category[];
@@ -24,6 +25,8 @@ export default function ExplorePage({ categories }: Props) {
     hasPrev,
     handlePrevPage,
   } = useGetTemplatesByFilter({ ordering: "-likes", templateLimit: 5, paginatedList: true });
+  const { data: suggestedTemplates, isLoading: isSuggestedTemplatesLoading } =
+    useGetsuggestedTemplatesByCategoryQuery();
 
   return (
     <Layout>
@@ -57,6 +60,13 @@ export default function ExplorePage({ categories }: Props) {
             isInfiniteScrolling={false}
             hasPrev={hasPrev}
             onPrevPage={handlePrevPage}
+          />
+          <TemplatesSection
+            filtred={!allFilterParamsNull}
+            templates={suggestedTemplates ?? []}
+            isLoading={isSuggestedTemplatesLoading}
+            templateLoading={isSuggestedTemplatesLoading}
+            title={`Because you use ${suggestedTemplates?.[0].category?.name} prompts`}
           />
         </Grid>
       </Box>
