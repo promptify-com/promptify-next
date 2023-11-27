@@ -264,56 +264,65 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
   };
 
   const validateVary = async (variation: string) => {
-    if (variation) {
-      const userMessage: IMessage = {
-        id: randomId(),
-        text: variation,
-        type: "text",
-        createdAt: createdAt,
-        fromUser: true,
-      };
-      setMessages(prevMessages => prevMessages.concat(userMessage));
+    try {
+      if (variation) {
+        const userMessage: IMessage = {
+          id: randomId(),
+          text: variation,
+          type: "text",
+          createdAt: createdAt,
+          fromUser: true,
+        };
+        setMessages(prevMessages => prevMessages.concat(userMessage));
 
-      setIsValidatingAnswer(true);
+        setIsValidatingAnswer(true);
 
-      const questionAnswerMap: Record<string, string | number | File> = {};
-      _inputs.forEach(input => {
-        const matchingAnswer = answers.find(answer => answer.inputName === input.name);
-        questionAnswerMap[input.name] = matchingAnswer?.answer || "";
-      });
+        const questionAnswerMap: Record<string, string | number | File> = {};
+        _inputs.forEach(input => {
+          const matchingAnswer = answers.find(answer => answer.inputName === input.name);
+          questionAnswerMap[input.name] = matchingAnswer?.answer || "";
+        });
 
-      const payload = {
-        prompt: variation,
-        variables: questionAnswerMap,
-      };
+        const payload = {
+          prompt: variation,
+          variables: questionAnswerMap,
+        };
 
-      const varyResponse = await vary({ token, payload });
+        const varyResponse = await vary({ token, payload });
 
-      if (typeof varyResponse === "string") {
-        onError("Oopps, something happened. Please try again!");
-        setIsValidatingAnswer(false);
-        return;
-      }
-
-      const newAnswers = _inputs
-        .map(input => {
-          const answer = varyResponse[input.name];
-
-          return {
-            inputName: input.name,
-            required: input.required,
-            question: input.question!,
-            prompt: input.prompt!,
-            answer,
+        if (typeof varyResponse === "string") {
+          setIsValidatingAnswer(false);
+          const botMessage: IMessage = {
+            id: randomId(),
+            text: `Something went wrong! can you please provide your message again?`,
+            type: "text",
+            createdAt: createdAt,
+            fromUser: false,
           };
-        })
-        .filter(answer => answer.answer !== "");
+          setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat(botMessage));
+          return;
+        }
 
-      setAnswers(newAnswers);
-      setIsValidatingAnswer(false);
+        const newAnswers = _inputs
+          .map(input => {
+            const answer = varyResponse[input.name];
 
-      addNewPrompt({ startOver: false });
-    }
+            return {
+              inputName: input.name,
+              required: input.required,
+              question: input.question!,
+              prompt: input.prompt!,
+              answer,
+            };
+          })
+          .filter(answer => answer.answer !== "");
+
+        setAnswers(newAnswers);
+        setIsValidatingAnswer(false);
+
+        addNewPrompt({ startOver: false });
+      }
+    } catch (error) {}
   };
 
   const handleUserParam = (value: number, param: PromptParams) => {
