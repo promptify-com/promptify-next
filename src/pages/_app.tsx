@@ -75,7 +75,10 @@ function App({ Component, ...rest }: AppProps) {
               strategy="lazyOnload"
               src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS}`}
             />
-            <Script strategy="lazyOnload">
+            <Script
+              strategy="lazyOnload"
+              suppressHydrationWarning={true}
+            >
               {`
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){dataLayer.push(arguments);}
@@ -83,6 +86,7 @@ function App({ Component, ...rest }: AppProps) {
                 gtag('config', '${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS}', {
                 page_path: window.location.pathname,
                 });
+                gtag('event', 'pageview', {Branch: '${process.env.BRANCH ?? "unknown"}'})
             `}
             </Script>
             <Script
