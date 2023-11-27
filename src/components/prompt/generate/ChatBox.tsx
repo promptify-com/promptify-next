@@ -175,6 +175,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
   }, [generatingResponse]);
 
   useEffect(() => {
+    console.log(isSimulaitonStreaming);
     if (!isSimulaitonStreaming && !!queuedMessages.length) {
       const nextQueuedMessage = queuedMessages.pop()!;
 
@@ -260,8 +261,6 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
         noHeader: true,
       },
     ]);
-
-    setIsSimulaitonStreaming(false);
   };
 
   const validateVary = async (variation: string) => {
