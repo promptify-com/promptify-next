@@ -5,13 +5,13 @@ import BaseButton from "@/components/base/BaseButton";
 import CodeFieldModal from "@/components/modals/CodeFieldModal";
 import { useAppSelector } from "@/hooks/useStore";
 import { getFileTypeExtensionsAsString } from "@/common/helpers/uploadFileHelper";
-import { FileType, IPromptInputQuestion } from "@/common/types/prompt";
+import { FileType, IPromptInput } from "@/common/types/prompt";
 import { Edit, Error } from "@mui/icons-material";
 
 interface Props {
-  input: IPromptInputQuestion;
+  input: IPromptInput;
   answer: IAnswer | undefined;
-  onChange: (value: string | File, question: IPromptInputQuestion) => void;
+  onChange: (value: string | File, question: IPromptInput) => void;
 }
 
 export const FormInput = ({ input, answer, onChange }: Props) => {

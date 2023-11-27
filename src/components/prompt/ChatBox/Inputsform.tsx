@@ -1,17 +1,17 @@
 import React, { Dispatch, SetStateAction } from "react";
 import { Fade, Stack } from "@mui/material";
 import { IAnswer } from "@/common/types/chat";
-import { IPromptInputQuestion } from "@/common/types/prompt";
+import { IPromptInput } from "@/common/types/prompt";
 import { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
 import { FormInput } from "./FormInput";
 import { FormParam } from "./FormParam";
 
 interface Props {
-  inputs: IPromptInputQuestion[];
+  inputs: IPromptInput[];
   params: PromptParams[];
   answers: IAnswer[];
   paramsValues: ResOverrides[];
-  onChangeInput: (value: string | File, question: IPromptInputQuestion) => void;
+  onChangeInput: (value: string | File, question: IPromptInput) => void;
   onChangeParam: (value: number, param: PromptParams) => void;
   setIsSimulationStreaming: Dispatch<SetStateAction<boolean>>;
   onScrollToBottom: () => void;

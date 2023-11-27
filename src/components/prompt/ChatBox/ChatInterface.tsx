@@ -9,16 +9,16 @@ import { InputsForm } from "./Inputsform";
 import { CardExecution } from "@/components/common/cards/CardExecution";
 import FeedbackThumbs from "../FeedbackThumbs";
 import { Replay } from "@mui/icons-material";
-import { IPromptInputQuestion } from "@/common/types/prompt";
+import { IPromptInput } from "@/common/types/prompt";
 import { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
 
 interface Props {
   template: Templates;
   messages: IMessage[];
-  onChangeInput: (value: string | File, question: IPromptInputQuestion) => void;
+  onChangeInput: (value: string | File, question: IPromptInput) => void;
   onChangeParam: (value: number, param: PromptParams) => void;
   setIsSimulationStreaming: Dispatch<SetStateAction<boolean>>;
-  inputs: IPromptInputQuestion[];
+  inputs: IPromptInput[];
   answers: IAnswer[];
   params: PromptParams[];
   paramsValues: ResOverrides[];

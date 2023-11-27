@@ -27,6 +27,7 @@ export const Display: React.FC<Props> = ({ templateData, close }) => {
   const isDesktopView = isDesktopViewPort();
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
+  const isGenerating = useAppSelector(state => state.template.isGenerating);
   const isFetching = useAppSelector(state => state.executions.isFetching);
   const activeExecution = useMemo(() => {
     if (selectedExecution) {
@@ -69,6 +70,8 @@ export const Display: React.FC<Props> = ({ templateData, close }) => {
 
     return null;
   }, [generatedExecution]);
+
+  const displayPreview = previewExecution && !isGenerating;
 
   return (
     <Grid
@@ -134,8 +137,8 @@ export const Display: React.FC<Props> = ({ templateData, close }) => {
             >
               <Box
                 sx={{
-                  width: { md: previewExecution ? "75%" : "100%" },
-                  borderRight: previewExecution ? "1px solid" : "0",
+                  width: { md: displayPreview ? "75%" : "100%" },
+                  borderRight: displayPreview ? "1px solid" : "0",
                   borderColor: "divider",
                 }}
               >
@@ -144,10 +147,10 @@ export const Display: React.FC<Props> = ({ templateData, close }) => {
                   promptsData={templateData.prompts}
                 />
               </Box>
-              {selectedExecution && previewExecution && (
+              {selectedExecution && displayPreview && (
                 <Box
                   sx={{
-                    width: previewExecution ? "25%" : "0%",
+                    width: displayPreview ? "25%" : "0%",
                     position: "sticky",
                     top: 0,
                     height: "fit-content",

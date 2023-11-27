@@ -21,21 +21,11 @@ export interface IPromptInput {
   fullName: string;
   type: InputType;
   required: boolean;
+  question?: string;
   defaultValue?: string | number | null;
   choices?: string[];
   fileExtensions?: string[];
   prompt?: number;
-}
-
-export interface IPromptInputQuestion {
-  type: InputType;
-  name: string;
-  fullName: string;
-  required: boolean;
-  question: string;
-  choices?: string[];
-  fileExtensions?: string[];
-  prompt: number;
 }
 
 export type FormMode = "input" | "chat";

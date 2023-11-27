@@ -9,9 +9,9 @@ import useToken from "@/hooks/useToken";
 import { ChatInterface } from "./ChatInterface";
 import { ChatInput } from "./ChatInput";
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
-import { IPromptInput, PromptLiveResponse, AnsweredInputType, IPromptInputQuestion } from "@/common/types/prompt";
+import { IPromptInput, PromptLiveResponse, AnsweredInputType } from "@/common/types/prompt";
 import { setChatFullScreenStatus, setGeneratingStatus, updateExecutionData } from "@/core/store/templatesSlice";
-import { IAnswer, IMessage } from "@/common/types/chat";
+import { IAnswer, IMessage, VaryValidatorResponse } from "@/common/types/chat";
 import { executionsApi, useStopExecutionMutation } from "@/core/api/executions";
 import { vary } from "@/common/helpers/varyValidator";
 import { parseMessageData } from "@/common/helpers/parseMessageData";
@@ -59,7 +59,7 @@ const ChatBox: React.FC<Props> = ({ onError, template }) => {
     setIsSimulationStreaming(true);
   };
 
-  const initialMessages = (questions: IPromptInputQuestion[]) => {
+  const initialMessages = (questions: IPromptInput[]) => {
     const createdAt = new Date(new Date().getTime() - 1000);
 
     const welcomeMessage: IMessage = {
@@ -106,6 +106,31 @@ const ChatBox: React.FC<Props> = ({ onError, template }) => {
     setShowGenerateButton(false);
   };
 
+  const messageAnswersForm = (message: string) => {
+    const createdAt = new Date(new Date().getTime() - 1000);
+
+    const botMessage: IMessage = {
+      id: randomId(),
+      text: message,
+      type: "text",
+      createdAt,
+      fromUser: false,
+    };
+
+    addToQueuedMessages([
+      {
+        id: randomId(),
+        text: "",
+        type: "form",
+        createdAt,
+        fromUser: false,
+        noHeader: true,
+      },
+    ]);
+
+    setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat(botMessage));
+  };
+
   const dispatchNewExecutionData = (answers: IAnswer[], inputs: IPromptInput[]) => {
     const promptsData: Record<number, ResPrompt> = {};
 
@@ -133,34 +158,34 @@ const ChatBox: React.FC<Props> = ({ onError, template }) => {
     dispatch(updateExecutionData(JSON.stringify(Object.values(promptsData))));
   };
 
-  const [_inputs, _params]: [IPromptInputQuestion[], PromptParams[]] = useMemo(() => {
+  const [_inputs, _params]: [IPromptInput[], PromptParams[]] = useMemo(() => {
     if (!template) {
       return [[], []];
     }
 
-    const { inputs, params } = prepareAndRemoveDuplicateInputs(template.prompts);
+    let { inputs, params } = prepareAndRemoveDuplicateInputs(template.prompts);
 
-    const inputsQuestions: IPromptInputQuestion[] = [];
-    template.questions?.forEach((question, idx) => {
-      if (!inputs[idx]) return;
+    if (template.questions?.length) {
+      const normalizeQuestions: Record<string, string> = template.questions.reduce(
+        (acc, question) => {
+          const key = Object.keys(question)[0];
+          acc[key] = question[key].question;
 
-      const { type, required, choices, fileExtensions, name, fullName, prompt } = inputs[idx];
-      const key = Object.keys(question)[0];
-      inputsQuestions.push({
-        ...question[key],
-        name,
-        fullName,
-        required,
-        type,
-        choices,
-        fileExtensions,
-        prompt: prompt!,
+          return acc;
+        },
+        {} as Record<string, string>,
+      );
+
+      inputs = inputs.map(input => {
+        input.question = normalizeQuestions[input.name] ?? "";
+
+        return input;
       });
-    });
+    }
 
-    inputsQuestions.sort((a, b) => +b.required - +a.required);
+    inputs.sort((a, b) => +b.required - +a.required);
 
-    initialMessages(inputsQuestions);
+    initialMessages(inputs);
 
     const valuesMap = new Map<number, ResOverrides>();
     params.forEach(_param => {
@@ -168,7 +193,7 @@ const ChatBox: React.FC<Props> = ({ onError, template }) => {
     });
     setParamsValues(Array.from(valuesMap.values()));
 
-    return [inputsQuestions, params];
+    return [inputs, params];
   }, [template]);
 
   useEffect(() => {
@@ -219,7 +244,7 @@ const ChatBox: React.FC<Props> = ({ onError, template }) => {
     }
   };
 
-  const allRequiredInputsAnswered = (inputs: IPromptInputQuestion[], answers: IAnswer[]): boolean => {
+  const allRequiredInputsAnswered = (inputs: IPromptInput[], answers: IAnswer[]): boolean => {
     const requiredQuestionNames = inputs.filter(question => question.required).map(question => question.name);
 
     if (!requiredQuestionNames.length) {
@@ -263,23 +288,30 @@ const ChatBox: React.FC<Props> = ({ onError, template }) => {
         variables: questionAnswerMap,
       };
 
-      const varyResponse = await vary({ token, payload });
+      let varyResponse: VaryValidatorResponse | string;
+      try {
+        varyResponse = await vary({ token, payload });
+      } catch (err) {
+        varyResponse = "error";
+      }
 
       if (typeof varyResponse === "string") {
-        onError("Oops, Please try again!");
         setIsValidatingAnswer(false);
+        messageAnswersForm("Oops! I couldn't get your reponse, Please try again.");
         return;
       }
 
       const answeredInputs: AnsweredInputType[] = [];
-      const newAnswers = _inputs
+      const validatedAnswers = varyResponse;
+      const newAnswers: IAnswer[] = _inputs
         .map(input => {
           const { name: inputName, required, question, prompt } = input;
-          const answer = varyResponse[input.name];
+          const answer = validatedAnswers[input.name];
+          const promptId = prompt!;
 
           if (answer) {
             answeredInputs.push({
-              promptId: prompt,
+              promptId,
               inputName,
               value: answer,
               modifiedFrom: "chat",
@@ -288,8 +320,8 @@ const ChatBox: React.FC<Props> = ({ onError, template }) => {
           return {
             inputName,
             required,
-            question,
-            prompt,
+            question: question || "",
+            prompt: promptId,
             answer,
           };
         })
@@ -298,46 +330,27 @@ const ChatBox: React.FC<Props> = ({ onError, template }) => {
       setAnswers(newAnswers);
       setIsValidatingAnswer(false);
 
-      const createdAt = new Date(new Date().getTime() - 1000);
       const isReady = allRequiredInputsAnswered(_inputs, newAnswers) ? " We are ready to create a new document." : "";
-      const botMessage: IMessage = {
-        id: randomId(),
-        text: `Ok!${isReady} I have prepared the incoming parameters, please check!`,
-        type: "text",
-        createdAt,
-        fromUser: false,
-      };
-
-      addToQueuedMessages([
-        {
-          id: randomId(),
-          text: "",
-          type: "form",
-          createdAt,
-          fromUser: false,
-          noHeader: true,
-        },
-      ]);
-
-      setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat(botMessage));
+      messageAnswersForm(`Ok!${isReady} I have prepared the incoming parameters, please check!`);
     }
   };
 
-  const handleUserInput = (value: string | File, currentQuestion: IPromptInputQuestion) => {
+  const handleUserInput = (value: string | File, input: IPromptInput) => {
     if (isSimulationStreaming) {
       return;
     }
 
-    const { name: inputName, required, question, prompt } = currentQuestion;
+    const { name: inputName, required, question, prompt } = input;
+    const promptId = prompt!;
 
     const _answers = [...answers.filter(answer => answer.inputName !== inputName)];
 
     if (!(!(value instanceof File) && value.trim() === "")) {
       const newAnswer: IAnswer = {
-        question,
+        question: question || "",
         required,
         inputName,
-        prompt,
+        prompt: promptId,
         answer: value,
         error: false,
       };
@@ -395,15 +408,8 @@ const ChatBox: React.FC<Props> = ({ onError, template }) => {
       const invalids = filesUploaded.answers
         .filter(answers => answers.error)
         .map(answer => _inputs.find(input => input.name === answer.inputName)?.fullName);
-      const botMessage: IMessage = {
-        id: randomId(),
-        text: `Please enter valid answers for "${invalids.join(", ")}"`,
-        type: "form",
-        createdAt: new Date(new Date().getTime() - 1000),
-        fromUser: false,
-      };
 
-      setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat(botMessage));
+      messageAnswersForm(`Please enter valid answers for "${invalids.join(", ")}"`);
       return;
     }
 
@@ -424,14 +430,15 @@ const ChatBox: React.FC<Props> = ({ onError, template }) => {
       const _params = execution.parameters;
       newAnswers = _inputs
         .map(input => {
-          const answer = _params[input.prompt][input.name];
           const { name: inputName, required, question, prompt } = input;
+          const promptId = prompt!;
+          const answer = _params[promptId][inputName];
 
           return {
             inputName,
             required,
-            question,
-            prompt,
+            question: question || "",
+            prompt: promptId,
             answer,
           };
         })
@@ -440,28 +447,8 @@ const ChatBox: React.FC<Props> = ({ onError, template }) => {
 
     setAnswers(newAnswers);
 
-    const createdAt = new Date(new Date().getTime() - 1000);
     const isReady = allRequiredInputsAnswered(_inputs, newAnswers) ? " We are ready to create a new document." : "";
-    const botMessage: IMessage = {
-      id: randomId(),
-      text: `Ok!${isReady} I have prepared the incoming parameters, please check!`,
-      type: "text",
-      createdAt,
-      fromUser: false,
-    };
-
-    addToQueuedMessages([
-      {
-        id: randomId(),
-        text: "",
-        type: "form",
-        createdAt,
-        fromUser: false,
-        noHeader: true,
-      },
-    ]);
-
-    setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat(botMessage));
+    messageAnswersForm(`Ok!${isReady} I have prepared the incoming parameters, please check!`);
   };
 
   const generateExecution = (executionData: ResPrompt[]) => {

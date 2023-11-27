@@ -1,6 +1,7 @@
 import { TemplateQuestionGeneratorData, VaryParams } from "@/core/api/dto/prompts";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { getExecutionById } from "@/hooks/api/executions";
+import { VaryValidatorResponse } from "@/common/types/chat";
 
 const answersValidatorTemplateId = 547;
 
@@ -10,7 +11,7 @@ export const vary = ({
 }: {
   token: string;
   payload: VaryParams;
-}): Promise<{ [question: string]: string | number } | string> => {
+}): Promise<VaryValidatorResponse | string> => {
   return new Promise(resolve => {
     const data: TemplateQuestionGeneratorData[] = [
       {
@@ -56,6 +57,9 @@ export const vary = ({
         } catch (_) {
           resolve("Something wrong happened");
         }
+      },
+      onerror(err) {
+        resolve("Something wrong happened");
       },
     });
   });
