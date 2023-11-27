@@ -107,6 +107,12 @@ export const templatesApi = baseApi.injectEndpoints({
           method: "post",
         }),
       }),
+      getsuggestedTemplatesByCategory: builder.query<Templates[], void>({
+        query: () => ({
+          url: "/api/meta/templates/suggested_by_category",
+          method: "get",
+        }),
+      }),
     };
   },
 });
@@ -125,4 +131,5 @@ export const {
   useUpdateTemplateMutation,
   usePublishTemplateMutation,
   useViewTemplateMutation,
+  useGetsuggestedTemplatesByCategoryQuery,
 } = templatesApi;

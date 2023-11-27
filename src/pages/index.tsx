@@ -13,7 +13,7 @@ import { CategoriesSection } from "@/components/explorer/CategoriesSection";
 import { userApi } from "@/core/api/user";
 import { WelcomeCard } from "@/components/homepage/WelcomeCard";
 import { useGetTemplatesByFilterQuery, useGetTemplatesSuggestedQuery } from "@/core/api/templates";
-import { useGetTemplatesExecutionsByMeQuery } from "@/core/api/executions";
+import { useGetLatestExecutedTemplatesQuery } from "@/core/api/executions";
 import { getPathURL, saveToken } from "@/common/utils";
 import { RootState } from "@/core/store";
 import { isValidUserFn, updateUser } from "@/core/store/userSlice";
@@ -28,7 +28,6 @@ interface HomePageProps {
 }
 
 const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
-const MY_EXECUTIONS_LIMIT = 4;
 
 const HomePage: NextPage<HomePageProps> = ({ categories }) => {
   const token = useToken();
@@ -37,8 +36,8 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
   const isValidUser = useSelector(isValidUserFn);
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
   const [getCurrentUser] = userApi.endpoints.getCurrentUser.useLazyQuery();
-  const { data: myLatestExecutions, isLoading: isMyLatestExecutionsLoading } = useGetTemplatesExecutionsByMeQuery(
-    MY_EXECUTIONS_LIMIT,
+  const { data: myLatestExecutions, isLoading: isMyLatestExecutionsLoading } = useGetLatestExecutedTemplatesQuery(
+    undefined,
     {
       skip: !isValidUser,
     },
@@ -153,7 +152,7 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
                   <TemplatesSection
                     isLatestTemplates
                     isLoading={isMyLatestExecutionsLoading}
-                    templates={(myLatestExecutions as TemplatesExecutionsByMePaginationResponse)?.results || []}
+                    templates={myLatestExecutions || []}
                     title="Your Latest Templates:"
                     type="myLatestExecutions"
                   />
