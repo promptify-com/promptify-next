@@ -13,13 +13,32 @@ interface Props {
 
 function PromptContent({ execution, prompt, id, answers }: Props) {
   function replacePlaceholdersWithAnswers(content: string, answers: IAnswer[]): React.ReactNode {
-    const regex = /{{(.*?):.*?}}/g;
+    const placeholderRegex = /{{(.*?):.*?}}/g;
+    const dollarWordRegex = /\$[a-zA-Z0-9_]+/g;
 
     let lastIndex = 0;
     const parts: React.ReactNode[] = [];
 
-    content.replace(regex, (match, inputName, index) => {
-      parts.push(content.slice(lastIndex, index));
+    const addColoredDollarWords = (text: string) => {
+      let lastIndexDollarWords = 0;
+      text.replace(dollarWordRegex, (match, index) => {
+        parts.push(text.slice(lastIndexDollarWords, index));
+        parts.push(
+          <span
+            key={`dollar-${index}`}
+            style={{ color: "#375CA9", fontWeight: "600" }}
+          >
+            {match}
+          </span>,
+        );
+        lastIndexDollarWords = index + match.length;
+        return match;
+      });
+      parts.push(text.slice(lastIndexDollarWords));
+    };
+
+    content.replace(placeholderRegex, (match, inputName, index) => {
+      addColoredDollarWords(content.slice(lastIndex, index));
 
       let replacement: string | undefined;
 
@@ -43,7 +62,7 @@ function PromptContent({ execution, prompt, id, answers }: Props) {
       if (replacement) {
         parts.push(
           <span
-            key={index}
+            key={`placeholder-${index}`}
             style={{ color: "#375CA9", fontWeight: "600" }}
           >
             {replacement}
@@ -52,7 +71,7 @@ function PromptContent({ execution, prompt, id, answers }: Props) {
       } else {
         parts.push(
           <span
-            key={index}
+            key={`placeholder-${index}`}
             style={{ color: "#375CA9", fontWeight: "600" }}
           >
             {match}
@@ -64,7 +83,7 @@ function PromptContent({ execution, prompt, id, answers }: Props) {
       return match;
     });
 
-    parts.push(content.slice(lastIndex));
+    addColoredDollarWords(content.slice(lastIndex));
 
     return parts;
   }
