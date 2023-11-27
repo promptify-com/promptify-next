@@ -12,7 +12,7 @@ import { RootState } from "@/core/store";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { useSelector } from "react-redux";
 import { theme } from "@/theme";
-import { redirectToPath } from "@/common/helpers";
+import { isDesktopViewPort, redirectToPath } from "@/common/helpers";
 import Image from "next/image";
 
 interface HeaderProps {
@@ -62,6 +62,7 @@ export const Header: React.FC<HeaderProps> = ({ transparent = false, fixed = fal
   const [openSearchDialog, setOpenSearchDialog] = useState<boolean>(false);
   const [openSidebar, setOpenSidebar] = useState<boolean>(false);
   const [sidebarType, setSidebarType] = useState<SidebarType>("navigation");
+  const desktopViewport = isDesktopViewPort();
 
   const handleInputFocus = () => {
     setOpenSearchDialog(true);
@@ -260,13 +261,15 @@ export const Header: React.FC<HeaderProps> = ({ transparent = false, fixed = fal
             </Box>
           </Box>
         </Box>
-        <SideBarMobile
-          type={sidebarType}
-          openDrawer={openSidebar}
-          onCloseDrawer={() => setOpenSidebar(false)}
-          onOpenDrawer={() => setOpenSidebar(true)}
-          setSidebarType={setSidebarType}
-        />
+        {!desktopViewport && (
+          <SideBarMobile
+            type={sidebarType}
+            openDrawer={openSidebar}
+            onCloseDrawer={() => setOpenSidebar(false)}
+            onOpenDrawer={() => setOpenSidebar(true)}
+            setSidebarType={setSidebarType}
+          />
+        )}
       </Grid>
     </Box>
   );
