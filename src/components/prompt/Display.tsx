@@ -10,14 +10,16 @@ import { SparkExportPopup } from "../dialog/SparkExportPopup";
 import { isDesktopViewPort } from "@/common/helpers";
 import GeneratedExecutionFooter from "./GeneratedExecutionFooter";
 import { useAppSelector } from "@/hooks/useStore";
+import { IAnswer } from "@/common/types/chat";
 
 interface Props {
   mode: "chat" | "display";
   templateData: Templates;
   close?: () => void;
+  answers?: IAnswer[];
 }
 
-export const Display: React.FC<Props> = ({ mode, templateData, close }) => {
+export const Display: React.FC<Props> = ({ mode, templateData, close, answers }) => {
   const currentUser = useAppSelector(state => state.user.currentUser);
   const [firstLoad, setFirstLoad] = useState(false);
   const [openExportPopup, setOpenExportpopup] = useState(false);
@@ -123,6 +125,7 @@ export const Display: React.FC<Props> = ({ mode, templateData, close }) => {
             <ExecutionCard
               execution={generatedExecution ?? selectedExecution}
               promptsData={templateData.prompts}
+              answers={answers}
             />
           )}
         </Box>

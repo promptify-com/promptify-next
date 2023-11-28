@@ -1,22 +1,28 @@
 import { useEffect, useRef, useState, FC } from "react";
-import { Box, Stack, Tooltip, Typography, keyframes } from "@mui/material";
-import { Subtitle } from "@/components/blocks";
-import { Error } from "@mui/icons-material";
-import { isImageOutput, markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
-import { DisplayPrompt, PromptLiveResponse } from "@/common/types/prompt";
-import { Prompts } from "@/core/api/dto/prompts";
-import { TemplatesExecutions } from "@/core/api/dto/templates";
+import Error from "@mui/icons-material/Error";
+import { keyframes } from "@mui/material/styles";
+import Tooltip from "@mui/material/Tooltip";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
 
+import { isImageOutput, markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
+import { Subtitle } from "@/components/blocks";
 import { useAppSelector } from "@/hooks/useStore";
 import PromptContent from "./generate/PromptContent";
 import FeedbackThumbs from "./FeedbackThumbs";
+import type { Prompts } from "@/core/api/dto/prompts";
+import type { TemplatesExecutions } from "@/core/api/dto/templates";
+import type { IAnswer } from "@/common/types/chat";
+import type { DisplayPrompt, PromptLiveResponse } from "@/common/types/prompt";
 
 interface Props {
   execution: PromptLiveResponse | TemplatesExecutions | null;
   promptsData: Prompts[];
+  answers?: IAnswer[];
 }
 
-export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
+export const ExecutionCard: FC<Props> = ({ execution, promptsData, answers }) => {
   const executionPrompts = execution && "data" in execution ? execution.data : execution?.prompt_executions;
   const sparkHashQueryParam = useAppSelector(state => state.executions.sparkHashQueryParam);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
@@ -249,6 +255,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
                       <PromptContent
                         id={index + 1}
                         prompt={prompt!}
+                        answers={answers}
                         execution={execution as TemplatesExecutions}
                       />
                     </Stack>

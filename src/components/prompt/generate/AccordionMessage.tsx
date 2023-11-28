@@ -117,6 +117,7 @@ export const AccordionMessage = ({
                   <Display
                     mode="chat"
                     templateData={template}
+                    answers={answers}
                   />
                 </Stack>
               )}
