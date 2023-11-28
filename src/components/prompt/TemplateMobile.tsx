@@ -1,14 +1,12 @@
 import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
-import { DetailsCardMini } from "./DetailsCardMini";
-import { DetailsCard } from "./DetailsCard";
 import { Details } from "./Details";
 import ChatBox from "./ChatBox";
 import { Display } from "./Display";
-import BottomTabs from "./BottomTabs";
 import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { ButtonGenerateExecution } from "./ButtonGenerateExecution";
 import { useAppSelector } from "@/hooks/useStore";
+import { TemplateDetailsCard } from "./TemplateDetailsCard";
 
 interface TemplateMobileProps {
   hashedExecution: TemplatesExecutions | null;
@@ -32,7 +30,6 @@ export default function TemplateMobile({ template, hashedExecution, setErrorMess
   return (
     <Grid
       mt={7}
-      gap={"8px"}
       container
       mx={"auto"}
       height={"calc(100svh - 56px)"}
@@ -54,30 +51,10 @@ export default function TemplateMobile({ template, hashedExecution, setErrorMess
         },
       }}
     >
-      {mobileTab === 0 ? (
-        <Grid
-          item
-          xs={12}
-          md={8}
-          height={"100%"}
-          overflow={"auto"}
-          bgcolor={"surface.1"}
-          position={"relative"}
-          pb={"75px"} // Bottom tab bar height
-        >
-          <DetailsCard templateData={template} />
-          <Details
-            templateData={template}
-            setMobileTab={setMobileTab}
-            mobile
-          />
-        </Grid>
-      ) : (
-        <DetailsCardMini templateData={template} />
-      )}
+      <TemplateDetailsCard template={template} />
 
       {displayChatBox ? (
-        <Grid>
+        <Grid height={{ xs: "calc(100% - 90.5px)", md: "100%" }}>
           <ChatBox
             onError={setErrorMessage}
             key={template?.id}
@@ -112,11 +89,6 @@ export default function TemplateMobile({ template, hashedExecution, setErrorMess
           />
         </Grid>
       </Grid>
-
-      <BottomTabs
-        setActiveTab={setMobileTab}
-        activeTab={mobileTab}
-      />
     </Grid>
   );
 }

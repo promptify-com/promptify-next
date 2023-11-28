@@ -34,7 +34,7 @@ export const FormParam: React.FC<GeneratorParamProps> = ({ param, paramValue, on
       flexWrap={"wrap"}
       gap={1}
     >
-      <Box maxWidth={"60%"}>
+      <Box maxWidth={{ md: "60%" }}>
         <InputLabel
           sx={{
             fontSize: 14,
@@ -61,7 +61,7 @@ export const FormParam: React.FC<GeneratorParamProps> = ({ param, paramValue, on
         disabled={!param.is_editable || isGenerating}
         sx={{
           height: "2px",
-          width: "30%",
+          width: { xs: "100%", md: "30%" },
           minWidth: "300px",
           flexShrink: 0,
           color: "#375CA9",

@@ -6,6 +6,7 @@ import { timeAgo } from "@/common/helpers/timeManipulation";
 import { StreamContent } from "./StreamContent";
 import { CheckCircle } from "@mui/icons-material";
 import { LogoApp } from "@/assets/icons/LogoApp";
+import { isDesktopViewPort } from "@/common/helpers";
 
 interface MessageBlockProps {
   message: IMessage;
@@ -17,16 +18,17 @@ export const Message = ({ message, setIsSimulationStreaming, onScrollToBottom }:
   const { fromUser, text, createdAt } = message;
   const currentUser = useAppSelector(state => state.user.currentUser);
   const isChatFullScreen = useAppSelector(state => state.template.isChatFullScreen);
+  const isDesktopView = isDesktopViewPort();
 
   const name = fromUser ? currentUser?.first_name ?? currentUser?.username : "Promptify";
 
   return (
     <Grid
-      py={"16px"}
+      py={{ xs: "8px", md: "16px" }}
       display={"flex"}
       gap={"16px"}
     >
-      {isChatFullScreen && !message.noHeader && (
+      {isChatFullScreen && !message.noHeader && isDesktopView && (
         <>
           {message.type === "spark" ? (
             <Stack
@@ -63,8 +65,8 @@ export const Message = ({ message, setIsSimulationStreaming, onScrollToBottom }:
 
       <Grid
         flex={1}
-        ml={isChatFullScreen && message.noHeader ? "48px" : 0}
-        mt={message.noHeader ? -1.5 : 0}
+        ml={{ xs: 0, md: isChatFullScreen && message.noHeader ? "48px" : 0 }}
+        mt={{ xs: 0, md: message.noHeader ? -1.5 : 0 }}
         display={"flex"}
         flexDirection={"column"}
         gap={"8px"}

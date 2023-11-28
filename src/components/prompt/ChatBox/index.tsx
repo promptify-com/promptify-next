@@ -19,7 +19,7 @@ import { useUploadFileMutation } from "@/core/api/uploadFile";
 import { uploadFileHelper } from "@/common/helpers/uploadFileHelper";
 import { setGeneratedExecution, setSelectedExecution } from "@/core/store/executionsSlice";
 import { getExecutionById } from "@/hooks/api/executions";
-import { randomId } from "@/common/helpers";
+import { isDesktopViewPort, randomId } from "@/common/helpers";
 import useChatBox from "@/hooks/useChatBox";
 
 interface Props {
@@ -32,6 +32,7 @@ const ChatBox: React.FC<Props> = ({ onError, template }) => {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(state => state.user.currentUser);
+  const isDesktopView = isDesktopViewPort();
   const [stopExecution] = useStopExecutionMutation();
   const [uploadFile] = useUploadFileMutation();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
@@ -588,26 +589,28 @@ const ChatBox: React.FC<Props> = ({ onError, template }) => {
       width={"100%"}
       height={"100%"}
     >
-      <Stack
-        direction={"row"}
-        alignItems={"center"}
-        sx={{
-          bgcolor: "surface.1",
-          p: "24px 8px 24px 28px",
-        }}
-      >
-        <Typography
-          fontSize={12}
-          fontWeight={500}
-          letterSpacing={2}
-          textTransform={"uppercase"}
+      {isDesktopView && (
+        <Stack
+          direction={"row"}
+          alignItems={"center"}
+          sx={{
+            bgcolor: "surface.1",
+            p: "24px 8px 24px 28px",
+          }}
         >
-          Chat With Promptify
-        </Typography>
-      </Stack>
+          <Typography
+            fontSize={12}
+            fontWeight={500}
+            letterSpacing={2}
+            textTransform={"uppercase"}
+          >
+            Chat With Promptify
+          </Typography>
+        </Stack>
+      )}
       <Stack
         justifyContent={"flex-end"}
-        height={"calc(100% - 66px)"}
+        height={{ xs: "100%", md: "calc(100% - 66px)" }}
         gap={2}
       >
         <ChatInterface

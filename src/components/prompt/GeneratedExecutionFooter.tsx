@@ -1,3 +1,4 @@
+import { isDesktopViewPort } from "@/common/helpers";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
@@ -5,10 +6,11 @@ import Typography from "@mui/material/Typography";
 interface Props {
   title: string;
   order: number;
-  isMobile: boolean;
 }
 
-export default function GeneratedExecutionFooter({ title, order, isMobile }: Props) {
+export default function GeneratedExecutionFooter({ title, order }: Props) {
+  const isDesktopView = isDesktopViewPort();
+
   if (!title || !order) {
     return null;
   }
@@ -17,7 +19,7 @@ export default function GeneratedExecutionFooter({ title, order, isMobile }: Pro
     <Box
       sx={{
         position: "sticky",
-        bottom: isMobile ? "129px" : 0,
+        bottom: !isDesktopView ? "129px" : 0,
         left: 0,
         right: 0,
         zIndex: 998,

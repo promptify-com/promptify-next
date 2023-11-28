@@ -170,7 +170,6 @@ export const Display: React.FC<Props> = ({ templateData, close }) => {
         <GeneratedExecutionFooter
           title={currentGeneratedPrompt.title}
           order={currentGeneratedPrompt.order}
-          isMobile={!isDesktopView}
         />
       )}
     </Grid>

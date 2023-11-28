@@ -2,7 +2,7 @@ import React, { useEffect, useRef, Dispatch, SetStateAction } from "react";
 import { Box, Button, Divider, Stack, Typography } from "@mui/material";
 import { Message } from "./Message";
 import { IAnswer, IMessage } from "@/common/types/chat";
-import { TemplateDetailsCard } from "./TemplateDetailsCard";
+import { TemplateDetailsCard } from "../TemplateDetailsCard";
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { useAppSelector } from "@/hooks/useStore";
 import { InputsForm } from "./Inputsform";
@@ -11,6 +11,7 @@ import FeedbackThumbs from "../FeedbackThumbs";
 import { Replay } from "@mui/icons-material";
 import { IPromptInput } from "@/common/types/prompt";
 import { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
+import { isDesktopViewPort } from "@/common/helpers";
 
 interface Props {
   template: Templates;
@@ -39,6 +40,7 @@ export const ChatInterface = ({
 }: Props) => {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const isChatFullScreen = useAppSelector(state => state.template.isChatFullScreen);
+  const isDesktopView = isDesktopViewPort();
 
   const scrollToBottom = () => {
     if (messagesContainerRef.current) {
@@ -74,11 +76,11 @@ export const ChatInterface = ({
     >
       <div style={{ marginTop: "auto" }}></div>
 
-      {isChatFullScreen && <TemplateDetailsCard template={template} />}
+      {isChatFullScreen && isDesktopView && <TemplateDetailsCard template={template} />}
 
       <Stack
         pb={"8px"}
-        mx={isChatFullScreen ? "40px" : "32px"}
+        mx={{ xs: "16px", md: isChatFullScreen ? "40px" : "32px" }}
       >
         <Divider
           sx={{
@@ -99,9 +101,9 @@ export const ChatInterface = ({
             />
             {msg.type === "form" && (
               <Box
-                ml={isChatFullScreen ? "48px" : 0}
+                ml={{ xs: 0, md: isChatFullScreen ? "48px" : 0 }}
                 mb={2}
-                mt={msg.noHeader ? -2.5 : 0}
+                mt={{ xs: 0, md: msg.noHeader ? -2.5 : 0 }}
               >
                 <InputsForm
                   inputs={inputs}
