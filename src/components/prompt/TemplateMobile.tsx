@@ -51,7 +51,10 @@ export default function TemplateMobile({ template, hashedExecution, setErrorMess
         },
       }}
     >
-      <TemplateDetailsCard template={template} />
+      <TemplateDetailsCard
+        template={template}
+        min
+      />
 
       {displayChatBox ? (
         <Grid height={{ xs: "calc(100% - 90.5px)", md: "100%" }}>
