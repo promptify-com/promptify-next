@@ -35,7 +35,7 @@ export const getInputsFromString = (str: string): IPromptInput[] => {
       fullName: parts[0]
         .replace(/([a-z])([A-Z])/g, "$1 $2")
         .toLowerCase()
-        .replace(/^./, parts[0][0].toUpperCase()),
+        .replace(/^./, parts[0][0]?.toUpperCase()),
       type: type,
       required: parts[2] ? parts[2].toLowerCase() !== "false" : true, // required by default
       choices: options,
