@@ -28,7 +28,7 @@ import { ExecutionTemplatePopupType, Templates } from "@/core/api/dto/templates"
 import { useDeleteExecutionFavoriteMutation, useExecutionFavoriteMutation } from "@/core/api/executions";
 import { SparkSaveDeletePopup } from "@/components/dialog/SparkSaveDeletePopup";
 import { SparkExportPopup } from "@/components/dialog/SparkExportPopup";
-import { setAccordionChatMode, setGeneratingStatus } from "@/core/store/templatesSlice";
+import { setAccordionChatMode, setGeneratingStatus, setShowPromptsView } from "@/core/store/templatesSlice";
 import { setGeneratedExecution } from "@/core/store/executionsSlice";
 import useTruncate from "@/hooks/useTruncate";
 import Grid from "@mui/material/Grid";
@@ -42,8 +42,6 @@ interface Props {
   onClear: () => void;
   showClear: boolean;
   showGenerate: boolean;
-  showPrompts: boolean;
-  toggleShowPrompts: () => void;
 }
 
 function AccordionMessageHeader({
@@ -55,8 +53,6 @@ function AccordionMessageHeader({
   showClear,
   onCancel,
   showGenerate,
-  showPrompts,
-  toggleShowPrompts,
 }: Props) {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const dispatch = useAppDispatch();
@@ -66,6 +62,7 @@ function AccordionMessageHeader({
   const [deleteExecutionFavorite] = useDeleteExecutionFavoriteMutation();
 
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
+  const showPrompts = useAppSelector(state => state.template.showPromptsView);
 
   const [executionPopup, setExecutionPopup] = useState<ExecutionTemplatePopupType>(null);
   const [executionTitle, setExecutionTitle] = useState(selectedExecution?.title);
@@ -335,7 +332,7 @@ function AccordionMessageHeader({
                     <IconButton
                       onClick={e => {
                         e.stopPropagation();
-                        toggleShowPrompts();
+                        dispatch(setShowPromptsView(!showPrompts));
                       }}
                       sx={{
                         border: "none",
@@ -395,7 +392,7 @@ function AccordionMessageHeader({
                       <IconButton
                         onClick={e => {
                           e.stopPropagation();
-                          toggleShowPrompts();
+                          dispatch(setShowPromptsView(!showPrompts));
                         }}
                         sx={{
                           border: "none",

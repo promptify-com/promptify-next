@@ -1,14 +1,15 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Box, Stack, Tooltip, Typography } from "@mui/material";
+import { useEffect, useRef, useState, FC } from "react";
+import { Box, Stack, Tooltip, Typography, keyframes } from "@mui/material";
 import { Subtitle } from "@/components/blocks";
 import { Error } from "@mui/icons-material";
 import { isImageOutput, markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
 import { DisplayPrompt, PromptLiveResponse } from "@/common/types/prompt";
 import { Prompts } from "@/core/api/dto/prompts";
 import { TemplatesExecutions } from "@/core/api/dto/templates";
-import { useSelector } from "react-redux";
-import { RootState } from "@/core/store";
+
 import { useAppSelector } from "@/hooks/useStore";
+import PromptContent from "./generate/PromptContent";
+import FeedbackThumbs from "./FeedbackThumbs";
 
 interface Props {
   execution: PromptLiveResponse | TemplatesExecutions | null;
@@ -18,8 +19,10 @@ interface Props {
 export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
   const executionPrompts = execution && "data" in execution ? execution.data : execution?.prompt_executions;
   const sparkHashQueryParam = useAppSelector(state => state.executions.sparkHashQueryParam);
-  const isGenerating = useSelector((state: RootState) => state.template.isGenerating);
+  const isGenerating = useAppSelector(state => state.template.isGenerating);
+  const showPrompts = useAppSelector(state => state.template.showPromptsView);
   const [sortedPrompts, setSortedPrompts] = useState<DisplayPrompt[]>([]);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const promptsOrderMap: { [key: string]: number } = {};
   const promptsExecutionOrderMap: { [key: string]: number } = {};
@@ -54,12 +57,21 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
     sortAndProcessExecutions();
   }, [executionPrompts]);
 
-  const containerRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    containerRef.current?.scrollIntoView({
-      block: isGenerating ? "end" : "start",
-    });
-  }, [execution]);
+  // useEffect(() => {
+  //   containerRef.current?.scrollIntoView({
+  //     block: isGenerating ? "end" : "start",
+  //   });
+  // }, [execution]);
+
+  const expandAnimation = keyframes`
+  from { width: 0%; }
+  to { width: 20%; }
+`;
+
+  const collapseAnimation = keyframes`
+  from { width: 20%; }
+  to { width: 0%; }
+`;
 
   const executionError = (error: string | undefined) => {
     return (
@@ -86,7 +98,6 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
       ref={containerRef}
       gap={1}
       p={"16px"}
-      width={"95%"}
     >
       {execution && "title" in execution && (
         <Typography sx={{ fontSize: 48, fontWeight: 400, color: "onSurface", py: "24px" }}>
@@ -116,66 +127,107 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
                 )}
                 {/* is Text Output */}
                 {!isImageOutput(exec.content) && (
-                  <Box>
-                    {isPrevItemImage && (
+                  <Box
+                    display={"flex"}
+                    alignItems={"start"}
+                    gap={"16px"}
+                  >
+                    <Stack
+                      width={showPrompts ? "75%" : "100%"}
+                      pr={"48px"}
+                      position={"relative"}
+                    >
+                      {isPrevItemImage && (
+                        <Box
+                          component={"img"}
+                          alt={"book cover"}
+                          src={prevItem.content}
+                          onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                            (e.target as HTMLImageElement).src = require("@/assets/images/default-thumbnail.jpg");
+                          }}
+                          sx={{
+                            borderRadius: "8px",
+                            width: "40%",
+                            objectFit: "cover",
+                            float: "right",
+                            ml: "20px",
+                            mb: "10px",
+                          }}
+                        />
+                      )}
                       <Box
-                        component={"img"}
-                        alt={"book cover"}
-                        src={prevItem.content}
-                        onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-                          (e.target as HTMLImageElement).src = require("@/assets/images/default-thumbnail.jpg");
-                        }}
                         sx={{
-                          borderRadius: "8px",
-                          width: "40%",
-                          objectFit: "cover",
-                          float: "right",
-                          ml: "20px",
-                          mb: "10px",
+                          fontSize: 15,
+                          fontWeight: 400,
+                          color: "onSurface",
+                          wordWrap: "break-word",
+                          textAlign: "justify",
+                          float: "none",
+                          ".highlight": {
+                            backgroundColor: "yellow",
+                            color: "black",
+                          },
+                          pre: {
+                            m: "10px 0",
+                            borderRadius: "8px",
+                            overflow: "hidden",
+                            code: {
+                              borderRadius: 0,
+                              m: 0,
+                            },
+                          },
+                          code: {
+                            display: "block",
+                            bgcolor: "#282a35",
+                            color: "common.white",
+                            borderRadius: "8px",
+                            p: "16px 24px",
+                            mb: "10px",
+                            overflow: "auto",
+                          },
+                          ".language-label": {
+                            p: "8px 24px",
+                            bgcolor: "#4d5562",
+                            color: "#ffffff",
+                            fontSize: 13,
+                          },
+                        }}
+                        dangerouslySetInnerHTML={{
+                          __html: sanitizeHTML(exec.content),
                         }}
                       />
-                    )}
-                    <Box
+                      {index === 0 && !isGenerating && execution && "parameters" in execution && (
+                        <Stack
+                          direction={"column"}
+                          alignItems={"center"}
+                          position={"absolute"}
+                          top={"30%"}
+                          right={"-10px"}
+                        >
+                          <FeedbackThumbs execution={execution} />
+                        </Stack>
+                      )}
+                    </Stack>
+
+                    <Stack
+                      mt={-8}
+                      flex={1}
+                      key={`animated-stack-${showPrompts}`}
+                      pl={"10px"}
+                      py={"20px"}
+                      borderLeft={showPrompts ? "2px solid #ECECF4" : "none"}
                       sx={{
-                        fontSize: 15,
-                        fontWeight: 400,
-                        color: "onSurface",
-                        wordWrap: "break-word",
-                        textAlign: "justify",
-                        float: "none",
-                        ".highlight": {
-                          backgroundColor: "yellow",
-                          color: "black",
-                        },
-                        pre: {
-                          m: "10px 0",
-                          borderRadius: "8px",
-                          overflow: "hidden",
-                          code: {
-                            borderRadius: 0,
-                            m: 0,
-                          },
-                        },
-                        code: {
-                          display: "block",
-                          bgcolor: "#282a35",
-                          color: "common.white",
-                          borderRadius: "8px",
-                          p: "16px 24px",
-                          mb: "10px",
-                          overflow: "auto",
-                        },
-                        ".language-label": {
-                          p: "8px 24px",
-                          bgcolor: "#4d5562",
-                          color: "#ffffff",
-                          fontSize: 13,
-                        },
+                        width: showPrompts ? "35%" : "0%",
+                        overflow: "hidden",
+                        animation: `${showPrompts ? expandAnimation : collapseAnimation} 300ms forwards`,
                       }}
-                      dangerouslySetInnerHTML={{
-                        __html: sanitizeHTML(exec.content),
-                      }}
-                    />
+                    >
+                      <PromptContent
+                        id={index + 1}
+                        prompt={prompt!}
+                        execution={execution as TemplatesExecutions}
+                      />
+                    </Stack>
                   </Box>
                 )}
                 {/* is Image Output and Next item is not text */}

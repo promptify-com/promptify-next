@@ -3,7 +3,7 @@ import Stack from "@mui/material/Stack";
 import Accordion from "@mui/material/Accordion";
 import Typography from "@mui/material/Typography";
 import AccordionDetails from "@mui/material/AccordionDetails";
-import { keyframes } from "@mui/material";
+import Fade from "@mui/material/Fade";
 
 import { useAppSelector } from "@/hooks/useStore";
 import { IAnswer } from "@/common/types/chat";
@@ -11,11 +11,8 @@ import { Display } from "../Display";
 import Inputsform from "./Inputsform";
 import AccordionMessageHeader from "./AccordionMessageHeader";
 import type { Templates } from "@/core/api/dto/templates";
-import FeedbackThumbs from "../FeedbackThumbs";
-import Fade from "@mui/material/Fade";
-import { IPromptInput } from "@/common/types/prompt";
-import { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
-import PromptContent from "./PromptContent";
+import type { IPromptInput } from "@/common/types/prompt";
+import type { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
 
 interface Props {
   inputs: IPromptInput[];
@@ -52,8 +49,6 @@ export const AccordionMessage = ({
   const [expanded, setExpanded] = useState(true);
   const accordionRef = useRef<HTMLDivElement>(null);
 
-  const [showPrompts, setShowPrompts] = useState(false);
-
   const handleExpandChange = (isExpanded: boolean) => {
     setExpanded(isExpanded);
   };
@@ -61,18 +56,6 @@ export const AccordionMessage = ({
   const handleShowAccordion = () => {
     setIsSimulationStreaming(false);
   };
-
-  const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
-
-  const expandAnimation = keyframes`
-  from { width: 0%; }
-  to { width: 20%; }
-`;
-
-  const collapseAnimation = keyframes`
-  from { width: 20%; }
-  to { width: 0%; }
-`;
 
   return (
     <Fade
@@ -96,8 +79,6 @@ export const AccordionMessage = ({
           onGenerate={onGenerate}
           onCancel={abortGenerating}
           mode={mode}
-          showPrompts={showPrompts}
-          toggleShowPrompts={() => setShowPrompts(!showPrompts)}
         />
 
         <AccordionDetails
@@ -123,64 +104,20 @@ export const AccordionMessage = ({
             </Typography>
 
             <Stack
-              width={"w00%"}
+              mt={"-10px"}
               bgcolor={"surface.1"}
               borderRadius={"8px"}
               position={"relative"}
             >
               {mode === "execution" && (
-                <Stack direction={"row"}>
-                  <Stack
-                    padding={mode === "execution" ? "16px 64px 48px 64px" : undefined}
-                    width={showPrompts ? "80%" : "100%"}
-                    position={"relative"}
-                  >
-                    <Display
-                      mode="chat"
-                      templateData={template}
-                    />
-                    {!isGenerating && selectedExecution && (
-                      <Stack
-                        direction={"column"}
-                        alignItems={"center"}
-                        position={"absolute"}
-                        top={"30%"}
-                        right={"10px"}
-                      >
-                        <FeedbackThumbs execution={selectedExecution} />
-                      </Stack>
-                    )}
-                  </Stack>
-
-                  {showPrompts && (
-                    <Stack
-                      mt={10}
-                      borderLeft={"2px solid #ECECF4"}
-                      pl={"20px"}
-                      pr={"80px"}
-                      display={"flex"}
-                      flexDirection={"column"}
-                      gap={2}
-                      sx={{
-                        width: showPrompts ? "20%" : "0%",
-                        overflow: "hidden",
-                        animation: `${showPrompts ? expandAnimation : collapseAnimation} 300ms forwards`,
-                      }}
-                    >
-                      {template.prompts.map((prompt, index) => {
-                        index++; // Start with 1
-                        return (
-                          <PromptContent
-                            key={prompt.id}
-                            execution={selectedExecution}
-                            prompt={prompt}
-                            answers={answers}
-                            id={index}
-                          />
-                        );
-                      })}
-                    </Stack>
-                  )}
+                <Stack
+                  padding={mode === "execution" ? "16px 0px 48px 64px" : undefined}
+                  position={"relative"}
+                >
+                  <Display
+                    mode="chat"
+                    templateData={template}
+                  />
                 </Stack>
               )}
               {mode === "input" && (

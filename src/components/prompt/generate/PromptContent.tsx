@@ -7,12 +7,12 @@ import { TemplatesExecutions } from "@/core/api/dto/templates";
 interface Props {
   execution: TemplatesExecutions | null;
   prompt: Prompts;
-  answers: IAnswer[];
+  answers?: IAnswer[];
   id: number;
 }
 
 function PromptContent({ execution, prompt, id, answers }: Props) {
-  function replacePlaceholdersWithAnswers(content: string, answers: IAnswer[]): React.ReactNode {
+  function replacePlaceholdersWithAnswers(content: string): React.ReactNode {
     const placeholderRegex = /{{(.*?):.*?}}/g;
     const dollarWordRegex = /\$[a-zA-Z0-9_]+/g;
 
@@ -53,7 +53,7 @@ function PromptContent({ execution, prompt, id, answers }: Props) {
           }
         }
       } else {
-        const answer = answers.find(a => a.inputName === inputName);
+        const answer = answers?.find(a => a.inputName === inputName);
         if (answer && typeof answer.answer === "string") {
           replacement = answer.answer;
         }
@@ -63,7 +63,7 @@ function PromptContent({ execution, prompt, id, answers }: Props) {
         parts.push(
           <span
             key={`placeholder-${index}`}
-            style={{ color: "#375CA9", fontWeight: "600" }}
+            style={{ color: "#375CA9", fontWeight: "600", wordBreak: "break-word", whiteSpace: "pre-wrap" }}
           >
             {replacement}
           </span>,
@@ -72,7 +72,7 @@ function PromptContent({ execution, prompt, id, answers }: Props) {
         parts.push(
           <span
             key={`placeholder-${index}`}
-            style={{ color: "#375CA9", fontWeight: "600" }}
+            style={{ color: "#375CA9", fontWeight: "600", wordBreak: "break-word", whiteSpace: "pre-wrap" }}
           >
             {match}
           </span>,
@@ -88,7 +88,7 @@ function PromptContent({ execution, prompt, id, answers }: Props) {
     return parts;
   }
 
-  const updatedContent = replacePlaceholdersWithAnswers(prompt.content, answers);
+  const updatedContent = replacePlaceholdersWithAnswers(prompt.content);
 
   return (
     <Stack direction={"column"}>
