@@ -1,11 +1,10 @@
-import { useState, type Dispatch, type SetStateAction, useEffect } from "react";
+import { type Dispatch, type SetStateAction, useEffect } from "react";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import { Display } from "./Display";
 import type { Templates } from "@/core/api/dto/templates";
 import ClientOnly from "../base/ClientOnly";
 import ChatBox from "./ChatBox";
-import Header from "./Header";
 import { Sidebar } from "./Sidebar";
 import { useAppSelector } from "@/hooks/useStore";
 import { useDispatch } from "react-redux";
@@ -36,7 +35,6 @@ export default function TemplateDesktop({ template, setErrorMessage }: TemplateD
       height={"calc(100svh - 90px)"}
       gap={"1px"}
     >
-      <Header template={template} />
       <Grid
         mt={0}
         gap={"1px"}
@@ -45,7 +43,7 @@ export default function TemplateDesktop({ template, setErrorMessage }: TemplateD
         mx={"auto"}
         bgcolor={"surface.1"}
         width={"100%"}
-        height={"calc(100% - 68px)"}
+        height={"100%"}
         position={"relative"}
         overflow={"auto"}
         sx={{

@@ -55,11 +55,11 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
   }, [executionPrompts]);
 
   const containerRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    containerRef.current?.scrollIntoView({
-      block: isGenerating ? "end" : "start",
-    });
-  }, [execution]);
+  // useEffect(() => {
+  //   containerRef.current?.scrollIntoView({
+  //     block: isGenerating ? "end" : "start",
+  //   });
+  // }, [execution]);
 
   const executionError = (error: string | undefined) => {
     return (

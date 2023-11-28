@@ -83,7 +83,7 @@ export const Display: React.FC<Props> = ({ templateData, close }) => {
         ref={containerRef}
         sx={{
           bgcolor: "surface.3",
-          minHeight: { xs: "100vh", md: "calc(100vh - (90px + 68px))" },
+          minHeight: { xs: "100vh", md: "calc(100vh - 90px)" },
           height: "1px",
           position: "relative",
           pb: { xs: "70px", md: "0" },

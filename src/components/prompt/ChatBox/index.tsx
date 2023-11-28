@@ -639,7 +639,6 @@ const ChatBox: React.FC<Props> = ({ onError, template }) => {
             alignItems={"center"}
             justifyContent={"center"}
             gap={1}
-            width={"100%"}
             p={"16px 8px 16px 16px"}
           >
             <Button
