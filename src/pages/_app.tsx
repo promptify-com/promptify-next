@@ -86,7 +86,7 @@ function App({ Component, ...rest }: AppProps) {
                 gtag('config', '${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS}', {
                 page_path: window.location.pathname,
                 });
-                gtag('event', 'pageview', {Branch: '${process.env.BRANCH ?? "unknown"}'})
+                gtag('event', 'pageview', {Branch: '${process.env.BRANCH ?? process.env.PRT_BRANCH ?? "unknown"}'})
             `}
             </Script>
             <Script
