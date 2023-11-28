@@ -8,9 +8,11 @@ const answersValidatorTemplateId = 516;
 export const generate = ({
   token,
   payload,
+  abortController,
 }: {
   token: string;
   payload: QuestionAnswerParams;
+  abortController: AbortController;
 }): Promise<AnswerValidatorResponse | string> => {
   return new Promise(resolve => {
     const data: TemplateQuestionGeneratorData[] = [
@@ -32,6 +34,7 @@ export const generate = ({
       },
       body: JSON.stringify(data),
       openWhenHidden: true,
+      signal: abortController.signal,
       onmessage(msg) {
         try {
           if (msg.event === "infer" && msg.data.includes("template_execution_id") && !templateExecutionId) {

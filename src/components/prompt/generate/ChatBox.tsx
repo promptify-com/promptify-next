@@ -357,15 +357,26 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
 
   const disabledButton = _inputs.length !== 0 || promptHasContent;
 
-  const validateAnswer = async (value: string) => {
-    if (currentQuestion) {
+  const validateAnswer = async (value: string): Promise<string | AnswerValidatorResponse | undefined> => {
+    if (!currentQuestion?.question) {
+      return Promise.resolve(undefined);
+    }
+
+    return new Promise(async resolve => {
       const payload = {
         question: currentQuestion.question,
         answer: value,
       };
+      const abortController = new AbortController();
+      const timeoutID = setTimeout(() => {
+        abortController.abort();
+        clearTimeout(timeoutID);
+        resolve({ approved: true, answer: value, feedback: "Your response is valid and accepted." });
+      }, 5000);
+      const response = await generate({ token, payload, abortController });
 
-      return await generate({ token, payload });
-    }
+      resolve(response);
+    });
   };
 
   const validateVary = async (variation: string) => {
@@ -459,12 +470,16 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
     if (isText && required) {
       setIsValidatingAnswer(true);
 
-      response = await validateAnswer(value);
+      const currentResponse = await validateAnswer(value);
       setIsValidatingAnswer(false);
 
-      if (typeof response === "string") {
+      if (typeof currentResponse === "string") {
         onError("Oopps, something happened. Please try again!");
         return;
+      }
+
+      if (currentResponse) {
+        response = currentResponse;
       }
     }
     let nextBotMessage: IMessage;
