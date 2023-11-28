@@ -23,6 +23,8 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
   const showPrompts = useAppSelector(state => state.template.showPromptsView);
   const [sortedPrompts, setSortedPrompts] = useState<DisplayPrompt[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
+  const stackRef = useRef<HTMLDivElement>(null);
+  const [stackHeight, setStackHeight] = useState(0);
 
   const promptsOrderMap: { [key: string]: number } = {};
   const promptsExecutionOrderMap: { [key: string]: number } = {};
@@ -62,6 +64,12 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
   //     block: isGenerating ? "end" : "start",
   //   });
   // }, [execution]);
+
+  useEffect(() => {
+    if (stackRef.current) {
+      setStackHeight(stackRef.current.offsetHeight);
+    }
+  }, [execution, isGenerating]);
 
   const expandAnimation = keyframes`
   from { width: 0%; }
@@ -133,6 +141,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
                     gap={"16px"}
                   >
                     <Stack
+                      ref={stackRef}
                       width={showPrompts ? "75%" : "100%"}
                       pr={"48px"}
                       position={"relative"}
@@ -216,10 +225,25 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
                       pl={"10px"}
                       py={"20px"}
                       borderLeft={showPrompts ? "2px solid #ECECF4" : "none"}
+                      maxHeight={stackHeight + 60}
+                      height={"100%"}
                       sx={{
                         width: showPrompts ? "35%" : "0%",
-                        overflow: "hidden",
+                        overflow: "auto",
                         animation: `${showPrompts ? expandAnimation : collapseAnimation} 300ms forwards`,
+                        "&::-webkit-scrollbar": {
+                          width: "6px",
+                          p: 1,
+                          bgcolor: "surface.1",
+                        },
+                        "&::-webkit-scrollbar-track": {
+                          webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
+                        },
+                        "&::-webkit-scrollbar-thumb": {
+                          bgcolor: "surface.1",
+                          outline: "1px solid surface.1",
+                          borderRadius: "10px",
+                        },
                       }}
                     >
                       <PromptContent
