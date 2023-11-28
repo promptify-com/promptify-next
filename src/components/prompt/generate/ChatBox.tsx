@@ -175,7 +175,6 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
   }, [generatingResponse]);
 
   useEffect(() => {
-    console.log(isSimulaitonStreaming);
     if (!isSimulaitonStreaming && !!queuedMessages.length) {
       const nextQueuedMessage = queuedMessages.pop()!;
 
@@ -261,6 +260,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
         noHeader: true,
       },
     ]);
+    setIsSimulaitonStreaming(false);
   };
 
   const validateVary = async (variation: string) => {
@@ -555,14 +555,6 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
     if (isSimulaitonStreaming) {
       return;
     }
-
-    const answer: IAnswer = {
-      question: selectedAnswer.question,
-      required: selectedAnswer.required,
-      inputName: selectedAnswer.inputName,
-      prompt: selectedAnswer.prompt,
-      answer: "",
-    };
 
     const input = _inputs.find(_input => _input.name === selectedAnswer.inputName);
     const newStandingQuestions = standingQuestions.concat(input!).sort((a, b) => +a.required - +b.required);

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, FC } from "react";
+import { useEffect, useRef, useState, FC, createRef, RefObject } from "react";
 import Error from "@mui/icons-material/Error";
 import { keyframes } from "@mui/material/styles";
 import Tooltip from "@mui/material/Tooltip";
@@ -29,8 +29,8 @@ export const ExecutionCard: FC<Props> = ({ execution, promptsData, answers }) =>
   const showPrompts = useAppSelector(state => state.template.showPromptsView);
   const [sortedPrompts, setSortedPrompts] = useState<DisplayPrompt[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
-  const stackRef = useRef<HTMLDivElement>(null);
-  const [stackHeight, setStackHeight] = useState(0);
+  const [elementRefs, setElementRefs] = useState<RefObject<HTMLDivElement>[]>([]);
+  const [elementHeights, setElementHeights] = useState<number[]>([]);
 
   const promptsOrderMap: { [key: string]: number } = {};
   const promptsExecutionOrderMap: { [key: string]: number } = {};
@@ -39,6 +39,22 @@ export const ExecutionCard: FC<Props> = ({ execution, promptsData, answers }) =>
     promptsOrderMap[prompt.id] = prompt.order;
     promptsExecutionOrderMap[prompt.id] = prompt.execution_priority;
   });
+
+  useEffect(() => {
+    setElementRefs(elementRefs =>
+      Array.from({ length: sortedPrompts.length }, (_, i) => elementRefs[i] || createRef<HTMLDivElement>()),
+    );
+  }, [sortedPrompts.length]);
+
+  useEffect(() => {
+    setElementHeights(Array(sortedPrompts.length).fill(0));
+    if (elementRefs.length === sortedPrompts.length) {
+      setTimeout(() => {
+        const heights = elementRefs.map(ref => ref.current?.offsetHeight ?? 0);
+        setElementHeights(heights);
+      }, 300);
+    }
+  }, [elementRefs, execution, promptsData]);
 
   useEffect(() => {
     const sortAndProcessExecutions = async () => {
@@ -70,12 +86,6 @@ export const ExecutionCard: FC<Props> = ({ execution, promptsData, answers }) =>
   //     block: isGenerating ? "end" : "start",
   //   });
   // }, [execution]);
-
-  useEffect(() => {
-    if (stackRef.current) {
-      setStackHeight(stackRef.current.offsetHeight);
-    }
-  }, [execution, isGenerating]);
 
   const expandAnimation = keyframes`
   from { width: 0%; }
@@ -147,7 +157,7 @@ export const ExecutionCard: FC<Props> = ({ execution, promptsData, answers }) =>
                     gap={"16px"}
                   >
                     <Stack
-                      ref={stackRef}
+                      ref={elementRefs[index]}
                       width={showPrompts ? "75%" : "100%"}
                       pr={"48px"}
                       position={"relative"}
@@ -216,7 +226,7 @@ export const ExecutionCard: FC<Props> = ({ execution, promptsData, answers }) =>
                           direction={"column"}
                           alignItems={"center"}
                           position={"absolute"}
-                          top={"30%"}
+                          top={"0"}
                           right={"-10px"}
                         >
                           <FeedbackThumbs execution={execution} />
@@ -225,14 +235,11 @@ export const ExecutionCard: FC<Props> = ({ execution, promptsData, answers }) =>
                     </Stack>
 
                     <Stack
-                      mt={-8}
+                      pt={2}
                       flex={1}
-                      key={`animated-stack-${showPrompts}`}
                       pl={"10px"}
-                      py={"20px"}
                       borderLeft={showPrompts ? "2px solid #ECECF4" : "none"}
-                      maxHeight={stackHeight + 60}
-                      height={"100%"}
+                      maxHeight={elementHeights[index]}
                       sx={{
                         width: showPrompts ? "35%" : "0%",
                         overflow: "auto",
