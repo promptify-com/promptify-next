@@ -1,19 +1,15 @@
-import Stack from "@mui/material/Stack";
-import type { Templates } from "@/core/api/dto/templates";
-import { Avatar, Breadcrumbs, Button, CardMedia, Link, alpha } from "@mui/material";
-import { ArrowBackIosNew, Tune } from "@mui/icons-material";
-import { theme } from "@/theme";
-import FavoriteIcon from "./FavoriteIcon";
-import { useAppSelector } from "@/hooks/useStore";
-import { getBaseUrl, redirectToPath } from "@/common/helpers";
-import { IEditPrompts } from "@/common/types/builder";
-import { useDispatch, useSelector } from "react-redux";
-import { isValidUserFn } from "@/core/store/userSlice";
 import { useRouter } from "next/router";
-import { useCreateTemplateMutation } from "@/core/api/templates";
-import Clone from "@/assets/icons/Clone";
-import { useRef } from "react";
+import Stack from "@mui/material/Stack";
+import Link from "@mui/material/Link";
+import CardMedia from "@mui/material/CardMedia";
+import { alpha } from "@mui/material/styles";
+import Breadcrumbs from "@mui/material/Breadcrumbs";
+import ArrowBackIosNew from "@mui/icons-material/ArrowBackIos";
+
+import { theme } from "@/theme";
 import { setSelectedTag } from "@/core/store/filtersSlice";
+import { useAppDispatch } from "@/hooks/useStore";
+import type { Templates } from "@/core/api/dto/templates";
 
 interface TemplateHeaderProps {
   template: Templates;
@@ -21,75 +17,7 @@ interface TemplateHeaderProps {
 
 export default function Header({ template }: TemplateHeaderProps) {
   const router = useRouter();
-  const dispatch = useDispatch();
-  const currentUser = useAppSelector(state => state.user.currentUser);
-  const isValidUser = useSelector(isValidUserFn);
-  const [createTemplate] = useCreateTemplateMutation();
-
-  const isCloning = useRef(false);
-
-  const cloneTemplate = async () => {
-    console.log(isCloning.current);
-    if (!isValidUser) {
-      return router.push("/signin");
-    }
-
-    if (!isCloning.current) {
-      isCloning.current = true;
-
-      try {
-        const clonedPrompts: IEditPrompts[] = template.prompts.map(prompt => {
-          const params = prompt.parameters.map(param => ({
-            parameter_id: param.parameter.id,
-            score: param.score,
-            is_visible: param.is_visible,
-            is_editable: param.is_editable,
-          }));
-
-          return {
-            temp_id: prompt.id,
-            title: prompt.title,
-            content: prompt.content,
-            engine_id: prompt.engine.id,
-            model_parameters: prompt.model_parameters,
-            dependencies: prompt.dependencies || [],
-            is_visible: prompt.is_visible,
-            show_output: prompt.show_output,
-            prompt_output_variable: prompt.prompt_output_variable,
-            order: prompt.order,
-            parameters: params || [],
-            output_format: prompt.output_format,
-          };
-        });
-
-        const { slug } = await createTemplate({
-          title: `${template.title} - Copy`,
-          description: template.description,
-          duration: template.duration.toString(),
-          difficulty: template.difficulty,
-          is_visible: template.is_visible,
-          language: template.language,
-          category: template.category?.id,
-          context: template.context,
-          tags: template.tags,
-          thumbnail: template.thumbnail,
-          executions_limit: template.executions_limit,
-          meta_title: template.meta_title,
-          meta_description: template.meta_description,
-          meta_keywords: template.meta_keywords,
-          status: "DRAFT",
-          prompts_list: clonedPrompts,
-        }).unwrap();
-
-        window.open(`${getBaseUrl}/prompt-builder/${slug}?editor=1`, "_blank");
-        redirectToPath(`/prompt/${slug}`);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        isCloning.current = false;
-      }
-    }
-  };
+  const dispatch = useAppDispatch();
 
   const breadcrumbs = [
     <Link
@@ -144,6 +72,7 @@ export default function Header({ template }: TemplateHeaderProps) {
       sx={{
         p: "8px 16px",
         bgcolor: "surface.1",
+        display: { xs: "none", md: "flex" },
       }}
     >
       <Breadcrumbs
@@ -151,81 +80,6 @@ export default function Header({ template }: TemplateHeaderProps) {
       >
         {breadcrumbs}
       </Breadcrumbs>
-      {/* <Stack
-        direction={"row"}
-        alignItems={"center"}
-        gap={1}
-        fontSize={13}
-      >
-        <Button
-          sx={{
-            p: "0",
-          }}
-        >
-          <FavoriteIcon
-            style={{
-              sx: {
-                color: "secondary.main",
-                fontSize: 13,
-                fontWeight: 500,
-                gap: 1,
-                svg: {
-                  width: 20,
-                  height: 20,
-                },
-              },
-            }}
-          />
-        </Button>
-        {currentUser?.is_admin || currentUser?.id === template.created_by.id ? (
-          <Button
-            onClick={() => redirectToPath(`/prompt-builder/${template.slug}`, { editor: 1 })}
-            sx={{
-              p: "8px 11px",
-              color: "secondary.main",
-              fontSize: 13,
-              fontWeight: 500,
-              gap: 1,
-            }}
-          >
-            <Tune sx={{ fontSize: 20 }} />
-            Customize
-          </Button>
-        ) : (
-          <Button
-            onClick={cloneTemplate}
-            sx={{
-              p: "8px 11px",
-              color: "secondary.main",
-              fontSize: 13,
-              fontWeight: 500,
-              gap: 1,
-            }}
-          >
-            <Clone size="20" />
-            Clone
-          </Button>
-        )}
-        <Stack
-          direction={"row"}
-          alignItems={"center"}
-          gap={0.5}
-          sx={{
-            p: "8px 11px",
-            color: "secondary.main",
-            fontSize: 13,
-            fontWeight: 500,
-            gap: 1,
-          }}
-        >
-          by {template.created_by.first_name || "Promptify"}
-          <Avatar
-            src={template.created_by.avatar}
-            alt={template.created_by.username}
-            sx={{ width: 30, height: 30 }}
-          />
-        </Stack>
-      </Stack> */}
     </Stack>
   );
 }

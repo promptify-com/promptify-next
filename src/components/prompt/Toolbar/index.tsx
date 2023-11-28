@@ -32,6 +32,7 @@ function TemplateToolbar({ template }: Props) {
   return (
     <Box
       height={"100%"}
+      display={{ xs: "none", md: "block" }}
       position={"sticky"}
       top={0}
     >

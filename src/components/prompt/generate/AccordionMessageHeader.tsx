@@ -125,6 +125,7 @@ function AccordionMessageHeader({
       <AccordionSummary
         sx={{
           bgcolor: "surface.2",
+          p: { xs: "0px 8px", md: "0px 16px" },
           borderRadius: "0px 16px 16px 16px",
         }}
       >
@@ -155,7 +156,6 @@ function AccordionMessageHeader({
               position={"relative"}
               mt={0.5}
               sx={{
-                padding: "4px",
                 width: "40px",
                 height: "40px",
                 display: "flex",
@@ -190,7 +190,7 @@ function AccordionMessageHeader({
             gap={"2px"}
           >
             <Typography
-              fontSize={"15px"}
+              fontSize={{ xs: "14px", md: "15px" }}
               lineHeight={"120%"}
               letterSpacing={"0.2px"}
             >
@@ -227,7 +227,7 @@ function AccordionMessageHeader({
             </Typography>
             <Typography
               sx={{
-                fontSize: 12,
+                fontSize: { xs: 10, md: 12 },
                 fontWeight: 400,
                 lineHeight: "143%",
                 letterSpacing: "0.17px",
@@ -276,16 +276,19 @@ function AccordionMessageHeader({
                 }}
                 endIcon={<PlayCircle />}
                 sx={{
+                  mr: { xs: -3, md: 0 },
                   height: "22px",
-                  p: "15px",
-                  fontSize: 15,
-                  opacity: showGenerate ? 1 : 0.4,
+                  p: { md: "15px" },
+                  fontSize: { xs: 12, md: 15 },
                   lineHeight: "110%",
                   letterSpacing: "0.2px",
                   fontWeight: 500,
                   color: showGenerate ? "primary" : "onSurface",
                   ":hover": {
                     bgcolor: "action.hover",
+                  },
+                  ":disabled": {
+                    color: "#5D5D60",
                   },
                 }}
                 variant={showGenerate ? "contained" : "text"}

@@ -108,23 +108,14 @@ function Template({ hashedExecution, fetchedTemplate }: TemplateProps) {
       });
   };
   const dynamicTheme = createTheme({ ...theme, palette });
-  const isMobileView = router.query.viewport === "mobile";
 
   return (
     <ThemeProvider theme={dynamicTheme}>
       <Layout>
-        {isMobileView ? (
-          <TemplateMobile
-            hashedExecution={hashedExecution}
-            template={fetchedTemplate}
-            setErrorMessage={setErrorMessage}
-          />
-        ) : (
-          <TemplateDesktop
-            template={fetchedTemplate}
-            setErrorMessage={setErrorMessage}
-          />
-        )}
+        <TemplateDesktop
+          template={fetchedTemplate}
+          setErrorMessage={setErrorMessage}
+        />
 
         <Snackbar
           anchorOrigin={{ vertical: "bottom", horizontal: "right" }}

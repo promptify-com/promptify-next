@@ -84,8 +84,9 @@ export const Header: React.FC<HeaderProps> = ({ transparent = false, fixed = fal
           xs: theme.custom.headerHeight.xs,
           md: theme.custom.headerHeight.md,
         },
-        borderBottomRightRadius: "16px",
-        borderBottomLeftRadius: "16px",
+        borderBottomRightRadius: { md: "16px" },
+        borderBottomLeftRadius: { md: "16px" },
+        borderBottom: { xs: "2px solid #E1E2EC", md: "none" },
       }}
     >
       <Grid
@@ -96,7 +97,6 @@ export const Header: React.FC<HeaderProps> = ({ transparent = false, fixed = fal
           gap: "30px",
           padding: { xs: "0 4px ", md: "0 24px" },
           alignItems: "center",
-          borderBottom: { xs: "2px solid #E1E2EC", md: "none" },
         }}
       >
         <Grid

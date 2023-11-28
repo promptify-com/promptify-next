@@ -79,9 +79,9 @@ export const ChatInterface = ({
     <Stack
       ref={messagesContainerRef}
       gap={3}
-      mx={"40px"}
+      mx={{ md: "40px" }}
       sx={{
-        overflow: "auto",
+        overflow: { md: "auto" },
         overscrollBehavior: "contain",
         "&::-webkit-scrollbar": {
           width: "6px",

@@ -84,6 +84,7 @@ export const AccordionMessage = ({
         <AccordionDetails
           sx={{
             mt: -4,
+            p: "0px 8px",
             pt: "32px",
             bgcolor: "surface.2",
             borderRadius: "0px 16px 16px 16px",
@@ -91,6 +92,7 @@ export const AccordionMessage = ({
         >
           <Stack>
             <Typography
+              width={{ xs: "284px", md: "100%" }}
               borderRadius={"8px"}
               bgcolor={"#375CA9"}
               p={"10px 8px 16px 16px"}
