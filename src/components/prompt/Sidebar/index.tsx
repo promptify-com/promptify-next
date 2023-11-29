@@ -15,8 +15,7 @@ import {
 } from "@mui/material";
 import { Api, ChatBubbleOutline, Close, InfoOutlined } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { setOpenBuilderSidebar } from "@/core/store/sidebarSlice";
+import { useAppSelector } from "@/hooks/useStore";
 import NoteStackIcon from "@/assets/icons/NoteStackIcon";
 import ExtensionSettingsIcon from "@/assets/icons/ExtensionSettingsIcon";
 import { Templates } from "@/core/api/dto/templates";
@@ -44,7 +43,6 @@ interface SidebarProps {
 
 export const Sidebar: React.FC<SidebarProps> = ({ template }) => {
   const [open, setOpen] = useState(false);
-  const dispatch = useAppDispatch();
   const isValidUser = useAppSelector(isValidUserFn);
   const {
     data: executions,
@@ -86,12 +84,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ template }) => {
   const handleOpenSidebar = (link: Link) => {
     setOpen(true);
     setActiveLink(link);
-    dispatch(setOpenBuilderSidebar(true));
   };
 
   const handleCloseSidebar = () => {
     setOpen(false);
-    dispatch(setOpenBuilderSidebar(false));
   };
 
   return (

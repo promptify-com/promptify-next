@@ -72,7 +72,7 @@ export const TemplateDetailsCard: React.FC<TemplateDetailsCardProps> = ({ templa
         direction={"row"}
         justifyContent={"space-between"}
         alignItems={min ? "center" : "flex-start"}
-        flexWrap={min ? "wrap" : "nowrap"}
+        gap={1}
       >
         <Stack
           gap={2}
@@ -80,7 +80,10 @@ export const TemplateDetailsCard: React.FC<TemplateDetailsCardProps> = ({ templa
             p: { md: "48px 72px 48px 54px" },
           }}
         >
-          <Stack gap={1}>
+          <Stack
+            gap={1}
+            sx={{ wordBreak: "break-all" }}
+          >
             <Typography
               fontSize={{ xs: 12, md: 14 }}
               fontWeight={500}
