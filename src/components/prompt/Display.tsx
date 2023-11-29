@@ -7,7 +7,6 @@ import { ExecutionCard } from "./ExecutionCard";
 import { DisplayActions } from "./DisplayActions";
 import ParagraphPlaceholder from "@/components/placeholders/ParagraphPlaceholder";
 import { SparkExportPopup } from "../dialog/SparkExportPopup";
-import { isDesktopViewPort } from "@/common/helpers";
 import GeneratedExecutionFooter from "./GeneratedExecutionFooter";
 import { useAppSelector } from "@/hooks/useStore";
 import { Stack } from "@mui/material";
@@ -24,7 +23,6 @@ export const Display: React.FC<Props> = ({ templateData, close }) => {
   const [openExportPopup, setOpenExportpopup] = useState(false);
   const [previewExecution, setPreviewExecution] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const isDesktopView = isDesktopViewPort();
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
@@ -77,16 +75,14 @@ export const Display: React.FC<Props> = ({ templateData, close }) => {
     <Grid
       display={"flex"}
       flexDirection={"column"}
-      gap={"8px"}
     >
       <Box
         ref={containerRef}
         sx={{
           bgcolor: "surface.3",
-          minHeight: { xs: "100vh", md: "calc(100vh - 90px)" },
+          minHeight: { xs: "calc(100svh - 58px)", md: "calc(100svh - 90px)" },
           height: "1px",
           position: "relative",
-          pb: { xs: "70px", md: "0" },
         }}
       >
         {currentUser?.id && (
@@ -109,7 +105,7 @@ export const Display: React.FC<Props> = ({ templateData, close }) => {
 
         <Box
           sx={{
-            height: "calc(100% - 67px)",
+            height: { xs: "calc(100% - 104px)", md: "calc(100% - 67px)" },
             overflow: "auto",
             opacity: firstLoad ? 0.5 : 1,
             bgcolor: "surface.1",
@@ -137,8 +133,9 @@ export const Display: React.FC<Props> = ({ templateData, close }) => {
             >
               <Box
                 sx={{
+                  display: { xs: displayPreview ? "none" : "block", md: "block" },
                   width: { md: displayPreview ? "75%" : "100%" },
-                  borderRight: displayPreview ? "1px solid" : "0",
+                  borderRight: displayPreview ? "1px solid" : 0,
                   borderColor: "divider",
                 }}
               >
@@ -150,7 +147,7 @@ export const Display: React.FC<Props> = ({ templateData, close }) => {
               {selectedExecution && displayPreview && (
                 <Box
                   sx={{
-                    width: displayPreview ? "25%" : "0%",
+                    width: { xs: "100%", md: displayPreview ? "25%" : 0 },
                     position: "sticky",
                     top: 0,
                     height: "fit-content",

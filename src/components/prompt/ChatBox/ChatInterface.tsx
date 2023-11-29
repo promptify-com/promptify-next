@@ -76,7 +76,12 @@ export const ChatInterface = ({
     >
       <div style={{ marginTop: "auto" }}></div>
 
-      {isChatFullScreen && isDesktopView && <TemplateDetailsCard template={template} />}
+      {isChatFullScreen && (
+        <TemplateDetailsCard
+          template={template}
+          min={!isDesktopView}
+        />
+      )}
 
       <Stack
         pb={"8px"}
@@ -119,7 +124,7 @@ export const ChatInterface = ({
             )}
             {msg.type === "spark" && msg.spark && (
               <Stack
-                mx={isChatFullScreen ? "48px" : "0"}
+                mx={{ xs: 0, md: isChatFullScreen ? "48px" : 0 }}
                 mb={2}
                 gap={2}
               >

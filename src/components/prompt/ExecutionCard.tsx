@@ -6,8 +6,6 @@ import { isImageOutput, markdownToHTML, sanitizeHTML } from "@/common/helpers/ht
 import { DisplayPrompt, PromptLiveResponse } from "@/common/types/prompt";
 import { Prompts } from "@/core/api/dto/prompts";
 import { TemplatesExecutions } from "@/core/api/dto/templates";
-import { useSelector } from "react-redux";
-import { RootState } from "@/core/store";
 import { useAppSelector } from "@/hooks/useStore";
 
 interface Props {
@@ -18,7 +16,6 @@ interface Props {
 export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
   const executionPrompts = execution && "data" in execution ? execution.data : execution?.prompt_executions;
   const sparkHashQueryParam = useAppSelector(state => state.executions.sparkHashQueryParam);
-  const isGenerating = useSelector((state: RootState) => state.template.isGenerating);
   const [sortedPrompts, setSortedPrompts] = useState<DisplayPrompt[]>([]);
 
   const promptsOrderMap: { [key: string]: number } = {};
@@ -88,11 +85,11 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
       sx={{
         width: { md: "80%" },
         m: { md: "auto" },
-        py: { md: "48px" },
+        p: { xs: "20px", md: "48px 0" },
       }}
     >
       {execution && "title" in execution && (
-        <Typography sx={{ fontSize: 48, fontWeight: 400, color: "onSurface", py: "24px" }}>
+        <Typography sx={{ fontSize: { xs: 30, md: 48 }, fontWeight: 400, color: "onSurface", py: "24px" }}>
           {execution.title}
         </Typography>
       )}
@@ -112,7 +109,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
                 sx={{ pb: "24px" }}
               >
                 {prompt && (
-                  <Subtitle sx={{ fontSize: 24, fontWeight: 400, color: "onSurface" }}>
+                  <Subtitle sx={{ fontSize: { xs: 18, md: 24 }, fontWeight: 400, color: "onSurface" }}>
                     {!isImageOutput(exec.content) && prompt?.title}
                     {exec.errors && executionError(exec.errors)}
                   </Subtitle>
@@ -140,7 +137,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
                     )}
                     <Box
                       sx={{
-                        fontSize: 15,
+                        fontSize: { xs: 14, md: 15 },
                         fontWeight: 400,
                         color: "onSurface",
                         wordWrap: "break-word",

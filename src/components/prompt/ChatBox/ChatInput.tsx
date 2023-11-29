@@ -8,6 +8,7 @@ import { setGeneratedExecution } from "@/core/store/executionsSlice";
 import { setChatFullScreenStatus, setGeneratingStatus } from "@/core/store/templatesSlice";
 import { GeneratingProgressCard } from "@/components/common/cards/GeneratingProgressCard";
 import { ProgressLogo } from "@/components/common/ProgressLogo";
+import { isDesktopViewPort } from "@/common/helpers";
 
 interface ChatInputProps {
   onSubmit: (value: string) => void;
@@ -33,6 +34,7 @@ export const ChatInput = ({
   const dispatch = useDispatch();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const isChatFullScreen = useAppSelector(state => state.template.isChatFullScreen);
+  const isDesktopView = isDesktopViewPort();
 
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -60,7 +62,7 @@ export const ChatInput = ({
           <Box
             width={"100%"}
             maxWidth={isChatFullScreen ? "360px" : "100%"}
-            mx={isChatFullScreen ? "88px" : "32px"}
+            mx={{ xs: "16px", md: isChatFullScreen ? "88px" : "32px" }}
           >
             <GeneratingProgressCard onCancel={abortConnection} />
           </Box>
@@ -69,9 +71,9 @@ export const ChatInput = ({
             direction={"row"}
             gap={1}
             alignItems={"center"}
-            ml={"40px"}
+            ml={{ xs: "16px", md: "40px" }}
           >
-            {isChatFullScreen && <ProgressLogo size="small" />}
+            {isChatFullScreen && isDesktopView && <ProgressLogo size="small" />}
             <Stack
               direction={"row"}
               gap={1}
@@ -99,7 +101,7 @@ export const ChatInput = ({
             alignItems={"center"}
             gap={2}
             flexWrap={"wrap"}
-            mx={isChatFullScreen ? "88px" : "32px"}
+            mx={{ xs: "16px", md: isChatFullScreen ? "88px" : "32px" }}
           >
             {showGenerate && (
               <Fade

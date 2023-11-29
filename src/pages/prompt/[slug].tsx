@@ -115,7 +115,6 @@ function Template({ hashedExecution, fetchedTemplate }: TemplateProps) {
       <Layout>
         {isMobileView ? (
           <TemplateMobile
-            hashedExecution={hashedExecution}
             template={fetchedTemplate}
             setErrorMessage={setErrorMessage}
           />

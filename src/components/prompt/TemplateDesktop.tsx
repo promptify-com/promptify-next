@@ -18,7 +18,7 @@ interface TemplateDesktopProps {
 
 export default function TemplateDesktop({ template, setErrorMessage }: TemplateDesktopProps) {
   const dispatch = useDispatch();
-  const chatFullScreen = useAppSelector(state => state.template.isChatFullScreen);
+  const isChatFullScreen = useAppSelector(state => state.template.isChatFullScreen);
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
 
   const closeExecutionDisplay = () => {
@@ -63,7 +63,7 @@ export default function TemplateDesktop({ template, setErrorMessage }: TemplateD
         }}
       >
         <Stack
-          width={chatFullScreen ? "100%" : "38%"}
+          width={isChatFullScreen ? "100%" : "38%"}
           minWidth={360}
           position={"sticky"}
           top={0}
@@ -96,7 +96,7 @@ export default function TemplateDesktop({ template, setErrorMessage }: TemplateD
           </ClientOnly>
         </Stack>
 
-        {!chatFullScreen && (
+        {!isChatFullScreen && (
           <Grid
             width={"62%"}
             display={"block"}

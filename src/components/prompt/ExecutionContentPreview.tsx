@@ -59,7 +59,7 @@ function ExecutionContentPreview({ prompts, execution }: Props) {
   return (
     <Stack
       gap={5}
-      p={"20px 8px"}
+      p={{ xs: "20px", md: "20px 8px" }}
     >
       {promptContents.map(prompt => (
         <Stack gap={2}>

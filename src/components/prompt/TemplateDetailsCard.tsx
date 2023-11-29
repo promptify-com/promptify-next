@@ -61,9 +61,8 @@ export const TemplateDetailsCard: React.FC<TemplateDetailsCardProps> = ({ templa
   return (
     <Box
       sx={{
-        width: min ? "calc(100% - 32px)" : "calc(100% - 80px)",
         m: min ? "16px" : "0 40px",
-        bgcolor: "surface.5",
+        bgcolor: alpha(theme.palette.primary.main, 0.08),
         borderRadius: min ? "42px" : "48px",
         p: min ? "14px" : 0,
         position: "relative",
@@ -130,7 +129,10 @@ export const TemplateDetailsCard: React.FC<TemplateDetailsCardProps> = ({ templa
             {expanded ? <ExpandLess /> : <ExpandMore />}
           </IconButton>
           <Collapse in={expanded}>
-            <Stack gap={2}>
+            <Stack
+              gap={1}
+              my={"8px"}
+            >
               <DescriptionTags />
             </Stack>
           </Collapse>

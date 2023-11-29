@@ -64,26 +64,18 @@ export const DisplayActions: React.FC<Props> = ({
     <Box
       sx={{
         bgcolor: "surface.3",
-        position: { xs: "fixed", md: "sticky" },
-        top: { xs: "auto", md: "0px" },
-        bottom: { xs: "74px", md: "auto" },
+        position: "sticky",
+        top: 0,
         left: 0,
         right: 0,
         zIndex: 90,
-        p: { md: "8px 8px 8px 16px" },
-        borderBottom: { xs: `1px solid ${palette.surface[5]}`, md: "none" },
-        boxShadow: {
-          xs: "0px -8px 40px 0px rgba(93, 123, 186, 0.09), 0px -8px 10px 0px rgba(98, 98, 107, 0.03)",
-          md: "0px -1px 0px 0px #ECECF4 inset",
-        },
+        p: "8px 8px 8px 16px",
       }}
     >
       <Box sx={{ position: "relative" }}>
-        {/* Big screen header */}
         <Stack
-          display={{ xs: "none", md: "flex" }}
-          direction={"row"}
-          alignItems={"center"}
+          direction={{ md: "row" }}
+          alignItems={{ xs: "flex-end", md: "center" }}
           justifyContent={"space-between"}
           gap={1}
         >
@@ -93,6 +85,7 @@ export const DisplayActions: React.FC<Props> = ({
                 direction={"row"}
                 alignItems={"center"}
                 gap={1}
+                width={{ xs: "100%", md: "auto" }}
               >
                 <Button
                   onClick={() => setExecutionPopup("update")}
@@ -106,6 +99,7 @@ export const DisplayActions: React.FC<Props> = ({
                     whiteSpace: "normal",
                     wordBreak: "break-word",
                     justifyContent: "space-between",
+                    bgcolor: { xs: "surface.2", md: "transparent" },
                     ":hover": {
                       bgcolor: "surface.2",
                     },
@@ -170,7 +164,7 @@ export const DisplayActions: React.FC<Props> = ({
                 </Tooltip>
                 <Divider
                   orientation="vertical"
-                  sx={{ width: "1px", height: "25px", borderColor: "surface.5" }}
+                  sx={actionsDividerStyle}
                 />
                 <Tooltip
                   title="Delete"
@@ -189,7 +183,7 @@ export const DisplayActions: React.FC<Props> = ({
                 </Tooltip>
                 <Divider
                   orientation="vertical"
-                  sx={{ width: "1px", height: "25px", borderColor: "surface.5" }}
+                  sx={actionsDividerStyle}
                 />
                 <Tooltip
                   title="Save"
@@ -205,7 +199,7 @@ export const DisplayActions: React.FC<Props> = ({
                 </Tooltip>
                 <Divider
                   orientation="vertical"
-                  sx={{ width: "1px", height: "25px", borderColor: "surface.5" }}
+                  sx={actionsDividerStyle}
                 />
                 {selectedExecution?.id && (
                   <Tooltip
@@ -221,6 +215,10 @@ export const DisplayActions: React.FC<Props> = ({
                     </IconButton>
                   </Tooltip>
                 )}
+                <Divider
+                  orientation="vertical"
+                  sx={actionsDividerStyle}
+                />
                 <IconButton
                   sx={{
                     ...actionBtnStyle,
@@ -234,6 +232,7 @@ export const DisplayActions: React.FC<Props> = ({
             </>
           ) : (
             <Stack
+              width={"100%"}
               direction={"row"}
               alignItems={"center"}
               gap={2}
@@ -250,42 +249,6 @@ export const DisplayActions: React.FC<Props> = ({
             </Stack>
           )}
         </Stack>
-
-        {/* Small screen header */}
-        <Box
-          display={"flex"}
-          alignItems={"center"}
-        >
-          <Stack
-            flex={1}
-            display={{ md: "none" }}
-            direction={"row"}
-            alignItems={"center"}
-            gap={1}
-            p={"8px 16px"}
-          ></Stack>
-          <Stack
-            display={{ md: "none" }}
-            direction={"row"}
-            alignItems={"center"}
-            gap={1}
-            p={"8px 16px"}
-          >
-            <Tooltip title="Export">
-              <IconButton
-                onClick={onOpenExport}
-                sx={{
-                  border: "none",
-                  "&:hover": {
-                    bgcolor: "surface.2",
-                  },
-                }}
-              >
-                <ShareOutlined />
-              </IconButton>
-            </Tooltip>
-          </Stack>
-        </Box>
       </Box>
 
       {(executionPopup === "delete" || executionPopup === "update") && (
@@ -310,4 +273,9 @@ const actionBtnStyle = {
   svg: {
     fontSize: "16px",
   },
+};
+const actionsDividerStyle = {
+  width: "1px",
+  height: "25px",
+  borderColor: "surface.5",
 };

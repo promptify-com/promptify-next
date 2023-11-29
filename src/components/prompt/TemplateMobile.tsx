@@ -1,31 +1,32 @@
-import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
+import { type Dispatch, type SetStateAction, useEffect } from "react";
 import Grid from "@mui/material/Grid";
-import { Details } from "./Details";
 import ChatBox from "./ChatBox";
 import { Display } from "./Display";
 import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
-import { ButtonGenerateExecution } from "./ButtonGenerateExecution";
 import { useAppSelector } from "@/hooks/useStore";
-import { TemplateDetailsCard } from "./TemplateDetailsCard";
+import { useDispatch } from "react-redux";
+import { setChatFullScreenStatus } from "@/core/store/templatesSlice";
+import { setSelectedExecution } from "@/core/store/executionsSlice";
+import ClientOnly from "../base/ClientOnly";
 
 interface TemplateMobileProps {
-  hashedExecution: TemplatesExecutions | null;
   template: Templates;
   setErrorMessage: Dispatch<SetStateAction<string>>;
 }
 
-export default function TemplateMobile({ template, hashedExecution, setErrorMessage }: TemplateMobileProps) {
-  const [mobileTab, setMobileTab] = useState(1);
-  const isGenerating = useAppSelector(state => state.template.isGenerating);
+export default function TemplateMobile({ template, setErrorMessage }: TemplateMobileProps) {
+  const dispatch = useDispatch();
+  const isChatFullScreen = useAppSelector(state => state.template.isChatFullScreen);
+  const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
 
   useEffect(() => {
-    if (isGenerating || hashedExecution?.id) {
-      setMobileTab(2);
-    }
-  }, [isGenerating, hashedExecution]);
+    dispatch(setChatFullScreenStatus(!selectedExecution));
+  }, [selectedExecution]);
 
-  const isTemplatePublished = template?.status === "PUBLISHED";
-  const displayChatBox = !!template?.questions?.length && isTemplatePublished && mobileTab === 1;
+  const closeExecutionDisplay = () => {
+    dispatch(setChatFullScreenStatus(true));
+    dispatch(setSelectedExecution(null));
+  };
 
   return (
     <Grid
@@ -51,46 +52,28 @@ export default function TemplateMobile({ template, hashedExecution, setErrorMess
         },
       }}
     >
-      <TemplateDetailsCard
-        template={template}
-        min
-      />
-
-      {displayChatBox ? (
-        <Grid height={{ xs: "calc(100% - 90.5px)", md: "100%" }}>
+      <Grid
+        height={"100%"}
+        display={isChatFullScreen ? "block" : "none"}
+      >
+        <ClientOnly>
           <ChatBox
             onError={setErrorMessage}
             key={template?.id}
             template={template}
           />
-        </Grid>
-      ) : (
-        <Grid
-          display={mobileTab === 1 ? "flex" : "none"}
-          width={"100%"}
-          justifyContent={"center"}
-          height={"74%"}
-          alignItems={"center"}
-          overflow={"hidden"}
-        >
-          <ButtonGenerateExecution
-            templateData={template}
-            onError={setErrorMessage}
-          />
-        </Grid>
-      )}
+        </ClientOnly>
+      </Grid>
 
       <Grid
         flex={1}
         borderRadius={"16px"}
-        display={mobileTab === 2 ? "block" : "none"}
+        display={!isChatFullScreen ? "block" : "none"}
       >
-        <Grid mr={1}>
-          <Display
-            templateData={template}
-            close={() => setMobileTab(1)}
-          />
-        </Grid>
+        <Display
+          templateData={template}
+          close={closeExecutionDisplay}
+        />
       </Grid>
     </Grid>
   );
