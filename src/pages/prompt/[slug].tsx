@@ -12,7 +12,6 @@ import { isValidUserFn } from "@/core/store/userSlice";
 import { updateTemplateData } from "@/core/store/templatesSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { getExecutionByHash } from "@/hooks/api/executions";
-import TemplateMobile from "@/components/prompt/TemplateMobile";
 import TemplateDesktop from "@/components/prompt/TemplateDesktop";
 import { getTemplateBySlug } from "@/hooks/api/templates";
 import { redirectToPath } from "@/common/helpers";
