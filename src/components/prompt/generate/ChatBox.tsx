@@ -586,11 +586,11 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
     <Box
       width={{ md: isSidebarExpanded ? "100%" : "80%" }}
       mx={{ md: "auto" }}
-      height={{ md: "100%" }}
+      height={"100%"}
     >
       <Stack
         justifyContent={"flex-end"}
-        height={{ md: "calc(100% - 20px)" }}
+        height={"calc(100% - 20px)"}
         gap={2}
       >
         <ChatInterface

@@ -85,7 +85,7 @@ export default function TemplateDesktop({ template, setErrorMessage }: TemplateD
   return (
     <Stack
       mt={{ xs: 5, md: 0 }}
-      height={{ md: "calc(100svh - 90px)" }}
+      height={{ xs: "calc(100svh - 40px)", md: "calc(100svh - 90px)" }}
       gap={"1px"}
       mx={{ xs: "16px", md: 0 }}
     >
@@ -98,9 +98,9 @@ export default function TemplateDesktop({ template, setErrorMessage }: TemplateD
         mx={"auto"}
         bgcolor={"surface.1"}
         width={"100%"}
-        height={{ md: "calc(100% - 68px)" }}
+        height={{ xs: "calc(100svh)", md: "calc(100% - 68px)" }}
         position={"relative"}
-        overflow={{ md: "auto" }}
+        overflow={"auto"}
         sx={{
           "&::-webkit-scrollbar": {
             width: "6px",
@@ -119,11 +119,11 @@ export default function TemplateDesktop({ template, setErrorMessage }: TemplateD
       >
         <Stack
           width={"100%"}
-          position={{ md: "sticky" }}
+          position={"sticky"}
           bottom={0}
           zIndex={100}
-          height={{ md: "100%" }}
-          overflow={{ md: "auto" }}
+          height={"100%"}
+          overflow={"auto"}
           sx={{
             borderColor: "surface.3",
             "&::-webkit-scrollbar": {

@@ -28,7 +28,7 @@ export const ChatInput = ({ onSubmit, disabled, isValidating, disabledButton, ad
       position={"relative"}
       display={"flex"}
       width={"100%"}
-      px={"40px"}
+      px={{ md: "40px" }}
       flexDirection={"column"}
       gap={"8px"}
     >
