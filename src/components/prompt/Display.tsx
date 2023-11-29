@@ -77,7 +77,7 @@ export const Display: React.FC<Props> = ({ mode, templateData, close, answers })
         ref={containerRef}
         sx={{
           bgcolor: isDisplayMode ? "surface.3" : "transparent",
-          minHeight: { xs: "100vh", md: isDisplayMode ? "calc(100vh - (90px + 68px))" : "auto" },
+          minHeight: { xs: "auto", md: isDisplayMode ? "calc(100vh - (90px + 68px))" : "auto" },
           position: "relative",
           pb: { xs: "0px", md: "70px" },
         }}

@@ -94,7 +94,7 @@ const MessageSender: React.FC<MessageSenderProps> = ({ onSubmit, disabled, place
           alignItems: "center",
           borderRadius: "99px",
           bgcolor: !hasNoValue ? undefined : "#375CA9",
-          color: { xs: "#8E8E94", md: "white" },
+          color: { xs: !hasNoValue ? "#8E8E94" : "white", md: "white" },
         }}
       >
         <ArrowUpward

@@ -119,7 +119,7 @@ export const SparkSaveDeletePopup = ({ type, activeExecution, onClose, onUpdate 
             fontWeight={500}
             lineHeight={"25.74px"}
           >
-            You really want to delete this spark permanently?
+            You really want to delete this work permanently?
           </Typography>
           <Grid
             display={"flex"}

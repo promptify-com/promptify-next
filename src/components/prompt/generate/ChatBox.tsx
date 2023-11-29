@@ -239,6 +239,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
     dispatch(setSelectedExecution(null));
     if (startOver) {
       setAnswers([]);
+      setIsSimulaitonStreaming(false);
     } else {
       const botMessage: IMessage = {
         id: randomId(),
@@ -248,19 +249,17 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
         fromUser: false,
       };
       setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat(botMessage));
+      addToQueuedMessages([
+        {
+          id: randomId(),
+          text: "",
+          type: "form",
+          createdAt: createdAt,
+          fromUser: false,
+          noHeader: true,
+        },
+      ]);
     }
-
-    addToQueuedMessages([
-      {
-        id: randomId(),
-        text: "",
-        type: "form",
-        createdAt: createdAt,
-        fromUser: false,
-        noHeader: true,
-      },
-    ]);
-    setIsSimulaitonStreaming(false);
   };
 
   const validateVary = async (variation: string) => {
