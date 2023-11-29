@@ -12,6 +12,7 @@ export default function useDataFetching(region: string, type: FetchingDataType, 
   const { data: fetchedData, isFetching } = useGetPaginatedDataQuery(params, {
     ...(!isModelType && { skip: isRegionEmpty }),
   });
+
   const hasNextData = !!fetchedData?.next;
   const hasPrevData = !!fetchedData?.previous;
   const fetchNextData = () => {
@@ -24,18 +25,19 @@ export default function useDataFetching(region: string, type: FetchingDataType, 
       setOffset(prevOffset => prevOffset - PAGINATION_LIMIT);
     }
   };
+  const resetStateDeps = isModelType ? [query] : [query, region];
 
   useEffect(() => {
     setData([]);
     setOffset(0);
-  }, [query, region]);
+  }, resetStateDeps);
 
   useEffect(() => {
     if (!!fetchedData?.results?.length) {
       // @ts-ignore
       setData(prevData => prevData.concat(fetchedData.results));
     }
-  }, [fetchedData?.results]);
+  }, [fetchedData]);
 
   return {
     isRegionEmpty,

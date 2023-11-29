@@ -62,7 +62,7 @@ export default function ExplorePage({ categories }: Props) {
             onPrevPage={handlePrevPage}
           />
           <TemplatesSection
-            filtred={!allFilterParamsNull}
+            filtred={false}
             templates={suggestedTemplates ?? []}
             isLoading={isSuggestedTemplatesLoading}
             templateLoading={isSuggestedTemplatesLoading}
