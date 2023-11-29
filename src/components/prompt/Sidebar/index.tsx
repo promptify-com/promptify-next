@@ -83,7 +83,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ template }) => {
   };
 
   const handleCloseSidebar = () => {
-    console.log("cloe");
     dispatch(setActiveSidebarLink(null));
   };
 
@@ -92,12 +91,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ template }) => {
   return (
     <Box
       sx={{
-        width: open ? { xs: "100%", md: drawerWidth } : 0,
+        width: { xs: open ? "100%" : 0, md: "auto" },
         height: "100%",
-        bgcolor: "surface.1",
-        display: "flex",
         position: { xs: "absolute", md: "sticky" },
         top: 0,
+        bgcolor: "surface.1",
+        display: "flex",
       }}
     >
       <Drawer
@@ -105,7 +104,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ template }) => {
         anchor="right"
         open={open}
         sx={{
-          width: "100%",
+          width: { xs: "100%", md: open ? drawerWidth : 0 },
           transition: theme.transitions.create("width", { duration: 200 }),
           position: "relative",
           "& .MuiDrawer-paper": {
