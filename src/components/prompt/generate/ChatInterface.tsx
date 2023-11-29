@@ -98,8 +98,6 @@ export const ChatInterface = ({
         },
       }}
     >
-      <div style={{ marginTop: "auto" }}></div>
-
       <TemplateDetailsCard template={template} />
 
       <Stack

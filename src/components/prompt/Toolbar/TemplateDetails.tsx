@@ -39,7 +39,7 @@ export const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template }) =>
   return (
     <Stack
       gap={2}
-      width={"300px"}
+      width={{ md: "300px" }}
       p={"24px"}
       mb={"80px"}
     >

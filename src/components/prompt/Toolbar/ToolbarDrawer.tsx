@@ -36,11 +36,11 @@ function ToolbarDrawer({ template, executions, isExecutionsLoading, refetchTempl
       anchor="right"
       open={sideBarOpen}
       sx={{
-        width: sideBarOpen ? DRAWER_WIDTH : 0,
+        width: { md: sideBarOpen ? DRAWER_WIDTH : 0 },
         transition: theme.transitions.create("width", { duration: 200 }),
         "& .MuiDrawer-paper": {
-          mt: "92px",
-          width: 360,
+          mt: { md: "92px" },
+          width: { xs: "100%", md: 360 },
           bgcolor: "surface.1",
           borderLeft: "none",
         },

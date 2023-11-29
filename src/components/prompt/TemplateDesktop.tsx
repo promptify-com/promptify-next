@@ -10,10 +10,17 @@ import Header from "./Header";
 import TemplateToolbar from "./Toolbar";
 import ToolbarDrawer from "./Toolbar/ToolbarDrawer";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { setAccordionChatMode } from "@/core/store/templatesSlice";
+import { openToolbarDrawer, setAccordionChatMode, setActiveToolbarLink } from "@/core/store/templatesSlice";
 import { setGeneratedExecution, setSelectedExecution, setSparkHashQueryParam } from "@/core/store/executionsSlice";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
+import Button from "@mui/material/Button";
+import NoteStackIcon from "@/assets/icons/NoteStackIcon";
+import { InfoOutlined } from "@mui/icons-material";
+import Badge from "@mui/material/Badge";
+import { theme } from "@/theme";
+import { Link, LinkName } from "@/common/types/TemplateToolbar";
+import { Icon } from "@mui/material";
 
 interface TemplateDesktopProps {
   template: Templates;
@@ -82,14 +89,85 @@ export default function TemplateDesktop({ template, setErrorMessage }: TemplateD
     }
   }, [selectedExecution]);
 
+  const ToolbarItems: Link[] = [
+    {
+      name: "executions",
+      icon: <NoteStackIcon />,
+      title: "My Works",
+    },
+
+    {
+      name: "details",
+      icon: <InfoOutlined />,
+      title: "Template details",
+    },
+  ];
+
+  const renderIcon = (link: Link) => {
+    if (link.name === "executions") {
+      return <NoteStackIcon color={"#375CA9"} />;
+    }
+    return link.icon;
+  };
+
+  const handleOpenDrawer = (link: Link) => {
+    dispatch(setActiveToolbarLink(link));
+    dispatch(openToolbarDrawer(true));
+  };
+
   return (
     <Stack
-      mt={{ xs: 5, md: 0 }}
-      height={{ xs: "calc(100svh - 40px)", md: "calc(100svh - 90px)" }}
+      mt={{ xs: 8, md: 0 }}
+      height={{ xs: "calc(100svh - 55px)", md: "calc(100svh - 90px)" }}
       gap={"1px"}
       mx={{ xs: "16px", md: 0 }}
     >
       <Header template={template} />
+
+      <Stack
+        py={1}
+        direction={"row"}
+        alignItems={"center"}
+        gap={"20px"}
+        display={{ xs: "flex", md: "none" }}
+      >
+        {ToolbarItems.map(link => (
+          <>
+            {executions?.length && link.name === "executions" ? (
+              <Badge
+                badgeContent={executions.length}
+                color="primary"
+              >
+                <Button
+                  onClick={() => handleOpenDrawer(link)}
+                  variant="text"
+                  startIcon={<Icon>{renderIcon(link)}</Icon>}
+                  sx={{
+                    height: 22,
+                    p: "15px",
+                    bgcolor: "surface.3",
+                  }}
+                >
+                  {link.title}
+                </Button>
+              </Badge>
+            ) : (
+              <Button
+                variant="text"
+                onClick={() => handleOpenDrawer(link)}
+                startIcon={<Icon sx={{ py: "4px", pr: "2px", mt: -0.5 }}>{renderIcon(link)}</Icon>}
+                sx={{
+                  height: 22,
+                  p: "15px",
+                  bgcolor: "surface.3",
+                }}
+              >
+                {link.title}
+              </Button>
+            )}
+          </>
+        ))}
+      </Stack>
       <Grid
         mt={0}
         gap={"1px"}
