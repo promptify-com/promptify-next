@@ -121,10 +121,10 @@ export const ExecutionCard: FC<Props> = ({ execution, promptsData, answers }) =>
     <Stack
       ref={containerRef}
       gap={1}
-      p={"16px"}
+      p={{ md: "16px" }}
     >
       {execution && "title" in execution && (
-        <Typography sx={{ fontSize: 48, fontWeight: 400, color: "onSurface", py: "24px" }}>
+        <Typography sx={{ fontSize: { xs: 22, md: 48 }, fontWeight: 400, color: "onSurface", py: "24px" }}>
           {execution.title}
         </Typography>
       )}
@@ -159,7 +159,7 @@ export const ExecutionCard: FC<Props> = ({ execution, promptsData, answers }) =>
                     <Stack
                       ref={elementRefs[index]}
                       width={showPrompts ? "75%" : "100%"}
-                      pr={"48px"}
+                      pr={{ md: "48px" }}
                       position={"relative"}
                     >
                       {isPrevItemImage && (
@@ -224,8 +224,8 @@ export const ExecutionCard: FC<Props> = ({ execution, promptsData, answers }) =>
                       {index === 0 && !isGenerating && execution && "parameters" in execution && (
                         <Stack
                           direction={"column"}
-                          alignItems={"center"}
-                          position={"absolute"}
+                          alignItems={"start"}
+                          position={{ md: "absolute" }}
                           top={"0"}
                           right={"-10px"}
                         >
@@ -235,7 +235,8 @@ export const ExecutionCard: FC<Props> = ({ execution, promptsData, answers }) =>
                     </Stack>
 
                     <Stack
-                      pt={2}
+                      mt={-7}
+                      py={2}
                       flex={1}
                       pl={"10px"}
                       borderLeft={showPrompts ? "2px solid #ECECF4" : "none"}

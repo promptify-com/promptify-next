@@ -84,15 +84,15 @@ export const AccordionMessage = ({
         <AccordionDetails
           sx={{
             mt: -4,
-            p: "0px 8px",
-            pt: "32px",
+            p: { xs: "32px 8px 8px 8px", md: "32px 16px 16px 16px" },
             bgcolor: "surface.2",
+            overflow: "hidden",
             borderRadius: "0px 16px 16px 16px",
           }}
         >
           <Stack>
             <Typography
-              width={{ xs: "284px", md: "100%" }}
+              width={{ xs: "284px", sm: "auto" }}
               borderRadius={"8px"}
               bgcolor={"#375CA9"}
               p={"10px 8px 16px 16px"}
@@ -113,7 +113,7 @@ export const AccordionMessage = ({
             >
               {mode === "execution" && (
                 <Stack
-                  padding={mode === "execution" ? "16px 0px 48px 64px" : undefined}
+                  padding={{ xs: "0px 16px", md: mode === "execution" ? "16px 0px 48px 64px" : undefined }}
                   position={"relative"}
                 >
                   <Display

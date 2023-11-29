@@ -47,7 +47,7 @@ export default function FeedbackThumbs({ execution }: newFeedBack) {
 
   return (
     <Stack
-      direction={"column"}
+      direction={{ xs: "row", md: "column" }}
       alignItems={"center"}
       gap={1}
     >

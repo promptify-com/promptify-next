@@ -130,113 +130,125 @@ function AccordionMessageHeader({
         }}
       >
         <Stack
-          direction={"row"}
+          direction={{ xs: mode === "execution" && !isGenerating ? "column" : "row", md: "row" }}
           gap={"8px"}
           width={"100%"}
           alignItems={"center"}
         >
-          {mode === "execution" && (
-            <>
-              {isGenerating ? (
-                <CircularProgress
-                  size={42}
-                  sx={{
-                    color: "grey.400",
-                    borderRadius: "50%",
-                  }}
-                />
-              ) : (
-                <AvatarWithInitials title={selectedExecution?.title ?? "Untitled"} />
-              )}
-            </>
-          )}
-
-          {mode === "input" && (
-            <Box
-              position={"relative"}
-              mt={0.5}
-              sx={{
-                width: "40px",
-                height: "40px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                borderRadius: "8px",
-                border: "1px dashed #375CA9 ",
-                bgcolor: "#375CA91A",
-                color: "#375CA9",
-              }}
-            >
-              <Add
-                sx={{
-                  fontSize: 32,
-                }}
-              />
-              <Box
-                position={"absolute"}
-                width={"13px"}
-                height={"13px"}
-                borderRadius={"4px 0px 8px 0px"}
-                bgcolor={"surface.1"}
-                bottom={0}
-                right={0}
-              />
-            </Box>
-          )}
-
           <Stack
             flex={1}
-            direction={"column"}
-            gap={"2px"}
+            direction={"row"}
+            alignItems={"center"}
+            gap={"8px"}
           >
-            <Typography
-              fontSize={{ xs: "14px", md: "15px" }}
-              lineHeight={"120%"}
-              letterSpacing={"0.2px"}
-            >
-              {mode === "input" && "New Prompt"}
+            {mode === "execution" && (
+              <>
+                {isGenerating ? (
+                  <CircularProgress
+                    size={42}
+                    sx={{
+                      color: "grey.400",
+                      borderRadius: "50%",
+                    }}
+                  />
+                ) : (
+                  <AvatarWithInitials title={selectedExecution?.title ?? "Untitled"} />
+                )}
+              </>
+            )}
 
-              {mode === "execution" && (
-                <>
-                  {isGenerating ? "Generation in progress..." : truncate(executionTitle ?? "Untitled", { length: 80 })}
-                  {executionTitle && !isGenerating && (
-                    <Tooltip
-                      arrow
-                      title="Rename"
-                      PopperProps={commonPopperProps}
-                    >
-                      <IconButton
-                        onClick={e => {
-                          e.stopPropagation();
-                          setExecutionPopup("update");
-                        }}
-                        sx={{
-                          border: "none",
-                          ml: 1,
-                          ":hover": {
-                            bgcolor: "surface.4",
-                          },
-                        }}
-                      >
-                        <Edit />
-                      </IconButton>
-                    </Tooltip>
-                  )}
-                </>
-              )}
-            </Typography>
-            <Typography
-              sx={{
-                fontSize: { xs: 10, md: 12 },
-                fontWeight: 400,
-                lineHeight: "143%",
-                letterSpacing: "0.17px",
-                opacity: 0.7,
-              }}
+            {mode === "input" && (
+              <Box
+                position={"relative"}
+                mt={0.5}
+                sx={{
+                  width: "40px",
+                  height: "40px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  borderRadius: "8px",
+                  border: "1px dashed #375CA9 ",
+                  bgcolor: "#375CA91A",
+                  color: "#375CA9",
+                }}
+              >
+                <Add
+                  sx={{
+                    fontSize: 32,
+                  }}
+                />
+                <Box
+                  position={"absolute"}
+                  width={"13px"}
+                  height={"13px"}
+                  borderRadius={"4px 0px 8px 0px"}
+                  bgcolor={"surface.1"}
+                  bottom={0}
+                  right={0}
+                />
+              </Box>
+            )}
+
+            <Stack
+              flex={1}
+              direction={"column"}
+              gap={"2px"}
             >
-              {mode === "input" && "About 360s generation time"}
-              {mode === "execution" && <>{isGenerating ? "About 360s Left" : ""}</>}
-            </Typography>
+              <Typography
+                fontSize={{ xs: "14px", md: "15px" }}
+                lineHeight={"120%"}
+                display={"flex"}
+                flex={1}
+                alignItems={"center"}
+                letterSpacing={"0.2px"}
+              >
+                {mode === "input" && "New Prompt"}
+
+                {mode === "execution" && (
+                  <>
+                    {isGenerating
+                      ? "Generation in progress..."
+                      : truncate(executionTitle ?? "Untitled", { length: 80 })}
+                    {executionTitle && !isGenerating && (
+                      <Tooltip
+                        arrow
+                        title="Rename"
+                        PopperProps={commonPopperProps}
+                      >
+                        <IconButton
+                          onClick={e => {
+                            e.stopPropagation();
+                            setExecutionPopup("update");
+                          }}
+                          sx={{
+                            border: "none",
+                            ml: { md: 1 },
+                            ":hover": {
+                              bgcolor: "surface.4",
+                            },
+                          }}
+                        >
+                          <Edit />
+                        </IconButton>
+                      </Tooltip>
+                    )}
+                  </>
+                )}
+              </Typography>
+              <Typography
+                sx={{
+                  fontSize: { xs: 10, md: 12 },
+                  fontWeight: 400,
+                  lineHeight: "143%",
+                  letterSpacing: "0.17px",
+                  opacity: 0.7,
+                }}
+              >
+                {mode === "input" && "About 360s generation time"}
+                {mode === "execution" && <>{isGenerating ? "About 360s Left" : ""}</>}
+              </Typography>
+            </Stack>
           </Stack>
 
           {mode === "input" && isExpanded && (
@@ -251,12 +263,13 @@ function AccordionMessageHeader({
                     e.stopPropagation();
                     onClear();
                   }}
-                  endIcon={<Close />}
+                  endIcon={<Close sx={{ fontSize: { xs: 3 }, ml: { xs: -1, md: 0 } }} />}
                   sx={{
+                    mr: -2,
                     height: "20px",
-                    p: "15px",
+                    p: { xs: 0, md: "15px" },
                     color: "onSurface",
-                    fontSize: 15,
+                    fontSize: { xs: 8.5, md: 15 },
                     fontWeight: 500,
                     ":hover": {
                       bgcolor: "action.hover",
@@ -276,9 +289,9 @@ function AccordionMessageHeader({
                 }}
                 endIcon={<PlayCircle />}
                 sx={{
-                  mr: { xs: -3, md: 0 },
+                  mr: { xs: -6, md: 0 },
                   height: "22px",
-                  p: { md: "15px" },
+                  p: { xs: 1, md: "15px" },
                   fontSize: { xs: 12, md: 15 },
                   lineHeight: "110%",
                   letterSpacing: "0.2px",
@@ -298,97 +311,42 @@ function AccordionMessageHeader({
               </Button>
             </Stack>
           )}
-
-          {mode === "execution" && (
-            <>
-              {isGenerating ? (
-                <Grid
-                  display={"flex"}
-                  alignItems={"center"}
-                >
-                  <Button
-                    onClick={e => {
-                      e.stopPropagation();
-                      abortConnection();
-                    }}
-                    endIcon={<HighlightOff />}
-                    sx={{
-                      height: "34px",
-                      p: "15px",
-                      color: "onSurface",
-                      fontSize: 13,
-                      fontWeight: 500,
-                      ":hover": {
-                        bgcolor: "action.hover",
-                      },
-                    }}
-                    variant="text"
+          <Stack
+            direction={"row"}
+            ml={{ xs: 4, md: 0 }}
+            alignItems={"center"}
+            gap={"8px"}
+          >
+            {mode === "execution" && (
+              <>
+                {isGenerating ? (
+                  <Grid
+                    display={"flex"}
+                    alignItems={"center"}
                   >
-                    Cancel
-                  </Button>
-
-                  <Tooltip
-                    title="Show Prompts"
-                    arrow
-                    PopperProps={commonPopperProps}
-                  >
-                    <IconButton
+                    <Button
                       onClick={e => {
                         e.stopPropagation();
-                        dispatch(setShowPromptsView(!showPrompts));
+                        abortConnection();
                       }}
+                      endIcon={<HighlightOff />}
                       sx={{
-                        border: "none",
+                        height: "34px",
+                        p: { md: "15px" },
+                        color: "onSurface",
+                        fontSize: 13,
+                        fontWeight: 500,
                         ":hover": {
-                          bgcolor: "surface.4",
+                          bgcolor: "action.hover",
                         },
                       }}
+                      variant="text"
                     >
-                      {!showPrompts ? <RemoveRedEyeOutlined /> : <VisibilityOff />}
-                    </IconButton>
-                  </Tooltip>
-                </Grid>
-              ) : (
-                <Stack
-                  direction={"row"}
-                  gap={"8px"}
-                  alignItems={"center"}
-                  mt={-1}
-                >
-                  <Box
-                    borderRight={"2px solid #ECECF4"}
-                    pr={1}
-                    height={"30px"}
-                  >
-                    <Tooltip
-                      title={selectedExecution?.is_favorite ? "Remove from works" : "Add to works"}
-                      arrow
-                      PopperProps={commonPopperProps}
-                    >
-                      <IconButton
-                        onClick={e => {
-                          e.stopPropagation();
-                          saveExecution();
-                        }}
-                        sx={{
-                          border: "none",
-                          ":hover": {
-                            bgcolor: "surface.4",
-                          },
-                        }}
-                      >
-                        {selectedExecution?.is_favorite ? <Star /> : <StarOutline />}
-                      </IconButton>
-                    </Tooltip>
-                  </Box>
+                      Cancel
+                    </Button>
 
-                  <Box
-                    borderRight={"2px solid #ECECF4"}
-                    pr={1}
-                    height={"30px"}
-                  >
                     <Tooltip
-                      title={!showPrompts ? "Show Prompts" : "Hide Prompts"}
+                      title="Show Prompts"
                       arrow
                       PopperProps={commonPopperProps}
                     >
@@ -407,116 +365,170 @@ function AccordionMessageHeader({
                         {!showPrompts ? <RemoveRedEyeOutlined /> : <VisibilityOff />}
                       </IconButton>
                     </Tooltip>
-                  </Box>
-
-                  <Box
-                    borderRight={"2px solid #ECECF4"}
-                    pr={1}
-                    height={"30px"}
+                  </Grid>
+                ) : (
+                  <Stack
+                    direction={"row"}
+                    gap={"8px"}
+                    alignItems={"center"}
+                    mt={-1}
                   >
-                    <Tooltip
-                      title="Share"
-                      arrow
-                      PopperProps={commonPopperProps}
+                    <Box
+                      borderRight={"2px solid #ECECF4"}
+                      pr={1}
+                      height={"30px"}
                     >
-                      <IconButton
-                        onClick={e => {
-                          e.stopPropagation();
-                          setOpenExportpopup(true);
-                        }}
-                        sx={{
-                          border: "none",
-                          ":hover": {
-                            bgcolor: "surface.4",
-                          },
-                        }}
+                      <Tooltip
+                        title={selectedExecution?.is_favorite ? "Remove from works" : "Add to works"}
+                        arrow
+                        PopperProps={commonPopperProps}
                       >
-                        <ShareOutlined />
-                      </IconButton>
-                    </Tooltip>
-                  </Box>
+                        <IconButton
+                          onClick={e => {
+                            e.stopPropagation();
+                            saveExecution();
+                          }}
+                          sx={{
+                            border: "none",
+                            ":hover": {
+                              bgcolor: "surface.4",
+                            },
+                          }}
+                        >
+                          {selectedExecution?.is_favorite ? <Star /> : <StarOutline />}
+                        </IconButton>
+                      </Tooltip>
+                    </Box>
 
-                  <Box
-                    borderRight={"2px solid #ECECF4"}
-                    pr={1}
-                    height={"30px"}
+                    <Box
+                      borderRight={"2px solid #ECECF4"}
+                      pr={1}
+                      height={"30px"}
+                    >
+                      <Tooltip
+                        title={!showPrompts ? "Show Prompts" : "Hide Prompts"}
+                        arrow
+                        PopperProps={commonPopperProps}
+                      >
+                        <IconButton
+                          onClick={e => {
+                            e.stopPropagation();
+                            dispatch(setShowPromptsView(!showPrompts));
+                          }}
+                          sx={{
+                            border: "none",
+                            ":hover": {
+                              bgcolor: "surface.4",
+                            },
+                          }}
+                        >
+                          {!showPrompts ? <RemoveRedEyeOutlined /> : <VisibilityOff />}
+                        </IconButton>
+                      </Tooltip>
+                    </Box>
+
+                    <Box
+                      borderRight={"2px solid #ECECF4"}
+                      pr={1}
+                      height={"30px"}
+                    >
+                      <Tooltip
+                        title="Share"
+                        arrow
+                        PopperProps={commonPopperProps}
+                      >
+                        <IconButton
+                          onClick={e => {
+                            e.stopPropagation();
+                            setOpenExportpopup(true);
+                          }}
+                          sx={{
+                            border: "none",
+                            ":hover": {
+                              bgcolor: "surface.4",
+                            },
+                          }}
+                        >
+                          <ShareOutlined />
+                        </IconButton>
+                      </Tooltip>
+                    </Box>
+
+                    <Box
+                      borderRight={"2px solid #ECECF4"}
+                      pr={1}
+                      height={"30px"}
+                    >
+                      <Tooltip
+                        title="Delete"
+                        arrow
+                        PopperProps={commonPopperProps}
+                      >
+                        <IconButton
+                          onClick={e => {
+                            e.stopPropagation();
+                            setExecutionPopup("delete");
+                          }}
+                          sx={{
+                            border: "none",
+                            ":hover": {
+                              color: "red",
+                              bgcolor: "surface.4",
+                            },
+                          }}
+                        >
+                          <DeleteOutline />
+                        </IconButton>
+                      </Tooltip>
+                    </Box>
+                  </Stack>
+                )}
+              </>
+            )}
+
+            <Stack>
+              {isExpanded ? (
+                <Tooltip
+                  title="Collapse"
+                  arrow
+                  placement="top"
+                  PopperProps={commonPopperProps}
+                >
+                  <IconButton
+                    sx={{
+                      border: "none",
+                      ":hover": {
+                        bgcolor: "surface.4",
+                      },
+                    }}
                   >
-                    <Tooltip
-                      title="Delete"
-                      arrow
-                      PopperProps={commonPopperProps}
-                    >
-                      <IconButton
-                        onClick={e => {
-                          e.stopPropagation();
-                          setExecutionPopup("delete");
-                        }}
-                        sx={{
-                          border: "none",
-                          ":hover": {
-                            color: "red",
-                            bgcolor: "surface.4",
-                          },
-                        }}
-                      >
-                        <DeleteOutline />
-                      </IconButton>
-                    </Tooltip>
-                  </Box>
-                </Stack>
-              )}
-            </>
-          )}
-
-          <Stack>
-            {isExpanded ? (
-              <Tooltip
-                title="Collapse"
-                arrow
-                placement="top"
-                PopperProps={commonPopperProps}
-              >
-                <IconButton
+                    <UnfoldLess fontSize="inherit" />
+                  </IconButton>
+                </Tooltip>
+              ) : (
+                <Button
+                  variant="text"
                   sx={{
-                    border: "none",
-                    fontSize: "50px",
-
+                    height: "34px",
+                    p: "15px",
+                    color: "onSurface",
+                    fontSize: 13,
+                    fontWeight: 500,
                     ":hover": {
-                      bgcolor: "surface.4",
+                      bgcolor: "action.hover",
                     },
                   }}
                 >
+                  Expand
                   <UnfoldLess
-                    fontSize="inherit"
                     sx={{
-                      fontSize: "50px",
+                      fontSize: 20,
+                      ml: 1,
                     }}
                   />
-                </IconButton>
-              </Tooltip>
-            ) : (
-              <Button
-                variant="text"
-                sx={{
-                  height: "34px",
-                  p: "15px",
-                  color: "onSurface",
-                  fontSize: 13,
-                  fontWeight: 500,
-                  ":hover": {
-                    bgcolor: "action.hover",
-                  },
-                }}
-              >
-                Expand
-                <UnfoldLess
-                  sx={{
-                    fontSize: 20,
-                    ml: 1,
-                  }}
-                />
-              </Button>
-            )}
+                </Button>
+              )}
+            </Stack>
           </Stack>
         </Stack>
       </AccordionSummary>
