@@ -1,4 +1,5 @@
 import { AnsweredInputType } from "@/common/types/prompt";
+import { SidebarLink } from "@/common/types/template";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
@@ -10,6 +11,7 @@ export interface TemplatesProps {
   isGenerating: boolean;
   isChatFullScreen: boolean;
   answeredInputs: AnsweredInputType[];
+  activeSideBarLink: SidebarLink | null;
 }
 
 type UpdateTemplateDataPayload = Pick<TemplatesProps, "is_favorite" | "id" | "likes">;
@@ -22,6 +24,7 @@ const initialState: TemplatesProps = {
   isGenerating: false,
   isChatFullScreen: true,
   answeredInputs: [],
+  activeSideBarLink: null,
 };
 
 export const templatesSlice = createSlice({
@@ -48,6 +51,9 @@ export const templatesSlice = createSlice({
     setChatFullScreenStatus: (state, action: PayloadAction<boolean>) => {
       state.isChatFullScreen = action.payload;
     },
+    setActiveSidebarLink: (state, action: PayloadAction<SidebarLink | null>) => {
+      state.activeSideBarLink = action.payload;
+    },
   },
 });
 
@@ -57,6 +63,7 @@ export const {
   updateExecutionData,
   setGeneratingStatus,
   setChatFullScreenStatus,
+  setActiveSidebarLink,
 } = templatesSlice.actions;
 
 export default templatesSlice.reducer;

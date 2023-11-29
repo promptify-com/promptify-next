@@ -1,14 +1,11 @@
 import { CardExecution } from "@/components/common/cards/CardExecution";
 import { CardExecutionPlaceholder } from "@/components/placeholders/CardExecutionPlaceholder";
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
-import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
 import { setGeneratedExecution, setSelectedExecution, setSparkHashQueryParam } from "@/core/store/executionsSlice";
-import { isValidUserFn } from "@/core/store/userSlice";
 import { useAppSelector } from "@/hooks/useStore";
 import { theme } from "@/theme";
 import { CloudQueue } from "@mui/icons-material";
 import { Box, Stack, Tab, Tabs, Typography, alpha } from "@mui/material";
-import { skipToken } from "@reduxjs/toolkit/dist/query";
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 
@@ -42,6 +39,7 @@ interface ExecutionsProps {
   executions: TemplatesExecutions[] | undefined;
   isExecutionsLoading: boolean;
   refetchTemplateExecutions: () => void;
+  onSelectExecution: () => void;
 }
 
 export const Executions: React.FC<ExecutionsProps> = ({
@@ -49,9 +47,9 @@ export const Executions: React.FC<ExecutionsProps> = ({
   executions,
   isExecutionsLoading,
   refetchTemplateExecutions,
+  onSelectExecution,
 }) => {
   const dispatch = useDispatch();
-  const isValidUser = useAppSelector(isValidUserFn);
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
@@ -59,12 +57,6 @@ export const Executions: React.FC<ExecutionsProps> = ({
   const changeTab = (e: React.SyntheticEvent, newValue: number) => {
     setTabsValue(newValue);
   };
-
-  // const {
-  //   data: executions,
-  //   isLoading,
-  //   refetch: refetchTemplateExecutions,
-  // } = useGetExecutionsByTemplateQuery(isValidUser ? template.id : skipToken);
 
   const handleSelectExecution = ({
     execution,
@@ -151,6 +143,7 @@ export const Executions: React.FC<ExecutionsProps> = ({
                   <CardExecution
                     key={execution.id}
                     execution={execution}
+                    onClick={onSelectExecution}
                   />
                 ))
               ) : (
@@ -181,6 +174,7 @@ export const Executions: React.FC<ExecutionsProps> = ({
                   <CardExecution
                     key={execution.id}
                     execution={execution}
+                    onClick={onSelectExecution}
                   />
                 ))
               ) : (

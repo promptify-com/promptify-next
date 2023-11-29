@@ -1,8 +1,7 @@
-import { ReactNode, useState } from "react";
+import { useState } from "react";
 import {
   Badge,
   Box,
-  Chip,
   Drawer,
   Grid,
   Icon,
@@ -27,33 +26,31 @@ import { Feedback } from "./Feedback";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
 import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
+import { SidebarLink } from "@/common/types/template";
+import { useDispatch } from "react-redux";
+import { setActiveSidebarLink } from "@/core/store/templatesSlice";
+import { isDesktopViewPort } from "@/common/helpers";
 
 const drawerWidth = 352;
 
-type LinkName = "executions" | "feedback" | "api" | "extension" | "details";
-
-interface Link {
-  name: LinkName;
-  icon: ReactNode;
-  title: string;
-}
 interface SidebarProps {
   template: Templates;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ template }) => {
-  const [open, setOpen] = useState(false);
+  const activeLink = useAppSelector(state => state.template.activeSideBarLink);
+  const isMobile = !isDesktopViewPort();
   const isValidUser = useAppSelector(isValidUserFn);
   const {
     data: executions,
     isLoading: isExecutionsLoading,
     refetch: refetchTemplateExecutions,
   } = useGetExecutionsByTemplateQuery(isValidUser ? template.id : skipToken);
-  const [activeLink, setActiveLink] = useState<Link>();
 
+  const dispatch = useDispatch();
   const theme = useTheme();
 
-  const Links: Link[] = [
+  const Links: SidebarLink[] = [
     {
       name: "executions",
       icon: <NoteStackIcon />,
@@ -81,22 +78,25 @@ export const Sidebar: React.FC<SidebarProps> = ({ template }) => {
     },
   ];
 
-  const handleOpenSidebar = (link: Link) => {
-    setOpen(true);
-    setActiveLink(link);
+  const handleOpenSidebar = (link: SidebarLink) => {
+    dispatch(setActiveSidebarLink(link));
   };
 
   const handleCloseSidebar = () => {
-    setOpen(false);
+    console.log("cloe");
+    dispatch(setActiveSidebarLink(null));
   };
+
+  const open = !!activeLink?.name;
 
   return (
     <Box
       sx={{
+        width: open ? { xs: "100%", md: drawerWidth } : 0,
+        height: "100%",
         bgcolor: "surface.1",
         display: "flex",
-        height: "100%",
-        position: "sticky",
+        position: { xs: "absolute", md: "sticky" },
         top: 0,
       }}
     >
@@ -105,7 +105,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ template }) => {
         anchor="right"
         open={open}
         sx={{
-          width: open ? drawerWidth : 0,
+          width: "100%",
           transition: theme.transitions.create("width", { duration: 200 }),
           position: "relative",
           "& .MuiDrawer-paper": {
@@ -163,6 +163,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ template }) => {
             executions={executions}
             isExecutionsLoading={isExecutionsLoading}
             refetchTemplateExecutions={refetchTemplateExecutions}
+            onSelectExecution={() => (isMobile ? handleCloseSidebar() : null)}
           />
         )}
         {activeLink?.name === "feedback" && <Feedback />}
@@ -170,9 +171,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ template }) => {
         {activeLink?.name === "extension" && <Extension />}
         {activeLink?.name === "details" && <TemplateDetails template={template} />}
       </Drawer>
-      <Box
-        display={"flex"}
-        flexDirection={"column"}
+      <Stack
+        display={{ xs: "none", md: "flex" }}
         gap={1}
         sx={{
           p: "16px",
@@ -238,7 +238,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ template }) => {
             </ListItem>
           </Grid>
         ))}
-      </Box>
+      </Stack>
     </Box>
   );
 };

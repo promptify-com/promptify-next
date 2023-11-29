@@ -11,10 +11,11 @@ import { getAbbreviation } from "@/common/helpers";
 
 interface CardExecutionProps {
   execution: TemplatesExecutions;
+  onClick?: () => void;
   min?: boolean;
 }
 
-export const CardExecution: React.FC<CardExecutionProps> = ({ execution, min }) => {
+export const CardExecution: React.FC<CardExecutionProps> = ({ execution, min, onClick }) => {
   const dispatch = useDispatch();
   const [content, setContent] = useState<string>("");
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
@@ -33,6 +34,7 @@ export const CardExecution: React.FC<CardExecutionProps> = ({ execution, min }) 
 
   const handleClick = () => {
     dispatch(setSelectedExecution(execution));
+    if (onClick) onClick();
   };
 
   const saveExecution = async (e: React.MouseEvent<HTMLButtonElement>) => {

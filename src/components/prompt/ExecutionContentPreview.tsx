@@ -62,7 +62,10 @@ function ExecutionContentPreview({ prompts, execution }: Props) {
       p={{ xs: "20px", md: "20px 8px" }}
     >
       {promptContents.map(prompt => (
-        <Stack gap={2}>
+        <Stack
+          key={prompt.id}
+          gap={2}
+        >
           <Typography>
             Prompt #{prompt.order}, {prompt.engine.name}
           </Typography>
