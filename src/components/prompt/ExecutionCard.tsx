@@ -160,6 +160,7 @@ export const ExecutionCard: FC<Props> = ({ execution, promptsData, answers }) =>
                       ref={elementRefs[index]}
                       width={showPrompts ? "75%" : "100%"}
                       pr={{ md: "48px" }}
+                      pb={{ xs: 3, md: 0 }}
                       position={"relative"}
                     >
                       {isPrevItemImage && (
@@ -225,9 +226,9 @@ export const ExecutionCard: FC<Props> = ({ execution, promptsData, answers }) =>
                         <Stack
                           direction={"column"}
                           alignItems={"start"}
-                          position={{ md: "absolute" }}
-                          top={"0"}
-                          right={"-10px"}
+                          position={"absolute"}
+                          top={{ xs: "96%", md: "0" }}
+                          right={{ xs: "42%", md: "-10px" }}
                         >
                           <FeedbackThumbs execution={execution} />
                         </Stack>

@@ -47,7 +47,7 @@ export const FormParam: React.FC<GeneratorParamProps> = ({ param, paramValue, on
         <Box pl={"45px"}>
           <InputLabel
             sx={{
-              fontSize: { xs: 12, md: 14 },
+              fontSize: { xs: 12, md: 15 },
               fontWeight: 500,
               lineHeight: "21px",
               letterSpacing: "0.17px",
