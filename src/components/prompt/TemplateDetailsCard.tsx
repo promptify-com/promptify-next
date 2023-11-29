@@ -82,7 +82,7 @@ export const TemplateDetailsCard: React.FC<TemplateDetailsCardProps> = ({ templa
         >
           <Stack
             gap={1}
-            sx={{ wordBreak: "break-all" }}
+            sx={{ wordBreak: "break-word", hyphens: "auto" }}
           >
             <Typography
               fontSize={{ xs: 12, md: 14 }}

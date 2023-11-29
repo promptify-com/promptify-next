@@ -124,7 +124,7 @@ export const Display: React.FC<Props> = ({ templateData, close }) => {
                 transform: "translate(-50%,-50%)",
               }}
             >
-              No spark found
+              No work found
             </Typography>
           ) : (
             <Stack

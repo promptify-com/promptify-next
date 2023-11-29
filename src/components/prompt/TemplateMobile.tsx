@@ -30,7 +30,7 @@ export default function TemplateMobile({ template, setErrorMessage }: TemplateMo
 
   return (
     <Grid
-      mt={7}
+      mt={"58px"}
       container
       mx={"auto"}
       height={"calc(100svh - 56px)"}
@@ -54,6 +54,7 @@ export default function TemplateMobile({ template, setErrorMessage }: TemplateMo
     >
       <Grid
         height={"100%"}
+        width={"100%"}
         display={isChatFullScreen ? "block" : "none"}
       >
         <ClientOnly>
