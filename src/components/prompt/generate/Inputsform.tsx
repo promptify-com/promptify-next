@@ -83,6 +83,7 @@ function Inputsform({ inputs, answers, onChangeInput, onChangeParam, params, par
                       borderColor: "secondary.main",
                       color: "secondary.main",
                       p: "3px 12px",
+                      fontSize: { xs: 12, md: 14 },
                       ":hover": {
                         bgcolor: "action.hover",
                       },
@@ -147,7 +148,7 @@ function Inputsform({ inputs, answers, onChangeInput, onChangeParam, params, par
                   <Button
                     component="label"
                     variant="contained"
-                    sx={{ border: "1px solid", p: "3px 12px", fontSize: 14, fontWeight: 500 }}
+                    sx={{ border: "1px solid", p: "3px 12px", fontSize: { xs: 12, md: 14 }, fontWeight: 500 }}
                   >
                     {isFile ? value.name : "Upload file"}
                     <input

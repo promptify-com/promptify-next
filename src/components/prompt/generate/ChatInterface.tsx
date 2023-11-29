@@ -101,7 +101,7 @@ export const ChatInterface = ({
       <TemplateDetailsCard template={template} />
 
       <Stack
-        pb={"38px"}
+        pb={{ md: "38px" }}
         direction={"column"}
         gap={3}
       >

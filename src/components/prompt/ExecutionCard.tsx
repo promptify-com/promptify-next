@@ -122,177 +122,189 @@ export const ExecutionCard: FC<Props> = ({ execution, promptsData, answers }) =>
       ref={containerRef}
       gap={1}
       p={{ md: "16px" }}
+      direction={{ xs: "column-reverse", md: "column" }}
     >
-      {execution && "title" in execution && (
-        <Typography sx={{ fontSize: { xs: 22, md: 48 }, fontWeight: 400, color: "onSurface", py: "24px" }}>
-          {execution.title}
-        </Typography>
+      {!isGenerating && execution && "parameters" in execution && (
+        <Stack
+          mt={-3}
+          pb={2}
+          display={{ md: "none" }}
+        >
+          <FeedbackThumbs execution={execution} />
+        </Stack>
       )}
-      {execution &&
-        sortedPrompts?.map((exec, index) => {
-          const prevItem = sortedPrompts[index - 1];
-          const isPrevItemImage = prevItem && isImageOutput(prevItem?.content);
-          const nextItem = sortedPrompts[index + 1];
-          const isNextItemText = nextItem && !isImageOutput(nextItem?.content);
-          const prompt = promptsData.find(prompt => prompt.id === exec.prompt);
+      <Stack gap={1}>
+        {execution && "title" in execution && (
+          <Typography sx={{ fontSize: { xs: 22, md: 48 }, fontWeight: 400, color: "onSurface", py: "24px" }}>
+            {execution.title}
+          </Typography>
+        )}
+        {execution &&
+          sortedPrompts?.map((exec, index) => {
+            const prevItem = sortedPrompts[index - 1];
+            const isPrevItemImage = prevItem && isImageOutput(prevItem?.content);
+            const nextItem = sortedPrompts[index + 1];
+            const isNextItemText = nextItem && !isImageOutput(nextItem?.content);
+            const prompt = promptsData.find(prompt => prompt.id === exec.prompt);
 
-          if (prompt?.show_output || sparkHashQueryParam) {
-            return (
-              <Stack
-                key={index}
-                gap={1}
-                sx={{ pb: "24px" }}
-              >
-                {prompt && (
-                  <Subtitle sx={{ fontSize: 24, fontWeight: 400, color: "onSurface" }}>
-                    {!isImageOutput(exec.content) && prompt?.title}
-                    {exec.errors && executionError(exec.errors)}
-                  </Subtitle>
-                )}
-                {/* is Text Output */}
-                {!isImageOutput(exec.content) && (
-                  <Box
-                    display={"flex"}
-                    alignItems={"start"}
-                    gap={"16px"}
-                  >
-                    <Stack
-                      ref={elementRefs[index]}
-                      width={showPrompts ? "75%" : "100%"}
-                      pr={{ md: "48px" }}
-                      pb={{ xs: 3, md: 0 }}
-                      position={"relative"}
+            if (prompt?.show_output || sparkHashQueryParam) {
+              return (
+                <Stack
+                  key={index}
+                  gap={1}
+                  sx={{ pb: "24px" }}
+                >
+                  {prompt && (
+                    <Subtitle sx={{ fontSize: 24, fontWeight: 400, color: "onSurface" }}>
+                      {!isImageOutput(exec.content) && prompt?.title}
+                      {exec.errors && executionError(exec.errors)}
+                    </Subtitle>
+                  )}
+                  {/* is Text Output */}
+                  {!isImageOutput(exec.content) && (
+                    <Box
+                      display={"flex"}
+                      alignItems={"start"}
+                      gap={"16px"}
                     >
-                      {isPrevItemImage && (
+                      <Stack
+                        ref={elementRefs[index]}
+                        width={showPrompts ? "75%" : "100%"}
+                        pr={{ md: "48px" }}
+                        position={"relative"}
+                      >
+                        {isPrevItemImage && (
+                          <Box
+                            component={"img"}
+                            alt={"book cover"}
+                            src={prevItem.content}
+                            onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                              (e.target as HTMLImageElement).src = require("@/assets/images/default-thumbnail.jpg");
+                            }}
+                            sx={{
+                              borderRadius: "8px",
+                              width: "40%",
+                              objectFit: "cover",
+                              float: "right",
+                              ml: "20px",
+                              mb: "10px",
+                            }}
+                          />
+                        )}
                         <Box
-                          component={"img"}
-                          alt={"book cover"}
-                          src={prevItem.content}
-                          onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-                            (e.target as HTMLImageElement).src = require("@/assets/images/default-thumbnail.jpg");
-                          }}
                           sx={{
-                            borderRadius: "8px",
-                            width: "40%",
-                            objectFit: "cover",
-                            float: "right",
-                            ml: "20px",
-                            mb: "10px",
+                            fontSize: 15,
+                            fontWeight: 400,
+                            color: "onSurface",
+                            wordWrap: "break-word",
+                            textAlign: "justify",
+                            float: "none",
+                            ".highlight": {
+                              backgroundColor: "yellow",
+                              color: "black",
+                            },
+                            pre: {
+                              m: "10px 0",
+                              borderRadius: "8px",
+                              overflow: "hidden",
+                              code: {
+                                borderRadius: 0,
+                                m: 0,
+                              },
+                            },
+                            code: {
+                              display: "block",
+                              bgcolor: "#282a35",
+                              color: "common.white",
+                              borderRadius: "8px",
+                              p: "16px 24px",
+                              mb: "10px",
+                              overflow: "auto",
+                            },
+                            ".language-label": {
+                              p: "8px 24px",
+                              bgcolor: "#4d5562",
+                              color: "#ffffff",
+                              fontSize: 13,
+                            },
+                          }}
+                          dangerouslySetInnerHTML={{
+                            __html: sanitizeHTML(exec.content),
                           }}
                         />
-                      )}
-                      <Box
-                        sx={{
-                          fontSize: 15,
-                          fontWeight: 400,
-                          color: "onSurface",
-                          wordWrap: "break-word",
-                          textAlign: "justify",
-                          float: "none",
-                          ".highlight": {
-                            backgroundColor: "yellow",
-                            color: "black",
-                          },
-                          pre: {
-                            m: "10px 0",
-                            borderRadius: "8px",
-                            overflow: "hidden",
-                            code: {
-                              borderRadius: 0,
-                              m: 0,
-                            },
-                          },
-                          code: {
-                            display: "block",
-                            bgcolor: "#282a35",
-                            color: "common.white",
-                            borderRadius: "8px",
-                            p: "16px 24px",
-                            mb: "10px",
-                            overflow: "auto",
-                          },
-                          ".language-label": {
-                            p: "8px 24px",
-                            bgcolor: "#4d5562",
-                            color: "#ffffff",
-                            fontSize: 13,
-                          },
-                        }}
-                        dangerouslySetInnerHTML={{
-                          __html: sanitizeHTML(exec.content),
-                        }}
-                      />
-                      {index === 0 && !isGenerating && execution && "parameters" in execution && (
-                        <Stack
-                          direction={"column"}
-                          alignItems={"start"}
-                          position={"absolute"}
-                          top={{ xs: "96%", md: "0" }}
-                          right={{ xs: "42%", md: "-10px" }}
-                        >
-                          <FeedbackThumbs execution={execution} />
-                        </Stack>
-                      )}
-                    </Stack>
+                        {index === 0 && !isGenerating && execution && "parameters" in execution && (
+                          <Stack
+                            direction={"column"}
+                            alignItems={"start"}
+                            display={{ xs: "none", md: "flex" }}
+                            position={"absolute"}
+                            top={"0"}
+                            right={"-10px"}
+                          >
+                            <FeedbackThumbs execution={execution} />
+                          </Stack>
+                        )}
+                      </Stack>
 
-                    <Stack
-                      mt={-7}
-                      py={2}
-                      flex={1}
-                      pl={"10px"}
-                      borderLeft={showPrompts ? "2px solid #ECECF4" : "none"}
-                      maxHeight={elementHeights[index]}
-                      sx={{
-                        width: showPrompts ? "35%" : "0%",
-                        overflow: "auto",
-                        animation: `${showPrompts ? expandAnimation : collapseAnimation} 300ms forwards`,
-                        "&::-webkit-scrollbar": {
-                          width: "6px",
-                          p: 1,
-                          bgcolor: "surface.1",
-                        },
-                        "&::-webkit-scrollbar-track": {
-                          webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
-                        },
-                        "&::-webkit-scrollbar-thumb": {
-                          bgcolor: "surface.1",
-                          outline: "1px solid surface.1",
-                          borderRadius: "10px",
-                        },
+                      <Stack
+                        mt={-7}
+                        py={2}
+                        flex={1}
+                        pl={"10px"}
+                        borderLeft={showPrompts ? "2px solid #ECECF4" : "none"}
+                        maxHeight={elementHeights[index]}
+                        sx={{
+                          width: showPrompts ? "35%" : "0%",
+                          overflow: "auto",
+                          animation: `${showPrompts ? expandAnimation : collapseAnimation} 300ms forwards`,
+                          "&::-webkit-scrollbar": {
+                            width: "6px",
+                            p: 1,
+                            bgcolor: "surface.1",
+                          },
+                          "&::-webkit-scrollbar-track": {
+                            webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
+                          },
+                          "&::-webkit-scrollbar-thumb": {
+                            bgcolor: "surface.1",
+                            outline: "1px solid surface.1",
+                            borderRadius: "10px",
+                          },
+                        }}
+                      >
+                        <PromptContent
+                          id={index + 1}
+                          prompt={prompt!}
+                          answers={answers}
+                          execution={execution as TemplatesExecutions}
+                        />
+                      </Stack>
+                    </Box>
+                  )}
+                  {/* is Image Output and Next item is not text */}
+                  {isImageOutput(exec.content) && !isNextItemText && (
+                    <Box
+                      component={"img"}
+                      alt={"book cover"}
+                      src={exec.content}
+                      onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                        (e.target as HTMLImageElement).src = require("@/assets/images/default-thumbnail.jpg");
                       }}
-                    >
-                      <PromptContent
-                        id={index + 1}
-                        prompt={prompt!}
-                        answers={answers}
-                        execution={execution as TemplatesExecutions}
-                      />
-                    </Stack>
-                  </Box>
-                )}
-                {/* is Image Output and Next item is not text */}
-                {isImageOutput(exec.content) && !isNextItemText && (
-                  <Box
-                    component={"img"}
-                    alt={"book cover"}
-                    src={exec.content}
-                    onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-                      (e.target as HTMLImageElement).src = require("@/assets/images/default-thumbnail.jpg");
-                    }}
-                    sx={{
-                      borderRadius: "8px",
-                      width: "40%",
-                      objectFit: "cover",
-                      float: "right",
-                      ml: "20px",
-                      mb: "10px",
-                    }}
-                  />
-                )}
-              </Stack>
-            );
-          }
-        })}
+                      sx={{
+                        borderRadius: "8px",
+                        width: "40%",
+                        objectFit: "cover",
+                        float: "right",
+                        ml: "20px",
+                        mb: "10px",
+                      }}
+                    />
+                  )}
+                </Stack>
+              );
+            }
+          })}
+      </Stack>
     </Stack>
   );
 };
