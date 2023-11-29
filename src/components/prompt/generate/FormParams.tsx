@@ -36,41 +36,58 @@ export const FormParam: React.FC<GeneratorParamProps> = ({ param, paramValue, on
       gap={1}
       borderBottom={"1px solid #ECECF4"}
     >
-      <Box
+      <Stack
         flex={1}
-        pl={"45px"}
+        direction={"row"}
+        alignItems={"start"}
+        gap={"8px"}
+        width={{ xs: "100%", md: "auto" }}
+        justifyContent={"space-between"}
       >
-        <InputLabel
+        <Box pl={"45px"}>
+          <InputLabel
+            sx={{
+              fontSize: { xs: 12, md: 14 },
+              fontWeight: 500,
+              lineHeight: "21px",
+              letterSpacing: "0.17px",
+              color: "#375CA9",
+              overflow: "visible",
+            }}
+          >
+            {param.parameter.name}:
+          </InputLabel>
+          <Typography
+            component={"span"}
+            sx={{
+              color: "onSurface",
+              fontSize: { xs: 12, md: 13 },
+              fontWeight: 400,
+              lineHeight: "18.85px",
+            }}
+          >
+            {activeDescription?.description}
+          </Typography>
+        </Box>
+        <IconButton
           sx={{
-            fontSize: 14,
-            fontWeight: 500,
-            lineHeight: "21px",
-            letterSpacing: "0.17px",
-            color: "#375CA9",
-            overflow: "visible",
+            opacity: 0.3,
+            border: "none",
+            display: { xs: "flex", md: "none" },
           }}
         >
-          {param.parameter.name}:
-        </InputLabel>
-        <Typography
-          component={"span"}
-          sx={{
-            color: "onSurface",
-            fontSize: 13,
-            fontWeight: 400,
-            lineHeight: "18.85px",
-          }}
-        >
-          {activeDescription?.description}
-        </Typography>
-      </Box>
+          <HelpOutline />
+        </IconButton>
+      </Stack>
+
       <Slider
         disabled={!param.is_editable || isGenerating}
         sx={{
           height: "2px",
-          width: "30%",
-          minWidth: "300px",
+          width: { xs: "70%", md: "30%" },
+          minWidth: { md: "300px" },
           flexShrink: 0,
+          ml: { xs: "45px", md: "0" },
           color: "#375CA9",
           "& .MuiSlider-thumb": {
             height: 12,
@@ -104,20 +121,16 @@ export const FormParam: React.FC<GeneratorParamProps> = ({ param, paramValue, on
         max={Math.max(...values)}
         onChange={(e: any) => handleScoreChange(e.target.value as number)}
       />
-      <Stack
-        direction={"row"}
-        alignItems={"center"}
-        gap={"8px"}
+
+      <IconButton
+        sx={{
+          opacity: 0.3,
+          border: "none",
+          display: { xs: "none", md: "flex" },
+        }}
       >
-        <IconButton
-          sx={{
-            opacity: 0.3,
-            border: "none",
-          }}
-        >
-          <HelpOutline />
-        </IconButton>
-      </Stack>
+        <HelpOutline />
+      </IconButton>
     </Stack>
   );
 };

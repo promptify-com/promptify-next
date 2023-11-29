@@ -92,7 +92,7 @@ export const AccordionMessage = ({
         >
           <Stack>
             <Typography
-              width={{ xs: "284px", sm: "auto" }}
+              width={{ xs: "70%", sm: "auto" }}
               borderRadius={"8px"}
               bgcolor={"#375CA9"}
               p={"10px 8px 16px 16px"}

@@ -55,7 +55,7 @@ function Inputsform({ inputs, answers, onChangeInput, onChangeParam, params, par
             />
             <InputLabel
               sx={{
-                fontSize: 15,
+                fontSize: { xs: 12, md: 15 },
                 fontWeight: 500,
                 color: "primary.main",
               }}
@@ -179,7 +179,7 @@ function Inputsform({ inputs, answers, onChangeInput, onChangeParam, params, par
                     ".MuiInputBase-input": {
                       p: 0,
                       color: "onSurface",
-                      fontSize: 14,
+                      fontSize: { xs: 12, md: 14 },
                       fontWeight: 400,
                       "&::placeholder": {
                         color: "text.secondary",
@@ -215,7 +215,7 @@ function Inputsform({ inputs, answers, onChangeInput, onChangeParam, params, par
               {input.required && (
                 <Typography
                   sx={{
-                    fontSize: 15,
+                    fontSize: { xs: 12, md: 15 },
                     fontWeight: 400,
                     lineHeight: "100%",
                     opacity: 0.3,
