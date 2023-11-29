@@ -1,4 +1,4 @@
-import { useEffect, type Dispatch, type SetStateAction } from "react";
+import { useEffect, type Dispatch, type SetStateAction, Fragment } from "react";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
@@ -132,7 +132,7 @@ export default function TemplateDesktop({ template, setErrorMessage }: TemplateD
         display={{ xs: "flex", md: "none" }}
       >
         {ToolbarItems.map(link => (
-          <>
+          <Fragment key={link.name}>
             {executions?.length && link.name === "executions" ? (
               <Badge
                 badgeContent={executions.length}
@@ -165,7 +165,7 @@ export default function TemplateDesktop({ template, setErrorMessage }: TemplateD
                 {link.title}
               </Button>
             )}
-          </>
+          </Fragment>
         ))}
       </Stack>
       <Grid
