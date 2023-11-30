@@ -3,9 +3,7 @@ import { CardExecutionPlaceholder } from "@/components/placeholders/CardExecutio
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { setGeneratedExecution, setSelectedExecution, setSparkHashQueryParam } from "@/core/store/executionsSlice";
 import { useAppSelector } from "@/hooks/useStore";
-import { theme } from "@/theme";
-import { CloudQueue } from "@mui/icons-material";
-import { Box, Stack, Tab, Tabs, Typography, alpha } from "@mui/material";
+import { Box, Stack, Tab, Tabs, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 
@@ -26,12 +24,6 @@ const CustomTabPanel = (props: TabPanelProps) => {
       {value === index && <React.Fragment>{children}</React.Fragment>}
     </Box>
   );
-};
-const a11yProps = (index: number) => {
-  return {
-    id: `simple-tab-${index}`,
-    "aria-controls": `simple-tabpanel-${index}`,
-  };
 };
 
 interface ExecutionsProps {
@@ -114,20 +106,15 @@ export const Executions: React.FC<ExecutionsProps> = ({
             onChange={changeTab}
             textColor="primary"
             indicatorColor="primary"
-            variant="fullWidth"
             sx={{ position: "sticky", top: 67, zIndex: 1, bgcolor: "surface.1" }}
           >
             <Tab
               label="Saved"
-              {...a11yProps(0)}
-              icon={<CloudQueue />}
-              iconPosition="start"
-              sx={{ ...tabStyle, color: `${alpha(theme.palette.onSurface, 0.4)}` }}
+              sx={{ fontSize: 13 }}
             />
             <Tab
               label="Unsaved"
-              {...a11yProps(1)}
-              sx={{ ...tabStyle, color: `${alpha(theme.palette.onSurface, 0.4)}` }}
+              sx={{ fontSize: 13 }}
             />
           </Tabs>
           <CustomTabPanel

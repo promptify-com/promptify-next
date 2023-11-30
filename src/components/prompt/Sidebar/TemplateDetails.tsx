@@ -103,10 +103,10 @@ const titleStyle = {
   fontSize: 12,
   fontWeight: 500,
   textTransform: "uppercase",
-  color: "onSurface",
+  color: "primary.main",
 };
 const detailsStyle = {
-  fontSize: 14,
+  fontSize: { xs: 13, md: 14 },
   fontWeight: 400,
   color: "grey.600",
   span: {
