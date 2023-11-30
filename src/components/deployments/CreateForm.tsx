@@ -17,6 +17,7 @@ import Logs from "./Logs";
 import DataLoading from "./DataLoading";
 import SearchableInputField from "./SearchableInputFields";
 import { useGetRegionsQuery } from "@/core/api/deployments";
+import TextField from "@mui/material/TextField";
 
 interface CreateFormProps {
   onClose: () => void;
@@ -33,10 +34,11 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
       instance: "",
       llm: "",
       model: "",
+      name: "",
     },
     onSubmit: handleCreateDeployment,
   });
-  const { region, provider, instance, llm, model } = formik.values;
+  const { region, provider, llm, name } = formik.values;
   const isProviderEmpty = provider === "";
   const { data: regions, isFetching: isRegionFetching } = useGetRegionsQuery(
     { provider: provider.toString() },
@@ -54,10 +56,20 @@ const CreateForm = ({ onClose }: CreateFormProps) => {
         gap={2}
       >
         <FormControl fullWidth>
+          <TextField
+            label="Model name"
+            name="name"
+            value={name}
+            onChange={event => {
+              formik.setFieldValue("name", event.target.value);
+            }}
+          />
+        </FormControl>
+        <FormControl fullWidth>
           <InputLabel> Select Cloud Provider</InputLabel>
           <Select
             value={provider}
-            label="Select   Cloud Provider"
+            label="Select Cloud Provider"
             autoWidth
             disabled={isDeploying}
             MenuProps={selectMenuProps}

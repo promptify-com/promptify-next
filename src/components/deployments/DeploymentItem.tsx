@@ -10,8 +10,8 @@ import type { Deployment } from "@/common/types/deployments";
 import { StatusChip } from "./StatusChip";
 import InstanceLabel from "./InstanceLabel";
 import useTimestampConverter from "@/hooks/useTimestampConverter";
-import { isDesktopViewPort } from "@/common/helpers";
 import { ExecuteDeploymentButton } from "./ExecuteDeploymentButton";
+import { HelpOutline } from "@mui/icons-material";
 
 interface DeploymentItem {
   item: Deployment;
@@ -20,7 +20,6 @@ interface DeploymentItem {
 
 function DeploymentItem({ item, onDelete }: DeploymentItem) {
   const { convertedTimestamp } = useTimestampConverter();
-  const isDesktop = isDesktopViewPort();
 
   return (
     <Grid
@@ -28,7 +27,7 @@ function DeploymentItem({ item, onDelete }: DeploymentItem) {
       my={{ xs: 1, md: 0 }}
       alignItems={"center"}
       sx={{
-        p: { md: "16px" },
+        p: { md: "16px 5px" },
         "&:hover": {
           bgcolor: "action.hover",
         },
@@ -44,11 +43,36 @@ function DeploymentItem({ item, onDelete }: DeploymentItem) {
       </Grid>
       <Grid
         item
+        xs={9.5}
+        md={2.5}
+      >
+        <Typography> {item.name} </Typography>
+      </Grid>
+      <Grid
+        item
+        xs={12}
+        md={1.5}
+        textTransform={"capitalize"}
+      >
+        <Typography>
+          {" "}
+          {item.user.first_name ? `${item.user.first_name} ${item.user.last_name}` : item.user.username}{" "}
+        </Typography>
+      </Grid>
+      <Grid
+        item
+        xs={6}
+        md={1.5}
+      >
+        <Typography> {item.instance.region.name} </Typography>
+      </Grid>
+      <Grid
+        item
         display={{ xs: "flex", md: "none" }}
         justifyContent={"end"}
         alignItems={"center"}
-        md={2}
-        xs={4}
+        md={1}
+        xs={6}
       >
         <StatusChip
           size="small"
@@ -58,17 +82,37 @@ function DeploymentItem({ item, onDelete }: DeploymentItem) {
       </Grid>
       <Grid
         item
+        display={{ xs: "flex", md: "none" }}
         xs={12}
-        md={4}
       >
         <InstanceLabel instance={item.instance} />
       </Grid>
       <Grid
         item
         display={{ xs: "none", md: "flex" }}
+        alignItems={"center"}
+        md={1.5}
+      >
+        {item.instance.instance_type}{" "}
+        <Tooltip
+          TransitionComponent={Zoom}
+          title={`(cost ${item.instance.cost}/h, ${item.instance.vcpus}vcpus, ${item.instance.num_gpus}gpus, ${item.instance.memory}memory)`}
+        >
+          <HelpOutline
+            sx={{
+              fontSize: 18,
+              cursor: "pointer",
+              color: "#375CA9",
+            }}
+          />
+        </Tooltip>
+      </Grid>
+      <Grid
+        item
+        display={{ xs: "none", md: "flex" }}
         justifyContent={"center"}
         alignItems={"center"}
-        md={2}
+        md={1}
       >
         <StatusChip
           size="small"
@@ -83,7 +127,6 @@ function DeploymentItem({ item, onDelete }: DeploymentItem) {
             <ErrorOutline
               sx={{
                 fontSize: 18,
-                ml: 1,
                 cursor: "pointer",
                 color: "#ef4444",
               }}
@@ -94,10 +137,10 @@ function DeploymentItem({ item, onDelete }: DeploymentItem) {
       <Grid
         item
         display={"flex"}
-        justifyContent={isDesktop ? "center" : "start"}
+        justifyContent={{ xs: "start", md: "center" }}
         pr={"13px"}
-        md={2}
-        {...(!isDesktop && { width: "50%" })}
+        md={1}
+        width={{ xs: "50%" }}
       >
         <Typography
           sx={{
@@ -112,15 +155,16 @@ function DeploymentItem({ item, onDelete }: DeploymentItem) {
         item
         display={"flex"}
         justifyContent={"end"}
-        md={2}
-        {...(isDesktop ? { pr: "0px" } : { width: "50%" })}
+        md={1}
+        width={{ xs: "50%" }}
+        pr={{ md: "0px" }}
       >
         <Typography
           display={"flex"}
           alignItems={"center"}
           sx={{
             fontSize: 12,
-            opacity: isDesktop ? 0.4 : 1,
+            opacity: { md: 0.4, xs: 1 },
             "&:hover": {
               opacity: 1,
             },
@@ -140,7 +184,7 @@ function DeploymentItem({ item, onDelete }: DeploymentItem) {
             >
               <DeleteRounded
                 sx={{
-                  opacity: isDesktop ? 0.25 : 1,
+                  opacity: { md: 0.25, xs: 1 },
                   fontSize: "16px",
                   "&:hover": {
                     opacity: 1,
@@ -149,7 +193,12 @@ function DeploymentItem({ item, onDelete }: DeploymentItem) {
               />
             </IconButton>
           </Tooltip>
-          {item.status === "done" && <ExecuteDeploymentButton item={item} />}
+          {item.status === "done" && (
+            <ExecuteDeploymentButton
+              deploymentId={item.id}
+              modelName={item.model.name}
+            />
+          )}
         </Typography>
       </Grid>
     </Grid>

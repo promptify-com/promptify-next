@@ -1,13 +1,16 @@
+import { UserPartial } from "@/core/api/dto/user";
+
 export type DeploymentStatus = "done" | "stopped" | "deploying" | "failed" | "created";
 
 export interface Deployment {
   id: number;
-  user: number;
+  user: UserPartial;
   failure_reason: string | null;
   model: Model;
   instance: Instance;
   status: DeploymentStatus;
   created_at: string;
+  name: string;
 }
 
 export interface FormikCreateDeployment {
@@ -16,13 +19,11 @@ export interface FormikCreateDeployment {
   region: string;
   instance: string;
   llm: string;
+  name: string;
   model: string;
 }
 
-export interface CreateDeployment {
-  model: string;
-  instance: string;
-}
+export type CreateDeployment = Pick<FormikCreateDeployment, "instance" | "model" | "name">;
 
 export interface Region {
   id: number;
@@ -40,7 +41,7 @@ export interface Instance {
   num_gpus: number;
   memory: number;
   cost: number;
-  region: number;
+  region: Pick<Region, "name">;
 }
 
 export interface Model {
