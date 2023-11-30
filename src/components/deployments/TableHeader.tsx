@@ -6,7 +6,7 @@ function TableHeader() {
     <Grid
       container
       display={{ xs: "none", md: "flex" }}
-      p={"16px"}
+      p={"16px 0"}
     >
       <Grid
         item
@@ -22,7 +22,43 @@ function TableHeader() {
       </Grid>
       <Grid
         item
-        md={4}
+        md={2.5}
+      >
+        <Typography
+          sx={{
+            opacity: 0.5,
+          }}
+        >
+          Name
+        </Typography>
+      </Grid>
+      <Grid
+        item
+        md={1.5}
+      >
+        <Typography
+          sx={{
+            opacity: 0.5,
+          }}
+        >
+          Created by
+        </Typography>
+      </Grid>
+      <Grid
+        item
+        md={1.5}
+      >
+        <Typography
+          sx={{
+            opacity: 0.5,
+          }}
+        >
+          Region
+        </Typography>
+      </Grid>
+      <Grid
+        item
+        md={1.5}
       >
         <Typography
           sx={{
@@ -37,7 +73,7 @@ function TableHeader() {
         justifyContent={"center"}
         alignItems={"center"}
         item
-        md={2}
+        md={1}
         sx={{
           opacity: 0.5,
         }}
@@ -49,7 +85,7 @@ function TableHeader() {
         justifyContent={"center"}
         alignItems={"center"}
         item
-        md={2}
+        md={1}
         sx={{
           opacity: 0.5,
         }}
@@ -60,7 +96,7 @@ function TableHeader() {
         item
         display={"flex"}
         justifyContent={"end"}
-        md={2}
+        md={1}
       >
         <Typography
           sx={{
