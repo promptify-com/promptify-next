@@ -197,6 +197,14 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
     }
   }, [isGenerating, generatedExecution]);
 
+  useEffect(() => {
+    if (allRequiredInputsAnswered(_inputs, answers)) {
+      setShowGenerateButton(true);
+    } else {
+      setShowGenerateButton(false);
+    }
+  }, [answers]);
+
   const selectGeneratedExecution = async () => {
     if (generatedExecution?.id) {
       const _newExecution = await getExecutionById(generatedExecution.id);
@@ -317,8 +325,10 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
       setAnswers(newAnswers);
       setIsValidatingAnswer(false);
 
-      const isReady = allRequiredInputsAnswered(_inputs, newAnswers) ? " We are ready to create a new document." : "";
-      messageAnswersForm(`Ok!${isReady} I have prepared the incoming parameters, please check!`);
+      const isReady = allRequiredInputsAnswered(_inputs, newAnswers)
+        ? " Let’s imagine something like this! Prepared request for you"
+        : "";
+      messageAnswersForm(`Ok!${isReady}, please check input information and we are ready to start!`);
     }
   };
 
