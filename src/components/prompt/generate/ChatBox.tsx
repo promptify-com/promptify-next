@@ -152,6 +152,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
         return input;
       });
     }
+    inputs.sort((a, b) => +b.required - +a.required);
 
     initialMessages({ inputs });
 
