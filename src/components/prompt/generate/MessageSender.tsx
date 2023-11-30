@@ -1,7 +1,8 @@
-import React, { useState } from "react";
-import { InputBase, Box } from "@mui/material";
-import { ArrowUpward, KeyboardCommandKey, Send } from "@mui/icons-material";
-import { theme } from "@/theme";
+import { useState } from "react";
+import ArrowUpward from "@mui/icons-material/ArrowUpward";
+import KeyboardCommandKey from "@mui/icons-material/KeyboardCommandKey";
+import Box from "@mui/material/Box";
+import InputBase from "@mui/material/InputBase";
 
 interface MessageSenderProps {
   onSubmit: (value: string) => void;
@@ -9,7 +10,7 @@ interface MessageSenderProps {
   placeholder?: string;
 }
 
-const MessageSender: React.FC<MessageSenderProps> = ({ onSubmit, disabled, placeholder = "Chat with Promptify" }) => {
+function MessageSender({ onSubmit, disabled, placeholder = "Chat with Promptify" }: MessageSenderProps) {
   const [localValue, setLocalValue] = useState("");
   const [isFocused, setIsFocused] = useState(false);
 
@@ -94,7 +95,7 @@ const MessageSender: React.FC<MessageSenderProps> = ({ onSubmit, disabled, place
           justifyContent: "center",
           alignItems: "center",
           borderRadius: "99px",
-          bgcolor: !hasNoValue ? undefined : theme.palette.primary.main,
+          bgcolor: !hasNoValue ? undefined : "primary.main",
           color: { xs: !hasNoValue ? "#8E8E94" : "white", md: "white" },
         }}
       >
@@ -107,6 +108,6 @@ const MessageSender: React.FC<MessageSenderProps> = ({ onSubmit, disabled, place
       </Box>
     </Box>
   );
-};
+}
 
 export default MessageSender;

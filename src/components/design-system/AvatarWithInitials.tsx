@@ -1,8 +1,6 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 
-import { theme } from "@/theme";
-
 function AvatarWithInitials({ title }: { title: string }) {
   const getInitials = () => {
     const words = title.split(" ");
@@ -20,7 +18,7 @@ function AvatarWithInitials({ title }: { title: string }) {
         justifyContent: "center",
         width: 40,
         height: 40,
-        bgcolor: theme.palette.primary.main,
+        bgcolor: "primary.main",
         borderRadius: "8px",
       }}
     >

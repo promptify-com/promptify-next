@@ -1,9 +1,14 @@
-import React from "react";
-import { Box, IconButton, InputLabel, Slider, Stack, Typography } from "@mui/material";
-import { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
+import Stack from "@mui/material/Stack";
+import Box from "@mui/material/Box";
+import InputLabel from "@mui/material/InputLabel";
+import Typography from "@mui/material/Typography";
+import IconButton from "@mui/material/IconButton";
+import Slider from "@mui/material/Slider";
+import HelpOutline from "@mui/icons-material/HelpOutline";
+
 import { useAppSelector } from "@/hooks/useStore";
-import { HelpOutline } from "@mui/icons-material";
-import { theme } from "@/theme";
+import type { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
+import Tooltip from "@mui/material/Tooltip";
 
 interface GeneratorParamProps {
   param: PromptParams;
@@ -11,7 +16,7 @@ interface GeneratorParamProps {
   onChange: (value: number, param: PromptParams) => void;
 }
 
-export const FormParam: React.FC<GeneratorParamProps> = ({ param, paramValue, onChange }) => {
+export default function FormParam({ param, paramValue, onChange }: GeneratorParamProps) {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
 
   const handleScoreChange = (score: number) => {
@@ -52,7 +57,7 @@ export const FormParam: React.FC<GeneratorParamProps> = ({ param, paramValue, on
               fontWeight: 500,
               lineHeight: "21px",
               letterSpacing: "0.17px",
-              color: theme.palette.primary.main,
+              color: "primary.main",
               overflow: "visible",
             }}
           >
@@ -89,7 +94,7 @@ export const FormParam: React.FC<GeneratorParamProps> = ({ param, paramValue, on
           minWidth: { md: "300px" },
           flexShrink: 0,
           ml: { xs: "45px", md: "0" },
-          color: theme.palette.primary.main,
+          color: "primary.main",
           "& .MuiSlider-thumb": {
             height: 12,
             width: 12,
@@ -104,12 +109,12 @@ export const FormParam: React.FC<GeneratorParamProps> = ({ param, paramValue, on
               transform: "translate(-50%, -50%)",
               width: 16,
               height: 16,
-              bgcolor: theme.palette.primary.main,
+              bgcolor: "primary.main",
               zIndex: -1,
             },
           },
           "& .MuiSlider-rail": {
-            bgcolor: theme.palette.primary.main,
+            bgcolor: "primary.main",
           },
           "& .MuiSlider-track": {
             height: "1px",
@@ -123,15 +128,19 @@ export const FormParam: React.FC<GeneratorParamProps> = ({ param, paramValue, on
         onChange={(e: any) => handleScoreChange(e.target.value as number)}
       />
 
-      <IconButton
-        sx={{
-          opacity: 0.3,
-          border: "none",
-          display: { xs: "none", md: "flex" },
-        }}
+      <Tooltip
+        arrow
+        title={"Parameter"}
       >
-        <HelpOutline />
-      </IconButton>
+        <IconButton
+          sx={{
+            opacity: 0.3,
+            border: "none",
+          }}
+        >
+          <HelpOutline />
+        </IconButton>
+      </Tooltip>
     </Stack>
   );
-};
+}

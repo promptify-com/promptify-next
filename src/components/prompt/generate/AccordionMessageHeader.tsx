@@ -175,7 +175,7 @@ function AccordionMessageHeader({
                   borderRadius: "8px",
                   border: `1px dashed ${theme.palette.primary.main}`,
                   bgcolor: "#375CA91A",
-                  color: theme.palette.primary.main,
+                  color: "primary.main",
                 }}
               >
                 <Add

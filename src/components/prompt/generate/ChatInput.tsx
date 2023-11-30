@@ -2,14 +2,13 @@ import { useRef } from "react";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+import Add from "@mui/icons-material/Add";
+import Tooltip from "@mui/material/Tooltip";
 
 import MessageSender from "./MessageSender";
 import { ProgressLogo } from "@/components/common/ProgressLogo";
-import Box from "@mui/material/Box";
-import Add from "@mui/icons-material/Add";
 import { useAppSelector } from "@/hooks/useStore";
-import { Tooltip } from "@mui/material";
-import { theme } from "@/theme";
 
 interface ChatInputProps {
   onSubmit: (value: string) => void;
@@ -83,11 +82,11 @@ export const ChatInput = ({ onSubmit, disabled, isValidating, disabledButton, ad
                 alignItems: "center",
                 borderRadius: "8px",
                 bgcolor: "#375CA91A",
-                color: theme.palette.primary.main,
+                color: "primary.main",
                 transition: "all 0.3s ease-in-out",
 
                 ":hover": {
-                  bgcolor: theme.palette.primary.main,
+                  bgcolor: "primary.main",
                   color: "white",
                   borderRadius: "99px",
                 },

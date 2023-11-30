@@ -1,6 +1,6 @@
 import ExtensionSettingsIcon from "@/assets/icons/ExtensionSettingsIcon";
 import NoteStackIcon from "@/assets/icons/NoteStackIcon";
-import type { Link, LinkName } from "@/common/types/TemplateToolbar";
+import type { Link } from "@/common/types/TemplateToolbar";
 import { openToolbarDrawer, setActiveToolbarLink } from "@/core/store/templatesSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { theme } from "@/theme";
@@ -71,7 +71,7 @@ function ToolbarItem({ item, onClick, executionsLength }: Props) {
               sx={{
                 minWidth: 0,
                 mr: "auto",
-                color: isSelected || item.name === "api" ? theme.palette.primary.main : "onSurface",
+                color: isSelected || item.name === "api" ? "primary.main" : "onSurface",
                 justifyContent: "center",
               }}
             >

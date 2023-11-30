@@ -1,11 +1,14 @@
 import { useEffect, type Dispatch, type SetStateAction, Fragment } from "react";
 import Grid from "@mui/material/Grid";
+import Icon from "@mui/material/Icon";
 import Stack from "@mui/material/Stack";
+import Button from "@mui/material/Button";
+import Badge from "@mui/material/Badge";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
 
 import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import ClientOnly from "../base/ClientOnly";
-import ChatBox from "./generate";
+import GeneratorChat from "./generate";
 import Header from "./Header";
 import TemplateToolbar from "./Toolbar";
 import ToolbarDrawer from "./Toolbar/ToolbarDrawer";
@@ -14,12 +17,9 @@ import { openToolbarDrawer, setAccordionChatMode, setActiveToolbarLink } from "@
 import { setGeneratedExecution, setSelectedExecution, setSparkHashQueryParam } from "@/core/store/executionsSlice";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
-import Button from "@mui/material/Button";
 import NoteStackIcon from "@/assets/icons/NoteStackIcon";
 import { InfoOutlined } from "@mui/icons-material";
-import Badge from "@mui/material/Badge";
 import { Link } from "@/common/types/TemplateToolbar";
-import { Icon } from "@mui/material";
 import { theme } from "@/theme";
 
 interface TemplateDesktopProps {
@@ -220,7 +220,7 @@ export default function TemplateLayout({ template, setErrorMessage }: TemplateDe
           }}
         >
           <ClientOnly>
-            <ChatBox
+            <GeneratorChat
               onError={setErrorMessage}
               template={template}
             />

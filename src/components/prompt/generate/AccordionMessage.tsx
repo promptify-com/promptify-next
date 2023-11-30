@@ -8,12 +8,11 @@ import Fade from "@mui/material/Fade";
 import { useAppSelector } from "@/hooks/useStore";
 import { IAnswer } from "@/common/types/chat";
 import { Display } from "../Display";
-import Inputsform from "./Inputsform";
+import Form from "./Form";
 import AccordionMessageHeader from "./AccordionMessageHeader";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
-import { theme } from "@/theme";
 
 interface Props {
   inputs: IPromptInput[];
@@ -95,7 +94,7 @@ export const AccordionMessage = ({
             <Typography
               width={{ xs: "70%", sm: "auto" }}
               borderRadius={"8px"}
-              bgcolor={theme.palette.primary.main}
+              bgcolor={"primary.main"}
               p={"10px 8px 16px 16px"}
               color={"white"}
               lineHeight={"100%"}
@@ -124,7 +123,7 @@ export const AccordionMessage = ({
                 </Stack>
               )}
               {mode === "input" && (
-                <Inputsform
+                <Form
                   inputs={inputs}
                   params={params}
                   paramsValues={paramsValues}

@@ -84,7 +84,7 @@ export const SparkSaveDeletePopup = ({ type, activeExecution, onClose, onUpdate 
               sx={{
                 height: "30px",
                 px: 0,
-                bgcolor: theme.palette.primary.main,
+                bgcolor: "primary.main",
                 border: "none",
                 "&:hover": {
                   bgcolor: "surface.5",

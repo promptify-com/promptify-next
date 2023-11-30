@@ -31,7 +31,7 @@ interface Props {
   template: Templates;
 }
 
-const ChatMode: React.FC<Props> = ({ onError, template }) => {
+const GeneratorChat: React.FC<Props> = ({ onError, template }) => {
   const token = useToken();
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -589,8 +589,8 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
             alignItems={"center"}
             justifyContent={"center"}
             gap={1}
-            width={"100%"}
-            p={"16px 8px 16px 16px"}
+            width={{ md: "100%" }}
+            p={{ md: "16px 8px 16px 16px" }}
           >
             <Button
               onClick={() => {
@@ -632,4 +632,4 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
   );
 };
 
-export default memo(ChatMode);
+export default memo(GeneratorChat);
