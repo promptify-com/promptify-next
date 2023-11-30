@@ -1,9 +1,7 @@
 import { TemplatesExecutions } from "@/core/api/dto/templates";
 
-export interface AnswerValidatorResponse {
-  answer: string;
-  feedback: string;
-  approved: boolean;
+export interface VaryValidatorResponse {
+  [question: string]: string | number;
 }
 
 export interface IMessage {
@@ -25,4 +23,5 @@ export interface IAnswer {
   question: string;
   answer: string | number | File;
   prompt: number;
+  error?: boolean;
 }

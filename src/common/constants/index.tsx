@@ -172,3 +172,7 @@ export const ToolbarItems: Link[] = [
     title: "Template details",
   },
 ];
+
+export const OUTPUT_FORMATS = ["JSON", "XML", "Markdown", "Custom"] as const;
+
+export type OutputFormat = (typeof OUTPUT_FORMATS)[number];

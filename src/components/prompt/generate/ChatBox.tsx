@@ -6,16 +6,16 @@ import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 
-import { PromptParams, ResOverrides, ResPrompt } from "@/core/api/dto/prompts";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { useAppSelector, useAppDispatch } from "@/hooks/useStore";
 import useToken from "@/hooks/useToken";
 import { ChatInterface } from "./ChatInterface";
 import { ChatInput } from "./ChatInput";
-import { Templates } from "@/core/api/dto/templates";
-import { IPromptInput, PromptLiveResponse } from "@/common/types/prompt";
+import type { Templates } from "@/core/api/dto/templates";
+import type { IPromptInput, PromptLiveResponse } from "@/common/types/prompt";
+import type { PromptParams, ResOverrides, ResPrompt } from "@/core/api/dto/prompts";
+import type { IAnswer, IMessage, VaryValidatorResponse } from "@/common/types/chat";
 import { setAccordionChatMode, setGeneratingStatus, updateExecutionData } from "@/core/store/templatesSlice";
-import { IAnswer, IMessage } from "@/common/types/chat";
 import { executionsApi, useStopExecutionMutation } from "@/core/api/executions";
 import { vary } from "@/common/helpers/varyValidator";
 import { parseMessageData } from "@/common/helpers/parseMessageData";
@@ -53,7 +53,6 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
   const [queuedMessages, setQueuedMessages] = useState<IMessage[]>([]);
   const [isSimulaitonStreaming, setIsSimulaitonStreaming] = useState(false);
   const [disableChatInput, setDisableChatInput] = useState(false);
-  const [standingQuestions, setStandingQuestions] = useState<IPromptInput[]>([]);
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
   const [paramsValues, setParamsValues] = useState<ResOverrides[]>([]);
 
@@ -165,6 +164,8 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
     return [inputs, params, promptHasContent];
   }, [template]);
 
+  const disabledButton = _inputs.length !== 0 || promptHasContent;
+
   useEffect(() => {
     dispatchNewExecutionData(answers, _inputs);
   }, [template]);
@@ -213,7 +214,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
     }
   };
 
-  const allRequiredQuestionsAnswered = (inputs: IPromptInput[], answers: IAnswer[]): boolean => {
+  const allRequiredInputsAnswered = (inputs: IPromptInput[], answers: IAnswer[]): boolean => {
     const requiredInputs = inputs.filter(input => input.required).map(input => input.name);
 
     if (!requiredInputs.length) {
@@ -225,104 +226,100 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
     return requiredInputs.every(name => answeredInputsSet.has(name));
   };
 
-  useEffect(() => {
-    if (allRequiredQuestionsAnswered(_inputs, answers)) {
-      setShowGenerateButton(true);
-    } else {
-      setShowGenerateButton(false);
-    }
-  }, [answers]);
+  const messageAnswersForm = (message: string) => {
+    const createdAt = new Date(new Date().getTime() - 1000);
 
-  const disabledButton = _inputs.length !== 0 || promptHasContent;
+    const botMessage: IMessage = {
+      id: randomId(),
+      text: message,
+      type: "text",
+      createdAt,
+      fromUser: false,
+    };
 
-  const addNewPrompt = ({ startOver = false }: { startOver: boolean }) => {
+    addToQueuedMessages([
+      {
+        id: randomId(),
+        text: "",
+        type: "form",
+        createdAt,
+        fromUser: false,
+        noHeader: true,
+      },
+    ]);
+
+    setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat(botMessage));
+  };
+
+  const addNewPrompt = () => {
     dispatch(setAccordionChatMode("input"));
     dispatch(setSelectedExecution(null));
-    if (startOver) {
-      setAnswers([]);
-      setIsSimulaitonStreaming(false);
-    } else {
-      const botMessage: IMessage = {
-        id: randomId(),
-        text: `Good! Let’s imagine something like this! Prepared request for you, please check input information and we are ready to start!  `,
-        type: "text",
-        createdAt: createdAt,
-        fromUser: false,
-      };
-      setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat(botMessage));
-      addToQueuedMessages([
-        {
-          id: randomId(),
-          text: "",
-          type: "form",
-          createdAt: createdAt,
-          fromUser: false,
-          noHeader: true,
-        },
-      ]);
-    }
+    setAnswers([]);
+    setIsSimulaitonStreaming(false);
   };
 
   const validateVary = async (variation: string) => {
-    try {
-      if (variation) {
-        const userMessage: IMessage = {
-          id: randomId(),
-          text: variation,
-          type: "text",
-          createdAt: createdAt,
-          fromUser: true,
-        };
-        setMessages(prevMessages => prevMessages.concat(userMessage));
+    if (variation) {
+      const userMessage: IMessage = {
+        id: randomId(),
+        text: variation,
+        type: "text",
+        createdAt: new Date(new Date().getTime() - 1000),
+        fromUser: true,
+      };
+      setMessages(prevMessages => prevMessages.concat(userMessage));
 
-        setIsValidatingAnswer(true);
+      setIsValidatingAnswer(true);
 
-        const questionAnswerMap: Record<string, string | number | File> = {};
-        _inputs.forEach(input => {
-          const matchingAnswer = answers.find(answer => answer.inputName === input.name);
-          questionAnswerMap[input.name] = matchingAnswer?.answer || "";
-        });
+      const questionAnswerMap: Record<string, string | number | File> = {};
+      _inputs.forEach(input => {
+        const matchingAnswer = answers.find(answer => answer.inputName === input.name);
+        questionAnswerMap[input.name] = matchingAnswer?.answer || "";
+      });
 
-        const payload = {
-          prompt: variation,
-          variables: questionAnswerMap,
-        };
+      const payload = {
+        prompt: variation,
+        variables: questionAnswerMap,
+      };
 
-        const varyResponse = await vary({ token, payload });
-
-        if (typeof varyResponse === "string") {
-          setIsValidatingAnswer(false);
-          const botMessage: IMessage = {
-            id: randomId(),
-            text: `Something went wrong! can you please provide your message again?`,
-            type: "text",
-            createdAt: createdAt,
-            fromUser: false,
-          };
-          setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat(botMessage));
-          return;
-        }
-
-        const newAnswers = _inputs
-          .map(input => {
-            const answer = varyResponse[input.name];
-
-            return {
-              inputName: input.name,
-              required: input.required,
-              question: input.question!,
-              prompt: input.prompt!,
-              answer,
-            };
-          })
-          .filter(answer => answer.answer !== "");
-
-        setAnswers(newAnswers);
-        setIsValidatingAnswer(false);
-
-        addNewPrompt({ startOver: false });
+      let varyResponse: VaryValidatorResponse | string;
+      try {
+        varyResponse = await vary({ token, payload });
+      } catch (err) {
+        varyResponse = "error";
       }
-    } catch (error) {}
+
+      if (typeof varyResponse === "string") {
+        console.log("first");
+        setIsValidatingAnswer(false);
+        messageAnswersForm("Oops! I couldn't get your reponse, Please try again.");
+        return;
+      }
+
+      const validatedAnswers = varyResponse;
+
+      const newAnswers: IAnswer[] = _inputs
+        .map(input => {
+          const { name: inputName, required, question, prompt } = input;
+          const answer = validatedAnswers[input.name];
+          const promptId = prompt!;
+
+          return {
+            inputName,
+            required,
+            question: question ?? "",
+            prompt: promptId,
+            answer,
+          };
+        })
+        .filter(answer => answer.answer !== "");
+
+      setAnswers(newAnswers);
+      setIsValidatingAnswer(false);
+
+      const isReady = allRequiredInputsAnswered(_inputs, newAnswers) ? " We are ready to create a new document." : "";
+      messageAnswersForm(`Ok!${isReady} I have prepared the incoming parameters, please check!`);
+    }
   };
 
   const handleUserParam = (value: number, param: PromptParams) => {
@@ -364,24 +361,28 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
   };
 
   const validateAndUploadFiles = () =>
-    new Promise<boolean>(async resolve => {
-      for (const answer of answers) {
-        if (answer.answer instanceof File && !uploadedFiles.current.has(answer.inputName)) {
-          const res = await uploadFileHelper(uploadFile, { file: answer.answer });
-          const fileUrl = res?.file;
+    new Promise<{ status: boolean; answers: IAnswer[] }>(async resolve => {
+      let status = true;
+      const _answers = await Promise.all(
+        [...answers].map(async answer => {
+          if (answer.answer instanceof File && !uploadedFiles.current.has(answer.inputName)) {
+            const res = await uploadFileHelper(uploadFile, { file: answer.answer });
+            const fileUrl = res?.file;
 
-          if (typeof fileUrl === "string" && fileUrl) {
-            uploadedFiles.current.set(answer.inputName, fileUrl);
-          } else {
-            handleAnswerClear(answer, true);
-            if (answer.required) {
-              resolve(false);
-              return;
+            if (typeof fileUrl === "string" && fileUrl) {
+              uploadedFiles.current.set(answer.inputName, fileUrl);
+            } else {
+              answer.error = true;
+              if (answer.required) {
+                status = false;
+              }
             }
           }
-        }
-      }
-      resolve(true);
+          return answer;
+        }),
+      );
+      setAnswers(_answers);
+      resolve({ status, answers: _answers });
     });
 
   const generateExecutionHandler = async () => {
@@ -389,28 +390,15 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
       return router.push("/signin");
     }
 
-    const NextMessages: IMessage[] = [
-      {
-        id: randomId(),
-        text: `Run Prompt`,
-        type: "text",
-        createdAt: createdAt,
-        fromUser: true,
-      },
-      {
-        id: randomId(),
-        text: "",
-        type: "form",
-        createdAt: createdAt,
-        fromUser: false,
-        noHeader: true,
-      },
-    ];
-
-    setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat(NextMessages));
-
     const filesUploaded = await validateAndUploadFiles();
-    if (!filesUploaded) return;
+    if (!filesUploaded.status) {
+      const invalids = filesUploaded.answers
+        .filter(answers => answers.error)
+        .map(answer => _inputs.find(input => input.name === answer.inputName)?.fullName);
+
+      messageAnswersForm(`Please enter valid answers for "${invalids.join(", ")}"`);
+      return;
+    }
 
     dispatch(setGeneratingStatus(true));
 
@@ -551,37 +539,6 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
     }
   };
 
-  const handleAnswerClear = (selectedAnswer: IAnswer, invalid = false) => {
-    if (isSimulaitonStreaming) {
-      return;
-    }
-
-    const input = _inputs.find(_input => _input.name === selectedAnswer.inputName);
-    const newStandingQuestions = standingQuestions.concat(input!).sort((a, b) => +a.required - +b.required);
-    const askedQuestion = newStandingQuestions[newStandingQuestions.length - 1];
-
-    setStandingQuestions(newStandingQuestions);
-
-    const invalidTxt =
-      invalid && input?.type === "file" ? `The uploaded file for "${selectedAnswer.inputName}" is invalid. ` : "";
-    const nextBotMessage: IMessage = {
-      id: randomId(),
-      text: invalidTxt + "Let's give it another go. " + askedQuestion.question,
-      choices: askedQuestion.choices,
-      fileExtensions: askedQuestion.fileExtensions,
-      type: "text",
-      createdAt: createdAt,
-      fromUser: false,
-    };
-
-    setMessages(prevMessages => prevMessages.concat(nextBotMessage));
-
-    const newAnswers: IAnswer[] = answers.filter(answer => answer.inputName !== selectedAnswer.inputName);
-
-    setAnswers(newAnswers);
-    dispatchNewExecutionData(newAnswers, _inputs);
-  };
-
   return (
     <Box
       width={{ md: isSidebarExpanded ? "100%" : "80%" }}
@@ -610,7 +567,7 @@ const ChatMode: React.FC<Props> = ({ onError, template }) => {
         />
         {currentUser?.id ? (
           <ChatInput
-            addNewPrompt={() => addNewPrompt({ startOver: true })}
+            addNewPrompt={addNewPrompt}
             onSubmit={validateVary}
             disabled={isValidatingAnswer || disableChatInput}
             isValidating={isValidatingAnswer}
