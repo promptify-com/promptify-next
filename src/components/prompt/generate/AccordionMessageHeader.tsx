@@ -11,7 +11,7 @@ import Add from "@mui/icons-material/Add";
 import HighlightOff from "@mui/icons-material/HighlightOff";
 import UnfoldLess from "@mui/icons-material/UnfoldLess";
 import PlayCircle from "@mui/icons-material/PlayCircle";
-import AvatarWithInitials from "../AvatarWithInitials";
+import AvatarWithInitials from "../../design-system/AvatarWithInitials";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 import {

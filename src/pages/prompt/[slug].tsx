@@ -12,7 +12,7 @@ import { isValidUserFn } from "@/core/store/userSlice";
 import { updateTemplateData } from "@/core/store/templatesSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { getExecutionByHash } from "@/hooks/api/executions";
-import TemplateDesktop from "@/components/prompt/TemplateDesktop";
+import TemplateLayout from "@/components/prompt/TemplateLayout";
 import { getTemplateBySlug } from "@/hooks/api/templates";
 import { redirectToPath } from "@/common/helpers";
 import { setSelectedExecution, setSparkHashQueryParam } from "@/core/store/executionsSlice";
@@ -111,7 +111,7 @@ function Template({ hashedExecution, fetchedTemplate }: TemplateProps) {
   return (
     <ThemeProvider theme={dynamicTheme}>
       <Layout>
-        <TemplateDesktop
+        <TemplateLayout
           template={fetchedTemplate}
           setErrorMessage={setErrorMessage}
         />

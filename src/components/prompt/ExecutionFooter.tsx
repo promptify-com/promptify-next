@@ -8,7 +8,7 @@ interface Props {
   isMobile: boolean;
 }
 
-export default function GeneratedExecutionFooter({ title, order, isMobile }: Props) {
+export default function ExecutionFooter({ title, order, isMobile }: Props) {
   if (!title || !order) {
     return null;
   }

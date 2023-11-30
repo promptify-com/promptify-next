@@ -5,7 +5,7 @@ import { skipToken } from "@reduxjs/toolkit/dist/query";
 
 import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import ClientOnly from "../base/ClientOnly";
-import ChatMode from "./generate/ChatBox";
+import ChatBox from "./generate";
 import Header from "./Header";
 import TemplateToolbar from "./Toolbar";
 import ToolbarDrawer from "./Toolbar/ToolbarDrawer";
@@ -18,8 +18,7 @@ import Button from "@mui/material/Button";
 import NoteStackIcon from "@/assets/icons/NoteStackIcon";
 import { InfoOutlined } from "@mui/icons-material";
 import Badge from "@mui/material/Badge";
-import { theme } from "@/theme";
-import { Link, LinkName } from "@/common/types/TemplateToolbar";
+import { Link } from "@/common/types/TemplateToolbar";
 import { Icon } from "@mui/material";
 
 interface TemplateDesktopProps {
@@ -27,7 +26,7 @@ interface TemplateDesktopProps {
   setErrorMessage: Dispatch<SetStateAction<string>>;
 }
 
-export default function TemplateDesktop({ template, setErrorMessage }: TemplateDesktopProps) {
+export default function TemplateLayout({ template, setErrorMessage }: TemplateDesktopProps) {
   const dispatch = useAppDispatch();
 
   const isValidUser = useAppSelector(isValidUserFn);
@@ -220,7 +219,7 @@ export default function TemplateDesktop({ template, setErrorMessage }: TemplateD
           }}
         >
           <ClientOnly>
-            <ChatMode
+            <ChatBox
               onError={setErrorMessage}
               template={template}
             />

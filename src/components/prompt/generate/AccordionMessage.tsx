@@ -117,7 +117,6 @@ export const AccordionMessage = ({
                   position={"relative"}
                 >
                   <Display
-                    mode="chat"
                     templateData={template}
                     answers={answers}
                   />

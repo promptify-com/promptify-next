@@ -1,47 +1,30 @@
-import React, { useEffect, useRef, useState, useMemo } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import { Templates } from "@/core/api/dto/templates";
+
 import { ExecutionCard } from "./ExecutionCard";
-import { DisplayActions } from "./DisplayActions";
 import ParagraphPlaceholder from "@/components/placeholders/ParagraphPlaceholder";
-import { SparkExportPopup } from "../dialog/SparkExportPopup";
 import { isDesktopViewPort } from "@/common/helpers";
-import GeneratedExecutionFooter from "./GeneratedExecutionFooter";
+import ExecutionFooter from "./ExecutionFooter";
 import { useAppSelector } from "@/hooks/useStore";
-import { IAnswer } from "@/common/types/chat";
+import type { Templates } from "@/core/api/dto/templates";
+import type { IAnswer } from "@/common/types/chat";
 
 interface Props {
-  mode: "chat" | "display";
   templateData: Templates;
   close?: () => void;
   answers?: IAnswer[];
 }
 
-export const Display: React.FC<Props> = ({ mode, templateData, close, answers }) => {
-  const currentUser = useAppSelector(state => state.user.currentUser);
+export const Display: React.FC<Props> = ({ templateData, close, answers }) => {
   const [firstLoad, setFirstLoad] = useState(false);
-  const [openExportPopup, setOpenExportpopup] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const isDesktopView = isDesktopViewPort();
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
   const isFetching = useAppSelector(state => state.executions.isFetching);
-  const activeExecution = useMemo(() => {
-    if (selectedExecution) {
-      return {
-        ...selectedExecution,
-        template: {
-          ...selectedExecution.template,
-          title: templateData.title,
-          slug: templateData.slug,
-          thumbnail: templateData.thumbnail,
-        },
-      };
-    }
-    return null;
-  }, [selectedExecution]);
+
   const isGeneratedExecutionEmpty = Boolean(generatedExecution && !generatedExecution.data?.length);
   const executionIsLoading = isFetching || isGeneratedExecutionEmpty;
 
@@ -65,8 +48,6 @@ export const Display: React.FC<Props> = ({ mode, templateData, close, answers })
     return null;
   }, [generatedExecution]);
 
-  const isDisplayMode = mode === "display";
-
   return (
     <Grid
       display={"flex"}
@@ -76,31 +57,13 @@ export const Display: React.FC<Props> = ({ mode, templateData, close, answers })
       <Box
         ref={containerRef}
         sx={{
-          bgcolor: isDisplayMode ? "surface.3" : "transparent",
-          minHeight: { xs: "auto", md: isDisplayMode ? "calc(100vh - (90px + 68px))" : "auto" },
+          bgcolor: "transparent",
           position: "relative",
           pb: { xs: "0px", md: "70px" },
         }}
       >
-        {currentUser?.id && mode === "display" && (
-          <>
-            <DisplayActions
-              selectedExecution={selectedExecution}
-              onOpenExport={() => setOpenExportpopup(true)}
-              close={close!}
-            />
-            {openExportPopup && activeExecution?.id && (
-              <SparkExportPopup
-                onClose={() => setOpenExportpopup(false)}
-                activeExecution={activeExecution}
-              />
-            )}
-          </>
-        )}
-
         <Box
           sx={{
-            height: isDisplayMode ? "calc(100% - 67px)" : "auto",
             overflow: "auto",
             opacity: firstLoad ? 0.5 : 1,
             bgcolor: "surface.1",
@@ -131,7 +94,7 @@ export const Display: React.FC<Props> = ({ mode, templateData, close, answers })
         </Box>
       </Box>
       {currentGeneratedPrompt && (
-        <GeneratedExecutionFooter
+        <ExecutionFooter
           title={currentGeneratedPrompt.title}
           order={currentGeneratedPrompt.order}
           isMobile={!isDesktopView}

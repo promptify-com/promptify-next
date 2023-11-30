@@ -2,7 +2,7 @@ import { Stack, Typography } from "@mui/material";
 import { TemplatesExecutions } from "@/core/api/dto/templates";
 
 import useTruncate from "@/hooks/useTruncate";
-import AvatarWithInitials from "@/components/prompt/AvatarWithInitials";
+import AvatarWithInitials from "@/components/design-system/AvatarWithInitials";
 
 interface CardExecutionProps {
   execution: TemplatesExecutions;
