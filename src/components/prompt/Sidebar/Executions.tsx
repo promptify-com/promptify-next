@@ -156,7 +156,7 @@ export const Executions: React.FC<ExecutionsProps> = ({
                     color: "onSurface",
                   }}
                 >
-                  No sparks yet
+                  No works yet
                 </Typography>
               )}
             </Stack>
@@ -187,7 +187,7 @@ export const Executions: React.FC<ExecutionsProps> = ({
                     color: "onSurface",
                   }}
                 >
-                  No sparks yet
+                  No works yet
                 </Typography>
               )}
             </Stack>
