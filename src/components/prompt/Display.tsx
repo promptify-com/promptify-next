@@ -10,7 +10,6 @@ import { SparkExportPopup } from "../dialog/SparkExportPopup";
 import GeneratedExecutionFooter from "./GeneratedExecutionFooter";
 import { useAppSelector } from "@/hooks/useStore";
 import { Stack } from "@mui/material";
-import ExecutionContentPreview from "./ExecutionContentPreview";
 
 interface Props {
   templateData: Templates;
@@ -21,7 +20,7 @@ export const Display: React.FC<Props> = ({ templateData, close }) => {
   const currentUser = useAppSelector(state => state.user.currentUser);
   const [firstLoad, setFirstLoad] = useState(true);
   const [openExportPopup, setOpenExportpopup] = useState(false);
-  const [previewExecution, setPreviewExecution] = useState(false);
+  const [previewsShown, setPreviewsShown] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
@@ -69,7 +68,7 @@ export const Display: React.FC<Props> = ({ templateData, close }) => {
     return null;
   }, [generatedExecution]);
 
-  const displayPreview = previewExecution && !isGenerating;
+  const showPreviews = previewsShown && !isGenerating;
 
   return (
     <Grid
@@ -91,8 +90,8 @@ export const Display: React.FC<Props> = ({ templateData, close }) => {
               selectedExecution={selectedExecution}
               onOpenExport={() => setOpenExportpopup(true)}
               close={close}
-              previewExecution={previewExecution}
-              toggleExecutionPreview={() => setPreviewExecution(!previewExecution)}
+              showPreviews={previewsShown}
+              toggleShowPreviews={() => setPreviewsShown(!previewsShown)}
             />
             {openExportPopup && activeExecution?.id && (
               <SparkExportPopup
@@ -127,39 +126,11 @@ export const Display: React.FC<Props> = ({ templateData, close }) => {
               No work found
             </Typography>
           ) : (
-            <Stack
-              direction={"row"}
-              gap={1}
-            >
-              <Box
-                sx={{
-                  display: { xs: displayPreview ? "none" : "block", md: "block" },
-                  width: { md: displayPreview ? "75%" : "100%" },
-                  borderRight: displayPreview ? "1px solid" : 0,
-                  borderColor: "divider",
-                }}
-              >
-                <ExecutionCard
-                  execution={generatedExecution ?? selectedExecution}
-                  promptsData={templateData.prompts}
-                />
-              </Box>
-              {selectedExecution && displayPreview && (
-                <Box
-                  sx={{
-                    width: { xs: "100%", md: displayPreview ? "25%" : 0 },
-                    position: "sticky",
-                    top: 0,
-                    height: "fit-content",
-                  }}
-                >
-                  <ExecutionContentPreview
-                    prompts={templateData.prompts}
-                    execution={selectedExecution}
-                  />
-                </Box>
-              )}
-            </Stack>
+            <ExecutionCard
+              execution={generatedExecution ?? selectedExecution}
+              promptsData={templateData.prompts}
+              showPreview={showPreviews}
+            />
           )}
         </Box>
       </Box>

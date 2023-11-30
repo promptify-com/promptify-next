@@ -22,16 +22,16 @@ interface Props {
   selectedExecution: TemplatesExecutions | null;
   onOpenExport: () => void;
   close: () => void;
-  previewExecution: boolean;
-  toggleExecutionPreview: () => void;
+  showPreviews: boolean;
+  toggleShowPreviews: () => void;
 }
 
 export const DisplayActions: React.FC<Props> = ({
   selectedExecution,
   onOpenExport,
   close,
-  previewExecution,
-  toggleExecutionPreview,
+  showPreviews,
+  toggleShowPreviews,
 }) => {
   const { palette } = useTheme();
   const { truncate } = useTruncate();
@@ -157,9 +157,9 @@ export const DisplayActions: React.FC<Props> = ({
                 >
                   <IconButton
                     sx={actionBtnStyle}
-                    onClick={toggleExecutionPreview}
+                    onClick={toggleShowPreviews}
                   >
-                    {previewExecution ? <VisibilityOff /> : <VisibilityOutlined />}
+                    {showPreviews ? <VisibilityOff /> : <VisibilityOutlined />}
                   </IconButton>
                 </Tooltip>
                 <Divider

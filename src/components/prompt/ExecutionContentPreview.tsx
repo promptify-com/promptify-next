@@ -1,41 +1,78 @@
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import type { IAnswer } from "@/common/types/chat";
+import type { Prompts } from "@/core/api/dto/prompts";
 import { TemplatesExecutions } from "@/core/api/dto/templates";
-import { Prompts } from "@/core/api/dto/prompts";
 
 interface Props {
-  prompts: Prompts[];
-  execution: TemplatesExecutions;
+  execution: TemplatesExecutions | null;
+  prompt: Prompts;
+  answers?: IAnswer[];
+  id: number;
 }
 
-function ExecutionContentPreview({ prompts, execution }: Props) {
-  function replacePlaceholdersWithAnswers(prompt: Prompts): React.ReactNode {
-    const regex = /{{(.*?):.*?}}/g;
+function ExecutionContentPreview({ execution, prompt, id, answers }: Props) {
+  function replacePlaceholdersWithAnswers(content: string): React.ReactNode {
+    const placeholderRegex = /{{(.*?):.*?}}/g;
+    const dollarWordRegex = /\$[a-zA-Z0-9_]+/g;
 
     let lastIndex = 0;
     const parts: React.ReactNode[] = [];
-    const content = prompt.content;
 
-    content.replace(regex, (match, inputName, index) => {
-      parts.push(content.slice(lastIndex, index));
-
-      const answer: string =
-        execution.parameters && execution.parameters[prompt.id] ? execution.parameters[prompt.id][inputName] : "";
-
-      if (answer) {
+    const addColoredDollarWords = (text: string) => {
+      let lastIndexDollarWords = 0;
+      text.replace(dollarWordRegex, (match, index) => {
+        parts.push(text.slice(lastIndexDollarWords, index));
         parts.push(
           <span
-            key={index}
-            style={{ color: "#375CA9", fontWeight: "600", wordBreak: "break-word" }}
+            key={`dollar-${index}`}
+            style={{ color: "#375CA9", fontWeight: "600" }}
           >
-            {answer}
+            {match}
+          </span>,
+        );
+        lastIndexDollarWords = index + match.length;
+        return match;
+      });
+      parts.push(text.slice(lastIndexDollarWords));
+    };
+
+    content.replace(placeholderRegex, (match, inputName, index) => {
+      addColoredDollarWords(content.slice(lastIndex, index));
+
+      let replacement: string | undefined;
+
+      if (execution && execution.parameters) {
+        for (const promptId in execution.parameters) {
+          if (execution.parameters.hasOwnProperty(promptId)) {
+            const params = execution.parameters[promptId];
+            if (params[inputName]) {
+              replacement = params[inputName] as string;
+              break;
+            }
+          }
+        }
+      } else {
+        const answer = answers?.find(a => a.inputName === inputName);
+        if (answer && typeof answer.answer === "string") {
+          replacement = answer.answer;
+        }
+      }
+
+      if (replacement) {
+        parts.push(
+          <span
+            key={`placeholder-${index}`}
+            style={{ color: "#375CA9", fontWeight: "600", wordBreak: "break-word", whiteSpace: "pre-wrap" }}
+          >
+            {replacement}
           </span>,
         );
       } else {
         parts.push(
           <span
-            key={index}
-            style={{ color: "#375CA9", fontWeight: "600", wordBreak: "break-word" }}
+            key={`placeholder-${index}`}
+            style={{ color: "#375CA9", fontWeight: "600", wordBreak: "break-word", whiteSpace: "pre-wrap" }}
           >
             {match}
           </span>,
@@ -46,37 +83,25 @@ function ExecutionContentPreview({ prompts, execution }: Props) {
       return match;
     });
 
-    parts.push(content.slice(lastIndex));
+    addColoredDollarWords(content.slice(lastIndex));
 
     return parts;
   }
 
-  const promptContents = prompts.map(prompt => ({
-    ...prompt,
-    content: replacePlaceholdersWithAnswers(prompt),
-  }));
+  const updatedContent = replacePlaceholdersWithAnswers(prompt.content);
 
   return (
-    <Stack
-      gap={5}
-      p={{ xs: "20px", md: "20px 8px" }}
-    >
-      {promptContents.map(prompt => (
-        <Stack
-          key={prompt.id}
-          gap={2}
-        >
-          <Typography>
-            Prompt #{prompt.order}, {prompt.engine.name}
-          </Typography>
-          <Typography
-            fontFamily={"Space Mono"}
-            color={"text.secondary"}
-          >
-            {prompt.content}
-          </Typography>
-        </Stack>
-      ))}
+    <Stack direction={"column"}>
+      <Typography>
+        Prompt #{id}, {prompt.engine.name}
+      </Typography>
+      <Typography
+        mt={2}
+        fontFamily={"Space Mono"}
+        color={"text.secondary"}
+      >
+        {updatedContent}
+      </Typography>
     </Stack>
   );
 }
