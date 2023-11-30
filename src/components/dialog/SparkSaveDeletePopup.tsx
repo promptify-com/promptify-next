@@ -8,6 +8,7 @@ import { useDeleteExecutionMutation, useUpdateExecutionMutation } from "@/core/a
 
 import { useAppDispatch } from "@/hooks/useStore";
 import { setAccordionChatMode } from "@/core/store/templatesSlice";
+import { theme } from "@/theme";
 
 interface SparkSaveDeletePopupProps {
   type: ExecutionTemplatePopupType;
@@ -83,7 +84,7 @@ export const SparkSaveDeletePopup = ({ type, activeExecution, onClose, onUpdate 
               sx={{
                 height: "30px",
                 px: 0,
-                bgcolor: "#375CA9",
+                bgcolor: theme.palette.primary.main,
                 border: "none",
                 "&:hover": {
                   bgcolor: "surface.5",

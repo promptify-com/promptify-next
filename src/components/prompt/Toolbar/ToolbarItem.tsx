@@ -3,6 +3,7 @@ import NoteStackIcon from "@/assets/icons/NoteStackIcon";
 import type { Link, LinkName } from "@/common/types/TemplateToolbar";
 import { openToolbarDrawer, setActiveToolbarLink } from "@/core/store/templatesSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { theme } from "@/theme";
 import { Badge } from "@mui/material";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
@@ -35,7 +36,7 @@ function ToolbarItem({ item, onClick, executionsLength }: Props) {
   const isSelected = activeLink?.name === item.name;
 
   const renderIcon = () => {
-    const iconColor = isSelected ? "#375CA9" : "#1B1B1E";
+    const iconColor = isSelected ? theme.palette.primary.main : "#1B1B1E";
 
     switch (item.name) {
       case "extension":
@@ -70,7 +71,7 @@ function ToolbarItem({ item, onClick, executionsLength }: Props) {
               sx={{
                 minWidth: 0,
                 mr: "auto",
-                color: isSelected || item.name === "api" ? "#375CA9" : "onSurface",
+                color: isSelected || item.name === "api" ? theme.palette.primary.main : "onSurface",
                 justifyContent: "center",
               }}
             >

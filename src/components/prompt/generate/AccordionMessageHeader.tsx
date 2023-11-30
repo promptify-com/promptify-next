@@ -32,6 +32,7 @@ import { setAccordionChatMode, setGeneratingStatus, setShowPromptsView } from "@
 import { setGeneratedExecution } from "@/core/store/executionsSlice";
 import useTruncate from "@/hooks/useTruncate";
 import Grid from "@mui/material/Grid";
+import { theme } from "@/theme";
 
 interface Props {
   template: Templates;
@@ -172,9 +173,9 @@ function AccordionMessageHeader({
                   justifyContent: "center",
                   alignItems: "center",
                   borderRadius: "8px",
-                  border: "1px dashed #375CA9 ",
+                  border: `1px dashed ${theme.palette.primary.main}`,
                   bgcolor: "#375CA91A",
-                  color: "#375CA9",
+                  color: theme.palette.primary.main,
                 }}
               >
                 <Add

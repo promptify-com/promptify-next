@@ -1,8 +1,11 @@
+import { DetailedHTMLProps, HTMLAttributes } from "react";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+
+import { theme } from "@/theme";
+import { TemplatesExecutions } from "@/core/api/dto/templates";
 import type { IAnswer } from "@/common/types/chat";
 import type { Prompts } from "@/core/api/dto/prompts";
-import { TemplatesExecutions } from "@/core/api/dto/templates";
 
 interface Props {
   execution: TemplatesExecutions | null;
@@ -26,7 +29,7 @@ function PromptContent({ execution, prompt, id, answers }: Props) {
         parts.push(
           <span
             key={`dollar-${index}`}
-            style={{ color: "#375CA9", fontWeight: "600" }}
+            style={HighlightStyle}
           >
             {match}
           </span>,
@@ -63,7 +66,7 @@ function PromptContent({ execution, prompt, id, answers }: Props) {
         parts.push(
           <span
             key={`placeholder-${index}`}
-            style={{ color: "#375CA9", fontWeight: "600", wordBreak: "break-word", whiteSpace: "pre-wrap" }}
+            style={HighlightStyle}
           >
             {replacement}
           </span>,
@@ -72,7 +75,7 @@ function PromptContent({ execution, prompt, id, answers }: Props) {
         parts.push(
           <span
             key={`placeholder-${index}`}
-            style={{ color: "#375CA9", fontWeight: "600", wordBreak: "break-word", whiteSpace: "pre-wrap" }}
+            style={HighlightStyle}
           >
             {match}
           </span>,
@@ -105,5 +108,12 @@ function PromptContent({ execution, prompt, id, answers }: Props) {
     </Stack>
   );
 }
+
+const HighlightStyle = {
+  color: theme.palette.primary.main,
+  fontWeight: "600",
+  wordBreak: "break-word",
+  whiteSpace: "pre-wrap",
+} as DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement>;
 
 export default PromptContent;

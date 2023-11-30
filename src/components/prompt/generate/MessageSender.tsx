@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { InputBase, Box } from "@mui/material";
 import { ArrowUpward, KeyboardCommandKey, Send } from "@mui/icons-material";
+import { theme } from "@/theme";
 
 interface MessageSenderProps {
   onSubmit: (value: string) => void;
@@ -93,7 +94,7 @@ const MessageSender: React.FC<MessageSenderProps> = ({ onSubmit, disabled, place
           justifyContent: "center",
           alignItems: "center",
           borderRadius: "99px",
-          bgcolor: !hasNoValue ? undefined : "#375CA9",
+          bgcolor: !hasNoValue ? undefined : theme.palette.primary.main,
           color: { xs: !hasNoValue ? "#8E8E94" : "white", md: "white" },
         }}
       >

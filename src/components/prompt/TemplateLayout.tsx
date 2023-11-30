@@ -20,6 +20,7 @@ import { InfoOutlined } from "@mui/icons-material";
 import Badge from "@mui/material/Badge";
 import { Link } from "@/common/types/TemplateToolbar";
 import { Icon } from "@mui/material";
+import { theme } from "@/theme";
 
 interface TemplateDesktopProps {
   template: Templates;
@@ -104,7 +105,7 @@ export default function TemplateLayout({ template, setErrorMessage }: TemplateDe
 
   const renderIcon = (link: Link) => {
     if (link.name === "executions") {
-      return <NoteStackIcon color={"#375CA9"} />;
+      return <NoteStackIcon color={theme.palette.primary.main} />;
     }
     return link.icon;
   };

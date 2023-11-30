@@ -9,6 +9,7 @@ import Box from "@mui/material/Box";
 import Add from "@mui/icons-material/Add";
 import { useAppSelector } from "@/hooks/useStore";
 import { Tooltip } from "@mui/material";
+import { theme } from "@/theme";
 
 interface ChatInputProps {
   onSubmit: (value: string) => void;
@@ -82,11 +83,11 @@ export const ChatInput = ({ onSubmit, disabled, isValidating, disabledButton, ad
                 alignItems: "center",
                 borderRadius: "8px",
                 bgcolor: "#375CA91A",
-                color: "#375CA9",
+                color: theme.palette.primary.main,
                 transition: "all 0.3s ease-in-out",
 
                 ":hover": {
-                  bgcolor: "#375CA9",
+                  bgcolor: theme.palette.primary.main,
                   color: "white",
                   borderRadius: "99px",
                 },

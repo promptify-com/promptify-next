@@ -3,6 +3,7 @@ import { Box, IconButton, InputLabel, Slider, Stack, Typography } from "@mui/mat
 import { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
 import { useAppSelector } from "@/hooks/useStore";
 import { HelpOutline } from "@mui/icons-material";
+import { theme } from "@/theme";
 
 interface GeneratorParamProps {
   param: PromptParams;
@@ -51,7 +52,7 @@ export const FormParam: React.FC<GeneratorParamProps> = ({ param, paramValue, on
               fontWeight: 500,
               lineHeight: "21px",
               letterSpacing: "0.17px",
-              color: "#375CA9",
+              color: theme.palette.primary.main,
               overflow: "visible",
             }}
           >
@@ -88,7 +89,7 @@ export const FormParam: React.FC<GeneratorParamProps> = ({ param, paramValue, on
           minWidth: { md: "300px" },
           flexShrink: 0,
           ml: { xs: "45px", md: "0" },
-          color: "#375CA9",
+          color: theme.palette.primary.main,
           "& .MuiSlider-thumb": {
             height: 12,
             width: 12,
@@ -103,12 +104,12 @@ export const FormParam: React.FC<GeneratorParamProps> = ({ param, paramValue, on
               transform: "translate(-50%, -50%)",
               width: 16,
               height: 16,
-              bgcolor: "#375CA9",
+              bgcolor: theme.palette.primary.main,
               zIndex: -1,
             },
           },
           "& .MuiSlider-rail": {
-            bgcolor: "#375CA9",
+            bgcolor: theme.palette.primary.main,
           },
           "& .MuiSlider-track": {
             height: "1px",

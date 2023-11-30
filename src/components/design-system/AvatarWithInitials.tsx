@@ -1,6 +1,7 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import React from "react";
+
+import { theme } from "@/theme";
 
 function AvatarWithInitials({ title }: { title: string }) {
   const getInitials = () => {
@@ -19,7 +20,7 @@ function AvatarWithInitials({ title }: { title: string }) {
         justifyContent: "center",
         width: 40,
         height: 40,
-        bgcolor: "#375CA9",
+        bgcolor: theme.palette.primary.main,
         borderRadius: "8px",
       }}
     >
