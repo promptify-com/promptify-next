@@ -120,6 +120,9 @@ function AccordionMessageHeader({
     ],
   };
 
+  const isExecutionMode = mode === "execution";
+  const isInputMode = mode === "input";
+
   return (
     <>
       <AccordionSummary
@@ -130,7 +133,7 @@ function AccordionMessageHeader({
         }}
       >
         <Stack
-          direction={{ xs: mode === "execution" && !isGenerating ? "column" : "row", md: "row" }}
+          direction={{ xs: isExecutionMode && !isGenerating ? "column" : "row", md: "row" }}
           gap={"8px"}
           width={"100%"}
           alignItems={"center"}
@@ -138,10 +141,11 @@ function AccordionMessageHeader({
           <Stack
             flex={1}
             direction={"row"}
+            width={{ xs: "100%", md: "auto" }}
             alignItems={"center"}
             gap={"8px"}
           >
-            {mode === "execution" && (
+            {isExecutionMode && (
               <>
                 {isGenerating ? (
                   <CircularProgress
@@ -157,7 +161,7 @@ function AccordionMessageHeader({
               </>
             )}
 
-            {mode === "input" && (
+            {!isExecutionMode && (
               <Box
                 position={"relative"}
                 mt={0.5}
@@ -203,9 +207,9 @@ function AccordionMessageHeader({
                 alignItems={"center"}
                 letterSpacing={"0.2px"}
               >
-                {mode === "input" && "New Prompt"}
+                {!isExecutionMode && "New Prompt"}
 
-                {mode === "execution" && (
+                {isExecutionMode && (
                   <>
                     {isGenerating
                       ? "Generation in progress..."
@@ -245,13 +249,13 @@ function AccordionMessageHeader({
                   opacity: 0.7,
                 }}
               >
-                {mode === "input" && "About 360s generation time"}
-                {mode === "execution" && <>{isGenerating ? "About 360s Left" : ""}</>}
+                {!isExecutionMode && "About 360s generation time"}
+                {isExecutionMode && <>{isGenerating ? "About 360s Left" : ""}</>}
               </Typography>
             </Stack>
           </Stack>
 
-          {mode === "input" && isExpanded && (
+          {!isExecutionMode && isExpanded && (
             <Stack
               direction={"row"}
               gap={1}
@@ -317,7 +321,7 @@ function AccordionMessageHeader({
             alignItems={"center"}
             gap={"8px"}
           >
-            {mode === "execution" && (
+            {isExecutionMode && (
               <>
                 {isGenerating ? (
                   <Grid
