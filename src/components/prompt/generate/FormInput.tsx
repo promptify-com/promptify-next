@@ -24,9 +24,22 @@ interface Props {
 }
 
 function FormInput({ input, value, onChangeInput }: Props) {
+  const [openTooltip, setOpenTooltip] = useState(false);
+
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const [codeFieldOpen, setCodeFieldOpen] = useState(false);
   const isFile = value instanceof File;
+
+  const commonPopperProps = {
+    modifiers: [
+      {
+        name: "offset",
+        options: {
+          offset: [0, -14],
+        },
+      },
+    ],
+  };
 
   return (
     <Stack
@@ -217,7 +230,11 @@ function FormInput({ input, value, onChangeInput }: Props) {
           </Typography>
         )}
         <Tooltip
+          open={openTooltip}
+          onClose={() => setOpenTooltip(false)}
+          onOpen={() => setOpenTooltip(true)}
           arrow
+          PopperProps={commonPopperProps}
           title={
             <Typography
               color={"white"}
@@ -229,6 +246,7 @@ function FormInput({ input, value, onChangeInput }: Props) {
           }
         >
           <IconButton
+            onClick={() => setOpenTooltip(!openTooltip)}
             sx={{
               opacity: 0.3,
               border: "none",

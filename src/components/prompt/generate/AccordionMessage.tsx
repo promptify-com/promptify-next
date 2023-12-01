@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import Fade from "@mui/material/Fade";
 
-import { useAppSelector } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { IAnswer } from "@/common/types/chat";
 import { Display } from "../Display";
 import Form from "./Form";
@@ -13,6 +13,9 @@ import AccordionMessageHeader from "./AccordionMessageHeader";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
+import Button from "@mui/material/Button";
+import { setAccordionChatMode } from "@/core/store/templatesSlice";
+import PlayCircle from "@mui/icons-material/PlayCircle";
 
 interface Props {
   inputs: IPromptInput[];
@@ -43,6 +46,7 @@ export const AccordionMessage = ({
   showGenerate,
   setIsSimulationStreaming,
 }: Props) => {
+  const dispatch = useAppDispatch();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const mode = useAppSelector(state => state.template.accordionChatMode);
 
@@ -88,6 +92,9 @@ export const AccordionMessage = ({
             bgcolor: "surface.2",
             overflow: "hidden",
             borderRadius: "0px 16px 16px 16px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "8px",
           }}
         >
           <Stack>
@@ -134,6 +141,36 @@ export const AccordionMessage = ({
               )}
             </Stack>
           </Stack>
+          {showGenerate && mode === "input" && (
+            <Stack
+              direction={"row"}
+              justifyContent={"end"}
+              mr={3}
+            >
+              <Button
+                onClick={event => {
+                  dispatch(setAccordionChatMode("execution"));
+                  onGenerate();
+                }}
+                endIcon={<PlayCircle />}
+                sx={{
+                  height: "22px",
+                  p: { xs: "8px", md: "15px" },
+                  fontSize: { xs: 12, md: 15 },
+                  lineHeight: "110%",
+                  letterSpacing: "0.2px",
+                  fontWeight: 500,
+                  color: showGenerate ? "primary" : "onSurface",
+                  ":hover": {
+                    bgcolor: "action.hover",
+                  },
+                }}
+                variant={"contained"}
+              >
+                Run prompts
+              </Button>
+            </Stack>
+          )}
         </AccordionDetails>
       </Accordion>
     </Fade>

@@ -122,7 +122,6 @@ function AccordionMessageHeader({
   };
 
   const isExecutionMode = mode === "execution";
-  const isInputMode = mode === "input";
 
   return (
     <>
@@ -270,11 +269,11 @@ function AccordionMessageHeader({
                   }}
                   endIcon={<Close sx={{ fontSize: { xs: 3 }, ml: { xs: -1, md: 0 } }} />}
                   sx={{
-                    mr: -2,
-                    height: "20px",
-                    p: { xs: 0, md: "15px" },
+                    mr: { xs: -5, md: 0 },
+                    height: "22px",
+                    p: { xs: "8px", md: "15px" },
                     color: "onSurface",
-                    fontSize: { xs: 8.5, md: 15 },
+                    fontSize: { xs: 11, md: 15 },
                     fontWeight: 500,
                     ":hover": {
                       bgcolor: "action.hover",
@@ -285,35 +284,6 @@ function AccordionMessageHeader({
                   Clear
                 </Button>
               )}
-
-              <Button
-                onClick={event => {
-                  event.stopPropagation();
-                  dispatch(setAccordionChatMode("execution"));
-                  onGenerate();
-                }}
-                endIcon={<PlayCircle />}
-                sx={{
-                  mr: { xs: -6, md: 0 },
-                  height: "22px",
-                  p: { xs: 1, md: "15px" },
-                  fontSize: { xs: 12, md: 15 },
-                  lineHeight: "110%",
-                  letterSpacing: "0.2px",
-                  fontWeight: 500,
-                  color: showGenerate ? "primary" : "onSurface",
-                  ":hover": {
-                    bgcolor: "action.hover",
-                  },
-                  ":disabled": {
-                    color: "#5D5D60",
-                  },
-                }}
-                variant={showGenerate ? "contained" : "text"}
-                disabled={!showGenerate}
-              >
-                Run prompts
-              </Button>
             </Stack>
           )}
           <Stack

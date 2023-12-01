@@ -59,7 +59,6 @@ export const Display: React.FC<Props> = ({ templateData, close, answers }) => {
         sx={{
           bgcolor: "transparent",
           position: "relative",
-          pb: { xs: "0px", md: "70px" },
         }}
       >
         <Box
