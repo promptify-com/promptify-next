@@ -16,9 +16,19 @@ interface ChatInputProps {
   isValidating: boolean;
   disabledButton: boolean;
   addNewPrompt: () => void;
+  onGenerate: () => void;
+  showGenerate: boolean;
 }
 
-export const ChatInput = ({ onSubmit, disabled, isValidating, disabledButton, addNewPrompt }: ChatInputProps) => {
+export const ChatInput = ({
+  onSubmit,
+  disabled,
+  isValidating,
+  disabledButton,
+  addNewPrompt,
+  onGenerate,
+  showGenerate,
+}: ChatInputProps) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mode = useAppSelector(state => state.template.accordionChatMode);
 
@@ -105,6 +115,9 @@ export const ChatInput = ({ onSubmit, disabled, isValidating, disabledButton, ad
           <MessageSender
             onSubmit={onSubmit}
             disabled={disabled || disabledButton}
+            mode={"chat"}
+            onGenerate={onGenerate}
+            showGenerate={showGenerate}
           />
         </Box>
       </Stack>

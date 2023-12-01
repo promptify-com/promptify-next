@@ -3,16 +3,32 @@ import ArrowUpward from "@mui/icons-material/ArrowUpward";
 import KeyboardCommandKey from "@mui/icons-material/KeyboardCommandKey";
 import Box from "@mui/material/Box";
 import InputBase from "@mui/material/InputBase";
+import Button from "@mui/material/Button";
+import PlayCircleFilledWhiteOutlined from "@mui/icons-material/PlayCircleFilledWhiteOutlined";
+import { useAppDispatch } from "@/hooks/useStore";
+import { setAccordionChatMode } from "@/core/store/templatesSlice";
+import { theme } from "@/theme";
 
 interface MessageSenderProps {
   onSubmit: (value: string) => void;
   disabled: boolean;
   placeholder?: string;
+  mode?: "chat" | "other";
+  onGenerate?: () => void;
+  showGenerate?: boolean;
 }
 
-function MessageSender({ onSubmit, disabled, placeholder = "Chat with Promptify" }: MessageSenderProps) {
+function MessageSender({
+  onSubmit,
+  disabled,
+  placeholder = "Chat with Promptify",
+  mode = "other",
+  onGenerate,
+  showGenerate,
+}: MessageSenderProps) {
   const [localValue, setLocalValue] = useState("");
   const [isFocused, setIsFocused] = useState(false);
+  const dispatch = useAppDispatch();
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
@@ -39,54 +55,127 @@ function MessageSender({ onSubmit, disabled, placeholder = "Chat with Promptify"
       p={"8px 16px"}
     >
       <KeyboardCommandKey
-        sx={{ fontSize: "20px", color: "text.secondary", position: "absolute", left: 9, top: 11, opacity: 0.5 }}
+        sx={{ fontSize: "20px", color: "text.secondary", position: "absolute", left: 9, top: 25, opacity: 0.5 }}
       />
-      <InputBase
-        onFocus={() => setIsFocused(true)} // Set focus state to true
-        onBlur={() => setIsFocused(false)}
-        multiline
-        disabled={disabled}
-        fullWidth
-        sx={{
-          flex: 1,
-          fontSize: 13,
-          p: "3px",
-          ml: "20px",
-          mr: "40px",
-          color: "onSurface",
-          lineHeight: "22px",
-          letterSpacing: "0.46px",
-          fontWeight: "500",
-          maxHeight: "60px",
-          overflow: "auto",
-          "&::-webkit-scrollbar": {
-            width: "3px",
-            p: 1,
-            backgroundColor: "surface.5",
-          },
-          "&::-webkit-scrollbar-track": {
-            webkitBoxShadow: "inset 0 0 16px rgba(0,0,0,0.00)",
-          },
-          "&::-webkit-scrollbar-thumb": {
-            backgroundColor: "surface.3",
-            outline: "1px solid surface.1",
-            borderRadius: "10px",
-          },
-          ".Mui-disabled": {
-            cursor: disabled ? "not-allowed" : "auto",
-          },
-        }}
-        placeholder={placeholder}
-        inputProps={{ "aria-label": "Name" }}
-        onChange={e => setLocalValue(e.target.value)}
-        value={localValue}
-        onKeyPress={handleKeyPress}
-      />
+
+      {mode === "chat" ? (
+        <Box width={{ md: "90%", xs: "87%" }}>
+          <InputBase
+            onFocus={() => setIsFocused(true)} // Set focus state to true
+            onBlur={() => setIsFocused(false)}
+            multiline
+            disabled={disabled}
+            fullWidth
+            sx={{
+              flex: 1,
+              fontSize: 13,
+              p: "3px",
+              ml: "20px",
+              mr: "40px",
+              color: "onSurface",
+              lineHeight: "22px",
+              letterSpacing: "0.46px",
+              fontWeight: "500",
+              maxHeight: "60px",
+              overflow: "auto",
+              "&::-webkit-scrollbar": {
+                width: "3px",
+                p: 1,
+                backgroundColor: "surface.5",
+              },
+              "&::-webkit-scrollbar-track": {
+                webkitBoxShadow: "inset 0 0 16px rgba(0,0,0,0.00)",
+              },
+              "&::-webkit-scrollbar-thumb": {
+                backgroundColor: "surface.3",
+                outline: "1px solid surface.1",
+                borderRadius: "10px",
+              },
+              ".Mui-disabled": {
+                cursor: disabled ? "not-allowed" : "auto",
+              },
+            }}
+            placeholder={placeholder}
+            inputProps={{ "aria-label": "Name" }}
+            onChange={e => setLocalValue(e.target.value)}
+            value={localValue}
+            onKeyPress={handleKeyPress}
+          />
+
+          <Button
+            onClick={() => {
+              dispatch(setAccordionChatMode("execution"));
+              onGenerate?.();
+            }}
+            startIcon={<PlayCircleFilledWhiteOutlined />}
+            disabled={!showGenerate}
+            sx={{
+              height: "22px",
+              p: { xs: "8px", md: "15px" },
+              fontSize: { xs: 12, md: 13 },
+              ml: "20px",
+              mt: "5px",
+              lineHeight: "110%",
+              letterSpacing: "0.2px",
+              fontWeight: 500,
+              color: showGenerate ? "primary" : `${theme.palette.onSurface}!important`,
+              ":hover": {
+                bgcolor: "action.hover",
+              },
+            }}
+            variant={"contained"}
+          >
+            Run prompts
+          </Button>
+        </Box>
+      ) : (
+        <InputBase
+          onFocus={() => setIsFocused(true)} // Set focus state to true
+          onBlur={() => setIsFocused(false)}
+          multiline
+          disabled={disabled}
+          fullWidth
+          sx={{
+            flex: 1,
+            fontSize: 13,
+            p: "3px",
+            ml: "20px",
+            mr: "40px",
+            color: "onSurface",
+            lineHeight: "22px",
+            letterSpacing: "0.46px",
+            fontWeight: "500",
+            maxHeight: "60px",
+            overflow: "auto",
+            "&::-webkit-scrollbar": {
+              width: "3px",
+              p: 1,
+              backgroundColor: "surface.5",
+            },
+            "&::-webkit-scrollbar-track": {
+              webkitBoxShadow: "inset 0 0 16px rgba(0,0,0,0.00)",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              backgroundColor: "surface.3",
+              outline: "1px solid surface.1",
+              borderRadius: "10px",
+            },
+            ".Mui-disabled": {
+              cursor: disabled ? "not-allowed" : "auto",
+            },
+          }}
+          placeholder={placeholder}
+          inputProps={{ "aria-label": "Name" }}
+          onChange={e => setLocalValue(e.target.value)}
+          value={localValue}
+          onKeyPress={handleKeyPress}
+        />
+      )}
 
       <Box
         sx={{
           position: "absolute",
-          top: 5,
+          top: 25,
           right: 13,
           padding: "4px",
           width: "25px",
