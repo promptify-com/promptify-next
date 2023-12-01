@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, FC, createRef, RefObject } from "react";
+import { useEffect, useRef, useState, createRef, RefObject } from "react";
 import Error from "@mui/icons-material/Error";
 import { keyframes } from "@mui/material/styles";
 import Tooltip from "@mui/material/Tooltip";
@@ -9,12 +9,12 @@ import Box from "@mui/material/Box";
 import { isImageOutput, markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
 import { Subtitle } from "@/components/blocks";
 import { useAppSelector } from "@/hooks/useStore";
-import PromptContent from "./generate/PromptContent";
-import FeedbackThumbs from "./FeedbackThumbs";
 import type { Prompts } from "@/core/api/dto/prompts";
 import type { TemplatesExecutions } from "@/core/api/dto/templates";
 import type { IAnswer } from "@/common/types/chat";
 import type { DisplayPrompt, PromptLiveResponse } from "@/common/types/prompt";
+import ExecutionContentPreview from "./generate/PromptContent";
+import FeedbackThumbs from "./FeedbackThumbs";
 
 interface Props {
   execution: PromptLiveResponse | TemplatesExecutions | null;
@@ -22,13 +22,10 @@ interface Props {
   answers?: IAnswer[];
 }
 
-export const ExecutionCard: FC<Props> = ({ execution, promptsData, answers }) => {
+export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers }) => {
   const executionPrompts = execution && "data" in execution ? execution.data : execution?.prompt_executions;
   const sparkHashQueryParam = useAppSelector(state => state.executions.sparkHashQueryParam);
-  const isGenerating = useAppSelector(state => state.template.isGenerating);
-  const showPrompts = useAppSelector(state => state.template.showPromptsView);
   const [sortedPrompts, setSortedPrompts] = useState<DisplayPrompt[]>([]);
-  const containerRef = useRef<HTMLDivElement>(null);
   const [elementRefs, setElementRefs] = useState<RefObject<HTMLDivElement>[]>([]);
   const [elementHeights, setElementHeights] = useState<number[]>([]);
 
@@ -81,6 +78,7 @@ export const ExecutionCard: FC<Props> = ({ execution, promptsData, answers }) =>
     sortAndProcessExecutions();
   }, [executionPrompts]);
 
+  const containerRef = useRef<HTMLDivElement>(null);
   // useEffect(() => {
   //   containerRef.current?.scrollIntoView({
   //     block: isGenerating ? "end" : "start",
@@ -97,6 +95,8 @@ export const ExecutionCard: FC<Props> = ({ execution, promptsData, answers }) =>
   to { width: 0%; }
 `;
 
+  const showPreview = useAppSelector(state => state.template.showPromptsView);
+  const isGenerating = useAppSelector(state => state.template.isGenerating);
   const executionError = (error: string | undefined) => {
     return (
       <Tooltip
@@ -121,12 +121,16 @@ export const ExecutionCard: FC<Props> = ({ execution, promptsData, answers }) =>
     <Stack
       ref={containerRef}
       gap={1}
-      p={{ md: "16px" }}
+      sx={{
+        width: { md: "90%" },
+        m: { md: "auto" },
+        p: { xs: "8px 0px", md: "0px" },
+      }}
       direction={{ xs: "column-reverse", md: "column" }}
     >
       {!isGenerating && execution && "parameters" in execution && (
         <Stack
-          mt={-3}
+          mt={-1}
           pb={2}
           display={{ md: "none" }}
         >
@@ -137,12 +141,11 @@ export const ExecutionCard: FC<Props> = ({ execution, promptsData, answers }) =>
         {execution && "title" in execution && (
           <Typography
             sx={{
-              display: { xs: showPrompts ? "none" : "flex", md: "block" },
-
-              fontSize: { xs: 22, md: 48 },
+              fontSize: { xs: 30, md: 48 },
               fontWeight: 400,
               color: "onSurface",
               py: "24px",
+              wordBreak: "break-word",
             }}
           >
             {execution.title}
@@ -161,13 +164,13 @@ export const ExecutionCard: FC<Props> = ({ execution, promptsData, answers }) =>
                 <Stack
                   key={index}
                   gap={1}
-                  sx={{ pb: "24px" }}
+                  sx={{ pb: { md: "24px" } }}
                 >
                   {prompt && (
                     <Subtitle
                       sx={{
-                        display: { xs: showPrompts ? "none" : "flex", md: "block" },
-                        fontSize: 24,
+                        display: { xs: showPreview ? "none" : "block", md: "block" },
+                        fontSize: { xs: 18, md: 24 },
                         fontWeight: 400,
                         color: "onSurface",
                       }}
@@ -178,17 +181,19 @@ export const ExecutionCard: FC<Props> = ({ execution, promptsData, answers }) =>
                   )}
                   {/* is Text Output */}
                   {!isImageOutput(exec.content) && (
-                    <Box
-                      display={"flex"}
+                    <Stack
+                      direction={"row"}
                       alignItems={"start"}
-                      gap={"16px"}
+                      gap={2}
+                      justifyContent={"start"}
+                      position={"relative"}
                     >
                       <Stack
                         ref={elementRefs[index]}
-                        width={{ md: showPrompts ? "75%" : "100%" }}
-                        pr={{ md: "48px" }}
-                        display={{ xs: showPrompts ? "none" : "flex", md: "flex" }}
-                        position={"relative"}
+                        display={{ xs: showPreview ? "none" : "flex", md: "flex" }}
+                        justifyItems={"start"}
+                        p={0}
+                        width={{ xs: "100%", md: showPreview ? "75%" : "100%" }}
                       >
                         {isPrevItemImage && (
                           <Box
@@ -210,11 +215,13 @@ export const ExecutionCard: FC<Props> = ({ execution, promptsData, answers }) =>
                         )}
                         <Box
                           sx={{
-                            fontSize: 15,
+                            p: 0,
+                            width: "100%",
+                            fontSize: { xs: 14, md: 15 },
                             fontWeight: 400,
                             color: "onSurface",
                             wordWrap: "break-word",
-                            textAlign: "justify",
+                            textAlign: "start",
                             float: "none",
                             ".highlight": {
                               backgroundColor: "yellow",
@@ -239,7 +246,7 @@ export const ExecutionCard: FC<Props> = ({ execution, promptsData, answers }) =>
                               overflow: "auto",
                             },
                             ".language-label": {
-                              p: "8px 24px",
+                              p: "8px 4px",
                               bgcolor: "#4d5562",
                               color: "#ffffff",
                               fontSize: 13,
@@ -256,7 +263,7 @@ export const ExecutionCard: FC<Props> = ({ execution, promptsData, answers }) =>
                             display={{ xs: "none", md: "flex" }}
                             position={"absolute"}
                             top={"0"}
-                            right={"-10px"}
+                            right={"-40px"}
                           >
                             <FeedbackThumbs execution={execution} />
                           </Stack>
@@ -268,12 +275,14 @@ export const ExecutionCard: FC<Props> = ({ execution, promptsData, answers }) =>
                         py={2}
                         flex={1}
                         pl={"10px"}
-                        borderLeft={showPrompts ? "2px solid #ECECF4" : "none"}
-                        maxHeight={{ md: elementHeights[index] }}
+                        borderLeft={{ md: showPreview ? "2px solid #ECECF4" : "none" }}
+                        maxHeight={{ md: showPreview ? elementHeights[index] : 0 }}
                         sx={{
-                          width: { xs: showPrompts ? "100%" : "0%", md: showPrompts ? "35%" : "0%" },
+                          width: { xs: showPreview ? "100%" : 0, md: showPreview ? "35%" : 0 },
+                          height: { xs: showPreview ? "fit-content" : 0, md: "fit-content" },
+                          mr: { md: showPreview ? "-48px" : 0 },
                           overflow: "auto",
-                          animation: `${showPrompts ? expandAnimation : collapseAnimation} 300ms forwards`,
+                          animation: `${showPreview ? expandAnimation : collapseAnimation} 300ms forwards`,
                           "&::-webkit-scrollbar": {
                             width: "6px",
                             p: 1,
@@ -289,14 +298,14 @@ export const ExecutionCard: FC<Props> = ({ execution, promptsData, answers }) =>
                           },
                         }}
                       >
-                        <PromptContent
+                        <ExecutionContentPreview
                           id={index + 1}
                           prompt={prompt!}
                           answers={answers}
                           execution={execution as TemplatesExecutions}
                         />
                       </Stack>
-                    </Box>
+                    </Stack>
                   )}
                   {/* is Image Output and Next item is not text */}
                   {isImageOutput(exec.content) && !isNextItemText && (
@@ -308,6 +317,7 @@ export const ExecutionCard: FC<Props> = ({ execution, promptsData, answers }) =>
                         (e.target as HTMLImageElement).src = require("@/assets/images/default-thumbnail.jpg");
                       }}
                       sx={{
+                        display: { xs: showPreview ? "none" : "block", md: "block" },
                         borderRadius: "8px",
                         width: "40%",
                         objectFit: "cover",

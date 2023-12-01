@@ -120,7 +120,7 @@ export const AccordionMessage = ({
             >
               {mode === "execution" && (
                 <Stack
-                  padding={{ xs: "0px 16px", md: mode === "execution" ? "16px 0px 48px 64px" : undefined }}
+                  padding={{ xs: "0px 8px", md: mode === "execution" ? "16px 0px 48px 64px" : undefined }}
                   position={"relative"}
                 >
                   <Display
