@@ -128,11 +128,11 @@ function AccordionMessageHeader({ template, mode, isExpanded, onClear, showClear
           alignItems={"center"}
         >
           <Stack
-            flex={1}
             direction={"row"}
-            width={{ xs: "100%", md: "auto" }}
             alignItems={"center"}
             gap={"8px"}
+            flex={1}
+            width={"100%"}
           >
             {isExecutionMode && (
               <>
@@ -194,6 +194,7 @@ function AccordionMessageHeader({ template, mode, isExpanded, onClear, showClear
                 display={"flex"}
                 flex={1}
                 alignItems={"center"}
+                justifyContent={{ xs: "space-between", md: "start" }}
                 letterSpacing={"0.2px"}
               >
                 {!isExecutionMode && "New Prompt"}
@@ -277,7 +278,6 @@ function AccordionMessageHeader({ template, mode, isExpanded, onClear, showClear
           )}
           <Stack
             direction={"row"}
-            ml={{ xs: 4, md: 0 }}
             alignItems={"center"}
             gap={"8px"}
           >
@@ -287,6 +287,7 @@ function AccordionMessageHeader({ template, mode, isExpanded, onClear, showClear
                   <Grid
                     display={"flex"}
                     alignItems={"center"}
+                    sx={{ mr: { xs: -1, md: 0 } }}
                   >
                     <Button
                       onClick={e => {
@@ -295,10 +296,10 @@ function AccordionMessageHeader({ template, mode, isExpanded, onClear, showClear
                       }}
                       endIcon={<HighlightOff />}
                       sx={{
-                        height: "34px",
-                        p: { md: "15px" },
+                        height: "22px",
+                        p: { xs: "8px", md: "15px" },
                         color: "onSurface",
-                        fontSize: 13,
+                        fontSize: { xs: 10, md: 15 },
                         fontWeight: 500,
                         ":hover": {
                           bgcolor: "action.hover",
@@ -308,27 +309,28 @@ function AccordionMessageHeader({ template, mode, isExpanded, onClear, showClear
                     >
                       Cancel
                     </Button>
-
-                    <Tooltip
-                      title="Show Prompts"
-                      arrow
-                      PopperProps={commonPopperProps}
-                    >
-                      <IconButton
-                        onClick={e => {
-                          e.stopPropagation();
-                          dispatch(setShowPromptsView(!showPrompts));
-                        }}
-                        sx={{
-                          border: "none",
-                          ":hover": {
-                            bgcolor: "surface.4",
-                          },
-                        }}
+                    {!isGenerating && (
+                      <Tooltip
+                        title="Show Prompts"
+                        arrow
+                        PopperProps={commonPopperProps}
                       >
-                        {!showPrompts ? <RemoveRedEyeOutlined /> : <VisibilityOff />}
-                      </IconButton>
-                    </Tooltip>
+                        <IconButton
+                          onClick={e => {
+                            e.stopPropagation();
+                            dispatch(setShowPromptsView(!showPrompts));
+                          }}
+                          sx={{
+                            border: "none",
+                            ":hover": {
+                              bgcolor: "surface.4",
+                            },
+                          }}
+                        >
+                          {!showPrompts ? <RemoveRedEyeOutlined /> : <VisibilityOff />}
+                        </IconButton>
+                      </Tooltip>
+                    )}
                   </Grid>
                 ) : (
                   <Stack
