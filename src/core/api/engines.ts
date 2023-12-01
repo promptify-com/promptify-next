@@ -10,7 +10,7 @@ export const enginesApi = baseApi.injectEndpoints({
           method: "get",
         }),
         providesTags: ["Engines"],
-        keepUnusedDataFor: 60 * 60,
+        keepUnusedDataFor: 3600,
       }),
     };
   },

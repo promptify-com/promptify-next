@@ -25,9 +25,10 @@ import useChatBox from "@/hooks/useChatBox";
 interface Props {
   onError: (errMsg: string) => void;
   template: Templates;
+  questionPrefixContent: string;
 }
 
-const ChatBox: React.FC<Props> = ({ onError, template }) => {
+const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) => {
   const token = useToken();
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -62,10 +63,12 @@ const ChatBox: React.FC<Props> = ({ onError, template }) => {
 
   const initialMessages = (questions: IPromptInput[]) => {
     const createdAt = new Date(new Date().getTime() - 1000);
+    const prefixedContent =
+      questionPrefixContent ?? `Hi, ${currentUser?.first_name ?? currentUser?.username ?? "There"}! Ready to work on`;
 
     const welcomeMessage: IMessage = {
       id: randomId(),
-      text: `Hi, ${currentUser?.first_name ?? currentUser?.username ?? "There"}! Ready to work on ${template?.title} ?`,
+      text: `${prefixedContent} ${template?.title} ?`,
       type: "text",
       createdAt,
       fromUser: false,

@@ -11,7 +11,7 @@ export const parametersApi = baseApi.injectEndpoints({
           method: "get",
         }),
         providesTags: ["Parameters"],
-        keepUnusedDataFor: 60 * 60,
+        keepUnusedDataFor: 3600,
       }),
       getParametersPresets: builder.query<IParametersPreset[], void>({
         query: () => ({
@@ -19,7 +19,7 @@ export const parametersApi = baseApi.injectEndpoints({
           method: "get",
         }),
         providesTags: ["ParametersPresets"],
-        keepUnusedDataFor: 60 * 60,
+        keepUnusedDataFor: 3600,
       }),
       createParametersPreset: builder.mutation<IParametersPreset[], IParametersPresetPost>({
         query: newPreset => ({
