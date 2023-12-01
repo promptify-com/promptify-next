@@ -51,7 +51,7 @@ function MessageSender({
       bgcolor={isFocused || hasNoValue ? "surface.1" : "surface.3"}
       alignItems={"center"}
       boxShadow={isFocused || hasNoValue ? "0px 4px 8px 0px #E1E2EC, 0px 0px 4px 0px rgba(0, 0, 0, 0.10)" : undefined}
-      borderRadius="99px"
+      borderRadius="24px"
       p={"8px 16px"}
       mx={"16px"}
     >
@@ -186,7 +186,7 @@ function MessageSender({
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          borderRadius: "99px",
+          borderRadius: "24px",
           bgcolor: !hasNoValue ? undefined : "primary.main",
           color: { xs: !hasNoValue ? "#8E8E94" : "white", md: "white" },
         }}
