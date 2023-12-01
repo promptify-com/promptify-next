@@ -144,7 +144,7 @@ export default function FormParam({ param, paramValue, onChange }: GeneratorPara
             height: "1px",
           },
         }}
-        value={activeDescription?.score || 0}
+        value={activeDescription?.score || 2}
         marks={marks}
         step={1}
         min={Math.min(...values)}
