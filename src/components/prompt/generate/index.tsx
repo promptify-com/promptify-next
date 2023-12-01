@@ -337,7 +337,7 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
             answer,
           };
         })
-        .filter(answer => !answer.answer);
+        .filter(answer => answer.answer);
 
       setAnswers(newAnswers);
       setIsValidatingAnswer(false);
