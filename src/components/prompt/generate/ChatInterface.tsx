@@ -87,13 +87,13 @@ export const ChatInterface = ({
         "&::-webkit-scrollbar": {
           width: { xs: "4px", md: "6px" },
           p: 1,
-          backgroundColor: "surface.5",
+          backgroundColor: "surface.1",
         },
         "&::-webkit-scrollbar-track": {
           webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
         },
         "&::-webkit-scrollbar-thumb": {
-          backgroundColor: "surface.1",
+          backgroundColor: "surface.5",
           outline: "1px solid surface.1",
           borderRadius: "10px",
         },
