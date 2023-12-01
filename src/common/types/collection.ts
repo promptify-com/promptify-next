@@ -1,11 +1,5 @@
 import { ITemplate } from "./template";
-
-export interface CreatedBy {
-  id: number;
-  username: string;
-  first_name: string;
-  last_name: string;
-}
+import { UserPartial } from "@/core/api/dto/user";
 
 export interface ICollection {
   id: number;
@@ -16,7 +10,7 @@ export interface ICollection {
   thumbnail: string;
   prompt_templates_count: number;
   likes: number;
-  created_by: CreatedBy;
+  created_by: UserPartial;
   slug: string;
 }
 
@@ -29,6 +23,6 @@ export interface ICollectionById {
   thumbnail: string;
   prompt_templates_count: number;
   likes: number;
-  created_by: CreatedBy;
+  created_by: UserPartial;
   prompt_templates: ITemplate[];
 }
