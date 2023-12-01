@@ -5,7 +5,7 @@ import Box from "@mui/material/Box";
 import InputBase from "@mui/material/InputBase";
 import Button from "@mui/material/Button";
 import PlayCircleFilledWhiteOutlined from "@mui/icons-material/PlayCircleFilledWhiteOutlined";
-import { useAppDispatch } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setAccordionChatMode } from "@/core/store/templatesSlice";
 import { theme } from "@/theme";
 
@@ -29,6 +29,7 @@ function MessageSender({
   const [localValue, setLocalValue] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   const dispatch = useAppDispatch();
+  const isGenerating = useAppSelector(state => state.template.isGenerating);
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
@@ -108,7 +109,7 @@ function MessageSender({
               onGenerate?.();
             }}
             startIcon={<PlayCircleFilledWhiteOutlined />}
-            disabled={!showGenerate}
+            disabled={!showGenerate || isGenerating}
             sx={{
               height: "22px",
               p: { xs: "8px", md: "15px" },
@@ -118,9 +119,9 @@ function MessageSender({
               lineHeight: "110%",
               letterSpacing: "0.2px",
               fontWeight: 500,
-              color: showGenerate ? "primary" : `#ACACBE!important`,
-              bgcolor: showGenerate ? "#375CA9" : `#F7F7F8!important`,
-              borderColor: showGenerate ? "#375CA9" : "transparent",
+              color: showGenerate && !isGenerating ? "primary" : `#ACACBE!important`,
+              bgcolor: showGenerate && !isGenerating ? "#375CA9" : `#F7F7F8!important`,
+              borderColor: showGenerate && !isGenerating ? "#375CA9" : "transparent",
               ":hover": {
                 bgcolor: "action.hover",
               },
