@@ -21,6 +21,8 @@ type CardTemplateLastProps = {
 function CardTemplateLast({ template }: CardTemplateLastProps) {
   const { truncate } = useTruncate();
 
+  const selectedExecution = template.executions[0];
+
   return (
     <Box>
       <Card
@@ -155,15 +157,16 @@ function CardTemplateLast({ template }: CardTemplateLastProps) {
                     letterSpacing: "0.17px",
                     color: "onSurface",
                   }}
-                  title={template.executions[0].title}
+                  title={selectedExecution.title}
                 >
-                  {truncate(template.executions[0].title, { length: 38 })}
+                  {truncate(selectedExecution.title, { length: 38 })}
                 </Typography>
               </Box>
 
               <IconButton
-                onClick={() => {
-                  redirectToPath(`prompt/${template.slug}`, { hash: template.executions[0].id });
+                onClick={e => {
+                  e.stopPropagation();
+                  redirectToPath(`prompt/${template.slug}`, { hash: selectedExecution.hash });
                 }}
                 sx={{
                   border: "none",

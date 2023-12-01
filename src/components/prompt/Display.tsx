@@ -18,7 +18,6 @@ interface Props {
 
 export const Display: React.FC<Props> = ({ templateData, close }) => {
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const [firstLoad, setFirstLoad] = useState(true);
   const [openExportPopup, setOpenExportpopup] = useState(false);
   const [previewsShown, setPreviewsShown] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -42,21 +41,6 @@ export const Display: React.FC<Props> = ({ templateData, close }) => {
   }, [selectedExecution]);
   const isGeneratedExecutionEmpty = Boolean(generatedExecution && !generatedExecution.data?.length);
   const executionIsLoading = isFetching || isGeneratedExecutionEmpty;
-
-  // click listener to remove opacity layer on first loaded execution
-  useEffect(() => {
-    const handleClick = () => setFirstLoad(false);
-
-    const container = containerRef.current;
-    container?.addEventListener("click", handleClick);
-
-    return () => container?.removeEventListener("click", handleClick);
-  }, []);
-
-  useEffect(() => {
-    // If there is a new execution being generated, remove opacity layer
-    setFirstLoad(!generatedExecution);
-  }, [generatedExecution]);
 
   const currentGeneratedPrompt = useMemo(() => {
     if (generatedExecution?.data?.length) {
@@ -106,7 +90,6 @@ export const Display: React.FC<Props> = ({ templateData, close }) => {
           sx={{
             height: { xs: "calc(100% - 104px)", md: "calc(100% - 67px)" },
             overflow: "auto",
-            opacity: firstLoad ? 0.5 : 1,
             bgcolor: "surface.1",
             borderRadius: "16px 16px 0px 0px",
             position: "relative",

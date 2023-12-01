@@ -82,7 +82,7 @@ export default function TemplateMobile({ template, setErrorMessage }: TemplateMo
       }}
     >
       <Stack
-        p={"10px"}
+        p={"12px 10px"}
         direction={"row"}
         alignItems={"center"}
         gap={"20px"}
@@ -142,7 +142,7 @@ export default function TemplateMobile({ template, setErrorMessage }: TemplateMo
         ))}
       </Stack>
       <Grid
-        height={"calc(100% - 50px)"}
+        height={"calc(100% - 54px)"}
         width={"100%"}
         display={isChatFullScreen ? "block" : "none"}
       >
