@@ -120,8 +120,8 @@ function MessageSender({
               letterSpacing: "0.2px",
               fontWeight: 500,
               color: showGenerate ? "primary" : `#ACACBE!important`,
-              bgcolor: showGenerate ? "inherit" : `#F7F7F8!important`,
-              borderColor: showGenerate ? "inherit" : "transparent",
+              bgcolor: showGenerate ? "#375CA9" : `#F7F7F8!important`,
+              borderColor: showGenerate ? "#375CA9" : "transparent",
               ":hover": {
                 bgcolor: "action.hover",
               },
