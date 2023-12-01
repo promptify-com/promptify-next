@@ -53,6 +53,7 @@ function MessageSender({
       boxShadow={isFocused || hasNoValue ? "0px 4px 8px 0px #E1E2EC, 0px 0px 4px 0px rgba(0, 0, 0, 0.10)" : undefined}
       borderRadius="99px"
       p={"8px 16px"}
+      mx={"16px"}
     >
       <KeyboardCommandKey
         sx={{ fontSize: "20px", color: "text.secondary", position: "absolute", left: 9, top: 25, opacity: 0.5 }}

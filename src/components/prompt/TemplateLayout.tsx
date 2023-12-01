@@ -120,7 +120,6 @@ export default function TemplateLayout({ template, setErrorMessage, questionPref
     <Stack
       mt={{ xs: 8, md: 0 }}
       height={{ xs: "calc(100svh - 65px)", md: "calc(100svh - 90px)" }}
-      mx={{ xs: "16px", md: 0 }}
     >
       <Header template={template} />
 
@@ -130,6 +129,7 @@ export default function TemplateLayout({ template, setErrorMessage, questionPref
         alignItems={"center"}
         gap={"20px"}
         display={{ xs: "flex", md: "none" }}
+        mx={"16px"}
       >
         {ToolbarItems.map(link => (
           <Fragment key={link.name}>

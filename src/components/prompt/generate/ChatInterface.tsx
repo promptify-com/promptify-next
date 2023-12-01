@@ -82,7 +82,7 @@ export const ChatInterface = ({
       mx={{ md: "40px" }}
       sx={{
         overflow: "auto",
-        pr: 1,
+        px: "16px",
         overscrollBehavior: "contain",
         "&::-webkit-scrollbar": {
           width: { xs: "4px", md: "6px" },
