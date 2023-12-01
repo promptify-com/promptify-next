@@ -59,7 +59,7 @@ function MessageSender({
       />
 
       {mode === "chat" ? (
-        <Box width={{ md: "90%", xs: "90%" }}>
+        <Box width={{ md: "90%", xs: "87%" }}>
           <InputBase
             onFocus={() => setIsFocused(true)} // Set focus state to true
             onBlur={() => setIsFocused(false)}
@@ -112,7 +112,7 @@ function MessageSender({
             sx={{
               height: "22px",
               p: { xs: "8px", md: "15px" },
-              fontSize: 13,
+              fontSize: { xs: 12, md: 13 },
               ml: "20px",
               mt: "5px",
               lineHeight: "110%",

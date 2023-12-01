@@ -5,6 +5,7 @@ import Typography from "@mui/material/Typography";
 import { TemplatesExecutions } from "@/core/api/dto/templates";
 import type { IAnswer } from "@/common/types/chat";
 import type { Prompts } from "@/core/api/dto/prompts";
+import { theme } from "@/theme";
 
 interface Props {
   execution: TemplatesExecutions | null;
@@ -109,7 +110,7 @@ function PromptContent({ execution, prompt, id, answers }: Props) {
 }
 
 const HighlightStyle = {
-  color: "primary.main",
+  color: theme.palette.primary.main,
   fontWeight: "600",
   wordBreak: "break-word",
   whiteSpace: "pre-wrap",
