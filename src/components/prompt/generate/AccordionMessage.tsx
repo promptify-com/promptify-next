@@ -78,9 +78,7 @@ export const AccordionMessage = ({
           template={template}
           onClear={onClear}
           showClear={Boolean(answers.length)}
-          showGenerate={showGenerate}
           isExpanded={expanded}
-          onGenerate={onGenerate}
           onCancel={abortGenerating}
           mode={mode}
         />
@@ -88,7 +86,7 @@ export const AccordionMessage = ({
         <AccordionDetails
           sx={{
             mt: -4,
-            p: { xs: "32px 8px 8px 8px", md: "32px 16px 16px 16px" },
+            p: { xs: "32px 8px 10px 8px", md: "32px 16px 12px 16px" },
             bgcolor: "surface.2",
             overflow: "hidden",
             borderRadius: "0px 16px 16px 16px",
@@ -155,7 +153,7 @@ export const AccordionMessage = ({
                 endIcon={<PlayCircle />}
                 sx={{
                   height: "22px",
-                  p: { xs: "8px", md: "15px" },
+                  p: { xs: "12px", md: "15px" },
                   fontSize: { xs: 12, md: 15 },
                   lineHeight: "110%",
                   letterSpacing: "0.2px",

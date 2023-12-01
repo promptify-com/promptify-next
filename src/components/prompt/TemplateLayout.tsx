@@ -119,8 +119,7 @@ export default function TemplateLayout({ template, setErrorMessage, questionPref
   return (
     <Stack
       mt={{ xs: 8, md: 0 }}
-      height={{ xs: "calc(100svh - 55px)", md: "calc(100svh - 90px)" }}
-      gap={"1px"}
+      height={{ xs: "calc(100svh - 65px)", md: "calc(100svh - 90px)" }}
       mx={{ xs: "16px", md: 0 }}
     >
       <Header template={template} />
