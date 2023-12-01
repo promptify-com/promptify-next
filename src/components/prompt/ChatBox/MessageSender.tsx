@@ -29,7 +29,7 @@ const MessageSender: React.FC<MessageSenderProps> = ({ onSubmit, disabled, place
       bgcolor={"surface.3"}
       display={"flex"}
       alignItems={"center"}
-      borderRadius="99px"
+      borderRadius="24px"
       m={{ xs: "10px 16px", md: "16px 24px" }}
       p={"8px"}
     >
