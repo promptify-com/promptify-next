@@ -19,7 +19,7 @@ interface Props {
   messages: IMessage[];
   onChangeInput: (value: string | File, input: IPromptInput) => void;
   onChangeParam: (value: number, param: PromptParams) => void;
-  setIsSimulaitonStreaming: Dispatch<SetStateAction<boolean>>;
+  setIsSimulationStreaming: Dispatch<SetStateAction<boolean>>;
   inputs: IPromptInput[];
   answers: IAnswer[];
   params: PromptParams[];
@@ -35,7 +35,7 @@ export const ChatInterface = ({
   messages,
   onChangeInput,
   onChangeParam,
-  setIsSimulaitonStreaming,
+  setIsSimulationStreaming,
   inputs,
   answers,
   onGenerate,
@@ -120,11 +120,12 @@ export const ChatInterface = ({
           <Fragment key={msg.id}>
             <Message
               message={msg}
-              setIsSimulaitonStreaming={setIsSimulaitonStreaming}
+              setIsSimulationStreaming={setIsSimulationStreaming}
               onScrollToBottom={scrollToBottom}
             />
             {msg.type === "form" && msg.id === lastFormMessage?.id && (
               <Box
+                id="accordion-header"
                 position={"relative"}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
@@ -156,7 +157,7 @@ export const ChatInterface = ({
                   onChangeInput={onChangeInput}
                   onChangeParam={onChangeParam}
                   onGenerate={onGenerate}
-                  setIsSimulationStreaming={setIsSimulaitonStreaming}
+                  setIsSimulationStreaming={setIsSimulationStreaming}
                 />
               </Box>
             )}

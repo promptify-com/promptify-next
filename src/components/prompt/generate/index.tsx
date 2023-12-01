@@ -36,26 +36,29 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
   const token = useToken();
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const currentUser = useAppSelector(state => state.user.currentUser);
-  const isGenerating = useAppSelector(state => state.template.isGenerating);
-
-  const isSidebarExpanded = useAppSelector(state => state.template.isSidebarExpanded);
   const [stopExecution] = useStopExecutionMutation();
   const [uploadFile] = useUploadFileMutation();
+
+  const currentUser = useAppSelector(state => state.user.currentUser);
+  const isGenerating = useAppSelector(state => state.template.isGenerating);
+  const isSidebarExpanded = useAppSelector(state => state.template.isSidebarExpanded);
+  const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
+  const AccordionChatMode = useAppSelector(state => state.template.accordionChatMode);
+
   const [showGenerateButton, setShowGenerateButton] = useState(false);
   const [isValidatingAnswer, setIsValidatingAnswer] = useState(false);
+  const [newExecutionId, setNewExecutionId] = useState<number | null>(null);
+  const [answers, setAnswers] = useState<IAnswer[]>([]);
+  const [messages, setMessages] = useState<IMessage[]>([]);
+  const [filteredMessages, setFilteredMessages] = useState<IMessage[]>([]);
+  const [paramsValues, setParamsValues] = useState<ResOverrides[]>([]);
+  const [queuedMessages, setQueuedMessages] = useState<IMessage[]>([]);
+  const [isSimulationStreaming, setIsSimulationStreaming] = useState(false);
+  const [disableChatInput, setDisableChatInput] = useState(false);
   const [generatingResponse, setGeneratingResponse] = useState<PromptLiveResponse>({
     created_at: new Date(),
     data: [],
   });
-  const [newExecutionId, setNewExecutionId] = useState<number | null>(null);
-  const [answers, setAnswers] = useState<IAnswer[]>([]);
-  const [messages, setMessages] = useState<IMessage[]>([]);
-  const [queuedMessages, setQueuedMessages] = useState<IMessage[]>([]);
-  const [isSimulaitonStreaming, setIsSimulaitonStreaming] = useState(false);
-  const [disableChatInput, setDisableChatInput] = useState(false);
-  const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
-  const [paramsValues, setParamsValues] = useState<ResOverrides[]>([]);
 
   const { preparePromptsData, prepareAndRemoveDuplicateInputs } = useChatBox();
 
@@ -65,7 +68,7 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
   const addToQueuedMessages = (messages: IMessage[]) => {
     setQueuedMessages(messages);
 
-    setIsSimulaitonStreaming(true);
+    setIsSimulationStreaming(true);
   };
 
   const createdAt = new Date();
@@ -167,6 +170,19 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
 
   const disabledButton = _inputs.length !== 0 || promptHasContent;
 
+  const showGenerate =
+    !isSimulationStreaming && (showGenerateButton || Boolean(!_inputs.length || !_inputs[0]?.required));
+
+  useEffect(() => {
+    setIsSimulationStreaming(false);
+    if (AccordionChatMode === "execution") {
+      const filtered = messages.filter(message => message.type === "form");
+      setFilteredMessages(filtered);
+    } else {
+      setFilteredMessages(messages);
+    }
+  }, [AccordionChatMode, messages]);
+
   useEffect(() => {
     dispatchNewExecutionData(answers, _inputs);
   }, [template]);
@@ -178,13 +194,13 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
   }, [generatingResponse]);
 
   useEffect(() => {
-    if (!isSimulaitonStreaming && !!queuedMessages.length) {
+    if (!isSimulationStreaming && !!queuedMessages.length) {
       const nextQueuedMessage = queuedMessages.pop()!;
 
       setMessages(prevMessages => prevMessages.concat(nextQueuedMessage));
       addToQueuedMessages(queuedMessages);
     }
-  }, [isSimulaitonStreaming]);
+  }, [isSimulationStreaming]);
 
   useEffect(() => {
     if (!isGenerating && generatedExecution?.data?.length) {
@@ -264,7 +280,7 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
     dispatch(setAccordionChatMode("input"));
     dispatch(setSelectedExecution(null));
     setAnswers([]);
-    setIsSimulaitonStreaming(false);
+    setIsSimulationStreaming(false);
   };
 
   const validateVary = async (variation: string) => {
@@ -347,7 +363,7 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
   };
 
   const handleUserInput = async (value: string | File, input: IPromptInput) => {
-    if (isSimulaitonStreaming) {
+    if (isSimulationStreaming) {
       return;
     }
 
@@ -563,13 +579,13 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
       >
         <ChatInterface
           template={template}
-          messages={messages}
-          setIsSimulaitonStreaming={setIsSimulaitonStreaming}
+          messages={filteredMessages}
+          setIsSimulationStreaming={setIsSimulationStreaming}
           inputs={_inputs}
           params={_params}
           paramsValues={paramsValues}
           answers={answers}
-          showGenerate={showGenerateButton}
+          showGenerate={showGenerate}
           onChangeInput={handleUserInput}
           onChangeParam={handleUserParam}
           onGenerate={generateExecutionHandler}

@@ -38,23 +38,12 @@ interface Props {
   template: Templates;
   mode: "execution" | "input";
   isExpanded: boolean;
-  onGenerate: () => void;
   onCancel: () => void;
   onClear: () => void;
   showClear: boolean;
-  showGenerate: boolean;
 }
 
-function AccordionMessageHeader({
-  template,
-  mode,
-  isExpanded,
-  onGenerate,
-  onClear,
-  showClear,
-  onCancel,
-  showGenerate,
-}: Props) {
+function AccordionMessageHeader({ template, mode, isExpanded, onClear, showClear, onCancel }: Props) {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const dispatch = useAppDispatch();
   const { truncate } = useTruncate();

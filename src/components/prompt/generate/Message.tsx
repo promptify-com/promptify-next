@@ -10,19 +10,19 @@ import { timeAgo } from "@/common/helpers/timeManipulation";
 
 interface MessageBlockProps {
   message: IMessage;
-  setIsSimulaitonStreaming: Dispatch<SetStateAction<boolean>>;
+  setIsSimulationStreaming: Dispatch<SetStateAction<boolean>>;
   onScrollToBottom: () => void;
 }
 
 interface MessageContentProps {
   content: string;
   shouldStream: boolean;
-  setIsSimulaitonStreaming: Dispatch<SetStateAction<boolean>>;
+  setIsSimulationStreaming: Dispatch<SetStateAction<boolean>>;
   onStreamingFinished: () => void;
 }
 
 const MessageContent = memo(
-  ({ content, shouldStream, setIsSimulaitonStreaming, onStreamingFinished }: MessageContentProps) => {
+  ({ content, shouldStream, setIsSimulationStreaming, onStreamingFinished }: MessageContentProps) => {
     const { streamedText, hasFinished } = useTextSimulationStreaming({
       text: content,
       shouldStream,
@@ -30,7 +30,7 @@ const MessageContent = memo(
 
     useEffect(() => {
       if (hasFinished) {
-        setIsSimulaitonStreaming(false);
+        setIsSimulationStreaming(false);
         onStreamingFinished();
       }
     }, [hasFinished]);
@@ -39,7 +39,7 @@ const MessageContent = memo(
   },
 );
 
-export const Message = ({ message, setIsSimulaitonStreaming, onScrollToBottom }: MessageBlockProps) => {
+export const Message = ({ message, setIsSimulationStreaming, onScrollToBottom }: MessageBlockProps) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const { fromUser, text, createdAt, type } = message;
@@ -114,7 +114,7 @@ export const Message = ({ message, setIsSimulaitonStreaming, onScrollToBottom }:
             <MessageContent
               content={text}
               shouldStream={!fromUser}
-              setIsSimulaitonStreaming={setIsSimulaitonStreaming}
+              setIsSimulationStreaming={setIsSimulationStreaming}
               onStreamingFinished={onScrollToBottom}
             />
           </Typography>

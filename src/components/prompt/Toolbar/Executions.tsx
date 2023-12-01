@@ -17,6 +17,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setGeneratedExecution, setSelectedExecution, setSparkHashQueryParam } from "@/core/store/executionsSlice";
 import { openToolbarDrawer, setAccordionChatMode } from "@/core/store/templatesSlice";
 import { isDesktopViewPort } from "@/common/helpers";
+import { useScrollToElement } from "@/hooks/useScrollToElement";
 
 interface ExecutionsProps {
   template: Templates;
@@ -33,6 +34,8 @@ export const Executions: React.FC<ExecutionsProps> = ({ template }) => {
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
+
+  const setSmoothScrollTarget = useScrollToElement("smooth");
 
   const {
     data: executions,
@@ -97,6 +100,7 @@ export const Executions: React.FC<ExecutionsProps> = ({ template }) => {
     dispatch(setAccordionChatMode("execution"));
 
     isMobile && dispatch(openToolbarDrawer(false));
+    setSmoothScrollTarget("#accordion-header");
   };
 
   return (
