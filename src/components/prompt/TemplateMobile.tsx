@@ -21,9 +21,10 @@ import { theme } from "@/theme";
 interface TemplateMobileProps {
   template: Templates;
   setErrorMessage: Dispatch<SetStateAction<string>>;
+  questionPrefixContent: string;
 }
 
-export default function TemplateMobile({ template, setErrorMessage }: TemplateMobileProps) {
+export default function TemplateMobile({ template, setErrorMessage, questionPrefixContent }: TemplateMobileProps) {
   const dispatch = useDispatch();
   const isChatFullScreen = useAppSelector(state => state.template.isChatFullScreen);
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
@@ -82,7 +83,7 @@ export default function TemplateMobile({ template, setErrorMessage }: TemplateMo
       }}
     >
       <Stack
-        p={"10px"}
+        p={"12px 10px"}
         direction={"row"}
         alignItems={"center"}
         gap={"20px"}
@@ -142,7 +143,7 @@ export default function TemplateMobile({ template, setErrorMessage }: TemplateMo
         ))}
       </Stack>
       <Grid
-        height={"calc(100% - 50px)"}
+        height={"calc(100% - 54px)"}
         width={"100%"}
         display={isChatFullScreen ? "block" : "none"}
       >
@@ -151,6 +152,7 @@ export default function TemplateMobile({ template, setErrorMessage }: TemplateMo
             onError={setErrorMessage}
             key={template?.id}
             template={template}
+            questionPrefixContent={questionPrefixContent}
           />
         </ClientOnly>
       </Grid>

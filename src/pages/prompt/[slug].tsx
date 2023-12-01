@@ -119,6 +119,7 @@ function Template({ hashedExecution, fetchedTemplate, questionPrefixContent }: T
           <TemplateMobile
             template={fetchedTemplate}
             setErrorMessage={setErrorMessage}
+            questionPrefixContent={questionPrefixContent}
           />
         ) : (
           <TemplateDesktop

@@ -1,13 +1,13 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { User } from '@/core/api/dto/user';
+import { User } from "@/core/api/dto/user";
 import Storage from "@/common/storage";
 
 interface IState {
-    currentUser: User | null;
+  currentUser: User | null;
 }
 
 const initialState: IState = {
-    currentUser: null,
+  currentUser: null,
 };
 
 const userSlice = createSlice({
@@ -22,8 +22,8 @@ const userSlice = createSlice({
   },
 });
 
-export const isValidUserFn = (({ user }: { user: IState }) => 
-    Boolean(user.currentUser?.id && user.currentUser?.username));
+export const isValidUserFn = ({ user }: { user: IState }) =>
+  Boolean(user.currentUser?.id && user.currentUser?.username);
 
 export const { updateUser } = userSlice.actions;
 
