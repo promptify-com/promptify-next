@@ -25,9 +25,10 @@ import { theme } from "@/theme";
 interface TemplateDesktopProps {
   template: Templates;
   setErrorMessage: Dispatch<SetStateAction<string>>;
+  questionPrefixContent: string;
 }
 
-export default function TemplateLayout({ template, setErrorMessage }: TemplateDesktopProps) {
+export default function TemplateLayout({ template, setErrorMessage, questionPrefixContent }: TemplateDesktopProps) {
   const dispatch = useAppDispatch();
 
   const isValidUser = useAppSelector(isValidUserFn);
@@ -223,6 +224,7 @@ export default function TemplateLayout({ template, setErrorMessage }: TemplateDe
             <GeneratorChat
               onError={setErrorMessage}
               template={template}
+              questionPrefixContent={questionPrefixContent}
             />
           </ClientOnly>
         </Stack>

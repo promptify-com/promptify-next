@@ -29,9 +29,10 @@ import { getExecutionById } from "@/hooks/api/executions";
 interface Props {
   onError: (errMsg: string) => void;
   template: Templates;
+  questionPrefixContent: string;
 }
 
-const GeneratorChat: React.FC<Props> = ({ onError, template }) => {
+const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixContent }) => {
   const token = useToken();
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -71,15 +72,15 @@ const GeneratorChat: React.FC<Props> = ({ onError, template }) => {
 
   const initialMessages = ({ inputs, startOver = false }: { inputs: IPromptInput[]; startOver?: boolean }) => {
     const welcomeMessage: IMessage[] = [];
+    const prefixedContent =
+      questionPrefixContent ?? `Hi, ${currentUser?.first_name ?? currentUser?.username ?? "There"}! Ready to work on`;
 
     if (!startOver) {
       let allQuestions = inputs.map(input => input.question);
 
       welcomeMessage.push({
         id: randomId(),
-        text: `Hi, ${
-          currentUser?.first_name ?? currentUser?.username ?? "There"
-        }! Ready to work on ${template?.title} ? ${allQuestions.join(" ")}`,
+        text: `${prefixedContent} ${template?.title} ? ${allQuestions.join(" ")}`,
         type: "text",
         createdAt: createdAt,
         fromUser: false,
