@@ -259,7 +259,7 @@ function AccordionMessageHeader({ template, mode, isExpanded, onClear, showClear
                   }}
                   endIcon={<Close sx={{ fontSize: { xs: 3 }, ml: { xs: -1, md: 0 } }} />}
                   sx={{
-                    mr: { xs: -5, md: 0 },
+                    mr: { xs: -2, md: 0 },
                     height: "22px",
                     p: { xs: "8px", md: "15px" },
                     color: "onSurface",
