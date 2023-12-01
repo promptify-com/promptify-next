@@ -53,6 +53,7 @@ export const Display: React.FC<Props> = ({ templateData, close, answers }) => {
       display={"flex"}
       flexDirection={"column"}
       gap={"8px"}
+      position={"relative"}
     >
       <Box
         ref={containerRef}
@@ -64,7 +65,6 @@ export const Display: React.FC<Props> = ({ templateData, close, answers }) => {
         <Box
           sx={{
             overflow: "auto",
-            opacity: firstLoad ? 0.5 : 1,
             bgcolor: "surface.1",
             borderRadius: "16px 16px 0px 0px",
             position: "relative",
