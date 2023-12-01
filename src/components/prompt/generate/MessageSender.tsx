@@ -119,7 +119,9 @@ function MessageSender({
               lineHeight: "110%",
               letterSpacing: "0.2px",
               fontWeight: 500,
-              color: showGenerate ? "primary" : `${theme.palette.onSurface}!important`,
+              color: showGenerate ? "primary" : `#ACACBE!important`,
+              bgcolor: showGenerate ? "inherit" : `#F7F7F8!important`,
+              borderColor: showGenerate ? "inherit" : "transparent",
               ":hover": {
                 bgcolor: "action.hover",
               },
