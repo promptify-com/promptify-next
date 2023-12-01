@@ -1,4 +1,4 @@
-import { User, UserMin } from "./user";
+import { User, UserPartial } from "./user";
 import { Prompts } from "./prompts";
 
 export type ExecutionTemplatePartial = Pick<Templates, "title" | "thumbnail" | "slug">;
@@ -214,7 +214,7 @@ export interface TemplateExecutionsDisplay {
   };
   description: string;
   thumbnail: string;
-  created_by: UserMin;
+  created_by: UserPartial;
   tags: Tag[];
   slug: string;
   executions: Execution[];

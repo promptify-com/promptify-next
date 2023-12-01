@@ -126,7 +126,15 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
       }}
     >
       {execution && "title" in execution && (
-        <Typography sx={{ fontSize: { xs: 30, md: 48 }, fontWeight: 400, color: "onSurface", py: "24px" }}>
+        <Typography
+          sx={{
+            fontSize: { xs: 30, md: 48 },
+            fontWeight: 400,
+            color: "onSurface",
+            py: "24px",
+            wordBreak: "break-word",
+          }}
+        >
           {execution.title}
         </Typography>
       )}
@@ -238,7 +246,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
                       flex={1}
                       pl={"10px"}
                       borderLeft={showPreview ? "2px solid #ECECF4" : "none"}
-                      maxHeight={{ md: elementHeights[index] }}
+                      maxHeight={{ md: showPreview ? elementHeights[index] : 0 }}
                       sx={{
                         width: { xs: showPreview ? "100%" : 0, md: showPreview ? "35%" : 0 },
                         height: { xs: showPreview ? "fit-content" : 0, md: "fit-content" },
@@ -279,6 +287,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
                       (e.target as HTMLImageElement).src = require("@/assets/images/default-thumbnail.jpg");
                     }}
                     sx={{
+                      display: { xs: showPreview ? "none" : "block", md: "block" },
                       borderRadius: "8px",
                       width: "40%",
                       objectFit: "cover",

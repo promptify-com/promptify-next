@@ -9,10 +9,11 @@ import { isDesktopViewPort } from "@/common/helpers";
 import ExecuteForm from "./ExecuteForm";
 
 interface Props {
-  item: Deployment;
+  modelName: string;
+  deploymentId: number;
 }
 
-export function ExecuteDeploymentButton({ item }: Props) {
+export function ExecuteDeploymentButton({ modelName, deploymentId }: Props) {
   const [openPopup, setOpenPopup] = useState(false);
   const isDesktop = isDesktopViewPort();
 
@@ -42,9 +43,9 @@ export function ExecuteDeploymentButton({ item }: Props) {
       </Tooltip>
 
       {openPopup && (
-        <DeployementPopup title={`Try ${item.model.name}`}>
+        <DeployementPopup title={`Try ${modelName}`}>
           <ExecuteForm
-            item={item!}
+            deploymentId={deploymentId}
             onClose={() => setOpenPopup(false)}
           />
         </DeployementPopup>

@@ -23,11 +23,12 @@ export const useDeployment = (onClose: () => void) => {
     resetValues();
     setDeploymentStatus("creating");
     const url = `${process.env.NEXT_PUBLIC_API_URL}/api/aithos/deployments/`;
-    const { model, instance } = values;
+    const { model, instance, name } = values;
 
     const payload: CreateDeployment = {
       instance,
       model,
+      name,
     };
 
     fetchEventSource(url, {
@@ -52,11 +53,15 @@ export const useDeployment = (onClose: () => void) => {
         if (msg.event === "status" && msg.data) {
           try {
             const data = JSON.parse(msg.data);
+            const failedMessage = data.message.includes("Failed");
             setLogs(prevLogs => [...prevLogs, data.message]);
 
-            if (data.message.includes("InService")) {
-              setDeploymentStatus("InService");
+            if (data.message.includes("InService") || failedMessage) {
+              setDeploymentStatus(failedMessage ? null : "InService");
               setTimeout(() => {
+                if (failedMessage) {
+                  abortController.current.abort();
+                }
                 onClose();
               }, 800);
             }
