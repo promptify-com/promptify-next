@@ -61,7 +61,7 @@ function MessageSender({
       {mode === "chat" ? (
         <Box width={{ md: "90%", xs: "87%" }}>
           <InputBase
-            onFocus={() => setIsFocused(true)} // Set focus state to true
+            onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
             multiline
             disabled={disabled}
@@ -130,7 +130,7 @@ function MessageSender({
         </Box>
       ) : (
         <InputBase
-          onFocus={() => setIsFocused(true)} // Set focus state to true
+          onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           multiline
           disabled={disabled}
