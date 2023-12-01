@@ -90,7 +90,7 @@ export const FormParam: React.FC<GeneratorParamProps> = ({ param, paramValue, on
             height: "1px",
           },
         }}
-        value={activeDescription?.score || 0}
+        value={activeDescription?.score || 2}
         marks={marks}
         step={1}
         min={Math.min(...values)}
