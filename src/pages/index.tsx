@@ -108,91 +108,89 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
   }, []);
 
   return (
-    <>
-      <Layout>
-        <Box
-          mt={{ xs: 7, md: 0 }}
-          padding={{ xs: "4px 0px", md: "0px 8px" }}
+    <Layout>
+      <Box
+        mt={{ xs: 7, md: 0 }}
+        padding={{ xs: "4px 0px", md: "0px 8px" }}
+      >
+        <Grid
+          gap={"56px"}
+          display={"flex"}
+          flexDirection={"column"}
+          sx={{
+            padding: { xs: "16px", md: "32px" },
+          }}
         >
-          <Grid
-            gap={"56px"}
-            display={"flex"}
-            flexDirection={"column"}
-            sx={{
-              padding: { xs: "16px", md: "32px" },
-            }}
-          >
-            <ClientOnly>
-              {isValidUser ? (
+          <ClientOnly>
+            {isValidUser ? (
+              <Grid
+                flexDirection="column"
+                display={"flex"}
+                gap={"56px"}
+              >
                 <Grid
-                  flexDirection="column"
-                  display={"flex"}
-                  gap={"56px"}
+                  sx={{
+                    alignItems: "center",
+                    width: "100%",
+                  }}
                 >
-                  <Grid
+                  <Typography
                     sx={{
-                      alignItems: "center",
-                      width: "100%",
+                      fontFamily: "Poppins",
+                      fontStyle: "normal",
+                      fontWeight: 500,
+                      fontSize: { xs: "30px", sm: "48px" },
+                      lineHeight: { xs: "30px", md: "56px" },
+                      color: "#1D2028",
+                      marginLeft: { xs: "0px", sm: "0px" },
                     }}
                   >
-                    <Typography
-                      sx={{
-                        fontFamily: "Poppins",
-                        fontStyle: "normal",
-                        fontWeight: 500,
-                        fontSize: { xs: "30px", sm: "48px" },
-                        lineHeight: { xs: "30px", md: "56px" },
-                        color: "#1D2028",
-                        marginLeft: { xs: "0px", sm: "0px" },
-                      }}
-                    >
-                      Welcome, {currentUser?.username}
-                    </Typography>
-                  </Grid>
-                  <TemplatesSection
-                    isLatestTemplates
-                    isLoading={isMyLatestExecutionsLoading}
-                    templates={myLatestExecutions || []}
-                    title="Your Latest Templates:"
-                    type="myLatestExecutions"
-                  />
-                  <TemplatesSection
-                    isLoading={isSuggestedTemplateLoading}
-                    templates={suggestedTemplates}
-                    title=" You may like these prompt templates:"
-                    type="suggestedTemplates"
-                  />
-                  <CategoriesSection
-                    categories={categories}
-                    isLoading={!isValidUser}
-                  />
+                    Welcome, {currentUser?.username}
+                  </Typography>
                 </Grid>
-              ) : (
-                <>
-                  <WelcomeCard />
-                  <CategoriesSection
-                    categories={categories}
-                    isLoading={isValidUser}
-                  />
-                  <TemplatesSection
-                    isLoading={isPopularTemplatesLoading}
-                    templates={popularTemplates?.results}
-                    title="Most Popular Prompt Templates"
-                    type="popularTemplates"
-                  />
-                  <TemplatesSection
-                    isLoading={isLatestTemplatesLoading}
-                    templates={latestTemplates?.results}
-                    title="Latest Prompt Templates"
-                    type="latestTemplates"
-                  />
-                </>
-              )}
-            </ClientOnly>
-          </Grid>
-        </Box>
-      </Layout>
-    </>
+                <TemplatesSection
+                  isLatestTemplates
+                  isLoading={isMyLatestExecutionsLoading}
+                  templates={myLatestExecutions || []}
+                  title="Your Latest Templates:"
+                  type="myLatestExecutions"
+                />
+                <TemplatesSection
+                  isLoading={isSuggestedTemplateLoading}
+                  templates={suggestedTemplates}
+                  title=" You may like these prompt templates:"
+                  type="suggestedTemplates"
+                />
+                <CategoriesSection
+                  categories={categories}
+                  isLoading={!isValidUser}
+                />
+              </Grid>
+            ) : (
+              <>
+                <WelcomeCard />
+                <CategoriesSection
+                  categories={categories}
+                  isLoading={isValidUser}
+                />
+                <TemplatesSection
+                  isLoading={isPopularTemplatesLoading}
+                  templates={popularTemplates?.results}
+                  title="Most Popular Prompt Templates"
+                  type="popularTemplates"
+                />
+                <TemplatesSection
+                  isLoading={isLatestTemplatesLoading}
+                  templates={latestTemplates?.results}
+                  title="Latest Prompt Templates"
+                  type="latestTemplates"
+                />
+              </>
+            )}
+          </ClientOnly>
+        </Grid>
+      </Box>
+    </Layout>
   );
 };
 

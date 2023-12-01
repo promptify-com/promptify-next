@@ -25,7 +25,7 @@ function CardTemplateLast({ template }: CardTemplateLastProps) {
     <Box>
       <Card
         onClick={() => {
-          redirectToPath(`prompt/${template.slug}`);
+          redirectToPath(`prompt/${template.slug}`, { hash: template.executions[0].hash });
         }}
         sx={{
           cursor: "pointer",
