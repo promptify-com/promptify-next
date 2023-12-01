@@ -136,6 +136,7 @@ const SparkFilters: React.FC<TemplateFilterProps> = ({
           container
           position={"relative"}
           gap={{ md: "1px" }}
+          flexWrap={"nowrap"}
         >
           <Grid
             onClick={e => {

@@ -306,15 +306,17 @@ const ChatBox: React.FC<Props> = ({ onError, template }) => {
       const validatedAnswers = varyResponse;
       const newAnswers: IAnswer[] = _inputs
         .map(input => {
-          const { name: inputName, required, question, prompt } = input;
-          const answer = validatedAnswers[input.name];
+          const { name: inputName, type, required, question, prompt } = input;
+          const answer = validatedAnswers[inputName];
           const promptId = prompt!;
+          const toNumber = type === "number" && typeof answer === "string";
+          const value = toNumber ? Number(answer.toString().replace(/[^\d]+/g, "")) : answer;
 
           if (answer) {
             answeredInputs.push({
               promptId,
               inputName,
-              value: answer,
+              value,
               modifiedFrom: "chat",
             });
           }
@@ -323,7 +325,7 @@ const ChatBox: React.FC<Props> = ({ onError, template }) => {
             required,
             question: question || "",
             prompt: promptId,
-            answer,
+            answer: value,
           };
         })
         .filter(answer => answer.answer !== "");

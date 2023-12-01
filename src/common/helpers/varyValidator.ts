@@ -2,6 +2,7 @@ import { TemplateQuestionGeneratorData, VaryParams } from "@/core/api/dto/prompt
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { getExecutionById } from "@/hooks/api/executions";
 import { VaryValidatorResponse } from "@/common/types/chat";
+import { parseMessageData } from "./parseMessageData";
 
 const answersValidatorTemplateId = 547;
 
@@ -49,11 +50,8 @@ export const vary = ({
             resolve("Something wrong happened");
           }
 
-          resolve(
-            _execution.prompt_executions && _execution.prompt_executions[0]
-              ? JSON.parse(_execution.prompt_executions[0].output.replace(/\n(\s+)?/g, ""))
-              : {},
-          );
+          const output = _execution.prompt_executions?.[0].output.replace(/\n(\s+)?/g, "").replace(/.*?\{/, "{");
+          resolve(output ? parseMessageData(output) : {});
         } catch (_) {
           resolve("Something wrong happened");
         }
