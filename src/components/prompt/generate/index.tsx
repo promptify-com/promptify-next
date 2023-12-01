@@ -281,6 +281,7 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
   };
 
   const validateVary = async (variation: string) => {
+    dispatch(setAccordionChatMode("input"));
     if (variation) {
       const userMessage: IMessage = {
         id: randomId(),
