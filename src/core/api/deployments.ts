@@ -35,7 +35,7 @@ export const deploymentsApi = baseApi.injectEndpoints({
             method: "get",
           };
         },
-        keepUnusedDataFor: 60 * 60,
+        keepUnusedDataFor: 3600,
       }),
 
       getPaginatedData: builder.query<PaginationData<Model | Instance>, FilterParams>({
@@ -47,7 +47,7 @@ export const deploymentsApi = baseApi.injectEndpoints({
             method: "get",
           };
         },
-        keepUnusedDataFor: 60 * 30,
+        keepUnusedDataFor: 1800,
       }),
 
       getDeployments: builder.query<Deployment[], void>({
@@ -55,7 +55,7 @@ export const deploymentsApi = baseApi.injectEndpoints({
           url: `/api/aithos/deployments`,
           method: "get",
         }),
-        keepUnusedDataFor: 60 * 15,
+        keepUnusedDataFor: 900,
         providesTags: ["Deployments"],
       }),
 

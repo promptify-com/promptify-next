@@ -14,9 +14,10 @@ import { setChatFullScreenStatus } from "@/core/store/templatesSlice";
 interface TemplateDesktopProps {
   template: Templates;
   setErrorMessage: Dispatch<SetStateAction<string>>;
+  questionPrefixContent: string;
 }
 
-export default function TemplateDesktop({ template, setErrorMessage }: TemplateDesktopProps) {
+export default function TemplateDesktop({ template, setErrorMessage, questionPrefixContent }: TemplateDesktopProps) {
   const dispatch = useDispatch();
   const isChatFullScreen = useAppSelector(state => state.template.isChatFullScreen);
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
@@ -92,6 +93,7 @@ export default function TemplateDesktop({ template, setErrorMessage }: TemplateD
             <ChatBox
               onError={setErrorMessage}
               template={template}
+              questionPrefixContent={questionPrefixContent}
             />
           </ClientOnly>
         </Stack>

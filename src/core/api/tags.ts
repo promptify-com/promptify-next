@@ -17,7 +17,7 @@ export const tagsApi = baseApi.injectEndpoints({
           url: `/api/meta/tags/popular/`,
           method: "get",
         }),
-        keepUnusedDataFor: 60 * 60,
+        keepUnusedDataFor: 3600,
       }),
     };
   },
