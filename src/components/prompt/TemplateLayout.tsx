@@ -48,7 +48,7 @@ export default function TemplateLayout({ template, setErrorMessage, questionPref
         flexWrap={{ md: "nowrap" }}
         gap={{ md: "1px" }}
         sx={{
-          width: { md: "100%" },
+          width: "100%",
           height: { xs: "calc(100svh - 56px)", md: "100%" },
           mt: { xs: "58px", md: 0 },
           mx: "auto",

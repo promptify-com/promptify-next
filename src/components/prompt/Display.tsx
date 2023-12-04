@@ -63,7 +63,10 @@ export const Display: React.FC<Props> = ({ templateData, close }) => {
         ref={containerRef}
         sx={{
           bgcolor: "surface.3",
-          minHeight: { xs: "calc(100svh - (58px + 54px))", md: "calc(100svh - 90px)" },
+          minHeight: {
+            xs: `calc(100svh - (58px + 54px ${isGenerating ? "+ 30.5px" : ""}))`,
+            md: "calc(100svh - 90px)",
+          },
           height: "1px",
           position: "relative",
         }}
@@ -88,7 +91,7 @@ export const Display: React.FC<Props> = ({ templateData, close }) => {
 
         <Box
           sx={{
-            height: { xs: "calc(100% - 104px)", md: "calc(100% - 67px)" },
+            height: { xs: `calc(100% - ${isGenerating ? "56" : "104"}px)`, md: "calc(100% - 67px)" },
             overflow: "auto",
             bgcolor: "surface.1",
             borderRadius: "16px 16px 0px 0px",

@@ -33,7 +33,6 @@ export const DisplayActions: React.FC<Props> = ({
   showPreviews,
   toggleShowPreviews,
 }) => {
-  const { palette } = useTheme();
   const { truncate } = useTruncate();
   const [favoriteExecution] = useExecutionFavoriteMutation();
   const [deleteExecutionFavorite] = useDeleteExecutionFavoriteMutation();
