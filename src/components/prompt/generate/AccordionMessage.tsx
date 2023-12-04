@@ -6,7 +6,7 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import Fade from "@mui/material/Fade";
 
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { IAnswer } from "@/common/types/chat";
+import { AccordionChatMode, IAnswer } from "@/common/types/chat";
 import { Display } from "../Display";
 import Form from "./Form";
 import AccordionMessageHeader from "./AccordionMessageHeader";
@@ -18,7 +18,6 @@ import { setAccordionChatMode } from "@/core/store/templatesSlice";
 import PlayCircle from "@mui/icons-material/PlayCircle";
 
 interface Props {
-  variant: "execution" | "input" | "repeat";
   inputs: IPromptInput[];
   params: PromptParams[];
   paramsValues: ResOverrides[];
@@ -31,10 +30,10 @@ interface Props {
   showGenerate: boolean;
   template: Templates;
   setIsSimulationStreaming: Dispatch<SetStateAction<boolean>>;
+  accordionChatMode: AccordionChatMode;
 }
 
 export const AccordionMessage = ({
-  variant,
   template,
   inputs,
   params,
@@ -47,6 +46,7 @@ export const AccordionMessage = ({
   abortGenerating,
   showGenerate,
   setIsSimulationStreaming,
+  accordionChatMode,
 }: Props) => {
   const dispatch = useAppDispatch();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
@@ -82,7 +82,7 @@ export const AccordionMessage = ({
           showClear={Boolean(answers.length)}
           isExpanded={expanded}
           onCancel={abortGenerating}
-          mode={variant}
+          mode={accordionChatMode}
         />
 
         <AccordionDetails
@@ -118,9 +118,9 @@ export const AccordionMessage = ({
               borderRadius={"8px"}
               position={"relative"}
             >
-              {variant === "execution" && (
+              {accordionChatMode === "execution" && (
                 <Stack
-                  padding={{ xs: "0px 8px", md: variant === "execution" ? "16px 0px 48px 64px" : undefined }}
+                  padding={{ xs: "0px 8px", md: "16px 0px 48px 64px" }}
                   position={"relative"}
                 >
                   <Display
@@ -129,7 +129,7 @@ export const AccordionMessage = ({
                   />
                 </Stack>
               )}
-              {variant === "input" && (
+              {accordionChatMode === "input" && (
                 <Form
                   inputs={inputs}
                   params={params}
@@ -141,7 +141,7 @@ export const AccordionMessage = ({
               )}
             </Stack>
           </Stack>
-          {showGenerate && variant === "input" && (
+          {showGenerate && accordionChatMode === "input" && (
             <Stack
               direction={"row"}
               justifyContent={"end"}

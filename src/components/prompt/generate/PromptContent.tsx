@@ -68,7 +68,7 @@ function PromptContent({ execution, prompt, id, answers }: Props) {
             key={`placeholder-${index}`}
             style={HighlightStyle}
           >
-            {replacement}
+            {typeof replacement === "object" ? JSON.stringify(replacement) : replacement}
           </span>,
         );
       } else {

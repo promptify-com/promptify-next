@@ -46,7 +46,8 @@ export const ChatInterface = ({
   paramsValues,
 }: Props) => {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
-  const mode = useAppSelector(state => state.template.accordionChatMode);
+  const accordionChatMode = useAppSelector(state => state.template.accordionChatMode);
+  const isExecutionMode = accordionChatMode === "execution";
 
   const [isHovered, setIsHovered] = useState(false);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
@@ -73,7 +74,7 @@ export const ChatInterface = ({
       mx={{ md: "40px" }}
       sx={{
         overflow: "auto",
-        px: "16px",
+        px: "8px",
         overscrollBehavior: "contain",
         "&::-webkit-scrollbar": {
           width: { xs: "4px", md: "6px" },
@@ -108,25 +109,10 @@ export const ChatInterface = ({
           {getCurrentDateFormatted()}
         </Divider>
 
-        {mode === "repeat" && (
+        {accordionChatMode === "repeat" && (
           <Box id="accordion-header">
             <AccordionMessage
-              variant={"execution"}
-              onClear={onClear}
-              template={template}
-              showGenerate={showGenerate}
-              abortGenerating={onAbort}
-              inputs={inputs}
-              params={params}
-              paramsValues={paramsValues}
-              answers={answers}
-              onChangeInput={onChangeInput}
-              onChangeParam={onChangeParam}
-              onGenerate={onGenerate}
-              setIsSimulationStreaming={setIsSimulationStreaming}
-            />
-            <AccordionMessage
-              variant={"input"}
+              accordionChatMode={"execution"}
               onClear={onClear}
               template={template}
               showGenerate={showGenerate}
@@ -143,10 +129,9 @@ export const ChatInterface = ({
           </Box>
         )}
 
-        {mode === "execution" && (
+        {accordionChatMode === "execution" && (
           <Box id="accordion-header">
             <AccordionMessage
-              variant={"execution"}
               onClear={onClear}
               template={template}
               showGenerate={showGenerate}
@@ -159,18 +144,19 @@ export const ChatInterface = ({
               onChangeParam={onChangeParam}
               onGenerate={onGenerate}
               setIsSimulationStreaming={setIsSimulationStreaming}
+              accordionChatMode={"execution"}
             />
           </Box>
         )}
 
         <Stack
           gap={3}
-          display={mode === "input" ? "flex" : "none"}
           direction={"column"}
+          display={isGenerating && isExecutionMode ? "none" : "flex"}
         >
           {messages.map(msg => (
             <Fragment key={msg.id}>
-              <Box>
+              <Box display={!isExecutionMode ? "flex" : "none"}>
                 <Message
                   message={msg}
                   setIsSimulationStreaming={setIsSimulationStreaming}
@@ -179,7 +165,7 @@ export const ChatInterface = ({
               </Box>
               {msg.type === "form" && msg.id === lastFormMessage?.id && (
                 <Box
-                  id="accordion-header"
+                  id="accordion-form"
                   position={"relative"}
                   onMouseEnter={() => setIsHovered(true)}
                   onMouseLeave={() => setIsHovered(false)}
@@ -199,21 +185,23 @@ export const ChatInterface = ({
                       Promptify {timeAgo(msg.createdAt)}
                     </Typography>
                   )}
-                  <AccordionMessage
-                    variant={"input"}
-                    onClear={onClear}
-                    template={template}
-                    showGenerate={showGenerate}
-                    abortGenerating={onAbort}
-                    inputs={inputs}
-                    params={params}
-                    paramsValues={paramsValues}
-                    answers={answers}
-                    onChangeInput={onChangeInput}
-                    onChangeParam={onChangeParam}
-                    onGenerate={onGenerate}
-                    setIsSimulationStreaming={setIsSimulationStreaming}
-                  />
+                  <Box id="accordion-input">
+                    <AccordionMessage
+                      onClear={onClear}
+                      template={template}
+                      showGenerate={showGenerate}
+                      abortGenerating={onAbort}
+                      inputs={inputs}
+                      params={params}
+                      paramsValues={paramsValues}
+                      answers={answers}
+                      onChangeInput={onChangeInput}
+                      onChangeParam={onChangeParam}
+                      onGenerate={onGenerate}
+                      setIsSimulationStreaming={setIsSimulationStreaming}
+                      accordionChatMode={"input"}
+                    />
+                  </Box>
                 </Box>
               )}
             </Fragment>
