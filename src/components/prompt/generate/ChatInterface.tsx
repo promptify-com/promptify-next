@@ -46,7 +46,8 @@ export const ChatInterface = ({
   paramsValues,
 }: Props) => {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
-  const isExecutionMode = useAppSelector(state => state.template.accordionChatMode) === "execution";
+  const accordionChatMode = useAppSelector(state => state.template.accordionChatMode);
+  const isExecutionMode = accordionChatMode === "execution";
 
   const [isHovered, setIsHovered] = useState(false);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
@@ -123,18 +124,19 @@ export const ChatInterface = ({
               onChangeParam={onChangeParam}
               onGenerate={onGenerate}
               setIsSimulationStreaming={setIsSimulationStreaming}
+              accordionChatMode={"execution"}
             />
           </Box>
         )}
 
         <Stack
           gap={3}
-          display={!isExecutionMode ? "flex" : "none"}
           direction={"column"}
+          display={isGenerating && isExecutionMode ? "none" : "flex"}
         >
           {messages.map(msg => (
             <Fragment key={msg.id}>
-              <Box>
+              <Box display={!isExecutionMode ? "flex" : "none"}>
                 <Message
                   message={msg}
                   setIsSimulationStreaming={setIsSimulationStreaming}
@@ -143,7 +145,7 @@ export const ChatInterface = ({
               </Box>
               {msg.type === "form" && msg.id === lastFormMessage?.id && (
                 <Box
-                  id="accordion-header"
+                  id="accordion-form"
                   position={"relative"}
                   onMouseEnter={() => setIsHovered(true)}
                   onMouseLeave={() => setIsHovered(false)}
@@ -176,6 +178,7 @@ export const ChatInterface = ({
                     onChangeParam={onChangeParam}
                     onGenerate={onGenerate}
                     setIsSimulationStreaming={setIsSimulationStreaming}
+                    accordionChatMode={"input"}
                   />
                 </Box>
               )}

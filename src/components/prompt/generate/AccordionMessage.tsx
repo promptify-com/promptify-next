@@ -30,6 +30,7 @@ interface Props {
   showGenerate: boolean;
   template: Templates;
   setIsSimulationStreaming: Dispatch<SetStateAction<boolean>>;
+  accordionChatMode: "input" | "execution";
 }
 
 export const AccordionMessage = ({
@@ -45,6 +46,7 @@ export const AccordionMessage = ({
   abortGenerating,
   showGenerate,
   setIsSimulationStreaming,
+  accordionChatMode,
 }: Props) => {
   const dispatch = useAppDispatch();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
@@ -81,7 +83,7 @@ export const AccordionMessage = ({
           showClear={Boolean(answers.length)}
           isExpanded={expanded}
           onCancel={abortGenerating}
-          mode={mode}
+          mode={accordionChatMode}
         />
 
         <AccordionDetails
@@ -117,9 +119,9 @@ export const AccordionMessage = ({
               borderRadius={"8px"}
               position={"relative"}
             >
-              {mode === "execution" && (
+              {accordionChatMode === "execution" && (
                 <Stack
-                  padding={{ xs: "0px 8px", md: mode === "execution" ? "16px 0px 48px 64px" : undefined }}
+                  padding={{ xs: "0px 8px", md: "16px 0px 48px 64px" }}
                   position={"relative"}
                 >
                   <Display
@@ -128,7 +130,7 @@ export const AccordionMessage = ({
                   />
                 </Stack>
               )}
-              {mode === "input" && (
+              {accordionChatMode === "input" && (
                 <Form
                   inputs={inputs}
                   params={params}
@@ -140,7 +142,7 @@ export const AccordionMessage = ({
               )}
             </Stack>
           </Stack>
-          {showGenerate && mode === "input" && (
+          {showGenerate && accordionChatMode === "input" && (
             <Stack
               direction={"row"}
               justifyContent={"end"}
