@@ -282,7 +282,7 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
         createdAt: new Date(new Date().getTime() - 1000),
         fromUser: true,
       };
-      setMessages(prevMessages => prevMessages.concat(userMessage));
+      setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat(userMessage));
 
       setIsValidatingAnswer(true);
 
