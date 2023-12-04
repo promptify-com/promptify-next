@@ -12,13 +12,12 @@ import { isValidUserFn } from "@/core/store/userSlice";
 import { updateTemplateData } from "@/core/store/templatesSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { getExecutionByHash } from "@/hooks/api/executions";
-import TemplateMobile from "@/components/prompt/TemplateMobile";
-import TemplateDesktop from "@/components/prompt/TemplateDesktop";
 import { getTemplateBySlug } from "@/hooks/api/templates";
 import { redirectToPath } from "@/common/helpers";
 import { setSelectedExecution, setSparkHashQueryParam } from "@/core/store/executionsSlice";
 import useBrowser from "@/hooks/useBrowser";
 import { getContentBySectioName } from "@/hooks/api/cms";
+import TemplateLayout from "@/components/prompt/TemplateLayout";
 
 interface TemplateProps {
   hashedExecution: TemplatesExecutions | null;
@@ -27,6 +26,7 @@ interface TemplateProps {
 }
 
 function Template({ hashedExecution, fetchedTemplate, questionPrefixContent }: TemplateProps) {
+  console.log(questionPrefixContent);
   const router = useRouter();
   const { replaceHistoryByPathname } = useBrowser();
   const [updateViewTemplate] = useViewTemplateMutation();
@@ -115,19 +115,11 @@ function Template({ hashedExecution, fetchedTemplate, questionPrefixContent }: T
   return (
     <ThemeProvider theme={dynamicTheme}>
       <Layout>
-        {isMobileView ? (
-          <TemplateMobile
-            template={fetchedTemplate}
-            setErrorMessage={setErrorMessage}
-            questionPrefixContent={questionPrefixContent}
-          />
-        ) : (
-          <TemplateDesktop
-            template={fetchedTemplate}
-            setErrorMessage={setErrorMessage}
-            questionPrefixContent={questionPrefixContent}
-          />
-        )}
+        <TemplateLayout
+          template={fetchedTemplate}
+          setErrorMessage={setErrorMessage}
+          questionPrefixContent={questionPrefixContent}
+        />
 
         <Snackbar
           anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
