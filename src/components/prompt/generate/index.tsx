@@ -50,7 +50,6 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
   const [newExecutionId, setNewExecutionId] = useState<number | null>(null);
   const [answers, setAnswers] = useState<IAnswer[]>([]);
   const [messages, setMessages] = useState<IMessage[]>([]);
-  const [filteredMessages, setFilteredMessages] = useState<IMessage[]>([]);
   const [paramsValues, setParamsValues] = useState<ResOverrides[]>([]);
   const [queuedMessages, setQueuedMessages] = useState<IMessage[]>([]);
   const [isSimulationStreaming, setIsSimulationStreaming] = useState(false);
@@ -172,13 +171,6 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
 
   const showGenerate =
     !isSimulationStreaming && (showGenerateButton || Boolean(!_inputs.length || !_inputs[0]?.required));
-
-  useEffect(() => {
-    if (AccordionChatMode === "execution") {
-      const filtered = messages.filter(message => message.type === "form");
-      setFilteredMessages(filtered);
-    }
-  }, [AccordionChatMode]);
 
   useEffect(() => {
     dispatchNewExecutionData(answers, _inputs);
@@ -577,7 +569,7 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
       >
         <ChatInterface
           template={template}
-          messages={AccordionChatMode === "execution" ? filteredMessages : messages}
+          messages={messages}
           setIsSimulationStreaming={setIsSimulationStreaming}
           inputs={_inputs}
           params={_params}

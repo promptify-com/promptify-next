@@ -47,6 +47,10 @@ export const ChatInterface = ({
 }: Props) => {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
+  const mode = useAppSelector(state => state.template.accordionChatMode);
+
+  const isExecutionMode = mode === "execution";
+
   const [isHovered, setIsHovered] = useState(false);
 
   const scrollToBottom = () => {
@@ -117,53 +121,73 @@ export const ChatInterface = ({
           {getCurrentDateFormatted()}
         </Divider>
 
-        {messages.map(msg => (
-          <Fragment key={msg.id}>
-            <Message
-              message={msg}
+        {isExecutionMode && (
+          <Box id="accordion-header">
+            <AccordionMessage
+              onClear={onClear}
+              template={template}
+              showGenerate={showGenerate}
+              abortGenerating={onAbort}
+              inputs={inputs}
+              params={params}
+              paramsValues={paramsValues}
+              answers={answers}
+              onChangeInput={onChangeInput}
+              onChangeParam={onChangeParam}
+              onGenerate={onGenerate}
               setIsSimulationStreaming={setIsSimulationStreaming}
-              onScrollToBottom={scrollToBottom}
             />
-            {msg.type === "form" && msg.id === lastFormMessage?.id && (
-              <Box
-                id="accordion-header"
-                position={"relative"}
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
-              >
-                {isHovered && (
-                  <Typography
-                    sx={{
-                      position: "absolute",
-                      top: -20,
-                      opacity: 0.5,
-                      left: 2,
-                      zIndex: 999,
-                    }}
-                    fontSize={12}
-                    variant="caption"
-                  >
-                    Promptify {timeAgo(msg.createdAt)}
-                  </Typography>
-                )}
-                <AccordionMessage
-                  onClear={onClear}
-                  template={template}
-                  showGenerate={showGenerate}
-                  abortGenerating={onAbort}
-                  inputs={inputs}
-                  params={params}
-                  paramsValues={paramsValues}
-                  answers={answers}
-                  onChangeInput={onChangeInput}
-                  onChangeParam={onChangeParam}
-                  onGenerate={onGenerate}
-                  setIsSimulationStreaming={setIsSimulationStreaming}
-                />
-              </Box>
-            )}
-          </Fragment>
-        ))}
+          </Box>
+        )}
+
+        {!isExecutionMode &&
+          messages.map(msg => (
+            <Fragment key={msg.id}>
+              <Message
+                message={msg}
+                setIsSimulationStreaming={setIsSimulationStreaming}
+                onScrollToBottom={scrollToBottom}
+              />
+              {msg.type === "form" && msg.id === lastFormMessage?.id && (
+                <Box
+                  id="accordion-header"
+                  position={"relative"}
+                  onMouseEnter={() => setIsHovered(true)}
+                  onMouseLeave={() => setIsHovered(false)}
+                >
+                  {isHovered && (
+                    <Typography
+                      sx={{
+                        position: "absolute",
+                        top: -20,
+                        opacity: 0.5,
+                        left: 2,
+                        zIndex: 999,
+                      }}
+                      fontSize={12}
+                      variant="caption"
+                    >
+                      Promptify {timeAgo(msg.createdAt)}
+                    </Typography>
+                  )}
+                  <AccordionMessage
+                    onClear={onClear}
+                    template={template}
+                    showGenerate={showGenerate}
+                    abortGenerating={onAbort}
+                    inputs={inputs}
+                    params={params}
+                    paramsValues={paramsValues}
+                    answers={answers}
+                    onChangeInput={onChangeInput}
+                    onChangeParam={onChangeParam}
+                    onGenerate={onGenerate}
+                    setIsSimulationStreaming={setIsSimulationStreaming}
+                  />
+                </Box>
+              )}
+            </Fragment>
+          ))}
       </Stack>
     </Stack>
   );
