@@ -164,7 +164,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
                 <Stack
                   key={index}
                   gap={1}
-                  sx={{ pb: { md: "24px" } }}
+                  position={"relative"}
                 >
                   {prompt && (
                     <Subtitle
@@ -186,13 +186,12 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
                       alignItems={"start"}
                       gap={2}
                       justifyContent={"start"}
-                      position={"relative"}
                     >
                       <Stack
                         ref={elementRefs[index]}
                         display={{ xs: showPreview ? "none" : "flex", md: "flex" }}
                         justifyItems={"start"}
-                        p={0}
+                        pr={{ md: showPreview ? 2 : 0 }}
                         width={{ xs: "100%", md: showPreview ? "75%" : "100%" }}
                       >
                         {isPrevItemImage && (
@@ -263,7 +262,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
                             display={{ xs: "none", md: "flex" }}
                             position={"absolute"}
                             top={"0"}
-                            right={"-40px"}
+                            right={showPreview ? "240px" : "-40px"}
                           >
                             <FeedbackThumbs execution={execution} />
                           </Stack>
