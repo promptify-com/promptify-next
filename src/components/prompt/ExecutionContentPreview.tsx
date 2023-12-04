@@ -65,7 +65,7 @@ function ExecutionContentPreview({ execution, prompt, id, answers }: Props) {
             key={`placeholder-${index}`}
             style={{ color: "#375CA9", fontWeight: "600", wordBreak: "break-word", whiteSpace: "pre-wrap" }}
           >
-            {replacement}
+            {typeof replacement === "object" ? JSON.stringify(replacement) : replacement}
           </span>,
         );
       } else {
