@@ -11,7 +11,7 @@ import { useAppSelector } from "@/hooks/useStore";
 import { TemplateDetailsCard } from "./TemplateDetailsCard";
 import { IPromptInput } from "@/common/types/prompt";
 import Typography from "@mui/material/Typography";
-import { timeAgo } from "@/common/helpers/timeManipulation";
+import { getCurrentDateFormatted, timeAgo } from "@/common/helpers/timeManipulation";
 import { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
 
 interface Props {
@@ -45,13 +45,11 @@ export const ChatInterface = ({
   params,
   paramsValues,
 }: Props) => {
-  const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
-  const mode = useAppSelector(state => state.template.accordionChatMode);
-
-  const isExecutionMode = mode === "execution";
+  const isExecutionMode = useAppSelector(state => state.template.accordionChatMode) === "execution";
 
   const [isHovered, setIsHovered] = useState(false);
+  const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
   const scrollToBottom = () => {
     if (messagesContainerRef.current) {
@@ -62,17 +60,6 @@ export const ChatInterface = ({
   useEffect(() => {
     scrollToBottom();
   }, [messages, isGenerating]);
-
-  function getCurrentDateFormatted(): string {
-    const currentDate = new Date();
-    const options: Intl.DateTimeFormatOptions = {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    };
-    return currentDate.toLocaleDateString("en-US", options);
-  }
 
   const lastFormMessage = messages
     .slice()
@@ -140,14 +127,20 @@ export const ChatInterface = ({
           </Box>
         )}
 
-        {!isExecutionMode &&
-          messages.map(msg => (
+        <Stack
+          gap={3}
+          display={!isExecutionMode ? "flex" : "none"}
+          direction={"column"}
+        >
+          {messages.map(msg => (
             <Fragment key={msg.id}>
-              <Message
-                message={msg}
-                setIsSimulationStreaming={setIsSimulationStreaming}
-                onScrollToBottom={scrollToBottom}
-              />
+              <Box>
+                <Message
+                  message={msg}
+                  setIsSimulationStreaming={setIsSimulationStreaming}
+                  onScrollToBottom={scrollToBottom}
+                />
+              </Box>
               {msg.type === "form" && msg.id === lastFormMessage?.id && (
                 <Box
                   id="accordion-header"
@@ -188,6 +181,7 @@ export const ChatInterface = ({
               )}
             </Fragment>
           ))}
+        </Stack>
       </Stack>
     </Stack>
   );
