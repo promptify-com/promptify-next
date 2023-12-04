@@ -76,7 +76,7 @@ export const ParamSlider = ({
                     marks
                     size="small"
                     min={1}
-                    max={6}
+                    max={param.descriptions?.length || 1}
                     value={param.score}
                     onChange={(e: any) => handleChangeScore(parseInt(e.target.value), param.parameter_id)}
                   />
