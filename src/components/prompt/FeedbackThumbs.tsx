@@ -34,6 +34,17 @@ export default function FeedbackThumbs({ execution }: newFeedBack) {
     }
   };
 
+  const handleRepeat = () => {
+    dispatch(setAccordionChatMode("repeat"));
+
+    setTimeout(() => {
+      const inputElement = document.getElementById("accordion-input");
+      if (inputElement) {
+        inputElement.scrollIntoView({ behavior: "smooth" });
+      }
+    }, 200);
+  };
+
   const commonPopperProps = {
     modifiers: [
       {
@@ -111,10 +122,7 @@ export default function FeedbackThumbs({ execution }: newFeedBack) {
       >
         <IconButton
           size="large"
-          onClick={() => {
-            dispatch(setAccordionChatMode("input"));
-            dispatch(setSelectedExecution(null));
-          }}
+          onClick={handleRepeat}
           sx={{
             p: "15px",
             border: "none",

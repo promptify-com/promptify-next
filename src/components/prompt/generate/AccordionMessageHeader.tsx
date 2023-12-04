@@ -36,7 +36,7 @@ import { theme } from "@/theme";
 
 interface Props {
   template: Templates;
-  mode: "execution" | "input";
+  mode: "execution" | "input" | "repeat";
   isExpanded: boolean;
   onCancel: () => void;
   onClear: () => void;

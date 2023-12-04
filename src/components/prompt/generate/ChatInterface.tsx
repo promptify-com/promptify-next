@@ -46,7 +46,7 @@ export const ChatInterface = ({
   paramsValues,
 }: Props) => {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
-  const isExecutionMode = useAppSelector(state => state.template.accordionChatMode) === "execution";
+  const mode = useAppSelector(state => state.template.accordionChatMode);
 
   const [isHovered, setIsHovered] = useState(false);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
@@ -108,9 +108,45 @@ export const ChatInterface = ({
           {getCurrentDateFormatted()}
         </Divider>
 
-        {isExecutionMode && (
+        {mode === "repeat" && (
           <Box id="accordion-header">
             <AccordionMessage
+              variant={"execution"}
+              onClear={onClear}
+              template={template}
+              showGenerate={showGenerate}
+              abortGenerating={onAbort}
+              inputs={inputs}
+              params={params}
+              paramsValues={paramsValues}
+              answers={answers}
+              onChangeInput={onChangeInput}
+              onChangeParam={onChangeParam}
+              onGenerate={onGenerate}
+              setIsSimulationStreaming={setIsSimulationStreaming}
+            />
+            <AccordionMessage
+              variant={"input"}
+              onClear={onClear}
+              template={template}
+              showGenerate={showGenerate}
+              abortGenerating={onAbort}
+              inputs={inputs}
+              params={params}
+              paramsValues={paramsValues}
+              answers={answers}
+              onChangeInput={onChangeInput}
+              onChangeParam={onChangeParam}
+              onGenerate={onGenerate}
+              setIsSimulationStreaming={setIsSimulationStreaming}
+            />
+          </Box>
+        )}
+
+        {mode === "execution" && (
+          <Box id="accordion-header">
+            <AccordionMessage
+              variant={"execution"}
               onClear={onClear}
               template={template}
               showGenerate={showGenerate}
@@ -129,7 +165,7 @@ export const ChatInterface = ({
 
         <Stack
           gap={3}
-          display={!isExecutionMode ? "flex" : "none"}
+          display={mode === "input" ? "flex" : "none"}
           direction={"column"}
         >
           {messages.map(msg => (
@@ -164,6 +200,7 @@ export const ChatInterface = ({
                     </Typography>
                   )}
                   <AccordionMessage
+                    variant={"input"}
                     onClear={onClear}
                     template={template}
                     showGenerate={showGenerate}

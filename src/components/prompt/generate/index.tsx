@@ -43,7 +43,8 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const isSidebarExpanded = useAppSelector(state => state.template.isSidebarExpanded);
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
-  const AccordionChatMode = useAppSelector(state => state.template.accordionChatMode);
+  const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
+  const isRepeatMode = useAppSelector(state => state.template.accordionChatMode) === "repeat";
 
   const [showGenerateButton, setShowGenerateButton] = useState(false);
   const [isValidatingAnswer, setIsValidatingAnswer] = useState(false);
@@ -171,6 +172,30 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
 
   const showGenerate =
     !isSimulationStreaming && (showGenerateButton || Boolean(!_inputs.length || !_inputs[0]?.required));
+
+  useEffect(() => {
+    if (isRepeatMode && selectedExecution) {
+      const { parameters } = selectedExecution;
+      setAnswers([]);
+
+      const newAnswers = parameters
+        ? Object.keys(parameters)
+            .map(promptId => {
+              const param = parameters[promptId];
+              return Object.keys(param).map(inputName => ({
+                inputName: inputName,
+                required: true,
+                question: "",
+                answer: param[inputName],
+                prompt: parseInt(promptId),
+                error: false,
+              }));
+            })
+            .flat()
+        : [];
+      setAnswers(newAnswers);
+    }
+  }, [isRepeatMode]);
 
   useEffect(() => {
     dispatchNewExecutionData(answers, _inputs);
@@ -305,7 +330,6 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
       }
 
       if (typeof varyResponse === "string") {
-        console.log("first");
         setIsValidatingAnswer(false);
         messageAnswersForm("Oops! I couldn't get your reponse, Please try again.");
         return;

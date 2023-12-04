@@ -191,7 +191,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
                         ref={elementRefs[index]}
                         display={{ xs: showPreview ? "none" : "flex", md: "flex" }}
                         justifyItems={"start"}
-                        pr={{ md: showPreview ? 2 : 0 }}
+                        pr={{ md: showPreview ? 6 : 0 }}
                         width={{ xs: "100%", md: showPreview ? "75%" : "100%" }}
                       >
                         {isPrevItemImage && (
@@ -262,7 +262,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
                             display={{ xs: "none", md: "flex" }}
                             position={"absolute"}
                             top={"0"}
-                            right={showPreview ? "240px" : "-40px"}
+                            right={showPreview ? "210px" : "-40px"}
                           >
                             <FeedbackThumbs execution={execution} />
                           </Stack>

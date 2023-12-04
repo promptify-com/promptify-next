@@ -18,6 +18,7 @@ import { setAccordionChatMode } from "@/core/store/templatesSlice";
 import PlayCircle from "@mui/icons-material/PlayCircle";
 
 interface Props {
+  variant: "execution" | "input" | "repeat";
   inputs: IPromptInput[];
   params: PromptParams[];
   paramsValues: ResOverrides[];
@@ -33,6 +34,7 @@ interface Props {
 }
 
 export const AccordionMessage = ({
+  variant,
   template,
   inputs,
   params,
@@ -48,7 +50,6 @@ export const AccordionMessage = ({
 }: Props) => {
   const dispatch = useAppDispatch();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
-  const mode = useAppSelector(state => state.template.accordionChatMode);
 
   const [expanded, setExpanded] = useState(true);
   const accordionRef = useRef<HTMLDivElement>(null);
@@ -81,7 +82,7 @@ export const AccordionMessage = ({
           showClear={Boolean(answers.length)}
           isExpanded={expanded}
           onCancel={abortGenerating}
-          mode={mode}
+          mode={variant}
         />
 
         <AccordionDetails
@@ -117,9 +118,9 @@ export const AccordionMessage = ({
               borderRadius={"8px"}
               position={"relative"}
             >
-              {mode === "execution" && (
+              {variant === "execution" && (
                 <Stack
-                  padding={{ xs: "0px 8px", md: mode === "execution" ? "16px 0px 48px 64px" : undefined }}
+                  padding={{ xs: "0px 8px", md: variant === "execution" ? "16px 0px 48px 64px" : undefined }}
                   position={"relative"}
                 >
                   <Display
@@ -128,7 +129,7 @@ export const AccordionMessage = ({
                   />
                 </Stack>
               )}
-              {mode === "input" && (
+              {variant === "input" && (
                 <Form
                   inputs={inputs}
                   params={params}
@@ -140,14 +141,14 @@ export const AccordionMessage = ({
               )}
             </Stack>
           </Stack>
-          {showGenerate && mode === "input" && (
+          {showGenerate && variant === "input" && (
             <Stack
               direction={"row"}
               justifyContent={"end"}
               mr={3}
             >
               <Button
-                onClick={event => {
+                onClick={() => {
                   dispatch(setAccordionChatMode("execution"));
                   onGenerate();
                 }}

@@ -1,4 +1,5 @@
 import { Link } from "@/common/types/TemplateToolbar";
+import { AccordionChatMode } from "@/common/types/chat";
 import { AnsweredInputType } from "@/common/types/prompt";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
@@ -13,7 +14,7 @@ export interface TemplatesProps {
   answeredInputs: AnsweredInputType[];
   isChatFullScreen: boolean;
   activeSideBarLink: Link | null;
-  accordionChatMode: "execution" | "input";
+  accordionChatMode: AccordionChatMode;
   showPromptsView: boolean;
 }
 
@@ -65,7 +66,7 @@ export const templatesSlice = createSlice({
     setActiveToolbarLink: (state, action: PayloadAction<Link | null>) => {
       state.activeSideBarLink = action.payload;
     },
-    setAccordionChatMode: (state, action: PayloadAction<"execution" | "input">) => {
+    setAccordionChatMode: (state, action: PayloadAction<AccordionChatMode>) => {
       state.accordionChatMode = action.payload;
     },
     setShowPromptsView: (state, action: PayloadAction<boolean>) => {

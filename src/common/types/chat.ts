@@ -25,3 +25,5 @@ export interface IAnswer {
   prompt: number;
   error?: boolean;
 }
+
+export type AccordionChatMode = "execution" | "input" | "repeat";
