@@ -1,11 +1,10 @@
-import { useEffect, useRef, useState, useMemo } from "react";
+import { useRef, useMemo } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 
 import { ExecutionCard } from "./ExecutionCard";
 import ParagraphPlaceholder from "@/components/placeholders/ParagraphPlaceholder";
-import { isDesktopViewPort } from "@/common/helpers";
 import ExecutionFooter from "./ExecutionFooter";
 import { useAppSelector } from "@/hooks/useStore";
 import type { Templates } from "@/core/api/dto/templates";
@@ -13,30 +12,17 @@ import type { IAnswer } from "@/common/types/chat";
 
 interface Props {
   templateData: Templates;
-  close?: () => void;
   answers?: IAnswer[];
 }
 
-export const Display: React.FC<Props> = ({ templateData, close, answers }) => {
-  const [firstLoad, setFirstLoad] = useState(false);
+export const Display: React.FC<Props> = ({ templateData, answers }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const isDesktopView = isDesktopViewPort();
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
   const isFetching = useAppSelector(state => state.executions.isFetching);
 
   const isGeneratedExecutionEmpty = Boolean(generatedExecution && !generatedExecution.data?.length);
   const executionIsLoading = isFetching || isGeneratedExecutionEmpty;
-
-  // click listener to remove opacity layer on first loaded execution
-  useEffect(() => {
-    const handleClick = () => setFirstLoad(false);
-
-    const container = containerRef.current;
-    container?.addEventListener("click", handleClick);
-
-    return () => container?.removeEventListener("click", handleClick);
-  }, []);
 
   const currentGeneratedPrompt = useMemo(() => {
     if (generatedExecution?.data?.length) {
@@ -96,7 +82,6 @@ export const Display: React.FC<Props> = ({ templateData, close, answers }) => {
         <ExecutionFooter
           title={currentGeneratedPrompt.title}
           order={currentGeneratedPrompt.order}
-          isMobile={!isDesktopView}
         />
       )}
     </Grid>

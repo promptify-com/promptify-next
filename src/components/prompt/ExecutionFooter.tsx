@@ -5,10 +5,9 @@ import Typography from "@mui/material/Typography";
 interface Props {
   title: string;
   order: number;
-  isMobile: boolean;
 }
 
-export default function ExecutionFooter({ title, order, isMobile }: Props) {
+export default function ExecutionFooter({ title, order }: Props) {
   if (!title || !order) {
     return null;
   }
@@ -17,7 +16,7 @@ export default function ExecutionFooter({ title, order, isMobile }: Props) {
     <Box
       sx={{
         position: "sticky",
-        bottom: isMobile ? "129px" : 0,
+        bottom: 0,
         left: 0,
         right: 0,
         bgcolor: "surface.1",

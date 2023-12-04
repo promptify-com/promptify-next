@@ -97,8 +97,11 @@ export const Executions: React.FC<ExecutionsProps> = ({ template }) => {
     dispatch(setAccordionChatMode("execution"));
 
     isMobile && dispatch(openToolbarDrawer(false));
-    const element = document.getElementById("accordion-header");
-    element && element.scrollIntoView({ behavior: "smooth" });
+
+    setTimeout(() => {
+      const element = document.getElementById("accordion-header");
+      element && element.scrollIntoView({ behavior: "smooth" });
+    }, 100);
   };
 
   return (
