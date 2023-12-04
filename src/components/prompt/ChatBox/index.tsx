@@ -331,7 +331,7 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
             answer: value,
           };
         })
-        .filter(answer => answer.answer !== "");
+        .filter(answer => answer.answer);
 
       setAnswers(newAnswers);
       setIsValidatingAnswer(false);
