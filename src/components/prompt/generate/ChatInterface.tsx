@@ -109,27 +109,7 @@ export const ChatInterface = ({
           {getCurrentDateFormatted()}
         </Divider>
 
-        {accordionChatMode === "repeat" && (
-          <Box id="accordion-header">
-            <AccordionMessage
-              accordionChatMode={"execution"}
-              onClear={onClear}
-              template={template}
-              showGenerate={showGenerate}
-              abortGenerating={onAbort}
-              inputs={inputs}
-              params={params}
-              paramsValues={paramsValues}
-              answers={answers}
-              onChangeInput={onChangeInput}
-              onChangeParam={onChangeParam}
-              onGenerate={onGenerate}
-              setIsSimulationStreaming={setIsSimulationStreaming}
-            />
-          </Box>
-        )}
-
-        {accordionChatMode === "execution" && (
+        {accordionChatMode !== "input" && (
           <Box id="accordion-header">
             <AccordionMessage
               onClear={onClear}
