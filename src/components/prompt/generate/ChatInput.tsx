@@ -38,7 +38,7 @@ export const ChatInput = ({
       position={"relative"}
       display={"flex"}
       width={"100%"}
-      px={{ xs: "16px", md: "40px" }}
+      px={{ xs: "8px", md: "40px" }}
       flexDirection={"column"}
       gap={"8px"}
     >
