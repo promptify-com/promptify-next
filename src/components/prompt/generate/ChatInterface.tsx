@@ -136,7 +136,7 @@ export const ChatInterface = ({
         >
           {messages.map(msg => (
             <Fragment key={msg.id}>
-              <Box display={!isExecutionMode ? "flex" : "none"}>
+              <Box display={accordionChatMode !== "repeat" ? "flex" : "none"}>
                 <Message
                   message={msg}
                   setIsSimulationStreaming={setIsSimulationStreaming}
