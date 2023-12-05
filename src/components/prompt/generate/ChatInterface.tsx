@@ -47,16 +47,50 @@ export const ChatInterface = ({
 }: Props) => {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const accordionChatMode = useAppSelector(state => state.template.accordionChatMode);
+
+  const execution = useAppSelector(state => state.executions.generatedExecution);
   const isExecutionMode = accordionChatMode === "execution";
 
   const [isHovered, setIsHovered] = useState(false);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
-  const scrollToBottom = () => {
+  const [isUserAtBottom, setIsUserAtBottom] = useState(true);
+  const [showScrollDown, setShowScrollDown] = useState(false);
+
+  const handleUserScroll = () => {
     if (messagesContainerRef.current) {
-      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight - 300;
+      const { scrollTop, scrollHeight, clientHeight } = messagesContainerRef.current;
+      const atBottom = scrollTop + clientHeight >= scrollHeight - 10;
+      setIsUserAtBottom(atBottom);
+      setShowScrollDown(!atBottom);
     }
   };
+
+  useEffect(() => {
+    const container = messagesContainerRef.current;
+    if (container) {
+      container.addEventListener("scroll", handleUserScroll);
+    }
+    return () => {
+      if (container) {
+        container.removeEventListener("scroll", handleUserScroll);
+      }
+    };
+  }, []);
+
+  const scrollToBottom = () => {
+    const container = messagesContainerRef.current;
+    if (container) {
+      container.scrollTop = container.scrollHeight;
+      setTimeout(handleUserScroll, 200);
+    }
+  };
+
+  useEffect(() => {
+    if (isUserAtBottom) {
+      scrollToBottom();
+    }
+  }, [execution]);
 
   useEffect(() => {
     scrollToBottom();

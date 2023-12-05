@@ -50,6 +50,7 @@ export const AccordionMessage = ({
 }: Props) => {
   const dispatch = useAppDispatch();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
+  const currentUser = useAppSelector(state => state.user.currentUser);
 
   const [expanded, setExpanded] = useState(true);
   const accordionRef = useRef<HTMLDivElement>(null);
@@ -141,7 +142,7 @@ export const AccordionMessage = ({
               )}
             </Stack>
           </Stack>
-          {showGenerate && accordionChatMode === "input" && (
+          {showGenerate && accordionChatMode === "input" && currentUser?.id && (
             <Stack
               direction={"row"}
               justifyContent={"end"}

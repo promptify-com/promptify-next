@@ -1,6 +1,5 @@
-import { useEffect, useRef, useState, createRef, RefObject } from "react";
+import { useEffect, useState, createRef, RefObject } from "react";
 import Error from "@mui/icons-material/Error";
-import { keyframes } from "@mui/material/styles";
 import Tooltip from "@mui/material/Tooltip";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
@@ -9,12 +8,12 @@ import Box from "@mui/material/Box";
 import { isImageOutput, markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
 import { Subtitle } from "@/components/blocks";
 import { useAppSelector } from "@/hooks/useStore";
+import ExecutionContentPreview from "./generate/PromptContent";
+import FeedbackThumbs from "./FeedbackThumbs";
 import type { Prompts } from "@/core/api/dto/prompts";
 import type { TemplatesExecutions } from "@/core/api/dto/templates";
 import type { IAnswer } from "@/common/types/chat";
 import type { DisplayPrompt, PromptLiveResponse } from "@/common/types/prompt";
-import ExecutionContentPreview from "./generate/PromptContent";
-import FeedbackThumbs from "./FeedbackThumbs";
 
 interface Props {
   execution: PromptLiveResponse | TemplatesExecutions | null;
@@ -22,15 +21,19 @@ interface Props {
   answers?: IAnswer[];
 }
 
-export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers }) => {
-  const executionPrompts = execution && "data" in execution ? execution.data : execution?.prompt_executions;
+export const ExecutionCard = ({ execution, promptsData, answers }: Props) => {
   const sparkHashQueryParam = useAppSelector(state => state.executions.sparkHashQueryParam);
+  const showPreview = useAppSelector(state => state.template.showPromptsView);
+  const isGenerating = useAppSelector(state => state.template.isGenerating);
+
   const [sortedPrompts, setSortedPrompts] = useState<DisplayPrompt[]>([]);
   const [elementRefs, setElementRefs] = useState<RefObject<HTMLDivElement>[]>([]);
   const [elementHeights, setElementHeights] = useState<number[]>([]);
 
   const promptsOrderMap: { [key: string]: number } = {};
   const promptsExecutionOrderMap: { [key: string]: number } = {};
+
+  const executionPrompts = execution && "data" in execution ? execution.data : execution?.prompt_executions;
 
   promptsData?.forEach(prompt => {
     promptsOrderMap[prompt.id] = prompt.order;
@@ -78,25 +81,6 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
     sortAndProcessExecutions();
   }, [executionPrompts]);
 
-  const containerRef = useRef<HTMLDivElement>(null);
-  // useEffect(() => {
-  //   containerRef.current?.scrollIntoView({
-  //     block: isGenerating ? "end" : "start",
-  //   });
-  // }, [execution]);
-
-  const expandAnimation = keyframes`
-  from { width: 0%; }
-  to { width: 20%; }
-`;
-
-  const collapseAnimation = keyframes`
-  from { width: 20%; }
-  to { width: 0%; }
-`;
-
-  const showPreview = useAppSelector(state => state.template.showPromptsView);
-  const isGenerating = useAppSelector(state => state.template.isGenerating);
   const executionError = (error: string | undefined) => {
     return (
       <Tooltip
@@ -119,7 +103,6 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
 
   return (
     <Stack
-      ref={containerRef}
       gap={1}
       sx={{
         width: { md: "90%" },
@@ -127,6 +110,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
         p: { xs: "8px 0px", md: "0px" },
       }}
       direction={{ xs: "column-reverse", md: "column" }}
+      position={"relative"}
     >
       {!isGenerating && execution && "parameters" in execution && (
         <Stack
@@ -281,7 +265,6 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
                           height: { xs: showPreview ? "fit-content" : 0, md: "fit-content" },
                           mr: { md: showPreview ? "-48px" : 0 },
                           overflow: "auto",
-                          animation: `${showPreview ? expandAnimation : collapseAnimation} 300ms forwards`,
                           "&::-webkit-scrollbar": {
                             width: "6px",
                             p: 1,

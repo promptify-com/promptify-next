@@ -29,6 +29,8 @@ function TemplateToolbar({ template }: Props) {
   const isValidUser = useAppSelector(isValidUserFn);
   const { data: executions } = useGetExecutionsByTemplateQuery(isValidUser ? template.id : skipToken);
 
+  const filteredToolbarItems = isValidUser ? ToolbarItems : ToolbarItems.filter(item => item.name !== "customize");
+
   return (
     <Box
       height={"100%"}
@@ -104,7 +106,7 @@ function TemplateToolbar({ template }: Props) {
             </ListItemButton>
           </ListItem>
 
-          {ToolbarItems.map(link => (
+          {filteredToolbarItems.map(link => (
             <ToolbarItem
               key={link.title}
               item={link}
