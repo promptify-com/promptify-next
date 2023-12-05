@@ -206,7 +206,7 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
             gap={1}
             mb={2}
           >
-            <Typography sx={{ fontSize: 34, fontWeight: 400 }}>Chained Prompt Builder</Typography>
+            <Typography sx={{ fontSize: 34, fontWeight: 400 }}>Chain of Thoughts Builder</Typography>
             <Typography sx={{ fontSize: 14, fontWeight: 400 }}>
               Structure your prompts for a productive and more deterministic AI. You chained prompts will guide AI
               content creation with focus and intent. Learn more
