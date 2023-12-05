@@ -63,7 +63,7 @@ export const Display: React.FC<Props> = ({ templateData }) => {
           bgcolor: "surface.3",
           minHeight: {
             xs: `calc(100svh - (58px + 54px ${isGenerating ? "+ 30.5px" : ""}))`,
-            md: "calc(100svh - 90px)",
+            md: "calc(100svh - (90px + 70.5px))",
           },
           height: "1px",
           position: "relative",
@@ -93,6 +93,19 @@ export const Display: React.FC<Props> = ({ templateData }) => {
             bgcolor: "surface.1",
             borderRadius: "16px 16px 0px 0px",
             position: "relative",
+            "&::-webkit-scrollbar": {
+              width: "6px",
+              p: 1,
+              bgcolor: "surface.3",
+            },
+            "&::-webkit-scrollbar-track": {
+              webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              bgcolor: "surface.1",
+              outline: "1px solid surface.1",
+              borderRadius: "10px",
+            },
           }}
         >
           {executionIsLoading ? (

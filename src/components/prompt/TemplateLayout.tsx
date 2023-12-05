@@ -7,13 +7,13 @@ import ChatBox from "./ChatBox";
 import { Sidebar } from "./Sidebar";
 import { useAppSelector } from "@/hooks/useStore";
 import { useDispatch } from "react-redux";
-import { setSelectedExecution } from "@/core/store/executionsSlice";
 import { setChatFullScreenStatus } from "@/core/store/templatesSlice";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
 import { Box } from "@mui/material";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
 import SidebarMini from "./Sidebar/Mini";
+import Header from "./Header";
 
 interface TemplateLayoutProps {
   template: Templates;
@@ -38,13 +38,14 @@ export default function TemplateLayout({ template, setErrorMessage, questionPref
       height={{ md: "calc(100svh - 90px)" }}
       gap={"1px"}
     >
+      <Header template={template} />
       <Stack
         direction={{ md: "row" }}
         flexWrap={{ md: "nowrap" }}
         gap={{ md: "1px" }}
         sx={{
           width: "100%",
-          height: { xs: "calc(100svh - 56px)", md: "100%" },
+          height: { xs: "calc(100svh - 56px)", md: "calc(100% - 70.5px)" },
           mt: { xs: "58px", md: 0 },
           mx: "auto",
           bgcolor: { md: "surface.1" },
