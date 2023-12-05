@@ -29,11 +29,6 @@ export default function TemplateLayout({ template, setErrorMessage, questionPref
   const isValidUser = useAppSelector(isValidUserFn);
   const { data: executions } = useGetExecutionsByTemplateQuery(isValidUser ? template.id : skipToken);
 
-  const closeExecutionDisplay = () => {
-    dispatch(setChatFullScreenStatus(true));
-    dispatch(setSelectedExecution(null));
-  };
-
   useEffect(() => {
     dispatch(setChatFullScreenStatus(!selectedExecution));
   }, [selectedExecution]);
@@ -115,10 +110,7 @@ export default function TemplateLayout({ template, setErrorMessage, questionPref
             width={{ md: "62%" }}
             flex={{ xs: 1, md: "auto" }}
           >
-            <Display
-              templateData={template}
-              close={closeExecutionDisplay}
-            />
+            <Display templateData={template} />
           </Box>
         )}
 

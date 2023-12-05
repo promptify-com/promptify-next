@@ -10,7 +10,12 @@ import { ChatInterface } from "./ChatInterface";
 import { ChatInput } from "./ChatInput";
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { IPromptInput, PromptLiveResponse, AnsweredInputType } from "@/common/types/prompt";
-import { setChatFullScreenStatus, setGeneratingStatus, updateExecutionData } from "@/core/store/templatesSlice";
+import {
+  setChatFullScreenStatus,
+  setGeneratingStatus,
+  setRepeatExecution,
+  updateExecutionData,
+} from "@/core/store/templatesSlice";
 import { IAnswer, IMessage, VaryValidatorResponse } from "@/common/types/chat";
 import { executionsApi, useStopExecutionMutation } from "@/core/api/executions";
 import { vary } from "@/common/helpers/varyValidator";
@@ -38,6 +43,7 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
   const [uploadFile] = useUploadFileMutation();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
+  const repeatExecution = useAppSelector(state => state.template.repeatExecution);
   const [showGenerateButton, setShowGenerateButton] = useState(false);
   const [isValidatingAnswer, setIsValidatingAnswer] = useState(false);
   const [generatingResponse, setGeneratingResponse] = useState<PromptLiveResponse>({
@@ -430,7 +436,7 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
     generateExecution(promptsData);
   };
 
-  const regenerateHandler = async (execution: TemplatesExecutions) => {
+  const repeatExecutionHandler = (execution: TemplatesExecutions) => {
     let newAnswers: IAnswer[] = [];
     if (execution.parameters) {
       const _params = execution.parameters;
@@ -456,6 +462,15 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
     const isReady = allRequiredInputsAnswered(_inputs, newAnswers) ? " We are ready to create a new document." : "";
     messageAnswersForm(`Ok!${isReady} I have prepared the incoming parameters, please check!`);
   };
+
+  useEffect(() => {
+    if (repeatExecution) {
+      repeatExecutionHandler(repeatExecution);
+      dispatch(setChatFullScreenStatus(true));
+      dispatch(setSelectedExecution(null));
+      dispatch(setRepeatExecution(null));
+    }
+  }, [repeatExecution]);
 
   const generateExecution = (executionData: ResPrompt[]) => {
     const url = `${process.env.NEXT_PUBLIC_API_URL}/api/meta/templates/${template!.id}/execute/`;
@@ -628,7 +643,6 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
           onChangeInput={handleUserInput}
           onChangeParam={handleUserParam}
           setIsSimulationStreaming={setIsSimulationStreaming}
-          regenerate={regenerateHandler}
         />
         {currentUser?.id ? (
           <ChatInput

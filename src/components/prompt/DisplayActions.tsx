@@ -17,11 +17,13 @@ import useTruncate from "@/hooks/useTruncate";
 import { SparkSaveDeletePopup } from "@/components/dialog/SparkSaveDeletePopup";
 import { ProgressLogo } from "../common/ProgressLogo";
 import { getAbbreviation } from "@/common/helpers";
+import { useDispatch } from "react-redux";
+import { setChatFullScreenStatus } from "@/core/store/templatesSlice";
+import { setSelectedExecution } from "@/core/store/executionsSlice";
 
 interface Props {
   selectedExecution: TemplatesExecutions | null;
   onOpenExport: () => void;
-  close: () => void;
   showPreviews: boolean;
   toggleShowPreviews: () => void;
 }
@@ -29,11 +31,11 @@ interface Props {
 export const DisplayActions: React.FC<Props> = ({
   selectedExecution,
   onOpenExport,
-  close,
   showPreviews,
   toggleShowPreviews,
 }) => {
   const { truncate } = useTruncate();
+  const dispatch = useDispatch();
   const [favoriteExecution] = useExecutionFavoriteMutation();
   const [deleteExecutionFavorite] = useDeleteExecutionFavoriteMutation();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
@@ -57,6 +59,11 @@ export const DisplayActions: React.FC<Props> = ({
     } catch (error) {
       console.error(error);
     }
+  };
+
+  const closeExecutionDisplay = () => {
+    dispatch(setChatFullScreenStatus(true));
+    dispatch(setSelectedExecution(null));
   };
 
   return (
@@ -223,7 +230,7 @@ export const DisplayActions: React.FC<Props> = ({
                     ...actionBtnStyle,
                     opacity: 0.45,
                   }}
-                  onClick={close}
+                  onClick={closeExecutionDisplay}
                 >
                   <Close />
                 </IconButton>

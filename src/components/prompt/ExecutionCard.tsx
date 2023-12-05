@@ -5,7 +5,6 @@ import Tooltip from "@mui/material/Tooltip";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-
 import { isImageOutput, markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
 import { Subtitle } from "@/components/blocks";
 import { useAppSelector } from "@/hooks/useStore";
@@ -14,6 +13,8 @@ import type { TemplatesExecutions } from "@/core/api/dto/templates";
 import type { IAnswer } from "@/common/types/chat";
 import type { DisplayPrompt, PromptLiveResponse } from "@/common/types/prompt";
 import ExecutionContentPreview from "./ExecutionContentPreview";
+import { FeedbackActions } from "./FeedbackActions";
+import { isDesktopViewPort } from "@/common/helpers";
 
 interface Props {
   execution: PromptLiveResponse | TemplatesExecutions | null;
@@ -28,6 +29,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
   const [sortedPrompts, setSortedPrompts] = useState<DisplayPrompt[]>([]);
   const [elementRefs, setElementRefs] = useState<RefObject<HTMLDivElement>[]>([]);
   const [elementHeights, setElementHeights] = useState<number[]>([]);
+  const isDesktop = isDesktopViewPort();
 
   const promptsOrderMap: { [key: string]: number } = {};
   const promptsExecutionOrderMap: { [key: string]: number } = {};
@@ -84,16 +86,6 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
   //     block: isGenerating ? "end" : "start",
   //   });
   // }, [execution]);
-
-  const expandAnimation = keyframes`
-  from { width: 0%; }
-  to { width: 20%; }
-`;
-
-  const collapseAnimation = keyframes`
-  from { width: 20%; }
-  to { width: 0%; }
-`;
 
   const executionError = (error: string | undefined) => {
     return (
@@ -177,6 +169,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
                       ref={elementRefs[index]}
                       display={{ xs: showPreview ? "none" : "flex", md: "flex" }}
                       width={{ md: showPreview ? "75%" : "100%" }}
+                      direction={{ md: "row" }}
                     >
                       {isPrevItemImage && (
                         <Box
@@ -238,6 +231,23 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
                           __html: sanitizeHTML(exec.content),
                         }}
                       />
+                      {"title" in execution && (
+                        <Box
+                          sx={{
+                            height: "fit-content",
+                            position: "sticky",
+                            top: "50px",
+                            mr: { md: showPreview ? 0 : "-50px" },
+                            ml: { md: "20px" },
+                          }}
+                        >
+                          <FeedbackActions
+                            execution={execution}
+                            vertical
+                            min
+                          />
+                        </Box>
+                      )}
                     </Stack>
 
                     <Stack
@@ -304,3 +314,13 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
     </Stack>
   );
 };
+
+const expandAnimation = keyframes`
+  from { width: 0%; }
+  to { width: 20%; }
+`;
+
+const collapseAnimation = keyframes`
+  from { width: 20%; }
+  to { width: 0%; }
+`;

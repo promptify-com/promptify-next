@@ -2,6 +2,7 @@ import { AnsweredInputType } from "@/common/types/prompt";
 import { SidebarLink } from "@/common/types/template";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
+import { TemplatesExecutions } from "../api/dto/templates";
 
 export interface TemplatesProps {
   is_favorite: boolean;
@@ -12,6 +13,7 @@ export interface TemplatesProps {
   isChatFullScreen: boolean;
   answeredInputs: AnsweredInputType[];
   activeSideBarLink: SidebarLink | null;
+  repeatExecution: TemplatesExecutions | null;
 }
 
 type UpdateTemplateDataPayload = Pick<TemplatesProps, "is_favorite" | "id" | "likes">;
@@ -25,6 +27,7 @@ const initialState: TemplatesProps = {
   isChatFullScreen: true,
   answeredInputs: [],
   activeSideBarLink: null,
+  repeatExecution: null,
 };
 
 export const templatesSlice = createSlice({
@@ -40,11 +43,9 @@ export const templatesSlice = createSlice({
       state.is_favorite = action.payload;
       state.likes = action.payload ? state.likes + 1 : state.likes - 1;
     },
-
     updateExecutionData: (state, action: PayloadAction<string>) => {
       state.executionData = action.payload;
     },
-
     setGeneratingStatus: (state, action: PayloadAction<boolean>) => {
       state.isGenerating = action.payload;
     },
@@ -53,6 +54,9 @@ export const templatesSlice = createSlice({
     },
     setActiveSidebarLink: (state, action: PayloadAction<SidebarLink | null>) => {
       state.activeSideBarLink = action.payload;
+    },
+    setRepeatExecution: (state, action: PayloadAction<TemplatesExecutions | null>) => {
+      state.repeatExecution = action.payload;
     },
   },
 });
@@ -64,6 +68,7 @@ export const {
   setGeneratingStatus,
   setChatFullScreenStatus,
   setActiveSidebarLink,
+  setRepeatExecution,
 } = templatesSlice.actions;
 
 export default templatesSlice.reducer;

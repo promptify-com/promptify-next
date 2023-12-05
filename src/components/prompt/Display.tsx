@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useMemo } from "react";
+import React, { useRef, useState, useMemo } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
@@ -9,14 +9,12 @@ import ParagraphPlaceholder from "@/components/placeholders/ParagraphPlaceholder
 import { SparkExportPopup } from "../dialog/SparkExportPopup";
 import GeneratedExecutionFooter from "./GeneratedExecutionFooter";
 import { useAppSelector } from "@/hooks/useStore";
-import { Stack } from "@mui/material";
 
 interface Props {
   templateData: Templates;
-  close: () => void;
 }
 
-export const Display: React.FC<Props> = ({ templateData, close }) => {
+export const Display: React.FC<Props> = ({ templateData }) => {
   const currentUser = useAppSelector(state => state.user.currentUser);
   const [openExportPopup, setOpenExportpopup] = useState(false);
   const [previewsShown, setPreviewsShown] = useState(false);
@@ -76,7 +74,6 @@ export const Display: React.FC<Props> = ({ templateData, close }) => {
             <DisplayActions
               selectedExecution={selectedExecution}
               onOpenExport={() => setOpenExportpopup(true)}
-              close={close}
               showPreviews={previewsShown}
               toggleShowPreviews={() => setPreviewsShown(!previewsShown)}
             />

@@ -26,7 +26,6 @@ interface TemplateProps {
 }
 
 function Template({ hashedExecution, fetchedTemplate, questionPrefixContent }: TemplateProps) {
-  console.log(questionPrefixContent);
   const router = useRouter();
   const { replaceHistoryByPathname } = useBrowser();
   const [updateViewTemplate] = useViewTemplateMutation();
@@ -110,7 +109,6 @@ function Template({ hashedExecution, fetchedTemplate, questionPrefixContent }: T
       });
   };
   const dynamicTheme = createTheme({ ...theme, palette });
-  const isMobileView = router.query.viewport === "mobile";
 
   return (
     <ThemeProvider theme={dynamicTheme}>

@@ -1,17 +1,16 @@
 import React, { useEffect, useRef, Dispatch, SetStateAction } from "react";
-import { Box, Button, Divider, Stack, Typography } from "@mui/material";
+import { Box, Divider, Stack, Typography } from "@mui/material";
 import { Message } from "./Message";
 import { IAnswer, IMessage } from "@/common/types/chat";
 import { TemplateDetailsCard } from "../TemplateDetailsCard";
-import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
+import { Templates } from "@/core/api/dto/templates";
 import { useAppSelector } from "@/hooks/useStore";
 import { InputsForm } from "./Inputsform";
 import { CardExecution } from "@/components/common/cards/CardExecution";
-import FeedbackThumbs from "../FeedbackThumbs";
-import { Replay } from "@mui/icons-material";
 import { IPromptInput } from "@/common/types/prompt";
 import { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
 import { isDesktopViewPort } from "@/common/helpers";
+import { FeedbackActions } from "../FeedbackActions";
 
 interface Props {
   template: Templates;
@@ -23,7 +22,6 @@ interface Props {
   answers: IAnswer[];
   params: PromptParams[];
   paramsValues: ResOverrides[];
-  regenerate: (execution: TemplatesExecutions) => void;
 }
 
 export const ChatInterface = ({
@@ -36,7 +34,6 @@ export const ChatInterface = ({
   answers,
   params,
   paramsValues,
-  regenerate,
 }: Props) => {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const isChatFullScreen = useAppSelector(state => state.template.isChatFullScreen);
@@ -144,35 +141,7 @@ export const ChatInterface = ({
                   >
                     Quick Feedback:
                   </Typography>
-                  <Stack
-                    direction={"row"}
-                    alignItems={"center"}
-                    flexWrap={"wrap"}
-                    gap={1}
-                  >
-                    <FeedbackThumbs execution={msg.spark} />
-                    <Button
-                      onClick={() => {
-                        if (msg.spark) regenerate(msg.spark);
-                      }}
-                      variant="text"
-                      startIcon={<Replay />}
-                      sx={{
-                        height: "22px",
-                        p: "15px",
-                        fontSize: 13,
-                        fontWeight: 500,
-                        border: "1px solid",
-                        borderColor: "divider",
-                        color: "secondary.main",
-                        ":hover": {
-                          bgcolor: "action.hover",
-                        },
-                      }}
-                    >
-                      Try again
-                    </Button>
-                  </Stack>
+                  <FeedbackActions execution={msg.spark} />
                 </Box>
               </Stack>
             )}
