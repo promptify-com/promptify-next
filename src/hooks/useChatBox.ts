@@ -14,10 +14,6 @@ export default function useChatBox() {
         _input => !inputs.some(__input => __input.name === _input.name),
       );
 
-      if (!_inputs.length) {
-        return;
-      }
-
       inputs.push(
         ..._inputs.map(_input => {
           _input["prompt"] = prompt.id;

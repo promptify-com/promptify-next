@@ -170,6 +170,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
                       display={{ xs: showPreview ? "none" : "flex", md: "flex" }}
                       width={{ md: showPreview ? "75%" : "100%" }}
                       direction={{ md: "row" }}
+                      gap={2}
                     >
                       {isPrevItemImage && (
                         <Box

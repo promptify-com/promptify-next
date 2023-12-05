@@ -199,7 +199,14 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
 
     const valuesMap = new Map<number, ResOverrides>();
     params.forEach(_param => {
-      valuesMap.set(_param.prompt, { id: _param.prompt, contextual_overrides: [] });
+      const paramId = _param.parameter.id;
+      valuesMap.set(_param.prompt, {
+        id: _param.prompt,
+        contextual_overrides: (valuesMap.get(_param.prompt)?.contextual_overrides || []).concat({
+          parameter: paramId,
+          score: _param.score,
+        }),
+      });
     });
     setParamsValues(Array.from(valuesMap.values()));
 
