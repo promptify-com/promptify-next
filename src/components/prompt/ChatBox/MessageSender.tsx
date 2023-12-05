@@ -1,17 +1,28 @@
 import React, { useRef, useState } from "react";
 import { InputBase, Box, IconButton } from "@mui/material";
 import { ArrowForward, KeyboardCommandKey, Send } from "@mui/icons-material";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import SlowMotionVideo from "@mui/icons-material/SlowMotionVideo";
 
 interface MessageSenderProps {
   onSubmit: (value: string) => void;
   disabled: boolean;
   placeholder?: string;
+  onGenerate: () => void;
+  showGenerate: boolean;
 }
 
-const MessageSender: React.FC<MessageSenderProps> = ({ onSubmit, disabled, placeholder = "Chat with Promptify" }) => {
+const MessageSender: React.FC<MessageSenderProps> = ({
+  onSubmit,
+  disabled,
+  placeholder = "Chat with Promptify",
+  onGenerate,
+  showGenerate,
+}) => {
   const [localValue, setLocalValue] = useState("");
   const fieldRef = useRef<HTMLInputElement | null>(null);
-
+  const dispatch = useAppDispatch();
+  const isGenerating = useAppSelector(state => state.template.isGenerating);
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -90,19 +101,49 @@ const MessageSender: React.FC<MessageSenderProps> = ({ onSubmit, disabled, place
         }}
       />
       <IconButton
-        onClick={handleSubmit}
-        disabled={!localValue}
         sx={{
           border: "none",
           bgcolor: localValue ? "primary.light" : "transparent",
           p: "4px",
+          width: "27px",
+          height: "27px",
+          ":hover": {
+            bgcolor: showGenerate ? "inherit" : "#626673",
+          },
+          "& svg": {
+            width: showGenerate && !localValue ? "24px" : "19px",
+            height: showGenerate && !localValue ? "24px" : "19px",
+          },
         }}
       >
-        <ArrowForward
-          sx={{
-            color: "surface.1",
-          }}
-        />
+        {showGenerate && !localValue ? (
+          <SlowMotionVideo
+            onClick={() => {
+              if (isGenerating) {
+                return;
+              }
+
+              onGenerate?.();
+            }}
+            sx={{
+              color: isGenerating ? "text.secondary" : "#375CA9",
+              cursor: isGenerating ? "not-allowed" : "pointer",
+            }}
+          />
+        ) : (
+          <ArrowForward
+            onClick={() => {
+              if (!localValue || isGenerating) {
+                return;
+              }
+
+              handleSubmit();
+            }}
+            sx={{
+              color: "surface.1",
+            }}
+          />
+        )}
       </IconButton>
     </Box>
   );

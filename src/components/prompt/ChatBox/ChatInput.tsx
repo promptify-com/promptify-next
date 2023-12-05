@@ -155,6 +155,8 @@ export const ChatInput = ({
       <MessageSender
         onSubmit={onSubmit}
         disabled={disabled}
+        showGenerate={showGenerate}
+        onGenerate={onGenerate}
       />
     </Grid>
   );
