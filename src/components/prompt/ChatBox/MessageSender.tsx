@@ -8,8 +8,8 @@ interface MessageSenderProps {
   onSubmit: (value: string) => void;
   disabled: boolean;
   placeholder?: string;
-  onGenerate: () => void;
-  showGenerate: boolean;
+  onGenerate?: () => void;
+  showGenerate?: boolean;
 }
 
 const MessageSender: React.FC<MessageSenderProps> = ({
