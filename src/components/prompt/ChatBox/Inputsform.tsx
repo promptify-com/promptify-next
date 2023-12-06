@@ -27,6 +27,8 @@ export const InputsForm = ({
   setIsSimulationStreaming,
   onScrollToBottom,
 }: Props) => {
+  const _params = params.filter(param => param.is_visible);
+
   return (
     <Fade
       in={true}
@@ -47,7 +49,7 @@ export const InputsForm = ({
             />
           );
         })}
-        {params?.map(param => {
+        {_params?.map(param => {
           const paramValue = paramsValues.find(paramVal => paramVal.id === param.prompt);
           return (
             <FormParam

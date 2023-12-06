@@ -130,187 +130,192 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
           {execution.title}
         </Typography>
       )}
-      {execution &&
-        sortedPrompts?.map((exec, index) => {
-          const prevItem = sortedPrompts[index - 1];
-          const isPrevItemImage = prevItem && isImageOutput(prevItem?.content);
-          const nextItem = sortedPrompts[index + 1];
-          const isNextItemText = nextItem && !isImageOutput(nextItem?.content);
-          const prompt = promptsData.find(prompt => prompt.id === exec.prompt);
+      {execution && (
+        <Stack direction={{ md: "row" }}>
+          <Stack gap={1}>
+            {sortedPrompts?.map((exec, index) => {
+              const prevItem = sortedPrompts[index - 1];
+              const isPrevItemImage = prevItem && isImageOutput(prevItem?.content);
+              const nextItem = sortedPrompts[index + 1];
+              const isNextItemText = nextItem && !isImageOutput(nextItem?.content);
+              const prompt = promptsData.find(prompt => prompt.id === exec.prompt);
 
-          if (prompt?.show_output || sparkHashQueryParam) {
-            return (
-              <Stack
-                key={index}
-                gap={1}
-                sx={{ pb: "24px" }}
-              >
-                {prompt && (
-                  <Subtitle
-                    sx={{
-                      display: { xs: showPreview ? "none" : "block", md: "block" },
-                      fontSize: { xs: 18, md: 24 },
-                      fontWeight: 400,
-                      color: "onSurface",
-                    }}
-                  >
-                    {!isImageOutput(exec.content) && prompt?.title}
-                    {exec.errors && executionError(exec.errors)}
-                  </Subtitle>
-                )}
-                {/* is Text Output */}
-                {!isImageOutput(exec.content) && (
+              if (prompt?.show_output || sparkHashQueryParam) {
+                return (
                   <Stack
-                    direction={"row"}
-                    alignItems={"start"}
-                    gap={2}
+                    key={index}
+                    gap={1}
+                    sx={{ pb: "24px" }}
                   >
-                    <Stack
-                      ref={elementRefs[index]}
-                      display={{ xs: showPreview ? "none" : "flex", md: "flex" }}
-                      width={{ md: showPreview ? "75%" : "100%" }}
-                      direction={{ md: "row" }}
-                    >
-                      {isPrevItemImage && (
-                        <Box
-                          component={"img"}
-                          alt={"book cover"}
-                          src={prevItem.content}
-                          onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-                            (e.target as HTMLImageElement).src = require("@/assets/images/default-thumbnail.jpg");
-                          }}
-                          sx={{
-                            borderRadius: "8px",
-                            width: "40%",
-                            objectFit: "cover",
-                            float: "right",
-                            ml: "20px",
-                            mb: "10px",
-                          }}
-                        />
-                      )}
-                      <Box
+                    {prompt && (
+                      <Subtitle
                         sx={{
-                          width: "100%",
-                          fontSize: { xs: 14, md: 15 },
+                          display: { xs: showPreview ? "none" : "block", md: "block" },
+                          fontSize: { xs: 18, md: 24 },
                           fontWeight: 400,
                           color: "onSurface",
-                          wordWrap: "break-word",
-                          textAlign: "justify",
-                          float: "none",
-                          ".highlight": {
-                            backgroundColor: "yellow",
-                            color: "black",
-                          },
-                          pre: {
-                            m: "10px 0",
-                            borderRadius: "8px",
-                            overflow: "hidden",
-                            code: {
-                              borderRadius: 0,
-                              m: 0,
-                            },
-                          },
-                          code: {
-                            display: "block",
-                            bgcolor: "#282a35",
-                            color: "common.white",
-                            borderRadius: "8px",
-                            p: "16px 24px",
-                            mb: "10px",
-                            overflow: "auto",
-                          },
-                          ".language-label": {
-                            p: "8px 24px",
-                            bgcolor: "#4d5562",
-                            color: "#ffffff",
-                            fontSize: 13,
-                          },
                         }}
-                        dangerouslySetInnerHTML={{
-                          __html: sanitizeHTML(exec.content),
-                        }}
-                      />
-                      {"title" in execution && (
-                        <Box
+                      >
+                        {!isImageOutput(exec.content) && prompt?.title}
+                        {exec.errors && executionError(exec.errors)}
+                      </Subtitle>
+                    )}
+                    {/* is Text Output */}
+                    {!isImageOutput(exec.content) && (
+                      <Stack
+                        direction={"row"}
+                        alignItems={"start"}
+                        gap={2}
+                      >
+                        <Stack
+                          ref={elementRefs[index]}
+                          display={{ xs: showPreview ? "none" : "flex", md: "flex" }}
+                          width={{ md: showPreview ? "65%" : "100%" }}
+                          direction={{ md: "row" }}
+                          gap={2}
+                        >
+                          {isPrevItemImage && (
+                            <Box
+                              component={"img"}
+                              alt={"book cover"}
+                              src={prevItem.content}
+                              onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                                (e.target as HTMLImageElement).src = require("@/assets/images/default-thumbnail.jpg");
+                              }}
+                              sx={{
+                                borderRadius: "8px",
+                                width: "40%",
+                                objectFit: "cover",
+                                float: "right",
+                                ml: "20px",
+                                mb: "10px",
+                              }}
+                            />
+                          )}
+                          <Box
+                            sx={{
+                              width: "100%",
+                              fontSize: { xs: 14, md: 15 },
+                              fontWeight: 400,
+                              color: "onSurface",
+                              wordWrap: "break-word",
+                              textAlign: "justify",
+                              float: "none",
+                              ".highlight": {
+                                backgroundColor: "yellow",
+                                color: "black",
+                              },
+                              pre: {
+                                m: "10px 0",
+                                borderRadius: "8px",
+                                overflow: "hidden",
+                                code: {
+                                  borderRadius: 0,
+                                  m: 0,
+                                },
+                              },
+                              code: {
+                                display: "block",
+                                bgcolor: "#282a35",
+                                color: "common.white",
+                                borderRadius: "8px",
+                                p: "16px 24px",
+                                mb: "10px",
+                                overflow: "auto",
+                              },
+                              ".language-label": {
+                                p: "8px 24px",
+                                bgcolor: "#4d5562",
+                                color: "#ffffff",
+                                fontSize: 13,
+                              },
+                            }}
+                            dangerouslySetInnerHTML={{
+                              __html: sanitizeHTML(exec.content),
+                            }}
+                          />
+                        </Stack>
+
+                        <Stack
+                          mt={{ md: -7 }}
+                          py={2}
+                          flex={1}
+                          pl={"10px"}
+                          borderLeft={showPreview ? "2px solid #ECECF4" : "none"}
+                          maxHeight={{ md: showPreview ? elementHeights[index] : 0 }}
                           sx={{
-                            height: "fit-content",
-                            position: "sticky",
-                            top: "50px",
-                            mr: { md: showPreview ? 0 : "-50px" },
-                            ml: { md: "20px" },
+                            width: { xs: showPreview ? "100%" : 0, md: showPreview ? "35%" : 0 },
+                            height: { xs: showPreview ? "fit-content" : 0, md: "fit-content" },
+                            overflow: "auto",
+                            animation: `${showPreview ? expandAnimation : collapseAnimation} 300ms forwards`,
+                            "&::-webkit-scrollbar": {
+                              width: "6px",
+                              p: 1,
+                              bgcolor: "surface.1",
+                            },
+                            "&::-webkit-scrollbar-track": {
+                              webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
+                            },
+                            "&::-webkit-scrollbar-thumb": {
+                              bgcolor: "surface.1",
+                              outline: "1px solid surface.1",
+                              borderRadius: "10px",
+                            },
                           }}
                         >
-                          <FeedbackActions
-                            execution={execution}
-                            vertical
-                            min
+                          <ExecutionContentPreview
+                            id={index + 1}
+                            prompt={prompt!}
+                            answers={answers}
+                            execution={execution as TemplatesExecutions}
                           />
-                        </Box>
-                      )}
-                    </Stack>
-
-                    <Stack
-                      mt={{ md: -7 }}
-                      py={2}
-                      flex={1}
-                      pl={"10px"}
-                      borderLeft={showPreview ? "2px solid #ECECF4" : "none"}
-                      maxHeight={{ md: showPreview ? elementHeights[index] : 0 }}
-                      sx={{
-                        width: { xs: showPreview ? "100%" : 0, md: showPreview ? "35%" : 0 },
-                        height: { xs: showPreview ? "fit-content" : 0, md: "fit-content" },
-                        mr: { md: showPreview ? "-48px" : 0 },
-                        overflow: "auto",
-                        animation: `${showPreview ? expandAnimation : collapseAnimation} 300ms forwards`,
-                        "&::-webkit-scrollbar": {
-                          width: "6px",
-                          p: 1,
-                          bgcolor: "surface.1",
-                        },
-                        "&::-webkit-scrollbar-track": {
-                          webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
-                        },
-                        "&::-webkit-scrollbar-thumb": {
-                          bgcolor: "surface.1",
-                          outline: "1px solid surface.1",
-                          borderRadius: "10px",
-                        },
-                      }}
-                    >
-                      <ExecutionContentPreview
-                        id={index + 1}
-                        prompt={prompt!}
-                        answers={answers}
-                        execution={execution as TemplatesExecutions}
+                        </Stack>
+                      </Stack>
+                    )}
+                    {/* is Image Output and Next item is not text */}
+                    {isImageOutput(exec.content) && !isNextItemText && (
+                      <Box
+                        component={"img"}
+                        alt={"book cover"}
+                        src={exec.content}
+                        onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                          (e.target as HTMLImageElement).src = require("@/assets/images/default-thumbnail.jpg");
+                        }}
+                        sx={{
+                          display: { xs: showPreview ? "none" : "block", md: "block" },
+                          borderRadius: "8px",
+                          width: "40%",
+                          objectFit: "cover",
+                          float: "right",
+                          ml: "20px",
+                          mb: "10px",
+                        }}
                       />
-                    </Stack>
+                    )}
                   </Stack>
-                )}
-                {/* is Image Output and Next item is not text */}
-                {isImageOutput(exec.content) && !isNextItemText && (
-                  <Box
-                    component={"img"}
-                    alt={"book cover"}
-                    src={exec.content}
-                    onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-                      (e.target as HTMLImageElement).src = require("@/assets/images/default-thumbnail.jpg");
-                    }}
-                    sx={{
-                      display: { xs: showPreview ? "none" : "block", md: "block" },
-                      borderRadius: "8px",
-                      width: "40%",
-                      objectFit: "cover",
-                      float: "right",
-                      ml: "20px",
-                      mb: "10px",
-                    }}
-                  />
-                )}
-              </Stack>
-            );
-          }
-        })}
+                );
+              }
+            })}
+          </Stack>
+          {"title" in execution && (
+            <Box
+              sx={{
+                height: "fit-content",
+                position: "sticky",
+                top: "50px",
+                mr: { md: "-50px" },
+                ml: { md: "20px" },
+              }}
+            >
+              <FeedbackActions
+                execution={execution}
+                vertical
+                min
+              />
+            </Box>
+          )}
+        </Stack>
+      )}
     </Stack>
   );
 };
