@@ -10,10 +10,10 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import Add from "@mui/icons-material/Add";
 import HighlightOff from "@mui/icons-material/HighlightOff";
 import UnfoldLess from "@mui/icons-material/UnfoldLess";
-import PlayCircle from "@mui/icons-material/PlayCircle";
 import AvatarWithInitials from "../../design-system/AvatarWithInitials";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
+import Grid from "@mui/material/Grid";
 import {
   DeleteOutline,
   Edit,
@@ -24,6 +24,7 @@ import {
   VisibilityOff,
 } from "@mui/icons-material";
 import Close from "@mui/icons-material/Close";
+
 import { ExecutionTemplatePopupType, Templates } from "@/core/api/dto/templates";
 import { useDeleteExecutionFavoriteMutation, useExecutionFavoriteMutation } from "@/core/api/executions";
 import { SparkSaveDeletePopup } from "@/components/dialog/SparkSaveDeletePopup";
@@ -31,12 +32,12 @@ import { SparkExportPopup } from "@/components/dialog/SparkExportPopup";
 import { setAccordionChatMode, setGeneratingStatus, setShowPromptsView } from "@/core/store/templatesSlice";
 import { setGeneratedExecution } from "@/core/store/executionsSlice";
 import useTruncate from "@/hooks/useTruncate";
-import Grid from "@mui/material/Grid";
 import { theme } from "@/theme";
+import { AccordionChatMode } from "@/common/types/chat";
 
 interface Props {
   template: Templates;
-  mode: "execution" | "input" | "repeat";
+  mode: AccordionChatMode;
   isExpanded: boolean;
   onCancel: () => void;
   onClear: () => void;
@@ -110,7 +111,7 @@ function AccordionMessageHeader({ template, mode, isExpanded, onClear, showClear
     ],
   };
 
-  const isExecutionMode = mode === "execution";
+  const isExecutionMode = mode === "execution" || mode === "generated_execution";
 
   return (
     <>

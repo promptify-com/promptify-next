@@ -150,7 +150,7 @@ export const AccordionMessage = ({
             >
               <Button
                 onClick={() => {
-                  dispatch(setAccordionChatMode("execution"));
+                  dispatch(setAccordionChatMode("generated_execution"));
                   onGenerate();
                 }}
                 endIcon={<PlayCircle />}

@@ -53,7 +53,7 @@ export const ApiAccess: React.FC<ApiAccessProps> = ({ template }) => {
           },
         }}
       >
-        Enable API
+        {false ? "Use API" : "Enable API"}
       </Button>
       <Link
         href={"#"}

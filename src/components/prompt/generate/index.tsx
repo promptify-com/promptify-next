@@ -247,16 +247,6 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
     if (generatedExecution?.id) {
       const _newExecution = await getExecutionById(generatedExecution.id);
       dispatch(setSelectedExecution(_newExecution));
-
-      const generatedExecutionMessage: IMessage = {
-        id: randomId(),
-        text: "",
-        type: "spark",
-        createdAt: createdAt,
-        fromUser: false,
-        spark: _newExecution,
-      };
-      setMessages(prevMessages => prevMessages.concat(generatedExecutionMessage));
     }
   };
 

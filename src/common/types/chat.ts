@@ -26,4 +26,4 @@ export interface IAnswer {
   error?: boolean;
 }
 
-export type AccordionChatMode = "execution" | "input" | "repeat";
+export type AccordionChatMode = "generated_execution" | "execution" | "input" | "repeat";

@@ -58,7 +58,6 @@ export const ChatInterface = ({
   const [isUserAtBottom, setIsUserAtBottom] = useState(true);
   const [showScrollDown, setShowScrollDown] = useState(false);
 
-  const isExecutionMode = accordionChatMode === "execution";
   const lastFormMessage = messages
     .slice()
     .reverse()
@@ -97,6 +96,8 @@ export const ChatInterface = ({
       scrollToBottom();
     }
   }, [messages, isGenerating, execution]);
+
+  const isExecutionMode = accordionChatMode === "execution" || accordionChatMode === "generated_execution";
 
   return (
     <Stack
@@ -192,7 +193,7 @@ export const ChatInterface = ({
 
         <Stack
           gap={3}
-          display={isGenerating && isExecutionMode ? "none" : "flex"}
+          display={accordionChatMode === "generated_execution" ? "none" : "flex"}
         >
           {messages.map(msg => (
             <Fragment key={msg.id}>

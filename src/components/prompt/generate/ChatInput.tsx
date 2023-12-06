@@ -30,7 +30,7 @@ export const ChatInput = ({
   showGenerate,
 }: ChatInputProps) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const mode = useAppSelector(state => state.template.accordionChatMode);
+  const accordionChatMode = useAppSelector(state => state.template.accordionChatMode);
 
   return (
     <Grid
@@ -75,7 +75,7 @@ export const ChatInput = ({
         gap={"8px"}
         alignItems={"center"}
       >
-        {mode === "execution" && (
+        {accordionChatMode === "generated_execution" && (
           <Tooltip
             title="Add new Prompt"
             arrow

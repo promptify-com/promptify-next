@@ -123,7 +123,7 @@ function MessageSender({
               if (isGenerating) {
                 return;
               }
-              dispatch(setAccordionChatMode("execution"));
+              dispatch(setAccordionChatMode("generated_execution"));
               onGenerate?.();
             }}
             sx={{

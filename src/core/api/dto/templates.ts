@@ -146,6 +146,7 @@ export interface Templates {
   last_api_run: Date;
   api_runs: number;
   example_execution: TemplatesExecutions | null;
+  is_api_enabled: boolean;
   is_internal?: boolean;
 }
 

@@ -84,12 +84,6 @@ export default function TemplateLayout({ template, setErrorMessage, questionPref
     }
   }, [executions]);
 
-  useEffect(() => {
-    if (selectedExecution) {
-      dispatch(setAccordionChatMode("execution"));
-    }
-  }, [selectedExecution]);
-
   const ToolbarItems: Link[] = [
     {
       name: "executions",
