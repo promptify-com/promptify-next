@@ -93,7 +93,7 @@ function FormInput({ input, value, onChangeInput }: Props) {
                 },
               }}
             >
-              {!isFile && value ? value : "Insert Code"}
+              {!isFile && value ? " Update code" : "Insert Code"}
             </BaseButton>
             {codeFieldOpen && (
               <CodeFieldModal

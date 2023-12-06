@@ -13,7 +13,7 @@ import Header from "./Header";
 import TemplateToolbar from "./Toolbar";
 import ToolbarDrawer from "./Toolbar/ToolbarDrawer";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { openToolbarDrawer, setAccordionChatMode, setActiveToolbarLink } from "@/core/store/templatesSlice";
+import { openToolbarDrawer, setActiveToolbarLink } from "@/core/store/templatesSlice";
 import { setGeneratedExecution, setSelectedExecution, setSparkHashQueryParam } from "@/core/store/executionsSlice";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";

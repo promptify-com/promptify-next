@@ -1,5 +1,5 @@
 import { baseApi } from "./api";
-import { PromptParams, TemplateQuestionGeneratorData } from "./dto/prompts";
+import { PromptParams } from "./dto/prompts";
 import { FilterParams, Templates, TemplatesWithPagination } from "./dto/templates";
 import { IEditTemplate } from "@/common/types/editTemplate";
 
@@ -113,6 +113,12 @@ export const templatesApi = baseApi.injectEndpoints({
           method: "get",
         }),
       }),
+      setTemplateEnableApi: builder.mutation<void, number>({
+        query: (id: number) => ({
+          url: `/api/meta/templates/${id}/enable_api`,
+          method: "post",
+        }),
+      }),
     };
   },
 });
@@ -132,4 +138,5 @@ export const {
   usePublishTemplateMutation,
   useViewTemplateMutation,
   useGetsuggestedTemplatesByCategoryQuery,
+  useSetTemplateEnableApiMutation,
 } = templatesApi;

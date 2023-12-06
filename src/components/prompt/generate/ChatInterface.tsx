@@ -97,8 +97,6 @@ export const ChatInterface = ({
     }
   }, [messages, isGenerating, execution]);
 
-  const isExecutionMode = accordionChatMode === "execution" || accordionChatMode === "generated_execution";
-
   return (
     <Stack
       ref={messagesContainerRef}
@@ -126,7 +124,7 @@ export const ChatInterface = ({
       }}
     >
       <TemplateDetailsCard template={template} />
-      {showScrollDown && (
+      {showScrollDown && isGenerating && (
         <Box
           onClick={scrollToBottom}
           position={"fixed"}
