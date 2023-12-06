@@ -14,7 +14,7 @@ import {
   SwipeableDrawer,
   alpha,
   Stack,
-  Drawer,
+  Zoom,
 } from "@mui/material";
 import { ClassicPreset } from "rete";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
@@ -35,14 +35,16 @@ import { ContentCopy } from "@mui/icons-material";
 import { IEditPrompts } from "@/common/types/builder";
 import TemplateForm from "@/components/common/forms/TemplateForm";
 import { isPromptVariableValid } from "@/common/helpers/promptValidator";
-import { randomId } from "@/common/helpers";
+import { randomId, redirectToPath } from "@/common/helpers";
 
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import { theme } from "@/theme";
 import { useGetEnginesQuery } from "@/core/api/engines";
-import { PromptForm } from "@/components/builder/PromptForm";
 import useToken from "@/hooks/useToken";
 import { BUILDER_TYPE } from "@/common/constants";
+import PromptCardAccordion from "@/components/builder/PromptCardAccordion";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return (
@@ -76,12 +78,10 @@ export const Builder = () => {
   const [invalidVariableMessage, setInvalidVariableMessage] = useState("");
   const token = useToken();
 
-  useEffect(() => {
-    if (!slug) {
-      router.push("/404");
-      return;
-    }
-  }, []);
+  if (!slug) {
+    redirectToPath("/404");
+    return;
+  }
 
   useEffect(() => {
     if (!token) {
@@ -103,11 +103,14 @@ export const Builder = () => {
     }
   }, [router.query]);
 
+  console.log("selectedNode:", selectedNode, selectedNodeData);
+
   const create = useCallback(
     (el: HTMLElement) => {
       return createEditor(
         el,
         setSelectedNode,
+        setSelectedNodeData,
         setSelectedConnection,
         prompts,
         engines,
@@ -181,13 +184,10 @@ export const Builder = () => {
   useEffect(() => {
     document.addEventListener("keydown", handleKeyboard);
 
-    return () => document.removeEventListener("keydown", handleKeyboard);
-  }, [selectedNode]);
-
-  useEffect(() => {
     if (!selectedNode) {
       setSelectedNodeData(null);
     } else {
+      console.log("selectedNode[nodesData]:", nodesData);
       const findSelectedNode = nodesData?.find(node => {
         return node?.id?.toString() === selectedNode?.id.toString() || node?.temp_id === selectedNode?.temp_id;
       });
@@ -196,7 +196,13 @@ export const Builder = () => {
         setSelectedNodeData(findSelectedNode);
       }
     }
+
+    return () => document.removeEventListener("keydown", handleKeyboard);
   }, [selectedNode]);
+
+  useEffect(() => {
+    updateEditor();
+  }, [selectedNodeData]);
 
   const handleKeyboard = async (e: KeyboardEvent) => {
     if (e.ctrlKey && e.code === "KeyN") {
@@ -264,25 +270,26 @@ export const Builder = () => {
         editor?.area.update("node", allNodesNode.id);
       });
 
-      await editor?.editor.addNode(node);
-
-      setNodeCount(prev => prev + 1);
-      setSelectedNode(node);
       node.selected = true;
       node.count = nodeCount.toString();
       node.temp_id = randomId();
 
+      await editor?.editor.addNode(node);
+      await editor?.area.update("node", node.id);
+
+      setSelectedNode(node);
+      setNodeCount(prev => prev + 1);
       setNodesData(prev => [
         ...prev,
         {
           temp_id: node.temp_id,
           count: nodeCount.toString(),
-          title: `${selectedNodeData.title} - Copy`,
+          title: node.label,
           content: selectedNodeData.content,
           engine_id: selectedNodeData.engine_id,
           dependencies: [],
           parameters: selectedNodeData.parameters,
-          order: selectedNodeData.order,
+          order: selectedNodeData.order ?? 1,
           output_format: selectedNodeData.output_format,
           model_parameters: selectedNodeData.model_parameters,
           is_visible: selectedNodeData.is_visible,
@@ -291,6 +298,10 @@ export const Builder = () => {
         },
       ]);
     }
+  };
+  const resetNodeData = () => {
+    setSelectedNodeData(null);
+    setSelectedNode(null);
   };
 
   const removeNode = async () => {
@@ -328,7 +339,7 @@ export const Builder = () => {
     setNodesData(allPrompts);
     await editor?.removeSelected();
 
-    setSelectedNode(null);
+    resetNodeData();
     setConfirmDialogOpen(false);
   };
 
@@ -355,12 +366,8 @@ export const Builder = () => {
     }
   };
 
-  useEffect(() => {
-    updateNodes();
-  }, [selectedNodeData]);
-
   const updateEditor = () => {
-    if (!!!selectedNode || !!!selectedNodeData) return;
+    if (!selectedNode || !selectedNodeData) return;
 
     const nodeId = Number(selectedNode.id) || Number(selectedNode.temp_id);
     if (nodeId !== selectedNodeData.id && nodeId !== selectedNodeData.temp_id) return;
@@ -371,20 +378,6 @@ export const Builder = () => {
       selectedNode.engineIcon = engine?.icon || "";
       editor?.area.update("node", selectedNode.id);
     }
-  };
-
-  const updateNodes = () => {
-    if (!!!selectedNode || !!!selectedNodeData) return;
-
-    const _nodes = nodesData.map(node => {
-      if (node.id === selectedNodeData.id || (selectedNodeData.temp_id && node.temp_id === selectedNodeData.temp_id)) {
-        node = selectedNodeData;
-      }
-      return node;
-    });
-
-    setNodesData(_nodes);
-    updateEditor();
   };
 
   const updateTemplateDependencies = (id: string, dependsOn: string) => {
@@ -491,7 +484,7 @@ export const Builder = () => {
           </Grid>
           <Grid
             item
-            xs={selectedNode ? 9 : 12}
+            xs={12}
             sx={{ flex: 1 }}
           >
             <Box
@@ -501,55 +494,116 @@ export const Builder = () => {
               sx={{
                 backgroundImage: `radial-gradient(${alpha(theme.palette.grey[500], 0.5)} 1.3px, transparent 0)`,
                 backgroundSize: "30px 30px",
+                backgroundAttachment: "fixed",
+                overflowY: "scroll",
               }}
             >
               <div
                 ref={ref}
                 style={{ height: "100%", width: "100%" }}
               ></div>
-
-              <Stack
-                direction={"row"}
-                gap={2}
-                sx={{
-                  position: "absolute",
-                  left: 50,
-                  bottom: 50,
-                }}
-              >
-                <Button
-                  variant="contained"
-                  sx={{
-                    ":hover": {
-                      bgcolor: "secondary.main",
-                      color: "onPrimary",
-                    },
+              {!!selectedNode && !!selectedNodeData && promptsData && (
+                <Zoom
+                  in={true}
+                  style={{
+                    transitionDelay: "100ms",
+                    width: "70%",
+                    height: "80%",
+                    position: "absolute",
+                    top: "5%",
+                    left: "15%",
                   }}
-                  onClick={() => createNode()}
                 >
-                  Add Node
-                  <Typography
-                    color={"white"}
-                    sx={{ opacity: 0.4 }}
+                  <Stack
+                    alignItems={"center"}
+                    gap={3}
                   >
-                    &nbsp;Ctrl+N
-                  </Typography>
-                </Button>
-                {selectedNode && (
-                  <>
-                    <Button
-                      variant="contained"
-                      sx={{
-                        ":hover": {
-                          bgcolor: "secondary.main",
-                          color: "onPrimary",
-                        },
-                      }}
-                      startIcon={<ContentCopy sx={{ opacity: 0.4 }} />}
-                      onClick={() => duplicateNode()}
+                    <DndProvider backend={HTML5Backend}>
+                      <PromptCardAccordion
+                        key={selectedNode.id ?? selectedNode.temp_id}
+                        prompt={selectedNodeData}
+                        order={0}
+                        setPrompt={prompt => {
+                          setSelectedNodeData(prompt);
+                        }}
+                        deletePrompt={() => setConfirmDialogOpen(true)}
+                        duplicatePrompt={() => {
+                          resetNodeData();
+                          duplicateNode();
+                        }}
+                        prompts={nodesData}
+                        engines={engines!}
+                        movePrompt={() => {}}
+                        findPromptIndex={() => 0}
+                        builderType={BUILDER_TYPE.ADMIN}
+                      />
+                    </DndProvider>
+                  </Stack>
+                </Zoom>
+              )}
+              {!selectedNode && (
+                <Stack
+                  direction={"row"}
+                  gap={2}
+                  sx={{
+                    position: "absolute",
+                    left: 50,
+                    bottom: 50,
+                  }}
+                >
+                  <Button
+                    variant="contained"
+                    sx={{
+                      ":hover": {
+                        bgcolor: "secondary.main",
+                        color: "onPrimary",
+                      },
+                    }}
+                    onClick={() => createNode()}
+                  >
+                    Add Node
+                    <Typography
+                      color={"white"}
+                      sx={{ opacity: 0.4 }}
                     >
-                      Duplicate
-                    </Button>
+                      &nbsp;Ctrl+N
+                    </Typography>
+                  </Button>
+                  {selectedNode && (
+                    <>
+                      <Button
+                        variant="contained"
+                        sx={{
+                          ":hover": {
+                            bgcolor: "secondary.main",
+                            color: "onPrimary",
+                          },
+                        }}
+                        startIcon={<ContentCopy sx={{ opacity: 0.4 }} />}
+                        onClick={() => duplicateNode()}
+                      >
+                        Duplicate
+                      </Button>
+                      <Button
+                        variant="contained"
+                        sx={{
+                          bgcolor: "#f85149",
+                          color: "onError",
+                          border: "none",
+                          ":hover": {
+                            bgcolor: "#f85149",
+                            color: "onError",
+                            opacity: 0.8,
+                          },
+                        }}
+                        startIcon={<DeleteIcon sx={{ opacity: 0.5 }} />}
+                        onClick={() => setConfirmDialogOpen(true)}
+                      >
+                        Delete
+                      </Button>
+                    </>
+                  )}
+                  {selectedConnection && (
                     <Button
                       variant="contained"
                       sx={{
@@ -563,32 +617,13 @@ export const Builder = () => {
                         },
                       }}
                       startIcon={<DeleteIcon sx={{ opacity: 0.5 }} />}
-                      onClick={() => setConfirmDialogOpen(true)}
+                      onClick={removeConnection}
                     >
                       Delete
                     </Button>
-                  </>
-                )}
-                {selectedConnection && (
-                  <Button
-                    variant="contained"
-                    sx={{
-                      bgcolor: "#f85149",
-                      color: "onError",
-                      border: "none",
-                      ":hover": {
-                        bgcolor: "#f85149",
-                        color: "onError",
-                        opacity: 0.8,
-                      },
-                    }}
-                    startIcon={<DeleteIcon sx={{ opacity: 0.5 }} />}
-                    onClick={removeConnection}
-                  >
-                    Delete
-                  </Button>
-                )}
-              </Stack>
+                  )}
+                </Stack>
+              )}
               <Box
                 sx={{
                   position: "absolute",
@@ -610,7 +645,7 @@ export const Builder = () => {
                   <PlusIcon />
                 </Box>
                 <Box
-                  onClick={() => editor?.zoomAt(0.1)}
+                  onClick={() => editor?.zoomAt(0.3)}
                   sx={{
                     "&:hover": {
                       cursor: "pointer",
@@ -651,31 +686,6 @@ export const Builder = () => {
                 />
               </Box>
             </SwipeableDrawer>
-          )}
-          {!!selectedNode && !!selectedNodeData && (
-            <Drawer
-              variant="persistent"
-              anchor="right"
-              open={!!selectedNode && !!selectedNodeData}
-              sx={{
-                "& .MuiDrawer-paper": {
-                  width: "430px",
-                  minWidth: "30svw",
-                },
-              }}
-            >
-              <PromptForm
-                removeNode={() => setConfirmDialogOpen(true)}
-                selectedNodeData={selectedNodeData}
-                setSelectedNodeData={setSelectedNodeData}
-                nodeCount={nodeCount}
-                nodesData={nodesData}
-                setNodesData={setNodesData}
-                close={() => {
-                  setSelectedNode(null);
-                }}
-              />
-            </Drawer>
           )}
         </Grid>
         <Snackbar
@@ -746,4 +756,5 @@ export async function getServerSideProps() {
     },
   };
 }
+
 export default Builder;

@@ -6,6 +6,7 @@ import React, { useState } from "react";
 import { EngineParamsSlider } from "../EngineParamsSlider";
 import { Engine } from "@/core/api/dto/templates";
 import { ConnectDragSource } from "react-dnd";
+import { BUILDER_TYPE } from "@/common/constants";
 
 interface Props {
   prompt: IEditPrompts;
@@ -15,9 +16,19 @@ interface Props {
   duplicatePrompt: () => void;
   engines: Engine[];
   dragPreview: ConnectDragSource;
+  builderType: BUILDER_TYPE;
 }
 
-export const Header = ({ prompt, order, setPrompt, deletePrompt, duplicatePrompt, engines, dragPreview }: Props) => {
+export const Header = ({
+  prompt,
+  order,
+  setPrompt,
+  deletePrompt,
+  duplicatePrompt,
+  engines,
+  dragPreview,
+  builderType,
+}: Props) => {
   const [showEngines, setShowEngines] = useState(false);
   const [enginesAnchor, setEnginesAnchor] = useState<HTMLElement | null>(null);
   const [showSettings, setShowSettings] = useState(false);
@@ -43,21 +54,27 @@ export const Header = ({ prompt, order, setPrompt, deletePrompt, duplicatePrompt
         gap={2}
         p={"12px"}
       >
-        <Button
-          ref={dragPreview}
-          sx={{
-            width: 24,
-            height: 24,
-            minWidth: "auto",
-            opacity: 0.4,
-            ":hover": {
-              opacity: 1,
-            },
-          }}
-        >
-          <Menu />
-        </Button>
-        <Typography>#{order}</Typography>
+        {builderType === BUILDER_TYPE.USER ? (
+          <>
+            <Button
+              ref={dragPreview}
+              sx={{
+                width: 24,
+                height: 24,
+                minWidth: "auto",
+                opacity: 0.4,
+                ":hover": {
+                  opacity: 1,
+                },
+              }}
+            >
+              <Menu />
+            </Button>
+            <Typography>#{order}</Typography>
+          </>
+        ) : (
+          <Menu sx={{ opacity: 0.3 }} />
+        )}
         <Button
           endIcon={<ArrowDropDown />}
           onClick={e => {

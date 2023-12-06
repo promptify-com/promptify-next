@@ -1,12 +1,14 @@
 import React, { useState } from "react";
-import { Chip, Stack, Typography, alpha } from "@mui/material";
-import {
-  CloudOutlined,
-  ModeEdit,
-  RocketLaunch,
-  VisibilityOutlined,
-  SettingsApplicationsRounded,
-} from "@mui/icons-material";
+import { alpha } from "@mui/material";
+import Chip from "@mui/material/Chip";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import CloudOutlined from "@mui/icons-material/CloudOutlined";
+import ModeEdit from "@mui/icons-material/ModeEdit";
+import RocketLaunch from "@mui/icons-material/RocketLaunch";
+import VisibilityOutlined from "@mui/icons-material/VisibilityOutlined";
+import AccountTree from "@mui/icons-material/AccountTree";
+import FormatListBulleted from "@mui/icons-material/FormatListBulleted";
 import BaseButton from "../base/BaseButton";
 import { TemplateStatus } from "@/core/api/dto/templates";
 import { theme } from "@/theme";
@@ -113,10 +115,21 @@ export const Header = ({ onSave, onPublish, title, status, templateSlug, onEditT
                   variant="text"
                   color="custom"
                   sx={btnStyle}
-                  startIcon={<SettingsApplicationsRounded sx={{ fontSize: 20 }} />}
+                  startIcon={<AccountTree sx={{ fontSize: 20 }} />}
                   onClick={() => window.open(`/builder/${templateSlug}`, "_blank")}
                 >
-                  Admin builder
+                  Tree of Thoughts Builder
+                </BaseButton>
+              )}
+              {type === BUILDER_TYPE.ADMIN && (
+                <BaseButton
+                  variant="text"
+                  color="custom"
+                  sx={btnStyle}
+                  startIcon={<FormatListBulleted sx={{ fontSize: 20 }} />}
+                  onClick={() => window.open(`/prompt-builder/${templateSlug}`, "_blank")}
+                >
+                  Chain of Thoughts Builder
                 </BaseButton>
               )}
               <BaseButton
