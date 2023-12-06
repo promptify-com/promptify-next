@@ -95,8 +95,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ template }) => {
         height: "100%",
         position: { xs: "absolute", md: "sticky" },
         top: 0,
-        bgcolor: "surface.1",
+        bgcolor: "surface.3",
         display: "flex",
+        gap: "1px",
       }}
     >
       <Drawer
@@ -115,7 +116,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ template }) => {
             right: 0,
             bottom: 0,
             bgcolor: "surface.1",
-            borderLeft: `1px solid ${theme.palette.surface[3]}`,
+            border: "none",
           },
         }}
       >
@@ -177,7 +178,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ template }) => {
           p: "16px",
           zIndex: 1300,
           bgcolor: "surface.1",
-          borderLeft: `1px solid ${theme.palette.surface[3]}`,
         }}
       >
         {Links.map(link => (

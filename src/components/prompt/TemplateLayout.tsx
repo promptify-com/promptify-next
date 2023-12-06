@@ -36,7 +36,8 @@ export default function TemplateLayout({ template, setErrorMessage, questionPref
   return (
     <Stack
       height={{ md: "calc(100svh - 90px)" }}
-      gap={"1px"}
+      bgcolor={"surface.3"}
+      gap={"2px"}
     >
       <Header template={template} />
       <Stack
@@ -48,7 +49,7 @@ export default function TemplateLayout({ template, setErrorMessage, questionPref
           height: { xs: "calc(100svh - 56px)", md: "calc(100% - 70.5px)" },
           mt: { xs: "58px", md: 0 },
           mx: "auto",
-          bgcolor: { md: "surface.1" },
+          bgcolor: "surface.3",
           position: "relative",
           overflow: "auto",
           "&::-webkit-scrollbar": {
@@ -80,8 +81,6 @@ export default function TemplateLayout({ template, setErrorMessage, questionPref
             top: { md: 0 },
             zIndex: { md: 100 },
             overflow: { md: "auto" },
-            borderRight: { md: "1px solid" },
-            borderColor: { md: "surface.3" },
             "&::-webkit-scrollbar": {
               width: { xs: "3px", md: "6px" },
               p: 1,

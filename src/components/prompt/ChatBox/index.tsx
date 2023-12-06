@@ -613,9 +613,11 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
   const showClearBtn = messages[messages.length - 1]?.type === "form" && answers.length > 0;
 
   return (
-    <Box
+    <Stack
+      gap={"1px"}
       width={"100%"}
-      height={"100%"}
+      height={"calc(100% - 1px)"}
+      bgcolor={"surface.3"}
     >
       {isDesktopView && (
         <Stack
@@ -638,8 +640,9 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
       )}
       <Stack
         justifyContent={"flex-end"}
-        height={{ xs: "100%", md: "calc(100% - 66px)" }}
         gap={2}
+        height={{ xs: "100%", md: "calc(100% - 66px)" }}
+        bgcolor={"surface.1"}
       >
         <ChatInterface
           inputs={_inputs}
@@ -675,7 +678,7 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
           </Stack>
         )}
       </Stack>
-    </Box>
+    </Stack>
   );
 };
 
