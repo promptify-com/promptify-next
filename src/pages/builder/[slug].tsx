@@ -103,6 +103,8 @@ export const Builder = () => {
     }
   }, [router.query]);
 
+  console.log("selectedNode:", selectedNode, selectedNodeData);
+
   const create = useCallback(
     (el: HTMLElement) => {
       return createEditor(
@@ -185,6 +187,7 @@ export const Builder = () => {
     if (!selectedNode) {
       setSelectedNodeData(null);
     } else {
+      console.log("selectedNode[nodesData]:", nodesData);
       const findSelectedNode = nodesData?.find(node => {
         return node?.id?.toString() === selectedNode?.id.toString() || node?.temp_id === selectedNode?.temp_id;
       });
@@ -198,7 +201,7 @@ export const Builder = () => {
   }, [selectedNode]);
 
   useEffect(() => {
-    updateNodes();
+    updateEditor();
   }, [selectedNodeData]);
 
   const handleKeyboard = async (e: KeyboardEvent) => {
@@ -281,7 +284,7 @@ export const Builder = () => {
         {
           temp_id: node.temp_id,
           count: nodeCount.toString(),
-          title: `${selectedNodeData.title} - Copy`,
+          title: node.label,
           content: selectedNodeData.content,
           engine_id: selectedNodeData.engine_id,
           dependencies: [],
@@ -364,7 +367,7 @@ export const Builder = () => {
   };
 
   const updateEditor = () => {
-    if (!!!selectedNode || !!!selectedNodeData) return;
+    if (!selectedNode || !selectedNodeData) return;
 
     const nodeId = Number(selectedNode.id) || Number(selectedNode.temp_id);
     if (nodeId !== selectedNodeData.id && nodeId !== selectedNodeData.temp_id) return;
@@ -375,20 +378,6 @@ export const Builder = () => {
       selectedNode.engineIcon = engine?.icon || "";
       editor?.area.update("node", selectedNode.id);
     }
-  };
-
-  const updateNodes = () => {
-    if (!selectedNode || !selectedNodeData) return;
-
-    const _nodes = nodesData.map(node => {
-      if (node.id === selectedNodeData.id || (selectedNodeData.temp_id && node.temp_id === selectedNodeData.temp_id)) {
-        node = selectedNodeData;
-      }
-      return node;
-    });
-
-    setNodesData(_nodes);
-    updateEditor();
   };
 
   const updateTemplateDependencies = (id: string, dependsOn: string) => {
