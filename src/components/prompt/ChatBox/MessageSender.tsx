@@ -1,33 +1,42 @@
 import React, { useRef, useState } from "react";
 import { InputBase, Box, IconButton } from "@mui/material";
 import { ArrowForward, KeyboardCommandKey, Send } from "@mui/icons-material";
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { useAppSelector } from "@/hooks/useStore";
 import SlowMotionVideo from "@mui/icons-material/SlowMotionVideo";
 
 interface MessageSenderProps {
   onSubmit: (value: string) => void;
-  disabled: boolean;
+  onChange?: (value: string) => void;
+  disabled?: boolean;
   placeholder?: string;
   onGenerate?: () => void;
   showGenerate?: boolean;
+  maxLength?: number;
 }
 
 const MessageSender: React.FC<MessageSenderProps> = ({
   onSubmit,
+  onChange,
   disabled,
   placeholder = "Chat with Promptify",
   onGenerate,
   showGenerate,
+  maxLength,
 }) => {
   const [localValue, setLocalValue] = useState("");
   const fieldRef = useRef<HTMLInputElement | null>(null);
-  const dispatch = useAppDispatch();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
       e.preventDefault();
       handleSubmit();
     }
+  };
+
+  const handleChange = (val: string) => {
+    if (maxLength && val.length > maxLength) return;
+    setLocalValue(val);
+    if (onChange) onChange(val);
   };
 
   const handleSubmit = () => {
@@ -56,7 +65,7 @@ const MessageSender: React.FC<MessageSenderProps> = ({
             <KeyboardCommandKey />
           </IconButton>
         }
-        onChange={e => setLocalValue(e.target.value)}
+        onChange={e => handleChange(e.target.value)}
         value={localValue}
         onKeyPress={handleKeyPress}
         sx={{

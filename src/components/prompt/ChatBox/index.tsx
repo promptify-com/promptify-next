@@ -26,6 +26,7 @@ import { setGeneratedExecution, setSelectedExecution } from "@/core/store/execut
 import { getExecutionById } from "@/hooks/api/executions";
 import { isDesktopViewPort, randomId } from "@/common/helpers";
 import useChatBox from "@/hooks/useChatBox";
+import SigninButton from "@/components/common/buttons/SigninButton";
 
 interface Props {
   onError: (errMsg: string) => void;
@@ -670,39 +671,7 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
             gap={1}
             p={"16px 8px 16px 16px"}
           >
-            <Button
-              onClick={() => {
-                router.push("/signin");
-              }}
-              variant={"contained"}
-              startIcon={
-                <LogoApp
-                  width={18}
-                  color="white"
-                />
-              }
-              sx={{
-                flex: 1,
-                p: "10px 25px",
-                fontWeight: 500,
-                borderColor: "primary.main",
-                borderRadius: "999px",
-                bgcolor: "primary.main",
-                color: "onPrimary",
-                whiteSpace: "pre-line",
-                ":hover": {
-                  bgcolor: "surface.1",
-                  color: "primary.main",
-                },
-              }}
-            >
-              <Typography
-                ml={2}
-                color={"inherit"}
-              >
-                Sign in or Create an account
-              </Typography>
-            </Button>
+            <SigninButton />
           </Stack>
         )}
       </Stack>
