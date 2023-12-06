@@ -13,6 +13,9 @@ import { IPromptInput } from "@/common/types/prompt";
 import Typography from "@mui/material/Typography";
 import { getCurrentDateFormatted, timeAgo } from "@/common/helpers/timeManipulation";
 import { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
+import { South } from "@mui/icons-material";
+import { theme } from "@/theme";
+import { alpha } from "@mui/material/styles";
 
 interface Props {
   template: Templates;
@@ -47,9 +50,7 @@ export const ChatInterface = ({
 }: Props) => {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const accordionChatMode = useAppSelector(state => state.template.accordionChatMode);
-
   const execution = useAppSelector(state => state.executions.generatedExecution);
-  const isExecutionMode = accordionChatMode === "execution";
 
   const [isHovered, setIsHovered] = useState(false);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
@@ -57,12 +58,25 @@ export const ChatInterface = ({
   const [isUserAtBottom, setIsUserAtBottom] = useState(true);
   const [showScrollDown, setShowScrollDown] = useState(false);
 
+  const isExecutionMode = accordionChatMode === "execution";
+  const lastFormMessage = messages
+    .slice()
+    .reverse()
+    .find(msg => msg.type === "form");
+
   const handleUserScroll = () => {
     if (messagesContainerRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = messagesContainerRef.current;
-      const atBottom = scrollTop + clientHeight >= scrollHeight - 10;
-      setIsUserAtBottom(atBottom);
-      setShowScrollDown(!atBottom);
+      const isAtBottom = scrollTop + clientHeight >= scrollHeight - 80;
+      setShowScrollDown(!isAtBottom);
+      setIsUserAtBottom(isAtBottom);
+    }
+  };
+  const scrollToBottom = () => {
+    const container = messagesContainerRef.current;
+    if (container) {
+      container.scrollTop = container.scrollHeight;
+      setTimeout(handleUserScroll, 200);
     }
   };
 
@@ -78,38 +92,23 @@ export const ChatInterface = ({
     };
   }, []);
 
-  const scrollToBottom = () => {
-    const container = messagesContainerRef.current;
-    if (container) {
-      container.scrollTop = container.scrollHeight;
-      setTimeout(handleUserScroll, 200);
-    }
-  };
-
   useEffect(() => {
     if (isUserAtBottom) {
       scrollToBottom();
     }
-  }, [execution]);
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages, isGenerating]);
-
-  const lastFormMessage = messages
-    .slice()
-    .reverse()
-    .find(msg => msg.type === "form");
+  }, [messages, isGenerating, execution]);
 
   return (
     <Stack
       ref={messagesContainerRef}
       gap={3}
       mx={{ md: "40px" }}
+      position={"relative"}
       sx={{
         overflow: "auto",
         px: "8px",
         overscrollBehavior: "contain",
+        scrollBehavior: "smooth",
         "&::-webkit-scrollbar": {
           width: { xs: "4px", md: "6px" },
           p: 1,
@@ -126,6 +125,34 @@ export const ChatInterface = ({
       }}
     >
       <TemplateDetailsCard template={template} />
+      {showScrollDown && (
+        <Box
+          onClick={scrollToBottom}
+          position={"fixed"}
+          zIndex={999}
+          bottom={"95px"}
+          left={"50%"}
+          sx={{
+            transform: "translateX(-50%)",
+          }}
+        >
+          <Box
+            sx={{
+              height: "30px",
+              width: "30px",
+              borderRadius: "40px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              bgcolor: "surface.3",
+              boxShadow: "0px 4px 8px 0px #E1E2EC, 0px 0px 4px 0px rgba(0, 0, 0, 0.30)",
+              border: " none",
+            }}
+          >
+            <South sx={{ fontSize: 16 }} />
+          </Box>
+        </Box>
+      )}
 
       <Stack
         pb={{ md: "38px" }}
@@ -165,12 +192,14 @@ export const ChatInterface = ({
 
         <Stack
           gap={3}
-          direction={"column"}
           display={isGenerating && isExecutionMode ? "none" : "flex"}
         >
           {messages.map(msg => (
             <Fragment key={msg.id}>
-              <Box display={accordionChatMode !== "repeat" ? "flex" : "none"}>
+              <Box
+                display={accordionChatMode !== "repeat" ? "flex" : "none"}
+                flexDirection={"column"}
+              >
                 <Message
                   message={msg}
                   setIsSimulationStreaming={setIsSimulationStreaming}

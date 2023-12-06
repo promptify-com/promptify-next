@@ -16,6 +16,8 @@ interface Props {
 }
 
 function Inputsform({ inputs, answers, onChangeInput, onChangeParam, params, paramsValues }: Props) {
+  const _params = params.filter(param => param.is_visible);
+
   return (
     <Stack gap={1}>
       {inputs.map((input, index) => {
@@ -30,7 +32,7 @@ function Inputsform({ inputs, answers, onChangeInput, onChangeParam, params, par
         );
       })}
 
-      {params?.map(param => {
+      {_params?.map(param => {
         const paramValue = paramsValues.find(paramVal => paramVal.id === param.prompt);
         return (
           <FormParam
