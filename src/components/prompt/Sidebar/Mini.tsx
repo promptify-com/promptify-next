@@ -39,6 +39,7 @@ export default function SidebarMini({ count }: Props) {
       gap={2.5}
       sx={{
         p: "12px 10px",
+        bgcolor: "surface.1",
       }}
     >
       {SidebarItems.map(link => (

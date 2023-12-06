@@ -1,7 +1,7 @@
 import Stack from "@mui/material/Stack";
 import type { Templates } from "@/core/api/dto/templates";
 import { Avatar, Breadcrumbs, Button, CardMedia, Link, alpha } from "@mui/material";
-import { ArrowBackIosNew, Tune } from "@mui/icons-material";
+import { ArrowBackIosNew, ContentCopy, Tune } from "@mui/icons-material";
 import { theme } from "@/theme";
 import FavoriteIcon from "./FavoriteIcon";
 import { useAppSelector } from "@/hooks/useStore";
@@ -11,7 +11,6 @@ import { useSelector } from "react-redux";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { useRouter } from "next/router";
 import { useCreateTemplateMutation } from "@/core/api/templates";
-import Clone from "@/assets/icons/Clone";
 import { useRef } from "react";
 
 interface TemplateHeaderProps {
@@ -195,7 +194,7 @@ export default function Header({ template }: TemplateHeaderProps) {
               gap: 1,
             }}
           >
-            <Clone size="20" />
+            <ContentCopy sx={{ fontSize: 20 }} />
             Clone
           </Button>
         )}
