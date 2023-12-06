@@ -11,6 +11,7 @@ import { DeleteDialog } from "@/components/dialog/DeleteDialog";
 import { useAppDispatch } from "@/hooks/useStore";
 import { handlePrompts } from "@/core/store/builderSlice";
 import { useScrollToElement } from "@/hooks/useScrollToElement";
+import { BUILDER_TYPE } from "@/common/constants";
 
 interface Props {
   prompts: IEditPrompts[];
@@ -182,6 +183,7 @@ const PromptList = ({ prompts, setPrompts, engines }: Props) => {
                   engines={engines}
                   movePrompt={movePrompt}
                   findPromptIndex={findPromptIndex}
+                  builderType={BUILDER_TYPE.USER}
                 />
               </Box>
               <Button
