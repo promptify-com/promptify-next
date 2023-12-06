@@ -15,11 +15,17 @@ interface ApiAccessProps {
 export const ApiAccess: React.FC<ApiAccessProps> = ({ template }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const [enableApi] = useSetTemplateEnableApiMutation();
+  const [enableApi, { isError, isSuccess, isLoading }] = useSetTemplateEnableApiMutation();
 
   const handleEnableApi = async () => {
+    if (template.is_api_enabled) {
+      setIsModalOpen(true);
+      return;
+    }
     await enableApi(template.id);
-    setIsModalOpen(true);
+    if (!isLoading && !isError && isSuccess) {
+      setIsModalOpen(true);
+    }
   };
 
   return (
@@ -49,6 +55,7 @@ export const ApiAccess: React.FC<ApiAccessProps> = ({ template }) => {
       <Button
         onClick={handleEnableApi}
         startIcon={<Api />}
+        disabled={isLoading}
         sx={{
           p: "8px 22px",
           borderRadius: "100px",

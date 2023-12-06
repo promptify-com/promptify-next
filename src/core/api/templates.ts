@@ -115,7 +115,7 @@ export const templatesApi = baseApi.injectEndpoints({
       }),
       setTemplateEnableApi: builder.mutation<void, number>({
         query: (id: number) => ({
-          url: `/api/meta/templates/${id}/enable_api`,
+          url: `/api/meta/templates/${id}/enable-api`,
           method: "post",
         }),
       }),
