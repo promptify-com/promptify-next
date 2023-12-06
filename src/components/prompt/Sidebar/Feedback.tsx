@@ -8,7 +8,7 @@ import { IMessage } from "@/common/types/chat";
 import { randomId } from "@/common/helpers";
 
 const maxLength = 2500;
-const initMessages: IMessage[] = Array.from({ length: 3 }).map((_, i) => ({
+const initMessages: IMessage[] = Array.from({ length: 3 }).map(_ => ({
   id: randomId(),
   createdAt: new Date(new Date().getTime() - 320000),
   fromUser: true,
@@ -21,13 +21,14 @@ export const Feedback = () => {
   const [feedback, setFeedback] = useState("");
   const [feedbacks, setFeedbacks] = useState(initMessages);
   const containerRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLDivElement>(null);
 
   const handleSubmit = (feedback: string) => {
     if (!feedback) return;
 
     const newFeedback: IMessage = {
       id: randomId(),
-      createdAt: new Date(new Date().getTime() - 320000),
+      createdAt: new Date(new Date().getTime() - 1000),
       fromUser: true,
       text: feedback,
       type: "text",
@@ -38,10 +39,13 @@ export const Feedback = () => {
   };
 
   const scrollToBottom = () => {
-    containerRef.current?.scrollIntoView({
+    if (!containerRef.current) return;
+    containerRef.current.style.paddingBottom = `${inputRef.current?.clientHeight}px` || "91px";
+    containerRef.current.scrollIntoView({
       block: "end",
       behavior: "smooth",
     });
+    containerRef.current.style.paddingBottom = "0";
   };
 
   return (
@@ -51,12 +55,12 @@ export const Feedback = () => {
       overflow={"auto"}
     >
       <Stack
-        ref={containerRef}
         flex={1}
+        height={"calc(100% - 91px)"}
         gap={3}
         sx={{
           overflow: "auto",
-          p: "24px",
+          p: "24px 24px 0",
           "&::-webkit-scrollbar": {
             width: "6px",
             p: 1,
@@ -72,58 +76,67 @@ export const Feedback = () => {
           },
         }}
       >
-        {feedbacks.map(feedback => (
-          <Stack
-            direction={"row"}
-            alignItems={"baseline"}
-            gap={1.5}
-          >
-            <Avatar
-              src={require("@/assets/images/default-avatar.jpg")}
-              alt={"Promptify"}
-              sx={{
-                width: 32,
-                height: 32,
-                bgcolor: "surface.5",
-              }}
-            />
-            <Stack gap={1.5}>
-              <Stack
-                direction={"row"}
-                alignItems={"center"}
-                gap={1.5}
-              >
-                <Typography
-                  fontSize={13}
-                  fontWeight={500}
-                  color={"primary.main"}
+        <>
+          {feedbacks.map(feedback => (
+            <Stack
+              direction={"row"}
+              alignItems={"baseline"}
+              gap={1.5}
+            >
+              <Avatar
+                src={require("@/assets/images/default-avatar.jpg")}
+                alt={"Promptify"}
+                sx={{
+                  width: 32,
+                  height: 32,
+                  bgcolor: "surface.5",
+                }}
+              />
+              <Stack gap={1.5}>
+                <Stack
+                  direction={"row"}
+                  alignItems={"center"}
+                  gap={1.5}
                 >
-                  Promptify {feedback.id}
-                </Typography>
+                  <Typography
+                    fontSize={13}
+                    fontWeight={500}
+                    color={"primary.main"}
+                  >
+                    Promptify {feedback.id}
+                  </Typography>
+                  <Typography
+                    fontSize={10}
+                    fontWeight={400}
+                    color={"onSurface"}
+                    sx={{
+                      opacity: 0.5,
+                    }}
+                  >
+                    {timeAgo(feedback.createdAt)}
+                  </Typography>
+                </Stack>
                 <Typography
-                  fontSize={10}
+                  fontSize={14}
                   fontWeight={400}
-                  color={"onSurface"}
+                  color={"common.black"}
                   sx={{
-                    opacity: 0.5,
+                    wordBreak: "break-word",
                   }}
                 >
-                  {timeAgo(feedback.createdAt)}
+                  {feedback.text}
                 </Typography>
               </Stack>
-              <Typography
-                fontSize={14}
-                fontWeight={400}
-                color={"common.black"}
-              >
-                {feedback.text}
-              </Typography>
             </Stack>
-          </Stack>
-        ))}
+          ))}
+        </>
+        <div ref={containerRef}></div>
       </Stack>
       {token ? (
-        <Stack alignItems={"flex-end"}>
+        <Stack
+          ref={inputRef}
+          alignItems={"flex-end"}
+        >
           <Box width={"100%"}>
             <MessageSender
               onSubmit={handleSubmit}
