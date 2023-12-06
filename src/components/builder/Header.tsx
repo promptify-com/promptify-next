@@ -121,7 +121,7 @@ export const Header = ({ onSave, onPublish, title, status, templateSlug, onEditT
                   Tree of Thoughts Builder
                 </BaseButton>
               )}
-              {currentUser?.is_admin && type === BUILDER_TYPE.ADMIN && (
+              {type === BUILDER_TYPE.ADMIN && (
                 <BaseButton
                   variant="text"
                   color="custom"

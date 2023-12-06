@@ -186,7 +186,9 @@ export async function createEditor(
       updateTemplateDependencies(target, source);
     }
 
-    if (context.type === "nodepicked") {
+    if (context.type !== "pointermove") console.log("context:", context.type);
+
+    if (context.type === "nodedragged") {
       const allNodes = editor.getNodes();
       allNodes?.forEach(allNodesNode => {
         allNodesNode.selected = false;
