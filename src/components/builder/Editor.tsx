@@ -198,7 +198,6 @@ export async function createEditor(
       const node = editor.getNode(context.data.id);
       node.selected = true;
       area.update("node", node.id);
-      console.log("selected node:", node);
 
       setSelectedNode(node);
       setSelectedNodeData(null);
