@@ -128,6 +128,12 @@ export const templatesApi = baseApi.injectEndpoints({
           data,
         }),
       }),
+      setTemplateEnableApi: builder.mutation<void, number>({
+        query: (id: number) => ({
+          url: `/api/meta/templates/${id}/enable-api`,
+          method: "post",
+        }),
+      }),
     };
   },
 });
@@ -149,4 +155,5 @@ export const {
   useGetsuggestedTemplatesByCategoryQuery,
   useGetFeedbacksQuery,
   useSaveFeedbackMutation,
+  useSetTemplateEnableApiMutation,
 } = templatesApi;

@@ -6,6 +6,7 @@ import { ApiAccessIcon } from "@/assets/icons/ApiAccess";
 import { theme } from "@/theme";
 import { Api } from "@mui/icons-material";
 import Link from "next/link";
+import { useSetTemplateEnableApiMutation } from "@/core/api/templates";
 
 interface ApiAccessProps {
   template: Templates;
@@ -13,6 +14,13 @@ interface ApiAccessProps {
 
 export const ApiAccess: React.FC<ApiAccessProps> = ({ template }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [enableApi, { isLoading }] = useSetTemplateEnableApiMutation();
+
+  const handleEnableApi = () => {
+    setIsModalOpen(true);
+    enableApi(template.id);
+  };
 
   return (
     <Stack
@@ -40,7 +48,7 @@ export const ApiAccess: React.FC<ApiAccessProps> = ({ template }) => {
       </Typography>
 
       <Button
-        onClick={() => setIsModalOpen(true)}
+        onClick={handleEnableApi}
         startIcon={<Api />}
         sx={{
           p: "8px 22px",
@@ -54,7 +62,7 @@ export const ApiAccess: React.FC<ApiAccessProps> = ({ template }) => {
           },
         }}
       >
-        Enable API
+        {template.is_api_enabled ? "Use API" : "Enable API"}
       </Button>
       {/* <Link
         href={"#"}

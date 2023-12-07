@@ -136,6 +136,7 @@ export interface Templates {
   api_runs: number;
   example_execution: TemplatesExecutions | null;
   is_internal?: boolean;
+  is_api_enabled: boolean;
 }
 
 export interface TemplatesWithPagination {
