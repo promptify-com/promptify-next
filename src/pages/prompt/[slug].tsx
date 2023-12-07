@@ -52,7 +52,7 @@ function Template({ hashedExecution, fetchedTemplate }: TemplateProps) {
     }
   }, [isValidUser]);
 
-  if (!fetchedTemplate.id) {
+  if (!fetchedTemplate?.id) {
     if (router.query.slug) {
       redirectToPath(`/prompt/${router.query.slug}`);
       return;
