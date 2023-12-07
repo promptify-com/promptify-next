@@ -127,7 +127,6 @@ export const templatesApi = baseApi.injectEndpoints({
           method: "post",
           data,
         }),
-        invalidatesTags: ["Feedbacks"],
       }),
     };
   },
