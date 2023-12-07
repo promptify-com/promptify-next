@@ -33,6 +33,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
               borderTopLeftRadius: "16px",
               borderTopRightRadius: "16px",
               overflow: "hidden",
+              zIndex: 1,
             }}
           >
             <Grid
