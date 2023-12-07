@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction, useEffect } from "react";
 import { Fade, Stack } from "@mui/material";
 import { IAnswer } from "@/common/types/chat";
 import { IPromptInput } from "@/common/types/prompt";
@@ -17,6 +17,8 @@ interface Props {
   onScrollToBottom: () => void;
 }
 
+const fadeTimeout = 800;
+
 export const InputsForm = ({
   inputs,
   params,
@@ -29,12 +31,14 @@ export const InputsForm = ({
 }: Props) => {
   const _params = params.filter(param => param.is_visible);
 
+  useEffect(() => {
+    setTimeout(() => setIsSimulationStreaming(false), fadeTimeout);
+  }, []);
   return (
     <Fade
       in={true}
       unmountOnExit
-      timeout={800}
-      onTransitionEnd={() => setIsSimulationStreaming(false)}
+      timeout={fadeTimeout}
       addEndListener={onScrollToBottom}
     >
       <Stack gap={2}>

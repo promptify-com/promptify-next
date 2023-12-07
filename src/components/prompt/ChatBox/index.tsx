@@ -1,9 +1,8 @@
 import React, { useState, useMemo, memo, useEffect, useRef } from "react";
-import { Typography, Button, Stack, Box } from "@mui/material";
+import { Typography, Stack } from "@mui/material";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { useRouter } from "next/router";
 import { PromptParams, ResOverrides, ResPrompt } from "@/core/api/dto/prompts";
-import { LogoApp } from "@/assets/icons/LogoApp";
 import { useAppSelector, useAppDispatch } from "@/hooks/useStore";
 import useToken from "@/hooks/useToken";
 import { ChatInterface } from "./ChatInterface";
