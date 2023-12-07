@@ -1,4 +1,4 @@
-import React, { useRef, useState, useMemo } from "react";
+import React, { useRef, useState, useMemo, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
@@ -9,6 +9,8 @@ import ParagraphPlaceholder from "@/components/placeholders/ParagraphPlaceholder
 import { SparkExportPopup } from "../dialog/SparkExportPopup";
 import GeneratedExecutionFooter from "./GeneratedExecutionFooter";
 import { useAppSelector } from "@/hooks/useStore";
+import { IconButton } from "@mui/material";
+import { South } from "@mui/icons-material";
 
 interface Props {
   templateData: Templates;
@@ -40,6 +42,40 @@ export const Display: React.FC<Props> = ({ templateData }) => {
   const isGeneratedExecutionEmpty = Boolean(generatedExecution && !generatedExecution.data?.length);
   const executionIsLoading = isFetching || isGeneratedExecutionEmpty;
 
+  const [isUserAtBottom, setIsUserAtBottom] = useState(true);
+  const [showScrollDown, setShowScrollDown] = useState(false);
+
+  const handleUserScroll = () => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const { scrollTop, scrollHeight, clientHeight } = container;
+    const isAtBottom = scrollTop + clientHeight >= scrollHeight - 80;
+    setShowScrollDown(!isAtBottom);
+    setIsUserAtBottom(isAtBottom);
+  };
+  const scrollToBottom = () => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    container.scrollTop = container.scrollHeight;
+    setTimeout(handleUserScroll, 200);
+  };
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    container.addEventListener("scroll", handleUserScroll);
+    return () => container.removeEventListener("scroll", handleUserScroll);
+  }, []);
+
+  useEffect(() => {
+    if (isUserAtBottom) {
+      scrollToBottom();
+    }
+  }, [generatedExecution, isGenerating]);
+
   const currentGeneratedPrompt = useMemo(() => {
     if (generatedExecution?.data?.length) {
       const loadingPrompt = generatedExecution.data.find(prompt => prompt.isLoading);
@@ -58,7 +94,6 @@ export const Display: React.FC<Props> = ({ templateData }) => {
       flexDirection={"column"}
     >
       <Box
-        ref={containerRef}
         sx={{
           bgcolor: "surface.3",
           minHeight: {
@@ -87,6 +122,7 @@ export const Display: React.FC<Props> = ({ templateData }) => {
         )}
 
         <Box
+          ref={containerRef}
           sx={{
             height: { xs: `calc(100% - ${isGenerating ? "56" : "104"}px)`, md: "calc(100% - 67px)" },
             overflow: "auto",
@@ -127,6 +163,27 @@ export const Display: React.FC<Props> = ({ templateData }) => {
               promptsData={templateData.prompts}
               showPreview={showPreviews}
             />
+          )}
+          {showScrollDown && isGenerating && (
+            <IconButton
+              onClick={scrollToBottom}
+              sx={{
+                height: "32px",
+                width: "32px",
+                position: "sticky",
+                left: "50%",
+                bottom: "70px",
+                zIndex: 999,
+                bgcolor: "surface.3",
+                boxShadow: "0px 4px 8px 3px #e1e2ece6, 0px 0px 4px 0px rgb(0 0 0 / 0%)",
+                border: " none",
+                ":hover": {
+                  bgcolor: "surface.5",
+                },
+              }}
+            >
+              <South sx={{ fontSize: 16 }} />
+            </IconButton>
           )}
         </Box>
       </Box>

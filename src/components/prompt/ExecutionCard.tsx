@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, createRef, RefObject } from "react";
+import { useEffect, useState, createRef, RefObject } from "react";
 import Error from "@mui/icons-material/Error";
 import { keyframes } from "@mui/material/styles";
 import Tooltip from "@mui/material/Tooltip";
@@ -14,7 +14,6 @@ import type { IAnswer } from "@/common/types/chat";
 import type { DisplayPrompt, PromptLiveResponse } from "@/common/types/prompt";
 import ExecutionContentPreview from "./ExecutionContentPreview";
 import { FeedbackActions } from "./FeedbackActions";
-import { isDesktopViewPort } from "@/common/helpers";
 
 interface Props {
   execution: PromptLiveResponse | TemplatesExecutions | null;
@@ -29,7 +28,6 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
   const [sortedPrompts, setSortedPrompts] = useState<DisplayPrompt[]>([]);
   const [elementRefs, setElementRefs] = useState<RefObject<HTMLDivElement>[]>([]);
   const [elementHeights, setElementHeights] = useState<number[]>([]);
-  const isDesktop = isDesktopViewPort();
 
   const promptsOrderMap: { [key: string]: number } = {};
   const promptsExecutionOrderMap: { [key: string]: number } = {};
@@ -80,13 +78,6 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
     sortAndProcessExecutions();
   }, [executionPrompts]);
 
-  const containerRef = useRef<HTMLDivElement>(null);
-  // useEffect(() => {
-  //   containerRef.current?.scrollIntoView({
-  //     block: isGenerating ? "end" : "start",
-  //   });
-  // }, [execution]);
-
   const executionError = (error: string | undefined) => {
     return (
       <Tooltip
@@ -109,7 +100,6 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
 
   return (
     <Stack
-      ref={containerRef}
       gap={1}
       sx={{
         width: { md: "80%" },
@@ -165,7 +155,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
                       <Stack
                         direction={"row"}
                         alignItems={"start"}
-                        gap={2}
+                        gap={{ md: 2 }}
                       >
                         <Stack
                           ref={elementRefs[index]}
@@ -237,15 +227,15 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
                         </Stack>
 
                         <Stack
-                          mt={{ md: -7 }}
-                          py={2}
                           flex={1}
-                          pl={"10px"}
-                          borderLeft={showPreview ? "2px solid #ECECF4" : "none"}
-                          maxHeight={{ md: showPreview ? elementHeights[index] : 0 }}
+                          mt={{ md: -7 }}
                           sx={{
                             width: { xs: showPreview ? "100%" : 0, md: showPreview ? "35%" : 0 },
                             height: { xs: showPreview ? "fit-content" : 0, md: "fit-content" },
+                            maxHeight: { md: showPreview ? elementHeights[index] : 0 },
+                            py: 2,
+                            pl: showPreview ? "10px" : 0,
+                            borderLeft: showPreview ? "2px solid #ECECF4" : "none",
                             overflow: "auto",
                             animation: `${showPreview ? expandAnimation : collapseAnimation} 300ms forwards`,
                             "&::-webkit-scrollbar": {
