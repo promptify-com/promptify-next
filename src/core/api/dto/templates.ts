@@ -1,4 +1,4 @@
-import { User, UserMin } from "./user";
+import { User, UserPartial } from "./user";
 import { Prompts } from "./prompts";
 import { InputType } from "@/common/types/prompt";
 
@@ -223,7 +223,7 @@ export interface TemplateExecutionsDisplay {
   };
   description: string;
   thumbnail: string;
-  created_by: UserMin;
+  created_by: UserPartial;
   tags: Tag[];
   slug: string;
   executions: Execution[];
