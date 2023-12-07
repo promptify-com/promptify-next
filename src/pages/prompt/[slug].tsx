@@ -34,6 +34,10 @@ function Template({ hashedExecution, fetchedTemplate, questionPrefixContent }: T
   const sparkHashQueryParam = (router.query?.hash as string | null) ?? null;
 
   useEffect(() => {
+    if (!fetchedTemplate) {
+      return;
+    }
+
     if (!savedTemplateId || savedTemplateId !== fetchedTemplate.id) {
       dispatch(
         updateTemplateData({
@@ -59,9 +63,14 @@ function Template({ hashedExecution, fetchedTemplate, questionPrefixContent }: T
     }
   }, [sparkHashQueryParam]);
 
-  if (!fetchedTemplate.id) {
+  if (!fetchedTemplate?.id) {
+    if (router.query.slug) {
+      redirectToPath(`/prompt/${router.query.slug}`);
+      return null;
+    }
+
     redirectToPath("/404");
-    return;
+    return null;
   }
 
   return (
