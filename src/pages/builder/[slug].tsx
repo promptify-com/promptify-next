@@ -103,8 +103,6 @@ export const Builder = () => {
     }
   }, [router.query]);
 
-  console.log("selectedNode:", selectedNode, selectedNodeData);
-
   const create = useCallback(
     (el: HTMLElement) => {
       return createEditor(
@@ -187,7 +185,6 @@ export const Builder = () => {
     if (!selectedNode) {
       setSelectedNodeData(null);
     } else {
-      console.log("selectedNode[nodesData]:", nodesData);
       const findSelectedNode = nodesData?.find(node => {
         return node?.id?.toString() === selectedNode?.id.toString() || node?.temp_id === selectedNode?.temp_id;
       });

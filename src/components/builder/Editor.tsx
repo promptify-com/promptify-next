@@ -152,8 +152,14 @@ export async function createEditor(
 
   AreaExtensions.selectableNodes(area, selector, { accumulating });
 
+  const contextTypes = new Set<string>();
+
   area.addPipe(async context => {
+    contextTypes.add(context.type);
+
     if (context.type === "connectioncreated" && isLoaded) {
+      contextTypes.clear();
+
       let target: any = context.data.target;
       let source: any = context.data.source;
 
@@ -184,11 +190,23 @@ export async function createEditor(
       });
 
       updateTemplateDependencies(target, source);
+
+      return context;
     }
 
-    if (context.type !== "pointermove") console.log("context:", context.type);
+    if (context.type === "nodedragged" && contextTypes.has("nodetranslated")) {
+      contextTypes.clear();
 
-    if (context.type === "nodedragged") {
+      const node = editor.getNode(context.data.id);
+      node.selected = false;
+      area.update("node", node.id);
+
+      return context;
+    }
+
+    if (context.type === "nodedragged" && !contextTypes.has("nodetranslate")) {
+      contextTypes.clear();
+
       const allNodes = editor.getNodes();
       allNodes?.forEach(allNodesNode => {
         allNodesNode.selected = false;
@@ -202,9 +220,13 @@ export async function createEditor(
       setSelectedNode(node);
       setSelectedNodeData(null);
       setSelectedConnection(null);
+
+      return context;
     }
 
     if (context.type === "pointerdown") {
+      contextTypes.clear();
+
       const allNodes = editor.getNodes();
       allNodes?.forEach(node => {
         node.selected = false;
