@@ -33,7 +33,11 @@ function Template({ hashedExecution, fetchedTemplate }: TemplateProps) {
   const savedTemplateId = useAppSelector(state => state.template.id);
 
   useEffect(() => {
-    if ((fetchedTemplate && !savedTemplateId) || savedTemplateId !== fetchedTemplate.id) {
+    if (!fetchedTemplate) {
+      return;
+    }
+
+    if (!savedTemplateId || savedTemplateId !== fetchedTemplate.id) {
       dispatch(
         updateTemplateData({
           id: fetchedTemplate.id,
