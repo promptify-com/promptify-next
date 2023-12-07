@@ -33,6 +33,10 @@ function Template({ hashedExecution, fetchedTemplate }: TemplateProps) {
   const savedTemplateId = useAppSelector(state => state.template.id);
 
   useEffect(() => {
+    if (!fetchedTemplate) {
+      return;
+    }
+
     if (!savedTemplateId || savedTemplateId !== fetchedTemplate.id) {
       dispatch(
         updateTemplateData({
@@ -52,9 +56,14 @@ function Template({ hashedExecution, fetchedTemplate }: TemplateProps) {
     }
   }, [isValidUser]);
 
-  if (!fetchedTemplate.id) {
+  if (!fetchedTemplate?.id) {
+    if (router.query.slug) {
+      redirectToPath(`/prompt/${router.query.slug}`);
+      return null;
+    }
+
     redirectToPath("/404");
-    return;
+    return null;
   }
 
   const fetchDynamicColors = () => {
