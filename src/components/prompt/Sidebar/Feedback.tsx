@@ -3,38 +3,37 @@ import SigninButton from "@/components/common/buttons/SigninButton";
 import useToken from "@/hooks/useToken";
 import { Avatar, Box, Stack, Typography } from "@mui/material";
 import MessageSender from "../ChatBox/MessageSender";
-import { useRef, useState } from "react";
-import { IMessage } from "@/common/types/chat";
-import { randomId } from "@/common/helpers";
+import { useEffect, useRef, useState } from "react";
+import { useGetFeedbacksQuery, useSaveFeedbackMutation } from "@/core/api/templates";
+import { useAppSelector } from "@/hooks/useStore";
+import { IFeedback } from "@/common/types/template";
 
 const maxLength = 2500;
-const initMessages: IMessage[] = Array.from({ length: 3 }).map(_ => ({
-  id: randomId(),
-  createdAt: new Date(new Date().getTime() - 320000),
-  fromUser: true,
-  text: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi provident perferendis in quisquam, dolore modi!",
-  type: "text",
-}));
 
 export const Feedback = () => {
   const token = useToken();
   const [feedback, setFeedback] = useState("");
-  const [feedbacks, setFeedbacks] = useState(initMessages);
+  const [feedbacks, setFeedbacks] = useState<IFeedback[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLDivElement>(null);
+  const currentUser = useAppSelector(state => state.user.currentUser);
+  const templateId = useAppSelector(state => state.template.id);
+  const { data: initFeedbacks, isFetching } = useGetFeedbacksQuery(templateId);
+  const [saveFeedback] = useSaveFeedbackMutation();
 
-  const handleSubmit = (feedback: string) => {
-    if (!feedback) return;
+  useEffect(() => {
+    setFeedbacks(initFeedbacks?.filter(_f => _f.status === "published") || []);
+  }, [initFeedbacks]);
 
-    const newFeedback: IMessage = {
-      id: randomId(),
-      createdAt: new Date(new Date().getTime() - 1000),
-      fromUser: true,
-      text: feedback,
-      type: "text",
-    };
-    setFeedbacks(prevFeedbacks => prevFeedbacks.concat(newFeedback));
+  const handleSubmit = async (feedback: string) => {
+    if (!feedback || !currentUser) return;
+
     setFeedback("");
+    const newFeedback = await saveFeedback({
+      comment: feedback,
+      template: templateId,
+    }).unwrap();
+    setFeedbacks(prevFeedbacks => prevFeedbacks.concat(newFeedback));
     scrollToBottom();
   };
 
@@ -77,58 +76,66 @@ export const Feedback = () => {
         }}
       >
         <>
-          {feedbacks.map(feedback => (
-            <Stack
-              direction={"row"}
-              alignItems={"baseline"}
-              gap={1.5}
-            >
-              <Avatar
-                src={require("@/assets/images/default-avatar.jpg")}
-                alt={"Promptify"}
-                sx={{
-                  width: 32,
-                  height: 32,
-                  bgcolor: "surface.5",
-                }}
-              />
-              <Stack gap={1.5}>
-                <Stack
-                  direction={"row"}
-                  alignItems={"center"}
-                  gap={1.5}
-                >
-                  <Typography
-                    fontSize={13}
-                    fontWeight={500}
-                    color={"primary.main"}
+          {feedbacks.map(feedback => {
+            const createdAt =
+              timeAgo(feedback.created_at) === "some time ago"
+                ? timeAgo(new Date(new Date().getTime() - 2000))
+                : timeAgo(feedback.created_at);
+            return (
+              <Stack
+                key={feedback.id}
+                direction={"row"}
+                gap={1.5}
+              >
+                <Avatar
+                  src={feedback.user.avatar}
+                  alt={"Promptify"}
+                  sx={{
+                    width: 32,
+                    height: 32,
+                    bgcolor: "surface.5",
+                  }}
+                />
+                <Stack gap={1.5}>
+                  <Stack
+                    direction={"row"}
+                    alignItems={"center"}
+                    gap={1.5}
                   >
-                    Promptify {feedback.id}
-                  </Typography>
+                    <Typography
+                      fontSize={13}
+                      fontWeight={500}
+                      color={"primary.main"}
+                    >
+                      {feedback.user.first_name
+                        ? `${feedback.user.first_name} ${feedback.user.last_name}`
+                        : feedback.user.username}
+                    </Typography>
+                    <Typography
+                      fontSize={10}
+                      fontWeight={400}
+                      color={"onSurface"}
+                      sx={{
+                        opacity: 0.5,
+                      }}
+                    >
+                      {createdAt}
+                    </Typography>
+                  </Stack>
                   <Typography
-                    fontSize={10}
+                    fontSize={14}
                     fontWeight={400}
-                    color={"onSurface"}
+                    color={"common.black"}
                     sx={{
-                      opacity: 0.5,
+                      wordBreak: "break-word",
                     }}
                   >
-                    {timeAgo(feedback.createdAt)}
+                    {feedback.comment}
                   </Typography>
                 </Stack>
-                <Typography
-                  fontSize={14}
-                  fontWeight={400}
-                  color={"common.black"}
-                  sx={{
-                    wordBreak: "break-word",
-                  }}
-                >
-                  {feedback.text}
-                </Typography>
               </Stack>
-            </Stack>
-          ))}
+            );
+          })}
         </>
         <div ref={containerRef}></div>
       </Stack>
@@ -155,7 +162,12 @@ export const Feedback = () => {
           </Typography>
         </Stack>
       ) : (
-        <SigninButton />
+        <Stack
+          alignItems={"center"}
+          mb={"20px"}
+        >
+          <SigninButton />
+        </Stack>
       )}
     </Stack>
   );

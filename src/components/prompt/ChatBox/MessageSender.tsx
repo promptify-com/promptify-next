@@ -44,6 +44,21 @@ const MessageSender: React.FC<MessageSenderProps> = ({
     setLocalValue("");
   };
 
+  const sendBtnStyle = {
+    border: "none",
+    bgcolor: localValue ? "primary.light" : "transparent",
+    p: "4px",
+    width: "27px",
+    height: "27px",
+    ":hover": {
+      bgcolor: showGenerate ? "inherit" : "#626673",
+    },
+    "& svg": {
+      width: showGenerate && !localValue ? "24px" : "19px",
+      height: showGenerate && !localValue ? "24px" : "19px",
+    },
+  };
+
   return (
     <Box
       bgcolor={"surface.3"}
@@ -109,51 +124,42 @@ const MessageSender: React.FC<MessageSenderProps> = ({
           },
         }}
       />
-      <IconButton
-        sx={{
-          border: "none",
-          bgcolor: localValue ? "primary.light" : "transparent",
-          p: "4px",
-          width: "27px",
-          height: "27px",
-          ":hover": {
-            bgcolor: showGenerate ? "inherit" : "#626673",
-          },
-          "& svg": {
-            width: showGenerate && !localValue ? "24px" : "19px",
-            height: showGenerate && !localValue ? "24px" : "19px",
-          },
-        }}
-      >
-        {showGenerate && !localValue ? (
-          <SlowMotionVideo
-            onClick={() => {
-              if (isGenerating) {
-                return;
-              }
+      {showGenerate && !localValue ? (
+        <IconButton
+          sx={sendBtnStyle}
+          onClick={() => {
+            if (isGenerating) {
+              return;
+            }
 
-              onGenerate?.();
-            }}
+            onGenerate?.();
+          }}
+        >
+          <SlowMotionVideo
             sx={{
               color: isGenerating ? "text.secondary" : "#375CA9",
               cursor: isGenerating ? "not-allowed" : "pointer",
             }}
           />
-        ) : (
-          <ArrowForward
-            onClick={() => {
-              if (!localValue || isGenerating) {
-                return;
-              }
+        </IconButton>
+      ) : (
+        <IconButton
+          sx={sendBtnStyle}
+          onClick={() => {
+            if (!localValue || isGenerating) {
+              return;
+            }
 
-              handleSubmit();
-            }}
+            handleSubmit();
+          }}
+        >
+          <ArrowForward
             sx={{
               color: "surface.1",
             }}
           />
-        )}
-      </IconButton>
+        </IconButton>
+      )}
     </Box>
   );
 };

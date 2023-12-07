@@ -1,5 +1,6 @@
+import { IFeedback, IPostFeedback } from "@/common/types/template";
 import { baseApi } from "./api";
-import { PromptParams, TemplateQuestionGeneratorData } from "./dto/prompts";
+import { PromptParams } from "./dto/prompts";
 import { FilterParams, Templates, TemplatesWithPagination } from "./dto/templates";
 import { IEditTemplate } from "@/common/types/editTemplate";
 
@@ -113,6 +114,21 @@ export const templatesApi = baseApi.injectEndpoints({
           method: "get",
         }),
       }),
+      getFeedbacks: builder.query<IFeedback[], number>({
+        query: (id: number) => ({
+          url: `/api/meta/templates/${id}/feedbacks/`,
+          method: "get",
+        }),
+        providesTags: ["Feedbacks"],
+      }),
+      saveFeedback: builder.mutation<IFeedback, IPostFeedback>({
+        query: (data: IPostFeedback) => ({
+          url: `/api/meta/feedbacks/`,
+          method: "post",
+          data,
+        }),
+        invalidatesTags: ["Feedbacks"],
+      }),
     };
   },
 });
@@ -132,4 +148,6 @@ export const {
   usePublishTemplateMutation,
   useViewTemplateMutation,
   useGetsuggestedTemplatesByCategoryQuery,
+  useGetFeedbacksQuery,
+  useSaveFeedbackMutation,
 } = templatesApi;
