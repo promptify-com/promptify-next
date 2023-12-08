@@ -104,7 +104,7 @@ const PromptCardAccordion = ({
       ref={(node: ConnectableElement) => preview(drop(node))}
       sx={{
         bgcolor: "surface.1",
-        m: "24px 0 !important",
+        m: builderType === BUILDER_TYPE.ADMIN ? 0 : "24px 0 !important",
         borderRadius: "16px !important",
         boxShadow: "none",
         transition: "box-shadow 0.3s ease-in-out",
