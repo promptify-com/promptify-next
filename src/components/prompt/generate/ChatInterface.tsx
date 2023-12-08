@@ -135,6 +135,7 @@ export const ChatInterface = ({
           left={"50%"}
           sx={{
             transform: "translateX(-50%)",
+            cursor: "pointer",
           }}
         >
           <Box
@@ -198,7 +199,7 @@ export const ChatInterface = ({
           {messages.map(msg => (
             <Fragment key={msg.id}>
               <Box
-                display={isExecutionMode ? "none" : "flex"}
+                display={accordionChatMode === "input" ? "flex" : "none"}
                 flexDirection={"column"}
               >
                 <Message
