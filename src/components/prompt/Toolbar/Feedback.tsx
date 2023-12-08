@@ -120,11 +120,11 @@ export const Feedback = () => {
                           {getDisplayName(feedback.user)}
                         </Typography>
                         <Typography
-                          fontSize={10}
+                          fontSize={14}
                           fontWeight={400}
-                          color={"onSurface"}
+                          color={"common.black"}
                           sx={{
-                            opacity: 0.5,
+                            wordBreak: "break-word",
                           }}
                         >
                           {createdAt}
