@@ -1,4 +1,4 @@
-import { IFeedback, IPostFeedback } from "@/common/types/template";
+import { IFeedback, IPostFeedback, TemplateApiStatus } from "@/common/types/template";
 import { baseApi } from "./api";
 import { PromptParams } from "./dto/prompts";
 import { FilterParams, Templates, TemplatesWithPagination } from "./dto/templates";
@@ -134,6 +134,12 @@ export const templatesApi = baseApi.injectEndpoints({
           method: "post",
         }),
       }),
+      getTemplateApiStatus: builder.query<TemplateApiStatus, number>({
+        query: id => ({
+          url: `/api/meta/templates/${id}/enable-api`,
+          method: "get",
+        }),
+      }),
     };
   },
 });
@@ -156,4 +162,5 @@ export const {
   useGetFeedbacksQuery,
   useSaveFeedbackMutation,
   useSetTemplateEnableApiMutation,
+  useGetTemplateApiStatusQuery,
 } = templatesApi;

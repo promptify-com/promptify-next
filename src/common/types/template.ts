@@ -40,3 +40,12 @@ export interface IPostFeedback {
   template: number;
   comment: string;
 }
+
+export interface TemplateApiStatus {
+  is_api_enabled: boolean;
+}
+
+export interface TemplateApiStatusState {
+  data: TemplateApiStatus | null;
+  isLoading: boolean;
+}

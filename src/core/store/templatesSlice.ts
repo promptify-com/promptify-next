@@ -1,5 +1,5 @@
 import { AnsweredInputType } from "@/common/types/prompt";
-import { SidebarLink } from "@/common/types/template";
+import { SidebarLink, TemplateApiStatusState } from "@/common/types/template";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { TemplatesExecutions } from "../api/dto/templates";
@@ -14,6 +14,7 @@ export interface TemplatesProps {
   answeredInputs: AnsweredInputType[];
   activeSideBarLink: SidebarLink | null;
   repeatExecution: TemplatesExecutions | null;
+  templateApiStatus: TemplateApiStatusState;
 }
 
 type UpdateTemplateDataPayload = Pick<TemplatesProps, "is_favorite" | "id" | "likes">;
@@ -28,6 +29,7 @@ const initialState: TemplatesProps = {
   answeredInputs: [],
   activeSideBarLink: null,
   repeatExecution: null,
+  templateApiStatus: { data: null, isLoading: true },
 };
 
 export const templatesSlice = createSlice({
@@ -58,6 +60,9 @@ export const templatesSlice = createSlice({
     setRepeatExecution: (state, action: PayloadAction<TemplatesExecutions | null>) => {
       state.repeatExecution = action.payload;
     },
+    setTemplateApiStatus: (state, action: PayloadAction<TemplateApiStatusState>) => {
+      state.templateApiStatus = action.payload;
+    },
   },
 });
 
@@ -69,6 +74,7 @@ export const {
   setChatFullScreenStatus,
   setActiveSidebarLink,
   setRepeatExecution,
+  setTemplateApiStatus,
 } = templatesSlice.actions;
 
 export default templatesSlice.reducer;
