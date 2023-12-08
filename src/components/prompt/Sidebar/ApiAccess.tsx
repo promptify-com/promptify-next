@@ -74,7 +74,6 @@ export const ApiAccess: React.FC<ApiAccessProps> = ({ template }) => {
         sx={{
           p: "8px 22px",
           borderRadius: "100px",
-          gap: 1.5,
           bgcolor: "primary.main",
           color: "primary.contrastText",
           ":hover": {
@@ -82,9 +81,9 @@ export const ApiAccess: React.FC<ApiAccessProps> = ({ template }) => {
             color: "text.primary",
           },
           ":disabled": {
-            bgcolor: "secondary.main",
-            color: "secondary.contrastText",
-            opacity: 0.7,
+            bgcolor: "surface.5",
+            color: "onSurface",
+            opacity: 0.4,
           },
         }}
       >
