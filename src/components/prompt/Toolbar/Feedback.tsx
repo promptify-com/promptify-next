@@ -1,12 +1,16 @@
+import { useEffect, useRef, useState } from "react";
+import Stack from "@mui/material/Stack";
+import Avatar from "@mui/material/Avatar";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+
 import { timeAgo } from "@/common/helpers/timeManipulation";
 import SigninButton from "@/components/common/buttons/SigninButton";
 import useToken from "@/hooks/useToken";
-import { Avatar, Box, Stack, Typography } from "@mui/material";
-import { useEffect, useRef, useState } from "react";
 import { useGetFeedbacksQuery, useSaveFeedbackMutation } from "@/core/api/templates";
 import { useAppSelector } from "@/hooks/useStore";
 import MessageSender from "../generate/MessageSender";
-import { IFeedback } from "@/core/api/dto/templates";
+import type { IFeedback } from "@/core/api/dto/templates";
 
 const maxLength = 2500;
 
@@ -18,7 +22,7 @@ export const Feedback = () => {
   const inputRef = useRef<HTMLDivElement>(null);
   const currentUser = useAppSelector(state => state.user.currentUser);
   const templateId = useAppSelector(state => state.template.id);
-  const { data: initFeedbacks, isFetching } = useGetFeedbacksQuery(templateId);
+  const { data: initFeedbacks } = useGetFeedbacksQuery(templateId);
   const [saveFeedback] = useSaveFeedbackMutation();
 
   useEffect(() => {
@@ -144,7 +148,10 @@ export const Feedback = () => {
           ref={inputRef}
           alignItems={"flex-end"}
         >
-          <Box width={"100%"}>
+          <Box
+            width={"90%"}
+            p={"10px 24px"}
+          >
             <MessageSender
               onSubmit={handleSubmit}
               onChange={setFeedback}

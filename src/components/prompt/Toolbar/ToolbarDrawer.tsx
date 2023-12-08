@@ -40,9 +40,11 @@ function ToolbarDrawer({ template, executions, isExecutionsLoading, refetchTempl
         transition: theme.transitions.create("width", { duration: 200 }),
         "& .MuiDrawer-paper": {
           mt: { md: "92px" },
+          height: "calc(100% - 92px)",
           width: { xs: "100%", md: 360 },
           bgcolor: "surface.1",
           borderLeft: "none",
+          borderTopRightRadius: "16px",
         },
       }}
     >
