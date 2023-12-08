@@ -1,6 +1,13 @@
 import { baseApi } from "./api";
 import { PromptParams } from "./dto/prompts";
-import { FilterParams, TemplateApiStatus, Templates, TemplatesWithPagination } from "./dto/templates";
+import {
+  FilterParams,
+  IFeedback,
+  IPostFeedback,
+  TemplateApiStatus,
+  Templates,
+  TemplatesWithPagination,
+} from "./dto/templates";
 import { IEditTemplate } from "@/common/types/editTemplate";
 
 const getSearchParams = (params: FilterParams) => {
@@ -113,6 +120,21 @@ export const templatesApi = baseApi.injectEndpoints({
           method: "get",
         }),
       }),
+
+      getFeedbacks: builder.query<IFeedback[], number>({
+        query: (id: number) => ({
+          url: `/api/meta/templates/${id}/feedbacks/`,
+          method: "get",
+        }),
+        providesTags: ["Feedbacks"],
+      }),
+      saveFeedback: builder.mutation<IFeedback, IPostFeedback>({
+        query: (data: IPostFeedback) => ({
+          url: `/api/meta/feedbacks/`,
+          method: "post",
+          data,
+        }),
+      }),
       getTemplateApiStatus: builder.query<TemplateApiStatus, number>({
         query: id => ({
           url: `/api/meta/templates/${id}/enable-api`,
@@ -144,6 +166,8 @@ export const {
   usePublishTemplateMutation,
   useViewTemplateMutation,
   useGetsuggestedTemplatesByCategoryQuery,
+  useGetFeedbacksQuery,
+  useSaveFeedbackMutation,
   useSetTemplateEnableApiMutation,
   useGetTemplateApiStatusQuery,
 } = templatesApi;

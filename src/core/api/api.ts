@@ -25,6 +25,7 @@ export const baseApi = createApi({
     "Parameters",
     "ParametersPresets",
     "Deployments",
+    "Feedbacks",
   ],
   endpoints: () => ({}),
 });

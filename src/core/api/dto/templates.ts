@@ -1,6 +1,7 @@
 import { User, UserPartial } from "./user";
 import { Prompts } from "./prompts";
 import { InputType } from "@/common/types/prompt";
+import { IUser } from "@/common/types";
 
 export type ExecutionTemplatePartial = Pick<Templates, "title" | "thumbnail" | "slug">;
 
@@ -280,4 +281,17 @@ export interface TemplateApiStatus {
 export interface TempalteApiStatusState {
   data: TemplateApiStatus | null;
   isLoading: boolean;
+}
+
+export interface IFeedback {
+  id: number;
+  user: IUser;
+  created_at: string;
+  template: number;
+  comment: string;
+  status: "draft" | "published";
+}
+export interface IPostFeedback {
+  template: number;
+  comment: string;
 }

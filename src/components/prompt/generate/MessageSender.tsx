@@ -11,20 +11,24 @@ import SlowMotionVideo from "@mui/icons-material/SlowMotionVideo";
 
 interface MessageSenderProps {
   onSubmit: (value: string) => void;
-  disabled: boolean;
+  onChange?: (value: string) => void;
+  disabled?: boolean;
   placeholder?: string;
   mode?: "chat" | "other";
   onGenerate?: () => void;
   showGenerate?: boolean;
+  maxLength?: number;
 }
 
 function MessageSender({
   onSubmit,
+  onChange,
   disabled,
   placeholder = "Chat with Promptify",
   mode = "other",
   onGenerate,
   showGenerate,
+  maxLength,
 }: MessageSenderProps) {
   const [localValue, setLocalValue] = useState("");
   const [isFocused, setIsFocused] = useState(false);
@@ -36,6 +40,12 @@ function MessageSender({
       e.preventDefault();
       handleSubmit();
     }
+  };
+
+  const handleChange = (val: string) => {
+    if (maxLength && val.length > maxLength) return;
+    setLocalValue(val);
+    if (onChange) onChange(val);
   };
 
   const handleSubmit = () => {
@@ -96,7 +106,7 @@ function MessageSender({
         }}
         placeholder={placeholder}
         inputProps={{ "aria-label": "Name" }}
-        onChange={e => setLocalValue(e.target.value)}
+        onChange={e => handleChange(e.target.value)}
         value={localValue}
         onKeyPress={handleKeyPress}
       />
