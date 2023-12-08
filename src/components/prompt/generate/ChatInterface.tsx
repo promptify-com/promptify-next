@@ -50,6 +50,8 @@ export const ChatInterface = ({
 }: Props) => {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const accordionChatMode = useAppSelector(state => state.template.accordionChatMode);
+
+  const isExecutionMode = accordionChatMode === "execution" || accordionChatMode === "generated_execution";
   const execution = useAppSelector(state => state.executions.generatedExecution);
 
   const [isHovered, setIsHovered] = useState(false);
@@ -196,7 +198,7 @@ export const ChatInterface = ({
           {messages.map(msg => (
             <Fragment key={msg.id}>
               <Box
-                display={accordionChatMode !== "repeat" ? "flex" : "none"}
+                display={isExecutionMode ? "none" : "flex"}
                 flexDirection={"column"}
               >
                 <Message

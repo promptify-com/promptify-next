@@ -11,6 +11,8 @@ import { useGetFeedbacksQuery, useSaveFeedbackMutation } from "@/core/api/templa
 import { useAppSelector } from "@/hooks/useStore";
 import MessageSender from "../generate/MessageSender";
 import type { IFeedback } from "@/core/api/dto/templates";
+import FeedbackPlaceholder from "@/components/placeholders/FeedbackPlaceholder";
+import { IUser } from "@/common/types";
 
 const maxLength = 2500;
 
@@ -22,7 +24,7 @@ export const Feedback = () => {
   const inputRef = useRef<HTMLDivElement>(null);
   const currentUser = useAppSelector(state => state.user.currentUser);
   const templateId = useAppSelector(state => state.template.id);
-  const { data: initFeedbacks } = useGetFeedbacksQuery(templateId);
+  const { data: initFeedbacks, isFetching } = useGetFeedbacksQuery(templateId);
   const [saveFeedback] = useSaveFeedbackMutation();
 
   useEffect(() => {
@@ -50,6 +52,18 @@ export const Feedback = () => {
     });
     containerRef.current.style.paddingBottom = "0";
   };
+
+  function getDisplayName(user: IUser) {
+    if (user && user.first_name) {
+      return user.first_name;
+    } else if (user && user.username) {
+      return user.username.charAt(0).toUpperCase() + user.username.slice(1).toLowerCase();
+    } else {
+      return "Unknown User";
+    }
+  }
+
+  // Usage
 
   return (
     <Stack
@@ -80,66 +94,70 @@ export const Feedback = () => {
         }}
       >
         <>
-          {feedbacks.map(feedback => {
-            const createdAt =
-              timeAgo(feedback.created_at) === "some time ago"
-                ? timeAgo(new Date(new Date().getTime() - 2000))
-                : timeAgo(feedback.created_at);
-            return (
-              <Stack
-                key={feedback.id}
-                direction={"row"}
-                gap={1.5}
-              >
-                <Avatar
-                  src={feedback.user.avatar}
-                  alt={"Promptify"}
-                  sx={{
-                    width: 32,
-                    height: 32,
-                    bgcolor: "surface.5",
-                  }}
-                />
-                <Stack gap={1.5}>
+          {isFetching ? (
+            <FeedbackPlaceholder count={3} />
+          ) : (
+            <>
+              {feedbacks.map(feedback => {
+                const createdAt =
+                  timeAgo(feedback.created_at) === "some time ago"
+                    ? timeAgo(new Date(new Date().getTime() - 2000))
+                    : timeAgo(feedback.created_at);
+                return (
                   <Stack
+                    key={feedback.id}
                     direction={"row"}
-                    alignItems={"center"}
                     gap={1.5}
                   >
-                    <Typography
-                      fontSize={13}
-                      fontWeight={500}
-                      color={"primary.main"}
-                    >
-                      {feedback.user.first_name
-                        ? `${feedback.user.first_name} ${feedback.user.last_name}`
-                        : feedback.user.username}
-                    </Typography>
-                    <Typography
-                      fontSize={10}
-                      fontWeight={400}
-                      color={"onSurface"}
+                    <Avatar
+                      src={feedback.user.avatar}
+                      alt={"Promptify"}
                       sx={{
-                        opacity: 0.5,
+                        width: 32,
+                        height: 32,
+                        bgcolor: "surface.5",
                       }}
-                    >
-                      {createdAt}
-                    </Typography>
+                    />
+                    <Stack gap={1.5}>
+                      <Stack
+                        direction={"row"}
+                        alignItems={"center"}
+                        gap={1.5}
+                      >
+                        <Typography
+                          fontSize={13}
+                          fontWeight={500}
+                          color={"primary.main"}
+                        >
+                          {getDisplayName(feedback.user)}
+                        </Typography>
+                        <Typography
+                          fontSize={10}
+                          fontWeight={400}
+                          color={"onSurface"}
+                          sx={{
+                            opacity: 0.5,
+                          }}
+                        >
+                          {createdAt}
+                        </Typography>
+                      </Stack>
+                      <Typography
+                        fontSize={14}
+                        fontWeight={400}
+                        color={"common.black"}
+                        sx={{
+                          wordBreak: "break-word",
+                        }}
+                      >
+                        {feedback.comment}
+                      </Typography>
+                    </Stack>
                   </Stack>
-                  <Typography
-                    fontSize={14}
-                    fontWeight={400}
-                    color={"common.black"}
-                    sx={{
-                      wordBreak: "break-word",
-                    }}
-                  >
-                    {feedback.comment}
-                  </Typography>
-                </Stack>
-              </Stack>
-            );
-          })}
+                );
+              })}
+            </>
+          )}
         </>
         <div ref={containerRef}></div>
       </Stack>

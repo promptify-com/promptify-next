@@ -125,6 +125,7 @@ export const templatesApi = baseApi.injectEndpoints({
         query: (id: number) => ({
           url: `/api/meta/templates/${id}/feedbacks/`,
           method: "get",
+          keepUnusedDataFor: 900,
         }),
         providesTags: ["Feedbacks"],
       }),
@@ -138,6 +139,7 @@ export const templatesApi = baseApi.injectEndpoints({
       getTemplateApiStatus: builder.query<TemplateApiStatus, number>({
         query: id => ({
           url: `/api/meta/templates/${id}/enable-api`,
+          keepUnusedDataFor: 604800,
           method: "get",
         }),
       }),

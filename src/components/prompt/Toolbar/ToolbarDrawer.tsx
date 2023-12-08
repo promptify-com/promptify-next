@@ -39,8 +39,8 @@ function ToolbarDrawer({ template, executions, isExecutionsLoading, refetchTempl
         width: { md: sideBarOpen ? DRAWER_WIDTH : 0 },
         transition: theme.transitions.create("width", { duration: 200 }),
         "& .MuiDrawer-paper": {
-          mt: { md: "92px" },
-          height: "calc(100% - 92px)",
+          mt: { xs: "60px", md: "92px" },
+          height: { md: "calc(100% - 92px)" },
           width: { xs: "100%", md: 360 },
           bgcolor: "surface.1",
           borderLeft: "none",
@@ -54,7 +54,7 @@ function ToolbarDrawer({ template, executions, isExecutionsLoading, refetchTempl
         justifyContent="space-between"
         sx={{
           bgcolor: "surface.1",
-          p: "16px 24px",
+          p: { xs: "14px", md: "16px 24px" },
           zIndex: 1300,
         }}
       >

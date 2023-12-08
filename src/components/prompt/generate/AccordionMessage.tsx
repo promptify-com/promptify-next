@@ -121,7 +121,7 @@ export const AccordionMessage = ({
             >
               {accordionChatMode === "execution" && (
                 <Stack
-                  padding={{ xs: "0px 8px", md: "16px 0px 48px 64px" }}
+                  padding={{ xs: "0px 8px", md: isGenerating ? "16px 0px 8px 64px" : "16px 0px 48px 64px" }}
                   position={"relative"}
                 >
                   <Display

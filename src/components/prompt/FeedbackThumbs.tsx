@@ -10,13 +10,13 @@ import { FeedbackType, TemplatesExecutions } from "@/core/api/dto/templates";
 import { useAppDispatch } from "@/hooks/useStore";
 import { setAccordionChatMode } from "@/core/store/templatesSlice";
 import { Tooltip } from "@mui/material";
-import { setSelectedExecution } from "@/core/store/executionsSlice";
 
 interface newFeedBack {
   execution: TemplatesExecutions;
+  vertical?: boolean;
 }
 
-export default function FeedbackThumbs({ execution }: newFeedBack) {
+export default function FeedbackThumbs({ vertical, execution }: newFeedBack) {
   const [updateExecution] = useUpdateExecutionMutation();
   const dispatch = useAppDispatch();
   const [feedback, setFeedback] = useState(execution.feedback);
@@ -58,7 +58,7 @@ export default function FeedbackThumbs({ execution }: newFeedBack) {
 
   return (
     <Stack
-      direction={{ xs: "row", md: "column" }}
+      direction={{ xs: "row", md: vertical ? "column" : "row" }}
       alignItems={"center"}
       gap={1}
     >
