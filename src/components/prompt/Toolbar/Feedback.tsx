@@ -1,17 +1,12 @@
-import { useEffect, useRef, useState } from "react";
-import Stack from "@mui/material/Stack";
-import Avatar from "@mui/material/Avatar";
-import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
-
 import { timeAgo } from "@/common/helpers/timeManipulation";
 import SigninButton from "@/components/common/buttons/SigninButton";
 import useToken from "@/hooks/useToken";
+import { Avatar, Box, Stack, Typography } from "@mui/material";
+import MessageSender from "../generate/MessageSender";
+import { useRef, useState } from "react";
 import { useGetFeedbacksQuery, useSaveFeedbackMutation } from "@/core/api/templates";
 import { useAppSelector } from "@/hooks/useStore";
-import MessageSender from "../generate/MessageSender";
-import type { IFeedback } from "@/core/api/dto/templates";
-import FeedbackPlaceholder from "@/components/placeholders/FeedbackPlaceholder";
+import ChatMessagePlaceholder from "@/components/placeholders/ChatMessagePlaceholder";
 import { IUser } from "@/common/types";
 
 const maxLength = 2500;
@@ -19,27 +14,21 @@ const maxLength = 2500;
 export const Feedback = () => {
   const token = useToken();
   const [feedback, setFeedback] = useState("");
-  const [feedbacks, setFeedbacks] = useState<IFeedback[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLDivElement>(null);
   const currentUser = useAppSelector(state => state.user.currentUser);
   const templateId = useAppSelector(state => state.template.id);
-  const { data: initFeedbacks, isFetching } = useGetFeedbacksQuery(templateId);
-  const [saveFeedback] = useSaveFeedbackMutation();
-
-  useEffect(() => {
-    setFeedbacks(initFeedbacks?.filter(_f => _f.status === "published") || []);
-  }, [initFeedbacks]);
+  const { data: feedbacks, isFetching } = useGetFeedbacksQuery(templateId);
+  const [saveFeedback, { isLoading }] = useSaveFeedbackMutation();
 
   const handleSubmit = async (feedback: string) => {
     if (!feedback || !currentUser) return;
 
     setFeedback("");
-    const newFeedback = await saveFeedback({
+    await saveFeedback({
       comment: feedback,
       template: templateId,
     }).unwrap();
-    setFeedbacks(prevFeedbacks => prevFeedbacks.concat(newFeedback));
     scrollToBottom();
   };
 
@@ -63,8 +52,7 @@ export const Feedback = () => {
     }
   }
 
-  // Usage
-
+  const publichedFeedbacks = feedbacks?.filter(_f => _f.status === "published") || [];
   return (
     <Stack
       gap={3}
@@ -95,10 +83,10 @@ export const Feedback = () => {
       >
         <>
           {isFetching ? (
-            <FeedbackPlaceholder count={3} />
+            <ChatMessagePlaceholder count={3} />
           ) : (
             <>
-              {feedbacks.map(feedback => {
+              {publichedFeedbacks.map(feedback => {
                 const createdAt =
                   timeAgo(feedback.created_at) === "some time ago"
                     ? timeAgo(new Date(new Date().getTime() - 2000))
@@ -175,6 +163,7 @@ export const Feedback = () => {
               onChange={setFeedback}
               placeholder="Leave your feedback..."
               maxLength={maxLength}
+              loading={isLoading}
             />
           </Box>
           <Typography

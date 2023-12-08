@@ -3,11 +3,10 @@ import ArrowUpward from "@mui/icons-material/ArrowUpward";
 import KeyboardCommandKey from "@mui/icons-material/KeyboardCommandKey";
 import Box from "@mui/material/Box";
 import InputBase from "@mui/material/InputBase";
-import Button from "@mui/material/Button";
-import PlayCircleFilledWhiteOutlined from "@mui/icons-material/PlayCircleFilledWhiteOutlined";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setAccordionChatMode } from "@/core/store/templatesSlice";
 import SlowMotionVideo from "@mui/icons-material/SlowMotionVideo";
+import { CircularProgress } from "@mui/material";
 
 interface MessageSenderProps {
   onSubmit: (value: string) => void;
@@ -18,6 +17,7 @@ interface MessageSenderProps {
   onGenerate?: () => void;
   showGenerate?: boolean;
   maxLength?: number;
+  loading: boolean;
 }
 
 function MessageSender({
@@ -29,6 +29,7 @@ function MessageSender({
   onGenerate,
   showGenerate,
   maxLength,
+  loading,
 }: MessageSenderProps) {
   const [localValue, setLocalValue] = useState("");
   const [isFocused, setIsFocused] = useState(false);
@@ -127,7 +128,12 @@ function MessageSender({
           color: { xs: !hasNoValue ? "#8E8E94" : "white", md: "white" },
         }}
       >
-        {mode === "chat" && showGenerate && !localValue ? (
+        {loading ? (
+          <CircularProgress
+            size={"20px"}
+            sx={{ color: "primary.light", p: "4px" }}
+          />
+        ) : mode === "chat" && showGenerate && !localValue ? (
           <SlowMotionVideo
             onClick={() => {
               if (isGenerating) {
