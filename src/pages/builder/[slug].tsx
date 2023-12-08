@@ -198,7 +198,16 @@ export const Builder = () => {
   }, [selectedNode]);
 
   useEffect(() => {
+    if (!selectedNodeData) {
+      return;
+    }
+
     updateEditor();
+    setNodesData(prevNodes =>
+      prevNodes
+        .filter(_node => _node.id !== selectedNodeData.id || _node.temp_id !== selectedNodeData.temp_id)
+        .concat(selectedNodeData),
+    );
   }, [selectedNodeData]);
 
   const handleKeyboard = async (e: KeyboardEvent) => {
@@ -210,12 +219,15 @@ export const Builder = () => {
     }
   };
 
-  const createNode = async () => {
+  const createNode = async (label: string = `Prompt #${nodeCount}`) => {
     const socket = new ClassicPreset.Socket("socket");
-    const node = new Node(`Prompt #${nodeCount}`);
+    const node = new Node(label);
     node.addInput("Input", new ClassicPreset.Input(socket, "Input"));
     node.addOutput("Output", new ClassicPreset.Output(socket, "Output"));
     node.engineIcon = engines?.find(eng => eng.id === 1)?.icon || "";
+    node.editor = editor?.editor;
+    node.area = editor?.area;
+    node.resetNodeData = resetNodeData;
 
     const allNodes = editor?.editor.getNodes();
 
@@ -259,6 +271,9 @@ export const Builder = () => {
       node.addInput("Input", new ClassicPreset.Input(socket, "Input"));
       node.addOutput("Output", new ClassicPreset.Output(socket, "Output"));
       node.engineIcon = engines?.find(eng => eng.id === selectedNodeData.engine_id)?.icon || "";
+      node.editor = editor?.editor;
+      node.area = editor?.area;
+      node.resetNodeData = resetNodeData;
 
       const allNodes = editor?.editor.getNodes();
 
@@ -296,9 +311,9 @@ export const Builder = () => {
       ]);
     }
   };
-  const resetNodeData = () => {
+  const resetNodeData = (selectedNode: Node | null = null) => {
+    setSelectedNode(selectedNode);
     setSelectedNodeData(null);
-    setSelectedNode(null);
   };
 
   const removeNode = async () => {
@@ -505,9 +520,9 @@ export const Builder = () => {
                   style={{
                     transitionDelay: "100ms",
                     width: "70%",
-                    height: "80%",
+                    height: "68%",
                     position: "absolute",
-                    top: "5%",
+                    top: "15%",
                     left: "15%",
                   }}
                 >
