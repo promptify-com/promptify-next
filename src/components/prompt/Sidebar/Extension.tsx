@@ -51,7 +51,7 @@ export const Extension = () => {
           },
         }}
       >
-        Install Extension
+        Coming Soon
       </Button>
       <Button
         onClick={() => {}}
