@@ -285,7 +285,7 @@ export interface TempalteApiStatusState {
 
 export interface IFeedback {
   id: number;
-  user: IUser;
+  user: UserPartial;
   created_at: string;
   template: number;
   comment: string;
@@ -294,4 +294,5 @@ export interface IFeedback {
 export interface IPostFeedback {
   template: number;
   comment: string;
+  user: UserPartial;
 }
