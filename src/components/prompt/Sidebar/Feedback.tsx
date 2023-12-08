@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { useGetFeedbacksQuery, useSaveFeedbackMutation } from "@/core/api/templates";
 import { useAppSelector } from "@/hooks/useStore";
 import { IFeedback } from "@/common/types/template";
+import ChatMessagePlaceholder from "@/components/placeholders/ChatMessagePlaceholder";
 
 const maxLength = 2500;
 
@@ -76,66 +77,71 @@ export const Feedback = () => {
         }}
       >
         <>
-          {feedbacks.map(feedback => {
-            const createdAt =
-              timeAgo(feedback.created_at) === "some time ago"
-                ? timeAgo(new Date(new Date().getTime() - 2000))
-                : timeAgo(feedback.created_at);
-            return (
-              <Stack
-                key={feedback.id}
-                direction={"row"}
-                gap={1.5}
-              >
-                <Avatar
-                  src={feedback.user.avatar}
-                  alt={"Promptify"}
-                  sx={{
-                    width: 32,
-                    height: 32,
-                    bgcolor: "surface.5",
-                  }}
-                />
-                <Stack gap={1.5}>
-                  <Stack
-                    direction={"row"}
-                    alignItems={"center"}
-                    gap={1.5}
-                  >
-                    <Typography
-                      fontSize={13}
-                      fontWeight={500}
-                      color={"primary.main"}
+          {isFetching ? (
+            <ChatMessagePlaceholder count={3} />
+          ) : (
+            feedbacks.map(feedback => {
+              const createdAt =
+                timeAgo(feedback.created_at) === "some time ago"
+                  ? timeAgo(new Date(new Date().getTime() - 2000))
+                  : timeAgo(feedback.created_at);
+              return (
+                <Stack
+                  key={feedback.id}
+                  direction={"row"}
+                  gap={1.5}
+                >
+                  <Avatar
+                    src={feedback.user.avatar}
+                    alt={"Promptify"}
+                    sx={{
+                      width: 32,
+                      height: 32,
+                      bgcolor: "surface.5",
+                    }}
+                  />
+                  <Stack gap={1.5}>
+                    <Stack
+                      direction={"row"}
+                      alignItems={"center"}
+                      gap={1.5}
                     >
-                      {feedback.user.first_name
-                        ? `${feedback.user.first_name} ${feedback.user.last_name}`
-                        : feedback.user.username}
-                    </Typography>
+                      <Typography
+                        fontSize={13}
+                        fontWeight={500}
+                        color={"primary.main"}
+                      >
+                        {feedback.user.first_name
+                          ? feedback.user.first_name
+                          : feedback.user.username.charAt(0).toUpperCase() +
+                            feedback.user.username.slice(1).toLowerCase()}
+                      </Typography>
+                      <Typography
+                        fontSize={10}
+                        fontWeight={400}
+                        color={"onSurface"}
+                        sx={{
+                          opacity: 0.5,
+                        }}
+                      >
+                        {createdAt}
+                      </Typography>
+                    </Stack>
                     <Typography
-                      fontSize={10}
+                      fontSize={14}
                       fontWeight={400}
-                      color={"onSurface"}
+                      color={"common.black"}
                       sx={{
-                        opacity: 0.5,
+                        wordBreak: "break-word",
                       }}
                     >
-                      {createdAt}
+                      {feedback.comment}
                     </Typography>
                   </Stack>
-                  <Typography
-                    fontSize={14}
-                    fontWeight={400}
-                    color={"common.black"}
-                    sx={{
-                      wordBreak: "break-word",
-                    }}
-                  >
-                    {feedback.comment}
-                  </Typography>
                 </Stack>
-              </Stack>
-            );
-          })}
+              );
+            })
+          )}
         </>
         <div ref={containerRef}></div>
       </Stack>

@@ -51,7 +51,7 @@ const MessageSender: React.FC<MessageSenderProps> = ({
     width: "27px",
     height: "27px",
     ":hover": {
-      bgcolor: showGenerate ? "inherit" : "#626673",
+      bgcolor: localValue ? "primary.light" : "transparent",
     },
     "& svg": {
       width: showGenerate && !localValue ? "24px" : "19px",
@@ -145,6 +145,7 @@ const MessageSender: React.FC<MessageSenderProps> = ({
       ) : (
         <IconButton
           sx={sendBtnStyle}
+          disabled={!localValue}
           onClick={() => {
             if (!localValue || isGenerating) {
               return;

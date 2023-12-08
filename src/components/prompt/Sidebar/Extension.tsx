@@ -51,7 +51,7 @@ export const Extension = () => {
           },
         }}
       >
-        Coming Soon
+        Coming soon
       </Button>
       <Button
         onClick={() => {}}
