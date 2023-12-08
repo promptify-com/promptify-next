@@ -25,11 +25,12 @@ export const Feedback = () => {
     if (!feedback || !currentUser) return;
 
     setFeedback("");
+    scrollToBottom();
     await saveFeedback({
       comment: feedback,
       template: templateId,
+      user: currentUser,
     }).unwrap();
-    scrollToBottom();
   };
 
   const scrollToBottom = () => {
@@ -116,6 +117,7 @@ export const Feedback = () => {
                           fontSize={13}
                           fontWeight={500}
                           color={"primary.main"}
+                          textTransform={"capitalize"}
                         >
                           {getDisplayName(feedback.user)}
                         </Typography>
