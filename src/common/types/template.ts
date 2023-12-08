@@ -2,6 +2,7 @@ import { Category } from "@/core/api/dto/templates";
 import { IEditPrompts } from "./builder";
 import { ReactNode } from "react";
 import { IUser } from "./user";
+import { UserPartial } from "@/core/api/dto/user";
 
 export type FormType = "create" | "edit";
 
@@ -30,7 +31,7 @@ export interface SidebarLink {
 
 export interface IFeedback {
   id: number;
-  user: IUser;
+  user: UserPartial;
   created_at: string;
   template: number;
   comment: string;
@@ -39,6 +40,7 @@ export interface IFeedback {
 export interface IPostFeedback {
   template: number;
   comment: string;
+  user: UserPartial;
 }
 
 export interface TemplateApiStatus {

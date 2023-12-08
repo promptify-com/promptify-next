@@ -3,6 +3,7 @@ import { baseApi } from "./api";
 import { PromptParams } from "./dto/prompts";
 import { FilterParams, Templates, TemplatesWithPagination } from "./dto/templates";
 import { IEditTemplate } from "@/common/types/editTemplate";
+import { randomId } from "@/common/helpers";
 
 const getSearchParams = (params: FilterParams) => {
   const searchParams = new URLSearchParams();
@@ -126,15 +127,27 @@ export const templatesApi = baseApi.injectEndpoints({
         query: (data: IPostFeedback) => ({
           url: `/api/meta/feedbacks/`,
           method: "post",
-          data,
+          data: { template: data.template, comment: data.comment },
         }),
         async onQueryStarted(feedback, { dispatch, queryFulfilled }) {
-          const { data: savedFeedback } = await queryFulfilled;
-          dispatch(
-            templatesApi.util.updateQueryData("getFeedbacks", savedFeedback.template, feedbacks => {
-              return feedbacks.concat(savedFeedback);
+          const patchResult = dispatch(
+            templatesApi.util.updateQueryData("getFeedbacks", feedback.template, feedbacks => {
+              return feedbacks.concat({
+                user: feedback.user,
+                template: feedback.template,
+                id: randomId(),
+                status: "published",
+                created_at: new Date().toISOString(),
+                comment: feedback.comment,
+              });
             }),
           );
+
+          try {
+            await queryFulfilled;
+          } catch {
+            patchResult.undo();
+          }
         },
       }),
       setTemplateEnableApi: builder.mutation<void, number>({
