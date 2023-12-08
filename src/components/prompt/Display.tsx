@@ -50,7 +50,7 @@ export const Display: React.FC<Props> = ({ templateData }) => {
     if (!container) return;
 
     const { scrollTop, scrollHeight, clientHeight } = container;
-    const isAtBottom = scrollTop + clientHeight >= scrollHeight - 80;
+    const isAtBottom = scrollTop + clientHeight >= scrollHeight - 120;
     setShowScrollDown(!isAtBottom);
     setIsUserAtBottom(isAtBottom);
   };
@@ -172,7 +172,7 @@ export const Display: React.FC<Props> = ({ templateData }) => {
                 width: "32px",
                 position: "sticky",
                 left: "50%",
-                bottom: "70px",
+                bottom: "30px",
                 zIndex: 999,
                 bgcolor: "surface.3",
                 boxShadow: "0px 4px 8px 3px #e1e2ece6, 0px 0px 4px 0px rgb(0 0 0 / 0%)",

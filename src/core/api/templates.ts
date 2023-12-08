@@ -119,6 +119,7 @@ export const templatesApi = baseApi.injectEndpoints({
           url: `/api/meta/templates/${id}/feedbacks/`,
           method: "get",
         }),
+        keepUnusedDataFor: 900,
         providesTags: ["Feedbacks"],
       }),
       saveFeedback: builder.mutation<IFeedback, IPostFeedback>({

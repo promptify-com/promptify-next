@@ -119,6 +119,7 @@ export const DisplayActions: React.FC<Props> = ({
                     alignItems={"center"}
                     justifyContent={"center"}
                     gap={1}
+                    maxWidth={"90%"}
                   >
                     <Stack
                       alignItems={"center"}
