@@ -1,6 +1,6 @@
 import { baseApi } from "./api";
 import { PromptParams } from "./dto/prompts";
-import { FilterParams, Templates, TemplatesWithPagination } from "./dto/templates";
+import { FilterParams, TemplateApiStatus, Templates, TemplatesWithPagination } from "./dto/templates";
 import { IEditTemplate } from "@/common/types/editTemplate";
 
 const getSearchParams = (params: FilterParams) => {
@@ -113,6 +113,12 @@ export const templatesApi = baseApi.injectEndpoints({
           method: "get",
         }),
       }),
+      getTemplateApiStatus: builder.query<TemplateApiStatus, number>({
+        query: id => ({
+          url: `/api/meta/templates/${id}/enable-api`,
+          method: "get",
+        }),
+      }),
       setTemplateEnableApi: builder.mutation<void, number>({
         query: (id: number) => ({
           url: `/api/meta/templates/${id}/enable-api`,
@@ -139,4 +145,5 @@ export const {
   useViewTemplateMutation,
   useGetsuggestedTemplatesByCategoryQuery,
   useSetTemplateEnableApiMutation,
+  useGetTemplateApiStatusQuery,
 } = templatesApi;

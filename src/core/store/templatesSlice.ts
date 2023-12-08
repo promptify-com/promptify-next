@@ -1,3 +1,4 @@
+import { TempalteApiStatusState, TemplateApiStatus } from "./../api/dto/templates";
 import { Link } from "@/common/types/TemplateToolbar";
 import { AccordionChatMode } from "@/common/types/chat";
 import { AnsweredInputType } from "@/common/types/prompt";
@@ -16,6 +17,7 @@ export interface TemplatesProps {
   activeSideBarLink: Link | null;
   accordionChatMode: AccordionChatMode;
   showPromptsView: boolean;
+  templateApiStatus: TempalteApiStatusState;
 }
 
 type UpdateTemplateDataPayload = Pick<TemplatesProps, "is_favorite" | "id" | "likes">;
@@ -32,6 +34,10 @@ const initialState: TemplatesProps = {
   answeredInputs: [],
   accordionChatMode: "input",
   showPromptsView: false,
+  templateApiStatus: {
+    data: null,
+    isLoading: true,
+  },
 };
 
 export const templatesSlice = createSlice({
@@ -72,6 +78,9 @@ export const templatesSlice = createSlice({
     setShowPromptsView: (state, action: PayloadAction<boolean>) => {
       state.showPromptsView = action.payload;
     },
+    setTemplateApiStatus: (state, action: PayloadAction<TempalteApiStatusState>) => {
+      state.templateApiStatus = action.payload;
+    },
   },
 });
 
@@ -85,6 +94,7 @@ export const {
   setActiveToolbarLink,
   setAccordionChatMode,
   setShowPromptsView,
+  setTemplateApiStatus,
 } = templatesSlice.actions;
 
 export default templatesSlice.reducer;

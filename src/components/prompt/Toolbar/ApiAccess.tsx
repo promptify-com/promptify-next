@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ApiAccessModal from "@/components/modals/ApiAccessModal";
 import { Templates } from "@/core/api/dto/templates";
 import { Button, Stack, Typography, alpha } from "@mui/material";
@@ -6,20 +6,40 @@ import { ApiAccessIcon } from "@/assets/icons/ApiAccess";
 import { theme } from "@/theme";
 import { Api } from "@mui/icons-material";
 import Link from "next/link";
-import { useSetTemplateEnableApiMutation } from "@/core/api/templates";
+import { templatesApi, useSetTemplateEnableApiMutation } from "@/core/api/templates";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { setTemplateApiStatus } from "@/core/store/templatesSlice";
 
 interface ApiAccessProps {
   template: Templates;
 }
 
 export const ApiAccess: React.FC<ApiAccessProps> = ({ template }) => {
+  const [enableApi, { isLoading }] = useSetTemplateEnableApiMutation();
+  const [getTempalteEnable] = templatesApi.endpoints.getTemplateApiStatus.useLazyQuery();
+
+  const dispatch = useAppDispatch();
+  const tempateApiStatus = useAppSelector(state => state.template.templateApiStatus);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const [enableApi, { isLoading }] = useSetTemplateEnableApiMutation();
+  const isTemplateApiEnabled = template.is_api_enabled || tempateApiStatus.data?.is_api_enabled;
+
+  const getTempalteApiStatus = async () => {
+    await getTempalteEnable(template.id)
+      .unwrap()
+      .then(data => dispatch(setTemplateApiStatus({ data, isLoading: false })))
+      .catch(_err => dispatch(setTemplateApiStatus({ data: null, isLoading: false })));
+  };
+  useEffect(() => {
+    getTempalteApiStatus();
+  }, [isLoading]);
 
   const handleEnableApi = () => {
     setIsModalOpen(true);
-    enableApi(template.id);
+    if (!isTemplateApiEnabled) {
+      enableApi(template.id);
+    }
   };
 
   return (
@@ -49,11 +69,10 @@ export const ApiAccess: React.FC<ApiAccessProps> = ({ template }) => {
       <Button
         onClick={handleEnableApi}
         startIcon={<Api />}
-        disabled={isLoading}
+        disabled={tempateApiStatus.isLoading || isLoading}
         sx={{
           p: "8px 22px",
           borderRadius: "100px",
-          gap: 1.5,
           bgcolor: "primary.main",
           color: "primary.contrastText",
           ":hover": {
@@ -62,7 +81,7 @@ export const ApiAccess: React.FC<ApiAccessProps> = ({ template }) => {
           },
         }}
       >
-        {template.is_api_enabled ? "Use API" : "Enable API"}
+        {isTemplateApiEnabled ? "Use API" : "Enable API"}
       </Button>
       <Link
         href={"#"}

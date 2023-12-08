@@ -272,3 +272,12 @@ export interface CollectionMutationParams {
 
 export type ExecutionTemplatePopupType = "update" | "delete" | "export" | null;
 export type FeedbackType = "NEUTRAL" | "LIKED" | "DISLIKED";
+
+export interface TemplateApiStatus {
+  is_api_enabled: boolean;
+}
+
+export interface TempalteApiStatusState {
+  data: TemplateApiStatus | null;
+  isLoading: boolean;
+}
