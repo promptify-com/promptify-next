@@ -1,14 +1,18 @@
 import { useEffect, useState } from "react";
-import ApiAccessModal from "@/components/modals/ApiAccessModal";
-import { Templates } from "@/core/api/dto/templates";
-import { Button, Stack, Typography, alpha } from "@mui/material";
-import { ApiAccessIcon } from "@/assets/icons/ApiAccess";
-import { theme } from "@/theme";
-import { Api } from "@mui/icons-material";
+import Api from "@mui/icons-material/Api";
 import Link from "next/link";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import { alpha } from "@mui/material/styles";
+import Button from "@mui/material/Button";
+
+import ApiAccessModal from "@/components/modals/ApiAccessModal";
+import { theme } from "@/theme";
+import { ApiAccessIcon } from "@/assets/icons/ApiAccess";
 import { templatesApi, useSetTemplateEnableApiMutation } from "@/core/api/templates";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setTemplateApiStatus } from "@/core/store/templatesSlice";
+import type { Templates } from "@/core/api/dto/templates";
 
 interface ApiAccessProps {
   template: Templates;
@@ -26,6 +30,7 @@ export const ApiAccess: React.FC<ApiAccessProps> = ({ template }) => {
   const isTemplateApiEnabled = template.is_api_enabled || tempateApiStatus.data?.is_api_enabled;
 
   const getTempalteApiStatus = async () => {
+    if (tempateApiStatus.data) return;
     await getTempalteEnable(template.id)
       .unwrap()
       .then(data => dispatch(setTemplateApiStatus({ data, isLoading: false })))
@@ -33,12 +38,13 @@ export const ApiAccess: React.FC<ApiAccessProps> = ({ template }) => {
   };
   useEffect(() => {
     getTempalteApiStatus();
-  }, [isLoading]);
+  }, []);
 
   const handleEnableApi = () => {
     setIsModalOpen(true);
     if (!isTemplateApiEnabled) {
       enableApi(template.id);
+      dispatch(setTemplateApiStatus({ data: { is_api_enabled: true }, isLoading: false }));
     }
   };
 
@@ -78,6 +84,11 @@ export const ApiAccess: React.FC<ApiAccessProps> = ({ template }) => {
           ":hover": {
             bgcolor: "action.hover",
             color: "text.primary",
+          },
+          ":disabled": {
+            bgcolor: "surface.5",
+            color: "onSurface",
+            opacity: 0.4,
           },
         }}
       >

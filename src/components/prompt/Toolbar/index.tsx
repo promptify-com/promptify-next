@@ -109,7 +109,6 @@ function TemplateToolbar({ template }: Props) {
           {filteredToolbarItems.map(link => (
             <ToolbarItem
               key={link.title}
-              templateId={template.id}
               item={link}
               onClick={handleItemClick}
               executionsLength={executions?.length ?? 0}
