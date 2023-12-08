@@ -44,6 +44,7 @@ export default function useChatBox() {
     templatePrompts: Prompts[],
   ) => {
     const promptsData: ResPrompt[] = [];
+    const promptParameterIds = new Map<number, number[]>();
 
     // we need to go through all inputs per prompt if exist, then create new entry for them
     templatePrompts.forEach(prompt => {
@@ -61,18 +62,40 @@ export default function useChatBox() {
         {} as Record<string, string>,
       );
 
+      if (!!prompt.parameters.length) {
+        const paramIds = prompt.parameters.map(param => param.parameter.id);
+        promptParameterIds.set(prompt.id, paramIds);
+      }
+
       if (!Object.keys(prompt_params)) {
         return;
       }
 
-      const _paramValues = paramsValues.find(param => param.id === prompt.id);
-
       promptsData.push({
-        contextual_overrides: _paramValues?.contextual_overrides || [],
+        contextual_overrides: [],
         prompt: prompt.id,
         prompt_params,
       });
     });
+
+    // setup parameters values
+    if (!!paramsValues.length) {
+      promptsData.forEach(promptData => {
+        const paramIds = promptParameterIds.get(promptData.prompt);
+
+        if (!paramIds?.length) {
+          return;
+        }
+
+        paramsValues.forEach(({ contextual_overrides: ctx }) => {
+          ctx.forEach(({ score, parameter }) => {
+            if (paramIds.includes(parameter)) {
+              promptData.contextual_overrides.push({ score, parameter });
+            }
+          });
+        });
+      });
+    }
 
     promptsData.forEach(promptData => {
       const paramsKeys = Object.keys(promptData.prompt_params);
