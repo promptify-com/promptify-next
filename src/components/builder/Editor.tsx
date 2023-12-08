@@ -1,7 +1,7 @@
 import { type Dispatch, type SetStateAction } from "react";
 import { createRoot } from "react-dom/client";
 import { NodeEditor, GetSchemes, ClassicPreset, BaseSchemes, NodeId } from "rete";
-import { AreaPlugin, AreaExtensions, Zoom, Drag } from "rete-area-plugin";
+import { AreaPlugin, AreaExtensions, Zoom } from "rete-area-plugin";
 import { BidirectFlow, ConnectionPlugin } from "rete-connection-plugin";
 import { ReactRenderPlugin, Presets, ReactArea2D } from "rete-react-render-plugin";
 import { PromptCard } from "./PromptCard";
@@ -18,6 +18,9 @@ export class Node extends ClassicPreset.Node {
   count = "";
   temp_id = 0;
   engineIcon = "";
+  editor?: NodeEditor<Schemes>;
+  area?: AreaPlugin<Schemes, AreaExtra>;
+  resetNodeData?: (node: Node | null) => void = () => {};
 }
 
 class Connection extends ClassicPreset.Connection<ClassicPreset.Node, ClassicPreset.Node> {
@@ -79,11 +82,17 @@ export async function createEditor(
     ]);
   };
 
-  const createNode = async (name: string, prompt: Prompts) => {
+  const createNode = async (label: string, prompt: Prompts) => {
     const socket = new ClassicPreset.Socket("socket");
-    const node = new Node(name);
+    const node = new Node(label);
     node.addInput("Input", new ClassicPreset.Input(socket, "Input"));
     node.addOutput("Output", new ClassicPreset.Output(socket, "Output"));
+    node.editor = editor;
+    node.area = area;
+    node.resetNodeData = _node => {
+      setSelectedNode(_node);
+      setSelectedNodeData(null);
+    };
 
     const allNodes = editor.getNodes();
 
@@ -152,14 +161,8 @@ export async function createEditor(
 
   AreaExtensions.selectableNodes(area, selector, { accumulating });
 
-  const contextTypes = new Set<string>();
-
   area.addPipe(async context => {
-    contextTypes.add(context.type);
-
     if (context.type === "connectioncreated" && isLoaded) {
-      contextTypes.clear();
-
       let target: any = context.data.target;
       let source: any = context.data.source;
 
@@ -194,39 +197,7 @@ export async function createEditor(
       return context;
     }
 
-    if (context.type === "nodedragged" && contextTypes.has("nodetranslated")) {
-      contextTypes.clear();
-
-      const node = editor.getNode(context.data.id);
-      node.selected = false;
-      area.update("node", node.id);
-
-      return context;
-    }
-
-    if (context.type === "nodedragged" && !contextTypes.has("nodetranslate")) {
-      contextTypes.clear();
-
-      const allNodes = editor.getNodes();
-      allNodes?.forEach(allNodesNode => {
-        allNodesNode.selected = false;
-        area.update("node", allNodesNode.id);
-      });
-
-      const node = editor.getNode(context.data.id);
-      node.selected = true;
-      area.update("node", node.id);
-
-      setSelectedNode(node);
-      setSelectedNodeData(null);
-      setSelectedConnection(null);
-
-      return context;
-    }
-
-    if (context.type === "pointerdown") {
-      contextTypes.clear();
-
+    if (context.type === "pointerdown" || context.type === "nodepicked") {
       const allNodes = editor.getNodes();
       allNodes?.forEach(node => {
         node.selected = false;
