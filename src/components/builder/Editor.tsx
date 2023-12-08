@@ -217,6 +217,7 @@ export async function createEditor(
     Presets.classic.setup({
       area,
       customize: {
+        // @ts-ignore
         node() {
           return PromptCard;
         },
