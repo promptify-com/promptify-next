@@ -128,6 +128,14 @@ export const templatesApi = baseApi.injectEndpoints({
           method: "post",
           data,
         }),
+        async onQueryStarted(feedback, { dispatch, queryFulfilled }) {
+          const { data: savedFeedback } = await queryFulfilled;
+          dispatch(
+            templatesApi.util.updateQueryData("getFeedbacks", savedFeedback.template, feedbacks => {
+              return feedbacks.concat(savedFeedback);
+            }),
+          );
+        },
       }),
       setTemplateEnableApi: builder.mutation<void, number>({
         query: (id: number) => ({

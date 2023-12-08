@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { InputBase, Box, IconButton } from "@mui/material";
+import { InputBase, Box, IconButton, CircularProgress } from "@mui/material";
 import { ArrowForward, KeyboardCommandKey, Send } from "@mui/icons-material";
 import { useAppSelector } from "@/hooks/useStore";
 import SlowMotionVideo from "@mui/icons-material/SlowMotionVideo";
@@ -12,6 +12,7 @@ interface MessageSenderProps {
   onGenerate?: () => void;
   showGenerate?: boolean;
   maxLength?: number;
+  loading?: boolean;
 }
 
 const MessageSender: React.FC<MessageSenderProps> = ({
@@ -22,6 +23,7 @@ const MessageSender: React.FC<MessageSenderProps> = ({
   onGenerate,
   showGenerate,
   maxLength,
+  loading,
 }) => {
   const [localValue, setLocalValue] = useState("");
   const fieldRef = useRef<HTMLInputElement | null>(null);
@@ -124,7 +126,12 @@ const MessageSender: React.FC<MessageSenderProps> = ({
           },
         }}
       />
-      {showGenerate && !localValue ? (
+      {loading ? (
+        <CircularProgress
+          size={"20px"}
+          sx={{ color: "primary.light", p: "4px" }}
+        />
+      ) : showGenerate && !localValue ? (
         <IconButton
           sx={sendBtnStyle}
           onClick={() => {

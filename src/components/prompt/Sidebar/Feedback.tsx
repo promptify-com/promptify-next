@@ -3,10 +3,9 @@ import SigninButton from "@/components/common/buttons/SigninButton";
 import useToken from "@/hooks/useToken";
 import { Avatar, Box, Stack, Typography } from "@mui/material";
 import MessageSender from "../ChatBox/MessageSender";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useGetFeedbacksQuery, useSaveFeedbackMutation } from "@/core/api/templates";
 import { useAppSelector } from "@/hooks/useStore";
-import { IFeedback } from "@/common/types/template";
 import ChatMessagePlaceholder from "@/components/placeholders/ChatMessagePlaceholder";
 
 const maxLength = 2500;
@@ -14,27 +13,21 @@ const maxLength = 2500;
 export const Feedback = () => {
   const token = useToken();
   const [feedback, setFeedback] = useState("");
-  const [feedbacks, setFeedbacks] = useState<IFeedback[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLDivElement>(null);
   const currentUser = useAppSelector(state => state.user.currentUser);
   const templateId = useAppSelector(state => state.template.id);
-  const { data: initFeedbacks, isFetching } = useGetFeedbacksQuery(templateId);
-  const [saveFeedback] = useSaveFeedbackMutation();
-
-  useEffect(() => {
-    setFeedbacks(initFeedbacks?.filter(_f => _f.status === "published") || []);
-  }, [initFeedbacks]);
+  const { data: feedbacks, isFetching } = useGetFeedbacksQuery(templateId);
+  const [saveFeedback, { isLoading }] = useSaveFeedbackMutation();
 
   const handleSubmit = async (feedback: string) => {
     if (!feedback || !currentUser) return;
 
     setFeedback("");
-    const newFeedback = await saveFeedback({
+    await saveFeedback({
       comment: feedback,
       template: templateId,
     }).unwrap();
-    setFeedbacks(prevFeedbacks => prevFeedbacks.concat(newFeedback));
     scrollToBottom();
   };
 
@@ -47,6 +40,8 @@ export const Feedback = () => {
     });
     containerRef.current.style.paddingBottom = "0";
   };
+
+  const publichedFeedbacks = feedbacks?.filter(_f => _f.status === "published") || [];
 
   return (
     <Stack
@@ -80,67 +75,69 @@ export const Feedback = () => {
           {isFetching ? (
             <ChatMessagePlaceholder count={3} />
           ) : (
-            feedbacks.map(feedback => {
-              const createdAt =
-                timeAgo(feedback.created_at) === "some time ago"
-                  ? timeAgo(new Date(new Date().getTime() - 2000))
-                  : timeAgo(feedback.created_at);
-              return (
-                <Stack
-                  key={feedback.id}
-                  direction={"row"}
-                  gap={1.5}
-                >
-                  <Avatar
-                    src={feedback.user.avatar}
-                    alt={"Promptify"}
-                    sx={{
-                      width: 32,
-                      height: 32,
-                      bgcolor: "surface.5",
-                    }}
-                  />
-                  <Stack gap={1.5}>
-                    <Stack
-                      direction={"row"}
-                      alignItems={"center"}
-                      gap={1.5}
-                    >
-                      <Typography
-                        fontSize={13}
-                        fontWeight={500}
-                        color={"primary.main"}
+            <>
+              {publichedFeedbacks.map(feedback => {
+                const createdAt =
+                  timeAgo(feedback.created_at) === "some time ago"
+                    ? timeAgo(new Date(new Date().getTime() - 2000))
+                    : timeAgo(feedback.created_at);
+                return (
+                  <Stack
+                    key={feedback.id}
+                    direction={"row"}
+                    gap={1.5}
+                  >
+                    <Avatar
+                      src={feedback.user.avatar}
+                      alt={"Promptify"}
+                      sx={{
+                        width: 32,
+                        height: 32,
+                        bgcolor: "surface.5",
+                      }}
+                    />
+                    <Stack gap={1.5}>
+                      <Stack
+                        direction={"row"}
+                        alignItems={"center"}
+                        gap={1.5}
                       >
-                        {feedback.user.first_name
-                          ? feedback.user.first_name
-                          : feedback.user.username.charAt(0).toUpperCase() +
-                            feedback.user.username.slice(1).toLowerCase()}
-                      </Typography>
+                        <Typography
+                          fontSize={13}
+                          fontWeight={500}
+                          color={"primary.main"}
+                        >
+                          {feedback.user.first_name
+                            ? feedback.user.first_name
+                            : feedback.user.username.charAt(0).toUpperCase() +
+                              feedback.user.username.slice(1).toLowerCase()}
+                        </Typography>
+                        <Typography
+                          fontSize={10}
+                          fontWeight={400}
+                          color={"onSurface"}
+                          sx={{
+                            opacity: 0.5,
+                          }}
+                        >
+                          {createdAt}
+                        </Typography>
+                      </Stack>
                       <Typography
-                        fontSize={10}
+                        fontSize={14}
                         fontWeight={400}
-                        color={"onSurface"}
+                        color={"common.black"}
                         sx={{
-                          opacity: 0.5,
+                          wordBreak: "break-word",
                         }}
                       >
-                        {createdAt}
+                        {feedback.comment}
                       </Typography>
                     </Stack>
-                    <Typography
-                      fontSize={14}
-                      fontWeight={400}
-                      color={"common.black"}
-                      sx={{
-                        wordBreak: "break-word",
-                      }}
-                    >
-                      {feedback.comment}
-                    </Typography>
                   </Stack>
-                </Stack>
-              );
-            })
+                );
+              })}
+            </>
           )}
         </>
         <div ref={containerRef}></div>
@@ -156,6 +153,7 @@ export const Feedback = () => {
               onChange={setFeedback}
               placeholder="Leave your feedback..."
               maxLength={maxLength}
+              loading={isLoading}
             />
           </Box>
           <Typography
