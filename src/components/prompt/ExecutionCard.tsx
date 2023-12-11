@@ -120,7 +120,10 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
         </Typography>
       )}
       {execution && (
-        <Stack direction={{ md: "row" }}>
+        <Stack
+          direction={{ md: "row" }}
+          pb={{ xs: 2, md: 0 }}
+        >
           <Stack gap={1}>
             {sortedPrompts?.map((exec, index) => {
               const prevItem = sortedPrompts[index - 1];
