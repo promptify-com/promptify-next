@@ -3,18 +3,18 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
 import { TemplatesExecutions } from "@/core/api/dto/templates";
-import type { IAnswer } from "@/common/types/chat";
 import type { Prompts } from "@/core/api/dto/prompts";
 import { theme } from "@/theme";
+import { useAppSelector } from "@/hooks/useStore";
 
 interface Props {
   execution: TemplatesExecutions | null;
   prompt: Prompts;
-  answers?: IAnswer[];
   id: number;
 }
 
-function PromptContent({ execution, prompt, id, answers }: Props) {
+function PromptContent({ execution, prompt, id }: Props) {
+  const answers = useAppSelector(state => state.chat.answers);
   function replacePlaceholdersWithAnswers(content: string): React.ReactNode {
     const placeholderRegex = /{{(.*?):.*?}}/g;
     const dollarWordRegex = /\$[a-zA-Z0-9_]+/g;

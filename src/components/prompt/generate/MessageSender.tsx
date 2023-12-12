@@ -17,7 +17,7 @@ interface MessageSenderProps {
   onGenerate?: () => void;
   showGenerate?: boolean;
   maxLength?: number;
-  loading: boolean;
+  loading?: boolean;
 }
 
 function MessageSender({

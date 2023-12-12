@@ -34,17 +34,16 @@ import { setGeneratedExecution } from "@/core/store/executionsSlice";
 import useTruncate from "@/hooks/useTruncate";
 import { theme } from "@/theme";
 import { AccordionChatMode } from "@/common/types/chat";
+import { setAnswers } from "@/core/store/chatSlice";
 
 interface Props {
   template: Templates;
   mode: AccordionChatMode;
   isExpanded: boolean;
   onCancel: () => void;
-  onClear: () => void;
-  showClear: boolean;
 }
 
-function AccordionMessageHeader({ template, mode, isExpanded, onClear, showClear, onCancel }: Props) {
+function AccordionMessageHeader({ template, mode, isExpanded, onCancel }: Props) {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const dispatch = useAppDispatch();
   const { truncate } = useTruncate();
@@ -54,6 +53,7 @@ function AccordionMessageHeader({ template, mode, isExpanded, onClear, showClear
 
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
   const showPrompts = useAppSelector(state => state.template.showPromptsView);
+  const answers = useAppSelector(state => state.chat.answers);
 
   const [executionPopup, setExecutionPopup] = useState<ExecutionTemplatePopupType>(null);
   const [executionTitle, setExecutionTitle] = useState(selectedExecution?.title);
@@ -252,11 +252,11 @@ function AccordionMessageHeader({ template, mode, isExpanded, onClear, showClear
               gap={1}
               alignItems={"center"}
             >
-              {showClear && (
+              {!!answers.length && (
                 <Button
                   onClick={e => {
                     e.stopPropagation();
-                    onClear();
+                    dispatch(setAnswers([]));
                   }}
                   endIcon={<Close sx={{ fontSize: { xs: 3 }, ml: { xs: -1, md: 0 } }} />}
                   sx={{

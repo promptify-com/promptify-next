@@ -8,14 +8,12 @@ import ParagraphPlaceholder from "@/components/placeholders/ParagraphPlaceholder
 import ExecutionFooter from "./ExecutionFooter";
 import { useAppSelector } from "@/hooks/useStore";
 import type { Templates } from "@/core/api/dto/templates";
-import type { IAnswer } from "@/common/types/chat";
 
 interface Props {
   templateData: Templates;
-  answers?: IAnswer[];
 }
 
-export const Display: React.FC<Props> = ({ templateData, answers }) => {
+export const Display: React.FC<Props> = ({ templateData }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
@@ -73,7 +71,6 @@ export const Display: React.FC<Props> = ({ templateData, answers }) => {
             <ExecutionCard
               execution={generatedExecution ?? selectedExecution}
               promptsData={templateData.prompts}
-              answers={answers}
             />
           )}
         </Box>

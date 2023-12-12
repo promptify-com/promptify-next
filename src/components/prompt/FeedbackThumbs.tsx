@@ -7,9 +7,9 @@ import { Replay } from "@mui/icons-material";
 
 import { useUpdateExecutionMutation } from "@/core/api/executions";
 import { FeedbackType, TemplatesExecutions } from "@/core/api/dto/templates";
-import { useAppDispatch } from "@/hooks/useStore";
-import { setAccordionChatMode } from "@/core/store/templatesSlice";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { Tooltip } from "@mui/material";
+import { setAnswers } from "@/core/store/chatSlice";
 
 interface newFeedBack {
   execution: TemplatesExecutions;
@@ -19,6 +19,7 @@ interface newFeedBack {
 export default function FeedbackThumbs({ vertical, execution }: newFeedBack) {
   const [updateExecution] = useUpdateExecutionMutation();
   const dispatch = useAppDispatch();
+  const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
   const [feedback, setFeedback] = useState(execution.feedback);
   const handleFeedback = (newFeedback: FeedbackType) => {
     if (feedback !== newFeedback) {
@@ -35,7 +36,26 @@ export default function FeedbackThumbs({ vertical, execution }: newFeedBack) {
   };
 
   const handleRepeat = () => {
-    dispatch(setAccordionChatMode("repeat"));
+    const { parameters } = selectedExecution!;
+
+    dispatch(setAnswers([]));
+
+    const newAnswers = parameters
+      ? Object.keys(parameters)
+          .map(promptId => {
+            const param = parameters[promptId];
+            return Object.keys(param).map(inputName => ({
+              inputName: inputName,
+              required: true,
+              question: "",
+              answer: param[inputName],
+              prompt: parseInt(promptId),
+              error: false,
+            }));
+          })
+          .flat()
+      : [];
+    dispatch(setAnswers(newAnswers));
 
     setTimeout(() => {
       const inputElement = document.getElementById("accordion-input");

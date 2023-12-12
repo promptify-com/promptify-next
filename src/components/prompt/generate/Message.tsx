@@ -1,45 +1,44 @@
-import { memo, useEffect, Dispatch, SetStateAction, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
+import Bolt from "@mui/icons-material/Bolt";
 
-import { useAppSelector } from "@/hooks/useStore";
-import { IMessage } from "@/common/types/chat";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import type { IMessage } from "@/common/types/chat";
 import useTextSimulationStreaming from "@/hooks/useTextSimulationStreaming";
-import { Bolt } from "@mui/icons-material";
 import { timeAgo } from "@/common/helpers/timeManipulation";
+import { setIsSimulationStreaming } from "@/core/store/chatSlice";
 
 interface MessageBlockProps {
   message: IMessage;
-  setIsSimulationStreaming: Dispatch<SetStateAction<boolean>>;
   onScrollToBottom: () => void;
 }
 
 interface MessageContentProps {
   content: string;
   shouldStream: boolean;
-  setIsSimulationStreaming: Dispatch<SetStateAction<boolean>>;
   onStreamingFinished: () => void;
 }
 
-const MessageContent = memo(
-  ({ content, shouldStream, setIsSimulationStreaming, onStreamingFinished }: MessageContentProps) => {
-    const { streamedText, hasFinished } = useTextSimulationStreaming({
-      text: content,
-      shouldStream,
-    });
+const MessageContent = memo(({ content, shouldStream, onStreamingFinished }: MessageContentProps) => {
+  const dispatch = useAppDispatch();
+  const { streamedText, hasFinished } = useTextSimulationStreaming({
+    text: content,
+    shouldStream,
+  });
 
-    useEffect(() => {
-      if (hasFinished) {
-        setIsSimulationStreaming(false);
-        onStreamingFinished();
-      }
-    }, [hasFinished]);
+  useEffect(() => {
+    if (hasFinished) {
+      dispatch(setIsSimulationStreaming(false));
 
-    return <>{streamedText}</>;
-  },
-);
+      onStreamingFinished();
+    }
+  }, [hasFinished]);
 
-export const Message = ({ message, setIsSimulationStreaming, onScrollToBottom }: MessageBlockProps) => {
+  return <>{streamedText}</>;
+});
+
+export const Message = ({ message, onScrollToBottom }: MessageBlockProps) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const { fromUser, text, createdAt, type } = message;
@@ -114,7 +113,6 @@ export const Message = ({ message, setIsSimulationStreaming, onScrollToBottom }:
             <MessageContent
               content={text}
               shouldStream={!fromUser}
-              setIsSimulationStreaming={setIsSimulationStreaming}
               onStreamingFinished={onScrollToBottom}
             />
           </Typography>

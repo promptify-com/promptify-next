@@ -8,6 +8,7 @@ import { useGetFeedbacksQuery, useSaveFeedbackMutation } from "@/core/api/templa
 import { useAppSelector } from "@/hooks/useStore";
 import ChatMessagePlaceholder from "@/components/placeholders/ChatMessagePlaceholder";
 import { IUser } from "@/common/types";
+import { UserPartial } from "@/core/api/dto/user";
 
 const maxLength = 2500;
 
@@ -43,7 +44,7 @@ export const Feedback = () => {
     containerRef.current.style.paddingBottom = "0";
   };
 
-  function getDisplayName(user: IUser) {
+  function getDisplayName(user: UserPartial) {
     if (user && user.first_name) {
       return user.first_name;
     } else if (user && user.username) {

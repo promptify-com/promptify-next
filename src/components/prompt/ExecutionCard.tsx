@@ -10,7 +10,6 @@ import { Subtitle } from "@/components/blocks";
 import { useAppSelector } from "@/hooks/useStore";
 import type { Prompts } from "@/core/api/dto/prompts";
 import type { TemplatesExecutions } from "@/core/api/dto/templates";
-import type { IAnswer } from "@/common/types/chat";
 import type { DisplayPrompt, PromptLiveResponse } from "@/common/types/prompt";
 import PromptContent from "./generate/PromptContent";
 import FeedbackThumbs from "./FeedbackThumbs";
@@ -18,10 +17,9 @@ import FeedbackThumbs from "./FeedbackThumbs";
 interface Props {
   execution: PromptLiveResponse | TemplatesExecutions | null;
   promptsData: Prompts[];
-  answers?: IAnswer[];
 }
 
-export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers }) => {
+export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
   const executionPrompts = execution && "data" in execution ? execution.data : execution?.prompt_executions;
   const sparkHashQueryParam = useAppSelector(state => state.executions.sparkHashQueryParam);
   const showPreview = useAppSelector(state => state.template.showPromptsView);
@@ -261,7 +259,6 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
                           <PromptContent
                             id={index + 1}
                             prompt={prompt}
-                            answers={answers}
                             execution={execution as TemplatesExecutions}
                           />
                         </Stack>

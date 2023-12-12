@@ -1,9 +1,38 @@
+import { useEffect, useState } from "react";
+
 import { getInputsFromString } from "@/common/helpers/getInputsFromString";
+import { useAppSelector } from "./useStore";
 import type { IAnswer } from "@/common/types/chat";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { PromptParams, Prompts, ResOverrides, ResPrompt } from "@/core/api/dto/prompts";
 
 export default function useChatBox() {
+  const isSimulationStreaming = useAppSelector(state => state.chat.isSimulationStreaming);
+  const inputs = useAppSelector(state => state.chat.inputs);
+  const answers = useAppSelector(state => state.chat.answers);
+
+  const [showGenerateButton, setShowGenerateButton] = useState(false);
+
+  const allRequiredInputsAnswered = (): boolean => {
+    const requiredInputs = inputs.filter(input => input.required).map(input => input.name);
+
+    if (!requiredInputs.length) {
+      return true;
+    }
+
+    const answeredInputsSet = new Set(answers.map(answer => answer.inputName));
+
+    return requiredInputs.every(name => answeredInputsSet.has(name));
+  };
+
+  useEffect(() => {
+    if (allRequiredInputsAnswered()) {
+      setShowGenerateButton(true);
+    } else {
+      setShowGenerateButton(false);
+    }
+  }, [answers]);
+
   const prepareAndRemoveDuplicateInputs = (templatePrompts: Prompts[]) => {
     const inputs: IPromptInput[] = [];
     const params: PromptParams[] = [];
@@ -133,8 +162,14 @@ export default function useChatBox() {
     return promptsData;
   };
 
+  const showGenerate =
+    !isSimulationStreaming && (showGenerateButton || Boolean(!inputs.length || !inputs[0]?.required));
+
   return {
     prepareAndRemoveDuplicateInputs,
     preparePromptsData,
+    showGenerate,
+    showGenerateButton,
+    allRequiredInputsAnswered,
   };
 }

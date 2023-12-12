@@ -8,14 +8,16 @@ import Tooltip from "@mui/material/Tooltip";
 
 import MessageSender from "./MessageSender";
 import { ProgressLogo } from "@/components/common/ProgressLogo";
-import { useAppSelector } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { setAccordionChatMode } from "@/core/store/templatesSlice";
+import { setSelectedExecution } from "@/core/store/executionsSlice";
+import { setAnswers, setIsSimulationStreaming } from "@/core/store/chatSlice";
 
 interface ChatInputProps {
   onSubmit: (value: string) => void;
   disabled: boolean;
   isValidating: boolean;
   disabledButton: boolean;
-  addNewPrompt: () => void;
   onGenerate: () => void;
   showGenerate: boolean;
 }
@@ -25,12 +27,20 @@ export const ChatInput = ({
   disabled,
   isValidating,
   disabledButton,
-  addNewPrompt,
   onGenerate,
   showGenerate,
 }: ChatInputProps) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const accordionChatMode = useAppSelector(state => state.template.accordionChatMode);
+
+  const dispatch = useAppDispatch();
+
+  const addNewPrompt = () => {
+    dispatch(setAccordionChatMode("input"));
+    dispatch(setSelectedExecution(null));
+    dispatch(setAnswers([]));
+    dispatch(setIsSimulationStreaming(false));
+  };
 
   return (
     <Grid

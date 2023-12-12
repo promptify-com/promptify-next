@@ -2,20 +2,21 @@ import Stack from "@mui/material/Stack";
 
 import FormParam from "./FormParams";
 import FormInput from "./FormInput";
-import type { IAnswer } from "@/common/types/chat";
 import type { IPromptInput } from "@/common/types/prompt";
-import type { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
+import type { PromptParams } from "@/core/api/dto/prompts";
+import { useAppSelector } from "@/hooks/useStore";
 
 interface Props {
-  inputs: IPromptInput[];
-  params: PromptParams[];
-  paramsValues: ResOverrides[];
-  answers: IAnswer[];
   onChangeInput: (value: string | File, input: IPromptInput) => void;
   onChangeParam: (value: number, param: PromptParams) => void;
 }
 
-function Inputsform({ inputs, answers, onChangeInput, onChangeParam, params, paramsValues }: Props) {
+function Inputsform({ onChangeInput, onChangeParam }: Props) {
+  const answers = useAppSelector(state => state.chat.answers);
+  const inputs = useAppSelector(state => state.chat.inputs);
+  const paramsValues = useAppSelector(state => state.chat.paramsValues);
+
+  const params = useAppSelector(state => state.chat.params);
   const _params = params.filter(param => param.is_visible);
 
   return (

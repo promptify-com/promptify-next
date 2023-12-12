@@ -1,51 +1,40 @@
-import { Dispatch, SetStateAction, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import Stack from "@mui/material/Stack";
 import Accordion from "@mui/material/Accordion";
 import Typography from "@mui/material/Typography";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import Fade from "@mui/material/Fade";
+import PlayCircle from "@mui/icons-material/PlayCircle";
+import Button from "@mui/material/Button";
 
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { AccordionChatMode, IAnswer } from "@/common/types/chat";
 import { Display } from "../Display";
 import Form from "./Form";
 import AccordionMessageHeader from "./AccordionMessageHeader";
+import { setAccordionChatMode } from "@/core/store/templatesSlice";
+import { setIsSimulationStreaming } from "@/core/store/chatSlice";
+import type { AccordionChatMode } from "@/common/types/chat";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IPromptInput } from "@/common/types/prompt";
-import type { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
-import Button from "@mui/material/Button";
-import { setAccordionChatMode } from "@/core/store/templatesSlice";
-import PlayCircle from "@mui/icons-material/PlayCircle";
+import type { PromptParams } from "@/core/api/dto/prompts";
 
 interface Props {
-  inputs: IPromptInput[];
-  params: PromptParams[];
-  paramsValues: ResOverrides[];
-  answers: IAnswer[];
   onChangeInput: (value: string | File, input: IPromptInput) => void;
   onChangeParam: (value: number, param: PromptParams) => void;
-  onClear: () => void;
   onGenerate: () => void;
   abortGenerating: () => void;
   showGenerate: boolean;
   template: Templates;
-  setIsSimulationStreaming: Dispatch<SetStateAction<boolean>>;
   accordionChatMode: AccordionChatMode;
 }
 
 export const AccordionMessage = ({
   template,
-  inputs,
-  params,
-  paramsValues,
-  answers,
   onChangeInput,
   onChangeParam,
-  onClear,
   onGenerate,
   abortGenerating,
   showGenerate,
-  setIsSimulationStreaming,
   accordionChatMode,
 }: Props) => {
   const dispatch = useAppDispatch();
@@ -59,16 +48,12 @@ export const AccordionMessage = ({
     setExpanded(isExpanded);
   };
 
-  const handleShowAccordion = () => {
-    setIsSimulationStreaming(false);
-  };
-
   return (
     <Fade
       in={true}
       unmountOnExit
       timeout={800}
-      onTransitionEnd={handleShowAccordion}
+      onTransitionEnd={() => dispatch(setIsSimulationStreaming(false))}
     >
       <Accordion
         ref={accordionRef}
@@ -79,8 +64,6 @@ export const AccordionMessage = ({
       >
         <AccordionMessageHeader
           template={template}
-          onClear={onClear}
-          showClear={Boolean(answers.length)}
           isExpanded={expanded}
           onCancel={abortGenerating}
           mode={accordionChatMode}
@@ -124,18 +107,11 @@ export const AccordionMessage = ({
                   padding={{ xs: "0px 8px", md: isGenerating ? "16px 0px 8px 64px" : "16px 0px 48px 64px" }}
                   position={"relative"}
                 >
-                  <Display
-                    templateData={template}
-                    answers={answers}
-                  />
+                  <Display templateData={template} />
                 </Stack>
               )}
               {accordionChatMode === "input" && (
                 <Form
-                  inputs={inputs}
-                  params={params}
-                  paramsValues={paramsValues}
-                  answers={answers}
                   onChangeInput={onChangeInput}
                   onChangeParam={onChangeParam}
                 />

@@ -2,57 +2,36 @@ import { useRef, Dispatch, SetStateAction, Fragment, useEffect, useState } from 
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
+import South from "@mui/icons-material/South";
+import Typography from "@mui/material/Typography";
 
 import { Message } from "./Message";
-import { IAnswer, IMessage } from "@/common/types/chat";
 import type { Templates } from "@/core/api/dto/templates";
 import { AccordionMessage } from "./AccordionMessage";
-import { useAppSelector } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { TemplateDetailsCard } from "./TemplateDetailsCard";
 import { IPromptInput } from "@/common/types/prompt";
-import Typography from "@mui/material/Typography";
 import { getCurrentDateFormatted, timeAgo } from "@/common/helpers/timeManipulation";
 import { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
-import { South } from "@mui/icons-material";
-import { theme } from "@/theme";
-import { alpha } from "@mui/material/styles";
+import { setAccordionChatMode } from "@/core/store/templatesSlice";
 
 interface Props {
   template: Templates;
-  messages: IMessage[];
   onChangeInput: (value: string | File, input: IPromptInput) => void;
   onChangeParam: (value: number, param: PromptParams) => void;
-  setIsSimulationStreaming: Dispatch<SetStateAction<boolean>>;
-  inputs: IPromptInput[];
-  answers: IAnswer[];
-  params: PromptParams[];
-  paramsValues: ResOverrides[];
   onGenerate: () => void;
   onAbort: () => void;
-  onClear: () => void;
   showGenerate: boolean;
 }
 
-export const ChatInterface = ({
-  template,
-  messages,
-  onChangeInput,
-  onChangeParam,
-  setIsSimulationStreaming,
-  inputs,
-  answers,
-  onGenerate,
-  showGenerate,
-  onAbort,
-  onClear,
-  params,
-  paramsValues,
-}: Props) => {
+export const ChatInterface = ({ template, onChangeInput, onChangeParam, onGenerate, showGenerate, onAbort }: Props) => {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const accordionChatMode = useAppSelector(state => state.template.accordionChatMode);
+  const messages = useAppSelector(state => state.chat.messages);
 
-  const isExecutionMode = accordionChatMode === "execution" || accordionChatMode === "generated_execution";
+  const dispatch = useAppDispatch();
   const execution = useAppSelector(state => state.executions.generatedExecution);
+  const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
 
   const [isHovered, setIsHovered] = useState(false);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
@@ -98,6 +77,12 @@ export const ChatInterface = ({
       scrollToBottom();
     }
   }, [messages, isGenerating, execution]);
+
+  useEffect(() => {
+    if (selectedExecution) {
+      dispatch(setAccordionChatMode("execution"));
+    }
+  }, [selectedExecution]);
 
   return (
     <Stack
@@ -175,18 +160,12 @@ export const ChatInterface = ({
         {accordionChatMode !== "input" && (
           <Box id="accordion-header">
             <AccordionMessage
-              onClear={onClear}
               template={template}
               showGenerate={showGenerate}
               abortGenerating={onAbort}
-              inputs={inputs}
-              params={params}
-              paramsValues={paramsValues}
-              answers={answers}
               onChangeInput={onChangeInput}
               onChangeParam={onChangeParam}
               onGenerate={onGenerate}
-              setIsSimulationStreaming={setIsSimulationStreaming}
               accordionChatMode={"execution"}
             />
           </Box>
@@ -204,7 +183,6 @@ export const ChatInterface = ({
               >
                 <Message
                   message={msg}
-                  setIsSimulationStreaming={setIsSimulationStreaming}
                   onScrollToBottom={scrollToBottom}
                 />
               </Box>
@@ -232,18 +210,12 @@ export const ChatInterface = ({
                   )}
                   <Box id="accordion-input">
                     <AccordionMessage
-                      onClear={onClear}
                       template={template}
                       showGenerate={showGenerate}
                       abortGenerating={onAbort}
-                      inputs={inputs}
-                      params={params}
-                      paramsValues={paramsValues}
-                      answers={answers}
                       onChangeInput={onChangeInput}
                       onChangeParam={onChangeParam}
                       onGenerate={onGenerate}
-                      setIsSimulationStreaming={setIsSimulationStreaming}
                       accordionChatMode={"input"}
                     />
                   </Box>
