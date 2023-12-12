@@ -6,7 +6,7 @@ import Box from "@mui/material/Box";
 import Add from "@mui/icons-material/Add";
 import Tooltip from "@mui/material/Tooltip";
 
-import MessageSender from "./MessageSender";
+import MessageSender from "@/components/Prompt/Common/Chat/MessageSender";
 import { ProgressLogo } from "@/components/common/ProgressLogo";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setGeneratedExecution, setSelectedExecution } from "@/core/store/executionsSlice";

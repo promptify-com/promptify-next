@@ -4,11 +4,10 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import BaseButton from "../base/BaseButton";
-import { Deployment } from "@/common/types/deployments";
 import useToken from "@/hooks/useToken";
 import { parseMessageData } from "@/common/helpers/parseMessageData";
 import { markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
-import MessageSender from "@/components/prompt/common/Chat/MessageSender";
+import MessageSender from "@/components/Prompt/Common/Chat/MessageSender";
 import ParagraphPlaceholder from "@/components/placeholders/ParagraphPlaceholder";
 
 interface ExecuteFormProps {

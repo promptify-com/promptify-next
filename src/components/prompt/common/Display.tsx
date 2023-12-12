@@ -3,10 +3,10 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 
-import { ExecutionCard } from "./ExecutionCard";
-import ParagraphPlaceholder from "@/components/placeholders/ParagraphPlaceholder";
-import ExecutionFooter from "./ExecutionFooter";
 import { useAppSelector } from "@/hooks/useStore";
+import { ExecutionCard } from "@/components/Prompt/Common/ExecutionCard";
+import ParagraphPlaceholder from "@/components/placeholders/ParagraphPlaceholder";
+import ExecutionFooter from "@/components/Prompt/Common/ExecutionFooter";
 import type { Templates } from "@/core/api/dto/templates";
 
 interface Props {

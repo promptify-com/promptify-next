@@ -5,15 +5,15 @@ import Stack from "@mui/material/Stack";
 import South from "@mui/icons-material/South";
 import Typography from "@mui/material/Typography";
 
-import { AccordionMessage } from "@/components/prompt/VariantB/AccordionMessage";
+import { TemplateDetailsCard } from "@/components/Prompt/Common/TemplateDetailsCard";
+import { AccordionMessage } from "@/components/Prompt/VariantB/AccordionMessage";
+import { Message } from "@/components/Prompt/Common/Chat/Message";
 import { useAppSelector } from "@/hooks/useStore";
-import { TemplateDetailsCard } from "../TemplateDetailsCard";
 import { getCurrentDateFormatted, timeAgo } from "@/common/helpers/timeManipulation";
-import { Message } from "./Message";
 import type { IPromptInput } from "@/common/types/prompt";
+import type { IMessage } from "@/common/types/chat";
 import type { Templates } from "@/core/api/dto/templates";
 import type { PromptParams } from "@/core/api/dto/prompts";
-import type { IMessage } from "@/common/types/chat";
 
 interface Props {
   messages: IMessage[];

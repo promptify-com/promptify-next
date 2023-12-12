@@ -1,10 +1,10 @@
 import Stack from "@mui/material/Stack";
 
-import FormParam from "./FormParams";
-import FormInput from "./FormInput";
+import { useAppSelector } from "@/hooks/useStore";
+import FormParam from "@/components/Prompt/Common/Chat/FormParams";
+import FormInput from "@/components/Prompt/Common/Chat/FormInput";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { PromptParams } from "@/core/api/dto/prompts";
-import { useAppSelector } from "@/hooks/useStore";
 
 interface Props {
   onChangeInput: (value: string | File, input: IPromptInput) => void;
