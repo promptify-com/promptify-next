@@ -8,8 +8,8 @@ import PlayCircle from "@mui/icons-material/PlayCircle";
 import Button from "@mui/material/Button";
 
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { Display } from "../Display";
-import Form from "./Form";
+import { Display } from "../common/Display";
+import Form from "../common/chat/Form";
 import AccordionMessageHeader from "./AccordionMessageHeader";
 import { setAccordionChatMode } from "@/core/store/templatesSlice";
 import { setIsSimulationStreaming } from "@/core/store/chatSlice";

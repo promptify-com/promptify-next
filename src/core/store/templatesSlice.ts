@@ -11,9 +11,7 @@ export interface TemplatesProps {
   likes: number;
   executionData: string;
   isGenerating: boolean;
-  isSidebarExpanded: boolean;
   answeredInputs: AnsweredInputType[];
-  isChatFullScreen: boolean;
   activeSideBarLink: Link | null;
   accordionChatMode: AccordionChatMode;
   showPromptsView: boolean;
@@ -28,9 +26,7 @@ const initialState: TemplatesProps = {
   likes: 0,
   executionData: "[]",
   isGenerating: false,
-  isSidebarExpanded: false,
   activeSideBarLink: null,
-  isChatFullScreen: true,
   answeredInputs: [],
   accordionChatMode: "input",
   showPromptsView: false,
@@ -61,13 +57,6 @@ export const templatesSlice = createSlice({
     setGeneratingStatus: (state, action: PayloadAction<boolean>) => {
       state.isGenerating = action.payload;
     },
-    openToolbarDrawer: (state, action: PayloadAction<boolean>) => {
-      state.isSidebarExpanded = action.payload;
-    },
-
-    setChatFullScreenStatus: (state, action: PayloadAction<boolean>) => {
-      state.isChatFullScreen = action.payload;
-    },
 
     setActiveToolbarLink: (state, action: PayloadAction<Link | null>) => {
       state.activeSideBarLink = action.payload;
@@ -89,8 +78,6 @@ export const {
   updateTemplateData,
   updateExecutionData,
   setGeneratingStatus,
-  openToolbarDrawer,
-  setChatFullScreenStatus,
   setActiveToolbarLink,
   setAccordionChatMode,
   setShowPromptsView,

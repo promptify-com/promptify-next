@@ -7,13 +7,12 @@ import Badge from "@mui/material/Badge";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
 
 import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
-import ClientOnly from "../base/ClientOnly";
-import GeneratorChat from "./generate";
-import Header from "./Header";
-import TemplateToolbar from "./Toolbar";
-import ToolbarDrawer from "./Toolbar/ToolbarDrawer";
+import GeneratorChat from "../common/chat";
+import Header from "../common/Header";
+import TemplateToolbar from "../common/Sidebar";
+import ToolbarDrawer from "../common/Sidebar/ToolbarDrawer";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { openToolbarDrawer, setActiveToolbarLink } from "@/core/store/templatesSlice";
+import { setActiveToolbarLink } from "@/core/store/templatesSlice";
 import { setGeneratedExecution, setSelectedExecution, setSparkHashQueryParam } from "@/core/store/executionsSlice";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
@@ -21,14 +20,15 @@ import NoteStackIcon from "@/assets/icons/NoteStackIcon";
 import { InfoOutlined } from "@mui/icons-material";
 import { Link } from "@/common/types/TemplateToolbar";
 import { theme } from "@/theme";
+import ClientOnly from "@/components/base/ClientOnly";
 
-interface TemplateDesktopProps {
+interface TemplateVariantBProps {
   template: Templates;
   setErrorMessage: Dispatch<SetStateAction<string>>;
   questionPrefixContent: string;
 }
 
-export default function TemplateLayout({ template, setErrorMessage, questionPrefixContent }: TemplateDesktopProps) {
+export default function TemplateVariantB({ template, setErrorMessage, questionPrefixContent }: TemplateVariantBProps) {
   const dispatch = useAppDispatch();
 
   const isValidUser = useAppSelector(isValidUserFn);
@@ -105,11 +105,6 @@ export default function TemplateLayout({ template, setErrorMessage, questionPref
     return link.icon;
   };
 
-  const handleOpenDrawer = (link: Link) => {
-    dispatch(setActiveToolbarLink(link));
-    dispatch(openToolbarDrawer(true));
-  };
-
   return (
     <Stack
       mt={{ xs: 8, md: 0 }}
@@ -133,7 +128,7 @@ export default function TemplateLayout({ template, setErrorMessage, questionPref
                 color="primary"
               >
                 <Button
-                  onClick={() => handleOpenDrawer(link)}
+                  onClick={() => dispatch(setActiveToolbarLink(link))}
                   variant="text"
                   startIcon={<Icon>{renderIcon(link)}</Icon>}
                   sx={{
@@ -148,7 +143,7 @@ export default function TemplateLayout({ template, setErrorMessage, questionPref
             ) : (
               <Button
                 variant="text"
-                onClick={() => handleOpenDrawer(link)}
+                onClick={() => dispatch(setActiveToolbarLink(link))}
                 startIcon={<Icon sx={{ py: "4px", pr: "2px", mt: -0.5 }}>{renderIcon(link)}</Icon>}
                 sx={{
                   height: 22,

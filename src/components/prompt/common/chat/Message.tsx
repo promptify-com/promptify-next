@@ -61,7 +61,7 @@ export const Message = ({ message, onScrollToBottom }: MessageBlockProps) => {
 
   return (
     <Grid
-      display={"flex"}
+      display={accordionMode === "input" ? "flex" : "none"}
       flexDirection={"column"}
       gap={"16px"}
       position={"relative"}

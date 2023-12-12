@@ -11,7 +11,7 @@ import { useAppSelector } from "@/hooks/useStore";
 import type { Prompts } from "@/core/api/dto/prompts";
 import type { TemplatesExecutions } from "@/core/api/dto/templates";
 import type { DisplayPrompt, PromptLiveResponse } from "@/common/types/prompt";
-import PromptContent from "./generate/PromptContent";
+import PromptContent from "./PromptContent";
 import FeedbackThumbs from "./FeedbackThumbs";
 
 interface Props {

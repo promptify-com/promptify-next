@@ -7,9 +7,9 @@ import Typography from "@mui/material/Typography";
 
 import { Message } from "./Message";
 import type { Templates } from "@/core/api/dto/templates";
-import { AccordionMessage } from "./AccordionMessage";
+import { AccordionMessage } from "../../variant_b/AccordionMessage";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { TemplateDetailsCard } from "./TemplateDetailsCard";
+import { TemplateDetailsCard } from "../TemplateDetailsCard";
 import { IPromptInput } from "@/common/types/prompt";
 import { getCurrentDateFormatted, timeAgo } from "@/common/helpers/timeManipulation";
 import { PromptParams } from "@/core/api/dto/prompts";
@@ -183,20 +183,17 @@ export const ChatInterface = ({
         <Stack
           gap={3}
           display={accordionChatMode === "generated_execution" ? "none" : "flex"}
+          flexDirection={"column"}
         >
           {messages.map(msg => (
             <Fragment key={msg.id}>
-              <Box
-                display={accordionChatMode === "input" ? "flex" : "none"}
-                flexDirection={"column"}
-              >
-                <Message
-                  message={msg}
-                  onScrollToBottom={scrollToBottom}
-                />
-              </Box>
+              <Message
+                message={msg}
+                onScrollToBottom={scrollToBottom}
+              />
               {msg.type === "form" && msg.id === lastFormMessage?.id && (
                 <Box
+                  width={"100%"}
                   id="accordion-form"
                   position={"relative"}
                   onMouseEnter={() => setIsHovered(true)}

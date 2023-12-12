@@ -9,10 +9,9 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ExtensionSettingsIcon from "@/assets/icons/ExtensionSettingsIcon";
 import NoteStackIcon from "@/assets/icons/NoteStackIcon";
 import type { Link } from "@/common/types/TemplateToolbar";
-import { openToolbarDrawer, setActiveToolbarLink, setTemplateApiStatus } from "@/core/store/templatesSlice";
+import { setActiveToolbarLink } from "@/core/store/templatesSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { theme } from "@/theme";
-import { templatesApi } from "@/core/api/templates";
 
 interface Props {
   item: Link;
@@ -27,7 +26,6 @@ function ToolbarItem({ item, onClick, executionsLength }: Props) {
 
   const handleClick = (link: Link) => {
     if (link.name !== "customize") {
-      dispatch(openToolbarDrawer(true));
       dispatch(setActiveToolbarLink(link));
       return;
     }

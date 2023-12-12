@@ -15,7 +15,7 @@ import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setGeneratedExecution, setSelectedExecution, setSparkHashQueryParam } from "@/core/store/executionsSlice";
-import { openToolbarDrawer, setAccordionChatMode } from "@/core/store/templatesSlice";
+import { setAccordionChatMode, setActiveToolbarLink } from "@/core/store/templatesSlice";
 import { isDesktopViewPort } from "@/common/helpers";
 
 interface ExecutionsProps {
@@ -96,7 +96,7 @@ export const Executions: React.FC<ExecutionsProps> = ({ template }) => {
     dispatch(setSelectedExecution(execution));
     dispatch(setAccordionChatMode("execution"));
 
-    isMobile && dispatch(openToolbarDrawer(false));
+    isMobile && dispatch(setActiveToolbarLink(null));
 
     setTimeout(() => {
       const element = document.getElementById("accordion-header");

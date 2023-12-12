@@ -11,7 +11,7 @@ import { Feedback } from "./Feedback";
 import { Extension } from "./Extension";
 import { ApiAccess } from "./ApiAccess";
 import { TemplateDetails } from "./TemplateDetails";
-import { openToolbarDrawer, setActiveToolbarLink } from "@/core/store/templatesSlice";
+import { setActiveToolbarLink } from "@/core/store/templatesSlice";
 import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 
 interface Props {
@@ -27,16 +27,17 @@ function ToolbarDrawer({ template, executions, isExecutionsLoading, refetchTempl
   const theme = useTheme();
   const dispatch = useAppDispatch();
 
-  const sideBarOpen = useAppSelector(state => state.template.isSidebarExpanded);
   const activeLink = useAppSelector(state => state.template.activeSideBarLink);
+
+  const isSidebarOpen = Boolean(activeLink);
 
   return (
     <Drawer
       variant="persistent"
       anchor="right"
-      open={sideBarOpen}
+      open={isSidebarOpen}
       sx={{
-        width: { md: sideBarOpen ? DRAWER_WIDTH : 0 },
+        width: { md: isSidebarOpen ? DRAWER_WIDTH : 0 },
         transition: theme.transitions.create("width", { duration: 200 }),
         "& .MuiDrawer-paper": {
           mt: { xs: "60px", md: "92px" },
@@ -70,7 +71,6 @@ function ToolbarDrawer({ template, executions, isExecutionsLoading, refetchTempl
 
         <IconButton
           onClick={() => {
-            dispatch(openToolbarDrawer(false));
             dispatch(setActiveToolbarLink(null));
           }}
           sx={{

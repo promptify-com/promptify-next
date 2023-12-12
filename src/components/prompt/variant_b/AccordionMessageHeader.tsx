@@ -10,7 +10,6 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import Add from "@mui/icons-material/Add";
 import HighlightOff from "@mui/icons-material/HighlightOff";
 import UnfoldLess from "@mui/icons-material/UnfoldLess";
-import AvatarWithInitials from "../../design-system/AvatarWithInitials";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 import Grid from "@mui/material/Grid";
@@ -35,6 +34,7 @@ import useTruncate from "@/hooks/useTruncate";
 import { theme } from "@/theme";
 import { AccordionChatMode } from "@/common/types/chat";
 import { setAnswers } from "@/core/store/chatSlice";
+import AvatarWithInitials from "@/components/design-system/AvatarWithInitials";
 
 interface Props {
   template: Templates;

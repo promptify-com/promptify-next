@@ -1,21 +1,23 @@
 import { useEffect, useState } from "react";
 import Alert from "@mui/material/Alert";
 import Snackbar from "@mui/material/Snackbar";
-
+import { type Palette, ThemeProvider, createTheme, useTheme } from "@mui/material";
+import materialDynamicColors from "material-dynamic-colors";
+import { mix } from "polished";
 import { useRouter } from "next/router";
 import { useViewTemplateMutation } from "@/core/api/templates";
-import type { TemplatesExecutions, Templates } from "@/core/api/dto/templates";
+import { TemplatesExecutions, Templates } from "@/core/api/dto/templates";
 import { Layout } from "@/layout";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { updateTemplateData } from "@/core/store/templatesSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { getExecutionByHash } from "@/hooks/api/executions";
-import TemplateLayout from "@/components/prompt/TemplateLayout";
 import { getTemplateBySlug } from "@/hooks/api/templates";
 import { redirectToPath } from "@/common/helpers";
 import { setSelectedExecution, setSparkHashQueryParam } from "@/core/store/executionsSlice";
 import useBrowser from "@/hooks/useBrowser";
 import { getContentBySectioName } from "@/hooks/api/cms";
+import TemplatePage from "@/components/prompt/variant_b";
 
 interface TemplateProps {
   hashedExecution: TemplatesExecutions | null;
@@ -28,6 +30,8 @@ function Template({ hashedExecution, fetchedTemplate, questionPrefixContent }: T
   const { replaceHistoryByPathname } = useBrowser();
   const [updateViewTemplate] = useViewTemplateMutation();
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const theme = useTheme();
+  const [palette, setPalette] = useState(theme.palette);
   const dispatch = useAppDispatch();
   const isValidUser = useAppSelector(isValidUserFn);
   const savedTemplateId = useAppSelector(state => state.template.id);
@@ -46,6 +50,10 @@ function Template({ hashedExecution, fetchedTemplate, questionPrefixContent }: T
           likes: fetchedTemplate.favorites_count,
         }),
       );
+
+      if (fetchedTemplate.thumbnail) {
+        fetchDynamicColors();
+      }
     }
 
     if (isValidUser) {
@@ -73,23 +81,63 @@ function Template({ hashedExecution, fetchedTemplate, questionPrefixContent }: T
     return null;
   }
 
-  return (
-    <Layout>
-      <TemplateLayout
-        template={fetchedTemplate}
-        setErrorMessage={setErrorMessage}
-        questionPrefixContent={questionPrefixContent}
-      />
+  const fetchDynamicColors = () => {
+    materialDynamicColors(fetchedTemplate.thumbnail)
+      .then((imgPalette: IMaterialDynamicColorsTheme) => {
+        const newPalette: Palette = {
+          ...theme.palette,
+          ...imgPalette.light,
+          primary: {
+            ...theme.palette.primary,
+            main: imgPalette.light.primary,
+          },
+          secondary: {
+            ...theme.palette.secondary,
+            main: imgPalette.light.secondary,
+          },
+          error: {
+            ...theme.palette.secondary,
+            main: imgPalette.light.error,
+          },
+          background: {
+            ...theme.palette.background,
+            default: imgPalette.light.background,
+          },
+          surface: {
+            1: imgPalette.light.surface,
+            2: mix(0.3, imgPalette.light.surfaceVariant, imgPalette.light.surface),
+            3: mix(0.6, imgPalette.light.surfaceVariant, imgPalette.light.surface),
+            4: mix(0.8, imgPalette.light.surfaceVariant, imgPalette.light.surface),
+            5: imgPalette.light.surfaceVariant,
+          },
+        };
+        setPalette(newPalette);
+      })
+      .catch(() => {
+        console.warn("Error fetching dynamic colors");
+      });
+  };
+  const dynamicTheme = createTheme({ ...theme, palette });
 
-      <Snackbar
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-        open={errorMessage.length > 0}
-        autoHideDuration={6000}
-        onClose={() => setErrorMessage("")}
-      >
-        <Alert severity={"error"}>{errorMessage}</Alert>
-      </Snackbar>
-    </Layout>
+  return (
+    <ThemeProvider theme={dynamicTheme}>
+      <Layout>
+        <TemplatePage
+          template={fetchedTemplate}
+          setErrorMessage={setErrorMessage}
+          questionPrefixContent={questionPrefixContent}
+        />
+
+        <Snackbar
+          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+          open={errorMessage.length > 0}
+          autoHideDuration={6000}
+          onClose={() => setErrorMessage("")}
+        >
+          <Alert severity={"error"}>{errorMessage}</Alert>
+        </Snackbar>
+      </Layout>
+    </ThemeProvider>
   );
 }
 
