@@ -21,7 +21,11 @@ export const sanitizeHTML = (html: string) => {
 
 export const isImageOutput = (output: string): boolean => {
   const IsImage =
-    output.endsWith(".png") || output.endsWith(".jpg") || output.endsWith(".jpeg") || output.endsWith(".webp");
+    output.endsWith(".png") ||
+    output.endsWith(".jpg") ||
+    output.endsWith(".jpeg") ||
+    output.endsWith(".webp") ||
+    output.includes("image/");
 
   return IsImage;
 };
