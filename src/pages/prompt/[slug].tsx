@@ -74,6 +74,7 @@ function Template({ hashedExecution, fetchedTemplate, questionPrefixContent }: T
   if (!fetchedTemplate?.id) {
     if (router.query.slug) {
       redirectToPath(`/prompt/${router.query.slug}`);
+
       return null;
     }
 
