@@ -65,9 +65,11 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
       const processedOutputs = await Promise.all(
         sortedByPrompts.map(async exec => {
           const _content = "message" in exec ? exec.message : exec.output;
+          const prompt = promptsData.find(prompt => prompt.id === exec.prompt)!;
+
           return {
             ...exec,
-            content: !isImageOutput(_content) ? await markdownToHTML(_content) : _content,
+            content: !isImageOutput(_content, prompt.engine.output_type) ? await markdownToHTML(_content) : _content,
           };
         }),
       );
@@ -124,11 +126,12 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
         <Stack direction={{ md: "row" }}>
           <Stack gap={1}>
             {sortedPrompts?.map((exec, index) => {
+              const prompt = promptsData.find(prompt => prompt.id === exec.prompt)!;
+              const engineType = prompt.engine.output_type;
               const prevItem = sortedPrompts[index - 1];
-              const isPrevItemImage = prevItem && isImageOutput(prevItem?.content);
+              const isPrevItemImage = prevItem && isImageOutput(prevItem?.content, engineType);
               const nextItem = sortedPrompts[index + 1];
-              const isNextItemText = nextItem && !isImageOutput(nextItem?.content);
-              const prompt = promptsData.find(prompt => prompt.id === exec.prompt);
+              const isNextItemText = nextItem && !isImageOutput(nextItem?.content, engineType);
 
               if (prompt?.show_output || sparkHashQueryParam) {
                 return (
@@ -146,12 +149,12 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
                           color: "onSurface",
                         }}
                       >
-                        {!isImageOutput(exec.content) && prompt?.title}
+                        {!isImageOutput(exec.content, engineType) && prompt?.title}
                         {exec.errors && executionError(exec.errors)}
                       </Subtitle>
                     )}
                     {/* is Text Output */}
-                    {!isImageOutput(exec.content) && (
+                    {!isImageOutput(exec.content, engineType) && (
                       <Stack
                         direction={"row"}
                         alignItems={"start"}
@@ -255,7 +258,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
                         >
                           <ExecutionContentPreview
                             id={index + 1}
-                            prompt={prompt!}
+                            prompt={prompt}
                             answers={answers}
                             execution={execution as TemplatesExecutions}
                           />
@@ -263,7 +266,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
                       </Stack>
                     )}
                     {/* is Image Output and Next item is not text */}
-                    {isImageOutput(exec.content) && !isNextItemText && (
+                    {isImageOutput(exec.content, engineType) && !isNextItemText && (
                       <Box
                         component={"img"}
                         alt={"book cover"}

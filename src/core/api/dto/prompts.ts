@@ -5,6 +5,9 @@ interface Engine {
   id: number;
   name: string;
   icon: string;
+  output_type: "IMAGE" | "TEXT";
+  input_type: "IMAGE" | "TEXT";
+  provider: string;
 }
 
 export interface Prompts {
