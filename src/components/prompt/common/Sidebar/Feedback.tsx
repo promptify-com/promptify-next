@@ -2,7 +2,7 @@ import { timeAgo } from "@/common/helpers/timeManipulation";
 import SigninButton from "@/components/common/buttons/SigninButton";
 import useToken from "@/hooks/useToken";
 import { Avatar, Box, Stack, Typography } from "@mui/material";
-import MessageSender from "../chat/MessageSender";
+import MessageSender from "../Chat/MessageSender";
 import { useRef, useState } from "react";
 import { useGetFeedbacksQuery, useSaveFeedbackMutation } from "@/core/api/templates";
 import { useAppSelector } from "@/hooks/useStore";

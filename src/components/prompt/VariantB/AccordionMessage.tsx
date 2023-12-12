@@ -9,7 +9,7 @@ import Button from "@mui/material/Button";
 
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { Display } from "../common/Display";
-import Form from "../common/chat/Form";
+import Form from "../common/Chat/Form";
 import AccordionMessageHeader from "./AccordionMessageHeader";
 import { setIsSimulationStreaming } from "@/core/store/chatSlice";
 import type { Templates } from "@/core/api/dto/templates";

@@ -63,7 +63,6 @@ export const Executions: React.FC<ExecutionsProps> = ({ template }) => {
 
       if (!promptNotCompleted) {
         dispatch(setSelectedExecution(null));
-        // dispatch(setGeneratedExecution(null));
         refetchTemplateExecutions();
       }
     }

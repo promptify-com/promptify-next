@@ -8,7 +8,7 @@ import { Deployment } from "@/common/types/deployments";
 import useToken from "@/hooks/useToken";
 import { parseMessageData } from "@/common/helpers/parseMessageData";
 import { markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
-import MessageSender from "@/components/prompt/common/chat/MessageSender";
+import MessageSender from "@/components/prompt/common/Chat/MessageSender";
 import ParagraphPlaceholder from "@/components/placeholders/ParagraphPlaceholder";
 
 interface ExecuteFormProps {

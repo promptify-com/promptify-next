@@ -5,11 +5,11 @@ import Stack from "@mui/material/Stack";
 import South from "@mui/icons-material/South";
 import Typography from "@mui/material/Typography";
 
-import { Message } from "./Message";
-import { AccordionMessage } from "@/components/prompt/variant_b/AccordionMessage";
+import { AccordionMessage } from "@/components/prompt/VariantB/AccordionMessage";
 import { useAppSelector } from "@/hooks/useStore";
 import { TemplateDetailsCard } from "../TemplateDetailsCard";
 import { getCurrentDateFormatted, timeAgo } from "@/common/helpers/timeManipulation";
+import { Message } from "./Message";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { Templates } from "@/core/api/dto/templates";
 import type { PromptParams } from "@/core/api/dto/prompts";

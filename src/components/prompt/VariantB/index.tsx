@@ -7,7 +7,7 @@ import Badge from "@mui/material/Badge";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
 
 import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
-import GeneratorChat from "../common/chat";
+import GeneratorChat from "../common/Chat";
 import Header from "../common/Header";
 import TemplateToolbar from "../common/Sidebar";
 import ToolbarDrawer from "../common/Sidebar/ToolbarDrawer";
@@ -48,7 +48,6 @@ export default function TemplateVariantB({ template, setErrorMessage, questionPr
 
       if (!promptNotCompleted) {
         dispatch(setSelectedExecution(null));
-        // dispatch(setGeneratedExecution(null));
         refetchTemplateExecutions();
       }
     }

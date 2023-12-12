@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
+import TemplateVariantB from "./VariantB";
 import type { Templates } from "@/core/api/dto/templates";
-import TemplateVariantB from "./variant_b";
 
 interface Props {
   template: Templates;
@@ -9,7 +9,7 @@ interface Props {
 }
 
 function TemplatePage({ template, setErrorMessage, questionPrefixContent }: Props) {
-  const activeVariant: "a" | "b" = "b";
+  const activeVariant: string = "b";
   return activeVariant === "b" ? (
     <TemplateVariantB
       template={template}

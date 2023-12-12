@@ -17,7 +17,7 @@ import { redirectToPath } from "@/common/helpers";
 import { setSelectedExecution, setSparkHashQueryParam } from "@/core/store/executionsSlice";
 import useBrowser from "@/hooks/useBrowser";
 import { getContentBySectioName } from "@/hooks/api/cms";
-import TemplatePage from "@/components/prompt/variant_b";
+import TemplatePage from "@/components/prompt";
 
 interface TemplateProps {
   hashedExecution: TemplatesExecutions | null;
