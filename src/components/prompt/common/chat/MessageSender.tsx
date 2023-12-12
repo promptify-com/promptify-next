@@ -4,7 +4,6 @@ import KeyboardCommandKey from "@mui/icons-material/KeyboardCommandKey";
 import Box from "@mui/material/Box";
 import InputBase from "@mui/material/InputBase";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { setAccordionChatMode } from "@/core/store/templatesSlice";
 import SlowMotionVideo from "@mui/icons-material/SlowMotionVideo";
 import { CircularProgress } from "@mui/material";
 
@@ -139,7 +138,6 @@ function MessageSender({
               if (isGenerating) {
                 return;
               }
-              dispatch(setAccordionChatMode("generated_execution"));
               onGenerate?.();
             }}
             sx={{

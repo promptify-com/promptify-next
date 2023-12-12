@@ -28,22 +28,21 @@ import { ExecutionTemplatePopupType, Templates } from "@/core/api/dto/templates"
 import { useDeleteExecutionFavoriteMutation, useExecutionFavoriteMutation } from "@/core/api/executions";
 import { SparkSaveDeletePopup } from "@/components/dialog/SparkSaveDeletePopup";
 import { SparkExportPopup } from "@/components/dialog/SparkExportPopup";
-import { setAccordionChatMode, setGeneratingStatus, setShowPromptsView } from "@/core/store/templatesSlice";
+import { setGeneratingStatus, setShowPromptsView } from "@/core/store/templatesSlice";
 import { setGeneratedExecution } from "@/core/store/executionsSlice";
 import useTruncate from "@/hooks/useTruncate";
 import { theme } from "@/theme";
-import { AccordionChatMode } from "@/common/types/chat";
 import { setAnswers } from "@/core/store/chatSlice";
 import AvatarWithInitials from "@/components/design-system/AvatarWithInitials";
 
 interface Props {
   template: Templates;
-  mode: AccordionChatMode;
   isExpanded: boolean;
   onCancel: () => void;
+  isExecutionMode: boolean;
 }
 
-function AccordionMessageHeader({ template, mode, isExpanded, onCancel }: Props) {
+function AccordionMessageHeader({ template, isExecutionMode, isExpanded, onCancel }: Props) {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const dispatch = useAppDispatch();
   const { truncate } = useTruncate();
@@ -82,7 +81,6 @@ function AccordionMessageHeader({ template, mode, isExpanded, onCancel }: Props)
     onCancel();
     dispatch(setGeneratedExecution(null));
     dispatch(setGeneratingStatus(false));
-    dispatch(setAccordionChatMode("input"));
   };
 
   const activeExecution = useMemo(() => {
@@ -110,8 +108,6 @@ function AccordionMessageHeader({ template, mode, isExpanded, onCancel }: Props)
       },
     ],
   };
-
-  const isExecutionMode = mode === "execution" || mode === "generated_execution";
 
   return (
     <>

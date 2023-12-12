@@ -12,6 +12,7 @@ import { setIsSimulationStreaming } from "@/core/store/chatSlice";
 interface MessageBlockProps {
   message: IMessage;
   onScrollToBottom: () => void;
+  isExecutionMode: boolean;
 }
 
 interface MessageContentProps {
@@ -38,7 +39,7 @@ const MessageContent = memo(({ content, shouldStream, onStreamingFinished }: Mes
   return <>{streamedText}</>;
 });
 
-export const Message = ({ message, onScrollToBottom }: MessageBlockProps) => {
+export const Message = ({ message, isExecutionMode, onScrollToBottom }: MessageBlockProps) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const { fromUser, text, createdAt, type } = message;
@@ -46,22 +47,17 @@ export const Message = ({ message, onScrollToBottom }: MessageBlockProps) => {
 
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
-  const accordionMode = useAppSelector(state => state.template.accordionChatMode);
 
   const name = fromUser ? currentUser?.first_name ?? currentUser?.username : "Promptify";
 
   if (type === "form") {
     return;
   }
-  if (
-    text === "" ||
-    (accordionMode === "execution" && text === "Run Prompt" && selectedExecution && !generatedExecution)
-  )
-    return;
+  if (text === "" || (isExecutionMode && text === "Run Prompt" && selectedExecution && !generatedExecution)) return;
 
   return (
     <Grid
-      display={accordionMode === "input" ? "flex" : "none"}
+      display={!isExecutionMode ? "flex" : "none"}
       flexDirection={"column"}
       gap={"16px"}
       position={"relative"}

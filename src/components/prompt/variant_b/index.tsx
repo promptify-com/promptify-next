@@ -48,7 +48,7 @@ export default function TemplateVariantB({ template, setErrorMessage, questionPr
 
       if (!promptNotCompleted) {
         dispatch(setSelectedExecution(null));
-        dispatch(setGeneratedExecution(null));
+        // dispatch(setGeneratedExecution(null));
         refetchTemplateExecutions();
       }
     }

@@ -11,7 +11,7 @@ import { useAppSelector, useAppDispatch } from "@/hooks/useStore";
 import useToken from "@/hooks/useToken";
 import { ChatInterface } from "./ChatInterface";
 import { ChatInput } from "./ChatInput";
-import { setAccordionChatMode, setGeneratingStatus, updateExecutionData } from "@/core/store/templatesSlice";
+import { setGeneratingStatus, updateExecutionData } from "@/core/store/templatesSlice";
 import { executionsApi, useStopExecutionMutation } from "@/core/api/executions";
 import { vary } from "@/common/helpers/varyValidator";
 import { parseMessageData } from "@/common/helpers/parseMessageData";
@@ -42,7 +42,7 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
 
   const currentUser = useAppSelector(state => state.user.currentUser);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
-  const isSidebarExpanded = useAppSelector(state => state.template.isSidebarExpanded);
+  const isSidebarExpanded = useAppSelector(state => state.template.activeSideBarLink);
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
   const answers = useAppSelector(state => state.chat.answers);
   const paramsValues = useAppSelector(state => state.chat.paramsValues);
@@ -226,7 +226,6 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
 
       if (allPromptsCompleted) {
         selectGeneratedExecution();
-        dispatch(setGeneratedExecution(null));
         dispatch(executionsApi.util.invalidateTags(["Executions"]));
       }
     }
@@ -263,7 +262,8 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
   };
 
   const validateVary = async (variation: string) => {
-    dispatch(setAccordionChatMode("input"));
+    dispatch(setSelectedExecution(null));
+    dispatch(setGeneratedExecution(null));
     if (variation) {
       const userMessage: IMessage = {
         id: randomId(),

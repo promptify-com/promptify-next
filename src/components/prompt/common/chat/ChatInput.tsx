@@ -9,8 +9,7 @@ import Tooltip from "@mui/material/Tooltip";
 import MessageSender from "./MessageSender";
 import { ProgressLogo } from "@/components/common/ProgressLogo";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { setAccordionChatMode } from "@/core/store/templatesSlice";
-import { setSelectedExecution } from "@/core/store/executionsSlice";
+import { setGeneratedExecution, setSelectedExecution } from "@/core/store/executionsSlice";
 import { setAnswers, setIsSimulationStreaming } from "@/core/store/chatSlice";
 
 interface ChatInputProps {
@@ -31,13 +30,13 @@ export const ChatInput = ({
   showGenerate,
 }: ChatInputProps) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const accordionChatMode = useAppSelector(state => state.template.accordionChatMode);
+  const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
 
   const dispatch = useAppDispatch();
 
   const addNewPrompt = () => {
-    dispatch(setAccordionChatMode("input"));
     dispatch(setSelectedExecution(null));
+    dispatch(setGeneratedExecution(null));
     dispatch(setAnswers([]));
     dispatch(setIsSimulationStreaming(false));
   };
@@ -85,7 +84,7 @@ export const ChatInput = ({
         gap={"8px"}
         alignItems={"center"}
       >
-        {accordionChatMode === "generated_execution" && (
+        {!!generatedExecution && (
           <Tooltip
             title="Add new Prompt"
             arrow

@@ -1,6 +1,5 @@
 import { TempalteApiStatusState, TemplateApiStatus } from "./../api/dto/templates";
 import { Link } from "@/common/types/TemplateToolbar";
-import { AccordionChatMode } from "@/common/types/chat";
 import { AnsweredInputType } from "@/common/types/prompt";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
@@ -13,7 +12,6 @@ export interface TemplatesProps {
   isGenerating: boolean;
   answeredInputs: AnsweredInputType[];
   activeSideBarLink: Link | null;
-  accordionChatMode: AccordionChatMode;
   showPromptsView: boolean;
   templateApiStatus: TempalteApiStatusState;
 }
@@ -28,7 +26,6 @@ const initialState: TemplatesProps = {
   isGenerating: false,
   activeSideBarLink: null,
   answeredInputs: [],
-  accordionChatMode: "input",
   showPromptsView: false,
   templateApiStatus: {
     data: null,
@@ -61,9 +58,7 @@ export const templatesSlice = createSlice({
     setActiveToolbarLink: (state, action: PayloadAction<Link | null>) => {
       state.activeSideBarLink = action.payload;
     },
-    setAccordionChatMode: (state, action: PayloadAction<AccordionChatMode>) => {
-      state.accordionChatMode = action.payload;
-    },
+
     setShowPromptsView: (state, action: PayloadAction<boolean>) => {
       state.showPromptsView = action.payload;
     },
@@ -79,7 +74,6 @@ export const {
   updateExecutionData,
   setGeneratingStatus,
   setActiveToolbarLink,
-  setAccordionChatMode,
   setShowPromptsView,
   setTemplateApiStatus,
 } = templatesSlice.actions;

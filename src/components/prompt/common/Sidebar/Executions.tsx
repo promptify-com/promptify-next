@@ -15,8 +15,9 @@ import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setGeneratedExecution, setSelectedExecution, setSparkHashQueryParam } from "@/core/store/executionsSlice";
-import { setAccordionChatMode, setActiveToolbarLink } from "@/core/store/templatesSlice";
+import { setActiveToolbarLink } from "@/core/store/templatesSlice";
 import { isDesktopViewPort } from "@/common/helpers";
+import { setAnswers } from "@/core/store/chatSlice";
 
 interface ExecutionsProps {
   template: Templates;
@@ -62,7 +63,7 @@ export const Executions: React.FC<ExecutionsProps> = ({ template }) => {
 
       if (!promptNotCompleted) {
         dispatch(setSelectedExecution(null));
-        dispatch(setGeneratedExecution(null));
+        // dispatch(setGeneratedExecution(null));
         refetchTemplateExecutions();
       }
     }
@@ -94,7 +95,8 @@ export const Executions: React.FC<ExecutionsProps> = ({ template }) => {
 
   const handleClick = (execution: TemplatesExecutions) => {
     dispatch(setSelectedExecution(execution));
-    dispatch(setAccordionChatMode("execution"));
+    dispatch(setGeneratedExecution(null));
+    dispatch(setAnswers([]));
 
     isMobile && dispatch(setActiveToolbarLink(null));
 

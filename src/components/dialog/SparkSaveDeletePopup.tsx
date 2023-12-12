@@ -7,8 +7,7 @@ import { Execution, ExecutionTemplatePopupType } from "@/core/api/dto/templates"
 import { useDeleteExecutionMutation, useUpdateExecutionMutation } from "@/core/api/executions";
 
 import { useAppDispatch } from "@/hooks/useStore";
-import { setAccordionChatMode } from "@/core/store/templatesSlice";
-import { theme } from "@/theme";
+import { setGeneratedExecution, setSelectedExecution } from "@/core/store/executionsSlice";
 
 interface SparkSaveDeletePopupProps {
   type: ExecutionTemplatePopupType;
@@ -42,7 +41,8 @@ export const SparkSaveDeletePopup = ({ type, activeExecution, onClose, onUpdate 
 
   const handleDeleteExecution = () => {
     if (activeExecution) {
-      dispatch(setAccordionChatMode("input"));
+      dispatch(setSelectedExecution(null));
+      dispatch(setGeneratedExecution(null));
       deleteExecution(activeExecution.id);
 
       if (!isDeleteExecutionError) {

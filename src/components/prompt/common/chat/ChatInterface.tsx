@@ -6,15 +6,14 @@ import South from "@mui/icons-material/South";
 import Typography from "@mui/material/Typography";
 
 import { Message } from "./Message";
-import type { Templates } from "@/core/api/dto/templates";
-import { AccordionMessage } from "../../variant_b/AccordionMessage";
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { AccordionMessage } from "@/components/prompt/variant_b/AccordionMessage";
+import { useAppSelector } from "@/hooks/useStore";
 import { TemplateDetailsCard } from "../TemplateDetailsCard";
-import { IPromptInput } from "@/common/types/prompt";
 import { getCurrentDateFormatted, timeAgo } from "@/common/helpers/timeManipulation";
-import { PromptParams } from "@/core/api/dto/prompts";
-import { setAccordionChatMode } from "@/core/store/templatesSlice";
-import { IMessage } from "@/common/types/chat";
+import type { IPromptInput } from "@/common/types/prompt";
+import type { Templates } from "@/core/api/dto/templates";
+import type { PromptParams } from "@/core/api/dto/prompts";
+import type { IMessage } from "@/common/types/chat";
 
 interface Props {
   messages: IMessage[];
@@ -36,10 +35,8 @@ export const ChatInterface = ({
   onAbort,
 }: Props) => {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
-  const accordionChatMode = useAppSelector(state => state.template.accordionChatMode);
 
-  const dispatch = useAppDispatch();
-  const execution = useAppSelector(state => state.executions.generatedExecution);
+  const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
 
   const [isHovered, setIsHovered] = useState(false);
@@ -85,13 +82,9 @@ export const ChatInterface = ({
     if (isUserAtBottom) {
       scrollToBottom();
     }
-  }, [messages, isGenerating, execution]);
+  }, [messages, isGenerating, generatedExecution]);
 
-  useEffect(() => {
-    if (selectedExecution) {
-      dispatch(setAccordionChatMode("execution"));
-    }
-  }, [selectedExecution]);
+  const executionMode = Boolean(selectedExecution || generatedExecution);
 
   return (
     <Stack
@@ -166,7 +159,7 @@ export const ChatInterface = ({
           {getCurrentDateFormatted()}
         </Divider>
 
-        {accordionChatMode !== "input" && (
+        {executionMode && (
           <Box id="accordion-header">
             <AccordionMessage
               template={template}
@@ -175,14 +168,14 @@ export const ChatInterface = ({
               onChangeInput={onChangeInput}
               onChangeParam={onChangeParam}
               onGenerate={onGenerate}
-              accordionChatMode={"execution"}
+              executionMode={true}
             />
           </Box>
         )}
 
         <Stack
           gap={3}
-          display={accordionChatMode === "generated_execution" ? "none" : "flex"}
+          display={!!generatedExecution ? "none" : "flex"}
           flexDirection={"column"}
         >
           {messages.map(msg => (
@@ -190,6 +183,7 @@ export const ChatInterface = ({
               <Message
                 message={msg}
                 onScrollToBottom={scrollToBottom}
+                isExecutionMode={executionMode}
               />
               {msg.type === "form" && msg.id === lastFormMessage?.id && (
                 <Box
@@ -222,7 +216,7 @@ export const ChatInterface = ({
                       onChangeInput={onChangeInput}
                       onChangeParam={onChangeParam}
                       onGenerate={onGenerate}
-                      accordionChatMode={"input"}
+                      executionMode={false}
                     />
                   </Box>
                 </Box>

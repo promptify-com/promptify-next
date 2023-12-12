@@ -11,9 +11,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { Display } from "../common/Display";
 import Form from "../common/chat/Form";
 import AccordionMessageHeader from "./AccordionMessageHeader";
-import { setAccordionChatMode } from "@/core/store/templatesSlice";
 import { setIsSimulationStreaming } from "@/core/store/chatSlice";
-import type { AccordionChatMode } from "@/common/types/chat";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { PromptParams } from "@/core/api/dto/prompts";
@@ -25,7 +23,7 @@ interface Props {
   abortGenerating: () => void;
   showGenerate: boolean;
   template: Templates;
-  accordionChatMode: AccordionChatMode;
+  executionMode: boolean;
 }
 
 export const AccordionMessage = ({
@@ -35,7 +33,7 @@ export const AccordionMessage = ({
   onGenerate,
   abortGenerating,
   showGenerate,
-  accordionChatMode,
+  executionMode,
 }: Props) => {
   const dispatch = useAppDispatch();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
@@ -66,7 +64,7 @@ export const AccordionMessage = ({
           template={template}
           isExpanded={expanded}
           onCancel={abortGenerating}
-          mode={accordionChatMode}
+          isExecutionMode={executionMode}
         />
 
         <AccordionDetails
@@ -102,7 +100,7 @@ export const AccordionMessage = ({
               borderRadius={"8px"}
               position={"relative"}
             >
-              {accordionChatMode === "execution" && (
+              {executionMode && (
                 <Stack
                   padding={{ xs: "0px 8px", md: isGenerating ? "16px 0px 8px 64px" : "16px 0px 48px 64px" }}
                   position={"relative"}
@@ -110,7 +108,7 @@ export const AccordionMessage = ({
                   <Display templateData={template} />
                 </Stack>
               )}
-              {accordionChatMode === "input" && (
+              {!executionMode && (
                 <Form
                   onChangeInput={onChangeInput}
                   onChangeParam={onChangeParam}
@@ -118,7 +116,7 @@ export const AccordionMessage = ({
               )}
             </Stack>
           </Stack>
-          {showGenerate && accordionChatMode === "input" && currentUser?.id && (
+          {showGenerate && !executionMode && currentUser?.id && (
             <Stack
               direction={"row"}
               justifyContent={"end"}
@@ -126,7 +124,6 @@ export const AccordionMessage = ({
             >
               <Button
                 onClick={() => {
-                  dispatch(setAccordionChatMode("generated_execution"));
                   onGenerate();
                 }}
                 endIcon={<PlayCircle />}
