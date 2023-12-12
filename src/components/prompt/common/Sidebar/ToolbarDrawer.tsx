@@ -6,12 +6,12 @@ import IconButton from "@mui/material/IconButton";
 import Close from "@mui/icons-material/Close";
 
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { Executions } from "./Executions";
-import { Feedback } from "./Feedback";
-import { Extension } from "./Extension";
-import { ApiAccess } from "./ApiAccess";
-import { TemplateDetails } from "./TemplateDetails";
 import { setActiveToolbarLink } from "@/core/store/templatesSlice";
+import { Executions } from "@/components/Prompt/Common/Sidebar/Executions";
+import { Feedback } from "@/components/Prompt/Common/Sidebar/Feedback";
+import { Extension } from "@/components/Prompt/Common/Sidebar/Extension";
+import { ApiAccess } from "@/components/Prompt/Common/Sidebar/ApiAccess";
+import { TemplateDetails } from "@/components/Prompt/Common/Sidebar/TemplateDetails";
 import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 
 interface Props {

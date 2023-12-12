@@ -5,22 +5,22 @@ import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import Badge from "@mui/material/Badge";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
+import InfoOutlined from "@mui/icons-material/InfoOutlined";
 
-import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
-import GeneratorChat from "../common/Chat";
-import Header from "../common/Header";
-import TemplateToolbar from "../common/Sidebar";
-import ToolbarDrawer from "../common/Sidebar/ToolbarDrawer";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setActiveToolbarLink } from "@/core/store/templatesSlice";
-import { setGeneratedExecution, setSelectedExecution, setSparkHashQueryParam } from "@/core/store/executionsSlice";
+import { setSelectedExecution, setSparkHashQueryParam } from "@/core/store/executionsSlice";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
 import NoteStackIcon from "@/assets/icons/NoteStackIcon";
-import { InfoOutlined } from "@mui/icons-material";
-import { Link } from "@/common/types/TemplateToolbar";
 import { theme } from "@/theme";
+import Chat from "@/components/Prompt/Common/Chat";
+import Header from "@/components/Prompt/Common/Header";
+import TemplateToolbar from "@/components/Prompt/Common/Sidebar/";
+import ToolbarDrawer from "@/components/Prompt/Common/Sidebar/ToolbarDrawer";
 import ClientOnly from "@/components/base/ClientOnly";
+import type { Link } from "@/common/types/TemplateToolbar";
+import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 
 interface TemplateVariantBProps {
   template: Templates;
@@ -208,7 +208,7 @@ export default function TemplateVariantB({ template, setErrorMessage, questionPr
           }}
         >
           <ClientOnly>
-            <GeneratorChat
+            <Chat
               onError={setErrorMessage}
               template={template}
               questionPrefixContent={questionPrefixContent}
