@@ -1,4 +1,4 @@
-import { useRef, Dispatch, SetStateAction, Fragment, useEffect, useState } from "react";
+import { useRef, Fragment, useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
@@ -12,10 +12,12 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { TemplateDetailsCard } from "./TemplateDetailsCard";
 import { IPromptInput } from "@/common/types/prompt";
 import { getCurrentDateFormatted, timeAgo } from "@/common/helpers/timeManipulation";
-import { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
+import { PromptParams } from "@/core/api/dto/prompts";
 import { setAccordionChatMode } from "@/core/store/templatesSlice";
+import { IMessage } from "@/common/types/chat";
 
 interface Props {
+  messages: IMessage[];
   template: Templates;
   onChangeInput: (value: string | File, input: IPromptInput) => void;
   onChangeParam: (value: number, param: PromptParams) => void;
@@ -24,10 +26,17 @@ interface Props {
   showGenerate: boolean;
 }
 
-export const ChatInterface = ({ template, onChangeInput, onChangeParam, onGenerate, showGenerate, onAbort }: Props) => {
+export const ChatInterface = ({
+  template,
+  messages,
+  onChangeInput,
+  onChangeParam,
+  onGenerate,
+  showGenerate,
+  onAbort,
+}: Props) => {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const accordionChatMode = useAppSelector(state => state.template.accordionChatMode);
-  const messages = useAppSelector(state => state.chat.messages);
 
   const dispatch = useAppDispatch();
   const execution = useAppSelector(state => state.executions.generatedExecution);

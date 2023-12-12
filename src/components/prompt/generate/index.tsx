@@ -21,14 +21,7 @@ import { setGeneratedExecution, setSelectedExecution } from "@/core/store/execut
 import useChatBox from "@/hooks/useChatBox";
 import { randomId } from "@/common/helpers";
 import { getExecutionById } from "@/hooks/api/executions";
-import {
-  setAnswers,
-  setInputs,
-  setIsSimulationStreaming,
-  setMessages,
-  setParams,
-  setparamsValues,
-} from "@/core/store/chatSlice";
+import { setAnswers, setInputs, setIsSimulationStreaming, setParams, setparamsValues } from "@/core/store/chatSlice";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IPromptInput, PromptLiveResponse } from "@/common/types/prompt";
 import type { PromptParams, ResOverrides, ResPrompt } from "@/core/api/dto/prompts";
@@ -51,11 +44,12 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const isSidebarExpanded = useAppSelector(state => state.template.isSidebarExpanded);
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
-  const currentMessages = useAppSelector(state => state.chat.messages);
   const answers = useAppSelector(state => state.chat.answers);
   const paramsValues = useAppSelector(state => state.chat.paramsValues);
   const isSimulationStreaming = useAppSelector(state => state.chat.isSimulationStreaming);
 
+  const [messages, setMessages] = useState<IMessage[]>([]);
+  const [showGenerateButton, setShowGenerateButton] = useState(false);
   const [isValidatingAnswer, setIsValidatingAnswer] = useState(false);
   const [newExecutionId, setNewExecutionId] = useState<number | null>(null);
   const [queuedMessages, setQueuedMessages] = useState<IMessage[]>([]);
@@ -65,13 +59,7 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
     data: [],
   });
 
-  const {
-    preparePromptsData,
-    prepareAndRemoveDuplicateInputs,
-    showGenerate,
-    showGenerateButton,
-    allRequiredInputsAnswered,
-  } = useChatBox();
+  const { preparePromptsData, prepareAndRemoveDuplicateInputs } = useChatBox();
 
   const abortController = useRef(new AbortController());
   const uploadedFiles = useRef(new Map<string, string>());
@@ -110,7 +98,7 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
       },
     ]);
 
-    dispatch(setMessages(welcomeMessage));
+    setMessages(welcomeMessage);
     dispatch(setAnswers([]));
   };
   const dispatchNewExecutionData = (answers: IAnswer[], inputs: IPromptInput[]) => {
@@ -188,6 +176,29 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
 
   const disabledButton = _inputs.length !== 0 || promptHasContent;
 
+  const allRequiredInputsAnswered = (): boolean => {
+    const requiredInputs = _inputs.filter(input => input.required).map(input => input.name);
+
+    if (!requiredInputs.length) {
+      return true;
+    }
+
+    const answeredInputsSet = new Set(answers.map(answer => answer.inputName));
+
+    return requiredInputs.every(name => answeredInputsSet.has(name));
+  };
+
+  const showGenerate =
+    !isSimulationStreaming && (showGenerateButton || Boolean(!_inputs.length || !_inputs[0]?.required));
+
+  useEffect(() => {
+    if (allRequiredInputsAnswered()) {
+      setShowGenerateButton(true);
+    } else {
+      setShowGenerateButton(false);
+    }
+  }, [answers]);
+
   useEffect(() => {
     dispatchNewExecutionData(answers, _inputs);
   }, [template]);
@@ -202,8 +213,8 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
     if (!isSimulationStreaming && !!queuedMessages.length) {
       const nextQueuedMessage = queuedMessages.pop()!;
 
-      const updatedMessages = currentMessages.concat(nextQueuedMessage);
-      dispatch(setMessages(updatedMessages));
+      const updatedMessages = messages.concat(nextQueuedMessage);
+      setMessages(updatedMessages);
 
       addToQueuedMessages(queuedMessages);
     }
@@ -247,9 +258,8 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
         noHeader: true,
       },
     ]);
-    const updatedMessages = currentMessages.filter(msg => msg.type !== "form").concat(botMessage);
 
-    dispatch(setMessages(updatedMessages));
+    setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat(botMessage));
   };
 
   const validateVary = async (variation: string) => {
@@ -262,8 +272,8 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
         createdAt: new Date(new Date().getTime() - 1000),
         fromUser: true,
       };
-      const updatedMessages = currentMessages.filter(msg => msg.type !== "form").concat(userMessage);
-      dispatch(setMessages(updatedMessages));
+
+      setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat(userMessage));
 
       setIsValidatingAnswer(true);
 
@@ -544,6 +554,7 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
         gap={2}
       >
         <ChatInterface
+          messages={messages}
           template={template}
           showGenerate={showGenerate}
           onChangeInput={handleUserInput}
