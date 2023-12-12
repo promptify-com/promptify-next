@@ -129,6 +129,7 @@ export const ChatInterface = ({
                   <CardExecution
                     execution={msg.spark}
                     min
+                    promptsData={template.prompts}
                   />
                 </Box>
 

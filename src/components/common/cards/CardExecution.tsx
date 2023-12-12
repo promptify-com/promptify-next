@@ -8,14 +8,16 @@ import { useEffect, useState } from "react";
 import { useAppSelector } from "@/hooks/useStore";
 import { useDeleteExecutionFavoriteMutation, useExecutionFavoriteMutation } from "@/core/api/executions";
 import { getAbbreviation } from "@/common/helpers";
+import { Prompts } from "@/core/api/dto/prompts";
 
 interface CardExecutionProps {
   execution: TemplatesExecutions;
   onClick?: () => void;
   min?: boolean;
+  promptsData: Prompts[];
 }
 
-export const CardExecution: React.FC<CardExecutionProps> = ({ execution, min, onClick }) => {
+export const CardExecution: React.FC<CardExecutionProps> = ({ execution, min, onClick, promptsData }) => {
   const dispatch = useDispatch();
   const [content, setContent] = useState<string>("");
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
@@ -24,7 +26,11 @@ export const CardExecution: React.FC<CardExecutionProps> = ({ execution, min, on
   const [deleteExecutionFavorite] = useDeleteExecutionFavoriteMutation();
 
   const getContent = async () => {
-    const prompt = execution.prompt_executions?.find(exec => !isImageOutput(exec.output));
+    const prompt = execution.prompt_executions?.find(exec => {
+      const _prompt = promptsData.find(prompt => prompt.id === exec.prompt)!;
+
+      return !isImageOutput(exec.output, _prompt?.engine?.output_type);
+    });
     const fetchedContent = await markdownToHTML(prompt?.output || "");
     setContent(fetchedContent);
   };

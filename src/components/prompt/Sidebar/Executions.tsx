@@ -131,6 +131,7 @@ export const Executions: React.FC<ExecutionsProps> = ({
                     key={execution.id}
                     execution={execution}
                     onClick={onSelectExecution}
+                    promptsData={template.prompts}
                   />
                 ))
               ) : (
@@ -162,6 +163,7 @@ export const Executions: React.FC<ExecutionsProps> = ({
                     key={execution.id}
                     execution={execution}
                     onClick={onSelectExecution}
+                    promptsData={template.prompts}
                   />
                 ))
               ) : (
