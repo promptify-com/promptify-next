@@ -2,7 +2,7 @@ import Box from "@mui/material/Box";
 
 import ToolbarItem from "./ToolbarItem";
 import Avatar from "@mui/material/Avatar";
-import FavoriteIcon from "../FavoriteIcon";
+import FavoriteIcon from "@/components/Prompt/Common/FavoriteIcon";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItem from "@mui/material/ListItem";
