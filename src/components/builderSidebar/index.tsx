@@ -1,4 +1,4 @@
-import { FC, ReactNode, useState } from "react";
+import { FC, ReactNode, useEffect, useState } from "react";
 import {
   Box,
   Divider,
@@ -21,6 +21,7 @@ import Help from "./Help";
 import { useAppDispatch } from "@/hooks/useStore";
 import { setOpenBuilderSidebar } from "@/core/store/sidebarSlice";
 import PromptSequence from "./PromptSequence";
+import { useRouter } from "next/router";
 
 const drawerWidth = 352;
 
@@ -34,11 +35,8 @@ interface Link {
 export const BuilderSidebar: FC = () => {
   const [open, setOpen] = useState(false);
   const dispatch = useAppDispatch();
-
   const [activeLink, setActiveLink] = useState<LinkName>();
-
   const theme = useTheme();
-
   const Links: Link[] = [
     {
       name: "list",
@@ -57,6 +55,13 @@ export const BuilderSidebar: FC = () => {
       icon: <ApiIcon />,
     },
   ];
+  const router = useRouter();
+
+  useEffect(() => {
+    if (router.query.slug === "create") {
+      handleOpenSidebar("help");
+    }
+  }, []);
 
   const handleOpenSidebar = (link: LinkName) => {
     setOpen(true);
@@ -68,6 +73,7 @@ export const BuilderSidebar: FC = () => {
     setOpen(false);
     dispatch(setOpenBuilderSidebar(false));
   };
+
   return (
     <Box
       sx={{
