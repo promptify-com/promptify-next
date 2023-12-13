@@ -21,7 +21,7 @@ import { getExecutionById } from "@/hooks/api/executions";
 import { isDesktopViewPort, randomId } from "@/common/helpers";
 import useChatBox from "@/hooks/useChatBox";
 import SigninButton from "@/components/common/buttons/SigninButton";
-import { setInputs, setParams, setparamsValues } from "@/core/store/chatSlice";
+import { setAnswers, setInputs, setIsSimulationStreaming, setParams, setparamsValues } from "@/core/store/chatSlice";
 
 interface Props {
   onError: (errMsg: string) => void;
@@ -45,12 +45,9 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
     created_at: new Date(),
     data: [],
   });
-  const [answers, setAnswers] = useState<IAnswer[]>([]);
-  const [isSimulationStreaming, setIsSimulationStreaming] = useState(false);
 
-  // const answers = useAppSelector(state => state.chat.answers)
-  // const inputs = useAppSelector(state => state.chat.answers)
-  // const isSimulationStreaming = useAppSelector(state => state.chat.isSimulationStreaming)
+  const answers = useAppSelector(state => state.chat.answers);
+  const isSimulationStreaming = useAppSelector(state => state.chat.isSimulationStreaming);
   const paramsValues = useAppSelector(state => state.chat.paramsValues);
 
   const [newExecutionId, setNewExecutionId] = useState<number | null>(null);
@@ -64,7 +61,7 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
 
   const addToQueuedMessages = (messages: IMessage[]) => {
     setQueuedMessages(messages);
-    setIsSimulationStreaming(true);
+    dispatch(setIsSimulationStreaming(true));
   };
 
   const initialMessages = (questions: IPromptInput[]) => {
@@ -112,7 +109,8 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
     }
 
     setMessages([welcomeMessage]);
-    setAnswers([]);
+    dispatch(setAnswers([]));
+
     setShowGenerateButton(false);
   };
 
@@ -347,8 +345,7 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
           };
         })
         .filter(answer => answer.answer);
-
-      setAnswers(newAnswers);
+      dispatch(setAnswers(newAnswers));
       setIsValidatingAnswer(false);
 
       const isReady = allRequiredInputsAnswered(_inputs, newAnswers) ? " We are ready to create a new document." : "";
@@ -378,7 +375,7 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
       _answers.push(newAnswer);
     }
 
-    setAnswers(_answers);
+    dispatch(setAnswers(_answers));
   };
 
   const handleUserParam = (value: number, param: PromptParams) => {
@@ -415,7 +412,8 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
           return answer;
         }),
       );
-      setAnswers(_answers);
+
+      dispatch(setAnswers(_answers));
       resolve({ status, answers: _answers });
     });
 
