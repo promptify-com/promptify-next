@@ -192,8 +192,14 @@ function HomePage() {
   );
 }
 
-export const getStaticProps = () => {
-  return { props: {} };
+export const getServerSideProps = () => {
+  return {
+    props: {
+      title: "Promptify | Boost Your Creativity",
+      description:
+        "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
+    },
+  };
 };
 
 export default HomePage;
