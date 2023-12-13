@@ -3,7 +3,7 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { useEffect } from "react";
 import type { AxiosResponse } from "axios";
-import type { GetServerSideProps, NextPage } from "next";
+import type { GetServerSideProps } from "next";
 import { useSelector, useDispatch } from "react-redux";
 import { IContinueWithSocialMediaResponse } from "@/common/types";
 import { client } from "@/common/axios";
@@ -17,19 +17,14 @@ import { useGetLatestExecutedTemplatesQuery } from "@/core/api/executions";
 import { getPathURL, saveToken } from "@/common/utils";
 import { RootState } from "@/core/store";
 import { isValidUserFn, updateUser } from "@/core/store/userSlice";
-import { Category, TemplatesExecutionsByMePaginationResponse } from "@/core/api/dto/templates";
 import { redirectToPath } from "@/common/helpers";
 import useToken from "@/hooks/useToken";
 import ClientOnly from "@/components/base/ClientOnly";
-import { getCategories } from "@/hooks/api/categories";
-
-interface HomePageProps {
-  categories: Category[];
-}
+import { useGetCategoriesQuery } from "@/core/api/categories";
 
 const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
 
-const HomePage: NextPage<HomePageProps> = ({ categories }) => {
+function HomePage() {
   const token = useToken();
   const path = getPathURL();
   const dispatch = useDispatch();
@@ -65,6 +60,7 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
       skip: token,
     },
   );
+  const { data: categories, isLoading: isCategoriesLoading } = useGetCategoriesQuery();
 
   // TODO: move authentication logic to signin page instead
   const doPostLogin = async (response: AxiosResponse<IContinueWithSocialMediaResponse>) => {
@@ -164,7 +160,7 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
                   />
                   <CategoriesSection
                     categories={categories}
-                    isLoading={!isValidUser}
+                    isLoading={isCategoriesLoading}
                   />
                 </Grid>
               ) : (
@@ -172,7 +168,7 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
                   <WelcomeCard />
                   <CategoriesSection
                     categories={categories}
-                    isLoading={isValidUser}
+                    isLoading={isCategoriesLoading}
                   />
                   <TemplatesSection
                     isLoading={isPopularTemplatesLoading}
@@ -194,21 +190,10 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
       </Layout>
     </>
   );
-};
+}
 
-export const getServerSideProps: GetServerSideProps = async ({ res }) => {
-  res.setHeader("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=60");
-
-  const categories = await getCategories();
-
-  return {
-    props: {
-      title: "Promptify | Boost Your Creativity",
-      description:
-        "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
-      categories,
-    },
-  };
+export const getStaticProps = () => {
+  return { props: {} };
 };
 
 export default HomePage;

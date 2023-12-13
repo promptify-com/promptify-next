@@ -9,10 +9,6 @@ interface CategoriesSectionProps {
 }
 
 export const CategoriesSection: React.FC<CategoriesSectionProps> = ({ isLoading, categories }) => {
-  if (!categories?.length) {
-    return null;
-  }
-
   return (
     <>
       <Box
