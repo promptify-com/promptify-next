@@ -5,9 +5,9 @@ import Stack from "@mui/material/Stack";
 import South from "@mui/icons-material/South";
 import Typography from "@mui/material/Typography";
 
-import { TemplateDetailsCard } from "@/components/Prompt/Common/TemplateDetailsCard";
+import { TemplateDetailsCard } from "../TemplateDetailsCard";
 import { AccordionMessage } from "@/components/Prompt/VariantB/AccordionMessage";
-import { Message } from "@/components/Prompt/Common/Chat/Message";
+import { Message } from "./Message";
 import { useAppSelector } from "@/hooks/useStore";
 import { getCurrentDateFormatted, timeAgo } from "@/common/helpers/timeManipulation";
 import type { IPromptInput } from "@/common/types/prompt";
