@@ -45,7 +45,7 @@ export default function ExplorePage({ categories }: Props) {
           <FiltersSelected show={!allFilterParamsNull} />
           {allFilterParamsNull && (
             <CategoriesSection
-              categories={categories}
+              categories={categories ?? []}
               isLoading={false}
             />
           )}
