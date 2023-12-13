@@ -5,7 +5,6 @@ import { theme } from "@/theme";
 import { useDispatch } from "react-redux";
 import { setSelectedTag } from "@/core/store/filtersSlice";
 import { useRouter } from "next/router";
-import { isDesktopViewPort } from "@/common/helpers";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 
 interface TemplateDetailsCardProps {
@@ -13,10 +12,11 @@ interface TemplateDetailsCardProps {
   min?: boolean;
 }
 
-export const TemplateDetailsCard: React.FC<TemplateDetailsCardProps> = ({ template, min = false }) => {
+export const TemplateDetailsCard: React.FC<TemplateDetailsCardProps> = ({ template, min }) => {
   const dispatch = useDispatch();
   const router = useRouter();
-  const isDesktopView = isDesktopViewPort();
+
+  const variantA = router.query.variant === "a";
   const [expanded, setExpanded] = useState(false);
 
   const DescriptionTags = () => (
@@ -64,25 +64,27 @@ export const TemplateDetailsCard: React.FC<TemplateDetailsCardProps> = ({ templa
     <Box
       sx={{
         bgcolor: alpha(theme.palette.primary.main, 0.08),
-        borderRadius: { xs: "42px", md: "16px" },
-        p: { xs: "14px", md: 0 },
+        borderRadius: min ? "42px" : "48px",
+        p: min ? "14px" : 0,
         position: "relative",
       }}
     >
       <Stack
         direction={"row"}
         justifyContent={"space-between"}
-        alignItems={{ xs: "center", md: "flex-start" }}
-        flexWrap={{ xs: "wrap", md: "nowrap" }}
+        alignItems={min ? "center" : "flex-start"}
+        gap={1}
       >
         <Stack
-          flex={1}
           gap={2}
           sx={{
-            p: { md: "40px 24px 40px 16px" },
+            p: { md: "48px 72px 48px 54px" },
           }}
         >
-          <Stack gap={1}>
+          <Stack
+            gap={1}
+            sx={{ wordBreak: "break-word", hyphens: "auto" }}
+          >
             <Typography
               fontSize={{ xs: 12, md: 14 }}
               fontWeight={500}
@@ -98,23 +100,21 @@ export const TemplateDetailsCard: React.FC<TemplateDetailsCardProps> = ({ templa
               {template.title}
             </Typography>
           </Stack>
-          {isDesktopView && <DescriptionTags />}
+          {!min && <DescriptionTags />}
         </Stack>
-        <Stack pb={{ md: "24px" }}>
-          <CardMedia
-            sx={{
-              width: { xs: "101px", md: "351px" },
-              height: { xs: "72px", md: "222px" },
-              objectFit: "cover",
-              borderRadius: { xs: "48px", md: "16px" },
-            }}
-            component="img"
-            image={template.thumbnail}
-            alt={template.title}
-          />
-        </Stack>
+        <CardMedia
+          sx={{
+            width: min ? "101px" : "351px",
+            height: min ? "72px" : "262px",
+            objectFit: "cover",
+            borderRadius: "48px",
+          }}
+          component="img"
+          image={template.thumbnail}
+          alt={template.title}
+        />
       </Stack>
-      {!isDesktopView && (
+      {min && (
         <>
           <IconButton
             onClick={() => setExpanded(!expanded)}
@@ -133,7 +133,10 @@ export const TemplateDetailsCard: React.FC<TemplateDetailsCardProps> = ({ templa
             {expanded ? <ExpandLess /> : <ExpandMore />}
           </IconButton>
           <Collapse in={expanded}>
-            <Stack gap={2}>
+            <Stack
+              gap={1}
+              my={"8px"}
+            >
               <DescriptionTags />
             </Stack>
           </Collapse>

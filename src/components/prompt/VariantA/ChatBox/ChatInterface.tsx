@@ -2,7 +2,6 @@ import React, { useEffect, useRef } from "react";
 import { Box, Divider, Stack, Typography } from "@mui/material";
 import { Message } from "./Message";
 import { IMessage } from "@/common/types/chat";
-import { TemplateDetailsCard } from "../TemplateDetailsCard";
 import { Templates } from "@/core/api/dto/templates";
 import { useAppSelector } from "@/hooks/useStore";
 import { InputsForm } from "./Inputsform";
@@ -11,6 +10,7 @@ import { PromptParams } from "@/core/api/dto/prompts";
 import { isDesktopViewPort } from "@/common/helpers";
 import { FeedbackActions } from "../FeedbackActions";
 import { MessageSparkBox } from "./MessageSparkBox";
+import { TemplateDetailsCard } from "../../Common/TemplateDetailsCard";
 
 interface Props {
   template: Templates;
@@ -62,12 +62,14 @@ export const ChatInterface = ({ template, messages, onChangeInput, onChangeParam
     >
       <div style={{ marginTop: "auto" }}></div>
 
-      {!isExecutionShown && (
-        <TemplateDetailsCard
-          template={template}
-          min={!isDesktopView}
-        />
-      )}
+      <Box mx={!isDesktopView ? "16px" : "40px"}>
+        {!isExecutionShown && (
+          <TemplateDetailsCard
+            template={template}
+            min={!isDesktopView}
+          />
+        )}
+      </Box>
 
       <Stack
         pb={"8px"}

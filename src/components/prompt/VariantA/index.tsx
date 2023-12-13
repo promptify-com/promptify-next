@@ -1,18 +1,20 @@
-import React, { type Dispatch, type SetStateAction } from "react";
+import { useEffect, type Dispatch, type SetStateAction } from "react";
 import Stack from "@mui/material/Stack";
 import { Display } from "./Display";
-import type { Templates } from "@/core/api/dto/templates";
+import Box from "@mui/material/Box";
+import { skipToken } from "@reduxjs/toolkit/dist/query";
 
 import ChatBox from "./ChatBox";
-import { Sidebar } from "./Sidebar";
-import { useAppSelector } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
-import { Box } from "@mui/material";
-import { skipToken } from "@reduxjs/toolkit/dist/query";
-import SidebarMini from "./Sidebar/Mini";
 import ClientOnly from "@/components/base/ClientOnly";
 import Header from "../Common/Header";
+import { Sidebar } from "../Common/Sidebar";
+import { setSelectedExecution, setSparkHashQueryParam } from "@/core/store/executionsSlice";
+import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
+
+import TopHeaderActions from "../Common/Sidebar/TopHeaderActions";
 
 interface TemplateLayoutProps {
   template: Templates;
@@ -21,13 +23,49 @@ interface TemplateLayoutProps {
 }
 
 export default function TemplateVariantA({ template, setErrorMessage, questionPrefixContent }: TemplateLayoutProps) {
+  const dispatch = useAppDispatch();
+
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
 
   const isExecutionShown = Boolean(selectedExecution ?? generatedExecution);
 
   const isValidUser = useAppSelector(isValidUserFn);
-  const { data: executions } = useGetExecutionsByTemplateQuery(isValidUser ? template.id : skipToken);
+  const {
+    data: executions,
+    isLoading: isExecutionsLoading,
+    refetch: refetchTemplateExecutions,
+  } = useGetExecutionsByTemplateQuery(isValidUser ? template.id : skipToken);
+
+  const handleSelectExecution = ({
+    execution,
+    resetHash = false,
+  }: {
+    execution: TemplatesExecutions | null;
+    resetHash?: boolean;
+  }) => {
+    if (resetHash) {
+      dispatch(setSparkHashQueryParam(null));
+    }
+
+    dispatch(setSelectedExecution(execution));
+  };
+
+  useEffect(() => {
+    if (!executions) {
+      return;
+    }
+
+    const wantedExecutionId = selectedExecution?.id.toString();
+
+    if (wantedExecutionId) {
+      const _selectedExecution = executions.find(exec => exec.id.toString() === wantedExecutionId);
+
+      handleSelectExecution({ execution: _selectedExecution || null, resetHash: true });
+    } else {
+      handleSelectExecution({ execution: template.example_execution || null, resetHash: true });
+    }
+  }, [executions]);
 
   return (
     <Stack
@@ -36,6 +74,7 @@ export default function TemplateVariantA({ template, setErrorMessage, questionPr
       gap={"2px"}
     >
       <Header template={template} />
+
       <Stack
         direction={{ md: "row" }}
         flexWrap={{ md: "nowrap" }}
@@ -63,9 +102,7 @@ export default function TemplateVariantA({ template, setErrorMessage, questionPr
           },
         }}
       >
-        <Box display={{ xs: "block", md: "none" }}>
-          <SidebarMini count={executions?.length || 0} />
-        </Box>
+        <TopHeaderActions executionsLength={executions?.length} />
 
         <Stack
           display={{ xs: !isExecutionShown ? "flex" : "none", md: "flex" }}
@@ -110,7 +147,12 @@ export default function TemplateVariantA({ template, setErrorMessage, questionPr
           </Box>
         )}
 
-        <Sidebar template={template} />
+        <Sidebar
+          template={template}
+          executions={executions ?? []}
+          isLoading={isExecutionsLoading}
+          refetchExecutions={refetchTemplateExecutions}
+        />
       </Stack>
     </Stack>
   );

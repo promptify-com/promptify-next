@@ -1,4 +1,5 @@
 import { SyntheticEvent, useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import Stack from "@mui/material/Stack";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -8,7 +9,6 @@ import ListItemButton from "@mui/material/ListItemButton";
 import Typography from "@mui/material/Typography";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
 
-import { CardExecution } from "@/components/common/cards/CardExecution";
 import { CardExecutionPlaceholder } from "@/components/placeholders/CardExecutionPlaceholder";
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
@@ -18,6 +18,7 @@ import { setGeneratedExecution, setSelectedExecution, setSparkHashQueryParam } f
 import { setActiveToolbarLink } from "@/core/store/templatesSlice";
 import { isDesktopViewPort } from "@/common/helpers";
 import { setAnswers } from "@/core/store/chatSlice";
+import { ExecutionItem } from "./ExecutionItem";
 
 interface ExecutionsProps {
   template: Templates;
@@ -27,13 +28,16 @@ interface ExecutionsProps {
 }
 
 export const Executions: React.FC<ExecutionsProps> = ({ template }) => {
-  const [selectedTab, setSelectedTab] = useState(0);
-
+  const isMobile = !isDesktopViewPort();
   const dispatch = useAppDispatch();
-  const isValidUser = useAppSelector(isValidUserFn);
+  const router = useRouter();
+  const activeVariant = router.query.variant;
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
+  const isValidUser = useAppSelector(isValidUserFn);
+
+  const [selectedTab, setSelectedTab] = useState(0);
 
   const {
     data: executions,
@@ -54,8 +58,6 @@ export const Executions: React.FC<ExecutionsProps> = ({ template }) => {
 
     dispatch(setSelectedExecution(execution));
   };
-
-  const isMobile = !isDesktopViewPort();
 
   useEffect(() => {
     if (!isGenerating && generatedExecution?.data?.length) {
@@ -132,31 +134,53 @@ export const Executions: React.FC<ExecutionsProps> = ({ template }) => {
               }}
             />
           </Tabs>
-          <List
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "8px",
-            }}
-          >
-            {filteredExecutions?.map(execution => (
-              <ListItem
-                onClick={() => handleClick(execution)}
-                sx={{ borderRadius: "8px", overflow: "hidden" }}
-                key={execution.id}
-                disablePadding
-              >
-                <ListItemButton
-                  selected={selectedExecution?.id === execution.id}
-                  sx={{
-                    p: 1,
-                  }}
+
+          {activeVariant === "a" ? (
+            <Stack
+              gap={2}
+              py={"24px"}
+            >
+              {filteredExecutions?.map(execution => (
+                <ExecutionItem
+                  key={execution.id}
+                  variant="a"
+                  execution={execution}
+                  promptsData={template.prompts}
+                />
+              ))}
+            </Stack>
+          ) : (
+            <List
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "8px",
+              }}
+            >
+              {filteredExecutions?.map(execution => (
+                <ListItem
+                  onClick={() => handleClick(execution)}
+                  sx={{ borderRadius: "8px", overflow: "hidden" }}
+                  key={execution.id}
+                  disablePadding
                 >
-                  <CardExecution execution={execution} />
-                </ListItemButton>
-              </ListItem>
-            ))}
-          </List>
+                  <ListItemButton
+                    selected={selectedExecution?.id === execution.id}
+                    sx={{
+                      p: 1,
+                    }}
+                  >
+                    <ExecutionItem
+                      key={execution.id}
+                      variant="b"
+                      execution={execution}
+                      promptsData={template.prompts}
+                    />
+                  </ListItemButton>
+                </ListItem>
+              ))}
+            </List>
+          )}
         </>
       ) : (
         <Typography

@@ -1,26 +1,18 @@
-import { useEffect, type Dispatch, type SetStateAction, Fragment } from "react";
+import { useEffect, type Dispatch, type SetStateAction } from "react";
 import Grid from "@mui/material/Grid";
-import Icon from "@mui/material/Icon";
 import Stack from "@mui/material/Stack";
-import Button from "@mui/material/Button";
-import Badge from "@mui/material/Badge";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
-import InfoOutlined from "@mui/icons-material/InfoOutlined";
 
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { setActiveToolbarLink } from "@/core/store/templatesSlice";
 import { setSelectedExecution, setSparkHashQueryParam } from "@/core/store/executionsSlice";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
-import NoteStackIcon from "@/assets/icons/NoteStackIcon";
-import { theme } from "@/theme";
 import Chat from "@/components/Prompt/Common/Chat";
 import Header from "@/components/Prompt/Common/Header";
-import TemplateToolbar from "@/components/Prompt/Common/Sidebar";
-import ToolbarDrawer from "@/components/Prompt/Common/Sidebar/ToolbarDrawer";
 import ClientOnly from "@/components/base/ClientOnly";
-import type { Link } from "@/common/types/TemplateToolbar";
 import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
+import { Sidebar } from "../Common/Sidebar";
+import TopHeaderActions from "../Common/Sidebar/TopHeaderActions";
 
 interface TemplateVariantBProps {
   template: Templates;
@@ -83,27 +75,6 @@ export default function TemplateVariantB({ template, setErrorMessage, questionPr
     }
   }, [executions]);
 
-  const ToolbarItems: Link[] = [
-    {
-      name: "executions",
-      icon: <NoteStackIcon />,
-      title: "My Works",
-    },
-
-    {
-      name: "details",
-      icon: <InfoOutlined />,
-      title: "Template details",
-    },
-  ];
-
-  const renderIcon = (link: Link) => {
-    if (link.name === "executions") {
-      return <NoteStackIcon color={theme.palette.primary.main} />;
-    }
-    return link.icon;
-  };
-
   return (
     <Stack
       mt={{ xs: 8, md: 0 }}
@@ -111,51 +82,7 @@ export default function TemplateVariantB({ template, setErrorMessage, questionPr
     >
       <Header template={template} />
 
-      <Stack
-        py={1}
-        direction={"row"}
-        alignItems={"center"}
-        gap={"20px"}
-        display={{ xs: "flex", md: "none" }}
-        mx={"16px"}
-      >
-        {ToolbarItems.map(link => (
-          <Fragment key={link.name}>
-            {executions?.length && link.name === "executions" ? (
-              <Badge
-                badgeContent={executions.length}
-                color="primary"
-              >
-                <Button
-                  onClick={() => dispatch(setActiveToolbarLink(link))}
-                  variant="text"
-                  startIcon={<Icon>{renderIcon(link)}</Icon>}
-                  sx={{
-                    height: 22,
-                    p: "15px",
-                    bgcolor: "surface.3",
-                  }}
-                >
-                  {link.title}
-                </Button>
-              </Badge>
-            ) : (
-              <Button
-                variant="text"
-                onClick={() => dispatch(setActiveToolbarLink(link))}
-                startIcon={<Icon sx={{ py: "4px", pr: "2px", mt: -0.5 }}>{renderIcon(link)}</Icon>}
-                sx={{
-                  height: 22,
-                  p: "15px",
-                  bgcolor: "surface.3",
-                }}
-              >
-                {link.title}
-              </Button>
-            )}
-          </Fragment>
-        ))}
-      </Stack>
+      <TopHeaderActions executionsLength={executions?.length} />
       <Grid
         mt={0}
         gap={"1px"}
@@ -215,13 +142,11 @@ export default function TemplateVariantB({ template, setErrorMessage, questionPr
             />
           </ClientOnly>
         </Stack>
-
-        <TemplateToolbar template={template} />
-        <ToolbarDrawer
+        <Sidebar
           template={template}
-          executions={executions!}
-          isExecutionsLoading={isExecutionsLoading}
-          refetchTemplateExecutions={refetchTemplateExecutions}
+          executions={executions ?? []}
+          isLoading={isExecutionsLoading}
+          refetchExecutions={refetchTemplateExecutions}
         />
       </Grid>
     </Stack>

@@ -12,24 +12,31 @@ import type { Link } from "@/common/types/TemplateToolbar";
 import { setActiveToolbarLink } from "@/core/store/templatesSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { theme } from "@/theme";
+import { Templates } from "@/core/api/dto/templates";
 
 interface Props {
+  template: Templates;
   item: Link;
-  onClick: (item: Link) => void;
   executionsLength: number;
+  activeVariant: string;
 }
 
-function ToolbarItem({ item, onClick, executionsLength }: Props) {
+function ToolbarItem({ item, activeVariant, template, executionsLength }: Props) {
   const dispatch = useAppDispatch();
 
   const activeLink = useAppSelector(state => state.template.activeSideBarLink);
+  const isVariantA = activeVariant === "a";
 
   const handleClick = (link: Link) => {
     if (link.name !== "customize") {
       dispatch(setActiveToolbarLink(link));
       return;
     }
-    onClick(link);
+
+    if (isVariantA) return;
+
+    const url = `/prompt-builder/${template.slug}?editor=1`;
+    window.open(url, "_blank");
   };
 
   const isSelected = activeLink?.name === item.name;
@@ -46,6 +53,7 @@ function ToolbarItem({ item, onClick, executionsLength }: Props) {
         return item.icon;
     }
   };
+
   return (
     <Grid key={item.name}>
       <ListItem disablePadding>
@@ -79,7 +87,10 @@ function ToolbarItem({ item, onClick, executionsLength }: Props) {
                   badgeContent={executionsLength}
                   sx={{
                     ".MuiBadge-badge.MuiBadge-standard": {
-                      bgcolor: "surface.5",
+                      bgcolor: isVariantA ? "surface.1" : "surface.5",
+
+                      border: isVariantA ? "1px solid" : "none",
+                      borderColor: "divider",
                     },
                   }}
                 >

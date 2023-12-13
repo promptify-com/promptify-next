@@ -139,7 +139,7 @@ export enum BUILDER_TYPE {
 
 export const BuilderInputTypes: InputType[] = ["text", "number", "integer", "code", "choices", "file"];
 
-export const ToolbarItems: Link[] = [
+export const TemplateSidebarLinks: Link[] = [
   {
     name: "customize",
     icon: <Tune />,

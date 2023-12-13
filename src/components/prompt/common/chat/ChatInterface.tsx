@@ -14,6 +14,7 @@ import type { IPromptInput } from "@/common/types/prompt";
 import type { IMessage } from "@/common/types/chat";
 import type { Templates } from "@/core/api/dto/templates";
 import type { PromptParams } from "@/core/api/dto/prompts";
+import { isDesktopViewPort } from "@/common/helpers";
 
 interface Props {
   messages: IMessage[];
@@ -35,6 +36,7 @@ export const ChatInterface = ({
   onAbort,
 }: Props) => {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
+  const isDesktopView = isDesktopViewPort();
 
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
@@ -112,7 +114,10 @@ export const ChatInterface = ({
         },
       }}
     >
-      <TemplateDetailsCard template={template} />
+      <TemplateDetailsCard
+        template={template}
+        min={!isDesktopView}
+      />
       {showScrollDown && isGenerating && (
         <Box
           onClick={scrollToBottom}
