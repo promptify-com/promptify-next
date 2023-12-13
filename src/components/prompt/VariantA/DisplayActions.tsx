@@ -17,7 +17,7 @@ import useTruncate from "@/hooks/useTruncate";
 import { SparkSaveDeletePopup } from "@/components/dialog/SparkSaveDeletePopup";
 import { getAbbreviation } from "@/common/helpers";
 import { useDispatch } from "react-redux";
-import { setSelectedExecution } from "@/core/store/executionsSlice";
+import { setGeneratedExecution, setSelectedExecution } from "@/core/store/executionsSlice";
 import { ProgressLogo } from "@/components/common/ProgressLogo";
 
 interface Props {
@@ -62,6 +62,7 @@ export const DisplayActions: React.FC<Props> = ({
 
   const closeExecutionDisplay = () => {
     dispatch(setSelectedExecution(null));
+    dispatch(setGeneratedExecution(null));
   };
 
   return (

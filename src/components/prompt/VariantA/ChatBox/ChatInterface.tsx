@@ -1,14 +1,13 @@
-import React, { useEffect, useRef, Dispatch, SetStateAction } from "react";
+import React, { useEffect, useRef } from "react";
 import { Box, Divider, Stack, Typography } from "@mui/material";
 import { Message } from "./Message";
-import { IAnswer, IMessage } from "@/common/types/chat";
+import { IMessage } from "@/common/types/chat";
 import { TemplateDetailsCard } from "../TemplateDetailsCard";
 import { Templates } from "@/core/api/dto/templates";
 import { useAppSelector } from "@/hooks/useStore";
 import { InputsForm } from "./Inputsform";
-import { CardExecution } from "@/components/common/cards/CardExecution";
 import { IPromptInput } from "@/common/types/prompt";
-import { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
+import { PromptParams } from "@/core/api/dto/prompts";
 import { isDesktopViewPort } from "@/common/helpers";
 import { FeedbackActions } from "../FeedbackActions";
 import { MessageSparkBox } from "./MessageSparkBox";
@@ -22,8 +21,11 @@ interface Props {
 
 export const ChatInterface = ({ template, messages, onChangeInput, onChangeParam }: Props) => {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
-  // const isChatFullScreen = useAppSelector(state => state.template.isChatFullScreen);
-  const isChatFullScreen = true;
+
+  const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
+  const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
+
+  const isExecutionShown = Boolean(selectedExecution ?? generatedExecution);
   const isDesktopView = isDesktopViewPort();
 
   const scrollToBottom = () => {
@@ -34,7 +36,7 @@ export const ChatInterface = ({ template, messages, onChangeInput, onChangeParam
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, isChatFullScreen]);
+  }, [messages, isExecutionShown]);
 
   return (
     <Stack
@@ -60,7 +62,7 @@ export const ChatInterface = ({ template, messages, onChangeInput, onChangeParam
     >
       <div style={{ marginTop: "auto" }}></div>
 
-      {isChatFullScreen && (
+      {!isExecutionShown && (
         <TemplateDetailsCard
           template={template}
           min={!isDesktopView}
@@ -69,7 +71,7 @@ export const ChatInterface = ({ template, messages, onChangeInput, onChangeParam
 
       <Stack
         pb={"8px"}
-        mx={{ xs: "16px", md: isChatFullScreen ? "40px" : "32px" }}
+        mx={{ xs: "16px", md: !isExecutionShown ? "40px" : "32px" }}
       >
         <Divider
           sx={{
@@ -84,12 +86,13 @@ export const ChatInterface = ({ template, messages, onChangeInput, onChangeParam
         {messages.map(msg => (
           <React.Fragment key={msg.id}>
             <Message
+              isExecutionShown={isExecutionShown}
               message={msg}
               onScrollToBottom={scrollToBottom}
             />
             {msg.type === "form" && (
               <Box
-                ml={{ xs: 0, md: isChatFullScreen ? "48px" : 0 }}
+                ml={{ xs: 0, md: !isExecutionShown ? "48px" : 0 }}
                 mb={2}
                 mt={{ xs: 0, md: msg.noHeader ? -2.5 : 0 }}
               >
@@ -102,7 +105,7 @@ export const ChatInterface = ({ template, messages, onChangeInput, onChangeParam
             )}
             {msg.type === "spark" && msg.spark && (
               <Stack
-                mx={{ xs: 0, md: isChatFullScreen ? "48px" : 0 }}
+                mx={{ xs: 0, md: !isExecutionShown ? "48px" : 0 }}
                 mb={2}
                 gap={2}
               >

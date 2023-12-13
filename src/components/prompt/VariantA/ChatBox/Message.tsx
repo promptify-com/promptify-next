@@ -1,4 +1,3 @@
-import React, { Dispatch, SetStateAction } from "react";
 import { Avatar, Grid, Stack, Typography } from "@mui/material";
 import { useAppSelector } from "@/hooks/useStore";
 import { IMessage } from "@/common/types/chat";
@@ -11,14 +10,13 @@ import { isDesktopViewPort } from "@/common/helpers";
 interface MessageBlockProps {
   message: IMessage;
   onScrollToBottom: () => void;
+  isExecutionShown: boolean;
 }
 
-export const Message = ({ message, onScrollToBottom }: MessageBlockProps) => {
+export const Message = ({ message, isExecutionShown, onScrollToBottom }: MessageBlockProps) => {
   const { fromUser, text, createdAt } = message;
   const currentUser = useAppSelector(state => state.user.currentUser);
-  // const isChatFullScreen = useAppSelector(state => state.template.isChatFullScreen);
-  // const isChatFullScreen = useAppSelector(state => state.template.isChatFullScreen);
-  const isChatFullScreen = true;
+
   const isDesktopView = isDesktopViewPort();
 
   const name = fromUser ? currentUser?.first_name ?? currentUser?.username : "Promptify";
@@ -29,7 +27,7 @@ export const Message = ({ message, onScrollToBottom }: MessageBlockProps) => {
       display={"flex"}
       gap={"16px"}
     >
-      {isChatFullScreen && !message.noHeader && isDesktopView && (
+      {!isExecutionShown && !message.noHeader && isDesktopView && (
         <>
           {message.type === "spark" ? (
             <Stack
@@ -66,7 +64,7 @@ export const Message = ({ message, onScrollToBottom }: MessageBlockProps) => {
 
       <Grid
         flex={1}
-        ml={{ xs: 0, md: isChatFullScreen && message.noHeader ? "48px" : 0 }}
+        ml={{ xs: 0, md: !isExecutionShown && message.noHeader ? "48px" : 0 }}
         mt={{ xs: 0, md: message.noHeader ? -1.5 : 0 }}
         display={"flex"}
         flexDirection={"column"}

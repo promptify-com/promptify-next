@@ -10,6 +10,7 @@ import { theme } from "@/theme";
 import { useAppSelector } from "@/hooks/useStore";
 import { IAnswer } from "@/common/types/chat";
 import { setAnswers } from "@/core/store/chatSlice";
+import { setRepeatedExecution } from "@/core/store/executionsSlice";
 
 interface newFeedBack {
   execution: TemplatesExecutions;
@@ -40,6 +41,7 @@ export const FeedbackActions: React.FC<newFeedBack> = ({ execution, vertical, mi
   };
 
   const handleRepeat = () => {
+    dispatch(setRepeatedExecution(execution));
     let newAnswers: IAnswer[] = [];
     if (execution.parameters) {
       const _params = execution.parameters;
@@ -61,9 +63,6 @@ export const FeedbackActions: React.FC<newFeedBack> = ({ execution, vertical, mi
     }
 
     dispatch(setAnswers(newAnswers));
-
-    // const isReady = allRequiredInputsAnswered(_inputs, newAnswers) ? " We are ready to create a new document." : "";
-    // messageAnswersForm(`Ok!${isReady} I have prepared the incoming parameters, please check!`);
   };
 
   const liked = feedback === "LIKED";

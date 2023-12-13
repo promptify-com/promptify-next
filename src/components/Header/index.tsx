@@ -178,11 +178,11 @@ export const Header: React.FC<HeaderProps> = ({ transparent = false, fixed = fal
             alignItems: "center",
             position: "relative",
           }}
-          onClick={handleInputFocus}
         >
           <SearchBar
             keyWord={keyWord}
             setKeyWord={setKeyWord}
+            onClick={handleInputFocus}
           />
           <SearchDialog
             open={openSearchDialog}

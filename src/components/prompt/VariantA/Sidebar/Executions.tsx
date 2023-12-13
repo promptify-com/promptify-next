@@ -6,6 +6,7 @@ import { useAppSelector } from "@/hooks/useStore";
 import { Box, Stack, Tab, Tabs, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import { ExecutionItem } from "./ExecutionItem";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -127,10 +128,11 @@ export const Executions: React.FC<ExecutionsProps> = ({
             >
               {savedExecutions && savedExecutions.length > 0 ? (
                 savedExecutions.map(execution => (
-                  <CardExecution
+                  <ExecutionItem
                     key={execution.id}
                     execution={execution}
                     onClick={onSelectExecution}
+                    promptsData={template.prompts}
                   />
                 ))
               ) : (
@@ -158,10 +160,11 @@ export const Executions: React.FC<ExecutionsProps> = ({
             >
               {unsavedExecutions && unsavedExecutions.length > 0 ? (
                 unsavedExecutions.map(execution => (
-                  <CardExecution
+                  <ExecutionItem
                     key={execution.id}
                     execution={execution}
                     onClick={onSelectExecution}
+                    promptsData={template.prompts}
                   />
                 ))
               ) : (

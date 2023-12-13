@@ -31,8 +31,12 @@ export const ChatInput = ({
   const dispatch = useDispatch();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const answers = useAppSelector(state => state.chat.answers);
-  const isChatFullScreen = true;
   const isDesktopView = isDesktopViewPort();
+
+  const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
+  const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
+
+  const isExecutionShown = Boolean(selectedExecution ?? generatedExecution);
 
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -40,7 +44,6 @@ export const ChatInput = ({
     abortGenerating();
     dispatch(setGeneratedExecution(null));
     dispatch(setGeneratingStatus(false));
-    // dispatch(setChatFullScreenStatus(true));
   };
 
   return (
@@ -59,8 +62,8 @@ export const ChatInput = ({
         {isGenerating ? (
           <Box
             width={"100%"}
-            maxWidth={isChatFullScreen ? "360px" : "100%"}
-            mx={{ xs: "16px", md: isChatFullScreen ? "88px" : "32px" }}
+            maxWidth={!isExecutionShown ? "360px" : "100%"}
+            mx={{ xs: "16px", md: !isExecutionShown ? "88px" : "32px" }}
           >
             <GeneratingProgressCard onCancel={abortConnection} />
           </Box>
@@ -71,7 +74,7 @@ export const ChatInput = ({
             alignItems={"center"}
             ml={{ xs: "16px", md: "40px" }}
           >
-            {isChatFullScreen && isDesktopView && <ProgressLogo size="small" />}
+            {!isExecutionShown && isDesktopView && <ProgressLogo size="small" />}
             <Stack
               direction={"row"}
               gap={1}
@@ -99,7 +102,7 @@ export const ChatInput = ({
             alignItems={"center"}
             gap={2}
             flexWrap={"wrap"}
-            mx={{ xs: "16px", md: isChatFullScreen ? "88px" : "32px" }}
+            mx={{ xs: "16px", md: !isExecutionShown ? "88px" : "32px" }}
           >
             {showGenerate && (
               <Fade

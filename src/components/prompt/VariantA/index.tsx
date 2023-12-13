@@ -1,4 +1,4 @@
-import React, { type Dispatch, type SetStateAction, useEffect } from "react";
+import React, { type Dispatch, type SetStateAction } from "react";
 import Stack from "@mui/material/Stack";
 import { Display } from "./Display";
 import type { Templates } from "@/core/api/dto/templates";
@@ -11,8 +11,8 @@ import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
 import { Box } from "@mui/material";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
 import SidebarMini from "./Sidebar/Mini";
-import Header from "./Header";
 import ClientOnly from "@/components/base/ClientOnly";
+import Header from "../Common/Header";
 
 interface TemplateLayoutProps {
   template: Templates;
@@ -21,7 +21,10 @@ interface TemplateLayoutProps {
 }
 
 export default function TemplateVariantA({ template, setErrorMessage, questionPrefixContent }: TemplateLayoutProps) {
-  const isChatFullScreen = true;
+  const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
+  const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
+
+  const isExecutionShown = Boolean(selectedExecution ?? generatedExecution);
 
   const isValidUser = useAppSelector(isValidUserFn);
   const { data: executions } = useGetExecutionsByTemplateQuery(isValidUser ? template.id : skipToken);
@@ -65,10 +68,10 @@ export default function TemplateVariantA({ template, setErrorMessage, questionPr
         </Box>
 
         <Stack
-          display={{ xs: isChatFullScreen ? "flex" : "none", md: "flex" }}
+          display={{ xs: !isExecutionShown ? "flex" : "none", md: "flex" }}
           sx={{
             height: { xs: "calc(100% - 54px)", md: "100%" },
-            width: { xs: "100%", md: isChatFullScreen ? "100%" : "38%" },
+            width: { xs: "100%", md: !isExecutionShown ? "100%" : "38%" },
             minWidth: { md: 360 },
             position: { md: "sticky" },
             top: { md: 0 },
@@ -98,7 +101,7 @@ export default function TemplateVariantA({ template, setErrorMessage, questionPr
           </ClientOnly>
         </Stack>
 
-        {!isChatFullScreen && (
+        {isExecutionShown && (
           <Box
             width={{ md: "62%" }}
             flex={{ xs: 1, md: "auto" }}
