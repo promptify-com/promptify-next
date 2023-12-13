@@ -56,6 +56,8 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props,
     />
   );
 });
+let areaCurrentZoomInt = 0;
+const ZOOM_SPEED = 1;
 
 export const Builder = () => {
   const router = useRouter();
@@ -646,7 +648,16 @@ export const Builder = () => {
                 }}
               >
                 <Box
-                  onClick={() => editor?.zoomAt(1)}
+                  onClick={() => {
+                    if (areaCurrentZoomInt === 0) {
+                      areaCurrentZoomInt = ZOOM_SPEED;
+                      editor?.zoomAt(ZOOM_SPEED);
+                      return;
+                    }
+
+                    areaCurrentZoomInt += ZOOM_SPEED;
+                    editor?.zoomAt(areaCurrentZoomInt);
+                  }}
                   sx={{
                     "&:hover": {
                       cursor: "pointer",
@@ -657,7 +668,21 @@ export const Builder = () => {
                   <PlusIcon />
                 </Box>
                 <Box
-                  onClick={() => editor?.zoomAt(0.3)}
+                  onClick={() => {
+                    if (areaCurrentZoomInt === 0) {
+                      areaCurrentZoomInt = ZOOM_SPEED;
+                      editor?.zoomAt(ZOOM_SPEED);
+                      return;
+                    }
+
+                    areaCurrentZoomInt -= ZOOM_SPEED;
+
+                    if (areaCurrentZoomInt <= 0) {
+                      areaCurrentZoomInt = 0.5;
+                    }
+
+                    editor?.zoomAt(areaCurrentZoomInt);
+                  }}
                   sx={{
                     "&:hover": {
                       cursor: "pointer",

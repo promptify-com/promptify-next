@@ -3,16 +3,10 @@ import Icon from "@mui/material/Icon";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
+import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { redirectToPath } from "@/common/helpers";
 import type { NavItem } from "@/common/types/sidebar";
-import ExpandLess from "@mui/icons-material/ExpandLess";
-import ExpandMore from "@mui/icons-material/ExpandMore";
-import Collapse from "@mui/material/Collapse";
-import { ExploreFilterSideBar } from "../explorer/ExploreFilterSideBar";
-import { Engine, Tag } from "@/core/api/dto/templates";
-import { theme } from "@/theme";
-import { Box } from "@mui/material";
 
 interface Props {
   navItem: NavItem;
@@ -26,9 +20,11 @@ function SidebarItem({ navItem }: Props) {
       style={{
         width: "100%",
         textDecoration: "none",
+        cursor: navItem.href === "#" ? "none" : "pointer",
       }}
     >
       <ListItem
+        className={navItem.href === "#" ? "grayedout_link" : ""}
         disablePadding
         sx={{
           ...(navItem.active && {
@@ -45,7 +41,7 @@ function SidebarItem({ navItem }: Props) {
           }),
           padding: "8px",
           height: "auto",
-          "&:hover": {
+          "&:not(.grayedout_link):hover": {
             backgroundColor: "transparent",
             borderRadius: "8px",
             ".MuiSvgIcon-root": {
@@ -88,6 +84,7 @@ function SidebarItem({ navItem }: Props) {
               color: "onSurface",
             },
           }}
+          disabled={navItem.href === "#"}
         >
           <Box sx={{ minWidth: "40px", display: "block" }}>
             <ListItemIcon
