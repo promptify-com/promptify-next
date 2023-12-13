@@ -68,7 +68,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
 
           return {
             ...exec,
-            content: !isImageOutput(_content, prompt?.engine.output_type!) ? await markdownToHTML(_content) : _content,
+            content: !isImageOutput(_content, prompt?.engine?.output_type!) ? await markdownToHTML(_content) : _content,
           };
         }),
       );
@@ -127,7 +127,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
           <Stack gap={1}>
             {sortedPrompts?.map((exec, index) => {
               const prompt = promptsData.find(prompt => prompt.id === exec.prompt)!;
-              const engineType = prompt.engine.output_type;
+              const engineType = prompt?.engine?.output_type;
               const prevItem = sortedPrompts[index - 1];
               const isPrevItemImage = prevItem && isImageOutput(prevItem?.content, engineType);
               const nextItem = sortedPrompts[index + 1];
@@ -265,7 +265,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
                       </Stack>
                     )}
                     {/* is Image Output and Next item is not text */}
-                    {isImageOutput(exec.content, prompt.engine.output_type) && !isNextItemText && (
+                    {isImageOutput(exec.content, prompt?.engine?.output_type) && !isNextItemText && (
                       <Box
                         component={"img"}
                         alt={"book cover"}
