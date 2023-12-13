@@ -69,7 +69,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
 
           return {
             ...exec,
-            content: !isImageOutput(_content, prompt.engine.output_type) ? await markdownToHTML(_content) : _content,
+            content: !isImageOutput(_content, prompt?.engine?.output_type) ? await markdownToHTML(_content) : _content,
           };
         }),
       );
@@ -127,7 +127,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
           <Stack gap={1}>
             {sortedPrompts?.map((exec, index) => {
               const prompt = promptsData.find(prompt => prompt.id === exec.prompt)!;
-              const engineType = prompt.engine.output_type;
+              const engineType = prompt?.engine?.output_type;
               const prevItem = sortedPrompts[index - 1];
               const isPrevItemImage = prevItem && isImageOutput(prevItem?.content, engineType);
               const nextItem = sortedPrompts[index + 1];
