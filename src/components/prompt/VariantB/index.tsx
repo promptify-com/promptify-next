@@ -16,7 +16,7 @@ import NoteStackIcon from "@/assets/icons/NoteStackIcon";
 import { theme } from "@/theme";
 import Chat from "@/components/Prompt/Common/Chat";
 import Header from "@/components/Prompt/Common/Header";
-import TemplateToolbar from "@/components/Prompt/Common/Sidebar/";
+import TemplateToolbar from "@/components/Prompt/Common/Sidebar";
 import ToolbarDrawer from "@/components/Prompt/Common/Sidebar/ToolbarDrawer";
 import ClientOnly from "@/components/base/ClientOnly";
 import type { Link } from "@/common/types/TemplateToolbar";
