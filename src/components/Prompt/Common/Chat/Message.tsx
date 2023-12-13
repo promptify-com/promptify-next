@@ -1,0 +1,119 @@
+import { memo, useEffect, useState } from "react";
+import Typography from "@mui/material/Typography";
+import Grid from "@mui/material/Grid";
+import Bolt from "@mui/icons-material/Bolt";
+
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import type { IMessage } from "@/common/types/chat";
+import useTextSimulationStreaming from "@/hooks/useTextSimulationStreaming";
+import { timeAgo } from "@/common/helpers/timeManipulation";
+import { setIsSimulationStreaming } from "@/core/store/chatSlice";
+
+interface MessageBlockProps {
+  message: IMessage;
+  onScrollToBottom: () => void;
+  isExecutionMode: boolean;
+}
+
+interface MessageContentProps {
+  content: string;
+  shouldStream: boolean;
+  onStreamingFinished: () => void;
+}
+
+const MessageContent = memo(({ content, shouldStream, onStreamingFinished }: MessageContentProps) => {
+  const dispatch = useAppDispatch();
+  const { streamedText, hasFinished } = useTextSimulationStreaming({
+    text: content,
+    shouldStream,
+  });
+
+  useEffect(() => {
+    if (hasFinished) {
+      dispatch(setIsSimulationStreaming(false));
+
+      onStreamingFinished();
+    }
+  }, [hasFinished]);
+
+  return <>{streamedText}</>;
+});
+
+export const Message = ({ message, isExecutionMode, onScrollToBottom }: MessageBlockProps) => {
+  const [isHovered, setIsHovered] = useState(false);
+
+  const { fromUser, text, createdAt, type } = message;
+  const currentUser = useAppSelector(state => state.user.currentUser);
+
+  const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
+  const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
+
+  const name = fromUser ? currentUser?.first_name ?? currentUser?.username : "Promptify";
+
+  if (type === "form") {
+    return;
+  }
+  if (text === "" || (isExecutionMode && text === "Run Prompt" && selectedExecution && !generatedExecution)) return;
+
+  return (
+    <Grid
+      display={!isExecutionMode ? "flex" : "none"}
+      flexDirection={"column"}
+      gap={"16px"}
+      position={"relative"}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      {isHovered && (
+        <Typography
+          sx={{
+            position: "absolute",
+            top: -20,
+            opacity: 0.5,
+            right: fromUser ? 0 : "",
+            left: !fromUser ? 2 : "",
+          }}
+          fontSize={12}
+          variant="caption"
+        >
+          {name} {timeAgo(createdAt)}
+        </Typography>
+      )}
+
+      <Grid
+        flex={1}
+        display={"flex"}
+        flexDirection={"column"}
+        width={fromUser ? "content-fit" : "100%"}
+        gap={"8px"}
+        ml={"auto"}
+        padding={" 8px 16px 8px 24px"}
+        borderRadius={!fromUser ? "0px 16px 16px 16px" : "16px 16px 0px 16px"}
+        bgcolor={fromUser ? "#7254721A" : "surface.2"}
+      >
+        <Grid
+          display={"flex"}
+          flexDirection={"column"}
+          gap={"8px"}
+          alignItems={"start"}
+        >
+          <Typography
+            fontSize={15}
+            lineHeight={"24px"}
+            letterSpacing={"0.17px"}
+            display={"flex"}
+            alignItems={"center"}
+            color={fromUser ? "#725472" : "onSurface"}
+          >
+            {text === "Run Prompt" && <Bolt />}
+            <MessageContent
+              content={text}
+              shouldStream={!fromUser}
+              onStreamingFinished={onScrollToBottom}
+            />
+          </Typography>
+        </Grid>
+      </Grid>
+    </Grid>
+  );
+};
