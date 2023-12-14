@@ -20,6 +20,7 @@ import { redirectToPath } from "@/common/helpers";
 import useToken from "@/hooks/useToken";
 import ClientOnly from "@/components/base/ClientOnly";
 import { useGetCategoriesQuery } from "@/core/api/categories";
+import useBrowser from "@/hooks/useBrowser";
 
 const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
 
@@ -30,6 +31,7 @@ function HomePage() {
   const isValidUser = useSelector(isValidUserFn);
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
   const [getCurrentUser] = userApi.endpoints.getCurrentUser.useLazyQuery();
+  const { isMobile } = useBrowser();
   const { data: myLatestExecutions, isLoading: isMyLatestExecutionsLoading } = useGetLatestExecutedTemplatesQuery(
     undefined,
     {
@@ -39,7 +41,6 @@ function HomePage() {
   const { data: suggestedTemplates, isLoading: isSuggestedTemplateLoading } = useGetTemplatesSuggestedQuery(undefined, {
     skip: !isValidUser,
   });
-
   const { data: popularTemplates, isLoading: isPopularTemplatesLoading } = useGetTemplatesByFilterQuery(
     {
       ordering: "-runs",
@@ -49,7 +50,6 @@ function HomePage() {
       skip: token,
     },
   );
-
   const { data: latestTemplates, isLoading: isLatestTemplatesLoading } = useGetTemplatesByFilterQuery(
     {
       ordering: "-created_at",
@@ -60,7 +60,6 @@ function HomePage() {
     },
   );
   const { data: categories, isLoading: isCategoriesLoading } = useGetCategoriesQuery();
-
   // TODO: move authentication logic to signin page instead
   const doPostLogin = async (response: AxiosResponse<IContinueWithSocialMediaResponse>) => {
     if (typeof response.data !== "object" || response.data === null) {

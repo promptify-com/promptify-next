@@ -5,10 +5,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/core/store";
 import { useGetTemplatesByFilterQuery } from "@/core/api/templates";
 import { FilterParams, SelectedFilters } from "@/core/api/dto/templates";
-import { useGetTagsPopularQuery } from "@/core/api/tags";
-import { useGetEnginesQuery } from "@/core/api/engines";
 import useDebounce from "./useDebounce";
-
 import { Templates } from "@/core/api/dto/templates";
 
 interface Props {
@@ -29,13 +26,7 @@ export function useGetTemplatesByFilter({
   paginatedList = false,
 }: Props = {}) {
   const router = useRouter();
-  const splittedPath = router.pathname.split("/");
-  const hasPathname = (route: "explore" | "[categorySlug]" | "[subcategorySlug]") => {
-    return splittedPath.includes(route);
-  };
   const { categorySlug, subcategorySlug } = router.query;
-  const tagsQuery = useGetTagsPopularQuery(undefined, { skip: !hasPathname("explore") });
-  const enginesQuery = useGetEnginesQuery(undefined, { skip: !hasPathname("explore") });
   const filters = useSelector((state: RootState) => state.filters);
   const { tag: tags, engine, title } = filters;
   const [offset, setOffset] = useState(0);
@@ -128,8 +119,6 @@ export function useGetTemplatesByFilter({
     handleNextPage,
     resetOffest,
     isFetching,
-    tags: tagsQuery.data,
-    engines: enginesQuery.data,
     hasMore,
     status,
     hasPrev,

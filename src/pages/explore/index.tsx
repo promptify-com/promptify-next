@@ -9,6 +9,8 @@ import { Category } from "@/core/api/dto/templates";
 import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
 import { getCategories } from "@/hooks/api/categories";
 import { useGetsuggestedTemplatesByCategoryQuery } from "@/core/api/templates";
+import { useAppSelector } from "@/hooks/useStore";
+import { isValidUserFn } from "@/core/store/userSlice";
 
 interface Props {
   categories: Category[];
@@ -25,8 +27,11 @@ export default function ExplorePage({ categories }: Props) {
     hasPrev,
     handlePrevPage,
   } = useGetTemplatesByFilter({ ordering: "-likes", templateLimit: 5, paginatedList: true });
-  const { data: suggestedTemplates, isLoading: isSuggestedTemplatesLoading } =
-    useGetsuggestedTemplatesByCategoryQuery();
+  const isValidUser = useAppSelector(isValidUserFn);
+  const { data: suggestedTemplates, isLoading: isSuggestedTemplatesLoading } = useGetsuggestedTemplatesByCategoryQuery(
+    undefined,
+    { skip: !isValidUser },
+  );
 
   return (
     <Layout>
@@ -61,13 +66,15 @@ export default function ExplorePage({ categories }: Props) {
             hasPrev={hasPrev}
             onPrevPage={handlePrevPage}
           />
-          <TemplatesSection
-            filtred={false}
-            templates={suggestedTemplates ?? []}
-            isLoading={isSuggestedTemplatesLoading}
-            templateLoading={isSuggestedTemplatesLoading}
-            title={`Because you use ${suggestedTemplates?.[0].category?.name} prompts`}
-          />
+          {isValidUser && (
+            <TemplatesSection
+              filtred={false}
+              templates={suggestedTemplates ?? []}
+              isLoading={isSuggestedTemplatesLoading}
+              templateLoading={isSuggestedTemplatesLoading}
+              title={`Because you use ${suggestedTemplates?.[0].category?.name} prompts`}
+            />
+          )}
         </Grid>
       </Box>
     </Layout>
