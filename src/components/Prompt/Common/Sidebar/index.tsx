@@ -38,6 +38,7 @@ interface SidebarProps {
 }
 
 function Sidebar({ template, executions, isLoading, refetchExecutions }: SidebarProps) {
+  const dispatch = useAppDispatch();
   const activeLink = useAppSelector(state => state.template.activeSideBarLink);
   const isValidUser = useAppSelector(isValidUserFn);
   const isMobile = !isDesktopViewPort();
@@ -48,7 +49,6 @@ function Sidebar({ template, executions, isLoading, refetchExecutions }: Sidebar
   const theme = useTheme();
 
   const handleCloseSidebar = () => {
-    const dispatch = useAppDispatch();
     dispatch(setActiveToolbarLink(null));
   };
 
