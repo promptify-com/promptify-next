@@ -39,6 +39,7 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
   const [uploadFile] = useUploadFileMutation();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
+  const repeatedExecution = useAppSelector(state => state.executions.repeatedExecution);
   const [showGenerateButton, setShowGenerateButton] = useState(false);
   const [isValidatingAnswer, setIsValidatingAnswer] = useState(false);
   const [generatingResponse, setGeneratingResponse] = useState<PromptLiveResponse>({
@@ -214,6 +215,12 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
   }, [template]);
 
   useEffect(() => {
+    if (!repeatedExecution) return;
+    const isReady = allRequiredInputsAnswered(_inputs, answers) ? " We are ready to create a new document." : "";
+    messageAnswersForm(`Ok!${isReady} I have prepared the incoming parameters, please check!`);
+  }, [repeatedExecution]);
+
+  useEffect(() => {
     dispatchNewExecutionData(answers, _inputs);
   }, [template, answers]);
 
@@ -381,11 +388,16 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
   const handleUserParam = (value: number, param: PromptParams) => {
     const paramId = param.parameter.id;
     const updatedParamsValues = paramsValues.map(paramValue => {
-      if (paramValue.id === param.prompt) {
-        const others = paramValue.contextual_overrides.filter(val => val.parameter !== paramId);
-        paramValue.contextual_overrides = others.concat({ parameter: paramId, score: value });
+      if (paramValue.id !== param.prompt) {
+        return paramValue;
       }
-      return paramValue;
+
+      return {
+        id: paramValue.id,
+        contextual_overrides: paramValue.contextual_overrides.map(ctx =>
+          ctx.parameter === paramId ? { parameter: paramId, score: value } : ctx,
+        ),
+      };
     });
 
     dispatch(setparamsValues(updatedParamsValues));
