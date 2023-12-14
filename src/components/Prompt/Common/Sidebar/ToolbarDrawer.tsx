@@ -1,0 +1,104 @@
+import { useTheme } from "@mui/material/styles";
+import Drawer from "@mui/material/Drawer";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import IconButton from "@mui/material/IconButton";
+import Close from "@mui/icons-material/Close";
+
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { setActiveToolbarLink } from "@/core/store/templatesSlice";
+import { Executions } from "@/components/Prompt/Common/Sidebar/Executions";
+import { Feedback } from "@/components/Prompt/Common/Sidebar/Feedback";
+import { Extension } from "@/components/Prompt/Common/Sidebar/Extension";
+import { ApiAccess } from "@/components/Prompt/Common/Sidebar/ApiAccess";
+import { TemplateDetails } from "@/components/Prompt/Common/Sidebar/TemplateDetails";
+import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
+
+interface Props {
+  template: Templates;
+  executions: TemplatesExecutions[];
+  isExecutionsLoading: boolean;
+  refetchTemplateExecutions: () => void;
+}
+
+function ToolbarDrawer({ template, executions, isExecutionsLoading, refetchTemplateExecutions }: Props) {
+  const DRAWER_WIDTH = 352;
+
+  const theme = useTheme();
+  const dispatch = useAppDispatch();
+
+  const activeLink = useAppSelector(state => state.template.activeSideBarLink);
+
+  const isSidebarOpen = Boolean(activeLink);
+
+  return (
+    <Drawer
+      variant="persistent"
+      anchor="right"
+      open={isSidebarOpen}
+      sx={{
+        width: { md: isSidebarOpen ? DRAWER_WIDTH : 0 },
+        transition: theme.transitions.create("width", { duration: 200 }),
+        "& .MuiDrawer-paper": {
+          mt: { xs: "60px", md: "92px" },
+          height: { md: "calc(100% - 92px)" },
+          width: { xs: "100%", md: 360 },
+          bgcolor: "surface.1",
+          borderLeft: "none",
+          borderTopRightRadius: "16px",
+        },
+      }}
+    >
+      <Stack
+        direction={"row"}
+        alignItems="center"
+        justifyContent="space-between"
+        sx={{
+          bgcolor: "surface.1",
+          p: { xs: "14px", md: "16px 24px" },
+          zIndex: 1300,
+        }}
+      >
+        <Typography
+          sx={{
+            color: "common.black",
+            fontSize: 16,
+            fontWeight: 500,
+          }}
+        >
+          {activeLink?.title}
+        </Typography>
+
+        <IconButton
+          onClick={() => {
+            dispatch(setActiveToolbarLink(null));
+          }}
+          sx={{
+            border: "none",
+            opacity: 0.45,
+            "&:hover": {
+              bgcolor: "surface.2",
+              opacity: 1,
+            },
+          }}
+        >
+          <Close />
+        </IconButton>
+      </Stack>
+      {activeLink?.name === "executions" && (
+        <Executions
+          template={template}
+          executions={executions}
+          isExecutionsLoading={isExecutionsLoading}
+          refetchTemplateExecutions={refetchTemplateExecutions}
+        />
+      )}
+      {activeLink?.name === "feedback" && <Feedback />}
+      {activeLink?.name === "api" && <ApiAccess template={template} />}
+      {activeLink?.name === "extension" && <Extension />}
+      {activeLink?.name === "details" && <TemplateDetails template={template} />}
+    </Drawer>
+  );
+}
+
+export default ToolbarDrawer;
