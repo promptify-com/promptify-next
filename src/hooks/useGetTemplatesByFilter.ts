@@ -1,12 +1,9 @@
 import { useDeferredValue, useMemo, useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
-
 import { RootState } from "@/core/store";
 import { useGetTemplatesByFilterQuery } from "@/core/api/templates";
 import { FilterParams, SelectedFilters } from "@/core/api/dto/templates";
-import { useGetTagsPopularQuery } from "@/core/api/tags";
-import { useGetEnginesQuery } from "@/core/api/engines";
 import useDebounce from "./useDebounce";
 
 import { Templates } from "@/core/api/dto/templates";
@@ -34,8 +31,6 @@ export function useGetTemplatesByFilter({
     return splittedPath.includes(route);
   };
   const { categorySlug, subcategorySlug } = router.query;
-  const tagsQuery = useGetTagsPopularQuery(undefined, { skip: !hasPathname("explore") });
-  const enginesQuery = useGetEnginesQuery(undefined, { skip: !hasPathname("explore") });
   const filters = useSelector((state: RootState) => state.filters);
   const { tag: tags, engine, title } = filters;
   const [offset, setOffset] = useState(0);
@@ -128,8 +123,6 @@ export function useGetTemplatesByFilter({
     handleNextPage,
     resetOffest,
     isFetching,
-    tags: tagsQuery.data,
-    engines: enginesQuery.data,
     hasMore,
     status,
     hasPrev,

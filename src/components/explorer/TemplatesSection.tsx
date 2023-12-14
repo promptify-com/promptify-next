@@ -1,13 +1,14 @@
-import { Box, Grid, Typography } from "@mui/material";
-
+import { Box, Grid, IconButton, Stack, Typography } from "@mui/material";
 import { NotFoundIcon } from "@/assets/icons/NotFoundIcon";
 import CardTemplate from "@/components/common/cards/CardTemplate";
 import { TemplateExecutionsDisplay, Templates } from "@/core/api/dto/templates";
 import CardTemplateLast from "../common/cards/CardTemplateLast";
-
 import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
 import LatestTemplatePlaceholder from "@/components/placeholders/LatestTemplatePlaceholder";
 import TemplatesInfiniteScroll from "../TemplatesInfiniteScroll";
+import { TemplatesFilter } from "./TemplatesFilter";
+import { Close, FilterList } from "@mui/icons-material";
+import { useState } from "react";
 
 interface TemplatesSectionProps {
   templates: Templates[] | TemplateExecutionsDisplay[] | undefined;
@@ -38,13 +39,43 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
   hasPrev,
   onPrevPage = () => {},
 }) => {
+  const [openFilters, setOpenFilters] = useState(false);
+
   if (!isLoading && !templates?.length) {
     return null;
   }
 
+  const filtersAllowed = type !== "myLatestExecutions";
+
   return (
     <Box width={"100%"}>
-      {!filtred && (templateLoading || !!templates?.length) && <Typography fontSize={19}>{title}</Typography>}
+      {!filtred && (templateLoading || !!templates?.length) && (
+        <Box>
+          <Stack
+            direction={"row"}
+            justifyContent={"space-between"}
+            alignItems={"center"}
+            gap={1}
+          >
+            <Typography fontSize={19}>{title}</Typography>
+            {filtersAllowed && (
+              <IconButton
+                onClick={e => setOpenFilters(!openFilters)}
+                size="small"
+                sx={{
+                  ml: "auto",
+                  ":hover": {
+                    bgcolor: "action.hover",
+                  },
+                }}
+              >
+                {openFilters ? <Close /> : <FilterList />}
+              </IconButton>
+            )}
+          </Stack>
+          {openFilters && <TemplatesFilter />}
+        </Box>
+      )}
 
       {templateLoading ? (
         isLatestTemplates ? (
