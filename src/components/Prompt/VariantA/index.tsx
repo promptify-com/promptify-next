@@ -1,18 +1,19 @@
-import React, { type Dispatch, type SetStateAction } from "react";
+import React, { useEffect, type Dispatch, type SetStateAction } from "react";
 import Stack from "@mui/material/Stack";
 import { Display } from "./Display";
-import type { Templates } from "@/core/api/dto/templates";
+import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 
 import ChatBox from "./ChatBox";
-import { Sidebar } from "./Sidebar";
-import { useAppSelector } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
 import { Box } from "@mui/material";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
-import SidebarMini from "./Sidebar/Mini";
 import ClientOnly from "@/components/base/ClientOnly";
 import Header from "../Common/Header";
+import TopHeaderActions from "../Common/Sidebar/TopHeaderActions";
+import { setSelectedExecution, setSparkHashQueryParam } from "@/core/store/executionsSlice";
+import { Sidebar } from "../Common/Sidebar";
 
 interface TemplateLayoutProps {
   template: Templates;
@@ -23,6 +24,8 @@ interface TemplateLayoutProps {
 export default function TemplateVariantA({ template, setErrorMessage, questionPrefixContent }: TemplateLayoutProps) {
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
+
+  const dispatch = useAppDispatch();
 
   const isExecutionShown = Boolean(selectedExecution ?? generatedExecution);
 
