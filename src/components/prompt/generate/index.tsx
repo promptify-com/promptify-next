@@ -329,12 +329,18 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
   const handleUserParam = (value: number, param: PromptParams) => {
     const paramId = param.parameter.id;
     const updatedParamsValues = paramsValues.map(paramValue => {
-      if (paramValue.id === param.prompt) {
-        const others = paramValue.contextual_overrides.filter(val => val.parameter !== paramId);
-        paramValue.contextual_overrides = others.concat({ parameter: paramId, score: value });
+      if (paramValue.id !== param.prompt) {
+        return paramValue;
       }
-      return paramValue;
+
+      return {
+        id: paramValue.id,
+        contextual_overrides: paramValue.contextual_overrides.map(ctx =>
+          ctx.parameter === paramId ? { parameter: paramId, score: value } : ctx,
+        ),
+      };
     });
+
     dispatch(setparamsValues(updatedParamsValues));
   };
 
