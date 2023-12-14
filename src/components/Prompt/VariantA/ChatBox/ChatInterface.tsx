@@ -4,13 +4,13 @@ import { Message } from "./Message";
 import { IMessage } from "@/common/types/chat";
 import { Templates } from "@/core/api/dto/templates";
 import { useAppSelector } from "@/hooks/useStore";
-import { InputsForm } from "./Inputsform";
 import { IPromptInput } from "@/common/types/prompt";
 import { PromptParams } from "@/core/api/dto/prompts";
 import { isDesktopViewPort } from "@/common/helpers";
 import { FeedbackActions } from "../FeedbackActions";
 import { MessageSparkBox } from "./MessageSparkBox";
 import { TemplateDetailsCard } from "../../Common/TemplateDetailsCard";
+import { InputsForm } from "./InputsForm";
 
 interface Props {
   template: Templates;
