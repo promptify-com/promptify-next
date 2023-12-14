@@ -20,9 +20,9 @@ import { useCreateTemplateMutation } from "@/core/api/templates";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { getBaseUrl, redirectToPath } from "@/common/helpers";
 import { IEditPrompts } from "@/common/types/builder";
-import { setCookie } from "@/common/helpers/cookies";
 import FavoriteIcon from "./FavoriteIcon";
 import BaseButton from "@/components/base/BaseButton";
+import { switchVariant } from "../utils";
 
 interface TemplateHeaderProps {
   template: Templates;
@@ -32,7 +32,7 @@ export default function Header({ template }: TemplateHeaderProps) {
   const router = useRouter();
   const dispatch = useAppDispatch();
 
-  const activeVariant = router.query.variant;
+  const activeVariant = router.query.variant as string;
   const isVariantA = activeVariant === "a";
   const currentUser = useAppSelector(state => state.user.currentUser);
   const isValidUser = useAppSelector(isValidUserFn);
@@ -101,15 +101,6 @@ export default function Header({ template }: TemplateHeaderProps) {
         isCloning.current = false;
       }
     }
-  };
-
-  const switchVariant = () => {
-    const newVariant = activeVariant === "a" ? "b" : "a";
-    setCookie("variant", newVariant, 30);
-
-    router.replace({ pathname: router.pathname, query: { ...router.query, variant: newVariant } }, undefined, {
-      shallow: true,
-    });
   };
 
   const breadcrumbs = [
@@ -261,7 +252,7 @@ export default function Header({ template }: TemplateHeaderProps) {
           color="custom"
           sx={btnStyle}
           startIcon={<SwitchAccessShortcut sx={{ fontSize: 20 }} />}
-          onClick={switchVariant}
+          onClick={() => switchVariant(activeVariant, router)}
         >
           Switch to {activeVariant === "a" ? "B" : "A"}{" "}
         </BaseButton>
