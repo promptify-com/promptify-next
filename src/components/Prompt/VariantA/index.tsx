@@ -1,70 +1,41 @@
-import React, { useEffect, type Dispatch, type SetStateAction } from "react";
+import { type Dispatch, type SetStateAction } from "react";
 import Stack from "@mui/material/Stack";
-import { Display } from "./Display";
-import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
+import Box from "@mui/material/Box";
 
 import ChatBox from "./ChatBox";
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { isValidUserFn } from "@/core/store/userSlice";
-import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
-import { Box } from "@mui/material";
-import { skipToken } from "@reduxjs/toolkit/dist/query";
+import { useAppSelector } from "@/hooks/useStore";
+import { Display } from "./Display";
+
+import { isDesktopViewPort } from "@/common/helpers";
 import ClientOnly from "@/components/base/ClientOnly";
-import Header from "../Common/Header";
-import TopHeaderActions from "../Common/Sidebar/TopHeaderActions";
-import { setSelectedExecution, setSparkHashQueryParam } from "@/core/store/executionsSlice";
-import { Sidebar } from "../Common/Sidebar";
+import Header from "@/components/Prompt/Common/Header";
+import TopHeaderActions from "@/components/Prompt/Common/Sidebar/TopHeaderActions";
+import Sidebar from "@/components/Prompt/Common/Sidebar";
+import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 
 interface TemplateLayoutProps {
   template: Templates;
   setErrorMessage: Dispatch<SetStateAction<string>>;
   questionPrefixContent: string;
+  executions: TemplatesExecutions[];
+  isExecutionsLoading: boolean;
+  refetchTemplateExecutions: () => void;
 }
 
-export default function TemplateVariantA({ template, setErrorMessage, questionPrefixContent }: TemplateLayoutProps) {
+export default function TemplateVariantA({
+  template,
+  executions,
+  isExecutionsLoading,
+  refetchTemplateExecutions,
+  setErrorMessage,
+  questionPrefixContent,
+}: TemplateLayoutProps) {
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
 
-  const dispatch = useAppDispatch();
+  const isMobile = !isDesktopViewPort();
 
   const isExecutionShown = Boolean(selectedExecution ?? generatedExecution);
-
-  const isValidUser = useAppSelector(isValidUserFn);
-  const {
-    data: executions,
-    isLoading: isExecutionsLoading,
-    refetch: refetchTemplateExecutions,
-  } = useGetExecutionsByTemplateQuery(isValidUser ? template.id : skipToken);
-
-  const handleSelectExecution = ({
-    execution,
-    resetHash = false,
-  }: {
-    execution: TemplatesExecutions | null;
-    resetHash?: boolean;
-  }) => {
-    if (resetHash) {
-      dispatch(setSparkHashQueryParam(null));
-    }
-
-    dispatch(setSelectedExecution(execution));
-  };
-
-  useEffect(() => {
-    if (!executions) {
-      return;
-    }
-
-    const wantedExecutionId = selectedExecution?.id.toString();
-
-    if (wantedExecutionId) {
-      const _selectedExecution = executions.find(exec => exec.id.toString() === wantedExecutionId);
-
-      handleSelectExecution({ execution: _selectedExecution || null, resetHash: true });
-    } else {
-      handleSelectExecution({ execution: template.example_execution || null, resetHash: true });
-    }
-  }, [executions]);
 
   return (
     <Stack
@@ -72,7 +43,7 @@ export default function TemplateVariantA({ template, setErrorMessage, questionPr
       bgcolor={"surface.3"}
       gap={"2px"}
     >
-      <Header template={template} />
+      {!isMobile && <Header template={template} />}
 
       <Stack
         direction={{ md: "row" }}
@@ -101,7 +72,7 @@ export default function TemplateVariantA({ template, setErrorMessage, questionPr
           },
         }}
       >
-        <TopHeaderActions executionsLength={executions?.length} />
+        {isMobile && <TopHeaderActions executionsLength={executions?.length} />}
 
         <Stack
           display={{ xs: !isExecutionShown ? "flex" : "none", md: "flex" }}

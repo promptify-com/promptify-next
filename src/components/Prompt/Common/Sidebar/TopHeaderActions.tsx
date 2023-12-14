@@ -1,5 +1,6 @@
 import NoteStackIcon from "@/assets/icons/NoteStackIcon";
 import { TemplateSidebarLinks } from "@/common/constants";
+import { isDesktopViewPort } from "@/common/helpers";
 import { Link } from "@/common/types/TemplateToolbar";
 import { setActiveToolbarLink } from "@/core/store/templatesSlice";
 import { useAppDispatch } from "@/hooks/useStore";
@@ -27,7 +28,7 @@ function TopHeaderActions({ executionsLength = 0 }) {
       alignItems={"center"}
       gap={"20px"}
       bgcolor={"surface.1"}
-      display={{ xs: "flex", md: "none" }}
+      display={"flex"}
     >
       {ToolbarItems.map(link => (
         <Fragment key={link.name}>

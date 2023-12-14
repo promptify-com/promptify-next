@@ -10,7 +10,6 @@ import {
   Typography,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import { useAppSelector } from "@/hooks/useStore";
 import { useRouter } from "next/router";
 import Close from "@mui/icons-material/Close";
 
@@ -22,11 +21,12 @@ import { Extension } from "./Extension";
 import { Feedback } from "./Feedback";
 import { isValidUserFn } from "@/core/store/userSlice";
 
-import { useDispatch } from "react-redux";
 import { setActiveToolbarLink } from "@/core/store/templatesSlice";
-import ToolbarItem from "../../Common/Sidebar/ToolbarItem";
+import ToolbarItem from "@/components/Prompt/Common/Sidebar/ToolbarItem";
 import { TemplateSidebarLinks } from "@/common/constants";
 import FavoriteIcon from "../FavoriteIcon";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { isDesktopViewPort } from "@/common/helpers";
 
 const drawerWidth = 352;
 
@@ -37,17 +37,18 @@ interface SidebarProps {
   refetchExecutions: () => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ template, executions, isLoading, refetchExecutions }) => {
+function Sidebar({ template, executions, isLoading, refetchExecutions }: SidebarProps) {
   const activeLink = useAppSelector(state => state.template.activeSideBarLink);
   const isValidUser = useAppSelector(isValidUserFn);
+  const isMobile = !isDesktopViewPort();
 
   const router = useRouter();
   const activeVariant = router.query.variant;
 
-  const dispatch = useDispatch();
   const theme = useTheme();
 
   const handleCloseSidebar = () => {
+    const dispatch = useAppDispatch();
     dispatch(setActiveToolbarLink(null));
   };
 
@@ -73,106 +74,110 @@ export const Sidebar: React.FC<SidebarProps> = ({ template, executions, isLoadin
         gap: "1px",
       }}
     >
-      {!isVariantA ? (
-        <Box
-          sx={{
-            display: "flex",
-            height: "100%",
-          }}
-        >
-          <Box
-            display={"flex"}
-            flexDirection={"column"}
-            alignItems={"center"}
-            justifyContent={"center"}
-            gap={1}
-            sx={{
-              p: "16px",
-              zIndex: 1300,
-              bgcolor: "surface.1",
-            }}
-          >
-            <Avatar
-              src={template.created_by.avatar}
-              alt={template.created_by.username}
-              sx={{ width: 30, height: 30 }}
-            />
-
-            <ListItem
-              disablePadding
+      {!isMobile && (
+        <>
+          {!isVariantA ? (
+            <Box
               sx={{
-                mb: -2,
+                display: "flex",
+                height: "100%",
               }}
             >
-              <ListItemButton
+              <Box
+                display={"flex"}
+                flexDirection={"column"}
+                alignItems={"center"}
+                justifyContent={"center"}
+                gap={1}
                 sx={{
-                  borderRadius: "16px",
-                  padding: "12px",
+                  p: "16px",
+                  zIndex: 1300,
+                  bgcolor: "surface.1",
                 }}
               >
-                <Box
-                  style={{
-                    textDecoration: "none",
-                    display: "flex",
-                    width: "auto",
-                    alignItems: "center",
-                    justifyContent: "center",
+                <Avatar
+                  src={template.created_by.avatar}
+                  alt={template.created_by.username}
+                  sx={{ width: 30, height: 30 }}
+                />
+
+                <ListItem
+                  disablePadding
+                  sx={{
+                    mb: -2,
                   }}
                 >
-                  <ListItemIcon
+                  <ListItemButton
                     sx={{
-                      minWidth: 0,
-                      color: "onSurface",
-                      justifyContent: "center",
+                      borderRadius: "16px",
+                      padding: "12px",
                     }}
                   >
-                    <FavoriteIcon
+                    <Box
                       style={{
-                        sx: {
-                          flexDirection: "column",
-                          p: 0,
-                          color: "secondary.main",
-                          fontSize: 13,
-                          fontWeight: 500,
-                        },
+                        textDecoration: "none",
+                        display: "flex",
+                        width: "auto",
+                        alignItems: "center",
+                        justifyContent: "center",
                       }}
-                    />
-                  </ListItemIcon>
-                </Box>
-              </ListItemButton>
-            </ListItem>
+                    >
+                      <ListItemIcon
+                        sx={{
+                          minWidth: 0,
+                          color: "onSurface",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <FavoriteIcon
+                          style={{
+                            sx: {
+                              flexDirection: "column",
+                              p: 0,
+                              color: "secondary.main",
+                              fontSize: 13,
+                              fontWeight: 500,
+                            },
+                          }}
+                        />
+                      </ListItemIcon>
+                    </Box>
+                  </ListItemButton>
+                </ListItem>
 
-            {filtredSidebarLinks.map(link => (
-              <ToolbarItem
-                activeVariant={activeVariant as string}
-                key={link.title}
-                item={link}
-                template={template}
-                executionsLength={executions?.length ?? 0}
-              />
-            ))}
-          </Box>
-        </Box>
-      ) : (
-        <Stack
-          display={{ xs: "none", md: "flex" }}
-          gap={1}
-          sx={{
-            p: "16px",
-            zIndex: 1300,
-            bgcolor: "surface.1",
-          }}
-        >
-          {filtredSidebarLinks.map(link => (
-            <ToolbarItem
-              activeVariant={activeVariant as string}
-              key={link.title}
-              item={link}
-              template={template}
-              executionsLength={executions?.length ?? 0}
-            />
-          ))}
-        </Stack>
+                {filtredSidebarLinks.map(link => (
+                  <ToolbarItem
+                    activeVariant={activeVariant as string}
+                    key={link.title}
+                    item={link}
+                    template={template}
+                    executionsLength={executions?.length ?? 0}
+                  />
+                ))}
+              </Box>
+            </Box>
+          ) : (
+            <Stack
+              display={{ xs: "none", md: "flex" }}
+              gap={1}
+              sx={{
+                p: "16px",
+                zIndex: 1300,
+                bgcolor: "surface.1",
+              }}
+            >
+              {filtredSidebarLinks.map(link => (
+                <ToolbarItem
+                  activeVariant={activeVariant as string}
+                  key={link.title}
+                  item={link}
+                  template={template}
+                  executionsLength={executions?.length ?? 0}
+                />
+              ))}
+            </Stack>
+          )}
+        </>
       )}
 
       <Drawer
@@ -247,4 +252,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ template, executions, isLoadin
       </Drawer>
     </Box>
   );
-};
+}
+
+export default Sidebar;

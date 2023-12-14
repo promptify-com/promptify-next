@@ -1,88 +1,40 @@
-import { useEffect, type Dispatch, type SetStateAction } from "react";
+import { type Dispatch, type SetStateAction } from "react";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
-import { skipToken } from "@reduxjs/toolkit/dist/query";
 
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { setSelectedExecution, setSparkHashQueryParam } from "@/core/store/executionsSlice";
-import { isValidUserFn } from "@/core/store/userSlice";
-import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
 import Chat from "@/components/Prompt/Common/Chat";
 import Header from "@/components/Prompt/Common/Header";
 import ClientOnly from "@/components/base/ClientOnly";
+import Sidebar from "@/components/Prompt/Common/Sidebar";
+import TopHeaderActions from "@/components/Prompt/Common/Sidebar/TopHeaderActions";
+import { isDesktopViewPort } from "@/common/helpers";
 import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
-import { Sidebar } from "../Common/Sidebar";
-import TopHeaderActions from "../Common/Sidebar/TopHeaderActions";
 
 interface TemplateVariantBProps {
   template: Templates;
   setErrorMessage: Dispatch<SetStateAction<string>>;
   questionPrefixContent: string;
+  executions: TemplatesExecutions[];
+  isExecutionsLoading: boolean;
+  refetchTemplateExecutions: () => void;
 }
 
-export default function TemplateVariantB({ template, setErrorMessage, questionPrefixContent }: TemplateVariantBProps) {
-  const dispatch = useAppDispatch();
-
-  const isValidUser = useAppSelector(isValidUserFn);
-  const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
-  const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
-  const isGenerating = useAppSelector(state => state.template.isGenerating);
-
-  const {
-    data: executions,
-    isLoading: isExecutionsLoading,
-    refetch: refetchTemplateExecutions,
-  } = useGetExecutionsByTemplateQuery(isValidUser ? template.id : skipToken);
-
-  useEffect(() => {
-    if (!isGenerating && generatedExecution?.data?.length) {
-      const promptNotCompleted = generatedExecution.data.find(execData => !execData.isCompleted);
-
-      if (!promptNotCompleted) {
-        dispatch(setSelectedExecution(null));
-        refetchTemplateExecutions();
-      }
-    }
-  }, [isGenerating, generatedExecution]);
-
-  const handleSelectExecution = ({
-    execution,
-    resetHash = false,
-  }: {
-    execution: TemplatesExecutions | null;
-    resetHash?: boolean;
-  }) => {
-    if (resetHash) {
-      dispatch(setSparkHashQueryParam(null));
-    }
-
-    dispatch(setSelectedExecution(execution));
-  };
-
-  useEffect(() => {
-    if (!executions) {
-      return;
-    }
-
-    const wantedExecutionId = selectedExecution?.id.toString();
-
-    if (wantedExecutionId) {
-      const _selectedExecution = executions.find(exec => exec.id.toString() === wantedExecutionId);
-
-      handleSelectExecution({ execution: _selectedExecution || null, resetHash: true });
-    } else {
-      handleSelectExecution({ execution: template.example_execution || null, resetHash: true });
-    }
-  }, [executions]);
-
+export default function TemplateVariantB({
+  template,
+  executions,
+  isExecutionsLoading,
+  refetchTemplateExecutions,
+  setErrorMessage,
+  questionPrefixContent,
+}: TemplateVariantBProps) {
+  const isMobile = !isDesktopViewPort();
   return (
     <Stack
       mt={{ xs: 8, md: 0 }}
       height={{ xs: "calc(100svh - 65px)", md: "calc(100svh - 90px)" }}
     >
-      <Header template={template} />
+      {isMobile ? <TopHeaderActions executionsLength={executions?.length} /> : <Header template={template} />}
 
-      <TopHeaderActions executionsLength={executions?.length} />
       <Grid
         mt={0}
         gap={"1px"}

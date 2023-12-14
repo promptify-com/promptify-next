@@ -2,8 +2,7 @@ import { Dispatch, SetStateAction, useEffect } from "react";
 import { useRouter } from "next/router";
 
 import { getCookie, setCookie } from "@/common/helpers/cookies";
-import TemplateVariantB from "@/components/Prompt/VariantB";
-import TemplateVariantA from "@/components/Prompt/VariantA";
+import TempalteLayout from "@/components/Prompt/TemplateLayout";
 import type { Templates } from "@/core/api/dto/templates";
 
 interface Props {
@@ -28,14 +27,9 @@ function TemplatePage({ template, setErrorMessage, questionPrefixContent }: Prop
     }
   }, [variant, router]);
 
-  return variant === "b" ? (
-    <TemplateVariantB
-      template={template}
-      setErrorMessage={setErrorMessage}
-      questionPrefixContent={questionPrefixContent}
-    />
-  ) : (
-    <TemplateVariantA
+  return (
+    <TempalteLayout
+      variant={variant}
       template={template}
       questionPrefixContent={questionPrefixContent}
       setErrorMessage={setErrorMessage}

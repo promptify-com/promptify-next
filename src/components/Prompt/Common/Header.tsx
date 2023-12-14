@@ -10,6 +10,7 @@ import Button from "@mui/material/Button";
 import Avatar from "@mui/material/Avatar";
 import Tune from "@mui/icons-material/Tune";
 import ContentCopy from "@mui/icons-material/ContentCopy";
+import SwitchAccessShortcut from "@mui/icons-material/SwitchAccessShortcut";
 
 import { theme } from "@/theme";
 import { setSelectedTag } from "@/core/store/filtersSlice";
@@ -22,8 +23,6 @@ import { IEditPrompts } from "@/common/types/builder";
 import { setCookie } from "@/common/helpers/cookies";
 import FavoriteIcon from "./FavoriteIcon";
 import BaseButton from "@/components/base/BaseButton";
-import FormatListBulleted from "@mui/icons-material/FormatListBulleted";
-import { SwitchAccessShortcut } from "@mui/icons-material";
 
 interface TemplateHeaderProps {
   template: Templates;
