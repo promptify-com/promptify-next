@@ -1,9 +1,10 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import TemplateVariantB from "./VariantB";
-import type { Templates } from "@/core/api/dto/templates";
-import TemplateVariantA from "./VariantA";
+import { Dispatch, SetStateAction, useEffect } from "react";
 import { useRouter } from "next/router";
+
 import { getCookie, setCookie } from "@/common/helpers/cookies";
+import TemplateVariantB from "@/components/Prompt/VariantB";
+import TemplateVariantA from "@/components/Prompt/VariantA";
+import type { Templates } from "@/core/api/dto/templates";
 
 interface Props {
   template: Templates;
@@ -13,23 +14,21 @@ interface Props {
 
 function TemplatePage({ template, setErrorMessage, questionPrefixContent }: Props) {
   const router = useRouter();
-  const [activeVariant, setActiveVariant] = useState<string>("");
+
+  let variant = (router.query.variant as string) ?? getCookie("variant");
+  if (!variant) {
+    variant = Math.random() < 0.5 ? "a" : "b";
+  }
 
   useEffect(() => {
-    let variant = router.query.variant ?? (getCookie("variant") as string);
-    if (!variant) {
-      variant = Math.random() < 0.5 ? "a" : ("b" as string);
-    }
-
-    setActiveVariant(variant as string);
-    setCookie("variant", variant as string, 30);
+    setCookie("variant", variant, 30);
 
     if (router.query.variant !== variant) {
       router.replace({ pathname: router.pathname, query: { ...router.query, variant } }, undefined, { shallow: true });
     }
-  }, [router]);
+  }, [variant, router]);
 
-  return activeVariant === "b" ? (
+  return variant === "b" ? (
     <TemplateVariantB
       template={template}
       setErrorMessage={setErrorMessage}
