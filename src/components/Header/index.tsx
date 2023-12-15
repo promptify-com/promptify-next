@@ -145,9 +145,9 @@ const Desktop = ({ keyWord = "", setKeyWord }: Pick<HeaderProps, "keyWord" | "se
           alignItems: "center",
           position: "relative",
         }}
-        onClick={handleInputFocus}
       >
         <SearchBar
+          onClick={handleInputFocus}
           keyWord={keyWord}
           setKeyWord={setKeyWord}
         />

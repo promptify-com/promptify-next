@@ -11,16 +11,17 @@ import { useAppSelector } from "@/hooks/useStore";
 import { IAnswer } from "@/common/types/chat";
 import { setAnswers } from "@/core/store/chatSlice";
 import { setRepeatedExecution } from "@/core/store/executionsSlice";
+import CheckCircle from "@mui/icons-material/CheckCircle";
 
 interface newFeedBack {
   execution: TemplatesExecutions;
   vertical?: boolean;
   min?: boolean;
-  onFeedbackGiven: (message: string) => void;
 }
 
-export const FeedbackActions: React.FC<newFeedBack> = ({ execution, onFeedbackGiven, vertical, min }) => {
+export const FeedbackActions: React.FC<newFeedBack> = ({ execution, vertical, min }) => {
   const [updateExecution] = useUpdateExecutionMutation();
+  const [feedbackMessage, setFeedbackMessage] = useState("");
   const [feedback, setFeedback] = useState(execution.feedback);
   const dispatch = useDispatch();
   const inputs = useAppSelector(state => state.chat.inputs);
@@ -38,7 +39,9 @@ export const FeedbackActions: React.FC<newFeedBack> = ({ execution, onFeedbackGi
         },
       };
       updateExecution(feedbackData);
-      onFeedbackGiven("Thank you for your Feedback");
+
+      setFeedbackMessage("Thank you for your Feedback");
+      setTimeout(() => setFeedbackMessage(""), 2000);
     }
   };
 
@@ -72,13 +75,27 @@ export const FeedbackActions: React.FC<newFeedBack> = ({ execution, onFeedbackGi
 
   return (
     <>
-      <Snackbar
-        open
-        message="Thank you for your feedback"
-        autoHideDuration={2000}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      />
+      {feedbackMessage && (
+        <Stack
+          gap={1}
+          direction={"row"}
+          alignItems={"center"}
+          sx={{
+            bgcolor: "primary.main",
+            position: "fixed",
+            top: "240px",
+            right: "40%",
 
+            color: "white",
+            p: 1,
+            borderRadius: "16px",
+            fontSize: 12,
+          }}
+        >
+          <CheckCircle sx={{ fontSize: 16 }} />
+          {feedbackMessage}
+        </Stack>
+      )}
       <Stack
         direction={{ xs: "row", md: vertical ? "column" : "row" }}
         alignItems={"center"}

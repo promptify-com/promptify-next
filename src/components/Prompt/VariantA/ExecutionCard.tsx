@@ -4,7 +4,6 @@ import { keyframes } from "@mui/material/styles";
 import Tooltip from "@mui/material/Tooltip";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import CheckCircle from "@mui/icons-material/CheckCircle";
 import Box from "@mui/material/Box";
 
 import { isImageOutput, markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
@@ -30,7 +29,6 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
   const [sortedPrompts, setSortedPrompts] = useState<DisplayPrompt[]>([]);
   const [elementRefs, setElementRefs] = useState<RefObject<HTMLDivElement>[]>([]);
   const [elementHeights, setElementHeights] = useState<number[]>([]);
-  const [feedbackMessage, setFeedbackMessage] = useState("");
 
   const promptsOrderMap: { [key: string]: number } = {};
   const promptsExecutionOrderMap: { [key: string]: number } = {};
@@ -82,11 +80,6 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
 
     sortAndProcessExecutions();
   }, [executionPrompts]);
-
-  const handleFeedback = (message: string) => {
-    setFeedbackMessage(message);
-    setTimeout(() => setFeedbackMessage(""), 2000); // Hide message after 2 seconds
-  };
 
   const executionError = (error: string | undefined) => {
     return (
@@ -310,33 +303,11 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
             >
               <FeedbackActions
                 execution={execution}
-                onFeedbackGiven={handleFeedback}
                 vertical
                 min
               />
             </Box>
           )}
-        </Stack>
-      )}
-      {feedbackMessage && (
-        <Stack
-          gap={1}
-          direction={"row"}
-          alignItems={"center"}
-          sx={{
-            bgcolor: "primary.main",
-            position: "fixed",
-            top: "240px",
-            right: "40%",
-
-            color: "white",
-            p: 1,
-            borderRadius: "16px",
-            fontSize: 12,
-          }}
-        >
-          <CheckCircle sx={{ fontSize: 16 }} />
-          {feedbackMessage}
         </Stack>
       )}
     </Stack>
