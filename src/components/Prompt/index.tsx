@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 import { getCookie, setCookie } from "@/common/helpers/cookies";
@@ -14,22 +14,25 @@ interface Props {
 function TemplatePage({ template, setErrorMessage, questionPrefixContent }: Props) {
   const router = useRouter();
 
-  let variant = (router.query.variant as string) ?? getCookie("variant");
-  if (!variant) {
-    variant = Math.random() < 0.5 ? "a" : "b";
-  }
+  const [activeVariant, setActiveVariant] = useState<string>("");
 
   useEffect(() => {
+    let variant = (router.query.variant as string) ?? getCookie("variant");
+    if (!variant) {
+      variant = Math.random() < 0.5 ? "a" : ("b" as string);
+    }
+
+    setActiveVariant(variant);
     setCookie("variant", variant, 30);
 
     if (router.query.variant !== variant) {
       router.replace({ pathname: router.pathname, query: { ...router.query, variant } }, undefined, { shallow: true });
     }
-  }, [variant, router]);
+  }, [router]);
 
   return (
     <TempalteLayout
-      variant={variant}
+      variant={activeVariant}
       template={template}
       questionPrefixContent={questionPrefixContent}
       setErrorMessage={setErrorMessage}
