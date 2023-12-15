@@ -5,7 +5,6 @@ import { RootState } from "@/core/store";
 import { useGetTemplatesByFilterQuery } from "@/core/api/templates";
 import { FilterParams, SelectedFilters } from "@/core/api/dto/templates";
 import useDebounce from "./useDebounce";
-
 import { Templates } from "@/core/api/dto/templates";
 
 interface Props {
@@ -26,10 +25,6 @@ export function useGetTemplatesByFilter({
   paginatedList = false,
 }: Props = {}) {
   const router = useRouter();
-  const splittedPath = router.pathname.split("/");
-  const hasPathname = (route: "explore" | "[categorySlug]" | "[subcategorySlug]") => {
-    return splittedPath.includes(route);
-  };
   const { categorySlug, subcategorySlug } = router.query;
   const filters = useSelector((state: RootState) => state.filters);
   const { tag: tags, engine, title } = filters;
