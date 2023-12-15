@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { SyntheticEvent, useRef, useState } from "react";
 import Stack from "@mui/material/Stack";
 import Accordion from "@mui/material/Accordion";
 import Typography from "@mui/material/Typography";
@@ -24,6 +24,8 @@ interface Props {
   showGenerate: boolean;
   template: Templates;
   executionMode: boolean;
+  onChange?: (event: SyntheticEvent<Element, Event>, expanded: boolean) => void;
+  expanded: boolean;
 }
 
 export const AccordionMessage = ({
@@ -34,17 +36,14 @@ export const AccordionMessage = ({
   abortGenerating,
   showGenerate,
   executionMode,
+  onChange,
+  expanded,
 }: Props) => {
   const dispatch = useAppDispatch();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const currentUser = useAppSelector(state => state.user.currentUser);
 
-  const [expanded, setExpanded] = useState(true);
   const accordionRef = useRef<HTMLDivElement>(null);
-
-  const handleExpandChange = (isExpanded: boolean) => {
-    setExpanded(isExpanded);
-  };
 
   return (
     <Fade
@@ -57,7 +56,7 @@ export const AccordionMessage = ({
         ref={accordionRef}
         elevation={0}
         expanded={expanded}
-        onChange={(_e, isExpanded) => handleExpandChange(isExpanded)}
+        onChange={onChange}
         sx={{ p: 0, flex: 1 }}
       >
         <AccordionMessageHeader

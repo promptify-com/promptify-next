@@ -49,6 +49,12 @@ export const ChatInterface = ({
   const [isUserAtBottom, setIsUserAtBottom] = useState(true);
   const [showScrollDown, setShowScrollDown] = useState(false);
 
+  const [expanded, setExpanded] = useState(true);
+
+  const handleExpandChange = (isExpanded: boolean) => {
+    setExpanded(isExpanded);
+  };
+
   const lastFormMessage = messages
     .slice()
     .reverse()
@@ -180,6 +186,8 @@ export const ChatInterface = ({
               }}
             >
               <AccordionMessage
+                expanded={expanded}
+                onChange={(_e, isExpanded) => handleExpandChange(isExpanded)}
                 template={template}
                 showGenerate={showGenerate}
                 abortGenerating={onAbort}
@@ -191,7 +199,7 @@ export const ChatInterface = ({
             </Box>
           )}
 
-          {selectedExecution && (
+          {selectedExecution && expanded && (
             <Box
               sx={{
                 position: "sticky",
@@ -254,6 +262,8 @@ export const ChatInterface = ({
                   )}
                   <Box id="accordion-input">
                     <AccordionMessage
+                      expanded={expanded}
+                      onChange={(_e, isExpanded) => handleExpandChange(isExpanded)}
                       template={template}
                       showGenerate={showGenerate}
                       abortGenerating={onAbort}
