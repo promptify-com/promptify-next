@@ -1,4 +1,4 @@
-import { TemplatesExecutions } from "@/core/api/dto/templates";
+import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 
 export interface VaryValidatorResponse {
   [question: string]: string | number;
@@ -8,13 +8,15 @@ export interface IMessage {
   id: number;
   text: string;
   createdAt: Date | string;
-  fromUser: boolean;
-  type: "text" | "form" | "spark";
+  type: "text" | "form" | "spark" | "templates";
+  fromUser?: boolean;
   spark?: TemplatesExecutions;
   choices?: string[] | null;
   fileExtensions?: string[];
   startOver?: boolean;
   noHeader?: boolean;
+  templates?: Templates[];
+  templatesTitle?: string;
 }
 
 export interface IAnswer {

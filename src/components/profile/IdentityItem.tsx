@@ -12,11 +12,11 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { Check } from "@/assets/icons";
 import { IOption, IQuestion } from "@/common/types";
 import { useUpdateAnswers } from "@/hooks/api/user";
 import Image from "../design-system/Image";
 import { Edit } from "@mui/icons-material";
+import { Check } from "@/assets/icons/Check";
 
 interface IProps {
   question: IQuestion;

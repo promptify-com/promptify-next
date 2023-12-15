@@ -235,6 +235,10 @@ export const Header: React.FC<HeaderProps> = ({ transparent = false, fixed = fal
   return (
     <Box
       sx={{
+        height: {
+          xs: theme.custom.headerHeight.xs,
+          md: theme.custom.headerHeight.md,
+        },
         width: "100%",
         background: transparent ? "transparent" : "surface.1",
         position: { xs: "fixed", md: fixed ? "fixed" : "relative" },
@@ -244,13 +248,8 @@ export const Header: React.FC<HeaderProps> = ({ transparent = false, fixed = fal
         alignItems: "center",
         justifyContent: "center",
         bgcolor: { xs: "surface.1", md: "surface.1" },
-        height: {
-          xs: theme.custom.headerHeight.xs,
-          md: theme.custom.headerHeight.md,
-        },
         borderBottomRightRadius: { md: "16px" },
         borderBottomLeftRadius: { md: "16px" },
-        borderBottom: { xs: "2px solid #E1E2EC", md: "none" },
       }}
     >
       <Grid
@@ -261,6 +260,7 @@ export const Header: React.FC<HeaderProps> = ({ transparent = false, fixed = fal
           gap: "30px",
           padding: { xs: "0 4px ", md: "0 24px" },
           alignItems: "center",
+          borderBottom: { xs: "2px solid #E1E2EC", md: "none" },
         }}
       >
         <Grid

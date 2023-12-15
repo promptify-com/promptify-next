@@ -114,10 +114,7 @@ export const ChatInterface = ({
         },
       }}
     >
-      <TemplateDetailsCard
-        template={template}
-        min={!isDesktopView}
-      />
+      <TemplateDetailsCard template={template} />
       {showScrollDown && isGenerating && (
         <Box
           onClick={scrollToBottom}

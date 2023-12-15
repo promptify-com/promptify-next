@@ -63,12 +63,7 @@ export const ChatInterface = ({ template, messages, onChangeInput, onChangeParam
       <div style={{ marginTop: "auto" }}></div>
 
       <Box mx={!isDesktopView ? "16px" : "40px"}>
-        {!isExecutionShown && (
-          <TemplateDetailsCard
-            template={template}
-            min={!isDesktopView}
-          />
-        )}
+        {!isExecutionShown && <TemplateDetailsCard template={template} />}
       </Box>
 
       <Stack

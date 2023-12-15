@@ -14,15 +14,17 @@ import useTruncate from "@/hooks/useTruncate";
 import { isDesktopViewPort, redirectToPath } from "@/common/helpers";
 import { theme } from "@/theme";
 import { useAppDispatch } from "@/hooks/useStore";
+import { FavoriteBorder } from "@mui/icons-material";
 
 type CardTemplateProps = {
   template: Templates | TemplateExecutionsDisplay;
   noRedirect?: boolean;
   query?: string;
   asResult?: boolean;
+  min?: boolean;
 };
 
-function CardTemplate({ template, noRedirect = false, query, asResult = false }: CardTemplateProps) {
+function CardTemplate({ template, noRedirect = false, query, asResult = false, min }: CardTemplateProps) {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { truncate } = useTruncate();
@@ -47,6 +49,37 @@ function CardTemplate({ template, noRedirect = false, query, asResult = false }:
       ),
     );
   };
+
+  const TemplateTags = (
+    <Grid
+      sx={{
+        display: "flex",
+        gap: "4px",
+      }}
+    >
+      {template.tags.slice(0, 3).map(tag => (
+        <Chip
+          key={tag.id}
+          clickable
+          size="small"
+          label={tag.name}
+          sx={{
+            fontSize: { xs: 11, md: 13 },
+            fontWeight: 400,
+            bgcolor: "surface.5",
+            color: "onSurface",
+          }}
+          onClick={e => {
+            e.stopPropagation();
+
+            dispatch(setSelectedTag(tag));
+
+            router.push("/explore");
+          }}
+        />
+      ))}
+    </Grid>
+  );
 
   return (
     <Box
@@ -91,15 +124,16 @@ function CardTemplate({ template, noRedirect = false, query, asResult = false }:
                 <CardMedia
                   sx={{
                     zIndex: 1,
-                    borderRadius: "16px",
-                    width: { xs: "98px", sm: "72px" },
-                    height: { xs: "73px", sm: "54px" },
+                    borderRadius: min ? "18px" : "10px",
+                    overflow: "hidden",
+                    width: min ? "64px" : { xs: "98px", md: "72px" },
+                    height: min ? "48px" : { xs: "73px", md: "54px" },
                   }}
                 >
                   <Image
                     src={template.thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
                     alt={template.title}
-                    style={{ borderRadius: "16%", objectFit: "cover", width: "100%", height: "100%" }}
+                    style={{ objectFit: "cover", width: "100%", height: "100%" }}
                   />
                 </CardMedia>
               </Grid>
@@ -122,23 +156,29 @@ function CardTemplate({ template, noRedirect = false, query, asResult = false }:
                     lineHeight: "16.8px",
                     letterSpacing: "0.15px",
                     color: "onSurface",
+                    opacity: min ? 0.45 : 1,
                   }}
                 >
-                  {highlightSearchQuery(truncate(template.description, { length: 70 }))}
+                  {min
+                    ? template.tags.map(tag => tag.name).join(", ")
+                    : highlightSearchQuery(truncate(template.description, { length: 70 }))}
                 </Typography>
               </Grid>
             </Grid>
-            <Image
-              src={template.created_by?.avatar ?? require("@/assets/images/default-avatar.jpg")}
-              alt={template.created_by?.first_name?.slice(0, 1) ?? "P"}
-              width={32}
-              height={32}
-              style={{
-                display: isDesktop ? "none" : asResult ? "none" : "flex",
-                backgroundColor: theme.palette.surface[5],
-                borderRadius: "50%",
-              }}
-            />
+
+            {!isDesktop && !min && (
+              <Image
+                src={template.created_by?.avatar ?? require("@/assets/images/default-avatar.jpg")}
+                alt={template.created_by?.first_name?.slice(0, 1) ?? "P"}
+                width={32}
+                height={32}
+                style={{
+                  display: asResult ? "none" : "flex",
+                  backgroundColor: theme.palette.surface[5],
+                  borderRadius: "50%",
+                }}
+              />
+            )}
           </Grid>
           <Grid
             display={asResult ? "none" : "flex"}
@@ -148,34 +188,7 @@ function CardTemplate({ template, noRedirect = false, query, asResult = false }:
             justifyContent={"space-between"}
             gap={3}
           >
-            <Grid
-              sx={{
-                display: "flex",
-                gap: "4px",
-              }}
-            >
-              {template.tags.slice(0, 3).map(tag => (
-                <Chip
-                  key={tag.id}
-                  clickable
-                  size="small"
-                  label={tag.name}
-                  sx={{
-                    fontSize: { xs: 11, md: 13 },
-                    fontWeight: 400,
-                    bgcolor: "surface.5",
-                    color: "onSurface",
-                  }}
-                  onClick={e => {
-                    e.stopPropagation();
-
-                    dispatch(setSelectedTag(tag));
-
-                    router.push("/explore");
-                  }}
-                />
-              ))}
-            </Grid>
+            {!min && TemplateTags}
             <Grid
               sx={{
                 display: "flex",
@@ -185,7 +198,7 @@ function CardTemplate({ template, noRedirect = false, query, asResult = false }:
               <Stack
                 direction={"row"}
                 alignItems={"center"}
-                gap={0.5}
+                gap={1}
                 sx={{
                   display: "flex",
                   fontSize: 13,
@@ -193,21 +206,22 @@ function CardTemplate({ template, noRedirect = false, query, asResult = false }:
                   color: "onSurface",
                 }}
               >
-                <ArrowBackIosRoundedIcon sx={{ fontSize: 14 }} />
+                {min ? <FavoriteBorder sx={{ fontSize: 18 }} /> : <ArrowBackIosRoundedIcon sx={{ fontSize: 14 }} />}
                 {template.favorites_count || 0}
               </Stack>
             </Grid>
-            <Image
-              src={template.created_by?.avatar ?? require("@/assets/images/default-avatar.jpg")}
-              alt={template.created_by?.first_name?.slice(0, 1) ?? "P"}
-              width={32}
-              height={32}
-              style={{
-                display: isDesktop ? "flex" : "none",
-                backgroundColor: theme.palette.surface[5],
-                borderRadius: "50%",
-              }}
-            />
+            {isDesktop && !min && (
+              <Image
+                src={template.created_by?.avatar ?? require("@/assets/images/default-avatar.jpg")}
+                alt={template.created_by?.first_name?.slice(0, 1) ?? "P"}
+                width={32}
+                height={32}
+                style={{
+                  backgroundColor: theme.palette.surface[5],
+                  borderRadius: "50%",
+                }}
+              />
+            )}
           </Grid>
         </Grid>
       </Card>

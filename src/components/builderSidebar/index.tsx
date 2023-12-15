@@ -15,12 +15,12 @@ import { Close, FormatListBulleted } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 
 import HelpIcon from "@/assets/icons/HelpIcon";
-import { ApiIcon } from "@/assets/icons";
 import PaperIcon from "@/assets/icons/PaperIcon";
 import Help from "./Help";
 import { useAppDispatch } from "@/hooks/useStore";
 import { setOpenBuilderSidebar } from "@/core/store/sidebarSlice";
 import PromptSequence from "./PromptSequence";
+import { ApiIcon } from "@/assets/icons/ApiIcon";
 
 const drawerWidth = 352;
 

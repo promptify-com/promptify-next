@@ -1,11 +1,11 @@
+import React from "react";
 import StickyNote2 from "@mui/icons-material/StickyNote2";
 import Home from "@mui/icons-material/Home";
 import Drawer from "@mui/material/Drawer";
 import { usePathname } from "next/navigation";
-import React, { useState } from "react";
 import { useAppSelector } from "@/hooks/useStore";
 import { isValidUserFn } from "@/core/store/userSlice";
-import { ExtensionRounded, FolderSpecial, HelpRounded, Inventory2Rounded } from "@mui/icons-material";
+import { Chat, ExtensionRounded, FolderSpecial, HelpRounded, Inventory2Rounded } from "@mui/icons-material";
 import List from "@mui/material/List";
 import Grid from "@mui/material/Grid";
 import { NavItem } from "@/common/types/sidebar";
@@ -15,6 +15,7 @@ import { theme } from "@/theme";
 function Sidebar() {
   const pathname = usePathname();
   const isPromptsPage = pathname.split("/")[1] === "explore";
+  const isChatPage = pathname.split("/")[1] === "chat";
   const isTemplatePage = pathname.split("/")[1] === "prompt";
   const slug = isTemplatePage ? pathname.split("/")[2] : "create";
   const isValidUser = useAppSelector(isValidUserFn);
@@ -34,6 +35,14 @@ function Sidebar() {
       active: isPromptsPage,
       external: false,
       reload: true,
+    },
+    {
+      name: "Chat",
+      href: "/chat",
+      icon: <Chat />,
+      active: isChatPage,
+      external: false,
+      reload: false,
     },
     {
       name: "My Works",

@@ -19,10 +19,8 @@ import {
 import { ClassicPreset } from "rete";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
 import { useRete } from "rete-react-render-plugin";
-
 import { createEditor, Node } from "@/components/builder/Editor";
 import { Header } from "@/components/builder/Header";
-import { MinusIcon, PlusIcon } from "@/assets/icons";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
   useDeletePromptMutation,
@@ -36,7 +34,6 @@ import { IEditPrompts } from "@/common/types/builder";
 import TemplateForm from "@/components/common/forms/TemplateForm";
 import { isPromptVariableValid } from "@/common/helpers/promptValidator";
 import { randomId, redirectToPath } from "@/common/helpers";
-
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import { theme } from "@/theme";
 import { useGetEnginesQuery } from "@/core/api/engines";
@@ -45,6 +42,8 @@ import { BUILDER_TYPE } from "@/common/constants";
 import PromptCardAccordion from "@/components/builder/PromptCardAccordion";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import { MinusIcon } from "@/assets/icons/MinusIcon";
+import { PlusIcon } from "@/assets/icons/PlusIcon";
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return (
