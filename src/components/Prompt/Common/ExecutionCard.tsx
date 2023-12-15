@@ -13,6 +13,7 @@ import type { TemplatesExecutions } from "@/core/api/dto/templates";
 import type { DisplayPrompt, PromptLiveResponse } from "@/common/types/prompt";
 import PromptContent from "./PromptContent";
 import FeedbackThumbs from "./FeedbackThumbs";
+import CheckCircle from "@mui/icons-material/CheckCircle";
 
 interface Props {
   execution: PromptLiveResponse | TemplatesExecutions | null;
@@ -23,10 +24,12 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
   const executionPrompts = execution && "data" in execution ? execution.data : execution?.prompt_executions;
   const sparkHashQueryParam = useAppSelector(state => state.executions.sparkHashQueryParam);
   const showPreview = useAppSelector(state => state.template.showPromptsView);
-  const [sortedPrompts, setSortedPrompts] = useState<DisplayPrompt[]>([]);
+  const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
 
+  const [sortedPrompts, setSortedPrompts] = useState<DisplayPrompt[]>([]);
   const [elementRefs, setElementRefs] = useState<RefObject<HTMLDivElement>[]>([]);
   const [elementHeights, setElementHeights] = useState<number[]>([]);
+  const [feedbackMessage, setFeedbackMessage] = useState("");
 
   const promptsOrderMap: { [key: string]: number } = {};
   const promptsExecutionOrderMap: { [key: string]: number } = {};
@@ -79,6 +82,11 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
     sortAndProcessExecutions();
   }, [executionPrompts]);
 
+  const handleFeedback = (message: string) => {
+    setFeedbackMessage(message);
+    setTimeout(() => setFeedbackMessage(""), 2000); // Hide message after 2 seconds
+  };
+
   const executionError = (error: string | undefined) => {
     return (
       <Tooltip
@@ -122,7 +130,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
       {execution && (
         <Stack
           direction={{ md: "row" }}
-          pb={{ xs: 2, md: 0 }}
+          p={{ xs: "title" in execution ? "10px 0px" : "20px 0px", md: 0 }}
         >
           <Stack gap={1}>
             {sortedPrompts?.map((exec, index) => {
@@ -289,7 +297,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
               }
             })}
           </Stack>
-          {"title" in execution && (
+          {selectedExecution && "title" in selectedExecution && (
             <Box
               sx={{
                 height: "fit-content",
@@ -300,11 +308,34 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
               }}
             >
               <FeedbackThumbs
-                execution={execution}
+                execution={selectedExecution}
+                onFeedbackGiven={handleFeedback}
                 vertical
               />
             </Box>
           )}
+        </Stack>
+      )}
+
+      {feedbackMessage && (
+        <Stack
+          gap={1}
+          direction={"row"}
+          alignItems={"center"}
+          sx={{
+            bgcolor: "primary.main",
+            position: "fixed",
+            top: "220px",
+            right: "45%",
+
+            color: "white",
+            p: 1,
+            borderRadius: "16px",
+            fontSize: 12,
+          }}
+        >
+          <CheckCircle sx={{ fontSize: 16 }} />
+          {feedbackMessage}
         </Stack>
       )}
     </Stack>

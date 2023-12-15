@@ -40,6 +40,7 @@ export const ChatInterface = ({
 
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
+  const repeatedExecution = useAppSelector(state => state.executions.repeatedExecution);
 
   const [isHovered, setIsHovered] = useState(false);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
@@ -180,7 +181,7 @@ export const ChatInterface = ({
 
         <Stack
           gap={3}
-          display={!!generatedExecution ? "none" : "flex"}
+          display={!!generatedExecution && !repeatedExecution ? "none" : "flex"}
           flexDirection={"column"}
         >
           {messages.map(msg => (

@@ -10,13 +10,15 @@ import { FeedbackType, TemplatesExecutions } from "@/core/api/dto/templates";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { Tooltip } from "@mui/material";
 import { setAnswers } from "@/core/store/chatSlice";
+import { setRepeatedExecution } from "@/core/store/executionsSlice";
 
-interface newFeedBack {
+interface Props {
   execution: TemplatesExecutions;
   vertical?: boolean;
+  onFeedbackGiven: (message: string) => void;
 }
 
-export default function FeedbackThumbs({ vertical, execution }: newFeedBack) {
+export default function FeedbackThumbs({ vertical, onFeedbackGiven, execution }: Props) {
   const [updateExecution] = useUpdateExecutionMutation();
   const dispatch = useAppDispatch();
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
@@ -32,12 +34,13 @@ export default function FeedbackThumbs({ vertical, execution }: newFeedBack) {
         },
       };
       updateExecution(feedbackData);
+      onFeedbackGiven("Thank you for your Feedback");
     }
   };
 
   const handleRepeat = () => {
     const { parameters } = selectedExecution!;
-
+    dispatch(setRepeatedExecution(selectedExecution));
     dispatch(setAnswers([]));
 
     const newAnswers = parameters

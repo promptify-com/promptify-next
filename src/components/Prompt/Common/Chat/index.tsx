@@ -17,7 +17,7 @@ import { vary } from "@/common/helpers/varyValidator";
 import { parseMessageData } from "@/common/helpers/parseMessageData";
 import { useUploadFileMutation } from "@/core/api/uploadFile";
 import { uploadFileHelper } from "@/common/helpers/uploadFileHelper";
-import { setGeneratedExecution, setSelectedExecution } from "@/core/store/executionsSlice";
+import { setGeneratedExecution, setRepeatedExecution, setSelectedExecution } from "@/core/store/executionsSlice";
 import useChatBox from "@/hooks/useChatBox";
 import { randomId } from "@/common/helpers";
 import { getExecutionById } from "@/hooks/api/executions";
@@ -397,6 +397,9 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
     if (!token) {
       return router.push("/signin");
     }
+
+    dispatch(setSelectedExecution(null));
+    dispatch(setRepeatedExecution(null));
 
     const filesUploaded = await validateAndUploadFiles();
     if (!filesUploaded.status) {
