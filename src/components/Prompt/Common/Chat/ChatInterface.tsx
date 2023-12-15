@@ -17,6 +17,11 @@ import type { PromptParams } from "@/core/api/dto/prompts";
 import { isDesktopViewPort } from "@/common/helpers";
 import FeedbackThumbs from "../FeedbackThumbs";
 
+type AccordionExpandedState = {
+  execution: boolean;
+  input: boolean;
+};
+
 interface Props {
   messages: IMessage[];
   template: Templates;
@@ -49,10 +54,16 @@ export const ChatInterface = ({
   const [isUserAtBottom, setIsUserAtBottom] = useState(true);
   const [showScrollDown, setShowScrollDown] = useState(false);
 
-  const [expanded, setExpanded] = useState(true);
+  const [expandedAccordions, setExpandedAccordions] = useState<AccordionExpandedState>({
+    execution: true,
+    input: true,
+  });
 
-  const handleExpandChange = (isExpanded: boolean) => {
-    setExpanded(isExpanded);
+  const handleExpandChange = (type: keyof AccordionExpandedState, isExpanded: boolean) => {
+    setExpandedAccordions(prev => ({
+      ...prev,
+      [type]: isExpanded,
+    }));
   };
 
   const lastFormMessage = messages
@@ -186,8 +197,8 @@ export const ChatInterface = ({
               }}
             >
               <AccordionMessage
-                expanded={expanded}
-                onChange={(_e, isExpanded) => handleExpandChange(isExpanded)}
+                expanded={expandedAccordions["execution"]}
+                onChange={(_e, isExpanded) => handleExpandChange("execution", isExpanded)}
                 template={template}
                 showGenerate={showGenerate}
                 abortGenerating={onAbort}
@@ -199,7 +210,7 @@ export const ChatInterface = ({
             </Box>
           )}
 
-          {selectedExecution && expanded && (
+          {selectedExecution && expandedAccordions["execution"] && (
             <Box
               sx={{
                 position: "sticky",
@@ -262,8 +273,8 @@ export const ChatInterface = ({
                   )}
                   <Box id="accordion-input">
                     <AccordionMessage
-                      expanded={expanded}
-                      onChange={(_e, isExpanded) => handleExpandChange(isExpanded)}
+                      expanded={expandedAccordions["input"]}
+                      onChange={(_e, isExpanded) => handleExpandChange("input", isExpanded)}
                       template={template}
                       showGenerate={showGenerate}
                       abortGenerating={onAbort}
