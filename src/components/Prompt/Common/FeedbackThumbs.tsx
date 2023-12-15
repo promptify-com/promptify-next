@@ -11,18 +11,22 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { Tooltip } from "@mui/material";
 import { setAnswers } from "@/core/store/chatSlice";
 import { setRepeatedExecution } from "@/core/store/executionsSlice";
+import CheckCircle from "@mui/icons-material/CheckCircle";
 
 interface Props {
   execution: TemplatesExecutions;
   vertical?: boolean;
-  onFeedbackGiven: (message: string) => void;
 }
 
-export default function FeedbackThumbs({ vertical, onFeedbackGiven, execution }: Props) {
+export default function FeedbackThumbs({ vertical, execution }: Props) {
   const [updateExecution] = useUpdateExecutionMutation();
   const dispatch = useAppDispatch();
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
+  const activeSideBarLink = useAppSelector(state => state.template.activeSideBarLink);
+
   const [feedback, setFeedback] = useState(execution.feedback);
+  const [feedbackMessage, setFeedbackMessage] = useState("");
+
   const handleFeedback = (newFeedback: FeedbackType) => {
     if (feedback !== newFeedback) {
       setFeedback(newFeedback);
@@ -34,7 +38,8 @@ export default function FeedbackThumbs({ vertical, onFeedbackGiven, execution }:
         },
       };
       updateExecution(feedbackData);
-      onFeedbackGiven("Thank you for your Feedback");
+      setFeedbackMessage("Thank you for your Feedback");
+      setTimeout(() => setFeedbackMessage(""), 2000);
     }
   };
 
@@ -80,85 +85,108 @@ export default function FeedbackThumbs({ vertical, onFeedbackGiven, execution }:
   };
 
   return (
-    <Stack
-      direction={{ xs: "row", md: vertical ? "column" : "row" }}
-      alignItems={"center"}
-      gap={1}
-    >
-      <Tooltip
-        title="Good"
-        arrow
-        PopperProps={commonPopperProps}
-      >
-        <IconButton
-          size="large"
-          onClick={() => handleFeedback("LIKED")}
+    <>
+      {feedbackMessage && (
+        <Stack
+          gap={1}
+          direction={"row"}
+          alignItems={"center"}
           sx={{
-            p: "15px",
-            border: "none",
-            bgcolor: "surface.2",
+            bgcolor: "primary.main",
+            position: "fixed",
+            top: { xs: "140px", md: "180px" },
+            right: activeSideBarLink ? "55%" : "45%",
 
-            ":hover": {
-              color: "green",
-              bgcolor: "action.hover",
-            },
+            color: "white",
+            p: 1,
+            borderRadius: "16px",
+            fontSize: 12,
           }}
         >
-          <TagFacesSharp
+          <CheckCircle sx={{ fontSize: 16 }} />
+          {feedbackMessage}
+        </Stack>
+      )}
+      <Stack
+        direction={{ xs: "row", md: vertical ? "column" : "row" }}
+        alignItems={"center"}
+        gap={1}
+      >
+        <Tooltip
+          title="Good"
+          arrow
+          PopperProps={commonPopperProps}
+        >
+          <IconButton
+            size="large"
+            onClick={() => handleFeedback("LIKED")}
             sx={{
-              color: execution.feedback === "LIKED" ? "green" : "inherit",
+              p: "15px",
+              border: "none",
+              bgcolor: "surface.2",
+
+              ":hover": {
+                color: "green",
+                bgcolor: "action.hover",
+              },
             }}
-          />
-        </IconButton>
-      </Tooltip>
+          >
+            <TagFacesSharp
+              sx={{
+                color: execution.feedback === "LIKED" ? "green" : "inherit",
+              }}
+            />
+          </IconButton>
+        </Tooltip>
 
-      <Tooltip
-        title="Bad"
-        arrow
-        PopperProps={commonPopperProps}
-      >
-        <IconButton
-          size="large"
-          onClick={() => handleFeedback("DISLIKED")}
-          sx={{
-            p: "15px",
-            border: "none",
-            bgcolor: "surface.2",
-
-            ":hover": {
-              color: "red",
-              bgcolor: "action.hover",
-            },
-          }}
+        <Tooltip
+          title="Bad"
+          arrow
+          PopperProps={commonPopperProps}
         >
-          <MoodBadSharp
+          <IconButton
+            size="large"
+            onClick={() => handleFeedback("DISLIKED")}
             sx={{
-              color: execution.feedback === "DISLIKED" ? "red" : "inherit",
-            }}
-          />
-        </IconButton>
-      </Tooltip>
-      <Tooltip
-        title="Repeat"
-        arrow
-        PopperProps={commonPopperProps}
-      >
-        <IconButton
-          size="large"
-          onClick={handleRepeat}
-          sx={{
-            p: "15px",
-            border: "none",
-            bgcolor: "surface.2",
+              p: "15px",
+              border: "none",
+              bgcolor: "surface.2",
 
-            ":hover": {
-              bgcolor: "action.hover",
-            },
-          }}
+              ":hover": {
+                color: "red",
+                bgcolor: "action.hover",
+              },
+            }}
+          >
+            <MoodBadSharp
+              sx={{
+                color: execution.feedback === "DISLIKED" ? "red" : "inherit",
+              }}
+            />
+          </IconButton>
+        </Tooltip>
+        <Tooltip
+          title="Repeat"
+          arrow
+          PopperProps={commonPopperProps}
         >
-          <Replay />
-        </IconButton>
-      </Tooltip>
-    </Stack>
+          <IconButton
+            size="large"
+            onClick={handleRepeat}
+            sx={{
+              p: "15px",
+              border: "none",
+              bgcolor: "surface.2",
+
+              ":hover": {
+                bgcolor: "action.hover",
+              },
+            }}
+          >
+            <Replay />
+          </IconButton>
+        </Tooltip>
+      </Stack>
+    </>
   );
 }

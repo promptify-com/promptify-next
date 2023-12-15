@@ -58,7 +58,7 @@ export const AccordionMessage = ({
         elevation={0}
         expanded={expanded}
         onChange={(_e, isExpanded) => handleExpandChange(isExpanded)}
-        sx={{ p: 0 }}
+        sx={{ p: 0, flex: 1 }}
       >
         <AccordionMessageHeader
           template={template}

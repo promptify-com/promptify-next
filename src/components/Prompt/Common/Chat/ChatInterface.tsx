@@ -15,6 +15,7 @@ import type { IMessage } from "@/common/types/chat";
 import type { Templates } from "@/core/api/dto/templates";
 import type { PromptParams } from "@/core/api/dto/prompts";
 import { isDesktopViewPort } from "@/common/helpers";
+import FeedbackThumbs from "../FeedbackThumbs";
 
 interface Props {
   messages: IMessage[];
@@ -165,19 +166,56 @@ export const ChatInterface = ({
           {getCurrentDateFormatted()}
         </Divider>
 
-        {executionMode && (
-          <Box id="accordion-header">
-            <AccordionMessage
-              template={template}
-              showGenerate={showGenerate}
-              abortGenerating={onAbort}
-              onChangeInput={onChangeInput}
-              onChangeParam={onChangeParam}
-              onGenerate={onGenerate}
-              executionMode={true}
-            />
-          </Box>
-        )}
+        <Stack
+          direction={"row"}
+          position={"relative"}
+          flexWrap={"nowrap"}
+        >
+          {executionMode && (
+            <Box
+              id="accordion-header"
+              display={"flex"}
+              sx={{
+                flex: "0 0 100%",
+              }}
+            >
+              <AccordionMessage
+                template={template}
+                showGenerate={showGenerate}
+                abortGenerating={onAbort}
+                onChangeInput={onChangeInput}
+                onChangeParam={onChangeParam}
+                onGenerate={onGenerate}
+                executionMode={true}
+              />
+            </Box>
+          )}
+
+          {selectedExecution && (
+            <Box
+              sx={{
+                position: "sticky",
+                top: "40px",
+                width: 0,
+                height: "fit-content",
+                mt: 45,
+                display: { xs: "none", md: "block" },
+              }}
+            >
+              <Box
+                sx={{
+                  position: "absolute",
+                  right: "80px",
+                }}
+              >
+                <FeedbackThumbs
+                  execution={selectedExecution!}
+                  vertical
+                />
+              </Box>
+            </Box>
+          )}
+        </Stack>
 
         <Stack
           gap={3}

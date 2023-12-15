@@ -301,6 +301,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
             <Box
               sx={{
                 height: "fit-content",
+                display: { md: "none" },
                 position: "sticky",
                 top: "50px",
                 mr: { md: "-50px" },
@@ -309,33 +310,10 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
             >
               <FeedbackThumbs
                 execution={selectedExecution}
-                onFeedbackGiven={handleFeedback}
                 vertical
               />
             </Box>
           )}
-        </Stack>
-      )}
-
-      {feedbackMessage && (
-        <Stack
-          gap={1}
-          direction={"row"}
-          alignItems={"center"}
-          sx={{
-            bgcolor: "primary.main",
-            position: "fixed",
-            top: "220px",
-            right: "45%",
-
-            color: "white",
-            p: 1,
-            borderRadius: "16px",
-            fontSize: 12,
-          }}
-        >
-          <CheckCircle sx={{ fontSize: 16 }} />
-          {feedbackMessage}
         </Stack>
       )}
     </Stack>
