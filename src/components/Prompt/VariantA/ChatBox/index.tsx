@@ -289,6 +289,7 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
   }, [answers, _inputs]);
 
   const validateVary = async (variation: string) => {
+    dispatch(setSelectedExecution(null));
     if (variation) {
       const userMessage: IMessage = {
         id: randomId(),

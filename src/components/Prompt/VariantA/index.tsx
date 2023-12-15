@@ -75,7 +75,7 @@ export default function TemplateVariantA({
         {isMobile && <TopHeaderActions executionsLength={executions?.length} />}
 
         <Stack
-          display={{ xs: !isExecutionShown ? "flex" : "none", md: "flex" }}
+          display={"flex"}
           sx={{
             height: { xs: "calc(100% - 54px)", md: "100%" },
             width: { xs: "100%", md: !isExecutionShown ? "100%" : "38%" },
@@ -110,6 +110,7 @@ export default function TemplateVariantA({
 
         {isExecutionShown && (
           <Box
+            position={{ xs: "absolute", md: "inherit" }}
             width={{ md: "62%" }}
             flex={{ xs: 1, md: "auto" }}
           >
