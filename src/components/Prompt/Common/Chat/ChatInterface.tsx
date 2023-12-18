@@ -16,7 +16,6 @@ import TemplateDetailsCard from "@/components/Prompt/Common/TemplateDetailsCard"
 import type { IPromptInput } from "@/common/types/prompt";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { Templates } from "@/core/api/dto/templates";
-import type { PromptParams } from "@/core/api/dto/prompts";
 
 type AccordionExpandedState = {
   execution: boolean;
@@ -27,21 +26,12 @@ interface Props {
   messages: IMessage[];
   template: Templates;
   onChangeInput: (value: string | File, input: IPromptInput) => void;
-  onChangeParam: (value: number, param: PromptParams) => void;
   onGenerate: () => void;
   onAbort: () => void;
   showGenerate: boolean;
 }
 
-export const ChatInterface = ({
-  template,
-  messages,
-  onChangeInput,
-  onChangeParam,
-  onGenerate,
-  showGenerate,
-  onAbort,
-}: Props) => {
+export const ChatInterface = ({ template, messages, onChangeInput, onGenerate, showGenerate, onAbort }: Props) => {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const isDesktopView = isDesktopViewPort();
 
@@ -169,7 +159,6 @@ export const ChatInterface = ({
                 showGenerate={showGenerate}
                 abortGenerating={onAbort}
                 onChangeInput={onChangeInput}
-                onChangeParam={onChangeParam}
                 onGenerate={onGenerate}
                 executionMode={true}
               />
@@ -246,7 +235,6 @@ export const ChatInterface = ({
                       showGenerate={showGenerate}
                       abortGenerating={onAbort}
                       onChangeInput={onChangeInput}
-                      onChangeParam={onChangeParam}
                       onGenerate={onGenerate}
                       executionMode={false}
                     />

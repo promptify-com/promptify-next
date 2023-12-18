@@ -1,4 +1,4 @@
-import { SyntheticEvent, useRef, useState } from "react";
+import { SyntheticEvent, useRef } from "react";
 import Stack from "@mui/material/Stack";
 import Accordion from "@mui/material/Accordion";
 import Typography from "@mui/material/Typography";
@@ -14,11 +14,9 @@ import Form from "@/components/Prompt/Common/Chat/Form";
 import AccordionMessageHeader from "@/components/Prompt/VariantB/AccordionMessageHeader";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IPromptInput } from "@/common/types/prompt";
-import type { PromptParams } from "@/core/api/dto/prompts";
 
 interface Props {
   onChangeInput: (value: string | File, input: IPromptInput) => void;
-  onChangeParam: (value: number, param: PromptParams) => void;
   onGenerate: () => void;
   abortGenerating: () => void;
   showGenerate: boolean;
@@ -31,7 +29,6 @@ interface Props {
 export default function AccordionMessage({
   template,
   onChangeInput,
-  onChangeParam,
   onGenerate,
   abortGenerating,
   showGenerate,
@@ -107,12 +104,7 @@ export default function AccordionMessage({
                   <Display templateData={template} />
                 </Stack>
               )}
-              {!executionMode && (
-                <Form
-                  onChangeInput={onChangeInput}
-                  onChangeParam={onChangeParam}
-                />
-              )}
+              {!executionMode && <Form onChangeInput={onChangeInput} />}
             </Stack>
           </Stack>
           {showGenerate && !executionMode && currentUser?.id && (

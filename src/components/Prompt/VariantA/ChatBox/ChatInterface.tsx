@@ -1,25 +1,27 @@
-import React, { useEffect, useRef } from "react";
-import { Box, Divider, Stack, Typography } from "@mui/material";
+import { Fragment, useEffect, useRef } from "react";
+import Stack from "@mui/material/Stack";
+import Box from "@mui/material/Box";
+import Divider from "@mui/material/Divider";
+import Typography from "@mui/material/Typography";
+
 import { Message } from "./Message";
-import { IMessage } from "@/components/Prompt/Types/chat";
-import { Templates } from "@/core/api/dto/templates";
 import { useAppSelector } from "@/hooks/useStore";
-import { InputsForm } from "./InputsForm";
-import { IPromptInput } from "@/common/types/prompt";
-import { PromptParams } from "@/core/api/dto/prompts";
 import { isDesktopViewPort } from "@/common/helpers";
 import { FeedbackActions } from "../FeedbackActions";
 import { MessageSparkBox } from "./MessageSparkBox";
-import TemplateDetailsCard from "../../Common/TemplateDetailsCard";
+import TemplateDetailsCard from "@/components/Prompt/Common/TemplateDetailsCard";
+import Form from "@/components/Prompt/Common/Chat/Form";
+import type { IPromptInput } from "@/common/types/prompt";
+import type { Templates } from "@/core/api/dto/templates";
+import type { IMessage } from "@/components/Prompt/Types/chat";
 
 interface Props {
   template: Templates;
   messages: IMessage[];
   onChangeInput: (value: string | File, question: IPromptInput) => void;
-  onChangeParam: (value: number, param: PromptParams) => void;
 }
 
-export const ChatInterface = ({ template, messages, onChangeInput, onChangeParam }: Props) => {
+export const ChatInterface = ({ template, messages, onChangeInput }: Props) => {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
@@ -86,7 +88,7 @@ export const ChatInterface = ({ template, messages, onChangeInput, onChangeParam
           New messages
         </Divider>
         {messages.map(msg => (
-          <React.Fragment key={msg.id}>
+          <Fragment key={msg.id}>
             <Message
               isExecutionShown={isExecutionShown}
               message={msg}
@@ -98,9 +100,8 @@ export const ChatInterface = ({ template, messages, onChangeInput, onChangeParam
                 mb={2}
                 mt={{ xs: 0, md: msg.noHeader ? -2.5 : 0 }}
               >
-                <InputsForm
+                <Form
                   onChangeInput={onChangeInput}
-                  onChangeParam={onChangeParam}
                   onScrollToBottom={scrollToBottom}
                 />
               </Box>
@@ -131,7 +132,7 @@ export const ChatInterface = ({ template, messages, onChangeInput, onChangeParam
                 </Box>
               </Stack>
             )}
-          </React.Fragment>
+          </Fragment>
         ))}
       </Stack>
     </Stack>

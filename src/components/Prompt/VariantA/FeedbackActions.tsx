@@ -84,7 +84,7 @@ export const FeedbackActions: React.FC<newFeedBack> = ({ execution, vertical, mi
             bgcolor: "primary.main",
             position: "fixed",
             top: "240px",
-            right: "40%",
+            right: "27%",
 
             color: "white",
             p: 1,
