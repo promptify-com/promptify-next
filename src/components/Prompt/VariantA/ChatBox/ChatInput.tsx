@@ -49,7 +49,7 @@ export const ChatInput = ({
   return (
     <Grid
       ref={containerRef}
-      mb={"16px"}
+      mb={{ md: "16px" }}
       position={"relative"}
       display={"flex"}
       flexDirection={"column"}

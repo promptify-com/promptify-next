@@ -1,50 +1,71 @@
 import Stack from "@mui/material/Stack";
 
-import { useAppSelector } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import FormParam from "@/components/Prompt/Common/Chat/FormParams";
 import FormInput from "@/components/Prompt/Common/Chat/FormInput";
 import type { IPromptInput } from "@/common/types/prompt";
-import type { PromptParams } from "@/core/api/dto/prompts";
+import Fade from "@mui/material/Fade";
+import { useEffect } from "react";
+import { setIsSimulationStreaming } from "@/core/store/chatSlice";
+import { useRouter } from "next/router";
 
 interface Props {
   onChangeInput: (value: string | File, input: IPromptInput) => void;
-  onChangeParam: (value: number, param: PromptParams) => void;
+  onScrollToBottom?: () => void;
 }
 
-function Inputsform({ onChangeInput, onChangeParam }: Props) {
-  const answers = useAppSelector(state => state.chat.answers);
-  const inputs = useAppSelector(state => state.chat.inputs);
-  const paramsValues = useAppSelector(state => state.chat.paramsValues);
+function Inputsform({ onChangeInput, onScrollToBottom }: Props) {
+  const dispatch = useAppDispatch();
 
+  const router = useRouter();
+  const variant = router.query.variant;
+
+  const isVariantB = variant === "b";
+
+  const fadeTimeout = isVariantB ? 0 : 800;
+
+  const answers = useAppSelector(state => state.chat.answers);
+  const paramsValues = useAppSelector(state => state.chat.paramsValues);
+  const inputs = useAppSelector(state => state.chat.inputs);
   const params = useAppSelector(state => state.chat.params);
-  const _params = params.filter(param => param.is_visible);
+
+  useEffect(() => {
+    if (isVariantB) return;
+    setTimeout(() => dispatch(setIsSimulationStreaming(false)), fadeTimeout);
+  }, []);
 
   return (
-    <Stack gap={1}>
-      {inputs.map((input, index) => {
-        const value = answers.find(answer => answer.inputName === input.name)?.answer ?? "";
-        return (
-          <FormInput
-            key={index}
-            input={input}
-            value={value}
-            onChangeInput={onChangeInput}
-          />
-        );
-      })}
+    <Fade
+      in={true}
+      unmountOnExit
+      timeout={fadeTimeout}
+      addEndListener={onScrollToBottom}
+    >
+      <Stack gap={isVariantB ? 1 : 2}>
+        {inputs.map((input, index) => {
+          const value = answers.find(answer => answer.inputName === input.name)?.answer ?? "";
+          return (
+            <FormInput
+              key={index}
+              input={input}
+              value={value}
+              onChange={onChangeInput}
+            />
+          );
+        })}
 
-      {_params?.map(param => {
-        const paramValue = paramsValues.find(paramVal => paramVal.id === param.prompt);
-        return (
-          <FormParam
-            key={param.parameter.id}
-            param={param}
-            paramValue={paramValue}
-            onChange={onChangeParam}
-          />
-        );
-      })}
-    </Stack>
+        {params?.map(param => {
+          const paramValue = paramsValues.find(paramVal => paramVal.id === param.prompt);
+          return (
+            <FormParam
+              key={param.parameter.id}
+              param={param}
+              paramValue={paramValue}
+            />
+          );
+        })}
+      </Stack>
+    </Fade>
   );
 }
 

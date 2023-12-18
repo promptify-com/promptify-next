@@ -4,21 +4,43 @@ import InputLabel from "@mui/material/InputLabel";
 import Typography from "@mui/material/Typography";
 import Slider from "@mui/material/Slider";
 
-import { useAppSelector } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import CustomTooltip from "@/components/Prompt/Common/CustomTooltip";
 import type { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
-import CustomTooltip from "../CustomTooltip";
+import { setparamsValues } from "@/core/store/chatSlice";
+import { useRouter } from "next/router";
 
 interface GeneratorParamProps {
   param: PromptParams;
   paramValue: ResOverrides | undefined;
-  onChange: (value: number, param: PromptParams) => void;
 }
 
-export default function FormParam({ param, paramValue, onChange }: GeneratorParamProps) {
+export default function FormParam({ param, paramValue }: GeneratorParamProps) {
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+
+  const variant = router.query.variant;
+  const isVariantB = variant === "b";
+
+  const paramsValues = useAppSelector(state => state.chat.paramsValues);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
 
   const handleScoreChange = (score: number) => {
-    onChange(score, param);
+    const paramId = param.parameter.id;
+    const updatedParamsValues = paramsValues.map(paramValue => {
+      if (paramValue.id !== param.prompt) {
+        return paramValue;
+      }
+
+      return {
+        id: paramValue.id,
+        contextual_overrides: paramValue.contextual_overrides.map(ctx =>
+          ctx.parameter === paramId ? { parameter: paramId, score } : ctx,
+        ),
+      };
+    });
+
+    dispatch(setparamsValues(updatedParamsValues));
   };
 
   const matchingContext = paramValue?.contextual_overrides.find(
@@ -36,9 +58,9 @@ export default function FormParam({ param, paramValue, onChange }: GeneratorPara
       direction={"row"}
       alignItems={"center"}
       flexWrap={"wrap"}
-      p={"16px 6px"}
+      p={isVariantB ? "16px 6px" : "0"}
       gap={1}
-      borderBottom={"1px solid #ECECF4"}
+      borderBottom={isVariantB ? "1px solid #ECECF4" : "none"}
     >
       <Stack
         flex={1}
@@ -48,7 +70,7 @@ export default function FormParam({ param, paramValue, onChange }: GeneratorPara
         width={{ xs: "100%", md: "auto" }}
         justifyContent={"space-between"}
       >
-        <Box pl={"45px"}>
+        <Box pl={isVariantB ? "45px" : 0}>
           <InputLabel
             sx={{
               fontSize: { xs: 12, md: 15 },
@@ -73,49 +95,20 @@ export default function FormParam({ param, paramValue, onChange }: GeneratorPara
             {activeDescription?.description}
           </Typography>
         </Box>
-        <Stack
-          sx={{
-            display: { xs: "flex", md: "none" },
-          }}
-        >
-          <CustomTooltip title={"Parameter"} />
-        </Stack>
+        {isVariantB && (
+          <Stack
+            sx={{
+              display: { xs: "flex", md: "none" },
+            }}
+          >
+            <CustomTooltip title={"Parameter"} />
+          </Stack>
+        )}
       </Stack>
 
       <Slider
         disabled={!param.is_editable || isGenerating}
-        sx={{
-          height: "2px",
-          width: { xs: "70%", md: "30%" },
-          minWidth: { md: "300px" },
-          flexShrink: 0,
-          ml: { xs: "45px", md: "0" },
-          color: "primary.main",
-          "& .MuiSlider-thumb": {
-            height: 12,
-            width: 12,
-            boxShadow:
-              "0px 1px 5px rgba(0, 0, 0, 0.12), 0px 2px 2px rgba(0, 0, 0, 0.14), 0px 3px 1px -2px rgba(0, 0, 0, 0.2)",
-            position: "relative",
-            "&::after": {
-              content: "''",
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              width: 16,
-              height: 16,
-              bgcolor: "primary.main",
-              zIndex: -1,
-            },
-          },
-          "& .MuiSlider-rail": {
-            bgcolor: "primary.main",
-          },
-          "& .MuiSlider-track": {
-            height: "1px",
-          },
-        }}
+        sx={sliderStyle}
         value={activeDescription?.score || 2}
         marks={marks}
         step={1}
@@ -124,13 +117,47 @@ export default function FormParam({ param, paramValue, onChange }: GeneratorPara
         onChange={(e: any) => handleScoreChange(e.target.value as number)}
       />
 
-      <Stack
-        sx={{
-          display: { xs: "none", md: "flex" },
-        }}
-      >
-        <CustomTooltip title={"Parameter"} />
-      </Stack>
+      {isVariantB && (
+        <Stack
+          sx={{
+            display: { xs: "none", md: "flex" },
+          }}
+        >
+          <CustomTooltip title={"Parameter"} />
+        </Stack>
+      )}
     </Stack>
   );
 }
+
+const sliderStyle = {
+  height: "2px",
+  width: { xs: "70%", md: "30%" },
+  minWidth: { md: "300px" },
+  flexShrink: 0,
+  ml: { xs: "45px", md: "0" },
+  color: "primary.main",
+  "& .MuiSlider-thumb": {
+    height: 12,
+    width: 12,
+    boxShadow: "0px 1px 5px rgba(0, 0, 0, 0.12), 0px 2px 2px rgba(0, 0, 0, 0.14), 0px 3px 1px -2px rgba(0, 0, 0, 0.2)",
+    position: "relative",
+    "&::after": {
+      content: "''",
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      width: 16,
+      height: 16,
+      bgcolor: "primary.main",
+      zIndex: -1,
+    },
+  },
+  "& .MuiSlider-rail": {
+    bgcolor: "primary.main",
+  },
+  "& .MuiSlider-track": {
+    height: "1px",
+  },
+};

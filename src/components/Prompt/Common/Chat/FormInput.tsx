@@ -8,32 +8,40 @@ import { useAppSelector } from "@/hooks/useStore";
 import type { IPromptInput } from "@/common/types/prompt";
 import RenderInputType from "./Inputs";
 import CustomTooltip from "../CustomTooltip";
+import { useRouter } from "next/router";
 
 interface Props {
   input: IPromptInput;
   value: string | number | File;
-  onChangeInput: (value: string | File, input: IPromptInput) => void;
+  onChange: (value: string | File, input: IPromptInput) => void;
 }
 
-function FormInput({ input, value, onChangeInput }: Props) {
+function FormInput({ input, value, onChange }: Props) {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const isFile = value instanceof File;
+  const router = useRouter();
+
+  const variant = router.query.variant;
+
+  const isVariantB = variant === "b";
 
   return (
     <Stack
-      key={input.name}
       direction={"row"}
-      p={"6px"}
+      p={isVariantB ? "6px" : 0}
       alignItems={"center"}
       gap={1}
-      borderBottom={"1px solid #ECECF4"}
+      borderBottom={isVariantB ? "1px solid #ECECF4" : "none"}
     >
-      <Radio
-        size="small"
-        checked={!!value}
-        value="a"
-        name="radio-buttons"
-      />
+      {isVariantB && (
+        <Radio
+          size="small"
+          checked={!!value}
+          value="a"
+          name="radio-buttons"
+        />
+      )}
+
       <InputLabel
         sx={{
           fontSize: { xs: 12, md: 15 },
@@ -50,41 +58,43 @@ function FormInput({ input, value, onChangeInput }: Props) {
       >
         <RenderInputType
           input={input}
-          onChange={onChangeInput}
+          onChange={onChange}
           value={value}
           isGenerating={isGenerating}
           isFile={isFile}
         />
       </Stack>
-      <Stack
-        direction={"row"}
-        alignItems={"center"}
-        gap={"8px"}
-      >
-        {input.required && (
-          <Typography
-            sx={{
-              fontSize: { xs: 12, md: 15 },
-              fontWeight: 400,
-              lineHeight: "100%",
-              opacity: 0.3,
-            }}
-          >
-            Required
-          </Typography>
-        )}
-        <CustomTooltip
-          title={
+      {isVariantB && (
+        <Stack
+          direction={"row"}
+          alignItems={"center"}
+          gap={"8px"}
+        >
+          {input.required && (
             <Typography
-              color={"white"}
-              textTransform={"capitalize"}
-              fontSize={11}
+              sx={{
+                fontSize: { xs: 12, md: 15 },
+                fontWeight: 400,
+                lineHeight: "100%",
+                opacity: 0.3,
+              }}
             >
-              {input.type}
+              Required
             </Typography>
-          }
-        />
-      </Stack>
+          )}
+          <CustomTooltip
+            title={
+              <Typography
+                color={"white"}
+                textTransform={"capitalize"}
+                fontSize={11}
+              >
+                {input.type}
+              </Typography>
+            }
+          />
+        </Stack>
+      )}
     </Stack>
   );
 }

@@ -156,16 +156,18 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
     initialMessages({ inputs });
 
     const valuesMap = new Map<number, ResOverrides>();
-    params.forEach(_param => {
-      const paramId = _param.parameter.id;
-      valuesMap.set(_param.prompt, {
-        id: _param.prompt,
-        contextual_overrides: (valuesMap.get(_param.prompt)?.contextual_overrides ?? []).concat({
-          parameter: paramId,
-          score: _param.score,
-        }),
+    params
+      .filter(param => param.is_visible)
+      .forEach(_param => {
+        const paramId = _param.parameter.id;
+        valuesMap.set(_param.prompt, {
+          id: _param.prompt,
+          contextual_overrides: (valuesMap.get(_param.prompt)?.contextual_overrides ?? []).concat({
+            parameter: paramId,
+            score: _param.score,
+          }),
+        });
       });
-    });
 
     dispatch(setparamsValues(Array.from(valuesMap.values())));
     dispatch(setParams(params));
@@ -566,7 +568,6 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
           template={template}
           showGenerate={showGenerate}
           onChangeInput={handleUserInput}
-          onChangeParam={handleUserParam}
           onGenerate={generateExecutionHandler}
           onAbort={abortConnection}
         />

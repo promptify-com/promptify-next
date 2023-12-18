@@ -197,16 +197,19 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
     initialMessages(inputs);
 
     const valuesMap = new Map<number, ResOverrides>();
-    params.forEach(_param => {
-      const paramId = _param.parameter.id;
-      valuesMap.set(_param.prompt, {
-        id: _param.prompt,
-        contextual_overrides: (valuesMap.get(_param.prompt)?.contextual_overrides || []).concat({
-          parameter: paramId,
-          score: _param.score,
-        }),
+    params
+      .filter(param => param.is_visible)
+      .forEach(_param => {
+        const paramId = _param.parameter.id;
+        valuesMap.set(_param.prompt, {
+          id: _param.prompt,
+          contextual_overrides: (valuesMap.get(_param.prompt)?.contextual_overrides || []).concat({
+            parameter: paramId,
+            score: _param.score,
+          }),
+        });
       });
-    });
+
     dispatch(setparamsValues(Array.from(valuesMap.values())));
     dispatch(setParams(params));
     dispatch(setInputs(inputs));
@@ -384,24 +387,6 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
     }
 
     dispatch(setAnswers(_answers));
-  };
-
-  const handleUserParam = (value: number, param: PromptParams) => {
-    const paramId = param.parameter.id;
-    const updatedParamsValues = paramsValues.map(paramValue => {
-      if (paramValue.id !== param.prompt) {
-        return paramValue;
-      }
-
-      return {
-        id: paramValue.id,
-        contextual_overrides: paramValue.contextual_overrides.map(ctx =>
-          ctx.parameter === paramId ? { parameter: paramId, score: value } : ctx,
-        ),
-      };
-    });
-
-    dispatch(setparamsValues(updatedParamsValues));
   };
 
   const validateAndUploadFiles = () =>
@@ -624,7 +609,6 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
           template={template}
           messages={messages}
           onChangeInput={handleUserInput}
-          onChangeParam={handleUserParam}
         />
         {currentUser?.id ? (
           <ChatInput
