@@ -7,7 +7,7 @@ import { markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
 import { useEffect, useState } from "react";
 import { useAppSelector } from "@/hooks/useStore";
 import { useDeleteExecutionFavoriteMutation, useExecutionFavoriteMutation } from "@/core/api/executions";
-import { getAbbreviation, isDesktopViewPort } from "@/common/helpers";
+import { isDesktopViewPort } from "@/common/helpers";
 import { Prompts } from "@/core/api/dto/prompts";
 import { setActiveToolbarLink } from "@/core/store/templatesSlice";
 import AvatarWithInitials from "@/components/Prompt/Common/AvatarWithInitials";
@@ -85,25 +85,11 @@ export const ExecutionItem: React.FC<CardExecutionProps> = ({ execution, min, pr
               alignItems={"center"}
               gap={1}
             >
-              <Stack
-                alignItems={"center"}
-                justifyContent={"center"}
-                sx={{
-                  width: 38,
-                  height: 38,
-                  p: "8px",
-                  bgcolor: "#375CA9",
-                  borderRadius: "8px",
-                }}
-              >
-                <Typography
-                  fontSize={18}
-                  fontWeight={700}
-                  color={"primary.contrastText"}
-                >
-                  {getAbbreviation(execution.title)}
-                </Typography>
-              </Stack>
+              <AvatarWithInitials
+                variant="a"
+                title={execution.title}
+              />
+
               <Typography
                 sx={{
                   width: "90%",
