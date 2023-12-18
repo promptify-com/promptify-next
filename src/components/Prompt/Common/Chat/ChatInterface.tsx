@@ -176,7 +176,7 @@ export const ChatInterface = ({
             </Box>
           )}
 
-          {selectedExecution && expandedAccordions["execution"] && (
+          {!!selectedExecution?.prompt_executions?.length && expandedAccordions["execution"] && (
             <Box
               sx={{
                 position: "sticky",
