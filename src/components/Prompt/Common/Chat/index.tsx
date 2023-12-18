@@ -16,7 +16,7 @@ import { executionsApi, useStopExecutionMutation } from "@/core/api/executions";
 import { vary } from "@/common/helpers/varyValidator";
 import { parseMessageData } from "@/common/helpers/parseMessageData";
 import { useUploadFileMutation } from "@/core/api/uploadFile";
-import { uploadFileHelper } from "@/common/helpers/uploadFileHelper";
+import { uploadFileHelper } from "@/components/Prompt/Utils/uploadFileHelper";
 import { setGeneratedExecution, setRepeatedExecution, setSelectedExecution } from "@/core/store/executionsSlice";
 import useChatBox from "@/hooks/useChatBox";
 import { randomId } from "@/common/helpers";

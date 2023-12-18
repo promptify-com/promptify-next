@@ -2,14 +2,11 @@ import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import InputLabel from "@mui/material/InputLabel";
 import Typography from "@mui/material/Typography";
-import IconButton from "@mui/material/IconButton";
 import Slider from "@mui/material/Slider";
-import HelpOutline from "@mui/icons-material/HelpOutline";
 
 import { useAppSelector } from "@/hooks/useStore";
 import type { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
-import Tooltip from "@mui/material/Tooltip";
-import { useState } from "react";
+import CustomTooltip from "../CustomTooltip";
 
 interface GeneratorParamProps {
   param: PromptParams;
@@ -33,19 +30,6 @@ export default function FormParam({ param, paramValue, onChange }: GeneratorPara
   const activeDescription = descriptions.find(description => description.score === activeScore);
   const marks = descriptions.map(description => ({ value: description.score }));
   const values = marks.map(obj => obj.value) || [];
-
-  const [openTooltip, setOpenTooltip] = useState(false);
-
-  const commonPopperProps = {
-    modifiers: [
-      {
-        name: "offset",
-        options: {
-          offset: [0, -9],
-        },
-      },
-    ],
-  };
 
   return (
     <Stack
@@ -89,25 +73,13 @@ export default function FormParam({ param, paramValue, onChange }: GeneratorPara
             {activeDescription?.description}
           </Typography>
         </Box>
-        <Tooltip
-          arrow
-          title={"Parameter"}
-          open={openTooltip}
-          onClose={() => setOpenTooltip(false)}
-          onOpen={() => setOpenTooltip(true)}
-          PopperProps={commonPopperProps}
+        <Stack
+          sx={{
+            display: { xs: "flex", md: "none" },
+          }}
         >
-          <IconButton
-            onClick={() => setOpenTooltip(!openTooltip)}
-            sx={{
-              opacity: 0.3,
-              border: "none",
-              display: { xs: "flex", md: "none" },
-            }}
-          >
-            <HelpOutline />
-          </IconButton>
-        </Tooltip>
+          <CustomTooltip title={"Parameter"} />
+        </Stack>
       </Stack>
 
       <Slider
@@ -152,25 +124,13 @@ export default function FormParam({ param, paramValue, onChange }: GeneratorPara
         onChange={(e: any) => handleScoreChange(e.target.value as number)}
       />
 
-      <Tooltip
-        arrow
-        title={"Parameter"}
-        open={openTooltip}
-        onClose={() => setOpenTooltip(false)}
-        onOpen={() => setOpenTooltip(true)}
-        PopperProps={commonPopperProps}
+      <Stack
+        sx={{
+          display: { xs: "none", md: "flex" },
+        }}
       >
-        <IconButton
-          onClick={() => setOpenTooltip(!openTooltip)}
-          sx={{
-            opacity: 0.3,
-            border: "none",
-            display: { xs: "none", md: "flex" },
-          }}
-        >
-          <HelpOutline />
-        </IconButton>
-      </Tooltip>
+        <CustomTooltip title={"Parameter"} />
+      </Stack>
     </Stack>
   );
 }

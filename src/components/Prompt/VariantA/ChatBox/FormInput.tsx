@@ -4,7 +4,7 @@ import { IAnswer } from "@/components/Prompt/Types/chat";
 import BaseButton from "@/components/base/BaseButton";
 import CodeFieldModal from "@/components/modals/CodeFieldModal";
 import { useAppSelector } from "@/hooks/useStore";
-import { getFileTypeExtensionsAsString } from "@/common/helpers/uploadFileHelper";
+import { getFileTypeExtensionsAsString } from "@/components/Prompt/Utils/uploadFileHelper";
 import { FileType, IPromptInput } from "@/common/types/prompt";
 import { Edit, Error } from "@mui/icons-material";
 
