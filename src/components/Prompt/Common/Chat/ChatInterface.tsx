@@ -1,21 +1,22 @@
-import { useRef, Fragment, useEffect, useState } from "react";
+import { useRef, Fragment, useState } from "react";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
 import South from "@mui/icons-material/South";
 import Typography from "@mui/material/Typography";
 
-import { TemplateDetailsCard } from "../TemplateDetailsCard";
-import { AccordionMessage } from "@/components/Prompt/VariantB/AccordionMessage";
 import { Message } from "./Message";
 import { useAppSelector } from "@/hooks/useStore";
 import { getCurrentDateFormatted, timeAgo } from "@/common/helpers/timeManipulation";
+import { isDesktopViewPort } from "@/common/helpers";
+import AccordionMessage from "@/components/Prompt/VariantB/AccordionMessage";
+import FeedbackThumbs from "@/components/Prompt/Common/FeedbackThumbs";
+import useScrollToBottom from "@/components/Prompt/Hooks/useScrolltoBottom";
+import TemplateDetailsCard from "@/components/Prompt/Common/TemplateDetailsCard";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { Templates } from "@/core/api/dto/templates";
 import type { PromptParams } from "@/core/api/dto/prompts";
-import { isDesktopViewPort } from "@/common/helpers";
-import FeedbackThumbs from "../FeedbackThumbs";
 
 type AccordionExpandedState = {
   execution: boolean;
@@ -51,13 +52,12 @@ export const ChatInterface = ({
   const [isHovered, setIsHovered] = useState(false);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
-  const [isUserAtBottom, setIsUserAtBottom] = useState(true);
-  const [showScrollDown, setShowScrollDown] = useState(false);
-
   const [expandedAccordions, setExpandedAccordions] = useState<AccordionExpandedState>({
     execution: true,
     input: true,
   });
+
+  const { showScrollDown, scrollToBottom } = useScrollToBottom({ ref: messagesContainerRef, messages, isGenerating });
 
   const handleExpandChange = (type: keyof AccordionExpandedState, isExpanded: boolean) => {
     setExpandedAccordions(prev => ({
@@ -70,40 +70,6 @@ export const ChatInterface = ({
     .slice()
     .reverse()
     .find(msg => msg.type === "form");
-
-  const handleUserScroll = () => {
-    if (messagesContainerRef.current) {
-      const { scrollTop, scrollHeight, clientHeight } = messagesContainerRef.current;
-      const isAtBottom = scrollTop + clientHeight >= scrollHeight - 80;
-      setShowScrollDown(!isAtBottom);
-      setIsUserAtBottom(isAtBottom);
-    }
-  };
-  const scrollToBottom = () => {
-    const container = messagesContainerRef.current;
-    if (container) {
-      container.scrollTop = container.scrollHeight;
-      setTimeout(handleUserScroll, 200);
-    }
-  };
-
-  useEffect(() => {
-    const container = messagesContainerRef.current;
-    if (container) {
-      container.addEventListener("scroll", handleUserScroll);
-    }
-    return () => {
-      if (container) {
-        container.removeEventListener("scroll", handleUserScroll);
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    if (isUserAtBottom) {
-      scrollToBottom();
-    }
-  }, [messages, isGenerating, generatedExecution]);
 
   const executionMode = Boolean(selectedExecution || generatedExecution);
 
@@ -228,7 +194,7 @@ export const ChatInterface = ({
                 }}
               >
                 <FeedbackThumbs
-                  execution={selectedExecution!}
+                  execution={selectedExecution}
                   vertical
                 />
               </Box>

@@ -1,16 +1,18 @@
-import React, { useRef, useState, useMemo, useEffect } from "react";
+import { useRef, useState, useMemo } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
+import South from "@mui/icons-material/South";
 import Typography from "@mui/material/Typography";
+import IconButton from "@mui/material/IconButton";
+
 import { Templates } from "@/core/api/dto/templates";
 import { ExecutionCard } from "./ExecutionCard";
 import { DisplayActions } from "./DisplayActions";
 import ParagraphPlaceholder from "@/components/placeholders/ParagraphPlaceholder";
-import GeneratedExecutionFooter from "./GeneratedExecutionFooter";
 import { useAppSelector } from "@/hooks/useStore";
-import { IconButton } from "@mui/material";
-import { South } from "@mui/icons-material";
 import { SparkExportPopup } from "@/components/dialog/SparkExportPopup";
+import useScrollToBottom from "@/components/Prompt/Hooks/useScrolltoBottom";
+import ExecutionFooter from "../Common/ExecutionFooter";
 
 interface Props {
   templateData: Templates;
@@ -18,13 +20,14 @@ interface Props {
 
 export const Display: React.FC<Props> = ({ templateData }) => {
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const [openExportPopup, setOpenExportpopup] = useState(false);
-  const [previewsShown, setPreviewsShown] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const isFetching = useAppSelector(state => state.executions.isFetching);
+
+  const [openExportPopup, setOpenExportpopup] = useState(false);
+  const [previewsShown, setPreviewsShown] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
   const activeExecution = useMemo(() => {
     if (selectedExecution) {
       return {
@@ -39,42 +42,11 @@ export const Display: React.FC<Props> = ({ templateData }) => {
     }
     return null;
   }, [selectedExecution]);
+
+  const { showScrollDown, scrollToBottom } = useScrollToBottom({ ref: containerRef, isGenerating });
+
   const isGeneratedExecutionEmpty = Boolean(generatedExecution && !generatedExecution.data?.length);
   const executionIsLoading = isFetching || isGeneratedExecutionEmpty;
-
-  const [isUserAtBottom, setIsUserAtBottom] = useState(true);
-  const [showScrollDown, setShowScrollDown] = useState(false);
-
-  const handleUserScroll = () => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    const { scrollTop, scrollHeight, clientHeight } = container;
-    const isAtBottom = scrollTop + clientHeight >= scrollHeight - 120;
-    setShowScrollDown(!isAtBottom);
-    setIsUserAtBottom(isAtBottom);
-  };
-  const scrollToBottom = () => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    container.scrollTop = container.scrollHeight;
-    setTimeout(handleUserScroll, 200);
-  };
-
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    container.addEventListener("scroll", handleUserScroll);
-    return () => container.removeEventListener("scroll", handleUserScroll);
-  }, []);
-
-  useEffect(() => {
-    if (isUserAtBottom) {
-      scrollToBottom();
-    }
-  }, [generatedExecution, isGenerating]);
 
   const currentGeneratedPrompt = useMemo(() => {
     if (generatedExecution?.data?.length) {
@@ -188,7 +160,7 @@ export const Display: React.FC<Props> = ({ templateData }) => {
         </Box>
       </Box>
       {currentGeneratedPrompt && (
-        <GeneratedExecutionFooter
+        <ExecutionFooter
           title={currentGeneratedPrompt.title}
           order={currentGeneratedPrompt.order}
         />
