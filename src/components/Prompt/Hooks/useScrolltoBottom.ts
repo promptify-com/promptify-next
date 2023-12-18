@@ -45,7 +45,7 @@ const useScrollToBottom = ({
     if (isUserAtBottom) {
       scrollToBottom();
     }
-  }, [generatedExecution, isGenerating]);
+  }, [messages, generatedExecution, isGenerating]);
 
   return { isUserAtBottom, showScrollDown, scrollToBottom };
 };
