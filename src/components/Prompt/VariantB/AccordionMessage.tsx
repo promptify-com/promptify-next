@@ -28,7 +28,7 @@ interface Props {
   expanded: boolean;
 }
 
-export const AccordionMessage = ({
+export default function AccordionMessage({
   template,
   onChangeInput,
   onChangeParam,
@@ -38,7 +38,7 @@ export const AccordionMessage = ({
   executionMode,
   onChange,
   expanded,
-}: Props) => {
+}: Props) {
   const dispatch = useAppDispatch();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const currentUser = useAppSelector(state => state.user.currentUser);
@@ -148,4 +148,4 @@ export const AccordionMessage = ({
       </Accordion>
     </Fade>
   );
-};
+}

@@ -1,8 +1,8 @@
 import TextField from "@mui/material/TextField";
 
-import Code from "@/components/Prompt/Common/Chat/InputsType/Code";
-import Choices from "@/components/Prompt/Common/Chat/InputsType/Choices";
-import File from "@/components/Prompt/Common/Chat/InputsType/File";
+import Code from "@/components/Prompt/Common/Chat/Inputs/Code";
+import Choices from "@/components/Prompt/Common/Chat/Inputs/Choices";
+import File from "@/components/Prompt/Common/Chat/Inputs/File";
 import type { IPromptInput } from "@/common/types/prompt";
 
 interface Props {

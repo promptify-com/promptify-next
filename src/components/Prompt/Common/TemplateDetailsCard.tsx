@@ -12,7 +12,7 @@ interface TemplateDetailsCardProps {
   min?: boolean;
 }
 
-export const TemplateDetailsCard: React.FC<TemplateDetailsCardProps> = ({ template, min }) => {
+export default function TemplateDetailsCard({ template, min }: TemplateDetailsCardProps) {
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -144,4 +144,4 @@ export const TemplateDetailsCard: React.FC<TemplateDetailsCardProps> = ({ templa
       )}
     </Box>
   );
-};
+}

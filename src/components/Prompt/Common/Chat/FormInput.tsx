@@ -6,7 +6,7 @@ import Typography from "@mui/material/Typography";
 import { useAppSelector } from "@/hooks/useStore";
 
 import type { IPromptInput } from "@/common/types/prompt";
-import RenderInputType from "./InputsType";
+import RenderInputType from "./Inputs";
 import CustomTooltip from "../CustomTooltip";
 
 interface Props {
