@@ -10,7 +10,7 @@ import { PromptParams } from "@/core/api/dto/prompts";
 import { isDesktopViewPort } from "@/common/helpers";
 import { FeedbackActions } from "../FeedbackActions";
 import { MessageSparkBox } from "./MessageSparkBox";
-import { TemplateDetailsCard } from "../../Common/TemplateDetailsCard";
+import TemplateDetailsCard from "../../Common/TemplateDetailsCard";
 
 interface Props {
   template: Templates;
