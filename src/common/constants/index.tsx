@@ -17,9 +17,9 @@ import { Prompt } from "@/assets/icons/prompts";
 import { TemplateStatus } from "@/core/api/dto/templates";
 import { InputType } from "@/common/types/prompt";
 import { DeploymentStatus } from "../types/deployments";
-import { Link } from "../types/TemplateToolbar";
 import NoteStackIcon from "@/assets/icons/NoteStackIcon";
 import ExtensionSettingsIcon from "@/assets/icons/ExtensionSettingsIcon";
+import { Link } from "@/components/Prompt/Types";
 
 export interface MenuType {
   id: number;

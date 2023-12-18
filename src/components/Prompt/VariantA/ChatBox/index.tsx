@@ -10,7 +10,7 @@ import { ChatInput } from "./ChatInput";
 import { Templates } from "@/core/api/dto/templates";
 import { IPromptInput, PromptLiveResponse, AnsweredInputType } from "@/common/types/prompt";
 import { setGeneratingStatus, updateExecutionData } from "@/core/store/templatesSlice";
-import { IAnswer, IMessage, VaryValidatorResponse } from "@/common/types/chat";
+import { IAnswer, IMessage, VaryValidatorResponse } from "@/components/Prompt/Types/chat";
 import { executionsApi, useStopExecutionMutation } from "@/core/api/executions";
 import { vary } from "@/common/helpers/varyValidator";
 import { parseMessageData } from "@/common/helpers/parseMessageData";

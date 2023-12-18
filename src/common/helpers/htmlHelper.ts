@@ -18,16 +18,3 @@ export const markdownToHTML = async (markdown: string) => {
 export const sanitizeHTML = (html: string) => {
   return DOMPurify.sanitize(html, { FORBID_TAGS: ["style", "a", "script"], FORBID_ATTR: ["href"] });
 };
-
-export const isImageOutput = (output: string, engineType: "TEXT" | "IMAGE"): boolean => {
-  try {
-    const imgURL = new URL(output);
-    const IsImage = [".png", ".jpg", ".jpeg", ".webp", ".gif", ".avif"].some(extension =>
-      imgURL.pathname.endsWith(extension),
-    );
-
-    return IsImage || engineType === "IMAGE";
-  } catch {
-    return false;
-  }
-};

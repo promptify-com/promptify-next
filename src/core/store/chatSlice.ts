@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { IPromptInput } from "@/common/types/prompt";
-import type { IAnswer } from "@/common/types/chat";
+import type { IAnswer } from "@/components/Prompt/Types/chat";
 import type { PromptParams, ResOverrides } from "../api/dto/prompts";
 
 export interface ExecutionsProps {

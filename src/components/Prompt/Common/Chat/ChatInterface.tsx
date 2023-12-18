@@ -11,7 +11,7 @@ import { Message } from "./Message";
 import { useAppSelector } from "@/hooks/useStore";
 import { getCurrentDateFormatted, timeAgo } from "@/common/helpers/timeManipulation";
 import type { IPromptInput } from "@/common/types/prompt";
-import type { IMessage } from "@/common/types/chat";
+import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { Templates } from "@/core/api/dto/templates";
 import type { PromptParams } from "@/core/api/dto/prompts";
 import { isDesktopViewPort } from "@/common/helpers";

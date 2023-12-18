@@ -4,7 +4,7 @@ import Grid from "@mui/material/Grid";
 import Bolt from "@mui/icons-material/Bolt";
 
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import type { IMessage } from "@/common/types/chat";
+import type { IMessage } from "@/components/Prompt/Types/chat";
 import useTextSimulationStreaming from "@/hooks/useTextSimulationStreaming";
 import { timeAgo } from "@/common/helpers/timeManipulation";
 import { setIsSimulationStreaming } from "@/core/store/chatSlice";

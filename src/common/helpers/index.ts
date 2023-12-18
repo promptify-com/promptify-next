@@ -41,22 +41,3 @@ export const redirectToPath = (path: string, searchParams: Record<string, string
 export function allFieldsFilled(obj: Record<string, any>): boolean {
   return Object.values(obj).every(value => value !== "");
 }
-
-export const getAbbreviation = (text: string) => {
-  if (text.trim() === "") {
-    return "SP";
-  }
-
-  const words = text.split(/\s+/);
-
-  if (words.length === 1) {
-    return words[0].substring(0, 2).toUpperCase();
-  }
-
-  const abbreviation = words
-    .slice(0, 2)
-    .map(word => word[0].toUpperCase())
-    .join("");
-
-  return abbreviation;
-};

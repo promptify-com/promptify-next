@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 
-function AvatarWithInitials({ title }: { title: string }) {
+function AvatarWithInitials({ title, variant = "b" }: { title: string; variant?: string }) {
   const getInitials = () => {
     const words = title.split(" ");
     if (words.length >= 2) {
@@ -29,15 +29,17 @@ function AvatarWithInitials({ title }: { title: string }) {
         {getInitials()}
       </Typography>
 
-      <Box
-        position={"absolute"}
-        width={"10px"}
-        height={"10px"}
-        borderRadius={"4px 0px 8px 0px"}
-        bgcolor={"surface.1"}
-        bottom={-0.5}
-        right={-1}
-      />
+      {variant === "b" && (
+        <Box
+          position={"absolute"}
+          width={"10px"}
+          height={"10px"}
+          borderRadius={"4px 0px 8px 0px"}
+          bgcolor={"surface.1"}
+          bottom={-0.5}
+          right={-1}
+        />
+      )}
     </Box>
   );
 }

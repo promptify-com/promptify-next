@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { Box, Divider, Stack, Typography } from "@mui/material";
 import { Message } from "./Message";
-import { IMessage } from "@/common/types/chat";
+import { IMessage } from "@/components/Prompt/Types/chat";
 import { Templates } from "@/core/api/dto/templates";
 import { useAppSelector } from "@/hooks/useStore";
 import { InputsForm } from "./InputsForm";

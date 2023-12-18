@@ -1,21 +1,21 @@
-import NoteStackIcon from "@/assets/icons/NoteStackIcon";
-import { TemplateSidebarLinks } from "@/common/constants";
-import { isDesktopViewPort } from "@/common/helpers";
-import { Link } from "@/common/types/TemplateToolbar";
-import BaseButton from "@/components/base/BaseButton";
-import { setActiveToolbarLink } from "@/core/store/templatesSlice";
-import { useAppDispatch } from "@/hooks/useStore";
-import { theme } from "@/theme";
+import { Fragment } from "react";
 import Badge from "@mui/material/Badge";
 import Button from "@mui/material/Button";
 import Icon from "@mui/material/Icon";
 import Stack from "@mui/material/Stack";
-import { alpha } from "@mui/material/styles";
-import React, { Fragment } from "react";
-import { switchVariant } from "../../utils";
-import { useRouter } from "next/router";
-import SwitchAccessShortcut from "@mui/icons-material/SwitchAccessShortcut";
 import Box from "@mui/material/Box";
+import { useRouter } from "next/router";
+import { alpha } from "@mui/material/styles";
+import SwitchAccessShortcut from "@mui/icons-material/SwitchAccessShortcut";
+
+import { theme } from "@/theme";
+import NoteStackIcon from "@/assets/icons/NoteStackIcon";
+import { TemplateSidebarLinks } from "@/common/constants";
+import { setActiveToolbarLink } from "@/core/store/templatesSlice";
+import { useAppDispatch } from "@/hooks/useStore";
+import BaseButton from "@/components/base/BaseButton";
+import { switchVariant } from "@/components/Prompt/Utils";
+import type { Link } from "@/components/Prompt/Types";
 
 function TopHeaderActions({ executionsLength = 0 }) {
   const dispatch = useAppDispatch();

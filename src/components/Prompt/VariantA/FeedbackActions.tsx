@@ -8,7 +8,7 @@ import { useDispatch } from "react-redux";
 import { Replay } from "@mui/icons-material";
 import { theme } from "@/theme";
 import { useAppSelector } from "@/hooks/useStore";
-import { IAnswer } from "@/common/types/chat";
+import { IAnswer } from "@/components/Prompt/Types/chat";
 import { setAnswers } from "@/core/store/chatSlice";
 import { setRepeatedExecution } from "@/core/store/executionsSlice";
 import CheckCircle from "@mui/icons-material/CheckCircle";

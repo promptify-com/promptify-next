@@ -25,7 +25,7 @@ import { setAnswers, setInputs, setIsSimulationStreaming, setParams, setparamsVa
 import type { Templates } from "@/core/api/dto/templates";
 import type { IPromptInput, PromptLiveResponse } from "@/common/types/prompt";
 import type { PromptParams, ResOverrides, ResPrompt } from "@/core/api/dto/prompts";
-import type { IAnswer, IMessage, VaryValidatorResponse } from "@/common/types/chat";
+import type { IAnswer, IMessage, VaryValidatorResponse } from "@/components/Prompt/Types/chat";
 
 interface Props {
   onError: (errMsg: string) => void;

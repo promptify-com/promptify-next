@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { Button, InputLabel, MenuItem, Select, Stack, TextField, Tooltip } from "@mui/material";
-import { IAnswer } from "@/common/types/chat";
+import { IAnswer } from "@/components/Prompt/Types/chat";
 import BaseButton from "@/components/base/BaseButton";
 import CodeFieldModal from "@/components/modals/CodeFieldModal";
 import { useAppSelector } from "@/hooks/useStore";

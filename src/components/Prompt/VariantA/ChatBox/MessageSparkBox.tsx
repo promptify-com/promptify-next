@@ -3,12 +3,13 @@ import { TemplatesExecutions } from "@/core/api/dto/templates";
 import { useDispatch } from "react-redux";
 import { setSelectedExecution } from "@/core/store/executionsSlice";
 import { Bookmark, BookmarkBorder } from "@mui/icons-material";
-import { isImageOutput, markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
+import { markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
 import { useEffect, useState } from "react";
 import { useAppSelector } from "@/hooks/useStore";
 import { useDeleteExecutionFavoriteMutation, useExecutionFavoriteMutation } from "@/core/api/executions";
-import { getAbbreviation } from "@/common/helpers";
 import { Prompts } from "@/core/api/dto/prompts";
+import { isImageOutput } from "../../Utils";
+import AvatarWithInitials from "@/components/Prompt/Common/AvatarWithInitials";
 
 interface MessageSparkBoxProps {
   execution: TemplatesExecutions;
@@ -76,25 +77,10 @@ export const MessageSparkBox: React.FC<MessageSparkBoxProps> = ({ execution, min
           alignItems={"center"}
           gap={1}
         >
-          <Stack
-            alignItems={"center"}
-            justifyContent={"center"}
-            sx={{
-              width: 38,
-              height: 38,
-              p: "8px",
-              bgcolor: "#375CA9",
-              borderRadius: "8px",
-            }}
-          >
-            <Typography
-              fontSize={18}
-              fontWeight={700}
-              color={"primary.contrastText"}
-            >
-              {getAbbreviation(execution.title)}
-            </Typography>
-          </Stack>
+          <AvatarWithInitials
+            title={execution.title}
+            variant="a"
+          />
           <Typography
             sx={{
               width: "90%",

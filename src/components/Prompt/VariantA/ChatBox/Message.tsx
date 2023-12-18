@@ -1,6 +1,6 @@
 import { Avatar, Grid, Stack, Typography } from "@mui/material";
 import { useAppSelector } from "@/hooks/useStore";
-import { IMessage } from "@/common/types/chat";
+import { IMessage } from "@/components/Prompt/Types/chat";
 import { timeAgo } from "@/common/helpers/timeManipulation";
 import { StreamContent } from "./StreamContent";
 import { CheckCircle } from "@mui/icons-material";

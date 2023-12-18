@@ -5,7 +5,8 @@ import Tooltip from "@mui/material/Tooltip";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import { isImageOutput, markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
+
+import { markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
 import { Subtitle } from "@/components/blocks";
 import { useAppSelector } from "@/hooks/useStore";
 import type { Prompts } from "@/core/api/dto/prompts";
@@ -13,7 +14,7 @@ import type { TemplatesExecutions } from "@/core/api/dto/templates";
 import type { DisplayPrompt, PromptLiveResponse } from "@/common/types/prompt";
 import PromptContent from "./PromptContent";
 import FeedbackThumbs from "./FeedbackThumbs";
-import CheckCircle from "@mui/icons-material/CheckCircle";
+import { isImageOutput } from "../Utils";
 
 interface Props {
   execution: PromptLiveResponse | TemplatesExecutions | null;
@@ -29,7 +30,6 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
   const [sortedPrompts, setSortedPrompts] = useState<DisplayPrompt[]>([]);
   const [elementRefs, setElementRefs] = useState<RefObject<HTMLDivElement>[]>([]);
   const [elementHeights, setElementHeights] = useState<number[]>([]);
-  const [feedbackMessage, setFeedbackMessage] = useState("");
 
   const promptsOrderMap: { [key: string]: number } = {};
   const promptsExecutionOrderMap: { [key: string]: number } = {};
@@ -81,11 +81,6 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
 
     sortAndProcessExecutions();
   }, [executionPrompts]);
-
-  const handleFeedback = (message: string) => {
-    setFeedbackMessage(message);
-    setTimeout(() => setFeedbackMessage(""), 2000); // Hide message after 2 seconds
-  };
 
   const executionError = (error: string | undefined) => {
     return (

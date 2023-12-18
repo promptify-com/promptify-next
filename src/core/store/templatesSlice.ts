@@ -1,6 +1,6 @@
 import { TempalteApiStatusState, TemplateApiStatus, TemplatesExecutions } from "./../api/dto/templates";
-import { Link } from "@/common/types/TemplateToolbar";
 import { AnsweredInputType } from "@/common/types/prompt";
+import { Link } from "@/components/Prompt/Types";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 

@@ -6,15 +6,16 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 
-import { isImageOutput, markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
+import { markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
 import { Subtitle } from "@/components/blocks";
 import { useAppSelector } from "@/hooks/useStore";
 import type { Prompts } from "@/core/api/dto/prompts";
 import type { TemplatesExecutions } from "@/core/api/dto/templates";
-import type { IAnswer } from "@/common/types/chat";
+import type { IAnswer } from "@/components/Prompt/Types/chat";
 import type { DisplayPrompt, PromptLiveResponse } from "@/common/types/prompt";
 import ExecutionContentPreview from "./ExecutionContentPreview";
 import { FeedbackActions } from "./FeedbackActions";
+import { isImageOutput } from "../Utils";
 
 interface Props {
   execution: PromptLiveResponse | TemplatesExecutions | null;

@@ -22,7 +22,7 @@ import { getBaseUrl, redirectToPath } from "@/common/helpers";
 import { IEditPrompts } from "@/common/types/builder";
 import FavoriteIcon from "./FavoriteIcon";
 import BaseButton from "@/components/base/BaseButton";
-import { switchVariant } from "../utils";
+import { switchVariant } from "@/components/Prompt/Utils";
 
 interface TemplateHeaderProps {
   template: Templates;

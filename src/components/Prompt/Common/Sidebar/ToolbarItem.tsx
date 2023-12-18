@@ -8,11 +8,11 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 
 import ExtensionSettingsIcon from "@/assets/icons/ExtensionSettingsIcon";
 import NoteStackIcon from "@/assets/icons/NoteStackIcon";
-import type { Link } from "@/common/types/TemplateToolbar";
 import { setActiveToolbarLink } from "@/core/store/templatesSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { theme } from "@/theme";
-import { Templates } from "@/core/api/dto/templates";
+import type { Templates } from "@/core/api/dto/templates";
+import type { Link } from "@/components/Prompt/Types";
 
 interface Props {
   template: Templates;

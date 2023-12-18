@@ -3,15 +3,16 @@ import { TemplatesExecutions } from "@/core/api/dto/templates";
 import { useDispatch } from "react-redux";
 import { setSelectedExecution } from "@/core/store/executionsSlice";
 import { Bookmark, BookmarkBorder } from "@mui/icons-material";
-import { isImageOutput, markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
+import { markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
 import { useEffect, useState } from "react";
 import { useAppSelector } from "@/hooks/useStore";
 import { useDeleteExecutionFavoriteMutation, useExecutionFavoriteMutation } from "@/core/api/executions";
 import { getAbbreviation, isDesktopViewPort } from "@/common/helpers";
 import { Prompts } from "@/core/api/dto/prompts";
 import { setActiveToolbarLink } from "@/core/store/templatesSlice";
-import AvatarWithInitials from "@/components/design-system/AvatarWithInitials";
+import AvatarWithInitials from "@/components/Prompt/Common/AvatarWithInitials";
 import useTruncate from "@/hooks/useTruncate";
+import { isImageOutput } from "../../Utils";
 
 interface CardExecutionProps {
   execution: TemplatesExecutions;

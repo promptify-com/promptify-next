@@ -1,6 +1,6 @@
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import type { IAnswer } from "@/common/types/chat";
+import type { IAnswer } from "@/components/Prompt/Types/chat";
 import type { Prompts } from "@/core/api/dto/prompts";
 import { TemplatesExecutions } from "@/core/api/dto/templates";
 

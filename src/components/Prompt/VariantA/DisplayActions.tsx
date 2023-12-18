@@ -10,15 +10,16 @@ import {
   VisibilityOff,
   VisibilityOutlined,
 } from "@mui/icons-material";
+
 import { ExecutionTemplatePopupType, TemplatesExecutions } from "@/core/api/dto/templates";
 import { useAppSelector } from "@/hooks/useStore";
 import { useDeleteExecutionFavoriteMutation, useExecutionFavoriteMutation } from "@/core/api/executions";
 import useTruncate from "@/hooks/useTruncate";
 import { SparkSaveDeletePopup } from "@/components/dialog/SparkSaveDeletePopup";
-import { getAbbreviation } from "@/common/helpers";
 import { useDispatch } from "react-redux";
 import { setGeneratedExecution, setSelectedExecution } from "@/core/store/executionsSlice";
 import { ProgressLogo } from "@/components/common/ProgressLogo";
+import AvatarWithInitials from "@/components/Prompt/Common/AvatarWithInitials";
 
 interface Props {
   selectedExecution: TemplatesExecutions | null;
@@ -120,25 +121,11 @@ export const DisplayActions: React.FC<Props> = ({
                     gap={1}
                     maxWidth={"90%"}
                   >
-                    <Stack
-                      alignItems={"center"}
-                      justifyContent={"center"}
-                      sx={{
-                        width: 28,
-                        height: 28,
-                        p: "4px",
-                        bgcolor: "#375CA9",
-                        borderRadius: "8px",
-                      }}
-                    >
-                      <Typography
-                        fontSize={16}
-                        fontWeight={700}
-                        color={"primary.contrastText"}
-                      >
-                        {getAbbreviation(executionTitle || "")}
-                      </Typography>
-                    </Stack>
+                    <AvatarWithInitials
+                      title={executionTitle || ""}
+                      variant="a"
+                    />
+
                     <Typography
                       sx={{
                         whiteSpace: "nowrap",

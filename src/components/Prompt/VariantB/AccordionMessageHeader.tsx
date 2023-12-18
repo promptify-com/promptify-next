@@ -33,7 +33,7 @@ import { setGeneratedExecution } from "@/core/store/executionsSlice";
 import useTruncate from "@/hooks/useTruncate";
 import { theme } from "@/theme";
 import { setAnswers } from "@/core/store/chatSlice";
-import AvatarWithInitials from "@/components/design-system/AvatarWithInitials";
+import AvatarWithInitials from "@/components/Prompt/Common/AvatarWithInitials";
 
 interface Props {
   template: Templates;
