@@ -3,7 +3,7 @@ import ArrowUpward from "@mui/icons-material/ArrowUpward";
 import KeyboardCommandKey from "@mui/icons-material/KeyboardCommandKey";
 import Box from "@mui/material/Box";
 import InputBase from "@mui/material/InputBase";
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { useAppSelector } from "@/hooks/useStore";
 import SlowMotionVideo from "@mui/icons-material/SlowMotionVideo";
 import { CircularProgress } from "@mui/material";
 
@@ -30,10 +30,10 @@ function MessageSender({
   maxLength,
   loading,
 }: MessageSenderProps) {
+  const isGenerating = useAppSelector(state => state.template.isGenerating);
+
   const [localValue, setLocalValue] = useState("");
   const [isFocused, setIsFocused] = useState(false);
-  const dispatch = useAppDispatch();
-  const isGenerating = useAppSelector(state => state.template.isGenerating);
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
@@ -45,7 +45,7 @@ function MessageSender({
   const handleChange = (val: string) => {
     if (maxLength && val.length > maxLength) return;
     setLocalValue(val);
-    if (onChange) onChange(val);
+    if (typeof onChange === "function") onChange(val);
   };
 
   const handleSubmit = () => {
@@ -53,15 +53,15 @@ function MessageSender({
     setLocalValue("");
   };
 
-  const hasNoValue = localValue !== "";
+  const hasValue = localValue !== "";
 
   return (
     <Box
       display={"flex"}
       position={"relative"}
-      bgcolor={isFocused || hasNoValue ? "surface.1" : "surface.3"}
+      bgcolor={isFocused || hasValue ? "surface.1" : "surface.3"}
       alignItems={"center"}
-      boxShadow={isFocused || hasNoValue ? "0px 4px 8px 0px #E1E2EC, 0px 0px 4px 0px rgba(0, 0, 0, 0.10)" : undefined}
+      boxShadow={isFocused || hasValue ? "0px 4px 8px 0px #E1E2EC, 0px 0px 4px 0px rgba(0, 0, 0, 0.10)" : undefined}
       borderRadius="24px"
       p={"8px 16px"}
     >
@@ -123,8 +123,8 @@ function MessageSender({
           justifyContent: "center",
           alignItems: "center",
           borderRadius: "24px",
-          bgcolor: !hasNoValue ? undefined : "primary.main",
-          color: { xs: !hasNoValue ? "#8E8E94" : "white", md: "white" },
+          bgcolor: !hasValue ? undefined : "primary.main",
+          color: { xs: !hasValue ? "#8E8E94" : "white", md: "white" },
         }}
       >
         {loading ? (
