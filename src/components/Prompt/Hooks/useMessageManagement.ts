@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { randomId } from "@/common/helpers";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setAnswers, setIsSimulationStreaming } from "@/core/store/chatSlice";
-import { IPromptInput } from "@/common/types/prompt";
+import type { IPromptInput } from "@/common/types/prompt";
 import type { IMessage } from "../Types/chat";
 import type { Templates } from "@/core/api/dto/templates";
 

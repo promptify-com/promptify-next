@@ -1,11 +1,12 @@
-import { IPromptInput } from "@/common/types/prompt";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
-import React from "react";
+
+import type { IPromptInput } from "@/common/types/prompt";
+import type { PromptInputType } from "@/components/Prompt/Types";
 
 interface Props {
   isGenerating: boolean;
-  value: string | number | File;
+  value: PromptInputType;
   input: IPromptInput;
   onChange: (value: string | File, input: IPromptInput) => void;
 }

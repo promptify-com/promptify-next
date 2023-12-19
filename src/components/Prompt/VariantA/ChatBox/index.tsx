@@ -22,6 +22,7 @@ import { isDesktopViewPort, randomId } from "@/common/helpers";
 import useChatBox from "@/hooks/useChatBox";
 import SigninButton from "@/components/common/buttons/SigninButton";
 import { setAnswers, setInputs, setIsSimulationStreaming, setParams, setparamsValues } from "@/core/store/chatSlice";
+import { PromptInputType } from "../../Types";
 
 interface Props {
   onError: (errMsg: string) => void;
@@ -305,7 +306,7 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
 
       setIsValidatingAnswer(true);
 
-      const questionAnswerMap: Record<string, string | number | File> = {};
+      const questionAnswerMap: Record<string, PromptInputType> = {};
       _inputs.forEach(input => {
         const matchingAnswer = answers.find(answer => answer.inputName === input.name);
         questionAnswerMap[input.name] = matchingAnswer?.answer || "";

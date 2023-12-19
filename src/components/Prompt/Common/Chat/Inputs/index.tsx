@@ -2,18 +2,19 @@ import { useRef } from "react";
 import { useRouter } from "next/router";
 import TextField from "@mui/material/TextField";
 import Edit from "@mui/icons-material/Edit";
+import Stack from "@mui/material/Stack";
 
 import Code from "@/components/Prompt/Common/Chat/Inputs/Code";
 import Choices from "@/components/Prompt/Common/Chat/Inputs/Choices";
 import File from "@/components/Prompt/Common/Chat/Inputs/File";
 import type { IPromptInput } from "@/common/types/prompt";
-import { Stack } from "@mui/material";
+import type { PromptInputType } from "@/components/Prompt/Types";
 
 interface Props {
   input: IPromptInput;
   isGenerating: boolean;
   isFile: boolean;
-  value: string | number | File;
+  value: PromptInputType;
   onChange: (value: string | File, input: IPromptInput) => void;
 }
 
@@ -43,7 +44,6 @@ function RenderInputType({ input, isGenerating, isFile, onChange, value }: Props
           onChange={onChange}
           value={value}
           isGenerating={isGenerating}
-          isFile={isFile}
         />
       );
     case "choices":

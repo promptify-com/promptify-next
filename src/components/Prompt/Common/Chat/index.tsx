@@ -27,6 +27,7 @@ import type { IPromptInput, PromptLiveResponse } from "@/common/types/prompt";
 import type { PromptParams, ResOverrides, ResPrompt } from "@/core/api/dto/prompts";
 import type { IAnswer, IMessage, VaryValidatorResponse } from "@/components/Prompt/Types/chat";
 import useMessageManagement from "../../Hooks/useMessageManagement";
+import { PromptInputType } from "../../Types";
 
 interface Props {
   onError: (errMsg: string) => void;
@@ -215,7 +216,7 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
 
       setIsValidatingAnswer(true);
 
-      const questionAnswerMap: Record<string, string | number | File> = {};
+      const questionAnswerMap: Record<string, PromptInputType> = {};
       _inputs.forEach(input => {
         const matchingAnswer = answers.find(answer => answer.inputName === input.name);
         questionAnswerMap[input.name] = matchingAnswer?.answer ?? "";

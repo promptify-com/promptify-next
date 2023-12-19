@@ -1,17 +1,18 @@
 import { useState } from "react";
+
 import BaseButton from "@/components/base/BaseButton";
-import type { IPromptInput } from "@/common/types/prompt";
 import CodeFieldModal from "@/components/modals/CodeFieldModal";
+import type { IPromptInput } from "@/common/types/prompt";
+import type { PromptInputType } from "@/components/Prompt/Types";
 
 interface CodeInputProps {
   input: IPromptInput;
   isGenerating: boolean;
-  isFile: boolean;
-  value: string | number | File;
+  value: PromptInputType;
   onChange: (value: string | File, input: IPromptInput) => void;
 }
 
-function Code({ input, isGenerating, isFile, value, onChange }: CodeInputProps) {
+function Code({ input, isGenerating, value, onChange }: CodeInputProps) {
   const [codeFieldOpen, setCodeFieldOpen] = useState(false);
 
   return (
@@ -36,7 +37,7 @@ function Code({ input, isGenerating, isFile, value, onChange }: CodeInputProps) 
           },
         }}
       >
-        {!isFile && value ? " Update code" : "Insert Code"}
+        {value ? " Update code" : "Insert Code"}
       </BaseButton>
       {codeFieldOpen && (
         <CodeFieldModal

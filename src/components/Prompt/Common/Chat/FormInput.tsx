@@ -5,14 +5,15 @@ import Typography from "@mui/material/Typography";
 
 import { useAppSelector } from "@/hooks/useStore";
 
-import type { IPromptInput } from "@/common/types/prompt";
 import RenderInputType from "./Inputs";
 import CustomTooltip from "../CustomTooltip";
 import { useRouter } from "next/router";
+import type { IPromptInput } from "@/common/types/prompt";
+import type { PromptInputType } from "../../Types";
 
 interface Props {
   input: IPromptInput;
-  value: string | number | File;
+  value: PromptInputType;
   onChange: (value: string | File, input: IPromptInput) => void;
 }
 

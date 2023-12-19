@@ -1,5 +1,6 @@
 import { OutputFormat } from "@/common/constants";
 import { IParameters } from "@/common/types";
+import { PromptInputType } from "@/components/Prompt/Types";
 
 interface Engine {
   id: number;
@@ -71,14 +72,14 @@ interface ContextualOverrides {
 export interface ResPrompt {
   prompt: number;
   contextual_overrides: ContextualOverrides[];
-  prompt_params: Record<string, string | number | File | { value: string | number; required: boolean }>;
+  prompt_params: Record<string, PromptInputType | { value: string | number; required: boolean }>;
 }
 
 export interface ResInputs {
   id: number;
   inputs: {
     [key: string]: {
-      value: string | number | File;
+      value: PromptInputType;
       required: boolean;
     };
   };
@@ -96,7 +97,7 @@ export interface QuestionAnswerParams {
 export interface VaryParams {
   prompt: string;
   variables: {
-    [question: string]: string | number | File;
+    [question: string]: PromptInputType;
   };
 }
 
