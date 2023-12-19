@@ -21,7 +21,7 @@ interface Props {
   abortGenerating: () => void;
   showGenerate: boolean;
   template: Templates;
-  executionMode: boolean;
+  type: "spark" | "form";
   onChange?: (event: SyntheticEvent<Element, Event>, expanded: boolean) => void;
   expanded: boolean;
 }
@@ -32,7 +32,7 @@ export default function AccordionMessage({
   onGenerate,
   abortGenerating,
   showGenerate,
-  executionMode,
+  type,
   onChange,
   expanded,
 }: Props) {
@@ -57,10 +57,10 @@ export default function AccordionMessage({
         sx={{ p: 0, flex: 1 }}
       >
         <AccordionMessageHeader
+          type={type}
           template={template}
           isExpanded={expanded}
           onCancel={abortGenerating}
-          isExecutionMode={executionMode}
         />
 
         <AccordionDetails
@@ -96,7 +96,7 @@ export default function AccordionMessage({
               borderRadius={"8px"}
               position={"relative"}
             >
-              {executionMode && (
+              {type === "spark" && (
                 <Stack
                   padding={{ xs: "0px 8px", md: isGenerating ? "16px 0px 8px 64px" : "16px 0px 48px 64px" }}
                   position={"relative"}
@@ -104,10 +104,10 @@ export default function AccordionMessage({
                   <Display templateData={template} />
                 </Stack>
               )}
-              {!executionMode && <Form onChangeInput={onChangeInput} />}
+              {type === "form" && <Form onChangeInput={onChangeInput} />}
             </Stack>
           </Stack>
-          {showGenerate && !executionMode && currentUser?.id && (
+          {showGenerate && type === "form" && currentUser?.id && (
             <Stack
               direction={"row"}
               justifyContent={"end"}

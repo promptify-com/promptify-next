@@ -102,7 +102,7 @@ export const Executions: React.FC<ExecutionsProps> = ({ template }) => {
     isMobile && dispatch(setActiveToolbarLink(null));
 
     setTimeout(() => {
-      const element = document.getElementById("accordion-header");
+      const element = document.getElementById("accordion-execution");
       element && element.scrollIntoView({ behavior: "smooth" });
     }, 100);
   };

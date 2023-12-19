@@ -18,8 +18,9 @@ import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { Templates } from "@/core/api/dto/templates";
 
 type AccordionExpandedState = {
-  execution: boolean;
-  input: boolean;
+  spark: boolean;
+  form: boolean;
+  text: boolean;
 };
 
 interface Props {
@@ -37,14 +38,15 @@ export const ChatInterface = ({ template, messages, onChangeInput, onGenerate, s
 
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
-  const repeatedExecution = useAppSelector(state => state.executions.repeatedExecution);
+  const executionMode = Boolean(selectedExecution || generatedExecution);
 
   const [isHovered, setIsHovered] = useState(false);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
   const [expandedAccordions, setExpandedAccordions] = useState<AccordionExpandedState>({
-    execution: true,
-    input: true,
+    spark: true,
+    form: true,
+    text: false,
   });
 
   const { showScrollDown, scrollToBottom } = useScrollToBottom({ ref: messagesContainerRef, messages, isGenerating });
@@ -56,12 +58,9 @@ export const ChatInterface = ({ template, messages, onChangeInput, onGenerate, s
     }));
   };
 
-  const lastFormMessage = messages
-    .slice()
-    .reverse()
-    .find(msg => msg.type === "form");
-
-  const executionMode = Boolean(selectedExecution || generatedExecution);
+  const showAccorionMessage = (message: IMessage): boolean => {
+    return Boolean(message.type === "form" || message.type === "spark");
+  };
 
   return (
     <Stack
@@ -69,25 +68,7 @@ export const ChatInterface = ({ template, messages, onChangeInput, onGenerate, s
       gap={3}
       mx={{ md: "40px" }}
       position={"relative"}
-      sx={{
-        overflow: "auto",
-        px: "8px",
-        overscrollBehavior: "contain",
-        scrollBehavior: "smooth",
-        "&::-webkit-scrollbar": {
-          width: { xs: "4px", md: "6px" },
-          p: 1,
-          backgroundColor: "surface.1",
-        },
-        "&::-webkit-scrollbar-track": {
-          webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
-        },
-        "&::-webkit-scrollbar-thumb": {
-          backgroundColor: "surface.5",
-          outline: "1px solid surface.1",
-          borderRadius: "10px",
-        },
-      }}
+      sx={messagesContainerStyle}
     >
       <TemplateDetailsCard
         template={template}
@@ -140,62 +121,8 @@ export const ChatInterface = ({ template, messages, onChangeInput, onGenerate, s
         </Divider>
 
         <Stack
-          direction={"row"}
-          position={"relative"}
-          flexWrap={"nowrap"}
-        >
-          {executionMode && (
-            <Box
-              id="accordion-header"
-              display={"flex"}
-              sx={{
-                flex: "0 0 100%",
-              }}
-            >
-              <AccordionMessage
-                expanded={expandedAccordions["execution"]}
-                onChange={(_e, isExpanded) => handleExpandChange("execution", isExpanded)}
-                template={template}
-                showGenerate={showGenerate}
-                abortGenerating={onAbort}
-                onChangeInput={onChangeInput}
-                onGenerate={onGenerate}
-                executionMode={true}
-              />
-            </Box>
-          )}
-
-          {!!selectedExecution?.prompt_executions?.length && expandedAccordions["execution"] && (
-            <Box
-              sx={{
-                position: "sticky",
-                top: "40px",
-                width: 0,
-                height: "fit-content",
-                mt: 45,
-                mb: 35,
-                display: { xs: "none", md: "block" },
-              }}
-            >
-              <Box
-                sx={{
-                  position: "absolute",
-                  right: "80px",
-                }}
-              >
-                <FeedbackThumbs
-                  execution={selectedExecution}
-                  vertical
-                />
-              </Box>
-            </Box>
-          )}
-        </Stack>
-
-        <Stack
           gap={3}
-          display={!!generatedExecution && !repeatedExecution ? "none" : "flex"}
-          flexDirection={"column"}
+          direction={"column"}
         >
           {messages.map(msg => (
             <Fragment key={msg.id}>
@@ -204,11 +131,11 @@ export const ChatInterface = ({ template, messages, onChangeInput, onGenerate, s
                 onScrollToBottom={scrollToBottom}
                 isExecutionMode={executionMode}
               />
-              {msg.type === "form" && msg.id === lastFormMessage?.id && (
+              {showAccorionMessage(msg) && (
                 <Box
                   width={"100%"}
-                  id="accordion-form"
                   position={"relative"}
+                  id={`accordion-${msg.type === "spark" ? "execution" : "input"}`}
                   onMouseEnter={() => setIsHovered(true)}
                   onMouseLeave={() => setIsHovered(false)}
                 >
@@ -227,18 +154,56 @@ export const ChatInterface = ({ template, messages, onChangeInput, onGenerate, s
                       Promptify {timeAgo(msg.createdAt)}
                     </Typography>
                   )}
-                  <Box id="accordion-input">
-                    <AccordionMessage
-                      expanded={expandedAccordions["input"]}
-                      onChange={(_e, isExpanded) => handleExpandChange("input", isExpanded)}
-                      template={template}
-                      showGenerate={showGenerate}
-                      abortGenerating={onAbort}
-                      onChangeInput={onChangeInput}
-                      onGenerate={onGenerate}
-                      executionMode={false}
-                    />
-                  </Box>
+                  <Stack
+                    direction={"row"}
+                    position={"relative"}
+                  >
+                    <Box
+                      display={"flex"}
+                      sx={{
+                        flex: "0 0 100%",
+                      }}
+                    >
+                      <AccordionMessage
+                        type={msg.type === "spark" ? "spark" : "form"}
+                        expanded={expandedAccordions[msg.type]}
+                        onChange={(_e, isExpanded) => handleExpandChange(msg.type, isExpanded)}
+                        template={template}
+                        showGenerate={showGenerate}
+                        abortGenerating={onAbort}
+                        onChangeInput={onChangeInput}
+                        onGenerate={onGenerate}
+                      />
+                    </Box>
+
+                    {msg.type === "spark" &&
+                      !!selectedExecution?.prompt_executions?.length &&
+                      expandedAccordions["spark"] && (
+                        <Box
+                          sx={{
+                            position: "sticky",
+                            top: "40px",
+                            width: 0,
+                            height: "fit-content",
+                            mt: 45,
+                            mb: 35,
+                            display: { xs: "none", md: "block" },
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              position: "absolute",
+                              right: "80px",
+                            }}
+                          >
+                            <FeedbackThumbs
+                              execution={selectedExecution}
+                              vertical
+                            />
+                          </Box>
+                        </Box>
+                      )}
+                  </Stack>
                 </Box>
               )}
             </Fragment>
@@ -247,4 +212,24 @@ export const ChatInterface = ({ template, messages, onChangeInput, onGenerate, s
       </Stack>
     </Stack>
   );
+};
+
+const messagesContainerStyle = {
+  overflow: "auto",
+  px: "8px",
+  overscrollBehavior: "contain",
+  scrollBehavior: "smooth",
+  "&::-webkit-scrollbar": {
+    width: { xs: "4px", md: "6px" },
+    p: 1,
+    backgroundColor: "surface.1",
+  },
+  "&::-webkit-scrollbar-track": {
+    webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
+  },
+  "&::-webkit-scrollbar-thumb": {
+    backgroundColor: "surface.5",
+    outline: "1px solid surface.1",
+    borderRadius: "10px",
+  },
 };

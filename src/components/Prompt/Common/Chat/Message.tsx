@@ -50,9 +50,6 @@ export const Message = ({ message, isExecutionMode, onScrollToBottom }: MessageB
 
   const name = fromUser ? currentUser?.first_name ?? currentUser?.username : "Promptify";
 
-  if (type === "form") {
-    return;
-  }
   if (text === "" || (isExecutionMode && text === "Run Prompt" && selectedExecution && !generatedExecution)) return;
 
   return (

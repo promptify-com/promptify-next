@@ -21,11 +21,12 @@ import { setGeneratedExecution, setRepeatedExecution, setSelectedExecution } fro
 import useChatBox from "@/hooks/useChatBox";
 import { randomId } from "@/common/helpers";
 import { getExecutionById } from "@/hooks/api/executions";
-import { setAnswers, setInputs, setIsSimulationStreaming, setParams, setparamsValues } from "@/core/store/chatSlice";
+import { setAnswers, setInputs, setParams, setparamsValues } from "@/core/store/chatSlice";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IPromptInput, PromptLiveResponse } from "@/common/types/prompt";
 import type { PromptParams, ResOverrides, ResPrompt } from "@/core/api/dto/prompts";
 import type { IAnswer, IMessage, VaryValidatorResponse } from "@/components/Prompt/Types/chat";
+import useMessageManagement from "../../Hooks/useMessageManagement";
 
 interface Props {
   onError: (errMsg: string) => void;
@@ -44,15 +45,14 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const isSidebarExpanded = useAppSelector(state => state.template.activeSideBarLink);
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
+
   const answers = useAppSelector(state => state.chat.answers);
   const paramsValues = useAppSelector(state => state.chat.paramsValues);
   const isSimulationStreaming = useAppSelector(state => state.chat.isSimulationStreaming);
 
-  const [messages, setMessages] = useState<IMessage[]>([]);
   const [showGenerateButton, setShowGenerateButton] = useState(false);
   const [isValidatingAnswer, setIsValidatingAnswer] = useState(false);
   const [newExecutionId, setNewExecutionId] = useState<number | null>(null);
-  const [queuedMessages, setQueuedMessages] = useState<IMessage[]>([]);
   const [disableChatInput, setDisableChatInput] = useState(false);
   const [generatingResponse, setGeneratingResponse] = useState<PromptLiveResponse>({
     created_at: new Date(),
@@ -64,43 +64,11 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
   const abortController = useRef(new AbortController());
   const uploadedFiles = useRef(new Map<string, string>());
 
-  const addToQueuedMessages = (messages: IMessage[]) => {
-    setQueuedMessages(messages);
-    dispatch(setIsSimulationStreaming(true));
-  };
+  const { messages, setMessages, initialMessages, messageAnswersForm } = useMessageManagement({
+    questionPrefixContent,
+    template,
+  });
 
-  const createdAt = new Date();
-
-  const initialMessages = ({ inputs, startOver = false }: { inputs: IPromptInput[]; startOver?: boolean }) => {
-    const welcomeMessage: IMessage[] = [];
-    const prefixedContent =
-      questionPrefixContent ?? `Hi, ${currentUser?.first_name ?? currentUser?.username ?? "There"}! Ready to work on`;
-
-    if (!startOver) {
-      let allQuestions = inputs.map(input => input.question);
-
-      welcomeMessage.push({
-        id: randomId(),
-        text: `${prefixedContent} ${template?.title} ? ${allQuestions.join(" ")}`,
-        type: "text",
-        createdAt: createdAt,
-        fromUser: false,
-      });
-    }
-
-    addToQueuedMessages([
-      {
-        id: randomId(),
-        text: "This is a list of information we need to execute this template:",
-        type: "form",
-        createdAt: createdAt,
-        fromUser: false,
-      },
-    ]);
-
-    setMessages(welcomeMessage);
-    dispatch(setAnswers([]));
-  };
   const dispatchNewExecutionData = (answers: IAnswer[], inputs: IPromptInput[]) => {
     const promptsData: Record<number, ResPrompt> = {};
 
@@ -212,17 +180,6 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
   }, [generatingResponse]);
 
   useEffect(() => {
-    if (!isSimulationStreaming && !!queuedMessages.length) {
-      const nextQueuedMessage = queuedMessages.pop()!;
-
-      const updatedMessages = messages.concat(nextQueuedMessage);
-      setMessages(updatedMessages);
-
-      addToQueuedMessages(queuedMessages);
-    }
-  }, [isSimulationStreaming]);
-
-  useEffect(() => {
     if (!isGenerating && generatedExecution?.data?.length) {
       const allPromptsCompleted = generatedExecution.data.every(execData => execData.isCompleted);
 
@@ -240,29 +197,6 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
     }
   };
 
-  const messageAnswersForm = (message: string) => {
-    const botMessage: IMessage = {
-      id: randomId(),
-      text: message,
-      type: "text",
-      createdAt,
-      fromUser: false,
-    };
-
-    addToQueuedMessages([
-      {
-        id: randomId(),
-        text: "",
-        type: "form",
-        createdAt,
-        fromUser: false,
-        noHeader: true,
-      },
-    ]);
-
-    setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat(botMessage));
-  };
-
   const validateVary = async (variation: string) => {
     dispatch(setSelectedExecution(null));
     dispatch(setGeneratedExecution(null));
@@ -275,7 +209,9 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
         fromUser: true,
       };
 
-      setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat(userMessage));
+      setMessages(prevMessages =>
+        prevMessages.filter(msg => msg.type !== "form" && msg.type !== "spark").concat(userMessage),
+      );
 
       setIsValidatingAnswer(true);
 
@@ -326,23 +262,6 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
       const isReady = allRequiredInputsAnswered() ? " Let’s imagine something like this! Prepared request for you" : "";
       messageAnswersForm(`Ok!${isReady}, please check input information and we are ready to start!`);
     }
-  };
-
-  const handleUserParam = (value: number, param: PromptParams) => {
-    const paramId = param.parameter.id;
-    const updatedParamsValues = paramsValues.map(paramValue => {
-      if (paramValue.id !== param.prompt) {
-        return paramValue;
-      }
-
-      return {
-        id: paramValue.id,
-        contextual_overrides: paramValue.contextual_overrides.map(ctx =>
-          ctx.parameter === paramId ? { parameter: paramId, score: value } : ctx,
-        ),
-      };
-    });
-    dispatch(setparamsValues(updatedParamsValues));
   };
 
   const handleUserInput = async (value: string | File, input: IPromptInput) => {

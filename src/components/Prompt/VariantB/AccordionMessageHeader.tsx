@@ -1,18 +1,17 @@
+import { useEffect, useMemo, useState } from "react";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { useEffect, useMemo, useState } from "react";
-
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import Add from "@mui/icons-material/Add";
 import HighlightOff from "@mui/icons-material/HighlightOff";
 import UnfoldLess from "@mui/icons-material/UnfoldLess";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 import Grid from "@mui/material/Grid";
+import Close from "@mui/icons-material/Close";
 import {
   DeleteOutline,
   Edit,
@@ -22,8 +21,8 @@ import {
   StarOutline,
   VisibilityOff,
 } from "@mui/icons-material";
-import Close from "@mui/icons-material/Close";
 
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { ExecutionTemplatePopupType, Templates } from "@/core/api/dto/templates";
 import { useDeleteExecutionFavoriteMutation, useExecutionFavoriteMutation } from "@/core/api/executions";
 import { SparkSaveDeletePopup } from "@/components/dialog/SparkSaveDeletePopup";
@@ -31,7 +30,6 @@ import { SparkExportPopup } from "@/components/dialog/SparkExportPopup";
 import { setGeneratingStatus, setShowPromptsView } from "@/core/store/templatesSlice";
 import { setGeneratedExecution } from "@/core/store/executionsSlice";
 import useTruncate from "@/hooks/useTruncate";
-import { theme } from "@/theme";
 import { setAnswers } from "@/core/store/chatSlice";
 import AvatarWithInitials from "@/components/Prompt/Common/AvatarWithInitials";
 
@@ -39,10 +37,10 @@ interface Props {
   template: Templates;
   isExpanded: boolean;
   onCancel: () => void;
-  isExecutionMode: boolean;
+  type: "spark" | "form";
 }
 
-function AccordionMessageHeader({ template, isExecutionMode, isExpanded, onCancel }: Props) {
+function AccordionMessageHeader({ template, type, isExpanded, onCancel }: Props) {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const dispatch = useAppDispatch();
   const { truncate } = useTruncate();
@@ -50,9 +48,9 @@ function AccordionMessageHeader({ template, isExecutionMode, isExpanded, onCance
   const [favoriteExecution] = useExecutionFavoriteMutation();
   const [deleteExecutionFavorite] = useDeleteExecutionFavoriteMutation();
 
-  const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
   const showPrompts = useAppSelector(state => state.template.showPromptsView);
   const answers = useAppSelector(state => state.chat.answers);
+  const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
 
   const [executionPopup, setExecutionPopup] = useState<ExecutionTemplatePopupType>(null);
   const [executionTitle, setExecutionTitle] = useState(selectedExecution?.title);
@@ -119,7 +117,7 @@ function AccordionMessageHeader({ template, isExecutionMode, isExpanded, onCance
         }}
       >
         <Stack
-          direction={{ xs: isExecutionMode && !isGenerating ? "column" : "row", md: "row" }}
+          direction={{ xs: type === "spark" && !isGenerating ? "column" : "row", md: "row" }}
           gap={"8px"}
           width={"100%"}
           alignItems={"center"}
@@ -131,7 +129,7 @@ function AccordionMessageHeader({ template, isExecutionMode, isExpanded, onCance
             flex={1}
             width={"100%"}
           >
-            {isExecutionMode && (
+            {type === "spark" && (
               <>
                 {isGenerating ? (
                   <CircularProgress
@@ -147,7 +145,7 @@ function AccordionMessageHeader({ template, isExecutionMode, isExpanded, onCance
               </>
             )}
 
-            {!isExecutionMode && (
+            {type === "form" && (
               <Box
                 position={"relative"}
                 mt={0.5}
@@ -195,9 +193,9 @@ function AccordionMessageHeader({ template, isExecutionMode, isExpanded, onCance
                 justifyContent={{ xs: "space-between", md: "start" }}
                 letterSpacing={"0.2px"}
               >
-                {!isExecutionMode && "New Prompt"}
+                {type === "form" && "New Prompt"}
 
-                {isExecutionMode && (
+                {type === "spark" && (
                   <>
                     {isGenerating
                       ? "Generation in progress..."
@@ -237,13 +235,13 @@ function AccordionMessageHeader({ template, isExecutionMode, isExpanded, onCance
                   opacity: 0.7,
                 }}
               >
-                {!isExecutionMode && "About 360s generation time"}
-                {isExecutionMode && <>{isGenerating ? "About 360s Left" : ""}</>}
+                {type === "form" && "About 360s generation time"}
+                {type === "spark" && <>{isGenerating ? "About 360s Left" : ""}</>}
               </Typography>
             </Stack>
           </Stack>
 
-          {!isExecutionMode && isExpanded && (
+          {type === "form" && isExpanded && (
             <Stack
               direction={"row"}
               gap={1}
@@ -279,7 +277,7 @@ function AccordionMessageHeader({ template, isExecutionMode, isExpanded, onCance
             alignItems={"center"}
             gap={"8px"}
           >
-            {isExecutionMode && (
+            {type === "spark" && (
               <>
                 {isGenerating ? (
                   <Grid
