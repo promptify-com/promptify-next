@@ -100,7 +100,7 @@ export const ChatInput = ({
                 justifyContent: "center",
                 alignItems: "center",
                 borderRadius: "8px",
-                bgcolor: "#375CA91A",
+                bgcolor: "surface.5",
                 color: "primary.main",
                 transition: "all 0.3s ease-in-out",
 

@@ -141,7 +141,7 @@ function MessageSender({
               onGenerate?.();
             }}
             sx={{
-              color: isGenerating ? "text.secondary" : "#375CA9",
+              color: isGenerating ? "text.secondary" : "primary.main",
               cursor: isGenerating ? "not-allowed" : "pointer",
             }}
           />

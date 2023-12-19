@@ -125,9 +125,13 @@ export default function AccordionMessage({
                   lineHeight: "110%",
                   letterSpacing: "0.2px",
                   fontWeight: 500,
+                  bgcolor: "primary.main",
+                  borderColor: "primary.main",
+
                   color: showGenerate ? "primary" : "onSurface",
                   ":hover": {
-                    bgcolor: "action.hover",
+                    bgcolor: "surface.1",
+                    color: "primary.main",
                   },
                 }}
                 variant={"contained"}

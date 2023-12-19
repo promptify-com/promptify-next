@@ -158,8 +158,9 @@ function AccordionMessageHeader({ template, isExecutionMode, isExpanded, onCance
                   justifyContent: "center",
                   alignItems: "center",
                   borderRadius: "8px",
-                  border: `1px dashed ${theme.palette.primary.main}`,
-                  bgcolor: "#375CA91A",
+                  border: `1px dashed`,
+                  borderColor: "primary.main",
+                  bgcolor: "surface.5",
                   color: "primary.main",
                 }}
               >
@@ -170,8 +171,8 @@ function AccordionMessageHeader({ template, isExecutionMode, isExpanded, onCance
                 />
                 <Box
                   position={"absolute"}
-                  width={"13px"}
-                  height={"13px"}
+                  width={"11px"}
+                  height={"11px"}
                   borderRadius={"4px 0px 8px 0px"}
                   bgcolor={"surface.1"}
                   bottom={0}
