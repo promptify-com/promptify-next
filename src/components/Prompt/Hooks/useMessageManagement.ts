@@ -73,9 +73,6 @@ function useMessageManagement({ questionPrefixContent, template }: Props) {
   };
 
   useEffect(() => {
-    const sparkMessageIndex = messages.findIndex(msg => msg.type === "spark");
-    const formMessageIndex = messages.findIndex(msg => msg.type === "form");
-
     const sparkMessage: IMessage = {
       id: randomId(),
       text: "",
@@ -85,23 +82,61 @@ function useMessageManagement({ questionPrefixContent, template }: Props) {
       noHeader: true,
     };
 
-    if (selectedExecution && !generatedExecution) {
-      if (sparkMessageIndex === -1) {
-        if (formMessageIndex !== -1) {
-          const newMessages = [...messages];
-          newMessages.splice(formMessageIndex, 0, sparkMessage);
-          setMessages(newMessages);
-        }
+    if (generatedExecution) {
+      const filteredMessages = messages.filter(msg => msg.type !== "form");
+      const sparkMessageExists = filteredMessages.some(msg => msg.type === "spark");
+
+      if (!sparkMessageExists) {
+        setMessages(filteredMessages.concat(sparkMessage));
+      } else {
+        setMessages(filteredMessages);
       }
-    } else if (generatedExecution) {
-      if (sparkMessageIndex === -1) {
-        setMessages([...messages, sparkMessage]);
+    }
+  }, [generatedExecution]);
+
+  useEffect(() => {
+    if (selectedExecution) {
+      const sparkMessageExists = messages.some(msg => msg.type === "spark");
+      const formMessageExists = messages.some(msg => msg.type === "form");
+
+      let newMessages = [...messages];
+
+      if (!sparkMessageExists) {
+        const sparkMessage: IMessage = {
+          id: randomId(),
+          text: "",
+          type: "spark",
+          createdAt: new Date(),
+          fromUser: false,
+          noHeader: true,
+        };
+        newMessages.push(sparkMessage);
       }
 
-      const filteredMessages = messages.filter(msg => msg.type !== "form");
-      setMessages(filteredMessages);
+      if (!formMessageExists) {
+        const formMessage: IMessage = {
+          id: randomId(),
+          text: "",
+          type: "form",
+          createdAt: new Date(),
+          fromUser: false,
+        };
+        newMessages.push(formMessage);
+      }
+
+      // Sort to ensure spark is always before form
+      newMessages.sort((a, b) => {
+        if (a.type === "spark" && b.type === "form") {
+          return -1;
+        } else if (a.type === "form" && b.type === "spark") {
+          return 1;
+        }
+        return 0;
+      });
+
+      setMessages(newMessages);
     }
-  }, [messages, selectedExecution, generatedExecution]);
+  }, [selectedExecution]);
 
   const messageAnswersForm = (message: string) => {
     const botMessage: IMessage = {
