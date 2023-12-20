@@ -186,7 +186,6 @@ export const ChatInterface = ({ template, messages, onChangeInput, onGenerate, s
                             width: 0,
                             height: "fit-content",
                             mt: 45,
-                            mb: 35,
                             display: { xs: "none", md: "block" },
                           }}
                         >

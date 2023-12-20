@@ -14,7 +14,36 @@ interface Props {
   onScrollToBottom?: () => void;
 }
 
-function Inputsform({ onChangeInput, onScrollToBottom }: Props) {
+// function FormLayout({}) {
+//   return (
+//     <Stack gap={isVariantB ? 1 : 2}>
+//       {inputs.map((input, index) => {
+//         const value = answers.find(answer => answer.inputName === input.name)?.answer ?? "";
+//         return (
+//           <FormInput
+//             key={index}
+//             input={input}
+//             value={value}
+//             onChange={onChangeInput}
+//           />
+//         );
+//       })}
+
+//       {params?.map(param => {
+//         const paramValue = paramsValues.find(paramVal => paramVal.id === param.prompt);
+//         return (
+//           <FormParam
+//             key={param.parameter.id}
+//             param={param}
+//             paramValue={paramValue}
+//           />
+//         );
+//       })}
+//     </Stack>
+//   );
+// }
+
+function Form({ onChangeInput, onScrollToBottom }: Props) {
   const dispatch = useAppDispatch();
 
   const router = useRouter();
@@ -29,16 +58,12 @@ function Inputsform({ onChangeInput, onScrollToBottom }: Props) {
   const inputs = useAppSelector(state => state.chat.inputs);
   const params = useAppSelector(state => state.chat.params);
 
-  useEffect(() => {
-    if (isVariantB) return;
-    setTimeout(() => dispatch(setIsSimulationStreaming(false)), fadeTimeout);
-  }, []);
-
   return (
     <Fade
       in={true}
       unmountOnExit
       timeout={fadeTimeout}
+      // onTransitionEnd={() => dispatch(setIsSimulationStreaming(false))}
       addEndListener={onScrollToBottom}
     >
       <Stack gap={isVariantB ? 1 : 2}>
@@ -69,4 +94,4 @@ function Inputsform({ onChangeInput, onScrollToBottom }: Props) {
   );
 }
 
-export default Inputsform;
+export default Form;
