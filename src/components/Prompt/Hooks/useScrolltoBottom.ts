@@ -12,7 +12,6 @@ const useScrollToBottom = ({
   messages?: IMessage[];
 }) => {
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
-  const [isUserAtBottom, setIsUserAtBottom] = useState<boolean>(true);
   const [showScrollDown, setShowScrollDown] = useState<boolean>(false);
 
   const handleUserScroll = () => {
@@ -22,7 +21,6 @@ const useScrollToBottom = ({
     const { scrollTop, scrollHeight, clientHeight } = container;
     const isAtBottom = scrollTop + clientHeight >= scrollHeight - 120;
     setShowScrollDown(!isAtBottom);
-    setIsUserAtBottom(isAtBottom);
   };
 
   const scrollToBottom = () => {
@@ -42,12 +40,12 @@ const useScrollToBottom = ({
   }, [ref]);
 
   useEffect(() => {
-    if (isUserAtBottom) {
+    if (!showScrollDown) {
       scrollToBottom();
     }
   }, [messages, generatedExecution, isGenerating]);
 
-  return { isUserAtBottom, showScrollDown, scrollToBottom };
+  return { showScrollDown, scrollToBottom };
 };
 
 export default useScrollToBottom;

@@ -19,6 +19,7 @@ import { useUploadFileMutation } from "@/core/api/uploadFile";
 import { uploadFileHelper } from "@/components/Prompt/Utils/uploadFileHelper";
 import { setGeneratedExecution, setRepeatedExecution, setSelectedExecution } from "@/core/store/executionsSlice";
 import useChatBox from "@/hooks/useChatBox";
+import useChat from "../../Hooks/useChat";
 import { randomId } from "@/common/helpers";
 import { getExecutionById } from "@/hooks/api/executions";
 import { setAnswers, setInputs, setParams, setparamsValues } from "@/core/store/chatSlice";
@@ -26,8 +27,7 @@ import type { Templates } from "@/core/api/dto/templates";
 import type { IPromptInput, PromptLiveResponse } from "@/common/types/prompt";
 import type { PromptParams, ResOverrides, ResPrompt } from "@/core/api/dto/prompts";
 import type { IAnswer, IMessage, VaryValidatorResponse } from "@/components/Prompt/Types/chat";
-import useMessageManagement from "../../Hooks/useMessageManagement";
-import { PromptInputType } from "../../Types";
+import type { PromptInputType } from "../../Types";
 
 interface Props {
   onError: (errMsg: string) => void;
@@ -65,7 +65,7 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
   const abortController = useRef(new AbortController());
   const uploadedFiles = useRef(new Map<string, string>());
 
-  const { messages, setMessages, initialMessages, messageAnswersForm } = useMessageManagement({
+  const { messages, setMessages, initialMessages, messageAnswersForm } = useChat({
     questionPrefixContent,
     template,
   });

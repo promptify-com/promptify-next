@@ -5,9 +5,9 @@ function AvatarWithInitials({ title, variant = "b" }: { title: string; variant?:
   const getInitials = () => {
     const words = title.split(" ");
     if (words.length >= 2) {
-      return `${words[0][0]}${words[1][0]}`.toUpperCase();
+      return `${words[0][0]}${words[1][0]}`?.toUpperCase();
     }
-    return words[0][0].toUpperCase();
+    return words[0][0]?.toUpperCase();
   };
   return (
     <Box

@@ -38,7 +38,6 @@ export const ChatInput = ({
     dispatch(setSelectedExecution(null));
     dispatch(setGeneratedExecution(null));
     dispatch(setAnswers([]));
-    dispatch(setIsSimulationStreaming(false));
   };
 
   return (

@@ -10,6 +10,7 @@ import { useDeleteExecutionFavoriteMutation, useExecutionFavoriteMutation } from
 import { Prompts } from "@/core/api/dto/prompts";
 import { isImageOutput } from "../../Utils";
 import AvatarWithInitials from "@/components/Prompt/Common/AvatarWithInitials";
+import { setIsSimulationStreaming } from "@/core/store/chatSlice";
 
 interface MessageSparkBoxProps {
   execution: TemplatesExecutions;
@@ -36,12 +37,16 @@ export const MessageSparkBox: React.FC<MessageSparkBoxProps> = ({ execution, min
     setContent(fetchedContent);
   };
   useEffect(() => {
+    if (min) {
+      dispatch(setIsSimulationStreaming(false));
+      return;
+    }
     getContent();
   }, []);
 
   const handleClick = () => {
     dispatch(setSelectedExecution(execution));
-    if (onClick) onClick();
+    if (typeof onClick === "function") onClick();
   };
 
   const saveExecution = async (e: React.MouseEvent<HTMLButtonElement>) => {

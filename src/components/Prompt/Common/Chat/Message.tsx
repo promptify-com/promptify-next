@@ -42,10 +42,17 @@ const MessageContent = memo(({ content, shouldStream, onStreamingFinished }: Mes
 export const Message = ({ message, isExecutionMode, onScrollToBottom }: MessageBlockProps) => {
   const [isHovered, setIsHovered] = useState(false);
 
+  const dispatch = useAppDispatch();
+
   const { fromUser, text, createdAt, type } = message;
   const currentUser = useAppSelector(state => state.user.currentUser);
 
   const name = fromUser ? currentUser?.first_name ?? currentUser?.username : "Promptify";
+
+  useEffect(() => {
+    if (fromUser) return;
+    dispatch(setIsSimulationStreaming(true));
+  }, []);
 
   if (type !== "text") return;
 
