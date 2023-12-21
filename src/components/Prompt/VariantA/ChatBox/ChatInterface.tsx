@@ -11,17 +11,15 @@ import { FeedbackActions } from "../FeedbackActions";
 import { MessageSparkBox } from "./MessageSparkBox";
 import TemplateDetailsCard from "@/components/Prompt/Common/TemplateDetailsCard";
 import Form from "@/components/Prompt/Common/Chat/Form";
-import type { IPromptInput } from "@/common/types/prompt";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 
 interface Props {
   template: Templates;
   messages: IMessage[];
-  onChangeInput: (value: string | File, question: IPromptInput) => void;
 }
 
-export const ChatInterface = ({ template, messages, onChangeInput }: Props) => {
+export const ChatInterface = ({ template, messages }: Props) => {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
@@ -100,10 +98,7 @@ export const ChatInterface = ({ template, messages, onChangeInput }: Props) => {
                 mb={2}
                 mt={{ xs: 0, md: msg.noHeader ? -2.5 : 0 }}
               >
-                <Form
-                  onChangeInput={onChangeInput}
-                  onScrollToBottom={scrollToBottom}
-                />
+                <Form onScrollToBottom={scrollToBottom} />
               </Box>
             )}
             {msg.type === "spark" && msg.spark && (

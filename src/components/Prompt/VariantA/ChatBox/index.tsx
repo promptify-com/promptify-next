@@ -23,6 +23,7 @@ import useChatBox from "@/hooks/useChatBox";
 import SigninButton from "@/components/common/buttons/SigninButton";
 import { setAnswers, setInputs, setIsSimulationStreaming, setParams, setparamsValues } from "@/core/store/chatSlice";
 import { PromptInputType } from "../../Types";
+import useApiAccess from "../../Hooks/useApiAccess";
 
 interface Props {
   onError: (errMsg: string) => void;
@@ -56,7 +57,9 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [queuedMessages, setQueuedMessages] = useState<IMessage[]>([]);
   const [disableChatInput, setDisableChatInput] = useState(false);
+
   const { prepareAndRemoveDuplicateInputs, preparePromptsData } = useChatBox();
+  const { dispatchNewExecutionData } = useApiAccess();
 
   const abortController = useRef(new AbortController());
   const uploadedFiles = useRef(new Map<string, string>());
@@ -141,33 +144,6 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
     setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat(botMessage));
   };
 
-  const dispatchNewExecutionData = (answers: IAnswer[], inputs: IPromptInput[]) => {
-    const promptsData: Record<number, ResPrompt> = {};
-
-    inputs.forEach(_input => {
-      const _promptId = _input.prompt!;
-
-      if (promptsData[_promptId]) {
-        promptsData[_promptId].prompt_params = { ...promptsData[_promptId].prompt_params, [_input.name]: "" };
-      } else {
-        promptsData[_promptId] = {
-          prompt: _promptId,
-          contextual_overrides: [],
-          prompt_params: { [_input.name]: "" },
-        };
-      }
-    });
-
-    answers.forEach(_answer => {
-      promptsData[_answer.prompt].prompt_params = {
-        ...promptsData[_answer.prompt].prompt_params,
-        [_answer.inputName]: _answer.answer,
-      };
-    });
-
-    dispatch(updateExecutionData(JSON.stringify(Object.values(promptsData))));
-  };
-
   const [_inputs, _params]: [IPromptInput[], PromptParams[]] = useMemo(() => {
     if (!template) {
       return [[], []];
@@ -225,16 +201,6 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
   }, [repeatedExecution]);
 
   useEffect(() => {
-    dispatchNewExecutionData(answers, _inputs);
-  }, [template, answers]);
-
-  useEffect(() => {
-    if (answers.length) {
-      dispatch(setGeneratedExecution(generatingResponse));
-    }
-  }, [generatingResponse]);
-
-  useEffect(() => {
     if (!isSimulationStreaming && !!queuedMessages.length) {
       const nextQueuedMessage = queuedMessages.pop()!;
 
@@ -242,6 +208,16 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
       addToQueuedMessages(queuedMessages);
     }
   }, [isSimulationStreaming]);
+
+  useEffect(() => {
+    dispatchNewExecutionData();
+  }, [template, answers]);
+
+  useEffect(() => {
+    if (answers.length) {
+      dispatch(setGeneratedExecution(generatingResponse));
+    }
+  }, [generatingResponse]);
 
   useEffect(() => {
     if (!isGenerating && generatedExecution?.data?.length) {
@@ -365,31 +341,6 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
     }
   };
 
-  const handleUserInput = (value: string | File, input: IPromptInput) => {
-    if (isSimulationStreaming) {
-      return;
-    }
-
-    const { name: inputName, required, question, prompt } = input;
-    const promptId = prompt!;
-
-    const _answers = [...answers.filter(answer => answer.inputName !== inputName)];
-
-    if (!(!(value instanceof File) && value.trim() === "")) {
-      const newAnswer: IAnswer = {
-        question: question || "",
-        required,
-        inputName,
-        prompt: promptId,
-        answer: value,
-        error: false,
-      };
-      _answers.push(newAnswer);
-    }
-
-    dispatch(setAnswers(_answers));
-  };
-
   const validateAndUploadFiles = () =>
     new Promise<{ status: boolean; answers: IAnswer[] }>(async resolve => {
       let status = true;
@@ -436,8 +387,6 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
     const promptsData = preparePromptsData(uploadedFiles.current, answers, paramsValues, template.prompts);
 
     uploadedFiles.current.clear();
-
-    // dispatch(setChatFullScreenStatus(false));
 
     generateExecution(promptsData);
   };
@@ -572,8 +521,6 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
     ((showGenerateButton && messages[messages.length - 1]?.type !== "spark") ||
       Boolean(!_inputs.length || !_inputs[0]?.required));
 
-  const showClearBtn = messages[messages.length - 1]?.type === "form" && answers.length > 0;
-
   return (
     <Stack
       gap={"1px"}
@@ -609,7 +556,6 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
         <ChatInterface
           template={template}
           messages={messages}
-          onChangeInput={handleUserInput}
         />
         {currentUser?.id ? (
           <ChatInput
