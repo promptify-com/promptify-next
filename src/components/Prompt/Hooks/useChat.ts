@@ -17,8 +17,8 @@ const createdAt = new Date();
 function useChat({ questionPrefixContent, template }: Props) {
   const dispatch = useAppDispatch();
 
-  const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
-  const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
+  const { selectedExecution, generatedExecution, repeatedExecution } = useAppSelector(state => state.executions);
+
   const currentUser = useAppSelector(state => state.user.currentUser);
   const isSimulationStreaming = useAppSelector(state => state.chat.isSimulationStreaming);
 
@@ -41,7 +41,10 @@ function useChat({ questionPrefixContent, template }: Props) {
     welcomeMessage.text = `${questionPrefixContent ?? greeting} ${template.title} ? ${allQuestions.join(" ")}`;
 
     setMessages([welcomeMessage]);
-    addToQueuedMessages([createMessage("form")]);
+
+    if (!selectedExecution) {
+      addToQueuedMessages([createMessage("form")]);
+    }
     dispatch(setAnswers([]));
   };
 
@@ -70,21 +73,26 @@ function useChat({ questionPrefixContent, template }: Props) {
   };
 
   function updateMessagesForGeneratedExecution() {
+    if (!generatedExecution) return;
+
     const filteredMessages = messages.filter(msg => msg.type !== "form");
+
     const sparkMessageExists = filteredMessages.some(msg => msg.type === "spark");
 
     if (!sparkMessageExists) {
-      setMessages(filteredMessages.concat(createMessage("spark")));
-    } else {
-      setMessages(filteredMessages);
+      filteredMessages.push(createMessage("spark"));
     }
+
+    setMessages(filteredMessages);
   }
 
   function updateMessagesForSelectedExecution() {
-    const sparkMessageExists = messages.some(msg => msg.type === "spark");
-    const formMessageExists = messages.some(msg => msg.type === "form");
+    if (!selectedExecution || !repeatedExecution) return;
 
     let newMessages = [...messages];
+
+    const sparkMessageExists = newMessages.some(msg => msg.type === "spark");
+    const formMessageExists = newMessages.some(msg => msg.type === "form");
 
     if (!sparkMessageExists) {
       newMessages.push(createMessage("spark"));
@@ -94,7 +102,6 @@ function useChat({ questionPrefixContent, template }: Props) {
       newMessages.push(createMessage("form"));
     }
 
-    // Sort to ensure spark is always before form
     newMessages.sort((a, b) => {
       if (a.type === "spark" && b.type === "form") {
         return -1;
@@ -108,16 +115,12 @@ function useChat({ questionPrefixContent, template }: Props) {
   }
 
   useEffect(() => {
-    if (!generatedExecution) return;
-
     updateMessagesForGeneratedExecution();
   }, [generatedExecution]);
 
   useEffect(() => {
-    if (!selectedExecution) return;
-
     updateMessagesForSelectedExecution();
-  }, [selectedExecution]);
+  }, [selectedExecution, repeatedExecution]);
 
   useEffect(() => {
     proccedQueuedMessages();
