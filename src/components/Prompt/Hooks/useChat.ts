@@ -41,10 +41,7 @@ function useChat({ questionPrefixContent, template }: Props) {
     welcomeMessage.text = `${questionPrefixContent ?? greeting} ${template.title} ? ${allQuestions.join(" ")}`;
 
     setMessages([welcomeMessage]);
-
-    if (!selectedExecution) {
-      addToQueuedMessages([createMessage("form")]);
-    }
+    addToQueuedMessages([createMessage("form")]);
     dispatch(setAnswers([]));
   };
 
@@ -87,7 +84,7 @@ function useChat({ questionPrefixContent, template }: Props) {
   }
 
   function updateMessagesForSelectedExecution() {
-    if (!selectedExecution || !repeatedExecution) return;
+    if (!selectedExecution) return;
 
     let newMessages = [...messages];
 
@@ -98,7 +95,7 @@ function useChat({ questionPrefixContent, template }: Props) {
       newMessages.push(createMessage("spark"));
     }
 
-    if (!formMessageExists) {
+    if (!formMessageExists && (!generatedExecution || repeatedExecution)) {
       newMessages.push(createMessage("form"));
     }
 
