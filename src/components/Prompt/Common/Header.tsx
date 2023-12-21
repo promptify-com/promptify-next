@@ -32,6 +32,8 @@ export default function Header({ template }: TemplateHeaderProps) {
   const router = useRouter();
   const dispatch = useAppDispatch();
 
+  const isGenerating = useAppSelector(state => state.template.isGenerating);
+
   const activeVariant = router.query.variant as string;
   const isVariantA = activeVariant === "a";
   const currentUser = useAppSelector(state => state.user.currentUser);
@@ -251,6 +253,7 @@ export default function Header({ template }: TemplateHeaderProps) {
           variant="text"
           color="custom"
           sx={btnStyle}
+          disabled={isGenerating}
           startIcon={<SwitchAccessShortcut sx={{ fontSize: 20 }} />}
           onClick={() => switchVariant(activeVariant, router)}
         >

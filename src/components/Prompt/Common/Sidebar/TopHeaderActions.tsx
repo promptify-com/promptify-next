@@ -12,7 +12,7 @@ import { theme } from "@/theme";
 import NoteStackIcon from "@/assets/icons/NoteStackIcon";
 import { TemplateSidebarLinks } from "@/common/constants";
 import { setActiveToolbarLink } from "@/core/store/templatesSlice";
-import { useAppDispatch } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import BaseButton from "@/components/base/BaseButton";
 import { switchVariant } from "@/components/Prompt/Utils";
 import type { Link } from "@/components/Prompt/Types";
@@ -20,6 +20,7 @@ import type { Link } from "@/components/Prompt/Types";
 function TopHeaderActions({ executionsLength = 0 }) {
   const dispatch = useAppDispatch();
 
+  const isGenerating = useAppSelector(state => state.template.isGenerating);
   const router = useRouter();
   const variant = router.query.variant as string;
   const ToolbarItems = TemplateSidebarLinks.filter(link => link.name === "executions" || link.name === "details");
@@ -88,6 +89,7 @@ function TopHeaderActions({ executionsLength = 0 }) {
           variant="text"
           color="custom"
           sx={btnStyle}
+          disabled={isGenerating}
           startIcon={<SwitchAccessShortcut sx={{ fontSize: 20 }} />}
           onClick={() => switchVariant(variant, router)}
         >

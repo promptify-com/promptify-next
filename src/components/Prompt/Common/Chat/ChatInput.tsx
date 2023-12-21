@@ -31,6 +31,7 @@ export const ChatInput = ({
 }: ChatInputProps) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
+  const isGenerating = useAppSelector(state => state.template.isGenerating);
 
   const dispatch = useAppDispatch();
 
@@ -83,7 +84,7 @@ export const ChatInput = ({
         gap={"8px"}
         alignItems={"center"}
       >
-        {!!generatedExecution && (
+        {!!generatedExecution && !isGenerating && (
           <Tooltip
             title="Add new Prompt"
             arrow
