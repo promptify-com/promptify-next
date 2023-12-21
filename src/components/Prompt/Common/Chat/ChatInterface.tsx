@@ -180,26 +180,21 @@ export const ChatInterface = ({ template, messages, onChangeInput, onGenerate, s
                       !!selectedExecution?.prompt_executions?.length &&
                       expandedAccordions["spark"] && (
                         <Box
+                          id="testt"
                           sx={{
                             position: "sticky",
-                            top: "40px",
-                            width: 0,
+                            top: "10px",
+                            right: "40px",
+                            mt: "20%",
                             height: "fit-content",
-                            mt: 45,
+                            mb: "30px",
                             display: { xs: "none", md: "block" },
                           }}
                         >
-                          <Box
-                            sx={{
-                              position: "absolute",
-                              right: "80px",
-                            }}
-                          >
-                            <FeedbackThumbs
-                              execution={selectedExecution}
-                              vertical
-                            />
-                          </Box>
+                          <FeedbackThumbs
+                            execution={selectedExecution}
+                            vertical
+                          />
                         </Box>
                       )}
                   </Stack>
@@ -214,7 +209,8 @@ export const ChatInterface = ({ template, messages, onChangeInput, onGenerate, s
 };
 
 const messagesContainerStyle = {
-  overflow: "auto",
+  overflowY: "auto",
+  overflowX: "hidden",
   px: "8px",
   overscrollBehavior: "contain",
   scrollBehavior: "smooth",
