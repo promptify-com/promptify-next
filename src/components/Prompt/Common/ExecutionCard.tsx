@@ -109,7 +109,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
         width: { md: "90%" },
       }}
     >
-      {execution && "title" in execution && (
+      {execution && (
         <Typography
           sx={{
             fontSize: { xs: 30, md: 48 },
@@ -119,7 +119,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
             wordBreak: "break-word",
           }}
         >
-          {execution.title}
+          {"title" in execution ? execution.title : "Untitled"}
         </Typography>
       )}
       {execution && (
