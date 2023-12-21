@@ -11,7 +11,7 @@ import { useAppSelector, useAppDispatch } from "@/hooks/useStore";
 import useToken from "@/hooks/useToken";
 import { ChatInterface } from "./ChatInterface";
 import { ChatInput } from "./ChatInput";
-import { setGeneratingStatus, updateExecutionData } from "@/core/store/templatesSlice";
+import { setGeneratingStatus } from "@/core/store/templatesSlice";
 import { executionsApi, useStopExecutionMutation } from "@/core/api/executions";
 import { vary } from "@/common/helpers/varyValidator";
 import { parseMessageData } from "@/common/helpers/parseMessageData";
@@ -28,6 +28,7 @@ import type { IPromptInput, PromptLiveResponse } from "@/common/types/prompt";
 import type { PromptParams, ResOverrides, ResPrompt } from "@/core/api/dto/prompts";
 import type { IAnswer, IMessage, VaryValidatorResponse } from "@/components/Prompt/Types/chat";
 import type { PromptInputType } from "../../Types";
+import useApiAccess from "../../Hooks/useApiAccess";
 
 interface Props {
   onError: (errMsg: string) => void;
@@ -61,6 +62,7 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
   });
 
   const { preparePromptsData, prepareAndRemoveDuplicateInputs } = useChatBox();
+  const { dispatchNewExecutionData } = useApiAccess();
 
   const abortController = useRef(new AbortController());
   const uploadedFiles = useRef(new Map<string, string>());
@@ -70,32 +72,6 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
     template,
   });
 
-  const dispatchNewExecutionData = (answers: IAnswer[], inputs: IPromptInput[]) => {
-    const promptsData: Record<number, ResPrompt> = {};
-
-    inputs.forEach(_input => {
-      const _promptId = _input.prompt!;
-
-      if (promptsData[_promptId]) {
-        promptsData[_promptId].prompt_params = { ...promptsData[_promptId].prompt_params, [_input.name]: "" };
-      } else {
-        promptsData[_promptId] = {
-          prompt: _promptId,
-          contextual_overrides: [],
-          prompt_params: { [_input.name]: "" },
-        };
-      }
-    });
-
-    answers.forEach(_answer => {
-      promptsData[_answer.prompt].prompt_params = {
-        ...promptsData[_answer.prompt].prompt_params,
-        [_answer.inputName]: _answer.answer,
-      };
-    });
-
-    dispatch(updateExecutionData(JSON.stringify(Object.values(promptsData))));
-  };
   const [_inputs, _params, promptHasContent]: [IPromptInput[], PromptParams[], boolean] = useMemo(() => {
     if (!template) {
       return [[], [], false];
@@ -171,7 +147,7 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
   }, [answers]);
 
   useEffect(() => {
-    dispatchNewExecutionData(answers, _inputs);
+    dispatchNewExecutionData();
   }, [template]);
 
   useEffect(() => {
@@ -263,31 +239,6 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
       const isReady = allRequiredInputsAnswered() ? " Let’s imagine something like this! Prepared request for you" : "";
       messageAnswersForm(`Ok!${isReady}, please check input information and we are ready to start!`);
     }
-  };
-
-  const handleUserInput = async (value: string | File, input: IPromptInput) => {
-    if (isSimulationStreaming) {
-      return;
-    }
-
-    const { name: inputName, required } = input;
-
-    const _answers = [...answers.filter(answer => answer.inputName !== inputName)];
-
-    if (!(!(value instanceof File) && value.trim() === "")) {
-      const newAnswer: IAnswer = {
-        question: input.question!,
-        required,
-        inputName,
-        prompt: input.prompt!,
-        answer: value,
-      };
-      _answers.push(newAnswer);
-    }
-
-    dispatch(setAnswers(_answers));
-
-    dispatchNewExecutionData(_answers, _inputs);
   };
 
   const validateAndUploadFiles = () =>
@@ -487,7 +438,6 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
           messages={messages}
           template={template}
           showGenerate={showGenerate}
-          onChangeInput={handleUserInput}
           onGenerate={generateExecutionHandler}
           onAbort={abortConnection}
         />

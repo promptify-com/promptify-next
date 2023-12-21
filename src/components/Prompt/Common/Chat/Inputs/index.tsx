@@ -4,24 +4,33 @@ import TextField from "@mui/material/TextField";
 import Edit from "@mui/icons-material/Edit";
 import Stack from "@mui/material/Stack";
 
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import useApiAccess from "@/components/Prompt/Hooks/useApiAccess";
+import { setAnswers } from "@/core/store/chatSlice";
 import Code from "@/components/Prompt/Common/Chat/Inputs/Code";
 import Choices from "@/components/Prompt/Common/Chat/Inputs/Choices";
 import File from "@/components/Prompt/Common/Chat/Inputs/File";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { PromptInputType } from "@/components/Prompt/Types";
+import type { IAnswer } from "@/components/Prompt/Types/chat";
 
 interface Props {
   input: IPromptInput;
   isGenerating: boolean;
   isFile: boolean;
   value: PromptInputType;
-  onChange: (value: string | File, input: IPromptInput) => void;
 }
 
-function RenderInputType({ input, isGenerating, isFile, onChange, value }: Props) {
+function RenderInputType({ input, isGenerating, isFile, value }: Props) {
   const router = useRouter();
   const variant = router.query.variant;
   const fieldRef = useRef<HTMLInputElement | null>(null);
+
+  const dispatch = useAppDispatch();
+  const { dispatchNewExecutionData } = useApiAccess();
+
+  const isSimulationStreaming = useAppSelector(state => state.chat.isSimulationStreaming);
+  const answers = useAppSelector(state => state.chat.answers);
 
   const dynamicWidth = () => {
     const textMeasureElement = document.createElement("span");
@@ -34,6 +43,29 @@ function RenderInputType({ input, isGenerating, isFile, onChange, value }: Props
     const width = textMeasureElement.offsetWidth;
     document.body.removeChild(textMeasureElement);
     return width;
+  };
+
+  const onChange = (value: string | File, input: IPromptInput) => {
+    if (isSimulationStreaming) {
+      return;
+    }
+
+    const { name: inputName, required } = input;
+
+    const _answers = [...answers.filter(answer => answer.inputName !== inputName)];
+
+    if (!(!(value instanceof File) && typeof value === "string" && value.trim() === "")) {
+      const newAnswer: IAnswer = {
+        question: input.question!,
+        required,
+        inputName,
+        prompt: input.prompt!,
+        answer: value,
+      };
+      _answers.push(newAnswer);
+    }
+    dispatch(setAnswers(_answers));
+    dispatchNewExecutionData();
   };
 
   switch (input.type) {

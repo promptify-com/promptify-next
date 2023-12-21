@@ -6,19 +6,16 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setIsSimulationStreaming } from "@/core/store/chatSlice";
 import FormParam from "@/components/Prompt/Common/Chat/FormParams";
 import FormInput from "@/components/Prompt/Common/Chat/FormInput";
-import type { IPromptInput } from "@/common/types/prompt";
 
 interface FormProps {
-  onChangeInput: (value: string | File, input: IPromptInput) => void;
   onScrollToBottom?: () => void;
 }
 
 interface FormLayoutProps {
   variant: "a" | "b";
-  onChangeInput: (value: string | File, input: IPromptInput) => void;
 }
 
-function FormFields({ variant, onChangeInput }: FormLayoutProps) {
+function FormFields({ variant }: FormLayoutProps) {
   const answers = useAppSelector(state => state.chat.answers);
   const paramsValues = useAppSelector(state => state.chat.paramsValues);
   const inputs = useAppSelector(state => state.chat.inputs);
@@ -32,7 +29,6 @@ function FormFields({ variant, onChangeInput }: FormLayoutProps) {
             key={index}
             input={input}
             value={value}
-            onChange={onChangeInput}
           />
         );
       })}
@@ -51,7 +47,7 @@ function FormFields({ variant, onChangeInput }: FormLayoutProps) {
   );
 }
 
-function Form({ onChangeInput, onScrollToBottom }: FormProps) {
+function Form({ onScrollToBottom }: FormProps) {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const variant = router.query.variant;
@@ -63,10 +59,7 @@ function Form({ onChangeInput, onScrollToBottom }: FormProps) {
   return (
     <Stack>
       {isVariantB ? (
-        <FormFields
-          variant={"b"}
-          onChangeInput={onChangeInput}
-        />
+        <FormFields variant={"b"} />
       ) : (
         <Fade
           in={true}
@@ -75,10 +68,7 @@ function Form({ onChangeInput, onScrollToBottom }: FormProps) {
           addEndListener={onScrollToBottom}
         >
           <Stack>
-            <FormFields
-              variant={"a"}
-              onChangeInput={onChangeInput}
-            />
+            <FormFields variant={"a"} />
           </Stack>
         </Fade>
       )}

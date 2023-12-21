@@ -2,28 +2,26 @@ import InputLabel from "@mui/material/InputLabel";
 import Radio from "@mui/material/Radio";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import { useRouter } from "next/router";
 
 import { useAppSelector } from "@/hooks/useStore";
-
 import RenderInputType from "./Inputs";
 import CustomTooltip from "../CustomTooltip";
-import { useRouter } from "next/router";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { PromptInputType } from "../../Types";
 
 interface Props {
   input: IPromptInput;
   value: PromptInputType;
-  onChange: (value: string | File, input: IPromptInput) => void;
 }
 
-function FormInput({ input, value, onChange }: Props) {
-  const isGenerating = useAppSelector(state => state.template.isGenerating);
-  const isFile = value instanceof File;
+function FormInput({ input, value }: Props) {
   const router = useRouter();
 
-  const variant = router.query.variant;
+  const isGenerating = useAppSelector(state => state.template.isGenerating);
 
+  const isFile = value instanceof File;
+  const variant = router.query.variant;
   const isVariantB = variant === "b";
 
   return (
@@ -59,7 +57,6 @@ function FormInput({ input, value, onChange }: Props) {
       >
         <RenderInputType
           input={input}
-          onChange={onChange}
           value={value}
           isGenerating={isGenerating}
           isFile={isFile}

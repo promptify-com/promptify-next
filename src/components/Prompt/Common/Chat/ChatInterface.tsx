@@ -13,7 +13,6 @@ import AccordionMessage from "@/components/Prompt/VariantB/AccordionMessage";
 import FeedbackThumbs from "@/components/Prompt/Common/FeedbackThumbs";
 import useScrollToBottom from "@/components/Prompt/Hooks/useScrolltoBottom";
 import TemplateDetailsCard from "@/components/Prompt/Common/TemplateDetailsCard";
-import type { IPromptInput } from "@/common/types/prompt";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { Templates } from "@/core/api/dto/templates";
 
@@ -26,13 +25,12 @@ type AccordionExpandedState = {
 interface Props {
   messages: IMessage[];
   template: Templates;
-  onChangeInput: (value: string | File, input: IPromptInput) => void;
   onGenerate: () => void;
   onAbort: () => void;
   showGenerate: boolean;
 }
 
-export const ChatInterface = ({ template, messages, onChangeInput, onGenerate, showGenerate, onAbort }: Props) => {
+export const ChatInterface = ({ template, messages, onGenerate, showGenerate, onAbort }: Props) => {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const isDesktopView = isDesktopViewPort();
 
@@ -171,7 +169,6 @@ export const ChatInterface = ({ template, messages, onChangeInput, onGenerate, s
                         template={template}
                         showGenerate={showGenerate}
                         abortGenerating={onAbort}
-                        onChangeInput={onChangeInput}
                         onGenerate={onGenerate}
                       />
                     </Box>

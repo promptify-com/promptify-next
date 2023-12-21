@@ -13,10 +13,8 @@ import { Display } from "@/components/Prompt/Common/Display";
 import Form from "@/components/Prompt/Common/Chat/Form";
 import AccordionMessageHeader from "@/components/Prompt/VariantB/AccordionMessageHeader";
 import type { Templates } from "@/core/api/dto/templates";
-import type { IPromptInput } from "@/common/types/prompt";
 
 interface Props {
-  onChangeInput: (value: string | File, input: IPromptInput) => void;
   onGenerate: () => void;
   abortGenerating: () => void;
   showGenerate: boolean;
@@ -28,7 +26,6 @@ interface Props {
 
 export default function AccordionMessage({
   template,
-  onChangeInput,
   onGenerate,
   abortGenerating,
   showGenerate,
@@ -104,7 +101,7 @@ export default function AccordionMessage({
                   <Display templateData={template} />
                 </Stack>
               )}
-              {type === "form" && <Form onChangeInput={onChangeInput} />}
+              {type === "form" && <Form />}
             </Stack>
           </Stack>
           {showGenerate && type === "form" && currentUser?.id && (
