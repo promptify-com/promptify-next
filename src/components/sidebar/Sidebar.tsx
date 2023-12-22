@@ -2,10 +2,10 @@ import StickyNote2 from "@mui/icons-material/StickyNote2";
 import Home from "@mui/icons-material/Home";
 import Drawer from "@mui/material/Drawer";
 import { usePathname } from "next/navigation";
-import React, { useState } from "react";
+import React from "react";
 import { useAppSelector } from "@/hooks/useStore";
 import { isValidUserFn } from "@/core/store/userSlice";
-import { ExtensionRounded, FolderSpecial, HelpRounded, Inventory2Rounded } from "@mui/icons-material";
+import { Chat, ExtensionRounded, FolderSpecial, HelpRounded, Inventory2Rounded } from "@mui/icons-material";
 import List from "@mui/material/List";
 import Grid from "@mui/material/Grid";
 import { NavItem } from "@/common/types/sidebar";
@@ -49,6 +49,14 @@ function Sidebar() {
       icon: <Inventory2Rounded />,
       active: pathname.includes("/prompt-builder"),
       external: isValidUser,
+      reload: false,
+    },
+    {
+      name: "Chat",
+      href: "/chat",
+      icon: <Chat />,
+      active: pathname === "/chat",
+      external: false,
       reload: false,
     },
     {

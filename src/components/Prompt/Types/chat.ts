@@ -1,11 +1,11 @@
-import { TemplatesExecutions } from "@/core/api/dto/templates";
+import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { PromptInputType } from ".";
 
 export interface VaryValidatorResponse {
   [question: string]: string | number;
 }
 
-export type MessageType = "text" | "form" | "spark";
+export type MessageType = "text" | "form" | "spark" | "templates";
 
 export interface IMessage {
   id: number;
@@ -14,10 +14,12 @@ export interface IMessage {
   fromUser: boolean;
   type: MessageType;
   spark?: TemplatesExecutions;
+  templates?: Templates[];
   choices?: string[] | null;
   fileExtensions?: string[];
   startOver?: boolean;
   noHeader?: boolean;
+  shouldStream?: boolean;
 }
 
 export interface IAnswer {
@@ -28,3 +30,5 @@ export interface IAnswer {
   prompt: number;
   error?: boolean;
 }
+
+export type AccordionChatMode = "generated_execution" | "execution" | "input" | "repeat";

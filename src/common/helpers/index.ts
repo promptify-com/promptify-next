@@ -21,7 +21,11 @@ export const addSpaceBetweenCapitalized = (text: string) => text.replace(/([a-z]
 export const promptComputeDomId = (prompt: IEditPrompts): string =>
   `prompt-${prompt.id ?? prompt.temp_id}-${prompt.title.toLowerCase().replace(/[^\w]/g, "-")}`;
 
-export const redirectToPath = (path: string, searchParams: Record<string, string | number> = {}) => {
+export const redirectToPath = (
+  path: string,
+  searchParams: Record<string, string | number> = {},
+  openInNewTab = false,
+) => {
   if (!isBrowser()) {
     return;
   }
@@ -33,6 +37,14 @@ export const redirectToPath = (path: string, searchParams: Record<string, string
     for (const param in searchParams) {
       newUrl.searchParams.set(param, `${searchParams[param]}`);
     }
+  }
+
+  if (openInNewTab) {
+    const link = document.createElement("a");
+    link.href = newUrl.toString();
+    link.target = "_blank";
+    link.click();
+    return;
   }
 
   window.location.href = newUrl.toString();

@@ -12,7 +12,7 @@ import { setIsSimulationStreaming } from "@/core/store/chatSlice";
 interface MessageBlockProps {
   message: IMessage;
   onScrollToBottom: () => void;
-  isExecutionMode: boolean;
+  isExecutionMode?: boolean;
 }
 
 interface MessageContentProps {

@@ -9,7 +9,7 @@ import { useAppSelector } from "@/hooks/useStore";
 import { isDesktopViewPort } from "@/common/helpers";
 import { FeedbackActions } from "../FeedbackActions";
 import { MessageSparkBox } from "./MessageSparkBox";
-import TemplateDetailsCard from "@/components/Prompt/Common/TemplateDetailsCard";
+import { TemplateDetailsCard } from "@/components/Prompt/Common/TemplateDetailsCard";
 import Form from "@/components/Prompt/Common/Chat/Form";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IMessage } from "@/components/Prompt/Types/chat";
