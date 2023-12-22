@@ -11,22 +11,46 @@ interface Props {
   questionPrefixContent: string;
 }
 
+declare global {
+  var gtag: (arg1: string, arg2: string, arg3: Record<string, string>) => void;
+}
+
 function TemplatePage({ template, setErrorMessage, questionPrefixContent }: Props) {
   const router = useRouter();
 
   const [activeVariant, setActiveVariant] = useState<string>("");
 
   useEffect(() => {
-    let variant = (router.query.variant as string) ?? Cookie.get("variant");
+    const cookieVariant = Cookie.get("variant");
+    let variant = cookieVariant ?? (router.query.variant as string);
+
     if (!variant) {
-      variant = Math.random() < 0.5 ? "a" : ("b" as string);
+      variant = Math.random() < 0.5 ? "a" : "b";
     }
 
     setActiveVariant(variant);
-    Cookie.set("variant", variant, 30);
+
+    if (!cookieVariant) {
+      sendPageViewEvent();
+
+      Cookie.set("variant", variant, 30);
+    }
 
     if (router.query.variant !== variant) {
       router.replace({ pathname: router.pathname, query: { ...router.query, variant } }, undefined, { shallow: true });
+    }
+
+    function sendPageViewEvent() {
+      if (typeof window.gtag === "undefined") {
+        const intervalID = setInterval(() => {
+          if (typeof window.gtag === "function") {
+            window.gtag("event", "pageview", { Branch: `staging-${variant}` });
+            clearInterval(intervalID);
+          }
+        }, 1000);
+      } else {
+        window.gtag("event", "pageview", { Branch: `staging-${variant}` });
+      }
     }
   }, [router]);
 

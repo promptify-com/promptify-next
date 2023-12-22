@@ -9,7 +9,7 @@ import { useAppDispatch } from "@/hooks/useStore";
 const useVariant = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const variant = router.query.variant;
+  const variant = Cookie.get("variant") ?? router.query.variant;
 
   const isVariantB = variant === "b";
   const isVariantA = variant === "a";
@@ -23,6 +23,8 @@ const useVariant = () => {
 
   const switchVariant = () => {
     const newVariant = variant === "a" ? "b" : "a";
+
+    window.gtag("event", "pageview", { Branch: `staging-${newVariant}` });
     Cookie.set("variant", newVariant, 30);
 
     clearStoredStates();

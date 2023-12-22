@@ -1,5 +1,4 @@
-const LCL_STR_KEY = "promptify:";
-
+import { LCL_STR_KEY } from "./constants";
 export default class Storage {
   static get(key: string) {
     try {
