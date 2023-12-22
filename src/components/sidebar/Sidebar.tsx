@@ -16,7 +16,6 @@ function Sidebar() {
   const pathname = usePathname();
   const isPromptsPage = pathname.split("/")[1] === "explore";
   const isTemplatePage = pathname.split("/")[1] === "prompt";
-  const isAutomationPage = pathname.split("/")[1] === "automation";
   const slug = isTemplatePage ? pathname.split("/")[2] : "create";
   const isValidUser = useAppSelector(isValidUserFn);
   const navItems: NavItem[] = [
@@ -54,9 +53,9 @@ function Sidebar() {
     },
     {
       name: "Automation",
-      href: isValidUser ? "/automation" : "/signin",
+      href: "/automation",
       icon: <Route />,
-      active: isAutomationPage,
+      active: pathname === "/automation",
       external: false,
       reload: false,
     },
