@@ -55,3 +55,14 @@ export function timeLeft(input: Date | string): string {
     ? `${minutes} ${minutes === 1 ? "minute" : "minutes"}`
     : " couple of seconds";
 }
+
+export function getCurrentDateFormatted(): string {
+  const currentDate = new Date();
+  const options: Intl.DateTimeFormatOptions = {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  };
+  return currentDate.toLocaleDateString("en-US", options);
+}

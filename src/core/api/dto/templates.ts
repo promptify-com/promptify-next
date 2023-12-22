@@ -1,6 +1,7 @@
 import { User, UserPartial } from "./user";
 import { Prompts } from "./prompts";
 import { InputType } from "@/common/types/prompt";
+import { IUser } from "@/common/types";
 
 export type ExecutionTemplatePartial = Pick<Templates, "title" | "thumbnail" | "slug">;
 
@@ -104,6 +105,7 @@ export interface TemplateQuestions {
 export interface UpdatedQuestionTemplate {
   type: InputType;
   name: string;
+  fullName: string;
   required: boolean;
   question: string;
   choices?: string[];
@@ -145,6 +147,7 @@ export interface Templates {
   last_api_run: Date;
   api_runs: number;
   example_execution: TemplatesExecutions | null;
+  is_api_enabled: boolean;
   is_internal?: boolean;
 }
 
@@ -172,6 +175,7 @@ export interface TemplatesExecutions {
   hash: string;
   feedback?: string;
   executed_by?: number;
+  errors?: string;
 }
 
 export interface ITemplateExecutionPut {
@@ -268,3 +272,27 @@ export interface CollectionMutationParams {
 }
 
 export type ExecutionTemplatePopupType = "update" | "delete" | "export" | null;
+export type FeedbackType = "NEUTRAL" | "LIKED" | "DISLIKED";
+
+export interface TemplateApiStatus {
+  is_api_enabled: boolean;
+}
+
+export interface TempalteApiStatusState {
+  data: TemplateApiStatus | null;
+  isLoading: boolean;
+}
+
+export interface IFeedback {
+  id: number;
+  user: UserPartial;
+  created_at: string;
+  template: number;
+  comment: string;
+  status: "draft" | "published";
+}
+export interface IPostFeedback {
+  template: number;
+  comment: string;
+  user: UserPartial;
+}

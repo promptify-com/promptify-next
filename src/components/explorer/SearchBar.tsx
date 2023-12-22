@@ -11,8 +11,9 @@ interface Props {
   // eslint-disable-next-line @typescript-eslint/ban-types
   setSelectedTag?: Function;
   from?: string;
+  onClick: () => void;
 }
-const SearchBar: React.FC<Props> = ({ keyWord, setKeyWord, selectedTag, setSelectedTag, from }) => {
+const SearchBar: React.FC<Props> = ({ keyWord, onClick, setKeyWord, selectedTag, setSelectedTag, from }) => {
   const { palette } = useTheme();
 
   const handleRemoveTag = (tag: Tag) => {
@@ -22,6 +23,7 @@ const SearchBar: React.FC<Props> = ({ keyWord, setKeyWord, selectedTag, setSelec
 
   return (
     <Box
+      onClick={onClick}
       display="flex"
       alignItems="center"
       sx={{

@@ -3,12 +3,15 @@ import { Box, Grid } from "@mui/material";
 import { Header } from "@/components/Header";
 import { theme } from "@/theme";
 import Sidebar from "./components/sidebar/Sidebar";
+import useBrowser from "./hooks/useBrowser";
 
 export const Layout = ({ children }: { children: ReactNode }) => {
+  const { isMobile } = useBrowser();
+
   return (
     <>
       <Box sx={{ bgcolor: "surface.3" }}>
-        <Sidebar />
+        {!isMobile && <Sidebar />}
         <Box
           display={"flex"}
           flexDirection={"column"}
@@ -33,6 +36,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
               borderTopLeftRadius: "16px",
               borderTopRightRadius: "16px",
               overflow: "hidden",
+              zIndex: 1,
             }}
           >
             <Grid

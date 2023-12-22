@@ -43,7 +43,7 @@ export const SparksLayoutMobile: FC<SparksLayoutProps> = ({
   };
 
   const navigateToTemplate = () => {
-    redirectToPath(`/prompt/${template.slug}`, { spark: execution.id });
+    redirectToPath(`/prompt/${template.slug}`, { hash: execution.hash });
   };
 
   return (

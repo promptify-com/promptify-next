@@ -1,4 +1,6 @@
+import { TempalteApiStatusState, TemplateApiStatus, TemplatesExecutions } from "./../api/dto/templates";
 import { AnsweredInputType } from "@/common/types/prompt";
+import { Link } from "@/components/Prompt/Types";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
@@ -9,6 +11,9 @@ export interface TemplatesProps {
   executionData: string;
   isGenerating: boolean;
   answeredInputs: AnsweredInputType[];
+  activeSideBarLink: Link | null;
+  showPromptsView: boolean;
+  templateApiStatus: TempalteApiStatusState;
 }
 
 type UpdateTemplateDataPayload = Pick<TemplatesProps, "is_favorite" | "id" | "likes">;
@@ -19,7 +24,13 @@ const initialState: TemplatesProps = {
   likes: 0,
   executionData: "[]",
   isGenerating: false,
+  activeSideBarLink: null,
   answeredInputs: [],
+  showPromptsView: false,
+  templateApiStatus: {
+    data: null,
+    isLoading: true,
+  },
 };
 
 export const templatesSlice = createSlice({
@@ -43,8 +54,16 @@ export const templatesSlice = createSlice({
     setGeneratingStatus: (state, action: PayloadAction<boolean>) => {
       state.isGenerating = action.payload;
     },
-    updateAnsweredInput: (state, action: PayloadAction<AnsweredInputType[]>) => {
-      state.answeredInputs = action.payload;
+
+    setActiveToolbarLink: (state, action: PayloadAction<Link | null>) => {
+      state.activeSideBarLink = action.payload;
+    },
+
+    setShowPromptsView: (state, action: PayloadAction<boolean>) => {
+      state.showPromptsView = action.payload;
+    },
+    setTemplateApiStatus: (state, action: PayloadAction<TempalteApiStatusState>) => {
+      state.templateApiStatus = action.payload;
     },
   },
 });
@@ -54,7 +73,9 @@ export const {
   updateTemplateData,
   updateExecutionData,
   setGeneratingStatus,
-  updateAnsweredInput,
+  setActiveToolbarLink,
+  setShowPromptsView,
+  setTemplateApiStatus,
 } = templatesSlice.actions;
 
 export default templatesSlice.reducer;

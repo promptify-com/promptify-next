@@ -12,18 +12,22 @@ import { isValidUserFn } from "@/core/store/userSlice";
 import { updateTemplateData } from "@/core/store/templatesSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { getExecutionByHash } from "@/hooks/api/executions";
-import TemplateMobile from "@/components/prompt/TemplateMobile";
-import TemplateDesktop from "@/components/prompt/TemplateDesktop";
 import { getTemplateBySlug } from "@/hooks/api/templates";
 import { redirectToPath } from "@/common/helpers";
+import { setSelectedExecution, setSparkHashQueryParam } from "@/core/store/executionsSlice";
+import useBrowser from "@/hooks/useBrowser";
+import { getContentBySectioName } from "@/hooks/api/cms";
+import TemplatePage from "@/components/Prompt";
 
 interface TemplateProps {
   hashedExecution: TemplatesExecutions | null;
   fetchedTemplate: Templates;
+  questionPrefixContent: string;
 }
 
-function Template({ hashedExecution, fetchedTemplate }: TemplateProps) {
+function Template({ hashedExecution, fetchedTemplate, questionPrefixContent }: TemplateProps) {
   const router = useRouter();
+  const { replaceHistoryByPathname } = useBrowser();
   const [updateViewTemplate] = useViewTemplateMutation();
   const [errorMessage, setErrorMessage] = useState<string>("");
   const theme = useTheme();
@@ -31,6 +35,7 @@ function Template({ hashedExecution, fetchedTemplate }: TemplateProps) {
   const dispatch = useAppDispatch();
   const isValidUser = useAppSelector(isValidUserFn);
   const savedTemplateId = useAppSelector(state => state.template.id);
+  const sparkHashQueryParam = (router.query?.hash as string | null) ?? null;
 
   useEffect(() => {
     if (!fetchedTemplate) {
@@ -55,6 +60,16 @@ function Template({ hashedExecution, fetchedTemplate }: TemplateProps) {
       updateViewTemplate(fetchedTemplate.id);
     }
   }, [isValidUser]);
+
+  useEffect(() => {
+    dispatch(setSparkHashQueryParam(sparkHashQueryParam));
+
+    if (sparkHashQueryParam && hashedExecution) {
+      dispatch(setSelectedExecution(hashedExecution));
+      replaceHistoryByPathname(`/prompt/${fetchedTemplate.slug}`);
+      return;
+    }
+  }, [sparkHashQueryParam]);
 
   if (!fetchedTemplate?.id) {
     if (router.query.slug) {
@@ -103,24 +118,15 @@ function Template({ hashedExecution, fetchedTemplate }: TemplateProps) {
       });
   };
   const dynamicTheme = createTheme({ ...theme, palette });
-  const isMobileView = router.query.viewport === "mobile";
 
   return (
     <ThemeProvider theme={dynamicTheme}>
       <Layout>
-        {isMobileView ? (
-          <TemplateMobile
-            hashedExecution={hashedExecution}
-            template={fetchedTemplate}
-            setErrorMessage={setErrorMessage}
-          />
-        ) : (
-          <TemplateDesktop
-            hashedExecution={hashedExecution}
-            template={fetchedTemplate}
-            setErrorMessage={setErrorMessage}
-          />
-        )}
+        <TemplatePage
+          template={fetchedTemplate}
+          setErrorMessage={setErrorMessage}
+          questionPrefixContent={questionPrefixContent}
+        />
 
         <Snackbar
           anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
@@ -150,27 +156,29 @@ export async function getServerSideProps({
   const { hash } = query;
   let fetchedTemplate: Templates = {} as Templates;
   let hashedExecution: TemplatesExecutions | null = null;
+  let questionPrefixContent = "";
 
   if (hash) {
-    const [_execution, _templatesResponse] = await Promise.allSettled([
+    const [_execution, _templatesResponse, _sectionContent] = await Promise.allSettled([
       getExecutionByHash(hash),
       getTemplateBySlug(slug),
+      getContentBySectioName("chat-questions-prefix"),
     ]);
-
-    if (_execution.status === "fulfilled") {
-      hashedExecution = _execution.value;
-    }
-    if (_templatesResponse.status === "fulfilled") {
-      fetchedTemplate = _templatesResponse.value;
-    }
+    fetchedTemplate = _templatesResponse.status === "fulfilled" ? _templatesResponse.value : fetchedTemplate;
+    hashedExecution = _execution.status === "fulfilled" ? _execution.value : hashedExecution;
+    questionPrefixContent =
+      _sectionContent.status === "fulfilled" ? _sectionContent.value.content : questionPrefixContent;
+  } else {
+    const [_templatesResponse, _sectionContent] = await Promise.allSettled([
+      getTemplateBySlug(slug),
+      getContentBySectioName("chat-questions-prefix"),
+    ]);
+    fetchedTemplate = _templatesResponse.status === "fulfilled" ? _templatesResponse.value : fetchedTemplate;
+    questionPrefixContent =
+      _sectionContent.status === "fulfilled" ? _sectionContent.value.content : questionPrefixContent;
   }
 
   try {
-    if (!hash) {
-      const _templatesResponse = await getTemplateBySlug(slug);
-      fetchedTemplate = _templatesResponse;
-    }
-
     return {
       props: {
         title: fetchedTemplate.meta_title || fetchedTemplate.title,
@@ -179,6 +187,7 @@ export async function getServerSideProps({
         image: fetchedTemplate.thumbnail,
         hashedExecution,
         fetchedTemplate,
+        questionPrefixContent,
       },
     };
   } catch (error) {
@@ -189,6 +198,7 @@ export async function getServerSideProps({
           "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
         fetchedTemplate,
         hashedExecution,
+        questionPrefixContent,
       },
     };
   }

@@ -1,5 +1,8 @@
 import { Category } from "@/core/api/dto/templates";
 import { IEditPrompts } from "./builder";
+import { ReactNode } from "react";
+import { IUser } from "./user";
+import { UserPartial } from "@/core/api/dto/user";
 
 export type FormType = "create" | "edit";
 
@@ -16,4 +19,35 @@ export interface ITemplate {
   difficulty: string;
   duration: string;
   prompts_list?: IEditPrompts[];
+}
+
+type LinkName = "executions" | "feedback" | "api" | "extension" | "details";
+
+export interface SidebarLink {
+  name: LinkName;
+  icon: ReactNode;
+  title: string;
+}
+
+export interface IFeedback {
+  id: number;
+  user: UserPartial;
+  created_at: string;
+  template: number;
+  comment: string;
+  status: "draft" | "published";
+}
+export interface IPostFeedback {
+  template: number;
+  comment: string;
+  user: UserPartial;
+}
+
+export interface TemplateApiStatus {
+  is_api_enabled: boolean;
+}
+
+export interface TemplateApiStatusState {
+  data: TemplateApiStatus | null;
+  isLoading: boolean;
 }

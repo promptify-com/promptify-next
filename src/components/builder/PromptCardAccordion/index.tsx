@@ -12,6 +12,7 @@ import { Engine } from "@/core/api/dto/templates";
 import { useDrag, useDrop, ConnectableElement } from "react-dnd";
 import { getBuilderVarsPresets } from "@/common/helpers/getBuilderVarsPresets";
 import { useDebouncedDispatch } from "@/hooks/useDebounceDispatch";
+import { BUILDER_TYPE } from "@/common/constants";
 
 interface Props {
   prompt: IEditPrompts;
@@ -23,6 +24,7 @@ interface Props {
   engines: Engine[];
   findPromptIndex: (id: number) => number;
   movePrompt: (id: number, atIndex: number) => void;
+  builderType: BUILDER_TYPE;
 }
 
 const PromptCardAccordion = ({
@@ -35,17 +37,19 @@ const PromptCardAccordion = ({
   engines,
   movePrompt,
   findPromptIndex,
+  builderType,
 }: Props) => {
   const [promptData, setPromptData] = useState(prompt);
   const [renameAllow, setRenameAllow] = useState(false);
   const cursorPositionRef = useRef(0);
   const [highlightedOption, setHighlitedOption] = useState("");
-
   const { outputPresets, inputPresets } = useMemo(() => getBuilderVarsPresets(prompts, promptData, false), [prompts]);
-
-  const dispatchUpdatePrompt = useDebouncedDispatch((prompt: IEditPrompts) => {
-    setPrompt(prompt);
-  }, 700);
+  const dispatchUpdatePrompt = useDebouncedDispatch(
+    (prompt: IEditPrompts) => {
+      setPrompt(prompt);
+    },
+    builderType === BUILDER_TYPE.USER ? 700 : 200,
+  );
 
   const updatePrompt = (newPromptData: IEditPrompts) => {
     setPromptData(newPromptData);
@@ -100,7 +104,7 @@ const PromptCardAccordion = ({
       ref={(node: ConnectableElement) => preview(drop(node))}
       sx={{
         bgcolor: "surface.1",
-        m: "24px 0 !important",
+        m: builderType === BUILDER_TYPE.ADMIN ? 0 : "24px 0 !important",
         borderRadius: "16px !important",
         boxShadow: "none",
         transition: "box-shadow 0.3s ease-in-out",
@@ -120,6 +124,7 @@ const PromptCardAccordion = ({
         duplicatePrompt={duplicatePrompt}
         engines={engines}
         dragPreview={(node: ConnectableElement) => drag(drop(node))}
+        builderType={builderType}
       />
       <Divider sx={{ borderColor: "surface.3" }} />
       <Box

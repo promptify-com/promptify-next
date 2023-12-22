@@ -1,14 +1,14 @@
-import React from "react";
+import { type Dispatch, type SetStateAction } from "react";
 import { createRoot } from "react-dom/client";
 import { NodeEditor, GetSchemes, ClassicPreset, BaseSchemes, NodeId } from "rete";
-import { AreaPlugin, AreaExtensions } from "rete-area-plugin";
+import { AreaPlugin, AreaExtensions, Zoom } from "rete-area-plugin";
 import { BidirectFlow, ConnectionPlugin } from "rete-connection-plugin";
 import { ReactRenderPlugin, Presets, ReactArea2D } from "rete-react-render-plugin";
 import { PromptCard } from "./PromptCard";
 import { CustomSocket } from "./CustomSocket";
 import { AutoArrangePlugin, Presets as ArrangePresets } from "rete-auto-arrange-plugin";
 import { SelectableConnection } from "./SelectableConnection";
-import { PromptParams, Prompts } from "@/core/api/dto/prompts";
+import { Prompts } from "@/core/api/dto/prompts";
 import { IEditPrompts } from "@/common/types/builder";
 import { Engine } from "@/core/api/dto/templates";
 
@@ -18,6 +18,9 @@ export class Node extends ClassicPreset.Node {
   count = "";
   temp_id = 0;
   engineIcon = "";
+  editor?: NodeEditor<Schemes>;
+  area?: AreaPlugin<Schemes, AreaExtra>;
+  resetNodeData?: (node: Node | null) => void = () => {};
 }
 
 class Connection extends ClassicPreset.Connection<ClassicPreset.Node, ClassicPreset.Node> {
@@ -28,13 +31,14 @@ type AreaExtra = ReactArea2D<Schemes>;
 
 export async function createEditor(
   container: HTMLElement,
-  setSelectedNode: (val: any) => void,
-  setSelectedConnection: (id: string | null) => void,
+  setSelectedNode: Dispatch<SetStateAction<Node | null>>,
+  setSelectedNodeData: Dispatch<SetStateAction<IEditPrompts | null>>,
+  setSelectedConnection: Dispatch<SetStateAction<string | null>>,
   prompts: Prompts[],
   engines: Engine[] | undefined,
   nodeCount: number,
-  setNodeCount: (val: number) => void,
-  setNodesData: React.Dispatch<React.SetStateAction<IEditPrompts[]>>,
+  setNodeCount: Dispatch<SetStateAction<number>>,
+  setNodesData: Dispatch<SetStateAction<IEditPrompts[]>>,
   updateTemplateDependencies: (val1: string, val2: string) => void,
 ) {
   const editor = new NodeEditor<Schemes>();
@@ -47,20 +51,14 @@ export async function createEditor(
   let isLoaded = false;
 
   const setInitialNodes = async (id: string, prompt: Prompts) => {
-    let promptParams: PromptParams[] = [];
-    if (prompt) {
-      const response = (await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/meta/prompts/${prompt.id}/params`)).json();
-      if (Array.isArray(response)) promptParams = response;
-    }
-
-    const initialParams = promptParams?.map(param => {
+    const initialParams = prompt.parameters?.map(param => {
       return {
         parameter_id: param.parameter.id,
         score: param.score,
         name: param.parameter.name,
         is_visible: param.is_visible,
         is_editable: param.is_editable,
-        descriptions: param.descriptions,
+        descriptions: param.parameter?.score_descriptions ?? param.descriptions,
       };
     });
 
@@ -84,11 +82,17 @@ export async function createEditor(
     ]);
   };
 
-  const createNode = async (name: string, prompt: Prompts) => {
+  const createNode = async (label: string, prompt: Prompts) => {
     const socket = new ClassicPreset.Socket("socket");
-    const node = new Node(name);
+    const node = new Node(label);
     node.addInput("Input", new ClassicPreset.Input(socket, "Input"));
     node.addOutput("Output", new ClassicPreset.Output(socket, "Output"));
+    node.editor = editor;
+    node.area = area;
+    node.resetNodeData = _node => {
+      setSelectedNode(_node);
+      setSelectedNodeData(null);
+    };
 
     const allNodes = editor.getNodes();
 
@@ -150,7 +154,7 @@ export async function createEditor(
     // Once all connections are added, arrange the layout
     Promise.all(connectionPromises).then(() => {
       arrange.layout();
-      AreaExtensions.zoomAt(area, editor.getNodes());
+      AreaExtensions.zoomAt(area, editor.getNodes(), { scale: 1 });
       isLoaded = true;
     });
   });
@@ -189,29 +193,18 @@ export async function createEditor(
       });
 
       updateTemplateDependencies(target, source);
+
+      return context;
     }
 
-    if (context.type === "nodepicked") {
-      const allNodes = editor.getNodes();
-      allNodes?.forEach(allNodesNode => {
-        allNodesNode.selected = false;
-        area.update("node", allNodesNode.id);
-      });
-
-      const node = editor.getNode(context.data.id);
-      node.selected = true;
-      area.update("node", node.id);
-      setSelectedNode(node);
-      setSelectedConnection(null);
-    }
-
-    if (context.type === "pointerdown") {
+    if (context.type === "pointerdown" || context.type === "nodepicked") {
       const allNodes = editor.getNodes();
       allNodes?.forEach(node => {
         node.selected = false;
         area.update("node", node.id);
       });
       setSelectedNode(null);
+      setSelectedNodeData(null);
       setSelectedConnection(null);
     }
 
@@ -224,6 +217,7 @@ export async function createEditor(
     Presets.classic.setup({
       area,
       customize: {
+        // @ts-ignore
         node() {
           return PromptCard;
         },
@@ -238,6 +232,7 @@ export async function createEditor(
   );
 
   connection.addPreset(() => new BidirectFlow());
+  area.area.setZoomHandler(new Zoom(0.05));
 
   editor.use(area);
   area.use(connection);

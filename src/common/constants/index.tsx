@@ -1,18 +1,25 @@
 import { ReactNode } from "react";
 import {
+  Api,
   AutoAwesome,
   AutoAwesomeOutlined,
+  ChatBubbleOutline,
   HomeRounded,
+  InfoOutlined,
   MenuBookRounded,
   RocketLaunchOutlined,
   Search,
   SettingsOutlined,
+  Tune,
 } from "@mui/icons-material/";
 
 import { Prompt } from "@/assets/icons/prompts";
 import { TemplateStatus } from "@/core/api/dto/templates";
 import { InputType } from "@/common/types/prompt";
 import { DeploymentStatus } from "../types/deployments";
+import NoteStackIcon from "@/assets/icons/NoteStackIcon";
+import ExtensionSettingsIcon from "@/assets/icons/ExtensionSettingsIcon";
+import { Link } from "@/components/Prompt/Types";
 
 export interface MenuType {
   id: number;
@@ -26,7 +33,7 @@ export const ProfileMenuItems: MenuType[] = [
     id: 1,
     icon: <AutoAwesomeOutlined />,
     href: "/sparks",
-    name: "My Sparks",
+    name: "My works",
   },
   {
     id: 2,
@@ -131,3 +138,44 @@ export enum BUILDER_TYPE {
 }
 
 export const BuilderInputTypes: InputType[] = ["text", "number", "integer", "code", "choices", "file"];
+
+export const TemplateSidebarLinks: Link[] = [
+  {
+    name: "customize",
+    icon: <Tune />,
+    title: "Customize",
+  },
+
+  {
+    name: "executions",
+    icon: <NoteStackIcon />,
+    title: "My Works",
+  },
+  {
+    name: "feedback",
+    icon: <ChatBubbleOutline />,
+    title: "Feedback",
+  },
+  {
+    name: "api",
+    icon: <Api />,
+    title: "API access",
+  },
+  {
+    name: "extension",
+    icon: <ExtensionSettingsIcon />,
+    title: "Extension settings",
+  },
+  {
+    name: "details",
+    icon: <InfoOutlined />,
+    title: "Template details",
+  },
+];
+
+export const OUTPUT_FORMATS = ["JSON", "XML", "Markdown", "Custom"] as const;
+
+export type OutputFormat = (typeof OUTPUT_FORMATS)[number];
+
+export const LCL_STR_KEY = "promptify:";
+export const COOKIE_STR_KEY = "promptify_";
