@@ -41,7 +41,9 @@ function useChat({ questionPrefixContent, template }: Props) {
     welcomeMessage.text = `${questionPrefixContent ?? greeting} ${template.title} ? ${allQuestions.join(" ")}`;
 
     setMessages([welcomeMessage]);
-    addToQueuedMessages([createMessage("form")]);
+    if (!selectedExecution) {
+      addToQueuedMessages([createMessage("form")]);
+    }
     dispatch(setAnswers([]));
   };
 
@@ -97,7 +99,7 @@ function useChat({ questionPrefixContent, template }: Props) {
       newMessages.push(createMessage("spark"));
     }
 
-    if (!formMessageExists && !formMessageExistsInQueue && (!generatedExecution || repeatedExecution)) {
+    if (!formMessageExists && (!generatedExecution || repeatedExecution)) {
       newMessages.push(createMessage("form"));
     }
 
