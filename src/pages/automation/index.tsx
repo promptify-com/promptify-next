@@ -2,11 +2,8 @@ import React from "react";
 import { Box, Grid, Stack, Typography, Skeleton } from "@mui/material";
 import { Layout } from "@/layout";
 import Protected from "@/components/Protected";
-import SparksContainer from "@/components/SparksContainer";
-import SparksTemplatePlaceholder from "@/components/placeholders/SparksTemplatePlaceholder";
-import { useGetWorkflowsQuery } from "@/core/api/automations";
+import { useGetWorkflowsQuery } from "@/core/api/workflows";
 import CardWorkflow from "@/components/common/cards/CardWorkflow";
-import LatestTemplatePlaceholder from "@/components/placeholders/LatestTemplatePlaceholder";
 import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
 
 const Sparks = () => {
@@ -51,7 +48,7 @@ const Sparks = () => {
                   lineHeight={"34.32px"}
                   letterSpacing={"0.17"}
                 >
-                  Automations
+                  Automation
                 </Typography>
                 <Stack gap={3}>
                   {workflows ? (
