@@ -55,9 +55,9 @@ function Sidebar() {
     },
     {
       name: "Automation",
-      href: isValidUser ? "/automation" : "/signin",
+      href: "/automation",
       icon: <Route />,
-      active: isAutomationPage,
+      active: pathname === "/automation",
       external: false,
       reload: false,
     },
