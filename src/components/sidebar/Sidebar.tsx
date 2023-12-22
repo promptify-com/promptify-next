@@ -57,7 +57,7 @@ function Sidebar() {
       name: "Automation",
       href: "/automation",
       icon: <Route />,
-      active: pathname === "/automation",
+      active: isAutomationPage,
       external: false,
       reload: false,
     },
