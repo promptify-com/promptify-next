@@ -10,17 +10,18 @@ import Image from "@/components/design-system/Image";
 import useTruncate from "@/hooks/useTruncate";
 import { theme } from "@/theme";
 import { IWorkflow } from "@/common/types/workflow";
-import { redirectToPath } from "@/common/helpers";
+import { useRouter } from "next/router";
 
 type CardWorkflowProps = {
   workflow: IWorkflow;
 };
 
 function CardWorkflow({ workflow }: CardWorkflowProps) {
+  const router = useRouter();
   const { truncate } = useTruncate();
 
   return (
-    <Box onClick={() => redirectToPath(`/automation/${workflow.id}`)}>
+    <Box onClick={() => router.push(`/automation/${workflow.id}`)}>
       <Card
         sx={{
           borderRadius: "16px",

@@ -1,9 +1,9 @@
 import React from "react";
 import ComingSoon from "../soon";
 
-const Sparks = () => {
+export default function Page() {
   return <ComingSoon backTo="/automation" />;
-};
+}
 
 export async function getServerSideProps({ params }: any) {
   return {
@@ -14,5 +14,3 @@ export async function getServerSideProps({ params }: any) {
     },
   };
 }
-
-export default Sparks;

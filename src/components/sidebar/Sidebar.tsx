@@ -2,7 +2,7 @@ import StickyNote2 from "@mui/icons-material/StickyNote2";
 import Home from "@mui/icons-material/Home";
 import Drawer from "@mui/material/Drawer";
 import { usePathname } from "next/navigation";
-import React, { useState } from "react";
+import React from "react";
 import { useAppSelector } from "@/hooks/useStore";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { ExtensionRounded, FolderSpecial, HelpRounded, Inventory2Rounded, Route } from "@mui/icons-material";
@@ -16,6 +16,7 @@ function Sidebar() {
   const pathname = usePathname();
   const isPromptsPage = pathname.split("/")[1] === "explore";
   const isTemplatePage = pathname.split("/")[1] === "prompt";
+  const isAutomationPage = pathname.split("/")[1] === "automation";
   const slug = isTemplatePage ? pathname.split("/")[2] : "create";
   const isValidUser = useAppSelector(isValidUserFn);
   const navItems: NavItem[] = [
@@ -55,7 +56,7 @@ function Sidebar() {
       name: "Automation",
       href: isValidUser ? "/automation" : "/signin",
       icon: <Route />,
-      active: pathname === "/automation",
+      active: isAutomationPage,
       external: false,
       reload: false,
     },

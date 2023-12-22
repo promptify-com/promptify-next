@@ -98,7 +98,7 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
       label: "Automation",
       icon: <Route />,
       href: isValidUser ? "/automation" : "/signin",
-      active: pathname === "/automation",
+      active: splittedPath[1] == "automation",
       external: false,
     },
     {
