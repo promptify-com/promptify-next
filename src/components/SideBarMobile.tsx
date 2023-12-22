@@ -36,7 +36,9 @@ import { useRouteChangeOverlay } from "@/hooks/useRouteChangeOverlay";
 import { theme } from "@/theme";
 import Image from "./design-system/Image";
 import StickyNote2 from "@mui/icons-material/StickyNote2";
-import { FolderSpecial, HelpRounded } from "@mui/icons-material";
+import FolderSpecial from "@mui/icons-material/FolderSpecial";
+import HelpRounded from "@mui/icons-material/HelpRounded";
+import Route from "@mui/icons-material/Route";
 
 type SidebarType = "navigation" | "profile";
 
@@ -57,7 +59,7 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
 }) => {
   const router = useRouter();
   const pathname = router.pathname;
-  const splittedPath = pathname.split("/");
+  const splitPath = pathname.split("/");
   const dispatch = useDispatch();
   const logout = useLogout();
   const title = useSelector((state: RootState) => state.filters.title || "");
@@ -82,7 +84,7 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
       label: "Prompts",
       icon: <StickyNote2 />,
       href: "/explore",
-      active: splittedPath[1] == "explore",
+      active: splitPath[1] == "explore",
       external: false,
     },
     {
@@ -90,6 +92,13 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
       icon: <FolderSpecial />,
       href: isValidUser ? "/sparks" : "/signin",
       active: pathname == "/sparks",
+      external: false,
+    },
+    {
+      label: "Automation",
+      icon: <Route />,
+      href: isValidUser ? "/automation" : "/signin",
+      active: splitPath[1] == "automation",
       external: false,
     },
     {

@@ -10,6 +10,7 @@ import ExtensionRounded from "@mui/icons-material/ExtensionRounded";
 import FolderSpecial from "@mui/icons-material/FolderSpecial";
 import HelpRounded from "@mui/icons-material/HelpRounded";
 import Inventory2Rounded from "@mui/icons-material/Inventory2Rounded";
+import Route from "@mui/icons-material/Route";
 import { NavItem } from "@/common/types/sidebar";
 import SidebarItem from "./SidebarItem";
 import { theme } from "@/theme";
@@ -17,6 +18,7 @@ import { theme } from "@/theme";
 function Sidebar() {
   const pathname = usePathname();
   const isPromptsPage = pathname.split("/")[1] === "explore";
+  const isAutomationPage = pathname.split("/")[1] === "automation";
   const isValidUser = useAppSelector(isValidUserFn);
   const navItems: NavItem[] = [
     {
@@ -49,6 +51,14 @@ function Sidebar() {
       icon: <Inventory2Rounded />,
       active: pathname.includes("/prompt-builder"),
       external: isValidUser,
+      reload: false,
+    },
+    {
+      name: "Automation",
+      href: isValidUser ? "/automation" : "/signin",
+      icon: <Route />,
+      active: isAutomationPage,
+      external: false,
       reload: false,
     },
     {
