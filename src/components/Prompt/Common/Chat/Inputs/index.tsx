@@ -1,5 +1,4 @@
 import { useRef } from "react";
-import { useRouter } from "next/router";
 import TextField from "@mui/material/TextField";
 import Edit from "@mui/icons-material/Edit";
 import Stack from "@mui/material/Stack";
@@ -10,27 +9,25 @@ import { setAnswers } from "@/core/store/chatSlice";
 import Code from "@/components/Prompt/Common/Chat/Inputs/Code";
 import Choices from "@/components/Prompt/Common/Chat/Inputs/Choices";
 import File from "@/components/Prompt/Common/Chat/Inputs/File";
+import useVariant from "@/components/Prompt/Hooks/useVariant";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { PromptInputType } from "@/components/Prompt/Types";
 import type { IAnswer } from "@/components/Prompt/Types/chat";
 
 interface Props {
   input: IPromptInput;
-  isGenerating: boolean;
-  isFile: boolean;
   value: PromptInputType;
 }
 
-function RenderInputType({ input, isGenerating, isFile, value }: Props) {
-  const router = useRouter();
-  const variant = router.query.variant;
-  const fieldRef = useRef<HTMLInputElement | null>(null);
-
+function RenderInputType({ input, value }: Props) {
   const dispatch = useAppDispatch();
   const { dispatchNewExecutionData } = useApiAccess();
+  const { isVariantB, isVariantA } = useVariant();
 
-  const isSimulationStreaming = useAppSelector(state => state.chat.isSimulationStreaming);
-  const answers = useAppSelector(state => state.chat.answers);
+  const { answers, isSimulationStreaming } = useAppSelector(state => state.chat);
+  const isGenerating = useAppSelector(state => state.template.isGenerating);
+
+  const fieldRef = useRef<HTMLInputElement | null>(null);
 
   const dynamicWidth = () => {
     const textMeasureElement = document.createElement("span");
@@ -67,6 +64,8 @@ function RenderInputType({ input, isGenerating, isFile, value }: Props) {
     dispatch(setAnswers(_answers));
     dispatchNewExecutionData();
   };
+
+  const isFile = value instanceof File;
 
   switch (input.type) {
     case "code":
@@ -105,11 +104,11 @@ function RenderInputType({ input, isGenerating, isFile, value }: Props) {
         >
           <TextField
             inputRef={ref => (fieldRef.current = ref)}
-            fullWidth={variant === "b"}
+            fullWidth={isVariantB}
             disabled={isGenerating}
             sx={{
               ".MuiInputBase-input": {
-                width: variant === "a" ? dynamicWidth() : "inherit",
+                width: isVariantA ? dynamicWidth() : "inherit",
                 p: 0,
                 color: "onSurface",
                 fontSize: { xs: 12, md: 14 },
@@ -138,7 +137,7 @@ function RenderInputType({ input, isGenerating, isFile, value }: Props) {
             value={value}
             onChange={e => onChange(e.target.value, input)}
           />
-          {variant === "a" && (
+          {isVariantA && (
             <Edit
               onClick={() => fieldRef.current?.focus()}
               sx={{

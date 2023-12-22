@@ -2,27 +2,24 @@ import InputLabel from "@mui/material/InputLabel";
 import Radio from "@mui/material/Radio";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { useRouter } from "next/router";
 
 import { useAppSelector } from "@/hooks/useStore";
 import RenderInputType from "./Inputs";
 import CustomTooltip from "../CustomTooltip";
+import useVariant from "../../Hooks/useVariant";
 import type { IPromptInput } from "@/common/types/prompt";
-import type { PromptInputType } from "../../Types";
 
 interface Props {
   input: IPromptInput;
-  value: PromptInputType;
 }
 
-function FormInput({ input, value }: Props) {
-  const router = useRouter();
+function FormInput({ input }: Props) {
+  const answers = useAppSelector(state => state.chat.answers);
 
-  const isGenerating = useAppSelector(state => state.template.isGenerating);
+  const { isVariantB } = useVariant();
+  const { fullName, required, type, name } = input;
 
-  const isFile = value instanceof File;
-  const variant = router.query.variant;
-  const isVariantB = variant === "b";
+  const value = answers.find(answer => answer.inputName === name)?.answer ?? "";
 
   return (
     <Stack
@@ -48,7 +45,7 @@ function FormInput({ input, value }: Props) {
           color: "primary.main",
         }}
       >
-        {input.fullName} {input.required && <span>*</span>} :
+        {fullName} {required && <span>*</span>} :
       </InputLabel>
       <Stack
         flex={1}
@@ -58,8 +55,6 @@ function FormInput({ input, value }: Props) {
         <RenderInputType
           input={input}
           value={value}
-          isGenerating={isGenerating}
-          isFile={isFile}
         />
       </Stack>
       {isVariantB && (
@@ -68,7 +63,7 @@ function FormInput({ input, value }: Props) {
           alignItems={"center"}
           gap={"8px"}
         >
-          {input.required && (
+          {required && (
             <Typography
               sx={{
                 fontSize: { xs: 12, md: 15 },
@@ -87,7 +82,7 @@ function FormInput({ input, value }: Props) {
                 textTransform={"capitalize"}
                 fontSize={11}
               >
-                {input.type}
+                {type}
               </Typography>
             }
           />
