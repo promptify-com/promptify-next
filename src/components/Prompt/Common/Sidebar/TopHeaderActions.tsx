@@ -4,7 +4,6 @@ import Button from "@mui/material/Button";
 import Icon from "@mui/material/Icon";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
-import { useRouter } from "next/router";
 import { alpha } from "@mui/material/styles";
 import SwitchAccessShortcut from "@mui/icons-material/SwitchAccessShortcut";
 
@@ -14,15 +13,16 @@ import { TemplateSidebarLinks } from "@/common/constants";
 import { setActiveToolbarLink } from "@/core/store/templatesSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import BaseButton from "@/components/base/BaseButton";
-import { switchVariant } from "@/components/Prompt/Utils";
+import useVariant from "../../Hooks/useVariant";
 import type { Link } from "@/components/Prompt/Types";
 
 function TopHeaderActions({ executionsLength = 0 }) {
   const dispatch = useAppDispatch();
 
   const isGenerating = useAppSelector(state => state.template.isGenerating);
-  const router = useRouter();
-  const variant = router.query.variant as string;
+
+  const { variant, switchVariant } = useVariant();
+
   const ToolbarItems = TemplateSidebarLinks.filter(link => link.name === "executions" || link.name === "details");
 
   const renderIcon = (link: Link) => {
@@ -91,7 +91,7 @@ function TopHeaderActions({ executionsLength = 0 }) {
           sx={btnStyle}
           disabled={isGenerating}
           startIcon={<SwitchAccessShortcut sx={{ fontSize: 20 }} />}
-          onClick={() => switchVariant(variant, router)}
+          onClick={switchVariant}
         >
           {variant === "a" ? "B" : "A"}{" "}
         </BaseButton>

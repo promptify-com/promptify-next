@@ -22,7 +22,7 @@ import { getBaseUrl, redirectToPath } from "@/common/helpers";
 import { IEditPrompts } from "@/common/types/builder";
 import FavoriteIcon from "./FavoriteIcon";
 import BaseButton from "@/components/base/BaseButton";
-import { switchVariant } from "@/components/Prompt/Utils";
+import useVariant from "../Hooks/useVariant";
 
 interface TemplateHeaderProps {
   template: Templates;
@@ -34,8 +34,8 @@ export default function Header({ template }: TemplateHeaderProps) {
 
   const isGenerating = useAppSelector(state => state.template.isGenerating);
 
-  const activeVariant = router.query.variant as string;
-  const isVariantA = activeVariant === "a";
+  const { switchVariant, variant, isVariantA } = useVariant();
+
   const currentUser = useAppSelector(state => state.user.currentUser);
   const isValidUser = useAppSelector(isValidUserFn);
 
@@ -255,9 +255,9 @@ export default function Header({ template }: TemplateHeaderProps) {
           sx={btnStyle}
           disabled={isGenerating}
           startIcon={<SwitchAccessShortcut sx={{ fontSize: 20 }} />}
-          onClick={() => switchVariant(activeVariant, router)}
+          onClick={switchVariant}
         >
-          Switch to {activeVariant === "a" ? "B" : "A"}{" "}
+          Switch to {variant === "a" ? "B" : "A"}{" "}
         </BaseButton>
       </Stack>
     </Stack>

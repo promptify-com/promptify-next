@@ -54,8 +54,6 @@ function Form({ onScrollToBottom }: FormProps) {
 
   const isVariantB = variant === "b";
 
-  const fadeTimeout = 800;
-
   return (
     <Stack>
       {isVariantB ? (
@@ -63,7 +61,6 @@ function Form({ onScrollToBottom }: FormProps) {
       ) : (
         <Fade
           in={true}
-          timeout={fadeTimeout}
           onTransitionEnd={() => dispatch(setIsSimulationStreaming(false))}
           addEndListener={onScrollToBottom}
         >

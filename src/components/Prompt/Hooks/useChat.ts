@@ -89,13 +89,15 @@ function useChat({ questionPrefixContent, template }: Props) {
     let newMessages = [...messages];
 
     const sparkMessageExists = newMessages.some(msg => msg.type === "spark");
+
     const formMessageExists = newMessages.some(msg => msg.type === "form");
+    const formMessageExistsInQueue = queuedMessages.some(msg => msg.type === "form");
 
     if (!sparkMessageExists) {
       newMessages.push(createMessage("spark"));
     }
 
-    if (!formMessageExists && (!generatedExecution || repeatedExecution)) {
+    if (!formMessageExists && !formMessageExistsInQueue && (!generatedExecution || repeatedExecution)) {
       newMessages.push(createMessage("form"));
     }
 
