@@ -151,10 +151,10 @@ export default function Chat() {
   const userChatted = useAppSelector(state => state.chat.userChatted);
   const currentSessionId = useRef<number>(isBrowser() ? Storage.get(N8N_SESSION_ID) : 0);
 
-  useEffect(() => {
-    initMessages();
-    loadPreviousSession();
-  }, []);
+  // useEffect(() => {
+  //   initMessages();
+  //   loadPreviousSession();
+  // }, []);
 
   useEffect(() => {
     if (!isSimulationStreaming && !!queuedMessages.length) {
