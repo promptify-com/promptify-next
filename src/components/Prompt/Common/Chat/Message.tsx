@@ -62,6 +62,7 @@ export const Message = ({ message, isExecutionMode, onScrollToBottom }: MessageB
       flexDirection={"column"}
       gap={"16px"}
       position={"relative"}
+      width={!fromUser ? "fit-content" : "100%"}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -106,7 +107,6 @@ export const Message = ({ message, isExecutionMode, onScrollToBottom }: MessageB
             alignItems={"center"}
             color={fromUser ? "#725472" : "onSurface"}
           >
-            {text === "Run Prompt" && <Bolt />}
             <MessageContent
               content={text}
               shouldStream={!fromUser}
