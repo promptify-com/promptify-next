@@ -6,7 +6,6 @@ import HomeRounded from "@mui/icons-material/HomeRounded";
 import MenuBookRounded from "@mui/icons-material/MenuBookRounded";
 import MenuRounded from "@mui/icons-material/MenuRounded";
 import Search from "@mui/icons-material/Search";
-import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Grid from "@mui/material/Grid";
@@ -39,6 +38,7 @@ import { useRouteChangeOverlay } from "@/hooks/useRouteChangeOverlay";
 import { theme } from "@/theme";
 import { redirectToPath } from "@/common/helpers";
 import Image from "./design-system/Image";
+import { Route } from "@mui/icons-material";
 
 type SidebarType = "navigation" | "profile";
 
@@ -92,6 +92,13 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
       icon: <AutoAwesome />,
       href: isValidUser ? "/sparks" : "/signin",
       active: pathname == "/sparks",
+      external: false,
+    },
+    {
+      label: "Automation",
+      icon: <Route />,
+      href: isValidUser ? "/automation" : "/signin",
+      active: splittedPath[1] == "automation",
       external: false,
     },
     {
