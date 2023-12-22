@@ -109,7 +109,7 @@ function RenderInputType({ input, isGenerating, isFile, value }: Props) {
             disabled={isGenerating}
             sx={{
               ".MuiInputBase-input": {
-                width: variant === "a" ? dynamicWidth() : "auto",
+                width: variant === "a" ? dynamicWidth() : "inherit",
                 p: 0,
                 color: "onSurface",
                 fontSize: { xs: 12, md: 14 },
