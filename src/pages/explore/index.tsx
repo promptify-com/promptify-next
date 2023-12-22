@@ -81,17 +81,20 @@ export default function ExplorePage({ categories }: Props) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ res }) => {
-  res.setHeader("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=60");
-
+export async function getStaticProps() {
   const categories = await getCategories();
+
+  if (!categories.length) {
+    throw new Error(`Failed to fetch categories`);
+  }
 
   return {
     props: {
+      categories,
       title: "Explore and Boost Your Creativity",
       description:
         "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
-      categories,
     },
+    revalidate: 3600,
   };
-};
+}
