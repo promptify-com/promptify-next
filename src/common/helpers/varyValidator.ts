@@ -1,8 +1,8 @@
 import { TemplateQuestionGeneratorData, VaryParams } from "@/core/api/dto/prompts";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { getExecutionById } from "@/hooks/api/executions";
-import { VaryValidatorResponse } from "@/components/Prompt/Types/chat";
 import { parseMessageData } from "./parseMessageData";
+import { VaryValidatorResponse } from "@/components/Prompt/Types/chat";
 
 const answersValidatorTemplateId = 547;
 

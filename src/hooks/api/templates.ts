@@ -53,3 +53,13 @@ export const getTemplateBySlug = async (slug: string): Promise<Templates> => {
       return response.data;
     });
 };
+
+export const getTemplateById = async (id: number): Promise<Templates> => {
+  return await authClient
+    .get(`/api/meta/templates/${id}/`, {
+      headers: { "Content-Type": "application/json" },
+    })
+    .then(response => {
+      return response.data;
+    });
+};
