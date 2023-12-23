@@ -128,7 +128,7 @@ async function fetchTempates(ids: number[]) {
 function extractTemplateIDs(message: string) {
   const tplIds =
     message
-      .match(/(id|Template):?(\s*[^\d]\s*(\d+))?/gi)
+      .match(/(id|Template)(\W+)?:?(\s*[^\d]\s*(\d+)|\d+)?/gi)
       ?.map(tpl => +tpl.replace(/[^\d]+/, ""))
       .filter(Boolean) ?? [];
   const tplIds2 =
@@ -300,7 +300,7 @@ export default function Chat() {
       newMessages.push({
         id: randomId(),
         text: preferableContent
-          .replace(/[\(]?(promptify_tpl_id|template id|are|with id):?(\s*[^\d]\s*(\d+))?[ \)]?/gi, "")
+          .replace(/[\(]?(promptify_tpl_id|template id|are|with id)(\W+)?:?(\s*[^\d]\s*(\d+)|\d+)?[ \)]?/gi, "")
           .replace(/((\,\d+)|#\d+|([\(]?id:\s*\d+[\)]?))/gi, "")
           .trim(),
         createdAt: new Date().toISOString(),
