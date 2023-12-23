@@ -5,6 +5,10 @@ interface TruncateOptions {
 
 const useTruncate = () => {
   const truncate = (text: string, options: TruncateOptions) => {
+    if (!text) {
+      return "";
+    }
+
     const { length, omission = "..." } = options;
 
     if (text.length > length) {
