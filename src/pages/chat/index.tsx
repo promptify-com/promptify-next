@@ -460,8 +460,14 @@ export default function Chat() {
   );
 }
 
-export async function getStaticProps() {
-  return { props: {} };
+export async function getServerSideProps() {
+  return {
+    props: {
+      title: "Promptify | Chat",
+      description:
+        "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
+    },
+  };
 }
 
 const TemplatesList = ({ templates, title }: { templates: Templates[]; title: string }) => {

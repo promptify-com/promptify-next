@@ -138,4 +138,14 @@ function Deployments() {
   );
 }
 
+export async function getServerSideProps() {
+  return {
+    props: {
+      title: "Promptify | Deployments",
+      description:
+        "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
+    },
+  };
+}
+
 export default Deployments;
