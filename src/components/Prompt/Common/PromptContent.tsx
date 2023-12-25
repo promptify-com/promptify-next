@@ -3,17 +3,17 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
 import { TemplatesExecutions } from "@/core/api/dto/templates";
-import type { Prompts } from "@/core/api/dto/prompts";
 import { theme } from "@/theme";
 import { useAppSelector } from "@/hooks/useStore";
 
 interface Props {
   execution: TemplatesExecutions | null;
-  prompt: Prompts;
+  content: string;
+  engineName: string;
   id: number;
 }
 
-function PromptContent({ execution, prompt, id }: Props) {
+function PromptContent({ execution, content, engineName, id }: Props) {
   const answers = useAppSelector(state => state.chat.answers);
   function replacePlaceholdersWithAnswers(content: string): React.ReactNode {
     const placeholderRegex = /{{(.*?):.*?}}/g;
@@ -91,12 +91,12 @@ function PromptContent({ execution, prompt, id }: Props) {
     return parts;
   }
 
-  const updatedContent = replacePlaceholdersWithAnswers(prompt.content);
+  const updatedContent = replacePlaceholdersWithAnswers(content);
 
   return (
     <Stack direction={"column"}>
       <Typography>
-        Prompt #{id}, {prompt.engine.name}
+        Prompt #{id}, {engineName}
       </Typography>
       <Typography
         mt={2}

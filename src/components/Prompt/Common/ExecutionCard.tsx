@@ -263,7 +263,8 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
                         >
                           <PromptContent
                             id={index + 1}
-                            prompt={prompt}
+                            content={prompt?.content ?? ""}
+                            engineName={prompt?.engine?.name ?? ""}
                             execution={execution as TemplatesExecutions}
                           />
                         </Stack>
