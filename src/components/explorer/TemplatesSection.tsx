@@ -12,14 +12,14 @@ import { useState } from "react";
 
 interface TemplatesSectionProps {
   templates: Templates[] | TemplateExecutionsDisplay[] | undefined;
-  isLoading: boolean;
+  isLoading?: boolean;
+  templateLoading?: boolean;
   filtred?: boolean;
   title?: string;
   isLatestTemplates?: boolean;
   onNextPage?: () => void;
   type?: string;
   hasMore?: boolean;
-  templateLoading?: boolean;
   isInfiniteScrolling?: boolean;
   hasPrev?: boolean;
   onPrevPage?: () => void;
@@ -27,7 +27,7 @@ interface TemplatesSectionProps {
 
 export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
   templates,
-  isLoading,
+  isLoading = false,
   filtred,
   title,
   isLatestTemplates = false,
@@ -41,11 +41,13 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
 }) => {
   const [openFilters, setOpenFilters] = useState(false);
 
-  if (!isLoading && !templates?.length) {
+  const filtersAllowed = type !== "myLatestExecutions";
+
+  const isNotLoading = !isLoading && !templateLoading;
+
+  if (isNotLoading && !templates?.length) {
     return null;
   }
-
-  const filtersAllowed = type !== "myLatestExecutions";
 
   return (
     <Box width={"100%"}>

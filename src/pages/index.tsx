@@ -30,7 +30,7 @@ const HomePage = () => {
   const isValidUser = useSelector(isValidUserFn);
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
   const [getCurrentUser] = userApi.endpoints.getCurrentUser.useLazyQuery();
-  const { data: myLatestExecutions, isLoading: isMyLatestExecutionsLoading } = useGetLatestExecutedTemplatesQuery(
+  const { data: myLatestExecutions, isFetching: isMyLatestExecutionsLoading } = useGetLatestExecutedTemplatesQuery(
     undefined,
     {
       skip: !isValidUser,
@@ -140,15 +140,16 @@ const HomePage = () => {
                     Welcome, {currentUser?.username}
                   </Typography>
                 </Grid>
+
                 <TemplatesSection
                   isLatestTemplates
-                  isLoading={isMyLatestExecutionsLoading}
-                  templates={myLatestExecutions || []}
+                  templateLoading={isMyLatestExecutionsLoading}
+                  templates={myLatestExecutions}
                   title="Your Latest Templates:"
                   type="myLatestExecutions"
                 />
                 <TemplatesSection
-                  isLoading={isSuggestedTemplateLoading}
+                  templateLoading={isSuggestedTemplateLoading}
                   templates={suggestedTemplates}
                   title=" You may like these prompt templates:"
                   type="suggestedTemplates"
