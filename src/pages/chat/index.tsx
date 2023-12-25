@@ -230,12 +230,21 @@ export default function Chat() {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const [queuedMessages, setQueuedMessages] = useState<IMessage[]>([]);
   const isSimulationStreaming = useAppSelector(state => state.chat.isSimulationStreaming);
+<<<<<<< HEAD
   // const userChatted = useAppSelector(state => state.chat.userChatted);
   const currentSessionId = useRef<number>(isBrowser() ? Storage.get(N8N_SESSION_ID) : 0);
 
   // useEffect(() => {
   //   // initMessages();
   //   loadPreviousSession();
+=======
+  const userChatted = useAppSelector(state => state.chat.userChatted);
+  const currentSessionId = useRef<number>(isBrowser() ? Storage.get(N8N_SESSION_ID) : 0);
+
+  // useEffect(() => {
+  //   initMessages();
+  // loadPreviousSession();
+>>>>>>> 90de1dd5 (chore: revert back showing landing page)
   // }, []);
 
   useEffect(() => {
