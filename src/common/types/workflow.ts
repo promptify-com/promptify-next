@@ -6,7 +6,7 @@ interface User {
   avatar?: string;
 }
 
-interface Node {
+export interface INode {
   id: string;
   name: string;
   type: string;
@@ -22,6 +22,6 @@ export interface IWorkflow {
   description?: string;
   image?: string;
   created_by: User;
-  nodes: Node[];
+  nodes: INode[];
   created_at: string;
 }

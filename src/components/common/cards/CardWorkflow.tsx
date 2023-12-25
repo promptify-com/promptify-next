@@ -9,12 +9,30 @@ import ArrowBackIosRoundedIcon from "@mui/icons-material/ArrowBackIosRounded";
 import Image from "@/components/design-system/Image";
 import useTruncate from "@/hooks/useTruncate";
 import { theme } from "@/theme";
-import { IWorkflow } from "@/common/types/workflow";
+import type { INode, IWorkflow } from "@/common/types/workflow";
 import { useRouter } from "next/router";
+import { addSpaceBetweenCapitalized } from "@/common/helpers";
 
 type CardWorkflowProps = {
   workflow: IWorkflow;
 };
+
+const UNWANTED_TYPES = ["switch", "set", "merge"];
+
+function getNodeNames(nodes: INode[] = [], slice = 3) {
+  const types = nodes
+    .map(node => {
+      if (!node.type) return undefined;
+
+      return node.type.replace(/(n8n-nodes-base|@n8n\/n8n-nodes-langchain)\./gi, "");
+    })
+    .filter(Boolean) as string[];
+  const filteredTypes = Array.from(new Set(types.map(type => addSpaceBetweenCapitalized(type)))).filter(
+    type => !UNWANTED_TYPES.includes(type),
+  );
+
+  return filteredTypes.slice(0, slice);
+}
 
 function CardWorkflow({ workflow }: CardWorkflowProps) {
   const router = useRouter();
@@ -121,23 +139,21 @@ function CardWorkflow({ workflow }: CardWorkflowProps) {
                 gap: "4px",
               }}
             >
-              {workflow.nodes
-                ?.filter(node => node.name)
-                .slice(0, 3)
-                .map(node => (
-                  <Chip
-                    key={node.id}
-                    clickable
-                    size="small"
-                    label={node.name}
-                    sx={{
-                      fontSize: { xs: 11, md: 13 },
-                      fontWeight: 400,
-                      bgcolor: "surface.5",
-                      color: "onSurface",
-                    }}
-                  />
-                ))}
+              {getNodeNames(workflow.nodes ?? []).map(node => (
+                <Chip
+                  key={node}
+                  clickable
+                  size="small"
+                  label={node}
+                  sx={{
+                    fontSize: { xs: 11, md: 13 },
+                    fontWeight: 400,
+                    bgcolor: "surface.5",
+                    color: "onSurface",
+                    textTransform: "capitalize",
+                  }}
+                />
+              ))}
             </Grid>
             <Grid
               sx={{
