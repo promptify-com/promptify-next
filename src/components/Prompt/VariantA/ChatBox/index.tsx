@@ -233,18 +233,22 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
 
   const selectGeneratedExecution = async () => {
     if (generatedExecution?.id) {
-      const _newExecution = await getExecutionById(generatedExecution.id);
-      dispatch(setSelectedExecution(_newExecution));
+      try {
+        const _newExecution = await getExecutionById(generatedExecution.id);
+        dispatch(setSelectedExecution(_newExecution));
 
-      const generatedExecutionMessage: IMessage = {
-        id: randomId(),
-        text: "",
-        type: "spark",
-        createdAt: new Date(new Date().getTime() - 1000),
-        fromUser: false,
-        spark: _newExecution,
-      };
-      setMessages(prevMessages => prevMessages.concat(generatedExecutionMessage));
+        const generatedExecutionMessage: IMessage = {
+          id: randomId(),
+          text: "",
+          type: "spark",
+          createdAt: new Date(new Date().getTime() - 1000),
+          fromUser: false,
+          spark: _newExecution,
+        };
+        setMessages(prevMessages => prevMessages.concat(generatedExecutionMessage));
+      } catch {
+        window.location.reload();
+      }
     }
   };
 

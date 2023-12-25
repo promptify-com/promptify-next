@@ -169,8 +169,12 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
 
   const selectGeneratedExecution = async () => {
     if (generatedExecution?.id) {
-      const _newExecution = await getExecutionById(generatedExecution.id);
-      dispatch(setSelectedExecution(_newExecution));
+      try {
+        const _newExecution = await getExecutionById(generatedExecution.id);
+        dispatch(setSelectedExecution(_newExecution));
+      } catch {
+        window.location.reload();
+      }
     }
   };
 
