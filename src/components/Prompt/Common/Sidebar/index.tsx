@@ -10,7 +10,6 @@ import {
   Typography,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import { useRouter } from "next/router";
 import Close from "@mui/icons-material/Close";
 
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
@@ -27,6 +26,7 @@ import { TemplateSidebarLinks } from "@/common/constants";
 import FavoriteIcon from "../FavoriteIcon";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { isDesktopViewPort } from "@/common/helpers";
+import useVariant from "../../Hooks/useVariant";
 
 const drawerWidth = 352;
 
@@ -39,12 +39,11 @@ interface SidebarProps {
 
 function Sidebar({ template, executions, isLoading, refetchExecutions }: SidebarProps) {
   const dispatch = useAppDispatch();
-  const activeLink = useAppSelector(state => state.template.activeSideBarLink);
-  const isValidUser = useAppSelector(isValidUserFn);
+  const { isVariantA } = useVariant();
   const isMobile = !isDesktopViewPort();
 
-  const router = useRouter();
-  const activeVariant = router.query.variant;
+  const activeLink = useAppSelector(state => state.template.activeSideBarLink);
+  const isValidUser = useAppSelector(isValidUserFn);
 
   const theme = useTheme();
 
@@ -53,8 +52,6 @@ function Sidebar({ template, executions, isLoading, refetchExecutions }: Sidebar
   };
 
   const open = !!activeLink?.name;
-
-  const isVariantA = activeVariant === "a";
 
   const shouldFilterCustomize = isVariantA || (!isVariantA && !isValidUser);
 
@@ -147,7 +144,6 @@ function Sidebar({ template, executions, isLoading, refetchExecutions }: Sidebar
 
                 {filtredSidebarLinks.map(link => (
                   <ToolbarItem
-                    activeVariant={activeVariant as string}
                     key={link.title}
                     item={link}
                     template={template}
@@ -168,7 +164,6 @@ function Sidebar({ template, executions, isLoading, refetchExecutions }: Sidebar
             >
               {filtredSidebarLinks.map(link => (
                 <ToolbarItem
-                  activeVariant={activeVariant as string}
                   key={link.title}
                   item={link}
                   template={template}

@@ -13,19 +13,19 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { theme } from "@/theme";
 import type { Templates } from "@/core/api/dto/templates";
 import type { Link } from "@/components/Prompt/Types";
+import useVariant from "../../Hooks/useVariant";
 
 interface Props {
   template: Templates;
   item: Link;
   executionsLength: number;
-  activeVariant: string;
 }
 
-function ToolbarItem({ item, activeVariant, template, executionsLength }: Props) {
+function ToolbarItem({ item, template, executionsLength }: Props) {
   const dispatch = useAppDispatch();
+  const { isVariantA } = useVariant();
 
   const activeLink = useAppSelector(state => state.template.activeSideBarLink);
-  const isVariantA = activeVariant === "a";
 
   const handleClick = (link: Link) => {
     if (link.name !== "customize") {

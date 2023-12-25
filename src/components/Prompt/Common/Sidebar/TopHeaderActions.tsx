@@ -62,9 +62,10 @@ function TopHeaderActions({ executionsLength = 0 }) {
                     height: 22,
                     p: "15px",
                     bgcolor: "surface.3",
+                    ...linkStyle,
                   }}
                 >
-                  {link.title}
+                  <span className="MuiButton-label">{link.title}</span>
                 </Button>
               </Badge>
             ) : (
@@ -76,9 +77,10 @@ function TopHeaderActions({ executionsLength = 0 }) {
                   height: 22,
                   p: "15px",
                   bgcolor: "surface.3",
+                  ...linkStyle,
                 }}
               >
-                {link.title}
+                <span className="MuiButton-label">{link.title}</span>
               </Button>
             )}
           </Fragment>
@@ -99,6 +101,17 @@ function TopHeaderActions({ executionsLength = 0 }) {
     </Stack>
   );
 }
+
+const linkStyle = {
+  ".MuiButton-label": {
+    fontSize: "10px",
+  },
+  "@media (min-width:400px)": {
+    ".MuiButton-label": {
+      fontSize: "14px",
+    },
+  },
+};
 
 const btnStyle = {
   color: "secondary.main",

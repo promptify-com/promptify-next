@@ -6,24 +6,22 @@ import Slider from "@mui/material/Slider";
 
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import CustomTooltip from "@/components/Prompt/Common/CustomTooltip";
-import type { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
 import { setparamsValues } from "@/core/store/chatSlice";
-import { useRouter } from "next/router";
+import useVariant from "../../Hooks/useVariant";
+import type { PromptParams } from "@/core/api/dto/prompts";
 
 interface GeneratorParamProps {
   param: PromptParams;
-  paramValue: ResOverrides | undefined;
 }
 
-export default function FormParam({ param, paramValue }: GeneratorParamProps) {
+export default function FormParam({ param }: GeneratorParamProps) {
   const dispatch = useAppDispatch();
-  const router = useRouter();
-
-  const variant = router.query.variant;
-  const isVariantB = variant === "b";
+  const { isVariantB } = useVariant();
 
   const paramsValues = useAppSelector(state => state.chat.paramsValues);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
+
+  const paramValue = paramsValues.find(paramVal => paramVal.id === param.prompt);
 
   const handleScoreChange = (score: number) => {
     const paramId = param.parameter.id;

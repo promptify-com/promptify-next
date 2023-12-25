@@ -1,5 +1,4 @@
-import { useRef } from "react";
-import { useRouter } from "next/router";
+import { useEffect, useRef, useState } from "react";
 import TextField from "@mui/material/TextField";
 import Edit from "@mui/icons-material/Edit";
 import Stack from "@mui/material/Stack";
@@ -10,27 +9,32 @@ import { setAnswers } from "@/core/store/chatSlice";
 import Code from "@/components/Prompt/Common/Chat/Inputs/Code";
 import Choices from "@/components/Prompt/Common/Chat/Inputs/Choices";
 import File from "@/components/Prompt/Common/Chat/Inputs/File";
+import useVariant from "@/components/Prompt/Hooks/useVariant";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { PromptInputType } from "@/components/Prompt/Types";
 import type { IAnswer } from "@/components/Prompt/Types/chat";
 
 interface Props {
   input: IPromptInput;
-  isGenerating: boolean;
-  isFile: boolean;
   value: PromptInputType;
 }
 
-function RenderInputType({ input, isGenerating, isFile, value }: Props) {
-  const router = useRouter();
-  const variant = router.query.variant;
-  const fieldRef = useRef<HTMLInputElement | null>(null);
-
+function RenderInputType({ input, value: initialValue }: Props) {
   const dispatch = useAppDispatch();
   const { dispatchNewExecutionData } = useApiAccess();
+  const { isVariantB } = useVariant();
 
-  const isSimulationStreaming = useAppSelector(state => state.chat.isSimulationStreaming);
-  const answers = useAppSelector(state => state.chat.answers);
+  const { answers, isSimulationStreaming } = useAppSelector(state => state.chat);
+  const isGenerating = useAppSelector(state => state.template.isGenerating);
+
+  const { name: inputName, required, type, prompt, question } = input;
+  const [localValue, setLocalValue] = useState(initialValue);
+
+  const fieldRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    setLocalValue(initialValue);
+  }, [initialValue]);
 
   const dynamicWidth = () => {
     const textMeasureElement = document.createElement("span");
@@ -38,43 +42,58 @@ function RenderInputType({ input, isGenerating, isFile, value }: Props) {
     textMeasureElement.style.fontWeight = "400";
     textMeasureElement.style.position = "absolute";
     textMeasureElement.style.visibility = "hidden";
-    textMeasureElement.innerHTML = value.toString() || (input.required ? "Required" : "Optional");
+    textMeasureElement.innerHTML = initialValue.toString() || (required ? "Required" : "Optional");
     document.body.appendChild(textMeasureElement);
     const width = textMeasureElement.offsetWidth;
     document.body.removeChild(textMeasureElement);
     return width;
   };
 
+  const isFile = initialValue instanceof File;
+  const isTextualType = type === "text" || type === "number" || type === "integer";
+
+  const onBlur = () => {
+    if (isSimulationStreaming) return;
+
+    updateAnswers(localValue, input);
+  };
+
   const onChange = (value: string | File, input: IPromptInput) => {
-    if (isSimulationStreaming) {
-      return;
+    if (isSimulationStreaming) return;
+    if (isTextualType) {
+      setLocalValue(value);
+    } else {
+      updateAnswers(value, input);
     }
+  };
 
-    const { name: inputName, required } = input;
-
+  const updateAnswers = (value: PromptInputType, input: IPromptInput) => {
     const _answers = [...answers.filter(answer => answer.inputName !== inputName)];
 
-    if (!(!(value instanceof File) && typeof value === "string" && value.trim() === "")) {
+    const isEmptyTextualInput = isTextualType && typeof value === "string" && value.trim() === "";
+
+    if (!isEmptyTextualInput) {
       const newAnswer: IAnswer = {
-        question: input.question!,
+        question: question!,
         required,
         inputName,
-        prompt: input.prompt!,
+        prompt: prompt!,
         answer: value,
       };
       _answers.push(newAnswer);
     }
+
     dispatch(setAnswers(_answers));
     dispatchNewExecutionData();
   };
 
-  switch (input.type) {
+  switch (type) {
     case "code":
       return (
         <Code
           input={input}
           onChange={onChange}
-          value={value}
+          value={initialValue}
           isGenerating={isGenerating}
         />
       );
@@ -82,7 +101,7 @@ function RenderInputType({ input, isGenerating, isFile, value }: Props) {
       return (
         <Choices
           input={input}
-          value={value}
+          value={initialValue}
           onChange={onChange}
           isGenerating={isGenerating}
         />
@@ -91,7 +110,7 @@ function RenderInputType({ input, isGenerating, isFile, value }: Props) {
       return (
         <File
           input={input}
-          value={value as File}
+          value={initialValue as File}
           isFile={isFile}
           onChange={onChange}
         />
@@ -105,11 +124,11 @@ function RenderInputType({ input, isGenerating, isFile, value }: Props) {
         >
           <TextField
             inputRef={ref => (fieldRef.current = ref)}
-            fullWidth={variant === "b"}
+            fullWidth={isVariantB}
             disabled={isGenerating}
             sx={{
               ".MuiInputBase-input": {
-                width: variant === "a" ? dynamicWidth() : "auto",
+                width: !isVariantB ? dynamicWidth() : "inherit",
                 p: 0,
                 color: "onSurface",
                 fontSize: { xs: 12, md: 14 },
@@ -135,10 +154,11 @@ function RenderInputType({ input, isGenerating, isFile, value }: Props) {
             }}
             placeholder={"Type here"}
             type={input.type}
-            value={value}
+            value={localValue}
             onChange={e => onChange(e.target.value, input)}
+            onBlur={onBlur}
           />
-          {variant === "a" && (
+          {!isVariantB && (
             <Edit
               onClick={() => fieldRef.current?.focus()}
               sx={{
@@ -146,7 +166,7 @@ function RenderInputType({ input, isGenerating, isFile, value }: Props) {
                 color: "#375CA9",
                 p: "4px",
                 cursor: "pointer",
-                opacity: value ? 0.9 : 0.45,
+                opacity: initialValue ? 0.9 : 0.45,
                 ":hover": {
                   opacity: 1,
                 },
