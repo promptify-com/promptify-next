@@ -117,8 +117,11 @@ export const ChatInput = ({
                     p: "15px",
                     fontSize: 13,
                     fontWeight: 500,
+                    bgcolor: "primary.main",
+                    borderColor: "primary.main",
                     ":hover": {
-                      bgcolor: "action.hover",
+                      bgcolor: "surface.1",
+                      color: "primary.main",
                     },
                   }}
                   variant="contained"

@@ -48,12 +48,12 @@ const MessageSender: React.FC<MessageSenderProps> = ({
 
   const sendBtnStyle = {
     border: "none",
-    bgcolor: localValue ? "primary.light" : "transparent",
+    bgcolor: localValue ? "primary.main" : "transparent",
     p: "4px",
     width: "27px",
     height: "27px",
     ":hover": {
-      bgcolor: localValue ? "primary.light" : "transparent",
+      bgcolor: localValue ? "primary.main" : "transparent",
     },
     "& svg": {
       width: showGenerate && !localValue ? "24px" : "19px",
@@ -144,7 +144,7 @@ const MessageSender: React.FC<MessageSenderProps> = ({
         >
           <SlowMotionVideo
             sx={{
-              color: isGenerating ? "text.secondary" : "#375CA9",
+              color: isGenerating ? "text.secondary" : "primary.main",
               cursor: isGenerating ? "not-allowed" : "pointer",
             }}
           />

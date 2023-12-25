@@ -178,7 +178,7 @@ function RenderInputType({ input, value: initialValue }: Props) {
               onClick={() => fieldRef.current?.focus()}
               sx={{
                 fontSize: 16,
-                color: "#375CA9",
+                color: "primary.main",
                 p: "4px",
                 cursor: "pointer",
                 opacity: initialValue ? 0.9 : 0.45,
