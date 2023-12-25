@@ -85,7 +85,9 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
     if (questions.length > 0) {
       let allQuestions = questions.map(_q => _q.question);
 
-      addToQueuedMessages([
+      const hasRequiredInput = questions.some(question => question.required);
+
+      const queuedMessages: IMessage[] = [
         {
           id: randomId(),
           text: allQuestions.join(" "),
@@ -102,15 +104,19 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
           fromUser: false,
           noHeader: true,
         },
-        {
+      ];
+      if (hasRequiredInput) {
+        queuedMessages.push({
           id: randomId(),
           text: "This is a list of information we need to execute this template:",
           type: "text",
           createdAt,
           fromUser: false,
           noHeader: true,
-        },
-      ]);
+        });
+      }
+
+      addToQueuedMessages(queuedMessages);
     }
 
     setMessages([welcomeMessage]);
