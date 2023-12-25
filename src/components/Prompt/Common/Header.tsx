@@ -30,11 +30,10 @@ interface TemplateHeaderProps {
 
 export default function Header({ template }: TemplateHeaderProps) {
   const router = useRouter();
+  const { switchVariant, variant, isVariantA } = useVariant();
   const dispatch = useAppDispatch();
 
   const isGenerating = useAppSelector(state => state.template.isGenerating);
-
-  const { switchVariant, variant, isVariantA } = useVariant();
 
   const currentUser = useAppSelector(state => state.user.currentUser);
   const isValidUser = useAppSelector(isValidUserFn);
