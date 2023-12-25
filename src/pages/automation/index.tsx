@@ -1,9 +1,8 @@
 import React from "react";
 import { Box, Grid, Stack, Typography, Skeleton } from "@mui/material";
 import { Layout } from "@/layout";
-import Protected from "@/components/Protected";
 import { useGetWorkflowsQuery } from "@/core/api/workflows";
-import CardWorkflow from "@/components/common/cards/CardWorkflow";
+import CardWorkflow from "@/components/Automation/CardWorkflow";
 import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
 
 const Automation = () => {
@@ -66,7 +65,7 @@ const Automation = () => {
                       mt: "50px",
                     }}
                   >
-                    No works found
+                    No automation found
                   </Typography>
                 )}
               </Stack>

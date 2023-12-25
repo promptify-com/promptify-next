@@ -9,30 +9,13 @@ import ArrowBackIosRoundedIcon from "@mui/icons-material/ArrowBackIosRounded";
 import Image from "@/components/design-system/Image";
 import useTruncate from "@/hooks/useTruncate";
 import { theme } from "@/theme";
-import type { INode, IWorkflow } from "@/common/types/workflow";
 import { useRouter } from "next/router";
-import { addSpaceBetweenCapitalized } from "@/common/helpers";
+import type { IWorkflow } from "./types";
+import { getNodeNames } from "./helpers";
 
 type CardWorkflowProps = {
   workflow: IWorkflow;
 };
-
-const UNWANTED_TYPES = ["switch", "set", "merge"];
-
-function getNodeNames(nodes: INode[] = [], slice = 3) {
-  const types = nodes
-    .map(node => {
-      if (!node.type) return undefined;
-
-      return node.type.replace(/(n8n-nodes-base|@n8n\/n8n-nodes-langchain)\./gi, "");
-    })
-    .filter(Boolean) as string[];
-  const filteredTypes = Array.from(new Set(types.map(type => addSpaceBetweenCapitalized(type)))).filter(
-    type => !UNWANTED_TYPES.includes(type),
-  );
-
-  return filteredTypes.slice(0, slice);
-}
 
 function CardWorkflow({ workflow }: CardWorkflowProps) {
   const router = useRouter();
@@ -114,8 +97,8 @@ function CardWorkflow({ workflow }: CardWorkflowProps) {
             </Grid>
             <Box display={{ md: "none" }}>
               <Image
-                src={workflow.created_by.avatar ?? require("@/assets/images/default-avatar.jpg")}
-                alt={workflow.created_by.first_name?.slice(0, 1) ?? "P"}
+                src={workflow?.created_by?.avatar ?? require("@/assets/images/default-avatar.jpg")}
+                alt={workflow?.created_by?.first_name?.slice(0, 1) ?? "P"}
                 width={32}
                 height={32}
                 style={{
@@ -139,7 +122,7 @@ function CardWorkflow({ workflow }: CardWorkflowProps) {
                 gap: "4px",
               }}
             >
-              {getNodeNames(workflow.nodes ?? []).map(node => (
+              {getNodeNames(workflow.data.nodes ?? []).map(node => (
                 <Chip
                   key={node}
                   clickable
