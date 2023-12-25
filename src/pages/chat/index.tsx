@@ -158,14 +158,13 @@ export default function Chat() {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const [queuedMessages, setQueuedMessages] = useState<IMessage[]>([]);
   const isSimulationStreaming = useAppSelector(state => state.chat.isSimulationStreaming);
-  const userChatted = true;
-  // useAppSelector(state => state.chat.userChatted);
+  const userChatted = useAppSelector(state => state.chat.userChatted);
   const currentSessionId = useRef<number>(isBrowser() ? Storage.get(N8N_SESSION_ID) : 0);
 
-  useEffect(() => {
-    initMessages();
-    // loadPreviousSession();
-  }, []);
+  // useEffect(() => {
+  //   initMessages();
+  // loadPreviousSession();
+  // }, []);
 
   useEffect(() => {
     if (!isSimulationStreaming && !!queuedMessages.length) {
