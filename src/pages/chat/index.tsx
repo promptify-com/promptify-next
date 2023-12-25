@@ -39,7 +39,8 @@ interface LoadPreviousSessionResponseItem {
   data: LoadPreviousSessionItem[];
 }
 interface SendMessageResponse {
-  output: string;
+  output?: string;
+  message?: string;
 }
 
 async function loadPreviousSessionAPI(sessionId: number): Promise<LoadPreviousSessionResponseItem> {
@@ -270,17 +271,22 @@ export default function Chat() {
           saveSessionId();
         }
         const sendMessageResponse = await sendMessageAPI(input, currentSessionId.current);
-        const ids = extractTemplateIDs(sendMessageResponse.output);
 
-        if (!!ids.length) {
-          const templates = await fetchTempates(ids);
-          const _templates = templateMessages(templates, "sendMessage", sendMessageResponse.output);
-
-          if (!!_templates.length) {
-            addToQueuedMessages(_templates);
-          }
+        if (sendMessageResponse.message) {
+          botMessage.text = sendMessageResponse.message;
         } else {
-          botMessage.text = sendMessageResponse.output;
+          const ids = extractTemplateIDs(sendMessageResponse.output!);
+
+          if (!!ids.length) {
+            const templates = await fetchTempates(ids);
+            const _templates = templateMessages(templates, "sendMessage", sendMessageResponse.output);
+
+            if (!!_templates.length) {
+              addToQueuedMessages(_templates);
+            }
+          } else {
+            botMessage.text = sendMessageResponse.output!;
+          }
         }
       } catch (err) {
         botMessage.text = "Oops! I couldn't get your request, Please try again. " + err;
