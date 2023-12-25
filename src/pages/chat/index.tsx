@@ -129,7 +129,7 @@ async function fetchTempates(ids: number[]) {
 function extractTemplateIDs(message: string) {
   const tplIds =
     message
-      .match(/(id|Template)(\W+)?:?(\s*[^\d]\s*(\d+)|\d+)?/gi)
+      .match(/(template id|template)(\W+)?:?(\s*[^\d]\s*(\d+)|\d+)?/gi)
       ?.map(tpl => +tpl.replace(/[^\d]+/, ""))
       .filter(Boolean) ?? [];
   const tplIds2 =
@@ -142,6 +142,15 @@ function extractTemplateIDs(message: string) {
   return Array.from(mergedIds)?.map(n => +n) ?? [];
 }
 
+function extractWorkflowIDs(message: string) {
+  return (
+    message
+      .match(/(workflow id|workflow)(\W+)?:?(\s*[^\d]\s*(\d+)|\d+)?/gi)
+      ?.map(wkf => +wkf.replace(/[^\d]+/, ""))
+      .filter(Boolean) ?? []
+  );
+}
+
 export default function Chat() {
   const dispatch = useAppDispatch();
   const [messages, setMessages] = useState<IMessage[]>([]);
@@ -149,13 +158,14 @@ export default function Chat() {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const [queuedMessages, setQueuedMessages] = useState<IMessage[]>([]);
   const isSimulationStreaming = useAppSelector(state => state.chat.isSimulationStreaming);
-  const userChatted = useAppSelector(state => state.chat.userChatted);
+  const userChatted = true;
+  // useAppSelector(state => state.chat.userChatted);
   const currentSessionId = useRef<number>(isBrowser() ? Storage.get(N8N_SESSION_ID) : 0);
 
-  // useEffect(() => {
-  //   initMessages();
-  //   loadPreviousSession();
-  // }, []);
+  useEffect(() => {
+    initMessages();
+    // loadPreviousSession();
+  }, []);
 
   useEffect(() => {
     if (!isSimulationStreaming && !!queuedMessages.length) {
@@ -223,15 +233,26 @@ export default function Chat() {
     }
   };
   const initMessages = () => {
-    setMessages([
-      {
-        id: randomId(),
-        text: "Hi there! 👋. My name is Promptify. How can I assist you today?",
-        createdAt: new Date().toISOString(),
-        fromUser: false,
-        type: "text",
-      },
-    ]);
+    setTimeout(() => {
+      setMessages(msgs =>
+        msgs.concat({
+          id: randomId(),
+          text: "Yes, I can help you plan a wedding. According to \nWORKFLOW ID: 2, \nnamed Wedding Planner, we'll start with an initial consultation to discuss your vision and budget\n\nchoose a venue, hire vendors, manage the guest list and more, all the way through to the day of the wedding and post-wedding tasks.",
+          createdAt: new Date().toISOString(),
+          fromUser: false,
+          type: "text",
+        }),
+      );
+    }, 1000);
+    // setMessages([
+    // {
+    //   id: randomId(),
+    //   text: "Hi there! 👋. My name is Promptify. How can I assist you today?",
+    //   createdAt: new Date().toISOString(),
+    //   fromUser: false,
+    //   type: "text",
+    // },
+    // ]);
   };
   const scrollToBottom = () => {
     const messagesContainer = messagesContainerRef.current;
