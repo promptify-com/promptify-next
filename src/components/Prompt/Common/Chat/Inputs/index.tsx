@@ -22,7 +22,7 @@ interface Props {
 function RenderInputType({ input, value }: Props) {
   const dispatch = useAppDispatch();
   const { dispatchNewExecutionData } = useApiAccess();
-  const { isVariantB, isVariantA } = useVariant();
+  const { isVariantB } = useVariant();
 
   const { answers, isSimulationStreaming } = useAppSelector(state => state.chat);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
@@ -108,7 +108,7 @@ function RenderInputType({ input, value }: Props) {
             disabled={isGenerating}
             sx={{
               ".MuiInputBase-input": {
-                width: isVariantA ? dynamicWidth() : "inherit",
+                width: !isVariantB ? dynamicWidth() : "inherit",
                 p: 0,
                 color: "onSurface",
                 fontSize: { xs: 12, md: 14 },
@@ -137,7 +137,7 @@ function RenderInputType({ input, value }: Props) {
             value={value}
             onChange={e => onChange(e.target.value, input)}
           />
-          {isVariantA && (
+          {!isVariantB && (
             <Edit
               onClick={() => fieldRef.current?.focus()}
               sx={{
