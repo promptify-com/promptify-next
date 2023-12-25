@@ -27,26 +27,36 @@ function RenderInputType({ input, value: initialValue }: Props) {
   const { answers, isSimulationStreaming } = useAppSelector(state => state.chat);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
 
-  const { name: inputName, required, type, prompt, question } = input;
   const [localValue, setLocalValue] = useState(initialValue);
-
+  const [inputWidth, setInputWidth] = useState<string>();
   const fieldRef = useRef<HTMLInputElement | null>(null);
+
+  const { name: inputName, required, type, prompt, question } = input;
 
   useEffect(() => {
     setLocalValue(initialValue);
   }, [initialValue]);
 
-  const dynamicWidth = () => {
-    const textMeasureElement = document.createElement("span");
-    textMeasureElement.style.fontSize = "14px";
-    textMeasureElement.style.fontWeight = "400";
-    textMeasureElement.style.position = "absolute";
-    textMeasureElement.style.visibility = "hidden";
-    textMeasureElement.innerHTML = initialValue.toString() || (required ? "Required" : "Optional");
-    document.body.appendChild(textMeasureElement);
-    const width = textMeasureElement.offsetWidth;
-    document.body.removeChild(textMeasureElement);
-    return width;
+  const calculateDynamicWidth = (value: string) => {
+    const tempEl = document.createElement("span");
+
+    tempEl.style.fontSize = "14px";
+    tempEl.style.fontFamily = "Arial";
+    tempEl.style.visibility = "hidden";
+    tempEl.style.position = "absolute";
+    tempEl.style.whiteSpace = "nowrap";
+    document.body.appendChild(tempEl);
+
+    const placeholder = required ? "Required" : "Optional";
+    tempEl.textContent = value.toString() || placeholder;
+
+    const width = tempEl.offsetWidth;
+
+    document.body.removeChild(tempEl);
+
+    const ExtraPadding = 10;
+
+    return `${width + ExtraPadding}px`;
   };
 
   const isFile = initialValue instanceof File;
@@ -55,19 +65,21 @@ function RenderInputType({ input, value: initialValue }: Props) {
   const onBlur = () => {
     if (isSimulationStreaming) return;
 
-    updateAnswers(localValue, input);
+    updateAnswers(localValue);
   };
 
-  const onChange = (value: string | File, input: IPromptInput) => {
+  const onChange = (value: string | File) => {
     if (isSimulationStreaming) return;
     if (isTextualType) {
       setLocalValue(value);
+      if (isVariantB) return;
+      setInputWidth(calculateDynamicWidth(value.toString()));
     } else {
-      updateAnswers(value, input);
+      updateAnswers(value);
     }
   };
 
-  const updateAnswers = (value: PromptInputType, input: IPromptInput) => {
+  const updateAnswers = (value: PromptInputType) => {
     const _answers = [...answers.filter(answer => answer.inputName !== inputName)];
 
     const isEmptyTextualInput = isTextualType && typeof value === "string" && value.trim() === "";
@@ -122,6 +134,7 @@ function RenderInputType({ input, value: initialValue }: Props) {
           gap={1}
           position={"relative"}
           alignItems={"center"}
+          width={"100%"}
         >
           <TextField
             inputRef={ref => (fieldRef.current = ref)}
@@ -129,7 +142,8 @@ function RenderInputType({ input, value: initialValue }: Props) {
             disabled={isGenerating}
             sx={{
               ".MuiInputBase-input": {
-                width: !isVariantB ? dynamicWidth() : "inherit",
+                ...(isVariantB ? {} : { width: inputWidth ? inputWidth : "70px" }),
+
                 p: 0,
                 color: "onSurface",
                 fontSize: { xs: 12, md: 14 },
@@ -153,10 +167,10 @@ function RenderInputType({ input, value: initialValue }: Props) {
                 border: 0,
               },
             }}
-            placeholder={"Type here"}
-            type={input.type}
+            placeholder={isVariantB ? "Type here" : required ? "Required" : "Optional"}
+            type={type}
             value={localValue}
-            onChange={e => onChange(e.target.value, input)}
+            onChange={e => onChange(e.target.value)}
             onBlur={onBlur}
           />
           {!isVariantB && (

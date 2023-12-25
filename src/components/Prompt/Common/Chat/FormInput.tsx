@@ -8,6 +8,7 @@ import RenderInputType from "./Inputs";
 import CustomTooltip from "../CustomTooltip";
 import useVariant from "../../Hooks/useVariant";
 import type { IPromptInput } from "@/common/types/prompt";
+import { Box } from "@mui/material";
 
 interface Props {
   input: IPromptInput;
@@ -37,20 +38,25 @@ function FormInput({ input }: Props) {
           name="radio-buttons"
         />
       )}
+      <Box>
+        <InputLabel
+          sx={{
+            fontSize: { xs: 12, md: 15 },
+            fontWeight: 500,
+            color: "primary.main",
+          }}
+        >
+          {fullName} {required && isVariantB && <span>*</span>} :
+        </InputLabel>
+      </Box>
 
-      <InputLabel
-        sx={{
-          fontSize: { xs: 12, md: 15 },
-          fontWeight: 500,
-          color: "primary.main",
-        }}
-      >
-        {fullName} {required && <span>*</span>} :
-      </InputLabel>
       <Stack
-        flex={1}
         display={"flex"}
         alignItems={"start"}
+        position={"relative"}
+        flex={1}
+        width={"100%"}
+        maxWidth={"95%"}
       >
         <RenderInputType
           input={input}
