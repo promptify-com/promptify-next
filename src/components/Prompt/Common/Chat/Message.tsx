@@ -106,6 +106,7 @@ export const Message = ({ message, isExecutionMode, onScrollToBottom }: MessageB
             display={"flex"}
             alignItems={"center"}
             color={fromUser ? "#725472" : "onSurface"}
+            whiteSpace={"pre-wrap"}
           >
             <MessageContent
               content={text}
