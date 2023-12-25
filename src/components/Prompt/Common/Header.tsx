@@ -23,6 +23,8 @@ import { IEditPrompts } from "@/common/types/builder";
 import FavoriteIcon from "./FavoriteIcon";
 import BaseButton from "@/components/base/BaseButton";
 import useVariant from "../Hooks/useVariant";
+import { ViewWeekOutlined, WebAssetOutlined } from "@mui/icons-material";
+import ClientOnly from "@/components/base/ClientOnly";
 
 interface TemplateHeaderProps {
   template: Templates;
@@ -249,16 +251,18 @@ export default function Header({ template }: TemplateHeaderProps) {
           </Stack>
         )}
 
-        <BaseButton
-          variant="text"
-          color="custom"
-          sx={btnStyle}
-          disabled={isGenerating}
-          startIcon={<SwitchAccessShortcut sx={{ fontSize: 20 }} />}
-          onClick={switchVariant}
-        >
-          Switch to {variant === "a" ? "B" : "A"}{" "}
-        </BaseButton>
+        <ClientOnly>
+          <BaseButton
+            variant="text"
+            color="custom"
+            sx={btnStyle}
+            disabled={isGenerating}
+            startIcon={<SwitchAccessShortcut sx={{ fontSize: 20 }} />}
+            onClick={switchVariant}
+          >
+            {variant === "a" ? <ViewWeekOutlined /> : <WebAssetOutlined />}
+          </BaseButton>
+        </ClientOnly>
       </Stack>
     </Stack>
   );

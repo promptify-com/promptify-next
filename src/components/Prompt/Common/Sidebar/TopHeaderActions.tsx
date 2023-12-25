@@ -15,6 +15,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import BaseButton from "@/components/base/BaseButton";
 import useVariant from "../../Hooks/useVariant";
 import type { Link } from "@/components/Prompt/Types";
+import { ViewWeekOutlined, WebAssetOutlined } from "@mui/icons-material";
 
 function TopHeaderActions({ executionsLength = 0 }) {
   const dispatch = useAppDispatch();
@@ -93,7 +94,7 @@ function TopHeaderActions({ executionsLength = 0 }) {
           startIcon={<SwitchAccessShortcut sx={{ fontSize: 20 }} />}
           onClick={switchVariant}
         >
-          {variant === "a" ? "B" : "A"}{" "}
+          {variant === "a" ? <ViewWeekOutlined /> : <WebAssetOutlined />}
         </BaseButton>
       </Box>
     </Stack>
