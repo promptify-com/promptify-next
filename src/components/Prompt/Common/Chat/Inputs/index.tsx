@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import TextField from "@mui/material/TextField";
 import Edit from "@mui/icons-material/Edit";
 import Stack from "@mui/material/Stack";
@@ -19,7 +19,7 @@ interface Props {
   value: PromptInputType;
 }
 
-function RenderInputType({ input, value }: Props) {
+function RenderInputType({ input, value: initialValue }: Props) {
   const dispatch = useAppDispatch();
   const { dispatchNewExecutionData } = useApiAccess();
   const { isVariantB } = useVariant();
@@ -27,7 +27,14 @@ function RenderInputType({ input, value }: Props) {
   const { answers, isSimulationStreaming } = useAppSelector(state => state.chat);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
 
+  const { name: inputName, required, type, prompt, question } = input;
+  const [localValue, setLocalValue] = useState(initialValue);
+
   const fieldRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    setLocalValue(initialValue);
+  }, [initialValue]);
 
   const dynamicWidth = () => {
     const textMeasureElement = document.createElement("span");
@@ -35,45 +42,58 @@ function RenderInputType({ input, value }: Props) {
     textMeasureElement.style.fontWeight = "400";
     textMeasureElement.style.position = "absolute";
     textMeasureElement.style.visibility = "hidden";
-    textMeasureElement.innerHTML = value.toString() || (input.required ? "Required" : "Optional");
+    textMeasureElement.innerHTML = initialValue.toString() || (required ? "Required" : "Optional");
     document.body.appendChild(textMeasureElement);
     const width = textMeasureElement.offsetWidth;
     document.body.removeChild(textMeasureElement);
     return width;
   };
 
+  const isFile = initialValue instanceof File;
+  const isTextualType = type === "text" || type === "number" || type === "integer";
+
+  const onBlur = () => {
+    if (isSimulationStreaming) return;
+
+    updateAnswers(localValue, input);
+  };
+
   const onChange = (value: string | File, input: IPromptInput) => {
-    if (isSimulationStreaming) {
-      return;
+    if (isSimulationStreaming) return;
+    if (isTextualType) {
+      setLocalValue(value);
+    } else {
+      updateAnswers(value, input);
     }
+  };
 
-    const { name: inputName, required } = input;
-
+  const updateAnswers = (value: PromptInputType, input: IPromptInput) => {
     const _answers = [...answers.filter(answer => answer.inputName !== inputName)];
 
-    if (!(!(value instanceof File) && typeof value === "string" && value.trim() === "")) {
+    const isEmptyTextualInput = isTextualType && typeof value === "string" && value.trim() === "";
+
+    if (!isEmptyTextualInput) {
       const newAnswer: IAnswer = {
-        question: input.question!,
+        question: question!,
         required,
         inputName,
-        prompt: input.prompt!,
+        prompt: prompt!,
         answer: value,
       };
       _answers.push(newAnswer);
     }
+
     dispatch(setAnswers(_answers));
     dispatchNewExecutionData();
   };
 
-  const isFile = value instanceof File;
-
-  switch (input.type) {
+  switch (type) {
     case "code":
       return (
         <Code
           input={input}
           onChange={onChange}
-          value={value}
+          value={initialValue}
           isGenerating={isGenerating}
         />
       );
@@ -81,7 +101,7 @@ function RenderInputType({ input, value }: Props) {
       return (
         <Choices
           input={input}
-          value={value}
+          value={initialValue}
           onChange={onChange}
           isGenerating={isGenerating}
         />
@@ -90,7 +110,7 @@ function RenderInputType({ input, value }: Props) {
       return (
         <File
           input={input}
-          value={value as File}
+          value={initialValue as File}
           isFile={isFile}
           onChange={onChange}
         />
@@ -134,8 +154,9 @@ function RenderInputType({ input, value }: Props) {
             }}
             placeholder={"Type here"}
             type={input.type}
-            value={value}
+            value={localValue}
             onChange={e => onChange(e.target.value, input)}
+            onBlur={onBlur}
           />
           {!isVariantB && (
             <Edit
@@ -145,7 +166,7 @@ function RenderInputType({ input, value }: Props) {
                 color: "#375CA9",
                 p: "4px",
                 cursor: "pointer",
-                opacity: value ? 0.9 : 0.45,
+                opacity: initialValue ? 0.9 : 0.45,
                 ":hover": {
                   opacity: 1,
                 },

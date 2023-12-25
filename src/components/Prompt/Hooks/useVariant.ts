@@ -65,10 +65,7 @@ const useVariant = () => {
     const newVariant = variant === "a" ? "b" : "a";
     setVariant(newVariant);
 
-    if (typeof window !== "undefined") {
-      Cookie.set("variant", newVariant, 30);
-    }
-
+    Cookie.set("variant", newVariant, 30);
     clearStoredStates();
 
     router.replace({ pathname: router.pathname, query: { ...router.query, variant: newVariant } }, undefined, {
