@@ -29,9 +29,9 @@ export const MessageSparkBox: React.FC<MessageSparkBoxProps> = ({ execution, min
 
   const getContent = async () => {
     const prompt = execution.prompt_executions?.find(exec => {
-      const _prompt = promptsData && promptsData.find(prompt => prompt.id === exec.prompt)!;
+      const _prompt = promptsData && promptsData.find(prompt => prompt.id === exec.prompt);
 
-      return !isImageOutput(exec.output, _prompt?.engine?.output_type!);
+      return !isImageOutput(exec.output, _prompt?.engine?.output_type ?? "TEXT");
     });
     const fetchedContent = await markdownToHTML(prompt?.output || "");
     setContent(fetchedContent);

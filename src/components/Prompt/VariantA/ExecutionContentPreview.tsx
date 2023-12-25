@@ -1,17 +1,17 @@
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import type { IAnswer } from "@/components/Prompt/Types/chat";
-import type { Prompts } from "@/core/api/dto/prompts";
 import { TemplatesExecutions } from "@/core/api/dto/templates";
 
 interface Props {
   execution: TemplatesExecutions | null;
-  prompt: Prompts;
+  content: string;
+  engineName: string;
   answers?: IAnswer[];
   id: number;
 }
 
-function ExecutionContentPreview({ execution, prompt, id, answers }: Props) {
+function ExecutionContentPreview({ execution, content, engineName, id, answers }: Props) {
   function replacePlaceholdersWithAnswers(content: string): React.ReactNode {
     const placeholderRegex = /{{(.*?):.*?}}/g;
     const dollarWordRegex = /\$[a-zA-Z0-9_]+/g;
@@ -88,12 +88,12 @@ function ExecutionContentPreview({ execution, prompt, id, answers }: Props) {
     return parts;
   }
 
-  const updatedContent = replacePlaceholdersWithAnswers(prompt.content);
+  const updatedContent = replacePlaceholdersWithAnswers(content);
 
   return (
     <Stack direction={"column"}>
       <Typography>
-        Prompt #{id}, {prompt.engine.name}
+        Prompt #{id}, {engineName}
       </Typography>
       <Typography
         mt={2}

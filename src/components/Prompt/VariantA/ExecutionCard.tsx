@@ -67,11 +67,13 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
       const processedOutputs = await Promise.all(
         sortedByPrompts.map(async exec => {
           const _content = "message" in exec ? exec.message : exec.output;
-          const prompt = promptsData.find(prompt => prompt.id === exec.prompt)!;
+          const prompt = promptsData.find(prompt => prompt.id === exec.prompt);
 
           return {
             ...exec,
-            content: !isImageOutput(_content, prompt.engine.output_type) ? await markdownToHTML(_content) : _content,
+            content: !isImageOutput(_content, prompt?.engine?.output_type ?? "TEXT")
+              ? await markdownToHTML(_content)
+              : _content,
           };
         }),
       );
@@ -128,8 +130,8 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
         <Stack direction={{ md: "row" }}>
           <Stack gap={1}>
             {sortedPrompts?.map((exec, index) => {
-              const prompt = promptsData.find(prompt => prompt.id === exec.prompt)!;
-              const engineType = prompt.engine.output_type;
+              const prompt = promptsData.find(prompt => prompt.id === exec.prompt);
+              const engineType = prompt?.engine?.output_type ?? "TEXT";
               const prevItem = sortedPrompts[index - 1];
               const isPrevItemImage = prevItem && isImageOutput(prevItem?.content, engineType);
               const nextItem = sortedPrompts[index + 1];
@@ -260,7 +262,8 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
                         >
                           <ExecutionContentPreview
                             id={index + 1}
-                            prompt={prompt}
+                            content={prompt?.content ?? ""}
+                            engineName={prompt?.engine?.name ?? ""}
                             answers={answers}
                             execution={execution as TemplatesExecutions}
                           />
