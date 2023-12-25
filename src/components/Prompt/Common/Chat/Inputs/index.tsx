@@ -121,6 +121,7 @@ function RenderInputType({ input, value: initialValue }: Props) {
           direction={"row"}
           gap={1}
           position={"relative"}
+          alignItems={"center"}
         >
           <TextField
             inputRef={ref => (fieldRef.current = ref)}
