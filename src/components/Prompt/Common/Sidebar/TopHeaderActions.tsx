@@ -5,7 +5,6 @@ import Icon from "@mui/material/Icon";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import { alpha } from "@mui/material/styles";
-import SwitchAccessShortcut from "@mui/icons-material/SwitchAccessShortcut";
 
 import { theme } from "@/theme";
 import NoteStackIcon from "@/assets/icons/NoteStackIcon";
@@ -93,10 +92,9 @@ function TopHeaderActions({ executionsLength = 0 }) {
           color="custom"
           sx={btnStyle}
           disabled={isGenerating}
-          startIcon={<SwitchAccessShortcut sx={{ fontSize: 20 }} />}
           onClick={switchVariant}
         >
-          {variant === "a" ? <ViewWeekOutlined /> : <WebAssetOutlined />}
+          {variant === "a" ? <WebAssetOutlined /> : <ViewWeekOutlined />}
         </BaseButton>
       </Box>
     </Stack>
@@ -117,10 +115,11 @@ const linkStyle = {
 const btnStyle = {
   color: "secondary.main",
   fontSize: 14,
-  p: "6px",
+  p: "6px 0",
   height: "30px",
   borderRadius: "8px",
-  border: `1px solid ${alpha(theme.palette.onSurface, 0.2)}`,
+  border: "none",
+  minWidth: "40px",
   ":hover": {
     bgcolor: "action.hover",
   },
