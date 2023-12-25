@@ -262,7 +262,8 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
                         >
                           <ExecutionContentPreview
                             id={index + 1}
-                            prompt={prompt}
+                            content={prompt?.content ?? ""}
+                            engineName={prompt?.engine?.name ?? ""}
                             answers={answers}
                             execution={execution as TemplatesExecutions}
                           />
