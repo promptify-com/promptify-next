@@ -78,8 +78,14 @@ const Automation = () => {
   );
 };
 
-export async function getStaticProps() {
-  return { props: {} };
+export function getServerSideProps() {
+  return {
+    props: {
+      title: "Promptify | Boost Your Creativity With Automation",
+      description:
+        "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
+    },
+  };
 }
 
 export default Automation;
