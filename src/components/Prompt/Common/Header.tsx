@@ -10,7 +10,6 @@ import Button from "@mui/material/Button";
 import Avatar from "@mui/material/Avatar";
 import Tune from "@mui/icons-material/Tune";
 import ContentCopy from "@mui/icons-material/ContentCopy";
-import SwitchAccessShortcut from "@mui/icons-material/SwitchAccessShortcut";
 
 import { theme } from "@/theme";
 import { setSelectedTag } from "@/core/store/filtersSlice";
@@ -256,10 +255,9 @@ export default function Header({ template }: TemplateHeaderProps) {
             color="custom"
             sx={btnStyle}
             disabled={isGenerating}
-            startIcon={<SwitchAccessShortcut sx={{ fontSize: 20 }} />}
             onClick={switchVariant}
           >
-            {variant === "a" ? <ViewWeekOutlined /> : <WebAssetOutlined />}
+            {variant === "a" ? <WebAssetOutlined /> : <ViewWeekOutlined />}
           </BaseButton>
         </ClientOnly>
       </Stack>
@@ -270,9 +268,10 @@ export default function Header({ template }: TemplateHeaderProps) {
 const btnStyle = {
   color: "secondary.main",
   fontSize: 14,
-  p: "6px 16px",
+  p: "6px 0px",
   borderRadius: "8px",
-  border: `1px solid ${alpha(theme.palette.onSurface, 0.2)}`,
+  border: "none",
+  minWidth: "40px",
   ":hover": {
     bgcolor: "action.hover",
   },
