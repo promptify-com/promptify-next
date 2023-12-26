@@ -526,6 +526,7 @@ export default function Chat() {
                 color: "onSurface",
                 opacity: 0.5,
                 py: "20px",
+                display: !!messages.length ? "block" : "none",
               }}
             >
               {getCurrentDateFormatted()}
