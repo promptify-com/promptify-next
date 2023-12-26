@@ -20,9 +20,10 @@ type CardTemplateProps = {
   noRedirect?: boolean;
   query?: string;
   asResult?: boolean;
+  redirect?: boolean;
 };
 
-function CardTemplate({ template, noRedirect = false, query, asResult = false }: CardTemplateProps) {
+function CardTemplate({ template, noRedirect = false, query, asResult = false, redirect = false }: CardTemplateProps) {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { truncate } = useTruncate();
@@ -51,6 +52,11 @@ function CardTemplate({ template, noRedirect = false, query, asResult = false }:
   return (
     <Box
       onClick={() => {
+        if (redirect) {
+          redirectToPath(`/prompt/${template.slug}`, {}, true);
+          return;
+        }
+
         if (!noRedirect) {
           redirectToPath(`/prompt/${template.slug}`);
         }

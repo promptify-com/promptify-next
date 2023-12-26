@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useRef, useState } from "react";
-import { isBrowser, randomId } from "@/common/helpers";
+import { isBrowser, randomId, redirectToPath } from "@/common/helpers";
 import { setIsSimulationStreaming, setUserChatted } from "@/core/store/chatSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { Layout } from "@/layout";
@@ -16,14 +16,65 @@ import Typography from "@mui/material/Typography";
 import { ListOutlined } from "@mui/icons-material";
 import Landing from "@/components/Landing";
 import { IMessage } from "@/components/Prompt/Types/chat";
-import { getTemplateById } from "@/hooks/api/templates";
+import { getTemplateById, getWorkflowById } from "@/hooks/api/templates";
 import { ChatInput } from "@/components/Prompt/Common/Chat/ChatInput";
 import { TemplateDetailsCard } from "@/components/Prompt/Common/TemplateDetailsCard";
 import { Message } from "@/components/Prompt/Common/Chat/Message";
+import type { IWorkflow, INode } from "@/components/Prompt/Types/chat";
+import Card from "@mui/material/Card";
+import Grid from "@mui/material/Grid";
+import CardMedia from "@mui/material/CardMedia";
+import Image from "@/components/design-system/Image";
+import { addSpaceBetweenCapitalized } from "@/common/helpers";
+import Chip from "@mui/material/Chip";
+import { alpha } from "@mui/material";
+import useTruncate from "@/hooks/useTruncate";
+
+const UNWANTED_TYPES = [
+  "n8n-nodes-base.switch",
+  "n8n-nodes-base.set",
+  "merge",
+  "n8n-nodes-base.manualTrigger",
+  "n8n-nodes-base.respondToWebhook",
+  "n8n-nodes-base.code",
+];
+const textMapping: Record<string, string> = {
+  textSplitterRecursiveCharacterTextSplitter: "recursiveCharacterTextSplitter",
+};
+
+export function getNodeNames(nodes: INode[] = [], slice = 3) {
+  if (!nodes[0].type) {
+    return nodes;
+  }
+
+  const types = nodes
+    .filter(node => !UNWANTED_TYPES.includes(node.type))
+    .map(node => {
+      if (!node.type) return undefined;
+
+      return node.type.split(".")[1] ?? "";
+    })
+    .filter(Boolean) as string[];
+  const filteredTypes = Array.from(
+    new Set(
+      types.map(type => {
+        if (textMapping[type]) {
+          return addSpaceBetweenCapitalized(textMapping[type]);
+        }
+
+        return addSpaceBetweenCapitalized(type);
+      }),
+    ),
+  );
+
+  return filteredTypes.slice(0, slice);
+}
 
 const N8N_SESSION_ID = "n8nSessionId";
 const N8N_SAVED_TEMPLATES = "n8nSavedTemplates";
 const N8N_SAVED_TEMPLATES_REFS = "n8nSavedTemplatesRefs";
+const N8N_SAVED_WORKFLOWS = "n8nSavedWorkflows";
+const N8N_SAVED_WORKFLOWS_REFS = "n8nSavedWorkflowsRefs";
 
 type MessageType = "loadSession" | "sendMessage";
 interface LoadPreviousSessionItem {
@@ -62,74 +113,89 @@ async function sendMessageAPI(message: string, sessionId: number): Promise<SendM
   return response.data;
 }
 
-async function fetchTempates(ids: number[]) {
+async function fetchData(ids: number[], isTemplate: boolean) {
   if (!ids.length) {
     return [];
   }
 
-  let savedTemplates = Storage.get(N8N_SAVED_TEMPLATES) as Record<number, Templates>;
-  let savedTemplatesRefs = Storage.get(N8N_SAVED_TEMPLATES_REFS) as Record<string, number[]>;
-  const templatesKey = ids.join("_");
+  const dataKey = isTemplate ? N8N_SAVED_TEMPLATES : N8N_SAVED_WORKFLOWS;
+  const dataRefKey = isTemplate ? N8N_SAVED_TEMPLATES_REFS : N8N_SAVED_WORKFLOWS_REFS;
+  let savedData = Storage.get(dataKey) as Record<number, IWorkflow | Templates>;
+  let savedDataRefs = Storage.get(dataRefKey) as Record<string, number[]>;
+  const idsKey = ids.join("_");
 
-  if (!savedTemplates) {
-    savedTemplates = {};
-    savedTemplatesRefs = {};
+  if (!savedData) {
+    savedData = {};
+    savedDataRefs = {};
   }
 
-  if (savedTemplatesRefs[templatesKey]) {
-    return ids.map(id => savedTemplates[id]);
+  if (savedDataRefs[idsKey]) {
+    return ids.map(id => savedData[id]);
   }
 
-  const templates = await Promise.allSettled(
+  const data = await Promise.allSettled(
     ids.map(id => {
       // we don't need to trigger a request as we already have this template stored
-      if (savedTemplates[id]) {
-        return savedTemplates[id];
+      if (savedData[id]) {
+        return savedData[id];
       }
 
-      return getTemplateById(id);
+      return isTemplate ? getTemplateById(id) : getWorkflowById(id);
     }),
   );
-  const filteredTemplates = templates
-    .map(template => {
-      if (template.status === "fulfilled") {
-        return template.value;
+  const filteredData = data
+    .map(_data => {
+      if (_data.status === "fulfilled") {
+        return _data.value;
       }
     })
-    .filter(tpl => tpl?.id) as Templates[];
+    .filter(_data => _data?.id) as IWorkflow[] | Templates[];
 
-  if (!!filteredTemplates.length) {
+  if (!!filteredData.length) {
     const collectedIds: number[] = [];
-    // only save necessary data for templates to be shown
-    savedTemplates = filteredTemplates.reduce((_templates, template) => {
-      collectedIds.push(template.id);
+    // only save necessary data to be shown
+    savedData = filteredData.reduce((_savedData, _data) => {
+      collectedIds.push(_data.id);
 
-      if (!_templates[template.id]) {
-        _templates[template.id] = {
-          id: template.id,
-          slug: template.slug,
-          thumbnail: template.thumbnail,
-          title: template.title,
-          tags: template.tags,
-          favorites_count: template.favorites_count,
-        } as Templates;
+      if (!_savedData[_data.id]) {
+        if (isTemplates(filteredData)) {
+          const __data = _data as Templates;
+          _savedData[_data.id] = {
+            id: __data.id,
+            slug: __data.slug,
+            thumbnail: __data.thumbnail,
+            title: __data.title,
+            tags: __data.tags,
+            favorites_count: __data.favorites_count,
+          } as Templates;
+        } else {
+          const __data = _data as IWorkflow;
+          _savedData[_data.id] = {
+            id: __data.id,
+            name: __data.name,
+            image: __data.image,
+            description: __data.description,
+            data: { nodes: getNodeNames(__data.data.nodes ?? [], 5) as unknown as INode[] },
+            created_by: __data.created_by,
+          } as IWorkflow;
+        }
       }
 
-      return _templates;
-    }, savedTemplates);
-    savedTemplatesRefs[templatesKey] = collectedIds;
+      return _savedData;
+    }, savedData);
+    savedDataRefs[idsKey] = collectedIds;
 
-    Storage.set(N8N_SAVED_TEMPLATES_REFS, JSON.stringify(savedTemplatesRefs));
-    Storage.set(N8N_SAVED_TEMPLATES, JSON.stringify(savedTemplates));
+    Storage.set(dataRefKey, JSON.stringify(savedDataRefs));
+    Storage.set(dataKey, JSON.stringify(savedData));
   }
 
-  return filteredTemplates;
+  return filteredData;
 }
 
 function extractTemplateIDs(message: string) {
   const tplIds =
     message
-      .match(/(template id|template)(\W+)?:?(\s*[^\d]\s*(\d+)|\d+)?/gi)
+      .match(/(template([\_\s*]?id)?|promptify_tpl_id)(\W+)?:?(\s*[^\d]\s*(\d+)|\d+)/gi)
       ?.map(tpl => +tpl.replace(/[^\d]+/, ""))
       .filter(Boolean) ?? [];
   const tplIds2 =
@@ -145,10 +211,16 @@ function extractTemplateIDs(message: string) {
 function extractWorkflowIDs(message: string) {
   return (
     message
-      .match(/(workflow id|workflow)(\W+)?:?(\s*[^\d]\s*(\d+)|\d+)?/gi)
+      .match(/(workflow([\_\s*]*?id)?)(\W+)?:?(\s*[^\d]\s*(\d+)|\d+)/gi)
       ?.map(wkf => +wkf.replace(/[^\d]+/, ""))
       .filter(Boolean) ?? []
   );
+}
+
+function isTemplates(data: Templates[] | IWorkflow[]): data is Templates[] {
+  if (!data.length) return false;
+
+  return "favorites_count" in data[0];
 }
 
 export default function Chat() {
@@ -158,12 +230,12 @@ export default function Chat() {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const [queuedMessages, setQueuedMessages] = useState<IMessage[]>([]);
   const isSimulationStreaming = useAppSelector(state => state.chat.isSimulationStreaming);
-  const userChatted = useAppSelector(state => state.chat.userChatted);
+  // const userChatted = useAppSelector(state => state.chat.userChatted);
   const currentSessionId = useRef<number>(isBrowser() ? Storage.get(N8N_SESSION_ID) : 0);
 
   // useEffect(() => {
-  //   initMessages();
-  // loadPreviousSession();
+  //   // initMessages();
+  //   loadPreviousSession();
   // }, []);
 
   useEffect(() => {
@@ -203,27 +275,56 @@ export default function Chat() {
         for (let i = 0; i < previousMessagesResponse.data.length; i++) {
           const message = previousMessagesResponse.data[i];
           const content = message.kwargs.content;
-          const ids = extractTemplateIDs(content);
 
-          if (message.id.includes("AIMessage") && !!ids.length) {
-            setIsValidatingAnswer(true);
-            const templates = await fetchTempates(ids);
-
-            if (!!templates.length) {
-              setMessages(prevMessages => prevMessages.concat(templateMessages(templates, "loadSession", content)));
-            }
-            setIsValidatingAnswer(false);
-          } else {
+          if (message.id.includes("HumanMessage")) {
             setMessages(prevMessages =>
               prevMessages.concat({
                 id: randomId(),
                 text: content,
                 createdAt: new Date().toISOString(),
-                fromUser: message.id.includes("HumanMessage"),
+                fromUser: true,
                 shouldStream: false,
                 type: "text",
               }),
             );
+
+            return;
+          }
+
+          const templateIDs = extractTemplateIDs(content);
+          const workflowIDs = extractWorkflowIDs(content);
+          let _templates: IMessage[] = [];
+
+          if (!!templateIDs.length) {
+            setIsValidatingAnswer(true);
+            const templates = (await fetchData(templateIDs, true)) as Templates[];
+
+            if (!!templates.length) {
+              _templates = dataMessages(templates, "loadSession", content);
+              setMessages(prevMessages => prevMessages.concat(_templates));
+            }
+            setIsValidatingAnswer(false);
+          }
+
+          if (!!workflowIDs.length) {
+            setIsValidatingAnswer(true);
+            const workflows = (await fetchData(workflowIDs, false)) as IWorkflow[];
+
+            if (!!workflows.length) {
+              const _workflows = dataMessages(workflows, "loadSession", content);
+
+              if (
+                (!!_templates.length && _workflows.length > 1) ||
+                (_templates.length === 1 && _workflows.length === 1)
+              ) {
+                _workflows.shift(); // we should avoid displaying this content's message twice
+              }
+
+              if (!!_workflows.length) {
+                setMessages(prevMessages => prevMessages.concat(_workflows));
+              }
+            }
+            setIsValidatingAnswer(false);
           }
         }
       }
@@ -232,26 +333,15 @@ export default function Chat() {
     }
   };
   const initMessages = () => {
-    setTimeout(() => {
-      setMessages(msgs =>
-        msgs.concat({
-          id: randomId(),
-          text: "Yes, I can help you plan a wedding. According to \nWORKFLOW ID: 2, \nnamed Wedding Planner, we'll start with an initial consultation to discuss your vision and budget\n\nchoose a venue, hire vendors, manage the guest list and more, all the way through to the day of the wedding and post-wedding tasks.",
-          createdAt: new Date().toISOString(),
-          fromUser: false,
-          type: "text",
-        }),
-      );
-    }, 1000);
-    // setMessages([
-    // {
-    //   id: randomId(),
-    //   text: "Hi there! 👋. My name is Promptify. How can I assist you today?",
-    //   createdAt: new Date().toISOString(),
-    //   fromUser: false,
-    //   type: "text",
-    // },
-    // ]);
+    setMessages([
+      {
+        id: randomId(),
+        text: "Hi there! 👋. My name is Promptify. How can I assist you today?",
+        createdAt: new Date().toISOString(),
+        fromUser: false,
+        type: "text",
+      },
+    ]);
   };
   const scrollToBottom = () => {
     const messagesContainer = messagesContainerRef.current;
@@ -265,7 +355,7 @@ export default function Chat() {
   };
   const submitMessage = async (input: string) => {
     if (input) {
-      dispatch(setUserChatted(true));
+      // dispatch(setUserChatted(true));
 
       const userMessage: IMessage = {
         id: randomId(),
@@ -295,17 +385,45 @@ export default function Chat() {
         if (sendMessageResponse.message) {
           botMessage.text = sendMessageResponse.message;
         } else {
-          const ids = extractTemplateIDs(sendMessageResponse.output!);
+          const templateIDs = extractTemplateIDs(sendMessageResponse.output!);
+          const workflowIDs = extractWorkflowIDs(sendMessageResponse.output!);
 
-          if (!!ids.length) {
-            const templates = await fetchTempates(ids);
-            const _templates = templateMessages(templates, "sendMessage", sendMessageResponse.output);
-
-            if (!!_templates.length) {
-              addToQueuedMessages(_templates);
-            }
-          } else {
+          if (!templateIDs.length && !workflowIDs.length) {
             botMessage.text = sendMessageResponse.output!;
+          } else {
+            let _templates: IMessage[] = [];
+            const waitingMessages: IMessage[] = [];
+
+            if (!!templateIDs.length) {
+              const templates = (await fetchData(templateIDs, true)) as Templates[];
+
+              if (!!templates.length) {
+                _templates = dataMessages(templates, "sendMessage", sendMessageResponse.output);
+
+                waitingMessages.push(..._templates);
+              }
+            }
+
+            if (!!workflowIDs.length) {
+              const workflows = (await fetchData(workflowIDs, false)) as IWorkflow[];
+
+              if (!!workflows.length) {
+                const _workflows = dataMessages(workflows, "sendMessage", sendMessageResponse.output);
+
+                if (
+                  (!!_templates.length && _workflows.length > 1) ||
+                  (_templates.length === 1 && _workflows.length === 1)
+                ) {
+                  _workflows.shift(); // we should avoid displaying this content's message twice
+                }
+
+                if (!!_workflows.length) {
+                  waitingMessages.push(..._workflows);
+                }
+              }
+            }
+
+            if (!!waitingMessages.length) addToQueuedMessages(waitingMessages);
           }
         }
       } catch (err) {
@@ -319,14 +437,17 @@ export default function Chat() {
       }
     }
   };
-  const templateMessages = (templates: Templates[], type: MessageType, preferableContent = "") => {
+  const dataMessages = (data: Templates[] | IWorkflow[], type: MessageType, preferableContent = "") => {
     const newMessages: IMessage[] = [];
 
-    if (!!templates.length) {
+    if (!!data.length) {
       newMessages.push({
         id: randomId(),
         text: preferableContent
-          .replace(/[\(]?(promptify_tpl_id|template id|are|with id)(\W+)?:?(\s*[^\d]\s*(\d+)|\d+)?[ \)]?/gi, "")
+          .replace(
+            /[\(]?(promptify_tpl_id|template([\_\s*]?id)?|with id|workflow([\_\s*]?id)?)(\W+)?:?(\s*[^\d]\s*(\d+)|\d+)[ \)]?/gi,
+            "",
+          )
           .replace(/((\,\d+)|#\d+|([\(]?id:\s*\d+[\)]?))/gi, "")
           .trim(),
         createdAt: new Date().toISOString(),
@@ -338,14 +459,14 @@ export default function Chat() {
         id: randomId(),
         text: "",
         createdAt: new Date().toISOString(),
-        type: "templates",
-        templates: templates,
+        type: isTemplates(data) ? "templates" : "workflows",
+        data,
         fromUser: true,
       });
     } else {
       newMessages.push({
         id: randomId(),
-        text: "We could not fetch templates!",
+        text: `We could not fetch ${isTemplates(data) ? "templates" : "workflows"}!`,
         createdAt: new Date().toISOString(),
         type: "text",
         fromUser: false,
@@ -370,74 +491,68 @@ export default function Chat() {
           mt: { xs: "58px", md: 0 },
         }}
       >
-        {!userChatted ? (
-          <Box
-            height={`calc(100% - 74px)`}
-            sx={{
-              px: { xs: "8px", md: "1px" },
-              overflow: "auto",
-              "&::-webkit-scrollbar": {
-                width: "4px",
-              },
-              "&::-webkit-scrollbar-thumb": {
-                backgroundColor: "rgba(137, 130, 130, 0.33)",
-                borderRadius: "10px",
-              },
-            }}
-          >
-            <Landing />
-          </Box>
-        ) : (
-          <Box
-            ref={messagesContainerRef}
-            height={`calc(100% - ${isValidatingAnswer ? "108" : "74"}px)`}
-            sx={{
-              px: { xs: "8px", md: "1px" },
-              overflow: "auto",
-              "&::-webkit-scrollbar": {
-                width: "4px",
-              },
-              "&::-webkit-scrollbar-thumb": {
-                backgroundColor: "rgba(137, 130, 130, 0.33)",
-                borderRadius: "10px",
-              },
-            }}
-          >
-            <>
-              <Divider
-                sx={{
-                  fontSize: 12,
-                  fontWeight: 400,
-                  color: "onSurface",
-                  opacity: 0.5,
-                  py: "20px",
-                }}
-              >
-                {getCurrentDateFormatted()}
-              </Divider>
-              <Stack
-                gap={3}
-                pb={"15px"}
-              >
-                {messages.map(msg => (
-                  <Fragment key={msg.id}>
-                    <Message
-                      message={msg}
-                      onScrollToBottom={scrollToBottom}
-                    />
+        <Box
+          ref={messagesContainerRef}
+          height={`calc(100% - ${isValidatingAnswer ? "108" : "74"}px)`}
+          sx={{
+            px: { xs: "8px", md: "1px" },
+            overflow: "auto",
+            "&::-webkit-scrollbar": {
+              width: "4px",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              backgroundColor: "rgba(137, 130, 130, 0.33)",
+              borderRadius: "10px",
+            },
+          }}
+        >
+          <>
+            <Box
+              sx={{
+                px: { xs: "8px", md: "1px" },
+                overflow: "auto",
+                "&::-webkit-scrollbar-thumb": {
+                  backgroundColor: "rgba(137, 130, 130, 0.33)",
+                  borderRadius: "10px",
+                },
+              }}
+            >
+              <Landing />
+            </Box>
+            <Divider
+              sx={{
+                fontSize: 12,
+                fontWeight: 400,
+                color: "onSurface",
+                opacity: 0.5,
+                py: "20px",
+              }}
+            >
+              {getCurrentDateFormatted()}
+            </Divider>
+            <Stack
+              gap={3}
+              pb={"15px"}
+            >
+              {messages.map(msg => (
+                <Fragment key={msg.id}>
+                  <Message
+                    message={msg}
+                    onScrollToBottom={scrollToBottom}
+                  />
 
-                    {msg.type === "templates" && (
-                      <TemplatesList
-                        templates={msg.templates ?? []}
-                        title={"Suggested Templates"}
-                      />
-                    )}
-                  </Fragment>
-                ))}
-              </Stack>
-            </>
-          </Box>
-        )}
+                  {["templates", "workflows"].includes(msg.type) && (
+                    <SuggestionsList
+                      data={msg.data ?? []}
+                      title={msg.type === "templates" ? "Suggested Templates" : "Suggested Automation Templates"}
+                    />
+                  )}
+                </Fragment>
+              ))}
+            </Stack>
+          </>
+        </Box>
+
         <ChatInput
           isValidating={isValidatingAnswer}
           onSubmit={submitMessage}
@@ -470,8 +585,7 @@ export async function getServerSideProps() {
   };
 }
 
-const TemplatesList = ({ templates, title }: { templates: Templates[]; title: string }) => {
-  const singleTemplate = templates.length === 1;
+const SuggestionsList = ({ data, title }: { title: string; data: Templates[] | IWorkflow[] }) => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -501,7 +615,7 @@ const TemplatesList = ({ templates, title }: { templates: Templates[]; title: st
           fontWeight={600}
           color={"onSurface"}
         >
-          {title || "Templates"}
+          {title || "Suggested List Templates"}
         </Typography>
       </Stack>
       <Stack
@@ -511,22 +625,143 @@ const TemplatesList = ({ templates, title }: { templates: Templates[]; title: st
           p: "18px",
         }}
       >
-        {templates.map(template =>
-          singleTemplate ? (
-            <TemplateDetailsCard
-              key={template.id}
-              template={template}
-              variant="light"
-              redirect
-            />
-          ) : (
-            <CardTemplate
-              key={template.id}
-              template={template}
-            />
-          ),
-        )}
+        {isTemplates(data) ? <TemplatesList templates={data} /> : <WorkflowsList workflows={data} />}
       </Stack>
     </Box>
   );
 };
+
+const WorkflowsList = ({ workflows }: { workflows: IWorkflow[] }) => {
+  return workflows.map(workflow => (
+    <CardWorkflow
+      key={workflow.id}
+      workflow={workflow}
+    />
+  ));
+};
+
+const TemplatesList = ({ templates }: { templates: Templates[] }) => {
+  const singleTemplate = templates.length === 1;
+
+  return templates.map(template =>
+    singleTemplate ? (
+      <TemplateDetailsCard
+        key={template.id}
+        template={template}
+        variant="light"
+        redirect
+      />
+    ) : (
+      <CardTemplate
+        key={template.id}
+        template={template}
+        redirect
+      />
+    ),
+  );
+};
+
+function CardWorkflow({ workflow }: { workflow: IWorkflow }) {
+  const { truncate } = useTruncate();
+
+  return (
+    <Box onClick={() => redirectToPath(`/automation/${workflow.id}`, {}, true)}>
+      <Card
+        sx={{
+          borderRadius: "16px",
+          p: "18px",
+          bgcolor: "surface.1",
+          cursor: "pointer",
+          "&:hover": {
+            bgcolor: "action.hover",
+          },
+        }}
+        elevation={0}
+      >
+        <Grid
+          display={"flex"}
+          flexDirection={"column"}
+          alignItems={"start"}
+          justifyContent={"space-between"}
+        >
+          <Grid
+            display={"flex"}
+            flexDirection={"row"}
+            width={{ xs: "100%", md: "auto" }}
+            justifyContent={"space-between"}
+            gap={"16px"}
+            alignItems={"center"}
+          >
+            <Grid
+              display={"flex"}
+              alignItems={"start"}
+              gap={"16px"}
+            >
+              <Grid marginTop={"8px"}>
+                <CardMedia
+                  sx={{
+                    zIndex: 1,
+                    borderRadius: "16px",
+                    width: { sm: "149px", xs: "98px" },
+                    height: { sm: "135px", xs: "73px" },
+                  }}
+                >
+                  <Image
+                    src={workflow.image ?? require("@/assets/images/default-thumbnail.jpg")}
+                    alt={workflow.name}
+                    style={{ borderRadius: "16%", objectFit: "cover", width: "100%", height: "100%" }}
+                  />
+                </CardMedia>
+              </Grid>
+              <Grid
+                gap={0.5}
+                display={"flex"}
+                flexDirection={"column"}
+                sx={{
+                  color: "onSurface",
+                  fontWeight: 400,
+                }}
+              >
+                <Typography fontSize={32}>{workflow.name}</Typography>
+                <Typography
+                  sx={{
+                    fontSize: 14,
+                    lineHeight: "19px",
+                    letterSpacing: "0.15px",
+                    color: alpha(theme.palette.onSurface, 0.45),
+                  }}
+                  title={workflow.description}
+                >
+                  {truncate(workflow.description || "", { length: 150 })}
+                </Typography>
+                <Grid
+                  sx={{
+                    display: "flex",
+                    gap: "4px",
+                    mt: "10px",
+                  }}
+                >
+                  {((workflow.data.nodes as unknown as string[]) ?? []).map(node => (
+                    <Chip
+                      key={node}
+                      clickable
+                      size="small"
+                      label={node}
+                      sx={{
+                        fontSize: { xs: 11 },
+                        fontWeight: 400,
+                        bgcolor: "surface.5",
+                        color: "onSurface",
+                        textTransform: "capitalize",
+                      }}
+                    />
+                  ))}
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
+        </Grid>
+      </Card>
+    </Box>
+  );
+}
