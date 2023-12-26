@@ -9,18 +9,28 @@ import CustomTooltip from "../CustomTooltip";
 import useVariant from "../../Hooks/useVariant";
 import type { IPromptInput } from "@/common/types/prompt";
 import { Box } from "@mui/material";
+import { useEffect, useRef, useState } from "react";
 
 interface Props {
   input: IPromptInput;
 }
 
 function FormInput({ input }: Props) {
-  const answers = useAppSelector(state => state.chat.answers);
-
   const { isVariantB } = useVariant();
+
+  const answers = useAppSelector(state => state.chat.answers);
+  const labelRef = useRef<HTMLDivElement | null>(null);
+  const [labelWidth, setLabelWidth] = useState(0);
+
   const { fullName, required, type, name } = input;
 
   const value = answers.find(answer => answer.inputName === name)?.answer ?? "";
+
+  useEffect(() => {
+    if (labelRef.current) {
+      setLabelWidth(labelRef.current.offsetWidth);
+    }
+  }, [fullName]);
 
   return (
     <Stack
@@ -38,7 +48,7 @@ function FormInput({ input }: Props) {
           name="radio-buttons"
         />
       )}
-      <Box>
+      <Box ref={labelRef}>
         <InputLabel
           sx={{
             fontSize: { xs: 12, md: 15 },
@@ -56,7 +66,7 @@ function FormInput({ input }: Props) {
         position={"relative"}
         flex={1}
         width={"100%"}
-        maxWidth={{ md: "95%" }}
+        maxWidth={`calc(100% - ${labelWidth}px)`}
       >
         <RenderInputType
           input={input}

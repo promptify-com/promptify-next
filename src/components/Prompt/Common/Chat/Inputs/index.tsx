@@ -140,11 +140,11 @@ function RenderInputType({ input, value: initialValue }: Props) {
         >
           <TextField
             inputRef={ref => (fieldRef.current = ref)}
-            fullWidth={isVariantB || isMobile}
+            fullWidth={isVariantB}
             disabled={isGenerating}
             sx={{
               ".MuiInputBase-input": {
-                ...(isVariantB ? {} : { width: { md: inputWidth ? inputWidth : "70px" } }),
+                ...(isVariantB ? {} : { width: inputWidth ? inputWidth : "70px" }),
                 p: 0,
                 color: "onSurface",
                 fontSize: { xs: 12, md: 14 },
