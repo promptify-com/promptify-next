@@ -30,7 +30,7 @@ const HomePage = () => {
   const isValidUser = useSelector(isValidUserFn);
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
   const [getCurrentUser] = userApi.endpoints.getCurrentUser.useLazyQuery();
-  const { data: myLatestExecutions, isFetching: isMyLatestExecutionsLoading } = useGetLatestExecutedTemplatesQuery(
+  const { data: myLatestExecutions, isLoading: isMyLatestExecutionsLoading } = useGetLatestExecutedTemplatesQuery(
     undefined,
     {
       skip: !isValidUser,
