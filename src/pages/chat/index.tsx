@@ -287,44 +287,42 @@ export default function Chat() {
                 type: "text",
               }),
             );
+          } else {
+            const templateIDs = extractTemplateIDs(content);
+            const workflowIDs = extractWorkflowIDs(content);
+            let _templates: IMessage[] = [];
 
-            return;
-          }
+            if (!!templateIDs.length) {
+              setIsValidatingAnswer(true);
+              const templates = (await fetchData(templateIDs, true)) as Templates[];
 
-          const templateIDs = extractTemplateIDs(content);
-          const workflowIDs = extractWorkflowIDs(content);
-          let _templates: IMessage[] = [];
-
-          if (!!templateIDs.length) {
-            setIsValidatingAnswer(true);
-            const templates = (await fetchData(templateIDs, true)) as Templates[];
-
-            if (!!templates.length) {
-              _templates = dataMessages(templates, "loadSession", content);
-              setMessages(prevMessages => prevMessages.concat(_templates));
-            }
-            setIsValidatingAnswer(false);
-          }
-
-          if (!!workflowIDs.length) {
-            setIsValidatingAnswer(true);
-            const workflows = (await fetchData(workflowIDs, false)) as IWorkflow[];
-
-            if (!!workflows.length) {
-              const _workflows = dataMessages(workflows, "loadSession", content);
-
-              if (
-                (!!_templates.length && _workflows.length > 1) ||
-                (_templates.length === 1 && _workflows.length === 1)
-              ) {
-                _workflows.shift(); // we should avoid displaying this content's message twice
+              if (!!templates.length) {
+                _templates = dataMessages(templates, "loadSession", content);
+                setMessages(prevMessages => prevMessages.concat(_templates));
               }
-
-              if (!!_workflows.length) {
-                setMessages(prevMessages => prevMessages.concat(_workflows));
-              }
+              setIsValidatingAnswer(false);
             }
-            setIsValidatingAnswer(false);
+
+            if (!!workflowIDs.length) {
+              setIsValidatingAnswer(true);
+              const workflows = (await fetchData(workflowIDs, false)) as IWorkflow[];
+
+              if (!!workflows.length) {
+                const _workflows = dataMessages(workflows, "loadSession", content);
+
+                if (
+                  (!!_templates.length && _workflows.length > 1) ||
+                  (_templates.length === 1 && _workflows.length === 1)
+                ) {
+                  _workflows.shift(); // we should avoid displaying this content's message twice
+                }
+
+                if (!!_workflows.length) {
+                  setMessages(prevMessages => prevMessages.concat(_workflows));
+                }
+              }
+              setIsValidatingAnswer(false);
+            }
           }
         }
       }
@@ -511,10 +509,6 @@ export default function Chat() {
               sx={{
                 px: { xs: "8px", md: "1px" },
                 overflow: "auto",
-                "&::-webkit-scrollbar-thumb": {
-                  backgroundColor: "rgba(137, 130, 130, 0.33)",
-                  borderRadius: "10px",
-                },
               }}
             >
               <Landing />

@@ -45,3 +45,7 @@ n8nClient.interceptors.request.use(
   },
   err => console.log("error", err),
 );
+
+export const n8nClient = axios.create({
+  baseURL: n8nApiUrl,
+});
