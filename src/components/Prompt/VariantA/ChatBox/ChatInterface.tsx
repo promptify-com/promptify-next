@@ -43,7 +43,8 @@ export const ChatInterface = ({ template, messages }: Props) => {
       ref={messagesContainerRef}
       gap={3}
       sx={{
-        overflow: "auto",
+        overflowX: "hidden",
+        overflowY: "auto",
         overscrollBehavior: "contain",
         scrollBehavior: "smooth",
         "&::-webkit-scrollbar": {

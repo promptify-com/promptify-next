@@ -1,15 +1,15 @@
+import { useEffect, useRef, useState } from "react";
 import InputLabel from "@mui/material/InputLabel";
 import Radio from "@mui/material/Radio";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
 
 import { useAppSelector } from "@/hooks/useStore";
 import RenderInputType from "./Inputs";
 import CustomTooltip from "../CustomTooltip";
 import useVariant from "../../Hooks/useVariant";
 import type { IPromptInput } from "@/common/types/prompt";
-import { Box } from "@mui/material";
-import { useEffect, useRef, useState } from "react";
 
 interface Props {
   input: IPromptInput;
