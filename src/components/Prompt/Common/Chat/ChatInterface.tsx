@@ -13,15 +13,10 @@ import AccordionMessage from "@/components/Prompt/VariantB/AccordionMessage";
 import FeedbackThumbs from "@/components/Prompt/Common/FeedbackThumbs";
 import useScrollToBottom from "@/components/Prompt/Hooks/useScrolltoBottom";
 import { TemplateDetailsCard } from "@/components/Prompt/Common/TemplateDetailsCard";
-import type { IMessage } from "@/components/Prompt/Types/chat";
+import type { IMessage, MessageType } from "@/components/Prompt/Types/chat";
 import type { Templates } from "@/core/api/dto/templates";
 
-type AccordionExpandedState = {
-  spark: boolean;
-  form: boolean;
-  text: boolean;
-  templates: boolean;
-};
+type AccordionExpandedState = Record<MessageType, boolean>;
 
 interface Props {
   messages: IMessage[];
@@ -46,7 +41,8 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
     spark: true,
     form: true,
     text: false,
-    templates: true,
+    templates: false,
+    workflows: false,
   });
 
   const { showScrollDown, scrollToBottom } = useScrollToBottom({ ref: messagesContainerRef, messages, isGenerating });
