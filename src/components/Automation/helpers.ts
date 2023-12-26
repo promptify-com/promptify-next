@@ -9,6 +9,9 @@ const UNWANTED_TYPES = [
   "n8n-nodes-base.respondToWebhook",
   "n8n-nodes-base.code",
 ];
+const textMapping: Record<string, string> = {
+  textSplitterRecursiveCharacterTextSplitter: "recursiveCharacterTextSplitter",
+};
 
 export function getNodeNames(nodes: INode[] = [], slice = 3) {
   const types = nodes
@@ -19,7 +22,17 @@ export function getNodeNames(nodes: INode[] = [], slice = 3) {
       return node.type.split(".")[1] ?? "";
     })
     .filter(Boolean) as string[];
-  const filteredTypes = Array.from(new Set(types.map(type => addSpaceBetweenCapitalized(type))));
+  const filteredTypes = Array.from(
+    new Set(
+      types.map(type => {
+        if (textMapping[type]) {
+          return addSpaceBetweenCapitalized(textMapping[type]);
+        }
+
+        return addSpaceBetweenCapitalized(type);
+      }),
+    ),
+  );
 
   return filteredTypes.slice(0, slice);
 }
