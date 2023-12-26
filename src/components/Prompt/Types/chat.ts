@@ -1,11 +1,32 @@
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { PromptInputType } from ".";
+import { UserPartial } from "@/core/api/dto/user";
 
+export interface INode {
+  id: string;
+  name: string;
+  type: string;
+  position: [number, number];
+  webhookId: string;
+  typeVersion: number;
+}
+interface IData {
+  nodes: INode[];
+}
+export interface IWorkflow {
+  id: number;
+  name: string;
+  description?: string;
+  image?: string;
+  created_by: UserPartial;
+  data: IData;
+  created_at: string;
+}
 export interface VaryValidatorResponse {
   [question: string]: string | number;
 }
 
-export type MessageType = "text" | "form" | "spark" | "templates";
+export type MessageType = "text" | "form" | "spark" | "templates" | "workflows";
 
 export interface IMessage {
   id: number;
@@ -14,7 +35,7 @@ export interface IMessage {
   fromUser: boolean;
   type: MessageType;
   spark?: TemplatesExecutions;
-  templates?: Templates[];
+  data?: Templates[] | IWorkflow[];
   choices?: string[] | null;
   fileExtensions?: string[];
   startOver?: boolean;

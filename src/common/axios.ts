@@ -26,9 +26,22 @@ authClient.interceptors.request.use(
 
     return config;
   },
-  err => console.log("error"),
+  err => console.log("error", err),
 );
 
 export const n8nClient = axios.create({
   baseURL: n8nApiUrl,
 });
+
+n8nClient.interceptors.request.use(
+  config => {
+    const token = getToken();
+
+    if (token) {
+      config.headers["Authorization"] = `Token ${token}`;
+    }
+
+    return config;
+  },
+  err => console.log("error", err),
+);
