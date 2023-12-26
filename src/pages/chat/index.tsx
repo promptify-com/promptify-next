@@ -154,13 +154,13 @@ async function fetchData(ids: number[], isTemplate: boolean) {
   if (!!filteredData.length) {
     const collectedIds: number[] = [];
     // only save necessary data to be shown
-    savedData = filteredData.reduce((_savedData, _data) => {
+    filteredData.forEach(_data => {
       collectedIds.push(_data.id);
 
-      if (!_savedData[_data.id]) {
+      if (!savedData[_data.id]) {
         if (isTemplates(filteredData)) {
           const __data = _data as Templates;
-          _savedData[_data.id] = {
+          savedData[_data.id] = {
             id: __data.id,
             slug: __data.slug,
             thumbnail: __data.thumbnail,
@@ -170,7 +170,7 @@ async function fetchData(ids: number[], isTemplate: boolean) {
           } as Templates;
         } else {
           const __data = _data as IWorkflow;
-          _savedData[_data.id] = {
+          savedData[_data.id] = {
             id: __data.id,
             name: __data.name,
             image: __data.image,
@@ -180,13 +180,14 @@ async function fetchData(ids: number[], isTemplate: boolean) {
           } as IWorkflow;
         }
       }
+    });
 
-      return _savedData;
-    }, savedData);
     savedDataRefs[idsKey] = collectedIds;
 
     Storage.set(dataRefKey, JSON.stringify(savedDataRefs));
     Storage.set(dataKey, JSON.stringify(savedData));
+
+    return Object.values(savedData);
   }
 
   return filteredData;
