@@ -53,8 +53,8 @@ export default function FormParam({ param }: GeneratorParamProps) {
 
   return (
     <Stack
-      direction={"row"}
-      alignItems={"center"}
+      direction={{ xs: isVariantB ? "row" : "column", md: "row" }}
+      alignItems={{ xs: isVariantB ? "center" : "start", md: "center" }}
       flexWrap={"wrap"}
       p={isVariantB ? "16px 6px" : "0"}
       gap={1}
@@ -106,7 +106,10 @@ export default function FormParam({ param }: GeneratorParamProps) {
 
       <Slider
         disabled={!param.is_editable || isGenerating}
-        sx={sliderStyle}
+        sx={{
+          ...sliderStyle,
+          ml: { xs: isVariantB ? "45px" : 0, md: "0" },
+        }}
         value={activeDescription?.score || 2}
         marks={marks}
         step={1}
@@ -127,13 +130,11 @@ export default function FormParam({ param }: GeneratorParamProps) {
     </Stack>
   );
 }
-
 const sliderStyle = {
   height: "2px",
   width: { xs: "70%", md: "30%" },
   minWidth: { md: "300px" },
   flexShrink: 0,
-  ml: { xs: "45px", md: "0" },
   color: "primary.main",
   "& .MuiSlider-thumb": {
     height: 12,
