@@ -56,7 +56,7 @@ function FormInput({ input }: Props) {
         position={"relative"}
         flex={1}
         width={"100%"}
-        maxWidth={"95%"}
+        maxWidth={{ md: "95%" }}
       >
         <RenderInputType
           input={input}

@@ -13,6 +13,7 @@ import useVariant from "@/components/Prompt/Hooks/useVariant";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { PromptInputType } from "@/components/Prompt/Types";
 import type { IAnswer } from "@/components/Prompt/Types/chat";
+import { isDesktopViewPort } from "@/common/helpers";
 
 interface Props {
   input: IPromptInput;
@@ -23,6 +24,7 @@ function RenderInputType({ input, value: initialValue }: Props) {
   const dispatch = useAppDispatch();
   const { dispatchNewExecutionData } = useApiAccess();
   const { isVariantB } = useVariant();
+  const isMobile = !isDesktopViewPort();
 
   const { answers, isSimulationStreaming } = useAppSelector(state => state.chat);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
@@ -138,12 +140,11 @@ function RenderInputType({ input, value: initialValue }: Props) {
         >
           <TextField
             inputRef={ref => (fieldRef.current = ref)}
-            fullWidth={isVariantB}
+            fullWidth={isVariantB || isMobile}
             disabled={isGenerating}
             sx={{
               ".MuiInputBase-input": {
-                ...(isVariantB ? {} : { width: inputWidth ? inputWidth : "70px" }),
-
+                ...(isVariantB ? {} : { width: { md: inputWidth ? inputWidth : "70px" } }),
                 p: 0,
                 color: "onSurface",
                 fontSize: { xs: 12, md: 14 },
