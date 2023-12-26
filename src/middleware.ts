@@ -5,8 +5,12 @@ export const config = {
 };
 
 export function middleware(request: NextRequest) {
-  const { device } = userAgent(request);
-  const viewport = device.type === "mobile" ? "mobile" : "desktop";
+  const { device, ua } = userAgent(request);
+  let viewport = device.type === "mobile" ? "mobile" : "desktop";
+
+  if (ua.includes("Amazon CloudFront")) {
+    viewport = "unknown";
+  }
 
   request.nextUrl.searchParams.set("viewport", viewport);
 
