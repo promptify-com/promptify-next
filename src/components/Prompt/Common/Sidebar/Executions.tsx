@@ -10,15 +10,12 @@ import Typography from "@mui/material/Typography";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
 
 import { CardExecutionPlaceholder } from "@/components/placeholders/CardExecutionPlaceholder";
-import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { setGeneratedExecution, setSelectedExecution, setSparkHashQueryParam } from "@/core/store/executionsSlice";
-import { setActiveToolbarLink } from "@/core/store/templatesSlice";
-import { isDesktopViewPort } from "@/common/helpers";
-import { setAnswers } from "@/core/store/chatSlice";
+import { setSelectedExecution, setSparkHashQueryParam } from "@/core/store/executionsSlice";
 import { ExecutionItem } from "./ExecutionItem";
+import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 
 interface ExecutionsProps {
   template: Templates;
@@ -28,7 +25,6 @@ interface ExecutionsProps {
 }
 
 export const Executions: React.FC<ExecutionsProps> = ({ template }) => {
-  const isMobile = !isDesktopViewPort();
   const dispatch = useAppDispatch();
   const router = useRouter();
   const activeVariant = router.query.variant;
@@ -94,19 +90,6 @@ export const Executions: React.FC<ExecutionsProps> = ({ template }) => {
     selectedTab === 0 ? execution.is_favorite : !execution.is_favorite,
   );
 
-  const handleClick = (execution: TemplatesExecutions) => {
-    dispatch(setSelectedExecution(execution));
-    dispatch(setGeneratedExecution(null));
-    dispatch(setAnswers([]));
-
-    isMobile && dispatch(setActiveToolbarLink(null));
-
-    setTimeout(() => {
-      const element = document.getElementById("accordion-execution");
-      element && element.scrollIntoView({ behavior: "smooth" });
-    }, 100);
-  };
-
   return (
     <Stack
       gap={2}
@@ -159,7 +142,6 @@ export const Executions: React.FC<ExecutionsProps> = ({ template }) => {
             >
               {filteredExecutions?.map(execution => (
                 <ListItem
-                  onClick={() => handleClick(execution)}
                   sx={{ borderRadius: "8px", overflow: "hidden" }}
                   key={execution.id}
                   disablePadding
@@ -167,7 +149,7 @@ export const Executions: React.FC<ExecutionsProps> = ({ template }) => {
                   <ListItemButton
                     selected={selectedExecution?.id === execution.id}
                     sx={{
-                      p: 1,
+                      p: 0,
                     }}
                   >
                     <ExecutionItem

@@ -41,7 +41,6 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
   const [uploadFile] = useUploadFileMutation();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
-  const repeatedExecution = useAppSelector(state => state.executions.repeatedExecution);
   const [showGenerateButton, setShowGenerateButton] = useState(false);
   const [isValidatingAnswer, setIsValidatingAnswer] = useState(false);
   const [generatingResponse, setGeneratingResponse] = useState<PromptLiveResponse>({
@@ -199,12 +198,6 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
 
     return [inputs, params];
   }, [template]);
-
-  useEffect(() => {
-    if (!repeatedExecution) return;
-    const isReady = allRequiredInputsAnswered(_inputs, answers) ? " We are ready to create a new document." : "";
-    messageAnswersForm(`Ok!${isReady} I have prepared the incoming parameters, please check!`);
-  }, [repeatedExecution]);
 
   useEffect(() => {
     if (!isSimulationStreaming && !!queuedMessages.length) {

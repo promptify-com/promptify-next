@@ -79,7 +79,6 @@ export const Display: React.FC<Props> = ({ templateData }) => {
         {currentUser?.id && (
           <>
             <DisplayActions
-              selectedExecution={selectedExecution}
               onOpenExport={() => setOpenExportpopup(true)}
               showPreviews={previewsShown}
               toggleShowPreviews={() => setPreviewsShown(!previewsShown)}

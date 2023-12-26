@@ -1,18 +1,26 @@
-import { Box, Card, IconButton, Stack, Tooltip, Typography } from "@mui/material";
-import { TemplatesExecutions } from "@/core/api/dto/templates";
-import { useDispatch } from "react-redux";
-import { setSelectedExecution } from "@/core/store/executionsSlice";
-import { Bookmark, BookmarkBorder } from "@mui/icons-material";
-import { markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
 import { useEffect, useState } from "react";
-import { useAppSelector } from "@/hooks/useStore";
+import Card from "@mui/material/Card";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import Tooltip from "@mui/material/Tooltip";
+import IconButton from "@mui/material/IconButton";
+import Box from "@mui/material/Box";
+import Bookmark from "@mui/icons-material/Bookmark";
+import BookmarkBorder from "@mui/icons-material/BookmarkBorder";
+
+import { setGeneratedExecution, setRepeatedExecution, setSelectedExecution } from "@/core/store/executionsSlice";
+import { markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { useDeleteExecutionFavoriteMutation, useExecutionFavoriteMutation } from "@/core/api/executions";
 import { isDesktopViewPort } from "@/common/helpers";
-import { Prompts } from "@/core/api/dto/prompts";
 import { setActiveToolbarLink } from "@/core/store/templatesSlice";
 import AvatarWithInitials from "@/components/Prompt/Common/AvatarWithInitials";
 import useTruncate from "@/hooks/useTruncate";
 import { isImageOutput } from "../../Utils";
+import { setAnswers } from "@/core/store/chatSlice";
+import useVariant from "../../Hooks/useVariant";
+import type { Prompts } from "@/core/api/dto/prompts";
+import type { TemplatesExecutions } from "@/core/api/dto/templates";
 
 interface CardExecutionProps {
   execution: TemplatesExecutions;
@@ -22,15 +30,19 @@ interface CardExecutionProps {
 }
 
 export const ExecutionItem: React.FC<CardExecutionProps> = ({ execution, min, promptsData, variant }) => {
-  const dispatch = useDispatch();
-  const isMobile = !isDesktopViewPort();
+  const dispatch = useAppDispatch();
+  const { isVariantB } = useVariant();
   const { truncate } = useTruncate();
+  const isMobile = !isDesktopViewPort();
+
+  const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
 
   const [content, setContent] = useState<string>("");
-  const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
-  const isSelected = execution.id === selectedExecution?.id;
+
   const [favoriteExecution] = useExecutionFavoriteMutation();
   const [deleteExecutionFavorite] = useDeleteExecutionFavoriteMutation();
+
+  const isSelected = execution.id === selectedExecution?.id;
 
   const getContent = async () => {
     const prompt = execution.prompt_executions?.find(exec => {
@@ -42,12 +54,44 @@ export const ExecutionItem: React.FC<CardExecutionProps> = ({ execution, min, pr
     setContent(fetchedContent);
   };
   useEffect(() => {
+    if (isVariantB) return;
     getContent();
   }, []);
 
+  const updateAnswers = () => {
+    const { parameters } = execution;
+
+    const newAnswers = parameters
+      ? Object.keys(parameters)
+          .map(promptId => {
+            const param = parameters[promptId];
+            return Object.keys(param).map(inputName => ({
+              inputName: inputName,
+              required: true,
+              question: "",
+              answer: param[inputName],
+              prompt: parseInt(promptId),
+              error: false,
+            }));
+          })
+          .flat()
+      : [];
+    dispatch(setAnswers(newAnswers));
+  };
+
   const handleClick = () => {
     dispatch(setSelectedExecution(execution));
+    dispatch(setGeneratedExecution(null));
+    dispatch(setRepeatedExecution(null));
+    updateAnswers();
     isMobile && dispatch(setActiveToolbarLink(null));
+
+    if (isVariantB) {
+      setTimeout(() => {
+        const element = document.getElementById("accordion-execution");
+        element && element.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+    }
   };
 
   const saveExecution = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -173,9 +217,13 @@ export const ExecutionItem: React.FC<CardExecutionProps> = ({ execution, min, pr
         </Card>
       ) : (
         <Stack
+          onClick={handleClick}
           direction={"row"}
+          width={"100%"}
+          height={"100%"}
           alignItems={"center"}
           gap={"8px"}
+          p={1}
         >
           <AvatarWithInitials title={execution.title} />
           <Stack flex={1}>

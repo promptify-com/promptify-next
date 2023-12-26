@@ -46,7 +46,6 @@ export default function FeedbackThumbs({ vertical, execution }: Props) {
   const handleRepeat = () => {
     const { parameters } = selectedExecution!;
     dispatch(setRepeatedExecution(selectedExecution));
-    dispatch(setAnswers([]));
 
     const newAnswers = parameters
       ? Object.keys(parameters)
