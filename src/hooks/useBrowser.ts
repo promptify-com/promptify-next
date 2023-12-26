@@ -5,7 +5,13 @@ export default function useBrowser() {
   const router = useRouter();
 
   const viewport = router.query.viewport;
-  const isMobile = viewport === "mobile" || (viewport === "unknown" && !isDesktopViewPort());
+
+  let isMobile;
+  if (viewport === "unknown") {
+    isMobile = !isDesktopViewPort();
+  } else {
+    isMobile = viewport === "mobile";
+  }
 
   const replaceHistoryByPathname = (pathname: string, delay: number = 1000) => {
     setTimeout(() => {

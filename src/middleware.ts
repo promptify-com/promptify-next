@@ -8,7 +8,7 @@ export function middleware(request: NextRequest) {
   const { device, ua } = userAgent(request);
   let viewport = device.type === "mobile" ? "mobile" : "desktop";
 
-  if (ua.includes("Amazon CloudFront")) {
+  if (ua.toLowerCase().includes("amazon cloudfront")) {
     viewport = "unknown";
   }
 
