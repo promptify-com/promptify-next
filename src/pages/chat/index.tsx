@@ -230,21 +230,12 @@ export default function Chat() {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const [queuedMessages, setQueuedMessages] = useState<IMessage[]>([]);
   const isSimulationStreaming = useAppSelector(state => state.chat.isSimulationStreaming);
-<<<<<<< HEAD
   // const userChatted = useAppSelector(state => state.chat.userChatted);
   const currentSessionId = useRef<number>(isBrowser() ? Storage.get(N8N_SESSION_ID) : 0);
 
   // useEffect(() => {
   //   // initMessages();
   //   loadPreviousSession();
-=======
-  const userChatted = useAppSelector(state => state.chat.userChatted);
-  const currentSessionId = useRef<number>(isBrowser() ? Storage.get(N8N_SESSION_ID) : 0);
-
-  // useEffect(() => {
-  //   initMessages();
-  // loadPreviousSession();
->>>>>>> 90de1dd5 (chore: revert back showing landing page)
   // }, []);
 
   useEffect(() => {
@@ -340,26 +331,15 @@ export default function Chat() {
     }
   };
   const initMessages = () => {
-    setTimeout(() => {
-      setMessages(msgs =>
-        msgs.concat({
-          id: randomId(),
-          text: "Yes, I can help you plan a wedding. According to \nWORKFLOW ID: 2, \nnamed Wedding Planner, we'll start with an initial consultation to discuss your vision and budget\n\nchoose a venue, hire vendors, manage the guest list and more, all the way through to the day of the wedding and post-wedding tasks.",
-          createdAt: new Date().toISOString(),
-          fromUser: false,
-          type: "text",
-        }),
-      );
-    }, 1000);
-    // setMessages([
-    // {
-    //   id: randomId(),
-    //   text: "Hi there! 👋. My name is Promptify. How can I assist you today?",
-    //   createdAt: new Date().toISOString(),
-    //   fromUser: false,
-    //   type: "text",
-    // },
-    // ]);
+    setMessages([
+      {
+        id: randomId(),
+        text: "Hi there! 👋. My name is Promptify. How can I assist you today?",
+        createdAt: new Date().toISOString(),
+        fromUser: false,
+        type: "text",
+      },
+    ]);
   };
   const scrollToBottom = () => {
     const messagesContainer = messagesContainerRef.current;
