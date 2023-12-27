@@ -166,7 +166,6 @@ export async function getServerSideProps({
     ]);
     fetchedTemplate = _templatesResponse.status === "fulfilled" ? _templatesResponse.value : fetchedTemplate;
     hashedExecution = _execution.status === "fulfilled" ? _execution.value : hashedExecution;
-    console.log(hashedExecution);
     questionPrefixContent =
       _sectionContent.status === "fulfilled" ? _sectionContent.value.content : questionPrefixContent;
   } else {
