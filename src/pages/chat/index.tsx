@@ -235,12 +235,12 @@ export default function Chat() {
   const [queuedMessages, setQueuedMessages] = useState<IMessage[]>([]);
   const isSimulationStreaming = useAppSelector(state => state.chat.isSimulationStreaming);
   const currentSessionId = useRef<number>(isBrowser() ? Storage.get(N8N_SESSION_ID) : 0);
-  const searchQuery = (router.query.q as string) !== "";
+  const searchQuery = router.query.q as string;
 
   useEffect(() => {
     // initMessages();
     // loadPreviousSession();
-    if (searchQuery) {
+    if (searchQuery?.length > 2) {
       submitMessage(`Search: ${router.query.q as string}`);
     }
   }, []);
