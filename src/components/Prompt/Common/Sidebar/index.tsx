@@ -33,11 +33,9 @@ const drawerWidth = 352;
 interface SidebarProps {
   template: Templates;
   executions: TemplatesExecutions[];
-  isLoading: boolean;
-  refetchExecutions: () => void;
 }
 
-function Sidebar({ template, executions, isLoading, refetchExecutions }: SidebarProps) {
+function Sidebar({ template, executions }: SidebarProps) {
   const dispatch = useAppDispatch();
   const { isVariantA } = useVariant();
   const isMobile = !isDesktopViewPort();
@@ -232,14 +230,7 @@ function Sidebar({ template, executions, isLoading, refetchExecutions }: Sidebar
             <Close />
           </IconButton>
         </Stack>
-        {activeLink?.name === "executions" && (
-          <Executions
-            template={template}
-            executions={executions}
-            isExecutionsLoading={isLoading}
-            refetchTemplateExecutions={refetchExecutions}
-          />
-        )}
+        {activeLink?.name === "executions" && <Executions template={template} />}
         {activeLink?.name === "feedback" && <Feedback />}
         {activeLink?.name === "api" && <ApiAccess template={template} />}
         {activeLink?.name === "extension" && <Extension />}

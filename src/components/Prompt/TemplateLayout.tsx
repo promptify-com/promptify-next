@@ -71,8 +71,6 @@ export default function TempalteLayout({
           template={template}
           questionPrefixContent={questionPrefixContent}
           setErrorMessage={setErrorMessage}
-          isExecutionsLoading={isExecutionsLoading}
-          refetchTemplateExecutions={refetchTemplateExecutions}
         />
       ) : (
         <TemplateVariantB
@@ -80,8 +78,6 @@ export default function TempalteLayout({
           template={template}
           questionPrefixContent={questionPrefixContent}
           setErrorMessage={setErrorMessage}
-          isExecutionsLoading={isExecutionsLoading}
-          refetchTemplateExecutions={refetchTemplateExecutions}
         />
       )}
     </>
