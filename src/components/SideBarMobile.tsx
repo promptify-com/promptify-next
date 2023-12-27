@@ -1,12 +1,10 @@
 import React, { useDeferredValue, useState } from "react";
 import { LogoApp } from "@/assets/icons/LogoApp";
-import AutoAwesome from "@mui/icons-material/AutoAwesome";
 import ClearRounded from "@mui/icons-material/ClearRounded";
 import HomeRounded from "@mui/icons-material/HomeRounded";
 import MenuBookRounded from "@mui/icons-material/MenuBookRounded";
 import MenuRounded from "@mui/icons-material/MenuRounded";
 import Search from "@mui/icons-material/Search";
-import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Grid from "@mui/material/Grid";
@@ -39,6 +37,8 @@ import { useRouteChangeOverlay } from "@/hooks/useRouteChangeOverlay";
 import { theme } from "@/theme";
 import { redirectToPath } from "@/common/helpers";
 import Image from "./design-system/Image";
+import StickyNote2 from "@mui/icons-material/StickyNote2";
+import { FolderSpecial, HelpRounded } from "@mui/icons-material";
 
 type SidebarType = "navigation" | "profile";
 
@@ -74,7 +74,7 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
   const { showOverlay } = useRouteChangeOverlay({ onCloseDrawerCallback: onCloseDrawer });
   const links = [
     {
-      label: "Homepage",
+      label: "Home",
       icon: <HomeRounded />,
       href: "/",
       active: pathname == "/",
@@ -82,21 +82,21 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
     },
     {
       label: "Prompts",
-      icon: <Search />,
+      icon: <StickyNote2 />,
       href: "/explore",
       active: splittedPath[1] == "explore",
       external: false,
     },
     {
       label: "My Works",
-      icon: <AutoAwesome />,
+      icon: <FolderSpecial />,
       href: isValidUser ? "/sparks" : "/signin",
       active: pathname == "/sparks",
       external: false,
     },
     {
-      label: "Learn",
-      icon: <MenuBookRounded />,
+      label: "Learn & Help",
+      icon: <HelpRounded />,
       href: "https://blog.promptify.com/",
       active: pathname == "/learn",
       external: true,
