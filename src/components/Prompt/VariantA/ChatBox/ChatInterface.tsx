@@ -5,7 +5,8 @@ import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
 
 import { Message } from "./Message";
-import { useAppSelector } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import GenerateAndClearButton from "./GenerateAndClearButton";
 import { isDesktopViewPort } from "@/common/helpers";
 import { FeedbackActions } from "../FeedbackActions";
 import { MessageSparkBox } from "./MessageSparkBox";
@@ -13,20 +14,36 @@ import TemplateDetailsCard from "@/components/Prompt/Common/TemplateDetailsCard"
 import Form from "@/components/Prompt/Common/Chat/Form";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IMessage } from "@/components/Prompt/Types/chat";
+import { GeneratingProgressCard } from "@/components/common/cards/GeneratingProgressCard";
+import { setGeneratedExecution } from "@/core/store/executionsSlice";
+import { setGeneratingStatus } from "@/core/store/templatesSlice";
 
 interface Props {
   template: Templates;
   messages: IMessage[];
+  onGenerate: () => void;
+  showGenerate: boolean;
+  isValidating: boolean;
+  abortGenerating: () => void;
 }
 
-export const ChatInterface = ({ template, messages }: Props) => {
-  const messagesContainerRef = useRef<HTMLDivElement | null>(null);
+export const ChatInterface = ({
+  template,
+  messages,
+  onGenerate,
+  showGenerate,
+  isValidating,
+  abortGenerating,
+}: Props) => {
+  const dispatch = useAppDispatch();
+  const isDesktopView = isDesktopViewPort();
 
-  const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
-  const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
+  const isGenerating = useAppSelector(state => state.template.isGenerating);
+  const { selectedExecution, generatedExecution } = useAppSelector(state => state.executions);
 
   const isExecutionShown = Boolean(selectedExecution ?? generatedExecution);
-  const isDesktopView = isDesktopViewPort();
+
+  const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
   const scrollToBottom = () => {
     if (messagesContainerRef.current) {
@@ -36,7 +53,13 @@ export const ChatInterface = ({ template, messages }: Props) => {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, isExecutionShown]);
+  }, [messages, isExecutionShown, showGenerate]);
+
+  const abortConnection = () => {
+    abortGenerating();
+    dispatch(setGeneratedExecution(null));
+    dispatch(setGeneratingStatus(false));
+  };
 
   return (
     <Stack
@@ -73,10 +96,7 @@ export const ChatInterface = ({ template, messages }: Props) => {
         )}
       </Box>
 
-      <Stack
-        pb={"8px"}
-        mx={{ xs: "16px", md: !isExecutionShown ? "40px" : "32px" }}
-      >
+      <Stack mx={{ xs: "16px", md: !isExecutionShown ? "40px" : "32px" }}>
         <Divider
           sx={{
             fontSize: 12,
@@ -132,6 +152,18 @@ export const ChatInterface = ({ template, messages }: Props) => {
           </Fragment>
         ))}
       </Stack>
+
+      <GenerateAndClearButton
+        onGenerate={onGenerate}
+        showGenerate={showGenerate}
+        isValidating={isValidating}
+      />
+
+      {isGenerating && (
+        <Box width={"100%"}>
+          <GeneratingProgressCard onCancel={abortConnection} />
+        </Box>
+      )}
     </Stack>
   );
 };
