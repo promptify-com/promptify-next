@@ -26,9 +26,11 @@ function SidebarItem({ navItem }: Props) {
       style={{
         width: "100%",
         textDecoration: "none",
+        cursor: navItem.href === "#" ? "none" : "pointer",
       }}
     >
       <ListItem
+        className={navItem.href === "#" ? "grayedout_link" : ""}
         disablePadding
         sx={{
           ...(navItem.active && {
@@ -45,7 +47,7 @@ function SidebarItem({ navItem }: Props) {
           }),
           padding: "8px",
           height: "auto",
-          "&:hover": {
+          "&:not(.grayedout_link):hover": {
             backgroundColor: "transparent",
             borderRadius: "8px",
             ".MuiSvgIcon-root": {
@@ -88,6 +90,7 @@ function SidebarItem({ navItem }: Props) {
               color: "onSurface",
             },
           }}
+          disabled={navItem.href === "#"}
         >
           <Box sx={{ minWidth: "40px", display: "block" }}>
             <ListItemIcon
