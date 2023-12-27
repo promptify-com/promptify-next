@@ -15,6 +15,7 @@ import useDebounce from "@/hooks/useDebounce";
 import CardTemplate from "../common/cards/CardTemplate";
 import CardTemplatePlaceholder from "../placeholders/CardTemplatePlaceHolder";
 import { NotFoundIcon } from "@/assets/icons/NotFoundIcon";
+import AskPromptifyButton from "../common/buttons/AskPromptifyButton";
 
 interface SearchDialogProps {
   open: boolean;
@@ -193,6 +194,7 @@ export const SearchDialog: React.FC<SearchDialogProps> = ({ open, close }) => {
                     minHeight={"20vh"}
                   >
                     <NotFoundIcon />
+                    <AskPromptifyButton keyword={debouncedSearchName} />
                   </Grid>
                 )}
               </Grid>

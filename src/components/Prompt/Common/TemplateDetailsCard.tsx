@@ -156,7 +156,10 @@ export const TemplateDetailsCard: React.FC<TemplateDetailsCardProps> = ({
       {!isDesktopView && (
         <>
           <IconButton
-            onClick={() => setExpanded(!expanded)}
+            onClick={e => {
+              e.stopPropagation();
+              setExpanded(!expanded);
+            }}
             sx={{
               position: "absolute",
               left: 0,

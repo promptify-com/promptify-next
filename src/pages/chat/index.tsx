@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useRef, useState } from "react";
 import { isBrowser, randomId, redirectToPath } from "@/common/helpers";
-import { setIsSimulationStreaming, setUserChatted } from "@/core/store/chatSlice";
+import { setIsSimulationStreaming } from "@/core/store/chatSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { Layout } from "@/layout";
 import { theme } from "@/theme";
@@ -29,6 +29,7 @@ import { addSpaceBetweenCapitalized } from "@/common/helpers";
 import Chip from "@mui/material/Chip";
 import { alpha } from "@mui/material";
 import useTruncate from "@/hooks/useTruncate";
+import { useRouter } from "next/router";
 
 const UNWANTED_TYPES = [
   "n8n-nodes-base.switch",
@@ -143,6 +144,7 @@ async function fetchData(ids: number[], isTemplate: boolean) {
       return isTemplate ? getTemplateById(id) : getWorkflowById(id);
     }),
   );
+
   const filteredData = data
     .map(_data => {
       if (_data.status === "fulfilled") {
@@ -154,7 +156,7 @@ async function fetchData(ids: number[], isTemplate: boolean) {
   if (!!filteredData.length) {
     const collectedIds: number[] = [];
     // only save necessary data to be shown
-    filteredData.forEach(_data => {
+    filteredData.forEach((_data, idx) => {
       collectedIds.push(_data.id);
 
       if (!savedData[_data.id]) {
@@ -168,6 +170,7 @@ async function fetchData(ids: number[], isTemplate: boolean) {
             tags: __data.tags,
             favorites_count: __data.favorites_count,
           } as Templates;
+          filteredData[idx] = savedData[_data.id] as Templates;
         } else {
           const __data = _data as IWorkflow;
           savedData[_data.id] = {
@@ -178,6 +181,7 @@ async function fetchData(ids: number[], isTemplate: boolean) {
             data: { nodes: getNodeNames(__data.data.nodes ?? [], 5) as unknown as INode[] },
             created_by: __data.created_by,
           } as IWorkflow;
+          filteredData[idx] = savedData[_data.id] as IWorkflow;
         }
       }
     });
@@ -186,8 +190,6 @@ async function fetchData(ids: number[], isTemplate: boolean) {
 
     Storage.set(dataRefKey, JSON.stringify(savedDataRefs));
     Storage.set(dataKey, JSON.stringify(savedData));
-
-    return Object.values(savedData);
   }
 
   return filteredData;
@@ -226,18 +228,22 @@ function isTemplates(data: Templates[] | IWorkflow[]): data is Templates[] {
 
 export default function Chat() {
   const dispatch = useAppDispatch();
+  const router = useRouter();
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [isValidatingAnswer, setIsValidatingAnswer] = useState(false);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const [queuedMessages, setQueuedMessages] = useState<IMessage[]>([]);
   const isSimulationStreaming = useAppSelector(state => state.chat.isSimulationStreaming);
-  // const userChatted = useAppSelector(state => state.chat.userChatted);
   const currentSessionId = useRef<number>(isBrowser() ? Storage.get(N8N_SESSION_ID) : 0);
+  const searchQuery = (router.query.q as string) !== "";
 
-  // useEffect(() => {
-  //   // initMessages();
-  //   loadPreviousSession();
-  // }, []);
+  useEffect(() => {
+    // initMessages();
+    // loadPreviousSession();
+    if (searchQuery) {
+      submitMessage(`Search: ${router.query.q as string}`);
+    }
+  }, []);
 
   useEffect(() => {
     if (!isSimulationStreaming && !!queuedMessages.length) {
@@ -354,8 +360,6 @@ export default function Chat() {
   };
   const submitMessage = async (input: string) => {
     if (input) {
-      // dispatch(setUserChatted(true));
-
       const userMessage: IMessage = {
         id: randomId(),
         text: input,

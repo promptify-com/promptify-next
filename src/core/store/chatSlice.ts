@@ -10,7 +10,6 @@ export interface ExecutionsProps {
   params: PromptParams[];
   paramsValues: ResOverrides[];
   isSimulationStreaming: boolean;
-  userChatted: boolean;
 }
 
 const initialState: ExecutionsProps = {
@@ -19,7 +18,6 @@ const initialState: ExecutionsProps = {
   params: [],
   paramsValues: [],
   isSimulationStreaming: false,
-  userChatted: false,
 };
 
 export const chatSlice = createSlice({
@@ -41,13 +39,9 @@ export const chatSlice = createSlice({
     setIsSimulationStreaming: (state, action: PayloadAction<boolean>) => {
       state.isSimulationStreaming = action.payload;
     },
-    setUserChatted: (state, action: PayloadAction<boolean>) => {
-      state.userChatted = action.payload;
-    },
   },
 });
 
-export const { setAnswers, setInputs, setParams, setparamsValues, setIsSimulationStreaming, setUserChatted } =
-  chatSlice.actions;
+export const { setAnswers, setInputs, setParams, setparamsValues, setIsSimulationStreaming } = chatSlice.actions;
 
 export default chatSlice.reducer;

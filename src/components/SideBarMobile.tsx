@@ -39,6 +39,7 @@ import { theme } from "@/theme";
 import { redirectToPath } from "@/common/helpers";
 import Image from "./design-system/Image";
 import { Chat } from "@mui/icons-material";
+import AskPromptifyButton from "./common/buttons/AskPromptifyButton";
 
 type SidebarType = "navigation" | "profile";
 
@@ -350,7 +351,10 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
                   </Grid>
                 ) : (
                   // Render not found icon when there are no results
-                  <NotFoundIcon />
+                  <>
+                    <NotFoundIcon />
+                    <AskPromptifyButton keyword={debouncedSearchName} />
+                  </>
                 )}
               </Grid>
             )}
