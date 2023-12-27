@@ -1,5 +1,5 @@
-import { addSpaceBetweenCapitalized } from "@/common/helpers";
 import type { INode } from "./types";
+import nodesData from "./nodes.json";
 
 const UNWANTED_TYPES = [
   "n8n-nodes-base.switch",
@@ -9,30 +9,13 @@ const UNWANTED_TYPES = [
   "n8n-nodes-base.respondToWebhook",
   "n8n-nodes-base.code",
 ];
-const textMapping: Record<string, string> = {
-  textSplitterRecursiveCharacterTextSplitter: "recursiveCharacterTextSplitter",
-};
 
 export function getNodeNames(nodes: INode[] = [], slice = 3) {
   const types = nodes
     .filter(node => !UNWANTED_TYPES.includes(node.type))
-    .map(node => {
-      if (!node.type) return undefined;
-
-      return node.type.split(".")[1] ?? "";
-    })
+    .map(node => node.type)
     .filter(Boolean) as string[];
-  const filteredTypes = Array.from(
-    new Set(
-      types.map(type => {
-        if (textMapping[type]) {
-          return addSpaceBetweenCapitalized(textMapping[type]);
-        }
-
-        return addSpaceBetweenCapitalized(type);
-      }),
-    ),
-  );
+  const filteredTypes = Array.from(new Set(types.map(type => nodesData.find(node => node.type === type)?.name)));
 
   return filteredTypes.slice(0, slice);
 }
