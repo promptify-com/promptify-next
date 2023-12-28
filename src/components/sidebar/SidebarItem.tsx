@@ -6,12 +6,6 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import Typography from "@mui/material/Typography";
 import { redirectToPath } from "@/common/helpers";
 import type { NavItem } from "@/common/types/sidebar";
-import ExpandLess from "@mui/icons-material/ExpandLess";
-import ExpandMore from "@mui/icons-material/ExpandMore";
-import Collapse from "@mui/material/Collapse";
-import { ExploreFilterSideBar } from "../explorer/ExploreFilterSideBar";
-import { Engine, Tag } from "@/core/api/dto/templates";
-import { theme } from "@/theme";
 import { Box } from "@mui/material";
 
 interface Props {
@@ -60,6 +54,10 @@ function SidebarItem({ navItem }: Props) {
             ".MuiListItemIcon-root": {
               backgroundColor: "surface.1",
             },
+          },
+          ".MuiListItemButton-root.Mui-disabled": {
+            pointerEvents: "visible",
+            cursor: "no-drop",
           },
         }}
         onClick={e => {
