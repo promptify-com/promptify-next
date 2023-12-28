@@ -311,6 +311,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
               }}
             >
               <FeedbackThumbs
+                variant="icon"
                 execution={selectedExecution}
                 vertical
               />

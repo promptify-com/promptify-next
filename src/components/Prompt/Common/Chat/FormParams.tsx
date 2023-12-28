@@ -3,6 +3,8 @@ import Box from "@mui/material/Box";
 import InputLabel from "@mui/material/InputLabel";
 import Typography from "@mui/material/Typography";
 import Slider from "@mui/material/Slider";
+import IconButton from "@mui/material/IconButton";
+import HelpOutline from "@mui/icons-material/HelpOutline";
 
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import CustomTooltip from "@/components/Prompt/Common/CustomTooltip";
@@ -50,6 +52,21 @@ export default function FormParam({ param }: GeneratorParamProps) {
   const activeDescription = descriptions.find(description => description.score === activeScore);
   const marks = descriptions.map(description => ({ value: description.score }));
   const values = marks.map(obj => obj.value) || [];
+
+  const HelpIcon = () => {
+    return (
+      <CustomTooltip title={"Parameter"}>
+        <IconButton
+          sx={{
+            opacity: 0.3,
+            border: "none",
+          }}
+        >
+          <HelpOutline />
+        </IconButton>
+      </CustomTooltip>
+    );
+  };
 
   return (
     <Stack
@@ -99,7 +116,7 @@ export default function FormParam({ param }: GeneratorParamProps) {
               display: { xs: "flex", md: "none" },
             }}
           >
-            <CustomTooltip title={"Parameter"} />
+            <HelpIcon />
           </Stack>
         )}
       </Stack>
@@ -124,7 +141,7 @@ export default function FormParam({ param }: GeneratorParamProps) {
             display: { xs: "none", md: "flex" },
           }}
         >
-          <CustomTooltip title={"Parameter"} />
+          <HelpIcon />
         </Stack>
       )}
     </Stack>

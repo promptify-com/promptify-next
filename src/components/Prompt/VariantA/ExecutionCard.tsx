@@ -14,8 +14,8 @@ import type { TemplatesExecutions } from "@/core/api/dto/templates";
 import type { IAnswer } from "@/components/Prompt/Types/chat";
 import type { DisplayPrompt, PromptLiveResponse } from "@/common/types/prompt";
 import ExecutionContentPreview from "./ExecutionContentPreview";
-import { FeedbackActions } from "./FeedbackActions";
 import { isImageOutput } from "../Utils";
+import FeedbackThumbs from "../Common/FeedbackThumbs";
 
 interface Props {
   execution: PromptLiveResponse | TemplatesExecutions | null;
@@ -312,10 +312,10 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
                 ml: { md: "20px" },
               }}
             >
-              <FeedbackActions
-                execution={execution}
+              <FeedbackThumbs
                 vertical
-                min
+                execution={execution}
+                variant="icon"
               />
             </Box>
           )}

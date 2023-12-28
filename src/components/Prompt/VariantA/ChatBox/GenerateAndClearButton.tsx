@@ -57,7 +57,7 @@ function GenerateAndClearButton({ isValidating, showGenerate, onGenerate }: Prop
               Run prompt
             </Button>
           )}
-          {!!answers.length && !isExecutionShown && (
+          {!!answers.length && !generatedExecution && (
             <Button
               variant="text"
               endIcon={<DeleteOutline />}

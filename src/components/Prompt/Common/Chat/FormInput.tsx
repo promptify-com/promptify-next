@@ -4,6 +4,8 @@ import Radio from "@mui/material/Radio";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
+import HelpOutline from "@mui/icons-material/HelpOutline";
 
 import { useAppSelector } from "@/hooks/useStore";
 import RenderInputType from "./Inputs";
@@ -101,7 +103,16 @@ function FormInput({ input }: Props) {
                 {type}
               </Typography>
             }
-          />
+          >
+            <IconButton
+              sx={{
+                opacity: 0.3,
+                border: "none",
+              }}
+            >
+              <HelpOutline />
+            </IconButton>
+          </CustomTooltip>
         </Stack>
       )}
     </Stack>

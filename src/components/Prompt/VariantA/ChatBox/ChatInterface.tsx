@@ -8,15 +8,15 @@ import { Message } from "./Message";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import GenerateAndClearButton from "./GenerateAndClearButton";
 import { isDesktopViewPort } from "@/common/helpers";
-import { FeedbackActions } from "../FeedbackActions";
 import { MessageSparkBox } from "./MessageSparkBox";
 import TemplateDetailsCard from "@/components/Prompt/Common/TemplateDetailsCard";
+import FeedbackThumbs from "../../Common/FeedbackThumbs";
 import Form from "@/components/Prompt/Common/Chat/Form";
-import type { Templates } from "@/core/api/dto/templates";
-import type { IMessage } from "@/components/Prompt/Types/chat";
 import { GeneratingProgressCard } from "@/components/common/cards/GeneratingProgressCard";
 import { setGeneratedExecution } from "@/core/store/executionsSlice";
 import { setGeneratingStatus } from "@/core/store/templatesSlice";
+import type { IMessage } from "@/components/Prompt/Types/chat";
+import type { Templates } from "@/core/api/dto/templates";
 
 interface Props {
   template: Templates;
@@ -145,7 +145,11 @@ export const ChatInterface = ({
                   >
                     Quick Feedback:
                   </Typography>
-                  <FeedbackActions execution={msg.spark} />
+
+                  <FeedbackThumbs
+                    execution={msg.spark}
+                    variant="button"
+                  />
                 </Box>
               </Stack>
             )}

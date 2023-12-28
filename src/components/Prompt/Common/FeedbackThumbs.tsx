@@ -2,30 +2,42 @@ import { useState } from "react";
 import Stack from "@mui/material/Stack";
 import TagFacesSharp from "@mui/icons-material/TagFacesSharp";
 import MoodBadSharp from "@mui/icons-material/MoodBadSharp";
-import IconButton from "@mui/material/IconButton";
+import Button from "@mui/material/Button";
+import CheckCircle from "@mui/icons-material/CheckCircle";
 import { Replay } from "@mui/icons-material";
+import { alpha } from "@mui/material/styles";
 
 import { useUpdateExecutionMutation } from "@/core/api/executions";
-import { FeedbackType, TemplatesExecutions } from "@/core/api/dto/templates";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { Tooltip } from "@mui/material";
 import { setAnswers } from "@/core/store/chatSlice";
 import { setRepeatedExecution } from "@/core/store/executionsSlice";
-import CheckCircle from "@mui/icons-material/CheckCircle";
+import { theme } from "@/theme";
+import { Happy } from "@/assets/icons/Happy";
+import { Sad } from "@/assets/icons/Sad";
+import useVariant from "../Hooks/useVariant";
+import CustomTooltip from "./CustomTooltip";
+import type { FeedbackType, TemplatesExecutions } from "@/core/api/dto/templates";
 
 interface Props {
+  variant: "button" | "icon";
   execution: TemplatesExecutions;
   vertical?: boolean;
 }
 
-export default function FeedbackThumbs({ vertical, execution }: Props) {
+export default function FeedbackThumbs({ vertical, execution, variant }: Props) {
   const [updateExecution] = useUpdateExecutionMutation();
   const dispatch = useAppDispatch();
+  const { isVariantB } = useVariant();
+
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
   const activeSideBarLink = useAppSelector(state => state.template.activeSideBarLink);
 
   const [feedback, setFeedback] = useState(execution.feedback);
   const [feedbackMessage, setFeedbackMessage] = useState("");
+
+  const liked = feedback === "LIKED";
+  const disliked = feedback === "DISLIKED";
+  const isIconVariant = variant === "icon";
 
   const handleFeedback = (newFeedback: FeedbackType) => {
     if (feedback !== newFeedback) {
@@ -64,23 +76,14 @@ export default function FeedbackThumbs({ vertical, execution }: Props) {
       : [];
     dispatch(setAnswers(newAnswers));
 
-    setTimeout(() => {
-      const inputElement = document.getElementById("accordion-input");
-      if (inputElement) {
-        inputElement.scrollIntoView({ behavior: "smooth" });
-      }
-    }, 200);
-  };
-
-  const commonPopperProps = {
-    modifiers: [
-      {
-        name: "offset",
-        options: {
-          offset: [0, -5],
-        },
-      },
-    ],
+    if (isVariantB) {
+      setTimeout(() => {
+        const inputElement = document.getElementById("accordion-input");
+        if (inputElement) {
+          inputElement.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 200);
+    }
   };
 
   return (
@@ -93,9 +96,8 @@ export default function FeedbackThumbs({ vertical, execution }: Props) {
           sx={{
             bgcolor: "primary.main",
             position: "fixed",
-            top: { xs: "140px", md: "180px" },
-            right: activeSideBarLink ? "55%" : "45%",
-
+            top: { xs: isVariantB ? "140px" : "240px", md: isVariantB ? "180px" : "240px" },
+            right: { md: isVariantB && activeSideBarLink ? "55%" : !isVariantB && !activeSideBarLink ? "27%" : "45%" },
             color: "white",
             p: 1,
             borderRadius: "16px",
@@ -106,86 +108,107 @@ export default function FeedbackThumbs({ vertical, execution }: Props) {
           {feedbackMessage}
         </Stack>
       )}
+
       <Stack
         direction={{ xs: "row", md: vertical ? "column" : "row" }}
         alignItems={"center"}
+        flexWrap={"wrap"}
         gap={1}
       >
-        <Tooltip
-          title="Good"
-          arrow
-          PopperProps={commonPopperProps}
-        >
-          <IconButton
-            size="large"
+        <CustomTooltip title={isIconVariant && "Good"}>
+          <Button
             onClick={() => handleFeedback("LIKED")}
+            variant="text"
+            startIcon={
+              isVariantB ? (
+                <TagFacesSharp
+                  sx={{
+                    color: liked ? "green" : "inherit",
+                  }}
+                />
+              ) : (
+                <Happy />
+              )
+            }
             sx={{
-              p: "15px",
-              border: "none",
-              bgcolor: "surface.2",
-
-              ":hover": {
-                color: "green",
-                bgcolor: "action.hover",
-              },
+              ...buttonStyle,
+              ...(isIconVariant && minButtonStyle),
+              border: !isVariantB && liked ? "1px solid #ABE88F8F" : true ? "none" : "1px solid",
+              bgcolor:
+                !isVariantB && liked ? "#ABE88F36" : true ? alpha(theme.palette.surface[5], 0.45) : "transparent",
             }}
           >
-            <TagFacesSharp
-              sx={{
-                color: execution.feedback === "LIKED" ? "green" : "inherit",
-              }}
-            />
-          </IconButton>
-        </Tooltip>
-
-        <Tooltip
-          title="Bad"
-          arrow
-          PopperProps={commonPopperProps}
-        >
-          <IconButton
-            size="large"
+            {!isIconVariant && "Good"}
+          </Button>
+        </CustomTooltip>
+        <CustomTooltip title={isIconVariant && "Sad"}>
+          <Button
             onClick={() => handleFeedback("DISLIKED")}
+            variant="text"
+            startIcon={
+              isVariantB ? (
+                <MoodBadSharp
+                  sx={{
+                    color: disliked ? "red" : "inherit",
+                  }}
+                />
+              ) : (
+                <Sad />
+              )
+            }
             sx={{
-              p: "15px",
-              border: "none",
-              bgcolor: "surface.2",
-
-              ":hover": {
-                color: "red",
-                bgcolor: "action.hover",
-              },
+              ...buttonStyle,
+              ...(isIconVariant && minButtonStyle),
+              border: !isVariantB && disliked ? "1px solid #FF624D8F" : true ? "none" : "1px solid",
+              bgcolor:
+                !isVariantB && disliked ? "#FF624D36" : true ? alpha(theme.palette.surface[5], 0.45) : "transparent",
             }}
           >
-            <MoodBadSharp
-              sx={{
-                color: execution.feedback === "DISLIKED" ? "red" : "inherit",
-              }}
-            />
-          </IconButton>
-        </Tooltip>
-        <Tooltip
-          title="Repeat"
-          arrow
-          PopperProps={commonPopperProps}
-        >
-          <IconButton
-            size="large"
-            onClick={handleRepeat}
+            {!isIconVariant && "Bad"}
+          </Button>
+        </CustomTooltip>
+        <CustomTooltip title={isIconVariant && "Repeat"}>
+          <Button
+            onClick={() => handleRepeat()}
+            variant="text"
+            startIcon={<Replay />}
             sx={{
-              p: "15px",
-              border: "none",
-              bgcolor: "surface.2",
-
-              ":hover": {
-                bgcolor: "action.hover",
-              },
+              ...buttonStyle,
+              ...(isIconVariant && minButtonStyle),
             }}
           >
-            <Replay />
-          </IconButton>
-        </Tooltip>
+            {!isIconVariant && "Try again"}
+          </Button>
+        </CustomTooltip>
       </Stack>
     </>
   );
 }
+
+const buttonStyle = {
+  height: "22px",
+  minWidth: "auto",
+  p: "15px",
+  fontSize: 13,
+  fontWeight: 500,
+  border: "1px solid",
+  borderColor: "divider",
+  color: "secondary.main",
+  ":hover": {
+    bgcolor: "action.hover",
+  },
+};
+
+const minButtonStyle = {
+  width: 49,
+  height: 49,
+  borderRadius: "50%",
+  border: "none",
+  bgcolor: alpha(theme.palette.surface[5], 0.45),
+  ".MuiButton-startIcon": {
+    m: 0,
+  },
+  ":hover": {
+    bgcolor: alpha(theme.palette.surface[5], 0.8),
+  },
+};

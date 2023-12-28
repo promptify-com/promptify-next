@@ -31,7 +31,7 @@ function Textual({ input, value, onChange, onBlur }: Props) {
   const calculateInputWidth = () => {
     if (spanRef.current && fieldRef.current) {
       const spanWidth = spanRef.current.offsetWidth;
-      const minWidth = Math.max(spanWidth, 70);
+      const minWidth = Math.max(spanWidth, value ? spanWidth : 70);
       fieldRef.current.style.width = isVariantB ? "-webkit-fill-available" : `${minWidth}px`;
     }
   };
@@ -48,10 +48,7 @@ function Textual({ input, value, onChange, onBlur }: Props) {
         inputRef={ref => (fieldRef.current = ref)}
         fullWidth={isVariantB}
         disabled={isGenerating}
-        sx={{
-          ...textFieldStyle,
-          ...(isVariantB && { minWidth: "70px" }),
-        }}
+        sx={textFieldStyle}
         placeholder={isVariantB ? "Type here" : required ? "Required" : "Optional"}
         type={type}
         value={value}
