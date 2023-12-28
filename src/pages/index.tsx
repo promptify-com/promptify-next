@@ -20,10 +20,13 @@ import { redirectToPath } from "@/common/helpers";
 import useToken from "@/hooks/useToken";
 import ClientOnly from "@/components/base/ClientOnly";
 import { useGetCategoriesQuery } from "@/core/api/categories";
+import { GetServerSideProps } from "next/types";
+import { getCategories } from "@/hooks/api/categories";
+import { Category } from "@/core/api/dto/templates";
 
 const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
 
-const HomePage = () => {
+const HomePage = ({ categories }: { categories: Category[] }) => {
   const token = useToken();
   const path = getPathURL();
   const dispatch = useDispatch();
@@ -57,7 +60,6 @@ const HomePage = () => {
       skip: token,
     },
   );
-  const { data: categories, isLoading: isCategoriesLoading } = useGetCategoriesQuery();
   // TODO: move authentication logic to signin page instead
   const doPostLogin = async (response: AxiosResponse<IContinueWithSocialMediaResponse>) => {
     if (typeof response.data !== "object" || response.data === null) {
@@ -156,7 +158,8 @@ const HomePage = () => {
                 />
                 <CategoriesSection
                   categories={categories}
-                  isLoading={isCategoriesLoading}
+                  isLoading={false}
+                  displayTitle
                 />
               </Grid>
             ) : (
@@ -164,7 +167,8 @@ const HomePage = () => {
                 <WelcomeCard />
                 <CategoriesSection
                   categories={categories}
-                  isLoading={isCategoriesLoading}
+                  isLoading={false}
+                  displayTitle
                 />
                 <TemplatesSection
                   isLoading={isPopularTemplatesLoading}
@@ -186,10 +190,16 @@ const HomePage = () => {
     </Layout>
   );
 };
+let catCounter = 1;
 
-export const getServerSideProps = () => {
+export const getServerSideProps: GetServerSideProps = async ({ res }) => {
+  res.setHeader("Cache-Control", "public, maxage=3600, stale-while-revalidate=60");
+
+  const categories = await getCategories();
+  console.log("catCounter:", catCounter++, "=>", categories[0].name);
   return {
     props: {
+      categories,
       title: "Promptify | Boost Your Creativity",
       description:
         "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
