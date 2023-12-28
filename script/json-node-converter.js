@@ -1,9 +1,6 @@
 const fs = require('fs');
 
-const inputFile = './nodes.json';
-const outputFile = './convertedNodes.json';
-
-function convertJSON() {
+function convertJSON(inputFile, outputFile) {
     try {
         const data = fs.readFileSync(inputFile, 'utf8');
         const nodes = JSON.parse(data);
@@ -20,4 +17,11 @@ function convertJSON() {
 
 }
 
-convertJSON();
+const [inputFile, outputFile] = process.argv.slice(2);
+
+if (!inputFile || !outputFile) {
+    console.error('Please provide input and output file paths.');
+    process.exit(1);
+}
+
+convertJSON(inputFile, outputFile);
