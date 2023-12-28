@@ -6,9 +6,14 @@ import CategoriesPlaceholder from "@/components/placeholders/CategoriesPlaceHold
 interface CategoriesSectionProps {
   isLoading: boolean;
   categories: Category[] | undefined;
+  displayTitle?: boolean;
 }
 
-export const CategoriesSection: React.FC<CategoriesSectionProps> = ({ isLoading, categories }) => {
+export const CategoriesSection: React.FC<CategoriesSectionProps> = ({
+  isLoading,
+  categories,
+  displayTitle = false,
+}) => {
   if (!categories?.length) {
     return null;
   }
@@ -20,7 +25,7 @@ export const CategoriesSection: React.FC<CategoriesSectionProps> = ({ isLoading,
         display={"flex"}
         flexDirection={"column"}
       >
-        {!isLoading && <Typography fontSize={19}> Prompt Template Category </Typography>}
+        {displayTitle && <Typography fontSize={19}> Prompt Template Category </Typography>}
         {isLoading ? (
           <Grid
             display={"flex"}

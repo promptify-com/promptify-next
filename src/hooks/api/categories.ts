@@ -8,6 +8,8 @@ export const getCategories = async (): Promise<Category[]> => {
     });
     const categories = (await responseCategories.json()) as Category[];
 
+    console.log("getCategories hit");
+
     return categories.filter(category => category.prompt_template_count && category.is_visible);
   } catch (error) {
     console.error("Failed to fetch categories:", error);
