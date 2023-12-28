@@ -4,7 +4,8 @@ import Button from "@mui/material/Button";
 import Icon from "@mui/material/Icon";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
-import { alpha } from "@mui/material/styles";
+import ViewWeekOutlined from "@mui/icons-material/ViewWeekOutlined";
+import WebAssetOutlined from "@mui/icons-material/WebAssetOutlined";
 
 import { theme } from "@/theme";
 import NoteStackIcon from "@/assets/icons/NoteStackIcon";
@@ -14,7 +15,6 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import BaseButton from "@/components/base/BaseButton";
 import useVariant from "../../Hooks/useVariant";
 import type { Link } from "@/components/Prompt/Types";
-import { ViewWeekOutlined, WebAssetOutlined } from "@mui/icons-material";
 
 function TopHeaderActions({ executionsLength = 0 }) {
   const dispatch = useAppDispatch();
@@ -115,8 +115,10 @@ const linkStyle = {
 const btnStyle = {
   color: "secondary.main",
   fontSize: 14,
+  mr: "-10px",
   p: "6px 0",
   height: "30px",
+  width: "30px",
   borderRadius: "8px",
   border: "none",
   minWidth: "40px",
