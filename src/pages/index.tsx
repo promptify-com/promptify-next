@@ -190,13 +190,12 @@ const HomePage = ({ categories }: { categories: Category[] }) => {
     </Layout>
   );
 };
-let catCounter = 1;
 
-export const getServerSideProps: GetServerSideProps = async ({ res }) => {
-  res.setHeader("Cache-Control", "public, maxage=3600, stale-while-revalidate=60");
+export const getServerSideProps: GetServerSideProps = async ({ res, query }) => {
+  res.setHeader("Cache-Control", "public, maxage=1800, stale-while-revalidate=30");
 
-  const categories = await getCategories();
-  console.log("catCounter:", catCounter++, "=>", categories[0].name);
+  const categories = await getCategories((query.from as string) ?? "");
+
   return {
     props: {
       categories,
