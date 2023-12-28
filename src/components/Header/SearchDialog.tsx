@@ -196,7 +196,10 @@ export const SearchDialog: React.FC<SearchDialogProps> = ({ open, close }) => {
                     <NotFoundIcon />
                     <AskPromptifyButton
                       keyword={debouncedSearchName}
-                      actionHandler={close}
+                      actionHandler={() => {
+                        close();
+                        setTextInput("");
+                      }}
                     />
                   </Grid>
                 )}

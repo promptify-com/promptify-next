@@ -353,7 +353,13 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
                   // Render not found icon when there are no results
                   <>
                     <NotFoundIcon />
-                    <AskPromptifyButton keyword={debouncedSearchName} />
+                    <AskPromptifyButton
+                      keyword={debouncedSearchName}
+                      actionHandler={() => {
+                        onCloseDrawer();
+                        setTextInput("");
+                      }}
+                    />
                   </>
                 )}
               </Grid>
