@@ -450,7 +450,6 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
             onSubmit={validateVary}
             disabled={isValidatingAnswer || disableChatInput}
             isValidating={isValidatingAnswer}
-            disabledButton={!disabledButton}
             showGenerate={showGenerateButton}
             onGenerate={generateExecutionHandler}
           />

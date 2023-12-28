@@ -6,10 +6,9 @@ import { PromptParams, ResOverrides, ResPrompt } from "@/core/api/dto/prompts";
 import { useAppSelector, useAppDispatch } from "@/hooks/useStore";
 import useToken from "@/hooks/useToken";
 import { ChatInterface } from "./ChatInterface";
-import { ChatInput } from "./ChatInput";
 import { Templates } from "@/core/api/dto/templates";
 import { IPromptInput, PromptLiveResponse, AnsweredInputType } from "@/common/types/prompt";
-import { setGeneratingStatus, updateExecutionData } from "@/core/store/templatesSlice";
+import { setGeneratingStatus } from "@/core/store/templatesSlice";
 import { IAnswer, IMessage, VaryValidatorResponse } from "@/components/Prompt/Types/chat";
 import { executionsApi, useStopExecutionMutation } from "@/core/api/executions";
 import { vary } from "@/common/helpers/varyValidator";
@@ -24,6 +23,7 @@ import SigninButton from "@/components/common/buttons/SigninButton";
 import { setAnswers, setInputs, setIsSimulationStreaming, setParams, setparamsValues } from "@/core/store/chatSlice";
 import { PromptInputType } from "../../Types";
 import useApiAccess from "../../Hooks/useApiAccess";
+import { ChatInput } from "../../Common/Chat/ChatInput";
 
 interface Props {
   onError: (errMsg: string) => void;
@@ -40,8 +40,7 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
   const [stopExecution] = useStopExecutionMutation();
   const [uploadFile] = useUploadFileMutation();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
-  const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
-  const repeatedExecution = useAppSelector(state => state.executions.repeatedExecution);
+  const { generatedExecution, repeatedExecution } = useAppSelector(state => state.executions);
   const [showGenerateButton, setShowGenerateButton] = useState(false);
   const [isValidatingAnswer, setIsValidatingAnswer] = useState(false);
   const [generatingResponse, setGeneratingResponse] = useState<PromptLiveResponse>({
@@ -85,7 +84,9 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
     if (questions.length > 0) {
       let allQuestions = questions.map(_q => _q.question);
 
-      addToQueuedMessages([
+      const hasRequiredInput = questions.some(question => question.required);
+
+      const queuedMessages: IMessage[] = [
         {
           id: randomId(),
           text: allQuestions.join(" "),
@@ -102,15 +103,19 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
           fromUser: false,
           noHeader: true,
         },
-        {
+      ];
+      if (hasRequiredInput) {
+        queuedMessages.push({
           id: randomId(),
           text: "This is a list of information we need to execute this template:",
           type: "text",
           createdAt,
           fromUser: false,
           noHeader: true,
-        },
-      ]);
+        });
+      }
+
+      addToQueuedMessages(queuedMessages);
     }
 
     setMessages([welcomeMessage]);
@@ -195,12 +200,6 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
   }, [template]);
 
   useEffect(() => {
-    if (!repeatedExecution) return;
-    const isReady = allRequiredInputsAnswered(_inputs, answers) ? " We are ready to create a new document." : "";
-    messageAnswersForm(`Ok!${isReady} I have prepared the incoming parameters, please check!`);
-  }, [repeatedExecution]);
-
-  useEffect(() => {
     if (!isSimulationStreaming && !!queuedMessages.length) {
       const nextQueuedMessage = queuedMessages.pop()!;
 
@@ -230,6 +229,12 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
       }
     }
   }, [isGenerating, generatedExecution]);
+
+  useEffect(() => {
+    if (!repeatedExecution) return;
+    const isReady = allRequiredInputsAnswered(_inputs, answers) ? " We are ready to create a new document." : "";
+    messageAnswersForm(`Ok!${isReady} I have prepared the incoming parameters, please check!`);
+  }, [repeatedExecution]);
 
   const selectGeneratedExecution = async () => {
     if (generatedExecution?.id) {
@@ -527,9 +532,8 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
 
   return (
     <Stack
-      gap={"1px"}
       width={"100%"}
-      height={"calc(100% - 1px)"}
+      height={"100%"}
       bgcolor={"surface.3"}
     >
       {isDesktopView && (
@@ -560,6 +564,10 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
         <ChatInterface
           template={template}
           messages={messages}
+          showGenerate={showGenerate}
+          onGenerate={generateExecutionHandler}
+          isValidating={isValidatingAnswer}
+          abortGenerating={abortConnection}
         />
         {currentUser?.id ? (
           <ChatInput
@@ -568,7 +576,6 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
             showGenerate={showGenerate}
             onGenerate={generateExecutionHandler}
             isValidating={isValidatingAnswer}
-            abortGenerating={abortConnection}
           />
         ) : (
           <Stack

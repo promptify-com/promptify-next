@@ -1,7 +1,11 @@
+import { useEffect, useRef, useState } from "react";
 import InputLabel from "@mui/material/InputLabel";
 import Radio from "@mui/material/Radio";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
+import HelpOutline from "@mui/icons-material/HelpOutline";
 
 import { useAppSelector } from "@/hooks/useStore";
 import RenderInputType from "./Inputs";
@@ -14,12 +18,21 @@ interface Props {
 }
 
 function FormInput({ input }: Props) {
-  const answers = useAppSelector(state => state.chat.answers);
-
   const { isVariantB } = useVariant();
+
+  const answers = useAppSelector(state => state.chat.answers);
+  const labelRef = useRef<HTMLDivElement | null>(null);
+  const [labelWidth, setLabelWidth] = useState(0);
+
   const { fullName, required, type, name } = input;
 
   const value = answers.find(answer => answer.inputName === name)?.answer ?? "";
+
+  useEffect(() => {
+    if (labelRef.current) {
+      setLabelWidth(labelRef.current.offsetWidth);
+    }
+  }, [fullName]);
 
   return (
     <Stack
@@ -37,20 +50,25 @@ function FormInput({ input }: Props) {
           name="radio-buttons"
         />
       )}
+      <Box ref={labelRef}>
+        <InputLabel
+          sx={{
+            fontSize: { xs: 12, md: 15 },
+            fontWeight: 500,
+            color: "primary.main",
+          }}
+        >
+          {fullName} {required && isVariantB && <span>*</span>} :
+        </InputLabel>
+      </Box>
 
-      <InputLabel
-        sx={{
-          fontSize: { xs: 12, md: 15 },
-          fontWeight: 500,
-          color: "primary.main",
-        }}
-      >
-        {fullName} {required && <span>*</span>} :
-      </InputLabel>
       <Stack
-        flex={1}
         display={"flex"}
         alignItems={"start"}
+        position={"relative"}
+        flex={1}
+        width={"100%"}
+        maxWidth={`calc(100% - ${labelWidth}px)`}
       >
         <RenderInputType
           input={input}
@@ -85,7 +103,16 @@ function FormInput({ input }: Props) {
                 {type}
               </Typography>
             }
-          />
+          >
+            <IconButton
+              sx={{
+                opacity: 0.3,
+                border: "none",
+              }}
+            >
+              <HelpOutline />
+            </IconButton>
+          </CustomTooltip>
         </Stack>
       )}
     </Stack>

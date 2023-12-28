@@ -3,6 +3,8 @@ import Box from "@mui/material/Box";
 import InputLabel from "@mui/material/InputLabel";
 import Typography from "@mui/material/Typography";
 import Slider from "@mui/material/Slider";
+import IconButton from "@mui/material/IconButton";
+import HelpOutline from "@mui/icons-material/HelpOutline";
 
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import CustomTooltip from "@/components/Prompt/Common/CustomTooltip";
@@ -51,10 +53,25 @@ export default function FormParam({ param }: GeneratorParamProps) {
   const marks = descriptions.map(description => ({ value: description.score }));
   const values = marks.map(obj => obj.value) || [];
 
+  const HelpIcon = () => {
+    return (
+      <CustomTooltip title={"Parameter"}>
+        <IconButton
+          sx={{
+            opacity: 0.3,
+            border: "none",
+          }}
+        >
+          <HelpOutline />
+        </IconButton>
+      </CustomTooltip>
+    );
+  };
+
   return (
     <Stack
-      direction={"row"}
-      alignItems={"center"}
+      direction={{ xs: isVariantB ? "row" : "column", md: "row" }}
+      alignItems={{ xs: isVariantB ? "center" : "start", md: "center" }}
       flexWrap={"wrap"}
       p={isVariantB ? "16px 6px" : "0"}
       gap={1}
@@ -99,14 +116,17 @@ export default function FormParam({ param }: GeneratorParamProps) {
               display: { xs: "flex", md: "none" },
             }}
           >
-            <CustomTooltip title={"Parameter"} />
+            <HelpIcon />
           </Stack>
         )}
       </Stack>
 
       <Slider
         disabled={!param.is_editable || isGenerating}
-        sx={sliderStyle}
+        sx={{
+          ...sliderStyle,
+          ml: { xs: isVariantB ? "45px" : 0, md: "0" },
+        }}
         value={activeDescription?.score || 2}
         marks={marks}
         step={1}
@@ -121,19 +141,17 @@ export default function FormParam({ param }: GeneratorParamProps) {
             display: { xs: "none", md: "flex" },
           }}
         >
-          <CustomTooltip title={"Parameter"} />
+          <HelpIcon />
         </Stack>
       )}
     </Stack>
   );
 }
-
 const sliderStyle = {
   height: "2px",
   width: { xs: "70%", md: "30%" },
   minWidth: { md: "300px" },
   flexShrink: 0,
-  ml: { xs: "45px", md: "0" },
   color: "primary.main",
   "& .MuiSlider-thumb": {
     height: 12,

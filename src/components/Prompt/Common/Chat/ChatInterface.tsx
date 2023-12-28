@@ -191,6 +191,7 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
                           <FeedbackThumbs
                             execution={selectedExecution}
                             vertical
+                            variant="icon"
                           />
                         </Box>
                       )}

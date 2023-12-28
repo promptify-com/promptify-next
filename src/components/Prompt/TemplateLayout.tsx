@@ -22,7 +22,7 @@ export default function TempalteLayout({
   setErrorMessage,
   questionPrefixContent,
 }: TemplateLayoutProps) {
-  const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
+  const { selectedExecution, sparkHashQueryParam } = useAppSelector(state => state.executions);
 
   const dispatch = useAppDispatch();
 
@@ -48,7 +48,7 @@ export default function TempalteLayout({
   };
 
   useEffect(() => {
-    if (!executions) {
+    if (!executions || sparkHashQueryParam) {
       return;
     }
 
@@ -71,8 +71,6 @@ export default function TempalteLayout({
           template={template}
           questionPrefixContent={questionPrefixContent}
           setErrorMessage={setErrorMessage}
-          isExecutionsLoading={isExecutionsLoading}
-          refetchTemplateExecutions={refetchTemplateExecutions}
         />
       ) : (
         <TemplateVariantB
@@ -80,8 +78,6 @@ export default function TempalteLayout({
           template={template}
           questionPrefixContent={questionPrefixContent}
           setErrorMessage={setErrorMessage}
-          isExecutionsLoading={isExecutionsLoading}
-          refetchTemplateExecutions={refetchTemplateExecutions}
         />
       )}
     </>

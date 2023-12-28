@@ -18,15 +18,11 @@ interface TemplateLayoutProps {
   setErrorMessage: Dispatch<SetStateAction<string>>;
   questionPrefixContent: string;
   executions: TemplatesExecutions[];
-  isExecutionsLoading: boolean;
-  refetchTemplateExecutions: () => void;
 }
 
 export default function TemplateVariantA({
   template,
   executions,
-  isExecutionsLoading,
-  refetchTemplateExecutions,
   setErrorMessage,
   questionPrefixContent,
 }: TemplateLayoutProps) {
@@ -121,8 +117,6 @@ export default function TemplateVariantA({
         <Sidebar
           template={template}
           executions={executions ?? []}
-          isLoading={isExecutionsLoading}
-          refetchExecutions={refetchTemplateExecutions}
         />
       </Stack>
     </Stack>

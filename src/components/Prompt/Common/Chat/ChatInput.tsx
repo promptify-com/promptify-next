@@ -1,4 +1,3 @@
-import { useRef } from "react";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
@@ -10,30 +9,25 @@ import MessageSender from "./MessageSender";
 import { ProgressLogo } from "@/components/common/ProgressLogo";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setGeneratedExecution, setSelectedExecution } from "@/core/store/executionsSlice";
-import { setAnswers, setIsSimulationStreaming } from "@/core/store/chatSlice";
+import { setAnswers } from "@/core/store/chatSlice";
+import useVariant from "../../Hooks/useVariant";
 
 interface ChatInputProps {
   onSubmit: (value: string) => void;
   disabled: boolean;
   isValidating: boolean;
-  disabledButton: boolean;
   onGenerate: () => void;
   showGenerate: boolean;
 }
 
-export const ChatInput = ({
-  onSubmit,
-  disabled,
-  isValidating,
-  disabledButton,
-  onGenerate,
-  showGenerate,
-}: ChatInputProps) => {
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
+export const ChatInput = ({ onSubmit, disabled, isValidating, onGenerate, showGenerate }: ChatInputProps) => {
+  const dispatch = useAppDispatch();
+  const { isVariantA } = useVariant();
+
+  const { generatedExecution, selectedExecution } = useAppSelector(state => state.executions);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
 
-  const dispatch = useAppDispatch();
+  const isExecutionShown = Boolean(selectedExecution || generatedExecution);
 
   const addNewPrompt = () => {
     dispatch(setSelectedExecution(null));
@@ -43,48 +37,50 @@ export const ChatInput = ({
 
   return (
     <Grid
-      ref={containerRef}
       position={"relative"}
       display={"flex"}
       width={"100%"}
-      px={{ xs: "8px", md: "40px" }}
+      px={{ xs: "8px", md: isExecutionShown && isVariantA ? "16px" : "40px" }}
+      pb={isVariantA ? "25px" : 0}
       flexDirection={"column"}
       gap={"8px"}
     >
-      <Stack
-        direction={"row"}
-        gap={2}
-      >
-        {isValidating && (
+      {isValidating && (
+        <Stack
+          direction={"row"}
+          gap={2}
+          alignItems={"center"}
+        >
+          <ProgressLogo size="small" />
           <Stack
             direction={"row"}
-            gap={2}
-            alignItems={"center"}
+            gap={1}
           >
-            <ProgressLogo size="small" />
-            <Stack
-              direction={"row"}
-              gap={1}
+            <Typography
+              fontSize={12}
+              fontWeight={600}
+              color={"onSurface"}
             >
-              <Typography
-                fontSize={15}
-                fontWeight={400}
-                color={"onSurface"}
-                sx={{ opacity: 0.6 }}
-              >
-                Promptify is thinking...
-              </Typography>
-            </Stack>
+              Promptify
+            </Typography>
+            <Typography
+              fontSize={12}
+              fontWeight={500}
+              color={"text.secondary"}
+              sx={{ opacity: 0.45 }}
+            >
+              Thinking...
+            </Typography>
           </Stack>
-        )}
-      </Stack>
+        </Stack>
+      )}
 
       <Stack
         direction={"row"}
         gap={"8px"}
         alignItems={"center"}
       >
-        {!!generatedExecution && !isGenerating && (
+        {!isVariantA && !!generatedExecution && !isGenerating && (
           <Tooltip
             title="Add new Prompt"
             arrow
@@ -123,7 +119,7 @@ export const ChatInput = ({
         <Box flex={1}>
           <MessageSender
             onSubmit={onSubmit}
-            disabled={disabled || disabledButton}
+            disabled={disabled}
             mode={"chat"}
             onGenerate={onGenerate}
             showGenerate={showGenerate}

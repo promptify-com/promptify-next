@@ -15,15 +15,11 @@ interface TemplateVariantBProps {
   setErrorMessage: Dispatch<SetStateAction<string>>;
   questionPrefixContent: string;
   executions: TemplatesExecutions[];
-  isExecutionsLoading: boolean;
-  refetchTemplateExecutions: () => void;
 }
 
 export default function TemplateVariantB({
   template,
   executions,
-  isExecutionsLoading,
-  refetchTemplateExecutions,
   setErrorMessage,
   questionPrefixContent,
 }: TemplateVariantBProps) {
@@ -97,8 +93,6 @@ export default function TemplateVariantB({
         <Sidebar
           template={template}
           executions={executions ?? []}
-          isLoading={isExecutionsLoading}
-          refetchExecutions={refetchTemplateExecutions}
         />
       </Grid>
     </Stack>

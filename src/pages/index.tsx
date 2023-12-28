@@ -142,15 +142,16 @@ const HomePage = ({ categories }: { categories: Category[] }) => {
                     Welcome, {currentUser?.username}
                   </Typography>
                 </Grid>
+
                 <TemplatesSection
                   isLatestTemplates
-                  isLoading={isMyLatestExecutionsLoading}
-                  templates={myLatestExecutions || []}
+                  templateLoading={isMyLatestExecutionsLoading}
+                  templates={myLatestExecutions}
                   title="Your Latest Templates:"
                   type="myLatestExecutions"
                 />
                 <TemplatesSection
-                  isLoading={isSuggestedTemplateLoading}
+                  templateLoading={isSuggestedTemplateLoading}
                   templates={suggestedTemplates}
                   title=" You may like these prompt templates:"
                   type="suggestedTemplates"
