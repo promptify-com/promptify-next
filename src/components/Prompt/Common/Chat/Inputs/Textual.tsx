@@ -7,6 +7,7 @@ import useVariant from "@/components/Prompt/Hooks/useVariant";
 import { useAppSelector } from "@/hooks/useStore";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { PromptInputType } from "@/components/Prompt/Types";
+import { isIosDevice } from "@/common/helpers";
 
 interface Props {
   input: IPromptInput;
@@ -48,7 +49,10 @@ function Textual({ input, value, onChange, onBlur }: Props) {
         inputRef={ref => (fieldRef.current = ref)}
         fullWidth={isVariantB}
         disabled={isGenerating}
-        sx={textFieldStyle}
+        sx={{
+          fontSize: { xs: isIosDevice() ? 16 : 12, md: isIosDevice() ? 16 : 14 },
+          ...textFieldStyle,
+        }}
         placeholder={isVariantB ? "Type here" : required ? "Required" : "Optional"}
         type={type}
         value={value}
@@ -94,11 +98,16 @@ const textFieldStyle = {
   ".MuiInputBase-input": {
     p: 0,
     color: "onSurface",
-    fontSize: { xs: 12, md: 14 },
     fontWeight: 400,
     "&::placeholder": {
       color: "text.secondary",
       opacity: 0.65,
+    },
+    "&::-webkit-input-placeholder": {
+      fontSize: {
+        xs: 12,
+        md: 14,
+      },
     },
     "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
       WebkitAppearance: "none",
