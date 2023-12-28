@@ -41,9 +41,3 @@ export const redirectToPath = (path: string, searchParams: Record<string, string
 export function allFieldsFilled(obj: Record<string, any>): boolean {
   return Object.values(obj).every(value => value !== "");
 }
-
-export const isIosDevice = () => {
-  if (typeof navigator === "undefined") return false;
-  const platform = navigator.platform || "";
-  return /iPad|iPhone|iPod/.test(platform) || (platform === "MacIntel" && navigator.maxTouchPoints > 1);
-};
