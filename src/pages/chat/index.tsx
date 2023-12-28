@@ -235,15 +235,11 @@ export default function Chat() {
   const [queuedMessages, setQueuedMessages] = useState<IMessage[]>([]);
   const isSimulationStreaming = useAppSelector(state => state.chat.isSimulationStreaming);
   const currentSessionId = useRef<number>(isBrowser() ? Storage.get(N8N_SESSION_ID) : 0);
-  const searchQuery = router.query.q as string;
 
-  useEffect(() => {
-    // initMessages();
-    // loadPreviousSession();
-    if (searchQuery?.length > 2) {
-      submitMessage(`Search: ${router.query.q as string}`);
-    }
-  }, []);
+  // useEffect(() => {
+  //   // initMessages();
+  //   // loadPreviousSession();
+  // }, []);
 
   useEffect(() => {
     if (!isSimulationStreaming && !!queuedMessages.length) {
@@ -257,6 +253,13 @@ export default function Chat() {
   }, [isSimulationStreaming, queuedMessages]);
 
   useEffect(() => scrollToBottom(), [messages]);
+  useEffect(() => {
+    const searchQuery = router.query.q as string;
+
+    if (searchQuery?.length > 2) {
+      submitMessage(`Search: ${router.query.q as string}`);
+    }
+  }, [router]);
 
   const addToQueuedMessages = (messages: IMessage[]) => {
     setTimeout(() => {

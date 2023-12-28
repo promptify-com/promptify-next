@@ -194,7 +194,10 @@ export const SearchDialog: React.FC<SearchDialogProps> = ({ open, close }) => {
                     minHeight={"20vh"}
                   >
                     <NotFoundIcon />
-                    <AskPromptifyButton keyword={debouncedSearchName} />
+                    <AskPromptifyButton
+                      keyword={debouncedSearchName}
+                      actionHandler={close}
+                    />
                   </Grid>
                 )}
               </Grid>

@@ -2,14 +2,22 @@ import BaseButton from "@/components/base/BaseButton";
 import { alpha } from "@mui/material";
 import { redirectToPath } from "@/common/helpers";
 import { theme } from "@/theme";
+import { useRouter } from "next/router";
 
-export default function AskPromptifyButton({ keyword }: { keyword: string }) {
+export default function AskPromptifyButton({ keyword, actionHandler }: { keyword: string; actionHandler: () => void }) {
+  const router = useRouter();
+
   return (
     <BaseButton
       variant="contained"
       color="primary"
       sx={btnStyle}
       onClick={() => {
+        if (router.pathname === "/") {
+          router.replace(`/?q=${keyword}`);
+          actionHandler();
+          return;
+        }
         redirectToPath("/", { q: keyword });
       }}
     >
