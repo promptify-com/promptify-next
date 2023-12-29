@@ -54,10 +54,11 @@ export const CategoriesSection: React.FC<CategoriesSectionProps> = ({
           >
             {categories
               ?.filter(category => !category.parent && category.is_visible && category.prompt_template_count)
-              .map(category => (
+              .map((category, idx) => (
                 <Grid key={category.id}>
                   <CategoryCard
                     category={category}
+                    index={idx}
                     href={`/explore/${category.slug}`}
                   />
                 </Grid>

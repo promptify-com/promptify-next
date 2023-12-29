@@ -1,12 +1,14 @@
 import { Card, CardActionArea, CardContent, CardMedia, Typography } from "@mui/material";
-import { Category } from "@/core/api/dto/templates";
-import { useSelector } from "react-redux";
-import { isValidUserFn } from "@/core/store/userSlice";
+import type { Category } from "@/core/api/dto/templates";
 import Image from "@/components/design-system/Image";
 import { redirectToPath } from "@/common/helpers";
+import useBrowser from "@/hooks/useBrowser";
+import useToken from "@/hooks/useToken";
 
-export const CategoryCard = ({ category, href }: { category: Category; href: string }) => {
-  const isValidUser = useSelector(isValidUserFn);
+export const CategoryCard = ({ category, href, index }: { category: Category; href: string; index: number }) => {
+  const token = useToken();
+  const { isMobile } = useBrowser();
+  const shouldPrioritizeImage = token ? false : isMobile ? index === 0 || index === 1 : true;
 
   return (
     <Card
@@ -43,7 +45,7 @@ export const CategoryCard = ({ category, href }: { category: Category; href: str
             src={category.image}
             alt={category.name}
             style={{ borderRadius: "16px", objectFit: "cover", width: "100%", height: "100%" }}
-            priority={!isValidUser}
+            priority={shouldPrioritizeImage}
           />
         </CardMedia>
 
