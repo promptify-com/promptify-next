@@ -74,8 +74,12 @@ function App({ Component, ...rest }: AppProps) {
             <Script
               strategy="lazyOnload"
               src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS}`}
+              defer
             />
-            <Script strategy="lazyOnload">
+            <Script
+              strategy="lazyOnload"
+              defer
+            >
               {`
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){dataLayer.push(arguments);}
@@ -87,6 +91,7 @@ function App({ Component, ...rest }: AppProps) {
             </Script>
             <Script
               strategy="afterInteractive"
+              defer
               dangerouslySetInnerHTML={{
                 __html: `
               (function(h,o,t,j,a,r){
