@@ -8,7 +8,7 @@ import LatestTemplatePlaceholder from "@/components/placeholders/LatestTemplateP
 import TemplatesInfiniteScroll from "../TemplatesInfiniteScroll";
 import { TemplatesFilter } from "./TemplatesFilter";
 import { Close, FilterList } from "@mui/icons-material";
-import { useState } from "react";
+import { type RefObject, useState, forwardRef } from "react";
 
 interface TemplatesSectionProps {
   templates: Templates[] | TemplateExecutionsDisplay[] | undefined;
@@ -25,20 +25,23 @@ interface TemplatesSectionProps {
   onPrevPage?: () => void;
 }
 
-export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
-  templates,
-  isLoading = false,
-  filtred,
-  title,
-  isLatestTemplates = false,
-  onNextPage = () => {},
-  type,
-  hasMore,
-  templateLoading,
-  isInfiniteScrolling = true,
-  hasPrev,
-  onPrevPage = () => {},
-}) => {
+export const TemplatesSection = forwardRef<HTMLDivElement, TemplatesSectionProps>(function TemplatesSectionInner(
+  {
+    templates,
+    isLoading = false,
+    filtred,
+    title,
+    isLatestTemplates = false,
+    onNextPage = () => {},
+    type,
+    hasMore,
+    templateLoading,
+    isInfiniteScrolling = true,
+    hasPrev,
+    onPrevPage = () => {},
+  },
+  ref,
+) {
   const [openFilters, setOpenFilters] = useState(false);
 
   const filtersAllowed = type !== "myLatestExecutions";
@@ -50,7 +53,10 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
   }
 
   return (
-    <Box width={"100%"}>
+    <Box
+      width={"100%"}
+      ref={ref}
+    >
       {!filtred && (templateLoading || !!templates?.length) && (
         <Box>
           <Stack
@@ -173,4 +179,4 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
       )}
     </Box>
   );
-};
+});

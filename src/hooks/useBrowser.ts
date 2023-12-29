@@ -4,7 +4,7 @@ import { isDesktopViewPort } from "@/common/helpers";
 export default function useBrowser() {
   const router = useRouter();
 
-  const viewport = router.query.viewport;
+  const viewport = router.query.viewport ?? "unknown";
 
   const isMobile = viewport === "unknown" ? !isDesktopViewPort() : viewport === "mobile";
 
