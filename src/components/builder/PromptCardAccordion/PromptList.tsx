@@ -1,17 +1,18 @@
-import { Fragment, useCallback, useState, memo, useEffect } from "react";
-import PromptCardAccordion from "@/components/builder/PromptCardAccordion";
-import { IEditPrompts } from "@/common/types/builder";
+import { Fragment, useCallback, useState, memo } from "react";
+import Stack from "@mui/material/Stack";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import { useDrop } from "react-dnd";
-import { Box, Button, Stack } from "@mui/material";
-import { Add } from "@mui/icons-material";
+import Add from "@mui/icons-material/Add";
+
+import PromptCardAccordion from "@/components/builder/PromptCardAccordion";
 import { promptComputeDomId, randomId } from "@/common/helpers";
-import { Engine } from "@/core/api/dto/templates";
 import { useDeletePromptMutation } from "@/core/api/templates";
 import { DeleteDialog } from "@/components/dialog/DeleteDialog";
-import { useAppDispatch } from "@/hooks/useStore";
-import { handlePrompts } from "@/core/store/builderSlice";
 import { useScrollToElement } from "@/hooks/useScrollToElement";
 import { BUILDER_TYPE } from "@/common/constants";
+import type { Engine } from "@/core/api/dto/templates";
+import type { IEditPrompts } from "@/common/types/builder";
 
 interface Props {
   prompts: IEditPrompts[];
@@ -22,7 +23,6 @@ const PromptList = ({ prompts, setPrompts, engines }: Props) => {
   const [promptToDelete, setPromptToDelete] = useState<IEditPrompts | null>(null);
   const [deletePrompt] = useDeletePromptMutation();
 
-  const dispatch = useAppDispatch();
   const setSmoothScrollTarget = useScrollToElement("smooth");
 
   const [, drop] = useDrop(() => ({ accept: "prompt" }));
@@ -49,7 +49,6 @@ const PromptList = ({ prompts, setPrompts, engines }: Props) => {
 
       const reorderedPrompts = _promptsCopy.map((prompt, index) => ({ ...prompt, order: index + 1 }));
       setPrompts(reorderedPrompts);
-      dispatch(handlePrompts(reorderedPrompts));
     },
     [findPromptIndex, prompts],
   );
@@ -66,7 +65,6 @@ const PromptList = ({ prompts, setPrompts, engines }: Props) => {
     });
 
     setPrompts(_prompts);
-    dispatch(handlePrompts(_prompts));
   };
 
   const createPrompt = (order: number) => {
@@ -101,7 +99,6 @@ const PromptList = ({ prompts, setPrompts, engines }: Props) => {
     }
 
     setPrompts(_prompts);
-    dispatch(handlePrompts(_prompts));
     setSmoothScrollTarget(`#${promptComputeDomId(_newPrompt)}`);
   };
 
