@@ -1,16 +1,26 @@
+import Card from "@mui/material/Card";
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
+import Tooltip from "@mui/material/Tooltip";
+import Avatar from "@mui/material/Avatar";
+import IconButton from "@mui/material/IconButton";
+import CardMedia from "@mui/material/CardMedia";
+import Typography from "@mui/material/Typography";
+import Chip from "@mui/material/Chip";
 import { FC } from "react";
-import { Delete, SettingsApplicationsRounded } from "@mui/icons-material";
-import { Box, Card, CardMedia, Chip, Grid, IconButton, Tooltip, Typography } from "@mui/material";
-import { Templates } from "@/core/api/dto/templates";
+import Delete from "@mui/icons-material/Delete";
+import SettingsApplicationsRounded from "@mui/icons-material/SettingsApplicationsRounded";
+
 import Image from "@/components/design-system/Image";
 import { getBaseUrl, redirectToPath } from "@/common/helpers";
+import type { Templates } from "@/core/api/dto/templates";
 
 interface TemplateManagerItemProps {
   template: Templates;
   onOpenDelete: () => void;
 }
 
-const TemplateManagerItem: FC<TemplateManagerItemProps> = ({ template, onOpenDelete }) => {
+function TemplateManagerItem({ template, onOpenDelete }: TemplateManagerItemProps) {
   const navigateToTemplate = () => {
     redirectToPath(`/prompt/${template.slug}`);
   };
@@ -22,7 +32,7 @@ const TemplateManagerItem: FC<TemplateManagerItemProps> = ({ template, onOpenDel
       sx={{
         p: "10px",
         borderRadius: "16px",
-        bgcolor: { xs: "surface.2", md: "surface.1" },
+        bgcolor: "surface.2",
       }}
     >
       <Grid
@@ -77,6 +87,18 @@ const TemplateManagerItem: FC<TemplateManagerItemProps> = ({ template, onOpenDel
           ml={"auto"}
           gap={"8px"}
         >
+          <Box mr={3}>
+            <Tooltip
+              placement="top"
+              arrow
+              title={`Created by ${template.created_by.first_name || template.created_by.username}`}
+            >
+              <Avatar
+                src={template.created_by.avatar}
+                sx={{ width: 30, height: 30 }}
+              />
+            </Tooltip>
+          </Box>
           <Tooltip title="Builder">
             <IconButton
               sx={{
@@ -116,6 +138,6 @@ const TemplateManagerItem: FC<TemplateManagerItemProps> = ({ template, onOpenDel
       </Grid>
     </Card>
   );
-};
+}
 
 export default TemplateManagerItem;

@@ -1,25 +1,21 @@
-import {
-  Avatar,
-  Box,
-  Drawer,
-  IconButton,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  Stack,
-  Typography,
-} from "@mui/material";
+import Box from "@mui/material/Box";
+import Avatar from "@mui/material/Avatar";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItem from "@mui/material/ListItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import Stack from "@mui/material/Stack";
+import Drawer from "@mui/material/Drawer";
+import Typography from "@mui/material/Typography";
+import IconButton from "@mui/material/IconButton";
 import { useTheme } from "@mui/material/styles";
 import Close from "@mui/icons-material/Close";
 
-import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import { Executions } from "./Executions";
 import { TemplateDetails } from "./TemplateDetails";
 import { ApiAccess } from "./ApiAccess";
 import { Extension } from "./Extension";
 import { Feedback } from "./Feedback";
 import { isValidUserFn } from "@/core/store/userSlice";
-
 import { setActiveToolbarLink } from "@/core/store/templatesSlice";
 import ToolbarItem from "@/components/Prompt/Common/Sidebar/ToolbarItem";
 import { TemplateSidebarLinks } from "@/common/constants";
@@ -27,6 +23,9 @@ import FavoriteIcon from "../FavoriteIcon";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { isDesktopViewPort } from "@/common/helpers";
 import useVariant from "../../Hooks/useVariant";
+import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
+import CustomTooltip from "../CustomTooltip";
+import { Tooltip } from "@mui/material";
 
 const drawerWidth = 352;
 
@@ -90,11 +89,16 @@ function Sidebar({ template, executions }: SidebarProps) {
                   bgcolor: "surface.1",
                 }}
               >
-                <Avatar
-                  src={template.created_by.avatar}
-                  alt={template.created_by.username}
-                  sx={{ width: 30, height: 30 }}
-                />
+                <Tooltip
+                  placement="top"
+                  arrow
+                  title={`Created by ${template.created_by.first_name || template.created_by.username}`}
+                >
+                  <Avatar
+                    src={template.created_by.avatar}
+                    sx={{ width: 30, height: 30 }}
+                  />
+                </Tooltip>
 
                 <ListItem
                   disablePadding
