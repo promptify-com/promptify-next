@@ -1,6 +1,5 @@
 import { lazy } from "react";
 import Box from "@mui/material/Box";
-import Avatar from "@mui/material/Avatar";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
