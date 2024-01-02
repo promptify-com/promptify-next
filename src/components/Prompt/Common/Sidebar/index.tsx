@@ -1,4 +1,4 @@
-import { lazy } from "react";
+import lazy from "next/dynamic";
 import Box from "@mui/material/Box";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItem from "@mui/material/ListItem";
