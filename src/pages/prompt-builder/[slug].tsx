@@ -188,7 +188,7 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
         <Header
           status={templateData?.status || "DRAFT"}
           title={templateData?.title || ""}
-          templateSlug={templateData.slug}
+          templateSlug={templateData?.slug}
           onPublish={handlePublishTemplate}
           onSave={handleSaveTemplate}
           onEditTemplate={() => setTemplateDrawerOpen(true)}
@@ -341,8 +341,10 @@ export async function getServerSideProps({ params }: { params: { slug: string } 
       }
     }
   } catch (error) {
-    console.error("Template/engines request failed:", error);
+    console.warn("Template/engines request failed:", error);
   }
+
+  console.log("slug template:", slug, templateData?.title, engines?.length, _initPrompts?.length);
 
   return {
     props: {
