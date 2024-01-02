@@ -14,8 +14,7 @@ import ChatMessagePlaceholder from "@/components/placeholders/ChatMessagePlaceho
 import type { UserPartial } from "@/core/api/dto/user";
 
 const maxLength = 2500;
-
-export const Feedback = () => {
+const Feedback = () => {
   const token = useToken();
   const [feedback, setFeedback] = useState("");
   const containerRef = useRef<HTMLDivElement>(null);
@@ -193,3 +192,5 @@ export const Feedback = () => {
     </Stack>
   );
 };
+
+export default Feedback;

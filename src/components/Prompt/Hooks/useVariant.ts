@@ -11,11 +11,16 @@ declare global {
   var gtag: (arg1: string, arg2: string, arg3: Record<string, string>) => void;
 }
 
+function getRandomVariant() {
+  return Math.random() < 0.5 ? "a" : "b";
+}
+
 const useVariant = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
-
-  const [variant, setVariant] = useState<string>("a");
+  const [variant, setVariant] = useState<string>(
+    (router.query.variant as string) !== "unknown" ? (router.query.variant as string) : getRandomVariant(),
+  );
 
   const isVariantB = variant === "b";
   const isVariantA = variant === "a";
@@ -25,7 +30,7 @@ const useVariant = () => {
     let variant = cookieVariant ?? (router.query.variant as string);
 
     if (!variant) {
-      variant = Math.random() < 0.5 ? "a" : "b";
+      variant = getRandomVariant();
     }
 
     setVariant(variant);

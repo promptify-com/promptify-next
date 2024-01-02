@@ -1,3 +1,4 @@
+import { lazy } from "react";
 import Box from "@mui/material/Box";
 import Avatar from "@mui/material/Avatar";
 import ListItemButton from "@mui/material/ListItemButton";
@@ -11,11 +12,6 @@ import IconButton from "@mui/material/IconButton";
 import { useTheme } from "@mui/material/styles";
 import Close from "@mui/icons-material/Close";
 
-import { Executions } from "./Executions";
-import { TemplateDetails } from "./TemplateDetails";
-import { ApiAccess } from "./ApiAccess";
-import { Extension } from "./Extension";
-import { Feedback } from "./Feedback";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { setActiveToolbarLink } from "@/core/store/templatesSlice";
 import ToolbarItem from "@/components/Prompt/Common/Sidebar/ToolbarItem";
@@ -25,7 +21,13 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { isDesktopViewPort } from "@/common/helpers";
 import useVariant from "../../Hooks/useVariant";
 import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
+import Image from "next/image";
 
+const ExecutionsLazy = lazy(() => import("./Executions"));
+const TemplateDetailsLazy = lazy(() => import("./TemplateDetails"));
+const ApiAccessLazy = lazy(() => import("./ApiAccess"));
+const ExtensionLazy = lazy(() => import("./Extension"));
+const FeedbackLazy = lazy(() => import("./Feedback"));
 const drawerWidth = 352;
 
 interface SidebarProps {
@@ -37,20 +39,14 @@ function Sidebar({ template, executions }: SidebarProps) {
   const dispatch = useAppDispatch();
   const { isVariantA } = useVariant();
   const isMobile = !isDesktopViewPort();
-
   const activeLink = useAppSelector(state => state.template.activeSideBarLink);
   const isValidUser = useAppSelector(isValidUserFn);
-
   const theme = useTheme();
-
   const handleCloseSidebar = () => {
     dispatch(setActiveToolbarLink(null));
   };
-
   const open = !!activeLink?.name;
-
   const shouldFilterCustomize = isVariantA || (!isVariantA && !isValidUser);
-
   const filtredSidebarLinks = shouldFilterCustomize
     ? TemplateSidebarLinks.filter(item => item.name !== "customize")
     : TemplateSidebarLinks;
@@ -93,9 +89,16 @@ function Sidebar({ template, executions }: SidebarProps) {
                   arrow
                   title={`Created by ${template.created_by.first_name || template.created_by.username}`}
                 >
-                  <Avatar
+                  <Image
                     src={template.created_by.avatar}
-                    sx={{ width: 30, height: 30 }}
+                    alt={template.created_by.username}
+                    width={30}
+                    height={30}
+                    priority={false}
+                    loading="lazy"
+                    style={{
+                      borderRadius: 30,
+                    }}
                   />
                 </Tooltip>
 
@@ -233,11 +236,11 @@ function Sidebar({ template, executions }: SidebarProps) {
             <Close />
           </IconButton>
         </Stack>
-        {activeLink?.name === "executions" && <Executions template={template} />}
-        {activeLink?.name === "feedback" && <Feedback />}
-        {activeLink?.name === "api" && <ApiAccess template={template} />}
-        {activeLink?.name === "extension" && <Extension />}
-        {activeLink?.name === "details" && <TemplateDetails template={template} />}
+        {activeLink?.name === "executions" && <ExecutionsLazy template={template} />}
+        {activeLink?.name === "details" && <TemplateDetailsLazy template={template} />}
+        {activeLink?.name === "feedback" && <FeedbackLazy />}
+        {activeLink?.name === "api" && <ApiAccessLazy template={template} />}
+        {activeLink?.name === "extension" && <ExtensionLazy />}
       </Drawer>
     </Box>
   );

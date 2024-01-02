@@ -20,7 +20,7 @@ interface ExecutionsProps {
   template: Templates;
 }
 
-export const Executions: React.FC<ExecutionsProps> = ({ template }) => {
+const Executions: React.FC<ExecutionsProps> = ({ template }) => {
   const router = useRouter();
   const activeVariant = router.query.variant;
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
@@ -144,3 +144,5 @@ export const Executions: React.FC<ExecutionsProps> = ({ template }) => {
     </Stack>
   );
 };
+
+export default Executions;
