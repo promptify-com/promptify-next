@@ -11,6 +11,7 @@ import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 import { useTheme } from "@mui/material/styles";
 import Close from "@mui/icons-material/Close";
+import Image from "next/image";
 
 import { isValidUserFn } from "@/core/store/userSlice";
 import { setActiveToolbarLink } from "@/core/store/templatesSlice";
@@ -20,14 +21,13 @@ import FavoriteIcon from "../FavoriteIcon";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { isDesktopViewPort } from "@/common/helpers";
 import useVariant from "../../Hooks/useVariant";
-import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
-import Image from "next/image";
-
 const ExecutionsLazy = lazy(() => import("./Executions"));
 const TemplateDetailsLazy = lazy(() => import("./TemplateDetails"));
 const ApiAccessLazy = lazy(() => import("./ApiAccess"));
 const ExtensionLazy = lazy(() => import("./Extension"));
 const FeedbackLazy = lazy(() => import("./Feedback"));
+import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
+
 const drawerWidth = 352;
 
 interface SidebarProps {
