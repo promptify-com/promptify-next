@@ -6,6 +6,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import Stack from "@mui/material/Stack";
 import Drawer from "@mui/material/Drawer";
 import Typography from "@mui/material/Typography";
+import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 import { useTheme } from "@mui/material/styles";
 import Close from "@mui/icons-material/Close";
@@ -24,8 +25,6 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { isDesktopViewPort } from "@/common/helpers";
 import useVariant from "../../Hooks/useVariant";
 import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
-import CustomTooltip from "../CustomTooltip";
-import { Tooltip } from "@mui/material";
 
 const drawerWidth = 352;
 
