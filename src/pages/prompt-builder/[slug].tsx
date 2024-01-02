@@ -29,9 +29,6 @@ interface PromptBuilderProps {
 }
 
 export const PromptBuilder = ({ templateData, initPrompts = [], engines }: PromptBuilderProps) => {
-  console.log("templateData:", templateData);
-  console.log("engines:", engines);
-  console.log("initPrompts:", initPrompts);
   const router = useRouter();
   const token = useToken();
   const builderSidebarOpen = useAppSelector(state => state.sidebar.builderSidebarOpen);
@@ -346,8 +343,6 @@ export async function getServerSideProps({ params }: { params: { slug: string } 
   } catch (error) {
     console.warn("Template/engines request failed:", error);
   }
-
-  console.log("slug template:", slug, templateData?.title, engines?.length, _initPrompts?.length);
 
   return {
     props: {
