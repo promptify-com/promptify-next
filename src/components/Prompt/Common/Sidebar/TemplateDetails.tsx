@@ -10,7 +10,7 @@ interface TemplateDetailsProps {
   template: Templates;
 }
 
-export const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template }) => {
+const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template }) => {
   const router = useRouter();
   const dispatch = useDispatch();
 
@@ -122,3 +122,5 @@ export const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template }) =>
     </Stack>
   );
 };
+
+export default TemplateDetails;

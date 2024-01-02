@@ -1,25 +1,15 @@
-import {
-  Avatar,
-  Box,
-  Drawer,
-  IconButton,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  Stack,
-  Typography,
-} from "@mui/material";
+import Box from "@mui/material/Box";
+import Drawer from "@mui/material/Drawer";
+import IconButton from "@mui/material/IconButton";
+import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 import { useTheme } from "@mui/material/styles";
 import Close from "@mui/icons-material/Close";
-
 import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
-import { Executions } from "./Executions";
-import { TemplateDetails } from "./TemplateDetails";
-import { ApiAccess } from "./ApiAccess";
-import { Extension } from "./Extension";
-import { Feedback } from "./Feedback";
 import { isValidUserFn } from "@/core/store/userSlice";
-
 import { setActiveToolbarLink } from "@/core/store/templatesSlice";
 import ToolbarItem from "@/components/Prompt/Common/Sidebar/ToolbarItem";
 import { TemplateSidebarLinks } from "@/common/constants";
@@ -27,7 +17,14 @@ import FavoriteIcon from "../FavoriteIcon";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { isDesktopViewPort } from "@/common/helpers";
 import useVariant from "../../Hooks/useVariant";
+import lazy from "next/dynamic";
+import Image from "@/components/design-system/Image";
 
+const ExecutionsLazy = lazy(() => import("./Executions"));
+const TemplateDetailsLazy = lazy(() => import("./TemplateDetails"));
+const ApiAccessLazy = lazy(() => import("./ApiAccess"));
+const ExtensionLazy = lazy(() => import("./Extension"));
+const FeedbackLazy = lazy(() => import("./Feedback"));
 const drawerWidth = 352;
 
 interface SidebarProps {
@@ -39,20 +36,14 @@ function Sidebar({ template, executions }: SidebarProps) {
   const dispatch = useAppDispatch();
   const { isVariantA } = useVariant();
   const isMobile = !isDesktopViewPort();
-
   const activeLink = useAppSelector(state => state.template.activeSideBarLink);
   const isValidUser = useAppSelector(isValidUserFn);
-
   const theme = useTheme();
-
   const handleCloseSidebar = () => {
     dispatch(setActiveToolbarLink(null));
   };
-
   const open = !!activeLink?.name;
-
   const shouldFilterCustomize = isVariantA || (!isVariantA && !isValidUser);
-
   const filtredSidebarLinks = shouldFilterCustomize
     ? TemplateSidebarLinks.filter(item => item.name !== "customize")
     : TemplateSidebarLinks;
@@ -90,12 +81,14 @@ function Sidebar({ template, executions }: SidebarProps) {
                   bgcolor: "surface.1",
                 }}
               >
-                <Avatar
+                <Image
                   src={template.created_by.avatar}
                   alt={template.created_by.username}
-                  sx={{ width: 30, height: 30 }}
+                  width={30}
+                  height={30}
+                  priority={false}
+                  loading="lazy"
                 />
-
                 <ListItem
                   disablePadding
                   sx={{
@@ -230,11 +223,11 @@ function Sidebar({ template, executions }: SidebarProps) {
             <Close />
           </IconButton>
         </Stack>
-        {activeLink?.name === "executions" && <Executions template={template} />}
-        {activeLink?.name === "feedback" && <Feedback />}
-        {activeLink?.name === "api" && <ApiAccess template={template} />}
-        {activeLink?.name === "extension" && <Extension />}
-        {activeLink?.name === "details" && <TemplateDetails template={template} />}
+        {activeLink?.name === "executions" && <ExecutionsLazy template={template} />}
+        {activeLink?.name === "details" && <TemplateDetailsLazy template={template} />}
+        {activeLink?.name === "feedback" && <FeedbackLazy />}
+        {activeLink?.name === "api" && <ApiAccessLazy template={template} />}
+        {activeLink?.name === "extension" && <ExtensionLazy />}
       </Drawer>
     </Box>
   );

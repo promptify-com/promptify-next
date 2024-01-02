@@ -18,6 +18,7 @@ import { setSelectedExecution, setSparkHashQueryParam } from "@/core/store/execu
 import useBrowser from "@/hooks/useBrowser";
 import { getContentBySectioName } from "@/hooks/api/cms";
 import TemplatePage from "@/components/Prompt";
+import { GetServerSideProps } from "next/types";
 
 interface TemplateProps {
   hashedExecution: TemplatesExecutions | null;
@@ -72,8 +73,8 @@ function Template({ hashedExecution, fetchedTemplate, questionPrefixContent }: T
   }, [sparkHashQueryParam]);
 
   if (!fetchedTemplate?.id) {
-    if (router.query.slug) {
-      redirectToPath(`/prompt/${router.query.slug}`);
+    if (router.query.slug && router.query.reloaded !== "true") {
+      redirectToPath(`/prompt/${router.query.slug}`, { reloaded: "true" });
       return null;
     }
 
@@ -141,56 +142,52 @@ function Template({ hashedExecution, fetchedTemplate, questionPrefixContent }: T
   );
 }
 
-export async function getServerSideProps({
-  params,
-  query,
-}: {
-  params: {
-    slug: string;
-  };
-  query: {
-    hash: string;
-  };
-}) {
-  const { slug } = params;
+export const getServerSideProps: GetServerSideProps = async ({ params, query, res }) => {
+  res.setHeader("Cache-Control", "public, maxage=900, stale-while-revalidate=2");
+
   const { hash } = query;
   let fetchedTemplate: Templates = {} as Templates;
   let hashedExecution: TemplatesExecutions | null = null;
   let questionPrefixContent = "";
 
-  if (hash) {
-    const [_execution, _templatesResponse, _sectionContent] = await Promise.allSettled([
-      getExecutionByHash(hash),
-      getTemplateBySlug(slug),
-      getContentBySectioName("chat-questions-prefix"),
-    ]);
-    fetchedTemplate = _templatesResponse.status === "fulfilled" ? _templatesResponse.value : fetchedTemplate;
-    hashedExecution = _execution.status === "fulfilled" ? _execution.value : hashedExecution;
-    questionPrefixContent =
-      _sectionContent.status === "fulfilled" ? _sectionContent.value.content : questionPrefixContent;
-  } else {
-    const [_templatesResponse, _sectionContent] = await Promise.allSettled([
-      getTemplateBySlug(slug),
-      getContentBySectioName("chat-questions-prefix"),
-    ]);
-    fetchedTemplate = _templatesResponse.status === "fulfilled" ? _templatesResponse.value : fetchedTemplate;
-    questionPrefixContent =
-      _sectionContent.status === "fulfilled" ? _sectionContent.value.content : questionPrefixContent;
-  }
-
   try {
+    if (hash) {
+      const [_execution, _templatesResponse, _sectionContent] = await Promise.allSettled([
+        getExecutionByHash(hash as string),
+        getTemplateBySlug(params?.slug as string),
+        getContentBySectioName("chat-questions-prefix"),
+      ]);
+      fetchedTemplate = _templatesResponse.status === "fulfilled" ? _templatesResponse.value : fetchedTemplate;
+      hashedExecution = _execution.status === "fulfilled" ? _execution.value : hashedExecution;
+      questionPrefixContent =
+        _sectionContent.status === "fulfilled" ? _sectionContent.value.content : questionPrefixContent;
+    } else {
+      const [_templatesResponse, _sectionContent] = await Promise.allSettled([
+        getTemplateBySlug(params?.slug as string),
+        getContentBySectioName("chat-questions-prefix"),
+      ]);
+      if (_templatesResponse.status === "fulfilled") {
+        fetchedTemplate = _templatesResponse.value;
+      }
+
+      if (_sectionContent.status === "fulfilled") {
+        questionPrefixContent = _sectionContent.value.content;
+      }
+    }
+
     return {
       props: {
-        title: fetchedTemplate.meta_title || fetchedTemplate.title,
-        description: fetchedTemplate.meta_description || fetchedTemplate.description,
-        meta_keywords: fetchedTemplate.meta_keywords,
-        image: fetchedTemplate.thumbnail,
+        title: fetchedTemplate.meta_title ?? fetchedTemplate.title ?? null,
+        description: fetchedTemplate.meta_description ?? fetchedTemplate.description ?? null,
+        meta_keywords: fetchedTemplate.meta_keywords ?? null,
+        image: fetchedTemplate.thumbnail ?? null,
         hashedExecution,
         fetchedTemplate,
         questionPrefixContent,
       },
     };
   } catch (error) {
+    console.log("Error occurred:", error);
     return {
       props: {
         title: "Promptify | Boost Your Creativity",
@@ -202,6 +199,6 @@ export async function getServerSideProps({
       },
     };
   }
-}
+};
 
 export default Template;
