@@ -8,7 +8,7 @@ import { theme } from "@/theme";
 import { ChromeIcon } from "@/assets/icons/Chrome";
 import Image from "@/components/design-system/Image";
 
-export const Extension = () => {
+const Extension = () => {
   return (
     <Stack
       alignItems={"center"}
@@ -85,3 +85,5 @@ export const Extension = () => {
     </Stack>
   );
 };
+
+export default Extension;

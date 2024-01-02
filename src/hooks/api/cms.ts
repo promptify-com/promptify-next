@@ -4,10 +4,10 @@ export const getContentBySectioName = async (sectionName: string): Promise<Varia
   try {
     const response = await fetch(
       process.env.NEXT_PUBLIC_API_URL + `/api/meta/text-content/get_section_text_content/?section_name=${sectionName}`,
-      {
-        next: { revalidate: 3600 },
-        cache: "force-cache",
-      },
+      // {
+      //   next: { revalidate: 3600 },
+      //   cache: "force-cache",
+      // },
     );
     const data = (await response.json()) as Section;
     const variations = data.variations;
