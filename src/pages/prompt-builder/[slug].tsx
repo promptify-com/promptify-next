@@ -28,7 +28,10 @@ interface PromptBuilderProps {
   engines: Engine[];
 }
 
-export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuilderProps) => {
+export const PromptBuilder = ({ templateData, initPrompts = [], engines }: PromptBuilderProps) => {
+  console.log("templateData:", templateData);
+  console.log("engines:", engines);
+  console.log("initPrompts:", initPrompts);
   const router = useRouter();
   const token = useToken();
   const builderSidebarOpen = useAppSelector(state => state.sidebar.builderSidebarOpen);
@@ -44,16 +47,16 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
 
   useEffect(() => {
     if (!storedPrompts.length) {
-      dispatch(handlePrompts(initPrompts));
+      dispatch(handlePrompts(initPrompts ?? []));
     }
 
     if (!storedEngines.length) {
-      dispatch(handleEngines(engines));
+      dispatch(handleEngines(engines ?? []));
     }
   }, [initPrompts, engines]);
 
   useEffect(() => {
-    setPrompts(storedPrompts);
+    setPrompts(storedPrompts ?? []);
   }, [storedPrompts]);
 
   useEffect(() => {
