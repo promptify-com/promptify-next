@@ -1,17 +1,16 @@
-import { FC, ReactNode, useState } from "react";
-import {
-  Box,
-  Divider,
-  Drawer,
-  Grid,
-  Icon,
-  IconButton,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  Typography,
-} from "@mui/material";
-import { Close, FormatListBulleted } from "@mui/icons-material";
+import { type Dispatch, type SetStateAction, ReactNode, useState } from "react";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import Icon from "@mui/material/Icon";
+import Drawer from "@mui/material/Drawer";
+import Typography from "@mui/material/Typography";
+import IconButton from "@mui/material/IconButton";
+import Divider from "@mui/material/Divider";
+import Close from "@mui/icons-material/Close";
+import FormatListBulleted from "@mui/icons-material/FormatListBulleted";
 import { useTheme } from "@mui/material/styles";
 
 import HelpIcon from "@/assets/icons/HelpIcon";
@@ -21,6 +20,8 @@ import Help from "./Help";
 import { useAppDispatch } from "@/hooks/useStore";
 import { setOpenBuilderSidebar } from "@/core/store/sidebarSlice";
 import PromptSequence from "./PromptSequence";
+import type { IEditPrompts } from "@/common/types/builder";
+import type { Engine } from "@/core/api/dto/templates";
 
 const drawerWidth = 352;
 
@@ -31,7 +32,13 @@ interface Link {
   icon: ReactNode;
 }
 
-export const BuilderSidebar: FC = () => {
+interface Props {
+  prompts: IEditPrompts[];
+  engines: Engine[];
+  setPrompts: Dispatch<SetStateAction<IEditPrompts[]>>;
+}
+
+export const BuilderSidebar = ({ prompts, engines, setPrompts }: Props) => {
   const [open, setOpen] = useState(false);
   const dispatch = useAppDispatch();
 
@@ -196,7 +203,13 @@ export const BuilderSidebar: FC = () => {
           </IconButton>
         </Box>
         <Divider />
-        {activeLink === "list" && <PromptSequence />}
+        {activeLink === "list" && (
+          <PromptSequence
+            prompts={prompts}
+            engines={engines}
+            setPrompts={setPrompts}
+          />
+        )}
         {activeLink === "help" && <Help />}
       </Drawer>
     </Box>

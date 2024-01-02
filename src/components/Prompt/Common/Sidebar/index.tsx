@@ -1,14 +1,17 @@
+import lazy from "next/dynamic";
 import Box from "@mui/material/Box";
-import Drawer from "@mui/material/Drawer";
-import IconButton from "@mui/material/IconButton";
-import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
+import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import Stack from "@mui/material/Stack";
+import Drawer from "@mui/material/Drawer";
 import Typography from "@mui/material/Typography";
+import Tooltip from "@mui/material/Tooltip";
+import IconButton from "@mui/material/IconButton";
 import { useTheme } from "@mui/material/styles";
 import Close from "@mui/icons-material/Close";
-import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
+import Image from "next/image";
+
 import { isValidUserFn } from "@/core/store/userSlice";
 import { setActiveToolbarLink } from "@/core/store/templatesSlice";
 import ToolbarItem from "@/components/Prompt/Common/Sidebar/ToolbarItem";
@@ -17,14 +20,13 @@ import FavoriteIcon from "../FavoriteIcon";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { isDesktopViewPort } from "@/common/helpers";
 import useVariant from "../../Hooks/useVariant";
-import lazy from "next/dynamic";
-import Image from "@/components/design-system/Image";
-
 const ExecutionsLazy = lazy(() => import("./Executions"));
 const TemplateDetailsLazy = lazy(() => import("./TemplateDetails"));
 const ApiAccessLazy = lazy(() => import("./ApiAccess"));
 const ExtensionLazy = lazy(() => import("./Extension"));
 const FeedbackLazy = lazy(() => import("./Feedback"));
+import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
+
 const drawerWidth = 352;
 
 interface SidebarProps {
@@ -81,14 +83,24 @@ function Sidebar({ template, executions }: SidebarProps) {
                   bgcolor: "surface.1",
                 }}
               >
-                <Image
-                  src={template.created_by.avatar}
-                  alt={template.created_by.username}
-                  width={30}
-                  height={30}
-                  priority={false}
-                  loading="lazy"
-                />
+                <Tooltip
+                  placement="top"
+                  arrow
+                  title={`Created by ${template.created_by.first_name || template.created_by.username}`}
+                >
+                  <Image
+                    src={template.created_by.avatar}
+                    alt={template.created_by.username}
+                    width={30}
+                    height={30}
+                    priority={false}
+                    loading="lazy"
+                    style={{
+                      borderRadius: 30,
+                    }}
+                  />
+                </Tooltip>
+
                 <ListItem
                   disablePadding
                   sx={{

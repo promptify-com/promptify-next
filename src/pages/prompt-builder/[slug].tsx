@@ -1,26 +1,30 @@
-import React, { useEffect, useState } from "react";
-import { usePublishTemplateMutation } from "@/core/api/templates";
-import { Alert, Box, Snackbar, Stack, SwipeableDrawer, Typography } from "@mui/material";
-
-import { Header } from "@/components/builder/Header";
-import TemplateForm from "@/components/common/forms/TemplateForm";
-import { IEditPrompts } from "@/common/types/builder";
-import { isPromptVariableValid } from "@/common/helpers/promptValidator";
-import { updateTemplate } from "@/hooks/api/templates";
-import { BuilderSidebar } from "@/components/builderSidebar";
-import { Engine, Templates } from "@/core/api/dto/templates";
-import { client } from "@/common/axios";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import PromptList from "@/components/builder/PromptCardAccordion/PromptList";
-import { useRouter } from "next/router";
-import useToken from "@/hooks/useToken";
-import { IEditTemplate } from "@/common/types/editTemplate";
-import { BUILDER_TYPE } from "@/common/constants";
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { handleEngines, handlePrompts } from "@/core/store/builderSlice";
-import Sidebar from "@/components/sidebar/Sidebar";
+import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import SwipeableDrawer from "@mui/material/SwipeableDrawer";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
+
 import { theme } from "@/theme";
+import { Header } from "@/components/builder/Header";
+import TemplateForm from "@/components/common/forms/TemplateForm";
+import { isPromptVariableValid } from "@/common/helpers/promptValidator";
+import { usePublishTemplateMutation } from "@/core/api/templates";
+import { updateTemplate } from "@/hooks/api/templates";
+import { BuilderSidebar } from "@/components/builderSidebar";
+import { client } from "@/common/axios";
+import PromptList from "@/components/builder/PromptCardAccordion/PromptList";
+import useToken from "@/hooks/useToken";
+import { useAppSelector } from "@/hooks/useStore";
+import Sidebar from "@/components/sidebar/Sidebar";
+import { BUILDER_TYPE } from "@/common/constants";
+import type { IEditTemplate } from "@/common/types/editTemplate";
+import type { Engine, Templates } from "@/core/api/dto/templates";
+import type { IEditPrompts } from "@/common/types/builder";
 
 interface PromptBuilderProps {
   templateData: Templates;
@@ -31,37 +35,21 @@ interface PromptBuilderProps {
 export const PromptBuilder = ({ templateData, initPrompts = [], engines }: PromptBuilderProps) => {
   const router = useRouter();
   const token = useToken();
+  const [publishTemplate] = usePublishTemplateMutation();
+
   const builderSidebarOpen = useAppSelector(state => state.sidebar.builderSidebarOpen);
+
   const [prompts, setPrompts] = useState(initPrompts);
   const [templateDrawerOpen, setTemplateDrawerOpen] = useState(Boolean(router.query.editor));
-  const [publishTemplate] = usePublishTemplateMutation();
   const [messageSnackBar, setMessageSnackBar] = useState({ status: false, message: "" });
   const [errorSnackBar, setErrorSnackBar] = useState({ status: false, message: "" });
-  const dispatch = useAppDispatch();
-  const storedPrompts = useAppSelector(state => state.builder.prompts);
-  const storedEngines = useAppSelector(state => state.builder.engines);
+
   const createMode = router.query.slug === "create" ? "create" : "edit";
-
-  useEffect(() => {
-    if (!storedPrompts.length) {
-      dispatch(handlePrompts(initPrompts ?? []));
-    }
-
-    if (!storedEngines.length) {
-      dispatch(handleEngines(engines ?? []));
-    }
-  }, [initPrompts, engines]);
-
-  useEffect(() => {
-    setPrompts(storedPrompts ?? []);
-  }, [storedPrompts]);
 
   useEffect(() => {
     if (!token) {
       router.push("/signin");
-    }
-
-    if (router.query.editor) {
+    } else if (router.query.editor) {
       const { editor, ...restQueryParams } = router.query;
 
       router.replace(
@@ -178,7 +166,11 @@ export const PromptBuilder = ({ templateData, initPrompts = [], engines }: Promp
       }}
     >
       <Sidebar />
-      <BuilderSidebar />
+      <BuilderSidebar
+        prompts={prompts}
+        setPrompts={setPrompts}
+        engines={engines}
+      />
       <Box
         sx={{
           ml: theme.custom.leftClosedSidebarWidth,
