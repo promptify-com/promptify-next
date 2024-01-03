@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { alpha } from "@mui/material";
+import { useState } from "react";
 import Chip from "@mui/material/Chip";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
@@ -9,20 +8,24 @@ import RocketLaunch from "@mui/icons-material/RocketLaunch";
 import VisibilityOutlined from "@mui/icons-material/VisibilityOutlined";
 import AccountTree from "@mui/icons-material/AccountTree";
 import FormatListBulleted from "@mui/icons-material/FormatListBulleted";
+import { usePathname } from "next/navigation";
+import { alpha } from "@mui/material/styles";
+
 import BaseButton from "../base/BaseButton";
-import { TemplateStatus } from "@/core/api/dto/templates";
 import { theme } from "@/theme";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { RootState } from "@/core/store";
-import { BuilderType } from "@/common/types/builder";
 import { BUILDER_TYPE } from "@/common/constants";
 import { useAppSelector } from "@/hooks/useStore";
 import { ProfileMenu } from "@/components/ProfileMenu";
-import { usePathname } from "next/navigation";
+import type { TemplateStatus } from "@/core/api/dto/templates";
+import type { BuilderType } from "@/common/types/builder";
+import BuilderHeaderPlaceholder from "../placeholders/BuilderHeaderPlaceholder";
 
 interface IHeader {
   onSave: () => void;
   onPublish: () => void;
+  templateLoading: boolean;
   title: string;
   status: TemplateStatus;
   templateSlug?: string;
@@ -30,7 +33,16 @@ interface IHeader {
   type: BuilderType;
 }
 
-export const Header = ({ onSave, onPublish, title, status, templateSlug, onEditTemplate, type }: IHeader) => {
+export const Header = ({
+  templateLoading,
+  onSave,
+  onPublish,
+  title,
+  status,
+  templateSlug,
+  onEditTemplate,
+  type,
+}: IHeader) => {
   const isValidUser = useAppSelector(isValidUserFn);
   const currentUser = useAppSelector((state: RootState) => state.user.currentUser);
   const [isSaving, setIsSaving] = useState(false);
@@ -49,131 +61,138 @@ export const Header = ({ onSave, onPublish, title, status, templateSlug, onEditT
   };
 
   return (
-    <Stack
-      direction={"row"}
-      alignItems={"center"}
-      gap={10}
-      bgcolor={"surface.1"}
-      p={"16px 24px"}
-      border={`1px solid ${theme.palette.surface[3]}`}
-      zIndex={3}
-      position={"relative"}
-    >
-      <Stack
-        flex={1}
-        direction={"row"}
-        alignItems={"center"}
-        justifyContent={"space-between"}
-      >
+    <>
+      {templateLoading ? (
+        <BuilderHeaderPlaceholder />
+      ) : (
         <Stack
           direction={"row"}
           alignItems={"center"}
-          gap={2}
+          gap={10}
+          bgcolor={"surface.1"}
+          p={"16px 24px"}
+          border={`1px solid `}
+          borderColor={"surface.3"}
+          zIndex={3}
+          position={"relative"}
         >
           <Stack
+            flex={1}
             direction={"row"}
             alignItems={"center"}
-            gap={1}
-            sx={{ color: "onSurface" }}
+            justifyContent={"space-between"}
           >
-            <Typography sx={{ color: "onSurface", fontSize: "16px" }}>{title}</Typography>
-            <ModeEdit
-              sx={{ cursor: "pointer", fontSize: "16px" }}
-              onClick={onEditTemplate}
-            />
-          </Stack>
+            <Stack
+              direction={"row"}
+              alignItems={"center"}
+              gap={2}
+            >
+              <Stack
+                direction={"row"}
+                alignItems={"center"}
+                gap={1}
+                sx={{ color: "onSurface" }}
+              >
+                <Typography sx={{ color: "onSurface", fontSize: "16px" }}>{title}</Typography>
+                <ModeEdit
+                  sx={{ cursor: "pointer", fontSize: "16px" }}
+                  onClick={onEditTemplate}
+                />
+              </Stack>
 
-          {status && (
-            <Chip
-              label={status}
-              sx={{
-                bgcolor: "surface.3",
-                color: "onSurface",
-                fontSize: 13,
-                p: "7px 6px",
-                height: "auto",
-                ".MuiChip-label": {
-                  textTransform: "lowercase",
-                  ":first-letter": {
-                    textTransform: "uppercase",
-                  },
-                },
-              }}
-              size="small"
-            />
-          )}
-        </Stack>
-        <Stack
-          direction={"row"}
-          alignItems={"center"}
-          gap={1}
-        >
-          {templateSlug ? (
-            <>
-              {currentUser?.is_admin && type === BUILDER_TYPE.USER && (
-                <BaseButton
-                  variant="text"
-                  color="custom"
-                  sx={btnStyle}
-                  startIcon={<AccountTree sx={{ fontSize: 20 }} />}
-                  onClick={() => window.open(`/builder/${templateSlug}`, "_blank")}
-                >
-                  Tree of Thoughts Builder
-                </BaseButton>
+              {status && (
+                <Chip
+                  label={status}
+                  sx={{
+                    bgcolor: "surface.3",
+                    color: "onSurface",
+                    fontSize: 13,
+                    p: "7px 6px",
+                    height: "auto",
+                    ".MuiChip-label": {
+                      textTransform: "lowercase",
+                      ":first-letter": {
+                        textTransform: "uppercase",
+                      },
+                    },
+                  }}
+                  size="small"
+                />
               )}
-              {type === BUILDER_TYPE.ADMIN && (
-                <BaseButton
-                  variant="text"
-                  color="custom"
-                  sx={btnStyle}
-                  startIcon={<FormatListBulleted sx={{ fontSize: 20 }} />}
-                  onClick={() => window.open(`/prompt-builder/${templateSlug}`, "_blank")}
-                >
-                  Chain of Thoughts Builder
-                </BaseButton>
-              )}
+            </Stack>
+            <Stack
+              direction={"row"}
+              alignItems={"center"}
+              gap={1}
+            >
+              {templateSlug ? (
+                <>
+                  {currentUser?.is_admin && type === BUILDER_TYPE.USER && (
+                    <BaseButton
+                      variant="text"
+                      color="custom"
+                      sx={btnStyle}
+                      startIcon={<AccountTree sx={{ fontSize: 20 }} />}
+                      onClick={() => window.open(`/builder/${templateSlug}`, "_blank")}
+                    >
+                      Tree of Thoughts Builder
+                    </BaseButton>
+                  )}
+                  {type === BUILDER_TYPE.ADMIN && (
+                    <BaseButton
+                      variant="text"
+                      color="custom"
+                      sx={btnStyle}
+                      startIcon={<FormatListBulleted sx={{ fontSize: 20 }} />}
+                      onClick={() => window.open(`/prompt-builder/${templateSlug}`, "_blank")}
+                    >
+                      Chain of Thoughts Builder
+                    </BaseButton>
+                  )}
+                  <BaseButton
+                    variant="text"
+                    color="custom"
+                    sx={btnStyle}
+                    startIcon={<VisibilityOutlined sx={{ fontSize: 20 }} />}
+                    onClick={() => window.open(`/prompt/${templateSlug}`, "_blank")}
+                  >
+                    Preview
+                  </BaseButton>
+                </>
+              ) : null}
               <BaseButton
                 variant="text"
                 color="custom"
                 sx={btnStyle}
-                startIcon={<VisibilityOutlined sx={{ fontSize: 20 }} />}
-                onClick={() => window.open(`/prompt/${templateSlug}`, "_blank")}
+                startIcon={<CloudOutlined sx={{ fontSize: 20 }} />}
+                disabled={isSaving}
+                onClick={handleSaveTemplate}
               >
-                Preview
+                Save
               </BaseButton>
-            </>
-          ) : null}
-          <BaseButton
-            variant="text"
-            color="custom"
-            sx={btnStyle}
-            startIcon={<CloudOutlined sx={{ fontSize: 20 }} />}
-            disabled={isSaving}
-            onClick={handleSaveTemplate}
-          >
-            Save
-          </BaseButton>
 
-          {status === "DRAFT" && pathname !== "/prompt-builder/create" && (
-            <BaseButton
-              variant="contained"
-              color="custom"
-              sx={{
-                ...btnStyle,
-                bgcolor: "secondary.main",
-                color: "onPrimary",
-              }}
-              startIcon={<RocketLaunch sx={{ fontSize: 20 }} />}
-              disabled={isSaving}
-              onClick={handlePublishTemplate}
-            >
-              Publish
-            </BaseButton>
-          )}
+              {status === "DRAFT" && pathname !== "/prompt-builder/create" && (
+                <BaseButton
+                  variant="contained"
+                  color="custom"
+                  sx={{
+                    ...btnStyle,
+                    bgcolor: "secondary.main",
+                    color: "onPrimary",
+                  }}
+                  startIcon={<RocketLaunch sx={{ fontSize: 20 }} />}
+                  disabled={isSaving}
+                  onClick={handlePublishTemplate}
+                >
+                  Publish
+                </BaseButton>
+              )}
+            </Stack>
+          </Stack>
+          {isValidUser && type === BUILDER_TYPE.USER && <ProfileMenu />}
         </Stack>
-      </Stack>
-      {isValidUser && type === BUILDER_TYPE.USER && <ProfileMenu />}
-    </Stack>
+      )}
+    </>
   );
 };
 
