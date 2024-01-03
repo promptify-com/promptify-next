@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { alpha } from "@mui/material";
+import { useState } from "react";
 import Chip from "@mui/material/Chip";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
@@ -9,20 +8,24 @@ import RocketLaunch from "@mui/icons-material/RocketLaunch";
 import VisibilityOutlined from "@mui/icons-material/VisibilityOutlined";
 import AccountTree from "@mui/icons-material/AccountTree";
 import FormatListBulleted from "@mui/icons-material/FormatListBulleted";
+import { usePathname } from "next/navigation";
+import { alpha } from "@mui/material/styles";
+
 import BaseButton from "../base/BaseButton";
-import { TemplateStatus } from "@/core/api/dto/templates";
 import { theme } from "@/theme";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { RootState } from "@/core/store";
-import { BuilderType } from "@/common/types/builder";
 import { BUILDER_TYPE } from "@/common/constants";
 import { useAppSelector } from "@/hooks/useStore";
 import { ProfileMenu } from "@/components/ProfileMenu";
-import { usePathname } from "next/navigation";
+import type { TemplateStatus } from "@/core/api/dto/templates";
+import type { BuilderType } from "@/common/types/builder";
+import BuilderHeaderPlaceholder from "../placeholders/BuilderHeaderPlaceholder";
 
 interface IHeader {
   onSave: () => void;
   onPublish: () => void;
+  templateLoading?: boolean;
   title: string;
   status: TemplateStatus;
   templateSlug?: string;
@@ -30,7 +33,16 @@ interface IHeader {
   type: BuilderType;
 }
 
-export const Header = ({ onSave, onPublish, title, status, templateSlug, onEditTemplate, type }: IHeader) => {
+export const Header = ({
+  templateLoading,
+  onSave,
+  onPublish,
+  title,
+  status,
+  templateSlug,
+  onEditTemplate,
+  type,
+}: IHeader) => {
   const isValidUser = useAppSelector(isValidUserFn);
   const currentUser = useAppSelector((state: RootState) => state.user.currentUser);
   const [isSaving, setIsSaving] = useState(false);
@@ -48,6 +60,10 @@ export const Header = ({ onSave, onPublish, title, status, templateSlug, onEditT
     setIsSaving(false);
   };
 
+  if (typeof templateLoading !== "undefined" && templateLoading) {
+    return <BuilderHeaderPlaceholder />;
+  }
+
   return (
     <Stack
       direction={"row"}
@@ -55,7 +71,8 @@ export const Header = ({ onSave, onPublish, title, status, templateSlug, onEditT
       gap={10}
       bgcolor={"surface.1"}
       p={"16px 24px"}
-      border={`1px solid ${theme.palette.surface[3]}`}
+      border={`1px solid `}
+      borderColor={"surface.3"}
       zIndex={3}
       position={"relative"}
     >
