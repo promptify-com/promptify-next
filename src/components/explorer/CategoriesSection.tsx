@@ -1,6 +1,8 @@
-import { Box, Grid, Typography } from "@mui/material";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
 import { CategoryCard } from "@/components/common/cards/CardCategory";
-import { Category } from "@/core/api/dto/templates";
+import type { Category } from "@/core/api/dto/templates";
 import CategoriesPlaceholder from "@/components/placeholders/CategoriesPlaceHolder";
 
 interface CategoriesSectionProps {
