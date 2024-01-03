@@ -40,7 +40,9 @@ export const PromptBuilder = () => {
   });
 
   const [prompts, setPrompts] = useState<IEditPrompts[]>([]);
-  const [templateData, setTemplateData] = useState<Templates>();
+  const [templateData, setTemplateData] = useState<Templates | undefined>(
+    slug === "create" ? ({ title: "new_template_12345" } as Templates) : undefined,
+  );
 
   useEffect(() => {
     if (engines && fetchedTemplateData) {
@@ -194,7 +196,7 @@ export const PromptBuilder = () => {
         <Header
           templateLoading={isTemplateLoading}
           status={templateData?.status || "DRAFT"}
-          title={templateData?.title || "new_template_12345"}
+          title={templateData?.title!}
           templateSlug={templateData?.slug}
           onPublish={handlePublishTemplate}
           onSave={handleSaveTemplate}
