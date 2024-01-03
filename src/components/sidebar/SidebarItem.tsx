@@ -4,9 +4,8 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import Typography from "@mui/material/Typography";
-import { redirectToPath } from "@/common/helpers";
+import Box from "@mui/material/Box";
 import type { NavItem } from "@/common/types/sidebar";
-import { Box } from "@mui/material";
 
 interface Props {
   navItem: NavItem;
@@ -59,20 +58,6 @@ function SidebarItem({ navItem }: Props) {
             pointerEvents: "visible",
             cursor: "no-drop",
           },
-        }}
-        onClick={e => {
-          if (navItem.external) {
-            return;
-          }
-
-          if (navItem.active) {
-            e.preventDefault();
-          }
-
-          if (navItem.reload && !navItem.active) {
-            e.stopPropagation();
-            redirectToPath(navItem.href);
-          }
         }}
       >
         <ListItemButton

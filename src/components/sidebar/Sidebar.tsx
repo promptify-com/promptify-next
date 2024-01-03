@@ -1,13 +1,15 @@
 import StickyNote2 from "@mui/icons-material/StickyNote2";
 import Home from "@mui/icons-material/Home";
 import Drawer from "@mui/material/Drawer";
-import { usePathname } from "next/navigation";
-import React from "react";
-import { useAppSelector } from "@/hooks/useStore";
-import { isValidUserFn } from "@/core/store/userSlice";
-import { ExtensionRounded, FolderSpecial, HelpRounded, Inventory2Rounded } from "@mui/icons-material";
 import List from "@mui/material/List";
 import Grid from "@mui/material/Grid";
+import { usePathname } from "next/navigation";
+import { useAppSelector } from "@/hooks/useStore";
+import { isValidUserFn } from "@/core/store/userSlice";
+import ExtensionRounded from "@mui/icons-material/ExtensionRounded";
+import FolderSpecial from "@mui/icons-material/FolderSpecial";
+import HelpRounded from "@mui/icons-material/HelpRounded";
+import Inventory2Rounded from "@mui/icons-material/Inventory2Rounded";
 import { NavItem } from "@/common/types/sidebar";
 import SidebarItem from "./SidebarItem";
 import { theme } from "@/theme";
@@ -25,7 +27,7 @@ function Sidebar() {
       icon: <Home />,
       active: pathname === "/",
       external: false,
-      reload: true,
+      reload: false,
     },
     {
       name: "Prompts",
@@ -33,7 +35,7 @@ function Sidebar() {
       icon: <StickyNote2 />,
       active: isPromptsPage,
       external: false,
-      reload: true,
+      reload: false,
     },
     {
       name: "My Works",
