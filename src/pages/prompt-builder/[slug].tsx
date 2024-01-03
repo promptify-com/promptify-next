@@ -80,10 +80,9 @@ export const PromptBuilder = () => {
     if (!currentTemplateData) return;
 
     if (newTemplate) {
-      setTemplateData(newTemplate); // Update state with new template
+      setTemplateData(newTemplate);
     }
 
-    // Ensure the template has an ID before proceeding
     if (!currentTemplateData.id) {
       let message = "Please try again or refresh the page";
       if (createMode === "create") {
@@ -98,7 +97,7 @@ export const PromptBuilder = () => {
     const invalids: string[] = [];
     for (let i = 0; i < prompts.length; i++) {
       const prompt = prompts[i];
-      const validation = isPromptVariableValid(prompt.content); // Assume this is a validation function you have
+      const validation = isPromptVariableValid(prompt.content);
       if (!validation.isValid) {
         invalids.push(validation.message);
         break;
@@ -110,7 +109,6 @@ export const PromptBuilder = () => {
       return;
     }
 
-    // Prepare prompts for saving
     const _prompts = prompts.map((prompt, index, array) => {
       const depend = array[index - 1]?.id || array[index - 1]?.temp_id;
       return {
@@ -125,7 +123,6 @@ export const PromptBuilder = () => {
       };
     });
 
-    // Prepare the template data for saving
     const _template: IEditTemplate = {
       title: currentTemplateData.title,
       description: currentTemplateData.description,
@@ -146,11 +143,9 @@ export const PromptBuilder = () => {
       meta_keywords: currentTemplateData.meta_keywords,
     };
 
-    // Update the template in your backend
-    await updateTemplate(currentTemplateData.id, _template); // Assume updateTemplate is an API service you have
+    await updateTemplate(currentTemplateData.id, _template);
     setMessageSnackBar({ status: true, message: "Prompt template saved with success" });
 
-    // Redirect or refresh logic
     setTimeout(() => {
       if (newTemplate) {
         window.location.href = window.location.href.replace("create", newTemplate.slug);
@@ -199,7 +194,7 @@ export const PromptBuilder = () => {
         <Header
           templateLoading={isTemplateLoading}
           status={templateData?.status || "DRAFT"}
-          title={templateData && !isTemplateLoading ? templateData.title : "new_template_12345"}
+          title={templateData?.title || "new_template_12345"}
           templateSlug={templateData?.slug}
           onPublish={handlePublishTemplate}
           onSave={handleSaveTemplate}

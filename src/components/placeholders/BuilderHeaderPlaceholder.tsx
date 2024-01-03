@@ -1,4 +1,4 @@
-import { Skeleton } from "@mui/material";
+import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
 
 function BuilderHeaderPlaceholder() {
