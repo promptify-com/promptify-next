@@ -234,7 +234,7 @@ export const PromptBuilder = () => {
           </Box>
         </Box>
 
-        {!!templateData && (
+        {!!templateData && templateDrawerOpen && (
           <SwipeableDrawer
             anchor={"left"}
             open={templateDrawerOpen}
