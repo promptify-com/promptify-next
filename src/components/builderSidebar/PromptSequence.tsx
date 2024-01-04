@@ -14,7 +14,9 @@ import type { Engine } from "@/core/api/dto/templates";
 import type { IEditPrompts } from "@/common/types/builder";
 
 interface DraggableContentProps {
-  prompt: IEditPrompts;
+  promptId: number;
+  promptTitle: string;
+  promptEngineId: number;
   engines: Engine[];
   findPromptIndex: (id: number) => number;
   movePrompt: (id: number, atIndex: number) => void;
@@ -26,119 +28,120 @@ interface PromptSequenceListProps {
   engines: Engine[];
 }
 
-const DraggableContent = memo(({ prompt, findPromptIndex, movePrompt, engines }: DraggableContentProps) => {
-  const setSmoothScrollTarget = useScrollToElement("smooth");
+const DraggableContent = memo(
+  ({ promptId, promptTitle, promptEngineId, findPromptIndex, movePrompt, engines }: DraggableContentProps) => {
+    const setSmoothScrollTarget = useScrollToElement("smooth");
 
-  const promptId = prompt.id! ?? prompt.temp_id;
-  const promptEngine = engines?.find(engine => engine.id === prompt.engine_id);
-  const originalIndex = findPromptIndex(promptId);
+    const promptEngine = engines?.find(engine => engine.id === promptEngineId);
+    const originalIndex = findPromptIndex(promptId);
 
-  const [{ isDragging }, drag, preview] = useDrag(
-    () => ({
-      type: "prompt",
-      item: { id: promptId, originalIndex },
-      collect: monitor => ({
-        isDragging: monitor.isDragging(),
+    const [{ isDragging }, drag, preview] = useDrag(
+      () => ({
+        type: "prompt",
+        item: { id: promptId, originalIndex },
+        collect: monitor => ({
+          isDragging: monitor.isDragging(),
+        }),
+        end: (item, monitor) => {
+          const { id: droppedId, originalIndex } = item;
+          const didDrop = monitor.didDrop();
+          if (!didDrop) {
+            movePrompt(droppedId, originalIndex);
+          }
+        },
       }),
-      end: (item, monitor) => {
-        const { id: droppedId, originalIndex } = item;
-        const didDrop = monitor.didDrop();
-        if (!didDrop) {
-          movePrompt(droppedId, originalIndex);
-        }
-      },
-    }),
-    [promptId, originalIndex, movePrompt],
-  );
-  const scrollSmoothTo = () => {
-    setSmoothScrollTarget(`#${promptComputeDomId(prompt)}`);
-  };
+      [promptId, originalIndex, movePrompt],
+    );
+    const scrollSmoothTo = () => {
+      setSmoothScrollTarget(`#${promptComputeDomId({ title: promptTitle, id: promptId })}`);
+    };
 
-  const [, drop] = useDrop(
-    () => ({
-      accept: "prompt",
-      hover({ id: draggedId }: { id: number }) {
-        if (draggedId !== promptId) {
-          const overIndex = findPromptIndex(promptId);
-          movePrompt(draggedId, overIndex);
-        }
-      },
-    }),
-    [findPromptIndex, movePrompt],
-  );
+    const [, drop] = useDrop(
+      () => ({
+        accept: "prompt",
+        hover({ id: draggedId }: { id: number }) {
+          if (draggedId !== promptId) {
+            const overIndex = findPromptIndex(promptId);
+            movePrompt(draggedId, overIndex);
+          }
+        },
+      }),
+      [findPromptIndex, movePrompt],
+    );
 
-  return (
-    <Stack
-      ref={(node: ConnectableElement) => preview(drop(node))}
-      key={prompt.id}
-      p={1}
-      direction={"row"}
-      justifyContent={"space-between"}
-      alignItems={"center"}
-      sx={{
-        userSelect: "none",
-        borderRadius: "8px",
-        border: isDragging ? "1px dashed var(--primary-main, #375CA9)" : "none",
-        backgroundColor: isDragging ? "rgba(55, 92, 169, 0.08)" : "none",
-      }}
-      gap={2}
-    >
-      <Box ref={(node: ConnectableElement) => drag(drop(node))}>
-        <Menu
+    return (
+      <Stack
+        ref={(node: ConnectableElement) => preview(drop(node))}
+        key={promptId}
+        p={1}
+        direction={"row"}
+        justifyContent={"space-between"}
+        alignItems={"center"}
+        sx={{
+          userSelect: "none",
+          borderRadius: "8px",
+          border: isDragging ? "1px dashed var(--primary-main, #375CA9)" : "none",
+          backgroundColor: isDragging ? "rgba(55, 92, 169, 0.08)" : "none",
+        }}
+        gap={2}
+      >
+        <Box ref={(node: ConnectableElement) => drag(drop(node))}>
+          <Menu
+            sx={{
+              width: 24,
+              height: 24,
+              opacity: 0.3,
+              cursor: "pointer",
+              ":hover": {
+                opacity: 1,
+              },
+            }}
+          />
+        </Box>
+        <Stack
+          direction={"row"}
+          gap={2}
+          flex={1}
+          alignItems={"center"}
+        >
+          <img
+            src={promptEngine?.icon}
+            alt={promptEngine?.name}
+            loading="lazy"
+            style={{
+              width: "32px",
+              height: "32px",
+              borderRadius: "50%",
+            }}
+          />
+          <Stack>
+            <Typography>{promptTitle}</Typography>
+            <Typography
+              sx={{
+                fontSize: 12,
+                fontWeight: 400,
+                color: "text.secondary",
+              }}
+            >
+              {promptEngine?.name}
+            </Typography>
+          </Stack>
+        </Stack>
+        <IconButton
+          onClick={scrollSmoothTo}
           sx={{
-            width: 24,
-            height: 24,
-            opacity: 0.3,
-            cursor: "pointer",
-            ":hover": {
-              opacity: 1,
+            border: "none",
+            "&:hover": {
+              bgcolor: "surface.2",
             },
           }}
-        />
-      </Box>
-      <Stack
-        direction={"row"}
-        gap={2}
-        flex={1}
-        alignItems={"center"}
-      >
-        <img
-          src={promptEngine?.icon}
-          alt={promptEngine?.name}
-          loading="lazy"
-          style={{
-            width: "32px",
-            height: "32px",
-            borderRadius: "50%",
-          }}
-        />
-        <Stack>
-          <Typography>{prompt.title}</Typography>
-          <Typography
-            sx={{
-              fontSize: 12,
-              fontWeight: 400,
-              color: "text.secondary",
-            }}
-          >
-            {promptEngine?.name}
-          </Typography>
-        </Stack>
+        >
+          <Edit />
+        </IconButton>
       </Stack>
-      <IconButton
-        onClick={scrollSmoothTo}
-        sx={{
-          border: "none",
-          "&:hover": {
-            bgcolor: "surface.2",
-          },
-        }}
-      >
-        <Edit />
-      </IconButton>
-    </Stack>
-  );
-});
+    );
+  },
+);
 
 const PromptSequenceList = memo(({ prompts, setPrompts, engines }: PromptSequenceListProps) => {
   const [, drop] = useDrop(() => ({ accept: "prompt" }));
@@ -178,7 +181,9 @@ const PromptSequenceList = memo(({ prompts, setPrompts, engines }: PromptSequenc
             return (
               <DraggableContent
                 key={prompt.id}
-                prompt={prompt}
+                promptEngineId={prompt.engine_id}
+                promptId={prompt.id || prompt.temp_id!}
+                promptTitle={prompt.title}
                 movePrompt={movePrompt}
                 findPromptIndex={findPromptIndex}
                 engines={engines}
