@@ -27,7 +27,6 @@ function RenderInputType({ input, value: initialValue }: Props) {
 
   const { name: inputName, required, type, prompt, question } = input;
 
-  const isFile = initialValue instanceof File;
   const isTextualType = type === "text" || type === "number" || type === "integer";
 
   useEffect(() => {
@@ -93,7 +92,6 @@ function RenderInputType({ input, value: initialValue }: Props) {
         <File
           input={input}
           value={initialValue as File}
-          isFile={isFile}
           onChange={onChange}
         />
       );

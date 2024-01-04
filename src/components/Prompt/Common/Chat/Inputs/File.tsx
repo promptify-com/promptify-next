@@ -5,14 +5,14 @@ import { getFileTypeExtensionsAsString } from "@/components/Prompt/Utils/uploadF
 import useTruncate from "@/hooks/useTruncate";
 import type { FileType, IPromptInput } from "@/common/types/prompt";
 interface Props {
-  isFile: boolean;
   value: File;
   input: IPromptInput;
   onChange: (value: string | File, input: IPromptInput) => void;
 }
 
-function File({ input, isFile, value, onChange }: Props) {
+function File({ input, value, onChange }: Props) {
   const { truncate } = useTruncate();
+
   return (
     <Stack
       direction={"row"}
@@ -24,7 +24,7 @@ function File({ input, isFile, value, onChange }: Props) {
         variant="contained"
         sx={{ border: "1px solid", p: "3px 12px", fontSize: { xs: 12, md: 14 }, fontWeight: 500 }}
       >
-        {isFile ? truncate(value.name, { length: 20 }) : "Upload file"}
+        {value.name ? truncate(value.name, { length: 20 }) : "Upload file"}
         <input
           hidden
           accept={getFileTypeExtensionsAsString(input.fileExtensions as FileType[])}
