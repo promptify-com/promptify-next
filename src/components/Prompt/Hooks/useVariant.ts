@@ -42,7 +42,7 @@ const useVariant = () => {
     }
 
     if (router.query.variant !== effectiveVariant) {
-      router.replace({ pathname: router.pathname, query: { ...router.query, effectiveVariant } }, undefined, {
+      router.replace({ pathname: router.pathname, query: { ...router.query, variant: effectiveVariant } }, undefined, {
         shallow: true,
       });
     }
