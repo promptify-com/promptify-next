@@ -42,7 +42,8 @@ const useVariant = () => {
     }
 
     if (router.query.variant !== effectiveVariant) {
-      router.replace({ pathname: router.pathname, query: { ...router.query, variant: effectiveVariant } }, undefined, {
+      const { hash, ...queries } = router.query;
+      router.replace({ pathname: router.pathname, query: { ...queries, variant: effectiveVariant } }, undefined, {
         shallow: true,
       });
     }
@@ -75,7 +76,8 @@ const useVariant = () => {
     Cookie.set("variant", newVariant, 30);
     clearStoredStates();
 
-    router.replace({ pathname: router.pathname, query: { ...router.query, variant: newVariant } }, undefined, {
+    const { hash, ...queries } = router.query;
+    router.replace({ pathname: router.pathname, query: { ...queries, variant: newVariant } }, undefined, {
       shallow: true,
     });
   };

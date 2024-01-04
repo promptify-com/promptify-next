@@ -12,6 +12,7 @@ interface Props {
 
 function File({ input, value, onChange }: Props) {
   const { truncate } = useTruncate();
+  const _value = value && typeof value === "string" ? "Previously uploaded file" : value?.name;
 
   return (
     <Stack
@@ -24,7 +25,7 @@ function File({ input, value, onChange }: Props) {
         variant="contained"
         sx={{ border: "1px solid", p: "3px 12px", fontSize: { xs: 12, md: 14 }, fontWeight: 500 }}
       >
-        {value.name ? truncate(value.name, { length: 20 }) : "Upload file"}
+        {_value ? truncate(_value, { length: 20 }) : "Upload file"}
         <input
           hidden
           accept={getFileTypeExtensionsAsString(input.fileExtensions as FileType[])}
