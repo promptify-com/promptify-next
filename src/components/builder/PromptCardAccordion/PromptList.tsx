@@ -178,7 +178,6 @@ const PromptList = ({ prompts, setPrompts, engines, templateLoading }: Props) =>
                     id={promptComputeDomId(prompt)}
                   >
                     <PromptCardAccordion
-                      key={prompt.id ?? prompt.temp_id}
                       prompt={prompt}
                       order={index}
                       setPrompt={changePrompt}
