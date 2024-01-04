@@ -13,7 +13,7 @@ import { updateTemplateData } from "@/core/store/templatesSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { getExecutionByHash } from "@/hooks/api/executions";
 import { getTemplateBySlug } from "@/hooks/api/templates";
-import { redirectToPath } from "@/common/helpers";
+import { redirectToPath, stripTags } from "@/common/helpers";
 import { setSelectedExecution, setSparkHashQueryParam } from "@/core/store/executionsSlice";
 import useBrowser from "@/hooks/useBrowser";
 import { getContentBySectioName } from "@/hooks/api/cms";
@@ -178,7 +178,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params, query, re
     return {
       props: {
         title: fetchedTemplate.meta_title ?? fetchedTemplate.title ?? null,
-        description: fetchedTemplate.meta_description ?? fetchedTemplate.description ?? null,
+        description: fetchedTemplate.meta_description ?? stripTags(fetchedTemplate.description) ?? null,
         meta_keywords: fetchedTemplate.meta_keywords ?? null,
         image: fetchedTemplate.thumbnail ?? null,
         hashedExecution,

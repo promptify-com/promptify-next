@@ -14,6 +14,7 @@ import { useRouter } from "next/router";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import Image from "@/components/design-system/Image";
+import { stripTags } from "@/common/helpers";
 
 interface TemplateDetailsCardProps {
   template: Templates;
@@ -31,7 +32,7 @@ const DescriptionTags = ({ description, tags }: { description: string; tags: Tag
         fontWeight={400}
         color={"onSurface"}
       >
-        {description}
+        {stripTags(description)}
       </Typography>
       <Stack
         direction={"row"}

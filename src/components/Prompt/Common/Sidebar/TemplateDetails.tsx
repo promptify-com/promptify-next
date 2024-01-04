@@ -1,3 +1,4 @@
+import { stripTags } from "@/common/helpers";
 import { formatDate, timeAgo } from "@/common/helpers/timeManipulation";
 import ClientOnly from "@/components/base/ClientOnly";
 import { Templates } from "@/core/api/dto/templates";
@@ -59,7 +60,7 @@ const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template }) => {
         fontWeight={400}
         color={"onSurface"}
       >
-        {template.description}
+        {stripTags(template.description)}
       </Typography>
 
       <Stack gap={1}>
