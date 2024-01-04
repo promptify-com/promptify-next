@@ -21,7 +21,6 @@ export function useIntersectionObserver(
   const updateEntry = ([entry]: IntersectionObserverEntry[]): void => {
     setEntry(entry);
     if (disconnectNodeOnceVisibile && entry?.isIntersecting) {
-      console.log("Entry:", rootMargin, " has intersect");
       observerRef.current?.disconnect();
       observerRef.current = null;
     }
