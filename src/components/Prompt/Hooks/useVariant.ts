@@ -27,34 +27,36 @@ const useVariant = () => {
 
   useEffect(() => {
     const cookieVariant = Cookie.get("variant");
-    let variant = cookieVariant ?? (router.query.variant as string);
+    let effectiveVariant = cookieVariant ?? variant;
 
-    if (!variant) {
-      variant = getRandomVariant();
+    if (!effectiveVariant) {
+      effectiveVariant = getRandomVariant();
     }
 
-    setVariant(variant);
+    setVariant(effectiveVariant);
 
     if (!cookieVariant) {
       sendPageViewEvent();
 
-      Cookie.set("variant", variant, 30);
+      Cookie.set("variant", effectiveVariant, 30);
     }
 
-    if (router.query.variant !== variant) {
-      router.replace({ pathname: router.pathname, query: { ...router.query, variant } }, undefined, { shallow: true });
+    if (router.query.variant !== effectiveVariant) {
+      router.replace({ pathname: router.pathname, query: { ...router.query, effectiveVariant } }, undefined, {
+        shallow: true,
+      });
     }
 
     function sendPageViewEvent() {
       if (typeof window.gtag === "undefined") {
         const intervalID = setInterval(() => {
           if (typeof window.gtag === "function") {
-            window.gtag("event", "pageview", { Branch: `staging-${variant}` });
+            window.gtag("event", "pageview", { Branch: `staging-${effectiveVariant}` });
             clearInterval(intervalID);
           }
         }, 1000);
       } else {
-        window.gtag("event", "pageview", { Branch: `staging-${variant}` });
+        window.gtag("event", "pageview", { Branch: `staging-${effectiveVariant}` });
       }
     }
   }, [router]);

@@ -39,9 +39,12 @@ function MessageSender({
   const fieldRef = useRef<HTMLInputElement | null>(null);
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSubmit();
+    } else if (e.key === "Enter" && e.shiftKey) {
+      e.preventDefault();
+      setLocalValue(localValue + "\n");
     }
   };
 
