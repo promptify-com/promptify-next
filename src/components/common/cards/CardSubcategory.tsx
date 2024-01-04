@@ -13,7 +13,10 @@ interface CardSubcategoryProps {
 
 export default function SubCategoryCard({ subcategory, categorySlug }: CardSubcategoryProps) {
   return (
-    <Link href={`/explore/${categorySlug}/${subcategory.slug}`}>
+    <Link
+      href={`/explore/${categorySlug}/${subcategory.slug}`}
+      style={{ textDecoration: "none" }}
+    >
       <Card
         sx={{
           bgcolor: { xs: "surface.2", md: "white" },

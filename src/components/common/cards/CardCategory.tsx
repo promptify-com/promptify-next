@@ -15,7 +15,10 @@ export const CategoryCard = ({ category, href, index }: { category: Category; hr
   const shouldPrioritizeImage = token ? false : isMobile ? index === 0 || index === 1 : true;
 
   return (
-    <Link href={href}>
+    <Link
+      href={href}
+      style={{ textDecoration: "none" }}
+    >
       <Card
         title={category.name}
         elevation={0}
