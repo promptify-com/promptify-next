@@ -1,39 +1,38 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { object, string } from "yup";
 import { useFormik } from "formik";
-import {
-  Select,
-  MenuItem,
-  TextField,
-  Chip,
-  Autocomplete,
-  InputLabel,
-  Checkbox,
-  Stack,
-  FormControl,
-  FormControlLabel,
-  Switch,
-} from "@mui/material";
-import { Close } from "@mui/icons-material";
+import Stack from "@mui/material/Stack";
+import TextField from "@mui/material/TextField";
+import Autocomplete from "@mui/material/Autocomplete";
+import Chip from "@mui/material/Chip";
+import Checkbox from "@mui/material/Checkbox";
+import InputLabel from "@mui/material/InputLabel";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Switch from "@mui/material/Switch";
+import Close from "@mui/icons-material/Close";
+import CircularProgress from "@mui/material/CircularProgress";
+import { usePathname } from "next/navigation";
 
 import { useGetTagsQuery } from "@/core/api/tags";
-import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
-import { IEditTemplate } from "@/common/types/editTemplate";
 import { fieldStyle, boxStyle, buttonBoxStyle, checkboxStyle } from "@/components/modals/styles";
 import { useGetCategoriesQuery } from "@/core/api/categories";
 import useToken from "@/hooks/useToken";
 import { useGetCurrentUserQuery } from "@/core/api/user";
 import { useCreateTemplateMutation, useUpdateTemplateMutation } from "@/core/api/templates";
-import { FormType } from "@/common/types/template";
 import { TemplateStatusArray } from "@/common/constants";
 import { executionsApi } from "@/core/api/executions";
 import { stripTags, getLanguageFromCode, getBaseUrl } from "@/common/helpers";
 import { useUploadFileMutation } from "@/core/api/uploadFile";
 import { uploadFileHelper } from "@/components/Prompt/Utils/uploadFileHelper";
-import { usePathname } from "next/navigation";
+import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
+import type { IEditTemplate } from "@/common/types/editTemplate";
+import type { FormType } from "@/common/types/template";
 
 interface Props {
   type?: FormType;
@@ -44,14 +43,10 @@ interface Props {
   darkMode?: boolean;
 }
 
-const TemplateForm: React.FC<Props> = ({
-  type = "create",
-  templateData,
-  onSaved = () => {},
-  onClose = () => {},
-  darkMode = false,
-}) => {
+function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMode = false }: Props) {
   const token = useToken();
+  const pathname = usePathname();
+
   const { data: categories } = useGetCategoriesQuery();
   const { data: fetchedTags } = useGetTagsQuery();
   const { data: user } = useGetCurrentUserQuery(token);
@@ -59,11 +54,12 @@ const TemplateForm: React.FC<Props> = ({
   const [updateTemplate] = useUpdateTemplateMutation();
   const [getTemplateExecution] = executionsApi.endpoints.getExecutionsByTemplate.useLazyQuery();
   const [uploadFile] = useUploadFileMutation();
+
   const [tags, setTags] = useState<string[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [executions, setExecutions] = useState<TemplatesExecutions[]>();
   const [selectedFile, setSelectedFile] = useState<File>();
-  const pathname = usePathname();
+  const [loading, setLoading] = useState(false);
 
   const getExecutions = async () => {
     if (!templateData) return null;
@@ -71,6 +67,7 @@ const TemplateForm: React.FC<Props> = ({
     setExecutions(response.data);
     setSelectedTags(templateData?.tags?.map(tag => tag.name) ?? []);
   };
+
   useEffect(() => {
     getExecutions();
   }, [templateData]);
@@ -102,7 +99,9 @@ const TemplateForm: React.FC<Props> = ({
   });
 
   const handleSave = (newTemplate?: Templates) => {
-    onSaved(newTemplate);
+    if (typeof onSaved !== "undefined") {
+      onSaved(newTemplate);
+    }
     formik.resetForm();
   };
 
@@ -124,6 +123,7 @@ const TemplateForm: React.FC<Props> = ({
   };
 
   const onCreateTemplate = async (values: IEditTemplate) => {
+    setLoading(true);
     if (selectedFile) {
       const result = await uploadFileHelper(uploadFile, { file: selectedFile });
 
@@ -139,6 +139,7 @@ const TemplateForm: React.FC<Props> = ({
         window.open(`${getBaseUrl}/prompt-builder/${newTemplate.slug}`, "_blank");
       }
     }
+    setLoading(false);
   };
 
   const formik = useFormik<IEditTemplate>({
@@ -192,6 +193,7 @@ const TemplateForm: React.FC<Props> = ({
           name="title"
           value={formik.values.title}
           onChange={formik.handleChange}
+          disabled={loading}
           error={formik.touched.title && formik.values.title === ""}
         />
       </Stack>
@@ -202,6 +204,7 @@ const TemplateForm: React.FC<Props> = ({
           fullWidth
           label="Description"
           variant="outlined"
+          disabled={loading}
           name="description"
           value={formik.values.description}
           onChange={formik.handleChange}
@@ -272,9 +275,8 @@ const TemplateForm: React.FC<Props> = ({
                   fontSize: "14px",
                   fontWeight: 500,
                   color: "inherit",
-                  fontFamily: "Poppins",
                   fontStyle: "normal",
-                  lineHeight: "24px" /* 171.429% */,
+                  lineHeight: "24px",
                   letterSpacing: "0.2px",
                 }}
               >
@@ -284,6 +286,7 @@ const TemplateForm: React.FC<Props> = ({
               <input
                 hidden
                 accept="image/*"
+                disabled={loading}
                 type="file"
                 onChange={e => {
                   const file = e.target.files && e.target.files[0];
@@ -293,6 +296,14 @@ const TemplateForm: React.FC<Props> = ({
                 }}
               />
             </Stack>
+            {formik.touched.thumbnail && formik.errors.thumbnail && (
+              <Typography
+                color="error"
+                variant="caption"
+              >
+                {`Thumbnail is ${formik.errors.thumbnail}`}
+              </Typography>
+            )}
           </Box>
         </Box>
       </Stack>
@@ -305,6 +316,7 @@ const TemplateForm: React.FC<Props> = ({
           }}
           options={["BEGINNER", "INTERMEDIATE", "ADVANCED"]}
           fullWidth
+          disabled={loading}
           renderInput={params => (
             <TextField
               {...params}
@@ -320,6 +332,7 @@ const TemplateForm: React.FC<Props> = ({
           variant="outlined"
           size="medium"
           name="duration"
+          disabled={loading}
           value={formik.values.duration}
           onChange={formik.handleChange}
           fullWidth
@@ -333,6 +346,7 @@ const TemplateForm: React.FC<Props> = ({
           }}
           options={["1", "0"]}
           fullWidth
+          disabled={loading}
           renderInput={params => (
             <TextField
               {...params}
@@ -349,6 +363,7 @@ const TemplateForm: React.FC<Props> = ({
             formik.setFieldValue("language", newValue);
           }}
           options={["en-us", "es", "fr"]}
+          disabled={loading}
           fullWidth
           renderInput={params => (
             <TextField
@@ -366,6 +381,7 @@ const TemplateForm: React.FC<Props> = ({
             onChange={(event, newValue) => {
               formik.setFieldValue("category", newValue?.id);
             }}
+            disabled={loading}
             options={categories}
             getOptionLabel={option => option.name}
             fullWidth
@@ -388,6 +404,7 @@ const TemplateForm: React.FC<Props> = ({
           size="medium"
           name="context"
           value={formik.values.context}
+          disabled={loading}
           onChange={formik.handleChange}
         />
       </Stack>
@@ -396,6 +413,7 @@ const TemplateForm: React.FC<Props> = ({
           multiple
           freeSolo
           sx={fieldStyle}
+          disabled={loading}
           options={tags}
           value={selectedTags}
           onChange={(event, newValue) => addNewTag(newValue)}
@@ -425,6 +443,7 @@ const TemplateForm: React.FC<Props> = ({
               label="Hourly Limit"
               variant="outlined"
               size="medium"
+              disabled={loading}
               name="executions_limit"
               value={formik.values.executions_limit}
               onChange={formik.handleChange}
@@ -437,6 +456,7 @@ const TemplateForm: React.FC<Props> = ({
               sx={checkboxStyle}
             >
               <Checkbox
+                disabled={loading}
                 checked={formik.values.slug === null}
                 onChange={() => {
                   formik.setFieldValue("slug", formik.values.slug === null ? "" : null);
@@ -450,7 +470,7 @@ const TemplateForm: React.FC<Props> = ({
               size="medium"
               name="slug"
               value={formik.values.slug ?? ""}
-              disabled={formik.values.slug === null}
+              disabled={formik.values.slug === null || loading}
               onChange={formik.handleChange}
             />
           </Stack>
@@ -462,6 +482,7 @@ const TemplateForm: React.FC<Props> = ({
               sx={checkboxStyle}
             >
               <Checkbox
+                disabled={loading}
                 checked={formik.values.meta_title === null}
                 onChange={() => {
                   formik.setFieldValue("meta_title", formik.values.meta_title === null ? "" : null);
@@ -475,7 +496,7 @@ const TemplateForm: React.FC<Props> = ({
               size="medium"
               name="meta_title"
               value={formik.values.meta_title ?? ""}
-              disabled={formik.values.meta_title === null}
+              disabled={formik.values.meta_title === null || loading}
               onChange={formik.handleChange}
             />
           </Stack>
@@ -487,6 +508,7 @@ const TemplateForm: React.FC<Props> = ({
               sx={checkboxStyle}
             >
               <Checkbox
+                disabled={loading}
                 checked={formik.values.meta_description === null}
                 onChange={() => {
                   formik.setFieldValue("meta_description", formik.values.meta_description === null ? "" : null);
@@ -502,7 +524,7 @@ const TemplateForm: React.FC<Props> = ({
               size="medium"
               name="meta_description"
               value={formik.values.meta_description ?? ""}
-              disabled={formik.values.meta_description === null}
+              disabled={formik.values.meta_description === null || loading}
               onChange={formik.handleChange}
             />
           </Stack>
@@ -514,6 +536,7 @@ const TemplateForm: React.FC<Props> = ({
               sx={checkboxStyle}
             >
               <Checkbox
+                disabled={loading}
                 checked={formik.values.meta_keywords === null}
                 onChange={() => {
                   formik.setFieldValue("meta_keywords", formik.values.meta_keywords === null ? "" : null);
@@ -529,13 +552,14 @@ const TemplateForm: React.FC<Props> = ({
               size="medium"
               name="meta_keywords"
               value={formik.values.meta_keywords ?? ""}
-              disabled={formik.values.meta_keywords === null}
+              disabled={formik.values.meta_keywords === null || loading}
               onChange={formik.handleChange}
             />
           </Stack>
 
           <Stack sx={boxStyle}>
             <Autocomplete
+              disabled={loading}
               value={formik.values.status}
               onChange={(event, newValue) => {
                 formik.setFieldValue("status", newValue);
@@ -554,6 +578,7 @@ const TemplateForm: React.FC<Props> = ({
               <FormControl variant="standard">
                 <InputLabel id="execution-label">Execution Example</InputLabel>
                 <Select
+                  disabled={loading}
                   labelId="execution-label"
                   value={formik.values.example_execution_id}
                   onChange={event => {
@@ -576,6 +601,7 @@ const TemplateForm: React.FC<Props> = ({
             control={<Switch color="primary" />}
             label="Is Internal?"
             labelPlacement="start"
+            disabled={loading}
             checked={formik.values.is_internal}
             name="is_internal"
             value={formik.values.is_internal}
@@ -613,22 +639,32 @@ const TemplateForm: React.FC<Props> = ({
         </Button>
         <Button
           variant="contained"
+          disabled={loading}
           sx={{
             flexDirection: "column",
             justifyContent: "center",
             alignItems: "center",
-            borderRadius: "var(--borderRadius, 4px)",
-            background: "var(--secondary-main, #1B1B1E)",
+            borderRadius: "4px",
+            bgcolor: "secondary.main",
           }}
           onClick={() => {
             formik.submitForm();
           }}
         >
-          Save
+          {loading ? (
+            <CircularProgress
+              size={"20px"}
+              sx={{
+                color: "primary.main",
+              }}
+            />
+          ) : (
+            "Save"
+          )}
         </Button>
       </Box>
     </Box>
   );
-};
+}
 
 export default TemplateForm;
