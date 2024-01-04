@@ -1,21 +1,19 @@
-import React, { useState } from "react";
-import {
-  Autocomplete,
-  Box,
-  Button,
-  Divider,
-  FormControl,
-  FormControlLabel,
-  InputLabel,
-  MenuItem,
-  Select,
-  Stack,
-  Switch,
-  TextField,
-  Typography,
-} from "@mui/material";
-import { IEditPrompts } from "@/common/types/builder";
+import { useState } from "react";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import Divider from "@mui/material/Divider";
+import Box from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Switch from "@mui/material/Switch";
+import Button from "@mui/material/Button";
+
 import { validatePromptOutput } from "@/common/helpers/promptValidator";
+import type { IEditPrompts } from "@/common/types/builder";
 
 interface Props {
   prompt: IEditPrompts;
@@ -25,7 +23,7 @@ interface Props {
 
 const titleFormats = ["JSON", "XML", "Markdown", "Custom"];
 
-export const OutputOptions: React.FC<Props> = ({ prompt, onSave, onCancel }) => {
+function OutputOptions({ prompt, onSave, onCancel }: Props) {
   const [promptData, setPromptData] = useState(prompt);
 
   return (
@@ -94,6 +92,20 @@ export const OutputOptions: React.FC<Props> = ({ prompt, onSave, onCancel }) => 
                 ))}
               </Select>
             </FormControl>
+            {promptData.output_format === "custom" && (
+              <textarea
+                style={{
+                  marginTop: "20px",
+                  width: "98%",
+                  minHeight: "120px",
+                  resize: "none",
+                  border: "1px solid gray",
+                  overflowX: "hidden",
+                }}
+                placeholder="Custom output area"
+                name="custom_output_format"
+              />
+            )}
           </Box>
           <Box>
             <Box
@@ -180,4 +192,6 @@ export const OutputOptions: React.FC<Props> = ({ prompt, onSave, onCancel }) => 
       </Stack>
     </Stack>
   );
-};
+}
+
+export default OutputOptions;
