@@ -24,6 +24,7 @@ import { setAnswers, setInputs, setIsSimulationStreaming, setParams, setparamsVa
 import { PromptInputType } from "../../Types";
 import useApiAccess from "../../Hooks/useApiAccess";
 import { ChatInput } from "../../Common/Chat/ChatInput";
+import Storage from "@/common/storage";
 
 interface Props {
   onError: (errMsg: string) => void;
@@ -389,6 +390,7 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
 
   const generateExecutionHandler = async () => {
     if (!token) {
+      Storage.set("answersStored", JSON.stringify(answers));
       return router.push("/signin");
     }
 

@@ -29,6 +29,7 @@ import type { PromptParams, ResOverrides, ResPrompt } from "@/core/api/dto/promp
 import type { IAnswer, IMessage, VaryValidatorResponse } from "@/components/Prompt/Types/chat";
 import type { PromptInputType } from "../../Types";
 import useApiAccess from "../../Hooks/useApiAccess";
+import Storage from "@/common/storage";
 
 interface Props {
   onError: (errMsg: string) => void;
@@ -253,6 +254,7 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
 
   const generateExecutionHandler = async () => {
     if (!token) {
+      Storage.set("answersStored", JSON.stringify(answers));
       return router.push("/signin");
     }
 
@@ -408,6 +410,12 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
     }
   };
 
+  const handleSignInOrCreateAccount = () => {
+    if (answers) {
+      Storage.set("answersStored", JSON.stringify(answers));
+    }
+    router.push("/signin");
+  };
   return (
     <Box
       width={{ md: isSidebarExpanded ? "100%" : "80%" }}
@@ -444,9 +452,7 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
             p={{ md: "16px 8px 16px 16px" }}
           >
             <Button
-              onClick={() => {
-                router.push("/signin");
-              }}
+              onClick={handleSignInOrCreateAccount}
               variant={"contained"}
               startIcon={
                 <LogoApp
