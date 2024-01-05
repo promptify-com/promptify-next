@@ -40,7 +40,9 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
   const [stopExecution] = useStopExecutionMutation();
   const [uploadFile] = useUploadFileMutation();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
-  const { generatedExecution, repeatedExecution } = useAppSelector(state => state.executions);
+  const { generatedExecution, repeatedExecution, selectedExecution, sparkHashQueryParam } = useAppSelector(
+    state => state.executions,
+  );
   const [showGenerateButton, setShowGenerateButton] = useState(false);
   const [isValidatingAnswer, setIsValidatingAnswer] = useState(false);
   const [generatingResponse, setGeneratingResponse] = useState<PromptLiveResponse>({
@@ -120,8 +122,37 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
 
     setMessages([welcomeMessage]);
     dispatch(setAnswers([]));
-
     setShowGenerateButton(false);
+
+    if (sparkHashQueryParam) {
+      const parameters = selectedExecution?.parameters;
+
+      if (!!Object.keys(parameters ?? {}).length) {
+        const newAnswers = Object.keys(parameters!)
+          .map(promptId => {
+            const param = parameters![promptId];
+
+            if (!param) {
+              return;
+            }
+
+            return Object.keys(param).map(inputName => ({
+              inputName,
+              required: true,
+              question: "",
+              answer: param[inputName],
+              prompt: parseInt(promptId),
+              error: false,
+            }));
+          })
+          .filter(data => Array.isArray(data))
+          .flat() as IAnswer[];
+
+        setTimeout(() => {
+          dispatch(setAnswers(newAnswers));
+        }, 50);
+      }
+    }
   };
 
   const messageAnswersForm = (message: string) => {
@@ -154,27 +185,7 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
       return [[], []];
     }
 
-    let { inputs, params } = prepareAndRemoveDuplicateInputs(template.prompts);
-
-    if (template.questions?.length) {
-      const normalizeQuestions: Record<string, string> = template.questions.reduce(
-        (acc, question) => {
-          const key = Object.keys(question)[0];
-          acc[key] = question[key].question;
-
-          return acc;
-        },
-        {} as Record<string, string>,
-      );
-
-      inputs = inputs.map(input => {
-        input.question = normalizeQuestions[input.name] ?? "";
-
-        return input;
-      });
-    }
-
-    inputs.sort((a, b) => +b.required - +a.required);
+    const { inputs, params } = prepareAndRemoveDuplicateInputs(template.prompts, template.questions);
 
     initialMessages(inputs);
 

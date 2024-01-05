@@ -148,7 +148,6 @@ const SearchBar: React.FC<Props> = ({ keyWord, onClick, setKeyWord, selectedTag,
               Prompts
             </Typography>
             <Typography
-              onClick={() => console.log("")}
               sx={{
                 bgcolor: "surface.5",
                 color: "onSurface",

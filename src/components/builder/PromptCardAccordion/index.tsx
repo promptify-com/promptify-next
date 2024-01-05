@@ -159,7 +159,10 @@ const PromptCardAccordion = ({
                   onClick={() => setRenameAllow(true)}
                 />
               </Stack>
-              <Button startIcon={<PlayCircle />}>Test run</Button>
+              {/*
+               * Will be added back in #608
+               * <Button startIcon={<PlayCircle />}>Test run</Button>
+               */}
             </>
           ) : (
             <RenameForm

@@ -51,10 +51,11 @@ export const BuilderSidebar = ({ prompts, engines, setPrompts }: Props) => {
       name: "list",
       icon: <FormatListBulleted />,
     },
-    {
-      name: "paper",
-      icon: <PaperIcon />,
-    },
+    // Will be added back in #609
+    // {
+    //   name: "paper",
+    //   icon: <PaperIcon />,
+    // },
     {
       name: "help",
       icon: <HelpIcon />,
