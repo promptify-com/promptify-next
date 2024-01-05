@@ -2,34 +2,48 @@ import { getInputsFromString } from "@/common/helpers/getInputsFromString";
 import type { IAnswer } from "@/components/Prompt/Types/chat";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { PromptParams, Prompts, ResOverrides, ResPrompt } from "@/core/api/dto/prompts";
+import type { TemplateQuestions } from "@/core/api/dto/templates";
 
 export default function useChatBox() {
-  const prepareAndRemoveDuplicateInputs = (templatePrompts: Prompts[]) => {
-    const inputs: IPromptInput[] = [];
+  const prepareAndRemoveDuplicateInputs = (templatePrompts: Prompts[], templateQuestions: TemplateQuestions[]) => {
     const params: PromptParams[] = [];
-
     let promptHasContent = false;
+    const inputsMap = new Map<string, IPromptInput>();
+    let normalizeQuestions: Record<string, string> = {};
+
+    if (templateQuestions?.length) {
+      normalizeQuestions = templateQuestions.reduce((acc, question) => {
+        const key = Object.keys(question)[0];
+        acc[key] = question[key].question;
+
+        return acc;
+      }, normalizeQuestions);
+    }
 
     templatePrompts.forEach(prompt => {
       if (prompt.content) {
         promptHasContent = true;
       }
+
       // remove duplicate inputs
-      const _inputs = getInputsFromString(prompt.content).filter(
-        _input => !inputs.some(__input => __input.name === _input.name),
-      );
+      getInputsFromString(prompt.content).forEach(_input => {
+        if (inputsMap.has(_input.name)) {
+          return;
+        }
 
-      inputs.push(
-        ..._inputs.map(_input => {
-          _input["prompt"] = prompt.id;
+        _input["prompt"] = prompt.id;
+        _input.question = normalizeQuestions[_input.name] ?? "";
 
-          return _input;
-        }),
-      );
+        inputsMap.set(_input.name, _input);
+      });
 
       const _params = prompt.parameters.filter(_param => !params.find(p => p.parameter.id === _param.parameter.id));
       params.push(..._params);
     });
+
+    const inputs = Array.from(inputsMap, ([_, input]) => input);
+
+    inputs.sort((a, b) => +b.required - +a.required);
 
     return {
       inputs,
