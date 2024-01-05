@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { object, string } from "yup";
-import { useFormik } from "formik";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -17,26 +15,25 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 import Close from "@mui/icons-material/Close";
 import CircularProgress from "@mui/material/CircularProgress";
-import { usePathname } from "next/navigation";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
 
 import { useGetTagsQuery } from "@/core/api/tags";
 import { fieldStyle, boxStyle, buttonBoxStyle, checkboxStyle } from "@/components/modals/styles";
 import { useGetCategoriesQuery } from "@/core/api/categories";
 import useToken from "@/hooks/useToken";
 import { useGetCurrentUserQuery } from "@/core/api/user";
-import { useCreateTemplateMutation, useUpdateTemplateMutation } from "@/core/api/templates";
 import { TemplateStatusArray } from "@/common/constants";
 import { executionsApi } from "@/core/api/executions";
-import { stripTags, getLanguageFromCode, getBaseUrl } from "@/common/helpers";
-import { useUploadFileMutation } from "@/core/api/uploadFile";
-import { uploadFileHelper } from "@/components/Prompt/Utils/uploadFileHelper";
+import { getLanguageFromCode } from "@/common/helpers";
+
 import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
-import type { IEditTemplate } from "@/common/types/editTemplate";
 import type { FormType } from "@/common/types/template";
+import useTemplateForm from "@/hooks/useTemplateForm";
 
 interface Props {
   type?: FormType;
-  templateData: Templates | null | undefined;
+  templateData: Templates | undefined;
   modalNew?: boolean;
   onSaved?: (template?: Templates) => void;
   onClose?: () => void;
@@ -45,21 +42,23 @@ interface Props {
 
 function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMode = false }: Props) {
   const token = useToken();
-  const pathname = usePathname();
 
-  const { data: categories } = useGetCategoriesQuery();
   const { data: fetchedTags } = useGetTagsQuery();
+  const { data: categories } = useGetCategoriesQuery();
   const { data: user } = useGetCurrentUserQuery(token);
-  const [createTemplate] = useCreateTemplateMutation();
-  const [updateTemplate] = useUpdateTemplateMutation();
-  const [getTemplateExecution] = executionsApi.endpoints.getExecutionsByTemplate.useLazyQuery();
-  const [uploadFile] = useUploadFileMutation();
 
-  const [tags, setTags] = useState<string[]>([]);
+  const [getTemplateExecution] = executionsApi.endpoints.getExecutionsByTemplate.useLazyQuery();
+
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [executions, setExecutions] = useState<TemplatesExecutions[]>();
   const [selectedFile, setSelectedFile] = useState<File>();
-  const [loading, setLoading] = useState(false);
+
+  const { formik, loading, showSnackbar, closeSnackbar } = useTemplateForm({
+    type,
+    template: templateData!,
+    uploadedFile: selectedFile,
+    onSaved: onSaved,
+  });
 
   const getExecutions = async () => {
     if (!templateData) return null;
@@ -72,104 +71,19 @@ function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMod
     getExecutions();
   }, [templateData]);
 
-  useEffect(() => {
-    if (fetchedTags) setTags(fetchedTags.map(tag => tag.name));
-  }, [fetchedTags]);
-
-  useEffect(() => {
-    formik.setFieldValue(
-      "tags",
-      selectedTags.map(tag => ({ name: tag })),
-    );
-  }, [selectedTags]);
-
   const handleImageChange = (image: File) => {
     setSelectedFile(image);
     formik.setFieldValue("thumbnail", URL.createObjectURL(image));
   };
 
-  const addNewTag = (newValue: string[]) => {
-    setSelectedTags(newValue);
+  const addNewTag = (newTags: string[]) => {
+    setSelectedTags(newTags);
+
+    formik.setFieldValue(
+      "tags",
+      newTags.map(tag => ({ name: tag })),
+    );
   };
-
-  const FormSchema = object({
-    title: string().min(1).required("required"),
-    description: string().min(1).required("required"),
-    thumbnail: string().min(1).required("required"),
-  });
-
-  const handleSave = (newTemplate?: Templates) => {
-    if (typeof onSaved !== "undefined") {
-      onSaved(newTemplate);
-    }
-    formik.resetForm();
-  };
-
-  const onEditTemplate = async (values: IEditTemplate) => {
-    if (!templateData) return;
-    if (selectedFile) {
-      const result = await uploadFileHelper(uploadFile, { file: selectedFile });
-
-      if (typeof result?.file === "string") {
-        values.thumbnail = result.file;
-      }
-    }
-    await updateTemplate({
-      id: templateData.id,
-      data: values,
-    });
-
-    handleSave();
-  };
-
-  const onCreateTemplate = async (values: IEditTemplate) => {
-    setLoading(true);
-    if (selectedFile) {
-      const result = await uploadFileHelper(uploadFile, { file: selectedFile });
-
-      if (typeof result?.file === "string") {
-        values.thumbnail = result.file;
-        const newTemplate = await createTemplate(values).unwrap();
-
-        handleSave(newTemplate);
-
-        if (type === "create" && pathname === "/prompt-builder/create") {
-          return;
-        }
-        window.open(`${getBaseUrl}/prompt-builder/${newTemplate.slug}`, "_blank");
-      }
-    }
-    setLoading(false);
-  };
-
-  const formik = useFormik<IEditTemplate>({
-    initialValues: {
-      title: templateData?.title ? stripTags(templateData.title) : "",
-      description: templateData?.description ? stripTags(templateData.description) : "",
-      duration: templateData?.duration?.toString() ?? "1",
-      difficulty: templateData?.difficulty ?? "BEGINNER",
-      is_visible: templateData?.is_visible ?? true,
-      language: templateData?.language ?? "en-us",
-      category: templateData?.category?.id ?? 1,
-      context: templateData?.context ? stripTags(templateData.context) : "",
-      tags: templateData?.tags ?? [],
-      thumbnail: templateData?.thumbnail ?? "",
-      executions_limit: templateData?.executions_limit ?? -1,
-      slug: templateData?.slug ? stripTags(templateData.slug) : "",
-      meta_title: templateData?.meta_title ? stripTags(templateData.meta_title) : "",
-      meta_description: templateData?.meta_description ? stripTags(templateData.meta_description) : "",
-      meta_keywords: templateData?.meta_keywords ? stripTags(templateData.meta_keywords) : "",
-      status: templateData?.status ?? "DRAFT",
-      is_internal: templateData?.is_internal ?? false,
-      ...(type === "edit" && {
-        example_execution_id: templateData?.example_execution?.id ?? null,
-      }),
-      ...(type === "create" && { prompts_list: [] }),
-    },
-    enableReinitialize: true,
-    validationSchema: FormSchema,
-    onSubmit: type === "create" ? onCreateTemplate : onEditTemplate,
-  });
 
   const color = !darkMode ? "common.white" : "common.black";
 
@@ -194,7 +108,8 @@ function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMod
           value={formik.values.title}
           onChange={formik.handleChange}
           disabled={loading}
-          error={formik.touched.title && formik.values.title === ""}
+          error={formik.touched.title && !formik.values.title}
+          helperText={formik.touched.title && formik.errors.title}
         />
       </Stack>
       <Stack sx={boxStyle}>
@@ -208,7 +123,8 @@ function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMod
           name="description"
           value={formik.values.description}
           onChange={formik.handleChange}
-          error={formik.touched.description && formik.values.description === ""}
+          error={formik.touched.description && !formik.values.description}
+          helperText={formik.touched.description && formik.errors.description}
         />
       </Stack>
       <Stack sx={[{ display: "flex", flexDirection: "column" }, boxStyle]}>
@@ -256,8 +172,8 @@ function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMod
               alignItems={"center"}
               justifyContent={"center"}
               sx={{
-                bgcolor: "surface.4",
-                color: "primary.main",
+                bgcolor: formik.touched.thumbnail && formik.errors.thumbnail ? "errorContainer" : "surface.4",
+                color: formik.touched.thumbnail && formik.errors.thumbnail ? "error.main" : "primary.main",
                 border: "1px solid transparent",
                 borderRadius: "4px",
                 p: "8px",
@@ -299,9 +215,12 @@ function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMod
             {formik.touched.thumbnail && formik.errors.thumbnail && (
               <Typography
                 color="error"
+                fontSize={12}
+                ml={2}
+                fontWeight={300}
                 variant="caption"
               >
-                {`Thumbnail is ${formik.errors.thumbnail}`}
+                {formik.errors.thumbnail}
               </Typography>
             )}
           </Box>
@@ -414,7 +333,7 @@ function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMod
           freeSolo
           sx={fieldStyle}
           disabled={loading}
-          options={tags}
+          options={fetchedTags ? fetchedTags.map(tag => tag.name) : []}
           value={selectedTags}
           onChange={(event, newValue) => addNewTag(newValue)}
           renderTags={(value: readonly string[], getTagProps) =>
@@ -663,6 +582,14 @@ function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMod
           )}
         </Button>
       </Box>
+      <Snackbar
+        open={showSnackbar}
+        onClose={closeSnackbar}
+        autoHideDuration={2000}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert severity="error">Please try again, make sure you have entered all required template information.</Alert>
+      </Snackbar>
     </Box>
   );
 }
