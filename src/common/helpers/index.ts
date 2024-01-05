@@ -41,3 +41,12 @@ export const redirectToPath = (path: string, searchParams: Record<string, string
 export function allFieldsFilled(obj: Record<string, any>): boolean {
   return Object.values(obj).every(value => value !== "");
 }
+
+export function isUrl(url: string): boolean {
+  try {
+    new URL(url);
+    return true;
+  } catch {
+    return false;
+  }
+}

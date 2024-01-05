@@ -4,6 +4,7 @@ import Stack from "@mui/material/Stack";
 import { getFileTypeExtensionsAsString } from "@/components/Prompt/Utils/uploadFileHelper";
 import useTruncate from "@/hooks/useTruncate";
 import type { FileType, IPromptInput } from "@/common/types/prompt";
+import { isUrl } from "@/common/helpers";
 interface Props {
   value: File;
   input: IPromptInput;
@@ -12,7 +13,8 @@ interface Props {
 
 function File({ input, value, onChange }: Props) {
   const { truncate } = useTruncate();
-  const _value = value && typeof value === "string" ? "Previously uploaded file" : value?.name;
+
+  const _value = value && typeof value === "string" && isUrl(value) ? (value as string).split("/").pop() : value?.name;
 
   return (
     <Stack
