@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
@@ -6,7 +6,7 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
-import Select from "@mui/material/Select";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
@@ -24,7 +24,33 @@ interface Props {
 const titleFormats = ["JSON", "XML", "Markdown", "Custom"];
 
 function OutputOptions({ prompt, onSave, onCancel }: Props) {
-  const [promptData, setPromptData] = useState(prompt);
+  const [promptData, setPromptData] = useState<IEditPrompts>({
+    ...prompt,
+    output_format: titleFormats.includes(prompt.output_format.toUpperCase()) ? prompt.output_format : "custom",
+    custom_output_format: titleFormats.includes(prompt.output_format.toUpperCase()) ? "" : prompt.output_format,
+  });
+
+  const handleFormatChange = (event: SelectChangeEvent<string>) => {
+    const value = event.target.value;
+    setPromptData({
+      ...promptData,
+      output_format: value,
+      ...(value !== "custom" && { custom_output_format: "" }),
+    });
+  };
+
+  useEffect(() => {
+    console.log(promptData);
+  }, [promptData]);
+
+  const handleCustomFormatChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = event.target.value;
+    setPromptData({
+      ...promptData,
+      output_format: "custom",
+      custom_output_format: value,
+    });
+  };
 
   return (
     <Stack
@@ -79,7 +105,7 @@ function OutputOptions({ prompt, onSave, onCancel }: Props) {
               <Select
                 labelId="format-select-label"
                 value={promptData.output_format}
-                onChange={e => setPromptData({ ...promptData, output_format: e.target.value })}
+                onChange={handleFormatChange}
                 label="Format"
               >
                 {titleFormats.map(format => (
@@ -102,6 +128,8 @@ function OutputOptions({ prompt, onSave, onCancel }: Props) {
                   border: "1px solid gray",
                   overflowX: "hidden",
                 }}
+                onChange={handleCustomFormatChange}
+                value={promptData.custom_output_format || ""}
                 placeholder="Custom output area"
                 name="custom_output_format"
               />
