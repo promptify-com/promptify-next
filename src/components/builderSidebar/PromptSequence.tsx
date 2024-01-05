@@ -53,7 +53,7 @@ const DraggableContent = memo(
       [promptId, originalIndex, movePrompt],
     );
     const scrollSmoothTo = () => {
-      setSmoothScrollTarget(`#${promptComputeDomId({ title: promptTitle, id: promptId })}`);
+      setSmoothScrollTarget(`#${promptComputeDomId({ title: promptTitle })}`);
     };
 
     const [, drop] = useDrop(
