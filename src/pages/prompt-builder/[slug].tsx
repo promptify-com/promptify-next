@@ -202,6 +202,7 @@ export const PromptBuilder = () => {
           onSave={handleSaveTemplate}
           onEditTemplate={() => setTemplateDrawerOpen(true)}
           type={BUILDER_TYPE.USER}
+          sidebarOpened={builderSidebarOpen}
         />
 
         <Box
