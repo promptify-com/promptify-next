@@ -74,7 +74,10 @@ export const Header = ({
       border={`1px solid `}
       borderColor={"surface.3"}
       zIndex={3}
-      position={"relative"}
+      sx={{
+        position: "relative",
+        ...(pathname.includes("/prompt-builder/") && { width: "100%", position: "fixed" }),
+      }}
     >
       <Stack
         flex={1}
