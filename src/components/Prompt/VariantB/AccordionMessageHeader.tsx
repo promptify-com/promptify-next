@@ -41,6 +41,7 @@ interface Props {
 }
 
 function AccordionMessageHeader({ template, type, isExpanded, onCancel }: Props) {
+  const currentUser = useAppSelector(state => state.user.currentUser);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const dispatch = useAppDispatch();
   const { truncate } = useTruncate();
@@ -106,6 +107,8 @@ function AccordionMessageHeader({ template, type, isExpanded, onCancel }: Props)
       },
     ],
   };
+
+  const isOwner = currentUser?.id === selectedExecution?.executed_by;
 
   return (
     <>
@@ -200,7 +203,7 @@ function AccordionMessageHeader({ template, type, isExpanded, onCancel }: Props)
                     {isGenerating
                       ? "Generation in progress..."
                       : truncate(executionTitle ?? "Untitled", { length: 80 })}
-                    {executionTitle && !isGenerating && (
+                    {executionTitle && !isGenerating && isOwner && (
                       <Tooltip
                         arrow
                         title="Rename"
@@ -416,33 +419,35 @@ function AccordionMessageHeader({ template, type, isExpanded, onCancel }: Props)
                       </Tooltip>
                     </Box>
 
-                    <Box
-                      borderRight={"2px solid #ECECF4"}
-                      pr={1}
-                      height={"30px"}
-                    >
-                      <Tooltip
-                        title="Delete"
-                        arrow
-                        PopperProps={commonPopperProps}
+                    {isOwner && (
+                      <Box
+                        borderRight={"2px solid #ECECF4"}
+                        pr={1}
+                        height={"30px"}
                       >
-                        <IconButton
-                          onClick={e => {
-                            e.stopPropagation();
-                            setExecutionPopup("delete");
-                          }}
-                          sx={{
-                            border: "none",
-                            ":hover": {
-                              color: "red",
-                              bgcolor: "surface.4",
-                            },
-                          }}
+                        <Tooltip
+                          title="Delete"
+                          arrow
+                          PopperProps={commonPopperProps}
                         >
-                          <DeleteOutline />
-                        </IconButton>
-                      </Tooltip>
-                    </Box>
+                          <IconButton
+                            onClick={e => {
+                              e.stopPropagation();
+                              setExecutionPopup("delete");
+                            }}
+                            sx={{
+                              border: "none",
+                              ":hover": {
+                                color: "red",
+                                bgcolor: "surface.4",
+                              },
+                            }}
+                          >
+                            <DeleteOutline />
+                          </IconButton>
+                        </Tooltip>
+                      </Box>
+                    )}
                   </Stack>
                 )}
               </>
