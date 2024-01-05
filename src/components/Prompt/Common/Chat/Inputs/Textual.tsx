@@ -54,6 +54,7 @@ function Textual({ input, value, onChange, onBlur }: Props) {
         value={value}
         onChange={e => onChange(e.target.value)}
         onBlur={onBlur}
+        multiline={isVariantB}
       />
 
       <span
