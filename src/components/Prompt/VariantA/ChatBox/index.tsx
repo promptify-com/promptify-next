@@ -24,7 +24,7 @@ import { setAnswers, setInputs, setIsSimulationStreaming, setParams, setparamsVa
 import { PromptInputType } from "../../Types";
 import useApiAccess from "../../Hooks/useApiAccess";
 import { ChatInput } from "../../Common/Chat/ChatInput";
-import Storage from "@/common/storage";
+import { useStoreAnswersAndParams } from "@/hooks/useStoreAnswersAndParams";
 
 interface Props {
   onError: (errMsg: string) => void;
@@ -59,6 +59,8 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [queuedMessages, setQueuedMessages] = useState<IMessage[]>([]);
   const [disableChatInput, setDisableChatInput] = useState(false);
+
+  const { storeAnswers, storeParams } = useStoreAnswersAndParams();
 
   const { prepareAndRemoveDuplicateInputs, preparePromptsData } = useChatBox();
   const { dispatchNewExecutionData } = useApiAccess();
@@ -390,7 +392,8 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
 
   const generateExecutionHandler = async () => {
     if (!token) {
-      Storage.set("answersStored", JSON.stringify(answers));
+      storeAnswers(answers);
+      storeParams(paramsValues);
       return router.push("/signin");
     }
 
