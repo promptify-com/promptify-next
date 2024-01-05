@@ -4,7 +4,7 @@ import { randomId } from "@/common/helpers";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setAnswers, setIsSimulationStreaming } from "@/core/store/chatSlice";
 import type { IPromptInput } from "@/common/types/prompt";
-import type { IMessage, MessageType } from "../Types/chat";
+import type { IAnswer, IMessage, MessageType } from "../Types/chat";
 import type { Templates } from "@/core/api/dto/templates";
 
 interface Props {
@@ -17,7 +17,9 @@ const createdAt = new Date();
 function useChat({ questionPrefixContent, template }: Props) {
   const dispatch = useAppDispatch();
 
-  const { selectedExecution, generatedExecution, repeatedExecution } = useAppSelector(state => state.executions);
+  const { selectedExecution, generatedExecution, repeatedExecution, sparkHashQueryParam } = useAppSelector(
+    state => state.executions,
+  );
 
   const currentUser = useAppSelector(state => state.user.currentUser);
   const isSimulationStreaming = useAppSelector(state => state.chat.isSimulationStreaming);
@@ -45,6 +47,36 @@ function useChat({ questionPrefixContent, template }: Props) {
       addToQueuedMessages([createMessage("form")]);
     }
     dispatch(setAnswers([]));
+
+    if (sparkHashQueryParam) {
+      const parameters = selectedExecution?.parameters;
+
+      if (!!Object.keys(parameters ?? {}).length) {
+        const newAnswers = Object.keys(parameters!)
+          .map(promptId => {
+            const param = parameters![promptId];
+
+            if (!param) {
+              return;
+            }
+
+            return Object.keys(param).map(inputName => ({
+              inputName,
+              required: true,
+              question: "",
+              answer: param[inputName],
+              prompt: parseInt(promptId),
+              error: false,
+            }));
+          })
+          .filter(data => Array.isArray(data))
+          .flat() as IAnswer[];
+
+        setTimeout(() => {
+          dispatch(setAnswers(newAnswers));
+        }, 50);
+      }
+    }
   };
 
   const addToQueuedMessages = (messages: IMessage[]) => {

@@ -31,6 +31,7 @@ interface IHeader {
   templateSlug?: string;
   onEditTemplate: () => void;
   type: BuilderType;
+  sidebarOpened?: boolean;
 }
 
 export const Header = ({
@@ -42,6 +43,7 @@ export const Header = ({
   templateSlug,
   onEditTemplate,
   type,
+  sidebarOpened,
 }: IHeader) => {
   const isValidUser = useAppSelector(isValidUserFn);
   const currentUser = useAppSelector((state: RootState) => state.user.currentUser);
@@ -74,7 +76,17 @@ export const Header = ({
       border={`1px solid `}
       borderColor={"surface.3"}
       zIndex={3}
-      position={"relative"}
+      height="70px"
+      boxSizing={"border-box"}
+      sx={{
+        position: "relative",
+        ...(type === BUILDER_TYPE.USER && {
+          width: sidebarOpened ? `calc(93.9% - ${theme.custom.promptBuilder.drawerWidth})` : "93.9%",
+          position: "fixed",
+          top: 0,
+          left: theme.custom.leftClosedSidebarWidth,
+        }),
+      }}
     >
       <Stack
         flex={1}

@@ -27,34 +27,37 @@ const useVariant = () => {
 
   useEffect(() => {
     const cookieVariant = Cookie.get("variant");
-    let variant = cookieVariant ?? (router.query.variant as string);
+    let effectiveVariant = cookieVariant ?? variant;
 
-    if (!variant) {
-      variant = getRandomVariant();
+    if (!effectiveVariant) {
+      effectiveVariant = getRandomVariant();
     }
 
-    setVariant(variant);
+    setVariant(effectiveVariant);
 
     if (!cookieVariant) {
       sendPageViewEvent();
 
-      Cookie.set("variant", variant, 30);
+      Cookie.set("variant", effectiveVariant, 30);
     }
 
-    if (router.query.variant !== variant) {
-      router.replace({ pathname: router.pathname, query: { ...router.query, variant } }, undefined, { shallow: true });
+    if (router.query.variant !== effectiveVariant) {
+      const { hash, ...queries } = router.query;
+      router.replace({ pathname: router.pathname, query: { ...queries, variant: effectiveVariant } }, undefined, {
+        shallow: true,
+      });
     }
 
     function sendPageViewEvent() {
       if (typeof window.gtag === "undefined") {
         const intervalID = setInterval(() => {
           if (typeof window.gtag === "function") {
-            window.gtag("event", "pageview", { Branch: `staging-${variant}` });
+            window.gtag("event", "pageview", { Branch: `staging-${effectiveVariant}` });
             clearInterval(intervalID);
           }
         }, 1000);
       } else {
-        window.gtag("event", "pageview", { Branch: `staging-${variant}` });
+        window.gtag("event", "pageview", { Branch: `staging-${effectiveVariant}` });
       }
     }
   }, [router]);
@@ -73,7 +76,8 @@ const useVariant = () => {
     Cookie.set("variant", newVariant, 30);
     clearStoredStates();
 
-    router.replace({ pathname: router.pathname, query: { ...router.query, variant: newVariant } }, undefined, {
+    const { hash, ...queries } = router.query;
+    router.replace({ pathname: router.pathname, query: { ...queries, variant: newVariant } }, undefined, {
       shallow: true,
     });
   };

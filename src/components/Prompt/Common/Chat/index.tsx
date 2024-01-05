@@ -77,26 +77,7 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
       return [[], [], false];
     }
 
-    let { inputs, params, promptHasContent } = prepareAndRemoveDuplicateInputs(template.prompts);
-
-    if (template.questions?.length) {
-      const normalizeQuestions: Record<string, string> = template.questions.reduce(
-        (acc, question) => {
-          const key = Object.keys(question)[0];
-          acc[key] = question[key].question;
-
-          return acc;
-        },
-        {} as Record<string, string>,
-      );
-
-      inputs = inputs.map(input => {
-        input.question = normalizeQuestions[input.name] ?? "";
-
-        return input;
-      });
-    }
-    inputs.sort((a, b) => +b.required - +a.required);
+    const { inputs, params, promptHasContent } = prepareAndRemoveDuplicateInputs(template.prompts, template.questions);
 
     initialMessages({ inputs });
 

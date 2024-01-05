@@ -53,7 +53,7 @@ function TemplatePage({ template, setErrorMessage, questionPrefixContent }: Prop
       handleSelectExecution({ execution: template.example_execution || null, resetHash: true });
     }
   }, [executions]);
-  console.log("variation", variant);
+
   return (
     <>
       {variant === "a" ? (

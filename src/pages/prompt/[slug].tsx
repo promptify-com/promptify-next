@@ -68,6 +68,7 @@ function Template({ hashedExecution, fetchedTemplate, questionPrefixContent }: T
     if (sparkHashQueryParam && hashedExecution) {
       dispatch(setSelectedExecution(hashedExecution));
       replaceHistoryByPathname(`/prompt/${fetchedTemplate.slug}`);
+
       return;
     }
   }, [sparkHashQueryParam]);
