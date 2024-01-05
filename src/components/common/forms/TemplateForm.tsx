@@ -110,7 +110,7 @@ function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMod
           onChange={formik.handleChange}
           disabled={loading}
           error={titleHasError}
-          helperText={titleHasError}
+          helperText={formik.errors.title}
         />
       </Stack>
       <Stack sx={boxStyle}>
@@ -125,7 +125,7 @@ function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMod
           value={formik.values.description}
           onChange={formik.handleChange}
           error={descriptionHasError}
-          helperText={descriptionHasError}
+          helperText={formik.errors.description}
         />
       </Stack>
       <Stack sx={[{ display: "flex", flexDirection: "column" }, boxStyle]}>
