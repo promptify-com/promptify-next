@@ -82,7 +82,7 @@ export const BuilderSidebar = ({ prompts, engines, setPrompts }: Props) => {
         display: "flex",
         position: "fixed",
         right: 0,
-        top: 0,
+        top: theme.custom.promptBuilder.headerHeight,
         height: "100vh",
         width: "64px",
         borderRadius: "var(--none, 0px)",
@@ -158,8 +158,10 @@ export const BuilderSidebar = ({ prompts, engines, setPrompts }: Props) => {
         sx={{
           width: drawerWidth,
           flexShrink: 0,
+          mt: theme.custom.promptBuilder.headerHeight,
           "& .MuiDrawer-paper": {
             width: drawerWidth,
+            mt: theme.custom.promptBuilder.headerHeight,
           },
         }}
         variant="persistent"

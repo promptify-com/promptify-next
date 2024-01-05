@@ -35,6 +35,9 @@ interface CustomTheme {
       xs: string;
       md: string;
     };
+    promptBuilder: {
+      headerHeight: string;
+    };
   };
 }
 
@@ -97,6 +100,9 @@ export let theme: Theme = createTheme({
     headerHeight: {
       xs: "58px",
       md: "90px",
+    },
+    promptBuilder: {
+      headerHeight: "75px",
     },
   },
 });

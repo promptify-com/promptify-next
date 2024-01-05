@@ -76,7 +76,7 @@ export const Header = ({
       zIndex={3}
       sx={{
         position: "relative",
-        ...(pathname.includes("/prompt-builder/") && { width: "100%", position: "fixed" }),
+        ...(pathname.includes("/prompt-builder/") && { width: "91%", position: "fixed", top: 0, right: 0 }),
       }}
     >
       <Stack
