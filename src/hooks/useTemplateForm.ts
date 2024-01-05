@@ -28,7 +28,7 @@ const useTemplateForm = ({ type, template, uploadedFile, onSaved }: Props) => {
   const [showSnackbar, setShowSnackbar] = useState(false);
 
   const handleSave = (newTemplate?: Templates) => {
-    if (typeof onSaved !== "undefined") {
+    if (typeof onSaved === "function") {
       onSaved(newTemplate);
     }
     formik.resetForm();
