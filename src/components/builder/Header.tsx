@@ -81,7 +81,9 @@ export const Header = ({
       sx={{
         position: "relative",
         ...(type === BUILDER_TYPE.USER && {
-          width: sidebarOpened ? `calc(93.9% - ${theme.custom.promptBuilder.drawerWidth})` : "93.9%",
+          width: sidebarOpened
+            ? `calc(100% - ${theme.custom.leftClosedSidebarWidth} - ${theme.custom.promptBuilder.drawerWidth})`
+            : `calc(100% - ${theme.custom.leftClosedSidebarWidth})`,
           position: "fixed",
           top: 0,
           left: theme.custom.leftClosedSidebarWidth,
