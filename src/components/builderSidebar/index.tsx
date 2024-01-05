@@ -80,7 +80,7 @@ export const BuilderSidebar = ({ prompts, engines, setPrompts }: Props) => {
         display: "flex",
         position: "fixed",
         right: 0,
-        top: theme.custom.promptBuilder.headerHeight,
+        top: 0,
         height: "100vh",
         width: "64px",
         borderRadius: "var(--none, 0px)",
