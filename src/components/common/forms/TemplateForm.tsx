@@ -53,12 +53,13 @@ function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMod
   const [executions, setExecutions] = useState<TemplatesExecutions[]>();
   const [selectedFile, setSelectedFile] = useState<File>();
 
-  const { formik, loading, showSnackbar, closeSnackbar } = useTemplateForm({
-    type,
-    template: templateData!,
-    uploadedFile: selectedFile,
-    onSaved: onSaved,
-  });
+  const { formik, loading, showSnackbar, closeSnackbar, titleHasError, thumbnailHasError, descriptionHasError } =
+    useTemplateForm({
+      type,
+      template: templateData!,
+      uploadedFile: selectedFile,
+      onSaved: onSaved,
+    });
 
   const getExecutions = async () => {
     if (!templateData) return null;
@@ -108,8 +109,8 @@ function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMod
           value={formik.values.title}
           onChange={formik.handleChange}
           disabled={loading}
-          error={formik.touched.title && !formik.values.title}
-          helperText={formik.touched.title && formik.errors.title}
+          error={titleHasError}
+          helperText={titleHasError}
         />
       </Stack>
       <Stack sx={boxStyle}>
@@ -123,8 +124,8 @@ function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMod
           name="description"
           value={formik.values.description}
           onChange={formik.handleChange}
-          error={formik.touched.description && !formik.values.description}
-          helperText={formik.touched.description && formik.errors.description}
+          error={descriptionHasError}
+          helperText={descriptionHasError}
         />
       </Stack>
       <Stack sx={[{ display: "flex", flexDirection: "column" }, boxStyle]}>
@@ -172,8 +173,8 @@ function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMod
               alignItems={"center"}
               justifyContent={"center"}
               sx={{
-                bgcolor: formik.touched.thumbnail && formik.errors.thumbnail ? "errorContainer" : "surface.4",
-                color: formik.touched.thumbnail && formik.errors.thumbnail ? "error.main" : "primary.main",
+                bgcolor: thumbnailHasError ? "errorContainer" : "surface.4",
+                color: thumbnailHasError ? "error.main" : "primary.main",
                 border: "1px solid transparent",
                 borderRadius: "4px",
                 p: "8px",

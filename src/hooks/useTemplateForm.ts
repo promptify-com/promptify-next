@@ -120,6 +120,18 @@ const useTemplateForm = ({ type, template, uploadedFile, onSaved }: Props) => {
     }
   }, [hasFormErrors()]);
 
-  return { formik, loading, showSnackbar, closeSnackbar: () => setShowSnackbar(false) };
+  const thumbnailHasError = Boolean(formik.errors.thumbnail && formik.touched.thumbnail);
+  const titleHasError = Boolean(formik.errors.title && formik.touched.title);
+  const descriptionHasError = Boolean(formik.errors.description && formik.touched.description);
+
+  return {
+    formik,
+    loading,
+    showSnackbar,
+    closeSnackbar: () => setShowSnackbar(false),
+    thumbnailHasError,
+    titleHasError,
+    descriptionHasError,
+  };
 };
 export default useTemplateForm;
