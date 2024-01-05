@@ -45,7 +45,7 @@ export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title, id }) 
 
   const [deleteTemplate] = useDeleteTemplateMutation();
   const [templateImportOpen, setTemplateImportOpen] = useState(false);
-  const [selectedTemplate, setSelectedTemplate] = useState<Templates | null>(null);
+  const [selectedTemplate, setSelectedTemplate] = useState<Templates>();
   const [templateFormType, setTemplateFormType] = useState<FormType>("create");
   const [templateFormOpen, setTemplateFormOpen] = useState(false);
   const [confirmDialog, setConfirmDialog] = useState(false);
@@ -176,7 +176,7 @@ export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title, id }) 
             <BaseButton
               size="small"
               onClick={() => {
-                setSelectedTemplate(null);
+                setSelectedTemplate(undefined);
                 setTemplateFormType("create");
                 setTemplateFormOpen(true);
               }}
@@ -198,7 +198,7 @@ export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title, id }) 
             <BaseButton
               onClick={() => {
                 setTemplateFormOpen(true);
-                setSelectedTemplate(null);
+                setSelectedTemplate(undefined);
                 setTemplateFormType("create");
               }}
               variant="contained"
