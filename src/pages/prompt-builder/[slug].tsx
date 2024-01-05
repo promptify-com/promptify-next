@@ -112,6 +112,10 @@ export const PromptBuilder = () => {
     }
 
     const _prompts = prompts.map((prompt, index, array) => {
+      if (prompt.output_format === "custom" && prompt.custom_output_format) {
+        prompt.output_format = prompt.custom_output_format;
+        delete prompt.custom_output_format;
+      }
       const depend = array[index - 1]?.id || array[index - 1]?.temp_id;
       return {
         ...prompt,
@@ -202,6 +206,7 @@ export const PromptBuilder = () => {
           onSave={handleSaveTemplate}
           onEditTemplate={() => setTemplateDrawerOpen(true)}
           type={BUILDER_TYPE.USER}
+          sidebarOpened={builderSidebarOpen}
         />
 
         <Box
@@ -209,6 +214,8 @@ export const PromptBuilder = () => {
             width: "70%",
             mx: "auto",
             p: "24px 0 40px",
+
+            ...(router.pathname.includes("/prompt-builder/") && { mt: theme.custom.promptBuilder.headerHeight }),
           }}
         >
           <Stack

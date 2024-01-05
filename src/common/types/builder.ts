@@ -21,6 +21,7 @@ export interface IEngineParams {
 export interface IPromptOptions {
   model_parameters: IEngineParams | null;
   output_format: string;
+  custom_output_format?: string;
   is_visible: boolean;
   show_output: boolean;
   prompt_output_variable: string;

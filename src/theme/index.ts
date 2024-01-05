@@ -35,6 +35,10 @@ interface CustomTheme {
       xs: string;
       md: string;
     };
+    promptBuilder: {
+      headerHeight: string;
+      drawerWidth: string;
+    };
   };
 }
 
@@ -97,6 +101,10 @@ export let theme: Theme = createTheme({
     headerHeight: {
       xs: "58px",
       md: "90px",
+    },
+    promptBuilder: {
+      headerHeight: "75px",
+      drawerWidth: "352px",
     },
   },
 });

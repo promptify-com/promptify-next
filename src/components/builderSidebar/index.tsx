@@ -23,8 +23,6 @@ import PromptSequence from "./PromptSequence";
 import type { IEditPrompts } from "@/common/types/builder";
 import type { Engine } from "@/core/api/dto/templates";
 
-const drawerWidth = 352;
-
 type LinkName = "list" | "paper" | "help" | "api";
 
 interface Link {
@@ -105,7 +103,7 @@ export const BuilderSidebar = ({ prompts, engines, setPrompts }: Props) => {
             easing: theme.transitions.easing.easeOut,
             duration: theme.transitions.duration.enteringScreen,
           }),
-          marginRight: `${drawerWidth}px`,
+          marginRight: theme.custom.promptBuilder.drawerWidth,
         }),
       }}
     >
@@ -156,10 +154,11 @@ export const BuilderSidebar = ({ prompts, engines, setPrompts }: Props) => {
       </Box>
       <Drawer
         sx={{
-          width: drawerWidth,
+          width: theme.custom.promptBuilder.drawerWidth,
           flexShrink: 0,
+          mt: theme.custom.promptBuilder.headerHeight,
           "& .MuiDrawer-paper": {
-            width: drawerWidth,
+            width: theme.custom.promptBuilder.drawerWidth,
           },
         }}
         variant="persistent"
@@ -173,6 +172,8 @@ export const BuilderSidebar = ({ prompts, engines, setPrompts }: Props) => {
           p={"16px 24px"}
           justifyContent="space-between"
           border={`1px solid ${theme.palette.surface[3]}`}
+          height="70px"
+          boxSizing={"border-box"}
         >
           <Typography
             variant="h6"

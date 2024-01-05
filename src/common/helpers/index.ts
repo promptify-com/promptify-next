@@ -18,8 +18,7 @@ export const isDesktopViewPort = () => {
 };
 
 export const addSpaceBetweenCapitalized = (text: string) => text.replace(/([a-z])([A-Z])/g, "$1 $2");
-export const promptComputeDomId = ({ title = "", id = 0 }): string =>
-  `prompt-${id}-${title.toLowerCase().replace(/[^\w]/g, "-")}`;
+export const promptComputeDomId = ({ title = "" }): string => `prompt-${title.toLowerCase().replace(/[^\w]/g, "-")}`;
 
 export const redirectToPath = (path: string, searchParams: Record<string, string | number> = {}) => {
   if (!isBrowser()) {
