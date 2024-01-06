@@ -1,0 +1,137 @@
+import React, { useState } from "react";
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  Divider,
+  IconButton,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { Close, ContentCopy, PlayArrow } from "@mui/icons-material";
+import { IEditPrompts } from "@/common/types/builder";
+import { getInputsFromString } from "@/common/helpers/getInputsFromString";
+
+interface PromptTestDialogProps {
+  open: boolean;
+  onClose: () => void;
+  prompt: IEditPrompts;
+}
+
+export const PromptTestDialog: React.FC<PromptTestDialogProps> = ({ open, onClose, prompt }) => {
+  const handleClose = (e: {}, reason: "backdropClick" | "escapeKeyDown") => {
+    if (reason && reason === "backdropClick") return;
+    onClose();
+  };
+
+  console.log(getInputsFromString(prompt.content));
+
+  return (
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      PaperProps={{
+        sx: {
+          width: "400px",
+          textarea: {
+            overscrollBehavior: "contain",
+          },
+        },
+      }}
+    >
+      <Stack
+        direction={"row"}
+        justifyContent={"space-between"}
+        alignItems={"center"}
+        p={"16px 24px"}
+      >
+        <DialogTitle
+          sx={{
+            fontSize: 20,
+            fontWeight: 400,
+            p: 0,
+          }}
+        >
+          Test Now
+        </DialogTitle>
+        <IconButton
+          aria-label="close"
+          onClick={onClose}
+          sx={{
+            color: "action.active",
+            border: "none",
+          }}
+        >
+          <Close />
+        </IconButton>
+      </Stack>
+      <Divider />
+      <DialogContent sx={{ p: 0 }}>
+        <Stack
+          gap={4}
+          alignItems={"flex-end"}
+          sx={{
+            p: "16px 24px",
+          }}
+        >
+          <Stack
+            width={"100%"}
+            gap={2}
+          >
+            <Typography
+              fontSize={20}
+              fontWeight={400}
+            >
+              Prompt inputs
+            </Typography>
+            <TextField
+              label="Input 1"
+              fullWidth
+            />
+          </Stack>
+          <Button
+            startIcon={<PlayArrow />}
+            sx={buttonStyle}
+          >
+            Run
+          </Button>
+          <Stack
+            width={"100%"}
+            gap={2}
+          >
+            <Typography
+              fontSize={20}
+              fontWeight={400}
+            >
+              Output
+            </Typography>
+            <TextField
+              multiline
+              rows={15}
+            />
+            <Button
+              startIcon={<ContentCopy />}
+              sx={buttonStyle}
+            >
+              Copy
+            </Button>
+          </Stack>
+        </Stack>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+const buttonStyle = {
+  width: "fit-content",
+  ml: "auto",
+  p: "6px 16px",
+  border: "1px solid #1B1B1E1A",
+  borderRadius: "4px",
+  fontSize: 14,
+  fontWeight: 500,
+  color: "secondary.main",
+};
