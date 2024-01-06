@@ -13,6 +13,7 @@ import { useDrag, useDrop, ConnectableElement } from "react-dnd";
 import { getBuilderVarsPresets } from "@/common/helpers/getBuilderVarsPresets";
 import { useDebouncedDispatch } from "@/hooks/useDebounceDispatch";
 import { BUILDER_TYPE } from "@/common/constants";
+import { PromptTestDialog } from "./PromptTestDialog";
 
 interface Props {
   prompt: IEditPrompts;
@@ -41,6 +42,7 @@ const PromptCardAccordion = ({
 }: Props) => {
   const [promptData, setPromptData] = useState(prompt);
   const [renameAllow, setRenameAllow] = useState(false);
+  const [showTest, setShowTest] = useState(false);
   const cursorPositionRef = useRef(0);
   const [highlightedOption, setHighlitedOption] = useState("");
   const { outputPresets, inputPresets } = useMemo(() => getBuilderVarsPresets(prompts, promptData, false), [prompts]);
@@ -159,10 +161,24 @@ const PromptCardAccordion = ({
                   onClick={() => setRenameAllow(true)}
                 />
               </Stack>
-              {/*
-               * Will be added back in #608
-               * <Button startIcon={<PlayCircle />}>Test run</Button>
-               */}
+              <Button
+                startIcon={<PlayCircle />}
+                onClick={() => setShowTest(true)}
+                sx={{
+                  fontSize: 13,
+                  fontWeight: 500,
+                  p: "4px 10px",
+                }}
+              >
+                Test run
+              </Button>
+              {showTest && (
+                <PromptTestDialog
+                  open={showTest}
+                  onClose={() => setShowTest(false)}
+                  prompt={promptData}
+                />
+              )}
             </>
           ) : (
             <RenameForm
