@@ -25,6 +25,7 @@ function Textual({ input, value, onChange, onBlur }: Props) {
   const spanRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    if (isVariantB) return;
     calculateInputWidth();
   }, [value]);
 

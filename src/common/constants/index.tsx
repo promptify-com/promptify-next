@@ -176,3 +176,5 @@ export type OutputFormat = (typeof OUTPUT_FORMATS)[number];
 
 export const LCL_STR_KEY = "promptify:";
 export const COOKIE_STR_KEY = "promptify_";
+
+export const outputFormatOptions = ["JSON", "XML", "Markdown", "Custom"];
