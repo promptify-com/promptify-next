@@ -117,12 +117,10 @@ function OutputOptions({ prompt, onSave, onCancel }: Props) {
             </FormControl>
             {promptData.output_format === "custom" && (
               <TextField
+                fullWidth
                 style={{
                   marginTop: "20px",
-                  width: "98%",
-                  minHeight: "120px",
                 }}
-                multiline
                 variant="outlined"
                 value={promptData.custom_output_format || ""}
                 label="Custom output area"
