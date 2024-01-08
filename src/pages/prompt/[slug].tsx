@@ -20,6 +20,17 @@ import { getContentBySectioName } from "@/hooks/api/cms";
 import TemplatePage from "@/components/Prompt";
 import { GetServerSideProps } from "next/types";
 
+interface IMUDynamicColorsThemeColor {
+  light: {
+    primary: string;
+    secondary: string;
+    error: string;
+    background: string;
+    surface: string;
+    surfaceVariant: string;
+  };
+}
+
 interface TemplateProps {
   hashedExecution: TemplatesExecutions | null;
   fetchedTemplate: Templates;
@@ -84,8 +95,9 @@ function Template({ hashedExecution, fetchedTemplate, questionPrefixContent }: T
   }
 
   const fetchDynamicColors = () => {
+    // @ts-expect-error unfound-new-type
     materialDynamicColors(fetchedTemplate.thumbnail)
-      .then((imgPalette: IMaterialDynamicColorsTheme) => {
+      .then((imgPalette: IMUDynamicColorsThemeColor) => {
         const newPalette: Palette = {
           ...theme.palette,
           ...imgPalette.light,
