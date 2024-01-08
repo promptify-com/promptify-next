@@ -175,10 +175,9 @@ const PromptList = ({ prompts, setPrompts, engines, templateLoading }: Props) =>
                 <Fragment key={index}>
                   <Box
                     width={"100%"}
-                    id={promptComputeDomId(prompt)}
+                    id={promptComputeDomId({ title: prompt.title })}
                   >
                     <PromptCardAccordion
-                      key={prompt.id ?? prompt.temp_id}
                       prompt={prompt}
                       order={index}
                       setPrompt={changePrompt}

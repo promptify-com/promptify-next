@@ -46,10 +46,11 @@ function FormInput({ input }: Props) {
   const value = answers.find(answer => answer.inputName === name)?.answer ?? "";
 
   useEffect(() => {
+    if (isVariantB) return;
     if (labelRef.current) {
       setLabelWidth(labelRef.current.offsetWidth);
     }
-  }, [fullName]);
+  }, [fullName, isVariantB]);
 
   return (
     <Stack

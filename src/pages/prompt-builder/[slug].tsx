@@ -112,6 +112,10 @@ export const PromptBuilder = () => {
     }
 
     const _prompts = prompts.map((prompt, index, array) => {
+      if (prompt.output_format === "custom" && prompt.custom_output_format) {
+        prompt.output_format = prompt.custom_output_format;
+        delete prompt.custom_output_format;
+      }
       const depend = array[index - 1]?.id || array[index - 1]?.temp_id;
       return {
         ...prompt,
@@ -237,7 +241,7 @@ export const PromptBuilder = () => {
           </Box>
         </Box>
 
-        {!!templateData && (
+        {!!templateData && templateDrawerOpen && (
           <SwipeableDrawer
             anchor={"left"}
             open={templateDrawerOpen}

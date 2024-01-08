@@ -1,32 +1,52 @@
-import React, { useState } from "react";
-import {
-  Autocomplete,
-  Box,
-  Button,
-  Divider,
-  FormControl,
-  FormControlLabel,
-  InputLabel,
-  MenuItem,
-  Select,
-  Stack,
-  Switch,
-  TextField,
-  Typography,
-} from "@mui/material";
-import { IEditPrompts } from "@/common/types/builder";
-import { validatePromptOutput } from "@/common/helpers/promptValidator";
+import { type ChangeEvent, useState } from "react";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import Divider from "@mui/material/Divider";
+import Box from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import Select, { type SelectChangeEvent } from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Switch from "@mui/material/Switch";
+import Button from "@mui/material/Button";
 
+import { validatePromptOutput } from "@/common/helpers/promptValidator";
+import { outputFormatOptions } from "@/common/constants";
+import type { IEditPrompts } from "@/common/types/builder";
+
+type CustomEvent = SelectChangeEvent<string> | ChangeEvent<{ name?: string; value: unknown }>;
 interface Props {
   prompt: IEditPrompts;
   onSave: (prompt: IEditPrompts) => void;
   onCancel: () => void;
 }
 
-const titleFormats = ["JSON", "XML", "Markdown", "Custom"];
+function OutputOptions({ prompt, onSave, onCancel }: Props) {
+  const initialOutputFormat = prompt.output_format;
+  const initialOutputFormatMatching = outputFormatOptions.find(
+    format => format.toLowerCase() === initialOutputFormat.toLowerCase(),
+  );
 
-export const OutputOptions: React.FC<Props> = ({ prompt, onSave, onCancel }) => {
-  const [promptData, setPromptData] = useState(prompt);
+  const initialState: IEditPrompts = {
+    ...prompt,
+    output_format: initialOutputFormatMatching?.toLowerCase() || "custom",
+    custom_output_format: initialOutputFormatMatching ? "" : initialOutputFormat,
+  };
+  const [promptData, setPromptData] = useState<IEditPrompts>(initialState);
+
+  const handleOutputFormatChange = (event: CustomEvent) => {
+    const { name, value } = "target" in event ? event.target : { name: "output_format", value: event };
+
+    const updatedPromptData = {
+      ...promptData,
+      output_format: name === "output_format" ? (value as string) : "custom",
+      custom_output_format: name === "custom_output_format" ? (value as string) : "",
+    };
+
+    setPromptData(updatedPromptData);
+  };
 
   return (
     <Stack
@@ -81,10 +101,11 @@ export const OutputOptions: React.FC<Props> = ({ prompt, onSave, onCancel }) => 
               <Select
                 labelId="format-select-label"
                 value={promptData.output_format}
-                onChange={e => setPromptData({ ...promptData, output_format: e.target.value })}
+                onChange={handleOutputFormatChange}
                 label="Format"
+                name="output_format"
               >
-                {titleFormats.map(format => (
+                {outputFormatOptions.map(format => (
                   <MenuItem
                     key={format}
                     value={format.toLowerCase()}
@@ -94,6 +115,19 @@ export const OutputOptions: React.FC<Props> = ({ prompt, onSave, onCancel }) => 
                 ))}
               </Select>
             </FormControl>
+            {promptData.output_format === "custom" && (
+              <TextField
+                fullWidth
+                style={{
+                  marginTop: "20px",
+                }}
+                variant="outlined"
+                value={promptData.custom_output_format || ""}
+                label="Custom output area"
+                name="custom_output_format"
+                onChange={handleOutputFormatChange}
+              />
+            )}
           </Box>
           <Box>
             <Box
@@ -180,4 +214,6 @@ export const OutputOptions: React.FC<Props> = ({ prompt, onSave, onCancel }) => 
       </Stack>
     </Stack>
   );
-};
+}
+
+export default OutputOptions;

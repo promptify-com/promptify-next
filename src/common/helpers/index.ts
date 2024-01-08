@@ -1,7 +1,6 @@
 import { useEffect, useLayoutEffect } from "react";
 import { LANGUAGES_CODE_MAPPING } from "../constants";
 import { useWindowSize } from "usehooks-ts";
-import { IEditPrompts } from "../types/builder";
 
 export const isBrowser = () => typeof window !== "undefined";
 export const isomorphicLayoutEffect = isBrowser() ? useLayoutEffect : useEffect;
@@ -17,9 +16,9 @@ export const isDesktopViewPort = () => {
   const { width } = useWindowSize();
   return width >= 900;
 };
+
 export const addSpaceBetweenCapitalized = (text: string) => text.replace(/([a-z])([A-Z])/g, "$1 $2");
-export const promptComputeDomId = (prompt: IEditPrompts): string =>
-  `prompt-${prompt.id ?? prompt.temp_id}-${prompt.title.toLowerCase().replace(/[^\w]/g, "-")}`;
+export const promptComputeDomId = ({ title = "" }): string => `prompt-${title.toLowerCase().replace(/[^\w]/g, "-")}`;
 
 export const redirectToPath = (path: string, searchParams: Record<string, string | number> = {}) => {
   if (!isBrowser()) {
