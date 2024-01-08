@@ -11,7 +11,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import CustomTooltip from "@/components/Prompt/Common/CustomTooltip";
 import { setparamsValues } from "@/core/store/chatSlice";
 import useVariant from "../../Hooks/useVariant";
-import type { PromptParams } from "@/core/api/dto/prompts";
+import type { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
 import Storage from "@/common/storage";
 
 interface GeneratorParamProps {
@@ -29,8 +29,12 @@ export default function FormParam({ param }: GeneratorParamProps) {
     const paramsStored = Storage.get("paramsStored");
 
     if (!paramsStored) return;
-    dispatch(setparamsValues(paramsStored));
-    Storage.remove("paramsStored");
+
+    const relevantParams = paramsStored.filter((paramStored: ResOverrides) => paramStored.id === param.prompt);
+    if (relevantParams.length > 0) {
+      dispatch(setparamsValues(paramsStored));
+      Storage.remove("paramsStored");
+    }
   }, []);
 
   const paramValue = paramsValues.find(paramVal => paramVal.id === param.prompt);

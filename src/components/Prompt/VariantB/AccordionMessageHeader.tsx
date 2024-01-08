@@ -338,32 +338,34 @@ function AccordionMessageHeader({ template, type, isExpanded, onCancel }: Props)
                     alignItems={"center"}
                     mt={-1}
                   >
-                    <Box
-                      borderRight={"2px solid #ECECF4"}
-                      pr={1}
-                      height={"30px"}
-                    >
-                      <Tooltip
-                        title={selectedExecution?.is_favorite ? "Remove from works" : "Add to works"}
-                        arrow
-                        PopperProps={commonPopperProps}
+                    {isOwner && (
+                      <Box
+                        borderRight={"2px solid #ECECF4"}
+                        pr={1}
+                        height={"30px"}
                       >
-                        <IconButton
-                          onClick={e => {
-                            e.stopPropagation();
-                            saveExecution();
-                          }}
-                          sx={{
-                            border: "none",
-                            ":hover": {
-                              bgcolor: "surface.4",
-                            },
-                          }}
+                        <Tooltip
+                          title={selectedExecution?.is_favorite ? "Remove from works" : "Add to works"}
+                          arrow
+                          PopperProps={commonPopperProps}
                         >
-                          {selectedExecution?.is_favorite ? <Star /> : <StarOutline />}
-                        </IconButton>
-                      </Tooltip>
-                    </Box>
+                          <IconButton
+                            onClick={e => {
+                              e.stopPropagation();
+                              saveExecution();
+                            }}
+                            sx={{
+                              border: "none",
+                              ":hover": {
+                                bgcolor: "surface.4",
+                              },
+                            }}
+                          >
+                            {selectedExecution?.is_favorite ? <Star /> : <StarOutline />}
+                          </IconButton>
+                        </Tooltip>
+                      </Box>
+                    )}
 
                     <Box
                       borderRight={"2px solid #ECECF4"}

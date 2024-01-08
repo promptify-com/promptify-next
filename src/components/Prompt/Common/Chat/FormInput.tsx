@@ -14,6 +14,7 @@ import useVariant from "../../Hooks/useVariant";
 import type { IPromptInput } from "@/common/types/prompt";
 import { setAnswers } from "@/core/store/chatSlice";
 import Storage from "@/common/storage";
+import { IAnswer } from "../../Types/chat";
 
 interface Props {
   input: IPromptInput;
@@ -33,8 +34,13 @@ function FormInput({ input }: Props) {
     const answersStored = Storage.get("answersStored");
 
     if (!answersStored) return;
-    dispatch(setAnswers(answersStored));
-    Storage.remove("answersStored");
+
+    const relevantAnswers = answersStored.filter((answer: IAnswer) => answer.prompt === input.prompt);
+
+    if (relevantAnswers.length > 0) {
+      dispatch(setAnswers(answersStored));
+      Storage.remove("answersStored");
+    }
   }, []);
 
   const value = answers.find(answer => answer.inputName === name)?.answer ?? "";
