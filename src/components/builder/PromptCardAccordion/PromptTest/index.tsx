@@ -1,23 +1,15 @@
 import React, { useMemo, useRef, useState } from "react";
-import {
-  Button,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  Divider,
-  IconButton,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Button, Dialog, DialogContent, DialogTitle, Divider, IconButton, Stack, Typography } from "@mui/material";
 import { Close, ContentCopy, PlayArrow } from "@mui/icons-material";
 import { IEditPrompts } from "@/common/types/builder";
 import usePromptExecute from "../../Hooks/usePromptExecute";
 import FormInput from "./FormInput";
 import { IExecuteInput, IExecuteParam, IInputValue, IParamValue } from "@/components/builder/Types";
+import { fetchEventSource } from "@microsoft/fetch-event-source";
 import useToken from "@/hooks/useToken";
-import { PromptLiveResponse } from "@/common/types/prompt";
+import { parseMessageData } from "@/common/helpers/parseMessageData";
 import FormParam from "./FormParam";
+import { GeneratedContent } from "./GeneratedContent";
 
 interface PromptTestDialogProps {
   open: boolean;
@@ -31,7 +23,7 @@ export const PromptTestDialog: React.FC<PromptTestDialogProps> = ({ open, onClos
   const paramsValues = useRef<IExecuteParam[]>([]);
   const uploadedFiles = useRef(new Map<string, string>());
   const [isGenerating, setIsGenerating] = useState(false);
-  const [generatingResponse, setGeneratingResponse] = useState<PromptLiveResponse | null>(null);
+  const [generatingResponse, setGeneratingResponse] = useState("");
 
   const handleClose = (e: {}, reason: "backdropClick" | "escapeKeyDown") => {
     if (reason && reason === "backdropClick") return;
@@ -77,7 +69,52 @@ export const PromptTestDialog: React.FC<PromptTestDialogProps> = ({ open, onClos
 
   const runExecution = () => {
     const executeData = preparePromptData(uploadedFiles.current, inputsValues.current, paramsValues.current);
-    console.log(executeData);
+
+    setIsGenerating(true);
+
+    fetchEventSource(`${process.env.NEXT_PUBLIC_API_URL}/api/meta/prompts/${prompt.id}/execute`, {
+      method: "POST",
+      headers: {
+        Authorization: `Token ${token}`,
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(executeData),
+      openWhenHidden: true,
+      async onopen(res) {
+        if (res.ok && res.status === 200) {
+          setIsGenerating(true);
+        } else if (res.status >= 400 && res.status < 500 && res.status !== 429) {
+          console.error("Client side error ", res);
+        }
+      },
+      onmessage(msg) {
+        console.log(msg);
+        try {
+          const parseData = parseMessageData(msg.data);
+          const message = parseData.message;
+
+          if (message === "[CONNECTED]") {
+            return;
+          }
+
+          if (msg.event === "infer" && msg.data) {
+            if (message) {
+              setGeneratingResponse(prev => prev.concat(message));
+            }
+          }
+        } catch {
+          console.info("invalid incoming msg:", msg);
+        }
+      },
+      onerror(err) {
+        setIsGenerating(false);
+        throw err; // rethrow to stop the operation
+      },
+      onclose() {
+        setIsGenerating(false);
+      },
+    });
   };
 
   return (
@@ -87,9 +124,6 @@ export const PromptTestDialog: React.FC<PromptTestDialogProps> = ({ open, onClos
       PaperProps={{
         sx: {
           width: "400px",
-          textarea: {
-            overscrollBehavior: "contain",
-          },
         },
       }}
     >
@@ -162,6 +196,7 @@ export const PromptTestDialog: React.FC<PromptTestDialogProps> = ({ open, onClos
             onClick={runExecution}
             startIcon={<PlayArrow />}
             sx={buttonStyle}
+            disabled={isGenerating}
           >
             Run
           </Button>
@@ -175,13 +210,11 @@ export const PromptTestDialog: React.FC<PromptTestDialogProps> = ({ open, onClos
             >
               Output
             </Typography>
-            <TextField
-              multiline
-              rows={15}
-            />
+            <GeneratedContent content={generatingResponse} />
             <Button
               startIcon={<ContentCopy />}
               sx={buttonStyle}
+              disabled={isGenerating}
             >
               Copy
             </Button>
