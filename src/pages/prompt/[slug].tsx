@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Alert from "@mui/material/Alert";
 import Snackbar from "@mui/material/Snackbar";
 import { type Palette, ThemeProvider, createTheme, useTheme } from "@mui/material";
-import { materialDynamicColors } from "material-dynamic-colors";
+import materialDynamicColors from "material-dynamic-colors";
 import { mix } from "polished";
 import { useRouter } from "next/router";
 import { useViewTemplateMutation } from "@/core/api/templates";
@@ -19,6 +19,17 @@ import useBrowser from "@/hooks/useBrowser";
 import { getContentBySectioName } from "@/hooks/api/cms";
 import TemplatePage from "@/components/Prompt";
 import { GetServerSideProps } from "next/types";
+
+interface IMUDynamicColorsThemeColor {
+  light: {
+    primary: string;
+    secondary: string;
+    error: string;
+    background: string;
+    surface: string;
+    surfaceVariant: string;
+  };
+}
 
 interface TemplateProps {
   hashedExecution: TemplatesExecutions | null;
@@ -84,8 +95,9 @@ function Template({ hashedExecution, fetchedTemplate, questionPrefixContent }: T
   }
 
   const fetchDynamicColors = () => {
+    // @ts-expect-error unfound-new-type
     materialDynamicColors(fetchedTemplate.thumbnail)
-      .then(imgPalette => {
+      .then((imgPalette: IMUDynamicColorsThemeColor) => {
         const newPalette: Palette = {
           ...theme.palette,
           ...imgPalette.light,
