@@ -37,10 +37,12 @@ function useChat({ questionPrefixContent, template }: Props) {
 
   const initialMessages = ({ inputs }: { inputs: IPromptInput[] }) => {
     const greeting = `Hi, ${currentUser?.first_name ?? currentUser?.username ?? "There"}! Ready to work on`;
-    const allQuestions = inputs.map(input => input.question);
+    const filteredQuestions = inputs.map(_q => _q.question).filter(Boolean);
 
     const welcomeMessage = createMessage("text");
-    welcomeMessage.text = `${questionPrefixContent ?? greeting} ${template.title} ? ${allQuestions.join(" ")}`;
+    welcomeMessage.text = `${questionPrefixContent ?? greeting} ${template.title}${
+      filteredQuestions.length ? "? " + filteredQuestions.slice(0, 3).join(" ") : ""
+    }`;
 
     setMessages([welcomeMessage]);
     if (!selectedExecution) {

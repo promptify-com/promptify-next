@@ -74,24 +74,23 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
     const createdAt = new Date(new Date().getTime() - 1000);
     const prefixedContent =
       questionPrefixContent ?? `Hi, ${currentUser?.first_name ?? currentUser?.username ?? "There"}! Ready to work on`;
+    const filteredQuestions = questions.map(_q => _q.question).filter(Boolean);
+    const hasQuestions = !!filteredQuestions.length;
 
     const welcomeMessage: IMessage = {
       id: randomId(),
-      text: `${prefixedContent} ${template?.title} ?`,
+      text: `${prefixedContent} ${template?.title}${hasQuestions ? "?" : ""}`,
       type: "text",
       createdAt,
       fromUser: false,
     };
 
-    if (questions.length > 0) {
-      let allQuestions = questions.map(_q => _q.question);
-
+    if (hasQuestions) {
       const hasRequiredInput = questions.some(question => question.required);
-
       const queuedMessages: IMessage[] = [
         {
           id: randomId(),
-          text: allQuestions.join(" "),
+          text: filteredQuestions.slice(0, 3).join(" "),
           type: "text",
           createdAt,
           fromUser: false,
@@ -106,6 +105,7 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
           noHeader: true,
         },
       ];
+
       if (hasRequiredInput) {
         queuedMessages.push({
           id: randomId(),
