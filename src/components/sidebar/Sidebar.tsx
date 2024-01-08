@@ -17,8 +17,6 @@ import { theme } from "@/theme";
 function Sidebar() {
   const pathname = usePathname();
   const isPromptsPage = pathname.split("/")[1] === "explore";
-  const isTemplatePage = pathname.split("/")[1] === "prompt";
-  const slug = isTemplatePage ? pathname.split("/")[2] : "create";
   const isValidUser = useAppSelector(isValidUserFn);
   const navItems: NavItem[] = [
     {
@@ -47,7 +45,7 @@ function Sidebar() {
     },
     {
       name: "Prompt Builder",
-      href: isValidUser ? `/prompt-builder/${slug}` : "/signin",
+      href: isValidUser ? `/prompt-builder/create` : "/signin",
       icon: <Inventory2Rounded />,
       active: pathname.includes("/prompt-builder"),
       external: isValidUser,

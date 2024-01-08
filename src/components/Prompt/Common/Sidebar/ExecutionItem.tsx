@@ -21,6 +21,7 @@ import { setAnswers } from "@/core/store/chatSlice";
 import useVariant from "../../Hooks/useVariant";
 import type { Prompts } from "@/core/api/dto/prompts";
 import type { TemplatesExecutions } from "@/core/api/dto/templates";
+import Image from "@/components/design-system/Image";
 
 interface CardExecutionProps {
   execution: TemplatesExecutions;
@@ -45,12 +46,15 @@ export const ExecutionItem: React.FC<CardExecutionProps> = ({ execution, min, pr
   const isSelected = execution.id === selectedExecution?.id;
 
   const getContent = async () => {
+    let isImage = false;
     const prompt = execution.prompt_executions?.find(exec => {
       const _prompt = promptsData.find(prompt => prompt.id === exec.prompt);
+      isImage = isImageOutput(exec.output, _prompt?.engine?.output_type ?? "TEXT");
 
-      return !isImageOutput(exec.output, _prompt?.engine?.output_type ?? "TEXT");
+      return _prompt;
     });
-    const fetchedContent = await markdownToHTML(prompt?.output || "");
+
+    const fetchedContent = isImage ? prompt?.output ?? "" : prompt?.output ? await markdownToHTML(prompt?.output) : "";
     setContent(fetchedContent);
   };
   useEffect(() => {
@@ -205,12 +209,33 @@ export const ExecutionItem: React.FC<CardExecutionProps> = ({ execution, min, pr
                 <Typography sx={{ fontSize: 14, fontWeight: 500, color: "onSurface", py: "12px" }}>
                   {execution.title}
                 </Typography>
-                <Typography
-                  sx={{ fontSize: 12, fontWeight: 400, color: "onSurface" }}
-                  dangerouslySetInnerHTML={{
-                    __html: sanitizeHTML(content),
-                  }}
-                />
+                {content.startsWith("http") ? (
+                  <Box
+                    sx={{
+                      display: "flex",
+                      width: "100%",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Image
+                      src={content ?? require("@/assets/images/default-thumbnail.jpg")}
+                      width={80}
+                      height={80}
+                      alt="Promptify"
+                      style={{
+                        borderRadius: "8px",
+                        objectFit: "cover",
+                      }}
+                    />
+                  </Box>
+                ) : (
+                  <Typography
+                    sx={{ fontSize: 12, fontWeight: 400, color: "onSurface" }}
+                    dangerouslySetInnerHTML={{
+                      __html: sanitizeHTML(content),
+                    }}
+                  />
+                )}
               </Box>
             </>
           )}

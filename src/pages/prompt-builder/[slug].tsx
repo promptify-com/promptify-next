@@ -202,6 +202,7 @@ export const PromptBuilder = () => {
           onSave={handleSaveTemplate}
           onEditTemplate={() => setTemplateDrawerOpen(true)}
           type={BUILDER_TYPE.USER}
+          sidebarOpened={builderSidebarOpen}
         />
 
         <Box
@@ -209,6 +210,8 @@ export const PromptBuilder = () => {
             width: "70%",
             mx: "auto",
             p: "24px 0 40px",
+
+            ...(router.pathname.includes("/prompt-builder/") && { mt: theme.custom.promptBuilder.headerHeight }),
           }}
         >
           <Stack
