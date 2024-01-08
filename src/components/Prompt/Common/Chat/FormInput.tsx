@@ -31,15 +31,15 @@ function FormInput({ input }: Props) {
   const { fullName, required, type, name } = input;
 
   useEffect(() => {
-    const answersStored = Storage.get("answersStored");
+    const answersStored = Storage.get("answers");
 
     if (!answersStored) return;
 
-    const relevantAnswers = answersStored.filter((answer: IAnswer) => answer.prompt === input.prompt);
+    const isRelevantAnswer = answersStored.some((answer: IAnswer) => answer.prompt === answer.prompt);
 
-    if (relevantAnswers.length > 0) {
+    if (isRelevantAnswer) {
       dispatch(setAnswers(answersStored));
-      Storage.remove("answersStored");
+      Storage.remove("answers");
     }
   }, []);
 

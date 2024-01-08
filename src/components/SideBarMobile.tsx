@@ -2,7 +2,6 @@ import React, { useDeferredValue, useState } from "react";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import ClearRounded from "@mui/icons-material/ClearRounded";
 import HomeRounded from "@mui/icons-material/HomeRounded";
-import MenuBookRounded from "@mui/icons-material/MenuBookRounded";
 import MenuRounded from "@mui/icons-material/MenuRounded";
 import Search from "@mui/icons-material/Search";
 import Box from "@mui/material/Box";
@@ -123,6 +122,10 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
     router.push({ pathname: "/explore" });
     onCloseDrawer();
   };
+
+  const ProfileMenuItemsFiltered = currentUser?.is_admin
+    ? ProfileMenuItems
+    : ProfileMenuItems.filter(item => item.name !== "My Deployments");
 
   return (
     <SwipeableDrawer
@@ -429,7 +432,7 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
                 autoFocusItem={false}
                 sx={{ width: "100%" }}
               >
-                {ProfileMenuItems.map(item => (
+                {ProfileMenuItemsFiltered.map(item => (
                   <MenuItem
                     key={item.name}
                     onClick={() => handleHeaderMenu(item)}

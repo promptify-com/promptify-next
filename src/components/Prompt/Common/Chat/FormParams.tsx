@@ -26,14 +26,15 @@ export default function FormParam({ param }: GeneratorParamProps) {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
 
   useEffect(() => {
-    const paramsStored = Storage.get("paramsStored");
+    const paramsStored = Storage.get("paramsValue");
 
     if (!paramsStored) return;
 
-    const relevantParams = paramsStored.filter((paramStored: ResOverrides) => paramStored.id === param.prompt);
-    if (relevantParams.length > 0) {
+    const isRelevantParam = paramsStored.some((paramStored: ResOverrides) => paramStored.id === param.prompt);
+
+    if (isRelevantParam) {
       dispatch(setparamsValues(paramsStored));
-      Storage.remove("paramsStored");
+      Storage.remove("paramsValue");
     }
   }, []);
 
