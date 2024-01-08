@@ -277,10 +277,6 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
                       key={link.label}
                       disablePadding
                       onClick={async () => {
-                        if (link.href === "/") {
-                          redirectToPath("/");
-                          return;
-                        }
                         await navigateTo(link.href, link.external);
                         onCloseDrawer();
                       }}
