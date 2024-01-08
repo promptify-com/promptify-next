@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Box from "@mui/material/Box";
 import FormControl from "@mui/material/FormControl";
 import Grid from "@mui/material/Grid";
@@ -18,11 +18,8 @@ import DeploymentList from "@/components/deployments/DeploymentList";
 import ActiveFilters from "@/components/deployments/ActiveFilters";
 import CreateDeploymentButton from "@/components/deployments/CreateDeploymentButton";
 import DeploymentPlaceholder from "@/components/placeholders/DeploymentPlaceholder";
-import { useAppSelector } from "@/hooks/useStore";
-import { redirectToPath } from "@/common/helpers";
 
 function Deployments() {
-  const currentUser = useAppSelector(state => state.user.currentUser);
   const [searchName, setSearchName] = useState("");
   const [status, setStatus] = useState<DeploymentStatus | string>("");
   const { data: deployments, isLoading, refetch } = useGetDeploymentsQuery();
@@ -35,10 +32,6 @@ function Deployments() {
   const refetchData = () => {
     refetch();
   };
-
-  useEffect(() => {
-    if (!currentUser?.is_admin) return redirectToPath("/");
-  }, []);
 
   return (
     <Protected>

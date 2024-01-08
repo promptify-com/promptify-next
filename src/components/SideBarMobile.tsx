@@ -125,7 +125,7 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
 
   const ProfileMenuItemsFiltered = currentUser?.is_admin
     ? ProfileMenuItems
-    : ProfileMenuItems.filter(item => item.name !== "My Deployments");
+    : ProfileMenuItems.filter(item => item.href !== "/deployments");
 
   return (
     <SwipeableDrawer
