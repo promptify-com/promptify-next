@@ -14,7 +14,7 @@ import type { IPromptInput } from "@/common/types/prompt";
 import useApiAccess from "../../Hooks/useApiAccess";
 import { setAnswers } from "@/core/store/chatSlice";
 import { PromptInputType } from "../../Types";
-import { IAnswer } from "../../Types/chat";
+import { IAnswer } from "@/components/Prompt/Types/chat";
 
 interface Props {
   input: IPromptInput;

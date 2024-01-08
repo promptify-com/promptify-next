@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import {
   Button,
   Dialog,
@@ -14,7 +14,10 @@ import { Close, ContentCopy, PlayArrow } from "@mui/icons-material";
 import { IEditPrompts } from "@/common/types/builder";
 import usePromptExecute from "../../Hooks/usePromptExecute";
 import FormInput from "./FormInput";
-import { IExecuteInput, IInputValue } from "../../Types";
+import { IExecuteInput, IExecuteParam, IInputValue, IParamValue } from "@/components/builder/Types";
+import useToken from "@/hooks/useToken";
+import { PromptLiveResponse } from "@/common/types/prompt";
+import FormParam from "./FormParam";
 
 interface PromptTestDialogProps {
   open: boolean;
@@ -23,8 +26,12 @@ interface PromptTestDialogProps {
 }
 
 export const PromptTestDialog: React.FC<PromptTestDialogProps> = ({ open, onClose, prompt }) => {
+  const token = useToken();
   const inputsValues = useRef<IExecuteInput>({});
+  const paramsValues = useRef<IExecuteParam[]>([]);
   const uploadedFiles = useRef(new Map<string, string>());
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generatingResponse, setGeneratingResponse] = useState<PromptLiveResponse | null>(null);
 
   const handleClose = (e: {}, reason: "backdropClick" | "escapeKeyDown") => {
     if (reason && reason === "backdropClick") return;
@@ -33,8 +40,8 @@ export const PromptTestDialog: React.FC<PromptTestDialogProps> = ({ open, onClos
 
   const { prepareAndRemoveDuplicateInputs, preparePromptData } = usePromptExecute(prompt);
 
-  const inputs = useMemo(() => {
-    const { inputs: _inputs } = prepareAndRemoveDuplicateInputs();
+  const [inputs, params] = useMemo(() => {
+    const { inputs: _inputs, params: _params } = prepareAndRemoveDuplicateInputs();
 
     _inputs.forEach(input => {
       inputsValues.current = {
@@ -42,23 +49,36 @@ export const PromptTestDialog: React.FC<PromptTestDialogProps> = ({ open, onClos
         [input.name]: "",
       };
     });
+    _params.forEach(param => {
+      paramsValues.current = paramsValues.current.concat({
+        parameter: param.parameter_id,
+        score: param.score,
+      });
+    });
 
-    return _inputs;
+    return [_inputs, _params];
   }, [prompt]);
 
-  const updateValues = (newInputVal: IInputValue) => {
+  const updateInputsValues = (newInputVal: IInputValue) => {
     inputsValues.current = {
       ...inputsValues.current,
-      [newInputVal.inputName]: newInputVal.value,
+      [newInputVal.name]: newInputVal.value,
     };
   };
 
-  const runExecution = () => {
-    const executeData = preparePromptData(uploadedFiles.current, inputsValues.current);
-    console.log(executeData);
+  const updateParamsValues = (newParamVal: IParamValue) => {
+    paramsValues.current = paramsValues.current
+      .filter(param => param.parameter !== newParamVal.parameter)
+      .concat({
+        parameter: newParamVal.parameter,
+        score: newParamVal.score,
+      });
   };
 
-  console.log(inputsValues.current);
+  const runExecution = () => {
+    const executeData = preparePromptData(uploadedFiles.current, inputsValues.current, paramsValues.current);
+    console.log(executeData);
+  };
 
   return (
     <Dialog
@@ -123,7 +143,17 @@ export const PromptTestDialog: React.FC<PromptTestDialogProps> = ({ open, onClos
                 <FormInput
                   key={idx}
                   input={input}
-                  onChange={updateValues}
+                  onChange={updateInputsValues}
+                />
+              );
+            })}
+
+            {params?.map(param => {
+              return (
+                <FormParam
+                  key={param.parameter_id}
+                  param={param}
+                  onChange={updateParamsValues}
                 />
               );
             })}

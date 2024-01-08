@@ -5,7 +5,7 @@ import type { IPromptInput } from "@/common/types/prompt";
 import { PromptInputType } from "@/components/Prompt/Types";
 import { Box } from "@mui/material";
 import { useState } from "react";
-import { IInputValue } from "../../Types";
+import { IInputValue } from "@/components/builder/Types";
 
 interface Props {
   input: IPromptInput;
@@ -13,7 +13,7 @@ interface Props {
 }
 
 function FormInput({ input, onChange }: Props) {
-  const { fullName, required, type, name: inputName, question, prompt } = input;
+  const { fullName, required, type, name } = input;
   const [value, setValue] = useState<PromptInputType>("");
   const isTextualType = type === "text" || type === "number" || type === "integer";
 
@@ -22,7 +22,7 @@ function FormInput({ input, onChange }: Props) {
     const isEmptyTextualInput = isTextualType && typeof value === "string" && value.trim() === "";
     if (!isEmptyTextualInput) {
       onChange({
-        inputName,
+        name,
         value,
       });
     }
@@ -33,7 +33,7 @@ function FormInput({ input, onChange }: Props) {
       direction={"row"}
       alignItems={"center"}
       gap={1}
-      p={"16px"}
+      p={"16px 6px"}
       borderBottom={"1px solid #ECECF4"}
     >
       <Box>

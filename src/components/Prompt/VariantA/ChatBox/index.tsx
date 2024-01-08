@@ -20,10 +20,10 @@ import { getExecutionById } from "@/hooks/api/executions";
 import { isDesktopViewPort, randomId } from "@/common/helpers";
 import useChatBox from "@/hooks/useChatBox";
 import SigninButton from "@/components/common/buttons/SigninButton";
-import { setAnswers, setInputs, setIsSimulationStreaming, setParams, setparamsValues } from "@/core/store/chatSlice";
-import { PromptInputType } from "../../Types";
-import useApiAccess from "../../Hooks/useApiAccess";
-import { ChatInput } from "../../Common/Chat/ChatInput";
+import { setAnswers, setInputs, setIsSimulationStreaming, setParams, setParamsValues } from "@/core/store/chatSlice";
+import { PromptInputType } from "@/components/Prompt/Types";
+import useApiAccess from "@/components/Prompt/Hooks/useApiAccess";
+import { ChatInput } from "@/components/Prompt/Common/Chat/ChatInput";
 
 interface Props {
   onError: (errMsg: string) => void;
@@ -203,7 +203,7 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
         });
       });
 
-    dispatch(setparamsValues(Array.from(valuesMap.values())));
+    dispatch(setParamsValues(Array.from(valuesMap.values())));
     dispatch(setParams(params));
     dispatch(setInputs(inputs));
 

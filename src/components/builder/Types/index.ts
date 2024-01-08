@@ -11,6 +11,16 @@ export interface IExecuteInput {
 }
 
 export type IInputValue = {
-  inputName: string;
+  name: string;
   value: PromptInputType;
+};
+
+export interface IExecuteParam {
+  parameter: number;
+  score: number;
+}
+
+export type IParamValue = {
+  parameter: number;
+  score: number;
 };

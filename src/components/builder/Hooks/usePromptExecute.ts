@@ -1,7 +1,7 @@
 import { getInputsFromString } from "@/common/helpers/getInputsFromString";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { ResOverrides } from "@/core/api/dto/prompts";
-import { IExecuteData, IExecuteInput } from "../Types";
+import { IExecuteData, IExecuteInput, IExecuteParam } from "../Types";
 import { IEditPrompts, IPromptParams } from "@/common/types/builder";
 
 export default function usePromptExecute(prompt: IEditPrompts) {
@@ -22,7 +22,7 @@ export default function usePromptExecute(prompt: IEditPrompts) {
 
     const params: IPromptParams[] = [];
     prompt.parameters.forEach(_param => {
-      if (!params.find(p => p.parameter_id === _param.parameter_id)) params.push(_param);
+      if (!params.find(p => p.parameter_id === _param.parameter_id && p.is_visible)) params.push(_param);
     });
 
     const inputs = Array.from(inputsMap, ([_, input]) => input);
@@ -35,7 +35,11 @@ export default function usePromptExecute(prompt: IEditPrompts) {
     };
   };
 
-  const preparePromptData = (uploadedFiles: Map<string, string>, inputsValues: IExecuteInput) => {
+  const preparePromptData = (
+    uploadedFiles: Map<string, string>,
+    inputsValues: IExecuteInput,
+    paramsValues: IExecuteParam[],
+  ) => {
     const prompt_params = getInputsFromString(prompt.content).reduce(
       (acc, input) => {
         // this is to make it available later on if an answer was set for it, otherwise it'll be removed.
@@ -47,7 +51,7 @@ export default function usePromptExecute(prompt: IEditPrompts) {
     );
 
     const promptData: IExecuteData = {
-      contextual_overrides: [],
+      contextual_overrides: paramsValues,
       prompt_params,
     };
 

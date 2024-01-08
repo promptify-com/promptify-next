@@ -5,11 +5,10 @@ import Typography from "@mui/material/Typography";
 import Slider from "@mui/material/Slider";
 import IconButton from "@mui/material/IconButton";
 import HelpOutline from "@mui/icons-material/HelpOutline";
-
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import CustomTooltip from "@/components/common/CustomTooltip";
-import { setparamsValues } from "@/core/store/chatSlice";
-import useVariant from "../../Hooks/useVariant";
+import { setParamsValues } from "@/core/store/chatSlice";
+import useVariant from "@/components/Prompt/Hooks/useVariant";
 import type { PromptParams } from "@/core/api/dto/prompts";
 
 interface GeneratorParamProps {
@@ -40,7 +39,7 @@ export default function FormParam({ param }: GeneratorParamProps) {
       };
     });
 
-    dispatch(setparamsValues(updatedParamsValues));
+    dispatch(setParamsValues(updatedParamsValues));
   };
 
   const matchingContext = paramValue?.contextual_overrides.find(
