@@ -46,7 +46,7 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
 
   const { prepareAndRemoveDuplicateInputs } = useChatBox();
 
-  const { messages, setMessages, initialMessages, messageAnswersForm } = useChat({
+  const { messages, setMessages, initialMessages, messageAnswersForm, allRequiredInputsAnswered } = useChat({
     questionPrefixContent,
     template,
   });
@@ -64,7 +64,7 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
 
     const { inputs, params, promptHasContent } = prepareAndRemoveDuplicateInputs(template.prompts, template.questions);
 
-    initialMessages({ inputs });
+    initialMessages({ questions: inputs });
 
     const valuesMap = new Map<number, ResOverrides>();
     params
@@ -87,28 +87,8 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
     return [inputs, params, promptHasContent];
   }, [template]);
 
-  const allRequiredInputsAnswered = (): boolean => {
-    const requiredInputs = _inputs.filter(input => input.required).map(input => input.name);
-
-    if (!requiredInputs.length) {
-      return true;
-    }
-
-    const answeredInputsSet = new Set(answers.map(answer => answer.inputName));
-
-    return requiredInputs.every(name => answeredInputsSet.has(name));
-  };
-
   const showGenerate =
     !isSimulationStreaming && (showGenerateButton || Boolean(!_inputs.length || !_inputs[0]?.required));
-
-  useEffect(() => {
-    if (allRequiredInputsAnswered()) {
-      setShowGenerateButton(true);
-    } else {
-      setShowGenerateButton(false);
-    }
-  }, [answers]);
 
   useEffect(() => {
     if (!isGenerating && generatedExecution?.data?.length) {
