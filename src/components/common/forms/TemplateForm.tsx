@@ -53,13 +53,12 @@ function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMod
   const [executions, setExecutions] = useState<TemplatesExecutions[]>();
   const [selectedFile, setSelectedFile] = useState<File>();
 
-  const { formik, loading, showSnackbar, closeSnackbar, titleHasError, thumbnailHasError, descriptionHasError } =
-    useTemplateForm({
-      type,
-      template: templateData!,
-      uploadedFile: selectedFile,
-      onSaved: onSaved,
-    });
+  const { formik, loading, showSnackbar, closeSnackbar, handleSubmit } = useTemplateForm({
+    type,
+    template: templateData!,
+    uploadedFile: selectedFile,
+    onSaved: onSaved,
+  });
 
   const getExecutions = async () => {
     if (!templateData) return null;
@@ -107,10 +106,11 @@ function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMod
           size="medium"
           name="title"
           value={formik.values.title}
-          onChange={formik.handleChange}
           disabled={loading}
-          error={titleHasError}
-          helperText={formik.errors.title}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          error={Boolean(formik.errors.title)}
+          helperText={formik.errors.title ? formik.errors.title : ""}
         />
       </Stack>
       <Stack sx={boxStyle}>
@@ -124,8 +124,9 @@ function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMod
           name="description"
           value={formik.values.description}
           onChange={formik.handleChange}
-          error={descriptionHasError}
-          helperText={formik.errors.description}
+          onBlur={formik.handleBlur}
+          error={Boolean(formik.errors.description)}
+          helperText={formik.errors.description ? formik.errors.description : ""}
         />
       </Stack>
       <Stack sx={[{ display: "flex", flexDirection: "column" }, boxStyle]}>
@@ -173,8 +174,8 @@ function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMod
               alignItems={"center"}
               justifyContent={"center"}
               sx={{
-                bgcolor: thumbnailHasError ? "errorContainer" : "surface.4",
-                color: thumbnailHasError ? "error.main" : "primary.main",
+                bgcolor: Boolean(formik.errors.thumbnail) ? "errorContainer" : "surface.4",
+                color: Boolean(formik.errors.thumbnail) ? "error.main" : "primary.main",
                 border: "1px solid transparent",
                 borderRadius: "4px",
                 p: "8px",
@@ -205,6 +206,7 @@ function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMod
                 accept="image/*"
                 disabled={loading}
                 type="file"
+                onBlur={formik.handleBlur}
                 onChange={e => {
                   const file = e.target.files && e.target.files[0];
                   if (file) {
@@ -213,7 +215,7 @@ function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMod
                 }}
               />
             </Stack>
-            {formik.touched.thumbnail && formik.errors.thumbnail && (
+            {Boolean(formik.errors.thumbnail) && (
               <Typography
                 color="error"
                 fontSize={12}
@@ -567,9 +569,7 @@ function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMod
             borderRadius: "4px",
             bgcolor: "secondary.main",
           }}
-          onClick={() => {
-            formik.submitForm();
-          }}
+          onClick={() => handleSubmit(formik.values)}
         >
           {loading ? (
             <CircularProgress

@@ -1,6 +1,6 @@
 import { object, string } from "yup";
 import { useFormik } from "formik";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { usePathname } from "next/navigation";
 
 import { getBaseUrl, stripTags } from "@/common/helpers";
@@ -71,6 +71,22 @@ const useTemplateForm = ({ type, template, uploadedFile, onSaved }: Props) => {
     setLoading(false);
   };
 
+  const handleSubmit = async (values: IEditTemplate) => {
+    // Validate the form
+    const validationErrors = await formik.validateForm();
+
+    if (Object.keys(validationErrors).length > 0) {
+      setShowSnackbar(true);
+      return;
+    }
+
+    if (type === "create") {
+      onCreateTemplate(values);
+    } else if (type === "edit") {
+      onEditTemplate(values);
+    }
+  };
+
   const FormSchema = object({
     title: string().min(1).required("Template title field is required"),
     description: string().min(1).required("Description field is required"),
@@ -103,35 +119,17 @@ const useTemplateForm = ({ type, template, uploadedFile, onSaved }: Props) => {
     },
     enableReinitialize: true,
     validationSchema: FormSchema,
-    validateOnBlur: false,
     validateOnChange: true,
-    onSubmit: type === "create" ? onCreateTemplate : onEditTemplate,
+    validateOnBlur: true,
+    onSubmit: handleSubmit,
   });
-
-  const hasFormErrors = (): boolean => {
-    const fieldsToCheck: (keyof IEditTemplate)[] = ["thumbnail", "title", "description"];
-
-    return fieldsToCheck.some(field => Boolean(formik.touched[field] && formik.errors[field]));
-  };
-
-  useEffect(() => {
-    if (hasFormErrors()) {
-      setShowSnackbar(true);
-    }
-  }, [hasFormErrors()]);
-
-  const thumbnailHasError = Boolean(formik.errors.thumbnail && formik.touched.thumbnail);
-  const titleHasError = Boolean(formik.errors.title && formik.touched.title);
-  const descriptionHasError = Boolean(formik.errors.description && formik.touched.description);
 
   return {
     formik,
     loading,
     showSnackbar,
     closeSnackbar: () => setShowSnackbar(false),
-    thumbnailHasError,
-    titleHasError,
-    descriptionHasError,
+    handleSubmit,
   };
 };
 export default useTemplateForm;
