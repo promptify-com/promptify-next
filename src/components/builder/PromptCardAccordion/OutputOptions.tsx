@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { type ChangeEvent, useEffect, useState } from "react";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
@@ -6,28 +6,26 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
+import Select, { type SelectChangeEvent } from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 import Button from "@mui/material/Button";
 
 import { validatePromptOutput } from "@/common/helpers/promptValidator";
+import { outputFormatOptions } from "@/common/constants";
 import type { IEditPrompts } from "@/common/types/builder";
 
-type CustomEvent = SelectChangeEvent<string> | React.ChangeEvent<{ name?: string; value: unknown }>;
-
+type CustomEvent = SelectChangeEvent<string> | ChangeEvent<{ name?: string; value: unknown }>;
 interface Props {
   prompt: IEditPrompts;
   onSave: (prompt: IEditPrompts) => void;
   onCancel: () => void;
 }
 
-const titleFormats = ["JSON", "XML", "Markdown", "Custom"];
-
 function OutputOptions({ prompt, onSave, onCancel }: Props) {
   const initialOutputFormat = prompt.output_format;
-  const initialOutputFormatMatching = titleFormats.find(
+  const initialOutputFormatMatching = outputFormatOptions.find(
     format => format.toLowerCase() === initialOutputFormat.toLowerCase(),
   );
 
@@ -41,19 +39,13 @@ function OutputOptions({ prompt, onSave, onCancel }: Props) {
   const handleOutputFormatChange = (event: CustomEvent) => {
     const { name, value } = "target" in event ? event.target : { name: "output_format", value: event };
 
-    if (name === "output_format") {
-      setPromptData({
-        ...promptData,
-        output_format: value as string,
-        ...(value !== "custom" && { custom_output_format: "" }),
-      });
-    } else if (name === "custom_output_format") {
-      setPromptData({
-        ...promptData,
-        output_format: "custom",
-        custom_output_format: value as string,
-      });
-    }
+    const updatedPromptData = {
+      ...promptData,
+      output_format: name === "output_format" ? (value as string) : "custom",
+      custom_output_format: name === "custom_output_format" ? (value as string) : "",
+    };
+
+    setPromptData(updatedPromptData);
   };
 
   useEffect(() => {
@@ -117,7 +109,7 @@ function OutputOptions({ prompt, onSave, onCancel }: Props) {
                 label="Format"
                 name="output_format"
               >
-                {titleFormats.map(format => (
+                {outputFormatOptions.map(format => (
                   <MenuItem
                     key={format}
                     value={format.toLowerCase()}
