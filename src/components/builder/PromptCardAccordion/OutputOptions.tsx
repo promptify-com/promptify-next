@@ -26,13 +26,16 @@ interface Props {
 const titleFormats = ["JSON", "XML", "Markdown", "Custom"];
 
 function OutputOptions({ prompt, onSave, onCancel }: Props) {
-  const initialOutputFormat = prompt.output_format.toLowerCase();
+  const initialOutputFormat = prompt.output_format;
+  const initialOutputFormatMatching = titleFormats.find(
+    format => format.toLowerCase() === initialOutputFormat.toLowerCase(),
+  );
+
   const initialState: IEditPrompts = {
     ...prompt,
-    output_format: titleFormats.includes(initialOutputFormat) ? initialOutputFormat : "custom",
-    custom_output_format: titleFormats.includes(initialOutputFormat) ? "" : initialOutputFormat,
+    output_format: initialOutputFormatMatching?.toLowerCase() || "custom",
+    custom_output_format: initialOutputFormatMatching ? "" : initialOutputFormat,
   };
-
   const [promptData, setPromptData] = useState<IEditPrompts>(initialState);
 
   const handleOutputFormatChange = (event: CustomEvent) => {
@@ -52,6 +55,10 @@ function OutputOptions({ prompt, onSave, onCancel }: Props) {
       });
     }
   };
+
+  useEffect(() => {
+    console.log(promptData);
+  }, []);
 
   return (
     <Stack
