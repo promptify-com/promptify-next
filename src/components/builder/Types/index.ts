@@ -7,8 +7,10 @@ export interface IExecuteData {
 }
 
 export interface IExecuteInput {
-  [key: string]: {
-    value: PromptInputType;
-    required: boolean;
-  };
+  [key: string]: PromptInputType;
 }
+
+export type IInputValue = {
+  inputName: string;
+  value: PromptInputType;
+};

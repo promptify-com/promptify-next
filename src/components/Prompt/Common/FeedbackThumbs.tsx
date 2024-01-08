@@ -15,7 +15,7 @@ import { theme } from "@/theme";
 import { Happy } from "@/assets/icons/Happy";
 import { Sad } from "@/assets/icons/Sad";
 import useVariant from "../Hooks/useVariant";
-import CustomTooltip from "./CustomTooltip";
+import CustomTooltip from "../../common/CustomTooltip";
 import type { FeedbackType, TemplatesExecutions } from "@/core/api/dto/templates";
 
 interface Props {
