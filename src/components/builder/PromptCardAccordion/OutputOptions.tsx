@@ -1,4 +1,4 @@
-import { type ChangeEvent, useEffect, useState } from "react";
+import { type ChangeEvent, useState } from "react";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
@@ -47,10 +47,6 @@ function OutputOptions({ prompt, onSave, onCancel }: Props) {
 
     setPromptData(updatedPromptData);
   };
-
-  useEffect(() => {
-    console.log(promptData);
-  }, []);
 
   return (
     <Stack
