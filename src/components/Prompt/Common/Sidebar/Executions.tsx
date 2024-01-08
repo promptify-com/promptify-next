@@ -125,7 +125,7 @@ const Executions: React.FC<ExecutionsProps> = ({ template }) => {
             color: "onSurface",
           }}
         >
-          No spark found
+          No work found
         </Typography>
       )}
       {filteredExecutions?.length === 0 && executions?.length! > 0 && (
@@ -138,7 +138,7 @@ const Executions: React.FC<ExecutionsProps> = ({ template }) => {
             color: "onSurface",
           }}
         >
-          {selectedTab === 0 ? "No saved executions found." : "No unsaved executions found."}
+          {selectedTab === 0 ? "No saved works found." : "No unsaved works found."}
         </Typography>
       )}
     </Stack>
