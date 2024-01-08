@@ -6,12 +6,15 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import HelpOutline from "@mui/icons-material/HelpOutline";
-
-import { useAppSelector } from "@/hooks/useStore";
-import RenderInputType from "./Inputs";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import RenderInputType from "@/components/common/forms/Inputs";
 import CustomTooltip from "../CustomTooltip";
 import useVariant from "../../Hooks/useVariant";
 import type { IPromptInput } from "@/common/types/prompt";
+import useApiAccess from "../../Hooks/useApiAccess";
+import { setAnswers } from "@/core/store/chatSlice";
+import { PromptInputType } from "../../Types";
+import { IAnswer } from "../../Types/chat";
 
 interface Props {
   input: IPromptInput;
@@ -20,13 +23,15 @@ interface Props {
 function FormInput({ input }: Props) {
   const { isVariantB } = useVariant();
 
-  const answers = useAppSelector(state => state.chat.answers);
+  const { answers, isSimulationStreaming } = useAppSelector(state => state.chat);
   const labelRef = useRef<HTMLDivElement | null>(null);
   const [labelWidth, setLabelWidth] = useState(0);
+  const dispatch = useAppDispatch();
+  const { dispatchNewExecutionData } = useApiAccess();
 
-  const { fullName, required, type, name } = input;
-
-  const value = answers.find(answer => answer.inputName === name)?.answer ?? "";
+  const { fullName, required, type, name: inputName, question, prompt } = input;
+  const value = answers.find(answer => answer.inputName === inputName)?.answer ?? "";
+  const isTextualType = type === "text" || type === "number" || type === "integer";
 
   useEffect(() => {
     if (isVariantB) return;
@@ -34,6 +39,26 @@ function FormInput({ input }: Props) {
       setLabelWidth(labelRef.current.offsetWidth);
     }
   }, [fullName, isVariantB]);
+
+  const updateAnswers = (value: PromptInputType) => {
+    const _answers = [...answers.filter(answer => answer.inputName !== inputName)];
+
+    const isEmptyTextualInput = isTextualType && typeof value === "string" && value.trim() === "";
+
+    if (!isEmptyTextualInput) {
+      const newAnswer: IAnswer = {
+        question: question!,
+        required,
+        inputName,
+        prompt: prompt!,
+        answer: value,
+      };
+      _answers.push(newAnswer);
+    }
+
+    dispatch(setAnswers(_answers));
+    dispatchNewExecutionData();
+  };
 
   return (
     <Stack
@@ -74,6 +99,8 @@ function FormInput({ input }: Props) {
         <RenderInputType
           input={input}
           value={value}
+          disabled={isSimulationStreaming}
+          onChange={updateAnswers}
         />
       </Stack>
       {isVariantB && (

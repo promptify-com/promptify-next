@@ -3,10 +3,10 @@ import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import useApiAccess from "@/components/Prompt/Hooks/useApiAccess";
 import { setAnswers } from "@/core/store/chatSlice";
-import Code from "@/components/Prompt/Common/Chat/Inputs/Code";
-import Choices from "@/components/Prompt/Common/Chat/Inputs/Choices";
-import File from "@/components/Prompt/Common/Chat/Inputs/File";
-import Textual from "@/components/Prompt/Common/Chat/Inputs/Textual";
+import Code from "@/components/common/forms/Inputs/Code";
+import Choices from "@/components/common/forms/Inputs/Choices";
+import File from "@/components/common/forms/Inputs/File";
+import Textual from "@/components/common/forms/Inputs/Textual";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { PromptInputType } from "@/components/Prompt/Types";
 import type { IAnswer } from "@/components/Prompt/Types/chat";
@@ -14,18 +14,16 @@ import type { IAnswer } from "@/components/Prompt/Types/chat";
 interface Props {
   input: IPromptInput;
   value: PromptInputType;
+  disabled: boolean;
+  onChange: (value: PromptInputType) => void;
 }
 
-function RenderInputType({ input, value: initialValue }: Props) {
-  const dispatch = useAppDispatch();
-  const { dispatchNewExecutionData } = useApiAccess();
-
-  const { answers, isSimulationStreaming } = useAppSelector(state => state.chat);
+function RenderInputType({ input, value: initialValue, disabled, onChange }: Props) {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
 
   const [localValue, setLocalValue] = useState(initialValue);
 
-  const { name: inputName, required, type, prompt, question } = input;
+  const { type } = input;
 
   const isTextualType = type === "text" || type === "number" || type === "integer";
 
@@ -34,38 +32,18 @@ function RenderInputType({ input, value: initialValue }: Props) {
   }, [initialValue]);
 
   const onBlur = () => {
-    if (isSimulationStreaming) return;
+    if (disabled) return;
 
-    updateAnswers(localValue);
+    onChange(localValue);
   };
 
-  const onChange = (value: string | File) => {
-    if (isSimulationStreaming) return;
+  const handleOnChange = (value: PromptInputType) => {
+    if (disabled) return;
     if (isTextualType) {
       setLocalValue(value);
     } else {
-      updateAnswers(value);
+      onChange(value);
     }
-  };
-
-  const updateAnswers = (value: PromptInputType) => {
-    const _answers = [...answers.filter(answer => answer.inputName !== inputName)];
-
-    const isEmptyTextualInput = isTextualType && typeof value === "string" && value.trim() === "";
-
-    if (!isEmptyTextualInput) {
-      const newAnswer: IAnswer = {
-        question: question!,
-        required,
-        inputName,
-        prompt: prompt!,
-        answer: value,
-      };
-      _answers.push(newAnswer);
-    }
-
-    dispatch(setAnswers(_answers));
-    dispatchNewExecutionData();
   };
 
   switch (type) {
@@ -73,7 +51,7 @@ function RenderInputType({ input, value: initialValue }: Props) {
       return (
         <Code
           input={input}
-          onChange={onChange}
+          onChange={handleOnChange}
           value={initialValue}
           isGenerating={isGenerating}
         />
@@ -83,7 +61,7 @@ function RenderInputType({ input, value: initialValue }: Props) {
         <Choices
           input={input}
           value={initialValue}
-          onChange={onChange}
+          onChange={handleOnChange}
           isGenerating={isGenerating}
         />
       );
@@ -92,7 +70,7 @@ function RenderInputType({ input, value: initialValue }: Props) {
         <File
           input={input}
           value={initialValue as File}
-          onChange={onChange}
+          onChange={handleOnChange}
         />
       );
     default:
@@ -100,7 +78,7 @@ function RenderInputType({ input, value: initialValue }: Props) {
         <Textual
           input={input}
           value={localValue}
-          onChange={onChange}
+          onChange={handleOnChange}
           onBlur={onBlur}
         />
       );
