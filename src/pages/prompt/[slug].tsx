@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Alert from "@mui/material/Alert";
 import Snackbar from "@mui/material/Snackbar";
 import { type Palette, ThemeProvider, createTheme, useTheme } from "@mui/material";
-import materialDynamicColors from "material-dynamic-colors";
+import { materialDynamicColors } from "material-dynamic-colors";
 import { mix } from "polished";
 import { useRouter } from "next/router";
 import { useViewTemplateMutation } from "@/core/api/templates";
@@ -85,7 +85,7 @@ function Template({ hashedExecution, fetchedTemplate, questionPrefixContent }: T
 
   const fetchDynamicColors = () => {
     materialDynamicColors(fetchedTemplate.thumbnail)
-      .then((imgPalette: IMaterialDynamicColorsTheme) => {
+      .then(imgPalette => {
         const newPalette: Palette = {
           ...theme.palette,
           ...imgPalette.light,
