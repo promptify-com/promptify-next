@@ -2,10 +2,8 @@ import React, { PropsWithChildren, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { PageLoading } from "./PageLoading";
 import { useRouter } from "next/router";
-import { isValidUserFn } from "@/core/store/userSlice";
+import { isAdminFn, isValidUserFn } from "@/core/store/userSlice";
 import { redirectToPath } from "@/common/helpers";
-import { useAppSelector } from "@/hooks/useStore";
-
 interface IProps extends PropsWithChildren {
   showLoadingPage?: boolean;
 }
@@ -17,10 +15,11 @@ const Protected: React.FC<IProps> = ({ children, showLoadingPage }) => {
   const router = useRouter();
   const [_, currentPathName] = router.pathname.split("/");
   const isValidUser = useSelector(isValidUserFn);
-  const currentUser = useAppSelector(state => state.user.currentUser);
+  const isAdmin = useSelector(isAdminFn);
 
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
+    let timeoutIdAdmin: NodeJS.Timeout;
 
     if (!isValidUser && protectedRoutes.includes(currentPathName)) {
       timeoutId = setTimeout(() => {
@@ -29,16 +28,20 @@ const Protected: React.FC<IProps> = ({ children, showLoadingPage }) => {
       }, 800);
     }
 
-    if (!currentUser?.is_admin && adminOnlyRoutes.includes(currentPathName)) {
-      redirectToPath("/");
+    if (!isAdmin && adminOnlyRoutes.includes(currentPathName)) {
+      timeoutIdAdmin = setTimeout(() => {
+        clearTimeout(timeoutIdAdmin);
+        redirectToPath("/");
+      }, 800);
     }
 
     return () => {
       clearTimeout(timeoutId);
+      clearTimeout(timeoutIdAdmin);
     };
-  }, [isValidUser, currentPathName]);
+  }, [isValidUser, isAdmin, currentPathName]);
 
-  return <>{showLoadingPage || !isValidUser ? <PageLoading /> : children}</>;
+  return <>{showLoadingPage || !isValidUser || !isAdmin ? <PageLoading /> : children}</>;
 };
 
 export default Protected;
