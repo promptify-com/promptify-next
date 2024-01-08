@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
 import {
-  Box,
   Button,
   Dialog,
   DialogContent,
@@ -13,7 +12,8 @@ import {
 } from "@mui/material";
 import { Close, ContentCopy, PlayArrow } from "@mui/icons-material";
 import { IEditPrompts } from "@/common/types/builder";
-import { getInputsFromString } from "@/common/helpers/getInputsFromString";
+import usePromptExecute from "../Hooks/usePromptExecute";
+import FormInput from "@/components/Prompt/Common/Chat/FormInput";
 
 interface PromptTestDialogProps {
   open: boolean;
@@ -27,7 +27,9 @@ export const PromptTestDialog: React.FC<PromptTestDialogProps> = ({ open, onClos
     onClose();
   };
 
-  console.log(getInputsFromString(prompt.content));
+  const { prepareAndRemoveDuplicateInputs, preparePromptData } = usePromptExecute(prompt);
+
+  const { inputs, params } = prepareAndRemoveDuplicateInputs();
 
   return (
     <Dialog
@@ -87,10 +89,14 @@ export const PromptTestDialog: React.FC<PromptTestDialogProps> = ({ open, onClos
             >
               Prompt inputs
             </Typography>
-            <TextField
-              label="Input 1"
-              fullWidth
-            />
+            {inputs.map((input, idx) => {
+              return (
+                <FormInput
+                  key={idx}
+                  input={input}
+                />
+              );
+            })}
           </Stack>
           <Button
             startIcon={<PlayArrow />}
