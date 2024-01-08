@@ -8,7 +8,7 @@ import IconButton from "@mui/material/IconButton";
 import HelpOutline from "@mui/icons-material/HelpOutline";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import RenderInputType from "@/components/common/forms/Inputs";
-import CustomTooltip from "../CustomTooltip";
+import CustomTooltip from "../../../common/CustomTooltip";
 import useVariant from "../../Hooks/useVariant";
 import type { IPromptInput } from "@/common/types/prompt";
 import useApiAccess from "../../Hooks/useApiAccess";

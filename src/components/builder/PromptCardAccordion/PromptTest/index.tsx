@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo, useRef } from "react";
 import {
   Button,
   Dialog,
@@ -12,8 +12,9 @@ import {
 } from "@mui/material";
 import { Close, ContentCopy, PlayArrow } from "@mui/icons-material";
 import { IEditPrompts } from "@/common/types/builder";
-import usePromptExecute from "../Hooks/usePromptExecute";
-import FormInput from "@/components/Prompt/Common/Chat/FormInput";
+import usePromptExecute from "../../Hooks/usePromptExecute";
+import FormInput from "./FormInput";
+import { IExecuteInput, IInputValue } from "../../Types";
 
 interface PromptTestDialogProps {
   open: boolean;
@@ -22,6 +23,9 @@ interface PromptTestDialogProps {
 }
 
 export const PromptTestDialog: React.FC<PromptTestDialogProps> = ({ open, onClose, prompt }) => {
+  const inputsValues = useRef<IExecuteInput>({});
+  const uploadedFiles = useRef(new Map<string, string>());
+
   const handleClose = (e: {}, reason: "backdropClick" | "escapeKeyDown") => {
     if (reason && reason === "backdropClick") return;
     onClose();
@@ -29,7 +33,32 @@ export const PromptTestDialog: React.FC<PromptTestDialogProps> = ({ open, onClos
 
   const { prepareAndRemoveDuplicateInputs, preparePromptData } = usePromptExecute(prompt);
 
-  const { inputs, params } = prepareAndRemoveDuplicateInputs();
+  const inputs = useMemo(() => {
+    const { inputs: _inputs } = prepareAndRemoveDuplicateInputs();
+
+    _inputs.forEach(input => {
+      inputsValues.current = {
+        ...inputsValues.current,
+        [input.name]: "",
+      };
+    });
+
+    return _inputs;
+  }, [prompt]);
+
+  const updateValues = (newInputVal: IInputValue) => {
+    inputsValues.current = {
+      ...inputsValues.current,
+      [newInputVal.inputName]: newInputVal.value,
+    };
+  };
+
+  const runExecution = () => {
+    const executeData = preparePromptData(uploadedFiles.current, inputsValues.current);
+    console.log(executeData);
+  };
+
+  console.log(inputsValues.current);
 
   return (
     <Dialog
@@ -94,11 +123,13 @@ export const PromptTestDialog: React.FC<PromptTestDialogProps> = ({ open, onClos
                 <FormInput
                   key={idx}
                   input={input}
+                  onChange={updateValues}
                 />
               );
             })}
           </Stack>
           <Button
+            onClick={runExecution}
             startIcon={<PlayArrow />}
             sx={buttonStyle}
           >

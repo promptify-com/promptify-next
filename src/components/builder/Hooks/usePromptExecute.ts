@@ -35,11 +35,7 @@ export default function usePromptExecute(prompt: IEditPrompts) {
     };
   };
 
-  const preparePromptData = (
-    uploadedFiles: Map<string, string>,
-    paramsValues: ResOverrides[],
-    answers: IExecuteInput,
-  ) => {
+  const preparePromptData = (uploadedFiles: Map<string, string>, inputsValues: IExecuteInput) => {
     const prompt_params = getInputsFromString(prompt.content).reduce(
       (acc, input) => {
         // this is to make it available later on if an answer was set for it, otherwise it'll be removed.
@@ -55,15 +51,6 @@ export default function usePromptExecute(prompt: IEditPrompts) {
       prompt_params,
     };
 
-    // setup parameters values
-    if (!!paramsValues.length) {
-      paramsValues.forEach(({ contextual_overrides: ctx }) => {
-        ctx.forEach(({ score, parameter }) => {
-          promptData.contextual_overrides.push({ score, parameter });
-        });
-      });
-    }
-
     const paramsKeys = Object.keys(promptData.prompt_params);
 
     /**
@@ -73,7 +60,7 @@ export default function usePromptExecute(prompt: IEditPrompts) {
      *   2. a value for the key is empty and is type of File
      */
     paramsKeys.forEach(inputName => {
-      const _answer = answers[inputName];
+      const _answer = inputsValues[inputName];
 
       if (!_answer) {
         delete promptData.prompt_params[inputName];
@@ -81,8 +68,8 @@ export default function usePromptExecute(prompt: IEditPrompts) {
         return;
       }
 
-      const isFile = _answer.value instanceof File;
-      const value = isFile ? uploadedFiles.get(inputName) : _answer.value;
+      const isFile = _answer instanceof File;
+      const value = isFile ? uploadedFiles.get(inputName) : _answer;
 
       if (!value) {
         if (isFile) {

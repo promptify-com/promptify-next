@@ -1,20 +1,16 @@
 import { useEffect, useState } from "react";
-
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import useApiAccess from "@/components/Prompt/Hooks/useApiAccess";
-import { setAnswers } from "@/core/store/chatSlice";
+import { useAppSelector } from "@/hooks/useStore";
 import Code from "@/components/common/forms/Inputs/Code";
 import Choices from "@/components/common/forms/Inputs/Choices";
 import File from "@/components/common/forms/Inputs/File";
 import Textual from "@/components/common/forms/Inputs/Textual";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { PromptInputType } from "@/components/Prompt/Types";
-import type { IAnswer } from "@/components/Prompt/Types/chat";
 
 interface Props {
   input: IPromptInput;
   value: PromptInputType;
-  disabled: boolean;
+  disabled?: boolean;
   onChange: (value: PromptInputType) => void;
 }
 

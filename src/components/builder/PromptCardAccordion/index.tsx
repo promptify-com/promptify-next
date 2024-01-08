@@ -13,7 +13,7 @@ import { useDrag, useDrop, ConnectableElement } from "react-dnd";
 import { getBuilderVarsPresets } from "@/common/helpers/getBuilderVarsPresets";
 import { useDebouncedDispatch } from "@/hooks/useDebounceDispatch";
 import { BUILDER_TYPE } from "@/common/constants";
-import { PromptTestDialog } from "./PromptTestDialog";
+import { PromptTestDialog } from "./PromptTest";
 
 interface Props {
   prompt: IEditPrompts;

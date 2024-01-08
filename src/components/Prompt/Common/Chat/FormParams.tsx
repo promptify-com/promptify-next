@@ -7,7 +7,7 @@ import IconButton from "@mui/material/IconButton";
 import HelpOutline from "@mui/icons-material/HelpOutline";
 
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import CustomTooltip from "@/components/Prompt/Common/CustomTooltip";
+import CustomTooltip from "@/components/common/CustomTooltip";
 import { setparamsValues } from "@/core/store/chatSlice";
 import useVariant from "../../Hooks/useVariant";
 import type { PromptParams } from "@/core/api/dto/prompts";
