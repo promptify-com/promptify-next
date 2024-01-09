@@ -60,7 +60,7 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
 
   const { preparePromptsData, prepareAndRemoveDuplicateInputs } = useChatBox();
   const { dispatchNewExecutionData } = useApiAccess();
-  const { uploadPromptFiles } = useUploadPromptFiles();
+  const { uploadPromptAnswersFiles } = useUploadPromptFiles();
 
   const abortController = useRef(new AbortController());
   const uploadedFiles = useRef(new Map<string, string>());
@@ -232,7 +232,7 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
     dispatch(setSelectedExecution(null));
     dispatch(setRepeatedExecution(null));
 
-    const filesUploaded = await uploadPromptFiles(answers, uploadedFiles.current);
+    const filesUploaded = await uploadPromptAnswersFiles(answers, uploadedFiles.current);
     dispatch(setAnswers(filesUploaded.answers));
     uploadedFiles.current = filesUploaded.uploadedFiles;
 

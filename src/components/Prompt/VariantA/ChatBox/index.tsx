@@ -59,7 +59,7 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
 
   const { prepareAndRemoveDuplicateInputs, preparePromptsData } = useChatBox();
   const { dispatchNewExecutionData } = useApiAccess();
-  const { uploadPromptFiles } = useUploadPromptFiles();
+  const { uploadPromptAnswersFiles } = useUploadPromptFiles();
 
   const abortController = useRef(new AbortController());
   const uploadedFiles = useRef(new Map<string, string>());
@@ -365,7 +365,7 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
       return router.push("/signin");
     }
 
-    const filesUploaded = await uploadPromptFiles(answers, uploadedFiles.current);
+    const filesUploaded = await uploadPromptAnswersFiles(answers, uploadedFiles.current);
     dispatch(setAnswers(filesUploaded.answers));
     uploadedFiles.current = filesUploaded.uploadedFiles;
 

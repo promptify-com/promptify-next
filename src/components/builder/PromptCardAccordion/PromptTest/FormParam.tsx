@@ -28,8 +28,6 @@ export default function FormParam({ param, onChange }: GeneratorParamProps) {
   const marks = Object.values(descriptions || {}).map(desc => ({ value: desc.score }));
   const values = marks.map(obj => obj.value) || [];
 
-  console.log(param, activeDescription);
-
   return (
     <Stack
       direction={"row"}

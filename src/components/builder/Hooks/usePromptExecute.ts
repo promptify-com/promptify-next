@@ -1,7 +1,6 @@
 import { getInputsFromString } from "@/common/helpers/getInputsFromString";
 import type { IPromptInput } from "@/common/types/prompt";
-import type { ResOverrides } from "@/core/api/dto/prompts";
-import { IExecuteData, IExecuteInput, IExecuteParam } from "../Types";
+import { IExecuteData, IExecuteInput, IExecuteParam } from "@/components/builder/Types";
 import { IEditPrompts, IPromptParams } from "@/common/types/builder";
 
 export default function usePromptExecute(prompt: IEditPrompts) {

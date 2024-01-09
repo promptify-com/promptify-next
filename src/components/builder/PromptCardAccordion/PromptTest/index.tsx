@@ -21,6 +21,7 @@ import { parseMessageData } from "@/common/helpers/parseMessageData";
 import FormParam from "./FormParam";
 import { GeneratedContent } from "./GeneratedContent";
 import useCopyToClipboard from "@/hooks/useCopyToClipboard";
+import useUploadPromptFiles from "@/hooks/useUploadPromptFiles";
 
 interface PromptTestDialogProps {
   open: boolean;
@@ -35,9 +36,9 @@ export const PromptTestDialog: React.FC<PromptTestDialogProps> = ({ open, onClos
 
   const inputsValues = useRef<IExecuteInput>({});
   const paramsValues = useRef<IExecuteParam[]>([]);
-  const uploadedFiles = useRef(new Map<string, string>());
 
   const [copyToClipboard, copyResult] = useCopyToClipboard();
+  const { uploadedFiles, uploadPromptFiles } = useUploadPromptFiles();
 
   const handleClose = (e: {}, reason: "backdropClick" | "escapeKeyDown") => {
     if (reason && reason === "backdropClick") return;
@@ -81,11 +82,30 @@ export const PromptTestDialog: React.FC<PromptTestDialogProps> = ({ open, onClos
       });
   };
 
-  const runExecution = () => {
+  const uploadAndValidateFiles = async () => {
+    const files = Object.entries(inputsValues.current)
+      .filter(([_, input]) => input instanceof File)
+      .map(([name, file]) => ({ name, file: file as File }));
+    const filesUploaded = await uploadPromptFiles(files);
+
+    if (!filesUploaded.status) {
+      const invalids = filesUploaded.inputs
+        .filter(input => input.error)
+        .map(input => Object.entries(inputsValues.current).find(([name]) => input.name === name)?.[0]);
+
+      setGeneratingResponse(`Please enter valid answers for "${invalids.join(", ")}"`);
+      return;
+    }
+  };
+
+  const runExecution = async () => {
+    setGeneratingResponse("");
+
+    await uploadAndValidateFiles();
+
     const executeData = preparePromptData(uploadedFiles.current, inputsValues.current, paramsValues.current);
 
     setIsGenerating(true);
-    setGeneratingResponse("");
 
     fetchEventSource(`${process.env.NEXT_PUBLIC_API_URL}/api/meta/prompts/${prompt.id}/execute`, {
       method: "POST",

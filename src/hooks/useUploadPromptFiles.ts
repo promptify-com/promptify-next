@@ -1,11 +1,44 @@
 import { IAnswer } from "@/components/Prompt/Types/chat";
 import { uploadFileHelper } from "@/components/Prompt/Utils/uploadFileHelper";
 import { useUploadFileMutation } from "@/core/api/uploadFile";
+import { useRef } from "react";
+
+interface IInputFile {
+  name: string;
+  file: File;
+  error?: boolean;
+}
 
 const useUploadPromptFiles = () => {
   const [uploadFile] = useUploadFileMutation();
+  const uploadedFiles = useRef(new Map<string, string>());
 
-  const uploadPromptFiles = (answers: IAnswer[], uploadedFiles: Map<string, string>) =>
+  const uploadPromptFiles = (inputs: IInputFile[]) =>
+    new Promise<{
+      status: boolean;
+      inputs: IInputFile[];
+    }>(async resolve => {
+      let status = true;
+      await Promise.all(
+        inputs.map(async input => {
+          if (!uploadedFiles.current.has(input.name)) {
+            const res = await uploadFileHelper(uploadFile, { file: input.file });
+            const fileUrl = res?.file;
+
+            if (typeof fileUrl === "string" && fileUrl) {
+              uploadedFiles.current.set(input.name, fileUrl);
+            } else {
+              input.error = true;
+              status = false;
+            }
+          }
+          return input;
+        }),
+      );
+      resolve({ status, inputs });
+    });
+
+  const uploadPromptAnswersFiles = (answers: IAnswer[], uploadedFiles: Map<string, string>) =>
     new Promise<{
       status: boolean;
       answers: IAnswer[];
@@ -34,7 +67,9 @@ const useUploadPromptFiles = () => {
     });
 
   return {
+    uploadedFiles,
     uploadPromptFiles,
+    uploadPromptAnswersFiles,
   };
 };
 
