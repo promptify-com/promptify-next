@@ -22,7 +22,6 @@ interface Props {
   deletePrompt: () => void;
   duplicatePrompt: () => void;
   prompts: IEditPrompts[];
-  engines: Engine[];
   findPromptIndex: (id: number) => number;
   movePrompt: (id: number, atIndex: number) => void;
   builderType: BUILDER_TYPE;
@@ -35,7 +34,6 @@ const PromptCardAccordion = ({
   deletePrompt,
   duplicatePrompt,
   prompts,
-  engines,
   movePrompt,
   findPromptIndex,
   builderType,
@@ -124,7 +122,6 @@ const PromptCardAccordion = ({
         setPrompt={updatePrompt}
         deletePrompt={deletePrompt}
         duplicatePrompt={duplicatePrompt}
-        engines={engines}
         dragPreview={(node: ConnectableElement) => drag(drop(node))}
         builderType={builderType}
       />

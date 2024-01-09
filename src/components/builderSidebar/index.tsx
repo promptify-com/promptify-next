@@ -12,16 +12,13 @@ import Divider from "@mui/material/Divider";
 import Close from "@mui/icons-material/Close";
 import FormatListBulleted from "@mui/icons-material/FormatListBulleted";
 import { useTheme } from "@mui/material/styles";
-
 import HelpIcon from "@/assets/icons/HelpIcon";
 import { ApiIcon } from "@/assets/icons";
-import PaperIcon from "@/assets/icons/PaperIcon";
 import Help from "./Help";
-import { useAppDispatch } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setOpenBuilderSidebar } from "@/core/store/sidebarSlice";
 import PromptSequence from "./PromptSequence";
 import type { IEditPrompts } from "@/common/types/builder";
-import type { Engine } from "@/core/api/dto/templates";
 
 type LinkName = "list" | "paper" | "help" | "api";
 
@@ -32,13 +29,14 @@ interface Link {
 
 interface Props {
   prompts: IEditPrompts[];
-  engines: Engine[];
   setPrompts: Dispatch<SetStateAction<IEditPrompts[]>>;
 }
 
-export const BuilderSidebar = ({ prompts, engines, setPrompts }: Props) => {
+export const BuilderSidebar = ({ prompts, setPrompts }: Props) => {
   const [open, setOpen] = useState(false);
   const dispatch = useAppDispatch();
+
+  const engines = useAppSelector(state => state.builder.engines);
 
   const [activeLink, setActiveLink] = useState<LinkName>();
 

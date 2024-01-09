@@ -4,9 +4,9 @@ import { ArrowDropDown, ContentCopy, DeleteOutline, Menu, Settings } from "@mui/
 import { Button, IconButton, Popover, Stack, Tooltip, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { EngineParamsSlider } from "../EngineParamsSlider";
-import { Engine } from "@/core/api/dto/templates";
 import { ConnectDragSource } from "react-dnd";
 import { BUILDER_TYPE } from "@/common/constants";
+import { useAppSelector } from "@/hooks/useStore";
 
 interface Props {
   prompt: IEditPrompts;
@@ -14,7 +14,6 @@ interface Props {
   setPrompt: (prompt: IEditPrompts) => void;
   deletePrompt: () => void;
   duplicatePrompt: () => void;
-  engines: Engine[];
   dragPreview: ConnectDragSource;
   builderType: BUILDER_TYPE;
 }
@@ -25,7 +24,6 @@ export const Header = ({
   setPrompt,
   deletePrompt,
   duplicatePrompt,
-  engines,
   dragPreview,
   builderType,
 }: Props) => {
@@ -33,6 +31,7 @@ export const Header = ({
   const [enginesAnchor, setEnginesAnchor] = useState<HTMLElement | null>(null);
   const [showSettings, setShowSettings] = useState(false);
   const [settingsAnchor, setSettingsAnchor] = useState<HTMLElement | null>(null);
+  const engines = useAppSelector(state => state.builder.engines);
 
   const closeEnginesModal = () => {
     setEnginesAnchor(null);

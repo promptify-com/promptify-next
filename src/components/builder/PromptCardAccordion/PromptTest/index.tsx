@@ -22,6 +22,7 @@ import FormParam from "./FormParam";
 import { GeneratedContent } from "./GeneratedContent";
 import useCopyToClipboard from "@/hooks/useCopyToClipboard";
 import useUploadPromptFiles from "@/hooks/useUploadPromptFiles";
+import { useAppSelector } from "@/hooks/useStore";
 
 interface PromptTestDialogProps {
   open: boolean;
@@ -36,6 +37,8 @@ export const PromptTestDialog: React.FC<PromptTestDialogProps> = ({ open, onClos
 
   const inputsValues = useRef<IExecuteInput>({});
   const paramsValues = useRef<IExecuteParam[]>([]);
+
+  const engines = useAppSelector(state => state.builder.engines);
 
   const [copyToClipboard, copyResult] = useCopyToClipboard();
   const { uploadedFiles, uploadPromptFiles } = useUploadPromptFiles();
@@ -148,6 +151,8 @@ export const PromptTestDialog: React.FC<PromptTestDialogProps> = ({ open, onClos
     });
   };
 
+  const engineType = engines.find(engine => engine.id === prompt.engine_id)?.output_type ?? "TEXT";
+
   return (
     <Dialog
       open={open}
@@ -253,7 +258,10 @@ export const PromptTestDialog: React.FC<PromptTestDialogProps> = ({ open, onClos
                 />
               )}
             </Stack>
-            <GeneratedContent content={generatingResponse} />
+            <GeneratedContent
+              content={generatingResponse}
+              engineType={engineType}
+            />
             {generatingResponse && (
               <Button
                 onClick={() => copyToClipboard(generatingResponse)}

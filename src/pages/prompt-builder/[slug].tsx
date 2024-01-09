@@ -8,7 +8,6 @@ import Typography from "@mui/material/Typography";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
-
 import { theme } from "@/theme";
 import { Header } from "@/components/builder/Header";
 import TemplateForm from "@/components/common/forms/TemplateForm";
@@ -26,10 +25,13 @@ import { handleInitPrompt } from "@/common/helpers/initPrompt";
 import type { IEditTemplate } from "@/common/types/editTemplate";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IEditPrompts } from "@/common/types/builder";
+import { useDispatch } from "react-redux";
+import { setEngines } from "@/core/store/builderSlice";
 
 export const PromptBuilder = () => {
   const router = useRouter();
   const token = useToken();
+  const dispatch = useDispatch();
   const [publishTemplate] = usePublishTemplateMutation();
 
   const slug = router.query.slug as string;
@@ -43,6 +45,10 @@ export const PromptBuilder = () => {
   const [templateData, setTemplateData] = useState<Templates | undefined>(
     slug === "create" ? ({ title: "new_template_12345" } as Templates) : undefined,
   );
+
+  useEffect(() => {
+    dispatch(setEngines(engines || []));
+  }, [engines]);
 
   useEffect(() => {
     if (engines && fetchedTemplateData) {
@@ -189,7 +195,6 @@ export const PromptBuilder = () => {
       <BuilderSidebar
         prompts={prompts}
         setPrompts={setPrompts}
-        engines={engines!}
       />
       <Box
         sx={{
@@ -235,7 +240,6 @@ export const PromptBuilder = () => {
                 templateLoading={isTemplateLoading}
                 prompts={prompts}
                 setPrompts={setPrompts}
-                engines={engines!}
               />
             </DndProvider>
           </Box>

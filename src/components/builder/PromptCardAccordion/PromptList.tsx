@@ -14,16 +14,18 @@ import { BUILDER_TYPE } from "@/common/constants";
 import type { Engine } from "@/core/api/dto/templates";
 import type { IEditPrompts } from "@/common/types/builder";
 import BuilderPromptPlaceholder from "@/components/placeholders/BuilderPromptPlaceholder";
+import { useAppSelector } from "@/hooks/useStore";
 
 interface Props {
   prompts: IEditPrompts[];
   setPrompts: (prompts: IEditPrompts[]) => void;
-  engines: Engine[];
   templateLoading: boolean;
 }
-const PromptList = ({ prompts, setPrompts, engines, templateLoading }: Props) => {
+const PromptList = ({ prompts, setPrompts, templateLoading }: Props) => {
   const [promptToDelete, setPromptToDelete] = useState<IEditPrompts | null>(null);
   const [deletePrompt] = useDeletePromptMutation();
+
+  const engines = useAppSelector(state => state.builder.engines);
 
   const setSmoothScrollTarget = useScrollToElement("smooth");
 
@@ -184,7 +186,6 @@ const PromptList = ({ prompts, setPrompts, engines, templateLoading }: Props) =>
                       deletePrompt={() => setPromptToDelete(prompt)}
                       duplicatePrompt={() => duplicatePrompt(prompt, index + 1)}
                       prompts={prompts}
-                      engines={engines}
                       movePrompt={movePrompt}
                       findPromptIndex={findPromptIndex}
                       builderType={BUILDER_TYPE.USER}
