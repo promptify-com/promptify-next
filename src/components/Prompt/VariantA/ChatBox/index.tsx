@@ -13,8 +13,6 @@ import { IAnswer, IMessage, VaryValidatorResponse } from "@/components/Prompt/Ty
 import { executionsApi, useStopExecutionMutation } from "@/core/api/executions";
 import { vary } from "@/common/helpers/varyValidator";
 import { parseMessageData } from "@/common/helpers/parseMessageData";
-import { useUploadFileMutation } from "@/core/api/uploadFile";
-import { uploadFileHelper } from "@/components/Prompt/Utils/uploadFileHelper";
 import { setGeneratedExecution, setSelectedExecution } from "@/core/store/executionsSlice";
 import { getExecutionById } from "@/hooks/api/executions";
 import { isDesktopViewPort, randomId } from "@/common/helpers";
@@ -24,6 +22,7 @@ import { setAnswers, setInputs, setIsSimulationStreaming, setParams, setParamsVa
 import { PromptInputType } from "@/components/Prompt/Types";
 import useApiAccess from "@/components/Prompt/Hooks/useApiAccess";
 import { ChatInput } from "@/components/Prompt/Common/Chat/ChatInput";
+import useUploadPromptFiles from "@/hooks/useUploadPromptFiles";
 
 interface Props {
   onError: (errMsg: string) => void;
@@ -38,7 +37,6 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
   const currentUser = useAppSelector(state => state.user.currentUser);
   const isDesktopView = isDesktopViewPort();
   const [stopExecution] = useStopExecutionMutation();
-  const [uploadFile] = useUploadFileMutation();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const { generatedExecution, repeatedExecution, selectedExecution, sparkHashQueryParam } = useAppSelector(
     state => state.executions,
@@ -61,6 +59,7 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
 
   const { prepareAndRemoveDuplicateInputs, preparePromptsData } = useChatBox();
   const { dispatchNewExecutionData } = useApiAccess();
+  const { uploadPromptFiles } = useUploadPromptFiles();
 
   const abortController = useRef(new AbortController());
   const uploadedFiles = useRef(new Map<string, string>());
@@ -361,38 +360,15 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
     }
   };
 
-  const validateAndUploadFiles = () =>
-    new Promise<{ status: boolean; answers: IAnswer[] }>(async resolve => {
-      let status = true;
-      const _answers = await Promise.all(
-        [...answers].map(async answer => {
-          if (answer.answer instanceof File && !uploadedFiles.current.has(answer.inputName)) {
-            const res = await uploadFileHelper(uploadFile, { file: answer.answer });
-            const fileUrl = res?.file;
-
-            if (typeof fileUrl === "string" && fileUrl) {
-              uploadedFiles.current.set(answer.inputName, fileUrl);
-            } else {
-              answer.error = true;
-              if (answer.required) {
-                status = false;
-              }
-            }
-          }
-          return answer;
-        }),
-      );
-
-      dispatch(setAnswers(_answers));
-      resolve({ status, answers: _answers });
-    });
-
   const generateExecutionHandler = async () => {
     if (!token) {
       return router.push("/signin");
     }
 
-    const filesUploaded = await validateAndUploadFiles();
+    const filesUploaded = await uploadPromptFiles(answers, uploadedFiles.current);
+    dispatch(setAnswers(filesUploaded.answers));
+    uploadedFiles.current = filesUploaded.uploadedFiles;
+
     if (!filesUploaded.status) {
       const invalids = filesUploaded.answers
         .filter(answers => answers.error)

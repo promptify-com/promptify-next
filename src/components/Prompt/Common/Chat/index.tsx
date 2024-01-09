@@ -5,7 +5,6 @@ import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { useAppSelector, useAppDispatch } from "@/hooks/useStore";
 import useToken from "@/hooks/useToken";
@@ -15,8 +14,6 @@ import { setGeneratingStatus } from "@/core/store/templatesSlice";
 import { executionsApi, useStopExecutionMutation } from "@/core/api/executions";
 import { vary } from "@/common/helpers/varyValidator";
 import { parseMessageData } from "@/common/helpers/parseMessageData";
-import { useUploadFileMutation } from "@/core/api/uploadFile";
-import { uploadFileHelper } from "@/components/Prompt/Utils/uploadFileHelper";
 import { setGeneratedExecution, setRepeatedExecution, setSelectedExecution } from "@/core/store/executionsSlice";
 import useChatBox from "@/hooks/useChatBox";
 import useChat from "@/components/Prompt/Hooks/useChat";
@@ -29,6 +26,7 @@ import type { PromptParams, ResOverrides, ResPrompt } from "@/core/api/dto/promp
 import type { IAnswer, IMessage, VaryValidatorResponse } from "@/components/Prompt/Types/chat";
 import type { PromptInputType } from "@/components/Prompt/Types";
 import useApiAccess from "@/components/Prompt/Hooks/useApiAccess";
+import useUploadPromptFiles from "@/hooks/useUploadPromptFiles";
 
 interface Props {
   onError: (errMsg: string) => void;
@@ -41,7 +39,6 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
   const router = useRouter();
   const dispatch = useAppDispatch();
   const [stopExecution] = useStopExecutionMutation();
-  const [uploadFile] = useUploadFileMutation();
 
   const currentUser = useAppSelector(state => state.user.currentUser);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
@@ -63,6 +60,7 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
 
   const { preparePromptsData, prepareAndRemoveDuplicateInputs } = useChatBox();
   const { dispatchNewExecutionData } = useApiAccess();
+  const { uploadPromptFiles } = useUploadPromptFiles();
 
   const abortController = useRef(new AbortController());
   const uploadedFiles = useRef(new Map<string, string>());
@@ -226,31 +224,6 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
     }
   };
 
-  const validateAndUploadFiles = () =>
-    new Promise<{ status: boolean; answers: IAnswer[] }>(async resolve => {
-      let status = true;
-      const _answers = await Promise.all(
-        [...answers].map(async answer => {
-          if (answer.answer instanceof File && !uploadedFiles.current.has(answer.inputName)) {
-            const res = await uploadFileHelper(uploadFile, { file: answer.answer });
-            const fileUrl = res?.file;
-
-            if (typeof fileUrl === "string" && fileUrl) {
-              uploadedFiles.current.set(answer.inputName, fileUrl);
-            } else {
-              answer.error = true;
-              if (answer.required) {
-                status = false;
-              }
-            }
-          }
-          return answer;
-        }),
-      );
-      dispatch(setAnswers(_answers));
-      resolve({ status, answers: _answers });
-    });
-
   const generateExecutionHandler = async () => {
     if (!token) {
       return router.push("/signin");
@@ -259,7 +232,10 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
     dispatch(setSelectedExecution(null));
     dispatch(setRepeatedExecution(null));
 
-    const filesUploaded = await validateAndUploadFiles();
+    const filesUploaded = await uploadPromptFiles(answers, uploadedFiles.current);
+    dispatch(setAnswers(filesUploaded.answers));
+    uploadedFiles.current = filesUploaded.uploadedFiles;
+
     if (!filesUploaded.status) {
       const invalids = filesUploaded.answers
         .filter(answers => answers.error)
