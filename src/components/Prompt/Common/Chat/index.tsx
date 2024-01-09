@@ -24,6 +24,7 @@ import type { IPromptInput } from "@/common/types/prompt";
 import type { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
 import type { IAnswer, IMessage, VaryValidatorResponse } from "@/components/Prompt/Types/chat";
 import type { PromptInputType } from "../../Types";
+import { useStoreAnswersAndParams } from "@/hooks/useStoreAnswersAndParams";
 
 interface Props {
   onError: (errMsg: string) => void;
@@ -39,11 +40,13 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
   const currentUser = useAppSelector(state => state.user.currentUser);
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
   const { isGenerating, activeSideBarLink: isSidebarExpanded } = useAppSelector(state => state.template);
-  const { answers, isSimulationStreaming } = useAppSelector(state => state.chat);
+  const { answers, isSimulationStreaming, paramsValues } = useAppSelector(state => state.chat);
 
   const [isValidatingAnswer, setIsValidatingAnswer] = useState(false);
 
   const { prepareAndRemoveDuplicateInputs } = useChatBox();
+
+  const { storeAnswers, storeParams } = useStoreAnswersAndParams();
 
   const { messages, setMessages, initialMessages, messageAnswersForm, allRequiredInputsAnswered, showGenerateButton } =
     useChat({
@@ -179,6 +182,12 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
     }
   };
 
+  const handleSignIn = () => {
+    storeAnswers(answers);
+    storeParams(paramsValues);
+    router.push("/signin");
+  };
+
   return (
     <Box
       width={{ md: isSidebarExpanded ? "100%" : "80%" }}
@@ -215,9 +224,7 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
             p={{ md: "16px 8px 16px 16px" }}
           >
             <Button
-              onClick={() => {
-                router.push("/signin");
-              }}
+              onClick={handleSignIn}
               variant={"contained"}
               startIcon={
                 <LogoApp

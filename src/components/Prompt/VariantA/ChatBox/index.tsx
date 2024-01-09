@@ -21,6 +21,8 @@ import type { IPromptInput, AnsweredInputType } from "@/common/types/prompt";
 import type { PromptInputType } from "../../Types";
 import type { IAnswer, IMessage, VaryValidatorResponse } from "@/components/Prompt/Types/chat";
 import type { Templates } from "@/core/api/dto/templates";
+import { useStoreAnswersAndParams } from "@/hooks/useStoreAnswersAndParams";
+import { useRouter } from "next/router";
 
 interface Props {
   onError: (errMsg: string) => void;
@@ -30,6 +32,8 @@ interface Props {
 
 const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) => {
   const token = useToken();
+  const router = useRouter();
+
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(state => state.user.currentUser);
   const isDesktopView = isDesktopViewPort();
@@ -38,8 +42,7 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
   const { generatedExecution } = useAppSelector(state => state.executions);
   const [isValidatingAnswer, setIsValidatingAnswer] = useState(false);
 
-  const answers = useAppSelector(state => state.chat.answers);
-  const isSimulationStreaming = useAppSelector(state => state.chat.isSimulationStreaming);
+  const { answers, paramsValues, isSimulationStreaming } = useAppSelector(state => state.chat);
 
   const { prepareAndRemoveDuplicateInputs } = useChatBox();
 
@@ -54,6 +57,7 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
     questionPrefixContent,
     onError,
   });
+  const { storeAnswers, storeParams } = useStoreAnswersAndParams();
 
   const [_inputs, _params]: [IPromptInput[], PromptParams[]] = useMemo(() => {
     if (!template) {
@@ -191,6 +195,12 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
     }
   };
 
+  const handleSignIn = () => {
+    storeAnswers(answers);
+    storeParams(paramsValues);
+    router.push("/signin");
+  };
+
   const showGenerate =
     !isSimulationStreaming &&
     ((showGenerateButton && messages[messages.length - 1]?.type !== "spark") ||
@@ -251,7 +261,7 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
             gap={1}
             p={"16px 8px 16px 16px"}
           >
-            <SigninButton />
+            <SigninButton onClick={handleSignIn} />
           </Stack>
         )}
       </Stack>

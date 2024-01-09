@@ -3,7 +3,7 @@ import { Button, Typography } from "@mui/material";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { useRouter } from "next/router";
 
-export const SigninButton = () => {
+export const SigninButton = ({ onClick }: { onClick: () => void }) => {
   const router = useRouter();
 
   return (

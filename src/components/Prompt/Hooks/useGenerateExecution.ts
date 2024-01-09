@@ -18,6 +18,7 @@ import type { PromptLiveResponse } from "@/common/types/prompt";
 import type { ResPrompt } from "@/core/api/dto/prompts";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IAnswer } from "../Types/chat";
+import { useStoreAnswersAndParams } from "@/hooks/useStoreAnswersAndParams";
 
 interface Props {
   template: Templates;
@@ -49,6 +50,7 @@ const useGenerateExecution = ({ template, questionPrefixContent, onError }: Prop
   });
   const { preparePromptsData } = useChatBox();
   const { dispatchNewExecutionData } = useApiAccess();
+  const { storeAnswers, storeParams } = useStoreAnswersAndParams();
 
   const validateAndUploadFiles = () =>
     new Promise<{ status: boolean; answers: IAnswer[] }>(async resolve => {
@@ -78,6 +80,8 @@ const useGenerateExecution = ({ template, questionPrefixContent, onError }: Prop
 
   const generateExecutionHandler = async () => {
     if (!token) {
+      storeAnswers(answers);
+      storeParams(paramsValues);
       return router.push("/signin");
     }
 

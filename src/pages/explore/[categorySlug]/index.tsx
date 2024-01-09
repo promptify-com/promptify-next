@@ -51,9 +51,18 @@ export default function Page({ category }: { category: Category }) {
                   <Button
                     onClick={() => goBack()}
                     variant="text"
-                    sx={{ fontSize: 19, color: "onSurface", ml: -3 }}
+                    sx={{
+                      fontSize: 19,
+                      color: "onSurface",
+                      ml: -3,
+                      textOverflow: "ellipsis",
+                      whiteSpace: "normal",
+                    }}
                   >
-                    <KeyboardArrowLeft /> {category.name} Prompt Template
+                    <Box sx={{ display: "flex", alignItems: "flex-start" }}>
+                      <KeyboardArrowLeft sx={{ mt: "5px" }} />
+                      {category.name} Prompt Template
+                    </Box>
                   </Button>
                 </Link>
                 <Typography variant="body1">{category.description}</Typography>{" "}
