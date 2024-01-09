@@ -41,15 +41,15 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
   const { isGenerating, activeSideBarLink: isSidebarExpanded } = useAppSelector(state => state.template);
   const { answers, isSimulationStreaming } = useAppSelector(state => state.chat);
 
-  const [showGenerateButton, setShowGenerateButton] = useState(false);
   const [isValidatingAnswer, setIsValidatingAnswer] = useState(false);
 
   const { prepareAndRemoveDuplicateInputs } = useChatBox();
 
-  const { messages, setMessages, initialMessages, messageAnswersForm, allRequiredInputsAnswered } = useChat({
-    questionPrefixContent,
-    template,
-  });
+  const { messages, setMessages, initialMessages, messageAnswersForm, allRequiredInputsAnswered, showGenerateButton } =
+    useChat({
+      questionPrefixContent,
+      template,
+    });
 
   const { generateExecutionHandler, abortConnection, disableChatInput } = useGenerateExecution({
     template,

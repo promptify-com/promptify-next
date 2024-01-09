@@ -47,11 +47,12 @@ function useChat({ questionPrefixContent, template }: Props) {
       filteredQuestions.length ? "? " + filteredQuestions.slice(0, 3).join(" ") : ""
     }`;
     const InitialMessages: IMessage[] = [welcomeMessage];
+    const initialQueuedMessages: IMessage[] = [];
 
     if (hasRequiredQuestion && isVariantA) {
       const textMessage = createMessage("text");
       textMessage.text = "This is a list of information we need to execute this template:";
-      InitialMessages.push(textMessage);
+      initialQueuedMessages.push(textMessage);
     }
 
     setMessages(InitialMessages);
@@ -59,9 +60,11 @@ function useChat({ questionPrefixContent, template }: Props) {
     const formMessage = createMessage("form");
 
     if (!selectedExecution && isVariantB) {
-      addToQueuedMessages([formMessage]);
-    } else {
-      addToQueuedMessages([formMessage]);
+      initialQueuedMessages.push(formMessage);
+      addToQueuedMessages(initialQueuedMessages);
+    } else if (isVariantA) {
+      initialQueuedMessages.push(formMessage);
+      addToQueuedMessages(initialQueuedMessages);
     }
     dispatch(setAnswers([]));
 
