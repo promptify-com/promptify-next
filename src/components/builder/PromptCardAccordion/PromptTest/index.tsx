@@ -1,6 +1,16 @@
 import React, { useMemo, useRef, useState } from "react";
-import { Button, Dialog, DialogContent, DialogTitle, Divider, IconButton, Stack, Typography } from "@mui/material";
-import { Close, ContentCopy, PlayArrow } from "@mui/icons-material";
+import {
+  Button,
+  CircularProgress,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  Divider,
+  IconButton,
+  Stack,
+  Typography,
+} from "@mui/material";
+import { Close, ContentCopy, Done, PlayArrow } from "@mui/icons-material";
 import { IEditPrompts } from "@/common/types/builder";
 import usePromptExecute from "../../Hooks/usePromptExecute";
 import FormInput from "./FormInput";
@@ -24,6 +34,7 @@ export const PromptTestDialog: React.FC<PromptTestDialogProps> = ({ open, onClos
   const uploadedFiles = useRef(new Map<string, string>());
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatingResponse, setGeneratingResponse] = useState("");
+  const [copied, setCopied] = useState(false);
 
   const handleClose = (e: {}, reason: "backdropClick" | "escapeKeyDown") => {
     if (reason && reason === "backdropClick") return;
@@ -71,6 +82,7 @@ export const PromptTestDialog: React.FC<PromptTestDialogProps> = ({ open, onClos
     const executeData = preparePromptData(uploadedFiles.current, inputsValues.current, paramsValues.current);
 
     setIsGenerating(true);
+    setGeneratingResponse("");
 
     fetchEventSource(`${process.env.NEXT_PUBLIC_API_URL}/api/meta/prompts/${prompt.id}/execute`, {
       method: "POST",
@@ -114,6 +126,13 @@ export const PromptTestDialog: React.FC<PromptTestDialogProps> = ({ open, onClos
       onclose() {
         setIsGenerating(false);
       },
+    });
+  };
+
+  const copyResponse = () => {
+    navigator.clipboard.writeText(generatingResponse).then(_ => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 3000);
     });
   };
 
@@ -204,20 +223,35 @@ export const PromptTestDialog: React.FC<PromptTestDialogProps> = ({ open, onClos
             width={"100%"}
             gap={2}
           >
-            <Typography
-              fontSize={20}
-              fontWeight={400}
+            <Stack
+              direction={"row"}
+              alignItems={"center"}
+              gap={1}
             >
-              Output
-            </Typography>
+              <Typography
+                fontSize={20}
+                fontWeight={400}
+              >
+                Output
+              </Typography>
+              {isGenerating && (
+                <CircularProgress
+                  size={"20px"}
+                  sx={{ color: "primary.light", p: "4px" }}
+                />
+              )}
+            </Stack>
             <GeneratedContent content={generatingResponse} />
-            <Button
-              startIcon={<ContentCopy />}
-              sx={buttonStyle}
-              disabled={isGenerating}
-            >
-              Copy
-            </Button>
+            {generatingResponse && (
+              <Button
+                onClick={copyResponse}
+                startIcon={copied ? <Done /> : <ContentCopy />}
+                sx={buttonStyle}
+                disabled={isGenerating}
+              >
+                {copied ? "Copied" : "Copy"}
+              </Button>
+            )}
           </Stack>
         </Stack>
       </DialogContent>

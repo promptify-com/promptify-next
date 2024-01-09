@@ -19,6 +19,7 @@ export const GeneratedContent: React.FC<GeneratedContentProps> = ({ content }) =
         overscrollBehavior: "contain",
         fontSize: 15,
         fontWeight: 400,
+        lineHeight: "28px",
         color: "onSurface",
         wordWrap: "break-word",
         ".highlight": {
