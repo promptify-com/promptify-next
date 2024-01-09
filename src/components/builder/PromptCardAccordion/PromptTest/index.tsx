@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   Button,
   CircularProgress,
@@ -47,23 +47,19 @@ export const PromptTestDialog: React.FC<PromptTestDialogProps> = ({ open, onClos
 
   const { prepareAndRemoveDuplicateInputs, preparePromptData } = usePromptExecute(prompt);
 
-  const [inputs, params] = useMemo(() => {
-    const { inputs: _inputs, params: _params } = prepareAndRemoveDuplicateInputs();
+  const { inputs, params } = prepareAndRemoveDuplicateInputs();
 
-    _inputs.forEach(input => {
+  useEffect(() => {
+    inputs.forEach(input => {
       inputsValues.current = {
         ...inputsValues.current,
         [input.name]: "",
       };
     });
-    _params.forEach(param => {
-      paramsValues.current = paramsValues.current.concat({
-        parameter: param.parameter_id,
-        score: param.score,
-      });
-    });
-
-    return [_inputs, _params];
+    paramsValues.current = params.map(param => ({
+      parameter: param.parameter_id,
+      score: param.score,
+    }));
   }, [prompt]);
 
   const updateInputsValues = (newInputVal: IInputValue) => {
