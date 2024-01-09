@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { Close, ContentCopy, Done, PlayArrow } from "@mui/icons-material";
 import { IEditPrompts } from "@/common/types/builder";
-import usePromptExecute from "../../Hooks/usePromptExecute";
+import usePromptExecute from "@/components/builder/Hooks/usePromptExecute";
 import FormInput from "./FormInput";
 import { IExecuteInput, IExecuteParam, IInputValue, IParamValue } from "@/components/builder/Types";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
@@ -20,6 +20,7 @@ import useToken from "@/hooks/useToken";
 import { parseMessageData } from "@/common/helpers/parseMessageData";
 import FormParam from "./FormParam";
 import { GeneratedContent } from "./GeneratedContent";
+import useCopyToClipboard from "@/hooks/useCopyToClipboard";
 
 interface PromptTestDialogProps {
   open: boolean;
@@ -29,12 +30,14 @@ interface PromptTestDialogProps {
 
 export const PromptTestDialog: React.FC<PromptTestDialogProps> = ({ open, onClose, prompt }) => {
   const token = useToken();
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generatingResponse, setGeneratingResponse] = useState("");
+
   const inputsValues = useRef<IExecuteInput>({});
   const paramsValues = useRef<IExecuteParam[]>([]);
   const uploadedFiles = useRef(new Map<string, string>());
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [generatingResponse, setGeneratingResponse] = useState("");
-  const [copied, setCopied] = useState(false);
+
+  const [copyToClipboard, copyResult] = useCopyToClipboard();
 
   const handleClose = (e: {}, reason: "backdropClick" | "escapeKeyDown") => {
     if (reason && reason === "backdropClick") return;
@@ -126,13 +129,6 @@ export const PromptTestDialog: React.FC<PromptTestDialogProps> = ({ open, onClos
       onclose() {
         setIsGenerating(false);
       },
-    });
-  };
-
-  const copyResponse = () => {
-    navigator.clipboard.writeText(generatingResponse).then(_ => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 3000);
     });
   };
 
@@ -244,12 +240,12 @@ export const PromptTestDialog: React.FC<PromptTestDialogProps> = ({ open, onClos
             <GeneratedContent content={generatingResponse} />
             {generatingResponse && (
               <Button
-                onClick={copyResponse}
-                startIcon={copied ? <Done /> : <ContentCopy />}
+                onClick={() => copyToClipboard(generatingResponse)}
+                startIcon={copyResult?.state === "success" ? <Done /> : <ContentCopy />}
                 sx={buttonStyle}
                 disabled={isGenerating}
               >
-                {copied ? "Copied" : "Copy"}
+                {copyResult?.state === "success" ? "Copied" : "Copy"}
               </Button>
             )}
           </Stack>
