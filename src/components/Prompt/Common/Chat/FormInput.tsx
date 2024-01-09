@@ -7,11 +7,14 @@ import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import HelpOutline from "@mui/icons-material/HelpOutline";
 
-import { useAppSelector } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import RenderInputType from "./Inputs";
 import CustomTooltip from "../CustomTooltip";
 import useVariant from "../../Hooks/useVariant";
 import type { IPromptInput } from "@/common/types/prompt";
+import { setAnswers } from "@/core/store/chatSlice";
+import Storage from "@/common/storage";
+import { IAnswer } from "../../Types/chat";
 
 interface Props {
   input: IPromptInput;
@@ -20,11 +23,25 @@ interface Props {
 function FormInput({ input }: Props) {
   const { isVariantB } = useVariant();
 
+  const dispatch = useAppDispatch();
   const answers = useAppSelector(state => state.chat.answers);
   const labelRef = useRef<HTMLDivElement | null>(null);
   const [labelWidth, setLabelWidth] = useState(0);
 
   const { fullName, required, type, name } = input;
+
+  useEffect(() => {
+    const answersStored = Storage.get("answers");
+
+    if (!answersStored) return;
+
+    const isRelevantAnswer = answersStored.some((answer: IAnswer) => answer.prompt === answer.prompt);
+
+    if (isRelevantAnswer) {
+      dispatch(setAnswers(answersStored));
+      Storage.remove("answers");
+    }
+  }, []);
 
   const value = answers.find(answer => answer.inputName === name)?.answer ?? "";
 

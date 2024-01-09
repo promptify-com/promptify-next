@@ -29,6 +29,8 @@ import type { PromptParams, ResOverrides, ResPrompt } from "@/core/api/dto/promp
 import type { IAnswer, IMessage, VaryValidatorResponse } from "@/components/Prompt/Types/chat";
 import type { PromptInputType } from "../../Types";
 import useApiAccess from "../../Hooks/useApiAccess";
+import { useStoreAnswersAndParams } from "@/hooks/useStoreAnswersAndParams";
+import { store } from "@/core/store";
 
 interface Props {
   onError: (errMsg: string) => void;
@@ -60,6 +62,8 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
     created_at: new Date(),
     data: [],
   });
+
+  const { storeAnswers, storeParams } = useStoreAnswersAndParams();
 
   const { preparePromptsData, prepareAndRemoveDuplicateInputs } = useChatBox();
   const { dispatchNewExecutionData } = useApiAccess();
@@ -253,6 +257,8 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
 
   const generateExecutionHandler = async () => {
     if (!token) {
+      storeAnswers(answers);
+      storeParams(paramsValues);
       return router.push("/signin");
     }
 
@@ -408,6 +414,11 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
     }
   };
 
+  const handleSignIn = () => {
+    storeAnswers(answers);
+    storeParams(paramsValues);
+    router.push("/signin");
+  };
   return (
     <Box
       width={{ md: isSidebarExpanded ? "100%" : "80%" }}
@@ -444,9 +455,7 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
             p={{ md: "16px 8px 16px 16px" }}
           >
             <Button
-              onClick={() => {
-                router.push("/signin");
-              }}
+              onClick={handleSignIn}
               variant={"contained"}
               startIcon={
                 <LogoApp
