@@ -13,7 +13,7 @@ import useVariant from "../../Hooks/useVariant";
 import type { IPromptInput } from "@/common/types/prompt";
 import useApiAccess from "../../Hooks/useApiAccess";
 import { setAnswers } from "@/core/store/chatSlice";
-import { PromptInputType } from "../../Types";
+import { PromptInputType } from "@/components/Prompt/Types";
 import { IAnswer } from "@/components/Prompt/Types/chat";
 
 interface Props {
