@@ -1,11 +1,14 @@
+import { useEffect } from "react";
 import { Avatar, Grid, Stack, Typography } from "@mui/material";
-import { useAppSelector } from "@/hooks/useStore";
+import { CheckCircle } from "@mui/icons-material";
+
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { IMessage } from "@/components/Prompt/Types/chat";
 import { timeAgo } from "@/common/helpers/timeManipulation";
 import { StreamContent } from "./StreamContent";
-import { CheckCircle } from "@mui/icons-material";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { isDesktopViewPort } from "@/common/helpers";
+import { setIsSimulationStreaming } from "@/core/store/chatSlice";
 
 interface MessageBlockProps {
   message: IMessage;
@@ -14,12 +17,19 @@ interface MessageBlockProps {
 }
 
 export const Message = ({ message, isExecutionShown, onScrollToBottom }: MessageBlockProps) => {
+  const dispatch = useAppDispatch();
+
   const { fromUser, text, createdAt } = message;
   const currentUser = useAppSelector(state => state.user.currentUser);
 
   const isDesktopView = isDesktopViewPort();
 
   const name = fromUser ? currentUser?.first_name ?? currentUser?.username : "Promptify";
+
+  useEffect(() => {
+    if (fromUser) return;
+    dispatch(setIsSimulationStreaming(true));
+  }, []);
 
   return (
     <Grid

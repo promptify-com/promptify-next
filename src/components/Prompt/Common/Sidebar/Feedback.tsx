@@ -3,6 +3,7 @@ import Stack from "@mui/material/Stack";
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+import { useRouter } from "next/router";
 
 import { timeAgo } from "@/common/helpers/timeManipulation";
 import SigninButton from "@/components/common/buttons/SigninButton";
@@ -16,6 +17,7 @@ import type { UserPartial } from "@/core/api/dto/user";
 const maxLength = 2500;
 const Feedback = () => {
   const token = useToken();
+  const router = useRouter();
   const [feedback, setFeedback] = useState("");
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLDivElement>(null);
@@ -186,7 +188,7 @@ const Feedback = () => {
           alignItems={"center"}
           mb={"20px"}
         >
-          <SigninButton />
+          <SigninButton onClick={() => router.push("/signin")} />
         </Stack>
       )}
     </Stack>
