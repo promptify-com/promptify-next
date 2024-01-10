@@ -8,12 +8,12 @@ import { RenameForm } from "@/components/common/forms/RenameForm";
 import { Footer } from "./Footer";
 import { HighlightTextarea } from "../HighlightWithinTextarea";
 import { Selection } from "react-highlight-within-textarea";
-import { Engine } from "@/core/api/dto/templates";
 import { useDrag, useDrop, ConnectableElement } from "react-dnd";
 import { getBuilderVarsPresets } from "@/common/helpers/getBuilderVarsPresets";
 import { useDebouncedDispatch } from "@/hooks/useDebounceDispatch";
 import { BUILDER_TYPE } from "@/common/constants";
 import { PromptTestDialog } from "./PromptTest";
+import { useAppSelector } from "@/hooks/useStore";
 
 interface Props {
   prompt: IEditPrompts;
@@ -50,6 +50,7 @@ const PromptCardAccordion = ({
     },
     builderType === BUILDER_TYPE.USER ? 700 : 200,
   );
+  const isOwner = useAppSelector(state => state.builder.isTemplateOwner);
 
   const updatePrompt = (newPromptData: IEditPrompts) => {
     setPromptData(newPromptData);
@@ -158,23 +159,27 @@ const PromptCardAccordion = ({
                   onClick={() => setRenameAllow(true)}
                 />
               </Stack>
-              <Button
-                startIcon={<PlayCircle />}
-                onClick={() => setShowTest(true)}
-                sx={{
-                  fontSize: 13,
-                  fontWeight: 500,
-                  p: "4px 10px",
-                }}
-              >
-                Test run
-              </Button>
-              {showTest && (
-                <PromptTestDialog
-                  open={showTest}
-                  onClose={() => setShowTest(false)}
-                  prompt={promptData}
-                />
+              {isOwner && (
+                <>
+                  <Button
+                    startIcon={<PlayCircle />}
+                    onClick={() => setShowTest(true)}
+                    sx={{
+                      fontSize: 13,
+                      fontWeight: 500,
+                      p: "4px 10px",
+                    }}
+                  >
+                    Test run
+                  </Button>
+                  {showTest && (
+                    <PromptTestDialog
+                      open={showTest}
+                      onClose={() => setShowTest(false)}
+                      prompt={promptData}
+                    />
+                  )}
+                </>
               )}
             </>
           ) : (

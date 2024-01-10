@@ -46,7 +46,8 @@ import PromptCardAccordion from "@/components/builder/PromptCardAccordion";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { useDispatch } from "react-redux";
-import { setEngines } from "@/core/store/builderSlice";
+import { setEngines, setIsTemplateOwner } from "@/core/store/builderSlice";
+import { useAppSelector } from "@/hooks/useStore";
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return (
@@ -69,7 +70,7 @@ export const Builder = () => {
   const [selectedNodeData, setSelectedNodeData] = useState<IEditPrompts | null>(null);
   const [selectedConnection, setSelectedConnection] = useState<string | null>(null);
   const [nodesData, setNodesData] = useState<IEditPrompts[]>([]);
-  const { data: promptsData } = useGetPromptTemplateBySlugQuery(slug ? slug : skipToken);
+  const { data: templateData } = useGetPromptTemplateBySlugQuery(slug ? slug : skipToken);
   const dataForRequest = useRef({} as any);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [snackBarOpen, setSnackBarOpen] = useState(false);
@@ -80,8 +81,12 @@ export const Builder = () => {
   const [invalidVariableMessage, setInvalidVariableMessage] = useState("");
   const token = useToken();
   const dispatch = useDispatch();
+  const currentUser = useAppSelector(state => state.user.currentUser);
 
   useEffect(() => {
+    if (currentUser) {
+      dispatch(setIsTemplateOwner(templateData?.created_by.id === currentUser?.id || currentUser?.is_admin));
+    }
     dispatch(setEngines(engines || []));
   }, [engines]);
 
@@ -125,28 +130,28 @@ export const Builder = () => {
         updateTemplateDependencies,
       );
     },
-    [setSelectedNode, prompts, promptsData],
+    [setSelectedNode, prompts, templateData],
   );
 
   const [ref, editor] = useRete(create);
 
   useEffect(() => {
-    if (promptsData) {
+    if (templateData) {
       const data = {
-        title: promptsData.title,
-        description: promptsData.description,
-        example: promptsData.example,
-        thumbnail: promptsData.thumbnail,
-        is_visible: promptsData.is_visible,
-        language: promptsData.language,
-        category: promptsData.category.id,
-        difficulty: promptsData.difficulty,
-        duration: promptsData.duration,
-        status: promptsData.status,
+        title: templateData.title,
+        description: templateData.description,
+        example: templateData.example,
+        thumbnail: templateData.thumbnail,
+        is_visible: templateData.is_visible,
+        language: templateData.language,
+        category: templateData.category.id,
+        difficulty: templateData.difficulty,
+        duration: templateData.duration,
+        status: templateData.status,
       };
       dataForRequest.current = data;
     }
-  }, [promptsData]);
+  }, [templateData]);
 
   useEffect(() => {
     if (nodesData) {
@@ -181,10 +186,10 @@ export const Builder = () => {
   }, [nodesData, dataForRequest]);
 
   useEffect(() => {
-    if (promptsData) {
-      setPrompts(promptsData.prompts);
+    if (templateData) {
+      setPrompts(templateData.prompts);
     }
-  }, [promptsData]);
+  }, [templateData]);
 
   useEffect(() => {
     document.addEventListener("keydown", handleKeyboard);
@@ -468,7 +473,7 @@ export const Builder = () => {
       return a.order - b.order;
     });
 
-    updateTemplate(promptsData!.id, data).then(() => {
+    updateTemplate(templateData!.id, data).then(() => {
       setSnackBarOpen(true);
       window.location.reload();
     });
@@ -480,7 +485,7 @@ export const Builder = () => {
 
   const handlePublishTemplate = async () => {
     injectOrderAndSendRequest();
-    await publishTemplate(promptsData!.id);
+    await publishTemplate(templateData!.id);
   };
 
   return (
@@ -496,7 +501,7 @@ export const Builder = () => {
               title={dataForRequest.current.title}
               onPublish={() => handlePublishTemplate()}
               onSave={injectOrderAndSendRequest}
-              templateSlug={promptsData?.slug}
+              templateSlug={templateData?.slug}
               onEditTemplate={() => toggleTemplateDrawer(true)}
               type={BUILDER_TYPE.ADMIN}
             />
@@ -521,7 +526,7 @@ export const Builder = () => {
                 ref={ref}
                 style={{ height: "100%", width: "100%" }}
               ></div>
-              {!!selectedNode && !!selectedNodeData && promptsData && (
+              {!!selectedNode && !!selectedNodeData && templateData && (
                 <Zoom
                   in={true}
                   style={{
@@ -676,7 +681,7 @@ export const Builder = () => {
               </Box>
             </Box>
           </Grid>
-          {!!promptsData && (
+          {!!templateData && (
             <SwipeableDrawer
               anchor={"left"}
               open={templateDrawerOpen}
@@ -697,7 +702,7 @@ export const Builder = () => {
               >
                 <TemplateForm
                   type="edit"
-                  templateData={promptsData}
+                  templateData={templateData}
                   darkMode
                   onSaved={() => window.location.reload()}
                   onClose={() => toggleTemplateDrawer(false)}

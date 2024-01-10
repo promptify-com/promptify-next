@@ -26,13 +26,14 @@ import type { IEditTemplate } from "@/common/types/editTemplate";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IEditPrompts } from "@/common/types/builder";
 import { useDispatch } from "react-redux";
-import { setEngines } from "@/core/store/builderSlice";
+import { setEngines, setIsTemplateOwner } from "@/core/store/builderSlice";
 
 export const PromptBuilder = () => {
   const router = useRouter();
   const token = useToken();
   const dispatch = useDispatch();
   const [publishTemplate] = usePublishTemplateMutation();
+  const currentUser = useAppSelector(state => state.user.currentUser);
 
   const slug = router.query.slug as string;
 
@@ -47,8 +48,11 @@ export const PromptBuilder = () => {
   );
 
   useEffect(() => {
+    if (currentUser) {
+      dispatch(setIsTemplateOwner(fetchedTemplateData?.created_by.id === currentUser?.id || currentUser?.is_admin));
+    }
     dispatch(setEngines(engines || []));
-  }, [engines]);
+  }, [fetchedTemplateData, engines]);
 
   useEffect(() => {
     if (engines && fetchedTemplateData) {
