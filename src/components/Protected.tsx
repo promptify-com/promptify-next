@@ -41,7 +41,9 @@ const Protected: React.FC<IProps> = ({ children, showLoadingPage }) => {
     };
   }, [isValidUser, isAdmin, currentPathName]);
 
-  return <>{showLoadingPage || !isValidUser || !isAdmin ? <PageLoading /> : children}</>;
+  const shouldShowLoading = showLoadingPage || !isValidUser || (!isAdmin && adminOnlyRoutes.includes(currentPathName));
+
+  return <>{shouldShowLoading ? <PageLoading /> : children}</>;
 };
 
 export default Protected;
