@@ -10,7 +10,7 @@ interface ImagePopupProps {
   onClose: () => void;
 }
 
-const ImagePopup: React.FC<ImagePopupProps> = ({ open, imageUrl, onClose }) => {
+function ImagePopup({ open, imageUrl, onClose }: ImagePopupProps) {
   return (
     <Dialog
       open={open}
@@ -46,6 +46,6 @@ const ImagePopup: React.FC<ImagePopupProps> = ({ open, imageUrl, onClose }) => {
       </DialogContent>
     </Dialog>
   );
-};
+}
 
 export default ImagePopup;

@@ -104,7 +104,7 @@ function useChat({ questionPrefixContent, template }: Props) {
           .map(promptId => {
             const param = contextualOverrides![promptId];
 
-            if (!param) {
+            if (!param?.length) {
               return;
             }
 
@@ -118,8 +118,7 @@ function useChat({ questionPrefixContent, template }: Props) {
               id: parseInt(promptId),
             };
           })
-          .filter(item => item !== undefined)
-          .flat() as ResOverrides[];
+          .filter(item => item !== undefined) as ResOverrides[];
 
         setTimeout(() => {
           dispatch(setparamsValues(newContextualOverrides));
