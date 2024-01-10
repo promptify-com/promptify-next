@@ -2,11 +2,12 @@ import { useState, useEffect } from "react";
 
 import { randomId } from "@/common/helpers";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { setAnswers, setIsSimulationStreaming } from "@/core/store/chatSlice";
+import { setAnswers, setIsSimulationStreaming, setparamsValues } from "@/core/store/chatSlice";
 import useVariant from "./useVariant";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { IAnswer, IMessage, MessageType } from "../Types/chat";
 import type { Templates } from "@/core/api/dto/templates";
+import { ContextualOverrides, ResOverrides } from "@/core/api/dto/prompts";
 
 interface Props {
   template: Templates;
@@ -70,6 +71,7 @@ function useChat({ questionPrefixContent, template }: Props) {
 
     if (sparkHashQueryParam) {
       const parameters = selectedExecution?.parameters;
+      const contextualOverrides = selectedExecution?.contextual_overrides;
 
       if (!!Object.keys(parameters ?? {}).length) {
         const newAnswers = Object.keys(parameters!)
@@ -94,6 +96,32 @@ function useChat({ questionPrefixContent, template }: Props) {
 
         setTimeout(() => {
           dispatch(setAnswers(newAnswers));
+        }, 50);
+      }
+
+      if (!!Object.keys(contextualOverrides ?? {}).length) {
+        const newContextualOverrides = Object.keys(contextualOverrides!)
+          .map(promptId => {
+            const param = contextualOverrides![promptId];
+
+            if (!param?.length) {
+              return;
+            }
+
+            const newParam = param.map((parameter: ContextualOverrides) => ({
+              parameter: parameter.parameter,
+              score: parameter.score,
+            }));
+
+            return {
+              contextual_overrides: newParam,
+              id: parseInt(promptId),
+            };
+          })
+          .filter(item => item !== undefined) as ResOverrides[];
+
+        setTimeout(() => {
+          dispatch(setparamsValues(newContextualOverrides));
         }, 50);
       }
     }

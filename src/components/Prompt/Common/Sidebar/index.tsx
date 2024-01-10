@@ -89,7 +89,7 @@ function Sidebar({ template, executions }: SidebarProps) {
                   title={`Created by ${template.created_by.first_name || template.created_by.username}`}
                 >
                   <Image
-                    src={template.created_by.avatar}
+                    src={template.created_by.avatar ?? require("@/assets/images/default-avatar.jpg")}
                     alt={template.created_by.username}
                     width={30}
                     height={30}
