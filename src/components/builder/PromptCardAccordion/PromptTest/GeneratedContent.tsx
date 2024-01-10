@@ -11,7 +11,17 @@ interface GeneratedContentProps {
 
 export const GeneratedContent: React.FC<GeneratedContentProps> = ({ content, engineType }) => {
   return (
-    <Box>
+    <Box
+      sx={{
+        border: "1px solid rgba(27, 27, 30, 0.23)",
+        borderRadius: "8px",
+        p: "12px",
+        minHeight: "200px",
+        maxHeight: "500px",
+        overflow: "auto",
+        overscrollBehavior: "contain",
+      }}
+    >
       {isImageOutput(content, engineType) ? (
         <Box
           component={"img"}
@@ -22,23 +32,13 @@ export const GeneratedContent: React.FC<GeneratedContentProps> = ({ content, eng
           }}
           sx={{
             borderRadius: "8px",
-            width: "40%",
+            width: "80%",
             objectFit: "cover",
-            float: "right",
-            ml: "20px",
-            mb: "10px",
           }}
         />
       ) : (
         <Box
           sx={{
-            border: "1px solid rgba(27, 27, 30, 0.23)",
-            borderRadius: "8px",
-            p: "12px",
-            minHeight: "200px",
-            maxHeight: "500px",
-            overflow: "auto",
-            overscrollBehavior: "contain",
             fontSize: 15,
             fontWeight: 400,
             lineHeight: "28px",
