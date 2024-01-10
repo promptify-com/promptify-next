@@ -33,7 +33,7 @@ export const GeneratedContent: React.FC<GeneratedContentProps> = ({ content, eng
       {isImageOutput(content, engineType) ? (
         <Box
           component={"img"}
-          alt={"book cover"}
+          alt={"cover"}
           src={content}
           onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
             (e.target as HTMLImageElement).src = require("@/assets/images/default-thumbnail.jpg");
@@ -52,6 +52,7 @@ export const GeneratedContent: React.FC<GeneratedContentProps> = ({ content, eng
             lineHeight: "28px",
             color: "onSurface",
             wordWrap: "break-word",
+            whiteSpace: "pre-wrap",
             ".highlight": {
               backgroundColor: "yellow",
               color: "black",

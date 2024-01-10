@@ -129,7 +129,6 @@ export const PromptTestDialog: React.FC<PromptTestDialogProps> = ({ open, onClos
         }
       },
       onmessage(msg) {
-        console.log(msg);
         try {
           const parseData = parseMessageData(msg.data);
           const message = parseData.message;
