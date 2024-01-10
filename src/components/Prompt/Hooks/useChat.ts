@@ -6,7 +6,7 @@ import { setAnswers, setIsSimulationStreaming, setparamsValues } from "@/core/st
 import type { IPromptInput } from "@/common/types/prompt";
 import type { IAnswer, IMessage, MessageType } from "../Types/chat";
 import type { Templates } from "@/core/api/dto/templates";
-import { ResOverrides } from "@/core/api/dto/prompts";
+import { ContextualOverrides, ResOverrides } from "@/core/api/dto/prompts";
 
 interface Props {
   template: Templates;
@@ -82,23 +82,26 @@ function useChat({ questionPrefixContent, template }: Props) {
       }
 
       if (!!Object.keys(contextualOverrides ?? {}).length) {
-        const newContextualOverrides = Object.keys(contextualOverrides!).map(promptId => {
-          const param = contextualOverrides![promptId];
+        const newContextualOverrides = Object.keys(contextualOverrides!)
+          .map(promptId => {
+            const param = contextualOverrides![promptId];
 
-          if (!param) {
-            return;
-          }
+            if (!param) {
+              return;
+            }
 
-          const newParam = param.map((parameter: { parameter: number; score: number }) => ({
-            parameter: parameter.parameter,
-            score: parameter.score,
-          }));
+            const newParam = param.map((parameter: ContextualOverrides) => ({
+              parameter: parameter.parameter,
+              score: parameter.score,
+            }));
 
-          return {
-            contextual_overrides: newParam,
-            id: parseInt(promptId),
-          };
-        }) as ResOverrides[];
+            return {
+              contextual_overrides: newParam,
+              id: parseInt(promptId),
+            };
+          })
+          .filter(item => item !== undefined)
+          .flat() as ResOverrides[];
 
         setTimeout(() => {
           dispatch(setparamsValues(newContextualOverrides));

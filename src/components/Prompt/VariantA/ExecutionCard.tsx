@@ -281,7 +281,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
                         <>
                           <Box
                             component={"img"}
-                            alt={"book cover"}
+                            alt={"Promptify"}
                             src={exec.content}
                             onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
                               (e.target as HTMLImageElement).src = require("@/assets/images/default-thumbnail.jpg");

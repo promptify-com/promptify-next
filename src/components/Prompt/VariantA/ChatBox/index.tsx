@@ -2,7 +2,7 @@ import { useState, useMemo, memo, useEffect, useRef } from "react";
 import { Typography, Stack } from "@mui/material";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { useRouter } from "next/router";
-import { PromptParams, ResOverrides, ResPrompt } from "@/core/api/dto/prompts";
+import { ContextualOverrides, PromptParams, ResOverrides, ResPrompt } from "@/core/api/dto/prompts";
 import { useAppSelector, useAppDispatch } from "@/hooks/useStore";
 import useToken from "@/hooks/useToken";
 import { ChatInterface } from "./ChatInterface";
@@ -164,7 +164,7 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
             return;
           }
 
-          const newParam = param.map((parameter: { parameter: number; score: number }) => ({
+          const newParam = param.map((parameter: ContextualOverrides) => ({
             parameter: parameter.parameter,
             score: parameter.score,
           }));

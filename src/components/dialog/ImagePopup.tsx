@@ -1,8 +1,8 @@
-import React from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
+import Image from "@/components/design-system/Image";
 
 interface ImagePopupProps {
   open: boolean;
@@ -38,10 +38,10 @@ const ImagePopup: React.FC<ImagePopupProps> = ({ open, imageUrl, onClose }) => {
         <CloseIcon />
       </IconButton>
       <DialogContent>
-        <img
+        <Image
           src={imageUrl}
-          alt="book cover"
-          style={{ width: "100%" }}
+          alt="Promptify"
+          style={{ width: "100%", height: "auto" }}
         />
       </DialogContent>
     </Dialog>
