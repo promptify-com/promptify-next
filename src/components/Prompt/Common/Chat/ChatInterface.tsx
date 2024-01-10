@@ -47,7 +47,11 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
     text: false,
   });
 
-  const { showScrollDown, scrollToBottom } = useScrollToBottom({ ref: messagesContainerRef, messages, isGenerating });
+  const { showScrollDown, scrollToBottom } = useScrollToBottom({
+    ref: messagesContainerRef,
+    content: messages,
+    isGenerating,
+  });
 
   const handleExpandChange = (type: keyof AccordionExpandedState, isExpanded: boolean) => {
     setExpandedAccordions(prev => ({

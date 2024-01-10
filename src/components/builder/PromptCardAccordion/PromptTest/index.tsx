@@ -35,6 +35,8 @@ export const PromptTestDialog: React.FC<PromptTestDialogProps> = ({ open, onClos
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatingResponse, setGeneratingResponse] = useState("");
 
+  const containerRef = useRef<HTMLDivElement>(null);
+
   const inputsValues = useRef<IExecuteInput>({});
   const paramsValues = useRef<IExecuteParam[]>([]);
 
@@ -99,12 +101,16 @@ export const PromptTestDialog: React.FC<PromptTestDialogProps> = ({ open, onClos
 
   const runExecution = async () => {
     setGeneratingResponse("");
+    setIsGenerating(true);
 
     await uploadAndValidateFiles();
 
     const executeData = preparePromptData(uploadedFiles.current, inputsValues.current, paramsValues.current);
 
-    setIsGenerating(true);
+    containerRef.current?.scrollIntoView({
+      block: "end",
+      behavior: "smooth",
+    });
 
     fetchEventSource(`${process.env.NEXT_PUBLIC_API_URL}/api/meta/prompts/${prompt.id}/execute`, {
       method: "POST",
@@ -192,6 +198,7 @@ export const PromptTestDialog: React.FC<PromptTestDialogProps> = ({ open, onClos
       <Divider />
       <DialogContent sx={{ p: 0 }}>
         <Stack
+          ref={containerRef}
           gap={4}
           alignItems={"flex-end"}
           sx={{
@@ -261,17 +268,16 @@ export const PromptTestDialog: React.FC<PromptTestDialogProps> = ({ open, onClos
             <GeneratedContent
               content={generatingResponse}
               engineType={engineType}
+              isGenerating={isGenerating}
             />
-            {generatingResponse && (
-              <Button
-                onClick={() => copyToClipboard(generatingResponse)}
-                startIcon={copyResult?.state === "success" ? <Done /> : <ContentCopy />}
-                sx={buttonStyle}
-                disabled={isGenerating}
-              >
-                {copyResult?.state === "success" ? "Copied" : "Copy"}
-              </Button>
-            )}
+            <Button
+              onClick={() => copyToClipboard(generatingResponse)}
+              startIcon={copyResult?.state === "success" ? <Done /> : <ContentCopy />}
+              sx={buttonStyle}
+              disabled={!generatingResponse || isGenerating}
+            >
+              {copyResult?.state === "success" ? "Copied" : "Copy"}
+            </Button>
           </Stack>
         </Stack>
       </DialogContent>

@@ -1,25 +1,33 @@
-import React from "react";
+import React, { useRef } from "react";
 import { sanitizeHTML } from "@/common/helpers/htmlHelper";
-import { Box } from "@mui/material";
+import { Box, IconButton } from "@mui/material";
 import { isImageOutput } from "@/components/Prompt/Utils";
 import { EngineOutput } from "@/core/api/dto/templates";
+import useScrollToBottom from "@/components/Prompt/Hooks/useScrolltoBottom";
+import { South } from "@mui/icons-material";
 
 interface GeneratedContentProps {
   content: string;
   engineType: EngineOutput;
+  isGenerating: boolean;
 }
 
-export const GeneratedContent: React.FC<GeneratedContentProps> = ({ content, engineType }) => {
+export const GeneratedContent: React.FC<GeneratedContentProps> = ({ content, engineType, isGenerating }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { showScrollDown, scrollToBottom } = useScrollToBottom({ ref: containerRef, isGenerating, content });
+
   return (
     <Box
+      ref={containerRef}
       sx={{
         border: "1px solid rgba(27, 27, 30, 0.23)",
         borderRadius: "8px",
         p: "12px",
-        minHeight: "200px",
-        maxHeight: "500px",
+        minHeight: "600px",
+        maxHeight: "50svh",
         overflow: "auto",
         overscrollBehavior: "contain",
+        position: "relative",
       }}
     >
       {isImageOutput(content, engineType) ? (
@@ -77,6 +85,27 @@ export const GeneratedContent: React.FC<GeneratedContentProps> = ({ content, eng
             __html: sanitizeHTML(content),
           }}
         />
+      )}
+      {showScrollDown && isGenerating && (
+        <IconButton
+          onClick={scrollToBottom}
+          sx={{
+            height: "32px",
+            width: "32px",
+            position: "sticky",
+            left: "50%",
+            bottom: "30px",
+            zIndex: 999,
+            bgcolor: "surface.3",
+            boxShadow: "0px 4px 8px 3px #e1e2ece6, 0px 0px 4px 0px rgb(0 0 0 / 0%)",
+            border: " none",
+            ":hover": {
+              bgcolor: "surface.5",
+            },
+          }}
+        >
+          <South sx={{ fontSize: 16 }} />
+        </IconButton>
       )}
     </Box>
   );
