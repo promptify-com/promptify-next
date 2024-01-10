@@ -47,6 +47,7 @@ const useUploadPromptFiles = () => {
       let status = true;
       const _answers = await Promise.all(
         [...answers].map(async answer => {
+          const _answer = { ...answer };
           if (answer.answer instanceof File && !uploadedFiles.has(answer.inputName)) {
             const res = await uploadFileHelper(uploadFile, { file: answer.answer });
             const fileUrl = res?.file;
@@ -54,13 +55,13 @@ const useUploadPromptFiles = () => {
             if (typeof fileUrl === "string" && fileUrl) {
               uploadedFiles.set(answer.inputName, fileUrl);
             } else {
-              answer.error = true;
+              _answer.error = true;
               if (answer.required) {
                 status = false;
               }
             }
           }
-          return answer;
+          return _answer;
         }),
       );
       resolve({ status, answers: _answers, uploadedFiles });
