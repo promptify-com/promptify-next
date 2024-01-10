@@ -14,6 +14,7 @@ import Route from "@mui/icons-material/Route";
 import { NavItem } from "@/common/types/sidebar";
 import SidebarItem from "./SidebarItem";
 import { theme } from "@/theme";
+import type { NavItem } from "@/common/types/sidebar";
 
 function Sidebar() {
   const pathname = usePathname();
