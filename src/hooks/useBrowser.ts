@@ -1,8 +1,13 @@
 import { useRouter } from "next/router";
+import { isDesktopViewPort } from "@/common/helpers";
 
 export default function useBrowser() {
   const router = useRouter();
-  const isMobile = router.query.viewport === "mobile";
+
+  const viewport = router.query.viewport ?? "unknown";
+
+  const isMobile = viewport === "unknown" ? !isDesktopViewPort() : viewport === "mobile";
+
   const replaceHistoryByPathname = (pathname: string, delay: number = 1000) => {
     setTimeout(() => {
       // router.replace({ pathname }, undefined, { shallow: true, scroll: false });

@@ -66,13 +66,13 @@ export default function ExplorePage({ categories }: Props) {
             hasPrev={hasPrev}
             onPrevPage={handlePrevPage}
           />
-          {isValidUser && (
+          {isValidUser && !!suggestedTemplates?.length && (
             <TemplatesSection
               filtred={false}
               templates={suggestedTemplates ?? []}
               isLoading={isSuggestedTemplatesLoading}
               templateLoading={isSuggestedTemplatesLoading}
-              title={`Because you use ${suggestedTemplates?.[0].category?.name} prompts`}
+              title={`Because you use ${suggestedTemplates?.[0]?.category?.name ?? "various"} prompts`}
             />
           )}
         </Grid>

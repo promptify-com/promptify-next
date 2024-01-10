@@ -1,18 +1,15 @@
 import { ReactNode } from "react";
-import {
-  Api,
-  AutoAwesome,
-  AutoAwesomeOutlined,
-  ChatBubbleOutline,
-  HomeRounded,
-  InfoOutlined,
-  MenuBookRounded,
-  RocketLaunchOutlined,
-  Search,
-  SettingsOutlined,
-  Tune,
-} from "@mui/icons-material/";
-
+import Tune from "@mui/icons-material/Tune";
+import SettingsOutlined from "@mui/icons-material/SettingsOutlined";
+import Search from "@mui/icons-material/Search";
+import RocketLaunchOutlined from "@mui/icons-material/RocketLaunchOutlined";
+import MenuBookRounded from "@mui/icons-material/MenuBookRounded";
+import InfoOutlined from "@mui/icons-material/InfoOutlined";
+import HomeRounded from "@mui/icons-material/HomeRounded";
+import ChatBubbleOutline from "@mui/icons-material/ChatBubbleOutline";
+import AutoAwesomeOutlined from "@mui/icons-material/AutoAwesomeOutlined";
+import AutoAwesome from "@mui/icons-material/AutoAwesome";
+import Api from "@mui/icons-material/Api";
 import { Prompt } from "@/assets/icons/prompts";
 import { TemplateStatus } from "@/core/api/dto/templates";
 import { InputType } from "@/common/types/prompt";
@@ -179,3 +176,5 @@ export type OutputFormat = (typeof OUTPUT_FORMATS)[number];
 
 export const LCL_STR_KEY = "promptify:";
 export const COOKIE_STR_KEY = "promptify_";
+
+export const outputFormatOptions = ["JSON", "XML", "Markdown", "Custom"];

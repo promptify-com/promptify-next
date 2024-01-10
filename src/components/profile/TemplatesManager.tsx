@@ -1,34 +1,32 @@
-import React, { useState, FC, useEffect } from "react";
-import {
-  Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  FormControl,
-  Grid,
-  InputBase,
-  Modal,
-  NativeSelect,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { useState, FC, useEffect } from "react";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Stack from "@mui/material/Stack";
+import InputBase from "@mui/material/InputBase";
+import FormControl from "@mui/material/FormControl";
+import NativeSelect from "@mui/material/NativeSelect";
+import Grid from "@mui/material/Grid";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogActions from "@mui/material/DialogActions";
+import Button from "@mui/material/Button";
+import Modal from "@mui/material/Modal";
+import Search from "@mui/icons-material/Search";
 
 import { useDeleteTemplateMutation, useGetMyTemplatesQuery } from "@/core/api/templates";
-import { TemplateStatus, Templates } from "@/core/api/dto/templates";
 import TemplateImportModal from "@/components/modals/TemplateImportModal";
 import TemplateForm from "@/components/common/forms/TemplateForm";
 import BaseButton from "@/components/base/BaseButton";
 import { modalStyle } from "@/components/modals/styles";
-import { FormType } from "@/common/types/template";
 import { TemplateStatusArray } from "@/common/constants";
 import TemplateManagerItem from "./TemplateManagerItem";
-import { Search } from "@mui/icons-material";
 import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
 import CardTemplatePlaceholder from "../placeholders/CardTemplatePlaceHolder";
 import TemplatesInfiniteScroll from "../TemplatesInfiniteScroll";
+import type { TemplateStatus, Templates } from "@/core/api/dto/templates";
+import type { FormType } from "@/common/types/template";
 
 export type UserType = "admin" | "user";
 
@@ -47,7 +45,7 @@ export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title, id }) 
 
   const [deleteTemplate] = useDeleteTemplateMutation();
   const [templateImportOpen, setTemplateImportOpen] = useState(false);
-  const [selectedTemplate, setSelectedTemplate] = useState<Templates | null>(null);
+  const [selectedTemplate, setSelectedTemplate] = useState<Templates>();
   const [templateFormType, setTemplateFormType] = useState<FormType>("create");
   const [templateFormOpen, setTemplateFormOpen] = useState(false);
   const [confirmDialog, setConfirmDialog] = useState(false);
@@ -178,7 +176,7 @@ export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title, id }) 
             <BaseButton
               size="small"
               onClick={() => {
-                setSelectedTemplate(null);
+                setSelectedTemplate(undefined);
                 setTemplateFormType("create");
                 setTemplateFormOpen(true);
               }}
@@ -200,7 +198,7 @@ export const TemplatesManager: FC<TemplateManagerProps> = ({ type, title, id }) 
             <BaseButton
               onClick={() => {
                 setTemplateFormOpen(true);
-                setSelectedTemplate(null);
+                setSelectedTemplate(undefined);
                 setTemplateFormType("create");
               }}
               variant="contained"

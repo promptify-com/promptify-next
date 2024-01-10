@@ -1,7 +1,8 @@
+import { StaticImport } from "next/dist/shared/lib/get-img-props";
 import NextImage from "next/image";
 
 interface NextImageProps {
-  src: string;
+  src: string | StaticImport;
   alt: string;
   priority?: boolean;
   style?: React.CSSProperties;

@@ -1,25 +1,18 @@
-import {
-  Avatar,
-  Box,
-  Drawer,
-  IconButton,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  Stack,
-  Typography,
-} from "@mui/material";
+import lazy from "next/dynamic";
+import Box from "@mui/material/Box";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItem from "@mui/material/ListItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import Stack from "@mui/material/Stack";
+import Drawer from "@mui/material/Drawer";
+import Typography from "@mui/material/Typography";
+import Tooltip from "@mui/material/Tooltip";
+import IconButton from "@mui/material/IconButton";
 import { useTheme } from "@mui/material/styles";
 import Close from "@mui/icons-material/Close";
+import Image from "next/image";
 
-import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
-import { Executions } from "./Executions";
-import { TemplateDetails } from "./TemplateDetails";
-import { ApiAccess } from "./ApiAccess";
-import { Extension } from "./Extension";
-import { Feedback } from "./Feedback";
 import { isValidUserFn } from "@/core/store/userSlice";
-
 import { setActiveToolbarLink } from "@/core/store/templatesSlice";
 import ToolbarItem from "@/components/Prompt/Common/Sidebar/ToolbarItem";
 import { TemplateSidebarLinks } from "@/common/constants";
@@ -27,34 +20,32 @@ import FavoriteIcon from "../FavoriteIcon";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { isDesktopViewPort } from "@/common/helpers";
 import useVariant from "../../Hooks/useVariant";
+const ExecutionsLazy = lazy(() => import("./Executions"));
+const TemplateDetailsLazy = lazy(() => import("./TemplateDetails"));
+const ApiAccessLazy = lazy(() => import("./ApiAccess"));
+const ExtensionLazy = lazy(() => import("./Extension"));
+const FeedbackLazy = lazy(() => import("./Feedback"));
+import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 
 const drawerWidth = 352;
 
 interface SidebarProps {
   template: Templates;
   executions: TemplatesExecutions[];
-  isLoading: boolean;
-  refetchExecutions: () => void;
 }
 
-function Sidebar({ template, executions, isLoading, refetchExecutions }: SidebarProps) {
+function Sidebar({ template, executions }: SidebarProps) {
   const dispatch = useAppDispatch();
   const { isVariantA } = useVariant();
   const isMobile = !isDesktopViewPort();
-
   const activeLink = useAppSelector(state => state.template.activeSideBarLink);
   const isValidUser = useAppSelector(isValidUserFn);
-
   const theme = useTheme();
-
   const handleCloseSidebar = () => {
     dispatch(setActiveToolbarLink(null));
   };
-
   const open = !!activeLink?.name;
-
   const shouldFilterCustomize = isVariantA || (!isVariantA && !isValidUser);
-
   const filtredSidebarLinks = shouldFilterCustomize
     ? TemplateSidebarLinks.filter(item => item.name !== "customize")
     : TemplateSidebarLinks;
@@ -92,11 +83,23 @@ function Sidebar({ template, executions, isLoading, refetchExecutions }: Sidebar
                   bgcolor: "surface.1",
                 }}
               >
-                <Avatar
-                  src={template.created_by.avatar}
-                  alt={template.created_by.username}
-                  sx={{ width: 30, height: 30 }}
-                />
+                <Tooltip
+                  placement="top"
+                  arrow
+                  title={`Created by ${template.created_by.first_name || template.created_by.username}`}
+                >
+                  <Image
+                    src={template.created_by.avatar}
+                    alt={template.created_by.username}
+                    width={30}
+                    height={30}
+                    priority={false}
+                    loading="lazy"
+                    style={{
+                      borderRadius: 30,
+                    }}
+                  />
+                </Tooltip>
 
                 <ListItem
                   disablePadding
@@ -232,18 +235,11 @@ function Sidebar({ template, executions, isLoading, refetchExecutions }: Sidebar
             <Close />
           </IconButton>
         </Stack>
-        {activeLink?.name === "executions" && (
-          <Executions
-            template={template}
-            executions={executions}
-            isExecutionsLoading={isLoading}
-            refetchTemplateExecutions={refetchExecutions}
-          />
-        )}
-        {activeLink?.name === "feedback" && <Feedback />}
-        {activeLink?.name === "api" && <ApiAccess template={template} />}
-        {activeLink?.name === "extension" && <Extension />}
-        {activeLink?.name === "details" && <TemplateDetails template={template} />}
+        {activeLink?.name === "executions" && <ExecutionsLazy template={template} />}
+        {activeLink?.name === "details" && <TemplateDetailsLazy template={template} />}
+        {activeLink?.name === "feedback" && <FeedbackLazy />}
+        {activeLink?.name === "api" && <ApiAccessLazy template={template} />}
+        {activeLink?.name === "extension" && <ExtensionLazy />}
       </Drawer>
     </Box>
   );

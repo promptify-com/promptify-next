@@ -1,9 +1,6 @@
-import React, { useDeferredValue, useState } from "react";
-import { LogoApp } from "@/assets/icons/LogoApp";
-import AutoAwesome from "@mui/icons-material/AutoAwesome";
+import { useDeferredValue, useState } from "react";
 import ClearRounded from "@mui/icons-material/ClearRounded";
 import HomeRounded from "@mui/icons-material/HomeRounded";
-import MenuBookRounded from "@mui/icons-material/MenuBookRounded";
 import MenuRounded from "@mui/icons-material/MenuRounded";
 import Search from "@mui/icons-material/Search";
 import Box from "@mui/material/Box";
@@ -20,14 +17,18 @@ import MenuList from "@mui/material/MenuList";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import Typography from "@mui/material/Typography";
 import { useRouter } from "next/router";
-import { useDispatch, useSelector } from "react-redux";
+import Route from "@mui/icons-material/Route";
+import StickyNote2 from "@mui/icons-material/StickyNote2";
+import HelpRounded from "@mui/icons-material/HelpRounded";
+import FolderSpecial from "@mui/icons-material/FolderSpecial";
+
+import { LogoApp } from "@/assets/icons/LogoApp";
 import { setSelectedKeyword } from "@/core/store/filtersSlice";
 import { CollectionsEmptyBox } from "./common/sidebar/CollectionsEmptyBox";
 import { MenuType, ProfileMenuItems } from "@/common/constants";
 import useLogout from "@/hooks/useLogout";
 import { Collections } from "./common/sidebar/Collections";
 import { isValidUserFn } from "@/core/store/userSlice";
-import { RootState } from "@/core/store";
 import useDebounce from "@/hooks/useDebounce";
 import { useGetTemplatesBySearchQuery } from "@/core/api/templates";
 import CardTemplate from "./common/cards/CardTemplate";
@@ -36,9 +37,8 @@ import { NotFoundIcon } from "@/assets/icons/NotFoundIcon";
 import LoadingOverlay from "./design-system/LoadingOverlay";
 import { useRouteChangeOverlay } from "@/hooks/useRouteChangeOverlay";
 import { theme } from "@/theme";
-import { redirectToPath } from "@/common/helpers";
 import Image from "./design-system/Image";
-import { Route } from "@mui/icons-material";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 
 type SidebarType = "navigation" | "profile";
 
@@ -60,11 +60,11 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
   const router = useRouter();
   const pathname = router.pathname;
   const splittedPath = pathname.split("/");
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const logout = useLogout();
-  const title = useSelector((state: RootState) => state.filters.title || "");
-  const isValidUser = useSelector(isValidUserFn);
-  const currentUser = useSelector((state: RootState) => state.user.currentUser);
+  const title = useAppSelector(state => state.filters.title || "");
+  const isValidUser = useAppSelector(isValidUserFn);
+  const currentUser = useAppSelector(state => state.user.currentUser);
   const [textInput, setTextInput] = useState("");
   const deferredSearchName = useDeferredValue(textInput);
   const debouncedSearchName = useDebounce<string>(deferredSearchName, 300);
@@ -74,7 +74,7 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
   const { showOverlay } = useRouteChangeOverlay({ onCloseDrawerCallback: onCloseDrawer });
   const links = [
     {
-      label: "Homepage",
+      label: "Home",
       icon: <HomeRounded />,
       href: "/",
       active: pathname == "/",
@@ -82,14 +82,14 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
     },
     {
       label: "Prompts",
-      icon: <Search />,
+      icon: <StickyNote2 />,
       href: "/explore",
       active: splittedPath[1] == "explore",
       external: false,
     },
     {
       label: "My Works",
-      icon: <AutoAwesome />,
+      icon: <FolderSpecial />,
       href: isValidUser ? "/sparks" : "/signin",
       active: pathname == "/sparks",
       external: false,
@@ -102,8 +102,8 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
       external: false,
     },
     {
-      label: "Learn",
-      icon: <MenuBookRounded />,
+      label: "Learn & Help",
+      icon: <HelpRounded />,
       href: "https://blog.promptify.com/",
       active: pathname == "/learn",
       external: true,
@@ -130,6 +130,10 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
     router.push({ pathname: "/explore" });
     onCloseDrawer();
   };
+
+  const ProfileMenuItemsFiltered = currentUser?.is_admin
+    ? ProfileMenuItems
+    : ProfileMenuItems.filter(item => item.href !== "/deployments");
 
   return (
     <SwipeableDrawer
@@ -284,10 +288,6 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
                       key={link.label}
                       disablePadding
                       onClick={async () => {
-                        if (link.href === "/") {
-                          redirectToPath("/");
-                          return;
-                        }
                         await navigateTo(link.href, link.external);
                         onCloseDrawer();
                       }}
@@ -436,7 +436,7 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
                 autoFocusItem={false}
                 sx={{ width: "100%" }}
               >
-                {ProfileMenuItems.map(item => (
+                {ProfileMenuItemsFiltered.map(item => (
                   <MenuItem
                     key={item.name}
                     onClick={() => handleHeaderMenu(item)}

@@ -1,5 +1,8 @@
-import { Breadcrumbs, Link, Typography } from "@mui/material";
+import Link from "next/link";
+import Breadcrumbs from "@mui/material/Breadcrumbs";
+import Typography from "@mui/material/Typography";
 import { NavigateNext } from "@mui/icons-material";
+import { theme } from "@/theme";
 
 interface BreadcrumbItem {
   label: string;
@@ -21,9 +24,8 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({ crumbs }) => {
         <span key={index}>
           {crumb.link ? (
             <Link
-              color="onSurface"
-              fontSize={19}
               href={crumb.link}
+              style={{ fontSize: "19px", color: theme.palette.onSurface, textDecoration: "none" }}
             >
               {crumb.label}
             </Link>

@@ -14,6 +14,7 @@ import { redirectToPath } from "@/common/helpers";
 import Image from "next/image";
 import useBrowser from "@/hooks/useBrowser";
 import { useAppSelector } from "@/hooks/useStore";
+import Link from "next/link";
 
 interface HeaderProps {
   transparent?: boolean;
@@ -263,15 +264,15 @@ export const Header: React.FC<HeaderProps> = ({ transparent = false, fixed = fal
           alignItems: "center",
         }}
       >
-        <Grid
-          onClick={() => {
-            redirectToPath("/");
+        <Link
+          href={"/"}
+          style={{
+            textDecoration: "none",
+            display: "flex",
+            padding: "0 10px",
+            alignItems: "center",
+            flexDirection: "row",
           }}
-          display="flex"
-          p={"0px 10px"}
-          alignItems={"center"}
-          height={48}
-          sx={{ cursor: "pointer" }}
         >
           <LogoApp width={23} />
           <Typography
@@ -280,7 +281,8 @@ export const Header: React.FC<HeaderProps> = ({ transparent = false, fixed = fal
           >
             Promptify
           </Typography>
-        </Grid>
+        </Link>
+
         {isMobile ? (
           <Mobile />
         ) : (

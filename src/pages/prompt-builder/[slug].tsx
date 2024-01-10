@@ -1,67 +1,69 @@
-import React, { useEffect, useState } from "react";
-import { usePublishTemplateMutation } from "@/core/api/templates";
-import { Alert, Box, Snackbar, Stack, SwipeableDrawer, Typography } from "@mui/material";
-
-import { Header } from "@/components/builder/Header";
-import TemplateForm from "@/components/common/forms/TemplateForm";
-import { IEditPrompts } from "@/common/types/builder";
-import { isPromptVariableValid } from "@/common/helpers/promptValidator";
-import { updateTemplate } from "@/hooks/api/templates";
-import { BuilderSidebar } from "@/components/builderSidebar";
-import { Engine, Templates } from "@/core/api/dto/templates";
-import { client } from "@/common/axios";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import PromptList from "@/components/builder/PromptCardAccordion/PromptList";
-import { useRouter } from "next/router";
-import useToken from "@/hooks/useToken";
-import { IEditTemplate } from "@/common/types/editTemplate";
-import { BUILDER_TYPE } from "@/common/constants";
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { handleEngines, handlePrompts } from "@/core/store/builderSlice";
-import Sidebar from "@/components/sidebar/Sidebar";
+import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import SwipeableDrawer from "@mui/material/SwipeableDrawer";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
+
 import { theme } from "@/theme";
+import { Header } from "@/components/builder/Header";
+import TemplateForm from "@/components/common/forms/TemplateForm";
+import { isPromptVariableValid } from "@/common/helpers/promptValidator";
+import { useGetPromptTemplateBySlugQuery, usePublishTemplateMutation } from "@/core/api/templates";
+import { updateTemplate } from "@/hooks/api/templates";
+import { BuilderSidebar } from "@/components/builderSidebar";
+import PromptList from "@/components/builder/PromptCardAccordion/PromptList";
+import useToken from "@/hooks/useToken";
+import { useAppSelector } from "@/hooks/useStore";
+import Sidebar from "@/components/sidebar/Sidebar";
+import { BUILDER_TYPE } from "@/common/constants";
+import { useGetEnginesQuery } from "@/core/api/engines";
+import { handleInitPrompt } from "@/common/helpers/initPrompt";
+import type { IEditTemplate } from "@/common/types/editTemplate";
+import type { Templates } from "@/core/api/dto/templates";
+import type { IEditPrompts } from "@/common/types/builder";
 
-interface PromptBuilderProps {
-  templateData: Templates;
-  initPrompts: IEditPrompts[];
-  engines: Engine[];
-}
-
-export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuilderProps) => {
+export const PromptBuilder = () => {
   const router = useRouter();
   const token = useToken();
-  const builderSidebarOpen = useAppSelector(state => state.sidebar.builderSidebarOpen);
-  const [prompts, setPrompts] = useState(initPrompts);
-  const [templateDrawerOpen, setTemplateDrawerOpen] = useState(Boolean(router.query.editor));
   const [publishTemplate] = usePublishTemplateMutation();
+
+  const slug = router.query.slug as string;
+
+  const { data: engines } = useGetEnginesQuery();
+  const { data: fetchedTemplateData, isLoading: isTemplateLoading } = useGetPromptTemplateBySlugQuery(slug, {
+    skip: slug === "create",
+  });
+
+  const [prompts, setPrompts] = useState<IEditPrompts[]>([]);
+  const [templateData, setTemplateData] = useState<Templates | undefined>(
+    slug === "create" ? ({ title: "new_template_12345" } as Templates) : undefined,
+  );
+
+  useEffect(() => {
+    if (engines && fetchedTemplateData) {
+      setTemplateData(fetchedTemplateData);
+      const processedPrompts = handleInitPrompt(fetchedTemplateData, engines) as IEditPrompts[];
+      setPrompts(processedPrompts);
+    }
+  }, [fetchedTemplateData, engines]);
+
+  const builderSidebarOpen = useAppSelector(state => state.sidebar.builderSidebarOpen);
+
+  const [templateDrawerOpen, setTemplateDrawerOpen] = useState(Boolean(router.query.editor));
   const [messageSnackBar, setMessageSnackBar] = useState({ status: false, message: "" });
   const [errorSnackBar, setErrorSnackBar] = useState({ status: false, message: "" });
-  const dispatch = useAppDispatch();
-  const storedPrompts = useAppSelector(state => state.builder.prompts);
-  const storedEngines = useAppSelector(state => state.builder.engines);
-  const createMode = router.query.slug === "create" ? "create" : "edit";
 
-  useEffect(() => {
-    if (!storedPrompts.length) {
-      dispatch(handlePrompts(initPrompts));
-    }
-
-    if (!storedEngines.length) {
-      dispatch(handleEngines(engines));
-    }
-  }, [initPrompts, engines]);
-
-  useEffect(() => {
-    setPrompts(storedPrompts);
-  }, [storedPrompts]);
+  const createMode = slug === "create" ? "create" : "edit";
 
   useEffect(() => {
     if (!token) {
       router.push("/signin");
-    }
-
-    if (router.query.editor) {
+    } else if (router.query.editor) {
       const { editor, ...restQueryParams } = router.query;
 
       router.replace(
@@ -76,23 +78,24 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
   }, [router.query]);
 
   const handleSaveTemplate = async (newTemplate?: Templates) => {
+    let currentTemplateData = newTemplate || templateData;
+    if (!currentTemplateData) return;
+
     if (newTemplate) {
-      templateData = newTemplate;
+      setTemplateData(newTemplate);
     }
 
-    if (!templateData.id) {
+    if (!currentTemplateData.id) {
       let message = "Please try again or refresh the page";
-
       if (createMode === "create") {
         message = "Please try again, and make sure you've entered template information!";
         setTemplateDrawerOpen(true);
       }
-
       setErrorSnackBar({ status: true, message });
-      createMode === "create" && setTemplateDrawerOpen(true);
       return;
     }
 
+    // Validate prompts
     const invalids: string[] = [];
     for (let i = 0; i < prompts.length; i++) {
       const prompt = prompts[i];
@@ -104,11 +107,15 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
     }
 
     if (invalids.length) {
-      setErrorSnackBar({ status: true, message: `You have entered an invalid prompt variable ${invalids.toString()}` });
+      setErrorSnackBar({ status: true, message: `You have entered an invalid prompt variable ${invalids.join(", ")}` });
       return;
     }
 
     const _prompts = prompts.map((prompt, index, array) => {
+      if (prompt.output_format === "custom" && prompt.custom_output_format) {
+        prompt.output_format = prompt.custom_output_format;
+        delete prompt.custom_output_format;
+      }
       const depend = array[index - 1]?.id || array[index - 1]?.temp_id;
       return {
         ...prompt,
@@ -123,27 +130,28 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
     });
 
     const _template: IEditTemplate = {
-      title: templateData.title,
-      description: templateData.description,
-      example: templateData.example,
-      thumbnail: templateData.thumbnail,
-      is_visible: templateData.is_visible,
-      language: templateData.language,
-      duration: templateData.duration.toString(),
-      category: templateData.category.id,
-      difficulty: templateData.difficulty,
-      status: templateData.status,
+      title: currentTemplateData.title,
+      description: currentTemplateData.description,
+      example: currentTemplateData.example,
+      thumbnail: currentTemplateData.thumbnail,
+      is_visible: currentTemplateData.is_visible,
+      language: currentTemplateData.language,
+      duration: currentTemplateData.duration.toString(),
+      category: currentTemplateData.category.id,
+      difficulty: currentTemplateData.difficulty,
+      status: currentTemplateData.status,
       prompts_list: _prompts,
-      context: templateData.context,
-      tags: templateData.tags,
-      executions_limit: templateData.executions_limit,
-      meta_title: templateData.meta_title,
-      meta_description: templateData.meta_description,
-      meta_keywords: templateData.meta_keywords,
+      context: currentTemplateData.context,
+      tags: currentTemplateData.tags,
+      executions_limit: currentTemplateData.executions_limit,
+      meta_title: currentTemplateData.meta_title,
+      meta_description: currentTemplateData.meta_description,
+      meta_keywords: currentTemplateData.meta_keywords,
     };
 
-    await updateTemplate(templateData.id, _template);
+    await updateTemplate(currentTemplateData.id, _template);
     setMessageSnackBar({ status: true, message: "Prompt template saved with success" });
+
     setTimeout(() => {
       if (newTemplate) {
         window.location.href = window.location.href.replace("create", newTemplate.slug);
@@ -154,7 +162,7 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
   };
 
   const handlePublishTemplate = async () => {
-    if (!templateData.id) {
+    if (!templateData?.id) {
       let message = "Please try again or refresh the page";
 
       if (createMode === "create") {
@@ -178,7 +186,11 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
       }}
     >
       <Sidebar />
-      <BuilderSidebar />
+      <BuilderSidebar
+        prompts={prompts}
+        setPrompts={setPrompts}
+        engines={engines!}
+      />
       <Box
         sx={{
           ml: theme.custom.leftClosedSidebarWidth,
@@ -186,13 +198,15 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
         }}
       >
         <Header
+          templateLoading={isTemplateLoading}
           status={templateData?.status || "DRAFT"}
-          title={templateData?.title || ""}
-          templateSlug={templateData.slug}
+          title={templateData?.title!}
+          templateSlug={templateData?.slug}
           onPublish={handlePublishTemplate}
           onSave={handleSaveTemplate}
           onEditTemplate={() => setTemplateDrawerOpen(true)}
           type={BUILDER_TYPE.USER}
+          sidebarOpened={builderSidebarOpen}
         />
 
         <Box
@@ -200,6 +214,8 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
             width: "70%",
             mx: "auto",
             p: "24px 0 40px",
+
+            ...(router.pathname.includes("/prompt-builder/") && { mt: theme.custom.promptBuilder.headerHeight }),
           }}
         >
           <Stack
@@ -216,15 +232,16 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
           <Box>
             <DndProvider backend={HTML5Backend}>
               <PromptList
+                templateLoading={isTemplateLoading}
                 prompts={prompts}
                 setPrompts={setPrompts}
-                engines={engines}
+                engines={engines!}
               />
             </DndProvider>
           </Box>
         </Box>
 
-        {!!templateData && (
+        {!!templateData && templateDrawerOpen && (
           <SwipeableDrawer
             anchor={"left"}
             open={templateDrawerOpen}
@@ -281,77 +298,12 @@ export const PromptBuilder = ({ templateData, initPrompts, engines }: PromptBuil
   );
 };
 
-const initPrompts = (template: Templates, engines: Engine[]) => {
-  if (template?.prompts) {
-    const textEngine = engines.find(engine => engine.output_type === "TEXT");
-    const _prompts = template.prompts.map((prompt, index) => {
-      const initialParams = prompt.parameters.map(param => ({
-        parameter_id: param.parameter.id,
-        score: param.score,
-        name: param.parameter.name,
-        is_visible: param.is_visible,
-        is_editable: param.is_editable,
-        descriptions: param.parameter.score_descriptions,
-      }));
-
-      return {
-        id: prompt.id,
-        title: prompt.title || `Prompt #1`,
-        content: prompt.content || "Describe here prompt parameters, for example {{name:text}}",
-        engine_id: prompt.engine?.id || textEngine?.id,
-        dependencies: prompt.dependencies || [],
-        parameters: initialParams,
-        order: index + 1,
-        output_format: prompt.output_format,
-        model_parameters: prompt.model_parameters,
-        is_visible: prompt.is_visible,
-        show_output: prompt.show_output,
-        prompt_output_variable: prompt.prompt_output_variable,
-      };
-    });
-
-    return _prompts;
-  }
-};
-
-export async function getServerSideProps({ params }: { params: { slug: string } }) {
-  const { slug } = params;
-  let engines: Engine[] = [];
-  let templateData: Templates = {} as Templates;
-  let _initPrompts: ReturnType<typeof initPrompts> = [];
-
-  try {
-    if (slug === "create") {
-      const _engines = await client.get<Engine[]>(`/api/meta/engines`);
-      engines = _engines.data;
-      templateData.title = "new_template_12345";
-    } else {
-      const [_fetchedTemplate, _engines] = await Promise.allSettled([
-        client.get<Templates>(`/api/meta/templates/by-slug/${slug}/`),
-        client.get<Engine[]>(`/api/meta/engines`),
-      ]);
-
-      if (_fetchedTemplate.status === "fulfilled") {
-        templateData = _fetchedTemplate.value.data;
-        _initPrompts = initPrompts(templateData, engines) ?? [];
-      }
-
-      if (_engines.status === "fulfilled") {
-        engines = _engines.value.data;
-      }
-    }
-  } catch (error) {
-    console.error("Template/engines request failed:", error);
-  }
-
+export async function getServerSideProps() {
   return {
     props: {
       title: "Promptify | Boost Your Creativity",
       description:
         "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
-      templateData,
-      initPrompts: _initPrompts,
-      engines,
     },
   };
 }

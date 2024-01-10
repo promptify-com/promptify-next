@@ -1,24 +1,14 @@
-import React, { useState } from "react";
-import { IconButton, Tooltip } from "@mui/material";
-import HelpOutline from "@mui/icons-material/HelpOutline";
+import { ReactNode, useState } from "react";
+import Stack from "@mui/material/Stack";
+import Tooltip from "@mui/material/Tooltip";
 
 interface CustomTooltipProps {
   title: React.ReactNode;
+  children: ReactNode;
 }
 
-function CustomTooltip({ title }: CustomTooltipProps) {
+function CustomTooltip({ title, children }: CustomTooltipProps) {
   const [openTooltip, setOpenTooltip] = useState(false);
-
-  const commonPopperProps = {
-    modifiers: [
-      {
-        name: "offset",
-        options: {
-          offset: [0, -14],
-        },
-      },
-    ],
-  };
 
   return (
     <Tooltip
@@ -29,17 +19,20 @@ function CustomTooltip({ title }: CustomTooltipProps) {
       PopperProps={commonPopperProps}
       title={title}
     >
-      <IconButton
-        onClick={() => setOpenTooltip(!openTooltip)}
-        sx={{
-          opacity: 0.3,
-          border: "none",
-        }}
-      >
-        <HelpOutline />
-      </IconButton>
+      <Stack onClick={() => setOpenTooltip(!openTooltip)}>{children}</Stack>
     </Tooltip>
   );
 }
 
 export default CustomTooltip;
+
+const commonPopperProps = {
+  modifiers: [
+    {
+      name: "offset",
+      options: {
+        offset: [0, -14],
+      },
+    },
+  ],
+};

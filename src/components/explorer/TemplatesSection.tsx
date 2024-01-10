@@ -8,47 +8,55 @@ import LatestTemplatePlaceholder from "@/components/placeholders/LatestTemplateP
 import TemplatesInfiniteScroll from "../TemplatesInfiniteScroll";
 import { TemplatesFilter } from "./TemplatesFilter";
 import { Close, FilterList } from "@mui/icons-material";
-import { useState } from "react";
+import { type RefObject, useState, forwardRef } from "react";
 
 interface TemplatesSectionProps {
   templates: Templates[] | TemplateExecutionsDisplay[] | undefined;
-  isLoading: boolean;
+  isLoading?: boolean;
+  templateLoading?: boolean;
   filtred?: boolean;
   title?: string;
   isLatestTemplates?: boolean;
   onNextPage?: () => void;
   type?: string;
   hasMore?: boolean;
-  templateLoading?: boolean;
   isInfiniteScrolling?: boolean;
   hasPrev?: boolean;
   onPrevPage?: () => void;
 }
 
-export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
-  templates,
-  isLoading,
-  filtred,
-  title,
-  isLatestTemplates = false,
-  onNextPage = () => {},
-  type,
-  hasMore,
-  templateLoading,
-  isInfiniteScrolling = true,
-  hasPrev,
-  onPrevPage = () => {},
-}) => {
+export const TemplatesSection = forwardRef<HTMLDivElement, TemplatesSectionProps>(function TemplatesSectionInner(
+  {
+    templates,
+    isLoading = false,
+    filtred,
+    title,
+    isLatestTemplates = false,
+    onNextPage = () => {},
+    type,
+    hasMore,
+    templateLoading,
+    isInfiniteScrolling = true,
+    hasPrev,
+    onPrevPage = () => {},
+  },
+  ref,
+) {
   const [openFilters, setOpenFilters] = useState(false);
-
-  if (!isLoading && !templates?.length) {
-    return null;
-  }
 
   const filtersAllowed = type !== "myLatestExecutions";
 
+  const isNotLoading = !isLoading && !templateLoading;
+
+  if (isNotLoading && !templates?.length) {
+    return null;
+  }
+
   return (
-    <Box width={"100%"}>
+    <Box
+      width={"100%"}
+      ref={ref}
+    >
       {!filtred && (templateLoading || !!templates?.length) && (
         <Box>
           <Stack
@@ -171,4 +179,4 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
       )}
     </Box>
   );
-};
+});

@@ -1,3 +1,4 @@
+import { stripTags } from "@/common/helpers";
 import { formatDate, timeAgo } from "@/common/helpers/timeManipulation";
 import ClientOnly from "@/components/base/ClientOnly";
 import { Templates } from "@/core/api/dto/templates";
@@ -10,7 +11,7 @@ interface TemplateDetailsProps {
   template: Templates;
 }
 
-export const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template }) => {
+const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template }) => {
   const router = useRouter();
   const dispatch = useDispatch();
 
@@ -59,7 +60,7 @@ export const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template }) =>
         fontWeight={400}
         color={"onSurface"}
       >
-        {template.description}
+        {stripTags(template.description)}
       </Typography>
 
       <Stack gap={1}>
@@ -122,3 +123,5 @@ export const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template }) =>
     </Stack>
   );
 };
+
+export default TemplateDetails;

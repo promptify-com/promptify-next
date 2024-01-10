@@ -60,6 +60,11 @@ export const Display: React.FC<Props> = ({ templateData }) => {
 
   const showPreviews = previewsShown && !isGenerating;
 
+  const height = {
+    topHeaderActions: "58px",
+    chatInput: "85px",
+  };
+
   return (
     <Grid
       display={"flex"}
@@ -69,7 +74,7 @@ export const Display: React.FC<Props> = ({ templateData }) => {
         sx={{
           bgcolor: "surface.3",
           minHeight: {
-            xs: `calc(100svh - (58px + 80px ${isGenerating ? "+ 30.5px" : ""}))`,
+            xs: `calc(100svh - (${height.topHeaderActions} + ${height.chatInput} ${isGenerating ? "+ 30.5px" : ""}))`,
             md: "calc(100svh - (90px + 70.5px))",
           },
           height: "1px",
@@ -79,7 +84,6 @@ export const Display: React.FC<Props> = ({ templateData }) => {
         {currentUser?.id && (
           <>
             <DisplayActions
-              selectedExecution={selectedExecution}
               onOpenExport={() => setOpenExportpopup(true)}
               showPreviews={previewsShown}
               toggleShowPreviews={() => setPreviewsShown(!previewsShown)}

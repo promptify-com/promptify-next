@@ -61,8 +61,8 @@ function App({ Component, ...rest }: AppProps) {
   useEffect(() => {
     const viewportMetaTagElement = document?.querySelector("[name=viewport]") as HTMLMetaElement;
 
-    if (navigator.userAgent.indexOf("iPhone") > -1 && !viewportMetaTagElement.content.includes("maximum-scale=1")) {
-      viewportMetaTagElement.setAttribute("content", "width=device-width, initial-scale=1, maximum-scale=1");
+    if (navigator.userAgent.indexOf("iPhone") <= -1) {
+      viewportMetaTagElement.setAttribute("content", "width=device-width, initial-scale=1");
     }
   }, []);
 
@@ -74,8 +74,12 @@ function App({ Component, ...rest }: AppProps) {
             <Script
               strategy="lazyOnload"
               src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS}`}
+              defer
             />
-            <Script strategy="lazyOnload">
+            <Script
+              strategy="lazyOnload"
+              defer
+            >
               {`
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){dataLayer.push(arguments);}
@@ -87,6 +91,7 @@ function App({ Component, ...rest }: AppProps) {
             </Script>
             <Script
               strategy="afterInteractive"
+              defer
               dangerouslySetInnerHTML={{
                 __html: `
               (function(h,o,t,j,a,r){
@@ -107,7 +112,7 @@ function App({ Component, ...rest }: AppProps) {
           <title>{pageProps?.title ?? "Promptify | Boost Your Creativity"}</title>
           <meta
             name="viewport"
-            content="width=device-width, initial-scale=1"
+            content="width=device-width, initial-scale=1 maximum-scale=1"
           />
           <meta
             name="description"

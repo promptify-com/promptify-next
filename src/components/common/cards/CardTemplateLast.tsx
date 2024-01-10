@@ -11,7 +11,7 @@ import useTruncate from "@/hooks/useTruncate";
 import SavedSpark from "@/assets/icons/SavedSpark";
 import NoSpark from "@/assets/icons/NoSpark";
 import Image from "@/components/design-system/Image";
-import { redirectToPath } from "@/common/helpers";
+import { redirectToPath, stripTags } from "@/common/helpers";
 import { theme } from "@/theme";
 
 type CardTemplateLastProps = {
@@ -94,7 +94,7 @@ function CardTemplateLast({ template }: CardTemplateLastProps) {
                   color: "text.secondary",
                 }}
               >
-                {truncate(template.description, { length: 60 })}
+                {truncate(stripTags(template.description), { length: 60 })}
               </Typography>
             </Grid>
             <Grid

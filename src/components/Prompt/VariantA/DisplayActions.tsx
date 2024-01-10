@@ -11,7 +11,7 @@ import {
   VisibilityOutlined,
 } from "@mui/icons-material";
 
-import { ExecutionTemplatePopupType, TemplatesExecutions } from "@/core/api/dto/templates";
+import { ExecutionTemplatePopupType } from "@/core/api/dto/templates";
 import { useAppSelector } from "@/hooks/useStore";
 import { useDeleteExecutionFavoriteMutation, useExecutionFavoriteMutation } from "@/core/api/executions";
 import useTruncate from "@/hooks/useTruncate";
@@ -20,25 +20,23 @@ import { useDispatch } from "react-redux";
 import { setGeneratedExecution, setSelectedExecution } from "@/core/store/executionsSlice";
 import { ProgressLogo } from "@/components/common/ProgressLogo";
 import AvatarWithInitials from "@/components/Prompt/Common/AvatarWithInitials";
+import { isDesktopViewPort } from "@/common/helpers";
 
 interface Props {
-  selectedExecution: TemplatesExecutions | null;
   onOpenExport: () => void;
   showPreviews: boolean;
   toggleShowPreviews: () => void;
 }
 
-export const DisplayActions: React.FC<Props> = ({
-  selectedExecution,
-  onOpenExport,
-  showPreviews,
-  toggleShowPreviews,
-}) => {
+export const DisplayActions: React.FC<Props> = ({ onOpenExport, showPreviews, toggleShowPreviews }) => {
   const { truncate } = useTruncate();
   const dispatch = useDispatch();
+  const isMobile = !isDesktopViewPort();
   const [favoriteExecution] = useExecutionFavoriteMutation();
   const [deleteExecutionFavorite] = useDeleteExecutionFavoriteMutation();
+
   const isGenerating = useAppSelector(state => state.template.isGenerating);
+  const { selectedExecution, repeatedExecution } = useAppSelector(state => state.executions);
 
   const [executionTitle, setExecutionTitle] = useState(selectedExecution?.title);
   const [executionPopup, setExecutionPopup] = useState<ExecutionTemplatePopupType>(null);
@@ -46,6 +44,12 @@ export const DisplayActions: React.FC<Props> = ({
   useEffect(() => {
     setExecutionTitle(selectedExecution?.title);
   }, [selectedExecution]);
+
+  useEffect(() => {
+    if (isMobile && repeatedExecution) {
+      closeExecutionDisplay();
+    }
+  }, [repeatedExecution]);
 
   const saveExecution = async () => {
     if (!!!selectedExecution) return;

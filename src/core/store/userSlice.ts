@@ -25,6 +25,8 @@ const userSlice = createSlice({
 export const isValidUserFn = ({ user }: { user: IState }) =>
   Boolean(user.currentUser?.id && user.currentUser?.username);
 
+export const isAdminFn = ({ user }: { user: IState }) => Boolean(user.currentUser && user.currentUser?.is_admin);
+
 export const { updateUser } = userSlice.actions;
 
 export default userSlice.reducer;

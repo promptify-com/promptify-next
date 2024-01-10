@@ -1,40 +1,46 @@
 import React, { useState } from "react";
-import { Box, CardMedia, Chip, Collapse, IconButton, Stack, Typography, alpha } from "@mui/material";
-import { Templates } from "@/core/api/dto/templates";
+import { alpha } from "@mui/material";
+import Box from "@mui/material/Box";
+import Chip from "@mui/material/Chip";
+import Collapse from "@mui/material/Collapse";
+import IconButton from "@mui/material/IconButton";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import { Tag, Templates } from "@/core/api/dto/templates";
 import { theme } from "@/theme";
 import { useDispatch } from "react-redux";
 import { setSelectedTag } from "@/core/store/filtersSlice";
 import { useRouter } from "next/router";
-import { ExpandLess, ExpandMore } from "@mui/icons-material";
+import ExpandLess from "@mui/icons-material/ExpandLess";
+import ExpandMore from "@mui/icons-material/ExpandMore";
+import Image from "@/components/design-system/Image";
+import { stripTags } from "@/common/helpers";
 
 interface TemplateDetailsCardProps {
   template: Templates;
   min?: boolean;
 }
 
-export default function TemplateDetailsCard({ template, min }: TemplateDetailsCardProps) {
+const DescriptionTags = ({ description, tags }: { description: string; tags: Tag[] }) => {
   const dispatch = useDispatch();
   const router = useRouter();
 
-  const variantA = router.query.variant === "a";
-  const [expanded, setExpanded] = useState(false);
-
-  const DescriptionTags = () => (
+  return (
     <>
       <Typography
         fontSize={{ xs: 12, md: 14 }}
         fontWeight={400}
         color={"onSurface"}
       >
-        {template.description}
+        {stripTags(description)}
       </Typography>
       <Stack
         direction={"row"}
         flexWrap={"wrap"}
         gap={1}
       >
-        {template.tags?.length > 0 &&
-          template.tags.map(tag => (
+        {tags?.length > 0 &&
+          tags.map(tag => (
             <Chip
               key={tag.id}
               onClick={() => {
@@ -59,6 +65,10 @@ export default function TemplateDetailsCard({ template, min }: TemplateDetailsCa
       </Stack>
     </>
   );
+};
+
+export default function TemplateDetailsCard({ template, min }: TemplateDetailsCardProps) {
+  const [expanded, setExpanded] = useState(false);
 
   return (
     <Box
@@ -100,18 +110,21 @@ export default function TemplateDetailsCard({ template, min }: TemplateDetailsCa
               {template.title}
             </Typography>
           </Stack>
-          {!min && <DescriptionTags />}
+          {!min && (
+            <DescriptionTags
+              tags={template.tags}
+              description={template.description}
+            />
+          )}
         </Stack>
-        <CardMedia
-          sx={{
-            width: min ? "101px" : "351px",
-            height: min ? "72px" : "262px",
-            objectFit: "cover",
-            borderRadius: "48px",
-          }}
-          component="img"
-          image={template.thumbnail}
+        <Image
+          src={template.thumbnail}
+          width={min ? 101 : 351}
+          height={min ? 72 : 262}
           alt={template.title}
+          priority
+          style={{ borderRadius: "48px", objectFit: "cover" }}
+          loading="eager"
         />
       </Stack>
       {min && (
@@ -137,7 +150,10 @@ export default function TemplateDetailsCard({ template, min }: TemplateDetailsCa
               gap={1}
               my={"8px"}
             >
-              <DescriptionTags />
+              <DescriptionTags
+                tags={template.tags}
+                description={template.description}
+              />
             </Stack>
           </Collapse>
         </>

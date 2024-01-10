@@ -11,45 +11,53 @@ declare global {
   var gtag: (arg1: string, arg2: string, arg3: Record<string, string>) => void;
 }
 
+function getRandomVariant() {
+  return Math.random() < 0.5 ? "a" : "b";
+}
+
 const useVariant = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
-
-  const [variant, setVariant] = useState<string>("a");
+  const [variant, setVariant] = useState<string>(
+    (router.query.variant as string) !== "unknown" ? (router.query.variant as string) : getRandomVariant(),
+  );
 
   const isVariantB = variant === "b";
   const isVariantA = variant === "a";
 
   useEffect(() => {
     const cookieVariant = Cookie.get("variant");
-    let variant = cookieVariant ?? (router.query.variant as string);
+    let effectiveVariant = cookieVariant ?? variant;
 
-    if (!variant) {
-      variant = Math.random() < 0.5 ? "a" : "b";
+    if (!effectiveVariant) {
+      effectiveVariant = getRandomVariant();
     }
 
-    setVariant(variant);
+    setVariant(effectiveVariant);
 
     if (!cookieVariant) {
       sendPageViewEvent();
 
-      Cookie.set("variant", variant, 30);
+      Cookie.set("variant", effectiveVariant, 30);
     }
 
-    if (router.query.variant !== variant) {
-      router.replace({ pathname: router.pathname, query: { ...router.query, variant } }, undefined, { shallow: true });
+    if (router.query.variant !== effectiveVariant) {
+      const { hash, ...queries } = router.query;
+      router.replace({ pathname: router.pathname, query: { ...queries, variant: effectiveVariant } }, undefined, {
+        shallow: true,
+      });
     }
 
     function sendPageViewEvent() {
       if (typeof window.gtag === "undefined") {
         const intervalID = setInterval(() => {
           if (typeof window.gtag === "function") {
-            window.gtag("event", "pageview", { Branch: `staging-${variant}` });
+            window.gtag("event", "pageview", { Branch: `staging-${effectiveVariant}` });
             clearInterval(intervalID);
           }
         }, 1000);
       } else {
-        window.gtag("event", "pageview", { Branch: `staging-${variant}` });
+        window.gtag("event", "pageview", { Branch: `staging-${effectiveVariant}` });
       }
     }
   }, [router]);
@@ -68,7 +76,8 @@ const useVariant = () => {
     Cookie.set("variant", newVariant, 30);
     clearStoredStates();
 
-    router.replace({ pathname: router.pathname, query: { ...router.query, variant: newVariant } }, undefined, {
+    const { hash, ...queries } = router.query;
+    router.replace({ pathname: router.pathname, query: { ...queries, variant: newVariant } }, undefined, {
       shallow: true,
     });
   };

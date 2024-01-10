@@ -36,6 +36,8 @@ export default function AccordionMessage({
   const dispatch = useAppDispatch();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const currentUser = useAppSelector(state => state.user.currentUser);
+  const inputs = useAppSelector(state => state.chat.inputs);
+  const hasInputs = !!inputs.length;
 
   const accordionRef = useRef<HTMLDivElement>(null);
 
@@ -83,6 +85,7 @@ export default function AccordionMessage({
               letterSpacing={"1px"}
               fontSize={"10px"}
               textTransform={"uppercase"}
+              display={hasInputs ? "block" : "none"}
             >
               {isGenerating ? "Generation Result" : "PROMPT Template information"}
             </Typography>

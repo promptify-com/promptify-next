@@ -116,3 +116,5 @@ export const ApiAccess: React.FC<ApiAccessProps> = ({ template }) => {
     </Stack>
   );
 };
+
+export default ApiAccess;

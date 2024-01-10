@@ -1,19 +1,23 @@
+import { useRef, useState } from "react";
+import Stack from "@mui/material/Stack";
+import Avatar from "@mui/material/Avatar";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+import { useRouter } from "next/router";
+
 import { timeAgo } from "@/common/helpers/timeManipulation";
 import SigninButton from "@/components/common/buttons/SigninButton";
 import useToken from "@/hooks/useToken";
-import { Avatar, Box, Stack, Typography } from "@mui/material";
 import MessageSender from "../Chat/MessageSender";
-import { useRef, useState } from "react";
 import { useGetFeedbacksQuery, useSaveFeedbackMutation } from "@/core/api/templates";
 import { useAppSelector } from "@/hooks/useStore";
 import ChatMessagePlaceholder from "@/components/placeholders/ChatMessagePlaceholder";
-import { IUser } from "@/common/types";
-import { UserPartial } from "@/core/api/dto/user";
+import type { UserPartial } from "@/core/api/dto/user";
 
 const maxLength = 2500;
-
-export const Feedback = () => {
+const Feedback = () => {
   const token = useToken();
+  const router = useRouter();
   const [feedback, setFeedback] = useState("");
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLDivElement>(null);
@@ -55,6 +59,7 @@ export const Feedback = () => {
   }
 
   const publichedFeedbacks = feedbacks?.filter(_f => _f.status === "published") || [];
+
   return (
     <Stack
       gap={3}
@@ -96,43 +101,32 @@ export const Feedback = () => {
                 return (
                   <Stack
                     key={feedback.id}
-                    direction={"row"}
-                    gap={1.5}
+                    direction={"column"}
+                    gap={1}
                   >
-                    <Avatar
-                      src={feedback.user.avatar}
-                      alt={"Promptify"}
-                      sx={{
-                        width: 32,
-                        height: 32,
-                        bgcolor: "surface.5",
-                      }}
-                    />
-                    <Stack gap={1.5}>
-                      <Stack
-                        direction={"row"}
-                        alignItems={"center"}
-                        gap={1.5}
+                    <Stack
+                      direction={"row"}
+                      gap={1.5}
+                      alignItems={"center"}
+                    >
+                      <Avatar
+                        src={feedback.user.avatar}
+                        alt={"Promptify"}
+                        sx={{
+                          width: 32,
+                          height: 32,
+                          bgcolor: "surface.5",
+                        }}
+                      />
+
+                      <Typography
+                        fontSize={13}
+                        fontWeight={500}
+                        color={"primary.main"}
+                        textTransform={"capitalize"}
                       >
-                        <Typography
-                          fontSize={13}
-                          fontWeight={500}
-                          color={"primary.main"}
-                          textTransform={"capitalize"}
-                        >
-                          {getDisplayName(feedback.user)}
-                        </Typography>
-                        <Typography
-                          fontSize={14}
-                          fontWeight={400}
-                          color={"common.black"}
-                          sx={{
-                            wordBreak: "break-word",
-                          }}
-                        >
-                          {createdAt}
-                        </Typography>
-                      </Stack>
+                        {getDisplayName(feedback.user)}
+                      </Typography>
                       <Typography
                         fontSize={14}
                         fontWeight={400}
@@ -141,9 +135,20 @@ export const Feedback = () => {
                           wordBreak: "break-word",
                         }}
                       >
-                        {feedback.comment}
+                        {createdAt}
                       </Typography>
                     </Stack>
+                    <Typography
+                      fontSize={14}
+                      ml={"43px"}
+                      fontWeight={400}
+                      color={"common.black"}
+                      sx={{
+                        wordBreak: "break-word",
+                      }}
+                    >
+                      {feedback.comment}
+                    </Typography>
                   </Stack>
                 );
               })}
@@ -159,7 +164,7 @@ export const Feedback = () => {
         >
           <Box
             width={"90%"}
-            p={"10px 24px"}
+            p={"10px 14px"}
           >
             <MessageSender
               onSubmit={handleSubmit}
@@ -183,9 +188,11 @@ export const Feedback = () => {
           alignItems={"center"}
           mb={"20px"}
         >
-          <SigninButton />
+          <SigninButton onClick={() => router.push("/signin")} />
         </Stack>
       )}
     </Stack>
   );
 };
+
+export default Feedback;

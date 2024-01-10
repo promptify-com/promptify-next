@@ -1,22 +1,23 @@
+import { usePathname } from "next/navigation";
 import StickyNote2 from "@mui/icons-material/StickyNote2";
 import Home from "@mui/icons-material/Home";
 import Drawer from "@mui/material/Drawer";
-import { usePathname } from "next/navigation";
-import React from "react";
-import { useAppSelector } from "@/hooks/useStore";
-import { isValidUserFn } from "@/core/store/userSlice";
-import { ExtensionRounded, FolderSpecial, HelpRounded, Inventory2Rounded, Route } from "@mui/icons-material";
 import List from "@mui/material/List";
 import Grid from "@mui/material/Grid";
-import { NavItem } from "@/common/types/sidebar";
+import ExtensionRounded from "@mui/icons-material/ExtensionRounded";
+import FolderSpecial from "@mui/icons-material/FolderSpecial";
+import HelpRounded from "@mui/icons-material/HelpRounded";
+
+import { useAppSelector } from "@/hooks/useStore";
+import { isValidUserFn } from "@/core/store/userSlice";
+import Inventory2Rounded from "@mui/icons-material/Inventory2Rounded";
+import type { NavItem } from "@/common/types/sidebar";
 import SidebarItem from "./SidebarItem";
 import { theme } from "@/theme";
 
 function Sidebar() {
   const pathname = usePathname();
   const isPromptsPage = pathname.split("/")[1] === "explore";
-  const isTemplatePage = pathname.split("/")[1] === "prompt";
-  const slug = isTemplatePage ? pathname.split("/")[2] : "create";
   const isValidUser = useAppSelector(isValidUserFn);
   const navItems: NavItem[] = [
     {
@@ -25,7 +26,7 @@ function Sidebar() {
       icon: <Home />,
       active: pathname === "/",
       external: false,
-      reload: true,
+      reload: false,
     },
     {
       name: "Prompts",
@@ -33,7 +34,7 @@ function Sidebar() {
       icon: <StickyNote2 />,
       active: isPromptsPage,
       external: false,
-      reload: true,
+      reload: false,
     },
     {
       name: "My Works",
@@ -45,7 +46,7 @@ function Sidebar() {
     },
     {
       name: "Prompt Builder",
-      href: isValidUser ? `/prompt-builder/${slug}` : "/signin",
+      href: isValidUser ? `/prompt-builder/create` : "/signin",
       icon: <Inventory2Rounded />,
       active: pathname.includes("/prompt-builder"),
       external: isValidUser,

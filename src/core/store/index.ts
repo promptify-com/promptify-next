@@ -7,7 +7,6 @@ import filterSlice from "./filtersSlice";
 import sidebarSlice from "./sidebarSlice";
 import profileSlice from "./profileSlice";
 import userSlice from "./userSlice";
-import builderSlice from "./builderSlice";
 import executionsSlice from "./executionsSlice";
 import chatSlice from "./chatSlice";
 
@@ -24,7 +23,6 @@ export const store = (options?: ConfigureStoreOptions["preloadedState"] | undefi
       sidebar: sidebarSlice,
       profile: profileSlice,
       user: userSlice,
-      builder: builderSlice,
       executions: executionsSlice,
       chat: chatSlice,
     },

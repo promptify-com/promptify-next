@@ -2,13 +2,26 @@
 const nextConfig = {
   reactStrictMode: false,
   images: {
-    domains: ["promptify.s3.amazonaws.com", "d20puxs4zqc773.cloudfront.net"],
-    minimumCacheTTL: 60 * 60,
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'promptify.s3.amazonaws.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'd20puxs4zqc773.cloudfront.net',
+      },
+      {
+        protocol: 'https',
+        hostname: 'insights.hotjar.com',
+      },
+    ],
+    minimumCacheTTL: 3600,
   },
   eslint: {
     dirs: ['common', 'assets', 'core', 'hooks', 'styles', 'themes', 'pages'],
   },
-  poweredByHeader: false
+  poweredByHeader: false,
 };
 
 if (
