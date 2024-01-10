@@ -195,12 +195,6 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
     }
   };
 
-  const handleSignIn = () => {
-    storeAnswers(answers);
-    storeParams(paramsValues);
-    router.push("/signin");
-  };
-
   const showGenerate =
     !isSimulationStreaming &&
     ((showGenerateButton && messages[messages.length - 1]?.type !== "spark") ||
@@ -261,7 +255,13 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
             gap={1}
             p={"16px 8px 16px 16px"}
           >
-            <SigninButton onClick={handleSignIn} />
+            <SigninButton
+              onClick={() => {
+                storeAnswers(answers);
+                storeParams(paramsValues);
+                router.push("/signin");
+              }}
+            />
           </Stack>
         )}
       </Stack>
