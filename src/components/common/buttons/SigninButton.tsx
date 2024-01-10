@@ -1,16 +1,11 @@
-import React from "react";
-import { Button, Typography } from "@mui/material";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
 import { LogoApp } from "@/assets/icons/LogoApp";
-import { useRouter } from "next/router";
 
-export const SigninButton = () => {
-  const router = useRouter();
-
+export const SigninButton = ({ onClick }: { onClick: () => void }) => {
   return (
     <Button
-      onClick={() => {
-        router.push("/signin");
-      }}
+      onClick={onClick}
       variant={"contained"}
       startIcon={
         <LogoApp

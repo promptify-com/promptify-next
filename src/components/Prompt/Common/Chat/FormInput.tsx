@@ -15,6 +15,7 @@ import useApiAccess from "../../Hooks/useApiAccess";
 import { setAnswers } from "@/core/store/chatSlice";
 import { PromptInputType } from "@/components/Prompt/Types";
 import { IAnswer } from "@/components/Prompt/Types/chat";
+import Storage from "@/common/storage";
 
 interface Props {
   input: IPromptInput;
@@ -32,6 +33,19 @@ function FormInput({ input }: Props) {
   const { fullName, required, type, name: inputName, question, prompt } = input;
   const value = answers.find(answer => answer.inputName === inputName)?.answer ?? "";
   const isTextualType = type === "text" || type === "number" || type === "integer";
+
+  useEffect(() => {
+    const answersStored = Storage.get("answers");
+
+    if (!answersStored) return;
+
+    const isRelevantAnswer = answersStored.some((answer: IAnswer) => answer.prompt === answer.prompt);
+
+    if (isRelevantAnswer) {
+      dispatch(setAnswers(answersStored));
+      Storage.remove("answers");
+    }
+  }, []);
 
   useEffect(() => {
     if (isVariantB) return;

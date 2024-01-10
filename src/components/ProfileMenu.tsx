@@ -35,6 +35,10 @@ export const ProfileMenu = () => {
     await logout();
   };
 
+  const ProfileMenuItemsFiltered = currentUser?.is_admin
+    ? ProfileMenuItems
+    : ProfileMenuItems.filter(item => item.href !== "/deployments");
+
   return (
     <Box>
       <Avatar
@@ -162,7 +166,7 @@ export const ProfileMenu = () => {
                     autoFocusItem={false}
                     sx={{ width: "100%" }}
                   >
-                    {ProfileMenuItems.map(item => (
+                    {ProfileMenuItemsFiltered.map(item => (
                       <MenuItem
                         key={item.name}
                         onClick={() => handleHeaderMenu(item)}
