@@ -7,13 +7,14 @@ import Grid from "@mui/material/Grid";
 import ExtensionRounded from "@mui/icons-material/ExtensionRounded";
 import FolderSpecial from "@mui/icons-material/FolderSpecial";
 import HelpRounded from "@mui/icons-material/HelpRounded";
+import Route from "@mui/icons-material/Route";
+import Inventory2Rounded from "@mui/icons-material/Inventory2Rounded";
 
 import { useAppSelector } from "@/hooks/useStore";
 import { isValidUserFn } from "@/core/store/userSlice";
-import Inventory2Rounded from "@mui/icons-material/Inventory2Rounded";
-import type { NavItem } from "@/common/types/sidebar";
 import SidebarItem from "./SidebarItem";
 import { theme } from "@/theme";
+import type { NavItem } from "@/common/types/sidebar";
 
 function Sidebar() {
   const pathname = usePathname();
