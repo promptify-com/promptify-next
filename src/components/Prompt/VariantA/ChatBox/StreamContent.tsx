@@ -20,8 +20,9 @@ export const StreamContent = memo(({ content, shouldStream, onStreamingFinished,
 
   useEffect(() => {
     if (hasFinished) {
-      onStreamingFinished();
       dispatch(setIsSimulationStreaming(false));
+
+      onStreamingFinished();
     }
   }, [hasFinished]);
 
