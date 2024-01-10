@@ -129,6 +129,7 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
 
     if (sparkHashQueryParam) {
       const parameters = selectedExecution?.parameters;
+      const contextualOverrides = selectedExecution?.contextual_overrides;
 
       if (!!Object.keys(parameters ?? {}).length) {
         const newAnswers = Object.keys(parameters!)
@@ -153,6 +154,29 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
 
         setTimeout(() => {
           dispatch(setAnswers(newAnswers));
+        }, 50);
+      }
+      if (!!Object.keys(contextualOverrides ?? {}).length) {
+        const newContextualOverrides = Object.keys(contextualOverrides!).map(promptId => {
+          const param = contextualOverrides![promptId];
+
+          if (!param) {
+            return;
+          }
+
+          const newParam = param.map((parameter: { parameter: number; score: number }) => ({
+            parameter: parameter.parameter,
+            score: parameter.score,
+          }));
+
+          return {
+            contextual_overrides: newParam,
+            id: parseInt(promptId),
+          };
+        }) as ResOverrides[];
+
+        setTimeout(() => {
+          dispatch(setparamsValues(newContextualOverrides));
         }, 50);
       }
     }
