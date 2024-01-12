@@ -14,6 +14,7 @@ import { useDebouncedDispatch } from "@/hooks/useDebounceDispatch";
 import { BUILDER_TYPE } from "@/common/constants";
 import { PromptTestDialog } from "./PromptTest";
 import { useAppSelector } from "@/hooks/useStore";
+import { isDeepEqual } from "@/common/helpers";
 
 interface Props {
   prompt: IEditPrompts;
@@ -55,7 +56,7 @@ const PromptCardAccordion = ({
   const isOwner = useAppSelector(state => state.builder.isTemplateOwner);
 
   const updatePrompt = (newPromptData: IEditPrompts) => {
-    if (JSON.stringify(promptData) === JSON.stringify(newPromptData)) return;
+    if (isDeepEqual(promptData, newPromptData)) return;
 
     setPromptData(newPromptData);
     dispatchUpdatePrompt(newPromptData);
