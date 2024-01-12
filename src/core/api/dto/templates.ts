@@ -114,10 +114,10 @@ export interface UpdatedQuestionTemplate {
 }
 export interface Templates {
   id: number;
-  title: string;
+  title: string; //name
   description: string;
   example: string;
-  thumbnail: string;
+  thumbnail: string; //image
   difficulty: string;
   duration: number;
   is_visible: boolean;
