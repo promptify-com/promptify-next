@@ -157,6 +157,7 @@ export const PromptTestDialog: React.FC<PromptTestDialogProps> = ({ open, onClos
   };
 
   const engineType = engines.find(engine => engine.id === prompt.engine_id)?.output_type ?? "TEXT";
+  const noParams = inputs.length === 0 && params.length === 0;
 
   return (
     <Dialog
@@ -204,7 +205,7 @@ export const PromptTestDialog: React.FC<PromptTestDialogProps> = ({ open, onClos
             p: "16px 24px",
           }}
         >
-          {inputs.length && params.length && (
+          {!noParams && (
             <Stack
               width={"100%"}
               gap={2}

@@ -1,10 +1,11 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { sanitizeHTML } from "@/common/helpers/htmlHelper";
 import { Box, IconButton } from "@mui/material";
 import { isImageOutput } from "@/components/Prompt/Utils";
 import { EngineOutput } from "@/core/api/dto/templates";
 import useScrollToBottom from "@/components/Prompt/Hooks/useScrolltoBottom";
 import { South } from "@mui/icons-material";
+import ImagePopup from "@/components/dialog/ImagePopup";
 
 interface GeneratedContentProps {
   content: string;
@@ -15,6 +16,7 @@ interface GeneratedContentProps {
 export const GeneratedContent: React.FC<GeneratedContentProps> = ({ content, engineType, isGenerating }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { showScrollDown, scrollToBottom } = useScrollToBottom({ ref: containerRef, isGenerating, content });
+  const [showImage, setShowImage] = useState<boolean>(false);
 
   return (
     <Box
@@ -31,19 +33,28 @@ export const GeneratedContent: React.FC<GeneratedContentProps> = ({ content, eng
       }}
     >
       {isImageOutput(content, engineType) ? (
-        <Box
-          component={"img"}
-          alt={"cover"}
-          src={content}
-          onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-            (e.target as HTMLImageElement).src = require("@/assets/images/default-thumbnail.jpg");
-          }}
-          sx={{
-            borderRadius: "8px",
-            width: "80%",
-            objectFit: "cover",
-          }}
-        />
+        <>
+          <Box
+            component={"img"}
+            alt={"cover"}
+            src={content}
+            onClick={() => setShowImage(true)}
+            onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+              (e.target as HTMLImageElement).src = require("@/assets/images/default-thumbnail.jpg");
+            }}
+            sx={{
+              borderRadius: "8px",
+              width: "80%",
+              objectFit: "cover",
+              cursor: "pointer",
+            }}
+          />
+          <ImagePopup
+            open={showImage}
+            imageUrl={content}
+            onClose={() => setShowImage(false)}
+          />
+        </>
       ) : (
         <Box
           sx={{
