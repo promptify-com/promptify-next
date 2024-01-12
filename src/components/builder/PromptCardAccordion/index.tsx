@@ -42,6 +42,7 @@ const PromptCardAccordion = ({
   const [renameAllow, setRenameAllow] = useState(false);
   const [showTest, setShowTest] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const saveNeeded = useRef(!!!promptData.id);
   const cursorPositionRef = useRef(0);
   const [highlightedOption, setHighlitedOption] = useState("");
   const { outputPresets, inputPresets } = useMemo(() => getBuilderVarsPresets(prompts, promptData, false), [prompts]);
@@ -54,8 +55,11 @@ const PromptCardAccordion = ({
   const isOwner = useAppSelector(state => state.builder.isTemplateOwner);
 
   const updatePrompt = (newPromptData: IEditPrompts) => {
+    if (JSON.stringify(promptData) === JSON.stringify(newPromptData)) return;
+
     setPromptData(newPromptData);
     dispatchUpdatePrompt(newPromptData);
+    saveNeeded.current = true;
   };
 
   const contentHandler = (content: string, selection?: Selection) => {
@@ -102,8 +106,8 @@ const PromptCardAccordion = ({
   );
 
   const handleOpenTest = () => {
-    if (promptData.id) setShowTest(true);
-    else setShowToast(true);
+    if (saveNeeded.current) setShowToast(true);
+    else setShowTest(true);
   };
 
   return (
