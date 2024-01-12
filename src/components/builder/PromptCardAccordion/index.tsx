@@ -253,6 +253,7 @@ const PromptCardAccordion = ({
           open={true}
           onClose={() => setShowToast(false)}
           autoHideDuration={8000}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
         >
           <Alert severity="warning">Please save your template changes first before running tests.</Alert>
         </Snackbar>

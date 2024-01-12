@@ -204,36 +204,38 @@ export const PromptTestDialog: React.FC<PromptTestDialogProps> = ({ open, onClos
             p: "16px 24px",
           }}
         >
-          <Stack
-            width={"100%"}
-            gap={2}
-          >
-            <Typography
-              fontSize={20}
-              fontWeight={400}
+          {inputs.length && params.length && (
+            <Stack
+              width={"100%"}
+              gap={2}
             >
-              Prompt inputs
-            </Typography>
-            {inputs.map((input, idx) => {
-              return (
-                <FormInput
-                  key={idx}
-                  input={input}
-                  onChange={updateInputsValues}
-                />
-              );
-            })}
+              <Typography
+                fontSize={20}
+                fontWeight={400}
+              >
+                Prompt inputs
+              </Typography>
+              {inputs.map((input, idx) => {
+                return (
+                  <FormInput
+                    key={idx}
+                    input={input}
+                    onChange={updateInputsValues}
+                  />
+                );
+              })}
 
-            {params?.map(param => {
-              return (
-                <FormParam
-                  key={param.parameter_id}
-                  param={param}
-                  onChange={updateParamsValues}
-                />
-              );
-            })}
-          </Stack>
+              {params?.map(param => {
+                return (
+                  <FormParam
+                    key={param.parameter_id}
+                    param={param}
+                    onChange={updateParamsValues}
+                  />
+                );
+              })}
+            </Stack>
+          )}
           <Button
             onClick={runExecution}
             startIcon={<PlayArrow />}

@@ -41,7 +41,7 @@ function FormInput({ input, onChange }: Props) {
       direction={"row"}
       alignItems={"center"}
       gap={1}
-      p={"16px 6px"}
+      p={"6px"}
       borderBottom={"1px solid #ECECF4"}
     >
       <Box ref={labelRef}>

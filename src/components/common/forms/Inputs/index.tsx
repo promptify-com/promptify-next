@@ -10,12 +10,12 @@ import type { PromptInputType } from "@/components/Prompt/Types";
 interface Props {
   input: IPromptInput;
   value: PromptInputType;
-  disabled?: boolean;
   onChange: (value: PromptInputType) => void;
 }
 
-function RenderInputType({ input, value: initialValue, disabled, onChange }: Props) {
+function RenderInputType({ input, value: initialValue, onChange }: Props) {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
+  const isSimulationStreaming = useAppSelector(state => state.chat.isSimulationStreaming);
 
   const [localValue, setLocalValue] = useState(initialValue);
 
@@ -28,13 +28,13 @@ function RenderInputType({ input, value: initialValue, disabled, onChange }: Pro
   }, [initialValue]);
 
   const onBlur = () => {
-    if (disabled) return;
+    if (isSimulationStreaming) return;
 
     onChange(localValue);
   };
 
   const handleOnChange = (value: PromptInputType) => {
-    if (disabled) return;
+    if (isSimulationStreaming) return;
     if (isTextualType) {
       setLocalValue(value);
     } else {

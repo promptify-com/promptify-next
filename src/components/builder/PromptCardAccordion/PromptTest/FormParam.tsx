@@ -33,7 +33,7 @@ export default function FormParam({ param, onChange }: GeneratorParamProps) {
       direction={"row"}
       alignItems={"center"}
       flexWrap={"wrap"}
-      p={"16px 6px"}
+      p={"6px"}
       gap={1}
       borderBottom={"1px solid #ECECF4"}
     >

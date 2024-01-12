@@ -8,10 +8,10 @@ import IconButton from "@mui/material/IconButton";
 import HelpOutline from "@mui/icons-material/HelpOutline";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import RenderInputType from "@/components/common/forms/Inputs";
-import CustomTooltip from "../../../common/CustomTooltip";
-import useVariant from "../../Hooks/useVariant";
+import CustomTooltip from "@/components/common/CustomTooltip";
+import useVariant from "@/components/Prompt/Hooks/useVariant";
 import type { IPromptInput } from "@/common/types/prompt";
-import useApiAccess from "../../Hooks/useApiAccess";
+import useApiAccess from "@/components/Prompt/Hooks/useApiAccess";
 import { setAnswers } from "@/core/store/chatSlice";
 import { PromptInputType } from "@/components/Prompt/Types";
 import { IAnswer } from "@/components/Prompt/Types/chat";
@@ -24,7 +24,7 @@ interface Props {
 function FormInput({ input }: Props) {
   const { isVariantB } = useVariant();
 
-  const { answers, isSimulationStreaming } = useAppSelector(state => state.chat);
+  const answers = useAppSelector(state => state.chat.answers);
   const labelRef = useRef<HTMLDivElement | null>(null);
   const [labelWidth, setLabelWidth] = useState(0);
   const dispatch = useAppDispatch();
@@ -113,7 +113,6 @@ function FormInput({ input }: Props) {
         <RenderInputType
           input={input}
           value={value}
-          disabled={isSimulationStreaming}
           onChange={updateAnswers}
         />
       </Stack>

@@ -84,9 +84,6 @@ export const Builder = () => {
   const currentUser = useAppSelector(state => state.user.currentUser);
 
   useEffect(() => {
-    if (currentUser) {
-      dispatch(setIsTemplateOwner(templateData?.created_by.id === currentUser?.id || currentUser?.is_admin));
-    }
     dispatch(setEngines(engines || []));
   }, [engines]);
 
@@ -150,6 +147,11 @@ export const Builder = () => {
         status: templateData.status,
       };
       dataForRequest.current = data;
+      setPrompts(templateData.prompts);
+
+      if (currentUser) {
+        dispatch(setIsTemplateOwner(templateData?.created_by.id === currentUser?.id || currentUser?.is_admin));
+      }
     }
   }, [templateData]);
 
@@ -184,12 +186,6 @@ export const Builder = () => {
       dataForRequest.current = data;
     }
   }, [nodesData, dataForRequest]);
-
-  useEffect(() => {
-    if (templateData) {
-      setPrompts(templateData.prompts);
-    }
-  }, [templateData]);
 
   useEffect(() => {
     document.addEventListener("keydown", handleKeyboard);
