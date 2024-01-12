@@ -1,5 +1,5 @@
 import { ModeEdit, PlayCircle } from "@mui/icons-material";
-import { Box, Button, Divider, Stack, Typography } from "@mui/material";
+import { Alert, Box, Button, Divider, Snackbar, Stack, Typography } from "@mui/material";
 import React, { memo, useMemo, useRef, useState } from "react";
 import { Header } from "./Header";
 import { StylerAccordion } from "./StylerAccordion";
@@ -41,6 +41,7 @@ const PromptCardAccordion = ({
   const [promptData, setPromptData] = useState(prompt);
   const [renameAllow, setRenameAllow] = useState(false);
   const [showTest, setShowTest] = useState(false);
+  const [showToast, setShowToast] = useState(false);
   const cursorPositionRef = useRef(0);
   const [highlightedOption, setHighlitedOption] = useState("");
   const { outputPresets, inputPresets } = useMemo(() => getBuilderVarsPresets(prompts, promptData, false), [prompts]);
@@ -99,6 +100,11 @@ const PromptCardAccordion = ({
     }),
     [findPromptIndex, movePrompt],
   );
+
+  const handleOpenTest = () => {
+    if (promptData.id) setShowTest(true);
+    else setShowToast(true);
+  };
 
   return (
     <Box
@@ -163,7 +169,7 @@ const PromptCardAccordion = ({
                 <>
                   <Button
                     startIcon={<PlayCircle />}
-                    onClick={() => setShowTest(true)}
+                    onClick={handleOpenTest}
                     sx={{
                       fontSize: 13,
                       fontWeight: 500,
@@ -238,6 +244,15 @@ const PromptCardAccordion = ({
           setPrompt={updatePrompt}
         />
       </Box>
+      {showToast && (
+        <Snackbar
+          open={true}
+          onClose={() => setShowToast(false)}
+          autoHideDuration={8000}
+        >
+          <Alert severity="warning">Please save your template changes first before running tests.</Alert>
+        </Snackbar>
+      )}
     </Box>
   );
 };
