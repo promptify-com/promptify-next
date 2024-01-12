@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 
 import { randomId } from "@/common/helpers";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { setAnswers, setIsSimulationStreaming, setparamsValues } from "@/core/store/chatSlice";
+import { setAnswers, setIsSimulationStreaming, setParamsValues } from "@/core/store/chatSlice";
 import useVariant from "./useVariant";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { IAnswer, IMessage, MessageType } from "../Types/chat";
@@ -121,7 +121,7 @@ function useChat({ questionPrefixContent, template }: Props) {
           .filter(item => item !== undefined) as ResOverrides[];
 
         setTimeout(() => {
-          dispatch(setparamsValues(newContextualOverrides));
+          dispatch(setParamsValues(newContextualOverrides));
         }, 50);
       }
     }

@@ -1,15 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
-import {
-  Button,
-  CircularProgress,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  Divider,
-  IconButton,
-  Stack,
-  Typography,
-} from "@mui/material";
+import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import Divider from "@mui/material/Divider";
+import IconButton from "@mui/material/IconButton";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 import { Close, ContentCopy, Done, PlayArrow } from "@mui/icons-material";
 import { IEditPrompts } from "@/common/types/builder";
 import usePromptExecute from "@/components/builder/Hooks/usePromptExecute";
