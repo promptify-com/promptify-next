@@ -1,4 +1,4 @@
-import { IWorkflow } from "@/components/Automation/types";
+import { IWorkflow } from "@/common/types/workflow";
 import { baseApi } from "./api";
 
 export const workflowsApi = baseApi.injectEndpoints({
@@ -10,15 +10,21 @@ export const workflowsApi = baseApi.injectEndpoints({
           method: "get",
         }),
       }),
-      createUserWorkflow: builder.mutation({
-        query: (workflowId: number) => ({
-          url: "/api/n8n/workflows",
+      getWorkflowById: builder.query<IWorkflow, number>({
+        query: workflowsId => ({
+          url: `/api/n8n/workflows/${workflowsId}/`,
+          method: "get",
+        }),
+      }),
+      createUserWorkflow: builder.mutation<IWorkflow, number>({
+        query: workflowId => ({
+          url: `/api/n8n/workflows/${workflowId}/create/`,
           method: "post",
-          data: { workflowId },
+          data: { active: true },
         }),
       }),
     };
   },
 });
 
-export const { useGetWorkflowsQuery, useCreateUserWorkflowMutation } = workflowsApi;
+export const { useGetWorkflowsQuery, useCreateUserWorkflowMutation, useGetWorkflowByIdQuery } = workflowsApi;

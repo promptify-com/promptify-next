@@ -4,18 +4,22 @@ import { randomId } from "@/common/helpers";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setAnswers, setIsSimulationStreaming } from "@/core/store/chatSlice";
 import useVariant from "./useVariant";
+import useToken from "@/hooks/useToken";
+import { vary } from "@/common/helpers/varyValidator";
+import { setGeneratedExecution, setSelectedExecution } from "@/core/store/executionsSlice";
 import type { IPromptInput } from "@/common/types/prompt";
-import type { IAnswer, IMessage, MessageType } from "../Types/chat";
-import type { Templates } from "@/core/api/dto/templates";
+import type { IAnswer, IMessage, MessageType, VaryValidatorResponse } from "../Types/chat";
+import type { PromptInputType } from "@/components/Prompt/Types";
 
 interface Props {
-  template: Templates;
-  questionPrefixContent: string;
+  initialMessageTitle: string;
+  questionPrefixContent?: string;
 }
 
 const createdAt = new Date();
 
-function useChat({ questionPrefixContent, template }: Props) {
+function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
+  const token = useToken();
   const dispatch = useAppDispatch();
   const { isVariantA, isVariantB } = useVariant();
 
@@ -28,6 +32,10 @@ function useChat({ questionPrefixContent, template }: Props) {
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [queuedMessages, setQueuedMessages] = useState<IMessage[]>([]);
   const [showGenerateButton, setShowGenerateButton] = useState(false);
+  const [isValidatingAnswer, setIsValidatingAnswer] = useState(false);
+
+  const showGenerate =
+    !isSimulationStreaming && (showGenerateButton || Boolean(!inputs.length || !inputs[0]?.required));
 
   const createMessage = (type: MessageType, fromUser = false) => ({
     id: randomId(),
@@ -43,7 +51,7 @@ function useChat({ questionPrefixContent, template }: Props) {
     const filteredQuestions = questions.map(_q => _q.question).filter(Boolean);
 
     const welcomeMessage = createMessage("text");
-    welcomeMessage.text = `${questionPrefixContent ?? greeting} ${template.title}${
+    welcomeMessage.text = `${questionPrefixContent ?? greeting} ${initialMessageTitle}${
       filteredQuestions.length ? "? " + filteredQuestions.slice(0, 3).join(" ") : ""
     }`;
     const InitialMessages: IMessage[] = [welcomeMessage];
@@ -96,6 +104,73 @@ function useChat({ questionPrefixContent, template }: Props) {
           dispatch(setAnswers(newAnswers));
         }, 50);
       }
+    }
+  };
+
+  const validateVary = async (variation: string) => {
+    dispatch(setSelectedExecution(null));
+    dispatch(setGeneratedExecution(null));
+    if (variation) {
+      const userMessage: IMessage = {
+        id: randomId(),
+        text: variation,
+        type: "text",
+        createdAt: new Date(new Date().getTime() - 1000),
+        fromUser: true,
+      };
+
+      setMessages(prevMessages =>
+        prevMessages.filter(msg => msg.type !== "form" && msg.type !== "spark").concat(userMessage),
+      );
+
+      setIsValidatingAnswer(true);
+
+      const questionAnswerMap: Record<string, PromptInputType> = {};
+      inputs.forEach(input => {
+        const matchingAnswer = answers.find(answer => answer.inputName === input.name);
+        questionAnswerMap[input.name] = matchingAnswer?.answer ?? "";
+      });
+
+      const payload = {
+        prompt: variation,
+        variables: questionAnswerMap,
+      };
+
+      let varyResponse: VaryValidatorResponse | string;
+      try {
+        varyResponse = await vary({ token, payload });
+      } catch (err) {
+        varyResponse = "error";
+      }
+
+      if (typeof varyResponse === "string") {
+        setIsValidatingAnswer(false);
+        messageAnswersForm("Oops! I couldn't get your reponse, Please try again.");
+        return;
+      }
+
+      const validatedAnswers = varyResponse;
+
+      const newAnswers: IAnswer[] = inputs
+        .map(input => {
+          const { name: inputName, required, question, prompt } = input;
+          const answer = validatedAnswers[input.name];
+          const promptId = prompt!;
+
+          return {
+            inputName,
+            required,
+            question: question ?? "",
+            prompt: promptId,
+            answer,
+          };
+        })
+        .filter(answer => answer.answer);
+      dispatch(setAnswers(newAnswers));
+      setIsValidatingAnswer(false);
+
+      const isReady = allRequiredInputsAnswered() ? " Let’s imagine something like this! Prepared request for you" : "";
+      messageAnswersForm(`Ok!${isReady}, please check input information and we are ready to start!`);
     }
   };
 
@@ -213,10 +288,11 @@ function useChat({ questionPrefixContent, template }: Props) {
     messages,
     setMessages,
     initialMessages,
-    addToQueuedMessages,
     messageAnswersForm,
     showGenerateButton,
-    allRequiredInputsAnswered,
+    showGenerate,
+    isValidatingAnswer,
+    validateVary,
   };
 }
 

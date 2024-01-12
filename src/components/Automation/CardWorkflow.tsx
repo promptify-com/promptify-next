@@ -6,12 +6,13 @@ import CardMedia from "@mui/material/CardMedia";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import ArrowBackIosRoundedIcon from "@mui/icons-material/ArrowBackIosRounded";
+import { useRouter } from "next/router";
+
 import Image from "@/components/design-system/Image";
 import useTruncate from "@/hooks/useTruncate";
 import { theme } from "@/theme";
-import { useRouter } from "next/router";
-import type { IWorkflow } from "./types";
-import { getNodeNames } from "./helpers";
+import { getNodeNames } from "@/components/Automation/helpers";
+import type { IWorkflow } from "@/components/Automation/types";
 
 type CardWorkflowProps = {
   workflow: IWorkflow;
@@ -19,6 +20,7 @@ type CardWorkflowProps = {
 
 function CardWorkflow({ workflow }: CardWorkflowProps) {
   const router = useRouter();
+
   const { truncate } = useTruncate();
 
   return (
