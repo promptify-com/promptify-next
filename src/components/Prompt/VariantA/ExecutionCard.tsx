@@ -295,6 +295,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData, answers
                               float: "right",
                               ml: "20px",
                               mb: "10px",
+                              cursor: "pointer",
                             }}
                           />
                           <ImagePopup

@@ -292,6 +292,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
                               float: "right",
                               ml: "20px",
                               mb: "10px",
+                              cursor: "pointer",
                             }}
                           />
 

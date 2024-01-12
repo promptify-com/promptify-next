@@ -15,24 +15,33 @@ function ImagePopup({ open, imageUrl, onClose }: ImagePopupProps) {
     <Dialog
       open={open}
       onClose={onClose}
+      sx={{
+        p: "4px",
+        "& .MuiDialog-container .MuiPaper-root": {
+          overflowY: "unset",
+        },
+      }}
     >
       <IconButton
         aria-label="close"
         onClick={onClose}
         sx={{
           position: "absolute",
-          right: 8,
-          top: 8,
+          right: "-10px",
+          top: "-12px",
           color: "white",
           backgroundColor: "rgba(0, 0, 0, 0.6)",
-          borderRadius: "50%",
+          p: "2px",
           "&:hover": {
             backgroundColor: "rgba(0, 0, 0, 0.8)",
             color: "white",
             borderColor: "white",
           },
-          border: "2px solid white",
           boxShadow: "0 2px 4px rgba(0,0,0,0.5)",
+          "& svg": {
+            width: "15px",
+            height: "15px",
+          },
         }}
       >
         <CloseIcon />

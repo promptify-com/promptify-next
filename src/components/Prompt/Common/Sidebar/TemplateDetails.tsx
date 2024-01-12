@@ -118,6 +118,9 @@ const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template }) => {
           <Typography sx={detailsStyle}>
             Runs: <span>{template.executions_count}</span>
           </Typography>
+          <Typography sx={detailsStyle}>
+            Created by: <span>{template.created_by.username}</span>
+          </Typography>
         </Stack>
       </Stack>
     </Stack>
