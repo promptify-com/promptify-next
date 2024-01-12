@@ -26,7 +26,7 @@ export default function FormParam({ param, onChange }: GeneratorParamProps) {
   const descriptions = param.descriptions;
   const activeDescription = descriptions?.find(description => description.score === activeScore);
   const marks = Object.values(descriptions || {}).map(desc => ({ value: desc.score }));
-  const values = marks.map(obj => obj.value) || [];
+  const values = marks.map(obj => obj.value);
 
   return (
     <Stack

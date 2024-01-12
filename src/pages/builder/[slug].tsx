@@ -44,9 +44,8 @@ import { BUILDER_TYPE } from "@/common/constants";
 import PromptCardAccordion from "@/components/builder/PromptCardAccordion";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { useDispatch } from "react-redux";
 import { setEngines, setIsTemplateOwner } from "@/core/store/builderSlice";
-import { useAppSelector } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return (
@@ -79,7 +78,7 @@ export const Builder = () => {
   const [snackBarInvalidVariables, setSnackBarInvalidVariables] = useState(false);
   const [invalidVariableMessage, setInvalidVariableMessage] = useState("");
   const token = useToken();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const currentUser = useAppSelector(state => state.user.currentUser);
 
   useEffect(() => {

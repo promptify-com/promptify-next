@@ -65,7 +65,7 @@ export default function FormParam({ param }: GeneratorParamProps) {
   const descriptions = param.parameter.score_descriptions;
   const activeDescription = descriptions.find(description => description.score === activeScore);
   const marks = descriptions.map(description => ({ value: description.score }));
-  const values = marks.map(obj => obj.value) || [];
+  const values = marks.map(obj => obj.value);
 
   const HelpIcon = () => {
     return (

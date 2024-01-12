@@ -3,7 +3,7 @@ import Stack from "@mui/material/Stack";
 import RenderInputType from "@/components/common/forms/Inputs";
 import type { IPromptInput } from "@/common/types/prompt";
 import { PromptInputType } from "@/components/Prompt/Types";
-import { Box } from "@mui/material";
+import Box from "@mui/material/Box";
 import { useEffect, useRef, useState } from "react";
 import { IInputValue } from "@/components/builder/Types";
 
