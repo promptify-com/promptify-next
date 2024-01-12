@@ -91,7 +91,7 @@ const useGenerateExecution = ({ template, questionPrefixContent, onError }: Prop
       async onopen(res) {
         if (res.ok && res.status === 200) {
           dispatch(setGeneratingStatus(true));
-          setGeneratingResponse({ created_at: new Date(), data: [] });
+          setGeneratingResponse({ created_at: new Date(), data: [], connectionOpened: true });
         } else if (res.status >= 400 && res.status < 500 && res.status !== 429) {
           console.error("Client side error ", res);
           onError("Something went wrong. Please try again later");
@@ -114,6 +114,7 @@ const useGenerateExecution = ({ template, questionPrefixContent, onError }: Prop
               id: executionId,
               created_at: prevState.created_at,
               data: prevState.data,
+              connectionOpened: true,
             }));
           }
 
@@ -199,7 +200,7 @@ const useGenerateExecution = ({ template, questionPrefixContent, onError }: Prop
   };
 
   useEffect(() => {
-    if (answers.length) {
+    if (generatingResponse.connectionOpened) {
       dispatch(setGeneratedExecution(generatingResponse));
     }
   }, [generatingResponse]);

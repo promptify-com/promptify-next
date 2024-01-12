@@ -17,6 +17,7 @@ export interface PromptLiveResponse {
   id?: number;
   created_at: Date;
   data: PromptLiveResponseData[];
+  connectionOpened?: boolean;
 }
 export interface IPromptInput {
   name: string;
