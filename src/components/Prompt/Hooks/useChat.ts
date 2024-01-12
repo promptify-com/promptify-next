@@ -94,9 +94,7 @@ function useChat({ questionPrefixContent, template }: Props) {
           .filter(data => Array.isArray(data))
           .flat() as IAnswer[];
 
-        setTimeout(() => {
-          dispatch(setAnswers(newAnswers));
-        }, 50);
+        dispatch(setAnswers(newAnswers));
       }
 
       if (!!Object.keys(contextualOverrides ?? {}).length) {
@@ -120,9 +118,7 @@ function useChat({ questionPrefixContent, template }: Props) {
           })
           .filter(item => item !== undefined) as ResOverrides[];
 
-        setTimeout(() => {
-          dispatch(setparamsValues(newContextualOverrides));
-        }, 50);
+        dispatch(setparamsValues(newContextualOverrides));
       }
     }
   };

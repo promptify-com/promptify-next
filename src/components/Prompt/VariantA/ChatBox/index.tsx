@@ -66,8 +66,6 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
 
     const { inputs, params } = prepareAndRemoveDuplicateInputs(template.prompts, template.questions);
 
-    initialMessages({ questions: inputs });
-
     const valuesMap = new Map<number, ResOverrides>();
     params
       .filter(param => param.is_visible)
@@ -83,6 +81,9 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
       });
 
     dispatch(setparamsValues(Array.from(valuesMap.values())));
+
+    initialMessages({ questions: inputs });
+
     dispatch(setParams(params));
     dispatch(setInputs(inputs));
 
