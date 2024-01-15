@@ -13,7 +13,7 @@ interface GeneratedContentProps {
   isGenerating: boolean;
 }
 
-export const GeneratedContent: React.FC<GeneratedContentProps> = ({ content, engineType, isGenerating }) => {
+function GeneratedContent({ content, engineType, isGenerating }: GeneratedContentProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { showScrollDown, scrollToBottom } = useScrollToBottom({ ref: containerRef, isGenerating, content });
   const [showImage, setShowImage] = useState<boolean>(false);
@@ -120,4 +120,6 @@ export const GeneratedContent: React.FC<GeneratedContentProps> = ({ content, eng
       )}
     </Box>
   );
-};
+}
+
+export default GeneratedContent;

@@ -9,7 +9,7 @@ import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 import { theme } from "@/theme";
-import { Header } from "@/components/builder/Header";
+import Header from "@/components/builder/Header";
 import TemplateForm from "@/components/common/forms/TemplateForm";
 import { isPromptVariableValid } from "@/common/helpers/promptValidator";
 import { useGetPromptTemplateBySlugQuery, usePublishTemplateMutation } from "@/core/api/templates";

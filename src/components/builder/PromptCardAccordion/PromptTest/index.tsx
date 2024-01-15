@@ -17,7 +17,7 @@ import { fetchEventSource } from "@microsoft/fetch-event-source";
 import useToken from "@/hooks/useToken";
 import { parseMessageData } from "@/common/helpers/parseMessageData";
 import FormParam from "./FormParam";
-import { GeneratedContent } from "./GeneratedContent";
+import GeneratedContent from "./GeneratedContent";
 import useCopyToClipboard from "@/hooks/useCopyToClipboard";
 import useUploadPromptFiles from "@/hooks/useUploadPromptFiles";
 import { useAppSelector } from "@/hooks/useStore";
@@ -28,7 +28,7 @@ interface PromptTestDialogProps {
   prompt: IEditPrompts;
 }
 
-export const PromptTestDialog: React.FC<PromptTestDialogProps> = ({ open, onClose, prompt }) => {
+function PromptTestDialog({ open, onClose, prompt }: PromptTestDialogProps) {
   const token = useToken();
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatingResponse, setGeneratingResponse] = useState("");
@@ -283,7 +283,7 @@ export const PromptTestDialog: React.FC<PromptTestDialogProps> = ({ open, onClos
       </DialogContent>
     </Dialog>
   );
-};
+}
 
 const buttonStyle = {
   width: "fit-content",
@@ -295,3 +295,5 @@ const buttonStyle = {
   fontWeight: 500,
   color: "secondary.main",
 };
+
+export default PromptTestDialog;

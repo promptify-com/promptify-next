@@ -1,18 +1,18 @@
 import { ModeEdit, PlayCircle } from "@mui/icons-material";
 import { Alert, Box, Button, Divider, Snackbar, Stack, Typography } from "@mui/material";
 import React, { memo, useMemo, useRef, useState } from "react";
-import { Header } from "./Header";
-import { StylerAccordion } from "./StylerAccordion";
+import Header from "./Header";
+import StylerAccordion from "./StylerAccordion";
 import { IEditPrompts } from "@/common/types/builder";
 import { RenameForm } from "@/components/common/forms/RenameForm";
-import { Footer } from "./Footer";
-import { HighlightTextarea } from "../HighlightWithinTextarea";
+import Footer from "./Footer";
+import HighlightTextarea from "../HighlightWithinTextarea";
 import { Selection } from "react-highlight-within-textarea";
 import { useDrag, useDrop, ConnectableElement } from "react-dnd";
 import { getBuilderVarsPresets } from "@/common/helpers/getBuilderVarsPresets";
 import { useDebouncedDispatch } from "@/hooks/useDebounceDispatch";
 import { BUILDER_TYPE } from "@/common/constants";
-import { PromptTestDialog } from "./PromptTest";
+import PromptTestDialog from "./PromptTest";
 import { useAppSelector } from "@/hooks/useStore";
 import { isDeepEqual } from "@/common/helpers";
 

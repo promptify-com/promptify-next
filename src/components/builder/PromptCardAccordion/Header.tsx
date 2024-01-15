@@ -3,7 +3,7 @@ import { EnginesGroups } from "@/components/common/forms/EnginesGroups";
 import { ArrowDropDown, ContentCopy, DeleteOutline, Menu, Settings } from "@mui/icons-material";
 import { Button, IconButton, Popover, Stack, Tooltip, Typography } from "@mui/material";
 import React, { useState } from "react";
-import { EngineParamsSlider } from "../EngineParamsSlider";
+import EngineParamsSlider from "../EngineParamsSlider";
 import { ConnectDragSource } from "react-dnd";
 import { BUILDER_TYPE } from "@/common/constants";
 import { useAppSelector } from "@/hooks/useStore";
@@ -18,15 +18,7 @@ interface Props {
   builderType: BUILDER_TYPE;
 }
 
-export const Header = ({
-  prompt,
-  order,
-  setPrompt,
-  deletePrompt,
-  duplicatePrompt,
-  dragPreview,
-  builderType,
-}: Props) => {
+function Header({ prompt, order, setPrompt, deletePrompt, duplicatePrompt, dragPreview, builderType }: Props) {
   const [showEngines, setShowEngines] = useState(false);
   const [enginesAnchor, setEnginesAnchor] = useState<HTMLElement | null>(null);
   const [showSettings, setShowSettings] = useState(false);
@@ -236,4 +228,6 @@ export const Header = ({
       </Popover>
     </>
   );
-};
+}
+
+export default Header;

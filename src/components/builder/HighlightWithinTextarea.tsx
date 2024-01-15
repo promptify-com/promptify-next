@@ -12,9 +12,9 @@ import {
   PresetType,
 } from "@/common/types/builder";
 import { useCursorPosition } from "@/hooks/useCursorPosition";
-import { SuggestionsList } from "./SuggestionsList";
+import SuggestionsList from "./SuggestionsList";
 import ClientOnly from "../base/ClientOnly";
-import { SuggestionsListDetailed } from "./SuggestionsListDetailed";
+import SuggestionsListDetailed from "./SuggestionsListDetailed";
 import { InputType } from "@/common/types/prompt";
 
 interface Props {
@@ -39,7 +39,7 @@ const highlight = [
   },
 ];
 
-export const HighlightTextarea = ({
+function HighlightTextarea({
   prompt,
   inputPresets,
   outputPresets,
@@ -48,7 +48,7 @@ export const HighlightTextarea = ({
   highlitedValue,
   setHighlitedValue,
   type,
-}: Props) => {
+}: Props) {
   const [optionType, setOptionType] = useState<PresetType>("input");
   const [suggestionList, setSuggestionList] = useState<Preset[]>([]);
   const divRef = useRef<HighlightWithinTextareaRef | null>(null);
@@ -162,4 +162,6 @@ export const HighlightTextarea = ({
       </Grid>
     </ClientOnly>
   );
-};
+}
+
+export default HighlightTextarea;

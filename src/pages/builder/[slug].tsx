@@ -20,7 +20,7 @@ import { ClassicPreset } from "rete";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
 import { useRete } from "rete-react-render-plugin";
 import { createEditor, Node } from "@/components/builder/Editor";
-import { Header } from "@/components/builder/Header";
+import Header from "@/components/builder/Header";
 import { MinusIcon, PlusIcon } from "@/assets/icons";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
