@@ -1,4 +1,3 @@
-import { usePathname } from "next/navigation";
 import StickyNote2 from "@mui/icons-material/StickyNote2";
 import Home from "@mui/icons-material/Home";
 import Drawer from "@mui/material/Drawer";
@@ -15,9 +14,14 @@ import { isValidUserFn } from "@/core/store/userSlice";
 import SidebarItem from "./SidebarItem";
 import { theme } from "@/theme";
 import type { NavItem } from "@/common/types/sidebar";
+import { useRouter } from "next/router";
 
 function Sidebar() {
-  const pathname = usePathname();
+  const router = useRouter();
+
+  const pathname = router.pathname;
+
+  console.log(pathname, pathname.split("/")[1]);
   const isPromptsPage = pathname.split("/")[1] === "explore";
   const isValidUser = useAppSelector(isValidUserFn);
   const navItems: NavItem[] = [

@@ -12,7 +12,7 @@ import Image from "@/components/design-system/Image";
 import useTruncate from "@/hooks/useTruncate";
 import { theme } from "@/theme";
 import { getNodeNames } from "@/components/Automation/helpers";
-import type { IWorkflow } from "@/components/Automation/types";
+import { IWorkflow } from "@/common/types/workflow";
 
 type CardWorkflowProps = {
   workflow: IWorkflow;

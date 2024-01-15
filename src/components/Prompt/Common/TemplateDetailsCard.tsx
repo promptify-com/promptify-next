@@ -14,7 +14,7 @@ import { useRouter } from "next/router";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import Image from "@/components/design-system/Image";
-import { stripTags } from "@/common/helpers";
+import { isDesktopViewPort, stripTags } from "@/common/helpers";
 
 interface DetailsCardProps {
   title: string;
@@ -22,7 +22,6 @@ interface DetailsCardProps {
   tags?: Tag[];
   categoryName: string;
   thumbnail: string;
-  min?: boolean;
 }
 
 const DescriptionTags = ({ description, tags }: { description: string; tags?: Tag[] }) => {
@@ -72,29 +71,24 @@ const DescriptionTags = ({ description, tags }: { description: string; tags?: Ta
   );
 };
 
-export default function TemplateDetailsCard({
-  title,
-  description,
-  tags,
-  categoryName,
-  thumbnail,
-  min,
-}: DetailsCardProps) {
+export default function TemplateDetailsCard({ title, description, tags, categoryName, thumbnail }: DetailsCardProps) {
   const [expanded, setExpanded] = useState(false);
+
+  const isMobile = !isDesktopViewPort();
 
   return (
     <Box
       sx={{
         bgcolor: alpha(theme.palette.primary.main, 0.08),
-        borderRadius: min ? "42px" : "48px",
-        p: min ? "14px" : 0,
+        borderRadius: isMobile ? "42px" : "48px",
+        p: isMobile ? "14px" : 0,
         position: "relative",
       }}
     >
       <Stack
         direction={"row"}
         justifyContent={"space-between"}
-        alignItems={min ? "center" : "flex-start"}
+        alignItems={isMobile ? "center" : "flex-start"}
         gap={1}
       >
         <Stack
@@ -122,7 +116,7 @@ export default function TemplateDetailsCard({
               {title}
             </Typography>
           </Stack>
-          {!min && (
+          {!isMobile && (
             <DescriptionTags
               tags={tags}
               description={description}
@@ -131,15 +125,15 @@ export default function TemplateDetailsCard({
         </Stack>
         <Image
           src={thumbnail}
-          width={min ? 101 : 351}
-          height={min ? 72 : 262}
+          width={isMobile ? 101 : 351}
+          height={isMobile ? 72 : 262}
           alt={title}
           priority
           style={{ borderRadius: "48px", objectFit: "cover" }}
           loading="eager"
         />
       </Stack>
-      {min && (
+      {isMobile && (
         <>
           <IconButton
             onClick={() => setExpanded(!expanded)}

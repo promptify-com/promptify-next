@@ -73,7 +73,6 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
           thumbnail={template.thumbnail}
           tags={template.tags}
           description={template.description}
-          min={!isDesktopView}
         />
       )}
 
