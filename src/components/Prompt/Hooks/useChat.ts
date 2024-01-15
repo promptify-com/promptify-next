@@ -10,7 +10,7 @@ import { setGeneratedExecution, setSelectedExecution } from "@/core/store/execut
 import type { IPromptInput } from "@/common/types/prompt";
 import { ContextualOverrides, ResOverrides } from "@/core/api/dto/prompts";
 import { useRouter } from "next/router";
-import type { IAnswer, IMessage, MessageType, VaryValidatorResponse } from "../Types/chat";
+import type { IAnswer, IMessage, MessageType } from "../Types/chat";
 import type { PromptInputType } from "@/components/Prompt/Types";
 
 interface Props {
@@ -110,12 +110,7 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
         variables: questionAnswerMap,
       };
 
-      let varyResponse: VaryValidatorResponse | string;
-      try {
-        varyResponse = await vary({ token, payload });
-      } catch (err) {
-        varyResponse = "error";
-      }
+      const varyResponse = await vary({ token, payload });
 
       if (typeof varyResponse === "string") {
         setIsValidatingAnswer(false);
@@ -123,12 +118,10 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
         return;
       }
 
-      const validatedAnswers = varyResponse;
-
       const newAnswers: IAnswer[] = inputs
         .map(input => {
           const { name: inputName, required, question, prompt } = input;
-          const answer = validatedAnswers[input.name];
+          const answer = varyResponse[input.name];
           const promptId = prompt!;
 
           return {

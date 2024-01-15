@@ -12,6 +12,7 @@ import { setInputs } from "@/core/store/chatSlice";
 import useWorkflow from "@/components/Automation/Hooks/useWorkflow";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IPromptInput } from "@/common/types/prompt";
+import WorkflowPlaceholder from "@/components/Automation/WorkflowPlaceholder";
 
 export default function Page() {
   const router = useRouter();
@@ -46,7 +47,7 @@ export default function Page() {
   return (
     <Layout>
       {isWorkFlowLoading ? (
-        <span>loading</span>
+        <WorkflowPlaceholder />
       ) : (
         <Stack
           sx={{

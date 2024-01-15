@@ -15,9 +15,14 @@ import { NavItem } from "@/common/types/sidebar";
 import SidebarItem from "./SidebarItem";
 import { theme } from "@/theme";
 import type { NavItem } from "@/common/types/sidebar";
+import { useRouter } from "next/router";
 
 function Sidebar() {
-  const pathname = usePathname();
+  const router = useRouter();
+
+  const pathname = router.pathname;
+
+  console.log(pathname, pathname.split("/")[1]);
   const isPromptsPage = pathname.split("/")[1] === "explore";
   const isAutomationPage = pathname.split("/")[1] === "automation";
   const isValidUser = useAppSelector(isValidUserFn);

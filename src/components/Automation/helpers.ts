@@ -1,4 +1,4 @@
-import type { INode } from "./types";
+import { INode } from "@/common/types/workflow";
 import nodesData from "./nodes.json";
 
 const UNWANTED_TYPES = [
