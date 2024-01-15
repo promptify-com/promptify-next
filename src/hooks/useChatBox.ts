@@ -45,12 +45,28 @@ export default function useChatBox() {
 
     inputs.sort((a, b) => +b.required - +a.required);
 
+    const valuesMap = new Map<number, ResOverrides>();
+    params
+      .filter(param => param.is_visible)
+      .forEach(_param => {
+        const paramId = _param.parameter.id;
+        valuesMap.set(_param.prompt, {
+          id: _param.prompt,
+          contextual_overrides: (valuesMap.get(_param.prompt)?.contextual_overrides ?? []).concat({
+            parameter: paramId,
+            score: _param.score,
+          }),
+        });
+      });
+
     return {
       inputs,
       params,
       promptHasContent,
+      paramsValues: Array.from(valuesMap.values()),
     };
   };
+
   const preparePromptsData = (
     uploadedFiles: Map<string, string>,
     answers: IAnswer[],

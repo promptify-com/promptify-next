@@ -67,7 +67,6 @@ function useChat({ questionPrefixContent, template }: Props) {
       initialQueuedMessages.push(formMessage);
       addToQueuedMessages(initialQueuedMessages);
     }
-    dispatch(setAnswers([]));
 
     if (sparkHashQueryParam) {
       const parameters = selectedExecution?.parameters;
@@ -94,9 +93,7 @@ function useChat({ questionPrefixContent, template }: Props) {
           .filter(data => Array.isArray(data))
           .flat() as IAnswer[];
 
-        setTimeout(() => {
-          dispatch(setAnswers(newAnswers));
-        }, 50);
+        dispatch(setAnswers(newAnswers));
       }
 
       if (!!Object.keys(contextualOverrides ?? {}).length) {
@@ -120,10 +117,10 @@ function useChat({ questionPrefixContent, template }: Props) {
           })
           .filter(item => item !== undefined) as ResOverrides[];
 
-        setTimeout(() => {
-          dispatch(setParamsValues(newContextualOverrides));
-        }, 50);
+        dispatch(setParamsValues(newContextualOverrides));
       }
+    } else {
+      dispatch(setAnswers([]));
     }
   };
 
