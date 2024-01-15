@@ -67,7 +67,6 @@ function useChat({ questionPrefixContent, template }: Props) {
       initialQueuedMessages.push(formMessage);
       addToQueuedMessages(initialQueuedMessages);
     }
-    dispatch(setAnswers([]));
 
     if (sparkHashQueryParam) {
       const parameters = selectedExecution?.parameters;
