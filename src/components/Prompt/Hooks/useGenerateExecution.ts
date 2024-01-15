@@ -4,7 +4,7 @@ import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { setGeneratingStatus } from "@/core/store/templatesSlice";
 import { parseMessageData } from "@/common/helpers/parseMessageData";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import useToken from "../../../hooks/useToken";
+import useToken from "@/hooks/useToken";
 import useChat from "./useChat";
 import useChatBox from "./useChatBox";
 import useApiAccess from "./useApiAccess";

@@ -4,7 +4,7 @@ import RenderInputType from "@/components/common/forms/Inputs";
 import type { IPromptInput } from "@/common/types/prompt";
 import { PromptInputType } from "@/components/Prompt/Types";
 import Box from "@mui/material/Box";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { IInputValue } from "@/components/builder/Types";
 
 interface Props {
@@ -16,8 +16,6 @@ function FormInput({ input, onChange }: Props) {
   const { fullName, required, type, name } = input;
   const [value, setValue] = useState<PromptInputType>("");
   const isTextualType = type === "text" || type === "number" || type === "integer";
-  const labelRef = useRef<HTMLDivElement | null>(null);
-  const [labelWidth, setLabelWidth] = useState(0);
 
   const handleChange = (value: PromptInputType) => {
     setValue(value);
@@ -30,12 +28,6 @@ function FormInput({ input, onChange }: Props) {
     }
   };
 
-  useEffect(() => {
-    if (labelRef.current) {
-      setLabelWidth(labelRef.current.offsetWidth);
-    }
-  }, [fullName]);
-
   return (
     <Stack
       direction={"row"}
@@ -44,7 +36,7 @@ function FormInput({ input, onChange }: Props) {
       p={"6px"}
       borderBottom={"1px solid #ECECF4"}
     >
-      <Box ref={labelRef}>
+      <Box>
         <InputLabel
           sx={{
             fontSize: { xs: 12, md: 15 },
@@ -57,12 +49,9 @@ function FormInput({ input, onChange }: Props) {
       </Box>
 
       <Stack
-        display={"flex"}
-        alignItems={"start"}
-        position={"relative"}
         flex={1}
-        width={"100%"}
-        maxWidth={`calc(100% - ${labelWidth}px)`}
+        position={"relative"}
+        overflow={"hidden"}
       >
         <RenderInputType
           input={input}
