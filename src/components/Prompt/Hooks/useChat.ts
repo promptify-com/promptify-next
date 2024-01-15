@@ -120,6 +120,8 @@ function useChat({ questionPrefixContent, template }: Props) {
 
         dispatch(setparamsValues(newContextualOverrides));
       }
+    } else {
+      dispatch(setAnswers([]));
     }
   };
 

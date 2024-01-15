@@ -65,23 +65,12 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
       return [[], [], false];
     }
 
-    const { inputs, params, promptHasContent } = prepareAndRemoveDuplicateInputs(template.prompts, template.questions);
+    const { inputs, params, promptHasContent, paramsValues } = prepareAndRemoveDuplicateInputs(
+      template.prompts,
+      template.questions,
+    );
 
-    const valuesMap = new Map<number, ResOverrides>();
-    params
-      .filter(param => param.is_visible)
-      .forEach(_param => {
-        const paramId = _param.parameter.id;
-        valuesMap.set(_param.prompt, {
-          id: _param.prompt,
-          contextual_overrides: (valuesMap.get(_param.prompt)?.contextual_overrides ?? []).concat({
-            parameter: paramId,
-            score: _param.score,
-          }),
-        });
-      });
-
-    dispatch(setparamsValues(Array.from(valuesMap.values())));
+    dispatch(setparamsValues(paramsValues));
 
     initialMessages({ questions: inputs });
 
