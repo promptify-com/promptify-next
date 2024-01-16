@@ -39,6 +39,7 @@ const PromptCardAccordion = ({
   findPromptIndex,
   builderType,
 }: Props) => {
+  const initPromptData = useRef(prompt);
   const [promptData, setPromptData] = useState(prompt);
   const [renameAllow, setRenameAllow] = useState(false);
   const [showTest, setShowTest] = useState(false);
@@ -56,11 +57,9 @@ const PromptCardAccordion = ({
   const isOwner = useAppSelector(state => state.builder.isTemplateOwner);
 
   const updatePrompt = (newPromptData: IEditPrompts) => {
-    if (isDeepEqual(promptData, newPromptData)) return;
-
     setPromptData(newPromptData);
     dispatchUpdatePrompt(newPromptData);
-    saveNeeded.current = true;
+    saveNeeded.current = !isDeepEqual(initPromptData.current, newPromptData);
   };
 
   const contentHandler = (content: string, selection?: Selection) => {
