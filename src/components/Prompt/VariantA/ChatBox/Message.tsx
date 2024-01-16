@@ -9,6 +9,7 @@ import { StreamContent } from "./StreamContent";
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { isDesktopViewPort } from "@/common/helpers";
 import { setIsSimulationStreaming } from "@/core/store/chatSlice";
+import ClientOnly from "@/components/base/ClientOnly";
 
 interface MessageBlockProps {
   message: IMessage;
@@ -105,16 +106,18 @@ export const Message = ({ message, isExecutionShown, onScrollToBottom }: Message
                 Successfully done generation
               </Typography>
             )}
-            <Typography
-              fontSize={12}
-              fontWeight={400}
-              color={"onSurface"}
-              sx={{
-                opacity: 0.5,
-              }}
-            >
-              {timeAgo(createdAt)}
-            </Typography>
+            <ClientOnly>
+              <Typography
+                fontSize={12}
+                fontWeight={400}
+                color={"onSurface"}
+                sx={{
+                  opacity: 0.5,
+                }}
+              >
+                {timeAgo(createdAt)}
+              </Typography>
+            </ClientOnly>
           </Grid>
         )}
 

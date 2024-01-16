@@ -8,6 +8,7 @@ import type { IPromptInput } from "@/common/types/prompt";
 import type { IAnswer, IMessage, MessageType } from "../Types/chat";
 import type { Templates } from "@/core/api/dto/templates";
 import { ContextualOverrides, ResOverrides } from "@/core/api/dto/prompts";
+import { useRouter } from "next/router";
 
 interface Props {
   template: Templates;
@@ -18,6 +19,7 @@ const createdAt = new Date();
 
 function useChat({ questionPrefixContent, template }: Props) {
   const dispatch = useAppDispatch();
+  const router = useRouter();
   const { isVariantA, isVariantB } = useVariant();
 
   const currentUser = useAppSelector(state => state.user.currentUser);
@@ -60,7 +62,7 @@ function useChat({ questionPrefixContent, template }: Props) {
 
     const formMessage = createMessage("form");
 
-    if (!selectedExecution && isVariantB) {
+    if (!router.query?.hash && isVariantB) {
       initialQueuedMessages.push(formMessage);
       addToQueuedMessages(initialQueuedMessages);
     } else if (isVariantA) {
@@ -68,60 +70,7 @@ function useChat({ questionPrefixContent, template }: Props) {
       addToQueuedMessages(initialQueuedMessages);
     }
 
-    if (sparkHashQueryParam) {
-      const parameters = selectedExecution?.parameters;
-      const contextualOverrides = selectedExecution?.contextual_overrides;
-
-      if (!!Object.keys(parameters ?? {}).length) {
-        const newAnswers = Object.keys(parameters!)
-          .map(promptId => {
-            const param = parameters![promptId];
-
-            if (!param) {
-              return;
-            }
-
-            return Object.keys(param).map(inputName => ({
-              inputName,
-              required: true,
-              question: "",
-              answer: param[inputName],
-              prompt: parseInt(promptId),
-              error: false,
-            }));
-          })
-          .filter(data => Array.isArray(data))
-          .flat() as IAnswer[];
-
-        dispatch(setAnswers(newAnswers));
-      }
-
-      if (!!Object.keys(contextualOverrides ?? {}).length) {
-        const newContextualOverrides = Object.keys(contextualOverrides!)
-          .map(promptId => {
-            const param = contextualOverrides![promptId];
-
-            if (!param?.length) {
-              return;
-            }
-
-            const newParam = param.map((parameter: ContextualOverrides) => ({
-              parameter: parameter.parameter,
-              score: parameter.score,
-            }));
-
-            return {
-              contextual_overrides: newParam,
-              id: parseInt(promptId),
-            };
-          })
-          .filter(item => item !== undefined) as ResOverrides[];
-
-        dispatch(setparamsValues(newContextualOverrides));
-      }
-    } else {
-      dispatch(setAnswers([]));
-    }
+    dispatch(setAnswers([]));
   };
 
   const messageAnswersForm = (message: string) => {
@@ -206,6 +155,65 @@ function useChat({ questionPrefixContent, template }: Props) {
 
     return requiredQuestionNames.every(name => answeredQuestionNamesSet.has(name));
   };
+
+  useEffect(() => {
+    if (router.query?.hash && !sparkHashQueryParam) {
+      return;
+    }
+
+    if (sparkHashQueryParam) {
+      const parameters = selectedExecution?.parameters;
+      const contextualOverrides = selectedExecution?.contextual_overrides;
+
+      if (!!Object.keys(parameters ?? {}).length) {
+        const newAnswers = Object.keys(parameters!)
+          .map(promptId => {
+            const param = parameters![promptId];
+
+            if (!param) {
+              return;
+            }
+
+            return Object.keys(param).map(inputName => ({
+              inputName,
+              required: true,
+              question: "",
+              answer: param[inputName],
+              prompt: parseInt(promptId),
+              error: false,
+            }));
+          })
+          .filter(data => Array.isArray(data))
+          .flat() as IAnswer[];
+
+        dispatch(setAnswers(newAnswers));
+      }
+
+      if (!!Object.keys(contextualOverrides ?? {}).length) {
+        const newContextualOverrides = Object.keys(contextualOverrides!)
+          .map(promptId => {
+            const param = contextualOverrides![promptId];
+
+            if (!param?.length) {
+              return;
+            }
+
+            const newParam = param.map((parameter: ContextualOverrides) => ({
+              parameter: parameter.parameter,
+              score: parameter.score,
+            }));
+
+            return {
+              contextual_overrides: newParam,
+              id: parseInt(promptId),
+            };
+          })
+          .filter(item => item !== undefined) as ResOverrides[];
+
+        dispatch(setparamsValues(newContextualOverrides));
+      }
+    }
+  }, [sparkHashQueryParam]);
 
   useEffect(() => {
     if (isVariantA) return;
