@@ -55,7 +55,7 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
 
   const { generateExecutionHandler, abortConnection, disableChatInput } = useGenerateExecution({
     template,
-    questionPrefixContent,
+    messageAnswersForm,
     onError,
   });
 
@@ -116,7 +116,9 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
         fromUser: true,
       };
 
-      setMessages(messages.filter(msg => msg.type !== "form" && msg.type !== "spark").concat(userMessage));
+      setMessages(prevMessages =>
+        prevMessages.filter(msg => msg.type !== "form" && msg.type !== "spark").concat(userMessage),
+      );
 
       setIsValidatingAnswer(true);
 

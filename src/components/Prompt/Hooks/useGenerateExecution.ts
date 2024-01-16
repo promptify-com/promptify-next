@@ -5,7 +5,6 @@ import { setGeneratingStatus } from "@/core/store/templatesSlice";
 import { parseMessageData } from "@/common/helpers/parseMessageData";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import useToken from "@/hooks/useToken";
-import useChat from "./useChat";
 import useChatBox from "./useChatBox";
 import useApiAccess from "./useApiAccess";
 import { useStopExecutionMutation } from "@/core/api/executions";
@@ -19,10 +18,10 @@ import { setAnswers } from "@/core/store/chatSlice";
 
 interface Props {
   template: Templates;
-  questionPrefixContent: string;
+  messageAnswersForm: (message: string) => void;
   onError: (errMsg: string) => void;
 }
-const useGenerateExecution = ({ template, questionPrefixContent, onError }: Props) => {
+const useGenerateExecution = ({ template, messageAnswersForm, onError }: Props) => {
   const token = useToken();
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -40,10 +39,6 @@ const useGenerateExecution = ({ template, questionPrefixContent, onError }: Prop
   });
   const abortController = useRef(new AbortController());
 
-  const { messageAnswersForm } = useChat({
-    questionPrefixContent,
-    template,
-  });
   const { preparePromptsData } = useChatBox();
   const { dispatchNewExecutionData } = useApiAccess();
   const { storeAnswers, storeParams } = useStoreAnswersAndParams();

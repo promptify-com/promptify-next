@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { randomId } from "@/common/helpers";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { setAnswers, setIsSimulationStreaming, setMessages, setParamsValues } from "@/core/store/chatSlice";
+import { setAnswers, setIsSimulationStreaming, setParamsValues } from "@/core/store/chatSlice";
 import useVariant from "./useVariant";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { IAnswer, IMessage, MessageType } from "../Types/chat";
@@ -20,15 +20,12 @@ function useChat({ questionPrefixContent, template }: Props) {
   const { isVariantA, isVariantB } = useVariant();
 
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const { messages, isSimulationStreaming, inputs, answers } = useAppSelector(state => state.chat);
+  const { isSimulationStreaming, inputs, answers } = useAppSelector(state => state.chat);
   const { selectedExecution, generatedExecution, repeatedExecution, sparkHashQueryParam } = useAppSelector(
     state => state.executions,
   );
 
-  const setMessagesHandler = (_messages: IMessage[]) => {
-    dispatch(setMessages(_messages));
-  };
-
+  const [messages, setMessages] = useState<IMessage[]>([]);
   const [queuedMessages, setQueuedMessages] = useState<IMessage[]>([]);
   const [showGenerateButton, setShowGenerateButton] = useState(false);
 
@@ -58,7 +55,7 @@ function useChat({ questionPrefixContent, template }: Props) {
       initialQueuedMessages.push(textMessage);
     }
 
-    setMessagesHandler(InitialMessages);
+    setMessages(InitialMessages);
 
     const formMessage = createMessage("form");
 
@@ -130,7 +127,7 @@ function useChat({ questionPrefixContent, template }: Props) {
     const botMessage = createMessage("text");
     botMessage.text = message;
     addToQueuedMessages([createMessage("form")]);
-    setMessagesHandler(messages.filter(msg => msg.type !== "form").concat(botMessage));
+    setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat(botMessage));
   };
 
   const addToQueuedMessages = (messages: IMessage[]) => {
@@ -143,7 +140,7 @@ function useChat({ questionPrefixContent, template }: Props) {
     if (!isSimulationStreaming && !!queuedMessages.length) {
       const nextQueuedMessage = queuedMessages.shift()!;
       dispatch(setIsSimulationStreaming(true));
-      setMessagesHandler(messages.concat(nextQueuedMessage));
+      setMessages(currentMessages => currentMessages.concat(nextQueuedMessage));
       addToQueuedMessages(queuedMessages);
     }
   };
@@ -159,7 +156,7 @@ function useChat({ questionPrefixContent, template }: Props) {
       filteredMessages.push(createMessage("spark"));
     }
 
-    setMessagesHandler(filteredMessages);
+    setMessages(filteredMessages);
   }
 
   function updateMessagesForSelectedExecution() {
@@ -188,7 +185,7 @@ function useChat({ questionPrefixContent, template }: Props) {
       return 0;
     });
 
-    setMessagesHandler(newMessages);
+    setMessages(newMessages);
   }
 
   function updateMessageForRepeatedExecution() {
@@ -238,7 +235,7 @@ function useChat({ questionPrefixContent, template }: Props) {
 
   return {
     messages,
-    setMessages: setMessagesHandler,
+    setMessages,
     initialMessages,
     addToQueuedMessages,
     messageAnswersForm,

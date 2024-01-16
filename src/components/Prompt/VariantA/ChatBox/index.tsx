@@ -52,7 +52,7 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
 
   const { generateExecutionHandler, abortConnection, disableChatInput } = useGenerateExecution({
     template,
-    questionPrefixContent,
+    messageAnswersForm,
     onError,
   });
   const { storeAnswers, storeParams } = useStoreAnswersAndParams();
