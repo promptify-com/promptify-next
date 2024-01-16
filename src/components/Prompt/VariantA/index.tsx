@@ -5,8 +5,6 @@ import Box from "@mui/material/Box";
 import ChatBox from "./ChatBox";
 import { useAppSelector } from "@/hooks/useStore";
 import { Display } from "./Display";
-
-import ClientOnly from "@/components/base/ClientOnly";
 import Header from "@/components/Prompt/Common/Header";
 import TopHeaderActions from "@/components/Prompt/Common/Sidebar/TopHeaderActions";
 import Sidebar from "@/components/Prompt/Common/Sidebar";
@@ -95,13 +93,11 @@ export default function TemplateVariantA({
             },
           }}
         >
-          <ClientOnly>
-            <ChatBox
-              onError={setErrorMessage}
-              template={template}
-              questionPrefixContent={questionPrefixContent}
-            />
-          </ClientOnly>
+          <ChatBox
+            onError={setErrorMessage}
+            template={template}
+            questionPrefixContent={questionPrefixContent}
+          />
         </Stack>
 
         {isExecutionShown && (

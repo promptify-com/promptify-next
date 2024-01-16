@@ -15,6 +15,7 @@ import useScrollToBottom from "@/components/Prompt/Hooks/useScrolltoBottom";
 import TemplateDetailsCard from "@/components/Prompt/Common/TemplateDetailsCard";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { Templates } from "@/core/api/dto/templates";
+import ClientOnly from "@/components/base/ClientOnly";
 
 type AccordionExpandedState = {
   spark: boolean;
@@ -138,19 +139,21 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
                   onMouseLeave={() => setIsHovered(false)}
                 >
                   {isHovered && (
-                    <Typography
-                      sx={{
-                        position: "absolute",
-                        top: -20,
-                        opacity: 0.5,
-                        left: 2,
-                        zIndex: 999,
-                      }}
-                      fontSize={12}
-                      variant="caption"
-                    >
-                      Promptify {timeAgo(msg.createdAt)}
-                    </Typography>
+                    <ClientOnly>
+                      <Typography
+                        sx={{
+                          position: "absolute",
+                          top: -20,
+                          opacity: 0.5,
+                          left: 2,
+                          zIndex: 999,
+                        }}
+                        fontSize={12}
+                        variant="caption"
+                      >
+                        Promptify {timeAgo(msg.createdAt)}
+                      </Typography>
+                    </ClientOnly>
                   )}
                   <Stack
                     direction={"row"}

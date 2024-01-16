@@ -1,13 +1,13 @@
 import { memo, useEffect, useState } from "react";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
-import Bolt from "@mui/icons-material/Bolt";
 
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import useTextSimulationStreaming from "@/hooks/useTextSimulationStreaming";
 import { timeAgo } from "@/common/helpers/timeManipulation";
 import { setIsSimulationStreaming } from "@/core/store/chatSlice";
+import ClientOnly from "@/components/base/ClientOnly";
 
 interface MessageBlockProps {
   message: IMessage;
@@ -67,19 +67,21 @@ export const Message = ({ message, isExecutionMode, onScrollToBottom }: MessageB
       onMouseLeave={() => setIsHovered(false)}
     >
       {isHovered && (
-        <Typography
-          sx={{
-            position: "absolute",
-            top: -20,
-            opacity: 0.5,
-            right: fromUser ? 0 : "",
-            left: !fromUser ? 2 : "",
-          }}
-          fontSize={12}
-          variant="caption"
-        >
-          {name} {timeAgo(createdAt)}
-        </Typography>
+        <ClientOnly>
+          <Typography
+            sx={{
+              position: "absolute",
+              top: -20,
+              opacity: 0.5,
+              right: fromUser ? 0 : "",
+              left: !fromUser ? 2 : "",
+            }}
+            fontSize={12}
+            variant="caption"
+          >
+            {name} {timeAgo(createdAt)}
+          </Typography>
+        </ClientOnly>
       )}
 
       <Grid

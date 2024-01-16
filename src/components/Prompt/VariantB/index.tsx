@@ -4,7 +4,6 @@ import Stack from "@mui/material/Stack";
 
 import Chat from "@/components/Prompt/Common/Chat";
 import Header from "@/components/Prompt/Common/Header";
-import ClientOnly from "@/components/base/ClientOnly";
 import Sidebar from "@/components/Prompt/Common/Sidebar";
 import TopHeaderActions from "@/components/Prompt/Common/Sidebar/TopHeaderActions";
 import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
@@ -82,13 +81,11 @@ export default function TemplateVariantB({
             },
           }}
         >
-          <ClientOnly>
-            <Chat
-              onError={setErrorMessage}
-              template={template}
-              questionPrefixContent={questionPrefixContent}
-            />
-          </ClientOnly>
+          <Chat
+            onError={setErrorMessage}
+            template={template}
+            questionPrefixContent={questionPrefixContent}
+          />
         </Stack>
         <Sidebar
           template={template}
