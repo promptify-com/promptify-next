@@ -15,6 +15,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'insights.hotjar.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'oaidalleapiprodscus.blob.core.windows.net',
+      },
     ],
     minimumCacheTTL: 3600,
   },

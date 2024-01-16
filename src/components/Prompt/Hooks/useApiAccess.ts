@@ -9,7 +9,6 @@ const useApiAccess = () => {
 
   const dispatchNewExecutionData = () => {
     const promptsData: Record<number, ResPrompt> = {};
-
     const _answers = [...answers];
     const _inputs = [...inputs];
 
@@ -28,6 +27,10 @@ const useApiAccess = () => {
     });
 
     _answers.forEach(_answer => {
+      if (!promptsData[_answer.prompt]?.prompt_params) {
+        return;
+      }
+
       promptsData[_answer.prompt].prompt_params = {
         ...promptsData[_answer.prompt].prompt_params,
         [_answer.inputName]: _answer.answer,
@@ -36,6 +39,7 @@ const useApiAccess = () => {
 
     dispatch(updateExecutionData(JSON.stringify(Object.values(promptsData))));
   };
+
   return { dispatchNewExecutionData };
 };
 

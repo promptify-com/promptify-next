@@ -64,7 +64,7 @@ export interface PromptParams {
   prompt: number;
 }
 
-interface ContextualOverrides {
+export interface ContextualOverrides {
   parameter: number;
   score: number;
 }
