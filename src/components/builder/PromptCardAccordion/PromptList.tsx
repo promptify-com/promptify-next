@@ -4,14 +4,12 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { useDrop } from "react-dnd";
 import Add from "@mui/icons-material/Add";
-
 import PromptCardAccordion from "@/components/builder/PromptCardAccordion";
 import { promptComputeDomId, randomId } from "@/common/helpers";
 import { useDeletePromptMutation } from "@/core/api/templates";
 import { DeleteDialog } from "@/components/dialog/DeleteDialog";
 import { useScrollToElement } from "@/hooks/useScrollToElement";
 import { BUILDER_TYPE } from "@/common/constants";
-import type { Engine } from "@/core/api/dto/templates";
 import type { IEditPrompts } from "@/common/types/builder";
 import BuilderPromptPlaceholder from "@/components/placeholders/BuilderPromptPlaceholder";
 import { useAppSelector } from "@/hooks/useStore";

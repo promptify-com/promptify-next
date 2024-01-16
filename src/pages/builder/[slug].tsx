@@ -44,7 +44,7 @@ import { BUILDER_TYPE } from "@/common/constants";
 import PromptCardAccordion from "@/components/builder/PromptCardAccordion";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { setEngines, setIsTemplateOwner } from "@/core/store/builderSlice";
+import { setEngines, setIsTemplateOwner, setTemplateStatus } from "@/core/store/builderSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
@@ -150,6 +150,7 @@ export const Builder = () => {
       if (currentUser) {
         dispatch(setIsTemplateOwner(templateData?.created_by.id === currentUser?.id || currentUser?.is_admin));
       }
+      dispatch(setTemplateStatus(templateData.status));
     }
   }, [templateData]);
 

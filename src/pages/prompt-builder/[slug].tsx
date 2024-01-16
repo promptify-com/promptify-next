@@ -26,7 +26,7 @@ import type { IEditTemplate } from "@/common/types/editTemplate";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IEditPrompts } from "@/common/types/builder";
 import { useDispatch } from "react-redux";
-import { setEngines, setIsTemplateOwner } from "@/core/store/builderSlice";
+import { setEngines, setIsTemplateOwner, setTemplateStatus } from "@/core/store/builderSlice";
 
 export const PromptBuilder = () => {
   const router = useRouter();
@@ -48,14 +48,13 @@ export const PromptBuilder = () => {
   );
 
   useEffect(() => {
-    if (currentUser) {
-      dispatch(setIsTemplateOwner(fetchedTemplateData?.created_by.id === currentUser?.id || currentUser?.is_admin));
-    }
-    dispatch(setEngines(engines || []));
-  }, [fetchedTemplateData, engines]);
-
-  useEffect(() => {
     if (engines && fetchedTemplateData) {
+      dispatch(setEngines(engines));
+      dispatch(setTemplateStatus(fetchedTemplateData.status));
+      if (currentUser) {
+        dispatch(setIsTemplateOwner(fetchedTemplateData.created_by.id === currentUser?.id || currentUser?.is_admin));
+      }
+
       setTemplateData(fetchedTemplateData);
       const processedPrompts = handleInitPrompt(fetchedTemplateData, engines) as IEditPrompts[];
       setPrompts(processedPrompts);

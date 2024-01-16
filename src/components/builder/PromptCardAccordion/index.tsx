@@ -15,6 +15,8 @@ import { BUILDER_TYPE } from "@/common/constants";
 import PromptTestDialog from "./PromptTest";
 import { useAppSelector } from "@/hooks/useStore";
 import { isDeepEqual } from "@/common/helpers";
+import { useUpdatePromptMutation } from "@/core/api/templates";
+import useDebounce from "@/hooks/useDebounce";
 
 interface Props {
   prompt: IEditPrompts;
@@ -48,18 +50,25 @@ const PromptCardAccordion = ({
   const cursorPositionRef = useRef(0);
   const [highlightedOption, setHighlightedOption] = useState("");
   const { outputPresets, inputPresets } = useMemo(() => getBuilderVarsPresets(prompts, promptData, false), [prompts]);
+  const { isTemplateOwner, templateStatus } = useAppSelector(state => state.builder);
+  const isDraft = templateStatus === "DRAFT";
+
+  const [savePrompt] = useUpdatePromptMutation();
+
   const dispatchUpdatePrompt = useDebouncedDispatch(
     (prompt: IEditPrompts) => {
       setPrompt(prompt);
+      if (isDraft && prompt.id) {
+        savePrompt({ id: prompt.id, data: prompt });
+      }
     },
     builderType === BUILDER_TYPE.USER ? 700 : 200,
   );
-  const isOwner = useAppSelector(state => state.builder.isTemplateOwner);
 
-  const updatePrompt = (newPromptData: IEditPrompts) => {
+  const updatePrompt = async (newPromptData: IEditPrompts) => {
     setPromptData(newPromptData);
     dispatchUpdatePrompt(newPromptData);
-    saveNeeded.current = !isDeepEqual(initPromptData.current, newPromptData);
+    saveNeeded.current = !isDraft && !isDeepEqual(initPromptData.current, newPromptData);
   };
 
   const contentHandler = (content: string, selection?: Selection) => {
@@ -169,7 +178,7 @@ const PromptCardAccordion = ({
                   onClick={() => setRenameAllow(true)}
                 />
               </Stack>
-              {isOwner && (
+              {isTemplateOwner && (
                 <>
                   <Button
                     startIcon={<PlayCircle />}
