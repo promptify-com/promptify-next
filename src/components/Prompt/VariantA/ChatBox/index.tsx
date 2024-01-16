@@ -1,7 +1,6 @@
 import { useState, useMemo, memo, useEffect } from "react";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-
 import { useAppSelector, useAppDispatch } from "@/hooks/useStore";
 import useToken from "@/hooks/useToken";
 import { ChatInterface } from "./ChatInterface";
@@ -13,12 +12,12 @@ import { isDesktopViewPort, randomId } from "@/common/helpers";
 import useChatBox from "@/hooks/useChatBox";
 import SigninButton from "@/components/common/buttons/SigninButton";
 import { setAnswers, setInputs, setParams, setParamsValues } from "@/core/store/chatSlice";
-import { ChatInput } from "../../Common/Chat/ChatInput";
-import useChat from "../../Hooks/useChat";
-import useGenerateExecution from "../../Hooks/useGenerateExecution";
-import type { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
+import { ChatInput } from "@/components/Prompt/Common/Chat/ChatInput";
+import useChat from "@/components/Prompt/Hooks/useChat";
+import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution";
+import type { PromptParams } from "@/core/api/dto/prompts";
 import type { IPromptInput, AnsweredInputType } from "@/common/types/prompt";
-import type { PromptInputType } from "../../Types";
+import type { PromptInputType } from "@/components/Prompt/Types";
 import type { IAnswer, IMessage, VaryValidatorResponse } from "@/components/Prompt/Types/chat";
 import type { Templates } from "@/core/api/dto/templates";
 import { useStoreAnswersAndParams } from "@/hooks/useStoreAnswersAndParams";
@@ -101,7 +100,7 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
           fromUser: false,
           spark: _newExecution,
         };
-        setMessages(prevMessages => prevMessages.concat(generatedExecutionMessage));
+        setMessages(messages.concat(generatedExecutionMessage));
       } catch {
         window.location.reload();
       }
@@ -118,7 +117,7 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
         createdAt: new Date(new Date().getTime() - 1000),
         fromUser: true,
       };
-      setMessages(prevMessages => prevMessages.concat(userMessage));
+      setMessages(messages.concat(userMessage));
 
       setIsValidatingAnswer(true);
 

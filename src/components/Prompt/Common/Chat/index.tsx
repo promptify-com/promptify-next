@@ -116,9 +116,7 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
         fromUser: true,
       };
 
-      setMessages(prevMessages =>
-        prevMessages.filter(msg => msg.type !== "form" && msg.type !== "spark").concat(userMessage),
-      );
+      setMessages(messages.filter(msg => msg.type !== "form" && msg.type !== "spark").concat(userMessage));
 
       setIsValidatingAnswer(true);
 

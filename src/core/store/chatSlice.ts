@@ -1,10 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { IPromptInput } from "@/common/types/prompt";
-import type { IAnswer } from "@/components/Prompt/Types/chat";
+import type { IAnswer, IMessage } from "@/components/Prompt/Types/chat";
 import type { PromptParams, ResOverrides } from "../api/dto/prompts";
 
 export interface ExecutionsProps {
+  messages: IMessage[];
   answers: IAnswer[];
   inputs: IPromptInput[];
   params: PromptParams[];
@@ -13,6 +14,7 @@ export interface ExecutionsProps {
 }
 
 const initialState: ExecutionsProps = {
+  messages: [],
   answers: [],
   inputs: [],
   params: [],
@@ -24,6 +26,9 @@ export const chatSlice = createSlice({
   name: "executions",
   initialState,
   reducers: {
+    setMessages: (state, action: PayloadAction<IMessage[]>) => {
+      state.messages = action.payload;
+    },
     setAnswers: (state, action: PayloadAction<IAnswer[]>) => {
       state.answers = action.payload;
     },
@@ -42,6 +47,7 @@ export const chatSlice = createSlice({
   },
 });
 
-export const { setAnswers, setInputs, setParams, setParamsValues, setIsSimulationStreaming } = chatSlice.actions;
+export const { setMessages, setAnswers, setInputs, setParams, setParamsValues, setIsSimulationStreaming } =
+  chatSlice.actions;
 
 export default chatSlice.reducer;

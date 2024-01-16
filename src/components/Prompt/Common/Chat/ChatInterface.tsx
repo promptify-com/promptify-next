@@ -181,7 +181,6 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
                       !!selectedExecution?.prompt_executions?.length &&
                       expandedAccordions["spark"] && (
                         <Box
-                          id="testt"
                           sx={{
                             position: "sticky",
                             top: "10px",
