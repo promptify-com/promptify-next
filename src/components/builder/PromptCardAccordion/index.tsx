@@ -45,7 +45,7 @@ const PromptCardAccordion = ({
   const [showToast, setShowToast] = useState(false);
   const saveNeeded = useRef(!!!promptData.id);
   const cursorPositionRef = useRef(0);
-  const [highlightedOption, setHighlitedOption] = useState("");
+  const [highlightedOption, setHighlightedOption] = useState("");
   const { outputPresets, inputPresets } = useMemo(() => getBuilderVarsPresets(prompts, promptData, false), [prompts]);
   const dispatchUpdatePrompt = useDebouncedDispatch(
     (prompt: IEditPrompts) => {
@@ -232,8 +232,8 @@ const PromptCardAccordion = ({
               onChange={contentHandler}
               outputPresets={outputPresets}
               inputPresets={inputPresets}
-              highlitedValue={highlightedOption}
-              setHighlitedValue={setHighlitedOption}
+              highlightedValue={highlightedOption}
+              setHighlightedValue={setHighlightedOption}
               type={"user"}
             />
           </Box>

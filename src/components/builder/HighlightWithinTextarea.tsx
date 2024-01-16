@@ -23,8 +23,8 @@ interface Props {
   inputPresets: InputVariable[];
   outputPresets: OutputVariable[];
   onChange: (str: string, Selection?: Selection) => void;
-  highlitedValue: string;
-  setHighlitedValue: (str: string) => void;
+  highlightedValue: string;
+  setHighlightedValue: (str: string) => void;
   type: BuilderType;
 }
 
@@ -45,14 +45,14 @@ function HighlightTextarea({
   outputPresets,
   cursorPositionRef,
   onChange,
-  highlitedValue,
-  setHighlitedValue,
+  highlightedValue,
+  setHighlightedValue,
   type,
 }: Props) {
   const [optionType, setOptionType] = useState<PresetType>("input");
   const [suggestionList, setSuggestionList] = useState<Preset[]>([]);
   const divRef = useRef<HighlightWithinTextareaRef | null>(null);
-  const cursorPosition = useCursorPosition(divRef, highlitedValue);
+  const cursorPosition = useCursorPosition(divRef, highlightedValue);
 
   const showSuggestions = (value: string) => {
     let suggestions: Preset[] = [];
@@ -88,7 +88,7 @@ function HighlightTextarea({
 
     let newVal = currentRegex + textAfterRegexValue;
 
-    setHighlitedValue(newVal);
+    setHighlightedValue(newVal);
     setSuggestionList(suggestions);
   };
 
@@ -99,18 +99,18 @@ function HighlightTextarea({
       outputPresets,
       inputPresets,
       onChange,
-      hasValueAfterRegex: highlitedValue,
+      hasValueAfterRegex: highlightedValue,
       cursorPositionRef,
       content: prompt.content,
     });
 
-    setHighlitedValue("");
+    setHighlightedValue("");
     setSuggestionList([]);
   };
 
   const handleTypeSelect = (type: InputType) => {
     const _newSugg: Preset = {
-      label: `${highlitedValue.slice(0, highlitedValue.indexOf(":") + 1) + type}}}`,
+      label: `${highlightedValue.slice(0, highlightedValue.indexOf(":") + 1) + type}}}`,
     };
     handleSuggestionSelect(_newSugg, "input");
   };
@@ -150,7 +150,7 @@ function HighlightTextarea({
           />
         ) : (
           <SuggestionsListDetailed
-            highlightValue={highlitedValue}
+            highlightValue={highlightedValue}
             suggestionList={suggestionList}
             position={cursorPosition}
             optionType={optionType}
