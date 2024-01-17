@@ -1,5 +1,12 @@
-import { ModeEdit, PlayCircle } from "@mui/icons-material";
-import { Alert, Box, Button, Divider, Snackbar, Stack, Typography } from "@mui/material";
+import ModeEdit from "@mui/icons-material/ModeEdit";
+import PlayCircle from "@mui/icons-material/PlayCircle";
+import Alert from "@mui/material/Alert";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Divider from "@mui/material/Divider";
+import Snackbar from "@mui/material/Snackbar";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 import React, { memo, useMemo, useRef, useState } from "react";
 import Header from "./Header";
 import StylerAccordion from "./StylerAccordion";
@@ -16,7 +23,6 @@ import PromptTestDialog from "./PromptTest";
 import { useAppSelector } from "@/hooks/useStore";
 import { isDeepEqual } from "@/common/helpers";
 import { useUpdatePromptMutation } from "@/core/api/templates";
-import useDebounce from "@/hooks/useDebounce";
 
 interface Props {
   prompt: IEditPrompts;
@@ -65,10 +71,10 @@ const PromptCardAccordion = ({
     builderType === BUILDER_TYPE.USER ? 700 : 200,
   );
 
-  const updatePrompt = async (newPromptData: IEditPrompts) => {
+  const updatePrompt = (newPromptData: IEditPrompts) => {
+    saveNeeded.current = !isDraft && !isDeepEqual(initPromptData.current, newPromptData);
     setPromptData(newPromptData);
     dispatchUpdatePrompt(newPromptData);
-    saveNeeded.current = !isDraft && !isDeepEqual(initPromptData.current, newPromptData);
   };
 
   const contentHandler = (content: string, selection?: Selection) => {
