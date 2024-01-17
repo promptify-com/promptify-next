@@ -8,7 +8,6 @@ import Icon from "@mui/material/Icon";
 import Drawer from "@mui/material/Drawer";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
-import Divider from "@mui/material/Divider";
 import Close from "@mui/icons-material/Close";
 import FormatListBulleted from "@mui/icons-material/FormatListBulleted";
 import { useTheme } from "@mui/material/styles";
@@ -21,6 +20,8 @@ import PromptSequence from "./PromptSequence";
 import type { IEditPrompts } from "@/common/types/builder";
 import PaperIcon from "@/assets/icons/PaperIcon";
 import TestLog from "./TestLog";
+import { ClearAll } from "@mui/icons-material";
+import { Tooltip } from "@mui/material";
 
 type LinkName = "list" | "test_log" | "help" | "api";
 
@@ -174,15 +175,16 @@ export const BuilderSidebar = ({ prompts, setPrompts }: Props) => {
         <Box
           display="flex"
           alignItems="center"
-          p={"16px 24px"}
           justifyContent="space-between"
+          gap={1}
+          p={"16px 24px"}
           border={`1px solid ${theme.palette.surface[3]}`}
           height="70px"
           boxSizing={"border-box"}
         >
           <Typography
-            variant="h6"
             sx={{
+              flex: 1,
               color: "var(--onSurface, #1B1B1E)",
               fontFeatureSettings: "'clig' off, 'liga' off",
               fontFamily: "Poppins",
@@ -196,6 +198,21 @@ export const BuilderSidebar = ({ prompts, setPrompts }: Props) => {
           >
             {activeLink?.name}
           </Typography>
+          {activeLink?.key === "test_log" && (
+            <Tooltip title="Delete all">
+              <IconButton
+                onClick={() => handleCloseSidebar()}
+                sx={{
+                  border: "none",
+                  "&:hover": {
+                    bgcolor: "surface.2",
+                  },
+                }}
+              >
+                <ClearAll />
+              </IconButton>
+            </Tooltip>
+          )}
 
           <IconButton
             onClick={() => handleCloseSidebar()}
