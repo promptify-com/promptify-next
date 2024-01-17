@@ -3,10 +3,10 @@ import { useAppSelector } from "@/hooks/useStore";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import { Accordion, AccordionDetails, AccordionSummary, Box, Stack, Typography, alpha } from "@mui/material";
 import React, { useState } from "react";
-import Image from "../design-system/Image";
+import Image from "@/components/design-system/Image";
 import { timeAgo } from "@/common/helpers/timeManipulation";
-import { borderRadius } from "polished";
 import { theme } from "@/theme";
+import ExecutionOutput from "@/components/builder/ExecutionOutput";
 
 const TestLog = () => {
   const templateId = useAppSelector(state => state.builder.templateId);
@@ -31,9 +31,10 @@ const TestLog = () => {
             sx={{
               p: "16px",
               boxShadow: "none",
+              borderRadius: "8px",
               "::before": { display: "none" },
               ":hover": { bgcolor: alpha(theme.palette.surface[2], 0.4) },
-              "&.Mui-expanded": { bgcolor: "surface.2", borderRadius: "8px" },
+              "&.Mui-expanded": { bgcolor: "surface.2" },
             }}
           >
             <AccordionSummary
@@ -73,7 +74,12 @@ const TestLog = () => {
                 </Stack>
               </Stack>
             </AccordionSummary>
-            <AccordionDetails>{execution.output}</AccordionDetails>
+            <AccordionDetails sx={{ p: "16px 0" }}>
+              <ExecutionOutput
+                output={execution.output}
+                engineType={"TEXT"}
+              />
+            </AccordionDetails>
           </Accordion>
         ))}
       </Box>
