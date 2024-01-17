@@ -14,6 +14,7 @@ export const workflowsApi = baseApi.injectEndpoints({
         query: workflowsId => ({
           url: `/api/n8n/workflows/${workflowsId}/`,
           method: "get",
+          keepUnusedDataFor: 60 * 60,
         }),
       }),
       createUserWorkflow: builder.mutation<IWorkflow, number>({

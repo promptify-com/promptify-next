@@ -318,6 +318,7 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
     showGenerateButton,
     showGenerate,
     isValidatingAnswer,
+    setIsValidatingAnswer,
     validateVary,
   };
 }
