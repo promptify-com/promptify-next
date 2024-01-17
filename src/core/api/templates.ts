@@ -4,6 +4,7 @@ import {
   FilterParams,
   IFeedback,
   IPostFeedback,
+  PromptExecutions,
   TemplateApiStatus,
   Templates,
   TemplatesWithPagination,
@@ -178,6 +179,12 @@ export const templatesApi = baseApi.injectEndpoints({
           method: "post",
         }),
       }),
+      getTemplatePromptExecutions: builder.query<PromptExecutions[], number>({
+        query: id => ({
+          url: `/api/meta/templates/${id}/prompt-executions`,
+          method: "get",
+        }),
+      }),
     };
   },
 });
@@ -202,4 +209,5 @@ export const {
   useSaveFeedbackMutation,
   useSetTemplateEnableApiMutation,
   useGetTemplateApiStatusQuery,
+  useGetTemplatePromptExecutionsQuery,
 } = templatesApi;

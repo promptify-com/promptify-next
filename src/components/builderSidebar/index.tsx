@@ -19,11 +19,14 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setOpenBuilderSidebar } from "@/core/store/sidebarSlice";
 import PromptSequence from "./PromptSequence";
 import type { IEditPrompts } from "@/common/types/builder";
+import PaperIcon from "@/assets/icons/PaperIcon";
+import TestLog from "./TestLog";
 
-type LinkName = "list" | "paper" | "help" | "api";
+type LinkName = "list" | "test_log" | "help" | "api";
 
 interface Link {
-  name: LinkName;
+  key: LinkName;
+  name: string;
   icon: ReactNode;
 }
 
@@ -38,31 +41,34 @@ export const BuilderSidebar = ({ prompts, setPrompts }: Props) => {
 
   const engines = useAppSelector(state => state.builder.engines);
 
-  const [activeLink, setActiveLink] = useState<LinkName>();
+  const [activeLink, setActiveLink] = useState<Link>();
 
   const theme = useTheme();
 
   const Links: Link[] = [
     {
-      name: "list",
+      key: "list",
+      name: "Prompt sequence",
       icon: <FormatListBulleted />,
     },
-    // Will be added back in #609
-    // {
-    //   name: "paper",
-    //   icon: <PaperIcon />,
-    // },
     {
-      name: "help",
+      key: "test_log",
+      name: "Test log",
+      icon: <PaperIcon />,
+    },
+    {
+      key: "help",
+      name: "Help",
       icon: <HelpIcon />,
     },
     {
-      name: "api",
+      key: "api",
+      name: "Api",
       icon: <ApiIcon />,
     },
   ];
 
-  const handleOpenSidebar = (link: LinkName) => {
+  const handleOpenSidebar = (link: Link) => {
     setOpen(true);
     setActiveLink(link);
     dispatch(setOpenBuilderSidebar(true));
@@ -114,7 +120,7 @@ export const BuilderSidebar = ({ prompts, setPrompts }: Props) => {
           <Grid key={link.name}>
             <ListItem
               disablePadding
-              onClick={() => handleOpenSidebar(link.name)}
+              onClick={() => handleOpenSidebar(link)}
             >
               <ListItemButton
                 sx={{
@@ -122,6 +128,7 @@ export const BuilderSidebar = ({ prompts, setPrompts }: Props) => {
                   borderRadius: "8px",
                   mx: 1,
                   padding: "16px 22px ",
+                  bgcolor: open && activeLink?.name === link.name ? "action.hover" : "transparent",
                 }}
               >
                 <Box
@@ -187,7 +194,7 @@ export const BuilderSidebar = ({ prompts, setPrompts }: Props) => {
               textTransform: "capitalize",
             }}
           >
-            {activeLink === "list" ? "Prompt Sequence" : activeLink}
+            {activeLink?.name}
           </Typography>
 
           <IconButton
@@ -203,14 +210,15 @@ export const BuilderSidebar = ({ prompts, setPrompts }: Props) => {
           </IconButton>
         </Box>
         <Divider />
-        {activeLink === "list" && (
+        {activeLink?.key === "list" && (
           <PromptSequence
             prompts={prompts}
             engines={engines}
             setPrompts={setPrompts}
           />
         )}
-        {activeLink === "help" && <Help />}
+        {activeLink?.key === "help" && <Help />}
+        {activeLink?.key === "test_log" && <TestLog />}
       </Drawer>
     </Box>
   );

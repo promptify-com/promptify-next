@@ -4,12 +4,14 @@ import { Engine, TemplateStatus } from "@/core/api/dto/templates";
 
 export interface Props {
   engines: Engine[];
+  templateId: number | null;
   isTemplateOwner: boolean;
   templateStatus: TemplateStatus | null;
 }
 
 const initialState: Props = {
   engines: [],
+  templateId: null,
   isTemplateOwner: false,
   templateStatus: null,
 };
@@ -20,6 +22,9 @@ export const builderSlice = createSlice({
   reducers: {
     setEngines: (state, action: PayloadAction<Engine[]>) => {
       state.engines = action.payload;
+    },
+    setTemplateId: (state, action: PayloadAction<number>) => {
+      state.templateId = action.payload;
     },
     setIsTemplateOwner: (state, action: PayloadAction<boolean>) => {
       state.isTemplateOwner = action.payload;
@@ -33,6 +38,6 @@ export const builderSlice = createSlice({
   },
 });
 
-export const { setEngines, setIsTemplateOwner, setTemplateStatus } = builderSlice.actions;
+export const { setEngines, setTemplateId, setIsTemplateOwner, setTemplateStatus } = builderSlice.actions;
 
 export default builderSlice.reducer;

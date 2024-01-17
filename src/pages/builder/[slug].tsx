@@ -35,7 +35,6 @@ import { IEditPrompts } from "@/common/types/builder";
 import TemplateForm from "@/components/common/forms/TemplateForm";
 import { isPromptVariableValid } from "@/common/helpers/promptValidator";
 import { randomId, redirectToPath } from "@/common/helpers";
-
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import { theme } from "@/theme";
 import { useGetEnginesQuery } from "@/core/api/engines";
@@ -44,7 +43,7 @@ import { BUILDER_TYPE } from "@/common/constants";
 import PromptCardAccordion from "@/components/builder/PromptCardAccordion";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { setEngines, setIsTemplateOwner, setTemplateStatus } from "@/core/store/builderSlice";
+import { setEngines, setIsTemplateOwner, setTemplateId, setTemplateStatus } from "@/core/store/builderSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
@@ -147,10 +146,11 @@ export const Builder = () => {
       dataForRequest.current = data;
       setPrompts(templateData.prompts);
 
+      dispatch(setTemplateId(templateData.id));
+      dispatch(setTemplateStatus(templateData.status));
       if (currentUser) {
         dispatch(setIsTemplateOwner(templateData?.created_by.id === currentUser?.id || currentUser?.is_admin));
       }
-      dispatch(setTemplateStatus(templateData.status));
     }
   }, [templateData]);
 

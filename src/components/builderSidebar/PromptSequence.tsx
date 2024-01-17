@@ -7,7 +7,6 @@ import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
-
 import { useScrollToElement } from "@/hooks/useScrollToElement";
 import { promptComputeDomId } from "@/common/helpers";
 import type { Engine } from "@/core/api/dto/templates";
