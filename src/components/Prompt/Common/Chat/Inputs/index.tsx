@@ -10,6 +10,7 @@ import Textual from "@/components/Prompt/Common/Chat/Inputs/Textual";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { PromptInputType } from "@/components/Prompt/Types";
 import type { IAnswer } from "@/components/Prompt/Types/chat";
+import { useDebouncedDispatch } from "@/hooks/useDebounceDispatch";
 
 interface Props {
   input: IPromptInput;
@@ -29,20 +30,19 @@ function RenderInputType({ input, value: initialValue }: Props) {
 
   const isTextualType = type === "text" || type === "number" || type === "integer";
 
+  const dispatchUpdateAnswers = useDebouncedDispatch((value: string) => {
+    updateAnswers(value);
+  }, 400);
+
   useEffect(() => {
     setLocalValue(initialValue);
   }, [initialValue]);
-
-  const onBlur = () => {
-    if (isSimulationStreaming) return;
-
-    updateAnswers(localValue);
-  };
 
   const onChange = (value: string | File) => {
     if (isSimulationStreaming) return;
     if (isTextualType) {
       setLocalValue(value);
+      dispatchUpdateAnswers(value as string);
     } else {
       updateAnswers(value);
     }
@@ -101,7 +101,6 @@ function RenderInputType({ input, value: initialValue }: Props) {
           input={input}
           value={localValue}
           onChange={onChange}
-          onBlur={onBlur}
         />
       );
   }
