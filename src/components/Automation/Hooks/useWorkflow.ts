@@ -40,14 +40,10 @@ const useWorkflow = () => {
     return webhookNode?.parameters?.path;
   };
 
-  const createWorkflowIfNeeded = async (selectedWorkflowId: number, nodes: INode[]) => {
-    const currentWorkflowPath = extractWebhookPath(nodes);
+  const createWorkflowIfNeeded = async (selectedWorkflowId: number) => {
     let storedWorkflows = Storage.get("workflows") || {};
 
-    if (
-      !(selectedWorkflowId.toString() in storedWorkflows) ||
-      storedWorkflows[selectedWorkflowId] !== currentWorkflowPath
-    ) {
+    if (!(selectedWorkflowId.toString() in storedWorkflows)) {
       try {
         const response = await createWorkflow(selectedWorkflowId);
         if ("data" in response) {
@@ -81,7 +77,7 @@ const useWorkflow = () => {
     if (data) {
       clearStoredStates();
       dispatch(setSelectedWorkflow(data));
-      createWorkflowIfNeeded(data.id, data.data.nodes);
+      createWorkflowIfNeeded(data.id);
     }
   }, [data]);
 
