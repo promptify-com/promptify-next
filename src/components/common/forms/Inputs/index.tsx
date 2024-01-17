@@ -19,9 +19,9 @@ function RenderInputType({ input, value: initialValue, onChange }: Props) {
 
   const [localValue, setLocalValue] = useState(initialValue);
 
-  const { type } = input;
+  const { type: inputType } = input;
 
-  const isTextualType = type === "text" || type === "number" || type === "integer";
+  const isTextualType = inputType === "text" || inputType === "number" || inputType === "integer";
 
   useEffect(() => {
     setLocalValue(initialValue);
@@ -42,7 +42,7 @@ function RenderInputType({ input, value: initialValue, onChange }: Props) {
     }
   };
 
-  switch (type) {
+  switch (inputType) {
     case "code":
       return (
         <Code
