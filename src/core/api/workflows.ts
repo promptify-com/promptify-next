@@ -1,4 +1,4 @@
-import { IWorkflow } from "@/common/types/workflow";
+import { IWorkflow, IWorkflowCreateResponse } from "@/common/types/workflow";
 import { baseApi } from "./api";
 
 export const workflowsApi = baseApi.injectEndpoints({
@@ -17,7 +17,7 @@ export const workflowsApi = baseApi.injectEndpoints({
           keepUnusedDataFor: 60 * 60,
         }),
       }),
-      createUserWorkflow: builder.mutation<IWorkflow, number>({
+      createUserWorkflow: builder.mutation<IWorkflowCreateResponse, number>({
         query: workflowId => ({
           url: `/api/n8n/workflows/${workflowId}/create/`,
           method: "post",

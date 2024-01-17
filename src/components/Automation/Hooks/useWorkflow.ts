@@ -10,7 +10,6 @@ import { n8nClient as ApiClient } from "@/common/axios";
 import Storage from "@/common/storage";
 import type { Category } from "@/core/api/dto/templates";
 import type { INode } from "@/common/types/workflow";
-import { IPromptInput } from "@/common/types/prompt";
 
 const useWorkflow = () => {
   const dispatch = useAppDispatch();
@@ -43,10 +42,7 @@ const useWorkflow = () => {
 
   const createWorkflowIfNeeded = async (selectedWorkflowId: number, nodes: INode[]) => {
     const currentWorkflowPath = extractWebhookPath(nodes);
-
     let storedWorkflows = Storage.get("workflows") || {};
-
-    console.log(storedWorkflows);
 
     if (
       !(selectedWorkflowId.toString() in storedWorkflows) ||
@@ -55,7 +51,7 @@ const useWorkflow = () => {
       try {
         const response = await createWorkflow(selectedWorkflowId);
         if ("data" in response) {
-          storedWorkflows[selectedWorkflowId] = currentWorkflowPath;
+          storedWorkflows[selectedWorkflowId] = extractWebhookPath(response.data.nodes);
 
           Storage.set("workflows", JSON.stringify(storedWorkflows));
         }
@@ -70,11 +66,13 @@ const useWorkflow = () => {
 
     inputs.forEach(input => {
       const answer = answers.find(answer => answer.inputName === input.name);
-
       inputsData[input.name] = answer?.answer as string;
     });
+    let storedWorkflows = Storage.get("workflows") || {};
 
-    const response = await ApiClient.post(`/webhook/${extractWebhookPath(selectedWorkflow.data.nodes)}`, inputsData);
+    let webhookPath = storedWorkflows[selectedWorkflow.id];
+
+    const response = await ApiClient.post(`/webhook/${webhookPath}`, inputsData);
 
     return response.data;
   }
