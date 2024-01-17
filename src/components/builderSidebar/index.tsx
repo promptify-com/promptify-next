@@ -164,6 +164,7 @@ export const BuilderSidebar = ({ prompts, setPrompts }: Props) => {
           mt: theme.custom.promptBuilder.headerHeight,
           "& .MuiDrawer-paper": {
             width: theme.custom.promptBuilder.drawerWidth,
+            bgcolor: "surface.1",
           },
         }}
         variant="persistent"
@@ -171,7 +172,6 @@ export const BuilderSidebar = ({ prompts, setPrompts }: Props) => {
         open={open}
       >
         <Box
-          bgcolor={"surface.1"}
           display="flex"
           alignItems="center"
           p={"16px 24px"}
@@ -209,7 +209,6 @@ export const BuilderSidebar = ({ prompts, setPrompts }: Props) => {
             <Close />
           </IconButton>
         </Box>
-        <Divider />
         {activeLink?.key === "list" && (
           <PromptSequence
             prompts={prompts}

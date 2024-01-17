@@ -198,7 +198,6 @@ const PromptSequenceList = memo(({ prompts, setPrompts, engines }: PromptSequenc
 const PromptSequence = ({ prompts, setPrompts, engines }: PromptSequenceListProps) => {
   return (
     <Box
-      bgcolor={"surface.1"}
       height={"96vh"}
       overflow={"hidden"}
       sx={{

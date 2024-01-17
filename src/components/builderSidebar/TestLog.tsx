@@ -48,8 +48,9 @@ const TestLog = () => {
                 p: "16px",
                 boxShadow: "none",
                 borderRadius: "8px",
+                bgcolor: "transparent",
                 "::before": { display: "none" },
-                ":hover": { bgcolor: alpha(theme.palette.surface[2], 0.4) },
+                ":hover": { bgcolor: alpha(theme.palette.surface[2], 0.7) },
                 "&.Mui-expanded": { bgcolor: "surface.2" },
               }}
             >
