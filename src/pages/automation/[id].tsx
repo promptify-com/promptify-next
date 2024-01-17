@@ -54,13 +54,18 @@ export default function Page() {
   }, [selectedWorkflow, isWorkFlowLoading]);
 
   const executeWorflow = async () => {
-    setIsValidatingAnswer(true);
-    const response = await sendMessageAPI();
-    setIsValidatingAnswer(false);
-    if (response) {
-      dispatch(setAnswers([]));
-      messageAnswersForm(response.message);
+    try {
+      setIsValidatingAnswer(true);
+      const response = await sendMessageAPI();
+      if (response) {
+        dispatch(setAnswers([]));
+        messageAnswersForm(response);
+      }
+    } catch (error) {
+      messageAnswersForm("Something went wrong when executing this workflow.");
+      console.error(error);
     }
+    setIsValidatingAnswer(false);
   };
 
   return (

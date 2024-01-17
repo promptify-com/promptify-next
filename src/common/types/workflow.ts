@@ -43,3 +43,13 @@ export interface IWorkflow {
   };
   created_at: Date;
 }
+
+export interface IWorkflowCreateResponse {
+  id: number;
+  name: string;
+  description?: string;
+  image?: string;
+  created_by: User;
+  nodes: INode[];
+  created_at: Date;
+}
