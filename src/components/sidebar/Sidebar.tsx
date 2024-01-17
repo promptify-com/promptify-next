@@ -20,8 +20,6 @@ function Sidebar() {
   const router = useRouter();
 
   const pathname = router.pathname;
-
-  console.log(pathname, pathname.split("/")[1]);
   const isPromptsPage = pathname.split("/")[1] === "explore";
   const isValidUser = useAppSelector(isValidUserFn);
   const navItems: NavItem[] = [

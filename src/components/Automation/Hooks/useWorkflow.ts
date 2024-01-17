@@ -6,18 +6,26 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setSelectedWorkflow } from "@/core/store/workflowSlice";
 import { setGeneratedExecution, setRepeatedExecution, setSelectedExecution } from "@/core/store/executionsSlice";
 import { setAnswers, setInputs } from "@/core/store/chatSlice";
+import { n8nClient as ApiClient } from "@/common/axios";
 import Storage from "@/common/storage";
 import type { Category } from "@/core/api/dto/templates";
 import type { INode } from "@/common/types/workflow";
+import { IPromptInput } from "@/common/types/prompt";
 
 const useWorkflow = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const workflowId = router.query.id as string;
+  const workflowId = router.query?.id as string;
 
   const selectedWorkflow = useAppSelector(state => state.workflow.selectedWorkflow);
+  const { answers, inputs } = useAppSelector(state => state.chat);
 
-  const { data, error, isLoading: isWorkFlowLoading } = useGetWorkflowByIdQuery(parseInt(workflowId));
+  const {
+    data,
+    error,
+    isLoading: isWorkFlowLoading,
+  } = useGetWorkflowByIdQuery(parseInt(workflowId), { skip: !workflowId });
+
   const [createWorkflow] = useCreateUserWorkflowMutation();
 
   const clearStoredStates = () => {
@@ -34,22 +42,42 @@ const useWorkflow = () => {
   };
 
   const createWorkflowIfNeeded = async (selectedWorkflowId: number, nodes: INode[]) => {
-    const storedWorkflowId = parseInt(Storage.get("workflowId"));
-    const storedWorkflowPath = Storage.get("workflowPath");
     const currentWorkflowPath = extractWebhookPath(nodes);
 
-    if (storedWorkflowId !== selectedWorkflowId || storedWorkflowPath !== currentWorkflowPath) {
+    let storedWorkflows = Storage.get("workflows") || {};
+
+    console.log(storedWorkflows);
+
+    if (
+      !(selectedWorkflowId.toString() in storedWorkflows) ||
+      storedWorkflows[selectedWorkflowId] !== currentWorkflowPath
+    ) {
       try {
         const response = await createWorkflow(selectedWorkflowId);
         if ("data" in response) {
-          Storage.set("workflowId", JSON.stringify(response.data.id));
-          Storage.set("workflowPath", JSON.stringify(extractWebhookPath(response.data.data.nodes)));
+          storedWorkflows[selectedWorkflowId] = currentWorkflowPath;
+
+          Storage.set("workflows", JSON.stringify(storedWorkflows));
         }
       } catch (error) {
         console.error("Error creating workflow:", error);
       }
     }
   };
+
+  async function sendMessageAPI(): Promise<any> {
+    let inputsData: Record<string, string> = {};
+
+    inputs.forEach(input => {
+      const answer = answers.find(answer => answer.inputName === input.name);
+
+      inputsData[input.name] = answer?.answer as string;
+    });
+
+    const response = await ApiClient.post(`/webhook/${extractWebhookPath(selectedWorkflow.data.nodes)}`, inputsData);
+
+    return response.data;
+  }
 
   useEffect(() => {
     if (data) {
@@ -59,8 +87,7 @@ const useWorkflow = () => {
     }
   }, [data]);
 
-  //@ts-ignore
-  const workflowAsTemplate: WorkFlowAsTemplate = {
+  const workflowAsTemplate = {
     id: selectedWorkflow.id,
     title: selectedWorkflow.name,
     description: selectedWorkflow.description!,
@@ -77,6 +104,7 @@ const useWorkflow = () => {
     workflowAsTemplate,
     isWorkFlowLoading,
     error,
+    sendMessageAPI,
   };
 };
 

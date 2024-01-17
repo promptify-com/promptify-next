@@ -8,27 +8,36 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { ChatInput } from "@/components/Prompt/Common/Chat/ChatInput";
 import SigninButton from "@/components/common/buttons/SigninButton";
 import useChat from "@/components/Prompt/Hooks/useChat";
-import { setInputs } from "@/core/store/chatSlice";
+import { setAnswers, setInputs } from "@/core/store/chatSlice";
 import useWorkflow from "@/components/Automation/Hooks/useWorkflow";
+import WorkflowPlaceholder from "@/components/Automation/WorkflowPlaceholder";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IPromptInput } from "@/common/types/prompt";
-import WorkflowPlaceholder from "@/components/Automation/WorkflowPlaceholder";
 
 export default function Page() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(state => state.user.currentUser);
 
-  const { selectedWorkflow, isWorkFlowLoading, workflowAsTemplate } = useWorkflow();
+  const { selectedWorkflow, isWorkFlowLoading, workflowAsTemplate, sendMessageAPI } = useWorkflow();
 
-  const { messages, initialMessages, validateVary, isValidatingAnswer, showGenerate, showGenerateButton } = useChat({
-    initialMessageTitle: selectedWorkflow.name,
+  const {
+    messages,
+    initialMessages,
+    validateVary,
+    isValidatingAnswer,
+    showGenerate,
+    showGenerateButton,
+    setIsValidatingAnswer,
+    messageAnswersForm,
+  } = useChat({
+    initialMessageTitle: `${selectedWorkflow.name}`,
   });
 
   useEffect(() => {
     if (!isWorkFlowLoading && selectedWorkflow && selectedWorkflow.data) {
       // Map the nodes to IPromptInput format
-      const questions: IPromptInput[] = selectedWorkflow.data.nodes
+      const inputs: IPromptInput[] = selectedWorkflow.data.nodes
         .filter(node => node.type === "n8n-nodes-base.set")
         .flatMap(node => node.parameters.fields?.values || [])
         .map(value => ({
@@ -39,10 +48,20 @@ export default function Page() {
           defaultValue: "",
         }));
 
-      initialMessages({ questions });
-      dispatch(setInputs(questions));
+      initialMessages({ questions: inputs });
+      dispatch(setInputs(inputs));
     }
   }, [selectedWorkflow, isWorkFlowLoading]);
+
+  const executeWorflow = async () => {
+    setIsValidatingAnswer(true);
+    const response = await sendMessageAPI();
+    setIsValidatingAnswer(false);
+    if (response) {
+      dispatch(setAnswers([]));
+      messageAnswersForm(response.message);
+    }
+  };
 
   return (
     <Layout>
@@ -65,20 +84,20 @@ export default function Page() {
             justifyContent={"flex-end"}
           >
             <ChatInterface
-              template={workflowAsTemplate as Templates}
+              template={workflowAsTemplate as unknown as Templates}
               messages={messages}
               showGenerate={showGenerate}
-              onGenerate={() => {}}
+              onGenerate={executeWorflow}
             />
           </Stack>
 
           {currentUser?.id ? (
             <ChatInput
               onSubmit={validateVary}
-              disabled={false}
+              disabled={isValidatingAnswer}
               isValidating={isValidatingAnswer}
               showGenerate={showGenerateButton}
-              onGenerate={() => {}}
+              onGenerate={executeWorflow}
             />
           ) : (
             <Stack
