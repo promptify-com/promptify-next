@@ -123,11 +123,15 @@ export const PromptBuilder = () => {
     const _prompts = prompts.map((prompt, index, array) => {
       if (prompt.output_format === "custom" && prompt.custom_output_format) {
         prompt.output_format = prompt.custom_output_format;
-        delete prompt.custom_output_format;
       }
+
+      prompt.output_format = prompt.output_format !== "custom" ? prompt.output_format : "Markdown";
+
       const depend = array[index - 1]?.id || array[index - 1]?.temp_id;
+      const { custom_output_format, ...restPrompt } = prompt;
+
       return {
-        ...prompt,
+        ...restPrompt,
         dependencies: depend ? [depend] : [],
         parameters: prompt?.parameters?.map(params => ({
           parameter_id: params.parameter_id,
