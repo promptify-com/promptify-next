@@ -42,7 +42,6 @@ function ExecutionOutput({ output, engineType }: Props) {
         lineHeight: "28px",
         color: "onSurface",
         wordWrap: "break-word",
-        whiteSpace: "pre-wrap",
         ".highlight": {
           backgroundColor: "yellow",
           color: "black",
