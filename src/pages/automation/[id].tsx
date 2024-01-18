@@ -8,13 +8,13 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { ChatInput } from "@/components/Prompt/Common/Chat/ChatInput";
 import SigninButton from "@/components/common/buttons/SigninButton";
 import useChat from "@/components/Prompt/Hooks/useChat";
-import { setAnswers, setInputs } from "@/core/store/chatSlice";
+import { setInputs } from "@/core/store/chatSlice";
 import useWorkflow from "@/components/Automation/Hooks/useWorkflow";
 import WorkflowPlaceholder from "@/components/Automation/WorkflowPlaceholder";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IPromptInput } from "@/common/types/prompt";
 
-export default function Page() {
+export default function SingleWorkflow() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(state => state.user.currentUser);
@@ -35,7 +35,7 @@ export default function Page() {
   });
 
   useEffect(() => {
-    if (!isWorkflowLoading && selectedWorkflow && selectedWorkflow.data) {
+    if (!isWorkflowLoading && selectedWorkflow?.data) {
       // Map the nodes to IPromptInput format
       const inputs: IPromptInput[] = selectedWorkflow.data.nodes
         .filter(node => node.type === "n8n-nodes-base.set")
@@ -45,7 +45,6 @@ export default function Page() {
           fullName: value.name,
           type: "text",
           required: true,
-          defaultValue: "",
         }));
 
       initialMessages({ questions: inputs });
@@ -58,7 +57,6 @@ export default function Page() {
       setIsValidatingAnswer(true);
       const response = await sendMessageAPI();
       if (response && typeof response === "string") {
-        dispatch(setAnswers([]));
         messageAnswersForm(response);
       }
     } catch (error) {

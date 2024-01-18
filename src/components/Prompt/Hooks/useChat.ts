@@ -18,7 +18,7 @@ interface Props {
   questionPrefixContent?: string;
 }
 
-const createdAt = new Date();
+const createdAt = new Date().toISOString();
 
 function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
   const token = useToken();
@@ -82,8 +82,10 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
   };
 
   const validateVary = async (variation: string) => {
-    dispatch(setSelectedExecution(null));
-    dispatch(setGeneratedExecution(null));
+    if (isVariantB) {
+      dispatch(setSelectedExecution(null));
+      dispatch(setGeneratedExecution(null));
+    }
     if (variation) {
       const userMessage: IMessage = {
         id: randomId(),

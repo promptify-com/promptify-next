@@ -8,7 +8,7 @@ import { setAnswers, setInputs } from "@/core/store/chatSlice";
 import { n8nClient as ApiClient } from "@/common/axios";
 import Storage from "@/common/storage";
 import type { Category } from "@/core/api/dto/templates";
-import type { INode, IWorkflow } from "@/common/types/workflow";
+import type { INode, IWorkflow } from "@/components/Automation/types";
 
 const useWorkflow = () => {
   const dispatch = useAppDispatch();
@@ -44,10 +44,9 @@ const useWorkflow = () => {
 
     if (!(selectedWorkflowId.toString() in storedWorkflows)) {
       try {
-        const response = await createWorkflow(selectedWorkflowId);
-        if ("data" in response) {
-          storedWorkflows[selectedWorkflowId] = extractWebhookPath(response.data.nodes);
-
+        const response = await createWorkflow(selectedWorkflowId).unwrap();
+        if (response) {
+          storedWorkflows[selectedWorkflowId] = extractWebhookPath(response.nodes);
           Storage.set("workflows", JSON.stringify(storedWorkflows));
         }
       } catch (error) {
@@ -63,18 +62,20 @@ const useWorkflow = () => {
       const answer = answers.find(answer => answer.inputName === input.name);
       inputsData[input.name] = answer?.answer as string;
     });
-    let storedWorkflows = Storage.get("workflows") || {};
+    const storedWorkflows = Storage.get("workflows") || {};
 
-    let webhookPath = storedWorkflows[workflowData?.id!];
+    const webhookPath = storedWorkflows[workflowData?.id!];
 
     const response = await ApiClient.post(`/webhook/${webhookPath}`, inputsData);
 
     return response.data;
   }
+  useEffect(() => {
+    clearStoredStates();
+  }, []);
 
   useEffect(() => {
     if (data) {
-      clearStoredStates();
       setWorkflowData(data);
       createWorkflowIfNeeded(data.id);
     }
