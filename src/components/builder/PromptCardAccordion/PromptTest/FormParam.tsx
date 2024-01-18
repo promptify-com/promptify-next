@@ -35,7 +35,6 @@ export default function FormParam({ param, onChange }: GeneratorParamProps) {
       flexWrap={"wrap"}
       p={"6px"}
       gap={1}
-      borderBottom={"1px solid #ECECF4"}
     >
       <Stack
         flex={1}

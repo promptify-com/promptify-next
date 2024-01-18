@@ -35,7 +35,6 @@ function FormInput({ input, onChange }: Props) {
       alignItems={"center"}
       gap={1}
       p={"6px"}
-      borderBottom={"1px solid #ECECF4"}
     >
       {!isTextualType && (
         <Box>
@@ -46,7 +45,7 @@ function FormInput({ input, onChange }: Props) {
               color: "primary.main",
             }}
           >
-            {fullName} {required && <span>*</span>} :
+            {fullName} :
           </InputLabel>
         </Box>
       )}

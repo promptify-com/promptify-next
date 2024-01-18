@@ -1,11 +1,13 @@
 import React, { useRef, useState } from "react";
 import { sanitizeHTML } from "@/common/helpers/htmlHelper";
-import { Box, IconButton } from "@mui/material";
+import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
 import { isImageOutput } from "@/components/Prompt/Utils";
 import { EngineOutput } from "@/core/api/dto/templates";
 import useScrollToBottom from "@/components/Prompt/Hooks/useScrolltoBottom";
 import { South } from "@mui/icons-material";
 import ImagePopup from "@/components/dialog/ImagePopup";
+import Image from "@/components/design-system/Image";
 
 interface GeneratedContentProps {
   content: string;
@@ -33,20 +35,12 @@ function GeneratedContent({ content, engineType, isGenerating }: GeneratedConten
     >
       {isImageOutput(content, engineType) ? (
         <>
-          <Box
-            component={"img"}
-            alt={"cover"}
+          <Image
             src={content}
+            alt={content}
+            style={{ borderRadius: "8px", objectFit: "cover", width: "80%", height: "fit-content" }}
+            priority={false}
             onClick={() => setShowImage(true)}
-            onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-              (e.target as HTMLImageElement).src = require("@/assets/images/default-thumbnail.jpg");
-            }}
-            sx={{
-              borderRadius: "8px",
-              width: "80%",
-              objectFit: "cover",
-              cursor: "pointer",
-            }}
           />
           <ImagePopup
             open={showImage}
