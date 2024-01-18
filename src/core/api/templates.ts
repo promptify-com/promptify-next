@@ -191,7 +191,19 @@ export const templatesApi = baseApi.injectEndpoints({
           url: `/api/meta/templates/${id}/prompt-executions`,
           method: "delete",
         }),
-        invalidatesTags: ["PromptsExecutions"],
+        async onQueryStarted(id, { dispatch, queryFulfilled }) {
+          const patchResult = dispatch(
+            templatesApi.util.updateQueryData("getPromptExecutions", id, executions => {
+              return [];
+            }),
+          );
+
+          try {
+            await queryFulfilled;
+          } catch {
+            patchResult.undo();
+          }
+        },
       }),
     };
   },
