@@ -22,6 +22,30 @@ import PaperIcon from "@/assets/icons/PaperIcon";
 import TestLog from "./TestLog";
 import { ClearAll } from "@mui/icons-material";
 import { Tooltip } from "@mui/material";
+import { useDeletePromptExecutionsMutation, useGetPromptExecutionsQuery } from "@/core/api/templates";
+
+const Links: Link[] = [
+  {
+    key: "list",
+    name: "Prompt sequence",
+    icon: <FormatListBulleted />,
+  },
+  {
+    key: "test_log",
+    name: "Test log",
+    icon: <PaperIcon />,
+  },
+  {
+    key: "help",
+    name: "Help",
+    icon: <HelpIcon />,
+  },
+  {
+    key: "api",
+    name: "Api",
+    icon: <ApiIcon />,
+  },
+];
 
 type LinkName = "list" | "test_log" | "help" | "api";
 
@@ -37,37 +61,15 @@ interface Props {
 }
 
 export const BuilderSidebar = ({ prompts, setPrompts }: Props) => {
-  const [open, setOpen] = useState(false);
+  const theme = useTheme();
   const dispatch = useAppDispatch();
+  const { templateId, engines } = useAppSelector(state => state.builder);
 
-  const engines = useAppSelector(state => state.builder.engines);
-
+  const [open, setOpen] = useState(false);
   const [activeLink, setActiveLink] = useState<Link>();
 
-  const theme = useTheme();
-
-  const Links: Link[] = [
-    {
-      key: "list",
-      name: "Prompt sequence",
-      icon: <FormatListBulleted />,
-    },
-    {
-      key: "test_log",
-      name: "Test log",
-      icon: <PaperIcon />,
-    },
-    {
-      key: "help",
-      name: "Help",
-      icon: <HelpIcon />,
-    },
-    {
-      key: "api",
-      name: "Api",
-      icon: <ApiIcon />,
-    },
-  ];
+  const { data: executions } = useGetPromptExecutionsQuery(templateId!, { skip: activeLink?.key !== "test_log" });
+  const [deletePrompt] = useDeletePromptExecutionsMutation();
 
   const handleOpenSidebar = (link: Link) => {
     setOpen(true);
@@ -79,6 +81,11 @@ export const BuilderSidebar = ({ prompts, setPrompts }: Props) => {
     setOpen(false);
     dispatch(setOpenBuilderSidebar(false));
   };
+
+  const deleteAllExecutions = async () => {
+    if (templateId) await deletePrompt(templateId);
+  };
+
   return (
     <Box
       sx={{
@@ -198,10 +205,10 @@ export const BuilderSidebar = ({ prompts, setPrompts }: Props) => {
           >
             {activeLink?.name}
           </Typography>
-          {activeLink?.key === "test_log" && (
+          {activeLink?.key === "test_log" && executions && executions.length > 0 && (
             <Tooltip title="Delete all">
               <IconButton
-                onClick={() => handleCloseSidebar()}
+                onClick={deleteAllExecutions}
                 sx={{
                   border: "none",
                   "&:hover": {
@@ -215,7 +222,7 @@ export const BuilderSidebar = ({ prompts, setPrompts }: Props) => {
           )}
 
           <IconButton
-            onClick={() => handleCloseSidebar()}
+            onClick={handleCloseSidebar}
             sx={{
               border: "none",
               "&:hover": {

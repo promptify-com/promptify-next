@@ -1,4 +1,4 @@
-import { useGetTemplatePromptExecutionsQuery } from "@/core/api/templates";
+import { useGetPromptExecutionsQuery } from "@/core/api/templates";
 import { useAppSelector } from "@/hooks/useStore";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import { alpha } from "@mui/material";
@@ -17,7 +17,7 @@ import { CardExecutionPlaceholder } from "@/components/placeholders/CardExecutio
 
 const TestLog = () => {
   const templateId = useAppSelector(state => state.builder.templateId);
-  const { data: executions, isLoading: isLoading } = useGetTemplatePromptExecutionsQuery(templateId!);
+  const { data: executions, isLoading: isLoading } = useGetPromptExecutionsQuery(templateId!);
 
   const [activeExecution, setActiveExecution] = useState<number | null>(null);
 
