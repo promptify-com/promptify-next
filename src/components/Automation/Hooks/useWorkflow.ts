@@ -1,28 +1,27 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 import { useCreateUserWorkflowMutation, useGetWorkflowByIdQuery } from "@/core/api/workflows";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { setSelectedWorkflow } from "@/core/store/workflowSlice";
 import { setGeneratedExecution, setRepeatedExecution, setSelectedExecution } from "@/core/store/executionsSlice";
 import { setAnswers, setInputs } from "@/core/store/chatSlice";
 import { n8nClient as ApiClient } from "@/common/axios";
 import Storage from "@/common/storage";
 import type { Category } from "@/core/api/dto/templates";
-import type { INode } from "@/common/types/workflow";
+import type { INode, IWorkflow } from "@/common/types/workflow";
 
 const useWorkflow = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const workflowId = router.query?.id as string;
 
-  const selectedWorkflow = useAppSelector(state => state.workflow.selectedWorkflow);
+  const [workflowData, setWorkflowData] = useState<IWorkflow>();
   const { answers, inputs } = useAppSelector(state => state.chat);
 
   const {
     data,
     error,
-    isLoading: isWorkFlowLoading,
+    isLoading: isWorkflowLoading,
   } = useGetWorkflowByIdQuery(parseInt(workflowId), { skip: !workflowId });
 
   const [createWorkflow] = useCreateUserWorkflowMutation();
@@ -66,7 +65,7 @@ const useWorkflow = () => {
     });
     let storedWorkflows = Storage.get("workflows") || {};
 
-    let webhookPath = storedWorkflows[selectedWorkflow.id];
+    let webhookPath = storedWorkflows[workflowData?.id!];
 
     const response = await ApiClient.post(`/webhook/${webhookPath}`, inputsData);
 
@@ -76,27 +75,27 @@ const useWorkflow = () => {
   useEffect(() => {
     if (data) {
       clearStoredStates();
-      dispatch(setSelectedWorkflow(data));
+      setWorkflowData(data);
       createWorkflowIfNeeded(data.id);
     }
   }, [data]);
 
   const workflowAsTemplate = {
-    id: selectedWorkflow.id,
-    title: selectedWorkflow.name,
-    description: selectedWorkflow.description!,
-    created_at: selectedWorkflow.created_at,
-    thumbnail: selectedWorkflow.image!,
-    created_by: selectedWorkflow.created_by,
+    id: workflowData?.id,
+    title: workflowData?.name,
+    description: workflowData?.description!,
+    created_at: workflowData?.created_at,
+    thumbnail: workflowData?.image!,
+    created_by: workflowData?.created_by,
     category: {} as Category,
     tags: [],
     prompts: [],
   };
 
   return {
-    selectedWorkflow,
+    selectedWorkflow: workflowData,
     workflowAsTemplate,
-    isWorkFlowLoading,
+    isWorkflowLoading,
     error,
     sendMessageAPI,
   };
