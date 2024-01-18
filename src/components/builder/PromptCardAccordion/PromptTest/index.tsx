@@ -86,22 +86,28 @@ function PromptTestDialog({ open, onClose, prompt }: PromptTestDialogProps) {
       .filter(([_, input]) => input instanceof File)
       .map(([name, file]) => ({ name, file: file as File }));
     const filesUploaded = await uploadPromptFiles(files);
+    const status = filesUploaded.status;
 
-    if (!filesUploaded.status) {
+    if (!status) {
       const invalids = filesUploaded.inputs
         .filter(input => input.error)
         .map(input => Object.entries(inputsValues.current).find(([name]) => input.name === name)?.[0]);
 
       setGeneratingResponse(`Please enter valid answers for "${invalids.join(", ")}"`);
-      return;
     }
+
+    return status;
   };
 
   const runExecution = async () => {
     setGeneratingResponse("");
     setIsGenerating(true);
 
-    await uploadAndValidateFiles();
+    const upload = await uploadAndValidateFiles();
+    if (!upload) {
+      setIsGenerating(false);
+      return;
+    }
 
     const executeData = preparePromptData(uploadedFiles.current, inputsValues.current, paramsValues.current);
 
