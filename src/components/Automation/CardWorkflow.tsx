@@ -13,6 +13,7 @@ import useTruncate from "@/hooks/useTruncate";
 import { theme } from "@/theme";
 import { getNodeNames } from "@/components/Automation/helpers";
 import { IWorkflow } from "@/common/types/workflow";
+import Link from "next/link";
 
 type CardWorkflowProps = {
   workflow: IWorkflow;
@@ -24,7 +25,10 @@ function CardWorkflow({ workflow }: CardWorkflowProps) {
   const { truncate } = useTruncate();
 
   return (
-    <Box onClick={() => router.push(`/automation/${workflow.id}`)}>
+    <Link
+      href={`/automation/${workflow.id}`}
+      style={{ textDecoration: "none" }}
+    >
       <Card
         sx={{
           borderRadius: "16px",
@@ -176,7 +180,7 @@ function CardWorkflow({ workflow }: CardWorkflowProps) {
           </Stack>
         </Grid>
       </Card>
-    </Box>
+    </Link>
   );
 }
 

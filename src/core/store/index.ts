@@ -9,7 +9,6 @@ import profileSlice from "./profileSlice";
 import userSlice from "./userSlice";
 import executionsSlice from "./executionsSlice";
 import chatSlice from "./chatSlice";
-import workflowSlice from "./workflowSlice";
 
 export interface State {
   tick: string;
@@ -26,7 +25,6 @@ export const store = (options?: ConfigureStoreOptions["preloadedState"] | undefi
       user: userSlice,
       executions: executionsSlice,
       chat: chatSlice,
-      workflow: workflowSlice,
     },
     middleware: getDefaultMiddleware =>
       getDefaultMiddleware({

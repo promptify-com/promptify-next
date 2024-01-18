@@ -19,7 +19,7 @@ export default function Page() {
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(state => state.user.currentUser);
 
-  const { selectedWorkflow, isWorkFlowLoading, workflowAsTemplate, sendMessageAPI } = useWorkflow();
+  const { selectedWorkflow, isWorkflowLoading, workflowAsTemplate, sendMessageAPI } = useWorkflow();
 
   const {
     messages,
@@ -31,11 +31,11 @@ export default function Page() {
     setIsValidatingAnswer,
     messageAnswersForm,
   } = useChat({
-    initialMessageTitle: `${selectedWorkflow.name}`,
+    initialMessageTitle: `${selectedWorkflow?.name}`,
   });
 
   useEffect(() => {
-    if (!isWorkFlowLoading && selectedWorkflow && selectedWorkflow.data) {
+    if (!isWorkflowLoading && selectedWorkflow && selectedWorkflow.data) {
       // Map the nodes to IPromptInput format
       const inputs: IPromptInput[] = selectedWorkflow.data.nodes
         .filter(node => node.type === "n8n-nodes-base.set")
@@ -51,13 +51,13 @@ export default function Page() {
       initialMessages({ questions: inputs });
       dispatch(setInputs(inputs));
     }
-  }, [selectedWorkflow, isWorkFlowLoading]);
+  }, [selectedWorkflow, isWorkflowLoading]);
 
   const executeWorflow = async () => {
     try {
       setIsValidatingAnswer(true);
       const response = await sendMessageAPI();
-      if (response) {
+      if (response && typeof response === "string") {
         dispatch(setAnswers([]));
         messageAnswersForm(response);
       }
@@ -70,7 +70,7 @@ export default function Page() {
 
   return (
     <Layout>
-      {isWorkFlowLoading ? (
+      {isWorkflowLoading ? (
         <WorkflowPlaceholder />
       ) : (
         <Stack
