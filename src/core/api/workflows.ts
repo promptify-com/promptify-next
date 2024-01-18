@@ -1,5 +1,5 @@
-import { IWorkflow, IWorkflowCreateResponse } from "@/common/types/workflow";
 import { baseApi } from "./api";
+import type { IWorkflow, IWorkflowCreateResponse } from "@/components/Automation/types";
 
 export const workflowsApi = baseApi.injectEndpoints({
   endpoints: builder => {

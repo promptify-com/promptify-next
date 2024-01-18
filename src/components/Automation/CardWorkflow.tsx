@@ -6,14 +6,14 @@ import CardMedia from "@mui/material/CardMedia";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import ArrowBackIosRoundedIcon from "@mui/icons-material/ArrowBackIosRounded";
+import Link from "next/link";
 import { useRouter } from "next/router";
 
 import Image from "@/components/design-system/Image";
 import useTruncate from "@/hooks/useTruncate";
 import { theme } from "@/theme";
 import { getNodeNames } from "@/components/Automation/helpers";
-import { IWorkflow } from "@/common/types/workflow";
-import Link from "next/link";
+import type { IWorkflow } from "@/components/Automation/types";
 
 type CardWorkflowProps = {
   workflow: IWorkflow;
@@ -78,7 +78,6 @@ function CardWorkflow({ workflow }: CardWorkflowProps) {
               </Grid>
               <Grid
                 gap={0.5}
-                sx={{}}
                 display={"flex"}
                 flexDirection={"column"}
               >

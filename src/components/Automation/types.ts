@@ -1,10 +1,14 @@
-import { UserPartial } from "@/core/api/dto/user";
+import type { User, UserPartial } from "@/core/api/dto/user";
 
 interface IParameters {
+  path?: string;
+  options?: any;
   fields?: {
-    values: { name: string; stringValue: string }[];
+    values: {
+      name: string;
+      stringValue?: string;
+    }[];
   };
-  options?: Record<string, string | number>;
 }
 
 export interface INode {
@@ -15,6 +19,16 @@ export interface INode {
   webhookId: string;
   parameters: IParameters;
   typeVersion: number;
+  simplifyOutput?: boolean;
+  query?: string;
+  jsCode?: string;
+  rules?: { rules: any[] };
+  value1?: string;
+  dataType?: string;
+  include?: string;
+  includeFields?: string;
+  httpMethod?: string;
+  responseMode?: string;
 }
 
 interface IConnections {
@@ -31,7 +45,17 @@ export interface IWorkflow {
   name: string;
   description?: string;
   image?: string;
-  created_by: UserPartial;
+  created_by: User;
   data: IData;
   created_at: string;
+}
+
+export interface IWorkflowCreateResponse {
+  id: number;
+  name: string;
+  description?: string;
+  image?: string;
+  created_by: UserPartial;
+  nodes: INode[];
+  created_at: Date;
 }

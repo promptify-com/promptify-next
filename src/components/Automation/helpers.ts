@@ -1,5 +1,5 @@
-import { INode } from "@/common/types/workflow";
-import nodesData from "./nodes.json";
+import nodesData from "@/components/Automation/nodes.json";
+import type { INode } from "@/components/Automation/types";
 
 const UNWANTED_TYPES = [
   "n8n-nodes-base.switch",
