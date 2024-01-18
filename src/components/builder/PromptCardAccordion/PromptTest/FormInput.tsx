@@ -6,7 +6,7 @@ import { PromptInputType } from "@/components/Prompt/Types";
 import Box from "@mui/material/Box";
 import { useState } from "react";
 import { IInputValue } from "@/components/builder/Types";
-import { TextField } from "@mui/material";
+import TextField from "@mui/material/TextField";
 
 interface Props {
   input: IPromptInput;

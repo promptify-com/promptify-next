@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
 import { Box } from "@mui/material";
 import { isImageOutput } from "@/components/Prompt/Utils";
 import ImagePopup from "@/components/dialog/ImagePopup";
@@ -16,7 +15,11 @@ function ExecutionOutput({ output, engineType }: Props) {
   const [content, setContent] = useState(output);
 
   useEffect(() => {
-    markdownToHTML(output).then(res => setContent(res));
+    if (!isImageOutput(output, engineType)) {
+      import("@/common/helpers/htmlHelper").then(({ markdownToHTML, sanitizeHTML }) => {
+        markdownToHTML(output).then(res => setContent(sanitizeHTML(res)));
+      });
+    }
   }, [output]);
 
   return isImageOutput(content, engineType) ? (
@@ -72,7 +75,7 @@ function ExecutionOutput({ output, engineType }: Props) {
         },
       }}
       dangerouslySetInnerHTML={{
-        __html: sanitizeHTML(content),
+        __html: content,
       }}
     />
   );
