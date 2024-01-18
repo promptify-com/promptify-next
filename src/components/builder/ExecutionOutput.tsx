@@ -4,6 +4,7 @@ import { Box } from "@mui/material";
 import { isImageOutput } from "@/components/Prompt/Utils";
 import ImagePopup from "@/components/dialog/ImagePopup";
 import { EngineOutput } from "@/core/api/dto/templates";
+import Image from "@/components/design-system/Image";
 
 interface Props {
   output: string;
@@ -20,20 +21,12 @@ function ExecutionOutput({ output, engineType }: Props) {
 
   return isImageOutput(content, engineType) ? (
     <>
-      <Box
-        component={"img"}
-        alt={"cover"}
+      <Image
         src={content}
+        alt={content}
+        style={{ borderRadius: "8px", objectFit: "cover", width: "80%", height: "fit-content" }}
+        priority={false}
         onClick={() => setShowImage(true)}
-        onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-          (e.target as HTMLImageElement).src = require("@/assets/images/default-thumbnail.jpg");
-        }}
-        sx={{
-          borderRadius: "8px",
-          width: "80%",
-          objectFit: "cover",
-          cursor: "pointer",
-        }}
       />
       <ImagePopup
         open={showImage}

@@ -1,8 +1,9 @@
 import React, { useRef } from "react";
-import { Box, IconButton } from "@mui/material";
+import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
 import { EngineOutput } from "@/core/api/dto/templates";
 import useScrollToBottom from "@/components/Prompt/Hooks/useScrolltoBottom";
-import { South } from "@mui/icons-material";
+import South from "@mui/icons-material/South";
 import ExecutionOutput from "@/components/builder/ExecutionOutput";
 
 interface GeneratedContentProps {

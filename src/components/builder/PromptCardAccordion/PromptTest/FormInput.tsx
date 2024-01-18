@@ -6,6 +6,7 @@ import { PromptInputType } from "@/components/Prompt/Types";
 import Box from "@mui/material/Box";
 import { useState } from "react";
 import { IInputValue } from "@/components/builder/Types";
+import { TextField } from "@mui/material";
 
 interface Props {
   input: IPromptInput;
@@ -34,30 +35,36 @@ function FormInput({ input, onChange }: Props) {
       alignItems={"center"}
       gap={1}
       p={"6px"}
-      borderBottom={"1px solid #ECECF4"}
     >
-      <Box>
-        <InputLabel
-          sx={{
-            fontSize: { xs: 12, md: 15 },
-            fontWeight: 500,
-            color: "primary.main",
-          }}
-        >
-          {fullName} {required && <span>*</span>} :
-        </InputLabel>
-      </Box>
+      {!isTextualType && (
+        <Box>
+          <InputLabel
+            sx={{
+              fontSize: { xs: 12, md: 15 },
+              fontWeight: 500,
+              color: "primary.main",
+            }}
+          >
+            {fullName} :
+          </InputLabel>
+        </Box>
+      )}
 
-      <Stack
-        flex={1}
-        position={"relative"}
-        overflow={"hidden"}
-      >
-        <RenderInputType
-          input={input}
-          value={value}
-          onChange={handleChange}
-        />
+      <Stack flex={1}>
+        {isTextualType ? (
+          <TextField
+            label={input.fullName}
+            type={type}
+            value={value}
+            onChange={e => handleChange(e.target.value)}
+          />
+        ) : (
+          <RenderInputType
+            input={input}
+            value={value}
+            onChange={handleChange}
+          />
+        )}
       </Stack>
     </Stack>
   );

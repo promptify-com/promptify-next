@@ -51,9 +51,10 @@ const useGenerateExecution = ({ template, messageAnswersForm, onError }: Props) 
     }
 
     const filesUploaded = await uploadPromptAnswersFiles(answers, uploadedFiles.current);
-    dispatch(setAnswers(filesUploaded.answers));
+    const _answers = filesUploaded.answers;
+    dispatch(setAnswers(_answers));
     if (!filesUploaded.status) {
-      const invalids = filesUploaded.answers
+      const invalids = _answers
         .filter(answers => answers.error)
         .map(answer => inputs.find(input => input.name === answer.inputName)?.fullName);
 
@@ -63,7 +64,7 @@ const useGenerateExecution = ({ template, messageAnswersForm, onError }: Props) 
 
     dispatch(setGeneratingStatus(true));
 
-    const promptsData = preparePromptsData(uploadedFiles.current, answers, paramsValues, template.prompts);
+    const promptsData = preparePromptsData(uploadedFiles.current, _answers, paramsValues, template.prompts);
 
     uploadedFiles.current.clear();
 
