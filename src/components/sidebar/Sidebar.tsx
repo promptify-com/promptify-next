@@ -3,19 +3,23 @@ import Home from "@mui/icons-material/Home";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
 import Grid from "@mui/material/Grid";
-import { usePathname } from "next/navigation";
-import { useAppSelector } from "@/hooks/useStore";
-import { isValidUserFn } from "@/core/store/userSlice";
 import ExtensionRounded from "@mui/icons-material/ExtensionRounded";
 import FolderSpecial from "@mui/icons-material/FolderSpecial";
 import HelpRounded from "@mui/icons-material/HelpRounded";
+import Route from "@mui/icons-material/Route";
 import Inventory2Rounded from "@mui/icons-material/Inventory2Rounded";
-import { NavItem } from "@/common/types/sidebar";
+
+import { useAppSelector } from "@/hooks/useStore";
+import { isValidUserFn } from "@/core/store/userSlice";
 import SidebarItem from "./SidebarItem";
 import { theme } from "@/theme";
+import type { NavItem } from "@/common/types/sidebar";
+import { useRouter } from "next/router";
 
 function Sidebar() {
-  const pathname = usePathname();
+  const router = useRouter();
+
+  const pathname = router.pathname;
   const isPromptsPage = pathname.split("/")[1] === "explore";
   const isValidUser = useAppSelector(isValidUserFn);
   const navItems: NavItem[] = [
@@ -49,6 +53,14 @@ function Sidebar() {
       icon: <Inventory2Rounded />,
       active: pathname.includes("/prompt-builder"),
       external: isValidUser,
+      reload: false,
+    },
+    {
+      name: "Automation",
+      href: "/automation",
+      icon: <Route />,
+      active: pathname === "/automation",
+      external: false,
       reload: false,
     },
     {
