@@ -18,8 +18,6 @@ interface Props {
   questionPrefixContent?: string;
 }
 
-const createdAt = new Date().toISOString();
-
 function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
   const token = useToken();
   const dispatch = useAppDispatch();
@@ -40,11 +38,11 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
   const showGenerate =
     !isSimulationStreaming && (showGenerateButton || Boolean(!inputs.length || !inputs[0]?.required));
 
-  const createMessage = (type: MessageType, fromUser = false) => ({
+  const createMessage = (type: MessageType, fromUser = false, timestamp = new Date().toISOString()) => ({
     id: randomId(),
     text: "",
     type,
-    createdAt: createdAt,
+    createdAt: timestamp,
     fromUser,
   });
 
@@ -87,13 +85,8 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
       dispatch(setGeneratedExecution(null));
     }
     if (variation) {
-      const userMessage: IMessage = {
-        id: randomId(),
-        text: variation,
-        type: "text",
-        createdAt: new Date(new Date().getTime() - 1000),
-        fromUser: true,
-      };
+      const userMessage = createMessage("text", true, new Date(new Date().getTime() - 1000).toISOString());
+      userMessage.text = variation;
 
       setMessages(prevMessages =>
         prevMessages.filter(msg => msg.type !== "form" && msg.type !== "spark").concat(userMessage),
