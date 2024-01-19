@@ -8,7 +8,10 @@ import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { Close, ContentCopy, Done, PlayArrow } from "@mui/icons-material";
+import Close from "@mui/icons-material/Close";
+import ContentCopy from "@mui/icons-material/ContentCopy";
+import Done from "@mui/icons-material/Done";
+import PlayArrow from "@mui/icons-material/PlayArrow";
 import { IEditPrompts } from "@/common/types/builder";
 import usePromptExecute from "@/components/builder/Hooks/usePromptExecute";
 import FormInput from "./FormInput";
@@ -20,7 +23,9 @@ import FormParam from "./FormParam";
 import GeneratedContent from "./GeneratedContent";
 import useCopyToClipboard from "@/hooks/useCopyToClipboard";
 import useUploadPromptFiles from "@/hooks/useUploadPromptFiles";
-import { useAppSelector } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { templatesApi } from "@/core/api/templates";
+import { randomId } from "@/common/helpers";
 
 interface PromptTestDialogProps {
   open: boolean;
@@ -30,6 +35,7 @@ interface PromptTestDialogProps {
 
 function PromptTestDialog({ open, onClose, prompt }: PromptTestDialogProps) {
   const token = useToken();
+  const dispatch = useAppDispatch();
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatingResponse, setGeneratingResponse] = useState("");
 
@@ -39,6 +45,7 @@ function PromptTestDialog({ open, onClose, prompt }: PromptTestDialogProps) {
   const paramsValues = useRef<IExecuteParam[]>([]);
 
   const engines = useAppSelector(state => state.builder.engines);
+  const engine = engines.find(engine => engine.id === prompt.engine_id);
 
   const [copyToClipboard, copyResult] = useCopyToClipboard();
   const { uploadedFiles, uploadPromptFiles } = useUploadPromptFiles();
@@ -146,6 +153,10 @@ function PromptTestDialog({ open, onClose, prompt }: PromptTestDialogProps) {
               setGeneratingResponse(prev => prev.concat(message));
             }
           }
+
+          if (message === "[COMPLETED]") {
+            console.log("complete", generatingResponse);
+          }
         } catch {
           console.info("invalid incoming msg:", msg);
         }
@@ -160,7 +171,7 @@ function PromptTestDialog({ open, onClose, prompt }: PromptTestDialogProps) {
     });
   };
 
-  const engineType = engines.find(engine => engine.id === prompt.engine_id)?.output_type ?? "TEXT";
+  const engineType = engine?.output_type ?? "TEXT";
   const noParams = inputs.length === 0 && params.length === 0;
 
   return (

@@ -41,6 +41,9 @@ function GeneratedContent({ content, engineType, isGenerating }: GeneratedConten
             style={{ borderRadius: "8px", objectFit: "cover", width: "80%", height: "fit-content" }}
             priority={false}
             onClick={() => setShowImage(true)}
+            onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+              (e.target as HTMLImageElement).src = require("@/assets/images/default-thumbnail.jpg");
+            }}
           />
           <ImagePopup
             open={showImage}

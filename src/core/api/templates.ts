@@ -4,6 +4,7 @@ import {
   FilterParams,
   IFeedback,
   IPostFeedback,
+  IPromptExecution,
   TemplateApiStatus,
   Templates,
   TemplatesWithPagination,
@@ -178,6 +179,32 @@ export const templatesApi = baseApi.injectEndpoints({
           method: "post",
         }),
       }),
+      getPromptExecutions: builder.query<IPromptExecution[], number>({
+        query: id => ({
+          url: `/api/meta/templates/${id}/prompt-executions`,
+          method: "get",
+        }),
+        providesTags: ["PromptsExecutions"],
+      }),
+      deletePromptExecutions: builder.mutation({
+        query: (id: number) => ({
+          url: `/api/meta/templates/${id}/prompt-executions`,
+          method: "delete",
+        }),
+        async onQueryStarted(id, { dispatch, queryFulfilled }) {
+          const patchResult = dispatch(
+            templatesApi.util.updateQueryData("getPromptExecutions", id, _ => {
+              return [];
+            }),
+          );
+
+          try {
+            await queryFulfilled;
+          } catch {
+            patchResult.undo();
+          }
+        },
+      }),
     };
   },
 });
@@ -202,4 +229,6 @@ export const {
   useSaveFeedbackMutation,
   useSetTemplateEnableApiMutation,
   useGetTemplateApiStatusQuery,
+  useGetPromptExecutionsQuery,
+  useDeletePromptExecutionsMutation,
 } = templatesApi;
