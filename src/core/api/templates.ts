@@ -193,7 +193,7 @@ export const templatesApi = baseApi.injectEndpoints({
         }),
         async onQueryStarted(id, { dispatch, queryFulfilled }) {
           const patchResult = dispatch(
-            templatesApi.util.updateQueryData("getPromptExecutions", id, executions => {
+            templatesApi.util.updateQueryData("getPromptExecutions", id, _ => {
               return [];
             }),
           );
