@@ -56,8 +56,8 @@ const PromptCardAccordion = ({
   const cursorPositionRef = useRef(0);
   const [highlightedOption, setHighlightedOption] = useState("");
   const { outputPresets, inputPresets } = useMemo(() => getBuilderVarsPresets(prompts, promptData, false), [prompts]);
-  const { isTemplateOwner, templateStatus } = useAppSelector(state => state.builder);
-  const isDraft = templateStatus === "DRAFT";
+  const { template, isTemplateOwner } = useAppSelector(state => state.builder);
+  const isDraft = template?.status === "DRAFT";
 
   const [savePrompt] = useUpdatePromptMutation();
 

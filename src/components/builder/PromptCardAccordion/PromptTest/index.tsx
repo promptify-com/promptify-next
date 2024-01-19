@@ -26,7 +26,6 @@ import useUploadPromptFiles from "@/hooks/useUploadPromptFiles";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { templatesApi } from "@/core/api/templates";
 import { randomId } from "@/common/helpers";
-import { IPromptExecution } from "@/core/api/dto/templates";
 
 interface PromptTestDialogProps {
   open: boolean;
@@ -158,19 +157,20 @@ function PromptTestDialog({ open, onClose, prompt }: PromptTestDialogProps) {
 
           if (message === "[COMPLETED]") {
             dispatch(
-              templatesApi.util.updateQueryData("getPromptExecutions", template?.id!, executions => {
-                return executions.concat({
+              templatesApi.util.updateQueryData("getPromptExecutions", template?.id!, _executions => {
+                _executions.unshift({
                   id: randomId(),
+                  output: generatingResponse,
                   prompt: {
                     id: prompt.id!,
                     title: prompt.title!,
                     engine: engine!,
                   },
                   executed_by: 32,
-                  output: generatingResponse,
-                  created_at: new Date(),
+                  created_at: new Date(new Date().getTime() - 1000),
                   tokens_spent: 360,
                 });
+                return _executions;
               }),
             );
           }
