@@ -42,16 +42,15 @@ const useWorkflow = () => {
   const createWorkflowIfNeeded = async (selectedWorkflowId: number) => {
     let storedWorkflows = Storage.get("workflows") || {};
 
-    if (!(selectedWorkflowId.toString() in storedWorkflows)) {
-      try {
-        const response = await createWorkflow(selectedWorkflowId).unwrap();
-        if (response) {
-          storedWorkflows[selectedWorkflowId] = extractWebhookPath(response.nodes);
-          Storage.set("workflows", JSON.stringify(storedWorkflows));
-        }
-      } catch (error) {
-        console.error("Error creating workflow:", error);
+    if (selectedWorkflowId.toString() in storedWorkflows) return;
+    try {
+      const response = await createWorkflow(selectedWorkflowId).unwrap();
+      if (response) {
+        storedWorkflows[selectedWorkflowId] = extractWebhookPath(response.nodes);
+        Storage.set("workflows", JSON.stringify(storedWorkflows));
       }
+    } catch (error) {
+      console.error("Error creating workflow:", error);
     }
   };
 
