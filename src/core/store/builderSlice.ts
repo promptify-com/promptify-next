@@ -1,19 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import { Engine, TemplateStatus } from "@/core/api/dto/templates";
+import { Engine, TemplateStatus, Templates } from "@/core/api/dto/templates";
 
 export interface Props {
   engines: Engine[];
-  templateId: number | null;
+  template: Templates | null;
   isTemplateOwner: boolean;
-  templateStatus: TemplateStatus | null;
 }
 
 const initialState: Props = {
   engines: [],
-  templateId: null,
+  template: null,
   isTemplateOwner: false,
-  templateStatus: null,
 };
 
 export const builderSlice = createSlice({
@@ -23,18 +21,15 @@ export const builderSlice = createSlice({
     setEngines: (state, action: PayloadAction<Engine[]>) => {
       state.engines = action.payload;
     },
-    setTemplateId: (state, action: PayloadAction<number>) => {
-      state.templateId = action.payload;
+    setTemplate: (state, action: PayloadAction<Templates>) => {
+      state.template = action.payload;
     },
     setIsTemplateOwner: (state, action: PayloadAction<boolean>) => {
       state.isTemplateOwner = action.payload;
     },
-    setTemplateStatus: (state, action: PayloadAction<TemplateStatus>) => {
-      state.templateStatus = action.payload;
-    },
   },
 });
 
-export const { setEngines, setTemplateId, setIsTemplateOwner, setTemplateStatus } = builderSlice.actions;
+export const { setEngines, setTemplate, setIsTemplateOwner } = builderSlice.actions;
 
 export default builderSlice.reducer;

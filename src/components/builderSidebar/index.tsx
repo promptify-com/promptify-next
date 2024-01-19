@@ -63,7 +63,8 @@ interface Props {
 export const BuilderSidebar = ({ prompts, setPrompts }: Props) => {
   const theme = useTheme();
   const dispatch = useAppDispatch();
-  const { templateId, engines } = useAppSelector(state => state.builder);
+  const { template, engines } = useAppSelector(state => state.builder);
+  const templateId = template?.id;
 
   const [open, setOpen] = useState(false);
   const [activeLink, setActiveLink] = useState<Link>();

@@ -26,6 +26,7 @@ import useUploadPromptFiles from "@/hooks/useUploadPromptFiles";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { templatesApi } from "@/core/api/templates";
 import { randomId } from "@/common/helpers";
+import { IPromptExecution } from "@/core/api/dto/templates";
 
 interface PromptTestDialogProps {
   open: boolean;
@@ -44,6 +45,7 @@ function PromptTestDialog({ open, onClose, prompt }: PromptTestDialogProps) {
   const inputsValues = useRef<IExecuteInput>({});
   const paramsValues = useRef<IExecuteParam[]>([]);
 
+  const template = useAppSelector(state => state.builder.template);
   const engines = useAppSelector(state => state.builder.engines);
   const engine = engines.find(engine => engine.id === prompt.engine_id);
 
@@ -155,7 +157,22 @@ function PromptTestDialog({ open, onClose, prompt }: PromptTestDialogProps) {
           }
 
           if (message === "[COMPLETED]") {
-            console.log("complete", generatingResponse);
+            dispatch(
+              templatesApi.util.updateQueryData("getPromptExecutions", template?.id!, executions => {
+                return executions.concat({
+                  id: randomId(),
+                  prompt: {
+                    id: prompt.id!,
+                    title: prompt.title!,
+                    engine: engine!,
+                  },
+                  executed_by: 32,
+                  output: generatingResponse,
+                  created_at: new Date(),
+                  tokens_spent: 360,
+                });
+              }),
+            );
           }
         } catch {
           console.info("invalid incoming msg:", msg);

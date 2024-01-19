@@ -4,7 +4,7 @@ import {
   FilterParams,
   IFeedback,
   IPostFeedback,
-  PromptExecutions,
+  IPromptExecution,
   TemplateApiStatus,
   Templates,
   TemplatesWithPagination,
@@ -179,7 +179,7 @@ export const templatesApi = baseApi.injectEndpoints({
           method: "post",
         }),
       }),
-      getPromptExecutions: builder.query<PromptExecutions[], number>({
+      getPromptExecutions: builder.query<IPromptExecution[], number>({
         query: id => ({
           url: `/api/meta/templates/${id}/prompt-executions`,
           method: "get",

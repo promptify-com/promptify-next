@@ -305,11 +305,11 @@ export interface IPromptExecution {
     engine: Engine;
   };
   output: string;
-  parameters: {
+  created_at: Date | string;
+  tokens_spent: number;
+  parameters?: {
     [key: number | string]: string | number;
   };
-  created_at: string;
-  tokens_spent: number;
   executed_by?: number;
   errors?: string;
 }
