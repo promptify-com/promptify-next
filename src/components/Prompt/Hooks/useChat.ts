@@ -4,22 +4,20 @@ import { randomId } from "@/common/helpers";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setAnswers, setIsSimulationStreaming, setparamsValues } from "@/core/store/chatSlice";
 import useVariant from "./useVariant";
-import useToken from "@/hooks/useToken";
-import { vary } from "@/common/helpers/varyValidator";
-import { setGeneratedExecution, setSelectedExecution } from "@/core/store/executionsSlice";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { IAnswer, IMessage, MessageType } from "../Types/chat";
-import type { PromptInputType } from "@/components/Prompt/Types";
-import type { ContextualOverrides, ResOverrides } from "@/core/api/dto/prompts";
+import type { Templates } from "@/core/api/dto/templates";
+import { ContextualOverrides, ResOverrides } from "@/core/api/dto/prompts";
 import { useRouter } from "next/router";
 
 interface Props {
-  initialMessageTitle: string;
-  questionPrefixContent?: string;
+  template: Templates;
+  questionPrefixContent: string;
 }
 
-function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
-  const token = useToken();
+const createdAt = new Date();
+
+function useChat({ questionPrefixContent, template }: Props) {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { isVariantA, isVariantB } = useVariant();
@@ -33,16 +31,12 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [queuedMessages, setQueuedMessages] = useState<IMessage[]>([]);
   const [showGenerateButton, setShowGenerateButton] = useState(false);
-  const [isValidatingAnswer, setIsValidatingAnswer] = useState(false);
 
-  const showGenerate =
-    !isSimulationStreaming && (showGenerateButton || Boolean(!inputs.length || !inputs[0]?.required));
-
-  const createMessage = (type: MessageType, fromUser = false, timestamp = new Date().toISOString()) => ({
+  const createMessage = (type: MessageType, fromUser = false) => ({
     id: randomId(),
     text: "",
     type,
-    createdAt: timestamp,
+    createdAt: createdAt,
     fromUser,
   });
 
@@ -52,7 +46,7 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
     const filteredQuestions = questions.map(_q => _q.question).filter(Boolean);
 
     const welcomeMessage = createMessage("text");
-    welcomeMessage.text = `${questionPrefixContent ?? greeting} ${initialMessageTitle}${
+    welcomeMessage.text = `${questionPrefixContent ?? greeting} ${template.title}${
       filteredQuestions.length ? "? " + filteredQuestions.slice(0, 3).join(" ") : ""
     }`;
     const InitialMessages: IMessage[] = [welcomeMessage];
@@ -77,63 +71,6 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
     }
 
     dispatch(setAnswers([]));
-  };
-
-  const validateVary = async (variation: string) => {
-    if (isVariantB) {
-      dispatch(setSelectedExecution(null));
-      dispatch(setGeneratedExecution(null));
-    }
-    if (variation) {
-      const userMessage = createMessage("text", true, new Date(new Date().getTime() - 1000).toISOString());
-      userMessage.text = variation;
-
-      setMessages(prevMessages =>
-        prevMessages.filter(msg => msg.type !== "form" && msg.type !== "spark").concat(userMessage),
-      );
-
-      setIsValidatingAnswer(true);
-
-      const questionAnswerMap: Record<string, PromptInputType> = {};
-      inputs.forEach(input => {
-        const matchingAnswer = answers.find(answer => answer.inputName === input.name);
-        questionAnswerMap[input.name] = matchingAnswer?.answer ?? "";
-      });
-
-      const payload = {
-        prompt: variation,
-        variables: questionAnswerMap,
-      };
-
-      const varyResponse = await vary({ token, payload });
-
-      if (typeof varyResponse === "string") {
-        setIsValidatingAnswer(false);
-        messageAnswersForm("Oops! I couldn't get your reponse, Please try again.");
-        return;
-      }
-
-      const newAnswers: IAnswer[] = inputs
-        .map(input => {
-          const { name: inputName, required, question, prompt } = input;
-          const answer = varyResponse[input.name];
-          const promptId = prompt!;
-
-          return {
-            inputName,
-            required,
-            question: question ?? "",
-            prompt: promptId,
-            answer,
-          };
-        })
-        .filter(answer => answer.answer);
-      dispatch(setAnswers(newAnswers));
-      setIsValidatingAnswer(false);
-
-      const isReady = allRequiredInputsAnswered() ? " Let’s imagine something like this! Prepared request for you" : "";
-      messageAnswersForm(`Ok!${isReady}, please check input information and we are ready to start!`);
-    }
   };
 
   const messageAnswersForm = (message: string) => {
@@ -309,12 +246,10 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
     messages,
     setMessages,
     initialMessages,
+    addToQueuedMessages,
     messageAnswersForm,
     showGenerateButton,
-    showGenerate,
-    isValidatingAnswer,
-    setIsValidatingAnswer,
-    validateVary,
+    allRequiredInputsAnswered,
   };
 }
 

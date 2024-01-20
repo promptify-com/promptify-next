@@ -46,7 +46,7 @@ const useGenerateExecution = ({ template, questionPrefixContent, onError }: Prop
 
   const { messageAnswersForm } = useChat({
     questionPrefixContent,
-    initialMessageTitle: template.title,
+    template,
   });
   const { preparePromptsData } = useChatBox();
   const { dispatchNewExecutionData } = useApiAccess();

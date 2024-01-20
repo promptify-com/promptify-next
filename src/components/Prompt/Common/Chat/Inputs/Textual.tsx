@@ -12,9 +12,10 @@ interface Props {
   input: IPromptInput;
   value: PromptInputType;
   onChange: (value: string | File) => void;
+  onBlur: () => void;
 }
 
-function Textual({ input, value, onChange }: Props) {
+function Textual({ input, value, onChange, onBlur }: Props) {
   const { type, required } = input;
 
   const { isVariantB } = useVariant();
@@ -53,6 +54,7 @@ function Textual({ input, value, onChange }: Props) {
         type={type}
         value={value}
         onChange={e => onChange(e.target.value)}
+        onBlur={onBlur}
         multiline={isVariantB}
         rows={1}
       />

@@ -25,21 +25,23 @@ type AccordionExpandedState = {
 
 interface Props {
   messages: IMessage[];
-  template?: Templates;
+  template: Templates;
   onGenerate: () => void;
-  onAbort?: () => void;
+  onAbort: () => void;
   showGenerate: boolean;
 }
 
 export const ChatInterface = ({ template, messages, onGenerate, showGenerate, onAbort }: Props) => {
+  const isGenerating = useAppSelector(state => state.template.isGenerating);
   const isDesktopView = isDesktopViewPort();
 
-  const isGenerating = useAppSelector(state => state.template.isGenerating);
-  const { generatedExecution, selectedExecution } = useAppSelector(state => state.executions);
+  const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
+  const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
   const executionMode = Boolean(selectedExecution || generatedExecution);
 
   const [isHovered, setIsHovered] = useState(false);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
+
   const [expandedAccordions, setExpandedAccordions] = useState<AccordionExpandedState>({
     spark: true,
     form: true,
@@ -67,16 +69,10 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
       position={"relative"}
       sx={messagesContainerStyle}
     >
-      {typeof template !== "undefined" && (
-        <TemplateDetailsCard
-          title={template.title}
-          categoryName={template?.category.name}
-          thumbnail={template.thumbnail}
-          tags={template.tags}
-          description={template.description}
-        />
-      )}
-
+      <TemplateDetailsCard
+        template={template}
+        min={!isDesktopView}
+      />
       {showScrollDown && isGenerating && (
         <Box
           onClick={scrollToBottom}
@@ -173,9 +169,9 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
                         type={msg.type === "spark" ? "spark" : "form"}
                         expanded={expandedAccordions[msg.type]}
                         onChange={(_e, isExpanded) => handleExpandChange(msg.type, isExpanded)}
-                        template={template!}
+                        template={template}
                         showGenerate={showGenerate}
-                        abortGenerating={onAbort!}
+                        abortGenerating={onAbort}
                         onGenerate={onGenerate}
                       />
                     </Box>

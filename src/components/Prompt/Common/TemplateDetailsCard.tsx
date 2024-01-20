@@ -14,17 +14,14 @@ import { useRouter } from "next/router";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import Image from "@/components/design-system/Image";
-import { isDesktopViewPort, stripTags } from "@/common/helpers";
+import { stripTags } from "@/common/helpers";
 
-interface DetailsCardProps {
-  title: string;
-  description: string;
-  tags?: Tag[];
-  categoryName: string;
-  thumbnail: string;
+interface TemplateDetailsCardProps {
+  template: Templates;
+  min?: boolean;
 }
 
-const DescriptionTags = ({ description, tags }: { description: string; tags?: Tag[] }) => {
+const DescriptionTags = ({ description, tags }: { description: string; tags: Tag[] }) => {
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -35,15 +32,14 @@ const DescriptionTags = ({ description, tags }: { description: string; tags?: Ta
         fontWeight={400}
         color={"onSurface"}
       >
-        {stripTags(description || "")}
+        {stripTags(description)}
       </Typography>
       <Stack
         direction={"row"}
         flexWrap={"wrap"}
         gap={1}
       >
-        {typeof tags !== "undefined" &&
-          tags?.length > 0 &&
+        {tags?.length > 0 &&
           tags.map(tag => (
             <Chip
               key={tag.id}
@@ -71,24 +67,22 @@ const DescriptionTags = ({ description, tags }: { description: string; tags?: Ta
   );
 };
 
-export default function TemplateDetailsCard({ title, description, tags, categoryName, thumbnail }: DetailsCardProps) {
+export default function TemplateDetailsCard({ template, min }: TemplateDetailsCardProps) {
   const [expanded, setExpanded] = useState(false);
-
-  const isMobile = !isDesktopViewPort();
 
   return (
     <Box
       sx={{
         bgcolor: alpha(theme.palette.primary.main, 0.08),
-        borderRadius: isMobile ? "42px" : "48px",
-        p: isMobile ? "14px" : 0,
+        borderRadius: min ? "42px" : "48px",
+        p: min ? "14px" : 0,
         position: "relative",
       }}
     >
       <Stack
         direction={"row"}
         justifyContent={"space-between"}
-        alignItems={isMobile ? "center" : "flex-start"}
+        alignItems={min ? "center" : "flex-start"}
         gap={1}
       >
         <Stack
@@ -106,34 +100,34 @@ export default function TemplateDetailsCard({ title, description, tags, category
               fontWeight={500}
               color={alpha(theme.palette.text.secondary, 0.45)}
             >
-              {categoryName}
+              {template.category.name}
             </Typography>
             <Typography
               fontSize={{ xs: 20, md: 36 }}
               fontWeight={{ xs: 500, md: 400 }}
               color={"text.primary"}
             >
-              {title}
+              {template.title}
             </Typography>
           </Stack>
-          {!isMobile && (
+          {!min && (
             <DescriptionTags
-              tags={tags}
-              description={description}
+              tags={template.tags}
+              description={template.description}
             />
           )}
         </Stack>
         <Image
-          src={thumbnail}
-          width={isMobile ? 101 : 351}
-          height={isMobile ? 72 : 262}
-          alt={title}
+          src={template.thumbnail}
+          width={min ? 101 : 351}
+          height={min ? 72 : 262}
+          alt={template.title}
           priority
           style={{ borderRadius: "48px", objectFit: "cover" }}
           loading="eager"
         />
       </Stack>
-      {isMobile && (
+      {min && (
         <>
           <IconButton
             onClick={() => setExpanded(!expanded)}
@@ -157,8 +151,8 @@ export default function TemplateDetailsCard({ title, description, tags, category
               my={"8px"}
             >
               <DescriptionTags
-                tags={tags}
-                description={description}
+                tags={template.tags}
+                description={template.description}
               />
             </Stack>
           </Collapse>
