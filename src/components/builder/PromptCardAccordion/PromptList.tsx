@@ -70,13 +70,18 @@ const PromptList = ({ prompts, setPrompts, engines, templateLoading }: Props) =>
   };
 
   const createPrompt = (order: number) => {
-    const textEngine = engines.find(engine => engine.output_type === "TEXT");
+    let engineId = 0;
+    if (engines && engines.length) {
+      const textEngine = engines.find(engine => engine.output_type === "TEXT");
+      engineId = textEngine?.id || 0;
+    }
+
     const temp_id = randomId();
     const _newPrompt = {
       temp_id: temp_id,
       title: `Prompt #${order}`,
       content: "Describe here prompt parameters, for example {{name:text}} or {{age:number}}",
-      engine_id: textEngine?.id || 0,
+      engine_id: engineId,
       dependencies: [],
       parameters: [],
       order: order,
