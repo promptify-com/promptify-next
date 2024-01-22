@@ -10,11 +10,11 @@ import { ProfileMenu } from "@/components/ProfileMenu";
 import { SideBarMobile } from "../SideBarMobile";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { theme } from "@/theme";
-import { redirectToPath } from "@/common/helpers";
 import Image from "next/image";
 import useBrowser from "@/hooks/useBrowser";
 import { useAppSelector } from "@/hooks/useStore";
 import Link from "next/link";
+import HeaderPlaceholder from "@/components/placeholders/HeaderPlaceholder";
 
 interface HeaderProps {
   transparent?: boolean;
@@ -231,7 +231,9 @@ const Desktop = ({ keyWord = "", setKeyWord }: Pick<HeaderProps, "keyWord" | "se
 };
 
 export const Header: React.FC<HeaderProps> = ({ transparent = false, fixed = false, keyWord = "", setKeyWord }) => {
-  const { isMobile } = useBrowser();
+  const { isMobile, clientLoaded } = useBrowser();
+
+  if (clientLoaded) return <HeaderPlaceholder />;
 
   return (
     <Box

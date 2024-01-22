@@ -1,4 +1,4 @@
-import { type Dispatch, type SetStateAction } from "react";
+import { type Dispatch, type SetStateAction, useEffect } from "react";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 
@@ -10,6 +10,7 @@ import TopHeaderActions from "@/components/Prompt/Common/Sidebar/TopHeaderAction
 import Sidebar from "@/components/Prompt/Common/Sidebar";
 import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import useBrowser from "@/hooks/useBrowser";
+import PromptPlaceholder from "@/components/placeholders/PromptPlaceholder";
 
 interface TemplateLayoutProps {
   template: Templates;
@@ -27,9 +28,11 @@ export default function TemplateVariantA({
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
 
-  const { isMobile } = useBrowser();
+  const { isMobile, clientLoaded } = useBrowser();
 
   const isExecutionShown = Boolean(selectedExecution ?? generatedExecution);
+
+  if (clientLoaded) return <PromptPlaceholder />;
 
   return (
     <Stack

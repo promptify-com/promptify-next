@@ -1,12 +1,14 @@
-import { useRouter } from "next/router";
 import { isDesktopViewPort } from "@/common/helpers";
+import { useEffect, useState } from "react";
 
 export default function useBrowser() {
-  const router = useRouter();
+  const [isMobile, setIsMobile] = useState(true);
+  const [clientLoaded, setClientLoaded] = useState(true);
 
-  const viewport = router.query.viewport ?? "unknown";
-
-  const isMobile = viewport === "unknown" ? !isDesktopViewPort() : viewport === "mobile";
+  useEffect(() => {
+    setIsMobile(!isDesktopViewPort());
+    setClientLoaded(false);
+  }, []);
 
   const replaceHistoryByPathname = (pathname: string, delay: number = 1000) => {
     setTimeout(() => {
@@ -17,5 +19,5 @@ export default function useBrowser() {
     }, delay);
   };
 
-  return { replaceHistoryByPathname, isMobile };
+  return { replaceHistoryByPathname, isMobile, clientLoaded };
 }

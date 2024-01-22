@@ -1,4 +1,4 @@
-import { type Dispatch, type SetStateAction } from "react";
+import { type Dispatch, type SetStateAction, useEffect } from "react";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 
@@ -8,6 +8,7 @@ import Sidebar from "@/components/Prompt/Common/Sidebar";
 import TopHeaderActions from "@/components/Prompt/Common/Sidebar/TopHeaderActions";
 import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import useBrowser from "@/hooks/useBrowser";
+import PromptPlaceholder from "@/components/placeholders/PromptPlaceholder";
 
 interface TemplateVariantBProps {
   template: Templates;
@@ -22,7 +23,10 @@ export default function TemplateVariantB({
   setErrorMessage,
   questionPrefixContent,
 }: TemplateVariantBProps) {
-  const { isMobile } = useBrowser();
+  const { isMobile, clientLoaded } = useBrowser();
+
+  if (clientLoaded) return <PromptPlaceholder />;
+
   return (
     <Stack
       mt={{ xs: 8, md: 0 }}

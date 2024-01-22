@@ -1,6 +1,5 @@
 import { useEffect, useLayoutEffect } from "react";
 import { LANGUAGES_CODE_MAPPING } from "../constants";
-import { useWindowSize } from "usehooks-ts";
 
 export const isBrowser = () => typeof window !== "undefined";
 export const isomorphicLayoutEffect = isBrowser() ? useLayoutEffect : useEffect;
@@ -13,8 +12,10 @@ export const highlightSearch = (searchString: string, searchValue: string): stri
     : searchString.replace(new RegExp(searchValue, "gi"), '<span class="highlight">$&</span>');
 export const getBaseUrl = typeof window !== "undefined" && window.location.origin;
 export const isDesktopViewPort = () => {
-  const { width } = useWindowSize();
-  return width >= 900;
+  if (typeof window !== "undefined") {
+    return window.innerWidth >= 900;
+  }
+  return false;
 };
 
 export const addSpaceBetweenCapitalized = (text: string) => text.replace(/([a-z])([A-Z])/g, "$1 $2");
