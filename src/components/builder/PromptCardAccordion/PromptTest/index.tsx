@@ -71,7 +71,7 @@ function PromptTestDialog({ open, onClose, prompt }: PromptTestDialogProps) {
       parameter: param.parameter_id,
       score: param.score,
     }));
-  }, [inputs, params]);
+  }, [prompt]);
 
   const updateInputsValues = (newInputVal: IInputValue) => {
     inputsValues.current = {
