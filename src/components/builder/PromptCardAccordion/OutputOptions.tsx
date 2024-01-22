@@ -35,8 +35,10 @@ function OutputOptions({ prompt, onSave, onCancel }: Props) {
     custom_output_format: initialOutputFormatMatching ? "" : initialOutputFormat,
   };
   const [promptData, setPromptData] = useState<IEditPrompts>(initialState);
+  const [hasError, setHasError] = useState(false);
 
   const handleOutputFormatChange = (event: CustomEvent) => {
+    setHasError(false);
     const { name, value } = "target" in event ? event.target : { name: "output_format", value: event };
 
     const updatedPromptData = {
@@ -46,6 +48,14 @@ function OutputOptions({ prompt, onSave, onCancel }: Props) {
     };
 
     setPromptData(updatedPromptData);
+  };
+
+  const handleSave = () => {
+    if (promptData.output_format === "custom" && !promptData.custom_output_format) {
+      return setHasError(true);
+    }
+    onSave(prompt);
+    setHasError(false);
   };
 
   return (
@@ -126,6 +136,8 @@ function OutputOptions({ prompt, onSave, onCancel }: Props) {
                 label="Custom output area"
                 name="custom_output_format"
                 onChange={handleOutputFormatChange}
+                error={hasError}
+                helperText={hasError && "Enter a valid custom output format"}
               />
             )}
           </Box>
@@ -203,11 +215,11 @@ function OutputOptions({ prompt, onSave, onCancel }: Props) {
         </Button>
         <Button
           variant="contained"
+          onClick={handleSave}
           sx={{
             bgcolor: "secondary.main",
             borderRadius: "4px",
           }}
-          onClick={() => onSave(promptData)}
         >
           Save
         </Button>
