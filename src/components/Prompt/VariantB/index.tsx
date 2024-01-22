@@ -1,4 +1,4 @@
-import { type Dispatch, type SetStateAction, useEffect } from "react";
+import { type Dispatch, type SetStateAction } from "react";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 
@@ -25,7 +25,7 @@ export default function TemplateVariantB({
 }: TemplateVariantBProps) {
   const { isMobile, clientLoaded } = useBrowser();
 
-  if (clientLoaded) return <PromptPlaceholder />;
+  if (!clientLoaded) return <PromptPlaceholder />;
 
   return (
     <Stack

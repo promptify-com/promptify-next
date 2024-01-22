@@ -2,12 +2,10 @@ import { isDesktopViewPort } from "@/common/helpers";
 import { useEffect, useState } from "react";
 
 export default function useBrowser() {
-  const [isMobile, setIsMobile] = useState(true);
-  const [clientLoaded, setClientLoaded] = useState(true);
+  const [clientLoaded, setClientLoaded] = useState(false);
 
   useEffect(() => {
-    setIsMobile(!isDesktopViewPort());
-    setClientLoaded(false);
+    setClientLoaded(true);
   }, []);
 
   const replaceHistoryByPathname = (pathname: string, delay: number = 1000) => {
@@ -19,5 +17,5 @@ export default function useBrowser() {
     }, delay);
   };
 
-  return { replaceHistoryByPathname, isMobile, clientLoaded };
+  return { replaceHistoryByPathname, isMobile: !isDesktopViewPort(), clientLoaded };
 }

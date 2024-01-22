@@ -233,7 +233,7 @@ const Desktop = ({ keyWord = "", setKeyWord }: Pick<HeaderProps, "keyWord" | "se
 export const Header: React.FC<HeaderProps> = ({ transparent = false, fixed = false, keyWord = "", setKeyWord }) => {
   const { isMobile, clientLoaded } = useBrowser();
 
-  if (clientLoaded) return <HeaderPlaceholder />;
+  if (!clientLoaded) return <HeaderPlaceholder />;
 
   return (
     <Box

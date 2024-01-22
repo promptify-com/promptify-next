@@ -1,4 +1,4 @@
-import { type Dispatch, type SetStateAction, useEffect } from "react";
+import { type Dispatch, type SetStateAction } from "react";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 
@@ -32,7 +32,7 @@ export default function TemplateVariantA({
 
   const isExecutionShown = Boolean(selectedExecution ?? generatedExecution);
 
-  if (clientLoaded) return <PromptPlaceholder />;
+  if (!clientLoaded) return <PromptPlaceholder />;
 
   return (
     <Stack
