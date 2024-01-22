@@ -8,8 +8,8 @@ import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import useVariant from "./Hooks/useVariant";
 import lazy from "next/dynamic";
 
-const TemplateVariantALazy = lazy(() => import("@/components/Prompt/VariantA"));
-const TemplateVariantBLazy = lazy(() => import("@/components/Prompt/VariantB"));
+const TemplateVariantALazy = lazy(() => import("@/components/Prompt/VariantA"), { ssr: false });
+const TemplateVariantBLazy = lazy(() => import("@/components/Prompt/VariantB"), { ssr: false });
 
 interface Props {
   template: Templates;

@@ -4,7 +4,7 @@ import { useWindowSize } from "usehooks-ts";
 
 export const isBrowser = () => typeof window !== "undefined";
 export const isomorphicLayoutEffect = isBrowser() ? useLayoutEffect : useEffect;
-export const stripTags = (content: string) => content.replace(/<\/?[^>]+(>|$)/gi, "");
+export const stripTags = (content: string) => content?.replace(/<\/?[^>]+(>|$)/gi, "");
 export const randomId = () => Math.floor(Math.random() * 1000000000);
 export const getLanguageFromCode = (code: string) => LANGUAGES_CODE_MAPPING[code] || LANGUAGES_CODE_MAPPING["en"];
 export const highlightSearch = (searchString: string, searchValue: string): string =>
