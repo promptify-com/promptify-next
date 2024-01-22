@@ -88,10 +88,13 @@ export const ChatInterface = ({
       <div style={{ marginTop: "auto" }}></div>
 
       <Box mx={!isDesktopView ? "16px" : "40px"}>
-        {!isExecutionShown && (
+        {typeof template !== "undefined" && !isExecutionShown && (
           <TemplateDetailsCard
-            template={template}
-            min={!isDesktopView}
+            title={template.title}
+            categoryName={template?.category.name}
+            thumbnail={template.thumbnail}
+            tags={template.tags}
+            description={template.description}
           />
         )}
       </Box>
