@@ -18,14 +18,22 @@ function getRandomVariant() {
 const useVariant = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const isAutomationPage = router.pathname.includes("/automation");
   const [variant, setVariant] = useState<string>(
-    (router.query.variant as string) !== "unknown" ? (router.query.variant as string) : getRandomVariant(),
+    isAutomationPage
+      ? "b"
+      : (router.query.variant as string) !== "unknown"
+      ? (router.query.variant as string)
+      : getRandomVariant(),
   );
 
   const isVariantB = variant === "b";
   const isVariantA = variant === "a";
 
   useEffect(() => {
+    if (isAutomationPage) {
+      return;
+    }
     const cookieVariant = Cookie.get("variant");
     let effectiveVariant = cookieVariant ?? variant;
 
