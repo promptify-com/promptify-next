@@ -8,7 +8,6 @@ import Sidebar from "@/components/Prompt/Common/Sidebar";
 import TopHeaderActions from "@/components/Prompt/Common/Sidebar/TopHeaderActions";
 import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import useBrowser from "@/hooks/useBrowser";
-import PromptPlaceholder from "@/components/placeholders/PromptPlaceholder";
 
 interface TemplateVariantBProps {
   template: Templates;
@@ -23,10 +22,7 @@ export default function TemplateVariantB({
   setErrorMessage,
   questionPrefixContent,
 }: TemplateVariantBProps) {
-  const { isMobile, clientLoaded } = useBrowser();
-
-  if (!clientLoaded) return <PromptPlaceholder />;
-
+  const { isMobile } = useBrowser();
   return (
     <Stack
       mt={{ xs: 8, md: 0 }}
