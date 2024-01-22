@@ -71,7 +71,7 @@ function PromptTestDialog({ open, onClose, prompt }: PromptTestDialogProps) {
       parameter: param.parameter_id,
       score: param.score,
     }));
-  }, [prompt]);
+  }, [inputs, params]);
 
   const updateInputsValues = (newInputVal: IInputValue) => {
     inputsValues.current = {
@@ -107,6 +107,26 @@ function PromptTestDialog({ open, onClose, prompt }: PromptTestDialogProps) {
     return status;
   };
 
+  const dispatchNewExecution = (output: string) => {
+    dispatch(
+      templatesApi.util.updateQueryData("getPromptExecutions", template?.id!, _executions => {
+        _executions.unshift({
+          id: randomId(),
+          output,
+          prompt: {
+            id: prompt.id!,
+            title: prompt.title!,
+            engine: engine!,
+          },
+          executed_by: 32,
+          created_at: new Date(new Date().getTime() - 1000),
+          tokens_spent: 360,
+        });
+        return _executions;
+      }),
+    );
+  };
+
   const runExecution = async () => {
     setGeneratingResponse("");
     setIsGenerating(true);
@@ -124,6 +144,7 @@ function PromptTestDialog({ open, onClose, prompt }: PromptTestDialogProps) {
       behavior: "smooth",
     });
 
+    let output = "";
     fetchEventSource(`${process.env.NEXT_PUBLIC_API_URL}/api/meta/prompts/${prompt.id}/execute`, {
       method: "POST",
       headers: {
@@ -151,28 +172,13 @@ function PromptTestDialog({ open, onClose, prompt }: PromptTestDialogProps) {
 
           if (msg.event === "infer" && msg.data) {
             if (message) {
+              output += message;
               setGeneratingResponse(prev => prev.concat(message));
             }
           }
 
           if (message === "[COMPLETED]") {
-            dispatch(
-              templatesApi.util.updateQueryData("getPromptExecutions", template?.id!, _executions => {
-                _executions.unshift({
-                  id: randomId(),
-                  output: generatingResponse,
-                  prompt: {
-                    id: prompt.id!,
-                    title: prompt.title!,
-                    engine: engine!,
-                  },
-                  executed_by: 32,
-                  created_at: new Date(new Date().getTime() - 1000),
-                  tokens_spent: 360,
-                });
-                return _executions;
-              }),
-            );
+            dispatchNewExecution(output);
           }
         } catch {
           console.info("invalid incoming msg:", msg);
