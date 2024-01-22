@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box } from "@mui/material";
+import Box from "@mui/material/Box";
 import { isImageOutput } from "@/components/Prompt/Utils";
 import ImagePopup from "@/components/dialog/ImagePopup";
 import { EngineOutput } from "@/core/api/dto/templates";
@@ -13,6 +13,7 @@ interface Props {
 function ExecutionOutput({ output, engineType }: Props) {
   const [showImage, setShowImage] = useState<boolean>(false);
   const [content, setContent] = useState(output);
+  const [imgError, setImgError] = useState(false);
 
   useEffect(() => {
     if (!isImageOutput(output, engineType)) {
@@ -20,25 +21,25 @@ function ExecutionOutput({ output, engineType }: Props) {
         markdownToHTML(output).then(res => setContent(sanitizeHTML(res)));
       });
     }
-  }, [output]);
+  }, [engineType, output]);
 
   return isImageOutput(content, engineType) ? (
     <>
       <Image
-        src={content}
-        alt={content}
+        src={!imgError ? content : require("@/assets/images/default-thumbnail.jpg")}
+        alt={"Expired"}
         style={{ borderRadius: "8px", objectFit: "cover", width: "80%", height: "fit-content" }}
-        priority={false}
-        onClick={() => setShowImage(true)}
-        onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-          (e.target as HTMLImageElement).src = require("@/assets/images/default-thumbnail.jpg");
-        }}
+        priority={true}
+        onClick={() => setShowImage(!imgError)}
+        onError={e => setImgError(true)}
       />
-      <ImagePopup
-        open={showImage}
-        imageUrl={content}
-        onClose={() => setShowImage(false)}
-      />
+      {!imgError && (
+        <ImagePopup
+          open={showImage}
+          imageUrl={content}
+          onClose={() => setShowImage(false)}
+        />
+      )}
     </>
   ) : (
     <Box

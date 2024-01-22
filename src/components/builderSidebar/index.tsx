@@ -20,8 +20,8 @@ import PromptSequence from "./PromptSequence";
 import type { IEditPrompts } from "@/common/types/builder";
 import PaperIcon from "@/assets/icons/PaperIcon";
 import TestLog from "./TestLog";
-import { ClearAll } from "@mui/icons-material";
-import { Tooltip } from "@mui/material";
+import ClearAll from "@mui/icons-material/ClearAll";
+import Tooltip from "@mui/material/Tooltip";
 import { useDeletePromptExecutionsMutation, useGetPromptExecutionsQuery } from "@/core/api/templates";
 
 const Links: Link[] = [

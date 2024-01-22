@@ -49,7 +49,6 @@ const TestLog = () => {
                 key={execution.id}
                 expanded={activeExecution === execution.id}
                 onChange={() => setActiveExecution(execution.id)}
-                onClick={() => selectExecution(execution.id)}
                 sx={{
                   p: "16px",
                   boxShadow: "none",
@@ -63,6 +62,7 @@ const TestLog = () => {
                 <AccordionSummary
                   expandIcon={<ExpandMore fontSize="small" />}
                   sx={{ p: 0, minHeight: "unset !important", ".MuiAccordionSummary-content": { m: 0 } }}
+                  onClick={() => selectExecution(execution.id)}
                 >
                   <Stack
                     direction={"row"}
