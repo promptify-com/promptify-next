@@ -72,7 +72,7 @@ const PromptCardAccordion = ({
   );
 
   const updatePrompt = (newPromptData: IEditPrompts) => {
-    saveNeeded.current = !isDraft && !isDeepEqual(initPromptData.current, newPromptData);
+    saveNeeded.current = !promptData.id || (!isDraft && !isDeepEqual(initPromptData.current, newPromptData));
     if (!isDeepEqual(promptData, newPromptData)) {
       setPromptData(newPromptData);
       dispatchUpdatePrompt(newPromptData);
