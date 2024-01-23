@@ -1,16 +1,14 @@
 import { ReactNode } from "react";
-import { Box, Grid, useMediaQuery, useTheme } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 import { Header } from "@/components/Header";
 import { theme } from "@/theme";
 import Sidebar from "./components/sidebar/Sidebar";
 
 export const Layout = ({ children }: { children: ReactNode }) => {
-  const { breakpoints } = useTheme();
-  const isMobile = useMediaQuery(breakpoints.down("sm"));
   return (
     <>
       <Box sx={{ bgcolor: "surface.3" }}>
-        {!isMobile && <Sidebar />}
+        <Sidebar />
         <Box
           display={"flex"}
           flexDirection={"column"}
