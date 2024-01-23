@@ -8,10 +8,15 @@ import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import useVariant from "./Hooks/useVariant";
 import lazy from "next/dynamic";
 import PromptPlaceholder from "@/components/placeholders/PromptPlaceholder";
-import useBrowser from "@/hooks/useBrowser";
 
-const TemplateVariantALazy = lazy(() => import("@/components/Prompt/VariantA"), { ssr: false });
-const TemplateVariantBLazy = lazy(() => import("@/components/Prompt/VariantB"), { ssr: false });
+const TemplateVariantALazy = lazy(() => import("@/components/Prompt/VariantA"), {
+  ssr: false,
+  loading: () => <PromptPlaceholder />,
+});
+const TemplateVariantBLazy = lazy(() => import("@/components/Prompt/VariantB"), {
+  ssr: false,
+  loading: () => <PromptPlaceholder />,
+});
 
 interface Props {
   template: Templates;
@@ -25,7 +30,6 @@ function TemplatePage({ template, setErrorMessage, questionPrefixContent }: Prop
   const isValidUser = useAppSelector(isValidUserFn);
   const { variant } = useVariant();
   const { data: executions } = useGetExecutionsByTemplateQuery(isValidUser ? template.id : skipToken);
-  const { clientLoaded } = useBrowser();
 
   const handleSelectExecution = ({
     execution,
@@ -56,8 +60,6 @@ function TemplatePage({ template, setErrorMessage, questionPrefixContent }: Prop
       handleSelectExecution({ execution: template.example_execution || null, resetHash: true });
     }
   }, [executions]);
-
-  if (!clientLoaded) return <PromptPlaceholder />;
 
   return (
     <>
