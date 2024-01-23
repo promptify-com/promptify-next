@@ -1,4 +1,4 @@
-import { useEffect, type Dispatch, type SetStateAction, useState } from "react";
+import { useEffect, type Dispatch, type SetStateAction } from "react";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { isValidUserFn } from "@/core/store/userSlice";
