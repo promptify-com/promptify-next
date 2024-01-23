@@ -23,10 +23,10 @@ function ExecutionOutput({ output, engineType }: Props) {
     }
   }, [engineType, output]);
 
-  return isImageOutput(content, engineType) ? (
+  return isImageOutput(output, engineType) ? (
     <>
       <Image
-        src={!imgError ? content : require("@/assets/images/default-thumbnail.jpg")}
+        src={!imgError ? output : require("@/assets/images/default-thumbnail.jpg")}
         alt={"Expired"}
         style={{ borderRadius: "8px", objectFit: "cover", width: "80%", height: "fit-content" }}
         priority={false}
