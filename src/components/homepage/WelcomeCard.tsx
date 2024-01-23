@@ -1,21 +1,10 @@
-import React, { useState, useEffect } from "react";
-import Image from "next/image";
+import Image from "../design-system/Image";
 import { Stack, Typography } from "@mui/material";
 import { useRouter } from "next/router";
-
 import BaseButton from "@/components/base/BaseButton";
-import useToken from "@/hooks/useToken";
 
 export const WelcomeCard = () => {
   const router = useRouter();
-  const token = useToken();
-  const [showContainer, setShowContainer] = useState(false);
-
-  useEffect(() => {
-    if (!token) {
-      setShowContainer(true);
-    }
-  }, [token]);
 
   return (
     <Stack
@@ -25,7 +14,7 @@ export const WelcomeCard = () => {
         borderRadius: "25px",
         gap: { xs: "25px", sm: "48px", md: "10px", lg: "48px" },
         flexDirection: { xs: "column", sm: "row" },
-        display: !showContainer ? "none" : "flex",
+        display: "flex",
       }}
     >
       <Stack
@@ -46,8 +35,7 @@ export const WelcomeCard = () => {
       >
         <Image
           src={require("@/assets/images/welcome.svg")}
-          alt="welcome"
-          fill
+          alt="Welcome"
           priority={true}
         />
       </Stack>

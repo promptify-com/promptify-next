@@ -1,8 +1,12 @@
-import { Skeleton, Box, Stack, Divider } from "@mui/material";
+import Box from "@mui/material/Box";
+import Divider from "@mui/material/Divider";
+import Skeleton from "@mui/material/Skeleton";
+import Stack from "@mui/material/Stack";
 
 export default function BuilderPromptPlaceholder({ count = 1 }) {
   return Array.from({ length: count }).map((_, index) => (
     <Box
+      key={index}
       sx={{
         bgcolor: "surface.1",
         m: "24px 0 !important",
@@ -54,13 +58,23 @@ export default function BuilderPromptPlaceholder({ count = 1 }) {
             }}
           />
         </Stack>
-        <Skeleton
-          variant="text"
-          animation="wave"
-          sx={{
-            height: "224px",
-          }}
-        />
+        <Stack
+          minHeight={"250px"}
+          direction={"column"}
+          gap={"8px"}
+          mt={"10px"}
+        >
+          {Array.from({ length: 6 }).map((_i, index) => (
+            <Skeleton
+              key={index}
+              variant="text"
+              animation="wave"
+              sx={{
+                height: "24px",
+              }}
+            />
+          ))}
+        </Stack>
         <Skeleton
           variant="rounded"
           animation="wave"

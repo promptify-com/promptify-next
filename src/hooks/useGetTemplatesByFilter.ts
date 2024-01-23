@@ -1,14 +1,10 @@
 import { useDeferredValue, useMemo, useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
-
 import { RootState } from "@/core/store";
 import { useGetTemplatesByFilterQuery } from "@/core/api/templates";
 import { FilterParams, SelectedFilters } from "@/core/api/dto/templates";
-import { useGetTagsPopularQuery } from "@/core/api/tags";
-import { useGetEnginesQuery } from "@/core/api/engines";
 import useDebounce from "./useDebounce";
-
 import { Templates } from "@/core/api/dto/templates";
 
 interface Props {
@@ -16,25 +12,28 @@ interface Props {
   subCatId?: number;
   ordering?: string;
   admin?: boolean;
+  templateLimit?: number;
+  paginatedList?: boolean;
 }
 
-export function useGetTemplatesByFilter({ catId, subCatId, ordering, admin = false }: Props = {}) {
+export function useGetTemplatesByFilter({
+  catId,
+  subCatId,
+  ordering,
+  admin = false,
+  templateLimit,
+  paginatedList = false,
+}: Props = {}) {
   const router = useRouter();
-  const splittedPath = router.pathname.split("/");
-  const hasPathname = (route: "explore" | "[categorySlug]" | "[subcategorySlug]") => {
-    return splittedPath.includes(route);
-  };
   const { categorySlug, subcategorySlug } = router.query;
-  const tagsQuery = useGetTagsPopularQuery(undefined, { skip: !hasPathname("explore") });
-  const enginesQuery = useGetEnginesQuery(undefined, { skip: !hasPathname("explore") });
   const filters = useSelector((state: RootState) => state.filters);
   const { tag: tags, engine, title } = filters;
-  const PAGINATION_LIMIT = 10;
   const [offset, setOffset] = useState(0);
   const [searchName, setSearchName] = useState("");
   const deferredSearchName = useDeferredValue(searchName);
   const debouncedSearchName = useDebounce<string>(deferredSearchName, 300);
   const [status, setStatus] = useState<string>();
+  const PAGINATION_LIMIT = templateLimit ?? 10;
   const memoizedFilteredTags = useMemo(() => {
     const filteredTags = tags
       .filter(item => item !== null)
@@ -64,7 +63,7 @@ export function useGetTemplatesByFilter({ catId, subCatId, ordering, admin = fal
 
   useEffect(() => {
     if (templates?.results) {
-      if (offset === 0) {
+      if (offset === 0 || paginatedList) {
         setAllTemplates(templates?.results);
       } else {
         setAllTemplates(prevTemplates => prevTemplates.concat(templates?.results));
@@ -93,8 +92,14 @@ export function useGetTemplatesByFilter({ catId, subCatId, ordering, admin = fal
       setOffset(prevOffset => prevOffset + PAGINATION_LIMIT);
     }
   };
+  const handlePrevPage = () => {
+    if (!!templates?.previous) {
+      setOffset(prevOffset => prevOffset - PAGINATION_LIMIT);
+    }
+  };
 
   const hasMore = !!templates?.next;
+  const hasPrev = !!templates?.previous;
 
   const filteredTemplates = admin
     ? allTemplates
@@ -113,9 +118,9 @@ export function useGetTemplatesByFilter({ catId, subCatId, ordering, admin = fal
     handleNextPage,
     resetOffest,
     isFetching,
-    tags: tagsQuery.data,
-    engines: enginesQuery.data,
     hasMore,
     status,
+    hasPrev,
+    handlePrevPage,
   };
 }

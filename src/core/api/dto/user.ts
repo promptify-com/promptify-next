@@ -18,12 +18,6 @@ export interface User {
   is_admin: boolean;
 }
 
-export interface UserMin {
-  id: number;
-  username: string;
-  first_name: string;
-  last_name: string;
-  avatar: string;
-}
+export type UserPartial = Pick<User, "id" | "username" | "first_name" | "last_name" | "avatar">;
 
 export interface UpdateUserData extends IEditProfile {}

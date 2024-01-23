@@ -11,7 +11,7 @@ import { useRouter } from "next/router";
 import { setSelectedTag } from "@/core/store/filtersSlice";
 import Image from "@/components/design-system/Image";
 import useTruncate from "@/hooks/useTruncate";
-import { isDesktopViewPort, redirectToPath } from "@/common/helpers";
+import { isDesktopViewPort, redirectToPath, stripTags } from "@/common/helpers";
 import { theme } from "@/theme";
 import { useAppDispatch } from "@/hooks/useStore";
 
@@ -124,7 +124,7 @@ function CardTemplate({ template, noRedirect = false, query, asResult = false }:
                     color: "onSurface",
                   }}
                 >
-                  {highlightSearchQuery(truncate(template.description, { length: 70 }))}
+                  {highlightSearchQuery(truncate(stripTags(template.description), { length: 70 }))}
                 </Typography>
               </Grid>
             </Grid>

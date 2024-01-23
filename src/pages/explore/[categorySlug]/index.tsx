@@ -1,30 +1,27 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { KeyboardArrowLeft } from "@mui/icons-material";
-import { Box, Button, Grid, Typography } from "@mui/material";
-
+import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
 import { authClient } from "@/common/axios";
-import { SubCategoryCard } from "@/components/common/cards/CardSubcategory";
-import { Category } from "@/core/api/dto/templates";
+import SubCategoryCard from "@/components/common/cards/CardSubcategory";
+import type { Category } from "@/core/api/dto/templates";
 import { Layout } from "@/layout";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
 import { FiltersSelected } from "@/components/explorer/FiltersSelected";
 import SubCategoryPlaceholder from "@/components/placeholders/SubCategoryPlaceholder";
 import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
 import { useGetCategoriesQuery } from "@/core/api/categories";
-import { redirectToPath } from "@/common/helpers";
 
 export default function Page({ category }: { category: Category }) {
   const router = useRouter();
   const { templates, isFetching, categorySlug, allFilterParamsNull, isTemplatesLoading, hasMore, handleNextPage } =
     useGetTemplatesByFilter({ catId: category?.id });
   const { data: categories, isLoading: isCategoryLoading } = useGetCategoriesQuery();
-
   const goBack = () => {
     router.push("/explore");
-  };
-  const navigateTo = (item: Category) => {
-    redirectToPath(`/explore/${categorySlug}/${item.slug}`);
   };
 
   return (
@@ -54,9 +51,18 @@ export default function Page({ category }: { category: Category }) {
                   <Button
                     onClick={() => goBack()}
                     variant="text"
-                    sx={{ fontSize: 19, color: "onSurface", ml: -3 }}
+                    sx={{
+                      fontSize: 19,
+                      color: "onSurface",
+                      ml: -3,
+                      textOverflow: "ellipsis",
+                      whiteSpace: "normal",
+                    }}
                   >
-                    <KeyboardArrowLeft /> {category.name} Prompt Template
+                    <Box sx={{ display: "flex", alignItems: "flex-start" }}>
+                      <KeyboardArrowLeft sx={{ mt: "5px" }} />
+                      {category.name} Prompt Template
+                    </Box>
                   </Button>
                 </Link>
                 <Typography variant="body1">{category.description}</Typography>{" "}
@@ -81,9 +87,7 @@ export default function Page({ category }: { category: Category }) {
                     <Grid key={subcategory.id}>
                       <SubCategoryCard
                         subcategory={subcategory}
-                        onSelected={() => {
-                          navigateTo(subcategory);
-                        }}
+                        categorySlug={categorySlug as string}
                       />
                     </Grid>
                   ))}

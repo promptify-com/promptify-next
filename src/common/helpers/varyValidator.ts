@@ -1,6 +1,8 @@
 import { TemplateQuestionGeneratorData, VaryParams } from "@/core/api/dto/prompts";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { getExecutionById } from "@/hooks/api/executions";
+import { VaryValidatorResponse } from "@/components/Prompt/Types/chat";
+import { parseMessageData } from "./parseMessageData";
 
 const answersValidatorTemplateId = 547;
 
@@ -10,13 +12,14 @@ export const vary = ({
 }: {
   token: string;
   payload: VaryParams;
-}): Promise<{ [question: string]: string | number } | string> => {
+}): Promise<VaryValidatorResponse | string> => {
   return new Promise(resolve => {
     const data: TemplateQuestionGeneratorData[] = [
       {
         prompt: 2144,
         contextual_overrides: [],
         prompt_params: payload,
+        output_format: "JSON",
       },
     ];
     const url = `${process.env.NEXT_PUBLIC_API_URL}/api/meta/templates/${answersValidatorTemplateId}/execute/`;
@@ -47,10 +50,14 @@ export const vary = ({
             resolve("Something wrong happened");
           }
 
-          resolve(JSON.parse(_execution.prompt_executions[0].output.replace(/\n(\s+)?/g, "")));
+          const output = _execution.prompt_executions?.[0].output.replace(/\n(\s+)?/g, "").replace(/.*?\{/, "{");
+          resolve(output ? parseMessageData(output) : {});
         } catch (_) {
           resolve("Something wrong happened");
         }
+      },
+      onerror(err) {
+        resolve("Something wrong happened");
       },
     });
   });

@@ -1,11 +1,11 @@
 import { useRouter } from "next/router";
 import Head from "next/head";
-import { KeyboardArrowLeft } from "@mui/icons-material";
-import { Box, Grid } from "@mui/material";
-
+import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
 import { authClient } from "@/common/axios";
-import { SubCategoryCard } from "@/components/common/cards/CardSubcategory";
-import { Category } from "@/core/api/dto/templates";
+import SubCategoryCard from "@/components/common/cards/CardSubcategory";
+import type { Category } from "@/core/api/dto/templates";
 import { Layout } from "@/layout";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
 import { FiltersSelected } from "@/components/explorer/FiltersSelected";
@@ -13,7 +13,6 @@ import SubCategoryPlaceholder from "@/components/placeholders/SubCategoryPlaceho
 import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
 import Breadcrumb from "@/components/design-system/Breadcrumb";
 import { useGetCategoriesQuery } from "@/core/api/categories";
-import { redirectToPath } from "@/common/helpers";
 
 interface CategoryOrSubcategory {
   category: Category;
@@ -25,13 +24,7 @@ export default function Page({ category, subcategory }: CategoryOrSubcategory) {
   const { templates, isFetching, allFilterParamsNull, hasMore, handleNextPage } = useGetTemplatesByFilter({
     subCatId: subcategory?.id,
   });
-
   const { data: categories, isLoading: isCategoryLoading } = useGetCategoriesQuery();
-
-  const navigateTo = (slug: string) => {
-    redirectToPath(`/explore/${category.slug}/${slug}`);
-  };
-
   const breadcrumbs = [
     { label: category.name, link: `/explore/${category.slug}` },
     { label: (router.query.subcategorySlug as string).replace(/-/g, " ") },
@@ -91,7 +84,7 @@ export default function Page({ category, subcategory }: CategoryOrSubcategory) {
                       <Grid key={subcategory.id}>
                         <SubCategoryCard
                           subcategory={subcategory}
-                          onSelected={() => navigateTo(subcategory.slug)}
+                          categorySlug={category.slug}
                         />
                       </Grid>
                     ))}

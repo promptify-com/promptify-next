@@ -1,27 +1,30 @@
-import { Fragment, useCallback, useState, memo, useEffect } from "react";
-import PromptCardAccordion from "@/components/builder/PromptCardAccordion";
-import { IEditPrompts } from "@/common/types/builder";
+import { Fragment, useCallback, useState, memo } from "react";
+import Stack from "@mui/material/Stack";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import { useDrop } from "react-dnd";
-import { Box, Button, Stack } from "@mui/material";
-import { Add } from "@mui/icons-material";
+import Add from "@mui/icons-material/Add";
+
+import PromptCardAccordion from "@/components/builder/PromptCardAccordion";
 import { promptComputeDomId, randomId } from "@/common/helpers";
-import { Engine } from "@/core/api/dto/templates";
 import { useDeletePromptMutation } from "@/core/api/templates";
 import { DeleteDialog } from "@/components/dialog/DeleteDialog";
-import { useAppDispatch } from "@/hooks/useStore";
-import { handlePrompts } from "@/core/store/builderSlice";
 import { useScrollToElement } from "@/hooks/useScrollToElement";
+import { BUILDER_TYPE } from "@/common/constants";
+import type { Engine } from "@/core/api/dto/templates";
+import type { IEditPrompts } from "@/common/types/builder";
+import BuilderPromptPlaceholder from "@/components/placeholders/BuilderPromptPlaceholder";
 
 interface Props {
   prompts: IEditPrompts[];
   setPrompts: (prompts: IEditPrompts[]) => void;
   engines: Engine[];
+  templateLoading: boolean;
 }
-const PromptList = ({ prompts, setPrompts, engines }: Props) => {
+const PromptList = ({ prompts, setPrompts, engines, templateLoading }: Props) => {
   const [promptToDelete, setPromptToDelete] = useState<IEditPrompts | null>(null);
   const [deletePrompt] = useDeletePromptMutation();
 
-  const dispatch = useAppDispatch();
   const setSmoothScrollTarget = useScrollToElement("smooth");
 
   const [, drop] = useDrop(() => ({ accept: "prompt" }));
@@ -48,7 +51,6 @@ const PromptList = ({ prompts, setPrompts, engines }: Props) => {
 
       const reorderedPrompts = _promptsCopy.map((prompt, index) => ({ ...prompt, order: index + 1 }));
       setPrompts(reorderedPrompts);
-      dispatch(handlePrompts(reorderedPrompts));
     },
     [findPromptIndex, prompts],
   );
@@ -65,7 +67,6 @@ const PromptList = ({ prompts, setPrompts, engines }: Props) => {
     });
 
     setPrompts(_prompts);
-    dispatch(handlePrompts(_prompts));
   };
 
   const createPrompt = (order: number) => {
@@ -100,7 +101,6 @@ const PromptList = ({ prompts, setPrompts, engines }: Props) => {
     }
 
     setPrompts(_prompts);
-    dispatch(handlePrompts(_prompts));
     setSmoothScrollTarget(`#${promptComputeDomId(_newPrompt)}`);
   };
 
@@ -157,85 +157,93 @@ const PromptList = ({ prompts, setPrompts, engines }: Props) => {
   };
 
   return (
-    <Stack
-      ref={drop}
-      alignItems={"center"}
-      gap={3}
-    >
-      {prompts.length ? (
-        prompts.map((prompt, index) => {
-          index++; // start from 1
-          return (
-            <Fragment key={index}>
-              <Box
-                width={"100%"}
-                id={promptComputeDomId(prompt)}
-              >
-                <PromptCardAccordion
-                  key={prompt.id ?? prompt.temp_id}
-                  prompt={prompt}
-                  order={index}
-                  setPrompt={changePrompt}
-                  deletePrompt={() => setPromptToDelete(prompt)}
-                  duplicatePrompt={() => duplicatePrompt(prompt, index + 1)}
-                  prompts={prompts}
-                  engines={engines}
-                  movePrompt={movePrompt}
-                  findPromptIndex={findPromptIndex}
-                />
-              </Box>
-              <Button
-                variant="contained"
-                startIcon={<Add />}
-                sx={{
-                  bgcolor: "surface.1",
-                  color: "text.primary",
-                  p: "6px 16px",
-                  border: "none",
-                  fontSize: 14,
-                  fontWeight: 500,
-                  ":hover": {
-                    bgcolor: "action.hover",
-                  },
-                }}
-                onClick={() => createPrompt(index + 1)}
-              >
-                New prompt
-              </Button>
-            </Fragment>
-          );
-        })
+    <>
+      {templateLoading ? (
+        <Stack gap={"16px"}>
+          <BuilderPromptPlaceholder count={2} />
+        </Stack>
       ) : (
-        <Button
-          variant="contained"
-          startIcon={<Add />}
-          sx={{
-            mt: "20svh",
-            bgcolor: "surface.1",
-            color: "text.primary",
-            p: "6px 16px",
-            border: "none",
-            fontSize: 14,
-            fontWeight: 500,
-            ":hover": {
-              bgcolor: "action.hover",
-            },
-          }}
-          onClick={() => createPrompt(1)}
+        <Stack
+          ref={drop}
+          alignItems={"center"}
+          gap={3}
         >
-          New prompt
-        </Button>
+          {prompts.length ? (
+            prompts.map((prompt, index) => {
+              index++; // start from 1
+              return (
+                <Fragment key={index}>
+                  <Box
+                    width={"100%"}
+                    id={promptComputeDomId({ title: prompt.title })}
+                  >
+                    <PromptCardAccordion
+                      prompt={prompt}
+                      order={index}
+                      setPrompt={changePrompt}
+                      deletePrompt={() => setPromptToDelete(prompt)}
+                      duplicatePrompt={() => duplicatePrompt(prompt, index + 1)}
+                      prompts={prompts}
+                      engines={engines}
+                      movePrompt={movePrompt}
+                      findPromptIndex={findPromptIndex}
+                      builderType={BUILDER_TYPE.USER}
+                    />
+                  </Box>
+                  <Button
+                    variant="contained"
+                    startIcon={<Add />}
+                    sx={{
+                      bgcolor: "surface.1",
+                      color: "text.primary",
+                      p: "6px 16px",
+                      border: "none",
+                      fontSize: 14,
+                      fontWeight: 500,
+                      ":hover": {
+                        bgcolor: "action.hover",
+                      },
+                    }}
+                    onClick={() => createPrompt(index + 1)}
+                  >
+                    New prompt
+                  </Button>
+                </Fragment>
+              );
+            })
+          ) : (
+            <Button
+              variant="contained"
+              startIcon={<Add />}
+              sx={{
+                mt: "20svh",
+                bgcolor: "surface.1",
+                color: "text.primary",
+                p: "6px 16px",
+                border: "none",
+                fontSize: 14,
+                fontWeight: 500,
+                ":hover": {
+                  bgcolor: "action.hover",
+                },
+              }}
+              onClick={() => createPrompt(1)}
+            >
+              New prompt
+            </Button>
+          )}
+          {promptToDelete && (
+            <DeleteDialog
+              open={true}
+              dialogTitle="Delete Prompt"
+              dialogContentText={`Are you sure you want to delete ${promptToDelete.title || "this prompt"}?`}
+              onClose={() => setPromptToDelete(null)}
+              onSubmit={removePrompt}
+            />
+          )}
+        </Stack>
       )}
-      {promptToDelete && (
-        <DeleteDialog
-          open={true}
-          dialogTitle="Delete Prompt"
-          dialogContentText={`Are you sure you want to delete ${promptToDelete.title || "this prompt"}?`}
-          onClose={() => setPromptToDelete(null)}
-          onSubmit={removePrompt}
-        />
-      )}
-    </Stack>
+    </>
   );
 };
 

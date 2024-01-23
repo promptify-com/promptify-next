@@ -30,9 +30,14 @@ interface CustomPalette {
 interface CustomTheme {
   custom: {
     defaultSidebarWidth: string;
+    leftClosedSidebarWidth: string;
     headerHeight: {
       xs: string;
       md: string;
+    };
+    promptBuilder: {
+      headerHeight: string;
+      drawerWidth: string;
     };
   };
 }
@@ -59,7 +64,7 @@ export let theme: Theme = createTheme({
       "600": "#81889E",
     },
     primary: {
-      main: "#3B4050",
+      main: "#375CA9",
     },
     secondary: {
       main: "#1B1B1E",
@@ -91,10 +96,15 @@ export let theme: Theme = createTheme({
     inverseSurface: "#303033",
   },
   custom: {
-    defaultSidebarWidth: "299px",
+    defaultSidebarWidth: "230px",
+    leftClosedSidebarWidth: "88px",
     headerHeight: {
       xs: "58px",
       md: "90px",
+    },
+    promptBuilder: {
+      headerHeight: "75px",
+      drawerWidth: "352px",
     },
   },
 });

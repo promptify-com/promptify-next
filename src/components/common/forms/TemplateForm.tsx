@@ -1,70 +1,64 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { object, string } from "yup";
-import { useFormik } from "formik";
-import {
-  Select,
-  MenuItem,
-  TextField,
-  Chip,
-  Autocomplete,
-  InputLabel,
-  Checkbox,
-  Stack,
-  FormControl,
-  FormControlLabel,
-  Switch,
-} from "@mui/material";
-import { Close } from "@mui/icons-material";
+import Stack from "@mui/material/Stack";
+import TextField from "@mui/material/TextField";
+import Autocomplete from "@mui/material/Autocomplete";
+import Chip from "@mui/material/Chip";
+import Checkbox from "@mui/material/Checkbox";
+import InputLabel from "@mui/material/InputLabel";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Switch from "@mui/material/Switch";
+import Close from "@mui/icons-material/Close";
+import CircularProgress from "@mui/material/CircularProgress";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
 
 import { useGetTagsQuery } from "@/core/api/tags";
-import { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
-import { IEditTemplate } from "@/common/types/editTemplate";
 import { fieldStyle, boxStyle, buttonBoxStyle, checkboxStyle } from "@/components/modals/styles";
 import { useGetCategoriesQuery } from "@/core/api/categories";
 import useToken from "@/hooks/useToken";
 import { useGetCurrentUserQuery } from "@/core/api/user";
-import { useCreateTemplateMutation, useUpdateTemplateMutation } from "@/core/api/templates";
-import { FormType } from "@/common/types/template";
 import { TemplateStatusArray } from "@/common/constants";
 import { executionsApi } from "@/core/api/executions";
-import { stripTags, getLanguageFromCode, getBaseUrl } from "@/common/helpers";
-import { useUploadFileMutation } from "@/core/api/uploadFile";
-import { uploadFileHelper } from "@/common/helpers/uploadFileHelper";
+import { getLanguageFromCode } from "@/common/helpers";
+
+import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
+import type { FormType } from "@/common/types/template";
+import useTemplateForm from "@/hooks/useTemplateForm";
 
 interface Props {
   type?: FormType;
-  templateData: Templates | null | undefined;
+  templateData: Templates | undefined;
   modalNew?: boolean;
-  onSaved?: () => void;
+  onSaved?: (template?: Templates) => void;
   onClose?: () => void;
   darkMode?: boolean;
 }
 
-const TemplateForm: React.FC<Props> = ({
-  type = "create",
-  templateData,
-  onSaved = () => {},
-  onClose = () => {},
-  darkMode = false,
-}) => {
+function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMode = false }: Props) {
   const token = useToken();
 
-  const { data: categories } = useGetCategoriesQuery();
   const { data: fetchedTags } = useGetTagsQuery();
+  const { data: categories } = useGetCategoriesQuery();
   const { data: user } = useGetCurrentUserQuery(token);
-  const [createTemplate] = useCreateTemplateMutation();
-  const [updateTemplate] = useUpdateTemplateMutation();
+
   const [getTemplateExecution] = executionsApi.endpoints.getExecutionsByTemplate.useLazyQuery();
 
-  const [uploadFile] = useUploadFileMutation();
-
-  const [tags, setTags] = useState<string[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [executions, setExecutions] = useState<TemplatesExecutions[]>();
   const [selectedFile, setSelectedFile] = useState<File>();
+
+  const { formik, loading, showSnackbar, closeSnackbar, handleSubmit } = useTemplateForm({
+    type,
+    template: templateData!,
+    uploadedFile: selectedFile,
+    onSaved: onSaved,
+  });
 
   const getExecutions = async () => {
     if (!templateData) return null;
@@ -72,100 +66,24 @@ const TemplateForm: React.FC<Props> = ({
     setExecutions(response.data);
     setSelectedTags(templateData?.tags?.map(tag => tag.name) ?? []);
   };
+
   useEffect(() => {
     getExecutions();
   }, [templateData]);
-
-  useEffect(() => {
-    if (fetchedTags) setTags(fetchedTags.map(tag => tag.name));
-  }, [fetchedTags]);
-
-  useEffect(() => {
-    formik.setFieldValue(
-      "tags",
-      selectedTags.map(tag => ({ name: tag })),
-    );
-  }, [selectedTags]);
 
   const handleImageChange = (image: File) => {
     setSelectedFile(image);
     formik.setFieldValue("thumbnail", URL.createObjectURL(image));
   };
 
-  const addNewTag = (newValue: string[]) => {
-    setSelectedTags(newValue);
+  const addNewTag = (newTags: string[]) => {
+    setSelectedTags(newTags);
+
+    formik.setFieldValue(
+      "tags",
+      newTags.map(tag => ({ name: tag })),
+    );
   };
-
-  const FormSchema = object({
-    title: string().min(1).required("required"),
-    description: string().min(1).required("required"),
-    thumbnail: string().min(1).required("required"),
-  });
-
-  const handleSave = () => {
-    onSaved();
-    formik.resetForm();
-  };
-
-  const onEditTemplate = async (values: IEditTemplate) => {
-    if (!templateData) return;
-    if (selectedFile) {
-      const result = await uploadFileHelper(uploadFile, { file: selectedFile });
-
-      if (typeof result?.file === "string") {
-        values.thumbnail = result.file;
-      }
-    }
-    await updateTemplate({
-      id: templateData.id,
-      data: values,
-    });
-
-    handleSave();
-  };
-
-  const onCreateTemplate = async (values: IEditTemplate) => {
-    if (selectedFile) {
-      const result = await uploadFileHelper(uploadFile, { file: selectedFile });
-
-      if (typeof result?.file === "string") {
-        values.thumbnail = result.file;
-        const { slug } = await createTemplate(values).unwrap();
-
-        handleSave();
-        window.open(`${getBaseUrl}/prompt-builder/${slug}`, "_blank");
-      }
-    }
-  };
-
-  const formik = useFormik<IEditTemplate>({
-    initialValues: {
-      title: templateData?.title ? stripTags(templateData.title) : "",
-      description: templateData?.description ? stripTags(templateData.description) : "",
-      duration: templateData?.duration?.toString() ?? "1",
-      difficulty: templateData?.difficulty ?? "BEGINNER",
-      is_visible: templateData?.is_visible ?? true,
-      language: templateData?.language ?? "en-us",
-      category: templateData?.category?.id ?? 1,
-      context: templateData?.context ? stripTags(templateData.context) : "",
-      tags: templateData?.tags ?? [],
-      thumbnail: templateData?.thumbnail ?? "",
-      executions_limit: templateData?.executions_limit ?? -1,
-      slug: templateData?.slug ? stripTags(templateData.slug) : "",
-      meta_title: templateData?.meta_title ? stripTags(templateData.meta_title) : "",
-      meta_description: templateData?.meta_description ? stripTags(templateData.meta_description) : "",
-      meta_keywords: templateData?.meta_keywords ? stripTags(templateData.meta_keywords) : "",
-      status: templateData?.status ?? "DRAFT",
-      is_internal: templateData?.is_internal ?? false,
-      ...(type === "edit" && {
-        example_execution_id: templateData?.example_execution?.id ?? null,
-      }),
-      ...(type === "create" && { prompts_list: [] }),
-    },
-    enableReinitialize: true,
-    validationSchema: FormSchema,
-    onSubmit: type === "create" ? onCreateTemplate : onEditTemplate,
-  });
 
   const color = !darkMode ? "common.white" : "common.black";
 
@@ -188,8 +106,11 @@ const TemplateForm: React.FC<Props> = ({
           size="medium"
           name="title"
           value={formik.values.title}
+          disabled={loading}
           onChange={formik.handleChange}
-          error={formik.touched.title && formik.values.title === ""}
+          onBlur={formik.handleBlur}
+          error={Boolean(formik.errors.title)}
+          helperText={formik.errors.title ? formik.errors.title : ""}
         />
       </Stack>
       <Stack sx={boxStyle}>
@@ -199,10 +120,13 @@ const TemplateForm: React.FC<Props> = ({
           fullWidth
           label="Description"
           variant="outlined"
+          disabled={loading}
           name="description"
           value={formik.values.description}
           onChange={formik.handleChange}
-          error={formik.touched.description && formik.values.description === ""}
+          onBlur={formik.handleBlur}
+          error={Boolean(formik.errors.description)}
+          helperText={formik.errors.description ? formik.errors.description : ""}
         />
       </Stack>
       <Stack sx={[{ display: "flex", flexDirection: "column" }, boxStyle]}>
@@ -250,8 +174,8 @@ const TemplateForm: React.FC<Props> = ({
               alignItems={"center"}
               justifyContent={"center"}
               sx={{
-                bgcolor: "surface.4",
-                color: "primary.main",
+                bgcolor: Boolean(formik.errors.thumbnail) ? "errorContainer" : "surface.4",
+                color: Boolean(formik.errors.thumbnail) ? "error.main" : "primary.main",
                 border: "1px solid transparent",
                 borderRadius: "4px",
                 p: "8px",
@@ -269,9 +193,8 @@ const TemplateForm: React.FC<Props> = ({
                   fontSize: "14px",
                   fontWeight: 500,
                   color: "inherit",
-                  fontFamily: "Poppins",
                   fontStyle: "normal",
-                  lineHeight: "24px" /* 171.429% */,
+                  lineHeight: "24px",
                   letterSpacing: "0.2px",
                 }}
               >
@@ -281,7 +204,9 @@ const TemplateForm: React.FC<Props> = ({
               <input
                 hidden
                 accept="image/*"
+                disabled={loading}
                 type="file"
+                onBlur={formik.handleBlur}
                 onChange={e => {
                   const file = e.target.files && e.target.files[0];
                   if (file) {
@@ -290,6 +215,17 @@ const TemplateForm: React.FC<Props> = ({
                 }}
               />
             </Stack>
+            {Boolean(formik.errors.thumbnail) && (
+              <Typography
+                color="error"
+                fontSize={12}
+                ml={2}
+                fontWeight={300}
+                variant="caption"
+              >
+                {formik.errors.thumbnail}
+              </Typography>
+            )}
           </Box>
         </Box>
       </Stack>
@@ -302,6 +238,7 @@ const TemplateForm: React.FC<Props> = ({
           }}
           options={["BEGINNER", "INTERMEDIATE", "ADVANCED"]}
           fullWidth
+          disabled={loading}
           renderInput={params => (
             <TextField
               {...params}
@@ -317,6 +254,7 @@ const TemplateForm: React.FC<Props> = ({
           variant="outlined"
           size="medium"
           name="duration"
+          disabled={loading}
           value={formik.values.duration}
           onChange={formik.handleChange}
           fullWidth
@@ -330,6 +268,7 @@ const TemplateForm: React.FC<Props> = ({
           }}
           options={["1", "0"]}
           fullWidth
+          disabled={loading}
           renderInput={params => (
             <TextField
               {...params}
@@ -346,6 +285,7 @@ const TemplateForm: React.FC<Props> = ({
             formik.setFieldValue("language", newValue);
           }}
           options={["en-us", "es", "fr"]}
+          disabled={loading}
           fullWidth
           renderInput={params => (
             <TextField
@@ -363,6 +303,7 @@ const TemplateForm: React.FC<Props> = ({
             onChange={(event, newValue) => {
               formik.setFieldValue("category", newValue?.id);
             }}
+            disabled={loading}
             options={categories}
             getOptionLabel={option => option.name}
             fullWidth
@@ -385,6 +326,7 @@ const TemplateForm: React.FC<Props> = ({
           size="medium"
           name="context"
           value={formik.values.context}
+          disabled={loading}
           onChange={formik.handleChange}
         />
       </Stack>
@@ -393,7 +335,8 @@ const TemplateForm: React.FC<Props> = ({
           multiple
           freeSolo
           sx={fieldStyle}
-          options={tags}
+          disabled={loading}
+          options={fetchedTags ? fetchedTags.map(tag => tag.name) : []}
           value={selectedTags}
           onChange={(event, newValue) => addNewTag(newValue)}
           renderTags={(value: readonly string[], getTagProps) =>
@@ -422,6 +365,7 @@ const TemplateForm: React.FC<Props> = ({
               label="Hourly Limit"
               variant="outlined"
               size="medium"
+              disabled={loading}
               name="executions_limit"
               value={formik.values.executions_limit}
               onChange={formik.handleChange}
@@ -434,6 +378,7 @@ const TemplateForm: React.FC<Props> = ({
               sx={checkboxStyle}
             >
               <Checkbox
+                disabled={loading}
                 checked={formik.values.slug === null}
                 onChange={() => {
                   formik.setFieldValue("slug", formik.values.slug === null ? "" : null);
@@ -447,7 +392,7 @@ const TemplateForm: React.FC<Props> = ({
               size="medium"
               name="slug"
               value={formik.values.slug ?? ""}
-              disabled={formik.values.slug === null}
+              disabled={formik.values.slug === null || loading}
               onChange={formik.handleChange}
             />
           </Stack>
@@ -459,6 +404,7 @@ const TemplateForm: React.FC<Props> = ({
               sx={checkboxStyle}
             >
               <Checkbox
+                disabled={loading}
                 checked={formik.values.meta_title === null}
                 onChange={() => {
                   formik.setFieldValue("meta_title", formik.values.meta_title === null ? "" : null);
@@ -472,7 +418,7 @@ const TemplateForm: React.FC<Props> = ({
               size="medium"
               name="meta_title"
               value={formik.values.meta_title ?? ""}
-              disabled={formik.values.meta_title === null}
+              disabled={formik.values.meta_title === null || loading}
               onChange={formik.handleChange}
             />
           </Stack>
@@ -484,6 +430,7 @@ const TemplateForm: React.FC<Props> = ({
               sx={checkboxStyle}
             >
               <Checkbox
+                disabled={loading}
                 checked={formik.values.meta_description === null}
                 onChange={() => {
                   formik.setFieldValue("meta_description", formik.values.meta_description === null ? "" : null);
@@ -499,7 +446,7 @@ const TemplateForm: React.FC<Props> = ({
               size="medium"
               name="meta_description"
               value={formik.values.meta_description ?? ""}
-              disabled={formik.values.meta_description === null}
+              disabled={formik.values.meta_description === null || loading}
               onChange={formik.handleChange}
             />
           </Stack>
@@ -511,6 +458,7 @@ const TemplateForm: React.FC<Props> = ({
               sx={checkboxStyle}
             >
               <Checkbox
+                disabled={loading}
                 checked={formik.values.meta_keywords === null}
                 onChange={() => {
                   formik.setFieldValue("meta_keywords", formik.values.meta_keywords === null ? "" : null);
@@ -526,13 +474,14 @@ const TemplateForm: React.FC<Props> = ({
               size="medium"
               name="meta_keywords"
               value={formik.values.meta_keywords ?? ""}
-              disabled={formik.values.meta_keywords === null}
+              disabled={formik.values.meta_keywords === null || loading}
               onChange={formik.handleChange}
             />
           </Stack>
 
           <Stack sx={boxStyle}>
             <Autocomplete
+              disabled={loading}
               value={formik.values.status}
               onChange={(event, newValue) => {
                 formik.setFieldValue("status", newValue);
@@ -551,6 +500,7 @@ const TemplateForm: React.FC<Props> = ({
               <FormControl variant="standard">
                 <InputLabel id="execution-label">Execution Example</InputLabel>
                 <Select
+                  disabled={loading}
                   labelId="execution-label"
                   value={formik.values.example_execution_id}
                   onChange={event => {
@@ -573,6 +523,7 @@ const TemplateForm: React.FC<Props> = ({
             control={<Switch color="primary" />}
             label="Is Internal?"
             labelPlacement="start"
+            disabled={loading}
             checked={formik.values.is_internal}
             name="is_internal"
             value={formik.values.is_internal}
@@ -610,22 +561,38 @@ const TemplateForm: React.FC<Props> = ({
         </Button>
         <Button
           variant="contained"
+          disabled={loading}
           sx={{
             flexDirection: "column",
             justifyContent: "center",
             alignItems: "center",
-            borderRadius: "var(--borderRadius, 4px)",
-            background: "var(--secondary-main, #1B1B1E)",
+            borderRadius: "4px",
+            bgcolor: "secondary.main",
           }}
-          onClick={() => {
-            formik.submitForm();
-          }}
+          onClick={() => handleSubmit(formik.values)}
         >
-          Save
+          {loading ? (
+            <CircularProgress
+              size={"20px"}
+              sx={{
+                color: "primary.main",
+              }}
+            />
+          ) : (
+            "Save"
+          )}
         </Button>
       </Box>
+      <Snackbar
+        open={showSnackbar}
+        onClose={closeSnackbar}
+        autoHideDuration={2000}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert severity="error">Please try again, make sure you have entered all required template information.</Alert>
+      </Snackbar>
     </Box>
   );
-};
+}
 
 export default TemplateForm;

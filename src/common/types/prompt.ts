@@ -1,3 +1,5 @@
+import { PromptInputType } from "@/components/Prompt/Types";
+
 export type InputType = "text" | "choices" | "number" | "integer" | "code" | "file";
 
 export type FileType = "pdf" | "docx" | "txt";
@@ -15,6 +17,7 @@ export interface PromptLiveResponse {
   id?: number;
   created_at: Date;
   data: PromptLiveResponseData[];
+  connectionOpened?: boolean;
 }
 export interface IPromptInput {
   name: string;
@@ -25,6 +28,7 @@ export interface IPromptInput {
   choices?: string[];
   fileExtensions?: string[];
   prompt?: number;
+  question?: string;
 }
 
 export type FormMode = "input" | "chat";
@@ -32,7 +36,7 @@ export type FormMode = "input" | "chat";
 export type AnsweredInputType = {
   promptId: number;
   inputName: string;
-  value: string | number | File;
+  value: PromptInputType;
   modifiedFrom: FormMode;
 };
 

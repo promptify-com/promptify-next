@@ -1,44 +1,89 @@
-import { Box, Grid, Typography } from "@mui/material";
-
+import { Box, Grid, IconButton, Stack, Typography } from "@mui/material";
 import { NotFoundIcon } from "@/assets/icons/NotFoundIcon";
 import CardTemplate from "@/components/common/cards/CardTemplate";
 import { TemplateExecutionsDisplay, Templates } from "@/core/api/dto/templates";
 import CardTemplateLast from "../common/cards/CardTemplateLast";
-
 import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
 import LatestTemplatePlaceholder from "@/components/placeholders/LatestTemplatePlaceholder";
 import TemplatesInfiniteScroll from "../TemplatesInfiniteScroll";
+import { TemplatesFilter } from "./TemplatesFilter";
+import { Close, FilterList } from "@mui/icons-material";
+import { type RefObject, useState, forwardRef } from "react";
 
 interface TemplatesSectionProps {
   templates: Templates[] | TemplateExecutionsDisplay[] | undefined;
-  isLoading: boolean;
+  isLoading?: boolean;
+  templateLoading?: boolean;
   filtred?: boolean;
   title?: string;
   isLatestTemplates?: boolean;
   onNextPage?: () => void;
   type?: string;
   hasMore?: boolean;
-  templateLoading?: boolean;
+  isInfiniteScrolling?: boolean;
+  hasPrev?: boolean;
+  onPrevPage?: () => void;
 }
 
-export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
-  templates,
-  isLoading,
-  filtred,
-  title,
-  isLatestTemplates = false,
-  onNextPage = () => {},
-  type,
-  hasMore,
-  templateLoading,
-}) => {
-  if (!isLoading && !templates?.length) {
+export const TemplatesSection = forwardRef<HTMLDivElement, TemplatesSectionProps>(function TemplatesSectionInner(
+  {
+    templates,
+    isLoading = false,
+    filtred,
+    title,
+    isLatestTemplates = false,
+    onNextPage = () => {},
+    type,
+    hasMore,
+    templateLoading,
+    isInfiniteScrolling = true,
+    hasPrev,
+    onPrevPage = () => {},
+  },
+  ref,
+) {
+  const [openFilters, setOpenFilters] = useState(false);
+
+  const filtersAllowed = type !== "myLatestExecutions";
+
+  const isNotLoading = !isLoading && !templateLoading;
+
+  if (isNotLoading && !templates?.length) {
     return null;
   }
 
   return (
-    <Box width={"100%"}>
-      {!filtred && (templateLoading || !!templates?.length) && <Typography fontSize={19}>{title}</Typography>}
+    <Box
+      width={"100%"}
+      ref={ref}
+    >
+      {!filtred && (templateLoading || !!templates?.length) && (
+        <Box>
+          <Stack
+            direction={"row"}
+            justifyContent={"space-between"}
+            alignItems={"center"}
+            gap={1}
+          >
+            <Typography fontSize={19}>{title}</Typography>
+            {filtersAllowed && (
+              <IconButton
+                onClick={e => setOpenFilters(!openFilters)}
+                size="small"
+                sx={{
+                  ml: "auto",
+                  ":hover": {
+                    bgcolor: "action.hover",
+                  },
+                }}
+              >
+                {openFilters ? <Close /> : <FilterList />}
+              </IconButton>
+            )}
+          </Stack>
+          {openFilters && <TemplatesFilter />}
+        </Box>
+      )}
 
       {templateLoading ? (
         isLatestTemplates ? (
@@ -54,7 +99,7 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
             <LatestTemplatePlaceholder count={4} />
           </Grid>
         ) : (
-          <CardTemplatePlaceholder count={4} />
+          <CardTemplatePlaceholder count={5} />
         )
       ) : (
         <Grid
@@ -98,6 +143,9 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
                 loading={isLoading}
                 onLoadMore={onNextPage}
                 hasMore={hasMore}
+                isInfiniteScrolling={isInfiniteScrolling}
+                hasPrev={hasPrev}
+                onLoadLess={onPrevPage}
               >
                 {!!templates?.length &&
                   templates.map((template: TemplateExecutionsDisplay | Templates) => {
@@ -131,4 +179,4 @@ export const TemplatesSection: React.FC<TemplatesSectionProps> = ({
       )}
     </Box>
   );
-};
+});

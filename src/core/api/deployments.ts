@@ -2,29 +2,27 @@ import { baseApi } from "./api";
 import type {
   Deployment,
   Instance,
-  InstanceParams,
-  ModelsWithPagination,
+  Model,
+  PaginationData,
   Region,
   RegionParams,
+  FilterParams,
 } from "@/common/types/deployments";
+
+const getSearchParams = (params: FilterParams) => {
+  const searchParams = new URLSearchParams();
+
+  params.limit && searchParams.append("limit", String(params.limit));
+  params.offset && searchParams.append("offset", String(params.offset));
+  params.query && searchParams.append("query", String(params.query));
+  params.region && searchParams.append("region", String(params.region));
+
+  return searchParams.toString();
+};
 
 export const deploymentsApi = baseApi.injectEndpoints({
   endpoints: builder => {
     return {
-      getInstances: builder.query<Instance[], InstanceParams>({
-        query: (params: InstanceParams) => {
-          const queryParams = new URLSearchParams();
-          if (params.region) {
-            queryParams.append("region", params.region);
-          }
-          return {
-            url: `/api/aithos/instances/?${queryParams.toString()}`,
-            method: "get",
-          };
-        },
-        keepUnusedDataFor: 60 * 60,
-      }),
-
       getRegions: builder.query<Region[], RegionParams>({
         query: (params: RegionParams) => {
           const queryParams = new URLSearchParams();
@@ -40,22 +38,16 @@ export const deploymentsApi = baseApi.injectEndpoints({
         keepUnusedDataFor: 60 * 60,
       }),
 
-      getModels: builder.query<ModelsWithPagination, { limit: number; offset: number; query?: string }>({
-        query: ({ limit, offset, query }) => {
-          const queryParams = new URLSearchParams({
-            limit: `${limit}`,
-            offset: `${offset}`,
-          });
-
-          if (query) {
-            queryParams.append("query", query);
-          }
+      getPaginatedData: builder.query<PaginationData<Model | Instance>, FilterParams>({
+        query: ({ limit, offset, query, type, region }: FilterParams) => {
+          const params = getSearchParams({ limit, offset, query, region });
 
           return {
-            url: `/api/aithos/models/?${queryParams.toString()}`,
+            url: type === "models" ? `/api/aithos/models/?${params}` : `/api/aithos/instances/?${params}`,
             method: "get",
           };
         },
+        keepUnusedDataFor: 60 * 30,
       }),
 
       getDeployments: builder.query<Deployment[], void>({
@@ -90,10 +82,5 @@ export const deploymentsApi = baseApi.injectEndpoints({
   },
 });
 
-export const {
-  useGetInstancesQuery,
-  useGetRegionsQuery,
-  useGetDeploymentsQuery,
-  useGetModelsQuery,
-  useDeleteDeploymentMutation,
-} = deploymentsApi;
+export const { useGetRegionsQuery, useGetDeploymentsQuery, useDeleteDeploymentMutation, useGetPaginatedDataQuery } =
+  deploymentsApi;

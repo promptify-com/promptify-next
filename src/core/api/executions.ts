@@ -1,8 +1,9 @@
 import { baseApi } from "./api";
-import {
+import type {
   ITemplateExecutionPut,
   ResponseType,
   TemplateExecutionsDisplay,
+  Templates,
   TemplatesExecutions,
   TemplatesExecutionsByMePaginationResponse,
 } from "./dto/templates";
@@ -25,6 +26,12 @@ export const executionsApi = baseApi.injectEndpoints({
           method: "get",
         }),
         providesTags: ["Executions"],
+      }),
+      getLatestExecutedTemplates: builder.query<Templates[], void>({
+        query: () => ({
+          url: "/api/meta/templates/last_executed",
+          method: "get",
+        }),
       }),
       exportExecution: builder.query<ResponseType, { id: number; fileType: "word" | "pdf" }>({
         query: ({ id, fileType }: { id: number; fileType: "word" | "pdf" }) => ({
@@ -57,6 +64,13 @@ export const executionsApi = baseApi.injectEndpoints({
         }),
         invalidatesTags: ["Executions"],
       }),
+      deleteExecutionFavorite: builder.mutation<TemplatesExecutions, number>({
+        query: (id: number) => ({
+          url: `/api/meta/template-executions/${id}/favorite/`,
+          method: "delete",
+        }),
+        invalidatesTags: ["Executions"],
+      }),
       stopExecution: builder.mutation<TemplatesExecutions, number>({
         query: (id: number) => ({
           url: `/api/meta/template-executions/${id}/stop/`,
@@ -74,6 +88,8 @@ export const {
   useGetTemplatesExecutionsByMeQuery,
   useUpdateExecutionMutation,
   useDeleteExecutionMutation,
+  useDeleteExecutionFavoriteMutation,
   useExecutionFavoriteMutation,
   useStopExecutionMutation,
+  useGetLatestExecutedTemplatesQuery,
 } = executionsApi;

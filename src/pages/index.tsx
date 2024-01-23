@@ -1,9 +1,8 @@
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import type { AxiosResponse } from "axios";
-import type { GetServerSideProps, NextPage } from "next";
 import { useSelector, useDispatch } from "react-redux";
 import { IContinueWithSocialMediaResponse } from "@/common/types";
 import { client } from "@/common/axios";
@@ -13,32 +12,89 @@ import { CategoriesSection } from "@/components/explorer/CategoriesSection";
 import { userApi } from "@/core/api/user";
 import { WelcomeCard } from "@/components/homepage/WelcomeCard";
 import { useGetTemplatesByFilterQuery, useGetTemplatesSuggestedQuery } from "@/core/api/templates";
-import { useGetTemplatesExecutionsByMeQuery } from "@/core/api/executions";
+import { useGetLatestExecutedTemplatesQuery } from "@/core/api/executions";
 import { getPathURL, saveToken } from "@/common/utils";
 import { RootState } from "@/core/store";
 import { isValidUserFn, updateUser } from "@/core/store/userSlice";
-import { Category, TemplatesExecutionsByMePaginationResponse } from "@/core/api/dto/templates";
 import { redirectToPath } from "@/common/helpers";
 import useToken from "@/hooks/useToken";
 import ClientOnly from "@/components/base/ClientOnly";
+import { GetServerSideProps } from "next/types";
 import { getCategories } from "@/hooks/api/categories";
-
-interface HomePageProps {
-  categories: Category[];
-}
+import { Category } from "@/core/api/dto/templates";
+import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 
 const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
-const MY_EXECUTIONS_LIMIT = 4;
+const ioLatestsOptions = {
+  threshold: 0,
+  rootMargin: "150px",
+  disconnectNodeOnceVisibile: true,
+};
+const ioPopularOptions = {
+  threshold: 0.5,
+  rootMargin: "100px",
+  disconnectNodeOnceVisibile: true,
+};
 
-const HomePage: NextPage<HomePageProps> = ({ categories }) => {
+function NonLoggedinUsersLayout({ categories }: { categories: Category[] }) {
   const token = useToken();
+  const latestTemplatesRef = useRef<HTMLDivElement | null>(null);
+  const popularTemplatesRef = useRef<HTMLDivElement | null>(null);
+  const latestTemplatesEntry = useIntersectionObserver(latestTemplatesRef, ioLatestsOptions);
+  const popularTemplatesEntry = useIntersectionObserver(popularTemplatesRef, ioPopularOptions);
+  const { data: popularTemplates } = useGetTemplatesByFilterQuery(
+    {
+      ordering: "-runs",
+      limit: 7,
+    },
+    {
+      skip: token || !popularTemplatesEntry?.isIntersecting,
+    },
+  );
+  const { data: latestTemplates } = useGetTemplatesByFilterQuery(
+    {
+      ordering: "-created_at",
+      limit: 7,
+    },
+    {
+      skip: token || !latestTemplatesEntry?.isIntersecting,
+    },
+  );
+
+  return (
+    <>
+      <WelcomeCard />
+      <CategoriesSection
+        categories={categories}
+        isLoading={false}
+        displayTitle
+      />
+      <TemplatesSection
+        templateLoading={!popularTemplates?.results.length}
+        templates={popularTemplates?.results}
+        title="Most Popular Prompt Templates"
+        type="popularTemplates"
+        ref={popularTemplatesRef}
+      />
+      <TemplatesSection
+        templateLoading={!latestTemplates?.results.length}
+        templates={latestTemplates?.results}
+        title="Latest Prompt Templates"
+        type="latestTemplates"
+        ref={latestTemplatesRef}
+      />
+    </>
+  );
+}
+
+const HomePage = ({ categories }: { categories: Category[] }) => {
   const path = getPathURL();
   const dispatch = useDispatch();
   const isValidUser = useSelector(isValidUserFn);
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
   const [getCurrentUser] = userApi.endpoints.getCurrentUser.useLazyQuery();
-  const { data: myLatestExecutions, isLoading: isMyLatestExecutionsLoading } = useGetTemplatesExecutionsByMeQuery(
-    MY_EXECUTIONS_LIMIT,
+  const { data: myLatestExecutions, isLoading: isMyLatestExecutionsLoading } = useGetLatestExecutedTemplatesQuery(
+    undefined,
     {
       skip: !isValidUser,
     },
@@ -47,26 +103,6 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
     skip: !isValidUser,
   });
 
-  const { data: popularTemplates, isLoading: isPopularTemplatesLoading } = useGetTemplatesByFilterQuery(
-    {
-      ordering: "-runs",
-      limit: 7,
-    },
-    {
-      skip: token,
-    },
-  );
-
-  const { data: latestTemplates, isLoading: isLatestTemplatesLoading } = useGetTemplatesByFilterQuery(
-    {
-      ordering: "-created_at",
-      limit: 7,
-    },
-    {
-      skip: token,
-    },
-  );
-
   // TODO: move authentication logic to signin page instead
   const doPostLogin = async (response: AxiosResponse<IContinueWithSocialMediaResponse>) => {
     if (typeof response.data !== "object" || response.data === null) {
@@ -74,15 +110,15 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
       return;
     }
 
-    const { token } = response.data;
+    const { token: _token } = response.data;
 
-    if (!token) {
-      console.error("incoming token for Microsoft authentication is not present:", token);
+    if (!_token) {
+      console.error("incoming token for Microsoft authentication is not present:", _token);
       return;
     }
 
-    saveToken({ token });
-    const payload = await getCurrentUser(token).unwrap();
+    saveToken({ token: _token });
+    const payload = await getCurrentUser(_token).unwrap();
 
     dispatch(updateUser(payload));
     redirectToPath(path || "/");
@@ -109,105 +145,87 @@ const HomePage: NextPage<HomePageProps> = ({ categories }) => {
   }, []);
 
   return (
-    <>
-      <Layout>
-        <Box
-          mt={{ xs: 7, md: 0 }}
-          padding={{ xs: "4px 0px", md: "0px 8px" }}
+    <Layout>
+      <Box
+        mt={{ xs: 7, md: 0 }}
+        padding={{ xs: "4px 0px", md: "0px 8px" }}
+      >
+        <Grid
+          gap={"56px"}
+          display={"flex"}
+          flexDirection={"column"}
+          sx={{
+            padding: { xs: "16px", md: "32px" },
+          }}
         >
-          <Grid
-            gap={"56px"}
-            display={"flex"}
-            flexDirection={"column"}
-            sx={{
-              padding: { xs: "16px", md: "32px" },
-            }}
-          >
+          {isValidUser ? (
             <ClientOnly>
-              {isValidUser ? (
+              <Grid
+                flexDirection="column"
+                display={"flex"}
+                gap={"56px"}
+              >
                 <Grid
-                  flexDirection="column"
-                  display={"flex"}
-                  gap={"56px"}
+                  sx={{
+                    alignItems: "center",
+                    width: "100%",
+                  }}
                 >
-                  <Grid
+                  <Typography
                     sx={{
-                      alignItems: "center",
-                      width: "100%",
+                      fontFamily: "Poppins",
+                      fontStyle: "normal",
+                      fontWeight: 500,
+                      fontSize: { xs: "30px", sm: "48px" },
+                      lineHeight: { xs: "30px", md: "56px" },
+                      color: "#1D2028",
+                      marginLeft: { xs: "0px", sm: "0px" },
                     }}
                   >
-                    <Typography
-                      sx={{
-                        fontFamily: "Poppins",
-                        fontStyle: "normal",
-                        fontWeight: 500,
-                        fontSize: { xs: "30px", sm: "48px" },
-                        lineHeight: { xs: "30px", md: "56px" },
-                        color: "#1D2028",
-                        marginLeft: { xs: "0px", sm: "0px" },
-                      }}
-                    >
-                      Welcome, {currentUser?.username}
-                    </Typography>
-                  </Grid>
-                  <TemplatesSection
-                    isLatestTemplates
-                    isLoading={isMyLatestExecutionsLoading}
-                    templates={(myLatestExecutions as TemplatesExecutionsByMePaginationResponse)?.results || []}
-                    title="Your Latest Templates:"
-                    type="myLatestExecutions"
-                  />
-                  <TemplatesSection
-                    isLoading={isSuggestedTemplateLoading}
-                    templates={suggestedTemplates}
-                    title=" You may like these prompt templates:"
-                    type="suggestedTemplates"
-                  />
-                  <CategoriesSection
-                    categories={categories}
-                    isLoading={!isValidUser}
-                  />
+                    Welcome, {currentUser?.username}
+                  </Typography>
                 </Grid>
-              ) : (
-                <>
-                  <WelcomeCard />
-                  <CategoriesSection
-                    categories={categories}
-                    isLoading={isValidUser}
-                  />
-                  <TemplatesSection
-                    isLoading={isPopularTemplatesLoading}
-                    templates={popularTemplates?.results}
-                    title="Most Popular Prompt Templates"
-                    type="popularTemplates"
-                  />
-                  <TemplatesSection
-                    isLoading={isLatestTemplatesLoading}
-                    templates={latestTemplates?.results}
-                    title="Latest Prompt Templates"
-                    type="latestTemplates"
-                  />
-                </>
-              )}
+
+                <TemplatesSection
+                  isLatestTemplates
+                  templateLoading={isMyLatestExecutionsLoading}
+                  templates={myLatestExecutions}
+                  title="Your Latest Templates:"
+                  type="myLatestExecutions"
+                />
+                <TemplatesSection
+                  templateLoading={isSuggestedTemplateLoading}
+                  templates={suggestedTemplates}
+                  title=" You may like these prompt templates:"
+                  type="suggestedTemplates"
+                />
+                <CategoriesSection
+                  categories={categories}
+                  isLoading={false}
+                  displayTitle
+                />
+              </Grid>
             </ClientOnly>
-          </Grid>
-        </Box>
-      </Layout>
-    </>
+          ) : (
+            <NonLoggedinUsersLayout categories={categories} />
+          )}
+        </Grid>
+      </Box>
+    </Layout>
   );
 };
 
 export const getServerSideProps: GetServerSideProps = async ({ res }) => {
-  res.setHeader("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=60");
+  res.setHeader("Cache-Control", "public, maxage=1800, stale-while-revalidate=30");
 
   const categories = await getCategories();
 
   return {
     props: {
+      categories,
       title: "Promptify | Boost Your Creativity",
       description:
         "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
-      categories,
     },
   };
 };

@@ -1,4 +1,4 @@
-import { MutableRefObject, useRef, useState } from "react";
+import { MutableRefObject, useEffect, useRef, useState } from "react";
 import HighlightWithinTextarea, { Selection } from "react-highlight-within-textarea";
 import { Grid } from "@mui/material";
 import { addPreset } from "@/common/helpers/addPreset";
@@ -133,7 +133,7 @@ export const HighlightTextarea = ({
           ref={divRef}
           value={prompt.content}
           highlight={highlight}
-          placeholder="///Write Prompt instructions here"
+          placeholder="Write Prompt instructions here"
           stripPastedStyles
           onChange={(newValue, selection) => {
             newValue = newValue.replace(/\{\{([^{}]*?)\}\}/g, (match, group) => `{{${group.replace(/\s+/g, "")}}}`);

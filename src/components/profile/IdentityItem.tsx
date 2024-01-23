@@ -17,6 +17,7 @@ import { IOption, IQuestion } from "@/common/types";
 import { useUpdateAnswers } from "@/hooks/api/user";
 import Image from "../design-system/Image";
 import { Edit } from "@mui/icons-material";
+import defaultAvatar from "@/assets/images/default-avatar.jpg";
 
 interface IProps {
   question: IQuestion;
@@ -25,18 +26,46 @@ interface IProps {
   length: number;
 }
 
+const AVAILABLE_OPTION_IMGS = [
+  "Countryside",
+  "Movies",
+  "Batman",
+  "Summer",
+  "Dolphin",
+  "Elephant",
+  "Lion",
+  "City",
+  "Yellow",
+  "Books",
+  "Blue",
+  "Winter",
+  "Owl",
+  "Spider-Man",
+  "Live+Performances",
+  "Spring",
+  "Video Games",
+  "Beach",
+  "Video+Games",
+  "Green",
+  "Mountains",
+  "Wonder Woman",
+  "Superman",
+  "Wonder+Woman",
+  "Autumn",
+  "Live Performances",
+  "Red",
+];
+
 export const IdentityItem: React.FC<IProps> = ({ length, question, index, defaultOption }) => {
   const [open, setOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState<IOption | null>(defaultOption ?? null);
   const [isLoading, setIsLoading] = useState(false);
-
   const handleToggle = () => {
     setOpen(prevOpen => !prevOpen);
   };
-
   const prevOpen = React.useRef(open);
   const anchorRef = React.useRef<HTMLButtonElement>(null);
-
+  const [setUserAnswer] = useUpdateAnswers();
   const handleClose = (event: Event | React.SyntheticEvent) => {
     if (anchorRef.current && anchorRef.current.contains(event.target as HTMLElement)) {
       return;
@@ -44,6 +73,18 @@ export const IdentityItem: React.FC<IProps> = ({ length, question, index, defaul
 
     setOpen(false);
   };
+  const handleOptionSelection = async (e: React.SyntheticEvent, option: IOption) => {
+    setSelectedOption(option);
+    handleClose(e);
+    setIsLoading(true);
+    await setUserAnswer(question, option.id)
+      .then(() => setIsLoading(false))
+      .catch(() => setIsLoading(false));
+  };
+  const selectedOptionSrc =
+    selectedOption?.text && AVAILABLE_OPTION_IMGS.includes(selectedOption.text)
+      ? `/assets/images/animals/${selectedOption.text}.jpg`
+      : defaultAvatar;
 
   useEffect(() => {
     if (prevOpen.current && !open) {
@@ -53,17 +94,6 @@ export const IdentityItem: React.FC<IProps> = ({ length, question, index, defaul
 
     prevOpen.current = open;
   }, [open]);
-
-  const [setUserAnswer] = useUpdateAnswers();
-
-  const handleOptionSelection = async (e: React.SyntheticEvent, option: IOption) => {
-    setSelectedOption(option);
-    handleClose(e);
-    setIsLoading(true);
-    await setUserAnswer(question, option.id)
-      .then(() => setIsLoading(false))
-      .catch(() => setIsLoading(false));
-  };
 
   return (
     <Box
@@ -138,9 +168,9 @@ export const IdentityItem: React.FC<IProps> = ({ length, question, index, defaul
             >
               {selectedOption && (
                 <Image
-                  src={require(`@/assets/images/animals/${selectedOption?.text}.jpg`)}
+                  src={`${selectedOptionSrc}`}
                   alt={"Unicorn"}
-                  loading="lazy"
+                  priority={false}
                   width={45}
                   height={45}
                   style={{ borderRadius: "45px" }}
@@ -226,6 +256,11 @@ export const IdentityItem: React.FC<IProps> = ({ length, question, index, defaul
                     </Typography>
                   </MenuItem>
                   {question.options.map(option => {
+                    const optionSrc =
+                      option?.text && AVAILABLE_OPTION_IMGS.includes(option.text)
+                        ? `/assets/images/animals/${option.text}.jpg`
+                        : defaultAvatar;
+
                     return (
                       <MenuItem
                         onClick={e => handleOptionSelection(e, option)}
@@ -243,9 +278,9 @@ export const IdentityItem: React.FC<IProps> = ({ length, question, index, defaul
                           alignItems="center"
                         >
                           <Image
-                            src={require(`@/assets/images/animals/${option.text}.jpg`)}
+                            src={optionSrc}
                             alt={"Unicorn"}
-                            loading="lazy"
+                            priority={false}
                             width={45}
                             height={45}
                             style={{ borderRadius: "45px" }}

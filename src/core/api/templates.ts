@@ -1,7 +1,15 @@
 import { baseApi } from "./api";
-import { PromptParams, TemplateQuestionGeneratorData } from "./dto/prompts";
-import { FilterParams, Templates, TemplatesWithPagination } from "./dto/templates";
+import { PromptParams } from "./dto/prompts";
+import {
+  FilterParams,
+  IFeedback,
+  IPostFeedback,
+  TemplateApiStatus,
+  Templates,
+  TemplatesWithPagination,
+} from "./dto/templates";
 import { IEditTemplate } from "@/common/types/editTemplate";
+import { randomId } from "@/common/helpers";
 
 const getSearchParams = (params: FilterParams) => {
   const searchParams = new URLSearchParams();
@@ -107,6 +115,61 @@ export const templatesApi = baseApi.injectEndpoints({
           method: "post",
         }),
       }),
+      getsuggestedTemplatesByCategory: builder.query<Templates[], void>({
+        query: () => ({
+          url: "/api/meta/templates/suggested_by_category",
+          method: "get",
+        }),
+      }),
+
+      getFeedbacks: builder.query<IFeedback[], number>({
+        query: (id: number) => ({
+          url: `/api/meta/templates/${id}/feedbacks/`,
+          method: "get",
+          keepUnusedDataFor: 900,
+        }),
+        providesTags: ["Feedbacks"],
+      }),
+      saveFeedback: builder.mutation<IFeedback, IPostFeedback>({
+        query: (data: IPostFeedback) => ({
+          url: `/api/meta/feedbacks/`,
+          method: "post",
+          data: { template: data.template, comment: data.comment },
+        }),
+        async onQueryStarted(feedback, { dispatch, queryFulfilled }) {
+          const patchResult = dispatch(
+            templatesApi.util.updateQueryData("getFeedbacks", feedback.template, feedbacks => {
+              return feedbacks.concat({
+                user: feedback.user,
+                template: feedback.template,
+                id: randomId(),
+                status: "published",
+                created_at: new Date().toISOString(),
+                comment: feedback.comment,
+              });
+            }),
+          );
+
+          try {
+            await queryFulfilled;
+          } catch {
+            patchResult.undo();
+          }
+        },
+      }),
+      getTemplateApiStatus: builder.query<TemplateApiStatus, number>({
+        query: id => ({
+          url: `/api/meta/templates/${id}/enable-api`,
+          keepUnusedDataFor: 604800,
+          method: "get",
+        }),
+      }),
+      setTemplateEnableApi: builder.mutation<void, number>({
+        query: (id: number) => ({
+          url: `/api/meta/templates/${id}/enable-api`,
+          method: "post",
+        }),
+      }),
     };
   },
 });
@@ -125,4 +188,9 @@ export const {
   useUpdateTemplateMutation,
   usePublishTemplateMutation,
   useViewTemplateMutation,
+  useGetsuggestedTemplatesByCategoryQuery,
+  useGetFeedbacksQuery,
+  useSaveFeedbackMutation,
+  useSetTemplateEnableApiMutation,
+  useGetTemplateApiStatusQuery,
 } = templatesApi;

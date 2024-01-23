@@ -1,13 +1,5 @@
 import SearchIcon from "@mui/icons-material/Search";
-import {
-  Box,
-  Grid,
-  IconButton,
-  InputBase,
-  Typography,
-  alpha,
-  useTheme,
-} from "@mui/material";
+import { Box, Grid, IconButton, InputBase, Typography, alpha, useTheme } from "@mui/material";
 import React from "react";
 import { Tag } from "@/core/api/dto/templates";
 import { LogoApp } from "@/assets/icons/LogoApp";
@@ -19,31 +11,26 @@ interface Props {
   // eslint-disable-next-line @typescript-eslint/ban-types
   setSelectedTag?: Function;
   from?: string;
+  onClick: () => void;
 }
-const SearchBar: React.FC<Props> = ({
-  keyWord,
-  setKeyWord,
-  selectedTag,
-  setSelectedTag,
-  from,
-}) => {
+const SearchBar: React.FC<Props> = ({ keyWord, onClick, setKeyWord, selectedTag, setSelectedTag, from }) => {
   const { palette } = useTheme();
 
   const handleRemoveTag = (tag: Tag) => {
-    const removeTag =
-      !!selectedTag && selectedTag.filter((el) => el.id !== tag.id);
+    const removeTag = !!selectedTag && selectedTag.filter(el => el.id !== tag.id);
     if (setSelectedTag) setSelectedTag(removeTag);
   };
 
   return (
     <Box
+      onClick={onClick}
       display="flex"
       alignItems="center"
       sx={{
-        bgcolor: "surface.1",
+        bgcolor: "surface.3",
         borderRadius: "99px",
         height: "48px",
-        minWidth: "100%",
+        minWidth: "95%",
         cursor: "pointer",
       }}
     >
@@ -81,7 +68,7 @@ const SearchBar: React.FC<Props> = ({
           </IconButton>
           {!!selectedTag &&
             selectedTag.length > 0 &&
-            selectedTag.map((el) => (
+            selectedTag.map(el => (
               <Typography
                 onClick={() => handleRemoveTag(el)}
                 key={el.id}
@@ -105,16 +92,12 @@ const SearchBar: React.FC<Props> = ({
 
           {from === "middle" ? (
             <InputBase
-              onChange={(e) => {
-                if (typeof setKeyWord === 'function') {
+              onChange={e => {
+                if (typeof setKeyWord === "function") {
                   setKeyWord(e.target.value);
                 }
               }}
-              placeholder={
-                !!selectedTag && !selectedTag.length
-                  ? "Search prompt templates..."
-                  : ""
-              }
+              placeholder={!!selectedTag && !selectedTag.length ? "Search prompt templates..." : ""}
               fullWidth
               sx={{
                 fontSize: "13px",
@@ -165,7 +148,6 @@ const SearchBar: React.FC<Props> = ({
               Prompts
             </Typography>
             <Typography
-              onClick={() => console.log("")}
               sx={{
                 bgcolor: "surface.5",
                 color: "onSurface",

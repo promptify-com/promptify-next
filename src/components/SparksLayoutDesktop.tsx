@@ -1,25 +1,22 @@
-import { FC } from "react";
 import { SparksLayoutProps } from "@/core/api/dto/templates";
-import { CloudQueueRounded, DeleteRounded, Edit, GetAppRounded } from "@mui/icons-material";
+import { CloudQueueRounded, DeleteRounded, Edit } from "@mui/icons-material";
 import { CardMedia, Grid, IconButton, Tooltip, Typography } from "@mui/material";
 import useTimestampConverter from "@/hooks/useTimestampConverter";
 import useTruncate from "@/hooks/useTruncate";
 import DraftSpark from "@/assets/icons/DraftSpark";
 import SavedSpark from "@/assets/icons/SavedSpark";
-import { useRouter } from "next/router";
 import ShareIcon from "@/assets/icons/ShareIcon";
 import { redirectToPath } from "@/common/helpers";
 import Image from "./design-system/Image";
 
-export const SparksLayoutDesktop: FC<SparksLayoutProps> = ({
+export default function SparksLayoutDesktop({
   execution,
   template,
   onExecutionSaved,
   onOpenEdit,
   onOpenDelete,
   onOpenExport,
-}) => {
-  const router = useRouter();
+}: SparksLayoutProps) {
   const { truncate } = useTruncate();
   const { convertedTimestamp } = useTimestampConverter();
 
@@ -39,7 +36,7 @@ export const SparksLayoutDesktop: FC<SparksLayoutProps> = ({
     >
       <Grid
         item
-        sx={{ width: "49px" }}
+        sx={{ width: "48px" }}
         padding={"16px 8px"}
         display={"flex"}
         justifyContent={"center"}
@@ -49,11 +46,10 @@ export const SparksLayoutDesktop: FC<SparksLayoutProps> = ({
       </Grid>
       <Grid
         onClick={() => {
-          redirectToPath(`/prompt/${template.slug}`, { spark: `${execution.id}` });
+          redirectToPath(`/prompt/${template.slug}`, { hash: `${execution.hash}` });
         }}
         item
-        md={2}
-        lg={3}
+        md={5}
         display={"flex"}
         justifyContent={"space-between"}
         alignItems={"center"}
@@ -65,7 +61,7 @@ export const SparksLayoutDesktop: FC<SparksLayoutProps> = ({
           lineHeight={"18.59px"}
           letterSpacing={"0.17px"}
         >
-          {truncate(execution.title, { length: 40 })}
+          {truncate(execution.title.replace(/title:?\s"?/i, ""), { length: 65 })}
         </Typography>
         <Tooltip title="Rename">
           <IconButton
@@ -90,7 +86,7 @@ export const SparksLayoutDesktop: FC<SparksLayoutProps> = ({
           redirectToPath(`prompt/${template.slug}`);
         }}
         item
-        md={4}
+        md={3}
         padding={"16px"}
         display={"flex"}
         gap={1}
@@ -129,6 +125,7 @@ export const SparksLayoutDesktop: FC<SparksLayoutProps> = ({
         display={"flex"}
         gap={1}
         alignItems={"center"}
+        md={1.5}
       >
         <Typography
           fontSize={12}
@@ -153,6 +150,7 @@ export const SparksLayoutDesktop: FC<SparksLayoutProps> = ({
       <Grid
         item
         xs={2}
+        md={1.8}
         padding={"16px"}
         position={"absolute"}
         right={0}
@@ -213,4 +211,4 @@ export const SparksLayoutDesktop: FC<SparksLayoutProps> = ({
       </Grid>
     </Grid>
   );
-};
+}

@@ -1,14 +1,21 @@
-import { Box, Grid, Typography } from "@mui/material";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
 import { CategoryCard } from "@/components/common/cards/CardCategory";
-import { Category } from "@/core/api/dto/templates";
+import type { Category } from "@/core/api/dto/templates";
 import CategoriesPlaceholder from "@/components/placeholders/CategoriesPlaceHolder";
 
 interface CategoriesSectionProps {
   isLoading: boolean;
   categories: Category[] | undefined;
+  displayTitle?: boolean;
 }
 
-export const CategoriesSection: React.FC<CategoriesSectionProps> = ({ isLoading, categories }) => {
+export const CategoriesSection: React.FC<CategoriesSectionProps> = ({
+  isLoading,
+  categories,
+  displayTitle = false,
+}) => {
   if (!categories?.length) {
     return null;
   }
@@ -20,7 +27,7 @@ export const CategoriesSection: React.FC<CategoriesSectionProps> = ({ isLoading,
         display={"flex"}
         flexDirection={"column"}
       >
-        {!isLoading && <Typography fontSize={19}> Prompt Template Category </Typography>}
+        {displayTitle && <Typography fontSize={19}> Prompt Template Category </Typography>}
         {isLoading ? (
           <Grid
             display={"flex"}
@@ -49,10 +56,11 @@ export const CategoriesSection: React.FC<CategoriesSectionProps> = ({ isLoading,
           >
             {categories
               ?.filter(category => !category.parent && category.is_visible && category.prompt_template_count)
-              .map(category => (
+              .map((category, idx) => (
                 <Grid key={category.id}>
                   <CategoryCard
                     category={category}
+                    index={idx}
                     href={`/explore/${category.slug}`}
                   />
                 </Grid>

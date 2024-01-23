@@ -1,13 +1,16 @@
+import { UserPartial } from "@/core/api/dto/user";
+
 export type DeploymentStatus = "done" | "stopped" | "deploying" | "failed" | "created";
 
 export interface Deployment {
   id: number;
-  user: number;
+  user: UserPartial;
   failure_reason: string | null;
-  model: ModelFields;
+  model: Model;
   instance: Instance;
   status: DeploymentStatus;
   created_at: string;
+  name: string;
 }
 
 export interface FormikCreateDeployment {
@@ -16,13 +19,11 @@ export interface FormikCreateDeployment {
   region: string;
   instance: string;
   llm: string;
+  name: string;
   model: string;
 }
 
-export interface CreateDeployment {
-  model: string;
-  instance: string;
-}
+export type CreateDeployment = Pick<FormikCreateDeployment, "instance" | "model" | "name">;
 
 export interface Region {
   id: number;
@@ -40,10 +41,10 @@ export interface Instance {
   num_gpus: number;
   memory: number;
   cost: number;
-  region: number;
+  region: Pick<Region, "name">;
 }
 
-export interface ModelFields {
+export interface Model {
   id: number;
   model_id: string;
   name: string;
@@ -51,23 +52,23 @@ export interface ModelFields {
   task: string;
 }
 
-export interface Model {
-  model: string;
-  pk: number;
-  fields: ModelFields;
-}
-
-export interface ModelsWithPagination {
+export interface PaginationData<T> {
   count: number;
   next: string | null;
   previous: string | null;
-  results: ModelFields[];
+  results: T[];
 }
 
 export interface RegionParams {
   provider?: string;
 }
 
-export interface InstanceParams {
+export interface FilterParams {
+  limit: number;
+  offset: number;
+  query?: string;
   region?: string;
+  type?: FetchingDataType;
 }
+
+export type FetchingDataType = "models" | "instances";

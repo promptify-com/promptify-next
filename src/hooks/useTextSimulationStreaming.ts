@@ -7,19 +7,21 @@ export interface Props {
 }
 
 const useTextSimulationStreaming = ({ shouldStream = true, speed = 20, text }: Props) => {
-  if (!shouldStream || !text) {
-    return { streamedText: text };
-  }
-
   const chars = text.split("");
   const [streamedText, setStreamedText] = useState("");
-  const [hasFinished, setFinished] = useState(false);
+  const [hasFinished, setHasFinished] = useState(false);
 
   useEffect(() => {
+    if (!shouldStream || !text) {
+      setHasFinished(true);
+      setStreamedText(text ?? "");
+      return;
+    }
+
     const timerId = setInterval(() => {
       if (!chars.length) {
         clearInterval(timerId);
-        setFinished(true);
+        setHasFinished(true);
         return;
       }
 

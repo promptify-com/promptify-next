@@ -1,21 +1,28 @@
 import { Check, DeleteRounded } from "@mui/icons-material";
 import { Dialog, Grid, TextField, Typography } from "@mui/material";
 import { red } from "@mui/material/colors";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import BaseButton from "../base/BaseButton";
 import { Execution, ExecutionTemplatePopupType } from "@/core/api/dto/templates";
 import { useDeleteExecutionMutation, useUpdateExecutionMutation } from "@/core/api/executions";
+
+import { useAppDispatch } from "@/hooks/useStore";
+import { setGeneratedExecution, setSelectedExecution } from "@/core/store/executionsSlice";
 
 interface SparkSaveDeletePopupProps {
   type: ExecutionTemplatePopupType;
   onClose: () => void;
   activeExecution: Execution | null;
+  onUpdate?: (execution: Execution) => void;
 }
 
-export const SparkSaveDeletePopup = ({ type, activeExecution, onClose }: SparkSaveDeletePopupProps) => {
+export const SparkSaveDeletePopup = ({ type, activeExecution, onClose, onUpdate }: SparkSaveDeletePopupProps) => {
   const [updateExecution, { isError }] = useUpdateExecutionMutation();
   const [deleteExecution, { isError: isDeleteExecutionError }] = useDeleteExecutionMutation();
   const [executionTitle, setExecutionTitle] = useState("");
+
+  const dispatch = useAppDispatch();
+
   useEffect(() => {
     if (activeExecution && activeExecution.title !== "") {
       setExecutionTitle(activeExecution.title);
@@ -26,6 +33,7 @@ export const SparkSaveDeletePopup = ({ type, activeExecution, onClose }: SparkSa
     if (activeExecution) {
       updateExecution({ id: activeExecution.id, data: { title: executionTitle } });
       if (!isError) {
+        if (onUpdate) onUpdate({ ...activeExecution, title: executionTitle });
         onClose();
       }
     }
@@ -33,7 +41,10 @@ export const SparkSaveDeletePopup = ({ type, activeExecution, onClose }: SparkSa
 
   const handleDeleteExecution = () => {
     if (activeExecution) {
+      dispatch(setSelectedExecution(null));
+      dispatch(setGeneratedExecution(null));
       deleteExecution(activeExecution.id);
+
       if (!isDeleteExecutionError) {
         onClose();
       }
@@ -41,12 +52,7 @@ export const SparkSaveDeletePopup = ({ type, activeExecution, onClose }: SparkSa
   };
 
   return (
-    <Dialog
-      open
-      onClose={() => onClose()}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-    >
+    <Dialog open>
       {type === "update" ? (
         <Grid
           width={"318px"}
@@ -78,7 +84,7 @@ export const SparkSaveDeletePopup = ({ type, activeExecution, onClose }: SparkSa
               sx={{
                 height: "30px",
                 px: 0,
-                bgcolor: "#375CA9",
+                bgcolor: "primary.main",
                 border: "none",
                 "&:hover": {
                   bgcolor: "surface.5",
@@ -114,7 +120,7 @@ export const SparkSaveDeletePopup = ({ type, activeExecution, onClose }: SparkSa
             fontWeight={500}
             lineHeight={"25.74px"}
           >
-            You really want to delete this spark permanently?
+            You really want to delete this work permanently?
           </Typography>
           <Grid
             display={"flex"}

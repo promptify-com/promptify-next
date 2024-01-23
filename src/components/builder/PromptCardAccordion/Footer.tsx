@@ -1,10 +1,14 @@
-import React, { useState } from "react";
-import { IEditPrompts } from "@/common/types/builder";
-import { ArrowDropDown } from "@mui/icons-material";
-import { Button, Popper, Stack, Typography } from "@mui/material";
-import { OutputOptions } from "./OutputOptions";
+import { useState } from "react";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import Popper from "@mui/material/Popper";
+import ArrowDropDown from "@mui/icons-material/ArrowDropDown";
+
+import OutputOptions from "./OutputOptions";
 import ArrowRightBottom from "@/assets/icons/ArrowRightBottom";
 import { theme } from "@/theme";
+import type { IEditPrompts } from "@/common/types/builder";
 
 interface Props {
   prompt: IEditPrompts;

@@ -12,18 +12,34 @@ import { isValidUserFn } from "@/core/store/userSlice";
 import { updateTemplateData } from "@/core/store/templatesSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { getExecutionByHash } from "@/hooks/api/executions";
-import TemplateMobile from "@/components/prompt/TemplateMobile";
-import TemplateDesktop from "@/components/prompt/TemplateDesktop";
 import { getTemplateBySlug } from "@/hooks/api/templates";
-import { redirectToPath } from "@/common/helpers";
+import { redirectToPath, stripTags } from "@/common/helpers";
+import { setSelectedExecution, setSparkHashQueryParam } from "@/core/store/executionsSlice";
+import useBrowser from "@/hooks/useBrowser";
+import { getContentBySectioName } from "@/hooks/api/cms";
+import TemplatePage from "@/components/Prompt";
+import { GetServerSideProps } from "next/types";
+
+interface IMUDynamicColorsThemeColor {
+  light: {
+    primary: string;
+    secondary: string;
+    error: string;
+    background: string;
+    surface: string;
+    surfaceVariant: string;
+  };
+}
 
 interface TemplateProps {
   hashedExecution: TemplatesExecutions | null;
   fetchedTemplate: Templates;
+  questionPrefixContent: string;
 }
 
-function Template({ hashedExecution, fetchedTemplate }: TemplateProps) {
+function Template({ hashedExecution, fetchedTemplate, questionPrefixContent }: TemplateProps) {
   const router = useRouter();
+  const { replaceHistoryByPathname } = useBrowser();
   const [updateViewTemplate] = useViewTemplateMutation();
   const [errorMessage, setErrorMessage] = useState<string>("");
   const theme = useTheme();
@@ -31,6 +47,7 @@ function Template({ hashedExecution, fetchedTemplate }: TemplateProps) {
   const dispatch = useAppDispatch();
   const isValidUser = useAppSelector(isValidUserFn);
   const savedTemplateId = useAppSelector(state => state.template.id);
+  const sparkHashQueryParam = (router.query?.hash as string | null) ?? null;
 
   useEffect(() => {
     if (!fetchedTemplate) {
@@ -56,9 +73,20 @@ function Template({ hashedExecution, fetchedTemplate }: TemplateProps) {
     }
   }, [isValidUser]);
 
+  useEffect(() => {
+    dispatch(setSparkHashQueryParam(sparkHashQueryParam));
+
+    if (sparkHashQueryParam && hashedExecution) {
+      dispatch(setSelectedExecution(hashedExecution));
+      replaceHistoryByPathname(`/prompt/${fetchedTemplate.slug}`);
+
+      return;
+    }
+  }, [sparkHashQueryParam]);
+
   if (!fetchedTemplate?.id) {
-    if (router.query.slug) {
-      redirectToPath(`/prompt/${router.query.slug}`);
+    if (router.query.slug && router.query.reloaded !== "true") {
+      redirectToPath(`/prompt/${router.query.slug}`, { reloaded: "true" });
       return null;
     }
 
@@ -67,8 +95,9 @@ function Template({ hashedExecution, fetchedTemplate }: TemplateProps) {
   }
 
   const fetchDynamicColors = () => {
+    // @ts-expect-error unfound-new-type
     materialDynamicColors(fetchedTemplate.thumbnail)
-      .then((imgPalette: IMaterialDynamicColorsTheme) => {
+      .then((imgPalette: IMUDynamicColorsThemeColor) => {
         const newPalette: Palette = {
           ...theme.palette,
           ...imgPalette.light,
@@ -103,24 +132,15 @@ function Template({ hashedExecution, fetchedTemplate }: TemplateProps) {
       });
   };
   const dynamicTheme = createTheme({ ...theme, palette });
-  const isMobileView = router.query.viewport === "mobile";
 
   return (
     <ThemeProvider theme={dynamicTheme}>
       <Layout>
-        {isMobileView ? (
-          <TemplateMobile
-            hashedExecution={hashedExecution}
-            template={fetchedTemplate}
-            setErrorMessage={setErrorMessage}
-          />
-        ) : (
-          <TemplateDesktop
-            hashedExecution={hashedExecution}
-            template={fetchedTemplate}
-            setErrorMessage={setErrorMessage}
-          />
-        )}
+        <TemplatePage
+          template={fetchedTemplate}
+          setErrorMessage={setErrorMessage}
+          questionPrefixContent={questionPrefixContent}
+        />
 
         <Snackbar
           anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
@@ -135,53 +155,52 @@ function Template({ hashedExecution, fetchedTemplate }: TemplateProps) {
   );
 }
 
-export async function getServerSideProps({
-  params,
-  query,
-}: {
-  params: {
-    slug: string;
-  };
-  query: {
-    hash: string;
-  };
-}) {
-  const { slug } = params;
+export const getServerSideProps: GetServerSideProps = async ({ params, query, res }) => {
+  res.setHeader("Cache-Control", "public, maxage=900, stale-while-revalidate=2");
+
   const { hash } = query;
   let fetchedTemplate: Templates = {} as Templates;
   let hashedExecution: TemplatesExecutions | null = null;
-
-  if (hash) {
-    const [_execution, _templatesResponse] = await Promise.allSettled([
-      getExecutionByHash(hash),
-      getTemplateBySlug(slug),
-    ]);
-
-    if (_execution.status === "fulfilled") {
-      hashedExecution = _execution.value;
-    }
-    if (_templatesResponse.status === "fulfilled") {
-      fetchedTemplate = _templatesResponse.value;
-    }
-  }
+  let questionPrefixContent = "";
 
   try {
-    if (!hash) {
-      const _templatesResponse = await getTemplateBySlug(slug);
-      fetchedTemplate = _templatesResponse;
+    if (hash) {
+      const [_execution, _templatesResponse, _sectionContent] = await Promise.allSettled([
+        getExecutionByHash(hash as string),
+        getTemplateBySlug(params?.slug as string),
+        getContentBySectioName("chat-questions-prefix"),
+      ]);
+      fetchedTemplate = _templatesResponse.status === "fulfilled" ? _templatesResponse.value : fetchedTemplate;
+      hashedExecution = _execution.status === "fulfilled" ? _execution.value : hashedExecution;
+      questionPrefixContent =
+        _sectionContent.status === "fulfilled" ? _sectionContent.value.content : questionPrefixContent;
+    } else {
+      const [_templatesResponse, _sectionContent] = await Promise.allSettled([
+        getTemplateBySlug(params?.slug as string),
+        getContentBySectioName("chat-questions-prefix"),
+      ]);
+      if (_templatesResponse.status === "fulfilled") {
+        fetchedTemplate = _templatesResponse.value;
+      }
+
+      if (_sectionContent.status === "fulfilled") {
+        questionPrefixContent = _sectionContent.value.content;
+      }
     }
 
     return {
       props: {
-        title: fetchedTemplate.meta_title || fetchedTemplate.title,
-        description: fetchedTemplate.meta_description || fetchedTemplate.description,
-        meta_keywords: fetchedTemplate.meta_keywords,
-        image: fetchedTemplate.thumbnail,
+        title: fetchedTemplate.meta_title ?? fetchedTemplate.title ?? null,
+        description: fetchedTemplate.meta_description ?? stripTags(fetchedTemplate.description) ?? null,
+        meta_keywords: fetchedTemplate.meta_keywords ?? null,
+        image: fetchedTemplate.thumbnail ?? null,
         hashedExecution,
         fetchedTemplate,
+        questionPrefixContent,
       },
     };
   } catch (error) {
+    console.log("Error occurred:", error);
     return {
       props: {
         title: "Promptify | Boost Your Creativity",
@@ -189,9 +208,10 @@ export async function getServerSideProps({
           "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
         fetchedTemplate,
         hashedExecution,
+        questionPrefixContent,
       },
     };
   }
-}
+};
 
 export default Template;
