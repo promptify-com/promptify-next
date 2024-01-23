@@ -57,6 +57,9 @@ function FormInput({ input, onChange }: Props) {
             type={type}
             value={value}
             onChange={e => handleChange(e.target.value)}
+            sx={{
+              ".MuiFormLabel-root": { fontWeight: 500, color: "primary.main" },
+            }}
           />
         ) : (
           <RenderInputType
