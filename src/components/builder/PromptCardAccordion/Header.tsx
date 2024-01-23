@@ -35,7 +35,7 @@ function Header({ prompt, order, setPrompt, deletePrompt, duplicatePrompt, dragP
     setShowSettings(false);
   };
 
-  const promptEngine = engines?.find(engine => engine.id === prompt.engine_id);
+  const promptEngine = engines?.find(engine => engine.id === prompt.engine);
 
   return (
     <>
@@ -194,7 +194,7 @@ function Header({ prompt, order, setPrompt, deletePrompt, duplicatePrompt, dragP
         <EnginesGroups
           engines={engines}
           onChange={engine => {
-            setPrompt({ ...prompt, engine_id: engine.id });
+            setPrompt({ ...prompt, engine: engine.id });
             closeEnginesModal();
           }}
         />

@@ -46,7 +46,7 @@ function PromptTestDialog({ open, onClose, prompt }: PromptTestDialogProps) {
 
   const template = useAppSelector(state => state.builder.template);
   const engines = useAppSelector(state => state.builder.engines);
-  const engine = engines.find(engine => engine.id === prompt.engine_id);
+  const engine = engines.find(engine => engine.id === prompt.engine);
 
   const [copyToClipboard, copyResult] = useCopyToClipboard();
   const { uploadedFiles, uploadPromptFiles } = useUploadPromptFiles();

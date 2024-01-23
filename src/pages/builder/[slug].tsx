@@ -163,7 +163,7 @@ export const Builder = () => {
           temp_id: node.temp_id,
           title: node.title,
           content: node.content,
-          engine_id: node.engine_id,
+          engine: node.engine,
           parameters: node?.parameters?.map(params => {
             return {
               parameter_id: params.parameter_id,
@@ -257,7 +257,7 @@ export const Builder = () => {
         count: nodeCount.toString(),
         title: `Prompt #${nodeCount}`,
         content: "Describe here prompt parameters, for example {{name:text}} or {{age:number}}",
-        engine_id: engines ? engines[0].id : 0,
+        engine: engines ? engines[0].id : 0,
         dependencies: [],
         parameters: [],
         order: 1,
@@ -276,7 +276,7 @@ export const Builder = () => {
       const node = new Node(`${selectedNodeData.title} - Copy`);
       node.addInput("Input", new ClassicPreset.Input(socket, "Input"));
       node.addOutput("Output", new ClassicPreset.Output(socket, "Output"));
-      node.engineIcon = engines?.find(eng => eng.id === selectedNodeData.engine_id)?.icon || "";
+      node.engineIcon = engines?.find(eng => eng.id === selectedNodeData.engine)?.icon || "";
       node.editor = editor?.editor;
       node.area = editor?.area;
       node.resetNodeData = resetNodeData;
@@ -304,7 +304,7 @@ export const Builder = () => {
           count: nodeCount.toString(),
           title: node.label,
           content: selectedNodeData.content,
-          engine_id: selectedNodeData.engine_id,
+          engine: selectedNodeData.engine,
           dependencies: [],
           parameters: selectedNodeData.parameters,
           order: selectedNodeData.order ?? 1,
@@ -389,7 +389,7 @@ export const Builder = () => {
 
     const nodeId = Number(selectedNode.id) || Number(selectedNode.temp_id);
     if (nodeId !== selectedNodeData.id && nodeId !== selectedNodeData.temp_id) return;
-    const engine = engines?.find(_engine => _engine.id === selectedNodeData.engine_id);
+    const engine = engines?.find(_engine => _engine.id === selectedNodeData.engine);
 
     if (selectedNode.label !== selectedNodeData.title || selectedNode.engineIcon !== engine?.icon) {
       selectedNode.label = selectedNodeData.title;

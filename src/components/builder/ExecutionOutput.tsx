@@ -29,7 +29,7 @@ function ExecutionOutput({ output, engineType }: Props) {
         src={!imgError ? content : require("@/assets/images/default-thumbnail.jpg")}
         alt={"Expired"}
         style={{ borderRadius: "8px", objectFit: "cover", width: "80%", height: "fit-content" }}
-        priority={true}
+        priority={false}
         onClick={() => setShowImage(!imgError)}
         onError={e => setImgError(true)}
       />
