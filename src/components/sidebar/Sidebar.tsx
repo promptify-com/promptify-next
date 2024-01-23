@@ -14,12 +14,11 @@ import SidebarItem from "./SidebarItem";
 import { theme } from "@/theme";
 import type { NavItem } from "@/common/types/sidebar";
 import { useRouter } from "next/router";
-import { useMediaQuery, useTheme } from "@mui/material";
+import useBrowser from "@/hooks/useBrowser";
 
 function Sidebar() {
   const router = useRouter();
-  const { breakpoints } = useTheme();
-  const isMobile = useMediaQuery(breakpoints.down("sm"));
+  const { isMobile } = useBrowser();
 
   const pathname = router.pathname;
   const isPromptsPage = pathname.split("/")[1] === "explore";
