@@ -1,4 +1,4 @@
-import { useEffect, type Dispatch, type SetStateAction } from "react";
+import { useEffect, type Dispatch, type SetStateAction, useState } from "react";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { isValidUserFn } from "@/core/store/userSlice";
@@ -7,9 +7,16 @@ import { setSelectedExecution, setSparkHashQueryParam } from "@/core/store/execu
 import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import useVariant from "./Hooks/useVariant";
 import lazy from "next/dynamic";
+import PromptPlaceholder from "@/components/placeholders/PromptPlaceholder";
 
-const TemplateVariantALazy = lazy(() => import("@/components/Prompt/VariantA"), { ssr: false });
-const TemplateVariantBLazy = lazy(() => import("@/components/Prompt/VariantB"), { ssr: false });
+const TemplateVariantALazy = lazy(() => import("@/components/Prompt/VariantA"), {
+  ssr: false,
+  loading: () => <PromptPlaceholder />,
+});
+const TemplateVariantBLazy = lazy(() => import("@/components/Prompt/VariantB"), {
+  ssr: false,
+  loading: () => <PromptPlaceholder />,
+});
 
 interface Props {
   template: Templates;
