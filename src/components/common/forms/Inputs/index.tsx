@@ -1,78 +1,44 @@
 import { useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import useApiAccess from "@/components/Prompt/Hooks/useApiAccess";
-import { setAnswers } from "@/core/store/chatSlice";
+import { useAppSelector } from "@/hooks/useStore";
 import Code from "@/components/common/forms/Inputs/Code";
 import Choices from "@/components/common/forms/Inputs/Choices";
 import File from "@/components/common/forms/Inputs/File";
 import Textual from "@/components/common/forms/Inputs/Textual";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { PromptInputType } from "@/components/Prompt/Types";
-import type { IAnswer } from "@/components/Prompt/Types/chat";
-import { useDebouncedDispatch } from "@/hooks/useDebounceDispatch";
 
 interface Props {
   input: IPromptInput;
   value: PromptInputType;
+  onChange: (value: PromptInputType) => void;
 }
 
-function RenderInputType({ input, value: initialValue }: Props) {
-  const dispatch = useAppDispatch();
-  const { dispatchNewExecutionData } = useApiAccess();
-
-  const { answers, isSimulationStreaming } = useAppSelector(state => state.chat);
+function RenderInputType({ input, value: initialValue, onChange }: Props) {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
+  const isSimulationStreaming = useAppSelector(state => state.chat.isSimulationStreaming);
 
   const [localValue, setLocalValue] = useState(initialValue);
 
-  const { name: inputName, required, type, prompt, question } = input;
+  const { type: inputType } = input;
 
-  const isTextualType = type === "text" || type === "number" || type === "integer";
-
-  const dispatchUpdateAnswers = useDebouncedDispatch((value: string) => {
-    updateAnswers(value);
-  }, 400);
+  const isTextualType = inputType === "text" || inputType === "number" || inputType === "integer";
 
   useEffect(() => {
     setLocalValue(initialValue);
   }, [initialValue]);
 
-  const onChange = (value: string | File) => {
+  const handleOnChange = (value: PromptInputType) => {
     if (isSimulationStreaming) return;
-    if (isTextualType) {
-      setLocalValue(value);
-      dispatchUpdateAnswers(value as string);
-    } else {
-      updateAnswers(value);
-    }
+    onChange(value);
+    setLocalValue(value);
   };
 
-  const updateAnswers = (value: PromptInputType) => {
-    const _answers = [...answers.filter(answer => answer.inputName !== inputName)];
-
-    const isEmptyTextualInput = isTextualType && typeof value === "string" && value.trim() === "";
-
-    if (!isEmptyTextualInput) {
-      const newAnswer: IAnswer = {
-        question: question!,
-        required,
-        inputName,
-        prompt: prompt!,
-        answer: value,
-      };
-      _answers.push(newAnswer);
-    }
-
-    dispatch(setAnswers(_answers));
-    dispatchNewExecutionData();
-  };
-
-  switch (type) {
+  switch (inputType) {
     case "code":
       return (
         <Code
           input={input}
-          onChange={onChange}
+          onChange={handleOnChange}
           value={initialValue}
           isGenerating={isGenerating}
         />
@@ -82,7 +48,7 @@ function RenderInputType({ input, value: initialValue }: Props) {
         <Choices
           input={input}
           value={initialValue}
-          onChange={onChange}
+          onChange={handleOnChange}
           isGenerating={isGenerating}
         />
       );
@@ -91,7 +57,7 @@ function RenderInputType({ input, value: initialValue }: Props) {
         <File
           input={input}
           value={initialValue as File}
-          onChange={onChange}
+          onChange={handleOnChange}
         />
       );
     default:
@@ -99,7 +65,7 @@ function RenderInputType({ input, value: initialValue }: Props) {
         <Textual
           input={input}
           value={localValue}
-          onChange={onChange}
+          onChange={handleOnChange}
         />
       );
   }

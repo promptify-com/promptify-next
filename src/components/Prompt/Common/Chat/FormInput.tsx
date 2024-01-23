@@ -16,6 +16,7 @@ import { setAnswers } from "@/core/store/chatSlice";
 import { PromptInputType } from "@/components/Prompt/Types";
 import { IAnswer } from "@/components/Prompt/Types/chat";
 import Storage from "@/common/storage";
+import { useDebouncedDispatch } from "@/hooks/useDebounceDispatch";
 
 interface Props {
   input: IPromptInput;
@@ -24,7 +25,7 @@ interface Props {
 function FormInput({ input }: Props) {
   const { isVariantB } = useVariant();
 
-  const answers = useAppSelector(state => state.chat.answers);
+  const { answers, isSimulationStreaming } = useAppSelector(state => state.chat);
   const labelRef = useRef<HTMLDivElement | null>(null);
   const [labelWidth, setLabelWidth] = useState(0);
   const dispatch = useAppDispatch();
@@ -33,6 +34,10 @@ function FormInput({ input }: Props) {
   const { fullName, required, type, name: inputName, question, prompt } = input;
   const value = answers.find(answer => answer.inputName === inputName)?.answer ?? "";
   const isTextualType = type === "text" || type === "number" || type === "integer";
+
+  const dispatchUpdateAnswers = useDebouncedDispatch((value: string) => {
+    updateAnswers(value);
+  }, 400);
 
   useEffect(() => {
     const answersStored = Storage.get("answers");
@@ -53,6 +58,15 @@ function FormInput({ input }: Props) {
       setLabelWidth(labelRef.current.offsetWidth);
     }
   }, [fullName, isVariantB]);
+
+  const onChange = (value: PromptInputType) => {
+    if (isSimulationStreaming) return;
+    if (isTextualType) {
+      dispatchUpdateAnswers(value as string);
+    } else {
+      updateAnswers(value);
+    }
+  };
 
   const updateAnswers = (value: PromptInputType) => {
     const _answers = [...answers.filter(answer => answer.inputName !== inputName)];
@@ -113,7 +127,7 @@ function FormInput({ input }: Props) {
         <RenderInputType
           input={input}
           value={value}
-          onChange={updateAnswers}
+          onChange={onChange}
         />
       </Stack>
       {isVariantB && (
