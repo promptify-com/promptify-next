@@ -1,8 +1,8 @@
-import { BaseQueryFn } from "@reduxjs/toolkit/query";
+import axios, { type AxiosError, type AxiosRequestConfig } from "axios";
+import { BaseQueryFn } from "@reduxjs/toolkit/dist/query";
 
-import axios, { AxiosError, AxiosRequestConfig } from "axios";
 import useToken from "@/hooks/useToken";
-import { ResponseType } from "./dto/templates";
+import type { ResponseType } from "./dto/templates";
 
 export const axiosBaseQuery =
   (
@@ -20,7 +20,6 @@ export const axiosBaseQuery =
     unknown
   > =>
   async ({ url, method, data, params, headers, responseType }) => {
-    // If access token exists send the Authorization header
     const token = useToken();
     headers = headers || {};
 
@@ -32,20 +31,32 @@ export const axiosBaseQuery =
       headers["Content-Type"] = "application/json";
     }
 
-    try {
-      const properUrl = url.endsWith("/") || url.includes("?") ? url : `${url}/`;
-      const axiosReq: AxiosRequestConfig = {
-        url: baseUrl + properUrl,
-        method,
-        data,
-        params,
-        headers,
-      };
-      if (responseType) {
-        axiosReq.responseType = responseType;
+    const attemptRequest = async (attempt = 0): Promise<{ data: any } | { error: any }> => {
+      try {
+        const properUrl = url.endsWith("/") || url.includes("?") ? url : `${url}/`;
+        const axiosReq: AxiosRequestConfig = {
+          url: baseUrl + properUrl,
+          method,
+          data,
+          params,
+          headers,
+        };
+        if (responseType) {
+          axiosReq.responseType = responseType;
+        }
+        const result = await axios(axiosReq);
+        return { data: result.data };
+      } catch (error) {
+        if (attempt < 3) {
+          // Retry up to 3 times
+          return attemptRequest(attempt + 1);
+        }
+        throw error;
       }
-      const result = await axios(axiosReq);
-      return { data: result.data };
+    };
+
+    try {
+      return await attemptRequest();
     } catch (axiosError) {
       const err = axiosError as AxiosError;
       return {
