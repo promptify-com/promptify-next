@@ -73,8 +73,10 @@ const PromptCardAccordion = ({
 
   const updatePrompt = (newPromptData: IEditPrompts) => {
     saveNeeded.current = !isDraft && !isDeepEqual(initPromptData.current, newPromptData);
-    setPromptData(newPromptData);
-    dispatchUpdatePrompt(newPromptData);
+    if (!isDeepEqual(promptData, newPromptData)) {
+      setPromptData(newPromptData);
+      dispatchUpdatePrompt(newPromptData);
+    }
   };
 
   const contentHandler = (content: string, selection?: Selection) => {
