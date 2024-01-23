@@ -1,8 +1,10 @@
-import { isDesktopViewPort } from "@/common/helpers";
 import { useEffect, useState } from "react";
+import { useMediaQuery, useTheme } from "@mui/material";
 
 export default function useBrowser() {
   const [clientLoaded, setClientLoaded] = useState(false);
+  const { breakpoints } = useTheme();
+  const isMobile = useMediaQuery(breakpoints.down("sm"));
 
   useEffect(() => {
     setClientLoaded(true);
@@ -17,5 +19,5 @@ export default function useBrowser() {
     }, delay);
   };
 
-  return { replaceHistoryByPathname, isMobile: !isDesktopViewPort(), clientLoaded };
+  return { replaceHistoryByPathname, isMobile, clientLoaded };
 }
