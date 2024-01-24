@@ -90,7 +90,7 @@ const useVariant = () => {
     });
   };
 
-  return { switchVariant, variant, isVariantA, isVariantB };
+  return { switchVariant, variant, isVariantA, isVariantB, isAutomationPage };
 };
 
 export default useVariant;
