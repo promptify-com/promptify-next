@@ -16,7 +16,7 @@ const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) 
   );
 });
 
-const ToastProvider = () => {
+function Toaster() {
   const dispatch = useAppDispatch();
   const { open, message, severity } = useAppSelector(state => state.toast);
 
@@ -34,6 +34,6 @@ const ToastProvider = () => {
       <Alert severity={severity}>{message}</Alert>
     </Snackbar>
   );
-};
+}
 
-export default ToastProvider;
+export default Toaster;

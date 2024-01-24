@@ -17,7 +17,7 @@ import { isValidUserFn, updateUser } from "@/core/store/userSlice";
 import { userApi } from "@/core/api/user";
 import Storage from "@/common/storage";
 import { deletePathURL, savePathURL } from "@/common/utils";
-import ToastProvider from "@/components/ToastProvider";
+import Toaster from "@/components/Toaster";
 
 function App({ Component, ...rest }: AppProps) {
   const { store, props } = wrapper.useWrappedStore(rest);
@@ -151,7 +151,7 @@ function App({ Component, ...rest }: AppProps) {
             href="https://promptify.s3.amazonaws.com"
           />
         </Head>
-        <ToastProvider />
+        <Toaster />
         <Component {...pageProps} />
       </ThemeProvider>
     </Provider>

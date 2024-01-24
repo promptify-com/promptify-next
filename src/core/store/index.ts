@@ -1,11 +1,4 @@
-import {
-  Action,
-  ConfigureStoreOptions,
-  Middleware,
-  ThunkAction,
-  configureStore,
-  isRejectedWithValue,
-} from "@reduxjs/toolkit";
+import { Action, ConfigureStoreOptions, Middleware, ThunkAction, configureStore } from "@reduxjs/toolkit";
 import { createWrapper } from "next-redux-wrapper";
 
 import { baseApi } from "../api/api";
@@ -47,7 +40,7 @@ const apiResponseMiddleware: Middleware =
   next =>
   action => {
     const errorPayload = action.payload;
-    if (errorPayload?.data?.retryRequestError && isRejectedWithValue(action)) {
+    if (errorPayload?.data?.retryRequestError) {
       dispatch(setToast({ message: errorPayload.data.message, severity: "error" }));
     }
 
