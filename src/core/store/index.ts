@@ -1,4 +1,11 @@
-import { Action, ConfigureStoreOptions, ThunkAction, configureStore } from "@reduxjs/toolkit";
+import {
+  Action,
+  ConfigureStoreOptions,
+  Middleware,
+  ThunkAction,
+  configureStore,
+  isRejectedWithValue,
+} from "@reduxjs/toolkit";
 import { createWrapper } from "next-redux-wrapper";
 
 import { baseApi } from "../api/api";
@@ -9,6 +16,7 @@ import profileSlice from "./profileSlice";
 import userSlice from "./userSlice";
 import executionsSlice from "./executionsSlice";
 import chatSlice from "./chatSlice";
+import toastSlice, { setToast } from "./toastSlice";
 
 export interface State {
   tick: string;
@@ -25,13 +33,26 @@ export const store = (options?: ConfigureStoreOptions["preloadedState"] | undefi
       user: userSlice,
       executions: executionsSlice,
       chat: chatSlice,
+      toast: toastSlice,
     },
     middleware: getDefaultMiddleware =>
       getDefaultMiddleware({
         serializableCheck: false,
-      }).concat(baseApi.middleware),
+      }).concat(baseApi.middleware, apiResponseMiddleware),
     ...options,
   });
+
+const apiResponseMiddleware: Middleware =
+  ({ dispatch }) =>
+  next =>
+  action => {
+    const errorPayload = action.payload;
+    if (errorPayload?.data?.retryRequestError && isRejectedWithValue(action)) {
+      dispatch(setToast({ message: errorPayload.data.message, severity: "error" }));
+    }
+
+    return next(action);
+  };
 
 type Store = ReturnType<typeof store>;
 

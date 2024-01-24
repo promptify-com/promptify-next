@@ -2,20 +2,22 @@ import "@/styles/globals.css";
 import "@fontsource/poppins/400.css";
 import "@fontsource/poppins/500.css";
 import "@fontsource/space-mono/400.css";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
 import type { AppProps } from "next/app";
 import { ThemeProvider } from "@mui/material";
-import { wrapper } from "@/core/store";
-import { theme } from "@/theme";
 import Head from "next/head";
 import Script from "next/script";
 import { Provider } from "react-redux";
-import { useEffect } from "react";
+
+import { wrapper } from "@/core/store";
+import { theme } from "@/theme";
 import useToken from "@/hooks/useToken";
 import { isValidUserFn, updateUser } from "@/core/store/userSlice";
 import { userApi } from "@/core/api/user";
 import Storage from "@/common/storage";
-import { useRouter } from "next/router";
 import { deletePathURL, savePathURL } from "@/common/utils";
+import ToastProvider from "@/components/ToastProvider";
 
 function App({ Component, ...rest }: AppProps) {
   const { store, props } = wrapper.useWrappedStore(rest);
@@ -149,6 +151,7 @@ function App({ Component, ...rest }: AppProps) {
             href="https://promptify.s3.amazonaws.com"
           />
         </Head>
+        <ToastProvider />
         <Component {...pageProps} />
       </ThemeProvider>
     </Provider>

@@ -1,12 +1,21 @@
-import axios, { type AxiosError, type AxiosRequestConfig } from "axios";
+import axios, { AxiosError, type AxiosRequestConfig } from "axios";
 import { BaseQueryFn } from "@reduxjs/toolkit/dist/query";
 
 import useToken from "@/hooks/useToken";
 import type { ResponseType } from "./dto/templates";
+class RetryRequestError extends Error {
+  status: number;
 
+  constructor(message?: string, options?: ErrorOptions) {
+    super(message, options);
+    this.status = 429;
+  }
+}
 export const axiosBaseQuery =
   (
-    { baseUrl }: { baseUrl: string } = { baseUrl: "" },
+    { baseUrl, maxRetries = 3 }: { baseUrl: string; maxRetries?: number } = {
+      baseUrl: "",
+    },
   ): BaseQueryFn<
     {
       url: string;
@@ -19,9 +28,8 @@ export const axiosBaseQuery =
     unknown,
     unknown
   > =>
-  async ({ url, method, data, params, headers, responseType }) => {
+  async ({ url, method, data, params, headers = {}, responseType }) => {
     const token = useToken();
-    headers = headers || {};
 
     if (token) {
       headers.Authorization = `Token ${token}`;
@@ -45,13 +53,13 @@ export const axiosBaseQuery =
           axiosReq.responseType = responseType;
         }
         const result = await axios(axiosReq);
+
         return { data: result.data };
       } catch (error) {
-        if (attempt < 3) {
-          // Retry up to 3 times
+        if (attempt < maxRetries) {
           return attemptRequest(attempt + 1);
         }
-        throw error;
+        throw new RetryRequestError("Request failed after all retry attempts.");
       }
     };
 
@@ -59,10 +67,15 @@ export const axiosBaseQuery =
       return await attemptRequest();
     } catch (axiosError) {
       const err = axiosError as AxiosError;
+      const isRetryRequestError = err instanceof RetryRequestError;
+
       return {
         error: {
-          status: err.response?.status,
-          data: err.response?.data || err.message,
+          status: err.response?.status || err.status,
+          data: {
+            message: err.response?.data || err.message,
+            retryRequestError: isRetryRequestError,
+          },
         },
       };
     }
