@@ -13,6 +13,7 @@ import { Display } from "@/components/Prompt/Common/Display";
 import Form from "@/components/Prompt/Common/Chat/Form";
 import AccordionMessageHeader from "@/components/Prompt/VariantB/AccordionMessageHeader";
 import type { Templates } from "@/core/api/dto/templates";
+import useVariant from "../Hooks/useVariant";
 
 interface Props {
   onGenerate: () => void;
@@ -34,6 +35,7 @@ export default function AccordionMessage({
   expanded,
 }: Props) {
   const dispatch = useAppDispatch();
+  const { isAutomationPage } = useVariant();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const currentUser = useAppSelector(state => state.user.currentUser);
   const inputs = useAppSelector(state => state.chat.inputs);
@@ -87,7 +89,7 @@ export default function AccordionMessage({
               textTransform={"uppercase"}
               display={hasInputs ? "block" : "none"}
             >
-              {isGenerating ? "Generation Result" : "PROMPT Template information"}
+              {isGenerating ? "Generation Result" : `${isAutomationPage ? "WORKFLOW" : "PROMPT Template"} information`}
             </Typography>
 
             <Stack
@@ -136,7 +138,7 @@ export default function AccordionMessage({
                 }}
                 variant={"contained"}
               >
-                Run prompts
+                {`Run ${isAutomationPage ? "workflow" : "prompts"}`}
               </Button>
             </Stack>
           )}
