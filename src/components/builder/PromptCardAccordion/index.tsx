@@ -52,7 +52,7 @@ const PromptCardAccordion = ({
   const [renameAllow, setRenameAllow] = useState(false);
   const [showTest, setShowTest] = useState(false);
   const [showToast, setShowToast] = useState(false);
-  const saveNeeded = useRef(!!!promptData.id);
+  const saveNeeded = useRef(!promptData.id);
   const cursorPositionRef = useRef(0);
   const [highlightedOption, setHighlightedOption] = useState("");
   const { outputPresets, inputPresets } = useMemo(() => getBuilderVarsPresets(prompts, promptData, false), [prompts]);
@@ -123,8 +123,11 @@ const PromptCardAccordion = ({
   );
 
   const handleOpenTest = () => {
-    if (saveNeeded.current) setShowToast(true);
-    else setShowTest(true);
+    if (saveNeeded.current) {
+      setShowToast(true);
+      return;
+    }
+    setShowTest(true);
   };
 
   return (

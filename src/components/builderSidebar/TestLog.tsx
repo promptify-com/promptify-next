@@ -22,12 +22,12 @@ const TestLog = () => {
   const [activeExecution, setActiveExecution] = useState<number | null>(null);
 
   const selectExecution = (execution: number) => {
-    if (execution === activeExecution) setActiveExecution(null);
-    else setActiveExecution(execution);
+    if (execution === activeExecution) {
+      setActiveExecution(null);
+      return;
+    }
+    setActiveExecution(execution);
   };
-
-  const defaultEngineIcon =
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS58O0-OcWTqwlFJCYTkJUSVlGeqleLPstyYdxFFcXNpQ&s";
 
   return (
     <Box
@@ -70,7 +70,7 @@ const TestLog = () => {
                     gap={2}
                   >
                     <Image
-                      src={engine.icon || defaultEngineIcon}
+                      src={engine.icon ?? require("@/assets/images/promptify.png")}
                       alt={engine.name}
                       width={25}
                       height={25}

@@ -5,12 +5,12 @@ import type { IPromptInput } from "@/common/types/prompt";
 import { PromptInputType } from "@/components/Prompt/Types";
 import Box from "@mui/material/Box";
 import { useState } from "react";
-import { IInputValue } from "@/components/builder/Types";
+import { InputValue } from "@/components/builder/Types";
 import TextField from "@mui/material/TextField";
 
 interface Props {
   input: IPromptInput;
-  onChange: (value: IInputValue) => void;
+  onChange: (value: InputValue) => void;
 }
 
 function FormInput({ input, onChange }: Props) {

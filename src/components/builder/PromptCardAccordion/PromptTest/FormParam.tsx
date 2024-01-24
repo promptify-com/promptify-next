@@ -3,13 +3,13 @@ import Box from "@mui/material/Box";
 import InputLabel from "@mui/material/InputLabel";
 import Typography from "@mui/material/Typography";
 import Slider from "@mui/material/Slider";
-import { IParamValue } from "@/components/builder/Types";
+import { ParamValue } from "@/components/builder/Types";
 import { IPromptParams } from "@/common/types/builder";
 import { useState } from "react";
 
 interface GeneratorParamProps {
   param: IPromptParams;
-  onChange: (value: IParamValue) => void;
+  onChange: (value: ParamValue) => void;
 }
 
 export default function FormParam({ param, onChange }: GeneratorParamProps) {

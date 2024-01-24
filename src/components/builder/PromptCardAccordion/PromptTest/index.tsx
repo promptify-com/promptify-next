@@ -15,7 +15,7 @@ import PlayArrow from "@mui/icons-material/PlayArrow";
 import { IEditPrompts } from "@/common/types/builder";
 import usePromptExecute from "@/components/builder/Hooks/usePromptExecute";
 import FormInput from "./FormInput";
-import { IExecuteInput, IExecuteParam, IInputValue, IParamValue } from "@/components/builder/Types";
+import { IExecuteInput, IExecuteParam, InputValue, ParamValue } from "@/components/builder/Types";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import useToken from "@/hooks/useToken";
 import { parseMessageData } from "@/common/helpers/parseMessageData";
@@ -74,14 +74,14 @@ function PromptTestDialog({ open, onClose, prompt }: PromptTestDialogProps) {
     }));
   }, [prompt]);
 
-  const updateInputsValues = (newInputVal: IInputValue) => {
+  const updateInputsValues = (newInputVal: InputValue) => {
     inputsValues.current = {
       ...inputsValues.current,
       [newInputVal.name]: newInputVal.value,
     };
   };
 
-  const updateParamsValues = (newParamVal: IParamValue) => {
+  const updateParamsValues = (newParamVal: ParamValue) => {
     paramsValues.current = paramsValues.current
       .filter(param => param.parameter !== newParamVal.parameter)
       .concat({
@@ -194,7 +194,7 @@ function PromptTestDialog({ open, onClose, prompt }: PromptTestDialogProps) {
   };
 
   const engineType = engine?.output_type ?? "TEXT";
-  const noParams = inputs.length === 0 && params.length === 0;
+  const showFormParams = inputs.length > 0 || params.length > 0;
 
   return (
     <Dialog
@@ -242,7 +242,7 @@ function PromptTestDialog({ open, onClose, prompt }: PromptTestDialogProps) {
             p: "16px 24px",
           }}
         >
-          {!noParams && (
+          {showFormParams && (
             <Stack
               width={"100%"}
               gap={2}

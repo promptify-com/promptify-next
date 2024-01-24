@@ -24,7 +24,7 @@ import ClearAll from "@mui/icons-material/ClearAll";
 import Tooltip from "@mui/material/Tooltip";
 import { useDeletePromptExecutionsMutation, useGetPromptExecutionsQuery } from "@/core/api/templates";
 
-const Links: Link[] = [
+const LINKS: Link[] = [
   {
     key: "list",
     name: "Prompt sequence",
@@ -125,7 +125,7 @@ export const BuilderSidebar = ({ prompts, setPrompts }: Props) => {
         flexDirection={"column"}
         gap={1}
       >
-        {Links.map(link => (
+        {LINKS.map(link => (
           <Grid key={link.name}>
             <ListItem
               disablePadding

@@ -10,17 +10,17 @@ export interface IExecuteInput {
   [key: string]: PromptInputType;
 }
 
-export type IInputValue = {
-  name: string;
-  value: PromptInputType;
-};
-
 export interface IExecuteParam {
   parameter: number;
   score: number;
 }
 
-export type IParamValue = {
+export type InputValue = {
+  name: string;
+  value: PromptInputType;
+};
+
+export type ParamValue = {
   parameter: number;
   score: number;
 };

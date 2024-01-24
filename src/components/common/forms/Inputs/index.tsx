@@ -21,8 +21,6 @@ function RenderInputType({ input, value: initialValue, onChange }: Props) {
 
   const { type: inputType } = input;
 
-  const isTextualType = inputType === "text" || inputType === "number" || inputType === "integer";
-
   useEffect(() => {
     setLocalValue(initialValue);
   }, [initialValue]);
