@@ -9,6 +9,7 @@ import { n8nClient as ApiClient } from "@/common/axios";
 import Storage from "@/common/storage";
 import type { Category } from "@/core/api/dto/templates";
 import type { INode, IWorkflow } from "@/components/Automation/types";
+import { stripTags } from "@/common/helpers";
 
 const useWorkflow = () => {
   const dispatch = useAppDispatch();
@@ -66,6 +67,9 @@ const useWorkflow = () => {
     const webhookPath = storedWorkflows[workflowData?.id!];
 
     const response = await ApiClient.post(`/webhook/${webhookPath}`, inputsData);
+    if (typeof response.data === "string") {
+      return stripTags(response.data);
+    }
 
     return response.data;
   }
