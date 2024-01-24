@@ -39,7 +39,7 @@ const TestLog = () => {
     >
       <Box p={"16px"}>
         {isLoading ? (
-          <CardExecutionPlaceholder length={5} />
+          <CardExecutionPlaceholder count={5} />
         ) : executions && executions.length > 0 ? (
           executions?.map(execution => {
             const engine = execution.prompt.engine;

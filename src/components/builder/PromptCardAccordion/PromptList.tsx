@@ -19,7 +19,7 @@ interface Props {
   setPrompts: (prompts: IEditPrompts[]) => void;
   templateLoading: boolean;
 }
-const PromptList = ({ prompts, setPrompts, templateLoading }: Props) => {
+function PromptList({ prompts, setPrompts, templateLoading }: Props) {
   const [promptToDelete, setPromptToDelete] = useState<IEditPrompts | null>(null);
   const [deletePrompt] = useDeletePromptMutation();
 
@@ -244,6 +244,6 @@ const PromptList = ({ prompts, setPrompts, templateLoading }: Props) => {
       )}
     </>
   );
-};
+}
 
 export default memo(PromptList);

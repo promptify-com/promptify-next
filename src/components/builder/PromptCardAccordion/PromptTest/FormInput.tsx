@@ -14,9 +14,9 @@ interface Props {
 }
 
 function FormInput({ input, onChange }: Props) {
-  const { fullName, required, type, name } = input;
+  const { fullName, type, name } = input;
   const [value, setValue] = useState<PromptInputType>("");
-  const isTextualType = type === "text" || type === "number" || type === "integer";
+  const isTextualType = ["text", "number", "integer"].includes(type);
 
   const handleChange = (value: PromptInputType) => {
     setValue(value);

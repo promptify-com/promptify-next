@@ -44,6 +44,7 @@ function PromptTestDialog({ open, onClose, prompt }: PromptTestDialogProps) {
   const inputsValues = useRef<IExecuteInput>({});
   const paramsValues = useRef<IExecuteParam[]>([]);
 
+  const currentUser = useAppSelector(state => state.user.currentUser);
   const template = useAppSelector(state => state.builder.template);
   const engines = useAppSelector(state => state.builder.engines);
   const engine = engines.find(engine => engine.id === prompt.engine);
@@ -118,7 +119,7 @@ function PromptTestDialog({ open, onClose, prompt }: PromptTestDialogProps) {
             title: prompt.title!,
             engine: engine!,
           },
-          executed_by: 32,
+          executed_by: currentUser?.id,
           created_at: new Date(new Date().getTime() - 1000),
           tokens_spent: 360,
         });
@@ -155,9 +156,7 @@ function PromptTestDialog({ open, onClose, prompt }: PromptTestDialogProps) {
       body: JSON.stringify(executeData),
       openWhenHidden: true,
       async onopen(res) {
-        if (res.ok && res.status === 200) {
-          setIsGenerating(true);
-        } else if (res.status >= 400 && res.status < 500 && res.status !== 429) {
+        if (res.status >= 400 && res.status < 500 && res.status !== 429) {
           console.error("Client side error ", res);
         }
       },

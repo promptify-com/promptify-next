@@ -23,9 +23,9 @@ export default function FormParam({ param, onChange }: GeneratorParamProps) {
     });
   };
 
-  const descriptions = param.descriptions;
-  const activeDescription = descriptions?.find(description => description.score === activeScore);
-  const marks = Object.values(descriptions || {}).map(desc => ({ value: desc.score }));
+  const descriptions = param.descriptions ?? [];
+  const activeDescription = descriptions.find(description => description.score === activeScore);
+  const marks = descriptions.map(desc => ({ value: desc.score }));
   const values = marks.map(obj => obj.value);
 
   return (
@@ -81,7 +81,7 @@ export default function FormParam({ param, onChange }: GeneratorParamProps) {
         step={1}
         min={Math.min(...values)}
         max={Math.max(...values)}
-        onChange={(e: any) => handleScoreChange(e.target.value as number)}
+        onChange={(_, value) => handleScoreChange(value as number)}
       />
     </Stack>
   );

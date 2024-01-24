@@ -6,7 +6,6 @@ import { IEditPrompts, IPromptParams } from "@/common/types/builder";
 export default function usePromptExecute(prompt: IEditPrompts) {
   const prepareAndRemoveDuplicateInputs = () => {
     const inputsMap = new Map<string, IPromptInput>();
-    let normalizeQuestions: Record<string, string> = {};
 
     getInputsFromString(prompt.content).forEach(_input => {
       if (inputsMap.has(_input.name)) {
@@ -14,14 +13,16 @@ export default function usePromptExecute(prompt: IEditPrompts) {
       }
 
       _input["prompt"] = prompt.id;
-      _input.question = normalizeQuestions[_input.name] ?? "";
+      _input.question = "";
 
       inputsMap.set(_input.name, _input);
     });
 
     const params: IPromptParams[] = [];
     prompt.parameters.forEach(_param => {
-      if (!params.find(p => p.parameter_id === _param.parameter_id && p.is_visible)) params.push(_param);
+      if (!params.find(p => p.parameter_id === _param.parameter_id && p.is_visible)) {
+        params.push(_param);
+      }
     });
 
     const inputs = Array.from(inputsMap, ([_, input]) => input);

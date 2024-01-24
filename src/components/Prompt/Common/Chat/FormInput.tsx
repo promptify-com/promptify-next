@@ -33,7 +33,7 @@ function FormInput({ input }: Props) {
 
   const { fullName, required, type, name: inputName, question, prompt } = input;
   const value = answers.find(answer => answer.inputName === inputName)?.answer ?? "";
-  const isTextualType = type === "text" || type === "number" || type === "integer";
+  const isTextualType = ["text", "number", "integer"].includes(type);
 
   const dispatchUpdateAnswers = useDebouncedDispatch((value: string) => {
     updateAnswers(value);

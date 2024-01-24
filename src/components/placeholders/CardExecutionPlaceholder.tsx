@@ -2,11 +2,11 @@ import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
 
 interface Props {
-  length?: number;
+  count?: number;
 }
 
-export const CardExecutionPlaceholder = ({ length = 1 }: Props) => {
-  return Array.from({ length }, (_, i) => (
+export const CardExecutionPlaceholder = ({ count = 1 }: Props) => {
+  return Array.from({ length: count }, (_, i) => (
     <Stack
       key={i}
       direction={"row"}
