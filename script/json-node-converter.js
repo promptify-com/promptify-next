@@ -4,10 +4,11 @@ function convertJSON(inputFile, outputFile) {
     try {
         const data = fs.readFileSync(inputFile, 'utf8');
         const nodes = JSON.parse(data);
+        const processedNodes = nodes.reduce((acc, node) => {
+            acc[node.type] = node;
 
-        const processedNodes = nodes.map(({ name, displayName, iconUrl }) => ({
-            name, displayName, iconUrl
-        }));
+            return acc;
+        }, {});
 
         fs.writeFileSync(outputFile, JSON.stringify(processedNodes, null, 2), 'utf8');
 
