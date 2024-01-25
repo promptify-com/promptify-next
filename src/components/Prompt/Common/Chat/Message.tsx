@@ -7,7 +7,7 @@ import useTextSimulationStreaming from "@/hooks/useTextSimulationStreaming";
 import { timeAgo } from "@/common/helpers/timeManipulation";
 import { setIsSimulationStreaming } from "@/core/store/chatSlice";
 import ClientOnly from "@/components/base/ClientOnly";
-import { sanitizeHTML } from "@/common/helpers/htmlHelper";
+import { markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 
 interface MessageBlockProps {
@@ -41,10 +41,24 @@ const MessageContent = memo(({ content, shouldStream, onStreamingFinished }: Mes
 });
 
 const MessageContentWithHTML = memo(({ content }: { content: string }) => {
+  const [html, setHtml] = useState("");
+
+  useEffect(() => {
+    if (!content) {
+      return;
+    }
+
+    const generateFinalHtml = async () => {
+      const _html = await markdownToHTML(content);
+      setHtml(_html);
+    };
+
+    generateFinalHtml();
+  }, [content]);
   return (
     <div
       dangerouslySetInnerHTML={{
-        __html: sanitizeHTML(content),
+        __html: sanitizeHTML(html),
       }}
     />
   );
