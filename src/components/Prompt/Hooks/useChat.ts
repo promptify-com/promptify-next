@@ -12,6 +12,7 @@ import { ContextualOverrides, ResOverrides } from "@/core/api/dto/prompts";
 import { useRouter } from "next/router";
 import type { IAnswer, IMessage, MessageType } from "../Types/chat";
 import type { PromptInputType } from "@/components/Prompt/Types";
+import { useStoreAnswersAndParams } from "@/hooks/useStoreAnswersAndParams";
 
 interface Props {
   initialMessageTitle: string;
@@ -25,7 +26,7 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
   const { isVariantA, isVariantB } = useVariant();
 
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const { isSimulationStreaming, inputs, answers } = useAppSelector(state => state.chat);
+  const { isSimulationStreaming, inputs, answers, paramsValues } = useAppSelector(state => state.chat);
   const { selectedExecution, generatedExecution, repeatedExecution, sparkHashQueryParam } = useAppSelector(
     state => state.executions,
   );
@@ -35,8 +36,13 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
   const [showGenerateButton, setShowGenerateButton] = useState(false);
   const [isValidatingAnswer, setIsValidatingAnswer] = useState(false);
 
-  const showGenerate =
-    !isSimulationStreaming && (showGenerateButton || Boolean(!inputs.length || !inputs[0]?.required));
+  const { storeAnswers, storeParams } = useStoreAnswersAndParams();
+
+  const showGenerate = isVariantB
+    ? !isSimulationStreaming && (showGenerateButton || Boolean(!inputs.length || !inputs[0]?.required))
+    : !isSimulationStreaming &&
+      ((showGenerateButton && messages[messages.length - 1]?.type !== "spark") ||
+        Boolean(!inputs.length || !inputs[0]?.required));
 
   const createMessage = (type: MessageType, fromUser = false, timestamp = new Date().toISOString()) => ({
     id: randomId(),
@@ -305,6 +311,12 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
     }
   }, [answers, inputs]);
 
+  const handleSignIn = () => {
+    storeAnswers(answers);
+    storeParams(paramsValues);
+    router.push("/signin");
+  };
+
   return {
     messages,
     setMessages,
@@ -315,6 +327,7 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
     isValidatingAnswer,
     setIsValidatingAnswer,
     validateVary,
+    handleSignIn,
   };
 }
 
