@@ -20,13 +20,10 @@ function FormInput({ input, onChange }: Props) {
 
   const handleChange = (value: PromptInputType) => {
     setValue(value);
-    const isEmpty = typeof value === "string" && !value.trim();
-    if (isTextualType && !isEmpty) {
-      onChange({
-        name,
-        value,
-      });
-    }
+    onChange({
+      name,
+      value,
+    });
   };
 
   return (

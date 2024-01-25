@@ -158,6 +158,7 @@ function PromptTestDialog({ open, onClose, prompt }: PromptTestDialogProps) {
       async onopen(res) {
         if (res.status >= 400 && res.status < 500 && res.status !== 429) {
           console.error("Client side error ", res);
+          setGeneratingResponse("Please enter valid answers");
         }
       },
       onmessage(msg) {
