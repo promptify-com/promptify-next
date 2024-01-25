@@ -57,7 +57,7 @@ export default function SingleWorkflow() {
       setIsValidatingAnswer(true);
       const response = await sendMessageAPI();
       if (response && typeof response === "string") {
-        messageAnswersForm(response);
+        messageAnswersForm(response, "html");
       }
     } catch (error) {
       messageAnswersForm("Something went wrong when executing this workflow.");

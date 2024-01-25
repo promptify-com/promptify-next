@@ -32,6 +32,7 @@ import { setGeneratedExecution } from "@/core/store/executionsSlice";
 import useTruncate from "@/hooks/useTruncate";
 import { setAnswers } from "@/core/store/chatSlice";
 import AvatarWithInitials from "@/components/Prompt/Common/AvatarWithInitials";
+import useVariant from "../Hooks/useVariant";
 
 interface Props {
   template: Templates;
@@ -45,6 +46,7 @@ function AccordionMessageHeader({ template, type, isExpanded, onCancel }: Props)
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const dispatch = useAppDispatch();
   const { truncate } = useTruncate();
+  const { isAutomationPage } = useVariant();
 
   const [favoriteExecution] = useExecutionFavoriteMutation();
   const [deleteExecutionFavorite] = useDeleteExecutionFavoriteMutation();
@@ -196,7 +198,7 @@ function AccordionMessageHeader({ template, type, isExpanded, onCancel }: Props)
                 justifyContent={{ xs: "space-between", md: "start" }}
                 letterSpacing={"0.2px"}
               >
-                {type === "form" && "New Prompt"}
+                {type === "form" && `New ${isAutomationPage ? "Execution" : "Prompt"}`}
 
                 {type === "spark" && (
                   <>
