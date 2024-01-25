@@ -8,7 +8,6 @@ import Typography from "@mui/material/Typography";
 import { Message } from "./Message";
 import { useAppSelector } from "@/hooks/useStore";
 import { getCurrentDateFormatted, timeAgo } from "@/common/helpers/timeManipulation";
-import { isDesktopViewPort } from "@/common/helpers";
 import AccordionMessage from "@/components/Prompt/VariantB/AccordionMessage";
 import FeedbackThumbs from "@/components/Prompt/Common/FeedbackThumbs";
 import useScrollToBottom from "@/components/Prompt/Hooks/useScrolltoBottom";
@@ -21,6 +20,7 @@ type AccordionExpandedState = {
   spark: boolean;
   form: boolean;
   text: boolean;
+  webhook: boolean;
 };
 
 interface Props {
@@ -32,8 +32,6 @@ interface Props {
 }
 
 export const ChatInterface = ({ template, messages, onGenerate, showGenerate, onAbort }: Props) => {
-  const isDesktopView = isDesktopViewPort();
-
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const { generatedExecution, selectedExecution } = useAppSelector(state => state.executions);
   const executionMode = Boolean(selectedExecution || generatedExecution);
@@ -44,6 +42,7 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
     spark: true,
     form: true,
     text: false,
+    webhook: false,
   });
 
   const { showScrollDown, scrollToBottom } = useScrollToBottom({ ref: messagesContainerRef, messages, isGenerating });
