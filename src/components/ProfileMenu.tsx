@@ -17,6 +17,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/core/store";
 import { useRef, useState } from "react";
 import Image from "./design-system/Image";
+import defaultAvatar from "@/assets/images/default-avatar.jpg";
 
 export const ProfileMenu = () => {
   const router = useRouter();
@@ -38,13 +39,12 @@ export const ProfileMenu = () => {
   const ProfileMenuItemsFiltered = currentUser?.is_admin
     ? ProfileMenuItems
     : ProfileMenuItems.filter(item => item.href !== "/deployments");
-
   return (
     <Box>
       <Avatar
         ref={menuAnchorRef}
         onClick={() => setIsMenuShown(!isMenuShown)}
-        src={currentUser?.avatar ?? require("@/assets/images/default-avatar.jpg")}
+        src={currentUser?.avatar ?? defaultAvatar.src}
         alt={currentUser?.first_name ?? "Promptify"}
         sx={{
           ml: "auto",

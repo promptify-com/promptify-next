@@ -1,12 +1,14 @@
-import { useRouter } from "next/router";
-import { isDesktopViewPort } from "@/common/helpers";
+import { useEffect, useState } from "react";
+import { useMediaQuery, useTheme } from "@mui/material";
 
 export default function useBrowser() {
-  const router = useRouter();
+  const [clientLoaded, setClientLoaded] = useState(false);
+  const { breakpoints } = useTheme();
+  const isMobile = useMediaQuery(breakpoints.down("sm"));
 
-  const viewport = router.query.viewport ?? "unknown";
-
-  const isMobile = viewport === "unknown" ? !isDesktopViewPort() : viewport === "mobile";
+  useEffect(() => {
+    setClientLoaded(true);
+  }, []);
 
   const replaceHistoryByPathname = (pathname: string, delay: number = 1000) => {
     setTimeout(() => {
@@ -17,5 +19,5 @@ export default function useBrowser() {
     }, delay);
   };
 
-  return { replaceHistoryByPathname, isMobile };
+  return { replaceHistoryByPathname, isMobile, clientLoaded };
 }
