@@ -20,7 +20,7 @@ type AccordionExpandedState = {
   spark: boolean;
   form: boolean;
   text: boolean;
-  webhook: boolean;
+  html: boolean;
 };
 
 interface Props {
@@ -42,7 +42,7 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
     spark: true,
     form: true,
     text: false,
-    webhook: false,
+    html: false,
   });
 
   const { showScrollDown, scrollToBottom } = useScrollToBottom({ ref: messagesContainerRef, messages, isGenerating });

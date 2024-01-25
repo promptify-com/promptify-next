@@ -75,7 +75,7 @@ export const Message = ({ message, isExecutionMode, onScrollToBottom }: MessageB
   const name = fromUser ? currentUser?.first_name ?? currentUser?.username : "Promptify";
 
   useEffect(() => {
-    if (fromUser || type === "webhook") return;
+    if (fromUser || type === "html") return;
     dispatch(setIsSimulationStreaming(true));
   }, []);
 
@@ -135,7 +135,7 @@ export const Message = ({ message, isExecutionMode, onScrollToBottom }: MessageB
             alignItems={"center"}
             color={fromUser ? "#725472" : "onSurface"}
           >
-            {type === "webhook" ? (
+            {type === "html" ? (
               <MessageContentWithHTML content={text} />
             ) : (
               <MessageContent
