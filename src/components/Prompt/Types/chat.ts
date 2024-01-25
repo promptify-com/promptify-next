@@ -5,7 +5,7 @@ export interface VaryValidatorResponse {
   [question: string]: string | number;
 }
 
-export type MessageType = "text" | "form" | "spark";
+export type MessageType = "text" | "form" | "spark" | "webhook";
 
 export interface IMessage {
   id: number;
