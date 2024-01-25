@@ -3,7 +3,6 @@ import Home from "@mui/icons-material/Home";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
 import Grid from "@mui/material/Grid";
-import { usePathname } from "next/navigation";
 import { useAppSelector } from "@/hooks/useStore";
 import { isValidUserFn } from "@/core/store/userSlice";
 import ExtensionRounded from "@mui/icons-material/ExtensionRounded";
@@ -15,9 +14,11 @@ import SidebarItem from "./SidebarItem";
 import { theme } from "@/theme";
 import type { NavItem } from "@/common/types/sidebar";
 import { useRouter } from "next/router";
+import useBrowser from "@/hooks/useBrowser";
 
 function Sidebar() {
   const router = useRouter();
+  const { isMobile } = useBrowser();
 
   const pathname = router.pathname;
   const isPromptsPage = pathname.split("/")[1] === "explore";
@@ -81,6 +82,10 @@ function Sidebar() {
     external: true,
     reload: false,
   };
+
+  if (isMobile) {
+    return null;
+  }
 
   return (
     <Drawer
