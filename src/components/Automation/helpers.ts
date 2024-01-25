@@ -1,5 +1,5 @@
-import nodesData from "@/components/Automation/nodes.json";
-import type { INode } from "@/components/Automation/types";
+import lazy from "next/dynamic";
+import type { INode, NodesFileData } from "@/components/Automation/types";
 
 const UNWANTED_TYPES = [
   "n8n-nodes-base.switch",
@@ -10,12 +10,26 @@ const UNWANTED_TYPES = [
   "n8n-nodes-base.code",
 ];
 
-export function getNodeNames(nodes: INode[] = [], slice = 3) {
+export async function getNodeNames(nodes: INode[] = [], slice = 3) {
   const types = nodes
     .filter(node => !UNWANTED_TYPES.includes(node.type))
     .map(node => node.type)
     .filter(Boolean) as string[];
-  const filteredTypes = Array.from(new Set(types.map(type => nodesData.find(node => node.type === type)?.name)));
+
+  if (!types.length) {
+    return [];
+  }
+
+  const nodesData = (
+    await import(
+      /* webpackChunkName: "workflow_nodes" */
+      /* webpackMode: "lazy" */
+      "@/components/Automation/nodes.json"
+    )
+  ).default;
+  const filteredTypes = Array.from(new Set(types.map(type => (nodesData as NodesFileData)[type]?.name)));
+
+  console.log("filteredTypes:", filteredTypes);
 
   return filteredTypes.slice(0, slice);
 }
