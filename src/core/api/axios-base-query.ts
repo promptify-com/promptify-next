@@ -1,12 +1,21 @@
-import { BaseQueryFn } from "@reduxjs/toolkit/query";
+import axios, { AxiosError, type AxiosRequestConfig } from "axios";
+import { BaseQueryFn } from "@reduxjs/toolkit/dist/query";
 
-import axios, { AxiosError, AxiosRequestConfig } from "axios";
 import useToken from "@/hooks/useToken";
-import { ResponseType } from "./dto/templates";
+import type { ResponseType } from "./dto/templates";
+class RetryRequestError extends Error {
+  status: number;
 
+  constructor(message?: string, options?: ErrorOptions) {
+    super(message, options);
+    this.status = 429;
+  }
+}
 export const axiosBaseQuery =
   (
-    { baseUrl }: { baseUrl: string } = { baseUrl: "" },
+    { baseUrl, maxRetries = 3 }: { baseUrl: string; maxRetries?: number } = {
+      baseUrl: "",
+    },
   ): BaseQueryFn<
     {
       url: string;
@@ -19,10 +28,8 @@ export const axiosBaseQuery =
     unknown,
     unknown
   > =>
-  async ({ url, method, data, params, headers, responseType }) => {
-    // If access token exists send the Authorization header
+  async ({ url, method, data, params, headers = {}, responseType }) => {
     const token = useToken();
-    headers = headers || {};
 
     if (token) {
       headers.Authorization = `Token ${token}`;
@@ -32,26 +39,43 @@ export const axiosBaseQuery =
       headers["Content-Type"] = "application/json";
     }
 
-    try {
-      const properUrl = url.endsWith("/") || url.includes("?") ? url : `${url}/`;
-      const axiosReq: AxiosRequestConfig = {
-        url: baseUrl + properUrl,
-        method,
-        data,
-        params,
-        headers,
-      };
-      if (responseType) {
-        axiosReq.responseType = responseType;
+    const attemptRequest = async (attempt = 0): Promise<{ data: any } | { error: any }> => {
+      try {
+        const properUrl = url.endsWith("/") || url.includes("?") ? url : `${url}/`;
+        const axiosReq: AxiosRequestConfig = {
+          url: baseUrl + properUrl,
+          method,
+          data,
+          params,
+          headers,
+        };
+        if (responseType) {
+          axiosReq.responseType = responseType;
+        }
+        const result = await axios(axiosReq);
+
+        return { data: result.data };
+      } catch (error) {
+        if (attempt < maxRetries) {
+          return attemptRequest(attempt + 1);
+        }
+        throw new RetryRequestError("Request failed after all retry attempts.");
       }
-      const result = await axios(axiosReq);
-      return { data: result.data };
+    };
+
+    try {
+      return await attemptRequest();
     } catch (axiosError) {
       const err = axiosError as AxiosError;
+      const isRetryRequestError = err instanceof RetryRequestError;
+
       return {
         error: {
-          status: err.response?.status,
-          data: err.response?.data || err.message,
+          status: err.response?.status || err.status,
+          data: {
+            message: err.response?.data || err.message,
+            retryRequestError: isRetryRequestError,
+          },
         },
       };
     }

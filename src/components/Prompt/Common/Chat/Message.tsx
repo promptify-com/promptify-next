@@ -3,11 +3,12 @@ import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import type { IMessage } from "@/components/Prompt/Types/chat";
 import useTextSimulationStreaming from "@/hooks/useTextSimulationStreaming";
 import { timeAgo } from "@/common/helpers/timeManipulation";
 import { setIsSimulationStreaming } from "@/core/store/chatSlice";
 import ClientOnly from "@/components/base/ClientOnly";
+import { markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
+import type { IMessage } from "@/components/Prompt/Types/chat";
 
 interface MessageBlockProps {
   message: IMessage;
@@ -39,6 +40,30 @@ const MessageContent = memo(({ content, shouldStream, onStreamingFinished }: Mes
   return <>{streamedText}</>;
 });
 
+const MessageContentWithHTML = memo(({ content }: { content: string }) => {
+  const [html, setHtml] = useState("");
+
+  useEffect(() => {
+    if (!content) {
+      return;
+    }
+
+    const generateFinalHtml = async () => {
+      const _html = await markdownToHTML(content);
+      setHtml(_html);
+    };
+
+    generateFinalHtml();
+  }, [content]);
+  return (
+    <div
+      dangerouslySetInnerHTML={{
+        __html: sanitizeHTML(html),
+      }}
+    />
+  );
+});
+
 export const Message = ({ message, isExecutionMode, onScrollToBottom }: MessageBlockProps) => {
   const [isHovered, setIsHovered] = useState(false);
 
@@ -50,11 +75,12 @@ export const Message = ({ message, isExecutionMode, onScrollToBottom }: MessageB
   const name = fromUser ? currentUser?.first_name ?? currentUser?.username : "Promptify";
 
   useEffect(() => {
-    if (fromUser) return;
+    if (fromUser || type === "html") return;
     dispatch(setIsSimulationStreaming(true));
   }, []);
 
-  if (type !== "text") return;
+  const isTypeFormOrSpark = type === "form" || type === "spark";
+  if (isTypeFormOrSpark) return;
 
   return (
     <Grid
@@ -109,11 +135,15 @@ export const Message = ({ message, isExecutionMode, onScrollToBottom }: MessageB
             alignItems={"center"}
             color={fromUser ? "#725472" : "onSurface"}
           >
-            <MessageContent
-              content={text}
-              shouldStream={!fromUser}
-              onStreamingFinished={onScrollToBottom}
-            />
+            {type === "html" ? (
+              <MessageContentWithHTML content={text} />
+            ) : (
+              <MessageContent
+                content={text}
+                shouldStream={!fromUser}
+                onStreamingFinished={onScrollToBottom}
+              />
+            )}
           </Typography>
         </Grid>
       </Grid>
