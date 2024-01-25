@@ -1,4 +1,3 @@
-import lazy from "next/dynamic";
 import type { INode, NodesFileData } from "@/components/Automation/types";
 
 const UNWANTED_TYPES = [
@@ -28,8 +27,6 @@ export async function getNodeNames(nodes: INode[] = [], slice = 3) {
     )
   ).default;
   const filteredTypes = Array.from(new Set(types.map(type => (nodesData as NodesFileData)[type]?.name)));
-
-  console.log("filteredTypes:", filteredTypes);
 
   return filteredTypes.slice(0, slice);
 }
