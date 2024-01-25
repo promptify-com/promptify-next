@@ -20,7 +20,7 @@ interface GeneratorParamProps {
 
 export default function FormParam({ param }: GeneratorParamProps) {
   const dispatch = useAppDispatch();
-  const { isVariantB } = useVariant();
+  const { isVariantB, isAutomationPage } = useVariant();
 
   const paramsValues = useAppSelector(state => state.chat.paramsValues);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
@@ -28,7 +28,7 @@ export default function FormParam({ param }: GeneratorParamProps) {
   useEffect(() => {
     const paramsStored = Storage.get("paramsValue");
 
-    if (!paramsStored) return;
+    if (!paramsStored || isAutomationPage) return;
 
     const isRelevantParam = paramsStored.some((paramStored: ResOverrides) => paramStored.id === param.prompt);
 
