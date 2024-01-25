@@ -4,6 +4,7 @@ import { isImageOutput } from "@/components/Prompt/Utils";
 import ImagePopup from "@/components/dialog/ImagePopup";
 import { EngineOutput } from "@/core/api/dto/templates";
 import Image from "@/components/design-system/Image";
+import Skeleton from "@mui/material/Skeleton";
 
 interface Props {
   output: string;
@@ -14,6 +15,7 @@ function ExecutionOutput({ output, engineType }: Props) {
   const [showImage, setShowImage] = useState<boolean>(false);
   const [content, setContent] = useState(output);
   const [imgError, setImgError] = useState(false);
+  const [imgLoaded, setImgLoaded] = useState(false);
 
   useEffect(() => {
     if (!isImageOutput(output, engineType)) {
@@ -28,11 +30,28 @@ function ExecutionOutput({ output, engineType }: Props) {
       <Image
         src={!imgError ? output : require("@/assets/images/default-thumbnail.jpg")}
         alt={"Expired"}
-        style={{ borderRadius: "8px", objectFit: "cover", width: "80%", height: "fit-content" }}
+        style={{
+          borderRadius: "8px",
+          objectFit: "cover",
+          width: "80%",
+          height: imgLoaded ? "fit-content" : 0,
+        }}
         priority={false}
         onClick={() => setShowImage(!imgError)}
         onError={e => setImgError(true)}
+        onLoad={() => setImgLoaded(true)}
       />
+      {!imgLoaded && (
+        <Skeleton
+          animation="wave"
+          variant="rectangular"
+          sx={{
+            width: "80%",
+            height: "230.4px",
+            borderRadius: "8px",
+          }}
+        />
+      )}
       {!imgError && (
         <ImagePopup
           open={showImage}

@@ -11,6 +11,7 @@ interface NextImageProps {
   loading?: "eager" | "lazy";
   onClick?: () => void;
   onError?: (event: React.SyntheticEvent<HTMLImageElement, Event>) => void;
+  onLoad?: () => void;
 }
 
 const Image: React.FC<NextImageProps> = ({
@@ -23,6 +24,7 @@ const Image: React.FC<NextImageProps> = ({
   loading,
   onClick,
   onError,
+  onLoad,
 }) => {
   return (
     <NextImage
@@ -36,6 +38,7 @@ const Image: React.FC<NextImageProps> = ({
       {...(loading && { loading })}
       onClick={onClick}
       onError={onError}
+      onLoad={onLoad}
     />
   );
 };
