@@ -48,21 +48,23 @@ export const PromptBuilder = () => {
   );
 
   useEffect(() => {
-    if (engines && fetchedTemplateData) {
+    if (engines) {
       dispatch(setEngines(engines));
+    }
+    if (fetchedTemplateData) {
       dispatch(setTemplate(fetchedTemplateData));
-
       if (currentUser) {
-        const isTemplateOwner = fetchedTemplateData.created_by.id === currentUser?.id || currentUser?.is_admin;
-        dispatch(setIsTemplateOwner(isTemplateOwner));
+        dispatch(setIsTemplateOwner(fetchedTemplateData.created_by.id === currentUser?.id || currentUser?.is_admin));
       }
 
       setTemplateData(fetchedTemplateData);
+    }
 
+    if (fetchedTemplateData && engines) {
       const processedPrompts = handleInitPrompt(fetchedTemplateData, engines) as IEditPrompts[];
       setPrompts(processedPrompts);
     }
-  }, [fetchedTemplateData, engines, currentUser]);
+  }, [fetchedTemplateData, engines]);
 
   const builderSidebarOpen = useAppSelector(state => state.sidebar.builderSidebarOpen);
 
