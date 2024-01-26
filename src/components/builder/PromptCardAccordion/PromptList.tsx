@@ -172,7 +172,7 @@ function PromptList({ prompts, setPrompts, templateLoading }: Props) {
             prompts.map((prompt, index) => {
               index++; // start from 1
               return (
-                <Fragment key={index}>
+                <Fragment key={prompt.id ?? prompt.temp_id}>
                   <Box
                     width={"100%"}
                     id={promptComputeDomId({ title: prompt.title })}

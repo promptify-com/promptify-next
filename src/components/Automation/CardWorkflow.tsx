@@ -7,22 +7,35 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import ArrowBackIosRoundedIcon from "@mui/icons-material/ArrowBackIosRounded";
 import Link from "next/link";
-import { useRouter } from "next/router";
 
 import Image from "@/components/design-system/Image";
 import useTruncate from "@/hooks/useTruncate";
 import { theme } from "@/theme";
 import { getNodeNames } from "@/components/Automation/helpers";
 import type { IWorkflow } from "@/components/Automation/types";
+import { useEffect, useState } from "react";
 
 type CardWorkflowProps = {
   workflow: IWorkflow;
 };
 
 function CardWorkflow({ workflow }: CardWorkflowProps) {
-  const router = useRouter();
-
   const { truncate } = useTruncate();
+  const [nodes, setNodes] = useState<string[]>([]);
+
+  useEffect(() => {
+    const loadNodes = async () => {
+      const _nodes = await getNodeNames(workflow.data.nodes ?? []);
+
+      if (!_nodes.length) {
+        return;
+      }
+
+      setNodes(_nodes);
+    };
+
+    loadNodes();
+  }, []);
 
   return (
     <Link
@@ -127,7 +140,7 @@ function CardWorkflow({ workflow }: CardWorkflowProps) {
                 gap: "4px",
               }}
             >
-              {getNodeNames(workflow.data.nodes ?? []).map(node => (
+              {nodes.map(node => (
                 <Chip
                   key={node}
                   clickable

@@ -3,15 +3,14 @@ const fs = require('fs');
 function convertJSON(inputFile, outputFile) {
     try {
         const data = fs.readFileSync(inputFile, 'utf8');
-        const nodes = JSON.parse(data);
-        const processedNodes = nodes.reduce((acc, node) => {
-            acc[node.type] = node;
+        const creds = JSON.parse(data);
+        const processedCreds = creds.reduce((acc, cred) => {
+            acc[cred.name] = cred;
 
             return acc;
         }, {});
 
-        fs.writeFileSync(outputFile, JSON.stringify(processedNodes, null, 2), 'utf8');
-
+        fs.writeFileSync(outputFile, JSON.stringify(processedCreds, null, 2), 'utf8');
     } catch (err) {
         console.error('Error:', err);
     }
