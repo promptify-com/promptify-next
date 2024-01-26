@@ -2,15 +2,11 @@ import axios, { AxiosError, type AxiosRequestConfig } from "axios";
 import { BaseQueryFn } from "@reduxjs/toolkit/dist/query";
 
 import useToken from "@/hooks/useToken";
+import RetryRequestError from "./errors/RetryRequestError";
 import type { ResponseType } from "./dto/templates";
-class RetryRequestError extends Error {
-  status: number;
 
-  constructor(message?: string, options?: ErrorOptions) {
-    super(message, options);
-    this.status = 429;
-  }
-}
+const IGNORED_RESPONSE_STATUS_CODES = [401, 403, 404];
+
 export const axiosBaseQuery =
   (
     { baseUrl, maxRetries = 3 }: { baseUrl: string; maxRetries?: number } = {
@@ -49,16 +45,25 @@ export const axiosBaseQuery =
           params,
           headers,
         };
+
         if (responseType) {
           axiosReq.responseType = responseType;
         }
+
         const result = await axios(axiosReq);
 
         return { data: result.data };
       } catch (error) {
+        const _err = error as AxiosError;
+
+        if (_err.response?.status && IGNORED_RESPONSE_STATUS_CODES.includes(_err.response.status)) {
+          throw error;
+        }
+
         if (attempt < maxRetries) {
           return attemptRequest(attempt + 1);
         }
+
         throw new RetryRequestError("Request failed after all retry attempts.");
       }
     };
