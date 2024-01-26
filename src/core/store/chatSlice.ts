@@ -33,7 +33,7 @@ export const chatSlice = createSlice({
     setParams: (state, action: PayloadAction<PromptParams[]>) => {
       state.params = action.payload;
     },
-    setparamsValues: (state, action: PayloadAction<ResOverrides[]>) => {
+    setParamsValues: (state, action: PayloadAction<ResOverrides[]>) => {
       state.paramsValues = action.payload;
     },
     setIsSimulationStreaming: (state, action: PayloadAction<boolean>) => {
@@ -42,6 +42,6 @@ export const chatSlice = createSlice({
   },
 });
 
-export const { setAnswers, setInputs, setParams, setparamsValues, setIsSimulationStreaming } = chatSlice.actions;
+export const { setAnswers, setInputs, setParams, setParamsValues, setIsSimulationStreaming } = chatSlice.actions;
 
 export default chatSlice.reducer;

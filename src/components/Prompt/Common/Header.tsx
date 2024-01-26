@@ -64,7 +64,7 @@ export default function Header({ template }: TemplateHeaderProps) {
             temp_id: prompt.id,
             title: prompt.title,
             content: prompt.content,
-            engine_id: prompt.engine.id,
+            engine: prompt.engine.id,
             model_parameters: prompt.model_parameters,
             dependencies: prompt.dependencies || [],
             is_visible: prompt.is_visible,
