@@ -1,2369 +1,2228 @@
-[
-  {
+{
+  "n8n-nodes-base.actionNetwork": {
     "name": "Action Network",
     "type": "n8n-nodes-base.actionNetwork",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/ActionNetwork/actionNetwork.svg"
   },
-  {
+  "n8n-nodes-base.activeCampaign": {
     "name": "ActiveCampaign",
     "type": "n8n-nodes-base.activeCampaign",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/ActiveCampaign/activeCampaign.png"
   },
-  {
+  "n8n-nodes-base.activeCampaignTrigger": {
     "name": "ActiveCampaign Trigger",
     "type": "n8n-nodes-base.activeCampaignTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/ActiveCampaign/activeCampaign.png"
   },
-  {
+  "n8n-nodes-base.acuitySchedulingTrigger": {
     "name": "Acuity Scheduling Trigger",
     "type": "n8n-nodes-base.acuitySchedulingTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/AcuityScheduling/acuityScheduling.png"
   },
-  {
+  "n8n-nodes-base.adalo": {
     "name": "Adalo",
     "type": "n8n-nodes-base.adalo",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Adalo/adalo.svg"
   },
-  {
+  "n8n-nodes-base.affinity": {
     "name": "Affinity",
     "type": "n8n-nodes-base.affinity",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Affinity/affinity.png"
   },
-  {
+  "n8n-nodes-base.affinityTrigger": {
     "name": "Affinity Trigger",
     "type": "n8n-nodes-base.affinityTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Affinity/affinity.png"
   },
-  {
+  "n8n-nodes-base.agileCrm": {
     "name": "Agile CRM",
     "type": "n8n-nodes-base.agileCrm",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/AgileCrm/agilecrm.png"
   },
-  {
+  "n8n-nodes-base.airtable": {
     "name": "Airtable",
     "type": "n8n-nodes-base.airtable",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Airtable/airtable.svg"
   },
-  {
-    "name": "Airtable",
-    "type": "n8n-nodes-base.airtable",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Airtable/airtable.svg"
-  },
-  {
+  "n8n-nodes-base.airtableTrigger": {
     "name": "Airtable Trigger",
     "type": "n8n-nodes-base.airtableTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Airtable/airtable.svg"
   },
-  {
+  "n8n-nodes-base.amqp": {
     "name": "AMQP Sender",
     "type": "n8n-nodes-base.amqp",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Amqp/amqp.png"
   },
-  {
+  "n8n-nodes-base.amqpTrigger": {
     "name": "AMQP Trigger",
     "type": "n8n-nodes-base.amqpTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Amqp/amqp.png"
   },
-  {
+  "n8n-nodes-base.apiTemplateIo": {
     "name": "APITemplate.io",
     "type": "n8n-nodes-base.apiTemplateIo",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/ApiTemplateIo/apiTemplateIo.svg"
   },
-  {
+  "n8n-nodes-base.asana": {
     "name": "Asana",
     "type": "n8n-nodes-base.asana",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Asana/asana.svg"
   },
-  {
+  "n8n-nodes-base.asanaTrigger": {
     "name": "Asana Trigger",
     "type": "n8n-nodes-base.asanaTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Asana/asana.svg"
   },
-  {
+  "n8n-nodes-base.automizy": {
     "name": "Automizy",
     "type": "n8n-nodes-base.automizy",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Automizy/automizy.png"
   },
-  {
+  "n8n-nodes-base.autopilot": {
     "name": "Autopilot",
     "type": "n8n-nodes-base.autopilot",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Autopilot/autopilot.svg"
   },
-  {
+  "n8n-nodes-base.autopilotTrigger": {
     "name": "Autopilot Trigger",
     "type": "n8n-nodes-base.autopilotTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Autopilot/autopilot.svg"
   },
-  {
+  "n8n-nodes-base.awsLambda": {
     "name": "AWS Lambda",
     "type": "n8n-nodes-base.awsLambda",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Aws/lambda.svg"
   },
-  {
+  "n8n-nodes-base.awsSns": {
     "name": "AWS SNS",
     "type": "n8n-nodes-base.awsSns",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Aws/sns.svg"
   },
-  {
+  "n8n-nodes-base.awsSnsTrigger": {
     "name": "AWS SNS Trigger",
     "type": "n8n-nodes-base.awsSnsTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Aws/sns.svg"
   },
-  {
+  "n8n-nodes-base.awsCertificateManager": {
     "name": "AWS Certificate Manager",
     "type": "n8n-nodes-base.awsCertificateManager",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Aws/CertificateManager/acm.svg"
   },
-  {
+  "n8n-nodes-base.awsComprehend": {
     "name": "AWS Comprehend",
     "type": "n8n-nodes-base.awsComprehend",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Aws/Comprehend/comprehend.svg"
   },
-  {
+  "n8n-nodes-base.awsDynamoDb": {
     "name": "AWS DynamoDB",
     "type": "n8n-nodes-base.awsDynamoDb",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Aws/DynamoDB/dynamodb.svg"
   },
-  {
+  "n8n-nodes-base.awsElb": {
     "name": "AWS ELB",
     "type": "n8n-nodes-base.awsElb",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Aws/ELB/elb.svg"
   },
-  {
+  "n8n-nodes-base.awsRekognition": {
     "name": "AWS Rekognition",
     "type": "n8n-nodes-base.awsRekognition",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Aws/Rekognition/rekognition.svg"
   },
-  {
+  "n8n-nodes-base.awsS3": {
     "name": "AWS S3",
     "type": "n8n-nodes-base.awsS3",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Aws/S3/s3.svg"
   },
-  {
-    "name": "AWS S3",
-    "type": "n8n-nodes-base.awsS3",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Aws/S3/s3.svg"
-  },
-  {
+  "n8n-nodes-base.awsSes": {
     "name": "AWS SES",
     "type": "n8n-nodes-base.awsSes",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Aws/SES/ses.svg"
   },
-  {
+  "n8n-nodes-base.awsSqs": {
     "name": "AWS SQS",
     "type": "n8n-nodes-base.awsSqs",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Aws/SQS/sqs.svg"
   },
-  {
+  "n8n-nodes-base.awsTextract": {
     "name": "AWS Textract",
     "type": "n8n-nodes-base.awsTextract",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Aws/Textract/textract.svg"
   },
-  {
+  "n8n-nodes-base.awsTranscribe": {
     "name": "AWS Transcribe",
     "type": "n8n-nodes-base.awsTranscribe",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Aws/Transcribe/transcribe.svg"
   },
-  {
+  "n8n-nodes-base.bambooHr": {
     "name": "BambooHR",
     "type": "n8n-nodes-base.bambooHr",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/BambooHr/bambooHr.png"
   },
-  {
+  "n8n-nodes-base.bannerbear": {
     "name": "Bannerbear",
     "type": "n8n-nodes-base.bannerbear",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Bannerbear/bannerbear.png"
   },
-  {
+  "n8n-nodes-base.baserow": {
     "name": "Baserow",
     "type": "n8n-nodes-base.baserow",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Baserow/baserow.svg"
   },
-  {
+  "n8n-nodes-base.beeminder": {
     "name": "Beeminder",
     "type": "n8n-nodes-base.beeminder",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Beeminder/beeminder.png"
   },
-  {
+  "n8n-nodes-base.bitbucketTrigger": {
     "name": "Bitbucket Trigger",
     "type": "n8n-nodes-base.bitbucketTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Bitbucket/bitbucket.svg"
   },
-  {
+  "n8n-nodes-base.bitly": {
     "name": "Bitly",
     "type": "n8n-nodes-base.bitly",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Bitly/bitly.svg"
   },
-  {
+  "n8n-nodes-base.bitwarden": {
     "name": "Bitwarden",
     "type": "n8n-nodes-base.bitwarden",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Bitwarden/bitwarden.svg"
   },
-  {
+  "n8n-nodes-base.box": {
     "name": "Box",
     "type": "n8n-nodes-base.box",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Box/box.png"
   },
-  {
+  "n8n-nodes-base.boxTrigger": {
     "name": "Box Trigger",
     "type": "n8n-nodes-base.boxTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Box/box.png"
   },
-  {
+  "n8n-nodes-base.Brandfetch": {
     "name": "Brandfetch",
     "type": "n8n-nodes-base.Brandfetch",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Brandfetch/brandfetch.png"
   },
-  {
+  "n8n-nodes-base.bubble": {
     "name": "Bubble",
     "type": "n8n-nodes-base.bubble",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Bubble/bubble.svg"
   },
-  {
+  "n8n-nodes-base.calTrigger": {
     "name": "Cal Trigger",
     "type": "n8n-nodes-base.calTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Cal/cal.svg"
   },
-  {
+  "n8n-nodes-base.calendlyTrigger": {
     "name": "Calendly Trigger",
     "type": "n8n-nodes-base.calendlyTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Calendly/calendly.svg"
   },
-  {
+  "n8n-nodes-base.chargebee": {
     "name": "Chargebee",
     "type": "n8n-nodes-base.chargebee",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Chargebee/chargebee.png"
   },
-  {
+  "n8n-nodes-base.chargebeeTrigger": {
     "name": "Chargebee Trigger",
     "type": "n8n-nodes-base.chargebeeTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Chargebee/chargebee.png"
   },
-  {
+  "n8n-nodes-base.circleCi": {
     "name": "CircleCI",
     "type": "n8n-nodes-base.circleCi",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/CircleCi/circleCi.png"
   },
-  {
+  "n8n-nodes-base.ciscoWebex": {
     "name": "Webex by Cisco",
     "type": "n8n-nodes-base.ciscoWebex",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Cisco/Webex/ciscoWebex.png"
   },
-  {
+  "n8n-nodes-base.citrixAdc": {
     "name": "Citrix ADC",
     "type": "n8n-nodes-base.citrixAdc",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Citrix/ADC/citrix.svg"
   },
-  {
+  "n8n-nodes-base.ciscoWebexTrigger": {
     "name": "Webex by Cisco Trigger",
     "type": "n8n-nodes-base.ciscoWebexTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Cisco/Webex/ciscoWebex.png"
   },
-  {
+  "n8n-nodes-base.cloudflare": {
     "name": "Cloudflare",
     "type": "n8n-nodes-base.cloudflare",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Cloudflare/cloudflare.svg"
   },
-  {
+  "n8n-nodes-base.clearbit": {
     "name": "Clearbit",
     "type": "n8n-nodes-base.clearbit",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Clearbit/clearbit.svg"
   },
-  {
+  "n8n-nodes-base.clickUp": {
     "name": "ClickUp",
     "type": "n8n-nodes-base.clickUp",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/ClickUp/clickup.svg"
   },
-  {
+  "n8n-nodes-base.clickUpTrigger": {
     "name": "ClickUp Trigger",
     "type": "n8n-nodes-base.clickUpTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/ClickUp/clickup.svg"
   },
-  {
+  "n8n-nodes-base.clockify": {
     "name": "Clockify",
     "type": "n8n-nodes-base.clockify",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Clockify/clockify.svg"
   },
-  {
+  "n8n-nodes-base.clockifyTrigger": {
     "name": "Clockify Trigger",
     "type": "n8n-nodes-base.clockifyTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Clockify/clockify.svg"
   },
-  {
+  "n8n-nodes-base.cockpit": {
     "name": "Cockpit",
     "type": "n8n-nodes-base.cockpit",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Cockpit/cockpit.png"
   },
-  {
+  "n8n-nodes-base.coda": {
     "name": "Coda",
     "type": "n8n-nodes-base.coda",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Coda/coda.svg"
   },
-  {
+  "n8n-nodes-base.code": {
     "name": "Code",
     "type": "n8n-nodes-base.code"
   },
-  {
+  "n8n-nodes-base.coinGecko": {
     "name": "CoinGecko",
     "type": "n8n-nodes-base.coinGecko",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/CoinGecko/coinGecko.svg"
   },
-  {
+  "n8n-nodes-base.compareDatasets": {
     "name": "Compare Datasets",
     "type": "n8n-nodes-base.compareDatasets",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/CompareDatasets/compare.svg"
   },
-  {
+  "n8n-nodes-base.compression": {
     "name": "Compression",
     "type": "n8n-nodes-base.compression"
   },
-  {
+  "n8n-nodes-base.contentful": {
     "name": "Contentful",
     "type": "n8n-nodes-base.contentful",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Contentful/contentful.png"
   },
-  {
+  "n8n-nodes-base.convertKit": {
     "name": "ConvertKit",
     "type": "n8n-nodes-base.convertKit",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/ConvertKit/convertKit.svg"
   },
-  {
+  "n8n-nodes-base.convertKitTrigger": {
     "name": "ConvertKit Trigger",
     "type": "n8n-nodes-base.convertKitTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/ConvertKit/convertKit.svg"
   },
-  {
+  "n8n-nodes-base.copper": {
     "name": "Copper",
     "type": "n8n-nodes-base.copper",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Copper/copper.svg"
   },
-  {
+  "n8n-nodes-base.copperTrigger": {
     "name": "Copper Trigger",
     "type": "n8n-nodes-base.copperTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Copper/copper.svg"
   },
-  {
+  "n8n-nodes-base.cortex": {
     "name": "Cortex",
     "type": "n8n-nodes-base.cortex",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Cortex/cortex.svg"
   },
-  {
+  "n8n-nodes-base.crateDb": {
     "name": "CrateDB",
     "type": "n8n-nodes-base.crateDb",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/CrateDb/cratedb.png"
   },
-  {
+  "n8n-nodes-base.cron": {
     "name": "Cron",
     "type": "n8n-nodes-base.cron"
   },
-  {
+  "n8n-nodes-base.crowdDev": {
     "name": "crowd.dev",
     "type": "n8n-nodes-base.crowdDev",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/CrowdDev/crowdDev.svg"
   },
-  {
+  "n8n-nodes-base.crowdDevTrigger": {
     "name": "crowd.dev Trigger",
     "type": "n8n-nodes-base.crowdDevTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/CrowdDev/crowdDev.svg"
   },
-  {
+  "n8n-nodes-base.crypto": {
     "name": "Crypto",
     "type": "n8n-nodes-base.crypto"
   },
-  {
+  "n8n-nodes-base.customerIo": {
     "name": "Customer.io",
     "type": "n8n-nodes-base.customerIo",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/CustomerIo/customerio.svg"
   },
-  {
+  "n8n-nodes-base.customerIoTrigger": {
     "name": "Customer.io Trigger",
     "type": "n8n-nodes-base.customerIoTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/CustomerIo/customerio.svg"
   },
-  {
+  "n8n-nodes-base.dateTime": {
     "name": "Date & Time",
     "type": "n8n-nodes-base.dateTime"
   },
-  {
-    "name": "Date & Time",
-    "type": "n8n-nodes-base.dateTime"
-  },
-  {
+  "n8n-nodes-base.debugHelper": {
     "name": "DebugHelper",
     "type": "n8n-nodes-base.debugHelper",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/DebugHelper/DebugHelper.svg"
   },
-  {
+  "n8n-nodes-base.deepL": {
     "name": "DeepL",
     "type": "n8n-nodes-base.deepL",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/DeepL/deepl.svg"
   },
-  {
+  "n8n-nodes-base.demio": {
     "name": "Demio",
     "type": "n8n-nodes-base.demio",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Demio/demio.svg"
   },
-  {
+  "n8n-nodes-base.dhl": {
     "name": "DHL",
     "type": "n8n-nodes-base.dhl",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Dhl/dhl.svg"
   },
-  {
+  "n8n-nodes-base.discord": {
     "name": "Discord",
     "type": "n8n-nodes-base.discord",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Discord/discord.svg"
   },
-  {
-    "name": "Discord",
-    "type": "n8n-nodes-base.discord",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Discord/discord.svg"
-  },
-  {
+  "n8n-nodes-base.discourse": {
     "name": "Discourse",
     "type": "n8n-nodes-base.discourse",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Discourse/discourse.svg"
   },
-  {
+  "n8n-nodes-base.disqus": {
     "name": "Disqus",
     "type": "n8n-nodes-base.disqus",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Disqus/disqus.png"
   },
-  {
+  "n8n-nodes-base.drift": {
     "name": "Drift",
     "type": "n8n-nodes-base.drift",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Drift/drift.png"
   },
-  {
+  "n8n-nodes-base.dropbox": {
     "name": "Dropbox",
     "type": "n8n-nodes-base.dropbox",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Dropbox/dropbox.svg"
   },
-  {
+  "n8n-nodes-base.dropcontact": {
     "name": "Dropcontact",
     "type": "n8n-nodes-base.dropcontact",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Dropcontact/dropcontact.svg"
   },
-  {
+  "n8n-nodes-base.editImage": {
     "name": "Edit Image",
     "type": "n8n-nodes-base.editImage"
   },
-  {
+  "n8n-nodes-base.egoi": {
     "name": "E-goi",
     "type": "n8n-nodes-base.egoi",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Egoi/egoi.png"
   },
-  {
+  "n8n-nodes-base.elasticsearch": {
     "name": "Elasticsearch",
     "type": "n8n-nodes-base.elasticsearch",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Elastic/Elasticsearch/elasticsearch.svg"
   },
-  {
+  "n8n-nodes-base.elasticSecurity": {
     "name": "Elastic Security",
     "type": "n8n-nodes-base.elasticSecurity",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Elastic/ElasticSecurity/elasticSecurity.svg"
   },
-  {
+  "n8n-nodes-base.emailReadImap": {
     "name": "Email Trigger (IMAP)",
     "type": "n8n-nodes-base.emailReadImap"
   },
-  {
-    "name": "Email Trigger (IMAP)",
-    "type": "n8n-nodes-base.emailReadImap"
-  },
-  {
+  "n8n-nodes-base.emailSend": {
     "name": "Send Email",
     "type": "n8n-nodes-base.emailSend"
   },
-  {
-    "name": "Send Email",
-    "type": "n8n-nodes-base.emailSend"
-  },
-  {
+  "n8n-nodes-base.emelia": {
     "name": "Emelia",
     "type": "n8n-nodes-base.emelia",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Emelia/emelia.svg"
   },
-  {
+  "n8n-nodes-base.emeliaTrigger": {
     "name": "Emelia Trigger",
     "type": "n8n-nodes-base.emeliaTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Emelia/emelia.svg"
   },
-  {
+  "n8n-nodes-base.erpNext": {
     "name": "ERPNext",
     "type": "n8n-nodes-base.erpNext",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/ERPNext/erpnext.svg"
   },
-  {
+  "n8n-nodes-base.errorTrigger": {
     "name": "Error Trigger",
     "type": "n8n-nodes-base.errorTrigger"
   },
-  {
+  "n8n-nodes-base.eventbriteTrigger": {
     "name": "Eventbrite Trigger",
     "type": "n8n-nodes-base.eventbriteTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Eventbrite/eventbrite.png"
   },
-  {
+  "n8n-nodes-base.executeCommand": {
     "name": "Execute Command",
     "type": "n8n-nodes-base.executeCommand"
   },
-  {
+  "n8n-nodes-base.executeWorkflow": {
     "name": "Execute Workflow",
     "type": "n8n-nodes-base.executeWorkflow"
   },
-  {
+  "n8n-nodes-base.executeWorkflowTrigger": {
     "name": "Execute Workflow Trigger",
     "type": "n8n-nodes-base.executeWorkflowTrigger"
   },
-  {
+  "n8n-nodes-base.executionData": {
     "name": "Execution Data",
     "type": "n8n-nodes-base.executionData"
   },
-  {
+  "n8n-nodes-base.facebookGraphApi": {
     "name": "Facebook Graph API",
     "type": "n8n-nodes-base.facebookGraphApi",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Facebook/facebook.svg"
   },
-  {
+  "n8n-nodes-base.facebookTrigger": {
     "name": "Facebook Trigger",
     "type": "n8n-nodes-base.facebookTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Facebook/facebook.svg"
   },
-  {
+  "n8n-nodes-base.facebookLeadAdsTrigger": {
     "name": "Facebook Lead Ads Trigger",
     "type": "n8n-nodes-base.facebookLeadAdsTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/FacebookLeadAds/facebook.svg"
   },
-  {
+  "n8n-nodes-base.figmaTrigger": {
     "name": "Figma Trigger (Beta)",
     "type": "n8n-nodes-base.figmaTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Figma/figma.svg"
   },
-  {
+  "n8n-nodes-base.filemaker": {
     "name": "FileMaker",
     "type": "n8n-nodes-base.filemaker",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/FileMaker/filemaker.png"
   },
-  {
+  "n8n-nodes-base.filter": {
     "name": "Filter",
     "type": "n8n-nodes-base.filter"
   },
-  {
+  "n8n-nodes-base.flow": {
     "name": "Flow",
     "type": "n8n-nodes-base.flow",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Flow/flow.png"
   },
-  {
+  "n8n-nodes-base.flowTrigger": {
     "name": "Flow Trigger",
     "type": "n8n-nodes-base.flowTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Flow/flow.png"
   },
-  {
+  "n8n-nodes-base.formTrigger": {
     "name": "n8n Form Trigger",
     "type": "n8n-nodes-base.formTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Form/form.svg"
   },
-  {
+  "n8n-nodes-base.formIoTrigger": {
     "name": "Form.io Trigger",
     "type": "n8n-nodes-base.formIoTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/FormIo/formio.svg"
   },
-  {
+  "n8n-nodes-base.formstackTrigger": {
     "name": "Formstack Trigger",
     "type": "n8n-nodes-base.formstackTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Formstack/formstack.svg"
   },
-  {
+  "n8n-nodes-base.freshdesk": {
     "name": "Freshdesk",
     "type": "n8n-nodes-base.freshdesk",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Freshdesk/freshdesk.png"
   },
-  {
+  "n8n-nodes-base.freshservice": {
     "name": "Freshservice",
     "type": "n8n-nodes-base.freshservice",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Freshservice/freshservice.svg"
   },
-  {
+  "n8n-nodes-base.freshworksCrm": {
     "name": "Freshworks CRM",
     "type": "n8n-nodes-base.freshworksCrm",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/FreshworksCrm/freshworksCrm.svg"
   },
-  {
+  "n8n-nodes-base.ftp": {
     "name": "FTP",
     "type": "n8n-nodes-base.ftp"
   },
-  {
+  "n8n-nodes-base.function": {
     "name": "Function",
     "type": "n8n-nodes-base.function"
   },
-  {
+  "n8n-nodes-base.functionItem": {
     "name": "Function Item",
     "type": "n8n-nodes-base.functionItem"
   },
-  {
+  "n8n-nodes-base.getResponse": {
     "name": "GetResponse",
     "type": "n8n-nodes-base.getResponse",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/GetResponse/getResponse.png"
   },
-  {
+  "n8n-nodes-base.getResponseTrigger": {
     "name": "GetResponse Trigger",
     "type": "n8n-nodes-base.getResponseTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/GetResponse/getResponse.png"
   },
-  {
+  "n8n-nodes-base.ghost": {
     "name": "Ghost",
     "type": "n8n-nodes-base.ghost",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Ghost/ghost.svg"
   },
-  {
+  "n8n-nodes-base.git": {
     "name": "Git",
     "type": "n8n-nodes-base.git",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Git/git.svg"
   },
-  {
+  "n8n-nodes-base.github": {
     "name": "GitHub",
     "type": "n8n-nodes-base.github",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Github/github.svg"
   },
-  {
+  "n8n-nodes-base.githubTrigger": {
     "name": "Github Trigger",
     "type": "n8n-nodes-base.githubTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Github/github.svg"
   },
-  {
+  "n8n-nodes-base.gitlab": {
     "name": "GitLab",
     "type": "n8n-nodes-base.gitlab",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Gitlab/gitlab.svg"
   },
-  {
+  "n8n-nodes-base.gitlabTrigger": {
     "name": "GitLab Trigger",
     "type": "n8n-nodes-base.gitlabTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Gitlab/gitlab.svg"
   },
-  {
+  "n8n-nodes-base.googleAds": {
     "name": "Google Ads",
     "type": "n8n-nodes-base.googleAds",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Ads/googleAds.svg"
   },
-  {
+  "n8n-nodes-base.googleAnalytics": {
     "name": "Google Analytics",
     "type": "n8n-nodes-base.googleAnalytics",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Analytics/analytics.svg"
   },
-  {
-    "name": "Google Analytics",
-    "type": "n8n-nodes-base.googleAnalytics",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Analytics/analytics.svg"
-  },
-  {
+  "n8n-nodes-base.googleBigQuery": {
     "name": "Google BigQuery",
     "type": "n8n-nodes-base.googleBigQuery",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/BigQuery/googleBigQuery.svg"
   },
-  {
-    "name": "Google BigQuery",
-    "type": "n8n-nodes-base.googleBigQuery",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/BigQuery/googleBigQuery.svg"
-  },
-  {
+  "n8n-nodes-base.googleBooks": {
     "name": "Google Books",
     "type": "n8n-nodes-base.googleBooks",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Books/googlebooks.svg"
   },
-  {
+  "n8n-nodes-base.googleCalendar": {
     "name": "Google Calendar",
     "type": "n8n-nodes-base.googleCalendar",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Calendar/googleCalendar.svg"
   },
-  {
+  "n8n-nodes-base.googleCalendarTrigger": {
     "name": "Google Calendar Trigger",
     "type": "n8n-nodes-base.googleCalendarTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Calendar/googleCalendar.svg"
   },
-  {
+  "n8n-nodes-base.googleChat": {
     "name": "Google Chat",
     "type": "n8n-nodes-base.googleChat",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Chat/googleChat.svg"
   },
-  {
+  "n8n-nodes-base.googleCloudNaturalLanguage": {
     "name": "Google Cloud Natural Language",
     "type": "n8n-nodes-base.googleCloudNaturalLanguage",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/CloudNaturalLanguage/googlecloudnaturallanguage.png"
   },
-  {
+  "n8n-nodes-base.googleCloudStorage": {
     "name": "Google Cloud Storage",
     "type": "n8n-nodes-base.googleCloudStorage",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/CloudStorage/googleCloudStorage.svg"
   },
-  {
+  "n8n-nodes-base.googleContacts": {
     "name": "Google Contacts",
     "type": "n8n-nodes-base.googleContacts",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Contacts/googleContacts.png"
   },
-  {
+  "n8n-nodes-base.googleDocs": {
     "name": "Google Docs",
     "type": "n8n-nodes-base.googleDocs",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Docs/googleDocs.svg"
   },
-  {
+  "n8n-nodes-base.googleDrive": {
     "name": "Google Drive",
     "type": "n8n-nodes-base.googleDrive",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Drive/googleDrive.svg"
   },
-  {
-    "name": "Google Drive",
-    "type": "n8n-nodes-base.googleDrive",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Drive/googleDrive.svg"
-  },
-  {
+  "n8n-nodes-base.googleDriveTrigger": {
     "name": "Google Drive Trigger",
     "type": "n8n-nodes-base.googleDriveTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Drive/googleDrive.svg"
   },
-  {
+  "n8n-nodes-base.googleFirebaseCloudFirestore": {
     "name": "Google Cloud Firestore",
     "type": "n8n-nodes-base.googleFirebaseCloudFirestore",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Firebase/CloudFirestore/googleFirebaseCloudFirestore.png"
   },
-  {
+  "n8n-nodes-base.googleFirebaseRealtimeDatabase": {
     "name": "Google Cloud Realtime Database",
     "type": "n8n-nodes-base.googleFirebaseRealtimeDatabase",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Firebase/RealtimeDatabase/googleFirebaseRealtimeDatabase.svg"
   },
-  {
+  "n8n-nodes-base.gmail": {
     "name": "Gmail",
     "type": "n8n-nodes-base.gmail",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Gmail/gmail.svg"
   },
-  {
-    "name": "Gmail",
-    "type": "n8n-nodes-base.gmail",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Gmail/gmail.svg"
-  },
-  {
+  "n8n-nodes-base.gmailTrigger": {
     "name": "Gmail Trigger",
     "type": "n8n-nodes-base.gmailTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Gmail/gmail.svg"
   },
-  {
+  "n8n-nodes-base.gSuiteAdmin": {
     "name": "Google Workspace Admin",
     "type": "n8n-nodes-base.gSuiteAdmin",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/GSuiteAdmin/google-workspace-admin.png"
   },
-  {
+  "n8n-nodes-base.googlePerspective": {
     "name": "Google Perspective",
     "type": "n8n-nodes-base.googlePerspective",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Perspective/perspective.svg"
   },
-  {
-    "name": "Google Sheets",
-    "type": "n8n-nodes-base.googleSheets",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Sheet/googleSheets.svg"
-  },
-  {
+  "n8n-nodes-base.googleSheets": {
     "name": "Google Sheets ",
     "type": "n8n-nodes-base.googleSheets",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Sheet/googleSheets.svg"
   },
-  {
+  "n8n-nodes-base.googleSheetsTrigger": {
     "name": "Google Sheets Trigger",
     "type": "n8n-nodes-base.googleSheetsTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Sheet/googleSheets.svg"
   },
-  {
+  "n8n-nodes-base.googleSlides": {
     "name": "Google Slides",
     "type": "n8n-nodes-base.googleSlides",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Slides/googleslides.svg"
   },
-  {
+  "n8n-nodes-base.googleTasks": {
     "name": "Google Tasks",
     "type": "n8n-nodes-base.googleTasks",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Task/googleTasks.png"
   },
-  {
+  "n8n-nodes-base.googleTranslate": {
     "name": "Google Translate",
     "type": "n8n-nodes-base.googleTranslate",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/Translate/googletranslate.png"
   },
-  {
+  "n8n-nodes-base.youTube": {
     "name": "YouTube",
     "type": "n8n-nodes-base.youTube",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Google/YouTube/youTube.png"
   },
-  {
+  "n8n-nodes-base.gotify": {
     "name": "Gotify",
     "type": "n8n-nodes-base.gotify",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Gotify/gotify.png"
   },
-  {
+  "n8n-nodes-base.goToWebinar": {
     "name": "GoToWebinar",
     "type": "n8n-nodes-base.goToWebinar",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/GoToWebinar/gotowebinar.svg"
   },
-  {
+  "n8n-nodes-base.grafana": {
     "name": "Grafana",
     "type": "n8n-nodes-base.grafana",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Grafana/grafana.svg"
   },
-  {
+  "n8n-nodes-base.graphql": {
     "name": "GraphQL",
     "type": "n8n-nodes-base.graphql",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/GraphQL/graphql.png"
   },
-  {
+  "n8n-nodes-base.grist": {
     "name": "Grist",
     "type": "n8n-nodes-base.grist",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Grist/grist.svg"
   },
-  {
+  "n8n-nodes-base.gumroadTrigger": {
     "name": "Gumroad Trigger",
     "type": "n8n-nodes-base.gumroadTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Gumroad/gumroad.png"
   },
-  {
+  "n8n-nodes-base.hackerNews": {
     "name": "Hacker News",
     "type": "n8n-nodes-base.hackerNews",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/HackerNews/hackernews.png"
   },
-  {
+  "n8n-nodes-base.haloPSA": {
     "name": "HaloPSA",
     "type": "n8n-nodes-base.haloPSA",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/HaloPSA/halopsa.svg"
   },
-  {
+  "n8n-nodes-base.harvest": {
     "name": "Harvest",
     "type": "n8n-nodes-base.harvest",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Harvest/harvest.png"
   },
-  {
+  "n8n-nodes-base.helpScout": {
     "name": "HelpScout",
     "type": "n8n-nodes-base.helpScout",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/HelpScout/helpScout.svg"
   },
-  {
+  "n8n-nodes-base.helpScoutTrigger": {
     "name": "HelpScout Trigger",
     "type": "n8n-nodes-base.helpScoutTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/HelpScout/helpScout.svg"
   },
-  {
+  "n8n-nodes-base.highLevel": {
     "name": "HighLevel",
     "type": "n8n-nodes-base.highLevel",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/HighLevel/highLevel.svg"
   },
-  {
+  "n8n-nodes-base.homeAssistant": {
     "name": "Home Assistant",
     "type": "n8n-nodes-base.homeAssistant",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/HomeAssistant/homeAssistant.svg"
   },
-  {
+  "n8n-nodes-base.htmlExtract": {
     "name": "HTML Extract",
     "type": "n8n-nodes-base.htmlExtract"
   },
-  {
+  "n8n-nodes-base.html": {
     "name": "HTML",
     "type": "n8n-nodes-base.html",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Html/html.svg"
   },
-  {
+  "n8n-nodes-base.httpRequest": {
     "name": "HTTP Request",
     "type": "n8n-nodes-base.httpRequest",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/HttpRequest/httprequest.svg"
   },
-  {
-    "name": "HTTP Request",
-    "type": "n8n-nodes-base.httpRequest",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/HttpRequest/httprequest.svg"
-  },
-  {
-    "name": "HTTP Request",
-    "type": "n8n-nodes-base.httpRequest",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/HttpRequest/httprequest.svg"
-  },
-  {
+  "n8n-nodes-base.hubspot": {
     "name": "HubSpot",
     "type": "n8n-nodes-base.hubspot",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Hubspot/hubspot.svg"
   },
-  {
-    "name": "HubSpot",
-    "type": "n8n-nodes-base.hubspot",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Hubspot/hubspot.svg"
-  },
-  {
+  "n8n-nodes-base.hubspotTrigger": {
     "name": "HubSpot Trigger",
     "type": "n8n-nodes-base.hubspotTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Hubspot/hubspot.svg"
   },
-  {
+  "n8n-nodes-base.humanticAi": {
     "name": "Humantic AI",
     "type": "n8n-nodes-base.humanticAi",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/HumanticAI/humanticai.png"
   },
-  {
+  "n8n-nodes-base.hunter": {
     "name": "Hunter",
     "type": "n8n-nodes-base.hunter",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Hunter/hunter.png"
   },
-  {
+  "n8n-nodes-base.iCal": {
     "name": "iCalendar",
     "type": "n8n-nodes-base.iCal"
   },
-  {
+  "n8n-nodes-base.if": {
     "name": "IF",
     "type": "n8n-nodes-base.if"
   },
-  {
+  "n8n-nodes-base.intercom": {
     "name": "Intercom",
     "type": "n8n-nodes-base.intercom",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Intercom/intercom.png"
   },
-  {
+  "n8n-nodes-base.interval": {
     "name": "Interval",
     "type": "n8n-nodes-base.interval"
   },
-  {
+  "n8n-nodes-base.invoiceNinja": {
     "name": "Invoice Ninja",
     "type": "n8n-nodes-base.invoiceNinja",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/InvoiceNinja/invoiceNinja.svg"
   },
-  {
+  "n8n-nodes-base.invoiceNinjaTrigger": {
     "name": "Invoice Ninja Trigger",
     "type": "n8n-nodes-base.invoiceNinjaTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/InvoiceNinja/invoiceNinja.svg"
   },
-  {
+  "n8n-nodes-base.itemLists": {
     "name": "Item Lists",
     "type": "n8n-nodes-base.itemLists",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/ItemLists/itemLists.svg"
   },
-  {
-    "name": "Item Lists",
-    "type": "n8n-nodes-base.itemLists",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/ItemLists/itemLists.svg"
-  },
-  {
-    "name": "Item Lists",
-    "type": "n8n-nodes-base.itemLists",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/ItemLists/itemLists.svg"
-  },
-  {
+  "n8n-nodes-base.iterable": {
     "name": "Iterable",
     "type": "n8n-nodes-base.iterable",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Iterable/iterable.png"
   },
-  {
+  "n8n-nodes-base.jenkins": {
     "name": "Jenkins",
     "type": "n8n-nodes-base.jenkins",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Jenkins/jenkins.svg"
   },
-  {
+  "n8n-nodes-base.jira": {
     "name": "Jira Software",
     "type": "n8n-nodes-base.jira",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Jira/jira.svg"
   },
-  {
+  "n8n-nodes-base.jiraTrigger": {
     "name": "Jira Trigger",
     "type": "n8n-nodes-base.jiraTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Jira/jira.svg"
   },
-  {
+  "n8n-nodes-base.jotFormTrigger": {
     "name": "JotForm Trigger",
     "type": "n8n-nodes-base.jotFormTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/JotForm/jotform.png"
   },
-  {
+  "n8n-nodes-base.kafka": {
     "name": "Kafka",
     "type": "n8n-nodes-base.kafka",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Kafka/kafka.svg"
   },
-  {
+  "n8n-nodes-base.kafkaTrigger": {
     "name": "Kafka Trigger",
     "type": "n8n-nodes-base.kafkaTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Kafka/kafka.svg"
   },
-  {
+  "n8n-nodes-base.keap": {
     "name": "Keap",
     "type": "n8n-nodes-base.keap",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Keap/keap.png"
   },
-  {
+  "n8n-nodes-base.keapTrigger": {
     "name": "Keap Trigger",
     "type": "n8n-nodes-base.keapTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Keap/keap.png"
   },
-  {
+  "n8n-nodes-base.kitemaker": {
     "name": "Kitemaker",
     "type": "n8n-nodes-base.kitemaker",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Kitemaker/kitemaker.svg"
   },
-  {
+  "n8n-nodes-base.koBoToolbox": {
     "name": "KoBoToolbox",
     "type": "n8n-nodes-base.koBoToolbox",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/KoBoToolbox/koBoToolbox.svg"
   },
-  {
+  "n8n-nodes-base.koBoToolboxTrigger": {
     "name": "KoBoToolbox Trigger",
     "type": "n8n-nodes-base.koBoToolboxTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/KoBoToolbox/koBoToolbox.svg"
   },
-  {
+  "n8n-nodes-base.ldap": {
     "name": "Ldap",
     "type": "n8n-nodes-base.ldap",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Ldap/ldap.svg"
   },
-  {
+  "n8n-nodes-base.lemlist": {
     "name": "Lemlist",
     "type": "n8n-nodes-base.lemlist",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Lemlist/lemlist.svg"
   },
-  {
+  "n8n-nodes-base.lemlistTrigger": {
     "name": "Lemlist Trigger",
     "type": "n8n-nodes-base.lemlistTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Lemlist/lemlist.svg"
   },
-  {
+  "n8n-nodes-base.line": {
     "name": "Line",
     "type": "n8n-nodes-base.line",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Line/line.png"
   },
-  {
+  "n8n-nodes-base.linear": {
     "name": "Linear",
     "type": "n8n-nodes-base.linear",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Linear/linear.svg"
   },
-  {
+  "n8n-nodes-base.linearTrigger": {
     "name": "Linear Trigger",
     "type": "n8n-nodes-base.linearTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Linear/linear.svg"
   },
-  {
+  "n8n-nodes-base.lingvaNex": {
     "name": "LingvaNex",
     "type": "n8n-nodes-base.lingvaNex",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/LingvaNex/lingvanex.png"
   },
-  {
+  "n8n-nodes-base.linkedIn": {
     "name": "LinkedIn",
     "type": "n8n-nodes-base.linkedIn",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/LinkedIn/linkedin.svg"
   },
-  {
+  "n8n-nodes-base.localFileTrigger": {
     "name": "Local File Trigger",
     "type": "n8n-nodes-base.localFileTrigger"
   },
-  {
+  "n8n-nodes-base.loneScaleTrigger": {
     "name": "LoneScale Trigger",
     "type": "n8n-nodes-base.loneScaleTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/LoneScale/lonescale-logo.svg"
   },
-  {
+  "n8n-nodes-base.loneScale": {
     "name": "LoneScale",
     "type": "n8n-nodes-base.loneScale",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/LoneScale/lonescale-logo.svg"
   },
-  {
+  "n8n-nodes-base.magento2": {
     "name": "Magento 2",
     "type": "n8n-nodes-base.magento2",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Magento/magento.svg"
   },
-  {
+  "n8n-nodes-base.mailcheck": {
     "name": "Mailcheck",
     "type": "n8n-nodes-base.mailcheck",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Mailcheck/mailcheck.svg"
   },
-  {
+  "n8n-nodes-base.mailchimp": {
     "name": "Mailchimp",
     "type": "n8n-nodes-base.mailchimp",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Mailchimp/mailchimp.svg"
   },
-  {
+  "n8n-nodes-base.mailchimpTrigger": {
     "name": "Mailchimp Trigger",
     "type": "n8n-nodes-base.mailchimpTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Mailchimp/mailchimp.svg"
   },
-  {
+  "n8n-nodes-base.mailerLite": {
     "name": "MailerLite",
     "type": "n8n-nodes-base.mailerLite",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/MailerLite/mailerLite.png"
   },
-  {
+  "n8n-nodes-base.mailerLiteTrigger": {
     "name": "MailerLite Trigger",
     "type": "n8n-nodes-base.mailerLiteTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/MailerLite/mailerLite.png"
   },
-  {
+  "n8n-nodes-base.mailgun": {
     "name": "Mailgun",
     "type": "n8n-nodes-base.mailgun",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Mailgun/mailgun.svg"
   },
-  {
+  "n8n-nodes-base.mailjet": {
     "name": "Mailjet",
     "type": "n8n-nodes-base.mailjet",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Mailjet/mailjet.svg"
   },
-  {
+  "n8n-nodes-base.mailjetTrigger": {
     "name": "Mailjet Trigger",
     "type": "n8n-nodes-base.mailjetTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Mailjet/mailjet.svg"
   },
-  {
+  "n8n-nodes-base.mandrill": {
     "name": "Mandrill",
     "type": "n8n-nodes-base.mandrill",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Mandrill/mandrill.svg"
   },
-  {
+  "n8n-nodes-base.manualTrigger": {
     "name": "Manual Trigger",
     "type": "n8n-nodes-base.manualTrigger"
   },
-  {
+  "n8n-nodes-base.markdown": {
     "name": "Markdown",
     "type": "n8n-nodes-base.markdown",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Markdown/markdown.svg"
   },
-  {
+  "n8n-nodes-base.marketstack": {
     "name": "Marketstack",
     "type": "n8n-nodes-base.marketstack",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Marketstack/marketstack.svg"
   },
-  {
+  "n8n-nodes-base.matrix": {
     "name": "Matrix",
     "type": "n8n-nodes-base.matrix",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Matrix/matrix.png"
   },
-  {
+  "n8n-nodes-base.mattermost": {
     "name": "Mattermost",
     "type": "n8n-nodes-base.mattermost",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Mattermost/mattermost.svg"
   },
-  {
+  "n8n-nodes-base.mautic": {
     "name": "Mautic",
     "type": "n8n-nodes-base.mautic",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Mautic/mautic.svg"
   },
-  {
+  "n8n-nodes-base.mauticTrigger": {
     "name": "Mautic Trigger",
     "type": "n8n-nodes-base.mauticTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Mautic/mautic.svg"
   },
-  {
+  "n8n-nodes-base.medium": {
     "name": "Medium",
     "type": "n8n-nodes-base.medium",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Medium/medium.png"
   },
-  {
+  "n8n-nodes-base.merge": {
     "name": "Merge",
     "type": "n8n-nodes-base.merge"
   },
-  {
-    "name": "Merge",
-    "type": "n8n-nodes-base.merge"
-  },
-  {
+  "n8n-nodes-base.messageBird": {
     "name": "MessageBird",
     "type": "n8n-nodes-base.messageBird",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/MessageBird/messagebird.svg"
   },
-  {
+  "n8n-nodes-base.metabase": {
     "name": "Metabase",
     "type": "n8n-nodes-base.metabase",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Metabase/metabase.svg"
   },
-  {
+  "n8n-nodes-base.microsoftDynamicsCrm": {
     "name": "Microsoft Dynamics CRM",
     "type": "n8n-nodes-base.microsoftDynamicsCrm",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Microsoft/Dynamics/dynamicsCrm.svg"
   },
-  {
-    "name": "Microsoft Excel 365",
-    "type": "n8n-nodes-base.microsoftExcel",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Microsoft/Excel/excel.svg"
-  },
-  {
+  "n8n-nodes-base.microsoftExcel": {
     "name": "Microsoft Excel",
     "type": "n8n-nodes-base.microsoftExcel",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Microsoft/Excel/excel.svg"
   },
-  {
+  "n8n-nodes-base.microsoftGraphSecurity": {
     "name": "Microsoft Graph Security",
     "type": "n8n-nodes-base.microsoftGraphSecurity",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Microsoft/GraphSecurity/microsoftGraph.svg"
   },
-  {
+  "n8n-nodes-base.microsoftOneDrive": {
     "name": "Microsoft OneDrive",
     "type": "n8n-nodes-base.microsoftOneDrive",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Microsoft/OneDrive/oneDrive.svg"
   },
-  {
+  "n8n-nodes-base.microsoftOutlook": {
     "name": "Microsoft Outlook",
     "type": "n8n-nodes-base.microsoftOutlook",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Microsoft/Outlook/outlook.svg"
   },
-  {
-    "name": "Microsoft Outlook",
-    "type": "n8n-nodes-base.microsoftOutlook",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Microsoft/Outlook/outlook.svg"
-  },
-  {
+  "n8n-nodes-base.microsoftSql": {
     "name": "Microsoft SQL",
     "type": "n8n-nodes-base.microsoftSql",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Microsoft/Sql/mssql.svg"
   },
-  {
+  "n8n-nodes-base.microsoftTeams": {
     "name": "Microsoft Teams",
     "type": "n8n-nodes-base.microsoftTeams",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Microsoft/Teams/teams.svg"
   },
-  {
+  "n8n-nodes-base.microsoftToDo": {
     "name": "Microsoft To Do",
     "type": "n8n-nodes-base.microsoftToDo",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Microsoft/ToDo/todo.svg"
   },
-  {
+  "n8n-nodes-base.mindee": {
     "name": "Mindee",
     "type": "n8n-nodes-base.mindee",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Mindee/mindee.svg"
   },
-  {
+  "n8n-nodes-base.misp": {
     "name": "MISP",
     "type": "n8n-nodes-base.misp",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Misp/misp.svg"
   },
-  {
+  "n8n-nodes-base.mocean": {
     "name": "Mocean",
     "type": "n8n-nodes-base.mocean",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Mocean/mocean.svg"
   },
-  {
+  "n8n-nodes-base.mondayCom": {
     "name": "Monday.com",
     "type": "n8n-nodes-base.mondayCom",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/MondayCom/mondayCom.svg"
   },
-  {
+  "n8n-nodes-base.mongoDb": {
     "name": "MongoDB",
     "type": "n8n-nodes-base.mongoDb",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/MongoDb/mongodb.svg"
   },
-  {
+  "n8n-nodes-base.monicaCrm": {
     "name": "Monica CRM",
     "type": "n8n-nodes-base.monicaCrm",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/MonicaCrm/monicaCrm.png"
   },
-  {
+  "n8n-nodes-base.moveBinaryData": {
     "name": "Convert to/from binary data",
     "type": "n8n-nodes-base.moveBinaryData"
   },
-  {
+  "n8n-nodes-base.mqtt": {
     "name": "MQTT",
     "type": "n8n-nodes-base.mqtt",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/MQTT/mqtt.svg"
   },
-  {
+  "n8n-nodes-base.mqttTrigger": {
     "name": "MQTT Trigger",
     "type": "n8n-nodes-base.mqttTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/MQTT/mqtt.svg"
   },
-  {
+  "n8n-nodes-base.msg91": {
     "name": "MSG91",
     "type": "n8n-nodes-base.msg91",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Msg91/msg91.png"
   },
-  {
+  "n8n-nodes-base.mySql": {
     "name": "MySQL",
     "type": "n8n-nodes-base.mySql",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/MySql/mysql.svg"
   },
-  {
-    "name": "MySQL",
-    "type": "n8n-nodes-base.mySql",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/MySql/mysql.svg"
-  },
-  {
+  "n8n-nodes-base.n8n": {
     "name": "n8n",
     "type": "n8n-nodes-base.n8n",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/N8n/n8n.svg"
   },
-  {
+  "n8n-nodes-base.n8nTrainingCustomerDatastore": {
     "name": "Customer Datastore (n8n training)",
     "type": "n8n-nodes-base.n8nTrainingCustomerDatastore",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/N8nTrainingCustomerDatastore/n8nTrainingCustomerDatastore.svg"
   },
-  {
+  "n8n-nodes-base.n8nTrainingCustomerMessenger": {
     "name": "Customer Messenger (n8n training)",
     "type": "n8n-nodes-base.n8nTrainingCustomerMessenger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/N8nTrainingCustomerMessenger/n8nTrainingCustomerMessenger.svg"
   },
-  {
+  "n8n-nodes-base.n8nTrigger": {
     "name": "n8n Trigger",
     "type": "n8n-nodes-base.n8nTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/N8nTrigger/n8nTrigger.svg"
   },
-  {
+  "n8n-nodes-base.nasa": {
     "name": "NASA",
     "type": "n8n-nodes-base.nasa",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Nasa/nasa.png"
   },
-  {
+  "n8n-nodes-base.netlify": {
     "name": "Netlify",
     "type": "n8n-nodes-base.netlify",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Netlify/netlify.svg"
   },
-  {
+  "n8n-nodes-base.netlifyTrigger": {
     "name": "Netlify Trigger",
     "type": "n8n-nodes-base.netlifyTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Netlify/netlify.svg"
   },
-  {
+  "n8n-nodes-base.nextCloud": {
     "name": "Nextcloud",
     "type": "n8n-nodes-base.nextCloud",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/NextCloud/nextcloud.svg"
   },
-  {
+  "n8n-nodes-base.nocoDb": {
     "name": "NocoDB",
     "type": "n8n-nodes-base.nocoDb",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/NocoDB/nocodb.svg"
   },
-  {
+  "n8n-nodes-base.sendInBlue": {
     "name": "Brevo",
     "type": "n8n-nodes-base.sendInBlue",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Brevo/brevo.svg"
   },
-  {
+  "n8n-nodes-base.sendInBlueTrigger": {
     "name": "Brevo Trigger",
     "type": "n8n-nodes-base.sendInBlueTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Brevo/brevo.svg"
   },
-  {
+  "n8n-nodes-base.stickyNote": {
     "name": "Sticky Note",
     "type": "n8n-nodes-base.stickyNote"
   },
-  {
+  "n8n-nodes-base.noOp": {
     "name": "No Operation, do nothing",
     "type": "n8n-nodes-base.noOp"
   },
-  {
+  "n8n-nodes-base.onfleet": {
     "name": "Onfleet",
     "type": "n8n-nodes-base.onfleet",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Onfleet/Onfleet.svg"
   },
-  {
+  "n8n-nodes-base.onfleetTrigger": {
     "name": "Onfleet Trigger",
     "type": "n8n-nodes-base.onfleetTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Onfleet/Onfleet.svg"
   },
-  {
+  "n8n-nodes-base.notion": {
     "name": "Notion",
     "type": "n8n-nodes-base.notion",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Notion/notion.svg"
   },
-  {
-    "name": "Notion",
-    "type": "n8n-nodes-base.notion",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Notion/notion.svg"
-  },
-  {
+  "n8n-nodes-base.notionTrigger": {
     "name": "Notion Trigger",
     "type": "n8n-nodes-base.notionTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Notion/notion.svg"
   },
-  {
+  "n8n-nodes-base.npm": {
     "name": "Npm",
     "type": "n8n-nodes-base.npm",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Npm/npm.svg"
   },
-  {
+  "n8n-nodes-base.odoo": {
     "name": "Odoo",
     "type": "n8n-nodes-base.odoo",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Odoo/odoo.svg"
   },
-  {
+  "n8n-nodes-base.oneSimpleApi": {
     "name": "One Simple API",
     "type": "n8n-nodes-base.oneSimpleApi",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/OneSimpleApi/onesimpleapi.svg"
   },
-  {
+  "n8n-nodes-base.openAi": {
     "name": "OpenAI",
     "type": "n8n-nodes-base.openAi",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/OpenAi/openAi.svg"
   },
-  {
+  "n8n-nodes-base.openThesaurus": {
     "name": "OpenThesaurus",
     "type": "n8n-nodes-base.openThesaurus",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/OpenThesaurus/openthesaurus.png"
   },
-  {
+  "n8n-nodes-base.openWeatherMap": {
     "name": "OpenWeatherMap",
     "type": "n8n-nodes-base.openWeatherMap"
   },
-  {
+  "n8n-nodes-base.orbit": {
     "name": "Orbit",
     "type": "n8n-nodes-base.orbit",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Orbit/orbit.svg"
   },
-  {
+  "n8n-nodes-base.oura": {
     "name": "Oura",
     "type": "n8n-nodes-base.oura",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Oura/oura.svg"
   },
-  {
+  "n8n-nodes-base.paddle": {
     "name": "Paddle",
     "type": "n8n-nodes-base.paddle",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Paddle/paddle.png"
   },
-  {
+  "n8n-nodes-base.pagerDuty": {
     "name": "PagerDuty",
     "type": "n8n-nodes-base.pagerDuty",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/PagerDuty/pagerDuty.svg"
   },
-  {
+  "n8n-nodes-base.payPal": {
     "name": "PayPal",
     "type": "n8n-nodes-base.payPal",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/PayPal/paypal.svg"
   },
-  {
+  "n8n-nodes-base.payPalTrigger": {
     "name": "PayPal Trigger",
     "type": "n8n-nodes-base.payPalTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/PayPal/paypal.svg"
   },
-  {
+  "n8n-nodes-base.peekalink": {
     "name": "Peekalink",
     "type": "n8n-nodes-base.peekalink",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Peekalink/peekalink.png"
   },
-  {
+  "n8n-nodes-base.phantombuster": {
     "name": "Phantombuster",
     "type": "n8n-nodes-base.phantombuster",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Phantombuster/phantombuster.png"
   },
-  {
+  "n8n-nodes-base.philipsHue": {
     "name": "Philips Hue",
     "type": "n8n-nodes-base.philipsHue",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/PhilipsHue/philipshue.png"
   },
-  {
+  "n8n-nodes-base.pipedrive": {
     "name": "Pipedrive",
     "type": "n8n-nodes-base.pipedrive",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Pipedrive/pipedrive.svg"
   },
-  {
+  "n8n-nodes-base.pipedriveTrigger": {
     "name": "Pipedrive Trigger",
     "type": "n8n-nodes-base.pipedriveTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Pipedrive/pipedrive.svg"
   },
-  {
+  "n8n-nodes-base.plivo": {
     "name": "Plivo",
     "type": "n8n-nodes-base.plivo",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Plivo/plivo.svg"
   },
-  {
+  "n8n-nodes-base.postBin": {
     "name": "PostBin",
     "type": "n8n-nodes-base.postBin",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/PostBin/postbin.svg"
   },
-  {
+  "n8n-nodes-base.postgres": {
     "name": "Postgres",
     "type": "n8n-nodes-base.postgres",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Postgres/postgres.svg"
   },
-  {
-    "name": "Postgres",
-    "type": "n8n-nodes-base.postgres",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Postgres/postgres.svg"
-  },
-  {
+  "n8n-nodes-base.postgresTrigger": {
     "name": "Postgres Trigger",
     "type": "n8n-nodes-base.postgresTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Postgres/postgres.svg"
   },
-  {
+  "n8n-nodes-base.postHog": {
     "name": "PostHog",
     "type": "n8n-nodes-base.postHog",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/PostHog/postHog.svg"
   },
-  {
+  "n8n-nodes-base.postmarkTrigger": {
     "name": "Postmark Trigger",
     "type": "n8n-nodes-base.postmarkTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Postmark/postmark.png"
   },
-  {
+  "n8n-nodes-base.profitWell": {
     "name": "ProfitWell",
     "type": "n8n-nodes-base.profitWell",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/ProfitWell/profitwell.png"
   },
-  {
+  "n8n-nodes-base.pushbullet": {
     "name": "Pushbullet",
     "type": "n8n-nodes-base.pushbullet",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Pushbullet/pushbullet.svg"
   },
-  {
+  "n8n-nodes-base.pushcut": {
     "name": "Pushcut",
     "type": "n8n-nodes-base.pushcut",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Pushcut/pushcut.png"
   },
-  {
+  "n8n-nodes-base.pushcutTrigger": {
     "name": "Pushcut Trigger",
     "type": "n8n-nodes-base.pushcutTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Pushcut/pushcut.png"
   },
-  {
+  "n8n-nodes-base.pushover": {
     "name": "Pushover",
     "type": "n8n-nodes-base.pushover",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Pushover/pushover.svg"
   },
-  {
+  "n8n-nodes-base.questDb": {
     "name": "QuestDB",
     "type": "n8n-nodes-base.questDb",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/QuestDb/questdb.png"
   },
-  {
+  "n8n-nodes-base.quickbase": {
     "name": "Quick Base",
     "type": "n8n-nodes-base.quickbase",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/QuickBase/quickbase.png"
   },
-  {
+  "n8n-nodes-base.quickbooks": {
     "name": "QuickBooks Online",
     "type": "n8n-nodes-base.quickbooks",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/QuickBooks/quickbooks.svg"
   },
-  {
+  "n8n-nodes-base.quickChart": {
     "name": "QuickChart",
     "type": "n8n-nodes-base.quickChart",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/QuickChart/quickChart.svg"
   },
-  {
+  "n8n-nodes-base.rabbitmq": {
     "name": "RabbitMQ",
     "type": "n8n-nodes-base.rabbitmq",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/RabbitMQ/rabbitmq.png"
   },
-  {
+  "n8n-nodes-base.rabbitmqTrigger": {
     "name": "RabbitMQ Trigger",
     "type": "n8n-nodes-base.rabbitmqTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/RabbitMQ/rabbitmq.png"
   },
-  {
+  "n8n-nodes-base.raindrop": {
     "name": "Raindrop",
     "type": "n8n-nodes-base.raindrop",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Raindrop/raindrop.svg"
   },
-  {
+  "n8n-nodes-base.readBinaryFile": {
     "name": "Read Binary File",
     "type": "n8n-nodes-base.readBinaryFile"
   },
-  {
+  "n8n-nodes-base.readBinaryFiles": {
     "name": "Read Binary Files",
     "type": "n8n-nodes-base.readBinaryFiles"
   },
-  {
+  "n8n-nodes-base.readPDF": {
     "name": "Read PDF",
     "type": "n8n-nodes-base.readPDF"
   },
-  {
+  "n8n-nodes-base.reddit": {
     "name": "Reddit",
     "type": "n8n-nodes-base.reddit",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Reddit/reddit.svg"
   },
-  {
+  "n8n-nodes-base.redis": {
     "name": "Redis",
     "type": "n8n-nodes-base.redis",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Redis/redis.svg"
   },
-  {
+  "n8n-nodes-base.redisTrigger": {
     "name": "Redis Trigger",
     "type": "n8n-nodes-base.redisTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Redis/redis.svg"
   },
-  {
+  "n8n-nodes-base.renameKeys": {
     "name": "Rename Keys",
     "type": "n8n-nodes-base.renameKeys"
   },
-  {
+  "n8n-nodes-base.respondToWebhook": {
     "name": "Respond to Webhook",
     "type": "n8n-nodes-base.respondToWebhook",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/RespondToWebhook/webhook.svg"
   },
-  {
+  "n8n-nodes-base.rocketchat": {
     "name": "RocketChat",
     "type": "n8n-nodes-base.rocketchat",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Rocketchat/rocketchat.svg"
   },
-  {
+  "n8n-nodes-base.rssFeedRead": {
     "name": "RSS Read",
     "type": "n8n-nodes-base.rssFeedRead"
   },
-  {
+  "n8n-nodes-base.rssFeedReadTrigger": {
     "name": "RSS Feed Trigger",
     "type": "n8n-nodes-base.rssFeedReadTrigger"
   },
-  {
+  "n8n-nodes-base.rundeck": {
     "name": "Rundeck",
     "type": "n8n-nodes-base.rundeck",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Rundeck/rundeck.png"
   },
-  {
+  "n8n-nodes-base.s3": {
     "name": "S3",
     "type": "n8n-nodes-base.s3",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/S3/s3.png"
   },
-  {
+  "n8n-nodes-base.salesforce": {
     "name": "Salesforce",
     "type": "n8n-nodes-base.salesforce",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Salesforce/salesforce.svg"
   },
-  {
+  "n8n-nodes-base.salesmate": {
     "name": "Salesmate",
     "type": "n8n-nodes-base.salesmate",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Salesmate/salesmate.png"
   },
-  {
+  "n8n-nodes-base.scheduleTrigger": {
     "name": "Schedule Trigger",
     "type": "n8n-nodes-base.scheduleTrigger"
   },
-  {
+  "n8n-nodes-base.seaTable": {
     "name": "SeaTable",
     "type": "n8n-nodes-base.seaTable",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/SeaTable/seaTable.svg"
   },
-  {
+  "n8n-nodes-base.seaTableTrigger": {
     "name": "SeaTable Trigger",
     "type": "n8n-nodes-base.seaTableTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/SeaTable/seaTable.svg"
   },
-  {
+  "n8n-nodes-base.securityScorecard": {
     "name": "SecurityScorecard",
     "type": "n8n-nodes-base.securityScorecard",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/SecurityScorecard/securityScorecard.svg"
   },
-  {
+  "n8n-nodes-base.segment": {
     "name": "Segment",
     "type": "n8n-nodes-base.segment",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Segment/segment.svg"
   },
-  {
+  "n8n-nodes-base.sendGrid": {
     "name": "SendGrid",
     "type": "n8n-nodes-base.sendGrid",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/SendGrid/sendGrid.svg"
   },
-  {
+  "n8n-nodes-base.sendy": {
     "name": "Sendy",
     "type": "n8n-nodes-base.sendy",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Sendy/sendy.png"
   },
-  {
+  "n8n-nodes-base.sentryIo": {
     "name": "Sentry.io",
     "type": "n8n-nodes-base.sentryIo",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/SentryIo/sentryio.svg"
   },
-  {
+  "n8n-nodes-base.serviceNow": {
     "name": "ServiceNow",
     "type": "n8n-nodes-base.serviceNow",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/ServiceNow/servicenow.svg"
   },
-  {
-    "name": "Edit Fields (Set)",
-    "type": "n8n-nodes-base.set"
-  },
-  {
+  "n8n-nodes-base.set": {
     "name": "Set",
     "type": "n8n-nodes-base.set"
   },
-  {
+  "n8n-nodes-base.shopify": {
     "name": "Shopify",
     "type": "n8n-nodes-base.shopify",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Shopify/shopify.svg"
   },
-  {
+  "n8n-nodes-base.shopifyTrigger": {
     "name": "Shopify Trigger",
     "type": "n8n-nodes-base.shopifyTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Shopify/shopify.svg"
   },
-  {
+  "n8n-nodes-base.signl4": {
     "name": "SIGNL4",
     "type": "n8n-nodes-base.signl4",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Signl4/signl4.png"
   },
-  {
+  "n8n-nodes-base.slack": {
     "name": "Slack",
     "type": "n8n-nodes-base.slack",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Slack/slack.svg"
   },
-  {
-    "name": "Slack",
-    "type": "n8n-nodes-base.slack",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Slack/slack.svg"
-  },
-  {
+  "n8n-nodes-base.sms77": {
     "name": "seven",
     "type": "n8n-nodes-base.sms77",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Sms77/seven.svg"
   },
-  {
+  "n8n-nodes-base.snowflake": {
     "name": "Snowflake",
     "type": "n8n-nodes-base.snowflake",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Snowflake/snowflake.svg"
   },
-  {
-    "name": "Loop Over Items (Split in Batches)",
-    "type": "n8n-nodes-base.splitInBatches"
-  },
-  {
+  "n8n-nodes-base.splitInBatches": {
     "name": "Split In Batches",
     "type": "n8n-nodes-base.splitInBatches"
   },
-  {
-    "name": "Split In Batches",
-    "type": "n8n-nodes-base.splitInBatches"
-  },
-  {
+  "n8n-nodes-base.splunk": {
     "name": "Splunk",
     "type": "n8n-nodes-base.splunk",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Splunk/splunk.svg"
   },
-  {
+  "n8n-nodes-base.spontit": {
     "name": "Spontit",
     "type": "n8n-nodes-base.spontit",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Spontit/spontit.png"
   },
-  {
+  "n8n-nodes-base.spotify": {
     "name": "Spotify",
     "type": "n8n-nodes-base.spotify",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Spotify/spotify.svg"
   },
-  {
+  "n8n-nodes-base.spreadsheetFile": {
     "name": "Spreadsheet File",
     "type": "n8n-nodes-base.spreadsheetFile"
   },
-  {
-    "name": "Spreadsheet File",
-    "type": "n8n-nodes-base.spreadsheetFile"
-  },
-  {
+  "n8n-nodes-base.sseTrigger": {
     "name": "SSE Trigger",
     "type": "n8n-nodes-base.sseTrigger"
   },
-  {
+  "n8n-nodes-base.ssh": {
     "name": "SSH",
     "type": "n8n-nodes-base.ssh"
   },
-  {
+  "n8n-nodes-base.stackby": {
     "name": "Stackby",
     "type": "n8n-nodes-base.stackby",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Stackby/stackby.png"
   },
-  {
+  "n8n-nodes-base.start": {
     "name": "Start",
     "type": "n8n-nodes-base.start"
   },
-  {
+  "n8n-nodes-base.stopAndError": {
     "name": "Stop and Error",
     "type": "n8n-nodes-base.stopAndError"
   },
-  {
+  "n8n-nodes-base.storyblok": {
     "name": "Storyblok",
     "type": "n8n-nodes-base.storyblok",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Storyblok/storyblok.svg"
   },
-  {
+  "n8n-nodes-base.strapi": {
     "name": "Strapi",
     "type": "n8n-nodes-base.strapi",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Strapi/strapi.svg"
   },
-  {
+  "n8n-nodes-base.strava": {
     "name": "Strava",
     "type": "n8n-nodes-base.strava",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Strava/strava.svg"
   },
-  {
+  "n8n-nodes-base.stravaTrigger": {
     "name": "Strava Trigger",
     "type": "n8n-nodes-base.stravaTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Strava/strava.svg"
   },
-  {
+  "n8n-nodes-base.stripe": {
     "name": "Stripe",
     "type": "n8n-nodes-base.stripe",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Stripe/stripe.svg"
   },
-  {
+  "n8n-nodes-base.stripeTrigger": {
     "name": "Stripe Trigger",
     "type": "n8n-nodes-base.stripeTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Stripe/stripe.svg"
   },
-  {
+  "n8n-nodes-base.supabase": {
     "name": "Supabase",
     "type": "n8n-nodes-base.supabase",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Supabase/supabase.svg"
   },
-  {
+  "n8n-nodes-base.surveyMonkeyTrigger": {
     "name": "SurveyMonkey Trigger",
     "type": "n8n-nodes-base.surveyMonkeyTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/SurveyMonkey/surveyMonkey.svg"
   },
-  {
+  "n8n-nodes-base.switch": {
     "name": "Switch",
     "type": "n8n-nodes-base.switch"
   },
-  {
-    "name": "Switch",
-    "type": "n8n-nodes-base.switch"
-  },
-  {
+  "n8n-nodes-base.syncroMsp": {
     "name": "SyncroMSP",
     "type": "n8n-nodes-base.syncroMsp",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/SyncroMSP/syncromsp.png"
   },
-  {
+  "n8n-nodes-base.taiga": {
     "name": "Taiga",
     "type": "n8n-nodes-base.taiga",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Taiga/taiga.svg"
   },
-  {
+  "n8n-nodes-base.taigaTrigger": {
     "name": "Taiga Trigger",
     "type": "n8n-nodes-base.taigaTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Taiga/taiga.svg"
   },
-  {
+  "n8n-nodes-base.tapfiliate": {
     "name": "Tapfiliate",
     "type": "n8n-nodes-base.tapfiliate",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Tapfiliate/tapfiliate.svg"
   },
-  {
+  "n8n-nodes-base.telegram": {
     "name": "Telegram",
     "type": "n8n-nodes-base.telegram",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Telegram/telegram.svg"
   },
-  {
+  "n8n-nodes-base.telegramTrigger": {
     "name": "Telegram Trigger",
     "type": "n8n-nodes-base.telegramTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Telegram/telegram.svg"
   },
-  {
+  "n8n-nodes-base.theHiveProject": {
     "name": "TheHive 5",
     "type": "n8n-nodes-base.theHiveProject",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/TheHiveProject/thehiveproject.svg"
   },
-  {
+  "n8n-nodes-base.theHiveProjectTrigger": {
     "name": "TheHive 5 Trigger",
     "type": "n8n-nodes-base.theHiveProjectTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/TheHiveProject/thehiveproject.svg"
   },
-  {
+  "n8n-nodes-base.theHive": {
     "name": "TheHive",
     "type": "n8n-nodes-base.theHive",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/TheHive/thehive.svg"
   },
-  {
+  "n8n-nodes-base.theHiveTrigger": {
     "name": "TheHive Trigger",
     "type": "n8n-nodes-base.theHiveTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/TheHive/thehive.svg"
   },
-  {
+  "n8n-nodes-base.timescaleDb": {
     "name": "TimescaleDB",
     "type": "n8n-nodes-base.timescaleDb",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/TimescaleDb/timescale.svg"
   },
-  {
+  "n8n-nodes-base.todoist": {
     "name": "Todoist",
     "type": "n8n-nodes-base.todoist",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Todoist/todoist.svg"
   },
-  {
-    "name": "Todoist",
-    "type": "n8n-nodes-base.todoist",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Todoist/todoist.svg"
-  },
-  {
+  "n8n-nodes-base.togglTrigger": {
     "name": "Toggl Trigger",
     "type": "n8n-nodes-base.togglTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Toggl/toggl.png"
   },
-  {
+  "n8n-nodes-base.totp": {
     "name": "TOTP",
     "type": "n8n-nodes-base.totp"
   },
-  {
+  "n8n-nodes-base.travisCi": {
     "name": "TravisCI",
     "type": "n8n-nodes-base.travisCi",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/TravisCi/travisci.png"
   },
-  {
+  "n8n-nodes-base.trello": {
     "name": "Trello",
     "type": "n8n-nodes-base.trello",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Trello/trello.svg"
   },
-  {
+  "n8n-nodes-base.trelloTrigger": {
     "name": "Trello Trigger",
     "type": "n8n-nodes-base.trelloTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Trello/trello.svg"
   },
-  {
+  "n8n-nodes-base.twake": {
     "name": "Twake",
     "type": "n8n-nodes-base.twake",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Twake/twake.png"
   },
-  {
+  "n8n-nodes-base.twilio": {
     "name": "Twilio",
     "type": "n8n-nodes-base.twilio",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Twilio/twilio.svg"
   },
-  {
+  "n8n-nodes-base.twist": {
     "name": "Twist",
     "type": "n8n-nodes-base.twist",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Twist/twist.png"
   },
-  {
+  "n8n-nodes-base.twitter": {
     "name": "X (Formerly Twitter)",
     "type": "n8n-nodes-base.twitter",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Twitter/x.svg"
   },
-  {
-    "name": "X (Formerly Twitter)",
-    "type": "n8n-nodes-base.twitter",
-    "iconUrl": "icons/n8n-nodes-base/dist/nodes/Twitter/x.svg"
-  },
-  {
+  "n8n-nodes-base.typeformTrigger": {
     "name": "Typeform Trigger",
     "type": "n8n-nodes-base.typeformTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Typeform/typeform.svg"
   },
-  {
+  "n8n-nodes-base.unleashedSoftware": {
     "name": "Unleashed Software",
     "type": "n8n-nodes-base.unleashedSoftware",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/UnleashedSoftware/unleashedSoftware.png"
   },
-  {
+  "n8n-nodes-base.uplead": {
     "name": "Uplead",
     "type": "n8n-nodes-base.uplead",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Uplead/uplead.png"
   },
-  {
+  "n8n-nodes-base.uproc": {
     "name": "uProc",
     "type": "n8n-nodes-base.uproc",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/UProc/uproc.png"
   },
-  {
+  "n8n-nodes-base.uptimeRobot": {
     "name": "UptimeRobot",
     "type": "n8n-nodes-base.uptimeRobot",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/UptimeRobot/uptimerobot.svg"
   },
-  {
+  "n8n-nodes-base.urlScanIo": {
     "name": "urlscan.io",
     "type": "n8n-nodes-base.urlScanIo",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/UrlScanIo/urlScanIo.svg"
   },
-  {
+  "n8n-nodes-base.vero": {
     "name": "Vero",
     "type": "n8n-nodes-base.vero",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Vero/vero.svg"
   },
-  {
+  "n8n-nodes-base.venafiTlsProtectCloud": {
     "name": "Venafi TLS Protect Cloud",
     "type": "n8n-nodes-base.venafiTlsProtectCloud",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Venafi/venafi.svg"
   },
-  {
+  "n8n-nodes-base.venafiTlsProtectCloudTrigger": {
     "name": "Venafi TLS Protect Cloud Trigger",
     "type": "n8n-nodes-base.venafiTlsProtectCloudTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Venafi/venafi.svg"
   },
-  {
+  "n8n-nodes-base.venafiTlsProtectDatacenter": {
     "name": "Venafi TLS Protect Datacenter",
     "type": "n8n-nodes-base.venafiTlsProtectDatacenter",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Venafi/venafi.svg"
   },
-  {
+  "n8n-nodes-base.vonage": {
     "name": "Vonage",
     "type": "n8n-nodes-base.vonage",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Vonage/vonage.png"
   },
-  {
+  "n8n-nodes-base.wait": {
     "name": "Wait",
     "type": "n8n-nodes-base.wait"
   },
-  {
+  "n8n-nodes-base.webflow": {
     "name": "Webflow",
     "type": "n8n-nodes-base.webflow",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Webflow/webflow.svg"
   },
-  {
+  "n8n-nodes-base.webflowTrigger": {
     "name": "Webflow Trigger",
     "type": "n8n-nodes-base.webflowTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Webflow/webflow.svg"
   },
-  {
+  "n8n-nodes-base.webhook": {
     "name": "Webhook",
     "type": "n8n-nodes-base.webhook",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Webhook/webhook.svg"
   },
-  {
+  "n8n-nodes-base.wekan": {
     "name": "Wekan",
     "type": "n8n-nodes-base.wekan",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Wekan/wekan.png"
   },
-  {
+  "n8n-nodes-base.whatsApp": {
     "name": "WhatsApp Business Cloud",
     "type": "n8n-nodes-base.whatsApp",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/WhatsApp/whatsapp.svg"
   },
-  {
+  "n8n-nodes-base.wise": {
     "name": "Wise",
     "type": "n8n-nodes-base.wise",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Wise/wise.svg"
   },
-  {
+  "n8n-nodes-base.wiseTrigger": {
     "name": "Wise Trigger",
     "type": "n8n-nodes-base.wiseTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Wise/wise.svg"
   },
-  {
+  "n8n-nodes-base.wooCommerce": {
     "name": "WooCommerce",
     "type": "n8n-nodes-base.wooCommerce",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/WooCommerce/wooCommerce.svg"
   },
-  {
+  "n8n-nodes-base.wooCommerceTrigger": {
     "name": "WooCommerce Trigger",
     "type": "n8n-nodes-base.wooCommerceTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/WooCommerce/wooCommerce.svg"
   },
-  {
+  "n8n-nodes-base.wordpress": {
     "name": "Wordpress",
     "type": "n8n-nodes-base.wordpress",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Wordpress/wordpress.svg"
   },
-  {
+  "n8n-nodes-base.workableTrigger": {
     "name": "Workable Trigger",
     "type": "n8n-nodes-base.workableTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Workable/workable.png"
   },
-  {
+  "n8n-nodes-base.workflowTrigger": {
     "name": "Workflow Trigger",
     "type": "n8n-nodes-base.workflowTrigger"
   },
-  {
+  "n8n-nodes-base.writeBinaryFile": {
     "name": "Write Binary File",
     "type": "n8n-nodes-base.writeBinaryFile"
   },
-  {
+  "n8n-nodes-base.wufooTrigger": {
     "name": "Wufoo Trigger",
     "type": "n8n-nodes-base.wufooTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Wufoo/wufoo.png"
   },
-  {
+  "n8n-nodes-base.xero": {
     "name": "Xero",
     "type": "n8n-nodes-base.xero",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Xero/xero.svg"
   },
-  {
+  "n8n-nodes-base.xml": {
     "name": "XML",
     "type": "n8n-nodes-base.xml"
   },
-  {
+  "n8n-nodes-base.yourls": {
     "name": "Yourls",
     "type": "n8n-nodes-base.yourls",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Yourls/yourls.png"
   },
-  {
+  "n8n-nodes-base.zammad": {
     "name": "Zammad",
     "type": "n8n-nodes-base.zammad",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Zammad/zammad.svg"
   },
-  {
+  "n8n-nodes-base.zendesk": {
     "name": "Zendesk",
     "type": "n8n-nodes-base.zendesk",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Zendesk/zendesk.svg"
   },
-  {
+  "n8n-nodes-base.zendeskTrigger": {
     "name": "Zendesk Trigger",
     "type": "n8n-nodes-base.zendeskTrigger",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Zendesk/zendesk.svg"
   },
-  {
+  "n8n-nodes-base.zohoCrm": {
     "name": "Zoho CRM",
     "type": "n8n-nodes-base.zohoCrm",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Zoho/zoho.svg"
   },
-  {
+  "n8n-nodes-base.zoom": {
     "name": "Zoom",
     "type": "n8n-nodes-base.zoom",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Zoom/zoom.svg"
   },
-  {
+  "n8n-nodes-base.zulip": {
     "name": "Zulip",
     "type": "n8n-nodes-base.zulip",
     "iconUrl": "icons/n8n-nodes-base/dist/nodes/Zulip/zulip.svg"
   },
-  {
+  "@n8n/n8n-nodes-langchain.agent": {
     "name": "AI Agent",
     "type": "@n8n/n8n-nodes-langchain.agent"
   },
-  {
+  "@n8n/n8n-nodes-langchain.openAiAssistant": {
     "name": "OpenAI Assistant",
     "type": "@n8n/n8n-nodes-langchain.openAiAssistant"
   },
-  {
+  "@n8n/n8n-nodes-langchain.chainSummarization": {
     "name": "Summarization Chain",
     "type": "@n8n/n8n-nodes-langchain.chainSummarization"
   },
-  {
+  "@n8n/n8n-nodes-langchain.chainLlm": {
     "name": "Basic LLM Chain",
     "type": "@n8n/n8n-nodes-langchain.chainLlm"
   },
-  {
+  "@n8n/n8n-nodes-langchain.chainRetrievalQa": {
     "name": "Question and Answer Chain",
     "type": "@n8n/n8n-nodes-langchain.chainRetrievalQa"
   },
-  {
+  "@n8n/n8n-nodes-langchain.code": {
     "name": "LangChain Code",
     "type": "@n8n/n8n-nodes-langchain.code"
   },
-  {
+  "@n8n/n8n-nodes-langchain.documentDefaultDataLoader": {
     "name": "Default Data Loader",
     "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
     "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/document_loaders/DocumentDefaultDataLoader/binary.svg"
   },
-  {
+  "@n8n/n8n-nodes-langchain.documentBinaryInputLoader": {
     "name": "Binary Input Loader",
     "type": "@n8n/n8n-nodes-langchain.documentBinaryInputLoader",
     "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/document_loaders/DocumentBinaryInputLoader/binary.svg"
   },
-  {
+  "@n8n/n8n-nodes-langchain.documentGithubLoader": {
     "name": "GitHub Document Loader",
     "type": "@n8n/n8n-nodes-langchain.documentGithubLoader",
     "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/document_loaders/DocumentGithubLoader/github.svg"
   },
-  {
+  "@n8n/n8n-nodes-langchain.documentJsonInputLoader": {
     "name": "JSON Input Loader",
     "type": "@n8n/n8n-nodes-langchain.documentJsonInputLoader",
     "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/document_loaders/DocumentJSONInputLoader/json.svg"
   },
-  {
+  "@n8n/n8n-nodes-langchain.embeddingsCohere": {
     "name": "Embeddings Cohere",
     "type": "@n8n/n8n-nodes-langchain.embeddingsCohere",
     "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/embeddings/EmbeddingsCohere/cohere.svg"
   },
-  {
+  "@n8n/n8n-nodes-langchain.embeddingsAwsBedrock": {
     "name": "Embeddings AWS Bedrock",
     "type": "@n8n/n8n-nodes-langchain.embeddingsAwsBedrock",
     "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/embeddings/EmbeddingsAwsBedrock/bedrock.svg"
   },
-  {
+  "@n8n/n8n-nodes-langchain.embeddingsGooglePalm": {
     "name": "Embeddings Google PaLM",
     "type": "@n8n/n8n-nodes-langchain.embeddingsGooglePalm",
     "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/embeddings/EmbeddingsGooglePalm/google.svg"
   },
-  {
+  "@n8n/n8n-nodes-langchain.embeddingsHuggingFaceInference": {
     "name": "Embeddings Hugging Face Inference",
     "type": "@n8n/n8n-nodes-langchain.embeddingsHuggingFaceInference",
     "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/embeddings/EmbeddingsHuggingFaceInference/huggingface.svg"
   },
-  {
+  "@n8n/n8n-nodes-langchain.embeddingsOpenAi": {
     "name": "Embeddings OpenAI",
     "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
     "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/embeddings/EmbeddingsOpenAI/openAi.svg"
   },
-  {
+  "@n8n/n8n-nodes-langchain.lmChatAnthropic": {
     "name": "Anthropic Chat Model",
     "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
     "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/llms/LMChatAnthropic/anthropic.svg"
   },
-  {
+  "@n8n/n8n-nodes-langchain.lmGooglePalm": {
     "name": "Google PaLM Language Model",
     "type": "@n8n/n8n-nodes-langchain.lmGooglePalm",
     "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/llms/LmGooglePalm/google.svg"
   },
-  {
+  "@n8n/n8n-nodes-langchain.lmChatAwsBedrock": {
     "name": "AWS Bedrock Chat Model",
     "type": "@n8n/n8n-nodes-langchain.lmChatAwsBedrock",
     "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/llms/LmChatAwsBedrock/bedrock.svg"
   },
-  {
+  "@n8n/n8n-nodes-langchain.lmChatGooglePalm": {
     "name": "Google PaLM Chat Model",
     "type": "@n8n/n8n-nodes-langchain.lmChatGooglePalm",
     "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/llms/LmChatGooglePalm/google.svg"
   },
-  {
+  "@n8n/n8n-nodes-langchain.lmChatOllama": {
     "name": "Ollama Chat Model",
     "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
     "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/llms/LMChatOllama/ollama.svg"
   },
-  {
+  "@n8n/n8n-nodes-langchain.lmChatOpenAi": {
     "name": "OpenAI Chat Model",
     "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
     "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/llms/LMChatOpenAi/openAi.svg"
   },
-  {
+  "@n8n/n8n-nodes-langchain.lmOpenAi": {
     "name": "OpenAI Model",
     "type": "@n8n/n8n-nodes-langchain.lmOpenAi",
     "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/llms/LMOpenAi/openAi.svg"
   },
-  {
+  "@n8n/n8n-nodes-langchain.lmCohere": {
     "name": "Cohere Model",
     "type": "@n8n/n8n-nodes-langchain.lmCohere",
     "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/llms/LMCohere/cohere.svg"
   },
-  {
+  "@n8n/n8n-nodes-langchain.lmOllama": {
     "name": "Ollama Model",
     "type": "@n8n/n8n-nodes-langchain.lmOllama",
     "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/llms/LMOllama/ollama.svg"
   },
-  {
+  "@n8n/n8n-nodes-langchain.lmOpenHuggingFaceInference": {
     "name": "Hugging Face Inference Model",
     "type": "@n8n/n8n-nodes-langchain.lmOpenHuggingFaceInference",
     "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/llms/LMOpenHuggingFaceInference/huggingface.svg"
   },
-  {
+  "@n8n/n8n-nodes-langchain.memoryBufferWindow": {
     "name": "Window Buffer Memory (easiest)",
     "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow"
   },
-  {
+  "@n8n/n8n-nodes-langchain.memoryMotorhead": {
     "name": "Motorhead",
     "type": "@n8n/n8n-nodes-langchain.memoryMotorhead"
   },
-  {
+  "@n8n/n8n-nodes-langchain.memoryRedisChat": {
     "name": "Redis Chat Memory",
     "type": "@n8n/n8n-nodes-langchain.memoryRedisChat",
     "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/memory/MemoryRedisChat/redis.svg"
   },
-  {
+  "@n8n/n8n-nodes-langchain.memoryChatRetriever": {
     "name": "Chat Messages Retriever",
     "type": "@n8n/n8n-nodes-langchain.memoryChatRetriever"
   },
-  {
+  "@n8n/n8n-nodes-langchain.memoryXata": {
     "name": "Xata",
     "type": "@n8n/n8n-nodes-langchain.memoryXata",
     "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/memory/MemoryXata/xata.svg"
   },
-  {
+  "@n8n/n8n-nodes-langchain.memoryZep": {
     "name": "Zep",
     "type": "@n8n/n8n-nodes-langchain.memoryZep",
     "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/memory/MemoryZep/zep.png"
   },
-  {
+  "@n8n/n8n-nodes-langchain.outputParserAutofixing": {
     "name": "Auto-fixing Output Parser",
     "type": "@n8n/n8n-nodes-langchain.outputParserAutofixing"
   },
-  {
+  "@n8n/n8n-nodes-langchain.outputParserItemList": {
     "name": "Item List Output Parser",
     "type": "@n8n/n8n-nodes-langchain.outputParserItemList"
   },
-  {
+  "@n8n/n8n-nodes-langchain.outputParserStructured": {
     "name": "Structured Output Parser",
     "type": "@n8n/n8n-nodes-langchain.outputParserStructured"
   },
-  {
+  "@n8n/n8n-nodes-langchain.retrieverContextualCompression": {
     "name": "Contextual Compression Retriever",
     "type": "@n8n/n8n-nodes-langchain.retrieverContextualCompression"
   },
-  {
+  "@n8n/n8n-nodes-langchain.retrieverVectorStore": {
     "name": "Vector Store Retriever",
     "type": "@n8n/n8n-nodes-langchain.retrieverVectorStore"
   },
-  {
+  "@n8n/n8n-nodes-langchain.retrieverMultiQuery": {
     "name": "MultiQuery Retriever",
     "type": "@n8n/n8n-nodes-langchain.retrieverMultiQuery"
   },
-  {
+  "@n8n/n8n-nodes-langchain.retrieverWorkflow": {
     "name": "Workflow Retriever",
     "type": "@n8n/n8n-nodes-langchain.retrieverWorkflow"
   },
-  {
+  "@n8n/n8n-nodes-langchain.textSplitterCharacterTextSplitter": {
     "name": "Character Text Splitter",
     "type": "@n8n/n8n-nodes-langchain.textSplitterCharacterTextSplitter"
   },
-  {
+  "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter": {
     "name": "Recursive Character Text Splitter",
     "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter"
   },
-  {
+  "@n8n/n8n-nodes-langchain.textSplitterTokenSplitter": {
     "name": "Token Splitter",
     "type": "@n8n/n8n-nodes-langchain.textSplitterTokenSplitter"
   },
-  {
+  "@n8n/n8n-nodes-langchain.toolCalculator": {
     "name": "Calculator",
     "type": "@n8n/n8n-nodes-langchain.toolCalculator"
   },
-  {
+  "@n8n/n8n-nodes-langchain.toolCode": {
     "name": "Custom Code Tool",
     "type": "@n8n/n8n-nodes-langchain.toolCode"
   },
-  {
+  "@n8n/n8n-nodes-langchain.toolSerpApi": {
     "name": "SerpApi (Google Search)",
     "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
     "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/tools/ToolSerpApi/serpApi.svg"
   },
-  {
+  "@n8n/n8n-nodes-langchain.toolWikipedia": {
     "name": "Wikipedia",
     "type": "@n8n/n8n-nodes-langchain.toolWikipedia",
     "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/tools/ToolWikipedia/wikipedia.svg"
   },
-  {
+  "@n8n/n8n-nodes-langchain.toolWolframAlpha": {
     "name": "Wolfram|Alpha",
     "type": "@n8n/n8n-nodes-langchain.toolWolframAlpha",
     "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/tools/ToolWolframAlpha/wolfram-alpha.svg"
   },
-  {
+  "@n8n/n8n-nodes-langchain.toolWorkflow": {
     "name": "Custom n8n Workflow Tool",
     "type": "@n8n/n8n-nodes-langchain.toolWorkflow"
   },
-  {
+  "@n8n/n8n-nodes-langchain.manualChatTrigger": {
     "name": "Manual Chat Trigger",
     "type": "@n8n/n8n-nodes-langchain.manualChatTrigger"
   },
-  {
+  "@n8n/n8n-nodes-langchain.vectorStoreInMemory": {
     "name": "In-Memory Vector Store",
     "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory"
   },
-  {
+  "@n8n/n8n-nodes-langchain.vectorStoreInMemoryInsert": {
     "name": "In Memory Vector Store Insert",
     "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemoryInsert"
   },
-  {
+  "@n8n/n8n-nodes-langchain.vectorStoreInMemoryLoad": {
     "name": "In Memory Vector Store Load",
     "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemoryLoad"
   },
-  {
+  "@n8n/n8n-nodes-langchain.vectorStorePinecone": {
     "name": "Pinecone Vector Store",
     "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
     "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/vector_store/VectorStorePinecone/pinecone.svg"
   },
-  {
+  "@n8n/n8n-nodes-langchain.vectorStorePineconeInsert": {
     "name": "Pinecone: Insert",
     "type": "@n8n/n8n-nodes-langchain.vectorStorePineconeInsert",
     "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/vector_store/VectorStorePineconeInsert/pinecone.svg"
   },
-  {
+  "@n8n/n8n-nodes-langchain.vectorStorePineconeLoad": {
     "name": "Pinecone: Load",
     "type": "@n8n/n8n-nodes-langchain.vectorStorePineconeLoad",
     "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/vector_store/VectorStorePineconeLoad/pinecone.svg"
   },
-  {
+  "@n8n/n8n-nodes-langchain.vectorStoreSupabase": {
     "name": "Supabase Vector Store",
     "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
     "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/vector_store/VectorStoreSupabase/supabase.svg"
   },
-  {
+  "@n8n/n8n-nodes-langchain.vectorStoreSupabaseInsert": {
     "name": "Supabase: Insert",
     "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabaseInsert",
     "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/vector_store/VectorStoreSupabaseInsert/supabase.svg"
   },
-  {
+  "@n8n/n8n-nodes-langchain.vectorStoreSupabaseLoad": {
     "name": "Supabase: Load",
     "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabaseLoad",
     "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/vector_store/VectorStoreSupabaseLoad/supabase.svg"
   },
-  {
+  "@n8n/n8n-nodes-langchain.vectorStoreZep": {
     "name": "Zep Vector Store",
     "type": "@n8n/n8n-nodes-langchain.vectorStoreZep",
     "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/vector_store/VectorStoreZep/zep.png"
   },
-  {
+  "@n8n/n8n-nodes-langchain.vectorStoreZepInsert": {
     "name": "Zep Vector Store: Insert",
     "type": "@n8n/n8n-nodes-langchain.vectorStoreZepInsert",
     "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/vector_store/VectorStoreZepInsert/zep.png"
   },
-  {
+  "@n8n/n8n-nodes-langchain.vectorStoreZepLoad": {
     "name": "Zep Vector Store: Load",
     "type": "@n8n/n8n-nodes-langchain.vectorStoreZepLoad",
     "iconUrl": "icons/@n8n/n8n-nodes-langchain/dist/nodes/vector_store/VectorStoreZepLoad/zep.png"
   },
-  {
+  "CUSTOM.promptify": {
     "name": "Promptify",
     "type": "CUSTOM.promptify",
     "iconUrl": "icons/CUSTOM/n8n-promptify/dist/nodes/Promptify/promptify.svg"
   }
-]
+}

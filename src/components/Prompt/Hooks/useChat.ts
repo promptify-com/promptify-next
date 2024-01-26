@@ -136,8 +136,8 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
     }
   };
 
-  const messageAnswersForm = (message: string) => {
-    const botMessage = createMessage("text");
+  const messageAnswersForm = (message: string, type: MessageType = "text") => {
+    const botMessage = createMessage(type);
     botMessage.text = message;
     addToQueuedMessages([createMessage("form")]);
     setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat(botMessage));
