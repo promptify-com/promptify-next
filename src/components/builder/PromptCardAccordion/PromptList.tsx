@@ -4,7 +4,6 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { useDrop } from "react-dnd";
 import Add from "@mui/icons-material/Add";
-
 import PromptCardAccordion from "@/components/builder/PromptCardAccordion";
 import { promptComputeDomId, randomId } from "@/common/helpers";
 import { useDeletePromptMutation } from "@/core/api/templates";
@@ -172,7 +171,7 @@ const PromptList = ({ prompts, setPrompts, engines, templateLoading }: Props) =>
             prompts.map((prompt, index) => {
               index++; // start from 1
               return (
-                <Fragment key={index}>
+                <Fragment key={prompt.id ?? prompt.temp_id}>
                   <Box
                     width={"100%"}
                     id={promptComputeDomId({ title: prompt.title })}
