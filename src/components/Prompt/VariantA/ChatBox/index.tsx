@@ -3,11 +3,11 @@ import Typography from "@mui/material/Typography";
 import { ChatInterface } from "./ChatInterface";
 import { ChatInput } from "@/components/Prompt/Common/Chat/ChatInput";
 import SigninButton from "@/components/common/buttons/SigninButton";
-import { Templates } from "@/core/api/dto/templates";
-import { IMessage } from "@/components/Prompt/Types/chat";
-import { useAppSelector } from "@/hooks/useStore";
+import type { IPromptInput } from "@/common/types/prompt";
+import type { IMessage } from "@/components/Prompt/Types/chat";
+import type { Templates } from "@/core/api/dto/templates";
 import useBrowser from "@/hooks/useBrowser";
-import { IPromptInput } from "@/common/types/prompt";
+import { useAppSelector } from "@/hooks/useStore";
 
 interface Props {
   template: Templates;

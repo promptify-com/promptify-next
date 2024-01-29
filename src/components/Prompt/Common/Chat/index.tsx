@@ -1,18 +1,16 @@
-import { memo, useEffect, useMemo } from "react";
-import { Templates } from "@/core/api/dto/templates";
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import useChat from "@/components/Prompt/Hooks/useChat";
-import useChatBox from "@/hooks/useChatBox";
-import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution";
-import { IPromptInput } from "@/common/types/prompt";
-import { PromptParams } from "@/core/api/dto/prompts";
-import { setInputs, setParams, setparamsValues } from "@/core/store/chatSlice";
-import { setSelectedExecution } from "@/core/store/executionsSlice";
-import { getExecutionById } from "@/hooks/api/executions";
-import { IMessage } from "../../Types/chat";
-import { randomId } from "@/common/helpers";
+import { useMemo, memo, useEffect } from "react";
+import { useAppSelector, useAppDispatch } from "@/hooks/useStore";
 import { executionsApi } from "@/core/api/executions";
-import useVariant from "../../Hooks/useVariant";
+import { setSelectedExecution } from "@/core/store/executionsSlice";
+import useChatBox from "@/hooks/useChatBox";
+import useChat from "@/components/Prompt/Hooks/useChat";
+import { getExecutionById } from "@/hooks/api/executions";
+import { setInputs, setParams, setParamsValues } from "@/core/store/chatSlice";
+import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution";
+import type { Templates } from "@/core/api/dto/templates";
+import type { IPromptInput } from "@/common/types/prompt";
+import type { PromptParams } from "@/core/api/dto/prompts";
+import useVariant from "@/components/Prompt/Hooks/useVariant";
 import ChatBoxVariantA from "@/components/Prompt/VariantA/ChatBox";
 import ChatBoxVariantB from "@/components/Prompt/VariantB/ChatBox";
 
@@ -31,8 +29,8 @@ const CommonChat: React.FC<Props> = ({ onError, template, questionPrefixContent 
 
   const {
     messages,
-    setMessages,
     initialMessages,
+    messageAnswersForm,
     showGenerateButton,
     showGenerate,
     validateVary,
@@ -45,7 +43,7 @@ const CommonChat: React.FC<Props> = ({ onError, template, questionPrefixContent 
   const { prepareAndRemoveDuplicateInputs } = useChatBox();
   const { generateExecutionHandler, abortConnection, disableChatInput } = useGenerateExecution({
     template,
-    questionPrefixContent,
+    messageAnswersForm,
     onError,
   });
 
@@ -59,7 +57,7 @@ const CommonChat: React.FC<Props> = ({ onError, template, questionPrefixContent 
       template.questions,
     );
 
-    dispatch(setparamsValues(paramsValues));
+    dispatch(setParamsValues(paramsValues));
 
     initialMessages({ questions: inputs });
 
@@ -85,16 +83,6 @@ const CommonChat: React.FC<Props> = ({ onError, template, questionPrefixContent 
       try {
         const _newExecution = await getExecutionById(generatedExecution.id);
         dispatch(setSelectedExecution(_newExecution));
-
-        const generatedExecutionMessage: IMessage = {
-          id: randomId(),
-          text: "",
-          type: "spark",
-          createdAt: new Date(new Date().getTime() - 1000),
-          fromUser: false,
-          spark: _newExecution,
-        };
-        setMessages(prevMessages => prevMessages.concat(generatedExecutionMessage));
       } catch {
         window.location.reload();
       }

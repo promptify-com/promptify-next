@@ -47,7 +47,7 @@ const Executions: React.FC<ExecutionsProps> = ({ template }) => {
       p={"0px 24px"}
     >
       {isExecutionsLoading ? (
-        Array.from({ length: 2 }, (_, i) => <CardExecutionPlaceholder key={i} />)
+        <CardExecutionPlaceholder count={2} />
       ) : executions && executions.length > 0 ? (
         <>
           <Tabs

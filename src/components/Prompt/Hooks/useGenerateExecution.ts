@@ -1,15 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
-
 import { setGeneratingStatus } from "@/core/store/templatesSlice";
 import { parseMessageData } from "@/common/helpers/parseMessageData";
-import { uploadFileHelper } from "../Utils/uploadFileHelper";
-import { setAnswers } from "@/core/store/chatSlice";
-import { useUploadFileMutation } from "@/core/api/uploadFile";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import useToken from "../../../hooks/useToken";
-import useChat from "./useChat";
+import useToken from "@/hooks/useToken";
 import useChatBox from "./useChatBox";
 import useApiAccess from "./useApiAccess";
 import { useStopExecutionMutation } from "@/core/api/executions";
@@ -17,20 +12,21 @@ import { setGeneratedExecution } from "@/core/store/executionsSlice";
 import type { PromptLiveResponse } from "@/common/types/prompt";
 import type { ResPrompt } from "@/core/api/dto/prompts";
 import type { Templates } from "@/core/api/dto/templates";
-import type { IAnswer } from "../Types/chat";
 import { useStoreAnswersAndParams } from "@/hooks/useStoreAnswersAndParams";
+import useUploadPromptFiles from "@/hooks/useUploadPromptFiles";
+import { setAnswers } from "@/core/store/chatSlice";
 
 interface Props {
   template: Templates;
-  questionPrefixContent: string;
+  messageAnswersForm: (message: string) => void;
   onError: (errMsg: string) => void;
 }
-const useGenerateExecution = ({ template, questionPrefixContent, onError }: Props) => {
+const useGenerateExecution = ({ template, messageAnswersForm, onError }: Props) => {
   const token = useToken();
   const router = useRouter();
   const dispatch = useAppDispatch();
 
-  const [uploadFile] = useUploadFileMutation();
+  const { uploadedFiles, uploadPromptAnswersFiles } = useUploadPromptFiles();
   const [stopExecution] = useStopExecutionMutation();
 
   const { answers, inputs, paramsValues } = useAppSelector(state => state.chat);
@@ -41,42 +37,11 @@ const useGenerateExecution = ({ template, questionPrefixContent, onError }: Prop
     created_at: new Date(),
     data: [],
   });
-  const uploadedFiles = useRef(new Map<string, string>());
   const abortController = useRef(new AbortController());
 
-  const { messageAnswersForm } = useChat({
-    questionPrefixContent,
-    initialMessageTitle: template.title,
-  });
   const { preparePromptsData } = useChatBox();
   const { dispatchNewExecutionData } = useApiAccess();
   const { storeAnswers, storeParams } = useStoreAnswersAndParams();
-
-  const validateAndUploadFiles = () =>
-    new Promise<{ status: boolean; answers: IAnswer[] }>(async resolve => {
-      let status = true;
-      const _answers = await Promise.all(
-        [...answers].map(async answer => {
-          if (answer.answer instanceof File && !uploadedFiles.current.has(answer.inputName)) {
-            const res = await uploadFileHelper(uploadFile, { file: answer.answer });
-            const fileUrl = res?.file;
-
-            if (typeof fileUrl === "string" && fileUrl) {
-              uploadedFiles.current.set(answer.inputName, fileUrl);
-            } else {
-              answer.error = true;
-              if (answer.required) {
-                status = false;
-              }
-            }
-          }
-          return answer;
-        }),
-      );
-
-      dispatch(setAnswers(_answers));
-      resolve({ status, answers: _answers });
-    });
 
   const generateExecutionHandler = async () => {
     if (!token) {
@@ -85,9 +50,11 @@ const useGenerateExecution = ({ template, questionPrefixContent, onError }: Prop
       return router.push("/signin");
     }
 
-    const filesUploaded = await validateAndUploadFiles();
+    const filesUploaded = await uploadPromptAnswersFiles(answers, uploadedFiles.current);
+    const _answers = filesUploaded.answers;
+    dispatch(setAnswers(_answers));
     if (!filesUploaded.status) {
-      const invalids = filesUploaded.answers
+      const invalids = _answers
         .filter(answers => answers.error)
         .map(answer => inputs.find(input => input.name === answer.inputName)?.fullName);
 
@@ -97,7 +64,7 @@ const useGenerateExecution = ({ template, questionPrefixContent, onError }: Prop
 
     dispatch(setGeneratingStatus(true));
 
-    const promptsData = preparePromptsData(uploadedFiles.current, answers, paramsValues, template.prompts);
+    const promptsData = preparePromptsData(uploadedFiles.current, _answers, paramsValues, template.prompts);
 
     uploadedFiles.current.clear();
 

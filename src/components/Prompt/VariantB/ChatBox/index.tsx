@@ -5,7 +5,7 @@ import Stack from "@mui/material/Stack";
 import SigninButton from "@/components/common/buttons/SigninButton";
 import { ChatInput } from "@/components/Prompt/Common/Chat/ChatInput";
 import { useAppSelector } from "@/hooks/useStore";
-import { ChatInterface } from "../../Common/Chat/ChatInterface";
+import { ChatInterface } from "@/components/Prompt/Common/Chat/ChatInterface";
 import type { Link } from "@/components/Prompt/Types";
 
 interface Props {

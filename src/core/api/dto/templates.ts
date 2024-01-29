@@ -296,3 +296,20 @@ export interface IPostFeedback {
   comment: string;
   user: UserPartial;
 }
+
+export interface IPromptExecution {
+  id: number;
+  prompt: {
+    id: number;
+    title: string;
+    engine: Engine;
+  };
+  output: string;
+  created_at: Date | string;
+  tokens_spent: number;
+  parameters?: {
+    [key: number | string]: string | number;
+  };
+  executed_by?: number;
+  errors?: string;
+}

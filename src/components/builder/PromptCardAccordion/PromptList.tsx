@@ -4,26 +4,26 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { useDrop } from "react-dnd";
 import Add from "@mui/icons-material/Add";
-
 import PromptCardAccordion from "@/components/builder/PromptCardAccordion";
 import { promptComputeDomId, randomId } from "@/common/helpers";
 import { useDeletePromptMutation } from "@/core/api/templates";
 import { DeleteDialog } from "@/components/dialog/DeleteDialog";
 import { useScrollToElement } from "@/hooks/useScrollToElement";
 import { BUILDER_TYPE } from "@/common/constants";
-import type { Engine } from "@/core/api/dto/templates";
 import type { IEditPrompts } from "@/common/types/builder";
 import BuilderPromptPlaceholder from "@/components/placeholders/BuilderPromptPlaceholder";
+import { useAppSelector } from "@/hooks/useStore";
 
 interface Props {
   prompts: IEditPrompts[];
   setPrompts: (prompts: IEditPrompts[]) => void;
-  engines: Engine[];
   templateLoading: boolean;
 }
-const PromptList = ({ prompts, setPrompts, engines, templateLoading }: Props) => {
+function PromptList({ prompts, setPrompts, templateLoading }: Props) {
   const [promptToDelete, setPromptToDelete] = useState<IEditPrompts | null>(null);
   const [deletePrompt] = useDeletePromptMutation();
+
+  const engines = useAppSelector(state => state.builder.engines);
 
   const setSmoothScrollTarget = useScrollToElement("smooth");
 
@@ -76,7 +76,7 @@ const PromptList = ({ prompts, setPrompts, engines, templateLoading }: Props) =>
       temp_id: temp_id,
       title: `Prompt #${order}`,
       content: "Describe here prompt parameters, for example {{name:text}} or {{age:number}}",
-      engine_id: textEngine?.id || 0,
+      engine: textEngine?.id || 0,
       dependencies: [],
       parameters: [],
       order: order,
@@ -117,7 +117,7 @@ const PromptList = ({ prompts, setPrompts, engines, templateLoading }: Props) =>
       temp_id: temp_id,
       title: `${duplicateData.title} - Copy`,
       content: duplicateData.content,
-      engine_id: duplicateData.engine_id,
+      engine: duplicateData.engine,
       dependencies: duplicateData.dependencies,
       parameters: duplicateData.parameters,
       order: order,
@@ -172,7 +172,7 @@ const PromptList = ({ prompts, setPrompts, engines, templateLoading }: Props) =>
             prompts.map((prompt, index) => {
               index++; // start from 1
               return (
-                <Fragment key={index}>
+                <Fragment key={prompt.id ?? prompt.temp_id}>
                   <Box
                     width={"100%"}
                     id={promptComputeDomId({ title: prompt.title })}
@@ -184,7 +184,6 @@ const PromptList = ({ prompts, setPrompts, engines, templateLoading }: Props) =>
                       deletePrompt={() => setPromptToDelete(prompt)}
                       duplicatePrompt={() => duplicatePrompt(prompt, index + 1)}
                       prompts={prompts}
-                      engines={engines}
                       movePrompt={movePrompt}
                       findPromptIndex={findPromptIndex}
                       builderType={BUILDER_TYPE.USER}
@@ -245,6 +244,6 @@ const PromptList = ({ prompts, setPrompts, engines, templateLoading }: Props) =>
       )}
     </>
   );
-};
+}
 
 export default memo(PromptList);
