@@ -142,7 +142,11 @@ export const TemplateSidebarLinks: Link[] = [
     icon: <Tune />,
     title: "Customize",
   },
-
+  {
+    name: "clone",
+    icon: <Tune />,
+    title: "Clone",
+  },
   {
     name: "executions",
     icon: <NoteStackIcon />,
