@@ -11,8 +11,7 @@ import IconButton from "@mui/material/IconButton";
 import { useTheme } from "@mui/material/styles";
 import Close from "@mui/icons-material/Close";
 import Image from "next/image";
-
-import { isValidUserFn } from "@/core/store/userSlice";
+import { isAdminFn } from "@/core/store/userSlice";
 import { setActiveToolbarLink } from "@/core/store/templatesSlice";
 import ToolbarItem from "@/components/Prompt/Common/Sidebar/ToolbarItem";
 import { TemplateSidebarLinks } from "@/common/constants";
@@ -44,8 +43,9 @@ function Sidebar({ template, executions }: SidebarProps) {
   const handleCloseSidebar = () => {
     dispatch(setActiveToolbarLink(null));
   };
+  const isAdmin = useAppSelector(isAdminFn);
 
-  const isOwner = currentUser?.is_admin || currentUser?.id === template.created_by.id;
+  const isOwner = isAdmin || currentUser?.id === template.created_by.id;
 
   const sidebarLinks = isVariantB
     ? TemplateSidebarLinks.filter(link => (isOwner ? link.name !== "clone" : link.name !== "customize"))

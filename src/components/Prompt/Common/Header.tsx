@@ -20,6 +20,7 @@ import useVariant from "@/components/Prompt/Hooks/useVariant";
 import { ViewWeekOutlined, WebAssetOutlined } from "@mui/icons-material";
 import ClientOnly from "@/components/base/ClientOnly";
 import useCloneTemplate from "@/components/Prompt/Hooks/useCloneTemplate";
+import { isAdminFn } from "@/core/store/userSlice";
 
 interface TemplateHeaderProps {
   template: Templates;
@@ -30,10 +31,13 @@ export default function Header({ template }: TemplateHeaderProps) {
   const { switchVariant, variant, isVariantA } = useVariant();
   const { cloneTemplate } = useCloneTemplate({ template });
   const dispatch = useAppDispatch();
+  const isAdmin = useAppSelector(isAdminFn);
 
   const isGenerating = useAppSelector(state => state.template.isGenerating);
 
   const currentUser = useAppSelector(state => state.user.currentUser);
+
+  const isOwner = isAdmin || currentUser?.id === template.created_by.id;
 
   const breadcrumbs = [
     <Link
@@ -128,7 +132,7 @@ export default function Header({ template }: TemplateHeaderProps) {
                 }}
               />
             </Button>
-            {currentUser?.is_admin || currentUser?.id === template.created_by.id ? (
+            {isOwner ? (
               <Button
                 onClick={() => window.open(`${getBaseUrl}/prompt-builder/${template.slug}?editor=1`, "_blank")}
                 sx={{
