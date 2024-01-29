@@ -63,22 +63,11 @@ export interface IWorkflowCreateResponse {
   created_at: Date;
 }
 
-interface AuthTypeProperty {
-  displayName: string;
-  name: string;
-  type: string;
-  default: string | number;
-  typeOptions?: {
-    password?: boolean;
-  };
-  description?: string;
-}
-
 interface AuthTypeProperties {
   name: string;
   displayName: string;
   documentationUrl: string;
-  properties: AuthTypeProperty[];
+  properties: ICredentialsProperty[];
 }
 
 export interface Creds {
