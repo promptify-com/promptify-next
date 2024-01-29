@@ -23,7 +23,7 @@ function TopHeaderActions({ executionsLength = 0 }) {
 
   const { variant, switchVariant } = useVariant();
 
-  const ToolbarItems = TemplateSidebarLinks.filter(link => link.name === "executions" || link.name === "details");
+  const ToolbarItems = TemplateSidebarLinks.filter(link => ["executions", "details"].includes(link.name));
 
   const renderIcon = (link: Link) => {
     if (link.name === "executions") {
