@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import { randomId } from "@/common/helpers";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setAnswers, setIsSimulationStreaming, setParamsValues } from "@/core/store/chatSlice";
@@ -8,8 +9,7 @@ import { vary } from "@/common/helpers/varyValidator";
 import { setGeneratedExecution, setSelectedExecution } from "@/core/store/executionsSlice";
 import type { IPromptInput } from "@/common/types/prompt";
 import { ContextualOverrides, ResOverrides } from "@/core/api/dto/prompts";
-import { useRouter } from "next/router";
-import type { IAnswer, IMessage, MessageType } from "../Types/chat";
+import type { IAnswer, IMessage, MessageType } from "@/components/Prompt/Types/chat";
 import type { PromptInputType } from "@/components/Prompt/Types";
 
 interface Props {
@@ -80,17 +80,16 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
 
     const formMessage = createMessage({ type: "form", noHeader: true });
 
-    if (isAutomationPage || (!router.query?.hash && isVariantB)) {
+    if (isAutomationPage && authCredentials.length) {
       const authMessage = createMessage({ type: "auth", noHeader: true });
-      if (authCredentials.length) {
-        initialQueuedMessages.push(authMessage);
-      }
+      initialQueuedMessages.push(authMessage);
       initialQueuedMessages.push(formMessage);
-      addToQueuedMessages(initialQueuedMessages);
+    } else if (!router.query.hash && isVariantB) {
+      initialQueuedMessages.push(formMessage);
     } else if (isVariantA) {
       initialQueuedMessages.push(formMessage);
-      addToQueuedMessages(initialQueuedMessages);
     }
+    addToQueuedMessages(initialQueuedMessages);
 
     dispatch(setAnswers([]));
   };

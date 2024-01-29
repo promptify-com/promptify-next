@@ -83,7 +83,10 @@ function Form({ onScrollToBottom, messageType }: FormProps) {
           addEndListener={onScrollToBottom}
         >
           <Stack>
-            <FormFields variant={"a"} />
+            <FormFields
+              variant={"a"}
+              messageType={messageType}
+            />
           </Stack>
         </Fade>
       )}
