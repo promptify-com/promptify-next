@@ -3,12 +3,13 @@ import { useRouter } from "next/router";
 
 import { useCreateUserWorkflowMutation, useGetWorkflowByIdQuery } from "@/core/api/workflows";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { setGeneratedExecution, setRepeatedExecution, setSelectedExecution } from "@/core/store/executionsSlice";
-import { setAnswers, setInputs } from "@/core/store/chatSlice";
+import { clearExecutionsStates } from "@/core/store/executionsSlice";
+import { clearChatStates, setAuthCredentials } from "@/core/store/chatSlice";
 import { n8nClient as ApiClient } from "@/common/axios";
 import Storage from "@/common/storage";
 import type { Category } from "@/core/api/dto/templates";
 import type { INode, IWorkflow } from "@/components/Automation/types";
+import { extractAuthData, nodes } from "../helpers";
 
 const useWorkflow = () => {
   const dispatch = useAppDispatch();
@@ -25,14 +26,6 @@ const useWorkflow = () => {
   } = useGetWorkflowByIdQuery(parseInt(workflowId), { skip: !workflowId });
 
   const [createWorkflow] = useCreateUserWorkflowMutation();
-
-  const clearStoredStates = () => {
-    dispatch(setSelectedExecution(null));
-    dispatch(setGeneratedExecution(null));
-    dispatch(setRepeatedExecution(null));
-    dispatch(setInputs([]));
-    dispatch(setAnswers([]));
-  };
 
   const extractWebhookPath = (nodes: INode[]) => {
     const webhookNode = nodes.find(node => node.type === "n8n-nodes-base.webhook");
@@ -70,13 +63,19 @@ const useWorkflow = () => {
     return response.data;
   }
   useEffect(() => {
-    clearStoredStates();
+    dispatch(clearChatStates());
+    dispatch(clearExecutionsStates());
   }, []);
 
+  async function getAuthCredentials(nodes: INode[]) {
+    const authCredentials = await extractAuthData(nodes);
+    dispatch(setAuthCredentials(authCredentials));
+  }
   useEffect(() => {
     if (data) {
       setWorkflowData(data);
       createWorkflowIfNeeded(data.id);
+      getAuthCredentials(nodes);
     }
   }, [data]);
 

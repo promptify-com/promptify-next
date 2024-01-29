@@ -12,15 +12,16 @@ import { setIsSimulationStreaming } from "@/core/store/chatSlice";
 import { Display } from "@/components/Prompt/Common/Display";
 import Form from "@/components/Prompt/Common/Chat/Form";
 import AccordionMessageHeader from "@/components/Prompt/VariantB/AccordionMessageHeader";
-import type { Templates } from "@/core/api/dto/templates";
 import useVariant from "../Hooks/useVariant";
+import type { Templates } from "@/core/api/dto/templates";
+import type { MessageType } from "@/components/Prompt/Types/chat";
 
 interface Props {
   onGenerate: () => void;
   abortGenerating: () => void;
   showGenerate: boolean;
   template: Templates;
-  type: "spark" | "form";
+  type: MessageType;
   onChange?: (event: SyntheticEvent<Element, Event>, expanded: boolean) => void;
   expanded: boolean;
 }
@@ -42,6 +43,21 @@ export default function AccordionMessage({
   const hasInputs = !!inputs.length;
 
   const accordionRef = useRef<HTMLDivElement>(null);
+
+  function getLabelText() {
+    if (isGenerating) {
+      return "Generation Result";
+    }
+    if (isAutomationPage && type === "form") {
+      return "WORKFLOW";
+    }
+    if (type === "auth") {
+      return "CREDENTIALS";
+    }
+    return "PROMPT Template";
+  }
+
+  const isTypeFormOrAuth = type === "form" || type === "auth";
 
   return (
     <Fade
@@ -89,7 +105,7 @@ export default function AccordionMessage({
               textTransform={"uppercase"}
               display={hasInputs ? "block" : "none"}
             >
-              {isGenerating ? "Generation Result" : `${isAutomationPage ? "WORKFLOW" : "PROMPT Template"} information`}
+              {`${getLabelText()} information.`}
             </Typography>
 
             <Stack
@@ -106,7 +122,7 @@ export default function AccordionMessage({
                   <Display templateData={template} />
                 </Stack>
               )}
-              {type === "form" && <Form />}
+              {isTypeFormOrAuth && <Form messageType={type} />}
             </Stack>
           </Stack>
           {showGenerate && type === "form" && currentUser?.id && (

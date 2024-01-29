@@ -3,6 +3,7 @@ import type { User, UserPartial } from "@/core/api/dto/user";
 interface IParameters {
   path?: string;
   options?: any;
+  authentication?: string;
   fields?: {
     values: {
       name: string;
@@ -60,4 +61,42 @@ export interface IWorkflowCreateResponse {
   created_by: UserPartial;
   nodes: INode[];
   created_at: Date;
+}
+
+interface AuthTypeProperty {
+  displayName: string;
+  name: string;
+  type: string;
+  default: string | number;
+  typeOptions?: {
+    password?: boolean;
+  };
+  description?: string;
+}
+
+interface AuthTypeProperties {
+  name: string;
+  displayName: string;
+  documentationUrl: string;
+  properties: AuthTypeProperty[];
+}
+
+export interface Creds {
+  [key: string]: AuthTypeProperties;
+}
+
+export interface AuthCredentials {
+  authType: string;
+  displayName: string;
+  properties: ICredentialsProperty[];
+}
+
+export interface ICredentialsProperty {
+  displayName: string;
+  default: string;
+  name: string;
+  type: string;
+  typeOptions?: {
+    password: boolean;
+  };
 }

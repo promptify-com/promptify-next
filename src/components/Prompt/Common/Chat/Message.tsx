@@ -79,8 +79,8 @@ export const Message = ({ message, isExecutionMode, onScrollToBottom }: MessageB
     dispatch(setIsSimulationStreaming(true));
   }, []);
 
-  const isTypeFormOrSpark = type === "form" || type === "spark";
-  if (isTypeFormOrSpark) return;
+  const isMessageBox = type === "form" || type === "spark" || type === "auth";
+  if (isMessageBox) return;
 
   return (
     <Grid

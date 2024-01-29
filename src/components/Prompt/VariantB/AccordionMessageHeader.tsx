@@ -33,12 +33,13 @@ import useTruncate from "@/hooks/useTruncate";
 import { setAnswers } from "@/core/store/chatSlice";
 import AvatarWithInitials from "@/components/Prompt/Common/AvatarWithInitials";
 import useVariant from "../Hooks/useVariant";
+import { MessageType } from "@/components/Prompt/Types/chat";
 
 interface Props {
   template: Templates;
   isExpanded: boolean;
   onCancel: () => void;
-  type: "spark" | "form";
+  type: MessageType;
 }
 
 function AccordionMessageHeader({ template, type, isExpanded, onCancel }: Props) {
@@ -112,6 +113,8 @@ function AccordionMessageHeader({ template, type, isExpanded, onCancel }: Props)
 
   const isOwner = currentUser?.id === selectedExecution?.executed_by;
 
+  const isTypeFormOrAuth = type === "form" || type === "auth";
+
   return (
     <>
       <AccordionSummary
@@ -150,7 +153,7 @@ function AccordionMessageHeader({ template, type, isExpanded, onCancel }: Props)
               </>
             )}
 
-            {type === "form" && (
+            {isTypeFormOrAuth && (
               <Box
                 position={"relative"}
                 mt={0.5}
@@ -198,7 +201,10 @@ function AccordionMessageHeader({ template, type, isExpanded, onCancel }: Props)
                 justifyContent={{ xs: "space-between", md: "start" }}
                 letterSpacing={"0.2px"}
               >
-                {type === "form" && `New ${isAutomationPage ? "Execution" : "Prompt"}`}
+                {isTypeFormOrAuth &&
+                  `New ${
+                    isAutomationPage && type === "form" ? "Execution" : type === "auth" ? "Credentails" : "Prompt"
+                  }`}
 
                 {type === "spark" && (
                   <>

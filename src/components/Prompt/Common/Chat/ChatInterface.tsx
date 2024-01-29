@@ -12,15 +12,16 @@ import AccordionMessage from "@/components/Prompt/VariantB/AccordionMessage";
 import FeedbackThumbs from "@/components/Prompt/Common/FeedbackThumbs";
 import useScrollToBottom from "@/components/Prompt/Hooks/useScrolltoBottom";
 import TemplateDetailsCard from "@/components/Prompt/Common/TemplateDetailsCard";
+import ClientOnly from "@/components/base/ClientOnly";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { Templates } from "@/core/api/dto/templates";
-import ClientOnly from "@/components/base/ClientOnly";
 
 type AccordionExpandedState = {
   spark: boolean;
   form: boolean;
   text: boolean;
   html: boolean;
+  auth: boolean;
 };
 
 interface Props {
@@ -41,6 +42,7 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
   const [expandedAccordions, setExpandedAccordions] = useState<AccordionExpandedState>({
     spark: true,
     form: true,
+    auth: true,
     text: false,
     html: false,
   });
@@ -59,7 +61,7 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
   };
 
   const showAccorionMessage = (message: IMessage): boolean => {
-    return Boolean(message.type === "form" || message.type === "spark");
+    return Boolean(message.type === "form" || message.type === "spark" || message.type === "auth");
   };
 
   return (
@@ -173,7 +175,7 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
                       }}
                     >
                       <AccordionMessage
-                        type={msg.type === "spark" ? "spark" : "form"}
+                        type={msg.type}
                         expanded={expandedAccordions[msg.type]}
                         onChange={(_e, isExpanded) => handleExpandChange(msg.type, isExpanded)}
                         template={template!}

@@ -1,4 +1,4 @@
-import type { INode, NodesFileData } from "@/components/Automation/types";
+import type { AuthCredentials, Creds, INode, NodesFileData } from "@/components/Automation/types";
 
 const UNWANTED_TYPES = [
   "n8n-nodes-base.switch",
@@ -30,3 +30,53 @@ export async function getNodeNames(nodes: INode[] = [], slice = 3) {
 
   return filteredTypes.slice(0, slice);
 }
+
+const authTypeMapping: { [key: string]: string } = {
+  basicAuth: "httpBasicAuth",
+  // Add other mappings here if necessary
+};
+
+export async function extractAuthData(nodes: INode[] = []): Promise<AuthCredentials[]> {
+  const authCredentials: AuthCredentials[] = [];
+
+  //@ts-ignore
+  const creds: Creds = (
+    await import(
+      /* webpackChunkName: "workflow_creds" */
+      /* webpackMode: "lazy" */
+      "@/components/Automation/creds.json"
+    )
+  ).default;
+
+  for (const node of nodes) {
+    const parameters = node.parameters as any;
+    if (parameters && parameters.authentication) {
+      let authType = parameters.authentication;
+      authType = authTypeMapping[authType] || authType;
+
+      if (creds[authType]) {
+        authCredentials.push({
+          authType: authType,
+          displayName: creds[authType].displayName,
+          properties: creds[authType].properties,
+        });
+      }
+    }
+  }
+
+  return authCredentials;
+}
+
+export const nodes: INode[] = [
+  {
+    id: "674cdfb9-5058-4bfd-b9e8-71020cab29b2",
+    name: "Respond to Webhook",
+    type: "n8n-nodes-base.respondToWebhook",
+    position: [1240, 280],
+    parameters: {
+      authentication: "basicAuth",
+    },
+    typeVersion: 1,
+    webhookId: "sss",
+  },
+];

@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import Stack from "@mui/material/Stack";
 import Fade from "@mui/material/Fade";
 
@@ -5,50 +6,76 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setIsSimulationStreaming } from "@/core/store/chatSlice";
 import FormParam from "@/components/Prompt/Common/Chat/FormParams";
 import FormInput from "@/components/Prompt/Common/Chat/FormInput";
-import useVariant from "../../Hooks/useVariant";
+import useVariant from "@/components/Prompt/Hooks/useVariant";
+import type { IPromptInput } from "@/common/types/prompt";
+import type { MessageType } from "@/components/Prompt/Types/chat";
 
 interface FormProps {
   onScrollToBottom?: () => void;
+  messageType?: MessageType;
 }
 
 interface FormLayoutProps {
+  messageType?: MessageType;
   variant: "a" | "b";
 }
 
-function FormFields({ variant }: FormLayoutProps) {
-  const { params, inputs } = useAppSelector(state => state.chat);
+function FormFields({ variant, messageType }: FormLayoutProps) {
+  const { params, inputs, authCredentials } = useAppSelector(state => state.chat);
+
+  const [localInputs, setLocalInputs] = useState<IPromptInput[]>([]);
+
+  useEffect(() => {
+    const transformedInputs: IPromptInput[] = authCredentials.map(credential => ({
+      name: credential.authType,
+      fullName: credential.displayName,
+      type: "auth",
+      required: true,
+    }));
+
+    if (messageType === "form") {
+      setLocalInputs(inputs);
+    } else if (messageType === "auth") {
+      setLocalInputs(transformedInputs);
+    }
+  }, []);
 
   return (
-    <Stack gap={variant === "b" ? 1 : 2}>
-      {inputs.map((input, index) => {
-        return (
-          <FormInput
-            key={index}
-            input={input}
-          />
-        );
-      })}
+    <>
+      <Stack gap={variant === "b" ? 1 : 2}>
+        {localInputs.map((input, index) => {
+          return (
+            <FormInput
+              key={index}
+              input={input}
+            />
+          );
+        })}
 
-      {params?.map(param => {
-        return (
-          <FormParam
-            key={param.parameter.id}
-            param={param}
-          />
-        );
-      })}
-    </Stack>
+        {params?.map(param => {
+          return (
+            <FormParam
+              key={param.parameter.id}
+              param={param}
+            />
+          );
+        })}
+      </Stack>
+    </>
   );
 }
 
-function Form({ onScrollToBottom }: FormProps) {
+function Form({ onScrollToBottom, messageType }: FormProps) {
   const dispatch = useAppDispatch();
   const { isVariantB } = useVariant();
 
   return (
     <Stack>
       {isVariantB ? (
-        <FormFields variant={"b"} />
+        <FormFields
+          variant={"b"}
+          messageType={messageType}
+        />
       ) : (
         <Fade
           in={true}
