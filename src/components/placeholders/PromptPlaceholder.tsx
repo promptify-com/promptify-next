@@ -13,6 +13,7 @@ function PromptPlaceholder() {
       sx={{
         position: "relative",
         pb: "90px",
+        bgcolor: "surface.1",
       }}
     >
       <Stack
@@ -155,7 +156,7 @@ function PromptPlaceholder() {
         sx={{
           position: "fixed",
           bottom: 0,
-          width: { xs: "100%", md: "calc(100% - 80px)" },
+          width: { xs: "100%", md: "calc(100% - 170px)" },
           p: "16px",
           boxSizing: "border-box",
         }}

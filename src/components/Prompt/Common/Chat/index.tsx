@@ -11,14 +11,21 @@ import type { Templates } from "@/core/api/dto/templates";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { PromptParams } from "@/core/api/dto/prompts";
 import useVariant from "@/components/Prompt/Hooks/useVariant";
-import ChatBoxVariantA from "@/components/Prompt/VariantA/ChatBox";
-import ChatBoxVariantB from "@/components/Prompt/VariantB/ChatBox";
+import dynamic from "next/dynamic";
+import PromptPlaceholder from "@/components/placeholders/PromptPlaceholder";
 
 interface Props {
   onError: (errMsg: string) => void;
   template: Templates;
   questionPrefixContent: string;
 }
+
+const ChatBoxVariantA = dynamic(() => import("@/components/Prompt/VariantA/ChatBox"), {
+  loading: () => <PromptPlaceholder />,
+});
+const ChatBoxVariantB = dynamic(() => import("@/components/Prompt/VariantB/ChatBox"), {
+  loading: () => <PromptPlaceholder />,
+});
 
 const CommonChat: React.FC<Props> = ({ onError, template, questionPrefixContent }) => {
   const { isVariantA } = useVariant();
