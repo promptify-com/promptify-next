@@ -36,19 +36,23 @@ interface SidebarProps {
 
 function Sidebar({ template, executions }: SidebarProps) {
   const dispatch = useAppDispatch();
-  const { isVariantA } = useVariant();
+  const { isVariantB } = useVariant();
   const isMobile = !isDesktopViewPort();
   const activeLink = useAppSelector(state => state.template.activeSideBarLink);
-  const isValidUser = useAppSelector(isValidUserFn);
+  const currentUser = useAppSelector(state => state.user.currentUser);
   const theme = useTheme();
   const handleCloseSidebar = () => {
     dispatch(setActiveToolbarLink(null));
   };
+
+  const isOwner = currentUser?.is_admin || currentUser?.id === template.created_by.id;
+
+  const sidebarLinks = isVariantB
+    ? TemplateSidebarLinks.filter(link => (isOwner ? link.name !== "clone" : link.name !== "customize"))
+    : TemplateSidebarLinks.filter(link => !["customize", "clone"].includes(link.name));
+
   const open = !!activeLink?.name;
-  const shouldFilterCustomize = isVariantA || (!isVariantA && !isValidUser);
-  const filtredSidebarLinks = shouldFilterCustomize
-    ? TemplateSidebarLinks.filter(item => item.name !== "customize")
-    : TemplateSidebarLinks;
+
   return (
     <Box
       sx={{
@@ -58,13 +62,13 @@ function Sidebar({ template, executions }: SidebarProps) {
         top: 0,
         bgcolor: "surface.3",
         display: "flex",
-        flexDirection: !isVariantA ? "row" : "row-reverse",
+        flexDirection: isVariantB ? "row" : "row-reverse",
         gap: "1px",
       }}
     >
       {!isMobile && (
         <>
-          {!isVariantA ? (
+          {isVariantB ? (
             <Box
               sx={{
                 display: "flex",
@@ -145,7 +149,7 @@ function Sidebar({ template, executions }: SidebarProps) {
                   </ListItemButton>
                 </ListItem>
 
-                {filtredSidebarLinks.map(link => (
+                {sidebarLinks.map(link => (
                   <ToolbarItem
                     key={link.title}
                     item={link}
@@ -165,7 +169,7 @@ function Sidebar({ template, executions }: SidebarProps) {
                 bgcolor: "surface.1",
               }}
             >
-              {filtredSidebarLinks.map(link => (
+              {sidebarLinks.map(link => (
                 <ToolbarItem
                   key={link.title}
                   item={link}

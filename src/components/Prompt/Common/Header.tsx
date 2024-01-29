@@ -1,4 +1,3 @@
-import { useRef } from "react";
 import { useRouter } from "next/router";
 import Stack from "@mui/material/Stack";
 import Link from "@mui/material/Link";
@@ -10,20 +9,17 @@ import Button from "@mui/material/Button";
 import Avatar from "@mui/material/Avatar";
 import Tune from "@mui/icons-material/Tune";
 import ContentCopy from "@mui/icons-material/ContentCopy";
-
 import { theme } from "@/theme";
 import { setSelectedTag } from "@/core/store/filtersSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import type { Templates } from "@/core/api/dto/templates";
-import { useCreateTemplateMutation } from "@/core/api/templates";
-import { isValidUserFn } from "@/core/store/userSlice";
-import { getBaseUrl, redirectToPath } from "@/common/helpers";
-import { IEditPrompts } from "@/common/types/builder";
+import { getBaseUrl } from "@/common/helpers";
 import FavoriteIcon from "./FavoriteIcon";
 import BaseButton from "@/components/base/BaseButton";
-import useVariant from "../Hooks/useVariant";
+import useVariant from "@/components/Prompt/Hooks/useVariant";
 import { ViewWeekOutlined, WebAssetOutlined } from "@mui/icons-material";
 import ClientOnly from "@/components/base/ClientOnly";
+import useCloneTemplate from "@/components/Prompt/Hooks/useCloneTemplate";
 
 interface TemplateHeaderProps {
   template: Templates;
@@ -32,78 +28,12 @@ interface TemplateHeaderProps {
 export default function Header({ template }: TemplateHeaderProps) {
   const router = useRouter();
   const { switchVariant, variant, isVariantA } = useVariant();
+  const { cloneTemplate } = useCloneTemplate({ template });
   const dispatch = useAppDispatch();
 
   const isGenerating = useAppSelector(state => state.template.isGenerating);
 
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const isValidUser = useAppSelector(isValidUserFn);
-
-  const [createTemplate] = useCreateTemplateMutation();
-
-  const isCloning = useRef(false);
-
-  const cloneTemplate = async () => {
-    if (!isValidUser) {
-      return router.push("/signin");
-    }
-
-    if (!isCloning.current) {
-      isCloning.current = true;
-
-      try {
-        const clonedPrompts: IEditPrompts[] = template.prompts.map(prompt => {
-          const params = prompt.parameters.map(param => ({
-            parameter_id: param.parameter.id,
-            score: param.score,
-            is_visible: param.is_visible,
-            is_editable: param.is_editable,
-          }));
-
-          return {
-            temp_id: prompt.id,
-            title: prompt.title,
-            content: prompt.content,
-            engine: prompt.engine.id,
-            model_parameters: prompt.model_parameters,
-            dependencies: prompt.dependencies || [],
-            is_visible: prompt.is_visible,
-            show_output: prompt.show_output,
-            prompt_output_variable: prompt.prompt_output_variable,
-            order: prompt.order,
-            parameters: params || [],
-            output_format: prompt.output_format,
-          };
-        });
-
-        const { slug } = await createTemplate({
-          title: `${template.title} - Copy`,
-          description: template.description,
-          duration: template.duration.toString(),
-          difficulty: template.difficulty,
-          is_visible: template.is_visible,
-          language: template.language,
-          category: template.category?.id,
-          context: template.context,
-          tags: template.tags,
-          thumbnail: template.thumbnail,
-          executions_limit: template.executions_limit,
-          meta_title: template.meta_title,
-          meta_description: template.meta_description,
-          meta_keywords: template.meta_keywords,
-          status: "DRAFT",
-          prompts_list: clonedPrompts,
-        }).unwrap();
-
-        window.open(`${getBaseUrl}/prompt-builder/${slug}?editor=1`, "_blank");
-        redirectToPath(`/prompt/${slug}`);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        isCloning.current = false;
-      }
-    }
-  };
 
   const breadcrumbs = [
     <Link
