@@ -53,8 +53,6 @@ function Textual({ input, value, onChange }: Props) {
         type={type}
         value={value}
         onChange={e => onChange(e.target.value)}
-        multiline={isVariantB}
-        rows={1}
       />
 
       <span

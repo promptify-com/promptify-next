@@ -10,7 +10,10 @@ import { Formik, Form, Field } from "formik";
 import { object, string } from "yup";
 
 import BaseButton from "@/components/base/BaseButton";
-import { useAppSelector } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import Storage from "@/common/storage";
+import { useCreateCredentialsMutation } from "@/core/api/workflows";
+import { setToast } from "@/core/store/toastSlice";
 import type { Credentials, ICredentialsProperty } from "@/components/Automation/types";
 import type { IPromptInput } from "@/common/types/prompt";
 
@@ -23,15 +26,21 @@ interface FormValues {
 }
 
 function Credentials({ input }: Props) {
+  const dispatch = useAppDispatch();
+  const [createCredentials] = useCreateCredentialsMutation();
+  const credentials = useAppSelector(state => state.chat.credentials);
+
   const [openModal, setOpenModal] = useState(false);
   const [credentialProperties, setCredentialProperties] = useState<ICredentialsProperty[]>([]);
-
-  const credentials = useAppSelector(state => state.chat.credentials);
+  const [areCredentialsStored, setAreCredentialsStored] = useState(false);
 
   useEffect(() => {
     const credential = credentials.find(cred => cred.displayName === input.fullName);
     if (credential) {
       setCredentialProperties(credential.properties);
+
+      const storedCredentials = Storage.get("credentials") || {};
+      setAreCredentialsStored(!!storedCredentials[credential.authType]);
     }
   }, [credentials]);
 
@@ -62,8 +71,41 @@ function Credentials({ input }: Props) {
     }, {}),
   );
 
-  const handleSubmit = (values: FormValues) => {
-    console.log("Form Values", values);
+  const handleSubmit = async (values: FormValues) => {
+    const credential = credentials.find(cred => cred.displayName === input.fullName);
+
+    const data: Record<string, string> = {};
+    for (const key in values) {
+      if (values.hasOwnProperty(key)) {
+        data[key] = values[key];
+      }
+    }
+
+    const payload = {
+      name: `${credential?.displayName} Credentials` || "Unnamed Credential",
+      type: credential?.authType!,
+      data: data,
+    };
+
+    try {
+      const response = await createCredentials(payload).unwrap();
+
+      const storedCredentials = Storage.get("credentials") || {};
+
+      storedCredentials[credential?.authType!] = {
+        name: response.name,
+        id: response.id,
+        createdAt: response.createdAt,
+      };
+
+      Storage.set("credentials", JSON.stringify(storedCredentials));
+
+      setOpenModal(false);
+      dispatch(setToast({ message: "Credental is successufully created", severity: "success" }));
+    } catch (error) {
+      console.error("Error:", error);
+      dispatch(setToast({ message: "Error creating credential", severity: "error" }));
+    }
   };
 
   return (
@@ -71,6 +113,7 @@ function Credentials({ input }: Props) {
       <BaseButton
         size="small"
         onClick={() => setOpenModal(true)}
+        disabled={areCredentialsStored}
         color="custom"
         variant="text"
         sx={{
@@ -85,7 +128,7 @@ function Credentials({ input }: Props) {
           },
         }}
       >
-        {"Insert Credentials"}
+        {areCredentialsStored ? "Credentials added" : "Insert Credentials"}
       </BaseButton>
 
       {openModal && (

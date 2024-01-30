@@ -90,3 +90,17 @@ export interface ICredentialsProperty {
     password: boolean;
   };
 }
+
+export interface CreateCredentialPayload {
+  name: string;
+  type: string;
+  data: Record<string, string>;
+}
+
+export interface CreateCredentialResponse {
+  name: string;
+  type: string;
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+}

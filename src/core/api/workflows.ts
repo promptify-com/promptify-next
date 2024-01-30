@@ -1,5 +1,10 @@
 import { baseApi } from "./api";
-import type { IWorkflow, IWorkflowCreateResponse } from "@/components/Automation/types";
+import type {
+  CreateCredentialPayload,
+  CreateCredentialResponse,
+  IWorkflow,
+  IWorkflowCreateResponse,
+} from "@/components/Automation/types";
 
 export const workflowsApi = baseApi.injectEndpoints({
   endpoints: builder => {
@@ -24,8 +29,21 @@ export const workflowsApi = baseApi.injectEndpoints({
           data: { active: true },
         }),
       }),
+
+      createCredentials: builder.mutation<CreateCredentialResponse, CreateCredentialPayload>({
+        query: data => ({
+          url: `/api/n8n/workflows/credentials/`,
+          method: "post",
+          data,
+        }),
+      }),
     };
   },
 });
 
-export const { useGetWorkflowsQuery, useCreateUserWorkflowMutation, useGetWorkflowByIdQuery } = workflowsApi;
+export const {
+  useGetWorkflowsQuery,
+  useCreateUserWorkflowMutation,
+  useGetWorkflowByIdQuery,
+  useCreateCredentialsMutation,
+} = workflowsApi;

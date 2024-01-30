@@ -68,6 +68,10 @@ const useWorkflow = () => {
     dispatch(setCredentials(credentials));
     return credentials;
   }
+  useEffect(() => {
+    dispatch(clearChatStates());
+    dispatch(clearExecutionsStates());
+  }, []);
 
   useEffect(() => {
     if (data) {

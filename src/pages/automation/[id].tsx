@@ -11,6 +11,7 @@ import useChat from "@/components/Prompt/Hooks/useChat";
 import { setInputs } from "@/core/store/chatSlice";
 import useWorkflow from "@/components/Automation/Hooks/useWorkflow";
 import WorkflowPlaceholder from "@/components/Automation/WorkflowPlaceholder";
+import Storage from "@/common/storage";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { IMessage } from "@/components/Prompt/Types/chat";
@@ -49,7 +50,11 @@ export default function SingleWorkflow() {
     const formMessage = createMessage({ type: "form", noHeader: true });
     const initialQueuedMessages: IMessage[] = [formMessage];
 
-    if (credentials.length) {
+    const storedCredentials = Storage.get("credentials") ?? {};
+
+    const areAllCredentialsStored = credentials.every(cred => storedCredentials[cred.authType]);
+
+    if (!areAllCredentialsStored) {
       const credMessage = createMessage({ type: "credentials", noHeader: true });
       initialQueuedMessages.unshift(credMessage);
     }
