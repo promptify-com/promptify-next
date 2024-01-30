@@ -4,12 +4,12 @@ import { useRouter } from "next/router";
 import { useCreateUserWorkflowMutation, useGetWorkflowByIdQuery } from "@/core/api/workflows";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { clearExecutionsStates } from "@/core/store/executionsSlice";
-import { clearChatStates, setAuthCredentials } from "@/core/store/chatSlice";
+import { clearChatStates, setCredentials } from "@/core/store/chatSlice";
 import { n8nClient as ApiClient } from "@/common/axios";
 import Storage from "@/common/storage";
+import { extractAuthData } from "@/components/Automation/helpers";
 import type { Category } from "@/core/api/dto/templates";
 import type { INode, IWorkflow } from "@/components/Automation/types";
-import { extractAuthData, nodes } from "../helpers";
 
 const useWorkflow = () => {
   const dispatch = useAppDispatch();
@@ -62,20 +62,16 @@ const useWorkflow = () => {
 
     return response.data;
   }
-  useEffect(() => {
-    dispatch(clearChatStates());
-    dispatch(clearExecutionsStates());
-  }, []);
 
-  async function getAuthCredentials(nodes: INode[]) {
-    const authCredentials = await extractAuthData(nodes);
-    dispatch(setAuthCredentials(authCredentials));
+  async function getCredentials(nodes: INode[]) {
+    const credentials = await extractAuthData(nodes);
+    dispatch(setCredentials(credentials));
+    return credentials;
   }
+
   useEffect(() => {
     if (data) {
       setWorkflowData(data);
-      createWorkflowIfNeeded(data.id);
-      getAuthCredentials(nodes);
     }
   }, [data]);
 
@@ -97,6 +93,8 @@ const useWorkflow = () => {
     isWorkflowLoading,
     error,
     sendMessageAPI,
+    getCredentials,
+    createWorkflowIfNeeded,
   };
 };
 

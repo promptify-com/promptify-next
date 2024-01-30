@@ -31,7 +31,7 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
   const { isVariantA, isVariantB, isAutomationPage } = useVariant();
 
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const { isSimulationStreaming, inputs, answers, authCredentials } = useAppSelector(state => state.chat);
+  const { isSimulationStreaming, inputs, answers, credentials } = useAppSelector(state => state.chat);
   const { selectedExecution, generatedExecution, repeatedExecution, sparkHashQueryParam } = useAppSelector(
     state => state.executions,
   );
@@ -80,18 +80,16 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
 
     const formMessage = createMessage({ type: "form", noHeader: true });
 
-    if (isAutomationPage && authCredentials.length) {
-      const authMessage = createMessage({ type: "auth", noHeader: true });
-      initialQueuedMessages.push(authMessage);
-      initialQueuedMessages.push(formMessage);
-    } else if (!router.query.hash && isVariantB) {
+    if (!router.query.hash && isVariantB) {
       initialQueuedMessages.push(formMessage);
     } else if (isVariantA) {
       initialQueuedMessages.push(formMessage);
     }
-    addToQueuedMessages(initialQueuedMessages);
 
     dispatch(setAnswers([]));
+    if (!isAutomationPage) {
+      addToQueuedMessages(initialQueuedMessages);
+    }
   };
 
   const validateVary = async (variation: string) => {
@@ -332,6 +330,8 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
     messages,
     setMessages,
     initialMessages,
+    createMessage,
+    addToQueuedMessages,
     messageAnswersForm,
     showGenerateButton,
     showGenerate,

@@ -13,13 +13,22 @@ import useWorkflow from "@/components/Automation/Hooks/useWorkflow";
 import WorkflowPlaceholder from "@/components/Automation/WorkflowPlaceholder";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IPromptInput } from "@/common/types/prompt";
+import type { IMessage } from "@/components/Prompt/Types/chat";
+import type { Credentials } from "@/components/Automation/types";
 
 export default function SingleWorkflow() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(state => state.user.currentUser);
 
-  const { selectedWorkflow, isWorkflowLoading, workflowAsTemplate, sendMessageAPI } = useWorkflow();
+  const {
+    selectedWorkflow,
+    isWorkflowLoading,
+    workflowAsTemplate,
+    sendMessageAPI,
+    createWorkflowIfNeeded,
+    getCredentials,
+  } = useWorkflow();
 
   const {
     messages,
@@ -30,26 +39,49 @@ export default function SingleWorkflow() {
     showGenerateButton,
     setIsValidatingAnswer,
     messageAnswersForm,
+    createMessage,
+    addToQueuedMessages,
   } = useChat({
     initialMessageTitle: `${selectedWorkflow?.name}`,
   });
 
-  useEffect(() => {
-    if (!isWorkflowLoading && selectedWorkflow?.data) {
-      // Map the nodes to IPromptInput format
-      const inputs: IPromptInput[] = selectedWorkflow.data.nodes
-        .filter(node => node.type === "n8n-nodes-base.set")
-        .flatMap(node => node.parameters.fields?.values || [])
-        .map(value => ({
-          name: value.name,
-          fullName: value.name,
-          type: "text",
-          required: true,
-        }));
+  function prepareAndQueueMessages(credentials: Credentials[]) {
+    const formMessage = createMessage({ type: "form", noHeader: true });
+    const initialQueuedMessages: IMessage[] = [formMessage];
 
-      initialMessages({ questions: inputs });
-      dispatch(setInputs(inputs));
+    if (credentials.length) {
+      const credMessage = createMessage({ type: "credentials", noHeader: true });
+      initialQueuedMessages.unshift(credMessage);
     }
+
+    addToQueuedMessages(initialQueuedMessages);
+  }
+
+  useEffect(() => {
+    const fetchAndProcessData = async () => {
+      if (!isWorkflowLoading && selectedWorkflow?.data) {
+        createWorkflowIfNeeded(selectedWorkflow.id);
+
+        const { nodes } = selectedWorkflow.data;
+        const credentials = await getCredentials(nodes);
+
+        const inputs: IPromptInput[] = nodes
+          .filter(node => node.type === "n8n-nodes-base.set")
+          .flatMap(node => node.parameters.fields?.values || [])
+          .map(value => ({
+            name: value.name,
+            fullName: value.name,
+            type: "text",
+            required: true,
+          }));
+        initialMessages({ questions: inputs });
+
+        prepareAndQueueMessages(credentials);
+        dispatch(setInputs(inputs));
+      }
+    };
+
+    fetchAndProcessData();
   }, [selectedWorkflow, isWorkflowLoading]);
 
   const executeWorflow = async () => {
