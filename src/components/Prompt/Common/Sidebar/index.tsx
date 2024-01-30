@@ -11,7 +11,8 @@ import IconButton from "@mui/material/IconButton";
 import { useTheme } from "@mui/material/styles";
 import Close from "@mui/icons-material/Close";
 import Image from "next/image";
-import { isAdminFn } from "@/core/store/userSlice";
+
+import { isValidUserFn } from "@/core/store/userSlice";
 import { setActiveToolbarLink } from "@/core/store/templatesSlice";
 import ToolbarItem from "@/components/Prompt/Common/Sidebar/ToolbarItem";
 import { TemplateSidebarLinks } from "@/common/constants";
@@ -35,24 +36,19 @@ interface SidebarProps {
 
 function Sidebar({ template, executions }: SidebarProps) {
   const dispatch = useAppDispatch();
-  const { isVariantB } = useVariant();
+  const { isVariantA } = useVariant();
   const isMobile = !isDesktopViewPort();
   const activeLink = useAppSelector(state => state.template.activeSideBarLink);
-  const currentUser = useAppSelector(state => state.user.currentUser);
+  const isValidUser = useAppSelector(isValidUserFn);
   const theme = useTheme();
   const handleCloseSidebar = () => {
     dispatch(setActiveToolbarLink(null));
   };
-  const isAdmin = useAppSelector(isAdminFn);
-
-  const isOwner = isAdmin || currentUser?.id === template.created_by.id;
-
-  const sidebarLinks = isVariantB
-    ? TemplateSidebarLinks.filter(link => (isOwner ? link.name !== "clone" : link.name !== "customize"))
-    : TemplateSidebarLinks.filter(link => !["customize", "clone"].includes(link.name));
-
   const open = !!activeLink?.name;
-
+  const shouldFilterCustomize = isVariantA || (!isVariantA && !isValidUser);
+  const filtredSidebarLinks = shouldFilterCustomize
+    ? TemplateSidebarLinks.filter(item => item.name !== "customize")
+    : TemplateSidebarLinks;
   return (
     <Box
       sx={{
@@ -62,13 +58,13 @@ function Sidebar({ template, executions }: SidebarProps) {
         top: 0,
         bgcolor: "surface.3",
         display: "flex",
-        flexDirection: isVariantB ? "row" : "row-reverse",
+        flexDirection: !isVariantA ? "row" : "row-reverse",
         gap: "1px",
       }}
     >
       {!isMobile && (
         <>
-          {isVariantB ? (
+          {!isVariantA ? (
             <Box
               sx={{
                 display: "flex",
@@ -149,7 +145,7 @@ function Sidebar({ template, executions }: SidebarProps) {
                   </ListItemButton>
                 </ListItem>
 
-                {sidebarLinks.map(link => (
+                {filtredSidebarLinks.map(link => (
                   <ToolbarItem
                     key={link.title}
                     item={link}
@@ -169,7 +165,7 @@ function Sidebar({ template, executions }: SidebarProps) {
                 bgcolor: "surface.1",
               }}
             >
-              {sidebarLinks.map(link => (
+              {filtredSidebarLinks.map(link => (
                 <ToolbarItem
                   key={link.title}
                   item={link}

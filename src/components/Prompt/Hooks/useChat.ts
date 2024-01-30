@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
+
 import { randomId } from "@/common/helpers";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { setAnswers, setIsSimulationStreaming, setParamsValues } from "@/core/store/chatSlice";
+import { setAnswers, setIsSimulationStreaming, setparamsValues } from "@/core/store/chatSlice";
 import useVariant from "./useVariant";
 import useToken from "@/hooks/useToken";
 import { vary } from "@/common/helpers/varyValidator";
@@ -148,7 +149,7 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
     }, 10);
   };
 
-  const proceedQueuedMessages = () => {
+  const proccedQueuedMessages = () => {
     if (!isSimulationStreaming && !!queuedMessages.length) {
       const nextQueuedMessage = queuedMessages.shift()!;
       dispatch(setIsSimulationStreaming(true));
@@ -272,7 +273,7 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
           })
           .filter(item => item !== undefined) as ResOverrides[];
 
-        dispatch(setParamsValues(newContextualOverrides));
+        dispatch(setparamsValues(newContextualOverrides));
       }
     }
   }, [sparkHashQueryParam]);
@@ -293,7 +294,7 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
   }, [repeatedExecution]);
 
   useEffect(() => {
-    proceedQueuedMessages();
+    proccedQueuedMessages();
   }, [isSimulationStreaming, queuedMessages]);
 
   useEffect(() => {

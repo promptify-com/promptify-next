@@ -8,8 +8,9 @@ import Typography from "@mui/material/Typography";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
+
 import { theme } from "@/theme";
-import Header from "@/components/builder/Header";
+import { Header } from "@/components/builder/Header";
 import TemplateForm from "@/components/common/forms/TemplateForm";
 import { isPromptVariableValid } from "@/common/helpers/promptValidator";
 import { useGetPromptTemplateBySlugQuery, usePublishTemplateMutation } from "@/core/api/templates";
@@ -25,15 +26,11 @@ import { handleInitPrompt } from "@/common/helpers/initPrompt";
 import type { IEditTemplate } from "@/common/types/editTemplate";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IEditPrompts } from "@/common/types/builder";
-import { useDispatch } from "react-redux";
-import { setEngines, setIsTemplateOwner, setTemplate } from "@/core/store/builderSlice";
 
 export const PromptBuilder = () => {
   const router = useRouter();
   const token = useToken();
-  const dispatch = useDispatch();
   const [publishTemplate] = usePublishTemplateMutation();
-  const currentUser = useAppSelector(state => state.user.currentUser);
 
   const slug = router.query.slug as string;
 
@@ -48,19 +45,8 @@ export const PromptBuilder = () => {
   );
 
   useEffect(() => {
-    if (engines) {
-      dispatch(setEngines(engines));
-    }
-    if (fetchedTemplateData) {
-      dispatch(setTemplate(fetchedTemplateData));
-      if (currentUser) {
-        dispatch(setIsTemplateOwner(fetchedTemplateData.created_by.id === currentUser?.id || currentUser?.is_admin));
-      }
-
+    if (engines && fetchedTemplateData) {
       setTemplateData(fetchedTemplateData);
-    }
-
-    if (fetchedTemplateData && engines) {
       const processedPrompts = handleInitPrompt(fetchedTemplateData, engines) as IEditPrompts[];
       setPrompts(processedPrompts);
     }
@@ -205,6 +191,7 @@ export const PromptBuilder = () => {
       <BuilderSidebar
         prompts={prompts}
         setPrompts={setPrompts}
+        engines={engines!}
       />
       <Box
         sx={{
@@ -250,6 +237,7 @@ export const PromptBuilder = () => {
                 templateLoading={isTemplateLoading}
                 prompts={prompts}
                 setPrompts={setPrompts}
+                engines={engines!}
               />
             </DndProvider>
           </Box>

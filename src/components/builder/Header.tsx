@@ -34,7 +34,7 @@ interface IHeader {
   sidebarOpened?: boolean;
 }
 
-function Header({
+export const Header = ({
   templateLoading,
   onSave,
   onPublish,
@@ -44,7 +44,7 @@ function Header({
   onEditTemplate,
   type,
   sidebarOpened,
-}: IHeader) {
+}: IHeader) => {
   const isValidUser = useAppSelector(isValidUserFn);
   const currentUser = useAppSelector((state: RootState) => state.user.currentUser);
   const [isSaving, setIsSaving] = useState(false);
@@ -206,7 +206,7 @@ function Header({
       {isValidUser && type === BUILDER_TYPE.USER && <ProfileMenu />}
     </Stack>
   );
-}
+};
 
 const btnStyle = {
   color: "secondary.main",
@@ -218,5 +218,3 @@ const btnStyle = {
     bgcolor: "action.hover",
   },
 };
-
-export default Header;

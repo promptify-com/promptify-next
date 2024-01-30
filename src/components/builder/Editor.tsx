@@ -69,7 +69,7 @@ export async function createEditor(
         count: nodeCount.toString(),
         title: prompt?.title || `Prompt #${nodeCount}`,
         content: prompt?.content || "Describe here prompt parameters, for example {{name:John Doe}}",
-        engine: prompt?.engine?.id || engines![0].id,
+        engine_id: prompt?.engine?.id || engines![0].id,
         dependencies: prompt?.dependencies || [],
         parameters: initialParams,
         order: 1,

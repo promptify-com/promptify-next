@@ -7,7 +7,7 @@ interface Props {
   setParam: (name: string, value: string) => void;
 }
 
-function EngineParams({ params, setParam }: Props) {
+export const EngineParams: React.FC<Props> = ({ params, setParam }) => {
   return (
     <Stack
       gap={1.5}
@@ -75,6 +75,4 @@ function EngineParams({ params, setParam }: Props) {
       </Box>
     </Stack>
   );
-}
-
-export default EngineParams;
+};

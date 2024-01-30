@@ -12,9 +12,9 @@ import {
   PresetType,
 } from "@/common/types/builder";
 import { useCursorPosition } from "@/hooks/useCursorPosition";
-import SuggestionsList from "./SuggestionsList";
+import { SuggestionsList } from "./SuggestionsList";
 import ClientOnly from "../base/ClientOnly";
-import SuggestionsListDetailed from "./SuggestionsListDetailed";
+import { SuggestionsListDetailed } from "./SuggestionsListDetailed";
 import { InputType } from "@/common/types/prompt";
 
 interface Props {
@@ -23,8 +23,8 @@ interface Props {
   inputPresets: InputVariable[];
   outputPresets: OutputVariable[];
   onChange: (str: string, Selection?: Selection) => void;
-  highlightedValue: string;
-  setHighlightedValue: (str: string) => void;
+  highlitedValue: string;
+  setHighlitedValue: (str: string) => void;
   type: BuilderType;
 }
 
@@ -39,20 +39,20 @@ const highlight = [
   },
 ];
 
-function HighlightTextarea({
+export const HighlightTextarea = ({
   prompt,
   inputPresets,
   outputPresets,
   cursorPositionRef,
   onChange,
-  highlightedValue,
-  setHighlightedValue,
+  highlitedValue,
+  setHighlitedValue,
   type,
-}: Props) {
+}: Props) => {
   const [optionType, setOptionType] = useState<PresetType>("input");
   const [suggestionList, setSuggestionList] = useState<Preset[]>([]);
   const divRef = useRef<HighlightWithinTextareaRef | null>(null);
-  const cursorPosition = useCursorPosition(divRef, highlightedValue);
+  const cursorPosition = useCursorPosition(divRef, highlitedValue);
 
   const showSuggestions = (value: string) => {
     let suggestions: Preset[] = [];
@@ -88,7 +88,7 @@ function HighlightTextarea({
 
     let newVal = currentRegex + textAfterRegexValue;
 
-    setHighlightedValue(newVal);
+    setHighlitedValue(newVal);
     setSuggestionList(suggestions);
   };
 
@@ -99,18 +99,18 @@ function HighlightTextarea({
       outputPresets,
       inputPresets,
       onChange,
-      hasValueAfterRegex: highlightedValue,
+      hasValueAfterRegex: highlitedValue,
       cursorPositionRef,
       content: prompt.content,
     });
 
-    setHighlightedValue("");
+    setHighlitedValue("");
     setSuggestionList([]);
   };
 
   const handleTypeSelect = (type: InputType) => {
     const _newSugg: Preset = {
-      label: `${highlightedValue.slice(0, highlightedValue.indexOf(":") + 1) + type}}}`,
+      label: `${highlitedValue.slice(0, highlitedValue.indexOf(":") + 1) + type}}}`,
     };
     handleSuggestionSelect(_newSugg, "input");
   };
@@ -150,7 +150,7 @@ function HighlightTextarea({
           />
         ) : (
           <SuggestionsListDetailed
-            highlightValue={highlightedValue}
+            highlightValue={highlitedValue}
             suggestionList={suggestionList}
             position={cursorPosition}
             optionType={optionType}
@@ -162,6 +162,4 @@ function HighlightTextarea({
       </Grid>
     </ClientOnly>
   );
-}
-
-export default HighlightTextarea;
+};

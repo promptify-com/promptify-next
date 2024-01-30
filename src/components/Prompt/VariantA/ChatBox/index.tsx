@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import { useMemo, memo, useEffect } from "react";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+
 import { useAppSelector, useAppDispatch } from "@/hooks/useStore";
 import { ChatInterface } from "./ChatInterface";
 import { executionsApi } from "@/core/api/executions";
@@ -10,11 +11,11 @@ import { getExecutionById } from "@/hooks/api/executions";
 import { isDesktopViewPort, randomId } from "@/common/helpers";
 import useChatBox from "@/hooks/useChatBox";
 import SigninButton from "@/components/common/buttons/SigninButton";
-import { setInputs, setParams, setParamsValues } from "@/core/store/chatSlice";
-import { ChatInput } from "@/components/Prompt/Common/Chat/ChatInput";
-import useChat from "@/components/Prompt/Hooks/useChat";
-import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution";
-import type { PromptParams } from "@/core/api/dto/prompts";
+import { setInputs, setParams, setparamsValues } from "@/core/store/chatSlice";
+import { ChatInput } from "../../Common/Chat/ChatInput";
+import useChat from "../../Hooks/useChat";
+import useGenerateExecution from "../../Hooks/useGenerateExecution";
+import type { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { Templates } from "@/core/api/dto/templates";
@@ -32,6 +33,7 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(state => state.user.currentUser);
   const isDesktopView = isDesktopViewPort();
+
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const { generatedExecution } = useAppSelector(state => state.executions);
 
@@ -39,22 +41,14 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
 
   const { prepareAndRemoveDuplicateInputs } = useChatBox();
 
-  const {
-    messages,
-    setMessages,
-    messageAnswersForm,
-    initialMessages,
-    validateVary,
-    isValidatingAnswer,
-    showGenerateButton,
-  } = useChat({
+  const { messages, setMessages, initialMessages, validateVary, isValidatingAnswer, showGenerateButton } = useChat({
     questionPrefixContent,
     initialMessageTitle: template.title,
   });
 
   const { generateExecutionHandler, abortConnection, disableChatInput } = useGenerateExecution({
     template,
-    messageAnswersForm,
+    questionPrefixContent,
     onError,
   });
   const { storeAnswers, storeParams } = useStoreAnswersAndParams();
@@ -66,7 +60,7 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
 
     const { inputs, params, paramsValues } = prepareAndRemoveDuplicateInputs(template.prompts, template.questions);
 
-    dispatch(setParamsValues(paramsValues));
+    dispatch(setparamsValues(paramsValues));
 
     initialMessages({ questions: inputs });
 
@@ -102,7 +96,7 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
           fromUser: false,
           spark: _newExecution,
         };
-        setMessages(messages.concat(generatedExecutionMessage));
+        setMessages(prevMessages => prevMessages.concat(generatedExecutionMessage));
       } catch {
         window.location.reload();
       }

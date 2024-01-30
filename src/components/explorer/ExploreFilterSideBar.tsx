@@ -69,7 +69,9 @@ export const ExploreFilterSideBar: React.FC<ExploreFilterSideBarProps> = ({ engi
                 selected={storedEngine?.id == engine.id}
               >
                 <Avatar
-                  src={require("@/assets/images/promptify.png")}
+                  src={
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS58O0-OcWTqwlFJCYTkJUSVlGeqleLPstyYdxFFcXNpQ&s"
+                  }
                   alt={engine.name}
                   sx={{
                     width: "25px",
