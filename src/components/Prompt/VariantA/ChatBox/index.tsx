@@ -21,7 +21,6 @@ import type { Templates } from "@/core/api/dto/templates";
 import { useStoreAnswersAndParams } from "@/hooks/useStoreAnswersAndParams";
 
 interface Props {
-  onError: (errMsg: string) => void;
   template: Templates;
   questionPrefixContent: string;
 }
