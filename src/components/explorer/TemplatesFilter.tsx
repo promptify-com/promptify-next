@@ -9,6 +9,8 @@ import { useRouter } from "next/router";
 import { useGetTagsPopularQuery } from "@/core/api/tags";
 import { useGetEnginesQuery } from "@/core/api/engines";
 
+const defaultEngineIcon =
+  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS58O0-OcWTqwlFJCYTkJUSVlGeqleLPstyYdxFFcXNpQ&s";
 const minShown = 5;
 
 export const TemplatesFilter = () => {
@@ -82,7 +84,7 @@ export const TemplatesFilter = () => {
               }}
             >
               <Avatar
-                src={engine.icon || require("@/assets/images/promptify.png")}
+                src={engine.icon || defaultEngineIcon}
                 alt={engine.name}
                 sx={{
                   width: "25px",

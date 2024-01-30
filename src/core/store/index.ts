@@ -1,6 +1,7 @@
 import { Action, ConfigureStoreOptions, Middleware, ThunkAction, configureStore } from "@reduxjs/toolkit";
 import { createWrapper } from "next-redux-wrapper";
-import { baseApi } from "@/core/api/api";
+
+import { baseApi } from "../api/api";
 import { templatesSlice } from "./templatesSlice";
 import filterSlice from "./filtersSlice";
 import sidebarSlice from "./sidebarSlice";
@@ -8,7 +9,6 @@ import profileSlice from "./profileSlice";
 import userSlice from "./userSlice";
 import executionsSlice from "./executionsSlice";
 import chatSlice from "./chatSlice";
-import builderSlice from "./builderSlice";
 import toastSlice, { setToast } from "./toastSlice";
 
 export interface State {
@@ -26,7 +26,6 @@ export const store = (options?: ConfigureStoreOptions["preloadedState"] | undefi
       user: userSlice,
       executions: executionsSlice,
       chat: chatSlice,
-      builder: builderSlice,
       toast: toastSlice,
     },
     middleware: getDefaultMiddleware =>

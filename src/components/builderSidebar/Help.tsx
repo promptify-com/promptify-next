@@ -12,6 +12,7 @@ const Help = () => {
         alignItems: "flex-start",
         gap: "24px",
         alignSelf: "stretch",
+        bgcolor: "surface.1",
       }}
     >
       <Typography
