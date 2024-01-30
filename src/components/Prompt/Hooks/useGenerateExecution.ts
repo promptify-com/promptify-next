@@ -15,13 +15,13 @@ import type { Templates } from "@/core/api/dto/templates";
 import { useStoreAnswersAndParams } from "@/hooks/useStoreAnswersAndParams";
 import useUploadPromptFiles from "@/hooks/useUploadPromptFiles";
 import { setAnswers } from "@/core/store/chatSlice";
+import { setToast } from "@/core/store/toastSlice";
 
 interface Props {
   template: Templates;
   messageAnswersForm: (message: string) => void;
-  onError: (errMsg: string) => void;
 }
-const useGenerateExecution = ({ template, messageAnswersForm, onError }: Props) => {
+const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
   const token = useToken();
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -89,8 +89,7 @@ const useGenerateExecution = ({ template, messageAnswersForm, onError }: Props) 
           dispatch(setGeneratingStatus(true));
           setGeneratingResponse({ created_at: new Date(), data: [], connectionOpened: true });
         } else if (res.status >= 400 && res.status < 500 && res.status !== 429) {
-          console.error("Client side error ", res);
-          onError("Something went wrong. Please try again later");
+          dispatch(setToast({ message: "Something went wrong. Please try again later", severity: "error" }));
         }
       },
       onmessage(msg) {
@@ -134,9 +133,10 @@ const useGenerateExecution = ({ template, messageAnswersForm, onError }: Props) 
             }
           } else {
             if (message.includes("[ERROR]")) {
-              onError(
-                message ? message.replace("[ERROR]", "") : "Something went wrong during the execution of this prompt",
-              );
+              const errorMessage = message
+                ? message.replace("[ERROR]", "")
+                : "Something went wrong during the execution of this prompt";
+              dispatch(setToast({ message: errorMessage, severity: "error" }));
               return;
             }
 
@@ -178,7 +178,7 @@ const useGenerateExecution = ({ template, messageAnswersForm, onError }: Props) 
       onerror(err) {
         setDisableChatInput(false);
         dispatch(setGeneratingStatus(false));
-        onError("Something went wrong. Please try again later");
+        dispatch(setToast({ message: "Something went wrong. Please try again later", severity: "error" }));
         throw err; // rethrow to stop the operation
       },
       onclose() {

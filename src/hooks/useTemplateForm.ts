@@ -10,6 +10,8 @@ import { useUploadFileMutation } from "@/core/api/uploadFile";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IEditTemplate } from "@/common/types/editTemplate";
 import type { FormType } from "./../common/types/template";
+import { useAppDispatch } from "./useStore";
+import { setToast } from "@/core/store/toastSlice";
 
 interface Props {
   type: FormType;
@@ -22,10 +24,10 @@ const useTemplateForm = ({ type, template, uploadedFile, onSaved }: Props) => {
   const [updateTemplate] = useUpdateTemplateMutation();
   const [createTemplate] = useCreateTemplateMutation();
   const [uploadFile] = useUploadFileMutation();
+  const dispatch = useAppDispatch();
   const pathname = usePathname();
 
   const [loading, setLoading] = useState(false);
-  const [showSnackbar, setShowSnackbar] = useState(false);
 
   const handleSave = (newTemplate?: Templates) => {
     if (typeof onSaved === "function") {
@@ -76,7 +78,12 @@ const useTemplateForm = ({ type, template, uploadedFile, onSaved }: Props) => {
     const validationErrors = await formik.validateForm();
 
     if (Object.keys(validationErrors).length > 0) {
-      setShowSnackbar(true);
+      dispatch(
+        setToast({
+          message: "Please try again, make sure you have entered all required template information.",
+          severity: "error",
+        }),
+      );
       return;
     }
 
@@ -127,8 +134,6 @@ const useTemplateForm = ({ type, template, uploadedFile, onSaved }: Props) => {
   return {
     formik,
     loading,
-    showSnackbar,
-    closeSnackbar: () => setShowSnackbar(false),
     handleSubmit,
   };
 };

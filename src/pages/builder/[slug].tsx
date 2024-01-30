@@ -10,7 +10,6 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Snackbar,
   SwipeableDrawer,
   alpha,
   Stack,
@@ -35,7 +34,6 @@ import { IEditPrompts } from "@/common/types/builder";
 import TemplateForm from "@/components/common/forms/TemplateForm";
 import { isPromptVariableValid } from "@/common/helpers/promptValidator";
 import { randomId, redirectToPath } from "@/common/helpers";
-import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import { theme } from "@/theme";
 import { useGetEnginesQuery } from "@/core/api/engines";
 import useToken from "@/hooks/useToken";
@@ -45,17 +43,7 @@ import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { setEngines, setIsTemplateOwner, setTemplate } from "@/core/store/builderSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-
-const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
-  return (
-    <MuiAlert
-      elevation={6}
-      ref={ref}
-      variant="filled"
-      {...props}
-    />
-  );
-});
+import { setToast } from "@/core/store/toastSlice";
 
 export const Builder = () => {
   const router = useRouter();
@@ -70,11 +58,9 @@ export const Builder = () => {
   const { data: templateData } = useGetPromptTemplateBySlugQuery(slug ? slug : skipToken);
   const dataForRequest = useRef({} as any);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
-  const [snackBarOpen, setSnackBarOpen] = useState(false);
   const [templateDrawerOpen, setTemplateDrawerOpen] = useState(Boolean(router.query.editor));
   const [deletePrompt] = useDeletePromptMutation();
   const [publishTemplate] = usePublishTemplateMutation();
-  const [snackBarInvalidVariables, setSnackBarInvalidVariables] = useState(false);
   const [invalidVariableMessage, setInvalidVariableMessage] = useState("");
   const token = useToken();
   const dispatch = useAppDispatch();
@@ -432,7 +418,12 @@ export const Builder = () => {
     });
 
     if (!allPromptsValid) {
-      setSnackBarInvalidVariables(true);
+      dispatch(
+        setToast({
+          message: `You have entered an invalid prompt variable ${invalidVariableMessage}`,
+          severity: "error",
+        }),
+      );
       return;
     }
 
@@ -468,7 +459,7 @@ export const Builder = () => {
     });
 
     updateTemplate(templateData!.id, data).then(() => {
-      setSnackBarOpen(true);
+      dispatch(setToast({ message: "Prompt template saved with success", severity: "success" }));
       window.location.reload();
     });
   };
@@ -705,27 +696,6 @@ export const Builder = () => {
             </SwipeableDrawer>
           )}
         </Grid>
-        <Snackbar
-          open={snackBarOpen}
-          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-          autoHideDuration={3000}
-          message="Prompt template saved with success"
-          onClose={() => setSnackBarOpen(false)}
-        />
-        <Snackbar
-          open={snackBarInvalidVariables}
-          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-          autoHideDuration={4000}
-          onClose={() => setSnackBarInvalidVariables(false)}
-        >
-          <Alert
-            onClose={() => setSnackBarInvalidVariables(false)}
-            severity="error"
-            sx={{ width: "100%", bgcolor: "#f85249" }}
-          >
-            You have entered an invalid prompt variable {invalidVariableMessage}
-          </Alert>
-        </Snackbar>
         <Dialog
           open={confirmDialogOpen}
           onClose={() => setConfirmDialogOpen(false)}

@@ -19,12 +19,11 @@ import { useStoreAnswersAndParams } from "@/hooks/useStoreAnswersAndParams";
 import SigninButton from "@/components/common/buttons/SigninButton";
 
 interface Props {
-  onError: (errMsg: string) => void;
   template: Templates;
   questionPrefixContent: string;
 }
 
-const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixContent }) => {
+const GeneratorChat: React.FC<Props> = ({ template, questionPrefixContent }) => {
   const router = useRouter();
   const dispatch = useAppDispatch();
 
@@ -53,7 +52,6 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
   const { generateExecutionHandler, abortConnection, disableChatInput } = useGenerateExecution({
     template,
     messageAnswersForm,
-    onError,
   });
 
   const [_inputs, _params]: [IPromptInput[], PromptParams[], boolean] = useMemo(() => {

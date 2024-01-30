@@ -20,11 +20,10 @@ const TemplateVariantBLazy = lazy(() => import("@/components/Prompt/VariantB"), 
 
 interface Props {
   template: Templates;
-  setErrorMessage: Dispatch<SetStateAction<string>>;
   questionPrefixContent: string;
 }
 
-function TemplatePage({ template, setErrorMessage, questionPrefixContent }: Props) {
+function TemplatePage({ template, questionPrefixContent }: Props) {
   const dispatch = useAppDispatch();
   const { selectedExecution, sparkHashQueryParam } = useAppSelector(state => state.executions);
   const isValidUser = useAppSelector(isValidUserFn);
@@ -68,14 +67,12 @@ function TemplatePage({ template, setErrorMessage, questionPrefixContent }: Prop
           executions={executions ?? []}
           template={template}
           questionPrefixContent={questionPrefixContent}
-          setErrorMessage={setErrorMessage}
         />
       ) : (
         <TemplateVariantBLazy
           executions={executions ?? []}
           template={template}
           questionPrefixContent={questionPrefixContent}
-          setErrorMessage={setErrorMessage}
         />
       )}
     </>

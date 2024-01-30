@@ -9,10 +9,11 @@ import { Google } from "@/assets/icons/google";
 import { Microsoft } from "@/assets/icons/microsoft";
 import { authClient } from "@/common/axios";
 import { IContinueWithSocialMediaResponse } from "@/common/types";
-import { savePathURL, saveToken } from "@/common/utils";
+import { saveToken } from "@/common/utils";
 import useToken from "@/hooks/useToken";
 import { useDispatch } from "react-redux";
 import { updateUser } from "@/core/store/userSlice";
+import { setToast } from "@/core/store/toastSlice";
 
 const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
 
@@ -21,17 +22,10 @@ interface IProps {
   preLogin: () => void;
   postLogin: (data: IContinueWithSocialMediaResponse | null) => void;
   authConnection: string[];
-  setTypeAlert: Function;
   setOpenAdd: Function;
 }
 
-export const AddConnectionButtons: React.FC<IProps> = ({
-  postLogin,
-  preLogin,
-  authConnection,
-  setTypeAlert,
-  setOpenAdd,
-}) => {
+export const AddConnectionButtons: React.FC<IProps> = ({ postLogin, preLogin, authConnection, setOpenAdd }) => {
   const dispatch = useDispatch();
   const savedToken = useToken();
   const githubButtonRef = useRef<HTMLButtonElement | null>(null);
@@ -40,11 +34,12 @@ export const AddConnectionButtons: React.FC<IProps> = ({
 
     if (token !== savedToken) {
       setOpenAdd(false);
-      setTypeAlert({
-        open: true,
-        color: "info",
-        message: "You already have this connection attached to another account",
-      });
+      dispatch(
+        setToast({
+          message: "You already have this connection attached to another account",
+          severity: "info",
+        }),
+      );
     } else {
       dispatch(updateUser(userProps));
       saveToken({ token });

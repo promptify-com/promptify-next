@@ -11,17 +11,11 @@ import useBrowser from "@/hooks/useBrowser";
 
 interface TemplateVariantBProps {
   template: Templates;
-  setErrorMessage: Dispatch<SetStateAction<string>>;
   questionPrefixContent: string;
   executions: TemplatesExecutions[];
 }
 
-export default function TemplateVariantB({
-  template,
-  executions,
-  setErrorMessage,
-  questionPrefixContent,
-}: TemplateVariantBProps) {
+export default function TemplateVariantB({ template, executions, questionPrefixContent }: TemplateVariantBProps) {
   const { isMobile } = useBrowser();
   return (
     <Stack
@@ -82,7 +76,6 @@ export default function TemplateVariantB({
           }}
         >
           <Chat
-            onError={setErrorMessage}
             template={template}
             questionPrefixContent={questionPrefixContent}
           />

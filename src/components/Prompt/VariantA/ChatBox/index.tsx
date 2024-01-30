@@ -26,7 +26,7 @@ interface Props {
   questionPrefixContent: string;
 }
 
-const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) => {
+const ChatBox: React.FC<Props> = ({ template, questionPrefixContent }) => {
   const router = useRouter();
 
   const dispatch = useAppDispatch();
@@ -55,7 +55,6 @@ const ChatBox: React.FC<Props> = ({ onError, template, questionPrefixContent }) 
   const { generateExecutionHandler, abortConnection, disableChatInput } = useGenerateExecution({
     template,
     messageAnswersForm,
-    onError,
   });
   const { storeAnswers, storeParams } = useStoreAnswersAndParams();
 
