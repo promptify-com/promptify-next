@@ -15,7 +15,7 @@ interface Props {
   setType: (type: InputType) => void;
 }
 
-export const SuggestionsListDetailed = ({
+function SuggestionsListDetailed({
   highlightValue,
   suggestionList,
   position,
@@ -23,7 +23,7 @@ export const SuggestionsListDetailed = ({
   onSelect,
   previousPresets,
   setType,
-}: Props) => {
+}: Props) {
   const [open, setOpen] = useState(false);
   const [showTypes, setShowTypes] = useState(false);
 
@@ -231,4 +231,6 @@ export const SuggestionsListDetailed = ({
       )}
     </>
   );
-};
+}
+
+export default SuggestionsListDetailed;

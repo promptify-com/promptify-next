@@ -7,7 +7,6 @@ import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
-
 import { useScrollToElement } from "@/hooks/useScrollToElement";
 import { promptComputeDomId } from "@/common/helpers";
 import type { Engine } from "@/core/api/dto/templates";
@@ -181,7 +180,7 @@ const PromptSequenceList = memo(({ prompts, setPrompts, engines }: PromptSequenc
             return (
               <DraggableContent
                 key={prompt.id}
-                promptEngineId={prompt.engine_id}
+                promptEngineId={prompt.engine}
                 promptId={prompt.id || prompt.temp_id!}
                 promptTitle={prompt.title}
                 movePrompt={movePrompt}
@@ -199,7 +198,6 @@ const PromptSequenceList = memo(({ prompts, setPrompts, engines }: PromptSequenc
 const PromptSequence = ({ prompts, setPrompts, engines }: PromptSequenceListProps) => {
   return (
     <Box
-      bgcolor={"surface.1"}
       height={"96vh"}
       overflow={"hidden"}
       sx={{

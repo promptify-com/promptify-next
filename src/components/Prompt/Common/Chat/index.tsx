@@ -1,28 +1,22 @@
-import { useState, useMemo, memo, useEffect } from "react";
+import { useMemo, memo, useEffect } from "react";
 import { useRouter } from "next/router";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
-
 import { useAppSelector, useAppDispatch } from "@/hooks/useStore";
-import useToken from "@/hooks/useToken";
 import { ChatInterface } from "@/components/Prompt/Common/Chat/ChatInterface";
 import { ChatInput } from "@/components/Prompt/Common/Chat/ChatInput";
 import { executionsApi } from "@/core/api/executions";
-import { vary } from "@/common/helpers/varyValidator";
-import { setGeneratedExecution, setSelectedExecution } from "@/core/store/executionsSlice";
+import { setSelectedExecution } from "@/core/store/executionsSlice";
 import useChatBox from "@/hooks/useChatBox";
 import useChat from "@/components/Prompt/Hooks/useChat";
-import { randomId } from "@/common/helpers";
 import { getExecutionById } from "@/hooks/api/executions";
-import { setAnswers, setInputs, setParams, setparamsValues } from "@/core/store/chatSlice";
+import { setInputs, setParams, setParamsValues } from "@/core/store/chatSlice";
 import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution";
-import SigninButton from "@/components/common/buttons/SigninButton";
-import { useStoreAnswersAndParams } from "@/hooks/useStoreAnswersAndParams";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IPromptInput } from "@/common/types/prompt";
-import type { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
-import type { IAnswer, IMessage, VaryValidatorResponse } from "@/components/Prompt/Types/chat";
-import type { PromptInputType } from "@/components/Prompt/Types";
+import type { PromptParams } from "@/core/api/dto/prompts";
+import { useStoreAnswersAndParams } from "@/hooks/useStoreAnswersAndParams";
+import SigninButton from "@/components/common/buttons/SigninButton";
 
 interface Props {
   onError: (errMsg: string) => void;
@@ -43,14 +37,22 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
 
   const { storeAnswers, storeParams } = useStoreAnswersAndParams();
 
-  const { messages, initialMessages, showGenerateButton, showGenerate, validateVary, isValidatingAnswer } = useChat({
+  const {
+    messages,
+    initialMessages,
+    messageAnswersForm,
+    showGenerateButton,
+    showGenerate,
+    validateVary,
+    isValidatingAnswer,
+  } = useChat({
     questionPrefixContent,
     initialMessageTitle: template.title,
   });
 
   const { generateExecutionHandler, abortConnection, disableChatInput } = useGenerateExecution({
     template,
-    questionPrefixContent,
+    messageAnswersForm,
     onError,
   });
 
@@ -64,7 +66,7 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
       template.questions,
     );
 
-    dispatch(setparamsValues(paramsValues));
+    dispatch(setParamsValues(paramsValues));
 
     initialMessages({ questions: inputs });
 

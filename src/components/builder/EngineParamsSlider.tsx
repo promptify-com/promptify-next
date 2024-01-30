@@ -9,7 +9,7 @@ interface Props {
   onCancel: () => void;
 }
 
-export const EngineParamsSlider: React.FC<Props> = ({ engineParams, onSave, onCancel }) => {
+function EngineParamsSlider({ engineParams, onSave, onCancel }: Props) {
   const [params, setParams] = useState<IEngineParams>({
     temperature: engineParams?.temperature || 0,
     maximumLength: engineParams?.maximumLength || 0,
@@ -75,4 +75,6 @@ export const EngineParamsSlider: React.FC<Props> = ({ engineParams, onSave, onCa
       </Stack>
     </Stack>
   );
-};
+}
+
+export default EngineParamsSlider;
