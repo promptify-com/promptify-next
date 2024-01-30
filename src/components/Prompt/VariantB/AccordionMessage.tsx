@@ -45,19 +45,22 @@ export default function AccordionMessage({
   const accordionRef = useRef<HTMLDivElement>(null);
 
   function getLabelText() {
-    if (isGenerating) {
-      return "Generation Result";
-    }
-    if (isAutomationPage && type === "form") {
-      return "WORKFLOW";
-    }
-    if (type === "auth") {
-      return "CREDENTIALS";
-    }
-    return "PROMPT Template";
-  }
+    const condition = `${isGenerating ? "generating" : ""}${
+      isAutomationPage && type === "form" ? "automation-form" : ""
+    }${type === "credentials" ? "credentials" : ""}`;
 
-  const isTypeFormOrAuth = type === "form" || type === "auth";
+    switch (condition) {
+      case "generating":
+        return "Generation Result";
+      case "automation-form":
+        return "WORKFLOW";
+      case "credentials":
+        return "CREDENTIALS";
+      default:
+        return "PROMPT Template";
+    }
+  }
+  const canDisplayForm = type === "form" || type === "credentials";
 
   return (
     <Fade
@@ -122,7 +125,7 @@ export default function AccordionMessage({
                   <Display templateData={template} />
                 </Stack>
               )}
-              {isTypeFormOrAuth && <Form messageType={type} />}
+              {canDisplayForm && <Form messageType={type} />}
             </Stack>
           </Stack>
           {showGenerate && type === "form" && currentUser?.id && (

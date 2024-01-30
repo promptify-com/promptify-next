@@ -12,18 +12,15 @@ import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 import Grid from "@mui/material/Grid";
 import Close from "@mui/icons-material/Close";
-import {
-  DeleteOutline,
-  Edit,
-  RemoveRedEyeOutlined,
-  ShareOutlined,
-  Star,
-  StarOutline,
-  VisibilityOff,
-} from "@mui/icons-material";
+import Edit from "@mui/icons-material/Edit";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import DeleteOutline from "@mui/icons-material/DeleteOutline";
+import RemoveRedEyeOutlined from "@mui/icons-material/RemoveRedEyeOutlined";
+import ShareOutlined from "@mui/icons-material/ShareOutlined";
+import Star from "@mui/icons-material/Star";
+import StarOutline from "@mui/icons-material/StarOutline";
 
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { ExecutionTemplatePopupType, Templates } from "@/core/api/dto/templates";
 import { useDeleteExecutionFavoriteMutation, useExecutionFavoriteMutation } from "@/core/api/executions";
 import { SparkSaveDeletePopup } from "@/components/dialog/SparkSaveDeletePopup";
 import { SparkExportPopup } from "@/components/dialog/SparkExportPopup";
@@ -32,8 +29,9 @@ import { setGeneratedExecution } from "@/core/store/executionsSlice";
 import useTruncate from "@/hooks/useTruncate";
 import { setAnswers } from "@/core/store/chatSlice";
 import AvatarWithInitials from "@/components/Prompt/Common/AvatarWithInitials";
-import useVariant from "../Hooks/useVariant";
-import { MessageType } from "@/components/Prompt/Types/chat";
+import useVariant from "@/components/Prompt/Hooks/useVariant";
+import type { ExecutionTemplatePopupType, Templates } from "@/core/api/dto/templates";
+import type { MessageType } from "@/components/Prompt/Types/chat";
 
 interface Props {
   template: Templates;
@@ -113,7 +111,7 @@ function AccordionMessageHeader({ template, type, isExpanded, onCancel }: Props)
 
   const isOwner = currentUser?.id === selectedExecution?.executed_by;
 
-  const isTypeFormOrAuth = type === "form" || type === "auth";
+  const canDisplayForm = type === "form" || type === "credentials";
 
   return (
     <>
@@ -153,7 +151,7 @@ function AccordionMessageHeader({ template, type, isExpanded, onCancel }: Props)
               </>
             )}
 
-            {isTypeFormOrAuth && (
+            {canDisplayForm && (
               <Box
                 position={"relative"}
                 mt={0.5}
@@ -201,9 +199,13 @@ function AccordionMessageHeader({ template, type, isExpanded, onCancel }: Props)
                 justifyContent={{ xs: "space-between", md: "start" }}
                 letterSpacing={"0.2px"}
               >
-                {isTypeFormOrAuth &&
+                {canDisplayForm &&
                   `New ${
-                    isAutomationPage && type === "form" ? "Execution" : type === "auth" ? "Credentails" : "Prompt"
+                    isAutomationPage && type === "form"
+                      ? "Execution"
+                      : type === "credentials"
+                      ? "Credentails"
+                      : "Prompt"
                   }`}
 
                 {type === "spark" && (

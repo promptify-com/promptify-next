@@ -74,7 +74,7 @@ export interface Creds {
   [key: string]: AuthTypeProperties;
 }
 
-export interface AuthCredentials {
+export interface Credentials {
   authType: string;
   displayName: string;
   properties: ICredentialsProperty[];

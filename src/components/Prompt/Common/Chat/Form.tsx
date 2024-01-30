@@ -21,12 +21,12 @@ interface FormLayoutProps {
 }
 
 function FormFields({ variant, messageType }: FormLayoutProps) {
-  const { params, inputs, authCredentials } = useAppSelector(state => state.chat);
+  const { params, inputs, credentials } = useAppSelector(state => state.chat);
 
   const [localInputs, setLocalInputs] = useState<IPromptInput[]>([]);
 
   useEffect(() => {
-    const transformedInputs: IPromptInput[] = authCredentials.map(credential => ({
+    const transformedInputs: IPromptInput[] = credentials.map(credential => ({
       name: credential.authType,
       fullName: credential.displayName,
       type: "auth",
@@ -35,33 +35,31 @@ function FormFields({ variant, messageType }: FormLayoutProps) {
 
     if (messageType === "form") {
       setLocalInputs(inputs);
-    } else if (messageType === "auth") {
+    } else if (messageType === "credentials") {
       setLocalInputs(transformedInputs);
     }
   }, []);
 
   return (
-    <>
-      <Stack gap={variant === "b" ? 1 : 2}>
-        {localInputs.map((input, index) => {
-          return (
-            <FormInput
-              key={index}
-              input={input}
-            />
-          );
-        })}
+    <Stack gap={variant === "b" ? 1 : 2}>
+      {localInputs.map((input, index) => {
+        return (
+          <FormInput
+            key={index}
+            input={input}
+          />
+        );
+      })}
 
-        {params?.map(param => {
-          return (
-            <FormParam
-              key={param.parameter.id}
-              param={param}
-            />
-          );
-        })}
-      </Stack>
-    </>
+      {params?.map(param => {
+        return (
+          <FormParam
+            key={param.parameter.id}
+            param={param}
+          />
+        );
+      })}
+    </Stack>
   );
 }
 

@@ -1,4 +1,4 @@
-import type { AuthCredentials, Creds, INode, NodesFileData } from "@/components/Automation/types";
+import type { Credentials, Creds, INode, NodesFileData } from "@/components/Automation/types";
 
 const UNWANTED_TYPES = [
   "n8n-nodes-base.switch",
@@ -36,8 +36,8 @@ const authTypeMapping: { [key: string]: string } = {
   // Add other mappings here if necessary
 };
 
-export async function extractAuthData(nodes: INode[] = []): Promise<AuthCredentials[]> {
-  const authCredentials: AuthCredentials[] = [];
+export async function extractAuthData(nodes: INode[] = []): Promise<Credentials[]> {
+  const credentials: Credentials[] = [];
 
   //@ts-ignore
   const creds: Creds = (
@@ -51,11 +51,17 @@ export async function extractAuthData(nodes: INode[] = []): Promise<AuthCredenti
   for (const node of nodes) {
     const parameters = node.parameters as any;
     if (parameters && parameters.authentication) {
-      let authType = parameters.authentication;
-      authType = authTypeMapping[authType] || authType;
+      const authenticationType = parameters.authentication;
+      const nodeCredentialType = parameters.nodeCredentialType;
+
+      const authType =
+        authTypeMapping[nodeCredentialType] ||
+        nodeCredentialType ||
+        authTypeMapping[authenticationType] ||
+        authenticationType;
 
       if (creds[authType]) {
-        authCredentials.push({
+        credentials.push({
           authType: authType,
           displayName: creds[authType].displayName,
           properties: creds[authType].properties,
@@ -64,19 +70,5 @@ export async function extractAuthData(nodes: INode[] = []): Promise<AuthCredenti
     }
   }
 
-  return authCredentials;
+  return credentials;
 }
-
-export const nodes: INode[] = [
-  {
-    id: "674cdfb9-5058-4bfd-b9e8-71020cab29b2",
-    name: "Respond to Webhook",
-    type: "n8n-nodes-base.respondToWebhook",
-    position: [1240, 280],
-    parameters: {
-      authentication: "basicAuth",
-    },
-    typeVersion: 1,
-    webhookId: "sss",
-  },
-];

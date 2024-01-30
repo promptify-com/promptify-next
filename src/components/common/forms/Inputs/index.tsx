@@ -4,7 +4,7 @@ import Code from "@/components/common/forms/Inputs/Code";
 import Choices from "@/components/common/forms/Inputs/Choices";
 import File from "@/components/common/forms/Inputs/File";
 import Textual from "@/components/common/forms/Inputs/Textual";
-import Auth from "@/components/common/forms/Inputs/Auth";
+import Credentials from "@/components/common/forms/Inputs/Credentials";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { PromptInputType } from "@/components/Prompt/Types";
 
@@ -60,7 +60,7 @@ function RenderInputType({ input, value: initialValue, onChange }: Props) {
         />
       );
     case "auth":
-      return <Auth input={input} />;
+      return <Credentials input={input} />;
     default:
       return (
         <Textual

@@ -21,7 +21,7 @@ type AccordionExpandedState = {
   form: boolean;
   text: boolean;
   html: boolean;
-  auth: boolean;
+  credentials: boolean;
 };
 
 interface Props {
@@ -42,7 +42,7 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
   const [expandedAccordions, setExpandedAccordions] = useState<AccordionExpandedState>({
     spark: true,
     form: true,
-    auth: true,
+    credentials: true,
     text: false,
     html: false,
   });
@@ -61,7 +61,7 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
   };
 
   const showAccorionMessage = (message: IMessage): boolean => {
-    return Boolean(message.type === "form" || message.type === "spark" || message.type === "auth");
+    return Boolean(message.type === "form" || message.type === "spark" || message.type === "credentials");
   };
 
   return (

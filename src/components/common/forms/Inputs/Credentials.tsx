@@ -14,7 +14,7 @@ import { useAppSelector } from "@/hooks/useStore";
 import type { ICredentialsProperty } from "@/components/Automation/types";
 import type { IPromptInput } from "@/common/types/prompt";
 
-interface AuthProps {
+interface Props {
   input: IPromptInput;
 }
 
@@ -22,18 +22,18 @@ interface FormValues {
   [key: string]: string;
 }
 
-function Auth({ input }: AuthProps) {
+function Credentials({ input }: Props) {
   const [openModal, setOpenModal] = useState(false);
   const [credentialProperties, setCredentialProperties] = useState<ICredentialsProperty[]>([]);
 
-  const authCredentials = useAppSelector(state => state.chat.authCredentials);
+  const credentials = useAppSelector(state => state.chat.credentials);
 
   useEffect(() => {
-    const credential = authCredentials.find(cred => cred.displayName === input.fullName);
+    const credential = credentials.find(cred => cred.displayName === input.fullName);
     if (credential) {
       setCredentialProperties(credential.properties);
     }
-  }, [authCredentials]);
+  }, [credentials]);
 
   const initialValues: FormValues = credentialProperties.reduce<FormValues>((acc, prop) => {
     acc[prop.name] = "";
@@ -140,4 +140,4 @@ function Auth({ input }: AuthProps) {
   );
 }
 
-export default Auth;
+export default Credentials;
