@@ -1,7 +1,7 @@
 import { baseApi } from "./api";
 import type {
   CreateCredentialPayload,
-  CreateCredentialResponse,
+  CredentialResponse,
   IWorkflow,
   IWorkflowCreateResponse,
 } from "@/components/Automation/types";
@@ -30,7 +30,14 @@ export const workflowsApi = baseApi.injectEndpoints({
         }),
       }),
 
-      createCredentials: builder.mutation<CreateCredentialResponse, CreateCredentialPayload>({
+      getCredentials: builder.query<CredentialResponse[], void>({
+        query: () => ({
+          url: `/api/n8n/workflows/credentials/`,
+          method: "get",
+        }),
+      }),
+
+      createCredentials: builder.mutation<CredentialResponse, CreateCredentialPayload>({
         query: data => ({
           url: `/api/n8n/workflows/credentials/`,
           method: "post",
@@ -46,4 +53,5 @@ export const {
   useCreateUserWorkflowMutation,
   useGetWorkflowByIdQuery,
   useCreateCredentialsMutation,
+  useGetCredentialsQuery,
 } = workflowsApi;

@@ -5,6 +5,7 @@ import Protected from "@/components/Protected";
 import { useSelector } from "react-redux";
 import { RootState } from "@/core/store";
 import EditProfile from "@/components/profile/EditProfile";
+import Credentials from "@/components/profile/Credentials";
 
 const Profile = () => {
   const isEditMode = useSelector((state: RootState) => state.profile.showEditMode);
@@ -55,6 +56,7 @@ const Profile = () => {
                   </Box>
                   <Home />
                   <Connections />
+                  <Credentials />
                   <Identy />
                   <TemplatesManager
                     type={"user"}

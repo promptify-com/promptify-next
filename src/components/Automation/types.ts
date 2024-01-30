@@ -97,7 +97,7 @@ export interface CreateCredentialPayload {
   data: Record<string, string>;
 }
 
-export interface CreateCredentialResponse {
+export interface CredentialResponse {
   name: string;
   type: string;
   id: string;
