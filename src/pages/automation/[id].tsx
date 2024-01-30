@@ -74,10 +74,10 @@ export default function SingleWorkflow() {
             type: "text",
             required: true,
           }));
-        initialMessages({ questions: inputs });
 
-        prepareAndQueueMessages(credentials);
         dispatch(setInputs(inputs));
+        initialMessages({ questions: inputs });
+        prepareAndQueueMessages(credentials);
       }
     };
 

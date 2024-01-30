@@ -11,7 +11,7 @@ import { object, string } from "yup";
 
 import BaseButton from "@/components/base/BaseButton";
 import { useAppSelector } from "@/hooks/useStore";
-import type { ICredentialsProperty } from "@/components/Automation/types";
+import type { Credentials, ICredentialsProperty } from "@/components/Automation/types";
 import type { IPromptInput } from "@/common/types/prompt";
 
 interface Props {
@@ -35,6 +35,17 @@ function Credentials({ input }: Props) {
     }
   }, [credentials]);
 
+  function getRequiredFields(credentialProperties: ICredentialsProperty[]) {
+    let requiredFields = credentialProperties.filter(prop => prop.required).map(prop => prop.name);
+
+    if (requiredFields.length === 0) {
+      requiredFields = credentialProperties.map(prop => prop.name);
+    }
+    return requiredFields;
+  }
+
+  const requiredFields = getRequiredFields(credentialProperties);
+
   const initialValues: FormValues = credentialProperties.reduce<FormValues>((acc, prop) => {
     acc[prop.name] = "";
     return acc;
@@ -42,7 +53,11 @@ function Credentials({ input }: Props) {
 
   const validationSchema = object().shape(
     credentialProperties.reduce<Record<string, any>>((acc, prop) => {
-      acc[prop.name] = string().required(`${prop.displayName} is Required`);
+      if (requiredFields.includes(prop.name)) {
+        acc[prop.name] = string().required(`${prop.displayName} is required`);
+      } else {
+        acc[prop.name] = string();
+      }
       return acc;
     }, {}),
   );
@@ -98,7 +113,7 @@ function Credentials({ input }: Props) {
                         <Field
                           as={TextField}
                           autoFocus={index === 0}
-                          required={true}
+                          required={requiredFields.includes(prop.name)}
                           label={prop.displayName}
                           name={prop.name}
                           type={prop.typeOptions?.password ? "password" : prop.type}

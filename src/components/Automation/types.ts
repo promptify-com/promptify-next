@@ -84,6 +84,7 @@ export interface ICredentialsProperty {
   displayName: string;
   default: string;
   name: string;
+  required?: boolean;
   type: string;
   typeOptions?: {
     password: boolean;
