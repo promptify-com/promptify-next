@@ -1,5 +1,5 @@
 import { GitHub, LinkedIn } from "@mui/icons-material";
-import { Box, Grid, Snackbar, Typography } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 import { useRef, useState, forwardRef } from "react";
 import GitHubLogin from "react-github-login";
 import { useLinkedIn } from "react-linkedin-login-oauth2";
@@ -16,19 +16,9 @@ import { updateUser } from "@/core/store/userSlice";
 import { useDispatch } from "react-redux";
 import { userApi } from "@/core/api/user";
 import { redirectToPath } from "@/common/helpers";
+import { setToast } from "@/core/store/toastSlice";
 
 const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
-
-const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
-  return (
-    <MuiAlert
-      elevation={6}
-      ref={ref}
-      variant="filled"
-      {...props}
-    />
-  );
-});
 
 interface IProps {
   preLogin: (isLoading: boolean) => void;
@@ -39,7 +29,6 @@ interface IProps {
 
 export default function SocialButtons({ preLogin, isChecked, setErrorCheckBox, from }: IProps) {
   const githubButtonRef = useRef<HTMLButtonElement | null>(null);
-  const [open, setOpen] = useState(false);
   const [attemptError, setAttemptError] = useState(false);
   const dispatch = useDispatch();
   const [getCurrentUser] = userApi.endpoints.getCurrentUser.useLazyQuery();
@@ -122,7 +111,14 @@ export default function SocialButtons({ preLogin, isChecked, setErrorCheckBox, f
   };
   const validateConsent = (loginMethod: Function) => {
     if (!isChecked && from === "signup") {
-      setOpen(true);
+      dispatch(
+        setToast({
+          message: "Please accept the terms and conditions.",
+          severity: "error",
+          duration: 6000,
+          position: { vertical: "bottom", horizontal: "right" },
+        }),
+      );
       setErrorCheckBox(false);
     } else {
       loginMethod();
@@ -326,14 +322,6 @@ export default function SocialButtons({ preLogin, isChecked, setErrorCheckBox, f
           Continue with Microsoft
         </Typography>
       </Grid>
-      <Snackbar
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-        open={open}
-        autoHideDuration={6000}
-        onClose={() => setOpen(false)}
-      >
-        <Alert severity={"error"}>Please accept the terms and conditions.</Alert>
-      </Snackbar>
     </Box>
   );
 }

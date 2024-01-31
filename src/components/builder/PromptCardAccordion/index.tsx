@@ -1,10 +1,8 @@
 import ModeEdit from "@mui/icons-material/ModeEdit";
 import PlayCircle from "@mui/icons-material/PlayCircle";
-import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
-import Snackbar from "@mui/material/Snackbar";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import React, { memo, useMemo, useRef, useState } from "react";
@@ -20,9 +18,10 @@ import { getBuilderVarsPresets } from "@/common/helpers/getBuilderVarsPresets";
 import { useDebouncedDispatch } from "@/hooks/useDebounceDispatch";
 import { BUILDER_TYPE } from "@/common/constants";
 import PromptTestDialog from "./PromptTest";
-import { useAppSelector } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { isDeepEqual } from "@/common/helpers";
 import { useUpdatePromptMutation } from "@/core/api/templates";
+import { setToast } from "@/core/store/toastSlice";
 
 interface Props {
   prompt: IEditPrompts;
@@ -48,10 +47,10 @@ const PromptCardAccordion = ({
   builderType,
 }: Props) => {
   const initPromptData = useRef(prompt);
+  const dispatch = useAppDispatch();
   const [promptData, setPromptData] = useState(prompt);
   const [renameAllow, setRenameAllow] = useState(false);
   const [showTest, setShowTest] = useState(false);
-  const [showToast, setShowToast] = useState(false);
   const saveNeeded = useRef(!promptData.id);
   const cursorPositionRef = useRef(0);
   const [highlightedOption, setHighlightedOption] = useState("");
@@ -124,10 +123,24 @@ const PromptCardAccordion = ({
 
   const handleOpenTest = () => {
     if (saveNeeded.current) {
-      setShowToast(true);
+      dispatch(
+        setToast({
+          message: "Please save your template changes first before running tests.",
+          severity: "warning",
+          duration: 8000,
+          position: { vertical: "top", horizontal: "center" },
+        }),
+      );
       return;
     }
-    setShowTest(true);
+    dispatch(
+      setToast({
+        message: "Please save your template changes first before running tests.",
+        severity: "warning",
+        duration: 8000,
+        position: { vertical: "top", horizontal: "center" },
+      }),
+    );
   };
 
   return (
@@ -268,16 +281,6 @@ const PromptCardAccordion = ({
           setPrompt={updatePrompt}
         />
       </Box>
-      {showToast && (
-        <Snackbar
-          open={true}
-          onClose={() => setShowToast(false)}
-          autoHideDuration={8000}
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        >
-          <Alert severity="warning">Please save your template changes first before running tests.</Alert>
-        </Snackbar>
-      )}
     </Box>
   );
 };

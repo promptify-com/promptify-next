@@ -15,8 +15,6 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 import Close from "@mui/icons-material/Close";
 import CircularProgress from "@mui/material/CircularProgress";
-import Snackbar from "@mui/material/Snackbar";
-import Alert from "@mui/material/Alert";
 
 import { useGetTagsQuery } from "@/core/api/tags";
 import { fieldStyle, boxStyle, buttonBoxStyle, checkboxStyle } from "@/components/modals/styles";
@@ -53,7 +51,7 @@ function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMod
   const [executions, setExecutions] = useState<TemplatesExecutions[]>();
   const [selectedFile, setSelectedFile] = useState<File>();
 
-  const { formik, loading, showSnackbar, closeSnackbar, handleSubmit } = useTemplateForm({
+  const { formik, loading, handleSubmit } = useTemplateForm({
     type,
     template: templateData!,
     uploadedFile: selectedFile,
@@ -583,14 +581,6 @@ function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMod
           )}
         </Button>
       </Box>
-      <Snackbar
-        open={showSnackbar}
-        onClose={closeSnackbar}
-        autoHideDuration={2000}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      >
-        <Alert severity="error">Please try again, make sure you have entered all required template information.</Alert>
-      </Snackbar>
     </Box>
   );
 }

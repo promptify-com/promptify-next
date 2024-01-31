@@ -17,7 +17,6 @@ import { IMessage } from "@/components/Prompt/Types/chat";
 import { randomId } from "@/common/helpers";
 
 interface Props {
-  onError: (errMsg: string) => void;
   template: Templates;
   questionPrefixContent: string;
 }
@@ -29,7 +28,7 @@ const ChatBoxVariantB = dynamic(() => import("@/components/Prompt/VariantB/ChatB
   loading: () => <PromptPlaceholder />,
 });
 
-const CommonChat: React.FC<Props> = ({ onError, template, questionPrefixContent }) => {
+const CommonChat: React.FC<Props> = ({ template, questionPrefixContent }) => {
   const { isVariantA } = useVariant();
   const dispatch = useAppDispatch();
 
@@ -54,7 +53,6 @@ const CommonChat: React.FC<Props> = ({ onError, template, questionPrefixContent 
   const { generateExecutionHandler, abortConnection, disableChatInput } = useGenerateExecution({
     template,
     messageAnswersForm,
-    onError,
   });
 
   const [_inputs, _params]: [IPromptInput[], PromptParams[], boolean] = useMemo(() => {

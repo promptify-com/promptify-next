@@ -13,17 +13,11 @@ import CommonChat from "@/components/Prompt/Common/Chat";
 
 interface TemplateLayoutProps {
   template: Templates;
-  setErrorMessage: Dispatch<SetStateAction<string>>;
   questionPrefixContent: string;
   executions: TemplatesExecutions[];
 }
 
-export default function TemplateVariantA({
-  template,
-  executions,
-  setErrorMessage,
-  questionPrefixContent,
-}: TemplateLayoutProps) {
+export default function TemplateVariantA({ template, executions, questionPrefixContent }: TemplateLayoutProps) {
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
 
@@ -94,7 +88,6 @@ export default function TemplateVariantA({
           }}
         >
           <CommonChat
-            onError={setErrorMessage}
             template={template}
             questionPrefixContent={questionPrefixContent}
           />
