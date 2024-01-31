@@ -30,11 +30,11 @@ const LINKS: Link[] = [
     name: "Prompt sequence",
     icon: <FormatListBulleted />,
   },
-  {
-    key: "test_log",
-    name: "Test log",
-    icon: <PaperIcon />,
-  },
+  // {
+  //   key: "test_log",
+  //   name: "Test log",
+  //   icon: <PaperIcon />,
+  // },
   {
     key: "help",
     name: "Help",
