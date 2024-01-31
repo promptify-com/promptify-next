@@ -13,7 +13,7 @@ import type { INode, IWorkflow } from "@/components/Automation/types";
 const useWorkflow = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const workflowId = router.query?.id as string;
+  const workflowId = router.query?.workflowId as string;
 
   const [workflowData, setWorkflowData] = useState<IWorkflow>();
   const { answers, inputs } = useAppSelector(state => state.chat);
