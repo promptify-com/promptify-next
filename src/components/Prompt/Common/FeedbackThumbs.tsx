@@ -166,19 +166,22 @@ export default function FeedbackThumbs({ vertical, execution, variant }: Props) 
             {!isIconVariant && "Bad"}
           </Button>
         </CustomTooltip>
-        <CustomTooltip title={isIconVariant && "Repeat"}>
-          <Button
-            onClick={() => handleRepeat()}
-            variant="text"
-            startIcon={<Replay />}
-            sx={{
-              ...buttonStyle,
-              ...(isIconVariant && minButtonStyle),
-            }}
-          >
-            {!isIconVariant && "Try again"}
-          </Button>
-        </CustomTooltip>
+
+        {selectedExecution && (
+          <CustomTooltip title={isIconVariant && "Repeat"}>
+            <Button
+              onClick={() => handleRepeat()}
+              variant="text"
+              startIcon={<Replay />}
+              sx={{
+                ...buttonStyle,
+                ...(isIconVariant && minButtonStyle),
+              }}
+            >
+              {!isIconVariant && "Try again"}
+            </Button>
+          </CustomTooltip>
+        )}
       </Stack>
     </>
   );

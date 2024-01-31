@@ -2,12 +2,12 @@ import { type Dispatch, type SetStateAction } from "react";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 
-import Chat from "@/components/Prompt/Common/Chat";
 import Header from "@/components/Prompt/Common/Header";
 import Sidebar from "@/components/Prompt/Common/Sidebar";
 import TopHeaderActions from "@/components/Prompt/Common/Sidebar/TopHeaderActions";
 import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import useBrowser from "@/hooks/useBrowser";
+import CommonChat from "@/components/Prompt/Common/Chat";
 
 interface TemplateVariantBProps {
   template: Templates;
@@ -81,7 +81,7 @@ export default function TemplateVariantB({
             },
           }}
         >
-          <Chat
+          <CommonChat
             onError={setErrorMessage}
             template={template}
             questionPrefixContent={questionPrefixContent}
