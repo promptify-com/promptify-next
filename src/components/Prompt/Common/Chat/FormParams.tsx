@@ -9,7 +9,7 @@ import HelpOutline from "@mui/icons-material/HelpOutline";
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import CustomTooltip from "@/components/Prompt/Common/CustomTooltip";
-import { setparamsValues } from "@/core/store/chatSlice";
+import { setParamsValues } from "@/core/store/chatSlice";
 import useVariant from "../../Hooks/useVariant";
 import type { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
 import Storage from "@/common/storage";
@@ -33,7 +33,7 @@ export default function FormParam({ param }: GeneratorParamProps) {
     const isRelevantParam = paramsStored.some((paramStored: ResOverrides) => paramStored.id === param.prompt);
 
     if (isRelevantParam) {
-      dispatch(setparamsValues(paramsStored));
+      dispatch(setParamsValues(paramsStored));
       Storage.remove("paramsValue");
     }
   }, []);
@@ -55,7 +55,7 @@ export default function FormParam({ param }: GeneratorParamProps) {
       };
     });
 
-    dispatch(setparamsValues(updatedParamsValues));
+    dispatch(setParamsValues(updatedParamsValues));
   };
 
   const matchingContext = paramValue?.contextual_overrides.find(
