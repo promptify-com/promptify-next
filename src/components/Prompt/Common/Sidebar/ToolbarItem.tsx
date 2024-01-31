@@ -13,8 +13,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { theme } from "@/theme";
 import type { Templates } from "@/core/api/dto/templates";
 import type { Link } from "@/components/Prompt/Types";
-import useVariant from "@/components/Prompt/Hooks/useVariant";
-import useCloneTemplate from "@/components/Prompt/Hooks/useCloneTemplate";
+import useVariant from "../../Hooks/useVariant";
 
 interface Props {
   template: Templates;
@@ -25,23 +24,19 @@ interface Props {
 function ToolbarItem({ item, template, executionsLength }: Props) {
   const dispatch = useAppDispatch();
   const { isVariantA } = useVariant();
-  const { cloneTemplate } = useCloneTemplate({ template });
 
   const activeLink = useAppSelector(state => state.template.activeSideBarLink);
 
   const handleClick = (link: Link) => {
-    if (link.name === "clone") {
-      cloneTemplate();
+    if (link.name !== "customize") {
+      dispatch(setActiveToolbarLink(link));
       return;
     }
 
-    if (link.name === "customize") {
-      const url = `/prompt-builder/${template.slug}?editor=1`;
-      window.open(url, "_blank");
-      return;
-    }
+    if (isVariantA) return;
 
-    dispatch(setActiveToolbarLink(link));
+    const url = `/prompt-builder/${template.slug}?editor=1`;
+    window.open(url, "_blank");
   };
 
   const isSelected = activeLink?.name === item.name;

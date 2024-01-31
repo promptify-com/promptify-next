@@ -45,11 +45,7 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
     html: false,
   });
 
-  const { showScrollDown, scrollToBottom } = useScrollToBottom({
-    ref: messagesContainerRef,
-    content: messages,
-    isGenerating,
-  });
+  const { showScrollDown, scrollToBottom } = useScrollToBottom({ ref: messagesContainerRef, messages, isGenerating });
 
   const handleExpandChange = (type: keyof AccordionExpandedState, isExpanded: boolean) => {
     setExpandedAccordions(prev => ({
@@ -187,6 +183,7 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
                       !!selectedExecution?.prompt_executions?.length &&
                       expandedAccordions["spark"] && (
                         <Box
+                          id="testt"
                           sx={{
                             position: "sticky",
                             top: "10px",

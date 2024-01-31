@@ -6,17 +6,15 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import HelpOutline from "@mui/icons-material/HelpOutline";
+
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import RenderInputType from "@/components/common/forms/Inputs";
-import CustomTooltip from "@/components/common/CustomTooltip";
-import useVariant from "@/components/Prompt/Hooks/useVariant";
+import RenderInputType from "./Inputs";
+import CustomTooltip from "../CustomTooltip";
+import useVariant from "../../Hooks/useVariant";
 import type { IPromptInput } from "@/common/types/prompt";
-import useApiAccess from "@/components/Prompt/Hooks/useApiAccess";
 import { setAnswers } from "@/core/store/chatSlice";
-import { PromptInputType } from "@/components/Prompt/Types";
-import { IAnswer } from "@/components/Prompt/Types/chat";
 import Storage from "@/common/storage";
-import { useDebouncedDispatch } from "@/hooks/useDebounceDispatch";
+import { IAnswer } from "../../Types/chat";
 
 interface Props {
   input: IPromptInput;
@@ -25,19 +23,12 @@ interface Props {
 function FormInput({ input }: Props) {
   const { isVariantB } = useVariant();
 
-  const { answers, isSimulationStreaming } = useAppSelector(state => state.chat);
+  const dispatch = useAppDispatch();
+  const answers = useAppSelector(state => state.chat.answers);
   const labelRef = useRef<HTMLDivElement | null>(null);
   const [labelWidth, setLabelWidth] = useState(0);
-  const dispatch = useAppDispatch();
-  const { dispatchNewExecutionData } = useApiAccess();
 
-  const { fullName, required, type, name: inputName, question, prompt } = input;
-  const value = answers.find(answer => answer.inputName === inputName)?.answer ?? "";
-  const isTextualType = ["text", "number", "integer"].includes(type);
-
-  const dispatchUpdateAnswers = useDebouncedDispatch((value: string) => {
-    updateAnswers(value);
-  }, 400);
+  const { fullName, required, type, name } = input;
 
   useEffect(() => {
     const answersStored = Storage.get("answers");
@@ -52,41 +43,14 @@ function FormInput({ input }: Props) {
     }
   }, []);
 
+  const value = answers.find(answer => answer.inputName === name)?.answer ?? "";
+
   useEffect(() => {
     if (isVariantB) return;
     if (labelRef.current) {
       setLabelWidth(labelRef.current.offsetWidth);
     }
   }, [fullName, isVariantB]);
-
-  const onChange = (value: PromptInputType) => {
-    if (isSimulationStreaming) return;
-    if (isTextualType) {
-      dispatchUpdateAnswers(value as string);
-    } else {
-      updateAnswers(value);
-    }
-  };
-
-  const updateAnswers = (value: PromptInputType) => {
-    const _answers = [...answers.filter(answer => answer.inputName !== inputName)];
-
-    const isEmptyTextualInput = isTextualType && typeof value === "string" && value.trim() === "";
-
-    if (!isEmptyTextualInput) {
-      const newAnswer: IAnswer = {
-        question: question!,
-        required,
-        inputName,
-        prompt: prompt!,
-        answer: value,
-      };
-      _answers.push(newAnswer);
-    }
-
-    dispatch(setAnswers(_answers));
-    dispatchNewExecutionData();
-  };
 
   return (
     <Stack
@@ -127,7 +91,6 @@ function FormInput({ input }: Props) {
         <RenderInputType
           input={input}
           value={value}
-          onChange={onChange}
         />
       </Stack>
       {isVariantB && (

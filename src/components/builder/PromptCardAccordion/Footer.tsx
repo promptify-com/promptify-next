@@ -15,7 +15,7 @@ interface Props {
   setPrompt: (prompt: IEditPrompts) => void;
 }
 
-function Footer({ prompt, setPrompt }: Props) {
+export const Footer = ({ prompt, setPrompt }: Props) => {
   const [showOptions, setShowOptions] = useState(false);
   const [optionsAnchor, setOptionsAnchor] = useState<HTMLElement | null>(null);
 
@@ -155,6 +155,4 @@ function Footer({ prompt, setPrompt }: Props) {
       </Popper>
     </>
   );
-}
-
-export default Footer;
+};
