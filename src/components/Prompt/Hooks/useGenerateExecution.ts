@@ -13,9 +13,9 @@ import type { PromptLiveResponse } from "@/common/types/prompt";
 import type { ResPrompt } from "@/core/api/dto/prompts";
 import type { Templates } from "@/core/api/dto/templates";
 import { useStoreAnswersAndParams } from "@/hooks/useStoreAnswersAndParams";
+import useUploadPromptFiles from "@/hooks/useUploadPromptFiles";
 import { setAnswers } from "@/core/store/chatSlice";
 import { setToast } from "@/core/store/toastSlice";
-import useUploadPromptFiles from "@/hooks/useUploadPromptFiles";
 
 interface Props {
   template: Templates;

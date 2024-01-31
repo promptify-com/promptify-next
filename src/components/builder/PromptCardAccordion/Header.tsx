@@ -3,10 +3,11 @@ import { EnginesGroups } from "@/components/common/forms/EnginesGroups";
 import { ArrowDropDown, ContentCopy, DeleteOutline, Menu, Settings } from "@mui/icons-material";
 import { Button, IconButton, Popover, Stack, Tooltip, Typography } from "@mui/material";
 import React, { useState } from "react";
-import { EngineParamsSlider } from "../EngineParamsSlider";
+import EngineParamsSlider from "../EngineParamsSlider";
 import { Engine } from "@/core/api/dto/templates";
 import { ConnectDragSource } from "react-dnd";
 import { BUILDER_TYPE } from "@/common/constants";
+import { useAppSelector } from "@/hooks/useStore";
 
 interface Props {
   prompt: IEditPrompts;
@@ -14,25 +15,16 @@ interface Props {
   setPrompt: (prompt: IEditPrompts) => void;
   deletePrompt: () => void;
   duplicatePrompt: () => void;
-  engines: Engine[];
   dragPreview: ConnectDragSource;
   builderType: BUILDER_TYPE;
 }
 
-export const Header = ({
-  prompt,
-  order,
-  setPrompt,
-  deletePrompt,
-  duplicatePrompt,
-  engines,
-  dragPreview,
-  builderType,
-}: Props) => {
+function Header({ prompt, order, setPrompt, deletePrompt, duplicatePrompt, dragPreview, builderType }: Props) {
   const [showEngines, setShowEngines] = useState(false);
   const [enginesAnchor, setEnginesAnchor] = useState<HTMLElement | null>(null);
   const [showSettings, setShowSettings] = useState(false);
   const [settingsAnchor, setSettingsAnchor] = useState<HTMLElement | null>(null);
+  const engines = useAppSelector(state => state.builder.engines);
 
   const closeEnginesModal = () => {
     setEnginesAnchor(null);
@@ -44,7 +36,7 @@ export const Header = ({
     setShowSettings(false);
   };
 
-  const promptEngine = engines?.find(engine => engine.id === prompt.engine_id);
+  const promptEngine = engines?.find(engine => engine.id === prompt.engine);
 
   return (
     <>
@@ -203,7 +195,7 @@ export const Header = ({
         <EnginesGroups
           engines={engines}
           onChange={engine => {
-            setPrompt({ ...prompt, engine_id: engine.id });
+            setPrompt({ ...prompt, engine: engine.id });
             closeEnginesModal();
           }}
         />
@@ -237,4 +229,6 @@ export const Header = ({
       </Popover>
     </>
   );
-};
+}
+
+export default Header;
