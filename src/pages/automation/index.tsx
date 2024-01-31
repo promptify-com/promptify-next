@@ -4,6 +4,7 @@ import { Layout } from "@/layout";
 import { useGetWorkflowsQuery } from "@/core/api/workflows";
 import CardWorkflow from "@/components/Automation/CardWorkflow";
 import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
+import { SEO_DESCRIPTION } from "@/common/constants";
 
 const Automation = () => {
   const { data: workflows, isLoading } = useGetWorkflowsQuery();
@@ -80,9 +81,8 @@ const Automation = () => {
 export function getServerSideProps() {
   return {
     props: {
-      title: "Promptify | Boost Your Creativity With Automation",
-      description:
-        "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
+      title: "Automation",
+      description: SEO_DESCRIPTION,
     },
   };
 }

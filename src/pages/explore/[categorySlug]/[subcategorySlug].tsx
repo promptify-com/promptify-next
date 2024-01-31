@@ -1,5 +1,4 @@
 import { useRouter } from "next/router";
-import Head from "next/head";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
@@ -31,80 +30,71 @@ export default function Page({ category, subcategory }: CategoryOrSubcategory) {
   ];
 
   return (
-    <>
-      <Head>
-        <title>{subcategory?.name}</title>
-        <meta
-          name="description"
-          content="Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out."
-        />
-      </Head>
-      <Layout>
-        <Box
-          mt={{ xs: 7, md: 0 }}
-          padding={{ xs: "4px 0px", md: "0px 8px" }}
+    <Layout>
+      <Box
+        mt={{ xs: 7, md: 0 }}
+        padding={{ xs: "4px 0px", md: "0px 8px" }}
+      >
+        <Grid
+          sx={{
+            padding: { xs: "16px", md: "32px" },
+          }}
         >
-          <Grid
-            sx={{
-              padding: { xs: "16px", md: "32px" },
-            }}
-          >
-            {isCategoryLoading ? (
-              <SubCategoryPlaceholder />
-            ) : (
-              <Box
-                gap={"16px"}
+          {isCategoryLoading ? (
+            <SubCategoryPlaceholder />
+          ) : (
+            <Box
+              gap={"16px"}
+              display={"flex"}
+              flexDirection={"column"}
+              width={"100%"}
+            >
+              <Grid>
+                <Box sx={{ display: "flex", alignItems: { xs: "self-start", md: "center" } }}>
+                  <KeyboardArrowLeft sx={{ mt: { xs: 0.3 } }} />
+                  <Breadcrumb crumbs={breadcrumbs} />
+                </Box>
+              </Grid>
+              <Grid
                 display={"flex"}
-                flexDirection={"column"}
-                width={"100%"}
+                gap={"8px"}
+                flexWrap={{ xs: "nowrap", md: "wrap" }}
+                sx={{
+                  overflow: { xs: "auto", md: "initial" },
+                  WebkitOverflowScrolling: "touch",
+                }}
               >
-                <Grid>
-                  <Box sx={{ display: "flex", alignItems: { xs: "self-start", md: "center" } }}>
-                    <KeyboardArrowLeft sx={{ mt: { xs: 0.3 } }} />
-                    <Breadcrumb crumbs={breadcrumbs} />
-                  </Box>
-                </Grid>
-                <Grid
-                  display={"flex"}
-                  gap={"8px"}
-                  flexWrap={{ xs: "nowrap", md: "wrap" }}
-                  sx={{
-                    overflow: { xs: "auto", md: "initial" },
-                    WebkitOverflowScrolling: "touch",
-                  }}
-                >
-                  {categories
-                    ?.filter(
-                      subcategory =>
-                        category.is_visible &&
-                        subcategory.prompt_template_count &&
-                        category?.name === subcategory.parent?.name,
-                    )
-                    .map(subcategory => (
-                      <Grid key={subcategory.id}>
-                        <SubCategoryCard
-                          subcategory={subcategory}
-                          categorySlug={category.slug}
-                        />
-                      </Grid>
-                    ))}
-                </Grid>
+                {categories
+                  ?.filter(
+                    subcategory =>
+                      category.is_visible &&
+                      subcategory.prompt_template_count &&
+                      category?.name === subcategory.parent?.name,
+                  )
+                  .map(subcategory => (
+                    <Grid key={subcategory.id}>
+                      <SubCategoryCard
+                        subcategory={subcategory}
+                        categorySlug={category.slug}
+                      />
+                    </Grid>
+                  ))}
+              </Grid>
 
-                <FiltersSelected show={!allFilterParamsNull} />
+              <FiltersSelected show={!allFilterParamsNull} />
 
-                <TemplatesSection
-                  filtred={!allFilterParamsNull}
-                  templates={templates ?? []}
-                  isLoading={isFetching}
-                  onNextPage={handleNextPage}
-                  hasMore={hasMore}
-                />
-              </Box>
-            )}
-          </Grid>
-        </Box>
-      </Layout>
-    </>
+              <TemplatesSection
+                filtred={!allFilterParamsNull}
+                templates={templates ?? []}
+                isLoading={isFetching}
+                onNextPage={handleNextPage}
+                hasMore={hasMore}
+              />
+            </Box>
+          )}
+        </Grid>
+      </Box>
+    </Layout>
   );
 }
 
@@ -121,6 +111,8 @@ export async function getServerSideProps({ params }: any) {
 
     return {
       props: {
+        title: subcategory.name,
+        description: subcategory.description,
         category,
         subcategory,
       },

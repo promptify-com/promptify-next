@@ -37,7 +37,7 @@ import { randomId, redirectToPath } from "@/common/helpers";
 import { theme } from "@/theme";
 import { useGetEnginesQuery } from "@/core/api/engines";
 import useToken from "@/hooks/useToken";
-import { BUILDER_TYPE } from "@/common/constants";
+import { BUILDER_TYPE, SEO_DESCRIPTION } from "@/common/constants";
 import PromptCardAccordion from "@/components/builder/PromptCardAccordion";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
@@ -746,9 +746,8 @@ export const Builder = () => {
 export async function getServerSideProps() {
   return {
     props: {
-      title: "Promptify | Boost Your Creativity",
-      description:
-        "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
+      title: "Tree of Thoughts Builder",
+      description: SEO_DESCRIPTION,
     },
   };
 }

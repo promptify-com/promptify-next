@@ -10,6 +10,7 @@ import { deletePathURL, getPathURL } from "@/common/utils";
 
 import SigninPlaceholder from "@/components/placeholders/SigninPlaceholder";
 import { redirectToPath } from "@/common/helpers";
+import { SEO_DESCRIPTION } from "@/common/constants";
 
 const Login = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -45,7 +46,12 @@ const Login = () => {
 };
 
 export async function getStaticProps() {
-  return { props: {} };
+  return {
+    props: {
+      title: "Welcome to Promptify",
+      description: SEO_DESCRIPTION,
+    },
+  };
 }
 
 export default Login;

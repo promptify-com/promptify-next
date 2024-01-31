@@ -17,7 +17,7 @@ import PromptList from "@/components/builder/PromptCardAccordion/PromptList";
 import useToken from "@/hooks/useToken";
 import { useAppSelector } from "@/hooks/useStore";
 import Sidebar from "@/components/sidebar/Sidebar";
-import { BUILDER_TYPE } from "@/common/constants";
+import { BUILDER_TYPE, SEO_DESCRIPTION } from "@/common/constants";
 import { useGetEnginesQuery } from "@/core/api/engines";
 import { handleInitPrompt } from "@/common/helpers/initPrompt";
 import type { IEditTemplate } from "@/common/types/editTemplate";
@@ -318,9 +318,8 @@ export const PromptBuilder = () => {
 export async function getServerSideProps() {
   return {
     props: {
-      title: "Promptify | Boost Your Creativity",
-      description:
-        "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
+      title: "Chain of Thoughts Builder",
+      description: SEO_DESCRIPTION,
     },
   };
 }
