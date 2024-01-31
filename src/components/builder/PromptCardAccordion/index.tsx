@@ -133,14 +133,8 @@ const PromptCardAccordion = ({
       );
       return;
     }
-    dispatch(
-      setToast({
-        message: "Please save your template changes first before running tests.",
-        severity: "warning",
-        duration: 8000,
-        position: { vertical: "top", horizontal: "center" },
-      }),
-    );
+
+    setShowTest(true);
   };
 
   return (
