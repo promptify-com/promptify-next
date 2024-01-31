@@ -6,7 +6,6 @@ import Button from "@mui/material/Button";
 import CheckCircle from "@mui/icons-material/CheckCircle";
 import { Replay } from "@mui/icons-material";
 import { alpha } from "@mui/material/styles";
-
 import { useUpdateExecutionMutation } from "@/core/api/executions";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setAnswers } from "@/core/store/chatSlice";
@@ -14,7 +13,7 @@ import { setRepeatedExecution } from "@/core/store/executionsSlice";
 import { theme } from "@/theme";
 import { Happy } from "@/assets/icons/Happy";
 import { Sad } from "@/assets/icons/Sad";
-import useVariant from "../Hooks/useVariant";
+import useVariant from "@/components/Prompt/Hooks/useVariant";
 import CustomTooltip from "./CustomTooltip";
 import type { FeedbackType, TemplatesExecutions } from "@/core/api/dto/templates";
 
@@ -29,7 +28,6 @@ export default function FeedbackThumbs({ vertical, execution, variant }: Props) 
   const dispatch = useAppDispatch();
   const { isVariantB } = useVariant();
 
-  const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
   const activeSideBarLink = useAppSelector(state => state.template.activeSideBarLink);
 
   const [feedback, setFeedback] = useState(execution.feedback);
@@ -56,8 +54,8 @@ export default function FeedbackThumbs({ vertical, execution, variant }: Props) 
   };
 
   const handleRepeat = () => {
-    const { parameters } = selectedExecution!;
-    dispatch(setRepeatedExecution(selectedExecution));
+    const { parameters } = execution;
+    dispatch(setRepeatedExecution(execution));
 
     const newAnswers = parameters
       ? Object.keys(parameters)
@@ -169,7 +167,7 @@ export default function FeedbackThumbs({ vertical, execution, variant }: Props) 
         </CustomTooltip>
         <CustomTooltip title={isIconVariant && "Repeat"}>
           <Button
-            onClick={() => handleRepeat()}
+            onClick={handleRepeat}
             variant="text"
             startIcon={<Replay />}
             sx={{

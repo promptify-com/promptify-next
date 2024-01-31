@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 
 import { randomId } from "@/common/helpers";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { setAnswers, setIsSimulationStreaming, setparamsValues } from "@/core/store/chatSlice";
+import { setAnswers, setIsSimulationStreaming, setParamsValues } from "@/core/store/chatSlice";
 import useVariant from "./useVariant";
 import useToken from "@/hooks/useToken";
 import { vary } from "@/common/helpers/varyValidator";
@@ -12,6 +12,7 @@ import { ContextualOverrides, ResOverrides } from "@/core/api/dto/prompts";
 import { useRouter } from "next/router";
 import type { IAnswer, IMessage, MessageType } from "../Types/chat";
 import type { PromptInputType } from "@/components/Prompt/Types";
+import { useStoreAnswersAndParams } from "@/hooks/useStoreAnswersAndParams";
 
 interface Props {
   initialMessageTitle: string;
@@ -25,7 +26,7 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
   const { isVariantA, isVariantB } = useVariant();
 
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const { isSimulationStreaming, inputs, answers } = useAppSelector(state => state.chat);
+  const { isSimulationStreaming, inputs, answers, paramsValues } = useAppSelector(state => state.chat);
   const { selectedExecution, generatedExecution, repeatedExecution, sparkHashQueryParam } = useAppSelector(
     state => state.executions,
   );
@@ -35,8 +36,13 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
   const [showGenerateButton, setShowGenerateButton] = useState(false);
   const [isValidatingAnswer, setIsValidatingAnswer] = useState(false);
 
-  const showGenerate =
-    !isSimulationStreaming && (showGenerateButton || Boolean(!inputs.length || !inputs[0]?.required));
+  const { storeAnswers, storeParams } = useStoreAnswersAndParams();
+
+  const showGenerate = isVariantB
+    ? !isSimulationStreaming && (showGenerateButton || Boolean(!inputs.length || !inputs[0]?.required))
+    : !isSimulationStreaming &&
+      ((showGenerateButton && messages[messages.length - 1]?.type !== "spark") ||
+        Boolean(!inputs.length || !inputs[0]?.required));
 
   const createMessage = (type: MessageType, fromUser = false, timestamp = new Date().toISOString()) => ({
     id: randomId(),
@@ -89,7 +95,9 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
       userMessage.text = variation;
 
       setMessages(prevMessages =>
-        prevMessages.filter(msg => msg.type !== "form" && msg.type !== "spark").concat(userMessage),
+        prevMessages
+          .filter(msg => (isVariantA ? msg.type !== "form" : msg.type !== "form" && msg.type !== "spark"))
+          .concat(userMessage),
       );
 
       setIsValidatingAnswer(true);
@@ -149,7 +157,7 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
     }, 10);
   };
 
-  const proccedQueuedMessages = () => {
+  const proceedQueuedMessages = () => {
     if (!isSimulationStreaming && !!queuedMessages.length) {
       const nextQueuedMessage = queuedMessages.shift()!;
       dispatch(setIsSimulationStreaming(true));
@@ -273,7 +281,7 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
           })
           .filter(item => item !== undefined) as ResOverrides[];
 
-        dispatch(setparamsValues(newContextualOverrides));
+        dispatch(setParamsValues(newContextualOverrides));
       }
     }
   }, [sparkHashQueryParam]);
@@ -294,7 +302,7 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
   }, [repeatedExecution]);
 
   useEffect(() => {
-    proccedQueuedMessages();
+    proceedQueuedMessages();
   }, [isSimulationStreaming, queuedMessages]);
 
   useEffect(() => {
@@ -304,6 +312,12 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
       setShowGenerateButton(false);
     }
   }, [answers, inputs]);
+
+  const handleSignIn = () => {
+    storeAnswers(answers);
+    storeParams(paramsValues);
+    router.push("/signin");
+  };
 
   return {
     messages,
@@ -315,6 +329,7 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
     isValidatingAnswer,
     setIsValidatingAnswer,
     validateVary,
+    handleSignIn,
   };
 }
 

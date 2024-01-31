@@ -6,11 +6,8 @@ import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
-import Snackbar from "@mui/material/Snackbar";
-import Alert from "@mui/material/Alert";
-
 import { theme } from "@/theme";
-import { Header } from "@/components/builder/Header";
+import Header from "@/components/builder/Header";
 import TemplateForm from "@/components/common/forms/TemplateForm";
 import { isPromptVariableValid } from "@/common/helpers/promptValidator";
 import { useGetPromptTemplateBySlugQuery, usePublishTemplateMutation } from "@/core/api/templates";
@@ -26,11 +23,16 @@ import { handleInitPrompt } from "@/common/helpers/initPrompt";
 import type { IEditTemplate } from "@/common/types/editTemplate";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IEditPrompts } from "@/common/types/builder";
+import { useDispatch } from "react-redux";
+import { setEngines, setIsTemplateOwner, setTemplate } from "@/core/store/builderSlice";
+import { setToast } from "@/core/store/toastSlice";
 
 export const PromptBuilder = () => {
   const router = useRouter();
   const token = useToken();
+  const dispatch = useDispatch();
   const [publishTemplate] = usePublishTemplateMutation();
+  const currentUser = useAppSelector(state => state.user.currentUser);
 
   const slug = router.query.slug as string;
 
@@ -45,8 +47,19 @@ export const PromptBuilder = () => {
   );
 
   useEffect(() => {
-    if (engines && fetchedTemplateData) {
+    if (engines) {
+      dispatch(setEngines(engines));
+    }
+    if (fetchedTemplateData) {
+      dispatch(setTemplate(fetchedTemplateData));
+      if (currentUser) {
+        dispatch(setIsTemplateOwner(fetchedTemplateData.created_by.id === currentUser?.id || currentUser?.is_admin));
+      }
+
       setTemplateData(fetchedTemplateData);
+    }
+
+    if (fetchedTemplateData && engines) {
       const processedPrompts = handleInitPrompt(fetchedTemplateData, engines) as IEditPrompts[];
       setPrompts(processedPrompts);
     }
@@ -55,8 +68,6 @@ export const PromptBuilder = () => {
   const builderSidebarOpen = useAppSelector(state => state.sidebar.builderSidebarOpen);
 
   const [templateDrawerOpen, setTemplateDrawerOpen] = useState(Boolean(router.query.editor));
-  const [messageSnackBar, setMessageSnackBar] = useState({ status: false, message: "" });
-  const [errorSnackBar, setErrorSnackBar] = useState({ status: false, message: "" });
 
   const createMode = slug === "create" ? "create" : "edit";
 
@@ -91,7 +102,14 @@ export const PromptBuilder = () => {
         message = "Please try again, and make sure you've entered template information!";
         setTemplateDrawerOpen(true);
       }
-      setErrorSnackBar({ status: true, message });
+      dispatch(
+        setToast({
+          message,
+          severity: "error",
+          duration: 4000,
+          position: { vertical: "top", horizontal: "center" },
+        }),
+      );
       return;
     }
 
@@ -107,7 +125,14 @@ export const PromptBuilder = () => {
     }
 
     if (invalids.length) {
-      setErrorSnackBar({ status: true, message: `You have entered an invalid prompt variable ${invalids.join(", ")}` });
+      dispatch(
+        setToast({
+          message: `You have entered an invalid prompt variable ${invalids.join(", ")}`,
+          severity: "error",
+          duration: 4000,
+          position: { vertical: "top", horizontal: "center" },
+        }),
+      );
       return;
     }
 
@@ -152,7 +177,14 @@ export const PromptBuilder = () => {
     };
 
     await updateTemplate(currentTemplateData.id, _template);
-    setMessageSnackBar({ status: true, message: "Prompt template saved with success" });
+    dispatch(
+      setToast({
+        message: "Prompt template saved with success",
+        severity: "success",
+        duration: 3000,
+        position: { vertical: "bottom", horizontal: "right" },
+      }),
+    );
 
     setTimeout(() => {
       if (newTemplate) {
@@ -171,8 +203,14 @@ export const PromptBuilder = () => {
         message = "Please try again, and make sure you've entered template information!";
         setTemplateDrawerOpen(true);
       }
-
-      setErrorSnackBar({ status: true, message });
+      dispatch(
+        setToast({
+          message,
+          severity: "error",
+          duration: 4000,
+          position: { vertical: "top", horizontal: "center" },
+        }),
+      );
       return;
     }
 
@@ -191,7 +229,6 @@ export const PromptBuilder = () => {
       <BuilderSidebar
         prompts={prompts}
         setPrompts={setPrompts}
-        engines={engines!}
       />
       <Box
         sx={{
@@ -237,7 +274,6 @@ export const PromptBuilder = () => {
                 templateLoading={isTemplateLoading}
                 prompts={prompts}
                 setPrompts={setPrompts}
-                engines={engines!}
               />
             </DndProvider>
           </Box>
@@ -275,27 +311,6 @@ export const PromptBuilder = () => {
           </SwipeableDrawer>
         )}
       </Box>
-      <Snackbar
-        open={messageSnackBar.status}
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-        autoHideDuration={3000}
-        message="Prompt template saved with success"
-        onClose={() => setMessageSnackBar({ status: false, message: "" })}
-      />
-      <Snackbar
-        open={errorSnackBar.status}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        autoHideDuration={4000}
-        onClose={() => setErrorSnackBar({ status: false, message: "" })}
-      >
-        <Alert
-          onClose={() => setErrorSnackBar({ status: false, message: "" })}
-          severity="error"
-          sx={{ width: "100%", bgcolor: "errorContainer", color: "onErrorContainer" }}
-        >
-          {errorSnackBar.message}
-        </Alert>
-      </Snackbar>
     </Box>
   );
 };

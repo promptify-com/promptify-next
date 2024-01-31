@@ -8,63 +8,71 @@ import Icon from "@mui/material/Icon";
 import Drawer from "@mui/material/Drawer";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
-import Divider from "@mui/material/Divider";
 import Close from "@mui/icons-material/Close";
 import FormatListBulleted from "@mui/icons-material/FormatListBulleted";
 import { useTheme } from "@mui/material/styles";
-
 import HelpIcon from "@/assets/icons/HelpIcon";
 import { ApiIcon } from "@/assets/icons";
-import PaperIcon from "@/assets/icons/PaperIcon";
 import Help from "./Help";
-import { useAppDispatch } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setOpenBuilderSidebar } from "@/core/store/sidebarSlice";
 import PromptSequence from "./PromptSequence";
 import type { IEditPrompts } from "@/common/types/builder";
-import type { Engine } from "@/core/api/dto/templates";
+import PaperIcon from "@/assets/icons/PaperIcon";
+import TestLog from "./TestLog";
+import ClearAll from "@mui/icons-material/ClearAll";
+import Tooltip from "@mui/material/Tooltip";
+import { useDeletePromptExecutionsMutation, useGetPromptExecutionsQuery } from "@/core/api/templates";
 
-type LinkName = "list" | "paper" | "help" | "api";
+const LINKS: Link[] = [
+  {
+    key: "list",
+    name: "Prompt sequence",
+    icon: <FormatListBulleted />,
+  },
+  // {
+  //   key: "test_log",
+  //   name: "Test log",
+  //   icon: <PaperIcon />,
+  // },
+  {
+    key: "help",
+    name: "Help",
+    icon: <HelpIcon />,
+  },
+  {
+    key: "api",
+    name: "Api",
+    icon: <ApiIcon />,
+  },
+];
+
+type LinkName = "list" | "test_log" | "help" | "api";
 
 interface Link {
-  name: LinkName;
+  key: LinkName;
+  name: string;
   icon: ReactNode;
 }
 
 interface Props {
   prompts: IEditPrompts[];
-  engines: Engine[];
   setPrompts: Dispatch<SetStateAction<IEditPrompts[]>>;
 }
 
-export const BuilderSidebar = ({ prompts, engines, setPrompts }: Props) => {
-  const [open, setOpen] = useState(false);
-  const dispatch = useAppDispatch();
-
-  const [activeLink, setActiveLink] = useState<LinkName>();
-
+export const BuilderSidebar = ({ prompts, setPrompts }: Props) => {
   const theme = useTheme();
+  const dispatch = useAppDispatch();
+  const { template, engines } = useAppSelector(state => state.builder);
+  const templateId = template?.id;
 
-  const Links: Link[] = [
-    {
-      name: "list",
-      icon: <FormatListBulleted />,
-    },
-    // Will be added back in #609
-    // {
-    //   name: "paper",
-    //   icon: <PaperIcon />,
-    // },
-    {
-      name: "help",
-      icon: <HelpIcon />,
-    },
-    {
-      name: "api",
-      icon: <ApiIcon />,
-    },
-  ];
+  const [open, setOpen] = useState(false);
+  const [activeLink, setActiveLink] = useState<Link>();
 
-  const handleOpenSidebar = (link: LinkName) => {
+  const { data: executions } = useGetPromptExecutionsQuery(templateId!, { skip: activeLink?.key !== "test_log" });
+  const [deletePrompt] = useDeletePromptExecutionsMutation();
+
+  const handleOpenSidebar = (link: Link) => {
     setOpen(true);
     setActiveLink(link);
     dispatch(setOpenBuilderSidebar(true));
@@ -74,6 +82,11 @@ export const BuilderSidebar = ({ prompts, engines, setPrompts }: Props) => {
     setOpen(false);
     dispatch(setOpenBuilderSidebar(false));
   };
+
+  const deleteAllExecutions = async () => {
+    if (templateId) await deletePrompt(templateId);
+  };
+
   return (
     <Box
       sx={{
@@ -112,11 +125,11 @@ export const BuilderSidebar = ({ prompts, engines, setPrompts }: Props) => {
         flexDirection={"column"}
         gap={1}
       >
-        {Links.map(link => (
+        {LINKS.map(link => (
           <Grid key={link.name}>
             <ListItem
               disablePadding
-              onClick={() => handleOpenSidebar(link.name)}
+              onClick={() => handleOpenSidebar(link)}
             >
               <ListItemButton
                 sx={{
@@ -124,6 +137,7 @@ export const BuilderSidebar = ({ prompts, engines, setPrompts }: Props) => {
                   borderRadius: "8px",
                   mx: 1,
                   padding: "16px 22px ",
+                  bgcolor: open && activeLink?.name === link.name ? "action.hover" : "transparent",
                 }}
               >
                 <Box
@@ -159,6 +173,7 @@ export const BuilderSidebar = ({ prompts, engines, setPrompts }: Props) => {
           mt: theme.custom.promptBuilder.headerHeight,
           "& .MuiDrawer-paper": {
             width: theme.custom.promptBuilder.drawerWidth,
+            bgcolor: "surface.1",
           },
         }}
         variant="persistent"
@@ -166,18 +181,18 @@ export const BuilderSidebar = ({ prompts, engines, setPrompts }: Props) => {
         open={open}
       >
         <Box
-          bgcolor={"surface.1"}
           display="flex"
           alignItems="center"
-          p={"16px 24px"}
           justifyContent="space-between"
+          gap={1}
+          p={"16px 24px"}
           border={`1px solid ${theme.palette.surface[3]}`}
           height="70px"
           boxSizing={"border-box"}
         >
           <Typography
-            variant="h6"
             sx={{
+              flex: 1,
               color: "var(--onSurface, #1B1B1E)",
               fontFeatureSettings: "'clig' off, 'liga' off",
               fontFamily: "Poppins",
@@ -189,11 +204,26 @@ export const BuilderSidebar = ({ prompts, engines, setPrompts }: Props) => {
               textTransform: "capitalize",
             }}
           >
-            {activeLink === "list" ? "Prompt Sequence" : activeLink}
+            {activeLink?.name}
           </Typography>
+          {activeLink?.key === "test_log" && executions && executions.length > 0 && (
+            <Tooltip title="Delete all">
+              <IconButton
+                onClick={deleteAllExecutions}
+                sx={{
+                  border: "none",
+                  "&:hover": {
+                    bgcolor: "surface.2",
+                  },
+                }}
+              >
+                <ClearAll />
+              </IconButton>
+            </Tooltip>
+          )}
 
           <IconButton
-            onClick={() => handleCloseSidebar()}
+            onClick={handleCloseSidebar}
             sx={{
               border: "none",
               "&:hover": {
@@ -204,15 +234,15 @@ export const BuilderSidebar = ({ prompts, engines, setPrompts }: Props) => {
             <Close />
           </IconButton>
         </Box>
-        <Divider />
-        {activeLink === "list" && (
+        {activeLink?.key === "list" && (
           <PromptSequence
             prompts={prompts}
             engines={engines}
             setPrompts={setPrompts}
           />
         )}
-        {activeLink === "help" && <Help />}
+        {activeLink?.key === "help" && <Help />}
+        {activeLink?.key === "test_log" && <TestLog />}
       </Drawer>
     </Box>
   );

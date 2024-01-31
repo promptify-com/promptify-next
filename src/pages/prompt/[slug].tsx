@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import Alert from "@mui/material/Alert";
-import Snackbar from "@mui/material/Snackbar";
 import { type Palette, ThemeProvider, createTheme, useTheme } from "@mui/material";
 import materialDynamicColors from "material-dynamic-colors";
 import { mix } from "polished";
@@ -41,7 +39,6 @@ function Template({ hashedExecution, fetchedTemplate, questionPrefixContent }: T
   const router = useRouter();
   const { replaceHistoryByPathname } = useBrowser();
   const [updateViewTemplate] = useViewTemplateMutation();
-  const [errorMessage, setErrorMessage] = useState<string>("");
   const theme = useTheme();
   const [palette, setPalette] = useState(theme.palette);
   const dispatch = useAppDispatch();
@@ -95,7 +92,7 @@ function Template({ hashedExecution, fetchedTemplate, questionPrefixContent }: T
   }
 
   const fetchDynamicColors = () => {
-    // @ts-expect-error unfound-new-type
+    //@ts-expect-error unfound-new-type
     materialDynamicColors(fetchedTemplate.thumbnail)
       .then((imgPalette: IMUDynamicColorsThemeColor) => {
         const newPalette: Palette = {
@@ -138,18 +135,8 @@ function Template({ hashedExecution, fetchedTemplate, questionPrefixContent }: T
       <Layout>
         <TemplatePage
           template={fetchedTemplate}
-          setErrorMessage={setErrorMessage}
           questionPrefixContent={questionPrefixContent}
         />
-
-        <Snackbar
-          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-          open={errorMessage.length > 0}
-          autoHideDuration={6000}
-          onClose={() => setErrorMessage("")}
-        >
-          <Alert severity={"error"}>{errorMessage}</Alert>
-        </Snackbar>
       </Layout>
     </ThemeProvider>
   );

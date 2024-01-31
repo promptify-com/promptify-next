@@ -6,6 +6,8 @@ export const baseApi = createApi({
   reducerPath: "baseApi",
   baseQuery: axiosBaseQuery({
     baseUrl: process.env.NEXT_PUBLIC_API_URL || "",
+    maxRetries: parseInt(process.env.NEXT_PUBLIC_MAX_REQUEST_RETRIES!) || 3,
+    retryDelay: parseInt(process.env.NEXT_PUBLIC_REQUEST_RETRY_DELAY!) || 1000, // in milliseconds
   }),
   extractRehydrationInfo(action, { reducerPath }) {
     if (action.type === HYDRATE) {
@@ -26,6 +28,7 @@ export const baseApi = createApi({
     "ParametersPresets",
     "Deployments",
     "Feedbacks",
+    "PromptsExecutions",
   ],
   endpoints: () => ({}),
 });

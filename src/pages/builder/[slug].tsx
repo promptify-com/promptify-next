@@ -10,7 +10,6 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Snackbar,
   SwipeableDrawer,
   alpha,
   Stack,
@@ -19,9 +18,8 @@ import {
 import { ClassicPreset } from "rete";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
 import { useRete } from "rete-react-render-plugin";
-
 import { createEditor, Node } from "@/components/builder/Editor";
-import { Header } from "@/components/builder/Header";
+import Header from "@/components/builder/Header";
 import { MinusIcon, PlusIcon } from "@/assets/icons";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
@@ -36,8 +34,6 @@ import { IEditPrompts } from "@/common/types/builder";
 import TemplateForm from "@/components/common/forms/TemplateForm";
 import { isPromptVariableValid } from "@/common/helpers/promptValidator";
 import { randomId, redirectToPath } from "@/common/helpers";
-
-import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import { theme } from "@/theme";
 import { useGetEnginesQuery } from "@/core/api/engines";
 import useToken from "@/hooks/useToken";
@@ -45,17 +41,9 @@ import { BUILDER_TYPE } from "@/common/constants";
 import PromptCardAccordion from "@/components/builder/PromptCardAccordion";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-
-const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
-  return (
-    <MuiAlert
-      elevation={6}
-      ref={ref}
-      variant="filled"
-      {...props}
-    />
-  );
-});
+import { setEngines, setIsTemplateOwner, setTemplate } from "@/core/store/builderSlice";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { setToast } from "@/core/store/toastSlice";
 
 export const Builder = () => {
   const router = useRouter();
@@ -67,16 +55,20 @@ export const Builder = () => {
   const [selectedNodeData, setSelectedNodeData] = useState<IEditPrompts | null>(null);
   const [selectedConnection, setSelectedConnection] = useState<string | null>(null);
   const [nodesData, setNodesData] = useState<IEditPrompts[]>([]);
-  const { data: promptsData } = useGetPromptTemplateBySlugQuery(slug ? slug : skipToken);
+  const { data: templateData } = useGetPromptTemplateBySlugQuery(slug ? slug : skipToken);
   const dataForRequest = useRef({} as any);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
-  const [snackBarOpen, setSnackBarOpen] = useState(false);
   const [templateDrawerOpen, setTemplateDrawerOpen] = useState(Boolean(router.query.editor));
   const [deletePrompt] = useDeletePromptMutation();
   const [publishTemplate] = usePublishTemplateMutation();
-  const [snackBarInvalidVariables, setSnackBarInvalidVariables] = useState(false);
   const [invalidVariableMessage, setInvalidVariableMessage] = useState("");
   const token = useToken();
+  const dispatch = useAppDispatch();
+  const currentUser = useAppSelector(state => state.user.currentUser);
+
+  useEffect(() => {
+    dispatch(setEngines(engines || []));
+  }, [engines]);
 
   if (!slug) {
     redirectToPath("/404");
@@ -118,28 +110,34 @@ export const Builder = () => {
         updateTemplateDependencies,
       );
     },
-    [setSelectedNode, prompts, promptsData],
+    [setSelectedNode, prompts, templateData],
   );
 
   const [ref, editor] = useRete(create);
 
   useEffect(() => {
-    if (promptsData) {
+    if (templateData) {
       const data = {
-        title: promptsData.title,
-        description: promptsData.description,
-        example: promptsData.example,
-        thumbnail: promptsData.thumbnail,
-        is_visible: promptsData.is_visible,
-        language: promptsData.language,
-        category: promptsData.category.id,
-        difficulty: promptsData.difficulty,
-        duration: promptsData.duration,
-        status: promptsData.status,
+        title: templateData.title,
+        description: templateData.description,
+        example: templateData.example,
+        thumbnail: templateData.thumbnail,
+        is_visible: templateData.is_visible,
+        language: templateData.language,
+        category: templateData.category.id,
+        difficulty: templateData.difficulty,
+        duration: templateData.duration,
+        status: templateData.status,
       };
       dataForRequest.current = data;
+      setPrompts(templateData.prompts);
+
+      dispatch(setTemplate(templateData));
+      if (currentUser) {
+        dispatch(setIsTemplateOwner(templateData?.created_by.id === currentUser?.id || currentUser?.is_admin));
+      }
     }
-  }, [promptsData]);
+  }, [templateData]);
 
   useEffect(() => {
     if (nodesData) {
@@ -151,7 +149,7 @@ export const Builder = () => {
           temp_id: node.temp_id,
           title: node.title,
           content: node.content,
-          engine_id: node.engine_id,
+          engine: node.engine,
           parameters: node?.parameters?.map(params => {
             return {
               parameter_id: params.parameter_id,
@@ -172,12 +170,6 @@ export const Builder = () => {
       dataForRequest.current = data;
     }
   }, [nodesData, dataForRequest]);
-
-  useEffect(() => {
-    if (promptsData) {
-      setPrompts(promptsData.prompts);
-    }
-  }, [promptsData]);
 
   useEffect(() => {
     document.addEventListener("keydown", handleKeyboard);
@@ -251,7 +243,7 @@ export const Builder = () => {
         count: nodeCount.toString(),
         title: `Prompt #${nodeCount}`,
         content: "Describe here prompt parameters, for example {{name:text}} or {{age:number}}",
-        engine_id: engines ? engines[0].id : 0,
+        engine: engines ? engines[0].id : 0,
         dependencies: [],
         parameters: [],
         order: 1,
@@ -270,7 +262,7 @@ export const Builder = () => {
       const node = new Node(`${selectedNodeData.title} - Copy`);
       node.addInput("Input", new ClassicPreset.Input(socket, "Input"));
       node.addOutput("Output", new ClassicPreset.Output(socket, "Output"));
-      node.engineIcon = engines?.find(eng => eng.id === selectedNodeData.engine_id)?.icon || "";
+      node.engineIcon = engines?.find(eng => eng.id === selectedNodeData.engine)?.icon || "";
       node.editor = editor?.editor;
       node.area = editor?.area;
       node.resetNodeData = resetNodeData;
@@ -298,7 +290,7 @@ export const Builder = () => {
           count: nodeCount.toString(),
           title: node.label,
           content: selectedNodeData.content,
-          engine_id: selectedNodeData.engine_id,
+          engine: selectedNodeData.engine,
           dependencies: [],
           parameters: selectedNodeData.parameters,
           order: selectedNodeData.order ?? 1,
@@ -383,7 +375,7 @@ export const Builder = () => {
 
     const nodeId = Number(selectedNode.id) || Number(selectedNode.temp_id);
     if (nodeId !== selectedNodeData.id && nodeId !== selectedNodeData.temp_id) return;
-    const engine = engines?.find(_engine => _engine.id === selectedNodeData.engine_id);
+    const engine = engines?.find(_engine => _engine.id === selectedNodeData.engine);
 
     if (selectedNode.label !== selectedNodeData.title || selectedNode.engineIcon !== engine?.icon) {
       selectedNode.label = selectedNodeData.title;
@@ -426,7 +418,14 @@ export const Builder = () => {
     });
 
     if (!allPromptsValid) {
-      setSnackBarInvalidVariables(true);
+      dispatch(
+        setToast({
+          message: `You have entered an invalid prompt variable ${invalidVariableMessage}`,
+          severity: "error",
+          duration: 4000,
+          position: { vertical: "bottom", horizontal: "right" },
+        }),
+      );
       return;
     }
 
@@ -461,8 +460,15 @@ export const Builder = () => {
       return a.order - b.order;
     });
 
-    updateTemplate(promptsData!.id, data).then(() => {
-      setSnackBarOpen(true);
+    updateTemplate(templateData!.id, data).then(() => {
+      dispatch(
+        setToast({
+          message: "Prompt template saved with success",
+          severity: "success",
+          duration: 3000,
+          position: { vertical: "bottom", horizontal: "right" },
+        }),
+      );
       window.location.reload();
     });
   };
@@ -473,7 +479,7 @@ export const Builder = () => {
 
   const handlePublishTemplate = async () => {
     injectOrderAndSendRequest();
-    await publishTemplate(promptsData!.id);
+    await publishTemplate(templateData!.id);
   };
 
   return (
@@ -489,7 +495,7 @@ export const Builder = () => {
               title={dataForRequest.current.title}
               onPublish={() => handlePublishTemplate()}
               onSave={injectOrderAndSendRequest}
-              templateSlug={promptsData?.slug}
+              templateSlug={templateData?.slug}
               onEditTemplate={() => toggleTemplateDrawer(true)}
               type={BUILDER_TYPE.ADMIN}
             />
@@ -514,7 +520,7 @@ export const Builder = () => {
                 ref={ref}
                 style={{ height: "100%", width: "100%" }}
               ></div>
-              {!!selectedNode && !!selectedNodeData && promptsData && (
+              {!!selectedNode && !!selectedNodeData && templateData && (
                 <Zoom
                   in={true}
                   style={{
@@ -544,7 +550,6 @@ export const Builder = () => {
                           duplicateNode();
                         }}
                         prompts={nodesData}
-                        engines={engines!}
                         movePrompt={() => {}}
                         findPromptIndex={() => 0}
                         builderType={BUILDER_TYPE.ADMIN}
@@ -670,7 +675,7 @@ export const Builder = () => {
               </Box>
             </Box>
           </Grid>
-          {!!promptsData && (
+          {!!templateData && (
             <SwipeableDrawer
               anchor={"left"}
               open={templateDrawerOpen}
@@ -691,7 +696,7 @@ export const Builder = () => {
               >
                 <TemplateForm
                   type="edit"
-                  templateData={promptsData}
+                  templateData={templateData}
                   darkMode
                   onSaved={() => window.location.reload()}
                   onClose={() => toggleTemplateDrawer(false)}
@@ -700,27 +705,6 @@ export const Builder = () => {
             </SwipeableDrawer>
           )}
         </Grid>
-        <Snackbar
-          open={snackBarOpen}
-          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-          autoHideDuration={3000}
-          message="Prompt template saved with success"
-          onClose={() => setSnackBarOpen(false)}
-        />
-        <Snackbar
-          open={snackBarInvalidVariables}
-          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-          autoHideDuration={4000}
-          onClose={() => setSnackBarInvalidVariables(false)}
-        >
-          <Alert
-            onClose={() => setSnackBarInvalidVariables(false)}
-            severity="error"
-            sx={{ width: "100%", bgcolor: "#f85249" }}
-          >
-            You have entered an invalid prompt variable {invalidVariableMessage}
-          </Alert>
-        </Snackbar>
         <Dialog
           open={confirmDialogOpen}
           onClose={() => setConfirmDialogOpen(false)}

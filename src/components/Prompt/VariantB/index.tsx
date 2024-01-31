@@ -2,26 +2,20 @@ import { type Dispatch, type SetStateAction } from "react";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 
-import Chat from "@/components/Prompt/Common/Chat";
 import Header from "@/components/Prompt/Common/Header";
 import Sidebar from "@/components/Prompt/Common/Sidebar";
 import TopHeaderActions from "@/components/Prompt/Common/Sidebar/TopHeaderActions";
 import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import useBrowser from "@/hooks/useBrowser";
+import CommonChat from "@/components/Prompt/Common/Chat";
 
 interface TemplateVariantBProps {
   template: Templates;
-  setErrorMessage: Dispatch<SetStateAction<string>>;
   questionPrefixContent: string;
   executions: TemplatesExecutions[];
 }
 
-export default function TemplateVariantB({
-  template,
-  executions,
-  setErrorMessage,
-  questionPrefixContent,
-}: TemplateVariantBProps) {
+export default function TemplateVariantB({ template, executions, questionPrefixContent }: TemplateVariantBProps) {
   const { isMobile } = useBrowser();
   return (
     <Stack
@@ -81,8 +75,7 @@ export default function TemplateVariantB({
             },
           }}
         >
-          <Chat
-            onError={setErrorMessage}
+          <CommonChat
             template={template}
             questionPrefixContent={questionPrefixContent}
           />

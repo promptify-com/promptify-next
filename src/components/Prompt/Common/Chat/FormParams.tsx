@@ -5,12 +5,11 @@ import Typography from "@mui/material/Typography";
 import Slider from "@mui/material/Slider";
 import IconButton from "@mui/material/IconButton";
 import HelpOutline from "@mui/icons-material/HelpOutline";
-
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import CustomTooltip from "@/components/Prompt/Common/CustomTooltip";
-import { setparamsValues } from "@/core/store/chatSlice";
-import useVariant from "../../Hooks/useVariant";
+import { setParamsValues } from "@/core/store/chatSlice";
+import useVariant from "@/components/Prompt/Hooks/useVariant";
 import type { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
 import Storage from "@/common/storage";
 
@@ -33,7 +32,7 @@ export default function FormParam({ param }: GeneratorParamProps) {
     const isRelevantParam = paramsStored.some((paramStored: ResOverrides) => paramStored.id === param.prompt);
 
     if (isRelevantParam) {
-      dispatch(setparamsValues(paramsStored));
+      dispatch(setParamsValues(paramsStored));
       Storage.remove("paramsValue");
     }
   }, []);
@@ -55,7 +54,7 @@ export default function FormParam({ param }: GeneratorParamProps) {
       };
     });
 
-    dispatch(setparamsValues(updatedParamsValues));
+    dispatch(setParamsValues(updatedParamsValues));
   };
 
   const matchingContext = paramValue?.contextual_overrides.find(
@@ -66,7 +65,7 @@ export default function FormParam({ param }: GeneratorParamProps) {
   const descriptions = param.parameter.score_descriptions;
   const activeDescription = descriptions.find(description => description.score === activeScore);
   const marks = descriptions.map(description => ({ value: description.score }));
-  const values = marks.map(obj => obj.value) || [];
+  const values = marks.map(obj => obj.value);
 
   const HelpIcon = () => {
     return (

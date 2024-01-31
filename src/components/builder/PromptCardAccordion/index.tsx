@@ -1,18 +1,27 @@
-import { ModeEdit, PlayCircle } from "@mui/icons-material";
-import { Box, Button, Divider, Stack, Typography } from "@mui/material";
+import ModeEdit from "@mui/icons-material/ModeEdit";
+import PlayCircle from "@mui/icons-material/PlayCircle";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Divider from "@mui/material/Divider";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 import React, { memo, useMemo, useRef, useState } from "react";
-import { Header } from "./Header";
-import { StylerAccordion } from "./StylerAccordion";
+import Header from "./Header";
+import StylerAccordion from "./StylerAccordion";
 import { IEditPrompts } from "@/common/types/builder";
 import { RenameForm } from "@/components/common/forms/RenameForm";
-import { Footer } from "./Footer";
-import { HighlightTextarea } from "../HighlightWithinTextarea";
+import Footer from "./Footer";
+import HighlightTextarea from "../HighlightWithinTextarea";
 import { Selection } from "react-highlight-within-textarea";
-import { Engine } from "@/core/api/dto/templates";
 import { useDrag, useDrop, ConnectableElement } from "react-dnd";
 import { getBuilderVarsPresets } from "@/common/helpers/getBuilderVarsPresets";
 import { useDebouncedDispatch } from "@/hooks/useDebounceDispatch";
 import { BUILDER_TYPE } from "@/common/constants";
+import PromptTestDialog from "./PromptTest";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { isDeepEqual } from "@/common/helpers";
+import { useUpdatePromptMutation } from "@/core/api/templates";
+import { setToast } from "@/core/store/toastSlice";
 
 interface Props {
   prompt: IEditPrompts;
@@ -21,7 +30,6 @@ interface Props {
   deletePrompt: () => void;
   duplicatePrompt: () => void;
   prompts: IEditPrompts[];
-  engines: Engine[];
   findPromptIndex: (id: number) => number;
   movePrompt: (id: number, atIndex: number) => void;
   builderType: BUILDER_TYPE;
@@ -34,26 +42,40 @@ const PromptCardAccordion = ({
   deletePrompt,
   duplicatePrompt,
   prompts,
-  engines,
   movePrompt,
   findPromptIndex,
   builderType,
 }: Props) => {
+  const initPromptData = useRef(prompt);
+  const dispatch = useAppDispatch();
   const [promptData, setPromptData] = useState(prompt);
   const [renameAllow, setRenameAllow] = useState(false);
+  const [showTest, setShowTest] = useState(false);
+  const saveNeeded = useRef(!promptData.id);
   const cursorPositionRef = useRef(0);
-  const [highlightedOption, setHighlitedOption] = useState("");
+  const [highlightedOption, setHighlightedOption] = useState("");
   const { outputPresets, inputPresets } = useMemo(() => getBuilderVarsPresets(prompts, promptData, false), [prompts]);
+  const { template, isTemplateOwner } = useAppSelector(state => state.builder);
+  const isDraft = template?.status === "DRAFT";
+
+  const [savePrompt] = useUpdatePromptMutation();
+
   const dispatchUpdatePrompt = useDebouncedDispatch(
     (prompt: IEditPrompts) => {
       setPrompt(prompt);
+      if (isDraft && prompt.id) {
+        savePrompt({ id: prompt.id, data: prompt });
+      }
     },
     builderType === BUILDER_TYPE.USER ? 700 : 200,
   );
 
   const updatePrompt = (newPromptData: IEditPrompts) => {
-    setPromptData(newPromptData);
-    dispatchUpdatePrompt(newPromptData);
+    saveNeeded.current = !promptData.id || (!isDraft && !isDeepEqual(initPromptData.current, newPromptData));
+    if (!isDeepEqual(promptData, newPromptData)) {
+      setPromptData(newPromptData);
+      dispatchUpdatePrompt(newPromptData);
+    }
   };
 
   const contentHandler = (content: string, selection?: Selection) => {
@@ -99,6 +121,22 @@ const PromptCardAccordion = ({
     [findPromptIndex, movePrompt],
   );
 
+  const handleOpenTest = () => {
+    if (saveNeeded.current) {
+      dispatch(
+        setToast({
+          message: "Please save your template changes first before running tests.",
+          severity: "warning",
+          duration: 8000,
+          position: { vertical: "top", horizontal: "center" },
+        }),
+      );
+      return;
+    }
+
+    setShowTest(true);
+  };
+
   return (
     <Box
       ref={(node: ConnectableElement) => preview(drop(node))}
@@ -122,7 +160,6 @@ const PromptCardAccordion = ({
         setPrompt={updatePrompt}
         deletePrompt={deletePrompt}
         duplicatePrompt={duplicatePrompt}
-        engines={engines}
         dragPreview={(node: ConnectableElement) => drag(drop(node))}
         builderType={builderType}
       />
@@ -159,10 +196,31 @@ const PromptCardAccordion = ({
                   onClick={() => setRenameAllow(true)}
                 />
               </Stack>
-              {/*
-               * Will be added back in #608
-               * <Button startIcon={<PlayCircle />}>Test run</Button>
-               */}
+              {isTemplateOwner && (
+                <>
+                  {false && (
+                    <Button
+                      startIcon={<PlayCircle />}
+                      onClick={handleOpenTest}
+                      sx={{
+                        fontSize: 13,
+                        fontWeight: 500,
+                        p: "4px 10px",
+                      }}
+                    >
+                      Test run
+                    </Button>
+                  )}
+
+                  {showTest && (
+                    <PromptTestDialog
+                      open={showTest}
+                      onClose={() => setShowTest(false)}
+                      prompt={promptData}
+                    />
+                  )}
+                </>
+              )}
             </>
           ) : (
             <RenameForm
@@ -203,8 +261,8 @@ const PromptCardAccordion = ({
               onChange={contentHandler}
               outputPresets={outputPresets}
               inputPresets={inputPresets}
-              highlitedValue={highlightedOption}
-              setHighlitedValue={setHighlitedOption}
+              highlightedValue={highlightedOption}
+              setHighlightedValue={setHighlightedOption}
               type={"user"}
             />
           </Box>
