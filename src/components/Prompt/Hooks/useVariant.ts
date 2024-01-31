@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-
 import Cookie from "@/common/helpers/cookies";
 import { setAnswers } from "@/core/store/chatSlice";
 import { setGeneratedExecution, setSelectedExecution } from "@/core/store/executionsSlice";

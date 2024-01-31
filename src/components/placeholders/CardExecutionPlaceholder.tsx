@@ -1,9 +1,14 @@
 import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
 
-export const CardExecutionPlaceholder = () => {
-  return (
+interface Props {
+  count?: number;
+}
+
+export const CardExecutionPlaceholder = ({ count = 1 }: Props) => {
+  return Array.from({ length: count }, (_, i) => (
     <Stack
+      key={i}
       direction={"row"}
       alignItems={"center"}
       gap={1}
@@ -33,5 +38,5 @@ export const CardExecutionPlaceholder = () => {
         />
       </Stack>
     </Stack>
-  );
+  ));
 };
