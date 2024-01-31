@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 
 import { randomId } from "@/common/helpers";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { setAnswers, setIsSimulationStreaming, setparamsValues } from "@/core/store/chatSlice";
+import { setAnswers, setIsSimulationStreaming, setParamsValues } from "@/core/store/chatSlice";
 import useVariant from "./useVariant";
 import useToken from "@/hooks/useToken";
 import { vary } from "@/common/helpers/varyValidator";
@@ -281,7 +281,7 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
           })
           .filter(item => item !== undefined) as ResOverrides[];
 
-        dispatch(setparamsValues(newContextualOverrides));
+        dispatch(setParamsValues(newContextualOverrides));
       }
     }
   }, [sparkHashQueryParam]);
