@@ -128,6 +128,7 @@ function Footer({ prompt, setPrompt }: Props) {
         open={showOptions}
         anchorEl={optionsAnchor}
         placement="bottom-start"
+        keepMounted
         modifiers={[
           {
             name: "offset",

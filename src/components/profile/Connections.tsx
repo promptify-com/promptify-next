@@ -1,39 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { LinkOff } from "@mui/icons-material";
-import { Box, Snackbar, Typography, useTheme, useMediaQuery } from "@mui/material";
-import MuiAlert, { AlertProps } from "@mui/material/Alert";
+import { Box, Typography, useTheme, useMediaQuery } from "@mui/material";
 import { useRouter } from "next/router";
-import { AlertContent, IConnection, IContinueWithSocialMediaResponse } from "@/common/types";
+import { IConnection, IContinueWithSocialMediaResponse } from "@/common/types";
 import { formatConnection } from "@/common/utils";
 import AddConnectionDialog from "@/components/dialog/AddConnectionDialog";
 import DeleteConnectionDialog from "@/components/dialog/DeleteConnectionDialog";
 import { useConnectionss, useDeleteConnection } from "@/hooks/api/connections";
 import useTruncate from "@/hooks/useTruncate";
 import Image from "../design-system/Image";
-
-const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
-  return (
-    <MuiAlert
-      elevation={6}
-      ref={ref}
-      variant="filled"
-      {...props}
-    />
-  );
-});
+import { useAppDispatch } from "@/hooks/useStore";
+import { setToast } from "@/core/store/toastSlice";
 
 export const Connections = () => {
   const router = useRouter();
+  const dispatch = useAppDispatch();
   const [connections, setConnections] = useState<IConnection[] | []>([]);
   const [authConnection, setAuthConnection] = useState<string[]>([]);
   const [open, setOpen] = useState<boolean>(false);
   const [openAdd, setOpenAdd] = useState(false);
   const [connectionSelected, setConnectionSelected] = useState<IConnection | null>();
-  const [typeAlert, setTypeAlert] = React.useState<AlertContent>({
-    open: false,
-    color: "success",
-    message: "Connection deleted successfully",
-  });
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [_useDeferredAction] = useConnectionss();
   const [useDeferredAction] = useDeleteConnection();
@@ -48,11 +34,7 @@ export const Connections = () => {
     setOpenAdd(false);
 
     if (!response?.token) {
-      setTypeAlert({
-        open: true,
-        color: "error",
-        message: "Connection not added",
-      });
+      dispatch(setToast({ message: "Connection not added", severity: "error", duration: 6000 }));
     } else {
       _useDeferredAction().then(res => {
         if (!res?.length) {
@@ -62,11 +44,7 @@ export const Connections = () => {
         const cnx = res.map((cn: any) => cn.provider);
         setAuthConnection(cnx);
         setConnections(res);
-        setTypeAlert({
-          open: true,
-          color: "success",
-          message: "Connection added successfully",
-        });
+        dispatch(setToast({ message: "Connection added successfully", severity: "success", duration: 6000 }));
       });
     }
 
@@ -80,17 +58,9 @@ export const Connections = () => {
           const cnx = filterConnection.map((cn: any) => cn.provider);
           setAuthConnection(cnx);
           setConnections(filterConnection);
-          setTypeAlert({
-            open: true,
-            color: "success",
-            message: "Connection deleted successfully",
-          });
+          dispatch(setToast({ message: "Connection deleted successfully", severity: "success", duration: 6000 }));
         } else {
-          setTypeAlert({
-            open: true,
-            color: "error",
-            message: "Connection not deleted",
-          });
+          dispatch(setToast({ message: "Connection not deleted", severity: "error", duration: 6000 }));
         }
         setOpen(!open);
       })
@@ -287,7 +257,6 @@ export const Connections = () => {
       <AddConnectionDialog
         openAdd={openAdd}
         setOpenAdd={setOpenAdd}
-        setTypeAlert={setTypeAlert}
         preLogin={preLogin}
         postLogin={postLogin}
         authConnection={authConnection}
@@ -298,13 +267,6 @@ export const Connections = () => {
         open={open}
         setOpen={setOpen}
       />
-      <Snackbar
-        open={typeAlert.open}
-        autoHideDuration={6000}
-        onClose={() => setTypeAlert({ ...typeAlert, open: false })}
-      >
-        <Alert severity={typeAlert.color}>{typeAlert.message}</Alert>
-      </Snackbar>
     </Box>
   );
 };

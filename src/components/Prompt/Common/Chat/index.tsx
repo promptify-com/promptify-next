@@ -1,10 +1,5 @@
 import { useMemo, memo, useEffect } from "react";
-import { useRouter } from "next/router";
-import Box from "@mui/material/Box";
-import Stack from "@mui/material/Stack";
 import { useAppSelector, useAppDispatch } from "@/hooks/useStore";
-import { ChatInterface } from "@/components/Prompt/Common/Chat/ChatInterface";
-import { ChatInput } from "@/components/Prompt/Common/Chat/ChatInput";
 import { executionsApi } from "@/core/api/executions";
 import { setSelectedExecution } from "@/core/store/executionsSlice";
 import useChatBox from "@/hooks/useChatBox";
@@ -15,45 +10,49 @@ import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution
 import type { Templates } from "@/core/api/dto/templates";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { PromptParams } from "@/core/api/dto/prompts";
-import { useStoreAnswersAndParams } from "@/hooks/useStoreAnswersAndParams";
-import SigninButton from "@/components/common/buttons/SigninButton";
+import useVariant from "@/components/Prompt/Hooks/useVariant";
+import dynamic from "next/dynamic";
+import PromptPlaceholder from "@/components/placeholders/PromptPlaceholder";
+import { IMessage } from "@/components/Prompt/Types/chat";
+import { randomId } from "@/common/helpers";
 
 interface Props {
-  onError: (errMsg: string) => void;
   template: Templates;
   questionPrefixContent: string;
 }
 
-const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixContent }) => {
-  const router = useRouter();
+const ChatBoxVariantA = dynamic(() => import("@/components/Prompt/VariantA/ChatBox"), {
+  loading: () => <PromptPlaceholder />,
+});
+const ChatBoxVariantB = dynamic(() => import("@/components/Prompt/VariantB/ChatBox"), {
+  loading: () => <PromptPlaceholder />,
+});
+
+const CommonChat: React.FC<Props> = ({ template, questionPrefixContent }) => {
+  const { isVariantA } = useVariant();
   const dispatch = useAppDispatch();
 
-  const currentUser = useAppSelector(state => state.user.currentUser);
-  const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
+  const { generatedExecution } = useAppSelector(state => state.executions);
   const { isGenerating, activeSideBarLink: isSidebarExpanded } = useAppSelector(state => state.template);
-  const { answers, isSimulationStreaming, paramsValues } = useAppSelector(state => state.chat);
-
-  const { prepareAndRemoveDuplicateInputs } = useChatBox();
-
-  const { storeAnswers, storeParams } = useStoreAnswersAndParams();
 
   const {
     messages,
+    setMessages,
     initialMessages,
     messageAnswersForm,
     showGenerateButton,
     showGenerate,
     validateVary,
     isValidatingAnswer,
+    handleSignIn,
   } = useChat({
     questionPrefixContent,
     initialMessageTitle: template.title,
   });
-
+  const { prepareAndRemoveDuplicateInputs } = useChatBox();
   const { generateExecutionHandler, abortConnection, disableChatInput } = useGenerateExecution({
     template,
     messageAnswersForm,
-    onError,
   });
 
   const [_inputs, _params]: [IPromptInput[], PromptParams[], boolean] = useMemo(() => {
@@ -92,61 +91,52 @@ const GeneratorChat: React.FC<Props> = ({ onError, template, questionPrefixConte
       try {
         const _newExecution = await getExecutionById(generatedExecution.id);
         dispatch(setSelectedExecution(_newExecution));
+        if (isVariantA) {
+          const generatedExecutionMessage: IMessage = {
+            id: randomId(),
+            text: "",
+            type: "spark",
+            createdAt: new Date(new Date().getTime() - 1000),
+            fromUser: false,
+            spark: _newExecution,
+          };
+          setMessages(messages.concat(generatedExecutionMessage));
+        }
       } catch {
         window.location.reload();
       }
     }
   };
 
-  //to be moved to useChat
-
-  const handleSignIn = () => {
-    storeAnswers(answers);
-    storeParams(paramsValues);
-    router.push("/signin");
-  };
-
-  return (
-    <Box
-      width={{ md: isSidebarExpanded ? "100%" : "80%" }}
-      mx={{ md: "auto" }}
-      height={"100%"}
-    >
-      <Stack
-        justifyContent={"flex-end"}
-        height={"calc(100% - 20px)"}
-        gap={2}
-      >
-        <ChatInterface
-          messages={messages}
-          template={template}
-          showGenerate={showGenerate}
-          onGenerate={generateExecutionHandler}
-          onAbort={abortConnection}
-        />
-        {currentUser?.id ? (
-          <ChatInput
-            onSubmit={validateVary}
-            disabled={isValidatingAnswer || disableChatInput}
-            isValidating={isValidatingAnswer}
-            showGenerate={showGenerateButton}
-            onGenerate={generateExecutionHandler}
-          />
-        ) : (
-          <Stack
-            direction={"column"}
-            alignItems={"center"}
-            justifyContent={"center"}
-            gap={1}
-            width={{ md: "100%" }}
-            p={{ md: "16px 8px 16px 16px" }}
-          >
-            <SigninButton onClick={handleSignIn} />
-          </Stack>
-        )}
-      </Stack>
-    </Box>
+  return isVariantA ? (
+    <ChatBoxVariantA
+      template={template}
+      messages={messages}
+      showGenerate={showGenerate}
+      generateExecutionHandler={generateExecutionHandler}
+      isValidatingAnswer={isValidatingAnswer}
+      abortConnection={abortConnection}
+      validateVary={validateVary}
+      isGenerating={isGenerating}
+      disableChatInput={disableChatInput}
+      inputs={_inputs}
+      handleSignIn={handleSignIn}
+    />
+  ) : (
+    <ChatBoxVariantB
+      template={template}
+      messages={messages}
+      showGenerate={showGenerate}
+      generateExecutionHandler={generateExecutionHandler}
+      isSidebarExpanded={isSidebarExpanded}
+      abortConnection={abortConnection}
+      validateVary={validateVary}
+      isValidatingAnswer={isValidatingAnswer}
+      disableChatInput={disableChatInput}
+      showGenerateButton={showGenerateButton}
+      handleSignIn={handleSignIn}
+    />
   );
 };
 
-export default memo(GeneratorChat);
+export default memo(CommonChat);

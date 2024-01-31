@@ -10,20 +10,12 @@ import { AddConnectionButtons } from "../login/AddConnectionButtons";
 interface IProps {
   openAdd: boolean;
   setOpenAdd: Function;
-  setTypeAlert: Function;
   preLogin: () => void;
   postLogin: (data: IContinueWithSocialMediaResponse | null) => void;
   authConnection: string[];
 }
 
-const AddConnectionDialog: React.FC<IProps> = ({
-  openAdd,
-  setOpenAdd,
-  preLogin,
-  postLogin,
-  authConnection,
-  setTypeAlert,
-}) => (
+const AddConnectionDialog: React.FC<IProps> = ({ openAdd, setOpenAdd, preLogin, postLogin, authConnection }) => (
   <div>
     <Dialog
       open={openAdd}
@@ -33,11 +25,8 @@ const AddConnectionDialog: React.FC<IProps> = ({
     >
       <DialogTitle id="alert-dialog-title">{"Add New Connection"}</DialogTitle>
       <DialogContent>
-        <GoogleOAuthProvider
-          clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID as string}
-        >
+        <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID as string}>
           <AddConnectionButtons
-            setTypeAlert={setTypeAlert}
             preLogin={preLogin}
             postLogin={postLogin}
             authConnection={authConnection}

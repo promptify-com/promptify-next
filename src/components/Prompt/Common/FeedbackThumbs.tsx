@@ -28,7 +28,6 @@ export default function FeedbackThumbs({ vertical, execution, variant }: Props) 
   const dispatch = useAppDispatch();
   const { isVariantB } = useVariant();
 
-  const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
   const activeSideBarLink = useAppSelector(state => state.template.activeSideBarLink);
 
   const [feedback, setFeedback] = useState(execution.feedback);
@@ -55,8 +54,8 @@ export default function FeedbackThumbs({ vertical, execution, variant }: Props) 
   };
 
   const handleRepeat = () => {
-    const { parameters } = selectedExecution!;
-    dispatch(setRepeatedExecution(selectedExecution));
+    const { parameters } = execution;
+    dispatch(setRepeatedExecution(execution));
 
     const newAnswers = parameters
       ? Object.keys(parameters)
@@ -168,7 +167,7 @@ export default function FeedbackThumbs({ vertical, execution, variant }: Props) 
         </CustomTooltip>
         <CustomTooltip title={isIconVariant && "Repeat"}>
           <Button
-            onClick={() => handleRepeat()}
+            onClick={handleRepeat}
             variant="text"
             startIcon={<Replay />}
             sx={{

@@ -11,6 +11,7 @@ import type { IPromptInput } from "@/common/types/prompt";
 import { ContextualOverrides, ResOverrides } from "@/core/api/dto/prompts";
 import type { IAnswer, IMessage, MessageType } from "@/components/Prompt/Types/chat";
 import type { PromptInputType } from "@/components/Prompt/Types";
+import { useStoreAnswersAndParams } from "@/hooks/useStoreAnswersAndParams";
 
 interface Props {
   initialMessageTitle: string;
@@ -31,7 +32,7 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
   const { isVariantA, isVariantB, isAutomationPage } = useVariant();
 
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const { isSimulationStreaming, inputs, answers } = useAppSelector(state => state.chat);
+  const { isSimulationStreaming, inputs, answers, paramsValues } = useAppSelector(state => state.chat);
   const { selectedExecution, generatedExecution, repeatedExecution, sparkHashQueryParam } = useAppSelector(
     state => state.executions,
   );
@@ -41,8 +42,13 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
   const [showGenerateButton, setShowGenerateButton] = useState(false);
   const [isValidatingAnswer, setIsValidatingAnswer] = useState(false);
 
-  const showGenerate =
-    !isSimulationStreaming && (showGenerateButton || Boolean(!inputs.length || !inputs[0]?.required));
+  const { storeAnswers, storeParams } = useStoreAnswersAndParams();
+
+  const showGenerate = isVariantB
+    ? !isSimulationStreaming && (showGenerateButton || Boolean(!inputs.length || !inputs[0]?.required))
+    : !isSimulationStreaming &&
+      ((showGenerateButton && messages[messages.length - 1]?.type !== "spark") ||
+        Boolean(!inputs.length || !inputs[0]?.required));
 
   const createMessage = ({
     type,
@@ -105,7 +111,9 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
       userMessage.text = variation;
 
       setMessages(prevMessages =>
-        prevMessages.filter(msg => msg.type !== "form" && msg.type !== "spark").concat(userMessage),
+        prevMessages
+          .filter(msg => (isVariantA ? msg.type !== "form" : msg.type !== "form" && msg.type !== "spark"))
+          .concat(userMessage),
       );
 
       setIsValidatingAnswer(true);
@@ -325,6 +333,12 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
     }
   }, [answers, inputs]);
 
+  const handleSignIn = () => {
+    storeAnswers(answers);
+    storeParams(paramsValues);
+    router.push("/signin");
+  };
+
   return {
     messages,
     setMessages,
@@ -337,6 +351,7 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
     isValidatingAnswer,
     setIsValidatingAnswer,
     validateVary,
+    handleSignIn,
   };
 }
 
