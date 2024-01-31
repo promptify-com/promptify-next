@@ -31,8 +31,12 @@ function OutputOptions({ prompt, onSave, onCancel }: Props) {
 
   const initialState: IEditPrompts = {
     ...prompt,
-    output_format: initialOutputFormatMatching?.toLowerCase() || "",
-    custom_output_format: initialOutputFormatMatching ? "" : initialOutputFormat,
+    output_format: initialOutputFormatMatching
+      ? initialOutputFormatMatching.toLowerCase()
+      : initialOutputFormat
+      ? "custom"
+      : "",
+    custom_output_format: initialOutputFormat ?? "",
   };
   const [promptData, setPromptData] = useState<IEditPrompts>(initialState);
   const [hasError, setHasError] = useState(false);
