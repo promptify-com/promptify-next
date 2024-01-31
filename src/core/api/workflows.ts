@@ -36,12 +36,17 @@ export const workflowsApi = baseApi.injectEndpoints({
           method: "get",
         }),
       }),
-
       createCredentials: builder.mutation<CredentialResponse, CreateCredentialPayload>({
         query: data => ({
           url: `/api/n8n/workflows/credentials/`,
           method: "post",
           data,
+        }),
+      }),
+      deleteCredential: builder.mutation<CredentialResponse, string>({
+        query: id => ({
+          url: `/api/n8n/workflows/credentials/${id}`,
+          method: "delete",
         }),
       }),
     };
@@ -54,4 +59,5 @@ export const {
   useGetWorkflowByIdQuery,
   useCreateCredentialsMutation,
   useGetCredentialsQuery,
+  useDeleteCredentialMutation,
 } = workflowsApi;
