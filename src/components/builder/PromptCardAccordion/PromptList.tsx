@@ -63,6 +63,7 @@ function PromptList({ prompts, setPrompts, templateLoading }: Props) {
           : true,
       )
       .concat(prompt);
+    _prompts.sort((a, b) => a.order - b.order);
 
     setPrompts(_prompts);
   };
