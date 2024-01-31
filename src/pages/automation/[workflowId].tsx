@@ -13,6 +13,8 @@ import WorkflowPlaceholder from "@/components/Automation/WorkflowPlaceholder";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IPromptInput } from "@/common/types/prompt";
 import { SEO_DESCRIPTION } from "@/common/constants";
+import { authClient } from "../../common/axios";
+import { IWorkflow } from "../../components/Automation/types";
 
 export default function SingleWorkflow() {
   const router = useRouter();
@@ -118,10 +120,24 @@ export default function SingleWorkflow() {
 }
 
 export async function getServerSideProps({ params }: any) {
-  return {
-    props: {
-      title: "Automation",
-      description: SEO_DESCRIPTION,
-    },
-  };
+  const { workflowId } = params;
+  try {
+    const res = await authClient.get(`/api/n8n/workflows/${workflowId}/`);
+    const workflow: IWorkflow = res.data;
+
+    return {
+      props: {
+        title: workflow.name ?? "Automation",
+        description: workflow.description ?? SEO_DESCRIPTION,
+        image: workflow.image,
+      },
+    };
+  } catch (error) {
+    return {
+      props: {
+        title: "Automation",
+        description: SEO_DESCRIPTION,
+      },
+    };
+  }
 }
