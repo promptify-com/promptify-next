@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import Stack from "@mui/material/Stack";
 import { useRouter } from "next/router";
-
 import { Layout } from "@/layout";
 import { ChatInterface } from "@/components/Prompt/Common/Chat/ChatInterface";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
@@ -13,6 +12,7 @@ import useWorkflow from "@/components/Automation/Hooks/useWorkflow";
 import WorkflowPlaceholder from "@/components/Automation/WorkflowPlaceholder";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IPromptInput } from "@/common/types/prompt";
+import { SEO_DESCRIPTION } from "@/common/constants";
 
 export default function SingleWorkflow() {
   const router = useRouter();
@@ -120,9 +120,8 @@ export default function SingleWorkflow() {
 export async function getServerSideProps({ params }: any) {
   return {
     props: {
-      title: "Promptify | Boost Your Creativity",
-      description:
-        "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
+      title: "Automation",
+      description: SEO_DESCRIPTION,
     },
   };
 }
