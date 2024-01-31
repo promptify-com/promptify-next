@@ -10,20 +10,19 @@ import { useDeletePromptMutation } from "@/core/api/templates";
 import { DeleteDialog } from "@/components/dialog/DeleteDialog";
 import { useScrollToElement } from "@/hooks/useScrollToElement";
 import { BUILDER_TYPE } from "@/common/constants";
+import type { Engine } from "@/core/api/dto/templates";
 import type { IEditPrompts } from "@/common/types/builder";
 import BuilderPromptPlaceholder from "@/components/placeholders/BuilderPromptPlaceholder";
-import { useAppSelector } from "@/hooks/useStore";
 
 interface Props {
   prompts: IEditPrompts[];
   setPrompts: (prompts: IEditPrompts[]) => void;
+  engines: Engine[];
   templateLoading: boolean;
 }
-function PromptList({ prompts, setPrompts, templateLoading }: Props) {
+const PromptList = ({ prompts, setPrompts, engines, templateLoading }: Props) => {
   const [promptToDelete, setPromptToDelete] = useState<IEditPrompts | null>(null);
   const [deletePrompt] = useDeletePromptMutation();
-
-  const engines = useAppSelector(state => state.builder.engines);
 
   const setSmoothScrollTarget = useScrollToElement("smooth");
 
@@ -76,7 +75,7 @@ function PromptList({ prompts, setPrompts, templateLoading }: Props) {
       temp_id: temp_id,
       title: `Prompt #${order}`,
       content: "Describe here prompt parameters, for example {{name:text}} or {{age:number}}",
-      engine: textEngine?.id || 0,
+      engine_id: textEngine?.id || 0,
       dependencies: [],
       parameters: [],
       order: order,
@@ -117,7 +116,7 @@ function PromptList({ prompts, setPrompts, templateLoading }: Props) {
       temp_id: temp_id,
       title: `${duplicateData.title} - Copy`,
       content: duplicateData.content,
-      engine: duplicateData.engine,
+      engine_id: duplicateData.engine_id,
       dependencies: duplicateData.dependencies,
       parameters: duplicateData.parameters,
       order: order,
@@ -184,6 +183,7 @@ function PromptList({ prompts, setPrompts, templateLoading }: Props) {
                       deletePrompt={() => setPromptToDelete(prompt)}
                       duplicatePrompt={() => duplicatePrompt(prompt, index + 1)}
                       prompts={prompts}
+                      engines={engines}
                       movePrompt={movePrompt}
                       findPromptIndex={findPromptIndex}
                       builderType={BUILDER_TYPE.USER}
@@ -244,6 +244,6 @@ function PromptList({ prompts, setPrompts, templateLoading }: Props) {
       )}
     </>
   );
-}
+};
 
 export default memo(PromptList);

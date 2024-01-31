@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
+
 import { randomId } from "@/common/helpers";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setAnswers, setIsSimulationStreaming, setParamsValues } from "@/core/store/chatSlice";
@@ -7,11 +8,11 @@ import useVariant from "./useVariant";
 import useToken from "@/hooks/useToken";
 import { vary } from "@/common/helpers/varyValidator";
 import { setGeneratedExecution, setSelectedExecution } from "@/core/store/executionsSlice";
-import type { IPromptInput } from "@/common/types/prompt";
 import { ContextualOverrides, ResOverrides } from "@/core/api/dto/prompts";
+import { useStoreAnswersAndParams } from "@/hooks/useStoreAnswersAndParams";
+import type { IPromptInput } from "@/common/types/prompt";
 import type { IAnswer, IMessage, MessageType } from "@/components/Prompt/Types/chat";
 import type { PromptInputType } from "@/components/Prompt/Types";
-import { useStoreAnswersAndParams } from "@/hooks/useStoreAnswersAndParams";
 
 interface Props {
   initialMessageTitle: string;
@@ -173,7 +174,7 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
     }, 10);
   };
 
-  const proceedQueuedMessages = () => {
+  const proccedQueuedMessages = () => {
     if (!isSimulationStreaming && !!queuedMessages.length) {
       const nextQueuedMessage = queuedMessages.shift()!;
       dispatch(setIsSimulationStreaming(true));
@@ -322,7 +323,7 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
   }, [repeatedExecution]);
 
   useEffect(() => {
-    proceedQueuedMessages();
+    proccedQueuedMessages();
   }, [isSimulationStreaming, queuedMessages]);
 
   useEffect(() => {

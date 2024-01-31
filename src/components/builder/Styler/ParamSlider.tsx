@@ -16,13 +16,13 @@ interface IProps {
   type: BuilderType;
 }
 
-function ParamSlider({
+export const ParamSlider = ({
   promptParams,
   handleChangeScore,
   handleChangeOptions,
   removeParam,
   type = BUILDER_TYPE.ADMIN,
-}: IProps) {
+}: IProps) => {
   return (
     <Stack gap={2}>
       {promptParams &&
@@ -134,7 +134,7 @@ function ParamSlider({
         })}
     </Stack>
   );
-}
+};
 
 const IconButtonStyles = {
   border: "none",
@@ -146,5 +146,3 @@ const IconButtonStyles = {
     height: 20,
   },
 };
-
-export default ParamSlider;
