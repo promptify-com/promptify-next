@@ -204,17 +204,20 @@ const PromptCardAccordion = ({
               </Stack>
               {isTemplateOwner && (
                 <>
-                  <Button
-                    startIcon={<PlayCircle />}
-                    onClick={handleOpenTest}
-                    sx={{
-                      fontSize: 13,
-                      fontWeight: 500,
-                      p: "4px 10px",
-                    }}
-                  >
-                    Test run
-                  </Button>
+                  {false && (
+                    <Button
+                      startIcon={<PlayCircle />}
+                      onClick={handleOpenTest}
+                      sx={{
+                        fontSize: 13,
+                        fontWeight: 500,
+                        p: "4px 10px",
+                      }}
+                    >
+                      Test run
+                    </Button>
+                  )}
+
                   {showTest && (
                     <PromptTestDialog
                       open={showTest}
