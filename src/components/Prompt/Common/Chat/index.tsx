@@ -13,6 +13,8 @@ import type { PromptParams } from "@/core/api/dto/prompts";
 import useVariant from "@/components/Prompt/Hooks/useVariant";
 import dynamic from "next/dynamic";
 import PromptPlaceholder from "@/components/placeholders/PromptPlaceholder";
+import { IMessage } from "@/components/Prompt/Types/chat";
+import { randomId } from "@/common/helpers";
 
 interface Props {
   onError: (errMsg: string) => void;
@@ -36,6 +38,7 @@ const CommonChat: React.FC<Props> = ({ onError, template, questionPrefixContent 
 
   const {
     messages,
+    setMessages,
     initialMessages,
     messageAnswersForm,
     showGenerateButton,
@@ -90,6 +93,17 @@ const CommonChat: React.FC<Props> = ({ onError, template, questionPrefixContent 
       try {
         const _newExecution = await getExecutionById(generatedExecution.id);
         dispatch(setSelectedExecution(_newExecution));
+        if (isVariantA) {
+          const generatedExecutionMessage: IMessage = {
+            id: randomId(),
+            text: "",
+            type: "spark",
+            createdAt: new Date(new Date().getTime() - 1000),
+            fromUser: false,
+            spark: _newExecution,
+          };
+          setMessages(messages.concat(generatedExecutionMessage));
+        }
       } catch {
         window.location.reload();
       }

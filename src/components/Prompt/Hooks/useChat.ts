@@ -94,7 +94,9 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
       userMessage.text = variation;
 
       setMessages(prevMessages =>
-        prevMessages.filter(msg => msg.type !== "form" && msg.type !== "spark").concat(userMessage),
+        prevMessages
+          .filter(msg => (isVariantA ? msg.type !== "form" : msg.type !== "form" && msg.type !== "spark"))
+          .concat(userMessage),
       );
 
       setIsValidatingAnswer(true);
