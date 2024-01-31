@@ -2,7 +2,6 @@ import { type Dispatch, type SetStateAction } from "react";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 
-import ChatBox from "./ChatBox";
 import { useAppSelector } from "@/hooks/useStore";
 import { Display } from "./Display";
 import Header from "@/components/Prompt/Common/Header";
@@ -10,6 +9,7 @@ import TopHeaderActions from "@/components/Prompt/Common/Sidebar/TopHeaderAction
 import Sidebar from "@/components/Prompt/Common/Sidebar";
 import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 import useBrowser from "@/hooks/useBrowser";
+import CommonChat from "@/components/Prompt/Common/Chat";
 
 interface TemplateLayoutProps {
   template: Templates;
@@ -87,7 +87,7 @@ export default function TemplateVariantA({ template, executions, questionPrefixC
             },
           }}
         >
-          <ChatBox
+          <CommonChat
             template={template}
             questionPrefixContent={questionPrefixContent}
           />
