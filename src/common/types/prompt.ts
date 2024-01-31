@@ -1,6 +1,6 @@
 import { PromptInputType } from "@/components/Prompt/Types";
 
-export type InputType = "text" | "choices" | "number" | "integer" | "code" | "file" | "auth";
+export type InputType = "text" | "choices" | "number" | "integer" | "code" | "file" | "credentials";
 
 export type FileType = "pdf" | "docx" | "txt";
 

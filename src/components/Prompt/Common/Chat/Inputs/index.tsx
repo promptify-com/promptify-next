@@ -11,6 +11,7 @@ import type { IPromptInput } from "@/common/types/prompt";
 import type { PromptInputType } from "@/components/Prompt/Types";
 import type { IAnswer } from "@/components/Prompt/Types/chat";
 import { useDebouncedDispatch } from "@/hooks/useDebounceDispatch";
+import Credentials from "./Credentials";
 
 interface Props {
   input: IPromptInput;
@@ -95,6 +96,8 @@ function RenderInputType({ input, value: initialValue }: Props) {
           onChange={onChange}
         />
       );
+    case "credentials":
+      return <Credentials input={input} />;
     default:
       return (
         <Textual

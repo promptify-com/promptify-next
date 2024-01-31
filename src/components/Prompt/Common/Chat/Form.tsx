@@ -29,7 +29,7 @@ function FormFields({ variant, messageType }: FormLayoutProps) {
     const transformedInputs: IPromptInput[] = credentials.map(credential => ({
       name: credential.authType,
       fullName: credential.displayName,
-      type: "auth",
+      type: "credentials",
       required: true,
     }));
 
