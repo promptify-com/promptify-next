@@ -38,6 +38,7 @@ export const AddConnectionButtons: React.FC<IProps> = ({ postLogin, preLogin, au
         setToast({
           message: "You already have this connection attached to another account",
           severity: "info",
+          duration: 6000,
         }),
       );
     } else {

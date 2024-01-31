@@ -89,7 +89,14 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
           dispatch(setGeneratingStatus(true));
           setGeneratingResponse({ created_at: new Date(), data: [], connectionOpened: true });
         } else if (res.status >= 400 && res.status < 500 && res.status !== 429) {
-          dispatch(setToast({ message: "Something went wrong. Please try again later", severity: "error" }));
+          dispatch(
+            setToast({
+              message: "Something went wrong. Please try again later",
+              severity: "error",
+              duration: 6000,
+              position: { vertical: "bottom", horizontal: "right" },
+            }),
+          );
         }
       },
       onmessage(msg) {
@@ -133,10 +140,14 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
             }
           } else {
             if (message.includes("[ERROR]")) {
-              const errorMessage = message
-                ? message.replace("[ERROR]", "")
-                : "Something went wrong during the execution of this prompt";
-              dispatch(setToast({ message: errorMessage, severity: "error" }));
+              dispatch(
+                setToast({
+                  message: "Something went wrong during the execution of this prompt",
+                  severity: "error",
+                  duration: 6000,
+                  position: { vertical: "bottom", horizontal: "right" },
+                }),
+              );
               return;
             }
 
@@ -178,7 +189,14 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
       onerror(err) {
         setDisableChatInput(false);
         dispatch(setGeneratingStatus(false));
-        dispatch(setToast({ message: "Something went wrong. Please try again later", severity: "error" }));
+        dispatch(
+          setToast({
+            message: "Something went wrong. Please try again later",
+            severity: "error",
+            duration: 6000,
+            position: { vertical: "bottom", horizontal: "right" },
+          }),
+        );
         throw err; // rethrow to stop the operation
       },
       onclose() {

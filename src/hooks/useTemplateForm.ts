@@ -82,6 +82,8 @@ const useTemplateForm = ({ type, template, uploadedFile, onSaved }: Props) => {
         setToast({
           message: "Please try again, make sure you have entered all required template information.",
           severity: "error",
+          duration: 2000,
+          position: { vertical: "top", horizontal: "center" },
         }),
       );
       return;

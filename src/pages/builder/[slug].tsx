@@ -422,6 +422,8 @@ export const Builder = () => {
         setToast({
           message: `You have entered an invalid prompt variable ${invalidVariableMessage}`,
           severity: "error",
+          duration: 4000,
+          position: { vertical: "bottom", horizontal: "right" },
         }),
       );
       return;
@@ -459,7 +461,14 @@ export const Builder = () => {
     });
 
     updateTemplate(templateData!.id, data).then(() => {
-      dispatch(setToast({ message: "Prompt template saved with success", severity: "success" }));
+      dispatch(
+        setToast({
+          message: "Prompt template saved with success",
+          severity: "success",
+          duration: 3000,
+          position: { vertical: "bottom", horizontal: "right" },
+        }),
+      );
       window.location.reload();
     });
   };

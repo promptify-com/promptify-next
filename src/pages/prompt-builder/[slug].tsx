@@ -102,7 +102,14 @@ export const PromptBuilder = () => {
         message = "Please try again, and make sure you've entered template information!";
         setTemplateDrawerOpen(true);
       }
-      dispatch(setToast({ message, severity: "error" }));
+      dispatch(
+        setToast({
+          message,
+          severity: "error",
+          duration: 4000,
+          position: { vertical: "top", horizontal: "center" },
+        }),
+      );
       return;
     }
 
@@ -119,7 +126,12 @@ export const PromptBuilder = () => {
 
     if (invalids.length) {
       dispatch(
-        setToast({ message: `You have entered an invalid prompt variable ${invalids.join(", ")}`, severity: "error" }),
+        setToast({
+          message: `You have entered an invalid prompt variable ${invalids.join(", ")}`,
+          severity: "error",
+          duration: 4000,
+          position: { vertical: "top", horizontal: "center" },
+        }),
       );
       return;
     }
@@ -165,7 +177,14 @@ export const PromptBuilder = () => {
     };
 
     await updateTemplate(currentTemplateData.id, _template);
-    dispatch(setToast({ message: "Prompt template saved with success", severity: "success" }));
+    dispatch(
+      setToast({
+        message: "Prompt template saved with success",
+        severity: "success",
+        duration: 3000,
+        position: { vertical: "bottom", horizontal: "right" },
+      }),
+    );
 
     setTimeout(() => {
       if (newTemplate) {
@@ -184,7 +203,14 @@ export const PromptBuilder = () => {
         message = "Please try again, and make sure you've entered template information!";
         setTemplateDrawerOpen(true);
       }
-      dispatch(setToast({ message, severity: "error" }));
+      dispatch(
+        setToast({
+          message,
+          severity: "error",
+          duration: 4000,
+          position: { vertical: "top", horizontal: "center" },
+        }),
+      );
       return;
     }
 

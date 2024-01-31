@@ -124,12 +124,22 @@ const PromptCardAccordion = ({
   const handleOpenTest = () => {
     if (saveNeeded.current) {
       dispatch(
-        setToast({ message: "Please save your template changes first before running tests.", severity: "warning" }),
+        setToast({
+          message: "Please save your template changes first before running tests.",
+          severity: "warning",
+          duration: 8000,
+          position: { vertical: "top", horizontal: "center" },
+        }),
       );
       return;
     }
     dispatch(
-      setToast({ message: "Please save your template changes first before running tests.", severity: "warning" }),
+      setToast({
+        message: "Please save your template changes first before running tests.",
+        severity: "warning",
+        duration: 8000,
+        position: { vertical: "top", horizontal: "center" },
+      }),
     );
   };
 

@@ -18,18 +18,19 @@ const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) 
 
 function Toaster() {
   const dispatch = useAppDispatch();
-  const { open, message, severity } = useAppSelector(state => state.toast);
-
+  const { open, message, severity, duration, position } = useAppSelector(state => state.toast);
+  console.log({ open, message, severity, duration, position });
   return (
     <Snackbar
       open={open}
-      autoHideDuration={6000}
+      autoHideDuration={duration}
       onClose={(_event, reason) => {
         if (reason === "clickaway") {
           return;
         }
         dispatch(clearToast());
       }}
+      anchorOrigin={position}
     >
       <Alert severity={severity}>{message}</Alert>
     </Snackbar>

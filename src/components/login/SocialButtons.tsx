@@ -111,7 +111,14 @@ export default function SocialButtons({ preLogin, isChecked, setErrorCheckBox, f
   };
   const validateConsent = (loginMethod: Function) => {
     if (!isChecked && from === "signup") {
-      dispatch(setToast({ message: "Please accept the terms and conditions.", severity: "error" }));
+      dispatch(
+        setToast({
+          message: "Please accept the terms and conditions.",
+          severity: "error",
+          duration: 6000,
+          position: { vertical: "bottom", horizontal: "right" },
+        }),
+      );
       setErrorCheckBox(false);
     } else {
       loginMethod();

@@ -34,7 +34,7 @@ export const Connections = () => {
     setOpenAdd(false);
 
     if (!response?.token) {
-      dispatch(setToast({ message: "Connection not added", severity: "error" }));
+      dispatch(setToast({ message: "Connection not added", severity: "error", duration: 6000 }));
     } else {
       _useDeferredAction().then(res => {
         if (!res?.length) {
@@ -44,7 +44,7 @@ export const Connections = () => {
         const cnx = res.map((cn: any) => cn.provider);
         setAuthConnection(cnx);
         setConnections(res);
-        dispatch(setToast({ message: "Connection added successfully", severity: "success" }));
+        dispatch(setToast({ message: "Connection added successfully", severity: "success", duration: 6000 }));
       });
     }
 
@@ -58,9 +58,9 @@ export const Connections = () => {
           const cnx = filterConnection.map((cn: any) => cn.provider);
           setAuthConnection(cnx);
           setConnections(filterConnection);
-          dispatch(setToast({ message: "Connection deleted successfully", severity: "success" }));
+          dispatch(setToast({ message: "Connection deleted successfully", severity: "success", duration: 6000 }));
         } else {
-          dispatch(setToast({ message: "Connection not deleted", severity: "error" }));
+          dispatch(setToast({ message: "Connection not deleted", severity: "error", duration: 6000 }));
         }
         setOpen(!open);
       })
