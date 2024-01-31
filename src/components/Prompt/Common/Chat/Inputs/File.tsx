@@ -1,10 +1,13 @@
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
-
 import { getFileTypeExtensionsAsString } from "@/components/Prompt/Utils/uploadFileHelper";
 import useTruncate from "@/hooks/useTruncate";
 import type { FileType, IPromptInput } from "@/common/types/prompt";
 import { isUrl } from "@/common/helpers";
+import { useAppSelector } from "@/hooks/useStore";
+import Tooltip from "@mui/material/Tooltip";
+import Error from "@mui/icons-material/Error";
+
 interface Props {
   value: File;
   input: IPromptInput;
@@ -13,8 +16,9 @@ interface Props {
 
 function File({ input, value, onChange }: Props) {
   const { truncate } = useTruncate();
-
+  const answers = useAppSelector(state => state.chat.answers);
   const _value = value && typeof value === "string" && isUrl(value) ? (value as string).split("/").pop() : value?.name;
+  const hasError = answers.find(answer => answer.inputName === input.name && answer.error);
 
   return (
     <Stack
@@ -48,6 +52,23 @@ function File({ input, value, onChange }: Props) {
           }}
         />
       </Button>
+      {hasError && (
+        <Tooltip
+          title={"The uploaded file is invalid"}
+          placement="right"
+          arrow
+          componentsProps={{
+            tooltip: {
+              sx: { bgcolor: "error.main", color: "onError", fontSize: 10, fontWeight: 500 },
+            },
+            arrow: {
+              sx: { color: "error.main" },
+            },
+          }}
+        >
+          <Error sx={{ color: "error.main", width: 20, height: 20 }} />
+        </Tooltip>
+      )}
     </Stack>
   );
 }

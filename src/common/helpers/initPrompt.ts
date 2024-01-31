@@ -17,7 +17,7 @@ export const handleInitPrompt = (template: Templates, engines: Engine[]) => {
         id: prompt.id,
         title: prompt.title || `Prompt #1`,
         content: prompt.content || "Describe here prompt parameters, for example {{name:text}}",
-        engine_id: prompt.engine?.id || textEngine?.id,
+        engine: prompt.engine?.id || textEngine?.id,
         dependencies: prompt.dependencies || [],
         parameters: initialParams,
         order: index + 1,

@@ -18,7 +18,7 @@ import { IParametersPreset } from "@/common/types/parametersPreset";
 import { Add, AddCircle, Bolt, ContentCopy, Save } from "@mui/icons-material";
 import { theme } from "@/theme";
 import { IParameters } from "@/common/types";
-import { ParamSlider } from "./ParamSlider";
+import ParamSlider from "./ParamSlider";
 import ParametersModal from "../ParametersModal";
 import {
   useCreateParametersPresetMutation,
@@ -34,7 +34,7 @@ interface IProps {
   type: BuilderType;
 }
 
-export const Styler = ({ selectedNodeData, setSelectedNodeData, type }: IProps) => {
+function Styler({ selectedNodeData, setSelectedNodeData, type }: IProps) {
   const { data: parameters } = useGetParametersQuery();
   const { data: presets } = useGetParametersPresetsQuery();
   const [createParametersPreset] = useCreateParametersPresetMutation();
@@ -397,4 +397,6 @@ export const Styler = ({ selectedNodeData, setSelectedNodeData, type }: IProps) 
       </Dialog>
     </Stack>
   );
-};
+}
+
+export default Styler;

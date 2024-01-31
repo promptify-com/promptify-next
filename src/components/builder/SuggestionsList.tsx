@@ -11,7 +11,7 @@ interface Props {
   onSelect: (option: Preset) => void;
 }
 
-export const SuggestionsList = ({ suggestionList, position, optionType, onSelect }: Props) => {
+function SuggestionsList({ suggestionList, position, optionType, onSelect }: Props) {
   return (
     <>
       {suggestionList.length > 0 && position && (
@@ -53,4 +53,6 @@ export const SuggestionsList = ({ suggestionList, position, optionType, onSelect
       )}
     </>
   );
-};
+}
+
+export default SuggestionsList;
