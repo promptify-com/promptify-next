@@ -16,6 +16,7 @@ import { useCreateCredentialsMutation } from "@/core/api/workflows";
 import { setToast } from "@/core/store/toastSlice";
 import type { Credentials, ICredentialsProperty } from "@/components/Automation/types";
 import type { IPromptInput } from "@/common/types/prompt";
+import useLocalStorage from "@/hooks/useLocaleStorage";
 
 interface Props {
   input: IPromptInput;
@@ -29,18 +30,17 @@ function Credentials({ input }: Props) {
   const dispatch = useAppDispatch();
   const [createCredentials] = useCreateCredentialsMutation();
   const credentials = useAppSelector(state => state.chat.credentials);
+  const [storedCredentials] = useLocalStorage("credentials", {});
+
+  const credential = credentials.find(cred => cred.displayName === input.fullName);
+  const areCredentialsStored = storedCredentials && !!storedCredentials[credential?.authType!];
 
   const [openModal, setOpenModal] = useState(false);
   const [credentialProperties, setCredentialProperties] = useState<ICredentialsProperty[]>([]);
-  const [areCredentialsStored, setAreCredentialsStored] = useState(false);
 
   useEffect(() => {
-    const credential = credentials.find(cred => cred.displayName === input.fullName);
     if (credential) {
       setCredentialProperties(credential.properties);
-
-      const storedCredentials = Storage.get("credentials") || {};
-      setAreCredentialsStored(!!storedCredentials[credential.authType]);
     }
   }, [credentials]);
 
@@ -72,8 +72,6 @@ function Credentials({ input }: Props) {
   );
 
   const handleSubmit = async (values: FormValues) => {
-    const credential = credentials.find(cred => cred.displayName === input.fullName);
-
     const data: Record<string, string> = {};
     for (const key in values) {
       if (values.hasOwnProperty(key)) {
@@ -89,8 +87,6 @@ function Credentials({ input }: Props) {
 
     try {
       const response = await createCredentials(payload).unwrap();
-
-      const storedCredentials = Storage.get("credentials") || {};
 
       storedCredentials[credential?.authType!] = {
         name: response.name,
