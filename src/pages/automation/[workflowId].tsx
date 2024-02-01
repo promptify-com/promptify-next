@@ -12,7 +12,7 @@ import useWorkflow from "@/components/Automation/Hooks/useWorkflow";
 import WorkflowPlaceholder from "@/components/Automation/WorkflowPlaceholder";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IPromptInput } from "@/common/types/prompt";
-import { SEO_DESCRIPTION } from "@/common/constants";
+import { AUTOMATION_DESCRIPTION } from "@/common/constants";
 import { authClient } from "../../common/axios";
 import { IWorkflow } from "../../components/Automation/types";
 
@@ -132,7 +132,7 @@ export async function getServerSideProps({ params }: any) {
     return {
       props: {
         title: workflow.name ?? "GPT",
-        description: workflow.description ?? SEO_DESCRIPTION,
+        description: workflow.description ?? AUTOMATION_DESCRIPTION,
         image: workflow.image,
         workflow,
       },
@@ -141,7 +141,7 @@ export async function getServerSideProps({ params }: any) {
     return {
       props: {
         title: "GPT",
-        description: SEO_DESCRIPTION,
+        description: AUTOMATION_DESCRIPTION,
         workflow: {},
       },
     };

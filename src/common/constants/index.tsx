@@ -187,3 +187,5 @@ export const outputFormatOptions = ["JSON", "XML", "Markdown", "Custom"];
 export const SEO_TITLE = "Promptify - Boost Your Creativity";
 export const SEO_DESCRIPTION =
   "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.";
+export const AUTOMATION_DESCRIPTION =
+  "Discover advanced Generative AI that combine sophisticated prompt templates, set of instructions, extra knowledge, and any combination of skills.";

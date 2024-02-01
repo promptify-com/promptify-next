@@ -2,7 +2,7 @@ import React from "react";
 import { Box, Grid, Stack, Typography } from "@mui/material";
 import { Layout } from "@/layout";
 import CardWorkflow from "@/components/Automation/CardWorkflow";
-import { SEO_DESCRIPTION } from "@/common/constants";
+import { AUTOMATION_DESCRIPTION } from "@/common/constants";
 import { IWorkflow } from "@/components/Automation/types";
 import { authClient } from "@/common/axios";
 
@@ -33,10 +33,7 @@ const Automation = ({ workflows }: Props) => {
               >
                 GPTs
               </Typography>
-              <Typography variant="body1">
-                Discover advanced Generative AI that combine sophisticated prompt templates, set of instructions, extra
-                knowledge, and any combination of skills.
-              </Typography>
+              <Typography variant="body1">{AUTOMATION_DESCRIPTION}</Typography>
             </Box>
 
             <Stack gap={3}>
@@ -75,7 +72,7 @@ export async function getServerSideProps() {
     return {
       props: {
         title: "GPTs",
-        description: SEO_DESCRIPTION,
+        description: AUTOMATION_DESCRIPTION,
         workflows,
       },
     };
@@ -83,7 +80,7 @@ export async function getServerSideProps() {
     return {
       props: {
         title: "GPTs",
-        description: SEO_DESCRIPTION,
+        description: AUTOMATION_DESCRIPTION,
         workflows: [],
       },
     };
