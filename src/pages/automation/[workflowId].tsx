@@ -16,12 +16,16 @@ import { SEO_DESCRIPTION } from "@/common/constants";
 import { authClient } from "../../common/axios";
 import { IWorkflow } from "../../components/Automation/types";
 
-export default function SingleWorkflow() {
+interface Props {
+  workflow: IWorkflow;
+}
+
+export default function SingleWorkflow({ workflow }: Props) {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(state => state.user.currentUser);
 
-  const { selectedWorkflow, isWorkflowLoading, workflowAsTemplate, sendMessageAPI } = useWorkflow();
+  const { selectedWorkflow, isWorkflowLoading, workflowAsTemplate, sendMessageAPI } = useWorkflow(workflow);
 
   const {
     messages,
@@ -127,16 +131,18 @@ export async function getServerSideProps({ params }: any) {
 
     return {
       props: {
-        title: workflow.name ?? "Automation",
+        title: workflow.name ?? "GPT",
         description: workflow.description ?? SEO_DESCRIPTION,
         image: workflow.image,
+        workflow,
       },
     };
   } catch (error) {
     return {
       props: {
-        title: "Automation",
+        title: "GPT",
         description: SEO_DESCRIPTION,
+        workflow: {},
       },
     };
   }

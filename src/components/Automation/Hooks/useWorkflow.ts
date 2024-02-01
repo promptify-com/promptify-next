@@ -10,21 +10,32 @@ import Storage from "@/common/storage";
 import type { Category } from "@/core/api/dto/templates";
 import type { INode, IWorkflow } from "@/components/Automation/types";
 
-const useWorkflow = () => {
+const useWorkflow = (workflow: IWorkflow) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const workflowId = router.query?.workflowId as string;
 
-  const [workflowData, setWorkflowData] = useState<IWorkflow>();
+  const [workflowData, setWorkflowData] = useState<IWorkflow>(workflow);
   const { answers, inputs } = useAppSelector(state => state.chat);
 
   const {
     data,
     error,
     isLoading: isWorkflowLoading,
-  } = useGetWorkflowByIdQuery(parseInt(workflowId), { skip: !workflowId });
+  } = useGetWorkflowByIdQuery(parseInt(workflowId), { skip: Boolean(workflow.id || !workflowId) });
 
   const [createWorkflow] = useCreateUserWorkflowMutation();
+
+  useEffect(() => {
+    clearStoredStates();
+  }, []);
+
+  useEffect(() => {
+    if (data) {
+      setWorkflowData(data);
+      createWorkflowIfNeeded(data.id);
+    }
+  }, [data]);
 
   const clearStoredStates = () => {
     dispatch(setSelectedExecution(null));
@@ -69,16 +80,6 @@ const useWorkflow = () => {
 
     return response.data;
   }
-  useEffect(() => {
-    clearStoredStates();
-  }, []);
-
-  useEffect(() => {
-    if (data) {
-      setWorkflowData(data);
-      createWorkflowIfNeeded(data.id);
-    }
-  }, [data]);
 
   const workflowAsTemplate = {
     id: workflowData?.id,

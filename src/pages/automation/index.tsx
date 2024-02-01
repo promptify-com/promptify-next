@@ -90,7 +90,7 @@ const Automation = () => {
 export function getServerSideProps() {
   return {
     props: {
-      title: "Automation",
+      title: "GPTs",
       description: SEO_DESCRIPTION,
     },
   };

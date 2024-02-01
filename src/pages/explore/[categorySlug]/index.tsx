@@ -120,7 +120,7 @@ export async function getServerSideProps({ params }: any) {
       props: {
         category,
         title: category.meta_title ?? category.name,
-        description: category.meta_description ?? SEO_DESCRIPTION,
+        description: category.meta_description ?? category.description,
         meta_keywords: category.meta_keywords,
         image: category.image,
       },
