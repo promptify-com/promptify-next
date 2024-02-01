@@ -52,8 +52,7 @@ const Automation = () => {
                   GPTs
                 </Typography>
                 <Typography variant="body1">
-                  Discover advanced Generative AI that combine sophisticated prompt templates, set of instructions,
-                  extra knowledge, and any combination of skills.
+                  Discover advanced Generative AI that combine sophisticated prompt templates, set of instructions, extra knowledge, and any combination of skills.
                 </Typography>
               </Box>
 
