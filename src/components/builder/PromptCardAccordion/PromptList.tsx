@@ -27,6 +27,7 @@ function PromptList({ prompts, setPrompts, templateLoading }: Props) {
   const setSmoothScrollTarget = useScrollToElement("smooth");
 
   const [, drop] = useDrop(() => ({ accept: "prompt" }));
+
   const findPromptIndex = useCallback(
     (id: number) => {
       let promptIndex = 0;
@@ -40,6 +41,7 @@ function PromptList({ prompts, setPrompts, templateLoading }: Props) {
     },
     [prompts],
   );
+
   const movePrompt = useCallback(
     (id: number, atIndex: number) => {
       const index = findPromptIndex(id);
