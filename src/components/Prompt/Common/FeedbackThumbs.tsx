@@ -6,7 +6,6 @@ import Button from "@mui/material/Button";
 import CheckCircle from "@mui/icons-material/CheckCircle";
 import { Replay } from "@mui/icons-material";
 import { alpha } from "@mui/material/styles";
-
 import { useUpdateExecutionMutation } from "@/core/api/executions";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setAnswers } from "@/core/store/chatSlice";
@@ -14,7 +13,7 @@ import { setRepeatedExecution } from "@/core/store/executionsSlice";
 import { theme } from "@/theme";
 import { Happy } from "@/assets/icons/Happy";
 import { Sad } from "@/assets/icons/Sad";
-import useVariant from "../Hooks/useVariant";
+import useVariant from "@/components/Prompt/Hooks/useVariant";
 import CustomTooltip from "./CustomTooltip";
 import type { FeedbackType, TemplatesExecutions } from "@/core/api/dto/templates";
 

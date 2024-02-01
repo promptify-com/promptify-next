@@ -16,7 +16,7 @@ import {
   alpha,
 } from "@mui/material";
 import React, { useState } from "react";
-import { Styler } from "../Styler/Styler";
+import Styler from "@/components/builder/Styler/Styler";
 import { IEditPrompts } from "@/common/types/builder";
 import { IParameters } from "@/common/types";
 import { useGetParametersQuery } from "@/core/api/parameters";
@@ -28,7 +28,7 @@ interface Props {
   setPrompt: (prompt: IEditPrompts) => void;
 }
 
-export const StylerAccordion = ({ prompt, setPrompt }: Props) => {
+function StylerAccordion({ prompt, setPrompt }: Props) {
   const { data: parameters } = useGetParametersQuery();
   const [showParams, setShowParams] = useState(false);
   const [paramsAnchor, setParamsAnchor] = useState<HTMLElement | null>(null);
@@ -219,4 +219,6 @@ export const StylerAccordion = ({ prompt, setPrompt }: Props) => {
       </Popover>
     </>
   );
-};
+}
+
+export default StylerAccordion;

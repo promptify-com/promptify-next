@@ -8,7 +8,7 @@ import { FiltersSelected } from "@/components/explorer/FiltersSelected";
 import { Category } from "@/core/api/dto/templates";
 import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
 import { getCategories } from "@/hooks/api/categories";
-import { useGetsuggestedTemplatesByCategoryQuery } from "@/core/api/templates";
+import { useGetSuggestedTemplatesByCategoryQuery } from "@/core/api/templates";
 import { useAppSelector } from "@/hooks/useStore";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { SEO_DESCRIPTION } from "@/common/constants";
@@ -29,7 +29,7 @@ export default function ExplorePage({ categories }: Props) {
     handlePrevPage,
   } = useGetTemplatesByFilter({ ordering: "-likes", templateLimit: 5, paginatedList: true });
   const isValidUser = useAppSelector(isValidUserFn);
-  const { data: suggestedTemplates, isLoading: isSuggestedTemplatesLoading } = useGetsuggestedTemplatesByCategoryQuery(
+  const { data: suggestedTemplates, isLoading: isSuggestedTemplatesLoading } = useGetSuggestedTemplatesByCategoryQuery(
     undefined,
     { skip: !isValidUser },
   );

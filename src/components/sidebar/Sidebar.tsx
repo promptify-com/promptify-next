@@ -9,12 +9,12 @@ import ExtensionRounded from "@mui/icons-material/ExtensionRounded";
 import FolderSpecial from "@mui/icons-material/FolderSpecial";
 import HelpRounded from "@mui/icons-material/HelpRounded";
 import Inventory2Rounded from "@mui/icons-material/Inventory2Rounded";
-import Route from "@mui/icons-material/Route";
 import SidebarItem from "./SidebarItem";
 import { theme } from "@/theme";
 import type { NavItem } from "@/common/types/sidebar";
 import { useRouter } from "next/router";
 import useBrowser from "@/hooks/useBrowser";
+import ElectricBoltIcon from "@mui/icons-material/ElectricBolt";
 
 function Sidebar() {
   const router = useRouter();
@@ -58,9 +58,9 @@ function Sidebar() {
       reload: false,
     },
     {
-      name: "Automation",
+      name: "GPTs",
       href: "/automation",
-      icon: <Route />,
+      icon: <ElectricBoltIcon />,
       active: isAutomationPage,
       external: false,
       reload: false,

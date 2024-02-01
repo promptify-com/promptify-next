@@ -7,9 +7,11 @@ import {
   TemplateApiStatus,
   Templates,
   TemplatesWithPagination,
+  IPromptExecution,
 } from "./dto/templates";
 import { IEditTemplate } from "@/common/types/editTemplate";
 import { randomId } from "@/common/helpers";
+import { IEditPrompts } from "@/common/types/builder";
 
 const getSearchParams = (params: FilterParams) => {
   const searchParams = new URLSearchParams();
@@ -73,6 +75,13 @@ export const templatesApi = baseApi.injectEndpoints({
           method: "delete",
         }),
       }),
+      updatePrompt: builder.mutation<IEditPrompts, { id: number; data: IEditPrompts }>({
+        query: ({ id, data }: { data: IEditPrompts; id: number }) => ({
+          url: `/api/meta/prompts/${id}`,
+          method: "put",
+          data,
+        }),
+      }),
       getMyTemplates: builder.query<Templates[], void>({
         query: () => ({
           url: "/api/meta/templates/me",
@@ -115,7 +124,7 @@ export const templatesApi = baseApi.injectEndpoints({
           method: "post",
         }),
       }),
-      getsuggestedTemplatesByCategory: builder.query<Templates[], void>({
+      getSuggestedTemplatesByCategory: builder.query<Templates[], void>({
         query: () => ({
           url: "/api/meta/templates/suggested_by_category",
           method: "get",
@@ -170,6 +179,32 @@ export const templatesApi = baseApi.injectEndpoints({
           method: "post",
         }),
       }),
+      getPromptExecutions: builder.query<IPromptExecution[], number>({
+        query: id => ({
+          url: `/api/meta/templates/${id}/prompt-executions`,
+          method: "get",
+        }),
+        providesTags: ["PromptsExecutions"],
+      }),
+      deletePromptExecutions: builder.mutation({
+        query: (id: number) => ({
+          url: `/api/meta/templates/${id}/prompt-executions`,
+          method: "delete",
+        }),
+        async onQueryStarted(id, { dispatch, queryFulfilled }) {
+          const patchResult = dispatch(
+            templatesApi.util.updateQueryData("getPromptExecutions", id, _ => {
+              return [];
+            }),
+          );
+
+          try {
+            await queryFulfilled;
+          } catch {
+            patchResult.undo();
+          }
+        },
+      }),
     };
   },
 });
@@ -177,6 +212,7 @@ export const templatesApi = baseApi.injectEndpoints({
 export const {
   useGetTemplatesSuggestedQuery,
   useDeleteTemplateMutation,
+  useUpdatePromptMutation,
   useGetTemplatesByFilterQuery,
   useGetTemplatesBySearchQuery,
   useGetPromptParamsQuery,
@@ -188,9 +224,11 @@ export const {
   useUpdateTemplateMutation,
   usePublishTemplateMutation,
   useViewTemplateMutation,
-  useGetsuggestedTemplatesByCategoryQuery,
+  useGetSuggestedTemplatesByCategoryQuery,
   useGetFeedbacksQuery,
   useSaveFeedbackMutation,
   useSetTemplateEnableApiMutation,
   useGetTemplateApiStatusQuery,
+  useGetPromptExecutionsQuery,
+  useDeletePromptExecutionsMutation,
 } = templatesApi;

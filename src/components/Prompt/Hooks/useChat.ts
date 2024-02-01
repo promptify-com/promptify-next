@@ -157,7 +157,7 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
     }, 10);
   };
 
-  const proccedQueuedMessages = () => {
+  const proceedQueuedMessages = () => {
     if (!isSimulationStreaming && !!queuedMessages.length) {
       const nextQueuedMessage = queuedMessages.shift()!;
       dispatch(setIsSimulationStreaming(true));
@@ -302,7 +302,7 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
   }, [repeatedExecution]);
 
   useEffect(() => {
-    proccedQueuedMessages();
+    proceedQueuedMessages();
   }, [isSimulationStreaming, queuedMessages]);
 
   useEffect(() => {

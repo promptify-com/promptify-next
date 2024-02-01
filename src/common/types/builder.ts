@@ -31,7 +31,7 @@ export interface IEditPrompts extends IPromptOptions {
   temp_id?: number;
   title: string;
   content: string;
-  engine_id: number;
+  engine: number;
   dependencies: number[];
   parameters: IPromptParams[];
   order: number;
