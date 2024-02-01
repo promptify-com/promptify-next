@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/core/store";
 import EditProfile from "@/components/profile/EditProfile";
 import Credentials from "@/components/profile/Credentials";
+import { SEO_DESCRIPTION } from "@/common/constants";
 
 const Profile = () => {
   const isEditMode = useSelector((state: RootState) => state.profile.showEditMode);
@@ -82,9 +83,8 @@ const Profile = () => {
 export async function getServerSideProps() {
   return {
     props: {
-      title: "Promptify | User Profile",
-      description:
-        "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
+      title: "Your Profile",
+      description: SEO_DESCRIPTION,
     },
   };
 }

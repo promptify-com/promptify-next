@@ -183,3 +183,11 @@ export const LCL_STR_KEY = "promptify:";
 export const COOKIE_STR_KEY = "promptify_";
 
 export const outputFormatOptions = ["JSON", "XML", "Markdown", "Custom"];
+
+export const SEO_TITLE = "Promptify - Boost Your Creativity";
+export const SEO_DESCRIPTION =
+  "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.";
+export const AUTOMATION_DESCRIPTION =
+  "Discover advanced Generative AI that combine sophisticated prompt templates, set of instructions, extra knowledge, and any combination of skills.";
+export const BUILDER_DESCRIPTION =
+  "Structure your prompts for a productive and more deterministic AI. Your chained prompts will guide AI content creation with focus and intent.";

@@ -14,6 +14,7 @@ import { FiltersSelected } from "@/components/explorer/FiltersSelected";
 import SubCategoryPlaceholder from "@/components/placeholders/SubCategoryPlaceholder";
 import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
 import { useGetCategoriesQuery } from "@/core/api/categories";
+import { SEO_DESCRIPTION, SEO_TITLE } from "@/common/constants";
 
 export default function Page({ category }: { category: Category }) {
   const router = useRouter();
@@ -118,10 +119,8 @@ export async function getServerSideProps({ params }: any) {
     return {
       props: {
         category,
-        title: category.meta_title || category.name,
-        description:
-          category.meta_description ||
-          "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
+        title: category.meta_title ?? category.name,
+        description: category.meta_description ?? category.description,
         meta_keywords: category.meta_keywords,
         image: category.image,
       },
@@ -130,9 +129,8 @@ export async function getServerSideProps({ params }: any) {
     return {
       props: {
         category: {},
-        title: "Promptify | Boost Your Creativity",
-        description:
-          "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
+        title: SEO_TITLE,
+        description: SEO_DESCRIPTION,
       },
     };
   }

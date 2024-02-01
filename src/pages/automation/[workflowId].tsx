@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import Stack from "@mui/material/Stack";
-import { useRouter } from "next/router";
 
+import { useRouter } from "next/router";
 import { Layout } from "@/layout";
 import { ChatInterface } from "@/components/Prompt/Common/Chat/ChatInterface";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
@@ -12,12 +12,19 @@ import { setInputs } from "@/core/store/chatSlice";
 import useWorkflow from "@/components/Automation/Hooks/useWorkflow";
 import WorkflowPlaceholder from "@/components/Automation/WorkflowPlaceholder";
 import Storage from "@/common/storage";
+import { AUTOMATION_DESCRIPTION } from "@/common/constants";
+import { authClient } from "@/common/axios";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { Credentials } from "@/components/Automation/types";
+import type { IWorkflow } from "@/components/Automation/types";
 
-export default function SingleWorkflow() {
+interface Props {
+  workflow: IWorkflow;
+}
+
+export default function SingleWorkflow({ workflow }: Props) {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(state => state.user.currentUser);
@@ -29,7 +36,7 @@ export default function SingleWorkflow() {
     sendMessageAPI,
     createWorkflowIfNeeded,
     getCredentials,
-  } = useWorkflow();
+  } = useWorkflow(workflow);
 
   const {
     messages,
@@ -155,11 +162,26 @@ export default function SingleWorkflow() {
 }
 
 export async function getServerSideProps({ params }: any) {
-  return {
-    props: {
-      title: "Promptify | Boost Your Creativity",
-      description:
-        "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
-    },
-  };
+  const { workflowId } = params;
+  try {
+    const res = await authClient.get(`/api/n8n/workflows/${workflowId}/`);
+    const workflow: IWorkflow = res.data;
+
+    return {
+      props: {
+        title: workflow.name ?? "GPT",
+        description: workflow.description ?? AUTOMATION_DESCRIPTION,
+        image: workflow.image,
+        workflow,
+      },
+    };
+  } catch (error) {
+    return {
+      props: {
+        title: "GPT",
+        description: AUTOMATION_DESCRIPTION,
+        workflow: {},
+      },
+    };
+  }
 }

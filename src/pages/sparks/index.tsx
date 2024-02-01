@@ -7,6 +7,7 @@ import { useGetTemplatesExecutionsByMeQuery } from "@/core/api/executions";
 import { TemplateExecutionsDisplay } from "@/core/api/dto/templates";
 
 import SparksTemplatePlaceholder from "@/components/placeholders/SparksTemplatePlaceholder";
+import { SEO_DESCRIPTION } from "@/common/constants";
 
 const Sparks = () => {
   const { data: executedTemplates, isLoading: isExecutedTemplatesLoading } =
@@ -79,9 +80,8 @@ const Sparks = () => {
 export async function getServerSideProps({ params }: any) {
   return {
     props: {
-      title: "Promptify | Boost Your Creativity",
-      description:
-        "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
+      title: "My Works",
+      description: SEO_DESCRIPTION,
     },
   };
 }
