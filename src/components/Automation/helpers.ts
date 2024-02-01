@@ -1,4 +1,4 @@
-import type { Credentials, Creds, INode, NodesFileData } from "@/components/Automation/types";
+import type { Credentials, Creds, ICredentials, INode, NodesFileData } from "@/components/Automation/types";
 
 const UNWANTED_TYPES = [
   "n8n-nodes-base.switch",
@@ -33,12 +33,12 @@ export async function getNodeNames(nodes: INode[] = [], slice = 3) {
   return filteredTypes.slice(0, slice);
 }
 
-const authTypeMapping: { [key: string]: string } = {
+export const authTypeMapping: { [key: string]: string } = {
   basicAuth: "httpBasicAuth",
   // Add other mappings here if necessary
 };
 
-export async function extractAuthData(nodes: INode[] = []): Promise<Credentials[]> {
+export async function extractCredentialsData(nodes: INode[] = []): Promise<Credentials[]> {
   const credentials: Credentials[] = [];
 
   //@ts-ignore
@@ -74,3 +74,29 @@ export async function extractAuthData(nodes: INode[] = []): Promise<Credentials[
 
   return credentials;
 }
+
+export const attachCredentialsToNode = (node: INode, credentials: ICredentials) => {
+  const { parameters } = node;
+
+  if (parameters && parameters.authentication) {
+    const authenticationType = parameters.authentication;
+    const nodeCredentialType = parameters.nodeCredentialType;
+
+    const authType =
+      authTypeMapping[nodeCredentialType!] ||
+      nodeCredentialType ||
+      authTypeMapping[authenticationType] ||
+      authenticationType;
+
+    const { id, name } = credentials[authType];
+
+    if (credentials[authType]) {
+      node.credentials = { [authType]: { id, name } };
+    }
+  }
+};
+
+export const extractWebhookPath = (nodes: INode[]) => {
+  const webhookNode = nodes.find(node => node.type === "n8n-nodes-base.webhook");
+  return webhookNode?.parameters?.path;
+};

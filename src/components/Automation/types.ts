@@ -4,6 +4,8 @@ interface IParameters {
   path?: string;
   options?: any;
   authentication?: string;
+  nodeCredentialType?: string;
+
   fields?: {
     values: {
       name: string;
@@ -20,6 +22,7 @@ export interface INode {
   webhookId: string;
   parameters: IParameters;
   typeVersion: number;
+  credentials?: ICredentials;
   simplifyOutput?: boolean;
   query?: string;
   jsCode?: string;
@@ -78,6 +81,13 @@ export interface Credentials {
   authType: string;
   displayName: string;
   properties: ICredentialsProperty[];
+}
+
+export interface ICredentials {
+  [key: string]: {
+    id: string;
+    name: string;
+  };
 }
 
 export interface ICredentialsProperty {

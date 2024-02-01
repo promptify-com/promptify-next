@@ -49,6 +49,12 @@ export const workflowsApi = baseApi.injectEndpoints({
           method: "delete",
         }),
       }),
+      updateWorkflow: builder.query<IWorkflowCreateResponse, number>({
+        query: workflowId => ({
+          url: `/api/n8n/workflows/${workflowId}/update`,
+          method: "update",
+        }),
+      }),
     };
   },
 });
@@ -60,4 +66,5 @@ export const {
   useCreateCredentialsMutation,
   useGetCredentialsQuery,
   useDeleteCredentialMutation,
+  useUpdateWorkflowQuery,
 } = workflowsApi;

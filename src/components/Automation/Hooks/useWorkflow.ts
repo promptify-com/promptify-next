@@ -7,9 +7,9 @@ import { clearExecutionsStates } from "@/core/store/executionsSlice";
 import { clearChatStates, setCredentials } from "@/core/store/chatSlice";
 import { n8nClient as ApiClient } from "@/common/axios";
 import Storage from "@/common/storage";
-import { extractAuthData } from "@/components/Automation/helpers";
+import { attachCredentialsToNode, extractCredentialsData, extractWebhookPath } from "@/components/Automation/helpers";
 import type { Category } from "@/core/api/dto/templates";
-import type { INode, IWorkflow } from "@/components/Automation/types";
+import type { INode, IWorkflow, IWorkflowCreateResponse } from "@/components/Automation/types";
 
 const useWorkflow = (workflow: IWorkflow) => {
   const dispatch = useAppDispatch();
@@ -27,19 +27,29 @@ const useWorkflow = (workflow: IWorkflow) => {
 
   const [createWorkflow] = useCreateUserWorkflowMutation();
 
-  const extractWebhookPath = (nodes: INode[]) => {
-    const webhookNode = nodes.find(node => node.type === "n8n-nodes-base.webhook");
-    return webhookNode?.parameters?.path;
-  };
-
   const createWorkflowIfNeeded = async (selectedWorkflowId: number) => {
-    let storedWorkflows = Storage.get("workflows") || {};
+    const storedWorkflows = Storage.get("workflows") || {};
 
     if (selectedWorkflowId.toString() in storedWorkflows) return;
+
     try {
       const response = await createWorkflow(selectedWorkflowId).unwrap();
       if (response) {
-        storedWorkflows[selectedWorkflowId] = extractWebhookPath(response.nodes);
+        const mutableResponse = JSON.parse(JSON.stringify(response)) as IWorkflowCreateResponse;
+
+        const webhookPath = extractWebhookPath(response.nodes);
+        const storedCredentials = Storage.get("credentials") || {};
+
+        mutableResponse.nodes.map(node => {
+          attachCredentialsToNode(node, storedCredentials);
+          return node;
+        });
+
+        storedWorkflows[selectedWorkflowId] = {
+          webhookPath,
+          workflow: mutableResponse,
+        };
+
         Storage.set("workflows", JSON.stringify(storedWorkflows));
       }
     } catch (error) {
@@ -64,7 +74,7 @@ const useWorkflow = (workflow: IWorkflow) => {
   }
 
   async function getCredentials(nodes: INode[]) {
-    const credentials = await extractAuthData(nodes);
+    const credentials = await extractCredentialsData(nodes);
     dispatch(setCredentials(credentials));
     return credentials;
   }

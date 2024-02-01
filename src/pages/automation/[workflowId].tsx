@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Stack from "@mui/material/Stack";
 
 import { useRouter } from "next/router";
@@ -27,6 +27,7 @@ interface Props {
 export default function SingleWorkflow({ workflow }: Props) {
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const [disableInput, setDisableInput] = useState(false);
   const currentUser = useAppSelector(state => state.user.currentUser);
 
   const {
@@ -60,6 +61,8 @@ export default function SingleWorkflow({ workflow }: Props) {
     const storedCredentials = Storage.get("credentials") ?? {};
 
     const areAllCredentialsStored = credentials.every(cred => storedCredentials[cred.authType]);
+
+    setDisableInput(!areAllCredentialsStored);
 
     if (!areAllCredentialsStored) {
       const credMessage = createMessage({ type: "credentials", noHeader: true });
@@ -141,7 +144,7 @@ export default function SingleWorkflow({ workflow }: Props) {
           {currentUser?.id ? (
             <ChatInput
               onSubmit={validateVary}
-              disabled={isValidatingAnswer}
+              disabled={isValidatingAnswer || disableInput}
               isValidating={isValidatingAnswer}
               showGenerate={showGenerateButton}
               onGenerate={executeWorflow}
