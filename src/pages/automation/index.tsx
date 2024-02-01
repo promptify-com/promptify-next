@@ -4,6 +4,7 @@ import { Layout } from "@/layout";
 import { useGetWorkflowsQuery } from "@/core/api/workflows";
 import CardWorkflow from "@/components/Automation/CardWorkflow";
 import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
+import ParagraphPlaceholder from "@/components/placeholders/ParagraphPlaceholder";
 
 const Automation = () => {
   const { data: workflows, isLoading } = useGetWorkflowsQuery();
@@ -34,20 +35,27 @@ const Automation = () => {
               </Box>
 
               <Box bgcolor={"surface.1"}>
+                <ParagraphPlaceholder count={1} />
                 <CardTemplatePlaceholder count={3} />
               </Box>
             </>
           ) : (
             <Stack gap={4}>
-              <Typography
-                fontSize={"24px"}
-                fontWeight={500}
-                color={"onSurface"}
-                lineHeight={"34.32px"}
-                letterSpacing={"0.17"}
-              >
-                Automation
-              </Typography>
+              <Box>
+                <Typography
+                  fontSize={"24px"}
+                  fontWeight={500}
+                  color={"onSurface"}
+                  lineHeight={"34.32px"}
+                  letterSpacing={"0.17"}
+                >
+                  GPTs
+                </Typography>
+                <Typography variant="body1">
+                  Discover advanced Generative AI that combine sophisticated prompt templates, set of instructions, extra knowledge, and any combination of skills.
+                </Typography>
+              </Box>
+
               <Stack gap={3}>
                 {workflows ? (
                   workflows.map(workflow => (

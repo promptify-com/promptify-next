@@ -38,7 +38,7 @@ import Image from "./design-system/Image";
 import StickyNote2 from "@mui/icons-material/StickyNote2";
 import FolderSpecial from "@mui/icons-material/FolderSpecial";
 import HelpRounded from "@mui/icons-material/HelpRounded";
-import Route from "@mui/icons-material/Route";
+import ElectricBoltIcon from "@mui/icons-material/ElectricBolt";
 
 type SidebarType = "navigation" | "profile";
 
@@ -95,8 +95,8 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
       external: false,
     },
     {
-      label: "Automation",
-      icon: <Route />,
+      label: "GPTs",
+      icon: <ElectricBoltIcon />,
       href: "/automation",
       active: pathname === "/automation",
       external: false,
