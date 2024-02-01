@@ -54,16 +54,13 @@ function PromptList({ prompts, setPrompts, templateLoading }: Props) {
     [findPromptIndex, prompts],
   );
 
-  const changePrompt = (prompt: IEditPrompts) => {
-    const _prompts = prompts
-      .filter(prevPrompt =>
-        (prompt.id && prevPrompt.id && prompt.id === prevPrompt.id) ||
-        (prompt.temp_id && prevPrompt.temp_id && prompt.temp_id === prevPrompt.temp_id)
-          ? false
-          : true,
-      )
-      .concat(prompt);
-    _prompts.sort((a, b) => a.order - b.order);
+  const changePrompt = (changedPrompt: IEditPrompts) => {
+    const _prompts = prompts.map(_prompt =>
+      (changedPrompt.id && _prompt.id && changedPrompt.id === _prompt.id) ||
+      (changedPrompt.temp_id && _prompt.temp_id && changedPrompt.temp_id === _prompt.temp_id)
+        ? changedPrompt
+        : _prompt,
+    );
 
     setPrompts(_prompts);
   };
