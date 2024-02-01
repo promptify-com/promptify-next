@@ -39,15 +39,22 @@ const Automation = () => {
             </>
           ) : (
             <Stack gap={4}>
-              <Typography
-                fontSize={"24px"}
-                fontWeight={500}
-                color={"onSurface"}
-                lineHeight={"34.32px"}
-                letterSpacing={"0.17"}
-              >
-                Automation
-              </Typography>
+              <Box>
+                <Typography
+                  fontSize={"24px"}
+                  fontWeight={500}
+                  color={"onSurface"}
+                  lineHeight={"34.32px"}
+                  letterSpacing={"0.17"}
+                >
+                  GPTs
+                </Typography>
+                <Typography variant="body1">
+                  Discover advanced Generative AI that combine sophisticated prompt templates, set of instructions,
+                  extra knowledge, and any combination of skills.
+                </Typography>
+              </Box>
+
               <Stack gap={3}>
                 {workflows ? (
                   workflows.map(workflow => (
