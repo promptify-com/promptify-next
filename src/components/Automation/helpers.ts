@@ -26,7 +26,9 @@ export async function getNodeNames(nodes: INode[] = [], slice = 3) {
       "@/components/Automation/nodes.json"
     )
   ).default;
-  const filteredTypes = Array.from(new Set(types.map(type => (nodesData as NodesFileData)[type]?.name)));
+  const filteredTypes = Array.from(
+    new Set(types.map(type => (nodesData as NodesFileData)[type]?.name).filter(name => name)),
+  );
 
   return filteredTypes.slice(0, slice);
 }

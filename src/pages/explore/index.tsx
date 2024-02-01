@@ -11,6 +11,7 @@ import { getCategories } from "@/hooks/api/categories";
 import { useGetSuggestedTemplatesByCategoryQuery } from "@/core/api/templates";
 import { useAppSelector } from "@/hooks/useStore";
 import { isValidUserFn } from "@/core/store/userSlice";
+import { SEO_DESCRIPTION } from "@/common/constants";
 
 interface Props {
   categories: Category[];
@@ -89,8 +90,7 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   return {
     props: {
       title: "Explore and Boost Your Creativity",
-      description:
-        "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
+      description: SEO_DESCRIPTION,
       categories,
     },
   };

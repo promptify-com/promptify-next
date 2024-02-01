@@ -6,10 +6,8 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import type { AppProps } from "next/app";
 import { ThemeProvider } from "@mui/material";
-import Head from "next/head";
 import Script from "next/script";
 import { Provider } from "react-redux";
-
 import { wrapper } from "@/core/store";
 import { theme } from "@/theme";
 import useToken from "@/hooks/useToken";
@@ -18,6 +16,7 @@ import { userApi } from "@/core/api/user";
 import Storage from "@/common/storage";
 import { deletePathURL, savePathURL } from "@/common/utils";
 import Toaster from "@/components/Toaster";
+import Seo from "@/components/Seo";
 
 function App({ Component, ...rest }: AppProps) {
   const { store, props } = wrapper.useWrappedStore(rest);
@@ -109,48 +108,12 @@ function App({ Component, ...rest }: AppProps) {
             />
           </>
         )}
-
-        <Head>
-          <title>{pageProps?.title ?? "Promptify | Boost Your Creativity"}</title>
-          <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1 maximum-scale=1"
-          />
-          <meta
-            name="description"
-            content={
-              pageProps?.description ??
-              "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out."
-            }
-          />
-          <meta
-            property="og:title"
-            content={pageProps?.title ?? "Promptify | Boost Your Creativity"}
-          />
-          <meta
-            property="og:description"
-            content={
-              pageProps?.description ??
-              "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out."
-            }
-          />
-          <meta
-            property="og:image"
-            content={pageProps?.image}
-          />
-          <meta
-            property="keywords"
-            content={pageProps?.meta_keywords}
-          />
-          <link
-            rel="preconnect"
-            href={process.env.NEXT_PUBLIC_API_URL}
-          />
-          <link
-            rel="preconnect"
-            href="https://promptify.s3.amazonaws.com"
-          />
-        </Head>
+        <Seo
+          title={pageProps?.title}
+          description={pageProps?.description}
+          image={pageProps?.image}
+          meta_keywords={pageProps?.meta_keywords}
+        />
         <Toaster />
         <Component {...pageProps} />
       </ThemeProvider>

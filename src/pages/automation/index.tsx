@@ -1,14 +1,16 @@
 import React from "react";
-import { Box, Grid, Stack, Typography, Skeleton } from "@mui/material";
+import { Box, Grid, Stack, Typography } from "@mui/material";
 import { Layout } from "@/layout";
-import { useGetWorkflowsQuery } from "@/core/api/workflows";
 import CardWorkflow from "@/components/Automation/CardWorkflow";
-import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
-import ParagraphPlaceholder from "@/components/placeholders/ParagraphPlaceholder";
+import { AUTOMATION_DESCRIPTION } from "@/common/constants";
+import { IWorkflow } from "@/components/Automation/types";
+import { authClient } from "@/common/axios";
 
-const Automation = () => {
-  const { data: workflows, isLoading } = useGetWorkflowsQuery();
+interface Props {
+  workflows: IWorkflow[];
+}
 
+const Automation = ({ workflows }: Props) => {
   return (
     <Layout>
       <Box
@@ -20,79 +22,69 @@ const Automation = () => {
             padding: { xs: "16px", md: "32px" },
           }}
         >
-          {isLoading ? (
-            <>
-              <Box
-                width={{ xs: "40%", md: "20%" }}
-                mb={1}
+          <Stack gap={4}>
+            <Box>
+              <Typography
+                fontSize={"24px"}
+                fontWeight={500}
+                color={"onSurface"}
+                lineHeight={"34.32px"}
+                letterSpacing={"0.17"}
               >
-                <Skeleton
-                  variant="text"
-                  height={35}
-                  width={"100%"}
-                  animation="wave"
-                />
-              </Box>
+                GPTs
+              </Typography>
+              <Typography variant="body1">{AUTOMATION_DESCRIPTION}</Typography>
+            </Box>
 
-              <Box bgcolor={"surface.1"}>
-                <ParagraphPlaceholder count={1} />
-                <CardTemplatePlaceholder count={3} />
-              </Box>
-            </>
-          ) : (
-            <Stack gap={4}>
-              <Box>
+            <Stack gap={3}>
+              {workflows.length > 0 ? (
+                workflows.map(workflow => (
+                  <CardWorkflow
+                    key={workflow.id}
+                    workflow={workflow}
+                  />
+                ))
+              ) : (
                 <Typography
-                  fontSize={"24px"}
-                  fontWeight={500}
-                  color={"onSurface"}
-                  lineHeight={"34.32px"}
-                  letterSpacing={"0.17"}
+                  sx={{
+                    color: "onSurface",
+                    opacity: 0.5,
+                    textAlign: "center",
+                    mt: "50px",
+                  }}
                 >
-                  GPTs
+                  No automation found
                 </Typography>
-                <Typography variant="body1">
-                  Discover advanced Generative AI that combine sophisticated prompt templates, set of instructions, extra knowledge, and any combination of skills.
-                </Typography>
-              </Box>
-
-              <Stack gap={3}>
-                {workflows ? (
-                  workflows.map(workflow => (
-                    <CardWorkflow
-                      key={workflow.id}
-                      workflow={workflow}
-                    />
-                  ))
-                ) : (
-                  <Typography
-                    sx={{
-                      color: "onSurface",
-                      opacity: 0.5,
-                      textAlign: "center",
-                      mt: "50px",
-                    }}
-                  >
-                    No automation found
-                  </Typography>
-                )}
-              </Stack>
+              )}
             </Stack>
-          )}
+          </Stack>
         </Grid>
       </Box>
     </Layout>
   );
 };
 
-export function getServerSideProps() {
-  return {
-    props: {
-      title: "Promptify | Boost Your Creativity With Automation",
-      description:
-        "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
-    },
-  };
+export async function getServerSideProps() {
+  try {
+    const res = await authClient.get(`/api/n8n/workflows`);
+    const workflows: IWorkflow[] = res.data;
+
+    return {
+      props: {
+        title: "GPTs",
+        description: AUTOMATION_DESCRIPTION,
+        workflows,
+      },
+    };
+  } catch (error) {
+    return {
+      props: {
+        title: "GPTs",
+        description: AUTOMATION_DESCRIPTION,
+        workflows: [],
+      },
+    };
+  }
 }
 
 export default Automation;
