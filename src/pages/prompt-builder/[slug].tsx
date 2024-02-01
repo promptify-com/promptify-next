@@ -17,7 +17,7 @@ import PromptList from "@/components/builder/PromptCardAccordion/PromptList";
 import useToken from "@/hooks/useToken";
 import { useAppSelector } from "@/hooks/useStore";
 import Sidebar from "@/components/sidebar/Sidebar";
-import { BUILDER_TYPE, SEO_DESCRIPTION } from "@/common/constants";
+import { BUILDER_DESCRIPTION, BUILDER_TYPE } from "@/common/constants";
 import { useGetEnginesQuery } from "@/core/api/engines";
 import { handleInitPrompt } from "@/common/helpers/initPrompt";
 import type { IEditTemplate } from "@/common/types/editTemplate";
@@ -262,10 +262,7 @@ export const PromptBuilder = () => {
             mb={2}
           >
             <Typography sx={{ fontSize: 34, fontWeight: 400 }}>Chain of Thoughts Builder</Typography>
-            <Typography sx={{ fontSize: 14, fontWeight: 400 }}>
-              Structure your prompts for a productive and more deterministic AI. You chained prompts will guide AI
-              content creation with focus and intent. Learn more
-            </Typography>
+            <Typography sx={{ fontSize: 14, fontWeight: 400 }}>{BUILDER_DESCRIPTION}</Typography>
           </Stack>
 
           <Box>
@@ -319,7 +316,7 @@ export async function getServerSideProps() {
   return {
     props: {
       title: "Chain of Thoughts Builder",
-      description: SEO_DESCRIPTION,
+      description: BUILDER_DESCRIPTION,
     },
   };
 }

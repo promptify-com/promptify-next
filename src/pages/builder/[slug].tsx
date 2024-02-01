@@ -37,7 +37,7 @@ import { randomId, redirectToPath } from "@/common/helpers";
 import { theme } from "@/theme";
 import { useGetEnginesQuery } from "@/core/api/engines";
 import useToken from "@/hooks/useToken";
-import { BUILDER_TYPE, SEO_DESCRIPTION } from "@/common/constants";
+import { BUILDER_DESCRIPTION, BUILDER_TYPE } from "@/common/constants";
 import PromptCardAccordion from "@/components/builder/PromptCardAccordion";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
@@ -747,7 +747,7 @@ export async function getServerSideProps() {
   return {
     props: {
       title: "Tree of Thoughts Builder",
-      description: SEO_DESCRIPTION,
+      description: BUILDER_DESCRIPTION,
     },
   };
 }
