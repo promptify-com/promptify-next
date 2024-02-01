@@ -127,14 +127,22 @@ function Footer({ prompt, setPrompt }: Props) {
       <Popper
         open={showOptions}
         anchorEl={optionsAnchor}
-        placement="bottom-start"
+        placement="top-end"
         keepMounted
         modifiers={[
           {
             name: "offset",
             options: {
-              offset: [15, 10],
+              offset: [5, 10],
             },
+          },
+          {
+            name: "flip",
+            enabled: false,
+          },
+          {
+            name: "preventOverflow",
+            enabled: false,
           },
         ]}
         sx={{
