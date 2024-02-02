@@ -10,7 +10,7 @@ import ChatBubbleOutline from "@mui/icons-material/ChatBubbleOutline";
 import AutoAwesomeOutlined from "@mui/icons-material/AutoAwesomeOutlined";
 import AutoAwesome from "@mui/icons-material/AutoAwesome";
 import Api from "@mui/icons-material/Api";
-import { Prompt } from "@/assets/icons/prompts";
+import { Prompt } from "@/assets/icons/Prompt";
 import { TemplateStatus } from "@/core/api/dto/templates";
 import { InputType } from "@/common/types/prompt";
 import { DeploymentStatus } from "../types/deployments";

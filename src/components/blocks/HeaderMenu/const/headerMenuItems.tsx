@@ -1,8 +1,5 @@
 import React from "react";
-import { Home } from "../../../../assets/icons/Home";
-import { Connection } from "../../../../assets/icons/Connection";
-import { User } from "../../../../assets/icons/user";
-import { Prompt } from "../../../../assets/icons/prompts";
+import { Home, Connection, User, Prompt } from "@/assets/icons";
 
 export const headerMenuItems = [
   { name: "Home ", icon: <Home />, id: 0, link: "home" },
