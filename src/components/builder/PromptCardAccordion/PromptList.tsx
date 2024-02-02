@@ -19,6 +19,7 @@ interface Props {
   setPrompts: (prompts: IEditPrompts[]) => void;
   templateLoading: boolean;
 }
+
 function PromptList({ prompts, setPrompts, templateLoading }: Props) {
   const [promptToDelete, setPromptToDelete] = useState<IEditPrompts | null>(null);
   const [deletePrompt] = useDeletePromptMutation();
@@ -29,16 +30,7 @@ function PromptList({ prompts, setPrompts, templateLoading }: Props) {
   const [, drop] = useDrop(() => ({ accept: "prompt" }));
 
   const findPromptIndex = useCallback(
-    (id: number) => {
-      let promptIndex = 0;
-
-      prompts.find((prompt, idx) => {
-        promptIndex = idx;
-        return prompt.id === id || prompt.temp_id === id;
-      });
-
-      return promptIndex;
-    },
+    (id: number) => prompts.findIndex(prompt => prompt.id === id || prompt.temp_id === id),
     [prompts],
   );
 
@@ -46,11 +38,10 @@ function PromptList({ prompts, setPrompts, templateLoading }: Props) {
     (id: number, atIndex: number) => {
       const index = findPromptIndex(id);
       const _promptsCopy = [...prompts];
-
       const targetPromptOrder = _promptsCopy.splice(index, 1);
       _promptsCopy.splice(atIndex, 0, targetPromptOrder[0]);
-
       const reorderedPrompts = _promptsCopy.map((prompt, index) => ({ ...prompt, order: index + 1 }));
+
       setPrompts(reorderedPrompts);
     },
     [findPromptIndex, prompts],
