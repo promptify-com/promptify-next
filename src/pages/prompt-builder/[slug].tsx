@@ -146,6 +146,7 @@ export const PromptBuilder = () => {
 
       return {
         ...restPrompt,
+        order: index,
         dependencies: depend ? [depend] : [],
         parameters: prompt?.parameters?.map(params => ({
           parameter_id: params.parameter_id,
