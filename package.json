@@ -38,7 +38,7 @@
     "httpsnippet": "2.0.0",
     "isomorphic-dompurify": "^1.8.0",
     "material-dynamic-colors": "^1.1.0",
-    "next": "^14.0.4",
+    "next": "14.1.0",
     "next-redux-wrapper": "^8.1.0",
     "polished": "^4.2.2",
     "react": "18.2.0",
