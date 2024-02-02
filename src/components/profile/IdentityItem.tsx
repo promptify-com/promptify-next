@@ -10,7 +10,6 @@ import Paper from "@mui/material/Paper";
 import Popper from "@mui/material/Popper";
 import Typography from "@mui/material/Typography";
 import React, { useEffect, useState } from "react";
-import { Check } from "@/assets/icons";
 import { IOption, IQuestion } from "@/common/types";
 import { useUpdateAnswers } from "@/hooks/api/user";
 import Image from "../design-system/Image";
