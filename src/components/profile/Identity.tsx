@@ -4,9 +4,10 @@ import { useQuestions } from "@/hooks/api/questions";
 import { useUserAnswers } from "@/hooks/api/user";
 import { IdentityItem } from "./IdentityItem";
 
-export const Identy = () => {
+export const Identity = () => {
   const [questions] = useQuestions();
   const [answers] = useUserAnswers();
+
   const getUserAnswer = (question: IQuestion): IOption | null => {
     const option = answers.find(answer => answer.question.id === question.id)?.option;
 
@@ -92,9 +93,9 @@ export const Identy = () => {
             {questions.map(question => {
               return (
                 <IdentityItem
+                  key={question.id}
                   question={question}
                   defaultOption={getUserAnswer(question)}
-                  key={question.id}
                 />
               );
             })}

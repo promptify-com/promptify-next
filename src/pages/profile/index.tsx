@@ -1,5 +1,5 @@
 import { Box, Grid, Typography } from "@mui/material";
-import { Connections, Home, Identy, TemplatesManager } from "@/components/profile";
+import { Connections, Home, Identity, TemplatesManager } from "@/components/profile";
 import { Layout } from "@/layout";
 import Protected from "@/components/Protected";
 import { useSelector } from "react-redux";
@@ -56,7 +56,7 @@ const Profile = () => {
                   </Box>
                   <Home />
                   <Connections />
-                  <Identy />
+                  <Identity />
                   <TemplatesManager
                     type={"user"}
                     title="My templates"
