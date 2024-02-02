@@ -54,7 +54,7 @@ interface IProps {
 
 export const IdentityItem: React.FC<IProps> = ({ question, defaultOption }) => {
   const [open, setOpen] = useState(false);
-  const [selectedOption, setSelectedOption] = useState<IOption | null>(defaultOption);
+  const [selectedOption, setSelectedOption] = useState<IOption>();
   const [isLoading, setIsLoading] = useState(false);
   const handleToggle = () => {
     setOpen(prevOpen => !prevOpen);
@@ -81,24 +81,21 @@ export const IdentityItem: React.FC<IProps> = ({ question, defaultOption }) => {
       .catch(() => setIsLoading(false));
   };
 
-  const selectedOptionSrc =
-    selectedOption?.text && AVAILABLE_OPTION_IMGS.includes(selectedOption.text)
-      ? `/assets/images/animals/${selectedOption.text}.jpg`
-      : defaultAvatar;
-
-  useEffect(() => {
-    setSelectedOption(defaultOption);
-  }, [defaultOption]);
-
   useEffect(() => {
     if (prevOpen.current && !open) {
       anchorRef.current?.focus();
     }
-
     prevOpen.current = open;
   }, [open]);
 
-  const options = question.options.filter(option => option.id !== selectedOption?.id);
+  const _selectedOption = selectedOption ?? defaultOption;
+
+  const options = question.options.filter(option => option.id !== _selectedOption?.id);
+
+  const selectedOptionSrc =
+    _selectedOption?.text && AVAILABLE_OPTION_IMGS.includes(_selectedOption.text)
+      ? `/assets/images/animals/${_selectedOption.text}.jpg`
+      : defaultAvatar;
 
   return (
     <Box
@@ -168,7 +165,7 @@ export const IdentityItem: React.FC<IProps> = ({ question, defaultOption }) => {
               alignItems={"center"}
               gap={1}
             >
-              {selectedOption && (
+              {_selectedOption && (
                 <Image
                   src={`${selectedOptionSrc}`}
                   alt={"Unicorn"}
@@ -191,7 +188,7 @@ export const IdentityItem: React.FC<IProps> = ({ question, defaultOption }) => {
                   color: "onSurface",
                 }}
               >
-                {selectedOption?.text}
+                {_selectedOption?.text}
               </Typography>
             </Grid>
           </Grid>
@@ -291,13 +288,11 @@ export const IdentityItem: React.FC<IProps> = ({ question, defaultOption }) => {
                             fontWeight={500}
                             fontSize="0.9rem"
                             ml="1rem"
-                            color={option.id === selectedOption?.id ? "#0F6FFF" : "#000"}
+                            color={"#000"}
                           >
                             {option.text}
                           </Typography>
                         </Box>
-
-                        {option.id === selectedOption?.id && <Check />}
                       </MenuItem>
                     );
                   })}
