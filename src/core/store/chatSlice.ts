@@ -12,6 +12,7 @@ export interface ExecutionsProps {
   paramsValues: ResOverrides[];
   isSimulationStreaming: boolean;
   credentials: Credentials[];
+  areCredentialsStored: boolean;
 }
 
 const initialState: ExecutionsProps = {
@@ -21,6 +22,7 @@ const initialState: ExecutionsProps = {
   paramsValues: [],
   isSimulationStreaming: false,
   credentials: [],
+  areCredentialsStored: false,
 };
 
 export const chatSlice = createSlice({
@@ -48,6 +50,9 @@ export const chatSlice = createSlice({
     clearChatStates: _state => {
       return initialState;
     },
+    setCredentialsStored: (state, action: PayloadAction<boolean>) => {
+      state.areCredentialsStored = action.payload;
+    },
   },
 });
 
@@ -59,6 +64,7 @@ export const {
   setIsSimulationStreaming,
   setCredentials,
   clearChatStates,
+  setCredentialsStored,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

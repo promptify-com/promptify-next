@@ -19,6 +19,7 @@ function Textual({ input, value, onChange }: Props) {
 
   const { isVariantB } = useVariant();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
+  const areAllCredentialsStored = useAppSelector(state => state.chat.areCredentialsStored);
 
   const fieldRef = useRef<HTMLInputElement | null>(null);
   const spanRef = useRef<HTMLDivElement | null>(null);
@@ -47,7 +48,7 @@ function Textual({ input, value, onChange }: Props) {
       <TextField
         inputRef={ref => (fieldRef.current = ref)}
         fullWidth={isVariantB}
-        disabled={isGenerating}
+        disabled={isGenerating || !areAllCredentialsStored}
         sx={textFieldStyle}
         placeholder={isVariantB ? "Type here" : required ? "Required" : "Optional"}
         type={type}

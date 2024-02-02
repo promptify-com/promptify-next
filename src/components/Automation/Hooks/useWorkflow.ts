@@ -17,7 +17,7 @@ const useWorkflow = (workflow: IWorkflow) => {
   const workflowId = router.query?.workflowId as string;
 
   const [workflowData, setWorkflowData] = useState<IWorkflow>(workflow);
-  const { answers, inputs } = useAppSelector(state => state.chat);
+  const { answers, inputs, areCredentialsStored } = useAppSelector(state => state.chat);
 
   const {
     data,
@@ -26,6 +26,27 @@ const useWorkflow = (workflow: IWorkflow) => {
   } = useGetWorkflowByIdQuery(parseInt(workflowId), { skip: Boolean(workflow.id || !workflowId) });
 
   const [createWorkflow] = useCreateUserWorkflowMutation();
+  const storedCredentials = Storage.get("credentials") || {};
+
+  useEffect(() => {
+    const attachCredentialsToStoredWorkflow = () => {
+      const storedWorkflows = Storage.get("workflows") || {};
+
+      if (!storedWorkflows[workflowId]) {
+        return;
+      }
+      const { workflow }: { workflow: IWorkflowCreateResponse } = storedWorkflows[workflowId];
+
+      if (areCredentialsStored && workflow?.nodes) {
+        workflow.nodes.forEach(node => {
+          attachCredentialsToNode(node, storedCredentials);
+        });
+
+        Storage.set("workflows", JSON.stringify(storedWorkflows));
+      }
+    };
+    attachCredentialsToStoredWorkflow();
+  }, [JSON.stringify(storedCredentials)]);
 
   const createWorkflowIfNeeded = async (selectedWorkflowId: number) => {
     const storedWorkflows = Storage.get("workflows") || {};

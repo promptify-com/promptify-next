@@ -16,7 +16,7 @@ import { useCreateCredentialsMutation } from "@/core/api/workflows";
 import { setToast } from "@/core/store/toastSlice";
 import type { Credentials, ICredentialsProperty } from "@/components/Automation/types";
 import type { IPromptInput } from "@/common/types/prompt";
-import useLocalStorage from "@/hooks/useLocaleStorage";
+import { setCredentialsStored } from "@/core/store/chatSlice";
 
 interface Props {
   input: IPromptInput;
@@ -30,10 +30,15 @@ function Credentials({ input }: Props) {
   const dispatch = useAppDispatch();
   const [createCredentials] = useCreateCredentialsMutation();
   const credentials = useAppSelector(state => state.chat.credentials);
-  const [storedCredentials] = useLocalStorage("credentials", {});
+
+  const storedCredentials = Storage.get("credentials") || {};
 
   const credential = credentials.find(cred => cred.displayName === input.fullName);
   const areCredentialsStored = storedCredentials && !!storedCredentials[credential?.authType!];
+
+  useEffect(() => {
+    dispatch(setCredentialsStored(areCredentialsStored));
+  }, [JSON.stringify(storedCredentials)]);
 
   const [openModal, setOpenModal] = useState(false);
   const [credentialProperties, setCredentialProperties] = useState<ICredentialsProperty[]>([]);

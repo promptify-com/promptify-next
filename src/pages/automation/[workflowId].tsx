@@ -8,7 +8,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { ChatInput } from "@/components/Prompt/Common/Chat/ChatInput";
 import SigninButton from "@/components/common/buttons/SigninButton";
 import useChat from "@/components/Prompt/Hooks/useChat";
-import { setInputs } from "@/core/store/chatSlice";
+import { setCredentials, setCredentialsStored, setInputs } from "@/core/store/chatSlice";
 import useWorkflow from "@/components/Automation/Hooks/useWorkflow";
 import WorkflowPlaceholder from "@/components/Automation/WorkflowPlaceholder";
 import Storage from "@/common/storage";
@@ -27,8 +27,9 @@ interface Props {
 export default function SingleWorkflow({ workflow }: Props) {
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const [disableInput, setDisableInput] = useState(false);
   const currentUser = useAppSelector(state => state.user.currentUser);
+
+  const { areCredentialsStored } = useAppSelector(state => state.chat);
 
   const {
     selectedWorkflow,
@@ -54,15 +55,21 @@ export default function SingleWorkflow({ workflow }: Props) {
     initialMessageTitle: `${selectedWorkflow?.name}`,
   });
 
+  const checkAllCredsStored = (credentials: Credentials[]) => {
+    const storedCredentials = Storage.get("credentials") ?? {};
+
+    const areAllCredentialsStored = credentials.every(cred => storedCredentials[cred.authType]);
+    dispatch(setCredentialsStored(areAllCredentialsStored));
+    return areAllCredentialsStored;
+  };
+
   function prepareAndQueueMessages(credentials: Credentials[]) {
     const formMessage = createMessage({ type: "form", noHeader: true });
     const initialQueuedMessages: IMessage[] = [formMessage];
 
-    const storedCredentials = Storage.get("credentials") ?? {};
+    const areAllCredentialsStored = checkAllCredsStored(credentials);
 
-    const areAllCredentialsStored = credentials.every(cred => storedCredentials[cred.authType]);
-
-    setDisableInput(!areAllCredentialsStored);
+    dispatch(setCredentialsStored(areAllCredentialsStored));
 
     if (!areAllCredentialsStored) {
       const credMessage = createMessage({ type: "credentials", noHeader: true });
@@ -79,6 +86,7 @@ export default function SingleWorkflow({ workflow }: Props) {
 
         const { nodes } = selectedWorkflow.data;
         const credentials = await getCredentials(nodes);
+        dispatch(setCredentials(credentials));
 
         const inputs: IPromptInput[] = nodes
           .filter(node => node.type === "n8n-nodes-base.set")
@@ -144,7 +152,7 @@ export default function SingleWorkflow({ workflow }: Props) {
           {currentUser?.id ? (
             <ChatInput
               onSubmit={validateVary}
-              disabled={isValidatingAnswer || disableInput}
+              disabled={isValidatingAnswer || !areCredentialsStored}
               isValidating={isValidatingAnswer}
               showGenerate={showGenerateButton}
               onGenerate={executeWorflow}
