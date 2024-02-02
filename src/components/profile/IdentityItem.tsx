@@ -82,6 +82,7 @@ export const IdentityItem: React.FC<IProps> = ({ question, defaultOption }) => {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     if (prevOpen.current && !open) {
       anchorRef.current?.focus();
     }
