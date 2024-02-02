@@ -19,13 +19,6 @@ import Image from "../design-system/Image";
 import { Edit } from "@mui/icons-material";
 import defaultAvatar from "@/assets/images/default-avatar.jpg";
 
-interface IProps {
-  question: IQuestion;
-  defaultOption: IOption | null;
-  index: number;
-  length: number;
-}
-
 const AVAILABLE_OPTION_IMGS = [
   "Countryside",
   "Movies",
@@ -56,9 +49,14 @@ const AVAILABLE_OPTION_IMGS = [
   "Red",
 ];
 
-export const IdentityItem: React.FC<IProps> = ({ length, question, index, defaultOption }) => {
+interface IProps {
+  question: IQuestion;
+  defaultOption: IOption | null;
+}
+
+export const IdentityItem: React.FC<IProps> = ({ question, defaultOption }) => {
   const [open, setOpen] = useState(false);
-  const [selectedOption, setSelectedOption] = useState<IOption | null>(defaultOption ?? null);
+  const [selectedOption, setSelectedOption] = useState<IOption | null>(defaultOption);
   const [isLoading, setIsLoading] = useState(false);
   const handleToggle = () => {
     setOpen(prevOpen => !prevOpen);
@@ -76,24 +74,33 @@ export const IdentityItem: React.FC<IProps> = ({ length, question, index, defaul
   const handleOptionSelection = async (e: React.SyntheticEvent, option: IOption) => {
     setSelectedOption(option);
     handleClose(e);
+
+    if (option.id === selectedOption?.id) return;
+
     setIsLoading(true);
     await setUserAnswer(question, option.id)
       .then(() => setIsLoading(false))
       .catch(() => setIsLoading(false));
   };
+
   const selectedOptionSrc =
     selectedOption?.text && AVAILABLE_OPTION_IMGS.includes(selectedOption.text)
       ? `/assets/images/animals/${selectedOption.text}.jpg`
       : defaultAvatar;
 
   useEffect(() => {
+    setSelectedOption(defaultOption);
+  }, [defaultOption]);
+
+  useEffect(() => {
     if (prevOpen.current && !open) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      anchorRef.current!.focus();
+      anchorRef.current?.focus();
     }
 
     prevOpen.current = open;
   }, [open]);
+
+  const options = question.options.filter(option => option.id !== selectedOption?.id);
 
   return (
     <Box
@@ -105,7 +112,6 @@ export const IdentityItem: React.FC<IProps> = ({ length, question, index, defaul
       }}
       width={"100%"}
       justifyContent="space-between"
-      // mt="2rem"
       alignItems="center"
       padding=" 16px"
       borderRadius={"16px"}
@@ -113,8 +119,6 @@ export const IdentityItem: React.FC<IProps> = ({ length, question, index, defaul
       <Grid
         display={"flex"}
         sx={{
-          dispaly: "flex",
-          flexDirection: "row",
           alignItem: "center",
           width: "100%",
           gap: "1em",
@@ -255,7 +259,7 @@ export const IdentityItem: React.FC<IProps> = ({ length, question, index, defaul
                       {question.text}
                     </Typography>
                   </MenuItem>
-                  {question.options.map(option => {
+                  {options.map(option => {
                     const optionSrc =
                       option?.text && AVAILABLE_OPTION_IMGS.includes(option.text)
                         ? `/assets/images/animals/${option.text}.jpg`
