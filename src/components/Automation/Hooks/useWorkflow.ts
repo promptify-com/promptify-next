@@ -1,11 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/router";
 
-import {
-  useCreateUserWorkflowMutation,
-  useGetWorkflowByIdQuery,
-  useUpdateWorkflowMutation,
-} from "@/core/api/workflows";
+import { useCreateUserWorkflowMutation, useUpdateWorkflowMutation } from "@/core/api/workflows";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { clearExecutionsStates } from "@/core/store/executionsSlice";
 import { clearChatStates, setCredentials } from "@/core/store/chatSlice";
@@ -21,14 +17,7 @@ const useWorkflow = (workflow: IWorkflow) => {
   const router = useRouter();
   const workflowId = router.query?.workflowId as string;
 
-  const [workflowData, setWorkflowData] = useState<IWorkflow>(workflow);
   const { answers, inputs, areCredentialsStored } = useAppSelector(state => state.chat);
-
-  const {
-    data,
-    error,
-    isLoading: isWorkflowLoading,
-  } = useGetWorkflowByIdQuery(parseInt(workflowId), { skip: Boolean(workflow.id || !workflowId) });
 
   const [createWorkflow] = useCreateUserWorkflowMutation();
   const [updateWorkflow] = useUpdateWorkflowMutation();
@@ -145,29 +134,21 @@ const useWorkflow = (workflow: IWorkflow) => {
     dispatch(clearExecutionsStates());
   }, []);
 
-  useEffect(() => {
-    if (data) {
-      setWorkflowData(data);
-    }
-  }, [data]);
-
   const workflowAsTemplate = {
-    id: workflowData?.id,
-    title: workflowData?.name,
-    description: workflowData?.description!,
-    created_at: workflowData?.created_at,
-    thumbnail: workflowData?.image!,
-    created_by: workflowData?.created_by,
+    id: workflow?.id,
+    title: workflow?.name,
+    description: workflow?.description!,
+    created_at: workflow?.created_at,
+    thumbnail: workflow?.image!,
+    created_by: workflow?.created_by,
     category: {} as Category,
     tags: [],
     prompts: [],
   };
 
   return {
-    selectedWorkflow: workflowData,
+    selectedWorkflow: workflow,
     workflowAsTemplate,
-    isWorkflowLoading,
-    error,
     sendMessageAPI,
     getCredentials,
     createWorkflowIfNeeded,

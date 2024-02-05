@@ -30,14 +30,8 @@ export default function SingleWorkflow({ workflow }: Props) {
 
   const { areCredentialsStored } = useAppSelector(state => state.chat);
 
-  const {
-    selectedWorkflow,
-    isWorkflowLoading,
-    workflowAsTemplate,
-    sendMessageAPI,
-    createWorkflowIfNeeded,
-    getCredentials,
-  } = useWorkflow(workflow);
+  const { selectedWorkflow, workflowAsTemplate, sendMessageAPI, createWorkflowIfNeeded, getCredentials } =
+    useWorkflow(workflow);
 
   const {
     messages,
@@ -62,6 +56,30 @@ export default function SingleWorkflow({ workflow }: Props) {
     return areAllCredentialsStored;
   };
 
+  const processData = async () => {
+    if (selectedWorkflow?.data) {
+      createWorkflowIfNeeded(selectedWorkflow.id);
+
+      const { nodes } = selectedWorkflow.data;
+      const credentials = await getCredentials(nodes);
+      dispatch(setCredentials(credentials));
+
+      const inputs: IPromptInput[] = nodes
+        .filter(node => node.type === "n8n-nodes-base.set")
+        .flatMap(node => node.parameters.fields?.values || [])
+        .map(value => ({
+          name: value.name,
+          fullName: value.name,
+          type: "text",
+          required: true,
+        }));
+
+      dispatch(setInputs(inputs));
+      initialMessages({ questions: inputs });
+      prepareAndQueueMessages(credentials);
+    }
+  };
+
   function prepareAndQueueMessages(credentials: Credentials[]) {
     const formMessage = createMessage({ type: "form", noHeader: true });
     const initialQueuedMessages: IMessage[] = [formMessage];
@@ -79,32 +97,8 @@ export default function SingleWorkflow({ workflow }: Props) {
   }
 
   useEffect(() => {
-    const fetchAndProcessData = async () => {
-      if (!isWorkflowLoading && selectedWorkflow?.data) {
-        createWorkflowIfNeeded(selectedWorkflow.id);
-
-        const { nodes } = selectedWorkflow.data;
-        const credentials = await getCredentials(nodes);
-        dispatch(setCredentials(credentials));
-
-        const inputs: IPromptInput[] = nodes
-          .filter(node => node.type === "n8n-nodes-base.set")
-          .flatMap(node => node.parameters.fields?.values || [])
-          .map(value => ({
-            name: value.name,
-            fullName: value.name,
-            type: "text",
-            required: true,
-          }));
-
-        dispatch(setInputs(inputs));
-        initialMessages({ questions: inputs });
-        prepareAndQueueMessages(credentials);
-      }
-    };
-
-    fetchAndProcessData();
-  }, [selectedWorkflow, isWorkflowLoading]);
+    processData();
+  }, [selectedWorkflow]);
 
   const executeWorflow = async () => {
     try {
@@ -122,7 +116,7 @@ export default function SingleWorkflow({ workflow }: Props) {
 
   return (
     <Layout>
-      {isWorkflowLoading ? (
+      {!selectedWorkflow.data ? (
         <WorkflowPlaceholder />
       ) : (
         <Stack
