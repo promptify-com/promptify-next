@@ -90,7 +90,7 @@ const TestLog = () => {
                         color={alpha(theme.palette.text.secondary, 0.45)}
                         letterSpacing={".5px"}
                       >
-                        {engine.name}, {timeAgo(execution.created_at)}, {execution.tokens_spent}s
+                        {engine.name}, {timeAgo(execution.created_at)}, {execution.tokens_spent} tokens
                       </Typography>
                     </Stack>
                   </Stack>

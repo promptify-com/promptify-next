@@ -177,7 +177,27 @@ export const PromptBuilder = () => {
       meta_keywords: currentTemplateData.meta_keywords,
     };
 
-    await updateTemplate(currentTemplateData.id, _template);
+    const updatedTemplate = await updateTemplate(currentTemplateData.id, _template);
+
+    const updatedPrompts = updatedTemplate.prompts.map((prompt: IEditPrompts) => {
+      return {
+        id: prompt.id,
+        title: prompt.title,
+        content: prompt.content,
+        engine: (prompt.engine as unknown as { id: number }).id,
+        dependencies: prompt.dependencies,
+        parameters: prompt.parameters,
+        order: prompt.order,
+        output_format: prompt.output_format,
+        model_parameters: prompt.model_parameters,
+        is_visible: prompt.is_visible,
+        show_output: prompt.show_output,
+        prompt_output_variable: prompt.prompt_output_variable,
+      };
+    });
+
+    setPrompts(updatedPrompts);
+
     dispatch(
       setToast({
         message: "Prompt template saved with success",
@@ -187,13 +207,9 @@ export const PromptBuilder = () => {
       }),
     );
 
-    setTimeout(() => {
-      if (newTemplate) {
-        window.location.href = window.location.href.replace("create", newTemplate.slug);
-      } else {
-        window.location.reload();
-      }
-    }, 700);
+    if (newTemplate) {
+      window.location.href = window.location.href.replace("create", newTemplate.slug);
+    }
   };
 
   const handlePublishTemplate = async () => {
