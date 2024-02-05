@@ -14,7 +14,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import Storage from "@/common/storage";
 import { useCreateCredentialsMutation } from "@/core/api/workflows";
 import { setToast } from "@/core/store/toastSlice";
-import type { Credentials, ICredentialsProperty } from "@/components/Automation/types";
+import type { ICredentialProperty } from "@/components/Automation/types";
 import type { IPromptInput } from "@/common/types/prompt";
 import { setCredentialsStored } from "@/core/store/chatSlice";
 import { useLocalStorageSync } from "@/hooks/useLocalStorageSync";
@@ -35,10 +35,10 @@ function Credentials({ input }: Props) {
   const storedCredentials = Storage.get("credentials") || {};
 
   const credential = credentials.find(cred => cred.displayName === input.fullName);
-  const areCredentialsStored = storedCredentials && !!storedCredentials[credential?.authType!];
+  const areCredentialsStored = storedCredentials && !!storedCredentials[credential?.name!];
 
   const [openModal, setOpenModal] = useState(false);
-  const [credentialProperties, setCredentialProperties] = useState<ICredentialsProperty[]>([]);
+  const [credentialProperties, setCredentialProperties] = useState<ICredentialProperty[]>([]);
 
   useEffect(() => {
     dispatch(setCredentialsStored(areCredentialsStored));
@@ -50,7 +50,7 @@ function Credentials({ input }: Props) {
     }
   }, [credentials]);
 
-  function getRequiredFields(credentialProperties: ICredentialsProperty[]) {
+  function getRequiredFields(credentialProperties: ICredentialProperty[]) {
     let requiredFields = credentialProperties.filter(prop => prop.required).map(prop => prop.name);
 
     if (requiredFields.length === 0) {
@@ -86,13 +86,13 @@ function Credentials({ input }: Props) {
     }
     const payload = {
       name: `${credential?.displayName} Credentials` || "Unnamed Credential",
-      type: credential?.authType!,
+      type: credential?.name!,
       data: data,
     };
     try {
       const response = await createCredentials(payload).unwrap();
 
-      storedCredentials[credential?.authType!] = {
+      storedCredentials[credential?.name!] = {
         name: response.name,
         id: response.id,
         createdAt: response.createdAt,
@@ -100,7 +100,7 @@ function Credentials({ input }: Props) {
       Storage.set("credentials", JSON.stringify(storedCredentials));
 
       setOpenModal(false);
-      dispatch(setToast({ message: "Credental was successufully created", severity: "success" }));
+      dispatch(setToast({ message: "Credential is successfully created", severity: "success" }));
     } catch (error) {
       console.error("Error:", error);
       dispatch(setToast({ message: "Credential was not created, please try again.", severity: "error" }));

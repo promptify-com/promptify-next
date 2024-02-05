@@ -17,7 +17,7 @@ import { authClient } from "@/common/axios";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { IMessage } from "@/components/Prompt/Types/chat";
-import type { Credentials, IWorkflow } from "@/components/Automation/types";
+import type { ICredential, IWorkflow } from "@/components/Automation/types";
 
 interface Props {
   workflow: IWorkflow;
@@ -48,10 +48,10 @@ export default function SingleWorkflow({ workflow }: Props) {
     initialMessageTitle: `${selectedWorkflow?.name}`,
   });
 
-  const checkAllCredsStored = (credentials: Credentials[]) => {
+  const checkAllCredsStored = (credentials: ICredential[]) => {
     const storedCredentials = Storage.get("credentials") ?? {};
 
-    const areAllCredentialsStored = credentials.every(cred => storedCredentials[cred.authType]);
+    const areAllCredentialsStored = credentials.every(cred => storedCredentials[cred.name]);
     dispatch(setCredentialsStored(areAllCredentialsStored));
     return areAllCredentialsStored;
   };
@@ -80,7 +80,7 @@ export default function SingleWorkflow({ workflow }: Props) {
     }
   };
 
-  function prepareAndQueueMessages(credentials: Credentials[]) {
+  function prepareAndQueueMessages(credentials: ICredential[]) {
     const formMessage = createMessage({ type: "form", noHeader: true });
     const initialQueuedMessages: IMessage[] = [formMessage];
 
