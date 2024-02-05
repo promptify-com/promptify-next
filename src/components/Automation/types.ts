@@ -57,13 +57,25 @@ export interface IWorkflow {
 }
 
 export interface IWorkflowCreateResponse {
-  id: number;
+  id?: string;
   name: string;
   description?: string;
   image?: string;
   created_by: UserPartial;
   nodes: INode[];
-  created_at: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
+  tags?: any[];
+  meta?: {
+    instanceId: string;
+  };
+  pinData?: any;
+  versionId?: string;
+  triggerCount?: number;
+  staticData?: any;
+  settings: any;
+  active: boolean;
+  connections: any;
 }
 
 interface AuthTypeProperties {
