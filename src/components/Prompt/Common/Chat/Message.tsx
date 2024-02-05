@@ -162,7 +162,13 @@ export const Message = ({ message, isExecutionMode, onScrollToBottom }: MessageB
         gap={"8px"}
         padding={isVariantB ? "8px 16px 8px 24px" : 0}
         borderRadius={!fromUser ? "0px 16px 16px 16px" : "16px 16px 0px 16px"}
-        {...(isVariantB && { bgcolor: fromUser ? "#7254721A" : "surface.2" })}
+        {...(isVariantA && {
+          ml: { xs: 0, md: !isExecutionMode && message.noHeader ? "48px" : 0 },
+          mt: { xs: 0, md: message.noHeader ? -1.5 : 0 },
+        })}
+        {...(isVariantB && {
+          bgcolor: fromUser ? "#7254721A" : "surface.2",
+        })}
       >
         {isVariantA && !message.noHeader && (
           <Grid
