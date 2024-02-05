@@ -3,20 +3,19 @@ import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
-
-import { Message } from "./Message";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import GenerateAndClearButton from "./GenerateAndClearButton";
 import { isDesktopViewPort } from "@/common/helpers";
 import { MessageSparkBox } from "./MessageSparkBox";
 import TemplateDetailsCard from "@/components/Prompt/Common/TemplateDetailsCard";
-import FeedbackThumbs from "../../Common/FeedbackThumbs";
+import FeedbackThumbs from "@/components/Prompt/Common/FeedbackThumbs";
 import Form from "@/components/Prompt/Common/Chat/Form";
 import { GeneratingProgressCard } from "@/components/common/cards/GeneratingProgressCard";
 import { setGeneratedExecution } from "@/core/store/executionsSlice";
 import { setGeneratingStatus } from "@/core/store/templatesSlice";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { Templates } from "@/core/api/dto/templates";
+import { Message } from "@/components/Prompt/Common/Chat/Message";
 
 interface Props {
   template: Templates;
@@ -39,9 +38,8 @@ export const ChatInterface = ({
   const isDesktopView = isDesktopViewPort();
 
   const isGenerating = useAppSelector(state => state.template.isGenerating);
-  const { selectedExecution, generatedExecution } = useAppSelector(state => state.executions);
-
-  const isExecutionShown = Boolean(selectedExecution ?? generatedExecution);
+  const { generatedExecution, selectedExecution } = useAppSelector(state => state.executions);
+  const executionMode = Boolean(selectedExecution || generatedExecution);
 
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
@@ -53,7 +51,7 @@ export const ChatInterface = ({
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, isExecutionShown, showGenerate]);
+  }, [messages, executionMode, showGenerate]);
 
   const abortConnection = () => {
     abortGenerating();
@@ -88,7 +86,7 @@ export const ChatInterface = ({
       <div style={{ marginTop: "auto" }}></div>
 
       <Box mx={!isDesktopView ? "16px" : "40px"}>
-        {typeof template !== "undefined" && !isExecutionShown && (
+        {typeof template !== "undefined" && !executionMode && (
           <TemplateDetailsCard
             title={template.title}
             categoryName={template?.category.name}
@@ -99,7 +97,7 @@ export const ChatInterface = ({
         )}
       </Box>
 
-      <Stack mx={{ xs: "16px", md: !isExecutionShown ? "40px" : "32px" }}>
+      <Stack mx={{ xs: "16px", md: !executionMode ? "40px" : "32px" }}>
         <Divider
           sx={{
             fontSize: 12,
@@ -113,13 +111,13 @@ export const ChatInterface = ({
         {messages.map(msg => (
           <Fragment key={msg.id}>
             <Message
-              isExecutionShown={isExecutionShown}
+              isExecutionMode={executionMode}
               message={msg}
               onScrollToBottom={scrollToBottom}
             />
             {msg.type === "form" && (
               <Box
-                ml={{ xs: 0, md: !isExecutionShown ? "48px" : 0 }}
+                ml={{ xs: 0, md: !executionMode ? "48px" : 0 }}
                 mb={2}
                 mt={{ xs: 0, md: msg.noHeader ? -2.5 : 0 }}
               >
@@ -128,7 +126,7 @@ export const ChatInterface = ({
             )}
             {msg.type === "spark" && msg.spark && (
               <Stack
-                mx={{ xs: 0, md: !isExecutionShown ? "48px" : 0 }}
+                mx={{ xs: 0, md: !executionMode ? "48px" : 0 }}
                 mb={2}
                 gap={2}
               >
