@@ -113,6 +113,17 @@ function AccordionMessageHeader({ template, type, isExpanded, onCancel }: Props)
 
   const canDisplayForm = type === "form" || type === "credentials";
 
+  function getAccordianHeader(): string {
+    switch (true) {
+      case isAutomationPage && type === "form":
+        return "New Execution";
+      case type === "credentials":
+        return "New Credentials";
+      default:
+        return "New Prompt";
+    }
+  }
+
   return (
     <>
       <AccordionSummary
@@ -199,14 +210,7 @@ function AccordionMessageHeader({ template, type, isExpanded, onCancel }: Props)
                 justifyContent={{ xs: "space-between", md: "start" }}
                 letterSpacing={"0.2px"}
               >
-                {canDisplayForm &&
-                  `New ${
-                    isAutomationPage && type === "form"
-                      ? "Execution"
-                      : type === "credentials"
-                      ? "Credentails"
-                      : "Prompt"
-                  }`}
+                {canDisplayForm && getAccordianHeader()}
 
                 {type === "spark" && (
                   <>
