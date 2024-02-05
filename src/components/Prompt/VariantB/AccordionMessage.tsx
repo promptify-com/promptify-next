@@ -45,21 +45,18 @@ export default function AccordionMessage({
   const accordionRef = useRef<HTMLDivElement>(null);
 
   function getLabelText() {
-    const condition = `${isGenerating ? "generating" : ""}${
-      isAutomationPage && type === "form" ? "automation-form" : ""
-    }${type === "credentials" ? "credentials" : ""}`;
-
-    switch (condition) {
-      case "generating":
+    switch (true) {
+      case isGenerating:
         return "Generation Result";
-      case "automation-form":
+      case isAutomationPage && type === "form":
         return "WORKFLOW";
-      case "credentials":
+      case type === "credentials":
         return "CREDENTIALS";
       default:
         return "PROMPT Template";
     }
   }
+
   const canDisplayForm = type === "form" || type === "credentials";
 
   return (
