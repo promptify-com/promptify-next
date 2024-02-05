@@ -9,15 +9,16 @@ import ClientOnly from "@/components/base/ClientOnly";
 import { markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import useVariant from "@/components/Prompt/Hooks/useVariant";
-import { Avatar, Stack } from "@mui/material";
+import Avatar from "@mui/material/Avatar";
+import Stack from "@mui/material/Stack";
 import { isDesktopViewPort } from "@/common/helpers";
 import CheckCircle from "@mui/icons-material/CheckCircle";
 import { LogoApp } from "@/assets/icons/LogoApp";
 
-interface MessageBlockProps {
+interface Props {
   message: IMessage;
   onScrollToBottom: () => void;
-  isExecutionMode: boolean;
+  isExecutionShown: boolean;
 }
 
 interface MessageContentProps {
@@ -68,7 +69,7 @@ const MessageContentWithHTML = memo(({ content }: { content: string }) => {
   );
 });
 
-export const Message = ({ message, isExecutionMode, onScrollToBottom }: MessageBlockProps) => {
+export const Message = ({ message, isExecutionShown, onScrollToBottom }: Props) => {
   const [isHovered, setIsHovered] = useState(false);
   const { isVariantA, isVariantB } = useVariant();
 
@@ -91,7 +92,7 @@ export const Message = ({ message, isExecutionMode, onScrollToBottom }: MessageB
 
   return (
     <Grid
-      display={isVariantB && isExecutionMode ? "none" : "flex"}
+      display={isVariantB && isExecutionShown ? "none" : "flex"}
       flexDirection={isVariantA ? "row" : "column"}
       gap={"16px"}
       position={"relative"}
@@ -102,7 +103,7 @@ export const Message = ({ message, isExecutionMode, onScrollToBottom }: MessageB
         onMouseLeave: () => setIsHovered(false),
       })}
     >
-      {isVariantA && !isExecutionMode && !message.noHeader && isDesktopView && (
+      {isVariantA && !isExecutionShown && !message.noHeader && isDesktopView && (
         <>
           {message.type === "spark" ? (
             <Stack
@@ -163,7 +164,7 @@ export const Message = ({ message, isExecutionMode, onScrollToBottom }: MessageB
         padding={isVariantB ? "8px 16px 8px 24px" : 0}
         borderRadius={!fromUser ? "0px 16px 16px 16px" : "16px 16px 0px 16px"}
         {...(isVariantA && {
-          ml: { xs: 0, md: !isExecutionMode && message.noHeader ? "48px" : 0 },
+          ml: { xs: 0, md: !isExecutionShown && message.noHeader ? "48px" : 0 },
           mt: { xs: 0, md: message.noHeader ? -1.5 : 0 },
         })}
         {...(isVariantB && {

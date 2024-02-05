@@ -39,7 +39,7 @@ export const ChatInterface = ({
 
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const { generatedExecution, selectedExecution } = useAppSelector(state => state.executions);
-  const executionMode = Boolean(selectedExecution || generatedExecution);
+  const isExecutionShown = Boolean(selectedExecution || generatedExecution);
 
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
@@ -51,7 +51,7 @@ export const ChatInterface = ({
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, executionMode, showGenerate]);
+  }, [messages, isExecutionShown, showGenerate]);
 
   const abortConnection = () => {
     abortGenerating();
@@ -86,7 +86,7 @@ export const ChatInterface = ({
       <div style={{ marginTop: "auto" }}></div>
 
       <Box mx={!isDesktopView ? "16px" : "40px"}>
-        {typeof template !== "undefined" && !executionMode && (
+        {typeof template !== "undefined" && !isExecutionShown && (
           <TemplateDetailsCard
             title={template.title}
             categoryName={template?.category.name}
@@ -97,7 +97,7 @@ export const ChatInterface = ({
         )}
       </Box>
 
-      <Stack mx={{ xs: "16px", md: !executionMode ? "40px" : "32px" }}>
+      <Stack mx={{ xs: "16px", md: !isExecutionShown ? "40px" : "32px" }}>
         <Divider
           sx={{
             fontSize: 12,
@@ -111,13 +111,13 @@ export const ChatInterface = ({
         {messages.map(msg => (
           <Fragment key={msg.id}>
             <Message
-              isExecutionMode={executionMode}
+              isExecutionShown={isExecutionShown}
               message={msg}
               onScrollToBottom={scrollToBottom}
             />
             {msg.type === "form" && (
               <Box
-                ml={{ xs: 0, md: !executionMode ? "48px" : 0 }}
+                ml={{ xs: 0, md: !isExecutionShown ? "48px" : 0 }}
                 mb={2}
                 mt={{ xs: 0, md: msg.noHeader ? -2.5 : 0 }}
               >
@@ -126,7 +126,7 @@ export const ChatInterface = ({
             )}
             {msg.type === "spark" && msg.spark && (
               <Stack
-                mx={{ xs: 0, md: !executionMode ? "48px" : 0 }}
+                mx={{ xs: 0, md: !isExecutionShown ? "48px" : 0 }}
                 mb={2}
                 gap={2}
               >
