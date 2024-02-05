@@ -22,7 +22,6 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { isDeepEqual } from "@/common/helpers";
 import { useUpdatePromptMutation } from "@/core/api/templates";
 import { setToast } from "@/core/store/toastSlice";
-import useFeatureFlag from "@/hooks/useFeatureFlag";
 
 interface Props {
   prompt: IEditPrompts;
@@ -58,7 +57,6 @@ const PromptCardAccordion = ({
   const { outputPresets, inputPresets } = useMemo(() => getBuilderVarsPresets(prompts, promptData, false), [prompts]);
   const { template, isTemplateOwner } = useAppSelector(state => state.builder);
   const isDraft = template?.status === "DRAFT";
-  const { isFeatureFlagEnabled } = useFeatureFlag("ff_testrun");
 
   const [savePrompt] = useUpdatePromptMutation();
 
@@ -198,7 +196,7 @@ const PromptCardAccordion = ({
                   onClick={() => setRenameAllow(true)}
                 />
               </Stack>
-              {isTemplateOwner && isFeatureFlagEnabled && (
+              {isTemplateOwner && (
                 <>
                   <Button
                     startIcon={<PlayCircle />}

@@ -19,6 +19,7 @@ interface Props {
   setPrompts: (prompts: IEditPrompts[]) => void;
   templateLoading: boolean;
 }
+
 function PromptList({ prompts, setPrompts, templateLoading }: Props) {
   const [promptToDelete, setPromptToDelete] = useState<IEditPrompts | null>(null);
   const [deletePrompt] = useDeletePromptMutation();
@@ -27,43 +28,32 @@ function PromptList({ prompts, setPrompts, templateLoading }: Props) {
   const setSmoothScrollTarget = useScrollToElement("smooth");
 
   const [, drop] = useDrop(() => ({ accept: "prompt" }));
+
   const findPromptIndex = useCallback(
-    (id: number) => {
-      let promptIndex = 0;
-
-      prompts.find((prompt, idx) => {
-        promptIndex = idx;
-        return prompt.id === id || prompt.temp_id === id;
-      });
-
-      return promptIndex;
-    },
+    (id: number) => prompts.findIndex(prompt => prompt.id === id || prompt.temp_id === id),
     [prompts],
   );
+
   const movePrompt = useCallback(
     (id: number, atIndex: number) => {
       const index = findPromptIndex(id);
       const _promptsCopy = [...prompts];
-
       const targetPromptOrder = _promptsCopy.splice(index, 1);
       _promptsCopy.splice(atIndex, 0, targetPromptOrder[0]);
-
       const reorderedPrompts = _promptsCopy.map((prompt, index) => ({ ...prompt, order: index + 1 }));
+
       setPrompts(reorderedPrompts);
     },
     [findPromptIndex, prompts],
   );
 
-  const changePrompt = (prompt: IEditPrompts) => {
-    const _prompts = prompts
-      .filter(prevPrompt =>
-        (prompt.id && prevPrompt.id && prompt.id === prevPrompt.id) ||
-        (prompt.temp_id && prevPrompt.temp_id && prompt.temp_id === prevPrompt.temp_id)
-          ? false
-          : true,
-      )
-      .concat(prompt);
-    _prompts.sort((a, b) => a.order - b.order);
+  const changePrompt = (changedPrompt: IEditPrompts) => {
+    const _prompts = prompts.map(_prompt =>
+      (changedPrompt.id && _prompt.id && changedPrompt.id === _prompt.id) ||
+      (changedPrompt.temp_id && _prompt.temp_id && changedPrompt.temp_id === _prompt.temp_id)
+        ? changedPrompt
+        : _prompt,
+    );
 
     setPrompts(_prompts);
   };

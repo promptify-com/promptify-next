@@ -17,7 +17,7 @@ import PromptList from "@/components/builder/PromptCardAccordion/PromptList";
 import useToken from "@/hooks/useToken";
 import { useAppSelector } from "@/hooks/useStore";
 import Sidebar from "@/components/sidebar/Sidebar";
-import { BUILDER_TYPE } from "@/common/constants";
+import { BUILDER_DESCRIPTION, BUILDER_TYPE } from "@/common/constants";
 import { useGetEnginesQuery } from "@/core/api/engines";
 import { handleInitPrompt } from "@/common/helpers/initPrompt";
 import type { IEditTemplate } from "@/common/types/editTemplate";
@@ -146,6 +146,7 @@ export const PromptBuilder = () => {
 
       return {
         ...restPrompt,
+        order: index,
         dependencies: depend ? [depend] : [],
         parameters: prompt?.parameters?.map(params => ({
           parameter_id: params.parameter_id,
@@ -176,7 +177,27 @@ export const PromptBuilder = () => {
       meta_keywords: currentTemplateData.meta_keywords,
     };
 
-    await updateTemplate(currentTemplateData.id, _template);
+    const updatedTemplate = await updateTemplate(currentTemplateData.id, _template);
+
+    const updatedPrompts = updatedTemplate.prompts.map((prompt: IEditPrompts) => {
+      return {
+        id: prompt.id,
+        title: prompt.title,
+        content: prompt.content,
+        engine: (prompt.engine as unknown as { id: number }).id,
+        dependencies: prompt.dependencies,
+        parameters: prompt.parameters,
+        order: prompt.order,
+        output_format: prompt.output_format,
+        model_parameters: prompt.model_parameters,
+        is_visible: prompt.is_visible,
+        show_output: prompt.show_output,
+        prompt_output_variable: prompt.prompt_output_variable,
+      };
+    });
+
+    setPrompts(updatedPrompts);
+
     dispatch(
       setToast({
         message: "Prompt template saved with success",
@@ -186,13 +207,9 @@ export const PromptBuilder = () => {
       }),
     );
 
-    setTimeout(() => {
-      if (newTemplate) {
-        window.location.href = window.location.href.replace("create", newTemplate.slug);
-      } else {
-        window.location.reload();
-      }
-    }, 700);
+    if (newTemplate) {
+      window.location.href = window.location.href.replace("create", newTemplate.slug);
+    }
   };
 
   const handlePublishTemplate = async () => {
@@ -262,10 +279,7 @@ export const PromptBuilder = () => {
             mb={2}
           >
             <Typography sx={{ fontSize: 34, fontWeight: 400 }}>Chain of Thoughts Builder</Typography>
-            <Typography sx={{ fontSize: 14, fontWeight: 400 }}>
-              Structure your prompts for a productive and more deterministic AI. You chained prompts will guide AI
-              content creation with focus and intent. Learn more
-            </Typography>
+            <Typography sx={{ fontSize: 14, fontWeight: 400 }}>{BUILDER_DESCRIPTION}</Typography>
           </Stack>
 
           <Box>
@@ -318,9 +332,8 @@ export const PromptBuilder = () => {
 export async function getServerSideProps() {
   return {
     props: {
-      title: "Promptify | Boost Your Creativity",
-      description:
-        "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
+      title: "Chain of Thoughts Builder",
+      description: BUILDER_DESCRIPTION,
     },
   };
 }

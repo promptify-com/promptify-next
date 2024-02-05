@@ -35,10 +35,6 @@ export const toastSlice = createSlice({
     },
     clearToast: state => {
       state.open = false;
-      state.message = "";
-      state.severity = "info";
-      state.duration = initialState.duration;
-      state.position = initialState.position;
     },
   },
 });

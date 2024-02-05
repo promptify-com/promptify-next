@@ -17,6 +17,7 @@ import useBrowser from "@/hooks/useBrowser";
 import { getContentBySectioName } from "@/hooks/api/cms";
 import TemplatePage from "@/components/Prompt";
 import { GetServerSideProps } from "next/types";
+import { SEO_DESCRIPTION, SEO_TITLE } from "@/common/constants";
 
 interface IMUDynamicColorsThemeColor {
   light: {
@@ -190,9 +191,8 @@ export const getServerSideProps: GetServerSideProps = async ({ params, query, re
     console.log("Error occurred:", error);
     return {
       props: {
-        title: "Promptify | Boost Your Creativity",
-        description:
-          "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
+        title: SEO_TITLE,
+        description: SEO_DESCRIPTION,
         fetchedTemplate,
         hashedExecution,
         questionPrefixContent,

@@ -23,6 +23,7 @@ import { GetServerSideProps } from "next/types";
 import { getCategories } from "@/hooks/api/categories";
 import { Category } from "@/core/api/dto/templates";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
+import { SEO_DESCRIPTION, SEO_TITLE } from "@/common/constants";
 
 const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
 const ioLatestsOptions = {
@@ -223,9 +224,8 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   return {
     props: {
       categories,
-      title: "Promptify | Boost Your Creativity",
-      description:
-        "Free AI Writing App for Unique Idea & Inspiration. Seamlessly bypass AI writing detection tools, ensuring your work stands out.",
+      title: SEO_TITLE,
+      description: SEO_DESCRIPTION,
     },
   };
 };

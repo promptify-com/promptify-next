@@ -44,7 +44,7 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
       ((showGenerateButton && messages[messages.length - 1]?.type !== "spark") ||
         Boolean(!inputs.length || !inputs[0]?.required));
 
-  const createMessage = (type: MessageType, fromUser = false, timestamp = new Date().toISOString()) => ({
+  const createMessage = (type: MessageType, fromUser = false, timestamp = new Date().toISOString()): IMessage => ({
     id: randomId(),
     text: "",
     type,
@@ -67,6 +67,7 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
     if (hasRequiredQuestion && isVariantA) {
       const textMessage = createMessage("text");
       textMessage.text = "This is a list of information we need to execute this template:";
+      textMessage.noHeader = true;
       initialQueuedMessages.push(textMessage);
     }
 

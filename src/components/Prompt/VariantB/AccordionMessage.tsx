@@ -6,14 +6,13 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import Fade from "@mui/material/Fade";
 import PlayCircle from "@mui/icons-material/PlayCircle";
 import Button from "@mui/material/Button";
-
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setIsSimulationStreaming } from "@/core/store/chatSlice";
 import { Display } from "@/components/Prompt/Common/Display";
 import Form from "@/components/Prompt/Common/Chat/Form";
 import AccordionMessageHeader from "@/components/Prompt/VariantB/AccordionMessageHeader";
 import type { Templates } from "@/core/api/dto/templates";
-import useVariant from "../Hooks/useVariant";
+import useVariant from "@/components/Prompt/Hooks/useVariant";
 
 interface Props {
   onGenerate: () => void;

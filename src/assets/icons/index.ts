@@ -8,3 +8,7 @@ export * from "./MinusIcon";
 export * from "./PromptIcon";
 export * from "./TrashIcon";
 export * from "./ApiIcon";
+export * from "./Home";
+export * from "./Connection";
+export * from "./User";
+export * from "./Prompt";
