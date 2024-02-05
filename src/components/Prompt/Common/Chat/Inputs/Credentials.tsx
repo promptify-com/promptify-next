@@ -17,6 +17,7 @@ import { setToast } from "@/core/store/toastSlice";
 import type { Credentials, ICredentialsProperty } from "@/components/Automation/types";
 import type { IPromptInput } from "@/common/types/prompt";
 import { setCredentialsStored } from "@/core/store/chatSlice";
+import { useLocalStorageSync } from "@/hooks/useLocalStorageSync";
 
 interface Props {
   input: IPromptInput;
@@ -36,12 +37,12 @@ function Credentials({ input }: Props) {
   const credential = credentials.find(cred => cred.displayName === input.fullName);
   const areCredentialsStored = storedCredentials && !!storedCredentials[credential?.authType!];
 
+  const [openModal, setOpenModal] = useState(false);
+  const [credentialProperties, setCredentialProperties] = useState<ICredentialsProperty[]>([]);
+
   useEffect(() => {
     dispatch(setCredentialsStored(areCredentialsStored));
   }, [JSON.stringify(storedCredentials)]);
-
-  const [openModal, setOpenModal] = useState(false);
-  const [credentialProperties, setCredentialProperties] = useState<ICredentialsProperty[]>([]);
 
   useEffect(() => {
     if (credential) {
@@ -83,13 +84,11 @@ function Credentials({ input }: Props) {
         data[key] = values[key];
       }
     }
-
     const payload = {
       name: `${credential?.displayName} Credentials` || "Unnamed Credential",
       type: credential?.authType!,
       data: data,
     };
-
     try {
       const response = await createCredentials(payload).unwrap();
 
@@ -98,14 +97,13 @@ function Credentials({ input }: Props) {
         id: response.id,
         createdAt: response.createdAt,
       };
-
       Storage.set("credentials", JSON.stringify(storedCredentials));
 
       setOpenModal(false);
-      dispatch(setToast({ message: "Credental is successufully created", severity: "success" }));
+      dispatch(setToast({ message: "Credental was successufully created", severity: "success" }));
     } catch (error) {
       console.error("Error:", error);
-      dispatch(setToast({ message: "Error creating credential", severity: "error" }));
+      dispatch(setToast({ message: "Credential was not created, please try again.", severity: "error" }));
     }
   };
 

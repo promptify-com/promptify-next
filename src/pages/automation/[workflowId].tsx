@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Stack from "@mui/material/Stack";
-
 import { useRouter } from "next/router";
+
 import { Layout } from "@/layout";
 import { ChatInterface } from "@/components/Prompt/Common/Chat/ChatInterface";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
@@ -17,8 +17,7 @@ import { authClient } from "@/common/axios";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { IMessage } from "@/components/Prompt/Types/chat";
-import type { Credentials } from "@/components/Automation/types";
-import type { IWorkflow } from "@/components/Automation/types";
+import type { Credentials, IWorkflow } from "@/components/Automation/types";
 
 interface Props {
   workflow: IWorkflow;

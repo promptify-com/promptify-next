@@ -1,11 +1,4 @@
-import type {
-  Credentials,
-  Creds,
-  ICredentials,
-  INode,
-  IWorkflowCreateResponse,
-  NodesFileData,
-} from "@/components/Automation/types";
+import type { Credentials, Creds, ICredentials, INode, NodesFileData } from "@/components/Automation/types";
 
 const UNWANTED_TYPES = [
   "n8n-nodes-base.switch",

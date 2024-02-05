@@ -33,11 +33,7 @@ function FormFields({ variant, messageType }: FormLayoutProps) {
       required: true,
     }));
 
-    if (messageType === "form") {
-      setLocalInputs(inputs);
-    } else if (messageType === "credentials") {
-      setLocalInputs(transformedInputs);
-    }
+    setLocalInputs(messageType === "credentials" ? transformedInputs : inputs);
   }, []);
 
   return (

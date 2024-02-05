@@ -12,8 +12,9 @@ import { clearChatStates, setCredentials } from "@/core/store/chatSlice";
 import { n8nClient as ApiClient } from "@/common/axios";
 import Storage from "@/common/storage";
 import { attachCredentialsToNode, extractCredentialsData, extractWebhookPath } from "@/components/Automation/helpers";
+import { useLocalStorageSync } from "@/hooks/useLocalStorageSync";
 import type { Category } from "@/core/api/dto/templates";
-import type { ICredentials, INode, IWorkflow, IWorkflowCreateResponse } from "@/components/Automation/types";
+import type { INode, IWorkflow, IWorkflowCreateResponse } from "@/components/Automation/types";
 
 const useWorkflow = (workflow: IWorkflow) => {
   const dispatch = useAppDispatch();
@@ -33,9 +34,7 @@ const useWorkflow = (workflow: IWorkflow) => {
   const [updateWorkflow] = useUpdateWorkflowMutation();
   const storedCredentials = Storage.get("credentials") || {};
 
-  const updateWorkflowsWithCredentials = async () => {
-    const storedWorkflows = Storage.get("workflows") || {};
-
+  const updateWorkflowsWithCredentials = async (storedWorkflows: any) => {
     const workflow = storedWorkflows[workflowId].workflow as IWorkflowCreateResponse;
 
     const hasCredentials = (node: INode) => {
@@ -58,28 +57,32 @@ const useWorkflow = (workflow: IWorkflow) => {
     }
   };
 
-  useEffect(() => {
-    if (!areCredentialsStored) {
+  const handleStorageUpdate = (
+    storedWorkflows: Record<string, { workflow: IWorkflowCreateResponse; webhookPath: string }> | null,
+  ) => {
+    if (!storedWorkflows || !storedWorkflows[workflowId] || !areCredentialsStored) {
       return;
     }
-    const attachCredentialsToStoredWorkflow = async () => {
-      const storedWorkflows = Storage.get("workflows") || {};
+    const storedWorkflow = storedWorkflows[workflowId].workflow;
+    if (storedWorkflow?.nodes) {
+      const originalNodes = JSON.stringify(storedWorkflow.nodes);
 
-      if (!storedWorkflows[workflowId]) {
-        return;
-      }
-      const { workflow }: { workflow: IWorkflowCreateResponse } = storedWorkflows[workflowId];
+      storedWorkflow.nodes.forEach(node => {
+        attachCredentialsToNode(node, storedCredentials);
+      });
 
-      if (workflow?.nodes) {
-        workflow.nodes.forEach(node => {
-          attachCredentialsToNode(node, storedCredentials);
-        });
+      const updatedNodes = JSON.stringify(storedWorkflow.nodes);
+      if (originalNodes !== updatedNodes) {
         Storage.set("workflows", JSON.stringify(storedWorkflows));
-        updateWorkflowsWithCredentials();
+        updateWorkflowsWithCredentials(storedWorkflows);
       }
-    };
-    attachCredentialsToStoredWorkflow();
-  }, [JSON.stringify(storedCredentials)]);
+    }
+  };
+
+  useLocalStorageSync<Record<string, { workflow: IWorkflowCreateResponse; webhookPath: string }>>(
+    "workflows",
+    handleStorageUpdate,
+  );
 
   const createWorkflowIfNeeded = async (selectedWorkflowId: number) => {
     const storedWorkflows = Storage.get("workflows") || {};
@@ -88,6 +91,8 @@ const useWorkflow = (workflow: IWorkflow) => {
 
     try {
       const response = await createWorkflow(selectedWorkflowId).unwrap();
+      const webhookPath = extractWebhookPath(response.nodes);
+
       if (response) {
         const updatedResponse = {
           name: response.name,
@@ -97,9 +102,6 @@ const useWorkflow = (workflow: IWorkflow) => {
           settings: response.settings,
         };
         const mutableResponse = JSON.parse(JSON.stringify(updatedResponse)) as IWorkflowCreateResponse;
-
-        const webhookPath = extractWebhookPath(response.nodes);
-        const storedCredentials = Storage.get("credentials") || {};
 
         mutableResponse.nodes.forEach(node => {
           attachCredentialsToNode(node, storedCredentials);
@@ -124,11 +126,13 @@ const useWorkflow = (workflow: IWorkflow) => {
     });
     const storedWorkflows = Storage.get("workflows") || {};
 
-    const webhookPath = storedWorkflows[workflowData?.id!].webhookPath;
-
-    const response = await ApiClient.post(`/webhook/${webhookPath}`, inputsData);
-
-    return response.data;
+    const webhookPath = storedWorkflows[workflowId].webhookPath;
+    try {
+      const response = await ApiClient.post(`/webhook/${webhookPath}`, inputsData);
+      return response.data;
+    } catch (error) {
+      console.error("failed to sendMessage");
+    }
   }
 
   async function getCredentials(nodes: INode[]) {
