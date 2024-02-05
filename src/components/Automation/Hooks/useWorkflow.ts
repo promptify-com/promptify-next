@@ -36,31 +36,24 @@ const useWorkflow = (workflow: IWorkflow) => {
   const updateWorkflowsWithCredentials = async () => {
     const storedWorkflows = Storage.get("workflows") || {};
 
-    for (const workflowId in storedWorkflows) {
-      const workflow = storedWorkflows[workflowId].workflow as IWorkflowCreateResponse;
+    const workflow = storedWorkflows[workflowId].workflow as IWorkflowCreateResponse;
 
-      const areCredentialsValid = (node: INode) => {
-        return node.credentials && Object.keys(node.credentials).length > 0;
-      };
+    const hasCredentials = (node: INode) => {
+      return node.credentials && Object.keys(node.credentials).length > 0;
+    };
 
-      const allNodesHaveCredentials = workflow.nodes.every(node => {
-        if (node.parameters?.authentication) {
-          return areCredentialsValid(node);
-        }
-        return true;
-      });
+    const nodesWithAuthentication = workflow.nodes.filter(node => node.parameters?.authentication);
 
-      if (allNodesHaveCredentials) {
-        try {
-          const updatedWorkflow = await updateWorkflow({
-            workflowId: parseInt(workflowId),
-            data: workflow,
-          }).unwrap();
+    const allNodesHaveCredentials = nodesWithAuthentication.every(node => hasCredentials(node));
 
-          console.log("Workflow updated successfully:", updatedWorkflow);
-        } catch (error) {
-          console.error("Error updating workflow:", error);
-        }
+    if (allNodesHaveCredentials) {
+      try {
+        await updateWorkflow({
+          workflowId: parseInt(workflowId),
+          data: workflow,
+        }).unwrap();
+      } catch (error) {
+        console.error("Error updating workflow:", error);
       }
     }
   };
@@ -77,7 +70,7 @@ const useWorkflow = (workflow: IWorkflow) => {
       }
       const { workflow }: { workflow: IWorkflowCreateResponse } = storedWorkflows[workflowId];
 
-      if (areCredentialsStored && workflow?.nodes) {
+      if (workflow?.nodes) {
         workflow.nodes.forEach(node => {
           attachCredentialsToNode(node, storedCredentials);
         });
@@ -103,22 +96,18 @@ const useWorkflow = (workflow: IWorkflow) => {
           connections: response.connections,
           settings: response.settings,
         };
-
         const mutableResponse = JSON.parse(JSON.stringify(updatedResponse)) as IWorkflowCreateResponse;
 
         const webhookPath = extractWebhookPath(response.nodes);
         const storedCredentials = Storage.get("credentials") || {};
 
-        mutableResponse.nodes.map(node => {
+        mutableResponse.nodes.forEach(node => {
           attachCredentialsToNode(node, storedCredentials);
-          return node;
         });
-
         storedWorkflows[selectedWorkflowId] = {
           webhookPath,
           workflow: mutableResponse,
         };
-
         Storage.set("workflows", JSON.stringify(storedWorkflows));
       }
     } catch (error) {
