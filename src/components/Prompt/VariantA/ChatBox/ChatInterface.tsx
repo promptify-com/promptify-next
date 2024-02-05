@@ -3,20 +3,19 @@ import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
-
-import { Message } from "./Message";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import GenerateAndClearButton from "./GenerateAndClearButton";
 import { isDesktopViewPort } from "@/common/helpers";
 import { MessageSparkBox } from "./MessageSparkBox";
 import TemplateDetailsCard from "@/components/Prompt/Common/TemplateDetailsCard";
-import FeedbackThumbs from "../../Common/FeedbackThumbs";
+import FeedbackThumbs from "@/components/Prompt/Common/FeedbackThumbs";
 import Form from "@/components/Prompt/Common/Chat/Form";
 import { GeneratingProgressCard } from "@/components/common/cards/GeneratingProgressCard";
 import { setGeneratedExecution } from "@/core/store/executionsSlice";
 import { setGeneratingStatus } from "@/core/store/templatesSlice";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { Templates } from "@/core/api/dto/templates";
+import { Message } from "@/components/Prompt/Common/Chat/Message";
 
 interface Props {
   template: Templates;
@@ -39,9 +38,8 @@ export const ChatInterface = ({
   const isDesktopView = isDesktopViewPort();
 
   const isGenerating = useAppSelector(state => state.template.isGenerating);
-  const { selectedExecution, generatedExecution } = useAppSelector(state => state.executions);
-
-  const isExecutionShown = Boolean(selectedExecution ?? generatedExecution);
+  const { generatedExecution, selectedExecution } = useAppSelector(state => state.executions);
+  const isExecutionShown = Boolean(selectedExecution || generatedExecution);
 
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
