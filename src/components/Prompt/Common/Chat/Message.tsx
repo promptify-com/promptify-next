@@ -91,7 +91,7 @@ export const Message = ({ message, isExecutionMode, onScrollToBottom }: MessageB
 
   return (
     <Grid
-      display={isExecutionMode ? "none" : "flex"}
+      display={isVariantB && isExecutionMode ? "none" : "flex"}
       flexDirection={isVariantA ? "row" : "column"}
       gap={"16px"}
       position={"relative"}
