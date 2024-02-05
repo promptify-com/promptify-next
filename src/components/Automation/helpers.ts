@@ -1,4 +1,10 @@
-import type { Credentials, Creds, ICredentials, INode, NodesFileData } from "@/components/Automation/types";
+import type {
+  ICredential,
+  INodeCredentials,
+  INode,
+  NodesFileData,
+  ICredentialJson,
+} from "@/components/Automation/types";
 
 const UNWANTED_TYPES = [
   "n8n-nodes-base.switch",
@@ -38,33 +44,30 @@ export const authTypeMapping: { [key: string]: string } = {
   // Add other mappings here if necessary
 };
 
-export async function extractCredentialsData(nodes: INode[] = []): Promise<Credentials[]> {
-  const credentials: Credentials[] = [];
-
-  //@ts-ignore
-  const creds: Creds = (
+export async function extractCredentialsData(nodes: INode[] = []): Promise<ICredential[]> {
+  const credentials: ICredential[] = [];
+  const creds = (
     await import(
       /* webpackChunkName: "workflow_creds" */
       /* webpackMode: "lazy" */
       "@/components/Automation/creds.json"
     )
-  ).default;
+  ).default as unknown as ICredentialJson;
 
   for (const node of nodes) {
-    const parameters = node.parameters as any;
+    const parameters = node.parameters;
     if (parameters && parameters.authentication) {
       const authenticationType = parameters.authentication;
       const nodeCredentialType = parameters.nodeCredentialType;
-
       const authType =
-        authTypeMapping[nodeCredentialType] ||
+        authTypeMapping[nodeCredentialType!] ||
         nodeCredentialType ||
         authTypeMapping[authenticationType] ||
         authenticationType;
 
       if (creds[authType]) {
         credentials.push({
-          authType: authType,
+          name: authType,
           displayName: creds[authType].displayName,
           properties: creds[authType].properties,
         });
@@ -75,7 +78,7 @@ export async function extractCredentialsData(nodes: INode[] = []): Promise<Crede
   return credentials;
 }
 
-export const attachCredentialsToNode = (node: INode, credentials: ICredentials) => {
+export const attachCredentialsToNode = (node: INode, credentials: INodeCredentials) => {
   const { parameters } = node;
 
   if (parameters && parameters.authentication) {

@@ -27,7 +27,7 @@ function FormFields({ variant, messageType }: FormLayoutProps) {
 
   useEffect(() => {
     const transformedInputs: IPromptInput[] = credentials.map(credential => ({
-      name: credential.authType,
+      name: credential.name,
       fullName: credential.displayName,
       type: "credentials",
       required: true,

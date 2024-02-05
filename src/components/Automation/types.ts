@@ -22,7 +22,7 @@ export interface INode {
   webhookId: string;
   parameters: IParameters;
   typeVersion: number;
-  credentials?: ICredentials;
+  credentials?: INodeCredentials;
   simplifyOutput?: boolean;
   query?: string;
   jsCode?: string;
@@ -78,38 +78,39 @@ export interface IWorkflowCreateResponse {
   connections: any;
 }
 
-interface AuthTypeProperties {
+export interface IAuthenticateBase {
+  type: string;
+  properties: Record<string, string>;
+}
+
+export interface ICredentialProperty {
+  displayName: string;
   name: string;
-  displayName: string;
-  documentationUrl: string;
-  properties: ICredentialsProperty[];
+  type: string;
+  required?: boolean;
+  typeOptions?: {
+    password: boolean;
+  };
+  default: string;
 }
 
-export interface Creds {
-  [key: string]: AuthTypeProperties;
-}
-
-export interface Credentials {
-  authType: string;
-  displayName: string;
-  properties: ICredentialsProperty[];
-}
-
-export interface ICredentials {
-  [key: string]: {
-    id: string;
-    name: string;
+export interface ICredentialJson {
+  [key: string]: ICredential & {
+    test: any;
+    authenticate: any;
   };
 }
 
-export interface ICredentialsProperty {
-  displayName: string;
-  default: string;
+export interface ICredential {
   name: string;
-  required?: boolean;
-  type: string;
-  typeOptions?: {
-    password: boolean;
+  displayName: string;
+  properties: ICredentialProperty[];
+}
+
+export interface INodeCredentials {
+  [key: string]: {
+    id: string;
+    name: string;
   };
 }
 
