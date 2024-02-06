@@ -92,9 +92,13 @@ export const attachCredentialsToNode = (node: INode, credentials: INodeCredentia
       authTypeMapping[authenticationType] ||
       authenticationType;
 
-    if (credentials[authType] && !node.credentials![authType]) {
+    if (!node.credentials) {
+      node.credentials = {};
+    }
+
+    if (credentials[authType] && !node.credentials[authType]) {
       const { id, name } = credentials[authType];
-      node.credentials![authType] = { id, name };
+      node.credentials[authType] = { id, name };
     }
   }
 };
@@ -105,7 +109,10 @@ export const extractWebhookPath = (nodes: INode[]) => {
 };
 
 export const checkAllCredsStored = (credentials: ICredential[]) => {
+  if (credentials.length === 0) {
+    return false;
+  }
   const storedCredentials = Storage.get("credentials") ?? {};
-  const areAllCredentialsStored = credentials.every(cred => storedCredentials[cred.name]);
+  const areAllCredentialsStored = credentials.every(cred => Boolean(storedCredentials[cred.name]));
   return areAllCredentialsStored;
 };
