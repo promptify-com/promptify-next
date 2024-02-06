@@ -30,8 +30,14 @@ export default function SingleWorkflow({ workflow }: Props) {
 
   const { areCredentialsStored } = useAppSelector(state => state.chat);
 
-  const { selectedWorkflow, workflowAsTemplate, sendMessageAPI, createWorkflowIfNeeded, extractCredsFromNodes } =
-    useWorkflow(workflow);
+  const {
+    selectedWorkflow,
+    workflowAsTemplate,
+    sendMessageAPI,
+    createWorkflowIfNeeded,
+    extractCredsFromNodes,
+    isWorkflowLoading,
+  } = useWorkflow(workflow);
 
   const {
     messages,
@@ -104,7 +110,7 @@ export default function SingleWorkflow({ workflow }: Props) {
 
   return (
     <Layout>
-      {!selectedWorkflow.data ? (
+      {isWorkflowLoading ? (
         <WorkflowPlaceholder />
       ) : (
         <Stack

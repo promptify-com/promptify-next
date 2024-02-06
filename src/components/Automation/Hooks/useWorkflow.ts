@@ -1,6 +1,7 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/router";
 
-import { useCreateUserWorkflowMutation } from "@/core/api/workflows";
+import { useCreateUserWorkflowMutation, useGetWorkflowByIdQuery } from "@/core/api/workflows";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { clearExecutionsStates } from "@/core/store/executionsSlice";
 import { clearChatStates, setCredentials } from "@/core/store/chatSlice";
@@ -11,6 +12,15 @@ import type { Category } from "@/core/api/dto/templates";
 import type { INode, IWorkflow } from "@/components/Automation/types";
 
 const useWorkflow = (workflow: IWorkflow) => {
+  const router = useRouter();
+  const workflowId = router.query?.workflowId as string;
+
+  const { data, isLoading: isWorkflowLoading } = useGetWorkflowByIdQuery(parseInt(workflowId), {
+    skip: Boolean(workflow.id || !workflowId),
+  });
+
+  const [workflowData, setWorkflowData] = useState<IWorkflow>(workflow);
+
   const dispatch = useAppDispatch();
   const webhookPathRef = useRef<string>();
 
@@ -84,6 +94,12 @@ const useWorkflow = (workflow: IWorkflow) => {
     dispatch(clearExecutionsStates());
   }, []);
 
+  useEffect(() => {
+    if (data) {
+      setWorkflowData(data);
+    }
+  }, [data]);
+
   const workflowAsTemplate = {
     id: workflow?.id,
     title: workflow?.name,
@@ -98,6 +114,7 @@ const useWorkflow = (workflow: IWorkflow) => {
 
   return {
     selectedWorkflow: workflow,
+    isWorkflowLoading,
     workflowAsTemplate,
     sendMessageAPI,
     extractCredsFromNodes,
