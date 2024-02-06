@@ -8,7 +8,6 @@ import {
   Templates,
   TemplatesWithPagination,
   IPromptExecution,
-  CreatePrompt,
 } from "./dto/templates";
 import { IEditTemplate } from "@/common/types/editTemplate";
 import { randomId } from "@/common/helpers";
@@ -206,8 +205,8 @@ export const templatesApi = baseApi.injectEndpoints({
           }
         },
       }),
-      createPrompt: builder.mutation<IEditPrompts, CreatePrompt>({
-        query: (data: CreatePrompt) => ({
+      createPrompt: builder.mutation<IEditPrompts, IEditPrompts>({
+        query: (data: IEditPrompts) => ({
           url: `/api/meta/prompts/`,
           method: "post",
           data,

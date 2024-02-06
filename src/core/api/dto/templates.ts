@@ -313,7 +313,3 @@ export interface IPromptExecution {
   executed_by?: number;
   errors?: string;
 }
-
-export interface CreatePrompt extends IEditPrompts {
-  template: number;
-}
