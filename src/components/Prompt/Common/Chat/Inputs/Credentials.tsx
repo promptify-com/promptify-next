@@ -17,7 +17,6 @@ import { setToast } from "@/core/store/toastSlice";
 import type { ICredentialProperty } from "@/components/Automation/types";
 import type { IPromptInput } from "@/common/types/prompt";
 import { setCredentialsStored } from "@/core/store/chatSlice";
-import { useLocalStorageSync } from "@/hooks/useLocalStorageSync";
 
 interface Props {
   input: IPromptInput;
@@ -121,7 +120,7 @@ function Credentials({ input }: Props) {
           borderColor: "secondary.main",
           color: "secondary.main",
           p: "3px 12px",
-          fontSize: { xs: 12, md: 14 },
+          fontSize: { xs: 11, md: 14 },
           ":hover": {
             bgcolor: "action.hover",
           },

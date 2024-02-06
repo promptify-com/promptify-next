@@ -123,7 +123,7 @@ export default function SingleWorkflow({ workflow }: Props) {
           sx={{
             width: { md: "80%" },
             mx: { md: "auto" },
-            height: "calc(100vh - 120px)",
+            height: { xs: "100vh", md: "calc(100vh - 120px)" },
             display: "flex",
             flexDirection: "column",
             justifyContent: "flex-end",
@@ -131,7 +131,7 @@ export default function SingleWorkflow({ workflow }: Props) {
           }}
         >
           <Stack
-            height={"calc(100% - 20px)"}
+            height={{ xs: "calc(100% - 140px)", md: "calc(100% - 20px)" }}
             justifyContent={"flex-end"}
           >
             <ChatInterface
@@ -143,13 +143,15 @@ export default function SingleWorkflow({ workflow }: Props) {
           </Stack>
 
           {currentUser?.id ? (
-            <ChatInput
-              onSubmit={validateVary}
-              disabled={isValidatingAnswer || !areCredentialsStored}
-              isValidating={isValidatingAnswer}
-              showGenerate={showGenerateButton}
-              onGenerate={executeWorflow}
-            />
+            <Stack p={{ xs: "0px 0px 17px 0px", md: 0 }}>
+              <ChatInput
+                onSubmit={validateVary}
+                disabled={isValidatingAnswer || !areCredentialsStored}
+                isValidating={isValidatingAnswer}
+                showGenerate={showGenerateButton}
+                onGenerate={executeWorflow}
+              />
+            </Stack>
           ) : (
             <Stack
               direction="row"
