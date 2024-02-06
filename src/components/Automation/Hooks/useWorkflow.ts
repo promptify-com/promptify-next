@@ -1,5 +1,4 @@
-import { useEffect } from "react";
-import { useRouter } from "next/router";
+import { useEffect, useRef } from "react";
 
 import { useCreateUserWorkflowMutation } from "@/core/api/workflows";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
@@ -13,8 +12,7 @@ import type { INode, IWorkflow } from "@/components/Automation/types";
 
 const useWorkflow = (workflow: IWorkflow) => {
   const dispatch = useAppDispatch();
-  const router = useRouter();
-  const workflowId = router.query?.workflowId as string;
+  const webhookPathRef = useRef<string>();
 
   const { answers, inputs } = useAppSelector(state => state.chat);
 
@@ -28,25 +26,35 @@ const useWorkflow = (workflow: IWorkflow) => {
 
     try {
       const response = await createWorkflow(selectedWorkflowId).unwrap();
-      const webhookPath = extractWebhookPath(response.nodes);
 
       if (response) {
-        const updatedResponse = {
-          name: response.name,
-          nodes: response.nodes,
-          active: response.active,
-          connections: response.connections,
-          settings: response.settings,
-        };
+        webhookPathRef.current = extractWebhookPath(response.nodes);
 
-        updatedResponse.nodes.forEach(node => {
-          attachCredentialsToNode(node, storedCredentials);
-        });
+        const nodesRequiringAuthentication = response.nodes.filter(node => node.parameters?.authentication);
 
-        storedWorkflows[selectedWorkflowId] = {
-          webhookPath,
-          workflow: updatedResponse,
-        };
+        if (nodesRequiringAuthentication.length) {
+          nodesRequiringAuthentication.forEach(node => {
+            attachCredentialsToNode(node, storedCredentials);
+          });
+
+          const updatedResponse = {
+            name: response.name,
+            nodes: response.nodes,
+            active: response.active,
+            connections: response.connections,
+            settings: response.settings,
+          };
+
+          storedWorkflows[selectedWorkflowId] = {
+            webhookPath: webhookPathRef.current,
+            workflow: updatedResponse,
+          };
+        } else {
+          storedWorkflows[selectedWorkflowId] = {
+            webhookPath: webhookPathRef.current,
+          };
+        }
+
         Storage.set("workflows", JSON.stringify(storedWorkflows));
       }
     } catch (error) {
@@ -61,10 +69,8 @@ const useWorkflow = (workflow: IWorkflow) => {
       const answer = answers.find(answer => answer.inputName === input.name);
       inputsData[input.name] = answer?.answer as string;
     });
-    const storedWorkflows = Storage.get("workflows") || {};
 
-    const webhookPath = storedWorkflows[workflowId].webhookPath;
-    const response = await ApiClient.post(`/webhook/${webhookPath}`, inputsData);
+    const response = await ApiClient.post(`/webhook/${webhookPathRef.current}`, inputsData);
     return response.data;
   }
 

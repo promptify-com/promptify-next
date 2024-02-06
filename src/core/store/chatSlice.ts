@@ -50,7 +50,7 @@ export const chatSlice = createSlice({
     clearChatStates: _state => {
       return initialState;
     },
-    setCredentialsStored: (state, action: PayloadAction<boolean>) => {
+    setAreCredentialsStored: (state, action: PayloadAction<boolean>) => {
       state.areCredentialsStored = action.payload;
     },
   },
@@ -64,7 +64,7 @@ export const {
   setIsSimulationStreaming,
   setCredentials,
   clearChatStates,
-  setCredentialsStored,
+  setAreCredentialsStored,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

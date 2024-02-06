@@ -1,3 +1,4 @@
+import Storage from "@/common/storage";
 import type {
   ICredential,
   INodeCredentials,
@@ -101,4 +102,10 @@ export const attachCredentialsToNode = (node: INode, credentials: INodeCredentia
 export const extractWebhookPath = (nodes: INode[]) => {
   const webhookNode = nodes.find(node => node.type === "n8n-nodes-base.webhook");
   return webhookNode?.parameters?.path;
+};
+
+export const checkAllCredsStored = (credentials: ICredential[]) => {
+  const storedCredentials = Storage.get("credentials") ?? {};
+  const areAllCredentialsStored = credentials.every(cred => storedCredentials[cred.name]);
+  return areAllCredentialsStored;
 };

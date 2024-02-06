@@ -15,9 +15,10 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import Storage from "@/common/storage";
 import { useCreateCredentialsMutation, useUpdateWorkflowMutation } from "@/core/api/workflows";
 import { setToast } from "@/core/store/toastSlice";
+import { attachCredentialsToNode, checkAllCredsStored } from "@/components/Automation/helpers";
+import { setAreCredentialsStored } from "@/core/store/chatSlice";
 import type { ICredentialProperty, IWorkflowCreateResponse } from "@/components/Automation/types";
 import type { IPromptInput } from "@/common/types/prompt";
-import { attachCredentialsToNode } from "@/components/Automation/helpers";
 
 interface Props {
   input: IPromptInput;
@@ -30,19 +31,18 @@ interface FormValues {
 function Credentials({ input }: Props) {
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const workflowId = router.query.workflowId as string;
 
   const [updateWorkflow] = useUpdateWorkflowMutation();
   const [createCredentials] = useCreateCredentialsMutation();
 
-  const { credentials, areCredentialsStored } = useAppSelector(state => state.chat);
+  const { credentials } = useAppSelector(state => state.chat);
 
   const [openModal, setOpenModal] = useState(false);
   const [credentialProperties, setCredentialProperties] = useState<ICredentialProperty[]>([]);
 
-  const workflowId = router.query.workflowId as string;
-  const credential = credentials.find(cred => cred.displayName === input.fullName);
-
   useEffect(() => {
+    const credential = credentials.find(cred => cred.displayName === input.fullName);
     if (credential) {
       setCredentialProperties(credential.properties);
     }
@@ -76,7 +76,9 @@ function Credentials({ input }: Props) {
   );
 
   const handleSubmit = async (values: FormValues) => {
+    const credential = credentials.find(cred => cred.displayName === input.fullName);
     const data: Record<string, string> = {};
+
     for (const key in values) {
       if (values.hasOwnProperty(key)) {
         data[key] = values[key];
@@ -88,25 +90,30 @@ function Credentials({ input }: Props) {
       data: data,
     };
     try {
-      await createCredentials(payload).unwrap();
+      const response = await createCredentials(payload).unwrap();
 
       const storedWorkflows = Storage.get("workflows") || {};
       const storedCredentials = Storage.get("credentials") || {};
+
+      storedCredentials[credential?.name!] = {
+        name: response.name,
+        id: response.id,
+        createdAt: response.createdAt,
+      };
+      Storage.set("credentials", JSON.stringify(storedCredentials));
+
       const workflow = storedWorkflows[workflowId].workflow as IWorkflowCreateResponse;
 
       workflow.nodes.forEach(node => {
         attachCredentialsToNode(node, storedCredentials);
       });
 
-      const nodesWithAuthentication = workflow.nodes.filter(node => node.parameters?.authentication);
-      const allNodesHaveCredentials = nodesWithAuthentication.every(
-        node => node.credentials && Object.keys(node.credentials).length > 0,
-      );
+      const areAllCredentialsStored = checkAllCredsStored(credentials);
+      dispatch(setAreCredentialsStored(areAllCredentialsStored));
 
-      storedWorkflows[workflowId].workflow = workflow;
       Storage.set("workflows", JSON.stringify(storedWorkflows));
 
-      if (allNodesHaveCredentials) {
+      if (areAllCredentialsStored) {
         try {
           await updateWorkflow({
             workflowId: parseInt(workflowId),
@@ -117,7 +124,6 @@ function Credentials({ input }: Props) {
           dispatch(setToast({ message: "Failed to update workflow", severity: "error" }));
         }
       }
-
       setOpenModal(false);
       dispatch(setToast({ message: "Credential was successfully created", severity: "success" }));
     } catch (error) {
@@ -126,12 +132,20 @@ function Credentials({ input }: Props) {
     }
   };
 
+  const checkCredentialInserted = () => {
+    const storedCredentials = Storage.get("credentials") || {};
+    const credential = credentials.find(cred => cred.displayName === input.fullName);
+    return !!storedCredentials[credential?.name!];
+  };
+
+  const isCredentialInserted = checkCredentialInserted();
+
   return (
     <>
       <BaseButton
         size="small"
         onClick={() => setOpenModal(true)}
-        disabled={areCredentialsStored}
+        disabled={isCredentialInserted}
         color="custom"
         variant="text"
         sx={{
@@ -146,7 +160,7 @@ function Credentials({ input }: Props) {
           },
         }}
       >
-        {areCredentialsStored ? "Credentials added" : "Insert Credentials"}
+        {isCredentialInserted ? "Credentials added" : "Insert Credentials"}
       </BaseButton>
 
       {openModal && (
