@@ -12,7 +12,7 @@ function Landing() {
         alignItems={"center"}
         gap={3}
         sx={{
-          minHeight: "80svh",
+          minHeight: "60svh",
           maxWidth: "90%",
           m: "auto",
         }}
@@ -75,7 +75,12 @@ function Landing() {
             >
               Continue with Google
             </Button>
-            <Button variant="outlined">or Learn more</Button>
+            <Button
+              variant="outlined"
+              sx={{ color: "#67677C" }}
+            >
+              or Learn more
+            </Button>
           </Stack>
         </Stack>
       </Stack>

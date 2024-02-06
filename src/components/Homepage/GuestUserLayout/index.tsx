@@ -1,9 +1,10 @@
 import { useRef } from "react";
 import useToken from "@/hooks/useToken";
-import { useIntersectionObserver } from "../../../hooks/useIntersectionObserver";
-import { useGetTemplatesByFilterQuery } from "../../../core/api/templates";
-import { Category } from "../../../core/api/dto/templates";
+import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
+import { useGetTemplatesByFilterQuery } from "@/core/api/templates";
+import { Category } from "@/core/api/dto/templates";
 import Landing from "./Landing";
+import CategoryCarousel from "./CategoriesCarousel";
 
 const ioLatestsOptions = {
   threshold: 0,
@@ -44,6 +45,7 @@ function GuestUserLayout({ categories }: { categories: Category[] }) {
   return (
     <>
       <Landing />
+      <CategoryCarousel categories={categories} />
     </>
   );
 }
