@@ -20,8 +20,7 @@ import { BUILDER_TYPE } from "@/common/constants";
 import PromptTestDialog from "./PromptTest";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { isDeepEqual } from "@/common/helpers";
-import { useUpdatePromptMutation } from "@/core/api/templates";
-import { setToast } from "@/core/store/toastSlice";
+import { useCreatePromptMutation, useUpdatePromptMutation } from "@/core/api/templates";
 
 interface Props {
   prompt: IEditPrompts;
@@ -57,8 +56,10 @@ const PromptCardAccordion = ({
   const { outputPresets, inputPresets } = useMemo(() => getBuilderVarsPresets(prompts, promptData, false), [prompts]);
   const { template, isTemplateOwner } = useAppSelector(state => state.builder);
   const isDraft = template?.status === "DRAFT";
+  const [disableSave, setDisableSave] = useState(false);
 
   const [savePrompt] = useUpdatePromptMutation();
+  const [createPrompt] = useCreatePromptMutation();
 
   const dispatchUpdatePrompt = useDebouncedDispatch(
     (prompt: IEditPrompts) => {
@@ -121,20 +122,32 @@ const PromptCardAccordion = ({
     [findPromptIndex, movePrompt],
   );
 
-  const handleOpenTest = () => {
-    if (saveNeeded.current) {
-      dispatch(
-        setToast({
-          message: "Please save your template changes first before running tests.",
-          severity: "warning",
-          duration: 8000,
-          position: { vertical: "top", horizontal: "center" },
-        }),
-      );
-      return;
-    }
+  const handleOpenTest = async () => {
+    if (template) {
+      const { temp_id, ...restOfPromptData } = promptData;
+      const _promptData = { ...restOfPromptData, template: template.id, error_action: "REPEAT" };
+      const savedPrompt = await createPrompt(_promptData);
 
-    setShowTest(true);
+      if (savedPrompt && "data" in savedPrompt) {
+        const _savedPromptData = {
+          content: savedPrompt.data.content,
+          dependencies: savedPrompt.data.dependencies,
+          engine: savedPrompt.data.engine,
+          id: savedPrompt.data.id,
+          is_visible: savedPrompt.data.is_visible,
+          model_parameters: savedPrompt.data.model_parameters,
+          order: savedPrompt.data.order,
+          output_format: savedPrompt.data.output_format,
+          parameters: promptData.parameters,
+          prompt_output_variable: savedPrompt.data.prompt_output_variable,
+          show_output: savedPrompt.data.show_output,
+          title: savedPrompt.data.title,
+        };
+        setPromptData(_savedPromptData);
+        setDisableSave(true);
+        setShowTest(true);
+      }
+    }
   };
 
   return (
@@ -206,13 +219,17 @@ const PromptCardAccordion = ({
                       fontWeight: 500,
                       p: "4px 10px",
                     }}
+                    disabled={disableSave}
                   >
                     Test run
                   </Button>
                   {showTest && (
                     <PromptTestDialog
                       open={showTest}
-                      onClose={() => setShowTest(false)}
+                      onClose={() => {
+                        setShowTest(false);
+                        setDisableSave(false);
+                      }}
                       prompt={promptData}
                     />
                   )}

@@ -2,6 +2,7 @@ import { User, UserPartial } from "./user";
 import { Prompts } from "./prompts";
 import { InputType } from "@/common/types/prompt";
 import { IUser } from "@/common/types";
+import { IEditPrompts } from "@/common/types/builder";
 
 export type ExecutionTemplatePartial = Pick<Templates, "title" | "thumbnail" | "slug">;
 
@@ -311,4 +312,9 @@ export interface IPromptExecution {
   };
   executed_by?: number;
   errors?: string;
+}
+
+export interface CreatePrompt extends IEditPrompts {
+  template: number;
+  error_action: string;
 }
