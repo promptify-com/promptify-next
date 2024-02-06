@@ -21,7 +21,7 @@ import { GetServerSideProps } from "next/types";
 import { getCategories } from "@/hooks/api/categories";
 import { Category } from "@/core/api/dto/templates";
 import { SEO_DESCRIPTION, SEO_TITLE } from "@/common/constants";
-import GuestUserLayout from "@/components/homepage/GuestUserLayout";
+import GuestUserLayout from "@/components/Homepage/GuestUserLayout";
 
 const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
 
