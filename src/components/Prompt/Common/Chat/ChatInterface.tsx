@@ -35,7 +35,7 @@ interface Props {
 export const ChatInterface = ({ template, messages, onGenerate, showGenerate, onAbort }: Props) => {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const { generatedExecution, selectedExecution } = useAppSelector(state => state.executions);
-  const executionMode = Boolean(selectedExecution || generatedExecution);
+  const isExecutionShown = Boolean(selectedExecution || generatedExecution);
 
   const [isHovered, setIsHovered] = useState(false);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
@@ -137,7 +137,7 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
               <Message
                 message={msg}
                 onScrollToBottom={scrollToBottom}
-                isExecutionMode={executionMode}
+                isExecutionShown={isExecutionShown}
               />
               {showAccorionMessage(msg) && (
                 <Box

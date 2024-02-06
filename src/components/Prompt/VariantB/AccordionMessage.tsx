@@ -6,7 +6,6 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import Fade from "@mui/material/Fade";
 import PlayCircle from "@mui/icons-material/PlayCircle";
 import Button from "@mui/material/Button";
-
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setIsSimulationStreaming } from "@/core/store/chatSlice";
 import { Display } from "@/components/Prompt/Common/Display";

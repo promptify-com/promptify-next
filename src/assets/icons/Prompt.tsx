@@ -1,6 +1,4 @@
-import React from "react";
-
-export const Prompt: React.FC = () => (
+export const Prompt = () => (
   <svg
     width="24"
     height="24"

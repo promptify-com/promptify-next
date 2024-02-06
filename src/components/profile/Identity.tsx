@@ -1,17 +1,15 @@
-import { useEffect, useState, useRef } from "react";
 import { Box, Typography } from "@mui/material";
 import { IOption, IQuestion } from "@/common/types";
 import { useQuestions } from "@/hooks/api/questions";
 import { useUserAnswers } from "@/hooks/api/user";
 import { IdentityItem } from "./IdentityItem";
 
-export const Identy = () => {
+export const Identity = () => {
   const [questions] = useQuestions();
   const [answers] = useUserAnswers();
+
   const getUserAnswer = (question: IQuestion): IOption | null => {
-    const option = answers.find(
-      (userAnswer) => userAnswer?.question?.id === question.id
-    )?.option;
+    const option = answers.find(answer => answer.question.id === question.id)?.option;
 
     return option || null;
   };
@@ -71,9 +69,8 @@ export const Identy = () => {
               color: "onSurface",
             }}
           >
-            Identity for Personlized AI at Promptify, blah balh blah, short
-            description in 3 rows to fill in the information, and
-            personalization will improve the data output by 34 percent
+            Identity for Personalized AI at Promptify, blah blah blah, short description in 3 rows to fill in the
+            information, and personalization will improve the data output by 34 percent
           </Typography>
         </Box>
       </Box>
@@ -93,14 +90,12 @@ export const Identy = () => {
               gap: "10px",
             }}
           >
-            {questions.map((question, index) => {
+            {questions.map(question => {
               return (
                 <IdentityItem
-                  length={questions.length}
+                  key={question.id}
                   question={question}
                   defaultOption={getUserAnswer(question)}
-                  index={index}
-                  key={question.id}
                 />
               );
             })}

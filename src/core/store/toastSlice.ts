@@ -33,7 +33,9 @@ export const toastSlice = createSlice({
       state.duration = action.payload.duration ?? initialState.duration;
       state.position = action.payload.position ?? initialState.position;
     },
-    clearToast: _state => initialState,
+    clearToast: state => {
+      state.open = false;
+    },
   },
 });
 

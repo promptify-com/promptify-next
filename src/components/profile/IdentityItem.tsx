@@ -1,30 +1,20 @@
-import {
-  Box,
-  CircularProgress,
-  ClickAwayListener,
-  Grid,
-  Grow,
-  IconButton,
-  MenuItem,
-  MenuList,
-  Paper,
-  Popper,
-  Typography,
-} from "@mui/material";
+import Box from "@mui/material/Box";
+import CircularProgress from "@mui/material/CircularProgress";
+import ClickAwayListener from "@mui/material/ClickAwayListener";
+import Grid from "@mui/material/Grid";
+import Grow from "@mui/material/Grow";
+import IconButton from "@mui/material/IconButton";
+import MenuItem from "@mui/material/MenuItem";
+import MenuList from "@mui/material/MenuList";
+import Paper from "@mui/material/Paper";
+import Popper from "@mui/material/Popper";
+import Typography from "@mui/material/Typography";
 import React, { useEffect, useState } from "react";
-import { Check } from "@/assets/icons";
 import { IOption, IQuestion } from "@/common/types";
 import { useUpdateAnswers } from "@/hooks/api/user";
 import Image from "../design-system/Image";
 import { Edit } from "@mui/icons-material";
 import defaultAvatar from "@/assets/images/default-avatar.jpg";
-
-interface IProps {
-  question: IQuestion;
-  defaultOption: IOption | null;
-  index: number;
-  length: number;
-}
 
 const AVAILABLE_OPTION_IMGS = [
   "Countryside",
@@ -56,9 +46,14 @@ const AVAILABLE_OPTION_IMGS = [
   "Red",
 ];
 
-export const IdentityItem: React.FC<IProps> = ({ length, question, index, defaultOption }) => {
+interface IProps {
+  question: IQuestion;
+  defaultOption: IOption | null;
+}
+
+export const IdentityItem: React.FC<IProps> = ({ question, defaultOption }) => {
   const [open, setOpen] = useState(false);
-  const [selectedOption, setSelectedOption] = useState<IOption | null>(defaultOption ?? null);
+  const [selectedOption, setSelectedOption] = useState<IOption>();
   const [isLoading, setIsLoading] = useState(false);
   const handleToggle = () => {
     setOpen(prevOpen => !prevOpen);
@@ -76,24 +71,31 @@ export const IdentityItem: React.FC<IProps> = ({ length, question, index, defaul
   const handleOptionSelection = async (e: React.SyntheticEvent, option: IOption) => {
     setSelectedOption(option);
     handleClose(e);
+
+    if (option.id === selectedOption?.id) return;
+
     setIsLoading(true);
     await setUserAnswer(question, option.id)
       .then(() => setIsLoading(false))
       .catch(() => setIsLoading(false));
   };
-  const selectedOptionSrc =
-    selectedOption?.text && AVAILABLE_OPTION_IMGS.includes(selectedOption.text)
-      ? `/assets/images/animals/${selectedOption.text}.jpg`
-      : defaultAvatar;
 
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     if (prevOpen.current && !open) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      anchorRef.current!.focus();
+      anchorRef.current?.focus();
     }
-
     prevOpen.current = open;
   }, [open]);
+
+  const _selectedOption = selectedOption ?? defaultOption;
+
+  const options = question.options.filter(option => option.id !== _selectedOption?.id);
+
+  const selectedOptionSrc =
+    _selectedOption?.text && AVAILABLE_OPTION_IMGS.includes(_selectedOption.text)
+      ? `/assets/images/animals/${_selectedOption.text}.jpg`
+      : defaultAvatar;
 
   return (
     <Box
@@ -105,7 +107,6 @@ export const IdentityItem: React.FC<IProps> = ({ length, question, index, defaul
       }}
       width={"100%"}
       justifyContent="space-between"
-      // mt="2rem"
       alignItems="center"
       padding=" 16px"
       borderRadius={"16px"}
@@ -113,8 +114,6 @@ export const IdentityItem: React.FC<IProps> = ({ length, question, index, defaul
       <Grid
         display={"flex"}
         sx={{
-          dispaly: "flex",
-          flexDirection: "row",
           alignItem: "center",
           width: "100%",
           gap: "1em",
@@ -166,7 +165,7 @@ export const IdentityItem: React.FC<IProps> = ({ length, question, index, defaul
               alignItems={"center"}
               gap={1}
             >
-              {selectedOption && (
+              {_selectedOption && (
                 <Image
                   src={`${selectedOptionSrc}`}
                   alt={"Unicorn"}
@@ -189,7 +188,7 @@ export const IdentityItem: React.FC<IProps> = ({ length, question, index, defaul
                   color: "onSurface",
                 }}
               >
-                {selectedOption?.text}
+                {_selectedOption?.text}
               </Typography>
             </Grid>
           </Grid>
@@ -255,7 +254,7 @@ export const IdentityItem: React.FC<IProps> = ({ length, question, index, defaul
                       {question.text}
                     </Typography>
                   </MenuItem>
-                  {question.options.map(option => {
+                  {options.map(option => {
                     const optionSrc =
                       option?.text && AVAILABLE_OPTION_IMGS.includes(option.text)
                         ? `/assets/images/animals/${option.text}.jpg`
@@ -289,13 +288,11 @@ export const IdentityItem: React.FC<IProps> = ({ length, question, index, defaul
                             fontWeight={500}
                             fontSize="0.9rem"
                             ml="1rem"
-                            color={option.id === selectedOption?.id ? "#0F6FFF" : "#000"}
+                            color={"#000"}
                           >
                             {option.text}
                           </Typography>
                         </Box>
-
-                        {option.id === selectedOption?.id && <Check />}
                       </MenuItem>
                     );
                   })}

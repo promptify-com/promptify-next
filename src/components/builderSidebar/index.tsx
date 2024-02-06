@@ -23,7 +23,6 @@ import TestLog from "./TestLog";
 import ClearAll from "@mui/icons-material/ClearAll";
 import Tooltip from "@mui/material/Tooltip";
 import { useDeletePromptExecutionsMutation, useGetPromptExecutionsQuery } from "@/core/api/templates";
-import useFeatureFlag from "@/hooks/useFeatureFlag";
 
 const LINKS: Link[] = [
   {
@@ -66,16 +65,8 @@ export const BuilderSidebar = ({ prompts, setPrompts }: Props) => {
   const dispatch = useAppDispatch();
   const { template, engines } = useAppSelector(state => state.builder);
   const templateId = template?.id;
-  const { isFeatureFlagEnabled } = useFeatureFlag("ff_testrun");
   const [open, setOpen] = useState(false);
   const [activeLink, setActiveLink] = useState<Link>();
-  const filteredLinks = LINKS.filter(link => {
-    if (isFeatureFlagEnabled) {
-      return true;
-    }
-
-    return link.key !== "test_log";
-  });
   const { data: executions } = useGetPromptExecutionsQuery(templateId!, { skip: activeLink?.key !== "test_log" });
   const [deletePrompt] = useDeletePromptExecutionsMutation();
 
@@ -132,7 +123,7 @@ export const BuilderSidebar = ({ prompts, setPrompts }: Props) => {
         flexDirection={"column"}
         gap={1}
       >
-        {filteredLinks.map(link => (
+        {LINKS.map(link => (
           <Grid key={link.name}>
             <ListItem
               disablePadding

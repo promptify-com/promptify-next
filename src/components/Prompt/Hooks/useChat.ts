@@ -80,6 +80,7 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
     if (hasRequiredQuestion && isVariantA) {
       const textMessage = createMessage({ type: "text", noHeader: true });
       textMessage.text = "This is a list of information we need to execute this template:";
+      textMessage.noHeader = true;
       initialQueuedMessages.push(textMessage);
     }
     setMessages(InitialMessages);
