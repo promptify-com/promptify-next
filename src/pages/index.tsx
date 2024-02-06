@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import type { AxiosResponse } from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { IContinueWithSocialMediaResponse } from "@/common/types";
@@ -10,83 +10,20 @@ import { Layout } from "@/layout";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
 import { CategoriesSection } from "@/components/explorer/CategoriesSection";
 import { userApi } from "@/core/api/user";
-import { WelcomeCard } from "@/components/homepage/WelcomeCard";
-import { useGetTemplatesByFilterQuery, useGetTemplatesSuggestedQuery } from "@/core/api/templates";
+import { useGetTemplatesSuggestedQuery } from "@/core/api/templates";
 import { useGetLatestExecutedTemplatesQuery } from "@/core/api/executions";
 import { getPathURL, saveToken } from "@/common/utils";
 import { RootState } from "@/core/store";
 import { isValidUserFn, updateUser } from "@/core/store/userSlice";
 import { redirectToPath } from "@/common/helpers";
-import useToken from "@/hooks/useToken";
 import ClientOnly from "@/components/base/ClientOnly";
 import { GetServerSideProps } from "next/types";
 import { getCategories } from "@/hooks/api/categories";
 import { Category } from "@/core/api/dto/templates";
-import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import { SEO_DESCRIPTION, SEO_TITLE } from "@/common/constants";
+import GuestUserLayout from "@/components/homepage/GuestUserLayout";
 
 const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
-const ioLatestsOptions = {
-  threshold: 0,
-  rootMargin: "150px",
-  disconnectNodeOnceVisibile: true,
-};
-const ioPopularOptions = {
-  threshold: 0.5,
-  rootMargin: "100px",
-  disconnectNodeOnceVisibile: true,
-};
-
-function NonLoggedinUsersLayout({ categories }: { categories: Category[] }) {
-  const token = useToken();
-  const latestTemplatesRef = useRef<HTMLDivElement | null>(null);
-  const popularTemplatesRef = useRef<HTMLDivElement | null>(null);
-  const latestTemplatesEntry = useIntersectionObserver(latestTemplatesRef, ioLatestsOptions);
-  const popularTemplatesEntry = useIntersectionObserver(popularTemplatesRef, ioPopularOptions);
-  const { data: popularTemplates } = useGetTemplatesByFilterQuery(
-    {
-      ordering: "-runs",
-      limit: 7,
-    },
-    {
-      skip: token || !popularTemplatesEntry?.isIntersecting,
-    },
-  );
-  const { data: latestTemplates } = useGetTemplatesByFilterQuery(
-    {
-      ordering: "-created_at",
-      limit: 7,
-    },
-    {
-      skip: token || !latestTemplatesEntry?.isIntersecting,
-    },
-  );
-
-  return (
-    <>
-      <WelcomeCard />
-      <CategoriesSection
-        categories={categories}
-        isLoading={false}
-        displayTitle
-      />
-      <TemplatesSection
-        templateLoading={!popularTemplates?.results.length}
-        templates={popularTemplates?.results}
-        title="Most Popular Prompt Templates"
-        type="popularTemplates"
-        ref={popularTemplatesRef}
-      />
-      <TemplatesSection
-        templateLoading={!latestTemplates?.results.length}
-        templates={latestTemplates?.results}
-        title="Latest Prompt Templates"
-        type="latestTemplates"
-        ref={latestTemplatesRef}
-      />
-    </>
-  );
-}
 
 const HomePage = ({ categories }: { categories: Category[] }) => {
   const path = getPathURL();
@@ -208,7 +145,7 @@ const HomePage = ({ categories }: { categories: Category[] }) => {
               </Grid>
             </ClientOnly>
           ) : (
-            <NonLoggedinUsersLayout categories={categories} />
+            <GuestUserLayout categories={categories} />
           )}
         </Grid>
       </Box>
