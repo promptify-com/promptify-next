@@ -125,7 +125,7 @@ const PromptCardAccordion = ({
   const handleOpenTest = async () => {
     if (template) {
       const { temp_id, ...restOfPromptData } = promptData;
-      const _promptData = { ...restOfPromptData, template: template.id, error_action: "REPEAT" };
+      const _promptData = { ...restOfPromptData, template: template.id };
       const savedPrompt = await createPrompt(_promptData);
 
       if (savedPrompt && "data" in savedPrompt) {

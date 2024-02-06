@@ -316,5 +316,4 @@ export interface IPromptExecution {
 
 export interface CreatePrompt extends IEditPrompts {
   template: number;
-  error_action: string;
 }
