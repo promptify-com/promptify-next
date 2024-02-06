@@ -91,9 +91,9 @@ export const attachCredentialsToNode = (node: INode, credentials: INodeCredentia
       authTypeMapping[authenticationType] ||
       authenticationType;
 
-    if (credentials[authType]) {
+    if (credentials[authType] && !node.credentials![authType]) {
       const { id, name } = credentials[authType];
-      node.credentials = { [authType]: { id, name } };
+      node.credentials![authType] = { id, name };
     }
   }
 };

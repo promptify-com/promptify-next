@@ -7,16 +7,17 @@ import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
 import FormControl from "@mui/material/FormControl";
 import { Formik, Form, Field } from "formik";
+import { useRouter } from "next/router";
 import { object, string } from "yup";
 
 import BaseButton from "@/components/base/BaseButton";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import Storage from "@/common/storage";
-import { useCreateCredentialsMutation } from "@/core/api/workflows";
+import { useCreateCredentialsMutation, useUpdateWorkflowMutation } from "@/core/api/workflows";
 import { setToast } from "@/core/store/toastSlice";
-import type { ICredentialProperty } from "@/components/Automation/types";
+import type { ICredentialProperty, IWorkflowCreateResponse } from "@/components/Automation/types";
 import type { IPromptInput } from "@/common/types/prompt";
-import { setCredentialsStored } from "@/core/store/chatSlice";
+import { attachCredentialsToNode } from "@/components/Automation/helpers";
 
 interface Props {
   input: IPromptInput;
@@ -28,20 +29,18 @@ interface FormValues {
 
 function Credentials({ input }: Props) {
   const dispatch = useAppDispatch();
+  const router = useRouter();
+
+  const [updateWorkflow] = useUpdateWorkflowMutation();
   const [createCredentials] = useCreateCredentialsMutation();
-  const credentials = useAppSelector(state => state.chat.credentials);
 
-  const storedCredentials = Storage.get("credentials") || {};
-
-  const credential = credentials.find(cred => cred.displayName === input.fullName);
-  const areCredentialsStored = storedCredentials && !!storedCredentials[credential?.name!];
+  const { credentials, areCredentialsStored } = useAppSelector(state => state.chat);
 
   const [openModal, setOpenModal] = useState(false);
   const [credentialProperties, setCredentialProperties] = useState<ICredentialProperty[]>([]);
 
-  useEffect(() => {
-    dispatch(setCredentialsStored(areCredentialsStored));
-  }, [JSON.stringify(storedCredentials)]);
+  const workflowId = router.query.workflowId as string;
+  const credential = credentials.find(cred => cred.displayName === input.fullName);
 
   useEffect(() => {
     if (credential) {
@@ -84,22 +83,43 @@ function Credentials({ input }: Props) {
       }
     }
     const payload = {
-      name: `${credential?.displayName} Credentials` || "Unnamed Credential",
+      name: `${credential?.displayName} Credentials`,
       type: credential?.name!,
       data: data,
     };
     try {
-      const response = await createCredentials(payload).unwrap();
+      await createCredentials(payload).unwrap();
 
-      storedCredentials[credential?.name!] = {
-        name: response.name,
-        id: response.id,
-        createdAt: response.createdAt,
-      };
-      Storage.set("credentials", JSON.stringify(storedCredentials));
+      const storedWorkflows = Storage.get("workflows") || {};
+      const storedCredentials = Storage.get("credentials") || {};
+      const workflow = storedWorkflows[workflowId].workflow as IWorkflowCreateResponse;
+
+      workflow.nodes.forEach(node => {
+        attachCredentialsToNode(node, storedCredentials);
+      });
+
+      const nodesWithAuthentication = workflow.nodes.filter(node => node.parameters?.authentication);
+      const allNodesHaveCredentials = nodesWithAuthentication.every(
+        node => node.credentials && Object.keys(node.credentials).length > 0,
+      );
+
+      storedWorkflows[workflowId].workflow = workflow;
+      Storage.set("workflows", JSON.stringify(storedWorkflows));
+
+      if (allNodesHaveCredentials) {
+        try {
+          await updateWorkflow({
+            workflowId: parseInt(workflowId),
+            data: workflow,
+          }).unwrap();
+        } catch (error) {
+          console.error("Error updating workflow:", error);
+          dispatch(setToast({ message: "Failed to update workflow", severity: "error" }));
+        }
+      }
 
       setOpenModal(false);
-      dispatch(setToast({ message: "Credential is successfully created", severity: "success" }));
+      dispatch(setToast({ message: "Credential was successfully created", severity: "success" }));
     } catch (error) {
       console.error("Error:", error);
       dispatch(setToast({ message: "Credential was not created, please try again.", severity: "error" }));

@@ -8,7 +8,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { ChatInput } from "@/components/Prompt/Common/Chat/ChatInput";
 import SigninButton from "@/components/common/buttons/SigninButton";
 import useChat from "@/components/Prompt/Hooks/useChat";
-import { setCredentials, setCredentialsStored, setInputs } from "@/core/store/chatSlice";
+import { setCredentialsStored, setInputs } from "@/core/store/chatSlice";
 import useWorkflow from "@/components/Automation/Hooks/useWorkflow";
 import WorkflowPlaceholder from "@/components/Automation/WorkflowPlaceholder";
 import Storage from "@/common/storage";
@@ -30,7 +30,7 @@ export default function SingleWorkflow({ workflow }: Props) {
 
   const { areCredentialsStored } = useAppSelector(state => state.chat);
 
-  const { selectedWorkflow, workflowAsTemplate, sendMessageAPI, createWorkflowIfNeeded, getCredentials } =
+  const { selectedWorkflow, workflowAsTemplate, sendMessageAPI, createWorkflowIfNeeded, extractCredsFromNodes } =
     useWorkflow(workflow);
 
   const {
@@ -61,8 +61,7 @@ export default function SingleWorkflow({ workflow }: Props) {
       createWorkflowIfNeeded(selectedWorkflow.id);
 
       const { nodes } = selectedWorkflow.data;
-      const credentials = await getCredentials(nodes);
-      dispatch(setCredentials(credentials));
+      const credentials = await extractCredsFromNodes(nodes);
 
       const inputs: IPromptInput[] = nodes
         .filter(node => node.type === "n8n-nodes-base.set")
@@ -80,6 +79,10 @@ export default function SingleWorkflow({ workflow }: Props) {
     }
   };
 
+  useEffect(() => {
+    processData();
+  }, [selectedWorkflow]);
+
   function prepareAndQueueMessages(credentials: ICredential[]) {
     const formMessage = createMessage({ type: "form", noHeader: true });
     const initialQueuedMessages: IMessage[] = [formMessage];
@@ -96,10 +99,6 @@ export default function SingleWorkflow({ workflow }: Props) {
     addToQueuedMessages(initialQueuedMessages);
   }
 
-  useEffect(() => {
-    processData();
-  }, [selectedWorkflow]);
-
   const executeWorflow = async () => {
     try {
       setIsValidatingAnswer(true);
@@ -108,8 +107,7 @@ export default function SingleWorkflow({ workflow }: Props) {
         messageAnswersForm(response, "html");
       }
     } catch (error) {
-      messageAnswersForm("Something went wrong when executing this workflow.");
-      console.error(error);
+      messageAnswersForm("Something went wrong when executing this GPT.");
     }
     setIsValidatingAnswer(false);
   };

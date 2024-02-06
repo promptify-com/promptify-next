@@ -46,7 +46,7 @@ export const useLocalStorageSync = <T>(key: string, onStorageUpdate: (data: T | 
     if (data !== null) {
       onStorageUpdate(data);
     }
-  }, [data, onStorageUpdate]);
+  }, [data]);
 
   return data;
 };
