@@ -205,6 +205,13 @@ export const templatesApi = baseApi.injectEndpoints({
           }
         },
       }),
+      createPrompt: builder.mutation<IEditPrompts, IEditPrompts>({
+        query: (data: IEditPrompts) => ({
+          url: `/api/meta/prompts/`,
+          method: "post",
+          data,
+        }),
+      }),
     };
   },
 });
@@ -231,4 +238,5 @@ export const {
   useGetTemplateApiStatusQuery,
   useGetPromptExecutionsQuery,
   useDeletePromptExecutionsMutation,
+  useCreatePromptMutation,
 } = templatesApi;

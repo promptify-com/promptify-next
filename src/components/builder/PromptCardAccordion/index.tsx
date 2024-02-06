@@ -18,10 +18,9 @@ import { getBuilderVarsPresets } from "@/common/helpers/getBuilderVarsPresets";
 import { useDebouncedDispatch } from "@/hooks/useDebounceDispatch";
 import { BUILDER_TYPE } from "@/common/constants";
 import PromptTestDialog from "./PromptTest";
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { useAppSelector } from "@/hooks/useStore";
 import { isDeepEqual } from "@/common/helpers";
-import { useUpdatePromptMutation } from "@/core/api/templates";
-import { setToast } from "@/core/store/toastSlice";
+import { useCreatePromptMutation, useUpdatePromptMutation } from "@/core/api/templates";
 
 interface Props {
   prompt: IEditPrompts;
@@ -47,7 +46,6 @@ const PromptCardAccordion = ({
   builderType,
 }: Props) => {
   const initPromptData = useRef(prompt);
-  const dispatch = useAppDispatch();
   const [promptData, setPromptData] = useState(prompt);
   const [renameAllow, setRenameAllow] = useState(false);
   const [showTest, setShowTest] = useState(false);
@@ -59,6 +57,7 @@ const PromptCardAccordion = ({
   const isDraft = template?.status === "DRAFT";
 
   const [savePrompt] = useUpdatePromptMutation();
+  const [createPrompt] = useCreatePromptMutation();
 
   const dispatchUpdatePrompt = useDebouncedDispatch(
     (prompt: IEditPrompts) => {
@@ -121,20 +120,30 @@ const PromptCardAccordion = ({
     [findPromptIndex, movePrompt],
   );
 
-  const handleOpenTest = () => {
-    if (saveNeeded.current) {
-      dispatch(
-        setToast({
-          message: "Please save your template changes first before running tests.",
-          severity: "warning",
-          duration: 8000,
-          position: { vertical: "top", horizontal: "center" },
-        }),
-      );
-      return;
-    }
+  const handleOpenTest = async () => {
+    if (template) {
+      promptData.template = template.id;
+      const savedPrompt = await createPrompt(promptData).unwrap();
 
-    setShowTest(true);
+      if (savedPrompt) {
+        const _savedPromptData: IEditPrompts = {
+          content: savedPrompt.content,
+          dependencies: savedPrompt.dependencies,
+          engine: savedPrompt.engine,
+          id: savedPrompt.id,
+          is_visible: savedPrompt.is_visible,
+          model_parameters: savedPrompt.model_parameters,
+          order: savedPrompt.order,
+          output_format: savedPrompt.output_format,
+          parameters: promptData.parameters,
+          prompt_output_variable: savedPrompt.prompt_output_variable,
+          show_output: savedPrompt.show_output,
+          title: savedPrompt.title,
+        };
+        setPromptData(_savedPromptData);
+        setShowTest(true);
+      }
+    }
   };
 
   return (

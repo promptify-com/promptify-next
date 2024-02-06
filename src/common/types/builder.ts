@@ -35,6 +35,7 @@ export interface IEditPrompts extends IPromptOptions {
   dependencies: number[];
   parameters: IPromptParams[];
   order: number;
+  template?: number;
 }
 
 export interface HighlightWithinTextareaRef {
