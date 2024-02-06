@@ -64,12 +64,8 @@ const useWorkflow = (workflow: IWorkflow) => {
     const storedWorkflows = Storage.get("workflows") || {};
 
     const webhookPath = storedWorkflows[workflowId].webhookPath;
-    try {
-      const response = await ApiClient.post(`/webhook/${webhookPath}`, inputsData);
-      return response.data;
-    } catch (error) {
-      console.error("failed to sendMessage");
-    }
+    const response = await ApiClient.post(`/webhook/${webhookPath}`, inputsData);
+    return response.data;
   }
 
   async function extractCredsFromNodes(nodes: INode[]) {
