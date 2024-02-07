@@ -17,7 +17,7 @@ import { authClient } from "@/common/axios";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { IMessage } from "@/components/Prompt/Types/chat";
-import type { ICredentialInput, IWorkflow } from "@/components/Automation/types";
+import type { ICredentialInput, INode, IWorkflow } from "@/components/Automation/types";
 
 interface Props {
   workflow: IWorkflow;
@@ -69,7 +69,7 @@ export default function SingleWorkflow({ workflow }: Props) {
 
       dispatch(setInputs(inputs));
       initialMessages({ questions: inputs });
-      prepareAndQueueMessages(credentialsInput);
+      prepareAndQueueMessages(credentialsInput, nodes);
     }
   };
 
@@ -79,12 +79,16 @@ export default function SingleWorkflow({ workflow }: Props) {
     }
   }, [selectedWorkflow, isWorkflowLoading]);
 
-  function prepareAndQueueMessages(credentialsInput: ICredentialInput[]) {
+  function prepareAndQueueMessages(credentialsInput: ICredentialInput[], nodes: INode[]) {
     const initialQueuedMessages: IMessage[] = [];
 
-    const areAllCredentialsStored = checkAllCredentialsStored(credentialsInput);
+    const requiresAuthentication = nodes.some(node => node.parameters?.authentication);
 
-    dispatch(setAreCredentialsStored(areAllCredentialsStored));
+    let areAllCredentialsStored = true;
+    if (requiresAuthentication) {
+      areAllCredentialsStored = checkAllCredentialsStored(credentialsInput);
+      dispatch(setAreCredentialsStored(areAllCredentialsStored));
+    }
 
     if (!areAllCredentialsStored) {
       const credMessage = createMessage({ type: "credentials", noHeader: true });
