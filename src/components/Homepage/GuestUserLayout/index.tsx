@@ -1,6 +1,4 @@
 import { useRef } from "react";
-import useToken from "@/hooks/useToken";
-import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import { useGetTemplatesByFilterQuery } from "@/core/api/templates";
 import { Category } from "@/core/api/dto/templates";
 import Landing from "./Landing";
@@ -8,6 +6,8 @@ import CategoryCarousel from "./CategoriesCarousel";
 import Services from "./Services";
 import Learn from "./Learn";
 import Testimonials from "./Testimonials";
+import { TemplatesSection } from "../../explorer/TemplatesSection";
+import { Stack, Typography } from "@mui/material";
 
 const ioLatestsOptions = {
   threshold: 0,
@@ -21,35 +21,34 @@ const ioPopularOptions = {
 };
 
 function GuestUserLayout({ categories }: { categories: Category[] }) {
-  const token = useToken();
-  const latestTemplatesRef = useRef<HTMLDivElement | null>(null);
   const popularTemplatesRef = useRef<HTMLDivElement | null>(null);
-  const latestTemplatesEntry = useIntersectionObserver(latestTemplatesRef, ioLatestsOptions);
-  const popularTemplatesEntry = useIntersectionObserver(popularTemplatesRef, ioPopularOptions);
-  const { data: popularTemplates } = useGetTemplatesByFilterQuery(
-    {
-      ordering: "-runs",
-      limit: 7,
-    },
-    {
-      skip: token || !popularTemplatesEntry?.isIntersecting,
-    },
-  );
-  const { data: latestTemplates } = useGetTemplatesByFilterQuery(
-    {
-      ordering: "-created_at",
-      limit: 7,
-    },
-    {
-      skip: token || !latestTemplatesEntry?.isIntersecting,
-    },
-  );
+  const { data: popularTemplates, isLoading } = useGetTemplatesByFilterQuery({
+    ordering: "-runs",
+    limit: 30,
+  });
 
   return (
     <>
       <Landing />
       <CategoryCarousel categories={categories} />
       <Services />
+      <Stack
+        py={"48px"}
+        gap={4}
+      >
+        <Typography
+          fontSize={32}
+          fontWeight={400}
+          color={"#2A2A3C"}
+        >
+          Most popular templates
+        </Typography>
+        <TemplatesSection
+          templateLoading={isLoading}
+          templates={popularTemplates?.results}
+          type="popularTemplates"
+        />
+      </Stack>
       <Learn />
       <Testimonials />
     </>

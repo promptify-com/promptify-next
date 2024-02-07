@@ -32,6 +32,7 @@ const LinkCard = ({ link }: { link: ILink }) => (
   <Link
     href={link.link}
     style={{ textDecoration: "none" }}
+    target="_blank"
   >
     <Stack
       gap={1}
@@ -77,7 +78,7 @@ const Links: ILink[] = [
     icon: <Support />,
     title: "Help Center",
     description: "Lorem ipsum dolor sit amet, consectetur adipiscing",
-    link: "#",
+    link: "https://blog.promptify.com/",
   },
   {
     icon: <RaisedHand />,
@@ -99,7 +100,7 @@ function Learn() {
       >
         <Typography
           fontSize={32}
-          fontWeight={500}
+          fontWeight={400}
           color={"#2A2A3C"}
         >
           Learn & Help

@@ -1,6 +1,5 @@
 import Chip from "@mui/material/Chip";
 import Stack from "@mui/material/Stack";
-import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
 import Grid from "@mui/material/Grid";
@@ -11,18 +10,19 @@ import { useRouter } from "next/router";
 import { setSelectedTag } from "@/core/store/filtersSlice";
 import Image from "@/components/design-system/Image";
 import useTruncate from "@/hooks/useTruncate";
-import { isDesktopViewPort, redirectToPath, stripTags } from "@/common/helpers";
+import { isDesktopViewPort, stripTags } from "@/common/helpers";
 import { theme } from "@/theme";
 import { useAppDispatch } from "@/hooks/useStore";
+import Link from "next/link";
 
 type CardTemplateProps = {
   template: Templates | TemplateExecutionsDisplay;
-  noRedirect?: boolean;
   query?: string;
   asResult?: boolean;
+  vertical?: boolean;
 };
 
-function CardTemplate({ template, noRedirect = false, query, asResult = false }: CardTemplateProps) {
+function CardTemplate({ template, query, asResult, vertical }: CardTemplateProps) {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { truncate } = useTruncate();
@@ -49,110 +49,100 @@ function CardTemplate({ template, noRedirect = false, query, asResult = false }:
   };
 
   return (
-    <Box
-      onClick={() => {
-        if (!noRedirect) {
-          redirectToPath(`/prompt/${template.slug}`);
-        }
+    <Link
+      href={`/prompt/${template.slug}`}
+      style={{
+        textDecoration: "none",
       }}
     >
       <Card
         sx={{
+          width: isDesktop && vertical ? "210px" : "auto",
+          height: "100%",
           borderRadius: "16px",
           cursor: "pointer",
           p: "8px",
-          bgcolor: "surface.2",
+          bgcolor: isDesktop && vertical ? "transparent" : "surface.2",
           "&:hover": {
             bgcolor: "action.hover",
           },
         }}
         elevation={0}
       >
-        <Grid
-          display={"flex"}
-          flexDirection={{ xs: "column", md: "row" }}
-          alignItems={{ xs: "start", md: "center" }}
+        <Stack
+          direction={{ xs: "column", md: vertical ? "column" : "row" }}
+          alignItems={{ xs: "start", md: vertical ? "flex-start" : "center" }}
           justifyContent={"space-between"}
+          gap={1}
         >
-          <Grid
-            display={"flex"}
-            flexDirection={"row"}
-            width={{ xs: "100%", md: "auto" }}
+          <Stack
+            direction={isDesktop && vertical ? "column" : "row"}
             justifyContent={"space-between"}
-            gap={{ xs: "16px", md: 0 }}
             alignItems={"center"}
+            gap={2}
+            width={{ xs: "100%", md: "auto" }}
           >
-            <Grid
-              display={"flex"}
-              alignItems={"center"}
-              gap={"16px"}
-            >
-              <Grid>
-                <CardMedia
-                  sx={{
-                    zIndex: 1,
-                    borderRadius: "16px",
-                    width: { xs: "98px", sm: "72px" },
-                    height: { xs: "73px", sm: "54px" },
-                  }}
-                >
-                  <Image
-                    src={template.thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
-                    alt={template.title}
-                    style={{ borderRadius: "16%", objectFit: "cover", width: "100%", height: "100%" }}
-                  />
-                </CardMedia>
-              </Grid>
-              <Grid
-                gap={0.5}
-                sx={{}}
-                display={"flex"}
-                flexDirection={"column"}
-              >
-                <Typography
-                  fontSize={14}
-                  fontWeight={500}
-                >
-                  {highlightSearchQuery(template.title)}
-                </Typography>
-                <Typography
-                  sx={{
-                    fontSize: 12,
-                    fontWeight: 400,
-                    lineHeight: "16.8px",
-                    letterSpacing: "0.15px",
-                    color: "onSurface",
-                  }}
-                >
-                  {highlightSearchQuery(truncate(stripTags(template.description), { length: 70 }))}
-                </Typography>
-              </Grid>
-            </Grid>
-            <Image
-              src={template.created_by?.avatar ?? require("@/assets/images/default-avatar.jpg")}
-              alt={template.created_by?.first_name?.slice(0, 1) ?? "P"}
-              width={32}
-              height={32}
-              style={{
-                display: isDesktop ? "none" : asResult ? "none" : "flex",
-                backgroundColor: theme.palette.surface[5],
-                borderRadius: "50%",
+            <CardMedia
+              sx={{
+                zIndex: 1,
+                borderRadius: "16px",
+                overflow: "hidden",
+                width: { xs: "98px", sm: vertical ? "100%" : "72px" },
+                height: { xs: "73px", sm: vertical ? "160px" : "54px" },
               }}
-            />
-          </Grid>
-          <Grid
+            >
+              <Image
+                src={template.thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
+                alt={template.title}
+                style={{ objectFit: "cover", width: "100%", height: "100%" }}
+              />
+            </CardMedia>
+            <Stack gap={0.5}>
+              <Typography
+                fontSize={14}
+                fontWeight={500}
+              >
+                {highlightSearchQuery(template.title)}
+              </Typography>
+              <Typography
+                sx={{
+                  fontSize: 12,
+                  fontWeight: 400,
+                  lineHeight: "16.8px",
+                  letterSpacing: "0.15px",
+                  color: "onSurface",
+                }}
+              >
+                {highlightSearchQuery(truncate(stripTags(template.description), { length: 70 }))}
+              </Typography>
+            </Stack>
+            {!vertical && (
+              <Image
+                src={template.created_by?.avatar ?? require("@/assets/images/default-avatar.jpg")}
+                alt={template.created_by?.first_name?.slice(0, 1) ?? "P"}
+                width={32}
+                height={32}
+                style={{
+                  display: isDesktop ? "none" : asResult ? "none" : "flex",
+                  backgroundColor: theme.palette.surface[5],
+                  borderRadius: "50%",
+                }}
+              />
+            )}
+          </Stack>
+          <Stack
             display={asResult ? "none" : "flex"}
+            direction={"row"}
+            justifyContent={"space-between"}
             alignItems={{ xs: "end", md: "center" }}
             width={{ xs: "100%", md: "auto" }}
             marginTop={{ xs: "10px", md: "0px" }}
-            justifyContent={"space-between"}
             gap={3}
           >
-            <Grid
-              sx={{
-                display: "flex",
-                gap: "4px",
-              }}
+            <Stack
+              direction={"row"}
+              flexWrap={"wrap"}
+              gap={1}
             >
               {template.tags.slice(0, 3).map(tag => (
                 <Chip
@@ -175,43 +165,47 @@ function CardTemplate({ template, noRedirect = false, query, asResult = false }:
                   }}
                 />
               ))}
-            </Grid>
-            <Grid
-              sx={{
-                display: "flex",
-                gap: "0.4em",
-              }}
-            >
-              <Stack
-                direction={"row"}
-                alignItems={"center"}
-                gap={0.5}
-                sx={{
-                  display: "flex",
-                  fontSize: 13,
-                  fontWeight: 500,
-                  color: "onSurface",
-                }}
-              >
-                <ArrowBackIosRoundedIcon sx={{ fontSize: 14 }} />
-                {template.favorites_count || 0}
-              </Stack>
-            </Grid>
-            <Image
-              src={template.created_by?.avatar ?? require("@/assets/images/default-avatar.jpg")}
-              alt={template.created_by?.first_name?.slice(0, 1) ?? "P"}
-              width={32}
-              height={32}
-              style={{
-                display: isDesktop ? "flex" : "none",
-                backgroundColor: theme.palette.surface[5],
-                borderRadius: "50%",
-              }}
-            />
-          </Grid>
-        </Grid>
+            </Stack>
+            {!vertical && (
+              <>
+                <Grid
+                  sx={{
+                    display: "flex",
+                    gap: "0.4em",
+                  }}
+                >
+                  <Stack
+                    direction={"row"}
+                    alignItems={"center"}
+                    gap={0.5}
+                    sx={{
+                      display: "flex",
+                      fontSize: 13,
+                      fontWeight: 500,
+                      color: "onSurface",
+                    }}
+                  >
+                    <ArrowBackIosRoundedIcon sx={{ fontSize: 14 }} />
+                    {template.favorites_count || 0}
+                  </Stack>
+                </Grid>
+                <Image
+                  src={template.created_by?.avatar ?? require("@/assets/images/default-avatar.jpg")}
+                  alt={template.created_by?.first_name?.slice(0, 1) ?? "P"}
+                  width={32}
+                  height={32}
+                  style={{
+                    display: isDesktop ? "flex" : "none",
+                    backgroundColor: theme.palette.surface[5],
+                    borderRadius: "50%",
+                  }}
+                />
+              </>
+            )}
+          </Stack>
+        </Stack>
       </Card>
-    </Box>
+    </Link>
   );
 }
 

@@ -106,7 +106,7 @@ function Testimonials() {
         >
           <Typography
             fontSize={32}
-            fontWeight={500}
+            fontWeight={400}
             color={"#2A2A3C"}
           >
             Testimonials

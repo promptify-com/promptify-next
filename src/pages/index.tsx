@@ -125,7 +125,6 @@ const HomePage = ({ categories }: { categories: Category[] }) => {
                 </Grid>
 
                 <TemplatesSection
-                  isLatestTemplates
                   templateLoading={isMyLatestExecutionsLoading}
                   templates={myLatestExecutions}
                   title="Your Latest Templates:"

@@ -56,7 +56,7 @@ export default function ExplorePage({ categories }: Props) {
             />
           )}
           <TemplatesSection
-            filtred={!allFilterParamsNull}
+            filtered={!allFilterParamsNull}
             templates={templates ?? []}
             isLoading={isFetching}
             templateLoading={isTemplatesLoading}
@@ -69,7 +69,7 @@ export default function ExplorePage({ categories }: Props) {
           />
           {isValidUser && !!suggestedTemplates?.length && (
             <TemplatesSection
-              filtred={false}
+              filtered={false}
               templates={suggestedTemplates ?? []}
               isLoading={isSuggestedTemplatesLoading}
               templateLoading={isSuggestedTemplatesLoading}
