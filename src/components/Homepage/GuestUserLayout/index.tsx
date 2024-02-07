@@ -5,6 +5,7 @@ import { useGetTemplatesByFilterQuery } from "@/core/api/templates";
 import { Category } from "@/core/api/dto/templates";
 import Landing from "./Landing";
 import CategoryCarousel from "./CategoriesCarousel";
+import Services from "./Services";
 
 const ioLatestsOptions = {
   threshold: 0,
@@ -46,6 +47,7 @@ function GuestUserLayout({ categories }: { categories: Category[] }) {
     <>
       <Landing />
       <CategoryCarousel categories={categories} />
+      <Services />
     </>
   );
 }
