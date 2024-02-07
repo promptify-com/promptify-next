@@ -21,7 +21,6 @@ const ioPopularOptions = {
 };
 
 function GuestUserLayout({ categories }: { categories: Category[] }) {
-  const popularTemplatesRef = useRef<HTMLDivElement | null>(null);
   const { data: popularTemplates, isLoading } = useGetTemplatesByFilterQuery({
     ordering: "-runs",
     limit: 30,

@@ -53,6 +53,7 @@ function CardTemplate({ template, query, asResult, vertical }: CardTemplateProps
       href={`/prompt/${template.slug}`}
       style={{
         textDecoration: "none",
+        width: isDesktop ? "auto" : "100%",
       }}
     >
       <Card
@@ -77,10 +78,10 @@ function CardTemplate({ template, query, asResult, vertical }: CardTemplateProps
         >
           <Stack
             direction={isDesktop && vertical ? "column" : "row"}
-            justifyContent={"space-between"}
-            alignItems={"center"}
+            justifyContent={{ xs: "flex-start", md: "space-between" }}
+            alignItems={vertical ? "flex-start" : "center"}
             gap={2}
-            width={{ xs: "100%", md: "auto" }}
+            width={"100%"}
           >
             <CardMedia
               sx={{
@@ -97,7 +98,10 @@ function CardTemplate({ template, query, asResult, vertical }: CardTemplateProps
                 style={{ objectFit: "cover", width: "100%", height: "100%" }}
               />
             </CardMedia>
-            <Stack gap={0.5}>
+            <Stack
+              flex={1}
+              gap={0.5}
+            >
               <Typography
                 fontSize={14}
                 fontWeight={500}
@@ -141,7 +145,7 @@ function CardTemplate({ template, query, asResult, vertical }: CardTemplateProps
           >
             <Stack
               direction={"row"}
-              flexWrap={"wrap"}
+              flexWrap={vertical ? "wrap" : "nowrap"}
               gap={1}
             >
               {template.tags.slice(0, 3).map(tag => (
