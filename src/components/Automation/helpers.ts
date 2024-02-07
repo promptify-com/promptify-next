@@ -1,5 +1,5 @@
+import Storage from "@/common/storage";
 import type {
-  INodeCredentials,
   INode,
   NodesFileData,
   ICredentialJson,
@@ -79,7 +79,7 @@ export async function extractCredentialsInput(nodes: INode[] = []): Promise<ICre
   return credentialsInput;
 }
 
-export const attachCredentialsToNode = (node: INode, credentials: ICredential[]) => {
+export const attachCredentialsToNode = (node: INode) => {
   if (node.type === "n8n-nodes-promptify.promptify") {
     return;
   }
@@ -95,7 +95,8 @@ export const attachCredentialsToNode = (node: INode, credentials: ICredential[])
       authTypeMapping[authenticationType] ||
       authenticationType;
 
-    const credential = credentials.find(cred => cred.type === authType);
+    const currentCredentials: ICredential[] = Storage.get("credentials") || [];
+    const credential = currentCredentials.find(cred => cred.type === authType);
 
     if (credential && !node.credentials?.[credential.type]) {
       const { type, id, name } = credential;

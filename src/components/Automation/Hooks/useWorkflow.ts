@@ -7,10 +7,9 @@ import { clearExecutionsStates } from "@/core/store/executionsSlice";
 import { clearChatStates } from "@/core/store/chatSlice";
 import { n8nClient as ApiClient } from "@/common/axios";
 import Storage from "@/common/storage";
-import { attachCredentialsToNode, extractWebhookPath } from "@/components/Automation/helpers";
+import { extractWebhookPath } from "@/components/Automation/helpers";
 import type { Category } from "@/core/api/dto/templates";
-import type { IWorkflow, IWorkflowCreateResponse } from "@/components/Automation/types";
-import useCredentials from "./useCredentials";
+import type { IWorkflow } from "@/components/Automation/types";
 
 const useWorkflow = (workflow: IWorkflow) => {
   const router = useRouter();
@@ -21,8 +20,6 @@ const useWorkflow = (workflow: IWorkflow) => {
   });
 
   const [workflowData, setWorkflowData] = useState<IWorkflow>(workflow);
-
-  const { credentials } = useCredentials();
 
   const dispatch = useAppDispatch();
   const webhookPathRef = useRef<string>();
@@ -44,10 +41,6 @@ const useWorkflow = (workflow: IWorkflow) => {
         const nodesRequiringAuthentication = response.nodes.filter(node => node.parameters?.authentication);
 
         if (nodesRequiringAuthentication.length) {
-          nodesRequiringAuthentication.forEach(node => {
-            attachCredentialsToNode(node, credentials);
-          });
-
           const updatedResponse = {
             name: response.name,
             nodes: response.nodes,
