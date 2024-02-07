@@ -118,10 +118,15 @@ function Credentials({ input }: Props) {
           await updateWorkflow({
             workflowId: parseInt(workflowId),
             data: workflow,
-          }).unwrap();
+          });
+
+          if (storedWorkflows[workflowId]) {
+            const { webhookPath } = storedWorkflows[workflowId];
+            storedWorkflows[workflowId] = { webhookPath };
+            Storage.set("workflows", JSON.stringify(storedWorkflows));
+          }
         } catch (error) {
           console.error("Error updating workflow:", error);
-          dispatch(setToast({ message: "Failed to update workflow", severity: "error" }));
         }
       }
       setOpenModal(false);

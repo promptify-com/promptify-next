@@ -30,8 +30,6 @@ const useWorkflow = (workflow: IWorkflow) => {
 
   const createWorkflowIfNeeded = async (selectedWorkflowId: number) => {
     const storedWorkflows = Storage.get("workflows") || {};
-    const storedCredentials = Storage.get("credentials") || {};
-
     if (selectedWorkflowId.toString() in storedWorkflows) return;
 
     try {
@@ -43,6 +41,8 @@ const useWorkflow = (workflow: IWorkflow) => {
         const nodesRequiringAuthentication = response.nodes.filter(node => node.parameters?.authentication);
 
         if (nodesRequiringAuthentication.length) {
+          const storedCredentials = Storage.get("credentials") || {};
+
           nodesRequiringAuthentication.forEach(node => {
             attachCredentialsToNode(node, storedCredentials);
           });
@@ -95,7 +95,7 @@ const useWorkflow = (workflow: IWorkflow) => {
   }, []);
 
   useEffect(() => {
-    if (data) {
+    if (!workflow && data) {
       setWorkflowData(data);
     }
   }, [data]);
@@ -113,7 +113,7 @@ const useWorkflow = (workflow: IWorkflow) => {
   };
 
   return {
-    selectedWorkflow: workflow,
+    selectedWorkflow: workflowData,
     isWorkflowLoading,
     workflowAsTemplate,
     sendMessageAPI,
