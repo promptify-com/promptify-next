@@ -9,7 +9,7 @@ import { n8nClient as ApiClient } from "@/common/axios";
 import Storage from "@/common/storage";
 import { attachCredentialsToNode, extractWebhookPath } from "@/components/Automation/helpers";
 import type { Category } from "@/core/api/dto/templates";
-import type { IWorkflow } from "@/components/Automation/types";
+import type { IWorkflow, IWorkflowCreateResponse } from "@/components/Automation/types";
 import useCredentials from "./useCredentials";
 
 const useWorkflow = (workflow: IWorkflow) => {
@@ -75,6 +75,11 @@ const useWorkflow = (workflow: IWorkflow) => {
 
   async function sendMessageAPI(): Promise<any> {
     let inputsData: Record<string, string> = {};
+
+    if (!webhookPathRef.current) {
+      const storedWorkflows = Storage.get("workflows") || {};
+      webhookPathRef.current = storedWorkflows[workflowId].webhookPath;
+    }
 
     inputs.forEach(input => {
       const answer = answers.find(answer => answer.inputName === input.name);

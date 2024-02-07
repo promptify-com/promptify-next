@@ -30,7 +30,7 @@ export default function SingleWorkflow({ workflow }: Props) {
 
   const { areCredentialsStored } = useAppSelector(state => state.chat);
 
-  const { extractCredentialsInputFromNodes, checkAllCredentialsStored, credentialsInput } = useCredentials();
+  const { extractCredentialsInputFromNodes, checkAllCredentialsStored } = useCredentials();
 
   const { selectedWorkflow, workflowAsTemplate, sendMessageAPI, createWorkflowIfNeeded, isWorkflowLoading } =
     useWorkflow(workflow);
@@ -74,9 +74,10 @@ export default function SingleWorkflow({ workflow }: Props) {
   };
 
   useEffect(() => {
-    if (!isWorkflowLoading && selectedWorkflow) {
-      processData();
+    if (isWorkflowLoading && !selectedWorkflow) {
+      return;
     }
+    processData();
   }, [selectedWorkflow, isWorkflowLoading]);
 
   function prepareAndQueueMessages(credentialsInput: ICredentialInput[], nodes: INode[]) {
@@ -87,10 +88,10 @@ export default function SingleWorkflow({ workflow }: Props) {
     let areAllCredentialsStored = true;
     if (requiresAuthentication) {
       areAllCredentialsStored = checkAllCredentialsStored(credentialsInput);
-      dispatch(setAreCredentialsStored(areAllCredentialsStored));
     }
+    dispatch(setAreCredentialsStored(requiresAuthentication ? areAllCredentialsStored : true));
 
-    if (!areAllCredentialsStored) {
+    if (requiresAuthentication && !areAllCredentialsStored) {
       const credMessage = createMessage({ type: "credentials", noHeader: true });
       initialQueuedMessages.push(credMessage);
     }
