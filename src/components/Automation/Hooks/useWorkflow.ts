@@ -4,12 +4,13 @@ import { useRouter } from "next/router";
 import { useCreateUserWorkflowMutation, useGetWorkflowByIdQuery } from "@/core/api/workflows";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { clearExecutionsStates } from "@/core/store/executionsSlice";
-import { clearChatStates, setCredentials } from "@/core/store/chatSlice";
+import { clearChatStates } from "@/core/store/chatSlice";
 import { n8nClient as ApiClient } from "@/common/axios";
 import Storage from "@/common/storage";
-import { attachCredentialsToNode, extractCredentialsData, extractWebhookPath } from "@/components/Automation/helpers";
+import { attachCredentialsToNode, extractWebhookPath } from "@/components/Automation/helpers";
 import type { Category } from "@/core/api/dto/templates";
-import type { INode, IWorkflow } from "@/components/Automation/types";
+import type { IWorkflow } from "@/components/Automation/types";
+import useCredentials from "./useCredentials";
 
 const useWorkflow = (workflow: IWorkflow) => {
   const router = useRouter();
@@ -20,6 +21,8 @@ const useWorkflow = (workflow: IWorkflow) => {
   });
 
   const [workflowData, setWorkflowData] = useState<IWorkflow>(workflow);
+
+  const { credentials } = useCredentials();
 
   const dispatch = useAppDispatch();
   const webhookPathRef = useRef<string>();
@@ -41,10 +44,8 @@ const useWorkflow = (workflow: IWorkflow) => {
         const nodesRequiringAuthentication = response.nodes.filter(node => node.parameters?.authentication);
 
         if (nodesRequiringAuthentication.length) {
-          const storedCredentials = Storage.get("credentials") || {};
-
           nodesRequiringAuthentication.forEach(node => {
-            attachCredentialsToNode(node, storedCredentials);
+            attachCredentialsToNode(node, credentials);
           });
 
           const updatedResponse = {
@@ -84,11 +85,6 @@ const useWorkflow = (workflow: IWorkflow) => {
     return response.data;
   }
 
-  async function extractCredsFromNodes(nodes: INode[]) {
-    const credentials = await extractCredentialsData(nodes);
-    dispatch(setCredentials(credentials));
-    return credentials;
-  }
   useEffect(() => {
     dispatch(clearChatStates());
     dispatch(clearExecutionsStates());
@@ -117,7 +113,6 @@ const useWorkflow = (workflow: IWorkflow) => {
     isWorkflowLoading,
     workflowAsTemplate,
     sendMessageAPI,
-    extractCredsFromNodes,
     createWorkflowIfNeeded,
   };
 };

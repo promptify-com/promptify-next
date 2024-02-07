@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
@@ -11,12 +11,13 @@ import { useRouter } from "next/router";
 import { object, string } from "yup";
 
 import BaseButton from "@/components/base/BaseButton";
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { useAppDispatch } from "@/hooks/useStore";
 import Storage from "@/common/storage";
 import { useCreateCredentialsMutation, useUpdateWorkflowMutation } from "@/core/api/workflows";
 import { setToast } from "@/core/store/toastSlice";
-import { attachCredentialsToNode, checkAllCredsStored } from "@/components/Automation/helpers";
+import { attachCredentialsToNode } from "@/components/Automation/helpers";
 import { setAreCredentialsStored } from "@/core/store/chatSlice";
+import useCredentials from "@/components/Automation/Hooks/useCredentials";
 import type { ICredentialProperty, IWorkflowCreateResponse } from "@/components/Automation/types";
 import type { IPromptInput } from "@/common/types/prompt";
 
@@ -36,17 +37,12 @@ function Credentials({ input }: Props) {
   const [updateWorkflow] = useUpdateWorkflowMutation();
   const [createCredentials] = useCreateCredentialsMutation();
 
-  const { credentials } = useAppSelector(state => state.chat);
+  const { credentialsInput, credentials, updateCredentials, checkAllCredentialsStored, checkCredentialInserted } =
+    useCredentials();
 
   const [openModal, setOpenModal] = useState(false);
-  const [credentialProperties, setCredentialProperties] = useState<ICredentialProperty[]>([]);
-
-  useEffect(() => {
-    const credential = credentials.find(cred => cred.displayName === input.fullName);
-    if (credential) {
-      setCredentialProperties(credential.properties);
-    }
-  }, [credentials]);
+  const credential = credentialsInput.find(cred => cred.displayName === input.fullName);
+  const credentialProperties = credential?.properties || [];
 
   function getRequiredFields(credentialProperties: ICredentialProperty[]) {
     let requiredFields = credentialProperties.filter(prop => prop.required).map(prop => prop.name);
@@ -76,7 +72,7 @@ function Credentials({ input }: Props) {
   );
 
   const handleSubmit = async (values: FormValues) => {
-    const credential = credentials.find(cred => cred.displayName === input.fullName);
+    const credential = credentialsInput.find(cred => cred.displayName === input.fullName);
     const data: Record<string, string> = {};
 
     for (const key in values) {
@@ -91,24 +87,17 @@ function Credentials({ input }: Props) {
     };
     try {
       const response = await createCredentials(payload).unwrap();
+      updateCredentials(response);
 
       const storedWorkflows = Storage.get("workflows") || {};
-      const storedCredentials = Storage.get("credentials") || {};
-
-      storedCredentials[credential?.name!] = {
-        name: response.name,
-        id: response.id,
-        createdAt: response.createdAt,
-      };
-      Storage.set("credentials", JSON.stringify(storedCredentials));
 
       const workflow = storedWorkflows[workflowId].workflow as IWorkflowCreateResponse;
 
       workflow.nodes.forEach(node => {
-        attachCredentialsToNode(node, storedCredentials);
+        attachCredentialsToNode(node, credentials);
       });
 
-      const areAllCredentialsStored = checkAllCredsStored(credentials);
+      const areAllCredentialsStored = checkAllCredentialsStored(credentialsInput);
       dispatch(setAreCredentialsStored(areAllCredentialsStored));
 
       Storage.set("workflows", JSON.stringify(storedWorkflows));
@@ -119,12 +108,6 @@ function Credentials({ input }: Props) {
             workflowId: parseInt(workflowId),
             data: workflow,
           });
-
-          if (storedWorkflows[workflowId]) {
-            const { webhookPath } = storedWorkflows[workflowId];
-            storedWorkflows[workflowId] = { webhookPath };
-            Storage.set("workflows", JSON.stringify(storedWorkflows));
-          }
         } catch (error) {
           console.error("Error updating workflow:", error);
         }
@@ -137,13 +120,7 @@ function Credentials({ input }: Props) {
     }
   };
 
-  const checkCredentialInserted = () => {
-    const storedCredentials = Storage.get("credentials") || {};
-    const credential = credentials.find(cred => cred.displayName === input.fullName);
-    return !!storedCredentials[credential?.name!];
-  };
-
-  const isCredentialInserted = checkCredentialInserted();
+  const isCredentialInserted = checkCredentialInserted(credential!);
 
   return (
     <>

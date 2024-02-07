@@ -10,14 +10,14 @@ import SigninButton from "@/components/common/buttons/SigninButton";
 import useChat from "@/components/Prompt/Hooks/useChat";
 import { setAreCredentialsStored, setInputs } from "@/core/store/chatSlice";
 import useWorkflow from "@/components/Automation/Hooks/useWorkflow";
+import useCredentials from "@/components/Automation/Hooks/useCredentials";
 import WorkflowPlaceholder from "@/components/Automation/WorkflowPlaceholder";
 import { AUTOMATION_DESCRIPTION } from "@/common/constants";
 import { authClient } from "@/common/axios";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { IMessage } from "@/components/Prompt/Types/chat";
-import type { ICredential, IWorkflow } from "@/components/Automation/types";
-import { checkAllCredsStored } from "@/components/Automation/helpers";
+import type { ICredentialInput, IWorkflow } from "@/components/Automation/types";
 
 interface Props {
   workflow: IWorkflow;
@@ -30,14 +30,10 @@ export default function SingleWorkflow({ workflow }: Props) {
 
   const { areCredentialsStored } = useAppSelector(state => state.chat);
 
-  const {
-    selectedWorkflow,
-    workflowAsTemplate,
-    sendMessageAPI,
-    createWorkflowIfNeeded,
-    extractCredsFromNodes,
-    isWorkflowLoading,
-  } = useWorkflow(workflow);
+  const { extractCredentialsInputFromNodes, checkAllCredentialsStored, credentialsInput } = useCredentials();
+
+  const { selectedWorkflow, workflowAsTemplate, sendMessageAPI, createWorkflowIfNeeded, isWorkflowLoading } =
+    useWorkflow(workflow);
 
   const {
     messages,
@@ -59,7 +55,7 @@ export default function SingleWorkflow({ workflow }: Props) {
       createWorkflowIfNeeded(selectedWorkflow.id);
 
       const { nodes } = selectedWorkflow.data;
-      const credentials = await extractCredsFromNodes(nodes);
+      const credentialsInput = await extractCredentialsInputFromNodes(nodes);
 
       const inputs: IPromptInput[] = nodes
         .filter(node => node.type === "n8n-nodes-base.set")
@@ -73,25 +69,30 @@ export default function SingleWorkflow({ workflow }: Props) {
 
       dispatch(setInputs(inputs));
       initialMessages({ questions: inputs });
-      prepareAndQueueMessages(credentials);
+      prepareAndQueueMessages(credentialsInput);
     }
   };
 
   useEffect(() => {
-    processData();
-  }, [selectedWorkflow]);
+    if (!isWorkflowLoading && selectedWorkflow) {
+      processData();
+    }
+  }, [selectedWorkflow, isWorkflowLoading]);
 
-  function prepareAndQueueMessages(credentials: ICredential[]) {
-    const formMessage = createMessage({ type: "form", noHeader: true });
-    const initialQueuedMessages: IMessage[] = [formMessage];
+  function prepareAndQueueMessages(credentialsInput: ICredentialInput[]) {
+    const initialQueuedMessages: IMessage[] = [];
 
-    const areAllCredentialsStored = checkAllCredsStored(credentials);
+    const areAllCredentialsStored = checkAllCredentialsStored(credentialsInput);
+
     dispatch(setAreCredentialsStored(areAllCredentialsStored));
 
     if (!areAllCredentialsStored) {
       const credMessage = createMessage({ type: "credentials", noHeader: true });
-      initialQueuedMessages.unshift(credMessage);
+      initialQueuedMessages.push(credMessage);
     }
+    const formMessage = createMessage({ type: "form", noHeader: true });
+    initialQueuedMessages.push(formMessage);
+
     addToQueuedMessages(initialQueuedMessages);
   }
 

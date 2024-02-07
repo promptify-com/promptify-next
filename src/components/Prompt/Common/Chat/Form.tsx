@@ -21,12 +21,12 @@ interface FormLayoutProps {
 }
 
 function FormFields({ variant, messageType }: FormLayoutProps) {
-  const { params, inputs, credentials } = useAppSelector(state => state.chat);
+  const { params, inputs, credentialsInput } = useAppSelector(state => state.chat);
 
   const [localInputs, setLocalInputs] = useState<IPromptInput[]>([]);
 
   useEffect(() => {
-    const transformedInputs: IPromptInput[] = credentials.map(credential => ({
+    const transformedInputs: IPromptInput[] = credentialsInput.map(credential => ({
       name: credential.name,
       fullName: credential.displayName,
       type: "credentials",

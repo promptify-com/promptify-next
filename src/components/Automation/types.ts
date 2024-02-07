@@ -95,13 +95,13 @@ export interface ICredentialProperty {
 }
 
 export interface ICredentialJson {
-  [key: string]: ICredential & {
+  [key: string]: ICredentialInput & {
     test: any;
     authenticate: any;
   };
 }
 
-export interface ICredential {
+export interface ICredentialInput {
   name: string;
   displayName: string;
   properties: ICredentialProperty[];
@@ -120,7 +120,7 @@ export interface CreateCredentialPayload {
   data: Record<string, string>;
 }
 
-export interface CredentialResponse {
+export interface ICredential {
   name: string;
   type: string;
   id: string;

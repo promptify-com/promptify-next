@@ -3,7 +3,7 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { IAnswer } from "@/components/Prompt/Types/chat";
 import type { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
-import type { ICredential } from "@/components/Automation/types";
+import type { ICredentialInput } from "@/components/Automation/types";
 
 export interface ExecutionsProps {
   answers: IAnswer[];
@@ -11,7 +11,7 @@ export interface ExecutionsProps {
   params: PromptParams[];
   paramsValues: ResOverrides[];
   isSimulationStreaming: boolean;
-  credentials: ICredential[];
+  credentialsInput: ICredentialInput[];
   areCredentialsStored: boolean;
 }
 
@@ -21,7 +21,7 @@ const initialState: ExecutionsProps = {
   params: [],
   paramsValues: [],
   isSimulationStreaming: false,
-  credentials: [],
+  credentialsInput: [],
   areCredentialsStored: false,
 };
 
@@ -44,8 +44,8 @@ export const chatSlice = createSlice({
     setIsSimulationStreaming: (state, action: PayloadAction<boolean>) => {
       state.isSimulationStreaming = action.payload;
     },
-    setCredentials: (state, action: PayloadAction<ICredential[]>) => {
-      state.credentials = action.payload;
+    setCredentialsInput: (state, action: PayloadAction<ICredentialInput[]>) => {
+      state.credentialsInput = action.payload;
     },
     clearChatStates: _state => {
       return initialState;
@@ -62,7 +62,7 @@ export const {
   setParams,
   setParamsValues,
   setIsSimulationStreaming,
-  setCredentials,
+  setCredentialsInput,
   clearChatStates,
   setAreCredentialsStored,
 } = chatSlice.actions;

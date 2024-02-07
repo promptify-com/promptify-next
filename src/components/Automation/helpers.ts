@@ -1,10 +1,10 @@
-import Storage from "@/common/storage";
 import type {
-  ICredential,
   INodeCredentials,
   INode,
   NodesFileData,
   ICredentialJson,
+  ICredentialInput,
+  ICredential,
 } from "@/components/Automation/types";
 
 const UNWANTED_TYPES = [
@@ -45,8 +45,8 @@ export const authTypeMapping: { [key: string]: string } = {
   // Add other mappings here if necessary
 };
 
-export async function extractCredentialsData(nodes: INode[] = []): Promise<ICredential[]> {
-  const credentials: ICredential[] = [];
+export async function extractCredentialsInput(nodes: INode[] = []): Promise<ICredentialInput[]> {
+  const credentialsInput: ICredentialInput[] = [];
   const creds = (
     await import(
       /* webpackChunkName: "workflow_creds" */
@@ -67,7 +67,7 @@ export async function extractCredentialsData(nodes: INode[] = []): Promise<ICred
         authenticationType;
 
       if (creds[authType]) {
-        credentials.push({
+        credentialsInput.push({
           name: authType,
           displayName: creds[authType].displayName,
           properties: creds[authType].properties,
@@ -76,10 +76,10 @@ export async function extractCredentialsData(nodes: INode[] = []): Promise<ICred
     }
   }
 
-  return credentials;
+  return credentialsInput;
 }
 
-export const attachCredentialsToNode = (node: INode, credentials: INodeCredentials) => {
+export const attachCredentialsToNode = (node: INode, credentials: ICredential[]) => {
   const { parameters } = node;
 
   if (parameters && parameters.authentication) {
@@ -92,27 +92,26 @@ export const attachCredentialsToNode = (node: INode, credentials: INodeCredentia
       authTypeMapping[authenticationType] ||
       authenticationType;
 
-    if (!node.credentials) {
-      node.credentials = {};
-    }
+    const credential = credentials.find(cred => cred.type === authType);
 
-    if (credentials[authType] && !node.credentials[authType]) {
-      const { id, name } = credentials[authType];
-      node.credentials[authType] = { id, name };
+    if (credential && !node.credentials?.[credential.type]) {
+      const { type, id, name } = credential;
+      const updatedNode = {
+        ...node,
+        credentials: {
+          ...(node.credentials || {}),
+          [type]: { id, name },
+        },
+      };
+
+      return updatedNode;
     }
   }
+
+  return node;
 };
 
 export const extractWebhookPath = (nodes: INode[]) => {
   const webhookNode = nodes.find(node => node.type === "n8n-nodes-base.webhook");
   return webhookNode?.parameters?.path;
-};
-
-export const checkAllCredsStored = (credentials: ICredential[]) => {
-  if (credentials.length === 0) {
-    return false;
-  }
-  const storedCredentials = Storage.get("credentials") ?? {};
-  const areAllCredentialsStored = credentials.every(cred => Boolean(storedCredentials[cred.name]));
-  return areAllCredentialsStored;
 };
