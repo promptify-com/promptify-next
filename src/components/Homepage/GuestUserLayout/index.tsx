@@ -7,6 +7,7 @@ import Landing from "./Landing";
 import CategoryCarousel from "./CategoriesCarousel";
 import Services from "./Services";
 import Learn from "./Learn";
+import Testimonials from "./Testimonials";
 
 const ioLatestsOptions = {
   threshold: 0,
@@ -50,6 +51,7 @@ function GuestUserLayout({ categories }: { categories: Category[] }) {
       <CategoryCarousel categories={categories} />
       <Services />
       <Learn />
+      <Testimonials />
     </>
   );
 }
