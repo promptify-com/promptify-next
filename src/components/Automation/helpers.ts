@@ -80,6 +80,9 @@ export async function extractCredentialsInput(nodes: INode[] = []): Promise<ICre
 }
 
 export const attachCredentialsToNode = (node: INode, credentials: ICredential[]) => {
+  if (node.type === "n8n-nodes-promptify.promptify") {
+    return;
+  }
   const { parameters } = node;
 
   if (parameters && parameters.authentication) {
