@@ -18,6 +18,7 @@ interface Props {
 function Footer({ prompt, setPrompt }: Props) {
   const [showOptions, setShowOptions] = useState(false);
   const [optionsAnchor, setOptionsAnchor] = useState<HTMLElement | null>(null);
+  const [popperPlacement, setPopperPlacement] = useState<"top-end" | "top">("top-end");
 
   const closeOptionsModal = () => {
     setOptionsAnchor(null);
@@ -76,6 +77,7 @@ function Footer({ prompt, setPrompt }: Props) {
           onClick={e => {
             setOptionsAnchor(e.currentTarget);
             setShowOptions(true);
+            setPopperPlacement("top");
           }}
         >
           Edit
@@ -100,6 +102,7 @@ function Footer({ prompt, setPrompt }: Props) {
             onClick={e => {
               setOptionsAnchor(e.currentTarget);
               setShowOptions(true);
+              setPopperPlacement("top-end");
             }}
             sx={{
               fontSize: 13,
@@ -127,7 +130,7 @@ function Footer({ prompt, setPrompt }: Props) {
       <Popper
         open={showOptions}
         anchorEl={optionsAnchor}
-        placement="top-end"
+        placement={popperPlacement}
         keepMounted
         modifiers={[
           {
