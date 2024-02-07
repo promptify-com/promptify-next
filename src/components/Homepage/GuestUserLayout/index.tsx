@@ -6,6 +6,7 @@ import { Category } from "@/core/api/dto/templates";
 import Landing from "./Landing";
 import CategoryCarousel from "./CategoriesCarousel";
 import Services from "./Services";
+import Learn from "./Learn";
 
 const ioLatestsOptions = {
   threshold: 0,
@@ -48,6 +49,7 @@ function GuestUserLayout({ categories }: { categories: Category[] }) {
       <Landing />
       <CategoryCarousel categories={categories} />
       <Services />
+      <Learn />
     </>
   );
 }
