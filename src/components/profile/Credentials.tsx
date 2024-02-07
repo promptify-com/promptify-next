@@ -1,38 +1,14 @@
-import { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 
 import { formatDate } from "@/common/helpers/timeManipulation";
-import { useGetCredentialsQuery } from "@/core/api/workflows";
-import Storage from "@/common/storage";
-import type { CredentialResponse } from "@/components/Automation/types";
+import useCredentials from "../Automation/Hooks/useCredentials";
 
 function Credentials() {
-  const storedCredentials = Storage.get("credentials");
-  const [localCredentials, setLocalCredentials] = useState<CredentialResponse[]>([]);
+  const { credentials } = useCredentials();
 
-  const shouldSkipApiCall = storedCredentials && Object.keys(storedCredentials).length > 0;
-
-  const { data: credentials } = useGetCredentialsQuery(undefined, {
-    skip: shouldSkipApiCall,
-  });
-
-  useEffect(() => {
-    const storedCredentials = Storage.get("credentials");
-
-    if (storedCredentials) {
-      const transformedCredentials: CredentialResponse[] = Object.keys(storedCredentials).map(key => ({
-        ...storedCredentials[key],
-        type: key,
-      }));
-      setLocalCredentials(transformedCredentials);
-    } else if (credentials) {
-      setLocalCredentials(credentials);
-    }
-  }, [credentials]);
-
-  if (!localCredentials.length) {
+  if (!credentials.length) {
     return;
   }
 
@@ -62,7 +38,7 @@ function Credentials() {
       >
         Credentials
       </Typography>
-      {localCredentials?.map(cred => (
+      {credentials.map(cred => (
         <Box
           key={cred.id}
           sx={{
