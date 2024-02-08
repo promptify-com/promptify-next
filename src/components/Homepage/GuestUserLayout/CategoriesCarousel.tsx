@@ -1,24 +1,15 @@
 import { Category } from "@/core/api/dto/templates";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { ArrowBackIosNew, ArrowForwardIos } from "@mui/icons-material";
 import { CategoryCard } from "@/components/common/cards/CardCategory";
-import useEmblaCarousel from "embla-carousel-react";
-import { useCallback } from "react";
 import { redirectToPath } from "@/common/helpers";
+import useCarousel from "@/hooks/useCarousel";
+import CarouselButtons from "@/components/common/buttons/CarouselButtons";
 
 function CategoryCarousel({ categories }: { categories: Category[] }) {
-  const [emblaRef, emblaApi] = useEmblaCarousel({
-    slidesToScroll: "auto",
-    containScroll: "trimSnaps",
-    dragFree: true,
-  });
-
-  const scrollPrev = useCallback(() => emblaApi && emblaApi.scrollPrev(), [emblaApi]);
-  const scrollNext = useCallback(() => emblaApi && emblaApi.scrollNext(), [emblaApi]);
+  const { containerRef, scrollNext, scrollPrev } = useCarousel();
 
   return (
     <Stack
@@ -48,21 +39,13 @@ function CategoryCarousel({ categories }: { categories: Category[] }) {
         >
           See all
         </Button>
-        <IconButton
-          sx={{ border: "none", color: "#67677C" }}
-          onClick={scrollPrev}
-        >
-          <ArrowBackIosNew />
-        </IconButton>
-        <IconButton
-          sx={{ border: "none", color: "#67677C" }}
-          onClick={scrollNext}
-        >
-          <ArrowForwardIos />
-        </IconButton>
+        <CarouselButtons
+          scrollPrev={scrollPrev}
+          scrollNext={scrollNext}
+        />
       </Stack>
       <Box
-        ref={emblaRef}
+        ref={containerRef}
         sx={{
           overflow: "hidden",
         }}
@@ -72,13 +55,7 @@ function CategoryCarousel({ categories }: { categories: Category[] }) {
           direction={"row"}
         >
           {categories.map((category, idx) => (
-            <Box
-              key={category.id}
-              sx={{
-                flex: "0 0 100%",
-                minWidth: 0,
-              }}
-            >
+            <Box key={category.id}>
               <CategoryCard
                 category={category}
                 index={idx}

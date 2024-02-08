@@ -5,7 +5,7 @@ import CategoryCarousel from "./CategoriesCarousel";
 import Services from "./Services";
 import Learn from "./Learn";
 import Testimonials from "./Testimonials";
-import { TemplatesSection } from "../../explorer/TemplatesSection";
+import { TemplatesSection } from "@/components/explorer/TemplatesSection";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
