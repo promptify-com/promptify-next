@@ -18,7 +18,7 @@ import { setToast } from "@/core/store/toastSlice";
 import { attachCredentialsToNode } from "@/components/Automation/helpers";
 import { setAreCredentialsStored } from "@/core/store/chatSlice";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
-import type { ICredentialProperty, IWorkflowCreateResponse } from "@/components/Automation/types";
+import type { ICredentialProperty, INode, IWorkflowCreateResponse } from "@/components/Automation/types";
 import type { IPromptInput } from "@/common/types/prompt";
 
 interface Props {
@@ -105,7 +105,7 @@ function Credentials({ input }: Props) {
         try {
           await updateWorkflow({
             workflowId: parseInt(workflowId),
-            data: workflow,
+            data: { ...workflow, nodes: updatedNodes as INode[] },
           });
         } catch (error) {
           console.error("Error updating workflow:", error);
