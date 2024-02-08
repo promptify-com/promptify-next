@@ -56,6 +56,9 @@ export async function extractCredentialsInput(nodes: INode[] = []): Promise<ICre
   ).default as unknown as ICredentialJson;
 
   for (const node of nodes) {
+    if (node.credentials) {
+      continue;
+    }
     const parameters = node.parameters;
     if (parameters && parameters.authentication) {
       const authenticationType = parameters.authentication;
@@ -101,15 +104,11 @@ export const attachCredentialsToNode = (node: INode) => {
 
     if (credential) {
       const { type, id, name } = credential;
-      const updatedNode = {
-        ...node,
-        credentials: {
-          ...(node.credentials || {}),
-          [type]: { id, name },
-        },
-      };
 
-      return updatedNode;
+      if (!node.credentials) {
+        node.credentials = {};
+      }
+      node.credentials[type] = { id, name };
     }
   }
 

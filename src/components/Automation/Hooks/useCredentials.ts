@@ -53,12 +53,9 @@ const useCredentials = () => {
   };
 
   const updateCredentials = (newCredential: ICredential) => {
-    const currentCredentials = Storage.get("credentials") || [];
-
-    const updatedCredentials = [...currentCredentials, newCredential];
-
+    const updatedCredentials = Storage.get("credentials") || [];
+    updatedCredentials.push(newCredential);
     credentials.current = updatedCredentials;
-
     Storage.set("credentials", JSON.stringify(updatedCredentials));
   };
 

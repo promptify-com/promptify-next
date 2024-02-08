@@ -9,7 +9,7 @@ import { n8nClient as ApiClient } from "@/common/axios";
 import Storage from "@/common/storage";
 import { extractWebhookPath } from "@/components/Automation/helpers";
 import type { Category } from "@/core/api/dto/templates";
-import type { IWorkflow } from "@/components/Automation/types";
+import type { IStoredWorkflows, IWorkflow } from "@/components/Automation/types";
 
 const useWorkflow = (workflow: IWorkflow) => {
   const router = useRouter();
@@ -66,12 +66,27 @@ const useWorkflow = (workflow: IWorkflow) => {
     }
   };
 
+  async function removeWorkflowFromStorage(storedWorkflows: IStoredWorkflows = {}) {
+    const _storedWorkflows = Object.values(storedWorkflows)?.length
+      ? storedWorkflows
+      : ((Storage.get("workflows") || {}) as IStoredWorkflows);
+    const { workflow, webhookPath } = _storedWorkflows[workflowId];
+
+    if (workflow) {
+      storedWorkflows[workflowId] = { webhookPath };
+      Storage.set("workflows", JSON.stringify(storedWorkflows));
+    }
+  }
+
   async function sendMessageAPI(): Promise<any> {
     let inputsData: Record<string, string> = {};
 
     if (!webhookPathRef.current) {
       const storedWorkflows = Storage.get("workflows") || {};
       webhookPathRef.current = storedWorkflows[workflowId].webhookPath;
+      removeWorkflowFromStorage(storedWorkflows);
+    } else {
+      removeWorkflowFromStorage();
     }
 
     inputs.forEach(input => {
@@ -95,12 +110,12 @@ const useWorkflow = (workflow: IWorkflow) => {
   }, [data]);
 
   const workflowAsTemplate = {
-    id: workflow?.id,
-    title: workflow?.name,
-    description: workflow?.description!,
-    created_at: workflow?.created_at,
-    thumbnail: workflow?.image!,
-    created_by: workflow?.created_by,
+    id: workflowData?.id,
+    title: workflowData?.name,
+    description: workflowData?.description!,
+    created_at: workflowData?.created_at,
+    thumbnail: workflowData?.image!,
+    created_by: workflowData?.created_by,
     category: {} as Category,
     tags: [],
     prompts: [],

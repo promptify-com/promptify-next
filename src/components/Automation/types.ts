@@ -127,3 +127,10 @@ export interface ICredential {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface IStoredWorkflows {
+  [key: string]: {
+    webhookPath: string;
+    workflow?: IWorkflowCreateResponse;
+  };
+}

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
@@ -37,8 +37,7 @@ function Credentials({ input }: Props) {
   const [updateWorkflow] = useUpdateWorkflowMutation();
   const [createCredentials] = useCreateCredentialsMutation();
 
-  const { credentialsInput, credentials, updateCredentials, checkAllCredentialsStored, checkCredentialInserted } =
-    useCredentials();
+  const { credentialsInput, updateCredentials, checkAllCredentialsStored, checkCredentialInserted } = useCredentials();
 
   const [openModal, setOpenModal] = useState(false);
   const credential = credentialsInput.find(cred => cred.displayName === input.fullName);
@@ -53,7 +52,7 @@ function Credentials({ input }: Props) {
     return requiredFields;
   }
 
-  const requiredFields = getRequiredFields(credentialProperties);
+  const requiredFields = useMemo(() => getRequiredFields(credentialProperties), [credentialProperties]);
 
   const initialValues: FormValues = credentialProperties.reduce<FormValues>((acc, prop) => {
     acc[prop.name] = "";
