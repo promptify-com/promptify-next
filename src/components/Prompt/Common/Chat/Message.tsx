@@ -160,7 +160,7 @@ export const Message = ({ message, isExecutionShown, onScrollToBottom }: Props) 
         flex={1}
         display={"flex"}
         flexDirection={"column"}
-        width={fromUser ? "content-fit" : "100%"}
+        width={fromUser ? "fit-content" : "100%"}
         gap={"8px"}
         padding={isVariantB ? "8px 16px 8px 24px" : 0}
         borderRadius={!fromUser ? "0px 16px 16px 16px" : "16px 16px 0px 16px"}
@@ -170,6 +170,7 @@ export const Message = ({ message, isExecutionShown, onScrollToBottom }: Props) 
         })}
         {...(isVariantB && {
           bgcolor: fromUser ? "#7254721A" : "surface.2",
+          ml: "auto",
         })}
       >
         {isVariantA && !message.noHeader && (
