@@ -1,12 +1,24 @@
 import { Category } from "@/core/api/dto/templates";
-import { Button, IconButton, Stack, Typography } from "@mui/material";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 import { ArrowBackIosNew, ArrowForwardIos } from "@mui/icons-material";
 import { CategoryCard } from "@/components/common/cards/CardCategory";
+import useEmblaCarousel from "embla-carousel-react";
+import { useCallback } from "react";
+import { redirectToPath } from "@/common/helpers";
 
 function CategoryCarousel({ categories }: { categories: Category[] }) {
-  const _categories = categories.filter(
-    category => !category.parent && category.is_visible && category.prompt_template_count,
-  );
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    slidesToScroll: "auto",
+    containScroll: "trimSnaps",
+    dragFree: true,
+  });
+
+  const scrollPrev = useCallback(() => emblaApi && emblaApi.scrollPrev(), [emblaApi]);
+  const scrollNext = useCallback(() => emblaApi && emblaApi.scrollNext(), [emblaApi]);
 
   return (
     <Stack
@@ -32,34 +44,51 @@ function CategoryCarousel({ categories }: { categories: Category[] }) {
         <Button
           variant="outlined"
           sx={{ color: "#67677C" }}
+          onClick={() => redirectToPath("/explore")}
         >
           See all
         </Button>
-        <IconButton sx={{ border: "none", color: "#67677C" }}>
+        <IconButton
+          sx={{ border: "none", color: "#67677C" }}
+          onClick={scrollPrev}
+        >
           <ArrowBackIosNew />
         </IconButton>
-        <IconButton sx={{ border: "none", color: "#67677C" }}>
+        <IconButton
+          sx={{ border: "none", color: "#67677C" }}
+          onClick={scrollNext}
+        >
           <ArrowForwardIos />
         </IconButton>
       </Stack>
-      <Stack
-        direction={"row"}
-        gap={3}
+      <Box
+        ref={emblaRef}
         sx={{
-          overflow: "auto",
-          overscrollBehavior: "contain",
+          overflow: "hidden",
         }}
       >
-        {_categories.map((category, idx) => (
-          <CategoryCard
-            key={category.id}
-            category={category}
-            index={idx}
-            href={`/explore/${category.slug}`}
-            min
-          />
-        ))}
-      </Stack>
+        <Stack
+          gap={3}
+          direction={"row"}
+        >
+          {categories.map((category, idx) => (
+            <Box
+              key={category.id}
+              sx={{
+                flex: "0 0 100%",
+                minWidth: 0,
+              }}
+            >
+              <CategoryCard
+                category={category}
+                index={idx}
+                href={`/explore/${category.slug}`}
+                min
+              />
+            </Box>
+          ))}
+        </Stack>
+      </Box>
     </Stack>
   );
 }

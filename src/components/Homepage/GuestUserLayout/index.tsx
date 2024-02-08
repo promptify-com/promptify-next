@@ -1,4 +1,3 @@
-import { useRef } from "react";
 import { useGetTemplatesByFilterQuery } from "@/core/api/templates";
 import { Category } from "@/core/api/dto/templates";
 import Landing from "./Landing";
@@ -7,18 +6,8 @@ import Services from "./Services";
 import Learn from "./Learn";
 import Testimonials from "./Testimonials";
 import { TemplatesSection } from "../../explorer/TemplatesSection";
-import { Stack, Typography } from "@mui/material";
-
-const ioLatestsOptions = {
-  threshold: 0,
-  rootMargin: "150px",
-  disconnectNodeOnceVisible: true,
-};
-const ioPopularOptions = {
-  threshold: 0.5,
-  rootMargin: "100px",
-  disconnectNodeOnceVisible: true,
-};
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 
 function GuestUserLayout({ categories }: { categories: Category[] }) {
   const { data: popularTemplates, isLoading } = useGetTemplatesByFilterQuery({
@@ -26,10 +15,14 @@ function GuestUserLayout({ categories }: { categories: Category[] }) {
     limit: 30,
   });
 
+  const _categories = categories.filter(
+    category => !category.parent && category.is_visible && category.prompt_template_count,
+  );
+
   return (
     <>
       <Landing />
-      <CategoryCarousel categories={categories} />
+      <CategoryCarousel categories={_categories} />
       <Services />
       <Stack
         py={"48px"}
