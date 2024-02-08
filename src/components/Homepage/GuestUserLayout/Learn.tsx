@@ -7,6 +7,7 @@ import BlogPostCard from "@/components/Homepage/BlogPostCard";
 import Support from "@mui/icons-material/Support";
 import { RaisedHand } from "@/assets/icons/RaisedHand";
 import { BlogPosts } from "@/components/Homepage/Constants";
+import { BLOG_URL } from "@/common/constants";
 
 interface ILink {
   icon: React.JSX.Element;
@@ -65,13 +66,13 @@ const Links: ILink[] = [
     icon: <Support />,
     title: "Help Center",
     description: "Lorem ipsum dolor sit amet, consectetur adipiscing",
-    link: "https://blog.promptify.com/",
+    link: BLOG_URL,
   },
   {
     icon: <RaisedHand />,
     title: "FAQ",
     description: "Lorem ipsum dolor sit amet, consectetur adipiscing",
-    link: "https://blog.promptify.com/",
+    link: BLOG_URL,
   },
 ];
 

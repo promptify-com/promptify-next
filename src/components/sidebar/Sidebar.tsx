@@ -15,6 +15,7 @@ import type { NavItem } from "@/common/types/sidebar";
 import { useRouter } from "next/router";
 import useBrowser from "@/hooks/useBrowser";
 import ElectricBoltIcon from "@mui/icons-material/ElectricBolt";
+import { BLOG_URL } from "@/common/constants";
 
 function Sidebar() {
   const router = useRouter();
@@ -76,7 +77,7 @@ function Sidebar() {
   ];
   const learnHelpNavItem = {
     name: "Learn & Help",
-    href: "https://blog.promptify.com/",
+    href: BLOG_URL,
     icon: <HelpRounded />,
     active: false,
     external: true,
