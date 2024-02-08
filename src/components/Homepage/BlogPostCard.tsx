@@ -7,6 +7,7 @@ import Typography from "@mui/material/Typography";
 import Link from "next/link";
 import Image from "@/components/design-system/Image";
 import { IBlogPost } from "./Types";
+import useTruncate from "@/hooks/useTruncate";
 
 interface Props {
   post: IBlogPost;
@@ -14,10 +15,12 @@ interface Props {
 }
 function BlogPostCard({ post, min }: Props) {
   const { title, image, content, link } = post;
+  const { truncate } = useTruncate();
 
   return (
     <Link
       href={link}
+      target="_blank"
       style={{ textDecoration: "none" }}
     >
       <Card
@@ -85,7 +88,7 @@ function BlogPostCard({ post, min }: Props) {
               fontWeight={400}
               color={"#000000"}
             >
-              {content}
+              {truncate(content, { length: 160 })}
             </Typography>
           </Stack>
         </CardContent>

@@ -6,20 +6,7 @@ import Link from "next/link";
 import BlogPostCard from "@/components/Homepage/BlogPostCard";
 import Support from "@mui/icons-material/Support";
 import { RaisedHand } from "@/assets/icons/RaisedHand";
-
-interface IBlogPost {
-  title: string;
-  image: string;
-  content: string;
-  link: string;
-}
-
-const BlogPost: IBlogPost = {
-  title: "Unleashing Creativity with AI: Discover the Power of Prompts with Promptify.com",
-  image: require("./empower.png"),
-  content: "Promptify.com, a platform designed to streamline the use of generative AI services",
-  link: "https://blog.promptify.com/",
-};
+import { BlogPosts } from "@/components/Homepage/Constants";
 
 interface ILink {
   icon: React.JSX.Element;
@@ -84,7 +71,7 @@ const Links: ILink[] = [
     icon: <RaisedHand />,
     title: "FAQ",
     description: "Lorem ipsum dolor sit amet, consectetur adipiscing",
-    link: "#",
+    link: "https://blog.promptify.com/",
   },
 ];
 
@@ -116,7 +103,7 @@ function Learn() {
       </Stack>
       <Stack direction={"row"}>
         <Box>
-          <BlogPostCard post={BlogPost} />
+          <BlogPostCard post={BlogPosts[0]} />
         </Box>
         <Stack
           justifyContent={"space-between"}
@@ -124,7 +111,7 @@ function Learn() {
           px={"16px"}
         >
           <BlogPostCard
-            post={BlogPost}
+            post={BlogPosts[1]}
             min
           />
           <LinkCard link={Links[0]} />
@@ -135,7 +122,7 @@ function Learn() {
           px={"16px"}
         >
           <BlogPostCard
-            post={BlogPost}
+            post={BlogPosts[2]}
             min
           />
           <LinkCard link={Links[1]} />

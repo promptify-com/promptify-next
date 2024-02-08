@@ -26,13 +26,10 @@ const TestimonialCard = ({ testimonial }: { testimonial: ITestimonials }) => (
   <Card
     elevation={0}
     sx={{
-      width: "668px",
-      minWidth: "668px",
+      width: "50%",
+      minWidth: "50%",
       bgcolor: "#F7F6FE",
       borderRadius: "24px",
-      "&:hover": {
-        bgcolor: "white",
-      },
     }}
   >
     <Stack direction={"row"}>
