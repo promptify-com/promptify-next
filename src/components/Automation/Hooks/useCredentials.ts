@@ -65,6 +65,7 @@ const useCredentials = () => {
   return {
     credentials: credentials.current,
     checkCredentialInserted,
+    initializeCredentials,
     checkAllCredentialsStored,
     updateCredentials,
     credentialsInput,

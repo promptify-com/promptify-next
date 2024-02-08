@@ -4,9 +4,17 @@ import Grid from "@mui/material/Grid";
 
 import { formatDate } from "@/common/helpers/timeManipulation";
 import useCredentials from "../Automation/Hooks/useCredentials";
+import { useEffect } from "react";
 
 function Credentials() {
-  const { credentials } = useCredentials();
+  const { credentials, initializeCredentials } = useCredentials();
+
+  useEffect(() => {
+    const fetchCredentials = async () => {
+      await initializeCredentials();
+    };
+    fetchCredentials();
+  }, [initializeCredentials]);
 
   if (!credentials.length) {
     return;
