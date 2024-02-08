@@ -7,7 +7,7 @@ function Landing() {
   return (
     <>
       <Stack
-        direction={"row"}
+        direction={{ md: "row" }}
         justifyContent={"center"}
         alignItems={"center"}
         gap={3}
@@ -26,15 +26,16 @@ function Landing() {
           <Stack gap={5}>
             <Box>
               <Typography
-                fontSize={48}
+                fontSize={{ xs: 32, md: 48 }}
                 fontWeight={400}
                 color={"#2A2A3C"}
               >
                 Empower Your
               </Typography>
               <Typography
-                fontSize={72}
+                fontSize={{ xs: 60, md: 72 }}
                 fontWeight={300}
+                lineHeight={"120%"}
                 color={"#2A2A3C"}
                 display={"flex"}
                 flexWrap={"wrap"}
@@ -50,7 +51,7 @@ function Landing() {
               </Typography>
             </Box>
             <Typography
-              fontSize={24}
+              fontSize={{ xs: 18, md: 24 }}
               fontWeight={400}
               color={"#2A2A3C"}
             >
@@ -60,6 +61,7 @@ function Landing() {
           <Stack
             direction={"row"}
             alignItems={"center"}
+            flexWrap={"wrap"}
             gap={2}
           >
             <Button

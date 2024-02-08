@@ -6,6 +6,7 @@ import CardMedia from "@mui/material/CardMedia";
 import Image from "@/components/design-system/Image";
 import useCarousel from "@/hooks/useCarousel";
 import CarouselButtons from "@/components/common/buttons/CarouselButtons";
+import { Box } from "@mui/material";
 
 interface ITestimonials {
   image: string;
@@ -26,18 +27,19 @@ const TestimonialCard = ({ testimonial }: { testimonial: ITestimonials }) => (
   <Card
     elevation={0}
     sx={{
-      width: "50%",
-      minWidth: "50%",
+      width: { xs: "100%", md: "50%" },
+      minWidth: { xs: "100%", md: "50%" },
       bgcolor: "#F7F6FE",
       borderRadius: "24px",
     }}
   >
-    <Stack direction={"row"}>
+    <Stack direction={{ md: "row" }}>
       <CardContent sx={{ flex: 1, padding: "24px 32px", m: 0 }}>
         <Stack
           height={"100%"}
           justifyContent={"space-between"}
           alignItems={"flex-start"}
+          gap={2}
         >
           <Typography
             fontSize={18}
@@ -68,7 +70,7 @@ const TestimonialCard = ({ testimonial }: { testimonial: ITestimonials }) => (
         sx={{
           zIndex: 1,
           borderRadius: "16px",
-          width: "223px",
+          width: { xs: "100%", md: "223px" },
           height: "312px",
         }}
       >
@@ -88,12 +90,12 @@ function Testimonials() {
 
   return (
     <Stack
-      py={"48px"}
+      py={{ xs: "30px", md: "48px" }}
       gap={4}
     >
       <Stack
-        direction={"row"}
-        alignItems={"center"}
+        direction={{ md: "row" }}
+        alignItems={{ md: "center" }}
         p={"8px 16px"}
         gap={1}
       >
@@ -117,10 +119,12 @@ function Testimonials() {
             What people says about Promptify
           </Typography>
         </Stack>
-        <CarouselButtons
-          scrollPrev={scrollPrev}
-          scrollNext={scrollNext}
-        />
+        <Box ml={"auto"}>
+          <CarouselButtons
+            scrollPrev={scrollPrev}
+            scrollNext={scrollNext}
+          />
+        </Box>
       </Stack>
       <Stack ref={containerRef}>
         <Stack

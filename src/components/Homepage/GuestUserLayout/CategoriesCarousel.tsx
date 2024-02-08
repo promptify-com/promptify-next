@@ -14,12 +14,12 @@ function CategoryCarousel({ categories }: { categories: Category[] }) {
     <Stack
       gap={5}
       sx={{
-        py: "48px",
+        py: { xs: "30px", md: "48px" },
       }}
     >
       <Stack
-        direction={"row"}
-        alignItems={"center"}
+        direction={{ md: "row" }}
+        alignItems={{ md: "center" }}
         p={"8px 16px"}
         gap={1}
       >
@@ -31,17 +31,24 @@ function CategoryCarousel({ categories }: { categories: Category[] }) {
         >
           Browse category
         </Typography>
-        <Button
-          variant="outlined"
-          sx={{ color: "#67677C" }}
-          onClick={() => redirectToPath("/explore")}
+        <Stack
+          direction={"row"}
+          alignItems={"center"}
+          justifyContent={"space-between"}
+          gap={1}
         >
-          See all
-        </Button>
-        <CarouselButtons
-          scrollPrev={scrollPrev}
-          scrollNext={scrollNext}
-        />
+          <Button
+            variant="outlined"
+            sx={{ color: "#67677C" }}
+            onClick={() => redirectToPath("/explore")}
+          >
+            See all
+          </Button>
+          <CarouselButtons
+            scrollPrev={scrollPrev}
+            scrollNext={scrollNext}
+          />
+        </Stack>
       </Stack>
       <Stack ref={containerRef}>
         <Stack

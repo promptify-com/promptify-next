@@ -20,12 +20,12 @@ function GuestUserLayout({ categories }: { categories: Category[] }) {
   );
 
   return (
-    <>
+    <Stack gap={4}>
       <Landing />
       <CategoryCarousel categories={_categories} />
       <Services />
       <Stack
-        py={"48px"}
+        py={{ xs: "30px", md: "48px" }}
         gap={4}
       >
         <Typography
@@ -43,7 +43,7 @@ function GuestUserLayout({ categories }: { categories: Category[] }) {
       </Stack>
       <Learn />
       <Testimonials />
-    </>
+    </Stack>
   );
 }
 

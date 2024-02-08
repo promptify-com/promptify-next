@@ -79,7 +79,7 @@ const Links: ILink[] = [
 function Learn() {
   return (
     <Stack
-      py={"48px"}
+      py={{ xs: "30px", md: "48px" }}
       gap={4}
     >
       <Stack
@@ -102,31 +102,36 @@ function Learn() {
           nostrum.
         </Typography>
       </Stack>
-      <Stack direction={"row"}>
-        <Box>
-          <BlogPostCard post={BlogPosts[0]} />
-        </Box>
+      <Stack
+        direction={{ md: "row" }}
+        gap={3}
+      >
+        <BlogPostCard post={BlogPosts[0]} />
         <Stack
           justifyContent={"space-between"}
           alignItems={"center"}
-          px={"16px"}
+          gap={3}
         >
-          <BlogPostCard
-            post={BlogPosts[1]}
-            min
-          />
-          <LinkCard link={Links[0]} />
-        </Stack>
-        <Stack
-          justifyContent={"space-between"}
-          alignItems={"center"}
-          px={"16px"}
-        >
-          <BlogPostCard
-            post={BlogPosts[2]}
-            min
-          />
-          <LinkCard link={Links[1]} />
+          <Stack
+            direction={{ md: "row" }}
+            gap={3}
+          >
+            <BlogPostCard
+              post={BlogPosts[1]}
+              min
+            />
+            <BlogPostCard
+              post={BlogPosts[2]}
+              min
+            />
+          </Stack>
+          <Stack
+            direction={{ md: "row" }}
+            gap={3}
+          >
+            <LinkCard link={Links[0]} />
+            <LinkCard link={Links[1]} />
+          </Stack>
         </Stack>
       </Stack>
     </Stack>

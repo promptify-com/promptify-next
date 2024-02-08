@@ -88,10 +88,7 @@ const HomePage = ({ categories }: { categories: Category[] }) => {
         mt={{ xs: 7, md: 0 }}
         padding={{ xs: "4px 0px", md: "0px 8px" }}
       >
-        <Grid
-          gap={"56px"}
-          display={"flex"}
-          flexDirection={"column"}
+        <Box
           sx={{
             padding: { xs: "16px", md: "32px" },
           }}
@@ -146,7 +143,7 @@ const HomePage = ({ categories }: { categories: Category[] }) => {
           ) : (
             <GuestUserLayout categories={categories} />
           )}
-        </Grid>
+        </Box>
       </Box>
     </Layout>
   );

@@ -52,11 +52,11 @@ const ServicesList: IServiceCard[] = [
 function Services() {
   return (
     <Stack
-      direction={"row"}
+      direction={{ md: "row" }}
       justifyContent={"center"}
       alignItems={"flex-start"}
-      py={"48px"}
       gap={4}
+      py={{ xs: "30px", md: "48px" }}
     >
       {ServicesList.map(service => (
         <Stack
