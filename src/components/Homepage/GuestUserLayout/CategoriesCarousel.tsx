@@ -1,5 +1,4 @@
 import { Category } from "@/core/api/dto/templates";
-import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
@@ -44,28 +43,22 @@ function CategoryCarousel({ categories }: { categories: Category[] }) {
           scrollNext={scrollNext}
         />
       </Stack>
-      <Box
-        ref={containerRef}
-        sx={{
-          overflow: "hidden",
-        }}
-      >
+      <Stack ref={containerRef}>
         <Stack
           gap={3}
           direction={"row"}
         >
           {categories.map((category, idx) => (
-            <Box key={category.id}>
-              <CategoryCard
-                category={category}
-                index={idx}
-                href={`/explore/${category.slug}`}
-                min
-              />
-            </Box>
+            <CategoryCard
+              key={category.id}
+              category={category}
+              index={idx}
+              href={`/explore/${category.slug}`}
+              min
+            />
           ))}
         </Stack>
-      </Box>
+      </Stack>
     </Stack>
   );
 }

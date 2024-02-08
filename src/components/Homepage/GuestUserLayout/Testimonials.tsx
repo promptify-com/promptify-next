@@ -3,10 +3,9 @@ import Typography from "@mui/material/Typography";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
-import IconButton from "@mui/material/IconButton";
-import ArrowBackIosNew from "@mui/icons-material/ArrowBackIosNew";
-import ArrowForwardIos from "@mui/icons-material/ArrowForwardIos";
 import Image from "@/components/design-system/Image";
+import useCarousel from "@/hooks/useCarousel";
+import CarouselButtons from "@/components/common/buttons/CarouselButtons";
 
 interface ITestimonials {
   image: string;
@@ -88,6 +87,8 @@ const TestimonialCard = ({ testimonial }: { testimonial: ITestimonials }) => (
 );
 
 function Testimonials() {
+  const { containerRef, scrollNext, scrollPrev } = useCarousel();
+
   return (
     <Stack
       py={"48px"}
@@ -119,27 +120,23 @@ function Testimonials() {
             What people says about Promptify
           </Typography>
         </Stack>
-        <IconButton sx={{ border: "none", color: "#67677C" }}>
-          <ArrowBackIosNew />
-        </IconButton>
-        <IconButton sx={{ border: "none", color: "#67677C" }}>
-          <ArrowForwardIos />
-        </IconButton>
+        <CarouselButtons
+          scrollPrev={scrollPrev}
+          scrollNext={scrollNext}
+        />
       </Stack>
-      <Stack
-        direction={"row"}
-        gap={3}
-        sx={{
-          overflow: "auto",
-          overscrollBehavior: "contain",
-        }}
-      >
-        {Array.from({ length: 10 }).map((_, idx) => (
-          <TestimonialCard
-            key={idx}
-            testimonial={Testimonial}
-          />
-        ))}
+      <Stack ref={containerRef}>
+        <Stack
+          gap={3}
+          direction={"row"}
+        >
+          {Array.from({ length: 10 }).map((_, idx) => (
+            <TestimonialCard
+              key={idx}
+              testimonial={Testimonial}
+            />
+          ))}
+        </Stack>
       </Stack>
     </Stack>
   );
