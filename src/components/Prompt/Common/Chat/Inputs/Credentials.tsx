@@ -159,7 +159,11 @@ function Credentials({ input }: Props) {
             >
               {({ errors, touched }) => (
                 <Form>
-                  <DialogContent>
+                  <DialogContent
+                    sx={{
+                      p: "16px 8px",
+                    }}
+                  >
                     {credentialProperties.map((prop, index) => (
                       <FormControl
                         fullWidth

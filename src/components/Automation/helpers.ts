@@ -96,9 +96,10 @@ export const attachCredentialsToNode = (node: INode) => {
       authenticationType;
 
     const currentCredentials: ICredential[] = Storage.get("credentials") || [];
+
     const credential = currentCredentials.find(cred => cred.type === authType);
 
-    if (credential && !node.credentials?.[credential.type]) {
+    if (credential) {
       const { type, id, name } = credential;
       const updatedNode = {
         ...node,
