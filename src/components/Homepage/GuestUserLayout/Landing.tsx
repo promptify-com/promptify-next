@@ -2,8 +2,11 @@ import { Box, Button, Stack, Typography } from "@mui/material";
 import Image from "../../design-system/Image";
 import { Google } from "../../../assets/icons/google";
 import { KeyboardArrowDown } from "@mui/icons-material";
+import { isDesktopViewPort } from "../../../common/helpers";
 
 function Landing() {
+  const isDesktop = isDesktopViewPort();
+
   return (
     <Stack
       direction={{ md: "row" }}
@@ -20,7 +23,7 @@ function Landing() {
       <Image
         src={require("./empower.svg")}
         alt={"Promptify"}
-        width={575}
+        width={isDesktop ? 575 : 315}
       />
       <Stack gap={6}>
         <Stack gap={5}>

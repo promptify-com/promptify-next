@@ -80,13 +80,13 @@ const TestimonialCard = ({ testimonial }: { testimonial: ITestimonial }) => (
           zIndex: 1,
           borderRadius: "16px",
           width: { xs: "100%", md: "223px" },
-          height: "312px",
+          height: { xs: "200px", md: "312px" },
         }}
       >
         <Image
           src={testimonial.image}
           alt={testimonial.name}
-          style={{ borderRadius: "16px", objectFit: "cover", width: "100%", height: "100%" }}
+          style={{ borderRadius: "16px", objectFit: "contain", width: "100%", height: "100%" }}
           priority={false}
         />
       </CardMedia>
