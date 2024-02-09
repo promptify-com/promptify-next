@@ -8,6 +8,7 @@ import { authClient } from "@/common/axios";
 
 interface Props {
   workflows: IWorkflow[];
+  query: any;
 }
 
 const Automation = ({ workflows }: Props) => {
@@ -64,9 +65,10 @@ const Automation = ({ workflows }: Props) => {
   );
 };
 
-export async function getServerSideProps() {
+export async function getServerSideProps({ query }: Props) {
   try {
-    const res = await authClient.get(`/api/n8n/workflows/`);
+    const enable = query.enable === "true" ? true : false;
+    const res = await authClient.get(`/api/n8n/workflows/${enable ? "?enabled=true" : ""}`);
     const workflows: IWorkflow[] = res.data;
 
     return {
@@ -74,6 +76,7 @@ export async function getServerSideProps() {
         title: "GPTs",
         description: AUTOMATION_DESCRIPTION,
         workflows,
+        enable,
       },
     };
   } catch (error) {
