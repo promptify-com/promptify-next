@@ -3,9 +3,9 @@ import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { CategoryCard } from "@/components/common/cards/CardCategory";
-import { redirectToPath } from "@/common/helpers";
 import useCarousel from "@/hooks/useCarousel";
 import CarouselButtons from "@/components/common/buttons/CarouselButtons";
+import Link from "next/link";
 
 function CategoryCarousel({ categories }: { categories: Category[] }) {
   const { containerRef, scrollNext, scrollPrev } = useCarousel();
@@ -39,8 +39,9 @@ function CategoryCarousel({ categories }: { categories: Category[] }) {
         >
           <Button
             variant="outlined"
+            LinkComponent={Link}
+            href="/explore"
             sx={{ color: "#67677C" }}
-            onClick={() => redirectToPath("/explore")}
           >
             See all
           </Button>
