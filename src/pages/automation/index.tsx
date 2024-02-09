@@ -76,7 +76,6 @@ export async function getServerSideProps({ query }: Props) {
         title: "GPTs",
         description: AUTOMATION_DESCRIPTION,
         workflows,
-        enable,
       },
     };
   } catch (error) {
