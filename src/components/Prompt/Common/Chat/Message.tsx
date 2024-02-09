@@ -218,24 +218,24 @@ export const Message = ({ message, isExecutionShown, onScrollToBottom }: Props) 
           gap={"8px"}
           alignItems={"start"}
         >
-          <Typography
-            fontSize={isVariantA ? 14 : 15}
-            lineHeight={"24px"}
-            letterSpacing={"0.17px"}
-            display={"flex"}
-            alignItems={"center"}
-            color={isVariantB && fromUser ? "#725472" : "onSurface"}
-          >
-            {type === "html" ? (
-              <MessageContentWithHTML content={text} />
-            ) : (
+          {type === "html" ? (
+            <MessageContentWithHTML content={text} />
+          ) : (
+            <Typography
+              fontSize={isVariantA ? 14 : 15}
+              lineHeight={"24px"}
+              letterSpacing={"0.17px"}
+              display={"flex"}
+              alignItems={"center"}
+              color={isVariantB && fromUser ? "#725472" : "onSurface"}
+            >
               <MessageContent
                 content={text}
                 shouldStream={!fromUser}
                 onStreamingFinished={onScrollToBottom}
               />
-            )}
-          </Typography>
+            </Typography>
+          )}
         </Grid>
       </Grid>
     </Grid>
