@@ -1,10 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 
-import { useCreateUserWorkflowMutation, useGetWorkflowByIdQuery } from "@/core/api/workflows";
+import {
+  useCreateUserWorkflowMutation,
+  useGetWorkflowByIdQuery,
+  useUpdateWorkflowMutation,
+} from "@/core/api/workflows";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { clearExecutionsStates } from "@/core/store/executionsSlice";
-import { clearChatStates } from "@/core/store/chatSlice";
+import { clearChatStates, setAreCredentialsStored } from "@/core/store/chatSlice";
 import { n8nClient as ApiClient } from "@/common/axios";
 import Storage from "@/common/storage";
 import { attachCredentialsToNode, extractWebhookPath } from "@/components/Automation/helpers";
@@ -25,8 +29,8 @@ const useWorkflow = (workflow: IWorkflow) => {
   const webhookPathRef = useRef<string>();
 
   const { answers, inputs } = useAppSelector(state => state.chat);
-
   const [createWorkflow] = useCreateUserWorkflowMutation();
+  const [updateWorkflow] = useUpdateWorkflowMutation();
 
   const createWorkflowIfNeeded = async (selectedWorkflowId: number) => {
     const storedWorkflows = Storage.get("workflows") || {};
@@ -57,8 +61,23 @@ const useWorkflow = (workflow: IWorkflow) => {
 
           storedWorkflows[selectedWorkflowId] = {
             webhookPath: webhookPathRef.current,
-            workflow: updatedResponse,
           };
+
+          if (updatedNodes.filter(node => node.parameters.authentication).every(node => node.credentials)) {
+            dispatch(setAreCredentialsStored(true));
+
+            try {
+              await updateWorkflow({
+                workflowId: parseInt(workflowId),
+                data: updatedResponse,
+              });
+            } catch (error) {
+              console.error("Error updating workflow:", error);
+            }
+          } else {
+            dispatch(setAreCredentialsStored(false));
+            storedWorkflows[selectedWorkflowId].workflow = updatedResponse;
+          }
         } else {
           storedWorkflows[selectedWorkflowId] = {
             webhookPath: webhookPathRef.current,
