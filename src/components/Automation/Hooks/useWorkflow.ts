@@ -68,7 +68,7 @@ const useWorkflow = (workflow: IWorkflow) => {
 
             try {
               await updateWorkflow({
-                workflowId: parseInt(workflowId),
+                workflowId: selectedWorkflowId,
                 data: updatedResponse,
               });
             } catch (error) {
