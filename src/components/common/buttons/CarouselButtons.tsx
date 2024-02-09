@@ -7,9 +7,11 @@ import IconButton from "@mui/material/IconButton";
 interface Props {
   scrollPrev(): void;
   scrollNext(): void;
+  canScrollNext: boolean;
+  canScrollPrev: boolean;
 }
 
-export const CarouselButtons: React.FC<Props> = ({ scrollPrev, scrollNext }) => {
+export const CarouselButtons: React.FC<Props> = ({ scrollPrev, scrollNext, canScrollNext, canScrollPrev }) => {
   return (
     <Stack
       direction={"row"}
@@ -18,12 +20,14 @@ export const CarouselButtons: React.FC<Props> = ({ scrollPrev, scrollNext }) => 
     >
       <IconButton
         sx={btnStyle}
+        disabled={!canScrollPrev}
         onClick={scrollPrev}
       >
         <ArrowBackIosNew />
       </IconButton>
       <IconButton
         sx={btnStyle}
+        disabled={!canScrollNext}
         onClick={scrollNext}
       >
         <ArrowForwardIos />
@@ -32,6 +36,12 @@ export const CarouselButtons: React.FC<Props> = ({ scrollPrev, scrollNext }) => 
   );
 };
 
-const btnStyle = { border: "none", color: "#67677C" };
+const btnStyle = {
+  border: "none",
+  color: "#67677C",
+  "&.Mui-disabled": {
+    opacity: 0.6,
+  },
+};
 
 export default CarouselButtons;

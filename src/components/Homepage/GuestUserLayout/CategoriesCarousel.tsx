@@ -8,7 +8,7 @@ import CarouselButtons from "@/components/common/buttons/CarouselButtons";
 import Link from "next/link";
 
 function CategoryCarousel({ categories }: { categories: Category[] }) {
-  const { containerRef, scrollNext, scrollPrev } = useCarousel();
+  const { containerRef, scrollNext, scrollPrev, canScrollNext, canScrollPrev } = useCarousel();
 
   return (
     <Stack
@@ -48,6 +48,8 @@ function CategoryCarousel({ categories }: { categories: Category[] }) {
           <CarouselButtons
             scrollPrev={scrollPrev}
             scrollNext={scrollNext}
+            canScrollNext={canScrollNext}
+            canScrollPrev={canScrollPrev}
           />
         </Stack>
       </Stack>

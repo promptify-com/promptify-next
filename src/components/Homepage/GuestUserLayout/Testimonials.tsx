@@ -95,7 +95,7 @@ const TestimonialCard = ({ testimonial }: { testimonial: ITestimonial }) => (
 );
 
 function Testimonials() {
-  const { containerRef, scrollNext, scrollPrev } = useCarousel();
+  const { containerRef, scrollNext, scrollPrev, canScrollNext, canScrollPrev } = useCarousel();
 
   return (
     <Stack
@@ -131,6 +131,8 @@ function Testimonials() {
           <CarouselButtons
             scrollPrev={scrollPrev}
             scrollNext={scrollNext}
+            canScrollNext={canScrollNext}
+            canScrollPrev={canScrollPrev}
           />
         </Box>
       </Stack>
