@@ -11,7 +11,7 @@ export const workflowsApi = baseApi.injectEndpoints({
     return {
       getWorkflows: builder.query<IWorkflow[], void>({
         query: () => ({
-          url: "/api/n8n/workflows/?enabled=true",
+          url: "/api/n8n/workflows/",
           method: "get",
         }),
       }),
