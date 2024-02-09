@@ -66,7 +66,7 @@ const Automation = ({ workflows }: Props) => {
 
 export async function getServerSideProps() {
   try {
-    const res = await authClient.get(`/api/n8n/workflows/?enabled=true`);
+    const res = await authClient.get(`/api/n8n/workflows/`);
     const workflows: IWorkflow[] = res.data;
 
     return {
