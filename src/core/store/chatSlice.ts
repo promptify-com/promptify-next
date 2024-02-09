@@ -2,7 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { IAnswer } from "@/components/Prompt/Types/chat";
-import type { PromptParams, ResOverrides } from "../api/dto/prompts";
+import type { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
+import type { ICredentialInput } from "@/components/Automation/types";
 
 export interface ExecutionsProps {
   answers: IAnswer[];
@@ -10,6 +11,8 @@ export interface ExecutionsProps {
   params: PromptParams[];
   paramsValues: ResOverrides[];
   isSimulationStreaming: boolean;
+  credentialsInput: ICredentialInput[];
+  areCredentialsStored: boolean;
 }
 
 const initialState: ExecutionsProps = {
@@ -18,10 +21,12 @@ const initialState: ExecutionsProps = {
   params: [],
   paramsValues: [],
   isSimulationStreaming: false,
+  credentialsInput: [],
+  areCredentialsStored: false,
 };
 
 export const chatSlice = createSlice({
-  name: "executions",
+  name: "chat",
   initialState,
   reducers: {
     setAnswers: (state, action: PayloadAction<IAnswer[]>) => {
@@ -39,9 +44,27 @@ export const chatSlice = createSlice({
     setIsSimulationStreaming: (state, action: PayloadAction<boolean>) => {
       state.isSimulationStreaming = action.payload;
     },
+    setCredentialsInput: (state, action: PayloadAction<ICredentialInput[]>) => {
+      state.credentialsInput = action.payload;
+    },
+    clearChatStates: _state => {
+      return initialState;
+    },
+    setAreCredentialsStored: (state, action: PayloadAction<boolean>) => {
+      state.areCredentialsStored = action.payload;
+    },
   },
 });
 
-export const { setAnswers, setInputs, setParams, setParamsValues, setIsSimulationStreaming } = chatSlice.actions;
+export const {
+  setAnswers,
+  setInputs,
+  setParams,
+  setParamsValues,
+  setIsSimulationStreaming,
+  setCredentialsInput,
+  clearChatStates,
+  setAreCredentialsStored,
+} = chatSlice.actions;
 
 export default chatSlice.reducer;

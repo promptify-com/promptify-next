@@ -87,8 +87,9 @@ export const Message = ({ message, isExecutionShown, onScrollToBottom }: Props) 
     dispatch(setIsSimulationStreaming(true));
   }, []);
 
-  const isTypeFormOrSpark = type === "form" || type === "spark";
-  if (isTypeFormOrSpark) return;
+  const isMessageBox = Boolean(["form", "spark", "credentials"].includes(type));
+
+  if (isMessageBox) return;
 
   return (
     <Grid
@@ -159,7 +160,7 @@ export const Message = ({ message, isExecutionShown, onScrollToBottom }: Props) 
         flex={1}
         display={"flex"}
         flexDirection={"column"}
-        width={fromUser ? "content-fit" : "100%"}
+        width={fromUser ? "fit-content" : "100%"}
         gap={"8px"}
         padding={isVariantB ? "8px 16px 8px 24px" : 0}
         borderRadius={!fromUser ? "0px 16px 16px 16px" : "16px 16px 0px 16px"}
@@ -169,6 +170,7 @@ export const Message = ({ message, isExecutionShown, onScrollToBottom }: Props) 
         })}
         {...(isVariantB && {
           bgcolor: fromUser ? "#7254721A" : "surface.2",
+          ml: "auto",
         })}
       >
         {isVariantA && !message.noHeader && (
@@ -216,24 +218,24 @@ export const Message = ({ message, isExecutionShown, onScrollToBottom }: Props) 
           gap={"8px"}
           alignItems={"start"}
         >
-          <Typography
-            fontSize={isVariantA ? 14 : 15}
-            lineHeight={"24px"}
-            letterSpacing={"0.17px"}
-            display={"flex"}
-            alignItems={"center"}
-            color={isVariantB && fromUser ? "#725472" : "onSurface"}
-          >
-            {type === "html" ? (
-              <MessageContentWithHTML content={text} />
-            ) : (
+          {type === "html" ? (
+            <MessageContentWithHTML content={text} />
+          ) : (
+            <Typography
+              fontSize={isVariantA ? 14 : 15}
+              lineHeight={"24px"}
+              letterSpacing={"0.17px"}
+              display={"flex"}
+              alignItems={"center"}
+              color={isVariantB && fromUser ? "#725472" : "onSurface"}
+            >
               <MessageContent
                 content={text}
                 shouldStream={!fromUser}
                 onStreamingFinished={onScrollToBottom}
               />
-            )}
-          </Typography>
+            </Typography>
+          )}
         </Grid>
       </Grid>
     </Grid>

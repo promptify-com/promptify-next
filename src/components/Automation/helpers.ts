@@ -1,4 +1,11 @@
-import type { INode, NodesFileData } from "@/components/Automation/types";
+import Storage from "@/common/storage";
+import type {
+  INode,
+  NodesFileData,
+  ICredentialJson,
+  ICredentialInput,
+  ICredential,
+} from "@/components/Automation/types";
 
 const UNWANTED_TYPES = [
   "n8n-nodes-base.switch",
@@ -32,3 +39,83 @@ export async function getNodeNames(nodes: INode[] = [], slice = 3) {
 
   return filteredTypes.slice(0, slice);
 }
+
+export const authTypeMapping: { [key: string]: string } = {
+  basicAuth: "httpBasicAuth",
+  // Add other mappings here if necessary
+};
+
+export async function extractCredentialsInput(nodes: INode[] = []): Promise<ICredentialInput[]> {
+  const credentialsInput: ICredentialInput[] = [];
+  const creds = (
+    await import(
+      /* webpackChunkName: "workflow_creds" */
+      /* webpackMode: "lazy" */
+      "@/components/Automation/creds.json"
+    )
+  ).default as unknown as ICredentialJson;
+
+  for (const node of nodes) {
+    if (node.credentials) {
+      continue;
+    }
+    const parameters = node.parameters;
+    if (parameters && parameters.authentication) {
+      const authenticationType = parameters.authentication;
+      const nodeCredentialType = parameters.nodeCredentialType;
+      const authType =
+        authTypeMapping[nodeCredentialType!] ||
+        nodeCredentialType ||
+        authTypeMapping[authenticationType] ||
+        authenticationType;
+
+      if (creds[authType]) {
+        credentialsInput.push({
+          name: authType,
+          displayName: creds[authType].displayName,
+          properties: creds[authType].properties,
+        });
+      }
+    }
+  }
+
+  return credentialsInput;
+}
+
+export const attachCredentialsToNode = (node: INode) => {
+  if (node.type === "n8n-nodes-promptify.promptify") {
+    return;
+  }
+  const { parameters } = node;
+
+  if (parameters && parameters.authentication) {
+    const authenticationType = parameters.authentication;
+    const nodeCredentialType = parameters.nodeCredentialType;
+
+    const authType =
+      authTypeMapping[nodeCredentialType!] ||
+      nodeCredentialType ||
+      authTypeMapping[authenticationType] ||
+      authenticationType;
+
+    const currentCredentials: ICredential[] = Storage.get("credentials") || [];
+
+    const credential = currentCredentials.find(cred => cred.type === authType);
+
+    if (credential) {
+      const { type, id, name } = credential;
+
+      if (!node.credentials) {
+        node.credentials = {};
+      }
+      node.credentials[type] = { id, name };
+    }
+  }
+
+  return node;
+};
+
+export const extractWebhookPath = (nodes: INode[]) => {
+  const webhookNode = nodes.find(node => node.type === "n8n-nodes-base.webhook");
+  return webhookNode?.parameters?.path;
+};

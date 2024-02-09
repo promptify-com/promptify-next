@@ -1,21 +1,22 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
+
 import { setGeneratingStatus } from "@/core/store/templatesSlice";
 import { parseMessageData } from "@/common/helpers/parseMessageData";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import useToken from "@/hooks/useToken";
-import useChatBox from "./useChatBox";
-import useApiAccess from "./useApiAccess";
+import useChatBox from "@/components/Prompt/Hooks/useChatBox";
+import useApiAccess from "@/components/Prompt/Hooks/useApiAccess";
 import { useStopExecutionMutation } from "@/core/api/executions";
-import { setGeneratedExecution } from "@/core/store/executionsSlice";
-import type { PromptLiveResponse } from "@/common/types/prompt";
-import type { ResPrompt } from "@/core/api/dto/prompts";
-import type { Templates } from "@/core/api/dto/templates";
+import { setGeneratedExecution, setSelectedExecution } from "@/core/store/executionsSlice";
 import { useStoreAnswersAndParams } from "@/hooks/useStoreAnswersAndParams";
 import useUploadPromptFiles from "@/hooks/useUploadPromptFiles";
 import { setAnswers } from "@/core/store/chatSlice";
 import { setToast } from "@/core/store/toastSlice";
+import type { PromptLiveResponse } from "@/common/types/prompt";
+import type { ResPrompt } from "@/core/api/dto/prompts";
+import type { Templates } from "@/core/api/dto/templates";
 
 interface Props {
   template: Templates;
@@ -66,8 +67,8 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
 
     const promptsData = preparePromptsData(uploadedFiles.current, _answers, paramsValues, template.prompts);
 
+    dispatch(setSelectedExecution(null));
     uploadedFiles.current.clear();
-
     generateExecution(promptsData);
   };
 

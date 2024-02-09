@@ -4,6 +4,7 @@ import Code from "./Code";
 import Choices from "./Choices";
 import File from "./File";
 import Textual from "./Textual";
+import Credentials from "./Credentials";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { PromptInputType } from "@/components/Prompt/Types";
 
@@ -58,6 +59,8 @@ function RenderInputType({ input, value: initialValue, onChange }: Props) {
           onChange={handleOnChange}
         />
       );
+    case "credentials":
+      return <Credentials input={input} />;
     default:
       return (
         <Textual

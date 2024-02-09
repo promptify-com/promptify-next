@@ -11,15 +11,16 @@ import { setIsSimulationStreaming } from "@/core/store/chatSlice";
 import { Display } from "@/components/Prompt/Common/Display";
 import Form from "@/components/Prompt/Common/Chat/Form";
 import AccordionMessageHeader from "@/components/Prompt/VariantB/AccordionMessageHeader";
+import useVariant from "../Hooks/useVariant";
 import type { Templates } from "@/core/api/dto/templates";
-import useVariant from "@/components/Prompt/Hooks/useVariant";
+import type { MessageType } from "@/components/Prompt/Types/chat";
 
 interface Props {
   onGenerate: () => void;
   abortGenerating: () => void;
   showGenerate: boolean;
   template: Templates;
-  type: "spark" | "form";
+  type: MessageType;
   onChange?: (event: SyntheticEvent<Element, Event>, expanded: boolean) => void;
   expanded: boolean;
 }
@@ -41,6 +42,21 @@ export default function AccordionMessage({
   const hasInputs = !!inputs.length;
 
   const accordionRef = useRef<HTMLDivElement>(null);
+
+  function getLabelText() {
+    switch (true) {
+      case isGenerating:
+        return "Generation Result";
+      case isAutomationPage && type === "form":
+        return "WORKFLOW";
+      case type === "credentials":
+        return "CREDENTIALS";
+      default:
+        return "PROMPT Template";
+    }
+  }
+
+  const canDisplayForm = type === "form" || type === "credentials";
 
   return (
     <Fade
@@ -88,7 +104,7 @@ export default function AccordionMessage({
               textTransform={"uppercase"}
               display={hasInputs ? "block" : "none"}
             >
-              {isGenerating ? "Generation Result" : `${isAutomationPage ? "WORKFLOW" : "PROMPT Template"} information`}
+              {`${getLabelText()} information.`}
             </Typography>
 
             <Stack
@@ -105,7 +121,7 @@ export default function AccordionMessage({
                   <Display templateData={template} />
                 </Stack>
               )}
-              {type === "form" && <Form />}
+              {canDisplayForm && <Form messageType={type} />}
             </Stack>
           </Stack>
           {showGenerate && type === "form" && currentUser?.id && (

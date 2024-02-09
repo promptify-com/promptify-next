@@ -1,15 +1,18 @@
-import { Box, Grid, Typography } from "@mui/material";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+
 import { Connections, Home, Identity, TemplatesManager } from "@/components/profile";
+import { useAppSelector } from "@/hooks/useStore";
 import { Layout } from "@/layout";
 import Protected from "@/components/Protected";
-import { useSelector } from "react-redux";
-import { RootState } from "@/core/store";
 import EditProfile from "@/components/profile/EditProfile";
+import Credentials from "@/components/profile/Credentials";
 import { SEO_DESCRIPTION } from "@/common/constants";
 
 const Profile = () => {
-  const isEditMode = useSelector((state: RootState) => state.profile.showEditMode);
-  const currentUser = useSelector((state: RootState) => state.user.currentUser);
+  const isEditMode = useAppSelector(state => state.profile.showEditMode);
+  const currentUser = useAppSelector(state => state.user.currentUser);
 
   return (
     <Protected>
@@ -56,6 +59,7 @@ const Profile = () => {
                   </Box>
                   <Home />
                   <Connections />
+                  <Credentials />
                   <Identity />
                   <TemplatesManager
                     type={"user"}
