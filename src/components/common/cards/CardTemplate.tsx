@@ -59,10 +59,10 @@ function CardTemplate({ template, query, asResult, vertical }: CardTemplateProps
       <Card
         sx={{
           width: isDesktop && vertical ? "210px" : "auto",
-          height: "100%",
+          height: isDesktop && vertical ? "calc(100% - 24px)" : "calc(100% - 16px)",
           borderRadius: "16px",
           cursor: "pointer",
-          p: "8px",
+          p: isDesktop && vertical ? "16px 16px 8px" : "8px",
           bgcolor: isDesktop && vertical ? "transparent" : "surface.2",
           "&:hover": {
             bgcolor: "action.hover",

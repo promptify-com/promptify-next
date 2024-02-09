@@ -52,8 +52,9 @@ function CategoryCarousel({ categories }: { categories: Category[] }) {
       </Stack>
       <Stack ref={containerRef}>
         <Stack
-          gap={3}
           direction={"row"}
+          gap={3}
+          p={"8px 16px"}
         >
           {categories.map((category, idx) => (
             <CategoryCard

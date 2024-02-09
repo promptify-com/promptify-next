@@ -3,8 +3,10 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import ElectricBoltOutlined from "@mui/icons-material/ElectricBoltOutlined";
 import Inventory2Outlined from "@mui/icons-material/Inventory2Outlined";
-import StickyNote2Outlined from "@mui/icons-material/StickyNote2Outlined";
 import Link from "next/link";
+import { StickyNote2Icon } from "@/assets/icons/StickyNote2Icon";
+import { DeployedCodeIcon } from "@/assets/icons/DeployedCodeIcon";
+import { ElectricBoltIcon } from "@/assets/icons/ElectricBoltIcon";
 
 interface IServiceCard {
   title: string;
@@ -19,7 +21,7 @@ interface IServiceCard {
 const ServicesList: IServiceCard[] = [
   {
     title: "Prompt Library",
-    icon: <StickyNote2Outlined />,
+    icon: <StickyNote2Icon />,
     description:
       "From versatile templates to an intuitive design, we offer an unparalleled content generation experience",
     link: {
@@ -29,7 +31,7 @@ const ServicesList: IServiceCard[] = [
   },
   {
     title: "Prompt Builder",
-    icon: <Inventory2Outlined />,
+    icon: <DeployedCodeIcon />,
     description:
       "From versatile templates to an intuitive design, we offer an unparalleled content generation experience",
     link: {
@@ -39,7 +41,7 @@ const ServicesList: IServiceCard[] = [
   },
   {
     title: "GPTs",
-    icon: <ElectricBoltOutlined />,
+    icon: <ElectricBoltIcon />,
     description:
       "Seamlessly integrate our services into your applications. Plus, use our Chrome extension for AI-powered writing on",
     link: {

@@ -102,15 +102,15 @@ function Learn() {
           nostrum.
         </Typography>
       </Stack>
-      <Stack
-        direction={{ md: "row" }}
-        gap={3}
-      >
-        <BlogPostCard post={BlogPosts[0]} />
+      <Stack direction={{ md: "row" }}>
+        <Box px={"16px"}>
+          <BlogPostCard post={BlogPosts[0]} />
+        </Box>
         <Stack
           justifyContent={"space-between"}
           alignItems={"center"}
-          gap={3}
+          gap={1}
+          px={"16px"}
         >
           <Stack
             direction={{ md: "row" }}

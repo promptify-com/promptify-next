@@ -26,15 +26,17 @@ function GuestUserLayout({ categories }: { categories: Category[] }) {
       <Services />
       <Stack
         py={{ xs: "30px", md: "48px" }}
-        gap={4}
+        gap={3}
       >
-        <Typography
-          fontSize={32}
-          fontWeight={400}
-          color={"#2A2A3C"}
-        >
-          Most popular templates
-        </Typography>
+        <Stack p={"8px 16px"}>
+          <Typography
+            fontSize={32}
+            fontWeight={400}
+            color={"#2A2A3C"}
+          >
+            Most popular templates:
+          </Typography>
+        </Stack>
         <TemplatesSection
           templateLoading={isLoading}
           templates={popularTemplates?.results}

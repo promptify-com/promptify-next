@@ -27,6 +27,7 @@ function BlogPostCard({ post, min }: Props) {
         elevation={0}
         title={title}
         sx={{
+          height: "100%",
           bgcolor: "transparent",
           borderRadius: "24px",
           overflow: "hidden",

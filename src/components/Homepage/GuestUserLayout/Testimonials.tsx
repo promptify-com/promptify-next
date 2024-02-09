@@ -8,22 +8,31 @@ import useCarousel from "@/hooks/useCarousel";
 import CarouselButtons from "@/components/common/buttons/CarouselButtons";
 import { Box } from "@mui/material";
 
-interface ITestimonials {
+interface ITestimonial {
   image: string;
   content: string;
   name: string;
   profession: string;
 }
 
-const Testimonial: ITestimonials = {
-  image: require("./empower.png"),
-  content:
-    "Before Promptify.com, I'd spend hours staring at a blank page. Now? Essays are a breeze, and I even have time for video games afterward! 🎮📝",
-  name: "Alex",
-  profession: "High School Student",
-};
+const TestimonialExamples: ITestimonial[] = [
+  {
+    image: require("@/assets/images/testimonial1.png"),
+    content:
+      "Before Promptify.com, I'd spend hours staring at a blank page. Now? Essays are a breeze, and I even have time for video games afterward! 🎮📝",
+    name: "Alex",
+    profession: "High School Student",
+  },
+  {
+    image: require("@/assets/images/testimonial2.png"),
+    content:
+      "Drafting business proposals and emails has never been this efficient. Promptify.com is like having an AI assistant by my side. Absolute game-changer! 👩💼🚀",
+    name: "Jordan",
+    profession: "Marketing Manager",
+  },
+];
 
-const TestimonialCard = ({ testimonial }: { testimonial: ITestimonials }) => (
+const TestimonialCard = ({ testimonial }: { testimonial: ITestimonial }) => (
   <Card
     elevation={0}
     sx={{
@@ -131,10 +140,10 @@ function Testimonials() {
           gap={3}
           direction={"row"}
         >
-          {Array.from({ length: 10 }).map((_, idx) => (
+          {TestimonialExamples.map((testimonial, idx) => (
             <TestimonialCard
               key={idx}
-              testimonial={Testimonial}
+              testimonial={testimonial}
             />
           ))}
         </Stack>
