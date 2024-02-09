@@ -142,7 +142,6 @@ export const TemplatesSection = forwardRef<HTMLDivElement, TemplatesSectionProps
             <Stack
               direction={"row"}
               flexWrap={"wrap"}
-              gap={1}
               rowGap={3}
             >
               {!!templates?.length &&

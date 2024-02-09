@@ -105,13 +105,12 @@ function Testimonials() {
       <Stack
         direction={{ md: "row" }}
         alignItems={{ md: "center" }}
-        p={"8px 16px"}
         gap={1}
+        px={"16px"}
       >
         <Stack
           flex={1}
           gap={1}
-          px={"16px"}
         >
           <Typography
             fontSize={32}
@@ -139,6 +138,7 @@ function Testimonials() {
         <Stack
           gap={3}
           direction={"row"}
+          px={"16px"}
         >
           {TestimonialExamples.map((testimonial, idx) => (
             <TestimonialCard
