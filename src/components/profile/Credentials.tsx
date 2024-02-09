@@ -1,20 +1,17 @@
+import { useEffect } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 
 import { formatDate } from "@/common/helpers/timeManipulation";
-import useCredentials from "../Automation/Hooks/useCredentials";
-import { useEffect } from "react";
+import useCredentials from "@/components/Automation/Hooks/useCredentials";
 
 function Credentials() {
   const { credentials, initializeCredentials } = useCredentials();
 
   useEffect(() => {
-    const fetchCredentials = async () => {
-      await initializeCredentials();
-    };
-    fetchCredentials();
-  }, [initializeCredentials]);
+    initializeCredentials();
+  }, []);
 
   if (!credentials.length) {
     return;

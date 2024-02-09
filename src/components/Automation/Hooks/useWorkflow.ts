@@ -38,7 +38,9 @@ const useWorkflow = (workflow: IWorkflow) => {
       if (response) {
         webhookPathRef.current = extractWebhookPath(response.nodes);
 
-        const nodesRequiringAuthentication = response.nodes.filter(node => node.parameters?.authentication);
+        const nodesRequiringAuthentication = response.nodes.filter(
+          node => node.parameters?.authentication && !node.credentials,
+        );
 
         if (nodesRequiringAuthentication.length) {
           const updatedResponse = {

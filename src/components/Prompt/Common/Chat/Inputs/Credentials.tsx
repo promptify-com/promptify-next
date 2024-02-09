@@ -92,8 +92,7 @@ function Credentials({ input }: Props) {
 
       const workflow = storedWorkflows[workflowId].workflow as IWorkflowCreateResponse;
 
-      const updatedNodes = workflow.nodes.map(node => attachCredentialsToNode(node));
-      storedWorkflows[workflowId].workflow = { ...workflow, nodes: updatedNodes };
+      workflow.nodes.forEach(node => attachCredentialsToNode(node));
 
       const areAllCredentialsStored = checkAllCredentialsStored(credentialsInput);
       dispatch(setAreCredentialsStored(areAllCredentialsStored));
@@ -104,7 +103,7 @@ function Credentials({ input }: Props) {
         try {
           await updateWorkflow({
             workflowId: parseInt(workflowId),
-            data: { ...workflow, nodes: updatedNodes as INode[] },
+            data: workflow,
           });
         } catch (error) {
           console.error("Error updating workflow:", error);
