@@ -87,7 +87,7 @@ export const TemplatesSection = forwardRef<HTMLDivElement, TemplatesSectionProps
       )}
 
       {templateLoading ? (
-        isLatestTemplates ? (
+        isLatestTemplates || isPopularTemplates ? (
           <Grid
             display={"flex"}
             flexDirection={"row"}

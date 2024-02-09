@@ -14,6 +14,9 @@ import { isDesktopViewPort, stripTags } from "@/common/helpers";
 import { theme } from "@/theme";
 import { useAppDispatch } from "@/hooks/useStore";
 import Link from "next/link";
+import { alpha } from "@mui/material";
+import Favorite from "@mui/icons-material/Favorite";
+import { Bolt } from "@mui/icons-material";
 
 type CardTemplateProps = {
   template: Templates | TemplateExecutionsDisplay;
@@ -75,13 +78,16 @@ function CardTemplate({ template, query, asResult, vertical }: CardTemplateProps
           alignItems={{ xs: "start", md: vertical ? "flex-start" : "center" }}
           justifyContent={"space-between"}
           gap={1}
+          height={"100%"}
         >
           <Stack
             direction={isDesktop && vertical ? "column" : "row"}
             justifyContent={{ xs: "flex-start", md: "space-between" }}
             alignItems={vertical ? "flex-start" : "center"}
+            flexWrap={"wrap"}
             gap={2}
             width={"100%"}
+            height={"100%"}
           >
             <CardMedia
               sx={{
@@ -115,6 +121,7 @@ function CardTemplate({ template, query, asResult, vertical }: CardTemplateProps
                   lineHeight: "16.8px",
                   letterSpacing: "0.15px",
                   color: "onSurface",
+                  opacity: vertical ? 0.75 : 1,
                 }}
               >
                 {highlightSearchQuery(truncate(stripTags(template.description), { length: 70 }))}
@@ -133,6 +140,41 @@ function CardTemplate({ template, query, asResult, vertical }: CardTemplateProps
                 }}
               />
             )}
+            {vertical && (
+              <Stack
+                direction={"row"}
+                alignItems={"center"}
+                gap={1}
+                width={"100%"}
+              >
+                <Stack
+                  direction={"row"}
+                  alignItems={"center"}
+                  gap={0.5}
+                  sx={iconTextStyle}
+                >
+                  <Favorite />
+                  {template.favorites_count || 0}
+                </Stack>
+                <Stack
+                  direction={"row"}
+                  alignItems={"center"}
+                  gap={0.5}
+                  sx={iconTextStyle}
+                >
+                  <Bolt />
+                  {template.executions_count || 0}
+                </Stack>
+                <Typography
+                  ml={"auto"}
+                  fontSize={13}
+                  fontWeight={400}
+                  color={alpha(theme.palette.onSurface, 0.75)}
+                >
+                  by {template.created_by.first_name || template.created_by.username}
+                </Typography>
+              </Stack>
+            )}
           </Stack>
           <Stack
             display={asResult ? "none" : "flex"}
@@ -140,77 +182,85 @@ function CardTemplate({ template, query, asResult, vertical }: CardTemplateProps
             justifyContent={"space-between"}
             alignItems={{ xs: "end", md: "center" }}
             width={{ xs: "100%", md: "auto" }}
-            marginTop={{ xs: "10px", md: "0px" }}
-            gap={3}
+            marginTop={{ xs: vertical ? 0 : "10px", md: "0px" }}
+            gap={2}
           >
             <Stack
               direction={"row"}
-              flexWrap={vertical ? "wrap" : "nowrap"}
               gap={1}
             >
-              {template.tags.slice(0, 3).map(tag => (
-                <Chip
-                  key={tag.id}
-                  clickable
-                  size="small"
-                  label={tag.name}
-                  sx={{
-                    fontSize: { xs: 11, md: 13 },
-                    fontWeight: 400,
-                    bgcolor: "surface.5",
-                    color: "onSurface",
-                  }}
-                  onClick={e => {
-                    e.stopPropagation();
+              {!vertical && (
+                <>
+                  {template.tags.slice(0, 3).map(tag => (
+                    <Chip
+                      key={tag.id}
+                      clickable
+                      size="small"
+                      label={tag.name}
+                      sx={{
+                        fontSize: { xs: 11, md: 13 },
+                        fontWeight: 400,
+                        bgcolor: "surface.5",
+                        color: "onSurface",
+                      }}
+                      onClick={e => {
+                        e.stopPropagation();
 
-                    dispatch(setSelectedTag(tag));
+                        dispatch(setSelectedTag(tag));
 
-                    router.push("/explore");
-                  }}
-                />
-              ))}
-            </Stack>
-            {!vertical && (
-              <>
-                <Grid
-                  sx={{
-                    display: "flex",
-                    gap: "0.4em",
-                  }}
-                >
-                  <Stack
-                    direction={"row"}
-                    alignItems={"center"}
-                    gap={0.5}
+                        router.push("/explore");
+                      }}
+                    />
+                  ))}
+                  <Grid
                     sx={{
                       display: "flex",
-                      fontSize: 13,
-                      fontWeight: 500,
-                      color: "onSurface",
+                      gap: "0.4em",
                     }}
                   >
-                    <ArrowBackIosRoundedIcon sx={{ fontSize: 14 }} />
-                    {template.favorites_count || 0}
-                  </Stack>
-                </Grid>
-                <Image
-                  src={template.created_by?.avatar ?? require("@/assets/images/default-avatar.jpg")}
-                  alt={template.created_by?.first_name?.slice(0, 1) ?? "P"}
-                  width={32}
-                  height={32}
-                  style={{
-                    display: isDesktop ? "flex" : "none",
-                    backgroundColor: theme.palette.surface[5],
-                    borderRadius: "50%",
-                  }}
-                />
-              </>
-            )}
+                    <Stack
+                      direction={"row"}
+                      alignItems={"center"}
+                      gap={0.5}
+                      sx={{
+                        display: "flex",
+                        fontSize: 13,
+                        fontWeight: 500,
+                        color: "onSurface",
+                      }}
+                    >
+                      <ArrowBackIosRoundedIcon sx={{ fontSize: 14 }} />
+                      {template.favorites_count || 0}
+                    </Stack>
+                  </Grid>
+                  <Image
+                    src={template.created_by?.avatar ?? require("@/assets/images/default-avatar.jpg")}
+                    alt={template.created_by?.first_name?.slice(0, 1) ?? "P"}
+                    width={32}
+                    height={32}
+                    style={{
+                      display: isDesktop ? "flex" : "none",
+                      backgroundColor: theme.palette.surface[5],
+                      borderRadius: "50%",
+                    }}
+                  />
+                </>
+              )}
+            </Stack>
           </Stack>
         </Stack>
       </Card>
     </Link>
   );
 }
+
+const iconTextStyle = {
+  fontSize: 13,
+  fontWeight: 400,
+  color: "onSurface",
+  svg: {
+    fontSize: 14,
+  },
+};
 
 export default CardTemplate;
