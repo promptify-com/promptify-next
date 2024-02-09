@@ -61,7 +61,7 @@ export interface IWorkflowCreateResponse {
   name: string;
   description?: string;
   image?: string;
-  created_by: UserPartial;
+  created_by?: UserPartial;
   nodes: INode[];
   createdAt?: Date;
   updatedAt?: Date;
