@@ -42,9 +42,10 @@ const useWorkflow = (workflow: IWorkflow) => {
           node => node.parameters?.authentication && !node.credentials,
         );
 
-        const updatedNodes = nodesRequiringAuthentication.map(node => ({ ...node }));
         if (nodesRequiringAuthentication.length) {
-          nodesRequiringAuthentication.forEach(node => attachCredentialsToNode(node));
+          // response's objects are not extensible, so we need to extract the nodes
+          const updatedNodes = response.nodes.map(node => ({ ...node }));
+          updatedNodes.forEach(node => attachCredentialsToNode(node));
 
           const updatedResponse = {
             name: response.name,
