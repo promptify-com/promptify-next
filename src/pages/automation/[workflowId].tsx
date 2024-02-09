@@ -52,10 +52,10 @@ export default function SingleWorkflow({ workflow }: Props) {
 
   const processData = async () => {
     if (selectedWorkflow?.data) {
-      createWorkflowIfNeeded(selectedWorkflow.id);
-
       const { nodes } = selectedWorkflow.data;
       const credentialsInput = await extractCredentialsInputFromNodes(nodes);
+
+      createWorkflowIfNeeded(selectedWorkflow.id);
 
       const inputs: IPromptInput[] = nodes
         .filter(node => node.type === "n8n-nodes-base.set")

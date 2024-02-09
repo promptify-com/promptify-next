@@ -42,12 +42,13 @@ const useWorkflow = (workflow: IWorkflow) => {
           node => node.parameters?.authentication && !node.credentials,
         );
 
+        const updatedNodes = nodesRequiringAuthentication.map(node => ({ ...node }));
         if (nodesRequiringAuthentication.length) {
           nodesRequiringAuthentication.forEach(node => attachCredentialsToNode(node));
 
           const updatedResponse = {
             name: response.name,
-            nodes: response.nodes,
+            nodes: updatedNodes,
             active: response.active,
             connections: response.connections,
             settings: response.settings,
