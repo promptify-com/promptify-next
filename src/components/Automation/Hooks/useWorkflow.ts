@@ -7,7 +7,7 @@ import { clearExecutionsStates } from "@/core/store/executionsSlice";
 import { clearChatStates } from "@/core/store/chatSlice";
 import { n8nClient as ApiClient } from "@/common/axios";
 import Storage from "@/common/storage";
-import { extractWebhookPath } from "@/components/Automation/helpers";
+import { attachCredentialsToNode, extractWebhookPath } from "@/components/Automation/helpers";
 import type { Category } from "@/core/api/dto/templates";
 import type { IStoredWorkflows, IWorkflow } from "@/components/Automation/types";
 
@@ -43,6 +43,8 @@ const useWorkflow = (workflow: IWorkflow) => {
         );
 
         if (nodesRequiringAuthentication.length) {
+          nodesRequiringAuthentication.forEach(node => attachCredentialsToNode(node));
+
           const updatedResponse = {
             name: response.name,
             nodes: response.nodes,
