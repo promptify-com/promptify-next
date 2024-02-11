@@ -31,11 +31,11 @@ const useWorkflow = (workflow: IWorkflow) => {
   }, []);
 
   useEffect(() => {
-    if (data) {
-      setWorkflowData(data);
-      createWorkflowIfNeeded(data.id);
+    if (data || workflow.id) {
+      data && setWorkflowData(data);
+      createWorkflowIfNeeded(data?.id ?? workflow.id);
     }
-  }, [data]);
+  }, [data, workflow]);
 
   const clearStoredStates = () => {
     dispatch(setSelectedExecution(null));
