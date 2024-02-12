@@ -1,16 +1,25 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 
 import { formatDate } from "@/common/helpers/timeManipulation";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
+import type { ICredential } from "@/components/Automation/types";
 
 function Credentials() {
-  const { credentials, initializeCredentials } = useCredentials();
+  const { initializeCredentials } = useCredentials();
+  const [credentials, setCredentials] = useState<ICredential[]>([]);
 
   useEffect(() => {
-    initializeCredentials();
+    // if credentials already in local storage, no http call will be triggered, we're safe here.
+    initializeCredentials().then(_credentials => {
+      if (!!_credentials.length) {
+        const newCredentials = _credentials.filter(credential => credential.type !== "promptifyApi");
+
+        setCredentials(newCredentials);
+      }
+    });
   }, []);
 
   if (!credentials.length) {
