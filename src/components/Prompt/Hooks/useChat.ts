@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 
 import { randomId } from "@/common/helpers";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
@@ -7,23 +8,29 @@ import useVariant from "./useVariant";
 import useToken from "@/hooks/useToken";
 import { vary } from "@/common/helpers/varyValidator";
 import { setGeneratedExecution, setSelectedExecution } from "@/core/store/executionsSlice";
-import type { IPromptInput } from "@/common/types/prompt";
 import { ContextualOverrides, ResOverrides } from "@/core/api/dto/prompts";
-import { useRouter } from "next/router";
-import type { IAnswer, IMessage, MessageType } from "../Types/chat";
-import type { PromptInputType } from "@/components/Prompt/Types";
 import { useStoreAnswersAndParams } from "@/hooks/useStoreAnswersAndParams";
+import type { IPromptInput } from "@/common/types/prompt";
+import type { IAnswer, IMessage, MessageType } from "@/components/Prompt/Types/chat";
+import type { PromptInputType } from "@/components/Prompt/Types";
 
 interface Props {
   initialMessageTitle: string;
   questionPrefixContent?: string;
 }
 
+interface CreateMessageProps {
+  type: MessageType;
+  fromUser?: boolean;
+  noHeader?: boolean;
+  timestamp?: string;
+}
+
 function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
   const token = useToken();
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const { isVariantA, isVariantB } = useVariant();
+  const { isVariantA, isVariantB, isAutomationPage } = useVariant();
 
   const currentUser = useAppSelector(state => state.user.currentUser);
   const { isSimulationStreaming, inputs, answers, paramsValues } = useAppSelector(state => state.chat);
@@ -44,12 +51,18 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
       ((showGenerateButton && messages[messages.length - 1]?.type !== "spark") ||
         Boolean(!inputs.length || !inputs[0]?.required));
 
-  const createMessage = (type: MessageType, fromUser = false, timestamp = new Date().toISOString()): IMessage => ({
+  const createMessage = ({
+    type,
+    timestamp = new Date().toISOString(),
+    fromUser = false,
+    noHeader = false,
+  }: CreateMessageProps) => ({
     id: randomId(),
     text: "",
     type,
     createdAt: timestamp,
     fromUser,
+    noHeader,
   });
 
   const initialMessages = ({ questions }: { questions: IPromptInput[] }) => {
@@ -57,7 +70,7 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
     const greeting = `Hi, ${currentUser?.first_name ?? currentUser?.username ?? "There"}! Ready to work on`;
     const filteredQuestions = questions.map(_q => _q.question).filter(Boolean);
 
-    const welcomeMessage = createMessage("text");
+    const welcomeMessage = createMessage({ type: "text" });
     welcomeMessage.text = `${questionPrefixContent ?? greeting} ${initialMessageTitle}${
       filteredQuestions.length ? "? " + filteredQuestions.slice(0, 3).join(" ") : ""
     }`;
@@ -65,25 +78,25 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
     const initialQueuedMessages: IMessage[] = [];
 
     if (hasRequiredQuestion && isVariantA) {
-      const textMessage = createMessage("text");
+      const textMessage = createMessage({ type: "text", noHeader: true });
       textMessage.text = "This is a list of information we need to execute this template:";
       textMessage.noHeader = true;
       initialQueuedMessages.push(textMessage);
     }
-
     setMessages(InitialMessages);
+    dispatch(setAnswers([]));
 
-    const formMessage = createMessage("form");
+    if (isAutomationPage) {
+      return;
+    }
+    const formMessage = createMessage({ type: "form", noHeader: true });
 
-    if (!router.query?.hash && isVariantB) {
+    if (!router.query.hash && isVariantB) {
       initialQueuedMessages.push(formMessage);
-      addToQueuedMessages(initialQueuedMessages);
     } else if (isVariantA) {
       initialQueuedMessages.push(formMessage);
-      addToQueuedMessages(initialQueuedMessages);
     }
-
-    dispatch(setAnswers([]));
+    addToQueuedMessages(initialQueuedMessages);
   };
 
   const validateVary = async (variation: string) => {
@@ -92,7 +105,11 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
       dispatch(setGeneratedExecution(null));
     }
     if (variation) {
-      const userMessage = createMessage("text", true, new Date(new Date().getTime() - 1000).toISOString());
+      const userMessage = createMessage({
+        type: "text",
+        fromUser: true,
+        timestamp: new Date(new Date().getTime() - 1000).toISOString(),
+      });
       userMessage.text = variation;
 
       setMessages(prevMessages =>
@@ -146,9 +163,9 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
   };
 
   const messageAnswersForm = (message: string, type: MessageType = "text") => {
-    const botMessage = createMessage(type);
+    const botMessage = createMessage({ type });
     botMessage.text = message;
-    addToQueuedMessages([createMessage("form")]);
+    addToQueuedMessages([createMessage({ type: "form" })]);
     setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat(botMessage));
   };
 
@@ -175,7 +192,7 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
     const sparkMessageExists = filteredMessages.some(msg => msg.type === "spark");
 
     if (!sparkMessageExists) {
-      filteredMessages.push(createMessage("spark"));
+      filteredMessages.push(createMessage({ type: "spark" }));
     }
 
     setMessages(filteredMessages);
@@ -191,11 +208,11 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
     const formMessageExists = newMessages.some(msg => msg.type === "form");
 
     if (!sparkMessageExists) {
-      newMessages.push(createMessage("spark"));
+      newMessages.push(createMessage({ type: "spark" }));
     }
 
     if (!formMessageExists && (!generatedExecution || repeatedExecution)) {
-      newMessages.push(createMessage("form"));
+      newMessages.push(createMessage({ type: "form" }));
     }
 
     newMessages.sort((a, b) => {
@@ -228,7 +245,7 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
     return requiredQuestionNames.every(name => answeredQuestionNamesSet.has(name));
   };
 
-  useEffect(() => {
+  function handleExecutionHashed() {
     if (router.query?.hash && !sparkHashQueryParam) {
       return;
     }
@@ -285,6 +302,10 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
         dispatch(setParamsValues(newContextualOverrides));
       }
     }
+  }
+
+  useEffect(() => {
+    handleExecutionHashed();
   }, [sparkHashQueryParam]);
 
   useEffect(() => {
@@ -324,6 +345,8 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
     messages,
     setMessages,
     initialMessages,
+    createMessage,
+    addToQueuedMessages,
     messageAnswersForm,
     showGenerateButton,
     showGenerate,

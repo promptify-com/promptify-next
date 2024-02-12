@@ -38,6 +38,9 @@ export const executionsSlice = createSlice({
     setIsFetching: (state, action: PayloadAction<boolean>) => {
       state.isFetching = action.payload;
     },
+    clearExecutionsStates: _state => {
+      return initialState;
+    },
   },
 });
 
@@ -47,6 +50,7 @@ export const {
   setRepeatedExecution,
   setSparkHashQueryParam,
   setIsFetching,
+  clearExecutionsStates,
 } = executionsSlice.actions;
 
 export default executionsSlice.reducer;

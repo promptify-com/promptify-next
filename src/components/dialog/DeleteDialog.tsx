@@ -1,14 +1,12 @@
-import React, { useEffect, useState } from "react";
-import {
-  Button,
-  CircularProgress,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-} from "@mui/material";
-import { red } from "@mui/material/colors";
+import { useState } from "react";
+import { red } from "@mui/material/colors/";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogActions from "@mui/material/DialogActions";
+import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
 
 interface DeleteDialogProps {
   open: boolean;

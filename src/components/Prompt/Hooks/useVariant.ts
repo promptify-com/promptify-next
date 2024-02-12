@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 import Cookie from "@/common/helpers/cookies";
-import { setAnswers } from "@/core/store/chatSlice";
-import { setGeneratedExecution, setSelectedExecution } from "@/core/store/executionsSlice";
+import { clearChatStates } from "@/core/store/chatSlice";
+import { clearExecutionsStates } from "@/core/store/executionsSlice";
 import { setActiveToolbarLink } from "@/core/store/templatesSlice";
 import { useAppDispatch } from "@/hooks/useStore";
 
@@ -70,19 +70,14 @@ const useVariant = () => {
     }
   }, [router]);
 
-  const clearStoredStates = () => {
-    dispatch(setActiveToolbarLink(null));
-    dispatch(setAnswers([]));
-    dispatch(setSelectedExecution(null));
-    dispatch(setGeneratedExecution(null));
-  };
-
   const switchVariant = () => {
     const newVariant = variant === "a" ? "b" : "a";
     setVariant(newVariant);
 
     Cookie.set("variant", newVariant, 30);
-    clearStoredStates();
+    dispatch(clearExecutionsStates());
+    dispatch(clearChatStates());
+    dispatch(setActiveToolbarLink(null));
 
     const { hash, ...queries } = router.query;
     router.replace({ pathname: router.pathname, query: { ...queries, variant: newVariant } }, undefined, {

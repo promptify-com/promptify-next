@@ -12,15 +12,19 @@ import AccordionMessage from "@/components/Prompt/VariantB/AccordionMessage";
 import FeedbackThumbs from "@/components/Prompt/Common/FeedbackThumbs";
 import useScrollToBottom from "@/components/Prompt/Hooks/useScrolltoBottom";
 import TemplateDetailsCard from "@/components/Prompt/Common/TemplateDetailsCard";
+import ClientOnly from "@/components/base/ClientOnly";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { Templates } from "@/core/api/dto/templates";
-import ClientOnly from "@/components/base/ClientOnly";
+import Button from "@mui/material/Button";
+import useVariant from "../../Hooks/useVariant";
+import PlayCircle from "@mui/icons-material/PlayCircle";
 
 type AccordionExpandedState = {
   spark: boolean;
   form: boolean;
   text: boolean;
   html: boolean;
+  credentials: boolean;
 };
 
 interface Props {
@@ -35,12 +39,16 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const { generatedExecution, selectedExecution } = useAppSelector(state => state.executions);
   const isExecutionShown = Boolean(selectedExecution || generatedExecution);
+  const inputs = useAppSelector(state => state.chat.inputs);
+
+  const { isAutomationPage } = useVariant();
 
   const [isHovered, setIsHovered] = useState(false);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const [expandedAccordions, setExpandedAccordions] = useState<AccordionExpandedState>({
     spark: true,
     form: true,
+    credentials: true,
     text: false,
     html: false,
   });
@@ -59,7 +67,7 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
   };
 
   const showAccorionMessage = (message: IMessage): boolean => {
-    return Boolean(message.type === "form" || message.type === "spark");
+    return Boolean(["form", "spark", "credentials"].includes(message.type));
   };
 
   return (
@@ -138,74 +146,105 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
                 isExecutionShown={isExecutionShown}
               />
               {showAccorionMessage(msg) && (
-                <Box
-                  width={"100%"}
-                  position={"relative"}
-                  id={`accordion-${msg.type === "spark" ? "execution" : "input"}`}
-                  onMouseEnter={() => setIsHovered(true)}
-                  onMouseLeave={() => setIsHovered(false)}
-                >
-                  {isHovered && (
-                    <ClientOnly>
-                      <Typography
-                        sx={{
-                          position: "absolute",
-                          top: -20,
-                          opacity: 0.5,
-                          left: 2,
-                          zIndex: 999,
-                        }}
-                        fontSize={12}
-                        variant="caption"
-                      >
-                        Promptify {timeAgo(msg.createdAt)}
-                      </Typography>
-                    </ClientOnly>
-                  )}
-                  <Stack
-                    direction={"row"}
-                    position={"relative"}
-                  >
-                    <Box
-                      display={"flex"}
-                      sx={{
-                        flex: "0 0 100%",
+                <>
+                  {inputs.length === 0 ? (
+                    <Button
+                      onClick={() => {
+                        onGenerate();
                       }}
-                    >
-                      <AccordionMessage
-                        type={msg.type === "spark" ? "spark" : "form"}
-                        expanded={expandedAccordions[msg.type]}
-                        onChange={(_e, isExpanded) => handleExpandChange(msg.type, isExpanded)}
-                        template={template!}
-                        showGenerate={showGenerate}
-                        abortGenerating={onAbort!}
-                        onGenerate={onGenerate}
-                      />
-                    </Box>
+                      endIcon={<PlayCircle />}
+                      sx={{
+                        height: "22px",
+                        maxWidth: "200px",
+                        p: { xs: "12px", md: "15px" },
+                        fontSize: { xs: 12, md: 15 },
+                        lineHeight: "110%",
+                        letterSpacing: "0.2px",
+                        fontWeight: 500,
+                        bgcolor: "primary.main",
+                        borderColor: "primary.main",
 
-                    {msg.type === "spark" &&
-                      !!selectedExecution?.prompt_executions?.length &&
-                      expandedAccordions["spark"] && (
+                        color: showGenerate || inputs.length === 0 ? "primary" : "onSurface",
+                        ":hover": {
+                          bgcolor: "surface.1",
+                          color: "primary.main",
+                        },
+                      }}
+                      variant={"contained"}
+                    >
+                      {`Run ${isAutomationPage ? "workflow" : "prompts"}`}
+                    </Button>
+                  ) : (
+                    <Box
+                      width={"100%"}
+                      position={"relative"}
+                      id={`accordion-${msg.type === "spark" ? "execution" : "input"}`}
+                      onMouseEnter={() => setIsHovered(true)}
+                      onMouseLeave={() => setIsHovered(false)}
+                    >
+                      {isHovered && (
+                        <ClientOnly>
+                          <Typography
+                            sx={{
+                              position: "absolute",
+                              top: -20,
+                              opacity: 0.5,
+                              left: 2,
+                              zIndex: 999,
+                            }}
+                            fontSize={12}
+                            variant="caption"
+                          >
+                            Promptify {timeAgo(msg.createdAt)}
+                          </Typography>
+                        </ClientOnly>
+                      )}
+                      <Stack
+                        direction={"row"}
+                        position={"relative"}
+                      >
                         <Box
+                          display={"flex"}
                           sx={{
-                            position: "sticky",
-                            top: "10px",
-                            right: "40px",
-                            mt: "20%",
-                            height: "fit-content",
-                            mb: "30px",
-                            display: { xs: "none", md: "block" },
+                            flex: "0 0 100%",
                           }}
                         >
-                          <FeedbackThumbs
-                            execution={selectedExecution}
-                            vertical
-                            variant="icon"
+                          <AccordionMessage
+                            type={msg.type}
+                            expanded={expandedAccordions[msg.type]}
+                            onChange={(_e, isExpanded) => handleExpandChange(msg.type, isExpanded)}
+                            template={template!}
+                            showGenerate={showGenerate}
+                            abortGenerating={onAbort!}
+                            onGenerate={onGenerate}
                           />
                         </Box>
-                      )}
-                  </Stack>
-                </Box>
+
+                        {msg.type === "spark" &&
+                          !!selectedExecution?.prompt_executions?.length &&
+                          expandedAccordions["spark"] && (
+                            <Box
+                              sx={{
+                                position: "sticky",
+                                top: "10px",
+                                right: "40px",
+                                mt: "20%",
+                                height: "fit-content",
+                                mb: "30px",
+                                display: { xs: "none", md: "block" },
+                              }}
+                            >
+                              <FeedbackThumbs
+                                execution={selectedExecution}
+                                vertical
+                                variant="icon"
+                              />
+                            </Box>
+                          )}
+                      </Stack>
+                    </Box>
+                  )}
+                </>
               )}
             </Fragment>
           ))}

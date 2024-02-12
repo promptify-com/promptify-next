@@ -1,16 +1,35 @@
-import React from "react";
-import { Box, Grid, Stack, Typography } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 import { Layout } from "@/layout";
 import CardWorkflow from "@/components/Automation/CardWorkflow";
 import { AUTOMATION_DESCRIPTION } from "@/common/constants";
 import { IWorkflow } from "@/components/Automation/types";
 import { authClient } from "@/common/axios";
+import { useGetWorkflowsQuery } from "@/core/api/workflows";
+import { useSearchParams } from "next/navigation";
+import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
 
 interface Props {
   workflows: IWorkflow[];
+  query: { enable: string };
 }
 
-const Automation = ({ workflows }: Props) => {
+export default function Automation({ workflows = [] }: Props) {
+  const [workflowsData, setWorkflowsData] = useState<Props["workflows"]>(workflows);
+  const searchParams = useSearchParams();
+  const { data, isLoading } = useGetWorkflowsQuery(searchParams.get("enable") === "true", {
+    skip: !!workflows.length,
+  });
+
+  useEffect(() => {
+    if (!!data?.length) {
+      setWorkflowsData(data);
+    }
+  }, [data]);
+
   return (
     <Layout>
       <Box
@@ -37,13 +56,17 @@ const Automation = ({ workflows }: Props) => {
             </Box>
 
             <Stack gap={3}>
-              {workflows.length > 0 ? (
-                workflows.map(workflow => (
+              {!!workflowsData.length ? (
+                workflowsData.map(workflow => (
                   <CardWorkflow
                     key={workflow.id}
                     workflow={workflow}
                   />
                 ))
+              ) : isLoading && !workflowsData.length ? (
+                <Box bgcolor={"surface.1"}>
+                  <CardTemplatePlaceholder count={5} />
+                </Box>
               ) : (
                 <Typography
                   sx={{
@@ -62,11 +85,12 @@ const Automation = ({ workflows }: Props) => {
       </Box>
     </Layout>
   );
-};
+}
 
-export async function getServerSideProps() {
+export async function getServerSideProps({ query }: Props) {
   try {
-    const res = await authClient.get(`/api/n8n/workflows`);
+    const enable = query.enable === "true" ? true : false;
+    const res = await authClient.get(`/api/n8n/workflows/${enable ? "?enabled=true" : ""}`);
     const workflows: IWorkflow[] = res.data;
 
     return {
@@ -86,5 +110,3 @@ export async function getServerSideProps() {
     };
   }
 }
-
-export default Automation;

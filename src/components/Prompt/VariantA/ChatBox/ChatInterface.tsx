@@ -121,7 +121,10 @@ export const ChatInterface = ({
                 mb={2}
                 mt={{ xs: 0, md: msg.noHeader ? -2.5 : 0 }}
               >
-                <Form onScrollToBottom={scrollToBottom} />
+                <Form
+                  onScrollToBottom={scrollToBottom}
+                  messageType={msg.type}
+                />
               </Box>
             )}
             {msg.type === "spark" && msg.spark && (

@@ -1,12 +1,17 @@
 import { baseApi } from "./api";
-import type { IWorkflow, IWorkflowCreateResponse } from "@/components/Automation/types";
+import type {
+  CreateCredentialPayload,
+  ICredential,
+  IWorkflow,
+  IWorkflowCreateResponse,
+} from "@/components/Automation/types";
 
 export const workflowsApi = baseApi.injectEndpoints({
   endpoints: builder => {
     return {
-      getWorkflows: builder.query<IWorkflow[], void>({
-        query: () => ({
-          url: "/api/n8n/workflows",
+      getWorkflows: builder.query<IWorkflow[], boolean>({
+        query: enable => ({
+          url: `/api/n8n/workflows/${enable ? "?enabled=true" : ""}`,
           method: "get",
         }),
       }),
@@ -24,8 +29,43 @@ export const workflowsApi = baseApi.injectEndpoints({
           data: { active: true },
         }),
       }),
+
+      getCredentials: builder.query<ICredential[], void>({
+        query: () => ({
+          url: `/api/n8n/workflows/credentials/`,
+          method: "get",
+        }),
+      }),
+      createCredentials: builder.mutation<ICredential, CreateCredentialPayload>({
+        query: data => ({
+          url: `/api/n8n/workflows/credentials/`,
+          method: "post",
+          data,
+        }),
+      }),
+      deleteCredential: builder.mutation<ICredential, string>({
+        query: id => ({
+          url: `/api/n8n/workflows/credentials/${id}`,
+          method: "delete",
+        }),
+      }),
+      updateWorkflow: builder.mutation<IWorkflowCreateResponse, { workflowId: number; data: IWorkflowCreateResponse }>({
+        query: ({ workflowId, data }) => ({
+          url: `/api/n8n/workflows/${workflowId}/update`,
+          method: "put",
+          data,
+        }),
+      }),
     };
   },
 });
 
-export const { useGetWorkflowsQuery, useCreateUserWorkflowMutation, useGetWorkflowByIdQuery } = workflowsApi;
+export const {
+  useGetWorkflowsQuery,
+  useCreateUserWorkflowMutation,
+  useGetWorkflowByIdQuery,
+  useCreateCredentialsMutation,
+  useGetCredentialsQuery,
+  useDeleteCredentialMutation,
+  useUpdateWorkflowMutation,
+} = workflowsApi;

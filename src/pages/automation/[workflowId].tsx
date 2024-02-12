@@ -1,31 +1,39 @@
 import { useEffect } from "react";
 import Stack from "@mui/material/Stack";
 import { useRouter } from "next/router";
+
 import { Layout } from "@/layout";
 import { ChatInterface } from "@/components/Prompt/Common/Chat/ChatInterface";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { ChatInput } from "@/components/Prompt/Common/Chat/ChatInput";
 import SigninButton from "@/components/common/buttons/SigninButton";
 import useChat from "@/components/Prompt/Hooks/useChat";
-import { setInputs } from "@/core/store/chatSlice";
+import { setAreCredentialsStored, setInputs } from "@/core/store/chatSlice";
 import useWorkflow from "@/components/Automation/Hooks/useWorkflow";
+import useCredentials from "@/components/Automation/Hooks/useCredentials";
 import WorkflowPlaceholder from "@/components/Automation/WorkflowPlaceholder";
+import { AUTOMATION_DESCRIPTION } from "@/common/constants";
+import { authClient } from "@/common/axios";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IPromptInput } from "@/common/types/prompt";
-import { AUTOMATION_DESCRIPTION } from "@/common/constants";
-import { authClient } from "../../common/axios";
-import { IWorkflow } from "../../components/Automation/types";
+import type { IMessage } from "@/components/Prompt/Types/chat";
+import type { ICredentialInput, INode, IWorkflow } from "@/components/Automation/types";
 
 interface Props {
   workflow: IWorkflow;
 }
 
-export default function SingleWorkflow({ workflow }: Props) {
+export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(state => state.user.currentUser);
 
-  const { selectedWorkflow, isWorkflowLoading, workflowAsTemplate, sendMessageAPI } = useWorkflow(workflow);
+  const { areCredentialsStored } = useAppSelector(state => state.chat);
+
+  const { extractCredentialsInputFromNodes, checkAllCredentialsStored } = useCredentials();
+
+  const { selectedWorkflow, workflowAsTemplate, sendMessageAPI, createWorkflowIfNeeded, isWorkflowLoading } =
+    useWorkflow(workflow);
 
   const {
     messages,
@@ -36,14 +44,20 @@ export default function SingleWorkflow({ workflow }: Props) {
     showGenerateButton,
     setIsValidatingAnswer,
     messageAnswersForm,
+    createMessage,
+    addToQueuedMessages,
   } = useChat({
     initialMessageTitle: `${selectedWorkflow?.name}`,
   });
 
-  useEffect(() => {
-    if (!isWorkflowLoading && selectedWorkflow?.data) {
-      // Map the nodes to IPromptInput format
-      const inputs: IPromptInput[] = selectedWorkflow.data.nodes
+  const processData = async () => {
+    if (selectedWorkflow?.data) {
+      const { nodes } = selectedWorkflow.data;
+      const credentialsInput = await extractCredentialsInputFromNodes(nodes);
+
+      createWorkflowIfNeeded(selectedWorkflow.id);
+
+      const inputs: IPromptInput[] = nodes
         .filter(node => node.type === "n8n-nodes-base.set")
         .flatMap(node => node.parameters.fields?.values || [])
         .map(value => ({
@@ -53,12 +67,41 @@ export default function SingleWorkflow({ workflow }: Props) {
           required: true,
         }));
 
-      initialMessages({ questions: inputs });
       dispatch(setInputs(inputs));
+      initialMessages({ questions: inputs });
+      prepareAndQueueMessages(credentialsInput, nodes);
     }
+  };
+
+  useEffect(() => {
+    if (isWorkflowLoading && !selectedWorkflow) {
+      return;
+    }
+    processData();
   }, [selectedWorkflow, isWorkflowLoading]);
 
-  const executeWorflow = async () => {
+  function prepareAndQueueMessages(credentialsInput: ICredentialInput[], nodes: INode[]) {
+    const initialQueuedMessages: IMessage[] = [];
+
+    const requiresAuthentication = nodes.some(node => node.parameters?.authentication);
+
+    let areAllCredentialsStored = true;
+    if (requiresAuthentication) {
+      areAllCredentialsStored = checkAllCredentialsStored(credentialsInput);
+    }
+    dispatch(setAreCredentialsStored(requiresAuthentication ? areAllCredentialsStored : true));
+
+    if (requiresAuthentication && !areAllCredentialsStored) {
+      const credMessage = createMessage({ type: "credentials", noHeader: true });
+      initialQueuedMessages.push(credMessage);
+    }
+    const formMessage = createMessage({ type: "form", noHeader: true });
+    initialQueuedMessages.push(formMessage);
+
+    addToQueuedMessages(initialQueuedMessages);
+  }
+
+  const executeWorkflow = async () => {
     try {
       setIsValidatingAnswer(true);
       const response = await sendMessageAPI();
@@ -66,8 +109,7 @@ export default function SingleWorkflow({ workflow }: Props) {
         messageAnswersForm(response, "html");
       }
     } catch (error) {
-      messageAnswersForm("Something went wrong when executing this workflow.");
-      console.error(error);
+      messageAnswersForm("Something went wrong when executing this GPT.");
     }
     setIsValidatingAnswer(false);
   };
@@ -81,7 +123,7 @@ export default function SingleWorkflow({ workflow }: Props) {
           sx={{
             width: { md: "80%" },
             mx: { md: "auto" },
-            height: "calc(100vh - 120px)",
+            height: { xs: "100vh", md: "calc(100vh - 120px)" },
             display: "flex",
             flexDirection: "column",
             justifyContent: "flex-end",
@@ -89,25 +131,27 @@ export default function SingleWorkflow({ workflow }: Props) {
           }}
         >
           <Stack
-            height={"calc(100% - 20px)"}
+            height={{ xs: "calc(100% - 140px)", md: "calc(100% - 20px)" }}
             justifyContent={"flex-end"}
           >
             <ChatInterface
               template={workflowAsTemplate as unknown as Templates}
               messages={messages}
               showGenerate={showGenerate}
-              onGenerate={executeWorflow}
+              onGenerate={executeWorkflow}
             />
           </Stack>
 
           {currentUser?.id ? (
-            <ChatInput
-              onSubmit={validateVary}
-              disabled={isValidatingAnswer}
-              isValidating={isValidatingAnswer}
-              showGenerate={showGenerateButton}
-              onGenerate={executeWorflow}
-            />
+            <Stack p={{ xs: "0px 0px 17px 0px", md: 0 }}>
+              <ChatInput
+                onSubmit={validateVary}
+                disabled={isValidatingAnswer || !areCredentialsStored}
+                isValidating={isValidatingAnswer}
+                showGenerate={showGenerateButton}
+                onGenerate={executeWorkflow}
+              />
+            </Stack>
           ) : (
             <Stack
               direction="row"

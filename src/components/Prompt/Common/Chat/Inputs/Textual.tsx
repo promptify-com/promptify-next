@@ -17,8 +17,9 @@ interface Props {
 function Textual({ input, value, onChange }: Props) {
   const { type, required } = input;
 
-  const { isVariantB } = useVariant();
+  const { isVariantB, isAutomationPage } = useVariant();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
+  const areAllCredentialsStored = useAppSelector(state => state.chat.areCredentialsStored);
 
   const fieldRef = useRef<HTMLInputElement | null>(null);
   const spanRef = useRef<HTMLDivElement | null>(null);
@@ -36,6 +37,8 @@ function Textual({ input, value, onChange }: Props) {
     }
   };
 
+  const disableInput = Boolean(isGenerating || (!areAllCredentialsStored && isAutomationPage));
+
   return (
     <Stack
       direction={"row"}
@@ -47,14 +50,12 @@ function Textual({ input, value, onChange }: Props) {
       <TextField
         inputRef={ref => (fieldRef.current = ref)}
         fullWidth={isVariantB}
-        disabled={isGenerating}
+        disabled={disableInput}
         sx={textFieldStyle}
         placeholder={isVariantB ? "Type here" : required ? "Required" : "Optional"}
         type={type}
         value={value}
         onChange={e => onChange(e.target.value)}
-        multiline={isVariantB}
-        rows={1}
       />
 
       <span

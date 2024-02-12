@@ -43,7 +43,14 @@ const apiResponseMiddleware: Middleware =
   action => {
     const errorPayload = action.payload;
     if (errorPayload?.data?.retryRequestError) {
-      dispatch(setToast({ message: errorPayload.data.message, severity: "error" }));
+      dispatch(
+        setToast({
+          message: errorPayload.data.message,
+          severity: "error",
+          position: { vertical: "bottom", horizontal: "right" },
+          duration: 1000,
+        }),
+      );
     }
 
     return next(action);
