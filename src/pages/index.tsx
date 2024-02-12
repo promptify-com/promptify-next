@@ -26,7 +26,7 @@ import GuestUserLayout from "@/components/Homepage/GuestUserLayout";
 const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
 
 const HomePage = ({ categories }: { categories: Category[] }) => {
-  const [loading, setLoading] = useState(true);
+  const [loaded, setLoaded] = useState(false);
   const path = getPathURL();
   const dispatch = useDispatch();
   const isValidUser = useSelector(isValidUserFn);
@@ -42,7 +42,7 @@ const HomePage = ({ categories }: { categories: Category[] }) => {
     skip: !isValidUser,
   });
 
-  useEffect(() => setLoading(false), [isValidUser]);
+  useEffect(() => setLoaded(true), [isValidUser]);
 
   // TODO: move authentication logic to signin page instead
   const doPostLogin = async (response: AxiosResponse<IContinueWithSocialMediaResponse>) => {
@@ -96,56 +96,57 @@ const HomePage = ({ categories }: { categories: Category[] }) => {
             padding: { xs: "16px", md: "32px" },
           }}
         >
-          {loading ? null : isValidUser ? (
-            <ClientOnly>
-              <Grid
-                flexDirection="column"
-                display={"flex"}
-                gap={"56px"}
-              >
+          {loaded &&
+            (isValidUser ? (
+              <ClientOnly>
                 <Grid
-                  sx={{
-                    alignItems: "center",
-                    width: "100%",
-                  }}
+                  flexDirection="column"
+                  display={"flex"}
+                  gap={"56px"}
                 >
-                  <Typography
+                  <Grid
                     sx={{
-                      fontFamily: "Poppins",
-                      fontStyle: "normal",
-                      fontWeight: 500,
-                      fontSize: { xs: "30px", sm: "48px" },
-                      lineHeight: { xs: "30px", md: "56px" },
-                      color: "#1D2028",
-                      marginLeft: { xs: "0px", sm: "0px" },
+                      alignItems: "center",
+                      width: "100%",
                     }}
                   >
-                    Welcome, {currentUser?.username}
-                  </Typography>
-                </Grid>
+                    <Typography
+                      sx={{
+                        fontFamily: "Poppins",
+                        fontStyle: "normal",
+                        fontWeight: 500,
+                        fontSize: { xs: "30px", sm: "48px" },
+                        lineHeight: { xs: "30px", md: "56px" },
+                        color: "#1D2028",
+                        marginLeft: { xs: "0px", sm: "0px" },
+                      }}
+                    >
+                      Welcome, {currentUser?.username}
+                    </Typography>
+                  </Grid>
 
-                <TemplatesSection
-                  templateLoading={isMyLatestExecutionsLoading}
-                  templates={myLatestExecutions}
-                  title="Your Latest Templates:"
-                  type="myLatestExecutions"
-                />
-                <TemplatesSection
-                  templateLoading={isSuggestedTemplateLoading}
-                  templates={suggestedTemplates}
-                  title=" You may like these prompt templates:"
-                  type="suggestedTemplates"
-                />
-                <CategoriesSection
-                  categories={categories}
-                  isLoading={false}
-                  displayTitle
-                />
-              </Grid>
-            </ClientOnly>
-          ) : (
-            <GuestUserLayout categories={categories} />
-          )}
+                  <TemplatesSection
+                    templateLoading={isMyLatestExecutionsLoading}
+                    templates={myLatestExecutions}
+                    title="Your Latest Templates:"
+                    type="myLatestExecutions"
+                  />
+                  <TemplatesSection
+                    templateLoading={isSuggestedTemplateLoading}
+                    templates={suggestedTemplates}
+                    title=" You may like these prompt templates:"
+                    type="suggestedTemplates"
+                  />
+                  <CategoriesSection
+                    categories={categories}
+                    isLoading={false}
+                    displayTitle
+                  />
+                </Grid>
+              </ClientOnly>
+            ) : (
+              <GuestUserLayout categories={categories} />
+            ))}
         </Box>
       </Box>
     </Layout>
