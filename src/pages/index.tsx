@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import type { AxiosResponse } from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { IContinueWithSocialMediaResponse } from "@/common/types";
@@ -26,6 +26,7 @@ import GuestUserLayout from "@/components/Homepage/GuestUserLayout";
 const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
 
 const HomePage = ({ categories }: { categories: Category[] }) => {
+  const [loading, setLoading] = useState(true);
   const path = getPathURL();
   const dispatch = useDispatch();
   const isValidUser = useSelector(isValidUserFn);
@@ -40,6 +41,8 @@ const HomePage = ({ categories }: { categories: Category[] }) => {
   const { data: suggestedTemplates, isLoading: isSuggestedTemplateLoading } = useGetTemplatesSuggestedQuery(undefined, {
     skip: !isValidUser,
   });
+
+  useEffect(() => setLoading(false), [isValidUser]);
 
   // TODO: move authentication logic to signin page instead
   const doPostLogin = async (response: AxiosResponse<IContinueWithSocialMediaResponse>) => {
@@ -93,7 +96,7 @@ const HomePage = ({ categories }: { categories: Category[] }) => {
             padding: { xs: "16px", md: "32px" },
           }}
         >
-          {isValidUser ? (
+          {loading ? null : isValidUser ? (
             <ClientOnly>
               <Grid
                 flexDirection="column"
