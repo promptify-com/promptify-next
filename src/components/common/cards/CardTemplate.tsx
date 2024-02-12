@@ -55,13 +55,15 @@ function CardTemplate({ template, query, asResult, vertical }: CardTemplateProps
     <Link
       href={`/prompt/${template.slug}`}
       style={{
+        flex: isDesktop ? 1 : "none",
         textDecoration: "none",
-        width: isDesktop ? "auto" : "100%",
+        width: isDesktop ? "fit-content" : "100%",
       }}
     >
       <Card
         sx={{
-          width: isDesktop && vertical ? "210px" : "auto",
+          width: "auto",
+          minWidth: isDesktop && vertical ? "210px" : "auto",
           height: isDesktop && vertical ? "calc(100% - 24px)" : "calc(100% - 16px)",
           borderRadius: "16px",
           cursor: "pointer",

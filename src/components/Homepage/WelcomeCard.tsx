@@ -1,4 +1,4 @@
-import Image from "../design-system/Image";
+import Image from "@/components/design-system/Image";
 import { Stack, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import BaseButton from "@/components/base/BaseButton";
