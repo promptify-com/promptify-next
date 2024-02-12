@@ -23,7 +23,7 @@ interface Props {
   workflow: IWorkflow;
 }
 
-export default function SingleWorkflow({ workflow }: Props) {
+export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(state => state.user.currentUser);

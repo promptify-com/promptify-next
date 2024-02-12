@@ -9,9 +9,9 @@ import type {
 export const workflowsApi = baseApi.injectEndpoints({
   endpoints: builder => {
     return {
-      getWorkflows: builder.query<IWorkflow[], void>({
-        query: () => ({
-          url: "/api/n8n/workflows/",
+      getWorkflows: builder.query<IWorkflow[], boolean>({
+        query: enable => ({
+          url: `/api/n8n/workflows/${enable ? "?enabled=true" : ""}`,
           method: "get",
         }),
       }),
