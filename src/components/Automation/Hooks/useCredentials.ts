@@ -14,22 +14,28 @@ const useCredentials = () => {
 
   const [getCredentials] = workflowsApi.endpoints.getCredentials.useLazyQuery();
 
-  const initializeCredentials = () => {
+  const initializeCredentials = (): Promise<ICredential[]> => {
     return new Promise(async resolve => {
       if (!!credentials.current.length) {
-        return resolve("");
+        resolve(credentials.current);
+
+        return;
       }
+
       try {
         const fetchedCredentials = await getCredentials().unwrap();
-        credentials.current = fetchedCredentials;
+
         if (!fetchedCredentials.length) {
           return;
         }
+
+        credentials.current = fetchedCredentials;
+
         Storage.set("credentials", JSON.stringify(fetchedCredentials));
       } catch (error) {
         console.error("Failed fetching Credentials");
       } finally {
-        resolve("");
+        resolve(credentials.current);
       }
     });
   };
