@@ -7,7 +7,6 @@ import Image from "@/components/design-system/Image";
 import useCarousel from "@/hooks/useCarousel";
 import CarouselButtons from "@/components/common/buttons/CarouselButtons";
 import { Box } from "@mui/material";
-
 interface ITestimonial {
   image: string;
   content: string;
@@ -36,8 +35,6 @@ const TestimonialCard = ({ testimonial }: { testimonial: ITestimonial }) => (
   <Card
     elevation={0}
     sx={{
-      width: { xs: "100%", md: "50%" },
-      minWidth: { xs: "100%", md: "50%" },
       bgcolor: "#F7F6FE",
       borderRadius: "24px",
     }}
@@ -94,6 +91,9 @@ const TestimonialCard = ({ testimonial }: { testimonial: ITestimonial }) => (
   </Card>
 );
 
+const CARDS_GAP = 24;
+const cardWidth = CARDS_GAP / TestimonialExamples.length;
+
 function Testimonials() {
   const { containerRef, scrollNext, scrollPrev, canScrollNext, canScrollPrev } = useCarousel();
 
@@ -136,17 +136,25 @@ function Testimonials() {
           />
         </Box>
       </Stack>
-      <Stack ref={containerRef}>
+      <Stack
+        ref={containerRef}
+        overflow={"hidden"}
+      >
         <Stack
-          gap={3}
           direction={"row"}
+          gap={`${CARDS_GAP}px`}
           px={"16px"}
         >
           {TestimonialExamples.map((testimonial, idx) => (
-            <TestimonialCard
+            <Box
               key={idx}
-              testimonial={testimonial}
-            />
+              sx={{
+                width: { xs: "100%", md: `calc(50% - ${cardWidth}px)` },
+                minWidth: { xs: "100%", md: `calc(50% - ${cardWidth}px)` },
+              }}
+            >
+              <TestimonialCard testimonial={testimonial} />
+            </Box>
           ))}
         </Stack>
       </Stack>

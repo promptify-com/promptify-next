@@ -57,7 +57,7 @@ function CardTemplate({ template, query, asResult, vertical }: CardTemplateProps
       style={{
         flex: isDesktop ? 1 : "none",
         textDecoration: "none",
-        width: isDesktop ? "fit-content" : "100%",
+        width: isDesktop ? "auto" : "100%",
       }}
     >
       <Card
