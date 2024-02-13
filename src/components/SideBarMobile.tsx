@@ -21,7 +21,7 @@ import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import { setSelectedKeyword } from "@/core/store/filtersSlice";
 import { CollectionsEmptyBox } from "./common/sidebar/CollectionsEmptyBox";
-import { MenuType, ProfileMenuItems } from "@/common/constants";
+import { BLOG_URL, MenuType, ProfileMenuItems } from "@/common/constants";
 import useLogout from "@/hooks/useLogout";
 import { Collections } from "./common/sidebar/Collections";
 import { isValidUserFn } from "@/core/store/userSlice";
@@ -104,7 +104,7 @@ export const SideBarMobile: React.FC<SideBarMobileProps> = ({
     {
       label: "Learn & Help",
       icon: <HelpRounded />,
-      href: "https://blog.promptify.com/",
+      href: BLOG_URL,
       active: pathname == "/learn",
       external: true,
     },

@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import { useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
 import type { AxiosResponse } from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { IContinueWithSocialMediaResponse } from "@/common/types";
@@ -10,85 +10,23 @@ import { Layout } from "@/layout";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
 import { CategoriesSection } from "@/components/explorer/CategoriesSection";
 import { userApi } from "@/core/api/user";
-import { WelcomeCard } from "@/components/homepage/WelcomeCard";
-import { useGetTemplatesByFilterQuery, useGetTemplatesSuggestedQuery } from "@/core/api/templates";
+import { useGetTemplatesSuggestedQuery } from "@/core/api/templates";
 import { useGetLatestExecutedTemplatesQuery } from "@/core/api/executions";
 import { getPathURL, saveToken } from "@/common/utils";
 import { RootState } from "@/core/store";
 import { isValidUserFn, updateUser } from "@/core/store/userSlice";
 import { redirectToPath } from "@/common/helpers";
-import useToken from "@/hooks/useToken";
 import ClientOnly from "@/components/base/ClientOnly";
 import { GetServerSideProps } from "next/types";
 import { getCategories } from "@/hooks/api/categories";
 import { Category } from "@/core/api/dto/templates";
-import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import { SEO_DESCRIPTION, SEO_TITLE } from "@/common/constants";
+import GuestUserLayout from "@/components/Homepage/GuestUserLayout";
 
 const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
-const ioLatestsOptions = {
-  threshold: 0,
-  rootMargin: "150px",
-  disconnectNodeOnceVisibile: true,
-};
-const ioPopularOptions = {
-  threshold: 0.5,
-  rootMargin: "100px",
-  disconnectNodeOnceVisibile: true,
-};
-
-function NonLoggedinUsersLayout({ categories }: { categories: Category[] }) {
-  const token = useToken();
-  const latestTemplatesRef = useRef<HTMLDivElement | null>(null);
-  const popularTemplatesRef = useRef<HTMLDivElement | null>(null);
-  const latestTemplatesEntry = useIntersectionObserver(latestTemplatesRef, ioLatestsOptions);
-  const popularTemplatesEntry = useIntersectionObserver(popularTemplatesRef, ioPopularOptions);
-  const { data: popularTemplates } = useGetTemplatesByFilterQuery(
-    {
-      ordering: "-runs",
-      limit: 7,
-    },
-    {
-      skip: token || !popularTemplatesEntry?.isIntersecting,
-    },
-  );
-  const { data: latestTemplates } = useGetTemplatesByFilterQuery(
-    {
-      ordering: "-created_at",
-      limit: 7,
-    },
-    {
-      skip: token || !latestTemplatesEntry?.isIntersecting,
-    },
-  );
-
-  return (
-    <>
-      <WelcomeCard />
-      <CategoriesSection
-        categories={categories}
-        isLoading={false}
-        displayTitle
-      />
-      <TemplatesSection
-        templateLoading={!popularTemplates?.results.length}
-        templates={popularTemplates?.results}
-        title="Most Popular Prompt Templates"
-        type="popularTemplates"
-        ref={popularTemplatesRef}
-      />
-      <TemplatesSection
-        templateLoading={!latestTemplates?.results.length}
-        templates={latestTemplates?.results}
-        title="Latest Prompt Templates"
-        type="latestTemplates"
-        ref={latestTemplatesRef}
-      />
-    </>
-  );
-}
 
 const HomePage = ({ categories }: { categories: Category[] }) => {
+  const [loaded, setLoaded] = useState(false);
   const path = getPathURL();
   const dispatch = useDispatch();
   const isValidUser = useSelector(isValidUserFn);
@@ -103,6 +41,8 @@ const HomePage = ({ categories }: { categories: Category[] }) => {
   const { data: suggestedTemplates, isLoading: isSuggestedTemplateLoading } = useGetTemplatesSuggestedQuery(undefined, {
     skip: !isValidUser,
   });
+
+  useEffect(() => setLoaded(true), [isValidUser]);
 
   // TODO: move authentication logic to signin page instead
   const doPostLogin = async (response: AxiosResponse<IContinueWithSocialMediaResponse>) => {
@@ -151,66 +91,63 @@ const HomePage = ({ categories }: { categories: Category[] }) => {
         mt={{ xs: 7, md: 0 }}
         padding={{ xs: "4px 0px", md: "0px 8px" }}
       >
-        <Grid
-          gap={"56px"}
-          display={"flex"}
-          flexDirection={"column"}
+        <Box
           sx={{
             padding: { xs: "16px", md: "32px" },
           }}
         >
-          {isValidUser ? (
-            <ClientOnly>
-              <Grid
-                flexDirection="column"
-                display={"flex"}
-                gap={"56px"}
-              >
+          {loaded &&
+            (isValidUser ? (
+              <ClientOnly>
                 <Grid
-                  sx={{
-                    alignItems: "center",
-                    width: "100%",
-                  }}
+                  flexDirection="column"
+                  display={"flex"}
+                  gap={"56px"}
                 >
-                  <Typography
+                  <Grid
                     sx={{
-                      fontFamily: "Poppins",
-                      fontStyle: "normal",
-                      fontWeight: 500,
-                      fontSize: { xs: "30px", sm: "48px" },
-                      lineHeight: { xs: "30px", md: "56px" },
-                      color: "#1D2028",
-                      marginLeft: { xs: "0px", sm: "0px" },
+                      alignItems: "center",
+                      width: "100%",
                     }}
                   >
-                    Welcome, {currentUser?.username}
-                  </Typography>
-                </Grid>
+                    <Typography
+                      sx={{
+                        fontFamily: "Poppins",
+                        fontStyle: "normal",
+                        fontWeight: 500,
+                        fontSize: { xs: "30px", sm: "48px" },
+                        lineHeight: { xs: "30px", md: "56px" },
+                        color: "#1D2028",
+                        marginLeft: { xs: "0px", sm: "0px" },
+                      }}
+                    >
+                      Welcome, {currentUser?.username}
+                    </Typography>
+                  </Grid>
 
-                <TemplatesSection
-                  isLatestTemplates
-                  templateLoading={isMyLatestExecutionsLoading}
-                  templates={myLatestExecutions}
-                  title="Your Latest Templates:"
-                  type="myLatestExecutions"
-                />
-                <TemplatesSection
-                  templateLoading={isSuggestedTemplateLoading}
-                  templates={suggestedTemplates}
-                  title=" You may like these prompt templates:"
-                  type="suggestedTemplates"
-                />
-                <CategoriesSection
-                  categories={categories}
-                  isLoading={false}
-                  displayTitle
-                />
-              </Grid>
-            </ClientOnly>
-          ) : (
-            <NonLoggedinUsersLayout categories={categories} />
-          )}
-        </Grid>
+                  <TemplatesSection
+                    templateLoading={isMyLatestExecutionsLoading}
+                    templates={myLatestExecutions}
+                    title="Your Latest Templates:"
+                    type="myLatestExecutions"
+                  />
+                  <TemplatesSection
+                    templateLoading={isSuggestedTemplateLoading}
+                    templates={suggestedTemplates}
+                    title=" You may like these prompt templates:"
+                    type="suggestedTemplates"
+                  />
+                  <CategoriesSection
+                    categories={categories}
+                    isLoading={false}
+                    displayTitle
+                  />
+                </Grid>
+              </ClientOnly>
+            ) : (
+              <GuestUserLayout categories={categories} />
+            ))}
+        </Box>
       </Box>
     </Layout>
   );

@@ -4,35 +4,35 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'promptify.s3.amazonaws.com',
+        protocol: "https",
+        hostname: "promptify.s3.amazonaws.com",
       },
       {
-        protocol: 'https',
-        hostname: 'd20puxs4zqc773.cloudfront.net',
+        protocol: "https",
+        hostname: "d20puxs4zqc773.cloudfront.net",
       },
       {
-        protocol: 'https',
-        hostname: 'insights.hotjar.com',
+        protocol: "https",
+        hostname: "insights.hotjar.com",
       },
       {
-        protocol: 'https',
-        hostname: 'oaidalleapiprodscus.blob.core.windows.net',
+        protocol: "https",
+        hostname: "oaidalleapiprodscus.blob.core.windows.net",
+      },
+      {
+        protocol: "https",
+        hostname: "assets-global.website-files.com",
       },
     ],
     minimumCacheTTL: 3600,
   },
   eslint: {
-    dirs: ['common', 'assets', 'core', 'hooks', 'styles', 'themes', 'pages'],
+    dirs: ["common", "assets", "core", "hooks", "styles", "themes", "pages"],
   },
   poweredByHeader: false,
 };
 
-if (
-  process.env.NODE_ENV === "production" &&
-  process.env.NEXT_PUBLIC_SENTRY_DSN &&
-  process.env.SENTRY_AUTH_TOKEN
-) {
+if (process.env.NODE_ENV === "production" && process.env.NEXT_PUBLIC_SENTRY_DSN && process.env.SENTRY_AUTH_TOKEN) {
   const { withSentryConfig } = require("@sentry/nextjs");
 
   nextConfig.sentry = {

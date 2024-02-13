@@ -2,21 +2,20 @@ import { Box, Grid, IconButton, Stack, Typography } from "@mui/material";
 import { NotFoundIcon } from "@/assets/icons/NotFoundIcon";
 import CardTemplate from "@/components/common/cards/CardTemplate";
 import { TemplateExecutionsDisplay, Templates } from "@/core/api/dto/templates";
-import CardTemplateLast from "../common/cards/CardTemplateLast";
+import CardTemplateLast from "@/components/common/cards/CardTemplateLast";
 import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
 import LatestTemplatePlaceholder from "@/components/placeholders/LatestTemplatePlaceholder";
-import TemplatesInfiniteScroll from "../TemplatesInfiniteScroll";
+import TemplatesInfiniteScroll from "@/components/TemplatesInfiniteScroll";
 import { TemplatesFilter } from "./TemplatesFilter";
 import { Close, FilterList } from "@mui/icons-material";
-import { type RefObject, useState, forwardRef } from "react";
+import { useState, forwardRef } from "react";
 
 interface TemplatesSectionProps {
   templates: Templates[] | TemplateExecutionsDisplay[] | undefined;
   isLoading?: boolean;
   templateLoading?: boolean;
-  filtred?: boolean;
+  filtered?: boolean;
   title?: string;
-  isLatestTemplates?: boolean;
   onNextPage?: () => void;
   type?: string;
   hasMore?: boolean;
@@ -29,9 +28,8 @@ export const TemplatesSection = forwardRef<HTMLDivElement, TemplatesSectionProps
   {
     templates,
     isLoading = false,
-    filtred,
+    filtered,
     title,
-    isLatestTemplates = false,
     onNextPage = () => {},
     type,
     hasMore,
@@ -44,7 +42,7 @@ export const TemplatesSection = forwardRef<HTMLDivElement, TemplatesSectionProps
 ) {
   const [openFilters, setOpenFilters] = useState(false);
 
-  const filtersAllowed = type !== "myLatestExecutions";
+  const filtersAllowed = !type || !["myLatestExecutions", "popularTemplates"].includes(type);
 
   const isNotLoading = !isLoading && !templateLoading;
 
@@ -52,12 +50,15 @@ export const TemplatesSection = forwardRef<HTMLDivElement, TemplatesSectionProps
     return null;
   }
 
+  const isLatestTemplates = type === "isLatestTemplates";
+  const isPopularTemplates = type === "popularTemplates";
+
   return (
     <Box
       width={"100%"}
       ref={ref}
     >
-      {!filtred && (templateLoading || !!templates?.length) && (
+      {!filtered && (templateLoading || !!templates?.length) && (
         <Box>
           <Stack
             direction={"row"}
@@ -86,7 +87,7 @@ export const TemplatesSection = forwardRef<HTMLDivElement, TemplatesSectionProps
       )}
 
       {templateLoading ? (
-        isLatestTemplates ? (
+        isLatestTemplates || isPopularTemplates ? (
           <Grid
             display={"flex"}
             flexDirection={"row"}
@@ -137,6 +138,21 @@ export const TemplatesSection = forwardRef<HTMLDivElement, TemplatesSectionProps
                 ))}
               </Grid>
             )
+          ) : isPopularTemplates ? (
+            <Stack
+              direction={"row"}
+              flexWrap={"wrap"}
+              rowGap={3}
+            >
+              {!!templates?.length &&
+                templates.map((template: TemplateExecutionsDisplay | Templates) => (
+                  <CardTemplate
+                    key={template.id}
+                    template={template as Templates}
+                    vertical
+                  />
+                ))}
+            </Stack>
           ) : (
             <Grid>
               <TemplatesInfiniteScroll
