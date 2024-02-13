@@ -65,13 +65,13 @@ const Links: ILink[] = [
   {
     icon: <Support />,
     title: "Help Center",
-    description: "Lorem ipsum dolor sit amet, consectetur adipiscing",
+    description: "Receive support through our help center",
     link: BLOG_URL,
   },
   {
     icon: <RaisedHand />,
     title: "FAQ",
-    description: "Lorem ipsum dolor sit amet, consectetur adipiscing",
+    description: "Browsing our Frequently Asked Questions (FAQs)",
     link: BLOG_URL,
   },
 ];
@@ -98,8 +98,7 @@ function Learn() {
           fontWeight={400}
           color={"#2A2A3C"}
         >
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis, aliquid qui laudantium necessitatibus ullam
-          nostrum.
+          Discover insightful content on our blog and get assistance via our help center or by consulting our FAQs.
         </Typography>
       </Stack>
       <Stack
