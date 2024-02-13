@@ -58,13 +58,16 @@ function Services() {
       justifyContent={"center"}
       alignItems={"flex-start"}
       gap={4}
-      py={{ xs: "30px", md: "48px" }}
+      sx={{
+        py: { xs: "30px", md: "48px" },
+        ml: { md: "16px" },
+      }}
     >
       {ServicesList.map(service => (
         <Stack
           key={service.title}
           gap={4}
-          p={"16px 24px"}
+          p={"16px"}
         >
           <Stack
             direction={"row"}

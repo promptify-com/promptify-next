@@ -103,7 +103,10 @@ function Learn() {
         </Typography>
       </Stack>
       <Stack direction={{ md: "row" }}>
-        <Box px={"16px"}>
+        <Box
+          px={"16px"}
+          flex={1}
+        >
           <BlogPostCard post={BlogPosts[0]} />
         </Box>
         <Stack
@@ -111,6 +114,7 @@ function Learn() {
           alignItems={"center"}
           gap={1}
           px={"16px"}
+          flex={1}
         >
           <Stack
             direction={{ md: "row" }}

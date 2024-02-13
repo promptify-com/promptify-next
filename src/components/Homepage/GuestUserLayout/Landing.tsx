@@ -56,7 +56,7 @@ function Landing() {
               lineHeight={"120%"}
               color={"#2A2A3C"}
               display={"flex"}
-              flexWrap={"wrap"}
+              flexWrap={{ xs: "wrap", lg: "nowrap" }}
               columnGap={2}
             >
               <Box

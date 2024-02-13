@@ -165,12 +165,7 @@ export default function SocialButtons({
       }}
     >
       {attemptError && (
-        <Box
-          sx={{
-            display: "flex",
-            alignSelf: "center",
-          }}
-        >
+        <Box p={"8px 22px"}>
           <Typography
             sx={{
               fontFamily: "Poppins",
