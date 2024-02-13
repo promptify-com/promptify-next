@@ -32,6 +32,7 @@ function Landing() {
         maxWidth: "90%",
         m: "auto",
         p: { md: "48px 24px" },
+        mb: { xs: "40px", md: 0 },
       }}
     >
       <Image

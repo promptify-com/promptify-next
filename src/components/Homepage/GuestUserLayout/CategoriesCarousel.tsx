@@ -25,7 +25,7 @@ function CategoryCarousel({ categories }: { categories: Category[] }) {
       >
         <Typography
           flex={1}
-          fontSize={32}
+          fontSize={{ xs: 28, md: 32 }}
           fontWeight={400}
           color={"#2A2A3C"}
         >

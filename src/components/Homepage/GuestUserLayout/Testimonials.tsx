@@ -113,7 +113,7 @@ function Testimonials() {
           gap={1}
         >
           <Typography
-            fontSize={32}
+            fontSize={{ xs: 28, md: 32 }}
             fontWeight={400}
             color={"#2A2A3C"}
           >
