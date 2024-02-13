@@ -20,7 +20,7 @@ function GuestUserLayout({ categories }: { categories: Category[] }) {
   );
 
   return (
-    <Stack gap={4}>
+    <Stack>
       <Landing />
       <CategoryCarousel categories={_categories} />
       <Services />

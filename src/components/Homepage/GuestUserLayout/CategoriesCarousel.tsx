@@ -14,7 +14,7 @@ function CategoryCarousel({ categories }: { categories: Category[] }) {
     <Stack
       gap={5}
       sx={{
-        p: { md: "48px 16px" },
+        pt: { md: "48px" },
       }}
     >
       <Stack

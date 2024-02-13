@@ -88,6 +88,12 @@ function BlogPostCard({ post, min }: Props) {
               fontSize={14}
               fontWeight={400}
               color={"#000000"}
+              style={{
+                display: "-webkit-box",
+                WebkitBoxOrient: "vertical",
+                WebkitLineClamp: 2,
+                overflow: "hidden",
+              }}
             >
               {truncate(content, { length: 160 })}
             </Typography>

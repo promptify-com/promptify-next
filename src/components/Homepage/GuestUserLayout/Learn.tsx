@@ -102,7 +102,10 @@ function Learn() {
           nostrum.
         </Typography>
       </Stack>
-      <Stack direction={{ md: "row" }}>
+      <Stack
+        direction={{ md: "row" }}
+        gap={{ xs: 2, md: 0 }}
+      >
         <Box
           px={"16px"}
           flex={1}
@@ -118,7 +121,7 @@ function Learn() {
         >
           <Stack
             direction={{ md: "row" }}
-            gap={3}
+            gap={{ xs: 4, md: 6 }}
           >
             <BlogPostCard
               post={BlogPosts[1]}
