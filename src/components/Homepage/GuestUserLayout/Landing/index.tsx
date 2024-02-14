@@ -5,7 +5,6 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { Google } from "@/assets/icons/google";
 import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
-import { isDesktopViewPort } from "@/common/helpers";
 import { useState } from "react";
 import SocialMediaAuth from "@/components/login/SocialMediaAuth";
 import { BLOG_URL } from "@/common/constants";

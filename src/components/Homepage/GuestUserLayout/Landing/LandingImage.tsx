@@ -55,7 +55,7 @@ function LandingImage() {
           width: "163px",
         }}
       >
-        Help me write new <Box className="active">article</Box> for my blog...
+        Help me write new <span className="active">article</span> for my blog...
       </Typography>
       <Typography
         sx={{
@@ -65,7 +65,7 @@ function LandingImage() {
           transform: "translateY(-50%)",
         }}
       >
-        a <Box className="active">nouvelle</Box>...
+        a <span className="active">nouvelle</span>...
       </Typography>
       <Typography
         sx={{
@@ -75,7 +75,7 @@ function LandingImage() {
           left: "120px",
         }}
       >
-        Let&apos;s create <Box className="active">character</Box>...
+        Let&apos;s create <span className="active">character</span>...
       </Typography>
     </Box>
   );

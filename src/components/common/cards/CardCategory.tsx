@@ -12,14 +12,15 @@ import Link from "next/link";
 interface Props {
   category: Category;
   href: string;
-  index: number;
+  index?: number;
+  priority?: boolean;
   min?: boolean;
 }
 
-export const CategoryCard = ({ category, href, index, min }: Props) => {
+export const CategoryCard = ({ category, href, index, priority, min }: Props) => {
   const token = useToken();
   const { isMobile } = useBrowser();
-  const shouldPrioritizeImage = token ? false : isMobile ? index === 0 || index === 1 : true;
+  const shouldPrioritizeImage = priority ?? token ? false : isMobile ? index === 0 || index === 1 : true;
 
   return (
     <Link

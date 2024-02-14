@@ -8,12 +8,24 @@ import Testimonials from "./Testimonials";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import { useRef } from "react";
+import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 
 function GuestUserLayout({ categories }: { categories: Category[] }) {
-  const { data: popularTemplates, isLoading } = useGetTemplatesByFilterQuery({
-    ordering: "-runs",
-    limit: 30,
+  const templateContainerRef = useRef<HTMLDivElement | null>(null);
+  const observer = useIntersectionObserver(templateContainerRef, {
+    threshold: 0.5,
   });
+
+  const { data: popularTemplates, isLoading } = useGetTemplatesByFilterQuery(
+    {
+      ordering: "-runs",
+      limit: 30,
+    },
+    {
+      skip: !observer?.isIntersecting,
+    },
+  );
 
   const _categories = categories.filter(
     category => !category.parent && category.is_visible && category.prompt_template_count,
@@ -25,6 +37,7 @@ function GuestUserLayout({ categories }: { categories: Category[] }) {
       <CategoryCarousel categories={_categories} />
       <Services />
       <Stack
+        ref={templateContainerRef}
         py={{ xs: "30px", md: "48px" }}
         gap={3}
       >

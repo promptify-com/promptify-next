@@ -7,9 +7,15 @@ import { CategoryCard } from "@/components/common/cards/CardCategory";
 import useCarousel from "@/hooks/useCarousel";
 import CarouselButtons from "@/components/common/buttons/CarouselButtons";
 import Link from "next/link";
+import { useRef } from "react";
+import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 
 function CategoryCarousel({ categories }: { categories: Category[] }) {
-  const { containerRef, scrollNext, scrollPrev } = useCarousel(true);
+  const { containerRef: carouselRef, scrollNext, scrollPrev } = useCarousel(true);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const observer = useIntersectionObserver(containerRef, {
+    threshold: 0.5,
+  });
 
   return (
     <Stack
@@ -55,24 +61,28 @@ function CategoryCarousel({ categories }: { categories: Category[] }) {
         </Stack>
       </Stack>
       <Stack
-        ref={containerRef}
+        ref={carouselRef}
         overflow={"hidden"}
         m={"8px 16px"}
       >
-        <Stack direction={"row"}>
-          {categories.map((category, idx) => (
-            <Box
-              key={category.id}
-              mx={"12px"}
-            >
-              <CategoryCard
-                category={category}
-                index={idx}
-                href={`/explore/${category.slug}`}
-                min
-              />
-            </Box>
-          ))}
+        <Stack
+          ref={containerRef}
+          direction={"row"}
+        >
+          {observer?.isIntersecting &&
+            categories.map(category => (
+              <Box
+                key={category.id}
+                mx={"12px"}
+              >
+                <CategoryCard
+                  category={category}
+                  priority={false}
+                  href={`/explore/${category.slug}`}
+                  min
+                />
+              </Box>
+            ))}
         </Stack>
       </Stack>
     </Stack>
