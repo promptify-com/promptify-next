@@ -10,12 +10,17 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { useRef } from "react";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
+import { Box } from "@mui/material";
 
 function GuestUserLayout({ categories }: { categories: Category[] }) {
   const templateContainerRef = useRef<HTMLDivElement | null>(null);
-  const observer = useIntersectionObserver(templateContainerRef, {
-    threshold: 0.5,
-  });
+  const learnContainerRef = useRef<HTMLDivElement | null>(null);
+  const testimonialsContainerRef = useRef<HTMLDivElement | null>(null);
+  const observers = {
+    templatesObserver: useIntersectionObserver(templateContainerRef, {}),
+    learnObserver: useIntersectionObserver(learnContainerRef, {}),
+    testimonialsObserver: useIntersectionObserver(testimonialsContainerRef, {}),
+  };
 
   const { data: popularTemplates, isLoading } = useGetTemplatesByFilterQuery(
     {
@@ -23,13 +28,16 @@ function GuestUserLayout({ categories }: { categories: Category[] }) {
       limit: 30,
     },
     {
-      skip: !observer?.isIntersecting,
+      skip: !observers.templatesObserver?.isIntersecting,
     },
   );
 
   const _categories = categories.filter(
     category => !category.parent && category.is_visible && category.prompt_template_count,
   );
+
+  const showLearn = observers.learnObserver?.isIntersecting;
+  const showTestimonials = observers.learnObserver?.isIntersecting;
 
   return (
     <Stack>
@@ -56,8 +64,8 @@ function GuestUserLayout({ categories }: { categories: Category[] }) {
           type="popularTemplates"
         />
       </Stack>
-      <Learn />
-      <Testimonials />
+      <Box ref={learnContainerRef}>{showLearn && <Learn />}</Box>
+      <Box ref={testimonialsContainerRef}>{showTestimonials && <Testimonials />}</Box>
     </Stack>
   );
 }
