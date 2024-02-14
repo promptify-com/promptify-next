@@ -1,16 +1,20 @@
 import { EmblaCarouselType } from "embla-carousel";
+import Autoplay from "embla-carousel-autoplay";
 import useEmblaCarousel from "embla-carousel-react";
 import { useCallback, useEffect, useState } from "react";
 
-export default function useCarousel() {
+export default function useCarousel(autoplay = false) {
   const [canScrollNext, setCanScrollNext] = useState(true);
   const [canScrollPrev, setCanScrollPrev] = useState(true);
 
-  const [emblaRef, emblaApi] = useEmblaCarousel({
-    slidesToScroll: "auto",
-    containScroll: "trimSnaps",
-    dragFree: true,
-  });
+  const [emblaRef, emblaApi] = useEmblaCarousel(
+    {
+      containScroll: "trimSnaps",
+      dragFree: true,
+      loop: true,
+    },
+    autoplay ? [Autoplay()] : [],
+  );
 
   const onSelect = useCallback((emblaApi: EmblaCarouselType) => {
     setCanScrollNext(emblaApi.canScrollNext());

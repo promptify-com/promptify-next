@@ -2,13 +2,14 @@ import { Category } from "@/core/api/dto/templates";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
 import { CategoryCard } from "@/components/common/cards/CardCategory";
 import useCarousel from "@/hooks/useCarousel";
 import CarouselButtons from "@/components/common/buttons/CarouselButtons";
 import Link from "next/link";
 
 function CategoryCarousel({ categories }: { categories: Category[] }) {
-  const { containerRef, scrollNext, scrollPrev, canScrollNext, canScrollPrev } = useCarousel();
+  const { containerRef, scrollNext, scrollPrev } = useCarousel(true);
 
   return (
     <Stack
@@ -48,28 +49,29 @@ function CategoryCarousel({ categories }: { categories: Category[] }) {
           <CarouselButtons
             scrollPrev={scrollPrev}
             scrollNext={scrollNext}
-            canScrollNext={canScrollNext}
-            canScrollPrev={canScrollPrev}
+            canScrollNext={true}
+            canScrollPrev={true}
           />
         </Stack>
       </Stack>
       <Stack
         ref={containerRef}
         overflow={"hidden"}
+        m={"8px 16px"}
       >
-        <Stack
-          direction={"row"}
-          gap={3}
-          p={"8px 16px"}
-        >
+        <Stack direction={"row"}>
           {categories.map((category, idx) => (
-            <CategoryCard
+            <Box
               key={category.id}
-              category={category}
-              index={idx}
-              href={`/explore/${category.slug}`}
-              min
-            />
+              mx={"12px"}
+            >
+              <CategoryCard
+                category={category}
+                index={idx}
+                href={`/explore/${category.slug}`}
+                min
+              />
+            </Box>
           ))}
         </Stack>
       </Stack>
