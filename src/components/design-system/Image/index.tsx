@@ -8,6 +8,8 @@ interface NextImageProps {
   style?: React.CSSProperties;
   width?: number;
   height?: number;
+  sizes?: string;
+  fill?: boolean;
   loading?: "eager" | "lazy";
   onClick?: () => void;
   onError?: (event: React.SyntheticEvent<HTMLImageElement, Event>) => void;
@@ -21,6 +23,8 @@ const Image: React.FC<NextImageProps> = ({
   style = {},
   width = 0,
   height = 0,
+  sizes,
+  fill,
   loading,
   onClick,
   onError,
@@ -32,8 +36,9 @@ const Image: React.FC<NextImageProps> = ({
       alt={alt}
       width={width}
       height={height}
-      sizes="100vw" // This is helping us to tell Next.js Image component to resize the image to fit the width of its container.
+      sizes={sizes ?? "100vw"}
       priority={priority}
+      fill={fill}
       style={style}
       {...(loading && { loading })}
       onClick={onClick}

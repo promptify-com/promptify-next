@@ -20,35 +20,51 @@ function LandingImage() {
           borderRadius: "50%",
         }}
       />
-      <Image
-        src={require("./empower-2.jpeg")}
-        alt={"Promptify"}
-        priority={true}
-        style={{
+      <Box
+        sx={{
           position: "relative",
           zIndex: 1,
           margin: "0 55px",
-          height: "auto",
           width: isDesktop ? "353px" : "253px",
-          objectFit: "cover",
+          height: isDesktop ? "408px" : "293px",
           borderRadius: "999px 999px 0 0",
+          overflow: "hidden",
         }}
-      />
-      <Image
-        src={require("./empower-1.jpeg")}
-        alt={"Promptify"}
-        priority={true}
-        style={{
+      >
+        <Image
+          src={require("./empower-2.jpeg")}
+          alt={"Promptify"}
+          priority={true}
+          fill
+          sizes="(max-width: 900px) 253px, 353px"
+          style={{
+            objectFit: "cover",
+          }}
+        />
+      </Box>
+      <Box
+        sx={{
           position: "absolute",
           zIndex: 2,
           bottom: "-20px",
           left: 0,
           height: "185px",
           width: "190px",
-          objectFit: "cover",
-          borderRadius: "999px 999px 0px",
+          borderRadius: "999px 999px 0",
+          overflow: "hidden",
         }}
-      />
+      >
+        <Image
+          src={require("./empower-1.jpeg")}
+          alt={"Promptify"}
+          priority={true}
+          fill
+          sizes="190px"
+          style={{
+            objectFit: "cover",
+          }}
+        />
+      </Box>
       <Typography
         sx={{
           ...textStyle,
