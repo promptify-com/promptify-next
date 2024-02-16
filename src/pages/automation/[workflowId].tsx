@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import Stack from "@mui/material/Stack";
 import { useRouter } from "next/router";
-
 import { Layout } from "@/layout";
 import { ChatInterface } from "@/components/Prompt/Common/Chat/ChatInterface";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
@@ -18,6 +17,8 @@ import type { Templates } from "@/core/api/dto/templates";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { ICredentialInput, INode, IWorkflow } from "@/components/Automation/types";
+import useStreamExecution from "@/components/Automation/Hooks/useStreamExecution";
+import { N8N_RESPONSE_REGEX } from "@/components/Automation/helpers";
 
 interface Props {
   workflow: IWorkflow;
@@ -49,6 +50,8 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
   } = useChat({
     initialMessageTitle: `${selectedWorkflow?.name}`,
   });
+
+  const { streamExecutionHandler } = useStreamExecution();
 
   const processData = async () => {
     if (selectedWorkflow?.data) {
@@ -106,7 +109,12 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
       setIsValidatingAnswer(true);
       const response = await sendMessageAPI();
       if (response && typeof response === "string") {
-        messageAnswersForm(response, "html");
+        const regex = new RegExp(N8N_RESPONSE_REGEX);
+        if (regex.test(response)) {
+          streamExecutionHandler(response);
+        } else {
+          messageAnswersForm(response, "html");
+        }
       }
     } catch (error) {
       messageAnswersForm("Something went wrong when executing this GPT.");

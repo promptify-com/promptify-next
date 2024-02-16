@@ -135,7 +135,7 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
 
       if (typeof varyResponse === "string") {
         setIsValidatingAnswer(false);
-        messageAnswersForm("Oops! I couldn't get your reponse, Please try again.");
+        messageAnswersForm("Oops! I couldn't get your response, Please try again.");
         return;
       }
 
