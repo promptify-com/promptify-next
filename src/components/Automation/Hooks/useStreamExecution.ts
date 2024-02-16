@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import useToken from "@/hooks/useToken";
 import { PromptLiveResponse } from "@/common/types/prompt";
@@ -7,6 +7,7 @@ import { useDispatch } from "react-redux";
 import { parseMessageData } from "@/common/helpers/parseMessageData";
 import { setGeneratingStatus } from "@/core/store/templatesSlice";
 import { N8N_RESPONSE_REGEX } from "@/components/Automation/helpers";
+import { setGeneratedExecution } from "../../../core/store/executionsSlice";
 
 interface IStreamExecution {
   id: number;
@@ -33,9 +34,6 @@ const useStreamExecution = () => {
   };
 
   const streamExecution = async (execution: IStreamExecution) => {
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    console.log(execution);
-    return;
     dispatch(setGeneratingStatus(true));
 
     await fetchEventSource(
@@ -44,6 +42,7 @@ const useStreamExecution = () => {
         method: "GET",
         headers: {
           Authorization: `Token ${token}`,
+          Accept: "application/json",
         },
         openWhenHidden: true,
         signal: abortController.current.signal,
@@ -170,7 +169,13 @@ const useStreamExecution = () => {
     );
   };
 
-  return { streamExecutionHandler, generatingResponse };
+  useEffect(() => {
+    if (generatingResponse.connectionOpened) {
+      dispatch(setGeneratedExecution(generatingResponse));
+    }
+  }, [generatingResponse]);
+
+  return { streamExecutionHandler };
 };
 
 export default useStreamExecution;

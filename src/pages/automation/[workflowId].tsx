@@ -19,6 +19,7 @@ import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { ICredentialInput, INode, IWorkflow } from "@/components/Automation/types";
 import useStreamExecution from "@/components/Automation/Hooks/useStreamExecution";
 import { N8N_RESPONSE_REGEX } from "@/components/Automation/helpers";
+import { ExecutionMessage } from "../../components/Automation/ExecutionMessage";
 
 interface Props {
   workflow: IWorkflow;
@@ -28,6 +29,7 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(state => state.user.currentUser);
+  const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
 
   const { areCredentialsStored } = useAppSelector(state => state.chat);
 
@@ -148,6 +150,7 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
               showGenerate={showGenerate}
               onGenerate={executeWorkflow}
             />
+            {generatedExecution && <ExecutionMessage execution={generatedExecution} />}
           </Stack>
 
           {currentUser?.id ? (
