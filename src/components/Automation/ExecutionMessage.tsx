@@ -30,41 +30,17 @@ export const ExecutionMessage: React.FC<Props> = ({ execution }) => {
     sortAndProcessExecutions();
   }, [executionPrompts]);
 
-  useEffect(() => {
-    scrollContainerRef.current?.scrollIntoView({
-      block: "end",
-      behavior: "auto",
-    });
-  }, [execution]);
-
   return (
     <Box
       sx={{
         my: "20px",
-        px: { xs: "8px", md: "40px" },
-        overflowY: "auto",
-        overflowX: "hidden",
-        scrollBehavior: "smooth",
-        "&::-webkit-scrollbar": {
-          width: { xs: "4px", md: "6px" },
-          p: 1,
-          backgroundColor: "surface.1",
-        },
-        "&::-webkit-scrollbar-track": {
-          webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
-        },
-        "&::-webkit-scrollbar-thumb": {
-          backgroundColor: "surface.5",
-          outline: "1px solid surface.1",
-          borderRadius: "10px",
-        },
       }}
     >
       <Stack
         gap={1}
         sx={{
-          width: { md: "calc(100% - 32px)" },
-          p: { xs: "32px 8px 10px 8px", md: "8px 16px 8px 24px" },
+          // width: { md: "calc(100% - 32px)" },
+          p: { xs: "32px 8px 10px 8px", md: "8px 24px 8px 24px" },
           bgcolor: "surface.2",
           borderRadius: "0px 16px 16px 16px",
         }}

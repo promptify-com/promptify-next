@@ -29,7 +29,6 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
 
   const { areCredentialsStored } = useAppSelector(state => state.chat);
 
@@ -145,15 +144,12 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
             justifyContent={"flex-end"}
             overflow={"auto"}
           >
-            {!generatedExecution && (
-              <ChatInterface
-                template={workflowAsTemplate as unknown as Templates}
-                messages={messages}
-                showGenerate={showGenerate}
-                onGenerate={executeWorkflow}
-              />
-            )}
-            {generatedExecution && <ExecutionMessage execution={generatedExecution} />}
+            <ChatInterface
+              template={workflowAsTemplate as unknown as Templates}
+              messages={messages}
+              showGenerate={false}
+              onGenerate={executeWorkflow}
+            />
           </Stack>
 
           {currentUser?.id ? (
