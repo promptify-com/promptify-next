@@ -138,14 +138,14 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
           gap={3}
           direction={"column"}
         >
-          {messages.map(msg => (
+          {messages.map((msg, i) => (
             <Fragment key={msg.id}>
               <Message
                 message={msg}
                 onScrollToBottom={scrollToBottom}
                 isExecutionShown={isExecutionShown}
               />
-              {showAccordionMessage(msg) && (
+              {i === messages.length - 1 && showAccordionMessage(msg) && (
                 <>
                   {inputs.length === 0 ? (
                     <Button
