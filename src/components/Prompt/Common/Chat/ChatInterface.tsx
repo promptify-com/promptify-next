@@ -147,7 +147,7 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
                 onScrollToBottom={scrollToBottom}
                 isExecutionShown={isExecutionShown}
               />
-              {i === messages.length - 1 && showAccordionMessage(msg) && (
+              {!(isAutomationPage && isGenerating) && i === messages.length - 1 && showAccordionMessage(msg) && (
                 <>
                   {inputs.length === 0 ? (
                     <Button
