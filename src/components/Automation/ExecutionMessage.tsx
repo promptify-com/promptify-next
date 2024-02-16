@@ -74,12 +74,12 @@ export const ExecutionMessage: React.FC<Props> = ({ execution }) => {
             py={{ xs: "10px", md: "20px" }}
             gap={4}
           >
-            {execution.title && (
+            {execution.temp_title && (
               <Typography
                 fontSize={{ xs: 18, md: 22 }}
                 fontWeight={400}
               >
-                {execution.title}
+                {execution.temp_title}
               </Typography>
             )}
             <Stack gap={1}>

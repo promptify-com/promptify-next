@@ -57,7 +57,7 @@ const useStreamExecution = ({ messageAnswersForm }: Props) => {
               created_at: new Date(),
               data: [],
               connectionOpened: true,
-              title: execution.title,
+              temp_title: execution.title,
             });
           } else if (res.status >= 400 && res.status < 500 && res.status !== 429) {
             dispatch(
@@ -178,7 +178,7 @@ const useStreamExecution = ({ messageAnswersForm }: Props) => {
   };
 
   const messageGeneratedExecution = () => {
-    const title = generatingResponse.title;
+    const title = generatingResponse.temp_title;
     const promptsOutput = generatingResponse.data.map(data => data.message).join(" ");
     const output = title ? `# ${title}\n\n${promptsOutput}` : promptsOutput;
     messageAnswersForm(output, "html");
