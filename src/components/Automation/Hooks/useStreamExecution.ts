@@ -52,8 +52,6 @@ const useStreamExecution = ({ messageAnswersForm }: Props) => {
         openWhenHidden: true,
         signal: abortController.current.signal,
         async onopen(res) {
-          console.log("onopen", res);
-
           if (res.ok && res.status === 200) {
             setGeneratingResponse({ created_at: new Date(), data: [], connectionOpened: true });
           } else if (res.status >= 400 && res.status < 500 && res.status !== 429) {
@@ -68,7 +66,6 @@ const useStreamExecution = ({ messageAnswersForm }: Props) => {
           }
         },
         onmessage(msg) {
-          console.log("onmessage", msg);
           try {
             const parseData = parseMessageData(msg.data);
             const message = parseData.message;

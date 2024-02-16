@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import { markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
@@ -6,13 +6,13 @@ import type { TemplatesExecutions } from "@/core/api/dto/templates";
 import type { DisplayPrompt, PromptLiveResponse } from "@/common/types/prompt";
 
 interface Props {
-  // title: string;
   execution: PromptLiveResponse | TemplatesExecutions | null;
 }
 
 export const ExecutionMessage: React.FC<Props> = ({ execution }) => {
   const executionPrompts = execution && "data" in execution ? execution.data : execution?.prompt_executions;
   const [prompts, setPrompts] = useState<DisplayPrompt[]>([]);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const sortAndProcessExecutions = async () => {
@@ -33,12 +33,34 @@ export const ExecutionMessage: React.FC<Props> = ({ execution }) => {
     sortAndProcessExecutions();
   }, [executionPrompts]);
 
+  useEffect(() => {
+    scrollContainerRef.current?.scrollIntoView({
+      block: "end",
+      behavior: "auto",
+    });
+  }, [execution]);
+
   return (
     <Box
       sx={{
         my: "20px",
         px: { xs: "8px", md: "40px" },
-        overflow: "auto",
+        overflowY: "auto",
+        overflowX: "hidden",
+        scrollBehavior: "smooth",
+        "&::-webkit-scrollbar": {
+          width: { xs: "4px", md: "6px" },
+          p: 1,
+          backgroundColor: "surface.1",
+        },
+        "&::-webkit-scrollbar-track": {
+          webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
+        },
+        "&::-webkit-scrollbar-thumb": {
+          backgroundColor: "surface.5",
+          outline: "1px solid surface.1",
+          borderRadius: "10px",
+        },
       }}
     >
       <Stack
@@ -115,6 +137,7 @@ export const ExecutionMessage: React.FC<Props> = ({ execution }) => {
           </Stack>
         )}
       </Stack>
+      <div ref={scrollContainerRef}></div>
     </Box>
   );
 };
