@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import { markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
-import type { TemplatesExecutions } from "@/core/api/dto/templates";
 import type { DisplayPrompt, PromptLiveResponse } from "@/common/types/prompt";
 import { Typography } from "@mui/material";
 
@@ -13,7 +12,6 @@ interface Props {
 export const ExecutionMessage: React.FC<Props> = ({ execution }) => {
   const executionPrompts = execution.data;
   const [prompts, setPrompts] = useState<DisplayPrompt[]>([]);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const sortAndProcessExecutions = async () => {
@@ -118,7 +116,6 @@ export const ExecutionMessage: React.FC<Props> = ({ execution }) => {
           </Stack>
         )}
       </Stack>
-      <div ref={scrollContainerRef}></div>
     </Box>
   );
 };
