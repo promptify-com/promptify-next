@@ -66,7 +66,7 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
     }));
   };
 
-  const showAccorionMessage = (message: IMessage): boolean => {
+  const showAccordionMessage = (message: IMessage): boolean => {
     return Boolean(["form", "spark", "credentials"].includes(message.type));
   };
 
@@ -145,7 +145,7 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
                 onScrollToBottom={scrollToBottom}
                 isExecutionShown={isExecutionShown}
               />
-              {showAccorionMessage(msg) && (
+              {showAccordionMessage(msg) && (
                 <>
                   {inputs.length === 0 ? (
                     <Button
@@ -163,7 +163,6 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
                         fontWeight: 500,
                         bgcolor: "primary.main",
                         borderColor: "primary.main",
-
                         color: showGenerate || inputs.length === 0 ? "primary" : "onSurface",
                         ":hover": {
                           bgcolor: "surface.1",
