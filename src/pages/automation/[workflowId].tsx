@@ -19,7 +19,7 @@ import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { ICredentialInput, INode, IWorkflow } from "@/components/Automation/types";
 import useStreamExecution from "@/components/Automation/Hooks/useStreamExecution";
 import { N8N_RESPONSE_REGEX } from "@/components/Automation/helpers";
-import { ExecutionMessage } from "../../components/Automation/ExecutionMessage";
+import { ExecutionMessage } from "@/components/Automation/ExecutionMessage";
 
 interface Props {
   workflow: IWorkflow;
