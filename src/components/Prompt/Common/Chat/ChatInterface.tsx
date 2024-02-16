@@ -163,7 +163,6 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
                         fontWeight: 500,
                         bgcolor: "primary.main",
                         borderColor: "primary.main",
-
                         color: showGenerate || inputs.length === 0 ? "primary" : "onSurface",
                         ":hover": {
                           bgcolor: "surface.1",

@@ -7,14 +7,19 @@ import { useDispatch } from "react-redux";
 import { parseMessageData } from "@/common/helpers/parseMessageData";
 import { setGeneratingStatus } from "@/core/store/templatesSlice";
 import { N8N_RESPONSE_REGEX } from "@/components/Automation/helpers";
-import { setGeneratedExecution } from "../../../core/store/executionsSlice";
+import { setGeneratedExecution } from "@/core/store/executionsSlice";
+import { MessageType } from "@/components/Prompt/Types/chat";
 
 interface IStreamExecution {
   id: number;
   title: string;
 }
 
-const useStreamExecution = () => {
+interface Props {
+  messageAnswersForm: (message: string, type?: MessageType) => void;
+}
+
+const useStreamExecution = ({ messageAnswersForm }: Props) => {
   const token = useToken();
   const dispatch = useDispatch();
   const abortController = useRef(new AbortController());
@@ -169,9 +174,22 @@ const useStreamExecution = () => {
     );
   };
 
+  const messageGeneratedExecution = () => {
+    const output = generatingResponse.data.map(data => data.message).join(" ");
+    messageAnswersForm(output, "html");
+  };
+
   useEffect(() => {
     if (generatingResponse.connectionOpened) {
       dispatch(setGeneratedExecution(generatingResponse));
+    }
+    if (generatingResponse.data.length) {
+      const allPromptsCompleted = generatingResponse.data.every(execData => execData.isCompleted);
+
+      if (allPromptsCompleted) {
+        messageGeneratedExecution();
+        dispatch(setGeneratedExecution(null));
+      }
     }
   }, [generatingResponse]);
 

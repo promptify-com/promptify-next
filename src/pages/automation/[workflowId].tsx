@@ -53,7 +53,7 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
     initialMessageTitle: `${selectedWorkflow?.name}`,
   });
 
-  const { streamExecutionHandler } = useStreamExecution();
+  const { streamExecutionHandler } = useStreamExecution({ messageAnswersForm });
 
   const processData = async () => {
     if (selectedWorkflow?.data) {
