@@ -4,27 +4,24 @@ import Box from "@mui/material/Box";
 import { markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
 import type { TemplatesExecutions } from "@/core/api/dto/templates";
 import type { DisplayPrompt, PromptLiveResponse } from "@/common/types/prompt";
+import { Typography } from "@mui/material";
 
 interface Props {
-  execution: PromptLiveResponse | TemplatesExecutions | null;
+  execution: PromptLiveResponse;
 }
 
 export const ExecutionMessage: React.FC<Props> = ({ execution }) => {
-  const executionPrompts = execution && "data" in execution ? execution.data : execution?.prompt_executions;
+  const executionPrompts = execution.data;
   const [prompts, setPrompts] = useState<DisplayPrompt[]>([]);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const sortAndProcessExecutions = async () => {
       const processedOutputs = await Promise.all(
-        [...(executionPrompts || [])].map(async exec => {
-          const _content = "message" in exec ? exec.message : exec.output;
-
-          return {
-            ...exec,
-            content: await markdownToHTML(_content),
-          };
-        }),
+        [...(executionPrompts || [])].map(async exec => ({
+          ...exec,
+          content: await markdownToHTML(exec.message),
+        })),
       );
 
       setPrompts(processedOutputs);
@@ -74,9 +71,17 @@ export const ExecutionMessage: React.FC<Props> = ({ execution }) => {
       >
         {execution && (
           <Stack
-            direction={{ md: "row" }}
-            justifyContent={"space-between"}
+            py={{ xs: "10px", md: "20px" }}
+            gap={4}
           >
+            {execution.title && (
+              <Typography
+                fontSize={{ xs: 18, md: 22 }}
+                fontWeight={400}
+              >
+                {execution.title}
+              </Typography>
+            )}
             <Stack gap={1}>
               {prompts?.map((exec, index) => (
                 <Stack

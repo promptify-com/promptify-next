@@ -53,7 +53,12 @@ const useStreamExecution = ({ messageAnswersForm }: Props) => {
         signal: abortController.current.signal,
         async onopen(res) {
           if (res.ok && res.status === 200) {
-            setGeneratingResponse({ created_at: new Date(), data: [], connectionOpened: true });
+            setGeneratingResponse({
+              created_at: new Date(),
+              data: [],
+              connectionOpened: true,
+              title: execution.title,
+            });
           } else if (res.status >= 400 && res.status < 500 && res.status !== 429) {
             dispatch(
               setToast({
@@ -78,6 +83,7 @@ const useStreamExecution = ({ messageAnswersForm }: Props) => {
 
             if (executionId) {
               setGeneratingResponse(prevState => ({
+                ...prevState,
                 id: executionId,
                 created_at: prevState.created_at,
                 data: prevState.data,
@@ -172,7 +178,9 @@ const useStreamExecution = ({ messageAnswersForm }: Props) => {
   };
 
   const messageGeneratedExecution = () => {
-    const output = generatingResponse.data.map(data => data.message).join(" ");
+    const title = generatingResponse.title;
+    const promptsOutput = generatingResponse.data.map(data => data.message).join(" ");
+    const output = title ? `# ${title}\n\n${promptsOutput}` : promptsOutput;
     messageAnswersForm(output, "html");
   };
 
