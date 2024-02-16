@@ -143,13 +143,16 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
           <Stack
             height={{ xs: "calc(100% - 140px)", md: "calc(100% - 20px)" }}
             justifyContent={"flex-end"}
+            overflow={"auto"}
           >
-            <ChatInterface
-              template={workflowAsTemplate as unknown as Templates}
-              messages={messages}
-              showGenerate={showGenerate}
-              onGenerate={executeWorkflow}
-            />
+            {!generatedExecution && (
+              <ChatInterface
+                template={workflowAsTemplate as unknown as Templates}
+                messages={messages}
+                showGenerate={showGenerate}
+                onGenerate={executeWorkflow}
+              />
+            )}
             {generatedExecution && <ExecutionMessage execution={generatedExecution} />}
           </Stack>
 

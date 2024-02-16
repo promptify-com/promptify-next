@@ -34,77 +34,87 @@ export const ExecutionMessage: React.FC<Props> = ({ execution }) => {
   }, [executionPrompts]);
 
   return (
-    <Stack
-      gap={1}
+    <Box
       sx={{
-        width: { md: "90%" },
-        mx: { md: "40px" },
+        my: "20px",
+        px: { xs: "8px", md: "40px" },
+        overflow: "auto",
       }}
     >
-      {execution && (
-        <Stack
-          direction={{ md: "row" }}
-          justifyContent={"space-between"}
-        >
-          <Stack gap={1}>
-            {prompts?.map((exec, index) => (
-              <Stack
-                key={index}
-                gap={1}
-                sx={{ pb: "24px" }}
-              >
+      <Stack
+        gap={1}
+        sx={{
+          width: { md: "calc(100% - 32px)" },
+          p: { xs: "32px 8px 10px 8px", md: "8px 16px 8px 24px" },
+          bgcolor: "surface.2",
+          borderRadius: "0px 16px 16px 16px",
+        }}
+      >
+        {execution && (
+          <Stack
+            direction={{ md: "row" }}
+            justifyContent={"space-between"}
+          >
+            <Stack gap={1}>
+              {prompts?.map((exec, index) => (
                 <Stack
-                  direction={{ md: "row" }}
-                  gap={2}
+                  key={index}
+                  gap={1}
+                  sx={{ pb: "24px" }}
                 >
-                  <Box
-                    sx={{
-                      width: "100%",
-                      fontSize: { xs: 14, md: 15 },
-                      fontWeight: 400,
-                      color: "onSurface",
-                      wordWrap: "break-word",
-                      textAlign: "justify",
-                      float: "none",
-                      ".highlight": {
-                        backgroundColor: "yellow",
-                        color: "black",
-                      },
-                      pre: {
-                        m: "10px 0",
-                        borderRadius: "8px",
-                        overflow: "hidden",
-                        code: {
-                          borderRadius: 0,
-                          m: 0,
+                  <Stack
+                    direction={{ md: "row" }}
+                    gap={2}
+                  >
+                    <Box
+                      sx={{
+                        width: "100%",
+                        fontSize: { xs: 14, md: 15 },
+                        fontWeight: 400,
+                        color: "onSurface",
+                        wordWrap: "break-word",
+                        textAlign: "justify",
+                        float: "none",
+                        ".highlight": {
+                          backgroundColor: "yellow",
+                          color: "black",
                         },
-                      },
-                      code: {
-                        display: "block",
-                        bgcolor: "#282a35",
-                        color: "common.white",
-                        borderRadius: "8px",
-                        p: "16px 24px",
-                        mb: "10px",
-                        overflow: "auto",
-                      },
-                      ".language-label": {
-                        p: "8px 24px",
-                        bgcolor: "#4d5562",
-                        color: "#ffffff",
-                        fontSize: 13,
-                      },
-                    }}
-                    dangerouslySetInnerHTML={{
-                      __html: sanitizeHTML(exec.content),
-                    }}
-                  />
+                        pre: {
+                          m: "10px 0",
+                          borderRadius: "8px",
+                          overflow: "hidden",
+                          code: {
+                            borderRadius: 0,
+                            m: 0,
+                          },
+                        },
+                        code: {
+                          display: "block",
+                          bgcolor: "#282a35",
+                          color: "common.white",
+                          borderRadius: "8px",
+                          p: "16px 24px",
+                          mb: "10px",
+                          overflow: "auto",
+                        },
+                        ".language-label": {
+                          p: "8px 24px",
+                          bgcolor: "#4d5562",
+                          color: "#ffffff",
+                          fontSize: 13,
+                        },
+                      }}
+                      dangerouslySetInnerHTML={{
+                        __html: sanitizeHTML(exec.content),
+                      }}
+                    />
+                  </Stack>
                 </Stack>
-              </Stack>
-            ))}
+              ))}
+            </Stack>
           </Stack>
-        </Stack>
-      )}
-    </Stack>
+        )}
+      </Stack>
+    </Box>
   );
 };
