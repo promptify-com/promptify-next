@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
@@ -13,7 +13,11 @@ import { object, string } from "yup";
 import BaseButton from "@/components/base/BaseButton";
 import { useAppDispatch } from "@/hooks/useStore";
 import Storage from "@/common/storage";
-import { useCreateCredentialsMutation, useUpdateWorkflowMutation } from "@/core/api/workflows";
+import {
+  useCreateCredentialsMutation,
+  useDeleteCredentialMutation,
+  useUpdateWorkflowMutation,
+} from "@/core/api/workflows";
 import { setToast } from "@/core/store/toastSlice";
 import { attachCredentialsToNode } from "@/components/Automation/helpers";
 import { setAreCredentialsStored } from "@/core/store/chatSlice";
@@ -22,6 +26,7 @@ import type { ICredentialProperty, IWorkflowCreateResponse } from "@/components/
 import type { IPromptInput } from "@/common/types/prompt";
 import { Box, Tooltip } from "@mui/material";
 import { getAuthUrl } from "@/hooks/api/workflow";
+import useCopyToClipboard from "@/hooks/useCopyToClipboard";
 
 interface Props {
   input: IPromptInput;
@@ -38,14 +43,39 @@ function Credentials({ input }: Props) {
 
   const [updateWorkflow] = useUpdateWorkflowMutation();
   const [createCredentials] = useCreateCredentialsMutation();
+  const [deleteCredential] = useDeleteCredentialMutation();
 
-  const { credentialsInput, updateCredentials, checkAllCredentialsStored, checkCredentialInserted } = useCredentials();
+  const { credentialsInput, updateCredentials, checkAllCredentialsStored, checkCredentialInserted, removeCredential } =
+    useCredentials();
 
   const [openModal, setOpenModal] = useState(false);
   const credential = credentialsInput.find(cred => cred.displayName === input.fullName);
   const credentialProperties = credential?.properties || [];
   const isOauthCredential = credential?.name.includes("OAuth2Api");
   const urlToCopy = `${window.location.origin}/oauth2/callback`;
+  const [copy, result] = useCopyToClipboard();
+
+  useEffect(() => {
+    if (result) {
+      if (result?.state === "success") {
+        dispatch(
+          setToast({
+            message: "Redirect URL copied to clipboard!",
+            severity: "success",
+            position: { vertical: "bottom", horizontal: "right" },
+          }),
+        );
+      } else {
+        dispatch(
+          setToast({
+            message: "Failed to copy URL",
+            severity: "error",
+            position: { vertical: "bottom", horizontal: "right" },
+          }),
+        );
+      }
+    }
+  }, [result]);
 
   function getRequiredFields(credentialProperties: ICredentialProperty[]) {
     let requiredFields = credentialProperties.filter(prop => prop.required).map(prop => prop.name);
@@ -141,70 +171,43 @@ function Credentials({ input }: Props) {
         "scrollbars=no,resizable=yes,status=no,titlebar=no,location=no,toolbar=no,menubar=no,width=500,height=700,popup=true";
       const oauthPopup = window.open(authUri, "OAuth2 Authorization", params);
 
-      const receiveMessage = (event: MessageEvent) => {
+      const receiveMessage = async (event: MessageEvent) => {
         if (event.origin !== window.location.origin) return;
-        console.log("incoming oauth event:", event); // please let me know what this event contains, I'm interested in the origin/data prop
-
         if (event.data.status === "success") {
           window.removeEventListener("message", receiveMessage, false);
-          console.log("Received message", event.data);
-          // trigger a state to notify user that they've connected successfully, remove the connect button
+          setOpenModal(false);
+          dispatch(setToast({ message: event.data.message, severity: event.data.status }));
         } else {
-          // handle error message by showing error toast message, but keep the credentials popup open.
+          dispatch(setToast({ message: event.data.message, severity: event.data.status }));
+          await deleteCredential(credentialId);
+          removeCredential(credentialId);
         }
-
         if (oauthPopup) {
           oauthPopup.close();
         }
       };
 
       window.addEventListener("message", receiveMessage, false);
-      //   const checkOAuthStatus = () => {
-      //     const oauthStatus = Storage.get("oauthStatus");
-      //     if (oauthStatus) {
-      //       Storage.remove("oauthStatus");
 
-      //       if (oauthStatus.data.status === "success") {
-      //         if (oauthPopup) {
-      //           setOpenModal(false);
-      //           dispatch(setToast({ message: "Credential was successfully created", severity: "success" }));
-      //         }
-      //       }
-      //     }
-      //   };
-
-      //   const pollingInterval = setInterval(checkOAuthStatus, 1000);
-
-      //   setTimeout(() => {
-      //     clearInterval(pollingInterval);
-      //     if (!Storage.get("oauthStatus")) {
-      //       console.error("OAuth timeout: No response received.");
-      //     }
-      //   }, 60000);
+      let checkPopupInterval = setInterval(async () => {
+        if (oauthPopup?.closed) {
+          clearInterval(checkPopupInterval);
+          window.removeEventListener("message", receiveMessage, false);
+          dispatch(
+            setToast({
+              message:
+                "OAuth authorization was cancelled. There may have been an issue with the authorization process.",
+              severity: "error",
+            }),
+          );
+          await deleteCredential(credentialId);
+          removeCredential(credentialId);
+        }
+      }, 1000);
     } catch (error) {
       console.error("Error during OAuth authorization:", error);
-    }
-  };
-
-  const handleCopyUrl = async () => {
-    try {
-      await navigator.clipboard.writeText(urlToCopy);
-      dispatch(
-        setToast({
-          message: "Redirect URL copied to clipboard!",
-          severity: "success",
-          position: { vertical: "bottom", horizontal: "right" },
-        }),
-      );
-    } catch (err) {
-      console.error("Failed to copy URL:", err);
-      dispatch(
-        setToast({
-          message: "Failed to copy URL",
-          severity: "error",
-          position: { vertical: "bottom", horizontal: "right" },
-        }),
-      );
+      await deleteCredential(credentialId);
+      removeCredential(credentialId);
     }
   };
 
@@ -247,7 +250,7 @@ function Credentials({ input }: Props) {
                 placement="top-end"
               >
                 <Box
-                  onClick={handleCopyUrl}
+                  onClick={() => copy(urlToCopy)}
                   sx={{
                     m: "0 5px",
                     p: "15px",

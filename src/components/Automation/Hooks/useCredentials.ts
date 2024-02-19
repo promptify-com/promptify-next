@@ -65,6 +65,12 @@ const useCredentials = () => {
     Storage.set("credentials", JSON.stringify(updatedCredentials));
   };
 
+  const removeCredential = (credentialId: string) => {
+    const updatedCredentials = credentials.current.filter(credential => credential.id !== credentialId);
+    credentials.current = updatedCredentials;
+    Storage.set("credentials", JSON.stringify(updatedCredentials));
+  };
+
   return {
     credentials: credentials.current,
     checkCredentialInserted,
@@ -73,6 +79,7 @@ const useCredentials = () => {
     updateCredentials,
     credentialsInput,
     extractCredentialsInputFromNodes,
+    removeCredential,
   };
 };
 

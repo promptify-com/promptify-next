@@ -1,5 +1,4 @@
 import { authClient } from "@/common/axios";
-import Storage from "@/common/storage";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useSearchParams } from "next/navigation";
@@ -19,6 +18,7 @@ export default function Callback() {
         `${process.env.NEXT_PUBLIC_API_URL}/api/oauth2/callback?code=${code}&state=${state}&redirectUri=${redirectUri}`,
       )
       .then(data => {
+        console.log({ data });
         window.opener.postMessage(
           {
             message: "successfully connected!",
