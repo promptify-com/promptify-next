@@ -4,13 +4,12 @@ import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
 import South from "@mui/icons-material/South";
 import Typography from "@mui/material/Typography";
-
 import { Message } from "./Message";
 import { useAppSelector } from "@/hooks/useStore";
 import { getCurrentDateFormatted, timeAgo } from "@/common/helpers/timeManipulation";
 import AccordionMessage from "@/components/Prompt/VariantB/AccordionMessage";
 import FeedbackThumbs from "@/components/Prompt/Common/FeedbackThumbs";
-import useScrollToBottom from "@/components/Prompt/Hooks/useScrolltoBottom";
+import useScrollToBottom from "@/components/Prompt/Hooks/useScrollToBottom";
 import TemplateDetailsCard from "@/components/Prompt/Common/TemplateDetailsCard";
 import ClientOnly from "@/components/base/ClientOnly";
 import type { IMessage } from "@/components/Prompt/Types/chat";
@@ -147,106 +146,104 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
                 onScrollToBottom={scrollToBottom}
                 isExecutionShown={isExecutionShown}
               />
-              {!(isAutomationPage && isGenerating) && i === messages.length - 1 && showAccordionMessage(msg) && (
-                <>
-                  {inputs.length === 0 ? (
-                    <Button
-                      onClick={() => {
-                        onGenerate();
-                      }}
-                      endIcon={<PlayCircle />}
-                      sx={{
-                        height: "22px",
-                        maxWidth: "200px",
-                        p: { xs: "12px", md: "15px" },
-                        fontSize: { xs: 12, md: 15 },
-                        lineHeight: "110%",
-                        letterSpacing: "0.2px",
-                        fontWeight: 500,
-                        bgcolor: "primary.main",
-                        borderColor: "primary.main",
-                        color: showGenerate || inputs.length === 0 ? "primary" : "onSurface",
-                        ":hover": {
-                          bgcolor: "surface.1",
-                          color: "primary.main",
-                        },
-                      }}
-                      variant={"contained"}
-                    >
-                      {`Run ${isAutomationPage ? "workflow" : "prompts"}`}
-                    </Button>
-                  ) : (
-                    <Box
-                      width={"100%"}
-                      position={"relative"}
-                      id={`accordion-${msg.type === "spark" ? "execution" : "input"}`}
-                      onMouseEnter={() => setIsHovered(true)}
-                      onMouseLeave={() => setIsHovered(false)}
-                    >
-                      {isHovered && (
-                        <ClientOnly>
-                          <Typography
-                            sx={{
-                              position: "absolute",
-                              top: -20,
-                              opacity: 0.5,
-                              left: 2,
-                              zIndex: 999,
-                            }}
-                            fontSize={12}
-                            variant="caption"
-                          >
-                            Promptify {timeAgo(msg.createdAt)}
-                          </Typography>
-                        </ClientOnly>
-                      )}
-                      <Stack
-                        direction={"row"}
-                        position={"relative"}
+              {showAccordionMessage(msg) && inputs.length > 0 && (
+                <Box
+                  width={"100%"}
+                  position={"relative"}
+                  id={`accordion-${msg.type === "spark" ? "execution" : "input"}`}
+                  onMouseEnter={() => setIsHovered(true)}
+                  onMouseLeave={() => setIsHovered(false)}
+                >
+                  {isHovered && (
+                    <ClientOnly>
+                      <Typography
+                        sx={{
+                          position: "absolute",
+                          top: -20,
+                          opacity: 0.5,
+                          left: 2,
+                          zIndex: 999,
+                        }}
+                        fontSize={12}
+                        variant="caption"
                       >
+                        Promptify {timeAgo(msg.createdAt)}
+                      </Typography>
+                    </ClientOnly>
+                  )}
+                  <Stack
+                    direction={"row"}
+                    position={"relative"}
+                  >
+                    <Box
+                      display={"flex"}
+                      sx={{
+                        flex: "0 0 100%",
+                      }}
+                    >
+                      <AccordionMessage
+                        type={msg.type}
+                        expanded={expandedAccordions[msg.type]}
+                        onChange={(_e, isExpanded) => handleExpandChange(msg.type, isExpanded)}
+                        template={template!}
+                        showGenerate={showGenerate}
+                        abortGenerating={onAbort!}
+                        onGenerate={onGenerate}
+                      />
+                    </Box>
+
+                    {msg.type === "spark" &&
+                      !!selectedExecution?.prompt_executions?.length &&
+                      expandedAccordions["spark"] && (
                         <Box
-                          display={"flex"}
                           sx={{
-                            flex: "0 0 100%",
+                            position: "sticky",
+                            top: "10px",
+                            right: "40px",
+                            mt: "20%",
+                            height: "fit-content",
+                            mb: "30px",
+                            display: { xs: "none", md: "block" },
                           }}
                         >
-                          <AccordionMessage
-                            type={msg.type}
-                            expanded={expandedAccordions[msg.type]}
-                            onChange={(_e, isExpanded) => handleExpandChange(msg.type, isExpanded)}
-                            template={template!}
-                            showGenerate={showGenerate}
-                            abortGenerating={onAbort!}
-                            onGenerate={onGenerate}
+                          <FeedbackThumbs
+                            execution={selectedExecution}
+                            vertical
+                            variant="icon"
                           />
                         </Box>
-
-                        {msg.type === "spark" &&
-                          !!selectedExecution?.prompt_executions?.length &&
-                          expandedAccordions["spark"] && (
-                            <Box
-                              sx={{
-                                position: "sticky",
-                                top: "10px",
-                                right: "40px",
-                                mt: "20%",
-                                height: "fit-content",
-                                mb: "30px",
-                                display: { xs: "none", md: "block" },
-                              }}
-                            >
-                              <FeedbackThumbs
-                                execution={selectedExecution}
-                                vertical
-                                variant="icon"
-                              />
-                            </Box>
-                          )}
-                      </Stack>
-                    </Box>
-                  )}
-                </>
+                      )}
+                  </Stack>
+                </Box>
               )}
+              {showAccordionMessage(msg) &&
+                !(isAutomationPage && isGenerating) &&
+                inputs.length === 0 &&
+                i === messages.length - 1 && (
+                  <Button
+                    onClick={onGenerate}
+                    endIcon={<PlayCircle />}
+                    sx={{
+                      height: "22px",
+                      maxWidth: "200px",
+                      p: { xs: "12px", md: "15px" },
+                      fontSize: { xs: 12, md: 15 },
+                      lineHeight: "110%",
+                      letterSpacing: "0.2px",
+                      fontWeight: 500,
+                      bgcolor: "primary.main",
+                      borderColor: "primary.main",
+                      color: "primary",
+                      ":hover": {
+                        bgcolor: "surface.1",
+                        color: "primary.main",
+                      },
+                    }}
+                    variant={"contained"}
+                  >
+                    {`Run ${isAutomationPage ? "workflow" : "prompts"}`}
+                  </Button>
+                )}
             </Fragment>
           ))}
         </Stack>

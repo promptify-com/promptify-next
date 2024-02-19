@@ -19,7 +19,6 @@ import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { ICredentialInput, INode, IWorkflow } from "@/components/Automation/types";
 import useStreamExecution from "@/components/Automation/Hooks/useStreamExecution";
 import { N8N_RESPONSE_REGEX } from "@/components/Automation/helpers";
-import { ExecutionMessage } from "@/components/Automation/ExecutionMessage";
 
 interface Props {
   workflow: IWorkflow;
@@ -147,7 +146,7 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
             <ChatInterface
               template={workflowAsTemplate as unknown as Templates}
               messages={messages}
-              showGenerate={false}
+              showGenerate={showGenerate}
               onGenerate={executeWorkflow}
             />
           </Stack>

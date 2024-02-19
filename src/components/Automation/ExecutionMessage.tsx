@@ -15,11 +15,18 @@ export const ExecutionMessage: React.FC<Props> = ({ execution }) => {
 
   useEffect(() => {
     const sortAndProcessExecutions = async () => {
-      const processedOutputs = await Promise.all(
-        [...(executionPrompts || [])].map(async exec => ({
-          ...exec,
-          content: await markdownToHTML(exec.message),
-        })),
+      const processedOutputs: DisplayPrompt[] = await Promise.all(
+        executionPrompts.map(async exec => {
+          const content = await markdownToHTML(exec.message);
+          return {
+            content,
+            prompt: exec.prompt,
+            created_at: exec.created_at,
+            isLoading: exec.isLoading,
+            isCompleted: exec.isCompleted,
+            isFailed: exec.isFailed,
+          };
+        }),
       );
 
       setPrompts(processedOutputs);
@@ -37,7 +44,6 @@ export const ExecutionMessage: React.FC<Props> = ({ execution }) => {
       <Stack
         gap={1}
         sx={{
-          // width: { md: "calc(100% - 32px)" },
           p: { xs: "32px 8px 10px 8px", md: "8px 24px 8px 24px" },
           bgcolor: "surface.2",
           borderRadius: "0px 16px 16px 16px",
