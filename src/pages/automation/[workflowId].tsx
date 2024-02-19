@@ -100,6 +100,15 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
     if ((requiresAuthentication && !areAllCredentialsStored) || (requiresOauth && !areAllCredentialsStored)) {
       const credMessage = createMessage({ type: "credentials", noHeader: true });
       initialQueuedMessages.push(credMessage);
+      const inputProv: IPromptInput[] = [
+        {
+          name: "credentials",
+          fullName: "credentials",
+          type: "credentials",
+          required: true,
+        },
+      ];
+      dispatch(setInputs(inputProv));
     }
     const formMessage = createMessage({ type: "form", noHeader: true });
     initialQueuedMessages.push(formMessage);

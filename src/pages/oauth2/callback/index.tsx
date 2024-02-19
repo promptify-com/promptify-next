@@ -19,12 +19,23 @@ export default function Callback() {
         `${process.env.NEXT_PUBLIC_API_URL}/api/oauth2/callback?code=${code}&state=${state}&redirectUri=${redirectUri}`,
       )
       .then(data => {
-        Storage.set("oauthStatus", JSON.stringify({ data: data.data }));
-        window.close();
+        window.opener.postMessage(
+          {
+            message: "successfully connected!",
+            status: "success",
+            data: JSON.stringify(data),
+          },
+          window.opener.location.origin,
+        );
       })
       .catch(error => {
-        Storage.set("oauthStatus", JSON.stringify({ status: "error", error: error }));
-        window.close();
+        window.opener.postMessage(
+          {
+            message: error.message,
+            status: "error",
+          },
+          window.opener.location.origin,
+        );
       });
   }, [code, state]);
   return (

@@ -138,31 +138,49 @@ function Credentials({ input }: Props) {
       }
 
       const params =
-        "scrollbars=no,resizable=yes,status=no,titlebar=no,location=no,toolbar=no,menubar=no,width=500,height=700";
+        "scrollbars=no,resizable=yes,status=no,titlebar=no,location=no,toolbar=no,menubar=no,width=500,height=700,popup=true";
       const oauthPopup = window.open(authUri, "OAuth2 Authorization", params);
 
-      const checkOAuthStatus = () => {
-        const oauthStatus = Storage.get("oauthStatus");
-        if (oauthStatus) {
-          Storage.remove("oauthStatus");
+      const receiveMessage = (event: MessageEvent) => {
+        if (event.origin !== window.location.origin) return;
+        console.log("incoming oauth event:", event); // please let me know what this event contains, I'm interested in the origin/data prop
 
-          if (oauthStatus.data.status === "success") {
-            if (oauthPopup) {
-              setOpenModal(false);
-              dispatch(setToast({ message: "Credential was successfully created", severity: "success" }));
-            }
-          }
+        if (event.data.status === "success") {
+          window.removeEventListener("message", receiveMessage, false);
+          console.log("Received message", event.data);
+          // trigger a state to notify user that they've connected successfully, remove the connect button
+        } else {
+          // handle error message by showing error toast message, but keep the credentials popup open.
+        }
+
+        if (oauthPopup) {
+          oauthPopup.close();
         }
       };
 
-      const pollingInterval = setInterval(checkOAuthStatus, 1000);
+      window.addEventListener("message", receiveMessage, false);
+      //   const checkOAuthStatus = () => {
+      //     const oauthStatus = Storage.get("oauthStatus");
+      //     if (oauthStatus) {
+      //       Storage.remove("oauthStatus");
 
-      setTimeout(() => {
-        clearInterval(pollingInterval);
-        if (!Storage.get("oauthStatus")) {
-          console.error("OAuth timeout: No response received.");
-        }
-      }, 60000);
+      //       if (oauthStatus.data.status === "success") {
+      //         if (oauthPopup) {
+      //           setOpenModal(false);
+      //           dispatch(setToast({ message: "Credential was successfully created", severity: "success" }));
+      //         }
+      //       }
+      //     }
+      //   };
+
+      //   const pollingInterval = setInterval(checkOAuthStatus, 1000);
+
+      //   setTimeout(() => {
+      //     clearInterval(pollingInterval);
+      //     if (!Storage.get("oauthStatus")) {
+      //       console.error("OAuth timeout: No response received.");
+      //     }
+      //   }, 60000);
     } catch (error) {
       console.error("Error during OAuth authorization:", error);
     }
