@@ -18,6 +18,7 @@ import type { Templates } from "@/core/api/dto/templates";
 import Button from "@mui/material/Button";
 import useVariant from "../../Hooks/useVariant";
 import PlayCircle from "@mui/icons-material/PlayCircle";
+import { ExecutionMessage } from "@/components/Automation/ExecutionMessage";
 
 type AccordionExpandedState = {
   spark: boolean;
@@ -66,8 +67,8 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
     }));
   };
 
-  const showAccorionMessage = (message: IMessage): boolean => {
-    return Boolean(["form", "spark", "credentials"].includes(message.type));
+  const showAccordionMessage = (message: IMessage): boolean => {
+    return Boolean(["form", "spark", "credentials", "html"].includes(message.type));
   };
 
   return (
@@ -138,14 +139,15 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
           gap={3}
           direction={"column"}
         >
-          {messages.map(msg => (
+          {isAutomationPage && generatedExecution && <ExecutionMessage execution={generatedExecution} />}
+          {messages.map((msg, i) => (
             <Fragment key={msg.id}>
               <Message
                 message={msg}
                 onScrollToBottom={scrollToBottom}
                 isExecutionShown={isExecutionShown}
               />
-              {showAccorionMessage(msg) && (
+              {!(isAutomationPage && isGenerating) && i === messages.length - 1 && showAccordionMessage(msg) && (
                 <>
                   {inputs.length === 0 ? (
                     <Button
@@ -163,7 +165,6 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
                         fontWeight: 500,
                         bgcolor: "primary.main",
                         borderColor: "primary.main",
-
                         color: showGenerate || inputs.length === 0 ? "primary" : "onSurface",
                         ":hover": {
                           bgcolor: "surface.1",
