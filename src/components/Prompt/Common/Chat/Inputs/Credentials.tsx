@@ -18,8 +18,10 @@ import { setToast } from "@/core/store/toastSlice";
 import { attachCredentialsToNode } from "@/components/Automation/helpers";
 import { setAreCredentialsStored } from "@/core/store/chatSlice";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
-import type { ICredentialProperty, INode, IWorkflowCreateResponse } from "@/components/Automation/types";
+import type { ICredentialProperty, IWorkflowCreateResponse } from "@/components/Automation/types";
 import type { IPromptInput } from "@/common/types/prompt";
+import { Box, Tooltip } from "@mui/material";
+import { getAuthUrl } from "@/hooks/api/workflow";
 
 interface Props {
   input: IPromptInput;
@@ -42,6 +44,8 @@ function Credentials({ input }: Props) {
   const [openModal, setOpenModal] = useState(false);
   const credential = credentialsInput.find(cred => cred.displayName === input.fullName);
   const credentialProperties = credential?.properties || [];
+  const isOauthCredential = credential?.name.includes("OAuth2Api");
+  const urlToCopy = `${window.location.origin}/oauth2/callback`;
 
   function getRequiredFields(credentialProperties: ICredentialProperty[]) {
     let requiredFields = credentialProperties.filter(prop => prop.required).map(prop => prop.name);
@@ -88,6 +92,10 @@ function Credentials({ input }: Props) {
       const response = await createCredentials(payload).unwrap();
       updateCredentials(response);
 
+      if (isOauthCredential && response) {
+        return response.id;
+      }
+
       const storedWorkflows = Storage.get("workflows") || {};
 
       const workflow = storedWorkflows[workflowId].workflow as IWorkflowCreateResponse;
@@ -114,6 +122,71 @@ function Credentials({ input }: Props) {
     } catch (error) {
       console.error("Error:", error);
       dispatch(setToast({ message: "Credential was not created, please try again.", severity: "error" }));
+    }
+  };
+
+  const handleOauthConnect = async (values: FormValues) => {
+    const credentialId = await handleSubmit(values);
+    if (!credentialId) {
+      return;
+    }
+
+    try {
+      const { authUri } = await getAuthUrl(credentialId, `${window.location.origin}/oauth2/callback`);
+      if (!authUri) {
+        return;
+      }
+
+      const params =
+        "scrollbars=no,resizable=yes,status=no,titlebar=no,location=no,toolbar=no,menubar=no,width=500,height=700";
+      const oauthPopup = window.open(authUri, "OAuth2 Authorization", params);
+
+      const checkOAuthStatus = () => {
+        const oauthStatus = Storage.get("oauthStatus");
+        if (oauthStatus) {
+          Storage.remove("oauthStatus");
+
+          if (oauthStatus.data.status === "success") {
+            if (oauthPopup) {
+              setOpenModal(false);
+              dispatch(setToast({ message: "Credential was successfully created", severity: "success" }));
+            }
+          }
+        }
+      };
+
+      const pollingInterval = setInterval(checkOAuthStatus, 1000);
+
+      setTimeout(() => {
+        clearInterval(pollingInterval);
+        if (!Storage.get("oauthStatus")) {
+          console.error("OAuth timeout: No response received.");
+        }
+      }, 60000);
+    } catch (error) {
+      console.error("Error during OAuth authorization:", error);
+    }
+  };
+
+  const handleCopyUrl = async () => {
+    try {
+      await navigator.clipboard.writeText(urlToCopy);
+      dispatch(
+        setToast({
+          message: "Redirect URL copied to clipboard!",
+          severity: "success",
+          position: { vertical: "bottom", horizontal: "right" },
+        }),
+      );
+    } catch (err) {
+      console.error("Failed to copy URL:", err);
+      dispatch(
+        setToast({
+          message: "Failed to copy URL",
+          severity: "error",
+          position: { vertical: "bottom", horizontal: "right" },
+        }),
+      );
     }
   };
 
@@ -150,12 +223,31 @@ function Credentials({ input }: Props) {
         >
           <DialogTitle>{input.fullName} Credentials</DialogTitle>
           <DialogContent>
+            {isOauthCredential && (
+              <Tooltip
+                title="Copy URL"
+                placement="top-end"
+              >
+                <Box
+                  onClick={handleCopyUrl}
+                  sx={{
+                    m: "0 5px",
+                    p: "15px",
+                    border: "1px solid #c4c4c4",
+                    borderRadius: "4px",
+                    cursor: "pointer",
+                  }}
+                >
+                  {urlToCopy}
+                </Box>
+              </Tooltip>
+            )}
             <Formik
               initialValues={initialValues}
               validationSchema={validationSchema}
               onSubmit={handleSubmit}
             >
-              {({ errors, touched }) => (
+              {({ errors, touched, values }) => (
                 <Form>
                   <DialogContent
                     sx={{
@@ -183,6 +275,28 @@ function Credentials({ input }: Props) {
                       </FormControl>
                     ))}
                   </DialogContent>
+                  {isOauthCredential && values.clientId && values.clientSecret && (
+                    <Button
+                      onClick={() => {
+                        handleOauthConnect(values);
+                      }}
+                      sx={{
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        borderRadius: "4px",
+                        bgcolor: "secondary.main",
+                        ml: "10px",
+                        color: "white",
+                        ":hover": {
+                          bgcolor: "action.hover",
+                          color: "inherit",
+                        },
+                      }}
+                    >
+                      Connect My Account
+                    </Button>
+                  )}
                   <DialogActions>
                     <Button onClick={() => setOpenModal(false)}>Cancel</Button>
                     <Button

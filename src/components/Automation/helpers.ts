@@ -45,6 +45,10 @@ export const authTypeMapping: { [key: string]: string } = {
   // Add other mappings here if necessary
 };
 
+export const oAuthTypeMapping: { [key: string]: string } = {
+  "n8n-nodes-base.googleCalendar": "googleCalendarOAuth2Api",
+};
+
 export async function extractCredentialsInput(nodes: INode[] = []): Promise<ICredentialInput[]> {
   const credentialsInput: ICredentialInput[] = [];
   const creds = (
@@ -59,6 +63,36 @@ export async function extractCredentialsInput(nodes: INode[] = []): Promise<ICre
     if (node.credentials) {
       continue;
     }
+
+    if (oAuthTypeMapping[node.type!]) {
+      const authType = oAuthTypeMapping[node.type!];
+      if (authType && creds[authType]) {
+        const properties = [
+          {
+            displayName: "Client ID",
+            name: "clientId",
+            type: "string",
+            default: "",
+          },
+          {
+            displayName: "Client Secret",
+            name: "clientSecret",
+            type: "string",
+            typeOptions: {
+              password: true,
+            },
+            default: "",
+          },
+        ];
+        credentialsInput.push({
+          name: authType,
+          displayName: creds[authType].displayName,
+          properties,
+        });
+      }
+      continue;
+    }
+
     const parameters = node.parameters;
     if (parameters && parameters.authentication) {
       const authenticationType = parameters.authentication;

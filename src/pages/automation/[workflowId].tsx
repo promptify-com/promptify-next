@@ -18,6 +18,7 @@ import type { Templates } from "@/core/api/dto/templates";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { ICredentialInput, INode, IWorkflow } from "@/components/Automation/types";
+import { oAuthTypeMapping } from "@/components/Automation/helpers";
 
 interface Props {
   workflow: IWorkflow;
@@ -54,7 +55,6 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
     if (selectedWorkflow?.data) {
       const { nodes } = selectedWorkflow.data;
       const credentialsInput = await extractCredentialsInputFromNodes(nodes);
-
       createWorkflowIfNeeded(selectedWorkflow.id);
 
       const inputs: IPromptInput[] = nodes
@@ -84,14 +84,16 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
     const initialQueuedMessages: IMessage[] = [];
 
     const requiresAuthentication = nodes.some(node => node.parameters?.authentication);
+    const requiresOauth = nodes.some(node => oAuthTypeMapping[node.type!]);
 
     let areAllCredentialsStored = true;
-    if (requiresAuthentication) {
+    if (requiresAuthentication || requiresOauth) {
       areAllCredentialsStored = checkAllCredentialsStored(credentialsInput);
     }
-    dispatch(setAreCredentialsStored(requiresAuthentication ? areAllCredentialsStored : true));
 
-    if (requiresAuthentication && !areAllCredentialsStored) {
+    dispatch(setAreCredentialsStored(false));
+
+    if ((requiresAuthentication && !areAllCredentialsStored) || (requiresOauth && !areAllCredentialsStored)) {
       const credMessage = createMessage({ type: "credentials", noHeader: true });
       initialQueuedMessages.push(credMessage);
     }
