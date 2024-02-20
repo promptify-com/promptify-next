@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
@@ -57,6 +57,8 @@ function Credentials({ input }: Props) {
   const [copy, result] = useCopyToClipboard();
   const [getAuthUrl] = workflowsApi.endpoints.getAuthUrl.useLazyQuery();
 
+  const checkPopupIntervalRef = useRef<number | undefined>(undefined);
+
   useEffect(() => {
     if (result) {
       if (result?.state === "success") {
@@ -78,6 +80,17 @@ function Credentials({ input }: Props) {
       }
     }
   }, [result]);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      console.log("CLEARING INTERVAL");
+      if (checkPopupIntervalRef.current) {
+        clearInterval(checkPopupIntervalRef.current);
+        checkPopupIntervalRef.current = undefined;
+      }
+    }, 120000);
+    return () => clearTimeout(timeoutId);
+  }, []);
 
   function getRequiredFields(credentialProperties: ICredentialProperty[]) {
     let requiredFields = credentialProperties.filter(prop => prop.required).map(prop => prop.name);
@@ -184,11 +197,10 @@ function Credentials({ input }: Props) {
         "scrollbars=no,resizable=yes,status=no,titlebar=no,location=no,toolbar=no,menubar=no,width=500,height=700,popup=true";
       const oauthPopup = window.open(authUri, "OAuth2 Authorization", params);
 
-      let checkPopupInterval: number | undefined;
-
       const clearPopupCheck = () => {
-        if (checkPopupInterval) {
-          clearInterval(checkPopupInterval);
+        if (checkPopupIntervalRef.current !== undefined) {
+          clearInterval(checkPopupIntervalRef.current);
+          checkPopupIntervalRef.current = undefined;
         }
         window.removeEventListener("message", receiveMessage, false);
       };
@@ -204,6 +216,7 @@ function Credentials({ input }: Props) {
           dispatch(setToast({ message: event.data.message, severity: event.data.status }));
           await deleteCredential(credentialId);
           removeCredential(credentialId);
+          clearPopupCheck();
         }
         if (oauthPopup) {
           oauthPopup.close();
@@ -212,7 +225,8 @@ function Credentials({ input }: Props) {
 
       window.addEventListener("message", receiveMessage, false);
 
-      checkPopupInterval = setInterval(async () => {
+      let elapsedSeconds = 0;
+      checkPopupIntervalRef.current = setInterval(async () => {
         if (oauthPopup?.closed) {
           clearPopupCheck();
           dispatch(
@@ -224,6 +238,11 @@ function Credentials({ input }: Props) {
           );
           await deleteCredential(credentialId);
           removeCredential(credentialId);
+        } else {
+          elapsedSeconds++;
+          if (elapsedSeconds >= 120) {
+            clearPopupCheck();
+          }
         }
       }, 1000) as unknown as number;
     } catch (error) {
