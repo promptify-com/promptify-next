@@ -170,6 +170,7 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
               messages={messages}
               showGenerate={showGenerate}
               onGenerate={executeWorkflow}
+              isValidating={isValidatingAnswer}
             />
           </Stack>
 

@@ -28,15 +28,17 @@ type AccordionExpandedState = {
 
 interface Props {
   messages: IMessage[];
-  template?: Templates;
   onGenerate: () => void;
-  onAbort?: () => void;
   showGenerate: boolean;
+  isValidating: boolean;
+  template?: Templates;
+  onAbort?: () => void;
 }
 
-export const ChatInterface = ({ template, messages, onGenerate, showGenerate, onAbort }: Props) => {
+export const ChatInterface = ({ template, messages, onGenerate, showGenerate, onAbort, isValidating }: Props) => {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const { generatedExecution, selectedExecution } = useAppSelector(state => state.executions);
+  const isSimulationStreaming = useAppSelector(state => state.chat.isSimulationStreaming);
   const isExecutionShown = Boolean(selectedExecution || generatedExecution);
   const inputs = useAppSelector(state => state.chat.inputs);
 
@@ -68,6 +70,9 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
   const showAccordionMessage = (message: IMessage): boolean => {
     return Boolean(["form", "spark", "credentials"].includes(message.type));
   };
+
+  const hasContent = template?.prompts.some(prompt => prompt.content);
+  const allowRun = (isAutomationPage || hasContent) && !isGenerating && !isValidating;
 
   return (
     <Stack
@@ -215,17 +220,14 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
                   </Stack>
                 </Box>
               )}
-              {showAccordionMessage(msg) &&
-                !(isAutomationPage && isGenerating) &&
-                inputs.length === 0 &&
-                i === messages.length - 1 && (
-                  <RunButton
-                    title={`Run ${isAutomationPage ? "workflow" : "prompts"}`}
-                    onClick={onGenerate}
-                  />
-                )}
             </Fragment>
           ))}
+          {allowRun && inputs.length === 0 && (
+            <RunButton
+              title={`Run ${isAutomationPage ? "workflow" : "prompts"}`}
+              onClick={onGenerate}
+            />
+          )}
         </Stack>
       </Stack>
     </Stack>
