@@ -69,7 +69,9 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
 
   const showAccordionMessage = (message: IMessage): boolean => {
     const type = message.type;
-    return Boolean(["spark", "credentials"].includes(type) || (type === "form" && inputs.length > 0));
+    return Boolean(
+      type === "credentials" || (!isAutomationPage && type === "spark") || (type === "form" && inputs.length > 0),
+    );
   };
 
   const hasContent = template?.prompts.some(prompt => prompt.content);

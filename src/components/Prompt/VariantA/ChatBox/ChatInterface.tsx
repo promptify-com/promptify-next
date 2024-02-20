@@ -59,6 +59,8 @@ export const ChatInterface = ({
     dispatch(setGeneratingStatus(false));
   };
 
+  const hasContent = template?.prompts.some(prompt => prompt.content);
+
   return (
     <Stack
       ref={messagesContainerRef}
@@ -161,11 +163,13 @@ export const ChatInterface = ({
         ))}
       </Stack>
 
-      <GenerateAndClearButton
-        onGenerate={onGenerate}
-        showGenerate={showGenerate}
-        isValidating={isValidating}
-      />
+      {hasContent && (
+        <GenerateAndClearButton
+          onGenerate={onGenerate}
+          showGenerate={showGenerate}
+          isValidating={isValidating}
+        />
+      )}
 
       {isGenerating && (
         <Box width={"100%"}>
