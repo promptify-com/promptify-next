@@ -54,6 +54,7 @@ const ChatBoxVariantB: React.FC<Props> = ({
           showGenerate={showGenerate}
           onGenerate={generateExecutionHandler}
           onAbort={abortConnection}
+          isValidating={isValidatingAnswer}
         />
         {currentUser?.id ? (
           <ChatInput

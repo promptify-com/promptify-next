@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import { EngineOutput } from "@/core/api/dto/templates";
-import useScrollToBottom from "@/components/Prompt/Hooks/useScrolltoBottom";
+import useScrollToBottom from "@/components/Prompt/Hooks/useScrollToBottom";
 import South from "@mui/icons-material/South";
 import ExecutionOutput from "@/components/builder/ExecutionOutput";
 

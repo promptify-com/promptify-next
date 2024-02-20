@@ -4,8 +4,6 @@ import Accordion from "@mui/material/Accordion";
 import Typography from "@mui/material/Typography";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import Fade from "@mui/material/Fade";
-import PlayCircle from "@mui/icons-material/PlayCircle";
-import Button from "@mui/material/Button";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setIsSimulationStreaming } from "@/core/store/chatSlice";
 import { Display } from "@/components/Prompt/Common/Display";
@@ -14,6 +12,7 @@ import AccordionMessageHeader from "@/components/Prompt/VariantB/AccordionMessag
 import useVariant from "../Hooks/useVariant";
 import type { Templates } from "@/core/api/dto/templates";
 import type { MessageType } from "@/components/Prompt/Types/chat";
+import RunButton from "@/components/Prompt/Common/RunButton";
 
 interface Props {
   onGenerate: () => void;
@@ -130,31 +129,10 @@ export default function AccordionMessage({
               justifyContent={"end"}
               mr={3}
             >
-              <Button
-                onClick={() => {
-                  onGenerate();
-                }}
-                endIcon={<PlayCircle />}
-                sx={{
-                  height: "22px",
-                  p: { xs: "12px", md: "15px" },
-                  fontSize: { xs: 12, md: 15 },
-                  lineHeight: "110%",
-                  letterSpacing: "0.2px",
-                  fontWeight: 500,
-                  bgcolor: "primary.main",
-                  borderColor: "primary.main",
-
-                  color: showGenerate ? "primary" : "onSurface",
-                  ":hover": {
-                    bgcolor: "surface.1",
-                    color: "primary.main",
-                  },
-                }}
-                variant={"contained"}
-              >
-                {`Run ${isAutomationPage ? "workflow" : "prompts"}`}
-              </Button>
+              <RunButton
+                title={`Run ${isAutomationPage ? "workflow" : "prompts"}`}
+                onClick={onGenerate}
+              />
             </Stack>
           )}
         </AccordionDetails>

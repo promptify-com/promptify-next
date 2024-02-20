@@ -2,7 +2,6 @@ import { useRef, useMemo } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-
 import { useAppSelector } from "@/hooks/useStore";
 import { ExecutionCard } from "./ExecutionCard";
 import ParagraphPlaceholder from "@/components/placeholders/ParagraphPlaceholder";
