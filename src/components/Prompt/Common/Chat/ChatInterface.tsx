@@ -38,7 +38,7 @@ interface Props {
 export const ChatInterface = ({ template, messages, onGenerate, showGenerate, onAbort, isValidating }: Props) => {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const { generatedExecution, selectedExecution } = useAppSelector(state => state.executions);
-  const isSimulationStreaming = useAppSelector(state => state.chat.isSimulationStreaming);
+  const currentUser = useAppSelector(state => state.user.currentUser);
   const isExecutionShown = Boolean(selectedExecution || generatedExecution);
   const inputs = useAppSelector(state => state.chat.inputs);
 
@@ -72,7 +72,7 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
   };
 
   const hasContent = template?.prompts.some(prompt => prompt.content);
-  const allowRun = (isAutomationPage || hasContent) && !isGenerating && !isValidating;
+  const allowRun = currentUser?.id && (isAutomationPage || hasContent) && !isGenerating && !isValidating;
 
   return (
     <Stack
