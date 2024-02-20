@@ -49,6 +49,7 @@ export const authTypeMapping: { [key: string]: string } = {
 
 export const oAuthTypeMapping: { [key: string]: string } = {
   "n8n-nodes-base.googleCalendar": "googleCalendarOAuth2Api",
+  "n8n-nodes-base.gmail": "gmailOAuth2",
 };
 
 export async function extractCredentialsInput(nodes: INode[] = []): Promise<ICredentialInput[]> {

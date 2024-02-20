@@ -17,6 +17,7 @@ import {
   useCreateCredentialsMutation,
   useDeleteCredentialMutation,
   useUpdateWorkflowMutation,
+  workflowsApi,
 } from "@/core/api/workflows";
 import { setToast } from "@/core/store/toastSlice";
 import { attachCredentialsToNode } from "@/components/Automation/helpers";
@@ -24,8 +25,9 @@ import { setAreCredentialsStored } from "@/core/store/chatSlice";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
 import type { ICredentialProperty, IWorkflowCreateResponse } from "@/components/Automation/types";
 import type { IPromptInput } from "@/common/types/prompt";
-import { Box, Tooltip } from "@mui/material";
-import { getAuthUrl } from "@/hooks/api/workflow";
+import Box from "@mui/material/Box";
+import Tooltip from "@mui/material/Tooltip";
+// import { getAuthUrl } from "@/hooks/api/workflow";
 import useCopyToClipboard from "@/hooks/useCopyToClipboard";
 
 interface Props {
@@ -51,9 +53,10 @@ function Credentials({ input }: Props) {
   const [openModal, setOpenModal] = useState(false);
   const credential = credentialsInput.find(cred => cred.displayName === input.fullName);
   const credentialProperties = credential?.properties || [];
-  const isOauthCredential = credential?.name.includes("OAuth2Api");
+  const isOauthCredential = credential?.name.includes("OAuth2");
   const urlToCopy = `${window.location.origin}/oauth2/callback`;
   const [copy, result] = useCopyToClipboard();
+  const [getAuthUrl] = workflowsApi.endpoints.getAuthUrl.useLazyQuery();
 
   useEffect(() => {
     if (result) {
@@ -104,6 +107,32 @@ function Credentials({ input }: Props) {
     }, {}),
   );
 
+  const updateWorkflowAndStorage = async () => {
+    const storedWorkflows = Storage.get("workflows") || {};
+
+    const workflow = storedWorkflows[workflowId].workflow as IWorkflowCreateResponse;
+
+    if (workflow && workflow.nodes) {
+      workflow.nodes.forEach(node => attachCredentialsToNode(node));
+
+      const areAllCredentialsStored = checkAllCredentialsStored(credentialsInput);
+      dispatch(setAreCredentialsStored(areAllCredentialsStored));
+
+      Storage.set("workflows", JSON.stringify(storedWorkflows));
+
+      if (areAllCredentialsStored) {
+        try {
+          await updateWorkflow({
+            workflowId: parseInt(workflowId),
+            data: workflow,
+          });
+        } catch (error) {
+          console.error("Error updating workflow:", error);
+        }
+      }
+    }
+  };
+
   const handleSubmit = async (values: FormValues) => {
     const credential = credentialsInput.find(cred => cred.displayName === input.fullName);
     const data: Record<string, string> = {};
@@ -126,27 +155,8 @@ function Credentials({ input }: Props) {
         return response.id;
       }
 
-      const storedWorkflows = Storage.get("workflows") || {};
+      updateWorkflowAndStorage();
 
-      const workflow = storedWorkflows[workflowId].workflow as IWorkflowCreateResponse;
-
-      workflow.nodes.forEach(node => attachCredentialsToNode(node));
-
-      const areAllCredentialsStored = checkAllCredentialsStored(credentialsInput);
-      dispatch(setAreCredentialsStored(areAllCredentialsStored));
-
-      Storage.set("workflows", JSON.stringify(storedWorkflows));
-
-      if (areAllCredentialsStored) {
-        try {
-          await updateWorkflow({
-            workflowId: parseInt(workflowId),
-            data: workflow,
-          });
-        } catch (error) {
-          console.error("Error updating workflow:", error);
-        }
-      }
       setOpenModal(false);
       dispatch(setToast({ message: "Credential was successfully created", severity: "success" }));
     } catch (error) {
@@ -162,7 +172,11 @@ function Credentials({ input }: Props) {
     }
 
     try {
-      const { authUri } = await getAuthUrl(credentialId, `${window.location.origin}/oauth2/callback`);
+      const { authUri } = await getAuthUrl({
+        id: credentialId,
+        redirectUri: `${window.location.origin}/oauth2/callback`,
+      }).unwrap();
+
       if (!authUri) {
         return;
       }
@@ -171,10 +185,20 @@ function Credentials({ input }: Props) {
         "scrollbars=no,resizable=yes,status=no,titlebar=no,location=no,toolbar=no,menubar=no,width=500,height=700,popup=true";
       const oauthPopup = window.open(authUri, "OAuth2 Authorization", params);
 
+      let checkPopupInterval: number | undefined;
+
+      const clearPopupCheck = () => {
+        if (checkPopupInterval) {
+          clearInterval(checkPopupInterval);
+        }
+        window.removeEventListener("message", receiveMessage, false);
+      };
+
       const receiveMessage = async (event: MessageEvent) => {
         if (event.origin !== window.location.origin) return;
         if (event.data.status === "success") {
-          window.removeEventListener("message", receiveMessage, false);
+          clearPopupCheck();
+          updateWorkflowAndStorage();
           setOpenModal(false);
           dispatch(setToast({ message: event.data.message, severity: event.data.status }));
         } else {
@@ -189,10 +213,9 @@ function Credentials({ input }: Props) {
 
       window.addEventListener("message", receiveMessage, false);
 
-      let checkPopupInterval = setInterval(async () => {
+      checkPopupInterval = setInterval(async () => {
         if (oauthPopup?.closed) {
-          clearInterval(checkPopupInterval);
-          window.removeEventListener("message", receiveMessage, false);
+          clearPopupCheck();
           dispatch(
             setToast({
               message:
@@ -203,7 +226,7 @@ function Credentials({ input }: Props) {
           await deleteCredential(credentialId);
           removeCredential(credentialId);
         }
-      }, 1000);
+      }, 1000) as unknown as number;
     } catch (error) {
       console.error("Error during OAuth authorization:", error);
       await deleteCredential(credentialId);

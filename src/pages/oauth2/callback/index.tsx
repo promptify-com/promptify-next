@@ -1,11 +1,13 @@
 import { authClient } from "@/common/axios";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
+import Typography from "@mui/material/Typography";
 import { useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function Callback() {
   const params = useSearchParams();
+  const [message, setMessage] = useState("");
   const code = params.get("code");
   const state = params.get("state");
   useEffect(() => {
@@ -18,15 +20,14 @@ export default function Callback() {
         `${process.env.NEXT_PUBLIC_API_URL}/api/oauth2/callback?code=${code}&state=${state}&redirectUri=${redirectUri}`,
       )
       .then(data => {
-        console.log({ data });
         window.opener.postMessage(
           {
             message: "successfully connected!",
             status: "success",
-            data: JSON.stringify(data),
           },
           window.opener.location.origin,
         );
+        setMessage("Connected, you can close this window.");
       })
       .catch(error => {
         window.opener.postMessage(
@@ -36,6 +37,7 @@ export default function Callback() {
           },
           window.opener.location.origin,
         );
+        setMessage("Something wrong, you can close this window and retry again.");
       });
   }, [code, state]);
   return (
@@ -46,6 +48,12 @@ export default function Callback() {
       minHeight="100vh"
     >
       <CircularProgress />
+      <Typography
+        variant="body1"
+        style={{ marginTop: 20 }}
+      >
+        {message}
+      </Typography>
     </Box>
   );
 }
