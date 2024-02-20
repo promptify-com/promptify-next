@@ -4,10 +4,10 @@ import { ArrowDropDown, ContentCopy, DeleteOutline, Menu, Settings } from "@mui/
 import { Button, IconButton, Popover, Stack, Tooltip, Typography } from "@mui/material";
 import React, { useState } from "react";
 import EngineParamsSlider from "../EngineParamsSlider";
-import { Engine } from "@/core/api/dto/templates";
 import { ConnectDragSource } from "react-dnd";
 import { BUILDER_TYPE } from "@/common/constants";
 import { useAppSelector } from "@/hooks/useStore";
+import Image from "@/components/design-system/Image";
 
 interface Props {
   prompt: IEditPrompts;
@@ -82,9 +82,9 @@ function Header({ prompt, order, setPrompt, deletePrompt, duplicatePrompt, dragP
             px: "8px",
           }}
         >
-          <img
-            src={promptEngine?.icon}
-            alt={promptEngine?.name}
+          <Image
+            src={promptEngine?.icon ?? ""}
+            alt={promptEngine?.name ?? ""}
             loading="lazy"
             style={{
               width: "24px",

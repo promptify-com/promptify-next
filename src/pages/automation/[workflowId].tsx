@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import Stack from "@mui/material/Stack";
 import { useRouter } from "next/router";
-
 import { Layout } from "@/layout";
 import { ChatInterface } from "@/components/Prompt/Common/Chat/ChatInterface";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
@@ -15,9 +14,12 @@ import WorkflowPlaceholder from "@/components/Automation/WorkflowPlaceholder";
 import { AUTOMATION_DESCRIPTION } from "@/common/constants";
 import { authClient } from "@/common/axios";
 import type { Templates } from "@/core/api/dto/templates";
-import type { IPromptInput } from "@/common/types/prompt";
+import type { IPromptInput, PromptLiveResponse } from "@/common/types/prompt";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { ICredentialInput, INode, IWorkflow } from "@/components/Automation/types";
+import { N8N_RESPONSE_REGEX } from "@/components/Automation/helpers";
+import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution";
+import { setGeneratedExecution } from "@/core/store/executionsSlice";
 
 interface Props {
   workflow: IWorkflow;
@@ -29,6 +31,7 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
   const currentUser = useAppSelector(state => state.user.currentUser);
 
   const { areCredentialsStored } = useAppSelector(state => state.chat);
+  const { generatedExecution } = useAppSelector(state => state.executions);
 
   const { extractCredentialsInputFromNodes, checkAllCredentialsStored } = useCredentials();
 
@@ -48,6 +51,10 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
     addToQueuedMessages,
   } = useChat({
     initialMessageTitle: `${selectedWorkflow?.name}`,
+  });
+
+  const { streamExecutionHandler } = useGenerateExecution({
+    messageAnswersForm,
   });
 
   const processData = async () => {
@@ -106,13 +113,36 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
       setIsValidatingAnswer(true);
       const response = await sendMessageAPI();
       if (response && typeof response === "string") {
-        messageAnswersForm(response, "html");
+        const regex = new RegExp(N8N_RESPONSE_REGEX);
+        if (regex.test(response)) {
+          streamExecutionHandler(response);
+        } else {
+          messageAnswersForm(response, "html");
+        }
       }
     } catch (error) {
       messageAnswersForm("Something went wrong when executing this GPT.");
     }
     setIsValidatingAnswer(false);
   };
+
+  const messageGeneratedExecution = (execution: PromptLiveResponse) => {
+    const title = execution.temp_title;
+    const promptsOutput = execution.data.map(data => data.message).join(" ");
+    const output = title ? `# ${title}\n\n${promptsOutput}` : promptsOutput;
+    messageAnswersForm(output, "html");
+  };
+
+  useEffect(() => {
+    if (generatedExecution?.data?.length) {
+      const allPromptsCompleted = generatedExecution.data.every(execData => execData.isCompleted);
+
+      if (allPromptsCompleted) {
+        messageGeneratedExecution(generatedExecution);
+        dispatch(setGeneratedExecution(null));
+      }
+    }
+  }, [generatedExecution]);
 
   return (
     <Layout>
@@ -133,12 +163,14 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
           <Stack
             height={{ xs: "calc(100% - 140px)", md: "calc(100% - 20px)" }}
             justifyContent={"flex-end"}
+            overflow={"auto"}
           >
             <ChatInterface
               template={workflowAsTemplate as unknown as Templates}
               messages={messages}
               showGenerate={showGenerate}
               onGenerate={executeWorkflow}
+              isValidating={isValidatingAnswer}
             />
           </Stack>
 

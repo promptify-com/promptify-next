@@ -9,10 +9,18 @@ import useBrowser from "@/hooks/useBrowser";
 import useToken from "@/hooks/useToken";
 import Link from "next/link";
 
-export const CategoryCard = ({ category, href, index }: { category: Category; href: string; index: number }) => {
+interface Props {
+  category: Category;
+  href: string;
+  index?: number;
+  priority?: boolean;
+  min?: boolean;
+}
+
+export const CategoryCard = ({ category, href, index, priority, min }: Props) => {
   const token = useToken();
   const { isMobile } = useBrowser();
-  const shouldPrioritizeImage = token ? false : isMobile ? index === 0 || index === 1 : true;
+  const shouldPrioritizeImage = priority ?? token ? false : isMobile ? index === 0 || index === 1 : true;
 
   return (
     <Link
@@ -20,11 +28,11 @@ export const CategoryCard = ({ category, href, index }: { category: Category; hr
       style={{ textDecoration: "none" }}
     >
       <Card
-        title={category.name}
         elevation={0}
+        title={category.name}
         sx={{
           maxWidth: "200px",
-          width: "200px",
+          width: min ? "156px" : "200px",
           bgcolor: "transparent",
           borderRadius: "27px",
           overflow: "hidden",
@@ -54,18 +62,20 @@ export const CategoryCard = ({ category, href, index }: { category: Category; hr
             />
           </CardMedia>
 
-          <Typography
-            variant="h1"
-            fontSize={16}
-            fontWeight={500}
-            lineHeight={"20.8px"}
-            color={"white"}
-            mx={2}
-            position={"absolute"}
-            top={8}
-          >
-            {category.name}
-          </Typography>
+          {!min && (
+            <Typography
+              variant="h1"
+              fontSize={16}
+              fontWeight={500}
+              lineHeight={"20.8px"}
+              color={"white"}
+              mx={2}
+              position={"absolute"}
+              top={8}
+            >
+              {category.name}
+            </Typography>
+          )}
           <CardContent sx={{ padding: "8px", m: 0 }}>
             <Typography
               gutterBottom
@@ -75,13 +85,15 @@ export const CategoryCard = ({ category, href, index }: { category: Category; hr
             >
               {category.name}
             </Typography>
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              fontSize={12}
-            >
-              {category.prompt_template_count} templates
-            </Typography>
+            {!min && (
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                fontSize={12}
+              >
+                {category.prompt_template_count} templates
+              </Typography>
+            )}
           </CardContent>
         </CardActionArea>
       </Card>

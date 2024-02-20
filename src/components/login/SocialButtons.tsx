@@ -1,10 +1,12 @@
-import { GitHub, LinkedIn } from "@mui/icons-material";
-import { Box, Grid, Typography } from "@mui/material";
-import { useRef, useState, forwardRef } from "react";
+import GitHub from "@mui/icons-material/GitHub";
+import LinkedIn from "@mui/icons-material/LinkedIn";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import { Dispatch, SetStateAction, useRef, useState } from "react";
 import GitHubLogin from "react-github-login";
 import { useLinkedIn } from "react-linkedin-login-oauth2";
 import { useGoogleLogin } from "@react-oauth/google";
-import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import { AxiosResponse } from "axios";
 import { Google } from "@/assets/icons/google";
 import { client } from "@/common/axios";
@@ -21,13 +23,20 @@ import { setToast } from "@/core/store/toastSlice";
 const CODE_TOKEN_ENDPOINT = "/api/login/social/token/";
 
 interface IProps {
-  preLogin: (isLoading: boolean) => void;
-  isChecked: boolean;
-  setErrorCheckBox: Function;
-  from: string;
+  preLogin?: (isLoading: boolean) => void;
+  isChecked?: boolean;
+  setErrorCheckBox?: Dispatch<SetStateAction<boolean>>;
+  from?: string;
+  asList?: boolean;
 }
 
-export default function SocialButtons({ preLogin, isChecked, setErrorCheckBox, from }: IProps) {
+export default function SocialButtons({
+  preLogin = () => null,
+  isChecked,
+  setErrorCheckBox = () => null,
+  from,
+  asList,
+}: IProps) {
   const githubButtonRef = useRef<HTMLButtonElement | null>(null);
   const [attemptError, setAttemptError] = useState(false);
   const dispatch = useDispatch();
@@ -125,6 +134,25 @@ export default function SocialButtons({ preLogin, isChecked, setErrorCheckBox, f
     }
   };
 
+  const socialBtnStyle = {
+    display: "flex",
+    justifyContent: asList ? "flex-start" : "center",
+    alignItems: "center",
+    padding: "8px 22px",
+    height: "42px",
+    width: "100%",
+    background: "transparent",
+    borderRadius: asList ? 0 : "100px",
+    border: asList ? "none" : "1px solid #3b405026",
+    gap: "0.5em",
+    cursor: "pointer",
+    "&:hover": {
+      transform: "scale(1.01)",
+      boxShadow: "rgba(0, 0, 0, 0.15) 0 0 1px",
+    },
+    ...(asList && { borderBottom: "1px solid #3b405026" }),
+  };
+
   return (
     <Box
       sx={{
@@ -132,17 +160,12 @@ export default function SocialButtons({ preLogin, isChecked, setErrorCheckBox, f
         flexDirection: "column",
         alignItems: "flex-start",
         padding: "0px",
-        gap: "16px",
+        gap: asList ? 0 : "16px",
         width: "100%",
       }}
     >
       {attemptError && (
-        <Box
-          sx={{
-            display: "flex",
-            alignSelf: "center",
-          }}
-        >
+        <Box p={"8px 22px"}>
           <Typography
             sx={{
               fontFamily: "Poppins",
@@ -161,23 +184,7 @@ export default function SocialButtons({ preLogin, isChecked, setErrorCheckBox, f
       )}
       <Grid
         onClick={() => validateConsent(loginWithGoogle)}
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          padding: "8px 22px",
-          height: "42px",
-          width: "100%",
-          background: "transparent",
-          borderRadius: "100px",
-          border: "1px solid var(--primary-states-outlined-border, rgba(59, 64, 80, 0.15))",
-          gap: "0.5em",
-          cursor: "pointer",
-          "&:hover": {
-            transform: "scale(1.01)",
-            boxShadow: "rgba(0, 0, 0, 0.15) 0 0 1px",
-          },
-        }}
+        sx={socialBtnStyle}
       >
         <Google />
         <Typography
@@ -197,23 +204,7 @@ export default function SocialButtons({ preLogin, isChecked, setErrorCheckBox, f
 
       <Grid
         onClick={() => validateConsent(linkedInLogin)}
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          padding: "8px 22px",
-          height: "42px",
-          width: "100%",
-          background: "transparent",
-          borderRadius: "100px",
-          border: "1px solid var(--primary-states-outlined-border, rgba(59, 64, 80, 0.15))",
-          gap: "0.5em",
-          cursor: "pointer",
-          "&:hover": {
-            transform: "scale(1.01)",
-            boxShadow: "rgba(0, 0, 0, 0.15) 0 0 1px",
-          },
-        }}
+        sx={socialBtnStyle}
       >
         <LinkedIn
           sx={{
@@ -253,23 +244,7 @@ export default function SocialButtons({ preLogin, isChecked, setErrorCheckBox, f
       <Grid
         onClick={() => validateConsent(handleGithubButtonClick)}
         component="span"
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          padding: "8px 22px",
-          height: "42px",
-          width: "100%",
-          background: "transparent",
-          borderRadius: "100px",
-          border: "1px solid var(--primary-states-outlined-border, rgba(59, 64, 80, 0.15))",
-          gap: "0.5em",
-          cursor: "pointer",
-          "&:hover": {
-            transform: "scale(1.01)",
-            boxShadow: "rgba(0, 0, 0, 0.15) 0 0 1px",
-          },
-        }}
+        sx={socialBtnStyle}
       >
         <GitHub sx={{ color: "#171515" }} />
         <Typography
@@ -289,23 +264,7 @@ export default function SocialButtons({ preLogin, isChecked, setErrorCheckBox, f
 
       <Grid
         onClick={() => validateConsent(loginWithMicrosoft)}
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          padding: "8px 22px",
-          height: "42px",
-          width: "100%",
-          background: "transparent",
-          borderRadius: "100px",
-          border: "1px solid var(--primary-states-outlined-border, rgba(59, 64, 80, 0.15))",
-          gap: "0.5em",
-          cursor: "pointer",
-          "&:hover": {
-            transform: "scale(1.01)",
-            boxShadow: "rgba(0, 0, 0, 0.15) 0 0 1px",
-          },
-        }}
+        sx={socialBtnStyle}
       >
         <Microsoft />
         <Typography

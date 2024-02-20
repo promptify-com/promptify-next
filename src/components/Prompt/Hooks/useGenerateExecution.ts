@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
-
 import { setGeneratingStatus } from "@/core/store/templatesSlice";
 import { parseMessageData } from "@/common/helpers/parseMessageData";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
@@ -17,9 +16,15 @@ import { setToast } from "@/core/store/toastSlice";
 import type { PromptLiveResponse } from "@/common/types/prompt";
 import type { ResPrompt } from "@/core/api/dto/prompts";
 import type { Templates } from "@/core/api/dto/templates";
+import { N8N_RESPONSE_REGEX } from "@/components/Automation/helpers";
+
+interface IStreamExecution {
+  id: number;
+  title: string;
+}
 
 interface Props {
-  template: Templates;
+  template?: Templates;
   messageAnswersForm: (message: string) => void;
 }
 const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
@@ -45,6 +50,8 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
   const { storeAnswers, storeParams } = useStoreAnswersAndParams();
 
   const generateExecutionHandler = async () => {
+    if (!template) return;
+
     if (!token) {
       storeAnswers(answers);
       storeParams(paramsValues);
@@ -69,26 +76,52 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
 
     dispatch(setSelectedExecution(null));
     uploadedFiles.current.clear();
-    generateExecution(promptsData);
+
+    const endpoint = `/api/meta/templates/${template.id}/execute/`;
+    fetchExecution({ endpoint, method: "POST", body: JSON.stringify(promptsData) });
   };
 
-  const generateExecution = (executionData: ResPrompt[]) => {
-    const url = `${process.env.NEXT_PUBLIC_API_URL}/api/meta/templates/${template!.id}/execute/`;
+  const streamExecutionHandler = async (response: string) => {
+    let executionMatch;
+    let regex = new RegExp(N8N_RESPONSE_REGEX);
+    while ((executionMatch = regex.exec(response)) !== null) {
+      const currentExecution: IStreamExecution = { id: parseInt(executionMatch[2]), title: executionMatch[1] };
 
-    fetchEventSource(url, {
-      method: "POST",
+      const endpoint = `/api/meta/template-executions/${currentExecution.id}/get_stream/`;
+      await fetchExecution({ endpoint, method: "GET", streamExecution: currentExecution });
+    }
+  };
+
+  const fetchExecution = ({
+    endpoint,
+    method,
+    body,
+    streamExecution,
+  }: {
+    endpoint: string;
+    method: string;
+    body?: string;
+    streamExecution?: IStreamExecution;
+  }) => {
+    fetchEventSource(process.env.NEXT_PUBLIC_API_URL + endpoint, {
+      method,
       headers: {
         Authorization: `Token ${token}`,
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(executionData),
+      ...(body && { body }),
       openWhenHidden: true,
       signal: abortController.current.signal,
       async onopen(res) {
         if (res.ok && res.status === 200) {
           dispatch(setGeneratingStatus(true));
-          setGeneratingResponse({ created_at: new Date(), data: [], connectionOpened: true });
+          setGeneratingResponse({
+            created_at: new Date(),
+            data: [],
+            connectionOpened: true,
+            temp_title: streamExecution?.title,
+          });
         } else if (res.status >= 400 && res.status < 500 && res.status !== 429) {
           dispatch(
             setToast({
@@ -114,6 +147,7 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
           if (executionId) {
             setNewExecutionId(executionId);
             setGeneratingResponse(prevState => ({
+              ...prevState,
               id: executionId,
               created_at: prevState.created_at,
               data: prevState.data,
@@ -224,7 +258,7 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
     dispatchNewExecutionData();
   }, [template]);
 
-  return { generateExecution, generateExecutionHandler, disableChatInput, abortConnection };
+  return { generateExecutionHandler, streamExecutionHandler, disableChatInput, abortConnection };
 };
 
 export default useGenerateExecution;

@@ -10,8 +10,6 @@ import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution
 import type { Templates } from "@/core/api/dto/templates";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { PromptParams } from "@/core/api/dto/prompts";
-import { useStoreAnswersAndParams } from "@/hooks/useStoreAnswersAndParams";
-import SigninButton from "@/components/common/buttons/SigninButton";
 import useVariant from "@/components/Prompt/Hooks/useVariant";
 import dynamic from "next/dynamic";
 import PromptPlaceholder from "@/components/placeholders/PromptPlaceholder";

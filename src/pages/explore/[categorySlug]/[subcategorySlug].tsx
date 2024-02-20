@@ -84,7 +84,7 @@ export default function Page({ category, subcategory }: CategoryOrSubcategory) {
               <FiltersSelected show={!allFilterParamsNull} />
 
               <TemplatesSection
-                filtred={!allFilterParamsNull}
+                filtered={!allFilterParamsNull}
                 templates={templates ?? []}
                 isLoading={isFetching}
                 onNextPage={handleNextPage}

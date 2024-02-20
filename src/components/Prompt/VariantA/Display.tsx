@@ -4,15 +4,14 @@ import Grid from "@mui/material/Grid";
 import South from "@mui/icons-material/South";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
-
 import { Templates } from "@/core/api/dto/templates";
 import { ExecutionCard } from "./ExecutionCard";
 import { DisplayActions } from "./DisplayActions";
 import ParagraphPlaceholder from "@/components/placeholders/ParagraphPlaceholder";
 import { useAppSelector } from "@/hooks/useStore";
 import { SparkExportPopup } from "@/components/dialog/SparkExportPopup";
-import useScrollToBottom from "@/components/Prompt/Hooks/useScrolltoBottom";
-import ExecutionFooter from "../Common/ExecutionFooter";
+import useScrollToBottom from "@/components/Prompt/Hooks/useScrollToBottom";
+import ExecutionFooter from "@/components/Prompt/Common/ExecutionFooter";
 
 interface Props {
   templateData: Templates;

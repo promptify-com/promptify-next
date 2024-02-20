@@ -32,6 +32,8 @@
     "axios": "^1.4.0",
     "draft-js": "^0.11.7",
     "elkjs": "^0.8.2",
+    "embla-carousel-autoplay": "^8.0.0-rc22",
+    "embla-carousel-react": "^8.0.0-rc22",
     "eslint": "8.48.0",
     "eslint-config-next": "13.4.19",
     "formik": "^2.4.2",

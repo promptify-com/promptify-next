@@ -95,7 +95,7 @@ export default function Page({ category }: { category: Category }) {
               </Grid>
               <FiltersSelected show={!allFilterParamsNull} />
               <TemplatesSection
-                filtred={!allFilterParamsNull}
+                filtered={!allFilterParamsNull}
                 templates={templates ?? []}
                 isLoading={isFetching}
                 templateLoading={isTemplatesLoading}

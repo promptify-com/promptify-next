@@ -25,6 +25,8 @@ export interface MenuType {
   href: string;
 }
 
+export const BLOG_URL = "https://blog.promptify.com/";
+
 export const ProfileMenuItems: MenuType[] = [
   {
     id: 1,
@@ -74,7 +76,7 @@ export const links = [
   {
     label: "Learn",
     icon: <MenuBookRounded />,
-    href: "https://blog.promptify.com/",
+    href: BLOG_URL,
     external: true,
   },
 ];
