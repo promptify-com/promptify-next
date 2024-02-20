@@ -67,7 +67,7 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
   };
 
   const showAccordionMessage = (message: IMessage): boolean => {
-    return Boolean(["form", "spark", "credentials", "html"].includes(message.type));
+    return Boolean(["form", "spark", "credentials"].includes(message.type));
   };
 
   return (

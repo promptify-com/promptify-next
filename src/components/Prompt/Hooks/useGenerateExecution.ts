@@ -78,7 +78,7 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
     uploadedFiles.current.clear();
 
     const endpoint = `/api/meta/templates/${template.id}/execute/`;
-    fetchExecution(endpoint, "POST", promptsData);
+    fetchExecution({ endpoint, method: "POST", body: JSON.stringify(promptsData) });
   };
 
   const streamExecutionHandler = async (response: string) => {
@@ -88,14 +88,21 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
       const currentExecution: IStreamExecution = { id: parseInt(executionMatch[2]), title: executionMatch[1] };
 
       const endpoint = `/api/meta/template-executions/${currentExecution.id}/get_stream/`;
-      await fetchExecution(endpoint, "GET", currentExecution);
+      await fetchExecution({ endpoint, method: "GET", streamExecution: currentExecution });
     }
   };
 
-  const fetchExecution = (endpoint: string, method: string, executionData?: ResPrompt[] | IStreamExecution) => {
-    const streamExecution = Array.isArray(executionData) ? undefined : executionData;
-    const body = Array.isArray(executionData) ? JSON.stringify(executionData) : undefined;
-
+  const fetchExecution = ({
+    endpoint,
+    method,
+    body,
+    streamExecution,
+  }: {
+    endpoint: string;
+    method: string;
+    body?: string;
+    streamExecution?: IStreamExecution;
+  }) => {
     fetchEventSource(process.env.NEXT_PUBLIC_API_URL + endpoint, {
       method,
       headers: {

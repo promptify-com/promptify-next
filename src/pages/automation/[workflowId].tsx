@@ -53,7 +53,7 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
     initialMessageTitle: `${selectedWorkflow?.name}`,
   });
 
-  const { generateExecutionHandler, streamExecutionHandler } = useGenerateExecution({
+  const { streamExecutionHandler } = useGenerateExecution({
     messageAnswersForm,
   });
 
