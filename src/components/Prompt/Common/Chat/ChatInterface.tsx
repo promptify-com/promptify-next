@@ -68,7 +68,8 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
   };
 
   const showAccordionMessage = (message: IMessage): boolean => {
-    return Boolean(["form", "spark", "credentials"].includes(message.type));
+    const type = message.type;
+    return Boolean(["spark", "credentials"].includes(type) || (type === "form" && inputs.length > 0));
   };
 
   const hasContent = template?.prompts.some(prompt => prompt.content);
@@ -143,14 +144,14 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
           direction={"column"}
         >
           {isAutomationPage && generatedExecution && <ExecutionMessage execution={generatedExecution} />}
-          {messages.map((msg, i) => (
+          {messages.map(msg => (
             <Fragment key={msg.id}>
               <Message
                 message={msg}
                 onScrollToBottom={scrollToBottom}
                 isExecutionShown={isExecutionShown}
               />
-              {showAccordionMessage(msg) && inputs.length > 0 && (
+              {showAccordionMessage(msg) && (
                 <Box
                   width={"100%"}
                   position={"relative"}
