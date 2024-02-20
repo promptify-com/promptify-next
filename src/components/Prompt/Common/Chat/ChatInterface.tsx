@@ -14,10 +14,9 @@ import TemplateDetailsCard from "@/components/Prompt/Common/TemplateDetailsCard"
 import ClientOnly from "@/components/base/ClientOnly";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { Templates } from "@/core/api/dto/templates";
-import Button from "@mui/material/Button";
-import useVariant from "../../Hooks/useVariant";
-import PlayCircle from "@mui/icons-material/PlayCircle";
+import useVariant from "@/components/Prompt/Hooks/useVariant";
 import { ExecutionMessage } from "@/components/Automation/ExecutionMessage";
+import RunButton from "@/components/Prompt/Common/RunButton";
 
 type AccordionExpandedState = {
   spark: boolean;
@@ -220,29 +219,10 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
                 !(isAutomationPage && isGenerating) &&
                 inputs.length === 0 &&
                 i === messages.length - 1 && (
-                  <Button
+                  <RunButton
+                    title={`Run ${isAutomationPage ? "workflow" : "prompts"}`}
                     onClick={onGenerate}
-                    endIcon={<PlayCircle />}
-                    sx={{
-                      height: "22px",
-                      maxWidth: "200px",
-                      p: { xs: "12px", md: "15px" },
-                      fontSize: { xs: 12, md: 15 },
-                      lineHeight: "110%",
-                      letterSpacing: "0.2px",
-                      fontWeight: 500,
-                      bgcolor: "primary.main",
-                      borderColor: "primary.main",
-                      color: "primary",
-                      ":hover": {
-                        bgcolor: "surface.1",
-                        color: "primary.main",
-                      },
-                    }}
-                    variant={"contained"}
-                  >
-                    {`Run ${isAutomationPage ? "workflow" : "prompts"}`}
-                  </Button>
+                  />
                 )}
             </Fragment>
           ))}
