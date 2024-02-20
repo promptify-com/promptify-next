@@ -4,21 +4,19 @@ import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
 import South from "@mui/icons-material/South";
 import Typography from "@mui/material/Typography";
-
 import { Message } from "./Message";
 import { useAppSelector } from "@/hooks/useStore";
 import { getCurrentDateFormatted, timeAgo } from "@/common/helpers/timeManipulation";
 import AccordionMessage from "@/components/Prompt/VariantB/AccordionMessage";
 import FeedbackThumbs from "@/components/Prompt/Common/FeedbackThumbs";
-import useScrollToBottom from "@/components/Prompt/Hooks/useScrolltoBottom";
+import useScrollToBottom from "@/components/Prompt/Hooks/useScrollToBottom";
 import TemplateDetailsCard from "@/components/Prompt/Common/TemplateDetailsCard";
 import ClientOnly from "@/components/base/ClientOnly";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { Templates } from "@/core/api/dto/templates";
-import Button from "@mui/material/Button";
-import useVariant from "../../Hooks/useVariant";
-import PlayCircle from "@mui/icons-material/PlayCircle";
+import useVariant from "@/components/Prompt/Hooks/useVariant";
 import { ExecutionMessage } from "@/components/Automation/ExecutionMessage";
+import RunButton from "@/components/Prompt/Common/RunButton";
 
 type AccordionExpandedState = {
   spark: boolean;
@@ -30,15 +28,17 @@ type AccordionExpandedState = {
 
 interface Props {
   messages: IMessage[];
-  template?: Templates;
   onGenerate: () => void;
-  onAbort?: () => void;
   showGenerate: boolean;
+  isValidating: boolean;
+  template?: Templates;
+  onAbort?: () => void;
 }
 
-export const ChatInterface = ({ template, messages, onGenerate, showGenerate, onAbort }: Props) => {
+export const ChatInterface = ({ template, messages, onGenerate, showGenerate, onAbort, isValidating }: Props) => {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const { generatedExecution, selectedExecution } = useAppSelector(state => state.executions);
+  const currentUser = useAppSelector(state => state.user.currentUser);
   const isExecutionShown = Boolean(selectedExecution || generatedExecution);
   const inputs = useAppSelector(state => state.chat.inputs);
 
@@ -68,8 +68,11 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
   };
 
   const showAccordionMessage = (message: IMessage): boolean => {
-    return Boolean(["form", "spark", "credentials", "html"].includes(message.type));
+    return Boolean(["form", "spark", "credentials"].includes(message.type));
   };
+
+  const hasContent = template?.prompts.some(prompt => prompt.content);
+  const allowRun = currentUser?.id && (isAutomationPage || hasContent) && !isGenerating && !isValidating;
 
   return (
     <Stack
@@ -147,108 +150,84 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
                 onScrollToBottom={scrollToBottom}
                 isExecutionShown={isExecutionShown}
               />
-              {!(isAutomationPage && isGenerating) && i === messages.length - 1 && showAccordionMessage(msg) && (
-                <>
-                  {inputs.length === 0 ? (
-                    <Button
-                      onClick={() => {
-                        onGenerate();
-                      }}
-                      endIcon={<PlayCircle />}
-                      sx={{
-                        height: "22px",
-                        maxWidth: "200px",
-                        p: { xs: "12px", md: "15px" },
-                        fontSize: { xs: 12, md: 15 },
-                        lineHeight: "110%",
-                        letterSpacing: "0.2px",
-                        fontWeight: 500,
-                        bgcolor: "primary.main",
-                        borderColor: "primary.main",
-                        color: showGenerate || inputs.length === 0 ? "primary" : "onSurface",
-                        ":hover": {
-                          bgcolor: "surface.1",
-                          color: "primary.main",
-                        },
-                      }}
-                      variant={"contained"}
-                    >
-                      {`Run ${isAutomationPage ? "workflow" : "prompts"}`}
-                    </Button>
-                  ) : (
-                    <Box
-                      width={"100%"}
-                      position={"relative"}
-                      id={`accordion-${msg.type === "spark" ? "execution" : "input"}`}
-                      onMouseEnter={() => setIsHovered(true)}
-                      onMouseLeave={() => setIsHovered(false)}
-                    >
-                      {isHovered && (
-                        <ClientOnly>
-                          <Typography
-                            sx={{
-                              position: "absolute",
-                              top: -20,
-                              opacity: 0.5,
-                              left: 2,
-                              zIndex: 999,
-                            }}
-                            fontSize={12}
-                            variant="caption"
-                          >
-                            Promptify {timeAgo(msg.createdAt)}
-                          </Typography>
-                        </ClientOnly>
-                      )}
-                      <Stack
-                        direction={"row"}
-                        position={"relative"}
+              {showAccordionMessage(msg) && inputs.length > 0 && (
+                <Box
+                  width={"100%"}
+                  position={"relative"}
+                  id={`accordion-${msg.type === "spark" ? "execution" : "input"}`}
+                  onMouseEnter={() => setIsHovered(true)}
+                  onMouseLeave={() => setIsHovered(false)}
+                >
+                  {isHovered && (
+                    <ClientOnly>
+                      <Typography
+                        sx={{
+                          position: "absolute",
+                          top: -20,
+                          opacity: 0.5,
+                          left: 2,
+                          zIndex: 999,
+                        }}
+                        fontSize={12}
+                        variant="caption"
                       >
+                        Promptify {timeAgo(msg.createdAt)}
+                      </Typography>
+                    </ClientOnly>
+                  )}
+                  <Stack
+                    direction={"row"}
+                    position={"relative"}
+                  >
+                    <Box
+                      display={"flex"}
+                      sx={{
+                        flex: "0 0 100%",
+                      }}
+                    >
+                      <AccordionMessage
+                        type={msg.type}
+                        expanded={expandedAccordions[msg.type]}
+                        onChange={(_e, isExpanded) => handleExpandChange(msg.type, isExpanded)}
+                        template={template!}
+                        showGenerate={showGenerate}
+                        abortGenerating={onAbort!}
+                        onGenerate={onGenerate}
+                      />
+                    </Box>
+
+                    {msg.type === "spark" &&
+                      !!selectedExecution?.prompt_executions?.length &&
+                      expandedAccordions["spark"] && (
                         <Box
-                          display={"flex"}
                           sx={{
-                            flex: "0 0 100%",
+                            position: "sticky",
+                            top: "10px",
+                            right: "40px",
+                            mt: "20%",
+                            height: "fit-content",
+                            mb: "30px",
+                            display: { xs: "none", md: "block" },
                           }}
                         >
-                          <AccordionMessage
-                            type={msg.type}
-                            expanded={expandedAccordions[msg.type]}
-                            onChange={(_e, isExpanded) => handleExpandChange(msg.type, isExpanded)}
-                            template={template!}
-                            showGenerate={showGenerate}
-                            abortGenerating={onAbort!}
-                            onGenerate={onGenerate}
+                          <FeedbackThumbs
+                            execution={selectedExecution}
+                            vertical
+                            variant="icon"
                           />
                         </Box>
-
-                        {msg.type === "spark" &&
-                          !!selectedExecution?.prompt_executions?.length &&
-                          expandedAccordions["spark"] && (
-                            <Box
-                              sx={{
-                                position: "sticky",
-                                top: "10px",
-                                right: "40px",
-                                mt: "20%",
-                                height: "fit-content",
-                                mb: "30px",
-                                display: { xs: "none", md: "block" },
-                              }}
-                            >
-                              <FeedbackThumbs
-                                execution={selectedExecution}
-                                vertical
-                                variant="icon"
-                              />
-                            </Box>
-                          )}
-                      </Stack>
-                    </Box>
-                  )}
-                </>
+                      )}
+                  </Stack>
+                </Box>
               )}
             </Fragment>
           ))}
+          {allowRun && inputs.length === 0 && (
+            <RunButton
+              title={`Run ${isAutomationPage ? "workflow" : "prompts"}`}
+              onClick={onGenerate}
+            />
+          )}
         </Stack>
       </Stack>
     </Stack>
