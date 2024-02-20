@@ -27,7 +27,6 @@ import type { ICredentialProperty, IWorkflowCreateResponse } from "@/components/
 import type { IPromptInput } from "@/common/types/prompt";
 import Box from "@mui/material/Box";
 import Tooltip from "@mui/material/Tooltip";
-// import { getAuthUrl } from "@/hooks/api/workflow";
 import useCopyToClipboard from "@/hooks/useCopyToClipboard";
 
 interface Props {
