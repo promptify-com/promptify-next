@@ -6,20 +6,12 @@ import { getCurrentDateFormatted } from "@/common/helpers/timeManipulation";
 import AccordionMessage from "@/components/Prompt/VariantB/AccordionMessage/index";
 import useScrollToBottom from "@/components/Prompt/Hooks/useScrollToBottom";
 import TemplateDetailsCard from "@/components/Prompt/Common/TemplateDetailsCard";
-import type { IMessage } from "@/components/Prompt/Types/chat";
+import type { ExpandedAccordionState, IMessage } from "@/components/Prompt/Types/chat";
 import type { Templates } from "@/core/api/dto/templates";
 import { ExecutionMessage } from "@/components/Automation/ExecutionMessage";
 import RunButton from "@/components/Prompt/Common/RunButton";
 import { Message } from "../Prompt/Common/Chat/Message";
 import ScrollDownButton from "@/components/common/buttons/ScrollDownButton";
-
-type AccordionExpandedState = {
-  spark: boolean;
-  form: boolean;
-  text: boolean;
-  html: boolean;
-  credentials: boolean;
-};
 
 interface Props {
   template: Templates;
@@ -37,7 +29,7 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, is
   const inputs = useAppSelector(state => state.chat.inputs);
 
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
-  const [expandedAccordions, setExpandedAccordions] = useState<AccordionExpandedState>({
+  const [expandedAccordions, setExpandedAccordions] = useState<ExpandedAccordionState>({
     spark: true,
     form: true,
     credentials: true,
@@ -51,7 +43,7 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, is
     isGenerating,
   });
 
-  const handleExpandChange = (type: keyof AccordionExpandedState, isExpanded: boolean) => {
+  const handleExpandChange = (type: keyof ExpandedAccordionState, isExpanded: boolean) => {
     setExpandedAccordions(prev => ({
       ...prev,
       [type]: isExpanded,

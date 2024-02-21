@@ -7,6 +7,14 @@ export interface VaryValidatorResponse {
 
 export type MessageType = "text" | "form" | "spark" | "html" | "credentials";
 
+export type ExpandedAccordionState = {
+  spark: boolean;
+  form: boolean;
+  text: boolean;
+  html: boolean;
+  credentials: boolean;
+};
+
 export interface IMessage {
   id: number;
   text: string;
