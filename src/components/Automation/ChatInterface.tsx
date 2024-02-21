@@ -85,23 +85,26 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, is
           gap={3}
           direction={"column"}
         >
-          {generatedExecution && <ExecutionMessage execution={generatedExecution} />}
-          {messages.map(msg => (
-            <Fragment key={msg.id}>
-              <Message
-                message={msg}
-                onScrollToBottom={scrollToBottom}
-              />
-              {showAccordionMessage(msg) && (
-                <AccordionMessage
+          {generatedExecution ? (
+            <ExecutionMessage execution={generatedExecution} />
+          ) : (
+            messages.map(msg => (
+              <Fragment key={msg.id}>
+                <Message
                   message={msg}
-                  template={template!}
-                  showGenerate={showGenerate}
-                  onGenerate={onGenerate}
+                  onScrollToBottom={scrollToBottom}
                 />
-              )}
-            </Fragment>
-          ))}
+                {showAccordionMessage(msg) && (
+                  <AccordionMessage
+                    message={msg}
+                    template={template!}
+                    showGenerate={showGenerate}
+                    onGenerate={onGenerate}
+                  />
+                )}
+              </Fragment>
+            ))
+          )}
           {allowNoInputsRun && (
             <RunButton
               title="Run workflow"
