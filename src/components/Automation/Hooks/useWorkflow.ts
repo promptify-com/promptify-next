@@ -11,7 +11,7 @@ import { clearExecutionsStates } from "@/core/store/executionsSlice";
 import { clearChatStates, setAreCredentialsStored } from "@/core/store/chatSlice";
 import { n8nClient as ApiClient } from "@/common/axios";
 import Storage from "@/common/storage";
-import { attachCredentialsToNode, extractWebhookPath } from "@/components/Automation/helpers";
+import { attachCredentialsToNode, extractWebhookPath, oAuthTypeMapping } from "@/components/Automation/helpers";
 import type { Category } from "@/core/api/dto/templates";
 import type { IStoredWorkflows, IWorkflow } from "@/components/Automation/types";
 
@@ -43,7 +43,7 @@ const useWorkflow = (workflow: IWorkflow) => {
         webhookPathRef.current = extractWebhookPath(response.nodes);
 
         const nodesRequiringAuthentication = response.nodes.filter(
-          node => node.parameters?.authentication && !node.credentials,
+          node => (node.parameters?.authentication || oAuthTypeMapping[node.type]) && !node.credentials,
         );
 
         if (nodesRequiringAuthentication.length) {
@@ -63,7 +63,13 @@ const useWorkflow = (workflow: IWorkflow) => {
             webhookPath: webhookPathRef.current,
           };
 
-          if (updatedNodes.filter(node => node.parameters.authentication).every(node => node.credentials)) {
+          const filteredNodes = updatedNodes
+            .filter(node => {
+              return node.parameters.authentication || oAuthTypeMapping[node.type];
+            })
+            .every(node => node.credentials);
+
+          if (filteredNodes) {
             dispatch(setAreCredentialsStored(true));
 
             try {

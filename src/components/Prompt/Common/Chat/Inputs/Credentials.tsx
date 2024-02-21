@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
@@ -13,13 +13,21 @@ import { object, string } from "yup";
 import BaseButton from "@/components/base/BaseButton";
 import { useAppDispatch } from "@/hooks/useStore";
 import Storage from "@/common/storage";
-import { useCreateCredentialsMutation, useUpdateWorkflowMutation } from "@/core/api/workflows";
+import {
+  useCreateCredentialsMutation,
+  useDeleteCredentialMutation,
+  useUpdateWorkflowMutation,
+  workflowsApi,
+} from "@/core/api/workflows";
 import { setToast } from "@/core/store/toastSlice";
 import { attachCredentialsToNode } from "@/components/Automation/helpers";
 import { setAreCredentialsStored } from "@/core/store/chatSlice";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
-import type { ICredentialProperty, INode, IWorkflowCreateResponse } from "@/components/Automation/types";
+import type { ICredentialProperty, IWorkflowCreateResponse } from "@/components/Automation/types";
 import type { IPromptInput } from "@/common/types/prompt";
+import Box from "@mui/material/Box";
+import Tooltip from "@mui/material/Tooltip";
+import useCopyToClipboard from "@/hooks/useCopyToClipboard";
 
 interface Props {
   input: IPromptInput;
@@ -36,12 +44,58 @@ function Credentials({ input }: Props) {
 
   const [updateWorkflow] = useUpdateWorkflowMutation();
   const [createCredentials] = useCreateCredentialsMutation();
+  const [deleteCredential] = useDeleteCredentialMutation();
 
-  const { credentialsInput, updateCredentials, checkAllCredentialsStored, checkCredentialInserted } = useCredentials();
+  const { credentialsInput, updateCredentials, checkAllCredentialsStored, checkCredentialInserted, removeCredential } =
+    useCredentials();
 
   const [openModal, setOpenModal] = useState(false);
   const credential = credentialsInput.find(cred => cred.displayName === input.fullName);
   const credentialProperties = credential?.properties || [];
+  const isOauthCredential = credential?.name.includes("OAuth2");
+  const urlToCopy = `${window.location.origin}/oauth2/callback`;
+  const [copy, result] = useCopyToClipboard();
+  const [getAuthUrl] = workflowsApi.endpoints.getAuthUrl.useLazyQuery();
+
+  const checkPopupIntervalRef = useRef<number | undefined>(undefined);
+
+  useEffect(() => {
+    if (result) {
+      if (result?.state === "success") {
+        dispatch(
+          setToast({
+            message: "Redirect URL copied to clipboard!",
+            severity: "success",
+            position: { vertical: "bottom", horizontal: "right" },
+          }),
+        );
+      } else {
+        dispatch(
+          setToast({
+            message: "Failed to copy URL",
+            severity: "error",
+            position: { vertical: "bottom", horizontal: "right" },
+          }),
+        );
+      }
+    }
+  }, [result]);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (checkPopupIntervalRef.current) {
+        clearInterval(checkPopupIntervalRef.current);
+        checkPopupIntervalRef.current = undefined;
+      }
+    }, 120000);
+    return () => {
+      if (checkPopupIntervalRef.current) {
+        clearInterval(checkPopupIntervalRef.current);
+        checkPopupIntervalRef.current = undefined;
+      }
+      clearTimeout(timeoutId);
+    };
+  }, []);
 
   function getRequiredFields(credentialProperties: ICredentialProperty[]) {
     let requiredFields = credentialProperties.filter(prop => prop.required).map(prop => prop.name);
@@ -70,6 +124,30 @@ function Credentials({ input }: Props) {
     }, {}),
   );
 
+  const updateWorkflowAndStorage = async () => {
+    const storedWorkflows = Storage.get("workflows") || {};
+
+    const workflow = storedWorkflows[workflowId].workflow as IWorkflowCreateResponse;
+
+    workflow.nodes.forEach(node => attachCredentialsToNode(node));
+
+    const areAllCredentialsStored = checkAllCredentialsStored(credentialsInput);
+    dispatch(setAreCredentialsStored(areAllCredentialsStored));
+
+    Storage.set("workflows", JSON.stringify(storedWorkflows));
+
+    if (areAllCredentialsStored) {
+      try {
+        await updateWorkflow({
+          workflowId: parseInt(workflowId),
+          data: workflow,
+        });
+      } catch (error) {
+        console.error("Error updating workflow:", error);
+      }
+    }
+  };
+
   const handleSubmit = async (values: FormValues) => {
     const credential = credentialsInput.find(cred => cred.displayName === input.fullName);
     const data: Record<string, string> = {};
@@ -88,32 +166,96 @@ function Credentials({ input }: Props) {
       const response = await createCredentials(payload).unwrap();
       updateCredentials(response);
 
-      const storedWorkflows = Storage.get("workflows") || {};
-
-      const workflow = storedWorkflows[workflowId].workflow as IWorkflowCreateResponse;
-
-      workflow.nodes.forEach(node => attachCredentialsToNode(node));
-
-      const areAllCredentialsStored = checkAllCredentialsStored(credentialsInput);
-      dispatch(setAreCredentialsStored(areAllCredentialsStored));
-
-      Storage.set("workflows", JSON.stringify(storedWorkflows));
-
-      if (areAllCredentialsStored) {
-        try {
-          await updateWorkflow({
-            workflowId: parseInt(workflowId),
-            data: workflow,
-          });
-        } catch (error) {
-          console.error("Error updating workflow:", error);
-        }
+      if (isOauthCredential && response) {
+        return response.id;
       }
+
+      updateWorkflowAndStorage();
+
       setOpenModal(false);
       dispatch(setToast({ message: "Credential was successfully created", severity: "success" }));
     } catch (error) {
       console.error("Error:", error);
       dispatch(setToast({ message: "Credential was not created, please try again.", severity: "error" }));
+    }
+  };
+
+  const handleOauthConnect = async (values: FormValues) => {
+    const credentialId = await handleSubmit(values);
+    if (!credentialId) {
+      return;
+    }
+
+    try {
+      const { authUri } = await getAuthUrl({
+        id: credentialId,
+        redirectUri: `${window.location.origin}/oauth2/callback`,
+      }).unwrap();
+
+      if (!authUri) {
+        return;
+      }
+
+      const params =
+        "scrollbars=no,resizable=yes,status=no,titlebar=no,location=no,toolbar=no,menubar=no,width=500,height=700,popup=true";
+      const oauthPopup = window.open(authUri, "OAuth2 Authorization", params);
+
+      const clearPopupCheck = () => {
+        if (checkPopupIntervalRef.current) {
+          clearInterval(checkPopupIntervalRef.current);
+          checkPopupIntervalRef.current = undefined;
+        }
+        window.removeEventListener("message", receiveMessage, false);
+      };
+
+      const receiveMessage = async (event: MessageEvent) => {
+        if (event.origin !== window.location.origin) {
+          clearPopupCheck();
+          return;
+        }
+
+        if (event.data.status === "success") {
+          clearPopupCheck();
+          updateWorkflowAndStorage();
+          setOpenModal(false);
+          dispatch(setToast({ message: event.data.message, severity: event.data.status }));
+        } else {
+          dispatch(setToast({ message: event.data.message, severity: event.data.status }));
+          await deleteCredential(credentialId);
+          removeCredential(credentialId);
+          clearPopupCheck();
+        }
+        if (oauthPopup) {
+          oauthPopup.close();
+        }
+      };
+
+      window.addEventListener("message", receiveMessage, false);
+
+      let elapsedSeconds = 0;
+      checkPopupIntervalRef.current = setInterval(async () => {
+        if (oauthPopup?.closed) {
+          clearPopupCheck();
+          dispatch(
+            setToast({
+              message:
+                "OAuth authorization was cancelled. There may have been an issue with the authorization process.",
+              severity: "error",
+            }),
+          );
+          await deleteCredential(credentialId);
+          removeCredential(credentialId);
+        } else {
+          elapsedSeconds++;
+          if (elapsedSeconds >= 120) {
+            clearPopupCheck();
+          }
+        }
+      }, 1000) as unknown as number;
+    } catch (error) {
+      console.error("Error during OAuth authorization:", error);
+      await deleteCredential(credentialId);
+      removeCredential(credentialId);
     }
   };
 
@@ -150,12 +292,31 @@ function Credentials({ input }: Props) {
         >
           <DialogTitle>{input.fullName} Credentials</DialogTitle>
           <DialogContent>
+            {isOauthCredential && (
+              <Tooltip
+                title="Copy URL"
+                placement="top-end"
+              >
+                <Box
+                  onClick={() => copy(urlToCopy)}
+                  sx={{
+                    m: "0 5px",
+                    p: "15px",
+                    border: "1px solid #c4c4c4",
+                    borderRadius: "4px",
+                    cursor: "pointer",
+                  }}
+                >
+                  {urlToCopy}
+                </Box>
+              </Tooltip>
+            )}
             <Formik
               initialValues={initialValues}
               validationSchema={validationSchema}
               onSubmit={handleSubmit}
             >
-              {({ errors, touched }) => (
+              {({ errors, touched, values }) => (
                 <Form>
                   <DialogContent
                     sx={{
@@ -183,6 +344,28 @@ function Credentials({ input }: Props) {
                       </FormControl>
                     ))}
                   </DialogContent>
+                  {isOauthCredential && values.clientId && values.clientSecret && (
+                    <Button
+                      onClick={() => {
+                        handleOauthConnect(values);
+                      }}
+                      sx={{
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        borderRadius: "4px",
+                        bgcolor: "secondary.main",
+                        ml: "10px",
+                        color: "white",
+                        ":hover": {
+                          bgcolor: "action.hover",
+                          color: "inherit",
+                        },
+                      }}
+                    >
+                      Connect My Account
+                    </Button>
+                  )}
                   <DialogActions>
                     <Button onClick={() => setOpenModal(false)}>Cancel</Button>
                     <Button

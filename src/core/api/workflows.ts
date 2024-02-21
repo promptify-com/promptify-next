@@ -56,6 +56,12 @@ export const workflowsApi = baseApi.injectEndpoints({
           data,
         }),
       }),
+      getAuthUrl: builder.query<{ authUri: string }, { id: string; redirectUri: string }>({
+        query: ({ id, redirectUri }) => ({
+          url: `/api/oauth2/auth?id=${id}&redirectUri=${redirectUri}`,
+          method: "get",
+        }),
+      }),
     };
   },
 });
@@ -68,4 +74,5 @@ export const {
   useGetCredentialsQuery,
   useDeleteCredentialMutation,
   useUpdateWorkflowMutation,
+  useGetAuthUrlQuery,
 } = workflowsApi;
