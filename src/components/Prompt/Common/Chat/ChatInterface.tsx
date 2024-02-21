@@ -13,11 +13,11 @@ import RunButton from "@/components/Prompt/Common/RunButton";
 import ScrollDownButton from "@/components/common/buttons/ScrollDownButton";
 
 interface Props {
+  template: Templates;
   messages: IMessage[];
   onGenerate: () => void;
   showGenerate: boolean;
   isValidating: boolean;
-  template?: Templates;
   onAbort?: () => void;
 }
 
@@ -50,7 +50,7 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
     }));
   };
 
-  const hasContent = template?.prompts.some(prompt => prompt.content);
+  const hasContent = template.prompts.some(prompt => prompt.content);
   const hasInputs = inputs.length > 0;
   const allowRun = currentUser?.id && hasContent && !isGenerating && !isValidating;
 
@@ -67,15 +67,13 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
       position={"relative"}
       sx={messagesContainerStyle}
     >
-      {typeof template !== "undefined" && (
-        <TemplateDetailsCard
-          title={template.title}
-          categoryName={template?.category.name}
-          thumbnail={template.thumbnail}
-          tags={template.tags}
-          description={template.description}
-        />
-      )}
+      <TemplateDetailsCard
+        title={template.title}
+        categoryName={template?.category.name}
+        thumbnail={template.thumbnail}
+        tags={template.tags}
+        description={template.description}
+      />
 
       {showScrollDown && isGenerating && <ScrollDownButton onClick={scrollToBottom} />}
 
@@ -109,10 +107,10 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
               {showAccordionMessage(msg) && (
                 <AccordionMessage
                   message={msg}
-                  template={template!}
+                  template={template}
                   expanded={expandedAccordions[msg.type]}
                   onGenerate={onGenerate}
-                  onChange={(_e, isExpanded) => handleExpandChange(msg.type, isExpanded)}
+                  onChange={(_, isExpanded) => handleExpandChange(msg.type, isExpanded)}
                   showGenerate={showGenerate}
                 />
               )}
