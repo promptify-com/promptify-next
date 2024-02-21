@@ -10,7 +10,7 @@ import type { ExpandedAccordionState, IMessage } from "@/components/Prompt/Types
 import type { Templates } from "@/core/api/dto/templates";
 import { ExecutionMessage } from "@/components/Automation/ExecutionMessage";
 import RunButton from "@/components/Prompt/Common/RunButton";
-import { Message } from "../Prompt/Common/Chat/Message";
+import { Message } from "@/components/Prompt/Common/Chat/Message";
 import ScrollDownButton from "@/components/common/buttons/ScrollDownButton";
 
 interface Props {
