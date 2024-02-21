@@ -1,16 +1,12 @@
 import { useRef, Fragment, useState } from "react";
-import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
 import { Message } from "./Message";
 import { useAppSelector } from "@/hooks/useStore";
-import { getCurrentDateFormatted, timeAgo } from "@/common/helpers/timeManipulation";
-import AccordionMessage from "@/components/Prompt/VariantB/AccordionMessage";
-import FeedbackThumbs from "@/components/Prompt/Common/FeedbackThumbs";
+import { getCurrentDateFormatted } from "@/common/helpers/timeManipulation";
+import AccordionMessage from "@/components/Prompt/VariantB/AccordionMessage/index";
 import useScrollToBottom from "@/components/Prompt/Hooks/useScrollToBottom";
 import TemplateDetailsCard from "@/components/Prompt/Common/TemplateDetailsCard";
-import ClientOnly from "@/components/base/ClientOnly";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { Templates } from "@/core/api/dto/templates";
 import RunButton from "@/components/Prompt/Common/RunButton";
@@ -40,7 +36,6 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
   const isExecutionShown = Boolean(selectedExecution || generatedExecution);
   const inputs = useAppSelector(state => state.chat.inputs);
 
-  const [isHovered, setIsHovered] = useState(false);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const [expandedAccordions, setExpandedAccordions] = useState<AccordionExpandedState>({
     spark: true,
@@ -120,73 +115,14 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
                 isExecutionShown={isExecutionShown}
               />
               {showAccordionMessage(msg) && (
-                <Box
-                  width={"100%"}
-                  position={"relative"}
-                  id={`accordion-${msg.type === "spark" ? "execution" : "input"}`}
-                  onMouseEnter={() => setIsHovered(true)}
-                  onMouseLeave={() => setIsHovered(false)}
-                >
-                  {isHovered && (
-                    <ClientOnly>
-                      <Typography
-                        sx={{
-                          position: "absolute",
-                          top: -20,
-                          opacity: 0.5,
-                          left: 2,
-                          zIndex: 999,
-                        }}
-                        fontSize={12}
-                        variant="caption"
-                      >
-                        Promptify {timeAgo(msg.createdAt)}
-                      </Typography>
-                    </ClientOnly>
-                  )}
-                  <Stack
-                    direction={"row"}
-                    position={"relative"}
-                  >
-                    <Box
-                      display={"flex"}
-                      sx={{
-                        flex: "0 0 100%",
-                      }}
-                    >
-                      <AccordionMessage
-                        type={msg.type}
-                        expanded={expandedAccordions[msg.type]}
-                        onChange={(_e, isExpanded) => handleExpandChange(msg.type, isExpanded)}
-                        template={template!}
-                        showGenerate={showGenerate}
-                        onGenerate={onGenerate}
-                      />
-                    </Box>
-
-                    {msg.type === "spark" &&
-                      !!selectedExecution?.prompt_executions?.length &&
-                      expandedAccordions["spark"] && (
-                        <Box
-                          sx={{
-                            position: "sticky",
-                            top: "10px",
-                            right: "40px",
-                            mt: "20%",
-                            height: "fit-content",
-                            mb: "30px",
-                            display: { xs: "none", md: "block" },
-                          }}
-                        >
-                          <FeedbackThumbs
-                            execution={selectedExecution}
-                            vertical
-                            variant="icon"
-                          />
-                        </Box>
-                      )}
-                  </Stack>
-                </Box>
+                <AccordionMessage
+                  message={msg}
+                  template={template!}
+                  expanded={expandedAccordions[msg.type]}
+                  onGenerate={onGenerate}
+                  onChange={(_e, isExpanded) => handleExpandChange(msg.type, isExpanded)}
+                  showGenerate={showGenerate}
+                />
               )}
             </Fragment>
           ))}
