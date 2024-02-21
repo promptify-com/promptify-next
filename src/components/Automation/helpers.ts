@@ -123,7 +123,7 @@ export const attachCredentialsToNode = (node: INode) => {
   if (node.type === "n8n-nodes-promptify.promptify") {
     return;
   }
-  const { parameters } = node;
+  const { parameters, type } = node;
 
   if (parameters && parameters.authentication) {
     const authenticationType = parameters.authentication;
@@ -137,6 +137,21 @@ export const attachCredentialsToNode = (node: INode) => {
 
     const currentCredentials: ICredential[] = Storage.get("credentials") || [];
 
+    const credential = currentCredentials.find(cred => cred.type === authType);
+
+    if (credential) {
+      const { type, id, name } = credential;
+
+      if (!node.credentials) {
+        node.credentials = {};
+      }
+      node.credentials[type] = { id, name };
+    }
+  }
+
+  if (oAuthTypeMapping[type]) {
+    const authType = oAuthTypeMapping[type];
+    const currentCredentials: ICredential[] = Storage.get("credentials") || [];
     const credential = currentCredentials.find(cred => cred.type === authType);
 
     if (credential) {

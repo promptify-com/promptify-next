@@ -97,8 +97,7 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
     if (requiresAuthentication || requiresOauth) {
       areAllCredentialsStored = checkAllCredentialsStored(credentialsInput);
     }
-
-    dispatch(setAreCredentialsStored(requiresAuthentication || requiresOauth ? areAllCredentialsStored : true));
+    dispatch(setAreCredentialsStored(areAllCredentialsStored));
 
     if ((requiresAuthentication || requiresOauth) && !areAllCredentialsStored) {
       const credMessage = createMessage({ type: "credentials", noHeader: true });

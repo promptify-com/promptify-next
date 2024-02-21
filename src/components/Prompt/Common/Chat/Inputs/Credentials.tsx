@@ -83,13 +83,18 @@ function Credentials({ input }: Props) {
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      console.log("CLEARING INTERVAL");
       if (checkPopupIntervalRef.current) {
         clearInterval(checkPopupIntervalRef.current);
         checkPopupIntervalRef.current = undefined;
       }
     }, 120000);
-    return () => clearTimeout(timeoutId);
+    return () => {
+      if (checkPopupIntervalRef.current) {
+        clearInterval(checkPopupIntervalRef.current);
+        checkPopupIntervalRef.current = undefined;
+      }
+      clearTimeout(timeoutId);
+    };
   }, []);
 
   function getRequiredFields(credentialProperties: ICredentialProperty[]) {
@@ -124,23 +129,21 @@ function Credentials({ input }: Props) {
 
     const workflow = storedWorkflows[workflowId].workflow as IWorkflowCreateResponse;
 
-    if (workflow && workflow.nodes) {
-      workflow.nodes.forEach(node => attachCredentialsToNode(node));
+    workflow.nodes.forEach(node => attachCredentialsToNode(node));
 
-      const areAllCredentialsStored = checkAllCredentialsStored(credentialsInput);
-      dispatch(setAreCredentialsStored(areAllCredentialsStored));
+    const areAllCredentialsStored = checkAllCredentialsStored(credentialsInput);
+    dispatch(setAreCredentialsStored(areAllCredentialsStored));
 
-      Storage.set("workflows", JSON.stringify(storedWorkflows));
+    Storage.set("workflows", JSON.stringify(storedWorkflows));
 
-      if (areAllCredentialsStored) {
-        try {
-          await updateWorkflow({
-            workflowId: parseInt(workflowId),
-            data: workflow,
-          });
-        } catch (error) {
-          console.error("Error updating workflow:", error);
-        }
+    if (areAllCredentialsStored) {
+      try {
+        await updateWorkflow({
+          workflowId: parseInt(workflowId),
+          data: workflow,
+        });
+      } catch (error) {
+        console.error("Error updating workflow:", error);
       }
     }
   };
@@ -208,6 +211,7 @@ function Credentials({ input }: Props) {
       const receiveMessage = async (event: MessageEvent) => {
         if (event.origin !== window.location.origin) return;
         if (event.data.status === "success") {
+          clearInterval(checkPopupIntervalRef.current);
           clearPopupCheck();
           updateWorkflowAndStorage();
           setOpenModal(false);
