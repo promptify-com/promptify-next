@@ -50,8 +50,8 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, is
     }));
   };
 
-  const allowRun = currentUser?.id && !isGenerating && !isValidating;
   const hasInputs = inputs.length > 0;
+  const allowNoInputsRun = !hasInputs && currentUser?.id && !isGenerating && !isValidating;
 
   const showAccordionMessage = (message: IMessage): boolean => {
     const type = message.type;
@@ -118,7 +118,7 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, is
               )}
             </Fragment>
           ))}
-          {!hasInputs && allowRun && (
+          {allowNoInputsRun && (
             <RunButton
               title="Run workflow"
               onClick={onGenerate}

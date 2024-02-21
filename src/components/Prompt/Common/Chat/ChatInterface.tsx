@@ -52,7 +52,7 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
 
   const hasContent = template.prompts.some(prompt => prompt.content);
   const hasInputs = inputs.length > 0;
-  const allowRun = currentUser?.id && hasContent && !isGenerating && !isValidating;
+  const allowNoInputsRun = !hasInputs && currentUser?.id && hasContent && !isGenerating && !isValidating;
 
   const showAccordionMessage = (message: IMessage): boolean => {
     const type = message.type;
@@ -116,7 +116,7 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
               )}
             </Fragment>
           ))}
-          {!hasInputs && allowRun && (
+          {allowNoInputsRun && (
             <RunButton
               title="Run prompts"
               onClick={onGenerate}
