@@ -13,6 +13,8 @@ import RunButton from "@/components/Prompt/Common/RunButton";
 import { Message } from "@/components/Prompt/Common/Chat/Message";
 import ScrollDownButton from "@/components/common/buttons/ScrollDownButton";
 
+const currentDate = getCurrentDateFormatted();
+
 interface Props {
   template: Templates;
   messages: IMessage[];
@@ -23,9 +25,8 @@ interface Props {
 
 export const ChatInterface = ({ template, messages, onGenerate, showGenerate, isValidating }: Props) => {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
-  const { generatedExecution, selectedExecution } = useAppSelector(state => state.executions);
+  const { generatedExecution } = useAppSelector(state => state.executions);
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const isExecutionShown = Boolean(selectedExecution || generatedExecution);
   const inputs = useAppSelector(state => state.chat.inputs);
 
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
@@ -91,7 +92,7 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, is
             opacity: 0.5,
           }}
         >
-          {getCurrentDateFormatted()}
+          {currentDate}
         </Divider>
 
         <Stack
@@ -104,7 +105,6 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, is
               <Message
                 message={msg}
                 onScrollToBottom={scrollToBottom}
-                isExecutionShown={isExecutionShown}
               />
               {showAccordionMessage(msg) && (
                 <AccordionMessage

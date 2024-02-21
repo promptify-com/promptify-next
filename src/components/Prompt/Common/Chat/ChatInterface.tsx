@@ -12,6 +12,8 @@ import type { Templates } from "@/core/api/dto/templates";
 import RunButton from "@/components/Prompt/Common/RunButton";
 import ScrollDownButton from "@/components/common/buttons/ScrollDownButton";
 
+const currentDate = getCurrentDateFormatted();
+
 interface Props {
   template: Templates;
   messages: IMessage[];
@@ -56,7 +58,7 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
 
   const showAccordionMessage = (message: IMessage): boolean => {
     const type = message.type;
-    return ["credentials", "spark"].includes(message.type) || (type === "form" && hasInputs);
+    return "spark" === type || (type === "form" && hasInputs);
   };
 
   return (
@@ -90,7 +92,7 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
             opacity: 0.5,
           }}
         >
-          {getCurrentDateFormatted()}
+          {currentDate}
         </Divider>
 
         <Stack

@@ -18,7 +18,7 @@ import { LogoApp } from "@/assets/icons/LogoApp";
 interface Props {
   message: IMessage;
   onScrollToBottom: () => void;
-  isExecutionShown: boolean;
+  isExecutionShown?: boolean;
 }
 
 interface MessageContentProps {
