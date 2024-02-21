@@ -36,7 +36,7 @@ import type { MessageType } from "@/components/Prompt/Types/chat";
 interface Props {
   template: Templates;
   isExpanded: boolean;
-  onCancel: () => void;
+  onCancel?: () => void;
   type: MessageType;
 }
 
@@ -78,6 +78,8 @@ function AccordionMessageHeader({ template, type, isExpanded, onCancel }: Props)
   };
 
   const abortConnection = () => {
+    if (!onCancel) return;
+
     onCancel();
     dispatch(setGeneratedExecution(null));
     dispatch(setGeneratingStatus(false));

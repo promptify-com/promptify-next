@@ -16,12 +16,12 @@ import RunButton from "@/components/Prompt/Common/RunButton";
 
 interface Props {
   onGenerate: () => void;
-  abortGenerating: () => void;
   showGenerate: boolean;
   template: Templates;
   type: MessageType;
-  onChange?: (event: SyntheticEvent<Element, Event>, expanded: boolean) => void;
   expanded: boolean;
+  abortGenerating?: () => void;
+  onChange?: (event: SyntheticEvent<Element, Event>, expanded: boolean) => void;
 }
 
 export default function AccordionMessage({

@@ -4,7 +4,6 @@ import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
 import South from "@mui/icons-material/South";
 import Typography from "@mui/material/Typography";
-import { Message } from "./Message";
 import { useAppSelector } from "@/hooks/useStore";
 import { getCurrentDateFormatted, timeAgo } from "@/common/helpers/timeManipulation";
 import AccordionMessage from "@/components/Prompt/VariantB/AccordionMessage";
@@ -14,9 +13,9 @@ import TemplateDetailsCard from "@/components/Prompt/Common/TemplateDetailsCard"
 import ClientOnly from "@/components/base/ClientOnly";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { Templates } from "@/core/api/dto/templates";
-import useVariant from "@/components/Prompt/Hooks/useVariant";
 import { ExecutionMessage } from "@/components/Automation/ExecutionMessage";
 import RunButton from "@/components/Prompt/Common/RunButton";
+import { Message } from "../Prompt/Common/Chat/Message";
 
 type AccordionExpandedState = {
   spark: boolean;
@@ -27,15 +26,14 @@ type AccordionExpandedState = {
 };
 
 interface Props {
+  template: Templates;
   messages: IMessage[];
   onGenerate: () => void;
   showGenerate: boolean;
   isValidating: boolean;
-  template?: Templates;
-  onAbort?: () => void;
 }
 
-export const ChatInterface = ({ template, messages, onGenerate, showGenerate, onAbort, isValidating }: Props) => {
+export const ChatInterface = ({ template, messages, onGenerate, showGenerate, isValidating }: Props) => {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const { generatedExecution, selectedExecution } = useAppSelector(state => state.executions);
   const currentUser = useAppSelector(state => state.user.currentUser);
@@ -65,13 +63,12 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
     }));
   };
 
-  const hasContent = template?.prompts.some(prompt => prompt.content);
+  const allowRun = currentUser?.id && !isGenerating && !isValidating;
   const hasInputs = inputs.length > 0;
-  const allowRun = currentUser?.id && hasContent && !isGenerating && !isValidating;
 
   const showAccordionMessage = (message: IMessage): boolean => {
     const type = message.type;
-    return ["credentials", "spark"].includes(message.type) || (type === "form" && hasInputs);
+    return Boolean(type === "credentials" || (type === "form" && hasInputs));
   };
 
   return (
@@ -82,7 +79,7 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
       position={"relative"}
       sx={messagesContainerStyle}
     >
-      {typeof template !== "undefined" && (
+      {template && (
         <TemplateDetailsCard
           title={template.title}
           categoryName={template?.category.name}
@@ -142,6 +139,7 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
           gap={3}
           direction={"column"}
         >
+          {generatedExecution && <ExecutionMessage execution={generatedExecution} />}
           {messages.map(msg => (
             <Fragment key={msg.id}>
               <Message
@@ -153,7 +151,6 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
                 <Box
                   width={"100%"}
                   position={"relative"}
-                  id={`accordion-${msg.type === "spark" ? "execution" : "input"}`}
                   onMouseEnter={() => setIsHovered(true)}
                   onMouseLeave={() => setIsHovered(false)}
                 >
@@ -220,9 +217,9 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
               )}
             </Fragment>
           ))}
-          {allowRun && inputs.length === 0 && (
+          {!hasInputs && allowRun && (
             <RunButton
-              title="Run prompts"
+              title="Run workflow"
               onClick={onGenerate}
             />
           )}
