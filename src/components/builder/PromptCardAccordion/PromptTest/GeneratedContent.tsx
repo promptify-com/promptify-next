@@ -1,10 +1,9 @@
 import React, { useRef } from "react";
 import Box from "@mui/material/Box";
-import IconButton from "@mui/material/IconButton";
 import { EngineOutput } from "@/core/api/dto/templates";
 import useScrollToBottom from "@/components/Prompt/Hooks/useScrollToBottom";
-import South from "@mui/icons-material/South";
 import ExecutionOutput from "@/components/builder/ExecutionOutput";
+import ScrollDownButton from "@/components/common/buttons/ScrollDownButton";
 
 interface GeneratedContentProps {
   content: string;
@@ -34,25 +33,10 @@ function GeneratedContent({ content, engineType, isGenerating }: GeneratedConten
         engineType={engineType}
       />
       {showScrollDown && isGenerating && (
-        <IconButton
+        <ScrollDownButton
+          sticky
           onClick={scrollToBottom}
-          sx={{
-            height: "32px",
-            width: "32px",
-            position: "sticky",
-            left: "50%",
-            bottom: "30px",
-            zIndex: 999,
-            bgcolor: "surface.3",
-            boxShadow: "0px 4px 8px 3px #e1e2ece6, 0px 0px 4px 0px rgb(0 0 0 / 0%)",
-            border: " none",
-            ":hover": {
-              bgcolor: "surface.5",
-            },
-          }}
-        >
-          <South sx={{ fontSize: 16 }} />
-        </IconButton>
+        />
       )}
     </Box>
   );

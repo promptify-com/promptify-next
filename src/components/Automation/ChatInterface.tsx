@@ -2,7 +2,6 @@ import { useRef, Fragment, useState } from "react";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
-import South from "@mui/icons-material/South";
 import Typography from "@mui/material/Typography";
 import { useAppSelector } from "@/hooks/useStore";
 import { getCurrentDateFormatted, timeAgo } from "@/common/helpers/timeManipulation";
@@ -16,6 +15,7 @@ import type { Templates } from "@/core/api/dto/templates";
 import { ExecutionMessage } from "@/components/Automation/ExecutionMessage";
 import RunButton from "@/components/Prompt/Common/RunButton";
 import { Message } from "../Prompt/Common/Chat/Message";
+import ScrollDownButton from "@/components/common/buttons/ScrollDownButton";
 
 type AccordionExpandedState = {
   spark: boolean;
@@ -89,35 +89,7 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, is
         />
       )}
 
-      {showScrollDown && isGenerating && (
-        <Box
-          onClick={scrollToBottom}
-          position={"fixed"}
-          zIndex={999}
-          bottom={"95px"}
-          left={"50%"}
-          sx={{
-            transform: "translateX(-50%)",
-            cursor: "pointer",
-          }}
-        >
-          <Box
-            sx={{
-              height: "30px",
-              width: "30px",
-              borderRadius: "40px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              bgcolor: "surface.3",
-              boxShadow: "0px 4px 8px 0px #E1E2EC, 0px 0px 4px 0px rgba(0, 0, 0, 0.30)",
-              border: " none",
-            }}
-          >
-            <South sx={{ fontSize: 16 }} />
-          </Box>
-        </Box>
-      )}
+      {showScrollDown && isGenerating && <ScrollDownButton onClick={scrollToBottom} />}
 
       <Stack
         pb={{ md: "38px" }}
