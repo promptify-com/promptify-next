@@ -118,7 +118,7 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
               )}
             </Fragment>
           ))}
-          {allowRun && inputs.length === 0 && (
+          {!hasInputs && allowRun && (
             <RunButton
               title="Run prompts"
               onClick={onGenerate}
