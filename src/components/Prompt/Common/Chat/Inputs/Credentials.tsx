@@ -210,7 +210,7 @@ function Credentials({ input }: Props) {
 
       const receiveMessage = async (event: MessageEvent) => {
         if (event.origin !== window.location.origin) {
-          clearInterval(checkPopupIntervalRef.current);
+          clearPopupCheck();
           return;
         }
 
