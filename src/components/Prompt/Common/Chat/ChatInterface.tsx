@@ -98,6 +98,7 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
                   template={template}
                   onGenerate={onGenerate}
                   showGenerate={showGenerate}
+                  abortGenerating={onAbort}
                 />
               )}
             </Fragment>
