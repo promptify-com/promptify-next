@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import Stack from "@mui/material/Stack";
 import { useRouter } from "next/router";
 import { Layout } from "@/layout";
-import { ChatInterface } from "@/components/Prompt/Common/Chat/ChatInterface";
+import { ChatInterface } from "@/components/Automation/ChatInterface";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { ChatInput } from "@/components/Prompt/Common/Chat/ChatInput";
 import SigninButton from "@/components/common/buttons/SigninButton";

@@ -1,7 +1,6 @@
 import { useRef, Fragment } from "react";
 import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
-import { Message } from "./Message";
 import { useAppSelector } from "@/hooks/useStore";
 import { getCurrentDateFormatted } from "@/common/helpers/timeManipulation";
 import AccordionMessage from "@/components/Prompt/VariantB/AccordionMessage/index";
@@ -9,7 +8,9 @@ import useScrollToBottom from "@/components/Prompt/Hooks/useScrollToBottom";
 import TemplateDetailsCard from "@/components/Prompt/Common/TemplateDetailsCard";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { Templates } from "@/core/api/dto/templates";
+import { ExecutionMessage } from "@/components/Automation/ExecutionMessage";
 import RunButton from "@/components/Prompt/Common/RunButton";
+import { Message } from "@/components/Prompt/Common/Chat/Message";
 import ScrollDownButton from "@/components/common/buttons/ScrollDownButton";
 
 const currentDate = getCurrentDateFormatted();
@@ -20,14 +21,12 @@ interface Props {
   onGenerate: () => void;
   showGenerate: boolean;
   isValidating: boolean;
-  onAbort?: () => void;
 }
 
-export const ChatInterface = ({ template, messages, onGenerate, showGenerate, onAbort, isValidating }: Props) => {
+export const ChatInterface = ({ template, messages, onGenerate, showGenerate, isValidating }: Props) => {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
-  const { generatedExecution, selectedExecution } = useAppSelector(state => state.executions);
+  const { generatedExecution } = useAppSelector(state => state.executions);
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const isExecutionShown = Boolean(selectedExecution || generatedExecution);
   const inputs = useAppSelector(state => state.chat.inputs);
 
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
@@ -38,13 +37,12 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
     isGenerating,
   });
 
-  const hasContent = template.prompts.some(prompt => prompt.content);
   const hasInputs = inputs.length > 0;
-  const allowNoInputsRun = !hasInputs && currentUser?.id && hasContent && !isGenerating && !isValidating;
+  const allowNoInputsRun = !hasInputs && currentUser?.id && !isGenerating && !isValidating;
 
   const showAccordionMessage = (message: IMessage): boolean => {
     const type = message.type;
-    return "spark" === type || (type === "form" && hasInputs);
+    return Boolean(type === "credentials" || (type === "form" && hasInputs));
   };
 
   return (
@@ -55,13 +53,15 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
       position={"relative"}
       sx={messagesContainerStyle}
     >
-      <TemplateDetailsCard
-        title={template.title}
-        categoryName={template?.category.name}
-        thumbnail={template.thumbnail}
-        tags={template.tags}
-        description={template.description}
-      />
+      {template && (
+        <TemplateDetailsCard
+          title={template.title}
+          categoryName={template?.category.name}
+          thumbnail={template.thumbnail}
+          tags={template.tags}
+          description={template.description}
+        />
+      )}
 
       {showScrollDown && isGenerating && <ScrollDownButton onClick={scrollToBottom} />}
 
@@ -85,26 +85,26 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
           gap={3}
           direction={"column"}
         >
+          {generatedExecution && <ExecutionMessage execution={generatedExecution} />}
           {messages.map(msg => (
             <Fragment key={msg.id}>
               <Message
                 message={msg}
                 onScrollToBottom={scrollToBottom}
-                isExecutionShown={isExecutionShown}
               />
               {showAccordionMessage(msg) && (
                 <AccordionMessage
                   message={msg}
-                  template={template}
-                  onGenerate={onGenerate}
+                  template={template!}
                   showGenerate={showGenerate}
+                  onGenerate={onGenerate}
                 />
               )}
             </Fragment>
           ))}
           {allowNoInputsRun && (
             <RunButton
-              title="Run prompts"
+              title="Run workflow"
               onClick={onGenerate}
             />
           )}

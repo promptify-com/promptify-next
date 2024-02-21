@@ -19,7 +19,6 @@ import RemoveRedEyeOutlined from "@mui/icons-material/RemoveRedEyeOutlined";
 import ShareOutlined from "@mui/icons-material/ShareOutlined";
 import Star from "@mui/icons-material/Star";
 import StarOutline from "@mui/icons-material/StarOutline";
-
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { useDeleteExecutionFavoriteMutation, useExecutionFavoriteMutation } from "@/core/api/executions";
 import { SparkSaveDeletePopup } from "@/components/dialog/SparkSaveDeletePopup";
@@ -36,7 +35,7 @@ import type { MessageType } from "@/components/Prompt/Types/chat";
 interface Props {
   template: Templates;
   isExpanded: boolean;
-  onCancel: () => void;
+  onCancel?: () => void;
   type: MessageType;
 }
 
@@ -78,7 +77,8 @@ function AccordionMessageHeader({ template, type, isExpanded, onCancel }: Props)
   };
 
   const abortConnection = () => {
-    onCancel();
+    onCancel?.();
+
     dispatch(setGeneratedExecution(null));
     dispatch(setGeneratingStatus(false));
   };
@@ -322,28 +322,6 @@ function AccordionMessageHeader({ template, type, isExpanded, onCancel }: Props)
                     >
                       Cancel
                     </Button>
-                    {!isGenerating && (
-                      <Tooltip
-                        title="Show Prompts"
-                        arrow
-                        PopperProps={commonPopperProps}
-                      >
-                        <IconButton
-                          onClick={e => {
-                            e.stopPropagation();
-                            dispatch(setShowPromptsView(!showPrompts));
-                          }}
-                          sx={{
-                            border: "none",
-                            ":hover": {
-                              bgcolor: "surface.4",
-                            },
-                          }}
-                        >
-                          {!showPrompts ? <RemoveRedEyeOutlined /> : <VisibilityOff />}
-                        </IconButton>
-                      </Tooltip>
-                    )}
                   </Grid>
                 ) : (
                   <Stack
