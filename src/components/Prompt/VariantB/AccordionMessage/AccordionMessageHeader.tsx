@@ -77,7 +77,7 @@ function AccordionMessageHeader({ template, type, isExpanded, onCancel }: Props)
   };
 
   const abortConnection = () => {
-    if (onCancel) onCancel();
+    onCancel?.();
 
     dispatch(setGeneratedExecution(null));
     dispatch(setGeneratingStatus(false));

@@ -1,4 +1,4 @@
-import { useRef, Fragment, useState } from "react";
+import { useRef, Fragment } from "react";
 import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
 import { useAppSelector } from "@/hooks/useStore";
@@ -6,7 +6,7 @@ import { getCurrentDateFormatted } from "@/common/helpers/timeManipulation";
 import AccordionMessage from "@/components/Prompt/VariantB/AccordionMessage/index";
 import useScrollToBottom from "@/components/Prompt/Hooks/useScrollToBottom";
 import TemplateDetailsCard from "@/components/Prompt/Common/TemplateDetailsCard";
-import type { ExpandedAccordionState, IMessage } from "@/components/Prompt/Types/chat";
+import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { Templates } from "@/core/api/dto/templates";
 import { ExecutionMessage } from "@/components/Automation/ExecutionMessage";
 import RunButton from "@/components/Prompt/Common/RunButton";
@@ -30,26 +30,12 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, is
   const inputs = useAppSelector(state => state.chat.inputs);
 
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
-  const [expandedAccordions, setExpandedAccordions] = useState<ExpandedAccordionState>({
-    spark: true,
-    form: true,
-    credentials: true,
-    text: false,
-    html: false,
-  });
 
   const { showScrollDown, scrollToBottom } = useScrollToBottom({
     ref: messagesContainerRef,
     content: messages,
     isGenerating,
   });
-
-  const handleExpandChange = (type: keyof ExpandedAccordionState, isExpanded: boolean) => {
-    setExpandedAccordions(prev => ({
-      ...prev,
-      [type]: isExpanded,
-    }));
-  };
 
   const hasInputs = inputs.length > 0;
   const allowNoInputsRun = !hasInputs && currentUser?.id && !isGenerating && !isValidating;
@@ -109,8 +95,6 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, is
               {showAccordionMessage(msg) && (
                 <AccordionMessage
                   message={msg}
-                  expanded={expandedAccordions[msg.type]}
-                  onChange={(_, isExpanded) => handleExpandChange(msg.type, isExpanded)}
                   template={template!}
                   showGenerate={showGenerate}
                   onGenerate={onGenerate}

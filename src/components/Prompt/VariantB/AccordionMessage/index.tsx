@@ -1,4 +1,4 @@
-import { SyntheticEvent, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import Stack from "@mui/material/Stack";
 import Accordion from "@mui/material/Accordion";
 import Typography from "@mui/material/Typography";
@@ -23,20 +23,10 @@ interface Props {
   template: Templates;
   onGenerate: () => void;
   showGenerate: boolean;
-  expanded: boolean;
-  onChange?: (event: SyntheticEvent<Element, Event>, expanded: boolean) => void;
   abortGenerating?: () => void;
 }
 
-export default function AccordionMessage({
-  message,
-  template,
-  onGenerate,
-  showGenerate,
-  expanded,
-  onChange,
-  abortGenerating,
-}: Props) {
+export default function AccordionMessage({ message, template, onGenerate, showGenerate, abortGenerating }: Props) {
   const dispatch = useAppDispatch();
   const { isAutomationPage } = useVariant();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
@@ -46,6 +36,7 @@ export default function AccordionMessage({
   const hasInputs = !!inputs.length;
   const type = message.type;
 
+  const [expanded, setExpanded] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
   const accordionRef = useRef<HTMLDivElement>(null);
 
@@ -109,7 +100,7 @@ export default function AccordionMessage({
               ref={accordionRef}
               elevation={0}
               expanded={expanded}
-              onChange={onChange}
+              onChange={(_, state) => setExpanded(state)}
               sx={{ p: 0, flex: 1 }}
             >
               <AccordionMessageHeader
