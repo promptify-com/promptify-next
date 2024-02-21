@@ -201,7 +201,7 @@ function Credentials({ input }: Props) {
       const oauthPopup = window.open(authUri, "OAuth2 Authorization", params);
 
       const clearPopupCheck = () => {
-        if (checkPopupIntervalRef.current !== undefined) {
+        if (checkPopupIntervalRef.current) {
           clearInterval(checkPopupIntervalRef.current);
           checkPopupIntervalRef.current = undefined;
         }
@@ -209,9 +209,12 @@ function Credentials({ input }: Props) {
       };
 
       const receiveMessage = async (event: MessageEvent) => {
-        if (event.origin !== window.location.origin) return;
-        if (event.data.status === "success") {
+        if (event.origin !== window.location.origin) {
           clearInterval(checkPopupIntervalRef.current);
+          return;
+        }
+
+        if (event.data.status === "success") {
           clearPopupCheck();
           updateWorkflowAndStorage();
           setOpenModal(false);

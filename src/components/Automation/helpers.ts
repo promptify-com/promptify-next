@@ -125,34 +125,21 @@ export const attachCredentialsToNode = (node: INode) => {
   }
   const { parameters, type } = node;
 
-  if (parameters && parameters.authentication) {
+  if ((parameters && parameters.authentication) || oAuthTypeMapping[type]) {
     const authenticationType = parameters.authentication;
     const nodeCredentialType = parameters.nodeCredentialType;
 
     const authType =
       authTypeMapping[nodeCredentialType!] ||
       nodeCredentialType ||
-      authTypeMapping[authenticationType] ||
+      authTypeMapping[authenticationType!] ||
       authenticationType;
 
     const currentCredentials: ICredential[] = Storage.get("credentials") || [];
 
-    const credential = currentCredentials.find(cred => cred.type === authType);
-
-    if (credential) {
-      const { type, id, name } = credential;
-
-      if (!node.credentials) {
-        node.credentials = {};
-      }
-      node.credentials[type] = { id, name };
-    }
-  }
-
-  if (oAuthTypeMapping[type]) {
-    const authType = oAuthTypeMapping[type];
-    const currentCredentials: ICredential[] = Storage.get("credentials") || [];
-    const credential = currentCredentials.find(cred => cred.type === authType);
+    const credential = oAuthTypeMapping[type]
+      ? currentCredentials.find(cred => cred.type.includes("OAuth2"))
+      : currentCredentials.find(cred => cred.type === authType);
 
     if (credential) {
       const { type, id, name } = credential;
