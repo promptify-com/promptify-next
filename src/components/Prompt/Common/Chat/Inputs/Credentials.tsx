@@ -11,7 +11,7 @@ import { useRouter } from "next/router";
 import { object, string } from "yup";
 
 import BaseButton from "@/components/base/BaseButton";
-import { useAppDispatch } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import Storage from "@/common/storage";
 import {
   useCreateCredentialsMutation,
@@ -28,6 +28,7 @@ import type { IPromptInput } from "@/common/types/prompt";
 import Box from "@mui/material/Box";
 import Tooltip from "@mui/material/Tooltip";
 import useCopyToClipboard from "@/hooks/useCopyToClipboard";
+import SigninButton from "@/components/common/buttons/SigninButton";
 
 interface Props {
   input: IPromptInput;
@@ -41,6 +42,7 @@ function Credentials({ input }: Props) {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const workflowId = router.query.workflowId as string;
+  const currentUser = useAppSelector(state => state.user.currentUser);
 
   const [updateWorkflow] = useUpdateWorkflowMutation();
   const [createCredentials] = useCreateCredentialsMutation();
@@ -263,26 +265,30 @@ function Credentials({ input }: Props) {
 
   return (
     <>
-      <BaseButton
-        size="small"
-        onClick={() => setOpenModal(true)}
-        disabled={isCredentialInserted}
-        color="custom"
-        variant="text"
-        sx={{
-          border: "1px solid",
-          borderRadius: "8px",
-          borderColor: "secondary.main",
-          color: "secondary.main",
-          p: "3px 12px",
-          fontSize: { xs: 11, md: 14 },
-          ":hover": {
-            bgcolor: "action.hover",
-          },
-        }}
-      >
-        {isCredentialInserted ? "Credentials added" : "Insert Credentials"}
-      </BaseButton>
+      {currentUser?.id ? (
+        <BaseButton
+          size="small"
+          onClick={() => setOpenModal(true)}
+          disabled={isCredentialInserted}
+          color="custom"
+          variant="text"
+          sx={{
+            border: "1px solid",
+            borderRadius: "8px",
+            borderColor: "secondary.main",
+            color: "secondary.main",
+            p: "3px 12px",
+            fontSize: { xs: 11, md: 14 },
+            ":hover": {
+              bgcolor: "action.hover",
+            },
+          }}
+        >
+          {isCredentialInserted ? "Credentials added" : "Insert Credentials"}
+        </BaseButton>
+      ) : (
+        <SigninButton onClick={() => router.push("/signin")} />
+      )}
 
       {openModal && (
         <Dialog
