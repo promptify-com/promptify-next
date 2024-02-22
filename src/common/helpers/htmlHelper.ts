@@ -23,5 +23,5 @@ DOMPurify.addHook("afterSanitizeAttributes", function (node) {
 });
 
 export const sanitizeHTML = (html: string) => {
-  return DOMPurify.sanitize(html, { FORBID_TAGS: ["style", "script"] });
+  return DOMPurify.sanitize(html, { FORBID_TAGS: ["style", "iframe", "script"] });
 };
