@@ -19,11 +19,12 @@ export default function Callback() {
       .get(
         `${process.env.NEXT_PUBLIC_API_URL}/api/oauth2/callback?code=${code}&state=${state}&redirectUri=${redirectUri}`,
       )
-      .then(data => {
+      .then(() => {
         window.opener.postMessage(
           {
             message: "successfully connected!",
             status: "success",
+            action: "oauth2callback",
           },
           window.opener.location.origin,
         );
@@ -34,6 +35,7 @@ export default function Callback() {
           {
             message: error.message,
             status: "error",
+            action: "oauth2callback",
           },
           window.opener.location.origin,
         );

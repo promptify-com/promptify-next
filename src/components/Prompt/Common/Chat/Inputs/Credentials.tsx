@@ -186,6 +186,11 @@ function Credentials({ input }: Props) {
       };
 
       const receiveMessage = async (event: MessageEvent) => {
+        // Skip any kind of extensions that may send events
+        if (!event.data.action || event.data.action !== "oauth2callback") {
+          return;
+        }
+
         if (event.origin !== window.location.origin) {
           clearPopupCheck();
           return;
