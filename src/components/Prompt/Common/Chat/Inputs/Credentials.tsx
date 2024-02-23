@@ -25,9 +25,6 @@ import { setAreCredentialsStored } from "@/core/store/chatSlice";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
 import type { ICredentialProperty, IWorkflowCreateResponse } from "@/components/Automation/types";
 import type { IPromptInput } from "@/common/types/prompt";
-import Box from "@mui/material/Box";
-import Tooltip from "@mui/material/Tooltip";
-import useCopyToClipboard from "@/hooks/useCopyToClipboard";
 import SigninButton from "@/components/common/buttons/SigninButton";
 
 interface Props {
@@ -43,6 +40,7 @@ function Credentials({ input }: Props) {
   const router = useRouter();
   const workflowId = router.query.workflowId as string;
   const currentUser = useAppSelector(state => state.user.currentUser);
+  const [oAuthConnected, setOAuthConnected] = useState(false);
 
   const [updateWorkflow] = useUpdateWorkflowMutation();
   const [createCredentials] = useCreateCredentialsMutation();
@@ -55,33 +53,10 @@ function Credentials({ input }: Props) {
   const credential = credentialsInput.find(cred => cred.displayName === input.fullName);
   const credentialProperties = credential?.properties || [];
   const isOauthCredential = credential?.name.includes("OAuth2");
-  const urlToCopy = `${window.location.origin}/oauth2/callback`;
-  const [copy, result] = useCopyToClipboard();
+
   const [getAuthUrl] = workflowsApi.endpoints.getAuthUrl.useLazyQuery();
 
   const checkPopupIntervalRef = useRef<number | undefined>(undefined);
-
-  useEffect(() => {
-    if (result) {
-      if (result?.state === "success") {
-        dispatch(
-          setToast({
-            message: "Redirect URL copied to clipboard!",
-            severity: "success",
-            position: { vertical: "bottom", horizontal: "right" },
-          }),
-        );
-      } else {
-        dispatch(
-          setToast({
-            message: "Failed to copy URL",
-            severity: "error",
-            position: { vertical: "bottom", horizontal: "right" },
-          }),
-        );
-      }
-    }
-  }, [result]);
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -150,7 +125,7 @@ function Credentials({ input }: Props) {
     }
   };
 
-  const handleSubmit = async (values: FormValues) => {
+  const handleSubmit = async (values: FormValues = {}) => {
     const credential = credentialsInput.find(cred => cred.displayName === input.fullName);
     const data: Record<string, string> = {};
 
@@ -182,8 +157,8 @@ function Credentials({ input }: Props) {
     }
   };
 
-  const handleOauthConnect = async (values: FormValues) => {
-    const credentialId = await handleSubmit(values);
+  const handleOauthConnect = async () => {
+    const credentialId = await handleSubmit();
     if (!credentialId) {
       return;
     }
@@ -221,6 +196,7 @@ function Credentials({ input }: Props) {
           updateWorkflowAndStorage();
           setOpenModal(false);
           dispatch(setToast({ message: event.data.message, severity: event.data.status }));
+          setOAuthConnected(true);
         } else {
           dispatch(setToast({ message: event.data.message, severity: event.data.status }));
           await deleteCredential(credentialId);
@@ -266,26 +242,48 @@ function Credentials({ input }: Props) {
   return (
     <>
       {currentUser?.id ? (
-        <BaseButton
-          size="small"
-          onClick={() => setOpenModal(true)}
-          disabled={isCredentialInserted}
-          color="custom"
-          variant="text"
-          sx={{
-            border: "1px solid",
-            borderRadius: "8px",
-            borderColor: "secondary.main",
-            color: "secondary.main",
-            p: "3px 12px",
-            fontSize: { xs: 11, md: 14 },
-            ":hover": {
-              bgcolor: "action.hover",
-            },
-          }}
-        >
-          {isCredentialInserted ? "Credentials added" : "Insert Credentials"}
-        </BaseButton>
+        isOauthCredential ? (
+          <BaseButton
+            onClick={handleOauthConnect}
+            color="custom"
+            variant="text"
+            sx={{
+              border: "1px solid",
+              borderRadius: "8px",
+              borderColor: "secondary.main",
+              color: "secondary.main",
+              p: "3px 12px",
+              fontSize: { xs: 11, md: 14 },
+              ":hover": {
+                bgcolor: "action.hover",
+              },
+            }}
+            disabled={oAuthConnected}
+          >
+            {oAuthConnected ? "Connected" : "Connect"}
+          </BaseButton>
+        ) : (
+          <BaseButton
+            size="small"
+            onClick={() => setOpenModal(true)}
+            disabled={isCredentialInserted}
+            color="custom"
+            variant="text"
+            sx={{
+              border: "1px solid",
+              borderRadius: "8px",
+              borderColor: "secondary.main",
+              color: "secondary.main",
+              p: "3px 12px",
+              fontSize: { xs: 11, md: 14 },
+              ":hover": {
+                bgcolor: "action.hover",
+              },
+            }}
+          >
+            {isCredentialInserted ? "Credentials added" : "Insert Credentials"}
+          </BaseButton>
+        )
       ) : (
         <SigninButton onClick={() => router.push("/signin")} />
       )}
@@ -298,31 +296,12 @@ function Credentials({ input }: Props) {
         >
           <DialogTitle>{input.fullName} Credentials</DialogTitle>
           <DialogContent>
-            {isOauthCredential && (
-              <Tooltip
-                title="Copy URL"
-                placement="top-end"
-              >
-                <Box
-                  onClick={() => copy(urlToCopy)}
-                  sx={{
-                    m: "0 5px",
-                    p: "15px",
-                    border: "1px solid #c4c4c4",
-                    borderRadius: "4px",
-                    cursor: "pointer",
-                  }}
-                >
-                  {urlToCopy}
-                </Box>
-              </Tooltip>
-            )}
             <Formik
               initialValues={initialValues}
               validationSchema={validationSchema}
               onSubmit={handleSubmit}
             >
-              {({ errors, touched, values }) => (
+              {({ errors, touched }) => (
                 <Form>
                   <DialogContent
                     sx={{
@@ -350,28 +329,6 @@ function Credentials({ input }: Props) {
                       </FormControl>
                     ))}
                   </DialogContent>
-                  {isOauthCredential && values.clientId && values.clientSecret && (
-                    <Button
-                      onClick={() => {
-                        handleOauthConnect(values);
-                      }}
-                      sx={{
-                        flexDirection: "column",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        borderRadius: "4px",
-                        bgcolor: "secondary.main",
-                        ml: "10px",
-                        color: "white",
-                        ":hover": {
-                          bgcolor: "action.hover",
-                          color: "inherit",
-                        },
-                      }}
-                    >
-                      Connect My Account
-                    </Button>
-                  )}
                   <DialogActions>
                     <Button onClick={() => setOpenModal(false)}>Cancel</Button>
                     <Button
