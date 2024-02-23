@@ -17,15 +17,12 @@ const useCredentials = () => {
 
   const initializeCredentials = (): Promise<ICredential[]> => {
     return new Promise(async resolve => {
-      if (!!credentials.current.length) {
+      if (!!credentials.current.length || !currentUser?.id) {
         resolve(credentials.current);
 
         return;
       }
-      if (!currentUser?.id) {
-        resolve(credentials.current);
-        return;
-      }
+
       try {
         const fetchedCredentials = await getCredentials().unwrap();
 
