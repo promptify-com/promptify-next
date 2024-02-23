@@ -243,25 +243,25 @@ function Credentials({ input }: Props) {
     <>
       {currentUser?.id ? (
         isOauthCredential ? (
-          <Button
+          <BaseButton
             onClick={handleOauthConnect}
+            color="custom"
+            variant="text"
             sx={{
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              borderRadius: "4px",
-              bgcolor: "secondary.main",
-              ml: "10px",
-              color: "white",
+              border: "1px solid",
+              borderRadius: "8px",
+              borderColor: "secondary.main",
+              color: "secondary.main",
+              p: "3px 12px",
+              fontSize: { xs: 11, md: 14 },
               ":hover": {
                 bgcolor: "action.hover",
-                color: "inherit",
               },
             }}
             disabled={oAuthConnected}
           >
             {oAuthConnected ? "Connected" : "Connect"}
-          </Button>
+          </BaseButton>
         ) : (
           <BaseButton
             size="small"
