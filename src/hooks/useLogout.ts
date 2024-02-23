@@ -10,6 +10,8 @@ const useLogout = () => {
     return new Promise(async resolve => {
       Storage.remove("token");
       Storage.remove("currentUser");
+      Storage.remove("workflows");
+      Storage.remove("credentials");
 
       dispatch(updateUser(null));
       redirectToPath("/");

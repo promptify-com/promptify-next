@@ -17,7 +17,11 @@ const userSlice = createSlice({
     updateUser: (state, action: PayloadAction<User | null>) => {
       state.currentUser = action.payload ? Object.freeze(action.payload) : null;
 
-      Storage.set("currentUser", JSON.stringify(action.payload || {}));
+      if (action.payload) {
+        Storage.set("currentUser", JSON.stringify(action.payload));
+      } else {
+        Storage.remove("currentUser");
+      }
     },
   },
 });

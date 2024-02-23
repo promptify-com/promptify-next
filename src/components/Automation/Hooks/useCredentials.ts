@@ -11,6 +11,7 @@ const useCredentials = () => {
   const credentials = useRef<ICredential[]>(Storage.get("credentials") || []);
 
   const credentialsInput = useAppSelector(state => state.chat.credentialsInput);
+  const currentUser = useAppSelector(state => state.user.currentUser);
 
   const [getCredentials] = workflowsApi.endpoints.getCredentials.useLazyQuery();
 
@@ -21,7 +22,10 @@ const useCredentials = () => {
 
         return;
       }
-
+      if (!currentUser?.id) {
+        resolve(credentials.current);
+        return;
+      }
       try {
         const fetchedCredentials = await getCredentials().unwrap();
 
