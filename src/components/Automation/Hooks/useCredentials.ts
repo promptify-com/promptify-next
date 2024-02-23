@@ -11,12 +11,13 @@ const useCredentials = () => {
   const credentials = useRef<ICredential[]>(Storage.get("credentials") || []);
 
   const credentialsInput = useAppSelector(state => state.chat.credentialsInput);
+  const currentUser = useAppSelector(state => state.user.currentUser);
 
   const [getCredentials] = workflowsApi.endpoints.getCredentials.useLazyQuery();
 
   const initializeCredentials = (): Promise<ICredential[]> => {
     return new Promise(async resolve => {
-      if (!!credentials.current.length) {
+      if (!!credentials.current.length || !currentUser?.id) {
         resolve(credentials.current);
 
         return;
