@@ -62,7 +62,10 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
     if (selectedWorkflow?.data) {
       const { nodes } = selectedWorkflow.data;
       const credentialsInput = await extractCredentialsInputFromNodes(nodes);
-      createWorkflowIfNeeded(selectedWorkflow.id);
+
+      if (currentUser?.id) {
+        createWorkflowIfNeeded(selectedWorkflow.id);
+      }
 
       const inputs: IPromptInput[] = nodes
         .filter(node => node.type === "n8n-nodes-base.set")
@@ -85,7 +88,7 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
       return;
     }
     processData();
-  }, [selectedWorkflow, isWorkflowLoading]);
+  }, [selectedWorkflow, isWorkflowLoading, currentUser]);
 
   function prepareAndQueueMessages(credentialsInput: ICredentialInput[], nodes: INode[]) {
     const initialQueuedMessages: IMessage[] = [];
