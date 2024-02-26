@@ -1,22 +1,30 @@
 import { Check, DeleteRounded } from "@mui/icons-material";
 import { Dialog, Grid, TextField, Typography } from "@mui/material";
 import { red } from "@mui/material/colors";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import BaseButton from "../base/BaseButton";
 import { Execution, ExecutionTemplatePopupType } from "@/core/api/dto/templates";
 import { useDeleteExecutionMutation, useUpdateExecutionMutation } from "@/core/api/executions";
 
 import { useAppDispatch } from "@/hooks/useStore";
 import { setGeneratedExecution, setSelectedExecution } from "@/core/store/executionsSlice";
+import { IMessage } from "../Prompt/Types/chat";
 
 interface SparkSaveDeletePopupProps {
   type: ExecutionTemplatePopupType;
   onClose: () => void;
   activeExecution: Execution | null;
   onUpdate?: (execution: Execution) => void;
+  setMessages?: Dispatch<SetStateAction<IMessage[]>>;
 }
 
-export const SparkSaveDeletePopup = ({ type, activeExecution, onClose, onUpdate }: SparkSaveDeletePopupProps) => {
+export const SparkSaveDeletePopup = ({
+  type,
+  activeExecution,
+  onClose,
+  onUpdate,
+  setMessages,
+}: SparkSaveDeletePopupProps) => {
   const [updateExecution, { isError }] = useUpdateExecutionMutation();
   const [deleteExecution, { isError: isDeleteExecutionError }] = useDeleteExecutionMutation();
   const [executionTitle, setExecutionTitle] = useState("");
@@ -44,6 +52,9 @@ export const SparkSaveDeletePopup = ({ type, activeExecution, onClose, onUpdate 
       dispatch(setSelectedExecution(null));
       dispatch(setGeneratedExecution(null));
       deleteExecution(activeExecution.id);
+      if (setMessages) {
+        setMessages(prevMessages => prevMessages.filter(message => message.type !== "spark"));
+      }
 
       if (!isDeleteExecutionError) {
         onClose();

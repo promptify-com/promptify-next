@@ -134,6 +134,7 @@ const CommonChat: React.FC<Props> = ({ template, questionPrefixContent }) => {
       disableChatInput={disableChatInput}
       showGenerateButton={showGenerateButton}
       handleSignIn={handleSignIn}
+      setMessages={setMessages}
     />
   );
 };

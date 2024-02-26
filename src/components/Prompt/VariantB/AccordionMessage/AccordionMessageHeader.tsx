@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -30,16 +30,17 @@ import { setAnswers } from "@/core/store/chatSlice";
 import AvatarWithInitials from "@/components/Prompt/Common/AvatarWithInitials";
 import useVariant from "@/components/Prompt/Hooks/useVariant";
 import type { ExecutionTemplatePopupType, Templates } from "@/core/api/dto/templates";
-import type { MessageType } from "@/components/Prompt/Types/chat";
+import type { IMessage, MessageType } from "@/components/Prompt/Types/chat";
 
 interface Props {
   template: Templates;
   isExpanded: boolean;
   onCancel?: () => void;
   type: MessageType;
+  setMessages?: Dispatch<SetStateAction<IMessage[]>>;
 }
 
-function AccordionMessageHeader({ template, type, isExpanded, onCancel }: Props) {
+function AccordionMessageHeader({ template, type, isExpanded, onCancel, setMessages }: Props) {
   const currentUser = useAppSelector(state => state.user.currentUser);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const dispatch = useAppDispatch();
@@ -499,6 +500,7 @@ function AccordionMessageHeader({ template, type, isExpanded, onCancel }: Props)
           activeExecution={selectedExecution}
           onClose={() => setExecutionPopup(null)}
           onUpdate={execution => setExecutionTitle(execution.title)}
+          setMessages={setMessages}
         />
       )}
 

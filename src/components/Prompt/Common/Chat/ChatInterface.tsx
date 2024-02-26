@@ -1,4 +1,4 @@
-import { useRef, Fragment } from "react";
+import { useRef, Fragment, Dispatch, SetStateAction } from "react";
 import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
 import { Message } from "./Message";
@@ -17,13 +17,22 @@ const currentDate = getCurrentDateFormatted();
 interface Props {
   template: Templates;
   messages: IMessage[];
+  setMessages: Dispatch<SetStateAction<IMessage[]>>;
   onGenerate: () => void;
   showGenerate: boolean;
   isValidating: boolean;
   onAbort?: () => void;
 }
 
-export const ChatInterface = ({ template, messages, onGenerate, showGenerate, onAbort, isValidating }: Props) => {
+export const ChatInterface = ({
+  template,
+  messages,
+  setMessages,
+  onGenerate,
+  showGenerate,
+  onAbort,
+  isValidating,
+}: Props) => {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const { generatedExecution, selectedExecution } = useAppSelector(state => state.executions);
   const currentUser = useAppSelector(state => state.user.currentUser);
@@ -99,6 +108,7 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
                   onGenerate={onGenerate}
                   showGenerate={showGenerate}
                   abortGenerating={onAbort}
+                  setMessages={setMessages}
                 />
               )}
             </Fragment>

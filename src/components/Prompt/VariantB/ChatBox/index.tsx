@@ -1,3 +1,4 @@
+import type { Dispatch, SetStateAction } from "react";
 import { Templates } from "@/core/api/dto/templates";
 import { IMessage } from "../../Types/chat";
 import Box from "@mui/material/Box";
@@ -12,6 +13,7 @@ interface Props {
   isSidebarExpanded: Link | null;
   template: Templates;
   messages: IMessage[];
+  setMessages: Dispatch<SetStateAction<IMessage[]>>;
   showGenerate: boolean;
   showGenerateButton: boolean;
   generateExecutionHandler: () => void;
@@ -34,6 +36,7 @@ const ChatBoxVariantB: React.FC<Props> = ({
   disableChatInput,
   showGenerateButton,
   handleSignIn,
+  setMessages,
 }) => {
   const currentUser = useAppSelector(state => state.user.currentUser);
 
@@ -50,6 +53,7 @@ const ChatBoxVariantB: React.FC<Props> = ({
       >
         <ChatInterface
           messages={messages}
+          setMessages={setMessages}
           template={template}
           showGenerate={showGenerate}
           onGenerate={generateExecutionHandler}
