@@ -84,93 +84,95 @@ export default function AccordionMessage({ message, template, onGenerate, showGe
         direction={"row"}
         position={"relative"}
       >
-        <Box
-          display={"flex"}
-          sx={{
-            flex: "0 0 100%",
-          }}
-        >
-          <Fade
-            in={true}
-            unmountOnExit
-            timeout={800}
-            onTransitionEnd={() => dispatch(setIsSimulationStreaming(false))}
+        {selectedExecution && (
+          <Box
+            display={"flex"}
+            sx={{
+              flex: "0 0 100%",
+            }}
           >
-            <Accordion
-              ref={accordionRef}
-              elevation={0}
-              expanded={expanded}
-              onChange={(_, state) => setExpanded(state)}
-              sx={{ p: 0, flex: 1 }}
+            <Fade
+              in={true}
+              unmountOnExit
+              timeout={800}
+              onTransitionEnd={() => dispatch(setIsSimulationStreaming(false))}
             >
-              <AccordionMessageHeader
-                type={type}
-                template={template}
-                isExpanded={expanded}
-                onCancel={abortGenerating}
-              />
-
-              <AccordionDetails
-                sx={{
-                  mt: -4,
-                  p: { xs: "32px 8px 10px 8px", md: "32px 16px 12px 16px" },
-                  bgcolor: "surface.2",
-                  overflow: "hidden",
-                  borderRadius: "0px 16px 16px 16px",
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "8px",
-                }}
+              <Accordion
+                ref={accordionRef}
+                elevation={0}
+                expanded={expanded}
+                onChange={(_, state) => setExpanded(state)}
+                sx={{ p: 0, flex: 1 }}
               >
-                <Stack>
-                  <Typography
-                    width={{ xs: "70%", sm: "auto" }}
-                    borderRadius={"8px"}
-                    bgcolor={"primary.main"}
-                    p={"10px 8px 16px 16px"}
-                    color={"white"}
-                    lineHeight={"100%"}
-                    letterSpacing={"1px"}
-                    fontSize={"10px"}
-                    textTransform={"uppercase"}
-                    display={hasInputs ? "block" : "none"}
-                  >
-                    {`${getLabelText()} information.`}
-                  </Typography>
+                <AccordionMessageHeader
+                  type={type}
+                  template={template}
+                  isExpanded={expanded}
+                  onCancel={abortGenerating}
+                />
 
-                  <Stack
-                    mt={"-10px"}
-                    bgcolor={"surface.1"}
-                    borderRadius={"8px"}
-                    position={"relative"}
-                  >
-                    {type === "spark" && (
-                      <Stack
-                        padding={{ xs: "0px 8px", md: isGenerating ? "16px 0px 8px 64px" : "16px 0px 48px 64px" }}
-                        position={"relative"}
-                      >
-                        <Display templateData={template} />
-                      </Stack>
-                    )}
-                    {canDisplayForm && <Form messageType={type} />}
+                <AccordionDetails
+                  sx={{
+                    mt: -4,
+                    p: { xs: "32px 8px 10px 8px", md: "32px 16px 12px 16px" },
+                    bgcolor: "surface.2",
+                    overflow: "hidden",
+                    borderRadius: "0px 16px 16px 16px",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "8px",
+                  }}
+                >
+                  <Stack>
+                    <Typography
+                      width={{ xs: "70%", sm: "auto" }}
+                      borderRadius={"8px"}
+                      bgcolor={"primary.main"}
+                      p={"10px 8px 16px 16px"}
+                      color={"white"}
+                      lineHeight={"100%"}
+                      letterSpacing={"1px"}
+                      fontSize={"10px"}
+                      textTransform={"uppercase"}
+                      display={hasInputs ? "block" : "none"}
+                    >
+                      {`${getLabelText()} information.`}
+                    </Typography>
+
+                    <Stack
+                      mt={"-10px"}
+                      bgcolor={"surface.1"}
+                      borderRadius={"8px"}
+                      position={"relative"}
+                    >
+                      {type === "spark" && (
+                        <Stack
+                          padding={{ xs: "0px 8px", md: isGenerating ? "16px 0px 8px 64px" : "16px 0px 48px 64px" }}
+                          position={"relative"}
+                        >
+                          <Display templateData={template} />
+                        </Stack>
+                      )}
+                      {canDisplayForm && <Form messageType={type} />}
+                    </Stack>
                   </Stack>
-                </Stack>
-                {showGenerate && type === "form" && currentUser?.id && (
-                  <Stack
-                    direction={"row"}
-                    justifyContent={"end"}
-                    mr={3}
-                  >
-                    <RunButton
-                      title={`Run ${isAutomationPage ? "workflow" : "prompts"}`}
-                      onClick={onGenerate}
-                    />
-                  </Stack>
-                )}
-              </AccordionDetails>
-            </Accordion>
-          </Fade>
-        </Box>
+                  {showGenerate && type === "form" && currentUser?.id && (
+                    <Stack
+                      direction={"row"}
+                      justifyContent={"end"}
+                      mr={3}
+                    >
+                      <RunButton
+                        title={`Run ${isAutomationPage ? "workflow" : "prompts"}`}
+                        onClick={onGenerate}
+                      />
+                    </Stack>
+                  )}
+                </AccordionDetails>
+              </Accordion>
+            </Fade>
+          </Box>
+        )}
 
         {type === "spark" && !!selectedExecution?.prompt_executions?.length && expanded && (
           <Box
