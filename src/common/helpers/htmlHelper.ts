@@ -15,6 +15,14 @@ export const markdownToHTML = async (markdown: string) => {
   return htmlContent;
 };
 
+DOMPurify.addHook("afterSanitizeAttributes", function (node) {
+  if ("href" in node) {
+    node.setAttribute("target", "_blank");
+    node.setAttribute("rel", "noopener noreferrer");
+    node.setAttribute("class", "link");
+  }
+});
+
 export const sanitizeHTML = (html: string) => {
-  return DOMPurify.sanitize(html, { FORBID_TAGS: ["style", "a", "script"], FORBID_ATTR: ["href"] });
+  return DOMPurify.sanitize(html, { FORBID_TAGS: ["style", "iframe", "script"] });
 };

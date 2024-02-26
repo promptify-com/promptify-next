@@ -18,6 +18,11 @@ body {
   background-color: #fff;
 }
 
+.link {
+  text-decoration:none;
+  color:#725472;
+}
+
 .github-button {
   border: none;
   background: transparent;

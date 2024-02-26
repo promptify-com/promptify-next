@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import Stack from "@mui/material/Stack";
 import { useRouter } from "next/router";
 import { Layout } from "@/layout";
-import { ChatInterface } from "@/components/Prompt/Common/Chat/ChatInterface";
+import { ChatInterface } from "@/components/Automation/ChatInterface";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { ChatInput } from "@/components/Prompt/Common/Chat/ChatInput";
 import SigninButton from "@/components/common/buttons/SigninButton";
@@ -17,6 +17,7 @@ import type { Templates } from "@/core/api/dto/templates";
 import type { IPromptInput, PromptLiveResponse } from "@/common/types/prompt";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { ICredentialInput, INode, IWorkflow } from "@/components/Automation/types";
+import { oAuthTypeMapping } from "@/components/Automation/helpers";
 import { N8N_RESPONSE_REGEX } from "@/components/Automation/helpers";
 import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution";
 import { setGeneratedExecution } from "@/core/store/executionsSlice";
@@ -62,7 +63,9 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
       const { nodes } = selectedWorkflow.data;
       const credentialsInput = await extractCredentialsInputFromNodes(nodes);
 
-      createWorkflowIfNeeded(selectedWorkflow.id);
+      if (currentUser?.id) {
+        createWorkflowIfNeeded(selectedWorkflow.id);
+      }
 
       const inputs: IPromptInput[] = nodes
         .filter(node => node.type === "n8n-nodes-base.set")
@@ -85,20 +88,21 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
       return;
     }
     processData();
-  }, [selectedWorkflow, isWorkflowLoading]);
+  }, [selectedWorkflow, isWorkflowLoading, currentUser]);
 
   function prepareAndQueueMessages(credentialsInput: ICredentialInput[], nodes: INode[]) {
     const initialQueuedMessages: IMessage[] = [];
 
     const requiresAuthentication = nodes.some(node => node.parameters?.authentication);
+    const requiresOauth = nodes.some(node => oAuthTypeMapping[node.type!]);
 
     let areAllCredentialsStored = true;
-    if (requiresAuthentication) {
+    if (requiresAuthentication || requiresOauth) {
       areAllCredentialsStored = checkAllCredentialsStored(credentialsInput);
     }
-    dispatch(setAreCredentialsStored(requiresAuthentication ? areAllCredentialsStored : true));
+    dispatch(setAreCredentialsStored(areAllCredentialsStored));
 
-    if (requiresAuthentication && !areAllCredentialsStored) {
+    if ((requiresAuthentication || requiresOauth) && !areAllCredentialsStored) {
       const credMessage = createMessage({ type: "credentials", noHeader: true });
       initialQueuedMessages.push(credMessage);
     }

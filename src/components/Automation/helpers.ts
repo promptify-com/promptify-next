@@ -47,6 +47,11 @@ export const authTypeMapping: { [key: string]: string } = {
   // Add other mappings here if necessary
 };
 
+export const oAuthTypeMapping: { [key: string]: string } = {
+  "n8n-nodes-base.googleCalendar": "googleCalendarOAuth2Api",
+  "n8n-nodes-base.gmail": "gmailOAuth2",
+};
+
 export async function extractCredentialsInput(nodes: INode[] = []): Promise<ICredentialInput[]> {
   const credentialsInput: ICredentialInput[] = [];
   const creds = (
@@ -61,6 +66,36 @@ export async function extractCredentialsInput(nodes: INode[] = []): Promise<ICre
     if (node.credentials) {
       continue;
     }
+
+    if (oAuthTypeMapping[node.type!]) {
+      const authType = oAuthTypeMapping[node.type!];
+      if (authType && creds[authType]) {
+        const properties = [
+          {
+            displayName: "Client ID",
+            name: "clientId",
+            type: "string",
+            default: "",
+          },
+          {
+            displayName: "Client Secret",
+            name: "clientSecret",
+            type: "string",
+            typeOptions: {
+              password: true,
+            },
+            default: "",
+          },
+        ];
+        credentialsInput.push({
+          name: authType,
+          displayName: creds[authType].displayName,
+          properties,
+        });
+      }
+      continue;
+    }
+
     const parameters = node.parameters;
     if (parameters && parameters.authentication) {
       const authenticationType = parameters.authentication;
@@ -88,21 +123,23 @@ export const attachCredentialsToNode = (node: INode) => {
   if (node.type === "n8n-nodes-promptify.promptify") {
     return;
   }
-  const { parameters } = node;
+  const { parameters, type } = node;
 
-  if (parameters && parameters.authentication) {
+  if ((parameters && parameters.authentication) || oAuthTypeMapping[type]) {
     const authenticationType = parameters.authentication;
     const nodeCredentialType = parameters.nodeCredentialType;
 
     const authType =
       authTypeMapping[nodeCredentialType!] ||
       nodeCredentialType ||
-      authTypeMapping[authenticationType] ||
+      authTypeMapping[authenticationType!] ||
       authenticationType;
 
     const currentCredentials: ICredential[] = Storage.get("credentials") || [];
 
-    const credential = currentCredentials.find(cred => cred.type === authType);
+    const credential = oAuthTypeMapping[type]
+      ? currentCredentials.find(cred => cred.type.includes("OAuth2"))
+      : currentCredentials.find(cred => cred.type === authType);
 
     if (credential) {
       const { type, id, name } = credential;

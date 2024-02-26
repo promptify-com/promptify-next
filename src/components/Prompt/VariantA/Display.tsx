@@ -1,9 +1,7 @@
 import { useRef, useState, useMemo } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import South from "@mui/icons-material/South";
 import Typography from "@mui/material/Typography";
-import IconButton from "@mui/material/IconButton";
 import { Templates } from "@/core/api/dto/templates";
 import { ExecutionCard } from "./ExecutionCard";
 import { DisplayActions } from "./DisplayActions";
@@ -12,6 +10,7 @@ import { useAppSelector } from "@/hooks/useStore";
 import { SparkExportPopup } from "@/components/dialog/SparkExportPopup";
 import useScrollToBottom from "@/components/Prompt/Hooks/useScrollToBottom";
 import ExecutionFooter from "@/components/Prompt/Common/ExecutionFooter";
+import ScrollDownButton from "@/components/common/buttons/ScrollDownButton";
 
 interface Props {
   templateData: Templates;
@@ -140,25 +139,10 @@ export const Display: React.FC<Props> = ({ templateData }) => {
             />
           )}
           {showScrollDown && isGenerating && (
-            <IconButton
+            <ScrollDownButton
+              sticky
               onClick={scrollToBottom}
-              sx={{
-                height: "32px",
-                width: "32px",
-                position: "sticky",
-                left: "50%",
-                bottom: "30px",
-                zIndex: 999,
-                bgcolor: "surface.3",
-                boxShadow: "0px 4px 8px 3px #e1e2ece6, 0px 0px 4px 0px rgb(0 0 0 / 0%)",
-                border: " none",
-                ":hover": {
-                  bgcolor: "surface.5",
-                },
-              }}
-            >
-              <South sx={{ fontSize: 16 }} />
-            </IconButton>
+            />
           )}
         </Box>
       </Box>
