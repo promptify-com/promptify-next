@@ -121,7 +121,6 @@ export const ChatInterface = ({
               <Box
                 ml={{ xs: 0, md: !isExecutionShown ? "48px" : 0 }}
                 mb={2}
-                mt={{ xs: 0, md: msg.noHeader ? -2.5 : 0 }}
               >
                 <Form
                   onScrollToBottom={scrollToBottom}
