@@ -1,17 +1,20 @@
 import { useRef, Fragment } from "react";
 import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
+
 import { useAppSelector } from "@/hooks/useStore";
 import { getCurrentDateFormatted } from "@/common/helpers/timeManipulation";
-import AccordionMessage from "@/components/Prompt/VariantB/AccordionMessage/index";
+import AccordionMessage from "@/components/common/AccordionMessage";
 import useScrollToBottom from "@/components/Prompt/Hooks/useScrollToBottom";
 import TemplateDetailsCard from "@/components/Prompt/Common/TemplateDetailsCard";
+import { ExecutionMessage } from "@/components/Automation/ExecutionMessage";
+import { Message } from "@/components/Prompt/Common/Chat/Message";
+import RunButton from "@/components/Prompt/Common/RunButton";
+import ScrollDownButton from "@/components/common/buttons/ScrollDownButton";
+import AccordionContentAutomation from "@/components/common/AccordionMessage/AccordionContentAutomation";
+import Form from "@/components/Prompt/Common/Chat/Form";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { Templates } from "@/core/api/dto/templates";
-import { ExecutionMessage } from "@/components/Automation/ExecutionMessage";
-import RunButton from "@/components/Prompt/Common/RunButton";
-import { Message } from "@/components/Prompt/Common/Chat/Message";
-import ScrollDownButton from "@/components/common/buttons/ScrollDownButton";
 
 const currentDate = getCurrentDateFormatted();
 
@@ -96,11 +99,25 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, is
                 />
                 {showAccordionMessage(msg) && (
                   <AccordionMessage
-                    message={msg}
-                    template={template!}
-                    showGenerate={showGenerate}
-                    onGenerate={onGenerate}
-                  />
+                    messageType={msg.type}
+                    messageTimestamp={msg.createdAt}
+                    template={template}
+                  >
+                    <AccordionContentAutomation
+                      title={msg.type === "credentials" ? "CREDENTIALS information." : "WORKFLOW information."}
+                      onGenerate={onGenerate}
+                      showRunButton={Boolean(showGenerate && msg.type === "form" && currentUser?.id)}
+                    >
+                      <Stack
+                        mt={"-10px"}
+                        bgcolor={"surface.1"}
+                        borderRadius={"8px"}
+                        position={"relative"}
+                      >
+                        {msg.type === "form" && <Form messageType={msg.type} />}
+                      </Stack>
+                    </AccordionContentAutomation>
+                  </AccordionMessage>
                 )}
               </Fragment>
             ))
