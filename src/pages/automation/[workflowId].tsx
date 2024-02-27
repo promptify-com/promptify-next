@@ -21,14 +21,8 @@ import { oAuthTypeMapping } from "@/components/Automation/helpers";
 import { N8N_RESPONSE_REGEX } from "@/components/Automation/helpers";
 import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution";
 import { setGeneratedExecution } from "@/core/store/executionsSlice";
-import { ToastState, setToast } from "@/core/store/toastSlice";
-
-const errorToast: Omit<ToastState, "open"> = {
-  message: "Something went wrong, we could not generate what you asked, please try again.",
-  severity: "error",
-  duration: 6000,
-  position: { vertical: "bottom", horizontal: "right" },
-};
+import { setToast } from "@/core/store/toastSlice";
+import { executeErrorToast } from "@/components/Prompt/Utils";
 
 interface Props {
   workflow: IWorkflow;
@@ -147,7 +141,7 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
   };
 
   const failedExecutionHandler = () => {
-    dispatch(setToast(errorToast));
+    dispatch(setToast(executeErrorToast));
     dispatch(setGeneratedExecution(null));
   };
 

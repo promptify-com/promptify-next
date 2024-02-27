@@ -16,6 +16,7 @@ import { setToast } from "@/core/store/toastSlice";
 import type { PromptLiveResponse } from "@/common/types/prompt";
 import type { Templates } from "@/core/api/dto/templates";
 import { N8N_RESPONSE_REGEX } from "@/components/Automation/helpers";
+import { executeErrorToast } from "@/components/Prompt/Utils";
 
 interface IStreamExecution {
   id: number;
@@ -122,14 +123,7 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
             temp_title: streamExecution?.title,
           });
         } else if (res.status >= 400 && res.status < 500 && res.status !== 429) {
-          dispatch(
-            setToast({
-              message: "Something went wrong, we could not generate what you asked, please try again.",
-              severity: "error",
-              duration: 6000,
-              position: { vertical: "bottom", horizontal: "right" },
-            }),
-          );
+          dispatch(setToast(executeErrorToast));
         }
       },
       onmessage(msg) {
@@ -155,14 +149,7 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
           }
 
           if (message.includes("[ERROR]")) {
-            dispatch(
-              setToast({
-                message: "Something went wrong, we could not generate what you asked, please try again.",
-                severity: "error",
-                duration: 6000,
-                position: { vertical: "bottom", horizontal: "right" },
-              }),
-            );
+            dispatch(setToast(executeErrorToast));
             return;
           }
 
@@ -223,14 +210,7 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
       onerror(err) {
         setDisableChatInput(false);
         dispatch(setGeneratingStatus(false));
-        dispatch(
-          setToast({
-            message: "Something went wrong, we could not generate what you asked, please try again.",
-            severity: "error",
-            duration: 6000,
-            position: { vertical: "bottom", horizontal: "right" },
-          }),
-        );
+        dispatch(setToast(executeErrorToast));
         throw err; // rethrow to stop the operation
       },
       onclose() {
