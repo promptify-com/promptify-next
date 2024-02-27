@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { IPromptInput } from "@/common/types/prompt";
-import type { IAnswer } from "@/components/Prompt/Types/chat";
+import type { IAnswer, IMessage } from "@/components/Prompt/Types/chat";
 import type { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
 import type { ICredentialInput } from "@/components/Automation/types";
 
@@ -13,6 +13,7 @@ export interface ExecutionsProps {
   isSimulationStreaming: boolean;
   credentialsInput: ICredentialInput[];
   areCredentialsStored: boolean;
+  tmpMessages?: IMessage[];
 }
 
 const initialState: ExecutionsProps = {
@@ -23,6 +24,7 @@ const initialState: ExecutionsProps = {
   isSimulationStreaming: false,
   credentialsInput: [],
   areCredentialsStored: false,
+  tmpMessages: [],
 };
 
 export const chatSlice = createSlice({
@@ -53,6 +55,9 @@ export const chatSlice = createSlice({
     setAreCredentialsStored: (state, action: PayloadAction<boolean>) => {
       state.areCredentialsStored = action.payload;
     },
+    setTmpMessages: (state, action: PayloadAction<IMessage[]>) => {
+      state.tmpMessages = action.payload;
+    },
   },
 });
 
@@ -65,6 +70,7 @@ export const {
   setCredentialsInput,
   clearChatStates,
   setAreCredentialsStored,
+  setTmpMessages,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

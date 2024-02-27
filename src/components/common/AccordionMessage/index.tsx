@@ -13,7 +13,7 @@ import ClientOnly from "@/components/base/ClientOnly";
 import { timeAgo } from "@/common/helpers/timeManipulation";
 import FeedbackThumbs from "@/components/Prompt/Common/FeedbackThumbs";
 import type { Templates } from "@/core/api/dto/templates";
-import type { MessageType } from "@/components/Prompt/Types/chat";
+import type { IMessage, MessageType } from "@/components/Prompt/Types/chat";
 
 interface Props {
   messageType: MessageType;
@@ -21,6 +21,7 @@ interface Props {
   children: ReactNode;
   template: Templates;
   abortGenerating?: () => void;
+  messages?: IMessage[];
 }
 
 export default function AccordionMessage({
@@ -28,7 +29,7 @@ export default function AccordionMessage({
   messageTimestamp,
   children,
   template,
-
+  messages = [],
   abortGenerating,
 }: Props) {
   const dispatch = useAppDispatch();
@@ -91,6 +92,7 @@ export default function AccordionMessage({
                 template={template}
                 isExpanded={expanded}
                 onCancel={abortGenerating}
+                messages={messages}
               />
 
               <AccordionDetails

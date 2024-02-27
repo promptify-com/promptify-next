@@ -11,14 +11,16 @@ import { useAppSelector } from "@/hooks/useStore";
 import useTruncate from "@/hooks/useTruncate";
 import HeaderSparkActions from "@/components/common/AccordionMessage/Header/HeaderSparkActions";
 import type { ExecutionTemplatePopupType, Templates } from "@/core/api/dto/templates";
+import type { IMessage } from "@/components/Prompt/Types/chat";
 
 interface Props {
   template: Templates;
   isExpanded: boolean;
   onCancel?: () => void;
+  messages?: IMessage[];
 }
 
-function HeaderSpark({ template, isExpanded, onCancel }: Props) {
+function HeaderSpark({ template, isExpanded, onCancel, messages = [] }: Props) {
   const { truncate } = useTruncate();
 
   const isGenerating = useAppSelector(state => state.template.isGenerating);
@@ -134,6 +136,7 @@ function HeaderSpark({ template, isExpanded, onCancel }: Props) {
         openExecutionPopup={openExecutionPopup}
         setOpenExecutionPopup={setOpenExecutionPopup}
         updateTitle={setExecutionTitle}
+        messages={messages}
       />
     </Stack>
   );

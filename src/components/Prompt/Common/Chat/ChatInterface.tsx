@@ -102,6 +102,7 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
                   messageTimestamp={msg.createdAt}
                   template={template}
                   abortGenerating={onAbort}
+                  messages={messages}
                 >
                   <AccordionContentPrompt
                     title={isGenerating ? "Generation Result information." : "PROMPT Template information."}

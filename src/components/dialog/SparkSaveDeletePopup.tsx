@@ -8,15 +8,24 @@ import { useDeleteExecutionMutation, useUpdateExecutionMutation } from "@/core/a
 
 import { useAppDispatch } from "@/hooks/useStore";
 import { setGeneratedExecution, setSelectedExecution } from "@/core/store/executionsSlice";
+import { setTmpMessages } from "@/core/store/chatSlice";
+import type { IMessage } from "../Prompt/Types/chat";
 
 interface SparkSaveDeletePopupProps {
   type: ExecutionTemplatePopupType;
   onClose: () => void;
   activeExecution: Execution | null;
   onUpdate?: (execution: Execution) => void;
+  messages?: IMessage[];
 }
 
-export const SparkSaveDeletePopup = ({ type, activeExecution, onClose, onUpdate }: SparkSaveDeletePopupProps) => {
+export const SparkSaveDeletePopup = ({
+  type,
+  activeExecution,
+  onClose,
+  onUpdate,
+  messages = [],
+}: SparkSaveDeletePopupProps) => {
   const [updateExecution, { isError }] = useUpdateExecutionMutation();
   const [deleteExecution, { isError: isDeleteExecutionError }] = useDeleteExecutionMutation();
   const [executionTitle, setExecutionTitle] = useState("");
@@ -44,6 +53,7 @@ export const SparkSaveDeletePopup = ({ type, activeExecution, onClose, onUpdate 
       dispatch(setSelectedExecution(null));
       dispatch(setGeneratedExecution(null));
       deleteExecution(activeExecution.id);
+      dispatch(setTmpMessages(messages.filter(message => message.type !== "spark")));
 
       if (!isDeleteExecutionError) {
         onClose();

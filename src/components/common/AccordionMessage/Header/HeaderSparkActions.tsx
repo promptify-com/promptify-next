@@ -20,6 +20,7 @@ import { SparkExportPopup } from "@/components/dialog/SparkExportPopup";
 import { useDeleteExecutionFavoriteMutation, useExecutionFavoriteMutation } from "@/core/api/executions";
 import { setGeneratedExecution } from "@/core/store/executionsSlice";
 import type { ExecutionTemplatePopupType, Templates } from "@/core/api/dto/templates";
+import type { IMessage } from "@/components/Prompt/Types/chat";
 
 interface Props {
   template: Templates;
@@ -28,6 +29,7 @@ interface Props {
   updateTitle: Dispatch<SetStateAction<string | undefined>>;
   openExecutionPopup: ExecutionTemplatePopupType;
   setOpenExecutionPopup: Dispatch<SetStateAction<ExecutionTemplatePopupType>>;
+  messages?: IMessage[];
 }
 
 function HeaderSparkActions({
@@ -37,6 +39,7 @@ function HeaderSparkActions({
   updateTitle,
   openExecutionPopup,
   setOpenExecutionPopup,
+  messages = [],
 }: Props) {
   const dispatch = useAppDispatch();
 
@@ -229,6 +232,7 @@ function HeaderSparkActions({
                       onClick={e => {
                         e.stopPropagation();
                         setOpenExecutionPopup("delete");
+                        // dispatch(setTmpMessages(messages.filter(message => message.type !== "spark")));
                       }}
                       sx={{
                         border: "none",
@@ -297,6 +301,7 @@ function HeaderSparkActions({
           activeExecution={selectedExecution}
           onClose={() => setOpenExecutionPopup(null)}
           onUpdate={execution => updateTitle(execution.title)}
+          messages={messages}
         />
       )}
 

@@ -5,16 +5,17 @@ import HeaderCreds from "@/components/common/AccordionMessage/Header/HeaderCreds
 import HeaderSpark from "@/components/common/AccordionMessage/Header/HeaderSpark";
 import useVariant from "@/components/Prompt/Hooks/useVariant";
 import type { Templates } from "@/core/api/dto/templates";
-import type { MessageType } from "@/components/Prompt/Types/chat";
+import type { IMessage, MessageType } from "@/components/Prompt/Types/chat";
 
 interface Props {
   template: Templates;
   isExpanded: boolean;
   onCancel?: () => void;
   type: MessageType;
+  messages?: IMessage[];
 }
 
-function AccordionMessageHeader({ template, type, isExpanded, onCancel }: Props) {
+function AccordionMessageHeader({ template, type, isExpanded, onCancel, messages = [] }: Props) {
   const { isAutomationPage } = useVariant();
 
   const RenderAccordionSummary = () => {
@@ -32,6 +33,7 @@ function AccordionMessageHeader({ template, type, isExpanded, onCancel }: Props)
             template={template}
             isExpanded={isExpanded}
             onCancel={onCancel}
+            messages={messages}
           />
         );
 
