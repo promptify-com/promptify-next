@@ -14,9 +14,9 @@ import useUploadPromptFiles from "@/hooks/useUploadPromptFiles";
 import { setAnswers } from "@/core/store/chatSlice";
 import { setToast } from "@/core/store/toastSlice";
 import type { PromptLiveResponse } from "@/common/types/prompt";
-import type { ResPrompt } from "@/core/api/dto/prompts";
 import type { Templates } from "@/core/api/dto/templates";
 import { N8N_RESPONSE_REGEX } from "@/components/Automation/helpers";
+import { EXECUTE_ERROR_TOAST } from "@/components/Prompt/Constants";
 
 interface IStreamExecution {
   id: number;
@@ -123,14 +123,7 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
             temp_title: streamExecution?.title,
           });
         } else if (res.status >= 400 && res.status < 500 && res.status !== 429) {
-          dispatch(
-            setToast({
-              message: "Something went wrong. Please try again later",
-              severity: "error",
-              duration: 6000,
-              position: { vertical: "bottom", horizontal: "right" },
-            }),
-          );
+          dispatch(setToast(EXECUTE_ERROR_TOAST));
         }
       },
       onmessage(msg) {
@@ -155,6 +148,11 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
             }));
           }
 
+          if (message.includes("[ERROR]")) {
+            dispatch(setToast(EXECUTE_ERROR_TOAST));
+            return;
+          }
+
           if (msg.event === "infer" && msg.data) {
             if (message) {
               setGeneratingResponse(prevState => {
@@ -174,18 +172,6 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
               });
             }
           } else {
-            if (message.includes("[ERROR]")) {
-              dispatch(
-                setToast({
-                  message: "Something went wrong during the execution of this prompt",
-                  severity: "error",
-                  duration: 6000,
-                  position: { vertical: "bottom", horizontal: "right" },
-                }),
-              );
-              return;
-            }
-
             setGeneratingResponse(prevState => {
               const newState = { ...prevState, data: [...prevState.data] };
               const activePromptIndex = newState.data.findIndex(promptData => promptData.prompt === +prompt);
@@ -224,14 +210,7 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
       onerror(err) {
         setDisableChatInput(false);
         dispatch(setGeneratingStatus(false));
-        dispatch(
-          setToast({
-            message: "Something went wrong. Please try again later",
-            severity: "error",
-            duration: 6000,
-            position: { vertical: "bottom", horizontal: "right" },
-          }),
-        );
+        dispatch(setToast(EXECUTE_ERROR_TOAST));
         throw err; // rethrow to stop the operation
       },
       onclose() {

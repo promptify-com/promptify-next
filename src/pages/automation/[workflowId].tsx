@@ -21,6 +21,8 @@ import { oAuthTypeMapping } from "@/components/Automation/helpers";
 import { N8N_RESPONSE_REGEX } from "@/components/Automation/helpers";
 import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution";
 import { setGeneratedExecution } from "@/core/store/executionsSlice";
+import { setToast } from "@/core/store/toastSlice";
+import { EXECUTE_ERROR_TOAST } from "@/components/Prompt/Constants";
 
 interface Props {
   workflow: IWorkflow;
@@ -117,17 +119,30 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
       setIsValidatingAnswer(true);
       const response = await sendMessageAPI();
       if (response && typeof response === "string") {
-        const regex = new RegExp(N8N_RESPONSE_REGEX);
-        if (regex.test(response)) {
-          streamExecutionHandler(response);
+        if (response.toLowerCase().includes("[error")) {
+          failedExecutionHandler();
         } else {
-          messageAnswersForm(response, "html");
+          const match = new RegExp(N8N_RESPONSE_REGEX).exec(response);
+
+          if (!match) {
+            messageAnswersForm(response, "html");
+          } else if (!match[2] || match[2] === "undefined") {
+            failedExecutionHandler();
+          } else {
+            streamExecutionHandler(response);
+          }
         }
       }
     } catch (error) {
-      messageAnswersForm("Something went wrong when executing this GPT.");
+      failedExecutionHandler();
+    } finally {
+      setIsValidatingAnswer(false);
     }
-    setIsValidatingAnswer(false);
+  };
+
+  const failedExecutionHandler = () => {
+    dispatch(setToast(EXECUTE_ERROR_TOAST));
+    dispatch(setGeneratedExecution(null));
   };
 
   const messageGeneratedExecution = (execution: PromptLiveResponse) => {

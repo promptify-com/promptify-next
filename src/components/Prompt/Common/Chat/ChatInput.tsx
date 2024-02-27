@@ -48,7 +48,7 @@ export const ChatInput = ({ onSubmit, disabled, isValidating, onGenerate, showGe
       {isValidating && (
         <Stack
           direction={"row"}
-          gap={2}
+          gap={1}
           alignItems={"center"}
         >
           <ProgressLogo size="small" />
