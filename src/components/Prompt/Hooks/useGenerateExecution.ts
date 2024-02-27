@@ -154,20 +154,20 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
             }));
           }
 
+          if (message.includes("[ERROR]")) {
+            dispatch(
+              setToast({
+                message: "Something went wrong, we could not generate what you asked, please try again.",
+                severity: "error",
+                duration: 6000,
+                position: { vertical: "bottom", horizontal: "right" },
+              }),
+            );
+            return;
+          }
+
           if (msg.event === "infer" && msg.data) {
             if (message) {
-              if (message.includes("[ERROR]")) {
-                dispatch(
-                  setToast({
-                    message: "Something went wrong, we could not generate what you asked, please try again.",
-                    severity: "error",
-                    duration: 6000,
-                    position: { vertical: "bottom", horizontal: "right" },
-                  }),
-                );
-                return;
-              }
-
               setGeneratingResponse(prevState => {
                 const newState = { ...prevState, data: [...prevState.data] };
                 const activePromptIndex = newState.data.findIndex(promptData => promptData.prompt === +prompt);
