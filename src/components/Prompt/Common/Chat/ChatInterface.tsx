@@ -9,7 +9,7 @@ import useScrollToBottom from "@/components/Prompt/Hooks/useScrollToBottom";
 import TemplateDetailsCard from "@/components/Prompt/Common/TemplateDetailsCard";
 import RunButton from "@/components/Prompt/Common/RunButton";
 import ScrollDownButton from "@/components/common/buttons/ScrollDownButton";
-import AccordionContentPrompt from "@/components/common/AccordionMessage/AccordionContentPrompt";
+import AccordionContentPrompt from "@/components/common/AccordionMessage/AccordionDetails/AccordionContentPrompt";
 import { Display } from "@/components/Prompt/Common/Display";
 import Form from "@/components/Prompt/Common/Chat/Form";
 import { Message } from "@/components/Prompt/Common/Chat/Message";

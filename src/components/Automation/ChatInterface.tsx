@@ -11,7 +11,7 @@ import { ExecutionMessage } from "@/components/Automation/ExecutionMessage";
 import { Message } from "@/components/Prompt/Common/Chat/Message";
 import RunButton from "@/components/Prompt/Common/RunButton";
 import ScrollDownButton from "@/components/common/buttons/ScrollDownButton";
-import AccordionContentAutomation from "@/components/common/AccordionMessage/AccordionContentAutomation";
+import AccordionContentAutomation from "@/components/common/AccordionMessage/AccordionDetails/AccordionContentAutomation";
 import Form from "@/components/Prompt/Common/Chat/Form";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import type { Templates } from "@/core/api/dto/templates";
@@ -114,7 +114,7 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, is
                         borderRadius={"8px"}
                         position={"relative"}
                       >
-                        {msg.type === "form" && <Form messageType={msg.type} />}
+                        {(msg.type === "form" || msg.type === "credentials") && <Form messageType={msg.type} />}
                       </Stack>
                     </AccordionContentAutomation>
                   </AccordionMessage>

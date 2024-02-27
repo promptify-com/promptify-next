@@ -8,7 +8,7 @@ import Fade from "@mui/material/Fade";
 
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setIsSimulationStreaming } from "@/core/store/chatSlice";
-import AccordionMessageHeader from "@/components/common/AccordionMessage/AccordionMessageHeader";
+import AccordionMessageHeader from "@/components/common/AccordionMessage/Header";
 import ClientOnly from "@/components/base/ClientOnly";
 import { timeAgo } from "@/common/helpers/timeManipulation";
 import FeedbackThumbs from "@/components/Prompt/Common/FeedbackThumbs";
@@ -110,8 +110,6 @@ export default function AccordionMessage({
             </Accordion>
           </Fade>
         </Box>
-
-        {/* TO BE MOVED  */}
 
         {messageType === "spark" && !!selectedExecution?.prompt_executions?.length && expanded && (
           <Box
