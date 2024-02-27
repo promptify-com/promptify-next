@@ -101,9 +101,10 @@ const useWorkflow = (workflow: IWorkflow) => {
     const _storedWorkflows = Object.values(storedWorkflows)?.length
       ? storedWorkflows
       : ((Storage.get("workflows") || {}) as IStoredWorkflows);
-    const { workflow, webhookPath } = _storedWorkflows[workflowId];
 
-    if (workflow) {
+    if ("workflow" in _storedWorkflows[workflowId]) {
+      const webhookPath = _storedWorkflows[workflowId].webhookPath;
+
       storedWorkflows[workflowId] = { webhookPath };
       Storage.set("workflows", JSON.stringify(storedWorkflows));
     }
