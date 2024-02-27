@@ -21,6 +21,14 @@ import { oAuthTypeMapping } from "@/components/Automation/helpers";
 import { N8N_RESPONSE_REGEX } from "@/components/Automation/helpers";
 import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution";
 import { setGeneratedExecution } from "@/core/store/executionsSlice";
+import { ToastState, setToast } from "@/core/store/toastSlice";
+
+const errorToast: Omit<ToastState, "open"> = {
+  message: "Something went wrong, we could not generate what you asked, please try again.",
+  severity: "error",
+  duration: 6000,
+  position: { vertical: "bottom", horizontal: "right" },
+};
 
 interface Props {
   workflow: IWorkflow;
@@ -117,17 +125,31 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
       setIsValidatingAnswer(true);
       const response = await sendMessageAPI();
       if (response && typeof response === "string") {
-        const regex = new RegExp(N8N_RESPONSE_REGEX);
-        if (regex.test(response)) {
-          streamExecutionHandler(response);
+        if (response.includes("[ERROR]")) {
+          failedExecutionHandler();
         } else {
-          messageAnswersForm(response, "html");
+          const match = new RegExp(N8N_RESPONSE_REGEX).exec(response);
+
+          console.log(match);
+          if (!match) {
+            messageAnswersForm(response, "html");
+          } else if (!match[2] || match[2] === "undefined") {
+            failedExecutionHandler();
+          } else {
+            streamExecutionHandler(response);
+          }
         }
       }
     } catch (error) {
       messageAnswersForm("Something went wrong when executing this GPT.");
+    } finally {
+      setIsValidatingAnswer(false);
     }
-    setIsValidatingAnswer(false);
+  };
+
+  const failedExecutionHandler = () => {
+    dispatch(setToast(errorToast));
+    dispatch(setGeneratedExecution(null));
   };
 
   const messageGeneratedExecution = (execution: PromptLiveResponse) => {

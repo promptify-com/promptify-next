@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-interface ToastState {
+export interface ToastState {
   open: boolean;
   message: string;
   severity: "error" | "warning" | "info" | "success";
