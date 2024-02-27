@@ -125,7 +125,7 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
       setIsValidatingAnswer(true);
       const response = await sendMessageAPI();
       if (response && typeof response === "string") {
-        if (response.includes("[ERROR]")) {
+        if (response.toLowerCase().includes("[error")) {
           failedExecutionHandler();
         } else {
           const match = new RegExp(N8N_RESPONSE_REGEX).exec(response);
