@@ -93,12 +93,12 @@ function HeaderForm({ title, type, isExpanded }: Props) {
               opacity: 0.7,
             }}
           >
-            {type === "form" && "About 360s generation time"}
+            About 360s generation time
           </Typography>
         </Stack>
       </Stack>
 
-      {type === "form" && isExpanded && (
+      {isExpanded && (
         <Stack
           direction={"row"}
           gap={1}

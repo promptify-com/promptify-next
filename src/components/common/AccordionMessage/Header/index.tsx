@@ -15,39 +15,38 @@ interface Props {
   messages?: IMessage[];
 }
 
-function AccordionMessageHeader({ template, type, isExpanded, onCancel, messages = [] }: Props) {
+const RenderAccordionSummary = ({ template, onCancel, messages, type, isExpanded }: Props) => {
   const { isAutomationPage } = useVariant();
+  switch (type) {
+    case "credentials":
+      return (
+        <HeaderCreds
+          title="New Credentials"
+          isExpanded={isExpanded}
+        />
+      );
+    case "spark":
+      return (
+        <HeaderSpark
+          template={template}
+          isExpanded={isExpanded}
+          onCancel={onCancel}
+          messages={messages}
+        />
+      );
 
-  const RenderAccordionSummary = () => {
-    switch (type) {
-      case "credentials":
-        return (
-          <HeaderCreds
-            title="New Credentials"
-            isExpanded={isExpanded}
-          />
-        );
-      case "spark":
-        return (
-          <HeaderSpark
-            template={template}
-            isExpanded={isExpanded}
-            onCancel={onCancel}
-            messages={messages}
-          />
-        );
+    default:
+      return (
+        <HeaderForm
+          title={isAutomationPage ? "New Execution" : "New Prompt"}
+          type={type}
+          isExpanded={isExpanded}
+        />
+      );
+  }
+};
 
-      default:
-        return (
-          <HeaderForm
-            title={isAutomationPage ? "New Execution" : "New Prompt"}
-            type={type}
-            isExpanded={isExpanded}
-          />
-        );
-    }
-  };
-
+function AccordionMessageHeader({ template, onCancel, messages, type, isExpanded }: Props) {
   return (
     <AccordionSummary
       sx={{
@@ -56,7 +55,13 @@ function AccordionMessageHeader({ template, type, isExpanded, onCancel, messages
         borderRadius: "0px 16px 16px 16px",
       }}
     >
-      <RenderAccordionSummary />
+      <RenderAccordionSummary
+        template={template}
+        type={type}
+        isExpanded={isExpanded}
+        onCancel={onCancel}
+        messages={messages}
+      />
     </AccordionSummary>
   );
 }
