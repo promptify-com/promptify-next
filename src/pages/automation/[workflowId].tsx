@@ -22,7 +22,7 @@ import { N8N_RESPONSE_REGEX } from "@/components/Automation/helpers";
 import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution";
 import { setGeneratedExecution } from "@/core/store/executionsSlice";
 import { setToast } from "@/core/store/toastSlice";
-import { executeErrorToast } from "@/components/Prompt/Utils";
+import { EXECUTE_ERROR_TOAST } from "@/components/Prompt/Constants";
 
 interface Props {
   workflow: IWorkflow;
@@ -141,7 +141,7 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
   };
 
   const failedExecutionHandler = () => {
-    dispatch(setToast(executeErrorToast));
+    dispatch(setToast(EXECUTE_ERROR_TOAST));
     dispatch(setGeneratedExecution(null));
   };
 

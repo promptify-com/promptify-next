@@ -16,7 +16,7 @@ import { setToast } from "@/core/store/toastSlice";
 import type { PromptLiveResponse } from "@/common/types/prompt";
 import type { Templates } from "@/core/api/dto/templates";
 import { N8N_RESPONSE_REGEX } from "@/components/Automation/helpers";
-import { executeErrorToast } from "@/components/Prompt/Utils";
+import { EXECUTE_ERROR_TOAST } from "@/components/Prompt/Constants";
 
 interface IStreamExecution {
   id: number;
@@ -123,7 +123,7 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
             temp_title: streamExecution?.title,
           });
         } else if (res.status >= 400 && res.status < 500 && res.status !== 429) {
-          dispatch(setToast(executeErrorToast));
+          dispatch(setToast(EXECUTE_ERROR_TOAST));
         }
       },
       onmessage(msg) {
@@ -149,7 +149,7 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
           }
 
           if (message.includes("[ERROR]")) {
-            dispatch(setToast(executeErrorToast));
+            dispatch(setToast(EXECUTE_ERROR_TOAST));
             return;
           }
 
@@ -210,7 +210,7 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
       onerror(err) {
         setDisableChatInput(false);
         dispatch(setGeneratingStatus(false));
-        dispatch(setToast(executeErrorToast));
+        dispatch(setToast(EXECUTE_ERROR_TOAST));
         throw err; // rethrow to stop the operation
       },
       onclose() {
