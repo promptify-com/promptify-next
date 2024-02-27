@@ -16,7 +16,6 @@ import { setToast } from "@/core/store/toastSlice";
 import type { PromptLiveResponse } from "@/common/types/prompt";
 import type { Templates } from "@/core/api/dto/templates";
 import { N8N_RESPONSE_REGEX } from "@/components/Automation/helpers";
-import { MessageType } from "@/components/Prompt/Types/chat";
 
 interface IStreamExecution {
   id: number;
@@ -25,7 +24,7 @@ interface IStreamExecution {
 
 interface Props {
   template?: Templates;
-  messageAnswersForm: (message: string, type?: MessageType) => void;
+  messageAnswersForm: (message: string) => void;
 }
 const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
   const token = useToken();
@@ -157,6 +156,18 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
 
           if (msg.event === "infer" && msg.data) {
             if (message) {
+              if (message.includes("[ERROR]")) {
+                dispatch(
+                  setToast({
+                    message: "Something went wrong, we could not generate what you asked, please try again.",
+                    severity: "error",
+                    duration: 6000,
+                    position: { vertical: "bottom", horizontal: "right" },
+                  }),
+                );
+                return;
+              }
+
               setGeneratingResponse(prevState => {
                 const newState = { ...prevState, data: [...prevState.data] };
                 const activePromptIndex = newState.data.findIndex(promptData => promptData.prompt === +prompt);
@@ -174,18 +185,6 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
               });
             }
           } else {
-            if (message.includes("[ERROR]")) {
-              dispatch(
-                setToast({
-                  message: "Something went wrong, we could not generate what you asked, please try again.",
-                  severity: "error",
-                  duration: 6000,
-                  position: { vertical: "bottom", horizontal: "right" },
-                }),
-              );
-              return;
-            }
-
             setGeneratingResponse(prevState => {
               const newState = { ...prevState, data: [...prevState.data] };
               const activePromptIndex = newState.data.findIndex(promptData => promptData.prompt === +prompt);

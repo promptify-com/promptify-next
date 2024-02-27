@@ -130,7 +130,6 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
         } else {
           const match = new RegExp(N8N_RESPONSE_REGEX).exec(response);
 
-          console.log(match);
           if (!match) {
             messageAnswersForm(response, "html");
           } else if (!match[2] || match[2] === "undefined") {
@@ -141,7 +140,7 @@ export default function SingleWorkflow({ workflow = {} as IWorkflow }: Props) {
         }
       }
     } catch (error) {
-      messageAnswersForm("Something went wrong when executing this GPT.");
+      failedExecutionHandler();
     } finally {
       setIsValidatingAnswer(false);
     }
