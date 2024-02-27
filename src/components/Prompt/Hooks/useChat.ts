@@ -33,7 +33,7 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
   const { isVariantA, isVariantB, isAutomationPage } = useVariant();
 
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const { isSimulationStreaming, inputs, answers, paramsValues } = useAppSelector(state => state.chat);
+  const { isSimulationStreaming, inputs, answers, paramsValues, tmpMessages } = useAppSelector(state => state.chat);
   const { selectedExecution, generatedExecution, repeatedExecution, sparkHashQueryParam } = useAppSelector(
     state => state.executions,
   );
@@ -334,6 +334,12 @@ function useChat({ questionPrefixContent, initialMessageTitle }: Props) {
       setShowGenerateButton(false);
     }
   }, [answers, inputs]);
+
+  useEffect(() => {
+    if (Array.isArray(tmpMessages)) {
+      setMessages(tmpMessages);
+    }
+  }, [tmpMessages]);
 
   const handleSignIn = () => {
     storeAnswers(answers);

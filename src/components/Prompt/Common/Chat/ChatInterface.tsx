@@ -99,6 +99,7 @@ export const ChatInterface = ({ template, messages, onGenerate, showGenerate, on
                   onGenerate={onGenerate}
                   showGenerate={showGenerate}
                   abortGenerating={onAbort}
+                  messages={msg.type === "spark" ? messages : []}
                 />
               )}
             </Fragment>

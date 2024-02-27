@@ -24,9 +24,17 @@ interface Props {
   onGenerate: () => void;
   showGenerate: boolean;
   abortGenerating?: () => void;
+  messages?: IMessage[];
 }
 
-export default function AccordionMessage({ message, template, onGenerate, showGenerate, abortGenerating }: Props) {
+export default function AccordionMessage({
+  message,
+  template,
+  onGenerate,
+  showGenerate,
+  abortGenerating,
+  messages,
+}: Props) {
   const dispatch = useAppDispatch();
   const { isAutomationPage } = useVariant();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
@@ -108,6 +116,7 @@ export default function AccordionMessage({ message, template, onGenerate, showGe
                 template={template}
                 isExpanded={expanded}
                 onCancel={abortGenerating}
+                messages={messages}
               />
 
               <AccordionDetails

@@ -26,20 +26,21 @@ import { SparkExportPopup } from "@/components/dialog/SparkExportPopup";
 import { setGeneratingStatus, setShowPromptsView } from "@/core/store/templatesSlice";
 import { setGeneratedExecution } from "@/core/store/executionsSlice";
 import useTruncate from "@/hooks/useTruncate";
-import { setAnswers } from "@/core/store/chatSlice";
+import { setAnswers, setTmpMessages } from "@/core/store/chatSlice";
 import AvatarWithInitials from "@/components/Prompt/Common/AvatarWithInitials";
 import useVariant from "@/components/Prompt/Hooks/useVariant";
 import type { ExecutionTemplatePopupType, Templates } from "@/core/api/dto/templates";
-import type { MessageType } from "@/components/Prompt/Types/chat";
+import type { IMessage, MessageType } from "@/components/Prompt/Types/chat";
 
 interface Props {
   template: Templates;
   isExpanded: boolean;
   onCancel?: () => void;
   type: MessageType;
+  messages?: IMessage[];
 }
 
-function AccordionMessageHeader({ template, type, isExpanded, onCancel }: Props) {
+function AccordionMessageHeader({ template, type, isExpanded, onCancel, messages = [] }: Props) {
   const currentUser = useAppSelector(state => state.user.currentUser);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const dispatch = useAppDispatch();
@@ -428,6 +429,7 @@ function AccordionMessageHeader({ template, type, isExpanded, onCancel }: Props)
                             onClick={e => {
                               e.stopPropagation();
                               setExecutionPopup("delete");
+                              dispatch(setTmpMessages(messages.filter(message => message.type !== "spark")));
                             }}
                             sx={{
                               border: "none",
