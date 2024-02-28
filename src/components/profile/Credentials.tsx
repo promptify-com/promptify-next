@@ -33,9 +33,16 @@ function Credentials() {
   const handleDelete = async () => {
     if (!selectedCredential) return;
 
-    await deleteCredential(selectedCredential.id);
+    try {
+      await deleteCredential(selectedCredential.id);
+    } catch (_) {
+      dispatch(setToast({ message: "Something went wrong please try again", severity: "error" }));
+      return;
+    } finally {
+      setSelectedCredential(null);
+    }
+
     removeCredential(selectedCredential.id);
-    setSelectedCredential(null);
     dispatch(setToast({ message: "Credential was successfully deleted", severity: "info" }));
   };
 
