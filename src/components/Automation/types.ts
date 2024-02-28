@@ -121,9 +121,9 @@ export interface CreateCredentialPayload {
 }
 
 export interface ICredential {
+  id: string;
   name: string;
   type: string;
-  id: string;
   createdAt: string;
   updatedAt: string;
 }
