@@ -14,6 +14,7 @@ export interface ExecutionsProps {
   credentialsInput: ICredentialInput[];
   areCredentialsStored: boolean;
   tmpMessages?: IMessage[];
+  value: string;
 }
 
 const initialState: ExecutionsProps = {
@@ -25,6 +26,7 @@ const initialState: ExecutionsProps = {
   credentialsInput: [],
   areCredentialsStored: false,
   tmpMessages: [],
+  value: "",
 };
 
 export const chatSlice = createSlice({
@@ -58,6 +60,9 @@ export const chatSlice = createSlice({
     setTmpMessages: (state, action: PayloadAction<IMessage[]>) => {
       state.tmpMessages = action.payload;
     },
+    setValue: (state, action: PayloadAction<string>) => {
+      state.value = action.payload;
+    },
   },
 });
 
@@ -71,6 +76,7 @@ export const {
   clearChatStates,
   setAreCredentialsStored,
   setTmpMessages,
+  setValue,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

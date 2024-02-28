@@ -18,17 +18,7 @@ import { getContentBySectioName } from "@/hooks/api/cms";
 import TemplatePage from "@/components/Prompt";
 import { GetServerSideProps } from "next/types";
 import { SEO_DESCRIPTION, SEO_TITLE } from "@/common/constants";
-
-interface IMUDynamicColorsThemeColor {
-  light: {
-    primary: string;
-    secondary: string;
-    error: string;
-    background: string;
-    surface: string;
-    surfaceVariant: string;
-  };
-}
+import { IMUDynamicColorsThemeColor } from "@/core/api/theme";
 
 interface TemplateProps {
   hashedExecution: TemplatesExecutions | null;
