@@ -1,28 +1,27 @@
 import { ReactNode } from "react";
 import Tune from "@mui/icons-material/Tune";
-import SettingsOutlined from "@mui/icons-material/SettingsOutlined";
 import Search from "@mui/icons-material/Search";
-import RocketLaunchOutlined from "@mui/icons-material/RocketLaunchOutlined";
 import MenuBookRounded from "@mui/icons-material/MenuBookRounded";
 import InfoOutlined from "@mui/icons-material/InfoOutlined";
 import HomeRounded from "@mui/icons-material/HomeRounded";
 import ChatBubbleOutline from "@mui/icons-material/ChatBubbleOutline";
-import AutoAwesomeOutlined from "@mui/icons-material/AutoAwesomeOutlined";
 import AutoAwesome from "@mui/icons-material/AutoAwesome";
 import Api from "@mui/icons-material/Api";
-import { Prompt } from "@/assets/icons/Prompt";
 import { TemplateStatus } from "@/core/api/dto/templates";
 import { InputType } from "@/common/types/prompt";
 import { DeploymentStatus } from "../types/deployments";
 import NoteStackIcon from "@/assets/icons/NoteStackIcon";
 import ExtensionSettingsIcon from "@/assets/icons/ExtensionSettingsIcon";
 import { Link } from "@/components/Prompt/Types";
+import AccountCircleOutlined from "@mui/icons-material/AccountCircleOutlined";
+import AddCircleOutline from "@mui/icons-material/AddCircleOutline";
 
 export interface MenuType {
   id: number;
   icon: ReactNode;
   name: string;
   href: string;
+  gap?: boolean;
 }
 
 export const BLOG_URL = "https://blog.promptify.com/";
@@ -30,27 +29,22 @@ export const BLOG_URL = "https://blog.promptify.com/";
 export const ProfileMenuItems: MenuType[] = [
   {
     id: 1,
-    icon: <AutoAwesomeOutlined />,
-    href: "/sparks",
-    name: "My works",
+    icon: <AccountCircleOutlined />,
+    href: "/profile",
+    name: "My account",
+    gap: true,
   },
   {
     id: 2,
-    icon: <Prompt />,
+    icon: <NoteStackIcon />,
     href: "/profile/#my-templates",
-    name: "My Templates",
+    name: "My prompts",
   },
   {
     id: 3,
-    icon: <RocketLaunchOutlined />,
-    href: "/deployments",
-    name: "My Deployments",
-  },
-  {
-    id: 4,
-    icon: <SettingsOutlined />,
-    href: "/profile",
-    name: "Settings",
+    icon: <AddCircleOutline />,
+    href: "#",
+    name: "Add new prompt",
   },
 ];
 

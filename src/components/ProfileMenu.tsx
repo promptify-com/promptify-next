@@ -97,6 +97,8 @@ export const ProfileMenu = () => {
                     flexDirection: "column",
                     justifyContent: "center",
                     alignItems: "center",
+                    p: "16px",
+                    gap: 2,
                   }}
                 >
                   <Grid
@@ -107,7 +109,6 @@ export const ProfileMenu = () => {
                       alignContent: "center",
                       justifyContent: "center",
                       alignItems: "center",
-                      py: "24px",
                       gap: "8px",
                     }}
                   >
@@ -164,7 +165,7 @@ export const ProfileMenu = () => {
                   </Grid>
                   <MenuList
                     autoFocusItem={false}
-                    sx={{ width: "100%" }}
+                    sx={{ width: "100%", p: 0 }}
                   >
                     {ProfileMenuItemsFiltered.map(item => (
                       <MenuItem
