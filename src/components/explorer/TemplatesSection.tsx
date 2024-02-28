@@ -162,7 +162,7 @@ export const TemplatesSection = forwardRef<HTMLDivElement, TemplatesSectionProps
   ref,
 ) {
   const isNotLoading = !isLoading && !templateLoading;
-  const isLatestTemplates = type === "myLatestExecutions";
+  const isLatestTemplates = ["isLatestTemplates", "myLatestExecutions"].includes(type!);
   const isPopularTemplates = type === "popularTemplates";
 
   if (isNotLoading && !templates?.length) {
