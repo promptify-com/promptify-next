@@ -6,15 +6,14 @@ import { formatDate } from "@/common/helpers/timeManipulation";
 import useCredentials from "@/components/Automation/Hooks/useCredentials";
 import type { ICredential } from "@/components/Automation/types";
 import { useDeleteCredentialMutation } from "@/core/api/workflows";
-import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
 import IconButton from "@mui/material/IconButton";
 import Delete from "@mui/icons-material/Delete";
+import { DeleteDialog } from "@/components/dialog/DeleteDialog";
+import { useAppDispatch } from "@/hooks/useStore";
+import { setToast } from "@/core/store/toastSlice";
 
 function Credentials() {
+  const dispatch = useAppDispatch();
   const [selectedCredential, setSelectedCredential] = useState<ICredential | null>(null);
   const [deleteCredential] = useDeleteCredentialMutation();
 
@@ -37,6 +36,7 @@ function Credentials() {
     await deleteCredential(selectedCredential.id);
     removeCredential(selectedCredential.id);
     setSelectedCredential(null);
+    dispatch(setToast({ message: "Credential was successfully deleted", severity: "info" }));
   };
 
   if (!credentials.length) {
@@ -146,39 +146,12 @@ function Credentials() {
         </Box>
       ))}
       {selectedCredential?.id && (
-        <Dialog
-          open
-          disableScrollLock={true}
+        <DeleteDialog
+          open={true}
+          dialogContentText={`Are you sure you want to remove ${selectedCredential.name}?`}
           onClose={() => setSelectedCredential(null)}
-        >
-          <DialogContent>
-            <DialogContentText>
-              Are you sure you want to remove <b>{selectedCredential.name}</b>?
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions
-            sx={{
-              p: "8px 15px 15px",
-            }}
-          >
-            <Button
-              sx={{
-                "&:hover": {
-                  backgroundColor: "grey.300",
-                },
-              }}
-              onClick={() => setSelectedCredential(null)}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="contained"
-              onClick={handleDelete}
-            >
-              Remove
-            </Button>
-          </DialogActions>
-        </Dialog>
+          onSubmit={handleDelete}
+        />
       )}
     </Box>
   );
