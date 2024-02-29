@@ -10,7 +10,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 
 interface DeleteDialogProps {
   open: boolean;
-  dialogTitle: string;
+  dialogTitle?: string;
   dialogContentText: string;
   onClose: () => void;
   onSubmit: () => void;
@@ -28,18 +28,12 @@ export const DeleteDialog: React.FC<DeleteDialogProps> = ({
   return (
     <Dialog
       open={open}
+      disableScrollLock={true}
       onClose={() => onClose()}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
     >
-      <DialogTitle
-        id="alert-dialog-title"
-        fontSize={26}
-      >
-        {dialogTitle}
-      </DialogTitle>
+      <DialogTitle fontSize={26}>{dialogTitle}</DialogTitle>
       <DialogContent>
-        <DialogContentText id="alert-dialog-description">{dialogContentText}</DialogContentText>
+        <DialogContentText>{dialogContentText}</DialogContentText>
       </DialogContent>
       <DialogActions>
         <Button

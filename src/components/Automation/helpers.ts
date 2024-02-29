@@ -7,7 +7,7 @@ import type {
   ICredential,
 } from "@/components/Automation/types";
 
-export const N8N_RESPONSE_REGEX = /#([^<]+)<PROMPT_EXECUTION_(\d+)>/g;
+export const N8N_RESPONSE_REGEX = /#([^<]+)<PROMPT_EXECUTION_(\d+|\w*)>?/g;
 
 const UNWANTED_TYPES = [
   "n8n-nodes-base.switch",
