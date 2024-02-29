@@ -106,7 +106,7 @@ function Credentials({ input }: Props) {
 
     const workflow = storedWorkflows[workflowId].workflow as IWorkflowCreateResponse;
 
-    workflow.nodes.forEach(node => attachCredentialsToNode(node));
+    workflow?.nodes.forEach(node => attachCredentialsToNode(node));
 
     const areAllCredentialsStored = checkAllCredentialsStored(credentialsInput);
     dispatch(setAreCredentialsStored(areAllCredentialsStored));

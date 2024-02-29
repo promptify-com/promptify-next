@@ -25,6 +25,127 @@ interface TemplatesSectionProps {
   isExplorePage?: boolean;
 }
 
+function TemplateHeader({ title, type }: Pick<TemplatesSectionProps, "title" | "type">) {
+  const [openFilters, setOpenFilters] = useState(false);
+  const filtersAllowed = !type || !["myLatestExecutions", "popularTemplates"].includes(type);
+
+  return (
+    <Box>
+      <Stack
+        direction={"row"}
+        justifyContent={"space-between"}
+        alignItems={"center"}
+        gap={1}
+      >
+        <Typography fontSize={19}>{title}</Typography>
+        {filtersAllowed && (
+          <IconButton
+            onClick={e => setOpenFilters(!openFilters)}
+            size="small"
+            sx={{
+              ml: "auto",
+              ":hover": {
+                bgcolor: "action.hover",
+              },
+            }}
+          >
+            {openFilters ? <Close /> : <FilterList />}
+          </IconButton>
+        )}
+      </Stack>
+      {openFilters && <TemplatesFilter />}
+    </Box>
+  );
+}
+
+function LatestTemplates({ templates }: Pick<TemplatesSectionProps, "templates">) {
+  if (!templates?.length) {
+    return null;
+  }
+
+  return (
+    <Grid
+      display={"flex"}
+      flexWrap={{ xs: "nowrap", md: "wrap" }}
+      sx={{
+        gap: "1em",
+        width: "100%",
+        overflow: { xs: "auto", md: "initial" },
+        WebkitOverflowScrolling: { xs: "touch", md: "initial" },
+      }}
+    >
+      {templates.map((template: TemplateExecutionsDisplay | Templates) => (
+        <Grid key={template.id}>
+          <CardTemplateLast
+            key={template.id}
+            template={template as TemplateExecutionsDisplay}
+          />
+        </Grid>
+      ))}
+    </Grid>
+  );
+}
+
+function PopularTemplates({ templates }: Pick<TemplatesSectionProps, "templates">) {
+  if (!templates?.length) {
+    return null;
+  }
+
+  return (
+    <Stack
+      direction={"row"}
+      flexWrap={"wrap"}
+      rowGap={3}
+    >
+      {templates.map((template: TemplateExecutionsDisplay | Templates) => (
+        <CardTemplate
+          key={template.id}
+          template={template as Templates}
+          vertical
+        />
+      ))}
+    </Stack>
+  );
+}
+
+function TemplatePagination({
+  isLoading,
+  onNextPage,
+  hasMore,
+  isInfiniteScrolling,
+  hasPrev,
+  onPrevPage,
+  templates = [],
+}: Omit<TemplatesSectionProps, "filtered" | "type" | "templateLoading" | "title">) {
+  if (!templates?.length && !isLoading && typeof onNextPage !== "function") {
+    return null;
+  }
+
+  return (
+    <Grid>
+      <TemplatesInfiniteScroll
+        loading={Boolean(isLoading)}
+        onLoadMore={onNextPage!}
+        hasMore={hasMore}
+        isInfiniteScrolling={isInfiniteScrolling}
+        hasPrev={hasPrev}
+        onLoadLess={onPrevPage}
+      >
+        {templates.map((template: TemplateExecutionsDisplay | Templates) => {
+          return (
+            <Grid key={template.id}>
+              <CardTemplate
+                key={template.id}
+                template={template as Templates}
+              />
+            </Grid>
+          );
+        })}
+      </TemplatesInfiniteScroll>
+    </Grid>
+  );
+}
+
 export const TemplatesSection = forwardRef<HTMLDivElement, TemplatesSectionProps>(function TemplatesSectionInner(
   {
     templates,
@@ -42,18 +163,13 @@ export const TemplatesSection = forwardRef<HTMLDivElement, TemplatesSectionProps
   },
   ref,
 ) {
-  const [openFilters, setOpenFilters] = useState(false);
-
-  const filtersAllowed = !type || !["myLatestExecutions", "popularTemplates"].includes(type);
-
   const isNotLoading = !isLoading && !templateLoading;
+  const isLatestTemplates = type === "myLatestExecutions";
+  const isPopularTemplates = type === "popularTemplates";
 
   if (isNotLoading && !templates?.length) {
     return null;
   }
-
-  const isLatestTemplates = type === "isLatestTemplates";
-  const isPopularTemplates = type === "popularTemplates";
 
   return (
     <Box
@@ -61,31 +177,10 @@ export const TemplatesSection = forwardRef<HTMLDivElement, TemplatesSectionProps
       ref={ref}
     >
       {!filtered && (templateLoading || !!templates?.length) && (
-        <Box>
-          <Stack
-            direction={"row"}
-            justifyContent={"space-between"}
-            alignItems={"center"}
-            gap={1}
-          >
-            <Typography fontSize={19}>{title}</Typography>
-            {filtersAllowed && (
-              <IconButton
-                onClick={e => setOpenFilters(!openFilters)}
-                size="small"
-                sx={{
-                  ml: "auto",
-                  ":hover": {
-                    bgcolor: "action.hover",
-                  },
-                }}
-              >
-                {openFilters ? <Close /> : <FilterList />}
-              </IconButton>
-            )}
-          </Stack>
-          {openFilters && <TemplatesFilter />}
-        </Box>
+        <TemplateHeader
+          title={title}
+          type={type}
+        />
       )}
 
       {templateLoading ? (
@@ -119,27 +214,7 @@ export const TemplatesSection = forwardRef<HTMLDivElement, TemplatesSectionProps
           }}
         >
           {isLatestTemplates ? (
-            !!templates?.length && (
-              <Grid
-                display={"flex"}
-                flexWrap={{ xs: "nowrap", md: "wrap" }}
-                sx={{
-                  gap: "1em",
-                  width: "100%",
-                  overflow: { xs: "auto", md: "initial" },
-                  WebkitOverflowScrolling: { xs: "touch", md: "initial" },
-                }}
-              >
-                {templates.map((template: TemplateExecutionsDisplay | Templates) => (
-                  <Grid key={template.id}>
-                    <CardTemplateLast
-                      key={template.id}
-                      template={template as TemplateExecutionsDisplay}
-                    />
-                  </Grid>
-                ))}
-              </Grid>
-            )
+            <LatestTemplates templates={templates} />
           ) : isPopularTemplates ? (
             <Stack
               direction={"row"}
