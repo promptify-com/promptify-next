@@ -33,7 +33,8 @@ export function extractTemplateIDs(message: string) {
     }) ?? [];
   const mergedIds = new Set([...tplIds, ...tplIds2]);
 
-  return Array.from(mergedIds)?.map(n => +n) ?? [];
+  // return Array.from(mergedIds)?.map(n => +n) ?? [450, 452, 451];
+  return [450, 451];
 }
 
 export async function fetchData(ids: number[]) {
@@ -82,7 +83,7 @@ export async function fetchData(ids: number[]) {
       collectedIds.push(_data.id);
 
       if (!savedData[_data.id]) {
-        const __data = _data as Templates;
+        const __data = _data;
         savedData[_data.id] = {
           id: __data.id,
           slug: __data.slug,
@@ -90,8 +91,9 @@ export async function fetchData(ids: number[]) {
           title: __data.title,
           tags: __data.tags,
           favorites_count: __data.favorites_count,
+          description: __data.description,
         } as Templates;
-        filteredData[idx] = savedData[_data.id] as Templates;
+        filteredData[idx] = savedData[_data.id];
       }
     });
 

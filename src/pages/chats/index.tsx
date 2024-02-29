@@ -2,20 +2,20 @@ import { useState } from "react";
 import { createTheme, ThemeProvider, type Palette } from "@mui/material/styles";
 import mix from "polished/lib/color/mix";
 import Stack from "@mui/material/Stack";
+import { materialDynamicColors } from "material-dynamic-colors";
 
 import { theme } from "@/theme";
 import { Layout } from "@/layout";
-import type { IMUDynamicColorsThemeColor } from "@/core/api/theme";
 import Landing from "@/components/Chat/Landing";
-import { Typography } from "@mui/material";
-import { ChatInterface } from "@/components/Chat/ChatInterface";
+import ChatInterface from "@/components/Chat/ChatInterface";
 import useMessageManager from "@/components/Chat/Hooks/useMessageManager";
-import { ChatInput } from "@/components/Chat/ChatInput";
+import ChatInput from "@/components/Chat/ChatInput";
+import type { IMUDynamicColorsThemeColor } from "@/core/api/theme";
 
 function ChatPage() {
   const [palette, setPalette] = useState(theme.palette);
 
-  const { messages, submitMessage, isValidatingAnswer } = useMessageManager();
+  const { messages, handleSubmitInput, isValidatingAnswer, suggestedTemplates } = useMessageManager();
 
   const fetchDynamicColors = () => {
     //@ts-expect-error unfound-new-type
@@ -76,6 +76,7 @@ function ChatPage() {
             <Landing />
           ) : (
             <ChatInterface
+              templates={suggestedTemplates}
               messages={messages}
               isValidating={isValidatingAnswer}
               showGenerate={false}
@@ -84,29 +85,13 @@ function ChatPage() {
             />
           )}
 
-          <Stack gap={2}>
-            <ChatInput
-              onSubmit={submitMessage}
-              disabled={isValidatingAnswer}
-              showGenerate={false}
-              isValidating={isValidatingAnswer}
-              onGenerate={() => {}}
-            />
-
-            <Typography
-              fontSize={12}
-              fontWeight={400}
-              lineHeight={"140%"}
-              letterSpacing={0.17}
-              textAlign={"center"}
-              sx={{
-                opacity: 0.45,
-              }}
-            >
-              Promptify uses various LLM models to achieve better results. Promptify may be wrong and can make mistakes,
-              just double-check the information received from the chat. Check our Terms of Use and Privacy Policy.
-            </Typography>
-          </Stack>
+          <ChatInput
+            onSubmit={handleSubmitInput}
+            disabled={isValidatingAnswer}
+            showGenerate={false}
+            isValidating={isValidatingAnswer}
+            onGenerate={() => {}}
+          />
         </Stack>
       </Layout>
     </ThemeProvider>

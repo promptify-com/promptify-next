@@ -4,7 +4,6 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 
 import { ProgressLogo } from "@/components/common/ProgressLogo";
-import { useAppDispatch } from "@/hooks/useStore";
 import MessageSender from "../Prompt/Common/Chat/MessageSender";
 
 interface ChatInputProps {
@@ -14,8 +13,7 @@ interface ChatInputProps {
   onGenerate: () => void;
   showGenerate: boolean;
 }
-
-export const ChatInput = ({ onSubmit, disabled, isValidating, onGenerate, showGenerate }: ChatInputProps) => {
+const ChatInput = ({ onSubmit, disabled, isValidating, onGenerate, showGenerate }: ChatInputProps) => {
   return (
     <Grid
       position={"relative"}
@@ -61,6 +59,21 @@ export const ChatInput = ({ onSubmit, disabled, isValidating, onGenerate, showGe
           />
         </Box>
       </Stack>
+      <Typography
+        fontSize={12}
+        fontWeight={400}
+        lineHeight={"140%"}
+        letterSpacing={0.17}
+        textAlign={"center"}
+        sx={{
+          opacity: 0.45,
+        }}
+      >
+        Promptify uses various LLM models to achieve better results. Promptify may be wrong and can make mistakes, just
+        double-check the information received from the chat. Check our Terms of Use and Privacy Policy.
+      </Typography>
     </Grid>
   );
 };
+
+export default ChatInput;

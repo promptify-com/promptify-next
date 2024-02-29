@@ -16,6 +16,7 @@ const useMessageManager = () => {
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [suggestedTemplates, setSuggestedTemplates] = useState<Templates[]>([]);
   const [isValidatingAnswer, setIsValidatingAnswer] = useState(false);
+  const [chatMode, setChatMode] = useState<"automation" | "messages">("automation");
 
   const createMessage = ({
     type,
@@ -59,8 +60,12 @@ const useMessageManager = () => {
             botMessage.text = sendMessageResponse.output!;
           } else {
             if (!!templateIDs.length) {
-              const templates = (await fetchData(templateIDs)) as Templates[];
+              const templates = await fetchData(templateIDs);
               setSuggestedTemplates(templates);
+              const suggestionsMessage = createMessage({ type: "suggestedTemplates" });
+              suggestionsMessage.text = "I found this prompts, following your request:";
+
+              setMessages(prevMessages => prevMessages.concat(suggestionsMessage));
             }
           }
         }
@@ -75,7 +80,10 @@ const useMessageManager = () => {
       }
     }
   };
-  return { messages, submitMessage, isValidatingAnswer, suggestedTemplates };
+
+  const handleSubmitInput = (input: string) => (chatMode === "automation" ? submitMessage(input) : () => {});
+
+  return { messages, handleSubmitInput, isValidatingAnswer, suggestedTemplates };
 };
 
 export default useMessageManager;

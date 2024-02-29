@@ -7,13 +7,11 @@ import useTextSimulationStreaming from "@/hooks/useTextSimulationStreaming";
 import { timeAgo } from "@/common/helpers/timeManipulation";
 import { setIsSimulationStreaming } from "@/core/store/chatSlice";
 import ClientOnly from "@/components/base/ClientOnly";
-import { markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 
 interface Props {
   message: IMessage;
   onScrollToBottom: () => void;
-  isExecutionShown?: boolean;
 }
 
 interface MessageContentProps {
@@ -40,42 +38,18 @@ const MessageContent = memo(({ content, shouldStream, onStreamingFinished }: Mes
   return <>{streamedText}</>;
 });
 
-const MessageContentWithHTML = memo(({ content }: { content: string }) => {
-  const [html, setHtml] = useState("");
-
-  useEffect(() => {
-    if (!content) {
-      return;
-    }
-
-    const generateFinalHtml = async () => {
-      const _html = await markdownToHTML(content);
-      setHtml(_html);
-    };
-
-    generateFinalHtml();
-  }, [content]);
-  return (
-    <div
-      dangerouslySetInnerHTML={{
-        __html: sanitizeHTML(html),
-      }}
-    />
-  );
-});
-
 export const Message = ({ message, onScrollToBottom }: Props) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const dispatch = useAppDispatch();
 
-  const { fromUser, text, createdAt, type } = message;
+  const { fromUser, text, createdAt } = message;
   const currentUser = useAppSelector(state => state.user.currentUser);
 
   const name = fromUser ? currentUser?.first_name ?? currentUser?.username : "Promptify";
 
   useEffect(() => {
-    if (fromUser || type === "html") return;
+    if (fromUser) return;
     dispatch(setIsSimulationStreaming(true));
   }, []);
 
@@ -124,25 +98,21 @@ export const Message = ({ message, onScrollToBottom }: Props) => {
           gap={"8px"}
           alignItems={"start"}
         >
-          {type === "html" ? (
-            <MessageContentWithHTML content={text} />
-          ) : (
-            <Typography
-              fontSize={16}
-              lineHeight={"25.6px"}
-              fontWeight={400}
-              letterSpacing={"0.17px"}
-              display={"flex"}
-              alignItems={"center"}
-              color={fromUser ? "onPrimary" : "onSurface"}
-            >
-              <MessageContent
-                content={text}
-                shouldStream={!fromUser}
-                onStreamingFinished={onScrollToBottom}
-              />
-            </Typography>
-          )}
+          <Typography
+            fontSize={16}
+            lineHeight={"25.6px"}
+            fontWeight={400}
+            letterSpacing={"0.17px"}
+            display={"flex"}
+            alignItems={"center"}
+            color={fromUser ? "onPrimary" : "onSurface"}
+          >
+            <MessageContent
+              content={text}
+              shouldStream={!fromUser}
+              onStreamingFinished={onScrollToBottom}
+            />
+          </Typography>
         </Grid>
       </Grid>
     </Grid>

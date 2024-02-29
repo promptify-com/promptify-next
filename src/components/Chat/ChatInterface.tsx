@@ -1,29 +1,23 @@
-import { useRef } from "react";
-import Divider from "@mui/material/Divider";
+import { Fragment, useRef } from "react";
 import Stack from "@mui/material/Stack";
 
-import { useAppSelector } from "@/hooks/useStore";
-import { getCurrentDateFormatted } from "@/common/helpers/timeManipulation";
 import useScrollToBottom from "@/components/Prompt/Hooks/useScrollToBottom";
-import TemplateDetailsCard from "@/components/Prompt/Common/TemplateDetailsCard";
 
 import type { IMessage } from "@/components/Prompt/Types/chat";
-import type { Templates } from "@/core/api/dto/templates";
 import { Message } from "./Message";
-
-const currentDate = getCurrentDateFormatted();
+import { Templates } from "@/core/api/dto/templates";
+import TemplateSuggestions from "./TemplateSuggestions";
 
 interface Props {
   messages: IMessage[];
+  templates: Templates[];
   onGenerate: () => void;
   showGenerate: boolean;
   isValidating: boolean;
   onAbort?: () => void;
 }
 
-export const ChatInterface = ({ messages, onGenerate, showGenerate, onAbort, isValidating }: Props) => {
-  const inputs = useAppSelector(state => state.chat.inputs);
-
+const ChatInterface = ({ templates, messages, onGenerate, showGenerate, onAbort, isValidating }: Props) => {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
   const { scrollToBottom } = useScrollToBottom({
@@ -49,13 +43,16 @@ export const ChatInterface = ({ messages, onGenerate, showGenerate, onAbort, isV
           direction={"column"}
         >
           {messages.map(msg => (
-            <Message
-              key={msg.id}
-              message={msg}
-              onScrollToBottom={scrollToBottom}
-              isExecutionShown={false}
-            />
+            <Fragment key={msg.id}>
+              <Message
+                message={msg}
+                onScrollToBottom={scrollToBottom}
+              />
+              {msg.type === "suggestedTemplates" && <TemplateSuggestions templates={templates} />}
+            </Fragment>
           ))}
+
+          {/* <SuggestedTemplates  */}
         </Stack>
       </Stack>
     </Stack>
@@ -82,3 +79,5 @@ const messagesContainerStyle = {
     borderRadius: "10px",
   },
 };
+
+export default ChatInterface;
