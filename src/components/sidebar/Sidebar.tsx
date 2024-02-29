@@ -45,10 +45,10 @@ function Sidebar() {
       reload: false,
     },
     {
-      name: "Chat",
+      name: "Chats",
       icon: <TryRounded />,
-      href: "/chat",
-      active: pathname === "/chat",
+      href: "/chats",
+      active: pathname === "/chats",
       external: false,
       reload: false,
     },
