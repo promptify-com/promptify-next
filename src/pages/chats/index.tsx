@@ -7,11 +7,15 @@ import { theme } from "@/theme";
 import { Layout } from "@/layout";
 import type { IMUDynamicColorsThemeColor } from "@/core/api/theme";
 import Landing from "@/components/Chat/Landing";
-import { ChatInput } from "@/components/Prompt/Common/Chat/ChatInput";
 import { Typography } from "@mui/material";
+import { ChatInterface } from "@/components/Chat/ChatInterface";
+import useMessageManager from "@/components/Chat/Hooks/useMessageManager";
+import { ChatInput } from "@/components/Chat/ChatInput";
 
 function ChatPage() {
   const [palette, setPalette] = useState(theme.palette);
+
+  const { messages, submitMessage, isValidatingAnswer } = useMessageManager();
 
   const fetchDynamicColors = () => {
     //@ts-expect-error unfound-new-type
@@ -52,6 +56,8 @@ function ChatPage() {
   };
   const dynamicTheme = createTheme({ ...theme, palette });
 
+  const showLanding = !!!messages.length;
+
   return (
     <ThemeProvider theme={dynamicTheme}>
       <Layout>
@@ -66,14 +72,24 @@ function ChatPage() {
             gap: 2,
           }}
         >
-          <Landing />
+          {showLanding ? (
+            <Landing />
+          ) : (
+            <ChatInterface
+              messages={messages}
+              isValidating={isValidatingAnswer}
+              showGenerate={false}
+              onAbort={() => {}}
+              onGenerate={() => {}}
+            />
+          )}
 
           <Stack gap={2}>
             <ChatInput
-              onSubmit={() => {}}
-              disabled={false}
+              onSubmit={submitMessage}
+              disabled={isValidatingAnswer}
               showGenerate={false}
-              isValidating={false}
+              isValidating={isValidatingAnswer}
               onGenerate={() => {}}
             />
 
