@@ -22,6 +22,7 @@ interface TemplatesSectionProps {
   isInfiniteScrolling?: boolean;
   hasPrev?: boolean;
   onPrevPage?: () => void;
+  isExplorePage?: boolean;
 }
 
 export const TemplatesSection = forwardRef<HTMLDivElement, TemplatesSectionProps>(function TemplatesSectionInner(
@@ -37,6 +38,7 @@ export const TemplatesSection = forwardRef<HTMLDivElement, TemplatesSectionProps
     isInfiniteScrolling = true,
     hasPrev,
     onPrevPage = () => {},
+    isExplorePage,
   },
   ref,
 ) {
@@ -149,6 +151,7 @@ export const TemplatesSection = forwardRef<HTMLDivElement, TemplatesSectionProps
                   <CardTemplate
                     key={template.id}
                     template={template as Templates}
+                    isExplorePage={isExplorePage}
                     vertical
                   />
                 ))}

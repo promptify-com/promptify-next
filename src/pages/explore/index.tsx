@@ -1,38 +1,59 @@
+import { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import CategoryCarousel from "@/components/common/CategoriesCarousel";
+
 import type { GetServerSideProps } from "next";
 import { Layout } from "@/layout";
-import { CategoriesSection } from "@/components/explorer/CategoriesSection";
-import { TemplatesSection } from "@/components/explorer/TemplatesSection";
 import { FiltersSelected } from "@/components/explorer/FiltersSelected";
 import { Category } from "@/core/api/dto/templates";
 import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
 import { getCategories } from "@/hooks/api/categories";
-import { useGetSuggestedTemplatesByCategoryQuery } from "@/core/api/templates";
-import { useAppSelector } from "@/hooks/useStore";
-import { isValidUserFn } from "@/core/store/userSlice";
 import { SEO_DESCRIPTION } from "@/common/constants";
-
+import { useRouter } from "next/router";
+import { CategoryCard } from "@/components/common/cards/CardCategory";
+import PopularTemplate from "@/components/explorer/PopularTemplate";
 interface Props {
   categories: Category[];
 }
 
 export default function ExplorePage({ categories }: Props) {
+  const { pathname } = useRouter();
+  const ITEM_PER_PAGE = 12;
   const {
-    templates,
-    isTemplatesLoading,
+    templates: popularTemplates,
+    isTemplatesLoading: isLoading,
     handleNextPage,
     hasMore,
     allFilterParamsNull,
-    isFetching,
-    hasPrev,
     handlePrevPage,
-  } = useGetTemplatesByFilter({ ordering: "-likes", templateLimit: 5, paginatedList: true });
-  const isValidUser = useAppSelector(isValidUserFn);
-  const { data: suggestedTemplates, isLoading: isSuggestedTemplatesLoading } = useGetSuggestedTemplatesByCategoryQuery(
-    undefined,
-    { skip: !isValidUser },
+  } = useGetTemplatesByFilter({ ordering: "-runs", templateLimit: ITEM_PER_PAGE });
+
+  const [seeAll, setSeeAll] = useState(false);
+  const [hasUserScrolled, setHasUserScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      if (scrollPosition > 0) {
+        setHasUserScrolled(true);
+      } else {
+        setHasUserScrolled(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const _categories = categories.filter(
+    category => !category.parent && category.is_visible && category.prompt_template_count,
   );
+
+  const isExplorePage = pathname === "/explore";
 
   return (
     <Layout>
@@ -49,33 +70,73 @@ export default function ExplorePage({ categories }: Props) {
           }}
         >
           <FiltersSelected show={!allFilterParamsNull} />
-          {allFilterParamsNull && (
-            <CategoriesSection
-              categories={categories}
-              isLoading={false}
-            />
-          )}
-          <TemplatesSection
-            filtered={!allFilterParamsNull}
-            templates={templates ?? []}
-            isLoading={isFetching}
-            templateLoading={isTemplatesLoading}
-            title="Best templates"
+          {allFilterParamsNull &&
+            (seeAll ? (
+              <Stack p={"8px 16px"}>
+                <Typography
+                  flex={1}
+                  fontSize={{ xs: 28, md: 32 }}
+                  fontWeight={400}
+                  color={"#2A2A3C"}
+                  mb="33px"
+                >
+                  Browse category
+                </Typography>
+                <Grid
+                  display="flex"
+                  gap="8px"
+                  alignItems="flex-start"
+                  alignContent="flex-start"
+                  alignSelf="stretch"
+                  flexWrap={{ xs: "nowrap", md: "wrap" }}
+                  sx={{
+                    overflow: { xs: "auto", md: "initial" },
+                    WebkitOverflowScrolling: { xs: "touch", md: "initial" },
+                    justifyContent: "space-between",
+                    px: { xs: "8px", md: "16px" },
+                  }}
+                >
+                  {_categories.map(category => (
+                    <Box
+                      key={category.id}
+                      sx={{
+                        flex: "1 1 auto",
+                        maxWidth: {
+                          xs: `calc(100% / 2 - 8px)`,
+                          sm: `calc(100% / 4 - 8px)`,
+                          md: `calc((100% - (5 * 8px)) / 6)`,
+                        },
+                        mx: "8px",
+                      }}
+                    >
+                      <CategoryCard
+                        category={category}
+                        priority={false}
+                        href={`/explore/${category.slug}`}
+                        isExplorePage={isExplorePage}
+                        min
+                      />
+                    </Box>
+                  ))}
+                </Grid>
+              </Stack>
+            ) : (
+              <CategoryCarousel
+                categories={_categories}
+                isExplorePage={isExplorePage}
+                showAllCategories={() => setSeeAll(true)}
+                userScrolled={hasUserScrolled}
+              />
+            ))}
+          <PopularTemplate
+            loading={isLoading}
+            hasNext={hasMore}
             onNextPage={handleNextPage}
-            hasMore={hasMore}
-            isInfiniteScrolling={false}
-            hasPrev={hasPrev}
             onPrevPage={handlePrevPage}
+            popularTemplate={popularTemplates}
+            isExplorePage={isExplorePage}
+            itemPerPage={ITEM_PER_PAGE}
           />
-          {isValidUser && !!suggestedTemplates?.length && (
-            <TemplatesSection
-              filtered={false}
-              templates={suggestedTemplates ?? []}
-              isLoading={isSuggestedTemplatesLoading}
-              templateLoading={isSuggestedTemplatesLoading}
-              title={`Because you use ${suggestedTemplates?.[0]?.category?.name ?? "various"} prompts`}
-            />
-          )}
         </Grid>
       </Box>
     </Layout>

@@ -1,7 +1,7 @@
 import { useGetTemplatesByFilterQuery } from "@/core/api/templates";
 import { Category } from "@/core/api/dto/templates";
 import Landing from "./Landing";
-import CategoryCarousel from "./CategoriesCarousel";
+import CategoryCarousel from "@/components/common/CategoriesCarousel";
 import Services from "./Services";
 import Learn from "./Learn";
 import Testimonials from "./Testimonials";

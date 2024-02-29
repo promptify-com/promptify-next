@@ -1,112 +1,232 @@
-import Link from "next/link";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
+import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { authClient } from "@/common/axios";
-import SubCategoryCard from "@/components/common/cards/CardSubcategory";
 import type { Category } from "@/core/api/dto/templates";
 import { Layout } from "@/layout";
-import { TemplatesSection } from "@/components/explorer/TemplatesSection";
-import { FiltersSelected } from "@/components/explorer/FiltersSelected";
-import SubCategoryPlaceholder from "@/components/placeholders/SubCategoryPlaceholder";
 import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
-import { useGetCategoriesQuery } from "@/core/api/categories";
 import { SEO_DESCRIPTION, SEO_TITLE } from "@/common/constants";
+import Image from "@/components/design-system/Image";
+import PopularTemplate from "@/components/explorer/PopularTemplate";
+import materialDynamicColors from "material-dynamic-colors";
+import { type Palette, ThemeProvider, createTheme, useTheme } from "@mui/material";
+import { mix } from "polished";
+
+interface IMUDynamicColorsThemeColor {
+  light: {
+    primary: string;
+    secondary: string;
+    error: string;
+    background: string;
+    surface: string;
+    surfaceVariant: string;
+  };
+}
 
 export default function Page({ category }: { category: Category }) {
   const router = useRouter();
-  const { templates, isFetching, categorySlug, allFilterParamsNull, isTemplatesLoading, hasMore, handleNextPage } =
-    useGetTemplatesByFilter({ catId: category?.id });
-  const { data: categories, isLoading: isCategoryLoading } = useGetCategoriesQuery();
+  const theme = useTheme();
+  const [palette, setPalette] = useState(theme.palette);
+
+  const ITEM_PER_PAGE = 12;
+
+  const {
+    templates: popularTemplates,
+    isTemplatesLoading: isLoading,
+    handleNextPage,
+    hasMore,
+    handlePrevPage,
+  } = useGetTemplatesByFilter({ catId: category?.id, ordering: "-runs", templateLimit: ITEM_PER_PAGE });
+
+  useEffect(() => {
+    if (!category) {
+      return;
+    }
+
+    if (category.image) {
+      fetchDynamicColors();
+    }
+  }, []);
+
   const goBack = () => {
     router.push("/explore");
   };
 
+  const fetchDynamicColors = () => {
+    //@ts-expect-error unfound-new-type
+    materialDynamicColors(category.image)
+      .then((imgPalette: IMUDynamicColorsThemeColor) => {
+        const newPalette: Palette = {
+          ...theme.palette,
+          ...imgPalette.light,
+          primary: {
+            ...theme.palette.primary,
+            main: imgPalette.light.primary,
+          },
+          secondary: {
+            ...theme.palette.secondary,
+            main: imgPalette.light.secondary,
+          },
+          error: {
+            ...theme.palette.secondary,
+            main: imgPalette.light.error,
+          },
+          background: {
+            ...theme.palette.background,
+            default: imgPalette.light.background,
+          },
+          surface: {
+            1: imgPalette.light.surface,
+            2: mix(0.3, imgPalette.light.surfaceVariant, imgPalette.light.surface),
+            3: mix(0.6, imgPalette.light.surfaceVariant, imgPalette.light.surface),
+            4: mix(0.8, imgPalette.light.surfaceVariant, imgPalette.light.surface),
+            5: imgPalette.light.surfaceVariant,
+          },
+        };
+        setPalette(newPalette);
+      })
+      .catch(() => {
+        console.warn("Error fetching dynamic colors");
+      });
+  };
+
+  const dynamicTheme = createTheme({ ...theme, palette });
+
   return (
-    <Layout>
-      <Box
-        mt={{ xs: 7, md: -2 }}
-        padding={{ xs: "4px 0px", md: "0px 8px" }}
-      >
-        <Grid
-          sx={{
-            padding: { xs: "16px", md: "32px" },
-          }}
+    <ThemeProvider theme={dynamicTheme}>
+      <Layout>
+        <Box
+          mt={{ xs: 7, md: -2 }}
+          padding={{ xs: "4px 0px", md: "0px 8px" }}
         >
-          {isCategoryLoading ? (
-            <SubCategoryPlaceholder />
-          ) : (
+          <Grid
+            sx={{
+              padding: { xs: "16px", md: "32px" },
+            }}
+          >
             <Box
               display={"flex"}
               flexDirection={"column"}
               gap={"16px"}
             >
-              <Grid>
-                <Link
-                  style={{ textDecoration: "none" }}
-                  href={"/explore"}
-                >
+              <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                <Stack>
                   <Button
                     onClick={() => goBack()}
                     variant="text"
                     sx={{
-                      fontSize: 19,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
                       color: "onSurface",
-                      ml: -3,
-                      textOverflow: "ellipsis",
-                      whiteSpace: "normal",
+                      p: "0px",
+                      fontSize: 16,
+                      fontWeight: 400,
+                      lineHeight: "160%",
+                      letterSpacing: "0.17px",
                     }}
                   >
-                    <Box sx={{ display: "flex", alignItems: "flex-start" }}>
-                      <KeyboardArrowLeft sx={{ mt: "5px" }} />
-                      {category.name} Prompt Template
-                    </Box>
+                    <Typography
+                      sx={{
+                        color: "onSurface",
+                        fontFeatureSettings: "'clig' off, 'liga' off",
+                        fontSize: "16px",
+                        opacity: 0.3,
+                        fontWeight: 400,
+                        lineHeight: "120%",
+                        letterSpacing: "0.2px",
+                      }}
+                    >
+                      All Category
+                    </Typography>
+                    <KeyboardArrowLeft sx={{ opacity: 0.3 }} />
                   </Button>
-                </Link>
-                <Typography variant="body1">{category.description}</Typography>{" "}
-              </Grid>
-              <Grid
-                display={"flex"}
-                gap={"8px"}
-                flexWrap={{ xs: "nowrap", md: "wrap" }}
+                </Stack>
+                <Stack>
+                  <Typography
+                    sx={{
+                      color: "onSurface",
+                      fontFeatureSettings: "'clig' off, 'liga' off",
+                      fontSize: "16px",
+                      fontWeight: 400,
+                      lineHeight: "120%",
+                      letterSpacing: "0.2px",
+                    }}
+                  >
+                    {category.name}
+                  </Typography>
+                </Stack>
+              </Box>
+
+              <Box
                 sx={{
-                  overflow: { xs: "auto", md: "initial" },
-                  WebkitOverflowScrolling: "touch",
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  gap: "16px",
                 }}
               >
-                {categories
-                  ?.filter(
-                    subcategory =>
-                      subcategory.is_visible &&
-                      subcategory.prompt_template_count &&
-                      category?.name === subcategory.parent?.name,
-                  )
-                  .map(subcategory => (
-                    <Grid key={subcategory.id}>
-                      <SubCategoryCard
-                        subcategory={subcategory}
-                        categorySlug={categorySlug as string}
-                      />
-                    </Grid>
-                  ))}
-              </Grid>
-              <FiltersSelected show={!allFilterParamsNull} />
-              <TemplatesSection
-                filtered={!allFilterParamsNull}
-                templates={templates ?? []}
-                isLoading={isFetching}
-                templateLoading={isTemplatesLoading}
+                <Image
+                  src={category.image ?? require("@/assets/images/default-thumbnail.jpg")}
+                  alt={category.name}
+                  style={{ objectFit: "cover", width: "20%", height: "auto", borderRadius: "50%" }}
+                />
+                <Box
+                  sx={{
+                    display: "flex",
+                    p: "var(--none, 0px) var(--2, 16px)",
+                    flexDirection: "column",
+                    gap: "24px",
+                    alignSelf: "stretch",
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      fontSize: 38,
+                      fontWeight: 400,
+                      lineHeight: "120%",
+                      letterSpacing: "0.17px",
+                      color: "onSurface",
+                      fontFeatureSettings: "'clig' off, 'liga' off",
+                    }}
+                  >
+                    {category.name}
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontSize: 16,
+                      fontWeight: 400,
+                      lineHeight: "160%",
+                      letterSpacing: "0.17px",
+                      color: "onSurface",
+                      fontFeatureSettings: "'clig' off, 'liga' off",
+                    }}
+                  >
+                    {category.description}
+                  </Typography>{" "}
+                </Box>
+              </Box>
+
+              <PopularTemplate
+                loading={isLoading}
+                hasNext={hasMore}
                 onNextPage={handleNextPage}
-                hasMore={hasMore}
+                onPrevPage={handlePrevPage}
+                popularTemplate={popularTemplates}
+                isExplorePage={true}
+                itemPerPage={ITEM_PER_PAGE}
               />
             </Box>
-          )}
-        </Grid>
-      </Box>
-    </Layout>
+          </Grid>
+        </Box>
+      </Layout>
+    </ThemeProvider>
   );
 }
 
