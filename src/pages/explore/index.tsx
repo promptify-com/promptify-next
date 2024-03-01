@@ -48,7 +48,7 @@ export default function ExplorePage({ categories }: Props) {
 
     const handleScroll = () => {
       clearTimeout(timeoutId);
-
+      console.log("scrolling");
       const scrollPosition = window.scrollY;
       timeoutId = setTimeout(() => {
         if (scrollPosition > 0) {
