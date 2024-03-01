@@ -7,6 +7,7 @@ const initialState: SelectedFilters = {
   title: null,
   category: null,
   subCategory: null,
+  engineType: "",
 };
 
 const filterSlice = createSlice({
@@ -35,6 +36,9 @@ const filterSlice = createSlice({
     deleteSelectedTag: (state, action: PayloadAction<number>) => {
       state.tag = state.tag.filter(tag => tag?.id !== action.payload);
     },
+    setSelectedEngineType: (state, action: PayloadAction<string>) => {
+      state.engineType = action.payload;
+    },
   },
 });
 
@@ -45,6 +49,7 @@ export const {
   setSelectedCategory,
   setSelectedSubCategory,
   deleteSelectedTag,
+  setSelectedEngineType,
 } = filterSlice.actions;
 
 export default filterSlice.reducer;

@@ -25,6 +25,7 @@ const getSearchParams = (params: FilterParams) => {
   params.limit && searchParams.append("limit", String(params.limit));
   params.offset && searchParams.append("offset", String(params.offset));
   params.status && searchParams.append("status", String(params.status));
+  params.engine_type && searchParams.append("engine_type", String(params.engine_type));
 
   return searchParams.toString();
 };

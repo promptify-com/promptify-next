@@ -27,6 +27,7 @@ export interface FilterParams {
   limit?: number;
   offset?: number;
   status?: string | null;
+  engine_type?: string;
 }
 
 export interface SelectedFilters {
@@ -35,6 +36,7 @@ export interface SelectedFilters {
   title: string | null;
   category: Category | null;
   subCategory: Category | null;
+  engineType?: string;
 }
 
 export class TemplateParam {
