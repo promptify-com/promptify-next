@@ -24,15 +24,14 @@ type CardTemplateProps = {
   query?: string;
   asResult?: boolean;
   vertical?: boolean;
-  isExplorePage?: boolean;
+  bgColor?: string;
 };
 
-function CardTemplate({ template, query, asResult, vertical, isExplorePage }: CardTemplateProps) {
+function CardTemplate({ template, query, asResult, vertical, bgColor }: CardTemplateProps) {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { truncate } = useTruncate();
   const isDesktop = isDesktopViewPort();
-  const [isHovered, setIsHovered] = useState(false);
 
   const highlightSearchQuery = (text: string) => {
     if (!query) return text;
@@ -54,8 +53,6 @@ function CardTemplate({ template, query, asResult, vertical, isExplorePage }: Ca
     );
   };
 
-  const bgExplorePageCard = isExplorePage ? "surfaceContainerLow" : "surface.2";
-
   return (
     <Link
       href={`/prompt/${template.slug}`}
@@ -64,11 +61,10 @@ function CardTemplate({ template, query, asResult, vertical, isExplorePage }: Ca
         textDecoration: "none",
         width: isDesktop ? "auto" : "100%",
         position: "relative",
+        maxWidth: "288px",
       }}
     >
       <Card
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
         sx={{
           width: "auto",
           minWidth: isDesktop && vertical ? "210px" : "auto",
@@ -76,10 +72,14 @@ function CardTemplate({ template, query, asResult, vertical, isExplorePage }: Ca
           borderRadius: "16px 16px 0 0",
           cursor: "pointer",
           p: isDesktop && vertical ? "16px 16px 8px" : "8px",
-          bgcolor: isDesktop && vertical ? "transparent" : bgExplorePageCard,
+          bgcolor: isDesktop && vertical ? "transparent" : bgColor,
           transition: "background-color 0.1s ease",
           "&:hover": {
-            bgcolor: bgExplorePageCard,
+            bgcolor: bgColor,
+            "& > #tags": {
+              zIndex: 999,
+              display: "flex",
+            },
           },
         }}
         elevation={0}
@@ -260,41 +260,41 @@ function CardTemplate({ template, query, asResult, vertical, isExplorePage }: Ca
             </Stack>
           </Stack>
         </Stack>
-        {isHovered && isExplorePage && (
-          <Stack
-            sx={{
-              position: "absolute",
-              top: "100%",
-              left: 0,
-              right: 0,
-              zIndex: 999,
-              p: "8px",
-              bgcolor: "surface.2",
-              borderRadius: "0 0 16px 16px",
-              display: "flex",
-              alignItems: "flex-start",
-              alignContent: "flex-start",
-              flexDirection: "row",
-              gap: "8px var(--1, 8px)",
-              flexWrap: "wrap",
-              transition: "background-color 0.3s ease",
-            }}
-          >
-            {template.tags.map(tag => (
-              <Chip
-                size="small"
-                label={tag.name}
-                key={tag.id}
-                sx={{
-                  fontSize: { xs: 11, md: 13 },
-                  fontWeight: 400,
-                  bgcolor: "white",
-                  color: "onSurface",
-                }}
-              />
-            ))}
-          </Stack>
-        )}
+
+        <Stack
+          sx={{
+            position: "absolute",
+            top: "100%",
+            left: 0,
+            right: 0,
+            zIndex: 0,
+            p: "8px",
+            bgcolor: "surface.2",
+            borderRadius: "0 0 16px 16px",
+            display: "none",
+            alignItems: "flex-start",
+            alignContent: "flex-start",
+            flexDirection: "row",
+            gap: "8px var(--1, 8px)",
+            flexWrap: "wrap",
+            transition: "background-color 0.3s ease",
+          }}
+          id="tags"
+        >
+          {template.tags.map(tag => (
+            <Chip
+              size="small"
+              label={tag.name}
+              key={tag.id}
+              sx={{
+                fontSize: { xs: 11, md: 13 },
+                fontWeight: 400,
+                bgcolor: "white",
+                color: "onSurface",
+              }}
+            />
+          ))}
+        </Stack>
       </Card>
     </Link>
   );

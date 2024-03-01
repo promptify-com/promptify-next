@@ -23,6 +23,7 @@ interface TemplatesSectionProps {
   hasPrev?: boolean;
   onPrevPage?: () => void;
   isExplorePage?: boolean;
+  bgColor?: string;
 }
 
 function TemplateHeader({ title, type }: Pick<TemplatesSectionProps, "title" | "type">) {
@@ -159,7 +160,7 @@ export const TemplatesSection = forwardRef<HTMLDivElement, TemplatesSectionProps
     isInfiniteScrolling = true,
     hasPrev,
     onPrevPage = () => {},
-    isExplorePage,
+    bgColor = "surface.2",
   },
   ref,
 ) {
@@ -226,7 +227,7 @@ export const TemplatesSection = forwardRef<HTMLDivElement, TemplatesSectionProps
                   <CardTemplate
                     key={template.id}
                     template={template as Templates}
-                    isExplorePage={isExplorePage}
+                    bgColor={bgColor}
                     vertical
                   />
                 ))}

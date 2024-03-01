@@ -11,16 +11,18 @@ import { FiltersSelected } from "@/components/explorer/FiltersSelected";
 import { Category } from "@/core/api/dto/templates";
 import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
 import { getCategories } from "@/hooks/api/categories";
+import { isValidUserFn } from "@/core/store/userSlice";
 import { SEO_DESCRIPTION } from "@/common/constants";
-import { useRouter } from "next/router";
 import { CategoryCard } from "@/components/common/cards/CardCategory";
 import PopularTemplate from "@/components/explorer/PopularTemplate";
+import { useAppSelector } from "@/hooks/useStore";
+import { useGetSuggestedTemplatesByCategoryQuery } from "@/core/api/templates";
+import { TemplatesSection } from "@/components/explorer/TemplatesSection";
 interface Props {
   categories: Category[];
 }
 
 export default function ExplorePage({ categories }: Props) {
-  const { pathname } = useRouter();
   const ITEM_PER_PAGE = 12;
   const {
     templates: popularTemplates,
@@ -29,37 +31,51 @@ export default function ExplorePage({ categories }: Props) {
     hasMore,
     allFilterParamsNull,
     handlePrevPage,
+    isFetching,
   } = useGetTemplatesByFilter({ ordering: "-runs", templateLimit: ITEM_PER_PAGE });
+
+  const isValidUser = useAppSelector(isValidUserFn);
+  const { data: suggestedTemplates, isLoading: isSuggestedTemplatesLoading } = useGetSuggestedTemplatesByCategoryQuery(
+    undefined,
+    { skip: !isValidUser },
+  );
 
   const [seeAll, setSeeAll] = useState(false);
   const [hasUserScrolled, setHasUserScrolled] = useState(false);
 
   useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+
     const handleScroll = () => {
+      clearTimeout(timeoutId);
+
       const scrollPosition = window.scrollY;
-      if (scrollPosition > 0) {
-        setHasUserScrolled(true);
-      } else {
-        setHasUserScrolled(false);
-      }
+      timeoutId = setTimeout(() => {
+        if (scrollPosition > 0) {
+          setHasUserScrolled(true);
+        } else {
+          setHasUserScrolled(false);
+        }
+      }, 150);
     };
 
     window.addEventListener("scroll", handleScroll);
 
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      clearTimeout(timeoutId);
+    };
   }, []);
 
   const _categories = categories.filter(
     category => !category.parent && category.is_visible && category.prompt_template_count,
   );
 
-  const isExplorePage = pathname === "/explore";
-
   return (
     <Layout>
       <Box
         mt={{ xs: 7, md: 0 }}
-        padding={{ xs: "4px 0px", md: "0px 8px" }}
+        padding={{ xs: "4px 0px", md: "0px 142px" }}
       >
         <Grid
           display={"flex"}
@@ -83,49 +99,39 @@ export default function ExplorePage({ categories }: Props) {
                   Browse category
                 </Typography>
                 <Grid
-                  display="flex"
-                  gap="8px"
-                  alignItems="flex-start"
-                  alignContent="flex-start"
-                  alignSelf="stretch"
+                  display={"flex"}
+                  flexDirection={"row"}
+                  gap={"8px"}
+                  alignItems={"flex-start"}
+                  alignContent={"flex-start"}
+                  alignSelf={"stretch"}
                   flexWrap={{ xs: "nowrap", md: "wrap" }}
                   sx={{
                     overflow: { xs: "auto", md: "initial" },
                     WebkitOverflowScrolling: { xs: "touch", md: "initial" },
-                    justifyContent: "space-between",
-                    px: { xs: "8px", md: "16px" },
                   }}
                 >
                   {_categories.map(category => (
-                    <Box
+                    <Grid
                       key={category.id}
-                      sx={{
-                        flex: "1 1 auto",
-                        maxWidth: {
-                          xs: `calc(100% / 2 - 8px)`,
-                          sm: `calc(100% / 4 - 8px)`,
-                          md: `calc((100% - (5 * 8px)) / 6)`,
-                        },
-                        mx: "8px",
-                      }}
+                      gap={"8px"}
                     >
                       <CategoryCard
                         category={category}
                         priority={false}
                         href={`/explore/${category.slug}`}
-                        isExplorePage={isExplorePage}
                         min
                       />
-                    </Box>
+                    </Grid>
                   ))}
                 </Grid>
               </Stack>
             ) : (
               <CategoryCarousel
                 categories={_categories}
-                isExplorePage={isExplorePage}
-                showAllCategories={() => setSeeAll(true)}
                 userScrolled={hasUserScrolled}
+                onClick={() => setSeeAll(true)}
+                gap={1}
               />
             ))}
           <PopularTemplate
@@ -134,9 +140,17 @@ export default function ExplorePage({ categories }: Props) {
             onNextPage={handleNextPage}
             onPrevPage={handlePrevPage}
             popularTemplate={popularTemplates}
-            isExplorePage={isExplorePage}
-            itemPerPage={ITEM_PER_PAGE}
+            isFetching={isFetching}
           />
+          {isValidUser && !!suggestedTemplates?.length && (
+            <TemplatesSection
+              filtered={false}
+              templates={suggestedTemplates ?? []}
+              isLoading={isSuggestedTemplatesLoading}
+              templateLoading={isSuggestedTemplatesLoading}
+              title={`Because you use ${suggestedTemplates?.[0]?.category?.name ?? "various"} prompts`}
+            />
+          )}
         </Grid>
       </Box>
     </Layout>

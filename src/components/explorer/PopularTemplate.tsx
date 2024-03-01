@@ -3,9 +3,9 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import TemplatesPaginatedList from "@/components/TemplatesPaginatedList";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
-import { isDesktopViewPort } from "@/common/helpers";
 
 import type { Templates } from "@/core/api/dto/templates";
+import useBrowser from "@/hooks/useBrowser";
 
 interface Props {
   loading: boolean;
@@ -13,24 +13,12 @@ interface Props {
   onNextPage: () => void;
   onPrevPage: () => void;
   popularTemplate: Templates[];
-  isExplorePage: boolean;
-  itemPerPage: number;
+  isFetching?: boolean;
 }
 
-function PopularTemplate({
-  loading,
-  hasNext,
-  onNextPage,
-  onPrevPage,
-  popularTemplate,
-  isExplorePage,
-  itemPerPage,
-}: Props) {
-  const [itemCount, setItemCount] = useState(0);
-  const [useLoadMore, setUseLoadMore] = useState(false);
-
+function PopularTemplate({ loading, hasNext, onNextPage, onPrevPage, popularTemplate, isFetching = false }: Props) {
   const observer = useRef<IntersectionObserver | null>(null);
-  const isMobile = !isDesktopViewPort();
+  const { isMobile } = useBrowser();
 
   const SCROLL_THRESHOLD = 24;
 
@@ -39,10 +27,7 @@ function PopularTemplate({
       if (loading) return;
       if (observer.current) observer.current.disconnect();
 
-      if (itemCount >= SCROLL_THRESHOLD) {
-        setUseLoadMore(true);
-        return;
-      }
+      if (popularTemplate.length >= SCROLL_THRESHOLD) return;
 
       const rowHeight = isMobile ? 145 : 80;
       const margin = `${2 * rowHeight}px`;
@@ -51,14 +36,13 @@ function PopularTemplate({
         entries => {
           if (entries[0].isIntersecting && hasNext) {
             onNextPage();
-            setItemCount(prevCount => prevCount + itemPerPage);
           }
         },
         { rootMargin: margin },
       );
       if (node) observer.current.observe(node);
     },
-    [loading, hasNext, itemCount],
+    [loading, hasNext, popularTemplate],
   );
 
   return (
@@ -66,7 +50,10 @@ function PopularTemplate({
       py={{ xs: "30px", md: "48px" }}
       gap={3}
     >
-      <Stack p={"8px 16px"}>
+      <Stack
+        p={"8px 16px"}
+        mb={"-24px"}
+      >
         <Typography
           fontSize={{ xs: 28, md: 32 }}
           fontWeight={400}
@@ -77,20 +64,19 @@ function PopularTemplate({
       </Stack>
       <TemplatesPaginatedList
         loading={loading}
-        hasNext={hasNext && useLoadMore}
-        onNextPage={() => {
-          onNextPage();
-          setItemCount(prevCount => prevCount + itemPerPage);
-        }}
+        isFetching={isFetching}
+        hasNext={hasNext}
+        onNextPage={onNextPage}
         hasPrev={false}
         onPrevPage={onPrevPage}
-        isExplorePage={isExplorePage}
+        buttonText="Load more"
+        variant="outlined"
       >
         <TemplatesSection
           templateLoading={loading}
           templates={popularTemplate}
           type="popularTemplates"
-          isExplorePage={isExplorePage}
+          bgColor="surfaceContainerLow"
         />
         <div ref={lastTemplateElementRef}></div>
       </TemplatesPaginatedList>

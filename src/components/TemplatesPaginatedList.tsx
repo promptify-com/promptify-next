@@ -1,6 +1,6 @@
 import React, { FC, ReactNode } from "react";
 import { Button, Grid } from "@mui/material";
-import { ArrowLeft, ArrowRight } from "@mui/icons-material";
+import { ArrowLeft } from "@mui/icons-material";
 
 interface TemplatesPaginatedListProps {
   children: ReactNode;
@@ -10,7 +10,10 @@ interface TemplatesPaginatedListProps {
   onNextPage: () => void;
   onPrevPage: () => void;
   canBeShown?: boolean;
-  isExplorePage?: boolean;
+  buttonText: string;
+  endIcon?: React.ReactNode;
+  variant?: "text" | "contained" | "outlined";
+  isFetching?: boolean;
 }
 
 const TemplatesPaginatedList: FC<TemplatesPaginatedListProps> = ({
@@ -21,7 +24,10 @@ const TemplatesPaginatedList: FC<TemplatesPaginatedListProps> = ({
   children,
   loading,
   canBeShown = true,
-  isExplorePage = false,
+  buttonText,
+  endIcon,
+  variant = "text",
+  isFetching = false,
 }) => {
   return (
     <Grid
@@ -47,27 +53,17 @@ const TemplatesPaginatedList: FC<TemplatesPaginatedListProps> = ({
             Prev
           </Button>
         )}
-        {hasNext &&
-          (isExplorePage && hasNext ? (
-            <Button
-              variant="outlined"
-              disabled={loading}
-              color="primary"
-              onClick={onNextPage}
-            >
-              LOAD MORE
-            </Button>
-          ) : (
-            <Button
-              variant="text"
-              disabled={loading}
-              color="primary"
-              onClick={onNextPage}
-            >
-              Next
-              <ArrowRight />
-            </Button>
-          ))}
+        {hasNext && (
+          <Button
+            variant={variant}
+            disabled={isFetching}
+            color="primary"
+            onClick={onNextPage}
+            endIcon={endIcon}
+          >
+            {buttonText}
+          </Button>
+        )}
       </Grid>
     </Grid>
   );

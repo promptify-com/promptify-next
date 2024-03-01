@@ -15,10 +15,9 @@ interface Props {
   index?: number;
   priority?: boolean;
   min?: boolean;
-  isExplorePage?: boolean;
 }
 
-export const CategoryCard = ({ category, href, index, priority, min, isExplorePage }: Props) => {
+export const CategoryCard = ({ category, href, index, priority, min }: Props) => {
   const token = useToken();
   const { isMobile } = useBrowser();
   const shouldPrioritizeImage = priority ?? token ? false : isMobile ? index === 0 || index === 1 : true;
@@ -36,14 +35,18 @@ export const CategoryCard = ({ category, href, index, priority, min, isExplorePa
           bgcolor: "transparent",
           borderRadius: "27px",
           overflow: "hidden",
-          "&:hover": {
-            bgcolor: "white",
-          },
         }}
       >
         <CardActionArea
           sx={{
             position: "relative",
+            "&:hover": {
+              backgroundColor: "transparent",
+              boxShadow: "none",
+            },
+            "&:hover .MuiCardActionArea-focusHighlight": {
+              opacity: 0,
+            },
           }}
         >
           <CardMedia
@@ -85,7 +88,7 @@ export const CategoryCard = ({ category, href, index, priority, min, isExplorePa
             >
               {category.name}
             </Typography>
-            {isExplorePage && (
+            {min && (
               <Typography
                 variant="body2"
                 color="text.secondary"

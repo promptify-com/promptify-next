@@ -58,7 +58,6 @@ export default function Page({ category }: { category: Category }) {
   };
 
   const fetchDynamicColors = () => {
-    //@ts-expect-error unfound-new-type
     materialDynamicColors(category.image)
       .then((imgPalette: IMUDynamicColorsThemeColor) => {
         const newPalette: Palette = {
@@ -102,7 +101,7 @@ export default function Page({ category }: { category: Category }) {
       <Layout>
         <Box
           mt={{ xs: 7, md: -2 }}
-          padding={{ xs: "4px 0px", md: "0px 8px" }}
+          padding={{ xs: "4px 0px", md: "0px 142px" }}
         >
           <Grid
             sx={{
@@ -142,7 +141,7 @@ export default function Page({ category }: { category: Category }) {
                         letterSpacing: "0.2px",
                       }}
                     >
-                      All Category
+                      All Categories
                     </Typography>
                     <KeyboardArrowLeft sx={{ opacity: 0.3 }} />
                   </Button>
@@ -176,6 +175,7 @@ export default function Page({ category }: { category: Category }) {
                   src={category.image ?? require("@/assets/images/default-thumbnail.jpg")}
                   alt={category.name}
                   style={{ objectFit: "cover", width: "20%", height: "auto", borderRadius: "50%" }}
+                  priority={true}
                 />
                 <Box
                   sx={{
@@ -219,8 +219,6 @@ export default function Page({ category }: { category: Category }) {
                 onNextPage={handleNextPage}
                 onPrevPage={handlePrevPage}
                 popularTemplate={popularTemplates}
-                isExplorePage={true}
-                itemPerPage={ITEM_PER_PAGE}
               />
             </Box>
           </Grid>

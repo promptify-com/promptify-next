@@ -5,7 +5,6 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import useCarousel from "@/hooks/useCarousel";
 import CarouselButtons from "@/components/common/buttons/CarouselButtons";
-import Link from "next/link";
 import Paper from "@mui/material/Paper";
 import Avatar from "@mui/material/Avatar";
 
@@ -15,13 +14,14 @@ import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 
 interface CategoryCarouselProps {
   categories: Category[];
-  isExplorePage?: boolean;
-  showAllCategories?: () => void;
+  onClick: () => void;
   userScrolled?: boolean;
+  autoPlay?: boolean;
+  gap?: number;
 }
 
-function CategoryCarousel({ categories, isExplorePage, showAllCategories, userScrolled }: CategoryCarouselProps) {
-  const { containerRef: carouselRef, scrollNext, scrollPrev } = useCarousel(!isExplorePage);
+function CategoryCarousel({ categories, onClick, userScrolled, autoPlay = false, gap = 5 }: CategoryCarouselProps) {
+  const { containerRef: carouselRef, scrollNext, scrollPrev } = useCarousel(autoPlay);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const observer = useIntersectionObserver(containerRef, {
     threshold: 0.5,
@@ -29,7 +29,7 @@ function CategoryCarousel({ categories, isExplorePage, showAllCategories, userSc
 
   return (
     <Stack
-      gap={5}
+      gap={gap}
       sx={{
         pt: { md: "48px" },
       }}
@@ -55,24 +55,13 @@ function CategoryCarousel({ categories, isExplorePage, showAllCategories, userSc
             justifyContent={"space-between"}
             gap={1}
           >
-            {isExplorePage ? (
-              <Button
-                sx={{ color: "#67677C" }}
-                variant="outlined"
-                onClick={showAllCategories}
-              >
-                See all
-              </Button>
-            ) : (
-              <Button
-                variant="outlined"
-                LinkComponent={Link}
-                href="/explore"
-                sx={{ color: "#67677C" }}
-              >
-                See all
-              </Button>
-            )}
+            <Button
+              variant="outlined"
+              sx={{ color: "#67677C" }}
+              onClick={onClick}
+            >
+              See all
+            </Button>
             <CarouselButtons
               scrollPrev={scrollPrev}
               scrollNext={scrollNext}
@@ -104,7 +93,7 @@ function CategoryCarousel({ categories, isExplorePage, showAllCategories, userSc
                 <Paper
                   key={category.id}
                   sx={{
-                    flex: "1",
+                    flex: "none",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -115,16 +104,23 @@ function CategoryCarousel({ categories, isExplorePage, showAllCategories, userSc
                     border: "1px solid",
                     borderColor: "surfaceContainer",
                     bgcolor: "onPrimary",
+                    width: "224px",
+                    height: "48px",
                   }}
                 >
                   <Avatar
                     src={category.image}
                     alt={category.name}
-                    sx={{ width: 56, height: 56 }}
+                    sx={{ width: "50px", height: "50px" }}
                   />
                   <Typography
                     variant="subtitle1"
-                    sx={{ flexGrow: 1, textAlign: "center", whiteSpace: "nowrap" }}
+                    sx={{
+                      flexGrow: 1,
+                      overflow: "hidden", // Hide overflow
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
                   >
                     {category.name}
                   </Typography>
@@ -153,7 +149,6 @@ function CategoryCarousel({ categories, isExplorePage, showAllCategories, userSc
                     category={category}
                     priority={false}
                     href={`/explore/${category.slug}`}
-                    isExplorePage={isExplorePage}
                     min
                   />
                 </Box>

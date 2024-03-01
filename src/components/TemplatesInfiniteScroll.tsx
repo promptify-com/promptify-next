@@ -3,6 +3,7 @@ import Grid from "@mui/material/Grid";
 import CardTemplatePlaceholder from "./placeholders/CardTemplatePlaceHolder";
 import { isDesktopViewPort } from "@/common/helpers";
 import TemplatesPaginatedList from "./TemplatesPaginatedList";
+import { ArrowRight } from "@mui/icons-material";
 
 interface TemplatesInfiniteScrollProps {
   loading: boolean;
@@ -67,6 +68,8 @@ const TemplatesInfiniteScroll: FC<TemplatesInfiniteScrollProps> = ({
           onNextPage={onLoadMore}
           onPrevPage={onLoadLess}
           loading={loading}
+          buttonText="Next"
+          endIcon={<ArrowRight />}
         >
           {loading ? <CardTemplatePlaceholder count={5} /> : <>{children}</>}
         </TemplatesPaginatedList>
