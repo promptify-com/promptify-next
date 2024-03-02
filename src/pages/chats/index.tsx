@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createTheme, ThemeProvider, type Palette } from "@mui/material/styles";
 import mix from "polished/lib/color/mix";
 import Stack from "@mui/material/Stack";
-import { materialDynamicColors } from "material-dynamic-colors";
+import materialDynamicColors from "material-dynamic-colors";
 
 import { theme } from "@/theme";
 import { Layout } from "@/layout";
@@ -11,15 +11,23 @@ import ChatInterface from "@/components/Chat/ChatInterface";
 import useMessageManager from "@/components/Chat/Hooks/useMessageManager";
 import ChatInput from "@/components/Chat/ChatInput";
 import type { IMUDynamicColorsThemeColor } from "@/core/api/theme";
+import { useAppSelector } from "@/hooks/useStore";
 
 function ChatPage() {
   const [palette, setPalette] = useState(theme.palette);
 
+  const selectedTemplate = useAppSelector(state => state.chat.selectedTemplate);
   const { messages, handleSubmitInput, isValidatingAnswer, suggestedTemplates } = useMessageManager();
+
+  useEffect(() => {
+    if (selectedTemplate?.thumbnail) {
+      fetchDynamicColors();
+    }
+  }, [selectedTemplate]);
 
   const fetchDynamicColors = () => {
     //@ts-expect-error unfound-new-type
-    materialDynamicColors(fetchedTemplate.thumbnail)
+    materialDynamicColors(selectedTemplate.thumbnail)
       .then((imgPalette: IMUDynamicColorsThemeColor) => {
         const newPalette: Palette = {
           ...theme.palette,

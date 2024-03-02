@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { randomId } from "@/common/helpers";
 
 import { extractTemplateIDs, fetchData, sendMessageAPI } from "@/components/Chat/helper";
 import type { IMessage, MessageType } from "@/components/Prompt/Types/chat";
 import type { Templates } from "@/core/api/dto/templates";
+import { useAppSelector } from "@/hooks/useStore";
 
 interface CreateMessageProps {
   type: MessageType;
@@ -13,10 +14,20 @@ interface CreateMessageProps {
 }
 
 const useMessageManager = () => {
+  const selectedTemplate = useAppSelector(state => state.chat.selectedTemplate);
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [suggestedTemplates, setSuggestedTemplates] = useState<Templates[]>([]);
   const [isValidatingAnswer, setIsValidatingAnswer] = useState(false);
   const [chatMode, setChatMode] = useState<"automation" | "messages">("automation");
+
+  useEffect(() => {
+    if (!selectedTemplate) {
+      return;
+    }
+    const runMessage = createMessage({ type: "text", fromUser: true });
+    runMessage.text = `Run "${selectedTemplate.title}"`;
+    setMessages(prevMessages => prevMessages.concat(runMessage));
+  }, [selectedTemplate]);
 
   const createMessage = ({
     type,
