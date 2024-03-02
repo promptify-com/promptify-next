@@ -34,7 +34,7 @@ function MessageSender({
   loading,
 }: MessageSenderProps) {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
-  const globalValue = useAppSelector(state => state.chat.value);
+  const MessageSenderValue = useAppSelector(state => state.chat.MessageSenderValue);
 
   const { isVariantB } = useVariant();
   const [localValue, setLocalValue] = useState("");
@@ -42,8 +42,8 @@ function MessageSender({
   const fieldRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
-    setLocalValue(globalValue);
-  }, [globalValue]);
+    setLocalValue(MessageSenderValue);
+  }, [MessageSenderValue]);
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {

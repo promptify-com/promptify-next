@@ -4,6 +4,7 @@ import type { IPromptInput } from "@/common/types/prompt";
 import type { IAnswer, IMessage } from "@/components/Prompt/Types/chat";
 import type { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
 import type { ICredentialInput } from "@/components/Automation/types";
+import type { Templates } from "@/core/api/dto/templates";
 
 export interface ExecutionsProps {
   answers: IAnswer[];
@@ -14,7 +15,8 @@ export interface ExecutionsProps {
   credentialsInput: ICredentialInput[];
   areCredentialsStored: boolean;
   tmpMessages?: IMessage[];
-  value: string;
+  MessageSenderValue: string;
+  selectedTemplate?: Templates;
 }
 
 const initialState: ExecutionsProps = {
@@ -26,7 +28,8 @@ const initialState: ExecutionsProps = {
   credentialsInput: [],
   areCredentialsStored: false,
   tmpMessages: [],
-  value: "",
+  MessageSenderValue: "",
+  selectedTemplate: undefined,
 };
 
 export const chatSlice = createSlice({
@@ -60,8 +63,11 @@ export const chatSlice = createSlice({
     setTmpMessages: (state, action: PayloadAction<IMessage[]>) => {
       state.tmpMessages = action.payload;
     },
-    setValue: (state, action: PayloadAction<string>) => {
-      state.value = action.payload;
+    setMessageSenderValue: (state, action: PayloadAction<string>) => {
+      state.MessageSenderValue = action.payload;
+    },
+    setSelectedTemplate: (state, action: PayloadAction<Templates | undefined>) => {
+      state.selectedTemplate = action.payload;
     },
   },
 });
@@ -76,7 +82,8 @@ export const {
   clearChatStates,
   setAreCredentialsStored,
   setTmpMessages,
-  setValue,
+  setMessageSenderValue,
+  setSelectedTemplate,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

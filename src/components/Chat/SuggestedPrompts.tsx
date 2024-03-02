@@ -3,7 +3,7 @@ import EmojiObjectsOutlinedIcon from "@mui/icons-material/EmojiObjectsOutlined";
 import Typography from "@mui/material/Typography";
 
 import { useAppDispatch } from "@/hooks/useStore";
-import { setValue } from "@/core/store/chatSlice";
+import { setMessageSenderValue } from "@/core/store/chatSlice";
 
 function SuggestedPrompts() {
   const dispatch = useAppDispatch();
@@ -35,7 +35,7 @@ function SuggestedPrompts() {
               bgcolor: "action.hover",
             },
           }}
-          onClick={() => dispatch(setValue(prompt))}
+          onClick={() => dispatch(setMessageSenderValue(prompt))}
         >
           <EmojiObjectsOutlinedIcon />
           <Typography

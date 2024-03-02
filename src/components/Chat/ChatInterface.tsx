@@ -6,7 +6,9 @@ import useScrollToBottom from "@/components/Prompt/Hooks/useScrollToBottom";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import { Message } from "./Message";
 import { Templates } from "@/core/api/dto/templates";
-import TemplateSuggestions from "./TemplateSuggestions";
+import TemplateSuggestions from "@/components/Chat/TemplateSuggestions";
+import ChatOptions from "./ChatOptions";
+import { useAppSelector } from "@/hooks/useStore";
 
 interface Props {
   messages: IMessage[];
@@ -19,6 +21,8 @@ interface Props {
 
 const ChatInterface = ({ templates, messages, onGenerate, showGenerate, onAbort, isValidating }: Props) => {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
+
+  const selectedTemplate = useAppSelector(state => state.chat.selectedTemplate);
 
   const { scrollToBottom } = useScrollToBottom({
     ref: messagesContainerRef,
@@ -34,7 +38,7 @@ const ChatInterface = ({ templates, messages, onGenerate, showGenerate, onAbort,
       sx={messagesContainerStyle}
     >
       <Stack
-        pb={{ md: "38px" }}
+        pt={{ md: "38px" }}
         direction={"column"}
         gap={3}
       >
@@ -48,11 +52,16 @@ const ChatInterface = ({ templates, messages, onGenerate, showGenerate, onAbort,
                 message={msg}
                 onScrollToBottom={scrollToBottom}
               />
-              {msg.type === "suggestedTemplates" && <TemplateSuggestions templates={templates} />}
+              {msg.type === "suggestedTemplates" && (
+                <TemplateSuggestions
+                  templates={templates}
+                  scrollToBottom={scrollToBottom}
+                />
+              )}
             </Fragment>
           ))}
 
-          {/* <SuggestedTemplates  */}
+          {!!selectedTemplate && <ChatOptions />}
         </Stack>
       </Stack>
     </Stack>

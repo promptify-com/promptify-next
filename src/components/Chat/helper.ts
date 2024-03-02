@@ -92,6 +92,7 @@ export async function fetchData(ids: number[]) {
           tags: __data.tags,
           favorites_count: __data.favorites_count,
           description: __data.description,
+          executions_count: __data.executions_count,
         } as Templates;
         filteredData[idx] = savedData[_data.id];
       }

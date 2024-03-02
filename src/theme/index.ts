@@ -26,6 +26,7 @@ interface CustomPalette {
   inverseOnSurface: string;
   inverseSurface: string;
   surfaceContainerLow: string;
+  surfaceContainerHighest: string;
 }
 
 interface CustomTheme {
@@ -83,6 +84,7 @@ export let theme: Theme = createTheme({
     onError: "#FFFFFF",
     onErrorContainer: "#410001",
     surfaceContainerLow: "#F5F3F7",
+    surfaceContainerHighest: "#E3E2E6",
     surface: {
       1: "#FDFBFF",
       2: "#F5F4FA",
