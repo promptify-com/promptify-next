@@ -17,17 +17,6 @@ import materialDynamicColors from "material-dynamic-colors";
 import { type Palette, ThemeProvider, createTheme, useTheme } from "@mui/material";
 import { mix } from "polished";
 
-interface IMUDynamicColorsThemeColor {
-  light: {
-    primary: string;
-    secondary: string;
-    error: string;
-    background: string;
-    surface: string;
-    surfaceVariant: string;
-  };
-}
-
 export default function Page({ category }: { category: Category }) {
   const router = useRouter();
   const theme = useTheme();
@@ -41,6 +30,7 @@ export default function Page({ category }: { category: Category }) {
     handleNextPage,
     hasMore,
     handlePrevPage,
+    isFetching,
   } = useGetTemplatesByFilter({ catId: category?.id, ordering: "-runs", templateLimit: ITEM_PER_PAGE });
 
   useEffect(() => {
@@ -59,7 +49,7 @@ export default function Page({ category }: { category: Category }) {
 
   const fetchDynamicColors = () => {
     materialDynamicColors(category.image)
-      .then((imgPalette: IMUDynamicColorsThemeColor) => {
+      .then(imgPalette => {
         const newPalette: Palette = {
           ...theme.palette,
           ...imgPalette.light,
@@ -219,6 +209,7 @@ export default function Page({ category }: { category: Category }) {
                 onNextPage={handleNextPage}
                 onPrevPage={handlePrevPage}
                 popularTemplate={popularTemplates}
+                isFetching={isFetching}
               />
             </Box>
           </Grid>

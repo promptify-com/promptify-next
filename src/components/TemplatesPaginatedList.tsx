@@ -1,6 +1,6 @@
 import React, { FC, ReactNode } from "react";
 import { Button, Grid } from "@mui/material";
-import { ArrowLeft } from "@mui/icons-material";
+import ArrowLeft from "@mui/icons-material/ArrowLeft";
 
 interface TemplatesPaginatedListProps {
   children: ReactNode;
@@ -10,7 +10,7 @@ interface TemplatesPaginatedListProps {
   onNextPage: () => void;
   onPrevPage: () => void;
   canBeShown?: boolean;
-  buttonText: string;
+  buttonText?: string;
   endIcon?: React.ReactNode;
   variant?: "text" | "contained" | "outlined";
   isFetching?: boolean;
@@ -24,7 +24,7 @@ const TemplatesPaginatedList: FC<TemplatesPaginatedListProps> = ({
   children,
   loading,
   canBeShown = true,
-  buttonText,
+  buttonText = "Next",
   endIcon,
   variant = "text",
   isFetching = false,

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
@@ -44,26 +44,19 @@ export default function ExplorePage({ categories }: Props) {
   const [hasUserScrolled, setHasUserScrolled] = useState(false);
 
   useEffect(() => {
-    let timeoutId: NodeJS.Timeout;
-
     const handleScroll = () => {
-      clearTimeout(timeoutId);
-
-      const scrollPosition = window.scrollY;
-      timeoutId = setTimeout(() => {
-        if (scrollPosition > 0) {
-          setHasUserScrolled(true);
-        } else {
-          setHasUserScrolled(false);
-        }
-      }, 150);
+      const threshold = 180;
+      if (window.scrollY > threshold) {
+        setHasUserScrolled(true);
+      } else {
+        setHasUserScrolled(false);
+      }
     };
 
     window.addEventListener("scroll", handleScroll);
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
-      clearTimeout(timeoutId);
     };
   }, []);
 

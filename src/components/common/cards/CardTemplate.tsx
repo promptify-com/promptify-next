@@ -27,7 +27,7 @@ type CardTemplateProps = {
   bgColor?: string;
 };
 
-function CardTemplate({ template, query, asResult, vertical, bgColor }: CardTemplateProps) {
+function CardTemplate({ template, query, asResult, vertical, bgColor = "surface.2" }: CardTemplateProps) {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { truncate } = useTruncate();

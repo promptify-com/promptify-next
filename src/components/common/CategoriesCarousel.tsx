@@ -9,7 +9,7 @@ import Paper from "@mui/material/Paper";
 import Avatar from "@mui/material/Avatar";
 
 import { CategoryCard } from "@/components/common/cards/CardCategory";
-import { Category } from "@/core/api/dto/templates";
+import type { Category } from "@/core/api/dto/templates";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 
 interface CategoryCarouselProps {
@@ -54,6 +54,7 @@ function CategoryCarousel({ categories, onClick, userScrolled, autoPlay = false,
             alignItems={"center"}
             justifyContent={"space-between"}
             gap={1}
+            sx={{ display: { xs: "none", md: "flex" } }}
           >
             <Button
               variant="outlined"

@@ -22,7 +22,6 @@ interface TemplatesSectionProps {
   isInfiniteScrolling?: boolean;
   hasPrev?: boolean;
   onPrevPage?: () => void;
-  isExplorePage?: boolean;
   bgColor?: string;
 }
 
