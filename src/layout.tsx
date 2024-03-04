@@ -26,7 +26,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
         >
           <Header transparent />
           <Box
-            bgcolor={"surface.1"}
+            bgcolor={"surfaceContainerLowest"}
             minHeight={{
               xs: `calc(100svh - ${theme.custom.headerHeight.xs})`,
               md: `calc(100svh - ${theme.custom.headerHeight.md})`,

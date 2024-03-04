@@ -55,6 +55,7 @@ const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template }) => {
 
   return (
     <Stack
+      position={"fixed"}
       height={{ md: "calc(100svh - 90px)" }}
       overflow={"auto"}
     >

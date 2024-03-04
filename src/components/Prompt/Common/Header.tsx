@@ -59,7 +59,6 @@ export default function Header({ template }: TemplateHeaderProps) {
       justifyContent={"space-between"}
       sx={{
         p: "24px 48px",
-        bgcolor: "surface.1",
         display: { xs: "none", md: "flex" },
       }}
     >
