@@ -14,7 +14,7 @@ import { getCategories } from "@/hooks/api/categories";
 import { isValidUserFn } from "@/core/store/userSlice";
 import { SEO_DESCRIPTION } from "@/common/constants";
 import { CategoryCard } from "@/components/common/cards/CardCategory";
-import PopularTemplate from "@/components/explorer/PopularTemplate";
+import PopularTemplates from "@/components/explorer/PopularTemplates";
 import { useAppSelector } from "@/hooks/useStore";
 import { useGetSuggestedTemplatesByCategoryQuery } from "@/core/api/templates";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
@@ -128,12 +128,12 @@ export default function ExplorePage({ categories }: Props) {
               />
             ))}
 
-          <PopularTemplate
+          <PopularTemplates
             loading={isFetching}
             hasNext={hasMore}
             onNextPage={handleNextPage}
             onPrevPage={handlePrevPage}
-            popularTemplate={popularTemplates}
+            templates={popularTemplates}
             templateLoading={isTemplatesLoading}
           />
           {isValidUser && !!suggestedTemplates?.length && (

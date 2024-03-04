@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef } from "react";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import TemplatesPaginatedList from "@/components/TemplatesPaginatedList";
@@ -12,11 +12,11 @@ interface Props {
   hasNext: boolean;
   onNextPage: () => void;
   onPrevPage: () => void;
-  popularTemplate: Templates[];
+  templates: Templates[];
   templateLoading: boolean;
 }
 
-function PopularTemplate({ loading, hasNext, onNextPage, onPrevPage, popularTemplate, templateLoading }: Props) {
+function PopularTemplates({ loading, hasNext, onNextPage, onPrevPage, templates, templateLoading }: Props) {
   const observer = useRef<IntersectionObserver | null>(null);
   const { isMobile } = useBrowser();
 
@@ -27,7 +27,7 @@ function PopularTemplate({ loading, hasNext, onNextPage, onPrevPage, popularTemp
       if (loading) return;
       if (observer.current) observer.current.disconnect();
 
-      if (popularTemplate.length >= SCROLL_THRESHOLD) return;
+      if (templates.length >= SCROLL_THRESHOLD) return;
 
       const rowHeight = isMobile ? 145 : 80;
       const margin = `${2 * rowHeight}px`;
@@ -42,7 +42,7 @@ function PopularTemplate({ loading, hasNext, onNextPage, onPrevPage, popularTemp
       );
       if (node) observer.current.observe(node);
     },
-    [loading, hasNext, popularTemplate],
+    [loading, hasNext, templates],
   );
 
   return (
@@ -73,7 +73,7 @@ function PopularTemplate({ loading, hasNext, onNextPage, onPrevPage, popularTemp
       >
         <TemplatesSection
           templateLoading={templateLoading}
-          templates={popularTemplate}
+          templates={templates}
           type="popularTemplates"
           bgColor="surfaceContainerLow"
         />
@@ -83,4 +83,4 @@ function PopularTemplate({ loading, hasNext, onNextPage, onPrevPage, popularTemp
   );
 }
 
-export default PopularTemplate;
+export default PopularTemplates;

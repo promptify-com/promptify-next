@@ -25,9 +25,17 @@ type CardTemplateProps = {
   asResult?: boolean;
   vertical?: boolean;
   bgColor?: string;
+  showTagsOnHover?: boolean;
 };
 
-function CardTemplate({ template, query, asResult, vertical, bgColor = "surface.2" }: CardTemplateProps) {
+function CardTemplate({
+  template,
+  query,
+  asResult,
+  vertical,
+  bgColor = "surface.2",
+  showTagsOnHover = false,
+}: CardTemplateProps) {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { truncate } = useTruncate();
@@ -53,6 +61,13 @@ function CardTemplate({ template, query, asResult, vertical, bgColor = "surface.
     );
   };
 
+  const conditionalTagStyles = showTagsOnHover && {
+    "&:hover .tags": {
+      zIndex: 999,
+      display: "flex",
+    },
+  };
+
   return (
     <Link
       href={`/prompt/${template.slug}`}
@@ -69,18 +84,15 @@ function CardTemplate({ template, query, asResult, vertical, bgColor = "surface.
           width: "auto",
           minWidth: isDesktop && vertical ? "210px" : "auto",
           height: isDesktop && vertical ? "calc(100% - 24px)" : "calc(100% - 16px)",
-          borderRadius: "16px 16px 0 0",
+          borderRadius: showTagsOnHover ? "16px 16px 0 0" : "16px",
           cursor: "pointer",
           p: isDesktop && vertical ? "16px 16px 8px" : "8px",
           bgcolor: isDesktop && vertical ? "transparent" : bgColor,
           transition: "background-color 0.1s ease",
           "&:hover": {
             bgcolor: bgColor,
-            "& > #tags": {
-              zIndex: 999,
-              display: "flex",
-            },
           },
+          ...conditionalTagStyles,
         }}
         elevation={0}
       >
@@ -261,40 +273,42 @@ function CardTemplate({ template, query, asResult, vertical, bgColor = "surface.
           </Stack>
         </Stack>
 
-        <Stack
-          sx={{
-            position: "absolute",
-            top: "100%",
-            left: 0,
-            right: 0,
-            zIndex: 0,
-            p: "8px",
-            bgcolor: "surface.2",
-            borderRadius: "0 0 16px 16px",
-            display: "none",
-            alignItems: "flex-start",
-            alignContent: "flex-start",
-            flexDirection: "row",
-            gap: "8px var(--1, 8px)",
-            flexWrap: "wrap",
-            transition: "background-color 0.3s ease",
-          }}
-          id="tags"
-        >
-          {template.tags.map(tag => (
-            <Chip
-              size="small"
-              label={tag.name}
-              key={tag.id}
-              sx={{
-                fontSize: { xs: 11, md: 13 },
-                fontWeight: 400,
-                bgcolor: "white",
-                color: "onSurface",
-              }}
-            />
-          ))}
-        </Stack>
+        {conditionalTagStyles && (
+          <Stack
+            sx={{
+              position: "absolute",
+              top: "100%",
+              left: 0,
+              right: 0,
+              zIndex: 0,
+              p: "8px",
+              bgcolor: "surface.2",
+              borderRadius: "0 0 16px 16px",
+              display: "none",
+              alignItems: "flex-start",
+              alignContent: "flex-start",
+              flexDirection: "row",
+              gap: "8px var(--1, 8px)",
+              flexWrap: "wrap",
+              transition: "background-color 0.3s ease",
+            }}
+            className="tags"
+          >
+            {template.tags.map(tag => (
+              <Chip
+                size="small"
+                label={tag.name}
+                key={tag.id}
+                sx={{
+                  fontSize: { xs: 11, md: 13 },
+                  fontWeight: 400,
+                  bgcolor: "white",
+                  color: "onSurface",
+                }}
+              />
+            ))}
+          </Stack>
+        )}
       </Card>
     </Link>
   );

@@ -228,6 +228,7 @@ export const TemplatesSection = forwardRef<HTMLDivElement, TemplatesSectionProps
                     template={template as Templates}
                     bgColor={bgColor}
                     vertical
+                    showTagsOnHover
                   />
                 ))}
             </Stack>

@@ -12,7 +12,7 @@ import { Layout } from "@/layout";
 import { useGetTemplatesByFilter } from "@/hooks/useGetTemplatesByFilter";
 import { SEO_DESCRIPTION, SEO_TITLE } from "@/common/constants";
 import Image from "@/components/design-system/Image";
-import PopularTemplate from "@/components/explorer/PopularTemplate";
+import PopularTemplates from "@/components/explorer/PopularTemplates";
 import materialDynamicColors from "material-dynamic-colors";
 import { type Palette, ThemeProvider, createTheme, useTheme } from "@mui/material";
 import { mix } from "polished";
@@ -203,12 +203,12 @@ export default function Page({ category }: { category: Category }) {
                 </Box>
               </Box>
 
-              <PopularTemplate
+              <PopularTemplates
                 loading={isFetching}
                 hasNext={hasMore}
                 onNextPage={handleNextPage}
                 onPrevPage={handlePrevPage}
-                popularTemplate={popularTemplates}
+                templates={popularTemplates}
                 templateLoading={isTemplatesLoading}
               />
             </Box>
