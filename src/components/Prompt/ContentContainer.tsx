@@ -10,6 +10,7 @@ import { Link } from "./Types";
 import Api from "@mui/icons-material/Api";
 import Instructions from "./Instructions";
 import ExecutionExample from "./ExecutionExample";
+import ApiAccess from "./ApiAccess";
 
 const ScrollTabs: Link[] = [
   {
@@ -47,7 +48,7 @@ export default function ContentContainer({ template }: Props) {
 
   return (
     <Box
-      height={"100svh"}
+      // height={"100svh"}
       overflow={"auto"}
     >
       <Box sx={{ position: "relative", top: 0, bgcolor: "surfaceContainerLowest", p: "32px 36px" }}>
@@ -89,6 +90,7 @@ export default function ContentContainer({ template }: Props) {
         execution={template.example_execution}
         promptsData={template.prompts}
       />
+      <ApiAccess template={template} />
     </Box>
   );
 }
