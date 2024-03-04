@@ -10,12 +10,14 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 
 import MessageBoxHeader from "@/components/Chat/MessageBoxHeader";
 import Form from "@/components/Prompt/Common/Chat/Form";
+import type { Templates } from "@/core/api/dto/templates";
 
 interface Props {
   content: string;
+  template: Templates;
 }
 
-function FormMessageBox({ content }: Props) {
+function FormMessageBox({ content, template }: Props) {
   return (
     <Stack>
       <Typography
@@ -83,7 +85,10 @@ function FormMessageBox({ content }: Props) {
               </Stack>
             </Stack>
 
-            <Form messageType={"form"} />
+            <Form
+              messageType={"form"}
+              template={template}
+            />
           </Stack>
         </AccordionDetails>
       </Accordion>

@@ -92,6 +92,11 @@ function FormInput({ input }: Props) {
       p={isVariantB ? "6px" : 0}
       alignItems={"center"}
       gap={1}
+      sx={{
+        "&:hover": {
+          bgcolor: "surface.1",
+        },
+      }}
     >
       {isVariantB && (
         <Radio

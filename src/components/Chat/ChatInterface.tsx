@@ -91,7 +91,10 @@ const ChatInterface = ({ templates, messages, onGenerate, showGenerate, onAbort,
                   onTransitionEnd={() => dispatch(setIsSimulationStreaming(false))}
                 >
                   <Stack>
-                    <FormMessageBox content={msg.text} />
+                    <FormMessageBox
+                      content={msg.text}
+                      template={selectedTemplate!}
+                    />
                   </Stack>
                 </Fade>
               )}
