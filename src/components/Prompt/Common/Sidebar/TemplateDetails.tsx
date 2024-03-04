@@ -2,7 +2,7 @@ import { stripTags } from "@/common/helpers";
 import { formatDate } from "@/common/helpers/timeManipulation";
 import { Templates } from "@/core/api/dto/templates";
 import { setSelectedTag } from "@/core/store/filtersSlice";
-import { Box, Button, Chip, Stack, Typography, alpha } from "@mui/material";
+import { Button, Chip, Stack, Typography, alpha } from "@mui/material";
 import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
 import Image from "@/components/design-system/Image";
@@ -11,6 +11,10 @@ import FavoriteIcon from "@/components/Prompt/FavoriteIcon";
 import Bookmark from "@mui/icons-material/Bookmark";
 import BookmarkBorder from "@mui/icons-material/BookmarkBorder";
 import RunButton from "@/components/Prompt/RunButton";
+import { useAppSelector } from "@/hooks/useStore";
+import Tune from "@mui/icons-material/Tune";
+import ContentCopy from "@mui/icons-material/ContentCopy";
+import useCloneTemplate from "@/components/Prompt/Hooks/useCloneTemplate";
 
 interface TemplateDetailsProps {
   template: Templates;
@@ -19,10 +23,38 @@ interface TemplateDetailsProps {
 const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template }) => {
   const router = useRouter();
   const dispatch = useDispatch();
+  const { cloneTemplate } = useCloneTemplate({ template });
+  const currentUser = useAppSelector(state => state.user.currentUser);
+  const isOwner = currentUser?.is_admin || currentUser?.id === template.created_by.id;
+
+  const handleEdit = () => {
+    if (isOwner) {
+      const url = `/prompt-builder/${template.slug}?editor=1`;
+      window.open(url, "_blank");
+      return;
+    }
+
+    cloneTemplate();
+  };
+
+  const CloneButton = () => (
+    <Button
+      onClick={handleEdit}
+      startIcon={isOwner ? <Tune /> : <ContentCopy />}
+      sx={{
+        ml: "-20px",
+        color: "onSurface",
+        ":hover": {
+          bgcolor: "surfaceContainerHigh",
+        },
+      }}
+    >
+      {isOwner ? "Edit" : "Clone & Edit"}
+    </Button>
+  );
 
   return (
     <Stack
-      gap={3}
       width={{ md: "430px" }}
       height={"100%"}
       overflow={"auto"}
@@ -97,7 +129,7 @@ const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template }) => {
             }}
           />
         </Stack>
-        <Box>
+        <Stack alignItems={"flex-start"}>
           <Stack
             gap={2}
             py={"16px"}
@@ -153,7 +185,13 @@ const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template }) => {
               Runs: <span>{template.executions_count}</span>
             </Typography>
           </Stack>
-        </Box>
+          <Stack
+            gap={2}
+            py={"16px"}
+          >
+            <CloneButton />
+          </Stack>
+        </Stack>
       </Stack>
     </Stack>
   );
