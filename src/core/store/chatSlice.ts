@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { IPromptInput } from "@/common/types/prompt";
-import type { IAnswer, IMessage } from "@/components/Prompt/Types/chat";
+import type { ChatOption, IAnswer, IMessage } from "@/components/Prompt/Types/chat";
 import type { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
 import type { ICredentialInput } from "@/components/Automation/types";
 import type { Templates } from "@/core/api/dto/templates";
@@ -17,6 +17,7 @@ export interface ExecutionsProps {
   tmpMessages?: IMessage[];
   MessageSenderValue: string;
   selectedTemplate?: Templates;
+  selectedChatOption?: ChatOption;
 }
 
 const initialState: ExecutionsProps = {
@@ -30,6 +31,7 @@ const initialState: ExecutionsProps = {
   tmpMessages: [],
   MessageSenderValue: "",
   selectedTemplate: undefined,
+  selectedChatOption: undefined,
 };
 
 export const chatSlice = createSlice({
@@ -69,6 +71,9 @@ export const chatSlice = createSlice({
     setSelectedTemplate: (state, action: PayloadAction<Templates | undefined>) => {
       state.selectedTemplate = action.payload;
     },
+    setSelectedChatOption: (state, action: PayloadAction<ChatOption | undefined>) => {
+      state.selectedChatOption = action.payload;
+    },
   },
 });
 
@@ -84,6 +89,7 @@ export const {
   setTmpMessages,
   setMessageSenderValue,
   setSelectedTemplate,
+  setSelectedChatOption,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

@@ -93,6 +93,8 @@ export async function fetchData(ids: number[]) {
           favorites_count: __data.favorites_count,
           description: __data.description,
           executions_count: __data.executions_count,
+          prompts: __data.prompts,
+          questions: __data.questions,
         } as Templates;
         filteredData[idx] = savedData[_data.id];
       }

@@ -2,13 +2,15 @@ import { Fragment, useRef } from "react";
 import Stack from "@mui/material/Stack";
 
 import useScrollToBottom from "@/components/Prompt/Hooks/useScrollToBottom";
-
-import type { IMessage } from "@/components/Prompt/Types/chat";
-import { Message } from "./Message";
-import { Templates } from "@/core/api/dto/templates";
+import Message from "@/components/Chat/Message";
 import TemplateSuggestions from "@/components/Chat/TemplateSuggestions";
-import ChatOptions from "./ChatOptions";
+import ChatOptions from "@/components/Chat/ChatOptions";
+import ChatHeading from "@/components/Chat/ChatHeading";
+import FormMessageBox from "@/components/Chat/FormMessageBox";
 import { useAppSelector } from "@/hooks/useStore";
+import type { Templates } from "@/core/api/dto/templates";
+import type { IMessage } from "@/components/Prompt/Types/chat";
+import { Fade } from "@mui/material";
 
 interface Props {
   messages: IMessage[];
@@ -22,13 +24,17 @@ interface Props {
 const ChatInterface = ({ templates, messages, onGenerate, showGenerate, onAbort, isValidating }: Props) => {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
-  const selectedTemplate = useAppSelector(state => state.chat.selectedTemplate);
+  const { selectedTemplate, selectedChatOption } = useAppSelector(state => state.chat);
+  const currentUser = useAppSelector(state => state.user.currentUser);
+  const isGenerating = useAppSelector(state => state.template.isGenerating);
 
   const { scrollToBottom } = useScrollToBottom({
     ref: messagesContainerRef,
     content: messages,
     isGenerating: false,
   });
+
+  const showChatOptions = Boolean(!!selectedTemplate && !selectedChatOption);
 
   return (
     <Stack
@@ -42,9 +48,16 @@ const ChatInterface = ({ templates, messages, onGenerate, showGenerate, onAbort,
         direction={"column"}
         gap={3}
       >
+        {!!selectedTemplate && (
+          <ChatHeading
+            title={selectedTemplate.title}
+            avatar={selectedTemplate.thumbnail}
+          />
+        )}
+
         <Stack
-          gap={3}
           direction={"column"}
+          gap={3}
         >
           {messages.map(msg => (
             <Fragment key={msg.id}>
@@ -53,15 +66,35 @@ const ChatInterface = ({ templates, messages, onGenerate, showGenerate, onAbort,
                 onScrollToBottom={scrollToBottom}
               />
               {msg.type === "suggestedTemplates" && (
-                <TemplateSuggestions
-                  templates={templates}
-                  scrollToBottom={scrollToBottom}
-                />
+                <Fade
+                  in={true}
+                  unmountOnExit
+                  timeout={800}
+                >
+                  <Stack>
+                    <TemplateSuggestions
+                      content={msg.text}
+                      templates={templates}
+                      scrollToBottom={scrollToBottom}
+                    />
+                  </Stack>
+                </Fade>
+              )}
+              {msg.type === "form" && (
+                <Fade
+                  in={true}
+                  unmountOnExit
+                  timeout={800}
+                >
+                  <Stack>
+                    <FormMessageBox content={msg.text} />
+                  </Stack>
+                </Fade>
               )}
             </Fragment>
           ))}
 
-          {!!selectedTemplate && <ChatOptions />}
+          {showChatOptions && <ChatOptions />}
         </Stack>
       </Stack>
     </Stack>

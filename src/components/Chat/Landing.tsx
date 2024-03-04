@@ -60,7 +60,6 @@ function Landing() {
             alt={"Image 1"}
             priority={true}
             fill
-            sizes="(max-width: 900px) 253px, 353px"
             style={{
               objectFit: "cover",
             }}
@@ -82,7 +81,6 @@ function Landing() {
             alt={"Image 2"}
             priority={true}
             fill
-            sizes="(max-width: 900px) 253px, 353px"
             style={{
               objectFit: "cover",
             }}
@@ -105,7 +103,6 @@ function Landing() {
             alt={"Image 3"}
             priority={true}
             fill
-            sizes="(max-width: 900px) 253px, 353px"
             style={{
               objectFit: "cover",
             }}

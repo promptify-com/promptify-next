@@ -10,19 +10,24 @@ import Landing from "@/components/Chat/Landing";
 import ChatInterface from "@/components/Chat/ChatInterface";
 import useMessageManager from "@/components/Chat/Hooks/useMessageManager";
 import ChatInput from "@/components/Chat/ChatInput";
-import type { IMUDynamicColorsThemeColor } from "@/core/api/theme";
 import { useAppSelector } from "@/hooks/useStore";
+import type { IMUDynamicColorsThemeColor } from "@/core/api/theme";
+import SigninButton from "@/components/common/buttons/SigninButton";
+import { useRouter } from "next/router";
 
 function ChatPage() {
+  const router = useRouter();
   const [palette, setPalette] = useState(theme.palette);
 
-  const selectedTemplate = useAppSelector(state => state.chat.selectedTemplate);
+  const { selectedTemplate, selectedChatOption, isSimulationStreaming } = useAppSelector(state => state.chat);
+  const currentUser = useAppSelector(state => state.user.currentUser);
   const { messages, handleSubmitInput, isValidatingAnswer, suggestedTemplates } = useMessageManager();
 
   useEffect(() => {
-    if (selectedTemplate?.thumbnail) {
-      fetchDynamicColors();
+    if (!selectedTemplate?.thumbnail) {
+      return;
     }
+    fetchDynamicColors();
   }, [selectedTemplate]);
 
   const fetchDynamicColors = () => {
@@ -93,13 +98,30 @@ function ChatPage() {
             />
           )}
 
-          <ChatInput
-            onSubmit={handleSubmitInput}
-            disabled={isValidatingAnswer}
-            showGenerate={false}
-            isValidating={isValidatingAnswer}
-            onGenerate={() => {}}
-          />
+          {currentUser?.id ? (
+            <>
+              {selectedChatOption !== "FORM" && (
+                <ChatInput
+                  onSubmit={handleSubmitInput}
+                  disabled={isValidatingAnswer}
+                  showGenerate={false}
+                  isValidating={isValidatingAnswer}
+                  onGenerate={() => {}}
+                />
+              )}
+            </>
+          ) : (
+            <Stack
+              direction={"column"}
+              alignItems={"center"}
+              justifyContent={"center"}
+              gap={1}
+              width={{ md: "100%" }}
+              p={{ md: "16px 8px 16px 16px" }}
+            >
+              <SigninButton onClick={() => router.push("/signin")} />
+            </Stack>
+          )}
         </Stack>
       </Layout>
     </ThemeProvider>

@@ -28,3 +28,5 @@ export interface IAnswer {
   prompt: number;
   error?: boolean;
 }
+
+export type ChatOption = "QA" | "FORM";

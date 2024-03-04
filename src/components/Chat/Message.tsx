@@ -38,7 +38,7 @@ const MessageContent = memo(({ content, shouldStream, onStreamingFinished }: Mes
   return <>{streamedText}</>;
 });
 
-export const Message = ({ message, onScrollToBottom }: Props) => {
+const Message = ({ message, onScrollToBottom }: Props) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const dispatch = useAppDispatch();
@@ -52,6 +52,10 @@ export const Message = ({ message, onScrollToBottom }: Props) => {
     if (fromUser) return;
     dispatch(setIsSimulationStreaming(true));
   }, []);
+
+  if (message.type !== "text") {
+    return;
+  }
 
   return (
     <Grid
@@ -118,3 +122,5 @@ export const Message = ({ message, onScrollToBottom }: Props) => {
     </Grid>
   );
 };
+
+export default Message;

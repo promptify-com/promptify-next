@@ -3,15 +3,19 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
+import type { ChatOption } from "@/components/Prompt/Types/chat";
+import { useAppDispatch } from "@/hooks/useStore";
+import { setSelectedChatOption } from "@/core/store/chatSlice";
 
 interface Option {
   image: string;
   label: string;
   hint: string;
-  type: "QA" | "FORM";
+  type: ChatOption;
 }
 
 function ChatOptions() {
+  const dispatch = useAppDispatch();
   const options: Option[] = [
     {
       image: "",
@@ -84,6 +88,7 @@ function ChatOptions() {
                     bgcolor: "action.hover",
                   },
                 }}
+                onClick={() => dispatch(setSelectedChatOption(option.type))}
               >
                 <Box
                   height={"300px"}
