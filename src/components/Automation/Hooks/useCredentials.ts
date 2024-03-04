@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useState } from "react";
 import Storage from "@/common/storage";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { workflowsApi } from "@/core/api/workflows";
@@ -8,7 +8,7 @@ import type { ICredential, ICredentialInput, INode } from "@/components/Automati
 
 const useCredentials = () => {
   const dispatch = useAppDispatch();
-  const credentials = useRef<ICredential[]>(Storage.get("credentials") || []);
+  const [credentials, setCredentials] = useState<ICredential[]>(Storage.get("credentials") || []);
 
   const credentialsInput = useAppSelector(state => state.chat.credentialsInput);
   const currentUser = useAppSelector(state => state.user.currentUser);
@@ -17,8 +17,8 @@ const useCredentials = () => {
 
   const initializeCredentials = (): Promise<ICredential[]> => {
     return new Promise(async resolve => {
-      if (!!credentials.current.length || !currentUser?.id) {
-        resolve(credentials.current);
+      if (!!credentials.length || !currentUser?.id) {
+        resolve(credentials);
 
         return;
       }
@@ -30,13 +30,13 @@ const useCredentials = () => {
           return;
         }
 
-        credentials.current = fetchedCredentials;
+        setCredentials(fetchedCredentials);
 
         Storage.set("credentials", JSON.stringify(fetchedCredentials));
       } catch (error) {
         console.error("Failed fetching Credentials");
       } finally {
-        resolve(credentials.current);
+        resolve(credentials);
       }
     });
   };
@@ -49,31 +49,32 @@ const useCredentials = () => {
   }
 
   const checkAllCredentialsStored = (credentialsInput: ICredentialInput[]) => {
-    if (!credentialsInput.length || !credentials.current.length) {
+    if (!credentialsInput.length || !credentials.length) {
       return false;
     }
-    return credentialsInput.every(input => credentials.current.some(credential => credential.type === input.name));
+    return credentialsInput.every(input => credentials.some(credential => credential.type === input.name));
   };
 
   const checkCredentialInserted = (credential: ICredentialInput) => {
-    return !!credentials.current.find(c => c.type === credential?.name);
+    return !!credentials.find(c => c.type === credential?.name);
   };
 
   const updateCredentials = (newCredential: ICredential) => {
     const updatedCredentials = Storage.get("credentials") || [];
     updatedCredentials.push(newCredential);
-    credentials.current = updatedCredentials;
+    setCredentials(updatedCredentials);
     Storage.set("credentials", JSON.stringify(updatedCredentials));
   };
 
   const removeCredential = (credentialId: string) => {
-    const updatedCredentials = credentials.current.filter(credential => credential.id !== credentialId);
-    credentials.current = updatedCredentials;
+    const updatedCredentials = credentials.filter(credential => credential.id !== credentialId);
+    setCredentials(updatedCredentials);
     Storage.set("credentials", JSON.stringify(updatedCredentials));
   };
 
   return {
-    credentials: credentials.current,
+    credentials,
+    setCredentials,
     checkCredentialInserted,
     initializeCredentials,
     checkAllCredentialsStored,
