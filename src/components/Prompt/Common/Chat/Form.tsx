@@ -13,6 +13,7 @@ import type { Templates } from "@/core/api/dto/templates";
 interface FormProps {
   messageType?: MessageType;
   template?: Templates;
+  onScrollToBottom?: () => void;
 }
 
 interface FormLayoutProps {
