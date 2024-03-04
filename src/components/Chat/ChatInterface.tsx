@@ -7,10 +7,11 @@ import TemplateSuggestions from "@/components/Chat/TemplateSuggestions";
 import ChatOptions from "@/components/Chat/ChatOptions";
 import ChatHeading from "@/components/Chat/ChatHeading";
 import FormMessageBox from "@/components/Chat/FormMessageBox";
-import { useAppSelector } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import { Fade } from "@mui/material";
+import { setIsSimulationStreaming } from "@/core/store/chatSlice";
 
 interface Props {
   messages: IMessage[];
@@ -22,6 +23,7 @@ interface Props {
 }
 
 const ChatInterface = ({ templates, messages, onGenerate, showGenerate, onAbort, isValidating }: Props) => {
+  const dispatch = useAppDispatch();
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
   const { selectedTemplate, selectedChatOption } = useAppSelector(state => state.chat);
@@ -70,6 +72,7 @@ const ChatInterface = ({ templates, messages, onGenerate, showGenerate, onAbort,
                   in={true}
                   unmountOnExit
                   timeout={800}
+                  onTransitionEnd={() => dispatch(setIsSimulationStreaming(false))}
                 >
                   <Stack>
                     <TemplateSuggestions
@@ -85,6 +88,7 @@ const ChatInterface = ({ templates, messages, onGenerate, showGenerate, onAbort,
                   in={true}
                   unmountOnExit
                   timeout={800}
+                  onTransitionEnd={() => dispatch(setIsSimulationStreaming(false))}
                 >
                   <Stack>
                     <FormMessageBox content={msg.text} />

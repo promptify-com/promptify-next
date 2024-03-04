@@ -73,6 +73,7 @@ function ChatOptions() {
             index++;
             return (
               <Box
+                key={index}
                 width={"460px"}
                 borderRadius={"24px"}
                 border={"1px solid"}

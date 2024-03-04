@@ -1,27 +1,22 @@
 import { useEffect, useState } from "react";
 import Stack from "@mui/material/Stack";
-import Fade from "@mui/material/Fade";
 
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { setIsSimulationStreaming } from "@/core/store/chatSlice";
+import { useAppSelector } from "@/hooks/useStore";
 import FormParam from "@/components/Prompt/Common/Chat/FormParams";
 import FormInput from "@/components/Prompt/Common/Chat/FormInput";
-import useVariant from "@/components/Prompt/Hooks/useVariant";
 import FormInputPlaceholder from "@/components/placeholders/FormInputPlaceholder";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { MessageType } from "@/components/Prompt/Types/chat";
 
 interface FormProps {
-  onScrollToBottom?: () => void;
   messageType?: MessageType;
 }
 
 interface FormLayoutProps {
   messageType?: MessageType;
-  variant: "a" | "b";
 }
 
-function FormFields({ variant, messageType }: FormLayoutProps) {
+function FormFields({ messageType }: FormLayoutProps) {
   const { params, inputs, credentialsInput } = useAppSelector(state => state.chat);
   const [localInputs, setLocalInputs] = useState<IPromptInput[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -42,12 +37,12 @@ function FormFields({ variant, messageType }: FormLayoutProps) {
     return () => clearTimeout(timer);
   }, [credentialsInput, inputs, messageType]);
 
-  if (isLoading && variant === "b") {
+  if (isLoading) {
     return <FormInputPlaceholder />;
   }
 
   return (
-    <Stack gap={variant === "b" ? 1 : 2}>
+    <Stack gap={1}>
       {localInputs.map((input, index) => (
         <FormInput
           key={index}
@@ -64,31 +59,10 @@ function FormFields({ variant, messageType }: FormLayoutProps) {
   );
 }
 
-function Form({ onScrollToBottom, messageType }: FormProps) {
-  const dispatch = useAppDispatch();
-  const { isVariantB } = useVariant();
-
+function Form({ messageType }: FormProps) {
   return (
     <Stack>
-      {isVariantB ? (
-        <FormFields
-          variant={"b"}
-          messageType={messageType}
-        />
-      ) : (
-        <Fade
-          in={true}
-          onTransitionEnd={() => dispatch(setIsSimulationStreaming(false))}
-          addEndListener={onScrollToBottom}
-        >
-          <Stack>
-            <FormFields
-              variant={"a"}
-              messageType={messageType}
-            />
-          </Stack>
-        </Fade>
-      )}
+      <FormFields messageType={messageType} />
     </Stack>
   );
 }
