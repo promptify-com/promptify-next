@@ -10,6 +10,7 @@ import { Link } from "./Types";
 import Api from "@mui/icons-material/Api";
 import { Typography } from "@mui/material";
 import { theme } from "@/theme";
+import AccordionBox from "../common/AccordionBox";
 
 const ScrollTabs: Link[] = [
   {
@@ -50,7 +51,7 @@ export default function ContentContainer({ template }: Props) {
       height={"100svh"}
       overflow={"auto"}
     >
-      <Box sx={{ position: "sticky", top: 0, bgcolor: "surfaceContainerLowest", p: "32px 36px" }}>
+      <Box sx={{ position: "relative", top: 0, bgcolor: "surfaceContainerLowest", p: "32px 36px" }}>
         <Stack
           direction={"row"}
           gap={2}
@@ -96,51 +97,53 @@ export default function ContentContainer({ template }: Props) {
         >
           Prompt instructions:
         </Typography>
-        <Stack gap={2}>
-          {template.prompts?.map(prompt => (
-            <Stack
-              key={prompt.id}
-              gap={2}
-            >
+        <AccordionBox>
+          <Stack gap={3}>
+            {template.prompts?.map(prompt => (
               <Stack
-                direction={"row"}
-                gap={1}
+                key={prompt.id}
+                gap={2}
               >
-                <Typography
-                  fontSize={16}
-                  fontWeight={500}
-                  color={"onSurface"}
+                <Stack
+                  direction={"row"}
+                  gap={1}
                 >
-                  {prompt.title}
-                </Typography>
-                <Typography
-                  fontSize={16}
-                  fontWeight={400}
-                  color={"secondary.main"}
-                >
-                  {prompt.engine.name}
-                </Typography>
-              </Stack>
-              <Box
-                sx={{
-                  px: "8px",
-                }}
-              >
-                <Typography
-                  fontSize={16}
-                  fontWeight={400}
-                  color={"onSurface"}
+                  <Typography
+                    fontSize={16}
+                    fontWeight={500}
+                    color={"onSurface"}
+                  >
+                    {prompt.title}
+                  </Typography>
+                  <Typography
+                    fontSize={16}
+                    fontWeight={400}
+                    color={"secondary.main"}
+                  >
+                    {prompt.engine.name}
+                  </Typography>
+                </Stack>
+                <Box
                   sx={{
-                    p: "16px 16px 16px 32px",
-                    borderLeft: `1px solid ${theme.palette.secondary.main}`,
+                    px: "8px",
                   }}
                 >
-                  {prompt.content}
-                </Typography>
-              </Box>
-            </Stack>
-          ))}
-        </Stack>
+                  <Typography
+                    fontSize={16}
+                    fontWeight={400}
+                    color={"onSurface"}
+                    sx={{
+                      p: "16px 16px 16px 32px",
+                      borderLeft: `1px solid ${theme.palette.secondary.main}`,
+                    }}
+                  >
+                    {prompt.content}
+                  </Typography>
+                </Box>
+              </Stack>
+            ))}
+          </Stack>
+        </AccordionBox>
       </Stack>
     </Box>
   );
