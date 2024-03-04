@@ -91,7 +91,12 @@ export default function Page({ category }: { category: Category }) {
       <Layout>
         <Box
           mt={{ xs: 7, md: -2 }}
-          padding={{ xs: "4px 0px", md: "0px 142px" }}
+          sx={{
+            maxWidth: "1072px",
+            marginLeft: "auto",
+            marginRight: "auto",
+            width: "100%",
+          }}
         >
           <Grid
             sx={{
@@ -155,7 +160,10 @@ export default function Page({ category }: { category: Category }) {
               <Box
                 sx={{
                   display: "flex",
-                  flexDirection: "row",
+                  flexDirection: {
+                    xs: "column",
+                    md: "row",
+                  },
                   justifyContent: "space-between",
                   alignItems: "center",
                   gap: "16px",

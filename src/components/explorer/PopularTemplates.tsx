@@ -46,10 +46,7 @@ function PopularTemplates({ loading, hasNext, onNextPage, onPrevPage, templates,
   );
 
   return (
-    <Stack
-      py={{ xs: "30px", md: "48px" }}
-      gap={3}
-    >
+    <Stack gap={3}>
       <Stack
         p={"8px 16px"}
         mb={"-24px"}

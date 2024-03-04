@@ -84,7 +84,10 @@ function CardTemplate({
           width: "auto",
           minWidth: isDesktop && vertical ? "210px" : "auto",
           height: isDesktop && vertical ? "calc(100% - 24px)" : "calc(100% - 16px)",
-          borderRadius: showTagsOnHover ? "16px 16px 0 0" : "16px",
+          borderRadius: {
+            sm: "16px",
+            md: showTagsOnHover ? "16px 16px 0 0" : "16px",
+          },
           cursor: "pointer",
           p: isDesktop && vertical ? "16px 16px 8px" : "8px",
           bgcolor: isDesktop && vertical ? "transparent" : bgColor,

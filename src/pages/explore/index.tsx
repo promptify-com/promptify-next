@@ -1,10 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import CategoryCarousel from "@/components/common/CategoriesCarousel";
-import lazy from "next/dynamic";
 
 import type { GetServerSideProps } from "next";
 import { Layout } from "@/layout";
@@ -18,10 +17,9 @@ import { CategoryCard } from "@/components/common/cards/CardCategory";
 import PopularTemplates from "@/components/explorer/PopularTemplates";
 import { useAppSelector } from "@/hooks/useStore";
 import { useGetSuggestedTemplatesByCategoryQuery } from "@/core/api/templates";
-
-const TemplatesSectionLazy = lazy(() =>
-  import("@/components/explorer/TemplatesSection").then(mod => mod.TemplatesSection),
-);
+import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
+import { TemplatesSection } from "@/components/explorer/TemplatesSection";
+import useBrowser from "@/hooks/useBrowser";
 
 interface Props {
   categories: Category[];
@@ -38,11 +36,16 @@ export default function ExplorePage({ categories }: Props) {
     handlePrevPage,
     isFetching,
   } = useGetTemplatesByFilter({ ordering: "-runs", templateLimit: ITEM_PER_PAGE });
+  const { isMobile } = useBrowser();
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const observer = useIntersectionObserver(containerRef, {
+    threshold: 0.5,
+  });
 
   const isValidUser = useAppSelector(isValidUserFn);
   const { data: suggestedTemplates, isLoading: isSuggestedTemplatesLoading } = useGetSuggestedTemplatesByCategoryQuery(
     undefined,
-    { skip: !isValidUser },
+    { skip: !isValidUser || !observer?.isIntersecting },
   );
 
   const [seeAll, setSeeAll] = useState(false);
@@ -50,7 +53,8 @@ export default function ExplorePage({ categories }: Props) {
 
   useEffect(() => {
     const handleScroll = () => {
-      const threshold = 180;
+      if (isMobile) return;
+      const threshold = 200;
       if (window.scrollY > threshold) {
         setHasUserScrolled(true);
       } else {
@@ -63,7 +67,7 @@ export default function ExplorePage({ categories }: Props) {
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, []);
+  }, [isMobile]);
 
   const _categories = categories.filter(
     category => !category.parent && category.is_visible && category.prompt_template_count,
@@ -73,14 +77,18 @@ export default function ExplorePage({ categories }: Props) {
     <Layout>
       <Box
         mt={{ xs: 7, md: 0 }}
-        padding={{ xs: "4px 0px", md: "0px 142px" }}
+        sx={{
+          maxWidth: "1072px",
+          margin: "0 auto",
+          width: "100%",
+        }}
       >
         <Grid
           display={"flex"}
           flexDirection={"column"}
           gap={"36px"}
           sx={{
-            padding: { xs: "16px", md: "32px" },
+            padding: { xs: 0, md: "32px" },
           }}
         >
           <FiltersSelected show={!allFilterParamsNull} />
@@ -141,15 +149,17 @@ export default function ExplorePage({ categories }: Props) {
             templates={popularTemplates}
             templateLoading={isTemplatesLoading}
           />
-          {isValidUser && !!suggestedTemplates?.length && (
-            <TemplatesSectionLazy
-              filtered={false}
-              templates={suggestedTemplates ?? []}
-              isLoading={isSuggestedTemplatesLoading}
-              templateLoading={isSuggestedTemplatesLoading}
-              title={`Because you use ${suggestedTemplates?.[0]?.category?.name ?? "various"} prompts`}
-            />
-          )}
+          <Box ref={containerRef}>
+            {isValidUser && !!suggestedTemplates?.length && (
+              <TemplatesSection
+                filtered={false}
+                templates={suggestedTemplates ?? []}
+                isLoading={isSuggestedTemplatesLoading}
+                templateLoading={isSuggestedTemplatesLoading}
+                title={`Because you use ${suggestedTemplates?.[0]?.category?.name ?? "various"} prompts`}
+              />
+            )}
+          </Box>
         </Grid>
       </Box>
     </Layout>

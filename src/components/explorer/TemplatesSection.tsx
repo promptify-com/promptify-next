@@ -220,6 +220,15 @@ export const TemplatesSection = forwardRef<HTMLDivElement, TemplatesSectionProps
               direction={"row"}
               flexWrap={"wrap"}
               rowGap={3}
+              sx={{
+                justifyContent: {
+                  xs: "center",
+                  sm: "center",
+                },
+                gap: {
+                  sm: 1,
+                },
+              }}
             >
               {!!templates?.length &&
                 templates.map((template: TemplateExecutionsDisplay | Templates, index) => (

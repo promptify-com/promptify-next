@@ -74,74 +74,88 @@ function CategoryCarousel({ categories, onClick, userScrolled, autoPlay = false,
         )}
       </Stack>
       {userScrolled ? (
-        <CarouselButtons
-          scrollPrev={scrollPrev}
-          scrollNext={scrollNext}
-          canScrollNext={true}
-          canScrollPrev={true}
+        <Box
+          sx={{
+            position: "fixed",
+            top: { md: 0, sm: " 58px" },
+            margin: "0 auto",
+            zIndex: 1000,
+            maxWidth: {
+              md: "875px",
+              lg: "1010px",
+            },
+            width: "100%",
+            bgcolor: "surface.1",
+          }}
         >
-          <Stack
-            ref={carouselRef}
-            overflow={"hidden"}
-            m={"8px 16px"}
+          <CarouselButtons
+            scrollPrev={scrollPrev}
+            scrollNext={scrollNext}
+            canScrollNext={true}
+            canScrollPrev={true}
           >
             <Stack
-              ref={containerRef}
-              direction={"row"}
+              ref={carouselRef}
+              overflow={"hidden"}
               m={"8px 16px"}
-              gap={"8px"}
             >
-              {categories.map(category => (
-                <Link
-                  key={category.id}
-                  href={`/explore/${category.slug}`}
-                  style={{ textDecoration: "none" }}
-                >
-                  <Paper
-                    component="a"
-                    sx={{
-                      flex: "none",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      flexDirection: "row",
-                      borderRadius: "50px",
-                      p: "4px 12px 4px 4px",
-                      gap: "8px",
-                      border: "1px solid",
-                      borderColor: "surfaceContainer",
-                      bgcolor: "onPrimary",
-                      width: "224px",
-                      height: "48px",
-                    }}
+              <Stack
+                ref={containerRef}
+                direction={"row"}
+                m={"8px 16px"}
+                gap={"8px"}
+              >
+                {categories.map(category => (
+                  <Link
+                    key={category.id}
+                    href={`/explore/${category.slug}`}
+                    style={{ textDecoration: "none" }}
                   >
-                    <Avatar
-                      src={category.image}
-                      alt={category.name}
-                      sx={{ width: "50px", height: "50px" }}
-                    />
-                    <Typography
-                      variant="subtitle1"
+                    <Paper
                       sx={{
-                        flexGrow: 1,
-                        overflow: "hidden", // Hide overflow
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
+                        flex: "none",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        flexDirection: "row",
+                        borderRadius: "50px",
+                        p: "4px 12px 4px 4px",
+                        gap: "8px",
+                        border: "1px solid",
+                        borderColor: "surfaceContainer",
+                        bgcolor: "onPrimary",
+                        width: "224px",
+                        height: "48px",
                       }}
                     >
-                      {category.name}
-                    </Typography>
-                  </Paper>
-                </Link>
-              ))}
+                      <Avatar
+                        src={category.image}
+                        alt={category.name}
+                        sx={{ width: "50px", height: "50px" }}
+                      />
+                      <Typography
+                        variant="subtitle1"
+                        sx={{
+                          flexGrow: 1,
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {category.name}
+                      </Typography>
+                    </Paper>
+                  </Link>
+                ))}
+              </Stack>
             </Stack>
-          </Stack>
-        </CarouselButtons>
+          </CarouselButtons>
+        </Box>
       ) : (
         <Stack
           ref={carouselRef}
           overflow={"hidden"}
-          m={"8px 16px"}
+          m={{ xs: 0, md: "8px 16px" }}
         >
           <Stack
             ref={containerRef}
