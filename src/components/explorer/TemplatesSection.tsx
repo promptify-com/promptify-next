@@ -222,9 +222,9 @@ export const TemplatesSection = forwardRef<HTMLDivElement, TemplatesSectionProps
               rowGap={3}
             >
               {!!templates?.length &&
-                templates.map((template: TemplateExecutionsDisplay | Templates) => (
+                templates.map((template: TemplateExecutionsDisplay | Templates, index) => (
                   <CardTemplate
-                    key={template.id}
+                    key={`${template.id} - ${index}`}
                     template={template as Templates}
                     bgColor={bgColor}
                     vertical
