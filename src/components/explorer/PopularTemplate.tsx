@@ -13,10 +13,10 @@ interface Props {
   onNextPage: () => void;
   onPrevPage: () => void;
   popularTemplate: Templates[];
-  isFetching?: boolean;
+  templateLoading: boolean;
 }
 
-function PopularTemplate({ loading, hasNext, onNextPage, onPrevPage, popularTemplate, isFetching = false }: Props) {
+function PopularTemplate({ loading, hasNext, onNextPage, onPrevPage, popularTemplate, templateLoading }: Props) {
   const observer = useRef<IntersectionObserver | null>(null);
   const { isMobile } = useBrowser();
 
@@ -64,7 +64,6 @@ function PopularTemplate({ loading, hasNext, onNextPage, onPrevPage, popularTemp
       </Stack>
       <TemplatesPaginatedList
         loading={loading}
-        isFetching={isFetching}
         hasNext={hasNext}
         onNextPage={onNextPage}
         hasPrev={false}
@@ -73,7 +72,7 @@ function PopularTemplate({ loading, hasNext, onNextPage, onPrevPage, popularTemp
         variant="outlined"
       >
         <TemplatesSection
-          templateLoading={loading}
+          templateLoading={templateLoading}
           templates={popularTemplate}
           type="popularTemplates"
           bgColor="surfaceContainerLow"

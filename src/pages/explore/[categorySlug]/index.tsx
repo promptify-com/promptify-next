@@ -26,7 +26,7 @@ export default function Page({ category }: { category: Category }) {
 
   const {
     templates: popularTemplates,
-    isTemplatesLoading: isLoading,
+    isTemplatesLoading,
     handleNextPage,
     hasMore,
     handlePrevPage,
@@ -204,12 +204,12 @@ export default function Page({ category }: { category: Category }) {
               </Box>
 
               <PopularTemplate
-                loading={isLoading}
+                loading={isFetching}
                 hasNext={hasMore}
                 onNextPage={handleNextPage}
                 onPrevPage={handlePrevPage}
                 popularTemplate={popularTemplates}
-                isFetching={isFetching}
+                templateLoading={isTemplatesLoading}
               />
             </Box>
           </Grid>

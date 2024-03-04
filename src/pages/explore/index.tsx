@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
@@ -26,7 +26,7 @@ export default function ExplorePage({ categories }: Props) {
   const ITEM_PER_PAGE = 12;
   const {
     templates: popularTemplates,
-    isTemplatesLoading: isLoading,
+    isTemplatesLoading,
     handleNextPage,
     hasMore,
     allFilterParamsNull,
@@ -127,13 +127,14 @@ export default function ExplorePage({ categories }: Props) {
                 gap={1}
               />
             ))}
+
           <PopularTemplate
-            loading={isLoading}
+            loading={isFetching}
             hasNext={hasMore}
             onNextPage={handleNextPage}
             onPrevPage={handlePrevPage}
             popularTemplate={popularTemplates}
-            isFetching={isFetching}
+            templateLoading={isTemplatesLoading}
           />
           {isValidUser && !!suggestedTemplates?.length && (
             <TemplatesSection

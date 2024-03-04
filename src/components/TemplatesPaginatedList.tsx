@@ -13,7 +13,6 @@ interface TemplatesPaginatedListProps {
   buttonText?: string;
   endIcon?: React.ReactNode;
   variant?: "text" | "contained" | "outlined";
-  isFetching?: boolean;
 }
 
 const TemplatesPaginatedList: FC<TemplatesPaginatedListProps> = ({
@@ -27,7 +26,6 @@ const TemplatesPaginatedList: FC<TemplatesPaginatedListProps> = ({
   buttonText = "Next",
   endIcon,
   variant = "text",
-  isFetching = false,
 }) => {
   return (
     <Grid
@@ -56,7 +54,7 @@ const TemplatesPaginatedList: FC<TemplatesPaginatedListProps> = ({
         {hasNext && (
           <Button
             variant={variant}
-            disabled={isFetching}
+            disabled={loading}
             color="primary"
             onClick={onNextPage}
             endIcon={endIcon}
