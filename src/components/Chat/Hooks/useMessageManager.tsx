@@ -70,7 +70,7 @@ const useMessageManager = () => {
     }
     const runMessage = createMessage({ type: "text", fromUser: true });
     runMessage.text = `Run "${selectedTemplate.title}"`;
-    setMessages(prevMessages => prevMessages.concat(runMessage));
+    setMessages(prevMessages => prevMessages.filter(message => message.type !== "form").concat(runMessage));
   }, [selectedTemplate]);
 
   const initialMessages = ({ questions }: { questions: IPromptInput[] }) => {
@@ -78,7 +78,7 @@ const useMessageManager = () => {
     const filteredQuestions = questions.map(_q => _q.question).filter(Boolean);
 
     const welcomeMessage = createMessage({ type: "text" });
-    welcomeMessage.text = `${greeting}, ${
+    welcomeMessage.text = `${greeting} ${selectedTemplate?.title}, ${
       filteredQuestions.length ? "? " + filteredQuestions.slice(0, 3).join(" ") : ""
     }`;
 
