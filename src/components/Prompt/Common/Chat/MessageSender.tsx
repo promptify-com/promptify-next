@@ -7,8 +7,9 @@ import SlowMotionVideo from "@mui/icons-material/SlowMotionVideo";
 import ArrowUpward from "@mui/icons-material/ArrowUpward";
 import ArrowForward from "@mui/icons-material/ArrowForward";
 
-import { useAppSelector } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import useVariant from "@/components/Prompt/Hooks/useVariant";
+import { setMessageSenderValue } from "@/core/store/chatSlice";
 
 interface MessageSenderProps {
   onSubmit: (value: string) => void;
@@ -33,6 +34,7 @@ function MessageSender({
   maxLength,
   loading,
 }: MessageSenderProps) {
+  const dispatch = useAppDispatch();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const MessageSenderValue = useAppSelector(state => state.chat.MessageSenderValue);
 
@@ -45,10 +47,13 @@ function MessageSender({
     setLocalValue(MessageSenderValue);
   }, [MessageSenderValue]);
 
+  const resetGlobalValue = () => !!MessageSenderValue && dispatch(setMessageSenderValue(""));
+
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSubmit();
+      resetGlobalValue();
     } else if (e.key === "Enter" && e.shiftKey) {
       e.preventDefault();
       setLocalValue(localValue + "\n");
@@ -64,6 +69,7 @@ function MessageSender({
   const handleSubmit = () => {
     onSubmit(localValue);
     setLocalValue("");
+    resetGlobalValue();
   };
 
   const hasValue = localValue !== "";

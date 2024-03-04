@@ -78,9 +78,7 @@ const useMessageManager = () => {
     const filteredQuestions = questions.map(_q => _q.question).filter(Boolean);
 
     const welcomeMessage = createMessage({ type: "text" });
-    welcomeMessage.text = `${greeting} ${selectedTemplate?.title}, ${
-      filteredQuestions.length ? "? " + filteredQuestions.slice(0, 3).join(" ") : ""
-    }`;
+    welcomeMessage.text = `${greeting} ${selectedTemplate?.title}. ${filteredQuestions.slice(0, 3).join(" ?")}`;
 
     dispatch(setAnswers([]));
 

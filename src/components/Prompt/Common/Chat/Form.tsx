@@ -57,7 +57,7 @@ function FormFields({ messageType, template }: FormLayoutProps) {
           <Stack key={index}>
             {shouldDisplayTitleAndEngine && (
               <Stack
-                px={"24px"}
+                px={"16px"}
                 py={"16px"}
                 direction={"row"}
                 gap={1}

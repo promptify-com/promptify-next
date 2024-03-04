@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Close from "@mui/icons-material/Close";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
@@ -9,7 +10,8 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 
 import MessageBoxHeader from "@/components/Chat/MessageBoxHeader";
-import Form from "@/components/Prompt/Common/Chat/Form";
+import FormInputs from "@/components/Prompt/Common/Chat/Form";
+import FormPromptContent from "@/components/Chat/FormPromptContent";
 import type { Templates } from "@/core/api/dto/templates";
 
 interface Props {
@@ -18,6 +20,9 @@ interface Props {
 }
 
 function FormMessageBox({ content, template }: Props) {
+  const [expanded, setExpanded] = useState(true);
+  const [formMode, setFormMode] = useState<"INPUT" | "PROMPT_CONTENT">("INPUT");
+
   return (
     <Stack>
       <Typography
@@ -32,12 +37,12 @@ function FormMessageBox({ content, template }: Props) {
         {content}
       </Typography>
       <Accordion
-        expanded
+        expanded={expanded}
         sx={{ bgcolor: "transparent", p: 0, m: 0 }}
         elevation={0}
       >
         <AccordionSummary sx={{ p: 0, m: 0 }}>
-          <MessageBoxHeader />
+          <MessageBoxHeader onExpand={() => setExpanded(true)} />
         </AccordionSummary>
 
         <AccordionDetails sx={{ p: 0 }}>
@@ -66,13 +71,19 @@ function FormMessageBox({ content, template }: Props) {
                 gap={2}
               >
                 <FormControlLabel
-                  control={<Switch defaultChecked />}
+                  control={
+                    <Switch
+                      defaultChecked
+                      onChange={() => setFormMode(prevState => (prevState === "INPUT" ? "PROMPT_CONTENT" : "INPUT"))}
+                    />
+                  }
                   label="Form mode"
                   labelPlacement="start"
                 />
                 <Button
                   startIcon={<Close />}
                   variant="text"
+                  onClick={() => () => setExpanded(false)}
                   sx={{
                     color: "onSurface",
                     "&:hover": {
@@ -84,16 +95,44 @@ function FormMessageBox({ content, template }: Props) {
                 </Button>
               </Stack>
             </Stack>
-
-            <Form
-              messageType={"form"}
-              template={template}
-            />
+            <Stack sx={formContainerStyle}>
+              {formMode === "INPUT" ? (
+                <FormInputs
+                  messageType={"form"}
+                  template={template}
+                />
+              ) : (
+                <FormPromptContent template={template} />
+              )}
+            </Stack>
           </Stack>
         </AccordionDetails>
       </Accordion>
     </Stack>
   );
 }
+
+const formContainerStyle = {
+  overflowY: "auto",
+  overflowX: "hidden",
+  maxHeight: "370px",
+  px: "8px",
+  overscrollBehavior: "contain",
+  scrollBehavior: "smooth",
+  "&::-webkit-scrollbar": {
+    width: { xs: "4px", md: "6px" },
+    p: 1,
+    backgroundColor: "surface.1",
+  },
+  "&::-webkit-scrollbar-track": {
+    webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
+  },
+  "&::-webkit-scrollbar-thumb": {
+    backgroundColor: "surfaceContainerHighest",
+    opacity: 0.6,
+    outline: "1px solid surface.1",
+    borderRadius: "10px",
+  },
+};
 
 export default FormMessageBox;

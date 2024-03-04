@@ -2,12 +2,30 @@ import React from "react";
 import Stack from "@mui/material/Stack";
 import Image from "../design-system/Image";
 import Box from "@mui/material/Box";
-import { Button, Typography } from "@mui/material";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+
 import { useAppSelector } from "@/hooks/useStore";
 import ArrowCircleUp from "@/assets/icons/ArrowCircleUp";
 
-function MessageBoxHeader({}) {
+interface Props {
+  onExpand?: () => void;
+}
+
+function MessageBoxHeader({ onExpand }: Props) {
   const { selectedChatOption, selectedTemplate, answers, inputs } = useAppSelector(state => state.chat);
+
+  const allRequiredInputsAnswered = (): boolean => {
+    const requiredQuestionNames = inputs.filter(question => question.required).map(question => question.name);
+    if (!requiredQuestionNames.length) {
+      return true;
+    }
+    const answeredQuestionNamesSet = new Set(answers.map(answer => answer.inputName));
+    return requiredQuestionNames.every(name => answeredQuestionNamesSet.has(name));
+  };
+
+  const allowGenerate = allRequiredInputsAnswered();
+
   return (
     <Stack
       bgcolor={"surface.2"}
@@ -53,6 +71,7 @@ function MessageBoxHeader({}) {
           direction={"row"}
           gap={2}
           alignItems={"center"}
+          onClick={onExpand}
         >
           <Button
             variant="text"
@@ -75,8 +94,13 @@ function MessageBoxHeader({}) {
                 bgcolor: "primary.main",
                 opacity: 0.9,
               },
+              ":disabled": {
+                bgcolor: "surface.5",
+                cursor: "not-allowed",
+              },
             }}
-            endIcon={<ArrowCircleUp />}
+            disabled={!allowGenerate}
+            endIcon={<ArrowCircleUp color={!allowGenerate ? "gray" : "white"} />}
           >
             Start
           </Button>
