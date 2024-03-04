@@ -10,7 +10,8 @@ import { Link } from "./Types";
 import Api from "@mui/icons-material/Api";
 import { Typography } from "@mui/material";
 import { theme } from "@/theme";
-import AccordionBox from "../common/AccordionBox";
+import AccordionBox from "@/components/common/AccordionBox";
+import { Prompts } from "@/core/api/dto/prompts";
 
 const ScrollTabs: Link[] = [
   {
@@ -144,6 +145,72 @@ export default function ContentContainer({ template }: Props) {
             ))}
           </Stack>
         </AccordionBox>
+      </Stack>
+      <Stack
+        gap={3}
+        p={"48px"}
+      >
+        <Typography
+          fontSize={32}
+          fontWeight={400}
+          color={"onSurface"}
+          py={"16px"}
+        >
+          Example response:
+        </Typography>
+        {template.example_execution ? (
+          <AccordionBox>
+            <Stack gap={3}>
+              {template.example_execution?.prompt_executions?.map(exec => {
+                const prompt = template.prompts.find(prt => prt.id === exec.prompt) as Prompts;
+                return (
+                  <Stack
+                    key={exec.id}
+                    gap={2}
+                  >
+                    <Stack
+                      direction={"row"}
+                      gap={1}
+                    >
+                      <Typography
+                        fontSize={16}
+                        fontWeight={500}
+                        color={"onSurface"}
+                      >
+                        {prompt.title}
+                      </Typography>
+                    </Stack>
+                    <Box
+                      sx={{
+                        px: "8px",
+                      }}
+                    >
+                      <Typography
+                        fontSize={16}
+                        fontWeight={400}
+                        color={"onSurface"}
+                        sx={{
+                          p: "16px 16px 16px 32px",
+                          borderLeft: `1px solid ${theme.palette.secondary.main}`,
+                        }}
+                      >
+                        {exec.output}
+                      </Typography>
+                    </Box>
+                  </Stack>
+                );
+              })}
+            </Stack>
+          </AccordionBox>
+        ) : (
+          <Typography
+            fontSize={16}
+            fontWeight={400}
+            color={"onSurface"}
+          >
+            No example found
+          </Typography>
+        )}
       </Stack>
     </Box>
   );
