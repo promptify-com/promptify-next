@@ -15,7 +15,7 @@ import { isAdminFn } from "@/core/store/userSlice";
 import { setActiveToolbarLink } from "@/core/store/templatesSlice";
 import ToolbarItem from "@/components/Prompt/Common/Sidebar/ToolbarItem";
 import { TemplateSidebarLinks } from "@/common/constants";
-import FavoriteIcon from "../FavoriteIcon";
+import FavoriteIcon from "../../FavoriteIcon";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { isDesktopViewPort } from "@/common/helpers";
 import useVariant from "../../Hooks/useVariant";

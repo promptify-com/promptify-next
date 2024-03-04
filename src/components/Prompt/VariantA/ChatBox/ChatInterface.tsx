@@ -7,7 +7,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import GenerateAndClearButton from "./GenerateAndClearButton";
 import { isDesktopViewPort } from "@/common/helpers";
 import { MessageSparkBox } from "./MessageSparkBox";
-import TemplateDetailsCard from "@/components/Prompt/Common/TemplateDetailsCard";
+import TemplateDetailsCard from "@/components/Prompt/TemplateDetailsCard";
 import FeedbackThumbs from "@/components/Prompt/Common/FeedbackThumbs";
 import Form from "@/components/Prompt/Common/Chat/Form";
 import { GeneratingProgressCard } from "@/components/common/cards/GeneratingProgressCard";

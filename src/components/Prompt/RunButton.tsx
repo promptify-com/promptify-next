@@ -1,16 +1,19 @@
+import PlayArrow from "@mui/icons-material/PlayArrow";
 import PlayCircle from "@mui/icons-material/PlayCircle";
+import { SxProps } from "@mui/material";
 import Button from "@mui/material/Button";
 
 interface Props {
   title: string;
   onClick: () => void;
+  sx?: SxProps;
 }
 
-export default function RunButton({ title, onClick }: Props) {
+export default function RunButton({ title, onClick, sx }: Props) {
   return (
     <Button
       onClick={onClick}
-      endIcon={<PlayCircle />}
+      startIcon={<PlayArrow />}
       variant={"contained"}
       sx={{
         height: "22px",
@@ -22,11 +25,13 @@ export default function RunButton({ title, onClick }: Props) {
         fontWeight: 500,
         bgcolor: "primary.main",
         borderColor: "primary.main",
+        borderRadius: "99px",
         color: "onPrimary",
         ":hover": {
           bgcolor: "surface.1",
           color: "primary.main",
         },
+        ...sx,
       }}
     >
       {title}

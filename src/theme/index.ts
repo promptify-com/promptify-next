@@ -25,6 +25,8 @@ interface CustomPalette {
   outline: string;
   inverseOnSurface: string;
   inverseSurface: string;
+  surfaceContainerHigh: string;
+  surfaceContainerLow: string;
 }
 
 interface CustomTheme {
@@ -94,6 +96,8 @@ export let theme: Theme = createTheme({
     outline: "#FFC5C9",
     inverseOnSurface: "#F2F0F4",
     inverseSurface: "#303033",
+    surfaceContainerHigh: "#E9E7EC",
+    surfaceContainerLow: "#F5F3F7",
   },
   custom: {
     defaultSidebarWidth: "230px",

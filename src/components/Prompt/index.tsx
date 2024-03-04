@@ -1,81 +1,31 @@
-import { useEffect, type Dispatch, type SetStateAction, useState } from "react";
-import { skipToken } from "@reduxjs/toolkit/dist/query";
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
-import { isValidUserFn } from "@/core/store/userSlice";
-import { useGetExecutionsByTemplateQuery } from "@/core/api/executions";
-import { setSelectedExecution, setSparkHashQueryParam } from "@/core/store/executionsSlice";
-import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
-import useVariant from "./Hooks/useVariant";
-import lazy from "next/dynamic";
-import PromptPlaceholder from "@/components/placeholders/PromptPlaceholder";
-
-const TemplateVariantALazy = lazy(() => import("@/components/Prompt/VariantA"), {
-  ssr: false,
-  loading: () => <PromptPlaceholder />,
-});
-const TemplateVariantBLazy = lazy(() => import("@/components/Prompt/VariantB"), {
-  ssr: false,
-  loading: () => <PromptPlaceholder />,
-});
+import Stack from "@mui/material/Stack";
+import useBrowser from "@/hooks/useBrowser";
+import Header from "@/components/Prompt/Common/Header";
+import { Templates } from "@/core/api/dto/templates";
+import TemplateDetails from "./Common/Sidebar/TemplateDetails";
+import { Box } from "@mui/material";
 
 interface Props {
   template: Templates;
-  questionPrefixContent: string;
 }
 
-function TemplatePage({ template, questionPrefixContent }: Props) {
-  const dispatch = useAppDispatch();
-  const { selectedExecution, sparkHashQueryParam } = useAppSelector(state => state.executions);
-  const isValidUser = useAppSelector(isValidUserFn);
-  const { variant } = useVariant();
-  const { data: executions } = useGetExecutionsByTemplateQuery(isValidUser ? template.id : skipToken);
-
-  const handleSelectExecution = ({
-    execution,
-    resetHash = false,
-  }: {
-    execution: TemplatesExecutions | null;
-    resetHash?: boolean;
-  }) => {
-    if (resetHash) {
-      dispatch(setSparkHashQueryParam(null));
-    }
-
-    dispatch(setSelectedExecution(execution));
-  };
-
-  useEffect(() => {
-    if (!executions || sparkHashQueryParam) {
-      return;
-    }
-
-    const wantedExecutionId = selectedExecution?.id.toString();
-
-    if (wantedExecutionId) {
-      const _selectedExecution = executions.find(exec => exec.id.toString() === wantedExecutionId);
-
-      handleSelectExecution({ execution: _selectedExecution || null, resetHash: true });
-    } else {
-      handleSelectExecution({ execution: template.example_execution || null, resetHash: true });
-    }
-  }, [executions]);
+function TemplatePage({ template }: Props) {
+  const { isMobile } = useBrowser();
 
   return (
-    <>
-      {variant === "a" ? (
-        <TemplateVariantALazy
-          executions={executions ?? []}
-          template={template}
-          questionPrefixContent={questionPrefixContent}
-        />
-      ) : (
-        <TemplateVariantBLazy
-          executions={executions ?? []}
-          template={template}
-          questionPrefixContent={questionPrefixContent}
-        />
-      )}
-    </>
+    <Stack
+      direction={"row"}
+      gap={4}
+      height={{ md: "calc(100svh - 90px)" }}
+      width={{ md: "90%" }}
+      m={"auto"}
+      bgcolor={"surface.1"}
+    >
+      <Stack flex={4}>{!isMobile && <Header template={template} />}</Stack>
+      <Box flex={1}>
+        <TemplateDetails template={template} />
+      </Box>
+    </Stack>
   );
 }
 
