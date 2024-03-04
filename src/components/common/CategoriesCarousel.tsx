@@ -11,6 +11,7 @@ import Avatar from "@mui/material/Avatar";
 import { CategoryCard } from "@/components/common/cards/CardCategory";
 import type { Category } from "@/core/api/dto/templates";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
+import Link from "next/link";
 
 interface CategoryCarouselProps {
   categories: Category[];
@@ -91,41 +92,47 @@ function CategoryCarousel({ categories, onClick, userScrolled, autoPlay = false,
               gap={"8px"}
             >
               {categories.map(category => (
-                <Paper
+                <Link
                   key={category.id}
-                  sx={{
-                    flex: "none",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    flexDirection: "row",
-                    borderRadius: "50px",
-                    p: "4px 12px 4px 4px",
-                    gap: "8px",
-                    border: "1px solid",
-                    borderColor: "surfaceContainer",
-                    bgcolor: "onPrimary",
-                    width: "224px",
-                    height: "48px",
-                  }}
+                  href={`/explore/${category.slug}`}
+                  style={{ textDecoration: "none" }}
                 >
-                  <Avatar
-                    src={category.image}
-                    alt={category.name}
-                    sx={{ width: "50px", height: "50px" }}
-                  />
-                  <Typography
-                    variant="subtitle1"
+                  <Paper
+                    component="a"
                     sx={{
-                      flexGrow: 1,
-                      overflow: "hidden", // Hide overflow
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
+                      flex: "none",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      flexDirection: "row",
+                      borderRadius: "50px",
+                      p: "4px 12px 4px 4px",
+                      gap: "8px",
+                      border: "1px solid",
+                      borderColor: "surfaceContainer",
+                      bgcolor: "onPrimary",
+                      width: "224px",
+                      height: "48px",
                     }}
                   >
-                    {category.name}
-                  </Typography>
-                </Paper>
+                    <Avatar
+                      src={category.image}
+                      alt={category.name}
+                      sx={{ width: "50px", height: "50px" }}
+                    />
+                    <Typography
+                      variant="subtitle1"
+                      sx={{
+                        flexGrow: 1,
+                        overflow: "hidden", // Hide overflow
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {category.name}
+                    </Typography>
+                  </Paper>
+                </Link>
               ))}
             </Stack>
           </Stack>

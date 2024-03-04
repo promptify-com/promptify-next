@@ -4,6 +4,7 @@ import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import CategoryCarousel from "@/components/common/CategoriesCarousel";
+import lazy from "next/dynamic";
 
 import type { GetServerSideProps } from "next";
 import { Layout } from "@/layout";
@@ -17,7 +18,11 @@ import { CategoryCard } from "@/components/common/cards/CardCategory";
 import PopularTemplates from "@/components/explorer/PopularTemplates";
 import { useAppSelector } from "@/hooks/useStore";
 import { useGetSuggestedTemplatesByCategoryQuery } from "@/core/api/templates";
-import { TemplatesSection } from "@/components/explorer/TemplatesSection";
+
+const TemplatesSectionLazy = lazy(() =>
+  import("@/components/explorer/TemplatesSection").then(mod => mod.TemplatesSection),
+);
+
 interface Props {
   categories: Category[];
 }
@@ -137,7 +142,7 @@ export default function ExplorePage({ categories }: Props) {
             templateLoading={isTemplatesLoading}
           />
           {isValidUser && !!suggestedTemplates?.length && (
-            <TemplatesSection
+            <TemplatesSectionLazy
               filtered={false}
               templates={suggestedTemplates ?? []}
               isLoading={isSuggestedTemplatesLoading}
