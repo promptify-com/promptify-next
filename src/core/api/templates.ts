@@ -15,9 +15,8 @@ import { IEditPrompts } from "@/common/types/builder";
 
 const getSearchParams = (params: FilterParams) => {
   const searchParams = new URLSearchParams();
-
   params.categoryId && searchParams.append("main_category_id", String(params.categoryId));
-  params.tag && searchParams.append("tag", params.tag);
+  params.tags?.length && params.tags.forEach(tag => searchParams.append("tag", tag.name));
   params.subcategoryId && searchParams.append("sub_category_id", String(params.subcategoryId));
   params.engineId && searchParams.append("engine", String(params.engineId));
   params.title && searchParams.append("title", params.title);

@@ -1,4 +1,4 @@
-import { useDeferredValue, useMemo, useState, useEffect } from "react";
+import { useDeferredValue, useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import { RootState } from "@/core/store";
@@ -34,16 +34,9 @@ export function useGetTemplatesByFilter({
   const debouncedSearchName = useDebounce<string>(deferredSearchName, 300);
   const [status, setStatus] = useState<string>();
   const PAGINATION_LIMIT = templateLimit ?? 10;
-  const memoizedFilteredTags = useMemo(() => {
-    const filteredTags = tags
-      .filter(item => item !== null)
-      .map(item => item?.name)
-      .join("&tag=");
 
-    return filteredTags;
-  }, [tags]);
   const params: FilterParams = {
-    tag: memoizedFilteredTags,
+    tags,
     engineId: engine?.id,
     engine_type: engineType,
     categoryId: catId,

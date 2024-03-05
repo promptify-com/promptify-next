@@ -20,7 +20,7 @@ export interface SparksLayoutProps {
 export interface FilterParams {
   categoryId?: number;
   subcategoryId?: number;
-  tag?: string;
+  tags?: Tag[];
   title?: string | null;
   engineId?: number;
   ordering?: string;
