@@ -132,8 +132,7 @@ export default function FeedbackThumbs({ vertical, execution, variant }: Props) 
               ...buttonStyle,
               ...(isIconVariant && minButtonStyle),
               border: !isVariantB && liked ? "1px solid #ABE88F8F" : true ? "none" : "1px solid",
-              bgcolor:
-                !isVariantB && liked ? "#ABE88F36" : true ? alpha(theme.palette.surface[5], 0.45) : "transparent",
+              bgcolor: !isVariantB && liked ? "#ABE88F36" : "transparent",
             }}
           >
             {!isIconVariant && "Good"}
@@ -158,8 +157,7 @@ export default function FeedbackThumbs({ vertical, execution, variant }: Props) 
               ...buttonStyle,
               ...(isIconVariant && minButtonStyle),
               border: !isVariantB && disliked ? "1px solid #FF624D8F" : true ? "none" : "1px solid",
-              bgcolor:
-                !isVariantB && disliked ? "#FF624D36" : true ? alpha(theme.palette.surface[5], 0.45) : "transparent",
+              bgcolor: !isVariantB && disliked ? "#FF624D36" : "transparent",
             }}
           >
             {!isIconVariant && "Bad"}
@@ -198,15 +196,15 @@ const buttonStyle = {
 };
 
 const minButtonStyle = {
-  width: 49,
-  height: 49,
+  width: 34,
+  height: 34,
   borderRadius: "50%",
   border: "none",
-  bgcolor: alpha(theme.palette.surface[5], 0.45),
+  bgcolor: "transparent",
   ".MuiButton-startIcon": {
     m: 0,
   },
   ":hover": {
-    bgcolor: alpha(theme.palette.surface[5], 0.8),
+    bgcolor: "action.hover",
   },
 };

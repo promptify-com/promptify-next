@@ -9,6 +9,7 @@ import type { IPromptInput } from "@/common/types/prompt";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IMessage, MessageType } from "@/components/Prompt/Types/chat";
 import type { PromptParams } from "@/core/api/dto/prompts";
+import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution";
 
 interface CreateMessageProps {
   type: MessageType;
@@ -160,7 +161,7 @@ const useMessageManager = () => {
 
   const handleSubmitInput = (input: string) => (chatMode === "automation" ? automationSubmitMessage(input) : () => {});
 
-  return { messages, handleSubmitInput, isValidatingAnswer, suggestedTemplates };
+  return { messages, setMessages, handleSubmitInput, isValidatingAnswer, suggestedTemplates, createMessage };
 };
 
 export default useMessageManager;

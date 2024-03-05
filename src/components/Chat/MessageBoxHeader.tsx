@@ -1,4 +1,3 @@
-import React from "react";
 import Stack from "@mui/material/Stack";
 import Image from "../design-system/Image";
 import Box from "@mui/material/Box";
@@ -10,9 +9,11 @@ import ArrowCircleUp from "@/assets/icons/ArrowCircleUp";
 
 interface Props {
   onExpand?: () => void;
+  onGenerate?: () => void;
+  variant: "FORM" | "EXECUTION";
 }
 
-function MessageBoxHeader({ onExpand }: Props) {
+function MessageBoxHeader({ onExpand, onGenerate, variant }: Props) {
   const { selectedChatOption, selectedTemplate, answers, inputs } = useAppSelector(state => state.chat);
 
   const allRequiredInputsAnswered = (): boolean => {
@@ -26,6 +27,8 @@ function MessageBoxHeader({ onExpand }: Props) {
 
   const allowGenerate = allRequiredInputsAnswered();
 
+  const showHeaderActions = Boolean(selectedChatOption === "FORM" && variant === "FORM");
+
   return (
     <Stack
       bgcolor={"surface.2"}
@@ -34,7 +37,7 @@ function MessageBoxHeader({ onExpand }: Props) {
       direction={"row"}
       alignItems={"center"}
       gap={2}
-      width={"100%"}
+      width={variant === "EXECUTION" ? "content-fit" : "100%"}
     >
       <Box
         sx={{
@@ -66,7 +69,7 @@ function MessageBoxHeader({ onExpand }: Props) {
       >
         {selectedTemplate?.title}
       </Typography>
-      {selectedChatOption === "FORM" && (
+      {showHeaderActions && (
         <Stack
           direction={"row"}
           gap={2}
@@ -101,6 +104,11 @@ function MessageBoxHeader({ onExpand }: Props) {
             }}
             disabled={!allowGenerate}
             endIcon={<ArrowCircleUp color={!allowGenerate ? "gray" : "white"} />}
+            onClick={() => {
+              if (typeof onGenerate === "function") {
+                onGenerate();
+              }
+            }}
           >
             Start
           </Button>

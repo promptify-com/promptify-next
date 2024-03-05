@@ -5,6 +5,7 @@ import Box from "@mui/material/Box";
 
 import { ProgressLogo } from "@/components/common/ProgressLogo";
 import MessageSender from "../Prompt/Common/Chat/MessageSender";
+import { CircularProgress } from "@mui/material";
 
 interface ChatInputProps {
   onSubmit: (value: string) => void;
@@ -28,7 +29,10 @@ const ChatInput = ({ onSubmit, disabled, isValidating, onGenerate, showGenerate 
           gap={1}
           alignItems={"center"}
         >
-          <ProgressLogo size="small" />
+          <CircularProgress
+            size={"24px"}
+            color="primary"
+          />
           <Stack
             direction={"row"}
             gap={1}

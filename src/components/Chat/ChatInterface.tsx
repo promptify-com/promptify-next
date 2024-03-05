@@ -12,6 +12,7 @@ import type { Templates } from "@/core/api/dto/templates";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import { Fade } from "@mui/material";
 import { setIsSimulationStreaming } from "@/core/store/chatSlice";
+import ExecutionMessageBox from "./ExecutionMessageBox";
 
 interface Props {
   messages: IMessage[];
@@ -19,7 +20,7 @@ interface Props {
   onGenerate: () => void;
   showGenerate: boolean;
   isValidating: boolean;
-  onAbort?: () => void;
+  onAbort: () => void;
 }
 
 const ChatInterface = ({ templates, messages, onGenerate, showGenerate, onAbort, isValidating }: Props) => {
@@ -27,8 +28,6 @@ const ChatInterface = ({ templates, messages, onGenerate, showGenerate, onAbort,
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
   const { selectedTemplate, selectedChatOption } = useAppSelector(state => state.chat);
-  const currentUser = useAppSelector(state => state.user.currentUser);
-  const isGenerating = useAppSelector(state => state.template.isGenerating);
 
   const { scrollToBottom } = useScrollToBottom({
     ref: messagesContainerRef,
@@ -94,7 +93,20 @@ const ChatInterface = ({ templates, messages, onGenerate, showGenerate, onAbort,
                     <FormMessageBox
                       content={msg.text}
                       template={selectedTemplate!}
+                      onGenerate={onGenerate}
                     />
+                  </Stack>
+                </Fade>
+              )}
+              {msg.type === "spark" && (
+                <Fade
+                  in={true}
+                  unmountOnExit
+                  timeout={800}
+                  onTransitionEnd={() => dispatch(setIsSimulationStreaming(false))}
+                >
+                  <Stack>
+                    <ExecutionMessageBox onAbort={onAbort} />
                   </Stack>
                 </Fade>
               )}

@@ -25,7 +25,7 @@ interface IStreamExecution {
 
 interface Props {
   template?: Templates;
-  messageAnswersForm: (message: string) => void;
+  messageAnswersForm?: (message: string) => void;
 }
 const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
   const token = useToken();
@@ -66,7 +66,10 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
         .filter(answers => answers.error)
         .map(answer => inputs.find(input => input.name === answer.inputName)?.fullName);
 
-      messageAnswersForm(`Please enter valid answers for "${invalids.join(", ")}"`);
+      if (typeof messageAnswersForm === "function") {
+        messageAnswersForm(`Please enter valid answers for "${invalids.join(", ")}"`);
+      }
+
       return;
     }
 

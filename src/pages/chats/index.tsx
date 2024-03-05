@@ -10,18 +10,36 @@ import Landing from "@/components/Chat/Landing";
 import ChatInterface from "@/components/Chat/ChatInterface";
 import useMessageManager from "@/components/Chat/Hooks/useMessageManager";
 import ChatInput from "@/components/Chat/ChatInput";
-import { useAppSelector } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import type { IMUDynamicColorsThemeColor } from "@/core/api/theme";
 import SigninButton from "@/components/common/buttons/SigninButton";
 import { useRouter } from "next/router";
+import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution";
+import { executionsApi } from "@/core/api/executions";
+import { getExecutionById } from "@/hooks/api/executions";
+import { setSelectedExecution } from "@/core/store/executionsSlice";
 
 function ChatPage() {
   const router = useRouter();
+  const dispatch = useAppDispatch();
   const [palette, setPalette] = useState(theme.palette);
 
   const { selectedTemplate, selectedChatOption, isSimulationStreaming } = useAppSelector(state => state.chat);
   const currentUser = useAppSelector(state => state.user.currentUser);
-  const { messages, handleSubmitInput, isValidatingAnswer, suggestedTemplates } = useMessageManager();
+  const isGenerating = useAppSelector(state => state.template.isGenerating);
+  const { generatedExecution, selectedExecution } = useAppSelector(state => state.executions);
+  const { messages, setMessages, createMessage, handleSubmitInput, isValidatingAnswer, suggestedTemplates } =
+    useMessageManager();
+
+  const { generateExecutionHandler, abortConnection, disableChatInput } = useGenerateExecution({
+    template: selectedTemplate,
+  });
+
+  const handleGenerateExecution = () => {
+    const executionMessage = createMessage({ type: "spark" });
+    setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat(executionMessage));
+    generateExecutionHandler();
+  };
 
   useEffect(() => {
     if (!selectedTemplate?.thumbnail) {
@@ -71,6 +89,28 @@ function ChatPage() {
 
   const showLanding = !!!messages.length;
 
+  useEffect(() => {
+    if (!isGenerating && generatedExecution?.data?.length) {
+      const allPromptsCompleted = generatedExecution.data.every(execData => execData.isCompleted);
+
+      if (allPromptsCompleted) {
+        selectGeneratedExecution();
+        dispatch(executionsApi.util.invalidateTags(["Executions"]));
+      }
+    }
+  }, [isGenerating, generatedExecution]);
+
+  const selectGeneratedExecution = async () => {
+    if (generatedExecution?.id) {
+      try {
+        const _newExecution = await getExecutionById(generatedExecution.id);
+        dispatch(setSelectedExecution(_newExecution));
+      } catch {
+        window.location.reload();
+      }
+    }
+  };
+
   return (
     <ThemeProvider theme={dynamicTheme}>
       <Layout>
@@ -93,14 +133,14 @@ function ChatPage() {
               messages={messages}
               isValidating={isValidatingAnswer}
               showGenerate={false}
-              onAbort={() => {}}
-              onGenerate={() => {}}
+              onAbort={abortConnection}
+              onGenerate={handleGenerateExecution}
             />
           )}
 
           {currentUser?.id ? (
             <>
-              {selectedChatOption !== "FORM" && (
+              {(selectedChatOption !== "FORM" || !!selectedExecution) && (
                 <ChatInput
                   onSubmit={handleSubmitInput}
                   disabled={isValidatingAnswer}

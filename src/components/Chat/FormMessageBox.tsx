@@ -17,9 +17,10 @@ import type { Templates } from "@/core/api/dto/templates";
 interface Props {
   content: string;
   template: Templates;
+  onGenerate: () => void;
 }
 
-function FormMessageBox({ content, template }: Props) {
+function FormMessageBox({ content, template, onGenerate }: Props) {
   const [expanded, setExpanded] = useState(true);
   const [formMode, setFormMode] = useState<"INPUT" | "PROMPT_CONTENT">("INPUT");
 
@@ -42,7 +43,11 @@ function FormMessageBox({ content, template }: Props) {
         elevation={0}
       >
         <AccordionSummary sx={{ p: 0, m: 0 }}>
-          <MessageBoxHeader onExpand={() => setExpanded(true)} />
+          <MessageBoxHeader
+            variant="FORM"
+            onExpand={() => setExpanded(true)}
+            onGenerate={onGenerate}
+          />
         </AccordionSummary>
 
         <AccordionDetails sx={{ p: 0 }}>
