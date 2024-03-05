@@ -5,9 +5,51 @@ import CreateNewFolderOutlined from "@mui/icons-material/CreateNewFolderOutlined
 import { useAppSelector } from "@/hooks/useStore";
 import FeedbackThumbs from "@/components/Prompt/Common/FeedbackThumbs";
 import ShareOutlined from "@mui/icons-material/ShareOutlined";
+import { useDeleteExecutionFavoriteMutation, useExecutionFavoriteMutation } from "@/core/api/executions";
+import { useMemo, useState } from "react";
+import { SparkExportPopup } from "../dialog/SparkExportPopup";
+import { Templates } from "@/core/api/dto/templates";
 
-function ExecutionMessageActions() {
+interface Props {
+  template: Templates;
+}
+
+function ExecutionMessageActions({ template }: Props) {
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
+
+  const [favoriteExecution] = useExecutionFavoriteMutation();
+  const [deleteExecutionFavorite] = useDeleteExecutionFavoriteMutation();
+
+  const [openExportPopup, setOpenExportPopup] = useState(false);
+
+  const activeExecution = useMemo(() => {
+    if (selectedExecution) {
+      return {
+        ...selectedExecution,
+        template: {
+          ...selectedExecution.template,
+          title: template.title,
+          slug: template.slug,
+          thumbnail: template.thumbnail,
+        },
+      };
+    }
+    return null;
+  }, [selectedExecution]);
+
+  const saveExecution = async () => {
+    if (!!!selectedExecution) return;
+
+    try {
+      if (selectedExecution.is_favorite) {
+        await deleteExecutionFavorite(selectedExecution.id);
+      } else {
+        await favoriteExecution(selectedExecution.id);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <>
@@ -28,14 +70,17 @@ function ExecutionMessageActions() {
             alignItems={"center"}
             gap={2}
           >
-            <Typography
-              fontSize={13}
-              fontWeight={400}
-              lineHeight={"28px"}
-              color={"text.secondary"}
-            >
-              Saved as draft
-            </Typography>
+            {!selectedExecution.is_favorite && (
+              <Typography
+                fontSize={13}
+                fontWeight={400}
+                lineHeight={"28px"}
+                color={"text.secondary"}
+              >
+                Saved as draft
+              </Typography>
+            )}
+
             <Button
               variant="text"
               startIcon={<CreateNewFolderOutlined />}
@@ -45,6 +90,7 @@ function ExecutionMessageActions() {
                   bgcolor: "action.hover",
                 },
               }}
+              onClick={saveExecution}
             >
               Save as document
             </Button>
@@ -57,11 +103,19 @@ function ExecutionMessageActions() {
                   bgcolor: "action.hover",
                 },
               }}
+              onClick={() => setOpenExportPopup(true)}
             >
               Export
             </Button>
           </Stack>
         </Stack>
+      )}
+
+      {openExportPopup && selectedExecution?.id && (
+        <SparkExportPopup
+          onClose={() => setOpenExportPopup(false)}
+          activeExecution={activeExecution}
+        />
       )}
     </>
   );

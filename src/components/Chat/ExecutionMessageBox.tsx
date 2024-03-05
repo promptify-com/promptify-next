@@ -5,8 +5,7 @@ import { useAppSelector } from "@/hooks/useStore";
 import { Display } from "@/components/Prompt/Common/Display";
 import ExecutionMessageFooter from "@/components/Chat/ExecutionMessageFooter";
 import ExecutionMessageActions from "@/components/Chat/ExecutionMessageActions";
-
-import ExecutionMessageInstructions from "./ExecutionMessageInstructions";
+import ExecutionMessageInstructions from "@/components/Chat/ExecutionMessageInstructions";
 
 interface Props {
   onAbort: () => void;
@@ -43,7 +42,7 @@ function ExecutionMessageBox({ onAbort }: Props) {
         </Stack>
         <ExecutionMessageFooter onAbort={onAbort} />
       </Stack>
-      <ExecutionMessageActions />
+      <ExecutionMessageActions template={selectedTemplate} />
     </Stack>
   );
 }
