@@ -106,8 +106,6 @@ export const ApiAccess: React.FC<ApiAccessProps> = ({ template }) => {
           Learn more about API
         </Typography>
       </Link>
-
-      {isModalOpen && <ApiAccessModal templateData={template} />}
     </Stack>
   );
 };
