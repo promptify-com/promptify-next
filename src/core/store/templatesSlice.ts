@@ -6,6 +6,7 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 
 export interface TemplatesProps {
   is_favorite: boolean;
+  is_liked: boolean;
   id: number;
   likes: number;
   executionData: string;
@@ -16,10 +17,11 @@ export interface TemplatesProps {
   templateApiStatus: TempalteApiStatusState;
 }
 
-type UpdateTemplateDataPayload = Pick<TemplatesProps, "is_favorite" | "id" | "likes">;
+type UpdateTemplateDataPayload = Pick<TemplatesProps, "is_favorite" | "is_liked" | "id" | "likes">;
 
 const initialState: TemplatesProps = {
   is_favorite: false,
+  is_liked: false,
   id: 0,
   likes: 0,
   executionData: "[]",
@@ -39,26 +41,26 @@ export const templatesSlice = createSlice({
   reducers: {
     updateTemplateData: (state, action: PayloadAction<UpdateTemplateDataPayload>) => {
       state.is_favorite = action.payload.is_favorite;
+      state.is_liked = action.payload.is_liked;
       state.id = action.payload.id;
       state.likes = action.payload.likes;
     },
     updateCurrentFavorite: (state, action: PayloadAction<boolean>) => {
       state.is_favorite = action.payload;
+    },
+    updateCurrentLike: (state, action: PayloadAction<boolean>) => {
+      state.is_liked = action.payload;
       state.likes = action.payload ? state.likes + 1 : state.likes - 1;
     },
-
     updateExecutionData: (state, action: PayloadAction<string>) => {
       state.executionData = action.payload;
     },
-
     setGeneratingStatus: (state, action: PayloadAction<boolean>) => {
       state.isGenerating = action.payload;
     },
-
     setActiveToolbarLink: (state, action: PayloadAction<Link | null>) => {
       state.activeSideBarLink = action.payload;
     },
-
     setShowPromptsView: (state, action: PayloadAction<boolean>) => {
       state.showPromptsView = action.payload;
     },
@@ -70,6 +72,7 @@ export const templatesSlice = createSlice({
 
 export const {
   updateCurrentFavorite,
+  updateCurrentLike,
   updateTemplateData,
   updateExecutionData,
   setGeneratingStatus,

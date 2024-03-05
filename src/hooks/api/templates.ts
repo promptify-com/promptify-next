@@ -32,18 +32,6 @@ export const importTemplate = async (data: IEditTemplate) => {
     });
 };
 
-export const likeTemplate = async (templateId: number) => {
-  return await authClient.post(`/api/meta/templates/${templateId}/like/`).then(response => {
-    return response.data;
-  });
-};
-
-export const removeTemplateLike = async (templateId: number) => {
-  return await authClient.delete(`/api/meta/templates/${templateId}/like/`).then(response => {
-    return response.data;
-  });
-};
-
 export const getTemplateBySlug = async (slug: string): Promise<Templates> => {
   return await authClient
     .get(`/api/meta/templates/by-slug/${slug}/`, {

@@ -7,14 +7,13 @@ import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
 import Image from "@/components/design-system/Image";
 import { theme } from "@/theme";
-import FavoriteIcon from "@/components/Prompt/FavoriteIcon";
-import Bookmark from "@mui/icons-material/Bookmark";
-import BookmarkBorder from "@mui/icons-material/BookmarkBorder";
+import FavoriteButton from "@/components/Prompt/FavoriteButton";
 import RunButton from "@/components/Prompt/RunButton";
 import { useAppSelector } from "@/hooks/useStore";
 import Tune from "@mui/icons-material/Tune";
 import ContentCopy from "@mui/icons-material/ContentCopy";
 import useCloneTemplate from "@/components/Prompt/Hooks/useCloneTemplate";
+import LikeButton from "./LikeButton";
 
 interface TemplateDetailsProps {
   template: Templates;
@@ -36,7 +35,7 @@ const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template }) => {
 
     cloneTemplate();
   };
-
+  console.log(template);
   const CloneButton = () => (
     <Button
       onClick={handleEdit}
@@ -98,18 +97,16 @@ const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template }) => {
             direction={"row"}
             gap={1}
           >
-            <FavoriteIcon
+            <LikeButton
               style={{
-                sx: iconBtnStyle,
+                sx: { flex: 1 },
               }}
             />
-            <Button
-              onClick={() => {}}
-              startIcon={template.is_favorite ? <Bookmark /> : <BookmarkBorder />}
-              sx={iconBtnStyle}
-            >
-              {template.is_favorite ? "Remove" : "Save"}
-            </Button>
+            <FavoriteButton
+              style={{
+                sx: { flex: 1 },
+              }}
+            />
           </Stack>
           <Typography
             fontSize={16}
@@ -205,19 +202,5 @@ const detailsStyle = {
   color: alpha(theme.palette.onSurface, 0.5),
   span: {
     color: "onSurface",
-  },
-};
-const iconBtnStyle = {
-  flex: 1,
-  border: "1px solid",
-  borderColor: "surfaceContainerHigh",
-  borderRadius: "99px",
-  p: "8px 16px",
-  fontSize: 14,
-  fontWeight: 500,
-  gap: 0.5,
-  color: "onSurface",
-  ":hover": {
-    bgcolor: "surfaceContainerHigh",
   },
 };

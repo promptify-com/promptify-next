@@ -2,7 +2,7 @@ import Stack from "@mui/material/Stack";
 import useBrowser from "@/hooks/useBrowser";
 import Header from "@/components/Prompt/Common/Header";
 import { Templates } from "@/core/api/dto/templates";
-import TemplateDetails from "./Common/Sidebar/TemplateDetails";
+import TemplateDetails from "./TemplateDetails";
 import Box from "@mui/material/Box";
 import Image from "@/components/design-system/Image";
 import ContentContainer from "./ContentContainer";
