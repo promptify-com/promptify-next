@@ -1,11 +1,7 @@
 import { Box, Chip } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 
-import {
-  deleteSelectedTag,
-  setSelectedEngine,
-  setSelectedKeyword,
-} from "@/core/store/filtersSlice";
+import { deleteSelectedTag, setSelectedEngine, setSelectedKeyword } from "@/core/store/filtersSlice";
 import { RootState } from "@/core/store";
 import { Tag } from "@/core/api/dto/templates";
 
@@ -17,14 +13,17 @@ export const FiltersSelected: React.FC<FiltersSelectedProps> = ({ show }) => {
   const dispatch = useDispatch();
   const filters = useSelector((state: RootState) => state.filters);
   const { engine, tag, title } = filters;
-
   const handleDeleteTag = (tagId: number) => {
     dispatch(deleteSelectedTag(tagId));
   };
   return (
     <>
       {show && (
-        <Box display={"flex"} alignItems={"center"} gap={2}>
+        <Box
+          display={"flex"}
+          alignItems={"center"}
+          gap={2}
+        >
           {engine && (
             <Chip
               label={engine.name}
@@ -33,7 +32,11 @@ export const FiltersSelected: React.FC<FiltersSelectedProps> = ({ show }) => {
             />
           )}
           {tag.length > 0 && (
-            <Box display={"flex"} alignItems={"center"} gap={2}>
+            <Box
+              display={"flex"}
+              alignItems={"center"}
+              gap={2}
+            >
               {tag
                 .filter((item: Tag | null): item is Tag => item !== null)
                 .map((item: Tag) => (

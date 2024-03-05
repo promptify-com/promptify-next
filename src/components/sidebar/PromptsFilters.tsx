@@ -6,20 +6,14 @@ import Collapsible from "./Collapsible";
 import Divider from "@mui/material/Divider";
 import type { Item } from "./Collapsible";
 import { useState } from "react";
+import { useGetTagsPopularQuery } from "@/core/api/tags";
+import { useGetEnginesQuery } from "@/core/api/engines";
 
 const contentTypeItems = [
-  { name: "Text", value: "Text" },
-  { name: "Image", value: "image" },
-  { name: "Video", value: "video" },
-  { name: "Audio", value: "audio" },
-] as const satisfies Item[];
-const engineItems = [
-  { name: "Stability AI", value: 1 },
-  { name: "GPT 4", value: 2 },
-] as const satisfies Item[];
-const tagItems = [
-  { name: "Creative writing", value: "creative writing" },
-  { name: "Storytelling", value: "storytelling" },
+  { name: "Text", id: 1 },
+  { name: "Image", id: 2 },
+  { name: "Video", id: 3 },
+  { name: "Audio", id: 4 },
 ] as const satisfies Item[];
 
 function MyFavorites() {
@@ -29,9 +23,10 @@ function MyFavorites() {
     <Stack
       sx={{
         bgcolor: "#EEEEE8",
-        borderRadius: "8px",
+        borderRadius: "16px",
         mb: "20px",
         mt: "20px",
+        p: "8px 8px 8px 16px",
         flexDirection: "row",
         alignItems: "center",
       }}
@@ -54,6 +49,9 @@ function MyFavorites() {
 }
 
 function PromptsFilters() {
+  const { data: tags } = useGetTagsPopularQuery();
+  const { data: engines } = useGetEnginesQuery();
+  console.log({ tags, engines });
   return (
     <>
       <MyFavorites />
@@ -64,12 +62,12 @@ function PromptsFilters() {
       />
       <Collapsible
         title="Engines"
-        items={engineItems}
+        items={engines}
         key="engines"
       />
       <Collapsible
         title="Popular tags"
-        items={tagItems}
+        items={tags}
         key="popularTags"
       />
     </>

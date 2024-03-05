@@ -20,7 +20,7 @@ interface Props {
   expandedOnHover: boolean;
 }
 
-const drawerWidth = 299;
+const drawerWidth = 284;
 
 const openedMixin = (theme: Theme): CSSObject => ({
   width: drawerWidth,
@@ -93,10 +93,10 @@ function FiltersDrawer({ expandedOnHover }: Props) {
               ? "0px 7px 8px -4px #00000033, 0px 12px 17px 2px #00000024, 0px 5px 22px 4px #0000001F"
               : "",
           boxSizing: "border-box",
-          overflow: "hidden",
+          overflow: "auto",
           bgcolor: "surface.1",
           border: "none",
-          width: `calc(${theme.custom.leftClosedSidebarWidth} + 300px)`,
+          width: `calc(${theme.custom.leftClosedSidebarWidth} + 285px)`,
           left: theme.custom.leftClosedSidebarWidth,
         },
       }}
@@ -106,14 +106,26 @@ function FiltersDrawer({ expandedOnHover }: Props) {
           flexDirection={"row"}
           alignItems={"center"}
           height={"40px"}
+          p={"20px 8px"}
+          justifyContent={"space-between"}
         >
-          <Typography width={"50%"}>{isPromptsPage ? "Prompts" : "Chats"}</Typography>
+          <Typography
+            sx={{
+              color: "onSurface",
+              fontFeatureSettings: "'clig' off, 'liga' off",
+              fontSize: "18px",
+              fontStyle: "normal",
+              fontWeight: 500,
+              lineHeight: "100%",
+            }}
+          >
+            {isPromptsPage ? "Prompts" : "Chats"}
+          </Typography>
           <IconButton
             onClick={toggleSidebar}
             sx={{
               opacity: 1,
               border: "none",
-              width: "50%",
               justifyContent: "flex-end",
               "&:hover": {
                 backgroundColor: "surface.2",
