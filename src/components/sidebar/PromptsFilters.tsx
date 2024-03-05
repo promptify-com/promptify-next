@@ -13,12 +13,12 @@ import { setSelectedEngine, setSelectedTag, deleteSelectedTag, setSelectedEngine
 import type { Engine, Tag } from "@/core/api/dto/templates";
 import { useAppSelector, useAppDispatch } from "@/hooks/useStore";
 
-const contentTypeItems = [
+const contentTypeItems: Item[] = [
   { name: "Text", id: 1 },
   { name: "Image", id: 2 },
   { name: "Video", id: 3 },
   { name: "Audio", id: 4 },
-] as const satisfies Item[];
+];
 
 function MyFavorites() {
   const [checked, setChecked] = useState(false);
