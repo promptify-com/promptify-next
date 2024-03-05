@@ -44,6 +44,8 @@ export default function ContentContainer({ template }: Props) {
 
   const handleTabChange = (tab: Link) => {
     setSelectedTab(tab);
+    const section = document.getElementById(tab.name);
+    section?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   return (
@@ -85,12 +87,18 @@ export default function ContentContainer({ template }: Props) {
           })}
         </Stack>
       </Box>
-      <Instructions prompts={template.prompts} />
-      <ExecutionExample
-        execution={template.example_execution}
-        promptsData={template.prompts}
-      />
-      <ApiAccess template={template} />
+      <div id="instructions">
+        <Instructions prompts={template.prompts} />
+      </div>
+      <div id="example">
+        <ExecutionExample
+          execution={template.example_execution}
+          promptsData={template.prompts}
+        />
+      </div>
+      <div id="api">
+        <ApiAccess template={template} />
+      </div>
     </Box>
   );
 }
