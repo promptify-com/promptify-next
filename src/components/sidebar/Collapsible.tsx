@@ -9,29 +9,28 @@ import Checkbox from "@mui/material/Checkbox";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import CircleIcon from "@mui/icons-material/Circle";
 import { Engine, Tag } from "@/core/api/dto/templates";
-import { Typography } from "@mui/material";
 export interface Item {
   name: string;
-  id: string | number;
+  id: number;
+  type?: string;
 }
 
 interface Props {
   title: string;
   items: Item[] | Engine[] | Tag[] | undefined;
+  onSelect: (item: Item) => void;
+  isSelected: (item: Item) => boolean;
 }
 
-function Collapsible({ title, items }: Props) {
+function Collapsible({ title, items, onSelect, isSelected }: Props) {
   if (!items?.length || !title) return;
 
   const [open, setOpen] = useState(true);
-  const [selectedItem, setSelectedItem] = useState<string | number>("");
+
   const [showAll, setShowAll] = useState<boolean>(false);
 
   const onClickHandler = () => {
     setOpen(!open);
-  };
-  const handleListItemClick = (id: string | number) => {
-    setSelectedItem(id);
   };
 
   const toggleShowAll = () => {
@@ -65,15 +64,18 @@ function Collapsible({ title, items }: Props) {
           {displayedItems.map(item => (
             <ListItemButton
               key={item.name}
-              selected={item.id === selectedItem}
-              onClick={() => handleListItemClick(item.id)}
+              selected={isSelected(item)}
+              onClick={() => onSelect(item)}
             >
               {isNotTags && (
                 <Checkbox
                   icon={<RadioButtonUncheckedIcon />}
                   checkedIcon={<CircleIcon />}
-                  checked={item.id === selectedItem || false}
-                  onClick={e => e.stopPropagation()}
+                  checked={isSelected(item)}
+                  onClick={e => {
+                    e.stopPropagation();
+                    onSelect(item);
+                  }}
                 />
               )}
               <ListItemText primary={item.name} />

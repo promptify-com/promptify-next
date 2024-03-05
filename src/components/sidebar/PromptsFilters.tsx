@@ -3,11 +3,15 @@ import Switch from "@mui/material/Switch";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Collapsible from "./Collapsible";
-import Divider from "@mui/material/Divider";
+import Storage from "@/common/storage";
+
 import type { Item } from "./Collapsible";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useGetTagsPopularQuery } from "@/core/api/tags";
 import { useGetEnginesQuery } from "@/core/api/engines";
+import { setSelectedEngine, setSelectedTag, deleteSelectedTag, setSelectedEngineType } from "@/core/store/filtersSlice";
+import type { Engine, Tag } from "@/core/api/dto/templates";
+import { useAppSelector, useAppDispatch } from "@/hooks/useStore";
 
 const contentTypeItems = [
   { name: "Text", id: 1 },
@@ -49,26 +53,114 @@ function MyFavorites() {
 }
 
 function PromptsFilters() {
+  const dispatch = useAppDispatch();
   const { data: tags } = useGetTagsPopularQuery();
   const { data: engines } = useGetEnginesQuery();
-  console.log({ tags, engines });
+  const { tag, engine, engineType } = useAppSelector(state => state.filters);
+
+  useEffect(() => {
+    const storedEngine = Storage.get("engineFilter") || null;
+    const storedTags = Storage.get("tagFilter") || [];
+    const storedEngineType = Storage.get("engineTypeFilter") || "";
+
+    if (storedEngine) {
+      dispatch(setSelectedEngine(storedEngine));
+    }
+
+    if (storedTags.length > 0) {
+      storedTags.forEach((tag: Tag) => {
+        dispatch(setSelectedTag(tag));
+      });
+    }
+
+    if (storedEngineType) {
+      dispatch(setSelectedEngineType(storedEngineType));
+    }
+  }, []);
+
+  const handleEngineSelect = (selectedEngine: Engine) => {
+    if (selectedEngine.id === engine?.id) {
+      dispatch(setSelectedEngine(null));
+      Storage.remove("engineFilter");
+    } else {
+      dispatch(setSelectedEngine(selectedEngine));
+      Storage.set("engineFilter", JSON.stringify(selectedEngine));
+    }
+  };
+
+  const handleTagSelect = (selectedTag: Tag) => {
+    const tagExists = tag.some(tagItem => tagItem.id === selectedTag.id);
+    if (tagExists) {
+      dispatch(deleteSelectedTag(selectedTag.id));
+      Storage.remove("tagFilter");
+    } else {
+      dispatch(setSelectedTag(selectedTag));
+      Storage.set("tagFilter", JSON.stringify([...tag, selectedTag]));
+    }
+  };
+
+  const handleEngineTypeSelect = (type: string) => {
+    if (type === engineType) {
+      dispatch(setSelectedEngineType(""));
+      Storage.remove("engineTypeFilter");
+    } else {
+      dispatch(setSelectedEngineType(type));
+      Storage.set("engineTypeFilter", type);
+    }
+  };
+
+  const handleItemSelect = (item: Item) => {
+    switch (item.type) {
+      case "engine":
+        handleEngineSelect(item as Engine);
+        break;
+      case "tag":
+        handleTagSelect(item as Tag);
+        break;
+      case "engineType":
+        handleEngineTypeSelect(item.name);
+        break;
+    }
+  };
+
+  const isSelected = (item: Item) => {
+    switch (item.type) {
+      case "engine":
+        return item.id === engine?.id;
+      case "tag":
+        return tag.some(tagItem => tagItem.id === item.id);
+      case "engineType":
+        return item.name === engineType;
+      default:
+        return false;
+    }
+  };
+
+  const addType = (items: Item[], type: string) => items.map(item => ({ ...item, type }));
+
   return (
     <>
       <MyFavorites />
       <Collapsible
         title="Content type"
-        items={contentTypeItems}
+        items={addType(contentTypeItems, "engineType")}
         key="contentType"
+        onSelect={handleItemSelect}
+        isSelected={isSelected}
       />
       <Collapsible
         title="Engines"
-        items={engines}
+        items={addType(engines || [], "engine")}
         key="engines"
+        onSelect={handleItemSelect}
+        isSelected={isSelected}
       />
       <Collapsible
         title="Popular tags"
-        items={tags}
+        items={addType(tags || [], "tag")}
         key="popularTags"
+        onSelect={handleItemSelect}
+        isSelected={isSelected}
       />
     </>
   );

@@ -27,7 +27,7 @@ export function useGetTemplatesByFilter({
   const router = useRouter();
   const { categorySlug, subcategorySlug } = router.query;
   const filters = useSelector((state: RootState) => state.filters);
-  const { tag: tags, engine, title } = filters;
+  const { tag: tags, engine, title, engineType } = filters;
   const [offset, setOffset] = useState(0);
   const [searchName, setSearchName] = useState("");
   const deferredSearchName = useDeferredValue(searchName);
@@ -45,6 +45,7 @@ export function useGetTemplatesByFilter({
   const params: FilterParams = {
     tag: memoizedFilteredTags,
     engineId: engine?.id,
+    engine_type: engineType,
     categoryId: catId,
     subcategoryId: subCatId,
     title: title ?? debouncedSearchName,

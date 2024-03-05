@@ -11,6 +11,8 @@ import { useRouter } from "next/router";
 import { setStickyPromptsFilters } from "@/core/store/sidebarSlice";
 import { theme } from "@/theme";
 import lazy from "next/dynamic";
+import Storage from "@/common/storage";
+import { useEffect } from "react";
 
 const PromptsFiltersLazy = lazy(() => import("./PromptsFilters"), {
   ssr: false,
@@ -67,8 +69,20 @@ function FiltersDrawer({ expandedOnHover }: Props) {
   const toggleSidebar = () => {
     if (isPromptsPage) {
       dispatch(setStickyPromptsFilters(!isPromptsFiltersSticky));
+      if (!isPromptsFiltersSticky) {
+        Storage.set("isPromptsFiltersSticky", JSON.stringify(!isPromptsFiltersSticky));
+      } else {
+        Storage.remove("isPromptsFiltersSticky");
+      }
     }
   };
+
+  useEffect(() => {
+    const isPromptsFiltersSticky = Storage.get("isPromptsFiltersSticky") || null;
+    if (isPromptsFiltersSticky) {
+      dispatch(setStickyPromptsFilters(isPromptsFiltersSticky));
+    }
+  }, []);
 
   return (
     <Drawer
