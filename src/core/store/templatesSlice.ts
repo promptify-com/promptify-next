@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { AnsweredInputType } from "@/common/types/prompt";
-import type { TempalteApiStatusState } from "./../api/dto/templates";
+import type { PopupTemplates, TempalteApiStatusState } from "./../api/dto/templates";
 import type { Link } from "@/components/Prompt/Types";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
@@ -15,6 +15,7 @@ export interface TemplatesProps {
   activeSideBarLink: Link | null;
   showPromptsView: boolean;
   templateApiStatus: TempalteApiStatusState;
+  popupTemplate: PopupTemplates;
 }
 
 type UpdateTemplateDataPayload = Pick<TemplatesProps, "is_favorite" | "is_liked" | "id" | "likes">;
@@ -32,6 +33,9 @@ const initialState: TemplatesProps = {
   templateApiStatus: {
     data: null,
     isLoading: true,
+  },
+  popupTemplate: {
+    template: null,
   },
 };
 
@@ -55,6 +59,9 @@ export const templatesSlice = createSlice({
     updateExecutionData: (state, action: PayloadAction<string>) => {
       state.executionData = action.payload;
     },
+    updatePopupTemplate: (state, action: PayloadAction<PopupTemplates>) => {
+      state.popupTemplate = action.payload;
+    },
     setGeneratingStatus: (state, action: PayloadAction<boolean>) => {
       state.isGenerating = action.payload;
     },
@@ -75,6 +82,7 @@ export const {
   updateCurrentLike,
   updateTemplateData,
   updateExecutionData,
+  updatePopupTemplate,
   setGeneratingStatus,
   setActiveToolbarLink,
   setShowPromptsView,

@@ -68,9 +68,9 @@ export default function ContentContainer({ template }: Props) {
 
   return (
     <Box
-      overflow={"auto"}
       ref={tabsRef}
-      height={tabsFixed ? "100svh" : "auto"}
+      height={tabsFixed ? "calc(100svh - 24px)" : "auto"}
+      overflow={"auto"}
     >
       <Box
         sx={{

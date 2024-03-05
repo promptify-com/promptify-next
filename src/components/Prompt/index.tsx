@@ -18,8 +18,8 @@ function TemplatePage({ template }: Props) {
     <Stack
       direction={"row"}
       gap={4}
-      width={{ md: "90%" }}
-      m={"auto"}
+      height={"100%"}
+      px={"32px"}
       bgcolor={"surfaceContainerLowest"}
     >
       <Stack flex={4}>
