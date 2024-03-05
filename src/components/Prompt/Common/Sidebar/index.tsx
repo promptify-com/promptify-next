@@ -23,7 +23,7 @@ const ExecutionsLazy = lazy(() => import("./Executions"));
 const TemplateDetailsLazy = lazy(() => import("./TemplateDetails"));
 const ApiAccessLazy = lazy(() => import("./ApiAccess"));
 const ExtensionLazy = lazy(() => import("./Extension"));
-const FeedbackLazy = lazy(() => import("./Feedback"));
+const FeedbackLazy = lazy(() => import("../../Feedback"));
 import type { Templates, TemplatesExecutions } from "@/core/api/dto/templates";
 
 const drawerWidth = 352;

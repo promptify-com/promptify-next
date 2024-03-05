@@ -11,6 +11,8 @@ import Api from "@mui/icons-material/Api";
 import Instructions from "./Instructions";
 import ExecutionExample from "./ExecutionExample";
 import ApiAccess from "./ApiAccess";
+import Feedback from "./Feedback";
+import ClientOnly from "@/components/base/ClientOnly";
 
 const ScrollTabs: Link[] = [
   {
@@ -98,6 +100,11 @@ export default function ContentContainer({ template }: Props) {
       </div>
       <div id="api">
         <ApiAccess template={template} />
+      </div>
+      <div id="feedback">
+        <ClientOnly>
+          <Feedback />
+        </ClientOnly>
       </div>
     </Box>
   );
