@@ -4,13 +4,33 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 
 import { useAppSelector } from "@/hooks/useStore";
+import { useEffect, useState } from "react";
 
 interface Props {
   onAbort: () => void;
 }
 
+interface GenerationTiming {
+  startTime: Date | null;
+  endTime: Date | null;
+  duration: number | null;
+}
+
 function ExecutionMessageFooter({ onAbort }: Props) {
   const isGenerating = useAppSelector(state => state.template.isGenerating);
+
+  const [timing, setTiming] = useState<GenerationTiming>({ startTime: null, endTime: null, duration: null });
+
+  useEffect(() => {
+    if (isGenerating) {
+      setTiming(timing => ({ ...timing, startTime: new Date(), endTime: null, duration: null }));
+    } else if (timing.startTime) {
+      const endTime = new Date();
+      const duration = Math.round((endTime.getTime() - timing.startTime.getTime()) / 1000);
+      setTiming({ ...timing, endTime, duration });
+    }
+  }, [isGenerating]);
+
   return (
     <>
       {isGenerating ? (
@@ -65,7 +85,7 @@ function ExecutionMessageFooter({ onAbort }: Props) {
               opacity: 0.9,
             }}
           >
-            Generation done in 39 second
+            Generation done in {timing.duration} second{timing.duration === 1 ? "" : "s"}
           </Typography>
         </Stack>
       )}

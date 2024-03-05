@@ -68,7 +68,7 @@ function ExecutionMessageActions({ template }: Props) {
           <Stack
             direction={"row"}
             alignItems={"center"}
-            gap={2}
+            gap={1}
           >
             {!selectedExecution.is_favorite && (
               <Typography
