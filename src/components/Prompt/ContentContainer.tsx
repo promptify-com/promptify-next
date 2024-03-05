@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Stack from "@mui/material/Stack";
 import { Templates } from "@/core/api/dto/templates";
 import Box from "@mui/material/Box";
@@ -43,6 +43,8 @@ interface Props {
 
 export default function ContentContainer({ template }: Props) {
   const [selectedTab, setSelectedTab] = useState<Link>(ScrollTabs[0]);
+  const [tabsFixed, setTabsFixed] = useState(false);
+  const tabsRef = useRef<HTMLDivElement>(null);
 
   const handleTabChange = (tab: Link) => {
     setSelectedTab(tab);
@@ -50,12 +52,35 @@ export default function ContentContainer({ template }: Props) {
     section?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (tabsRef.current) {
+        const atTop = tabsRef.current.getBoundingClientRect().top <= 0;
+        setTabsFixed(atTop);
+      }
+    };
+
+    handleScroll();
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
     <Box
-      // height={"100svh"}
       overflow={"auto"}
+      ref={tabsRef}
+      height={tabsFixed ? "100svh" : "auto"}
     >
-      <Box sx={{ position: "relative", top: 0, bgcolor: "surfaceContainerLowest", p: "32px 36px" }}>
+      <Box
+        sx={{
+          position: tabsFixed ? "sticky" : "relative",
+          zIndex: 999,
+          top: 0,
+          bgcolor: "surfaceContainerLowest",
+          p: "32px 36px",
+        }}
+      >
         <Stack
           direction={"row"}
           gap={2}
