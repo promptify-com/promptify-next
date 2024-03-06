@@ -103,12 +103,16 @@ export default function Page({ category }: { category: Category }) {
               padding: { xs: "16px", md: "32px" },
             }}
           >
-            <Box
+            <Stack
               display={"flex"}
               flexDirection={"column"}
               gap={"16px"}
             >
-              <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+              <Stack
+                direction="row"
+                alignItems="center"
+                gap={2}
+              >
                 <Stack>
                   <Button
                     onClick={() => goBack()}
@@ -141,21 +145,20 @@ export default function Page({ category }: { category: Category }) {
                     <KeyboardArrowLeft sx={{ opacity: 0.3 }} />
                   </Button>
                 </Stack>
-                <Stack>
-                  <Typography
-                    sx={{
-                      color: "onSurface",
-                      fontFeatureSettings: "'clig' off, 'liga' off",
-                      fontSize: "16px",
-                      fontWeight: 400,
-                      lineHeight: "120%",
-                      letterSpacing: "0.2px",
-                    }}
-                  >
-                    {category.name}
-                  </Typography>
-                </Stack>
-              </Box>
+
+                <Typography
+                  sx={{
+                    color: "onSurface",
+                    fontFeatureSettings: "'clig' off, 'liga' off",
+                    fontSize: "16px",
+                    fontWeight: 400,
+                    lineHeight: "120%",
+                    letterSpacing: "0.2px",
+                  }}
+                >
+                  {category.name}
+                </Typography>
+              </Stack>
 
               <Box
                 sx={{
@@ -219,7 +222,7 @@ export default function Page({ category }: { category: Category }) {
                 templates={popularTemplates}
                 templateLoading={isTemplatesLoading}
               />
-            </Box>
+            </Stack>
           </Grid>
         </Box>
       </Layout>

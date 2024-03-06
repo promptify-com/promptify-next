@@ -86,7 +86,7 @@ function LatestTemplates({ templates }: Pick<TemplatesSectionProps, "templates">
   );
 }
 
-function PopularTemplates({ templates }: Pick<TemplatesSectionProps, "templates">) {
+function PopularTemplates({ templates, bgColor }: Pick<TemplatesSectionProps, "templates" | "bgColor">) {
   if (!templates?.length) {
     return null;
   }
@@ -96,12 +96,23 @@ function PopularTemplates({ templates }: Pick<TemplatesSectionProps, "templates"
       direction={"row"}
       flexWrap={"wrap"}
       rowGap={3}
+      sx={{
+        justifyContent: {
+          xs: "center",
+          sm: "center",
+        },
+        gap: {
+          sm: 1,
+        },
+      }}
     >
-      {templates.map((template: TemplateExecutionsDisplay | Templates) => (
+      {templates.map((template: TemplateExecutionsDisplay | Templates, index) => (
         <CardTemplate
-          key={template.id}
+          key={`${template.id} - ${index}`}
           template={template as Templates}
+          bgColor={bgColor}
           vertical
+          showTagsOnHover
         />
       ))}
     </Stack>
@@ -216,54 +227,31 @@ export const TemplatesSection = forwardRef<HTMLDivElement, TemplatesSectionProps
           {isLatestTemplates ? (
             <LatestTemplates templates={templates} />
           ) : isPopularTemplates ? (
-            <Stack
-              direction={"row"}
-              flexWrap={"wrap"}
-              rowGap={3}
-              sx={{
-                justifyContent: {
-                  xs: "center",
-                  sm: "center",
-                },
-                gap: {
-                  sm: 1,
-                },
-              }}
+            <PopularTemplates
+              templates={templates}
+              bgColor={bgColor}
+            />
+          ) : (
+            <TemplatesInfiniteScroll
+              loading={isLoading}
+              onLoadMore={onNextPage}
+              hasMore={hasMore}
+              isInfiniteScrolling={isInfiniteScrolling}
+              hasPrev={hasPrev}
+              onLoadLess={onPrevPage}
             >
               {!!templates?.length &&
-                templates.map((template: TemplateExecutionsDisplay | Templates, index) => (
-                  <CardTemplate
-                    key={`${template.id} - ${index}`}
-                    template={template as Templates}
-                    bgColor={bgColor}
-                    vertical
-                    showTagsOnHover
-                  />
-                ))}
-            </Stack>
-          ) : (
-            <Grid>
-              <TemplatesInfiniteScroll
-                loading={isLoading}
-                onLoadMore={onNextPage}
-                hasMore={hasMore}
-                isInfiniteScrolling={isInfiniteScrolling}
-                hasPrev={hasPrev}
-                onLoadLess={onPrevPage}
-              >
-                {!!templates?.length &&
-                  templates.map((template: TemplateExecutionsDisplay | Templates) => {
-                    return (
-                      <Grid key={template.id}>
-                        <CardTemplate
-                          key={template.id}
-                          template={template as Templates}
-                        />
-                      </Grid>
-                    );
-                  })}
-              </TemplatesInfiniteScroll>
-            </Grid>
+                templates.map((template: TemplateExecutionsDisplay | Templates) => {
+                  return (
+                    <Grid key={template.id}>
+                      <CardTemplate
+                        key={template.id}
+                        template={template as Templates}
+                      />
+                    </Grid>
+                  );
+                })}
+            </TemplatesInfiniteScroll>
           )}
 
           {type !== "myLatestExecutions" && !isLoading && !templates?.length && (
