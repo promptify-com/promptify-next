@@ -34,6 +34,7 @@ export default function FiltersDrawer({ expandedOnHover }: Props) {
       title="Prompts"
       expanded={isPromptsFiltersSticky || expandedOnHover}
       toggleExpand={toggleSidebar}
+      sticky={isPromptsFiltersSticky}
     >
       <PromptsFilters />
     </DrawerContainer>

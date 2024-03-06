@@ -127,7 +127,7 @@ function ChatPage() {
       <Layout>
         <Stack
           sx={{
-            width: { md: "950px" },
+            width: { md: "75%" },
             mx: { md: "auto" },
             height: { xs: "100vh", md: "calc(100vh - 120px)" },
             display: "flex",

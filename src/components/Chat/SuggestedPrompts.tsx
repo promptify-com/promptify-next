@@ -16,13 +16,14 @@ function SuggestedPrompts() {
     <Stack
       direction={"row"}
       justifyContent={"space-between"}
+      gap={2}
     >
       {prompts.map((prompt, index) => (
         <Stack
-          direction={"column"}
+          key={index}
           alignItems={"flex-start"}
           justifyContent={"space-between"}
-          key={index}
+          flex={1}
           border={"1px solid"}
           borderColor={"#E3E2E6"}
           borderRadius={"16px"}

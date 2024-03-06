@@ -133,7 +133,7 @@ function Sidebar() {
         className="sidebar-list"
         sx={{
           overflow: "none",
-          bgcolor: "surface.3",
+          bgcolor: "surfaceContainerLow",
           width: theme.custom.leftClosedSidebarWidth,
           padding: "8px 4px",
           height: "100vh",

@@ -33,6 +33,7 @@ export default function ChatsDrawer({ expandedOnHover }: Props) {
       title="Chats"
       expanded={isChatHistorySticky || expandedOnHover}
       toggleExpand={toggleSidebar}
+      sticky={isChatHistorySticky}
     ></DrawerContainer>
   );
 }

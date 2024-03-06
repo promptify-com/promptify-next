@@ -3,12 +3,10 @@ import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import MuiDrawer from "@mui/material/Drawer";
-import { SidebarIcon } from "@/assets/icons/Sidebar";
-import { SideBarCloseIcon } from "@/assets/icons/SideBarClose";
 import { styled, Theme, CSSObject } from "@mui/material/styles";
 import { theme } from "@/theme";
 import { ReactNode } from "react";
-import { useAppSelector } from "@/hooks/useStore";
+import { KeyboardTab } from "@mui/icons-material";
 
 const drawerWidth = 284;
 
@@ -52,11 +50,11 @@ interface Props {
   title: string;
   expanded: boolean;
   toggleExpand(): void;
-  children: ReactNode;
+  sticky: boolean;
+  children?: ReactNode;
 }
 
-export default function DrawerContainer({ title, expanded, toggleExpand, children }: Props) {
-  const isPromptsFiltersSticky = useAppSelector(state => state.sidebar.isPromptsFiltersSticky);
+export default function DrawerContainer({ title, expanded, toggleExpand, sticky, children }: Props) {
   return (
     <Drawer
       variant={"permanent"}
@@ -74,7 +72,7 @@ export default function DrawerContainer({ title, expanded, toggleExpand, childre
           height: "100svh",
           boxSizing: "border-box",
           overflow: "auto",
-          bgcolor: "surface.1",
+          bgcolor: "surfaceContainerLow",
           border: "none",
           width: `calc(${theme.custom.leftClosedSidebarWidth} + 285px)`,
           left: theme.custom.leftClosedSidebarWidth,
@@ -106,12 +104,16 @@ export default function DrawerContainer({ title, expanded, toggleExpand, childre
             opacity: 1,
             border: "none",
             justifyContent: "flex-end",
+            svg: {
+              color: "onSurface",
+              transform: sticky ? "rotateY(180deg)" : "none",
+            },
             "&:hover": {
               backgroundColor: "surface.2",
             },
           }}
         >
-          {!isPromptsFiltersSticky && expanded ? <SideBarCloseIcon /> : <SidebarIcon />}
+          <KeyboardTab />
         </IconButton>
       </Stack>
       <Divider />
