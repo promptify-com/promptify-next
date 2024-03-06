@@ -12,7 +12,7 @@ import type { Templates } from "@/core/api/dto/templates";
 
 interface TemplateHeaderProps {
   template: Templates;
-  close(): void;
+  close?(): void;
 }
 
 export default function Header({ template, close }: TemplateHeaderProps) {
@@ -25,7 +25,7 @@ export default function Header({ template, close }: TemplateHeaderProps) {
       onClick={e => {
         e.preventDefault();
         router.push("/explore");
-        close();
+        close?.();
       }}
       sx={breadcrumbStyle}
     >
@@ -38,7 +38,7 @@ export default function Header({ template, close }: TemplateHeaderProps) {
         e.preventDefault();
         dispatch(setSelectedTag(template.category));
         router.push("/explore");
-        close();
+        close?.();
       }}
       sx={breadcrumbStyle}
     >
