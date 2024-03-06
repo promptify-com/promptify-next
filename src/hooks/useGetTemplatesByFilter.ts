@@ -1,4 +1,4 @@
-import { useDeferredValue, useMemo, useState, useEffect } from "react";
+import { useDeferredValue, useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import { RootState } from "@/core/store";
@@ -27,24 +27,18 @@ export function useGetTemplatesByFilter({
   const router = useRouter();
   const { categorySlug, subcategorySlug } = router.query;
   const filters = useSelector((state: RootState) => state.filters);
-  const { tag: tags, engine, title } = filters;
+  const { tag: tags, engine, title, engineType, isFavourite } = filters;
   const [offset, setOffset] = useState(0);
   const [searchName, setSearchName] = useState("");
   const deferredSearchName = useDeferredValue(searchName);
   const debouncedSearchName = useDebounce<string>(deferredSearchName, 300);
   const [status, setStatus] = useState<string>();
   const PAGINATION_LIMIT = templateLimit ?? 10;
-  const memoizedFilteredTags = useMemo(() => {
-    const filteredTags = tags
-      .filter(item => item !== null)
-      .map(item => item?.name)
-      .join("&tag=");
 
-    return filteredTags;
-  }, [tags]);
   const params: FilterParams = {
-    tag: memoizedFilteredTags,
+    tags,
     engineId: engine?.id,
+    engine_type: engineType,
     categoryId: catId,
     subcategoryId: subCatId,
     title: title ?? debouncedSearchName,
@@ -52,7 +46,14 @@ export function useGetTemplatesByFilter({
     limit: PAGINATION_LIMIT,
     status,
     ordering,
+    isFavourite: isFavourite,
+    isInternal: false,
   };
+
+  if (admin) {
+    delete params.isInternal;
+  }
+
   const skipFetchingTemplates = ![catId, subCatId, admin, ordering].some(_param => _param);
   const {
     data: templates,
@@ -77,7 +78,9 @@ export function useGetTemplatesByFilter({
       filters.tag.every(tag => tag === null) &&
       filters.title === null &&
       filters.category === null &&
-      filters.subCategory === null
+      filters.subCategory === null &&
+      filters.engineType === "" &&
+      filters.isFavourite === false
     );
   }
   const allFilterParamsNull = areAllStatesNull(filters);
@@ -101,10 +104,6 @@ export function useGetTemplatesByFilter({
   const hasMore = !!templates?.next;
   const hasPrev = !!templates?.previous;
 
-  const filteredTemplates = admin
-    ? allTemplates
-    : allTemplates?.filter(template => (typeof template?.is_internal === "undefined" ? true : !template.is_internal));
-
   return {
     categorySlug,
     searchName,
@@ -112,7 +111,7 @@ export function useGetTemplatesByFilter({
     debouncedSearchName,
     subcategorySlug,
     allFilterParamsNull,
-    templates: filteredTemplates,
+    templates: allTemplates,
     isTemplatesLoading,
     filters,
     handleNextPage,

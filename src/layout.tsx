@@ -3,8 +3,10 @@ import { Box, Grid } from "@mui/material";
 import { Header } from "@/components/Header";
 import { theme } from "@/theme";
 import Sidebar from "./components/sidebar/Sidebar";
+import { useAppSelector } from "@/hooks/useStore";
 
 export const Layout = ({ children }: { children: ReactNode }) => {
+  const isPromptsFiltersSticky = useAppSelector(state => state.sidebar.isPromptsFiltersSticky);
   return (
     <>
       <Box sx={{ bgcolor: "surface.3" }}>
@@ -34,6 +36,12 @@ export const Layout = ({ children }: { children: ReactNode }) => {
               borderTopRightRadius: "16px",
               overflow: "hidden",
               zIndex: 1,
+              ...(isPromptsFiltersSticky
+                ? {
+                    width: "calc(100% - 75px - 300px)",
+                    marginLeft: "auto",
+                  }
+                : { width: "auto" }),
             }}
           >
             <Grid

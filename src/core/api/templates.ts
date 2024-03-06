@@ -15,9 +15,8 @@ import { IEditPrompts } from "@/common/types/builder";
 
 const getSearchParams = (params: FilterParams) => {
   const searchParams = new URLSearchParams();
-
   params.categoryId && searchParams.append("main_category_id", String(params.categoryId));
-  params.tag && searchParams.append("tag", params.tag);
+  params.tags?.length && params.tags.forEach(tag => searchParams.append("tag", tag.name));
   params.subcategoryId && searchParams.append("sub_category_id", String(params.subcategoryId));
   params.engineId && searchParams.append("engine", String(params.engineId));
   params.title && searchParams.append("title", params.title);
@@ -25,6 +24,9 @@ const getSearchParams = (params: FilterParams) => {
   params.limit && searchParams.append("limit", String(params.limit));
   params.offset && searchParams.append("offset", String(params.offset));
   params.status && searchParams.append("status", String(params.status));
+  params.engine_type && searchParams.append("engine_type", String(params.engine_type));
+  params.isFavourite && searchParams.append("is_favorite", String(params.isFavourite));
+  typeof params.isInternal === "boolean" && searchParams.append("is_internal", String(params.isInternal));
 
   return searchParams.toString();
 };

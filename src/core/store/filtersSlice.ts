@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Category, Engine, SelectedFilters, Tag } from "../api/dto/templates";
+import Storage from "@/common/storage";
 
 const initialState: SelectedFilters = {
   engine: null,
@@ -7,6 +8,8 @@ const initialState: SelectedFilters = {
   title: null,
   category: null,
   subCategory: null,
+  engineType: "",
+  isFavourite: false,
 };
 
 const filterSlice = createSlice({
@@ -15,6 +18,11 @@ const filterSlice = createSlice({
   reducers: {
     setSelectedEngine: (state, action: PayloadAction<Engine | null>) => {
       state.engine = action.payload;
+      if (action.payload) {
+        Storage.set("engineFilter", JSON.stringify(action.payload));
+      } else {
+        Storage.remove("engineFilter");
+      }
     },
     setSelectedTag: (state, action: PayloadAction<Tag>) => {
       if (state.tag?.find(_tag => _tag.id === action.payload?.id)) {
@@ -22,6 +30,8 @@ const filterSlice = createSlice({
       }
 
       state.tag.push(action.payload);
+
+      Storage.set("tagFilter", JSON.stringify(state.tag));
     },
     setSelectedCategory: (state, action: PayloadAction<Category | null>) => {
       state.category = action.payload;
@@ -34,6 +44,29 @@ const filterSlice = createSlice({
     },
     deleteSelectedTag: (state, action: PayloadAction<number>) => {
       state.tag = state.tag.filter(tag => tag?.id !== action.payload);
+      if (!state.tag.length) {
+        Storage.remove("tagFilter");
+        return;
+      }
+      Storage.set("tagFilter", JSON.stringify(state.tag));
+    },
+    setSelectedEngineType: (state, action: PayloadAction<string>) => {
+      state.engineType = action.payload;
+
+      if (action.payload) {
+        Storage.set("engineTypeFilter", JSON.stringify(action.payload));
+      } else {
+        Storage.remove("engineTypeFilter");
+      }
+    },
+    setMyFavoritesChecked: (state, action: PayloadAction<boolean>) => {
+      state.isFavourite = action.payload;
+      if (!action.payload) {
+        Storage.remove("myFavoritesChecked");
+        return
+      }
+      
+      Storage.set("myFavoritesChecked", JSON.stringify(action.payload));
     },
   },
 });
@@ -45,6 +78,8 @@ export const {
   setSelectedCategory,
   setSelectedSubCategory,
   deleteSelectedTag,
+  setSelectedEngineType,
+  setMyFavoritesChecked,
 } = filterSlice.actions;
 
 export default filterSlice.reducer;

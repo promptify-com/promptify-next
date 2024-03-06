@@ -18,6 +18,7 @@ export const tagsApi = baseApi.injectEndpoints({
           method: "get",
         }),
         keepUnusedDataFor: 60 * 60,
+        transformResponse: (response: Tag[]) => response.map(tag => ({ ...tag, type: "tag" })),
       }),
     };
   },
