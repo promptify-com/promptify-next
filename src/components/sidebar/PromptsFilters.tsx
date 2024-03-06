@@ -6,7 +6,7 @@ import Collapsible from "./Collapsible";
 import Storage from "@/common/storage";
 
 import type { Item } from "./Collapsible";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useGetTagsPopularQuery } from "@/core/api/tags";
 import { useGetEnginesQuery } from "@/core/api/engines";
 import {
