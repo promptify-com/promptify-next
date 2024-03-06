@@ -20,9 +20,10 @@ interface Props {
   items: Item[] | Engine[] | Tag[] | undefined;
   onSelect: (item: Item) => void;
   isSelected: (item: Item) => boolean;
+  isTags?: boolean;
 }
 
-function Collapsible({ title, items, onSelect, isSelected }: Props) {
+function Collapsible({ title, items, onSelect, isSelected, isTags }: Props) {
   if (!items?.length || !title) return;
 
   const [open, setOpen] = useState(true);
@@ -38,7 +39,7 @@ function Collapsible({ title, items, onSelect, isSelected }: Props) {
   };
 
   const displayedItems = showAll ? items : items.slice(0, 5);
-  const isNotTags = title !== "Popular tags";
+
   return (
     <List
       sx={{
@@ -67,7 +68,7 @@ function Collapsible({ title, items, onSelect, isSelected }: Props) {
               selected={isSelected(item)}
               onClick={() => onSelect(item)}
             >
-              {isNotTags && (
+              {!isTags && (
                 <Checkbox
                   icon={<RadioButtonUncheckedIcon />}
                   checkedIcon={<CircleIcon />}

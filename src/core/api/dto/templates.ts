@@ -37,6 +37,7 @@ export interface SelectedFilters {
   category: Category | null;
   subCategory: Category | null;
   engineType?: string;
+  isFavourite?: boolean;
 }
 
 export class TemplateParam {
@@ -69,10 +70,12 @@ export interface Engine {
   name: string;
   output_type: EngineOutput;
   provider: string;
+  type?: string;
 }
 export interface Tag {
   id: number;
   name: string;
+  type?: string;
 }
 
 interface CategoryParent {

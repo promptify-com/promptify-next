@@ -70,7 +70,7 @@ function FiltersDrawer({ expandedOnHover }: Props) {
     if (isPromptsPage) {
       dispatch(setStickyPromptsFilters(!isPromptsFiltersSticky));
       if (!isPromptsFiltersSticky) {
-        Storage.set("isPromptsFiltersSticky", JSON.stringify(!isPromptsFiltersSticky));
+        Storage.set("isPromptsFiltersSticky", String(!isPromptsFiltersSticky));
       } else {
         Storage.remove("isPromptsFiltersSticky");
       }
@@ -78,9 +78,9 @@ function FiltersDrawer({ expandedOnHover }: Props) {
   };
 
   useEffect(() => {
-    const isPromptsFiltersSticky = Storage.get("isPromptsFiltersSticky") || null;
+    const isPromptsFiltersSticky = Storage.get("isPromptsFiltersSticky");
     if (isPromptsFiltersSticky) {
-      dispatch(setStickyPromptsFilters(isPromptsFiltersSticky));
+      dispatch(setStickyPromptsFilters(isPromptsFiltersSticky === "true" ? true : false));
     }
   }, []);
 
