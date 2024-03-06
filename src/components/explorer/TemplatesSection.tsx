@@ -100,6 +100,7 @@ function PopularTemplates({ templates, bgColor }: Pick<TemplatesSectionProps, "t
         justifyContent: {
           xs: "center",
           sm: "center",
+          md: "flex-start",
         },
         gap: {
           sm: 1,
