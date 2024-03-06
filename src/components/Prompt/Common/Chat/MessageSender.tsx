@@ -1,13 +1,15 @@
-import { useRef, useState } from "react";
-import ArrowUpward from "@mui/icons-material/ArrowUpward";
+import { useEffect, useRef, useState } from "react";
+import CircularProgress from "@mui/material/CircularProgress";
 import KeyboardCommandKey from "@mui/icons-material/KeyboardCommandKey";
 import Box from "@mui/material/Box";
 import InputBase from "@mui/material/InputBase";
-import { useAppSelector } from "@/hooks/useStore";
 import SlowMotionVideo from "@mui/icons-material/SlowMotionVideo";
-import { CircularProgress, IconButton } from "@mui/material";
-import useVariant from "../../Hooks/useVariant";
-import { ArrowForward } from "@mui/icons-material";
+import ArrowUpward from "@mui/icons-material/ArrowUpward";
+import ArrowForward from "@mui/icons-material/ArrowForward";
+
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import useVariant from "@/components/Prompt/Hooks/useVariant";
+import { setMessageSenderValue } from "@/core/store/chatSlice";
 
 interface MessageSenderProps {
   onSubmit: (value: string) => void;
@@ -32,16 +34,26 @@ function MessageSender({
   maxLength,
   loading,
 }: MessageSenderProps) {
+  const dispatch = useAppDispatch();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
+  const MessageSenderValue = useAppSelector(state => state.chat.MessageSenderValue);
+
   const { isVariantB } = useVariant();
   const [localValue, setLocalValue] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   const fieldRef = useRef<HTMLInputElement | null>(null);
 
+  useEffect(() => {
+    setLocalValue(MessageSenderValue);
+  }, [MessageSenderValue]);
+
+  const resetGlobalValue = () => !!MessageSenderValue && dispatch(setMessageSenderValue(""));
+
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSubmit();
+      resetGlobalValue();
     } else if (e.key === "Enter" && e.shiftKey) {
       e.preventDefault();
       setLocalValue(localValue + "\n");
@@ -57,6 +69,7 @@ function MessageSender({
   const handleSubmit = () => {
     onSubmit(localValue);
     setLocalValue("");
+    resetGlobalValue();
   };
 
   const hasValue = localValue !== "";

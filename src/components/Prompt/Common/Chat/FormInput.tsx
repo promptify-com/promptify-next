@@ -92,7 +92,11 @@ function FormInput({ input }: Props) {
       p={isVariantB ? "6px" : 0}
       alignItems={"center"}
       gap={1}
-      borderBottom={isVariantB ? "1px solid #ECECF4" : "none"}
+      sx={{
+        "&:hover": {
+          bgcolor: "surface.1",
+        },
+      }}
     >
       {isVariantB && (
         <Radio
@@ -134,18 +138,6 @@ function FormInput({ input }: Props) {
           alignItems={"center"}
           gap={"8px"}
         >
-          {required && (
-            <Typography
-              sx={{
-                fontSize: { xs: 12, md: 15 },
-                fontWeight: 400,
-                lineHeight: "100%",
-                opacity: 0.3,
-              }}
-            >
-              Required
-            </Typography>
-          )}
           <CustomTooltip
             title={
               <Typography

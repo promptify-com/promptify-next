@@ -9,13 +9,12 @@ import Box from "@mui/material/Box";
 import { markdownToHTML, sanitizeHTML } from "@/common/helpers/htmlHelper";
 import { Subtitle } from "@/components/blocks";
 import { useAppSelector } from "@/hooks/useStore";
+import PromptContent from "./PromptContent";
+import { isImageOutput } from "../Utils";
+import ImagePopup from "@/components/dialog/ImagePopup";
 import type { Prompts } from "@/core/api/dto/prompts";
 import type { TemplatesExecutions } from "@/core/api/dto/templates";
 import type { DisplayPrompt, PromptLiveResponse } from "@/common/types/prompt";
-import PromptContent from "./PromptContent";
-import FeedbackThumbs from "./FeedbackThumbs";
-import { isImageOutput } from "../Utils";
-import ImagePopup from "@/components/dialog/ImagePopup";
 
 interface Props {
   execution: PromptLiveResponse | TemplatesExecutions | null;
@@ -26,7 +25,6 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
   const executionPrompts = execution && "data" in execution ? execution.data : execution?.prompt_executions;
   const sparkHashQueryParam = useAppSelector(state => state.executions.sparkHashQueryParam);
   const showPreview = useAppSelector(state => state.template.showPromptsView);
-  const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
 
   const [sortedPrompts, setSortedPrompts] = useState<DisplayPrompt[]>([]);
   const [elementRefs, setElementRefs] = useState<RefObject<HTMLDivElement>[]>([]);
@@ -109,6 +107,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
   return (
     <Stack
       gap={1}
+      p={"24px"}
       sx={{
         width: { md: "90%" },
       }}
@@ -311,24 +310,6 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
               <Typography>We could not display the selected execution as it's missing some information!</Typography>
             )}
           </Stack>
-          {selectedExecution && "title" in selectedExecution && (
-            <Box
-              sx={{
-                height: "fit-content",
-                display: { md: "none" },
-                position: "sticky",
-                top: "50px",
-                mr: { md: "-50px" },
-                ml: { md: "20px" },
-              }}
-            >
-              <FeedbackThumbs
-                variant="icon"
-                execution={selectedExecution}
-                vertical
-              />
-            </Box>
-          )}
         </Stack>
       )}
     </Stack>
