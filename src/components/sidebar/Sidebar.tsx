@@ -22,11 +22,14 @@ import type { NavItem } from "@/common/types/sidebar";
 const FiltersDrawerLazy = lazy(() => import("./FiltersDrawer"), {
   ssr: false,
 });
+const ChatsDrawerLazy = lazy(() => import("./ChatsDrawer"), {
+  ssr: false,
+});
 
 function Sidebar() {
   const router = useRouter();
   const { isMobile } = useBrowser();
-  const [expandedOnHover, setExpandedOnHover] = useState<boolean>(false);
+  const [mouseHover, setMouseHover] = useState<boolean>(false);
   const pathname = router.pathname;
   const isPromptsPage = pathname.split("/")[1] === "explore";
   const isChatPage = pathname.split("/")[1] === "chats";
@@ -103,12 +106,13 @@ function Sidebar() {
     return null;
   }
 
+  const filtersExpanded = isPromptsPage && mouseHover;
+  const chatsExpanded = isChatPage && mouseHover;
+
   return (
     <Grid
-      onMouseEnter={() => {
-        setExpandedOnHover(isPromptsPage || isChatPage);
-      }}
-      onMouseLeave={() => setExpandedOnHover(false)}
+      onMouseEnter={() => setMouseHover(true)}
+      onMouseLeave={() => setMouseHover(false)}
       sx={{
         display: { xs: "none", md: "flex" },
         "flex-direction": "column",
@@ -147,7 +151,8 @@ function Sidebar() {
           <SidebarItem navItem={learnHelpNavItem} />
         </List>
       </Grid>
-      {isPromptsPage && <FiltersDrawerLazy expandedOnHover={expandedOnHover} />}
+      {isPromptsPage && <FiltersDrawerLazy expandedOnHover={filtersExpanded} />}
+      {isChatPage && <ChatsDrawerLazy expandedOnHover={chatsExpanded} />}
     </Grid>
   );
 }
