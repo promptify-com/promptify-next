@@ -71,7 +71,7 @@ export default function ExecutionExample({ execution, promptsData }: Props) {
         </AccordionBox>
       ) : (
         <Typography
-          fontSize={16}
+          fontSize={14}
           fontWeight={400}
           color={"onSurface"}
         >

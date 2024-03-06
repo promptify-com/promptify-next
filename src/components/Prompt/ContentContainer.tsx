@@ -67,7 +67,8 @@ export default function ContentContainer({ template, tabsFixed }: Props) {
           direction={"row"}
           gap={2}
           sx={{
-            width: "fit-content",
+            width: "100%",
+            minWidth: "fit-content",
             bgcolor: "surfaceContainerLow",
             p: "4px",
             borderRadius: "999px",
@@ -98,7 +99,7 @@ export default function ContentContainer({ template, tabsFixed }: Props) {
         </Stack>
       </Box>
       <div id="instructions">
-        <Instructions prompts={template.prompts} />
+        <Instructions prompts={template.prompts || []} />
       </div>
       <div id="example">
         <ExecutionExample

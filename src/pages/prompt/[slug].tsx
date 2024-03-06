@@ -6,13 +6,13 @@ import { useViewTemplateMutation } from "@/core/api/templates";
 import { Templates } from "@/core/api/dto/templates";
 import { Layout } from "@/layout";
 import { isValidUserFn } from "@/core/store/userSlice";
-import { updatePopupTemplate, updateTemplateData } from "@/core/store/templatesSlice";
+import { updateTemplateData } from "@/core/store/templatesSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { getTemplateBySlug } from "@/hooks/api/templates";
 import { stripTags } from "@/common/helpers";
 import { GetServerSideProps } from "next/types";
 import { SEO_DESCRIPTION, SEO_TITLE } from "@/common/constants";
-import TemplateModal from "@/components/Prompt/TemplateModal";
+import TemplatePage from "@/components/Prompt";
 
 interface IMUDynamicColorsThemeColor {
   light: {
@@ -49,12 +49,6 @@ function Template({ fetchedTemplate }: TemplateProps) {
           is_favorite: fetchedTemplate.is_favorite,
           is_liked: fetchedTemplate.is_liked,
           likes: fetchedTemplate.favorites_count,
-        }),
-      );
-      // TODO: testing purpose
-      dispatch(
-        updatePopupTemplate({
-          template: fetchedTemplate,
         }),
       );
 
@@ -110,7 +104,7 @@ function Template({ fetchedTemplate }: TemplateProps) {
   return (
     <ThemeProvider theme={dynamicTheme}>
       <Layout>
-        <TemplateModal />
+        <TemplatePage template={fetchedTemplate} />
       </Layout>
     </ThemeProvider>
   );

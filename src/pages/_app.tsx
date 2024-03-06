@@ -17,6 +17,7 @@ import Storage from "@/common/storage";
 import { deletePathURL, savePathURL } from "@/common/utils";
 import Toaster from "@/components/Toaster";
 import Seo from "@/components/Seo";
+import TemplateModal from "@/components/Prompt/TemplateModal";
 
 function App({ Component, ...rest }: AppProps) {
   const { store, props } = wrapper.useWrappedStore(rest);
@@ -116,6 +117,7 @@ function App({ Component, ...rest }: AppProps) {
         />
         <Toaster />
         <Component {...pageProps} />
+        <TemplateModal />
       </ThemeProvider>
     </Provider>
   );

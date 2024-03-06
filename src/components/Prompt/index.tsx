@@ -7,21 +7,25 @@ import Box from "@mui/material/Box";
 import Image from "@/components/design-system/Image";
 import ContentContainer from "./ContentContainer";
 import { useEffect, useRef, useState } from "react";
+import { theme } from "../../theme";
 
 interface Props {
   template: Templates;
+  popup?: boolean;
 }
 
-function TemplatePage({ template }: Props) {
+function TemplatePage({ template, popup }: Props) {
   const { isMobile } = useBrowser();
   const [tabsFixed, setTabsFixed] = useState(false);
   const tabsRef = useRef<HTMLDivElement>(null);
+  const topThreshold = popup ? 24 : 92;
 
   useEffect(() => {
     const handleScroll = () => {
       const tabsElement = document.getElementById("sections_tabs");
       if (tabsElement) {
-        const atTop = tabsElement.getBoundingClientRect().top <= 24;
+        const atTop = tabsElement.getBoundingClientRect().top <= topThreshold;
+        console.log(tabsElement.getBoundingClientRect().top);
         setTabsFixed(atTop);
       }
     };
@@ -36,13 +40,20 @@ function TemplatePage({ template }: Props) {
     <Stack
       direction={"row"}
       gap={4}
+      height={{
+        xs: `calc(100svh - ${popup ? "24px" : theme.custom.headerHeight.xs})`,
+        md: `calc(100svh - ${popup ? "24px" : theme.custom.headerHeight.md})`,
+      }}
       px={"32px"}
       bgcolor={"surfaceContainerLowest"}
     >
       <Box
         ref={tabsRef}
         flex={4}
-        height={"calc(100svh - 24px)"}
+        height={{
+          xs: `calc(100% - ${popup ? "24px" : 0})`,
+          md: `calc(100% - ${popup ? "24px" : 0})`,
+        }}
         overflow={"auto"}
         sx={{
           pr: "4px",

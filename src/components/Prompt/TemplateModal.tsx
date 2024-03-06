@@ -8,6 +8,7 @@ import { useAppSelector } from "@/hooks/useStore";
 import { useDispatch } from "react-redux";
 import { updatePopupTemplate } from "@/core/store/templatesSlice";
 import Close from "@mui/icons-material/Close";
+import { useEffect } from "react";
 
 interface NavigationBoxProps {
   template: Templates | null;
@@ -74,7 +75,12 @@ function TemplateModal() {
         template: null,
       }),
     );
+    document.body.style.overflow = "unset";
   };
+
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+  }, []);
 
   if (!template) return;
 
@@ -85,7 +91,6 @@ function TemplateModal() {
     >
       <Stack
         direction={"row"}
-        alignItems={"flex-end"}
         bgcolor={"surfaceContainerLowest"}
         sx={{
           height: "calc(100svh - 24px)",
@@ -94,9 +99,18 @@ function TemplateModal() {
           borderTopRightRadius: "24px",
           overflow: "auto",
           position: "relative",
+          "&::-webkit-scrollbar": {
+            width: { xs: "4px", md: "6px" },
+            p: 1,
+          },
+          ":hover&::-webkit-scrollbar-thumb": {
+            backgroundColor: "surface.5",
+            outline: "1px solid surface.1",
+            borderRadius: "10px",
+          },
         }}
       >
-        {/* <IconButton
+        <IconButton
           onClick={close}
           sx={{
             position: "absolute",
@@ -108,16 +122,19 @@ function TemplateModal() {
           }}
         >
           <Close />
-        </IconButton> */}
-        <NavigationBox
+        </IconButton>
+        {/* <NavigationBox
           template={template}
           type="previous"
+        /> */}
+        <TemplatePage
+          template={template}
+          popup
         />
-        <TemplatePage template={template} />
-        <NavigationBox
+        {/* <NavigationBox
           template={template}
           type="next"
-        />
+        /> */}
       </Stack>
     </Modal>
   );

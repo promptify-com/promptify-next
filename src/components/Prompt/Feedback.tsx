@@ -86,7 +86,7 @@ const Feedback = () => {
       >
         {isFetching ? (
           <ChatMessagePlaceholder count={3} />
-        ) : (
+        ) : publishedFeedbacks.length > 0 ? (
           <Stack
             gap={3}
             direction={"column-reverse"}
@@ -146,6 +146,14 @@ const Feedback = () => {
               );
             })}
           </Stack>
+        ) : (
+          <Typography
+            fontSize={14}
+            fontWeight={400}
+            color={"onSurface"}
+          >
+            No feedback yet
+          </Typography>
         )}
       </Stack>
     </Stack>
