@@ -26,6 +26,7 @@ const getSearchParams = (params: FilterParams) => {
   params.status && searchParams.append("status", String(params.status));
   params.engine_type && searchParams.append("engine_type", String(params.engine_type));
   params.isFavourite && searchParams.append("is_favorite", String(params.isFavourite));
+  typeof params.isInternal === "boolean" && searchParams.append("is_internal", String(params.isInternal));
 
   return searchParams.toString();
 };

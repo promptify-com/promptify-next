@@ -29,6 +29,7 @@ export interface FilterParams {
   status?: string | null;
   engine_type?: string;
   isFavourite?: boolean;
+  isInternal?: boolean;
 }
 
 export interface SelectedFilters {
