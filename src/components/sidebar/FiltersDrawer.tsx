@@ -80,7 +80,7 @@ function FiltersDrawer({ expandedOnHover }: Props) {
   useEffect(() => {
     const isPromptsFiltersSticky = Storage.get("isPromptsFiltersSticky");
     if (isPromptsFiltersSticky) {
-      dispatch(setStickyPromptsFilters(isPromptsFiltersSticky === "true" ? true : false));
+      dispatch(setStickyPromptsFilters(isPromptsFiltersSticky));
     }
   }, []);
 
@@ -102,10 +102,7 @@ function FiltersDrawer({ expandedOnHover }: Props) {
           padding: "10px 20px",
           borderRadius: 0,
           height: "100svh",
-          boxShadow:
-            !isPromptsFiltersSticky && expandedOnHover
-              ? "0px 7px 8px -4px #00000033, 0px 12px 17px 2px #00000024, 0px 5px 22px 4px #0000001F"
-              : "",
+          boxShadow: !isPromptsFiltersSticky && expandedOnHover ? "8px 0 5px -2px #00000033" : "",
           boxSizing: "border-box",
           overflow: "auto",
           bgcolor: "surface.1",
