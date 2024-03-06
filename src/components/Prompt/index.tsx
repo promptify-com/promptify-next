@@ -6,8 +6,21 @@ import TemplateDetails from "./TemplateDetails";
 import Box from "@mui/material/Box";
 import Image from "@/components/design-system/Image";
 import ContentContainer from "./ContentContainer";
-import { useEffect, useRef, useState } from "react";
-import { theme } from "../../theme";
+import { useRef, useEffect, useState } from "react";
+import { type Palette, ThemeProvider, createTheme, useTheme } from "@mui/material";
+import materialDynamicColors from "material-dynamic-colors";
+import { mix } from "polished";
+
+interface IMUDynamicColorsThemeColor {
+  light: {
+    primary: string;
+    secondary: string;
+    error: string;
+    background: string;
+    surface: string;
+    surfaceVariant: string;
+  };
+}
 
 interface Props {
   template: Templates;
@@ -16,16 +29,17 @@ interface Props {
 
 function TemplatePage({ template, popup }: Props) {
   const { isMobile } = useBrowser();
+  const theme = useTheme();
   const [tabsFixed, setTabsFixed] = useState(false);
   const tabsRef = useRef<HTMLDivElement>(null);
   const topThreshold = popup ? 24 : 92;
+  const [palette, setPalette] = useState(theme.palette);
 
   useEffect(() => {
     const handleScroll = () => {
       const tabsElement = document.getElementById("sections_tabs");
       if (tabsElement) {
         const atTop = tabsElement.getBoundingClientRect().top <= topThreshold;
-        console.log(tabsElement.getBoundingClientRect().top);
         setTabsFixed(atTop);
       }
     };
@@ -36,70 +50,114 @@ function TemplatePage({ template, popup }: Props) {
     return () => tabsRef.current?.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    if (!template) {
+      return;
+    }
+
+    if (template.thumbnail) {
+      fetchDynamicColors();
+    }
+  }, [template]);
+
+  const fetchDynamicColors = () => {
+    //@ts-expect-error unfound-new-type
+    materialDynamicColors(template.thumbnail)
+      .then((imgPalette: IMUDynamicColorsThemeColor) => {
+        const newPalette: Palette = {
+          ...theme.palette,
+          ...imgPalette.light,
+          primary: {
+            ...theme.palette.primary,
+            main: imgPalette.light.primary,
+          },
+          secondary: {
+            ...theme.palette.secondary,
+            main: imgPalette.light.secondary,
+          },
+          error: {
+            ...theme.palette.secondary,
+            main: imgPalette.light.error,
+          },
+          background: {
+            ...theme.palette.background,
+            default: imgPalette.light.background,
+          },
+          surface: {
+            1: imgPalette.light.surface,
+            2: mix(0.3, imgPalette.light.surfaceVariant, imgPalette.light.surface),
+            3: mix(0.6, imgPalette.light.surfaceVariant, imgPalette.light.surface),
+            4: mix(0.8, imgPalette.light.surfaceVariant, imgPalette.light.surface),
+            5: imgPalette.light.surfaceVariant,
+          },
+        };
+        setPalette(newPalette);
+      })
+      .catch(() => {
+        console.warn("Error fetching dynamic colors");
+      });
+  };
+  const dynamicTheme = createTheme({ ...theme, palette });
+
   return (
-    <Stack
-      direction={"row"}
-      gap={4}
-      height={{
-        xs: `calc(100svh - ${popup ? "24px" : theme.custom.headerHeight.xs})`,
-        md: `calc(100svh - ${popup ? "24px" : theme.custom.headerHeight.md})`,
-      }}
-      px={"32px"}
-      bgcolor={"surfaceContainerLowest"}
-    >
-      <Box
-        ref={tabsRef}
-        flex={4}
+    <ThemeProvider theme={dynamicTheme}>
+      <Stack
+        direction={"row"}
+        gap={4}
         height={{
-          xs: `calc(100% - ${popup ? "24px" : 0})`,
-          md: `calc(100% - ${popup ? "24px" : 0})`,
+          xs: `calc(100svh - ${popup ? "24px" : theme.custom.headerHeight.xs})`,
+          md: `calc(100svh - ${popup ? "24px" : theme.custom.headerHeight.md})`,
         }}
-        overflow={"auto"}
-        sx={{
-          pr: "4px",
-          "&::-webkit-scrollbar": {
-            width: { xs: "4px", md: "6px" },
-            p: 1,
-          },
-          ":hover&::-webkit-scrollbar-thumb": {
-            backgroundColor: "surface.5",
-            outline: "1px solid surface.1",
-            borderRadius: "10px",
-          },
-        }}
+        px={"32px"}
+        bgcolor={"surfaceContainerLowest"}
       >
-        <Stack>
-          {!isMobile && <Header template={template} />}
-          <Box
-            sx={{
-              position: "relative",
-              width: "100%",
-              height: isMobile ? "408px" : "446px",
-              borderRadius: "24px",
-              overflow: "hidden",
-            }}
-          >
-            <Image
-              src={template.thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
-              alt={template.title?.slice(0, 1) ?? "P"}
-              priority={true}
-              fill
-              sizes="(max-width: 900px) 253px, 446px"
-              style={{
-                objectFit: "cover",
+        <Box
+          ref={tabsRef}
+          flex={4}
+          height={{
+            xs: `calc(100% - ${popup ? "24px" : 0})`,
+            md: `calc(100% - ${popup ? "24px" : 0})`,
+          }}
+          overflow={"auto"}
+          sx={{
+            "&::-webkit-scrollbar": {
+              width: 0,
+            },
+          }}
+        >
+          <Stack>
+            {!isMobile && <Header template={template} />}
+            <Box
+              sx={{
+                position: "relative",
+                width: "100%",
+                height: isMobile ? "408px" : "446px",
+                borderRadius: "24px",
+                overflow: "hidden",
               }}
+            >
+              <Image
+                src={template.thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
+                alt={template.title?.slice(0, 1) ?? "P"}
+                priority={true}
+                fill
+                sizes="(max-width: 900px) 253px, 446px"
+                style={{
+                  objectFit: "cover",
+                }}
+              />
+            </Box>
+            <ContentContainer
+              template={template}
+              tabsFixed={tabsFixed}
             />
-          </Box>
-          <ContentContainer
-            template={template}
-            tabsFixed={tabsFixed}
-          />
-        </Stack>
-      </Box>
-      <Box flex={2}>
-        <TemplateDetails template={template} />
-      </Box>
-    </Stack>
+          </Stack>
+        </Box>
+        <Box flex={2}>
+          <TemplateDetails template={template} />
+        </Box>
+      </Stack>
+    </ThemeProvider>
   );
 }
 

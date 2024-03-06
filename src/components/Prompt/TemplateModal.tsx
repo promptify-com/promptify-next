@@ -8,7 +8,6 @@ import { useAppSelector } from "@/hooks/useStore";
 import { useDispatch } from "react-redux";
 import { updatePopupTemplate } from "@/core/store/templatesSlice";
 import Close from "@mui/icons-material/Close";
-import { useEffect } from "react";
 
 interface NavigationBoxProps {
   template: Templates | null;
@@ -95,13 +94,7 @@ function TemplateModal() {
           overflow: "auto",
           position: "relative",
           "&::-webkit-scrollbar": {
-            width: { xs: "4px", md: "6px" },
-            p: 1,
-          },
-          ":hover&::-webkit-scrollbar-thumb": {
-            backgroundColor: "surface.5",
-            outline: "1px solid surface.1",
-            borderRadius: "10px",
+            width: 0,
           },
         }}
       >
