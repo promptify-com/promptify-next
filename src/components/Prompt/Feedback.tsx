@@ -57,7 +57,7 @@ const Feedback = () => {
       >
         Feedback:
       </Typography>
-      {token ? (
+      {token && (
         <Box
           width={"100%"}
           py={"16px"}
@@ -69,13 +69,6 @@ const Feedback = () => {
             loading={isLoading}
           />
         </Box>
-      ) : (
-        <Stack
-          alignItems={"center"}
-          mb={"20px"}
-        >
-          <SigninButton onClick={() => router.push("/signin")} />
-        </Stack>
       )}
       <Stack
         gap={3}
