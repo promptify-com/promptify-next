@@ -63,6 +63,7 @@ const filterSlice = createSlice({
       state.isFavourite = action.payload;
       if (!action.payload) {
         Storage.remove("myFavoritesChecked");
+        return
       }
     },
   },
