@@ -29,6 +29,7 @@ export interface IMessage {
   isRequired?: boolean;
   isEditable?: boolean;
   questionIndex?: number;
+  questionInputName?: string;
 }
 
 export interface IAnswer {

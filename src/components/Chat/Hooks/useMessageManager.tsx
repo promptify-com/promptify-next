@@ -18,6 +18,7 @@ interface CreateMessageProps {
   isEditable?: boolean;
   isRequired?: boolean;
   questionIndex?: number;
+  questionInputName?: string;
 }
 
 const useMessageManager = () => {
@@ -35,6 +36,7 @@ const useMessageManager = () => {
   const [suggestedTemplates, setSuggestedTemplates] = useState<Templates[]>([]);
   const [isValidatingAnswer, setIsValidatingAnswer] = useState(false);
   const [chatMode, setChatMode] = useState<"automation" | "messages">("automation");
+  const [allQuestionsAnswered, setAllQuestionsAnswered] = useState(false);
 
   const createMessage = ({
     type,
@@ -44,6 +46,7 @@ const useMessageManager = () => {
     isEditable = false,
     isRequired = false,
     questionIndex,
+    questionInputName,
   }: CreateMessageProps) => ({
     id: randomId(),
     text: "",
@@ -54,6 +57,7 @@ const useMessageManager = () => {
     isEditable,
     isRequired,
     questionIndex,
+    questionInputName,
   });
 
   const addToQueuedMessages = (messages: IMessage[]) => {
@@ -101,10 +105,13 @@ const useMessageManager = () => {
     } else {
       const headerWithTextMessage = createMessage({ type: "HeaderWithText" });
       headerWithTextMessage.text = welcomeMessage.text;
-      const questionMessage = createMessage({ type: "question", isRequired: questions[0].required, questionIndex: 1 });
+      const questionMessage = createMessage({
+        type: "question",
+        isRequired: questions[0].required,
+        questionIndex: 1,
+      });
       questionMessage.text = `${filteredQuestions[0] || questions[0].fullName}`;
       setMessages(prevMessages => prevMessages.concat(headerWithTextMessage));
-
       addToQueuedMessages([questionMessage]);
     }
   };
@@ -197,7 +204,12 @@ const useMessageManager = () => {
     if (!value) {
       return;
     }
-    const userMessage = createMessage({ type: "text", fromUser: true, isEditable: true });
+    const userMessage = createMessage({
+      type: "text",
+      fromUser: true,
+      isEditable: true,
+      questionInputName: inputs[answers.length].name,
+    });
     userMessage.text = value;
 
     setMessages(prevMessages => prevMessages.concat(userMessage));
@@ -218,15 +230,20 @@ const useMessageManager = () => {
 
     const nextQuestionIndex = _answers.length;
     const nextQuestion = questions[nextQuestionIndex];
-
+    let botMessage: IMessage;
     if (nextQuestion) {
-      const botMessage: IMessage = createMessage({
+      botMessage = createMessage({
         type: "question",
         isRequired: inputs[nextQuestionIndex].required,
         questionIndex: Math.min(_answers.length + 1, inputs.length),
       });
       botMessage.text = nextQuestion;
       setMessages(prevMessages => prevMessages.concat(botMessage));
+    } else {
+      botMessage = createMessage({ type: "text" });
+      botMessage.text = "Congrats! We are ready to run the prompt";
+      setMessages(prevMessages => prevMessages.concat(botMessage));
+      setAllQuestionsAnswered(true);
     }
   };
 
@@ -252,6 +269,8 @@ const useMessageManager = () => {
     createMessage,
     showGenerateButton,
     setChatMode,
+    allQuestionsAnswered,
+    setAllQuestionsAnswered,
   };
 };
 

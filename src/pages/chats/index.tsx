@@ -38,6 +38,8 @@ function ChatPage() {
     suggestedTemplates,
     showGenerateButton,
     setChatMode,
+    allQuestionsAnswered,
+    setAllQuestionsAnswered,
   } = useMessageManager();
 
   const { generateExecutionHandler, abortConnection, disableChatInput } = useGenerateExecution({
@@ -146,6 +148,9 @@ function ChatPage() {
               onGenerate={() => {
                 setChatMode("automation");
                 handleGenerateExecution();
+                if (selectedChatOption === "QA") {
+                  setAllQuestionsAnswered(false);
+                }
               }}
             />
           )}
@@ -155,7 +160,7 @@ function ChatPage() {
               {(selectedChatOption !== "FORM" || !!selectedExecution) && (
                 <ChatInput
                   onSubmit={handleSubmitInput}
-                  disabled={isValidatingAnswer || disableChatInput}
+                  disabled={isValidatingAnswer || disableChatInput || allQuestionsAnswered}
                   showGenerate={false}
                   isValidating={isValidatingAnswer}
                   onGenerate={() => {}}

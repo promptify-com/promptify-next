@@ -228,6 +228,7 @@ const useGenerateExecution = ({ template, messageAnswersForm }: Props) => {
     if (newExecutionId) {
       stopExecution(newExecutionId);
     }
+    dispatch(setGeneratingStatus(false));
   };
 
   useEffect(() => {
