@@ -75,12 +75,7 @@ function TemplateModal() {
         template: null,
       }),
     );
-    document.body.style.overflow = "unset";
   };
-
-  useEffect(() => {
-    document.body.style.overflow = "hidden";
-  }, []);
 
   if (!template) return;
 

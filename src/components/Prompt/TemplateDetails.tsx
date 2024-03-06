@@ -15,6 +15,7 @@ import Tune from "@mui/icons-material/Tune";
 import ContentCopy from "@mui/icons-material/ContentCopy";
 import useCloneTemplate from "@/components/Prompt/Hooks/useCloneTemplate";
 import { setSelectedTemplate } from "@/core/store/chatSlice";
+import { updatePopupTemplate } from "@/core/store/templatesSlice";
 
 interface TemplateDetailsProps {
   template: Templates;
@@ -59,7 +60,12 @@ const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template }) => {
     }
 
     dispatch(setSelectedTemplate(template));
-    router.push("/chat");
+    router.push("/chats");
+    dispatch(
+      updatePopupTemplate({
+        template: null,
+      }),
+    );
   };
 
   return (
