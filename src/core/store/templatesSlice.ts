@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { AnsweredInputType } from "@/common/types/prompt";
-import type { PopupTemplates, TempalteApiStatusState } from "./../api/dto/templates";
+import type { PopupTemplates, TempalteApiStatusState } from "@/core/api/dto/templates";
 import type { Link } from "@/components/Prompt/Types";
 import type { PayloadAction } from "@reduxjs/toolkit";
 

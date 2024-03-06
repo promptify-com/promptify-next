@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import Stack from "@mui/material/Stack";
 import Link from "@mui/material/Link";
-import CardMedia from "@mui/material/CardMedia";
+import Typography from "@mui/material/Typography";
 import { alpha } from "@mui/material/styles";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import ArrowBackIosNew from "@mui/icons-material/ArrowBackIos";
@@ -9,7 +9,6 @@ import { theme } from "@/theme";
 import { setSelectedTag } from "@/core/store/filtersSlice";
 import { useAppDispatch } from "@/hooks/useStore";
 import type { Templates } from "@/core/api/dto/templates";
-import { Typography } from "@mui/material";
 
 interface TemplateHeaderProps {
   template: Templates;

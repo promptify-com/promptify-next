@@ -1,4 +1,8 @@
-import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Stack } from "@mui/material";
+import Accordion from "@mui/material/Accordion";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import Button from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
 import { ReactNode, useState } from "react";
 
 interface Props {

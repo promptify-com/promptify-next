@@ -8,7 +8,7 @@ interface Props {
   style?: { sx: SxProps };
 }
 
-const FavoriteButton: React.FC<Props> = ({ style = { sx: {} } }) => {
+const LikeButton: React.FC<Props> = ({ style = { sx: {} } }) => {
   const [saveFavoriteTemplate, { templateData }] = useSaveFavoriteTemplate(true);
 
   return (
@@ -35,4 +35,4 @@ const FavoriteButton: React.FC<Props> = ({ style = { sx: {} } }) => {
   );
 };
 
-export default memo(FavoriteButton);
+export default memo(LikeButton);

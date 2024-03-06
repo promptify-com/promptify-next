@@ -3,7 +3,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
 import { useAppSelector } from "@/hooks/useStore";
-import RunButton from "@/components/Prompt/RunButton";
+import RunButton from "@/components/Prompt/Common/RunButton";
 
 interface Props {
   title: string;

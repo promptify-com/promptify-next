@@ -7,13 +7,13 @@ import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
 import Image from "@/components/design-system/Image";
 import { theme } from "@/theme";
-import FavoriteButton from "@/components/Prompt/FavoriteButton";
-import RunButton from "@/components/Prompt/RunButton";
+import FavoriteButton from "./FavoriteButton";
+import LikeButton from "./LikeButton";
+import RunButton from "@/components/Prompt/Common/RunButton";
 import { useAppSelector } from "@/hooks/useStore";
 import Tune from "@mui/icons-material/Tune";
 import ContentCopy from "@mui/icons-material/ContentCopy";
 import useCloneTemplate from "@/components/Prompt/Hooks/useCloneTemplate";
-import LikeButton from "./LikeButton";
 
 interface TemplateDetailsProps {
   template: Templates;

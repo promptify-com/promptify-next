@@ -6,7 +6,6 @@ import Typography from "@mui/material/Typography";
 import { alpha } from "@mui/material/styles";
 import Button from "@mui/material/Button";
 
-import ApiAccessModal from "@/components/Prompt/ApiAccess";
 import { theme } from "@/theme";
 import { ApiAccessIcon } from "@/assets/icons/ApiAccess";
 import { templatesApi, useSetTemplateEnableApiMutation } from "@/core/api/templates";
