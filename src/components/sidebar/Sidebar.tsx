@@ -29,7 +29,7 @@ function Sidebar() {
   const [expandedOnHover, setExpandedOnHover] = useState<boolean>(false);
   const pathname = router.pathname;
   const isPromptsPage = pathname.split("/")[1] === "explore";
-  const isChatPage = pathname.split("/")[1] === "chat";
+  const isChatPage = pathname.split("/")[1] === "chats";
   const isAutomationPage = pathname.split("/")[1] === "automation";
   const isValidUser = useAppSelector(isValidUserFn);
   const navItems: NavItem[] = [
@@ -106,19 +106,9 @@ function Sidebar() {
   return (
     <Grid
       onMouseEnter={() => {
-        if (!isPromptsPage) {
-          return;
-        }
-
-        setExpandedOnHover(true);
+        setExpandedOnHover(isPromptsPage || isChatPage);
       }}
-      onMouseLeave={() => {
-        if (!isPromptsPage) {
-          return;
-        }
-
-        setExpandedOnHover(false);
-      }}
+      onMouseLeave={() => setExpandedOnHover(false)}
       sx={{
         display: { xs: "none", md: "flex" },
         "flex-direction": "column",
@@ -157,7 +147,7 @@ function Sidebar() {
           <SidebarItem navItem={learnHelpNavItem} />
         </List>
       </Grid>
-      {(isPromptsPage || isChatPage) && <FiltersDrawerLazy expandedOnHover={expandedOnHover} />}
+      {isPromptsPage && <FiltersDrawerLazy expandedOnHover={expandedOnHover} />}
     </Grid>
   );
 }
