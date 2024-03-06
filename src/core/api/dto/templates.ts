@@ -20,13 +20,15 @@ export interface SparksLayoutProps {
 export interface FilterParams {
   categoryId?: number;
   subcategoryId?: number;
-  tag?: string;
+  tags?: Tag[];
   title?: string | null;
   engineId?: number;
   ordering?: string;
   limit?: number;
   offset?: number;
   status?: string | null;
+  engine_type?: string;
+  isFavourite?: boolean;
   isInternal?: boolean;
 }
 
@@ -36,6 +38,8 @@ export interface SelectedFilters {
   title: string | null;
   category: Category | null;
   subCategory: Category | null;
+  engineType?: string;
+  isFavourite?: boolean;
 }
 
 export class TemplateParam {
@@ -68,10 +72,12 @@ export interface Engine {
   name: string;
   output_type: EngineOutput;
   provider: string;
+  type?: string;
 }
 export interface Tag {
   id: number;
   name: string;
+  type?: string;
 }
 
 interface CategoryParent {

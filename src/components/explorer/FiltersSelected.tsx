@@ -3,7 +3,9 @@ import { useDispatch, useSelector } from "react-redux";
 
 import {
   deleteSelectedTag,
+  setMyFavoritesChecked,
   setSelectedEngine,
+  setSelectedEngineType,
   setSelectedKeyword,
 } from "@/core/store/filtersSlice";
 import { RootState } from "@/core/store";
@@ -16,15 +18,19 @@ interface FiltersSelectedProps {
 export const FiltersSelected: React.FC<FiltersSelectedProps> = ({ show }) => {
   const dispatch = useDispatch();
   const filters = useSelector((state: RootState) => state.filters);
-  const { engine, tag, title } = filters;
-
+  const { engine, tag, title, engineType, isFavourite } = filters;
   const handleDeleteTag = (tagId: number) => {
     dispatch(deleteSelectedTag(tagId));
   };
+
   return (
     <>
       {show && (
-        <Box display={"flex"} alignItems={"center"} gap={2}>
+        <Box
+          display={"flex"}
+          alignItems={"center"}
+          gap={2}
+        >
           {engine && (
             <Chip
               label={engine.name}
@@ -33,7 +39,11 @@ export const FiltersSelected: React.FC<FiltersSelectedProps> = ({ show }) => {
             />
           )}
           {tag.length > 0 && (
-            <Box display={"flex"} alignItems={"center"} gap={2}>
+            <Box
+              display={"flex"}
+              alignItems={"center"}
+              gap={2}
+            >
               {tag
                 .filter((item: Tag | null): item is Tag => item !== null)
                 .map((item: Tag) => (
@@ -51,6 +61,21 @@ export const FiltersSelected: React.FC<FiltersSelectedProps> = ({ show }) => {
               label={title}
               sx={{ fontSize: 13, fontWeight: 500 }}
               onDelete={() => dispatch(setSelectedKeyword(null))}
+            />
+          )}
+
+          {engineType && (
+            <Chip
+              label={engineType}
+              sx={{ fontSize: 13, fontWeight: 500 }}
+              onDelete={() => dispatch(setSelectedEngineType(""))}
+            />
+          )}
+          {isFavourite && (
+            <Chip
+              label={"My Favorites"}
+              sx={{ fontSize: 13, fontWeight: 500 }}
+              onDelete={() => dispatch(setMyFavoritesChecked(false))}
             />
           )}
         </Box>
