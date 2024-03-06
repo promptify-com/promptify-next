@@ -7,15 +7,17 @@ import useChatBox from "@/hooks/useChatBox";
 import { setAnswers, setInputs, setIsSimulationStreaming, setParams, setParamsValues } from "@/core/store/chatSlice";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { Templates } from "@/core/api/dto/templates";
-import type { IMessage, MessageType } from "@/components/Prompt/Types/chat";
+import type { IAnswer, IMessage, MessageType } from "@/components/Prompt/Types/chat";
 import type { PromptParams } from "@/core/api/dto/prompts";
-import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution";
 
 interface CreateMessageProps {
   type: MessageType;
   fromUser?: boolean;
   noHeader?: boolean;
   timestamp?: string;
+  isEditable?: boolean;
+  isRequired?: boolean;
+  questionIndex?: number;
 }
 
 const useMessageManager = () => {
@@ -23,7 +25,9 @@ const useMessageManager = () => {
 
   const { prepareAndRemoveDuplicateInputs } = useChatBox();
 
-  const { selectedTemplate, answers, isSimulationStreaming, selectedChatOption } = useAppSelector(state => state.chat);
+  const { selectedTemplate, isSimulationStreaming, selectedChatOption, inputs, answers } = useAppSelector(
+    state => state.chat,
+  );
   const currentUser = useAppSelector(state => state.user.currentUser);
 
   const [messages, setMessages] = useState<IMessage[]>([]);
@@ -37,6 +41,9 @@ const useMessageManager = () => {
     timestamp = new Date().toISOString(),
     fromUser = false,
     noHeader = false,
+    isEditable = false,
+    isRequired = false,
+    questionIndex,
   }: CreateMessageProps) => ({
     id: randomId(),
     text: "",
@@ -44,6 +51,9 @@ const useMessageManager = () => {
     createdAt: timestamp,
     fromUser,
     noHeader,
+    isEditable,
+    isRequired,
+    questionIndex,
   });
 
   const addToQueuedMessages = (messages: IMessage[]) => {
@@ -75,6 +85,7 @@ const useMessageManager = () => {
   }, [selectedTemplate]);
 
   const initialMessages = ({ questions }: { questions: IPromptInput[] }) => {
+    setChatMode("messages");
     const greeting = `Hi, ${currentUser?.first_name ?? currentUser?.username ?? "There"}! Ready to work on`;
     const filteredQuestions = questions.map(_q => _q.question).filter(Boolean);
 
@@ -87,6 +98,14 @@ const useMessageManager = () => {
       const formMessage = createMessage({ type: "form", noHeader: true });
       formMessage.text = welcomeMessage.text;
       setMessages(prevMessages => prevMessages.concat(formMessage));
+    } else {
+      const headerWithTextMessage = createMessage({ type: "HeaderWithText" });
+      headerWithTextMessage.text = welcomeMessage.text;
+      const questionMessage = createMessage({ type: "question", isRequired: questions[0].required, questionIndex: 1 });
+      questionMessage.text = `${filteredQuestions[0] || questions[0].fullName}`;
+      setMessages(prevMessages => prevMessages.concat(headerWithTextMessage));
+
+      addToQueuedMessages([questionMessage]);
     }
   };
 
@@ -110,58 +129,130 @@ const useMessageManager = () => {
     return [inputs, params, promptHasContent];
   }, [selectedChatOption]);
 
+  const allRequiredInputsAnswered = (): boolean => {
+    const requiredQuestionNames = inputs.filter(question => question.required).map(question => question.name);
+
+    if (!requiredQuestionNames.length) {
+      return true;
+    }
+
+    const answeredQuestionNamesSet = new Set(answers.map(answer => answer.inputName));
+
+    return requiredQuestionNames.every(name => answeredQuestionNamesSet.has(name));
+  };
+
   const automationSubmitMessage = async (input: string) => {
-    if (input) {
-      const userMessage = createMessage({ type: "text", fromUser: true });
-      userMessage.text = input;
+    if (!input) {
+      return;
+    }
+    const userMessage = createMessage({ type: "text", fromUser: true });
+    userMessage.text = input;
 
-      setMessages(prevMessages => prevMessages.concat(userMessage));
-      setIsValidatingAnswer(true);
+    setMessages(prevMessages => prevMessages.concat(userMessage));
+    setIsValidatingAnswer(true);
 
-      const botMessage: IMessage = {
-        id: randomId(),
-        text: "",
-        createdAt: new Date().toISOString(),
-        fromUser: false,
-        type: "text",
-      };
+    const botMessage: IMessage = {
+      id: randomId(),
+      text: "",
+      createdAt: new Date().toISOString(),
+      fromUser: false,
+      type: "text",
+    };
 
-      try {
-        const sendMessageResponse = await sendMessageAPI(input);
+    try {
+      const sendMessageResponse = await sendMessageAPI(input);
 
-        if (sendMessageResponse.message) {
-          botMessage.text = sendMessageResponse.message;
+      if (sendMessageResponse.message) {
+        botMessage.text = sendMessageResponse.message;
+      } else {
+        const templateIDs = extractTemplateIDs(sendMessageResponse.output!);
+
+        if (!templateIDs.length) {
+          botMessage.text = sendMessageResponse.output!;
         } else {
-          const templateIDs = extractTemplateIDs(sendMessageResponse.output!);
+          if (!!templateIDs.length) {
+            const templates = await fetchData(templateIDs);
+            setSuggestedTemplates(templates);
+            const suggestionsMessage = createMessage({ type: "suggestedTemplates" });
+            suggestionsMessage.text = "I found this prompts, following your request:";
 
-          if (!templateIDs.length) {
-            botMessage.text = sendMessageResponse.output!;
-          } else {
-            if (!!templateIDs.length) {
-              const templates = await fetchData(templateIDs);
-              setSuggestedTemplates(templates);
-              const suggestionsMessage = createMessage({ type: "suggestedTemplates" });
-              suggestionsMessage.text = "I found this prompts, following your request:";
-
-              setMessages(prevMessages => prevMessages.concat(suggestionsMessage));
-            }
+            setMessages(prevMessages => prevMessages.concat(suggestionsMessage));
           }
         }
-      } catch (err) {
-        botMessage.text = "Oops! I couldn't get your request, Please try again. " + err;
-      } finally {
-        setIsValidatingAnswer(false);
       }
+    } catch (err) {
+      botMessage.text = "Oops! I couldn't get your request, Please try again. " + err;
+    } finally {
+      setIsValidatingAnswer(false);
+    }
 
-      if (botMessage.text !== "") {
-        setMessages(prevMessages => prevMessages.concat(botMessage));
-      }
+    if (botMessage.text !== "") {
+      setMessages(prevMessages => prevMessages.concat(botMessage));
     }
   };
 
-  const handleSubmitInput = (input: string) => (chatMode === "automation" ? automationSubmitMessage(input) : () => {});
+  const questionAnswerSubmitMessage = async (value: string) => {
+    const { required, name: inputName, question, prompt } = inputs[answers.length];
 
-  return { messages, setMessages, handleSubmitInput, isValidatingAnswer, suggestedTemplates, createMessage };
+    if (!value) {
+      return;
+    }
+    const userMessage = createMessage({ type: "text", fromUser: true, isEditable: true });
+    userMessage.text = value;
+
+    setMessages(prevMessages => prevMessages.concat(userMessage));
+
+    const _answers = answers.filter(answer => answer.inputName !== inputs[answers.length].name);
+
+    const newAnswer: IAnswer = {
+      question: question!,
+      required,
+      inputName,
+      prompt: prompt!,
+      answer: value,
+    };
+    _answers.push(newAnswer);
+    dispatch(setAnswers(_answers));
+
+    const questions = inputs.map(_q => _q.question).filter(Boolean);
+
+    const nextQuestionIndex = _answers.length;
+    const nextQuestion = questions[nextQuestionIndex];
+
+    if (nextQuestion) {
+      const botMessage: IMessage = createMessage({
+        type: "question",
+        isRequired: inputs[nextQuestionIndex].required,
+        questionIndex: Math.min(_answers.length + 1, inputs.length),
+      });
+      botMessage.text = nextQuestion;
+      setMessages(prevMessages => prevMessages.concat(botMessage));
+    }
+  };
+
+  const handleSubmitInput = (input: string) => {
+    if (chatMode === "automation") {
+      automationSubmitMessage(input);
+    } else {
+      questionAnswerSubmitMessage(input);
+    }
+  };
+
+  const showGenerateButton =
+    chatMode === "messages" &&
+    !isSimulationStreaming &&
+    (allRequiredInputsAnswered() || Boolean(!inputs.length || !inputs[0]?.required));
+
+  return {
+    messages,
+    setMessages,
+    handleSubmitInput,
+    isValidatingAnswer,
+    suggestedTemplates,
+    createMessage,
+    showGenerateButton,
+    setChatMode,
+  };
 };
 
 export default useMessageManager;

@@ -7,7 +7,7 @@ import FeedbackThumbs from "@/components/Prompt/Common/FeedbackThumbs";
 import ShareOutlined from "@mui/icons-material/ShareOutlined";
 import { useDeleteExecutionFavoriteMutation, useExecutionFavoriteMutation } from "@/core/api/executions";
 import { useMemo, useState } from "react";
-import { SparkExportPopup } from "../dialog/SparkExportPopup";
+import { SparkExportPopup } from "../../../dialog/SparkExportPopup";
 import { Templates } from "@/core/api/dto/templates";
 
 interface Props {

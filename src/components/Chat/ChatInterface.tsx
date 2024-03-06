@@ -1,30 +1,26 @@
 import { Fragment, useRef } from "react";
 import Stack from "@mui/material/Stack";
 
+import { useAppSelector } from "@/hooks/useStore";
 import useScrollToBottom from "@/components/Prompt/Hooks/useScrollToBottom";
-import Message from "@/components/Chat/Message";
-import TemplateSuggestions from "@/components/Chat/TemplateSuggestions";
 import ChatOptions from "@/components/Chat/ChatOptions";
 import ChatHeading from "@/components/Chat/ChatHeading";
-import FormMessageBox from "@/components/Chat/FormMessageBox";
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import RenderMessage from "@/components/Chat/RenderMessage";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IMessage } from "@/components/Prompt/Types/chat";
-import { Fade } from "@mui/material";
-import { setIsSimulationStreaming } from "@/core/store/chatSlice";
-import ExecutionMessageBox from "./ExecutionMessageBox";
+import Button from "@mui/material/Button";
+import ArrowCircleUp from "@/assets/icons/ArrowCircleUp";
 
 interface Props {
   messages: IMessage[];
   templates: Templates[];
   onGenerate: () => void;
-  showGenerate: boolean;
+  showGenerateButton: boolean;
   isValidating: boolean;
   onAbort: () => void;
 }
 
-const ChatInterface = ({ templates, messages, onGenerate, showGenerate, onAbort, isValidating }: Props) => {
-  const dispatch = useAppDispatch();
+const ChatInterface = ({ templates, messages, onGenerate, showGenerateButton, onAbort }: Props) => {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
   const { selectedTemplate, selectedChatOption } = useAppSelector(state => state.chat);
@@ -62,58 +58,48 @@ const ChatInterface = ({ templates, messages, onGenerate, showGenerate, onAbort,
         >
           {messages.map(msg => (
             <Fragment key={msg.id}>
-              <Message
+              <RenderMessage
                 message={msg}
+                templates={templates}
                 onScrollToBottom={scrollToBottom}
+                onGenerate={onGenerate}
+                onAbort={onAbort}
               />
-              {msg.type === "suggestedTemplates" && (
-                <Fade
-                  in={true}
-                  unmountOnExit
-                  timeout={800}
-                  onTransitionEnd={() => dispatch(setIsSimulationStreaming(false))}
-                >
-                  <Stack>
-                    <TemplateSuggestions
-                      content={msg.text}
-                      templates={templates}
-                      scrollToBottom={scrollToBottom}
-                    />
-                  </Stack>
-                </Fade>
-              )}
-              {msg.type === "form" && (
-                <Fade
-                  in={true}
-                  unmountOnExit
-                  timeout={800}
-                  onTransitionEnd={() => dispatch(setIsSimulationStreaming(false))}
-                >
-                  <Stack>
-                    <FormMessageBox
-                      content={msg.text}
-                      template={selectedTemplate!}
-                      onGenerate={onGenerate}
-                    />
-                  </Stack>
-                </Fade>
-              )}
-              {msg.type === "spark" && (
-                <Fade
-                  in={true}
-                  unmountOnExit
-                  timeout={800}
-                  onTransitionEnd={() => dispatch(setIsSimulationStreaming(false))}
-                >
-                  <Stack>
-                    <ExecutionMessageBox onAbort={onAbort} />
-                  </Stack>
-                </Fade>
-              )}
             </Fragment>
           ))}
 
           {showChatOptions && <ChatOptions />}
+        </Stack>
+        <Stack
+          direction={"row"}
+          justifyContent={"start"}
+        >
+          {showGenerateButton && (
+            <Button
+              variant="text"
+              sx={{
+                bgcolor: "primary.main",
+                color: "onPrimary",
+                border: "none",
+                "&:hover": {
+                  bgcolor: "primary.main",
+                  opacity: 0.9,
+                },
+                ":disabled": {
+                  bgcolor: "surface.5",
+                  cursor: "not-allowed",
+                },
+              }}
+              endIcon={<ArrowCircleUp />}
+              onClick={() => {
+                if (typeof onGenerate === "function") {
+                  onGenerate();
+                }
+              }}
+            >
+              Start
+            </Button>
+          )}
         </Stack>
       </Stack>
     </Stack>

@@ -6,7 +6,7 @@ import Button from "@mui/material/Button";
 import PlayArrow from "@mui/icons-material/PlayArrow";
 import ElectricBolt from "@mui/icons-material/ElectricBolt";
 
-import Image from "../design-system/Image";
+import Image from "../../design-system/Image";
 import type { Templates } from "@/core/api/dto/templates";
 
 interface Props {

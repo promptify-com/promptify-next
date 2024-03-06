@@ -1,5 +1,5 @@
 import Stack from "@mui/material/Stack";
-import Image from "../design-system/Image";
+import Image from "../../design-system/Image";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
@@ -37,7 +37,7 @@ function MessageBoxHeader({ onExpand, onGenerate, variant }: Props) {
       direction={"row"}
       alignItems={"center"}
       gap={2}
-      width={variant === "EXECUTION" ? "content-fit" : "100%"}
+      width={"content-fit"}
     >
       <Box
         sx={{

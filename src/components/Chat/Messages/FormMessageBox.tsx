@@ -9,7 +9,7 @@ import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 
-import MessageBoxHeader from "@/components/Chat/MessageBoxHeader";
+import MessageBoxHeader from "@/components/Chat/Messages/MessageBoxHeader";
 import FormInputs from "@/components/Prompt/Common/Chat/Form";
 import FormPromptContent from "@/components/Chat/FormPromptContent";
 import type { Templates } from "@/core/api/dto/templates";

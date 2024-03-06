@@ -1,6 +1,6 @@
 import Stack from "@mui/material/Stack";
 
-import TemplateSuggestionItem from "@/components/Chat/TemplateSuggestionItem";
+import TemplateSuggestionItem from "@/components/Chat/Messages/TemplateSuggestionItem";
 import type { Templates } from "@/core/api/dto/templates";
 import { useAppDispatch } from "@/hooks/useStore";
 import { setSelectedChatOption, setSelectedTemplate } from "@/core/store/chatSlice";

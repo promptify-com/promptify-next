@@ -24,12 +24,21 @@ function ChatPage() {
   const dispatch = useAppDispatch();
   const [palette, setPalette] = useState(theme.palette);
 
-  const { selectedTemplate, selectedChatOption, isSimulationStreaming } = useAppSelector(state => state.chat);
+  const { selectedTemplate, selectedChatOption } = useAppSelector(state => state.chat);
   const currentUser = useAppSelector(state => state.user.currentUser);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const { generatedExecution, selectedExecution } = useAppSelector(state => state.executions);
-  const { messages, setMessages, createMessage, handleSubmitInput, isValidatingAnswer, suggestedTemplates } =
-    useMessageManager();
+
+  const {
+    messages,
+    setMessages,
+    createMessage,
+    handleSubmitInput,
+    isValidatingAnswer,
+    suggestedTemplates,
+    showGenerateButton,
+    setChatMode,
+  } = useMessageManager();
 
   const { generateExecutionHandler, abortConnection, disableChatInput } = useGenerateExecution({
     template: selectedTemplate,
@@ -132,9 +141,12 @@ function ChatPage() {
               templates={suggestedTemplates}
               messages={messages}
               isValidating={isValidatingAnswer}
-              showGenerate={false}
+              showGenerateButton={showGenerateButton}
               onAbort={abortConnection}
-              onGenerate={handleGenerateExecution}
+              onGenerate={() => {
+                setChatMode("automation");
+                handleGenerateExecution();
+              }}
             />
           )}
 
@@ -143,7 +155,7 @@ function ChatPage() {
               {(selectedChatOption !== "FORM" || !!selectedExecution) && (
                 <ChatInput
                   onSubmit={handleSubmitInput}
-                  disabled={isValidatingAnswer}
+                  disabled={isValidatingAnswer || disableChatInput}
                   showGenerate={false}
                   isValidating={isValidatingAnswer}
                   onGenerate={() => {}}

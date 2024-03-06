@@ -6,9 +6,10 @@ import Checkbox from "@mui/material/Checkbox";
 import type { ChatOption } from "@/components/Prompt/Types/chat";
 import { useAppDispatch } from "@/hooks/useStore";
 import { setSelectedChatOption } from "@/core/store/chatSlice";
+import Image from "../design-system/Image";
 
 interface Option {
-  image: string;
+  imagePath: string;
   label: string;
   hint: string;
   type: ChatOption;
@@ -18,14 +19,14 @@ function ChatOptions() {
   const dispatch = useAppDispatch();
   const options: Option[] = [
     {
-      image: "",
+      imagePath: "@/pages/chat/images/QA.png",
       label: "Complete questionary",
       hint: "Easy for new users",
       type: "QA",
     },
 
     {
-      image: "",
+      imagePath: "@/pages/chat/images/fill_prompt.png",
       label: "Fill prompt instructions",
       hint: "Better for advanced users",
       type: "FORM",
@@ -92,10 +93,21 @@ function ChatOptions() {
                 onClick={() => dispatch(setSelectedChatOption(option.type))}
               >
                 <Box
-                  height={"300px"}
-                  borderRadius={"24px"}
-                  bgcolor={"surface.2"}
-                ></Box>
+                  sx={{
+                    height: "300px",
+                    overflow: "hidden",
+                  }}
+                >
+                  {/* <Image
+                    src={require("@/pages/chats/images/QA.png")}
+                    alt={option.label}
+                    priority={true}
+                    fill
+                    style={{
+                      objectFit: "cover",
+                    }}
+                  /> */}
+                </Box>
                 <Box textAlign={"center"}>
                   <Typography
                     fontSize={18}

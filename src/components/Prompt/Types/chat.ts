@@ -5,7 +5,15 @@ export interface VaryValidatorResponse {
   [question: string]: string | number;
 }
 
-export type MessageType = "text" | "form" | "spark" | "html" | "credentials" | "suggestedTemplates";
+export type MessageType =
+  | "text"
+  | "form"
+  | "spark"
+  | "html"
+  | "credentials"
+  | "suggestedTemplates"
+  | "HeaderWithText"
+  | "question";
 
 export interface IMessage {
   id: number;
@@ -18,6 +26,9 @@ export interface IMessage {
   fileExtensions?: string[];
   startOver?: boolean;
   noHeader?: boolean;
+  isRequired?: boolean;
+  isEditable?: boolean;
+  questionIndex?: number;
 }
 
 export interface IAnswer {
