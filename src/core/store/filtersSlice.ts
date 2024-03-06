@@ -61,7 +61,6 @@ const filterSlice = createSlice({
     },
     setMyFavoritesChecked: (state, action: PayloadAction<boolean>) => {
       state.isFavourite = action.payload;
-      Storage.set("myFavoritesChecked", JSON.stringify(action.payload));
       if (!action.payload) {
         Storage.remove("myFavoritesChecked");
       }
