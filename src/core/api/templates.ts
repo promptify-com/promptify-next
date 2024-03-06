@@ -25,6 +25,7 @@ const getSearchParams = (params: FilterParams) => {
   params.limit && searchParams.append("limit", String(params.limit));
   params.offset && searchParams.append("offset", String(params.offset));
   params.status && searchParams.append("status", String(params.status));
+  params.isInternal && searchParams.append("is_internal", String(params.isInternal));
 
   return searchParams.toString();
 };

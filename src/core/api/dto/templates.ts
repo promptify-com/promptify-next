@@ -27,6 +27,7 @@ export interface FilterParams {
   limit?: number;
   offset?: number;
   status?: string | null;
+  isInternal?: boolean;
 }
 
 export interface SelectedFilters {

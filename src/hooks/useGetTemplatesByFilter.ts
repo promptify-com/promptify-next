@@ -52,7 +52,13 @@ export function useGetTemplatesByFilter({
     limit: PAGINATION_LIMIT,
     status,
     ordering,
+    isInternal: false,
   };
+
+  if (admin) {
+    delete params.isInternal;
+  }
+
   const skipFetchingTemplates = ![catId, subCatId, admin, ordering].some(_param => _param);
   const {
     data: templates,
@@ -101,10 +107,6 @@ export function useGetTemplatesByFilter({
   const hasMore = !!templates?.next;
   const hasPrev = !!templates?.previous;
 
-  const filteredTemplates = admin
-    ? allTemplates
-    : allTemplates?.filter(template => (typeof template?.is_internal === "undefined" ? true : !template.is_internal));
-
   return {
     categorySlug,
     searchName,
@@ -112,7 +114,7 @@ export function useGetTemplatesByFilter({
     debouncedSearchName,
     subcategorySlug,
     allFilterParamsNull,
-    templates: filteredTemplates,
+    templates: allTemplates,
     isTemplatesLoading,
     filters,
     handleNextPage,
