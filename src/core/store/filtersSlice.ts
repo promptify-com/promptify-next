@@ -65,6 +65,8 @@ const filterSlice = createSlice({
         Storage.remove("myFavoritesChecked");
         return
       }
+      
+      Storage.set("myFavoritesChecked", JSON.stringify(action.payload));
     },
   },
 });
