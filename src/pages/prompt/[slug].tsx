@@ -1,10 +1,5 @@
-import { useEffect } from "react";
-import { useViewTemplateMutation } from "@/core/api/templates";
-import { Templates } from "@/core/api/dto/templates";
 import { Layout } from "@/layout";
-import { isValidUserFn } from "@/core/store/userSlice";
-import { updateTemplateData } from "@/core/store/templatesSlice";
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { Templates } from "@/core/api/dto/templates";
 import { getTemplateBySlug } from "@/hooks/api/templates";
 import { stripTags } from "@/common/helpers";
 import { GetServerSideProps } from "next/types";
@@ -16,32 +11,6 @@ interface TemplateProps {
 }
 
 function Template({ fetchedTemplate }: TemplateProps) {
-  const [updateViewTemplate] = useViewTemplateMutation();
-  const dispatch = useAppDispatch();
-  const isValidUser = useAppSelector(isValidUserFn);
-  const savedTemplateId = useAppSelector(state => state.template.id);
-
-  useEffect(() => {
-    if (!fetchedTemplate) {
-      return;
-    }
-
-    if (!savedTemplateId || savedTemplateId !== fetchedTemplate.id) {
-      dispatch(
-        updateTemplateData({
-          id: fetchedTemplate.id,
-          is_favorite: fetchedTemplate.is_favorite,
-          is_liked: fetchedTemplate.is_liked,
-          likes: fetchedTemplate.favorites_count,
-        }),
-      );
-    }
-
-    if (isValidUser) {
-      updateViewTemplate(fetchedTemplate.id);
-    }
-  }, [isValidUser]);
-
   return (
     <Layout>
       <TemplatePage template={fetchedTemplate} />

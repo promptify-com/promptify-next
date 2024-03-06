@@ -10,6 +10,10 @@ import { useRef, useEffect, useState } from "react";
 import { type Palette, ThemeProvider, createTheme, useTheme } from "@mui/material";
 import materialDynamicColors from "material-dynamic-colors";
 import { mix } from "polished";
+import { isValidUserFn } from "@/core/store/userSlice";
+import { updatePopupTemplate, updateTemplateData } from "@/core/store/templatesSlice";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { useViewTemplateMutation } from "@/core/api/templates";
 
 interface IMUDynamicColorsThemeColor {
   light: {
@@ -30,6 +34,11 @@ interface Props {
 function TemplatePage({ template, popup }: Props) {
   const { isMobile } = useBrowser();
   const theme = useTheme();
+  const dispatch = useAppDispatch();
+  const isValidUser = useAppSelector(isValidUserFn);
+  const savedTemplateId = useAppSelector(state => state.template.id);
+  const [updateViewTemplate] = useViewTemplateMutation();
+
   const [tabsFixed, setTabsFixed] = useState(false);
   const tabsRef = useRef<HTMLDivElement>(null);
   const topThreshold = popup ? 24 : 92;
@@ -58,7 +67,30 @@ function TemplatePage({ template, popup }: Props) {
     if (template.thumbnail) {
       fetchDynamicColors();
     }
+
+    if (!savedTemplateId || savedTemplateId !== template.id) {
+      dispatch(
+        updateTemplateData({
+          id: template.id,
+          is_favorite: template.is_favorite,
+          is_liked: template.is_liked,
+          likes: template.favorites_count,
+        }),
+      );
+    }
+
+    if (isValidUser) {
+      updateViewTemplate(template.id);
+    }
   }, [template]);
+
+  const closeTemplatePopup = () => {
+    dispatch(
+      updatePopupTemplate({
+        template: null,
+      }),
+    );
+  };
 
   const fetchDynamicColors = () => {
     //@ts-expect-error unfound-new-type
@@ -126,7 +158,12 @@ function TemplatePage({ template, popup }: Props) {
           }}
         >
           <Stack>
-            {!isMobile && <Header template={template} />}
+            {!isMobile && (
+              <Header
+                template={template}
+                close={closeTemplatePopup}
+              />
+            )}
             <Box
               sx={{
                 position: "relative",

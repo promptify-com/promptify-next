@@ -12,15 +12,21 @@ import type { Templates } from "@/core/api/dto/templates";
 
 interface TemplateHeaderProps {
   template: Templates;
+  close(): void;
 }
 
-export default function Header({ template }: TemplateHeaderProps) {
+export default function Header({ template, close }: TemplateHeaderProps) {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const breadcrumbs = [
     <Link
       key="0"
       href="/explore"
+      onClick={e => {
+        e.preventDefault();
+        router.push("/explore");
+        close();
+      }}
       sx={breadcrumbStyle}
     >
       All Templates
@@ -32,6 +38,7 @@ export default function Header({ template }: TemplateHeaderProps) {
         e.preventDefault();
         dispatch(setSelectedTag(template.category));
         router.push("/explore");
+        close();
       }}
       sx={breadcrumbStyle}
     >

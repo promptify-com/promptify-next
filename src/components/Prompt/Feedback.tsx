@@ -1,11 +1,8 @@
-import { useRef, useState } from "react";
 import Stack from "@mui/material/Stack";
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import { useRouter } from "next/router";
 import { timeAgo } from "@/common/helpers/timeManipulation";
-import SigninButton from "@/components/common/buttons/SigninButton";
 import useToken from "@/hooks/useToken";
 import MessageSender from "./Common/Chat/MessageSender";
 import { useGetFeedbacksQuery, useSaveFeedbackMutation } from "@/core/api/templates";
@@ -16,7 +13,6 @@ import type { UserPartial } from "@/core/api/dto/user";
 const maxLength = 2500;
 const Feedback = () => {
   const token = useToken();
-  const router = useRouter();
   const currentUser = useAppSelector(state => state.user.currentUser);
   const templateId = useAppSelector(state => state.template.id);
   const { data: feedbacks, isFetching } = useGetFeedbacksQuery(templateId);
