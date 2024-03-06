@@ -79,7 +79,10 @@ function TemplateModal() {
   if (!template) return;
 
   return (
-    <Modal open={!!template.id}>
+    <Modal
+      open={!!template.id}
+      disableAutoFocus={true}
+    >
       <Stack
         direction={"row"}
         alignItems={"flex-end"}
@@ -93,7 +96,7 @@ function TemplateModal() {
           position: "relative",
         }}
       >
-        <IconButton
+        {/* <IconButton
           onClick={close}
           sx={{
             position: "absolute",
@@ -105,7 +108,7 @@ function TemplateModal() {
           }}
         >
           <Close />
-        </IconButton>
+        </IconButton> */}
         <NavigationBox
           template={template}
           type="previous"

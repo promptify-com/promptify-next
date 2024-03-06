@@ -39,12 +39,11 @@ const ScrollTabs: Link[] = [
 
 interface Props {
   template: Templates;
+  tabsFixed: boolean;
 }
 
-export default function ContentContainer({ template }: Props) {
+export default function ContentContainer({ template, tabsFixed }: Props) {
   const [selectedTab, setSelectedTab] = useState<Link>(ScrollTabs[0]);
-  const [tabsFixed, setTabsFixed] = useState(false);
-  const tabsRef = useRef<HTMLDivElement>(null);
 
   const handleTabChange = (tab: Link) => {
     setSelectedTab(tab);
@@ -52,27 +51,10 @@ export default function ContentContainer({ template }: Props) {
     section?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (tabsRef.current) {
-        const atTop = tabsRef.current.getBoundingClientRect().top <= 0;
-        setTabsFixed(atTop);
-      }
-    };
-
-    handleScroll();
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
   return (
-    <Box
-      ref={tabsRef}
-      height={tabsFixed ? "calc(100svh - 24px)" : "auto"}
-      overflow={"auto"}
-    >
+    <Box>
       <Box
+        id={"sections_tabs"}
         sx={{
           position: tabsFixed ? "sticky" : "relative",
           zIndex: 999,
@@ -85,6 +67,7 @@ export default function ContentContainer({ template }: Props) {
           direction={"row"}
           gap={2}
           sx={{
+            width: "fit-content",
             bgcolor: "surfaceContainerLow",
             p: "4px",
             borderRadius: "999px",

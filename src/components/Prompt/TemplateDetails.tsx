@@ -35,7 +35,6 @@ const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template }) => {
 
     cloneTemplate();
   };
-  console.log(template);
   const CloneButton = () => (
     <Button
       onClick={handleEdit}
@@ -54,9 +53,13 @@ const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template }) => {
 
   return (
     <Stack
-      position={"fixed"}
-      height={{ md: "100%" }}
+      height={{ md: "calc(100svh - 24px)" }}
       overflow={"auto"}
+      sx={{
+        "&::-webkit-scrollbar": {
+          width: 0,
+        },
+      }}
     >
       <Stack
         gap={6}

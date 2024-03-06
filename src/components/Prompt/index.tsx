@@ -6,6 +6,7 @@ import TemplateDetails from "./TemplateDetails";
 import Box from "@mui/material/Box";
 import Image from "@/components/design-system/Image";
 import ContentContainer from "./ContentContainer";
+import { useEffect, useRef, useState } from "react";
 
 interface Props {
   template: Templates;
@@ -13,39 +14,77 @@ interface Props {
 
 function TemplatePage({ template }: Props) {
   const { isMobile } = useBrowser();
+  const [tabsFixed, setTabsFixed] = useState(false);
+  const tabsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const tabsElement = document.getElementById("sections_tabs");
+      if (tabsElement) {
+        const atTop = tabsElement.getBoundingClientRect().top <= 24;
+        setTabsFixed(atTop);
+      }
+    };
+
+    handleScroll();
+
+    tabsRef.current?.addEventListener("scroll", handleScroll);
+    return () => tabsRef.current?.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <Stack
       direction={"row"}
       gap={4}
-      height={"100%"}
       px={"32px"}
       bgcolor={"surfaceContainerLowest"}
     >
-      <Stack flex={4}>
-        {!isMobile && <Header template={template} />}
-        <Box
-          sx={{
-            position: "relative",
-            width: "100%",
-            height: isMobile ? "408px" : "446px",
-            borderRadius: "24px",
-            overflow: "hidden",
-          }}
-        >
-          <Image
-            src={template.thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
-            alt={template.title?.slice(0, 1) ?? "P"}
-            priority={true}
-            fill
-            sizes="(max-width: 900px) 253px, 446px"
-            style={{
-              objectFit: "cover",
+      <Box
+        ref={tabsRef}
+        flex={4}
+        height={"calc(100svh - 24px)"}
+        overflow={"auto"}
+        sx={{
+          pr: "4px",
+          "&::-webkit-scrollbar": {
+            width: { xs: "4px", md: "6px" },
+            p: 1,
+          },
+          ":hover&::-webkit-scrollbar-thumb": {
+            backgroundColor: "surface.5",
+            outline: "1px solid surface.1",
+            borderRadius: "10px",
+          },
+        }}
+      >
+        <Stack>
+          {!isMobile && <Header template={template} />}
+          <Box
+            sx={{
+              position: "relative",
+              width: "100%",
+              height: isMobile ? "408px" : "446px",
+              borderRadius: "24px",
+              overflow: "hidden",
             }}
+          >
+            <Image
+              src={template.thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
+              alt={template.title?.slice(0, 1) ?? "P"}
+              priority={true}
+              fill
+              sizes="(max-width: 900px) 253px, 446px"
+              style={{
+                objectFit: "cover",
+              }}
+            />
+          </Box>
+          <ContentContainer
+            template={template}
+            tabsFixed={tabsFixed}
           />
-        </Box>
-        <ContentContainer template={template} />
-      </Stack>
+        </Stack>
+      </Box>
       <Box flex={2}>
         <TemplateDetails template={template} />
       </Box>
