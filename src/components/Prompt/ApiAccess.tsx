@@ -61,13 +61,10 @@ const LanguageSelectorAndCopy = ({
       <Select
         value={language}
         onChange={handleChange}
-        IconComponent={() => <ExpandMore />}
+        inputProps={{ MenuProps: { disableScrollLock: true } }}
         sx={{
           fontSize: 14,
           fontWeight: 500,
-          ".MuiSelect-select": {
-            pr: "4px !important",
-          },
           fieldset: {
             border: "none",
           },
