@@ -28,6 +28,7 @@ export interface FilterParams {
   offset?: number;
   status?: string | null;
   engine_type?: string;
+  isFavourite?: boolean;
 }
 
 export interface SelectedFilters {

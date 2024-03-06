@@ -25,6 +25,7 @@ const getSearchParams = (params: FilterParams) => {
   params.offset && searchParams.append("offset", String(params.offset));
   params.status && searchParams.append("status", String(params.status));
   params.engine_type && searchParams.append("engine_type", String(params.engine_type));
+  params.isFavourite && searchParams.append("is_favorite", String(params.isFavourite));
 
   return searchParams.toString();
 };

@@ -1,7 +1,13 @@
 import { Box, Chip } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 
-import { deleteSelectedTag, setSelectedEngine, setSelectedKeyword } from "@/core/store/filtersSlice";
+import {
+  deleteSelectedTag,
+  setMyFavoritesChecked,
+  setSelectedEngine,
+  setSelectedEngineType,
+  setSelectedKeyword,
+} from "@/core/store/filtersSlice";
 import { RootState } from "@/core/store";
 import { Tag } from "@/core/api/dto/templates";
 
@@ -12,10 +18,11 @@ interface FiltersSelectedProps {
 export const FiltersSelected: React.FC<FiltersSelectedProps> = ({ show }) => {
   const dispatch = useDispatch();
   const filters = useSelector((state: RootState) => state.filters);
-  const { engine, tag, title } = filters;
+  const { engine, tag, title, engineType, isFavourite } = filters;
   const handleDeleteTag = (tagId: number) => {
     dispatch(deleteSelectedTag(tagId));
   };
+
   return (
     <>
       {show && (
@@ -54,6 +61,21 @@ export const FiltersSelected: React.FC<FiltersSelectedProps> = ({ show }) => {
               label={title}
               sx={{ fontSize: 13, fontWeight: 500 }}
               onDelete={() => dispatch(setSelectedKeyword(null))}
+            />
+          )}
+
+          {engineType && (
+            <Chip
+              label={engineType}
+              sx={{ fontSize: 13, fontWeight: 500 }}
+              onDelete={() => dispatch(setSelectedEngineType(""))}
+            />
+          )}
+          {isFavourite && (
+            <Chip
+              label={"My Favorites"}
+              sx={{ fontSize: 13, fontWeight: 500 }}
+              onDelete={() => dispatch(setMyFavoritesChecked(false))}
             />
           )}
         </Box>

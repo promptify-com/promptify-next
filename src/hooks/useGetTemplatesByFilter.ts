@@ -27,7 +27,7 @@ export function useGetTemplatesByFilter({
   const router = useRouter();
   const { categorySlug, subcategorySlug } = router.query;
   const filters = useSelector((state: RootState) => state.filters);
-  const { tag: tags, engine, title, engineType } = filters;
+  const { tag: tags, engine, title, engineType, isFavourite } = filters;
   const [offset, setOffset] = useState(0);
   const [searchName, setSearchName] = useState("");
   const deferredSearchName = useDeferredValue(searchName);
@@ -46,6 +46,7 @@ export function useGetTemplatesByFilter({
     limit: PAGINATION_LIMIT,
     status,
     ordering,
+    isFavourite: isFavourite,
   };
   const skipFetchingTemplates = ![catId, subCatId, admin, ordering].some(_param => _param);
   const {
@@ -71,7 +72,9 @@ export function useGetTemplatesByFilter({
       filters.tag.every(tag => tag === null) &&
       filters.title === null &&
       filters.category === null &&
-      filters.subCategory === null
+      filters.subCategory === null &&
+      filters.engineType === "" &&
+      filters.isFavourite === false
     );
   }
   const allFilterParamsNull = areAllStatesNull(filters);
