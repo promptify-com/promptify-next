@@ -14,6 +14,7 @@ import { useAppSelector } from "@/hooks/useStore";
 import Tune from "@mui/icons-material/Tune";
 import ContentCopy from "@mui/icons-material/ContentCopy";
 import useCloneTemplate from "@/components/Prompt/Hooks/useCloneTemplate";
+import { setSelectedTemplate } from "@/core/store/chatSlice";
 
 interface TemplateDetailsProps {
   template: Templates;
@@ -35,6 +36,7 @@ const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template }) => {
 
     cloneTemplate();
   };
+
   const CloneButton = () => (
     <Button
       onClick={handleEdit}
@@ -50,6 +52,15 @@ const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template }) => {
       {isOwner ? "Edit" : "Clone & Edit"}
     </Button>
   );
+
+  const handleRun = () => {
+    if (!currentUser?.id) {
+      return router.push("/signin");
+    }
+
+    dispatch(setSelectedTemplate(template));
+    router.push("/chat");
+  };
 
   return (
     <Stack
@@ -121,7 +132,7 @@ const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template }) => {
 
           <RunButton
             title="Run prompt"
-            onClick={() => {}}
+            onClick={handleRun}
             sx={{
               maxWidth: "none",
               height: "auto",
