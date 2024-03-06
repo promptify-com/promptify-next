@@ -44,7 +44,10 @@ const filterSlice = createSlice({
     },
     deleteSelectedTag: (state, action: PayloadAction<number>) => {
       state.tag = state.tag.filter(tag => tag?.id !== action.payload);
-      if (state.tag.length === 0) Storage.remove("tagFilter");
+      if (!state.tag.length) {
+        Storage.remove("tagFilter");
+        return;
+      }
       Storage.set("tagFilter", JSON.stringify(state.tag));
     },
     setSelectedEngineType: (state, action: PayloadAction<string>) => {
