@@ -160,17 +160,11 @@ export default function Page({ category }: { category: Category }) {
                 </Typography>
               </Stack>
 
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: {
-                    xs: "column",
-                    md: "row",
-                  },
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  gap: "16px",
-                }}
+              <Stack
+                direction={{ xs: "column", md: "row" }}
+                justifyContent="space-between"
+                alignItems="center"
+                gap="16px"
               >
                 <Image
                   src={category.image ?? require("@/assets/images/default-thumbnail.jpg")}
@@ -178,7 +172,7 @@ export default function Page({ category }: { category: Category }) {
                   style={{ objectFit: "cover", width: "20%", height: "auto", borderRadius: "50%" }}
                   priority={true}
                 />
-                <Box
+                <Stack
                   sx={{
                     display: "flex",
                     p: "var(--none, 0px) var(--2, 16px)",
@@ -211,8 +205,8 @@ export default function Page({ category }: { category: Category }) {
                   >
                     {category.description}
                   </Typography>{" "}
-                </Box>
-              </Box>
+                </Stack>
+              </Stack>
 
               <PopularTemplates
                 loading={isFetching}
