@@ -26,8 +26,6 @@ function PopularTemplates({ loading, hasNext, onNextPage, onPrevPage, templates,
     (node: HTMLDivElement) => {
       if (loading) return;
       if (observer.current) observer.current.disconnect();
-      console.log({ templates });
-      console.log(templates.length, SCROLL_THRESHOLD);
       if (templates.length >= SCROLL_THRESHOLD) return;
 
       const rowHeight = isMobile ? 145 : 80;
