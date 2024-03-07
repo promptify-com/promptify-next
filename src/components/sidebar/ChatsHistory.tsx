@@ -6,13 +6,13 @@ interface Props {}
 
 export default function ChatsHistory({}: Props) {
   const { data: chats } = useGetChatsQuery();
-  console.log(chats);
 
   return (
     <Stack
       gap={4}
       py={"16px"}
     >
+      <Stack gap={2}></Stack>
       <Stack gap={2}>
         <Typography
           fontSize={14}
