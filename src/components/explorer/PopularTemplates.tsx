@@ -6,6 +6,7 @@ import { TemplatesSection } from "@/components/explorer/TemplatesSection";
 
 import type { Templates } from "@/core/api/dto/templates";
 import useBrowser from "@/hooks/useBrowser";
+import { CircularProgress } from "@mui/material";
 
 interface Props {
   loading: boolean;
@@ -67,8 +68,16 @@ function PopularTemplates({ loading, hasNext, onNextPage, onPrevPage, templates,
         onNextPage={onNextPage}
         hasPrev={false}
         onPrevPage={onPrevPage}
-        buttonText="Load more"
+        buttonText={loading ? "Loading..." : "Load more"}
         variant="outlined"
+        endIcon={
+          loading && (
+            <CircularProgress
+              size={24}
+              color="primary"
+            />
+          )
+        }
       >
         <TemplatesSection
           templateLoading={templateLoading}

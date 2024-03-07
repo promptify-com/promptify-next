@@ -7,6 +7,7 @@ import Box from "@mui/material/Box";
 import XIcon from "@mui/icons-material/X";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
+import { IconButton } from "@mui/material";
 
 const Links = [
   { title: "Privacy Policy", href: "https://blog.promptify.com/post/privacy-policy" },
@@ -26,25 +27,13 @@ const socialLinks = [
 
 const thisYear = new Date().getFullYear();
 
-const commonBoxStyles = {
-  display: "inline-flex",
-  alignItems: "center",
-  justifyContent: "center",
-  padding: "12px 16px",
-  borderRadius: "99px",
-  transition: "background-color 0.3s",
-  "&:hover": {
-    backgroundColor: "surface.2",
-  },
-};
-
 function FooterPrompt() {
   return (
     <>
       <Divider />
       <Stack
         display={"flex"}
-        p={"32px var(--none, 0px)"}
+        p={"32px 0px"}
         flexDirection={"column"}
         justifyContent={"center"}
         alignItems={"center"}
@@ -78,11 +67,25 @@ function FooterPrompt() {
                 Promptify
               </Typography>
             </Stack>
-            <>
+            <Stack
+              direction={"row"}
+              alignItems={"center"}
+              gap={1}
+            >
               {Links.map((link, index) => (
                 <Box
                   key={index}
-                  sx={commonBoxStyles}
+                  sx={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    borderRadius: "99px",
+                    transition: "background-color 0.3s",
+                    "&:hover": {
+                      backgroundColor: "action.hover",
+                    },
+                  }}
+                  p={"12px 16px"}
                 >
                   <Link
                     href={link.href}
@@ -102,23 +105,29 @@ function FooterPrompt() {
                   </Link>
                 </Box>
               ))}
-            </>
+            </Stack>
           </Stack>
           <Stack
             flexDirection={{ xs: "column", md: "row" }}
             gap={"8px"}
           >
             {socialLinks.map((link, index) => (
-              <Box
-                key={index}
-                sx={commonBoxStyles}
-              >
+              <Box key={index}>
                 <Link
                   href={link.href}
                   key={index}
                   target="_blank"
                 >
-                  {link.icon}
+                  <IconButton
+                    sx={{
+                      border: "none",
+                      "&:hover": {
+                        bgcolor: "action.hover",
+                      },
+                    }}
+                  >
+                    {link.icon}
+                  </IconButton>
                 </Link>
               </Box>
             ))}

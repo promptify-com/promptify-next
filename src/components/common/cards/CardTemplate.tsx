@@ -1,4 +1,3 @@
-import { useState } from "react";
 import Chip from "@mui/material/Chip";
 import Stack from "@mui/material/Stack";
 import Card from "@mui/material/Card";
@@ -76,7 +75,7 @@ function CardTemplate({
         textDecoration: "none",
         width: isDesktop ? "auto" : "100%",
         position: "relative",
-        maxWidth: "288px",
+        maxWidth: "254px",
       }}
     >
       <Card
