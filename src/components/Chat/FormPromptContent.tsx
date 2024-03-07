@@ -2,7 +2,8 @@ import React, { Fragment, useState } from "react";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { Button, InputBase } from "@mui/material";
+import InputBase from "@mui/material/InputBase";
+
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setAnswers } from "@/core/store/chatSlice";
 import { useDebouncedDispatch } from "@/hooks/useDebounceDispatch";
@@ -71,12 +72,13 @@ function highlightContent(content: string, promptId: number): JSX.Element[] {
     const existingAnswer = (answers.find(answer => inputName === answer.inputName)?.answer as string) || inputName;
 
     highlightedContent.push(
-      <Button
+      <Box
         key={key++}
         onClick={() => handleHighlightClick(promptId, inputName)}
         sx={{
           display: "inline-block",
           p: "0px 8px",
+          borderRadius: "24px",
           bgcolor: "secondaryContainer",
           color: "primary.main",
           "&:hover": {
@@ -89,7 +91,10 @@ function highlightContent(content: string, promptId: number): JSX.Element[] {
             autoFocus
             defaultValue={existingAnswer}
             onBlur={event => {
-              dispatchUpdateAnswers(event.target.value);
+              const newValue = event.target.value;
+              if (newValue !== existingAnswer) {
+                dispatchUpdateAnswers(newValue);
+              }
               setSelectedPrompt(null);
             }}
             sx={{
@@ -99,7 +104,7 @@ function highlightContent(content: string, promptId: number): JSX.Element[] {
         ) : (
           <Typography color={"primary.main"}>{existingAnswer}</Typography>
         )}
-      </Button>,
+      </Box>,
     );
 
     lastIndex = regex.lastIndex;
