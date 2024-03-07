@@ -1,12 +1,12 @@
 import { LogoApp } from "@/assets/icons/LogoApp";
-import { XIcon } from "@/assets/icons/XIcon";
-import { FacebookIcon } from "@/assets/icons/FbIcon";
-import { LinkedinIcon } from "@/assets/icons/Linkedin";
 import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Link from "next/link";
 import Box from "@mui/material/Box";
+import XIcon from "@mui/icons-material/X";
+import FacebookIcon from "@mui/icons-material/Facebook";
+import LinkedInIcon from "@mui/icons-material/LinkedIn";
 
 const Links = [
   { title: "Privacy Policy", href: "https://blog.promptify.com/post/privacy-policy" },
@@ -15,9 +15,13 @@ const Links = [
 ];
 
 const socialLinks = [
-  { title: "Facebook", href: "#", icon: <FacebookIcon /> },
-  { title: "Twitter", href: "#", icon: <XIcon /> },
-  { title: "LinkedIn", href: "https://www.linkedin.com/company/promptify-com/about/", icon: <LinkedinIcon /> },
+  { title: "Twitter", href: "#", icon: <XIcon style={{ fill: "#1B1B1F" }} /> },
+  { title: "Facebook", href: "#", icon: <FacebookIcon style={{ fill: "#1B1B1F" }} /> },
+  {
+    title: "LinkedIn",
+    href: "https://www.linkedin.com/company/promptify-com/about/",
+    icon: <LinkedInIcon style={{ fill: "#1B1B1F" }} />,
+  },
 ];
 
 const thisYear = new Date().getFullYear();
