@@ -3,6 +3,7 @@ import { setStickyChatHistory } from "@/core/store/sidebarSlice";
 import Storage from "@/common/storage";
 import { useEffect } from "react";
 import DrawerContainer from "./DrawerContainer";
+import ChatsHistory from "./ChatsHistory";
 
 interface Props {
   expandedOnHover: boolean;
@@ -34,6 +35,8 @@ export default function ChatsDrawer({ expandedOnHover }: Props) {
       expanded={isChatHistorySticky || expandedOnHover}
       toggleExpand={toggleSidebar}
       sticky={isChatHistorySticky}
-    ></DrawerContainer>
+    >
+      <ChatsHistory />
+    </DrawerContainer>
   );
 }
