@@ -3,10 +3,13 @@ import { useCreateChatMutation, useGetChatsQuery } from "@/core/api/chats";
 import { ChatCard } from "@/components/common/cards/CardChat";
 import SearchField from "@/components/common/forms/SearchField";
 import { useState } from "react";
+import { useAppDispatch } from "@/hooks/useStore";
+import { setToast } from "@/core/store/toastSlice";
 
 interface Props {}
 
 export default function ChatsHistory({}: Props) {
+  const dispatch = useAppDispatch();
   const { data: chats } = useGetChatsQuery();
   const [createChat] = useCreateChatMutation();
   const [search, setSearch] = useState("");
@@ -18,7 +21,9 @@ export default function ChatsHistory({}: Props) {
       await createChat({
         title: "Welcome",
       });
-    } catch (err) {}
+    } catch (_) {
+      dispatch(setToast({ message: "Chat not deleted! Please try again.", severity: "error", duration: 6000 }));
+    }
   };
 
   return (
@@ -55,12 +60,24 @@ export default function ChatsHistory({}: Props) {
         >
           Recent:
         </Typography>
-        {filteredChats?.map(chat => (
-          <ChatCard
-            key={chat.id}
-            chat={chat}
-          />
-        ))}
+        {filteredChats && filteredChats?.length > 0 ? (
+          filteredChats.map(chat => (
+            <ChatCard
+              key={chat.id}
+              chat={chat}
+            />
+          ))
+        ) : (
+          <Typography
+            fontSize={14}
+            fontWeight={400}
+            color={"onSurface"}
+            mt={"30px"}
+            textAlign={"center"}
+          >
+            No chat yet!
+          </Typography>
+        )}
       </Stack>
     </Stack>
   );

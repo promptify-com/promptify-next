@@ -45,8 +45,27 @@ export const chatsApi = baseApi.injectEndpoints({
           }
         },
       }),
+      deleteChat: builder.mutation({
+        query: (id: number) => ({
+          url: `/api/chat/chats/${id}`,
+          method: "delete",
+        }),
+        async onQueryStarted(id, { dispatch, queryFulfilled }) {
+          const patchResult = dispatch(
+            chatsApi.util.updateQueryData("getChats", undefined, _chats => {
+              return _chats.filter(chat => chat.id !== id);
+            }),
+          );
+
+          try {
+            await queryFulfilled;
+          } catch {
+            patchResult.undo();
+          }
+        },
+      }),
     };
   },
 });
 
-export const { useGetChatsQuery, useGetChatByIdQuery, useCreateChatMutation } = chatsApi;
+export const { useGetChatsQuery, useGetChatByIdQuery, useCreateChatMutation, useDeleteChatMutation } = chatsApi;
