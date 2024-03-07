@@ -1,13 +1,12 @@
-import Divider from "@mui/material/Divider";
-import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
-import Link from "next/link";
-
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { XIcon } from "@/assets/icons/XIcon";
 import { FacebookIcon } from "@/assets/icons/FbIcon";
 import { LinkedinIcon } from "@/assets/icons/Linkedin";
-import { Box } from "@mui/material";
+import Divider from "@mui/material/Divider";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import Link from "next/link";
+import Box from "@mui/material/Box";
 
 const Links = [
   { title: "Privacy Policy", href: "https://blog.promptify.com/post/privacy-policy" },
