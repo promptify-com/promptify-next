@@ -15,7 +15,7 @@ interface Props {
 }
 
 function Textual({ input, value, onChange }: Props) {
-  const { type, required } = input;
+  const type = input.type;
 
   const { isVariantB, isAutomationPage } = useVariant();
   const isGenerating = useAppSelector(state => state.template.isGenerating);
@@ -23,19 +23,6 @@ function Textual({ input, value, onChange }: Props) {
 
   const fieldRef = useRef<HTMLInputElement | null>(null);
   const spanRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    if (isVariantB) return;
-    calculateInputWidth();
-  }, [value]);
-
-  const calculateInputWidth = () => {
-    if (spanRef.current && fieldRef.current) {
-      const spanWidth = spanRef.current.offsetWidth;
-      const minWidth = Math.max(spanWidth, value ? spanWidth : 70);
-      fieldRef.current.style.width = isVariantB ? "-webkit-fill-available" : `${minWidth}px`;
-    }
-  };
 
   const disableInput = Boolean(isGenerating || (!areAllCredentialsStored && isAutomationPage));
 
@@ -49,43 +36,14 @@ function Textual({ input, value, onChange }: Props) {
     >
       <TextField
         inputRef={ref => (fieldRef.current = ref)}
-        fullWidth={isVariantB}
+        fullWidth
         disabled={disableInput}
         sx={textFieldStyle}
-        placeholder={isVariantB ? "Type here" : required ? "Required" : "Optional"}
+        placeholder={"Type here"}
         type={type}
         value={value}
         onChange={e => onChange(e.target.value)}
       />
-
-      <span
-        ref={spanRef}
-        style={{
-          position: "absolute",
-          fontSize: 14,
-          visibility: "hidden",
-          height: "auto",
-          width: "auto",
-          whiteSpace: "pre",
-        }}
-      >
-        {value as string}
-      </span>
-      {!isVariantB && (
-        <Edit
-          onClick={() => fieldRef.current?.focus()}
-          sx={{
-            fontSize: 16,
-            color: "primary.main",
-            p: "4px",
-            cursor: "pointer",
-            opacity: value ? 0.9 : 0.45,
-            ":hover": {
-              opacity: 1,
-            },
-          }}
-        />
-      )}
     </Stack>
   );
 }

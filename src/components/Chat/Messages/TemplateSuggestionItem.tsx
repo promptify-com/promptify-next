@@ -25,109 +25,121 @@ function TemplateSuggestionItem({ template, onClick }: Props) {
       direction={"row"}
       gap={"24px"}
       alignItems={"center"}
+      justifyContent={"space-between"}
     >
-      <Box
-        sx={{
-          zIndex: 0,
-          position: "relative",
-          width: "152px",
-          height: "113px",
-          borderRadius: "24px",
-          overflow: "hidden",
-        }}
-      >
-        <Image
-          src={thumbnail}
-          alt={"Image 1"}
-          priority={true}
-          fill
-          style={{
-            objectFit: "cover",
-          }}
-        />
-      </Box>
       <Stack
-        width={"55%"}
-        direction={"column"}
-        justifyItems={"flex-start"}
-        gap={2}
+        direction={"row"}
+        alignItems={"center"}
+        gap={"24px"}
       >
-        <Box>
-          <Typography
-            fontSize={18}
-            fontWeight={500}
-            lineHeight={"25.2px"}
-          >
-            {title}
-          </Typography>
-          <Typography
-            fontSize={16}
-            fontWeight={400}
-            lineHeight={"22.2px"}
-            sx={{
-              opacity: 0.75,
+        <Box
+          sx={{
+            zIndex: 0,
+            position: "relative",
+            width: "152px",
+            height: "113px",
+            borderRadius: "24px",
+            overflow: "hidden",
+          }}
+        >
+          <Image
+            src={thumbnail}
+            alt={"Image 1"}
+            priority={true}
+            fill
+            style={{
+              objectFit: "cover",
             }}
-          >
-            {description}
-          </Typography>
+          />
         </Box>
         <Stack
-          direction={"row"}
-          gap={"8px"}
-          alignItems={"center"}
+          direction={"column"}
+          justifyItems={"flex-start"}
+          gap={2}
         >
-          <Box
-            display={"flex"}
-            alignItems={"center"}
-          >
-            <Favorite
-              sx={{
-                fontSize: "14px",
-                mr: "2px",
-              }}
-            />
+          <Box>
             <Typography
-              fontSize={13}
-              fontWeight={400}
-              lineHeight={"18.2px"}
+              fontSize={18}
+              fontWeight={500}
+              lineHeight={"25.2px"}
             >
-              {favorites_count}
+              {title}
+            </Typography>
+            <Typography
+              fontSize={16}
+              fontWeight={400}
+              lineHeight={"22.2px"}
+              sx={{
+                opacity: 0.75,
+              }}
+            >
+              {description}
             </Typography>
           </Box>
-          <Box
-            display={"flex"}
+          <Stack
+            direction={"row"}
+            gap={"8px"}
             alignItems={"center"}
           >
-            <ElectricBolt
-              sx={{
-                fontSize: "14px",
-                mr: "2px",
-              }}
-            />
+            <Box
+              display={"flex"}
+              alignItems={"center"}
+            >
+              <Favorite
+                sx={{
+                  fontSize: "14px",
+                  mr: "2px",
+                }}
+              />
+              <Typography
+                fontSize={13}
+                fontWeight={400}
+                lineHeight={"18.2px"}
+              >
+                {favorites_count}
+              </Typography>
+            </Box>
+            <Box
+              display={"flex"}
+              alignItems={"center"}
+            >
+              <ElectricBolt
+                sx={{
+                  fontSize: "14px",
+                  mr: "2px",
+                }}
+              />
 
-            <Typography
-              fontSize={13}
-              fontWeight={400}
-              lineHeight={"18.2px"}
-            >
-              {executions_count}
-            </Typography>
-          </Box>
+              <Typography
+                fontSize={13}
+                fontWeight={400}
+                lineHeight={"18.2px"}
+              >
+                {executions_count}
+              </Typography>
+            </Box>
+          </Stack>
         </Stack>
       </Stack>
-      <Button
-        variant="text"
-        startIcon={<PlayArrow />}
-        sx={{
-          color: "onSurface",
-          "&:hover": {
-            bgcolor: "action.hover",
-          },
-        }}
-        onClick={onClick}
+      <Stack
+        direction={"row"}
+        alignItems={"center"}
+        px={"30px"}
       >
-        Run prompt
-      </Button>
+        <Button
+          variant="text"
+          startIcon={<PlayArrow />}
+          sx={{
+            color: "onSurface",
+            "&:hover": {
+              bgcolor: "action.hover",
+            },
+          }}
+          onClick={onClick}
+        >
+          Run prompt
+        </Button>
+      </Stack>
     </Stack>
   );
 }

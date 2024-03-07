@@ -67,6 +67,7 @@ function ChatOptions() {
         </Box>
         <Stack
           direction={"row"}
+          justifyContent={"center"}
           gap={3}
           py={2}
         >
@@ -75,7 +76,7 @@ function ChatOptions() {
             return (
               <Box
                 key={index}
-                width={"460px"}
+                width={"50%"}
                 borderRadius={"24px"}
                 border={"1px solid"}
                 borderColor={"surfaceContainerHighest"}
