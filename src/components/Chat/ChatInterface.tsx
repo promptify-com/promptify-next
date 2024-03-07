@@ -10,7 +10,6 @@ import type { Templates } from "@/core/api/dto/templates";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import Button from "@mui/material/Button";
 import ArrowCircleUp from "@/assets/icons/ArrowCircleUp";
-import Box from "@mui/material/Box";
 
 interface Props {
   messages: IMessage[];
@@ -73,7 +72,7 @@ const ChatInterface = ({ templates, messages, onGenerate, showGenerateButton, on
           direction={"row"}
           justifyContent={"start"}
         >
-          {showGenerateButton && (
+          {showGenerateButton && selectedChatOption === "QA" && (
             <Button
               variant="text"
               sx={{
