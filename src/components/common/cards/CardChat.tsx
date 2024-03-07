@@ -1,5 +1,4 @@
 import Card from "@mui/material/Card";
-import CardActionArea from "@mui/material/CardActionArea";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
@@ -17,9 +16,11 @@ import { RenameForm } from "@/components/common/forms/RenameForm";
 
 interface Props {
   chat: IChat;
+  active?: boolean;
+  onClick?(): void;
 }
 
-export const ChatCard = ({ chat }: Props) => {
+export const ChatCard = ({ chat, active, onClick }: Props) => {
   const dispatch = useAppDispatch();
   const [actionsMenuAnchor, setActionsMenuAnchor] = useState<null | HTMLElement>(null);
   const handleOpenActions = (e: React.MouseEvent<HTMLElement>) => setActionsMenuAnchor(e.currentTarget);
@@ -43,13 +44,22 @@ export const ChatCard = ({ chat }: Props) => {
     <Card
       elevation={0}
       title={chat.title}
+      onClick={onClick}
       sx={{
         width: "100%",
-        bgcolor: "surfaceContainerHigh",
+        bgcolor: active ? "surfaceContainerLowest" : "surfaceContainerHigh",
         borderRadius: "16px",
         overflow: "hidden",
+        cursor: onClick ? "pointer" : "default",
+        ".actions-menu": {
+          opacity: 0,
+          transition: "opacity 0.3s ease",
+        },
         "&:hover": {
           bgcolor: "surfaceContainerHighest",
+          ".actions-menu": {
+            opacity: 1,
+          },
         },
       }}
     >
@@ -110,7 +120,11 @@ export const ChatCard = ({ chat }: Props) => {
           )}
         </CardContent>
         <IconButton
-          onClick={handleOpenActions}
+          onClick={e => {
+            e.stopPropagation();
+            handleOpenActions(e);
+          }}
+          className="actions-menu"
           sx={{ border: "none", ":hover": { bgcolor: "action.hover" } }}
         >
           <MoreVert />
@@ -120,6 +134,7 @@ export const ChatCard = ({ chat }: Props) => {
           open={Boolean(actionsMenuAnchor)}
           onClose={handleCloseActions}
           disableScrollLock
+          onClick={e => e.stopPropagation()}
           sx={{
             ".MuiPaper-root": {
               width: "199px",

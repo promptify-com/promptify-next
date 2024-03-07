@@ -3,8 +3,10 @@ import { useCreateChatMutation, useGetChatsQuery } from "@/core/api/chats";
 import { ChatCard } from "@/components/common/cards/CardChat";
 import SearchField from "@/components/common/forms/SearchField";
 import { useState } from "react";
-import { useAppDispatch } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setToast } from "@/core/store/toastSlice";
+import { setSelectedChat } from "../../core/store/chatSlice";
+import { IChat } from "../../core/api/dto/chats";
 
 interface Props {}
 
@@ -13,15 +15,21 @@ export default function ChatsHistory({}: Props) {
   const { data: chats, isLoading: loadingChats } = useGetChatsQuery();
   const [createChat] = useCreateChatMutation();
   const [search, setSearch] = useState("");
+  const selectedChat = useAppSelector(state => state.chat.selectedChat);
 
   const handleNewChat = async () => {
     try {
-      await createChat({
+      const newChat = await createChat({
         title: "Welcome",
-      });
+      }).unwrap();
+      handleClickChat(newChat);
     } catch (_) {
       dispatch(setToast({ message: "Chat not deleted! Please try again.", severity: "error", duration: 6000 }));
     }
+  };
+
+  const handleClickChat = (chat: IChat) => {
+    dispatch(setSelectedChat(chat));
   };
 
   const filteredChats = chats?.filter(chat => chat.title.toLowerCase().includes(search));
@@ -68,6 +76,8 @@ export default function ChatsHistory({}: Props) {
               <ChatCard
                 key={chat.id}
                 chat={chat}
+                onClick={() => handleClickChat(chat)}
+                active={chat.id === selectedChat?.id}
               />
             ))
           ) : (

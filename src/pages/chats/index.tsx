@@ -24,7 +24,7 @@ function Chat() {
   const dispatch = useAppDispatch();
   const [palette, setPalette] = useState(theme.palette);
 
-  const { selectedTemplate, selectedChatOption } = useAppSelector(state => state.chat);
+  const { selectedTemplate, selectedChatOption, selectedChat } = useAppSelector(state => state.chat);
   const currentUser = useAppSelector(state => state.user.currentUser);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const { generatedExecution, selectedExecution } = useAppSelector(state => state.executions);
@@ -51,6 +51,12 @@ function Chat() {
     setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat(executionMessage));
     generateExecutionHandler();
   };
+
+  useEffect(() => {
+    if (!selectedChat) {
+      // dispatch();
+    }
+  }, []);
 
   useEffect(() => {
     if (!selectedTemplate?.thumbnail) {
