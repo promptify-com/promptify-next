@@ -4,6 +4,7 @@ import { createTheme, ThemeProvider, type Palette } from "@mui/material/styles";
 import mix from "polished/lib/color/mix";
 import Stack from "@mui/material/Stack";
 import materialDynamicColors from "material-dynamic-colors";
+
 import { theme } from "@/theme";
 import { Layout } from "@/layout";
 import Landing from "@/components/Chat/Landing";
@@ -124,16 +125,6 @@ export function ChatPage() {
   return (
     <ThemeProvider theme={dynamicTheme}>
       <Layout>
-        <Box
-          height={"10px"}
-          width={"100%"}
-          boxShadow={{ md: "0px 4px 8px 17px #FDFBFF" }}
-          position={"fixed"}
-          sx={{
-            zIndex: 2222,
-          }}
-          mt={-3}
-        ></Box>
         <Stack
           sx={{
             width: { md: "950px" },
@@ -168,9 +159,7 @@ export function ChatPage() {
                 <ChatInput
                   onSubmit={handleSubmitInput}
                   disabled={isValidatingAnswer || disableChatInput || allQuestionsAnswered}
-                  showGenerate={false}
                   isValidating={isValidatingAnswer}
-                  onGenerate={() => {}}
                 />
               )}
             </>
