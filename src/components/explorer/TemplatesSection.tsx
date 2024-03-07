@@ -109,7 +109,7 @@ function PopularTemplates({ templates, bgColor }: Pick<TemplatesSectionProps, "t
     >
       {templates.map((template: TemplateExecutionsDisplay | Templates, index) => (
         <CardTemplate
-          key={`${template.id} - ${index}`}
+          key={`${template.id}_${index}`}
           template={template as Templates}
           bgColor={bgColor}
           vertical

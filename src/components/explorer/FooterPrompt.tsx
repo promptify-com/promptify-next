@@ -1,12 +1,13 @@
+import Divider from "@mui/material/Divider";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import Link from "next/link";
+
 import { LogoApp } from "@/assets/icons/LogoApp";
 import { XIcon } from "@/assets/icons/XIcon";
 import { FacebookIcon } from "@/assets/icons/FbIcon";
 import { LinkedinIcon } from "@/assets/icons/Linkedin";
-import Divider from "@mui/material/Divider";
-import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
-import styled from "styled-components";
-import { theme } from "@/theme";
+import { Box } from "@mui/material";
 
 const Links = [
   { title: "Privacy Policy", href: "https://blog.promptify.com/post/privacy-policy" },
@@ -14,8 +15,15 @@ const Links = [
   { title: "Support", href: "#" },
 ];
 
-const CustomLink = styled("a")(() => ({
-  textDecoration: "none",
+const socialLinks = [
+  { title: "Facebook", href: "#", icon: <FacebookIcon /> },
+  { title: "Twitter", href: "#", icon: <XIcon /> },
+  { title: "LinkedIn", href: "https://www.linkedin.com/company/promptify-com/about/", icon: <LinkedinIcon /> },
+];
+
+const thisYear = new Date().getFullYear();
+
+const commonBoxStyles = {
   display: "inline-flex",
   alignItems: "center",
   justifyContent: "center",
@@ -23,9 +31,9 @@ const CustomLink = styled("a")(() => ({
   borderRadius: "99px",
   transition: "background-color 0.3s",
   "&:hover": {
-    backgroundColor: theme.palette.surface[2],
+    backgroundColor: "surface.2",
   },
-}));
+};
 
 function FooterPrompt() {
   return (
@@ -69,23 +77,27 @@ function FooterPrompt() {
             </Stack>
             <>
               {Links.map((link, index) => (
-                <CustomLink
+                <Box
                   key={index}
-                  href={link.href}
-                  target="_blank"
+                  sx={commonBoxStyles}
                 >
-                  <Typography
-                    sx={{
-                      fontSize: "16px",
-                      fontWeight: 500,
-                      lineHeight: "150%",
-                      color: "onSurface",
-                      fontFeatureSettings: "'clig' off, 'liga' off",
-                    }}
+                  <Link
+                    href={link.href}
+                    style={{ textDecoration: "none" }}
                   >
-                    {link.title}
-                  </Typography>
-                </CustomLink>
+                    <Typography
+                      sx={{
+                        fontSize: "16px",
+                        fontWeight: 500,
+                        lineHeight: "150%",
+                        color: "onSurface",
+                        fontFeatureSettings: "'clig' off, 'liga' off",
+                      }}
+                    >
+                      {link.title}
+                    </Typography>
+                  </Link>
+                </Box>
               ))}
             </>
           </Stack>
@@ -93,18 +105,20 @@ function FooterPrompt() {
             flexDirection={{ xs: "column", md: "row" }}
             gap={"8px"}
           >
-            <CustomLink href={"#"}>
-              <XIcon />
-            </CustomLink>
-            <CustomLink href={"#"}>
-              <FacebookIcon />
-            </CustomLink>
-            <CustomLink
-              href={"https://www.linkedin.com/company/promptify-com/about/"}
-              target="_blank"
-            >
-              <LinkedinIcon />
-            </CustomLink>
+            {socialLinks.map((link, index) => (
+              <Box
+                key={index}
+                sx={commonBoxStyles}
+              >
+                <Link
+                  href={link.href}
+                  key={index}
+                  target="_blank"
+                >
+                  {link.icon}
+                </Link>
+              </Box>
+            ))}
           </Stack>
         </Stack>
         <Stack
@@ -124,7 +138,7 @@ function FooterPrompt() {
               fontFeatureSettings: "'clig' off, 'liga' off",
             }}
           >
-            © 2024 Promptify.com - Promptify LLC. All rights reserved.
+            © {thisYear} Promptify.com - Promptify LLC. All rights reserved.
           </Typography>
         </Stack>
       </Stack>
