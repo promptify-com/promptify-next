@@ -20,6 +20,7 @@ import { useGetSuggestedTemplatesByCategoryQuery } from "@/core/api/templates";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
 import useBrowser from "@/hooks/useBrowser";
+import FooterPrompt from "@/components/explorer/FooterPrompt";
 
 interface Props {
   categories: Category[];
@@ -161,6 +162,7 @@ export default function ExplorePage({ categories }: Props) {
             )}
           </Box>
         </Grid>
+        <FooterPrompt />
       </Box>
     </Layout>
   );

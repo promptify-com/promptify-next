@@ -16,6 +16,7 @@ import PopularTemplates from "@/components/explorer/PopularTemplates";
 import materialDynamicColors from "material-dynamic-colors";
 import { type Palette, ThemeProvider, createTheme, useTheme } from "@mui/material";
 import { mix } from "polished";
+import FooterPrompt from "@/components/explorer/FooterPrompt";
 
 export default function Page({ category }: { category: Category }) {
   const router = useRouter();
@@ -218,6 +219,7 @@ export default function Page({ category }: { category: Category }) {
               />
             </Stack>
           </Grid>
+          <FooterPrompt />
         </Box>
       </Layout>
     </ThemeProvider>
