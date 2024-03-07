@@ -16,7 +16,6 @@ interface Props {
   templates: Templates[];
   onGenerate: () => void;
   showGenerateButton: boolean;
-  isValidating: boolean;
   onAbort: () => void;
 }
 
@@ -28,7 +27,6 @@ const ChatInterface = ({ templates, messages, onGenerate, showGenerateButton, on
   const { scrollToBottom } = useScrollToBottom({
     ref: messagesContainerRef,
     content: messages,
-    isGenerating: false,
   });
 
   const showChatOptions = Boolean(!!selectedTemplate && !selectedChatOption);
@@ -74,7 +72,7 @@ const ChatInterface = ({ templates, messages, onGenerate, showGenerateButton, on
           direction={"row"}
           justifyContent={"start"}
         >
-          {showGenerateButton && (
+          {showGenerateButton && selectedChatOption === "QA" && (
             <Button
               variant="text"
               sx={{

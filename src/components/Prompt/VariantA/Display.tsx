@@ -41,7 +41,7 @@ export const Display: React.FC<Props> = ({ templateData }) => {
     return null;
   }, [selectedExecution]);
 
-  const { showScrollDown, scrollToBottom } = useScrollToBottom({ ref: containerRef, isGenerating });
+  const { showScrollDown, scrollToBottom } = useScrollToBottom({ ref: containerRef });
 
   const isGeneratedExecutionEmpty = Boolean(generatedExecution && !generatedExecution.data?.length);
   const executionIsLoading = isFetching || isGeneratedExecutionEmpty;

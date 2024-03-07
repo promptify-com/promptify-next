@@ -19,7 +19,7 @@ import { getExecutionById } from "@/hooks/api/executions";
 import { setSelectedExecution } from "@/core/store/executionsSlice";
 import type { IMUDynamicColorsThemeColor } from "@/core/api/theme";
 
-function Chat() {
+function ChatPage() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const [palette, setPalette] = useState(theme.palette);
@@ -98,6 +98,8 @@ function Chat() {
   };
   const dynamicTheme = createTheme({ ...theme, palette });
 
+  const showLanding = !!!messages.length;
+
   useEffect(() => {
     if (!isGenerating && generatedExecution?.data?.length) {
       const allPromptsCompleted = generatedExecution.data.every(execData => execData.isCompleted);
@@ -120,21 +122,17 @@ function Chat() {
     }
   };
 
-  const showLanding = !!!messages.length;
-  const showChatInput = selectedChatOption !== "FORM" || !!selectedExecution;
-
   return (
     <ThemeProvider theme={dynamicTheme}>
       <Layout>
         <Stack
           sx={{
-            width: { md: "75%" },
+            width: { md: "950px" },
             mx: { md: "auto" },
             height: { xs: "100vh", md: "calc(100vh - 100px)" },
             display: "flex",
             flexDirection: "column",
             justifyContent: "flex-end",
-            gap: 1,
           }}
         >
           {showLanding ? (
@@ -157,10 +155,10 @@ function Chat() {
 
           {currentUser?.id ? (
             <>
-              {showChatInput && (
+              {(selectedChatOption !== "FORM" || !!selectedExecution) && (
                 <ChatInput
                   onSubmit={handleSubmitInput}
-                  disabled={isValidatingAnswer || disableChatInput || allQuestionsAnswered || isGenerating}
+                  disabled={isValidatingAnswer || disableChatInput || allQuestionsAnswered}
                   isValidating={isValidatingAnswer}
                 />
               )}
@@ -183,4 +181,4 @@ function Chat() {
   );
 }
 
-export default Chat;
+export default ChatPage;

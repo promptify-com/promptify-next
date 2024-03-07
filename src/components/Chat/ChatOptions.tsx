@@ -19,14 +19,14 @@ function ChatOptions() {
   const dispatch = useAppDispatch();
   const options: Option[] = [
     {
-      imagePath: "@/pages/chat/images/QA.png",
+      imagePath: "@/pages/chats/images/QA.png",
       label: "Complete questionary",
       hint: "Easy for new users",
       type: "QA",
     },
 
     {
-      imagePath: "@/pages/chat/images/fill_prompt.png",
+      imagePath: "@/pages/chats/images/fill_prompt.png",
       label: "Fill prompt instructions",
       hint: "Better for advanced users",
       type: "FORM",
@@ -94,19 +94,25 @@ function ChatOptions() {
               >
                 <Box
                   sx={{
+                    position: "relative",
+                    borderRadius: "24px",
                     height: "300px",
                     overflow: "hidden",
                   }}
                 >
-                  {/* <Image
-                    src={require("@/pages/chats/images/QA.png")}
+                  <Image
+                    src={
+                      option.type === "QA"
+                        ? require("@/pages/chats/images/QA.png")
+                        : require("@/pages/chats/images/fill_prompt.png")
+                    }
                     alt={option.label}
                     priority={true}
                     fill
                     style={{
                       objectFit: "cover",
                     }}
-                  /> */}
+                  />
                 </Box>
                 <Box textAlign={"center"}>
                   <Typography

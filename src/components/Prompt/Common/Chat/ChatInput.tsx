@@ -120,9 +120,6 @@ export const ChatInput = ({ onSubmit, disabled, isValidating, onGenerate, showGe
           <MessageSender
             onSubmit={onSubmit}
             disabled={disabled}
-            mode={"chat"}
-            onGenerate={onGenerate}
-            showGenerate={showGenerate}
           />
         </Box>
       </Stack>

@@ -1,3 +1,5 @@
+import { useState } from "react";
+import lazy from "next/dynamic";
 import { useRouter } from "next/router";
 import StickyNote2 from "@mui/icons-material/StickyNote2";
 import Home from "@mui/icons-material/Home";
@@ -15,8 +17,6 @@ import SidebarItem from "./SidebarItem";
 import { theme } from "@/theme";
 import useBrowser from "@/hooks/useBrowser";
 import { BLOG_URL } from "@/common/constants";
-import { useState } from "react";
-import lazy from "next/dynamic";
 import type { NavItem } from "@/common/types/sidebar";
 
 const FiltersDrawerLazy = lazy(() => import("./FiltersDrawer"), {
