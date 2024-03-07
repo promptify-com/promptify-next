@@ -14,16 +14,17 @@ function SuggestedPrompts() {
   ];
   return (
     <Stack
-      direction={"row"}
+      direction={{ xs: "column", md: "row" }}
       justifyContent={"space-between"}
-      gap={"24px"}
+      gap={{ xs: "8px", md: "24px" }}
+      m={{ xs: "8px", md: 0 }}
     >
       {prompts.map((prompt, index) => (
         <Stack
-          width={"100%"}
-          direction={"column"}
-          alignItems={"flex-start"}
-          justifyContent={"space-between"}
+          width={{ xs: "-webkit-fill-available", md: "100%" }}
+          direction={{ xs: "row", md: "column" }}
+          alignItems={{ xs: "center", md: "flex-start" }}
+          justifyContent={{ md: "space-between" }}
           key={index}
           border={"1px solid"}
           borderColor={"#E3E2E6"}

@@ -107,7 +107,7 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
   return (
     <Stack
       gap={1}
-      p={"24px"}
+      p={{ xs: "16px", md: "24px" }}
       sx={{
         width: { md: "90%" },
       }}
@@ -233,41 +233,6 @@ export const ExecutionCard: React.FC<Props> = ({ execution, promptsData }) => {
                               dangerouslySetInnerHTML={{
                                 __html: sanitizeHTML(exec.content),
                               }}
-                            />
-                          </Stack>
-
-                          <Stack
-                            flex={1}
-                            mt={{ md: -7 }}
-                            sx={{
-                              width: { xs: showPreview ? "100%" : 0, md: showPreview ? "35%" : 0 },
-                              height: { xs: showPreview ? "fit-content" : 0, md: "fit-content" },
-                              maxHeight: { md: showPreview ? elementHeights[index] : 0 },
-                              py: 2,
-                              pl: showPreview ? "10px" : 0,
-                              borderLeft: showPreview ? "2px solid #ECECF4" : "none",
-                              overflow: "auto",
-                              animation: `${showPreview ? expandAnimation : collapseAnimation} 300ms forwards`,
-                              "&::-webkit-scrollbar": {
-                                width: "6px",
-                                p: 1,
-                                bgcolor: "surface.1",
-                              },
-                              "&::-webkit-scrollbar-track": {
-                                webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
-                              },
-                              "&::-webkit-scrollbar-thumb": {
-                                bgcolor: "surface.1",
-                                outline: "1px solid surface.1",
-                                borderRadius: "10px",
-                              },
-                            }}
-                          >
-                            <PromptContent
-                              id={index + 1}
-                              content={prompt?.content ?? ""}
-                              engineName={prompt?.engine?.name ?? ""}
-                              execution={execution as TemplatesExecutions}
                             />
                           </Stack>
                         </Stack>

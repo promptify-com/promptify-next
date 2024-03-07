@@ -29,7 +29,7 @@ function ExecutionMessageBox({ onAbort }: Props) {
 
         <Stack
           position={"relative"}
-          mx={"24px"}
+          mx={{ xs: "8px", md: "24px" }}
           borderRadius={"24px"}
           overflow={"hidden"}
           direction={"column"}

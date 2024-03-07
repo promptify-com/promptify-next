@@ -70,7 +70,6 @@ export default function FeedbackThumbs({ vertical, execution, variant }: Props) 
     <Stack
       direction={{ xs: "row", md: vertical ? "column" : "row" }}
       alignItems={"center"}
-      flexWrap={"wrap"}
       gap={1}
     >
       <CustomTooltip title={isIconVariant && "Good"}>

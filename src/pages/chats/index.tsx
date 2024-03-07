@@ -140,20 +140,29 @@ function Chat() {
           {showLanding ? (
             <Landing />
           ) : (
-            <ChatInterface
-              templates={suggestedTemplates}
-              messages={messages}
-              showGenerateButton={showGenerateButton}
-              onAbort={abortConnection}
-              onGenerate={() => {
-                setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "spark"));
-                handleGenerateExecution();
-                setChatMode("automation");
-                if (selectedChatOption === "QA") {
-                  setAllQuestionsAnswered(false);
-                }
+            <Stack
+              sx={{
+                height: { xs: "calc(100% - 120px)", md: "100%" },
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "flex-end",
               }}
-            />
+            >
+              <ChatInterface
+                templates={suggestedTemplates}
+                messages={messages}
+                showGenerateButton={showGenerateButton}
+                onAbort={abortConnection}
+                onGenerate={() => {
+                  setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "spark"));
+                  handleGenerateExecution();
+                  setChatMode("automation");
+                  if (selectedChatOption === "QA") {
+                    setAllQuestionsAnswered(false);
+                  }
+                }}
+              />
+            </Stack>
           )}
 
           {currentUser?.id ? (

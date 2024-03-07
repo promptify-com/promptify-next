@@ -8,6 +8,8 @@ import ElectricBolt from "@mui/icons-material/ElectricBolt";
 
 import Image from "../../design-system/Image";
 import type { Templates } from "@/core/api/dto/templates";
+import { IconButton } from "@mui/material";
+import { MoreVert } from "@mui/icons-material";
 
 interface Props {
   template: Templates;
@@ -16,13 +18,14 @@ interface Props {
 
 function TemplateSuggestionItem({ template, onClick }: Props) {
   const { thumbnail, title, description, favorites_count, executions_count } = template;
+
   return (
     <Stack
       bgcolor={"surface.1"}
       p={"16px 0px"}
-      pl={"16px"}
+      px={{ xs: "8px", md: "16px" }}
       borderRadius={"24px"}
-      direction={"row"}
+      direction={{ xs: "column", md: "row" }}
       gap={"24px"}
       alignItems={"center"}
       justifyContent={"space-between"}
@@ -36,7 +39,7 @@ function TemplateSuggestionItem({ template, onClick }: Props) {
           sx={{
             zIndex: 0,
             position: "relative",
-            width: "152px",
+            width: { xs: "260px", md: "152px" },
             height: "113px",
             borderRadius: "24px",
             overflow: "hidden",
@@ -59,14 +62,14 @@ function TemplateSuggestionItem({ template, onClick }: Props) {
         >
           <Box>
             <Typography
-              fontSize={18}
+              fontSize={{ xs: 15, md: 18 }}
               fontWeight={500}
               lineHeight={"25.2px"}
             >
               {title}
             </Typography>
             <Typography
-              fontSize={16}
+              fontSize={{ xs: 14, md: 16 }}
               fontWeight={400}
               lineHeight={"22.2px"}
               sx={{
@@ -121,16 +124,20 @@ function TemplateSuggestionItem({ template, onClick }: Props) {
           </Stack>
         </Stack>
       </Stack>
+
       <Stack
         direction={"row"}
         alignItems={"center"}
-        px={"30px"}
+        px={{ md: "30px" }}
+        width={{ xs: "100%", md: "fit-content" }}
       >
         <Button
           variant="text"
           startIcon={<PlayArrow />}
           sx={{
             color: "onSurface",
+            width: { xs: "100%", md: "fit-content" },
+            bgcolor: { xs: "surfaceContainerLow", md: "transparent" },
             "&:hover": {
               bgcolor: "action.hover",
             },
@@ -139,6 +146,17 @@ function TemplateSuggestionItem({ template, onClick }: Props) {
         >
           Run prompt
         </Button>
+
+        <IconButton
+          sx={{
+            border: "none",
+            "&:hover": {
+              bgcolor: "action.hover",
+            },
+          }}
+        >
+          <MoreVert />
+        </IconButton>
       </Stack>
     </Stack>
   );

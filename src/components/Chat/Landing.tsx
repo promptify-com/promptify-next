@@ -22,6 +22,7 @@ function Landing() {
       gap={4}
       pt={"32px"}
       pb={"16px"}
+      px={{ xs: "8px", md: "0" }}
       position={"relative"}
     >
       <Stack
@@ -48,11 +49,11 @@ function Landing() {
           sx={{
             position: "absolute",
             zIndex: 0,
-            width: "150px",
-            height: "293px",
+            width: { xs: "70px", md: "150px" },
+            height: { xs: "120px", md: "293px" },
             borderRadius: "140px",
             overflow: "hidden",
-            left: 20,
+            left: { xs: 60, md: 20 },
           }}
         >
           <Image
@@ -70,8 +71,10 @@ function Landing() {
           sx={{
             position: "relative",
             zIndex: 1,
-            width: "200px",
-            height: "393px",
+            // width: "200px",
+            // height: "393px",
+            width: { xs: "120px", md: "200px" },
+            height: { xs: "180px", md: "393px" },
             borderRadius: "140px",
             overflow: "hidden",
           }}
@@ -91,11 +94,11 @@ function Landing() {
           sx={{
             position: "absolute",
             zIndex: 0,
-            width: "150px",
-            height: "293px",
+            width: { xs: "70px", md: "150px" },
+            height: { xs: "120px", md: "293px" },
             borderRadius: "140px",
             overflow: "hidden",
-            right: 20,
+            right: { xs: 60, md: 20 },
           }}
         >
           <Image
@@ -114,7 +117,7 @@ function Landing() {
         gap={4}
       >
         <Typography
-          fontSize={"48px"}
+          fontSize={{ xs: "30px", md: "48px" }}
           fontWeight={300}
           lineHeight={"57.6px"}
           letterSpacing={"0.17px"}
@@ -122,12 +125,12 @@ function Landing() {
           Let’s start new chat!
         </Typography>
         <Typography
-          fontSize={"16px"}
+          fontSize={{ xs: "14px", md: "16px" }}
           fontWeight={"400"}
           lineHeight={"25.6px"}
         >
           I can help you with your requests like any other AI, moreover I can run different models, also, you can look
-          at my <br /> pre-designed prompts for different cases!
+          at my pre-designed prompts for different cases!
         </Typography>
       </Stack>
       <SuggestedPrompts />

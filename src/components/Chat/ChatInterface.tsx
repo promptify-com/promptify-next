@@ -35,6 +35,7 @@ const ChatInterface = ({ templates, messages, onGenerate, showGenerateButton, on
     <Stack
       ref={messagesContainerRef}
       gap={3}
+      p={{ xs: "8px", md: 0 }}
       position={"relative"}
       sx={messagesContainerStyle}
     >
@@ -105,8 +106,10 @@ const ChatInterface = ({ templates, messages, onGenerate, showGenerateButton, on
 };
 
 const messagesContainerStyle = {
+  pt: { xs: "30px", md: 0 },
   overflowY: "auto",
   overflowX: "hidden",
+
   px: "8px",
   overscrollBehavior: "contain",
   scrollBehavior: "smooth",

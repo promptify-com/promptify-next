@@ -19,6 +19,8 @@ const ChatInput = ({ onSubmit, disabled, isValidating }: ChatInputProps) => {
       width={"100%"}
       flexDirection={"column"}
       gap={"8px"}
+      px={{ xs: "8px", md: 0 }}
+      pb={{ xs: "20px", md: 0 }}
     >
       {isValidating && (
         <Stack
@@ -65,6 +67,7 @@ const ChatInput = ({ onSubmit, disabled, isValidating }: ChatInputProps) => {
         textAlign={"center"}
         sx={{
           opacity: 0.45,
+          display: { xs: "none", md: "block" },
         }}
       >
         Promptify uses various LLM models to achieve better results. Promptify may be wrong and can make mistakes, just
