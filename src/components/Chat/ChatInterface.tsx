@@ -6,10 +6,10 @@ import useScrollToBottom from "@/components/Prompt/Hooks/useScrollToBottom";
 import ChatOptions from "@/components/Chat/ChatOptions";
 import ChatHeading from "@/components/Chat/ChatHeading";
 import RenderMessage from "@/components/Chat/RenderMessage";
-import type { Templates } from "@/core/api/dto/templates";
-import type { IMessage } from "@/components/Prompt/Types/chat";
 import Button from "@mui/material/Button";
 import ArrowCircleUp from "@/assets/icons/ArrowCircleUp";
+import type { Templates } from "@/core/api/dto/templates";
+import type { IMessage } from "@/components/Prompt/Types/chat";
 
 interface Props {
   messages: IMessage[];
@@ -72,7 +72,7 @@ const ChatInterface = ({ templates, messages, onGenerate, showGenerateButton, on
           direction={"row"}
           justifyContent={"start"}
         >
-          {showGenerateButton && selectedChatOption === "QA" && (
+          {showGenerateButton && (
             <Button
               variant="text"
               sx={{

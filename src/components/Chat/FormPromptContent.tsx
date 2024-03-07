@@ -28,16 +28,19 @@ function highlightContent(content: string, promptId: number): JSX.Element[] {
   }, 400);
 
   const updateAnswers = (value: string) => {
-    const matchedInput = inputs.find(input => selectedPrompt?.match.includes(input.name));
-    console.log(matchedInput);
+    if (!selectedPrompt) {
+      return;
+    }
 
-    if (!matchedInput || !selectedPrompt) {
+    const matchedInput = inputs.find(input => selectedPrompt.match === input.name);
+
+    if (!matchedInput) {
       return;
     }
 
     const { required, question, name: inputName, prompt } = matchedInput;
 
-    const _answers = answers.filter(answer => !selectedPrompt?.match.includes(answer.inputName));
+    const newAnswers = answers.filter(answer => answer.inputName !== inputName);
 
     const newAnswer: IAnswer = {
       question: question!,
@@ -46,18 +49,12 @@ function highlightContent(content: string, promptId: number): JSX.Element[] {
       prompt: prompt!,
       answer: value,
     };
-    _answers.push(newAnswer);
+    newAnswers.push(newAnswer);
 
-    dispatch(setAnswers(_answers));
+    dispatch(setAnswers(newAnswers));
   };
 
-  const getDisplayValue = (matchText: string) => {
-    // Check if there's an existing answer for this input
-    const existingAnswer = answers.find(answer => matchText.includes(answer.inputName));
-    return existingAnswer ? (existingAnswer.answer as string) : matchText;
-  };
-
-  const regex = /(\{\{(.*?)\}\})/g;
+  const regex = /\{\{(\w+):[^}]*\}\}/g;
   let match: RegExpExecArray | null;
   let lastIndex = 0;
   let highlightedContent: JSX.Element[] = [];
@@ -68,16 +65,15 @@ function highlightContent(content: string, promptId: number): JSX.Element[] {
       highlightedContent.push(<span key={key++}>{content.substring(lastIndex, match.index)}</span>);
     }
 
-    const matchText = match[0];
-    const displayValue = getDisplayValue(matchText);
-
+    const inputName = match[1]; // The word between {{ and :
     const isSelectedForInput =
-      selectedPrompt && selectedPrompt.promptId === promptId && selectedPrompt.match === matchText;
+      selectedPrompt && selectedPrompt.promptId === promptId && selectedPrompt.match === inputName;
+    const existingAnswer = (answers.find(answer => inputName === answer.inputName)?.answer as string) || inputName;
 
     highlightedContent.push(
       <Button
-        variant="text"
         key={key++}
+        onClick={() => handleHighlightClick(promptId, inputName)}
         sx={{
           display: "inline-block",
           p: "0px 8px",
@@ -87,23 +83,21 @@ function highlightContent(content: string, promptId: number): JSX.Element[] {
             bgcolor: "secondaryContainer",
           },
         }}
-        onClick={() => handleHighlightClick(promptId, matchText)}
       >
         {isSelectedForInput ? (
           <InputBase
             autoFocus
-            defaultValue={displayValue}
-            size="small"
+            defaultValue={existingAnswer}
             onBlur={event => {
               dispatchUpdateAnswers(event.target.value);
               setSelectedPrompt(null);
             }}
-            onChange={event => {
-              dispatchUpdateAnswers(event.target.value);
+            sx={{
+              color: "primary.main",
             }}
           />
         ) : (
-          <Typography color={"primary.main"}>{displayValue}</Typography>
+          <Typography color={"primary.main"}>{existingAnswer}</Typography>
         )}
       </Button>,
     );
