@@ -37,7 +37,7 @@ function MessageBoxHeader({ onExpand, onGenerate, variant }: Props) {
       direction={"row"}
       alignItems={"center"}
       gap={2}
-      width={"content-fit"}
+      width={variant === "FORM" && selectedChatOption === "FORM" ? "100%" : "content-fit"}
     >
       <Box
         sx={{

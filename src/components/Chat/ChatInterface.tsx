@@ -10,13 +10,13 @@ import type { Templates } from "@/core/api/dto/templates";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 import Button from "@mui/material/Button";
 import ArrowCircleUp from "@/assets/icons/ArrowCircleUp";
+import Box from "@mui/material/Box";
 
 interface Props {
   messages: IMessage[];
   templates: Templates[];
   onGenerate: () => void;
   showGenerateButton: boolean;
-  isValidating: boolean;
   onAbort: () => void;
 }
 
@@ -28,7 +28,6 @@ const ChatInterface = ({ templates, messages, onGenerate, showGenerateButton, on
   const { scrollToBottom } = useScrollToBottom({
     ref: messagesContainerRef,
     content: messages,
-    isGenerating: false,
   });
 
   const showChatOptions = Boolean(!!selectedTemplate && !selectedChatOption);

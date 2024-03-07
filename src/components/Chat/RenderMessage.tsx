@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setIsSimulationStreaming } from "@/core/store/chatSlice";
 import TemplateSuggestions from "./Messages/TemplateSuggestions";
 import FormMessageBox from "@/components/Chat/Messages/FormMessageBox";
-import ExecutionMessageBox from "@/components/Chat/Messages/ExecutionMessageBox/ExecutionMessageBox";
+import ExecutionMessageBox from "@/components/Chat/Messages/ExecutionMessageBox";
 import HeaderWithTextMessage from "@/components/Chat/Messages/HeaderWithTextMessage";
 import QuestionMessage from "@/components/Chat/Messages/QuestionMessage";
 import TextMessage from "@/components/Chat/Messages/TextMessage";
@@ -22,7 +22,7 @@ interface Props {
 
 function RenderMessage({ message, onScrollToBottom, templates, onGenerate, onAbort }: Props) {
   const dispatch = useAppDispatch();
-  const { selectedChatOption, selectedTemplate } = useAppSelector(state => state.chat);
+  const selectedTemplate = useAppSelector(state => state.chat.selectedTemplate);
   return (
     <>
       {message.type === "text" && (
@@ -48,7 +48,7 @@ function RenderMessage({ message, onScrollToBottom, templates, onGenerate, onAbo
           </Stack>
         </Fade>
       )}
-      {message.type === "form" && selectedChatOption === "FORM" && (
+      {message.type === "form" && (
         <Fade
           in={true}
           unmountOnExit

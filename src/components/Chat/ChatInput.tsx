@@ -2,19 +2,16 @@ import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+import CircularProgress from "@mui/material/CircularProgress";
 
-import { ProgressLogo } from "@/components/common/ProgressLogo";
 import MessageSender from "../Prompt/Common/Chat/MessageSender";
-import { CircularProgress } from "@mui/material";
 
 interface ChatInputProps {
   onSubmit: (value: string) => void;
   disabled: boolean;
   isValidating: boolean;
-  onGenerate: () => void;
-  showGenerate: boolean;
 }
-const ChatInput = ({ onSubmit, disabled, isValidating, onGenerate, showGenerate }: ChatInputProps) => {
+const ChatInput = ({ onSubmit, disabled, isValidating }: ChatInputProps) => {
   return (
     <Grid
       position={"relative"}
@@ -57,9 +54,6 @@ const ChatInput = ({ onSubmit, disabled, isValidating, onGenerate, showGenerate 
           <MessageSender
             onSubmit={onSubmit}
             disabled={disabled}
-            mode={"chat"}
-            onGenerate={onGenerate}
-            showGenerate={showGenerate}
           />
         </Box>
       </Stack>

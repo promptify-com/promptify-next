@@ -5,14 +5,13 @@ import { useAppSelector } from "@/hooks/useStore";
 import { Display } from "@/components/Prompt/Common/Display";
 import ExecutionMessageFooter from "@/components/Chat/Messages/ExecutionMessageBox/ExecutionMessageFooter";
 import ExecutionMessageActions from "@/components/Chat/Messages/ExecutionMessageBox/ExecutionMessageActions";
-import ExecutionMessageInstructions from "@/components/Chat/Messages/ExecutionMessageBox/ExecutionMessageInstructions";
 
 interface Props {
   onAbort: () => void;
 }
 
 function ExecutionMessageBox({ onAbort }: Props) {
-  const { selectedTemplate, selectedChatOption } = useAppSelector(state => state.chat);
+  const { selectedTemplate } = useAppSelector(state => state.chat);
 
   if (!selectedTemplate) {
     return;
@@ -27,8 +26,6 @@ function ExecutionMessageBox({ onAbort }: Props) {
         borderRadius={"24px"}
       >
         <MessageBoxHeader variant="EXECUTION" />
-
-        {selectedChatOption === "QA" && <ExecutionMessageInstructions />}
 
         <Stack
           position={"relative"}

@@ -4,7 +4,6 @@ import { createTheme, ThemeProvider, type Palette } from "@mui/material/styles";
 import mix from "polished/lib/color/mix";
 import Stack from "@mui/material/Stack";
 import materialDynamicColors from "material-dynamic-colors";
-
 import { theme } from "@/theme";
 import { Layout } from "@/layout";
 import Landing from "@/components/Chat/Landing";
@@ -19,7 +18,7 @@ import { getExecutionById } from "@/hooks/api/executions";
 import { setSelectedExecution } from "@/core/store/executionsSlice";
 import type { IMUDynamicColorsThemeColor } from "@/core/api/theme";
 
-function ChatPage() {
+export function ChatPage() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const [palette, setPalette] = useState(theme.palette);
@@ -98,6 +97,8 @@ function ChatPage() {
   };
   const dynamicTheme = createTheme({ ...theme, palette });
 
+  const showLanding = !!!messages.length;
+
   useEffect(() => {
     if (!isGenerating && generatedExecution?.data?.length) {
       const allPromptsCompleted = generatedExecution.data.every(execData => execData.isCompleted);
@@ -120,12 +121,19 @@ function ChatPage() {
     }
   };
 
-  const showLanding = !!!messages.length;
-  const showChatInput = selectedChatOption !== "FORM" || !!selectedExecution;
-
   return (
     <ThemeProvider theme={dynamicTheme}>
       <Layout>
+        <Box
+          height={"10px"}
+          width={"100%"}
+          boxShadow={{ md: "0px 4px 8px 17px #FDFBFF" }}
+          position={"fixed"}
+          sx={{
+            zIndex: 2222,
+          }}
+          mt={-3}
+        ></Box>
         <Stack
           sx={{
             width: { md: "950px" },
@@ -134,7 +142,6 @@ function ChatPage() {
             display: "flex",
             flexDirection: "column",
             justifyContent: "flex-end",
-            gap: 1,
           }}
         >
           {showLanding ? (
@@ -157,11 +164,13 @@ function ChatPage() {
 
           {currentUser?.id ? (
             <>
-              {showChatInput && (
+              {(selectedChatOption !== "FORM" || !!selectedExecution) && (
                 <ChatInput
                   onSubmit={handleSubmitInput}
-                  disabled={isValidatingAnswer || disableChatInput || allQuestionsAnswered || isGenerating}
+                  disabled={isValidatingAnswer || disableChatInput || allQuestionsAnswered}
+                  showGenerate={false}
                   isValidating={isValidatingAnswer}
+                  onGenerate={() => {}}
                 />
               )}
             </>
@@ -182,5 +191,3 @@ function ChatPage() {
     </ThemeProvider>
   );
 }
-
-export default ChatPage;
