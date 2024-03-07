@@ -64,8 +64,39 @@ export const chatsApi = baseApi.injectEndpoints({
           }
         },
       }),
+      updateChat: builder.mutation<IChat, { id: number; data: IChatPartial }>({
+        query: ({ id, data }: { data: IChatPartial; id: number }) => ({
+          url: `/api/chat/chats/${id}`,
+          method: "put",
+          data,
+        }),
+        async onQueryStarted({ id: chatId, data: chatData }, { dispatch, queryFulfilled }) {
+          const patchResult = dispatch(
+            chatsApi.util.updateQueryData("getChats", undefined, _chats => {
+              return _chats.map(_chat => ({
+                id: _chat.id,
+                created_at: _chat.created_at,
+                updated_at: new Date().toISOString(),
+                ...(_chat.id === chatId ? chatData : _chat),
+              }));
+            }),
+          );
+
+          try {
+            await queryFulfilled;
+          } catch {
+            patchResult.undo();
+          }
+        },
+      }),
     };
   },
 });
 
-export const { useGetChatsQuery, useGetChatByIdQuery, useCreateChatMutation, useDeleteChatMutation } = chatsApi;
+export const {
+  useGetChatsQuery,
+  useGetChatByIdQuery,
+  useCreateChatMutation,
+  useDeleteChatMutation,
+  useUpdateChatMutation,
+} = chatsApi;

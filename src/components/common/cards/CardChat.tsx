@@ -9,10 +9,11 @@ import { Box, IconButton, Menu, MenuItem, Stack } from "@mui/material";
 import { DeleteForeverOutlined, MoreVert } from "@mui/icons-material";
 import { useState } from "react";
 import Edit from "@mui/icons-material/Edit";
-import { useDeleteChatMutation } from "@/core/api/chats";
+import { useDeleteChatMutation, useUpdateChatMutation } from "@/core/api/chats";
 import { useAppDispatch } from "@/hooks/useStore";
 import { setToast } from "@/core/store/toastSlice";
 import { DeleteDialog } from "@/components/dialog/DeleteDialog";
+import { RenameForm } from "@/components/common/forms/RenameForm";
 
 interface Props {
   chat: IChat;
@@ -25,8 +26,10 @@ export const ChatCard = ({ chat }: Props) => {
   const handleCloseActions = () => setActionsMenuAnchor(null);
   const [imgError, setImgError] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [renameAllow, setRenameAllow] = useState(false);
 
   const [deleteChat] = useDeleteChatMutation();
+  const [updateChat] = useUpdateChatMutation();
 
   const handleDeleteChat = async () => {
     try {
@@ -72,25 +75,39 @@ export const ChatCard = ({ chat }: Props) => {
           />
         </CardMedia>
         <CardContent sx={{ flex: 1, display: "flex", flexDirection: "column", gap: 1, p: 0, overflow: "hidden" }}>
-          <Typography
-            fontSize={14}
-            fontWeight={500}
-            color={"onSurface"}
-            overflow={"hidden"}
-            textOverflow={"ellipsis"}
-          >
-            {chat.title}
-          </Typography>
-          <Typography
-            fontSize={13}
-            fontWeight={400}
-            color={"onSurface"}
-            whiteSpace={"nowrap"}
-            overflow={"hidden"}
-            textOverflow={"ellipsis"}
-          >
-            {chat.title}
-          </Typography>
+          {!renameAllow ? (
+            <>
+              <Typography
+                fontSize={14}
+                fontWeight={500}
+                color={"onSurface"}
+                overflow={"hidden"}
+                textOverflow={"ellipsis"}
+              >
+                {chat.title}
+              </Typography>
+              <Typography
+                fontSize={13}
+                fontWeight={400}
+                color={"onSurface"}
+                whiteSpace={"nowrap"}
+                overflow={"hidden"}
+                textOverflow={"ellipsis"}
+              >
+                {chat.title}
+              </Typography>
+            </>
+          ) : (
+            <RenameForm
+              placeholder="New Chat"
+              initialValue={chat.title}
+              onSave={val => {
+                updateChat({ id: chat.id, data: { title: val } });
+                setRenameAllow(false);
+              }}
+              onCancel={() => setRenameAllow(false)}
+            />
+          )}
         </CardContent>
         <IconButton
           onClick={handleOpenActions}
@@ -113,7 +130,13 @@ export const ChatCard = ({ chat }: Props) => {
             },
           }}
         >
-          <MenuItem sx={menuItemStyle}>
+          <MenuItem
+            onClick={() => {
+              setRenameAllow(true);
+              handleCloseActions();
+            }}
+            sx={menuItemStyle}
+          >
             <Edit />
             <Box>Rename</Box>
           </MenuItem>
