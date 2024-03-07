@@ -26,8 +26,6 @@ function FormInput({ input }: Props) {
   const { isVariantB } = useVariant();
   const { answers, isSimulationStreaming } = useAppSelector(state => state.chat);
   const dispatch = useAppDispatch();
-  const labelRef = useRef<HTMLDivElement | null>(null);
-  const [labelWidth, setLabelWidth] = useState(0);
   const { dispatchNewExecutionData } = useApiAccess();
 
   const { fullName, required, type, name: inputName, question, prompt } = input;
@@ -50,13 +48,6 @@ function FormInput({ input }: Props) {
       Storage.remove("answers");
     }
   }, []);
-
-  useEffect(() => {
-    if (isVariantB) return;
-    if (labelRef.current) {
-      setLabelWidth(labelRef.current.offsetWidth);
-    }
-  }, [fullName, isVariantB]);
 
   const onChange = (value: PromptInputType) => {
     if (isSimulationStreaming) return;
@@ -89,7 +80,7 @@ function FormInput({ input }: Props) {
   return (
     <Stack
       direction={"row"}
-      p={isVariantB ? "6px" : 0}
+      p={"6px"}
       alignItems={"center"}
       gap={1}
       sx={{
@@ -98,15 +89,13 @@ function FormInput({ input }: Props) {
         },
       }}
     >
-      {isVariantB && (
-        <Radio
-          size="small"
-          checked={!!value}
-          value="a"
-          name="radio-buttons"
-        />
-      )}
-      <Box ref={labelRef}>
+      <Radio
+        size="small"
+        checked={!!value}
+        value="a"
+        name="radio-buttons"
+      />
+      <Box>
         <InputLabel
           sx={{
             fontSize: { xs: 12, md: 15 },
@@ -114,7 +103,7 @@ function FormInput({ input }: Props) {
             color: "primary.main",
           }}
         >
-          {fullName} {required && isVariantB && <span>*</span>} :
+          {fullName} {required && <span>*</span>} :
         </InputLabel>
       </Box>
 
@@ -124,7 +113,6 @@ function FormInput({ input }: Props) {
         position={"relative"}
         flex={1}
         width={"100%"}
-        maxWidth={`calc(100% - ${labelWidth}px)`}
       >
         <RenderInputType
           input={input}
@@ -132,34 +120,32 @@ function FormInput({ input }: Props) {
           onChange={onChange}
         />
       </Stack>
-      {isVariantB && (
-        <Stack
-          direction={"row"}
-          alignItems={"center"}
-          gap={"8px"}
-        >
-          <CustomTooltip
-            title={
-              <Typography
-                color={"white"}
-                textTransform={"capitalize"}
-                fontSize={11}
-              >
-                {type}
-              </Typography>
-            }
-          >
-            <IconButton
-              sx={{
-                opacity: 0.3,
-                border: "none",
-              }}
+      <Stack
+        direction={"row"}
+        alignItems={"center"}
+        gap={"8px"}
+      >
+        <CustomTooltip
+          title={
+            <Typography
+              color={"white"}
+              textTransform={"capitalize"}
+              fontSize={11}
             >
-              <HelpOutline />
-            </IconButton>
-          </CustomTooltip>
-        </Stack>
-      )}
+              {type}
+            </Typography>
+          }
+        >
+          <IconButton
+            sx={{
+              opacity: 0.3,
+              border: "none",
+            }}
+          >
+            <HelpOutline />
+          </IconButton>
+        </CustomTooltip>
+      </Stack>
     </Stack>
   );
 }

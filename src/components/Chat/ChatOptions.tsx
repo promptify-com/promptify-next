@@ -37,6 +37,7 @@ function ChatOptions() {
       sx={{
         height: "calc(100vh - 140px)",
       }}
+      p={{ xs: "8px", md: 0 }}
     >
       <Stack
         direction={"column"}
@@ -66,7 +67,9 @@ function ChatOptions() {
           </Typography>
         </Box>
         <Stack
-          direction={"row"}
+          direction={{ xs: "column", md: "row" }}
+          justifyContent={"center"}
+          alignItems={"center"}
           gap={3}
           py={2}
         >
@@ -75,15 +78,16 @@ function ChatOptions() {
             return (
               <Box
                 key={index}
-                width={"460px"}
+                width={"100%"}
                 borderRadius={"24px"}
                 border={"1px solid"}
                 borderColor={"surfaceContainerHighest"}
-                p={2}
+                p={{ xs: 1, md: 2 }}
                 display={"flex"}
-                flexDirection={"column"}
+                flexDirection={{ xs: "row", md: "column" }}
                 gap={2}
-                justifyContent={"space-between"}
+                justifyContent={{ md: "space-between" }}
+                alignItems={"center"}
                 sx={{
                   cursor: "pointer",
                   "&:hover": {
@@ -96,7 +100,8 @@ function ChatOptions() {
                   sx={{
                     position: "relative",
                     borderRadius: "24px",
-                    height: "300px",
+                    height: { xs: "120px", md: "300px" },
+                    width: { xs: "120px", md: "300px" },
                     overflow: "hidden",
                   }}
                 >
@@ -114,9 +119,9 @@ function ChatOptions() {
                     }}
                   />
                 </Box>
-                <Box textAlign={"center"}>
+                <Box textAlign={{ md: "center" }}>
                   <Typography
-                    fontSize={18}
+                    fontSize={{ xs: 15, md: 18 }}
                     fontWeight={400}
                     lineHeight={"28.6px"}
                     letterSpacing={0.17}
@@ -125,7 +130,7 @@ function ChatOptions() {
                   </Typography>
                   <Typography
                     mt={1}
-                    fontSize={16}
+                    fontSize={{ xs: 14, md: 16 }}
                     fontWeight={400}
                     lineHeight={"16.8px"}
                     letterSpacing={0.17}

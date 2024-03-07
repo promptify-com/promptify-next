@@ -20,7 +20,7 @@ function QuestionMessage({ content, isRequired, index }: Props) {
       gap={2}
     >
       <Typography
-        fontSize={16}
+        fontSize={{ xs: 14, md: 16 }}
         fontWeight={400}
         color={"primary.main"}
         lineHeight={"25.4px"}
@@ -30,7 +30,7 @@ function QuestionMessage({ content, isRequired, index }: Props) {
       </Typography>
       <Stack>
         <Typography
-          fontSize={24}
+          fontSize={{ xs: 20, md: 24 }}
           fontWeight={400}
           lineHeight={"38px"}
           letterSpacing={"0.17px"}

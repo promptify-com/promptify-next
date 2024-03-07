@@ -6,10 +6,10 @@ import useScrollToBottom from "@/components/Prompt/Hooks/useScrollToBottom";
 import ChatOptions from "@/components/Chat/ChatOptions";
 import ChatHeading from "@/components/Chat/ChatHeading";
 import RenderMessage from "@/components/Chat/RenderMessage";
-import type { Templates } from "@/core/api/dto/templates";
-import type { IMessage } from "@/components/Prompt/Types/chat";
 import Button from "@mui/material/Button";
 import ArrowCircleUp from "@/assets/icons/ArrowCircleUp";
+import type { Templates } from "@/core/api/dto/templates";
+import type { IMessage } from "@/components/Prompt/Types/chat";
 
 interface Props {
   messages: IMessage[];
@@ -35,6 +35,7 @@ const ChatInterface = ({ templates, messages, onGenerate, showGenerateButton, on
     <Stack
       ref={messagesContainerRef}
       gap={3}
+      p={{ xs: "8px", md: 0 }}
       position={"relative"}
       sx={messagesContainerStyle}
     >
@@ -72,7 +73,7 @@ const ChatInterface = ({ templates, messages, onGenerate, showGenerateButton, on
           direction={"row"}
           justifyContent={"start"}
         >
-          {showGenerateButton && selectedChatOption === "QA" && (
+          {showGenerateButton && (
             <Button
               variant="text"
               sx={{
@@ -105,8 +106,10 @@ const ChatInterface = ({ templates, messages, onGenerate, showGenerateButton, on
 };
 
 const messagesContainerStyle = {
+  pt: { xs: "30px", md: 0 },
   overflowY: "auto",
   overflowX: "hidden",
+
   px: "8px",
   overscrollBehavior: "contain",
   scrollBehavior: "smooth",

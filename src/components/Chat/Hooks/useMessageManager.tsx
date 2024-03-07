@@ -31,12 +31,15 @@ const useMessageManager = () => {
   );
   const currentUser = useAppSelector(state => state.user.currentUser);
 
+  const repeatedExecution = useAppSelector(state => state.executions.repeatedExecution);
+
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [queuedMessages, setQueuedMessages] = useState<IMessage[]>([]);
   const [suggestedTemplates, setSuggestedTemplates] = useState<Templates[]>([]);
   const [isValidatingAnswer, setIsValidatingAnswer] = useState(false);
   const [chatMode, setChatMode] = useState<"automation" | "messages">("automation");
   const [allQuestionsAnswered, setAllQuestionsAnswered] = useState(false);
+  const [welcomeMessage, setWelcomeMessage] = useState("");
 
   const createMessage = ({
     type,
@@ -93,18 +96,17 @@ const useMessageManager = () => {
     const greeting = `Hi, ${currentUser?.first_name ?? currentUser?.username ?? "There"}! Ready to work on`;
     const filteredQuestions = questions.map(_q => _q.question).filter(Boolean);
 
-    const welcomeMessage = createMessage({ type: "text" });
-    welcomeMessage.text = `${greeting} ${selectedTemplate?.title}. ${filteredQuestions.slice(0, 3).join(" ?")}`;
-
-    dispatch(setAnswers([]));
+    const initialMessage = createMessage({ type: "text" });
+    setWelcomeMessage(`${greeting} ${selectedTemplate?.title}. ${filteredQuestions.slice(0, 3).join(" ")}`);
+    initialMessage.text = welcomeMessage;
 
     if (selectedChatOption === "FORM") {
       const formMessage = createMessage({ type: "form", noHeader: true });
-      formMessage.text = welcomeMessage.text;
+      formMessage.text = initialMessage.text;
       setMessages(prevMessages => prevMessages.concat(formMessage));
     } else {
       const headerWithTextMessage = createMessage({ type: "HeaderWithText" });
-      headerWithTextMessage.text = welcomeMessage.text;
+      headerWithTextMessage.text = initialMessage.text;
       const questionMessage = createMessage({
         type: "question",
         isRequired: questions[0].required,
@@ -134,7 +136,7 @@ const useMessageManager = () => {
     dispatch(setInputs(inputs));
 
     return [inputs, params, promptHasContent];
-  }, [selectedChatOption]);
+  }, [selectedChatOption, repeatedExecution]);
 
   const allRequiredInputsAnswered = (): boolean => {
     const requiredQuestionNames = inputs.filter(question => question.required).map(question => question.name);

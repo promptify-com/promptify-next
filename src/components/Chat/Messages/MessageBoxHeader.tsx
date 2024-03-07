@@ -32,43 +32,53 @@ function MessageBoxHeader({ onExpand, onGenerate, variant }: Props) {
   return (
     <Stack
       bgcolor={"surface.2"}
-      p={"16px 24px"}
+      p={{ xs: "8px 16px", md: "16px 24px" }}
       borderRadius={"24px"}
-      direction={"row"}
-      alignItems={"center"}
+      direction={{ xs: "column", md: "row" }}
+      alignItems={{ md: "center" }}
+      justifyContent={"space-between"}
       gap={2}
-      width={variant === "FORM" && selectedChatOption === "FORM" ? "100%" : "content-fit"}
+      width={{
+        xs: "-webkit-fill-available",
+        md: variant === "FORM" && selectedChatOption === "FORM" ? "100%" : "fit-content",
+      }}
     >
-      <Box
-        sx={{
-          zIndex: 0,
-          position: "relative",
-          width: "60px",
-          height: "45px",
-          borderRadius: "16px",
-          overflow: "hidden",
-        }}
+      <Stack
+        direction={"row"}
+        alignItems={"center"}
+        gap={2}
       >
-        <Image
-          src={selectedTemplate?.thumbnail!}
-          alt={"Image 1"}
-          priority={true}
-          fill
-          style={{
-            objectFit: "cover",
+        <Box
+          sx={{
+            zIndex: 0,
+            position: "relative",
+            width: { xs: "100px", md: "60px" },
+            height: { xs: "60px", md: "45px" },
+            borderRadius: "16px",
+            overflow: "hidden",
           }}
-        />
-      </Box>
-      <Typography
-        fontSize={18}
-        fontWeight={500}
-        lineHeight={"25.2px"}
-        sx={{
-          flex: 1,
-        }}
-      >
-        {selectedTemplate?.title}
-      </Typography>
+        >
+          <Image
+            src={selectedTemplate?.thumbnail!}
+            alt={"Image 1"}
+            priority={true}
+            fill
+            style={{
+              objectFit: "cover",
+            }}
+          />
+        </Box>
+        <Typography
+          fontSize={18}
+          fontWeight={500}
+          lineHeight={"25.2px"}
+          sx={{
+            flex: 1,
+          }}
+        >
+          {selectedTemplate?.title}
+        </Typography>
+      </Stack>
       {showHeaderActions && (
         <Stack
           direction={"row"}
@@ -80,6 +90,7 @@ function MessageBoxHeader({ onExpand, onGenerate, variant }: Props) {
             variant="text"
             sx={{
               bgcolor: "surface.4",
+
               "&:hover": {
                 bgcolor: "action.hover",
               },
@@ -93,6 +104,7 @@ function MessageBoxHeader({ onExpand, onGenerate, variant }: Props) {
               bgcolor: "primary.main",
               color: "onPrimary",
               border: "none",
+
               "&:hover": {
                 bgcolor: "primary.main",
                 opacity: 0.9,

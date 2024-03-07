@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Close from "@mui/icons-material/Close";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
@@ -13,16 +13,25 @@ import MessageBoxHeader from "@/components/Chat/Messages/MessageBoxHeader";
 import FormInputs from "@/components/Prompt/Common/Chat/Form";
 import FormPromptContent from "@/components/Chat/FormPromptContent";
 import type { Templates } from "@/core/api/dto/templates";
+import { isDesktopViewPort } from "@/common/helpers";
 
 interface Props {
   content: string;
   template: Templates;
   onGenerate: () => void;
+  onScrollToBottom: () => void;
 }
 
-function FormMessageBox({ content, template, onGenerate }: Props) {
+function FormMessageBox({ content, template, onGenerate, onScrollToBottom }: Props) {
+  const isDesktopView = isDesktopViewPort();
   const [expanded, setExpanded] = useState(true);
   const [formMode, setFormMode] = useState<"INPUT" | "PROMPT_CONTENT">("INPUT");
+
+  useEffect(() => {
+    setTimeout(() => {
+      onScrollToBottom();
+    }, 400);
+  }, [expanded]);
 
   return (
     <Stack>
@@ -42,10 +51,12 @@ function FormMessageBox({ content, template, onGenerate }: Props) {
         sx={{ bgcolor: "transparent", p: 0, m: 0 }}
         elevation={0}
       >
-        <AccordionSummary sx={{ p: 0, m: 0 }}>
+        <AccordionSummary sx={{ p: 0, m: "8px" }}>
           <MessageBoxHeader
             variant="FORM"
-            onExpand={() => setExpanded(true)}
+            onExpand={() => {
+              setExpanded(true);
+            }}
             onGenerate={onGenerate}
           />
         </AccordionSummary>
@@ -66,7 +77,7 @@ function FormMessageBox({ content, template, onGenerate }: Props) {
               justifyContent={"space-between"}
             >
               <Typography
-                fontSize={16}
+                fontSize={{ xs: 14, md: 16 }}
                 lineHeight={"18px"}
               >
                 Prompt instruction:
@@ -83,20 +94,26 @@ function FormMessageBox({ content, template, onGenerate }: Props) {
                     />
                   }
                   label="Form mode"
+                  sx={{
+                    fontSize: 12,
+                  }}
                   labelPlacement="start"
                 />
                 <Button
                   startIcon={<Close />}
                   variant="text"
-                  onClick={() => () => setExpanded(false)}
+                  onClick={() => {
+                    setExpanded(false);
+                  }}
                   sx={{
                     color: "onSurface",
+                    p: { xs: 1, md: "16px 15px" },
                     "&:hover": {
                       bgcolor: "action.hover",
                     },
                   }}
                 >
-                  Close
+                  {isDesktopView && "Close"}
                 </Button>
               </Stack>
             </Stack>

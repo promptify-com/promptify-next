@@ -9,6 +9,7 @@ import { useDeleteExecutionFavoriteMutation, useExecutionFavoriteMutation } from
 import { useMemo, useState } from "react";
 import { SparkExportPopup } from "../../../dialog/SparkExportPopup";
 import { Templates } from "@/core/api/dto/templates";
+import { isDesktopViewPort } from "@/common/helpers";
 
 interface Props {
   template: Templates;
@@ -16,6 +17,8 @@ interface Props {
 
 function ExecutionMessageActions({ template }: Props) {
   const selectedExecution = useAppSelector(state => state.executions.selectedExecution);
+
+  const isDesktopView = isDesktopViewPort();
 
   const [favoriteExecution] = useExecutionFavoriteMutation();
   const [deleteExecutionFavorite] = useDeleteExecutionFavoriteMutation();
@@ -86,26 +89,32 @@ function ExecutionMessageActions({ template }: Props) {
               startIcon={<CreateNewFolderOutlined />}
               sx={{
                 color: "onSurface",
+                fontSize: { xs: 12, md: 16 },
+                minWidth: { xs: "40px", md: "auto" },
+                p: { xs: 1 },
                 "&:hover": {
                   bgcolor: "action.hover",
                 },
               }}
               onClick={saveExecution}
             >
-              Save as document
+              {isDesktopView && "Save as document"}
             </Button>
             <Button
               variant="text"
               startIcon={<ShareOutlined />}
               sx={{
                 color: "onSurface",
+                fontSize: { xs: 12, md: 16 },
+                minWidth: { xs: "40px", md: "auto" },
+                p: { xs: 1 },
                 "&:hover": {
                   bgcolor: "action.hover",
                 },
               }}
               onClick={() => setOpenExportPopup(true)}
             >
-              Export
+              {isDesktopView && "Export"}
             </Button>
           </Stack>
         </Stack>
