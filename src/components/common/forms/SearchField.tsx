@@ -3,25 +3,29 @@ import IconButton from "@mui/material/IconButton";
 import InputBase from "@mui/material/InputBase";
 import Stack from "@mui/material/Stack";
 import Search from "@mui/icons-material/Search";
+import { SxProps } from "@mui/material";
 
 interface Props {
   placeholder: string;
   value: string;
   onChange: (value: string) => void;
-  onPressEnter(): void;
+  onPressEnter?(): void;
+  sx?: SxProps;
 }
 
-const SearchField: React.FC<Props> = ({ placeholder, value, onChange, onPressEnter }) => {
+const SearchField: React.FC<Props> = ({ placeholder, value, onChange, onPressEnter, sx }) => {
   return (
     <Stack
       direction={"row"}
       sx={{
-        width: { xs: "97%", sm: "100%" },
-        paddingRight: "0.5em",
+        width: "calc(100% - 16px)",
+        bgcolor: "surfaceContainerHigh",
+        borderRadius: "999px",
+        p: "8px",
         gap: "5px",
-        display: "flex",
         overflowX: "auto",
         alignItems: "center",
+        ...sx,
       }}
     >
       <IconButton
@@ -41,15 +45,15 @@ const SearchField: React.FC<Props> = ({ placeholder, value, onChange, onPressEnt
         }}
         defaultValue={value}
         placeholder={placeholder}
-        fullWidth
         sx={{
+          flex: 1,
           fontSize: "13px",
           padding: "0px",
           fontFamily: "Poppins",
         }}
         onKeyPress={e => {
           if (e.key === "Enter") {
-            onPressEnter();
+            onPressEnter?.();
           }
         }}
       />
