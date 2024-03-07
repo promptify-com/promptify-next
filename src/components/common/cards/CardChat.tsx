@@ -42,6 +42,9 @@ export const ChatCard = ({ chat }: Props) => {
         >
           <Image
             src={chat.thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
+            onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+              (e.target as HTMLImageElement).src = require("@/assets/images/default-thumbnail.jpg");
+            }}
             alt={chat.title}
             style={{ borderRadius: "50%", objectFit: "cover", width: "100%", height: "100%" }}
             priority={true}

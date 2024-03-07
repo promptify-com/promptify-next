@@ -1,5 +1,6 @@
+import { randomId } from "../../common/helpers";
 import { baseApi } from "./api";
-import { IChat } from "./dto/chats";
+import { IChat, IChatPartial } from "./dto/chats";
 
 export const chatsApi = baseApi.injectEndpoints({
   endpoints: builder => {
@@ -17,13 +18,32 @@ export const chatsApi = baseApi.injectEndpoints({
           method: "get",
         }),
       }),
-      createChat: builder.mutation<IChat, IChat>({
+      createChat: builder.mutation<IChat, IChatPartial>({
         query: (data: IChat) => ({
           url: `/api/chat/chats`,
           method: "post",
           data,
         }),
-        invalidatesTags: ["Chats"],
+        async onQueryStarted(chat, { dispatch, queryFulfilled }) {
+          const patchResult = dispatch(
+            chatsApi.util.updateQueryData("getChats", undefined, _chats => {
+              _chats.unshift({
+                id: randomId(),
+                title: chat.title,
+                thumbnail: chat.thumbnail,
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString(),
+              });
+              return _chats;
+            }),
+          );
+
+          try {
+            await queryFulfilled;
+          } catch {
+            patchResult.undo();
+          }
+        },
       }),
     };
   },

@@ -3,6 +3,8 @@ export interface IChat {
   created_at: string;
   updated_at: string;
   title: string;
-  thumbnail: string;
-  created_by: number;
+  thumbnail?: string;
+  created_by?: number;
 }
+
+export type IChatPartial = Pick<IChat, "title" | "thumbnail">;
