@@ -500,9 +500,9 @@ function TemplateForm({ type = "create", templateData, onSaved, onClose, darkMod
                 <Select
                   disabled={loading}
                   labelId="execution-label"
-                  value={formik.values.example_execution_id}
+                  value={formik.values.example_execution}
                   onChange={event => {
-                    formik.setFieldValue("example_execution_id", event.target.value);
+                    formik.setFieldValue("example_execution", event.target.value);
                   }}
                 >
                   {executions?.map(execution => (

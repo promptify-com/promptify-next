@@ -122,7 +122,7 @@ const useTemplateForm = ({ type, template, uploadedFile, onSaved }: Props) => {
       status: template?.status ?? "DRAFT",
       is_internal: template?.is_internal ?? false,
       ...(type === "edit" && {
-        example_execution_id: template?.example_execution?.id ?? null,
+        example_execution: template?.example_execution?.id ?? null,
       }),
       ...(type === "create" && { prompts_list: [] }),
     },
