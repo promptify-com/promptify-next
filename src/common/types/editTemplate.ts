@@ -20,6 +20,6 @@ export interface IEditTemplate {
   meta_description: string;
   meta_keywords: string;
   status: TemplateStatus;
-  example_execution_id?: number | null;
+  example_execution?: number | null;
   is_internal?: boolean;
 }
