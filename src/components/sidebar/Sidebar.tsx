@@ -1,7 +1,8 @@
+import { useState } from "react";
+import lazy from "next/dynamic";
 import { useRouter } from "next/router";
 import StickyNote2 from "@mui/icons-material/StickyNote2";
 import Home from "@mui/icons-material/Home";
-import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
 import Grid from "@mui/material/Grid";
 import HelpRounded from "@mui/icons-material/HelpRounded";
@@ -19,12 +20,17 @@ import useBrowser from "@/hooks/useBrowser";
 import { BLOG_URL } from "@/common/constants";
 import type { NavItem } from "@/common/types/sidebar";
 
+const FiltersDrawerLazy = lazy(() => import("./FiltersDrawer"), {
+  ssr: false,
+});
+
 function Sidebar() {
   const router = useRouter();
   const { isMobile } = useBrowser();
-
+  const [expandedOnHover, setExpandedOnHover] = useState<boolean>(false);
   const pathname = router.pathname;
   const isPromptsPage = pathname.split("/")[1] === "explore";
+  const isChatPage = pathname.split("/")[1] === "chat";
   const isAutomationPage = pathname.split("/")[1] === "automation";
   const isValidUser = useAppSelector(isValidUserFn);
   const navItems: NavItem[] = [
@@ -99,15 +105,32 @@ function Sidebar() {
   }
 
   return (
-    <Drawer
-      open
-      variant="permanent"
-      anchor="left"
+    <Grid
+      onMouseEnter={() => {
+        if (!isPromptsPage) {
+          return;
+        }
+
+        setExpandedOnHover(true);
+      }}
+      onMouseLeave={() => {
+        if (!isPromptsPage) {
+          return;
+        }
+
+        setExpandedOnHover(false);
+      }}
       sx={{
         display: { xs: "none", md: "flex" },
-        "& .MuiDrawer-paper": {
-          borderRight: "none",
-        },
+        "flex-direction": "column",
+        height: "100%",
+        flex: "1 0 auto",
+        "z-index": 1200,
+        position: "fixed",
+        top: 0,
+        outline: 0,
+        left: 0,
+        borderRight: "none",
       }}
     >
       <Grid
@@ -135,7 +158,8 @@ function Sidebar() {
           <SidebarItem navItem={learnHelpNavItem} />
         </List>
       </Grid>
-    </Drawer>
+      {(isPromptsPage || isChatPage) && <FiltersDrawerLazy expandedOnHover={expandedOnHover} />}
+    </Grid>
   );
 }
 

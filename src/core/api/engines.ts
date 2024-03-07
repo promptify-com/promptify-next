@@ -11,6 +11,7 @@ export const enginesApi = baseApi.injectEndpoints({
         }),
         providesTags: ["Engines"],
         keepUnusedDataFor: 60 * 60,
+        transformResponse: (response: Engine[]) => response.map(engine => ({ ...engine, type: "engine" })),
       }),
     };
   },
