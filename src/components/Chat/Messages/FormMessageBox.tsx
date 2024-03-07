@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Close from "@mui/icons-material/Close";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
@@ -45,7 +45,9 @@ function FormMessageBox({ content, template, onGenerate }: Props) {
         <AccordionSummary sx={{ p: 0, m: 0 }}>
           <MessageBoxHeader
             variant="FORM"
-            onExpand={() => setExpanded(true)}
+            onExpand={() => {
+              setExpanded(true);
+            }}
             onGenerate={onGenerate}
           />
         </AccordionSummary>
@@ -88,7 +90,9 @@ function FormMessageBox({ content, template, onGenerate }: Props) {
                 <Button
                   startIcon={<Close />}
                   variant="text"
-                  onClick={() => () => setExpanded(false)}
+                  onClick={() => {
+                    setExpanded(false);
+                  }}
                   sx={{
                     color: "onSurface",
                     "&:hover": {
