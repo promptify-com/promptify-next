@@ -3,18 +3,14 @@ import Stack from "@mui/material/Stack";
 import TagFacesSharp from "@mui/icons-material/TagFacesSharp";
 import MoodBadSharp from "@mui/icons-material/MoodBadSharp";
 import Button from "@mui/material/Button";
-import CheckCircle from "@mui/icons-material/CheckCircle";
-import { Replay } from "@mui/icons-material";
-import { alpha } from "@mui/material/styles";
+import Replay from "@mui/icons-material/Replay";
+
 import { useUpdateExecutionMutation } from "@/core/api/executions";
-import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { useAppDispatch } from "@/hooks/useStore";
 import { setAnswers } from "@/core/store/chatSlice";
 import { setRepeatedExecution } from "@/core/store/executionsSlice";
-import { theme } from "@/theme";
-import { Happy } from "@/assets/icons/Happy";
-import { Sad } from "@/assets/icons/Sad";
-import useVariant from "@/components/Prompt/Hooks/useVariant";
 import CustomTooltip from "./CustomTooltip";
+import { setToast } from "@/core/store/toastSlice";
 import type { FeedbackType, TemplatesExecutions } from "@/core/api/dto/templates";
 
 interface Props {
@@ -26,12 +22,8 @@ interface Props {
 export default function FeedbackThumbs({ vertical, execution, variant }: Props) {
   const [updateExecution] = useUpdateExecutionMutation();
   const dispatch = useAppDispatch();
-  const { isVariantB } = useVariant();
-
-  const activeSideBarLink = useAppSelector(state => state.template.activeSideBarLink);
 
   const [feedback, setFeedback] = useState(execution.feedback);
-  const [feedbackMessage, setFeedbackMessage] = useState("");
 
   const liked = feedback === "LIKED";
   const disliked = feedback === "DISLIKED";
@@ -48,8 +40,7 @@ export default function FeedbackThumbs({ vertical, execution, variant }: Props) 
         },
       };
       updateExecution(feedbackData);
-      setFeedbackMessage("Thank you for your Feedback");
-      setTimeout(() => setFeedbackMessage(""), 2000);
+      dispatch(setToast({ message: "Thank you for your Feedback", severity: "success" }));
     }
   };
 
@@ -73,111 +64,71 @@ export default function FeedbackThumbs({ vertical, execution, variant }: Props) 
           .flat()
       : [];
     dispatch(setAnswers(newAnswers));
-
-    if (isVariantB) {
-      setTimeout(() => {
-        const inputElement = document.getElementById("accordion-input");
-        if (inputElement) {
-          inputElement.scrollIntoView({ behavior: "smooth" });
-        }
-      }, 200);
-    }
   };
 
   return (
-    <>
-      {feedbackMessage && (
-        <Stack
-          gap={1}
-          direction={"row"}
-          alignItems={"center"}
+    <Stack
+      direction={{ xs: "row", md: vertical ? "column" : "row" }}
+      alignItems={"center"}
+      flexWrap={"wrap"}
+      gap={1}
+    >
+      <CustomTooltip title={isIconVariant && "Good"}>
+        <Button
+          onClick={() => handleFeedback("LIKED")}
+          variant="text"
+          startIcon={
+            <TagFacesSharp
+              sx={{
+                color: liked ? "green" : "inherit",
+              }}
+            />
+          }
           sx={{
-            bgcolor: "primary.main",
-            position: "fixed",
-            top: { xs: isVariantB ? "140px" : "240px", md: isVariantB ? "180px" : "240px" },
-            right: { md: isVariantB && activeSideBarLink ? "55%" : !isVariantB && !activeSideBarLink ? "27%" : "45%" },
-            color: "white",
-            p: 1,
-            borderRadius: "16px",
-            fontSize: 12,
+            ...buttonStyle,
+            ...(isIconVariant && minButtonStyle),
+            border: "none",
+            bgcolor: "transparent",
           }}
         >
-          <CheckCircle sx={{ fontSize: 16 }} />
-          {feedbackMessage}
-        </Stack>
-      )}
-
-      <Stack
-        direction={{ xs: "row", md: vertical ? "column" : "row" }}
-        alignItems={"center"}
-        flexWrap={"wrap"}
-        gap={1}
-      >
-        <CustomTooltip title={isIconVariant && "Good"}>
-          <Button
-            onClick={() => handleFeedback("LIKED")}
-            variant="text"
-            startIcon={
-              isVariantB ? (
-                <TagFacesSharp
-                  sx={{
-                    color: liked ? "green" : "inherit",
-                  }}
-                />
-              ) : (
-                <Happy />
-              )
-            }
-            sx={{
-              ...buttonStyle,
-              ...(isIconVariant && minButtonStyle),
-              border: !isVariantB && liked ? "1px solid #ABE88F8F" : true ? "none" : "1px solid",
-              bgcolor: !isVariantB && liked ? "#ABE88F36" : "transparent",
-            }}
-          >
-            {!isIconVariant && "Good"}
-          </Button>
-        </CustomTooltip>
-        <CustomTooltip title={isIconVariant && "Sad"}>
-          <Button
-            onClick={() => handleFeedback("DISLIKED")}
-            variant="text"
-            startIcon={
-              isVariantB ? (
-                <MoodBadSharp
-                  sx={{
-                    color: disliked ? "red" : "inherit",
-                  }}
-                />
-              ) : (
-                <Sad />
-              )
-            }
-            sx={{
-              ...buttonStyle,
-              ...(isIconVariant && minButtonStyle),
-              border: !isVariantB && disliked ? "1px solid #FF624D8F" : true ? "none" : "1px solid",
-              bgcolor: !isVariantB && disliked ? "#FF624D36" : "transparent",
-            }}
-          >
-            {!isIconVariant && "Bad"}
-          </Button>
-        </CustomTooltip>
-        <CustomTooltip title={isIconVariant && "Repeat"}>
-          <Button
-            onClick={handleRepeat}
-            variant="text"
-            startIcon={<Replay />}
-            sx={{
-              ...buttonStyle,
-              ...(isIconVariant && minButtonStyle),
-            }}
-          >
-            {!isIconVariant && "Try again"}
-          </Button>
-        </CustomTooltip>
-      </Stack>
-    </>
+          {!isIconVariant && "Good"}
+        </Button>
+      </CustomTooltip>
+      <CustomTooltip title={isIconVariant && "Sad"}>
+        <Button
+          onClick={() => handleFeedback("DISLIKED")}
+          variant="text"
+          startIcon={
+            <MoodBadSharp
+              sx={{
+                color: disliked ? "red" : "inherit",
+              }}
+            />
+          }
+          sx={{
+            ...buttonStyle,
+            ...(isIconVariant && minButtonStyle),
+            border: "none",
+            bgcolor: "transparent",
+          }}
+        >
+          {!isIconVariant && "Bad"}
+        </Button>
+      </CustomTooltip>
+      <CustomTooltip title={isIconVariant && "Repeat"}>
+        <Button
+          onClick={handleRepeat}
+          variant="text"
+          startIcon={<Replay />}
+          sx={{
+            ...buttonStyle,
+            ...(isIconVariant && minButtonStyle),
+          }}
+        >
+          {!isIconVariant && "Try again"}
+        </Button>
+      </CustomTooltip>
+    </Stack>
   );
 }
 

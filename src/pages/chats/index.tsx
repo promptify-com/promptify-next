@@ -146,8 +146,9 @@ function Chat() {
               showGenerateButton={showGenerateButton}
               onAbort={abortConnection}
               onGenerate={() => {
-                setChatMode("automation");
+                setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "spark"));
                 handleGenerateExecution();
+                setChatMode("automation");
                 if (selectedChatOption === "QA") {
                   setAllQuestionsAnswered(false);
                 }

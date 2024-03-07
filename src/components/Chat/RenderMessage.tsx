@@ -60,6 +60,7 @@ function RenderMessage({ message, onScrollToBottom, templates, onGenerate, onAbo
               content={message.text}
               template={selectedTemplate!}
               onGenerate={onGenerate}
+              onScrollToBottom={onScrollToBottom}
             />
           </Stack>
         </Fade>

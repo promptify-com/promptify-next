@@ -18,11 +18,18 @@ interface Props {
   content: string;
   template: Templates;
   onGenerate: () => void;
+  onScrollToBottom: () => void;
 }
 
-function FormMessageBox({ content, template, onGenerate }: Props) {
+function FormMessageBox({ content, template, onGenerate, onScrollToBottom }: Props) {
   const [expanded, setExpanded] = useState(true);
   const [formMode, setFormMode] = useState<"INPUT" | "PROMPT_CONTENT">("INPUT");
+
+  useEffect(() => {
+    setTimeout(() => {
+      onScrollToBottom();
+    }, 400);
+  }, [expanded]);
 
   return (
     <Stack>
