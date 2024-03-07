@@ -9,6 +9,8 @@ import type { IPromptInput } from "@/common/types/prompt";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IAnswer, IMessage, MessageType } from "@/components/Prompt/Types/chat";
 import type { PromptParams } from "@/core/api/dto/prompts";
+import { useCreateChatMutation } from "@/core/api/chats";
+import { setSelectedChat } from "@/core/store/chatSlice";
 
 interface CreateMessageProps {
   type: MessageType;
@@ -26,7 +28,7 @@ const useMessageManager = () => {
 
   const { prepareAndRemoveDuplicateInputs } = useChatBox();
 
-  const { selectedTemplate, isSimulationStreaming, selectedChatOption, inputs, answers } = useAppSelector(
+  const { selectedTemplate, isSimulationStreaming, selectedChatOption, selectedChat, inputs, answers } = useAppSelector(
     state => state.chat,
   );
   const currentUser = useAppSelector(state => state.user.currentUser);
@@ -40,6 +42,7 @@ const useMessageManager = () => {
   const [chatMode, setChatMode] = useState<"automation" | "messages">("automation");
   const [allQuestionsAnswered, setAllQuestionsAnswered] = useState(false);
   const [welcomeMessage, setWelcomeMessage] = useState("");
+  const [createChat] = useCreateChatMutation();
 
   const createMessage = ({
     type,
@@ -150,10 +153,24 @@ const useMessageManager = () => {
     return requiredQuestionNames.every(name => answeredQuestionNamesSet.has(name));
   };
 
-  const automationSubmitMessage = async (input: string) => {
-    if (!input) {
-      return;
+  const createNewChat = async () => {
+    try {
+      const newChat = await createChat({
+        title: "Welcome",
+      }).unwrap();
+      dispatch(setSelectedChat(newChat));
+    } catch (err) {
+      console.error("Error creating a new chat: ", err);
     }
+  };
+
+  const automationSubmitMessage = async (input: string) => {
+    if (!input) return;
+
+    if (!selectedChat) {
+      createNewChat();
+    }
+
     const userMessage = createMessage({ type: "text", fromUser: true });
     userMessage.text = input;
 

@@ -9,10 +9,11 @@ import { DeleteForeverOutlined, MoreVert } from "@mui/icons-material";
 import { useState } from "react";
 import Edit from "@mui/icons-material/Edit";
 import { useDeleteChatMutation, useUpdateChatMutation } from "@/core/api/chats";
-import { useAppDispatch } from "@/hooks/useStore";
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setToast } from "@/core/store/toastSlice";
 import { DeleteDialog } from "@/components/dialog/DeleteDialog";
 import { RenameForm } from "@/components/common/forms/RenameForm";
+import { setSelectedChat } from "@/core/store/chatSlice";
 
 interface Props {
   chat: IChat;
@@ -29,12 +30,16 @@ export const ChatCard = ({ chat, active, onClick }: Props) => {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [renameAllow, setRenameAllow] = useState(false);
 
+  const selectedChat = useAppSelector(state => state.chat.selectedChat);
   const [deleteChat] = useDeleteChatMutation();
   const [updateChat] = useUpdateChatMutation();
 
   const handleDeleteChat = async () => {
     try {
       await deleteChat(chat.id);
+      if (selectedChat?.id === chat.id) {
+        dispatch(setSelectedChat(undefined));
+      }
     } catch (_) {
       dispatch(setToast({ message: "Chat not deleted! Please try again.", severity: "error", duration: 6000 }));
     }

@@ -24,7 +24,7 @@ export default function ChatsHistory({}: Props) {
       }).unwrap();
       handleClickChat(newChat);
     } catch (_) {
-      dispatch(setToast({ message: "Chat not deleted! Please try again.", severity: "error", duration: 6000 }));
+      dispatch(setToast({ message: "Chat not created! Please try again.", severity: "error", duration: 6000 }));
     }
   };
 
