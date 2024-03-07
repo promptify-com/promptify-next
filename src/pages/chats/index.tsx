@@ -19,7 +19,7 @@ import { getExecutionById } from "@/hooks/api/executions";
 import { setSelectedExecution } from "@/core/store/executionsSlice";
 import type { IMUDynamicColorsThemeColor } from "@/core/api/theme";
 
-function ChatPage() {
+function Chat() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const [palette, setPalette] = useState(theme.palette);
@@ -183,4 +183,4 @@ function ChatPage() {
   );
 }
 
-export default ChatPage;
+export default Chat;
