@@ -25,24 +25,15 @@ export const chatsApi = baseApi.injectEndpoints({
           data,
         }),
         async onQueryStarted(chat, { dispatch, queryFulfilled }) {
-          const patchResult = dispatch(
-            chatsApi.util.updateQueryData("getChats", undefined, _chats => {
-              _chats.unshift({
-                id: randomId(),
-                title: chat.title,
-                thumbnail: chat.thumbnail,
-                created_at: new Date().toISOString(),
-                updated_at: new Date().toISOString(),
-              });
-              return _chats;
-            }),
-          );
-
           try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
+            const newChat = await queryFulfilled;
+            dispatch(
+              chatsApi.util.updateQueryData("getChats", undefined, _chats => {
+                _chats.unshift(newChat.data);
+                return _chats;
+              }),
+            );
+          } catch {}
         },
       }),
       deleteChat: builder.mutation({

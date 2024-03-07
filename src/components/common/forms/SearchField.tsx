@@ -10,10 +10,11 @@ interface Props {
   value: string;
   onChange: (value: string) => void;
   onPressEnter?(): void;
+  disabled?: boolean;
   sx?: SxProps;
 }
 
-const SearchField: React.FC<Props> = ({ placeholder, value, onChange, onPressEnter, sx }) => {
+const SearchField: React.FC<Props> = ({ placeholder, value, onChange, onPressEnter, disabled, sx }) => {
   return (
     <Stack
       direction={"row"}
@@ -45,6 +46,7 @@ const SearchField: React.FC<Props> = ({ placeholder, value, onChange, onPressEnt
         }}
         defaultValue={value}
         placeholder={placeholder}
+        disabled={disabled}
         sx={{
           flex: 1,
           fontSize: "13px",

@@ -10,11 +10,9 @@ interface Props {}
 
 export default function ChatsHistory({}: Props) {
   const dispatch = useAppDispatch();
-  const { data: chats } = useGetChatsQuery();
+  const { data: chats, isLoading: loadingChats } = useGetChatsQuery();
   const [createChat] = useCreateChatMutation();
   const [search, setSearch] = useState("");
-
-  const filteredChats = chats?.filter(chat => chat.title.toLowerCase().includes(search));
 
   const handleNewChat = async () => {
     try {
@@ -26,6 +24,9 @@ export default function ChatsHistory({}: Props) {
     }
   };
 
+  const filteredChats = chats?.filter(chat => chat.title.toLowerCase().includes(search));
+  const emptyChats = Boolean(!chats?.length || chats?.length === 0);
+
   return (
     <Stack
       gap={4}
@@ -36,6 +37,7 @@ export default function ChatsHistory({}: Props) {
           placeholder="Search in chats..."
           value={search}
           onChange={val => setSearch(val.toLowerCase())}
+          disabled={emptyChats}
         />
         <Button
           onClick={handleNewChat}
@@ -60,24 +62,25 @@ export default function ChatsHistory({}: Props) {
         >
           Recent:
         </Typography>
-        {filteredChats && filteredChats?.length > 0 ? (
-          filteredChats.map(chat => (
-            <ChatCard
-              key={chat.id}
-              chat={chat}
-            />
-          ))
-        ) : (
-          <Typography
-            fontSize={14}
-            fontWeight={400}
-            color={"onSurface"}
-            mt={"30px"}
-            textAlign={"center"}
-          >
-            No chat yet!
-          </Typography>
-        )}
+        {!loadingChats &&
+          (filteredChats && filteredChats?.length > 0 ? (
+            filteredChats.map(chat => (
+              <ChatCard
+                key={chat.id}
+                chat={chat}
+              />
+            ))
+          ) : (
+            <Typography
+              fontSize={14}
+              fontWeight={400}
+              color={"onSurface"}
+              mt={"30px"}
+              textAlign={"center"}
+            >
+              Let&apos;s start new chat!
+            </Typography>
+          ))}
       </Stack>
     </Stack>
   );
