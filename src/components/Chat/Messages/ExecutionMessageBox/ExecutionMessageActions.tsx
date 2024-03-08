@@ -10,6 +10,8 @@ import { useMemo, useState } from "react";
 import { SparkExportPopup } from "../../../dialog/SparkExportPopup";
 import { Templates } from "@/core/api/dto/templates";
 import { isDesktopViewPort } from "@/common/helpers";
+import { setToast } from "@/core/store/toastSlice";
+import { FolderSpecialOutlined } from "@mui/icons-material";
 
 interface Props {
   template: Templates;
@@ -24,6 +26,7 @@ function ExecutionMessageActions({ template }: Props) {
   const [deleteExecutionFavorite] = useDeleteExecutionFavoriteMutation();
 
   const [openExportPopup, setOpenExportPopup] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
 
   const activeExecution = useMemo(() => {
     if (selectedExecution) {
@@ -46,8 +49,12 @@ function ExecutionMessageActions({ template }: Props) {
     try {
       if (selectedExecution.is_favorite) {
         await deleteExecutionFavorite(selectedExecution.id);
+        setToast({ message: "Execution was successfully removed from your documents", severity: "success" });
+        setIsLiked(false);
       } else {
         await favoriteExecution(selectedExecution.id);
+        setToast({ message: "Execution was successfully added to your documents", severity: "success" });
+        setIsLiked(true);
       }
     } catch (error) {
       console.error(error);
@@ -86,7 +93,7 @@ function ExecutionMessageActions({ template }: Props) {
 
             <Button
               variant="text"
-              startIcon={<CreateNewFolderOutlined />}
+              startIcon={isLiked ? <FolderSpecialOutlined /> : <CreateNewFolderOutlined />}
               sx={{
                 color: "onSurface",
                 fontSize: { xs: 12, md: 16 },
@@ -98,7 +105,7 @@ function ExecutionMessageActions({ template }: Props) {
               }}
               onClick={saveExecution}
             >
-              {isDesktopView && "Save as document"}
+              {isDesktopView && <>{isLiked ? "Remove from documents" : "Save as document"}</>}
             </Button>
             <Button
               variant="text"

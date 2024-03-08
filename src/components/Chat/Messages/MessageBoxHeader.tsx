@@ -5,7 +5,6 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 
 import { useAppSelector } from "@/hooks/useStore";
-import ArrowCircleUp from "@/assets/icons/ArrowCircleUp";
 import RunButton from "../RunButton";
 
 interface Props {
