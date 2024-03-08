@@ -49,10 +49,7 @@ function FormFields({ messageType, template }: FormLayoutProps) {
   let lastPromptId: number;
 
   return (
-    <Stack
-      gap={1}
-      pb={"10px"}
-    >
+    <Stack gap={1}>
       {localInputs.map((input, index) => {
         const currentPrompt = template?.prompts.find(prompt => prompt.id === input.prompt);
         const shouldDisplayTitleAndEngine = lastPromptId !== input.prompt;
@@ -61,7 +58,7 @@ function FormFields({ messageType, template }: FormLayoutProps) {
           <Stack key={index}>
             {shouldDisplayTitleAndEngine && (
               <Stack
-                px={"16px"}
+                px={{ xs: "16px", md: "24px" }}
                 py={"16px"}
                 direction={"row"}
                 gap={1}

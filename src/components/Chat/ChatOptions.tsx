@@ -7,6 +7,7 @@ import type { ChatOption } from "@/components/Prompt/Types/chat";
 import { useAppDispatch } from "@/hooks/useStore";
 import { setSelectedChatOption } from "@/core/store/chatSlice";
 import Image from "../design-system/Image";
+import Storage from "@/common/storage";
 
 interface Option {
   imagePath: string;
@@ -94,7 +95,10 @@ function ChatOptions() {
                     bgcolor: "action.hover",
                   },
                 }}
-                onClick={() => dispatch(setSelectedChatOption(option.type))}
+                onClick={() => {
+                  dispatch(setSelectedChatOption(option.type));
+                  Storage.set("chatOption", JSON.stringify(option.type));
+                }}
               >
                 <Box
                   sx={{

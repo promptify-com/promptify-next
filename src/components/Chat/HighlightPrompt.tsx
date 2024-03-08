@@ -66,9 +66,9 @@ const HighlightContent = ({ content, promptId }: Props) => {
 
       const inputName = match[1];
       const isRequired = inputs.find(input => input.name === inputName)?.required;
-      const isSelectedForInput =
-        selectedPrompt && selectedPrompt.promptId === promptId && selectedPrompt.match === inputName;
-      const existingAnswer = (answers.find(answer => inputName === answer.inputName)?.answer as string) || inputName;
+      const isSelectedForInput = selectedPrompt && selectedPrompt.match === inputName;
+      const answer = answers.find(answer => inputName === answer.inputName)?.answer as string;
+      const existingAnswer = answer || inputName;
 
       highlightedContent.push(
         <Box
@@ -99,7 +99,9 @@ const HighlightContent = ({ content, promptId }: Props) => {
               sx={{ color: "primary.main" }}
             />
           ) : (
-            <Typography color="primary.main">{existingAnswer + `${isRequired && "*"}`}</Typography>
+            <Typography color="primary.main">
+              {existingAnswer + `${isRequired && inputName === existingAnswer ? "*" : ""}`}
+            </Typography>
           )}
         </Box>,
       );

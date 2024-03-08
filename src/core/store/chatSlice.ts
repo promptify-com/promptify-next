@@ -5,6 +5,7 @@ import type { ChatMode, ChatOption, IAnswer, IMessage } from "@/components/Promp
 import type { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
 import type { ICredentialInput } from "@/components/Automation/types";
 import type { Templates } from "@/core/api/dto/templates";
+import Storage from "@/common/storage";
 
 export interface ExecutionsProps {
   answers: IAnswer[];
@@ -32,7 +33,7 @@ const initialState: ExecutionsProps = {
   tmpMessages: [],
   MessageSenderValue: "",
   selectedTemplate: undefined,
-  selectedChatOption: undefined,
+  selectedChatOption: Storage.get("chatOption"),
   chatMode: "automation",
 };
 
