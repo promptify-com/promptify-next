@@ -13,6 +13,7 @@ import ExecutionExample from "./ExecutionExample";
 import ApiAccess from "./ApiAccess";
 import Feedback from "./Feedback";
 import ClientOnly from "@/components/base/ClientOnly";
+import useBrowser from "@/hooks/useBrowser";
 
 const ScrollTabs: Link[] = [
   {
@@ -43,6 +44,7 @@ interface Props {
 }
 
 export default function ContentContainer({ template, tabsFixed }: Props) {
+  const { isMobile } = useBrowser();
   const [selectedTab, setSelectedTab] = useState<Link>(ScrollTabs[0]);
 
   const handleTabChange = (tab: Link) => {
@@ -94,11 +96,11 @@ export default function ContentContainer({ template, tabsFixed }: Props) {
       <Box
         id={"sections_tabs"}
         sx={{
-          position: tabsFixed ? "sticky" : "relative",
+          position: { xs: "sticky", md: tabsFixed ? "sticky" : "relative" },
           zIndex: 999,
           top: 0,
           bgcolor: "surfaceContainerLowest",
-          p: { xs: "2px 16px", md: "32px 36px" },
+          p: { xs: "8px 16px", md: "32px 36px" },
         }}
       >
         <Stack
@@ -122,7 +124,7 @@ export default function ContentContainer({ template, tabsFixed }: Props) {
                 sx={{
                   flex: 1,
                   minWidth: "fit-content",
-                  p: { xs: "8px", md: "8px 16px" },
+                  p: "8px 16px",
                   color: selected ? "onSecondary" : "onSurface",
                   bgcolor: selected ? "secondary.main" : "transparent",
                   ":hover": {
@@ -130,7 +132,7 @@ export default function ContentContainer({ template, tabsFixed }: Props) {
                   },
                 }}
               >
-                {selected && tab.title}
+                {(!isMobile || selected) && tab.title}
               </Button>
             );
           })}

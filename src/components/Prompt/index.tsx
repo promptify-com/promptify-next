@@ -150,7 +150,7 @@ function TemplatePage({ template, popup }: Props) {
         <Box
           ref={tabsRef}
           flex={4}
-          order={1}
+          order={{ xs: 1, md: 0 }}
           height={{
             md: `calc(100% - ${popup ? "24px" : "0px"})`,
           }}
