@@ -143,7 +143,10 @@ function Chat() {
           ) : (
             <Stack
               sx={{
-                height: { xs: "calc(100% - 120px)", md: "calc(100% - 90px)" },
+                height: {
+                  xs: showChatInput ? "calc(100% - 120px)" : "calc(100% - 60px)",
+                  md: showChatInput ? "calc(100% - 90px)" : "100%",
+                },
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "flex-end",
