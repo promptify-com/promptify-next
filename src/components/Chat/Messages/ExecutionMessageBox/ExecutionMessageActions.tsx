@@ -91,7 +91,7 @@ function ExecutionMessageActions({ template }: Props) {
                 color: "onSurface",
                 fontSize: { xs: 12, md: 16 },
                 minWidth: { xs: "40px", md: "auto" },
-                p: { xs: 1 },
+                p: { xs: 1, md: "4px 20px" },
                 "&:hover": {
                   bgcolor: "action.hover",
                 },
@@ -107,7 +107,7 @@ function ExecutionMessageActions({ template }: Props) {
                 color: "onSurface",
                 fontSize: { xs: 12, md: 16 },
                 minWidth: { xs: "40px", md: "auto" },
-                p: { xs: 1 },
+                p: { xs: 1, md: "4px 20px" },
                 "&:hover": {
                   bgcolor: "action.hover",
                 },

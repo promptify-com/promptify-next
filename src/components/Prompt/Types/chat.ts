@@ -42,3 +42,5 @@ export interface IAnswer {
 }
 
 export type ChatOption = "QA" | "FORM";
+
+export type ChatMode = "messages" | "automation";

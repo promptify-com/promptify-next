@@ -6,8 +6,7 @@ import useScrollToBottom from "@/components/Prompt/Hooks/useScrollToBottom";
 import ChatOptions from "@/components/Chat/ChatOptions";
 import ChatHeading from "@/components/Chat/ChatHeading";
 import RenderMessage from "@/components/Chat/RenderMessage";
-import Button from "@mui/material/Button";
-import ArrowCircleUp from "@/assets/icons/ArrowCircleUp";
+import RunButton from "@/components/Chat/RunButton";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IMessage } from "@/components/Prompt/Types/chat";
 
@@ -35,12 +34,11 @@ const ChatInterface = ({ templates, messages, onGenerate, showGenerateButton, on
     <Stack
       ref={messagesContainerRef}
       gap={3}
-      p={{ xs: "8px", md: 0 }}
+      p={{ xs: "8px", md: "16px" }}
       position={"relative"}
       sx={messagesContainerStyle}
     >
       <Stack
-        pt={{ md: "38px" }}
         direction={"column"}
         gap={3}
       >
@@ -73,31 +71,14 @@ const ChatInterface = ({ templates, messages, onGenerate, showGenerateButton, on
           direction={"row"}
           justifyContent={"start"}
         >
-          {showGenerateButton && (
-            <Button
-              variant="text"
-              sx={{
-                bgcolor: "primary.main",
-                color: "onPrimary",
-                border: "none",
-                "&:hover": {
-                  bgcolor: "primary.main",
-                  opacity: 0.9,
-                },
-                ":disabled": {
-                  bgcolor: "surface.5",
-                  cursor: "not-allowed",
-                },
-              }}
-              endIcon={<ArrowCircleUp />}
+          {showGenerateButton && selectedChatOption === "QA" && (
+            <RunButton
               onClick={() => {
                 if (typeof onGenerate === "function") {
                   onGenerate();
                 }
               }}
-            >
-              Start
-            </Button>
+            />
           )}
         </Stack>
       </Stack>
@@ -106,7 +87,6 @@ const ChatInterface = ({ templates, messages, onGenerate, showGenerateButton, on
 };
 
 const messagesContainerStyle = {
-  pt: { xs: "30px", md: 0 },
   overflowY: "auto",
   overflowX: "hidden",
 

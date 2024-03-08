@@ -4,7 +4,14 @@ import { randomId } from "@/common/helpers";
 import { extractTemplateIDs, fetchData, sendMessageAPI } from "@/components/Chat/helper";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import useChatBox from "@/hooks/useChatBox";
-import { setAnswers, setInputs, setIsSimulationStreaming, setParams, setParamsValues } from "@/core/store/chatSlice";
+import {
+  setAnswers,
+  setChatMode,
+  setInputs,
+  setIsSimulationStreaming,
+  setParams,
+  setParamsValues,
+} from "@/core/store/chatSlice";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IAnswer, IMessage, MessageType } from "@/components/Prompt/Types/chat";
@@ -28,9 +35,8 @@ const useMessageManager = () => {
 
   const { prepareAndRemoveDuplicateInputs } = useChatBox();
 
-  const { selectedTemplate, isSimulationStreaming, selectedChatOption, selectedChat, inputs, answers } = useAppSelector(
-    state => state.chat,
-  );
+  const { selectedTemplate, isSimulationStreaming, selectedChatOption, selectedChat, inputs, answers, chatMode } =
+    useAppSelector(state => state.chat);
   const currentUser = useAppSelector(state => state.user.currentUser);
 
   const repeatedExecution = useAppSelector(state => state.executions.repeatedExecution);
@@ -39,9 +45,7 @@ const useMessageManager = () => {
   const [queuedMessages, setQueuedMessages] = useState<IMessage[]>([]);
   const [suggestedTemplates, setSuggestedTemplates] = useState<Templates[]>([]);
   const [isValidatingAnswer, setIsValidatingAnswer] = useState(false);
-  const [chatMode, setChatMode] = useState<"automation" | "messages">("automation");
   const [allQuestionsAnswered, setAllQuestionsAnswered] = useState(false);
-  const [welcomeMessage, setWelcomeMessage] = useState("");
   const initialChat = useRef(true);
 
   const [createChat] = useCreateChatMutation();
@@ -97,21 +101,20 @@ const useMessageManager = () => {
   }, [selectedTemplate]);
 
   const initialMessages = ({ questions }: { questions: IPromptInput[] }) => {
-    setChatMode("messages");
+    dispatch(setChatMode("messages"));
     const greeting = `Hi, ${currentUser?.first_name ?? currentUser?.username ?? "There"}! Ready to work on`;
     const filteredQuestions = questions.map(_q => _q.question).filter(Boolean);
 
-    const initialMessage = createMessage({ type: "text" });
-    setWelcomeMessage(`${greeting} ${selectedTemplate?.title}. ${filteredQuestions.slice(0, 3).join(" ")}`);
-    initialMessage.text = welcomeMessage;
+    const welcomeMessage = createMessage({ type: "text" });
+    welcomeMessage.text = `${greeting} ${selectedTemplate?.title}. ${filteredQuestions.slice(0, 3).join(" ")}`;
 
     if (selectedChatOption === "FORM") {
       const formMessage = createMessage({ type: "form", noHeader: true });
-      formMessage.text = initialMessage.text;
+      formMessage.text = welcomeMessage.text;
       setMessages(prevMessages => prevMessages.concat(formMessage));
     } else {
       const headerWithTextMessage = createMessage({ type: "HeaderWithText" });
-      headerWithTextMessage.text = initialMessage.text;
+      headerWithTextMessage.text = welcomeMessage.text;
       const questionMessage = createMessage({
         type: "question",
         isRequired: questions[0].required,
@@ -204,7 +207,11 @@ const useMessageManager = () => {
             const templates = await fetchData(templateIDs);
             setSuggestedTemplates(templates);
             const suggestionsMessage = createMessage({ type: "suggestedTemplates" });
-            suggestionsMessage.text = "I found this prompts, following your request:";
+            const pluralTemplates = templates.length > 1;
+
+            suggestionsMessage.text = `I found ${pluralTemplates ? "these" : "this"} prompt${
+              pluralTemplates ? "s" : ""
+            }, following your request:`;
 
             setMessages(prevMessages => prevMessages.concat(suggestionsMessage));
           }
@@ -292,7 +299,6 @@ const useMessageManager = () => {
     suggestedTemplates,
     createMessage,
     showGenerateButton,
-    setChatMode,
     allQuestionsAnswered,
     setAllQuestionsAnswered,
     initialChat,

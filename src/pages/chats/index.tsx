@@ -17,6 +17,7 @@ import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution
 import { executionsApi } from "@/core/api/executions";
 import { getExecutionById } from "@/hooks/api/executions";
 import { setSelectedExecution } from "@/core/store/executionsSlice";
+import { setChatMode } from "@/core/store/chatSlice";
 import type { IMUDynamicColorsThemeColor } from "@/core/api/theme";
 import { useCreateChatMutation, useUpdateChatMutation } from "@/core/api/chats";
 import { setAnswers, setInputs, setSelectedChat, setSelectedTemplate } from "@/core/store/chatSlice";
@@ -26,7 +27,7 @@ function Chat() {
   const dispatch = useAppDispatch();
   const [palette, setPalette] = useState(theme.palette);
 
-  const { selectedTemplate, selectedChatOption, selectedChat } = useAppSelector(state => state.chat);
+  const { selectedTemplate, selectedChatOption, selectedChat, chatMode } = useAppSelector(state => state.chat);
   const currentUser = useAppSelector(state => state.user.currentUser);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const { generatedExecution, selectedExecution } = useAppSelector(state => state.executions);
@@ -42,7 +43,7 @@ function Chat() {
     setIsValidatingAnswer,
     suggestedTemplates,
     showGenerateButton,
-    setChatMode,
+
     allQuestionsAnswered,
     setAllQuestionsAnswered,
     initialChat,
@@ -95,7 +96,7 @@ function Chat() {
       dispatch(setInputs([]));
       dispatch(setSelectedTemplate(undefined));
       setIsValidatingAnswer(false);
-      setChatMode("automation");
+      dispatch(setChatMode("automation"));
       initialChat.current = false;
     }
   }, [selectedChat]);
@@ -169,7 +170,7 @@ function Chat() {
   };
 
   const showLanding = !!!messages.length;
-  const showChatInput = selectedChatOption !== "FORM" || !!selectedExecution;
+  const showChatInput = selectedChatOption !== "FORM" || !!selectedExecution || chatMode === "automation";
 
   return (
     <ThemeProvider theme={dynamicTheme}>
@@ -190,7 +191,10 @@ function Chat() {
           ) : (
             <Stack
               sx={{
-                height: { xs: "calc(100% - 120px)", md: "100%" },
+                height: {
+                  xs: showChatInput ? "calc(100% - 120px)" : "calc(100% - 60px)",
+                  md: showChatInput ? "calc(100% - 90px)" : "100%",
+                },
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "flex-end",
@@ -204,7 +208,7 @@ function Chat() {
                 onGenerate={() => {
                   setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "spark"));
                   handleGenerateExecution();
-                  setChatMode("automation");
+                  dispatch(setChatMode("automation"));
                   if (selectedChatOption === "QA") {
                     setAllQuestionsAnswered(false);
                   }

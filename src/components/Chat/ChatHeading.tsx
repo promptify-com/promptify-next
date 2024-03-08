@@ -11,6 +11,7 @@ interface Props {
 function ChatHeading({ title, avatar }: Props) {
   return (
     <Stack
+      mt={2}
       p={1}
       direction={"row"}
       alignItems={"center"}

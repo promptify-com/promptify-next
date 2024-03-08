@@ -12,8 +12,10 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import MessageBoxHeader from "@/components/Chat/Messages/MessageBoxHeader";
 import FormInputs from "@/components/Prompt/Common/Chat/Form";
 import FormPromptContent from "@/components/Chat/FormPromptContent";
-import type { Templates } from "@/core/api/dto/templates";
 import { isDesktopViewPort } from "@/common/helpers";
+import { setChatMode } from "@/core/store/chatSlice";
+import { useAppDispatch } from "@/hooks/useStore";
+import type { Templates } from "@/core/api/dto/templates";
 
 interface Props {
   content: string;
@@ -24,6 +26,7 @@ interface Props {
 
 function FormMessageBox({ content, template, onGenerate, onScrollToBottom }: Props) {
   const isDesktopView = isDesktopViewPort();
+  const dispatch = useAppDispatch();
   const [expanded, setExpanded] = useState(true);
   const [formMode, setFormMode] = useState<"INPUT" | "PROMPT_CONTENT">("INPUT");
 
@@ -51,11 +54,12 @@ function FormMessageBox({ content, template, onGenerate, onScrollToBottom }: Pro
         sx={{ bgcolor: "transparent", p: 0, m: 0 }}
         elevation={0}
       >
-        <AccordionSummary sx={{ p: 0, m: "8px" }}>
+        <AccordionSummary sx={{ p: 0, m: 0 }}>
           <MessageBoxHeader
             variant="FORM"
             onExpand={() => {
               setExpanded(true);
+              dispatch(setChatMode("messages"));
             }}
             onGenerate={onGenerate}
           />
@@ -63,13 +67,13 @@ function FormMessageBox({ content, template, onGenerate, onScrollToBottom }: Pro
 
         <AccordionDetails sx={{ p: 0 }}>
           <Stack
-            mt={"20px"}
+            mt={"15px"}
             bgcolor={"surface.2"}
             borderRadius={"24px"}
             position={"relative"}
           >
             <Stack
-              p={"16px 24px"}
+              p={{ xs: "8px 16px", md: "16px 24px" }}
               borderBottom={"1px solid"}
               borderColor={"surfaceContainerHigh"}
               direction={"row"}
@@ -93,7 +97,7 @@ function FormMessageBox({ content, template, onGenerate, onScrollToBottom }: Pro
                       onChange={() => setFormMode(prevState => (prevState === "INPUT" ? "PROMPT_CONTENT" : "INPUT"))}
                     />
                   }
-                  label="Form mode"
+                  label={isDesktopView ? "Form mode" : ""}
                   sx={{
                     fontSize: 12,
                   }}
@@ -104,10 +108,10 @@ function FormMessageBox({ content, template, onGenerate, onScrollToBottom }: Pro
                   variant="text"
                   onClick={() => {
                     setExpanded(false);
+                    dispatch(setChatMode("automation"));
                   }}
                   sx={{
                     color: "onSurface",
-                    p: { xs: 1, md: "16px 15px" },
                     "&:hover": {
                       bgcolor: "action.hover",
                     },
@@ -138,7 +142,6 @@ const formContainerStyle = {
   overflowY: "auto",
   overflowX: "hidden",
   maxHeight: "370px",
-  px: "8px",
   overscrollBehavior: "contain",
   scrollBehavior: "smooth",
   "&::-webkit-scrollbar": {

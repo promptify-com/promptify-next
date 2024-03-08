@@ -49,7 +49,10 @@ function FormFields({ messageType, template }: FormLayoutProps) {
   let lastPromptId: number;
 
   return (
-    <Stack gap={1}>
+    <Stack
+      gap={1}
+      pb={"10px"}
+    >
       {localInputs.map((input, index) => {
         const currentPrompt = template?.prompts.find(prompt => prompt.id === input.prompt);
         const shouldDisplayTitleAndEngine = lastPromptId !== input.prompt;
@@ -77,6 +80,22 @@ function FormFields({ messageType, template }: FormLayoutProps) {
           </Stack>
         );
       })}
+      {!!params.length && (
+        <Stack
+          px={"16px"}
+          py={"16px"}
+          direction={"column"}
+          gap={1}
+        >
+          <Typography
+            fontSize={16}
+            lineHeight={"22px"}
+          >
+            Contextual parameters:
+          </Typography>
+        </Stack>
+      )}
+
       {params?.map(param => (
         <FormParam
           key={param.parameter.id}
