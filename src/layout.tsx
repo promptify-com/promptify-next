@@ -4,12 +4,17 @@ import { Header } from "@/components/Header";
 import { theme } from "@/theme";
 import Sidebar from "./components/sidebar/Sidebar";
 import { useAppSelector } from "@/hooks/useStore";
+import { useRouter } from "next/router";
 
 export const Layout = ({ children }: { children: ReactNode }) => {
+  const router = useRouter();
+  const pathname = router.pathname;
   const isPromptsFiltersSticky = useAppSelector(state => state.sidebar.isPromptsFiltersSticky);
   const isChatHistorySticky = useAppSelector(state => state.sidebar.isChatHistorySticky);
+  const isPromptsPage = pathname.split("/")[1] === "explore";
+  const isChatPage = pathname.split("/")[1] === "chats";
 
-  const sidebarExpanded = isPromptsFiltersSticky || isChatHistorySticky;
+  const sidebarExpanded = (isPromptsPage && isPromptsFiltersSticky) || (isChatPage && isChatHistorySticky);
 
   const containerWidth = `${theme.custom.leftClosedSidebarWidth} ${sidebarExpanded ? "+ 375px" : ""}`;
 
