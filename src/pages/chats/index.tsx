@@ -17,17 +17,26 @@ import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution
 import { executionsApi } from "@/core/api/executions";
 import { getExecutionById } from "@/hooks/api/executions";
 import { setSelectedExecution } from "@/core/store/executionsSlice";
+import { setChatMode, setInitialChat } from "@/core/store/chatSlice";
 import type { IMUDynamicColorsThemeColor } from "@/core/api/theme";
+import { useCreateChatMutation, useUpdateChatMutation } from "@/core/api/chats";
+import { setAnswers, setInputs, setSelectedChat, setSelectedTemplate } from "@/core/store/chatSlice";
 
 function Chat() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const [palette, setPalette] = useState(theme.palette);
 
-  const { selectedTemplate, selectedChatOption } = useAppSelector(state => state.chat);
+  const { selectedTemplate, selectedChatOption, selectedChat, chatMode, initialChat } = useAppSelector(
+    state => state.chat,
+  );
   const currentUser = useAppSelector(state => state.user.currentUser);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const { generatedExecution, selectedExecution } = useAppSelector(state => state.executions);
+  const isChatHistorySticky = useAppSelector(state => state.sidebar.isChatHistorySticky);
+
+  const [createChat] = useCreateChatMutation();
+  const [updateChat] = useUpdateChatMutation();
 
   const {
     messages,
@@ -35,9 +44,10 @@ function Chat() {
     createMessage,
     handleSubmitInput,
     isValidatingAnswer,
+    setIsValidatingAnswer,
     suggestedTemplates,
     showGenerateButton,
-    setChatMode,
+
     allQuestionsAnswered,
     setAllQuestionsAnswered,
   } = useMessageManager();
@@ -52,11 +62,53 @@ function Chat() {
     generateExecutionHandler();
   };
 
-  useEffect(() => {
+  const handleDynamicColors = () => {
     if (!selectedTemplate?.thumbnail) {
       return;
     }
     fetchDynamicColors();
+  };
+
+  const handleCreateChat = async () => {
+    if (!selectedTemplate) return;
+
+    try {
+      const newChat = await createChat({
+        title: selectedTemplate.title ?? "Welcome",
+      }).unwrap();
+      dispatch(setSelectedChat(newChat));
+    } catch (err) {
+      console.error("Error creating a new chat: ", err);
+    }
+  };
+
+  const handleTitleChat = async () => {
+    if (!selectedChat || !selectedTemplate?.title) return;
+
+    try {
+      updateChat({ id: selectedChat.id, data: { title: selectedTemplate.title } });
+    } catch (err) {
+      console.error("Error updating chat: ", err);
+    }
+  };
+
+  useEffect(() => {
+    if (!initialChat) {
+      dispatch(setInitialChat(false));
+      setMessages([]);
+      dispatch(setAnswers([]));
+      dispatch(setInputs([]));
+      dispatch(setSelectedTemplate(undefined));
+      setIsValidatingAnswer(false);
+      dispatch(setChatMode("automation"));
+    }
+  }, [selectedChat]);
+
+  useEffect(() => {
+    handleDynamicColors();
+
+    if (selectedChat && selectedTemplate?.title) handleTitleChat();
+    else handleCreateChat();
   }, [selectedTemplate]);
 
   const fetchDynamicColors = () => {
@@ -121,15 +173,14 @@ function Chat() {
   };
 
   const showLanding = !!!messages.length;
-  const showChatInput = selectedChatOption !== "FORM" || !!selectedExecution;
+  const showChatInput = selectedChatOption !== "FORM" || !!selectedExecution || chatMode === "automation";
 
   return (
     <ThemeProvider theme={dynamicTheme}>
       <Layout>
         <Stack
           sx={{
-            width: { md: "75%" },
-            mx: { md: "auto" },
+            // mx: { md: "auto" },
             height: { xs: "100vh", md: "calc(100vh - 100px)" },
             display: "flex",
             flexDirection: "column",
@@ -142,7 +193,10 @@ function Chat() {
           ) : (
             <Stack
               sx={{
-                height: { xs: "calc(100% - 120px)", md: "calc(100% - 90px)" },
+                height: {
+                  xs: showChatInput ? "calc(100% - 120px)" : "calc(100% - 60px)",
+                  md: showChatInput ? "calc(100% - 90px)" : "100%",
+                },
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "flex-end",
@@ -156,7 +210,7 @@ function Chat() {
                 onGenerate={() => {
                   setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "spark"));
                   handleGenerateExecution();
-                  setChatMode("automation");
+                  dispatch(setChatMode("automation"));
                   if (selectedChatOption === "QA") {
                     setAllQuestionsAnswered(false);
                   }
@@ -164,29 +218,30 @@ function Chat() {
               />
             </Stack>
           )}
-
-          {currentUser?.id ? (
-            <>
-              {showChatInput && (
-                <ChatInput
-                  onSubmit={handleSubmitInput}
-                  disabled={isValidatingAnswer || disableChatInput || allQuestionsAnswered || isGenerating}
-                  isValidating={isValidatingAnswer}
-                />
-              )}
-            </>
-          ) : (
-            <Stack
-              direction={"column"}
-              alignItems={"center"}
-              justifyContent={"center"}
-              gap={1}
-              width={{ md: "100%" }}
-              p={{ md: "16px 8px 16px 16px" }}
-            >
-              <SigninButton onClick={() => router.push("/signin")} />
-            </Stack>
-          )}
+          <Stack px={{ md: isChatHistorySticky ? "80px" : "300px" }}>
+            {currentUser?.id ? (
+              <>
+                {showChatInput && (
+                  <ChatInput
+                    onSubmit={handleSubmitInput}
+                    disabled={isValidatingAnswer || disableChatInput || allQuestionsAnswered || isGenerating}
+                    isValidating={isValidatingAnswer}
+                  />
+                )}
+              </>
+            ) : (
+              <Stack
+                direction={"column"}
+                alignItems={"center"}
+                justifyContent={"center"}
+                gap={1}
+                width={{ md: "100%" }}
+                p={{ md: "16px 8px 16px 16px" }}
+              >
+                <SigninButton onClick={() => router.push("/signin")} />
+              </Stack>
+            )}
+          </Stack>
         </Stack>
       </Layout>
     </ThemeProvider>

@@ -1,10 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { IPromptInput } from "@/common/types/prompt";
-import type { ChatOption, IAnswer, IMessage } from "@/components/Prompt/Types/chat";
+import type { ChatMode, ChatOption, IAnswer, IMessage } from "@/components/Prompt/Types/chat";
 import type { PromptParams, ResOverrides } from "@/core/api/dto/prompts";
 import type { ICredentialInput } from "@/components/Automation/types";
 import type { Templates } from "@/core/api/dto/templates";
+import type { IChat } from "@/core/api/dto/chats";
+import Storage from "@/common/storage";
 
 export interface ExecutionsProps {
   answers: IAnswer[];
@@ -18,6 +20,9 @@ export interface ExecutionsProps {
   MessageSenderValue: string;
   selectedTemplate?: Templates;
   selectedChatOption?: ChatOption;
+  selectedChat?: IChat;
+  chatMode: ChatMode;
+  initialChat: boolean;
 }
 
 const initialState: ExecutionsProps = {
@@ -31,7 +36,10 @@ const initialState: ExecutionsProps = {
   tmpMessages: [],
   MessageSenderValue: "",
   selectedTemplate: undefined,
-  selectedChatOption: undefined,
+  selectedChatOption: Storage.get("chatOption"),
+  selectedChat: undefined,
+  chatMode: "automation",
+  initialChat: true,
 };
 
 export const chatSlice = createSlice({
@@ -74,6 +82,15 @@ export const chatSlice = createSlice({
     setSelectedChatOption: (state, action: PayloadAction<ChatOption | undefined>) => {
       state.selectedChatOption = action.payload;
     },
+    setSelectedChat: (state, action: PayloadAction<IChat | undefined>) => {
+      state.selectedChat = action.payload;
+    },
+    setChatMode: (state, action: PayloadAction<ChatMode>) => {
+      state.chatMode = action.payload;
+    },
+    setInitialChat: (state, action: PayloadAction<boolean>) => {
+      state.initialChat = action.payload;
+    },
   },
 });
 
@@ -90,6 +107,9 @@ export const {
   setMessageSenderValue,
   setSelectedTemplate,
   setSelectedChatOption,
+  setSelectedChat,
+  setChatMode,
+  setInitialChat,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

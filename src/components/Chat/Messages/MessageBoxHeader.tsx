@@ -12,21 +12,11 @@ interface Props {
   onExpand?: () => void;
   onGenerate?: () => void;
   variant: "FORM" | "EXECUTION";
+  showRunButton?: boolean;
 }
 
-function MessageBoxHeader({ onExpand, onGenerate, variant }: Props) {
+function MessageBoxHeader({ onExpand, onGenerate, variant, showRunButton }: Props) {
   const { selectedChatOption, selectedTemplate, answers, inputs } = useAppSelector(state => state.chat);
-
-  const allRequiredInputsAnswered = (): boolean => {
-    const requiredQuestionNames = inputs.filter(question => question.required).map(question => question.name);
-    if (!requiredQuestionNames.length) {
-      return true;
-    }
-    const answeredQuestionNamesSet = new Set(answers.map(answer => answer.inputName));
-    return requiredQuestionNames.every(name => answeredQuestionNamesSet.has(name));
-  };
-
-  const allowGenerate = allRequiredInputsAnswered();
 
   const showHeaderActions = Boolean(selectedChatOption === "FORM" && variant === "FORM");
 
@@ -85,7 +75,6 @@ function MessageBoxHeader({ onExpand, onGenerate, variant }: Props) {
           direction={"row"}
           gap={2}
           alignItems={"center"}
-          onClick={onExpand}
         >
           <Button
             variant="text"
@@ -96,6 +85,7 @@ function MessageBoxHeader({ onExpand, onGenerate, variant }: Props) {
                 bgcolor: "action.hover",
               },
             }}
+            onClick={onExpand}
           >
             Instructions: {answers.length} of {inputs.length}
           </Button>
@@ -105,7 +95,7 @@ function MessageBoxHeader({ onExpand, onGenerate, variant }: Props) {
                 onGenerate();
               }
             }}
-            disabled={!allowGenerate}
+            disabled={!showRunButton}
           />
         </Stack>
       )}

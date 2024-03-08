@@ -49,7 +49,6 @@ function TemplateSuggestions({ templates, scrollToBottom, content }: Props) {
               template={template}
               onClick={() => {
                 dispatch(setSelectedTemplate(template));
-                dispatch(setSelectedChatOption(undefined));
                 setTimeout(() => {
                   scrollToBottom();
                 }, 100);
@@ -66,9 +65,6 @@ function TemplateSuggestions({ templates, scrollToBottom, content }: Props) {
               <Button
                 variant="text"
                 onClick={() => {
-                  setTimeout(() => {
-                    scrollToBottom();
-                  }, 100);
                   setVisibleCount(templates.length);
                 }}
                 sx={{
@@ -77,7 +73,7 @@ function TemplateSuggestions({ templates, scrollToBottom, content }: Props) {
                   },
                 }}
               >
-                and {visibleCount} prompts more...
+                and {templates.length - visibleCount} prompts more...
               </Button>
             </Stack>
           )}

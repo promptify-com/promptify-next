@@ -1,20 +1,20 @@
-import { Box, Grid, IconButton, InputBase } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import * as React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setSelectedKeyword } from "@/core/store/filtersSlice";
-import { Search } from "@mui/icons-material";
 import { useRouter } from "next/router";
 import { RootState } from "@/core/store";
 import SearchByKeywords from "./SearchByKeywords";
 import { useDeferredValue, useEffect, useState } from "react";
 import { useGetTemplatesBySearchQuery } from "@/core/api/templates";
 import useDebounce from "@/hooks/useDebounce";
-import CardTemplate from "../common/cards/CardTemplate";
-import CardTemplatePlaceholder from "../placeholders/CardTemplatePlaceHolder";
+import CardTemplate from "@/components/common/cards/CardTemplate";
+import CardTemplatePlaceholder from "@/components/placeholders/CardTemplatePlaceHolder";
 import { NotFoundIcon } from "@/assets/icons/NotFoundIcon";
+import SearchField from "@/components/common/forms/SearchField";
 
 interface SearchDialogProps {
   open: boolean;
@@ -24,6 +24,8 @@ interface SearchDialogProps {
 export const SearchDialog: React.FC<SearchDialogProps> = ({ open, close }) => {
   const router = useRouter();
   const dispatch = useDispatch();
+
+  const isExplorePage = router.pathname === "/explore";
 
   const [IsSm, setIsSm] = useState(false);
   const [textInput, setTextInput] = useState("");
@@ -69,6 +71,7 @@ export const SearchDialog: React.FC<SearchDialogProps> = ({ open, close }) => {
         right: 0,
         height: "fit-content",
       }}
+      disableScrollLock={true}
       componentsProps={{
         backdrop: { sx: { backgroundColor: !IsSm ? "rgba(0, 0, 0, 0)" : "" } },
       }}
@@ -112,48 +115,18 @@ export const SearchDialog: React.FC<SearchDialogProps> = ({ open, close }) => {
             }}
             alignItems="center"
           >
-            <Grid
-              sx={{
-                width: { xs: "97%", sm: "100%" },
-                paddingRight: "0.5em",
-                gap: "5px",
-                display: "flex",
-                overflowX: "auto",
-                alignItems: "center",
+            <SearchField
+              placeholder="Search templates..."
+              value={title ?? textInput}
+              onChange={val => setTextInput(val)}
+              onPressEnter={() => {
+                dispatch(setSelectedKeyword(textInput));
+                if (!isExplorePage) {
+                  router.push({ pathname: "/explore" });
+                }
               }}
-            >
-              <IconButton
-                size="small"
-                sx={{
-                  color: "onSurface",
-                  border: "none",
-                  marginLeft: "0.5em",
-                  ":hover": { color: "tertiary" },
-                }}
-              >
-                <Search />
-              </IconButton>
-              <InputBase
-                className={"data-hj-allow"}
-                onChange={e => {
-                  setTextInput(e.target.value);
-                }}
-                defaultValue={title ?? textInput}
-                placeholder={"Search templates..."}
-                fullWidth
-                sx={{
-                  fontSize: "13px",
-                  padding: "0px",
-                  fontFamily: "Poppins",
-                }}
-                onKeyPress={e => {
-                  if (e.key === "Enter") {
-                    dispatch(setSelectedKeyword(textInput));
-                    router.push({ pathname: "/explore" });
-                  }
-                }}
-              />
-            </Grid>
+              sx={{ bgcolor: "transparent" }}
+            />
           </Grid>
         </Box>
       </DialogTitle>

@@ -1,14 +1,24 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { randomId } from "@/common/helpers";
 import { extractTemplateIDs, fetchData, sendMessageAPI } from "@/components/Chat/helper";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import useChatBox from "@/hooks/useChatBox";
-import { setAnswers, setInputs, setIsSimulationStreaming, setParams, setParamsValues } from "@/core/store/chatSlice";
+import {
+  setAnswers,
+  setChatMode,
+  setInitialChat,
+  setInputs,
+  setIsSimulationStreaming,
+  setParams,
+  setParamsValues,
+} from "@/core/store/chatSlice";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IAnswer, IMessage, MessageType } from "@/components/Prompt/Types/chat";
 import type { PromptParams } from "@/core/api/dto/prompts";
+import { useCreateChatMutation } from "@/core/api/chats";
+import { setSelectedChat } from "@/core/store/chatSlice";
 
 interface CreateMessageProps {
   type: MessageType;
@@ -26,9 +36,16 @@ const useMessageManager = () => {
 
   const { prepareAndRemoveDuplicateInputs } = useChatBox();
 
-  const { selectedTemplate, isSimulationStreaming, selectedChatOption, inputs, answers } = useAppSelector(
-    state => state.chat,
-  );
+  const {
+    selectedTemplate,
+    isSimulationStreaming,
+    selectedChatOption,
+    selectedChat,
+    inputs,
+    answers,
+    chatMode,
+    initialChat,
+  } = useAppSelector(state => state.chat);
   const currentUser = useAppSelector(state => state.user.currentUser);
 
   const repeatedExecution = useAppSelector(state => state.executions.repeatedExecution);
@@ -37,8 +54,9 @@ const useMessageManager = () => {
   const [queuedMessages, setQueuedMessages] = useState<IMessage[]>([]);
   const [suggestedTemplates, setSuggestedTemplates] = useState<Templates[]>([]);
   const [isValidatingAnswer, setIsValidatingAnswer] = useState(false);
-  const [chatMode, setChatMode] = useState<"automation" | "messages">("automation");
   const [allQuestionsAnswered, setAllQuestionsAnswered] = useState(false);
+
+  const [createChat] = useCreateChatMutation();
 
   const createMessage = ({
     type,
@@ -81,27 +99,21 @@ const useMessageManager = () => {
     proceedQueuedMessages();
   }, [isSimulationStreaming, queuedMessages]);
 
-  useEffect(() => {
-    if (!selectedTemplate) {
-      return;
-    }
-    const runMessage = createMessage({ type: "text", fromUser: true });
-    runMessage.text = `Run "${selectedTemplate.title}"`;
-    setMessages(prevMessages => prevMessages.filter(message => message.type !== "form").concat(runMessage));
-  }, [selectedTemplate]);
-
   const initialMessages = ({ questions }: { questions: IPromptInput[] }) => {
-    setChatMode("messages");
+    dispatch(setChatMode("messages"));
     const greeting = `Hi, ${currentUser?.first_name ?? currentUser?.username ?? "There"}! Ready to work on`;
     const filteredQuestions = questions.map(_q => _q.question).filter(Boolean);
 
     const welcomeMessage = createMessage({ type: "text" });
     welcomeMessage.text = `${greeting} ${selectedTemplate?.title}. ${filteredQuestions.slice(0, 3).join(" ")}`;
 
+    const runMessage = createMessage({ type: "text", fromUser: true });
+    runMessage.text = `Run "${selectedTemplate?.title}"`;
+
     if (selectedChatOption === "FORM") {
       const formMessage = createMessage({ type: "form", noHeader: true });
       formMessage.text = welcomeMessage.text;
-      setMessages(prevMessages => prevMessages.concat(formMessage));
+      setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat([runMessage, formMessage]));
     } else {
       const headerWithTextMessage = createMessage({ type: "HeaderWithText" });
       headerWithTextMessage.text = welcomeMessage.text;
@@ -111,7 +123,7 @@ const useMessageManager = () => {
         questionIndex: 1,
       });
       questionMessage.text = `${filteredQuestions[0] || questions[0].fullName}`;
-      setMessages(prevMessages => prevMessages.concat(headerWithTextMessage));
+      setMessages(prevMessages => prevMessages.concat([runMessage, headerWithTextMessage]));
       addToQueuedMessages([questionMessage]);
     }
   };
@@ -134,7 +146,7 @@ const useMessageManager = () => {
     dispatch(setInputs(inputs));
 
     return [inputs, params, promptHasContent];
-  }, [selectedChatOption, repeatedExecution]);
+  }, [selectedTemplate, selectedChatOption, repeatedExecution]);
 
   const allRequiredInputsAnswered = (): boolean => {
     const requiredQuestionNames = inputs.filter(question => question.required).map(question => question.name);
@@ -148,10 +160,26 @@ const useMessageManager = () => {
     return requiredQuestionNames.every(name => answeredQuestionNamesSet.has(name));
   };
 
-  const automationSubmitMessage = async (input: string) => {
-    if (!input) {
-      return;
+  const createNewChat = async () => {
+    try {
+      const newChat = await createChat({
+        title: "Welcome",
+      }).unwrap();
+      dispatch(setSelectedChat(newChat));
+      // TODO: this timeout should be removed. just a workaround to handle selectedChat watcher inside <Chats />
+      setTimeout(() => dispatch(setInitialChat(false)), 1000);
+    } catch (err) {
+      console.error("Error creating a new chat: ", err);
     }
+  };
+
+  const automationSubmitMessage = async (input: string) => {
+    if (!input) return;
+
+    if (!selectedChat) {
+      createNewChat();
+    }
+
     const userMessage = createMessage({ type: "text", fromUser: true });
     userMessage.text = input;
 
@@ -181,7 +209,11 @@ const useMessageManager = () => {
             const templates = await fetchData(templateIDs);
             setSuggestedTemplates(templates);
             const suggestionsMessage = createMessage({ type: "suggestedTemplates" });
-            suggestionsMessage.text = "I found this prompts, following your request:";
+            const pluralTemplates = templates.length > 1;
+
+            suggestionsMessage.text = `I found ${pluralTemplates ? "these" : "this"} prompt${
+              pluralTemplates ? "s" : ""
+            }, following your request:`;
 
             setMessages(prevMessages => prevMessages.concat(suggestionsMessage));
           }
@@ -265,12 +297,13 @@ const useMessageManager = () => {
     setMessages,
     handleSubmitInput,
     isValidatingAnswer,
+    setIsValidatingAnswer,
     suggestedTemplates,
     createMessage,
     showGenerateButton,
-    setChatMode,
     allQuestionsAnswered,
     setAllQuestionsAnswered,
+    initialChat,
   };
 };
 

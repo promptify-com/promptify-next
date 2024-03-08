@@ -4,9 +4,20 @@ import { Header } from "@/components/Header";
 import { theme } from "@/theme";
 import Sidebar from "./components/sidebar/Sidebar";
 import { useAppSelector } from "@/hooks/useStore";
+import { useRouter } from "next/router";
 
 export const Layout = ({ children }: { children: ReactNode }) => {
+  const router = useRouter();
+  const pathname = router.pathname;
   const isPromptsFiltersSticky = useAppSelector(state => state.sidebar.isPromptsFiltersSticky);
+  const isChatHistorySticky = useAppSelector(state => state.sidebar.isChatHistorySticky);
+  const isPromptsPage = pathname.split("/")[1] === "explore";
+  const isChatPage = pathname.split("/")[1] === "chats";
+
+  const sidebarExpanded = (isPromptsPage && isPromptsFiltersSticky) || (isChatPage && isChatHistorySticky);
+
+  const containerWidth = `${theme.custom.leftClosedSidebarWidth} ${sidebarExpanded ? "+ 375px" : ""}`;
+
   return (
     <>
       <Box sx={{ bgcolor: "surface.3" }}>
@@ -19,9 +30,9 @@ export const Layout = ({ children }: { children: ReactNode }) => {
             minHeight: "100svh",
             maxWidth: {
               xs: "100%",
-              md: `calc(100% - ${theme.custom.leftClosedSidebarWidth})`,
+              md: `calc(100% - (${containerWidth}))`,
             },
-            m: { md: `0px 0px 0px auto` },
+            ml: { md: "auto" },
           }}
         >
           <Header transparent />
@@ -36,12 +47,6 @@ export const Layout = ({ children }: { children: ReactNode }) => {
               borderTopRightRadius: "16px",
               overflow: "hidden",
               zIndex: 1,
-              ...(isPromptsFiltersSticky
-                ? {
-                    width: "calc(100% - 75px - 300px)",
-                    marginLeft: "auto",
-                  }
-                : { width: "auto" }),
             }}
           >
             <Grid

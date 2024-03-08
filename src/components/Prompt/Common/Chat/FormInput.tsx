@@ -82,8 +82,8 @@ function FormInput({ input }: Props) {
       direction={"row"}
       alignItems={"center"}
       gap={1}
+      px={{ xs: "16px", md: "24px" }}
       sx={{
-        px: "16px",
         "&:hover": {
           bgcolor: "surface.1",
         },
@@ -92,7 +92,7 @@ function FormInput({ input }: Props) {
       <Box>
         <InputLabel
           sx={{
-            fontSize: { xs: 12, md: 15 },
+            fontSize: { xs: 14, md: 15 },
             fontWeight: 500,
             color: "primary.main",
           }}

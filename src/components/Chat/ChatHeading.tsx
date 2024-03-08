@@ -5,13 +5,12 @@ import Image from "@/components/design-system/Image";
 
 interface Props {
   title: string;
-  avatar: string;
+  thumbnail: string | undefined;
 }
 
-function ChatHeading({ title, avatar }: Props) {
+function ChatHeading({ title, thumbnail }: Props) {
   return (
     <Stack
-      mt={2}
       p={1}
       direction={"row"}
       alignItems={"center"}
@@ -22,14 +21,14 @@ function ChatHeading({ title, avatar }: Props) {
         sx={{
           zIndex: 0,
           position: "relative",
-          width: "40px",
+          minWidth: "40px",
           height: "40px",
           borderRadius: "40px",
           overflow: "hidden",
         }}
       >
         <Image
-          src={avatar}
+          src={thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
           alt={"Image 1"}
           priority={true}
           fill
@@ -51,9 +50,9 @@ function ChatHeading({ title, avatar }: Props) {
           Chat:
         </Typography>
         <Typography
-          fontSize={24}
+          fontSize={{ xs: 19, md: 24 }}
           fontWeight={400}
-          lineHeight={"38.4px"}
+          lineHeight={{ md: "38.4px" }}
           letterSpacing={"0.17px"}
         >
           {title}

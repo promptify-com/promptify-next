@@ -39,7 +39,7 @@ function MyFavorites() {
   return (
     <Stack
       sx={{
-        bgcolor: "#EEEEE8",
+        bgcolor: "surfaceContainerHigh",
         borderRadius: "16px",
         mb: "20px",
         mt: "20px",

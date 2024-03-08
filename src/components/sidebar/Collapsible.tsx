@@ -44,7 +44,7 @@ function Collapsible({ title, items, onSelect, isSelected, isTags }: Props) {
     <List
       sx={{
         width: "100%",
-        bgcolor: "#EEEEE8",
+        bgcolor: "surfaceContainerHigh",
         borderRadius: "16px",
         mb: "20px",
       }}

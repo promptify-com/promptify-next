@@ -11,7 +11,6 @@ import FolderSpecial from "@mui/icons-material/FolderSpecial";
 import ExtensionRounded from "@mui/icons-material/ExtensionRounded";
 import Inventory2Rounded from "@mui/icons-material/Inventory2Rounded";
 import TryRounded from "@mui/icons-material/TryRounded";
-
 import { useAppSelector } from "@/hooks/useStore";
 import { isValidUserFn } from "@/core/store/userSlice";
 import SidebarItem from "./SidebarItem";
@@ -23,14 +22,17 @@ import type { NavItem } from "@/common/types/sidebar";
 const FiltersDrawerLazy = lazy(() => import("./FiltersDrawer"), {
   ssr: false,
 });
+const ChatsDrawerLazy = lazy(() => import("./ChatsDrawer"), {
+  ssr: false,
+});
 
 function Sidebar() {
   const router = useRouter();
   const { isMobile } = useBrowser();
-  const [expandedOnHover, setExpandedOnHover] = useState<boolean>(false);
+  const [mouseHover, setMouseHover] = useState<boolean>(false);
   const pathname = router.pathname;
   const isPromptsPage = pathname.split("/")[1] === "explore";
-  const isChatPage = pathname.split("/")[1] === "chat";
+  const isChatPage = pathname.split("/")[1] === "chats";
   const isAutomationPage = pathname.split("/")[1] === "automation";
   const isValidUser = useAppSelector(isValidUserFn);
   const navItems: NavItem[] = [
@@ -104,22 +106,13 @@ function Sidebar() {
     return null;
   }
 
+  const filtersExpanded = isPromptsPage && mouseHover;
+  const chatsExpanded = isChatPage && mouseHover;
+
   return (
     <Grid
-      onMouseEnter={() => {
-        if (!isPromptsPage) {
-          return;
-        }
-
-        setExpandedOnHover(true);
-      }}
-      onMouseLeave={() => {
-        if (!isPromptsPage) {
-          return;
-        }
-
-        setExpandedOnHover(false);
-      }}
+      onMouseEnter={() => setMouseHover(true)}
+      onMouseLeave={() => setMouseHover(false)}
       sx={{
         display: { xs: "none", md: "flex" },
         "flex-direction": "column",
@@ -140,7 +133,7 @@ function Sidebar() {
         className="sidebar-list"
         sx={{
           overflow: "none",
-          bgcolor: "surface.3",
+          bgcolor: "surfaceContainerLow",
           width: theme.custom.leftClosedSidebarWidth,
           padding: "8px 4px",
           height: "100vh",
@@ -158,7 +151,8 @@ function Sidebar() {
           <SidebarItem navItem={learnHelpNavItem} />
         </List>
       </Grid>
-      {(isPromptsPage || isChatPage) && <FiltersDrawerLazy expandedOnHover={expandedOnHover} />}
+      {isPromptsPage && <FiltersDrawerLazy expandedOnHover={filtersExpanded} />}
+      {isChatPage && <ChatsDrawerLazy expandedOnHover={chatsExpanded} />}
     </Grid>
   );
 }
