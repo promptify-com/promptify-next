@@ -2,16 +2,10 @@ import { useAppSelector } from "@/hooks/useStore";
 import { useState, useEffect, RefObject } from "react";
 import { IMessage } from "@/components/Prompt/Types/chat";
 
-const useScrollToBottom = ({
-  ref,
-  isGenerating,
-  content,
-}: {
-  ref: RefObject<HTMLDivElement>;
-  isGenerating: boolean;
-  content?: IMessage[] | string;
-}) => {
+const useScrollToBottom = ({ ref, content }: { ref: RefObject<HTMLDivElement>; content?: IMessage[] | string }) => {
   const generatedExecution = useAppSelector(state => state.executions.generatedExecution);
+  const isGenerating = useAppSelector(state => state.template.isGenerating);
+
   const [showScrollDown, setShowScrollDown] = useState<boolean>(false);
 
   const handleUserScroll = () => {

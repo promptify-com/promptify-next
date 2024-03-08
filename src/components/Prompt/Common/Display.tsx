@@ -74,12 +74,6 @@ export const Display: React.FC<Props> = ({ templateData }) => {
           )}
         </Box>
       </Box>
-      {currentGeneratedPrompt && (
-        <ExecutionFooter
-          title={currentGeneratedPrompt.title}
-          order={currentGeneratedPrompt.order}
-        />
-      )}
     </Grid>
   );
 };

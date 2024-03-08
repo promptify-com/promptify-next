@@ -84,12 +84,16 @@ export default function FormParam({ param }: GeneratorParamProps) {
 
   return (
     <Stack
-      direction={{ xs: isVariantB ? "row" : "column", md: "row" }}
-      alignItems={{ xs: isVariantB ? "center" : "start", md: "center" }}
+      direction={{ xs: "column", md: "row" }}
+      alignItems={{ xs: "start", md: "center" }}
       flexWrap={"wrap"}
-      p={isVariantB ? "16px 6px" : "0"}
       gap={1}
-      borderBottom={isVariantB ? "1px solid #ECECF4" : "none"}
+      sx={{
+        px: "16px",
+        "&:hover": {
+          bgcolor: "surface.1",
+        },
+      }}
     >
       <Stack
         flex={1}
@@ -99,12 +103,15 @@ export default function FormParam({ param }: GeneratorParamProps) {
         width={{ xs: "100%", md: "auto" }}
         justifyContent={"space-between"}
       >
-        <Box pl={isVariantB ? "45px" : 0}>
+        <Stack
+          direction={{ md: "row" }}
+          alignItems={{ md: "center" }}
+          gap={"16px"}
+        >
           <InputLabel
             sx={{
               fontSize: { xs: 12, md: 15 },
               fontWeight: 500,
-              lineHeight: "21px",
               letterSpacing: "0.17px",
               color: "primary.main",
               overflow: "visible",
@@ -123,23 +130,20 @@ export default function FormParam({ param }: GeneratorParamProps) {
           >
             {activeDescription?.description}
           </Typography>
-        </Box>
-        {isVariantB && (
-          <Stack
-            sx={{
-              display: { xs: "flex", md: "none" },
-            }}
-          >
-            <HelpIcon />
-          </Stack>
-        )}
+        </Stack>
+        <Stack
+          sx={{
+            display: { xs: "flex", md: "none" },
+          }}
+        >
+          <HelpIcon />
+        </Stack>
       </Stack>
 
       <Slider
         disabled={!param.is_editable || isGenerating}
         sx={{
           ...sliderStyle,
-          ml: { xs: isVariantB ? "45px" : 0, md: "0" },
         }}
         value={activeDescription?.score || 2}
         marks={marks}
@@ -163,7 +167,7 @@ export default function FormParam({ param }: GeneratorParamProps) {
 }
 const sliderStyle = {
   height: "2px",
-  width: { xs: "70%", md: "30%" },
+  width: { xs: "70%", md: "100px" },
   minWidth: { md: "300px" },
   flexShrink: 0,
   color: "primary.main",

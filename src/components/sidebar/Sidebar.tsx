@@ -1,22 +1,24 @@
+import { useState } from "react";
+import lazy from "next/dynamic";
+import { useRouter } from "next/router";
 import StickyNote2 from "@mui/icons-material/StickyNote2";
 import Home from "@mui/icons-material/Home";
 import List from "@mui/material/List";
 import Grid from "@mui/material/Grid";
+import HelpRounded from "@mui/icons-material/HelpRounded";
+import ElectricBoltIcon from "@mui/icons-material/ElectricBolt";
+import FolderSpecial from "@mui/icons-material/FolderSpecial";
+import ExtensionRounded from "@mui/icons-material/ExtensionRounded";
+import Inventory2Rounded from "@mui/icons-material/Inventory2Rounded";
+import TryRounded from "@mui/icons-material/TryRounded";
+
 import { useAppSelector } from "@/hooks/useStore";
 import { isValidUserFn } from "@/core/store/userSlice";
-import ExtensionRounded from "@mui/icons-material/ExtensionRounded";
-import FolderSpecial from "@mui/icons-material/FolderSpecial";
-import HelpRounded from "@mui/icons-material/HelpRounded";
-import Inventory2Rounded from "@mui/icons-material/Inventory2Rounded";
 import SidebarItem from "./SidebarItem";
 import { theme } from "@/theme";
-import type { NavItem } from "@/common/types/sidebar";
-import { useRouter } from "next/router";
 import useBrowser from "@/hooks/useBrowser";
-import ElectricBoltIcon from "@mui/icons-material/ElectricBolt";
 import { BLOG_URL } from "@/common/constants";
-import { useState } from "react";
-import lazy from "next/dynamic";
+import type { NavItem } from "@/common/types/sidebar";
 
 const FiltersDrawerLazy = lazy(() => import("./FiltersDrawer"), {
   ssr: false,
@@ -45,6 +47,14 @@ function Sidebar() {
       href: "/explore",
       icon: <StickyNote2 />,
       active: isPromptsPage,
+      external: false,
+      reload: false,
+    },
+    {
+      name: "Chats",
+      icon: <TryRounded />,
+      href: "/chats",
+      active: pathname === "/chats",
       external: false,
       reload: false,
     },

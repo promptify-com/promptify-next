@@ -13,7 +13,7 @@ interface GeneratedContentProps {
 
 function GeneratedContent({ content, engineType, isGenerating }: GeneratedContentProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const { showScrollDown, scrollToBottom } = useScrollToBottom({ ref: containerRef, isGenerating, content });
+  const { showScrollDown, scrollToBottom } = useScrollToBottom({ ref: containerRef, content });
 
   return (
     <Box

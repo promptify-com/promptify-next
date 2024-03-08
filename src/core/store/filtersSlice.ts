@@ -63,9 +63,9 @@ const filterSlice = createSlice({
       state.isFavourite = action.payload;
       if (!action.payload) {
         Storage.remove("myFavoritesChecked");
-        return
+        return;
       }
-      
+
       Storage.set("myFavoritesChecked", JSON.stringify(action.payload));
     },
   },

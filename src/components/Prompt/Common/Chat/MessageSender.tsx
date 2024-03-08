@@ -1,22 +1,17 @@
-import { useRef, useState } from "react";
-import ArrowUpward from "@mui/icons-material/ArrowUpward";
-import KeyboardCommandKey from "@mui/icons-material/KeyboardCommandKey";
+import { useEffect, useState } from "react";
+import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 import InputBase from "@mui/material/InputBase";
-import { useAppSelector } from "@/hooks/useStore";
-import SlowMotionVideo from "@mui/icons-material/SlowMotionVideo";
-import { CircularProgress, IconButton } from "@mui/material";
-import useVariant from "../../Hooks/useVariant";
-import { ArrowForward } from "@mui/icons-material";
+
+import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
+import { setMessageSenderValue } from "@/core/store/chatSlice";
+import ArrowCircleUp from "@/assets/icons/ArrowCircleUp";
 
 interface MessageSenderProps {
   onSubmit: (value: string) => void;
   onChange?: (value: string) => void;
   disabled?: boolean;
   placeholder?: string;
-  mode?: "chat" | "other";
-  onGenerate?: () => void;
-  showGenerate?: boolean;
   maxLength?: number;
   loading?: boolean;
 }
@@ -25,23 +20,26 @@ function MessageSender({
   onSubmit,
   onChange,
   disabled,
-  placeholder = "Chat with Promptify",
-  mode = "other",
-  onGenerate,
-  showGenerate,
+  placeholder = "Chat with Promptify...",
   maxLength,
   loading,
 }: MessageSenderProps) {
-  const isGenerating = useAppSelector(state => state.template.isGenerating);
-  const { isVariantB } = useVariant();
+  const dispatch = useAppDispatch();
+  const MessageSenderValue = useAppSelector(state => state.chat.MessageSenderValue);
+
   const [localValue, setLocalValue] = useState("");
-  const [isFocused, setIsFocused] = useState(false);
-  const fieldRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    setLocalValue(MessageSenderValue);
+  }, [MessageSenderValue]);
+
+  const resetGlobalValue = () => !!MessageSenderValue && dispatch(setMessageSenderValue(""));
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSubmit();
+      resetGlobalValue();
     } else if (e.key === "Enter" && e.shiftKey) {
       e.preventDefault();
       setLocalValue(localValue + "\n");
@@ -57,30 +55,22 @@ function MessageSender({
   const handleSubmit = () => {
     onSubmit(localValue);
     setLocalValue("");
+    resetGlobalValue();
   };
 
   const hasValue = localValue !== "";
-  const isFocusedAndVariantB = isVariantB && (isFocused || hasValue);
 
   return (
     <Box
       display={"flex"}
       position={"relative"}
-      bgcolor={isFocusedAndVariantB ? "surface.1" : "surface.3"}
+      bgcolor={"surfaceContainerLow"}
       alignItems={"center"}
-      boxShadow={isFocusedAndVariantB ? "0px 4px 8px 0px #E1E2EC, 0px 0px 4px 0px rgba(0, 0, 0, 0.10)" : undefined}
-      borderRadius="24px"
-      p={"8px 16px"}
+      borderRadius="44px"
+      gap={2}
+      p={"8px 8px 8px 24px"}
     >
-      <KeyboardCommandKey
-        onClick={() => fieldRef.current?.focus()}
-        sx={{ fontSize: "20px", color: "text.secondary", position: "absolute", left: 9, top: 12, opacity: 0.5 }}
-      />
-
       <InputBase
-        inputRef={ref => (fieldRef.current = ref)}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
         multiline
         disabled={disabled}
         fullWidth
@@ -97,49 +87,23 @@ function MessageSender({
         onKeyPress={handleKeyPress}
       />
 
-      <Box
-        sx={{
-          color: { xs: !hasValue ? "#8E8E94" : "white", md: "white" },
-          ...boxStyle,
-          ...(hasValue && { bgcolor: "primary.main" }),
-        }}
-      >
+      <Box mt={0.5}>
         {loading ? (
           <CircularProgress
             size={"20px"}
             sx={{ color: "primary.light", p: "4px" }}
           />
-        ) : mode === "chat" && showGenerate && !localValue ? (
-          <SlowMotionVideo
-            onClick={() => {
-              if (isGenerating) {
-                return;
-              }
-              onGenerate?.();
-            }}
-            sx={{
-              color: isGenerating ? "text.secondary" : "primary.main",
-              cursor: isGenerating ? "not-allowed" : "pointer",
-            }}
-          />
         ) : (
-          <>
-            {isVariantB ? (
-              <ArrowUpward
-                onClick={handleSubmit}
-                sx={{
-                  cursor: disabled ? "not-allowed" : "pointer",
-                }}
-              />
-            ) : (
-              <ArrowForward
-                onClick={handleSubmit}
-                sx={{
-                  cursor: disabled ? "not-allowed" : "pointer",
-                }}
-              />
-            )}
-          </>
+          <Box
+            onClick={handleSubmit}
+            sx={{ cursor: "pointer" }}
+          >
+            <ArrowCircleUp
+              height="32"
+              width="32"
+              color={!hasValue ? "white" : "#375CA9"}
+            />
+          </Box>
         )}
       </Box>
     </Box>
@@ -150,14 +114,11 @@ export default MessageSender;
 
 const inputStyle = {
   flex: 1,
-  fontSize: 13,
-  p: "3px",
-  ml: "20px",
-  mr: "40px",
+  fontSize: 16,
   color: "onSurface",
   lineHeight: "22px",
   letterSpacing: "0.46px",
-  fontWeight: "500",
+  fontWeight: "400",
   maxHeight: "60px",
   overflow: "auto",
   "&::-webkit-scrollbar": {
@@ -173,17 +134,4 @@ const inputStyle = {
     outline: "1px solid surface.1",
     borderRadius: "10px",
   },
-};
-
-const boxStyle = {
-  position: "absolute",
-  top: 6,
-  right: 13,
-  padding: "4px",
-  width: "25px",
-  height: "25px",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  borderRadius: "24px",
 };
