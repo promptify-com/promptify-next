@@ -48,8 +48,8 @@ function CategoryCarousel({ categories, onClick, userScrolled, autoPlay = false,
       >
         <Typography
           flex={1}
-          fontSize={{ xs: 22, md: 32 }}
-          fontWeight={400}
+          fontSize={{ xs: 19, md: 32 }}
+          fontWeight={500}
           color={"#2A2A3C"}
         >
           Browse category
@@ -161,7 +161,7 @@ function CategoryCarousel({ categories, onClick, userScrolled, autoPlay = false,
         <Stack
           ref={carouselRef}
           overflow={"hidden"}
-          m={{ xs: 0, md: "8px 16px" }}
+          m={"8px 16px"}
         >
           <Stack
             ref={containerRef}
@@ -171,7 +171,7 @@ function CategoryCarousel({ categories, onClick, userScrolled, autoPlay = false,
               categories.map(category => (
                 <Box
                   key={category.id}
-                  mx={"12px"}
+                  mx={"8px"}
                 >
                   <CategoryCard
                     category={category}
