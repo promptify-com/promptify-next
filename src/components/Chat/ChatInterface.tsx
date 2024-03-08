@@ -21,7 +21,7 @@ interface Props {
 const ChatInterface = ({ templates, messages, onGenerate, showGenerateButton, onAbort }: Props) => {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
-  const { selectedTemplate, selectedChatOption } = useAppSelector(state => state.chat);
+  const { selectedTemplate, selectedChatOption, selectedChat } = useAppSelector(state => state.chat);
   const isChatHistorySticky = useAppSelector(state => state.sidebar.isChatHistorySticky);
 
   const { scrollToBottom } = useScrollToBottom({
@@ -43,10 +43,10 @@ const ChatInterface = ({ templates, messages, onGenerate, showGenerateButton, on
         direction={"column"}
         gap={3}
       >
-        {!!selectedTemplate && (
+        {!!selectedChat && (
           <ChatHeading
-            title={selectedTemplate.title}
-            avatar={selectedTemplate.thumbnail}
+            title={selectedChat.title}
+            thumbnail={selectedChat.thumbnail}
           />
         )}
 

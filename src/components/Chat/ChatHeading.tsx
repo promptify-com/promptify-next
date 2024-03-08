@@ -5,10 +5,10 @@ import Image from "@/components/design-system/Image";
 
 interface Props {
   title: string;
-  avatar: string;
+  thumbnail: string | undefined;
 }
 
-function ChatHeading({ title, avatar }: Props) {
+function ChatHeading({ title, thumbnail }: Props) {
   return (
     <Stack
       p={1}
@@ -28,7 +28,7 @@ function ChatHeading({ title, avatar }: Props) {
         }}
       >
         <Image
-          src={avatar}
+          src={thumbnail ?? require("@/assets/images/default-thumbnail.jpg")}
           alt={"Image 1"}
           priority={true}
           fill
