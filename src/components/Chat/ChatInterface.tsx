@@ -34,7 +34,7 @@ const ChatInterface = ({ templates, messages, onGenerate, showGenerateButton, on
     <Stack
       ref={messagesContainerRef}
       gap={3}
-      p={{ xs: "8px", md: "16px" }}
+      p={{ xs: "48px 8px", md: "40px 300px" }}
       position={"relative"}
       sx={messagesContainerStyle}
     >
@@ -89,22 +89,11 @@ const ChatInterface = ({ templates, messages, onGenerate, showGenerateButton, on
 const messagesContainerStyle = {
   overflowY: "auto",
   overflowX: "hidden",
-
   px: "8px",
   overscrollBehavior: "contain",
   scrollBehavior: "smooth",
   "&::-webkit-scrollbar": {
-    width: { xs: "4px", md: "6px" },
-    p: 1,
-    backgroundColor: "surface.1",
-  },
-  "&::-webkit-scrollbar-track": {
-    webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
-  },
-  "&::-webkit-scrollbar-thumb": {
-    backgroundColor: "surface.5",
-    outline: "1px solid surface.1",
-    borderRadius: "10px",
+    width: "0px",
   },
 };
 

@@ -92,7 +92,7 @@ function FormInput({ input }: Props) {
       <Box>
         <InputLabel
           sx={{
-            fontSize: { xs: 12, md: 15 },
+            fontSize: { xs: 14, md: 15 },
             fontWeight: 500,
             color: "primary.main",
           }}

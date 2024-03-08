@@ -64,14 +64,12 @@ function FormPromptContent({ template }: Props) {
               Contextual parameters:
             </Typography>
           </Stack>
-          <Stack px={"8px"}>
-            {params?.map(param => (
-              <FormParam
-                key={param.parameter.id}
-                param={param}
-              />
-            ))}
-          </Stack>
+          {params?.map(param => (
+            <FormParam
+              key={param.parameter.id}
+              param={param}
+            />
+          ))}
         </Stack>
       )}
     </>
