@@ -18,16 +18,20 @@ import { executionsApi } from "@/core/api/executions";
 import { getExecutionById } from "@/hooks/api/executions";
 import { setSelectedExecution } from "@/core/store/executionsSlice";
 import type { IMUDynamicColorsThemeColor } from "@/core/api/theme";
+import { useCreateChatMutation, useUpdateChatMutation } from "@/core/api/chats";
+import { setSelectedChat } from "@/core/store/chatSlice";
 
 function Chat() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const [palette, setPalette] = useState(theme.palette);
 
-  const { selectedTemplate, selectedChatOption } = useAppSelector(state => state.chat);
+  const { selectedTemplate, selectedChatOption, selectedChat } = useAppSelector(state => state.chat);
   const currentUser = useAppSelector(state => state.user.currentUser);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const { generatedExecution, selectedExecution } = useAppSelector(state => state.executions);
+  const [createChat] = useCreateChatMutation();
+  const [updateChat] = useUpdateChatMutation();
 
   const {
     messages,
@@ -52,11 +56,41 @@ function Chat() {
     generateExecutionHandler();
   };
 
-  useEffect(() => {
+  const handleDynamicColors = () => {
     if (!selectedTemplate?.thumbnail) {
       return;
     }
     fetchDynamicColors();
+  };
+
+  const handleCreateChat = async () => {
+    if (!selectedTemplate) return;
+
+    try {
+      const newChat = await createChat({
+        title: selectedTemplate.title ?? "Welcome",
+      }).unwrap();
+      dispatch(setSelectedChat(newChat));
+    } catch (err) {
+      console.error("Error creating a new chat: ", err);
+    }
+  };
+
+  const handleTitleChat = async () => {
+    if (!selectedChat || !selectedTemplate?.title) return;
+
+    try {
+      updateChat({ id: selectedChat.id, data: { title: selectedTemplate.title } });
+    } catch (err) {
+      console.error("Error updating chat: ", err);
+    }
+  };
+
+  useEffect(() => {
+    handleDynamicColors();
+
+    if (selectedChat && selectedTemplate?.title) handleTitleChat();
+    else handleCreateChat();
   }, [selectedTemplate]);
 
   const fetchDynamicColors = () => {
