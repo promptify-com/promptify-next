@@ -51,8 +51,6 @@ export default function ContentContainer({ template, tabsFixed }: Props) {
     section?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  const sectionsRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
-
   useEffect(() => {
     const sectionRatios = new Map();
 
@@ -138,31 +136,19 @@ export default function ContentContainer({ template, tabsFixed }: Props) {
           })}
         </Stack>
       </Box>
-      <div
-        id="instructions"
-        ref={el => (sectionsRefs.current["instructions"] = el)}
-      >
+      <div id="instructions">
         <Instructions prompts={template.prompts || []} />
       </div>
-      <div
-        id="example"
-        ref={el => (sectionsRefs.current["example"] = el)}
-      >
+      <div id="example">
         <ExecutionExample
           execution={template.example_execution}
           promptsData={template.prompts}
         />
       </div>
-      <div
-        id="api"
-        ref={el => (sectionsRefs.current["api"] = el)}
-      >
+      <div id="api">
         <ApiAccess template={template} />
       </div>
-      <div
-        id="feedback"
-        ref={el => (sectionsRefs.current["feedback"] = el)}
-      >
+      <div id="feedback">
         <ClientOnly>
           <Feedback />
         </ClientOnly>
