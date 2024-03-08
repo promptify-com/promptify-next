@@ -13,6 +13,8 @@ import MessageBoxHeader from "@/components/Chat/Messages/MessageBoxHeader";
 import FormInputs from "@/components/Prompt/Common/Chat/Form";
 import FormPromptContent from "@/components/Chat/FormPromptContent";
 import { isDesktopViewPort } from "@/common/helpers";
+import { setChatMode } from "@/core/store/chatSlice";
+import { useAppDispatch } from "@/hooks/useStore";
 import type { Templates } from "@/core/api/dto/templates";
 
 interface Props {
@@ -24,6 +26,7 @@ interface Props {
 
 function FormMessageBox({ content, template, onGenerate, onScrollToBottom }: Props) {
   const isDesktopView = isDesktopViewPort();
+  const dispatch = useAppDispatch();
   const [expanded, setExpanded] = useState(true);
   const [formMode, setFormMode] = useState<"INPUT" | "PROMPT_CONTENT">("INPUT");
 
@@ -56,6 +59,7 @@ function FormMessageBox({ content, template, onGenerate, onScrollToBottom }: Pro
             variant="FORM"
             onExpand={() => {
               setExpanded(true);
+              dispatch(setChatMode("messages"));
             }}
             onGenerate={onGenerate}
           />
@@ -104,6 +108,7 @@ function FormMessageBox({ content, template, onGenerate, onScrollToBottom }: Pro
                   variant="text"
                   onClick={() => {
                     setExpanded(false);
+                    dispatch(setChatMode("automation"));
                   }}
                   sx={{
                     color: "onSurface",

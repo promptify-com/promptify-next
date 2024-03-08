@@ -50,28 +50,30 @@ function FormPromptContent({ template }: Props) {
           </Fragment>
         ))}
       </Stack>
-      <Stack>
-        <Stack
-          direction={"column"}
-          gap={1}
-          p={"16px 24px"}
-        >
-          <Typography
-            fontSize={16}
-            lineHeight={"22px"}
+      {!!params.length && (
+        <Stack>
+          <Stack
+            direction={"column"}
+            gap={1}
+            p={"16px 24px"}
           >
-            Contextual Params:
-          </Typography>
+            <Typography
+              fontSize={16}
+              lineHeight={"22px"}
+            >
+              Contextual parameters:
+            </Typography>
+          </Stack>
+          <Stack px={"8px"}>
+            {params?.map(param => (
+              <FormParam
+                key={param.parameter.id}
+                param={param}
+              />
+            ))}
+          </Stack>
         </Stack>
-        <Stack px={"8px"}>
-          {params?.map(param => (
-            <FormParam
-              key={param.parameter.id}
-              param={param}
-            />
-          ))}
-        </Stack>
-      </Stack>
+      )}
     </>
   );
 }

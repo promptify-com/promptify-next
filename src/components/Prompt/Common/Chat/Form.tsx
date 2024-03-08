@@ -91,7 +91,7 @@ function FormFields({ messageType, template }: FormLayoutProps) {
             fontSize={16}
             lineHeight={"22px"}
           >
-            Contextual Params:
+            Contextual parameters:
           </Typography>
         </Stack>
       )}

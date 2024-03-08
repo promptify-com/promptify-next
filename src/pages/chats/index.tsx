@@ -17,6 +17,7 @@ import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution
 import { executionsApi } from "@/core/api/executions";
 import { getExecutionById } from "@/hooks/api/executions";
 import { setSelectedExecution } from "@/core/store/executionsSlice";
+import { setChatMode } from "@/core/store/chatSlice";
 import type { IMUDynamicColorsThemeColor } from "@/core/api/theme";
 
 function Chat() {
@@ -24,7 +25,7 @@ function Chat() {
   const dispatch = useAppDispatch();
   const [palette, setPalette] = useState(theme.palette);
 
-  const { selectedTemplate, selectedChatOption } = useAppSelector(state => state.chat);
+  const { selectedTemplate, selectedChatOption, chatMode } = useAppSelector(state => state.chat);
   const currentUser = useAppSelector(state => state.user.currentUser);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const { generatedExecution, selectedExecution } = useAppSelector(state => state.executions);
@@ -37,7 +38,7 @@ function Chat() {
     isValidatingAnswer,
     suggestedTemplates,
     showGenerateButton,
-    setChatMode,
+
     allQuestionsAnswered,
     setAllQuestionsAnswered,
   } = useMessageManager();
@@ -121,7 +122,7 @@ function Chat() {
   };
 
   const showLanding = !!!messages.length;
-  const showChatInput = selectedChatOption !== "FORM" || !!selectedExecution;
+  const showChatInput = selectedChatOption !== "FORM" || !!selectedExecution || chatMode === "automation";
 
   return (
     <ThemeProvider theme={dynamicTheme}>
@@ -156,7 +157,7 @@ function Chat() {
                 onGenerate={() => {
                   setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "spark"));
                   handleGenerateExecution();
-                  setChatMode("automation");
+                  dispatch(setChatMode("automation"));
                   if (selectedChatOption === "QA") {
                     setAllQuestionsAnswered(false);
                   }

@@ -4,7 +4,14 @@ import { randomId } from "@/common/helpers";
 import { extractTemplateIDs, fetchData, sendMessageAPI } from "@/components/Chat/helper";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import useChatBox from "@/hooks/useChatBox";
-import { setAnswers, setInputs, setIsSimulationStreaming, setParams, setParamsValues } from "@/core/store/chatSlice";
+import {
+  setAnswers,
+  setChatMode,
+  setInputs,
+  setIsSimulationStreaming,
+  setParams,
+  setParamsValues,
+} from "@/core/store/chatSlice";
 import type { IPromptInput } from "@/common/types/prompt";
 import type { Templates } from "@/core/api/dto/templates";
 import type { IAnswer, IMessage, MessageType } from "@/components/Prompt/Types/chat";
@@ -26,7 +33,7 @@ const useMessageManager = () => {
 
   const { prepareAndRemoveDuplicateInputs } = useChatBox();
 
-  const { selectedTemplate, isSimulationStreaming, selectedChatOption, inputs, answers } = useAppSelector(
+  const { selectedTemplate, isSimulationStreaming, selectedChatOption, inputs, answers, chatMode } = useAppSelector(
     state => state.chat,
   );
   const currentUser = useAppSelector(state => state.user.currentUser);
@@ -37,7 +44,6 @@ const useMessageManager = () => {
   const [queuedMessages, setQueuedMessages] = useState<IMessage[]>([]);
   const [suggestedTemplates, setSuggestedTemplates] = useState<Templates[]>([]);
   const [isValidatingAnswer, setIsValidatingAnswer] = useState(false);
-  const [chatMode, setChatMode] = useState<"automation" | "messages">("automation");
   const [allQuestionsAnswered, setAllQuestionsAnswered] = useState(false);
 
   const createMessage = ({
@@ -91,7 +97,7 @@ const useMessageManager = () => {
   }, [selectedTemplate]);
 
   const initialMessages = ({ questions }: { questions: IPromptInput[] }) => {
-    setChatMode("messages");
+    dispatch(setChatMode("messages"));
     const greeting = `Hi, ${currentUser?.first_name ?? currentUser?.username ?? "There"}! Ready to work on`;
     const filteredQuestions = questions.map(_q => _q.question).filter(Boolean);
 
@@ -272,7 +278,6 @@ const useMessageManager = () => {
     suggestedTemplates,
     createMessage,
     showGenerateButton,
-    setChatMode,
     allQuestionsAnswered,
     setAllQuestionsAnswered,
   };

@@ -85,7 +85,6 @@ function MessageBoxHeader({ onExpand, onGenerate, variant }: Props) {
           direction={"row"}
           gap={2}
           alignItems={"center"}
-          onClick={onExpand}
         >
           <Button
             variant="text"
@@ -96,6 +95,7 @@ function MessageBoxHeader({ onExpand, onGenerate, variant }: Props) {
                 bgcolor: "action.hover",
               },
             }}
+            onClick={onExpand}
           >
             Instructions: {answers.length} of {inputs.length}
           </Button>
