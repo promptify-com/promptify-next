@@ -83,7 +83,6 @@ function Template({ hashedExecution, fetchedTemplate, questionPrefixContent }: T
   }
 
   const fetchDynamicColors = () => {
-    //@ts-expect-error unfound-new-type
     materialDynamicColors(fetchedTemplate.thumbnail)
       .then((imgPalette: IMUDynamicColorsThemeColor) => {
         const newPalette: Palette = {

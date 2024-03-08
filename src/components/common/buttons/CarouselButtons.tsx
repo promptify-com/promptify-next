@@ -9,9 +9,16 @@ interface Props {
   scrollNext(): void;
   canScrollNext: boolean;
   canScrollPrev: boolean;
+  children?: React.ReactNode;
 }
 
-export const CarouselButtons: React.FC<Props> = ({ scrollPrev, scrollNext, canScrollNext, canScrollPrev }) => {
+export const CarouselButtons: React.FC<Props> = ({
+  scrollPrev,
+  scrollNext,
+  canScrollNext,
+  canScrollPrev,
+  children,
+}) => {
   return (
     <Stack
       direction={"row"}
@@ -25,6 +32,7 @@ export const CarouselButtons: React.FC<Props> = ({ scrollPrev, scrollNext, canSc
       >
         <ArrowBackIosNew />
       </IconButton>
+      {children}
       <IconButton
         sx={btnStyle}
         disabled={!canScrollNext}

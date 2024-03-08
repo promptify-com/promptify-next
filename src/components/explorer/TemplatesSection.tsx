@@ -22,6 +22,7 @@ interface TemplatesSectionProps {
   isInfiniteScrolling?: boolean;
   hasPrev?: boolean;
   onPrevPage?: () => void;
+  bgColor?: string;
 }
 
 function TemplateHeader({ title, type }: Pick<TemplatesSectionProps, "title" | "type">) {
@@ -85,7 +86,7 @@ function LatestTemplates({ templates }: Pick<TemplatesSectionProps, "templates">
   );
 }
 
-function PopularTemplates({ templates }: Pick<TemplatesSectionProps, "templates">) {
+function PopularTemplates({ templates, bgColor }: Pick<TemplatesSectionProps, "templates" | "bgColor">) {
   if (!templates?.length) {
     return null;
   }
@@ -95,12 +96,24 @@ function PopularTemplates({ templates }: Pick<TemplatesSectionProps, "templates"
       direction={"row"}
       flexWrap={"wrap"}
       rowGap={3}
+      sx={{
+        justifyContent: {
+          xs: "center",
+          sm: "center",
+          md: "flex-start",
+        },
+        gap: {
+          sm: 1,
+        },
+      }}
     >
-      {templates.map((template: TemplateExecutionsDisplay | Templates) => (
+      {templates.map((template: TemplateExecutionsDisplay | Templates, index) => (
         <CardTemplate
-          key={template.id}
+          key={`${template.id}_${index}`}
           template={template as Templates}
+          bgColor={bgColor}
           vertical
+          showTagsOnHover
         />
       ))}
     </Stack>
@@ -158,6 +171,7 @@ export const TemplatesSection = forwardRef<HTMLDivElement, TemplatesSectionProps
     isInfiniteScrolling = true,
     hasPrev,
     onPrevPage = () => {},
+    bgColor = "surface.2",
   },
   ref,
 ) {
@@ -214,17 +228,31 @@ export const TemplatesSection = forwardRef<HTMLDivElement, TemplatesSectionProps
           {isLatestTemplates ? (
             <LatestTemplates templates={templates} />
           ) : isPopularTemplates ? (
-            <PopularTemplates templates={templates} />
+            <PopularTemplates
+              templates={templates}
+              bgColor={bgColor}
+            />
           ) : (
-            <TemplatePagination
-              isLoading={isLoading}
-              onNextPage={onNextPage}
+            <TemplatesInfiniteScroll
+              loading={isLoading}
+              onLoadMore={onNextPage}
               hasMore={hasMore}
               isInfiniteScrolling={isInfiniteScrolling}
               hasPrev={hasPrev}
-              onPrevPage={onPrevPage}
-              templates={templates}
-            />
+              onLoadLess={onPrevPage}
+            >
+              {!!templates?.length &&
+                templates.map((template: TemplateExecutionsDisplay | Templates) => {
+                  return (
+                    <Grid key={template.id}>
+                      <CardTemplate
+                        key={template.id}
+                        template={template as Templates}
+                      />
+                    </Grid>
+                  );
+                })}
+            </TemplatesInfiniteScroll>
           )}
 
           {type !== "myLatestExecutions" && !isLoading && !templates?.length && (

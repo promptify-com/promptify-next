@@ -17,15 +17,25 @@ import Link from "next/link";
 import { alpha } from "@mui/material";
 import Favorite from "@mui/icons-material/Favorite";
 import { Bolt } from "@mui/icons-material";
+import Box from "@mui/material/Box";
 
 type CardTemplateProps = {
   template: Templates | TemplateExecutionsDisplay;
   query?: string;
   asResult?: boolean;
   vertical?: boolean;
+  bgColor?: string;
+  showTagsOnHover?: boolean;
 };
 
-function CardTemplate({ template, query, asResult, vertical }: CardTemplateProps) {
+function CardTemplate({
+  template,
+  query,
+  asResult,
+  vertical,
+  bgColor = "surface.2",
+  showTagsOnHover = false,
+}: CardTemplateProps) {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { truncate } = useTruncate();
@@ -51,13 +61,28 @@ function CardTemplate({ template, query, asResult, vertical }: CardTemplateProps
     );
   };
 
+  const conditionalTagStyles = showTagsOnHover && {
+    "&:hover .tags": {
+      zIndex: 999,
+      display: "flex",
+    },
+  };
+
   return (
-    <Link
+    <Box
+      component={Link}
       href={`/prompt/${template.slug}`}
-      style={{
+      sx={{
         flex: isDesktop ? 1 : "none",
         textDecoration: "none",
         width: isDesktop ? "auto" : "100%",
+        position: "relative",
+        maxWidth: {
+          xs: "100%",
+          sm: "300px",
+          md: "300px",
+          lg: "254px",
+        },
       }}
     >
       <Card
@@ -65,13 +90,18 @@ function CardTemplate({ template, query, asResult, vertical }: CardTemplateProps
           width: "auto",
           minWidth: isDesktop && vertical ? "210px" : "auto",
           height: isDesktop && vertical ? "calc(100% - 24px)" : "calc(100% - 16px)",
-          borderRadius: "16px",
+          borderRadius: {
+            sm: "16px",
+            md: showTagsOnHover ? "16px 16px 0 0" : "16px",
+          },
           cursor: "pointer",
           p: isDesktop && vertical ? "16px 16px 8px" : "8px",
-          bgcolor: isDesktop && vertical ? "transparent" : "surface.2",
+          bgcolor: isDesktop && vertical ? "transparent" : bgColor,
+          transition: "background-color 0.1s ease",
           "&:hover": {
-            bgcolor: "action.hover",
+            bgcolor: bgColor,
           },
+          ...conditionalTagStyles,
         }}
         elevation={0}
       >
@@ -111,14 +141,14 @@ function CardTemplate({ template, query, asResult, vertical }: CardTemplateProps
               gap={0.5}
             >
               <Typography
-                fontSize={14}
+                fontSize={{ xs: 16, md: 14 }}
                 fontWeight={500}
               >
                 {highlightSearchQuery(template.title)}
               </Typography>
               <Typography
                 sx={{
-                  fontSize: 12,
+                  fontSize: { xs: 14, md: 12 },
                   fontWeight: 400,
                   lineHeight: "16.8px",
                   letterSpacing: "0.15px",
@@ -251,8 +281,45 @@ function CardTemplate({ template, query, asResult, vertical }: CardTemplateProps
             </Stack>
           </Stack>
         </Stack>
+
+        {conditionalTagStyles && (
+          <Stack
+            sx={{
+              position: "absolute",
+              top: "100%",
+              left: 0,
+              right: 0,
+              zIndex: 0,
+              p: "8px",
+              bgcolor: "surface.2",
+              borderRadius: "0 0 16px 16px",
+              display: "none",
+              alignItems: "flex-start",
+              alignContent: "flex-start",
+              flexDirection: "row",
+              gap: "8px var(--1, 8px)",
+              flexWrap: "wrap",
+              transition: "background-color 0.3s ease",
+            }}
+            className="tags"
+          >
+            {template.tags.map(tag => (
+              <Chip
+                size="small"
+                label={tag.name}
+                key={tag.id}
+                sx={{
+                  fontSize: { xs: 11, md: 13 },
+                  fontWeight: 400,
+                  bgcolor: "white",
+                  color: "onSurface",
+                }}
+              />
+            ))}
+          </Stack>
+        )}
       </Card>
-    </Link>
+    </Box>
   );
 }
 
