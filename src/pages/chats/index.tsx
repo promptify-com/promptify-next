@@ -17,7 +17,7 @@ import useGenerateExecution from "@/components/Prompt/Hooks/useGenerateExecution
 import { executionsApi } from "@/core/api/executions";
 import { getExecutionById } from "@/hooks/api/executions";
 import { setSelectedExecution } from "@/core/store/executionsSlice";
-import { setChatMode } from "@/core/store/chatSlice";
+import { setChatMode, setInitialChat } from "@/core/store/chatSlice";
 import type { IMUDynamicColorsThemeColor } from "@/core/api/theme";
 import { useCreateChatMutation, useUpdateChatMutation } from "@/core/api/chats";
 import { setAnswers, setInputs, setSelectedChat, setSelectedTemplate } from "@/core/store/chatSlice";
@@ -27,7 +27,9 @@ function Chat() {
   const dispatch = useAppDispatch();
   const [palette, setPalette] = useState(theme.palette);
 
-  const { selectedTemplate, selectedChatOption, selectedChat, chatMode } = useAppSelector(state => state.chat);
+  const { selectedTemplate, selectedChatOption, selectedChat, chatMode, initialChat } = useAppSelector(
+    state => state.chat,
+  );
   const currentUser = useAppSelector(state => state.user.currentUser);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const { generatedExecution, selectedExecution } = useAppSelector(state => state.executions);
@@ -46,7 +48,6 @@ function Chat() {
 
     allQuestionsAnswered,
     setAllQuestionsAnswered,
-    initialChat,
   } = useMessageManager();
 
   const { generateExecutionHandler, abortConnection, disableChatInput } = useGenerateExecution({
@@ -90,14 +91,15 @@ function Chat() {
   };
 
   useEffect(() => {
-    if (!initialChat.current) {
+    console.log(initialChat);
+    if (!initialChat) {
+      dispatch(setInitialChat(false));
       setMessages([]);
       dispatch(setAnswers([]));
       dispatch(setInputs([]));
       dispatch(setSelectedTemplate(undefined));
       setIsValidatingAnswer(false);
       dispatch(setChatMode("automation"));
-      initialChat.current = false;
     }
   }, [selectedChat]);
 

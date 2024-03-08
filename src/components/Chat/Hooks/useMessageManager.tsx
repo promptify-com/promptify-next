@@ -7,6 +7,7 @@ import useChatBox from "@/hooks/useChatBox";
 import {
   setAnswers,
   setChatMode,
+  setInitialChat,
   setInputs,
   setIsSimulationStreaming,
   setParams,
@@ -35,8 +36,16 @@ const useMessageManager = () => {
 
   const { prepareAndRemoveDuplicateInputs } = useChatBox();
 
-  const { selectedTemplate, isSimulationStreaming, selectedChatOption, selectedChat, inputs, answers, chatMode } =
-    useAppSelector(state => state.chat);
+  const {
+    selectedTemplate,
+    isSimulationStreaming,
+    selectedChatOption,
+    selectedChat,
+    inputs,
+    answers,
+    chatMode,
+    initialChat,
+  } = useAppSelector(state => state.chat);
   const currentUser = useAppSelector(state => state.user.currentUser);
 
   const repeatedExecution = useAppSelector(state => state.executions.repeatedExecution);
@@ -46,7 +55,6 @@ const useMessageManager = () => {
   const [suggestedTemplates, setSuggestedTemplates] = useState<Templates[]>([]);
   const [isValidatingAnswer, setIsValidatingAnswer] = useState(false);
   const [allQuestionsAnswered, setAllQuestionsAnswered] = useState(false);
-  const initialChat = useRef(true);
 
   const [createChat] = useCreateChatMutation();
 
@@ -159,7 +167,7 @@ const useMessageManager = () => {
       }).unwrap();
       dispatch(setSelectedChat(newChat));
       // TODO: this timeout should be removed. just a workaround to handle selectedChat watcher inside <Chats />
-      setTimeout(() => (initialChat.current = false), 1000);
+      setTimeout(() => dispatch(setInitialChat(false)), 1000);
     } catch (err) {
       console.error("Error creating a new chat: ", err);
     }

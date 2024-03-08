@@ -22,6 +22,7 @@ export interface ExecutionsProps {
   selectedChatOption?: ChatOption;
   selectedChat?: IChat;
   chatMode: ChatMode;
+  initialChat: boolean;
 }
 
 const initialState: ExecutionsProps = {
@@ -38,6 +39,7 @@ const initialState: ExecutionsProps = {
   selectedChatOption: Storage.get("chatOption"),
   selectedChat: undefined,
   chatMode: "automation",
+  initialChat: true,
 };
 
 export const chatSlice = createSlice({
@@ -86,6 +88,9 @@ export const chatSlice = createSlice({
     setChatMode: (state, action: PayloadAction<ChatMode>) => {
       state.chatMode = action.payload;
     },
+    setInitialChat: (state, action: PayloadAction<boolean>) => {
+      state.initialChat = action.payload;
+    },
   },
 });
 
@@ -104,6 +109,7 @@ export const {
   setSelectedChatOption,
   setSelectedChat,
   setChatMode,
+  setInitialChat,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

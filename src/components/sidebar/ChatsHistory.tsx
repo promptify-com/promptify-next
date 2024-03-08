@@ -5,9 +5,9 @@ import SearchField from "@/components/common/forms/SearchField";
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setToast } from "@/core/store/toastSlice";
-import { setSelectedChat } from "../../core/store/chatSlice";
-import { IChat } from "../../core/api/dto/chats";
-import { ChatCardPlaceholder } from "../placeholders/ChatCardPlaceholder";
+import { setInitialChat, setSelectedChat } from "@/core/store/chatSlice";
+import { IChat } from "@/core/api/dto/chats";
+import { ChatCardPlaceholder } from "@/components/placeholders/ChatCardPlaceholder";
 
 interface Props {}
 
@@ -24,6 +24,7 @@ export default function ChatsHistory({}: Props) {
         title: "Welcome",
       }).unwrap();
       handleClickChat(newChat);
+      dispatch(setInitialChat(false));
     } catch (_) {
       dispatch(setToast({ message: "Chat not created! Please try again.", severity: "error", duration: 6000 }));
     }
@@ -31,6 +32,7 @@ export default function ChatsHistory({}: Props) {
 
   const handleClickChat = (chat: IChat) => {
     dispatch(setSelectedChat(chat));
+    dispatch(setInitialChat(false));
   };
 
   const filteredChats = chats?.filter(chat => chat.title.toLowerCase().includes(search));
