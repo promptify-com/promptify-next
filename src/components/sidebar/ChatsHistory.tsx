@@ -7,6 +7,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setToast } from "@/core/store/toastSlice";
 import { setSelectedChat } from "../../core/store/chatSlice";
 import { IChat } from "../../core/api/dto/chats";
+import { ChatCardPlaceholder } from "../placeholders/ChatCardPlaceholder";
 
 interface Props {}
 
@@ -70,27 +71,33 @@ export default function ChatsHistory({}: Props) {
         >
           Recent:
         </Typography>
-        {!loadingChats &&
-          (filteredChats && filteredChats?.length > 0 ? (
-            filteredChats.map(chat => (
-              <ChatCard
-                key={chat.id}
-                chat={chat}
-                onClick={() => handleClickChat(chat)}
-                active={chat.id === selectedChat?.id}
-              />
-            ))
-          ) : (
+        {loadingChats ? (
+          <ChatCardPlaceholder count={3} />
+        ) : filteredChats && filteredChats?.length > 0 ? (
+          filteredChats.map(chat => (
+            <ChatCard
+              key={chat.id}
+              chat={chat}
+              onClick={() => handleClickChat(chat)}
+              active={chat.id === selectedChat?.id}
+            />
+          ))
+        ) : (
+          <>
             <Typography
               fontSize={14}
               fontWeight={400}
               color={"onSurface"}
               mt={"30px"}
               textAlign={"center"}
+              sx={{
+                opacity: 0.7,
+              }}
             >
               Let&apos;s start new chat!
             </Typography>
-          ))}
+          </>
+        )}
       </Stack>
     </Stack>
   );
