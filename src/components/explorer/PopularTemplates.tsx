@@ -1,33 +1,58 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import TemplatesPaginatedList from "@/components/TemplatesPaginatedList";
 import { TemplatesSection } from "@/components/explorer/TemplatesSection";
 
-import type { Templates } from "@/core/api/dto/templates";
+import type { FilterParams, Templates } from "@/core/api/dto/templates";
 import useBrowser from "@/hooks/useBrowser";
-import { CircularProgress } from "@mui/material";
+import Box from "@mui/material/Box";
+import CircularProgress from "@mui/material/CircularProgress";
+import { useGetTemplatesByFilterQuery } from "@/core/api/templates";
 
 interface Props {
-  loading: boolean;
-  hasNext: boolean;
-  onNextPage: () => void;
-  onPrevPage: () => void;
-  templates: Templates[];
-  templateLoading: boolean;
+  catId?: number;
 }
 
-function PopularTemplates({ loading, hasNext, onNextPage, onPrevPage, templates, templateLoading }: Props) {
+function PopularTemplates({ catId }: Props) {
   const observer = useRef<IntersectionObserver | null>(null);
   const { isMobile } = useBrowser();
-
+  const [offset, setOffset] = useState(0);
+  const [allTemplates, setAllTemplates] = useState<Templates[]>([]);
+  const PAGINATION_LIMIT = 12;
   const SCROLL_THRESHOLD = 24;
+
+  const params: FilterParams = {
+    offset,
+    limit: PAGINATION_LIMIT,
+    ordering: "-runs",
+    isInternal: false,
+    categoryId: catId,
+  };
+
+  const { data, isLoading, isFetching } = useGetTemplatesByFilterQuery(params);
+
+  const handleNextPage = () => {
+    if (!!data?.next) {
+      setOffset(prevOffset => prevOffset + PAGINATION_LIMIT);
+    }
+  };
+
+  useEffect(() => {
+    if (data?.results) {
+      if (offset === 0) {
+        setAllTemplates(data?.results);
+      } else {
+        setAllTemplates(prevTemplates => prevTemplates.concat(data?.results));
+      }
+    }
+  }, [data?.results]);
 
   const lastTemplateElementRef = useCallback(
     (node: HTMLDivElement) => {
-      if (loading) return;
+      if (isFetching) return;
       if (observer.current) observer.current.disconnect();
-      if (templates.length >= SCROLL_THRESHOLD) {
+      if (allTemplates.length >= SCROLL_THRESHOLD) {
         observer.current?.disconnect();
         return;
       }
@@ -37,15 +62,15 @@ function PopularTemplates({ loading, hasNext, onNextPage, onPrevPage, templates,
 
       observer.current = new IntersectionObserver(
         entries => {
-          if (entries[0].isIntersecting && hasNext) {
-            onNextPage();
+          if (entries[0].isIntersecting && !!data?.next) {
+            handleNextPage();
           }
         },
         { rootMargin: margin },
       );
       if (node) observer.current.observe(node);
     },
-    [loading, hasNext, templates],
+    [isFetching, !!data?.next, allTemplates.length],
   );
 
   return (
@@ -63,15 +88,14 @@ function PopularTemplates({ loading, hasNext, onNextPage, onPrevPage, templates,
         </Typography>
       </Stack>
       <TemplatesPaginatedList
-        loading={loading}
-        hasNext={hasNext}
-        onNextPage={onNextPage}
+        loading={isFetching}
+        hasNext={!!data?.next}
+        onNextPage={handleNextPage}
         hasPrev={false}
-        onPrevPage={onPrevPage}
-        buttonText={loading ? "Loading..." : "Load more"}
+        buttonText={isFetching ? "Loading..." : "Load more"}
         variant="outlined"
         endIcon={
-          loading && (
+          isFetching && (
             <CircularProgress
               size={24}
               color="primary"
@@ -79,12 +103,14 @@ function PopularTemplates({ loading, hasNext, onNextPage, onPrevPage, templates,
           )
         }
       >
-        <TemplatesSection
-          templateLoading={templateLoading}
-          templates={templates}
-          type="popularTemplates"
-          bgColor="surfaceContainerLow"
-        />
+        <Box sx={{ px: { xs: "20px", md: "0px" } }}>
+          <TemplatesSection
+            templateLoading={isLoading}
+            templates={allTemplates}
+            type="popularTemplates"
+            bgColor="surfaceContainerLow"
+          />
+        </Box>
         <div ref={lastTemplateElementRef}></div>
       </TemplatesPaginatedList>
     </Stack>

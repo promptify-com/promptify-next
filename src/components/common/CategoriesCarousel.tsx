@@ -12,6 +12,8 @@ import { CategoryCard } from "@/components/common/cards/CardCategory";
 import type { Category } from "@/core/api/dto/templates";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import Link from "next/link";
+import { theme } from "@/theme";
+import { useAppSelector } from "@/hooks/useStore";
 
 interface CategoryCarouselProps {
   categories: Category[];
@@ -27,6 +29,7 @@ function CategoryCarousel({ categories, onClick, userScrolled, autoPlay = false,
   const observer = useIntersectionObserver(containerRef, {
     threshold: 0.5,
   });
+  const isPromptsFiltersSticky = useAppSelector(state => state.sidebar.isPromptsFiltersSticky);
 
   return (
     <Stack
@@ -82,7 +85,8 @@ function CategoryCarousel({ categories, onClick, userScrolled, autoPlay = false,
             zIndex: 1000,
             maxWidth: {
               md: "875px",
-              lg: "1010px",
+              lg: `${isPromptsFiltersSticky ? 920 : 1010}px`,
+              xl: "1010px",
             },
             width: "100%",
             bgcolor: "surface.1",

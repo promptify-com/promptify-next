@@ -17,22 +17,24 @@ import materialDynamicColors from "material-dynamic-colors";
 import { type Palette, ThemeProvider, createTheme, useTheme } from "@mui/material";
 import { mix } from "polished";
 import FooterPrompt from "@/components/explorer/FooterPrompt";
+import { FiltersSelected } from "@/components/explorer/FiltersSelected";
+import { TemplatesSection } from "@/components/explorer/TemplatesSection";
 
 export default function Page({ category }: { category: Category }) {
   const router = useRouter();
   const theme = useTheme();
   const [palette, setPalette] = useState(theme.palette);
 
-  const ITEM_PER_PAGE = 12;
-
   const {
-    templates: popularTemplates,
+    templates,
     isTemplatesLoading,
     handleNextPage,
     hasMore,
-    handlePrevPage,
+    allFilterParamsNull,
     isFetching,
-  } = useGetTemplatesByFilter({ catId: category?.id, ordering: "-runs", templateLimit: ITEM_PER_PAGE });
+    hasPrev,
+    handlePrevPage,
+  } = useGetTemplatesByFilter({ catId: category?.id, ordering: "-likes", templateLimit: 5, paginatedList: true });
 
   useEffect(() => {
     if (!category) {
@@ -209,14 +211,24 @@ export default function Page({ category }: { category: Category }) {
                 </Stack>
               </Stack>
 
-              <PopularTemplates
-                loading={isFetching}
-                hasNext={hasMore}
-                onNextPage={handleNextPage}
-                onPrevPage={handlePrevPage}
-                templates={popularTemplates}
-                templateLoading={isTemplatesLoading}
-              />
+              <FiltersSelected show={!allFilterParamsNull} />
+
+              {!allFilterParamsNull && (
+                <TemplatesSection
+                  filtered={!allFilterParamsNull}
+                  templates={templates ?? []}
+                  isLoading={isFetching}
+                  templateLoading={isTemplatesLoading}
+                  title="Best templates"
+                  onNextPage={handleNextPage}
+                  hasMore={hasMore}
+                  isInfiniteScrolling={false}
+                  hasPrev={hasPrev}
+                  onPrevPage={handlePrevPage}
+                />
+              )}
+
+              <PopularTemplates catId={category?.id} />
             </Stack>
           </Grid>
           <FooterPrompt />

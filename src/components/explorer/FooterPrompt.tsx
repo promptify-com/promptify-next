@@ -29,7 +29,10 @@ const thisYear = new Date().getFullYear();
 
 function FooterPrompt() {
   return (
-    <>
+    <Stack
+      width={"95%"}
+      margin={"auto"}
+    >
       <Divider />
       <Stack
         display={"flex"}
@@ -90,6 +93,7 @@ function FooterPrompt() {
                   <Link
                     href={link.href}
                     style={{ textDecoration: "none" }}
+                    target="_blank"
                   >
                     <Typography
                       sx={{
@@ -108,7 +112,7 @@ function FooterPrompt() {
             </Stack>
           </Stack>
           <Stack
-            flexDirection={{ xs: "column", md: "row" }}
+            flexDirection={"row"}
             gap={"8px"}
           >
             {socialLinks.map((link, index) => (
@@ -148,13 +152,14 @@ function FooterPrompt() {
               letterSpacing: "0.17px",
               color: "#575E71",
               fontFeatureSettings: "'clig' off, 'liga' off",
+              textAlign: { xs: "center", md: "left" },
             }}
           >
             © {thisYear} Promptify.com - Promptify LLC. All rights reserved.
           </Typography>
         </Stack>
       </Stack>
-    </>
+    </Stack>
   );
 }
 

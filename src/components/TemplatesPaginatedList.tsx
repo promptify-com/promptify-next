@@ -8,7 +8,7 @@ interface TemplatesPaginatedListProps {
   hasPrev?: boolean;
   loading: boolean;
   onNextPage: () => void;
-  onPrevPage: () => void;
+  onPrevPage?: () => void;
   canBeShown?: boolean;
   buttonText?: string;
   endIcon?: React.ReactNode;

@@ -17,6 +17,7 @@ import Link from "next/link";
 import { alpha } from "@mui/material";
 import Favorite from "@mui/icons-material/Favorite";
 import { Bolt } from "@mui/icons-material";
+import Box from "@mui/material/Box";
 
 type CardTemplateProps = {
   template: Templates | TemplateExecutionsDisplay;
@@ -68,14 +69,20 @@ function CardTemplate({
   };
 
   return (
-    <Link
+    <Box
+      component={Link}
       href={`/prompt/${template.slug}`}
-      style={{
+      sx={{
         flex: isDesktop ? 1 : "none",
         textDecoration: "none",
         width: isDesktop ? "auto" : "100%",
         position: "relative",
-        maxWidth: "254px",
+        maxWidth: {
+          xs: "100%",
+          sm: "300px",
+          md: "300px",
+          lg: "254px",
+        },
       }}
     >
       <Card
@@ -134,14 +141,14 @@ function CardTemplate({
               gap={0.5}
             >
               <Typography
-                fontSize={14}
+                fontSize={{ xs: 16, md: 14 }}
                 fontWeight={500}
               >
                 {highlightSearchQuery(template.title)}
               </Typography>
               <Typography
                 sx={{
-                  fontSize: 12,
+                  fontSize: { xs: 14, md: 12 },
                   fontWeight: 400,
                   lineHeight: "16.8px",
                   letterSpacing: "0.15px",
@@ -312,7 +319,7 @@ function CardTemplate({
           </Stack>
         )}
       </Card>
-    </Link>
+    </Box>
   );
 }
 

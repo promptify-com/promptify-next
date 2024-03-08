@@ -27,16 +27,16 @@ interface Props {
 }
 
 export default function ExplorePage({ categories }: Props) {
-  const ITEM_PER_PAGE = 12;
   const {
-    templates: popularTemplates,
+    templates,
     isTemplatesLoading,
     handleNextPage,
     hasMore,
     allFilterParamsNull,
-    handlePrevPage,
     isFetching,
-  } = useGetTemplatesByFilter({ ordering: "-runs", templateLimit: ITEM_PER_PAGE });
+    hasPrev,
+    handlePrevPage,
+  } = useGetTemplatesByFilter({ ordering: "-likes", templateLimit: 5, paginatedList: true });
   const { isMobile } = useBrowser();
   const containerRef = useRef<HTMLDivElement | null>(null);
   const observer = useIntersectionObserver(containerRef, {
@@ -142,15 +142,28 @@ export default function ExplorePage({ categories }: Props) {
               />
             ))}
 
-          <PopularTemplates
-            loading={isFetching}
-            hasNext={hasMore}
-            onNextPage={handleNextPage}
-            onPrevPage={handlePrevPage}
-            templates={popularTemplates}
-            templateLoading={isTemplatesLoading}
-          />
-          <Box ref={containerRef}>
+          {!allFilterParamsNull && (
+            <TemplatesSection
+              filtered={!allFilterParamsNull}
+              templates={templates ?? []}
+              isLoading={isFetching}
+              templateLoading={isTemplatesLoading}
+              title="Best templates"
+              onNextPage={handleNextPage}
+              hasMore={hasMore}
+              isInfiniteScrolling={false}
+              hasPrev={hasPrev}
+              onPrevPage={handlePrevPage}
+            />
+          )}
+
+          <PopularTemplates />
+          <Box
+            ref={containerRef}
+            sx={{
+              m: { xs: "0 20px", md: "0px" },
+            }}
+          >
             {isValidUser && !!suggestedTemplates?.length && (
               <TemplatesSection
                 filtered={false}
