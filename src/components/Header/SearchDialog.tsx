@@ -25,6 +25,8 @@ export const SearchDialog: React.FC<SearchDialogProps> = ({ open, close }) => {
   const router = useRouter();
   const dispatch = useDispatch();
 
+  const isExplorePage = router.pathname === "/explore";
+
   const [IsSm, setIsSm] = useState(false);
   const [textInput, setTextInput] = useState("");
   const deferredSearchName = useDeferredValue(textInput);
@@ -119,7 +121,9 @@ export const SearchDialog: React.FC<SearchDialogProps> = ({ open, close }) => {
               onChange={val => setTextInput(val)}
               onPressEnter={() => {
                 dispatch(setSelectedKeyword(textInput));
-                router.push({ pathname: "/explore" });
+                if (!isExplorePage) {
+                  router.push({ pathname: "/explore" });
+                }
               }}
               sx={{ bgcolor: "transparent" }}
             />

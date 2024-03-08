@@ -1,4 +1,6 @@
-import { Button, Stack, Typography } from "@mui/material";
+import Button from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 import { useCreateChatMutation, useGetChatsQuery } from "@/core/api/chats";
 import { ChatCard } from "@/components/common/cards/CardChat";
 import SearchField from "@/components/common/forms/SearchField";
