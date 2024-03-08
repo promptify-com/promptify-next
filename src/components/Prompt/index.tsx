@@ -200,7 +200,10 @@ function TemplatePage({ template, popup }: Props) {
           flex={2}
           order={0}
         >
-          <TemplateDetails template={template} />
+          <TemplateDetails
+            template={template}
+            close={closeTemplatePopup}
+          />
         </Box>
       </Stack>
     </ThemeProvider>

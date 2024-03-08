@@ -20,9 +20,10 @@ import useBrowser from "../../hooks/useBrowser";
 
 interface TemplateDetailsProps {
   template: Templates;
+  close?(): void;
 }
 
-const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template }) => {
+const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template, close }) => {
   const router = useRouter();
   const { isMobile } = useBrowser();
   const dispatch = useDispatch();
@@ -194,6 +195,7 @@ const TemplateDetails: React.FC<TemplateDetailsProps> = ({ template }) => {
                     onClick={() => {
                       dispatch(setSelectedTag(tag));
                       router.push("/explore");
+                      close?.();
                     }}
                     variant={"filled"}
                     label={tag.name}
