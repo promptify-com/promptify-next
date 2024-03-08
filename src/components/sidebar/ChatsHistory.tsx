@@ -37,7 +37,7 @@ export default function ChatsHistory({}: Props) {
     dispatch(setInitialChat(false));
   };
 
-  const filteredChats = chats?.filter(chat => chat.title.toLowerCase().includes(search));
+  const filteredChats = chats?.filter(chat => chat.title.toLowerCase().indexOf(search) > -1);
   const emptyChats = Boolean(!chats?.length || chats?.length === 0);
 
   return (
