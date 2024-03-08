@@ -91,7 +91,6 @@ function Chat() {
   };
 
   useEffect(() => {
-    console.log(initialChat);
     if (!initialChat) {
       dispatch(setInitialChat(false));
       setMessages([]);
