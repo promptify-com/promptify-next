@@ -77,7 +77,7 @@ function TemplateSuggestions({ templates, scrollToBottom, content }: Props) {
                   },
                 }}
               >
-                and {visibleCount} prompts more...
+                and {templates.length - visibleCount} prompts more...
               </Button>
             </Stack>
           )}

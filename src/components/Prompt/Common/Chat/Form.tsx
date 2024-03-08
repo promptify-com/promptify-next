@@ -80,19 +80,22 @@ function FormFields({ messageType, template }: FormLayoutProps) {
           </Stack>
         );
       })}
-      <Stack
-        px={"16px"}
-        py={"16px"}
-        direction={"column"}
-        gap={1}
-      >
-        <Typography
-          fontSize={16}
-          lineHeight={"22px"}
+      {!!params.length && (
+        <Stack
+          px={"16px"}
+          py={"16px"}
+          direction={"column"}
+          gap={1}
         >
-          Contextual Params:
-        </Typography>
-      </Stack>
+          <Typography
+            fontSize={16}
+            lineHeight={"22px"}
+          >
+            Contextual Params:
+          </Typography>
+        </Stack>
+      )}
+
       {params?.map(param => (
         <FormParam
           key={param.parameter.id}

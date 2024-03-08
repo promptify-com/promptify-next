@@ -181,7 +181,11 @@ const useMessageManager = () => {
             const templates = await fetchData(templateIDs);
             setSuggestedTemplates(templates);
             const suggestionsMessage = createMessage({ type: "suggestedTemplates" });
-            suggestionsMessage.text = "I found this prompts, following your request:";
+            const pluralTemplates = templates.length > 1;
+
+            suggestionsMessage.text = `I found ${pluralTemplates ? "these" : "this"} prompt${
+              pluralTemplates ? "s" : ""
+            }, following your request:`;
 
             setMessages(prevMessages => prevMessages.concat(suggestionsMessage));
           }
