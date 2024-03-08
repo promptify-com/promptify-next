@@ -15,11 +15,6 @@ export default function FiltersDrawer({ expandedOnHover }: Props) {
 
   const toggleSidebar = () => {
     dispatch(setStickyPromptsFilters(!isPromptsFiltersSticky));
-    if (!isPromptsFiltersSticky) {
-      Storage.set("isPromptsFiltersSticky", String(!isPromptsFiltersSticky));
-    } else {
-      Storage.remove("isPromptsFiltersSticky");
-    }
   };
 
   useEffect(() => {

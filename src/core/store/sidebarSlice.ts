@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import Storage from "@/common/storage";
 
 const initialState = {
   builderSidebarOpen: false,
@@ -14,10 +15,22 @@ const sidebarSlice = createSlice({
       state.builderSidebarOpen = action.payload;
     },
     setStickyPromptsFilters: (state, action: PayloadAction<boolean>) => {
-      state.isPromptsFiltersSticky = action.payload;
+      const sticky = action.payload;
+      state.isPromptsFiltersSticky = sticky;
+      if (sticky) {
+        Storage.set("isPromptsFiltersSticky", String(sticky));
+      } else {
+        Storage.remove("isPromptsFiltersSticky");
+      }
     },
     setStickyChatHistory: (state, action: PayloadAction<boolean>) => {
-      state.isChatHistorySticky = action.payload;
+      const sticky = action.payload;
+      state.isChatHistorySticky = sticky;
+      if (sticky) {
+        Storage.set("isChatHistorySticky", String(sticky));
+      } else {
+        Storage.remove("isChatHistorySticky");
+      }
     },
   },
 });

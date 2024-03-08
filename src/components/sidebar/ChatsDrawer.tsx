@@ -15,11 +15,6 @@ export default function ChatsDrawer({ expandedOnHover }: Props) {
 
   const toggleSidebar = () => {
     dispatch(setStickyChatHistory(!isChatHistorySticky));
-    if (!isChatHistorySticky) {
-      Storage.set("isChatHistorySticky", String(!isChatHistorySticky));
-    } else {
-      Storage.remove("isChatHistorySticky");
-    }
   };
 
   useEffect(() => {
