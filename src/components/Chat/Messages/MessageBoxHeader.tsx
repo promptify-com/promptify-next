@@ -12,7 +12,7 @@ interface Props {
   onExpand?: () => void;
   onGenerate?: () => void;
   variant: "FORM" | "EXECUTION";
-  showRunButton: boolean;
+  showRunButton?: boolean;
 }
 
 function MessageBoxHeader({ onExpand, onGenerate, variant, showRunButton }: Props) {
