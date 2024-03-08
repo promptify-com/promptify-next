@@ -12,8 +12,8 @@ import { CategoryCard } from "@/components/common/cards/CardCategory";
 import type { Category } from "@/core/api/dto/templates";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import Link from "next/link";
-import { theme } from "@/theme";
 import { useAppSelector } from "@/hooks/useStore";
+import useBrowser from "@/hooks/useBrowser";
 
 interface CategoryCarouselProps {
   categories: Category[];
@@ -25,6 +25,8 @@ interface CategoryCarouselProps {
 
 function CategoryCarousel({ categories, onClick, userScrolled, autoPlay = false, gap = 5 }: CategoryCarouselProps) {
   const { containerRef: carouselRef, scrollNext, scrollPrev } = useCarousel(autoPlay);
+  const { isMobile } = useBrowser();
+
   const containerRef = useRef<HTMLDivElement | null>(null);
   const observer = useIntersectionObserver(containerRef, {
     threshold: 0.5,
@@ -46,7 +48,7 @@ function CategoryCarousel({ categories, onClick, userScrolled, autoPlay = false,
       >
         <Typography
           flex={1}
-          fontSize={{ xs: 28, md: 32 }}
+          fontSize={{ xs: 22, md: 32 }}
           fontWeight={400}
           color={"#2A2A3C"}
         >
@@ -175,7 +177,7 @@ function CategoryCarousel({ categories, onClick, userScrolled, autoPlay = false,
                     category={category}
                     priority={false}
                     href={`/explore/${category.slug}`}
-                    min
+                    min={!isMobile}
                   />
                 </Box>
               ))}

@@ -80,7 +80,7 @@ function PopularTemplates({ catId }: Props) {
         mb={"-24px"}
       >
         <Typography
-          fontSize={{ xs: 28, md: 32 }}
+          fontSize={{ xs: 22, md: 32 }}
           fontWeight={400}
           color={"#2A2A3C"}
         >

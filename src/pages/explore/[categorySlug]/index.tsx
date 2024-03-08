@@ -214,18 +214,20 @@ export default function Page({ category }: { category: Category }) {
               <FiltersSelected show={!allFilterParamsNull} />
 
               {!allFilterParamsNull && (
-                <TemplatesSection
-                  filtered={!allFilterParamsNull}
-                  templates={templates ?? []}
-                  isLoading={isFetching}
-                  templateLoading={isTemplatesLoading}
-                  title="Best templates"
-                  onNextPage={handleNextPage}
-                  hasMore={hasMore}
-                  isInfiniteScrolling={false}
-                  hasPrev={hasPrev}
-                  onPrevPage={handlePrevPage}
-                />
+                <Box sx={{ px: { xs: "20px", md: "0px" } }}>
+                  <TemplatesSection
+                    filtered={!allFilterParamsNull}
+                    templates={templates ?? []}
+                    isLoading={isFetching}
+                    templateLoading={isTemplatesLoading}
+                    title="Best templates"
+                    onNextPage={handleNextPage}
+                    hasMore={hasMore}
+                    isInfiniteScrolling={false}
+                    hasPrev={hasPrev}
+                    onPrevPage={handlePrevPage}
+                  />
+                </Box>
               )}
 
               <PopularTemplates catId={category?.id} />
