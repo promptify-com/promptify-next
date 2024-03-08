@@ -79,7 +79,7 @@ function FormFields({ messageType, template }: FormLayoutProps) {
       })}
       {!!params.length && (
         <Stack
-          px={"16px"}
+          px={{ xs: "16px", md: "24px" }}
           py={"16px"}
           direction={"column"}
           gap={1}

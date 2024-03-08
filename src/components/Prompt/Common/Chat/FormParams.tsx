@@ -88,8 +88,8 @@ export default function FormParam({ param }: GeneratorParamProps) {
       alignItems={{ xs: "start", md: "center" }}
       flexWrap={"wrap"}
       gap={1}
+      px={{ xs: "16px", md: "24px" }}
       sx={{
-        px: "16px",
         "&:hover": {
           bgcolor: "surface.1",
         },
