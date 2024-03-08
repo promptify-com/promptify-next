@@ -109,7 +109,7 @@ export const ChatCard = ({ chat, active, onClick }: Props) => {
                 overflow={"hidden"}
                 textOverflow={"ellipsis"}
               >
-                {chat.title}
+                {chat.last_message}
               </Typography>
             </>
           ) : (
