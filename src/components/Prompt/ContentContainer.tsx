@@ -51,6 +51,46 @@ export default function ContentContainer({ template, tabsFixed }: Props) {
     section?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
+  const sectionsRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+
+  useEffect(() => {
+    const sectionRatios = new Map();
+
+    const observer = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          sectionRatios.set(entry.target.id, entry.intersectionRatio);
+
+          let maxRatio = 0;
+          let currentSectionId: string | null = null;
+
+          sectionRatios.forEach((ratio, id) => {
+            if (ratio > maxRatio) {
+              maxRatio = ratio;
+              currentSectionId = id;
+            }
+          });
+
+          if (currentSectionId) {
+            const newSelectedTab = ScrollTabs.find(tab => tab.name === currentSectionId);
+            if (newSelectedTab) setSelectedTab(newSelectedTab);
+          }
+        });
+      },
+      {
+        rootMargin: "0px",
+        threshold: Array.from({ length: 20 }, (_, i) => i * 0.05),
+      },
+    );
+
+    ScrollTabs.forEach(tab => {
+      const section = document.getElementById(tab.name);
+      if (section) observer.observe(section);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <Box>
       <Box
@@ -98,19 +138,31 @@ export default function ContentContainer({ template, tabsFixed }: Props) {
           })}
         </Stack>
       </Box>
-      <div id="instructions">
+      <div
+        id="instructions"
+        ref={el => (sectionsRefs.current["instructions"] = el)}
+      >
         <Instructions prompts={template.prompts || []} />
       </div>
-      <div id="example">
+      <div
+        id="example"
+        ref={el => (sectionsRefs.current["example"] = el)}
+      >
         <ExecutionExample
           execution={template.example_execution}
           promptsData={template.prompts}
         />
       </div>
-      <div id="api">
+      <div
+        id="api"
+        ref={el => (sectionsRefs.current["api"] = el)}
+      >
         <ApiAccess template={template} />
       </div>
-      <div id="feedback">
+      <div
+        id="feedback"
+        ref={el => (sectionsRefs.current["feedback"] = el)}
+      >
         <ClientOnly>
           <Feedback />
         </ClientOnly>
