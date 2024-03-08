@@ -91,15 +91,6 @@ const useMessageManager = () => {
     proceedQueuedMessages();
   }, [isSimulationStreaming, queuedMessages]);
 
-  useEffect(() => {
-    if (!selectedTemplate) {
-      return;
-    }
-    const runMessage = createMessage({ type: "text", fromUser: true });
-    runMessage.text = `Run "${selectedTemplate.title}"`;
-    setMessages(prevMessages => prevMessages.filter(message => message.type !== "form").concat(runMessage));
-  }, [selectedTemplate]);
-
   const initialMessages = ({ questions }: { questions: IPromptInput[] }) => {
     dispatch(setChatMode("messages"));
     const greeting = `Hi, ${currentUser?.first_name ?? currentUser?.username ?? "There"}! Ready to work on`;
@@ -108,10 +99,13 @@ const useMessageManager = () => {
     const welcomeMessage = createMessage({ type: "text" });
     welcomeMessage.text = `${greeting} ${selectedTemplate?.title}. ${filteredQuestions.slice(0, 3).join(" ")}`;
 
+    const runMessage = createMessage({ type: "text", fromUser: true });
+    runMessage.text = `Run "${selectedTemplate?.title}"`;
+
     if (selectedChatOption === "FORM") {
       const formMessage = createMessage({ type: "form", noHeader: true });
       formMessage.text = welcomeMessage.text;
-      setMessages(prevMessages => prevMessages.concat(formMessage));
+      setMessages(prevMessages => prevMessages.filter(msg => msg.type !== "form").concat([runMessage, formMessage]));
     } else {
       const headerWithTextMessage = createMessage({ type: "HeaderWithText" });
       headerWithTextMessage.text = welcomeMessage.text;
@@ -121,7 +115,7 @@ const useMessageManager = () => {
         questionIndex: 1,
       });
       questionMessage.text = `${filteredQuestions[0] || questions[0].fullName}`;
-      setMessages(prevMessages => prevMessages.concat(headerWithTextMessage));
+      setMessages(prevMessages => prevMessages.concat([runMessage, headerWithTextMessage]));
       addToQueuedMessages([questionMessage]);
     }
   };
@@ -144,7 +138,7 @@ const useMessageManager = () => {
     dispatch(setInputs(inputs));
 
     return [inputs, params, promptHasContent];
-  }, [selectedChatOption, repeatedExecution]);
+  }, [selectedTemplate, selectedChatOption, repeatedExecution]);
 
   const allRequiredInputsAnswered = (): boolean => {
     const requiredQuestionNames = inputs.filter(question => question.required).map(question => question.name);

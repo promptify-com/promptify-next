@@ -6,6 +6,8 @@ import InputBase from "@mui/material/InputBase";
 import { useAppDispatch, useAppSelector } from "@/hooks/useStore";
 import { setMessageSenderValue } from "@/core/store/chatSlice";
 import ArrowCircleUp from "@/assets/icons/ArrowCircleUp";
+import { Stack } from "@mui/material";
+import { BackspaceOutlined } from "@mui/icons-material";
 
 interface MessageSenderProps {
   onSubmit: (value: string) => void;
@@ -87,7 +89,24 @@ function MessageSender({
         onKeyPress={handleKeyPress}
       />
 
-      <Box mt={0.5}>
+      <Stack
+        direction={"row"}
+        alignItems={"center"}
+        gap={2}
+      >
+        {hasValue && (
+          <BackspaceOutlined
+            sx={{
+              fontSize: "20px",
+              cursor: "pointer",
+              color: "text.secondary",
+            }}
+            onClick={() => {
+              setLocalValue("");
+              dispatch(setMessageSenderValue(""));
+            }}
+          />
+        )}
         {loading ? (
           <CircularProgress
             size={"20px"}
@@ -96,16 +115,17 @@ function MessageSender({
         ) : (
           <Box
             onClick={handleSubmit}
+            mt={1}
             sx={{ cursor: "pointer" }}
           >
             <ArrowCircleUp
               height="32"
               width="32"
-              color={!hasValue ? "white" : "#375CA9"}
+              color={!hasValue ? "#DFE4D7" : "#375CA9"}
             />
           </Box>
         )}
-      </Box>
+      </Stack>
     </Box>
   );
 }

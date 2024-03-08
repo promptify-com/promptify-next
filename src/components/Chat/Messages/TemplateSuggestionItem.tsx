@@ -40,6 +40,8 @@ function TemplateSuggestionItem({ template, onClick }: Props) {
             zIndex: 0,
             position: "relative",
             width: { xs: "260px", md: "152px" },
+            minWidth: "152px",
+
             height: "113px",
             borderRadius: "24px",
             overflow: "hidden",

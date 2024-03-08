@@ -82,8 +82,8 @@ function FormInput({ input }: Props) {
       direction={"row"}
       alignItems={"center"}
       gap={1}
+      px={{ xs: "16px", md: "24px" }}
       sx={{
-        px: "16px",
         "&:hover": {
           bgcolor: "surface.1",
         },
