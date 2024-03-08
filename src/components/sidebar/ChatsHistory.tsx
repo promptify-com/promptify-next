@@ -94,7 +94,7 @@ export default function ChatsHistory({}: Props) {
                 opacity: 0.7,
               }}
             >
-              Let&apos;s start new chat!
+              No chat found
             </Typography>
           </>
         )}

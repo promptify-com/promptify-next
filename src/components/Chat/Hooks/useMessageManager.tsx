@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { randomId } from "@/common/helpers";
 import { extractTemplateIDs, fetchData, sendMessageAPI } from "@/components/Chat/helper";
@@ -42,6 +42,8 @@ const useMessageManager = () => {
   const [chatMode, setChatMode] = useState<"automation" | "messages">("automation");
   const [allQuestionsAnswered, setAllQuestionsAnswered] = useState(false);
   const [welcomeMessage, setWelcomeMessage] = useState("");
+  const initialChat = useRef(true);
+
   const [createChat] = useCreateChatMutation();
 
   const createMessage = ({
@@ -159,6 +161,8 @@ const useMessageManager = () => {
         title: "Welcome",
       }).unwrap();
       dispatch(setSelectedChat(newChat));
+      // TODO: this timeout should be removed. just a workaround to handle selectedChat watcher inside <Chats />
+      setTimeout(() => (initialChat.current = false), 1000);
     } catch (err) {
       console.error("Error creating a new chat: ", err);
     }
@@ -284,12 +288,14 @@ const useMessageManager = () => {
     setMessages,
     handleSubmitInput,
     isValidatingAnswer,
+    setIsValidatingAnswer,
     suggestedTemplates,
     createMessage,
     showGenerateButton,
     setChatMode,
     allQuestionsAnswered,
     setAllQuestionsAnswered,
+    initialChat,
   };
 };
 

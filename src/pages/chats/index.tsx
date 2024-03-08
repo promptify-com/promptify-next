@@ -19,7 +19,7 @@ import { getExecutionById } from "@/hooks/api/executions";
 import { setSelectedExecution } from "@/core/store/executionsSlice";
 import type { IMUDynamicColorsThemeColor } from "@/core/api/theme";
 import { useCreateChatMutation, useUpdateChatMutation } from "@/core/api/chats";
-import { setSelectedChat } from "@/core/store/chatSlice";
+import { setAnswers, setInputs, setSelectedChat, setSelectedTemplate } from "@/core/store/chatSlice";
 
 function Chat() {
   const router = useRouter();
@@ -39,11 +39,13 @@ function Chat() {
     createMessage,
     handleSubmitInput,
     isValidatingAnswer,
+    setIsValidatingAnswer,
     suggestedTemplates,
     showGenerateButton,
     setChatMode,
     allQuestionsAnswered,
     setAllQuestionsAnswered,
+    initialChat,
   } = useMessageManager();
 
   const { generateExecutionHandler, abortConnection, disableChatInput } = useGenerateExecution({
@@ -85,6 +87,18 @@ function Chat() {
       console.error("Error updating chat: ", err);
     }
   };
+
+  useEffect(() => {
+    if (!initialChat.current) {
+      setMessages([]);
+      dispatch(setAnswers([]));
+      dispatch(setInputs([]));
+      dispatch(setSelectedTemplate(undefined));
+      setIsValidatingAnswer(false);
+      setChatMode("automation");
+      initialChat.current = false;
+    }
+  }, [selectedChat]);
 
   useEffect(() => {
     handleDynamicColors();
