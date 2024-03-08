@@ -22,6 +22,7 @@ const ChatInterface = ({ templates, messages, onGenerate, showGenerateButton, on
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
   const { selectedTemplate, selectedChatOption } = useAppSelector(state => state.chat);
+  const isChatHistorySticky = useAppSelector(state => state.sidebar.isChatHistorySticky);
 
   const { scrollToBottom } = useScrollToBottom({
     ref: messagesContainerRef,
@@ -34,7 +35,7 @@ const ChatInterface = ({ templates, messages, onGenerate, showGenerateButton, on
     <Stack
       ref={messagesContainerRef}
       gap={3}
-      p={{ xs: "48px 8px", md: "40px 300px" }}
+      p={{ xs: "48px 8px", md: isChatHistorySticky ? "40px 80px" : "40px 300px" }}
       position={"relative"}
       sx={messagesContainerStyle}
     >

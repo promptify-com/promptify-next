@@ -33,6 +33,8 @@ function Chat() {
   const currentUser = useAppSelector(state => state.user.currentUser);
   const isGenerating = useAppSelector(state => state.template.isGenerating);
   const { generatedExecution, selectedExecution } = useAppSelector(state => state.executions);
+  const isChatHistorySticky = useAppSelector(state => state.sidebar.isChatHistorySticky);
+
   const [createChat] = useCreateChatMutation();
   const [updateChat] = useUpdateChatMutation();
 
@@ -216,7 +218,7 @@ function Chat() {
               />
             </Stack>
           )}
-          <Stack px={{ md: "300px" }}>
+          <Stack px={{ md: isChatHistorySticky ? "80px" : "300px" }}>
             {currentUser?.id ? (
               <>
                 {showChatInput && (

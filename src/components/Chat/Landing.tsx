@@ -4,9 +4,11 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Image from "@/components/design-system/Image";
 import SuggestedPrompts from "@/components/Chat/SuggestedPrompts";
+import { useAppSelector } from "@/hooks/useStore";
 
 function Landing() {
   const [showImages, setShowImages] = useState(false);
+  const isChatHistorySticky = useAppSelector(state => state.sidebar.isChatHistorySticky);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -22,7 +24,7 @@ function Landing() {
       gap={4}
       pt={"32px"}
       pb={"16px"}
-      px={{ xs: "8px", md: "300px" }}
+      px={{ xs: "8px", md: isChatHistorySticky ? "80px" : "300px" }}
       position={"relative"}
     >
       <Stack
