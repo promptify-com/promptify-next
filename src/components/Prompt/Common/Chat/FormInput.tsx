@@ -80,21 +80,15 @@ function FormInput({ input }: Props) {
   return (
     <Stack
       direction={"row"}
-      p={"6px"}
       alignItems={"center"}
       gap={1}
       sx={{
+        px: "16px",
         "&:hover": {
           bgcolor: "surface.1",
         },
       }}
     >
-      <Radio
-        size="small"
-        checked={!!value}
-        value="a"
-        name="radio-buttons"
-      />
       <Box>
         <InputLabel
           sx={{

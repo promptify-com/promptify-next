@@ -34,7 +34,7 @@ export function extractTemplateIDs(message: string) {
   const mergedIds = new Set([...tplIds, ...tplIds2]);
 
   // return Array.from(mergedIds)?.map(n => +n) ?? [450, 452, 451];
-  return [450, 451];
+  return [450, 451, 127, 137, 138];
 }
 
 export async function fetchData(ids: number[]) {

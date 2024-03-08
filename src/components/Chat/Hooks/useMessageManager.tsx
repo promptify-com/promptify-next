@@ -39,7 +39,6 @@ const useMessageManager = () => {
   const [isValidatingAnswer, setIsValidatingAnswer] = useState(false);
   const [chatMode, setChatMode] = useState<"automation" | "messages">("automation");
   const [allQuestionsAnswered, setAllQuestionsAnswered] = useState(false);
-  const [welcomeMessage, setWelcomeMessage] = useState("");
 
   const createMessage = ({
     type,
@@ -96,17 +95,16 @@ const useMessageManager = () => {
     const greeting = `Hi, ${currentUser?.first_name ?? currentUser?.username ?? "There"}! Ready to work on`;
     const filteredQuestions = questions.map(_q => _q.question).filter(Boolean);
 
-    const initialMessage = createMessage({ type: "text" });
-    setWelcomeMessage(`${greeting} ${selectedTemplate?.title}. ${filteredQuestions.slice(0, 3).join(" ")}`);
-    initialMessage.text = welcomeMessage;
+    const welcomeMessage = createMessage({ type: "text" });
+    welcomeMessage.text = `${greeting} ${selectedTemplate?.title}. ${filteredQuestions.slice(0, 3).join(" ")}`;
 
     if (selectedChatOption === "FORM") {
       const formMessage = createMessage({ type: "form", noHeader: true });
-      formMessage.text = initialMessage.text;
+      formMessage.text = welcomeMessage.text;
       setMessages(prevMessages => prevMessages.concat(formMessage));
     } else {
       const headerWithTextMessage = createMessage({ type: "HeaderWithText" });
-      headerWithTextMessage.text = initialMessage.text;
+      headerWithTextMessage.text = welcomeMessage.text;
       const questionMessage = createMessage({
         type: "question",
         isRequired: questions[0].required,

@@ -6,6 +6,7 @@ import Button from "@mui/material/Button";
 
 import { useAppSelector } from "@/hooks/useStore";
 import ArrowCircleUp from "@/assets/icons/ArrowCircleUp";
+import RunButton from "../RunButton";
 
 interface Props {
   onExpand?: () => void;
@@ -40,7 +41,7 @@ function MessageBoxHeader({ onExpand, onGenerate, variant }: Props) {
       gap={2}
       width={{
         xs: "-webkit-fill-available",
-        md: variant === "FORM" && selectedChatOption === "FORM" ? "100%" : "fit-content",
+        md: variant === "FORM" && selectedChatOption === "FORM" ? "100%" : "-webkit-fill-available",
       }}
     >
       <Stack
@@ -98,32 +99,14 @@ function MessageBoxHeader({ onExpand, onGenerate, variant }: Props) {
           >
             Instructions: {answers.length} of {inputs.length}
           </Button>
-          <Button
-            variant="text"
-            sx={{
-              bgcolor: "primary.main",
-              color: "onPrimary",
-              border: "none",
-
-              "&:hover": {
-                bgcolor: "primary.main",
-                opacity: 0.9,
-              },
-              ":disabled": {
-                bgcolor: "surface.5",
-                cursor: "not-allowed",
-              },
-            }}
-            disabled={!allowGenerate}
-            endIcon={<ArrowCircleUp color={!allowGenerate ? "gray" : "white"} />}
+          <RunButton
             onClick={() => {
               if (typeof onGenerate === "function") {
                 onGenerate();
               }
             }}
-          >
-            Start
-          </Button>
+            disabled={!allowGenerate}
+          />
         </Stack>
       )}
     </Stack>

@@ -101,7 +101,7 @@ function ChatOptions() {
                     position: "relative",
                     borderRadius: "24px",
                     height: { xs: "120px", md: "300px" },
-                    width: { xs: "120px", md: "300px" },
+                    width: { xs: "120px", md: "100%" },
                     overflow: "hidden",
                   }}
                 >
