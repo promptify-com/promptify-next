@@ -129,8 +129,7 @@ function Chat() {
       <Layout>
         <Stack
           sx={{
-            width: { md: "75%" },
-            mx: { md: "auto" },
+            // mx: { md: "auto" },
             height: { xs: "100vh", md: "calc(100vh - 100px)" },
             display: "flex",
             flexDirection: "column",
@@ -168,29 +167,30 @@ function Chat() {
               />
             </Stack>
           )}
-
-          {currentUser?.id ? (
-            <>
-              {showChatInput && (
-                <ChatInput
-                  onSubmit={handleSubmitInput}
-                  disabled={isValidatingAnswer || disableChatInput || allQuestionsAnswered || isGenerating}
-                  isValidating={isValidatingAnswer}
-                />
-              )}
-            </>
-          ) : (
-            <Stack
-              direction={"column"}
-              alignItems={"center"}
-              justifyContent={"center"}
-              gap={1}
-              width={{ md: "100%" }}
-              p={{ md: "16px 8px 16px 16px" }}
-            >
-              <SigninButton onClick={() => router.push("/signin")} />
-            </Stack>
-          )}
+          <Stack px={{ md: "300px" }}>
+            {currentUser?.id ? (
+              <>
+                {showChatInput && (
+                  <ChatInput
+                    onSubmit={handleSubmitInput}
+                    disabled={isValidatingAnswer || disableChatInput || allQuestionsAnswered || isGenerating}
+                    isValidating={isValidatingAnswer}
+                  />
+                )}
+              </>
+            ) : (
+              <Stack
+                direction={"column"}
+                alignItems={"center"}
+                justifyContent={"center"}
+                gap={1}
+                width={{ md: "100%" }}
+                p={{ md: "16px 8px 16px 16px" }}
+              >
+                <SigninButton onClick={() => router.push("/signin")} />
+              </Stack>
+            )}
+          </Stack>
         </Stack>
       </Layout>
     </ThemeProvider>

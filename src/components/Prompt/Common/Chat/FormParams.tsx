@@ -110,7 +110,7 @@ export default function FormParam({ param }: GeneratorParamProps) {
         >
           <InputLabel
             sx={{
-              fontSize: { xs: 12, md: 15 },
+              fontSize: { xs: 14, md: 15 },
               fontWeight: 500,
               letterSpacing: "0.17px",
               color: "primary.main",
@@ -123,7 +123,7 @@ export default function FormParam({ param }: GeneratorParamProps) {
             component={"span"}
             sx={{
               color: "onSurface",
-              fontSize: { xs: 12, md: 13 },
+              fontSize: 13,
               fontWeight: 400,
               lineHeight: "18.85px",
             }}
