@@ -71,11 +71,15 @@ export default function DrawerContainer({ title, expanded, toggleExpand, sticky,
           borderRadius: 0,
           height: "100svh",
           boxSizing: "border-box",
-          overflow: "auto",
           bgcolor: "surfaceContainerLow",
           border: "none",
           width: `calc(${theme.custom.leftClosedSidebarWidth} + 285px)`,
           left: theme.custom.leftClosedSidebarWidth,
+          overflow: "auto",
+          overscrollBehavior: "contain",
+          "&::-webkit-scrollbar": {
+            display: "none",
+          },
         },
       }}
     >
